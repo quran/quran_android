@@ -7,6 +7,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.core.view.DisplayCutoutCompat;
+import androidx.core.view.WindowInsetsCompat;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
@@ -17,6 +19,10 @@ import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 
+import dev.chrisbanes.insetter.Insetter;
+import dev.chrisbanes.insetter.OnApplyInsetsListener;
+import dev.chrisbanes.insetter.Side;
+import dev.chrisbanes.insetter.ViewState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -38,7 +44,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   private QuranAyahInfo selectedAyah;
   private OnClickListener onClickListener;
   private OnTranslationActionListener onTranslationActionListener;
-  private LinearLayoutManager layoutManager;
+  private final LinearLayoutManager layoutManager;
 
   public TranslationView(Context context) {
     this(context, null);
@@ -80,6 +86,22 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       addView(ayahToolBar, LayoutParams.WRAP_CONTENT,
           context.getResources().getDimensionPixelSize(R.dimen.toolbar_total_height));
     }
+
+    Insetter.builder()
+        .setOnApplyInsetsListener((view, insets, initialState) -> {
+          final DisplayCutoutCompat cutout = insets.getDisplayCutout();
+          if (cutout != null) {
+            final int topSafeOffset = cutout.getSafeInsetTop();
+            final int bottomSafeOffset = cutout.getSafeInsetBottom();
+            final int horizontalSafeOffset =
+                Math.max(cutout.getSafeInsetLeft(), cutout.getSafeInsetRight());
+            setPadding(horizontalSafeOffset,
+                topSafeOffset,
+                horizontalSafeOffset,
+                bottomSafeOffset);
+          }
+        })
+        .applyToView(this);
   }
 
   public void setVerses(@NonNull QuranDisplayData quranDisplayData,

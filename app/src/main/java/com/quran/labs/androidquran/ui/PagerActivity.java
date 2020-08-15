@@ -176,7 +176,6 @@ public class PagerActivity extends QuranActionBarActivity implements
   private AudioRequest lastAudioRequest;
   private boolean isDualPages = false;
   private boolean isLandscape;
-  private boolean isImmersiveInPortrait;
   private Integer lastPlayingSura;
   private Integer lastPlayingAyah;
   private View toolBarArea;
@@ -310,7 +309,6 @@ public class PagerActivity extends QuranActionBarActivity implements
             .subscribe(ignore -> onBookmarksChanged()));
 
     final Resources resources = getResources();
-    isImmersiveInPortrait = quranSettings.isImmersiveInPortrait();
     isLandscape = resources.getConfiguration().orientation ==
         Configuration.ORIENTATION_LANDSCAPE;
     ayahToolBarTotalHeight = resources
@@ -580,8 +578,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void setUiVisibility(boolean isVisible) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
-        (isLandscape || isImmersiveInPortrait)){
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       setUiVisibilityKitKat(isVisible);
       if (isInMultiWindowMode) {
         animateToolBar(isVisible);
