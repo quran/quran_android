@@ -9,11 +9,17 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetrics;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 
+import android.view.DisplayCutout;
+import android.view.View;
+import androidx.core.view.DisplayCutoutCompat;
+import androidx.core.view.WindowInsetsCompat;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
@@ -22,6 +28,11 @@ import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
 
+import dev.chrisbanes.insetter.Insetter;
+import dev.chrisbanes.insetter.OnApplyInsetsListener;
+import dev.chrisbanes.insetter.Side;
+import dev.chrisbanes.insetter.Sides;
+import dev.chrisbanes.insetter.ViewState;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +55,7 @@ public class HighlightingImageView extends AppCompatImageView {
   private static int scrollableHeaderFooterFontSize;
 
   // Sorted map so we use highest priority highlighting when iterating
-  private SortedMap<HighlightType, Set<String>> currentHighlights = new TreeMap<>();
+  private final SortedMap<HighlightType, Set<String>> currentHighlights = new TreeMap<>();
 
   private boolean isNightMode;
   private boolean isColorFilterOn;
@@ -63,6 +74,11 @@ public class HighlightingImageView extends AppCompatImageView {
   private AyahCoordinates ayahCoordinates;
   private Set<ImageDrawHelper> imageDrawHelpers;
 
+  private int topSafeOffset = 0;
+  private int bottomSafeOffset = 0;
+  private int horizontalSafeOffset = 0;
+  private int verticalOffsetForScrolling = 0;
+
   public HighlightingImageView(Context context) {
     this(context, null);
   }
@@ -78,11 +94,30 @@ public class HighlightingImageView extends AppCompatImageView {
       scrollableHeaderFooterFontSize =
           res.getDimensionPixelSize(R.dimen.page_overlay_font_size_scrollable);
     }
+
+    Insetter.builder()
+        .setOnApplyInsetsListener((view, insets, initialState) -> {
+          final DisplayCutoutCompat cutout = insets.getDisplayCutout();
+          if (cutout != null) {
+            topSafeOffset = cutout.getSafeInsetTop();
+            bottomSafeOffset = cutout.getSafeInsetBottom();
+            horizontalSafeOffset = Math.max(cutout.getSafeInsetLeft(), cutout.getSafeInsetRight());
+            setPadding(horizontalSafeOffset,
+                topSafeOffset + verticalOffsetForScrolling,
+                horizontalSafeOffset,
+                bottomSafeOffset + verticalOffsetForScrolling);
+          }
+        })
+        .applyToView(this);
   }
 
   public void setIsScrollable(boolean scrollable) {
     int topBottom = scrollable ? scrollableHeaderFooterSize : headerFooterSize;
-    setPadding(getPaddingLeft(), topBottom, getPaddingRight(), topBottom);
+    verticalOffsetForScrolling = topBottom;
+    setPadding(horizontalSafeOffset,
+        topBottom + topSafeOffset,
+        horizontalSafeOffset,
+        topBottom + bottomSafeOffset);
     fontSize = scrollable ? scrollableHeaderFooterFontSize : headerFooterFontSize;
   }
 
@@ -261,16 +296,19 @@ public class HighlightingImageView extends AppCompatImageView {
 
     overlayParams.paint.setTextAlign(Align.LEFT);
     canvas.drawText(overlayParams.suraText,
-        overlayParams.offsetX, overlayParams.topBaseline,
+        overlayParams.offsetX + horizontalSafeOffset,
+        overlayParams.topBaseline + topSafeOffset,
         overlayParams.paint);
     overlayParams.paint.setTextAlign(Align.CENTER);
     canvas.drawText(overlayParams.pageText,
-        getWidth() / 2.0f, overlayParams.bottomBaseline,
+        getWidth() / 2.0f,
+        overlayParams.bottomBaseline - bottomSafeOffset,
         overlayParams.paint);
     // Merge the current rub3 text with the juz' text
     overlayParams.paint.setTextAlign(Align.RIGHT);
     canvas.drawText(overlayParams.juzText + overlayParams.rub3Text,
-        getWidth() - overlayParams.offsetX, overlayParams.topBaseline,
+        (getWidth() - overlayParams.offsetX) - horizontalSafeOffset,
+        overlayParams.topBaseline + topSafeOffset,
         overlayParams.paint);
     didDraw = true;
   }
@@ -325,7 +363,7 @@ public class HighlightingImageView extends AppCompatImageView {
            if (rangesToDraw != null && !rangesToDraw.isEmpty()) {
              for (AyahBounds b : rangesToDraw) {
                matrix.mapRect(scaledRect, b.getBounds());
-               scaledRect.offset(0, getPaddingTop());
+               scaledRect.offset(getPaddingLeft(), getPaddingTop());
                canvas.drawRect(scaledRect, paint);
              }
              alreadyHighlighted.add(ayah);
