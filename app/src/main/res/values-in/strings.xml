@@ -316,9 +316,6 @@
 
   <!-- audio manager -->
   <string name="audio_manager">Pengelola Audio</string>
-  <string name="prefs_immersive_in_portrait_title">Layar penuh ketika mode tegak</string>
-  <string name="prefs_immersive_in_portrait_summary_enabled">Gambar tegak dan mendatar ditampilkan dalam layar penuh</string>
-  <string name="prefs_immersive_in_portrait_summary_disabled">Hanya gambar yang ditampilkan ketika layar penuh</string>
   <string name="tag_blank_tag_error">Nama label tidak boleh kosong!</string>
   <string name="tag_duplicate_tag_error">Nama label sudah dipakai</string>
   <string name="notification_channel_download">Unduhan Quran</string>

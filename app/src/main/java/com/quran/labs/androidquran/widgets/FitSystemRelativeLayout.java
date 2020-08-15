@@ -15,7 +15,7 @@ public class FitSystemRelativeLayout extends RelativeLayout {
 
   private int lastTopInset;
   private View toolBarParent;
-  private MarginLayoutParams toolBarViewParams;
+  private View audioBarView;
   private MarginLayoutParams audioBarViewParams;
 
   public FitSystemRelativeLayout(@NonNull Context context) {
@@ -37,15 +37,16 @@ public class FitSystemRelativeLayout extends RelativeLayout {
 
   @Override
   protected boolean fitSystemWindows(@NonNull Rect insets) {
-    if (toolBarViewParams == null || audioBarViewParams == null) {
+    if (toolBarParent == null || audioBarView == null || audioBarViewParams == null) {
       View toolbar = findViewById(R.id.toolbar);
       toolBarParent = (View) toolbar.getParent();
-      toolBarViewParams = (MarginLayoutParams) toolbar.getLayoutParams();
-      audioBarViewParams = (MarginLayoutParams) findViewById(R.id.audio_area).getLayoutParams();
+      audioBarView = findViewById(R.id.audio_area);
+      audioBarViewParams = (MarginLayoutParams) audioBarView.getLayoutParams();
     }
 
-    toolBarViewParams.setMargins(insets.left, insets.top, insets.right, 0);
-    audioBarViewParams.setMargins(insets.left, 0, insets.right, insets.bottom);
+    toolBarParent.setPadding(insets.left, insets.top, insets.right, 0);
+    audioBarView.setPadding(insets.left, 0, insets.right, 0);
+    audioBarViewParams.setMargins(0, 0, 0, insets.bottom);
 
     /*
       this is needed to fix a bug where the Toolbar is half cut off before Kitkat (especially when
@@ -68,6 +69,6 @@ public class FitSystemRelativeLayout extends RelativeLayout {
       toolBarParent.requestLayout();
       lastTopInset = insets.top;
     }
-    return true;
+    return false;
   }
 }

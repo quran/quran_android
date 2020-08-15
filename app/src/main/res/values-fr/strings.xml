@@ -290,9 +290,6 @@
   <string name="audio_manager">Gestionnaire audio</string>
   <string name="menu_show_date">" Afficher la date"</string>
   <string name="about_furqan_summary">Police de caractères Ottoman et explication en arabe</string>
-  <string name="prefs_immersive_in_portrait_title">Plein écran en mode portrait</string>
-  <string name="prefs_immersive_in_portrait_summary_enabled">Les images sont affichées en plein écran en portrait et paysage</string>
-  <string name="prefs_immersive_in_portrait_summary_disabled">Les images sont affichées en plein écran uniquement en paysage</string>
   <string name="prefs_category_advanced_summary">Importer/exporter des signets, définir le répertoire des données, etc.</string>
   <string name="prefs_import_title">Importer</string>
   <string name="prefs_import_summary">Importer des signets et des tags</string>
