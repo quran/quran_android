@@ -43,4 +43,8 @@
   <color name="snackbar_background_color">@color/download_button_background</color>
   <color name="overlay_panel">#bb000000</color>
   <color name="navbar_night_color">#ff000000</color>
+  <color name="toast_background_color">#e6eeeeee</color>
+  <color name="toast_text_color">#ff000000</color>
+  <color name="toast_background_color_night">#ff2d2d2d</color>
+  <color name="toast_text_color_night">#ffffffff</color>
 </resources>

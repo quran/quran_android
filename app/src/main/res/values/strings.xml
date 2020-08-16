@@ -55,11 +55,14 @@
   <string name="about_quran_ksu">Electronic Moshaf Project</string>
   <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project is the app\'s source of Arabic Tafaseer and translations for various languages. It is also the source for Dr. Ayman Suwaid\'s recitation.</string>
   <string name="about_quran_ksu_url" translatable="false">https://quran.ksu.edu.sa</string>
-  <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (furqan.co)</string>
+  <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (tafsir.app)</string>
   <string name="about_furqan_summary">Uthmani text and Arabic Tafaseer</string>
-  <string name="about_furqan_url" translatable="false">https://furqan.co</string>
+  <string name="about_furqan_url" translatable="false">https://tafsir.app</string>
+  <string name="about_quran_enc" translatable="false">Noble Quran Encyclopedia (QuranEnc)</string>
+  <string name="about_quran_enc_summary">Translations for many languages</string>
+  <string name="about_quran_enc_url" translatable="false">https://quranenc.com</string>
   <string name="about_tanzil" translatable="false">Tanzil</string>
-  <string name="about_tanzil_summary">Translations for many languages</string>
+  <string name="about_tanzil_summary">Translations for a few languages</string>
   <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
   <string name="about_noorhidayat" translatable="false">Noorhidayat</string>
   <string name="about_noorhidayat_summary">Noorehira font and Mufti Taqi Translation</string>
@@ -162,9 +165,6 @@
   <string name="prefs_use_arabic_title">Arabic mode</string>
   <string name="prefs_use_arabic_summary_on">Use Arabic for application interface</string>
   <string name="prefs_new_background_title">New background</string>
-  <string name="prefs_immersive_in_portrait_title">Fullscreen in portrait mode</string>
-  <string name="prefs_immersive_in_portrait_summary_enabled">Both portrait and landscape images are displayed  in full screen</string>
-  <string name="prefs_immersive_in_portrait_summary_disabled">Only landscape images are displayed in full screen</string>
   <string name="prefs_lock_orientation_title">Lock screen orientation</string>
   <string name="prefs_lock_orientation_summary_on">Use fixed orientation mode</string>
   <string name="prefs_lock_orientation_summary_off">Adaptive to current orientation mode</string>
@@ -221,6 +221,8 @@
   <string name="prefs_export_summary">Export a copy of bookmarks and tags</string>
   <string name="prefs_page_type_title">Page Type (experimental)</string>
   <string name="prefs_page_type_summary">Select the type of reading pages</string>
+  <string name="prefs_sura_translated_name_summary">Show sura translated name</string>
+  <string name="prefs_sura_translated_name_title">Sura translated name</string>
 
   <string name="translations" translatable="false">@string/prefs_translations</string>
   <string name="more_translations">More Translations</string>
@@ -394,6 +396,11 @@
   <string name="audio_manager_download_selection">Download selection</string>
   <string name="audio_manager_delete_selection">Delete selection</string>
 
+  <!-- audio updates -->
+  <string name="audio_updated_title">Quran Audio files Update</string>
+  <string name="audio_updated_text">Several Quran audio files have been updated. Quran has removed
+  your copy of these files so that the newest versions can be downloaded the next time you play them
+  back.</string>
 
   <!-- format strings -->
   <string name="sura_ayah" translatable="false">%1$d:%2$d</string>

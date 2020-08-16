@@ -1,6 +1,7 @@
 package com.quran.common.search
 
 import android.database.Cursor
+import android.database.DatabaseUtils
 import android.database.MatrixCursor
 import android.database.sqlite.SQLiteDatabase
 import com.quran.common.search.arabic.ArabicCharacterHelper
@@ -35,23 +36,40 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
 
     val regexp = ArabicCharacterHelper.generateRegex(originalSearchText)
     val pattern = Pattern.compile(regexp)
-    database.rawQuery(query, arrayOf(searchText))?.use { cursor ->
-      while (cursor.moveToNext()) {
-        val text = cursor.getString(3)
 
-        val matcher = pattern.matcher(text)
-        if (matcher.find()) {
-          val matchText: String = if (withSnippets) {
-            text.replace("($regexp)".toRegex(), "$matchStart$1$matchEnd")
-          } else {
-            text
+    var cursorCopy: Cursor? = null
+    try {
+      cursorCopy = database.rawQuery(query, arrayOf(searchText))
+      cursorCopy?.let { cursor ->
+            cursorCopy = cursor
+
+            while (cursor.moveToNext()) {
+              val text = cursor.getString(3)
+
+              val matcher = pattern.matcher(text)
+              if (matcher.find()) {
+                val matchText: String = if (withSnippets) {
+                  text.replace("($regexp)".toRegex(), "$matchStart$1$matchEnd")
+                } else {
+                  text
+                }
+
+                matrixCursor.addRow(
+                    arrayOf(
+                        cursor.getInt(0),
+                        cursor.getInt(1),
+                        cursor.getInt(2),
+                        matchText
+                    )
+                )
+              }
+            }
           }
-
-          matrixCursor.addRow(arrayOf(cursor.getInt(0),
-              cursor.getInt(1),
-              cursor.getInt(2),
-              matchText))
-        }
+    } finally {
+      try {
+        cursorCopy?.close()
+      } catch (exception: Exception) {
+        // swallow
       }
     }
 
@@ -59,6 +77,6 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
   }
 
   companion object {
-    private val arabicRegex =  "[\u0627\u0623\u0621\u062a\u0629\u0647\u0649]".toRegex()
+    private val arabicRegex =  "[\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649]".toRegex()
   }
 }

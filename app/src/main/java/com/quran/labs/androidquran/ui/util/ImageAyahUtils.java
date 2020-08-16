@@ -7,7 +7,7 @@ import android.util.SparseArray;
 import android.widget.ImageView;
 
 import com.quran.page.common.data.AyahBounds;
-import com.quran.labs.androidquran.data.SuraAyah;
+import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.widgets.AyahToolBar;
 import com.quran.labs.androidquran.widgets.HighlightingImageView;
 
@@ -178,6 +178,7 @@ public class ImageAyahUtils {
     if (imageView.getImageMatrix().invert(inverse)) {
       results = new float[2];
       inverse.mapPoints(results, new float[]{screenX, screenY});
+      results[1] = results[1] - imageView.getPaddingTop();
     }
     return results;
   }

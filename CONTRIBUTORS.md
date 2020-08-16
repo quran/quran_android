@@ -18,11 +18,15 @@ Quran Android Contributors
 * [Ahmed Essam](http://twitter.com/neo_4583)
 * [Hosain Al Ahmad](https://github.com/hosainnet)
 * [Ahmed Abdelaal](https://github.com/Ahmed9914)
+* [Saïd B](https://github.com/sbou88)
 
 
 ### Audio
 
 * [Anas Saiyed](https://github.com/anassaiyed) - scripts and support for migrating many shuyookh from gapped to gapless.
+* [Nacer Tahri](https://github.com/nacer80)
+* [Abdullah Hussein](http://abdullahhussein.com)
+* [M. Jayyusi](https://github.com/MJayyusi)
 
 
 ### UI and Designer
@@ -40,6 +44,7 @@ Quran Android Contributors
 * Kurdish by [Goran Gharib Karim](https://github.com/GorranKurd).
 * French by Yasser [yasserkad](http://github.com/yasserkad).
 * French updates by [Abdullah ibn Nadjo](https://github.com/abdullahibnnadjo).
+* French updates 1441 Ramadan 13 (06/05/2020) [Saïd B](https://github.com/sbou88).
 * German by [Armin Supuk](http://github.com/ArminSupuk).
 * Chinese by [Bo Li](http://twitter.com/liboat).
 * Uyghur by Abduqadir Abliz [Sahran](http://github.com/Sahran).

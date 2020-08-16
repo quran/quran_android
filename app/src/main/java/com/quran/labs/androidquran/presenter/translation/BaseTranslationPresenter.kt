@@ -1,13 +1,13 @@
 package com.quran.labs.androidquran.presenter.translation
 
+import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.common.QuranText
 import com.quran.labs.androidquran.common.TranslationMetadata
-import com.quran.labs.androidquran.data.QuranInfo
-import com.quran.labs.androidquran.data.SuraAyah
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.data.SuraAyahIterator
-import com.quran.labs.androidquran.data.VerseRange
+import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.presenter.Presenter
@@ -26,7 +26,8 @@ internal open class BaseTranslationPresenter<T> internal constructor(
     private val translationModel: TranslationModel,
     private val translationsAdapter: TranslationsDBAdapter,
     private val translationUtil: TranslationUtil,
-    private val quranInfo: QuranInfo) : Presenter<T> {
+    private val quranInfo: QuranInfo
+) : Presenter<T> {
   private var lastCacheTime: Long = 0
   private val translationMap: MutableMap<String, LocalTranslation> = HashMap()
 
@@ -35,17 +36,10 @@ internal open class BaseTranslationPresenter<T> internal constructor(
 
   fun getVerses(getArabic: Boolean,
                 translations: List<String>,
-                verseRange: VerseRange): Single<ResultHolder> {
-    // get all the translations for these verses, using a source of either the list
-    // of active translations, or a set of all translations if there are no active
-    // translations selected.
-    val source = if (!translations.isEmpty())
-      Observable.fromIterable(translations)
-    else
-      getTranslationMapSingle()
-          .toObservable()
-          .map<List<String>> { map -> map.map { it.value.filename }.toList() }
-          .flatMap<String> { Observable.fromIterable(it) }
+                verseRange: VerseRange
+  ): Single<ResultHolder> {
+    // get all the translations for these verses, using a source of the list of active translations
+    val source = Observable.fromIterable(translations)
 
     val translationsObservable =
         source.concatMapEager { db ->
@@ -153,8 +147,10 @@ internal open class BaseTranslationPresenter<T> internal constructor(
 
     // missing some entries for some ayat - this is a work around for bad data in some databases
     // ex. ibn katheer is missing 3 records, 1 in each of suras 5, 17, and 87.
-    val start = SuraAyah(verseRange.startSura, verseRange.startAyah)
-    val end = SuraAyah(verseRange.endingSura, verseRange.endingAyah)
+    val start =
+      SuraAyah(verseRange.startSura, verseRange.startAyah)
+    val end =
+      SuraAyah(verseRange.endingSura, verseRange.endingAyah)
     val iterator = SuraAyahIterator(quranInfo, start, end)
 
     var i = 0

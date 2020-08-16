@@ -17,8 +17,8 @@ android {
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion
     targetSdkVersion deps.android.build.targetSdkVersion
-    versionCode 2990
-    versionName "2.9.9"
+    versionCode 3010
+    versionName "3.0.1"
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     multiDexEnabled true
   }
@@ -97,8 +97,13 @@ android {
       exceptionFormat "full"
     }
   }
+
   androidExtensions {
     experimental = true
+  }
+
+  packagingOptions {
+    exclude "META-INF/*.kotlin_module"
   }
 }
 
@@ -117,12 +122,21 @@ if (new File(rootDir, 'extras/extras.gradle').exists()) {
 }
 
 dependencies {
+  implementation project(path: ':common:audio')
   implementation project(path: ':common:data')
   implementation project(path: ':common:networking')
   implementation project(path: ':common:pages')
   implementation project(path: ':common:search')
 
+  implementation project(path: ':feature:audio')
+
   implementation deps.kotlin.stdlib
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
+
+  implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+  implementation "com.squareup.retrofit2:converter-moshi:${retrofitVersion}"
+
   implementation "androidx.appcompat:appcompat:${androidxAppcompatVersion}"
   implementation "androidx.media:media:${androidxMediaVersion}"
   implementation "androidx.localbroadcastmanager:localbroadcastmanager:${androidxLocalBroadcastVersion}"
@@ -133,7 +147,7 @@ dependencies {
   implementation "androidx.multidex:multidex:2.0.1"
 
   // rx
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.18'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
   implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
   // dagger
@@ -143,18 +157,18 @@ dependencies {
   // workmanager
   implementation "androidx.work:work-runtime-ktx:${workManagerVersion}"
 
-  implementation "com.squareup.okio:okio:2.4.3"
+  implementation "com.squareup.okio:okio:${okioVersion}"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
 
-  // remove metadata line from proguard.cfg upon updating to 1.9.3
-  implementation 'com.squareup.moshi:moshi:1.9.2'
-  kapt("com.squareup.moshi:moshi-kotlin-codegen:1.9.2")
+  implementation "com.squareup.moshi:moshi:${moshiVersion}"
+  kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
 
+  implementation "dev.chrisbanes:insetter-ktx:0.3.1"
   implementation 'com.jakewharton.timber:timber:4.7.1'
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.3'
   testImplementation 'junit:junit:4.13'
   testImplementation 'com.google.truth:truth:1.0.1'
-  testImplementation "org.mockito:mockito-core:3.2.0"
+  testImplementation "org.mockito:mockito-core:3.3.3"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"

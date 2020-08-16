@@ -44,7 +44,7 @@ public class QuranDataProvider extends ContentProvider {
   private static final UriMatcher uriMatcher = buildUriMatcher();
 
   private boolean didInject;
-  @Inject QuranInfo quranInfo;
+  @Inject QuranDisplayData quranDisplayData;
   @Inject TranslationsDBAdapter translationsDBAdapter;
   @Inject QuranFileUtils quranFileUtils;
 
@@ -166,7 +166,7 @@ public class QuranDataProvider extends ContentProvider {
             int ayah = suggestions.getInt(2);
             String text = suggestions.getString(3);
             String foundText = context.getString(
-                R.string.found_in_sura, quranInfo.getSuraName(context, sura, false), ayah);
+                R.string.found_in_sura, quranDisplayData.getSuraName(context, sura, false), ayah);
 
             gotResults = true;
             MatrixCursor.RowBuilder row = mc.newRow();

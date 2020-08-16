@@ -150,9 +150,6 @@
   <string name="prefs_use_arabic_title">Режим арабского</string>
   <string name="prefs_use_arabic_summary_on">Приложение будет локализовано под арабский язык </string>
   <string name="prefs_new_background_title">Новый фон</string>
-  <string name="prefs_immersive_in_portrait_title">Полный экран в портретном режиме</string>
-  <string name="prefs_immersive_in_portrait_summary_enabled">Как портретные, так и альбомные изображения отображаются в полноэкранном режиме</string>
-  <string name="prefs_immersive_in_portrait_summary_disabled">В полноэкранном режиме отображаются только альбомные изображения</string>
   <string name="prefs_lock_orientation_title">Удерживать ориентацию экрана</string>
   <string name="prefs_lock_orientation_summary_on">Страницы Корана будут удерживаться в выбранном режиме</string>
   <string name="prefs_lock_orientation_summary_off">Адаптировать под текущую ориентацию</string>
@@ -381,6 +378,12 @@
   <string name="audio_manager_download_all">Скачать все</string>
   <string name="audio_manager_download_selection">Скачать выбранные</string>
   <string name="audio_manager_delete_selection">Удалить выбранные</string>
+
+  <!-- audio updates -->
+  <string name="audio_updated_title">Обновление аудио файлов</string>
+  <string name="audio_updated_text">Несколько аудио файлов были обновлены. Ваша копия этих файлов
+    была удалена, новые версии будут загружены при следующем воспроизведении.
+  </string>
 
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_audio">Рецитация Корана</string>

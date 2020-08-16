@@ -1,0 +1,42 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+  compileSdkVersion deps.android.build.compileSdkVersion
+  defaultConfig {
+    minSdkVersion deps.android.build.minSdkVersion
+    targetSdkVersion deps.android.build.targetSdkVersion
+  }
+
+  buildTypes {
+     beta {
+       consumerProguardFiles 'proguard.cfg'
+       matchingFallbacks = ['debug']
+     }
+
+     release {
+       consumerProguardFiles 'proguard.cfg'
+     }
+  }
+}
+
+dependencies {
+  implementation project(path: ':common:audio')
+
+  implementation deps.kotlin.stdlib
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
+
+  implementation "com.squareup.okio:okio:${okioVersion}"
+
+  implementation "com.squareup.moshi:moshi:${moshiVersion}"
+  kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
+
+  implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+
+  implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+
+  testImplementation 'junit:junit:4.13'
+  testImplementation 'com.google.truth:truth:1.0.1'
+}

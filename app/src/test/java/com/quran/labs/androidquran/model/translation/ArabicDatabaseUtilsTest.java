@@ -2,9 +2,11 @@ package com.quran.labs.androidquran.model.translation;
 
 import android.content.Context;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.data.page.provider.madani.MadaniPageProvider;
+import com.quran.data.pageinfo.common.MadaniDataSource;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
@@ -65,7 +67,7 @@ public class ArabicDatabaseUtilsTest {
 
   private ArabicDatabaseUtils getArabicDatabaseUtils() {
     return new ArabicDatabaseUtils(context,
-        new QuranInfo(new MadaniPageProvider()),
+        new QuranInfo(new MadaniDataSource()),
         mock(QuranFileUtils.class)) {
       @Override
       DatabaseHandler getArabicDatabaseHandler() {

@@ -6,8 +6,8 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
+import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.core.worker.WorkerTaskFactory
-import com.quran.labs.androidquran.data.QuranInfo
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranPartialPageChecker
 import com.quran.labs.androidquran.util.QuranScreenInfo
@@ -41,9 +41,9 @@ class PartialPageCheckingWorker(private val context: Context,
 
       // prepare page widths and paths
       val width = quranScreenInfo.widthParam
-      val pagesDirectory = quranFileUtils.getQuranImagesDirectory(context, width)
+      val pagesDirectory = quranFileUtils.getQuranImagesDirectory(context, width)!!
       val tabletWidth = quranScreenInfo.tabletWidthParam
-      val tabletPagesDirectory = quranFileUtils.getQuranImagesDirectory(context, tabletWidth)
+      val tabletPagesDirectory = quranFileUtils.getQuranImagesDirectory(context, tabletWidth)!!
 
       // compute the partial page sets
       val partialPages =

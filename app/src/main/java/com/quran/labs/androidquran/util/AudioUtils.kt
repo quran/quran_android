@@ -3,10 +3,10 @@ package com.quran.labs.androidquran.util
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.VisibleForTesting
+import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.common.QariItem
-import com.quran.labs.androidquran.data.QuranInfo
-import com.quran.labs.androidquran.data.SuraAyah
+import com.quran.labs.androidquran.common.audio.QariItem
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.service.AudioService
 import dagger.Reusable
 import timber.log.Timber
@@ -49,7 +49,9 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     val items = mutableListOf<QariItem>()
     for (i in shuyookh.indices) {
       if (hasGaplessEquivalent[i] == 0 || haveAnyFiles(context, paths[i])) {
-        items += QariItem(i, shuyookh[i], urls[i], paths[i], databases[i])
+        items += QariItem(
+            i, shuyookh[i], urls[i], paths[i], databases[i]
+        )
       }
     }
 
@@ -123,23 +125,11 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     if (page > totalPages || page < 0) {
       return null
     }
-    if (page < totalPages) {
-      val nextPage = page + 1
-      val nextPageSura = quranInfo.safelyGetSuraOnPage(nextPage)
-      // using [page+1] as an index because we literally want the next page
-      val nextPageAyah = quranInfo.getFirstAyahOnPage(nextPage)
 
-      pageLastSura = nextPageSura
-      pageLastAyah = nextPageAyah - 1
-      if (pageLastAyah < 1) {
-        pageLastSura--
-        pageLastAyah = quranInfo.getNumAyahs(pageLastSura)
-      }
-    }
 
     if (mode == LookAheadAmount.SURA) {
       var sura = startAyah.sura
-      var lastAyah = quranInfo.getNumAyahs(sura)
+      var lastAyah = quranInfo.getNumberOfAyahs(sura)
       if (lastAyah == -1) {
         return null
       }
@@ -147,7 +137,7 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
       // if we start playback between two suras, download both suras
       if (pageLastSura > sura) {
         sura = pageLastSura
-        lastAyah = quranInfo.getNumAyahs(sura)
+        lastAyah = quranInfo.getNumberOfAyahs(sura)
       }
       return SuraAyah(sura, lastAyah)
     } else if (mode == LookAheadAmount.JUZ) {
@@ -166,6 +156,10 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
 
         return SuraAyah(endJuz[0], endJuz[1])
       }
+    } else {
+      val range = quranInfo.getVerseRangeForPage(page)
+      pageLastSura = range.endingSura
+      pageLastAyah = range.endingAyah
     }
 
     // page mode (fallback also from errors above)
@@ -239,11 +233,12 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     val endAyah = end.ayah
 
     if (endSura < startSura || endSura == startSura && endAyah < startAyah) {
-      throw IllegalStateException("End isn't larger than the start")
+      throw IllegalStateException(
+          "End isn't larger than the start: $startSura:$startAyah to $endSura:$endAyah")
     }
 
     for (i in startSura..endSura) {
-      val lastAyah = if (i == endSura) { endAyah } else { quranInfo.getNumAyahs(i) }
+      val lastAyah = if (i == endSura) { endAyah } else { quranInfo.getNumberOfAyahs(i) }
       val firstAyah = if (i == startSura) { startAyah } else { 1 }
 
       if (isGapless) {

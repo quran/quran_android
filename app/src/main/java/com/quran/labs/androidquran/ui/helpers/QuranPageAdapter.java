@@ -5,8 +5,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import android.view.ViewGroup;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.data.QuranInfo;
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.fragment.TabletFragment;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
@@ -76,7 +76,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
   @Override
   public Fragment getItem(int position) {
-    int page = quranInfo.getPageFromPos(position, isDualPages);
+    int page = quranInfo.getPageFromPosition(position, isDualPages);
     Timber.d("getting page: %d", page);
     if (isDualPages) {
       return TabletFragment.newInstance(page,
@@ -110,7 +110,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
     if (page < Constants.PAGES_FIRST || totalPages < page) {
       return null;
     }
-    int position = quranInfo.getPosFromPage(page, isDualPages);
+    int position = quranInfo.getPositionFromPage(page, isDualPages);
     Fragment fragment = getFragmentIfExists(position);
     return fragment instanceof QuranPage && fragment.isAdded() ? (QuranPage) fragment : null;
   }

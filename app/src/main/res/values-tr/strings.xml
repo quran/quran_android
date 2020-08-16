@@ -30,7 +30,7 @@
   <string name="about_description">"Quran for Android ücretsiz bir Kur'an uygulamasıdır. Lütfen dualarınızda katkıda bulunanları unutmayın."</string>
   <string name="about_data_sources">Veri kaynakları</string>
   <string name="about_images">Resim dosyaları</string>
-  <string name="about_madani_images">"Kur'an resim dosyaları, Kral Fahd Kuran Matbaası Kompleksinin yazı fontları temeli̇nde üreti̇lmiştir"</string>
+  <string name="about_madani_images">"Kur'an resim dosyaları, Kral Fahd Kuran Matbaası Kompleksinin yazı fontları temelinde üretilmiştir"</string>
   <string name="about_naskh_images">"Nesih Kur'an resim dosyaları SHL Info Systems'ten alınmıştır (izinle)"</string>
   <string name="about_qaloon_images">"Qaloon resim dosyaları Nous Memes Editions Et Diffusion (Tunus)'un izniyle kullanılmıştır"</string>
   <string name="about_quranicaudio_summary">"Sürekli mp3 Kur'an okunması"</string>
@@ -73,8 +73,8 @@
   <string name="quranSearchType">"Kur'an-i Kerîm âyetlerinde arama"</string>
 
   <plurals name="files_downloaded">
-    <item quantity="one">1 sure i̇ndirildi</item>
-    <item quantity="other">%1$d sure i̇ndirildi</item>
+    <item quantity="one">1 sure indirildi</item>
+    <item quantity="other">%1$d sure indirildi</item>
   </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
@@ -112,7 +112,7 @@
   <string name="prefs_display_marker_title">"Kur'an kısımlarını gösteren uyarı göster"</string>
   <string name="prefs_display_marker_summary">Ekranda cüz ve hizip bilgileri görüntüle</string>
   <string name="prefs_highlight_bookmarks_title">İşaretleri vurgulama</string>
-  <string name="prefs_highlight_bookmarks_summary">İşaretlenen âyetleri̇ vurgulayarak göster</string>
+  <string name="prefs_highlight_bookmarks_summary">İşaretlenen âyetleri vurgulayarak göster</string>
   <string name="prefs_translation_text_title">Meâllerin metin büyüklüğü</string>
   <string name="prefs_volume_key_navigation_summary">Sayfalar arasında ses düğmelerini kullanarak dolaş</string>
   <string name="prefs_volume_key_navigation_title">Ses düğmesi ile dolaşma</string>
@@ -136,9 +136,6 @@
   <string name="prefs_night_mode_text_brightness_title">Metin parlaklığı</string>
   <string name="prefs_night_mode_text_brightness_summary">Gece modu açıkken metin parlaklığı</string>
   <string name="prefs_new_background_title">Yeni arkaplan</string>
-  <string name="prefs_immersive_in_portrait_title">Dikey modda tam ekrani kullan</string>
-  <string name="prefs_immersive_in_portrait_summary_enabled">Dikey ve yatay modda tam ekran kullanılacak</string>
-  <string name="prefs_immersive_in_portrait_summary_disabled">Sadece yatay modda tam ekran kullanılacak</string>
   <string name="prefs_download_amount_title">İndirme miktarı</string>
   <string name="prefs_download_amount_summary">Ayrık olan ses dosyaları için indrime miktarı</string>
   <string name="prefs_audio_manager_summary">"Kur'an seslerini yönetme ve indirme"</string>
@@ -166,7 +163,7 @@
   <string name="more_translations">Daha fazla meâller</string>
   <string name="import_data_permissions_error">İzinler hatası nedeniyle yedekleme dosyası okunamıyor</string>
   <string name="import_data_error">Geçersiz yedekleme dosyası (veya yedekleme dosyası okunamıyor)</string>
-  <string name="import_data">Verileri i̇çe aktar</string>
+  <string name="import_data">Verileri içe aktar</string>
   <string name="import_data_and_override">Bu dosyayı içe aktarırsanız, tüm işaretlerinizi %1$d işaret ve %2$d etiketle değiştirilir. Devam etmek istiyor musunuz?</string>
   <string name="import_successful">İçe aktarma başarıyla tamamlandı</string>
   <string name="export_data_error">Veriler dışa aktarılırken hata oluştu</string>
@@ -332,7 +329,13 @@
   <string name="audio_manager_surah_delete">Sureyi sil</string>
   <string name="audio_manager_surah_download">Sureyi indir</string>
 
+  <!-- audio updates -->
+  <string name="audio_updated_title">Ses dosyaları güncellendi</string>
+  <string name="audio_updated_text">Birkaç ses dosyaları güncellendi. Güncellenen sürümün bir
+    sonraki oynatılmasında indirilebilmesi için bu dosyaların cihazınızdaki kopyası kaldırıldı.
+  </string>
+
   <!-- notification channel names [CHAR LIMIT=40] -->
-  <string name="notification_channel_download">"Kur'an i̇ndirme"</string>
+  <string name="notification_channel_download">"Kur'an indirme"</string>
   <string name="notification_channel_audio">"Kur'an okunması"</string>
 </resources>

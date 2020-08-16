@@ -11,4 +11,7 @@ public class QuranFileConstants {
   public static final String ARABIC_DATABASE = "quran.ar.db";
   public static final String ARABIC_SHARE_TABLE = DatabaseHandler.ARABIC_TEXT_TABLE;
   public static final boolean ARABIC_SHARE_TEXT_HAS_BASMALLAH = true;
+
+  // data
+  public static final boolean ARE_PAGES_BUNDLED = true;
 }

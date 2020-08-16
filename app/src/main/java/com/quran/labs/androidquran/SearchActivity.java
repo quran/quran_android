@@ -17,8 +17,9 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.data.QuranDataProvider;
-import com.quran.labs.androidquran.data.QuranInfo;
+import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
@@ -52,8 +53,9 @@ public class SearchActivity extends QuranActionBarActivity
   private String query;
   private ResultAdapter adapter;
   private DefaultDownloadReceiver downloadReceiver;
-  
+
   @Inject QuranInfo quranInfo;
+  @Inject QuranDisplayData quranDisplayData;
   @Inject QuranFileUtils quranFileUtils;
 
   @Override
@@ -176,7 +178,7 @@ public class SearchActivity extends QuranActionBarActivity
 
       ListView listView = findViewById(R.id.results_list);
       if (adapter == null) {
-        adapter = new ResultAdapter(this, cursor, quranInfo);
+        adapter = new ResultAdapter(this, cursor, quranDisplayData);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener((parent, view, position, id) -> {
           ListView p = (ListView) parent;
@@ -244,7 +246,7 @@ public class SearchActivity extends QuranActionBarActivity
         int sura = 1;
         int total = id;
         for (int j = 1; j <= 114; j++) {
-          int cnt = quranInfo.getNumAyahs(j);
+          int cnt = quranInfo.getNumberOfAyahs(j);
           total -= cnt;
           if (total >= 0)
             sura++;
@@ -256,7 +258,7 @@ public class SearchActivity extends QuranActionBarActivity
 
         if (total == 0){
           sura--;
-          total = quranInfo.getNumAyahs(sura);
+          total = quranInfo.getNumberOfAyahs(sura);
         }
 
         jumpToResult(sura, total);
@@ -286,13 +288,13 @@ public class SearchActivity extends QuranActionBarActivity
   private static class ResultAdapter extends CursorAdapter {
     private Context context;
     private LayoutInflater inflater;
-    private QuranInfo quranInfo;
+    private QuranDisplayData quranDisplayData;
 
-    ResultAdapter(Context context, Cursor cursor, QuranInfo quranInfo) {
+    ResultAdapter(Context context, Cursor cursor, QuranDisplayData quranDisplayData) {
       super(context, cursor, 0);
       inflater = LayoutInflater.from(context);
       this.context = context;
-      this.quranInfo = quranInfo;
+      this.quranDisplayData = quranDisplayData;
     }
 
     @Override
@@ -311,7 +313,7 @@ public class SearchActivity extends QuranActionBarActivity
       int sura = cursor.getInt(1);
       int ayah = cursor.getInt(2);
       String text = cursor.getString(3);
-      String suraName = quranInfo.getSuraName(this.context, sura, false);
+      String suraName = quranDisplayData.getSuraName(this.context, sura, false);
       holder.text.setText(Html.fromHtml(text));
       holder.metadata.setText(this.context.getString(R.string.found_in_sura, suraName, ayah));
     }

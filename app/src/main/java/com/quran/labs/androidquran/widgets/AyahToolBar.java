@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.ui.util.ToastCompat;
 
 import androidx.annotation.MenuRes;
 import androidx.appcompat.widget.PopupMenu;
@@ -246,7 +247,7 @@ public class AyahToolBar extends ViewGroup implements
   public boolean onLongClick(View v) {
     MenuItem item = menu.findItem(v.getId());
     if (item != null && item.getTitle() != null) {
-      Toast.makeText(context, item.getTitle(), Toast.LENGTH_SHORT).show();
+      ToastCompat.makeText(context, item.getTitle(), Toast.LENGTH_SHORT).show();
       return true;
     }
     return false;
