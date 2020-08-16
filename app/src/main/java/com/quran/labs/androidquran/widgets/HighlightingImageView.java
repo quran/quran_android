@@ -62,7 +62,6 @@ public class HighlightingImageView extends AppCompatImageView {
 
   // Sorted map so we use highest priority highlighting when iterating
   private final SortedMap<HighlightType, Set<AyahHighlight>> currentHighlights = new TreeMap<>();
-  private final SortedMap<HighlightType, Set<String>> currentHighlights = new TreeMap<>();
 
   private boolean isNightMode;
   private boolean isColorFilterOn;
