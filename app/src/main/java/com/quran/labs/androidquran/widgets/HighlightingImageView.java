@@ -24,8 +24,11 @@ import androidx.core.view.DisplayCutoutCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.ui.helpers.AyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.HighlightAnimationConfig;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.SingleAyahHighlight;
+import com.quran.labs.androidquran.ui.helpers.TransitionAyahHighlight;
 import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
@@ -526,90 +529,3 @@ public class HighlightingImageView extends AppCompatImageView {
     }
   }
 }
-
-class AyahHighlight {
-  private String key;
-  private boolean transition;
-
-  public AyahHighlight(String key) {
-    this.key = key;
-    this.transition = false;
-  }
-
-  public AyahHighlight(String key, boolean transition) {
-    this.key = key;
-    this.transition = transition;
-  }
-
-  public String getKey() {
-    return key;
-  }
-  
-  public boolean isTransition() {
-    return transition;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
-      return true;
-    }
-
-    if((obj == null) || (obj.getClass() != this.getClass())) {
-      return false;
-    }
-
-    AyahHighlight ayahHighlight = (AyahHighlight)obj;
-    return this.key.equals(ayahHighlight.key);
-  }
-
-  @Override
-  public int hashCode() {
-    return key.hashCode();
-  }
-
-  @NonNull
-  @Override
-  public String toString() {
-    return key;
-  }
-}
-
-class SingleAyahHighlight extends AyahHighlight {
-
-  public SingleAyahHighlight(String key) {
-    super(key);
-  }
-
-  public SingleAyahHighlight(int surah, int ayah) {
-    super(surah + ":" + ayah);
-  }
-
-  public static Set<AyahHighlight> createSet(Set<String> ayahKeys) {
-    Set<AyahHighlight> set = new HashSet<>();
-    for(String ayahKey: ayahKeys) {
-      set.add(new SingleAyahHighlight(ayahKey));
-    }
-    return set;
-  }
-}
-
-class TransitionAyahHighlight extends AyahHighlight {
-  final private static String ARROW = "->";
-  private AyahHighlight source, destination;
-
-  public TransitionAyahHighlight(AyahHighlight source, AyahHighlight destination) {
-    super(source.getKey() + ARROW + destination.getKey(), true);
-    this.source = source;
-    this.destination = destination;
-  }
-
-  public AyahHighlight getSource() {
-    return source;
-  }
-
-  public AyahHighlight getDestination() {
-    return destination;
-  }
-}
-
