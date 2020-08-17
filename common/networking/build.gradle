@@ -7,7 +7,6 @@ java {
 }
 
 dependencies {
-  implementation deps.kotlin.stdlib
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
 
