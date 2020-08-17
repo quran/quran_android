@@ -12,7 +12,6 @@ android {
 
 dependencies {
   implementation project(path: ':common:data')
-  implementation deps.kotlin.stdlib
 
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
