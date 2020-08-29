@@ -59,4 +59,5 @@
   <string name="qari_fares_abbad_gapless">Fares Abbad (sem intervalo)</string>
   <string name="qari_khalifa_taniji_gapless">Khalifa Tangi (sem intervalo)</string>
   <string name="qari_abdullah_matroud_gapless">Abdullah Matroud (sem intervalo)</string>
+ <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (sem intervalo)</string>
 </resources>
