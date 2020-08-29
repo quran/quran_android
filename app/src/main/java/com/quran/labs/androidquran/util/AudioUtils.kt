@@ -4,15 +4,16 @@ import android.content.Context
 import android.content.Intent
 import androidx.annotation.VisibleForTesting
 import com.quran.data.core.QuranInfo
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.audio.QariItem
-import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.service.AudioService
 import dagger.Reusable
 import timber.log.Timber
 import java.io.File
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.Comparator
 
 @Reusable
 class AudioUtils @Inject
@@ -111,12 +112,10 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     startAyah: SuraAyah,
     currentPage: Int,
     mode: Int,
-    isDualPages: Boolean,
-    isNotSplitAndShowingTranslation: Boolean
+    isDualPageVisible: Boolean
   ): SuraAyah? {
     val page =
-      if (isDualPages &&
-        isNotSplitAndShowingTranslation &&
+      if (isDualPageVisible &&
         mode == LookAheadAmount.PAGE &&
         currentPage % 2 == 1
       ) {
