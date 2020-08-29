@@ -23,8 +23,7 @@ class AudioUtilsTest {
       SuraAyah(sura = 109, ayah = 1),
       currentPage = 603,
       mode = 1,
-      isDualPages = false,
-      isNotSplitAndShowingTranslation = false
+      isDualPageVisible = false
     )
     Assert.assertNotNull(lastAyah)
     Assert.assertEquals(5, lastAyah!!.ayah.toLong())
@@ -63,8 +62,7 @@ class AudioUtilsTest {
     val end = audioUtils.getLastAyahToPlay(start,
       currentPage = 536,
       mode = 1,
-      isDualPages = false,
-      isNotSplitAndShowingTranslation = false
+      isDualPageVisible = false
     )
     assertThat(end).isEqualTo(SuraAyah(56, 76))
   }

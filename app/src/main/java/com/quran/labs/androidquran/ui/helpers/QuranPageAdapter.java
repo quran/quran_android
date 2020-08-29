@@ -73,7 +73,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
   @Override
   public int getCount() {
-    if (isDualPages && (!isSplitScreen || !isShowingTranslation)) {
+    if (isDualPagesVisible()) {
       return totalPagesDual;
     } else {
       return totalPages;
@@ -83,7 +83,7 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
   @Override
   public Fragment getItem(int position) {
     int page = quranInfo
-        .getPageFromPosition(position, isDualPages, isSplitScreen, isShowingTranslation);
+        .getPageFromPosition(position, isDualPagesVisible());
     Timber.d("getting page: %d, from position %d", page, position);
     if (isDualPages) {
       return TabletFragment.newInstance(page,
@@ -117,10 +117,13 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
     if (page < Constants.PAGES_FIRST || totalPages < page) {
       return null;
     }
-    int position = quranInfo
-        .getPositionFromPage(page, isDualPages, isSplitScreen, isShowingTranslation);
+    int position = quranInfo.getPositionFromPage(page, isDualPagesVisible());
     Fragment fragment = getFragmentIfExists(position);
     return fragment instanceof QuranPage && fragment.isAdded() ? (QuranPage) fragment : null;
+  }
+
+  private Boolean isDualPagesVisible() {
+    return isDualPages && !(isSplitScreen && isShowingTranslation);
   }
 
 }
