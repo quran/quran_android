@@ -125,9 +125,6 @@
   <string name="prefs_use_arabic_title">Arapski</string>
   <string name="prefs_use_arabic_summary_on">Koristite aplikaciju na arapskom</string>
   <string name="prefs_new_background_title">Nova pozadina</string>
-  <string name="prefs_immersive_in_portrait_title">Puni zaslon u vertikalnom položaju</string>
-  <string name="prefs_immersive_in_portrait_summary_enabled">I u vertikalnom i u horizontalnom položaju slike su prikazane u punom zaslonu</string>
-  <string name="prefs_immersive_in_portrait_summary_disabled">Jedino su u horizontalnom položaju slike prikazane u punom zaslonu</string>
   <string name="prefs_lock_orientation_title">Zabranite rotaciju zaslona u aplikaciji</string>
   <string name="prefs_lock_orientation_summary_on">Koristite fiksni način orentacije</string>
   <string name="prefs_lock_orientation_summary_off">Prilagodite trenutnom načinu orentacije</string>

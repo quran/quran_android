@@ -26,15 +26,6 @@
         app:iconSpaceReserved="false"/>
 
     <CheckBoxPreference
-        android:defaultValue="@bool/immersive_in_portrait"
-        android:key="@string/prefs_immersive_in_portrait"
-        android:persistent="true"
-        android:summaryOff="@string/prefs_immersive_in_portrait_summary_disabled"
-        android:summaryOn="@string/prefs_immersive_in_portrait_summary_enabled"
-        android:title="@string/prefs_immersive_in_portrait_title"
-        app:iconSpaceReserved="false"/>
-
-    <CheckBoxPreference
         android:defaultValue="false"
         android:disableDependentsState="false"
         android:key="@string/prefs_lock_orientation"

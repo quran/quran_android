@@ -54,4 +54,9 @@
   <string name="qari_ajamy_gapless">Ahmed ibn Ali al-Ajamy (sem intervalo)</string>
   <string name="qari_ali_jaber_gapless">Ali Jaber (sem intervalo)</string>
   <string name="qari_muaiqly_gapless">Maher Al Muaiqly (sem intervalo)</string>
+  <string name="qari_juhany_gapless">Abdullah Al-Juhany (sem intervalo)</string>
+  <string name="qari_abdulmuhsin_qasim_gapless">Abdul Mohsen Al-Qasim (sem intervalo)</string>
+  <string name="qari_fares_abbad_gapless">Fares Abbad (sem intervalo)</string>
+  <string name="qari_khalifa_taniji_gapless">Khalifa Tangi (sem intervalo)</string>
+  <string name="qari_abdullah_matroud_gapless">Abdullah Matroud (sem intervalo)</string>
 </resources>

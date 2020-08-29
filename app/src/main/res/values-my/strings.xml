@@ -104,9 +104,6 @@
   <string name="prefs_use_arabic_title">Mod Aplikasi Arab</string>
   <string name="prefs_use_arabic_summary_on">Aplikasi keseluruhan akan menggunakan tulisan dan bahasa Arab</string>
   <string name="prefs_new_background_title">Latar beakang baru</string>
-  <string name="prefs_immersive_in_portrait_title">Skrin penuh dalam mod potret</string>
-  <string name="prefs_immersive_in_portrait_summary_enabled">Kedua mod potret dan landskap akan memaparkan gambar dalam skrin penuh</string>
-  <string name="prefs_immersive_in_portrait_summary_disabled">Hanya mod landskap akan memaparkan gambar dalam skrin penuh</string>
   <string name="prefs_lock_orientation_title">Kunci orientasi layar</string>
   <string name="prefs_lock_orientation_summary_on">Halaman Quran akan berada dalam mod orientasi tetap</string>
   <string name="prefs_lock_orientation_summary_off">Penyesuaian orientasi layar secara automatik</string>

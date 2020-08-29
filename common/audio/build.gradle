@@ -15,5 +15,4 @@ android {
 }
 
 dependencies {
-  implementation deps.kotlin.stdlib
 }

@@ -126,9 +126,6 @@
   <string name="prefs_use_arabic_title">Arabcha rejim</string>
   <string name="prefs_use_arabic_summary_on">Ilova arab tilida ishlaydi </string>
   <string name="prefs_new_background_title">Yangi fon</string>
-  <string name="prefs_immersive_in_portrait_title">Landshaft rejimda toʻliq ekrandan foydalanish</string>
-  <string name="prefs_immersive_in_portrait_summary_enabled">Ham landshaft, ham planshet rejimda toʻliq ekrandan foydalanish</string>
-  <string name="prefs_immersive_in_portrait_summary_disabled">Faqat planshet rejimda toʻliq ekrandan foydalanish</string>
   <string name="prefs_lock_orientation_title">Ekran oriyentatsiyasini qulflash</string>
   <string name="prefs_lock_orientation_summary_on">Qurʼon sahifalari doim belgilangan oriyentatsiyada boʻladi</string>
   <string name="prefs_lock_orientation_summary_off">Joriy oriyentatsiyadan foydalaniladi</string>

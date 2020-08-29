@@ -54,4 +54,9 @@
   <string name="qari_ajamy_gapless">Ahmed ibn Ali al-Ajamy (lückenlos)</string>
   <string name="qari_ali_jaber_gapless">Ali Jaber (lückenlos)</string>
   <string name="qari_muaiqly_gapless">Maher Al Muaiqly (lückenlos)</string>
+  <string name="qari_juhany_gapless">Abdullah Al-Juhany (lückenlos)</string>
+  <string name="qari_abdulmuhsin_qasim_gapless">Abdul Mohsen Al-Qasim (lückenlos)</string>
+  <string name="qari_fares_abbad_gapless">Fares Abbad (lückenlos)</string>
+  <string name="qari_khalifa_taniji_gapless">Khalifa Taniji (lückenlos)</string>
+  <string name="qari_abdullah_matroud_gapless">Abdullah Matroud (lückenlos)</string>
 </resources>

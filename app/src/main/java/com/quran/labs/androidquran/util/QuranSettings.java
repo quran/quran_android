@@ -89,11 +89,6 @@ public class QuranSettings {
     return prefs.getBoolean(Constants.PREF_DISPLAY_MARKER_POPUP, true);
   }
 
-  public boolean isImmersiveInPortrait() {
-    return prefs.getBoolean(Constants.PREF_IMMERSIVE_IN_PORTRAIT,
-        appContext.getResources().getBoolean(R.bool.immersive_in_portrait));
-  }
-
   public boolean shouldHighlightBookmarks() {
     return prefs.getBoolean(Constants.PREF_HIGHLIGHT_BOOKMARKS, true);
   }
