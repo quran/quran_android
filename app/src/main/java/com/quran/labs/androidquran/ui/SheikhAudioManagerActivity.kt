@@ -70,6 +70,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
   private var downloadReceiver: DefaultDownloadReceiver? = null
   private var basePath: String? = null
   private var actionMode: ActionMode? = null
+  private var dialogConfirm: AlertDialog? = null
 
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -136,6 +137,9 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
 
   override fun onDestroy() {
     compositeDisposable.clear()
+    if (dialogConfirm != null) {
+      dialogConfirm?.dismiss()
+    }
     super.onDestroy()
   }
 
@@ -244,7 +248,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
             val surah = position + 1
             val downloaded = info.downloadedSuras[surah]
             if (downloaded) {
-              var surahName = quranDisplayData.getSuraName(this, surah, true)
+              val surahName = quranDisplayData.getSuraName(this, surah, true)
               val msg = String.format(getString(R.string.audio_manager_remove_audio_msg), surahName)
               val builder = AlertDialog.Builder(this)
               builder.setTitle(R.string.audio_manager_remove_audio_title)
@@ -255,7 +259,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
                   }
                   .setNegativeButton(R.string.cancel
                   ) { dialog, _ -> dialog.dismiss() }
-              builder.show()
+              dialogConfirm = builder.show()
             } else {
               download(surah, surah)
             }
