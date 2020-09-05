@@ -7,8 +7,11 @@ import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
+import com.google.gson.Gson;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.audio.AudioPlaybackSettings;
+import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 
@@ -21,6 +24,7 @@ import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
 
 
+
 public class QuranSettings {
   private static final String PREFS_FILE = "com.quran.labs.androidquran.per_installation";
 
@@ -29,6 +33,7 @@ public class QuranSettings {
   private Context appContext;
   private SharedPreferences prefs;
   private SharedPreferences perInstallationPrefs;
+  Gson gson = new Gson();
 
   public static synchronized QuranSettings getInstance(@NonNull Context context) {
     if (instance == null) {
@@ -156,7 +161,9 @@ public class QuranSettings {
     prefs.edit().putBoolean(Constants.PREF_SHOW_RECENTS, minimizeRecents).apply();
   }
 
-  public boolean getShowDate() { return prefs.getBoolean(Constants.PREF_SHOW_DATE, false);  }
+  public boolean getShowDate() {
+    return prefs.getBoolean(Constants.PREF_SHOW_DATE, false);
+  }
 
   public void setShowDate(boolean isDateShown) {
     prefs.edit().putBoolean(Constants.PREF_SHOW_DATE, isDateShown).apply();
@@ -165,6 +172,7 @@ public class QuranSettings {
   public boolean isShowSuraTranslatedName() {
     return prefs.getBoolean(Constants.PREF_SURA_TRANSLATED_NAME, appContext.getResources().getBoolean(R.bool.show_sura_names_translation));
   }
+
   // probably should eventually move this to Application.onCreate..
   public void upgradePreferences() {
     int version = getVersion();
@@ -195,7 +203,7 @@ public class QuranSettings {
               .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)
               .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM)
               .remove(Constants.PREF_ACTIVE_TRANSLATION)
-                  // these aren't migrated since they can be derived pretty easily
+              // these aren't migrated since they can be derived pretty easily
               .remove("didPresentPermissionsRationale") // was renamed, removing old one
               .remove(Constants.PREF_DEFAULT_IMAGES_DIR)
               .remove(Constants.PREF_HAVE_UPDATED_TRANSLATIONS)
@@ -435,5 +443,13 @@ public class QuranSettings {
     setToSave.add(pageType);
     perInstallationPrefs.edit()
         .putStringSet(Constants.PREF_CHECKED_PARTIAL_IMAGES, setToSave).apply();
+  }
+
+  public void setLastAudioSettings(AudioPlaybackSettings audioSettings) {
+    prefs.edit().putString(Constants.PREF_AUDIO_PLAYBACK_SETTINGS, gson.toJson(audioSettings)).apply();
+  }
+
+  public AudioPlaybackSettings getLastAudioSettings() {
+    return gson.fromJson(prefs.getString(Constants.PREF_AUDIO_PLAYBACK_SETTINGS, ""), AudioPlaybackSettings.class);
   }
 }

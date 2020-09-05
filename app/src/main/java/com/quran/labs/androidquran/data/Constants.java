@@ -98,4 +98,5 @@ public class Constants {
   public static final String PREF_CHECKED_PARTIAL_IMAGES = "didCheckPartialImages";
   public static final String PREF_CURRENT_AUDIO_REVISION = "currentAudioRevision";
   public static final String PREF_SURA_TRANSLATED_NAME = "suraTranslatedName";
+  public static final String PREF_AUDIO_PLAYBACK_SETTINGS = "audioPlaybackSettings";
 }
