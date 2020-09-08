@@ -137,9 +137,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
 
   override fun onDestroy() {
     compositeDisposable.clear()
-    if (dialogConfirm != null) {
-      dialogConfirm?.dismiss()
-    }
+    dialogConfirm?.dismiss()
     super.onDestroy()
   }
 
