@@ -22,6 +22,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 
 public class InlineTranslationView extends ScrollView {
@@ -76,15 +77,24 @@ public class InlineTranslationView extends ScrollView {
   public void refresh() {
     if (ayat != null && translations != null) {
       initResources();
-      setAyahs(translations, ayat);
+      setAyahs(translations, ayat, null);
     }
   }
 
-  public void setAyahs(LocalTranslation[] translations, List<QuranAyahInfo> ayat) {
+  public void setAyahs(LocalTranslation[] translations,
+                       List<QuranAyahInfo> ayat,
+                       @Nullable TextView ayahNumberForNav) {
     linearLayout.removeAllViews();
     if (ayat.size() > 0 && ayat.get(0).texts.size() > 0) {
       this.ayat = ayat;
       this.translations = translations;
+
+      if (ayahNumberForNav != null) {
+        QuranAyahInfo ayahInfo = ayat.get(0);
+        int suraNumber = ayahInfo.sura;
+        int ayahNumber = ayahInfo.ayah;
+        ayahNumberForNav.setText(resources.getString(R.string.sura_ayah, suraNumber, ayahNumber));
+      }
 
       for (int i = 0, ayatSize = ayat.size(); i < ayatSize; i++) {
         addTextForAyah(translations, ayat.get(i));

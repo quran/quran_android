@@ -29,32 +29,41 @@
         />
   </LinearLayout>
 
-  <com.quran.labs.androidquran.widgets.LeftToRightLinearLayout
-      android:id="@+id/controls"
+  <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_gravity="bottom"
-      >
-    <ImageButton
-        android:id="@+id/next_ayah"
+    android:layout_gravity="bottom">
+
+    <com.quran.labs.androidquran.widgets.LeftToRightLinearLayout
+        android:id="@+id/controls"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_translation_next"
-        android:contentDescription="@string/next"
-        />
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        />
-    <ImageButton
-        android:id="@+id/previous_ayah"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_translation_previous"
-        android:contentDescription="@string/previous"
-        />
-  </com.quran.labs.androidquran.widgets.LeftToRightLinearLayout>
+        android:layout_gravity="bottom"
+        android:layout_centerHorizontal="true"
+        >
+      <ImageButton
+          android:id="@+id/next_ayah"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@drawable/ic_translation_next"
+          android:contentDescription="@string/next"
+          />
+      <TextView
+          android:id="@+id/ayah_number_nav"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:layout_gravity="center"
+          />
+      <ImageButton
+          android:id="@+id/previous_ayah"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@drawable/ic_translation_previous"
+          android:contentDescription="@string/previous"
+          />
+    </com.quran.labs.androidquran.widgets.LeftToRightLinearLayout>
+  </RelativeLayout>
 
   <LinearLayout
       android:id="@+id/empty_state"

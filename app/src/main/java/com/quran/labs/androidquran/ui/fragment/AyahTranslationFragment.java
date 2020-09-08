@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.R;
@@ -36,6 +37,7 @@ public class AyahTranslationFragment extends AyahActionFragment
   private View emptyState;
   private View translationControls;
   private QuranSpinner translator;
+  private TextView ayahNumberForNav;
   private TranslationsSpinnerAdapter translationAdapter;
   private List<LocalTranslation> translations;
 
@@ -60,6 +62,7 @@ public class AyahTranslationFragment extends AyahActionFragment
     progressBar = view.findViewById(R.id.progress);
     emptyState = view.findViewById(R.id.empty_state);
     translationControls = view.findViewById(R.id.controls);
+    ayahNumberForNav = translationControls.findViewById(R.id.ayah_number_nav);
     final View next = translationControls.findViewById(R.id.next_ayah);
     next.setOnClickListener(onClickListener);
 
@@ -158,7 +161,7 @@ public class AyahTranslationFragment extends AyahActionFragment
     progressBar.setVisibility(View.GONE);
     if (verses.size() > 0) {
       emptyState.setVisibility(View.GONE);
-      translationView.setAyahs(translations, verses);
+      translationView.setAyahs(translations, verses, ayahNumberForNav);
     } else {
       emptyState.setVisibility(View.VISIBLE);
     }
