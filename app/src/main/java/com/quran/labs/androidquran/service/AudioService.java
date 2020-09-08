@@ -414,15 +414,8 @@ public class AudioService extends Service implements OnCompletionListener,
         audioQueue = new AudioQueue(quranInfo, audioRequest,
             new AudioPlaybackInfo(start, 1, 1, basmallah));
         Crashlytics.log("audio request has changed...");
-
-        if (player != null) {
-          player.stop();
-        }
-        state = State.Stopped;
-        Crashlytics.log("stop if playing...");
       }
-
-      processTogglePlaybackRequest();
+       processTogglePlaybackRequest();
     } else if (ACTION_PLAY.equals(action)) {
       processPlayRequest();
     } else if (ACTION_PAUSE.equals(action)) {
