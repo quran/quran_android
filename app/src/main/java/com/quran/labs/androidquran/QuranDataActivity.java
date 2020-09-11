@@ -286,7 +286,9 @@ public class QuranDataActivity extends Activity implements
             quranFileUtils.makeQuranDirectory(this, quranScreenInfo.getWidthParam())) {
           File f = new File(location, "" + System.currentTimeMillis());
           if (f.createNewFile()) {
-            f.delete();
+            if (!f.delete()) {
+              // file delete failed; take appropriate action
+            }
             return true;
           }
         }
@@ -360,61 +362,84 @@ public class QuranDataActivity extends Activity implements
   public void onPagesChecked(QuranDataPresenter.QuranDataStatus quranDataStatus) {
     this.quranDataStatus = quranDataStatus;
 
+    getPagesIfNecessary(quranDataStatus);
+  }
+
+  private void getPagesIfNecessary(QuranDataPresenter.QuranDataStatus quranDataStatus) {
     if (!quranDataStatus.havePages()) {
-      if (quranSettings.didDownloadPages()) {
-        // log if we downloaded pages once before
-        try {
-          onPagesLost();
-        } catch (Exception e) {
-          Crashlytics.logException(e);
-        }
-        // clear the "pages downloaded" flag
-        quranSettings.removeDidDownloadPages();
-      }
-
-      String lastErrorItem = quranSettings.getLastDownloadItemWithError();
-      Timber.d("checkPages: need to download pages... lastError: %s", lastErrorItem);
-      if (PAGES_DOWNLOAD_KEY.equals(lastErrorItem)) {
-        int lastError = quranSettings.getLastDownloadErrorCode();
-        int errorId = ServiceIntentHelper
-            .getErrorResourceFromErrorCode(lastError, false);
-        showFatalErrorDialog(errorId);
-      } else if (quranSettings.shouldFetchPages()) {
-        downloadQuranImages(false);
-      } else {
-        promptForDownload();
-      }
+      logDownloadedPagesIfNecessary();
     } else {
-      final String appLocation = quranSettings.getAppCustomLocation();
-      final String baseDirectory = quranFileUtils.getQuranBaseDirectory();
+      createFilesInQuranDir(quranDataStatus);
+    }
+  }
+
+  private void createFilesInQuranDir(QuranDataPresenter.QuranDataStatus quranDataStatus) {
+    final String appLocation = quranSettings.getAppCustomLocation();
+    final String baseDirectory = quranFileUtils.getQuranBaseDirectory();
+    try {
+      // try to write a directory to distinguish between the entire Quran directory
+      // being removed versus just the images being somehow removed.
+
+      //noinspection ResultOfMethodCallIgnored
+      new File(baseDirectory, QURAN_DIRECTORY_MARKER_FILE).createNewFile();
+      //noinspection ResultOfMethodCallIgnored
+      new File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile();
+      makeQuranHiddenDirMarkerFileIfNecessary();
+
+      quranSettings.setDownloadedPages(System.currentTimeMillis(), appLocation,
+          quranDataStatus.getPortraitWidth() + "_" + quranDataStatus.getLandscapeWidth());
+    } catch (IOException ioe) {
+      Crashlytics.logException(ioe);
+    }
+
+    promptForDownloadIfNecessary(quranDataStatus);
+  }
+
+  private void promptForDownloadIfNecessary(QuranDataPresenter.QuranDataStatus quranDataStatus) {
+    final String patchParam = quranDataStatus.getPatchParam();
+    if (!TextUtils.isEmpty(patchParam)) {
+      Timber.d("checkPages: have pages, but need patch %s", patchParam);
+      promptForDownload();
+    } else {
+      runListView();
+    }
+  }
+
+  private void makeQuranHiddenDirMarkerFileIfNecessary() throws IOException {
+    // try writing a file to the app's internal no_backup directory
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      //noinspection ResultOfMethodCallIgnored
+      new File(getNoBackupFilesDir(), QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile();
+    }
+  }
+
+  private void logDownloadedPagesIfNecessary() {
+    if (quranSettings.didDownloadPages()) {
+      // log if we downloaded pages once before
       try {
-        // try to write a directory to distinguish between the entire Quran directory
-        // being removed versus just the images being somehow removed.
-
-        //noinspection ResultOfMethodCallIgnored
-        new File(baseDirectory, QURAN_DIRECTORY_MARKER_FILE).createNewFile();
-        //noinspection ResultOfMethodCallIgnored
-        new File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile();
-
-        // try writing a file to the app's internal no_backup directory
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-          //noinspection ResultOfMethodCallIgnored
-          new File(getNoBackupFilesDir(), QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile();
-        }
-
-        quranSettings.setDownloadedPages(System.currentTimeMillis(), appLocation,
-            quranDataStatus.getPortraitWidth() + "_" + quranDataStatus.getLandscapeWidth());
-      } catch (IOException ioe) {
-        Crashlytics.logException(ioe);
+        onPagesLost();
+      } catch (Exception e) {
+        Crashlytics.logException(e);
       }
+      // clear the "pages downloaded" flag
+      quranSettings.removeDidDownloadPages();
+    }
 
-      final String patchParam = quranDataStatus.getPatchParam();
-      if (!TextUtils.isEmpty(patchParam)) {
-        Timber.d("checkPages: have pages, but need patch %s", patchParam);
-        promptForDownload();
-      } else {
-        runListView();
-      }
+    displayErrorIfNecessary();
+  }
+
+  private void displayErrorIfNecessary() {
+    String lastErrorItem = quranSettings.getLastDownloadItemWithError();
+    Timber.d("checkPages: need to download pages... lastError: %s", lastErrorItem);
+    if (PAGES_DOWNLOAD_KEY.equals(lastErrorItem)) {
+      int lastError = quranSettings.getLastDownloadErrorCode();
+      int errorId = ServiceIntentHelper
+          .getErrorResourceFromErrorCode(lastError, false);
+      showFatalErrorDialog(errorId);
+    } else if (quranSettings.shouldFetchPages()) {
+      downloadQuranImages(false);
+    } else {
+      promptForDownload();
     }
   }
 

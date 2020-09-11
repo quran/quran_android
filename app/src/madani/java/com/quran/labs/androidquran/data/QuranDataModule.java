@@ -10,6 +10,8 @@ import java.util.Map;
 @Module
 public class QuranDataModule {
 
+  private QuranDataModule(){}
+
   @Provides
   static PageProvider provideQuranPageProvider(Map<String, PageProvider> providers,
                                                QuranSettings quranSettings) {
