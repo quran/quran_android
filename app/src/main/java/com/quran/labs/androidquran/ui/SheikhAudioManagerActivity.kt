@@ -374,15 +374,19 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
       holder.name.text = quranDisplayData.getSuraName(context, position + 1, true)
       val surahStatus: Int
       val surahStatusImage: Int
+      val surahStatusBackground: Int
       if (isItemFullyDownloaded(position)) {
         surahStatus = R.string.audio_manager_surah_delete
         surahStatusImage = R.drawable.ic_cancel
+        surahStatusBackground = R.drawable.cancel_button_circle
       } else {
         surahStatus = R.string.audio_manager_surah_download
         surahStatusImage = R.drawable.ic_download
+        surahStatusBackground = R.drawable.download_button_circle
       }
       holder.status.text = getString(surahStatus)
       holder.image.setImageResource(surahStatusImage)
+      holder.image.setBackgroundResource(surahStatusBackground)
       holder.setChecked(isItemChecked(position))
     }
 
