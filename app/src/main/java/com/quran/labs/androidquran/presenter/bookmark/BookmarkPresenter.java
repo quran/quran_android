@@ -5,8 +5,6 @@ import android.content.Context;
 import androidx.annotation.VisibleForTesting;
 import com.google.android.material.snackbar.Snackbar;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
@@ -115,27 +113,20 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     groupByTags = !groupByTags;
     quranSettings.setBookmarksGroupedByTags(groupByTags);
     requestData(false);
-    Answers.getInstance().logCustom(
-        new CustomEvent(groupByTags ? "groupByTags" : "doNotGroupByTags"));
   }
 
   public void toggleShowRecents() {
     showRecents = !showRecents;
     quranSettings.setShowRecents(showRecents);
     requestData(false);
-    Answers.getInstance().logCustom(
-        new CustomEvent(showRecents ? "showRecents" : "doNotMinimizeRecents"));
   }
 
   public void toogleShowDate() {
     showDate = !showDate;
     quranSettings.setShowDate(showDate);
     requestData(false);
-    Answers.getInstance().logCustom(
-        new CustomEvent(showDate ? "showDate" : "doNotShowDate")
-    );
-
   }
+
   public boolean isShowingRecents() {
     return showRecents;
   }

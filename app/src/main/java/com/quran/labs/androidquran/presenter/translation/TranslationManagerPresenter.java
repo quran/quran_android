@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Pair;
 import android.util.SparseArray;
 
-import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.dao.translation.Translation;
 import com.quran.labs.androidquran.dao.translation.TranslationItem;
@@ -21,8 +20,6 @@ import com.squareup.moshi.Moshi;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -169,7 +166,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
           }
         }
       } catch (Exception e) {
-        Crashlytics.logException(e);
+        Timber.e(e);
       }
       return Observable.empty();
     });
@@ -215,7 +212,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
       }
     } catch (Exception e) {
       cacheFile.delete();
-      Crashlytics.logException(e);
+      Timber.e(e);
     }
   }
 

@@ -1,9 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'io.fabric'
 apply plugin: 'net.ltgt.errorprone'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.firebase.crashlytics'
 
 android {
   compileSdkVersion deps.android.build.compileSdkVersion
@@ -46,14 +46,13 @@ android {
       signingConfig signingConfigs.release
       versionNameSuffix "-beta"
       if (project.hasProperty('disableCrashlytics')) {
-        ext.enableCrashlytics = false
+        firebaseCrashlytics.mappingFileUploadEnabled false
       }
       matchingFallbacks = ['debug']
     }
 
     debug {
-      ext.enableCrashlytics = false
-      ext.alwaysUpdateBuildId = false
+      firebaseCrashlytics.mappingFileUploadEnabled false
       applicationIdSuffix ".debug"
       versionNameSuffix "-debug"
     }
@@ -63,7 +62,7 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.cfg'
       signingConfig signingConfigs.release
       if (project.hasProperty('disableCrashlytics')) {
-        ext.enableCrashlytics = false
+        firebaseCrashlytics.mappingFileUploadEnabled false
       }
     }
   }
@@ -171,7 +170,7 @@ dependencies {
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
-  implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+  implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 
   errorprone 'com.google.errorprone:error_prone_core:2.3.3'
   //noinspection GradleDynamicVersion
