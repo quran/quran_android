@@ -128,16 +128,10 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
 
 
     if (mode == LookAheadAmount.SURA) {
-      var sura = startAyah.sura
-      var lastAyah = quranInfo.getNumberOfAyahs(sura)
+      val sura = startAyah.sura
+      val lastAyah = quranInfo.getNumberOfAyahs(sura)
       if (lastAyah == -1) {
         return null
-      }
-
-      // if we start playback between two suras, download both suras
-      if (pageLastSura > sura) {
-        sura = pageLastSura
-        lastAyah = quranInfo.getNumberOfAyahs(sura)
       }
       return SuraAyah(sura, lastAyah)
     } else if (mode == LookAheadAmount.JUZ) {
