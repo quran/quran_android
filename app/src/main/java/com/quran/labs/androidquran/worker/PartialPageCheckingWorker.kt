@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.CustomEvent
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.core.worker.WorkerTaskFactory
 import com.quran.labs.androidquran.util.QuranFileUtils
@@ -63,15 +61,6 @@ class PartialPageCheckingWorker(private val context: Context,
       if (allPartialPages.size > PARTIAL_PAGE_LIMIT) {
         Timber.e(IllegalStateException("Too many partial pages found"),
             "found ${allPartialPages.size} partial images")
-        Answers.getInstance()
-            .logCustom(
-                CustomEvent("tooManyPartialPagesFound")
-                    .putCustomAttribute("pageType", requestedPageType)
-                    .putCustomAttribute("partialPages", allPartialPages.size)
-                    .putCustomAttribute("tabletImages", if (width == tabletWidth) "no" else "yes")
-                    .putCustomAttribute("width", width)
-                    .putCustomAttribute("tabletWidth", tabletWidth)
-            )
         // still delete the partial images just because ¯\_(ツ)_/¯
       }
 
@@ -87,35 +76,9 @@ class PartialPageCheckingWorker(private val context: Context,
       }
 
       if (!deletionSucceeded) {
-        Answers.getInstance()
-            .logCustom(
-                CustomEvent("partialPagesWorkerFailedToDelete")
-                    .putCustomAttribute("pageType", requestedPageType)
-                    .putCustomAttribute("width", width)
-                    .putCustomAttribute("tabletWidth", tabletWidth)
-                    .putCustomAttribute("partialPages", allPartialPages.size)
-            )
         Timber.d("PartialPageCheckingWorker - partial deletion failure, retrying..")
         Result.retry()
       } else {
-        if (allPartialPages.isNotEmpty()) {
-          Answers.getInstance()
-              .logCustom(
-                  CustomEvent("partialPagesWorkerSuccess")
-                      .putCustomAttribute("pageType", requestedPageType)
-                      .putCustomAttribute("width", width)
-                      .putCustomAttribute("tabletWidth", tabletWidth)
-                      .putCustomAttribute("partialPages", allPartialPages.size)
-              )
-        } else {
-          Answers.getInstance()
-              .logCustom(
-                  CustomEvent("partialPagesWorkerNoOpSuccess")
-                      .putCustomAttribute("pageType", requestedPageType)
-                      .putCustomAttribute("width", width)
-                      .putCustomAttribute("tabletWidth", tabletWidth)
-              )
-        }
         Timber.d("PartialPageCheckingWorker - partial success!")
         quranSettings.setCheckedPartialImages(requestedPageType)
         Result.success()

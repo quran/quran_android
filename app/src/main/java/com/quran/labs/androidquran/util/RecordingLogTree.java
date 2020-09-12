@@ -2,8 +2,7 @@ package com.quran.labs.androidquran.util;
 
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
@@ -21,6 +20,7 @@ import timber.log.Timber;
 public class RecordingLogTree extends Timber.Tree {
 
   private static final int BUFFER_SIZE = 200;
+  private final FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
 
   // Adding one to the initial size accounts for the add before remove.
   private final Deque<String> buffer = new ArrayDeque<>(BUFFER_SIZE + 1);
@@ -36,8 +36,8 @@ public class RecordingLogTree extends Timber.Tree {
     }
 
     if (t != null && priority == Log.ERROR) {
-      Crashlytics.log(getLogs());
-      Crashlytics.logException(t);
+      crashlytics.log(getLogs());
+      crashlytics.recordException(t);
     }
   }
 
