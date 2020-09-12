@@ -20,8 +20,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.CustomEvent
 import com.quran.labs.androidquran.AboutUsActivity
 import com.quran.labs.androidquran.HelpActivity
 import com.quran.labs.androidquran.QuranApplication
@@ -205,7 +203,6 @@ class QuranActivity : QuranActionBarActivity(),
         gotoPageDialog()
       }
       R.id.other_apps -> {
-        Answers.getInstance().logCustom(CustomEvent("menuOtherApps"))
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse("market://search?q=pub:quran.com")
         if (packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY) == null) {

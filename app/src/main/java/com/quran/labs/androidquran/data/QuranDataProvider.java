@@ -11,7 +11,6 @@ import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
@@ -77,7 +76,7 @@ public class QuranDataProvider extends ContentProvider {
       }
     }
 
-    Crashlytics.log("uri: " + uri.toString());
+    Timber.d("uri: %s", uri.toString());
     switch (uriMatcher.match(uri)) {
       case SEARCH_SUGGEST: {
         if (selectionArgs == null) {

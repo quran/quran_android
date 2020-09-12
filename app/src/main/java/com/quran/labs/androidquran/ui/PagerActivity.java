@@ -30,7 +30,6 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.HelpActivity;
@@ -779,7 +778,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
           destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
           downloadType);
-      Crashlytics.log("starting service to download ayah position file");
+      Timber.d("starting service to download ayah position file");
       startService(intent);
 
       haveDownload = true;
@@ -801,7 +800,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           AUDIO_DOWNLOAD_KEY, downloadType);
       intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
           QuranDataProvider.QURAN_ARABIC_DATABASE + extension);
-      Crashlytics.log("starting service to download arabic database");
+      Timber.d("starting service to download arabic database");
       startService(intent);
     }
 
@@ -1503,7 +1502,7 @@ public class PagerActivity extends QuranActionBarActivity implements
             quranSettings.getPreferredDownloadAmount(), isDualPageVisible());
 
     if (ending != null) {
-      Crashlytics.log("playFromAyah - " + start + ", ending: " +
+      Timber.d("playFromAyah - " + start + ", ending: " +
           ending + " - original: " + end + " -- " +
           quranSettings.getPreferredDownloadAmount());
       final QariItem item = audioStatusBar.getAudioInfo();
@@ -1529,7 +1528,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         toggleActionBar();
       }
       audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-      Crashlytics.log("starting service in handleRequiredDownload");
+      Timber.d("starting service in handleRequiredDownload");
       startService(downloadIntent);
     }
   }
@@ -1545,7 +1544,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       audioStatusBar.switchMode(AudioStatusBar.LOADING_MODE);
     }
 
-    Crashlytics.log("starting service for audio playback");
+    Timber.d("starting service for audio playback");
     startService(intent);
   }
 

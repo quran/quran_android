@@ -11,7 +11,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.crashlytics.android.Crashlytics
 import com.quran.data.core.QuranInfo
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.BuildConfig
@@ -77,7 +76,7 @@ class QuranDataPresenter @Inject internal constructor(
                   try {
                     generateDebugLog()
                   } catch (e: Exception) {
-                    Crashlytics.logException(e)
+                    Timber.e(e)
                   }
                 }
               }
