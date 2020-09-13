@@ -19,6 +19,7 @@ class AudioUtilsTest {
         .thenReturn(MadaniDataSource())
     val quranInfo = QuranInfo(MadaniDataSource())
     val audioUtils = AudioUtils(quranInfo, Mockito.mock(QuranFileUtils::class.java))
+    // mode 1 is PAGE
     val lastAyah = audioUtils.getLastAyahToPlay(
       SuraAyah(sura = 109, ayah = 1),
       currentPage = 603,
@@ -28,6 +29,20 @@ class AudioUtilsTest {
     Assert.assertNotNull(lastAyah)
     Assert.assertEquals(5, lastAyah!!.ayah.toLong())
     Assert.assertEquals(111, lastAyah.sura.toLong())
+  }
+
+  @Test
+  fun testGetLastAyahWhenPlayingWithSuraBounds() {
+     val pageProviderMock = Mockito.mock(PageProvider::class.java)
+    whenever(pageProviderMock.getDataSource())
+        .thenReturn(MadaniDataSource())
+    val quranInfo = QuranInfo(MadaniDataSource())
+    val audioUtils = AudioUtils(quranInfo, Mockito.mock(QuranFileUtils::class.java))
+    // mode 2 is SURA
+    val lastAyah = audioUtils.getLastAyahToPlay(SuraAyah(2, 6), 3, 2, false)
+    Assert.assertNotNull(lastAyah)
+    Assert.assertEquals(286, lastAyah!!.ayah.toLong())
+    Assert.assertEquals(2, lastAyah.sura.toLong())
   }
 
   @Test
