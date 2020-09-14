@@ -15,6 +15,8 @@ import com.quran.labs.androidquran.di.module.application.ApplicationModule;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.RecordingLogTree;
 import com.quran.labs.androidquran.core.worker.QuranWorkerFactory;
+import com.quran.labs.androidquran.widget.BookmarksWidgetSubscriber;
+
 import io.fabric.sdk.android.Fabric;
 import java.util.Locale;
 import javax.inject.Inject;
@@ -25,6 +27,9 @@ public class QuranApplication extends MultiDexApplication {
 
   @Inject
   QuranWorkerFactory quranWorkerFactory;
+
+  @Inject
+  BookmarksWidgetSubscriber bookmarksWidgetSubscriber;
 
   @Override
   public void onCreate() {
@@ -43,6 +48,7 @@ public class QuranApplication extends MultiDexApplication {
           .setWorkerFactory(quranWorkerFactory)
           .build()
     );
+    bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary();
   }
 
   protected ApplicationComponent initializeInjector() {

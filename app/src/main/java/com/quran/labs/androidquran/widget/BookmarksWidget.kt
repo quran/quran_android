@@ -8,7 +8,6 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.RemoteViews
 import com.quran.labs.androidquran.*
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.QuranActivity
 import javax.inject.Inject
@@ -16,7 +15,7 @@ import javax.inject.Inject
 class BookmarksWidget : AppWidgetProvider() {
 
   @Inject
-  lateinit var bookmarkModel: BookmarkModel
+  lateinit var bookmarksWidgetSubscriber: BookmarksWidgetSubscriber
 
   override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
     for (appWidgetId in appWidgetIds) {
@@ -56,13 +55,13 @@ class BookmarksWidget : AppWidgetProvider() {
 
   override fun onEnabled(context: Context) {
     (context.applicationContext as QuranApplication).applicationComponent.inject(this)
-    bookmarkModel.onEnabledBookmarksWidget()
+    bookmarksWidgetSubscriber.onEnabledBookmarksWidget()
     super.onEnabled(context)
   }
 
   override fun onDisabled(context: Context) {
     (context.applicationContext as QuranApplication).applicationComponent.inject(this)
-    bookmarkModel.onDisabledBookmarksWidget()
+    bookmarksWidgetSubscriber.onDisabledBookmarksWidget()
     super.onDisabled(context)
   }
 }

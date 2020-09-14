@@ -1,14 +1,10 @@
 package com.quran.labs.androidquran.model.bookmark;
 
-import androidx.core.util.Pair;
-
-import com.quran.labs.androidquran.widget.BookmarksWidgetUpdater;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.Tag;
+import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -18,9 +14,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import io.reactivex.android.plugins.RxAndroidPlugins;
+import androidx.core.util.Pair;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.schedulers.Schedulers;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;
@@ -29,7 +24,6 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,63 +32,12 @@ public class BookmarkModelTest {
 
   @Mock BookmarksDBAdapter bookmarksAdapter;
   @Mock RecentPageModel recentPageModel;
-  @Mock BookmarksWidgetUpdater bookmarksWidgetUpdater;
   private BookmarkModel model;
-
-  @BeforeClass
-  public static void setup() {
-    RxAndroidPlugins.setInitMainThreadSchedulerHandler(schedulerCallable -> Schedulers.trampoline());
-  }
 
   @Before
   public void setupTest() {
     MockitoAnnotations.initMocks(BookmarkModelTest.this);
-    model = new BookmarkModel(bookmarksAdapter, recentPageModel, bookmarksWidgetUpdater);
-  }
-
-  @Test
-  public void testSubscribeBookmarksWidgetIfBookmarksWidgetsExist() {
-    when(bookmarksWidgetUpdater.checkForAnyBookmarksWidgets()).thenReturn(true);
-
-    model = new BookmarkModel(bookmarksAdapter, recentPageModel, bookmarksWidgetUpdater);
-    verify(bookmarksWidgetUpdater, never()).updateBookmarksWidget();
-
-    model.safeAddBookmark(1, 1, 1).test().awaitTerminalEvent();
-    verify(bookmarksWidgetUpdater).updateBookmarksWidget();
-  }
-
-  @Test
-  public void testDontSubscribeBookmarksWidgetIfNoBookmarksWidgetsExist() {
-    when(bookmarksWidgetUpdater.checkForAnyBookmarksWidgets()).thenReturn(false);
-
-    model = new BookmarkModel(bookmarksAdapter, recentPageModel, bookmarksWidgetUpdater);
-    model.safeAddBookmark(1, 1, 1).test().awaitTerminalEvent();
-
-    verify(bookmarksWidgetUpdater, never()).updateBookmarksWidget();
-  }
-
-  @Test
-  public void testSubscribeBookmarksWidgetIfWidgetGetsAdded() {
-    when(bookmarksWidgetUpdater.checkForAnyBookmarksWidgets()).thenReturn(false);
-
-    model = new BookmarkModel(bookmarksAdapter, recentPageModel, bookmarksWidgetUpdater);
-
-    model.onEnabledBookmarksWidget();
-    model.safeAddBookmark(1, 1, 1).test().awaitTerminalEvent();
-
-    verify(bookmarksWidgetUpdater).updateBookmarksWidget();
-  }
-
-  @Test
-  public void testUnsubscribeBookmarksWidgetIfAllBookmarksWidgetsGetRemoved() {
-    when(bookmarksWidgetUpdater.checkForAnyBookmarksWidgets()).thenReturn(true);
-
-    model = new BookmarkModel(bookmarksAdapter, recentPageModel, bookmarksWidgetUpdater);
-
-    model.onDisabledBookmarksWidget();
-    model.safeAddBookmark(1, 1, 1).test().awaitTerminalEvent();
-
-    verify(bookmarksWidgetUpdater, never()).updateBookmarksWidget();
+    model = new BookmarkModel(bookmarksAdapter, recentPageModel);
   }
 
   @Test

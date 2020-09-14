@@ -5,7 +5,6 @@ import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
-import com.quran.labs.androidquran.widget.BookmarksWidgetUpdater;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +18,6 @@ import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -32,44 +29,14 @@ public class BookmarkModel {
   private final BookmarksDBAdapter bookmarksDBAdapter;
   private final Subject<Tag> tagPublishSubject;
   private final Subject<Boolean> bookmarksPublishSubject;
-  private final BookmarksWidgetUpdater bookmarksWidgetUpdater;
-  private Disposable bookmarksWidgetDisposable = null;
 
   @Inject
-  public BookmarkModel(BookmarksDBAdapter bookmarksAdapter, RecentPageModel recentPageModel,
-                       BookmarksWidgetUpdater bookmarksWidgetUpdater) {
+  public BookmarkModel(BookmarksDBAdapter bookmarksAdapter, RecentPageModel recentPageModel) {
     this.recentPageModel = recentPageModel;
     this.bookmarksDBAdapter = bookmarksAdapter;
-    this.bookmarksWidgetUpdater = bookmarksWidgetUpdater;
 
     tagPublishSubject = PublishSubject.<Tag>create().toSerialized();
     bookmarksPublishSubject = PublishSubject.<Boolean>create().toSerialized();
-
-    subscribeBookmarksWidgetIfNecessary();
-  }
-
-  private void subscribeBookmarksWidgetIfNecessary() {
-    if (bookmarksWidgetUpdater.checkForAnyBookmarksWidgets())  {
-      subscribeBookmarksWidget();
-    }
-  }
-
-  private void subscribeBookmarksWidget() {
-    bookmarksWidgetDisposable = bookmarksObservable()
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(ignore -> bookmarksWidgetUpdater.updateBookmarksWidget());
-  }
-
-  public void onEnabledBookmarksWidget() {
-    if (bookmarksWidgetDisposable == null) {
-      subscribeBookmarksWidget();
-    }
-  }
-
-  public void onDisabledBookmarksWidget() {
-    if (bookmarksWidgetDisposable != null) {
-      bookmarksWidgetDisposable.dispose();
-    }
   }
 
   public Observable<Tag> tagsObservable() {
