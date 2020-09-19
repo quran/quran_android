@@ -14,7 +14,10 @@ import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.util.QuranSettings
 import javax.inject.Inject
 
-
+/**
+ * Transparent activity that just shows a [JumpFragment]. Clicking outside or closing the dialog
+ * finishes the activity.
+ */
 class ShowJumpFragmentActivity : QuranActionBarActivity(), JumpDestination {
 
   @Inject
@@ -28,7 +31,7 @@ class ShowJumpFragmentActivity : QuranActionBarActivity(), JumpDestination {
 
   override fun onStart() {
     if (supportFragmentManager.fragments.isEmpty()) {
-      supportFragmentManager.registerFragmentLifecycleCallbacks(object: FragmentManager.FragmentLifecycleCallbacks() {
+      supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
         override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) = finish()
       }, false)
       JumpFragment().show(supportFragmentManager, JumpFragment.TAG)

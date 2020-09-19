@@ -39,6 +39,9 @@ import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+/**
+ * Activity for searching the Quran
+ */
 public class SearchActivity extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener,
     LoaderManager.LoaderCallbacks<Cursor> {

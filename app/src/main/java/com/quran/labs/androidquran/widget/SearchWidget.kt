@@ -12,6 +12,13 @@ import com.quran.labs.androidquran.SearchActivity
 import com.quran.labs.androidquran.ShortcutsActivity
 import com.quran.labs.androidquran.ui.QuranActivity
 
+/**
+ * Widget that displays buttons for:
+ * - searching the Quran
+ * - jumping into the app
+ * - jumping to the most recent page
+ * - jumping to a particular Ayah
+ */
 class SearchWidget : AppWidgetProvider() {
 
   override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {

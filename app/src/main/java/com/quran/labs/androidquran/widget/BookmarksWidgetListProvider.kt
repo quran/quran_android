@@ -15,6 +15,10 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
 import javax.inject.Inject
 
+/**
+ * [RemoteViewsFactory] implementation responsible for providing a list of bookmark views to be
+ * displayed in [BookmarksWidget].
+ */
 class BookmarksWidgetListProvider(private val context: Context) : RemoteViewsFactory {
 
   private var quranRowList: List<QuranRow> = listOf()

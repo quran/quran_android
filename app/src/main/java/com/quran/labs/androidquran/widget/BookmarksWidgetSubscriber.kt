@@ -6,7 +6,10 @@ import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
+/**
+ * Singleton that monitors for changes to bookmarks and triggers [BookmarksWidget] updates.
+ * Bookmark changes are only monitored if at least one [BookmarksWidget] exists.
+ */
 @Singleton
 class BookmarksWidgetSubscriber @Inject constructor(
     private val bookmarkModel: BookmarkModel,

@@ -12,6 +12,9 @@ import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.QuranActivity
 import javax.inject.Inject
 
+/**
+ * Widget that displays a list of bookmarks and some buttons for jumping into the app
+ */
 class BookmarksWidget : AppWidgetProvider() {
 
   @Inject
