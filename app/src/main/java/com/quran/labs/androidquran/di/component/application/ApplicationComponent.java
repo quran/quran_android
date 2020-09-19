@@ -32,7 +32,7 @@ import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.widget.BookmarksWidget;
 import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity;
-import com.quran.labs.androidquran.widget.WidgetListProvider;
+import com.quran.labs.androidquran.widget.BookmarksWidgetListProvider;
 
 import javax.inject.Singleton;
 
@@ -88,6 +88,6 @@ public interface ApplicationComponent {
   void inject(AddTagDialog addTagDialog);
 
   // widgets
-  void inject(WidgetListProvider widgetListProvider);
+  void inject(BookmarksWidgetListProvider bookmarksWidgetListProvider);
   void inject(BookmarksWidget bookmarksWidget);
 }

@@ -15,7 +15,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
 import javax.inject.Inject
 
-class WidgetListProvider(private val context: Context) : RemoteViewsFactory {
+class BookmarksWidgetListProvider(private val context: Context) : RemoteViewsFactory {
 
   private var quranRowList: List<QuranRow> = listOf()
 
@@ -50,11 +50,6 @@ class WidgetListProvider(private val context: Context) : RemoteViewsFactory {
 
   override fun hasStableIds() = false
 
-  /*
-  *Similar to getView of Adapter where instead of View
-  *we return RemoteViews
-  *
-  */
   override fun getViewAt(position: Int): RemoteViews {
     val remoteView = RemoteViews(context.packageName, R.layout.bookmarks_widget_list_row)
     val item = quranRowList[position]

@@ -19,7 +19,7 @@ class BookmarksWidget : AppWidgetProvider() {
 
   override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
     for (appWidgetId in appWidgetIds) {
-      val serviceIntent = Intent(context, WidgetService::class.java).apply {
+      val serviceIntent = Intent(context, BookmarksWidgetService::class.java).apply {
         putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
         data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
       }
