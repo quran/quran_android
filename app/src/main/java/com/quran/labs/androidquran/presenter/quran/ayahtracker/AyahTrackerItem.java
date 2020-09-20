@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.widgets.AyahToolBar;
+import com.quran.labs.androidquran.view.AyahToolBar;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 

@@ -15,7 +15,7 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.widgets.AyahToolBar;
+import com.quran.labs.androidquran.view.AyahToolBar;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 

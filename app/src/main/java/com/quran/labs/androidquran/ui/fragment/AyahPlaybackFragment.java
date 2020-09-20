@@ -19,7 +19,7 @@ import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.QuranSpinner;
+import com.quran.labs.androidquran.view.QuranSpinner;
 
 import javax.inject.Inject;
 

@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.widgets;
+package com.quran.labs.androidquran.view;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -9,17 +9,13 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetrics;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 
-import android.view.DisplayCutout;
-import android.view.View;
 import androidx.core.view.DisplayCutoutCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
@@ -29,10 +25,7 @@ import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
 
 import dev.chrisbanes.insetter.Insetter;
-import dev.chrisbanes.insetter.OnApplyInsetsListener;
-import dev.chrisbanes.insetter.Side;
-import dev.chrisbanes.insetter.Sides;
-import dev.chrisbanes.insetter.ViewState;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
