@@ -13,8 +13,6 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.QuranAdvancedPreferenceActivity;
 import com.quran.labs.androidquran.QuranApplication;
@@ -141,7 +139,6 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
             .subscribeWith(new DisposableSingleObserver<Uri>() {
               @Override
               public void onSuccess(Uri uri) {
-                Answers.getInstance().logCustom(new CustomEvent("exportData"));
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("application/json");
                 shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);

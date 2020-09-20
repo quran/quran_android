@@ -68,7 +68,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private RepeatButton repeatButton;
   private AudioBarListener audioBarListener;
 
-  private int[] repeatValues = {0, 1, 2, 3, -1};
+  private int[] repeatValues = {0, 1, 2, 3, 5, 10, -1};
 
   public interface AudioBarListener {
     void onPlayPressed();
@@ -179,7 +179,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   public void updateSelectedItem() {
     if (spinner != null) {
-      spinner.setSelection(currentQari);
+      spinner.setSelection(currentQari, false);
     }
   }
 

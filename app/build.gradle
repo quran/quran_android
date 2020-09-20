@@ -1,9 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'io.fabric'
 apply plugin: 'net.ltgt.errorprone'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.firebase.crashlytics'
 
 android {
   compileSdkVersion deps.android.build.compileSdkVersion
@@ -46,14 +46,13 @@ android {
       signingConfig signingConfigs.release
       versionNameSuffix "-beta"
       if (project.hasProperty('disableCrashlytics')) {
-        ext.enableCrashlytics = false
+        firebaseCrashlytics.mappingFileUploadEnabled false
       }
       matchingFallbacks = ['debug']
     }
 
     debug {
-      ext.enableCrashlytics = false
-      ext.alwaysUpdateBuildId = false
+      firebaseCrashlytics.mappingFileUploadEnabled false
       applicationIdSuffix ".debug"
       versionNameSuffix "-debug"
     }
@@ -63,7 +62,7 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.cfg'
       signingConfig signingConfigs.release
       if (project.hasProperty('disableCrashlytics')) {
-        ext.enableCrashlytics = false
+        firebaseCrashlytics.mappingFileUploadEnabled false
       }
     }
   }
@@ -130,7 +129,6 @@ dependencies {
 
   implementation project(path: ':feature:audio')
 
-  implementation deps.kotlin.stdlib
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
 
@@ -140,7 +138,7 @@ dependencies {
   implementation "androidx.appcompat:appcompat:${androidxAppcompatVersion}"
   implementation "androidx.media:media:${androidxMediaVersion}"
   implementation "androidx.localbroadcastmanager:localbroadcastmanager:${androidxLocalBroadcastVersion}"
-  implementation "androidx.preference:preference:${androidxPreferencesVersion}"
+  implementation "androidx.preference:preference-ktx:${androidxPreferencesVersion}"
   implementation "androidx.recyclerview:recyclerview:${androidxRecyclerViewVersion}"
   implementation "com.google.android.material:material:${materialComponentsVersion}"
   implementation "androidx.swiperefreshlayout:swiperefreshlayout:${androidxSwipeRefreshVersion}"
@@ -163,15 +161,16 @@ dependencies {
   implementation "com.squareup.moshi:moshi:${moshiVersion}"
   kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
 
+  implementation "dev.chrisbanes:insetter-ktx:0.3.1"
   implementation 'com.jakewharton.timber:timber:4.7.1'
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.3'
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
   testImplementation 'junit:junit:4.13'
   testImplementation 'com.google.truth:truth:1.0.1'
-  testImplementation "org.mockito:mockito-core:3.3.3"
+  testImplementation "org.mockito:mockito-core:3.5.5"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
-  implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+  implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
 
   errorprone 'com.google.errorprone:error_prone_core:2.3.3'
   //noinspection GradleDynamicVersion

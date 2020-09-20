@@ -136,9 +136,6 @@
   <string name="prefs_night_mode_text_brightness_title">Metin parlaklığı</string>
   <string name="prefs_night_mode_text_brightness_summary">Gece modu açıkken metin parlaklığı</string>
   <string name="prefs_new_background_title">Yeni arkaplan</string>
-  <string name="prefs_immersive_in_portrait_title">Dikey modda tam ekrani kullan</string>
-  <string name="prefs_immersive_in_portrait_summary_enabled">Dikey ve yatay modda tam ekran kullanılacak</string>
-  <string name="prefs_immersive_in_portrait_summary_disabled">Sadece yatay modda tam ekran kullanılacak</string>
   <string name="prefs_download_amount_title">İndirme miktarı</string>
   <string name="prefs_download_amount_summary">Ayrık olan ses dosyaları için indrime miktarı</string>
   <string name="prefs_audio_manager_summary">"Kur'an seslerini yönetme ve indirme"</string>

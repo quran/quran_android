@@ -15,7 +15,8 @@
   <!-- support chromebooks without touch screen -->
   <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
-  <uses-sdk tools:overrideLibrary="timber.log"/>
+  <!-- minSdk 15 vs 14 - really doesn't matter tbh since no one uses 14 at all, but  ¯\_(ツ)_/¯ -->
+  <uses-sdk tools:overrideLibrary="timber.log, dev.chrisbanes.insetter, dev.chrisbanes.insetter.ktx, com.google.firebase.crashlytics"/>
 
   <application
       android:icon="@drawable/icon"

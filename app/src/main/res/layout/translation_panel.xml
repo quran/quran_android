@@ -39,7 +39,7 @@
         android:id="@+id/next_ayah"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_translation_left"
+        android:src="@drawable/ic_translation_next"
         android:contentDescription="@string/next"
         />
     <Space
@@ -51,7 +51,7 @@
         android:id="@+id/previous_ayah"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_translation_right"
+        android:src="@drawable/ic_translation_previous"
         android:contentDescription="@string/previous"
         />
   </com.quran.labs.androidquran.widgets.LeftToRightLinearLayout>

@@ -178,6 +178,7 @@ public class ImageAyahUtils {
     if (imageView.getImageMatrix().invert(inverse)) {
       results = new float[2];
       inverse.mapPoints(results, new float[]{screenX, screenY});
+      results[1] = results[1] - imageView.getPaddingTop();
     }
     return results;
   }

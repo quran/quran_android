@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.pageselect
 
-import com.crashlytics.android.Crashlytics
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.ImageUtil
@@ -9,6 +8,7 @@ import dagger.Reusable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -46,7 +46,7 @@ class PageSelectPresenter @Inject
               imageUtil.downloadImage(url, previewImage)
                   .subscribeOn(Schedulers.io())
                   .observeOn(mainThreadScheduler)
-                  .subscribe({ generateData() }, { e -> Crashlytics.logException(e) })
+                  .subscribe({ generateData() }, { e -> Timber.e(e) })
           )
           null
         } else {

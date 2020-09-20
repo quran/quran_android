@@ -54,4 +54,10 @@
   <string name="qari_ajamy_gapless">Ахмед ибн Али аль-Аджами (безинтервальное)</string>
   <string name="qari_ali_jaber_gapless">Али Джабер (безинтервальное)</string>
   <string name="qari_muaiqly_gapless">Махир аль-Муаккили (безинтервальное)</string>
+  <string name="qari_juhany_gapless">Абдулла аль-Джахани (безинтервальное)</string>
+  <string name="qari_abdulmuhsin_qasim_gapless">Абдул Мохсен Қасым (безинтервальное)</string>
+  <string name="qari_fares_abbad_gapless">Фарес Аббад (безинтервальное)</string>
+  <string name="qari_khalifa_taniji_gapless">Халифа Тенги (безинтервальное)</string>
+  <string name="qari_abdullah_matroud_gapless">Абдулла Матруд (безинтервальное)</string>
+ <string name="qari_salah_bukhatir_gapless">Салех Бухатир (безинтервальное)</string>
 </resources>

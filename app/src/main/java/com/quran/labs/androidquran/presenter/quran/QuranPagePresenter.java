@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.presenter.quran;
 
 import android.graphics.Bitmap;
 
+import androidx.annotation.NonNull;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.Response;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
@@ -60,14 +61,14 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableObserver<PageCoordinates>() {
               @Override
-              public void onNext(PageCoordinates pageCoordinates) {
+              public void onNext(@NonNull PageCoordinates pageCoordinates) {
                 if (screen != null) {
                   screen.setPageCoordinates(pageCoordinates);
                 }
               }
 
               @Override
-              public void onError(Throwable e) {
+              public void onError(@NonNull Throwable e) {
                 encounteredError = true;
                 if (screen != null) {
                   screen.setAyahCoordinatesError();
@@ -88,14 +89,14 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
             .subscribeWith(new DisposableObserver<List<Bookmark>>() {
 
               @Override
-              public void onNext(List<Bookmark> bookmarks) {
+              public void onNext(@NonNull List<Bookmark> bookmarks) {
                 if (screen != null) {
                   screen.setBookmarksOnPage(bookmarks);
                 }
               }
 
               @Override
-              public void onError(Throwable e) {
+              public void onError(@NonNull Throwable e) {
               }
 
               @Override
@@ -112,14 +113,14 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableObserver<AyahCoordinates>() {
               @Override
-              public void onNext(AyahCoordinates coordinates) {
+              public void onNext(@NonNull AyahCoordinates coordinates) {
                 if (screen != null) {
                   screen.setAyahCoordinatesData(coordinates);
                 }
               }
 
               @Override
-              public void onError(Throwable e) {
+              public void onError(@NonNull Throwable e) {
               }
 
               @Override
@@ -139,7 +140,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(new DisposableObserver<Response>() {
           @Override
-          public void onNext(Response response) {
+          public void onNext(@NonNull Response response) {
             if (screen != null) {
               Bitmap bitmap = response.getBitmap();
               if (bitmap != null) {
@@ -166,7 +167,7 @@ public class QuranPagePresenter implements Presenter<QuranPageScreen> {
           }
 
           @Override
-          public void onError(Throwable e) {
+          public void onError(@NonNull Throwable e) {
           }
 
           @Override

@@ -30,7 +30,6 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
@@ -173,7 +172,6 @@ public class PagerActivity extends QuranActionBarActivity implements
   private AudioRequest lastAudioRequest;
   private boolean isDualPages = false;
   private boolean isLandscape;
-  private boolean isImmersiveInPortrait;
   private Integer lastPlayingSura;
   private Integer lastPlayingAyah;
   private View toolBarArea;
@@ -307,7 +305,6 @@ public class PagerActivity extends QuranActionBarActivity implements
             .subscribe(ignore -> onBookmarksChanged()));
 
     final Resources resources = getResources();
-    isImmersiveInPortrait = quranSettings.isImmersiveInPortrait();
     isLandscape = resources.getConfiguration().orientation ==
         Configuration.ORIENTATION_LANDSCAPE;
     ayahToolBarTotalHeight = resources
@@ -577,8 +574,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void setUiVisibility(boolean isVisible) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT &&
-        (isLandscape || isImmersiveInPortrait)){
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       setUiVisibilityKitKat(isVisible);
       if (isInMultiWindowMode) {
         animateToolBar(isVisible);
@@ -773,7 +769,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
           destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
           downloadType);
-      Crashlytics.log("starting service to download ayah position file");
+      Timber.d("starting service to download ayah position file");
       startService(intent);
 
       haveDownload = true;
@@ -795,7 +791,7 @@ public class PagerActivity extends QuranActionBarActivity implements
           AUDIO_DOWNLOAD_KEY, downloadType);
       intent.putExtra(QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
           QuranDataProvider.QURAN_ARABIC_DATABASE + extension);
-      Crashlytics.log("starting service to download arabic database");
+      Timber.d("starting service to download arabic database");
       startService(intent);
     }
 
@@ -1483,7 +1479,7 @@ public class PagerActivity extends QuranActionBarActivity implements
             quranSettings.getPreferredDownloadAmount(), isDualPages);
 
     if (ending != null) {
-      Crashlytics.log("playFromAyah - " + start + ", ending: " +
+      Timber.d("playFromAyah - " + start + ", ending: " +
           ending + " - original: " + end + " -- " +
           quranSettings.getPreferredDownloadAmount());
       final QariItem item = audioStatusBar.getAudioInfo();
@@ -1509,7 +1505,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         toggleActionBar();
       }
       audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-      Crashlytics.log("starting service in handleRequiredDownload");
+      Timber.d("starting service in handleRequiredDownload");
       startService(downloadIntent);
     }
   }
@@ -1525,7 +1521,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       audioStatusBar.switchMode(AudioStatusBar.LOADING_MODE);
     }
 
-    Crashlytics.log("starting service for audio playback");
+    Timber.d("starting service for audio playback");
     startService(intent);
   }
 

@@ -12,14 +12,16 @@ import android.graphics.drawable.PaintDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
+import android.util.TypedValue;
+import android.view.Display;
+import android.view.View;
+import android.view.WindowManager;
+
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Px;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
-import android.view.Display;
-import android.view.View;
-import android.view.WindowManager;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -128,17 +130,28 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     if (view != null) {
       int width = MeasureSpec.getSize(widthMeasureSpec);
       int height = MeasureSpec.getSize(heightMeasureSpec);
+      int leftLineWidth = leftBorder == BorderMode.LINE ? 1 : getBorderWidth(leftPageBorder);
+      int rightLineWidth = rightBorder == BorderMode.HIDDEN ?
+          0 : getBorderWidth(rightPageBorder);
+      width = width - (leftLineWidth + rightLineWidth);
       if (!isFullWidth) {
-        int leftLineWidth = leftBorder == BorderMode.LINE ? 1 : leftPageBorder.getIntrinsicWidth();
-        int rightLineWidth = rightBorder == BorderMode.HIDDEN ?
-            0 : rightPageBorder.getIntrinsicWidth();
         int headerFooterHeight = 0;
-        width = width - (leftLineWidth + rightLineWidth + viewPaddingSmall + viewPaddingLarge);
+        width = width - (viewPaddingSmall + viewPaddingLarge);
         height = height - 2 * headerFooterHeight;
       }
       view.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
           MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
     }
+  }
+
+  private int getBorderWidth(Drawable drawable) {
+    if (drawable == lineDrawable)
+      return lineDrawable.getIntrinsicWidth();
+
+    // enlarge the book side indicator to a sensible device-independent width
+    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+        13f,
+        getResources().getDisplayMetrics());
   }
 
   @Override
@@ -148,9 +161,9 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
       int width = getMeasuredWidth();
       int height = getMeasuredHeight();
       @Px int leftLineWidth = leftBorder == BorderMode.LINE ?
-          1 : leftPageBorder.getIntrinsicWidth();
+          1 : getBorderWidth(leftPageBorder);
       @Px int rightLineWidth = rightBorder == BorderMode.HIDDEN ?
-          0 : rightPageBorder.getIntrinsicWidth();
+          0 : getBorderWidth(rightPageBorder);
       int headerFooterHeight = 0;
       view.layout(leftLineWidth, headerFooterHeight,
           width - rightLineWidth, height - headerFooterHeight);
@@ -167,13 +180,13 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
       if (leftBorder != BorderMode.LINE || !shouldHideLine) {
         Drawable left = leftBorder == BorderMode.LINE ? lineDrawable :
             leftBorder == BorderMode.LIGHT ? leftPageBorder : leftPageBorderNight;
-        left.setBounds(0, 0, left.getIntrinsicWidth(), height);
+        left.setBounds(0, 0, getBorderWidth(left), height);
         left.draw(canvas);
       }
 
       if (rightBorder != BorderMode.HIDDEN) {
         Drawable right = rightBorder == BorderMode.LIGHT ? rightPageBorder : rightPageBorderNight;
-        right.setBounds(width - right.getIntrinsicWidth(), 0, width, height);
+        right.setBounds(width - getBorderWidth(right), 0, width, height);
         right.draw(canvas);
       }
     }

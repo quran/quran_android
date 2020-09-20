@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.presenter.audio
 
 import android.content.Context
 import android.content.Intent
-import com.crashlytics.android.Crashlytics
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.audio.QariItem
 import com.quran.labs.androidquran.dao.audio.AudioPathInfo
@@ -16,7 +15,6 @@ import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QuranFileUtils
 import java.io.File
-import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 class AudioPresenter @Inject
@@ -50,13 +48,8 @@ constructor(private val quranDisplayData: QuranDisplayData,
         audioPathInfo
       }
 
-      val (checkedStart, checkedEnd) = if (start < end) start to end else end to start
-      if (checkedStart != start) {
-        Crashlytics.logException(IllegalArgumentException("expected $start > $end, but wasn't."))
-      }
-
       val audioRequest = AudioRequest(
-          checkedStart, checkedEnd, qari, verseRepeat, rangeRepeat, enforceRange, stream, audioPath)
+          start, end, qari, verseRepeat, rangeRepeat, enforceRange, stream, audioPath)
       play(audioRequest)
     }
   }
@@ -91,7 +84,7 @@ constructor(private val quranDisplayData: QuranDisplayData,
     return if (!quranFileUtils.haveAyaPositionFile(context)) {
       getDownloadIntent(context,
           quranFileUtils.ayaPositionFileUrl,
-          quranFileUtils.getQuranAyahDatabaseDirectory(context),
+          quranFileUtils.getQuranAyahDatabaseDirectory(context)!!,
           context.getString(R.string.highlighting_database))
     } else if (gaplessDb != null && !File(gaplessDb).exists()) {
       getDownloadIntent(context,

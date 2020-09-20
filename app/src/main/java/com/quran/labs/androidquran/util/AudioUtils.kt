@@ -125,31 +125,13 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     if (page > totalPages || page < 0) {
       return null
     }
-    if (page < totalPages) {
-      val nextPage = page + 1
-      val nextPageSura = quranInfo.getSuraNumberFromPage(nextPage)
-      // using [page+1] as an index because we literally want the next page
-      val nextPageAyah = quranInfo.getFirstAyahOnPage(nextPage)
 
-      pageLastSura = nextPageSura
-      pageLastAyah = nextPageAyah - 1
-      if (pageLastAyah < 1) {
-        pageLastSura--
-        pageLastAyah = quranInfo.getNumberOfAyahs(pageLastSura)
-      }
-    }
 
     if (mode == LookAheadAmount.SURA) {
-      var sura = startAyah.sura
-      var lastAyah = quranInfo.getNumberOfAyahs(sura)
+      val sura = startAyah.sura
+      val lastAyah = quranInfo.getNumberOfAyahs(sura)
       if (lastAyah == -1) {
         return null
-      }
-
-      // if we start playback between two suras, download both suras
-      if (pageLastSura > sura) {
-        sura = pageLastSura
-        lastAyah = quranInfo.getNumberOfAyahs(sura)
       }
       return SuraAyah(sura, lastAyah)
     } else if (mode == LookAheadAmount.JUZ) {
@@ -168,6 +150,10 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
 
         return SuraAyah(endJuz[0], endJuz[1])
       }
+    } else {
+      val range = quranInfo.getVerseRangeForPage(page)
+      pageLastSura = range.endingSura
+      pageLastAyah = range.endingAyah
     }
 
     // page mode (fallback also from errors above)
