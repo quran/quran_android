@@ -2,8 +2,9 @@ package com.quran.labs.androidquran.widget
 
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import io.reactivex.android.plugins.RxAndroidPlugins
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.schedulers.TestScheduler
 import io.reactivex.subjects.PublishSubject
+import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
@@ -13,6 +14,7 @@ import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
 import org.mockito.quality.Strictness
+import java.util.concurrent.TimeUnit
 
 
 class BookmarksWidgetSubscriberTest {
@@ -36,9 +38,11 @@ class BookmarksWidgetSubscriberTest {
     `when`(bookmarkModel.bookmarksObservable()).thenReturn(testSubject.hide())
 
     bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
+    testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
 
     verify(bookmarksWidgetUpdater, never()).updateBookmarksWidget()
     testSubject.onNext(true)
+    testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
     verify(bookmarksWidgetUpdater).updateBookmarksWidget()
   }
 
@@ -61,6 +65,7 @@ class BookmarksWidgetSubscriberTest {
     bookmarksWidgetSubscriber.onEnabledBookmarksWidget()
 
     testSubject.onNext(true)
+    testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
     verify(bookmarksWidgetUpdater).updateBookmarksWidget()
   }
 
@@ -73,14 +78,24 @@ class BookmarksWidgetSubscriberTest {
     bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
     bookmarksWidgetSubscriber.onDisabledBookmarksWidget()
     testSubject.onNext(true)
+    testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
     verify(bookmarksWidgetUpdater, never()).updateBookmarksWidget()
   }
 
   companion object {
+
+    private val testScheduler = TestScheduler()
+
     @BeforeClass
     @JvmStatic
     fun setup() {
-      RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
+      RxAndroidPlugins.setMainThreadSchedulerHandler { testScheduler }
+    }
+
+    @AfterClass
+    @JvmStatic
+    fun tearDown() {
+      RxAndroidPlugins.reset()
     }
   }
 }
