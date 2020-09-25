@@ -22,7 +22,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranPage;
 import com.quran.labs.androidquran.ui.translation.OnTranslationActionListener;
 import com.quran.labs.androidquran.ui.translation.TranslationView;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
+import com.quran.labs.androidquran.view.QuranTranslationPageLayout;
 
 import java.util.List;
 

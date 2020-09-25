@@ -32,7 +32,7 @@
       android:layout_height="wrap_content"
       android:orientation="horizontal">
 
-    <com.quran.labs.androidquran.widgets.ForceCompleteTextView
+    <com.quran.labs.androidquran.view.ForceCompleteTextView
         android:id="@+id/sura_spinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
