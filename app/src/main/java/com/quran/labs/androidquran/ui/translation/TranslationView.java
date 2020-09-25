@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.core.view.DisplayCutoutCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
@@ -17,12 +17,10 @@ import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.widgets.AyahToolBar;
+import com.quran.labs.androidquran.view.AyahToolBar;
 
 import dev.chrisbanes.insetter.Insetter;
-import dev.chrisbanes.insetter.OnApplyInsetsListener;
-import dev.chrisbanes.insetter.Side;
-import dev.chrisbanes.insetter.ViewState;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

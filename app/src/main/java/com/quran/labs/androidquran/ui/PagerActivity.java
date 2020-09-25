@@ -79,11 +79,11 @@ import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.ShareUtil;
-import com.quran.labs.androidquran.widgets.AudioStatusBar;
-import com.quran.labs.androidquran.widgets.AyahToolBar;
-import com.quran.labs.androidquran.widgets.IconPageIndicator;
-import com.quran.labs.androidquran.widgets.QuranSpinner;
-import com.quran.labs.androidquran.widgets.SlidingUpPanelLayout;
+import com.quran.labs.androidquran.view.AudioStatusBar;
+import com.quran.labs.androidquran.view.AyahToolBar;
+import com.quran.labs.androidquran.view.IconPageIndicator;
+import com.quran.labs.androidquran.view.QuranSpinner;
+import com.quran.labs.androidquran.view.SlidingUpPanelLayout;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -124,7 +124,7 @@ import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_P
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.PAGES;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
-import static com.quran.labs.androidquran.widgets.AyahToolBar.AyahToolBarPosition;
+import static com.quran.labs.androidquran.view.AyahToolBar.AyahToolBarPosition;
 
 /**
  * Activity that displays the Quran (in Arabic or translation mode).

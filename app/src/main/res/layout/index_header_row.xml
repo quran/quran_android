@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.quran.labs.androidquran.widgets.QuranHeaderView
+<com.quran.labs.androidquran.view.QuranHeaderView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -26,4 +26,4 @@
         android:textColor="@color/sura_number_color"
         android:textSize="16sp"
         tools:text="1"/>
-</com.quran.labs.androidquran.widgets.QuranHeaderView>
+</com.quran.labs.androidquran.view.QuranHeaderView>

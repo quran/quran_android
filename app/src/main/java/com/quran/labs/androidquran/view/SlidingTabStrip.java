@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.widgets;
+package com.quran.labs.androidquran.view;
 
 /*
  * Copyright (C) 2013 The Android Open Source Project

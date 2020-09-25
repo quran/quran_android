@@ -30,7 +30,7 @@
  *
  */
 
-package com.quran.labs.androidquran.widgets;
+package com.quran.labs.androidquran.view;
 
 import android.annotation.TargetApi;
 import android.content.Context;

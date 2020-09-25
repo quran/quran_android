@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import com.quran.labs.androidquran.widgets.AyahToolBar;
+import com.quran.labs.androidquran.view.AyahToolBar;
 
 import java.util.Set;
 

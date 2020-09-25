@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.widgets;
+package com.quran.labs.androidquran.view;
 
 import android.content.Context;
 import android.util.AttributeSet;

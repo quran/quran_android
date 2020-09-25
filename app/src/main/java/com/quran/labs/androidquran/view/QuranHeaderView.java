@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.widgets;
+package com.quran.labs.androidquran.view;
 
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
