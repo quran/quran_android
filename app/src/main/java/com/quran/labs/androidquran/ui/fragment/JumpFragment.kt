@@ -30,7 +30,7 @@ import com.quran.labs.androidquran.R.layout
 import com.quran.labs.androidquran.R.string
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.util.QuranUtils
-import com.quran.labs.androidquran.widgets.ForceCompleteTextView
+import com.quran.labs.androidquran.view.ForceCompleteTextView
 import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
