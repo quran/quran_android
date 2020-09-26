@@ -12,13 +12,6 @@
     <Button android:id="@+id/btnGetTranslations" android:text="@string/menu_get_translations"
     	android:layout_width="match_parent" android:layout_height="wrap_content" android:visibility="gone"/>
 
-  <androidx.appcompat.widget.SearchView
-      android:id="@+id/search_view"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:queryHint="@string/search_hint"
-      android:inputType="text" />
-
   <TextView
       android:id="@+id/search_area"
       android:layout_width="fill_parent"
