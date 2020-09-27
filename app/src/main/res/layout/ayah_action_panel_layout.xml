@@ -29,7 +29,7 @@
         android:src="@drawable/ic_action_expand"
         android:contentDescription="@string/cancel"
         />
-    <com.quran.labs.androidquran.widgets.IconPageIndicator
+    <com.quran.labs.androidquran.view.IconPageIndicator
         android:id="@+id/sliding_pager_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
         app:indicatorHeight="@dimen/icon_page_indicator_height"
         />
   </LinearLayout>
-  <com.quran.labs.androidquran.widgets.QuranViewPager
+  <com.quran.labs.androidquran.view.QuranViewPager
       android:id="@+id/sliding_layout_pager"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"

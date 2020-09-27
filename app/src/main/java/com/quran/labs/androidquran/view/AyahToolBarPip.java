@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.widgets;
+package com.quran.labs.androidquran.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -11,7 +11,7 @@ import android.view.View;
 
 import com.quran.labs.androidquran.R;
 
-import static com.quran.labs.androidquran.widgets.AyahToolBar.PipPosition;
+import static com.quran.labs.androidquran.view.AyahToolBar.PipPosition;
 
 public class AyahToolBarPip extends View {
   private Path mPath;

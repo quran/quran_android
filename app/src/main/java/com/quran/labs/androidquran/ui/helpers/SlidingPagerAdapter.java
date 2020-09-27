@@ -7,7 +7,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.ui.fragment.AyahPlaybackFragment;
 import com.quran.labs.androidquran.ui.fragment.AyahTranslationFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
-import com.quran.labs.androidquran.widgets.IconPageIndicator;
+import com.quran.labs.androidquran.view.IconPageIndicator;
 
 public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
     IconPageIndicator.IconPagerAdapter {

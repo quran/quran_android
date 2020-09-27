@@ -23,8 +23,8 @@ import com.quran.labs.androidquran.ui.helpers.UthmaniSpan
 import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
-import com.quran.labs.androidquran.widgets.AyahNumberView
-import com.quran.labs.androidquran.widgets.DividerView
+import com.quran.labs.androidquran.view.AyahNumberView
+import com.quran.labs.androidquran.view.DividerView
 
 internal class TranslationAdapter(private val context: Context,
                                   private val recyclerView: RecyclerView,

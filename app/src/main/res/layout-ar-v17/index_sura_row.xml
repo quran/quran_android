@@ -64,7 +64,7 @@
         tools:text="Makki - 286 Verses"
         />
 
-    <com.quran.labs.androidquran.widgets.TagsViewGroup
+    <com.quran.labs.androidquran.view.TagsViewGroup
         android:id="@+id/tags"
         android:layout_width="match_parent"
         android:layout_height="24dp"

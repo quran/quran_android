@@ -26,12 +26,12 @@
         android:layout_gravity="end"
         android:orientation="horizontal"
         >
-      <com.quran.labs.androidquran.widgets.QuranSpinner
+      <com.quran.labs.androidquran.view.QuranSpinner
           android:id="@+id/start_ayah_spinner"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           />
-      <com.quran.labs.androidquran.widgets.QuranSpinner
+      <com.quran.labs.androidquran.view.QuranSpinner
           android:id="@+id/start_sura_spinner"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -51,12 +51,12 @@
         android:layout_gravity="end"
         android:orientation="horizontal"
         >
-      <com.quran.labs.androidquran.widgets.QuranSpinner
+      <com.quran.labs.androidquran.view.QuranSpinner
           android:id="@+id/end_ayah_spinner"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           />
-      <com.quran.labs.androidquran.widgets.QuranSpinner
+      <com.quran.labs.androidquran.view.QuranSpinner
           android:id="@+id/end_sura_spinner"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
         android:layout_gravity="end"
         android:orientation="horizontal"
         >
-      <com.quran.labs.androidquran.widgets.QuranSpinner
+      <com.quran.labs.androidquran.view.QuranSpinner
           android:id="@+id/repeat_range_spinner"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
         android:layout_gravity="end"
         android:orientation="horizontal"
         >
-      <com.quran.labs.androidquran.widgets.QuranSpinner
+      <com.quran.labs.androidquran.view.QuranSpinner
           android:id="@+id/repeat_verse_spinner"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"

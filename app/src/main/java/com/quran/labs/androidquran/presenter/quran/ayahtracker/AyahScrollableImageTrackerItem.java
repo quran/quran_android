@@ -7,9 +7,9 @@ import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
-import com.quran.labs.androidquran.widgets.AyahToolBar;
-import com.quran.labs.androidquran.widgets.HighlightingImageView;
-import com.quran.labs.androidquran.widgets.QuranPageLayout;
+import com.quran.labs.androidquran.view.AyahToolBar;
+import com.quran.labs.androidquran.view.HighlightingImageView;
+import com.quran.labs.androidquran.view.QuranPageLayout;
 import com.quran.page.common.draw.ImageDrawHelper;
 
 import java.util.Set;
