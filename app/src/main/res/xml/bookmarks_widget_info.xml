@@ -2,7 +2,7 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialLayout="@layout/bookmarks_widget"
     android:minHeight="110dp"
-    android:minWidth="180dp"
+    android:minWidth="250dp"
     android:previewImage="@drawable/bookmarks_widget_preview"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
