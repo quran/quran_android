@@ -3,6 +3,7 @@
     android:initialLayout="@layout/bookmarks_widget"
     android:minHeight="110dp"
     android:minWidth="250dp"
+    android:minResizeWidth="180dp"
     android:previewImage="@drawable/bookmarks_widget_preview"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
