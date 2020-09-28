@@ -52,7 +52,7 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:gravity="center"
-      android:text="@string/no_bookmarks"
+      android:text="@string/bookmarks_list_empty"
       android:textColor="#ffffff"
       android:textSize="20sp"
       android:layout_marginHorizontal="8dp"

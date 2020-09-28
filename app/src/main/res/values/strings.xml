@@ -377,7 +377,7 @@
   <string name="tag_blank_tag_error">Tag names cannot be blank!</string>
   <string name="tag_duplicate_tag_error">Tag name already exists!</string>
 
-  <!-- bookmark & tag list -->
+  <!-- widgets -->
   <string name="bookmarks_list_empty">No Bookmarks</string>
 
   <!-- audio manager -->
@@ -410,7 +410,4 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Quran Downloads</string>
   <string name="notification_channel_audio">Quran Recitation</string>
-
-  <!-- Widgets -->
-  <string name="no_bookmarks">No bookmarks currently set</string>
 </resources>
