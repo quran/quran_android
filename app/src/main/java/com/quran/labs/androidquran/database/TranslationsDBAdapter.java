@@ -68,31 +68,30 @@ public class TranslationsDBAdapter {
     }
 
     List<LocalTranslation> items = new ArrayList<>();
-    Cursor cursor = db.query(TranslationsTable.TABLE_NAME,
-        null, null, null, null, null,
-        TranslationsTable.ID + " ASC");
-    if (cursor != null) {
-      try {
-        while (cursor.moveToNext()) {
-          int id = cursor.getInt(0);
-          String name = cursor.getString(1);
-          String translator = cursor.getString(2);
-          String translatorForeign = cursor.getString(3);
-          String filename = cursor.getString(4);
-          String url = cursor.getString(5);
-          String languageCode = cursor.getString(6);
-          int version = cursor.getInt(7);
-          int minimumVersion = cursor.getInt(8);
-          int displayOrder = cursor.getInt(9);
+    Cursor cursor = null;
+    try {
+      cursor = db.query(TranslationsTable.TABLE_NAME,
+              null, null, null, null, null,
+              TranslationsTable.ID + " ASC");
+      while (cursor.moveToNext()) {
+        int id = cursor.getInt(0);
+        String name = cursor.getString(1);
+        String translator = cursor.getString(2);
+        String translatorForeign = cursor.getString(3);
+        String filename = cursor.getString(4);
+        String url = cursor.getString(5);
+        String languageCode = cursor.getString(6);
+        int version = cursor.getInt(7);
+        int minimumVersion = cursor.getInt(8);
+        int displayOrder = cursor.getInt(9);
 
-          if (quranFileUtils.hasTranslation(context, filename)) {
-            items.add(new LocalTranslation(id, filename, name, translator,
-                translatorForeign, url, languageCode, version, minimumVersion, displayOrder));
-          }
+        if (quranFileUtils.hasTranslation(context, filename)) {
+          items.add(new LocalTranslation(id, filename, name, translator,
+                  translatorForeign, url, languageCode, version, minimumVersion, displayOrder));
         }
-      } finally {
-        cursor.close();
       }
+    } finally {
+      cursor.close();
     }
     items = Collections.unmodifiableList(items);
     if (items.size() > 0) {
@@ -111,6 +110,7 @@ public class TranslationsDBAdapter {
     db.beginTransaction();
 
     try {
+      int cachedNextOrder = -1;
       for (int i = 0, updatesSize = updates.size(); i < updatesSize; i++) {
         TranslationItem item = updates.get(i);
         if (item.exists()) {
@@ -121,20 +121,26 @@ public class TranslationsDBAdapter {
           if (item.getDisplayOrder() > -1) {
             displayOrder = item.getDisplayOrder();
           } else {
-            // get next highest display order
-            Cursor cursor = db.query(
-                TranslationsTable.TABLE_NAME,
-                new String[] {TranslationsTable.DISPLAY_ORDER},
-                null, null, null, null,
-                TranslationsTable.DISPLAY_ORDER + " DESC",
-                "1"
-            );
-            try {
-              if (cursor != null && cursor.moveToFirst()) {
-                displayOrder = cursor.getInt(0) + 1;
+            Cursor cursor = null;
+            if (cachedNextOrder == -1) {
+              try {
+                // get next highest display order
+                cursor = db.query(
+                        TranslationsTable.TABLE_NAME,
+                        new String[]{TranslationsTable.DISPLAY_ORDER},
+                        null, null, null, null,
+                        TranslationsTable.DISPLAY_ORDER + " DESC",
+                        "1"
+                );
+                if (cursor != null && cursor.moveToFirst()) {
+                  cachedNextOrder = cursor.getInt(0) + 1;
+                  displayOrder = cachedNextOrder++;
+                }
+              } finally {
+                if (cursor != null) cursor.close();
               }
-            } finally {
-              if (cursor !=null) cursor.close();
+            } else {
+              displayOrder = cachedNextOrder++;
             }
           }
 

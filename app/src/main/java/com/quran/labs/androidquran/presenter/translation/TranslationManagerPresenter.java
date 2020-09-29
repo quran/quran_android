@@ -146,6 +146,12 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
         .subscribe();
   }
 
+  public void updateItemOrdering(final List<TranslationItem> items) {
+    Observable.fromCallable(() -> translationsDBAdapter.writeTranslationUpdates(items))
+            .subscribeOn(Schedulers.io())
+            .subscribe();
+  }
+
   @WorkerThread
   public Observable<List<TranslationItem>> syncTranslationsWithCache() {
     return getCachedTranslationListObservable()

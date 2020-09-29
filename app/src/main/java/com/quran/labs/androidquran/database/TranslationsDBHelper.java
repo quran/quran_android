@@ -1,8 +1,6 @@
 package com.quran.labs.androidquran.database;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -73,40 +71,29 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
         db.endTransaction();
       }
     }
+
     if (oldVersion < 5) {
-      // Add display order column and add arbitrary order to existing translations
-      db.beginTransaction();
-      try {
-        db.execSQL("ALTER TABLE "
-            + TranslationsTable.TABLE_NAME
-            + " ADD COLUMN "
-            + TranslationsTable.DISPLAY_ORDER
-            + " integer not null default -1"
-        );
-        Cursor translations = db.query(
-            TranslationsTable.TABLE_NAME, new String[] { TranslationsTable.ID }, null, null, null, null, null
-        );
-        try {
-          if (translations != null && translations.moveToFirst()) {
-            for (int i = 0; i < translations.getCount(); i++) {
-              ContentValues values = new ContentValues();
-              values.put(TranslationsTable.DISPLAY_ORDER, i);
-              db.update(
-                  TranslationsTable.TABLE_NAME,
-                  values,
-                  TranslationsTable.ID + " = ?",
-                  new String[] { String.valueOf(translations.getInt(0)) }
-              );
-              translations.moveToNext();
-            }
-          }
-        } finally {
-          if (translations != null) translations.close();
-        }
-        db.setTransactionSuccessful();
-      } finally {
-        db.endTransaction();
-      }
+      upgradeToV5(db);
+    }
+  }
+
+  private void upgradeToV5(SQLiteDatabase db) {
+    // Add display order column and add arbitrary order to existing translations
+    db.beginTransaction();
+    try {
+      db.execSQL("ALTER TABLE "
+              + TranslationsTable.TABLE_NAME
+              + " ADD COLUMN "
+              + TranslationsTable.DISPLAY_ORDER
+              + " integer not null default -1"
+      );
+
+      // for now, set the order to be the translation id
+      db.execSQL("UPDATE " + TranslationsTable.TABLE_NAME + " SET " +
+              TranslationsTable.DISPLAY_ORDER + " = " + TranslationsTable.ID);
+      db.setTransactionSuccessful();
+    } finally {
+      db.endTransaction();
     }
   }
 

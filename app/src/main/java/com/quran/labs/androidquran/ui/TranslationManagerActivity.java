@@ -54,6 +54,9 @@ public class TranslationManagerActivity extends QuranActionBarActivity
   private static final String UPGRADING_EXTENSION = ".old";
 
   private List<TranslationItem> allItems;
+  private List<TranslationItem> currentSortedDownloads;
+  private List<TranslationItem> originalSortedDownloads;
+
   private SparseIntArray translationPositions;
 
   private TranslationsAdapter adapter;
@@ -159,12 +162,12 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       }
 
       List<TranslationItem> sortedItems = sortedDownloadedItems();
-      int lastDisplayOrder = sortedItems.get(sortedItems.size() - 1).getDisplayOrder();
-      TranslationItem updated = downloadingItem.withTranslationVersion(
-          downloadingItem.getTranslation().getCurrentVersion()
-      ).withDisplayOrder(
-          lastDisplayOrder + 1
-      );
+      int lastDisplayOrder = sortedItems.isEmpty() ? 1 :
+              sortedItems.get(sortedItems.size() - 1).getDisplayOrder();
+
+      final Translation translation = downloadingItem.getTranslation();
+      TranslationItem updated = new TranslationItem(translation,
+              translation.getCurrentVersion(), lastDisplayOrder + 1);
       updateTranslationItem(updated);
 
       // update active translations and add this item to it
@@ -210,6 +213,20 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     presenter.updateItem(updated);
   }
 
+  private void updateDownloadedItems() {
+    final List<TranslationRowData> translations = adapter.getTranslations();
+    final int downloadedItemCount = currentSortedDownloads.size();
+    if (downloadedItemCount + 1 <= translations.size()) {
+      for (int i = 0; i < downloadedItemCount; i++) {
+        translations.remove(1);
+      }
+
+      translations.addAll(1, currentSortedDownloads);
+      adapter.setTranslations(translations);
+      adapter.notifyDataSetChanged();
+    }
+  }
+
   public void onErrorDownloadTranslations() {
     translationSwipeRefresh.setRefreshing(false);
     Snackbar
@@ -237,7 +254,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
 
     List<TranslationItem> downloaded = new ArrayList<>();
     List<TranslationItem> notDownloaded = new ArrayList<>();
-    for (int i = 0, mAllItemsSize = allItems.size(); i < mAllItemsSize; i++) {
+    for (int i = 0, allItemsSize = allItems.size(); i < allItemsSize; i++) {
       TranslationItem item = allItems.get(i);
       if (item.exists()) {
         downloaded.add(item);
@@ -251,12 +268,12 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       TranslationHeader hdr = new TranslationHeader(getString(R.string.downloaded_translations));
       result.add(hdr);
 
-      Collections.sort(downloaded, new TranslationItemDisplaySort ());
+      // sort by display order
+      Collections.sort(downloaded, new TranslationItemDisplaySort());
 
       boolean needsUpgrade = false;
       for (TranslationItem item : downloaded) {
         result.add(item);
-        Timber.i("aaa translation " + item.name () + " order " + item.getDisplayOrder ());
         needsUpgrade = needsUpgrade || item.needsUpgrade();
       }
 
@@ -264,6 +281,8 @@ public class TranslationManagerActivity extends QuranActionBarActivity
         quranSettings.setHaveUpdatedTranslations(false);
       }
     }
+    originalSortedDownloads = new ArrayList<>(downloaded);
+    currentSortedDownloads = new ArrayList<>(downloaded);
 
     result.add(new TranslationHeader(getString(R.string.available_translations)));
 
@@ -361,78 +380,67 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     for (TranslationItem item : allItems) {
       if (item.exists()) result.add(item);
     }
-    Collections.sort(result, new TranslationItemDisplaySort ());
+    Collections.sort(result, new TranslationItemDisplaySort());
     return result;
   }
 
   private void rankDownItem(TranslationRowData targetRow) {
-    TranslationItem targetItem = (TranslationItem) targetRow;
-    List<TranslationItem> sortedDownloads = sortedDownloadedItems();
-    if (sortedDownloads.indexOf(targetItem) + 1 < sortedDownloads.size()) { // ignore last item in list
-      TranslationItem updatedItem = targetItem.withDisplayOrder(targetItem.getDisplayOrder() + 1);
-      ArrayList<TranslationItem> toUpdate = new ArrayList<>();
-      toUpdate.add(updatedItem);
-      TranslationItem swapItem = null;
-      for(TranslationItem translationItem : sortedDownloads){
-        if (translationItem.getDisplayOrder() == updatedItem.getDisplayOrder()) {
-          swapItem = translationItem;
-          break;
-        }
+    final TranslationItem targetItem = (TranslationItem) targetRow;
+    final int targetTranslationId = targetItem.getTranslation().getId();
+
+    int targetIndex = -1;
+    for (int i = 0; i < currentSortedDownloads.size(); i++) {
+      if (currentSortedDownloads.get(i).getTranslation().getId() == targetTranslationId) {
+        targetIndex = i;
+        break;
       }
-      if (swapItem != null) { // swap item order
-        if (swapItem.getDisplayOrder() > 0) {
-          toUpdate.add(swapItem.withDisplayOrder(swapItem.getDisplayOrder() - 1));
-        }
-      } else { // shift item order for higher items
-        for (TranslationItem translationItem : sortedDownloads) {
-          if (translationItem.getDisplayOrder() > -1 && translationItem.getDisplayOrder() < updatedItem.getDisplayOrder()) {
-            toUpdate.add(translationItem.withDisplayOrder(translationItem.getDisplayOrder() + 1));
-          }
-        }
+    }
+
+    if (targetIndex >= 0) {
+      currentSortedDownloads.remove(targetIndex);
+      final TranslationItem updatedItem =
+              targetItem.withDisplayOrder(targetItem.getDisplayOrder() + 1);
+      if (targetIndex + 1 < currentSortedDownloads.size()) {
+        currentSortedDownloads.add(targetIndex + 1, updatedItem);
+      } else {
+        currentSortedDownloads.add(updatedItem);
       }
-      if (!toUpdate.isEmpty()) {
-        if (selectionListener != null) selectionListener.handleSelection(updatedItem);
-        for(TranslationItem toUpdateItem : toUpdate){
-          updateTranslationItem(toUpdateItem);
-        }
-        generateListItems();
-      }
+      updateDownloadedItems();
     }
   }
 
   private void rankUpItem(TranslationRowData targetRow) {
-    TranslationItem targetItem = (TranslationItem) targetRow;
-    List<TranslationItem> sortedDownloads = sortedDownloadedItems();
-    if (sortedDownloads.indexOf(targetItem) > 0) { // ignore first item in list
-      ArrayList<TranslationItem> toUpdate  = new ArrayList<>();
-      int updatedDisplayOrder = targetItem.getDisplayOrder();
-      TranslationItem updatedItem = null;
-      if (updatedDisplayOrder > 0) {
-        updatedItem = targetItem.withDisplayOrder(--updatedDisplayOrder);
-        toUpdate.add(updatedItem);
+    final TranslationItem targetItem = (TranslationItem) targetRow;
+    final int targetTranslationId = targetItem.getTranslation().getId();
+
+    int targetIndex = -1;
+    for (int i = 0; i < currentSortedDownloads.size(); i++) {
+      if (currentSortedDownloads.get(i).getTranslation().getId() == targetTranslationId) {
+        targetIndex = i;
+        break;
       }
-      TranslationItem swapItem = null;
-      for (TranslationItem translationItem : sortedDownloads) {
-        if (translationItem.getDisplayOrder() == updatedDisplayOrder) {
-          swapItem = translationItem;
-        }
+    }
+
+    if (targetIndex >= 0) {
+      currentSortedDownloads.remove(targetIndex);
+      final TranslationItem updatedItem =
+              targetItem.withDisplayOrder(targetItem.getDisplayOrder() - 1);
+      currentSortedDownloads.add(Math.max(targetIndex - 1, 0), updatedItem);
+      updateDownloadedItems();
+    }
+  }
+
+  private void updateTranslationOrdersIfNecessary() {
+    if (!originalSortedDownloads.equals(currentSortedDownloads)) {
+      final List<TranslationItem> normalizedSortOrders = new ArrayList<>();
+      for (int i = 0; i < currentSortedDownloads.size(); i++) {
+        normalizedSortOrders.add(currentSortedDownloads.get(i).withDisplayOrder(i + 1));
       }
-      if (swapItem != null) { // swap item order
-        toUpdate.add(swapItem.withDisplayOrder(swapItem.getDisplayOrder() + 1));
-      } else { // shift item order for lower items
-        for (TranslationItem translationItem : sortedDownloads) {
-          if (translationItem.getDisplayOrder() > updatedDisplayOrder) {
-            toUpdate.add(translationItem.withDisplayOrder(translationItem.getDisplayOrder() - 1));
-          }
-        }
-      }
-      if (!toUpdate.isEmpty()) {
-        if (selectionListener != null && updatedItem != null) selectionListener.handleSelection(updatedItem);
-        for (TranslationItem toUpdateItem : toUpdate) {
-          updateTranslationItem(toUpdateItem);
-        }
-        generateListItems();
-      }
+      originalSortedDownloads.clear();
+      originalSortedDownloads.addAll(normalizedSortOrders);
+      currentSortedDownloads.clear();
+      currentSortedDownloads.addAll(normalizedSortOrders);
+      presenter.updateItemOrdering(normalizedSortOrders);
     }
   }
 
@@ -518,6 +526,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
       if (mode == actionMode) {
         selectionListener.clearSelection();
         actionMode = null;
+        updateTranslationOrdersIfNecessary();
       }
     }
 
