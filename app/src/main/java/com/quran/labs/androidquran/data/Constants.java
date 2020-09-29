@@ -65,6 +65,10 @@ public class Constants {
   public static final String PREF_HIGHLIGHT_BOOKMARKS = "highlightBookmarks";
   public static final String PREF_AYAH_BEFORE_TRANSLATION =
       "ayahBeforeTranslation";
+  public static final String PREF_SPLIT_PAGE_AND_TRANSLATION =
+      "splitPageAndTranslation";
+  public static final String PREF_QURAN_ON_RIGHT =
+      "quranOnRight";
   public static final String PREF_PREFER_STREAMING = "preferStreaming";
   public static final String PREF_DOWNLOAD_AMOUNT = "preferredDownloadAmount";
   public static final String PREF_LAST_UPDATED_TRANSLATIONS =

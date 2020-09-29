@@ -1,8 +1,5 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import android.view.ViewGroup;
 
 import com.quran.data.core.QuranInfo;
@@ -11,23 +8,28 @@ import com.quran.labs.androidquran.ui.fragment.QuranPageFragment;
 import com.quran.labs.androidquran.ui.fragment.TabletFragment;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import timber.log.Timber;
 
 public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
   private boolean isShowingTranslation;
   private boolean isDualPages;
+  private final boolean isSplitScreen;
   private final QuranInfo quranInfo;
   private final int totalPages;
   private final int totalPagesDual;
 
   public QuranPageAdapter(FragmentManager fm, boolean dualPages,
                           boolean isShowingTranslation,
-                          QuranInfo quranInfo) {
+                          QuranInfo quranInfo, boolean isSplitScreen) {
     super(fm, dualPages ? "dualPages" : "singlePage");
     this.quranInfo = quranInfo;
     isDualPages = dualPages;
     this.isShowingTranslation = isShowingTranslation;
+    this.isSplitScreen = isSplitScreen;
     totalPages = quranInfo.getNumberOfPages();
     totalPagesDual = totalPages / 2;
   }
@@ -71,17 +73,22 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
   @Override
   public int getCount() {
-    return isDualPages ? totalPagesDual : totalPages;
+    if (isDualPagesVisible()) {
+      return totalPagesDual;
+    } else {
+      return totalPages;
+    }
   }
 
   @Override
   public Fragment getItem(int position) {
-    int page = quranInfo.getPageFromPosition(position, isDualPages);
-    Timber.d("getting page: %d", page);
+    int page = quranInfo
+        .getPageFromPosition(position, isDualPagesVisible());
+    Timber.d("getting page: %d, from position %d", page, position);
     if (isDualPages) {
       return TabletFragment.newInstance(page,
           isShowingTranslation ? TabletFragment.Mode.TRANSLATION :
-              TabletFragment.Mode.ARABIC);
+              TabletFragment.Mode.ARABIC, isSplitScreen);
     } else if (isShowingTranslation) {
       return TranslationFragment.newInstance(page);
     } else {
@@ -110,9 +117,13 @@ public class QuranPageAdapter extends FragmentStatePagerAdapter {
     if (page < Constants.PAGES_FIRST || totalPages < page) {
       return null;
     }
-    int position = quranInfo.getPositionFromPage(page, isDualPages);
+    int position = quranInfo.getPositionFromPage(page, isDualPagesVisible());
     Fragment fragment = getFragmentIfExists(position);
     return fragment instanceof QuranPage && fragment.isAdded() ? (QuranPage) fragment : null;
+  }
+
+  private Boolean isDualPagesVisible() {
+    return isDualPages && !(isSplitScreen && isShowingTranslation);
   }
 
 }
