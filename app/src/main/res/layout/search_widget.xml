@@ -1,0 +1,41 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/search_widget_background"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="15dp">
+
+  <ImageButton
+      android:id="@+id/search_widget_icon_button"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:background="@android:color/transparent"
+      android:src="@drawable/icon" />
+
+  <ImageButton
+      android:id="@+id/search_widget_btn_search"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:background="@android:color/transparent"
+      android:src="@drawable/ic_ab_search" />
+
+  <ImageButton
+      android:id="@+id/search_widget_btn_go_to_quran"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:background="@android:color/transparent"
+      android:src="@drawable/ic_goto_quran" />
+
+  <ImageButton
+      android:id="@+id/search_widget_btn_jump"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:background="@android:color/transparent"
+      android:src="@drawable/ic_baseline_arrow_forward_24" />
+
+</LinearLayout>

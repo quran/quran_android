@@ -381,7 +381,7 @@
   <string name="tag_blank_tag_error">Tag names cannot be blank!</string>
   <string name="tag_duplicate_tag_error">Tag name already exists!</string>
 
-  <!-- bookmark & tag list -->
+  <!-- widgets -->
   <string name="bookmarks_list_empty">No Bookmarks</string>
 
   <!-- audio manager -->

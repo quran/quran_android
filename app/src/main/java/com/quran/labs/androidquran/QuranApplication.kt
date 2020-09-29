@@ -13,6 +13,7 @@ import com.quran.labs.androidquran.di.component.application.DaggerApplicationCom
 import com.quran.labs.androidquran.di.module.application.ApplicationModule
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.RecordingLogTree
+import com.quran.labs.androidquran.widget.BookmarksWidgetSubscriber
 import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
@@ -22,6 +23,9 @@ open class QuranApplication : MultiDexApplication() {
 
   @Inject
   lateinit var quranWorkerFactory: QuranWorkerFactory
+
+  @Inject
+  lateinit var bookmarksWidgetSubscriber: BookmarksWidgetSubscriber
 
   override fun onCreate() {
     super.onCreate()
@@ -34,6 +38,7 @@ open class QuranApplication : MultiDexApplication() {
             .setWorkerFactory(quranWorkerFactory)
             .build()
     )
+    bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
   }
 
   open fun setupTimber() {

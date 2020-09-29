@@ -1,17 +1,19 @@
 package com.quran.labs.androidquran.di.component.application;
 
+import com.quran.common.networking.NetworkModule;
 import com.quran.data.page.provider.QuranPageModule;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.QuranForwarderActivity;
 import com.quran.labs.androidquran.QuranImportActivity;
 import com.quran.labs.androidquran.SearchActivity;
-import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent;
+import com.quran.labs.androidquran.core.worker.di.WorkerModule;
 import com.quran.labs.androidquran.data.QuranDataModule;
 import com.quran.labs.androidquran.data.QuranDataProvider;
+import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent;
 import com.quran.labs.androidquran.di.module.application.ApplicationModule;
 import com.quran.labs.androidquran.di.module.application.DatabaseModule;
-import com.quran.common.networking.NetworkModule;
+import com.quran.labs.androidquran.di.module.widgets.BookmarksWidgetUpdaterModule;
 import com.quran.labs.androidquran.pageselect.PageSelectActivity;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
@@ -28,8 +30,10 @@ import com.quran.labs.androidquran.ui.fragment.QuranAdvancedSettingsFragment;
 import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment;
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
+import com.quran.labs.androidquran.widget.BookmarksWidget;
+import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity;
+import com.quran.labs.androidquran.widget.BookmarksWidgetListProvider;
 
-import com.quran.labs.androidquran.core.worker.di.WorkerModule;
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -41,7 +45,8 @@ import dagger.Component;
     NetworkModule.class,
     QuranDataModule.class,
     QuranPageModule.class,
-    WorkerModule.class
+    WorkerModule.class,
+    BookmarksWidgetUpdaterModule.class
 } )
 public interface ApplicationComponent {
   // subcomponents
@@ -66,6 +71,7 @@ public interface ApplicationComponent {
   void inject(QuranForwarderActivity quranForwarderActivity);
   void inject(SearchActivity searchActivity);
   void inject(PageSelectActivity pageSelectActivity);
+  void inject(ShowJumpFragmentActivity showJumpFragmentActivity);
 
   // fragments
   void inject(BookmarksFragment bookmarksFragment);
@@ -80,4 +86,8 @@ public interface ApplicationComponent {
   // dialogs
   void inject(TagBookmarkDialog tagBookmarkDialog);
   void inject(AddTagDialog addTagDialog);
+
+  // widgets
+  void inject(BookmarksWidgetListProvider bookmarksWidgetListProvider);
+  void inject(BookmarksWidget bookmarksWidget);
 }

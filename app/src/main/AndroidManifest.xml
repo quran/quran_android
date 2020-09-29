@@ -164,6 +164,35 @@
         <action android:name="android.intent.action.MEDIA_BUTTON"/>
       </intent-filter>
     </service>
+    <service
+        android:name=".widget.BookmarksWidgetService"
+        android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+    <receiver android:name=".widget.BookmarksWidget">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="com.quran.labs.androidquran.UPDATE_LIST" />
+      </intent-filter>
+
+      <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/bookmarks_widget_info" />
+    </receiver>
+    <receiver android:name=".widget.SearchWidget">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+
+      <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/search_widget_info" />
+    </receiver>
+
+    <activity
+        android:name=".widget.ShowJumpFragmentActivity"
+        android:launchMode="singleInstance"
+        android:excludeFromRecents="true"
+        android:theme="@style/Theme.AppCompat.Dialog" />
 
     <!-- override WorkManager initialization -->
     <provider
@@ -171,4 +200,4 @@
         android:authorities="${applicationId}.workmanager-init"
         tools:node="remove" />
   </application>
-</manifest> 
+</manifest>

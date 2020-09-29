@@ -35,6 +35,10 @@ import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 
+/**
+ * [DialogFragment] of a dialog for quickly selecting and jumping to a particular location in the
+ * Quran. A location can be selected by page number or Surah/Ayah.
+ */
 class JumpFragment : DialogFragment() {
 
   @Inject
