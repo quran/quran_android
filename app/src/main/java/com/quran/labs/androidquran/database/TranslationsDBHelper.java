@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 class TranslationsDBHelper extends SQLiteOpenHelper {
 
   private static final String DB_NAME = "translations.db";
-  private static final int DB_VERSION = 4;
+  private static final int DB_VERSION = 5;
   private static final String CREATE_TRANSLATIONS_TABLE =
       "CREATE TABLE " + TranslationsTable.TABLE_NAME + "(" +
           TranslationsTable.ID + " integer primary key, " +
@@ -22,7 +22,9 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
           TranslationsTable.URL + " varchar, " +
           TranslationsTable.LANGUAGE_CODE + " varchar, " +
           TranslationsTable.VERSION + " integer not null default 0," +
-          TranslationsTable.MINIMUM_REQUIRED_VERSION + " integer not null default 0);";
+          TranslationsTable.MINIMUM_REQUIRED_VERSION + " integer not null default 0, " +
+          TranslationsTable.DISPLAY_ORDER + " integer not null default -1 " +
+          ");";
 
   @Inject
   TranslationsDBHelper(Context context) {
@@ -69,6 +71,30 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
         db.endTransaction();
       }
     }
+
+    if (oldVersion < 5) {
+      upgradeToV5(db);
+    }
+  }
+
+  private void upgradeToV5(SQLiteDatabase db) {
+    // Add display order column and add arbitrary order to existing translations
+    db.beginTransaction();
+    try {
+      db.execSQL("ALTER TABLE "
+              + TranslationsTable.TABLE_NAME
+              + " ADD COLUMN "
+              + TranslationsTable.DISPLAY_ORDER
+              + " integer not null default -1"
+      );
+
+      // for now, set the order to be the translation id
+      db.execSQL("UPDATE " + TranslationsTable.TABLE_NAME + " SET " +
+              TranslationsTable.DISPLAY_ORDER + " = " + TranslationsTable.ID);
+      db.setTransactionSuccessful();
+    } finally {
+      db.endTransaction();
+    }
   }
 
   static class TranslationsTable {
@@ -82,5 +108,6 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
     static final String LANGUAGE_CODE = "languageCode";
     static final String VERSION = "version";
     static final String MINIMUM_REQUIRED_VERSION = "minimumRequiredVersion";
+    static final String DISPLAY_ORDER = "userDisplayOrder";
   }
 }

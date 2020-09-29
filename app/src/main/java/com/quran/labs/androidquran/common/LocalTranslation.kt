@@ -9,7 +9,8 @@ data class LocalTranslation(
   val url: String = "",
   val languageCode: String? = "",
   val version: Int = 1,
-  val minimumVersion: Int = 2) {
+  val minimumVersion: Int = 2,
+  val displayOrder: Int = -1) {
 
   fun getTranslatorName(): String {
     return when {

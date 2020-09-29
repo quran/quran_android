@@ -14,7 +14,7 @@ open class TranslationUtil(@ColorInt private val color: Int,
                            private val quranInfo: QuranInfo
 ) {
 
-  open fun parseTranslationText(quranText: QuranText): TranslationMetadata {
+  open fun parseTranslationText(quranText: QuranText, translationId: Int): TranslationMetadata {
     val text = quranText.text
     val hyperlinkId = getHyperlinkAyahId(quranText)
 
@@ -39,7 +39,7 @@ open class TranslationUtil(@ColorInt private val color: Int,
           val range = it.range
           spannable.setSpan(span, range.start, range.last + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
-    return TranslationMetadata(quranText.sura, quranText.ayah, spannable, suraAyah)
+    return TranslationMetadata(quranText.sura, quranText.ayah, spannable, translationId, suraAyah)
   }
 
   companion object {

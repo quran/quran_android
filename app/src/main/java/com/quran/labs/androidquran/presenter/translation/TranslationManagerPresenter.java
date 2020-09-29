@@ -146,6 +146,12 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
         .subscribe();
   }
 
+  public void updateItemOrdering(final List<TranslationItem> items) {
+    Observable.fromCallable(() -> translationsDBAdapter.writeTranslationUpdates(items))
+            .subscribeOn(Schedulers.io())
+            .subscribe();
+  }
+
   @WorkerThread
   public Observable<List<TranslationItem>> syncTranslationsWithCache() {
     return getCachedTranslationListObservable()
@@ -245,7 +251,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
             override = new TranslationItem(translation.withSchema(versions.second), versions.first);
           }
         } else {
-          item = new TranslationItem(translation, local.getVersion());
+          item = new TranslationItem(translation, local.getVersion(), local.getDisplayOrder());
         }
       } else {
         item = new TranslationItem(translation);

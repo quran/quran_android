@@ -234,6 +234,10 @@
   <string name="export_data_error">Error exporting data</string>
   <string name="exported_data">Data exported to %1$s</string>
 
+  <string name="move_up">Move Up</string>
+  <string name="move_down">Move Down</string>
+  <string name="delete_translation">Remove Translation</string>
+
   <string name="logs_email" translatable="false">quranandroid+logs@gmail.com</string>
   <string name="warning">Warning</string>
   <string name="kitkat_external_message">Due to Android limitations, if you choose to place Quran

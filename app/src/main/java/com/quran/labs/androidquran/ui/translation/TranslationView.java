@@ -11,6 +11,7 @@ import androidx.core.view.DisplayCutoutCompat;
 
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
@@ -23,6 +24,7 @@ import dev.chrisbanes.insetter.Insetter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -127,22 +129,23 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
         rows.add(new TranslationViewRow(TranslationViewRow.Type.QURAN_TEXT, verse));
       }
 
-      // added this to guard against a crash that happened when verse.texts was empty
-      int verseTexts = verse.texts.size();
-      for (int j = 0; j < translations.length; j++) {
-        final TranslationMetadata metadata = verseTexts > j ? verse.texts.get(j) : null;
+      final LocalTranslation[] sortedTranslations = Arrays.copyOf(this.translations, this.translations.length);
+      Arrays.sort(sortedTranslations, new LocalTranslationDisplaySort());
+
+      for (int j = 0; j < sortedTranslations.length; j++) {
+        final TranslationMetadata metadata = findText(verse.texts, sortedTranslations[j].getId());
         CharSequence text = metadata != null ? metadata.getText() : "";
         if (!TextUtils.isEmpty(text)) {
           if (wantTranslationHeaders) {
             rows.add(
                 new TranslationViewRow(TranslationViewRow.Type.TRANSLATOR,
                     verse,
-                    translations[j].getTranslatorName()));
+                    sortedTranslations[j].getTranslatorName()));
           }
           rows.add(new TranslationViewRow(
               TranslationViewRow.Type.TRANSLATION_TEXT, verse, text, j,
               metadata == null ? null : metadata.getLink(),
-              "ar".equals(translations[j].getLanguageCode())));
+              "ar".equals(sortedTranslations[j].getLanguageCode())));
         }
       }
 
@@ -197,6 +200,15 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     if (onClickListener != null) {
       onClickListener.onClick(v);
     }
+  }
+
+  private TranslationMetadata findText(List<TranslationMetadata> texts, Integer translationId) {
+    for (TranslationMetadata text : texts) {
+      if (translationId.equals(text.getLocalTranslationId())) {
+        return text;
+      }
+    }
+    return null;
   }
 
   /**

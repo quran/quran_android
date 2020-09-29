@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.adapter;
 
-import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,12 +25,19 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
 
   private final UnicastSubject<TranslationRowData> onClickDownloadSubject = UnicastSubject.create();
   private final UnicastSubject<TranslationRowData> onClickRemoveSubject = UnicastSubject.create();
+  private final UnicastSubject<TranslationRowData> onClickRankUpSubject = UnicastSubject.create();
+  private final UnicastSubject<TranslationRowData> onClickRankDownSubject = UnicastSubject.create();
+
+  private final DownloadedMenuActionListener downloadedMenuActionListener;
+  private final DownloadedItemActionListener downloadedItemActionListener;
 
   private List<TranslationRowData> translations = new ArrayList<>();
-  private Context context;
 
-  public TranslationsAdapter(Context context) {
-    this.context = context;
+  private TranslationItem selectedItem;
+
+  public TranslationsAdapter(DownloadedMenuActionListener aDownloadedMenuActionListener) {
+    this.downloadedMenuActionListener = aDownloadedMenuActionListener;
+    this.downloadedItemActionListener = new DownloadedItemActionListenerImpl();
   }
 
   @NotNull
@@ -47,6 +53,10 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
     switch (holder.getItemViewType()) {
       case R.layout.translation_row:
         TranslationItem item = (TranslationItem) rowItem;
+        holder.setItem(item);
+        holder.itemView.setActivated(
+          (selectedItem != null) && (item.getTranslation().getId() == selectedItem.getTranslation().getId())
+        );
         holder.getTranslationTitle().setText(item.name());
         if (TextUtils.isEmpty(item.getTranslation().getTranslatorNameLocalized())) {
           holder.getTranslationInfo().setText(item.getTranslation().getTranslator());
@@ -58,6 +68,8 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
         ImageView rightImage = holder.getRightImage();
 
         if (item.exists()) {
+          rightImage.setVisibility(View.GONE);
+          holder.itemView.setOnLongClickListener(holder.actionMenuListener);
           if (item.needsUpgrade()) {
             leftImage.setImageResource(R.drawable.ic_download);
             leftImage.setVisibility(View.VISIBLE);
@@ -65,10 +77,6 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
           } else {
             leftImage.setVisibility(View.GONE);
           }
-          rightImage.setImageResource(R.drawable.ic_cancel);
-          rightImage.setOnClickListener(holder.removeListener);
-          rightImage.setVisibility(View.VISIBLE);
-          rightImage.setContentDescription(context.getString(R.string.remove_button));
         } else {
           leftImage.setVisibility(View.GONE);
           rightImage.setImageResource(R.drawable.ic_download);
@@ -80,6 +88,7 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
         }
         break;
       case R.layout.translation_sep:
+        holder.itemView.setActivated(false);
         holder.getSeparatorText().setText(rowItem.name());
         break;
     }
@@ -104,12 +113,39 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
     return onClickRemoveSubject.hide();
   }
 
+  public Observable<TranslationRowData> getOnClickRankUpSubject() {
+    return onClickRankUpSubject.hide();
+  }
+
+  public Observable<TranslationRowData> getOnClickRankDownSubject() {
+    return onClickRankDownSubject.hide();
+  }
+
   public void setTranslations(List<TranslationRowData> data) {
     this.translations = data;
   }
 
   public List<TranslationRowData> getTranslations() {
     return translations;
+  }
+
+  public void setSelectedItem ( TranslationItem selectedItem ) {
+    this.selectedItem = selectedItem;
+    notifyDataSetChanged();
+  }
+
+  class DownloadedItemActionListenerImpl implements DownloadedItemActionListener {
+    public void handleDeleteItemAction() {
+      onClickRemoveSubject.onNext(selectedItem);
+    }
+
+    public void handleRankUpItemAction() {
+      onClickRankUpSubject.onNext(selectedItem);
+    }
+
+    public void handleRankDownItemAction() {
+      onClickRankDownSubject.onNext(selectedItem);
+    }
   }
 
   class TranslationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -119,6 +155,7 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
     @Nullable ImageView leftImage;
     @Nullable ImageView rightImage;
     @Nullable TextView separatorText;
+    @Nullable TranslationItem item;
 
     TranslationViewHolder(View itemView, int viewType) {
       super(itemView);
@@ -130,6 +167,10 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
       if (viewType == R.layout.translation_row) {
         itemView.setOnClickListener(this);
       }
+    }
+
+    void setItem ( @Nullable TranslationItem item ) {
+      this.item = item;
     }
 
     TextView getSeparatorText() {
@@ -152,17 +193,15 @@ public class TranslationsAdapter extends RecyclerView.Adapter<TranslationsAdapte
       return rightImage;
     }
 
-    final View.OnClickListener removeListener = v -> {
-      TranslationItem item = (TranslationItem) translations.get(getAdapterPosition());
-      onClickRemoveSubject.onNext(item);
+    final View.OnLongClickListener actionMenuListener = v -> {
+      downloadedMenuActionListener.startMenuAction(item, downloadedItemActionListener);
+      return true;
     };
 
     @Override
     public void onClick(View v) {
-      TranslationItem item = (TranslationItem) translations.get(getAdapterPosition());
-      if (item.exists() && !item.needsUpgrade()) {
-        onClickRemoveSubject.onNext(item);
-      } else {
+      downloadedMenuActionListener.finishMenuAction();
+      if (!item.exists() || item.needsUpgrade()) {
         onClickDownloadSubject.onNext(item);
       }
     }
