@@ -57,6 +57,7 @@ class QuranDataPresenter @Inject internal constructor(
 
   @UiThread
   fun checkPages() {
+    val lastCachedResult = lastCachedResult
     if (quranFileUtils.getQuranBaseDirectory(appContext) == null) {
       activity?.onStorageNotAvailable()
     } else if (lastCachedResult != null && cachedPageType == quranSettings.pageType) {
@@ -82,13 +83,13 @@ class QuranDataPresenter @Inject internal constructor(
               }
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(Consumer<QuranDataStatus> {
+              .subscribe(Consumer {
                 if (it.havePages() && it.patchParam == null) {
                   // only cache cases where no downloads are needed - otherwise, caching
                   // is risky since after coming back to the app, the downloads could be
                   // done, though the cached data suggests otherwise.
                   cachedPageType = pageType
-                  lastCachedResult = it
+                  this.lastCachedResult = it
                 }
                 activity?.onPagesChecked(it)
                 checkPagesDisposable = null
