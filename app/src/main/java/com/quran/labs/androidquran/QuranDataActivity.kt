@@ -77,7 +77,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   private var quranDataStatus: QuranDataStatus? = null
   private var disposable: Disposable? = null
 
-  public override fun onCreate(savedInstanceState: Bundle) {
+  public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     val quranApp = application as QuranApplication
     quranApp.applicationComponent.inject(this)
