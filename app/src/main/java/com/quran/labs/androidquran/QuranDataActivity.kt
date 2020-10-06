@@ -1,0 +1,596 @@
+package com.quran.labs.androidquran
+
+import android.Manifest.permission
+import android.R.string
+import android.app.Activity
+import android.content.DialogInterface
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
+import android.os.Bundle
+import android.os.Environment
+import android.text.TextUtils
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AlertDialog.Builder
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.work.WorkManager
+import com.quran.data.source.PageProvider
+import com.quran.labs.androidquran.presenter.data.QuranDataPresenter
+import com.quran.labs.androidquran.presenter.data.QuranDataPresenter.QuranDataStatus
+import com.quran.labs.androidquran.service.QuranDownloadService
+import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
+import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
+import com.quran.labs.androidquran.service.util.PermissionUtil
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent
+import com.quran.labs.androidquran.service.util.ServiceIntentHelper
+import com.quran.labs.androidquran.ui.QuranActivity
+import com.quran.labs.androidquran.ui.util.ToastCompat
+import com.quran.labs.androidquran.util.QuranFileUtils
+import com.quran.labs.androidquran.util.QuranScreenInfo
+import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.worker.WorkerConstants
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import timber.log.Timber
+import java.io.File
+import java.io.IOException
+import java.util.concurrent.TimeUnit.MILLISECONDS
+import javax.inject.Inject
+
+/**
+ * Launch [QuranActivity] after performing the following checks:
+ *
+ *  * Check that we have permission to write to external storage (if we need this permission)
+ * and if not, ask the user for permission
+ *  * Verify that we have the necessary Quran data downloaded on the device
+ *
+ * The logic is split between [QuranDataActivity] and [QuranDataPresenter],
+ * and [QuranDownloadService] is (mostly) used to perform the actual downloading of
+ * any Quran data.
+ */
+class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissionsResultCallback {
+
+  @Inject
+  lateinit var quranFileUtils: QuranFileUtils
+
+  @Inject
+  lateinit var quranScreenInfo: QuranScreenInfo
+
+  @Inject
+  lateinit var quranPageProvider: PageProvider
+
+  @Inject
+  lateinit var quranDataPresenter: QuranDataPresenter
+
+  private lateinit var quranSettings: QuranSettings
+
+  private var errorDialog: AlertDialog? = null
+  private var promptForDownloadDialog: AlertDialog? = null
+  private var permissionsDialog: AlertDialog? = null
+  private var downloadReceiver: DefaultDownloadReceiver? = null
+  private var quranDataStatus: QuranDataStatus? = null
+  private var disposable: Disposable? = null
+
+  public override fun onCreate(savedInstanceState: Bundle) {
+    super.onCreate(savedInstanceState)
+    val quranApp = application as QuranApplication
+    quranApp.applicationComponent.inject(this)
+    quranSettings = QuranSettings.getInstance(this)
+    quranSettings.upgradePreferences()
+
+    // replace null app locations (especially those set to null due to failures
+    // of finding a suitable data directory) with the default value to allow
+    // retrying to find a suitable location on app startup.
+    if (!quranSettings.isAppLocationSet) {
+      quranSettings.appCustomLocation = quranSettings.defaultLocation
+    }
+  }
+
+  override fun onResume() {
+    super.onResume()
+    quranDataPresenter.bind(this)
+    val downloadReceiver = DefaultDownloadReceiver(
+        this,
+        QuranDownloadService.DOWNLOAD_TYPE_PAGES
+    )
+    downloadReceiver.setCanCancelDownload(true)
+    val action = ProgressIntent.INTENT_NAME
+    LocalBroadcastManager.getInstance(this)
+        .registerReceiver(
+            downloadReceiver,
+            IntentFilter(action)
+        )
+    downloadReceiver.setListener(this)
+    this.downloadReceiver = downloadReceiver
+
+    disposable = Single.timer(100, MILLISECONDS)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { _: Long? ->
+          // try to reconnect to the service - delayed since some devices consider
+          // onResume as part of the app being in the background for starting-service
+          // purposes.
+          val reconnectIntent = Intent(this@QuranDataActivity, QuranDownloadService::class.java)
+          reconnectIntent.action = QuranDownloadService.ACTION_RECONNECT
+          reconnectIntent.putExtra(
+              QuranDownloadService.EXTRA_DOWNLOAD_TYPE,
+              QuranDownloadService.DOWNLOAD_TYPE_PAGES
+          )
+          try {
+            // this should be perfectly valid - on some devices though, despite the 100ms
+            // delay (or a longer one), some devices still complain about not being in the
+            // foreground.
+            //
+            // since this isn't strictly necessary (since the download service should emit
+            // periodically on its own anyway, and should handle multiple download requests,
+            // etc), let's just drop it if it fails since this is expected to rarely occur.
+            startService(reconnectIntent)
+          } catch (ise: IllegalStateException) {
+            Timber.e(ise)
+          }
+        }
+    checkPermissions()
+  }
+
+  override fun onPause() {
+    disposable!!.dispose()
+    quranDataPresenter.unbind(this)
+    downloadReceiver?.let { receiver ->
+      receiver.setListener(null)
+      LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
+      downloadReceiver = null
+    }
+
+    promptForDownloadDialog?.dismiss()
+    promptForDownloadDialog = null
+
+    errorDialog?.dismiss()
+    errorDialog = null
+    super.onPause()
+  }
+
+  private fun checkPermissions() {
+    val path = quranSettings.appCustomLocation
+    val fallbackFile = getExternalFilesDir(null)
+    val usesExternalFileDir = path != null && path.contains("com.quran")
+    if (path == null || usesExternalFileDir && fallbackFile == null) {
+      // suggests that we're on m+ and getExternalFilesDir returned null at some point
+      runListView()
+      return
+    }
+    val needsPermission = !usesExternalFileDir || path != fallbackFile!!.absolutePath
+    if (needsPermission && !PermissionUtil.haveWriteExternalStoragePermission(this)) {
+      // request permission
+      if (PermissionUtil.canRequestWriteExternalStoragePermission(this)) {
+        //show permission rationale dialog
+        val permissionsDialog = Builder(this)
+            .setMessage(R.string.storage_permission_rationale)
+            .setCancelable(false)
+            .setPositiveButton(string.ok) { dialog: DialogInterface, which: Int ->
+              dialog.dismiss()
+              permissionsDialog = null
+
+              // request permissions
+              requestExternalSdcardPermission()
+            }
+            .setNegativeButton(string.cancel) { dialog: DialogInterface, which: Int ->
+              // dismiss the dialog
+              dialog.dismiss()
+              permissionsDialog = null
+
+              // fall back if we can
+              if (fallbackFile != null) {
+                quranSettings.appCustomLocation = fallbackFile.absolutePath
+                checkPages()
+              } else {
+                // set to null so we can try again next launch
+                quranSettings.appCustomLocation = null
+                runListView()
+              }
+            }
+            .create()
+        this.permissionsDialog = permissionsDialog
+        permissionsDialog.show()
+      } else {
+        // fall back if we can
+        if (fallbackFile != null) {
+          quranSettings.appCustomLocation = fallbackFile.absolutePath
+          checkPages()
+        } else {
+          // set to null so we can try again next launch
+          quranSettings.appCustomLocation = null
+          runListView()
+        }
+      }
+    } else {
+      checkPages()
+    }
+  }
+
+  private fun checkPages() {
+    quranDataPresenter.checkPages()
+  }
+
+  private fun requestExternalSdcardPermission() {
+    ActivityCompat.requestPermissions(
+        this, arrayOf(permission.WRITE_EXTERNAL_STORAGE),
+        REQUEST_WRITE_TO_SDCARD_PERMISSIONS
+    )
+    quranSettings.setSdcardPermissionsDialogPresented()
+  }
+
+  override fun onRequestPermissionsResult(
+    requestCode: Int,
+    permissions: Array<String>,
+    grantResults: IntArray
+  ) {
+    if (requestCode == REQUEST_WRITE_TO_SDCARD_PERMISSIONS) {
+      if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        /*
+         * taking a risk here. on nexus 6, the permission is granted automatically. on the emulator,
+         * a restart is required. on reddit, someone with a nexus 9 said they also didn't need to
+         * restart for the permission to take effect.
+         *
+         * going to assume that it just works to avoid meh code (a check to see if i can actually
+         * write, and a PendingIntent plus System.exit to restart the app otherwise). logging to
+         * know if we should actually have that code or not.
+         *
+         * also see:
+         * http://stackoverflow.com/questions/32471888/
+         */
+        if (!canWriteSdcardAfterPermissions()) {
+          ToastCompat.makeText(
+              this,
+              R.string.storage_permission_please_restart, Toast.LENGTH_LONG
+          )
+              .show()
+        }
+        checkPages()
+      } else {
+        val fallbackFile = getExternalFilesDir(null)
+        if (fallbackFile != null) {
+          quranSettings.appCustomLocation = fallbackFile.absolutePath
+          checkPages()
+        } else {
+          // set to null so we can try again next launch
+          quranSettings.appCustomLocation = null
+          runListView()
+        }
+      }
+    }
+  }
+
+  private fun canWriteSdcardAfterPermissions(): Boolean {
+    val location = quranFileUtils.getQuranBaseDirectory(this)
+    if (location != null) {
+      try {
+        if (File(location).exists() ||
+            quranFileUtils.makeQuranDirectory(this, quranScreenInfo.widthParam)
+        ) {
+          val f = File(location, "" + System.currentTimeMillis())
+          if (f.createNewFile()) {
+            f.delete()
+            return true
+          }
+        }
+      } catch (e: Exception) {
+        // no op
+      }
+    }
+    return false
+  }
+
+  override fun handleDownloadSuccess() {
+    if (quranDataStatus != null && !quranDataStatus!!.havePages()) {
+      // didn't have pages before and the download succeeded, which means
+      // full zip download was done - let's mark partial pages checker as
+      // not needed since we already checked it.
+      val pageType = quranSettings.pageType
+      quranSettings.setCheckedPartialImages(pageType)
+
+      // cancel any pending work
+      WorkManager.getInstance(applicationContext)
+          .cancelUniqueWork(WorkerConstants.CLEANUP_PREFIX + pageType)
+    }
+    quranSettings.removeShouldFetchPages()
+    runListView()
+  }
+
+  override fun handleDownloadFailure(errId: Int) {
+    if (errorDialog != null && errorDialog!!.isShowing) {
+      return
+    }
+    showFatalErrorDialog(errId)
+  }
+
+  private fun showFatalErrorDialog(errorId: Int) {
+    val builder = Builder(this)
+    builder.setMessage(errorId)
+    builder.setCancelable(false)
+    builder.setPositiveButton(
+        R.string.download_retry
+    ) { dialog: DialogInterface, _: Int ->
+      dialog.dismiss()
+      errorDialog = null
+      removeErrorPreferences()
+      downloadQuranImages(true)
+    }
+    builder.setNegativeButton(
+        R.string.download_cancel
+    ) { dialog: DialogInterface, _: Int ->
+      dialog.dismiss()
+      errorDialog = null
+      removeErrorPreferences()
+      quranSettings.setShouldFetchPages(false)
+      runListView()
+    }
+    errorDialog = builder.create()
+    errorDialog!!.show()
+  }
+
+  private fun removeErrorPreferences() {
+    quranSettings.clearLastDownloadError()
+  }
+
+  fun onStorageNotAvailable() {
+    // no storage mounted, nothing we can do...
+    runListView()
+  }
+
+  fun onPagesChecked(quranDataStatus: QuranDataStatus) {
+    this.quranDataStatus = quranDataStatus
+    if (!quranDataStatus.havePages()) {
+      if (quranSettings.didDownloadPages()) {
+        // log if we downloaded pages once before
+        try {
+          onPagesLost()
+        } catch (e: Exception) {
+          Timber.e(e)
+        }
+        // clear the "pages downloaded" flag
+        quranSettings.removeDidDownloadPages()
+      }
+      val lastErrorItem = quranSettings.lastDownloadItemWithError
+      Timber.d("checkPages: need to download pages... lastError: %s", lastErrorItem)
+      if (PAGES_DOWNLOAD_KEY == lastErrorItem) {
+        val lastError = quranSettings.lastDownloadErrorCode
+        val errorId = ServiceIntentHelper
+            .getErrorResourceFromErrorCode(lastError, false)
+        showFatalErrorDialog(errorId)
+      } else if (quranSettings.shouldFetchPages()) {
+        downloadQuranImages(false)
+      } else {
+        promptForDownload()
+      }
+    } else {
+      val appLocation = quranSettings.appCustomLocation
+      val baseDirectory = quranFileUtils.quranBaseDirectory
+      try {
+        // try to write a directory to distinguish between the entire Quran directory
+        // being removed versus just the images being somehow removed.
+        File(baseDirectory, QURAN_DIRECTORY_MARKER_FILE).createNewFile()
+        File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
+
+        // try writing a file to the app's internal no_backup directory
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+          File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
+        }
+        quranSettings.setDownloadedPages(
+            System.currentTimeMillis(), appLocation,
+            quranDataStatus.portraitWidth + "_" + quranDataStatus.landscapeWidth
+        )
+      } catch (ioe: IOException) {
+        Timber.e(ioe)
+      }
+      val patchParam = quranDataStatus.patchParam
+      if (!TextUtils.isEmpty(patchParam)) {
+        Timber.d("checkPages: have pages, but need patch %s", patchParam)
+        promptForDownload()
+      } else {
+        runListView()
+      }
+    }
+  }
+
+  private fun onPagesLost() {
+    val appLocation = quranSettings.appCustomLocation
+    // check if appLocation matches either external files dir or the sdcard
+    val appDir = getExternalFilesDir(null)
+    val sdcard = Environment.getExternalStorageDirectory()
+
+    // see if the page path at the time of the first download hasn't changed
+    val lastDownloadedPagePath = quranSettings.previouslyDownloadedPath
+    val isPagePathTheSame = appLocation == lastDownloadedPagePath
+
+    // see if the last downloaded page types are the same as what we want to download now
+    val lastDownloadedPages = quranSettings.previouslyDownloadedPageTypes
+    val currentPagesToDownload = quranDataStatus!!.portraitWidth + "_" +
+        quranDataStatus!!.landscapeWidth
+    val arePageSetsEquivalent = lastDownloadedPages == currentPagesToDownload
+
+    // check for the existence of a .q4a file in the base directory to distinguish
+    // the case in which the whole directory was wiped (nothing we can really do here?)
+    // and the case when just the images disappeared.
+    var didHiddenFileSurvive = false
+    val baseDirectory = quranFileUtils.quranBaseDirectory
+    if (baseDirectory != null) {
+      try {
+        didHiddenFileSurvive = File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).exists()
+      } catch (e: Exception) {
+        Timber.e(e)
+      }
+    }
+
+    // check for the existence of a q4a file in the base directory - this is the same as
+    // above, but is there to see if, perhaps, hidden files survive but non-hidden ones don't.
+    var didNormalFileSurvive = false
+    if (baseDirectory != null) {
+      try {
+        didNormalFileSurvive = File(baseDirectory, QURAN_DIRECTORY_MARKER_FILE).exists()
+      } catch (e: Exception) {
+        Timber.e(e)
+      }
+    }
+
+    // check for the existence of a .q4a file in the internal no_backup directory.
+    var didInternalFileSurvive = false
+    if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+      try {
+        didInternalFileSurvive = File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).exists()
+      } catch (e: Exception) {
+        Timber.e(e)
+      }
+    }
+
+    // how recently did the files disappear?
+    val downloadTime = quranSettings.previouslyDownloadedTime
+    val recencyOfRemoval: String
+    recencyOfRemoval = if (downloadTime == 0L) {
+      "no timestamp"
+    } else {
+      val deltaInSeconds = (System.currentTimeMillis() - downloadTime) / 1000
+      when {
+        deltaInSeconds < 5 * 60 -> { "within 5 minutes" }
+        deltaInSeconds < 10 * 60 -> { "within 10 minutes" }
+        deltaInSeconds < 60 * 60 -> { "within an hour" }
+        deltaInSeconds < 24 * 60 * 60 -> { "within a day" }
+        else -> { "more than a day" }
+      }
+    }
+
+    // log an exception
+    Timber.w(quranDataStatus.toString())
+    Timber.w(quranDataPresenter.getDebugLog())
+    Timber.w("appLocation: %s", appLocation)
+    Timber.w("sdcard: %s, app dir: %s", sdcard, appDir)
+    Timber.w("didNormalFileSurvive: %s", didNormalFileSurvive)
+    Timber.w("didInternalFileSurvive: %s", didInternalFileSurvive)
+    Timber.w("didHiddenFileSurvive: %s", didHiddenFileSurvive)
+    Timber.w(
+        "seconds passed: %d, recency: %s",
+        (System.currentTimeMillis() - downloadTime) / 1000, recencyOfRemoval
+    )
+    Timber.w("isPagePathTheSame: %s", isPagePathTheSame)
+    Timber.w("arePagesToDownloadTheSame: %s", arePageSetsEquivalent)
+    Timber.e(IllegalStateException("Deleted Data"), "Unable to Download Pages")
+  }
+
+  /**
+   * this method asks the service to download quran images.
+   *
+   * there are two possible cases - the first is one in which we are not
+   * sure if a download is going on or not (ie we just came in the app,
+   * the files aren't all there, so we want to start downloading).  in
+   * this case, we start the download only if we didn't receive any
+   * broadcasts before starting it.
+   *
+   * in the second case, we know what we are doing (either because the user
+   * just clicked "download" for the first time or the user asked to retry
+   * after an error), then we pass the force parameter, which asks the
+   * service to just restart the download irrespective of anything else.
+   *
+   * @param force whether to force the download to restart or not
+   */
+  private fun downloadQuranImages(force: Boolean) {
+    // if any broadcasts were received, then we are already downloading
+    // so unless we know what we are doing (via force), don't ask the
+    // service to restart the download
+    if (downloadReceiver != null && downloadReceiver!!.didReceiveBroadcast() && !force) {
+      return
+    }
+    val dataStatus = quranDataStatus
+    var url: String
+    url = if (dataStatus!!.needPortrait() && !dataStatus.needLandscape()) {
+      // phone (and tablet when upgrading on some devices, ex n10)
+      quranFileUtils.zipFileUrl
+    } else if (dataStatus.needLandscape() && !dataStatus.needPortrait()) {
+      // tablet (when upgrading from pre-tablet on some devices, ex n7).
+      quranFileUtils.getZipFileUrl(quranScreenInfo.tabletWidthParam)
+    } else {
+      // new tablet installation - if both image sets are the same
+      // size, then just get the correct one only
+      if (quranScreenInfo.tabletWidthParam == quranScreenInfo.widthParam) {
+        quranFileUtils.zipFileUrl
+      } else {
+        // otherwise download one zip with both image sets
+        val widthParam = quranScreenInfo.widthParam + quranScreenInfo.tabletWidthParam
+        quranFileUtils.getZipFileUrl(widthParam)
+      }
+    }
+
+    // if we have a patch url, just use that
+    val patchParam = dataStatus.patchParam
+    if (!TextUtils.isEmpty(patchParam)) {
+      url = quranFileUtils.getPatchFileUrl(patchParam!!, quranPageProvider.getImageVersion())
+    }
+    val destination = quranFileUtils.getQuranImagesBaseDirectory(this@QuranDataActivity)
+
+    // start service
+    val intent = ServiceIntentHelper.getDownloadIntent(
+        this, url,
+        destination, getString(R.string.app_name), PAGES_DOWNLOAD_KEY,
+        QuranDownloadService.DOWNLOAD_TYPE_PAGES
+    )
+    if (!force) {
+      // handle race condition in which we missed the error preference and
+      // the broadcast - if so, just rebroadcast errors so we handle them
+      intent.putExtra(QuranDownloadService.EXTRA_REPEAT_LAST_ERROR, true)
+    }
+    startService(intent)
+  }
+
+  private fun promptForDownload() {
+    val dataStatus = quranDataStatus
+    var message = R.string.downloadPrompt
+    if (quranScreenInfo.isDualPageMode && dataStatus!!.needLandscape()) {
+      message = R.string.downloadTabletPrompt
+    }
+    if (!TextUtils.isEmpty(dataStatus!!.patchParam)) {
+      // patch message if applicable
+      message = R.string.downloadImportantPrompt
+    }
+    val dialog = Builder(this)
+    dialog.setMessage(message)
+    dialog.setCancelable(false)
+    dialog.setPositiveButton(
+        R.string.downloadPrompt_ok
+    ) { dialog1: DialogInterface, id: Int ->
+      dialog1.dismiss()
+      promptForDownloadDialog = null
+      quranSettings.setShouldFetchPages(true)
+      downloadQuranImages(true)
+    }
+    dialog.setNegativeButton(
+        R.string.downloadPrompt_no
+    ) { dialog12: DialogInterface, id: Int ->
+      dialog12.dismiss()
+      promptForDownloadDialog = null
+      runListView()
+    }
+    val promptForDownloadDialog = dialog.create()
+    promptForDownloadDialog.setTitle(R.string.downloadPrompt_title)
+    promptForDownloadDialog.show()
+    this.promptForDownloadDialog = promptForDownloadDialog
+  }
+
+  private fun runListView() {
+    val i = Intent(this, QuranActivity::class.java)
+    i.putExtra(
+        QuranActivity.EXTRA_SHOW_TRANSLATION_UPGRADE, quranSettings.haveUpdatedTranslations()
+    )
+    startActivity(i)
+    finish()
+  }
+
+  companion object {
+    const val PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY"
+    private const val REQUEST_WRITE_TO_SDCARD_PERMISSIONS = 1
+    private const val QURAN_DIRECTORY_MARKER_FILE = "q4a"
+    private const val QURAN_HIDDEN_DIRECTORY_MARKER_FILE = ".q4a"
+  }
+}
