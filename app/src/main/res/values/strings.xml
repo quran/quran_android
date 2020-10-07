@@ -39,6 +39,7 @@
   <string name="menu_jump">Jump</string>
   <string name="gotoPage">Go to page</string>
   <string name="cancel">Cancel</string>
+  <string name="please_wait">Please wait…</string>
 
   <!-- about -->
   <string name="about_description">Quran for Android is a free Quran application. Please do not forget the contributors in your prayers.</string>
@@ -411,13 +412,15 @@
   <!-- format strings -->
   <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
 
-  <!-- notification channel names [CHAR LIMIT=40] -->
+  <!-- dual screen prefs -->
   <string name="prefs_category_dual_screen">Dual Page Preferences</string>
-  <string name="notification_channel_download">Quran Downloads</string>
-  <string name="notification_channel_audio">Quran Recitation</string>
   <string name="prefs_quran_on_right_title">Show Quran on right in dual mode</string>
   <string name="prefs_quran_on_right_summary_on">In dual page mode with translations, Quran is shown on the right</string>
   <string name="prefs_quran_on_right_summary_off">In dual page mode with translations, translation is shown on the right</string>
   <string name="prefs_split_page_and_translation_title">Quran and translation in dual mode</string>
   <string name="prefs_split_page_and_translation_summary">In dual page mode with translations, Quran page and translation is shown</string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
+  <string name="notification_channel_download">Quran Downloads</string>
+  <string name="notification_channel_audio">Quran Recitation</string>
 </resources>

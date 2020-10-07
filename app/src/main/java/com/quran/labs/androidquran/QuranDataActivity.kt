@@ -7,14 +7,12 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AlertDialog.Builder
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -34,12 +32,20 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.worker.WorkerConstants
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
+import java.lang.IllegalArgumentException
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
@@ -75,7 +81,10 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   private var permissionsDialog: AlertDialog? = null
   private var downloadReceiver: DefaultDownloadReceiver? = null
   private var quranDataStatus: QuranDataStatus? = null
+  private var updateDialog: AlertDialog? = null
   private var disposable: Disposable? = null
+
+  private val scope = MainScope()
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -138,7 +147,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   }
 
   override fun onPause() {
-    disposable!!.dispose()
+    disposable?.dispose()
     quranDataPresenter.unbind(this)
     downloadReceiver?.let { receiver ->
       receiver.setListener(null)
@@ -151,53 +160,31 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
 
     errorDialog?.dismiss()
     errorDialog = null
+    updateDialog?.dismiss()
+    updateDialog = null
+
+    scope.cancel()
     super.onPause()
   }
 
   private fun checkPermissions() {
+    // path is the current app location - if not set, it falls back to getExternalFilesDir
     val path = quranSettings.appCustomLocation
     val fallbackFile = getExternalFilesDir(null)
     val usesExternalFileDir = path != null && path.contains("com.quran")
     if (path == null || usesExternalFileDir && fallbackFile == null) {
-      // suggests that we're on m+ and getExternalFilesDir returned null at some point
+      // error case: suggests that we're on m+ and getExternalFilesDir returned null at some point
       runListView()
       return
     }
+
     val needsPermission = !usesExternalFileDir || path != fallbackFile!!.absolutePath
     if (needsPermission && !PermissionUtil.haveWriteExternalStoragePermission(this)) {
-      // request permission
+      // we need permission and don't have it, so request it if we can
       if (PermissionUtil.canRequestWriteExternalStoragePermission(this)) {
-        //show permission rationale dialog
-        val permissionsDialog = Builder(this)
-            .setMessage(R.string.storage_permission_rationale)
-            .setCancelable(false)
-            .setPositiveButton(string.ok) { dialog: DialogInterface, which: Int ->
-              dialog.dismiss()
-              permissionsDialog = null
-
-              // request permissions
-              requestExternalSdcardPermission()
-            }
-            .setNegativeButton(string.cancel) { dialog: DialogInterface, which: Int ->
-              // dismiss the dialog
-              dialog.dismiss()
-              permissionsDialog = null
-
-              // fall back if we can
-              if (fallbackFile != null) {
-                quranSettings.appCustomLocation = fallbackFile.absolutePath
-                checkPages()
-              } else {
-                // set to null so we can try again next launch
-                quranSettings.appCustomLocation = null
-                runListView()
-              }
-            }
-            .create()
-        this.permissionsDialog = permissionsDialog
-        permissionsDialog.show()
+        askIfCanRequestPermissions(fallbackFile)
       } else {
-        // fall back if we can
+        // we can't request permissions, so try to fall back
         if (fallbackFile != null) {
           quranSettings.appCustomLocation = fallbackFile.absolutePath
           checkPages()
@@ -207,7 +194,67 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
           runListView()
         }
       }
+   } else if (needsPermission && Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+      // we need permission (i.e. are writing to the sdcard) on Android 10 (Q) and above
+      // we should migrate because when we are required to target Android 11 next year
+      // in sha' Allah, we may lose legacy permissions.
+      //
+      // one question might be, "what if the person set a custom path?" - on Kitkat and
+      // above, the only allowed custom paths are what is returned by getExternalFilesDirs,
+      // none of which need write permissions. it's extremely unlikely for someone to upgrade
+      // from Kitkat to Android 10 (10 years worth of upgrades!)
+      migrateFromTo(fallbackFile!!.absolutePath)
     } else {
+      checkPages()
+    }
+  }
+
+  private fun askIfCanRequestPermissions(fallbackFile: File?) {
+    //show permission rationale dialog
+    val permissionsDialog = AlertDialog.Builder(this)
+        .setMessage(R.string.storage_permission_rationale)
+        .setCancelable(false)
+        .setPositiveButton(string.ok) { dialog: DialogInterface, _: Int ->
+          dialog.dismiss()
+          permissionsDialog = null
+
+          // request permissions
+          requestExternalSdcardPermission()
+        }
+        .setNegativeButton(string.cancel) { dialog: DialogInterface, _: Int ->
+          // dismiss the dialog
+          dialog.dismiss()
+          permissionsDialog = null
+
+          // fall back if we can
+          if (fallbackFile != null) {
+            quranSettings.appCustomLocation = fallbackFile.absolutePath
+            checkPages()
+          } else {
+            // set to null so we can try again next launch
+            quranSettings.appCustomLocation = null
+            runListView()
+          }
+        }
+        .create()
+    this.permissionsDialog = permissionsDialog
+    permissionsDialog.show()
+  }
+
+  private fun migrateFromTo(destination: String) {
+    val migrationDialog = AlertDialog.Builder(this)
+        .setView(R.layout.migration_upgrade)
+        .create()
+    updateDialog = migrationDialog
+    migrationDialog.show()
+
+    scope.launch {
+      withContext(Dispatchers.IO) {
+        if (quranFileUtils.moveAppFiles(applicationContext, destination)) {
+          // only if we succeed...
+          quranSettings.appCustomLocation = destination
+        }
+      }
       checkPages()
     }
   }
@@ -309,7 +356,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   }
 
   private fun showFatalErrorDialog(errorId: Int) {
-    val builder = Builder(this)
+    val builder = AlertDialog.Builder(this)
     builder.setMessage(errorId)
     builder.setCancelable(false)
     builder.setPositiveButton(
@@ -338,11 +385,16 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   }
 
   fun onStorageNotAvailable() {
+    updateDialog?.dismiss()
+    updateDialog = null
     // no storage mounted, nothing we can do...
     runListView()
   }
 
   fun onPagesChecked(quranDataStatus: QuranDataStatus) {
+    updateDialog?.dismiss()
+    updateDialog = null
+
     this.quranDataStatus = quranDataStatus
     if (!quranDataStatus.havePages()) {
       if (quranSettings.didDownloadPages()) {
@@ -357,15 +409,19 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
       }
       val lastErrorItem = quranSettings.lastDownloadItemWithError
       Timber.d("checkPages: need to download pages... lastError: %s", lastErrorItem)
-      if (PAGES_DOWNLOAD_KEY == lastErrorItem) {
-        val lastError = quranSettings.lastDownloadErrorCode
-        val errorId = ServiceIntentHelper
-            .getErrorResourceFromErrorCode(lastError, false)
-        showFatalErrorDialog(errorId)
-      } else if (quranSettings.shouldFetchPages()) {
-        downloadQuranImages(false)
-      } else {
-        promptForDownload()
+      when {
+        PAGES_DOWNLOAD_KEY == lastErrorItem -> {
+          val lastError = quranSettings.lastDownloadErrorCode
+          val errorId = ServiceIntentHelper
+              .getErrorResourceFromErrorCode(lastError, false)
+          showFatalErrorDialog(errorId)
+        }
+        quranSettings.shouldFetchPages() -> {
+          downloadQuranImages(false)
+        }
+        else -> {
+          promptForDownload()
+        }
       }
     } else {
       val appLocation = quranSettings.appCustomLocation
@@ -377,7 +433,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
         File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
 
         // try writing a file to the app's internal no_backup directory
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
           File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
         }
         quranSettings.setDownloadedPages(
@@ -439,7 +495,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
 
     // check for the existence of a .q4a file in the internal no_backup directory.
     var didInternalFileSurvive = false
-    if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       try {
         didInternalFileSurvive = File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).exists()
       } catch (e: Exception) {
@@ -554,12 +610,12 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
       // patch message if applicable
       message = R.string.downloadImportantPrompt
     }
-    val dialog = Builder(this)
+    val dialog = AlertDialog.Builder(this)
     dialog.setMessage(message)
     dialog.setCancelable(false)
     dialog.setPositiveButton(
         R.string.downloadPrompt_ok
-    ) { dialog1: DialogInterface, id: Int ->
+    ) { dialog1: DialogInterface, _: Int ->
       dialog1.dismiss()
       promptForDownloadDialog = null
       quranSettings.setShouldFetchPages(true)
@@ -567,7 +623,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     }
     dialog.setNegativeButton(
         R.string.downloadPrompt_no
-    ) { dialog12: DialogInterface, id: Int ->
+    ) { dialog12: DialogInterface, _: Int ->
       dialog12.dismiss()
       promptForDownloadDialog = null
       runListView()
