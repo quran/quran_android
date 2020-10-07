@@ -18,6 +18,7 @@ import okhttp3.Request.Builder
 import okhttp3.ResponseBody
 import okio.Buffer
 import okio.ForwardingSource
+import okio.Okio
 import okio.Source
 import okio.buffer
 import okio.sink
@@ -548,13 +549,13 @@ class QuranFileUtils @Inject constructor(
     }
   }
 
-  @Throws(IOException::class)
   private fun copyFileOrDirectory(source: File, destination: File) {
     if (source.isDirectory) {
       if (!destination.exists() && !destination.mkdirs()) {
         return
       }
-      val files = source.listFiles()
+
+      val files = source.listFiles() ?: throw IOException("null listFiles() output...")
       for (f in files) {
         copyFileOrDirectory(f, File(destination, f.name))
       }
@@ -563,21 +564,10 @@ class QuranFileUtils @Inject constructor(
     }
   }
 
-  @Throws(IOException::class)
   private fun copyFile(source: File, destination: File) {
-    FileInputStream(source)
-        .use { `in` ->
-          FileOutputStream(destination)
-              .use { out ->
-                val buffer = ByteArray(1024)
-                var length: Int
-                while (`in`.read(buffer)
-                        .also { length = it } > 0
-                ) {
-                  out.write(buffer, 0, length)
-                }
-              }
-        }
+    destination.sink().buffer().use { sink ->
+      source.source().use { source -> sink.writeAll(source) }
+    }
   }
 
   // taken from Picasso's BitmapUtils class

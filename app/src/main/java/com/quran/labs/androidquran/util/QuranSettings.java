@@ -12,6 +12,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,9 +27,9 @@ public class QuranSettings {
 
   private static QuranSettings instance;
 
-  private Context appContext;
-  private SharedPreferences prefs;
-  private SharedPreferences perInstallationPrefs;
+  private final Context appContext;
+  private final SharedPreferences prefs;
+  private final SharedPreferences perInstallationPrefs;
 
   public static synchronized QuranSettings getInstance(@NonNull Context context) {
     if (instance == null) {
@@ -285,7 +286,9 @@ public class QuranSettings {
   }
 
   public String getDefaultLocation() {
-    return Environment.getExternalStorageDirectory().getAbsolutePath();
+    final File externalFilesDir = appContext.getExternalFilesDir(null);
+    return externalFilesDir != null ?
+        externalFilesDir.getAbsolutePath() : null;
   }
 
   public void setAppCustomLocation(String newLocation) {
