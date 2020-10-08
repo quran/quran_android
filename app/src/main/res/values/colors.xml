@@ -42,7 +42,7 @@
   <color name="download_button_background">#ff556f79</color>
   <color name="cancel_button_background">#ffa50800</color>
   <color name="snackbar_background_color">@color/download_button_background</color>
-  <color name="overlay_panel">#bb000000</color>
+  <color name="overlay_panel">#dd000000</color>
   <color name="navbar_night_color">#ff000000</color>
   <color name="toast_background_color">#e6eeeeee</color>
   <color name="toast_text_color">#ff000000</color>
