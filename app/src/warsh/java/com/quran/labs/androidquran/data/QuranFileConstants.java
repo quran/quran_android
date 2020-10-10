@@ -14,4 +14,5 @@ public class QuranFileConstants {
 
   // data
   public static final boolean ARE_PAGES_BUNDLED = true;
+  public static final int[] FORCE_DELETE_PAGES = new int[] { 1260 };
 }

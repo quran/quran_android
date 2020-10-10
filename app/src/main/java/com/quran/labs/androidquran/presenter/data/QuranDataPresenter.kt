@@ -101,6 +101,9 @@ class QuranDataPresenter @Inject internal constructor(
   private fun copyLocalDataIfNecessary(status: QuranDataStatus): Single<QuranDataStatus> {
     return Single.fromCallable {
       if (!status.havePages() && QuranFileConstants.ARE_PAGES_BUNDLED) {
+        for (widthToDelete in QuranFileConstants.FORCE_DELETE_PAGES) {
+          quranFileUtils.removeFilesForWidth(appContext, widthToDelete)
+        }
         quranFileUtils.copyQuranDataFromAssets(appContext, status.portraitWidth)
         status.copy(havePortrait = true, haveLandscape = true)
       } else {
@@ -245,7 +248,7 @@ class QuranDataPresenter @Inject internal constructor(
   }
 
   private fun actuallyCheckPages(totalPages: Int): Single<QuranDataStatus> {
-    return Single.fromCallable<QuranDataStatus> {
+    return Single.fromCallable {
       val width = quranScreenInfo.widthParam
       val havePortrait = quranFileUtils.haveAllImages(appContext, width, totalPages, true)
 
