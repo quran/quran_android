@@ -18,14 +18,12 @@ import okhttp3.Request.Builder
 import okhttp3.ResponseBody
 import okio.Buffer
 import okio.ForwardingSource
-import okio.Okio
 import okio.Source
 import okio.buffer
 import okio.sink
 import okio.source
 import timber.log.Timber
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -94,6 +92,19 @@ class QuranFileUtils @Inject constructor(
       }
     }
     return null
+  }
+
+  fun removeFilesForWidth(context: Context, width: Int) {
+    val widthParam = "_$width"
+    val quranDirectory = getQuranImagesDirectory(context, widthParam) ?: return
+    val file = File(quranDirectory)
+    if (file.exists()) {
+      deleteFileOrDirectory(file)
+      val ayahinfoFile = File(getQuranAyahDatabaseDirectory(context), "ayahinfo_$width.db")
+      if (ayahinfoFile.exists()) {
+        ayahinfoFile.delete()
+      }
+    }
   }
 
   fun copyQuranDataFromAssets(context: Context, widthParam: String) {
