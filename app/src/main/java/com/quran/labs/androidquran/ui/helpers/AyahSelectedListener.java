@@ -17,4 +17,9 @@ public interface AyahSelectedListener {
   /** General click event without ayah info */
   boolean onClick(EventType eventType);
 
+  /** end ayah mode */
+  void endAyahMode();
+
+  /** set menu bar position */
+  void requestMenuPositionUpdate(AyahTracker tracker);
 }

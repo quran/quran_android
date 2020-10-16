@@ -44,7 +44,7 @@ public class AyahTranslationFragment extends AyahActionFragment
   @Inject InlineTranslationPresenter translationPresenter;
 
   @Override
-  public void onAttach(Context context) {
+  public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     ((PagerActivity) getActivity()).getPagerActivityComponent().inject(this);
   }
@@ -85,7 +85,7 @@ public class AyahTranslationFragment extends AyahActionFragment
     super.onPause();
   }
 
-  private View.OnClickListener onClickListener = v -> {
+  private final View.OnClickListener onClickListener = v -> {
     final Activity activity = getActivity();
     if (activity instanceof PagerActivity) {
       final PagerActivity pagerActivity = (PagerActivity) activity;

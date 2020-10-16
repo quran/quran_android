@@ -20,7 +20,7 @@ public class TabletView extends QuranPageWrapperLayout {
   @IntDef( { QURAN_PAGE, TRANSLATION_PAGE } )
   @interface TabletPageType {}
 
-  private Context context;
+  private final Context context;
   private QuranPageLayout leftPage;
   private QuranPageLayout rightPage;
   private PageController pageController;
@@ -70,20 +70,11 @@ public class TabletView extends QuranPageWrapperLayout {
     this.rightPage.setPageController(controller, rightPage);
   }
 
-  public void setPageController(
-    PageController controller,
-    int pageNumber,
-    boolean isQuranOnRight
-  ) {
+  public void setPageController(PageController controller, int pageNumber) {
     this.pageController = controller;
 
-    if (isQuranOnRight) {
-      this.rightPage.setPageController(controller, pageNumber);
-      this.leftPage.setPageController(null, pageNumber);
-    } else {
-      this.rightPage.setPageController(null, pageNumber);
-      this.leftPage.setPageController(controller, pageNumber);
-    }
+    this.rightPage.setPageController(controller, pageNumber);
+    this.leftPage.setPageController(controller, pageNumber);
   }
 
   @Override

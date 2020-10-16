@@ -113,6 +113,18 @@ public class AyahTrackerPresenter implements AyahTracker,
     return null;
   }
 
+  public void handleLongClick(SuraAyah suraAyah, AyahSelectedListener ayahSelectedListener) {
+    ayahSelectedListener.onAyahSelected(AyahSelectedListener.EventType.LONG_PRESS, suraAyah, this);
+  }
+
+  public void endAyahMode(AyahSelectedListener ayahSelectedListener) {
+    ayahSelectedListener.endAyahMode();
+  }
+
+  public void requestMenuPositionUpdate(AyahSelectedListener ayahSelectedListener) {
+    ayahSelectedListener.requestMenuPositionUpdate(this);
+  }
+
   public boolean handleTouchEvent(Activity activity, MotionEvent event,
                                   AyahSelectedListener.EventType eventType, int page,
                                   AyahSelectedListener ayahSelectedListener,

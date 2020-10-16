@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -10,8 +9,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.fragment.app.Fragment;
 import com.quran.data.core.QuranInfo;
+import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
@@ -20,6 +23,7 @@ import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
 import com.quran.labs.androidquran.presenter.quran.QuranPageScreen;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahImageTrackerItem;
+import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahSplitConsolidationTrackerItem;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerItem;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTranslationTrackerItem;
@@ -28,7 +32,6 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
-import com.quran.labs.androidquran.ui.translation.OnTranslationActionListener;
 import com.quran.labs.androidquran.ui.translation.TranslationView;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -40,26 +43,18 @@ import com.quran.labs.androidquran.view.TabletView;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.fragment.app.Fragment;
 import dagger.Lazy;
 import io.reactivex.disposables.CompositeDisposable;
+import java.util.List;
+import java.util.Set;
+import javax.inject.Inject;
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
 public class TabletFragment extends Fragment
     implements PageController, TranslationPresenter.TranslationScreen,
-    QuranPage, QuranPageScreen, AyahTrackerPresenter.AyahInteractionHandler,
-    OnTranslationActionListener {
+    QuranPage, QuranPageScreen, AyahTrackerPresenter.AyahInteractionHandler {
   private static final String FIRST_PAGE_EXTRA = "pageNumber";
   private static final String MODE_EXTRA = "mode";
   private static final String IS_SPLIT_SCREEN = "splitScreenMode";
@@ -83,11 +78,12 @@ public class TabletFragment extends Fragment
   private TranslationView rightTranslation;
   private HighlightingImageView leftImageView;
   private HighlightingImageView rightImageView;
-  private CompositeDisposable compositeDisposable = new CompositeDisposable();
+  private final CompositeDisposable compositeDisposable = new CompositeDisposable();
   private AyahTrackerItem[] ayahTrackerItems;
 
   private TranslationView splitTranslationView;
   private HighlightingImageView splitImageView;
+  private int lastLongPressPage = -1;
 
   @Inject QuranSettings quranSettings;
   @Inject AyahTrackerPresenter ayahTrackerPresenter;
@@ -119,7 +115,7 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater,
+  public View onCreateView(@NonNull LayoutInflater inflater,
                            ViewGroup container, Bundle savedInstanceState) {
     final Context context = getActivity();
     mainView = new TabletView(context);
@@ -140,9 +136,7 @@ public class TabletFragment extends Fragment
         PagerActivity pagerActivity = (PagerActivity) context;
         leftTranslation.setTranslationClickedListener(v -> pagerActivity.toggleActionBar());
         rightTranslation.setTranslationClickedListener(v -> pagerActivity.toggleActionBar());
-        leftTranslation.setOnTranslationActionListener(this);
-        rightTranslation.setOnTranslationActionListener(this);
-        mainView.setPageController(null, pageNumber, pageNumber - 1);
+        mainView.setPageController(this, pageNumber, pageNumber - 1);
       } else {
         initSplitMode();
       }
@@ -172,8 +166,7 @@ public class TabletFragment extends Fragment
 
     PagerActivity pagerActivity = (PagerActivity) getActivity();
     splitTranslationView.setTranslationClickedListener(v -> pagerActivity.toggleActionBar());
-    splitTranslationView.setOnTranslationActionListener(this);
-    mainView.setPageController(this, pageNumber, isQuranOnRight);
+    mainView.setPageController(this, pageNumber);
   }
 
   @Override
@@ -280,9 +273,11 @@ public class TabletFragment extends Fragment
             rightImageView);
       } else if (mode == Mode.TRANSLATION) {
         if (isSplitScreen) {
+          final AyahImageTrackerItem imageItem;
+          final AyahTranslationTrackerItem translationItem;
           if (isQuranOnRight) {
-            left = new AyahTranslationTrackerItem(pageNumber, quranInfo, splitTranslationView);
-            right = new AyahImageTrackerItem(pageNumber,
+            translationItem = new AyahTranslationTrackerItem(pageNumber, quranInfo, splitTranslationView);
+            imageItem = new AyahImageTrackerItem(pageNumber,
                 screenHeight,
                 quranInfo,
                 quranDisplayData,
@@ -290,15 +285,19 @@ public class TabletFragment extends Fragment
                 imageDrawHelpers,
                 splitImageView);
           } else {
-            left = new AyahImageTrackerItem(pageNumber,
+            imageItem = new AyahImageTrackerItem(pageNumber,
                 screenHeight,
                 quranInfo,
                 quranDisplayData,
                 false,
                 imageDrawHelpers,
                 splitImageView);
-            right = new AyahTranslationTrackerItem(pageNumber, quranInfo, splitTranslationView);
+            translationItem = new AyahTranslationTrackerItem(pageNumber, quranInfo, splitTranslationView);
           }
+          final AyahTrackerItem splitItem =
+              new AyahSplitConsolidationTrackerItem(pageNumber, imageItem, translationItem);
+          ayahTrackerItems = new AyahTrackerItem[] { splitItem };
+          return ayahTrackerItems;
         } else {
           left = new AyahTranslationTrackerItem(pageNumber, quranInfo, leftTranslation);
           right = new AyahTranslationTrackerItem(pageNumber - 1, quranInfo, rightTranslation);
@@ -312,7 +311,7 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void onAttach(Context context) {
+  public void onAttach(@NonNull Context context) {
     super.onAttach(context);
 
     pageNumber = getArguments().getInt(FIRST_PAGE_EXTRA);
@@ -334,25 +333,6 @@ public class TabletFragment extends Fragment
     super.onDetach();
     ayahSelectedListener = null;
     compositeDisposable.clear();
-  }
-
-  @Override
-  public void onTranslationAction(QuranAyahInfo ayah,
-                                  LocalTranslation[] translations,
-                                  int actionId) {
-    Activity activity = getActivity();
-    if (activity instanceof PagerActivity) {
-      translationPresenter.get()
-          .onTranslationAction((PagerActivity) activity, ayah, translations, actionId);
-    }
-
-    if (isSplitScreen) {
-      splitTranslationView.unhighlightAyat();
-    } else {
-      int page = quranInfo.getPageFromSuraAyah(ayah.sura, ayah.ayah);
-      TranslationView translationView = page == pageNumber ? leftTranslation : rightTranslation;
-      translationView.unhighlightAyat();
-    }
   }
 
   @Override
@@ -458,6 +438,18 @@ public class TabletFragment extends Fragment
   }
 
   @Override
+  public void handleLongPress(SuraAyah suraAyah) {
+    if (isVisible()) {
+      final int page = quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah);
+      if (page != lastLongPressPage) {
+        ayahTrackerPresenter.endAyahMode(ayahSelectedListener);
+      }
+      lastLongPressPage = page;
+      ayahTrackerPresenter.handleLongClick(suraAyah, ayahSelectedListener);
+    }
+  }
+
+  @Override
   public void handleRetryClicked() {
     hidePageDownloadError();
     quranPagePresenter.get().downloadImages();
@@ -466,5 +458,19 @@ public class TabletFragment extends Fragment
   @Override
   public void onScrollChanged(int x, int y, int oldx, int oldy) {
     // no-op - no image ScrollView in this mode.
+  }
+
+  @Override
+  public void endAyahMode() {
+    if (isVisible()) {
+      ayahTrackerPresenter.endAyahMode(ayahSelectedListener);
+    }
+  }
+
+  @Override
+  public void requestMenuPositionUpdate() {
+    if (isVisible()) {
+      ayahTrackerPresenter.requestMenuPositionUpdate(ayahSelectedListener);
+    }
   }
 }

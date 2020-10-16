@@ -49,7 +49,7 @@ internal class TranslationAdapter(private val context: Context,
   private val expandedTafaseerAyahs = mutableSetOf<Pair<Int, Int>>()
   private val expandedHyperlinks = mutableSetOf<Pair<Int, Int>>()
 
-  private val defaultClickListener = View.OnClickListener { v -> onClickListener.onClick(v) }
+  private val defaultClickListener = View.OnClickListener { this.handleClick(it) }
   private val defaultLongClickListener = View.OnLongClickListener { this.selectVerseRows(it) }
   private val expandClickListener = View.OnClickListener { v -> toggleExpandTafseer(v) }
   private val expandHyperlinkClickListener = View.OnClickListener { v -> toggleExpandHyperlink(v) }
@@ -109,15 +109,22 @@ internal class TranslationAdapter(private val context: Context,
             // ... or when we're the previous ayah
             highlightedStartPosition - 1 == startPosition + count ->
               startChangeCount += highlightedRowCount
-            else -> // otherwise, unhighlight
-              notifyItemRangeChanged(
-                  highlightedStartPosition, highlightedRowCount, HIGHLIGHT_CHANGE)
+            else -> {
+              // otherwise, unhighlight
+              val start = highlightedStartPosition
+              val changeCount = highlightedRowCount
+              recyclerView.handler.post {
+                notifyItemRangeChanged(start, changeCount, HIGHLIGHT_CHANGE)
+              }
+            }
           }
         }
 
         // and update rows to be highlighted
-        notifyItemRangeChanged(startChangeRange, startChangeCount, HIGHLIGHT_CHANGE)
-        recyclerView.smoothScrollToPosition(startPosition + count)
+        recyclerView.handler.post {
+          notifyItemRangeChanged(startChangeRange, startChangeCount, HIGHLIGHT_CHANGE)
+          recyclerView.smoothScrollToPosition(startPosition)
+        }
       }
 
       highlightedAyah = ayahId
@@ -128,9 +135,12 @@ internal class TranslationAdapter(private val context: Context,
 
   fun unhighlight() {
     if (highlightedAyah > 0 && highlightedRowCount > 0) {
-      notifyItemRangeChanged(highlightedStartPosition, highlightedRowCount)
+      val start = highlightedStartPosition
+      val count = highlightedRowCount
+      recyclerView.handler.post {
+        notifyItemRangeChanged(start, count)
+      }
     }
-
     highlightedAyah = 0
     highlightedRowCount = 0
     highlightedStartPosition = -1
@@ -157,6 +167,18 @@ internal class TranslationAdapter(private val context: Context,
     if (this.data.isNotEmpty()) {
       notifyDataSetChanged()
     }
+  }
+
+  private fun handleClick(view: View) {
+    val position = recyclerView.getChildAdapterPosition(view)
+    if (highlightedAyah != 0 && position != RecyclerView.NO_POSITION) {
+      val ayahInfo = data[position].ayahInfo
+      if (ayahInfo.ayahId != highlightedAyah) {
+        onVerseSelectedListener.onVerseSelected(ayahInfo)
+        return
+      }
+    }
+    onClickListener.onClick(view)
   }
 
   private fun selectVerseRows(view: View): Boolean {
