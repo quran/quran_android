@@ -17,7 +17,7 @@ import java.util.Set;
 import androidx.annotation.NonNull;
 
 public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
-  @NonNull private QuranPageLayout quranPageLayout;
+  @NonNull private final QuranPageLayout quranPageLayout;
   private final int screenHeight;
 
   public AyahScrollableImageTrackerItem(int page,

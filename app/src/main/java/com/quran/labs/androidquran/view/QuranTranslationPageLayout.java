@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.ui.translation.TranslationView;
+import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 public class QuranTranslationPageLayout extends QuranPageLayout {
@@ -21,6 +22,12 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
   protected View generateContentView(Context context, boolean isLandscape) {
     translationView = new TranslationView(context);
     return translationView;
+  }
+
+  @Override
+  public void setPageController(PageController controller, int pageNumber) {
+    super.setPageController(controller, pageNumber);
+    translationView.setPageController(controller);
   }
 
   @Override

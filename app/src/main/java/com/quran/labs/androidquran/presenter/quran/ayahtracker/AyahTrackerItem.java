@@ -13,13 +13,11 @@ import com.quran.page.common.data.PageCoordinates;
 import java.util.List;
 import java.util.Set;
 
-public class AyahTrackerItem<T> {
+public class AyahTrackerItem {
   final int page;
-  @NonNull final T ayahView;
 
-  AyahTrackerItem(int page, @NonNull T ayahView) {
+  AyahTrackerItem(int page) {
     this.page = page;
-    this.ayahView = ayahView;
   }
 
   void onSetPageBounds(PageCoordinates pageCoordinates) {

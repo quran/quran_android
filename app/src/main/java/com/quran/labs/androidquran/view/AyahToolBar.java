@@ -179,12 +179,6 @@ public class AyahToolBar extends ViewGroup implements
     }
   }
 
-  public void updatePositionRelative(AyahToolBarPosition position) {
-    position.x -= (pipWidth / 2);
-    position.y++;
-    updatePosition(position);
-  }
-
   public void updatePosition(AyahToolBarPosition position) {
     boolean needsLayout = position.pipPosition != pipPosition || pipOffset != position.pipOffset;
     ensurePipPosition(position.pipPosition);
