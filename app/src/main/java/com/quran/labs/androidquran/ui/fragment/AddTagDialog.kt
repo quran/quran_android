@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
@@ -13,7 +14,7 @@ import com.quran.labs.androidquran.dao.Tag
 import com.quran.labs.androidquran.presenter.bookmark.AddTagDialogPresenter
 import javax.inject.Inject
 
-class AddTagDialog : androidx.fragment.app.DialogFragment() {
+class AddTagDialog : DialogFragment() {
 
   @Inject
   internal lateinit var addTagDialogPresenter: AddTagDialogPresenter
@@ -52,6 +53,8 @@ class AddTagDialog : androidx.fragment.app.DialogFragment() {
             }
           }
     }
+
+    textInputEditText?.requestFocus()
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -59,7 +62,7 @@ class AddTagDialog : androidx.fragment.app.DialogFragment() {
     val id = args?.getLong(EXTRA_ID, -1) ?: -1
     val originalName = args?.getString(EXTRA_NAME, "") ?: ""
 
-    val activity = activity!!
+    val activity = requireActivity()
     val inflater = activity.layoutInflater
 
     @SuppressLint("InflateParams")
