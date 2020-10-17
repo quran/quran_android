@@ -15,7 +15,6 @@ import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler
 import com.quran.labs.androidquran.feature.audio.AudioUpdater
 import com.quran.labs.androidquran.feature.audio.api.AudioUpdateService
 import com.quran.labs.androidquran.feature.audio.util.AudioFileCheckerImpl
-import com.quran.labs.androidquran.feature.audio.util.HashLoggerImpl
 import com.quran.labs.androidquran.feature.audio.util.MD5Calculator
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.NotificationChannelUtil
@@ -47,8 +46,7 @@ class AudioUpdateWorker(
         val localFilesToDelete = AudioUpdater.computeUpdates(
             updates.updates, audioUtils.getQariList(context),
             AudioFileCheckerImpl(MD5Calculator, audioPathRoot),
-            AudioDatabaseVersionChecker(),
-            HashLoggerImpl
+            AudioDatabaseVersionChecker()
         )
 
         Timber.d("update count: %d", localFilesToDelete.size)

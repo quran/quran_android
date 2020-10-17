@@ -5,7 +5,6 @@ import com.quran.labs.androidquran.common.audio.QariItem
 import com.quran.labs.androidquran.feature.audio.api.AudioFileUpdate
 import com.quran.labs.androidquran.feature.audio.api.AudioSetUpdate
 import com.quran.labs.androidquran.feature.audio.util.AudioFileChecker
-import com.quran.labs.androidquran.feature.audio.util.HashLogger
 import org.junit.Test
 
 class AudioUpdaterTest {
@@ -37,10 +36,6 @@ class AudioUpdaterTest {
     override fun getVersionForDatabase(path: String) = 1
   }
 
-  private val hashLogger = object : HashLogger {
-    override fun logEvent(numberOfFiles: Int) {}
-  }
-
   private val qaris = listOf(
       QariItem(1, "Gapped Sheikh", "https://url1/", "sheikh1", null),
       QariItem(2, "Gapless Sheikh", "https://url2/", "sheikh2", "sheikh2")
@@ -54,7 +49,7 @@ class AudioUpdaterTest {
     )
     assertThat(
         AudioUpdater.computeUpdates(
-            updates, qaris, allFilesUpdatedFileChecker, versionOneDatabaseChecker, hashLogger
+            updates, qaris, allFilesUpdatedFileChecker, versionOneDatabaseChecker
         )
     ).isEmpty()
   }
@@ -67,7 +62,7 @@ class AudioUpdaterTest {
     )
 
     val localUpdates = AudioUpdater.computeUpdates(
-        updates, qaris, allFilesOutdatedFileChecker, versionOneDatabaseChecker, hashLogger)
+        updates, qaris, allFilesOutdatedFileChecker, versionOneDatabaseChecker)
     assertThat(localUpdates).hasSize(1)
     assertThat(localUpdates.first().qari).isEqualTo(qaris[0])
     assertThat(localUpdates.first().files).containsExactly("001001.mp3")
@@ -85,7 +80,7 @@ class AudioUpdaterTest {
     )
 
     val localUpdates = AudioUpdater.computeUpdates(
-        updates, qaris, allFilesUpdatedFileChecker, versionOneDatabaseChecker, hashLogger)
+        updates, qaris, allFilesUpdatedFileChecker, versionOneDatabaseChecker)
     assertThat(localUpdates).hasSize(1)
     assertThat(localUpdates.first().qari).isEqualTo(qaris[1])
     assertThat(localUpdates.first().files).isEmpty()
@@ -103,7 +98,7 @@ class AudioUpdaterTest {
     )
 
     val localUpdates = AudioUpdater.computeUpdates(
-        updates, qaris, allFilesUpdatedNoDatabaseFileChecker, versionOneDatabaseChecker, hashLogger)
+        updates, qaris, allFilesUpdatedNoDatabaseFileChecker, versionOneDatabaseChecker)
     assertThat(localUpdates).isEmpty()
   }
 }
