@@ -34,8 +34,6 @@ dependencies {
 
   implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
 
-  implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-
-  testImplementation 'junit:junit:4.13'
+  testImplementation 'junit:junit:4.13.1'
   testImplementation 'com.google.truth:truth:1.0.1'
 }
