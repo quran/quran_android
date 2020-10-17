@@ -50,6 +50,8 @@
 
   <string name="search_hint">بحث في القران</string>
   <string name="quranSearchType">آيات القران</string>
+  <string name="search_full_results">نتائج كاملة</string>
+  <string name="search_entire_mushaf">ابحث في المصحف بأكمله</string>
 
   <plurals name="files_downloaded">
     <item quantity="zero">لم يتم تحميل سور بعد‎</item>

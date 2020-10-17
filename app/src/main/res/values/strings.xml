@@ -132,6 +132,8 @@
     </string>
   <string name="search_hint">Search the Quran</string>
   <string name="quranSearchType">Verses of the Quran</string>
+  <string name="search_full_results">Full Results</string>
+  <string name="search_entire_mushaf">Search the entire mushaf</string>
 
   <plurals name="files_downloaded">
     <item quantity="one">1 surah downloaded</item>

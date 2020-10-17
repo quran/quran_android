@@ -272,6 +272,10 @@ public class SearchActivity extends QuranActionBarActivity
       }
 
       if (id != null) {
+        if (id == -1) {
+          showResults(query);
+          return;
+        }
         int sura = 1;
         int total = id;
         for (int j = 1; j <= 114; j++) {
