@@ -283,22 +283,25 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   public void highlightAyah(int surah, int ayah, HighlightType type) {
-    Set<AyahHighlight> highlights = currentHighlights.get(type);
-    SingleAyahHighlight singleAyahHighlight = new SingleAyahHighlight(surah, ayah);
+    final Set<AyahHighlight> highlights = currentHighlights.get(type);
+    final SingleAyahHighlight singleAyahHighlight = new SingleAyahHighlight(surah, ayah);
     if (highlights == null) {
-      highlights = new HashSet<>();
-      currentHighlights.put(type, highlights);
-      highlights.add(singleAyahHighlight);
+      final Set<AyahHighlight> updatedHighlights = new HashSet<>();
+      updatedHighlights.add(singleAyahHighlight);
+      currentHighlights.put(type, updatedHighlights);
     } else if (!type.isMultipleHighlightsAllowed()) {
       // If multiple highlighting not allowed (e.g. audio)
       // clear all others of this type first
       // only if highlight type is floatable
-      if(shouldFloatHighlight(highlights, type, surah, ayah)) {
+      if (shouldFloatHighlight(highlights, type, surah, ayah)) {
         highlightFloatableAyah(highlights, singleAyahHighlight, type.getAnimationConfig());
       } else {
         highlights.clear();
         highlights.add(singleAyahHighlight);
       }
+    } else {
+      highlights.add(singleAyahHighlight);
+      currentHighlights.put(type, highlights);
     }
   }
 
