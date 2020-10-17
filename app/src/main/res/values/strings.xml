@@ -414,9 +414,6 @@
 
   <!-- dual screen prefs -->
   <string name="prefs_category_dual_screen">Dual Page Preferences</string>
-  <string name="prefs_quran_on_right_title">Show Quran on right in dual mode</string>
-  <string name="prefs_quran_on_right_summary_on">In dual page mode with translations, Quran is shown on the right</string>
-  <string name="prefs_quran_on_right_summary_off">In dual page mode with translations, translation is shown on the right</string>
   <string name="prefs_split_page_and_translation_title">Quran and translation in dual mode</string>
   <string name="prefs_split_page_and_translation_summary">In dual page mode with translations, Quran page and translation is shown</string>
 

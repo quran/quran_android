@@ -21,7 +21,6 @@
   <string translatable="false" name="prefs_translation_text_size">translationTextSize</string>
   <string translatable="false" name="prefs_ayah_before_translation">ayahBeforeTranslation</string>
   <string translatable="false" name="prefs_split_page_and_translation">splitPageAndTranslation</string>
-  <string translatable="false" name="prefs_quran_on_right">quranOnRight</string>
   <string translatable="false" name="prefs_prefer_streaming">preferStreaming</string>
   <string translatable="false" name="prefs_download_amount">preferredDownloadAmount</string>
   <string translatable="false" name="prefs_volume_key_navigation">volumeKeyNavigation</string>

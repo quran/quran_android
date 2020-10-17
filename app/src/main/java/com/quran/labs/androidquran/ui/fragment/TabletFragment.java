@@ -145,7 +145,7 @@ public class TabletFragment extends Fragment
   }
 
   private void initSplitMode() {
-    isQuranOnRight = quranSettings.isQuranOnRight();
+    isQuranOnRight = pageNumber % 2 == 1;
 
     final int leftPageType = isQuranOnRight ? TabletView.TRANSLATION_PAGE : TabletView.QURAN_PAGE;
     final int rightPageType = isQuranOnRight ? TabletView.QURAN_PAGE : TabletView.TRANSLATION_PAGE;
