@@ -67,8 +67,6 @@ public class Constants {
       "ayahBeforeTranslation";
   public static final String PREF_SPLIT_PAGE_AND_TRANSLATION =
       "splitPageAndTranslation";
-  public static final String PREF_QURAN_ON_RIGHT =
-      "quranOnRight";
   public static final String PREF_PREFER_STREAMING = "preferStreaming";
   public static final String PREF_DOWNLOAD_AMOUNT = "preferredDownloadAmount";
   public static final String PREF_LAST_UPDATED_TRANSLATIONS =

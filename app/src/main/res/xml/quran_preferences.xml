@@ -113,6 +113,30 @@
   </PreferenceCategory>
 
   <PreferenceCategory
+      android:key="@string/prefs_category_dual_screen_key"
+      android:title="@string/prefs_category_dual_screen"
+      app:iconSpaceReserved="false">
+
+    <CheckBoxPreference
+        android:defaultValue="@bool/use_tablet_interface_by_default"
+        android:key="@string/prefs_dual_page_enabled"
+        android:persistent="true"
+        android:summaryOff="@string/prefs_dual_page_mode_disabled"
+        android:summaryOn="@string/prefs_dual_page_mode_enabled"
+        android:title="@string/prefs_dual_page_mode_title"
+        app:iconSpaceReserved="false"/>
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/prefs_split_page_and_translation"
+        android:persistent="true"
+        android:summary="@string/prefs_split_page_and_translation_summary"
+        android:title="@string/prefs_split_page_and_translation_title"
+        app:iconSpaceReserved="false" />
+
+  </PreferenceCategory>
+
+  <PreferenceCategory
       android:title="@string/prefs_category_translation"
       app:iconSpaceReserved="false">
 
@@ -136,40 +160,6 @@
         android:max="40"
         android:persistent="true"
         android:title="@string/prefs_translation_text_title"/>
-  </PreferenceCategory>
-
-  <PreferenceCategory
-      android:key="@string/prefs_category_dual_screen_key"
-      android:title="@string/prefs_category_dual_screen"
-      app:iconSpaceReserved="false">
-
-    <CheckBoxPreference
-        android:defaultValue="@bool/use_tablet_interface_by_default"
-        android:key="@string/prefs_dual_page_enabled"
-        android:persistent="true"
-        android:summaryOff="@string/prefs_dual_page_mode_disabled"
-        android:summaryOn="@string/prefs_dual_page_mode_enabled"
-        android:title="@string/prefs_dual_page_mode_title"
-        app:iconSpaceReserved="false"/>
-
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="@string/prefs_split_page_and_translation"
-        android:persistent="true"
-        android:summary="@string/prefs_split_page_and_translation_summary"
-        android:title="@string/prefs_split_page_and_translation_title"
-        app:iconSpaceReserved="false" />
-
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:dependency="@string/prefs_split_page_and_translation"
-        android:key="@string/prefs_quran_on_right"
-        android:persistent="true"
-        android:summaryOff="@string/prefs_quran_on_right_summary_off"
-        android:summaryOn="@string/prefs_quran_on_right_summary_on"
-        android:title="@string/prefs_quran_on_right_title"
-        app:iconSpaceReserved="false" />
-
   </PreferenceCategory>
 
   <PreferenceCategory

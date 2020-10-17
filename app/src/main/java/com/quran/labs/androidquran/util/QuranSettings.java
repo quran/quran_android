@@ -169,10 +169,6 @@ public class QuranSettings {
     return prefs.getBoolean(Constants.PREF_SPLIT_PAGE_AND_TRANSLATION, false);
   }
 
-  public boolean isQuranOnRight() {
-    return prefs.getBoolean(Constants.PREF_QURAN_ON_RIGHT, true);
-  }
-
   public boolean isShowSuraTranslatedName() {
     return prefs.getBoolean(Constants.PREF_SURA_TRANSLATED_NAME,
         appContext.getResources().getBoolean(R.bool.show_sura_names_translation));
