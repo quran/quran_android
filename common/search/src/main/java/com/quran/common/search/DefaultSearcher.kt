@@ -31,7 +31,7 @@ class DefaultSearcher(private val matchStart: String,
   }
 
   override fun getLimit(withSnippets: Boolean): String {
-    return if (withSnippets) { "" } else { "LIMIT 25" }
+    return if (withSnippets) { "" } else { "LIMIT 10" }
   }
 
   override fun processSearchText(searchText: String, hasFTS: Boolean): String {

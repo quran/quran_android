@@ -133,6 +133,7 @@ public class QuranDataProvider extends ContentProvider {
 
     Context context = getContext();
     boolean gotResults = false;
+    boolean likelyHaveMoreResults = false;
     for (int i = start; i < total; i++) {
       if (gotResults) {
         continue;
@@ -160,7 +161,15 @@ public class QuranDataProvider extends ContentProvider {
       try {
         suggestions = search(query, database, false);
         if (context != null && suggestions != null && suggestions.moveToFirst()) {
+          if (suggestions.getCount() > 5) {
+            likelyHaveMoreResults = true;
+          }
+
+          int results = 0;
           do {
+            if (results == 5) {
+              break;
+            }
             int sura = suggestions.getInt(1);
             int ayah = suggestions.getInt(2);
             String text = suggestions.getString(3);
@@ -175,6 +184,7 @@ public class QuranDataProvider extends ContentProvider {
             row.add(text);
             row.add(foundText);
             row.add(id);
+            results++;
           } while (suggestions.moveToNext());
         }
       } finally {
@@ -182,6 +192,12 @@ public class QuranDataProvider extends ContentProvider {
       }
     }
 
+    if (context != null && (queryIsArabic || likelyHaveMoreResults)) {
+      mc.addRow(new Object[] {
+          -1, context.getString(R.string.search_full_results),
+          context.getString(R.string.search_entire_mushaf), -1
+      });
+    }
     return mc;
   }
 
