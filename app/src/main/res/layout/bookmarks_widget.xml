@@ -43,7 +43,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="@color/translation_verse_text_color"
-        android:src="@drawable/ic_baseline_arrow_forward_24" />
+        android:src="@drawable/ic_baseline_arrow_upright_24" />
 
   </LinearLayout>
 
