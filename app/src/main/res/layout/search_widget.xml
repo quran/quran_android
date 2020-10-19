@@ -36,6 +36,6 @@
       android:layout_height="match_parent"
       android:layout_weight="1"
       android:background="@android:color/transparent"
-      android:src="@drawable/ic_baseline_arrow_forward_24" />
+      android:src="@drawable/ic_baseline_arrow_upright_24" />
 
 </LinearLayout>
