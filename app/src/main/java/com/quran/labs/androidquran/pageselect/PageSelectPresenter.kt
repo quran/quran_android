@@ -20,7 +20,7 @@ class PageSelectPresenter @Inject
                 private val pageTypes:
                 Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>) :
     Presenter<PageSelectActivity> {
-  private val baseUrl = "https://android.quran.com/data/pagetypes"
+  private val baseUrl = "https://android.quran.com/data/pagetypes/snips"
   private val compositeDisposable = CompositeDisposable()
   private val downloadingSet = mutableSetOf<String>()
   private var currentView: PageSelectActivity? = null
@@ -28,7 +28,7 @@ class PageSelectPresenter @Inject
   private fun generateData() {
     val base = quranFileUtils.quranBaseDirectory
     if (base != null) {
-      val outputPath = File(base, "pagetypes")
+      val outputPath = File(File(base, "pagetypes"), "snips")
       if (!outputPath.exists()) {
         outputPath.mkdirs()
         File(outputPath, ".nomedia").createNewFile()
@@ -70,7 +70,8 @@ class PageSelectPresenter @Inject
   override fun unbind(what: PageSelectActivity?) {
     if (currentView === what) {
       currentView = null
-      // not clearing the composite disposable to avoid interrupting the download
+      compositeDisposable.clear()
+      downloadingSet.clear()
     }
   }
 }
