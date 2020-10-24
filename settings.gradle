@@ -1,9 +1,11 @@
 include ':app'
+include ':common:analytics'
 include ':common:audio'
 include ':common:data'
 include ':common:networking'
 include ':common:pages'
 include ':common:search'
+include ':feature:analytics-noop'
 include ':feature:audio'
 include ':pages:madani'
 

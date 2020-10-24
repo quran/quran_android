@@ -30,6 +30,7 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.quran.analytics.AnalyticsProvider;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.HelpActivity;
@@ -219,6 +220,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
   @Inject AudioPresenter audioPresenter;
+  @Inject AnalyticsProvider analyticsProvider;
 
   private CompositeDisposable compositeDisposable;
   private final CompositeDisposable foregroundDisposable = new CompositeDisposable();
