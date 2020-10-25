@@ -1,3 +1,4 @@
 dependencies {
    implementation project(path: ':pages:madani')
+   implementation project(path: ':feature:analytics-noop')
 }

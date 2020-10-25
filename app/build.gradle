@@ -121,6 +121,7 @@ if (new File(rootDir, 'extras/extras.gradle').exists()) {
 }
 
 dependencies {
+  implementation project(path: ':common:analytics')
   implementation project(path: ':common:audio')
   implementation project(path: ':common:data')
   implementation project(path: ':common:networking')

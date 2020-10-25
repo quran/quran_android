@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.di.component.application;
 
+import com.quran.analytics.provider.AnalyticsModule;
 import com.quran.common.networking.NetworkModule;
 import com.quran.data.page.provider.QuranPageModule;
 import com.quran.labs.androidquran.QuranApplication;
@@ -40,6 +41,7 @@ import dagger.Component;
 
 @Singleton
 @Component(modules = {
+    AnalyticsModule.class,
     ApplicationModule.class,
     DatabaseModule.class,
     NetworkModule.class,
