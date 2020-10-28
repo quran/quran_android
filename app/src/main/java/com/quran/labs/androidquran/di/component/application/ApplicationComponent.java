@@ -12,6 +12,7 @@ import com.quran.labs.androidquran.core.worker.di.WorkerModule;
 import com.quran.labs.androidquran.data.QuranDataModule;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent;
+import com.quran.labs.androidquran.di.component.activity.QuranActivityComponent;
 import com.quran.labs.androidquran.di.module.application.ApplicationModule;
 import com.quran.labs.androidquran.di.module.application.DatabaseModule;
 import com.quran.labs.androidquran.di.module.widgets.BookmarksWidgetUpdaterModule;
@@ -53,6 +54,7 @@ import dagger.Component;
 public interface ApplicationComponent {
   // subcomponents
   PagerActivityComponent.Builder pagerActivityComponentBuilder();
+  QuranActivityComponent.Builder quranActivityComponentBuilder();
 
   // application
   void inject(QuranApplication quranApplication);
@@ -65,7 +67,6 @@ public interface ApplicationComponent {
   void inject(QuranDownloadService quranDownloadService);
 
   // activities
-  void inject(QuranActivity quranActivity);
   void inject(QuranDataActivity quranDataActivity);
   void inject(QuranImportActivity quranImportActivity);
   void inject(AudioManagerActivity audioManagerActivity);

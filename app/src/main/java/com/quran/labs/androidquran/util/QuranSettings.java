@@ -4,7 +4,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import com.quran.labs.androidquran.BuildConfig;
@@ -59,6 +58,10 @@ public class QuranSettings {
 
   public boolean isLandscapeOrientation() {
     return prefs.getBoolean(Constants.PREF_LANDSCAPE_ORIENTATION, false);
+  }
+
+  public boolean navigateWithVolumeKeys() {
+    return prefs.getBoolean(Constants.PREF_USE_VOLUME_KEY_NAV, false);
   }
 
   public boolean shouldStream() {

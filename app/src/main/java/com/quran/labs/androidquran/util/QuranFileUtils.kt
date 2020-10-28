@@ -529,8 +529,13 @@ class QuranFileUtils @Inject constructor(
     } else if (newDirectory.exists() || newDirectory.mkdirs()) {
       try {
         copyFileOrDirectory(currentDirectory, newDirectory)
-        Timber.d("Removing $currentDirectory due to move to $newDirectory")
-        deleteFileOrDirectory(currentDirectory)
+        try {
+          Timber.d("Removing $currentDirectory due to move to $newDirectory")
+          deleteFileOrDirectory(currentDirectory)
+        } catch (e: IOException) {
+          // swallow silently
+          Timber.e(e, "warning while deleting app files")
+        }
         return true
       } catch (e: IOException) {
         Timber.e(e, "error moving app files")
