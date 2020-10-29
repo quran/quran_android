@@ -32,3 +32,7 @@ before_script:
 script:
    - ./gradlew clean testMadaniRelease feature:audio:testDebug -PdisableCrashlytics
    - ./gradlew clean connectedMadaniDebugAndroidTest -PdisableCrashlytics
+
+branches:
+  only:
+    - master
