@@ -20,3 +20,4 @@ build/
 crashlytics-build.properties
 com_crashlytics_export_strings.xml
 extras
+app/google-services.json
