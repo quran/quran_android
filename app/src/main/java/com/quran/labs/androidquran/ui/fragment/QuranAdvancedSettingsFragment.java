@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.QuranAdvancedPreferenceActivity;
 import com.quran.labs.androidquran.QuranApplication;
@@ -92,7 +93,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
               .observeOn(AndroidSchedulers.mainThread())
               .subscribeWith(new DisposableMaybeObserver<String>() {
                 @Override
-                public void onSuccess(String logs) {
+                public void onSuccess(@NonNull String logs) {
                   Intent intent = new Intent(Intent.ACTION_SEND);
                   intent.setType("message/rfc822");
                   intent.putExtra(Intent.EXTRA_EMAIL,
@@ -105,7 +106,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
                 }
 
                 @Override
-                public void onError(Throwable e) {
+                public void onError(@NonNull Throwable e) {
                 }
 
                 @Override
@@ -138,7 +139,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableSingleObserver<Uri>() {
               @Override
-              public void onSuccess(Uri uri) {
+              public void onSuccess(@NonNull Uri uri) {
                 Intent shareIntent = new Intent(Intent.ACTION_SEND);
                 shareIntent.setType("application/json");
                 shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -159,7 +160,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
               }
 
               @Override
-              public void onError(Throwable e) {
+              public void onError(@NonNull Throwable e) {
                 exportSubscription = null;
                 if (isAdded()) {
                   ToastCompat.makeText(context, R.string.export_data_error, Toast.LENGTH_LONG).show();
@@ -172,7 +173,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
 
     internalSdcardLocation = Environment.getExternalStorageDirectory().getAbsolutePath();
 
-    listStoragePref = (DataListPreference) findPreference(getString(R.string.prefs_app_location));
+    listStoragePref = findPreference(getString(R.string.prefs_app_location));
     listStoragePref.setEnabled(false);
 
     try {
