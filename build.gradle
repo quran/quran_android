@@ -48,6 +48,7 @@ buildscript {
     classpath 'com.google.firebase:firebase-crashlytics-gradle:2.3.0'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     classpath "net.ltgt.gradle:gradle-errorprone-plugin:1.2.1"
+    classpath 'com.google.gms:google-services:4.3.4'
   }
 }
 

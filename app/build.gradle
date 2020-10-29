@@ -4,6 +4,10 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'net.ltgt.errorprone'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.crashlytics'
+if (getGradle().getStartParameter().getTaskRequests().toString().contains("Release") &&
+    !project.hasProperty("disableFirebase")) {
+  apply plugin: 'com.google.gms.google-services'
+}
 
 android {
   compileSdkVersion deps.android.build.compileSdkVersion
@@ -17,8 +21,8 @@ android {
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion
     targetSdkVersion deps.android.build.targetSdkVersion
-    versionCode 3010
-    versionName "3.0.1"
+    versionCode 3020
+    versionName "3.0.2"
     testInstrumentationRunner "com.quran.labs.androidquran.core.QuranTestRunner"
     multiDexEnabled true
   }
