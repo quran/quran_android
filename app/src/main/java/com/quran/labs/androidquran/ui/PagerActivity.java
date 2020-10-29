@@ -30,7 +30,6 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import com.quran.analytics.AnalyticsProvider;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.HelpActivity;
@@ -52,6 +51,7 @@ import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.presenter.audio.AudioPresenter;
 import com.quran.labs.androidquran.presenter.bookmark.RecentPagePresenter;
+import com.quran.labs.androidquran.presenter.data.QuranEventLogger;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -220,7 +220,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
   @Inject AudioPresenter audioPresenter;
-  @Inject AnalyticsProvider analyticsProvider;
+  @Inject QuranEventLogger quranEventLogger;
 
   private CompositeDisposable compositeDisposable;
   private final CompositeDisposable foregroundDisposable = new CompositeDisposable();
@@ -368,7 +368,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
       @Override
       public void onPageScrolled(int position, float positionOffset,
-                                 int positionOffsetPixels) {
+          int positionOffsetPixels) {
         if (ayahToolBar.isShowing() && ayahToolBarPos != null) {
           final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
           int barPos = quranInfo.getPositionFromPage(startPage, isDualPageVisible());
@@ -493,6 +493,8 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       defaultNavigationBarColor = getWindow().getNavigationBarColor();
     }
+
+    quranEventLogger.logAnalytics(isDualPages, showingTranslation, isSplitScreen);
   }
 
   private boolean isDualPageVisible() {
@@ -658,8 +660,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   public boolean onKeyDown(int keyCode, KeyEvent event) {
     boolean navigate = audioStatusBar.getCurrentMode() !=
         AudioStatusBar.PLAYING_MODE
-        && PreferenceManager.getDefaultSharedPreferences(this).
-        getBoolean(Constants.PREF_USE_VOLUME_KEY_NAV, false);
+        && quranSettings.navigateWithVolumeKeys();
     if (navigate && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
       viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
       return true;
@@ -992,6 +993,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       return true;
     } else if (itemId == R.id.goto_translation) {
       if (translations != null) {
+        quranEventLogger.switchToTranslationMode(translations.size());
         switchToTranslation();
       }
       return true;
@@ -1480,6 +1482,10 @@ public class PagerActivity extends QuranActionBarActivity implements
       page = ((numberOfPagesDual - position) * 2) - 1;
     }
 
+    // log the event
+    quranEventLogger.logAudioPlayback(QuranEventLogger.AudioPlaybackSource.PAGE,
+        audioStatusBar.getAudioInfo(), isDualPages, showingTranslation, isSplitScreen);
+
     int startSura = quranDisplayData.safelyGetSuraOnPage(page);
     int startAyah = quranInfo.getFirstAyahOnPage(page);
     List<Integer> startingSuraList = quranInfo.getListOfSurahWithStartingOnPage(page);
@@ -1939,6 +1945,8 @@ public class PagerActivity extends QuranActionBarActivity implements
           sliderPage = slidingPagerAdapter.getPagePosition(TRANSLATION_PAGE);
           break;
         case R.id.cab_play_from_here:
+          quranEventLogger.logAudioPlayback(QuranEventLogger.AudioPlaybackSource.AYAH,
+              audioStatusBar.getAudioInfo(), isDualPages, showingTranslation, isSplitScreen);
           playFromAyah(getCurrentPage(), start.sura, start.ayah);
           toggleActionBarVisibility(true);
           sliderPage = -1;

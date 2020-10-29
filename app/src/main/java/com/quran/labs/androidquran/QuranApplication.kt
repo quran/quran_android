@@ -45,7 +45,7 @@ open class QuranApplication : MultiDexApplication() {
     Timber.plant(RecordingLogTree())
   }
 
-  private fun initializeInjector(): ApplicationComponent {
+  open fun initializeInjector(): ApplicationComponent {
     return DaggerApplicationComponent.builder()
         .applicationModule(ApplicationModule(this))
         .build()

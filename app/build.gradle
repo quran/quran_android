@@ -19,7 +19,7 @@ android {
     targetSdkVersion deps.android.build.targetSdkVersion
     versionCode 3010
     versionName "3.0.1"
-    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    testInstrumentationRunner "com.quran.labs.androidquran.core.QuranTestRunner"
     multiDexEnabled true
   }
 
@@ -151,6 +151,7 @@ dependencies {
 
   // dagger
   kapt deps.dagger.apt
+  kaptAndroidTest deps.dagger.apt
   implementation deps.dagger.runtime
 
   // workmanager
