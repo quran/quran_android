@@ -1974,12 +1974,14 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   @Override
   public void requestMenuPositionUpdate(AyahTracker tracker) {
-    ayahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah,
-        ayahToolBar.getToolBarWidth(), ayahToolBarTotalHeight);
-    if (ayahToolBarPos != null) {
-      ayahToolBar.updatePosition(ayahToolBarPos);
-      if (ayahToolBar.getVisibility() != View.VISIBLE) {
-        ayahToolBar.setVisibility(View.VISIBLE);
+    if (start != null) {
+      ayahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah,
+          ayahToolBar.getToolBarWidth(), ayahToolBarTotalHeight);
+      if (ayahToolBarPos != null) {
+        ayahToolBar.updatePosition(ayahToolBarPos);
+        if (ayahToolBar.getVisibility() != View.VISIBLE) {
+          ayahToolBar.setVisibility(View.VISIBLE);
+        }
       }
     }
   }

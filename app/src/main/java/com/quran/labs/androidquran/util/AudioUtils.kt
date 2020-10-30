@@ -146,13 +146,13 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
       if (juz == 30) {
         return SuraAyah(114, 6)
       } else if (juz in 1..29) {
-        var endJuz = quranInfo.getQuarterByIndex(juz * 8)
+        val endJuz = quranInfo.getQuarterByIndex(juz * 8)
         if (pageLastSura > endJuz[0]) {
           // ex between jathiya and a7qaf
-          endJuz = quranInfo.getQuarterByIndex((juz + 1) * 8)
+          return getQuarterForNextJuz(juz)
         } else if (pageLastSura == endJuz[0] && pageLastAyah > endJuz[1]) {
           // ex surat al anfal
-          endJuz = quranInfo.getQuarterByIndex((juz + 1) * 8)
+          return getQuarterForNextJuz(juz)
         }
 
         return SuraAyah(endJuz[0], endJuz[1])
@@ -165,6 +165,16 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
 
     // page mode (fallback also from errors above)
     return SuraAyah(pageLastSura, pageLastAyah)
+  }
+
+  private fun getQuarterForNextJuz(currentJuz: Int): SuraAyah {
+    return if (currentJuz < 29) {
+      val juz = quranInfo.getQuarterByIndex((currentJuz + 1) * 8)
+      SuraAyah(juz[0], juz[1])
+    } else {
+      // if we're currently at the 29th juz', just return the end of the 30th.
+      SuraAyah(114, 6)
+    }
   }
 
   fun shouldDownloadBasmallah(

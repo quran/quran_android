@@ -53,7 +53,8 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
             TranslationsTable.FILENAME + ", " +
             TranslationsTable.URL + ", " +
             (oldVersion < 3 ? "" : (TranslationsTable.LANGUAGE_CODE + ",")) +
-            TranslationsTable.VERSION + ") " +
+            TranslationsTable.VERSION + ", " +
+            TranslationsTable.DISPLAY_ORDER + ") " +
             "SELECT " + TranslationsTable.ID + ", " +
             TranslationsTable.NAME + ", " +
             TranslationsTable.TRANSLATOR + ", " +
@@ -61,7 +62,8 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
             TranslationsTable.FILENAME + ", " +
             TranslationsTable.URL + ", " +
             (oldVersion < 3 ? "" : (TranslationsTable.LANGUAGE_CODE + ",")) +
-            TranslationsTable.VERSION +
+            TranslationsTable.VERSION + ", " +
+            TranslationsTable.ID +
             " FROM " + BACKUP_TABLE);
         db.execSQL("DROP TABLE " + BACKUP_TABLE);
         db.execSQL("UPDATE " + TranslationsTable.TABLE_NAME + " SET " +
@@ -70,9 +72,9 @@ class TranslationsDBHelper extends SQLiteOpenHelper {
       } finally {
         db.endTransaction();
       }
-    }
-
-    if (oldVersion < 5) {
+    } else if (oldVersion < 5) {
+      // the v3 and below update also updates to v5.
+      // this code is called for updating from v4.
       upgradeToV5(db);
     }
   }

@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.presenter.bookmark;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -196,7 +197,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         .subscribeWith(new DisposableSingleObserver<BookmarkResult>() {
 
           @Override
-          public void onSuccess(BookmarkResult result) {
+          public void onSuccess(@NonNull BookmarkResult result) {
             pendingRemoval = null;
             cachedData = result;
             if (fragment != null) {
@@ -205,14 +206,14 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
           }
 
           @Override
-          public void onError(Throwable e) {
+          public void onError(@NonNull Throwable e) {
           }
         });
   }
 
   private BookmarkResult predictQuranListAfterDeletion(List<QuranRow> remove) {
     if (cachedData != null) {
-      List<QuranRow> placeholder = new ArrayList<>(cachedData.getRows().size() - remove.size());
+      List<QuranRow> placeholder = new ArrayList<>(Math.max(0, cachedData.getRows().size() - remove.size()));
       List<QuranRow> rows = cachedData.getRows();
       List<Long> removedTags = new ArrayList<>();
       for (int i = 0, rowsSize = rows.size(); i < rowsSize; i++) {
