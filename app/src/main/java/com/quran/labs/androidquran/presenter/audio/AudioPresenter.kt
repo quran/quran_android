@@ -14,6 +14,7 @@ import com.quran.labs.androidquran.service.util.ServiceIntentHelper
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QuranFileUtils
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -48,8 +49,19 @@ constructor(private val quranDisplayData: QuranDisplayData,
         audioPathInfo
       }
 
+      val (actualStart, actualEnd) = if (start > end) {
+        start to end
+      } else {
+        Timber.e(
+            IllegalStateException(
+                "End isn't larger than the start: $start to $end"
+            )
+        )
+        end to start
+      }
+
       val audioRequest = AudioRequest(
-          start, end, qari, verseRepeat, rangeRepeat, enforceRange, stream, audioPath)
+          actualStart, actualEnd, qari, verseRepeat, rangeRepeat, enforceRange, stream, audioPath)
       play(audioRequest)
     }
   }

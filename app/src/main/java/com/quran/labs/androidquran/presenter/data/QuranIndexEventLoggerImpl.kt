@@ -13,7 +13,12 @@ class QuranIndexEventLoggerImpl @Inject constructor(
 
   override fun logAnalytics() {
     val appLocation = quranSettings.appCustomLocation
-    val pathType = if ("com.quran" in appLocation) { "external" } else { "sdcard" }
+    val pathType =
+      when {
+        appLocation == null -> "unknown"
+        "com.quran" in appLocation -> "external"
+        else -> "sdcard"
+      }
 
     val params: Map<String, Any> = mapOf(
         "pathType" to pathType,
