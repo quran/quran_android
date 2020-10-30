@@ -21,7 +21,7 @@ android {
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion
     targetSdkVersion deps.android.build.targetSdkVersion
-    versionCode 3021
+    versionCode 3022
     versionName "3.0.2"
     testInstrumentationRunner "com.quran.labs.androidquran.core.QuranTestRunner"
     multiDexEnabled true
