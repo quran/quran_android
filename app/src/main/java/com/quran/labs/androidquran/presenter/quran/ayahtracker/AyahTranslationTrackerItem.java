@@ -5,10 +5,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
+import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.translation.TranslationView;
 import com.quran.labs.androidquran.view.AyahToolBar;
-import com.quran.labs.androidquran.view.HighlightingImageView;
 
 public class AyahTranslationTrackerItem extends AyahTrackerItem {
   private final QuranInfo quranInfo;
@@ -52,4 +53,16 @@ public class AyahTranslationTrackerItem extends AyahTrackerItem {
     return position == null ? super.getToolBarPosition(page, sura, ayah, toolBarWidth,
         toolBarHeight) : position;
   }
+
+  @Nullable
+  @Override
+  QuranAyahInfo getQuranAyahInfo(int sura, int ayah) {
+    final QuranAyahInfo quranAyahInfo = ayahView.getQuranAyahInfo(sura, ayah);
+    return quranAyahInfo == null ? super.getQuranAyahInfo(sura, ayah) : quranAyahInfo;
+  }
+
+  @Nullable
+  LocalTranslation[] getLocalTranslations() {
+    final LocalTranslation[] translations = ayahView.getLocalTranslations();
+    return translations == null ? super.getLocalTranslations() : translations;  }
 }

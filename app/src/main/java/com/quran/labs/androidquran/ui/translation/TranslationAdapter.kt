@@ -90,6 +90,10 @@ internal class TranslationAdapter(private val context: Context,
     highlightAyah(ayahId, true)
   }
 
+  fun highlightedAyahInfo(): QuranAyahInfo? {
+    return data.firstOrNull { it.ayahInfo.ayahId == highlightedAyah }?.ayahInfo
+  }
+
   private fun highlightAyah(ayahId: Int, notify: Boolean) {
     if (ayahId != highlightedAyah) {
       val matches = data.withIndex().filter { it.value.ayahInfo.ayahId == ayahId }
