@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.annotation.Nullable;
 import androidx.core.view.DisplayCutoutCompat;
 
 import com.quran.data.model.SuraAyah;
@@ -37,6 +38,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   private OnClickListener onClickListener;
   private final LinearLayoutManager layoutManager;
   private PageController pageController;
+  private LocalTranslation[] localTranslations;
 
   public TranslationView(Context context) {
     this(context, null);
@@ -150,6 +152,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       rows.add(new TranslationViewRow(TranslationViewRow.Type.SPACER, verse));
     }
 
+    localTranslations = translations;
     translationAdapter.setData(rows);
     translationAdapter.notifyDataSetChanged();
   }
@@ -198,6 +201,20 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       }
     }
     return null;
+  }
+
+  @Nullable
+  public QuranAyahInfo getQuranAyahInfo(int sura, int ayah) {
+    if (selectedAyah != null && selectedAyah.sura == sura && selectedAyah.ayah == ayah) {
+      return translationAdapter.highlightedAyahInfo();
+    } else {
+      return null;
+    }
+  }
+
+  @Nullable
+  public LocalTranslation[] getLocalTranslations() {
+    return localTranslations;
   }
 
   public AyahToolBar.AyahToolBarPosition getToolbarPosition() {

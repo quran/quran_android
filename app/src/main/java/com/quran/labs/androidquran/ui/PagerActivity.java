@@ -30,6 +30,7 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.HelpActivity;
@@ -39,6 +40,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.audio.QariItem;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.Constants;
@@ -204,6 +206,9 @@ public class PagerActivity extends QuranActionBarActivity implements
   private int numberOfPagesDual;
   private int defaultNavigationBarColor;
   private boolean isSplitScreen = false;
+
+  @Nullable private QuranAyahInfo lastSelectedTranslationAyah;
+  @Nullable private LocalTranslation[] lastActivatedLocalTranslations;
 
   private PagerActivityComponent pagerActivityComponent;
 
@@ -1750,6 +1755,8 @@ public class PagerActivity extends QuranActionBarActivity implements
       ayahToolBar.showMenu();
       showAyahModeHighlights(suraAyah, tracker);
       isInAyahMode = true;
+      lastActivatedLocalTranslations = tracker.getLocalTranslations();
+      lastSelectedTranslationAyah = tracker.getQuranAyahInfo(suraAyah.sura, suraAyah.ayah);
     }
   }
 
@@ -1806,6 +1813,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     if (isInAyahMode) {
       clearAyahModeHighlights();
       start = end = suraAyah;
+      lastSelectedTranslationAyah = tracker.getQuranAyahInfo(suraAyah.sura, suraAyah.ayah);
       if (ayahToolBar.isShowing()) {
         ayahToolBar.resetMenu();
         updateToolbarPosition(suraAyah, tracker);
@@ -1991,6 +1999,21 @@ public class PagerActivity extends QuranActionBarActivity implements
       return;
     } else if (!quranFileUtils.hasArabicSearchDatabase(this)) {
       showGetRequiredFilesDialog();
+      return;
+    }
+
+    final LocalTranslation[] translationNames = lastActivatedLocalTranslations;
+    if (showingTranslation && translationNames != null) {
+      final QuranAyahInfo quranAyahInfo = lastSelectedTranslationAyah;
+      if (quranAyahInfo != null && translationNames != null) {
+        final String shareText = shareUtil.getShareText(this, quranAyahInfo, translationNames);
+        if (isCopy) {
+          shareUtil.copyToClipboard(this, shareText);
+        } else {
+          shareUtil.shareViaIntent(this, shareText, R.string.share_ayah_text);
+        }
+      }
+
       return;
     }
 

@@ -3,6 +3,8 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
@@ -50,6 +52,16 @@ public class AyahTrackerItem {
 
   @Nullable
   SuraAyah getAyahForPosition(int page, float x, float y) {
+    return null;
+  }
+
+  @Nullable
+  QuranAyahInfo getQuranAyahInfo(int sura, int ayah) {
+    return null;
+  }
+
+  @Nullable
+  LocalTranslation[] getLocalTranslations() {
     return null;
   }
 }

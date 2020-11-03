@@ -6,6 +6,8 @@ import android.view.MotionEvent;
 
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.common.HighlightInfo;
+import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.di.QuranPageScope;
@@ -108,6 +110,30 @@ public class AyahTrackerPresenter implements AyahTracker,
           item.getToolBarPosition(page, sura, ayah, toolBarWidth, toolBarHeight);
       if (position != null) {
         return position;
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public QuranAyahInfo getQuranAyahInfo(int sura, int ayah) {
+    for (AyahTrackerItem item : items) {
+      final QuranAyahInfo quranAyahInfo = item.getQuranAyahInfo(sura, ayah);
+      if (quranAyahInfo != null) {
+        return quranAyahInfo;
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public LocalTranslation[] getLocalTranslations() {
+    for (AyahTrackerItem item : items) {
+      final LocalTranslation[] localTranslations = item.getLocalTranslations();
+      if (localTranslations != null) {
+        return localTranslations;
       }
     }
     return null;
