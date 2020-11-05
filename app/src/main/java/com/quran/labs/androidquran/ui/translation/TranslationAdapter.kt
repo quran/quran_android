@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
@@ -127,7 +128,12 @@ internal class TranslationAdapter(private val context: Context,
         // and update rows to be highlighted
         recyclerView.handler.post {
           notifyItemRangeChanged(startChangeRange, startChangeCount, HIGHLIGHT_CHANGE)
-          recyclerView.smoothScrollToPosition(startPosition)
+          val layoutManager = recyclerView.layoutManager
+          if (layoutManager is LinearLayoutManager) {
+            layoutManager.scrollToPositionWithOffset(startPosition, 52)
+          } else {
+            recyclerView.smoothScrollToPosition(startPosition)
+          }
         }
       }
 
