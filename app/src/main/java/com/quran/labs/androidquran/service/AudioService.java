@@ -608,6 +608,8 @@ public class AudioService extends Service implements OnCompletionListener,
             // jump back to the ayah we should repeat and play it
             pos = getSeekPosition(false);
             player.seekTo(pos);
+          } if (!success) {
+            processStopRequest();
           } else {
             playAudio(true);
           }
