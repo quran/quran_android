@@ -332,7 +332,7 @@
   <string name="about_quran_enc_summary">الترجمات لعدد من اللغات</string>
   <string name="about_tanzil" translatable="false">تنزيل</string>
   <string name="about_tanzil_summary">ترجمات لبعض اللغات</string>
-  <string name="please_wait">الرجاء الانتظار...</string>
+  <string name="please_wait">الرجاء الانتظار…</string>
   <string name="exported_data">صدرت البيانات إلى %1$s</string>
   <string name="audio_manager_remove_audio_title">حذف الملف الصوتي؟</string>
   <string name="audio_manager_remove_audio_msg">سيتم حذف الملف الصوتي ل%1$s. متأكد؟</string>
@@ -345,5 +345,9 @@
   <string name="please_grant_permissions">رجاء امنح الإذن في الإعدادات</string>
   <string name="about_noorhidayat" translatable="false">نور وهداية (Noorhidayat)</string>
   <string name="kitkat_external_message">بسبب قيود الأندرويد، إذا اخترت تخزين ملفات قرآن على الذاكرة الخارجية ثم مسحت التطبيق أو بيانات قرآن أندرويد، ستحذف جميع صفحات المصحف والصوت ولابد من تحميلها مجددا. هل ترغب في استعمال الذاكرة الخارجية؟</string>
+  <string name="scoped_storage_message">بسبب القيود الجديدة في أندرويد 11، تخزين بيانات التطبيق في
+    مكان غير مجلد التطبيق الافتراضي قد يؤدي إلى عدم تمكن التطبيق من الوصول لملفاته في إصدارات أندرويد
+    القادمة، هل ترغب في نقل البيانات على أية حال؟
+  </string>
 
 </resources>

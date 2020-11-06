@@ -247,6 +247,9 @@
         data on your external SD card and later uninstall or clear data for Quran Android, all Quran
         Android pages and audio will be deleted and you will have to download them again. Are you
         sure you want to use the external SD card?</string>
+  <string name="scoped_storage_message">Due to Android changes to increase user privacy, copying
+    files outside of the app directories might stop Quran from accessing its data in future versions
+    of Android. Are you sure you\'d like to use this path?</string>
   <string name="please_grant_permissions">Please grant permission in application settings</string>
   <!-- Preferences End -->
 
