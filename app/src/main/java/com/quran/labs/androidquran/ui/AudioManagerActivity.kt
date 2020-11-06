@@ -151,6 +151,8 @@ class AudioManagerActivity : QuranActionBarActivity() {
       )
       if (fullyDownloaded > 0)
         holder.image.setBackgroundResource(R.drawable.downloaded_button_circle)
+      else
+        holder.image.setBackgroundResource(R.drawable.download_button_circle)
     }
 
     fun getSheikhInfoForPosition(position: Int): QariDownloadInfo? {
