@@ -60,13 +60,14 @@ internal class TranslationAdapter(private val context: Context,
       val highlightedEndPosition = highlightedStartPosition + highlightedRowCount
 
       // find the row with the verse number
-      val versePosition = (highlightedStartPosition until highlightedEndPosition)
-          .firstOrNull { data[it].type == TranslationViewRow.Type.VERSE_NUMBER }
+      val versePosition = data.withIndex().firstOrNull {
+        it.index in highlightedStartPosition until highlightedEndPosition &&
+            it.value.type == TranslationViewRow.Type.VERSE_NUMBER }
 
       // find out where to position the popup based on the center of the box
       versePosition?.let {
         val viewHolder =
-            recyclerView.findViewHolderForAdapterPosition(versePosition) as RowViewHolder?
+            recyclerView.findViewHolderForAdapterPosition(versePosition.index) as RowViewHolder?
         viewHolder?.ayahNumber?.let { ayahNumberView ->
           val x = (ayahNumberView.left + ayahNumberView.boxCenterX)
           val y = (ayahNumberView.top + ayahNumberView.boxBottomY)

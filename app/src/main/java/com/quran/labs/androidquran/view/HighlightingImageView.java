@@ -241,7 +241,12 @@ public class HighlightingImageView extends AppCompatImageView {
 
     // yes we make copies, because normalizing the bounds will change them
     List<AyahBounds> sourceBounds = new ArrayList<>(startingBounds);
-    List<AyahBounds> destinationBounds = new ArrayList<>(highlightCoordinates.get(destinationHighlight));
+
+    List<AyahBounds> destinationBounds = new ArrayList<>();
+    final List<AyahBounds> source = highlightCoordinates.get(destinationHighlight);
+    if (source != null) {
+      destinationBounds.addAll(source);
+    }
 
     highlights.clear();
     highlights.add(transitionHighlight);
