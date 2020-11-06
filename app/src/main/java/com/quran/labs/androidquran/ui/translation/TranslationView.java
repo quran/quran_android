@@ -15,6 +15,7 @@ import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
 import com.quran.labs.androidquran.data.QuranDisplayData;
+import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -165,13 +166,24 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     onClickListener = listener;
   }
 
-  public void highlightAyah(SuraAyah suraAyah, int ayahId) {
-    selectedAyah = suraAyah;
-    translationAdapter.setHighlightedAyah(ayahId);
+  public void highlightAyah(SuraAyah suraAyah, int ayahId, HighlightType highlightType) {
+    if (highlightType == HighlightType.SELECTION) {
+      selectedAyah = suraAyah;
+    } else if (selectedAyah != null) {
+      hideMenu();
+    }
+    translationAdapter.setHighlightedAyah(ayahId, highlightType);
   }
 
   private void hideMenu() {
     pageController.endAyahMode();
+  }
+
+  public void unhighlightAyah(HighlightType highlightType) {
+    if (highlightType == HighlightType.SELECTION) {
+      selectedAyah = null;
+    }
+    translationAdapter.unhighlight();
   }
 
   public void unhighlightAyat() {
@@ -248,9 +260,14 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   @Override
   public void onVerseSelected(@NonNull QuranAyahInfo ayahInfo) {
     final SuraAyah suraAyah = new SuraAyah(ayahInfo.sura, ayahInfo.ayah);
-    if (selectedAyah != null && !selectedAyah.equals(suraAyah)) {
+    if (selectedAyah != null) {
+      final boolean isUnselectingSelectedVerse = selectedAyah.equals(suraAyah);
       hideMenu();
+      if (isUnselectingSelectedVerse) {
+        return;
+      }
     }
+
     pageController.handleLongPress(suraAyah);
     pageController.requestMenuPositionUpdate();
   }
