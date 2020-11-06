@@ -147,7 +147,7 @@
   <string name="prefs_category_reading">Настройки чтения</string>
   <string name="prefs_category_translation">Настройки перевода</string>
   <string name="prefs_category_display_settings">Настройки экрана</string>
-  <string name="prefs_use_arabic_title">Режим арабского</string>
+  <string name="prefs_use_arabic_title">Режим арабского (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Приложение будет локализовано под арабский язык </string>
   <string name="prefs_new_background_title">Новый фон</string>
   <string name="prefs_lock_orientation_title">Удерживать ориентацию экрана</string>

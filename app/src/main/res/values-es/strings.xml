@@ -49,7 +49,7 @@
   <string name="prefs_category_reading">Preferencias de lectura</string>
   <string name="prefs_category_translation">Preferencias de traducción</string>
   <string name="prefs_category_display_settings">Configuración de pantalla</string>
-  <string name="prefs_use_arabic_title">Modo Árabe</string>
+  <string name="prefs_use_arabic_title">Modo Árabe (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">La aplicación se mostrará en Árabe </string>
   <string name="prefs_new_background_title">Nuevo fondo</string>
   <string name="prefs_lock_orientation_title">Bloquear orientación de la pantalla</string>

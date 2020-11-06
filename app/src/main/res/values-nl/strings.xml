@@ -114,7 +114,7 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="prefs_category_reading">Voorkeuren voor Lezen</string>
   <string name="prefs_category_translation">Voorkeuren voor Vertalingen</string>
   <string name="prefs_category_display_settings">Beeldscherminstellingen</string>
-  <string name="prefs_use_arabic_title">Arabisch-modus</string>
+  <string name="prefs_use_arabic_title">Arabisch-modus (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Gebruik Arabisch voor de applicatie-interface</string>
   <string name="prefs_new_background_title">Nieuwe achtergrond</string>
   <string name="prefs_lock_orientation_title">Vergrendel schermoriëntatie</string>

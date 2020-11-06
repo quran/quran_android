@@ -73,7 +73,7 @@
   <string name="prefs_category_reading">ڕێکخستنی خوێندنەوە</string>
   <string name="prefs_category_translation">ڕێکخستنی وەرگێڕان</string>
   <string name="prefs_category_display_settings">ڕێکخستنی پیشاندان</string>
-  <string name="prefs_use_arabic_title">شێوازی عەرەبی</string>
+  <string name="prefs_use_arabic_title">شێوازی عەرەبی (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">زمانی بەرنامەکە ئەبێت بە عەرەبی </string>
   <string name="prefs_new_background_title">پشت شاشەی نوێ</string>
   <string name="prefs_lock_orientation_title">قفڵکردنی گۆڕینی ئاڕاستەی شاشە</string>

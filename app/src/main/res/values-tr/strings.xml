@@ -99,7 +99,7 @@
   <string name="prefs_category_reading">Okuma seçenekleri</string>
   <string name="prefs_category_translation">Meâl seçenekleri</string>
   <string name="prefs_category_display_settings">Görüntüleme ayarları</string>
-  <string name="prefs_use_arabic_title">Arapça modu</string>
+  <string name="prefs_use_arabic_title">Arapça modu (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Uygulama Arapça olarak çalışacak</string>
   <string name="prefs_lock_orientation_title">Ekran döndürmeyi kapat</string>
   <string name="prefs_lock_orientation_summary_on">"Kur'an sayfları döndürme özellikleri olmadan gösterilecek"</string>

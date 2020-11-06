@@ -123,7 +123,7 @@
   <string name="prefs_category_reading">Oʻqish</string>
   <string name="prefs_category_translation">Tarjima sozlamalari</string>
   <string name="prefs_category_display_settings">Koʻrinish</string>
-  <string name="prefs_use_arabic_title">Arabcha rejim</string>
+  <string name="prefs_use_arabic_title">Arabcha rejim (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Ilova arab tilida ishlaydi </string>
   <string name="prefs_new_background_title">Yangi fon</string>
   <string name="prefs_lock_orientation_title">Ekran oriyentatsiyasini qulflash</string>

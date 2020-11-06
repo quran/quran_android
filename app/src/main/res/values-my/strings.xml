@@ -101,7 +101,7 @@
   <string name="prefs_category_reading">Keutamaan Bacaan</string>
   <string name="prefs_category_translation">Keutamaan Terjemahan</string>
   <string name="prefs_category_display_settings">Tetapan Paparan</string>
-  <string name="prefs_use_arabic_title">Mod Aplikasi Arab</string>
+  <string name="prefs_use_arabic_title">Mod Aplikasi Arab (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Aplikasi keseluruhan akan menggunakan tulisan dan bahasa Arab</string>
   <string name="prefs_new_background_title">Latar beakang baru</string>
   <string name="prefs_lock_orientation_title">Kunci orientasi layar</string>
