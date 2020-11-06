@@ -1318,7 +1318,11 @@ public class AudioService extends Service implements OnCompletionListener,
     compositeDisposable.clear();
     // Service is being killed, so make sure we release our resources
     serviceHandler.removeCallbacksAndMessages(null);
-    serviceLooper.quit();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      serviceLooper.quitSafely();
+    } else {
+      serviceLooper.quit();
+    }
     unregisterReceiver(noisyAudioStreamReceiver);
     state = State.Stopped;
     relaxResources(true, true);

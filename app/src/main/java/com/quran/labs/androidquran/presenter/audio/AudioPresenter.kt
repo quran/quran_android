@@ -49,7 +49,7 @@ constructor(private val quranDisplayData: QuranDisplayData,
         audioPathInfo
       }
 
-      val (actualStart, actualEnd) = if (start < end) {
+      val (actualStart, actualEnd) = if (start <= end) {
         start to end
       } else {
         Timber.e(
