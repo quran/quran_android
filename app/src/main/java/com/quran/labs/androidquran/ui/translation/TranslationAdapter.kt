@@ -20,6 +20,7 @@ import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.helpers.ExpandTafseerSpan
+import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan
 import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
@@ -46,6 +47,7 @@ internal class TranslationAdapter(private val context: Context,
   private var highlightedAyah: Int = 0
   private var highlightedRowCount: Int = 0
   private var highlightedStartPosition: Int = 0
+  private var highlightType: HighlightType? = null
 
   private val expandedTafaseerAyahs = mutableSetOf<Pair<Int, Int>>()
   private val expandedHyperlinks = mutableSetOf<Pair<Int, Int>>()
@@ -84,19 +86,19 @@ internal class TranslationAdapter(private val context: Context,
     expandedTafaseerAyahs.clear();
     this.data.addAll(data)
     if (highlightedAyah > 0) {
-      highlightAyah(highlightedAyah, false)
+      highlightAyah(highlightedAyah, false, highlightType ?: HighlightType.SELECTION)
     }
   }
 
-  fun setHighlightedAyah(ayahId: Int) {
-    highlightAyah(ayahId, true)
+  fun setHighlightedAyah(ayahId: Int, highlightType: HighlightType) {
+    highlightAyah(ayahId, true, highlightType)
   }
 
   fun highlightedAyahInfo(): QuranAyahInfo? {
     return data.firstOrNull { it.ayahInfo.ayahId == highlightedAyah }?.ayahInfo
   }
 
-  private fun highlightAyah(ayahId: Int, notify: Boolean) {
+  private fun highlightAyah(ayahId: Int, notify: Boolean, highlightedType: HighlightType) {
     if (ayahId != highlightedAyah) {
       val matches = data.withIndex().filter { it.value.ayahInfo.ayahId == ayahId }
       val (startPosition, count) = (matches.firstOrNull()?.index ?: -1) to matches.size
@@ -130,8 +132,8 @@ internal class TranslationAdapter(private val context: Context,
         recyclerView.handler.post {
           notifyItemRangeChanged(startChangeRange, startChangeCount, HIGHLIGHT_CHANGE)
           val layoutManager = recyclerView.layoutManager
-          if (layoutManager is LinearLayoutManager) {
-            layoutManager.scrollToPositionWithOffset(startPosition, 52)
+          if (highlightedType == HighlightType.AUDIO && layoutManager is LinearLayoutManager) {
+            layoutManager.scrollToPositionWithOffset(startPosition, 64)
           } else {
             recyclerView.smoothScrollToPosition(startPosition)
           }
@@ -141,6 +143,7 @@ internal class TranslationAdapter(private val context: Context,
       highlightedAyah = ayahId
       highlightedStartPosition = startPosition
       highlightedRowCount = count
+      highlightType = highlightedType
     }
   }
 
@@ -184,7 +187,7 @@ internal class TranslationAdapter(private val context: Context,
     val position = recyclerView.getChildAdapterPosition(view)
     if (highlightedAyah != 0 && position != RecyclerView.NO_POSITION) {
       val ayahInfo = data[position].ayahInfo
-      if (ayahInfo.ayahId != highlightedAyah) {
+      if (ayahInfo.ayahId != highlightedAyah && highlightType == HighlightType.SELECTION) {
         onVerseSelectedListener.onVerseSelected(ayahInfo)
         return
       }
@@ -196,7 +199,7 @@ internal class TranslationAdapter(private val context: Context,
     val position = recyclerView.getChildAdapterPosition(view)
     if (position != RecyclerView.NO_POSITION) {
       val ayahInfo = data[position].ayahInfo
-      highlightAyah(ayahInfo.ayahId, true)
+      highlightAyah(ayahInfo.ayahId, true, HighlightType.SELECTION)
       onVerseSelectedListener.onVerseSelected(ayahInfo)
       return true
     }

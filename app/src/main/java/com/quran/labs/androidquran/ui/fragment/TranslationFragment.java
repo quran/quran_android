@@ -39,12 +39,9 @@ public class TranslationFragment extends Fragment implements
     TranslationPresenter.TranslationScreen, PageController {
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
-  private static final String SI_PAGE_NUMBER = "SI_PAGE_NUMBER";
-  private static final String SI_HIGHLIGHTED_AYAH = "SI_HIGHLIGHTED_AYAH";
   private static final String SI_SCROLL_POSITION = "SI_SCROLL_POSITION";
 
   private int pageNumber;
-  private int highlightedAyah;
   private int scrollPosition;
 
   private TranslationView translationView;
@@ -71,14 +68,6 @@ public class TranslationFragment extends Fragment implements
     super.onCreate(savedInstanceState);
 
     if (savedInstanceState != null) {
-      int page = savedInstanceState.getInt(SI_PAGE_NUMBER, -1);
-      if (page == pageNumber) {
-        int highlightedAyah =
-            savedInstanceState.getInt(SI_HIGHLIGHTED_AYAH, -1);
-        if (highlightedAyah > 0) {
-          this.highlightedAyah = highlightedAyah;
-        }
-      }
       scrollPosition = savedInstanceState.getInt(SI_SCROLL_POSITION);
     }
     setHasOptionsMenu(true);
@@ -156,10 +145,6 @@ public class TranslationFragment extends Fragment implements
                         @NonNull LocalTranslation[] translations,
                         @NonNull List<QuranAyahInfo> verses) {
     translationView.setVerses(quranDisplayData, translations, verses);
-    if (highlightedAyah > 0) {
-      translationView.highlightAyah(quranInfo.getSuraAyahFromAyahId(highlightedAyah),
-          highlightedAyah);
-    }
   }
 
   @Override
@@ -173,9 +158,6 @@ public class TranslationFragment extends Fragment implements
 
   @Override
   public void onSaveInstanceState(@NonNull Bundle outState) {
-    if (highlightedAyah > 0) {
-      outState.putInt(SI_HIGHLIGHTED_AYAH, highlightedAyah);
-    }
     scrollPosition = translationView.findFirstCompletelyVisibleItemPosition();
     outState.putInt(SI_SCROLL_POSITION, scrollPosition);
     super.onSaveInstanceState(outState);

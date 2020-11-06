@@ -26,17 +26,17 @@ public class AyahTranslationTrackerItem extends AyahTrackerItem {
   @Override
   boolean onHighlightAyah(int page, int sura, int ayah, HighlightType type, boolean scrollToAyah) {
     if (this.page == page) {
-      ayahView.highlightAyah(new SuraAyah(sura, ayah), quranInfo.getAyahId(sura, ayah));
+      ayahView.highlightAyah(new SuraAyah(sura, ayah), quranInfo.getAyahId(sura, ayah), type);
       return true;
     }
-    ayahView.unhighlightAyat();
+    ayahView.unhighlightAyah(type);
     return false;
   }
 
   @Override
   void onUnHighlightAyah(int page, int sura, int ayah, HighlightType type) {
     if (this.page == page) {
-      ayahView.unhighlightAyat();
+      ayahView.unhighlightAyah(type);
     }
   }
 
