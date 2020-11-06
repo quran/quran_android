@@ -73,7 +73,7 @@
   <string name="prefs_category_reading">朗读设置</string>
   <string name="prefs_category_translation">译文设置</string>
   <string name="prefs_category_display_settings">显示设置</string>
-  <string name="prefs_use_arabic_title">阿拉伯语模式</string>
+  <string name="prefs_use_arabic_title">阿拉伯语模式 (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">应用程序将采用阿拉伯语界面</string>
   <string name="prefs_new_background_title">新的壁纸</string>
   <string name="prefs_lock_orientation_title">屏幕旋转方向</string>

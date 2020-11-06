@@ -71,7 +71,7 @@
   <string name="prefs_category_reading">تنظیمات خواندن</string>
   <string name="prefs_category_translation">تنظیمات ترجمه</string>
   <string name="prefs_category_display_settings">تنظیمات نمایش</string>
-  <string name="prefs_use_arabic_title">حالت عربی</string>
+  <string name="prefs_use_arabic_title">حالت عربی (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">تغییر زبان برنامه به عربی</string>
   <string name="prefs_lock_orientation_title">حفظ جهت نمایش</string>
   <string name="prefs_lock_orientation_summary_on">عدم تغییر خودکار جهت نمایش</string>

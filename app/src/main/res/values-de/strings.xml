@@ -119,7 +119,7 @@
   <string name="prefs_category_reading">Lese Optionen</string>
   <string name="prefs_category_translation">Übersetzungsoptionen</string>
   <string name="prefs_category_display_settings">Bildschirmoptionen</string>
-  <string name="prefs_use_arabic_title">Arabischer Modus</string>
+  <string name="prefs_use_arabic_title">Arabischer Modus (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Das Programm wird ins Arabische umgestellt</string>
   <string name="prefs_new_background_title">Neuen Hintergrund verwenden</string>
   <string name="prefs_lock_orientation_title">Bildschirmausrichtung sperren</string>

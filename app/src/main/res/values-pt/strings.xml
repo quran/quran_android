@@ -88,7 +88,7 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="prefs_category_reading">Preferencias de Leitura</string>
   <string name="prefs_category_translation">Preferncias de Tradução</string>
   <string name="prefs_category_display_settings">Configurações de Visualização</string>
-  <string name="prefs_use_arabic_title">Modo de Árabe</string>
+  <string name="prefs_use_arabic_title">Modo de Árabe (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Aplicação irá ser alterada para Árabe (Requer reinicialização)</string>
   <string name="prefs_new_background_title">New background</string>
   <string name="prefs_lock_orientation_title">Lock screen orientation</string>

@@ -122,7 +122,7 @@
   <string name="prefs_category_reading">Preferencije vezane za stranice</string>
   <string name="prefs_category_translation">Preferencije vezane za prevod</string>
   <string name="prefs_category_display_settings">Prikažite postavke</string>
-  <string name="prefs_use_arabic_title">Arapski</string>
+  <string name="prefs_use_arabic_title">Arapski (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Koristite aplikaciju na arapskom</string>
   <string name="prefs_new_background_title">Nova pozadina</string>
   <string name="prefs_lock_orientation_title">Zabranite rotaciju zaslona u aplikaciji</string>
