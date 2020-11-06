@@ -194,8 +194,8 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
           runListView()
         }
       }
-   } else if (needsPermission && Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-      // we need permission (i.e. are writing to the sdcard) on Android 10 (Q) and above
+   } else if (needsPermission && Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+      // we need permission (i.e. are writing to the sdcard) on Android 11 and above
       // we should migrate because when we are required to target Android 11 next year
       // in sha' Allah, we may lose legacy permissions.
       //

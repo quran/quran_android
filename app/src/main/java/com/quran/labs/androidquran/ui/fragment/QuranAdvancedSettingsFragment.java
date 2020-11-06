@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -14,6 +15,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.QuranAdvancedPreferenceActivity;
 import com.quran.labs.androidquran.QuranApplication;
@@ -270,15 +272,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
             String current = settings.getAppCustomLocation();
             if (appSize < destStorage.getFreeSpace()) {
               if (current == null || !current.equals(newLocation)) {
-                if (destStorage.doesRequirePermission()) {
-                  if (!PermissionUtil.haveWriteExternalStoragePermission(context1)) {
-                    requestExternalStoragePermission(newLocation);
-                    return false;
-                  }
-
-                  // we have the permission, so fall through and handle the move
-                }
-                handleMove(newLocation);
+                handleMove(newLocation, destStorage);
               }
             } else {
               ToastCompat.makeText(context1,
@@ -305,36 +299,76 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
   }
 
 
-  private void handleMove(String newLocation) {
+  private void handleMove(String newLocation, StorageUtils.Storage storageLocation) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT ||
         newLocation.equals(internalSdcardLocation)) {
-      moveFiles(newLocation);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        // on Android Q (not really "above" since we don't show the option above),
+        // warn if the person tries to use the /sdcard path.
+        showScopedStorageConfirmation(newLocation, storageLocation);
+      } else {
+        // otherwise just copy
+        moveFiles(newLocation, storageLocation);
+      }
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      // don't warn for using Android app directories on Q and above
+      moveFiles(newLocation, storageLocation);
     } else {
-      showKitKatConfirmation(newLocation);
+      // but on older versions, warn
+      showKitKatConfirmation(newLocation, storageLocation);
     }
   }
 
-  private void showKitKatConfirmation(final String newLocation) {
+  private void showScopedStorageConfirmation(final String newLocation,
+                                             final StorageUtils.Storage storageLocation) {
+    showConfirmation(newLocation, storageLocation, R.string.scoped_storage_message);
+  }
+
+  private void showKitKatConfirmation(final String newLocation,
+                                      final StorageUtils.Storage storageLocation) {
+    showConfirmation(newLocation, storageLocation, R.string.kitkat_external_message);
+  }
+
+  private void showConfirmation(final String newLocation,
+                                final StorageUtils.Storage storageLocation,
+                                @StringRes int message) {
     final Context context = getActivity();
-    final AlertDialog.Builder b = new AlertDialog.Builder(context)
-        .setTitle(R.string.warning)
-        .setMessage(R.string.kitkat_external_message)
-        .setPositiveButton(R.string.dialog_ok, (currentDialog, which) -> {
-          moveFiles(newLocation);
-          currentDialog.dismiss();
-          QuranAdvancedSettingsFragment.this.dialog = null;
-        })
-        .setNegativeButton(R.string.cancel, (currentDialog, which) -> {
-          currentDialog.dismiss();
-          QuranAdvancedSettingsFragment.this.dialog = null;
-        });
-    dialog = b.create();
-    dialog.show();
+    if (context != null) {
+      final AlertDialog.Builder b = new AlertDialog.Builder(context)
+          .setTitle(R.string.warning)
+          .setMessage(message)
+          .setPositiveButton(R.string.dialog_ok, (currentDialog, which) -> {
+            moveFiles(newLocation, storageLocation);
+            currentDialog.dismiss();
+            QuranAdvancedSettingsFragment.this.dialog = null;
+          })
+          .setNegativeButton(R.string.cancel, (currentDialog, which) -> {
+            currentDialog.dismiss();
+            QuranAdvancedSettingsFragment.this.dialog = null;
+          });
+      dialog = b.create();
+      dialog.show();
+    }
+  }
+
+  private void moveFiles(String newLocation, StorageUtils.Storage storageLocation) {
+    final Context context = getContext();
+    if (context != null) {
+      if (storageLocation.doesRequirePermission() &&
+          !PermissionUtil.haveWriteExternalStoragePermission(context)) {
+        requestExternalStoragePermission(newLocation);
+      } else {
+        moveFiles(newLocation);
+      }
+    }
   }
 
   public void moveFiles(String newLocation) {
-    moveFilesAsyncTask = new MoveFilesAsyncTask(getActivity(), newLocation, quranFileUtils);
-    moveFilesAsyncTask.execute();
+    final Context context = getContext();
+    if (context != null) {
+      moveFilesAsyncTask = new MoveFilesAsyncTask(context, newLocation, quranFileUtils);
+      moveFilesAsyncTask.execute();
+    }
   }
 
   @Override
