@@ -309,5 +309,41 @@
   <string name="more_translations">المزيد من الترجمات والتفاسير</string>
   <string name="menu_show_date">إظهار تاريخ الإضافة</string>
   <string name="pause">وقف مؤقت</string>
+  <string name="prefs_category_dual_screen">تفضيلات الصفحتين المتجاورتين</string>
+  <string name="prefs_split_page_and_translation_title">عرض صفحة من المصحف وأخرى من الترجمة</string>
+  <string name="prefs_split_page_and_translation_summary">عند تفعيل الصفحتين المتجاورتين، تعرض صفحة المصحف والترجمة معا</string>
+  <string name="move_up">تحريك للأعلى</string>
+  <string name="move_down">تحريك للأسفل</string>
+  <string name="delete_translation">حذف الترجمة</string>
+  <string name="prefs_megabytes_int">%1$d م ب</string>
+  <string name="prefs_megabytes_str">%s م ب</string>
+  <string name="storage_permission_please_restart">يرجى إعادة تشغيل التطبيق لتفعيل الإذن</string>
+  <string name="storage_permission_rationale">تطبيق قرآن يحتاج إلى إذنك بالوصول إلى الذاكرة الخارجية. التطبيق سيعمل دون الإذن، لكن عند مسح البيانات أو حذف التطبيق، ستحذف جميع صفحات المصحف والبيانات والصوت. هل تريد الإذن لتطبيق قرآن؟</string>
+  <string name="about_contributors_summary">قائمة بأسماء المساهمين في تطوير تطبيق قرآن أندرويد</string>
+  <string name="about_contributors">المساهمون</string>
+  <string name="about_others">أخرى</string>
+  <string name="about_open_source">مشاريع مفتوحة المصدر</string>
+  <string name="about_furqan" translatable="false">الباحث القرآني (tafsir.app)</string>
+  <string name="about_quran_ksu">مشروع المصحف الإلكتروني</string>
+  <string name="about_quran_ksu_summary">مشروع المصحف الإلكتروني بجامعة الملك سعود هو مصدر عدد من التفاسير والترجمات المستخدمة في التطبيق. وهو أيضا مصدر تلاوة الشيخ أيمن سويد.</string>
+  <string name="about_quranicaudio_summary">التلاوات الصوتية المتصلة</string>
+  <string name="about_furqan_summary">النص العثماني والتفاسير العربية</string>
+  <string name="about_quran_enc" translatable="false">موسوعة القرآن الكريم</string>
+  <string name="about_quran_enc_summary">الترجمات لعدد من اللغات</string>
+  <string name="about_tanzil" translatable="false">تنزيل</string>
+  <string name="about_tanzil_summary">ترجمات لبعض اللغات</string>
+  <string name="please_wait">الرجاء الانتظار...</string>
+  <string name="exported_data">صدرت البيانات إلى %1$s</string>
+  <string name="audio_manager_remove_audio_title">حذف الملف الصوتي؟</string>
+  <string name="audio_manager_remove_audio_msg">سيتم حذف الملف الصوتي ل%1$s. متأكد؟</string>
+  <string name="about_noorhidayat_summary">خط نورحِرا وترجمة مفتي تقي</string>
+  <string name="about_qaloon_images">صور صفحات القرآن برواية قالون مأخوذة بتصريح من Nous-Mêmes Éditions Et Diffusion (تونس)</string>
+  <string name="audio_updated_title">تحديث الملفات الصوتية</string>
+  <string name="audio_updated_text">تم تحديث عدد من الملفات الصوتية. تطبيق قرآن حذف نسختك القديمة من هذه الملفات لتتمكن من تنزيل النسخ الجديدة عند تشغيلك لهذه الملفات في المرة القادمة.</string>
+  <string name="import_data_error">ملف النسخة الاحتياطية تالف (أو فشلت قراءة النسخة الاحتياطية)</string>
+  <string name="import_data_permissions_error">فشلت قراءة ملف النسخة الاحتياطية بسبب فقدان الإذن</string>
+  <string name="please_grant_permissions">رجاء امنح الإذن في الإعدادات</string>
+  <string name="about_noorhidayat" translatable="false">نور وهداية (Noorhidayat)</string>
+  <string name="kitkat_external_message">بسبب قيود الأندرويد، إذا اخترت تخزين ملفات قرآن على الذاكرة الخارجية ثم مسحت التطبيق أو بيانات قرآن أندرويد، ستحذف جميع صفحات المصحف والصوت ولابد من تحميلها مجددا. هل ترغب في استعمال الذاكرة الخارجية؟</string>
 
 </resources>
