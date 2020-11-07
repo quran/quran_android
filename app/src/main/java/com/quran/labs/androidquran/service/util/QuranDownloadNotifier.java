@@ -8,11 +8,11 @@ import android.content.Intent;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import com.crashlytics.android.Crashlytics;
 import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.util.NotificationChannelUtil;
+import timber.log.Timber;
 
 public class QuranDownloadNotifier {
   // error messages
@@ -84,11 +84,11 @@ public class QuranDownloadNotifier {
     }
   }
 
-  private Context appContext;
-  private Service service;
-  private NotificationManager notificationManager;
-  private LocalBroadcastManager broadcastManager;
-  private int notificationColor;
+  private final Context appContext;
+  private final Service service;
+  private final NotificationManager notificationManager;
+  private final LocalBroadcastManager broadcastManager;
+  private final int notificationColor;
   private int lastProgress;
   private int lastMaximum;
   private boolean isForeground;
@@ -334,7 +334,7 @@ public class QuranDownloadNotifier {
         notificationManager.notify(notificationId, builder.build());
       }
     } catch (SecurityException se) {
-      Crashlytics.logException(se);
+      Timber.e(se);
     }
   }
 }

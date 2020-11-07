@@ -6,7 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.quran.labs.androidquran.R
 import io.reactivex.Maybe
@@ -17,7 +20,7 @@ import java.lang.ref.WeakReference
 
 class PageSelectAdapter(val inflater: LayoutInflater,
                         val width: Int,
-                        private val selectionHandler: (String) -> Unit) : androidx.viewpager.widget.PagerAdapter() {
+                        private val selectionHandler: (String) -> Unit) : PagerAdapter() {
   private val items : MutableList<PageTypeItem> = mutableListOf()
   private val compositeDisposable = CompositeDisposable()
 
@@ -28,7 +31,7 @@ class PageSelectAdapter(val inflater: LayoutInflater,
     }
   }
 
-  fun replaceItems(updates: List<PageTypeItem>, pager: androidx.viewpager.widget.ViewPager) {
+  fun replaceItems(updates: List<PageTypeItem>, pager: ViewPager) {
     items.clear()
     items.addAll(updates)
     items.forEach {
@@ -52,9 +55,12 @@ class PageSelectAdapter(val inflater: LayoutInflater,
     view.findViewById<FloatingActionButton>(R.id.fab).setOnClickListener(listener)
 
     val image = view.findViewById<ImageView>(R.id.preview)
+    val progressBar = view.findViewById<ProgressBar>(R.id.progress_bar)
     if (data.previewImage != null) {
+      progressBar.visibility = View.GONE
       readImage(data.previewImage.path, WeakReference(image))
     } else {
+      progressBar.visibility = View.VISIBLE
       image.setImageBitmap(null)
     }
   }

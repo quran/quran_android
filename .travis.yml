@@ -10,7 +10,7 @@ android:
       - platform-tools
       - build-tools-29.0.2
       - build-tools-28.0.3
-      - android-28
+      - android-29
       - android-22 # required for emulator below
       - extra-android-m2repository
       - sys-img-armeabi-v7a-android-22
@@ -30,5 +30,9 @@ before_script:
   - adb shell input keyevent 82 &
 
 script:
-   - ./gradlew clean testMadaniRelease feature:audio:testDebug -PdisableCrashlytics
-   - ./gradlew clean connectedMadaniDebugAndroidTest -PdisableCrashlytics
+   - ./gradlew clean testMadaniRelease feature:audio:testDebug -PdisableCrashlytics -PdisableFirebase
+   - ./gradlew clean connectedMadaniDebugAndroidTest -PdisableCrashlytics -PdisableFirebase
+
+branches:
+  only:
+    - master

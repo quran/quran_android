@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.data;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.crashlytics.android.Crashlytics;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.source.PageProvider;
@@ -15,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
+import timber.log.Timber;
 
 public class QuranDisplayData {
   private final QuranInfo quranInfo;
@@ -149,7 +149,7 @@ public class QuranDisplayData {
 
   public int safelyGetSuraOnPage(int page) {
     if (page < Constants.PAGES_FIRST || page > quranInfo.getNumberOfPages()) {
-      Crashlytics.logException(new IllegalArgumentException("got page: " + page));
+      Timber.e(new IllegalArgumentException("safelyGetSuraOnPage with page: " + page));
       page = 1;
     }
     return quranInfo.getSuraOnPage(page);

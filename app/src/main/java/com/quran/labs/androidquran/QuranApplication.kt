@@ -7,15 +7,13 @@ import android.os.Build.VERSION_CODES
 import androidx.multidex.MultiDexApplication
 import androidx.work.Configuration
 import androidx.work.WorkManager
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore.Builder
 import com.quran.labs.androidquran.core.worker.QuranWorkerFactory
 import com.quran.labs.androidquran.di.component.application.ApplicationComponent
 import com.quran.labs.androidquran.di.component.application.DaggerApplicationComponent
 import com.quran.labs.androidquran.di.module.application.ApplicationModule
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.RecordingLogTree
-import io.fabric.sdk.android.Fabric
+import com.quran.labs.androidquran.widget.BookmarksWidgetSubscriber
 import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
@@ -26,13 +24,12 @@ open class QuranApplication : MultiDexApplication() {
   @Inject
   lateinit var quranWorkerFactory: QuranWorkerFactory
 
+  @Inject
+  lateinit var bookmarksWidgetSubscriber: BookmarksWidgetSubscriber
+
   override fun onCreate() {
     super.onCreate()
-    Fabric.with(this,
-        Crashlytics.Builder().core(Builder().disabled(BuildConfig.DEBUG).build())
-        .build()
-    )
-    Timber.plant(RecordingLogTree())
+    setupTimber()
     applicationComponent = initializeInjector()
     applicationComponent.inject(this)
     WorkManager.initialize(
@@ -41,9 +38,14 @@ open class QuranApplication : MultiDexApplication() {
             .setWorkerFactory(quranWorkerFactory)
             .build()
     )
+    bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
   }
 
-  private fun initializeInjector(): ApplicationComponent {
+  open fun setupTimber() {
+    Timber.plant(RecordingLogTree())
+  }
+
+  open fun initializeInjector(): ApplicationComponent {
     return DaggerApplicationComponent.builder()
         .applicationModule(ApplicationModule(this))
         .build()

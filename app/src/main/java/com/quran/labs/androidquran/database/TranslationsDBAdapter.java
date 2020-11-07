@@ -68,10 +68,11 @@ public class TranslationsDBAdapter {
     }
 
     List<LocalTranslation> items = new ArrayList<>();
-    Cursor cursor = db.query(TranslationsTable.TABLE_NAME,
-        null, null, null, null, null,
-        TranslationsTable.ID + " ASC");
-    if (cursor != null) {
+    Cursor cursor = null;
+    try {
+      cursor = db.query(TranslationsTable.TABLE_NAME,
+              null, null, null, null, null,
+              TranslationsTable.ID + " ASC");
       while (cursor.moveToNext()) {
         int id = cursor.getInt(0);
         String name = cursor.getString(1);
@@ -82,12 +83,14 @@ public class TranslationsDBAdapter {
         String languageCode = cursor.getString(6);
         int version = cursor.getInt(7);
         int minimumVersion = cursor.getInt(8);
+        int displayOrder = cursor.getInt(9);
 
         if (quranFileUtils.hasTranslation(context, filename)) {
           items.add(new LocalTranslation(id, filename, name, translator,
-              translatorForeign, url, languageCode, version, minimumVersion));
+                  translatorForeign, url, languageCode, version, minimumVersion, displayOrder));
         }
       }
+    } finally {
       cursor.close();
     }
     items = Collections.unmodifiableList(items);
@@ -105,11 +108,42 @@ public class TranslationsDBAdapter {
   public boolean writeTranslationUpdates(List<TranslationItem> updates) {
     boolean result = true;
     db.beginTransaction();
+
     try {
+      int cachedNextOrder = -1;
       for (int i = 0, updatesSize = updates.size(); i < updatesSize; i++) {
         TranslationItem item = updates.get(i);
         if (item.exists()) {
+          int displayOrder = 0;
+
           final Translation translation = item.getTranslation();
+
+          if (item.getDisplayOrder() > -1) {
+            displayOrder = item.getDisplayOrder();
+          } else {
+            Cursor cursor = null;
+            if (cachedNextOrder == -1) {
+              try {
+                // get next highest display order
+                cursor = db.query(
+                        TranslationsTable.TABLE_NAME,
+                        new String[]{TranslationsTable.DISPLAY_ORDER},
+                        null, null, null, null,
+                        TranslationsTable.DISPLAY_ORDER + " DESC",
+                        "1"
+                );
+                if (cursor != null && cursor.moveToFirst()) {
+                  cachedNextOrder = cursor.getInt(0) + 1;
+                  displayOrder = cachedNextOrder++;
+                }
+              } finally {
+                if (cursor != null) cursor.close();
+              }
+            } else {
+              displayOrder = cachedNextOrder++;
+            }
+          }
+
           ContentValues values = new ContentValues();
           values.put(TranslationsTable.ID, translation.getId());
           values.put(TranslationsTable.NAME, translation.getDisplayName());
@@ -121,6 +155,7 @@ public class TranslationsDBAdapter {
           values.put(TranslationsTable.LANGUAGE_CODE, translation.getLanguageCode());
           values.put(TranslationsTable.VERSION, item.getLocalVersion());
           values.put(TranslationsTable.MINIMUM_REQUIRED_VERSION, translation.getMinimumVersion());
+          values.put(TranslationsTable.DISPLAY_ORDER, displayOrder);
 
           db.replace(TranslationsTable.TABLE_NAME, null, values);
         } else {

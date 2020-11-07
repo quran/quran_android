@@ -2,11 +2,10 @@ package com.quran.labs.androidquran.presenter.bookmark;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import com.google.android.material.snackbar.Snackbar;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
@@ -115,27 +114,20 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     groupByTags = !groupByTags;
     quranSettings.setBookmarksGroupedByTags(groupByTags);
     requestData(false);
-    Answers.getInstance().logCustom(
-        new CustomEvent(groupByTags ? "groupByTags" : "doNotGroupByTags"));
   }
 
   public void toggleShowRecents() {
     showRecents = !showRecents;
     quranSettings.setShowRecents(showRecents);
     requestData(false);
-    Answers.getInstance().logCustom(
-        new CustomEvent(showRecents ? "showRecents" : "doNotMinimizeRecents"));
   }
 
   public void toogleShowDate() {
     showDate = !showDate;
     quranSettings.setShowDate(showDate);
     requestData(false);
-    Answers.getInstance().logCustom(
-        new CustomEvent(showDate ? "showDate" : "doNotShowDate")
-    );
-
   }
+
   public boolean isShowingRecents() {
     return showRecents;
   }
@@ -205,7 +197,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         .subscribeWith(new DisposableSingleObserver<BookmarkResult>() {
 
           @Override
-          public void onSuccess(BookmarkResult result) {
+          public void onSuccess(@NonNull BookmarkResult result) {
             pendingRemoval = null;
             cachedData = result;
             if (fragment != null) {
@@ -214,14 +206,14 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
           }
 
           @Override
-          public void onError(Throwable e) {
+          public void onError(@NonNull Throwable e) {
           }
         });
   }
 
   private BookmarkResult predictQuranListAfterDeletion(List<QuranRow> remove) {
     if (cachedData != null) {
-      List<QuranRow> placeholder = new ArrayList<>(cachedData.getRows().size() - remove.size());
+      List<QuranRow> placeholder = new ArrayList<>(Math.max(0, cachedData.getRows().size() - remove.size()));
       List<QuranRow> rows = cachedData.getRows();
       List<Long> removedTags = new ArrayList<>();
       for (int i = 0, rowsSize = rows.size(); i < rowsSize; i++) {

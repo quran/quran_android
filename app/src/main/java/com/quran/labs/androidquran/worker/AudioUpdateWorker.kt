@@ -7,8 +7,6 @@ import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.CustomEvent
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.core.worker.WorkerTaskFactory
 import com.quran.labs.androidquran.data.Constants
@@ -17,15 +15,12 @@ import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler
 import com.quran.labs.androidquran.feature.audio.AudioUpdater
 import com.quran.labs.androidquran.feature.audio.api.AudioUpdateService
 import com.quran.labs.androidquran.feature.audio.util.AudioFileCheckerImpl
-import com.quran.labs.androidquran.feature.audio.util.HashLoggerImpl
 import com.quran.labs.androidquran.feature.audio.util.MD5Calculator
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.NotificationChannelUtil
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import kotlinx.coroutines.coroutineScope
-import retrofit2.Retrofit.Builder
-import retrofit2.converter.moshi.MoshiConverterFactory
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -51,8 +46,7 @@ class AudioUpdateWorker(
         val localFilesToDelete = AudioUpdater.computeUpdates(
             updates.updates, audioUtils.getQariList(context),
             AudioFileCheckerImpl(MD5Calculator, audioPathRoot),
-            AudioDatabaseVersionChecker(),
-            HashLoggerImpl
+            AudioDatabaseVersionChecker()
         )
 
         Timber.d("update count: %d", localFilesToDelete.size)
@@ -82,10 +76,6 @@ class AudioUpdateWorker(
               File(filePath).delete()
             }
           }
-
-          Answers.getInstance()
-              .logCustom(CustomEvent("audioUpdatesSuccessful")
-                  .putCustomAttribute("numberOfSetsAffected", localFilesToDelete.size))
 
           // push a notification to inform the person that some files
           // have been deleted.

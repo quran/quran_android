@@ -6,6 +6,8 @@ import android.view.MotionEvent;
 
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.common.HighlightInfo;
+import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.di.QuranPageScope;
@@ -15,7 +17,7 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.util.QuranFileUtils;
-import com.quran.labs.androidquran.widgets.AyahToolBar;
+import com.quran.labs.androidquran.view.AyahToolBar;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 
@@ -111,6 +113,42 @@ public class AyahTrackerPresenter implements AyahTracker,
       }
     }
     return null;
+  }
+
+  @Nullable
+  @Override
+  public QuranAyahInfo getQuranAyahInfo(int sura, int ayah) {
+    for (AyahTrackerItem item : items) {
+      final QuranAyahInfo quranAyahInfo = item.getQuranAyahInfo(sura, ayah);
+      if (quranAyahInfo != null) {
+        return quranAyahInfo;
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public LocalTranslation[] getLocalTranslations() {
+    for (AyahTrackerItem item : items) {
+      final LocalTranslation[] localTranslations = item.getLocalTranslations();
+      if (localTranslations != null) {
+        return localTranslations;
+      }
+    }
+    return null;
+  }
+
+  public void handleLongClick(SuraAyah suraAyah, AyahSelectedListener ayahSelectedListener) {
+    ayahSelectedListener.onAyahSelected(AyahSelectedListener.EventType.LONG_PRESS, suraAyah, this);
+  }
+
+  public void endAyahMode(AyahSelectedListener ayahSelectedListener) {
+    ayahSelectedListener.endAyahMode();
+  }
+
+  public void requestMenuPositionUpdate(AyahSelectedListener ayahSelectedListener) {
+    ayahSelectedListener.requestMenuPositionUpdate(this);
   }
 
   public boolean handleTouchEvent(Activity activity, MotionEvent event,

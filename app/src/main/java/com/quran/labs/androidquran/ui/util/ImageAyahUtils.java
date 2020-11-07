@@ -8,8 +8,8 @@ import android.widget.ImageView;
 
 import com.quran.page.common.data.AyahBounds;
 import com.quran.data.model.SuraAyah;
-import com.quran.labs.androidquran.widgets.AyahToolBar;
-import com.quran.labs.androidquran.widgets.HighlightingImageView;
+import com.quran.labs.androidquran.view.AyahToolBar;
+import com.quran.labs.androidquran.view.HighlightingImageView;
 
 import java.util.ArrayList;
 import java.util.List;

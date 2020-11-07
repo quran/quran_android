@@ -7,7 +7,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.ui.fragment.AyahPlaybackFragment;
 import com.quran.labs.androidquran.ui.fragment.AyahTranslationFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
-import com.quran.labs.androidquran.widgets.IconPageIndicator;
+import com.quran.labs.androidquran.view.IconPageIndicator;
 
 public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
     IconPageIndicator.IconPagerAdapter {
@@ -22,11 +22,11 @@ public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
       R.drawable.ic_tag, R.drawable.ic_translation, R.drawable.ic_play
   };
 
-  private boolean mIsRtl;
+  private final boolean isRtl;
 
   public SlidingPagerAdapter(FragmentManager fm, boolean isRtl) {
     super(fm, "sliding");
-    mIsRtl = isRtl;
+    this.isRtl = isRtl;
   }
 
   @Override
@@ -35,7 +35,7 @@ public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
   }
 
   public int getPagePosition(int page) {
-    return mIsRtl ? (PAGES.length - 1) - page : page;
+    return isRtl ? (PAGES.length - 1) - page : page;
   }
 
   @Override

@@ -1,10 +1,8 @@
 package com.quran.labs.androidquran.model.bookmark;
 
-import androidx.core.util.Pair;
-
+import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
-import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
@@ -15,6 +13,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import androidx.core.util.Pair;
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
@@ -79,6 +78,7 @@ public class BookmarkModel {
         }
       }
       bookmarksDBAdapter.bulkDelete(tagsToDelete, bookmarksToDelete, untag);
+      bookmarksPublishSubject.onNext(true);
       return null;
     }).subscribeOn(Schedulers.io());
   }

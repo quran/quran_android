@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.SpannableString;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -33,11 +35,15 @@ import com.quran.labs.androidquran.util.QuranUtils;
 import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+/**
+ * Activity for searching the Quran
+ */
 public class SearchActivity extends QuranActionBarActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener,
     LoaderManager.LoaderCallbacks<Cursor> {
@@ -79,6 +85,26 @@ public class SearchActivity extends QuranActionBarActivity
       finish();
     });
     handleIntent(getIntent());
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    super.onCreateOptionsMenu(menu);
+    getMenuInflater().inflate(R.menu.search_menu, menu);
+    MenuItem searchItem = menu.findItem(R.id.search);
+    SearchView searchView = (SearchView) searchItem.getActionView();
+    SearchManager searchManager = ((SearchManager) getSystemService(Context.SEARCH_SERVICE));
+    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+    Intent intent = getIntent();
+    if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+      // Make sure the keyboard is hidden if doing a search from within this activity
+      searchView.clearFocus();
+    } else if (intent.getAction() == null){
+      // If no action is specified, just open the keyboard so the user can quickly start searching
+      searchItem.expandActionView();
+    }
+    return true;
   }
 
   @Override
@@ -169,6 +195,9 @@ public class SearchActivity extends QuranActionBarActivity
         buttonGetTranslations.setText(R.string.get_translations);
         buttonGetTranslations.setVisibility(View.VISIBLE);
       }
+      if (adapter != null) {
+        adapter.swapCursor(null);
+      }
     } else {
       // Display the number of results
       int count = cursor.getCount();
@@ -186,7 +215,7 @@ public class SearchActivity extends QuranActionBarActivity
           jumpToResult(currentCursor.getInt(1), currentCursor.getInt(2));
         });
       } else {
-        adapter.changeCursor(cursor);
+        adapter.swapCursor(cursor);
       }
     }
   }
@@ -194,7 +223,7 @@ public class SearchActivity extends QuranActionBarActivity
   @Override
   public void onLoaderReset(@NonNull Loader<Cursor> loader) {
     if (adapter != null) {
-      adapter.changeCursor(null);
+      adapter.swapCursor(null);
     }
   }
 
@@ -243,6 +272,10 @@ public class SearchActivity extends QuranActionBarActivity
       }
 
       if (id != null) {
+        if (id == -1) {
+          showResults(query);
+          return;
+        }
         int sura = 1;
         int total = id;
         for (int j = 1; j <= 114; j++) {

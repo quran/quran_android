@@ -30,11 +30,15 @@ import com.quran.labs.androidquran.R.layout
 import com.quran.labs.androidquran.R.string
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.util.QuranUtils
-import com.quran.labs.androidquran.widgets.ForceCompleteTextView
+import com.quran.labs.androidquran.view.ForceCompleteTextView
 import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 
+/**
+ * [DialogFragment] of a dialog for quickly selecting and jumping to a particular location in the
+ * Quran. A location can be selected by page number or Surah/Ayah.
+ */
 class JumpFragment : DialogFragment() {
 
   @Inject

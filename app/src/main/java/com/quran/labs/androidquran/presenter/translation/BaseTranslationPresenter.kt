@@ -99,14 +99,16 @@ internal open class BaseTranslationPresenter<T> internal constructor(
           if (element != null) {
             // replace with "" when a translation doesn't load to keep translations aligned
             val ayahTranslations = quranTexts.mapIndexed { index: Int, quranText: QuranText? ->
-              val translationMinVersion = translationInfo.getOrNull(index)?.minimumVersion ?: 0
+              val translation = translationInfo.getOrNull(index);
+              val translationMinVersion = translation?.minimumVersion ?: 0
+              val translationId = translation?.id ?: -1;
               val shouldProcess =
                   translationMinVersion >= TranslationUtil.MINIMUM_PROCESSING_VERSION
               val text = quranText ?: QuranText(element.sura, element.ayah, "")
               if (shouldProcess) {
-                translationUtil.parseTranslationText(text)
+                translationUtil.parseTranslationText(text, translationId)
               } else {
-                TranslationMetadata(element.sura, element.ayah, text.text)
+                TranslationMetadata(element.sura, element.ayah, text.text, translationId)
               }
             }
 

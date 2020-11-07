@@ -20,8 +20,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.CustomEvent
 import com.quran.labs.androidquran.AboutUsActivity
 import com.quran.labs.androidquran.HelpActivity
 import com.quran.labs.androidquran.QuranApplication
@@ -31,6 +29,8 @@ import com.quran.labs.androidquran.SearchActivity
 import com.quran.labs.androidquran.ShortcutsActivity
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel
+import com.quran.labs.androidquran.presenter.data.QuranIndexEventLogger
+import com.quran.labs.androidquran.presenter.data.QuranIndexEventLoggerImpl
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter
 import com.quran.labs.androidquran.service.AudioService
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog
@@ -45,7 +45,7 @@ import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
-import com.quran.labs.androidquran.widgets.SlidingTabLayout
+import com.quran.labs.androidquran.view.SlidingTabLayout
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -89,13 +89,18 @@ class QuranActivity : QuranActionBarActivity(),
   lateinit var recentPageModel: RecentPageModel
   @Inject
   lateinit var translationManagerPresenter: TranslationManagerPresenter
+  @Inject
+  lateinit var quranIndexEventLogger: QuranIndexEventLogger
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     val quranApp = application as QuranApplication
     quranApp.refreshLocale(this, false)
 
     super.onCreate(savedInstanceState)
-    quranApp.applicationComponent.inject(this)
+    quranApp.applicationComponent
+        .quranActivityComponentBuilder()
+        .build()
+        .inject(this)
 
     setContentView(R.layout.quran_index)
     isRtl = isRtl()
@@ -137,6 +142,7 @@ class QuranActivity : QuranActionBarActivity(),
       }
     }
     updateTranslationsListAsNeeded()
+    quranIndexEventLogger.logAnalytics()
   }
 
   public override fun onResume() {
@@ -205,11 +211,10 @@ class QuranActivity : QuranActionBarActivity(),
         gotoPageDialog()
       }
       R.id.other_apps -> {
-        Answers.getInstance().logCustom(CustomEvent("menuOtherApps"))
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse("market://search?q=pub:quran.com")
         if (packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY) == null) {
-          intent.data = Uri.parse("http://play.google.com/store/search?q=pub:quran.com")
+          intent.data = Uri.parse("https://play.google.com/store/search?q=pub:quran.com")
         }
         startActivity(intent)
       }

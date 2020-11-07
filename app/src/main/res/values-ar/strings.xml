@@ -10,13 +10,13 @@
   <string name="downloading_message">يرجى الإنتظار حتى نهاية التحميل</string>
   <string name="extracting_title">تجهيز…</string>
   <string name="menu_about">عنا</string>
-  <string name="menu_other_apps">تطبيقات اخرى‎</string>
+  <string name="menu_other_apps">تطبيقات أخرى‎</string>
   <string name="menu_settings">الإعدادات</string>
   <string name="menu_jump_last_page">الصفحة الأخيرة</string>
   <string name="menu_bookmarks">المرجعيات</string>
   <string name="menu_bookmarks_page">مرجعيات الصفحات</string>
   <string name="menu_bookmarks_ayah">مرجعيات الآيات</string>
-  <string name="menu_sort">تغير الترتيب</string>
+  <string name="menu_sort">تغيير الترتيب</string>
   <string name="menu_sort_date">تاريخ الإضافة</string>
   <string name="menu_sort_location">موقعها في القرآن</string>
   <string name="menu_translation">التفسير/الترجمة</string>
@@ -25,10 +25,10 @@
   <string name="menu_search">بحث</string>
   <string name="menu_get_translations">حمل التفاسير/التراجم</string>
   <string name="menu_jump">انتقال سريع</string>
-  <string name="gotoPage">ادخل رقم الصفحة</string>
-  <string name="cancel">الغاء</string>
+  <string name="gotoPage">أدخل رقم الصفحة</string>
+  <string name="cancel">إلغاء</string>
 
-  <string name="help_title">الاسئلة المتداولة</string>
+  <string name="help_title">الأسئلة المتداولة</string>
   <string name="help">
         &lt;b&gt;كيف يتمّ تشغيل الصّوت؟&lt;/b&gt;
         &lt;br/&gt;
@@ -48,8 +48,10 @@
          أثناء قراءتك اضغط على الآية ضغطةً طويلةً ستظهر لك قائمةٌ بها عِدّة اختياراتٍ منها الإرسال ومنها تسجيل الآية في المرجعيّات، نسخ الآية، و تفسير الآية.
     </string>
 
-  <string name="search_hint">بحث في القران</string>
-  <string name="quranSearchType">آيات القران</string>
+  <string name="search_hint">بحث في القرآن</string>
+  <string name="quranSearchType">آيات القرآن</string>
+  <string name="search_full_results">نتائج كاملة</string>
+  <string name="search_entire_mushaf">ابحث في المصحف بأكمله</string>
 
   <plurals name="files_downloaded">
     <item quantity="zero">لم يتم تحميل سور بعد‎</item>
@@ -106,9 +108,9 @@
   <string name="prefs_ayah_before_translation_summary">اختر لعرض الآية مع التفسير</string>
   <string name="prefs_category_download">خيارات التحميل</string>
   <string name="prefs_streaming_title">استماع عبر اﻻنترنت</string>
-  <string name="prefs_streaming_summary"> سيتم تشغيل الملفات عبر اﻻنترنت (لن يتم تنزيل الملفات على الجهاز)</string>
+  <string name="prefs_streaming_summary">" سيتم تشغيل الصوت عبر اﻻنترنت (لن يتم تنزيل الملفات على الجهاز)"</string>
   <string name="prefs_download_amount_title">كم التحميل</string>
-  <string name="prefs_download_amount_summary">كم التحميل للتلاوات الغير متصلة</string>
+  <string name="prefs_download_amount_summary">كم التحميل للتلاوات غير المتصلة</string>
   <string name="prefs_audio_manager_summary">تحميل وإدارة الملفات الصوتية</string>
   <string name="prefs_app_location_title">مكان التطبيق</string>
   <string name="prefs_app_location_summary">اختر الذاكرة التي سيتم تخزين الملفات عليها</string>
@@ -119,15 +121,15 @@
   <string name="prefs_copying_app_files">جاري نسخ ملفات التطبيق</string>
   <string name="prefs_err_moving_app_files">حدث خطأ اثناء نقل ملفات التطبيق</string>
   <string name="prefs_no_enough_space_to_move_files">لا يوجد مساحة كافية لنقل ملفات التطبيق</string>
-  <string name="prefs_dual_page_mode_title">عرض صفحتين/صفحة واحدة في الوضع الأفقي</string>
-  <string name="prefs_dual_page_mode_enabled">عرض صفحتين في الوضع الأفقي</string>
+  <string name="prefs_dual_page_mode_title">وضع الصفحتين المتجاورتين</string>
+  <string name="prefs_dual_page_mode_enabled">عرض صفحتين متجاورتين في الوضع الأفقي</string>
   <string name="prefs_dual_page_mode_disabled">عرض صفحة واحدة في الوضع الأفقي</string>
   <string name="prefs_import_title">استيراد</string>
-  <string name="prefs_import_summary">استيراد الاشارات المرجعية والعلامات</string>
+  <string name="prefs_import_summary">استيراد الإشارات المرجعية والعلامات</string>
   <string name="prefs_send_logs_title">إرسال السجلات</string>
   <string name="prefs_send_logs_summary">إرسال سجلات التصحيح للمطور</string>
-  <string name="prefs_sura_translated_name_summary">اظهار اسماء السور مترجمة</string>
-  <string name="prefs_sura_translated_name_title">ترجمة اسماء السور</string>
+  <string name="prefs_sura_translated_name_summary">إظهار أسماء السور مترجمة</string>
+  <string name="prefs_sura_translated_name_title">ترجمة أسماء السور</string>
   <!-- Preferences End -->
 
   <string name="downloaded_translations">الملفات المحملة</string>
@@ -155,7 +157,7 @@
   <string name="quran_ayah_details">%1$s - آية %2$s، جزء %3$s</string>
   <string name="quran_sura_title">سورة %1$s</string>
 
-  <string name="sura_ayah_notification_str">سورة %1$s, آية %2$d</string>
+  <string name="sura_ayah_notification_str">سورة %1$s، آية %2$d</string>
 
   <string name="index_loading">جاري التحميل…</string>
 
@@ -176,29 +178,29 @@
   <string name="download_error_invalid_download_retry">هناك ملف تالف، جاري إعادة التحميل</string>
   <string name="download_error_network_retry">لا يمكن اﻻتصال بالانترنت، جاري إعادة المحاولة…</string>
   <string name="notification_download_canceled">تم إلغاء التحميل</string>
-  <string name="sdcard_error">لم يتم العثور على بطاقه الذاكرة الرقمية. اعد وضعها و حاول مرة اخرى.</string>
+  <string name="sdcard_error">لم يتم العثور على بطاقه الذاكرة الرقمية. أعد وضعها و حاول مرة أخرى.</string>
 
   <!-- downloading dialogs -->
   <string name="download_progress">تم تحميل %1$s / %2$s</string>
   <string name="download_sura_progress">جاري التحميل من سورة %3$d - %1$s / %2$s</string>
-  <string name="download_sura_ayah_progress">جاري تحميل السورة %1$d الأية %2$d</string>
+  <string name="download_sura_ayah_progress">جاري تحميل السورة %1$d الآية %2$d</string>
   <string name="process_progress">جاري اﻹعداد %1$d / %2$d</string>
-  <string name="download_retry">اعد المحاولة</string>
+  <string name="download_retry">أعد المحاولة</string>
   <string name="download_cancel">إلغاء</string>
   <string name="download_extra_data">لدعم الترجمة و المشاركة يجب تحميل بعض
        الملفات .. حمل الأن؟</string>
-  <string name="download_non_wifi_prompt">أنت لست على وأي فأي.  تحميل البيانات على أية حال؟</string>
+  <string name="download_non_wifi_prompt">أنت لست على واي فاي.  تحميل البيانات على أية حال؟</string>
 
   <!-- translation database stuff -->
   <string name="remove_dlg_title">امسح التفسير/الترجمة؟</string>
-  <string name="remove_dlg_msg">هل ترغب في حذف التفسير/الترجمة %1$s؟</string>
+  <string name="remove_dlg_msg">هل ترغب في حذف %1$s؟</string>
   <string name="error_getting_translation_list">لم يتم تحميل الملف المطلوب، من فضلك أعد المحاولة</string>
   <string name="search_data">بيانات البحث</string>
   <string name="need_translation">لم يتم تحميل أي تفسير أو ترجمة</string>
   <string name="get_translations">حمّل التفسير أو الترجمة</string>
 
   <!-- help -->
-  <string name="email_us">اذا لم تجد اجابه سؤالكم بالاعلى فيمكنكم مراسلتنا على هذا البريد quranandroid@gmail.com للدعم. ونحيط بكم علما انه تصلنا كثير من الاسئله ، ولهذا قد لا نرد على جميع الرسائل.‎</string>
+  <string name="email_us">إذا لم تجد إجابة سؤالكم بالأعلى فيمكنكم مراسلتنا على هذا البريد quranandroid@gmail.com للدعم. ونحيط بكم علما أنه تصلنا كثير من الأسئلة، ولهذا قد لا نرد على جميع الرسائل.‎</string>
 
   <!-- sura metainfo -->
   <string name="makki">مكية</string>
@@ -215,9 +217,9 @@
   <!-- ayah action panel -->
   <string name="play_from">من</string>
   <string name="play_to">إلى</string>
-  <string name="play_restrict_range"> شغل ما تم اختياره من الايات فقط</string>
+  <string name="play_restrict_range">" شغل ما تم اختياره من الآيات فقط"</string>
   <string name="play_verses_range">تشغيل مجموعة الآيات:</string>
-  <string name="play_each_verse">تشغيل كل اية :</string>
+  <string name="play_each_verse">تشغيل كل آية:</string>
   <string name="play_apply">تطبيق</string>
   <string name="play_apply_and_play">تطبيق وتشغيل</string>
 
@@ -228,8 +230,8 @@
     <item>لانهائي</item>
   </string-array>
 
-  <string name="playback_prompt_title">ابداء التشغيل من:</string>
-  <string name="starting_page_label">أول الصفحه</string>
+  <string name="playback_prompt_title">بدء التشغيل من:</string>
+  <string name="starting_page_label">أول الصفحة</string>
 
   <!-- long press -->
   <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>
@@ -264,18 +266,18 @@
   <string name="stop">إيقاف</string>
 
   <string name="downloadTabletPrompt">تم تحسين الصور الخاصه بالتابلت. هل تود تحميلها الان؟</string>
-  <string name="menu_sort_group_by_tags">رتب حسب للتصنيفات</string>
-  <string name="about_description">هذا التطبيق مجانا. لا تنسونا من صالح دعائكم.</string>
-  <string name="about_data_sources">مصدر المعلومات</string>
+  <string name="menu_sort_group_by_tags">رتب حسب التصنيفات</string>
+  <string name="about_description">هذا التطبيق مجاني. لا تنسونا من صالح دعائكم.</string>
+  <string name="about_data_sources">مصادر المعلومات</string>
   <string name="about_images">الصور</string>
-  <string name="about_madani_images">صور صفحات القران الموجودة بالتطبيق مصدرها مجمع الملك فهد لطباعة المصحف الشريف بالمدينة المنورة</string>
-  <string name="about_naskh_images">صور صفحات القران الموجودة بتطبيق النسخ مأخوذه بتصريح من SHL Info Systems</string>
+  <string name="about_madani_images">صور صفحات القرآن الموجودة بالتطبيق مصدرها مجمع الملك فهد لطباعة المصحف الشريف بالمدينة المنورة</string>
+  <string name="about_naskh_images">صور صفحات القرآن الموجودة بتطبيق النسخ مأخوذه بتصريح من SHL Info Systems</string>
   <string name="prefs_category_advanced">خيارات متقدمة</string>
   <string name="prefs_category_advanced_summary">استيراد وتصدير المرجعيات وإعدادات أخرى</string>
   <string name="prefs_export_title">تصدير</string>
   <string name="prefs_export_summary">تصدير نسخة من المرجعيات و التصنيفات.</string>
   <string name="prefs_page_type_title">نوع طباعة المصحف (تجريبي )</string>
-  <string name="prefs_page_type_summary">أختر نوع الصفحات</string>
+  <string name="prefs_page_type_summary">اختر نوع الصفحات</string>
 
   <string name="import_data">استيراد البيانات</string>
   <string name="import_data_and_override">"اذا قمت باستيراد هذا الملف، سيتم استبدال المرجعيات ب  %1$d مرجعيات و %2$d تصنيفات. استيراد؟"</string>
@@ -293,19 +295,59 @@
     <item quantity="many">تم حذف %d عنصر</item>
   </plurals>
   <string name="undo">تراجع</string>
-  <string name="notification_channel_download">"تحميل ملفات القران "</string>
-  <string name="notification_channel_audio">تلاوة القران</string>
+  <string name="notification_channel_download">تحميل ملفات القرآن</string>
+  <string name="notification_channel_audio">تلاوة القرآن</string>
   <string name="audio_manager_delete_selection">حذف التحديد</string>
   <string name="audio_manager_download_selection">تحميل التحديد</string>
   <string name="audio_manager_download_all">تحميل الكل</string>
   <string name="audio_manager_surah_delete">حذف السورة</string>
   <string name="audio_manager_surah_download">تحميل السورة</string>
-  <string name="next">التالى</string>
+  <string name="next">التالي</string>
   <string name="previous">السابق</string>
   <string name="tag_blank_tag_error">لا يمكن أن يكون اسم التصنيف فارغًا</string>
-  <string name="tag_duplicate_tag_error">التصنيف مكرر, اكتب تصنيف جديد</string>
+  <string name="tag_duplicate_tag_error">التصنيف مكرر، اكتب تصنيفا جديدا</string>
   <string name="more_translations">المزيد من الترجمات والتفاسير</string>
   <string name="menu_show_date">إظهار تاريخ الإضافة</string>
   <string name="pause">وقف مؤقت</string>
+  <string name="prefs_category_dual_screen">تفضيلات الصفحتين المتجاورتين</string>
+  <string name="prefs_split_page_and_translation_title">عرض صفحة من المصحف وأخرى من الترجمة</string>
+  <string name="prefs_split_page_and_translation_summary">عند تفعيل الصفحتين المتجاورتين، تعرض صفحة المصحف والترجمة معا</string>
+  <string name="move_up">تحريك للأعلى</string>
+  <string name="move_down">تحريك للأسفل</string>
+  <string name="delete_translation">حذف الترجمة</string>
+  <string name="prefs_megabytes_int">%1$d م ب</string>
+  <string name="prefs_megabytes_str">%s م ب</string>
+  <string name="storage_permission_please_restart">يرجى إعادة تشغيل التطبيق لتفعيل الإذن</string>
+  <string name="storage_permission_rationale">تطبيق قرآن يحتاج إلى إذنك بالوصول إلى الذاكرة الخارجية. التطبيق سيعمل دون الإذن، لكن عند مسح البيانات أو حذف التطبيق، ستحذف جميع صفحات المصحف والبيانات والصوت. هل تريد الإذن لتطبيق قرآن؟</string>
+  <string name="about_contributors_summary">قائمة بأسماء المساهمين في تطوير تطبيق قرآن أندرويد</string>
+  <string name="about_contributors">المساهمون</string>
+  <string name="about_others">أخرى</string>
+  <string name="about_open_source">مشاريع مفتوحة المصدر</string>
+  <string name="about_furqan" translatable="false">الباحث القرآني (tafsir.app)</string>
+  <string name="about_quran_ksu">مشروع المصحف الإلكتروني</string>
+  <string name="about_quran_ksu_summary">مشروع المصحف الإلكتروني بجامعة الملك سعود هو مصدر عدد من التفاسير والترجمات المستخدمة في التطبيق. وهو أيضا مصدر تلاوة الشيخ أيمن سويد.</string>
+  <string name="about_quranicaudio_summary">التلاوات الصوتية المتصلة</string>
+  <string name="about_furqan_summary">النص العثماني والتفاسير العربية</string>
+  <string name="about_quran_enc" translatable="false">موسوعة القرآن الكريم</string>
+  <string name="about_quran_enc_summary">الترجمات لعدد من اللغات</string>
+  <string name="about_tanzil" translatable="false">تنزيل</string>
+  <string name="about_tanzil_summary">ترجمات لبعض اللغات</string>
+  <string name="please_wait">الرجاء الانتظار…</string>
+  <string name="exported_data">صدرت البيانات إلى %1$s</string>
+  <string name="audio_manager_remove_audio_title">حذف الملف الصوتي؟</string>
+  <string name="audio_manager_remove_audio_msg">سيتم حذف الملف الصوتي ل%1$s. متأكد؟</string>
+  <string name="about_noorhidayat_summary">خط نورحِرا وترجمة مفتي تقي</string>
+  <string name="about_qaloon_images">صور صفحات القرآن برواية قالون مأخوذة بتصريح من Nous-Mêmes Éditions Et Diffusion (تونس)</string>
+  <string name="audio_updated_title">تحديث الملفات الصوتية</string>
+  <string name="audio_updated_text">تم تحديث عدد من الملفات الصوتية. تطبيق قرآن حذف نسختك القديمة من هذه الملفات لتتمكن من تنزيل النسخ الجديدة عند تشغيلك لهذه الملفات في المرة القادمة.</string>
+  <string name="import_data_error">ملف النسخة الاحتياطية تالف (أو فشلت قراءة النسخة الاحتياطية)</string>
+  <string name="import_data_permissions_error">فشلت قراءة ملف النسخة الاحتياطية بسبب فقدان الإذن</string>
+  <string name="please_grant_permissions">رجاء امنح الإذن في الإعدادات</string>
+  <string name="about_noorhidayat" translatable="false">نور وهداية (Noorhidayat)</string>
+  <string name="kitkat_external_message">بسبب قيود الأندرويد، إذا اخترت تخزين ملفات قرآن على الذاكرة الخارجية ثم مسحت التطبيق أو بيانات قرآن أندرويد، ستحذف جميع صفحات المصحف والصوت ولابد من تحميلها مجددا. هل ترغب في استعمال الذاكرة الخارجية؟</string>
+  <string name="scoped_storage_message">بسبب القيود الجديدة في أندرويد 11، تخزين بيانات التطبيق في
+    مكان غير مجلد التطبيق الافتراضي قد يؤدي إلى عدم تمكن التطبيق من الوصول لملفاته في إصدارات أندرويد
+    القادمة، هل ترغب في نقل البيانات على أية حال؟
+  </string>
 
 </resources>

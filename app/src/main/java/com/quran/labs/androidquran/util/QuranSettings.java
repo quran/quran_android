@@ -4,7 +4,6 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import com.quran.labs.androidquran.BuildConfig;
@@ -12,6 +11,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,9 +26,9 @@ public class QuranSettings {
 
   private static QuranSettings instance;
 
-  private Context appContext;
-  private SharedPreferences prefs;
-  private SharedPreferences perInstallationPrefs;
+  private final Context appContext;
+  private final SharedPreferences prefs;
+  private final SharedPreferences perInstallationPrefs;
 
   public static synchronized QuranSettings getInstance(@NonNull Context context) {
     if (instance == null) {
@@ -58,6 +58,10 @@ public class QuranSettings {
 
   public boolean isLandscapeOrientation() {
     return prefs.getBoolean(Constants.PREF_LANDSCAPE_ORIENTATION, false);
+  }
+
+  public boolean navigateWithVolumeKeys() {
+    return prefs.getBoolean(Constants.PREF_USE_VOLUME_KEY_NAV, false);
   }
 
   public boolean shouldStream() {
@@ -156,15 +160,23 @@ public class QuranSettings {
     prefs.edit().putBoolean(Constants.PREF_SHOW_RECENTS, minimizeRecents).apply();
   }
 
-  public boolean getShowDate() { return prefs.getBoolean(Constants.PREF_SHOW_DATE, false);  }
+  public boolean getShowDate() {
+    return prefs.getBoolean(Constants.PREF_SHOW_DATE, false);
+  }
 
   public void setShowDate(boolean isDateShown) {
     prefs.edit().putBoolean(Constants.PREF_SHOW_DATE, isDateShown).apply();
   }
 
-  public boolean isShowSuraTranslatedName() {
-    return prefs.getBoolean(Constants.PREF_SURA_TRANSLATED_NAME, appContext.getResources().getBoolean(R.bool.show_sura_names_translation));
+  public boolean isQuranSplitWithTranslation() {
+    return prefs.getBoolean(Constants.PREF_SPLIT_PAGE_AND_TRANSLATION, false);
   }
+
+  public boolean isShowSuraTranslatedName() {
+    return prefs.getBoolean(Constants.PREF_SURA_TRANSLATED_NAME,
+        appContext.getResources().getBoolean(R.bool.show_sura_names_translation));
+  }
+
   // probably should eventually move this to Application.onCreate..
   public void upgradePreferences() {
     int version = getVersion();
@@ -195,7 +207,7 @@ public class QuranSettings {
               .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)
               .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM)
               .remove(Constants.PREF_ACTIVE_TRANSLATION)
-                  // these aren't migrated since they can be derived pretty easily
+              // these aren't migrated since they can be derived pretty easily
               .remove("didPresentPermissionsRationale") // was renamed, removing old one
               .remove(Constants.PREF_DEFAULT_IMAGES_DIR)
               .remove(Constants.PREF_HAVE_UPDATED_TRANSLATIONS)
@@ -273,7 +285,9 @@ public class QuranSettings {
   }
 
   public String getDefaultLocation() {
-    return Environment.getExternalStorageDirectory().getAbsolutePath();
+    final File externalFilesDir = appContext.getExternalFilesDir(null);
+    return externalFilesDir != null ?
+        externalFilesDir.getAbsolutePath() : null;
   }
 
   public void setAppCustomLocation(String newLocation) {
@@ -316,7 +330,8 @@ public class QuranSettings {
   }
 
   public void setShouldFetchPages(boolean shouldFetchPages) {
-    perInstallationPrefs.edit().putBoolean(Constants.PREF_SHOULD_FETCH_PAGES, shouldFetchPages).apply();
+    perInstallationPrefs.edit().putBoolean(Constants.PREF_SHOULD_FETCH_PAGES, shouldFetchPages)
+        .apply();
   }
 
   public void removeShouldFetchPages() {

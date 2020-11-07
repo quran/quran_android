@@ -1,7 +1,8 @@
 package com.quran.labs.androidquran.dao.translation
 
 data class TranslationItem @JvmOverloads constructor(val translation: Translation,
-                                                     val localVersion: Int = 0) : TranslationRowData {
+                                                     val localVersion: Int = 0,
+                                                     val displayOrder: Int = -1) : TranslationRowData {
 
   override fun isSeparator() = false
 
@@ -16,4 +17,6 @@ data class TranslationItem @JvmOverloads constructor(val translation: Translatio
   fun withTranslationRemoved() = this.copy(localVersion = 0)
 
   fun withTranslationVersion(version: Int) = this.copy(localVersion = version)
+
+  fun withDisplayOrder(newDisplayOrder: Int) = this.copy(displayOrder = newDisplayOrder)
 }

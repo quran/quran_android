@@ -3,23 +3,23 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.widgets.AyahToolBar;
+import com.quran.labs.androidquran.view.AyahToolBar;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 
 import java.util.List;
 import java.util.Set;
 
-public class AyahTrackerItem<T> {
+public class AyahTrackerItem {
   final int page;
-  @NonNull final T ayahView;
 
-  AyahTrackerItem(int page, @NonNull T ayahView) {
+  AyahTrackerItem(int page) {
     this.page = page;
-    this.ayahView = ayahView;
   }
 
   void onSetPageBounds(PageCoordinates pageCoordinates) {
@@ -52,6 +52,16 @@ public class AyahTrackerItem<T> {
 
   @Nullable
   SuraAyah getAyahForPosition(int page, float x, float y) {
+    return null;
+  }
+
+  @Nullable
+  QuranAyahInfo getQuranAyahInfo(int sura, int ayah) {
+    return null;
+  }
+
+  @Nullable
+  LocalTranslation[] getLocalTranslations() {
     return null;
   }
 }

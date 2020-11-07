@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.quran.labs.androidquran.widgets.SlidingUpPanelLayout
+<com.quran.labs.androidquran.view.SlidingUpPanelLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sliding_panel"
@@ -23,4 +23,4 @@
         android:layout_height="match_parent"
         layout="@layout/ayah_action_panel_layout"/>
 
-</com.quran.labs.androidquran.widgets.SlidingUpPanelLayout>
+</com.quran.labs.androidquran.view.SlidingUpPanelLayout>

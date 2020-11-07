@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.quran.data.core.QuranInfo;
+import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranDisplayData;
@@ -17,12 +19,13 @@ import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresen
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTranslationTrackerItem;
 import com.quran.labs.androidquran.presenter.translation.TranslationPresenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
-import com.quran.labs.androidquran.ui.translation.OnTranslationActionListener;
 import com.quran.labs.androidquran.ui.translation.TranslationView;
+import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.widgets.QuranTranslationPageLayout;
+import com.quran.labs.androidquran.view.QuranTranslationPageLayout;
 
 import java.util.List;
 
@@ -33,16 +36,12 @@ import androidx.fragment.app.Fragment;
 
 public class TranslationFragment extends Fragment implements
     AyahTrackerPresenter.AyahInteractionHandler, QuranPage,
-    TranslationPresenter.TranslationScreen,
-    OnTranslationActionListener {
+    TranslationPresenter.TranslationScreen, PageController {
   private static final String PAGE_NUMBER_EXTRA = "pageNumber";
 
-  private static final String SI_PAGE_NUMBER = "SI_PAGE_NUMBER";
-  private static final String SI_HIGHLIGHTED_AYAH = "SI_HIGHLIGHTED_AYAH";
   private static final String SI_SCROLL_POSITION = "SI_SCROLL_POSITION";
 
   private int pageNumber;
-  private int highlightedAyah;
   private int scrollPosition;
 
   private TranslationView translationView;
@@ -54,6 +53,7 @@ public class TranslationFragment extends Fragment implements
   @Inject QuranSettings quranSettings;
   @Inject TranslationPresenter presenter;
   @Inject AyahTrackerPresenter ayahTrackerPresenter;
+  @Inject AyahSelectedListener ayahSelectedListener;
 
   public static TranslationFragment newInstance(int page) {
     final TranslationFragment f = new TranslationFragment();
@@ -68,25 +68,17 @@ public class TranslationFragment extends Fragment implements
     super.onCreate(savedInstanceState);
 
     if (savedInstanceState != null) {
-      int page = savedInstanceState.getInt(SI_PAGE_NUMBER, -1);
-      if (page == pageNumber) {
-        int highlightedAyah =
-            savedInstanceState.getInt(SI_HIGHLIGHTED_AYAH, -1);
-        if (highlightedAyah > 0) {
-          this.highlightedAyah = highlightedAyah;
-        }
-      }
       scrollPosition = savedInstanceState.getInt(SI_SCROLL_POSITION);
     }
     setHasOptionsMenu(true);
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater,
+  public View onCreateView(@NonNull LayoutInflater inflater,
                            ViewGroup container, Bundle savedInstanceState) {
     Context context = getActivity();
     mainView = new QuranTranslationPageLayout(context);
-    mainView.setPageController(null, pageNumber);
+    mainView.setPageController(this, pageNumber);
 
     translationView = mainView.getTranslationView();
     translationView.setTranslationClickedListener(v -> {
@@ -96,12 +88,11 @@ public class TranslationFragment extends Fragment implements
       }
     });
 
-    translationView.setOnTranslationActionListener(this);
     return mainView;
   }
 
   @Override
-  public void onAttach(Context context) {
+  public void onAttach(@NonNull Context context) {
     super.onAttach(context);
 
     pageNumber = getArguments() != null ? getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
@@ -110,17 +101,6 @@ public class TranslationFragment extends Fragment implements
         .withQuranPageModule(new QuranPageModule(pageNumber))
         .build()
         .inject(this);
-  }
-
-  @Override
-  public void onTranslationAction(QuranAyahInfo ayah,
-                                  LocalTranslation[] translations,
-                                  int actionId) {
-    Activity activity = getActivity();
-    if (activity instanceof PagerActivity) {
-      presenter.onTranslationAction((PagerActivity) activity, ayah, translations, actionId);
-    }
-    translationView.unhighlightAyat();
   }
 
   @Override
@@ -165,9 +145,6 @@ public class TranslationFragment extends Fragment implements
                         @NonNull LocalTranslation[] translations,
                         @NonNull List<QuranAyahInfo> verses) {
     translationView.setVerses(quranDisplayData, translations, verses);
-    if (highlightedAyah > 0) {
-      translationView.highlightAyah(highlightedAyah);
-    }
   }
 
   @Override
@@ -180,12 +157,44 @@ public class TranslationFragment extends Fragment implements
   }
 
   @Override
-  public void onSaveInstanceState(Bundle outState) {
-    if (highlightedAyah > 0) {
-      outState.putInt(SI_HIGHLIGHTED_AYAH, highlightedAyah);
-    }
+  public void onSaveInstanceState(@NonNull Bundle outState) {
     scrollPosition = translationView.findFirstCompletelyVisibleItemPosition();
     outState.putInt(SI_SCROLL_POSITION, scrollPosition);
     super.onSaveInstanceState(outState);
+  }
+
+  @Override
+  public boolean handleTouchEvent(MotionEvent event,
+      AyahSelectedListener.EventType eventType, int page) {
+    return false;
+  }
+
+  @Override
+  public void handleRetryClicked() {
+  }
+
+  @Override
+  public void onScrollChanged(int x, int y, int oldx, int oldy) {
+  }
+
+  @Override
+  public void handleLongPress(SuraAyah suraAyah) {
+    if (isVisible()) {
+      ayahTrackerPresenter.handleLongClick(suraAyah, ayahSelectedListener);
+    }
+  }
+
+  @Override
+  public void endAyahMode() {
+    if (isVisible()) {
+      ayahTrackerPresenter.endAyahMode(ayahSelectedListener);
+    }
+  }
+
+  @Override
+  public void requestMenuPositionUpdate() {
+    if (isVisible()) {
+      ayahTrackerPresenter.requestMenuPositionUpdate(ayahSelectedListener);
+    }
   }
 }

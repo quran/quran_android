@@ -7,7 +7,7 @@ import com.quran.data.core.QuranConstants.NUMBER_OF_SURAS
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.VerseRange
 import com.quran.data.source.QuranDataSource
-import java.util.ArrayList
+import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -160,16 +160,22 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     return if (sura < 1 || sura > NUMBER_OF_SURAS) -1 else suraNumAyahs[sura - 1]
   }
 
-  fun getPageFromPosition(position: Int, dual: Boolean): Int {
-    return if (dual) {
+  fun getPageFromPosition(
+    position: Int,
+    isDualPagesVisible: Boolean
+  ): Int {
+    return if (isDualPagesVisible) {
       (numberOfPagesDual - position) * 2
     } else {
       numberOfPages - position
     }
   }
 
-  fun getPositionFromPage(page: Int, dual: Boolean): Int {
-    return if (dual) {
+  fun getPositionFromPage(
+    page: Int,
+    isDualPagesVisible: Boolean
+  ): Int {
+    return if (isDualPagesVisible) {
       val pageToUse = if (page % 2 != 0) { page + 1 } else { page }
       numberOfPagesDual - pageToUse / 2
     } else {

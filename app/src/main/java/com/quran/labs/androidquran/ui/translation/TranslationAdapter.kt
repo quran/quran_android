@@ -13,18 +13,20 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.helpers.ExpandTafseerSpan
+import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan
 import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
-import com.quran.labs.androidquran.widgets.AyahNumberView
-import com.quran.labs.androidquran.widgets.DividerView
+import com.quran.labs.androidquran.view.AyahNumberView
+import com.quran.labs.androidquran.view.DividerView
 
 internal class TranslationAdapter(private val context: Context,
                                   private val recyclerView: RecyclerView,
@@ -45,11 +47,12 @@ internal class TranslationAdapter(private val context: Context,
   private var highlightedAyah: Int = 0
   private var highlightedRowCount: Int = 0
   private var highlightedStartPosition: Int = 0
+  private var highlightType: HighlightType? = null
 
   private val expandedTafaseerAyahs = mutableSetOf<Pair<Int, Int>>()
   private val expandedHyperlinks = mutableSetOf<Pair<Int, Int>>()
 
-  private val defaultClickListener = View.OnClickListener { v -> onClickListener.onClick(v) }
+  private val defaultClickListener = View.OnClickListener { this.handleClick(it) }
   private val defaultLongClickListener = View.OnLongClickListener { this.selectVerseRows(it) }
   private val expandClickListener = View.OnClickListener { v -> toggleExpandTafseer(v) }
   private val expandHyperlinkClickListener = View.OnClickListener { v -> toggleExpandHyperlink(v) }
@@ -59,13 +62,14 @@ internal class TranslationAdapter(private val context: Context,
       val highlightedEndPosition = highlightedStartPosition + highlightedRowCount
 
       // find the row with the verse number
-      val versePosition = (highlightedStartPosition until highlightedEndPosition)
-          .firstOrNull { data[it].type == TranslationViewRow.Type.VERSE_NUMBER }
+      val versePosition = data.withIndex().firstOrNull {
+        it.index in highlightedStartPosition until highlightedEndPosition &&
+            it.value.type == TranslationViewRow.Type.VERSE_NUMBER }
 
       // find out where to position the popup based on the center of the box
       versePosition?.let {
         val viewHolder =
-            recyclerView.findViewHolderForAdapterPosition(versePosition) as RowViewHolder?
+            recyclerView.findViewHolderForAdapterPosition(versePosition.index) as RowViewHolder?
         viewHolder?.ayahNumber?.let { ayahNumberView ->
           val x = (ayahNumberView.left + ayahNumberView.boxCenterX)
           val y = (ayahNumberView.top + ayahNumberView.boxBottomY)
@@ -82,15 +86,19 @@ internal class TranslationAdapter(private val context: Context,
     expandedTafaseerAyahs.clear();
     this.data.addAll(data)
     if (highlightedAyah > 0) {
-      highlightAyah(highlightedAyah, false)
+      highlightAyah(highlightedAyah, false, highlightType ?: HighlightType.SELECTION)
     }
   }
 
-  fun setHighlightedAyah(ayahId: Int) {
-    highlightAyah(ayahId, true)
+  fun setHighlightedAyah(ayahId: Int, highlightType: HighlightType) {
+    highlightAyah(ayahId, true, highlightType)
   }
 
-  private fun highlightAyah(ayahId: Int, notify: Boolean) {
+  fun highlightedAyahInfo(): QuranAyahInfo? {
+    return data.firstOrNull { it.ayahInfo.ayahId == highlightedAyah }?.ayahInfo
+  }
+
+  private fun highlightAyah(ayahId: Int, notify: Boolean, highlightedType: HighlightType) {
     if (ayahId != highlightedAyah) {
       val matches = data.withIndex().filter { it.value.ayahInfo.ayahId == ayahId }
       val (startPosition, count) = (matches.firstOrNull()?.index ?: -1) to matches.size
@@ -109,28 +117,44 @@ internal class TranslationAdapter(private val context: Context,
             // ... or when we're the previous ayah
             highlightedStartPosition - 1 == startPosition + count ->
               startChangeCount += highlightedRowCount
-            else -> // otherwise, unhighlight
-              notifyItemRangeChanged(
-                  highlightedStartPosition, highlightedRowCount, HIGHLIGHT_CHANGE)
+            else -> {
+              // otherwise, unhighlight
+              val start = highlightedStartPosition
+              val changeCount = highlightedRowCount
+              recyclerView.handler.post {
+                notifyItemRangeChanged(start, changeCount, HIGHLIGHT_CHANGE)
+              }
+            }
           }
         }
 
         // and update rows to be highlighted
-        notifyItemRangeChanged(startChangeRange, startChangeCount, HIGHLIGHT_CHANGE)
-        recyclerView.smoothScrollToPosition(startPosition + count)
+        recyclerView.handler.post {
+          notifyItemRangeChanged(startChangeRange, startChangeCount, HIGHLIGHT_CHANGE)
+          val layoutManager = recyclerView.layoutManager
+          if (highlightedType == HighlightType.AUDIO && layoutManager is LinearLayoutManager) {
+            layoutManager.scrollToPositionWithOffset(startPosition, 64)
+          } else {
+            recyclerView.smoothScrollToPosition(startPosition)
+          }
+        }
       }
 
       highlightedAyah = ayahId
       highlightedStartPosition = startPosition
       highlightedRowCount = count
+      highlightType = highlightedType
     }
   }
 
   fun unhighlight() {
     if (highlightedAyah > 0 && highlightedRowCount > 0) {
-      notifyItemRangeChanged(highlightedStartPosition, highlightedRowCount)
+      val start = highlightedStartPosition
+      val count = highlightedRowCount
+      recyclerView.handler.post {
+        notifyItemRangeChanged(start, count)
+      }
     }
-
     highlightedAyah = 0
     highlightedRowCount = 0
     highlightedStartPosition = -1
@@ -159,11 +183,23 @@ internal class TranslationAdapter(private val context: Context,
     }
   }
 
+  private fun handleClick(view: View) {
+    val position = recyclerView.getChildAdapterPosition(view)
+    if (highlightedAyah != 0 && position != RecyclerView.NO_POSITION) {
+      val ayahInfo = data[position].ayahInfo
+      if (ayahInfo.ayahId != highlightedAyah && highlightType == HighlightType.SELECTION) {
+        onVerseSelectedListener.onVerseSelected(ayahInfo)
+        return
+      }
+    }
+    onClickListener.onClick(view)
+  }
+
   private fun selectVerseRows(view: View): Boolean {
     val position = recyclerView.getChildAdapterPosition(view)
     if (position != RecyclerView.NO_POSITION) {
       val ayahInfo = data[position].ayahInfo
-      highlightAyah(ayahInfo.ayahId, true)
+      highlightAyah(ayahInfo.ayahId, true, HighlightType.SELECTION)
       onVerseSelectedListener.onVerseSelected(ayahInfo)
       return true
     }

@@ -6,11 +6,10 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabaseCorruptException;
 
-import com.crashlytics.android.Crashlytics;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import timber.log.Timber;
 
 public class SuraTimingDatabaseHandler {
   private SQLiteDatabase database;
@@ -47,22 +46,22 @@ public class SuraTimingDatabaseHandler {
         databaseMap.remove(databasePath);
       }
     } catch (Exception e) {
-      Crashlytics.logException(e);
+      Timber.e(e);
     }
   }
 
   private SuraTimingDatabaseHandler(String path) throws SQLException {
-    Crashlytics.log("opening gapless data file, " + path);
+    Timber.d("opening gapless data file, %s", path);
     try {
       database = SQLiteDatabase.openDatabase(path, null,
           SQLiteDatabase.NO_LOCALIZED_COLLATORS, new DefaultDatabaseErrorHandler());
     } catch (SQLiteDatabaseCorruptException sce) {
-      Crashlytics.log("database corrupted: " + path);
+      Timber.d("database corrupted: %s", path);
       database = null;
     } catch (SQLException se) {
-      Crashlytics.log("database at " + path +
+      Timber.d("database at " + path +
           (new File(path).exists() ? " exists" : " doesn't exist"));
-      Crashlytics.logException(se);
+      Timber.e(se);
       database = null;
     }
   }

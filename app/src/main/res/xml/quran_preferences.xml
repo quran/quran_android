@@ -26,15 +26,6 @@
         app:iconSpaceReserved="false"/>
 
     <CheckBoxPreference
-        android:defaultValue="@bool/use_tablet_interface_by_default"
-        android:key="@string/prefs_dual_page_enabled"
-        android:persistent="true"
-        android:summaryOff="@string/prefs_dual_page_mode_disabled"
-        android:summaryOn="@string/prefs_dual_page_mode_enabled"
-        android:title="@string/prefs_dual_page_mode_title"
-        app:iconSpaceReserved="false"/>
-
-    <CheckBoxPreference
         android:defaultValue="false"
         android:disableDependentsState="false"
         android:key="@string/prefs_lock_orientation"
@@ -119,6 +110,30 @@
         android:summary="@string/prefs_volume_key_navigation_summary"
         android:title="@string/prefs_volume_key_navigation_title"
         app:iconSpaceReserved="false"/>
+  </PreferenceCategory>
+
+  <PreferenceCategory
+      android:key="@string/prefs_category_dual_screen_key"
+      android:title="@string/prefs_category_dual_screen"
+      app:iconSpaceReserved="false">
+
+    <CheckBoxPreference
+        android:defaultValue="@bool/use_tablet_interface_by_default"
+        android:key="@string/prefs_dual_page_enabled"
+        android:persistent="true"
+        android:summaryOff="@string/prefs_dual_page_mode_disabled"
+        android:summaryOn="@string/prefs_dual_page_mode_enabled"
+        android:title="@string/prefs_dual_page_mode_title"
+        app:iconSpaceReserved="false"/>
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/prefs_split_page_and_translation"
+        android:persistent="true"
+        android:summary="@string/prefs_split_page_and_translation_summary"
+        android:title="@string/prefs_split_page_and_translation_title"
+        app:iconSpaceReserved="false" />
+
   </PreferenceCategory>
 
   <PreferenceCategory

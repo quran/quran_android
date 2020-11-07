@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:layout_marginVertical="8dp"
+    >
+
+  <ImageView
+      android:id="@+id/widget_favorite_icon"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerVertical="true"
+      android:layout_gravity="center_vertical"
+      android:layout_marginHorizontal="8dp"
+      app:srcCompat="@drawable/ic_favorite"
+      />
+  <TextView
+      android:id="@+id/sura_title"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="4dp"
+      android:layout_toRightOf="@id/widget_favorite_icon"
+      android:textAppearance="@style/TitleText"
+      tools:text="Surah title"
+      />
+  <TextView
+      android:id="@+id/sura_meta_data"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/sura_title"
+      android:layout_toRightOf="@id/widget_favorite_icon"
+      android:textColor="@color/sura_details_color"
+      android:textSize="14sp"
+      tools:text="Surah location"
+      />
+
+</RelativeLayout>

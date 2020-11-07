@@ -70,9 +70,12 @@ public class StorageUtils {
         }
 
         int number = 1;
-        result.add(new Storage(context.getString(typeId, number),
-            Environment.getExternalStorageDirectory().getAbsolutePath(),
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M));
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+          // don't show the /sdcard option for people on Android 11
+          result.add(new Storage(context.getString(typeId, number),
+              Environment.getExternalStorageDirectory().getAbsolutePath(),
+              Build.VERSION.SDK_INT >= Build.VERSION_CODES.M));
+        }
         for (File mountPoint : mountPoints) {
           result.add(new Storage(context.getString(typeId, number++),
               mountPoint.getAbsolutePath()));

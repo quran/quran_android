@@ -13,14 +13,14 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
         android:background="?attr/colorPrimary"
         style="@style/ToolBarArea"/>
-    <com.quran.labs.androidquran.widgets.SlidingTabLayout
+    <com.quran.labs.androidquran.view.SlidingTabLayout
         android:id="@+id/indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         style="@style/ToolBarArea"
         />
-    <com.quran.labs.androidquran.widgets.QuranViewPager
+    <com.quran.labs.androidquran.view.QuranViewPager
         android:id="@+id/index_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

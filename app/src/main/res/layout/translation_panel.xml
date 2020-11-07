@@ -11,7 +11,7 @@
       android:layout_height="match_parent"
       android:orientation="vertical"
       >
-    <com.quran.labs.androidquran.widgets.QuranSpinner
+    <com.quran.labs.androidquran.view.QuranSpinner
         android:id="@+id/translator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,14 +22,14 @@
         android:textStyle="bold"
         android:textColor="@color/accent_color"
         />
-    <com.quran.labs.androidquran.widgets.InlineTranslationView
+    <com.quran.labs.androidquran.view.InlineTranslationView
         android:id="@+id/translation_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
   </LinearLayout>
 
-  <com.quran.labs.androidquran.widgets.LeftToRightLinearLayout
+  <com.quran.labs.androidquran.view.LeftToRightLinearLayout
       android:id="@+id/controls"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
         android:id="@+id/next_ayah"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_translation_left"
+        android:src="@drawable/ic_translation_next"
         android:contentDescription="@string/next"
         />
     <Space
@@ -51,10 +51,10 @@
         android:id="@+id/previous_ayah"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_translation_right"
+        android:src="@drawable/ic_translation_previous"
         android:contentDescription="@string/previous"
         />
-  </com.quran.labs.androidquran.widgets.LeftToRightLinearLayout>
+  </com.quran.labs.androidquran.view.LeftToRightLinearLayout>
 
   <LinearLayout
       android:id="@+id/empty_state"

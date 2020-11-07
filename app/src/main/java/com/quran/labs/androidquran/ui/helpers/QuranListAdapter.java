@@ -1,10 +1,9 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import androidx.recyclerview.widget.RecyclerView;
-import android.text.TextUtils;
+
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +17,8 @@ import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.ui.QuranActivity;
 import com.quran.labs.androidquran.util.LocaleUtil;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.JuzView;
-import com.quran.labs.androidquran.widgets.TagsViewGroup;
+import com.quran.labs.androidquran.view.JuzView;
+import com.quran.labs.androidquran.view.TagsViewGroup;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

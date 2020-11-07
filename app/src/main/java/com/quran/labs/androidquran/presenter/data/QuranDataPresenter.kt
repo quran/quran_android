@@ -11,7 +11,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.crashlytics.android.Crashlytics
 import com.quran.data.core.QuranInfo
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.BuildConfig
@@ -58,6 +57,7 @@ class QuranDataPresenter @Inject internal constructor(
 
   @UiThread
   fun checkPages() {
+    val lastCachedResult = lastCachedResult
     if (quranFileUtils.getQuranBaseDirectory(appContext) == null) {
       activity?.onStorageNotAvailable()
     } else if (lastCachedResult != null && cachedPageType == quranSettings.pageType) {
@@ -77,19 +77,19 @@ class QuranDataPresenter @Inject internal constructor(
                   try {
                     generateDebugLog()
                   } catch (e: Exception) {
-                    Crashlytics.logException(e)
+                    Timber.e(e)
                   }
                 }
               }
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
-              .subscribe(Consumer<QuranDataStatus> {
+              .subscribe(Consumer {
                 if (it.havePages() && it.patchParam == null) {
                   // only cache cases where no downloads are needed - otherwise, caching
                   // is risky since after coming back to the app, the downloads could be
                   // done, though the cached data suggests otherwise.
                   cachedPageType = pageType
-                  lastCachedResult = it
+                  this.lastCachedResult = it
                 }
                 activity?.onPagesChecked(it)
                 checkPagesDisposable = null
@@ -101,6 +101,9 @@ class QuranDataPresenter @Inject internal constructor(
   private fun copyLocalDataIfNecessary(status: QuranDataStatus): Single<QuranDataStatus> {
     return Single.fromCallable {
       if (!status.havePages() && QuranFileConstants.ARE_PAGES_BUNDLED) {
+        for (widthToDelete in QuranFileConstants.FORCE_DELETE_PAGES) {
+          quranFileUtils.removeFilesForWidth(appContext, widthToDelete)
+        }
         quranFileUtils.copyQuranDataFromAssets(appContext, status.portraitWidth)
         status.copy(havePortrait = true, haveLandscape = true)
       } else {
@@ -245,7 +248,7 @@ class QuranDataPresenter @Inject internal constructor(
   }
 
   private fun actuallyCheckPages(totalPages: Int): Single<QuranDataStatus> {
-    return Single.fromCallable<QuranDataStatus> {
+    return Single.fromCallable {
       val width = quranScreenInfo.widthParam
       val havePortrait = quranFileUtils.haveAllImages(appContext, width, totalPages, true)
 

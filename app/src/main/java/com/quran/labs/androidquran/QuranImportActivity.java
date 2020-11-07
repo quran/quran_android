@@ -8,8 +8,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
 import com.quran.labs.androidquran.presenter.QuranImportPresenter;
 import com.quran.labs.androidquran.ui.util.ToastCompat;
@@ -27,7 +25,6 @@ public class QuranImportActivity extends AppCompatActivity implements
     quranApp.refreshLocale(this, false);
     super.onCreate(savedInstanceState);
     quranApp.getApplicationComponent().inject(this);
-    Answers.getInstance().logCustom(new CustomEvent("importData"));
   }
 
   @Override
@@ -69,7 +66,6 @@ public class QuranImportActivity extends AppCompatActivity implements
   }
 
   public void showImportComplete() {
-    Answers.getInstance().logCustom(new CustomEvent("importDataSuccessful"));
     ToastCompat.makeText(QuranImportActivity.this,
         R.string.import_successful, Toast.LENGTH_LONG).show();
     finish();

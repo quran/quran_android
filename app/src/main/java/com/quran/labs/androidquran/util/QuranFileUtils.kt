@@ -24,7 +24,6 @@ import okio.sink
 import okio.source
 import timber.log.Timber
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -93,6 +92,19 @@ class QuranFileUtils @Inject constructor(
       }
     }
     return null
+  }
+
+  fun removeFilesForWidth(context: Context, width: Int) {
+    val widthParam = "_$width"
+    val quranDirectory = getQuranImagesDirectory(context, widthParam) ?: return
+    val file = File(quranDirectory)
+    if (file.exists()) {
+      deleteFileOrDirectory(file)
+      val ayahinfoFile = File(getQuranAyahDatabaseDirectory(context), "ayahinfo_$width.db")
+      if (ayahinfoFile.exists()) {
+        ayahinfoFile.delete()
+      }
+    }
   }
 
   fun copyQuranDataFromAssets(context: Context, widthParam: String) {
@@ -517,8 +529,13 @@ class QuranFileUtils @Inject constructor(
     } else if (newDirectory.exists() || newDirectory.mkdirs()) {
       try {
         copyFileOrDirectory(currentDirectory, newDirectory)
-        Timber.d("Removing $currentDirectory due to move to $newDirectory")
-        deleteFileOrDirectory(currentDirectory)
+        try {
+          Timber.d("Removing $currentDirectory due to move to $newDirectory")
+          deleteFileOrDirectory(currentDirectory)
+        } catch (e: IOException) {
+          // swallow silently
+          Timber.e(e, "warning while deleting app files")
+        }
         return true
       } catch (e: IOException) {
         Timber.e(e, "error moving app files")
@@ -548,13 +565,13 @@ class QuranFileUtils @Inject constructor(
     }
   }
 
-  @Throws(IOException::class)
   private fun copyFileOrDirectory(source: File, destination: File) {
     if (source.isDirectory) {
       if (!destination.exists() && !destination.mkdirs()) {
         return
       }
-      val files = source.listFiles()
+
+      val files = source.listFiles() ?: throw IOException("null listFiles() output...")
       for (f in files) {
         copyFileOrDirectory(f, File(destination, f.name))
       }
@@ -563,21 +580,10 @@ class QuranFileUtils @Inject constructor(
     }
   }
 
-  @Throws(IOException::class)
   private fun copyFile(source: File, destination: File) {
-    FileInputStream(source)
-        .use { `in` ->
-          FileOutputStream(destination)
-              .use { out ->
-                val buffer = ByteArray(1024)
-                var length: Int
-                while (`in`.read(buffer)
-                        .also { length = it } > 0
-                ) {
-                  out.write(buffer, 0, length)
-                }
-              }
-        }
+    destination.sink().buffer().use { sink ->
+      source.source().use { source -> sink.writeAll(source) }
+    }
   }
 
   // taken from Picasso's BitmapUtils class

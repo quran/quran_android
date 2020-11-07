@@ -1,6 +1,9 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import com.quran.labs.androidquran.widgets.AyahToolBar;
+import androidx.annotation.Nullable;
+import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
+import com.quran.labs.androidquran.view.AyahToolBar;
 
 import java.util.Set;
 
@@ -11,4 +14,6 @@ public interface AyahTracker {
   void unHighlightAyahs(HighlightType type);
   AyahToolBar.AyahToolBarPosition getToolBarPosition(int sura, int ayah,
       int toolBarWidth, int toolBarHeight);
+  @Nullable QuranAyahInfo getQuranAyahInfo(int sura, int ayah);
+  @Nullable LocalTranslation[] getLocalTranslations();
 }

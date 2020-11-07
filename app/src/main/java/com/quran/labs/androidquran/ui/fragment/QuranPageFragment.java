@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.quran.data.core.QuranInfo;
+import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.dao.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
@@ -30,8 +31,8 @@ import com.quran.labs.androidquran.ui.helpers.QuranPage;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.widgets.HighlightingImageView;
-import com.quran.labs.androidquran.widgets.QuranImagePageLayout;
+import com.quran.labs.androidquran.view.HighlightingImageView;
+import com.quran.labs.androidquran.view.QuranImagePageLayout;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
@@ -127,7 +128,7 @@ public class QuranPageFragment extends Fragment implements PageController,
   }
 
   @Override
-  public void onAttach(Context context) {
+  public void onAttach(@NonNull Context context) {
     super.onAttach(context);
 
     pageNumber = getArguments().getInt(PAGE_NUMBER_EXTRA);
@@ -223,5 +224,26 @@ public class QuranPageFragment extends Fragment implements PageController,
   public boolean handleTouchEvent(MotionEvent event, EventType eventType, int page) {
     return isVisible() && ayahTrackerPresenter.handleTouchEvent(getActivity(), event, eventType,
         page, ayahSelectedListener, ayahCoordinatesError);
+  }
+
+  @Override
+  public void handleLongPress(SuraAyah suraAyah) {
+    if (isVisible()) {
+      ayahTrackerPresenter.handleLongClick(suraAyah, ayahSelectedListener);
+    }
+  }
+
+  @Override
+  public void endAyahMode() {
+    if (isVisible()) {
+      ayahTrackerPresenter.endAyahMode(ayahSelectedListener);
+    }
+  }
+
+  @Override
+  public void requestMenuPositionUpdate() {
+    if (isVisible()) {
+      ayahTrackerPresenter.requestMenuPositionUpdate(ayahSelectedListener);
+    }
   }
 }

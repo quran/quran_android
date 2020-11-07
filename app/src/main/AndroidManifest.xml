@@ -16,7 +16,7 @@
   <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
   <!-- minSdk 15 vs 14 - really doesn't matter tbh since no one uses 14 at all, but  ¯\_(ツ)_/¯ -->
-  <uses-sdk tools:overrideLibrary="timber.log, dev.chrisbanes.insetter, dev.chrisbanes.insetter.ktx"/>
+  <uses-sdk tools:overrideLibrary="timber.log, dev.chrisbanes.insetter, dev.chrisbanes.insetter.ktx, com.google.firebase.crashlytics"/>
 
   <application
       android:icon="@drawable/icon"
@@ -27,11 +27,10 @@
       android:fullBackupContent="@xml/backup"
       android:networkSecurityConfig="@xml/network_security_config"
       android:supportsRtl="true"
-      android:theme="@style/Quran">
-    <activity
-        android:name=".ui.SheikhAudioManagerActivity"
-        android:theme="@style/Quran"
-        ></activity>
+      android:theme="@style/Quran"
+      android:requestLegacyExternalStorage="true"
+      tools:targetApi="n">
+
     <activity
         android:name=".QuranDataActivity"
         android:label="@string/app_name"
@@ -164,6 +163,37 @@
         <action android:name="android.intent.action.MEDIA_BUTTON"/>
       </intent-filter>
     </service>
+    <service
+        android:name=".widget.BookmarksWidgetService"
+        android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+    <receiver android:name=".widget.BookmarksWidget">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        <action android:name="com.quran.labs.androidquran.UPDATE_LIST" />
+      </intent-filter>
+
+      <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/bookmarks_widget_info" />
+    </receiver>
+    <receiver android:name=".widget.SearchWidget">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+
+      <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/search_widget_info" />
+    </receiver>
+
+    <activity
+        android:name=".widget.ShowJumpFragmentActivity"
+        android:launchMode="singleInstance"
+        android:excludeFromRecents="true"
+        android:theme="@style/Theme.AppCompat.Dialog" />
+
+    <activity android:name=".ui.SheikhAudioManagerActivity" />
 
     <!-- override WorkManager initialization -->
     <provider
@@ -171,4 +201,4 @@
         android:authorities="${applicationId}.workmanager-init"
         tools:node="remove" />
   </application>
-</manifest> 
+</manifest>

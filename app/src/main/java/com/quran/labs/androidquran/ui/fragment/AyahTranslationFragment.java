@@ -18,8 +18,8 @@ import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresen
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.widgets.InlineTranslationView;
-import com.quran.labs.androidquran.widgets.QuranSpinner;
+import com.quran.labs.androidquran.view.InlineTranslationView;
+import com.quran.labs.androidquran.view.QuranSpinner;
 
 import java.util.List;
 import java.util.Set;
@@ -44,7 +44,7 @@ public class AyahTranslationFragment extends AyahActionFragment
   @Inject InlineTranslationPresenter translationPresenter;
 
   @Override
-  public void onAttach(Context context) {
+  public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     ((PagerActivity) getActivity()).getPagerActivityComponent().inject(this);
   }
@@ -85,7 +85,7 @@ public class AyahTranslationFragment extends AyahActionFragment
     super.onPause();
   }
 
-  private View.OnClickListener onClickListener = v -> {
+  private final View.OnClickListener onClickListener = v -> {
     final Activity activity = getActivity();
     if (activity instanceof PagerActivity) {
       final PagerActivity pagerActivity = (PagerActivity) activity;

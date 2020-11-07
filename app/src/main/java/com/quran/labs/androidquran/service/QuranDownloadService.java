@@ -13,9 +13,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.StatFs;
 
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.data.model.SuraAyah;
@@ -489,9 +486,6 @@ public class QuranDownloadService extends Service implements
       }
 
       if (res == DOWNLOAD_SUCCESS) {
-        if (i > 0 && !url.contains("https://")) {
-          Answers.getInstance().logCustom(new CustomEvent("httpFallbackSuccess"));
-        }
         return true;
       } else if (res == QuranDownloadNotifier.ERROR_DISK_SPACE ||
           res == QuranDownloadNotifier.ERROR_PERMISSIONS) {
@@ -569,7 +563,7 @@ public class QuranDownloadService extends Service implements
       call = okHttpClient.newCall(request);
       final Response response = call.execute();
       if (response.isSuccessful()) {
-        Crashlytics.log("successful response: " + response.code() + " - " + downloadedAmount);
+        Timber.d("successful response: " + response.code() + " - " + downloadedAmount);
         final BufferedSink sink = Okio.buffer(Okio.appendingSink(partialFile));
         final ResponseBody body = response.body();
         source = body.source();
@@ -658,7 +652,7 @@ public class QuranDownloadService extends Service implements
 
       return availableSpace > spaceNeeded;
     } catch (Exception e) {
-      Crashlytics.logException(e);
+      Timber.e(e);
       return true;
     }
   }

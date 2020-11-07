@@ -13,5 +13,6 @@ public class QuranFileConstants {
   public static final boolean ARABIC_SHARE_TEXT_HAS_BASMALLAH = true;
 
   // data
-  public static final boolean ARE_PAGES_BUNDLED = true;
+  public static final boolean ARE_PAGES_BUNDLED = false;
+  public static final int[] FORCE_DELETE_PAGES = new int[] { };
 }

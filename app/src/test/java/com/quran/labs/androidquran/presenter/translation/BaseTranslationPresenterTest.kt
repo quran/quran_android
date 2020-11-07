@@ -33,8 +33,8 @@ class BaseTranslationPresenterTest {
                 MadaniDataSource()
             )
         ) {
-          override fun parseTranslationText(quranText: QuranText): TranslationMetadata {
-            return TranslationMetadata(quranText.sura, quranText.ayah, quranText.text)
+          override fun parseTranslationText(quranText: QuranText, translationId: Int): TranslationMetadata {
+            return TranslationMetadata(quranText.sura, quranText.ayah, quranText.text, translationId)
           }
         },
         QuranInfo(MadaniDataSource())
@@ -48,7 +48,7 @@ class BaseTranslationPresenterTest {
       init {
         put("one.db", LocalTranslation(1, "one.db", "One", "First", null, "", null, 1, 2))
         put("two.db", LocalTranslation(2, "two.db", "Two", "Second", null, "", null, 1, 2))
-        put("three.db", LocalTranslation(2, "three.db", "Three", "Third", null, "", null, 1, 2))
+        put("three.db", LocalTranslation(3, "three.db", "Three", "Third", null, "", null, 1, 2))
       }
     }
 
@@ -74,7 +74,8 @@ class BaseTranslationPresenterTest {
     val verseRange = VerseRange(1, 1, 1, 1, 1)
     val arabic = listOf(QuranText(1, 1, "first ayah"))
     val info = presenter.combineAyahData(verseRange, arabic,
-        listOf(listOf(QuranText(1, 1, "translation"))), emptyArray())
+        listOf(listOf(QuranText(1, 1, "translation"))),
+        arrayOf(LocalTranslation(1, "one.db", "One", "First", null, "", null, 1, 2)))
 
     assertThat(info).hasSize(1)
     val first = info[0]
@@ -83,6 +84,7 @@ class BaseTranslationPresenterTest {
     assertThat(first.texts).hasSize(1)
     assertThat(first.arabicText).isEqualTo("first ayah")
     assertThat(first.texts[0].text).isEqualTo("translation")
+    assertThat(first.texts[0].localTranslationId).isEqualTo(1)
   }
 
   @Test

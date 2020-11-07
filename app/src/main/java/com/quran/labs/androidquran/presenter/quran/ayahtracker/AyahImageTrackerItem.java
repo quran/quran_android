@@ -11,8 +11,8 @@ import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.AyahToolBar;
-import com.quran.labs.androidquran.widgets.HighlightingImageView;
+import com.quran.labs.androidquran.view.AyahToolBar;
+import com.quran.labs.androidquran.view.HighlightingImageView;
 import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
@@ -25,13 +25,15 @@ import java.util.Set;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView> {
+public class AyahImageTrackerItem extends AyahTrackerItem {
   private final QuranInfo quranInfo;
   private final QuranDisplayData quranDisplayData;
   private final boolean isPageOnRightSide;
   private final int screenHeight;
   private final Set<ImageDrawHelper> imageDrawHelpers;
   @Nullable Map<String, List<AyahBounds>> coordinates;
+  @NonNull final HighlightingImageView ayahView;
+
 
   public AyahImageTrackerItem(int page,
                               int screenHeight,
@@ -49,7 +51,8 @@ public class AyahImageTrackerItem extends AyahTrackerItem<HighlightingImageView>
                               boolean isPageOnTheRight,
                               @NonNull Set<ImageDrawHelper> imageDrawHelpers,
                               @NonNull HighlightingImageView highlightingImageView) {
-    super(page, highlightingImageView);
+    super(page);
+    this.ayahView = highlightingImageView;
     this.quranInfo = quranInfo;
     this.quranDisplayData = quranDisplayData;
     this.screenHeight = screenHeight;

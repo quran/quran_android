@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_activated="true" android:drawable="@color/accent_color_dark" />
+    <item android:state_pressed="true" android:drawable="@color/ripple_dark"/>
+    <item android:drawable="@drawable/abc_item_background_holo_dark" />
+</selector>

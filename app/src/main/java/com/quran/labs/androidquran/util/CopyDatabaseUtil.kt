@@ -1,12 +1,11 @@
 package com.quran.labs.androidquran.util
 
 import android.content.Context
-import com.crashlytics.android.Crashlytics
 import io.reactivex.Single
-import okio.Okio
 import okio.buffer
 import okio.sink
 import okio.source
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -47,7 +46,7 @@ class CopyDatabaseUtil @Inject constructor(val context: Context,
         false
       }
     }
-    .doOnError { Crashlytics.logException(it) }
+    .doOnError { Timber.e(it) }
     .onErrorReturn { false }
   }
 }

@@ -36,9 +36,10 @@
   <string name="menu_help">Help</string>
   <string name="menu_search">Search</string>
   <string name="menu_get_translations">Get Translations</string>
-  <string name="menu_jump">Jump</string>
+  <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">Go to page</string>
   <string name="cancel">Cancel</string>
+  <string name="please_wait">Please wait…</string>
 
   <!-- about -->
   <string name="about_description">Quran for Android is a free Quran application. Please do not forget the contributors in your prayers.</string>
@@ -131,6 +132,8 @@
     </string>
   <string name="search_hint">Search the Quran</string>
   <string name="quranSearchType">Verses of the Quran</string>
+  <string name="search_full_results">Full Results</string>
+  <string name="search_entire_mushaf">Search the entire mushaf</string>
 
   <plurals name="files_downloaded">
     <item quantity="one">1 surah downloaded</item>
@@ -162,7 +165,7 @@
   <string name="prefs_category_reading">Reading Preferences</string>
   <string name="prefs_category_translation">Translation Preferences</string>
   <string name="prefs_category_display_settings">Display Settings</string>
-  <string name="prefs_use_arabic_title">Arabic mode</string>
+  <string name="prefs_use_arabic_title">Arabic mode (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Use Arabic for application interface</string>
   <string name="prefs_new_background_title">New background</string>
   <string name="prefs_lock_orientation_title">Lock screen orientation</string>
@@ -234,12 +237,19 @@
   <string name="export_data_error">Error exporting data</string>
   <string name="exported_data">Data exported to %1$s</string>
 
+  <string name="move_up">Move Up</string>
+  <string name="move_down">Move Down</string>
+  <string name="delete_translation">Remove Translation</string>
+
   <string name="logs_email" translatable="false">quranandroid+logs@gmail.com</string>
   <string name="warning">Warning</string>
   <string name="kitkat_external_message">Due to Android limitations, if you choose to place Quran
         data on your external SD card and later uninstall or clear data for Quran Android, all Quran
         Android pages and audio will be deleted and you will have to download them again. Are you
         sure you want to use the external SD card?</string>
+  <string name="scoped_storage_message">Due to Android changes to increase user privacy, copying
+    files outside of the app directories might stop Quran from accessing its data in future versions
+    of Android. Are you sure you\'d like to use this path?</string>
   <string name="please_grant_permissions">Please grant permission in application settings</string>
   <!-- Preferences End -->
 
@@ -377,11 +387,13 @@
   <string name="tag_blank_tag_error">Tag names cannot be blank!</string>
   <string name="tag_duplicate_tag_error">Tag name already exists!</string>
 
-  <!-- bookmark & tag list -->
+  <!-- widgets -->
   <string name="bookmarks_list_empty">No Bookmarks</string>
 
   <!-- audio manager -->
   <string name="audio_manager">Audio Manager</string>
+  <string name="audio_manager_remove_audio_title">Remove Surah?</string>
+  <string name="audio_manager_remove_audio_msg">Are you sure you would like to remove %1$s?</string>
   <plurals name="audio_manager_delete_surah_success">
     <item quantity="one">Successfully deleted the surah</item>
     <item quantity="other">Successfully deleted %1$d surahs</item>
@@ -404,6 +416,11 @@
 
   <!-- format strings -->
   <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
+
+  <!-- dual screen prefs -->
+  <string name="prefs_category_dual_screen">Dual Page Preferences</string>
+  <string name="prefs_split_page_and_translation_title">Quran and translation in dual mode</string>
+  <string name="prefs_split_page_and_translation_summary">In dual page mode with translations, Quran page and translation is shown</string>
 
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Quran Downloads</string>

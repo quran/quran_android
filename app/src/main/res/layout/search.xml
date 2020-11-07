@@ -9,15 +9,18 @@
               android:textSize="17sp"
               android:visibility="gone"
               android:textColor="?android:textColorPrimary" />
-    <Button android:id="@+id/btnGetTranslations" android:text="@string/menu_get_translations" 
+    <Button android:id="@+id/btnGetTranslations" android:text="@string/menu_get_translations"
     	android:layout_width="match_parent" android:layout_height="wrap_content" android:visibility="gone"/>
-    <TextView android:id="@+id/search_area"
-            android:textColor="?android:textColorPrimary"
-            android:textSize="17sp"
-            android:text="@string/search_key"
-            android:background="@android:drawable/title_bar"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+
+  <TextView
+      android:id="@+id/search_area"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:background="@android:drawable/title_bar"
+      android:text="@string/search_key"
+      android:textColor="?android:textColorPrimary"
+      android:textSize="17sp" />
+
     <ListView
             android:id="@+id/results_list"
             android:layout_width="match_parent"

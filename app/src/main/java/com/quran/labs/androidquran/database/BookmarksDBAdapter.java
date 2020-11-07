@@ -30,10 +30,12 @@ public class BookmarksDBAdapter {
   private static final int SORT_ALPHABETICAL = 2;
 
   private SQLiteDatabase db;
+  Context context;
 
   public BookmarksDBAdapter(Context context, int numberOfPages) {
     BookmarksDBHelper dbHelper = BookmarksDBHelper.getInstance(context, numberOfPages);
     db = dbHelper.getWritableDatabase();
+    this.context = context;
   }
 
   @NonNull
@@ -234,6 +236,7 @@ public class BookmarksDBAdapter {
     }
   }
 
+
   public long addBookmarkIfNotExists(Integer sura, Integer ayah, int page) {
     long bookmarkId = getBookmarkId(sura, ayah, page);
     if (bookmarkId < 0) {
@@ -428,7 +431,6 @@ public class BookmarksDBAdapter {
     } finally {
       db.endTransaction();
     }
-
     return result;
   }
 }

@@ -22,7 +22,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.widgets.JuzView;
+import com.quran.labs.androidquran.view.JuzView;
 
 import javax.inject.Inject;
 
