@@ -600,7 +600,7 @@ public class AudioService extends Service implements OnCompletionListener,
         // line, switch the sura.
         ayahTime = gaplessSuraData.get(999);
         if (ayahTime > 0 && pos >= ayahTime) {
-          boolean success = audioQueue.playAt(sura + 1, 1, true);
+          boolean success = audioQueue.playAt(sura + 1, 1, false);
           if (success && audioQueue.getCurrentSura() == sura) {
             // remove any messages currently in the queue
             serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS);
@@ -608,7 +608,7 @@ public class AudioService extends Service implements OnCompletionListener,
             // jump back to the ayah we should repeat and play it
             pos = getSeekPosition(false);
             player.seekTo(pos);
-          } if (!success) {
+          } else if (!success) {
             processStopRequest();
           } else {
             playAudio(true);
