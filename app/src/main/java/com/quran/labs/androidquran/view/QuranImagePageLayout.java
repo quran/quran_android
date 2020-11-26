@@ -27,7 +27,7 @@ public class QuranImagePageLayout extends QuranPageLayout {
   protected View generateContentView(Context context, boolean isLandscape) {
     imageView = new HighlightingImageView(context);
     imageView.setAdjustViewBounds(true);
-    imageView.setIsScrollable(isLandscape && shouldWrapWithScrollView());
+    imageView.setIsScrollable(isLandscape && shouldWrapWithScrollView(), isLandscape);
     return imageView;
   }
 

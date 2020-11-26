@@ -52,6 +52,8 @@ public class HighlightingImageView extends AppCompatImageView {
   private static int headerFooterFontSize;
   private static int scrollableHeaderFooterSize;
   private static int scrollableHeaderFooterFontSize;
+  private static int dualPageHeaderFooterSize;
+  private static int dualPageHeaderFooterFontSize;
 
   // Sorted map so we use highest priority highlighting when iterating
   private final SortedMap<HighlightType, Set<AyahHighlight>> currentHighlights = new TreeMap<>();
@@ -90,9 +92,12 @@ public class HighlightingImageView extends AppCompatImageView {
       overlayTextColor = ContextCompat.getColor(context, R.color.overlay_text_color);
       headerFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size);
       scrollableHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_scrollable);
+      dualPageHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_dualPage);
       headerFooterFontSize = res.getDimensionPixelSize(R.dimen.page_overlay_font_size);
       scrollableHeaderFooterFontSize =
           res.getDimensionPixelSize(R.dimen.page_overlay_font_size_scrollable);
+      dualPageHeaderFooterFontSize =
+          res.getDimensionPixelSize(R.dimen.page_overlay_font_size_dualPage);
     }
 
     Insetter.builder()
@@ -111,14 +116,15 @@ public class HighlightingImageView extends AppCompatImageView {
         .applyToView(this);
   }
 
-  public void setIsScrollable(boolean scrollable) {
+  public void setIsScrollable(boolean scrollable, boolean landscape) {
     int topBottom = scrollable ? scrollableHeaderFooterSize : headerFooterSize;
     verticalOffsetForScrolling = topBottom;
     setPadding(horizontalSafeOffset,
         topBottom + topSafeOffset,
         horizontalSafeOffset,
         topBottom + bottomSafeOffset);
-    fontSize = scrollable ? scrollableHeaderFooterFontSize : headerFooterFontSize;
+    fontSize = scrollable ? scrollableHeaderFooterFontSize :
+        landscape ? dualPageHeaderFooterFontSize : headerFooterFontSize;
   }
 
   public void unHighlight(int surah, int ayah, HighlightType type) {
