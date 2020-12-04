@@ -72,7 +72,7 @@ public class AyahImageTrackerItem extends AyahTrackerItem {
         String juzText = quranDisplayData.getJuzDisplayStringForPage(context, page);
         String pageText = QuranUtils.getLocalizedNumber(context, page);
         String rub3Text = QuranDisplayHelper.displayRub3(context, quranInfo, page);
-        ayahView.setOverlayText(suraText, juzText, pageText, rub3Text);
+        ayahView.setOverlayText(context, suraText, juzText, pageText, rub3Text);
       }
       ayahView.setPageData(pageCoordinates, imageDrawHelpers);
     }

@@ -13,6 +13,7 @@ import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 
@@ -23,6 +24,7 @@ import com.quran.labs.androidquran.ui.helpers.HighlightAnimationConfig;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.SingleAyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.TransitionAyahHighlight;
+import com.quran.labs.androidquran.ui.util.TypefaceManager;
 import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
@@ -117,7 +119,8 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   public void setIsScrollable(boolean scrollable, boolean landscape) {
-    int topBottom = scrollable ? scrollableHeaderFooterSize : headerFooterSize;
+    int topBottom = scrollable ? scrollableHeaderFooterSize :
+        landscape ? dualPageHeaderFooterSize : headerFooterSize;
     verticalOffsetForScrolling = topBottom;
     setPadding(horizontalSafeOffset,
         topBottom + topSafeOffset,
@@ -359,7 +362,7 @@ public class HighlightingImageView extends AppCompatImageView {
     String rub3Text = null;
   }
 
-  public void setOverlayText(String suraText, String juzText, String pageText, String rub3Text) {
+  public void setOverlayText(Context context, String suraText, String juzText, String pageText, String rub3Text) {
     // Calculate page bounding rect from ayahinfo db
     if (pageBounds == null) {
       return;
@@ -372,7 +375,10 @@ public class HighlightingImageView extends AppCompatImageView {
     overlayParams.rub3Text = rub3Text;
     overlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
     overlayParams.paint.setTextSize(fontSize);
-
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && juzText.contains("ج")) {
+      // change typeface for Arabic
+      overlayParams.paint.setTypeface(TypefaceManager.getHeaderFooterTypeface(context));
+    }
     if (!didDraw) {
       invalidate();
     }
