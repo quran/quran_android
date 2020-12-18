@@ -1093,11 +1093,19 @@ public class AudioService extends Service implements OnCompletionListener,
     } else {
       final int beforeSura = audioQueue.getCurrentSura();
       if (audioQueue.playNextAyah(false)) {
-        // we actually switched to a different ayah - so if the
-        // sura changed, then play the basmala if the ayah is
-        // not the first one (or if we're in sura tawba).
-        boolean flag = beforeSura != audioQueue.getCurrentSura();
-        playAudio(flag);
+        if (audioRequest != null &&
+            audioRequest.isGapless() &&
+            beforeSura == audioQueue.getCurrentSura()) {
+          // we're actually repeating, but we reached the end of the file before we could
+          // seek to the proper place. so let's seek anyway.
+          player.seekTo(gaplessSuraData.get(audioQueue.getCurrentAyah()));
+        } else {
+          // we actually switched to a different ayah - so if the
+          // sura changed, then play the basmala if the ayah is
+          // not the first one (or if we're in sura tawba).
+          boolean flag = beforeSura != audioQueue.getCurrentSura();
+          playAudio(flag);
+        }
       } else {
         processStopRequest(true);
       }
