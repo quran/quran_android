@@ -1051,6 +1051,9 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void switchToQuran() {
+    if (isInAyahMode) {
+      endAyahMode();
+    }
     final int page = getCurrentPage();
     pagerAdapter.setQuranMode();
     showingTranslation = false;

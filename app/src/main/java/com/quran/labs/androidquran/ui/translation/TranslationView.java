@@ -232,7 +232,12 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   public AyahToolBar.AyahToolBarPosition getToolbarPosition() {
     int[] versePopupPosition = translationAdapter.getSelectedVersePopupPosition();
     if (versePopupPosition != null) {
-      final int xOffset = ((View) getParent()).getLeft();
+      // for dual screen tablet mode, we need to add the view's x (so clicks on the
+      // right page properly show on the right page and not on the left one).
+      final int[] positionOnScreen = new int[2];
+      getLocationOnScreen(positionOnScreen);
+      final int xOffset = positionOnScreen[0];
+
       AyahToolBar.AyahToolBarPosition position = new AyahToolBar.AyahToolBarPosition();
       position.x = xOffset + versePopupPosition[0];
       position.y = versePopupPosition[1];
@@ -266,6 +271,10 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       if (isUnselectingSelectedVerse) {
         return;
       }
+    } else {
+      // hide the menu because the previous page might have had
+      // something selected here (which would break selection).
+      hideMenu();
     }
 
     pageController.handleLongPress(suraAyah);
