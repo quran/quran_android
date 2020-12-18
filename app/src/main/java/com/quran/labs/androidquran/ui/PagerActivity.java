@@ -1760,6 +1760,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
+  @Override
   public void endAyahMode() {
     ayahToolBar.hideMenu();
     slidingPanel.collapsePane();
