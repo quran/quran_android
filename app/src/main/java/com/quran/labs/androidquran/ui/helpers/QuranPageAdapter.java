@@ -16,7 +16,7 @@ import timber.log.Timber;
 public class QuranPageAdapter extends FragmentStatePagerAdapter {
 
   private boolean isShowingTranslation;
-  private boolean isDualPages;
+  private final boolean isDualPages;
   private final boolean isSplitScreen;
   private final QuranInfo quranInfo;
   private final int totalPages;
