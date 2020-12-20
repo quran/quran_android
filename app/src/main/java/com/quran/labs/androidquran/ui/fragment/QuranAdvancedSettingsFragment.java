@@ -187,7 +187,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
 
     // Hide app location pref if there is no storage option
     // except for the normal Environment.getExternalStorageDirectory
-    if (storageList == null || storageList.size() <= 1) {
+    if (storageList.size() <= 1) {
       Timber.d("removing advanced settings from preferences");
       hideStorageListPref();
     } else {
@@ -256,7 +256,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
 
       listStoragePref
           .setOnPreferenceChangeListener((preference, newValue) -> {
-            final Context context1 = getActivity();
+            final Context context1 = requireActivity();
             final QuranSettings settings = QuranSettings.getInstance(context1);
 
             if (TextUtils.isEmpty(settings.getAppCustomLocation()) &&

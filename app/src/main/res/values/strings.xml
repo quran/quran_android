@@ -205,7 +205,7 @@
   <string name="prefs_send_logs_title">Send logs</string>
   <string name="prefs_send_logs_summary">Send debug logs to the developer</string>
   <string name="prefs_sdcard_internal">Internal storage</string>
-  <string name="prefs_sdcard_external">External SD card %1$d</string>
+  <string name="prefs_sdcard_external">External storage %1$d</string>
   <string name="prefs_app_size">Current data size is</string>
   <string name="prefs_calculating_app_size">Calculating App Size</string>
   <string name="prefs_copying_app_files">Copying App files</string>
