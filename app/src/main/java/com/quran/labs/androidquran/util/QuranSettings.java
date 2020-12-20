@@ -285,9 +285,7 @@ public class QuranSettings {
   }
 
   public String getDefaultLocation() {
-    final File externalFilesDir = appContext.getExternalFilesDir(null);
-    return externalFilesDir != null ?
-        externalFilesDir.getAbsolutePath() : null;
+    return appContext.getFilesDir().getAbsolutePath();
   }
 
   public void setAppCustomLocation(String newLocation) {

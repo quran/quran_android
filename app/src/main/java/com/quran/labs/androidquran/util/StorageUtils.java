@@ -62,24 +62,27 @@ public class StorageUtils {
       int limit = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? 1 : 2;
       final File[] mountPoints = ContextCompat.getExternalFilesDirs(context, null);
       if (mountPoints.length >= limit) {
-        int typeId;
-        if (!Environment.isExternalStorageRemovable() || Environment.isExternalStorageEmulated()) {
-          typeId = R.string.prefs_sdcard_internal;
-        } else {
-          typeId = R.string.prefs_sdcard_external;
-        }
+
+        // internal files dir
+        result.add(
+            new Storage(context.getString(R.string.prefs_sdcard_internal),
+                context.getFilesDir().getAbsolutePath()));
+
+        // all of these are "external" files dir or related
 
         int number = 1;
+        // this first one is not safe to write on starting from Android 11 - /sdcard.
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
           // don't show the /sdcard option for people on Android 11
-          result.add(new Storage(context.getString(typeId, number),
+          result.add(new Storage(context.getString(R.string.prefs_sdcard_external, number++),
               Environment.getExternalStorageDirectory().getAbsolutePath(),
               Build.VERSION.SDK_INT >= Build.VERSION_CODES.M));
         }
+
+        // add all the remaining places
         for (File mountPoint : mountPoints) {
-          result.add(new Storage(context.getString(typeId, number++),
+          result.add(new Storage(context.getString(R.string.prefs_sdcard_external, number++),
               mountPoint.getAbsolutePath()));
-          typeId = R.string.prefs_sdcard_external;
         }
       }
       return result;
@@ -128,17 +131,16 @@ public class StorageUtils {
   private static List<Storage> buildMountsList(Context context, List<String> mounts) {
     List<Storage> list = new ArrayList<>(mounts.size());
 
-    int externalSdcardsCount = 0;
+    int externalSdcardsCount;
     if (mounts.size() > 0) {
-      // Follow Android SD Cards naming conventions
-      if (!Environment.isExternalStorageRemovable() || Environment.isExternalStorageEmulated()) {
-        list.add(new Storage(context.getString(R.string.prefs_sdcard_internal),
-            Environment.getExternalStorageDirectory().getAbsolutePath()));
-      } else {
-        externalSdcardsCount = 1;
-        list.add(new Storage(context.getString(R.string.prefs_sdcard_external,
-            externalSdcardsCount), mounts.get(0)));
-      }
+      // internal files dir
+      list.add(
+          new Storage(context.getString(R.string.prefs_sdcard_internal),
+              context.getFilesDir().getAbsolutePath()));
+
+      externalSdcardsCount = 1;
+      list.add(new Storage(context.getString(R.string.prefs_sdcard_external,
+          externalSdcardsCount), mounts.get(0)));
 
       // All other mounts rather than the first mount point are considered as External SD Card
       if (mounts.size() > 1) {
