@@ -25,7 +25,7 @@
   <color name="translation_background_color_night">#ff1d1f21</color>
   <color name="translation_ayah_selected_color">#ffe0f2f1</color>
   <color name="translation_ayah_selected_color_night">#ff2d2d2d</color>
-  <color name="overlay_text_color">#ff888888</color>
+  <color name="overlay_text_color">#ff505050</color>
   <color name="selection_highlight">#404694A6</color>
   <color name="audio_highlight">#4046A646</color>
   <color name="note_highlight">#40EBEB21</color>

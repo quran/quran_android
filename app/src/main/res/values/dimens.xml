@@ -27,10 +27,12 @@
   <dimen name="repeat_text_y_padding">4dp</dimen>
 
   <!-- page overlay text -->
-  <dimen name="page_overlay_size">12sp</dimen>
-  <dimen name="page_overlay_font_size">10sp</dimen>
-  <dimen name="page_overlay_font_size_scrollable">16sp</dimen>
-  <dimen name="page_overlay_size_scrollable">20sp</dimen>
+  <dimen name="page_overlay_size">15dp</dimen>
+  <dimen name="page_overlay_font_size">14dp</dimen>
+  <dimen name="page_overlay_font_size_scrollable">16dp</dimen>
+  <dimen name="page_overlay_font_size_dualPage">9dp</dimen>
+  <dimen name="page_overlay_size_scrollable">20dp</dimen>
+  <dimen name="page_overlay_size_dualPage">12dp</dimen>
 
   <!-- tags -->
   <dimen name="tag_width">50dp</dimen>

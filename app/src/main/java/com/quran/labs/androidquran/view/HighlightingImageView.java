@@ -13,6 +13,7 @@ import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 
@@ -23,6 +24,7 @@ import com.quran.labs.androidquran.ui.helpers.HighlightAnimationConfig;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.SingleAyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.TransitionAyahHighlight;
+import com.quran.labs.androidquran.ui.util.TypefaceManager;
 import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
@@ -52,6 +54,8 @@ public class HighlightingImageView extends AppCompatImageView {
   private static int headerFooterFontSize;
   private static int scrollableHeaderFooterSize;
   private static int scrollableHeaderFooterFontSize;
+  private static int dualPageHeaderFooterSize;
+  private static int dualPageHeaderFooterFontSize;
 
   // Sorted map so we use highest priority highlighting when iterating
   private final SortedMap<HighlightType, Set<AyahHighlight>> currentHighlights = new TreeMap<>();
@@ -90,9 +94,12 @@ public class HighlightingImageView extends AppCompatImageView {
       overlayTextColor = ContextCompat.getColor(context, R.color.overlay_text_color);
       headerFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size);
       scrollableHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_scrollable);
+      dualPageHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_dualPage);
       headerFooterFontSize = res.getDimensionPixelSize(R.dimen.page_overlay_font_size);
       scrollableHeaderFooterFontSize =
           res.getDimensionPixelSize(R.dimen.page_overlay_font_size_scrollable);
+      dualPageHeaderFooterFontSize =
+          res.getDimensionPixelSize(R.dimen.page_overlay_font_size_dualPage);
     }
 
     Insetter.builder()
@@ -111,14 +118,16 @@ public class HighlightingImageView extends AppCompatImageView {
         .applyToView(this);
   }
 
-  public void setIsScrollable(boolean scrollable) {
-    int topBottom = scrollable ? scrollableHeaderFooterSize : headerFooterSize;
+  public void setIsScrollable(boolean scrollable, boolean landscape) {
+    int topBottom = scrollable ? scrollableHeaderFooterSize :
+        landscape ? dualPageHeaderFooterSize : headerFooterSize;
     verticalOffsetForScrolling = topBottom;
     setPadding(horizontalSafeOffset,
         topBottom + topSafeOffset,
         horizontalSafeOffset,
         topBottom + bottomSafeOffset);
-    fontSize = scrollable ? scrollableHeaderFooterFontSize : headerFooterFontSize;
+    fontSize = scrollable ? scrollableHeaderFooterFontSize :
+        landscape ? dualPageHeaderFooterFontSize : headerFooterFontSize;
   }
 
   public void unHighlight(int surah, int ayah, HighlightType type) {
@@ -353,7 +362,7 @@ public class HighlightingImageView extends AppCompatImageView {
     String rub3Text = null;
   }
 
-  public void setOverlayText(String suraText, String juzText, String pageText, String rub3Text) {
+  public void setOverlayText(Context context, String suraText, String juzText, String pageText, String rub3Text) {
     // Calculate page bounding rect from ayahinfo db
     if (pageBounds == null) {
       return;
@@ -366,7 +375,10 @@ public class HighlightingImageView extends AppCompatImageView {
     overlayParams.rub3Text = rub3Text;
     overlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
     overlayParams.paint.setTextSize(fontSize);
-
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && juzText.contains("ج")) {
+      // change typeface for Arabic
+      overlayParams.paint.setTypeface(TypefaceManager.getHeaderFooterTypeface(context));
+    }
     if (!didDraw) {
       invalidate();
     }

@@ -13,6 +13,7 @@ public class TypefaceManager {
 
   private static Typeface typeface;
   private static Typeface arabicTafseerTypeface;
+  private static Typeface arabicHeaderFooterTypeface;
 
   public static Typeface getUthmaniTypeface(@NonNull Context context) {
     if (typeface == null) {
@@ -37,5 +38,12 @@ public class TypefaceManager {
       arabicTafseerTypeface = Typeface.createFromAsset(context.getAssets(), "kitab.ttf");
     }
     return arabicTafseerTypeface;
+  }
+
+  public static Typeface getHeaderFooterTypeface(@NonNull Context context) {
+    if (arabicHeaderFooterTypeface == null) {
+      arabicHeaderFooterTypeface = Typeface.createFromAsset(context.getAssets(), "UthmanTN1Ver10.otf");
+    }
+    return arabicHeaderFooterTypeface;
   }
 }
