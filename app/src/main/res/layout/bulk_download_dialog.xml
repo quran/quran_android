@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp">
+
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingTop="8dp"
+      android:paddingBottom="8dp"
+      android:text="@string/play_from"/>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+    <com.quran.labs.androidquran.view.ForceCompleteTextView
+        android:id="@+id/first_sura_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:inputType="text|textAutoComplete"
+        android:imeOptions="flagNoExtractUi"
+        android:selectAllOnFocus="true"/>
+  </LinearLayout>
+
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingTop="8dp"
+      android:paddingBottom="8dp"
+      android:text="@string/play_to"/>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+    <com.quran.labs.androidquran.view.ForceCompleteTextView
+        android:id="@+id/last_sura_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:inputType="text|textAutoComplete"
+        android:imeOptions="flagNoExtractUi"
+        android:selectAllOnFocus="true"/>
+  </LinearLayout>
+</LinearLayout>
