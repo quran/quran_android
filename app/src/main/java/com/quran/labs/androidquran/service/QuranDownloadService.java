@@ -22,6 +22,7 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.Notificati
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.UrlUtil;
 import com.quran.labs.androidquran.util.ZipUtils;
 
 import java.io.File;
@@ -98,6 +99,8 @@ public class QuranDownloadService extends Service implements
   private ServiceHandler serviceHandler;
   private QuranDownloadNotifier notifier;
 
+  private static boolean fallbackByDefault = false;
+
   // written from ui thread and read by download thread
   private volatile boolean isDownloadCanceled;
   private LocalBroadcastManager broadcastManager;
@@ -109,10 +112,11 @@ public class QuranDownloadService extends Service implements
   private Map<String, Intent> recentlyFailedDownloads = null;
 
   // incremented from ui thread and decremented by download thread
-  private AtomicInteger currentOperations = new AtomicInteger(0);
+  private final AtomicInteger currentOperations = new AtomicInteger(0);
 
   @Inject QuranInfo quranInfo;
   @Inject OkHttpClient okHttpClient;
+  @Inject UrlUtil urlUtil;
 
   private final class ServiceHandler extends Handler {
 
@@ -464,11 +468,8 @@ public class QuranDownloadService extends Service implements
       }
 
       String url = urlString;
-      if (i > 0) {
-        // let's try http instead of https?
-        if (urlString.contains("quran.com") || urlString.contains("quranicaudio.com")) {
-          url = urlString.replace("https://", "http://");
-        }
+      if (fallbackByDefault || i > 0) {
+        url = urlUtil.fallbackUrl(url);
 
         // want to wait before retrying again
         try {
@@ -486,6 +487,7 @@ public class QuranDownloadService extends Service implements
       }
 
       if (res == DOWNLOAD_SUCCESS) {
+        fallbackByDefault = (i > 0);
         return true;
       } else if (res == QuranDownloadNotifier.ERROR_DISK_SPACE ||
           res == QuranDownloadNotifier.ERROR_PERMISSIONS) {

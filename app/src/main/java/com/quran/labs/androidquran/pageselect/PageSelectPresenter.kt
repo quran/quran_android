@@ -4,6 +4,7 @@ import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.ImageUtil
 import com.quran.labs.androidquran.util.QuranFileUtils
+import com.quran.labs.androidquran.util.UrlUtil
 import dagger.Reusable
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
@@ -17,6 +18,7 @@ class PageSelectPresenter @Inject
     constructor(private val imageUtil: ImageUtil,
                 private val quranFileUtils: QuranFileUtils,
                 private val mainThreadScheduler: Scheduler,
+                private val urlUtil: UrlUtil,
                 private val pageTypes:
                 Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>) :
     Presenter<PageSelectActivity> {
@@ -44,6 +46,8 @@ class PageSelectPresenter @Inject
           val url = "$baseUrl/${it.key}.png"
           compositeDisposable.add(
               imageUtil.downloadImage(url, previewImage)
+                  .onErrorResumeNext(
+                      imageUtil.downloadImage(urlUtil.fallbackUrl(url), previewImage))
                   .subscribeOn(Schedulers.io())
                   .observeOn(mainThreadScheduler)
                   .subscribe({ generateData() }, { e -> Timber.e(e) })

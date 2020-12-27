@@ -37,7 +37,8 @@ import javax.inject.Inject
 class QuranFileUtils @Inject constructor(
   context: Context,
   private val pageProvider: PageProvider,
-  private val quranScreenInfo: QuranScreenInfo
+  private val quranScreenInfo: QuranScreenInfo,
+  private val urlUtil: UrlUtil
 ) {
   // server urls
   private val imageBaseUrl: String = pageProvider.getImagesBaseUrl()
@@ -267,7 +268,8 @@ class QuranFileUtils @Inject constructor(
     filename: String,
     isRetry: Boolean
   ): Response {
-    val urlString = (imageBaseUrl + "width" + widthParam + File.separator + filename)
+    val base = if (isRetry) urlUtil.fallbackUrl(imageBaseUrl) else imageBaseUrl
+    val urlString = (base + "width" + widthParam + File.separator + filename)
     Timber.d("want to download: %s", urlString)
     val request = Builder()
         .url(urlString)

@@ -6,6 +6,7 @@ import com.quran.labs.androidquran.dao.translation.TranslationList;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 
+import com.quran.labs.androidquran.util.UrlUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class TranslationManagerPresenterTest {
     mockWebServer = new MockWebServer();
     translationManager = new TranslationManagerPresenter(
         mockAppContext, mockOkHttp, mockSettings, null,
-        mock(QuranFileUtils.class)) {
+        mock(QuranFileUtils.class), new UrlUtil()) {
       @Override
       void writeTranslationList(TranslationList list) {
         // no op
