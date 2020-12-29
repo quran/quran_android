@@ -190,7 +190,7 @@ public class AyahTrackerPresenter implements AyahTracker,
   private void checkCoordinateData(Activity activity) {
     if (activity instanceof PagerActivity &&
         (!quranFileUtils.haveAyaPositionFile(activity) ||
-            !quranFileUtils.hasArabicSearchDatabase(activity))) {
+            !quranFileUtils.hasArabicSearchDatabase())) {
       PagerActivity pagerActivity = (PagerActivity) activity;
       pagerActivity.showGetRequiredFilesDialog();
     }

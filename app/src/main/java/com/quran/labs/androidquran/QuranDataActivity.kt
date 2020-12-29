@@ -18,9 +18,9 @@ import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
+import com.quran.data.model.QuranDataStatus
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.presenter.data.QuranDataPresenter
-import com.quran.labs.androidquran.presenter.data.QuranDataPresenter.QuranDataStatus
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener

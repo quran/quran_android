@@ -792,7 +792,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       haveDownload = true;
     }
 
-    if (!quranFileUtils.hasArabicSearchDatabase(this)) {
+    if (!quranFileUtils.hasArabicSearchDatabase()) {
       String url = quranFileUtils.getArabicSearchDatabaseUrl();
 
       // show "downloading required files" unless we already showed that for
@@ -1096,7 +1096,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       }
     }
 
-    if (!quranFileUtils.hasArabicSearchDatabase(this) && !promptedForExtraDownload) {
+    if (!quranFileUtils.hasArabicSearchDatabase() && !promptedForExtraDownload) {
       promptedForExtraDownload = true;
       showGetRequiredFilesDialog();
     }
@@ -2001,7 +2001,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   private void shareAyah(SuraAyah start, SuraAyah end, final boolean isCopy) {
     if (start == null || end == null) {
       return;
-    } else if (!quranFileUtils.hasArabicSearchDatabase(this)) {
+    } else if (!quranFileUtils.hasArabicSearchDatabase()) {
       showGetRequiredFilesDialog();
       return;
     }

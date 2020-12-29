@@ -17,8 +17,4 @@ public class QuranFileConstants {
       Build.VERSION.SDK_INT >= 21 ?
           DatabaseHandler.SHARE_TEXT_TABLE : DatabaseHandler.ARABIC_TEXT_TABLE;
   public static final boolean ARABIC_SHARE_TEXT_HAS_BASMALLAH = true;
-
-  // data
-  public static final boolean ARE_PAGES_BUNDLED = false;
-  public static final int[] FORCE_DELETE_PAGES = new int[] { };
 }
