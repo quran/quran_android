@@ -228,7 +228,12 @@ class QuranFileUtils @Inject constructor(
 
   @WorkerThread
   override fun copyFromAssetsRelative(assetsPath: String, filename: String, destination: String) {
-    copyFromAssets(assetsPath, filename, getQuranBaseDirectory(appContext) + destination)
+    val actualDestination = getQuranBaseDirectory(appContext) + destination
+    val dir = File(actualDestination)
+    if (!dir.exists()) {
+      dir.mkdirs()
+    }
+    copyFromAssets(assetsPath, filename, actualDestination)
   }
 
   @WorkerThread
