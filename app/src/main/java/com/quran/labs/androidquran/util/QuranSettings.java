@@ -185,63 +185,6 @@ public class QuranSettings {
         version = prefs.getInt(Constants.PREF_VERSION, 0);
       }
 
-      if (version != 0) {
-        if (version < 2672) {
-          // migrate preferences
-          setAppCustomLocation(prefs.getString(Constants.PREF_APP_LOCATION, null));
-
-          if (prefs.contains(Constants.PREF_SHOULD_FETCH_PAGES)) {
-            setShouldFetchPages(prefs.getBoolean(Constants.PREF_SHOULD_FETCH_PAGES, false));
-          }
-
-          if (prefs.contains(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)) {
-            setLastDownloadError(
-                prefs.getString(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM, null),
-                prefs.getInt(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR, 0));
-          }
-
-          prefs.edit()
-              .remove(Constants.PREF_VERSION)
-              .remove(Constants.PREF_APP_LOCATION)
-              .remove(Constants.PREF_SHOULD_FETCH_PAGES)
-              .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ERROR)
-              .remove(QuranDownloadService.PREF_LAST_DOWNLOAD_ITEM)
-              .remove(Constants.PREF_ACTIVE_TRANSLATION)
-              // these aren't migrated since they can be derived pretty easily
-              .remove("didPresentPermissionsRationale") // was renamed, removing old one
-              .remove(Constants.PREF_DEFAULT_IMAGES_DIR)
-              .remove(Constants.PREF_HAVE_UPDATED_TRANSLATIONS)
-              .remove(Constants.PREF_LAST_UPDATED_TRANSLATIONS)
-              .apply();
-        } else if (version < 2674) {
-          // explicitly an else - if we migrated via the above, we're okay. otherwise, we are in
-          // a bad state due to not crashing in 2.6.7-p2 (thus getting its incorrect behavior),
-          // and thus crashing on 2.6.7-p3 and above (where the bug was fixed). this works around
-          // this issue.
-          try {
-            getLastDownloadItemWithError();
-            getLastDownloadErrorCode();
-          } catch (Exception e) {
-            clearLastDownloadError();
-          }
-        } else if (version == 2800) {
-          // upgrading from 2800, need to remove notification channels
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            deleteOldNotificationChannels();
-          }
-        }
-
-        if (version < 2943) {
-          prefs.edit().remove("didDownloadPages").apply();
-        }
-
-        if (version < 2961) {
-          // on 2.9.6 and below, remove the partial checked flag so we can
-          // check them again.
-          perInstallationPrefs.edit().remove(Constants.PREF_CHECKED_PARTIAL_IMAGES).apply();
-        }
-      }
-
       // no matter which version we're upgrading from, make sure the app location is set
       if (!isAppLocationSet()) {
         setAppCustomLocation(getAppCustomLocation());
@@ -249,16 +192,6 @@ public class QuranSettings {
 
       // make sure that the version code now says that we're up to date.
       setVersion(BuildConfig.VERSION_CODE);
-    }
-  }
-
-  @RequiresApi(api = Build.VERSION_CODES.O)
-  private void deleteOldNotificationChannels() {
-    NotificationManager notificationManager =
-        (NotificationManager) appContext.getSystemService(Context.NOTIFICATION_SERVICE);
-    if (notificationManager != null) {
-      notificationManager.deleteNotificationChannel("quran_audio");
-      notificationManager.deleteNotificationChannel("quran_download");
     }
   }
 
