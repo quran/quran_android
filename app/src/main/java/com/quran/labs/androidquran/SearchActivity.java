@@ -170,7 +170,7 @@ public class SearchActivity extends QuranActionBarActivity
     final boolean containsArabic = QuranUtils.doesStringContainArabic(query);
     isArabicSearch = containsArabic;
     boolean showArabicWarning = (isArabicSearch &&
-        !quranFileUtils.hasArabicSearchDatabase(this));
+        !quranFileUtils.hasArabicSearchDatabase());
 
     if (showArabicWarning) {
       // overridden because if we search Arabic tafaseer, this tells us to go
@@ -256,7 +256,7 @@ public class SearchActivity extends QuranActionBarActivity
       if (isArabicSearch) {
         // if we come from muyassar and don't have arabic db, we set
         // arabic search to false so we jump to the translation.
-        if (!quranFileUtils.hasArabicSearchDatabase(this)) {
+        if (!quranFileUtils.hasArabicSearchDatabase()) {
           isArabicSearch = false;
         }
       }

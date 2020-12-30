@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.graphics.BitmapFactory.Options
 import android.os.Environment
 import androidx.annotation.WorkerThread
+import com.quran.data.core.QuranFileManager
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.common.Response
@@ -39,7 +40,7 @@ class QuranFileUtils @Inject constructor(
   private val pageProvider: PageProvider,
   private val quranScreenInfo: QuranScreenInfo,
   private val urlUtil: UrlUtil
-) {
+): QuranFileManager {
   // server urls
   private val imageBaseUrl: String = pageProvider.getImagesBaseUrl()
   private val imageZipBaseUrl: String = pageProvider.getImagesZipBaseUrl()
@@ -58,9 +59,10 @@ class QuranFileUtils @Inject constructor(
 
   // check if the images with the given width param have a version
   // that we specify (ex if version is 3, check for a .v3 file).
-  fun isVersion(context: Context, widthParam: String, version: Int): Boolean {
+  @WorkerThread
+  override fun isVersion(widthParam: String, version: Int): Boolean {
     // version 1 or below are true as long as you have images
-    return version <= 1 || hasVersionFile(context, widthParam, version)
+    return version <= 1 || hasVersionFile(appContext, widthParam, version)
   }
 
   private fun hasVersionFile(context: Context, widthParam: String, version: Int): Boolean {
@@ -95,38 +97,29 @@ class QuranFileUtils @Inject constructor(
     return null
   }
 
-  fun removeFilesForWidth(context: Context, width: Int) {
+  @WorkerThread
+  override fun removeFilesForWidth(width: Int) {
     val widthParam = "_$width"
-    val quranDirectory = getQuranImagesDirectory(context, widthParam) ?: return
+    val quranDirectory = getQuranImagesDirectory(appContext, widthParam) ?: return
     val file = File(quranDirectory)
     if (file.exists()) {
       deleteFileOrDirectory(file)
-      val ayahinfoFile = File(getQuranAyahDatabaseDirectory(context), "ayahinfo_$width.db")
+      val ayahinfoFile = File(getQuranAyahDatabaseDirectory(appContext), "ayahinfo_$width.db")
       if (ayahinfoFile.exists()) {
         ayahinfoFile.delete()
       }
     }
   }
 
-  fun copyQuranDataFromAssets(context: Context, widthParam: String) {
-    val quranDirectory = getQuranImagesDirectory(context, widthParam) ?: return
-    for (page in 1..604) {
-      val filename = getPageFileName(page)
-      copyFromAssets("pages/$filename", filename, quranDirectory + File.separator)
-    }
+  @WorkerThread
+  override fun writeVersionFile(widthParam: String, version: Int) {
+    val quranDirectory = getQuranImagesDirectory(appContext, widthParam) ?: return
+    File(quranDirectory, ".v$version").createNewFile()
+  }
 
-    for (patch in 1..pageProvider.getImageVersion()) {
-      File(quranDirectory, ".v$patch").createNewFile()
-    }
-
-    val base = getQuranBaseDirectory(context)
-    val databaseDestination = base + pageProvider.getAyahInfoDirectoryName()
-    val dbDirectory = File(databaseDestination)
-    if (!dbDirectory.exists()) {
-      dbDirectory.mkdir()
-    }
-    val filename = "ayahinfo$widthParam.zip"
-    copyFromAssets("databases${File.separator}$filename", filename, databaseDestination)
+  @WorkerThread
+  override fun writeNoMediaFileRelative(widthParam: String) {
+    val quranDirectory = getQuranImagesDirectory(appContext, widthParam) ?: return
     writeNoMediaFile(quranDirectory)
   }
 
@@ -234,9 +227,14 @@ class QuranFileUtils @Inject constructor(
   }
 
   @WorkerThread
-  fun copyFromAssets(assetsFileName: String, filename: String, destination: String) {
+  override fun copyFromAssetsRelative(assetsPath: String, filename: String, destination: String) {
+    copyFromAssets(assetsPath, filename, getQuranBaseDirectory(appContext) + destination)
+  }
+
+  @WorkerThread
+  private fun copyFromAssets(assetsPath: String, filename: String, destination: String) {
     val assets = appContext.assets
-    assets.open(assetsFileName)
+    assets.open(assetsPath)
         .source()
         .use { source ->
           File(destination, filename).sink()
@@ -484,7 +482,9 @@ class QuranFileUtils @Inject constructor(
     return false
   }
 
-  fun hasArabicSearchDatabase(context: Context): Boolean {
+  @WorkerThread
+  override fun hasArabicSearchDatabase(): Boolean {
+    val context = appContext
     if (hasTranslation(context, QuranDataProvider.QURAN_ARABIC_DATABASE)) {
       return true
     } else if (databaseDirectory != ayahInfoDirectory) {

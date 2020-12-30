@@ -142,7 +142,7 @@ public class QuranDataProvider extends ContentProvider {
       String database;
       if (i < 0) {
         database = QURAN_ARABIC_DATABASE;
-        if (!quranFileUtils.hasArabicSearchDatabase(context)) {
+        if (!quranFileUtils.hasArabicSearchDatabase()) {
           continue;
         }
       } else {
