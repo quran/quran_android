@@ -16,7 +16,7 @@
   <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
   <!-- minSdk 15 vs 14 - really doesn't matter tbh since no one uses 14 at all, but  ¯\_(ツ)_/¯ -->
-  <uses-sdk tools:overrideLibrary="timber.log, dev.chrisbanes.insetter, dev.chrisbanes.insetter.ktx, com.google.firebase.crashlytics"/>
+  <uses-sdk tools:overrideLibrary="timber.log, dev.chrisbanes.insetter, dev.chrisbanes.insetter.ktx, com.google.firebase.crashlytics, com.shawnlin.numberpicker"/>
 
   <application
       android:icon="@drawable/icon"
