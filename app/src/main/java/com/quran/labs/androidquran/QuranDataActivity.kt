@@ -174,8 +174,8 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     val fallbackFile = filesDir
     val usesInternalDir = path != null && path == fallbackFile.absolutePath
     val usesExternalFileDir = path != null &&
-        ContextCompat.getExternalFilesDirs(this, null).any {
-          it.absolutePath == path
+        ContextCompat.getExternalFilesDirs(this, null).any { file: File? ->
+          file != null && file.absolutePath == path
         }
 
     if (path == null) {

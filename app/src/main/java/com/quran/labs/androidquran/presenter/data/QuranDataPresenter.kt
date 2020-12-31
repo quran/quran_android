@@ -17,7 +17,6 @@ import com.quran.data.source.PageProvider
 import com.quran.data.upgrade.LocalDataUpgrade
 import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.data.Constants
-import com.quran.labs.androidquran.data.QuranFileConstants
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
