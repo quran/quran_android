@@ -432,7 +432,7 @@ internal class TranslationAdapter(private val context: Context,
 
   companion object {
     private val USE_UTHMANI_SPAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-    private const val ARABIC_MULTIPLIER = 1.4f
+    const val ARABIC_MULTIPLIER = 1.4f
     private const val MAX_TAFSEER_LENGTH = 750
     private const val HIGHLIGHT_CHANGE = 1
   }

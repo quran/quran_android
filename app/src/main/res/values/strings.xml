@@ -226,6 +226,7 @@
   <string name="prefs_page_type_summary">Select the type of reading pages</string>
   <string name="prefs_sura_translated_name_summary">Show sura translated name</string>
   <string name="prefs_sura_translated_name_title">Sura translated name</string>
+  <string name="prefs_preview">Preview</string>
 
   <string name="translations" translatable="false">@string/prefs_translations</string>
   <string name="more_translations">More Translations</string>

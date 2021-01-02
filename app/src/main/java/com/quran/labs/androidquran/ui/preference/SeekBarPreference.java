@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -31,6 +32,8 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
   private Context mContext;
   private SeekBar mSeekBar;
   private TextView mValueText;
+  protected TextView mPreviewText;
+  protected TextView mArabicPreviewText;
 
   private String mSuffix;
   private int mTintColor;
@@ -53,11 +56,22 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     super.onBindViewHolder(holder);
     mSeekBar = (SeekBar) holder.findViewById(R.id.seekbar);
     mValueText = (TextView) holder.findViewById(R.id.value);
+    mPreviewText = (TextView) holder.findViewById(R.id.pref_preview);
+    mPreviewText.setVisibility(getPreviewVisibility());
+    mArabicPreviewText = (TextView) holder.findViewById(R.id.arabic_preview);
+    mArabicPreviewText.setVisibility(getPreviewVisibility());
     mSeekBar.setOnSeekBarChangeListener(this);
     styleSeekBar();
     mValue = shouldPersist() ? getPersistedInt(mDefault) : 0;
     mSeekBar.setMax(mMax);
     mSeekBar.setProgress(mValue);
+  }
+
+  /**
+   * Visibility of the preview view under the seek bar
+   */
+  protected int getPreviewVisibility() {
+    return View.GONE;
   }
 
   private void styleSeekBar() {
