@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.ui.fragment;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +13,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 
 import com.quran.data.core.QuranInfo;
+import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
-import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.util.TypefaceManager;
@@ -25,6 +24,9 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.view.QuranSpinner;
 import com.shawnlin.numberpicker.NumberPicker;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -45,8 +47,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   private QuranSpinner endingAyahSpinner;
   private NumberPicker repeatVersePicker;
   private NumberPicker repeatRangePicker;
-  private boolean isArabicNames;
-  private int numOfOptions;
+  private final int numOfOptions = 99;
   private CheckBox restrictToRange;
   private ArrayAdapter<CharSequence> startAyahAdapter;
   private ArrayAdapter<CharSequence> endingAyahAdapter;
@@ -75,33 +76,24 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     final Context context = getActivity();
 
     // Using Eastern Arabic Numerals
-    isArabicNames = QuranSettings.getInstance(context).isArabicNames();
-    if (isArabicNames){
-      String[] arNums = {"٩٩","٩٨","٩٧","٩٦","٩٥","٩٤","٩٣","٩٢","٩١","٩٠","٨٩","٨٨","٨٧","٨٦","٨٥","٨٤","٨٣","٨٢","٨١","٨٠","٧٩","٧٨","٧٧","٧٦","٧٥","٧٤","٧٣","٧٢","٧١","٧٠","٦٩","٦٨","٦٧","٦٦","٦٥","٦٤","٦٣","٦٢","٦١","٦٠","٥٩","٥٨","٥٧","٥٦","٥٥","٥٤","٥٣","٥٢","٥١","٥٠","٤٩","٤٨","٤٧","٤٦","٤٥","٤٤","٤٣","٤٢","٤١","٤٠","٣٩","٣٨","٣٧","٣٦","٣٥","٣٤","٣٣","٣٢","٣١","٣٠","٢٩","٢٨","٢٧","٢٦","٢٥","٢٤","٢٣","٢٢","٢١","٢٠","١٩","١٨","١٧","١٦","١٥","١٤","١٣","١٢","١١","١٠","٩","٨","٧","٦","٥","٤","٣","٢","١"};
-      numOfOptions = arNums.length;
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        // change typeface for Arabic
-        Typeface typeface = TypefaceManager.getHeaderFooterTypeface(context);
-        repeatVersePicker.setTypeface(typeface);
-        repeatVersePicker.setSelectedTypeface(typeface);
-        repeatRangePicker.setTypeface(typeface);
-        repeatRangePicker.setSelectedTypeface(typeface);
-      }
-      repeatVersePicker.setMinValue(1);
-      repeatVersePicker.setMaxValue(numOfOptions);
-      repeatVersePicker.setDisplayedValues(arNums);
-      repeatRangePicker.setMinValue(1);
-      repeatRangePicker.setMaxValue(numOfOptions);
-      repeatRangePicker.setDisplayedValues(arNums);
-      repeatVersePicker.setValue(numOfOptions+1-defaultVerseRepeat); //100-3
-      repeatRangePicker.setValue(numOfOptions+1-defaultRangeRepeat); //100-7
+    boolean isArabicNames = QuranSettings.getInstance(context).isArabicNames();
+    if (isArabicNames) {
+      repeatVersePicker.setFormatter(value -> arFormat(value));
+      repeatVersePicker.setOrder(NumberPicker.DESCENDING);
+      repeatRangePicker.setFormatter(value -> arFormat(value));
+      repeatRangePicker.setOrder(NumberPicker.DESCENDING);
+      Typeface typeface = TypefaceManager.getHeaderFooterTypeface(context);
+      repeatVersePicker.setTypeface(typeface);
+      repeatVersePicker.setSelectedTypeface(typeface);
+      repeatRangePicker.setTypeface(typeface);
+      repeatRangePicker.setSelectedTypeface(typeface);
     }
-    else
-    {
-      repeatVersePicker.setValue(defaultVerseRepeat);
-      repeatRangePicker.setValue(defaultRangeRepeat);
-    }
-
+    repeatVersePicker.setMinValue(1);
+    repeatVersePicker.setValue(defaultVerseRepeat);
+    repeatVersePicker.setMaxValue(numOfOptions);
+    repeatRangePicker.setMinValue(1);
+    repeatRangePicker.setValue(defaultRangeRepeat);
+    repeatRangePicker.setMaxValue(numOfOptions);
 
     startAyahAdapter = initializeAyahSpinner(context, startAyahSpinner);
     endingAyahAdapter = initializeAyahSpinner(context, endingAyahSpinner);
@@ -119,6 +111,11 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     verseAdapter.setDropDownViewResource(
         ITEM_DROPDOWN_LAYOUT);
     return view;
+  }
+
+  private String arFormat(int value) {
+    NumberFormat numberFormat = NumberFormat.getNumberInstance(new Locale("ar"));
+    return numberFormat.format(value);
   }
 
   @Override
@@ -160,10 +157,6 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       final int page = quranInfo.getPageFromSuraAyah(currentStart.sura, currentStart.ayah);
       int repeatVerse = repeatVersePicker.getValue();
       int repeatRange = repeatRangePicker.getValue();
-      if (isArabicNames){
-        repeatVerse = numOfOptions+1-repeatVerse;
-        repeatRange = numOfOptions+1-repeatRange;
-      }
       final int verseRepeat = repeatVerse-1;
       final int rangeRepeat = repeatRange-1;
       final boolean enforceRange = restrictToRange.isChecked();
