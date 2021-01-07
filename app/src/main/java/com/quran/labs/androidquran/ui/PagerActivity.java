@@ -1575,6 +1575,21 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   @Override
+  public void onUpPressed() {
+    startService(audioUtils.getAudioIntent(
+        this, AudioService.ACTION_INCREASE_SPEAD));
+    // audioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
+  }
+
+  @Override
+  public void onDownPressed() {
+    startService(audioUtils.getAudioIntent(
+        this, AudioService.ACTION_DECREASE_SPEAD));
+    //  audioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
+  }
+
+
+  @Override
   public void onNextPressed() {
     startService(audioUtils.getAudioIntent(this,
         AudioService.ACTION_SKIP));
