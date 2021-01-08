@@ -56,3 +56,7 @@ Please keep use of this code for non-profit purposes only. Also, please note tha
 * [Dagger2](https://google.github.io/dagger/)
 * [Timber](https://github.com/JakeWharton/timber)
 * [dnsjava](http://dnsjava.org)
+
+
+## Code Analysis 
+<img src="https://user-images.githubusercontent.com/13488900/104063468-e3323f80-5204-11eb-869e-a372e3b5df6b.png">
