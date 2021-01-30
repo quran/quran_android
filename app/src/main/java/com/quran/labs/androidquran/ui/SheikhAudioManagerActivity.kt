@@ -35,6 +35,7 @@ import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
+import com.quran.labs.androidquran.ui.fragment.BulkDownloadFragment
 import com.quran.labs.androidquran.ui.util.ToastCompat
 import com.quran.labs.androidquran.util.AudioManagerUtils
 import com.quran.labs.androidquran.util.AudioUtils
@@ -155,7 +156,9 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
       R.id.download_all -> {
         val info = surahAdapter.qariDownloadInfo ?: return true
         if (info.downloadedSuras.size() != 114) {
-          download(1, 114)
+          val fm = supportFragmentManager
+          val bulkDownloadDialog = BulkDownloadFragment()
+          bulkDownloadDialog.show(fm, BulkDownloadFragment.TAG)
         }
       }
     }
@@ -322,6 +325,10 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
       download(surah, surah)
     }
     finishActionMode()
+  }
+
+  fun downloadBulk(startSurah: Int, endSurah: Int){
+      download(startSurah,endSurah)
   }
 
   private fun download(startSurah: Int, endSurah: Int) {
