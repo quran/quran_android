@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import androidx.annotation.NonNull;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.QuranApplication;
@@ -47,7 +48,6 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   private QuranSpinner endingAyahSpinner;
   private NumberPicker repeatVersePicker;
   private NumberPicker repeatRangePicker;
-  private final int numOfOptions = 99;
   private CheckBox restrictToRange;
   private ArrayAdapter<CharSequence> startAyahAdapter;
   private ArrayAdapter<CharSequence> endingAyahAdapter;
@@ -73,14 +73,14 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     int defaultVerseRepeat = 3;
     int defaultRangeRepeat = 7;
 
-    final Context context = getActivity();
+    final Context context = requireContext();
 
     // Using Eastern Arabic Numerals
     boolean isArabicNames = QuranSettings.getInstance(context).isArabicNames();
     if (isArabicNames) {
-      repeatVersePicker.setFormatter(value -> arFormat(value));
+      repeatVersePicker.setFormatter(this::arFormat);
       repeatVersePicker.setOrder(NumberPicker.DESCENDING);
-      repeatRangePicker.setFormatter(value -> arFormat(value));
+      repeatRangePicker.setFormatter(this::arFormat);
       repeatRangePicker.setOrder(NumberPicker.DESCENDING);
       Typeface typeface = TypefaceManager.getHeaderFooterTypeface(context);
       repeatVersePicker.setTypeface(typeface);
@@ -90,6 +90,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     }
     repeatVersePicker.setMinValue(1);
     repeatVersePicker.setValue(defaultVerseRepeat);
+    final int numOfOptions = 25;
     repeatVersePicker.setMaxValue(numOfOptions);
     repeatRangePicker.setMinValue(1);
     repeatRangePicker.setValue(defaultRangeRepeat);
@@ -119,17 +120,14 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   }
 
   @Override
-  public void onAttach(Context context) {
+  public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
   }
 
-  private View.OnClickListener mOnClickListener = v -> {
-    switch (v.getId()) {
-      case R.id.apply: {
-        apply();
-        break;
-      }
+  private final View.OnClickListener mOnClickListener = v -> {
+    if (v.getId() == R.id.apply) {
+      apply();
     }
   };
 
@@ -257,16 +255,6 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       spinner.setSelection(currentAyah - 1);
     }
   }
-
-  private void updateEnforceBounds(int rangeRepeatPosition) {
-    if (rangeRepeatPosition > 0) {
-      restrictToRange.setChecked(true);
-      restrictToRange.setEnabled(false);
-    } else {
-      restrictToRange.setEnabled(true);
-    }
-  }
-
 
   @Override
   protected void refreshView() {

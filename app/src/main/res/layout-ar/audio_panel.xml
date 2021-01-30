@@ -64,73 +64,8 @@
           />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:orientation="horizontal"
-        >
-      <com.shawnlin.numberpicker.NumberPicker
-          android:id="@+id/repeat_range_picker"
-          android:layout_width="wrap_content"
-          android:layout_height="40dp"
-          android:layout_centerInParent="true"
-          app:np_orientation="horizontal"
-          app:np_width="135dp"
-          app:np_height="48dp"
-          app:np_max="99"
-          app:np_value="7"
-          app:np_min="1"
-          app:np_textSize="27sp"
-          app:np_selectedTextSize="33sp"
-          app:np_selectedTextColor="@color/panel_label"
-          app:np_dividerColor="@color/panel_label"
-          app:np_dividerType="underline"
-          app:np_fadingEdgeEnabled="true"
-          app:np_wrapSelectorWheel="true"
-          />
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical"
-          android:text="@string/play_verses_range"
-          android:textAppearance="@style/PanelLabel"
-          />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:orientation="horizontal"
-        >
-      <com.shawnlin.numberpicker.NumberPicker
-          android:id="@+id/repeat_verse_picker"
-          android:layout_width="wrap_content"
-          android:layout_height="40dp"
-          android:layout_centerInParent="true"
-          app:np_orientation="horizontal"
-          app:np_width="135dp"
-          app:np_height="48dp"
-          app:np_max="99"
-          app:np_value="3"
-          app:np_min="1"
-          app:np_textSize="27sp"
-          app:np_selectedTextSize="33sp"
-          app:np_selectedTextColor="@color/panel_label"
-          app:np_dividerColor="@color/panel_label"
-          app:np_dividerType="underline"
-          app:np_fadingEdgeEnabled="true"
-          app:np_wrapSelectorWheel="true"
-          />
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical"
-          android:text="@string/play_each_verse"
-          android:textAppearance="@style/PanelLabel"
-          />
-    </LinearLayout>
+    <include layout="@layout/play_set_of_verses" />
+    <include layout="@layout/play_each_verse" />
 
     <CheckBox
         android:id="@+id/restrict_to_range"
