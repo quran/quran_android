@@ -307,6 +307,7 @@
   <string name="tag_blank_tag_error">لا يمكن أن يكون اسم التصنيف فارغًا</string>
   <string name="tag_duplicate_tag_error">التصنيف مكرر، اكتب تصنيفا جديدا</string>
   <string name="more_translations">المزيد من الترجمات والتفاسير</string>
+  <string name="prefs_preview">معاينة</string>
   <string name="menu_show_date">إظهار تاريخ الإضافة</string>
   <string name="pause">وقف مؤقت</string>
   <string name="prefs_category_dual_screen">تفضيلات الصفحتين المتجاورتين</string>
