@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.ui.fragment;
 
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,20 +12,26 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import androidx.annotation.NonNull;
 import com.quran.data.core.QuranInfo;
+import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
-import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.util.TypefaceManager;
+import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.view.QuranSpinner;
+import com.shawnlin.numberpicker.NumberPicker;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
 public class AyahPlaybackFragment extends AyahActionFragment {
-  private static final int REPEAT_MAX = 3;
   private static final int ITEM_LAYOUT = R.layout.sherlock_spinner_item;
   private static final int ITEM_DROPDOWN_LAYOUT = R.layout.sherlock_spinner_dropdown_item;
 
@@ -39,8 +46,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   private QuranSpinner startAyahSpinner;
   private QuranSpinner endingSuraSpinner;
   private QuranSpinner endingAyahSpinner;
-  private QuranSpinner repeatVerseSpinner;
-  private QuranSpinner repeatRangeSpinner;
+  private NumberPicker repeatVersePicker;
+  private NumberPicker repeatRangePicker;
   private CheckBox restrictToRange;
   private ArrayAdapter<CharSequence> startAyahAdapter;
   private ArrayAdapter<CharSequence> endingAyahAdapter;
@@ -58,13 +65,37 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     startAyahSpinner = view.findViewById(R.id.start_ayah_spinner);
     endingSuraSpinner = view.findViewById(R.id.end_sura_spinner);
     endingAyahSpinner = view.findViewById(R.id.end_ayah_spinner);
-    repeatVerseSpinner = view.findViewById(R.id.repeat_verse_spinner);
-    repeatRangeSpinner = view.findViewById(R.id.repeat_range_spinner);
     restrictToRange = view.findViewById(R.id.restrict_to_range);
     applyButton = view.findViewById(R.id.apply);
     applyButton.setOnClickListener(mOnClickListener);
+    repeatVersePicker = (NumberPicker) view.findViewById(R.id.repeat_verse_picker);
+    repeatRangePicker = (NumberPicker) view.findViewById(R.id.repeat_range_picker);
+    int defaultVerseRepeat = 3;
+    int defaultRangeRepeat = 7;
 
-    final Context context = getActivity();
+    final Context context = requireContext();
+
+    // Using Eastern Arabic Numerals
+    boolean isArabicNames = QuranSettings.getInstance(context).isArabicNames();
+    if (isArabicNames) {
+      repeatVersePicker.setFormatter(this::arFormat);
+      repeatVersePicker.setOrder(NumberPicker.DESCENDING);
+      repeatRangePicker.setFormatter(this::arFormat);
+      repeatRangePicker.setOrder(NumberPicker.DESCENDING);
+      Typeface typeface = TypefaceManager.getHeaderFooterTypeface(context);
+      repeatVersePicker.setTypeface(typeface);
+      repeatVersePicker.setSelectedTypeface(typeface);
+      repeatRangePicker.setTypeface(typeface);
+      repeatRangePicker.setSelectedTypeface(typeface);
+    }
+    repeatVersePicker.setMinValue(1);
+    repeatVersePicker.setValue(defaultVerseRepeat);
+    final int numOfOptions = 25;
+    repeatVersePicker.setMaxValue(numOfOptions);
+    repeatRangePicker.setMinValue(1);
+    repeatRangePicker.setValue(defaultRangeRepeat);
+    repeatRangePicker.setMaxValue(numOfOptions);
+
     startAyahAdapter = initializeAyahSpinner(context, startAyahSpinner);
     endingAyahAdapter = initializeAyahSpinner(context, endingAyahSpinner);
     initializeSuraSpinner(context, startSuraSpinner, startAyahAdapter);
@@ -75,38 +106,28 @@ public class AyahPlaybackFragment extends AyahActionFragment {
         new ArrayAdapter<>(context, ITEM_LAYOUT, repeatOptions);
     rangeAdapter.setDropDownViewResource(
         ITEM_DROPDOWN_LAYOUT);
-    repeatRangeSpinner.setAdapter(rangeAdapter);
-    repeatRangeSpinner.setOnItemSelectedListener(
-        new AdapterView.OnItemSelectedListener() {
-      @Override
-      public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        updateEnforceBounds(position);
-      }
 
-      @Override
-      public void onNothingSelected(AdapterView<?> parent) {
-      }
-    });
     final ArrayAdapter<CharSequence> verseAdapter =
         new ArrayAdapter<>(context, ITEM_LAYOUT, repeatOptions);
     verseAdapter.setDropDownViewResource(
         ITEM_DROPDOWN_LAYOUT);
-    repeatVerseSpinner.setAdapter(verseAdapter);
     return view;
   }
 
+  private String arFormat(int value) {
+    NumberFormat numberFormat = NumberFormat.getNumberInstance(new Locale("ar"));
+    return numberFormat.format(value);
+  }
+
   @Override
-  public void onAttach(Context context) {
+  public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
   }
 
-  private View.OnClickListener mOnClickListener = v -> {
-    switch (v.getId()) {
-      case R.id.apply: {
-        apply();
-        break;
-      }
+  private final View.OnClickListener mOnClickListener = v -> {
+    if (v.getId() == R.id.apply) {
+      apply();
     }
   };
 
@@ -132,10 +153,10 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       }
 
       final int page = quranInfo.getPageFromSuraAyah(currentStart.sura, currentStart.ayah);
-      final int verseRepeat = positionToRepeat(
-          repeatVerseSpinner.getSelectedItemPosition());
-      final int rangeRepeat = positionToRepeat(
-          repeatRangeSpinner.getSelectedItemPosition());
+      int repeatVerse = repeatVersePicker.getValue();
+      int repeatRange = repeatRangePicker.getValue();
+      final int verseRepeat = repeatVerse-1;
+      final int rangeRepeat = repeatRange-1;
       final boolean enforceRange = restrictToRange.isChecked();
 
       boolean updatedRange = false;
@@ -235,31 +256,6 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     }
   }
 
-  private void updateEnforceBounds(int rangeRepeatPosition) {
-    if (rangeRepeatPosition > 0) {
-      restrictToRange.setChecked(true);
-      restrictToRange.setEnabled(false);
-    } else {
-      restrictToRange.setEnabled(true);
-    }
-  }
-
-  private int repeatToPosition(int repeat) {
-    if (repeat == -1) {
-      return REPEAT_MAX;
-    } else {
-      return repeat;
-    }
-  }
-
-  private int positionToRepeat(int position) {
-    if (position >= REPEAT_MAX) {
-      return -1;
-    } else {
-      return position;
-    }
-  }
-
   @Override
   protected void refreshView() {
     final Context context = getActivity();
@@ -307,8 +303,6 @@ public class AyahPlaybackFragment extends AyahActionFragment {
           endAyat, ending.ayah);
       startSuraSpinner.setSelection(start.sura - 1);
       endingSuraSpinner.setSelection(ending.sura - 1);
-      repeatRangeSpinner.setSelection(repeatToPosition(rangeRepeatCount));
-      repeatVerseSpinner.setSelection(repeatToPosition(verseRepeatCount));
       restrictToRange.setChecked(shouldEnforce);
     }
   }
