@@ -10,7 +10,7 @@ import android.widget.Toast;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
-import com.quran.labs.androidquran.common.QuranText;
+import com.quran.data.model.QuranText;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.ui.util.ToastCompat;
 

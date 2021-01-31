@@ -2,11 +2,9 @@ package com.quran.labs.androidquran.presenter.translation
 
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
-import com.quran.data.page.provider.madani.MadaniPageProvider
 import com.quran.labs.androidquran.common.LocalTranslation
-import com.quran.labs.androidquran.common.QuranText
+import com.quran.data.model.QuranText
 import com.quran.labs.androidquran.common.TranslationMetadata
-import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.data.model.VerseRange
 import com.quran.data.pageinfo.common.MadaniDataSource
 import com.quran.labs.androidquran.database.TranslationsDBAdapter

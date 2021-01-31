@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.presenter.translation
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
-import com.quran.labs.androidquran.common.QuranText
+import com.quran.data.model.QuranText
 import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.data.SuraAyahIterator
@@ -17,7 +17,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Function3
 import io.reactivex.schedulers.Schedulers
 import java.util.ArrayList
 import java.util.HashMap
@@ -54,7 +53,7 @@ internal open class BaseTranslationPresenter<T> internal constructor(
     else
       translationModel.getArabicFromDatabase(verseRange).onErrorReturnItem(ArrayList())
     return Single.zip(arabicObservable, translationsObservable, getTranslationMapSingle(),
-        Function3 { arabic: List<QuranText>,
+        { arabic: List<QuranText>,
                     texts: List<List<QuranText>>,
                     map: Map<String, LocalTranslation> ->
           val translationInfos = getTranslations(translations, map)
@@ -170,9 +169,7 @@ internal open class BaseTranslationPresenter<T> internal constructor(
     return if (this.translationMap.isEmpty() ||
         this.lastCacheTime != translationsAdapter.lastWriteTime) {
       Single.fromCallable<List<LocalTranslation>> { translationsAdapter.translations }
-          .map<Map<String, LocalTranslation>> { translations ->
-            translations.associateBy { it.filename }
-          }
+          .map { translations -> translations.associateBy { it.filename } }
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread())
           .doOnSuccess { map ->
