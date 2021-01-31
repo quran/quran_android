@@ -68,8 +68,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     restrictToRange = view.findViewById(R.id.restrict_to_range);
     applyButton = view.findViewById(R.id.apply);
     applyButton.setOnClickListener(mOnClickListener);
-    repeatVersePicker = (NumberPicker) view.findViewById(R.id.repeat_verse_picker);
-    repeatRangePicker = (NumberPicker) view.findViewById(R.id.repeat_range_picker);
+    repeatVersePicker = view.findViewById(R.id.repeat_verse_picker);
+    repeatRangePicker = view.findViewById(R.id.repeat_range_picker);
     int defaultVerseRepeat = 3;
     int defaultRangeRepeat = 7;
 
@@ -87,6 +87,11 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       repeatVersePicker.setSelectedTypeface(typeface);
       repeatRangePicker.setTypeface(typeface);
       repeatRangePicker.setSelectedTypeface(typeface);
+      // Use larger text size since KFGQPC font is small
+      repeatVersePicker.setSelectedTextSize(R.dimen.arabic_number_picker_selected_text_size);
+      repeatRangePicker.setSelectedTextSize(R.dimen.arabic_number_picker_selected_text_size);
+      repeatVersePicker.setTextSize(R.dimen.arabic_number_picker_text_size);
+      repeatRangePicker.setTextSize(R.dimen.arabic_number_picker_text_size);
     }
     repeatVersePicker.setMinValue(1);
     repeatVersePicker.setValue(defaultVerseRepeat);
