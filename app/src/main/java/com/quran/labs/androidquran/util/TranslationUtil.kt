@@ -5,7 +5,7 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import androidx.annotation.ColorInt
 import com.quran.data.core.QuranInfo
-import com.quran.labs.androidquran.common.QuranText
+import com.quran.data.model.QuranText
 import com.quran.labs.androidquran.common.TranslationMetadata
 import dagger.Reusable
 
@@ -24,8 +24,9 @@ open class TranslationUtil(@ColorInt private val color: Int,
       null
     }
 
-    val textToParse = if (suraAyah != null && quranText.extraData != null) {
-      quranText.extraData
+    val extraData = quranText.extraData
+    val textToParse = if (suraAyah != null && extraData != null) {
+      extraData
     } else {
       text
     }
@@ -37,7 +38,7 @@ open class TranslationUtil(@ColorInt private val color: Int,
         .forEach {
           val span = ForegroundColorSpan(color)
           val range = it.range
-          spannable.setSpan(span, range.start, range.last + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+          spannable.setSpan(span, range.first, range.last + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     return TranslationMetadata(quranText.sura, quranText.ayah, spannable, translationId, suraAyah)
   }

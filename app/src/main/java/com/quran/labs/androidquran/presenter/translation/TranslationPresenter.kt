@@ -35,11 +35,12 @@ internal class TranslationPresenter @Inject internal constructor(translationMode
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(object : DisposableObserver<ResultHolder>() {
           override fun onNext(result: ResultHolder) {
-            if (translationScreen != null && result.ayahInformation.isNotEmpty()) {
-              translationScreen!!.setVerses(
+            val screen = translationScreen
+            if (screen != null && result.ayahInformation.isNotEmpty()) {
+              screen.setVerses(
                   getPage(result.ayahInformation), result.translations,
                   result.ayahInformation)
-              translationScreen!!.updateScrollPosition()
+              screen.updateScrollPosition()
             }
           }
 
