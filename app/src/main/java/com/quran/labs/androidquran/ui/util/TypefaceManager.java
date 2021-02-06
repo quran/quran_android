@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 public class TypefaceManager {
   public static final int TYPE_UTHMANI_HAFS = 1;
   public static final int TYPE_NOOR_HAYAH = 2;
+  public static final int TYPE_UTHMANIC_WARSH = 3;
 
   private static Typeface typeface;
   private static Typeface arabicTafseerTypeface;
@@ -21,6 +22,10 @@ public class TypefaceManager {
       switch (QuranFileConstants.FONT_TYPE) {
         case TYPE_NOOR_HAYAH: {
           fontName = "noorehira.ttf";
+          break;
+        }
+        case TYPE_UTHMANIC_WARSH: {
+          fontName = "uthmanic_warsh_ver09.ttf";
           break;
         }
         case TYPE_UTHMANI_HAFS:
