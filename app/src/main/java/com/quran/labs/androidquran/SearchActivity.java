@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -169,7 +170,7 @@ public class SearchActivity extends QuranActionBarActivity
   public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
     final boolean containsArabic = QuranUtils.doesStringContainArabic(query);
     isArabicSearch = containsArabic;
-    boolean showArabicWarning = (isArabicSearch &&
+    @SuppressLint("WrongThread") boolean showArabicWarning = (isArabicSearch &&
         !quranFileUtils.hasArabicSearchDatabase());
 
     if (showArabicWarning) {
