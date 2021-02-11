@@ -3,7 +3,7 @@
 <resources>
   <string name="app_name">Coran</string>
   <string name="downloadPrompt_title">Télécharger les fichiers requis ?</string>
-  <string name="downloadPrompt">Pour des performances optimales, certains fichiers doivent être téléchargés. Si vous ne voulez ne pas faire cela maintenant, chaque page prendra plus de temps à charger. Souhaitez-vous télécharger les fichiers requis maintenant ?   </string>
+  <string name="downloadPrompt">Pour des performances optimales, certains fichiers doivent être téléchargés. Si vous ne voulez pas faire cela maintenant, chaque page prendra plus de temps à charger. Souhaitez-vous télécharger les fichiers requis maintenant ?</string>
   <string name="downloadTabletPrompt">Nous avons récemment ajouté de meilleures images pour les tablettes. Voulez-vous télécharger ces images maintenant ?</string>
   <string name="downloadImportantPrompt">Il y a une petite mais importante mise à jour pour les images du Coran. Voulez-vous télécharger cette mise à jour maintenant ?</string>
   <string name="downloadPrompt_ok">Oui</string>
@@ -17,7 +17,7 @@
   <string name="menu_jump_last_page">Dernière page</string>
   <string name="menu_bookmarks">Favoris</string>
   <string name="menu_bookmarks_page">Pages en favoris</string>
-  <string name="menu_bookmarks_ayah">Ayāt en favoris</string>
+  <string name="menu_bookmarks_ayah">Ayāts en favoris</string>
   <string name="menu_sort">Trier</string>
   <string name="menu_sort_date">Par date d\'ajout</string>
   <string name="menu_sort_location">Selon l\'ordre dans le coran</string>
@@ -35,9 +35,9 @@
   <string name="about_description">Quran pour Android est une application Quran gratuite. S\'il vous plaît, n\'oubliez pas les contributeurs dans vos prières.</string>
   <string name="about_data_sources">Sources de données</string>
   <string name="about_images">Images</string>
-  <string name="about_madani_images">Les images du Quran sont basées sur les polices d\'écriture du King Fahd Quran Printing Complex</string>
+  <string name="about_madani_images">Les images du Quran sont basées sur les polices d\'écriture du complexe Roi Fahd pour l\'impression du Saint Coran</string>
   <string name="about_naskh_images">Les images du Quran pour l\'application Naskh sont issues (avec leur permission) de SHL Info Systems</string>
-  <string name="about_qaloon_images">Les images Qaloon sont utilisées avec la permission de Nous Memes Editions Et Diffusion (Tunisie)</string>
+  <string name="about_qaloon_images">Les images Qaloon sont utilisées avec la permission de Nous-Mêmes Editions Et Diffusion (Tunisie)</string>
   <string name="about_quranicaudio_summary">Récitations mp3 du Quran non espacées</string>
   <string name="about_quran_ksu">Projet Electronic Moshaf</string>
   <string name="about_quran_ksu_summary">Le projet King Saud University Electronic Moshaf était la source du Tafsir en langue arabe et des traductions pour de nombreuses langues</string>
@@ -80,7 +80,7 @@
 
   <!-- Search messages -->
   <string name="found_in_sura">Trouvée dans la sourate %1$s Aya %2$d</string>
-  <string name="no_results">Aucun resultats pour \"%s\"</string>
+  <string name="no_results">Aucun resultat pour \"%s\"</string>
   <string name="no_arabic_search_available">Vous n\'avez pas téléchargé le pack de recherche arabe.  S\'il vous plaît veuillez le télécharger et recommencez votre recherche.</string>
   <string name="get_arabic_search_db">Télécharger la base de données de recherche arabe</string>
 
@@ -97,8 +97,8 @@
   <string name="prefs_lock_orientation_summary_on">L\'affichage du coran ne s\'adaptera pas au changement d\'orientation de l\'écran.</string>
   <string name="prefs_lock_orientation_summary_off">L\'affichage du coran s\'adaptera au changement d\'orientation de l\'écran.</string>
   <string name="prefs_landscape_orientation_title">Mode paysage</string>
-  <string name="prefs_landscape_orientation_summary_on">L\'orientation paysage sera utilisé.</string>
-  <string name="prefs_landscape_orientation_summary_off">L\'orientation portrait sera utilisé.</string>
+  <string name="prefs_landscape_orientation_summary_on">L\'orientation paysage sera utilisée.</string>
+  <string name="prefs_landscape_orientation_summary_off">L\'orientation portrait sera utilisée.</string>
   <string name="prefs_night_mode_title">Mode nuit</string>
   <string name="prefs_night_mode_summary">Un fond sombre et des polices lumineuses seront utilisés.</string>
   <string name="prefs_night_mode_text_brightness_title">Luminosité du texte</string>
@@ -108,7 +108,7 @@
   <string name="prefs_display_marker_title">Montrer un popup de repère</string>
   <string name="prefs_display_marker_summary">Affiche un popup quand on atteint un juz\', un hizb, etc.</string>
   <string name="prefs_highlight_bookmarks_title">Surligner les favoris</string>
-  <string name="prefs_highlight_bookmarks_summary">Surligner les Ayāt en favoris durant la lecture</string>
+  <string name="prefs_highlight_bookmarks_summary">Surligner les Ayāts en favoris durant la lecture</string>
   <string name="prefs_translation_text_title">Taille du texte traduit</string>
   <string name="prefs_translations">Traductions</string>
   <string name="prefs_translations_summary">Télécharger et gérer les traductions</string>
@@ -232,7 +232,7 @@
   <!-- ayah action panel -->
   <string name="play_from">Depuis</string>
   <string name="play_to">À</string>
-  <string name="play_restrict_range">Écouter uniquement les Ayāt sélectionnés</string>
+  <string name="play_restrict_range">Écouter uniquement les Ayāts sélectionnés</string>
   <string name="play_verses_range">Écouter la selection de Ayāt :</string>
   <string name="play_each_verse">Écouter chaque Aya :</string>
   <string name="play_apply">Appliquer</string>
@@ -283,7 +283,7 @@
   <string name="undo">Annuler</string>
 
   <!-- m permissions stuff -->
-  <string name="storage_permission_rationale">L\'application demande la permission de stocker ses données sur un stockage externe. Elle continuera de fonctionner sans cette permission, mais si vous effacez les données, ou désintallez l\'application, toutes les pages téléchargées, les audios, et les données seront supprimés. Accorder la permission à l\'application Coran ?</string>
+  <string name="storage_permission_rationale">L\'application demande la permission de stocker ses données sur un support externe. Elle continuera de fonctionner sans cette permission, mais si vous effacez les données, ou désintallez l\'application, toutes les pages téléchargées, les audios, et les données seront supprimés. Accorder la permission à l\'application Coran ?</string>
   <string name="storage_permission_please_restart">Redémarrez l\'application pour appliquer les changements.</string>
 
   <!-- audio manager -->
@@ -300,14 +300,14 @@
   <string name="starting_page_label">Début de la page</string>
   <string name="recent_pages">Pages récente</string>
   <string name="tag_blank_tag_error">Le nom du tag ne peux pas être vide</string>
-  <string name="tag_duplicate_tag_error">Le nom du tag existant déjà!</string>
+  <string name="tag_duplicate_tag_error">Le nom du tag existe déjà!</string>
   <string name="audio_manager_surah_download">Télécharger la sourate</string>
   <string name="audio_manager_surah_delete">Supprimer la sourate</string>
   <string name="audio_manager_download_all">Tout télécharger</string>
   <string name="audio_manager_download_selection">Télécharger la sélection</string>
   <string name="audio_manager_delete_selection">Supprimer la sélection</string>
   <string name="audio_updated_title">Mise à jour des fichiers audio du Coran</string>
-  <string name="audio_updated_text">Des fichiers audio du Coran ont été mis à jour. Nous avons supprimé la copie local de ces fichiers afin de téléchargées la nouvelle version la prochaine fois que vous les écouterez.</string>
+  <string name="audio_updated_text">Des fichiers audio du Coran ont été mis à jour. Nous avons supprimé la copie local de ces fichiers afin de télécharger la nouvelle version la prochaine fois que vous les écouterez.</string>
   <string name="notification_channel_download">Coran : Téléchargements</string>
   <string name="notification_channel_audio">Coran : Récitations</string>
   <string name="prefs_page_type_title">Type d\'affichage (expérimental)</string>
