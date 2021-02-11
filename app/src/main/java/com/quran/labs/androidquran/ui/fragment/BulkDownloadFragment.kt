@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
@@ -26,6 +25,7 @@ import com.quran.labs.androidquran.view.ForceCompleteTextView
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.max
 
 /**
  * [BulkDownloadFragment] is a dialog for selecting audio download first Surah and last Surah
@@ -39,8 +39,8 @@ class BulkDownloadFragment : DialogFragment() {
   private lateinit var suraLastInput: ForceCompleteTextView
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val activity: Activity? = activity
-    val inflater = activity!!.layoutInflater
+    val activity = requireActivity()
+    val inflater = activity.layoutInflater
 
     @SuppressLint("InflateParams")
     val layout = inflater.inflate(layout.bulk_download_dialog, null)
@@ -75,9 +75,8 @@ class BulkDownloadFragment : DialogFragment() {
         else -> { suraFirstAdapter.getItem(0) }
       }
 
-      var suraFirst = suras.indexOf(suraFirstName) + 1
       // default to Al-Fatiha
-      if (suraFirst == 0) suraFirst = 1
+      val suraFirst = max(suras.indexOf(suraFirstName) + 1, 1)
       suraFirstInput.tag = suraFirst
       suraFirstInput.setText(suras[suraFirst - 1])
     }

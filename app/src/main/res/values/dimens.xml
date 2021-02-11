@@ -21,6 +21,8 @@
   <dimen name="page_margin_small">7dp</dimen>
   <dimen name="page_margin_large">11dp</dimen>
   <dimen name="spinner_dropdown_item_height">48dp</dimen>
+  <dimen name="arabic_number_picker_text_size">27sp</dimen>
+  <dimen name="arabic_number_picker_selected_text_size">33sp</dimen>
 
   <!-- repeat -->
   <dimen name="repeat_superscript_text_size">10sp</dimen>
