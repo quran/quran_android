@@ -8,6 +8,24 @@ on:
       - master
 
 jobs:
+  lint:
+    needs: [build]
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+
+      - name: Run lint
+        run: ./gradlew lintMadaniDebug
+
+      - name: Upload lint results
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: lint_report
+          path: app/build/reports/lint-results-madaniDebug.html
+
   test:
     needs: [build]
     name: Unit tests

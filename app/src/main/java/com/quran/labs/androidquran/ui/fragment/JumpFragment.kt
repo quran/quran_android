@@ -50,8 +50,8 @@ class JumpFragment : DialogFragment() {
   private lateinit var pageInput: EditText
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val activity: Activity? = activity
-    val inflater = activity!!.layoutInflater
+    val activity: Activity = requireActivity()
+    val inflater = activity.layoutInflater
 
     @SuppressLint("InflateParams")
     val layout = inflater.inflate(layout.jump_dialog, null)
