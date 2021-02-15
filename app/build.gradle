@@ -137,6 +137,7 @@ dependencies {
   implementation "androidx.localbroadcastmanager:localbroadcastmanager:${androidxLocalBroadcastVersion}"
   implementation "androidx.preference:preference-ktx:${androidxPreferencesVersion}"
   implementation "androidx.recyclerview:recyclerview:${androidxRecyclerViewVersion}"
+  implementation "com.simplecityapps:recyclerview-fastscroll:2.0.1"
   implementation "com.google.android.material:material:${materialComponentsVersion}"
   implementation "androidx.swiperefreshlayout:swiperefreshlayout:${androidxSwipeRefreshVersion}"
   implementation "androidx.multidex:multidex:2.0.1"
