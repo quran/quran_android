@@ -85,8 +85,6 @@
   <string name="about_numberPicker_url" translatable="false">https://github.com/ShawnLin013/NumberPicker</string>
   <string name="about_okhttp" translatable="false">OkHttp</string>
   <string name="about_okhttp_url" translatable="false">https://github.com/square/okhttp</string>
-  <string name="about_recyclerViewFastScroll" translatable="false">RecyclerView-FastScroll</string>
-  <string name="about_recyclerViewFastScroll_url" translatable="false">https://github.com/timusus/RecyclerView-FastScroll</string>
   <string name="about_rxjava" translatable="false">RxJava</string>
   <string name="about_rxjava_url" translatable="false">https://github.com/ReactiveX/RxJava</string>
   <string name="about_rxandroid" translatable="false">RxAndroid</string>

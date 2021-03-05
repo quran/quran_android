@@ -215,14 +215,6 @@
           android:data="@string/about_numberPicker_url"/>
     </Preference>
 
-    <Preference
-        android:summary="@string/about_recyclerViewFastScroll_url"
-        android:title="@string/about_recyclerViewFastScroll"
-        app:iconSpaceReserved="false">
-      <intent
-          android:action="android.intent.action.VIEW"
-          android:data="@string/about_recyclerViewFastScroll_url"/>
-    </Preference>
   </PreferenceCategory>
 
   <PreferenceCategory
