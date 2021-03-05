@@ -214,6 +214,7 @@
           android:action="android.intent.action.VIEW"
           android:data="@string/about_numberPicker_url"/>
     </Preference>
+
   </PreferenceCategory>
 
   <PreferenceCategory
