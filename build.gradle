@@ -1,7 +1,7 @@
 buildscript {
   ext {
-    kotlinVersion = '1.4.30'
-    coroutinesVersion = '1.4.2'
+    kotlinVersion = '1.4.31'
+    coroutinesVersion = '1.4.3'
     daggerVersion = '2.32'
     androidxMediaVersion = '1.2.1'
     androidxAnnotationVersion = '1.1.0'
@@ -16,7 +16,7 @@ buildscript {
     moshiVersion = '1.11.0'
     // note - 3.13.x and above require minSdk 21
     okhttpVersion = '3.12.+'
-    okioVersion = '2.9.0'
+    okioVersion = '2.10.0'
     workManagerVersion = '2.5.0'
     // note - 2.7.x and above require minSdk 21
     retrofitVersion = '2.6.+'
@@ -38,14 +38,13 @@ buildscript {
 
   repositories {
     google()
-    jcenter()
     maven { url 'https://maven.fabric.io/public' }
     maven { url 'https://plugins.gradle.org/m2/' }
   }
 
   dependencies {
     classpath 'com.android.tools.build:gradle:4.1.2'
-    classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
+    classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.1'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     classpath "net.ltgt.gradle:gradle-errorprone-plugin:1.3.0"
     classpath 'com.google.gms:google-services:4.3.5'
