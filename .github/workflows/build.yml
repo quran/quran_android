@@ -44,6 +44,19 @@ jobs:
           name: unit_test_report
           path: app/build/reports/tests/testMadaniDebugUnitTest/
 
+  ui_test:
+    name: Instrumentation tests
+    runs-on: macos-latest
+    steps:
+      - name: Checkout the Code
+        uses: actions/checkout@v2
+
+      - name: Run instrumentation tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: ./gradlew connectedMadaniDebugAndroidTest -PdisableCrashlytics -PdisableFirebase
+
   build:
     name: Build
     runs-on: ubuntu-latest
