@@ -162,11 +162,11 @@ dependencies {
   implementation "dev.chrisbanes:insetter-ktx:0.3.1"
   implementation 'com.jakewharton.timber:timber:4.7.1'
   debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
-  implementation 'com.google.firebase:firebase-crashlytics:17.3.1'
+  implementation 'com.google.firebase:firebase-crashlytics:17.4.0'
 
-  testImplementation 'junit:junit:4.13.2'
-  testImplementation 'com.google.truth:truth:1.1.2'
-  testImplementation "org.mockito:mockito-core:3.7.7"
+  testImplementation "junit:junit:${junitVersion}"
+  testImplementation "com.google.truth:truth:${truthVersion}"
+  testImplementation "org.mockito:mockito-core:3.8.0"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
 
   androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
@@ -178,5 +178,5 @@ dependencies {
   errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
 
   // Number Picker
-  implementation 'com.shawnlin:number-picker:2.4.11'
+  implementation 'com.shawnlin:number-picker:2.4.12'
 }
