@@ -404,6 +404,14 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
         } catch (e: Exception) {
           Timber.e(e)
         }
+
+        // pages are lost, switch to internal storage if we aren't on it
+        val path = quranSettings.appCustomLocation
+        val internalDirectory = filesDir.absolutePath
+        if (path != internalDirectory) {
+          quranSettings.appCustomLocation = internalDirectory
+        }
+
         // clear the "pages downloaded" flag
         quranSettings.removeDidDownloadPages()
       }
