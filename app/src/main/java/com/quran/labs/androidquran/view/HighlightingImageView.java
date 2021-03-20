@@ -236,7 +236,7 @@ public class HighlightingImageView extends AppCompatImageView {
     AyahHighlight sourceHighlight;
 
     List<AyahBounds> startingBounds;
-    if(previousHighlight.isTransition()) {
+    if (previousHighlight.isTransition()) {
       // The ayah changed during animating
       startingBounds = (List<AyahBounds>)animator.getAnimatedValue();
       animator.cancel();
