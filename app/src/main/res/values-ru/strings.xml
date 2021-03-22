@@ -39,6 +39,7 @@
   <string name="menu_jump">Перейти</string>
   <string name="gotoPage">Перейти на страницу</string>
   <string name="cancel">Отмена</string>
+  <string name="please_wait">Подождите пожалуйста…</string>
 
   <!-- about -->
   <string name="about_description">Quran for Android - это бесплатное приложение Корана.
@@ -61,7 +62,8 @@
         служил источником арабского тафсира и переводов на нескольких языков
     </string>
   <string name="about_furqan_summary">Текст на Османи и тафсиры на арабском</string>
-  <string name="about_tanzil_summary">Перевод для многих языков</string>
+  <string name="about_quran_enc_summary">Переводы для многих языков</string>
+  <string name="about_tanzil_summary">Переводы для несколько языков</string>
   <string name="about_noorhidayat_summary">Шрифт Noorehira и перевод муфтия Мухаммада Таки Усмани</string>
   <string name="about_open_source">Проекты с открытыми исходниками</string>
   <string name="about_others">Другие</string>
@@ -107,6 +109,8 @@
     </string>
   <string name="search_hint">Поиск по Корану</string>
   <string name="quranSearchType">Стихи Корана</string>
+  <string name="search_full_results">Полные результаты</string>
+  <string name="search_entire_mushaf">Обыскать весь мусхаф</string>
 
   <plurals name="files_downloaded">
     <item quantity="one">Загружено %1$d сура</item>
@@ -186,7 +190,7 @@
   <string name="prefs_send_logs_title">Отправить журналы</string>
   <string name="prefs_send_logs_summary">Отправить журналы отладки разработчику</string>
   <string name="prefs_sdcard_internal">Внутренняя память</string>
-  <string name="prefs_sdcard_external">Внешняя SD карта %1$d</string>
+  <string name="prefs_sdcard_external">Внешняя память %1$d</string>
   <string name="prefs_app_size">Размер приложения</string>
   <string name="prefs_calculating_app_size">Расчет размера приложения</string>
   <string name="prefs_copying_app_files">Копирование файлов приложения</string>
@@ -205,6 +209,9 @@
   <string name="prefs_export_summary">Экспорт копию закладок и тегов</string>
   <string name="prefs_page_type_title">Тип страниц (экспериментальный)</string>
   <string name="prefs_page_type_summary">Выберите тип страниц</string>
+  <string name="prefs_sura_translated_name_summary">Показать перевод названия суры</string>
+  <string name="prefs_sura_translated_name_title">Перевод названия суры</string>
+  <string name="prefs_preview">Предварительный просмотр</string>
 
   <string name="more_translations">Ещё переводов</string>
   <string name="import_data_permissions_error">Не удается прочитать файл резервной копии из-за ошибки разрешения.</string>
@@ -216,11 +223,18 @@
   <string name="export_data_error">Ошибка экспорта данных</string>
   <string name="exported_data">Данные экспортированы в %1$s</string>
 
+  <string name="move_up">Вверх</string>
+  <string name="move_down">Вниз</string>
+  <string name="delete_translation">Удалить перевод</string>
+
   <string name="warning">Внимание</string>
   <string name="kitkat_external_message">Из-за ограничений Android, если Вы сейчас разместите исходные данные
         приложения Quran for Android на Вашей внешней SD карте, а затем очистите или деинсталлируете приложение,
         все страницы и аудио приложения Quran for Android будут удалены. Все эти данные нужно будет скачать снова. Вы уверены,
         что хотите использовать внешнюю SD карту?</string>
+  <string name="scoped_storage_message">Из-за изменений в системе Android, направленных на повышение конфиденциальности
+    пользователей, копирование файлов за пределами папок приложений может предотвратить приложению Корана получить доступ
+    к своим данным в будущих версиях Android. Вы уверены, что хотите использовать этот путь?</string>
   <string name="please_grant_permissions">Пожалуйста, предоставляйте разрешения в настройках приложения</string>
   <!-- Preferences End -->
 
@@ -356,11 +370,13 @@
   <string name="tag_blank_tag_error">Имена тегов не могут быть пустыми!</string>
   <string name="tag_duplicate_tag_error">Имя тега уже существует!</string>
 
-  <!-- bookmark & tag list -->
+  <!-- widgets -->
   <string name="bookmarks_list_empty">Закладки отсутствуют</string>
 
   <!-- audio manager -->
   <string name="audio_manager">Аудио менеджер</string>
+  <string name="audio_manager_remove_audio_title">Удалить суру?</string>
+  <string name="audio_manager_remove_audio_msg">Вы уверены, что хотите удалить %1$s?</string>
   <plurals name="audio_manager_delete_surah_success">
     <item quantity="one">Удалено %1$d сура</item>
     <item quantity="few">Удалено %1$d суры</item>
@@ -384,6 +400,11 @@
   <string name="audio_updated_text">Несколько аудио файлов были обновлены. Ваша копия этих файлов
     была удалена, новые версии будут загружены при следующем воспроизведении.
   </string>
+
+  <!-- dual screen prefs -->
+  <string name="prefs_category_dual_screen">Настройки двойной страницы</string>
+  <string name="prefs_split_page_and_translation_title">Коран и перевод в двойном режиме</string>
+  <string name="prefs_split_page_and_translation_summary">В двухстраничном режиме отображаются страница Корана и перевод</string>
 
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_audio">Рецитация Корана</string>
