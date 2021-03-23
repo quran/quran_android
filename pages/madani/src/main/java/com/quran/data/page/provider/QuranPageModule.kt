@@ -1,10 +1,11 @@
 package com.quran.data.page.provider
 
+import com.quran.common.upgrade.LocalDataUpgrade
+import com.quran.common.upgrade.PreferencesUpgrade
 import com.quran.data.page.provider.madani.MadaniPageProvider
 import com.quran.data.pageinfo.mapper.AyahMapper
 import com.quran.data.pageinfo.mapper.IdentityAyahMapper
 import com.quran.data.source.PageProvider
-import com.quran.data.upgrade.LocalDataUpgrade
 import com.quran.page.common.draw.ImageDrawHelper
 import dagger.Module
 import dagger.Provides
@@ -31,8 +32,13 @@ object QuranPageModule {
     return emptySet()
   }
 
+  @JvmStatic
   @Provides
   fun provideLocalDataUpgrade(): LocalDataUpgrade = LocalDataUpgrade { it }
+
+  @JvmStatic
+  @Provides
+  fun providePreferencesUpgrade(): PreferencesUpgrade = PreferencesUpgrade { _, _, _ -> true }
 
   @JvmStatic
   @Reusable

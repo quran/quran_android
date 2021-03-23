@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
+import com.quran.common.upgrade.PreferencesUpgrade;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -178,7 +179,7 @@ public class QuranSettings {
   }
 
   // probably should eventually move this to Application.onCreate..
-  public void upgradePreferences() {
+  public void upgradePreferences(PreferencesUpgrade preferencesUpgrade) {
     int version = getVersion();
     if (version != BuildConfig.VERSION_CODE) {
       if (version == 0) {
@@ -190,8 +191,14 @@ public class QuranSettings {
         setAppCustomLocation(getAppCustomLocation());
       }
 
-      // make sure that the version code now says that we're up to date.
-      setVersion(BuildConfig.VERSION_CODE);
+      // allow specific flavors of the app to handle their own upgrade logic.
+      // this is important because different flavors have different version codes, so
+      // common code here would likely be wrong for other flavors (unless it depends on
+      // relative offsets to the version code instead of the actual version code).
+      if (preferencesUpgrade.upgrade(appContext, version, BuildConfig.VERSION_CODE)) {
+        // make sure that the version code now says that we're up to date.
+        setVersion(BuildConfig.VERSION_CODE);
+      }
     }
   }
 

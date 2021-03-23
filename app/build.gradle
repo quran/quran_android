@@ -123,6 +123,7 @@ dependencies {
   implementation project(path: ':common:networking')
   implementation project(path: ':common:pages')
   implementation project(path: ':common:search')
+  implementation project(path: ':common:upgrade')
 
   implementation project(path: ':feature:audio')
 
