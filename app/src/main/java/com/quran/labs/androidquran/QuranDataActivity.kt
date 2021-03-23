@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
+import com.quran.common.upgrade.PreferencesUpgrade
 import com.quran.data.model.QuranDataStatus
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.presenter.data.QuranDataPresenter
@@ -75,6 +76,9 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   @Inject
   lateinit var quranDataPresenter: QuranDataPresenter
 
+  @Inject
+  lateinit var preferencesUpgrade: PreferencesUpgrade
+
   private lateinit var quranSettings: QuranSettings
 
   private var errorDialog: AlertDialog? = null
@@ -92,7 +96,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     val quranApp = application as QuranApplication
     quranApp.applicationComponent.inject(this)
     quranSettings = QuranSettings.getInstance(this)
-    quranSettings.upgradePreferences()
+    quranSettings.upgradePreferences(preferencesUpgrade)
 
     // replace null app locations (especially those set to null due to failures
     // of finding a suitable data directory) with the default value to allow

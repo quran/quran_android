@@ -11,11 +11,10 @@ android {
 }
 
 dependencies {
-  implementation project(path: ':common:data')
-  implementation project(path: ':common:pages')
-  implementation project(path: ':common:audio')
-  implementation project(path: ':common:upgrade')
+  implementation project(":common:data")
 
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
+
+  implementation "androidx.annotation:annotation:${androidxAnnotationVersion}"
 }

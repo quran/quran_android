@@ -14,7 +14,7 @@ import androidx.work.workDataOf
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.QuranDataStatus
 import com.quran.data.source.PageProvider
-import com.quran.data.upgrade.LocalDataUpgrade
+import com.quran.common.upgrade.LocalDataUpgrade
 import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.presenter.Presenter
@@ -42,7 +42,8 @@ class QuranDataPresenter @Inject internal constructor(
     val quranScreenInfo: QuranScreenInfo,
     private val quranPageProvider: PageProvider,
     val quranFileUtils: QuranFileUtils,
-    private val localDataUpgrade: LocalDataUpgrade) : Presenter<QuranDataActivity> {
+    private val localDataUpgrade: LocalDataUpgrade
+) : Presenter<QuranDataActivity> {
 
   private var activity: QuranDataActivity? = null
   private var checkPagesDisposable: Disposable? = null
