@@ -3,10 +3,8 @@ package com.quran.labs.androidquran.model.translation;
 import android.content.Context;
 
 import com.quran.data.core.QuranInfo;
-import com.quran.data.page.provider.madani.MadaniPageProvider;
 import com.quran.data.pageinfo.common.MadaniDataSource;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.data.QuranDisplayData;
+import com.quran.data.model.bookmark.Bookmark;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 

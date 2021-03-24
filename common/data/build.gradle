@@ -7,4 +7,7 @@ dependencies {
   // dagger
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
+
+  implementation "com.squareup.moshi:moshi:${moshiVersion}"
+  kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
 }

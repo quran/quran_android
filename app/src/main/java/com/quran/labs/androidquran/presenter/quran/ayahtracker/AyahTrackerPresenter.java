@@ -8,7 +8,7 @@ import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.common.HighlightInfo;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
+import com.quran.data.model.bookmark.Bookmark;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.di.QuranPageScope;
 import com.quran.labs.androidquran.presenter.Presenter;

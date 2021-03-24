@@ -11,7 +11,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 
 import com.quran.labs.androidquran.QuranImportActivity;
-import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
+import com.quran.data.model.bookmark.BookmarkData;
 import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.service.util.PermissionUtil;

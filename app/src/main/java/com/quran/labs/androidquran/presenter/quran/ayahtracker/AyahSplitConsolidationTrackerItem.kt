@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
 import com.quran.data.model.SuraAyah
-import com.quran.labs.androidquran.dao.bookmark.Bookmark
+import com.quran.data.model.bookmark.Bookmark
 import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.labs.androidquran.view.AyahToolBar.AyahToolBarPosition
 import com.quran.page.common.data.AyahCoordinates

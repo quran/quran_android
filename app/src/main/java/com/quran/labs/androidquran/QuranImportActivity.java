@@ -8,7 +8,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
+import com.quran.data.model.bookmark.BookmarkData;
 import com.quran.labs.androidquran.presenter.QuranImportPresenter;
 import com.quran.labs.androidquran.ui.util.ToastCompat;
 

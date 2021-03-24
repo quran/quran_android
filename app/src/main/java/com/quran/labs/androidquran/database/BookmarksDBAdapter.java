@@ -7,10 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
-import com.quran.labs.androidquran.dao.RecentPage;
-import com.quran.labs.androidquran.dao.Tag;
+import com.quran.data.model.bookmark.Bookmark;
+import com.quran.data.model.bookmark.BookmarkData;
+import com.quran.data.model.bookmark.RecentPage;
+import com.quran.data.model.bookmark.Tag;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarkTagTable;
 import com.quran.labs.androidquran.database.BookmarksDBHelper.BookmarksTable;

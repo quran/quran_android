@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.Tag;
+import com.quran.data.model.bookmark.Tag;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
