@@ -1,7 +1,5 @@
-package com.quran.labs.androidquran.dao.bookmark
+package com.quran.data.model.bookmark
 
-import com.quran.labs.androidquran.dao.RecentPage
-import com.quran.labs.androidquran.dao.Tag
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)

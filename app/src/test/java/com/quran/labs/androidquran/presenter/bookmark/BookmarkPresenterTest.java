@@ -5,10 +5,10 @@ import android.content.res.Resources;
 
 import com.quran.data.core.QuranInfo;
 import com.quran.data.pageinfo.common.MadaniDataSource;
-import com.quran.labs.androidquran.dao.RecentPage;
-import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
+import com.quran.data.model.bookmark.RecentPage;
+import com.quran.data.model.bookmark.Tag;
+import com.quran.data.model.bookmark.Bookmark;
+import com.quran.data.model.bookmark.BookmarkData;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;

@@ -5,7 +5,7 @@ import android.database.Cursor;
 
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.QuranText;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
+import com.quran.data.model.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranFileConstants;
 import com.quran.data.model.SuraAyah;

@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import androidx.annotation.NonNull;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.Response;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
+import com.quran.data.model.bookmark.Bookmark;
 import com.quran.labs.androidquran.di.QuranPageScope;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.quran.CoordinatesModel;

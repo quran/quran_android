@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.dao.bookmark
+package com.quran.data.model.bookmark
 
 import com.squareup.moshi.JsonClass
 

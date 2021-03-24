@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
+import com.quran.data.model.bookmark.BookmarkData;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
 import java.io.File;

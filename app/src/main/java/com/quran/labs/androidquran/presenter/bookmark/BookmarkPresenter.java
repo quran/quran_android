@@ -7,10 +7,10 @@ import androidx.annotation.VisibleForTesting;
 import com.google.android.material.snackbar.Snackbar;
 
 import com.quran.data.core.QuranInfo;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
-import com.quran.labs.androidquran.dao.RecentPage;
-import com.quran.labs.androidquran.dao.Tag;
+import com.quran.data.model.bookmark.Bookmark;
+import com.quran.data.model.bookmark.BookmarkData;
+import com.quran.data.model.bookmark.RecentPage;
+import com.quran.data.model.bookmark.Tag;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkResult;

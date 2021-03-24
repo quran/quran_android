@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
+import com.quran.data.model.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;

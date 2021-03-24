@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.model.bookmark;
 
-import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
+import com.quran.data.model.bookmark.Tag;
+import com.quran.data.model.bookmark.Bookmark;
+import com.quran.data.model.bookmark.BookmarkData;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 

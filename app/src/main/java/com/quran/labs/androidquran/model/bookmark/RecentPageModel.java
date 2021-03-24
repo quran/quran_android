@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.model.bookmark;
 
 import androidx.annotation.UiThread;
 
-import com.quran.labs.androidquran.dao.RecentPage;
+import com.quran.data.model.bookmark.RecentPage;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 

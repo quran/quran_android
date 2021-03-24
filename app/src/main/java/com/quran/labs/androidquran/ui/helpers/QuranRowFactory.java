@@ -5,8 +5,8 @@ import androidx.core.content.ContextCompat;
 
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.dao.Tag;
+import com.quran.data.model.bookmark.Bookmark;
+import com.quran.data.model.bookmark.Tag;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 
 import javax.inject.Inject;
