@@ -96,21 +96,19 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
 
   private static BookmarksDBHelper sInstance;
 
-  public static BookmarksDBHelper getInstance(Context context, int numberOfPages) {
+  public static BookmarksDBHelper getInstance(Context context) {
     if (sInstance == null) {
-      sInstance = new BookmarksDBHelper(context.getApplicationContext(), numberOfPages);
+      sInstance = new BookmarksDBHelper(context.getApplicationContext());
     }
     return sInstance;
   }
 
   private final int lastPage;
-  private final int totalPages;
 
-  private BookmarksDBHelper(Context context, int numberOfPages) {
+  private BookmarksDBHelper(Context context) {
     super(context, DB_NAME, null, DB_VERSION);
     QuranSettings quranSettings = QuranSettings.getInstance(context);
     lastPage = quranSettings.getLastPage();
-    totalPages = numberOfPages;
   }
 
   @Override
@@ -140,7 +138,9 @@ class BookmarksDBHelper extends SQLiteOpenHelper {
 
   private void upgradeToVer3(SQLiteDatabase db) {
     db.execSQL(LAST_PAGES_TABLE);
-    if (this.lastPage >= Constants.PAGES_FIRST && this.lastPage <= totalPages) {
+
+    // the default lastPage is -1
+    if (this.lastPage >= Constants.PAGES_FIRST) {
       db.execSQL("INSERT INTO last_pages(page) values(?)", new Object[] { lastPage });
     }
   }
