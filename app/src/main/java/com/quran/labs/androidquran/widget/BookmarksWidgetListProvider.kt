@@ -36,8 +36,8 @@ class BookmarksWidgetListProvider(private val context: Context) : RemoteViewsFac
 
   private fun populateListItem() {
     val appContext = context.applicationContext
-    val mBookmarksDBAdapter = BookmarksDBAdapter(appContext, quranInfo.numberOfPages)
-    val bookmarksList = mBookmarksDBAdapter.getBookmarks(BookmarksDBAdapter.SORT_LOCATION)
+    val bookmarksDBAdapter = BookmarksDBAdapter(appContext)
+    val bookmarksList = bookmarksDBAdapter.getBookmarks(BookmarksDBAdapter.SORT_LOCATION)
     quranRowList = bookmarksList.map { quranRowFactory.fromBookmark(appContext, it) }
   }
 

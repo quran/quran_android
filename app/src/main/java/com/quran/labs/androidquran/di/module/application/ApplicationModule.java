@@ -8,12 +8,14 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.quran.data.core.QuranFileManager;
+import com.quran.data.dao.Settings;
 import com.quran.data.source.DisplaySize;
 import com.quran.data.source.PageProvider;
 import com.quran.data.source.PageSizeCalculator;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 
+import com.quran.labs.androidquran.util.SettingsImpl;
 import java.io.File;
 
 import javax.inject.Singleton;
@@ -63,6 +65,11 @@ public class ApplicationModule {
   @Singleton
   QuranSettings provideQuranSettings() {
     return QuranSettings.getInstance(application);
+  }
+
+  @Provides
+  Settings provideSettings(SettingsImpl settingsImpl) {
+    return settingsImpl;
   }
 
   @Provides

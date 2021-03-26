@@ -32,8 +32,8 @@ public class BookmarksDBAdapter {
   private SQLiteDatabase db;
   Context context;
 
-  public BookmarksDBAdapter(Context context, int numberOfPages) {
-    BookmarksDBHelper dbHelper = BookmarksDBHelper.getInstance(context, numberOfPages);
+  public BookmarksDBAdapter(Context context) {
+    BookmarksDBHelper dbHelper = BookmarksDBHelper.getInstance(context);
     db = dbHelper.getWritableDatabase();
     this.context = context;
   }
@@ -229,6 +229,25 @@ public class BookmarksDBAdapter {
         params[1] = String.valueOf(item.second);
         db.delete(BookmarkTagTable.TABLE_NAME,
             BookmarkTagTable.BOOKMARK_ID + " = ? AND " + BookmarkTagTable.TAG_ID + " = ?", params);
+      }
+      db.setTransactionSuccessful();
+    } finally {
+      db.endTransaction();
+    }
+  }
+
+  public void updateBookmarks(List<Bookmark> bookmarks) {
+    db.beginTransaction();
+    try {
+      final ContentValues contentValues = new ContentValues();
+      for (int i = 0, size = bookmarks.size(); i < size; i++) {
+        final Bookmark bookmark = bookmarks.get(i);
+
+        contentValues.clear();
+        contentValues.put(BookmarksTable.SURA, bookmark.getSura());
+        contentValues.put(BookmarksTable.AYAH, bookmark.getAyah());
+        db.update(BookmarksTable.TABLE_NAME, contentValues,
+            BookmarksTable.ID + "=" + bookmark.getId(), null);
       }
       db.setTransactionSuccessful();
     } finally {
