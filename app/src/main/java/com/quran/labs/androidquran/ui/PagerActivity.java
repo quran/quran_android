@@ -1507,7 +1507,9 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void playFromAyah(int page, int startSura, int startAyah) {
     final SuraAyah start = new SuraAyah(startSura, startAyah);
-    playFromAyah(start, null, page, 0, 0, false);
+    // handle the case of multiple ayat being selected and play them as a range if so
+    final SuraAyah ending = (end == null || start.equals(end) || start.after(end))? null : end;
+    playFromAyah(start, ending, page, 0, 0, ending != null);
   }
 
   public void playFromAyah(SuraAyah start,
@@ -1767,7 +1769,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   public void endAyahMode() {
     ayahToolBar.hideMenu();
     slidingPanel.collapsePane();
-    clearAyahModeHighlights();
+    clearAyahModeHighlights(true);
     isInAyahMode = false;
   }
 
@@ -1815,7 +1817,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void updateAyahStartSelection(SuraAyah suraAyah, AyahTracker tracker) {
     if (isInAyahMode) {
-      clearAyahModeHighlights();
+      clearAyahModeHighlights(false);
       start = end = suraAyah;
       lastSelectedTranslationAyah = tracker.getQuranAyahInfo(suraAyah.sura, suraAyah.ayah);
       if (ayahToolBar.isShowing()) {
@@ -1831,7 +1833,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void updateAyahEndSelection(SuraAyah suraAyah) {
     if (isInAyahMode) {
-      clearAyahModeHighlights();
+      clearAyahModeHighlights(false);
       if (suraAyah.after(start)) {
         end = suraAyah;
       } else {
@@ -1924,7 +1926,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         suraAyah.sura, suraAyah.ayah, HighlightType.SELECTION, false);
   }
 
-  private void clearAyahModeHighlights() {
+  private void clearAyahModeHighlights(boolean shouldClear) {
     if (isInAyahMode) {
       final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
       final int endingPage = quranInfo.getPageFromSuraAyah(end.sura, end.ayah);
@@ -1933,6 +1935,13 @@ public class PagerActivity extends QuranActionBarActivity implements
         if (fragment != null) {
           fragment.getAyahTracker().unHighlightAyahs(HighlightType.SELECTION);
         }
+      }
+
+      // when we end ayah mode, let's clear start and end to not affect future
+      // playbacks of audio.
+      if (shouldClear) {
+        start = null;
+        end = null;
       }
     }
   }
