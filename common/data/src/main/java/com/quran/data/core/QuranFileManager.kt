@@ -16,7 +16,7 @@ interface QuranFileManager {
   fun writeVersionFile(widthParam: String, version: Int)
 
   @WorkerThread
-  fun removeFilesForWidth(width: Int)
+  fun removeFilesForWidth(width: Int, directoryLambda: ((String) -> String) = { it })
 
   @WorkerThread
   fun writeNoMediaFileRelative(widthParam: String)
