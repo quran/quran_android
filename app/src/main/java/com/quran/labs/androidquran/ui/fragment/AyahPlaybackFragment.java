@@ -70,8 +70,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     applyButton.setOnClickListener(mOnClickListener);
     repeatVersePicker = view.findViewById(R.id.repeat_verse_picker);
     repeatRangePicker = view.findViewById(R.id.repeat_range_picker);
-    int defaultVerseRepeat = 3;
-    int defaultRangeRepeat = 7;
+    final int defaultVerseRepeat = 1;
+    final int defaultRangeRepeat = 1;
 
     final Context context = requireContext();
 
