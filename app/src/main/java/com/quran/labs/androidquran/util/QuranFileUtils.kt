@@ -98,13 +98,16 @@ class QuranFileUtils @Inject constructor(
   }
 
   @WorkerThread
-  override fun removeFilesForWidth(width: Int) {
+  override fun removeFilesForWidth(width: Int, directoryLambda: ((String) -> String)) {
     val widthParam = "_$width"
-    val quranDirectory = getQuranImagesDirectory(appContext, widthParam) ?: return
+    val quranDirectoryWithoutLambda = getQuranImagesDirectory(appContext, widthParam) ?: return
+    val quranDirectory = directoryLambda(quranDirectoryWithoutLambda)
     val file = File(quranDirectory)
     if (file.exists()) {
       deleteFileOrDirectory(file)
-      val ayahinfoFile = File(getQuranAyahDatabaseDirectory(appContext), "ayahinfo_$width.db")
+      val ayahDatabaseDirectoryWithoutLambda = getQuranAyahDatabaseDirectory(appContext) ?: return
+      val ayahDatabaseDirectory = directoryLambda(ayahDatabaseDirectoryWithoutLambda)
+      val ayahinfoFile = File(ayahDatabaseDirectory, "ayahinfo_$width.db")
       if (ayahinfoFile.exists()) {
         ayahinfoFile.delete()
       }
