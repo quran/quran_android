@@ -155,7 +155,7 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
 
   <string name="canceling">Cancelando&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
-  <string name="page_description">página %1$s, Juz\' %2$s</string>
+  <string name="page_description">Página %1$s, Juz\' %2$s</string>
   <string name="highlighting_database">Arquivos Necessários</string>
   <string name="timing_database">Arquivos Necessários</string>
 
