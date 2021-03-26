@@ -116,7 +116,7 @@
   <string name="index_loading">Cargando…</string>
   <string name="canceling">Cancelando…</string>
   <string name="juz2_description">Yuz %1$s</string>
-  <string name="page_description">página %1$s, Yuz %2$s</string>
+  <string name="page_description">Página %1$s, Yuz %2$s</string>
   <string name="highlighting_database">Archivos requeridos</string>
   <string name="timing_database">Archivos requeridos</string>
   <!--download statuses and errors-->

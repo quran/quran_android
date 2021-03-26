@@ -183,7 +183,7 @@
   <string name="index_loading">Chargement…</string>
   <string name="canceling">Annulation…</string>
   <string name="juz2_description">Juz\' %1$s</string>
-  <string name="page_description">page %1$s, Juz\' %2$s</string>
+  <string name="page_description">Page %1$s, Juz\' %2$s</string>
   <string name="highlighting_database">Fichiers requis</string>
   <string name="timing_database">Fichiers requis</string>
 
