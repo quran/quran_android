@@ -1,8 +1,8 @@
-/* 
+/*
  * This code is based on the RandomMusicPlayer example from
  * the Android Open Source Project samples.  It has been modified
  * for use in Quran Android.
- *   
+ *
  * Copyright (C) 2011 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,6 +41,7 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
+import android.media.PlaybackParams;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.AsyncTask;
@@ -55,19 +56,21 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.SparseIntArray;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.media.app.NotificationCompat.MediaStyle;
 import androidx.media.session.MediaButtonReceiver;
+
 import com.quran.data.core.QuranInfo;
+import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.audio.AudioPlaybackInfo;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDisplayData;
-import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
 import com.quran.labs.androidquran.extension.SuraAyahExtensionKt;
@@ -78,12 +81,15 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.NotificationChannelUtil;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.inject.Inject;
+
 import io.reactivex.Maybe;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import java.io.File;
-import java.io.IOException;
-import javax.inject.Inject;
 import timber.log.Timber;
 
 /**
@@ -104,6 +110,8 @@ public class AudioService extends Service implements OnCompletionListener,
   public static final String ACTION_PAUSE = "com.quran.labs.androidquran.action.PAUSE";
   public static final String ACTION_STOP = "com.quran.labs.androidquran.action.STOP";
   public static final String ACTION_SKIP = "com.quran.labs.androidquran.action.SKIP";
+  public static final String ACTION_INCREASE_SPEAD = "com.quran.labs.androidquran.action.INCREASE_SPEAD";
+  public static final String ACTION_DECREASE_SPEAD = "com.quran.labs.androidquran.action.DECREASE_SPEAD";
   public static final String ACTION_REWIND = "com.quran.labs.androidquran.action.REWIND";
   public static final String ACTION_CONNECT = "com.quran.labs.androidquran.action.CONNECT";
   public static final String ACTION_UPDATE_REPEAT = "com.quran.labs.androidquran.action.UPDATE_REPEAT";
@@ -210,9 +218,12 @@ public class AudioService extends Service implements OnCompletionListener,
   private AsyncTask<Integer, Void, SparseIntArray> timingTask = null;
   private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-  @Inject QuranInfo quranInfo;
-  @Inject QuranDisplayData quranDisplayData;
-  @Inject AudioUtils audioUtils;
+  @Inject
+  QuranInfo quranInfo;
+  @Inject
+  QuranDisplayData quranDisplayData;
+  @Inject
+  AudioUtils audioUtils;
 
   private static final int MSG_INCOMING = 1;
   private static final int MSG_START_AUDIO = 2;
@@ -319,8 +330,8 @@ public class AudioService extends Service implements OnCompletionListener,
 
     compositeDisposable.add(
         Maybe.fromCallable(this::generateNotificationIcon)
-          .subscribeOn(Schedulers.io())
-          .subscribe(bitmap -> notificationIcon = bitmap));
+            .subscribeOn(Schedulers.io())
+            .subscribe(bitmap -> notificationIcon = bitmap));
   }
 
   private class MediaSessionCallback extends MediaSessionCompat.Callback {
@@ -432,6 +443,10 @@ public class AudioService extends Service implements OnCompletionListener,
       processStopRequest();
     } else if (ACTION_REWIND.equals(action)) {
       processRewindRequest();
+    } else if (ACTION_INCREASE_SPEAD.equals(action)) {
+      processIncreasePlayback();
+    } else if (ACTION_DECREASE_SPEAD.equals(action)) {
+      processDecreasePlayback();
     } else if (ACTION_UPDATE_REPEAT.equals(action)) {
       final AudioRequest playInfo = intent.getParcelableExtra(EXTRA_PLAY_INFO);
       if (playInfo != null && audioQueue != null) {
@@ -736,6 +751,19 @@ public class AudioService extends Service implements OnCompletionListener,
     }
   }
 
+  private void processIncreasePlayback() {
+    if (State.Playing == state) {
+      increasePlayback();
+    }
+  }
+
+  private void processDecreasePlayback() {
+    if (State.Playing == state) {
+      decreasePlayback();
+    }
+  }
+
+
   private void processSkipRequest() {
     if (audioRequest == null) {
       return;
@@ -928,6 +956,22 @@ public class AudioService extends Service implements OnCompletionListener,
     }
   }
 
+  private void increasePlayback() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      PlaybackParams params = player.getPlaybackParams();
+      params.setSpeed(params.getSpeed() + 0.15f);
+      player.setPlaybackParams(params);
+    }
+  }
+
+  private void decreasePlayback() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      PlaybackParams params = player.getPlaybackParams();
+      params.setSpeed(params.getSpeed() - 0.15f);
+      player.setPlaybackParams(params);
+    }
+  }
+
   private void tryToGetAudioFocus() {
     if (audioFocus != AudioFocus.Focused &&
         audioFocusHelper != null && audioFocusHelper.requestFocus()) {
@@ -1065,12 +1109,12 @@ public class AudioService extends Service implements OnCompletionListener,
     builder.setState(state, position, 1.0f);
     builder.setActions(
         PlaybackStateCompat.ACTION_PLAY |
-        PlaybackStateCompat.ACTION_STOP |
-        PlaybackStateCompat.ACTION_REWIND |
-        PlaybackStateCompat.ACTION_FAST_FORWARD |
-        PlaybackStateCompat.ACTION_PAUSE |
-        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-        PlaybackStateCompat.ACTION_SKIP_TO_NEXT);
+            PlaybackStateCompat.ACTION_STOP |
+            PlaybackStateCompat.ACTION_REWIND |
+            PlaybackStateCompat.ACTION_FAST_FORWARD |
+            PlaybackStateCompat.ACTION_PAUSE |
+            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+            PlaybackStateCompat.ACTION_SKIP_TO_NEXT);
     mediaSession.setPlaybackState(builder.build());
   }
 
@@ -1083,7 +1127,9 @@ public class AudioService extends Service implements OnCompletionListener,
     serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200);
   }
 
-  /** Called when media player is done playing current file. */
+  /**
+   * Called when media player is done playing current file.
+   */
   @Override
   public void onCompletion(MediaPlayer player) {
     // The media player finished playing the current file, so
@@ -1112,7 +1158,9 @@ public class AudioService extends Service implements OnCompletionListener,
     }
   }
 
-  /** Called when media player is done preparing. */
+  /**
+   * Called when media player is done preparing.
+   */
   @Override
   public void onPrepared(MediaPlayer player) {
     Timber.d("okay, prepared!");
@@ -1145,7 +1193,9 @@ public class AudioService extends Service implements OnCompletionListener,
     configAndStartMediaPlayer();
   }
 
-  /** Updates the notification. */
+  /**
+   * Updates the notification.
+   */
   void updateNotification() {
     notificationBuilder.setContentText(getTitle());
     if (!didSetNotificationIconOnNotificationBuilder && notificationIcon != null) {

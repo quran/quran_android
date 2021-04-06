@@ -20,6 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.core.view.ViewCompat;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.audio.QariItem;
 import com.quran.labs.androidquran.data.Constants;
@@ -27,12 +33,6 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import java.util.List;
-
-import androidx.annotation.DrawableRes;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.core.view.ViewCompat;
 
 public class AudioStatusBar extends LeftToRightLinearLayout {
 
@@ -43,44 +43,85 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   public static final int PAUSED_MODE = 5;
   public static final int PROMPT_DOWNLOAD_MODE = 6;
 
-  private Context context;
+  private final Context context;
   private int currentMode;
-  private int buttonWidth;
-  private int separatorWidth;
-  private int separatorSpacing;
-  private int textFontSize;
-  private int textFullFontSize;
-  private int spinnerPadding;
+  private final int buttonWidth;
+  private final int separatorWidth;
+  private final int separatorSpacing;
+  private final int textFontSize;
+  private final int textFullFontSize;
+  private final int spinnerPadding;
   private QariAdapter adapter;
 
   private int currentQari;
   private int currentRepeat = 0;
-  @DrawableRes private int itemBackground;
-  private boolean isRtl;
+  private final boolean isRtl;
+  private final SharedPreferences sharedPreferences;
   private boolean isDualPageMode;
   private boolean hasErrorText;
   private boolean haveCriticalError = false;
-  private SharedPreferences sharedPreferences;
+  private final int[] repeatValues = {0, 1, 2, 3, -1};
 
   private QuranSpinner spinner;
   private TextView progressText;
   private ProgressBar progressBar;
   private RepeatButton repeatButton;
   private AudioBarListener audioBarListener;
+  @DrawableRes
+  private int itemBackground;
+  OnClickListener onClickListener = new OnClickListener() {
+    @Override
+    public void onClick(View view) {
+      if (audioBarListener != null) {
+        int tag = (Integer) view.getTag();
+        switch (tag) {
+          case R.drawable.ic_play:
+            audioBarListener.onPlayPressed();
+            break;
+          case R.drawable.ic_stop:
+            audioBarListener.onStopPressed();
+            break;
 
-  private int[] repeatValues = {0, 1, 2, 3, -1};
+          case R.drawable.ic_plus_1_24:
+            audioBarListener.onUpPressed();
+            break;
 
-  public interface AudioBarListener {
-    void onPlayPressed();
-    void onPausePressed();
-    void onNextPressed();
-    void onPreviousPressed();
-    void onStopPressed();
-    void onCancelPressed(boolean stopDownload);
-    void setRepeatCount(int repeatCount);
-    void onAcceptPressed();
-    void onAudioSettingsPressed();
-  }
+          case R.drawable.ic_neg_1_24:
+            audioBarListener.onDownPressed();
+            break;
+
+
+          case R.drawable.ic_pause:
+            audioBarListener.onPausePressed();
+            break;
+          case R.drawable.ic_next:
+            audioBarListener.onNextPressed();
+            break;
+          case R.drawable.ic_previous:
+            audioBarListener.onPreviousPressed();
+            break;
+          case R.drawable.ic_repeat:
+            incrementRepeat();
+            audioBarListener.setRepeatCount(repeatValues[currentRepeat]);
+            break;
+          case R.drawable.ic_cancel:
+            if (haveCriticalError) {
+              haveCriticalError = false;
+              switchMode(STOPPED_MODE);
+            } else {
+              audioBarListener.onCancelPressed(currentMode == DOWNLOADING_MODE);
+            }
+            break;
+          case R.drawable.ic_accept:
+            audioBarListener.onAcceptPressed();
+            break;
+          case R.drawable.ic_action_settings:
+            audioBarListener.onAudioSettingsPressed();
+            break;
+        }
+      }
+    }
+  };
 
   public AudioStatusBar(Context context) {
     this(context, null);
@@ -164,11 +205,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
       showPromptForDownloadMode();
     } else if (mode == DOWNLOADING_MODE || mode == LOADING_MODE) {
       showProgress(mode);
-    } else if (mode == PLAYING_MODE) {
-      showPlayingMode(false);
-    } else {
-      showPlayingMode(true);
-    }
+    } else showPlayingMode(mode != PLAYING_MODE);
   }
 
   @NonNull
@@ -228,60 +265,32 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     }
   }
 
-  private static class QariAdapter extends BaseAdapter {
-    @NonNull LayoutInflater inflater;
-    @NonNull private final List<QariItem> items;
-    @LayoutRes private final int layoutViewId;
-    @LayoutRes private final int dropDownViewId;
+  private void showPlayingMode(boolean isPaused) {
+    removeAllViews();
 
-    QariAdapter(@NonNull Context context,
-                @NonNull List<QariItem> items,
-                @LayoutRes int layoutViewId,
-                @LayoutRes int dropDownViewId) {
-      this.items = items;
-      this.layoutViewId = layoutViewId;
-      this.dropDownViewId = dropDownViewId;
-      inflater = LayoutInflater.from(context);
+    final boolean withWeight = !isDualPageMode;
+
+    int button;
+    if (isPaused) {
+      button = R.drawable.ic_play;
+      currentMode = PAUSED_MODE;
+    } else {
+      button = R.drawable.ic_pause;
+      currentMode = PLAYING_MODE;
     }
 
-    @Override
-    public int getCount() {
-      return items.size();
-    }
+    addButton(R.drawable.ic_stop, withWeight);
+    addButton(R.drawable.ic_previous, withWeight);
+    addButton(button, withWeight);
+    addButton(R.drawable.ic_next, withWeight);
+    addButton(R.drawable.ic_plus_1_24, withWeight);
+    addButton(R.drawable.ic_neg_1_24, withWeight);
 
-    @Override
-    public QariItem getItem(int position) {
-      return items.get(position);
-    }
+    repeatButton = new RepeatButton(context);
+    addButton(repeatButton, R.drawable.ic_repeat, withWeight);
+    updateRepeatButtonText();
 
-    @Override
-    public long getItemId(int position) {
-      return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-      return getViewInternal(position, convertView, parent, layoutViewId);
-    }
-
-    @Override
-    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-      return getViewInternal(position, convertView, parent, dropDownViewId);
-    }
-
-    private View getViewInternal(int position, View convertView,
-        ViewGroup parent, @LayoutRes int resource) {
-      TextView textView;
-      if (convertView == null) {
-        textView = (TextView) inflater.inflate(resource, parent, false);
-      } else {
-        textView = (TextView) convertView;
-      }
-
-      QariItem item = getItem(position);
-      textView.setText(item.getName());
-      return textView;
-    }
+    addButton(R.drawable.ic_action_settings, withWeight);
   }
 
   private void addSpinner() {
@@ -399,30 +408,28 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     addView(ll, lp);
   }
 
-  private void showPlayingMode(boolean isPaused) {
-    removeAllViews();
+  public interface AudioBarListener {
+    void onPlayPressed();
 
-    final boolean withWeight = !isDualPageMode;
+    void onPausePressed();
 
-    int button;
-    if (isPaused) {
-      button = R.drawable.ic_play;
-      currentMode = PAUSED_MODE;
-    } else {
-      button = R.drawable.ic_pause;
-      currentMode = PLAYING_MODE;
-    }
+    void onNextPressed();
 
-    addButton(R.drawable.ic_stop, withWeight);
-    addButton(R.drawable.ic_previous, withWeight);
-    addButton(button, withWeight);
-    addButton(R.drawable.ic_next, withWeight);
+    void onUpPressed();
 
-    repeatButton = new RepeatButton(context);
-    addButton(repeatButton, R.drawable.ic_repeat, withWeight);
-    updateRepeatButtonText();
+    void onDownPressed();
 
-    addButton(R.drawable.ic_action_settings, withWeight);
+    void onPreviousPressed();
+
+    void onStopPressed();
+
+    void onCancelPressed(boolean stopDownload);
+
+    void setRepeatCount(int repeatCount);
+
+    void onAcceptPressed();
+
+    void onAudioSettingsPressed();
   }
 
   private void addButton(int imageId, boolean withWeight) {
@@ -498,47 +505,63 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     audioBarListener = listener;
   }
 
-  OnClickListener onClickListener = new OnClickListener() {
-    @Override
-    public void onClick(View view) {
-      if (audioBarListener != null) {
-        int tag = (Integer) view.getTag();
-        switch (tag) {
-          case R.drawable.ic_play:
-            audioBarListener.onPlayPressed();
-            break;
-          case R.drawable.ic_stop:
-            audioBarListener.onStopPressed();
-            break;
-          case R.drawable.ic_pause:
-            audioBarListener.onPausePressed();
-            break;
-          case R.drawable.ic_next:
-            audioBarListener.onNextPressed();
-            break;
-          case R.drawable.ic_previous:
-            audioBarListener.onPreviousPressed();
-            break;
-          case R.drawable.ic_repeat:
-            incrementRepeat();
-            audioBarListener.setRepeatCount(repeatValues[currentRepeat]);
-            break;
-          case R.drawable.ic_cancel:
-            if (haveCriticalError) {
-              haveCriticalError = false;
-              switchMode(STOPPED_MODE);
-            } else {
-              audioBarListener.onCancelPressed(currentMode == DOWNLOADING_MODE);
-            }
-            break;
-          case R.drawable.ic_accept:
-            audioBarListener.onAcceptPressed();
-            break;
-          case R.drawable.ic_action_settings:
-            audioBarListener.onAudioSettingsPressed();
-            break;
-        }
-      }
+  private static class QariAdapter extends BaseAdapter {
+    @NonNull
+    private final List<QariItem> items;
+    @LayoutRes
+    private final int layoutViewId;
+    @LayoutRes
+    private final int dropDownViewId;
+    @NonNull
+    LayoutInflater inflater;
+
+    QariAdapter(@NonNull Context context,
+                @NonNull List<QariItem> items,
+                @LayoutRes int layoutViewId,
+                @LayoutRes int dropDownViewId) {
+      this.items = items;
+      this.layoutViewId = layoutViewId;
+      this.dropDownViewId = dropDownViewId;
+      inflater = LayoutInflater.from(context);
     }
-  };
+
+    @Override
+    public int getCount() {
+      return items.size();
+    }
+
+    @Override
+    public QariItem getItem(int position) {
+      return items.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+      return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+      return getViewInternal(position, convertView, parent, layoutViewId);
+    }
+
+    @Override
+    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+      return getViewInternal(position, convertView, parent, dropDownViewId);
+    }
+
+    private View getViewInternal(int position, View convertView,
+                                 ViewGroup parent, @LayoutRes int resource) {
+      TextView textView;
+      if (convertView == null) {
+        textView = (TextView) inflater.inflate(resource, parent, false);
+      } else {
+        textView = (TextView) convertView;
+      }
+
+      QariItem item = getItem(position);
+      textView.setText(item.getName());
+      return textView;
+    }
+  }
 }
