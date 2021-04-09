@@ -40,6 +40,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   private boolean shouldEnforce;
   private int rangeRepeatCount;
   private int verseRepeatCount;
+  final int defaultVerseRepeat = 1;
+  final int defaultRangeRepeat = 1;
 
   private Button applyButton;
   private QuranSpinner startSuraSpinner;
@@ -49,6 +51,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   private NumberPicker repeatVersePicker;
   private NumberPicker repeatRangePicker;
   private CheckBox restrictToRange;
+  private CheckBox infiniteVerse;
+  private CheckBox infiniteRange;
   private ArrayAdapter<CharSequence> startAyahAdapter;
   private ArrayAdapter<CharSequence> endingAyahAdapter;
 
@@ -70,8 +74,9 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     applyButton.setOnClickListener(mOnClickListener);
     repeatVersePicker = view.findViewById(R.id.repeat_verse_picker);
     repeatRangePicker = view.findViewById(R.id.repeat_range_picker);
-    final int defaultVerseRepeat = 1;
-    final int defaultRangeRepeat = 1;
+    infiniteVerse = view.findViewById(R.id.checkBoxInfiniteVerse);
+    infiniteRange = view.findViewById(R.id.checkBoxInfiniteRange);
+
 
     final Context context = requireContext();
 
@@ -158,10 +163,23 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       }
 
       final int page = quranInfo.getPageFromSuraAyah(currentStart.sura, currentStart.ayah);
-      int repeatVerse = repeatVersePicker.getValue();
-      int repeatRange = repeatRangePicker.getValue();
-      final int verseRepeat = repeatVerse-1;
-      final int rangeRepeat = repeatRange-1;
+      int repeatVerse = repeatVersePicker.getValue()-1;
+      int repeatRange = repeatRangePicker.getValue()-1;
+      // Overwrite if infinite checkbox is checked
+      if (infiniteRange.isChecked()) {
+        repeatRange = -1;
+        repeatRangePicker.setValue(defaultRangeRepeat);
+      }
+      if (infiniteVerse.isChecked()) {
+        repeatVerse = -1;
+        // other settings are meaningless
+        repeatVersePicker.setValue(defaultVerseRepeat);
+        repeatRangePicker.setValue(defaultRangeRepeat);
+        repeatRange = 0;
+        infiniteRange.setChecked(false);
+      }
+      final int verseRepeat = repeatVerse;
+      final int rangeRepeat = repeatRange;
       final boolean enforceRange = restrictToRange.isChecked();
 
       boolean updatedRange = false;
