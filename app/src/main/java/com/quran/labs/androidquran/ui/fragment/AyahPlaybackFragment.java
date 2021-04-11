@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
+
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.QuranApplication;
@@ -163,8 +164,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       }
 
       final int page = quranInfo.getPageFromSuraAyah(currentStart.sura, currentStart.ayah);
-      int repeatVerse = repeatVersePicker.getValue()-1;
-      int repeatRange = repeatRangePicker.getValue()-1;
+      int repeatVerse = repeatVersePicker.getValue() - 1;
+      int repeatRange = repeatRangePicker.getValue() - 1;
       // Overwrite if infinite checkbox is checked
       if (infiniteRange.isChecked()) {
         repeatRange = -1;
@@ -221,7 +222,7 @@ public class AyahPlaybackFragment extends AyahActionFragment {
                                      final ArrayAdapter<CharSequence> ayahAdapter) {
     String[] suras = context.getResources().
         getStringArray(R.array.sura_names);
-    for (int i=0; i<suras.length; i++){
+    for (int i = 0; i < suras.length; i++) {
       suras[i] = QuranUtils.getLocalizedNumber(context, (i + 1)) +
           ". " + suras[i];
     }
@@ -236,12 +237,12 @@ public class AyahPlaybackFragment extends AyahActionFragment {
             int sura = position + 1;
             int ayahCount = quranInfo.getNumberOfAyahs(sura);
             CharSequence[] ayahs = new String[ayahCount];
-            for (int i = 0; i < ayahCount; i++){
+            for (int i = 0; i < ayahCount; i++) {
               ayahs[i] = QuranUtils.getLocalizedNumber(context, (i + 1));
             }
             ayahAdapter.clear();
 
-            for (int i=0; i<ayahCount; i++){
+            for (int i = 0; i < ayahCount; i++) {
               ayahAdapter.add(ayahs[i]);
             }
           }
