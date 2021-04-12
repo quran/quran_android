@@ -247,8 +247,10 @@ public class QuranListAdapter extends
     }
     return false;
   }
+
   public void setElements(QuranRow[] elements) {
     this.elements = elements;
+    notifyDataSetChanged();
   }
 
   class HeaderHolder extends RecyclerView.ViewHolder {
