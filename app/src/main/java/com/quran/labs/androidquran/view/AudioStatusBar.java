@@ -43,6 +43,8 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   public static final int PAUSED_MODE = 5;
   public static final int PROMPT_DOWNLOAD_MODE = 6;
 
+  private static final int MAX_AUDIOBAR_QUICK_REPEAT = 3;
+
   private Context context;
   private int currentMode;
   private int buttonWidth;
@@ -67,8 +69,6 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private ProgressBar progressBar;
   private RepeatButton repeatButton;
   private AudioBarListener audioBarListener;
-
-  private int[] repeatValues = {0, 1, 2, 3, -1};
 
   public interface AudioBarListener {
     void onPlayPressed();
@@ -458,7 +458,9 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   private void incrementRepeat() {
     currentRepeat++;
-    if (currentRepeat == repeatValues.length) {
+    if (currentRepeat - 1 == MAX_AUDIOBAR_QUICK_REPEAT) {
+      currentRepeat = -1;
+    } else if (currentRepeat > MAX_AUDIOBAR_QUICK_REPEAT) {
       currentRepeat = 0;
     }
     updateRepeatButtonText();
@@ -466,27 +468,21 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   private void updateRepeatButtonText() {
     String str;
-    int value = repeatValues[currentRepeat];
-    if (value == 0) {
-      str = "";
-    } else if (value > 0) {
-      str = repeatValues[currentRepeat] + "";
-    } else {
+    if (currentRepeat == -1) {
       str = context.getString(R.string.infinity);
+    } else if (currentRepeat == 0) {
+      str = "";
+    } else {
+      str = String.valueOf(currentRepeat);
     }
     repeatButton.setText(str);
   }
 
   public void setRepeatCount(int repeatCount) {
     boolean updated = false;
-    for (int i = 0; i < repeatValues.length; i++) {
-      if (repeatValues[i] == repeatCount) {
-        if (currentRepeat != i) {
-          currentRepeat = i;
-          updated = true;
-        }
-        break;
-      }
+    if (currentRepeat != repeatCount) {
+      currentRepeat = repeatCount;
+      updated = true;
     }
 
     if (updated && repeatButton != null) {
@@ -521,7 +517,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
             break;
           case R.drawable.ic_repeat:
             incrementRepeat();
-            audioBarListener.setRepeatCount(repeatValues[currentRepeat]);
+            audioBarListener.setRepeatCount(currentRepeat);
             break;
           case R.drawable.ic_cancel:
             if (haveCriticalError) {

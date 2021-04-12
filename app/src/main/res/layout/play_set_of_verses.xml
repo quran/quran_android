@@ -30,11 +30,4 @@
       app:np_fadingEdgeEnabled="true"
       app:np_wrapSelectorWheel="true"
       />
-  <CheckBox
-      android:id="@+id/checkBoxInfiniteRange"
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent"
-      android:layout_weight="1"
-      android:text="@string/infinity"
-      />
 </LinearLayout>

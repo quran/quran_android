@@ -35,6 +35,7 @@ import javax.inject.Inject;
 public class AyahPlaybackFragment extends AyahActionFragment {
   private static final int ITEM_LAYOUT = R.layout.sherlock_spinner_item;
   private static final int ITEM_DROPDOWN_LAYOUT = R.layout.sherlock_spinner_dropdown_item;
+  private static final int MAX_REPEATS = 25;
 
   private SuraAyah decidedStart;
   private SuraAyah decidedEnd;
@@ -52,8 +53,6 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   private NumberPicker repeatVersePicker;
   private NumberPicker repeatRangePicker;
   private CheckBox restrictToRange;
-  private CheckBox infiniteVerse;
-  private CheckBox infiniteRange;
   private ArrayAdapter<CharSequence> startAyahAdapter;
   private ArrayAdapter<CharSequence> endingAyahAdapter;
 
@@ -75,19 +74,27 @@ public class AyahPlaybackFragment extends AyahActionFragment {
     applyButton.setOnClickListener(mOnClickListener);
     repeatVersePicker = view.findViewById(R.id.repeat_verse_picker);
     repeatRangePicker = view.findViewById(R.id.repeat_range_picker);
-    infiniteVerse = view.findViewById(R.id.checkBoxInfiniteVerse);
-    infiniteRange = view.findViewById(R.id.checkBoxInfiniteRange);
-
 
     final Context context = requireContext();
 
-    // Using Eastern Arabic Numerals
     boolean isArabicNames = QuranSettings.getInstance(context).isArabicNames();
+    final Locale locale;
+    if (isArabicNames) {
+      locale = new Locale("ar");
+    } else {
+      locale = Locale.getDefault();
+    }
+    final NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
+
+    final String[] values = new String[MAX_REPEATS + 1];
+    for (int i = 1; i <= MAX_REPEATS; i++) {
+      values[i - 1] = numberFormat.format(i);
+    }
+    values[MAX_REPEATS] = getString(R.string.infinity);
+
     if (isArabicNames) {
       repeatVersePicker.setFormatter(this::arFormat);
-      repeatVersePicker.setOrder(NumberPicker.DESCENDING);
       repeatRangePicker.setFormatter(this::arFormat);
-      repeatRangePicker.setOrder(NumberPicker.DESCENDING);
       Typeface typeface = TypefaceManager.getHeaderFooterTypeface(context);
       repeatVersePicker.setTypeface(typeface);
       repeatVersePicker.setSelectedTypeface(typeface);
@@ -100,12 +107,19 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       repeatRangePicker.setTextSize(R.dimen.arabic_number_picker_text_size);
     }
     repeatVersePicker.setMinValue(1);
-    repeatVersePicker.setValue(defaultVerseRepeat);
-    final int numOfOptions = 25;
-    repeatVersePicker.setMaxValue(numOfOptions);
+    repeatVersePicker.setMaxValue(MAX_REPEATS + 1);
     repeatRangePicker.setMinValue(1);
+    repeatRangePicker.setMaxValue(MAX_REPEATS + 1);
+    repeatVersePicker.setDisplayedValues(values);
+    repeatRangePicker.setDisplayedValues(values);
     repeatRangePicker.setValue(defaultRangeRepeat);
-    repeatRangePicker.setMaxValue(numOfOptions);
+    repeatVersePicker.setValue(defaultVerseRepeat);
+    repeatRangePicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
+      if (newVal > 1) {
+        // whenever we want to repeat the range, we have to enable restrictToRange
+        restrictToRange.setChecked(true);
+      }
+    });
 
     startAyahAdapter = initializeAyahSpinner(context, startAyahSpinner);
     endingAyahAdapter = initializeAyahSpinner(context, endingAyahSpinner);
@@ -166,19 +180,16 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       final int page = quranInfo.getPageFromSuraAyah(currentStart.sura, currentStart.ayah);
       int repeatVerse = repeatVersePicker.getValue() - 1;
       int repeatRange = repeatRangePicker.getValue() - 1;
-      // Overwrite if infinite checkbox is checked
-      if (infiniteRange.isChecked()) {
-        repeatRange = -1;
-        repeatRangePicker.setValue(defaultRangeRepeat);
-      }
-      if (infiniteVerse.isChecked()) {
+
+      if (repeatVerse == MAX_REPEATS) {
         repeatVerse = -1;
-        // other settings are meaningless
-        repeatVersePicker.setValue(defaultVerseRepeat);
-        repeatRangePicker.setValue(defaultRangeRepeat);
-        repeatRange = 0;
-        infiniteRange.setChecked(false);
       }
+
+      if (repeatRange == MAX_REPEATS) {
+        repeatRange = -1;
+      }
+
+      // Overwrite if infinite checkbox is checked
       final int verseRepeat = repeatVerse;
       final int rangeRepeat = repeatRange;
       final boolean enforceRange = restrictToRange.isChecked();
@@ -328,6 +339,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
       startSuraSpinner.setSelection(start.sura - 1);
       endingSuraSpinner.setSelection(ending.sura - 1);
       restrictToRange.setChecked(shouldEnforce);
+      repeatRangePicker.setValue(rangeRepeatCount + 1);
+      repeatVersePicker.setValue(verseRepeatCount + 1);
     }
   }
 }
