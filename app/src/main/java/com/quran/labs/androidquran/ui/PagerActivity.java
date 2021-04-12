@@ -1144,14 +1144,15 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private void onBookmarksChanged() {
     if (isInAyahMode) {
-      final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
+      final SuraAyah startRef = start;
+      final int startPage = quranInfo.getPageFromSuraAyah(startRef.sura, startRef.ayah);
       compositeDisposable.add(
-          bookmarkModel.getIsBookmarkedObservable(start.sura, start.ayah, startPage)
+          bookmarkModel.getIsBookmarkedObservable(startRef.sura, startRef.ayah, startPage)
               .observeOn(AndroidSchedulers.mainThread())
               .subscribeWith(new DisposableSingleObserver<Boolean>() {
                 @Override
                 public void onSuccess(@NonNull Boolean isBookmarked) {
-                  updateAyahBookmark(start, isBookmarked, true);
+                  updateAyahBookmark(startRef, isBookmarked, true);
                 }
 
                 @Override
