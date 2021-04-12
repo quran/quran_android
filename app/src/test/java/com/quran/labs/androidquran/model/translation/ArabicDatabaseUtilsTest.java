@@ -73,7 +73,7 @@ public class ArabicDatabaseUtilsTest {
       }
 
       @Override
-      Map<Integer, String> getAyahTextForAyat(List<Integer> ayat) {
+      public Map<Integer, String> getAyahTextForAyat(List<Integer> ayat) {
         Map<Integer, String> result = new HashMap<>();
         for (Integer ayahId : ayat) {
           result.put(ayahId, "verse " + ayahId);

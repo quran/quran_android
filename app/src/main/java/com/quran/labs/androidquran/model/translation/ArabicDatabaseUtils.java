@@ -106,7 +106,7 @@ public class ArabicDatabaseUtils {
         mergeBookmarksWithAyahText(bookmarks, getAyahTextForAyat(ayahIds));
   }
 
-  Map<Integer, String> getAyahTextForAyat(List<Integer> ayat) {
+  public Map<Integer, String> getAyahTextForAyat(List<Integer> ayat) {
     Map<Integer, String> result = new HashMap<>(ayat.size());
     DatabaseHandler arabicDatabaseHandler = getArabicDatabaseHandler();
     if (arabicDatabaseHandler != null) {

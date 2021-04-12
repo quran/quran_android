@@ -20,7 +20,7 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
   private val pageRub3Start = quranDataSource.getQuarterStartByPage()
   private val suraNumAyahs = quranDataSource.getNumberOfAyahsForSuraArray()
   private val suraIsMakki = quranDataSource.getIsMakkiBySuraArray()
-  private val quarters = quranDataSource.getQuartersArray()
+  val quarters = quranDataSource.getQuartersArray()
 
   val numberOfPages = quranDataSource.getNumberOfPages()
   val numberOfPagesDual = numberOfPages / 2
