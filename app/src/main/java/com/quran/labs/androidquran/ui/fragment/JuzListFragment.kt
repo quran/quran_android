@@ -137,10 +137,18 @@ class JuzListFragment : Fragment() {
     val quarters = if (QuranFileConstants.FETCH_QUARTER_NAMES_FROM_DATABASE) {
       juzListPresenter.quarters().toTypedArray()
     } else {
-      val res = resources
-      res.getStringArray(array.quarter_prefix_array)
+      val context = context
+      if (context != null) {
+        val res = context.resources
+        res.getStringArray(array.quarter_prefix_array)
+      } else {
+        emptyArray<String>()
+      }
     }
-    updateJuz2List(quarters)
+
+    if (isAdded && quarters.isNotEmpty()) {
+      updateJuz2List(quarters)
+    }
   }
 
   private fun updateJuz2List(quarters: Array<String>) {
