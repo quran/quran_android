@@ -20,7 +20,7 @@
       android:shortcutLongLabel="@string/menu_jump">
     <intent
         android:action="com.quran.labs.androidquran.jump_to"
-        android:targetPackage="com.quran.labs.androidquran.debug"
+        android:targetPackage="com.quran.labs.androidquran"
         android:targetClass="com.quran.labs.androidquran.ShortcutsActivity"
       />
   </shortcut>
