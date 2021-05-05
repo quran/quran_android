@@ -12,7 +12,8 @@ import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
 
 /**
  * Handle shortcuts by lauching the appropriate activity.
- * Currently, there is only one shortcut to go to the last page.
+ * Currently, there is one shortcut to go to the last page,
+ * and one shortcut to jump to any location in the Quran.
  */
 class ShortcutsActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
