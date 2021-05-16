@@ -9,12 +9,24 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.quran.labs.androidquran.base.BaseActivityTest
 import org.hamcrest.Matchers
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class QuranActivityTest : BaseActivityTest() {
   @get:Rule
   val rule = ActivityScenarioRule(QuranActivity::class.java)
+
+  @Before
+  fun setup() {
+    Intents.init()
+  }
+
+  @After
+  fun teardown() {
+    Intents.release()
+  }
 
   @Test
   fun testClickingOnSuraOnListViewNavigatesToSura() {
@@ -23,7 +35,6 @@ class QuranActivityTest : BaseActivityTest() {
         .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
 
     //when
-    Intents.init()
     Espresso.onView(
         Matchers.allOf(
             ViewMatchers.withText("Surah Al-Fatihah"), ViewMatchers.isCompletelyDisplayed()
