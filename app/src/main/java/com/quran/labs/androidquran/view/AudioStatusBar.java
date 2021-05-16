@@ -94,6 +94,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     super(context, attrs, defStyle);
 
     this.context = context;
+    repeatButton = new RepeatButton(context);
     Resources resources = getResources();
     buttonWidth = resources.getDimensionPixelSize(
         R.dimen.audiobar_button_width);
@@ -418,7 +419,6 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     addButton(button, withWeight);
     addButton(R.drawable.ic_next, withWeight);
 
-    repeatButton = new RepeatButton(context);
     addButton(repeatButton, R.drawable.ic_repeat, withWeight);
     updateRepeatButtonText();
 
