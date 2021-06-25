@@ -10,6 +10,9 @@ interface QuranFileManager {
   fun copyFromAssetsRelative(assetsPath: String, filename: String, destination: String)
 
   @WorkerThread
+  fun removeOldArabicDatabase(): Boolean
+
+  @WorkerThread
   fun hasArabicSearchDatabase(): Boolean
 
   @WorkerThread

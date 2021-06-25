@@ -69,6 +69,7 @@ class QuranDataPresenter @Inject internal constructor(
               .andThen(actuallyCheckPages(pages))
               .flatMap { Single.fromCallable { localDataUpgrade.processData(it) } }
               .map { checkPatchStatus(it) }
+              .flatMap { Single.fromCallable { localDataUpgrade.processPatch(it) } }
               .doOnSuccess {
                 if (!it.havePages()) {
                   try {
