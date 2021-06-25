@@ -240,6 +240,18 @@ class QuranFileUtils @Inject constructor(
   }
 
   @WorkerThread
+  override fun removeOldArabicDatabase(): Boolean {
+    val databaseQuranArabicDatabase = File(
+      getQuranDatabaseDirectory(appContext),
+      QuranDataProvider.QURAN_ARABIC_DATABASE
+    )
+
+    return if (databaseQuranArabicDatabase.exists()) {
+      databaseQuranArabicDatabase.delete()
+    } else true
+  }
+
+  @WorkerThread
   private fun copyFromAssets(assetsPath: String, filename: String, destination: String) {
     val assets = appContext.assets
     assets.open(assetsPath)

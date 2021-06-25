@@ -34,7 +34,7 @@ object QuranPageModule {
 
   @JvmStatic
   @Provides
-  fun provideLocalDataUpgrade(): LocalDataUpgrade = LocalDataUpgrade { it }
+  fun provideLocalDataUpgrade(): LocalDataUpgrade = object : LocalDataUpgrade {  }
 
   @JvmStatic
   @Provides
