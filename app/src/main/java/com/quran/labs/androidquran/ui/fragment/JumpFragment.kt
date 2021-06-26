@@ -255,10 +255,10 @@ class JumpFragment : DialogFragment() {
           results.values = originalItems
           results.count = originalItems.size
         } else {
-          val infix = constraint.toString().toLowerCase(Locale.getDefault())
+          val infix = constraint.toString().lowercase(Locale.getDefault())
           val filteredIndex = infix.toIntOrNull()?.toString()
           val filteredCopy = originalItems.filterIndexed { index, sura ->
-            sura.toLowerCase(Locale.getDefault()).contains(infix) ||
+            sura.lowercase(Locale.getDefault()).contains(infix) ||
                 // support English numbers in Arabic mode
                 filteredIndex != null && (index + 1).toString().contains(filteredIndex)
           }

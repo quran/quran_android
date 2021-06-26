@@ -99,5 +99,6 @@ public class QuranAdvancedPreferenceActivity extends QuranActionBarActivity {
       }
       locationToWrite = null;
     }
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
   }
 }

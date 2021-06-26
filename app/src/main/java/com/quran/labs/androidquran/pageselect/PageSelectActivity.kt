@@ -27,9 +27,7 @@ class PageSelectActivity : AppCompatActivity() {
     setContentView(R.layout.page_select)
 
     val display = windowManager.defaultDisplay
-    val width = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-      QuranDisplayHelper.getWidthKitKat(display)
-    else display.width
+    val width = QuranDisplayHelper.getWidthKitKat(display)
 
     adapter = PageSelectAdapter(LayoutInflater.from(this), width) {
       onPageTypeSelected(it)

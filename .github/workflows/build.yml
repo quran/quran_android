@@ -34,6 +34,11 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v2
 
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
       - name: Run tests
         run: ./gradlew testMadaniDebug feature:audio:testDebug -PdisableCrashlytics -PdisableFirebase
 
@@ -50,6 +55,11 @@ jobs:
     steps:
       - name: Checkout the Code
         uses: actions/checkout@v2
+
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
 
       - name: Run instrumentation tests
         uses: reactivecircus/android-emulator-runner@v2

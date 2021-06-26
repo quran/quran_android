@@ -90,5 +90,6 @@ public class QuranImportActivity extends AppCompatActivity implements
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
       @NonNull int[] grantResults) {
     mPresenter.onPermissionsResult(requestCode, grantResults);
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
   }
 }

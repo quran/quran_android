@@ -63,7 +63,6 @@ public class SuraListFragment extends Fragment {
 
     final Context context = getActivity();
     mRecyclerView = view.findViewById(R.id.recycler_view);
-    mRecyclerView.setHasFixedSize(true);
     mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
     mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 

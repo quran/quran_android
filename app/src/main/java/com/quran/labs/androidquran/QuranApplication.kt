@@ -81,9 +81,7 @@ open class QuranApplication : MultiDexApplication() {
     val resources = context.resources
     val config = resources.configuration
     config.locale = locale
-    if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
-      config.setLayoutDirection(config.locale)
-    }
+    config.setLayoutDirection(config.locale)
     resources.updateConfiguration(config, resources.displayMetrics)
   }
 }

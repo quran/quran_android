@@ -10,7 +10,7 @@ class MultiDns(private val servers: List<Dns>) : Dns {
     var lastException: Exception? = null
     for (i in servers.indices) {
       try {
-        return servers[i].lookup(hostname)
+        return servers[i].lookup(hostname).toMutableList()
       } catch (unknownHostException: UnknownHostException) {
         lastException = unknownHostException
       }

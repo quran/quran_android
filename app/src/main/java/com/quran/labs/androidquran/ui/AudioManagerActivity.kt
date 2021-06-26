@@ -67,7 +67,6 @@ class AudioManagerActivity : QuranActionBarActivity() {
     shuyookhAdapter = ShuyookhAdapter(qariItems)
 
     recyclerView = findViewById(R.id.recycler_view)
-    recyclerView.setHasFixedSize(true)
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.itemAnimator = DefaultItemAnimator()
     recyclerView.adapter = shuyookhAdapter
