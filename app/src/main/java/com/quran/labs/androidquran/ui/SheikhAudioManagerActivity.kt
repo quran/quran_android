@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.IntentFilter
 import android.os.Bundle
@@ -99,7 +100,6 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
     surahAdapter = SurahAdapter(this)
 
     recyclerView = findViewById(R.id.recycler_view)
-    recyclerView.setHasFixedSize(true)
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.itemAnimator = DefaultItemAnimator()
     recyclerView.adapter = surahAdapter

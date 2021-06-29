@@ -173,7 +173,7 @@ class QuranFileUtils @Inject constructor(
   }
 
   private val isSDCardMounted: Boolean
-    private get() {
+    get() {
       val state = Environment.getExternalStorageState()
       return state == Environment.MEDIA_MOUNTED
     }
@@ -297,7 +297,7 @@ class QuranFileUtils @Inject constructor(
     try {
       val response = call.execute()
       if (response.isSuccessful) {
-        responseBody = response.body()
+        responseBody = response.body
         if (responseBody != null) {
           // handling for BitmapFactory.decodeStream not throwing an error
           // when the download is interrupted or an exception occurs. This

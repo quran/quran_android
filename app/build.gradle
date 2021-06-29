@@ -3,10 +3,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'net.ltgt.errorprone'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.firebase.crashlytics'
 if (getGradle().getStartParameter().getTaskRequests().toString().contains("Release") &&
-    !project.hasProperty("disableFirebase")) {
+    !project.hasProperty("disableFirebase") && !project.hasProperty("disableCrashlytics")) {
   apply plugin: 'com.google.gms.google-services'
+  apply plugin: 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -49,14 +49,10 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.cfg'
       signingConfig signingConfigs.release
       versionNameSuffix "-beta"
-      if (project.hasProperty('disableCrashlytics')) {
-        firebaseCrashlytics.mappingFileUploadEnabled false
-      }
       matchingFallbacks = ['debug']
     }
 
     debug {
-      firebaseCrashlytics.mappingFileUploadEnabled false
       applicationIdSuffix ".debug"
       versionNameSuffix "-debug"
     }
@@ -65,9 +61,6 @@ android {
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.cfg'
       signingConfig signingConfigs.release
-      if (project.hasProperty('disableCrashlytics')) {
-        firebaseCrashlytics.mappingFileUploadEnabled false
-      }
     }
   }
 
@@ -162,22 +155,20 @@ dependencies {
 
   implementation "dev.chrisbanes:insetter-ktx:0.3.1"
   implementation 'com.jakewharton.timber:timber:4.7.1'
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
-  implementation 'com.google.firebase:firebase-crashlytics:17.4.0'
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.7'
+  implementation 'com.google.firebase:firebase-crashlytics:18.0.1'
 
   testImplementation "junit:junit:${junitVersion}"
   testImplementation "com.google.truth:truth:${truthVersion}"
-  testImplementation "org.mockito:mockito-core:3.8.0"
+  testImplementation "org.mockito:mockito-core:3.10.0"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
 
   androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
   androidTestImplementation "androidx.test.ext:junit:${androidxJunitExtVersion}"
 
-  errorprone 'com.google.errorprone:error_prone_core:2.5.1'
-  //noinspection GradleDynamicVersion
-  errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+  errorprone 'com.google.errorprone:error_prone_core:2.7.1'
 
   // Number Picker
-  implementation 'com.shawnlin:number-picker:2.4.12'
+  implementation 'io.github.ShawnLin013:number-picker:2.4.13'
 }

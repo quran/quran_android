@@ -29,7 +29,7 @@ class ImageUtil @Inject constructor(private val okHttpClient: OkHttpClient) {
         if (response.isSuccessful) {
           try {
             // save the png from the download to a temporary file
-            response.body()
+            response.body
                 ?.source()
                 ?.use { source ->
                   destination.sink()
