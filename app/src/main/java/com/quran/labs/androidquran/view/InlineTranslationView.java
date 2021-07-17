@@ -90,6 +90,7 @@ public class InlineTranslationView extends ScrollView {
         addTextForAyah(translations, ayat.get(i));
       }
       addFooterSpacer();
+      this.scrollTo(0, 0);
     }
   }
 
