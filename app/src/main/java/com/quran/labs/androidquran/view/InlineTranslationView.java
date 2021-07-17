@@ -20,6 +20,7 @@ import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
 import com.quran.labs.androidquran.util.QuranSettings;
 
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.StyleRes;

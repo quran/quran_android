@@ -185,9 +185,9 @@ public class PagerActivity extends QuranActionBarActivity implements
   private ViewGroup.MarginLayoutParams audioBarParams;
   private boolean isInMultiWindowMode;
 
-  private String[] translationItems;
-  private List<LocalTranslation> translations;
-  private Set<String> activeTranslations;
+  private String[] translationSpinnerTitles;
+  private List<LocalTranslation> allTranslationsFromDb;
+  private Set<String> activeTranslationsFilesNames;
   private TranslationsSpinnerAdapter translationsSpinnerAdapter;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
@@ -346,7 +346,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     initAyahActionPanel();
 
-    if (showingTranslation && translationItems != null) {
+    if (showingTranslation && translationSpinnerTitles != null) {
       updateActionBarSpinner();
     } else {
       updateActionBarTitle(numberOfPages - page);
@@ -997,8 +997,8 @@ public class PagerActivity extends QuranActionBarActivity implements
       switchToQuran();
       return true;
     } else if (itemId == R.id.goto_translation) {
-      if (translations != null) {
-        quranEventLogger.switchToTranslationMode(translations.size());
+      if (allTranslationsFromDb != null) {
+        quranEventLogger.switchToTranslationMode(allTranslationsFromDb.size());
         switchToTranslation();
       }
       return true;
@@ -1075,7 +1075,7 @@ public class PagerActivity extends QuranActionBarActivity implements
       endAyahMode();
     }
 
-    if (translations.size() == 0) {
+    if (allTranslationsFromDb.size() == 0) {
       startTranslationManager();
     } else {
       int page = getCurrentPage();
@@ -1123,16 +1123,16 @@ public class PagerActivity extends QuranActionBarActivity implements
         }
       };
 
-  public List<LocalTranslation> getTranslations() {
-    return translations;
+  public List<LocalTranslation> getAllTranslationsFromDb() {
+    return allTranslationsFromDb;
   }
 
-  public String[] getTranslationNames() {
-    return translationItems;
+  public String[] getTranslationSpinnerTitles() {
+    return translationSpinnerTitles;
   }
 
-  public Set<String> getActiveTranslations() {
-    return activeTranslations;
+  public Set<String> getActiveTranslationsFilesNames() {
+    return activeTranslationsFilesNames;
   }
 
   @Override
@@ -1187,7 +1187,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void updateActionBarSpinner() {
-    if (translationItems == null || translationItems.length == 0) {
+    if (translationSpinnerTitles == null || translationSpinnerTitles.length == 0) {
       int page = getCurrentPage();
       updateActionBarTitle(page);
       return;
@@ -1195,8 +1195,8 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     if (translationsSpinnerAdapter == null) {
       translationsSpinnerAdapter = new TranslationsSpinnerAdapter(this,
-          R.layout.translation_ab_spinner_item, translationItems, translations,
-          activeTranslations == null ? quranSettings.getActiveTranslations() : activeTranslations,
+          R.layout.translation_ab_spinner_item, translationSpinnerTitles, allTranslationsFromDb,
+          activeTranslationsFilesNames == null ? quranSettings.getActiveTranslations() : activeTranslationsFilesNames,
           translationItemChangedListener) {
         @NonNull
         @Override
@@ -1401,21 +1401,21 @@ public class PagerActivity extends QuranActionBarActivity implements
                   }
                 }
 
-                Set<String> currentActiveTranslations = quranSettings.getActiveTranslations();
-                if (currentActiveTranslations.isEmpty() && items > 0) {
-                  currentActiveTranslations = new HashSet<>();
+                Set<String> currentActiveTranslationsFilesNames = quranSettings.getActiveTranslations();
+                if (currentActiveTranslationsFilesNames.isEmpty() && items > 0) {
+                  currentActiveTranslationsFilesNames = new HashSet<>();
                   for (int i = 0; i < items; i++) {
-                    currentActiveTranslations.add(sortedTranslations.get(i).getFilename());
+                    currentActiveTranslationsFilesNames.add(sortedTranslations.get(i).getFilename());
                   }
                 }
-                activeTranslations = currentActiveTranslations;
+                activeTranslationsFilesNames = currentActiveTranslationsFilesNames;
 
                 if (translationsSpinnerAdapter != null) {
                   translationsSpinnerAdapter
-                      .updateItems(titles, sortedTranslations, activeTranslations);
+                      .updateItems(titles, sortedTranslations, activeTranslationsFilesNames);
                 }
-                translationItems = titles;
-                translations = sortedTranslations;
+                translationSpinnerTitles = titles;
+                allTranslationsFromDb = sortedTranslations;
 
                 if (showingTranslation) {
                   // Since translation items have changed, need to
