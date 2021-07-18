@@ -45,4 +45,5 @@ class QuranPreferenceActivity : QuranActionBarActivity() {
     finish()
     startActivity(intent)
   }
+
 }
