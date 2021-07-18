@@ -2,10 +2,9 @@ package com.quran.labs.androidquran.widget
 
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import io.reactivex.android.plugins.RxAndroidPlugins
+import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.TestScheduler
 import io.reactivex.subjects.PublishSubject
-import org.junit.AfterClass
-import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.InjectMocks
@@ -84,18 +83,14 @@ class BookmarksWidgetSubscriberTest {
 
   companion object {
 
-    private val testScheduler = TestScheduler()
+    val testScheduler: TestScheduler = TestScheduler()
 
-    @BeforeClass
-    @JvmStatic
-    fun setup() {
-      RxAndroidPlugins.setMainThreadSchedulerHandler { testScheduler }
-    }
+    init {
+      RxAndroidPlugins.setInitMainThreadSchedulerHandler { testScheduler }
+      RxJavaPlugins.setInitComputationSchedulerHandler { testScheduler }
+      RxJavaPlugins.setInitIoSchedulerHandler { testScheduler }
 
-    @AfterClass
-    @JvmStatic
-    fun tearDown() {
-      RxAndroidPlugins.reset()
     }
   }
+
 }
