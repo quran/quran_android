@@ -96,16 +96,7 @@ class ArabicDatabaseUtilsTest {
   }
 
   private fun makeText(words: Int): String {
-    val result = StringBuilder()
-
-    for (i in 0 until words) {
-      if (i > 0) {
-        result.append(" ")
-      }
-      result.append("word").append(i)
-    }
-
-    return result.toString()
+    return (0 until words).joinToString(" ") { "word$it" }
   }
 
   @Test
