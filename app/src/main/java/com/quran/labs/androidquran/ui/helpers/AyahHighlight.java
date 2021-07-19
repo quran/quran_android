@@ -2,9 +2,6 @@ package com.quran.labs.androidquran.ui.helpers;
 
 import androidx.annotation.NonNull;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class AyahHighlight {
   private String key;
   private boolean transition;
