@@ -45,6 +45,7 @@ class ArabicDatabaseUtilsTest {
 
     assertThat(result[0].ayahText).isNotEmpty()
     assertThat(result[1].ayahText).isNull()
+    assertThat(result[2].ayahText).isNotEmpty()
 
     assertThat(result).isNotSameInstanceAs(bookmarks)
   }
