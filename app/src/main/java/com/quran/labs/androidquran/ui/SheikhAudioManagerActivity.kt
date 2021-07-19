@@ -4,9 +4,13 @@ import android.content.Context
 import android.content.IntentFilter
 import android.os.Bundle
 import android.util.SparseBooleanArray
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.view.View.OnClickListener
 import android.view.View.OnLongClickListener
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -40,7 +44,8 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import java.io.File
-import java.util.*
+import java.util.ArrayList
+import java.util.Locale
 import javax.inject.Inject
 
 class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListener {
