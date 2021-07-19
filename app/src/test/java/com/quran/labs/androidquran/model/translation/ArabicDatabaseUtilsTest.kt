@@ -73,11 +73,7 @@ class ArabicDatabaseUtilsTest {
       }
 
       override fun getAyahTextForAyat(ayat: List<Int>): Map<Int, String> {
-        val result: MutableMap<Int, String> = HashMap()
-        for (ayahId in ayat) {
-          result[ayahId] = "verse $ayahId"
-        }
-        return result
+        return ayat.map { ayahId -> ayahId to "verse $ayahId" }.toMap()
       }
     }
   }
