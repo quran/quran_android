@@ -16,7 +16,6 @@ import org.mockito.MockitoAnnotations
 import com.google.common.truth.Truth.assertThat
 
 import java.util.ArrayList
-import java.util.HashMap
 
 class ArabicDatabaseUtilsTest {
 
