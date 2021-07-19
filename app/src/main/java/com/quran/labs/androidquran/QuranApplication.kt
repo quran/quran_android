@@ -2,8 +2,6 @@ package com.quran.labs.androidquran
 
 import android.content.Context
 import android.content.res.Resources
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import androidx.multidex.MultiDexApplication
 import androidx.work.Configuration
 import androidx.work.WorkManager
@@ -15,7 +13,7 @@ import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.RecordingLogTree
 import com.quran.labs.androidquran.widget.BookmarksWidgetSubscriber
 import timber.log.Timber
-import java.util.Locale
+import java.util.*
 import javax.inject.Inject
 
 open class QuranApplication : MultiDexApplication() {

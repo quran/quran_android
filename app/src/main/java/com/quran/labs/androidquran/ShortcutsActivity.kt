@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.ShortcutManager
 import android.os.Build
 import android.os.Bundle
-import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import com.quran.labs.androidquran.ui.QuranActivity
 import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity

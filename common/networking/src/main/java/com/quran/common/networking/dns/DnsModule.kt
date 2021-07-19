@@ -4,12 +4,10 @@ import dagger.Module
 import dagger.Provides
 import okhttp3.Cache
 import okhttp3.Dns
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.dnsoverhttps.DnsOverHttps
 import java.io.File
-import java.net.InetAddress
 import java.net.UnknownHostException
 
 @Module
