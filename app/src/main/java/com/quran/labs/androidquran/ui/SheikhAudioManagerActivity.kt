@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.IntentFilter
 import android.os.Bundle
@@ -26,11 +25,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.quran.data.core.QuranInfo
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.audio.QariItem
 import com.quran.labs.androidquran.data.QuranDisplayData
-import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener

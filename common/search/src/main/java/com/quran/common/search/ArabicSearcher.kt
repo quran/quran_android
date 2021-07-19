@@ -1,7 +1,6 @@
 package com.quran.common.search
 
 import android.database.Cursor
-import android.database.DatabaseUtils
 import android.database.MatrixCursor
 import android.database.sqlite.SQLiteDatabase
 import com.quran.common.search.arabic.ArabicCharacterHelper

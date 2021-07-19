@@ -2,8 +2,6 @@ package com.quran.labs.androidquran
 
 import android.content.Context
 import android.content.res.Resources
-import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import androidx.multidex.MultiDexApplication
 import androidx.work.Configuration
 import androidx.work.WorkManager
