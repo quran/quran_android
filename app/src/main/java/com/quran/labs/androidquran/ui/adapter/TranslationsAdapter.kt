@@ -69,12 +69,13 @@ class TranslationsAdapter(private val downloadedMenuActionListener: DownloadedMe
             }
           } else {
             leftImage.visibility = View.GONE
-            rightImage.setImageResource(R.drawable.ic_download)
-            rightImage.setOnClickListener(null)
-            rightImage.visibility = View.VISIBLE
-            rightImage.setOnClickListener(null)
-            rightImage.isClickable = false
-            rightImage.contentDescription = null
+            with(rightImage) {
+              setImageResource(R.drawable.ic_download)
+              setOnClickListener(null)
+              visibility = View.VISIBLE
+              isClickable = false
+              contentDescription = null
+            }
           }
         }
         R.layout.translation_sep -> {
@@ -90,7 +91,7 @@ class TranslationsAdapter(private val downloadedMenuActionListener: DownloadedMe
   }
 
   override fun getItemViewType(position: Int): Int {
-    return if (translations.get(position).isSeparator()) {
+    return if (translations[position].isSeparator()) {
       R.layout.translation_sep
     } else {
       R.layout.translation_row
