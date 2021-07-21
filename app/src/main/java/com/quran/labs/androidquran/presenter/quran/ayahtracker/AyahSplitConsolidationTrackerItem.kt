@@ -29,7 +29,7 @@ class AyahSplitConsolidationTrackerItem(
   }
 
   override fun onHighlightAyah(
-    page: Int, sura: Int, ayah: Int, type: HighlightType?, scrollToAyah: Boolean
+    page: Int, sura: Int, ayah: Int, type: HighlightType, scrollToAyah: Boolean
   ): Boolean {
     val firstResult = imageTrackerItem.onHighlightAyah(page, sura, ayah, type, scrollToAyah)
     val secondResult = translationTrackerItem.onHighlightAyah(page, sura, ayah, type, scrollToAyah)
@@ -41,12 +41,12 @@ class AyahSplitConsolidationTrackerItem(
     translationTrackerItem.onHighlightAyat(page, ayahKeys, type)
   }
 
-  override fun onUnHighlightAyah(page: Int, sura: Int, ayah: Int, type: HighlightType?) {
+  override fun onUnHighlightAyah(page: Int, sura: Int, ayah: Int, type: HighlightType) {
     imageTrackerItem.onUnHighlightAyah(page, sura, ayah, type)
     translationTrackerItem.onUnHighlightAyah(page, sura, ayah, type)
   }
 
-  override fun onUnHighlightAyahType(type: HighlightType?) {
+  override fun onUnHighlightAyahType(type: HighlightType) {
     imageTrackerItem.onUnHighlightAyahType(type)
     translationTrackerItem.onUnHighlightAyahType(type)
   }
