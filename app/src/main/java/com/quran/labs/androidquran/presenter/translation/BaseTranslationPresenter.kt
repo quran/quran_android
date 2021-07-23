@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.presenter.translation
 
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.common.LocalTranslation
+import com.quran.labs.androidquran.common.LocalTranslationDisplaySort
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.data.model.QuranText
 import com.quran.labs.androidquran.common.TranslationMetadata
@@ -18,8 +19,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import java.util.ArrayList
-import java.util.HashMap
+import java.util.*
 
 internal open class BaseTranslationPresenter<T> internal constructor(
     private val translationModel: TranslationModel,
@@ -34,11 +34,24 @@ internal open class BaseTranslationPresenter<T> internal constructor(
   var disposable: Disposable? = null
 
   fun getVerses(getArabic: Boolean,
-                translations: List<String>,
+                translationsFileNames: List<String>,
                 verseRange: VerseRange
   ): Single<ResultHolder> {
-    // get all the translations for these verses, using a source of the list of active translations
-    val source = Observable.fromIterable(translations)
+
+    val orderedTranslationsFilesNames: MutableList<String> = mutableListOf()
+    val translations = translationsAdapter.translations
+    val sortedTranslations: List<LocalTranslation> = ArrayList(translations)
+    Collections.sort(sortedTranslations, LocalTranslationDisplaySort())
+
+    for (t in sortedTranslations) {
+      for (i in translationsFileNames.indices) {
+        if (t.filename == translationsFileNames[i]) {
+          orderedTranslationsFilesNames.add(translationsFileNames[i])
+        }
+      }
+    }
+    // get all the translations for these verses, using a source of the list of ordered active translations
+    val source = Observable.fromIterable(orderedTranslationsFilesNames)
 
     val translationsObservable =
         source.concatMapEager { db ->
@@ -56,7 +69,7 @@ internal open class BaseTranslationPresenter<T> internal constructor(
         { arabic: List<QuranText>,
                     texts: List<List<QuranText>>,
                     map: Map<String, LocalTranslation> ->
-          val translationInfos = getTranslations(translations, map)
+          val translationInfos = getTranslations(orderedTranslationsFilesNames, map)
           val ayahInfo = combineAyahData(verseRange, arabic, texts, translationInfos)
           ResultHolder(translationInfos, ayahInfo)
         })

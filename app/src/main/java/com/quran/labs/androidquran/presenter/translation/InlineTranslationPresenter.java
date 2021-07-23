@@ -31,12 +31,12 @@ public class InlineTranslationPresenter extends
     this.quranSettings = quranSettings;
   }
 
-  public void refresh(List<String> orderedTranslationsFilesNames, VerseRange verseRange) { //  pass orderedTranslationsFilesNames here to return ordered Verses from DBs
+  public void refresh(VerseRange verseRange) {
     if (getDisposable() != null) {
       getDisposable().dispose();
     }
 
-    setDisposable(getVerses(false, orderedTranslationsFilesNames, verseRange)
+    setDisposable(getVerses(false, getTranslations(quranSettings), verseRange)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(new DisposableSingleObserver<ResultHolder>() {
           @Override
