@@ -54,8 +54,7 @@ open class QuranApplication : MultiDexApplication() {
     force: Boolean
   ) {
     val language = if (QuranSettings.getInstance(this).isArabicNames) "ar" else null
-    val locale: Locale
-    locale = when {
+    val locale: Locale = when {
       "ar" == language -> {
         Locale("ar")
       }
@@ -78,7 +77,7 @@ open class QuranApplication : MultiDexApplication() {
   private fun updateLocale(context: Context, locale: Locale) {
     val resources = context.resources
     val config = resources.configuration
-    config.locale = locale
+    config.setLocale(locale)
     config.setLayoutDirection(config.locale)
     resources.updateConfiguration(config, resources.displayMetrics)
   }
