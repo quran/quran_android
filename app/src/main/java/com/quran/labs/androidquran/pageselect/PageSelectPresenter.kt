@@ -71,7 +71,7 @@ class PageSelectPresenter @Inject
     generateData()
   }
 
-  override fun unbind(what: PageSelectActivity?) {
+  override fun unbind(what: PageSelectActivity) {
     if (currentView === what) {
       currentView = null
       compositeDisposable.clear()
