@@ -185,9 +185,9 @@ public class PagerActivity extends QuranActionBarActivity implements
   private ViewGroup.MarginLayoutParams audioBarParams;
   private boolean isInMultiWindowMode;
 
-  private String[] translationItems;
+  private String[] translationNames;
   private List<LocalTranslation> translations;
-  private Set<String> activeTranslations;
+  private Set<String> activeTranslationsFilesNames;
   private TranslationsSpinnerAdapter translationsSpinnerAdapter;
 
   public static final int MSG_HIDE_ACTIONBAR = 1;
@@ -346,7 +346,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     initAyahActionPanel();
 
-    if (showingTranslation && translationItems != null) {
+    if (showingTranslation && translationNames != null) {
       updateActionBarSpinner();
     } else {
       updateActionBarTitle(numberOfPages - page);
@@ -1128,11 +1128,11 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   public String[] getTranslationNames() {
-    return translationItems;
+    return translationNames;
   }
 
-  public Set<String> getActiveTranslations() {
-    return activeTranslations;
+  public Set<String> getActiveTranslationsFilesNames() {
+    return activeTranslationsFilesNames;
   }
 
   @Override
@@ -1187,7 +1187,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   }
 
   private void updateActionBarSpinner() {
-    if (translationItems == null || translationItems.length == 0) {
+    if (translationNames == null || translationNames.length == 0) {
       int page = getCurrentPage();
       updateActionBarTitle(page);
       return;
@@ -1195,8 +1195,8 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     if (translationsSpinnerAdapter == null) {
       translationsSpinnerAdapter = new TranslationsSpinnerAdapter(this,
-          R.layout.translation_ab_spinner_item, translationItems, translations,
-          activeTranslations == null ? quranSettings.getActiveTranslations() : activeTranslations,
+          R.layout.translation_ab_spinner_item, translationNames, translations,
+          activeTranslationsFilesNames == null ? quranSettings.getActiveTranslations() : activeTranslationsFilesNames,
           translationItemChangedListener) {
         @NonNull
         @Override
@@ -1401,20 +1401,20 @@ public class PagerActivity extends QuranActionBarActivity implements
                   }
                 }
 
-                Set<String> currentActiveTranslations = quranSettings.getActiveTranslations();
-                if (currentActiveTranslations.isEmpty() && items > 0) {
-                  currentActiveTranslations = new HashSet<>();
+                Set<String> currentActiveTranslationsFilesNames = quranSettings.getActiveTranslations();
+                if (currentActiveTranslationsFilesNames.isEmpty() && items > 0) {
+                  currentActiveTranslationsFilesNames = new HashSet<>();
                   for (int i = 0; i < items; i++) {
-                    currentActiveTranslations.add(sortedTranslations.get(i).getFilename());
+                    currentActiveTranslationsFilesNames.add(sortedTranslations.get(i).getFilename());
                   }
                 }
-                activeTranslations = currentActiveTranslations;
+                activeTranslationsFilesNames = currentActiveTranslationsFilesNames;
 
                 if (translationsSpinnerAdapter != null) {
                   translationsSpinnerAdapter
-                      .updateItems(titles, sortedTranslations, activeTranslations);
+                      .updateItems(titles, sortedTranslations, activeTranslationsFilesNames);
                 }
-                translationItems = titles;
+                translationNames = titles;
                 translations = sortedTranslations;
 
                 if (showingTranslation) {
