@@ -55,7 +55,7 @@ class AudioUpdateWorker(
             if (localUpdate.needsDatabaseUpgrade) {
               // delete the database
               val dbPath = audioUtils.getQariDatabasePathIfGapless(context, localUpdate.qari)
-              SuraTimingDatabaseHandler.clearDatabaseHandlerIfExists(dbPath)
+              dbPath?.let { SuraTimingDatabaseHandler.clearDatabaseHandlerIfExists(it) }
               Timber.d("would remove %s", dbPath)
               File(dbPath).delete()
             }
