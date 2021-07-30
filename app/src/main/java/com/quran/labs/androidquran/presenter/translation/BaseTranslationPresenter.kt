@@ -38,20 +38,16 @@ internal open class BaseTranslationPresenter<T> internal constructor(
                 verseRange: VerseRange
   ): Single<ResultHolder> {
 
-    val orderedTranslationsFilesNames: MutableList<String> = mutableListOf()
     val translations = translationsAdapter.getTranslations()
     val sortedTranslations: List<LocalTranslation> = ArrayList(translations)
     Collections.sort(sortedTranslations, LocalTranslationDisplaySort())
 
-    for (t in sortedTranslations) {
-      for (i in translationsFileNames.indices) {
-        if (t.filename == translationsFileNames[i]) {
-          orderedTranslationsFilesNames.add(translationsFileNames[i])
-        }
-      }
-    }
+    val orderedTranslationsFileNames = sortedTranslations
+      .filter { translationsFileNames.contains(it.filename) }
+      .map { it.filename }
+
     // get all the translations for these verses, using a source of the list of ordered active translations
-    val source = Observable.fromIterable(orderedTranslationsFilesNames)
+    val source = Observable.fromIterable(orderedTranslationsFileNames)
 
     val translationsObservable =
         source.concatMapEager { db ->
@@ -69,7 +65,7 @@ internal open class BaseTranslationPresenter<T> internal constructor(
         { arabic: List<QuranText>,
                     texts: List<List<QuranText>>,
                     map: Map<String, LocalTranslation> ->
-          val translationInfos = getTranslations(orderedTranslationsFilesNames, map)
+          val translationInfos = getTranslations(orderedTranslationsFileNames, map)
           val ayahInfo = combineAyahData(verseRange, arabic, texts, translationInfos)
           ResultHolder(translationInfos, ayahInfo)
         })
