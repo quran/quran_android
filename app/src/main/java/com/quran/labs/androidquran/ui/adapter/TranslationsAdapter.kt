@@ -39,48 +39,46 @@ class TranslationsAdapter(private val downloadedMenuActionListener: DownloadedMe
 
   override fun onBindViewHolder(holder: TranslationViewHolder, position: Int) {
     val rowItem = translations[position]
-    with(holder) {
+    holder.apply {
       when (itemViewType) {
         R.layout.translation_row -> {
           val item = rowItem as TranslationItem
-          this.item = item
+          this.translationItem = item
           itemView.isActivated =
             (selectedItem != null) && (item.translation.id == selectedItem?.translation?.id)
-          translationTitle.text = item.name()
+          translationTitle?.text = item.name()
 
           if (TextUtils.isEmpty(item.translation.translatorNameLocalized)) {
-            holder.translationInfo.text = item.translation.translator
+            holder.translationInfo?.text = item.translation.translator
           } else {
-            holder.translationInfo.text = item.translation.translatorNameLocalized
+            holder.translationInfo?.text = item.translation.translatorNameLocalized
           }
 
           val leftImage = this.leftImage
           val rightImage = this.rightImage
 
           if (item.exists()) {
-            rightImage.visibility = View.GONE
+            rightImage?.visibility = View.GONE
             itemView.setOnLongClickListener(actionMenuListener)
             if (item.needsUpgrade()) {
-              leftImage.setImageResource(R.drawable.ic_download)
-              leftImage.visibility = View.VISIBLE
-              translationInfo.setText(R.string.update_available)
+              leftImage?.setImageResource(R.drawable.ic_download)
+              leftImage?.visibility = View.VISIBLE
+              translationInfo?.setText(R.string.update_available)
             } else {
-              leftImage.visibility = View.GONE
+              leftImage?.visibility = View.GONE
             }
           } else {
-            leftImage.visibility = View.GONE
-            with(rightImage) {
-              setImageResource(R.drawable.ic_download)
-              setOnClickListener(null)
-              visibility = View.VISIBLE
-              isClickable = false
-              contentDescription = null
-            }
+            leftImage?.visibility = View.GONE
+            rightImage?.setImageResource(R.drawable.ic_download)
+            rightImage?.setOnClickListener(null)
+            rightImage?.visibility = View.VISIBLE
+            rightImage?.isClickable = false
+            rightImage?.contentDescription = null
           }
         }
         R.layout.translation_sep -> {
           itemView.isActivated = false
-          separatorText.text = rowItem.name()
+          separatorText?.text = rowItem.name()
         }
       }
     }
@@ -142,20 +140,20 @@ class TranslationsAdapter(private val downloadedMenuActionListener: DownloadedMe
   }
 
   inner class TranslationViewHolder(itemView: View, viewType: Int) : RecyclerView.ViewHolder(itemView) {
-    val translationTitle: TextView = itemView.findViewById(R.id.translation_title)
-    val translationInfo: TextView = itemView.findViewById(R.id.translation_info)
-    val leftImage: ImageView = itemView.findViewById(R.id.left_image)
-    val rightImage: ImageView = itemView.findViewById(R.id.right_image)
-    val separatorText: TextView = itemView.findViewById(R.id.separator_txt)
-    var item: TranslationItem? = null
+    var translationTitle: TextView? = itemView.findViewById(R.id.translation_title)
+    var translationInfo: TextView? = itemView.findViewById(R.id.translation_info)
+    var leftImage: ImageView? = itemView.findViewById(R.id.left_image)
+    var rightImage: ImageView? = itemView.findViewById(R.id.right_image)
+    var separatorText: TextView? = itemView.findViewById(R.id.separator_txt)
+    var translationItem: TranslationItem? = null
 
     init {
       if (viewType == R.layout.translation_row) {
         itemView.setOnClickListener {
           downloadedMenuActionListener.finishMenuAction()
-          item?.let {
-            if (!it.exists() || it.needsUpgrade()) {
-              onClickDownloadSubject.onNext(it)
+          translationItem?.let { item ->
+            if (!item.exists() || item.needsUpgrade()) {
+              onClickDownloadSubject.onNext(item)
             }
           }
         }
@@ -163,7 +161,7 @@ class TranslationsAdapter(private val downloadedMenuActionListener: DownloadedMe
     }
 
     val actionMenuListener = OnLongClickListener {
-      item?.let { downloadedMenuActionListener.startMenuAction(it, downloadedItemActionListener) }
+      translationItem?.let { item -> downloadedMenuActionListener.startMenuAction(item, downloadedItemActionListener) }
       true
     }
   }
