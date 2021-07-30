@@ -37,8 +37,9 @@ internal open class BaseTranslationPresenter<T> internal constructor(
                 translationsFileNames: List<String>,
                 verseRange: VerseRange
   ): Single<ResultHolder> {
-
+    
     val translations = translationsAdapter.getTranslations()
+    
     val sortedTranslations: List<LocalTranslation> = ArrayList(translations)
     Collections.sort(sortedTranslations, LocalTranslationDisplaySort())
 
