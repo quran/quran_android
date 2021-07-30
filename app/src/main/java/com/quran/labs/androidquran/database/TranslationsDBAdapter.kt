@@ -5,13 +5,17 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.SparseArray
-import androidx.annotation.WorkerThread
+
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.dao.translation.TranslationItem
 import com.quran.labs.androidquran.database.TranslationsDBHelper.TranslationsTable
 import com.quran.labs.androidquran.util.QuranFileUtils
+
+import java.util.ArrayList
+import java.util.Collections
 import timber.log.Timber
-import java.util.*
+
+import androidx.annotation.WorkerThread
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,7 +35,7 @@ class TranslationsDBAdapter @Inject constructor(
 
   fun getTranslationsHash(): SparseArray<LocalTranslation> {
     val result = SparseArray<LocalTranslation>()
-    for (item in translations) {
+    for (item in getTranslations()) {
       result.put(item.id, item)
     }
     return result
@@ -39,9 +43,8 @@ class TranslationsDBAdapter @Inject constructor(
 
   // intentional, since cachedTranslations can be replaced by another thread, causing the check
   // to be true, but the cached object returned to be null (or to change).
-  @get:WorkerThread
-  val translations: List<LocalTranslation>
-  get() {
+  @WorkerThread
+  fun getTranslations(): List<LocalTranslation> {
     // intentional, since cachedTranslations can be replaced by another thread, causing the check
     // to be true, but the cached object returned to be null (or to change).
     val cached = cachedTranslations

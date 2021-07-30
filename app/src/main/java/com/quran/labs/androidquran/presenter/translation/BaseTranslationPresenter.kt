@@ -39,7 +39,7 @@ internal open class BaseTranslationPresenter<T> internal constructor(
   ): Single<ResultHolder> {
 
     val orderedTranslationsFilesNames: MutableList<String> = mutableListOf()
-    val translations = translationsAdapter.translations
+    val translations = translationsAdapter.getTranslations()
     val sortedTranslations: List<LocalTranslation> = ArrayList(translations)
     Collections.sort(sortedTranslations, LocalTranslationDisplaySort())
 
@@ -181,7 +181,7 @@ internal open class BaseTranslationPresenter<T> internal constructor(
   private fun getTranslationMapSingle(): Single<Map<String, LocalTranslation>> {
     return if (this.translationMap.isEmpty() ||
         this.lastCacheTime != translationsAdapter.lastWriteTime) {
-          Single.fromCallable { translationsAdapter.translations }
+          Single.fromCallable { translationsAdapter.getTranslations() }
             .map { translations -> translations.associateBy { it.filename } }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

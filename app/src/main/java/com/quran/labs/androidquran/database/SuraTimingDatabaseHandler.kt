@@ -76,9 +76,8 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
   }
 
   fun getAyahTimings(sura: Int): Cursor? {
-    if (!validDatabase()) {
-      return null
-    }
+    if (!validDatabase()) { return null }
+
     return try {
       database?.query(
         TimingsTable.TABLE_NAME, arrayOf(
@@ -93,8 +92,7 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
     }
   }
 
-  val version: Int
-    get() {
+  fun getVersion(): Int {
       if (!validDatabase()) {
         return -1
       }
