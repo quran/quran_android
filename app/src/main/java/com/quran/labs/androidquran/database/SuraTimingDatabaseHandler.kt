@@ -45,7 +45,7 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
       try {
         val handler = databaseMap.remove(databasePath)
         if (handler != null) {
-          handler.database!!.close()
+          handler.database?.close()
           databaseMap.remove(databasePath)
         }
       } catch (e: Exception) {
@@ -65,9 +65,7 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
       Timber.d("database corrupted: %s", path)
       null
     } catch (se: SQLException) {
-      Timber.d(
-        "database at $path ${if (File(path).exists()) "exists " else "doesn 't exist"}"
-      )
+      Timber.d("database at $path ${if (File(path).exists()) "exists " else "doesn 't exist"}")
       Timber.e(se)
       null
     }
