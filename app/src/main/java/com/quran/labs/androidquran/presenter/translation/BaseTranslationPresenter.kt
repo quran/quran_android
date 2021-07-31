@@ -37,8 +37,9 @@ internal open class BaseTranslationPresenter<T> internal constructor(
                 translationsFileNames: List<String>,
                 verseRange: VerseRange
   ): Single<ResultHolder> {
-
-    val translations = translationsAdapter.translations
+    
+    val translations = translationsAdapter.getTranslations()
+    
     val sortedTranslations: List<LocalTranslation> = ArrayList(translations)
     Collections.sort(sortedTranslations, LocalTranslationDisplaySort())
 
@@ -177,15 +178,15 @@ internal open class BaseTranslationPresenter<T> internal constructor(
   private fun getTranslationMapSingle(): Single<Map<String, LocalTranslation>> {
     return if (this.translationMap.isEmpty() ||
         this.lastCacheTime != translationsAdapter.lastWriteTime) {
-      Single.fromCallable<List<LocalTranslation>> { translationsAdapter.translations }
-          .map { translations -> translations.associateBy { it.filename } }
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .doOnSuccess { map ->
-            this.lastCacheTime = translationsAdapter.lastWriteTime
-            this.translationMap.clear()
-            this.translationMap.putAll(map)
-          }
+          Single.fromCallable { translationsAdapter.getTranslations() }
+            .map { translations -> translations.associateBy { it.filename } }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { map ->
+              this.lastCacheTime = translationsAdapter.lastWriteTime
+              this.translationMap.clear()
+              this.translationMap.putAll(map)
+            }
     } else {
       Single.just(this.translationMap)
     }
