@@ -20,11 +20,14 @@ import io.reactivex.Single
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.schedulers.Schedulers
 
-import org.mockito.*
 import org.mockito.ArgumentMatchers.*
-import org.mockito.Mockito.`when`
+import org.mockito.Mock
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.spy
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import org.mockito.internal.verification.VerificationModeFactory.times
+import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
 
 class TagBookmarkPresenterTest {
 
@@ -56,7 +59,7 @@ class TagBookmarkPresenterTest {
     val latch = CountDownLatch(1)
     val secondLatch = CountDownLatch(2)
 
-    val presenter: TagBookmarkPresenter = Mockito.spy(object : TagBookmarkPresenter(bookmarkModel) {
+    val presenter: TagBookmarkPresenter = spy(object : TagBookmarkPresenter(bookmarkModel) {
       override fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
         super.onRefreshedData(data)
         latch.countDown()
@@ -71,10 +74,10 @@ class TagBookmarkPresenterTest {
     secondLatch.await()
 
     // make sure we called refresh twice
-    verify(presenter, Mockito.times(2)).refresh()
+    verify(presenter, times(2)).refresh()
 
     // but make sure we only queried tags from the database once
-    verify(bookmarkModel, Mockito.times(1)).tagsObservable
+    verify(bookmarkModel, times(1)).tagsObservable
   }
 
   @Test
@@ -85,7 +88,7 @@ class TagBookmarkPresenterTest {
 
     val saveLatch = CountDownLatch(1)
     val refreshLatch = CountDownLatch(1)
-    val presenter: TagBookmarkPresenter = Mockito.spy(object : TagBookmarkPresenter(bookmarkModel) {
+    val presenter: TagBookmarkPresenter = spy(object : TagBookmarkPresenter(bookmarkModel) {
       override fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
         super.onRefreshedData(data)
         refreshLatch.countDown()
@@ -102,12 +105,12 @@ class TagBookmarkPresenterTest {
 
     // try to modify a tag - save shouldn't be called
     assertThat(presenter.toggleTag(1)).isTrue()
-    verify(presenter, Mockito.times(0)).saveChanges()
+    verify(presenter, times(0)).saveChanges()
 
     // explicitly call save
     presenter.saveChanges()
     saveLatch.countDown()
-    verify(presenter, Mockito.times(1)).saveChanges()
+    verify(presenter, times(1)).saveChanges()
   }
 
   @Test
@@ -126,7 +129,7 @@ class TagBookmarkPresenterTest {
     val latch = CountDownLatch(1)
     val secondLatch = CountDownLatch(2)
 
-    val presenter: TagBookmarkPresenter = Mockito.spy(object : TagBookmarkPresenter(bookmarkModel) {
+    val presenter: TagBookmarkPresenter = spy(object : TagBookmarkPresenter(bookmarkModel) {
       override fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
         super.onRefreshedData(data)
         refreshLatch.countDown()
@@ -153,25 +156,25 @@ class TagBookmarkPresenterTest {
     presenter.saveChanges()
     secondLatch.await()
 
-    verify(bookmarkModel, Mockito.times(1))
+    verify(bookmarkModel, times(1))
       .updateBookmarkTags(any(LongArray::class.java), any(), anyBoolean())
   }
 
   @Test
   fun testAddDialogCall() {
-    val bookmarkDialog = Mockito.mock(TagBookmarkDialog::class.java)
+    val bookmarkDialog = mock(TagBookmarkDialog::class.java)
 
-    val presenter = Mockito.spy(TagBookmarkPresenter(bookmarkModel))
+    val presenter = spy(TagBookmarkPresenter(bookmarkModel))
     presenter.bind(bookmarkDialog)
     assertThat(presenter.toggleTag(-1)).isFalse()
-    verify(bookmarkDialog, Mockito.times(1)).showAddTagDialog()
+    verify(bookmarkDialog, times(1)).showAddTagDialog()
     presenter.unbind(bookmarkDialog)
   }
 
   @Test
   fun testAddDialogCallUnbound() {
-    val presenter = Mockito.spy(TagBookmarkPresenter(bookmarkModel))
+    val presenter = spy(TagBookmarkPresenter(bookmarkModel))
     assertThat(presenter.toggleTag(-1)).isFalse()
-    verify(presenter, Mockito.times(0)).setMadeChanges()
+    verify(presenter, times(0)).setMadeChanges()
   }
 }
