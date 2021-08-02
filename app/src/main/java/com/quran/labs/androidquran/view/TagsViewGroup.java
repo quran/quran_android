@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.quran.labs.androidquran.R;
 import com.quran.data.model.bookmark.Tag;
-import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
 
@@ -27,7 +26,6 @@ public class TagsViewGroup extends LinearLayout {
   private int mTagsMargin;
   private int mTagsTextSize;
   private int mDefaultTagBackgroundColor;
-  private boolean mIsRtl;
   private Context mContext;
 
   private List<Tag> mTags;
@@ -60,7 +58,6 @@ public class TagsViewGroup extends LinearLayout {
     mTagsTextSize = resources.getDimensionPixelSize(R.dimen.tag_text_size);
     mDefaultTagBackgroundColor = ContextCompat.getColor(context, R.color.accent_color_dark);
     mTagsToShow = MAX_TAGS;
-    mIsRtl = QuranSettings.getInstance(context).isArabicNames();
   }
 
   public void setTags(List<Tag> tags) {
@@ -100,23 +97,11 @@ public class TagsViewGroup extends LinearLayout {
   }
 
   private void setStartMargin(LayoutParams params, int value) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-      params.setMarginStart(value);
-    } else if (mIsRtl) {
-      params.rightMargin = value;
-    } else {
-      params.leftMargin = value;
-    }
+    params.setMarginStart(value);
   }
 
   private void setEndMargin(LayoutParams params, int value) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-      params.setMarginEnd(value);
-    } else if (mIsRtl) {
-      params.leftMargin = value;
-    } else {
-      params.rightMargin = value;
-    }
+    params.setMarginEnd(value);
   }
 
   @Override
