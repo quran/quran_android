@@ -25,7 +25,7 @@ class ShowJumpFragmentActivity : QuranActionBarActivity(), JumpDestination {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     (application as QuranApplication).applicationComponent.inject(this)
-    supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+    supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
   }
 
   override fun onStart() {
