@@ -11,6 +11,7 @@ import org.junit.Test
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.Mockito.*
+import org.mockito.Mockito.`when` as whenever
 import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
 import org.mockito.quality.Strictness
@@ -33,9 +34,9 @@ class BookmarksWidgetSubscriberTest {
 
   @Test
   fun testSubscribeBookmarksWidgetIfBookmarksWidgetsExist() {
-    `when`(bookmarksWidgetUpdater.checkForAnyBookmarksWidgets()).thenReturn(true)
+    whenever(bookmarksWidgetUpdater.checkForAnyBookmarksWidgets()).thenReturn(true)
     val testSubject = PublishSubject.create<Boolean>().toSerialized()
-    `when`(bookmarkModel.bookmarksObservable()).thenReturn(testSubject.hide())
+    whenever(bookmarkModel.bookmarksObservable()).thenReturn(testSubject.hide())
 
     bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
     testScheduler.advanceTimeBy(1, TimeUnit.SECONDS)
@@ -48,7 +49,7 @@ class BookmarksWidgetSubscriberTest {
 
   @Test
   fun testDontSubscribeBookmarksWidgetIfNoBookmarksWidgetsExist() {
-    `when`(bookmarksWidgetUpdater.checkForAnyBookmarksWidgets()).thenReturn(false)
+    whenever(bookmarksWidgetUpdater.checkForAnyBookmarksWidgets()).thenReturn(false)
 
     bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
 
@@ -57,9 +58,9 @@ class BookmarksWidgetSubscriberTest {
 
   @Test
   fun testSubscribeBookmarksWidgetIfWidgetGetsAdded() {
-    `when`(bookmarksWidgetUpdater.checkForAnyBookmarksWidgets()).thenReturn(false)
+    whenever(bookmarksWidgetUpdater.checkForAnyBookmarksWidgets()).thenReturn(false)
     val testSubject = PublishSubject.create<Boolean>().toSerialized()
-    `when`(bookmarkModel.bookmarksObservable()).thenReturn(testSubject.hide())
+    whenever(bookmarkModel.bookmarksObservable()).thenReturn(testSubject.hide())
 
     bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
     bookmarksWidgetSubscriber.onEnabledBookmarksWidget()
@@ -71,9 +72,9 @@ class BookmarksWidgetSubscriberTest {
 
   @Test
   fun testUnsubscribeBookmarksWidgetIfAllBookmarksWidgetsGetRemoved() {
-    `when`(bookmarksWidgetUpdater.checkForAnyBookmarksWidgets()).thenReturn(true)
+    whenever(bookmarksWidgetUpdater.checkForAnyBookmarksWidgets()).thenReturn(true)
     val testSubject = PublishSubject.create<Boolean>().toSerialized()
-    `when`(bookmarkModel.bookmarksObservable()).thenReturn(testSubject.hide())
+    whenever(bookmarkModel.bookmarksObservable()).thenReturn(testSubject.hide())
 
     bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
     bookmarksWidgetSubscriber.onDisabledBookmarksWidget()
