@@ -8,7 +8,7 @@ import org.xbill.DNS.SimpleResolver
 import java.net.InetAddress
 
 class DnsFallback : Dns {
-  var initialized = false
+  private var initialized = false
 
   override fun lookup(hostname: String): MutableList<InetAddress> {
     if (!initialized) {
