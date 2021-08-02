@@ -29,7 +29,7 @@ import org.junit.Test
 import com.google.common.truth.Truth.assertThat
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.`when` as whenever
 import org.mockito.MockitoAnnotations
 
 class BookmarkPresenterTest {
@@ -114,10 +114,10 @@ class BookmarkPresenterTest {
     MockitoAnnotations.openMocks(this@BookmarkPresenterTest)
 
     QuranSettings.setInstance(settings)
-    `when`(appContext.getString(anyInt())).thenReturn("Test")
-    `when`(appContext.resources).thenReturn(resources)
-    `when`(resources.getStringArray(anyInt())).thenReturn(RESOURCE_ARRAY)
-    `when`(appContext.applicationContext).thenReturn(appContext)
+    whenever(appContext.getString(anyInt())).thenReturn("Test")
+    whenever(appContext.resources).thenReturn(resources)
+    whenever(resources.getStringArray(anyInt())).thenReturn(RESOURCE_ARRAY)
+    whenever(appContext.applicationContext).thenReturn(appContext)
   }
 
   @Test
@@ -179,7 +179,7 @@ class BookmarkPresenterTest {
       }
     }
 
-    `when`(settings.lastPage).thenReturn(42)
+    whenever(settings.lastPage).thenReturn(42)
 
     val presenter = makeBookmarkPresenter(model)
     val (rows, tagMap) = getBookmarkResultByDateAndValidate(presenter, false)
