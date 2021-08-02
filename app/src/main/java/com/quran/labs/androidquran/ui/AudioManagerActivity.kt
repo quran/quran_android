@@ -119,7 +119,7 @@ class AudioManagerActivity : QuranActionBarActivity() {
     return super.onOptionsItemSelected(item)
   }
 
-  private inner class ShuyookhAdapter internal constructor(val qariItems: List<QariItem>) :
+  private inner class ShuyookhAdapter(val qariItems: List<QariItem>) :
       Adapter<SheikhViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(this@AudioManagerActivity)
     private val downloadInfoMap: MutableMap<QariItem, QariDownloadInfo> = HashMap()
@@ -163,7 +163,7 @@ class AudioManagerActivity : QuranActionBarActivity() {
     }
   }
 
-  private inner class SheikhViewHolder internal constructor(itemView: View) :
+  private inner class SheikhViewHolder(itemView: View) :
       ViewHolder(itemView) {
     val name: TextView = itemView.findViewById(R.id.name)
     val quantity: TextView = itemView.findViewById(R.id.quantity)

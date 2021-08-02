@@ -212,7 +212,7 @@ class JumpFragment : DialogFragment() {
   /**
    * ListAdapter that supports filtering by using case-insensitive infix (substring).
    */
-  private class InfixFilterArrayAdapter internal constructor(
+  private class InfixFilterArrayAdapter(
     context: Context,
     @LayoutRes private val itemLayoutRes: Int,
     private val originalItems: List<String>

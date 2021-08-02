@@ -375,7 +375,7 @@ class QuranActivity : QuranActionBarActivity(),
     dialog.show(fm, AddTagDialog.TAG)
   }
 
-  private inner class PagerAdapter internal constructor(fm: FragmentManager) :
+  private inner class PagerAdapter(fm: FragmentManager) :
       FragmentPagerAdapter(fm) {
 
     override fun getCount() = 3
