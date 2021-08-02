@@ -101,17 +101,17 @@ public class QuranSettings {
 
   public int getPreferredDownloadAmount() {
     String str = prefs.getString(Constants.PREF_DOWNLOAD_AMOUNT,
-        "" + AudioUtils.LookAheadAmount.INSTANCE.getPAGE());
-    int val = AudioUtils.LookAheadAmount.INSTANCE.getPAGE();
+        "" + AudioUtils.LookAheadAmount.PAGE);
+    int val = AudioUtils.LookAheadAmount.PAGE;
     try {
       val = Integer.parseInt(str);
     } catch (Exception e) {
       // no op
     }
 
-    if (val > AudioUtils.LookAheadAmount.INSTANCE.getMAX() ||
-        val < AudioUtils.LookAheadAmount.INSTANCE.getMIN()) {
-      return AudioUtils.LookAheadAmount.INSTANCE.getPAGE();
+    if (val > AudioUtils.LookAheadAmount.MAX ||
+        val < AudioUtils.LookAheadAmount.MIN) {
+      return AudioUtils.LookAheadAmount.PAGE;
     }
     return val;
   }
