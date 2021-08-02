@@ -111,8 +111,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     setOrientation(LinearLayout.HORIZONTAL);
 
     // only flip the layout when the language is rtl and we're on api 17+
-    isRtl = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
-        (QuranSettings.getInstance(this.context).isArabicNames() || QuranUtils.isRtl());
+    isRtl = QuranSettings.getInstance(this.context).isArabicNames() || QuranUtils.isRtl();
     sharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(context.getApplicationContext());
     currentQari = sharedPreferences.getInt(Constants.PREF_DEFAULT_QARI, 0);
