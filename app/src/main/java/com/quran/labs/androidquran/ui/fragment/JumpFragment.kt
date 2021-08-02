@@ -108,9 +108,8 @@ class JumpFragment : DialogFragment() {
 
     suraInput.setOnForceCompleteListener { _: ForceCompleteTextView?, position: Int, _: Long ->
       val enteredText = suraInput.text.toString()
-      val suraName: String?
 
-      suraName = when {
+      val suraName: String? = when {
         // user selects
         position >= 0 -> { suraAdapter.getItem(position) }
         suras.contains(enteredText) -> { enteredText }
