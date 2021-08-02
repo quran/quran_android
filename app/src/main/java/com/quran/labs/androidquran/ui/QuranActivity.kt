@@ -403,7 +403,7 @@ class QuranActivity : QuranActionBarActivity(),
       }
     }
 
-    override fun getPageTitle(position: Int): CharSequence? {
+    override fun getPageTitle(position: Int): CharSequence {
       val resId = if (isRtl) ARABIC_TITLES[position] else TITLES[position]
       return getString(resId)
     }
