@@ -21,7 +21,7 @@ import okio.BufferedSource
 import com.google.common.truth.Truth.assertThat
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyString
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.`when` as whenever
 import org.mockito.Mockito.mock
 
 class QuranImportPresenterTest {
@@ -41,8 +41,8 @@ class QuranImportPresenterTest {
   fun testParseExternalFile() {
     val `is`: InputStream = ByteArrayInputStream(ByteArray(32))
     val resolver = mock(ContentResolver::class.java)
-    `when`(resolver.openInputStream(any())).thenReturn(`is`)
-    `when`(appContext.contentResolver).thenReturn(resolver)
+    whenever(resolver.openInputStream(any())).thenReturn(`is`)
+    whenever(appContext.contentResolver).thenReturn(resolver)
 
     val observer = TestObserver<BufferedSource?>()
     presenter.parseExternalFile(Uri.EMPTY)
@@ -61,8 +61,8 @@ class QuranImportPresenterTest {
   @Throws(FileNotFoundException::class)
   fun testParseExternalFileNullIs() {
     val resolver = mock(ContentResolver::class.java)
-    `when`(resolver.openInputStream(any(Uri::class.java))).thenReturn(null)
-    `when`(appContext.contentResolver).thenReturn(resolver)
+    whenever(resolver.openInputStream(any(Uri::class.java))).thenReturn(null)
+    whenever(appContext.contentResolver).thenReturn(resolver)
 
     val observer = TestObserver<BufferedSource>()
     presenter.parseExternalFile(Uri.EMPTY)
@@ -77,8 +77,8 @@ class QuranImportPresenterTest {
   @Throws(FileNotFoundException::class)
   fun testParseUriNullFd() {
     val resolver = mock(ContentResolver::class.java)
-    `when`(resolver.openFileDescriptor(any(Uri::class.java), anyString())).thenReturn(null)
-    `when`(appContext.contentResolver).thenReturn(resolver)
+    whenever(resolver.openFileDescriptor(any(Uri::class.java), anyString())).thenReturn(null)
+    whenever(appContext.contentResolver).thenReturn(resolver)
 
     val observer = TestObserver<BufferedSource>()
     presenter.parseUri(Uri.EMPTY)
@@ -93,11 +93,11 @@ class QuranImportPresenterTest {
   @Throws(FileNotFoundException::class)
   fun testParseUriWithException() {
     val pfd = mock(ParcelFileDescriptor::class.java)
-    `when`(pfd.fd).thenReturn(-1)
+    whenever(pfd.fd).thenReturn(-1)
 
     val resolver = mock(ContentResolver::class.java)
-    `when`(resolver.openFileDescriptor(any(), anyString())).thenReturn(pfd)
-    `when`(appContext.contentResolver).thenReturn(resolver)
+    whenever(resolver.openFileDescriptor(any(), anyString())).thenReturn(pfd)
+    whenever(appContext.contentResolver).thenReturn(resolver)
 
     val observer = TestObserver<BufferedSource>()
     presenter.parseUri(Uri.EMPTY)
