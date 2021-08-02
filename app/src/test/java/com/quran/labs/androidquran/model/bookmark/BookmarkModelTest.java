@@ -18,12 +18,12 @@ import androidx.core.util.Pair;
 import io.reactivex.observers.TestObserver;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anySetOf;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,7 +36,7 @@ public class BookmarkModelTest {
 
   @Before
   public void setupTest() {
-    MockitoAnnotations.initMocks(BookmarkModelTest.this);
+    MockitoAnnotations.openMocks(BookmarkModelTest.this);
     model = new BookmarkModel(bookmarksAdapter, recentPageModel);
   }
 
@@ -58,10 +58,10 @@ public class BookmarkModelTest {
   @Test
   public void testUpdateBookmarkTags() {
     when(bookmarksAdapter.tagBookmarks(
-        any(long[].class), anySetOf(long.class), anyBoolean())).thenReturn(true);
+        any(long[].class), anySet(), anyBoolean())).thenReturn(true);
 
     TestObserver<Boolean> testObserver = new TestObserver<>();
-    model.updateBookmarkTags(new long[] { }, new HashSet<Long>(), false)
+    model.updateBookmarkTags(new long[] { }, new HashSet<>(), false)
         .subscribe(testObserver);
     testObserver.awaitTerminalEvent();
     testObserver.assertNoErrors();
