@@ -26,7 +26,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.`when` as whenever
 import org.mockito.MockitoAnnotations
 
 class TagBookmarkPresenterTest {
@@ -48,9 +48,9 @@ class TagBookmarkPresenterTest {
 
     val tags: MutableList<Tag> = ArrayList()
     tags.add(Tag(1, "Test"))
-    `when`(bookmarkModel.tagsObservable()).thenReturn(Observable.empty())
-    `when`(bookmarkModel.tagsObservable).thenReturn(Single.just(tags))
-    `when`(bookmarkModel.getBookmarkTagIds(any())).thenReturn(Maybe.empty())
+    whenever(bookmarkModel.tagsObservable()).thenReturn(Observable.empty())
+    whenever(bookmarkModel.tagsObservable).thenReturn(Single.just(tags))
+    whenever(bookmarkModel.getBookmarkTagIds(any())).thenReturn(Maybe.empty())
   }
 
   @Test
@@ -83,7 +83,7 @@ class TagBookmarkPresenterTest {
   @Test
   @Throws(InterruptedException::class)
   fun testChangeShouldOnlySaveExplicitlyForBookmarkIds() {
-    `when`(bookmarkModel.updateBookmarkTags(any(LongArray::class.java), any(), anyBoolean()))
+    whenever(bookmarkModel.updateBookmarkTags(any(LongArray::class.java), any(), anyBoolean()))
       .thenReturn(Observable.just(true))
 
     val saveLatch = CountDownLatch(1)
@@ -116,10 +116,10 @@ class TagBookmarkPresenterTest {
   @Test
   @Throws(InterruptedException::class)
   fun testChangeShouldSaveImmediatelyForAyahBookmarks() {
-    `when`(bookmarkModel.updateBookmarkTags(any(LongArray::class.java), any(), anyBoolean()))
+    whenever(bookmarkModel.updateBookmarkTags(any(LongArray::class.java), any(), anyBoolean()))
       .thenReturn(Observable.just(true))
 
-    `when`(bookmarkModel.safeAddBookmark(anyInt(), anyInt(), anyInt()))
+    whenever(bookmarkModel.safeAddBookmark(anyInt(), anyInt(), anyInt()))
       .thenReturn(Observable.just(2L))
 
     // when refresh is done
