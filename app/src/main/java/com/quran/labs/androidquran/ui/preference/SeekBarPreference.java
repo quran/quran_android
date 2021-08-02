@@ -58,7 +58,6 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
     mPreviewText = (TextView) holder.findViewById(R.id.pref_preview);
     mPreviewText.setVisibility(getPreviewVisibility());
     mSeekBar.setOnSeekBarChangeListener(this);
-    styleSeekBar();
     mValue = shouldPersist() ? getPersistedInt(mDefault) : 0;
     mSeekBar.setMax(mMax);
     mSeekBar.setProgress(mValue);
@@ -69,30 +68,6 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
    */
   protected int getPreviewVisibility() {
     return View.GONE;
-  }
-
-  private void styleSeekBar() {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-      final Drawable progressDrawable = mSeekBar.getProgressDrawable();
-      if (progressDrawable != null) {
-        if (progressDrawable instanceof LayerDrawable) {
-          LayerDrawable ld = (LayerDrawable) progressDrawable;
-          int layers = ld.getNumberOfLayers();
-          for (int i = 0; i < layers; i++) {
-            ld.getDrawable(i).mutate().setColorFilter(mTintColor, PorterDuff.Mode.SRC_ATOP);
-          }
-        } else {
-          progressDrawable.mutate().setColorFilter(mTintColor, PorterDuff.Mode.SRC_ATOP);
-        }
-      }
-
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-        final Drawable thumb = mSeekBar.getThumb();
-        if (thumb != null) {
-          thumb.mutate().setColorFilter(mTintColor, PorterDuff.Mode.SRC_ATOP);
-        }
-      }
-    }
   }
 
   @Override
