@@ -7,10 +7,6 @@
 package com.quran.labs.androidquran.ui.preference;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SeekBar;
