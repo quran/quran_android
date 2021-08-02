@@ -40,11 +40,7 @@ public class ToastCompat {
 
     boolean nightMode = QuranSettings.getInstance(context).isNightMode();
     Drawable tintedBackground = createTintedBackground(context, nightMode);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      toastView.setBackground(tintedBackground);
-    } else {
-      toastView.setBackgroundDrawable(tintedBackground);
-    }
+    toastView.setBackground(tintedBackground);
 
     TextView textView = toastView.findViewById(R.id.message);
     textView.setTextColor(getTextColor(context, nightMode));

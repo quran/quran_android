@@ -686,16 +686,11 @@ public class AudioService extends Service implements OnCompletionListener,
       serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS);
       player.pause();
       setState(PlaybackStateCompat.STATE_PAUSED);
-      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-        // while paused, we always retain the MediaPlayer
-        relaxResources(false, true);
-      } else {
-        // on jellybean and above, stay in the foreground and
-        // update the notification.
-        relaxResources(false, false);
-        pauseNotification();
-        notifyAudioStatus(AudioUpdateIntent.PAUSED);
-      }
+      // on jellybean and above, stay in the foreground and
+      // update the notification.
+      relaxResources(false, false);
+      pauseNotification();
+      notifyAudioStatus(AudioUpdateIntent.PAUSED);
     } else if (State.Stopped == state) {
       // if we get a pause while we're already stopped, it means we likely woke up because
       // of AudioIntentReceiver, so just stop in this case.
@@ -1326,11 +1321,7 @@ public class AudioService extends Service implements OnCompletionListener,
     compositeDisposable.clear();
     // Service is being killed, so make sure we release our resources
     serviceHandler.removeCallbacksAndMessages(null);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-      serviceLooper.quitSafely();
-    } else {
-      serviceLooper.quit();
-    }
+    serviceLooper.quitSafely();
     unregisterReceiver(noisyAudioStreamReceiver);
     state = State.Stopped;
     relaxResources(true, true);

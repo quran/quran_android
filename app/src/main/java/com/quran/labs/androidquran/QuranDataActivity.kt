@@ -442,9 +442,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
         File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
 
         // try writing a file to the app's internal no_backup directory
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-          File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
-        }
+        File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
         quranSettings.setDownloadedPages(
             System.currentTimeMillis(), appLocation,
             quranDataStatus.portraitWidth + "_" + quranDataStatus.landscapeWidth
@@ -504,18 +502,15 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
 
     // check for the existence of a .q4a file in the internal no_backup directory.
     var didInternalFileSurvive = false
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      try {
-        didInternalFileSurvive = File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).exists()
-      } catch (e: Exception) {
-        Timber.e(e)
-      }
+    try {
+      didInternalFileSurvive = File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).exists()
+    } catch (e: Exception) {
+      Timber.e(e)
     }
 
     // how recently did the files disappear?
     val downloadTime = quranSettings.previouslyDownloadedTime
-    val recencyOfRemoval: String
-    recencyOfRemoval = if (downloadTime == 0L) {
+    val recencyOfRemoval: String = if (downloadTime == 0L) {
       "no timestamp"
     } else {
       val deltaInSeconds = (System.currentTimeMillis() - downloadTime) / 1000
