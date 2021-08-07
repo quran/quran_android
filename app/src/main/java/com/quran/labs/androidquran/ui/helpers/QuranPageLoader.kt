@@ -20,7 +20,7 @@ class QuranPageLoader @Inject internal constructor(
   private val quranFileUtils: QuranFileUtils
 ) {
 
-  private fun loadImage(pageNumber: Int): Response? {
+  private fun loadImage(pageNumber: Int): Response {
     var response: Response? = null
     var oom: OutOfMemoryError? = null
     try {

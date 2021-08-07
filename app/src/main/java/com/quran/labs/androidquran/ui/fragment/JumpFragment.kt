@@ -108,9 +108,8 @@ class JumpFragment : DialogFragment() {
 
     suraInput.setOnForceCompleteListener { _: ForceCompleteTextView?, position: Int, _: Long ->
       val enteredText = suraInput.text.toString()
-      val suraName: String?
 
-      suraName = when {
+      val suraName: String? = when {
         // user selects
         position >= 0 -> { suraAdapter.getItem(position) }
         suras.contains(enteredText) -> { enteredText }
@@ -212,7 +211,7 @@ class JumpFragment : DialogFragment() {
   /**
    * ListAdapter that supports filtering by using case-insensitive infix (substring).
    */
-  private class InfixFilterArrayAdapter internal constructor(
+  private class InfixFilterArrayAdapter(
     context: Context,
     @LayoutRes private val itemLayoutRes: Int,
     private val originalItems: List<String>

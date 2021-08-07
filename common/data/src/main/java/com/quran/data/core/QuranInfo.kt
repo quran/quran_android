@@ -197,7 +197,7 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     return overriddenJuz ?: actualJuz
   }
 
-  fun getSuraAyahFromAyahId(ayahId: Int): SuraAyah? {
+  fun getSuraAyahFromAyahId(ayahId: Int): SuraAyah {
     var sura = 0
     var ayahIdentifier = ayahId
     while (ayahIdentifier > suraNumAyahs[sura]) {

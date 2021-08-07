@@ -63,9 +63,8 @@ class BulkDownloadFragment : DialogFragment() {
 
     suraFirstInput.setOnForceCompleteListener { _: ForceCompleteTextView?, position: Int, _: Long ->
       val enteredFirstText = suraFirstInput.text.toString()
-      val suraFirstName: String?
 
-      suraFirstName = when {
+      val suraFirstName: String? = when {
         // user selects
         position >= 0 -> { suraFirstAdapter.getItem(position) }
         suras.contains(enteredFirstText) -> { enteredFirstText }
@@ -92,9 +91,8 @@ class BulkDownloadFragment : DialogFragment() {
 
     suraLastInput.setOnForceCompleteListener { _: ForceCompleteTextView?, position: Int, _: Long ->
       val enteredLastText = suraLastInput.text.toString()
-      val suraLastName: String?
 
-      suraLastName = when {
+      val suraLastName: String? = when {
         // user selects
         position >= 0 -> { suraLastAdapter.getItem(position) }
         suras.contains(enteredLastText) -> { enteredLastText }

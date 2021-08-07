@@ -360,7 +360,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
     readShuyookhData()
   }
 
-  private inner class SurahAdapter internal constructor(
+  private inner class SurahAdapter(
     private val context: Context
   ) : Adapter<SurahViewHolder>() {
     var qariDownloadInfo: QariDownloadInfo? = null
@@ -453,7 +453,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
 
   }
 
-  private inner class SurahViewHolder internal constructor(val view: View) : ViewHolder(view) {
+  private inner class SurahViewHolder(val view: View) : ViewHolder(view) {
     val name: TextView = view.findViewById(R.id.name)
     val status: TextView = view.findViewById(R.id.quantity)
     val image: ImageView = view.findViewById(R.id.image)

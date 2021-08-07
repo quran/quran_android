@@ -13,7 +13,6 @@ import timber.log.Timber
 import java.io.File
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.Comparator
 
 @Reusable
 class AudioUtils @Inject
@@ -22,13 +21,13 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
   private val totalPages = quranInfo.numberOfPages
 
   internal object LookAheadAmount {
-    val PAGE = 1
-    val SURA = 2
-    val JUZ = 3
+    const val PAGE = 1
+    const val SURA = 2
+    const val JUZ = 3
 
     // make sure to update these when a lookup type is added
-    val MIN = 1
-    val MAX = 3
+    const val MIN = 1
+    const val MAX = 3
   }
 
   /**
@@ -56,20 +55,20 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
       }
     }
 
-    return items.sortedWith(Comparator { lhs, rhs ->
+    return items.sortedWith { lhs, rhs ->
       if (lhs.isGapless != rhs.isGapless) {
         if (lhs.isGapless) -1 else 1
       } else {
         lhs.name.compareTo(rhs.name)
       }
-    })
+    }
   }
 
   fun getQariUrl(item: QariItem): String {
     return item.url + if (item.isGapless) {
-      "%03d" + AudioUtils.AUDIO_EXTENSION
+      "%03d$AUDIO_EXTENSION"
     } else {
-      "%03d%03d" + AudioUtils.AUDIO_EXTENSION
+      "%03d%03d$AUDIO_EXTENSION"
     }
   }
 
@@ -82,9 +81,9 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
     val rootDirectory = quranFileUtils.getQuranAudioDirectory(context)
     return if (rootDirectory == null) null else
       rootDirectory + item.path + File.separator + if (item.isGapless) {
-        "%03d" + AudioUtils.AUDIO_EXTENSION
+        "%03d$AUDIO_EXTENSION"
       } else {
-        "%d" + File.separator + "%d" + AudioUtils.AUDIO_EXTENSION
+        "%d" + File.separator + "%d" + AUDIO_EXTENSION
       }
   }
 
