@@ -437,10 +437,8 @@ public class PagerActivity extends QuranActionBarActivity implements
       }
     });
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      setUiVisibilityListener();
-      audioStatusBar.setVisibility(View.VISIBLE);
-    }
+    setUiVisibilityListener();
+    audioStatusBar.setVisibility(View.VISIBLE);
     toggleActionBarVisibility(true);
 
     if (shouldAdjustPageNumber) {
@@ -495,9 +493,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         new IntentFilter(action));
     downloadReceiver.setListener(this);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      defaultNavigationBarColor = getWindow().getNavigationBarColor();
-    }
+    defaultNavigationBarColor = getWindow().getNavigationBarColor();
 
     quranEventLogger.logAnalytics(isDualPages, showingTranslation, isSplitScreen);
   }
@@ -529,13 +525,11 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private int getStatusBarHeight() {
     // thanks to https://github.com/jgilfelt/SystemBarTint for this
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      final Resources resources = getResources();
-      final int resId = resources.getIdentifier(
-          "status_bar_height", "dimen", "android");
-      if (resId > 0) {
-        return resources.getDimensionPixelSize(resId);
-      }
+    final Resources resources = getResources();
+    final int resId = resources.getIdentifier(
+        "status_bar_height", "dimen", "android");
+    if (resId > 0) {
+      return resources.getDimensionPixelSize(resId);
     }
     return 0;
   }
@@ -557,8 +551,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     // Create and set fragment pager adapter
     slidingPagerAdapter = new SlidingPagerAdapter(getSupportFragmentManager(),
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
-            (quranSettings.isArabicNames() || QuranUtils.isRtl()));
+        quranSettings.isArabicNames() || QuranUtils.isRtl());
     slidingPager.setAdapter(slidingPagerAdapter);
 
     // Attach the view pager to the action bar
@@ -720,9 +713,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     final int color =
         isNightMode ? ContextCompat.getColor(this, R.color.navbar_night_color) :
             defaultNavigationBarColor;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      getWindow().setNavigationBarColor(color);
-    }
+    getWindow().setNavigationBarColor(color);
   }
 
   @NonNull
@@ -894,9 +885,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   protected void onDestroy() {
     Timber.d("onDestroy()");
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      clearUiVisibilityListener();
-    }
+    clearUiVisibilityListener();
 
     // remove broadcast receivers
     LocalBroadcastManager.getInstance(this).unregisterReceiver(audioReceiver);
@@ -1301,27 +1290,12 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   public void toggleActionBar() {
     if (isActionBarHidden) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-        setUiVisibility(true);
-      } else {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        toolBarArea.setVisibility(View.VISIBLE);
-        audioStatusBar.updateSelectedItem();
-        audioStatusBar.setVisibility(View.VISIBLE);
-      }
+      setUiVisibility(true);
 
       isActionBarHidden = false;
     } else {
       handler.removeMessages(MSG_HIDE_ACTIONBAR);
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-        setUiVisibility(false);
-      } else {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        toolBarArea.setVisibility(View.GONE);
-        audioStatusBar.setVisibility(View.GONE);
-      }
+      setUiVisibility(false);
 
       isActionBarHidden = true;
     }
