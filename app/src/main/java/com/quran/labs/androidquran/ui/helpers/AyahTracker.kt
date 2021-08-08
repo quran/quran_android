@@ -11,7 +11,7 @@ interface AyahTracker {
   fun unHighlightAyahs(type: HighlightType)
   fun getToolBarPosition(
     sura: Int, ayah: Int, toolBarWidth: Int, toolBarHeight: Int
-  ): AyahToolBarPosition
+  ): AyahToolBarPosition?
   fun getQuranAyahInfo(sura: Int, ayah: Int): QuranAyahInfo?
   fun getLocalTranslations(): Array<LocalTranslation?>?
 }
