@@ -583,21 +583,8 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void setUiVisibility(boolean isVisible) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      setUiVisibilityKitKat(isVisible);
-      if (isInMultiWindowMode) {
-        animateToolBar(isVisible);
-      }
-      return;
-    }
-
-    int flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-    if (!isVisible) {
-      flags |= View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN;
-    }
-    viewPager.setSystemUiVisibility(flags);
+    setUiVisibilityKitKat(isVisible);
     if (isInMultiWindowMode) {
       animateToolBar(isVisible);
     }
