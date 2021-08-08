@@ -590,7 +590,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  @TargetApi(Build.VERSION_CODES.KITKAT)
   private void setUiVisibilityKitKat(boolean isVisible) {
     int flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -604,7 +603,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     viewPager.setSystemUiVisibility(flags);
   }
 
-  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void setUiVisibilityListener() {
     viewPager.setOnSystemUiVisibilityChangeListener(
         flags -> {
@@ -613,7 +611,6 @@ public class PagerActivity extends QuranActionBarActivity implements
         });
   }
 
-  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void clearUiVisibilityListener() {
     viewPager.setOnSystemUiVisibilityChangeListener(null);
   }
