@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui;
 
-import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -26,7 +25,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -105,7 +103,6 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
-import androidx.core.view.MenuItemCompat;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -437,10 +434,8 @@ public class PagerActivity extends QuranActionBarActivity implements
       }
     });
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      setUiVisibilityListener();
-      audioStatusBar.setVisibility(View.VISIBLE);
-    }
+    setUiVisibilityListener();
+    audioStatusBar.setVisibility(View.VISIBLE);
     toggleActionBarVisibility(true);
 
     if (shouldAdjustPageNumber) {
@@ -495,9 +490,7 @@ public class PagerActivity extends QuranActionBarActivity implements
         new IntentFilter(action));
     downloadReceiver.setListener(this);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      defaultNavigationBarColor = getWindow().getNavigationBarColor();
-    }
+    defaultNavigationBarColor = getWindow().getNavigationBarColor();
 
     quranEventLogger.logAnalytics(isDualPages, showingTranslation, isSplitScreen);
   }
@@ -529,13 +522,11 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   private int getStatusBarHeight() {
     // thanks to https://github.com/jgilfelt/SystemBarTint for this
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      final Resources resources = getResources();
-      final int resId = resources.getIdentifier(
-          "status_bar_height", "dimen", "android");
-      if (resId > 0) {
-        return resources.getDimensionPixelSize(resId);
-      }
+    final Resources resources = getResources();
+    final int resId = resources.getIdentifier(
+        "status_bar_height", "dimen", "android");
+    if (resId > 0) {
+      return resources.getDimensionPixelSize(resId);
     }
     return 0;
   }
@@ -557,8 +548,7 @@ public class PagerActivity extends QuranActionBarActivity implements
 
     // Create and set fragment pager adapter
     slidingPagerAdapter = new SlidingPagerAdapter(getSupportFragmentManager(),
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
-            (quranSettings.isArabicNames() || QuranUtils.isRtl()));
+        quranSettings.isArabicNames() || QuranUtils.isRtl());
     slidingPager.setAdapter(slidingPagerAdapter);
 
     // Attach the view pager to the action bar
@@ -590,27 +580,13 @@ public class PagerActivity extends QuranActionBarActivity implements
     }
   }
 
-  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void setUiVisibility(boolean isVisible) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      setUiVisibilityKitKat(isVisible);
-      if (isInMultiWindowMode) {
-        animateToolBar(isVisible);
-      }
-      return;
-    }
-
-    int flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-    if (!isVisible) {
-      flags |= View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN;
-    }
-    viewPager.setSystemUiVisibility(flags);
+    setUiVisibilityKitKat(isVisible);
     if (isInMultiWindowMode) {
       animateToolBar(isVisible);
     }
   }
 
-  @TargetApi(Build.VERSION_CODES.KITKAT)
   private void setUiVisibilityKitKat(boolean isVisible) {
     int flags = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -624,7 +600,6 @@ public class PagerActivity extends QuranActionBarActivity implements
     viewPager.setSystemUiVisibility(flags);
   }
 
-  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void setUiVisibilityListener() {
     viewPager.setOnSystemUiVisibilityChangeListener(
         flags -> {
@@ -633,7 +608,6 @@ public class PagerActivity extends QuranActionBarActivity implements
         });
   }
 
-  @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   private void clearUiVisibilityListener() {
     viewPager.setOnSystemUiVisibilityChangeListener(null);
   }
@@ -720,9 +694,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     final int color =
         isNightMode ? ContextCompat.getColor(this, R.color.navbar_night_color) :
             defaultNavigationBarColor;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      getWindow().setNavigationBarColor(color);
-    }
+    getWindow().setNavigationBarColor(color);
   }
 
   @NonNull
@@ -894,9 +866,7 @@ public class PagerActivity extends QuranActionBarActivity implements
   @Override
   protected void onDestroy() {
     Timber.d("onDestroy()");
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-      clearUiVisibilityListener();
-    }
+    clearUiVisibilityListener();
 
     // remove broadcast receivers
     LocalBroadcastManager.getInstance(this).unregisterReceiver(audioReceiver);
@@ -936,7 +906,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.quran_menu, menu);
     final MenuItem item = menu.findItem(R.id.search);
-    final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+    final SearchView searchView = (SearchView) item.getActionView();
     final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
     searchView.setQueryHint(getString(R.string.search_hint));
     searchView.setSearchableInfo(searchManager.getSearchableInfo(
@@ -1301,27 +1271,12 @@ public class PagerActivity extends QuranActionBarActivity implements
 
   public void toggleActionBar() {
     if (isActionBarHidden) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-        setUiVisibility(true);
-      } else {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        toolBarArea.setVisibility(View.VISIBLE);
-        audioStatusBar.updateSelectedItem();
-        audioStatusBar.setVisibility(View.VISIBLE);
-      }
+      setUiVisibility(true);
 
       isActionBarHidden = false;
     } else {
       handler.removeMessages(MSG_HIDE_ACTIONBAR);
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-        setUiVisibility(false);
-      } else {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        toolBarArea.setVisibility(View.GONE);
-        audioStatusBar.setVisibility(View.GONE);
-      }
+      setUiVisibility(false);
 
       isActionBarHidden = true;
     }
