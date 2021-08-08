@@ -909,7 +909,7 @@ public class PagerActivity extends QuranActionBarActivity implements
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.quran_menu, menu);
     final MenuItem item = menu.findItem(R.id.search);
-    final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+    final SearchView searchView = (SearchView) item.getActionView();
     final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
     searchView.setQueryHint(getString(R.string.search_hint));
     searchView.setSearchableInfo(searchManager.getSearchableInfo(
