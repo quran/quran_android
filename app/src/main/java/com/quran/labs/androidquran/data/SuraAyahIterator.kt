@@ -41,7 +41,8 @@ class SuraAyahIterator(
 
   operator fun next(): Boolean {
     if (!started) {
-      return true.also { started = it }
+      started = true
+      return true
     } else if (!hasNext()) {
       return false
     }
