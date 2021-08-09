@@ -15,7 +15,6 @@ import androidx.appcompat.app.AlertDialog.Builder
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.MenuItemCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -181,7 +180,7 @@ class QuranActivity : QuranActionBarActivity(),
     val inflater = menuInflater
     inflater.inflate(R.menu.home_menu, menu)
     searchItem = menu.findItem(R.id.search)
-    val searchView = MenuItemCompat.getActionView(searchItem) as SearchView
+    val searchView = searchItem?.actionView as SearchView
     val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
     searchView.queryHint = getString(R.string.search_hint)
     searchView.setSearchableInfo(
