@@ -12,8 +12,7 @@ interface AyahSelectedListener {
 
   /** Click event with ayah info and highlighter passed  */
   fun onAyahSelected(
-    eventType: EventType?,
-    suraAyah: SuraAyah?, tracker: AyahTracker?
+    eventType: EventType, suraAyah: SuraAyah, tracker: AyahTracker
   ): Boolean
 
   /** General click event without ayah info  */
@@ -23,5 +22,5 @@ interface AyahSelectedListener {
   fun endAyahMode()
 
   /** set menu bar position  */
-  fun requestMenuPositionUpdate(tracker: AyahTracker?)
+  fun requestMenuPositionUpdate(tracker: AyahTracker)
 }
