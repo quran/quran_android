@@ -45,15 +45,13 @@ class JuzListFragment : Fragment() {
   private var recyclerView: RecyclerView? = null
   private var disposable: Disposable? = null
   private var adapter: QuranListAdapter? = null
-  private var mainScope: CoroutineScope = MainScope()
+  private val mainScope: CoroutineScope = MainScope()
 
-  @JvmField
   @Inject
-  var quranInfo: QuranInfo? = null
+  lateinit var quranInfo: QuranInfo
 
-  @JvmField
   @Inject
-  var quranDisplayData: QuranDisplayData? = null
+  lateinit var quranDisplayData: QuranDisplayData
 
   @Inject
   lateinit var juzListPresenter: JuzListPresenter
@@ -88,11 +86,11 @@ class JuzListFragment : Fragment() {
   override fun onAttach(context: Context) {
     super.onAttach(context)
     (context.applicationContext as QuranApplication).applicationComponent.inject(this)
-    mainScope = MainScope()
   }
 
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    super.onActivityCreated(savedInstanceState)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+
     mainScope.launch {
       fetchJuz2List()
     }
@@ -112,7 +110,7 @@ class JuzListFragment : Fragment() {
         .subscribeWith(object : DisposableSingleObserver<Int?>() {
           override fun onSuccess(recentPage: Int) {
             if (recentPage != Constants.NO_PAGE) {
-              val juz = quranInfo!!.getJuzFromPage(recentPage)
+              val juz = quranInfo.getJuzFromPage(recentPage)
               val position = (juz - 1) * 9
               recyclerView?.scrollToPosition(position)
             }
@@ -153,7 +151,6 @@ class JuzListFragment : Fragment() {
 
   private fun updateJuz2List(quarters: Array<String>) {
     val activity: Activity = activity ?: return
-    val quranInfo = quranInfo ?: return
 
     val elements = arrayOfNulls<QuranRow>(Constants.JUZ2_COUNT * (8 + 1))
     var ctr = 0
@@ -174,7 +171,7 @@ class JuzListFragment : Fragment() {
       }
       val metadata = getString(
         string.sura_ayah_notification_str,
-        quranDisplayData!!.getSuraName(activity, pos[0], false), pos[1]
+        quranDisplayData.getSuraName(activity, pos[0], false), pos[1]
       )
       val builder = Builder()
         .withText(quarters[i])
