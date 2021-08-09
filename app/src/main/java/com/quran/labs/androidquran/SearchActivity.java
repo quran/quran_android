@@ -316,7 +316,7 @@ public class SearchActivity extends QuranActionBarActivity
   private void showResults(String query) {
     Bundle args = new Bundle();
     args.putString(EXTRA_QUERY, query);
-    getSupportLoaderManager().restartLoader(0, args, this);
+    LoaderManager.getInstance(this).restartLoader(0, args, this);
   }
 
   private static class ResultAdapter extends CursorAdapter {
