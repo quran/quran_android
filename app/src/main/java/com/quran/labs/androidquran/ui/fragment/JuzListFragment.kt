@@ -45,7 +45,7 @@ class JuzListFragment : Fragment() {
   private var recyclerView: RecyclerView? = null
   private var disposable: Disposable? = null
   private var adapter: QuranListAdapter? = null
-  private var mainScope: CoroutineScope = MainScope()
+  private val mainScope: CoroutineScope = MainScope()
 
   @Inject
   lateinit var quranInfo: QuranInfo
