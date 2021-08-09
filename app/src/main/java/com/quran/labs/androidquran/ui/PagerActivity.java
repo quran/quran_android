@@ -99,6 +99,7 @@ import javax.inject.Inject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -133,7 +134,7 @@ import static com.quran.labs.androidquran.view.AyahToolBar.AyahToolBarPosition;
  * QuranPageAdapter}). {@link AudioService} is used to handle playing audio, and this is synced with
  * the display of the Quran.
  */
-public class PagerActivity extends QuranActionBarActivity implements
+public class PagerActivity extends AppCompatActivity implements
     AudioStatusBar.AudioBarListener,
     DefaultDownloadReceiver.DownloadListener,
     TagBookmarkDialog.OnBookmarkTagsUpdateListener,

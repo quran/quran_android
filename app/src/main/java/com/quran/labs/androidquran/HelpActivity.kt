@@ -3,10 +3,10 @@ package com.quran.labs.androidquran
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
-import com.quran.labs.androidquran.ui.QuranActionBarActivity
 
-class HelpActivity : QuranActionBarActivity() {
+class HelpActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
