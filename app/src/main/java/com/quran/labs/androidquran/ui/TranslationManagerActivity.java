@@ -39,6 +39,7 @@ import javax.inject.Inject;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,7 +48,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
 
-public class TranslationManagerActivity extends QuranActionBarActivity
+public class TranslationManagerActivity extends AppCompatActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener, DownloadedMenuActionListener {
 
   public static final String TRANSLATION_DOWNLOAD_KEY = "TRANSLATION_DOWNLOAD_KEY";

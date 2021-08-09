@@ -2,12 +2,12 @@ package com.quran.labs.androidquran
 
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.quran.labs.androidquran.ui.QuranActionBarActivity
 import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment
 import com.quran.labs.androidquran.util.AudioManagerUtils
 
-class QuranPreferenceActivity : QuranActionBarActivity() {
+class QuranPreferenceActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     (application as QuranApplication).refreshLocale(this, false)

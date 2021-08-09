@@ -5,16 +5,16 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import com.quran.labs.androidquran.service.util.PermissionUtil
-import com.quran.labs.androidquran.ui.QuranActionBarActivity
 import com.quran.labs.androidquran.ui.fragment.QuranAdvancedSettingsFragment
 import com.quran.labs.androidquran.ui.util.ToastCompat
 import com.quran.labs.androidquran.util.AudioManagerUtils
 import com.quran.labs.androidquran.util.QuranSettings
 
-class QuranAdvancedPreferenceActivity : QuranActionBarActivity() {
+class QuranAdvancedPreferenceActivity : AppCompatActivity() {
 
   companion object {
     private const val SI_LOCATION_TO_WRITE = "SI_LOCATION_TO_WRITE"

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +29,7 @@ import io.reactivex.disposables.CompositeDisposable
 import java.util.HashMap
 import javax.inject.Inject
 
-class AudioManagerActivity : QuranActionBarActivity() {
+class AudioManagerActivity : AppCompatActivity() {
   private val disposable: CompositeDisposable = CompositeDisposable()
 
   private lateinit var progressBar: ProgressBar
