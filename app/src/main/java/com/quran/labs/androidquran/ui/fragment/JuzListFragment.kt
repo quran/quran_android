@@ -156,7 +156,7 @@ class JuzListFragment : Fragment() {
     var ctr = 0
     for (i in 0 until 8 * Constants.JUZ2_COUNT) {
       val pos = quranInfo.getQuarterByIndex(i)
-      val page = quranInfo.getPageFromSuraAyah(pos[0], pos[1])
+      val page = quranInfo.getPageFromSuraAyah(pos.first, pos.second)
       if (i % 8 == 0) {
         val juz = 1 + i / 8
         val juzTitle = activity.getString(
@@ -171,7 +171,7 @@ class JuzListFragment : Fragment() {
       }
       val metadata = getString(
         string.sura_ayah_notification_str,
-        quranDisplayData.getSuraName(activity, pos[0], false), pos[1]
+        quranDisplayData.getSuraName(activity, pos.first, false), pos.second
       )
       val builder = Builder()
         .withText(quarters[i])

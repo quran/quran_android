@@ -216,7 +216,7 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     // get the starting point of the next juz'
     val lastQuarter = quarters[juz * 8]
     // if we're after that starting point, return juz + 1
-    return if (sura > lastQuarter[0] || lastQuarter[0] == sura && ayah >= lastQuarter[1]) {
+    return if (sura > lastQuarter.first || lastQuarter.first == sura && ayah >= lastQuarter.second) {
       juz + 1
     } else {
       // otherwise just return this juz

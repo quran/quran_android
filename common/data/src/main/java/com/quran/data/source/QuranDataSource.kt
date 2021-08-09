@@ -10,5 +10,5 @@ interface QuranDataSource {
   fun getNumberOfAyahsForSuraArray() : IntArray
   fun getIsMakkiBySuraArray() : BooleanArray
   fun getQuarterStartByPage() : IntArray
-  fun getQuartersArray() : Array<IntArray>
+  fun getQuartersArray() : Array<Pair<Int, Int>>
 }
