@@ -13,8 +13,9 @@ class JuzListPresenter @Inject constructor(
 
   suspend fun quarters(): List<String> {
     return withContext(Dispatchers.IO) {
-      val ayahIds = quranInfo.quarters
-        .map { quranInfo.getAyahId(it.first(), it.last()) }
+      val ayahIds = quranInfo.quarters.map {
+        quranInfo.getAyahId(it.first(), it.last())
+      }
       val results = arabicDatabaseUtils.getAyahTextForAyat(ayahIds)
       ayahIds.map { results[it] ?: "" }
     }
