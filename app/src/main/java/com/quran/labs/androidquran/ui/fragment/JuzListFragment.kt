@@ -86,7 +86,6 @@ class JuzListFragment : Fragment() {
   override fun onAttach(context: Context) {
     super.onAttach(context)
     (context.applicationContext as QuranApplication).applicationComponent.inject(this)
-    mainScope = MainScope()
   }
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
