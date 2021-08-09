@@ -185,7 +185,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
     return selected.isBookmark() || (selected.isBookmarkHeader() && selected.tagId >= 0);
   }
 
-  private View.OnClickListener mOnUndoClickListener = new View.OnClickListener() {
+  private final View.OnClickListener mOnUndoClickListener = new View.OnClickListener() {
     @Override
     public void onClick(View v) {
       bookmarkPresenter.cancelDeletion();
