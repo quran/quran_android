@@ -89,8 +89,9 @@ class JuzListFragment : Fragment() {
     mainScope = MainScope()
   }
 
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    super.onActivityCreated(savedInstanceState)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+
     mainScope.launch {
       fetchJuz2List()
     }
