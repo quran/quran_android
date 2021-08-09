@@ -359,8 +359,8 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void onActivityCreated(Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
     if (mode == Mode.TRANSLATION) {
       translationPresenter.get().refresh();
     }
