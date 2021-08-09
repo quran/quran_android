@@ -117,7 +117,7 @@ public class TagBookmarkDialog extends DialogFragment {
   @NonNull
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
     builder.setView(createTagsListView());
     builder.setPositiveButton(R.string.dialog_ok, (dialog, which) -> {
       // no-op - set in onStart to avoid closing dialog now
