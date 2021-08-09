@@ -17,7 +17,7 @@ class JuzListPresenter @Inject constructor(
         quranInfo.getAyahId(intArray.first(), intArray.last())
       }
       val results = arabicDatabaseUtils.getAyahTextForAyat(ayahIds)
-      ayahIds.map { i -> results[i] ?: "" }
+      ayahIds.map { id -> results[id] ?: "" }
     }
   }
 }

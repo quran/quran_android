@@ -117,7 +117,7 @@ public class TagBookmarkDialog extends DialogFragment {
   @NonNull
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+    AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
     builder.setView(createTagsListView());
     builder.setPositiveButton(R.string.dialog_ok, (dialog, which) -> {
       // no-op - set in onStart to avoid closing dialog now
@@ -160,10 +160,10 @@ public class TagBookmarkDialog extends DialogFragment {
 
   public static class TagsAdapter extends BaseAdapter {
 
-    private LayoutInflater mInflater;
-    private TagBookmarkPresenter mTagBookmarkPresenter;
+    private final LayoutInflater mInflater;
+    private final TagBookmarkPresenter mTagBookmarkPresenter;
 
-    private String mNewTagString;
+    private final String mNewTagString;
     private List<Tag> mTags = new ArrayList<>();
     private HashSet<Long> mCheckedTags = new HashSet<>();
 

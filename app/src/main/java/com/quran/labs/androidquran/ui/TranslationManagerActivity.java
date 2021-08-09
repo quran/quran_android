@@ -475,7 +475,7 @@ public class TranslationManagerActivity extends QuranActionBarActivity
     downloadedItemActionListener = null;
   }
 
-  class TranslationSelectionListener {
+  static class TranslationSelectionListener {
     private final TranslationsAdapter adapter;
 
     TranslationSelectionListener(TranslationsAdapter anAdapter) {
