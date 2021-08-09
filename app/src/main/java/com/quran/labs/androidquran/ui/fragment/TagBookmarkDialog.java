@@ -160,10 +160,10 @@ public class TagBookmarkDialog extends DialogFragment {
 
   public static class TagsAdapter extends BaseAdapter {
 
-    private LayoutInflater mInflater;
-    private TagBookmarkPresenter mTagBookmarkPresenter;
+    private final LayoutInflater mInflater;
+    private final TagBookmarkPresenter mTagBookmarkPresenter;
 
-    private String mNewTagString;
+    private final String mNewTagString;
     private List<Tag> mTags = new ArrayList<>();
     private HashSet<Long> mCheckedTags = new HashSet<>();
 
