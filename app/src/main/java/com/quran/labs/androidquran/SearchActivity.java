@@ -320,9 +320,9 @@ public class SearchActivity extends QuranActionBarActivity
   }
 
   private static class ResultAdapter extends CursorAdapter {
-    private Context context;
-    private LayoutInflater inflater;
-    private QuranDisplayData quranDisplayData;
+    private final Context context;
+    private final LayoutInflater inflater;
+    private final QuranDisplayData quranDisplayData;
 
     ResultAdapter(Context context, Cursor cursor, QuranDisplayData quranDisplayData) {
       super(context, cursor, 0);
