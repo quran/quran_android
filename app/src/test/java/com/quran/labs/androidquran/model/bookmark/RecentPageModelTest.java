@@ -42,7 +42,7 @@ public class RecentPageModelTest {
 
   @Before
   public void setupTest() {
-    MockitoAnnotations.initMocks(RecentPageModelTest.this);
+    MockitoAnnotations.openMocks(RecentPageModelTest.this);
   }
 
   @Test

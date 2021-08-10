@@ -25,7 +25,7 @@ public class BookmarkImportExportModelTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(BookmarkImportExportModelTest.this);
+    MockitoAnnotations.openMocks(BookmarkImportExportModelTest.this);
     bookmarkImportExportModel = new BookmarkImportExportModel(
         context, new BookmarkJsonModel(), bookmarkModel);
   }

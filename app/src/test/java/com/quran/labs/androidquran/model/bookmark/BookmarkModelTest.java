@@ -36,7 +36,7 @@ public class BookmarkModelTest {
 
   @Before
   public void setupTest() {
-    MockitoAnnotations.initMocks(BookmarkModelTest.this);
+    MockitoAnnotations.openMocks(BookmarkModelTest.this);
     model = new BookmarkModel(bookmarksAdapter, recentPageModel);
   }
 
