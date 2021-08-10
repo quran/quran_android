@@ -82,9 +82,10 @@ class BookmarkPresenterTest {
         total += tags.coerceAtLeast(1)
       }
       AYAH_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG = total
+
       total = 0
-      for ((_, _, _, _, _, tags1) in MIXED_BOOKMARKS_LIST) {
-        val tags = tags1.size
+      for (bookmark in MIXED_BOOKMARKS_LIST) {
+        val tags = bookmark.tags.size
         total += tags.coerceAtLeast(1)
       }
       MIXED_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG = total
