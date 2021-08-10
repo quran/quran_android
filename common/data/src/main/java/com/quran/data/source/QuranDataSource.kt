@@ -1,5 +1,7 @@
 package com.quran.data.source
 
+import com.quran.data.model.SuraAyah
+
 interface QuranDataSource {
   fun getNumberOfPages() : Int
   fun getPageForSuraArray() : IntArray
@@ -10,5 +12,5 @@ interface QuranDataSource {
   fun getNumberOfAyahsForSuraArray() : IntArray
   fun getIsMakkiBySuraArray() : BooleanArray
   fun getQuarterStartByPage() : IntArray
-  fun getQuartersArray() : Array<IntArray>
+  fun getQuartersArray() : Array<SuraAyah>
 }

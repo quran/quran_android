@@ -146,15 +146,15 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
         return SuraAyah(114, 6)
       } else if (juz in 1..29) {
         val endJuz = quranInfo.getQuarterByIndex(juz * 8)
-        if (pageLastSura > endJuz[0]) {
+        if (pageLastSura > endJuz.sura) {
           // ex between jathiya and a7qaf
           return getQuarterForNextJuz(juz)
-        } else if (pageLastSura == endJuz[0] && pageLastAyah > endJuz[1]) {
+        } else if (pageLastSura == endJuz.sura && pageLastAyah > endJuz.ayah) {
           // ex surat al anfal
           return getQuarterForNextJuz(juz)
         }
 
-        return SuraAyah(endJuz[0], endJuz[1])
+        return SuraAyah(endJuz.sura, endJuz.ayah)
       }
     } else {
       val range = quranInfo.getVerseRangeForPage(page)
@@ -169,7 +169,7 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
   private fun getQuarterForNextJuz(currentJuz: Int): SuraAyah {
     return if (currentJuz < 29) {
       val juz = quranInfo.getQuarterByIndex((currentJuz + 1) * 8)
-      SuraAyah(juz[0], juz[1])
+      SuraAyah(juz.sura, juz.ayah)
     } else {
       // if we're currently at the 29th juz', just return the end of the 30th.
       SuraAyah(114, 6)

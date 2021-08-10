@@ -13,8 +13,8 @@ class JuzListPresenter @Inject constructor(
 
   suspend fun quarters(): List<String> {
     return withContext(Dispatchers.IO) {
-      val ayahIds = quranInfo.quarters.map { intArray ->
-        quranInfo.getAyahId(intArray.first(), intArray.last())
+      val ayahIds = quranInfo.quarters.map { juz ->
+        quranInfo.getAyahId(juz.sura, juz.ayah)
       }
       val results = arabicDatabaseUtils.getAyahTextForAyat(ayahIds)
       ayahIds.map { id -> results[id] ?: "" }
