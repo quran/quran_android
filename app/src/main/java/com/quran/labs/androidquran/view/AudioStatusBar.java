@@ -44,29 +44,29 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   private static final int MAX_AUDIOBAR_QUICK_REPEAT = 3;
 
-  private Context context;
+  private final Context context;
   private int currentMode;
-  private int buttonWidth;
-  private int separatorWidth;
-  private int separatorSpacing;
-  private int textFontSize;
-  private int textFullFontSize;
-  private int spinnerPadding;
+  private final int buttonWidth;
+  private final int separatorWidth;
+  private final int separatorSpacing;
+  private final int textFontSize;
+  private final int textFullFontSize;
+  private final int spinnerPadding;
   private QariAdapter adapter;
 
   private int currentQari;
   private int currentRepeat = 0;
   @DrawableRes private int itemBackground;
-  private boolean isRtl;
+  private final boolean isRtl;
   private boolean isDualPageMode;
   private boolean hasErrorText;
   private boolean haveCriticalError = false;
-  private SharedPreferences sharedPreferences;
+  private final SharedPreferences sharedPreferences;
 
   private QuranSpinner spinner;
   private TextView progressText;
   private ProgressBar progressBar;
-  private RepeatButton repeatButton;
+  private final RepeatButton repeatButton;
   private AudioBarListener audioBarListener;
 
   public interface AudioBarListener {
