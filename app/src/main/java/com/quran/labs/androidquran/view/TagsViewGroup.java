@@ -1,10 +1,7 @@
 package com.quran.labs.androidquran.view;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Build;
-import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -13,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.quran.labs.androidquran.R;
+import androidx.core.content.ContextCompat;
+
 import com.quran.data.model.bookmark.Tag;
+import com.quran.labs.androidquran.R;
 
 import java.util.List;
 
@@ -43,7 +42,6 @@ public class TagsViewGroup extends LinearLayout {
     init(context);
   }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public TagsViewGroup(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
     init(context);
