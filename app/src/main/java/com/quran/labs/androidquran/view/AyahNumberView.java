@@ -24,8 +24,8 @@ public class AyahNumberView extends View {
   private String suraAyah;
   private boolean isNightMode;
 
-  private Paint boxPaint;
-  private TextPaint textPaint;
+  private final Paint boxPaint;
+  private final TextPaint textPaint;
   private StaticLayout textLayout;
 
   public AyahNumberView(Context context) {

@@ -24,14 +24,14 @@ public class JuzView extends Drawable {
 
   private int radius;
   private int circleY;
-  private int percentage;
+  private final int percentage;
   private float textOffset;
-  private String overlayText;
+  private final String overlayText;
 
   private RectF circleRect;
-  private Paint circlePaint;
+  private final Paint circlePaint;
   private TextPaint overlayTextPaint;
-  private Paint circleBackgroundPaint;
+  private final Paint circleBackgroundPaint;
 
   public JuzView(Context context, int type, String overlayText) {
     final Resources resources = context.getResources();

@@ -17,13 +17,13 @@ import androidx.appcompat.widget.AppCompatImageView;
 
 public class RepeatButton extends AppCompatImageView {
   @NonNull private String text;
-  @NonNull private TextPaint paint;
+  @NonNull private final TextPaint paint;
   private boolean canDraw;
   private int viewWidth;
   private int viewHeight;
   private int textXPosition;
   private int textYPosition;
-  private int textYPadding;
+  private final int textYPadding;
 
   public RepeatButton(Context context) {
     this(context, null);

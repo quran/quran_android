@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import com.quran.labs.androidquran.R;
 
 public class FitSystemRelativeLayout extends RelativeLayout {
-  private static final boolean IS_PRE_KITKAT = Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT;
+  private static final boolean IS_PRE_KITKAT = false;
 
   private int lastTopInset;
   private View toolBarParent;
@@ -29,10 +29,8 @@ public class FitSystemRelativeLayout extends RelativeLayout {
   public FitSystemRelativeLayout(@NonNull Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-      // needed to fix positioning of the ayah toolbar
-      setLayoutDirection(LAYOUT_DIRECTION_LTR);
-    }
+    // needed to fix positioning of the ayah toolbar
+    setLayoutDirection(LAYOUT_DIRECTION_LTR);
   }
 
   @Override
