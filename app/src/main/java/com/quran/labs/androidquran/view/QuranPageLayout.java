@@ -70,9 +70,9 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
   private ObservableScrollView scrollView;
   private @BorderMode int leftBorder;
   private @BorderMode int rightBorder;
-  private View innerView;
-  private int viewPaddingSmall;
-  private int viewPaddingLarge;
+  private final View innerView;
+  private final int viewPaddingSmall;
+  private final int viewPaddingLarge;
 
   public QuranPageLayout(Context context) {
     super(context);
@@ -217,8 +217,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
       final WindowManager mgr =
           (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
       Display display = mgr.getDefaultDisplay();
-      int width = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ?
-          QuranDisplayHelper.getWidthKitKat(display) : display.getWidth();
+      int width = QuranDisplayHelper.getWidthKitKat(display);
       width = width / pagesVisible;
       leftGradient = QuranDisplayHelper.getPaintDrawable(width, 0);
       rightGradient = QuranDisplayHelper.getPaintDrawable(0, width);

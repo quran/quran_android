@@ -45,7 +45,7 @@ class QuranImportPresenterTest {
     whenever(resolver.openInputStream(any())).thenReturn(`is`)
     whenever(appContext.contentResolver).thenReturn(resolver)
 
-    val observer = TestObserver<BufferedSource?>()
+    val observer = TestObserver<BufferedSource>()
     presenter.parseExternalFile(Uri.EMPTY)
       .subscribe(observer)
     BaseTestExtension.awaitTerminalEvent(observer)

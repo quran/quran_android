@@ -288,11 +288,8 @@ public class HighlightingImageView extends AppCompatImageView {
       // can't animate to the same location
       return false;
     }
-    if(highlightCoordinates == null) {
-      // can't setup animation, if coordinates are not known beforehand
-      return false;
-    }
-    return true;
+    // can't setup animation, if coordinates are not known beforehand
+    return highlightCoordinates != null;
   }
 
   public void highlightAyah(int surah, int ayah, HighlightType type) {
@@ -482,11 +479,9 @@ public class HighlightingImageView extends AppCompatImageView {
 
     if(ayahHighlight.isTransition()) {
       TransitionAyahHighlight transitionHighlight = (TransitionAyahHighlight)ayahHighlight;
-      if(alreadyHighlighted.contains(transitionHighlight.getSource())
+      return alreadyHighlighted.contains(transitionHighlight.getSource())
           || // if x -> y, either x or y is already highlighted, then we don't show the highlight
-          alreadyHighlighted.contains(transitionHighlight.getDestination())) {
-        return true;
-      }
+          alreadyHighlighted.contains(transitionHighlight.getDestination());
     }
 
     return false;
