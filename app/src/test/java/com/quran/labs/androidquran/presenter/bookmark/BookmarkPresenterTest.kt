@@ -35,13 +35,13 @@ import org.mockito.MockitoAnnotations
 class BookmarkPresenterTest {
 
   companion object {
-    private var TAG_LIST: MutableList<Tag> = ArrayList(2)
-    private var RECENTS_LIST: MutableList<RecentPage> = ArrayList(1)
-    private var AYAH_BOOKMARKS_LIST: MutableList<Bookmark> = ArrayList(2)
-    private var MIXED_BOOKMARKS_LIST: MutableList<Bookmark>
-    private val RESOURCE_ARRAY: Array<String?>
-    private var AYAH_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG: Int
-    private var MIXED_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG: Int
+    private val TAG_LIST: MutableList<Tag> = ArrayList(2)
+    private val RECENTS_LIST: MutableList<RecentPage> = ArrayList(1)
+    private val AYAH_BOOKMARKS_LIST: MutableList<Bookmark> = ArrayList(2)
+    private val MIXED_BOOKMARKS_LIST: MutableList<Bookmark>
+    private val RESOURCE_ARRAY: Array<String>
+    private val AYAH_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG: Int
+    private val MIXED_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG: Int
 
     @BeforeClass
     @JvmStatic
@@ -72,10 +72,7 @@ class BookmarkPresenterTest {
       )
 
       // we return this fake array when getStringArray is called
-      RESOURCE_ARRAY = arrayOfNulls(114)
-      for (i in 0..113) {
-        RESOURCE_ARRAY[i] = i.toString()
-      }
+      RESOURCE_ARRAY = Array(114) { it.toString() }
 
       // figure out how many rows the bookmarks would occupy if grouped by tags - this is really
       // the max between number of tags and 1 for each bookmark.
@@ -85,9 +82,10 @@ class BookmarkPresenterTest {
         total += tags.coerceAtLeast(1)
       }
       AYAH_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG = total
+
       total = 0
-      for ((_, _, _, _, _, tags1) in MIXED_BOOKMARKS_LIST) {
-        val tags = tags1.size
+      for (bookmark in MIXED_BOOKMARKS_LIST) {
+        val tags = bookmark.tags.size
         total += tags.coerceAtLeast(1)
       }
       MIXED_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG = total
@@ -126,7 +124,7 @@ class BookmarkPresenterTest {
       override fun getBookmarkDataObservable(sortOrder: Int): Single<BookmarkData> {
         return Single.zip(
           Single.just(ArrayList()),
-          Single.just<List<Bookmark>?>(AYAH_BOOKMARKS_LIST),
+          Single.just(AYAH_BOOKMARKS_LIST),
           Single.just(ArrayList()),
           { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
             BookmarkData(tags, bookmarks, recentPages)
@@ -169,9 +167,9 @@ class BookmarkPresenterTest {
     val model: BookmarkModel = object : BookmarkModel(bookmarksAdapter, recentPageModel) {
       override fun getBookmarkDataObservable(sortOrder: Int): Single<BookmarkData> {
         return Single.zip(
-          Single.just<List<Tag>?>(TAG_LIST),
+          Single.just(TAG_LIST),
           Single.just(MIXED_BOOKMARKS_LIST),
-          Single.just<List<RecentPage>?>(RECENTS_LIST),
+          Single.just(RECENTS_LIST),
           { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
             BookmarkData(tags, bookmarks, recentPages)
           }
@@ -193,8 +191,8 @@ class BookmarkPresenterTest {
     val model: BookmarkModel = object : BookmarkModel(bookmarksAdapter, recentPageModel) {
       override fun getBookmarkDataObservable(sortOrder: Int): Single<BookmarkData> {
         return Single.zip(
-          Single.just<List<Tag>?>(TAG_LIST),
-          Single.just<List<Bookmark>?>(AYAH_BOOKMARKS_LIST),
+          Single.just(TAG_LIST),
+          Single.just(AYAH_BOOKMARKS_LIST),
           Single.just(ArrayList()),
           { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
             BookmarkData(tags, bookmarks, recentPages)
@@ -218,7 +216,7 @@ class BookmarkPresenterTest {
     val model: BookmarkModel = object : BookmarkModel(bookmarksAdapter, recentPageModel) {
       override fun getBookmarkDataObservable(sortOrder: Int): Single<BookmarkData> {
         return Single.zip(
-          Single.just<List<Tag>?>(TAG_LIST),
+          Single.just(TAG_LIST),
           Single.just(MIXED_BOOKMARKS_LIST),
           Single.just(ArrayList()),
           { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
@@ -243,9 +241,9 @@ class BookmarkPresenterTest {
     val model: BookmarkModel = object : BookmarkModel(bookmarksAdapter, recentPageModel) {
       override fun getBookmarkDataObservable(sortOrder: Int): Single<BookmarkData> {
         return Single.zip(
-          Single.just<List<Tag>?>(TAG_LIST),
+          Single.just(TAG_LIST),
           Single.just(MIXED_BOOKMARKS_LIST),
-          Single.just<List<RecentPage>?>(RECENTS_LIST),
+          Single.just(RECENTS_LIST),
           { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
             BookmarkData(tags, bookmarks, recentPages)
           }
