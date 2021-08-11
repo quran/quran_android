@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment
 
 import androidx.recyclerview.widget.RecyclerView
-import io.reactivex.disposables.Disposable
+import io.reactivex.rxjava3.disposables.Disposable
 import javax.inject.Inject
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.data.QuranDisplayData
@@ -24,8 +24,8 @@ import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.data.QuranFileConstants
 import com.quran.labs.androidquran.presenter.data.JuzListPresenter
 import com.quran.labs.androidquran.ui.QuranActivity
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.QuranUtils
@@ -107,7 +107,7 @@ class JuzListFragment : Fragment() {
       disposable = activity.latestPageObservable
         .first(Constants.NO_PAGE)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(object : DisposableSingleObserver<Int?>() {
+        .subscribeWith(object : DisposableSingleObserver<Int>() {
           override fun onSuccess(recentPage: Int) {
             if (recentPage != Constants.NO_PAGE) {
               val juz = quranInfo.getJuzFromPage(recentPage)

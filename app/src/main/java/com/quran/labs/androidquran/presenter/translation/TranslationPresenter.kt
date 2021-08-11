@@ -8,9 +8,9 @@ import com.quran.labs.androidquran.di.QuranPageScope
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableObserver
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.observers.DisposableObserver
 import javax.inject.Inject
 
 @QuranPageScope
@@ -19,7 +19,7 @@ internal class TranslationPresenter @Inject internal constructor(translationMode
                      translationsAdapter: TranslationsDBAdapter,
                      translationUtil: TranslationUtil,
                      private val quranInfo: QuranInfo,
-                     private val pages: Array<Int?>) :
+                     private val pages: Array<Int>) :
     BaseTranslationPresenter<TranslationPresenter.TranslationScreen>(
         translationModel, translationsAdapter, translationUtil, quranInfo) {
 
@@ -51,7 +51,7 @@ internal class TranslationPresenter @Inject internal constructor(translationMode
   }
 
   private fun getPage(result: List<QuranAyahInfo>): Int {
-    val firstPage = pages.first()
+    val firstPage = pages.firstOrNull()
     return if (pages.size == 1 && firstPage != null) {
       firstPage
     } else {

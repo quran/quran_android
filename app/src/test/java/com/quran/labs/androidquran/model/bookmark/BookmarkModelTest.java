@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import androidx.core.util.Pair;
-import io.reactivex.observers.TestObserver;
+import io.reactivex.rxjava3.observers.TestObserver;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.ArgumentMatchers.anySet;

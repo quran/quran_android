@@ -11,7 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 
-import io.reactivex.observers.TestObserver;
+import io.reactivex.rxjava3.observers.TestObserver;
 import okio.Buffer;
 
 public class BookmarkImportExportModelTest {

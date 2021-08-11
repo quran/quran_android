@@ -15,8 +15,8 @@ import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.SettingsImpl
 import dagger.Module
 import dagger.Provides
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import java.io.File
 import javax.inject.Singleton
 

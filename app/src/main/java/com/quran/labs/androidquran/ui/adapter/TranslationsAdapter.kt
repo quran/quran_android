@@ -15,8 +15,8 @@ import com.quran.labs.androidquran.dao.translation.TranslationRowData
 
 import java.util.ArrayList
 
-import io.reactivex.Observable
-import io.reactivex.subjects.UnicastSubject
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.UnicastSubject
 
 class TranslationsAdapter(private val downloadedMenuActionListener: DownloadedMenuActionListener) :
   RecyclerView.Adapter<TranslationsAdapter.TranslationViewHolder>() {

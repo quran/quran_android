@@ -9,7 +9,7 @@ import com.quran.labs.androidquran.database.DatabaseHandler
 import com.quran.labs.androidquran.database.DatabaseHandler.TextType
 import com.quran.labs.androidquran.di.ActivityScope
 import com.quran.labs.androidquran.util.QuranFileUtils
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 @ActivityScope
