@@ -34,17 +34,17 @@ import android.media.AudioManager
 class AudioFocusHelper(
   ctx: Context, private val focusable: AudioFocusable?
 ) : AudioManager.OnAudioFocusChangeListener {
-  private val mAM: AudioManager = ctx.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+  private val audioManager: AudioManager = ctx.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
   /** Requests audio focus. Returns whether request was successful or not.  */
   fun requestFocus(): Boolean {
     return AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
-        mAM.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
+        audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
   }
 
   /** Abandons audio focus. Returns whether request was successful or not.  */
   fun abandonFocus(): Boolean {
-    return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == mAM.abandonAudioFocus(this)
+    return AudioManager.AUDIOFOCUS_REQUEST_GRANTED == audioManager.abandonAudioFocus(this)
   }
 
   /**
