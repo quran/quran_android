@@ -12,7 +12,7 @@ public class QuranHeaderView extends ViewGroup {
 
   private View mTitle;
   private View mPageNumber;
-  private boolean mIsRtl;
+  private final boolean mIsRtl;
 
   public QuranHeaderView(Context context) {
     this(context, null);
