@@ -15,10 +15,11 @@ import java.io.ByteArrayInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
 
-import io.reactivex.observers.TestObserver
+import io.reactivex.rxjava3.observers.TestObserver
 import okio.BufferedSource
 
 import com.google.common.truth.Truth.assertThat
+import com.quran.labs.BaseTestExtension
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.`when` as whenever
@@ -47,7 +48,7 @@ class QuranImportPresenterTest {
     val observer = TestObserver<BufferedSource?>()
     presenter.parseExternalFile(Uri.EMPTY)
       .subscribe(observer)
-    observer.awaitTerminalEvent()
+    BaseTestExtension.awaitTerminalEvent(observer)
     observer.assertValueCount(1)
     observer.assertNoErrors()
     observer.assertComplete()
@@ -67,7 +68,7 @@ class QuranImportPresenterTest {
     val observer = TestObserver<BufferedSource>()
     presenter.parseExternalFile(Uri.EMPTY)
       .subscribe(observer)
-    observer.awaitTerminalEvent()
+    BaseTestExtension.awaitTerminalEvent(observer)
     observer.assertValueCount(0)
     observer.assertNoErrors()
     observer.assertComplete()
@@ -83,7 +84,7 @@ class QuranImportPresenterTest {
     val observer = TestObserver<BufferedSource>()
     presenter.parseUri(Uri.EMPTY)
       .subscribe(observer)
-    observer.awaitTerminalEvent()
+    BaseTestExtension.awaitTerminalEvent(observer)
     observer.assertComplete()
     observer.assertValueCount(0)
     observer.assertNoErrors()
@@ -102,7 +103,7 @@ class QuranImportPresenterTest {
     val observer = TestObserver<BufferedSource>()
     presenter.parseUri(Uri.EMPTY)
       .subscribe(observer)
-    observer.awaitTerminalEvent()
+    BaseTestExtension.awaitTerminalEvent(observer)
     observer.assertError(NullPointerException::class.java)
     observer.assertValueCount(0)
   }

@@ -14,7 +14,7 @@ import org.junit.Test
 import java.io.File
 import java.io.IOException
 
-import io.reactivex.observers.TestObserver
+import io.reactivex.rxjava3.observers.TestObserver
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -22,6 +22,7 @@ import okio.Buffer
 import okio.source
 
 import com.google.common.truth.Truth
+import com.quran.labs.BaseTestExtension
 import org.mockito.Mockito.mock
 
 class TranslationManagerPresenterTest {
@@ -64,7 +65,7 @@ class TranslationManagerPresenterTest {
     val testObserver = TestObserver<TranslationList>()
     translationManager.cachedTranslationListObservable
       .subscribe(testObserver)
-    testObserver.awaitTerminalEvent()
+    BaseTestExtension.awaitTerminalEvent(testObserver)
     testObserver.assertNoValues()
     testObserver.assertNoErrors()
   }
@@ -82,7 +83,7 @@ class TranslationManagerPresenterTest {
     val testObserver = TestObserver<TranslationList>()
     translationManager.remoteTranslationListObservable
       .subscribe(testObserver)
-    testObserver.awaitTerminalEvent()
+    BaseTestExtension.awaitTerminalEvent(testObserver)
     testObserver.assertValueCount(1)
     testObserver.assertNoErrors()
     val (translations) = testObserver.values()[0]
@@ -98,7 +99,7 @@ class TranslationManagerPresenterTest {
     val testObserver = TestObserver<TranslationList>()
     translationManager.remoteTranslationListObservable
       .subscribe(testObserver)
-    testObserver.awaitTerminalEvent()
+    BaseTestExtension.awaitTerminalEvent(testObserver)
     testObserver.assertNoValues()
     testObserver.assertError(IOException::class.java)
   }

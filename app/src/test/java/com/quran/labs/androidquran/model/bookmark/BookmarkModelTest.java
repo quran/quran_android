@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.model.bookmark;
 
 import com.quran.data.model.bookmark.Tag;
 import com.quran.data.model.bookmark.Bookmark;
+import com.quran.labs.BaseTestExtension;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
 import org.junit.Before;
@@ -48,7 +49,7 @@ public class BookmarkModelTest {
     TestObserver<Void> testObserver = new TestObserver<>();
     model.updateTag(tag)
         .subscribe(testObserver);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertNoErrors();
     testObserver.assertComplete();
 
@@ -63,7 +64,7 @@ public class BookmarkModelTest {
     TestObserver<Boolean> testObserver = new TestObserver<>();
     model.updateBookmarkTags(new long[] { }, new HashSet<>(), false)
         .subscribe(testObserver);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertNoErrors();
     testObserver.assertComplete();
   }
@@ -83,7 +84,7 @@ public class BookmarkModelTest {
       TestObserver<List<Bookmark>> testObserver = new TestObserver<>();
       model.getBookmarkedAyahsOnPageObservable(input)
           .subscribe(testObserver);
-      testObserver.awaitTerminalEvent();
+      BaseTestExtension.awaitTerminalEvent(testObserver);
       testObserver.assertNoErrors();
       testObserver.assertValueCount(input.length);
       verify(bookmarksAdapter, times(input.length + total)).getBookmarkedAyahsOnPage(anyInt());
@@ -99,7 +100,7 @@ public class BookmarkModelTest {
     TestObserver<Pair<Integer, Boolean>> testObserver = new TestObserver<>();
     model.getIsBookmarkedObservable(42, 43)
         .subscribe(testObserver);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertNoErrors();
     testObserver.assertValueCount(2);
 

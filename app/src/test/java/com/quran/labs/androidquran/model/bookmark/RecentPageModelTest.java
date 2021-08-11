@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.model.bookmark;
 
 import com.quran.data.model.bookmark.RecentPage;
+import com.quran.labs.BaseTestExtension;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
@@ -55,7 +56,7 @@ public class RecentPageModelTest {
     recentPageModel.getLatestPageObservable()
         .firstOrError()
         .subscribe(testObserver);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertValue(Constants.NO_PAGE);
   }
 
@@ -69,7 +70,7 @@ public class RecentPageModelTest {
     recentPageModel.getLatestPageObservable()
         .firstOrError()
         .subscribe(testObserver);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertValue(49);
   }
 
@@ -84,7 +85,7 @@ public class RecentPageModelTest {
     recentPageModel.getLatestPageObservable()
         .take(1)
         .subscribe(testObserver);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
 
     // after that, let's resubscribe and update with 2 other pages
     testObserver = new TestObserver<>();
@@ -94,7 +95,7 @@ public class RecentPageModelTest {
     recentPageModel.updateLatestPage(51);
     recentPageModel.updateLatestPage(23);
 
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertValues(49, 51, 23);
   }
 
@@ -128,7 +129,7 @@ public class RecentPageModelTest {
     // and that another page afterwards was written
     recentPageModel.updateLatestPage(23);
 
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertValues(51, 23);
   }
 
@@ -142,7 +143,7 @@ public class RecentPageModelTest {
         .subscribe(testObserver);
 
     recentPageModel.persistLatestPage(200, 200, 200);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
 
     verify(bookmarksAdapter, times(1)).addRecentPage(200);
     verify(bookmarksAdapter, times(0)).replaceRecentRangeWithPage(anyInt(), anyInt(), anyInt());
@@ -158,7 +159,7 @@ public class RecentPageModelTest {
         .subscribe(testObserver);
 
     recentPageModel.persistLatestPage(100, 300, 200);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
 
     verify(bookmarksAdapter, times(1)).replaceRecentRangeWithPage(100, 300, 200);
   }

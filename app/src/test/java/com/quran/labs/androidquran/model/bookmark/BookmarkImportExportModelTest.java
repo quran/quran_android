@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.model.bookmark;
 import android.content.Context;
 
 import com.quran.data.model.bookmark.BookmarkData;
+import com.quran.labs.BaseTestExtension;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class BookmarkImportExportModelTest {
     TestObserver<BookmarkData> testObserver = new TestObserver<>();
     bookmarkImportExportModel.readBookmarks(buffer)
         .subscribe(testObserver);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertValueCount(1);
     testObserver.assertNoErrors();
   }
@@ -50,7 +51,7 @@ public class BookmarkImportExportModelTest {
 
     bookmarkImportExportModel.readBookmarks(source)
         .subscribe(testObserver);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertValueCount(0);
     testObserver.assertError(IOException.class);
   }

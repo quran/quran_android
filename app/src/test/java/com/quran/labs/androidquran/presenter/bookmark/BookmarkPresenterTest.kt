@@ -18,15 +18,16 @@ import com.quran.labs.androidquran.model.bookmark.RecentPageModel
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
 import com.quran.labs.androidquran.util.QuranSettings
 
-import io.reactivex.Single
-import io.reactivex.android.plugins.RxAndroidPlugins
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
 import com.google.common.truth.Truth.assertThat
+import com.quran.labs.BaseTestExtension
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
 import org.mockito.Mockito.`when` as whenever
@@ -288,7 +289,7 @@ class BookmarkPresenterTest {
     val testObserver = presenter
       .getBookmarksListObservable(BookmarksDBAdapter.SORT_DATE_ADDED, groupByTags)
       .test()
-    testObserver.awaitTerminalEvent()
+    BaseTestExtension.awaitTerminalEvent(testObserver)
     testObserver.assertNoErrors()
     testObserver.assertValueCount(1)
     return testObserver.values()[0]
