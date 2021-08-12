@@ -445,10 +445,10 @@ public class AudioService extends Service implements OnCompletionListener,
   private class ReadGaplessDataTask extends AsyncTask<Integer, Void, SparseIntArray> {
 
     private int mSura = 0;
-    private final String mDatabasePath;
+    private final String databasePath;
 
     public ReadGaplessDataTask(String database) {
-      mDatabasePath = database;
+      databasePath = database;
     }
 
     @Override
@@ -456,7 +456,7 @@ public class AudioService extends Service implements OnCompletionListener,
       int sura = params[0];
       mSura = sura;
 
-      SuraTimingDatabaseHandler db = SuraTimingDatabaseHandler.getDatabaseHandler(mDatabasePath);
+      SuraTimingDatabaseHandler db = SuraTimingDatabaseHandler.getDatabaseHandler(databasePath);
       SparseIntArray map = null;
 
       Cursor cursor = null;
