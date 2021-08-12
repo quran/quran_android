@@ -498,7 +498,7 @@ public class AudioService extends Service implements OnCompletionListener,
     if (gaplessSura == audioQueue.getCurrentSura()) {
       if (gaplessSuraData != null) {
         int ayah = audioQueue.getCurrentAyah();
-        Integer time = gaplessSuraData.get(ayah);
+        int time = gaplessSuraData.get(ayah);
         if (ayah == 1 && !isRepeating) {
           return gaplessSuraData.get(0);
         }
