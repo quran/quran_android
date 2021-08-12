@@ -587,7 +587,7 @@ public class QuranDownloadService extends Service implements
         long totalRead = downloadedAmount;
 
         while (!isDownloadCanceled && !source.exhausted() &&
-            ((read = source.read(sink.buffer(), BUFFER_SIZE)) > 0)) {
+            ((read = source.read(sink.getBuffer(), BUFFER_SIZE)) > 0)) {
           totalRead += read;
           if (loops++ % 5 == 0) {
             lastSentIntent = notifier.notifyProgress(notificationInfo, totalRead, size);
@@ -649,8 +649,7 @@ public class QuranDownloadService extends Service implements
     try {
       StatFs fsStats = new StatFs(
           Environment.getExternalStorageDirectory().getAbsolutePath());
-      double availableSpace = (double) fsStats.getAvailableBlocks() *
-          (double) fsStats.getBlockSize();
+      long availableSpace = fsStats.getAvailableBlocksLong() * fsStats.getBlockSizeLong();
 
       return availableSpace > spaceNeeded;
     } catch (Exception e) {

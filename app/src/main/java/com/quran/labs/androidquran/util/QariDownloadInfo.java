@@ -12,7 +12,7 @@ public class QariDownloadInfo {
 
   public final QariItem qariItem;
   public SparseBooleanArray downloadedSuras;
-  private SparseBooleanArray partialSuras;
+  private final SparseBooleanArray partialSuras;
 
   QariDownloadInfo(QariItem item) {
     this(item, Collections.<Integer>emptyList());

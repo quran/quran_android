@@ -78,8 +78,8 @@ class BookmarkPresenterTest {
       // figure out how many rows the bookmarks would occupy if grouped by tags - this is really
       // the max between number of tags and 1 for each bookmark.
       var total = 0
-      for ((_, _, _, _, _, tags1) in AYAH_BOOKMARKS_LIST) {
-        val tags = tags1.size
+      for (bookmark in AYAH_BOOKMARKS_LIST) {
+        val tags = bookmark.tags.size
         total += tags.coerceAtLeast(1)
       }
       AYAH_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG = total
