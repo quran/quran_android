@@ -445,7 +445,7 @@ public class AudioService extends Service implements OnCompletionListener,
   private class ReadGaplessDataTask extends AsyncTask<Integer, Void, SparseIntArray> {
 
     private int mSura = 0;
-    private String mDatabasePath = null;
+    private final String mDatabasePath;
 
     public ReadGaplessDataTask(String database) {
       mDatabasePath = database;
@@ -498,7 +498,7 @@ public class AudioService extends Service implements OnCompletionListener,
     if (gaplessSura == audioQueue.getCurrentSura()) {
       if (gaplessSuraData != null) {
         int ayah = audioQueue.getCurrentAyah();
-        Integer time = gaplessSuraData.get(ayah);
+        int time = gaplessSuraData.get(ayah);
         if (ayah == 1 && !isRepeating) {
           return gaplessSuraData.get(0);
         }
@@ -526,12 +526,12 @@ public class AudioService extends Service implements OnCompletionListener,
       }
       setState(PlaybackStateCompat.STATE_PLAYING);
       int pos = player.getCurrentPosition();
-      Integer ayahTime = gaplessSuraData.get(ayah);
+      int ayahTime = gaplessSuraData.get(ayah);
       Timber.d("updateAudioPlayPosition: %d:%d, currently at %d vs expected at %d",
           sura, ayah, pos, ayahTime);
 
+      int iterAyah = ayah;
       if (ayahTime > pos) {
-        int iterAyah = ayah;
         while (--iterAyah > 0) {
           ayahTime = gaplessSuraData.get(iterAyah);
           if (ayahTime <= pos) {
@@ -542,7 +542,6 @@ public class AudioService extends Service implements OnCompletionListener,
           }
         }
       } else {
-        int iterAyah = ayah;
         while (++iterAyah <= maxAyahs) {
           ayahTime = gaplessSuraData.get(iterAyah);
           if (ayahTime > pos) {
@@ -906,13 +905,12 @@ public class AudioService extends Service implements OnCompletionListener,
         if (timing != -1) {
           Timber.d("got timing: %d, seeking and updating later...", timing);
           player.seekTo(timing);
-          return;
         } else {
           Timber.d("no timing data yet, will try again...");
           // try to play again after 200 ms
           serviceHandler.sendEmptyMessageDelayed(MSG_START_AUDIO, 200);
-          return;
         }
+        return;
       } else if (audioRequest.isGapless()) {
         serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200);
       }

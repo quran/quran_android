@@ -16,10 +16,10 @@ import java.text.DecimalFormat;
 
 public class DefaultDownloadReceiver extends BroadcastReceiver {
 
-  private int mDownloadType = -1;
+  private final int mDownloadType;
   private SimpleDownloadListener mListener;
   private ProgressDialog mProgressDialog;
-  private Context mContext = null;
+  private final Context mContext;
   private boolean mDidReceiveBroadcast;
   private boolean mCanCancelDownload;
 
