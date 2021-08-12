@@ -526,7 +526,7 @@ public class AudioService extends Service implements OnCompletionListener,
       }
       setState(PlaybackStateCompat.STATE_PLAYING);
       int pos = player.getCurrentPosition();
-      Integer ayahTime = gaplessSuraData.get(ayah);
+      int ayahTime = gaplessSuraData.get(ayah);
       Timber.d("updateAudioPlayPosition: %d:%d, currently at %d vs expected at %d",
           sura, ayah, pos, ayahTime);
 
