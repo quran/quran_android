@@ -445,7 +445,7 @@ public class AudioService extends Service implements OnCompletionListener,
   private class ReadGaplessDataTask extends AsyncTask<Integer, Void, SparseIntArray> {
 
     private int mSura = 0;
-    private String mDatabasePath = null;
+    private final String mDatabasePath;
 
     public ReadGaplessDataTask(String database) {
       mDatabasePath = database;
