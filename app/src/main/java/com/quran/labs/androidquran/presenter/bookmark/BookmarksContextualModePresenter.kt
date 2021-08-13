@@ -9,7 +9,9 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class BookmarksContextualModePresenter @Inject constructor() : Presenter<BookmarksFragment> {
 
   private var actionMode: ActionMode? = null
@@ -21,14 +23,14 @@ class BookmarksContextualModePresenter @Inject constructor() : Presenter<Bookmar
   }
 
   private fun startActionMode() {
-    if (activity != null) {
-      actionMode = activity?.startSupportActionMode(BookmarksContextualModePresenter().ModeCallback())
+    activity?.let {
+      actionMode = it.startSupportActionMode(ModeCallback())
     }
   }
 
   fun invalidateActionMode(startIfStopped: Boolean) {
     if (actionMode != null) {
-      actionMode?.invalidate()
+      actionMode!!.invalidate()
     } else if (startIfStopped) {
       startActionMode()
     }
@@ -40,7 +42,7 @@ class BookmarksContextualModePresenter @Inject constructor() : Presenter<Bookmar
 
   override fun bind(what: BookmarksFragment) {
     fragment = what
-    activity = fragment?.activity as AppCompatActivity
+    activity = what.activity as AppCompatActivity
   }
 
   override fun unbind(what: BookmarksFragment) {
@@ -52,8 +54,7 @@ class BookmarksContextualModePresenter @Inject constructor() : Presenter<Bookmar
 
   private inner class ModeCallback : ActionMode.Callback {
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
-      val inflater: MenuInflater = activity!!.menuInflater
-      inflater.inflate(R.menu.bookmark_contextual_menu, menu)
+      activity?.menuInflater?.inflate(R.menu.bookmark_contextual_menu, menu)
       return true
     }
 
@@ -63,12 +64,9 @@ class BookmarksContextualModePresenter @Inject constructor() : Presenter<Bookmar
     }
 
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+      val result = fragment?.onContextualActionClicked(item.itemId) ?: false
       finishActionMode()
-      return if (fragment != null) {
-        fragment!!.onContextualActionClicked(item.itemId)
-      } else {
-        false
-      }
+      return result
     }
 
     override fun onDestroyActionMode(mode: ActionMode) {
