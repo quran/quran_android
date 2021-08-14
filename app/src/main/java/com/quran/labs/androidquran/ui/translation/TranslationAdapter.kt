@@ -406,11 +406,9 @@ internal class TranslationAdapter(
       row.type != TranslationViewRow.Type.BASMALLAH &&
       row.type != TranslationViewRow.Type.SPACER
     ) {
-      if (isHighlighted) {
-        holder.wrapperView.setBackgroundColor(ayahSelectionColor)
-      } else {
-        holder.wrapperView.setBackgroundColor(0)
-      }
+      holder.wrapperView.setBackgroundColor(
+        if (isHighlighted) ayahSelectionColor else 0
+      )
     } else if (holder.divider != null) { // SPACER type
       if (isHighlighted) {
         holder.divider.highlight(ayahSelectionColor)
@@ -420,9 +418,7 @@ internal class TranslationAdapter(
     }
   }
 
-  override fun getItemCount(): Int {
-    return data.size
-  }
+  override fun getItemCount(): Int = data.size
 
   internal inner class RowViewHolder(val wrapperView: View) : RecyclerView.ViewHolder(wrapperView) {
     val text: TextView? = wrapperView.findViewById(R.id.text)
