@@ -30,6 +30,7 @@ class DatabaseHandler private constructor(
 ) {
   private var schemaVersion = 1
   private var database: SQLiteDatabase? = null
+
   private val defaultSearcher: Searcher
   private val arabicSearcher: Searcher
 
@@ -69,7 +70,7 @@ class DatabaseHandler private constructor(
       try {
         val handler = databaseMap.remove(databaseName)
         if (handler != null) {
-          handler.database!!.close()
+          handler.database?.close()
           databaseMap.remove(databaseName)
         }
       } catch (e: Exception) {
@@ -115,9 +116,7 @@ class DatabaseHandler private constructor(
     }
   }
 
-  fun validDatabase(): Boolean {
-    return database?.isOpen ?: false
-  }
+  fun validDatabase(): Boolean = database?.isOpen ?: false
 
   private fun getVerses(sura: Int, minAyah: Int, maxAyah: Int): Cursor? {
     return getVerses(sura, minAyah, maxAyah, VERSE_TABLE)
@@ -125,9 +124,8 @@ class DatabaseHandler private constructor(
 
   private fun getProperty(column: String): Int {
     var value = 1
-    if (!validDatabase()) {
-      return value
-    }
+    if (!validDatabase()) return value
+
     var cursor: Cursor? = null
     return try {
       cursor = database?.query(PROPERTIES_TABLE, arrayOf(COL_VALUE),
@@ -244,9 +242,7 @@ class DatabaseHandler private constructor(
   }
 
   private fun getVersesInternal(verses: VerseRange, table: String): Cursor? {
-    if (!validDatabase()) {
-      return null
-    }
+    if (!validDatabase()) return null
 
     val whereQuery = StringBuilder()
     whereQuery.append("(")
@@ -299,7 +295,7 @@ class DatabaseHandler private constructor(
     return getVerses(sura, ayah, ayah)
   }
 
-  fun getVersesByIds(ids: List<Int>): Cursor {
+  fun getVersesByIds(ids: List<Int>): Cursor? {
     val builder = StringBuilder()
     for (i in ids.indices) {
       if (i > 0) {
@@ -312,7 +308,7 @@ class DatabaseHandler private constructor(
     val sql = "SELECT rowid as _id, " + COL_SURA + ", " + COL_AYAH + ", " + COL_TEXT +
         " FROM " + QuranFileConstants.ARABIC_SHARE_TABLE +
         " WHERE rowid in(" + builder.toString() + ")"
-    return database!!.rawQuery(sql, null)
+    return database?.rawQuery(sql, null)
   }
 
   fun search(query: String, withSnippets: Boolean, isArabicDatabase: Boolean): Cursor? {
@@ -320,9 +316,7 @@ class DatabaseHandler private constructor(
   }
 
   fun search(q: String, table: String, withSnippets: Boolean, isArabicDatabase: Boolean): Cursor? {
-    if (!validDatabase()) {
-      return null
-    }
+    if (!validDatabase()) return null
 
     var searchText = q
     var pos = 0
@@ -342,11 +336,7 @@ class DatabaseHandler private constructor(
       searchText = searchText.replace("\"".toRegex(), "")
     }
 
-    val searcher: Searcher = if (isArabicDatabase) {
-      arabicSearcher
-    } else {
-      defaultSearcher
-    }
+    val searcher: Searcher = if (isArabicDatabase) arabicSearcher else defaultSearcher
 
     val useFullTextIndex = schemaVersion > 1 && !isArabicDatabase
     val qtext = searcher.getQuery(withSnippets, useFullTextIndex, table,

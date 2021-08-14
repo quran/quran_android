@@ -71,12 +71,10 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
     }
   }
 
-  private fun validDatabase(): Boolean {
-    return database?.isOpen ?: false
-  }
+  private fun validDatabase(): Boolean = database?.isOpen ?: false
 
   fun getAyahTimings(sura: Int): Cursor? {
-    if (!validDatabase()) { return null }
+    if (!validDatabase()) return null
 
     return try {
       database?.query(
