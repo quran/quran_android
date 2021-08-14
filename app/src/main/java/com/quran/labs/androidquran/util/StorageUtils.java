@@ -32,8 +32,7 @@ public class StorageUtils {
   public static List<Storage> getAllStorageLocations(Context context) {
 
     /*
-      This first condition is the code moving forward, since the else case is a bunch
-      of unsupported hacks.
+      Condition is unwrapped since SDK is always >= 21
 
       For Kitkat and above, we rely on Environment.getExternalFilesDirs to give us a list
       of application writable directories (none of which require WRITE_EXTERNAL_STORAGE on
@@ -57,38 +56,34 @@ public class StorageUtils {
       external storage directory), and potentially more (depending on how many items are returned
       by getExternalFilesDirs).
      */
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      List<Storage> result = new ArrayList<>();
-      int limit = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? 1 : 2;
-      final File[] mountPoints = ContextCompat.getExternalFilesDirs(context, null);
-      if (mountPoints.length >= limit) {
+    List<Storage> result = new ArrayList<>();
+    int limit = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? 1 : 2;
+    final File[] mountPoints = ContextCompat.getExternalFilesDirs(context, null);
+    if (mountPoints.length >= limit) {
 
-        // internal files dir
-        result.add(
-            new Storage(context.getString(R.string.prefs_sdcard_internal),
-                context.getFilesDir().getAbsolutePath()));
+      // internal files dir
+      result.add(
+          new Storage(context.getString(R.string.prefs_sdcard_internal),
+              context.getFilesDir().getAbsolutePath()));
 
-        // all of these are "external" files dir or related
+      // all of these are "external" files dir or related
 
-        int number = 1;
-        // this first one is not safe to write on starting from Android 11 - /sdcard.
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-          // don't show the /sdcard option for people on Android 11
-          result.add(new Storage(context.getString(R.string.prefs_sdcard_external, number++),
-              Environment.getExternalStorageDirectory().getAbsolutePath(),
-              Build.VERSION.SDK_INT >= Build.VERSION_CODES.M));
-        }
-
-        // add all the remaining places
-        for (File mountPoint : mountPoints) {
-          result.add(new Storage(context.getString(R.string.prefs_sdcard_external, number++),
-              mountPoint.getAbsolutePath()));
-        }
+      int number = 1;
+      // this first one is not safe to write on starting from Android 11 - /sdcard.
+      if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+        // don't show the /sdcard option for people on Android 11
+        result.add(new Storage(context.getString(R.string.prefs_sdcard_external, number++),
+            Environment.getExternalStorageDirectory().getAbsolutePath(),
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M));
       }
-      return result;
-    } else {
-      return getLegacyStorageLocations(context);
+
+      // add all the remaining places
+      for (File mountPoint : mountPoints) {
+        result.add(new Storage(context.getString(R.string.prefs_sdcard_external, number++),
+            mountPoint.getAbsolutePath()));
+      }
     }
+    return result;
   }
 
   /**
@@ -264,12 +259,7 @@ public class StorageUtils {
     private void computeSpace() {
       StatFs stat = new StatFs(mountPoint);
       long bytesAvailable;
-      if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1) {
-        bytesAvailable = stat.getAvailableBlocksLong() * stat.getBlockSizeLong();
-      } else {
-        //noinspection deprecation
-        bytesAvailable = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
-      }
+      bytesAvailable = stat.getAvailableBlocksLong() * stat.getBlockSizeLong();
       // Convert total bytes to megabytes
       freeSpace = bytesAvailable / (1024 * 1024);
     }
