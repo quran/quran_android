@@ -242,11 +242,12 @@ class BookmarksDBAdapter(context: Context) {
     return bookmarkId
   }
 
-  fun addBookmark(sura: Int, ayah: Int, page: Int): Long {
-    val values = ContentValues()
-    values.put(BookmarksTable.SURA, sura)
-    values.put(BookmarksTable.AYAH, ayah)
-    values.put(BookmarksTable.PAGE, page)
+  fun addBookmark(sura: Int?, ayah: Int?, page: Int): Long {
+    val values = ContentValues().apply {
+      put(BookmarksTable.SURA, sura)
+      put(BookmarksTable.AYAH, ayah)
+      put(BookmarksTable.PAGE, page)
+    }
     return db.insert(BookmarksTable.TABLE_NAME, null, values)
   }
 
