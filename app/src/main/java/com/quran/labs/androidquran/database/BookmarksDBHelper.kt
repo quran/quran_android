@@ -97,7 +97,6 @@ class BookmarksDBHelper private constructor(context: Context) :
 
     private var sInstance: BookmarksDBHelper? = null
 
-    @JvmStatic
     fun getInstance(context: Context): BookmarksDBHelper {
       if (sInstance == null) {
         sInstance = BookmarksDBHelper(context.applicationContext)

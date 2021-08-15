@@ -110,7 +110,7 @@ class BookmarksDBAdapter(context: Context) {
         val tableColumns = arrayOf(LastPagesTable.ID, LastPagesTable.PAGE, "strftime('%s', " + LastPagesTable.ADDED_DATE + ")")
         cursor = db.query(LastPagesTable.TABLE_NAME, tableColumns, null, null, null, null,
           LastPagesTable.ADDED_DATE + " DESC")
-        if (cursor != null) {
+        cursor?.let {
           while (cursor.moveToNext()) {
             recents.add(RecentPage(cursor.getInt(1), cursor.getLong(2)))
           }
@@ -153,7 +153,7 @@ class BookmarksDBAdapter(context: Context) {
         arrayOf(BookmarkTagTable.TAG_ID),
         BookmarkTagTable.BOOKMARK_ID + "=" + bookmarkId,
         null, null, null, BookmarkTagTable.TAG_ID + " ASC")
-      if (cursor != null) {
+      cursor?.let {
         while (cursor.moveToNext()) {
           bookmarkTags.add(cursor.getLong(0))
         }
@@ -172,8 +172,8 @@ class BookmarksDBAdapter(context: Context) {
             BookmarksTable.SURA + (if (sura == null) " IS NULL" else "=$sura") +
             " AND " + BookmarksTable.AYAH +
             (if (ayah == null) " IS NULL" else "=$ayah")), null, null, null, null)
-      if (cursor != null && cursor.moveToFirst()) {
-        return cursor.getLong(0)
+      cursor?.let {
+        if (it.moveToFirst()) return it.getLong(0)
       }
     } catch (e: Exception) {
       // swallow the error for now
@@ -242,11 +242,12 @@ class BookmarksDBAdapter(context: Context) {
     return bookmarkId
   }
 
-  fun addBookmark(sura: Int, ayah: Int, page: Int): Long {
-    val values = ContentValues()
-    values.put(BookmarksTable.SURA, sura)
-    values.put(BookmarksTable.AYAH, ayah)
-    values.put(BookmarksTable.PAGE, page)
+  fun addBookmark(sura: Int?, ayah: Int?, page: Int): Long {
+    val values = ContentValues().apply {
+      put(BookmarksTable.SURA, sura)
+      put(BookmarksTable.AYAH, ayah)
+      put(BookmarksTable.PAGE, page)
+    }
     return db.insert(BookmarksTable.TABLE_NAME, null, values)
   }
 
@@ -305,8 +306,8 @@ class BookmarksDBAdapter(context: Context) {
         null,
         null,
         "1")
-      if (cursor != null && cursor.moveToNext()) {
-        return cursor.getLong(0)
+      cursor?.let {
+        if (it.moveToNext()) return it.getLong(0)
       }
     } finally {
       DatabaseUtils.closeCursor(cursor)
@@ -320,6 +321,7 @@ class BookmarksDBAdapter(context: Context) {
       val values = ContentValues()
       values.put(TagsTable.ID, id)
       values.put(TagsTable.NAME, newName)
+
       1 == db.update(TagsTable.TABLE_NAME, values,
         TagsTable.ID + "=" + id, null)
     } else {

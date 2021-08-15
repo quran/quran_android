@@ -125,10 +125,8 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
     importPref.setOnPreferenceClickListener(preference -> {
       Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
       intent.setType("*/*");
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        String[] mimeTypes = new String[]{"application/*", "text/*"};
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-      }
+      String[] mimeTypes = new String[]{"application/*", "text/*"};
+      intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
       startActivityForResult(intent, REQUEST_CODE_IMPORT);
       return true;
     });
@@ -299,8 +297,7 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
 
 
   private void handleMove(String newLocation, StorageUtils.Storage storageLocation) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT ||
-        newLocation.equals(internalSdcardLocation)) {
+    if (newLocation.equals(internalSdcardLocation)) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         // on Android Q (not really "above" since we don't show the option above),
         // warn if the person tries to use the /sdcard path.
