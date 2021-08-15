@@ -19,3 +19,14 @@ object BaseTestExtension {
     }
   }
 }
+
+// Same as above function, but for Kotlin.
+fun <T> TestObserver<T>.awaitTerminalEvent(): Boolean {
+  return try {
+    this.await()
+    true
+  } catch (ex: InterruptedException) {
+    Thread.currentThread().interrupt()
+    false
+  }
+}

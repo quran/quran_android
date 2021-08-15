@@ -22,7 +22,7 @@ import okio.Buffer
 import okio.source
 
 import com.google.common.truth.Truth
-import com.quran.labs.BaseTestExtension
+import com.quran.labs.awaitTerminalEvent
 import org.mockito.Mockito.mock
 
 class TranslationManagerPresenterTest {
@@ -65,7 +65,7 @@ class TranslationManagerPresenterTest {
     val testObserver = TestObserver<TranslationList>()
     translationManager.cachedTranslationListObservable
       .subscribe(testObserver)
-    BaseTestExtension.awaitTerminalEvent(testObserver)
+    testObserver.awaitTerminalEvent()
     testObserver.assertNoValues()
     testObserver.assertNoErrors()
   }
@@ -83,7 +83,7 @@ class TranslationManagerPresenterTest {
     val testObserver = TestObserver<TranslationList>()
     translationManager.remoteTranslationListObservable
       .subscribe(testObserver)
-    BaseTestExtension.awaitTerminalEvent(testObserver)
+    testObserver.awaitTerminalEvent()
     testObserver.assertValueCount(1)
     testObserver.assertNoErrors()
     val (translations) = testObserver.values()[0]
@@ -99,7 +99,7 @@ class TranslationManagerPresenterTest {
     val testObserver = TestObserver<TranslationList>()
     translationManager.remoteTranslationListObservable
       .subscribe(testObserver)
-    BaseTestExtension.awaitTerminalEvent(testObserver)
+    testObserver.awaitTerminalEvent()
     testObserver.assertNoValues()
     testObserver.assertError(IOException::class.java)
   }

@@ -27,7 +27,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 
 import com.google.common.truth.Truth.assertThat
-import com.quran.labs.BaseTestExtension
+import com.quran.labs.awaitTerminalEvent
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
 import org.mockito.Mockito.`when` as whenever
@@ -287,7 +287,7 @@ class BookmarkPresenterTest {
     val testObserver = presenter
       .getBookmarksListObservable(BookmarksDBAdapter.SORT_DATE_ADDED, groupByTags)
       .test()
-    BaseTestExtension.awaitTerminalEvent(testObserver)
+    testObserver.awaitTerminalEvent()
     testObserver.assertNoErrors()
     testObserver.assertValueCount(1)
     return testObserver.values()[0]
