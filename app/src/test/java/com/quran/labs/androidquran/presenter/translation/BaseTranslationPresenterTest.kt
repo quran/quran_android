@@ -29,11 +29,7 @@ class BaseTranslationPresenterTest {
     presenter = BaseTranslationPresenter(
         Mockito.mock(TranslationModel::class.java),
         Mockito.mock(TranslationsDBAdapter::class.java),
-        object : TranslationUtil(0,
-            QuranInfo(
-                MadaniDataSource()
-            )
-        ) {
+        object : TranslationUtil(0, QuranInfo(MadaniDataSource())) {
           override fun parseTranslationText(quranText: QuranText, translationId: Int): TranslationMetadata {
             return TranslationMetadata(quranText.sura, quranText.ayah, quranText.text, translationId)
           }

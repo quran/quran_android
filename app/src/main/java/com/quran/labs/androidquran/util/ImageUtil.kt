@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.util
 
-import io.reactivex.Maybe
+import io.reactivex.rxjava3.core.Maybe
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.buffer

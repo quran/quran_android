@@ -19,10 +19,10 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.UrlUtil;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.observers.DisposableObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -175,7 +175,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
     final String url = host + WEB_SERVICE_ENDPOINT;
     return
         downloadTranslationList(url)
-            .onErrorResumeNext(downloadTranslationList(urlUtil.fallbackUrl(url)))
+            .onErrorResumeWith(downloadTranslationList(urlUtil.fallbackUrl(url)))
             .doOnNext(translationList -> {
               translationList.getTranslations();
               if (!translationList.getTranslations().isEmpty()) {

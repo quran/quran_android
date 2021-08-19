@@ -15,9 +15,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 
 @Singleton
@@ -182,8 +182,7 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
           bookmarkIds != null && bookmarkIds.length == 1 ? bookmarkIds[0] : 0);
     }
     return bookmarkModel.getBookmarkTagIds(bookmarkId)
-        .defaultIfEmpty(new ArrayList<>())
-        .toSingle();
+        .defaultIfEmpty(new ArrayList<>());
   }
 
   @Override

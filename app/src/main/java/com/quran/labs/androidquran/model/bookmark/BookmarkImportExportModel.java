@@ -14,8 +14,8 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;

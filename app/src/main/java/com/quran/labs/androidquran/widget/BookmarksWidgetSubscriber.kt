@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.widget
 
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
 import javax.inject.Inject
 import javax.inject.Singleton
 

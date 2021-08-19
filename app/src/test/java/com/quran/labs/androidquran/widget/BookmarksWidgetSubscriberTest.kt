@@ -1,9 +1,9 @@
 package com.quran.labs.androidquran.widget
 
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
-import io.reactivex.android.plugins.RxAndroidPlugins
-import io.reactivex.schedulers.TestScheduler
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
+import io.reactivex.rxjava3.schedulers.TestScheduler
+import io.reactivex.rxjava3.subjects.PublishSubject
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import org.junit.Rule

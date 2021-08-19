@@ -11,11 +11,11 @@ import com.quran.labs.androidquran.ui.helpers.QuranPageLoader
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableObserver
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.observers.DisposableObserver
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -51,7 +51,7 @@ class QuranPagePresenter @Inject constructor(
     compositeDisposable.add(
       coordinatesModel.getPageCoordinates(quranSettings.shouldOverlayPageInfo(), *pages)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(object : DisposableObserver<PageCoordinates?>() {
+        .subscribeWith(object : DisposableObserver<PageCoordinates>() {
           override fun onNext(pageCoordinates: PageCoordinates) {
             screen?.setPageCoordinates(pageCoordinates)
           }
@@ -72,7 +72,7 @@ class QuranPagePresenter @Inject constructor(
     compositeDisposable.add(
       bookmarkModel.getBookmarkedAyahsOnPageObservable(*pages)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(object : DisposableObserver<List<Bookmark?>?>() {
+        .subscribeWith(object : DisposableObserver<List<Bookmark?>>() {
           override fun onNext(bookmarks: List<Bookmark?>) {
             screen?.setBookmarksOnPage(bookmarks)
           }
@@ -90,7 +90,7 @@ class QuranPagePresenter @Inject constructor(
         .andThen(Observable.fromArray(*pages))
         .flatMap { coordinatesModel.getAyahCoordinates(it) }
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(object : DisposableObserver<AyahCoordinates?>() {
+        .subscribeWith(object : DisposableObserver<AyahCoordinates>() {
           override fun onNext(coordinates: AyahCoordinates) {
             screen?.setAyahCoordinatesData(coordinates)
           }
@@ -111,7 +111,7 @@ class QuranPagePresenter @Inject constructor(
     compositeDisposable.add(
       quranPageLoader.loadPages(*pages)
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(object : DisposableObserver<Response?>() {
+        .subscribeWith(object : DisposableObserver<Response>() {
           override fun onNext(response: Response) {
             screen?.let { pageScreen ->
               val bitmap = response.bitmap

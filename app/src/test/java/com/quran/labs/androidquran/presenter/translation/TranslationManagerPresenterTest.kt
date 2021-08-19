@@ -14,7 +14,7 @@ import org.junit.Test
 import java.io.File
 import java.io.IOException
 
-import io.reactivex.observers.TestObserver
+import io.reactivex.rxjava3.observers.TestObserver
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -22,6 +22,7 @@ import okio.Buffer
 import okio.source
 
 import com.google.common.truth.Truth
+import com.quran.labs.awaitTerminalEvent
 import org.mockito.Mockito.mock
 
 class TranslationManagerPresenterTest {

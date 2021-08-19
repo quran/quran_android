@@ -5,8 +5,8 @@ import com.quran.labs.androidquran.di.ActivityScope
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.PagerActivity
-import io.reactivex.disposables.Disposable
-import io.reactivex.observers.DisposableObserver
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.observers.DisposableObserver
 import javax.inject.Inject
 
 @ActivityScope
@@ -43,7 +43,7 @@ class RecentPagePresenter @Inject constructor(private val model: RecentPageModel
     maximumPage = Constants.NO_PAGE
     lastPage = Constants.NO_PAGE
     disposable = what.viewPagerObservable
-      .subscribeWith(object : DisposableObserver<Int?>() {
+      .subscribeWith(object : DisposableObserver<Int>() {
         override fun onNext(value: Int) {
           onPageChanged(value)
         }
