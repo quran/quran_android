@@ -128,10 +128,9 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo) {
     val info = context.getString(if (quranInfo.isMakki(sura)) R.string.makki else R.string.madani) + " - "
 
     val ayahs = quranInfo.getNumberOfAyahs(sura)
-    info.plus(context.resources.getQuantityString(
+    return info + context.resources.getQuantityString(
       R.plurals.verses, ayahs,
-      QuranUtils.getLocalizedNumber(context, ayahs)))
-    return info
+      QuranUtils.getLocalizedNumber(context, ayahs))
   }
 
   fun safelyGetSuraOnPage(page: Int): Int {
