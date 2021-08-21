@@ -107,7 +107,7 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo) {
       maxAyah = quranInfo.getNumberOfAyahs(maxSura)
     }
 
-    notificationTitle.plus(
+    return notificationTitle.plus(
       if (minSura == maxSura) {
         if (minVerse.ayah == maxAyah) {
           " ($maxAyah)"
@@ -120,8 +120,6 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo) {
             " (" + maxAyah + ")"
       }
     )
-
-    return notificationTitle
   }
 
   fun getSuraListMetaString(context: Context, sura: Int): String {
