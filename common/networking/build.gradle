@@ -10,6 +10,6 @@ dependencies {
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
 
-  implementation 'dnsjava:dnsjava:2.1.9'
+  implementation 'dnsjava:dnsjava:3.4.2'
   implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:${okhttpVersion}"
 }
