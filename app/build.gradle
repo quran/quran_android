@@ -137,7 +137,7 @@ dependencies {
   implementation "androidx.multidex:multidex:2.0.1"
 
   // rx
-  implementation 'io.reactivex.rxjava3:rxjava:3.1.0'
+  implementation 'io.reactivex.rxjava3:rxjava:3.1.1'
   implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
 
   // dagger
@@ -168,7 +168,7 @@ dependencies {
   androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
   androidTestImplementation "androidx.test.ext:junit:${androidxJunitExtVersion}"
 
-  errorprone 'com.google.errorprone:error_prone_core:2.7.1'
+  errorprone 'com.google.errorprone:error_prone_core:2.9.0'
 
   // Number Picker
   implementation 'io.github.ShawnLin013:number-picker:2.4.13'
