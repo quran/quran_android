@@ -7,6 +7,7 @@ import com.quran.data.pageinfo.mapper.AyahMapper
 import com.quran.data.pageinfo.mapper.IdentityAyahMapper
 import com.quran.data.source.PageProvider
 import com.quran.page.common.draw.ImageDrawHelper
+import com.quran.page.common.factory.PageViewFactoryProvider
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
@@ -16,6 +17,11 @@ import dagger.multibindings.StringKey
 
 @Module
 object QuranPageModule {
+
+  @Provides
+  fun providePageViewFactoryProvider(): PageViewFactoryProvider {
+    return PageViewFactoryProvider { null }
+  }
 
   @JvmStatic
   @Provides
