@@ -12,6 +12,7 @@ android {
 
 dependencies {
   implementation project(path: ':common:data')
+  implementation "androidx.fragment:fragment-ktx:${androidxFragmentVersion}"
 
   kapt deps.dagger.apt
   implementation deps.dagger.runtime

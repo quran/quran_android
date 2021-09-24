@@ -3,9 +3,12 @@ package com.quran.labs.androidquran.data;
 import com.quran.data.source.PageProvider;
 import com.quran.data.source.QuranDataSource;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.page.common.factory.PageViewFactoryProvider;
+
+import java.util.Map;
+
 import dagger.Module;
 import dagger.Provides;
-import java.util.Map;
 
 @Module
 public class QuranDataModule {
@@ -19,6 +22,11 @@ public class QuranDataModule {
       quranSettings.setPageType(fallbackType);
     }
     return providers.get(key == null ? fallbackType : key);
+  }
+
+  @Provides
+  static PageViewFactoryProvider providePageViewFactoryProvider() {
+    return pageType -> null;
   }
 
   @Provides
