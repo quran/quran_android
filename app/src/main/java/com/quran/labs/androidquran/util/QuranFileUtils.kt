@@ -37,7 +37,7 @@ import javax.inject.Inject
 
 class QuranFileUtils @Inject constructor(
   context: Context,
-  private val pageProvider: PageProvider,
+  pageProvider: PageProvider,
   private val quranScreenInfo: QuranScreenInfo,
   private val urlUtil: UrlUtil
 ): QuranFileManager {
