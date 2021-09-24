@@ -5,11 +5,13 @@ import android.content.Context
 import android.graphics.Point
 import android.view.Display
 import android.view.WindowManager
+import com.quran.data.constant.DependencyInjectionConstants
 import com.quran.data.core.QuranFileManager
 import com.quran.data.dao.Settings
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
+import com.quran.labs.androidquran.data.QuranFileConstants
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.SettingsImpl
@@ -18,6 +20,7 @@ import dagger.Provides
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import java.io.File
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -58,6 +61,17 @@ class ApplicationModule(private val application: Application) {
   @Provides
   fun provideSettings(settingsImpl: SettingsImpl): Settings {
     return settingsImpl
+  }
+
+  @Named(DependencyInjectionConstants.CURRENT_PAGE_TYPE)
+  @Provides
+  fun provideCurrentPageType(quranSettings: QuranSettings): String {
+    val currentKey = quranSettings.pageType
+    val result = currentKey ?: QuranFileConstants.FALLBACK_PAGE_TYPE
+    if (currentKey == null) {
+      quranSettings.pageType = result
+    }
+    return result
   }
 
   @Provides

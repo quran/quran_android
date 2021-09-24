@@ -3,14 +3,18 @@ package com.quran.labs.androidquran.di.component.application
 import com.quran.analytics.provider.AnalyticsModule
 import com.quran.common.networking.NetworkModule
 import com.quran.data.page.provider.QuranPageModule
-import com.quran.labs.androidquran.*
+import com.quran.labs.androidquran.QuranApplication
+import com.quran.labs.androidquran.QuranDataActivity
+import com.quran.labs.androidquran.QuranForwarderActivity
+import com.quran.labs.androidquran.QuranImportActivity
+import com.quran.labs.androidquran.SearchActivity
 import com.quran.labs.androidquran.core.worker.di.WorkerModule
-import com.quran.labs.androidquran.data.QuranDataModule
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent
 import com.quran.labs.androidquran.di.component.activity.QuranActivityComponent
 import com.quran.labs.androidquran.di.module.application.ApplicationModule
 import com.quran.labs.androidquran.di.module.application.DatabaseModule
+import com.quran.labs.androidquran.di.module.application.PageAggregationModule
 import com.quran.labs.androidquran.di.module.widgets.BookmarksWidgetUpdaterModule
 import com.quran.labs.androidquran.pageselect.PageSelectActivity
 import com.quran.labs.androidquran.service.AudioService
@@ -18,7 +22,15 @@ import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.ui.AudioManagerActivity
 import com.quran.labs.androidquran.ui.SheikhAudioManagerActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
-import com.quran.labs.androidquran.ui.fragment.*
+import com.quran.labs.androidquran.ui.fragment.AddTagDialog
+import com.quran.labs.androidquran.ui.fragment.AyahPlaybackFragment
+import com.quran.labs.androidquran.ui.fragment.BookmarksFragment
+import com.quran.labs.androidquran.ui.fragment.JumpFragment
+import com.quran.labs.androidquran.ui.fragment.JuzListFragment
+import com.quran.labs.androidquran.ui.fragment.QuranAdvancedSettingsFragment
+import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment
+import com.quran.labs.androidquran.ui.fragment.SuraListFragment
+import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import com.quran.labs.androidquran.widget.BookmarksWidget
 import com.quran.labs.androidquran.widget.BookmarksWidgetListProvider
 import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
@@ -32,7 +44,7 @@ import javax.inject.Singleton
     ApplicationModule::class,
     DatabaseModule::class,
     NetworkModule::class,
-    QuranDataModule::class,
+    PageAggregationModule::class,
     QuranPageModule::class,
     WorkerModule::class,
     BookmarksWidgetUpdaterModule::class
