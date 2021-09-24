@@ -85,6 +85,8 @@ import com.quran.labs.androidquran.view.AyahToolBar;
 import com.quran.labs.androidquran.view.IconPageIndicator;
 import com.quran.labs.androidquran.view.QuranSpinner;
 import com.quran.labs.androidquran.view.SlidingUpPanelLayout;
+import com.quran.page.common.factory.PageViewFactory;
+import com.quran.page.common.factory.PageViewFactoryProvider;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -224,6 +226,7 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject QuranFileUtils quranFileUtils;
   @Inject AudioPresenter audioPresenter;
   @Inject QuranEventLogger quranEventLogger;
+  @Inject PageViewFactoryProvider pageProviderFactoryProvider;
 
   private CompositeDisposable compositeDisposable;
   private final CompositeDisposable foregroundDisposable = new CompositeDisposable();
@@ -352,7 +355,13 @@ public class PagerActivity extends AppCompatActivity implements
 
     lastPopupTime = System.currentTimeMillis();
     pagerAdapter = new QuranPageAdapter(
-        getSupportFragmentManager(), isDualPages, showingTranslation, quranInfo, isSplitScreen);
+        getSupportFragmentManager(),
+        isDualPages,
+        showingTranslation,
+        quranInfo,
+        isSplitScreen,
+        pageProviderFactoryProvider.providePageViewFactory(quranSettings.getPageType())
+    );
     ayahToolBar = findViewById(R.id.ayah_toolbar);
 
     final NonRestoringViewPager nonRestoringViewPager = findViewById(R.id.quran_pager);
