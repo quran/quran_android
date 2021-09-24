@@ -860,7 +860,7 @@ public class PagerActivity extends AppCompatActivity implements
     }
     audioPresenter.unbind(this);
     recentPagePresenter.unbind(this);
-    quranSettings.setWasShowingTranslation(pagerAdapter.getIsShowingTranslation());
+    quranSettings.setWasShowingTranslation(pagerAdapter.isShowingTranslation());
     super.onPause();
   }
 
