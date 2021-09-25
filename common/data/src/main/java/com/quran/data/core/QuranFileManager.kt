@@ -3,6 +3,8 @@ package com.quran.data.core
 import androidx.annotation.WorkerThread
 
 interface QuranFileManager {
+  fun quranImagesDirectory(): String?
+  
   @WorkerThread
   fun isVersion(widthParam: String, version: Int): Boolean
 

@@ -19,6 +19,7 @@ buildscript {
     okioVersion = '2.10.0'
     workManagerVersion = '2.6.0'
     retrofitVersion = '2.9.0'
+    compose_version = '1.1.0-alpha04'
 
     // testing
     junitVersion = '4.13.2'

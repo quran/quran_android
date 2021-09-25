@@ -97,6 +97,8 @@ class QuranFileUtils @Inject constructor(
     return null
   }
 
+  override fun quranImagesDirectory(): String? = getQuranImagesDirectory(appContext)
+
   @WorkerThread
   override fun removeFilesForWidth(width: Int, directoryLambda: ((String) -> String)) {
     val widthParam = "_$width"

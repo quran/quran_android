@@ -56,40 +56,40 @@ interface ApplicationComponent {
   fun quranActivityComponentBuilder(): QuranActivityComponent.Builder
 
   // application
-  fun inject(quranApplication: QuranApplication?)
+  fun inject(quranApplication: QuranApplication)
 
   // content provider
-  fun inject(quranDataProvider: QuranDataProvider?)
+  fun inject(quranDataProvider: QuranDataProvider)
 
   // services
-  fun inject(audioService: AudioService?)
-  fun inject(quranDownloadService: QuranDownloadService?)
+  fun inject(audioService: AudioService)
+  fun inject(quranDownloadService: QuranDownloadService)
 
   // activities
-  fun inject(quranDataActivity: QuranDataActivity?)
-  fun inject(quranImportActivity: QuranImportActivity?)
-  fun inject(audioManagerActivity: AudioManagerActivity?)
-  fun inject(sheikhAudioManagerActivity: SheikhAudioManagerActivity?)
-  fun inject(quranForwarderActivity: QuranForwarderActivity?)
-  fun inject(searchActivity: SearchActivity?)
-  fun inject(pageSelectActivity: PageSelectActivity?)
-  fun inject(showJumpFragmentActivity: ShowJumpFragmentActivity?)
+  fun inject(quranDataActivity: QuranDataActivity)
+  fun inject(quranImportActivity: QuranImportActivity)
+  fun inject(audioManagerActivity: AudioManagerActivity)
+  fun inject(sheikhAudioManagerActivity: SheikhAudioManagerActivity)
+  fun inject(quranForwarderActivity: QuranForwarderActivity)
+  fun inject(searchActivity: SearchActivity)
+  fun inject(pageSelectActivity: PageSelectActivity)
+  fun inject(showJumpFragmentActivity: ShowJumpFragmentActivity)
 
   // fragments
-  fun inject(bookmarksFragment: BookmarksFragment?)
-  fun inject(fragment: QuranSettingsFragment?)
-  fun inject(translationManagerActivity: TranslationManagerActivity?)
-  fun inject(quranAdvancedSettingsFragment: QuranAdvancedSettingsFragment?)
-  fun inject(suraListFragment: SuraListFragment?)
-  fun inject(juzListFragment: JuzListFragment?)
-  fun inject(ayahPlaybackFragment: AyahPlaybackFragment?)
-  fun inject(jumpFragment: JumpFragment?)
+  fun inject(bookmarksFragment: BookmarksFragment)
+  fun inject(fragment: QuranSettingsFragment)
+  fun inject(translationManagerActivity: TranslationManagerActivity)
+  fun inject(quranAdvancedSettingsFragment: QuranAdvancedSettingsFragment)
+  fun inject(suraListFragment: SuraListFragment)
+  fun inject(juzListFragment: JuzListFragment)
+  fun inject(ayahPlaybackFragment: AyahPlaybackFragment)
+  fun inject(jumpFragment: JumpFragment)
 
   // dialogs
-  fun inject(tagBookmarkDialog: TagBookmarkDialog?)
-  fun inject(addTagDialog: AddTagDialog?)
+  fun inject(tagBookmarkDialog: TagBookmarkDialog)
+  fun inject(addTagDialog: AddTagDialog)
 
   // widgets
-  fun inject(bookmarksWidgetListProvider: BookmarksWidgetListProvider?)
-  fun inject(bookmarksWidget: BookmarksWidget?)
+  fun inject(bookmarksWidgetListProvider: BookmarksWidgetListProvider)
+  fun inject(bookmarksWidget: BookmarksWidget)
 }
