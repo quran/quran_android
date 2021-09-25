@@ -92,7 +92,6 @@ class PageSelectAdapter(val inflater: LayoutInflater,
   }
 
   override fun destroyItem(container: ViewGroup, position: Int, o: Any) {
-    super.destroyItem(container, position, o)
     container.removeView(o as View)
   }
 }

@@ -203,7 +203,7 @@ class QuranDataPresenter @Inject internal constructor(
       }
 
       val pageType = quranSettings.pageType
-      if (!quranSettings.didCheckPartialImages(pageType)) {
+      if (!quranSettings.didCheckPartialImages(pageType) && !pageType.endsWith("lines")) {
         Timber.d("enqueuing work for $pageType...")
 
         // setup check pages task

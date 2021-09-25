@@ -129,7 +129,8 @@ class QuranFileUtils @Inject constructor(
   fun haveAllImages(context: Context,
     widthParam: String,
     totalPages: Int,
-    makeDirectory: Boolean
+    makeDirectory: Boolean,
+    oneFilePerPage: Boolean = true
   ): Boolean {
     val quranDirectory = getQuranImagesDirectory(context, widthParam)
     Timber.d("haveAllImages: for width %s, directory is: %s", widthParam, quranDirectory)
@@ -145,9 +146,8 @@ class QuranFileUtils @Inject constructor(
         if (fileList == null) {
           Timber.d("haveAllImages: null fileList, checking page by page...")
           for (i in 1..totalPages) {
-            if (!File(dir, getPageFileName(i))
-                    .exists()
-            ) {
+            val name = if (oneFilePerPage) getPageFileName(i) else i.toString()
+            if (!File(dir, name).exists()) {
               Timber.d("haveAllImages: couldn't find page %d", i)
               return false
             }
