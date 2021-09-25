@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.quran.labs.androidquran.BuildConfig
 
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.dao.translation.TranslationItem
@@ -49,7 +50,11 @@ class TranslationsAdapter(private val downloadedMenuActionListener: DownloadedMe
           translationTitle?.text = item.name()
 
           if (TextUtils.isEmpty(item.translation.translatorNameLocalized)) {
-            holder.translationInfo?.text = item.translation.translator
+            val translationId = item.translation.id
+            val translation_title = "translation_" + translationId.toString() + "_title"
+            holder.translationTitle?.text = this.itemView.context.getString(this.itemView.resources.getIdentifier(translation_title, "string", BuildConfig.APPLICATION_ID))
+            val translation_translator = "translation_" + translationId.toString() + "_translator"
+            holder.translationInfo?.text = this.itemView.context.getString(this.itemView.resources.getIdentifier(translation_translator, "string", BuildConfig.APPLICATION_ID))
           } else {
             holder.translationInfo?.text = item.translation.translatorNameLocalized
           }

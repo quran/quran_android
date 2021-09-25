@@ -352,4 +352,8 @@
   </string>
   <string name="comma_with_spaces">" ، "</string>
 
+  <!-- Translation Title and Info -->
+  <string name="translation_33_title">الترجمة الألبانية</string>
+  <string name="translation_33_translator">شريف أحمدي</string>
+
 </resources>

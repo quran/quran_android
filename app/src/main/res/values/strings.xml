@@ -429,4 +429,8 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Quran Downloads</string>
   <string name="notification_channel_audio">Quran Recitation</string>
+
+  <!-- Translation Title and Info -->
+  <string name="translation_33_title">Albanian Translation</string>
+  <string name="translation_33_translator">Sherif Ahmeti</string>
 </resources>
