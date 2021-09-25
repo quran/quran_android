@@ -17,7 +17,7 @@ buildscript {
     moshiVersion = '1.12.0'
     okhttpVersion = '4.9.1'
     okioVersion = '2.10.0'
-    workManagerVersion = '2.5.0'
+    workManagerVersion = '2.6.0'
     retrofitVersion = '2.9.0'
 
     // testing
