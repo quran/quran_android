@@ -25,7 +25,6 @@ android {
     versionCode 3070
     versionName "3.0.7"
     testInstrumentationRunner "com.quran.labs.androidquran.core.QuranTestRunner"
-    multiDexEnabled true
   }
 
   signingConfigs {
@@ -134,7 +133,6 @@ dependencies {
   implementation "androidx.recyclerview:recyclerview:${androidxRecyclerViewVersion}"
   implementation "com.google.android.material:material:${materialComponentsVersion}"
   implementation "androidx.swiperefreshlayout:swiperefreshlayout:${androidxSwipeRefreshVersion}"
-  implementation "androidx.multidex:multidex:2.0.1"
 
   // rx
   implementation 'io.reactivex.rxjava3:rxjava:3.1.1'

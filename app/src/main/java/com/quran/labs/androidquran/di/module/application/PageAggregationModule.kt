@@ -1,6 +1,8 @@
 package com.quran.labs.androidquran.di.module.application
 
 import com.quran.data.constant.DependencyInjectionConstants
+import com.quran.data.di.QuranPageDependencies
+import com.quran.data.di.impl.QuranPageDependenciesImpl
 import com.quran.data.source.PageProvider
 import com.quran.data.source.QuranDataSource
 import dagger.Module
@@ -19,7 +21,15 @@ object PageAggregationModule {
     return providers[pageType]!!
   }
 
-  @Provides fun provideQuranDataSource(pageProvider: PageProvider): QuranDataSource {
+  @Provides
+  fun provideQuranDataSource(pageProvider: PageProvider): QuranDataSource {
     return pageProvider.getDataSource()
+  }
+
+  @Provides
+  fun provideQuranPageDependencies(
+    quranPageDependenciesImpl: QuranPageDependenciesImpl
+  ): QuranPageDependencies {
+    return quranPageDependenciesImpl
   }
 }
