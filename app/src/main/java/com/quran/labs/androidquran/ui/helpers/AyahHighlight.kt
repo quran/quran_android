@@ -7,7 +7,10 @@ sealed class AyahHighlight {
   fun isTransition() = this is TransitionAyahHighlight
 
   data class SingleAyahHighlight(override val key: String) : AyahHighlight() {
-    constructor(surah: Int, ayah: Int) : this("$surah:$ayah")
+    @JvmOverloads
+    constructor(sura: Int, ayah: Int, word: Int = -1) :
+        this(key = "$sura:$ayah${if (word < 0) "" else ":$word"}")
+
     companion object {
       @JvmStatic
       fun createSet(ayahKeys: Set<String>): Set<AyahHighlight> {

@@ -30,6 +30,7 @@ class AyahScrollableImageTrackerItem(
     page: Int,
     sura: Int,
     ayah: Int,
+    word: Int,
     type: HighlightType,
     scrollToAyah: Boolean
   ): Boolean {
@@ -61,7 +62,7 @@ class AyahScrollableImageTrackerItem(
         }
       }
     }
-    return super.onHighlightAyah(page, sura, ayah, type, scrollToAyah)
+    return super.onHighlightAyah(page, sura, ayah, word, type, scrollToAyah)
   }
 
   override fun getToolBarPosition(page: Int, sura: Int, ayah: Int): SelectionIndicator {

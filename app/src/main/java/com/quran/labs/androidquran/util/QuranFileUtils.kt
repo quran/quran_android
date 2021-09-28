@@ -54,6 +54,8 @@ class QuranFileUtils @Inject constructor(
   private val ayahInfoDirectory: String = pageProvider.getAyahInfoDirectoryName()
   private val imagesDirectory: String = pageProvider.getImagesDirectoryName()
 
+  val ayahInfoDbHasGlyphData = pageProvider.ayahInfoDbHasGlyphData()
+
   private val appContext: Context = context.applicationContext
   val gaplessDatabaseRootUrl: String = pageProvider.getAudioDatabasesBaseUrl()
 
