@@ -98,6 +98,15 @@ class QuranFileUtils @Inject constructor(
   }
 
   override fun quranImagesDirectory(): String? = getQuranImagesDirectory(appContext)
+  override fun ayahInfoFileDirectory(): String? {
+    val base = quranAyahDatabaseDirectory
+    return if (base != null) {
+      val filename = ayaPositionFileName
+      base + File.separator + filename
+    } else {
+      null
+    }
+  }
 
   @WorkerThread
   override fun removeFilesForWidth(width: Int, directoryLambda: ((String) -> String)) {
