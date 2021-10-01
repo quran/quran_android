@@ -19,7 +19,9 @@ buildscript {
     okioVersion = '2.10.0'
     workManagerVersion = '2.6.0'
     retrofitVersion = '2.9.0'
-    compose_version = '1.1.0-alpha04'
+    supportSqliteVersion = '2.1.0'
+    sqldelightVersion = '1.5.1'
+    composeVersion = '1.1.0-alpha05'
 
     // testing
     junitVersion = '4.13.2'
@@ -47,11 +49,12 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:7.0.2'
-    classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.1'
+    classpath "com.android.tools.build:gradle:7.0.2"
+    classpath "com.google.firebase:firebase-crashlytics-gradle:2.7.1"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     classpath "net.ltgt.gradle:gradle-errorprone-plugin:2.0.2"
-    classpath 'com.google.gms:google-services:4.3.10'
+    classpath "com.google.gms:google-services:4.3.10"
+    classpath "com.squareup.sqldelight:gradle-plugin:$sqldelightVersion"
   }
 }
 

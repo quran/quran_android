@@ -4,6 +4,7 @@ import androidx.annotation.WorkerThread
 
 interface QuranFileManager {
   fun quranImagesDirectory(): String?
+  fun ayahInfoFileDirectory(): String?
   
   @WorkerThread
   fun isVersion(widthParam: String, version: Int): Boolean
