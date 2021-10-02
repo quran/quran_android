@@ -16,7 +16,7 @@ import dagger.multibindings.IntoMap
 import dagger.multibindings.StringKey
 
 @Module
-object QuranPageModule {
+object QuranDataModule {
 
   @Provides
   fun providePageViewFactoryProvider(): PageViewFactoryProvider {

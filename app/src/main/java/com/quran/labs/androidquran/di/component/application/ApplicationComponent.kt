@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.di.component.application
 
 import com.quran.analytics.provider.AnalyticsModule
 import com.quran.common.networking.NetworkModule
-import com.quran.data.page.provider.QuranPageModule
+import com.quran.data.page.provider.QuranDataModule
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.QuranForwarderActivity
@@ -45,7 +45,7 @@ import javax.inject.Singleton
     DatabaseModule::class,
     NetworkModule::class,
     PageAggregationModule::class,
-    QuranPageModule::class,
+    QuranDataModule::class,
     WorkerModule::class,
     BookmarksWidgetUpdaterModule::class
   ]
