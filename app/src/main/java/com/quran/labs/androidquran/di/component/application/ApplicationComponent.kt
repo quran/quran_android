@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.di.component.application
 
 import com.quran.analytics.provider.AnalyticsModule
 import com.quran.common.networking.NetworkModule
+import com.quran.data.di.AppScope
 import com.quran.data.page.provider.QuranDataModule
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.QuranDataActivity
@@ -34,11 +35,12 @@ import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import com.quran.labs.androidquran.widget.BookmarksWidget
 import com.quran.labs.androidquran.widget.BookmarksWidgetListProvider
 import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
-import dagger.Component
+import com.squareup.anvil.annotations.MergeComponent
 import javax.inject.Singleton
 
 @Singleton
-@Component(
+@MergeComponent(
+  AppScope::class,
   modules = [
     AnalyticsModule::class,
     ApplicationModule::class,

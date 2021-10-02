@@ -19,14 +19,14 @@ internal class TranslationPresenter @Inject internal constructor(translationMode
                      translationsAdapter: TranslationsDBAdapter,
                      translationUtil: TranslationUtil,
                      private val quranInfo: QuranInfo,
-                     private val pages: Array<Int>) :
+                     private val pages: IntArray) :
     BaseTranslationPresenter<TranslationPresenter.TranslationScreen>(
         translationModel, translationsAdapter, translationUtil, quranInfo) {
 
   fun refresh() {
     disposable?.dispose()
 
-    disposable = Observable.fromArray(*pages)
+    disposable = Observable.fromArray(*pages.toTypedArray())
         .flatMap { page ->
           getVerses(quranSettings.wantArabicInTranslationView(),
               getTranslations(quranSettings), quranInfo.getVerseRangeForPage(page))

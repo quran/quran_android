@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.di
+package com.quran.data.di
 
 import javax.inject.Scope
 

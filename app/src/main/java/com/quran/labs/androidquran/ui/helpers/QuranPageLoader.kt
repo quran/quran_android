@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.ui.helpers
 
 import android.content.Context
 import com.quran.labs.androidquran.common.Response
-import com.quran.labs.androidquran.di.ActivityScope
+import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import io.reactivex.rxjava3.core.Observable

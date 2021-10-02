@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
 import com.quran.labs.androidquran.data.Constants
-import com.quran.labs.androidquran.di.ActivityScope
+import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.PagerActivity
