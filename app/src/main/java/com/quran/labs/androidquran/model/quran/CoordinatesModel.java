@@ -4,7 +4,7 @@ import android.graphics.RectF;
 
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider;
-import com.quran.labs.androidquran.di.ActivityScope;
+import com.quran.data.di.ActivityScope;
 import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;

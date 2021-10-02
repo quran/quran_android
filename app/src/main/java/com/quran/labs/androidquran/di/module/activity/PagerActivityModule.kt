@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.core.content.ContextCompat
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.di.ActivityScope
+import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener
 import com.quran.labs.androidquran.util.QuranScreenInfo

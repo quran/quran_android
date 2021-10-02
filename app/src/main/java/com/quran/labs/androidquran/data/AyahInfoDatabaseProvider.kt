@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.data
 
 import android.content.Context
-import com.quran.labs.androidquran.di.ActivityScope
+import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.util.QuranFileUtils
 import javax.inject.Inject
 

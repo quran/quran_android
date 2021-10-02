@@ -15,9 +15,9 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
+import com.quran.data.model.bookmark.Bookmark;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
-import com.quran.data.model.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
@@ -318,8 +318,8 @@ public class TabletFragment extends Fragment
     mode = getArguments().getInt(MODE_EXTRA, Mode.ARABIC);
     isSplitScreen = getArguments().getBoolean(IS_SPLIT_SCREEN, false);
 
-    final Integer[] pages = (isSplitScreen && mode == Mode.TRANSLATION) ?
-        new Integer[]{ pageNumber } : new Integer[]{ pageNumber - 1, pageNumber };
+    final int[] pages = (isSplitScreen && mode == Mode.TRANSLATION) ?
+        new int[]{ pageNumber } : new int[]{ pageNumber - 1, pageNumber };
 
     ((PagerActivity) getActivity()).getPagerActivityComponent()
         .quranPageComponentBuilder()

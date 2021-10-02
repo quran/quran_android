@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.di.component.fragment
 
+import com.quran.data.page.provider.di.QuranPageExtrasComponent
 import com.quran.labs.androidquran.di.QuranPageScope
 import com.quran.labs.androidquran.di.module.fragment.QuranPageModule
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment
@@ -9,7 +10,7 @@ import dagger.Subcomponent
 
 @QuranPageScope
 @Subcomponent(modules = [QuranPageModule::class])
-interface QuranPageComponent {
+interface QuranPageComponent: QuranPageExtrasComponent {
   fun inject(quranPageFragment: QuranPageFragment)
   fun inject(tabletFragment: TabletFragment)
   fun inject(translationFragment: TranslationFragment)

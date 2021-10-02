@@ -25,7 +25,7 @@ class QuranPagePresenter @Inject constructor(
   private val coordinatesModel: CoordinatesModel,
   private val quranSettings: QuranSettings,
   private val quranPageLoader: QuranPageLoader,
-  private val pages: Array<Int>,
+  private val pages: IntArray,
 ) : Presenter<QuranPageScreen> {
 
   private val compositeDisposable: CompositeDisposable = CompositeDisposable()
@@ -47,9 +47,9 @@ class QuranPagePresenter @Inject constructor(
     compositeDisposable.clear()
   }
 
-  private fun getPageCoordinates(pages: Array<out Int>) {
+  private fun getPageCoordinates(pages: IntArray) {
     compositeDisposable.add(
-      coordinatesModel.getPageCoordinates(quranSettings.shouldOverlayPageInfo(), *pages)
+      coordinatesModel.getPageCoordinates(quranSettings.shouldOverlayPageInfo(), *pages.toTypedArray())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(object : DisposableObserver<PageCoordinates>() {
           override fun onNext(pageCoordinates: PageCoordinates) {
@@ -84,10 +84,10 @@ class QuranPagePresenter @Inject constructor(
     )
   }
 
-  private fun getAyahCoordinates(pages: Array<out Int>) {
+  private fun getAyahCoordinates(pages: IntArray) {
     compositeDisposable.add(
       Completable.timer(500, TimeUnit.MILLISECONDS)
-        .andThen(Observable.fromArray(*pages))
+        .andThen(Observable.fromArray(*pages.toTypedArray()))
         .flatMap { coordinatesModel.getAyahCoordinates(it) }
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(object : DisposableObserver<AyahCoordinates>() {
@@ -99,7 +99,7 @@ class QuranPagePresenter @Inject constructor(
 
           override fun onComplete() {
             if (quranSettings.shouldHighlightBookmarks()) {
-              getBookmarkedAyahs(pages)
+              getBookmarkedAyahs(pages.toTypedArray())
             }
           }
         })
@@ -109,7 +109,7 @@ class QuranPagePresenter @Inject constructor(
   fun downloadImages() {
     screen?.hidePageDownloadError()
     compositeDisposable.add(
-      quranPageLoader.loadPages(*pages)
+      quranPageLoader.loadPages(*pages.toTypedArray())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(object : DisposableObserver<Response>() {
           override fun onNext(response: Response) {
