@@ -690,11 +690,11 @@ public class PagerActivity extends AppCompatActivity implements
             shouldReconnect = false;
           }));
     }
-
-    if (highlightedSura > 0 && highlightedAyah > 0) {
-      handler.postDelayed(() ->
-          highlightAyah(highlightedSura, highlightedAyah, false, HighlightType.SELECTION), 750);
-    }
+    // commented out to disable unnecessary scrolling  at resume
+    // if (highlightedSura > 0 && highlightedAyah > 0) {
+    //   handler.postDelayed(() ->
+    //       highlightAyah(highlightedSura, highlightedAyah, false, HighlightType.SELECTION), 750);
+    // }
 
     updateNavigationBar(quranSettings.isNightMode());
   }
