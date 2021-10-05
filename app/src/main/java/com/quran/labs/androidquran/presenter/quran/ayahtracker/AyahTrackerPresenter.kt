@@ -3,11 +3,13 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker
 import android.app.Activity
 import android.view.MotionEvent
 import com.quran.data.core.QuranInfo
+import com.quran.data.model.AyahSelection
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.labs.androidquran.common.HighlightInfo
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
+import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.di.QuranPageScope
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter.AyahInteractionHandler
@@ -16,21 +18,37 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.DOUBLE_TAP
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.LONG_PRESS
+import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.SINGLE_TAP
 import com.quran.labs.androidquran.ui.helpers.AyahTracker
 import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.view.AyahToolBar.AyahToolBarPosition
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
+import com.quran.reading.common.ReadingEventPresenter
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @QuranPageScope
 class AyahTrackerPresenter @Inject constructor(
   private val quranInfo: QuranInfo,
-  private val quranFileUtils: QuranFileUtils
+  private val quranFileUtils: QuranFileUtils,
+  private val quranDisplayData: QuranDisplayData,
+  private val readingEventPresenter: ReadingEventPresenter
 ) : AyahTracker, Presenter<AyahInteractionHandler> {
+  private val scope = MainScope()
+
   private var items: Array<AyahTrackerItem> = emptyArray()
   private var pendingHighlightInfo: HighlightInfo? = null
+
+  init {
+    readingEventPresenter.ayahSelectionFlow
+      .onEach { onAyahSelectionChanged(it) }
+      .launchIn(scope)
+  }
 
   fun setPageBounds(pageCoordinates: PageCoordinates?) {
     for (item in items) {
@@ -54,6 +72,27 @@ class AyahTrackerPresenter @Inject constructor(
   fun setAyahBookmarks(bookmarks: List<Bookmark?>?) {
     for (item in items) {
       item.onSetAyahBookmarks(bookmarks!!)
+    }
+  }
+
+  private fun onAyahSelectionChanged(ayahSelection: AyahSelection) {
+    unHighlightAyahs(HighlightType.SELECTION)
+    when (ayahSelection) {
+      is AyahSelection.Ayah -> {
+        val suraAyah = ayahSelection.suraAyah
+        highlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.SELECTION, false)
+      }
+      is AyahSelection.AyahRange -> {
+        items.forEach {
+          val elements = quranDisplayData.getAyahKeysOnPage(
+            it.page,
+            ayahSelection.startSuraAyah,
+            ayahSelection.endSuraAyah
+          )
+          it.onHighlightAyat(it.page, elements, HighlightType.SELECTION)
+        }
+      }
+      else -> { /* nothing is selected, and we already cleared */ }
     }
   }
 
@@ -123,12 +162,16 @@ class AyahTrackerPresenter @Inject constructor(
     return null
   }
 
-  fun handleLongClick(suraAyah: SuraAyah?, ayahSelectedListener: AyahSelectedListener) {
-    ayahSelectedListener.onAyahSelected(LONG_PRESS, suraAyah!!, this)
+  fun onPressIgnoringSelectionState() {
+    readingEventPresenter.onClick()
   }
 
-  fun endAyahMode(ayahSelectedListener: AyahSelectedListener) {
-    ayahSelectedListener.endAyahMode()
+  fun onLongPress(suraAyah: SuraAyah) {
+    handleLongPress(suraAyah)
+  }
+
+  fun endAyahMode() {
+    readingEventPresenter.onAyahSelection(AyahSelection.None)
   }
 
   fun requestMenuPositionUpdate(ayahSelectedListener: AyahSelectedListener) {
@@ -136,37 +179,75 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   fun handleTouchEvent(
-    activity: Activity, event: MotionEvent,
-    eventType: EventType, page: Int,
-    ayahSelectedListener: AyahSelectedListener,
+    activity: Activity,
+    event: MotionEvent,
+    eventType: EventType,
+    page: Int,
     ayahCoordinatesError: Boolean
   ): Boolean {
     if (eventType === DOUBLE_TAP) {
-      unHighlightAyahs(HighlightType.SELECTION)
-    } else if (ayahSelectedListener.isListeningForAyahSelection(eventType)) {
+      readingEventPresenter.onAyahSelection(AyahSelection.None)
+    } else if (eventType == LONG_PRESS ||
+      readingEventPresenter.currentAyahSelection() != AyahSelection.None
+    ) {
+      // press or long press when an ayah is selected
       if (ayahCoordinatesError) {
         checkCoordinateData(activity)
       } else {
-        handlePress(event, eventType, page, ayahSelectedListener)
+        // either a press or a long press, but we're in selection mode
+        handleAyahSelection(event, eventType, page)
       }
-      return true
+    } else {
+      // normal click
+      readingEventPresenter.onClick()
     }
-    return ayahSelectedListener.onClick(eventType)
+    return true
   }
 
-  private fun handlePress(
-    ev: MotionEvent, eventType: EventType, page: Int,
-    ayahSelectedListener: AyahSelectedListener?
+  private fun handleAyahSelection(
+    ev: MotionEvent,
+    eventType: EventType,
+    page: Int
   ) {
     val result = getAyahForPosition(page, ev.x, ev.y)
-    if (result != null && ayahSelectedListener != null) {
-      ayahSelectedListener.onAyahSelected(eventType, result, this)
+    if (result != null) {
+      if (eventType == SINGLE_TAP) {
+        readingEventPresenter.onAyahSelection(AyahSelection.Ayah(result))
+      } else if (eventType == LONG_PRESS) {
+        handleLongPress(result)
+      }
+    }
+  }
+
+  private fun handleLongPress(selectedSuraAyah: SuraAyah) {
+    val current = readingEventPresenter.currentAyahSelection()
+    val updatedAyahSelection = updateAyahRange(selectedSuraAyah, current)
+    readingEventPresenter.onAyahSelection(updatedAyahSelection)
+  }
+
+  private fun updateAyahRange(selectedAyah: SuraAyah, ayahSelection: AyahSelection): AyahSelection {
+    return when (ayahSelection) {
+      is AyahSelection.None -> AyahSelection.Ayah(selectedAyah)
+      is AyahSelection.Ayah -> {
+        if (selectedAyah > ayahSelection.suraAyah) {
+          AyahSelection.AyahRange(ayahSelection.suraAyah, selectedAyah)
+        } else {
+          AyahSelection.AyahRange(selectedAyah, ayahSelection.suraAyah)
+        }
+      }
+      is AyahSelection.AyahRange -> {
+        if (selectedAyah > ayahSelection.startSuraAyah) {
+          AyahSelection.AyahRange(ayahSelection.startSuraAyah, selectedAyah)
+        } else {
+          AyahSelection.AyahRange(selectedAyah, ayahSelection.startSuraAyah)
+        }
+      }
     }
   }
 
   private fun getAyahForPosition(page: Int, x: Float, y: Float): SuraAyah? {
     for (item in items) {
-      val ayah = item!!.getAyahForPosition(page, x, y)
+      val ayah = item.getAyahForPosition(page, x, y)
       if (ayah != null) {
         return ayah
       }
@@ -189,6 +270,7 @@ class AyahTrackerPresenter @Inject constructor(
 
   override fun unbind(what: AyahInteractionHandler) {
     items = emptyArray()
+    scope.cancel()
   }
 
   interface AyahInteractionHandler {

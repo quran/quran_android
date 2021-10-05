@@ -199,7 +199,7 @@ public class QuranPageFragment extends Fragment implements PageController,
   @Override
   public void setPageDownloadError(@StringRes int errorMessage) {
     quranPageLayout.showError(errorMessage);
-    quranPageLayout.setOnClickListener(v -> ayahSelectedListener.onClick(EventType.SINGLE_TAP));
+    quranPageLayout.setOnClickListener(v -> ayahTrackerPresenter.onPressIgnoringSelectionState());
   }
 
   @Override
@@ -223,20 +223,20 @@ public class QuranPageFragment extends Fragment implements PageController,
   @Override
   public boolean handleTouchEvent(MotionEvent event, EventType eventType, int page) {
     return isVisible() && ayahTrackerPresenter.handleTouchEvent(getActivity(), event, eventType,
-        page, ayahSelectedListener, ayahCoordinatesError);
+        page, ayahCoordinatesError);
   }
 
   @Override
   public void handleLongPress(SuraAyah suraAyah) {
     if (isVisible()) {
-      ayahTrackerPresenter.handleLongClick(suraAyah, ayahSelectedListener);
+      ayahTrackerPresenter.onLongPress(suraAyah);
     }
   }
 
   @Override
   public void endAyahMode() {
     if (isVisible()) {
-      ayahTrackerPresenter.endAyahMode(ayahSelectedListener);
+      ayahTrackerPresenter.endAyahMode();
     }
   }
 

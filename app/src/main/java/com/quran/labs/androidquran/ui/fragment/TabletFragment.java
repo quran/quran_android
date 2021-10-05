@@ -338,7 +338,7 @@ public class TabletFragment extends Fragment
   @Override
   public void setPageDownloadError(@StringRes int errorMessage) {
     mainView.showError(errorMessage);
-    mainView.setOnClickListener(v -> ayahSelectedListener.onClick(EventType.SINGLE_TAP));
+    mainView.setOnClickListener(v -> ayahTrackerPresenter.onPressIgnoringSelectionState());
   }
 
   @Override
@@ -434,7 +434,7 @@ public class TabletFragment extends Fragment
   @Override
   public boolean handleTouchEvent(MotionEvent event, EventType eventType, int page) {
     return isVisible() && ayahTrackerPresenter.handleTouchEvent(getActivity(), event, eventType,
-        page, ayahSelectedListener, ayahCoordinatesError);
+        page, ayahCoordinatesError);
   }
 
   @Override
@@ -442,10 +442,10 @@ public class TabletFragment extends Fragment
     if (isVisible()) {
       final int page = quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah);
       if (page != lastLongPressPage) {
-        ayahTrackerPresenter.endAyahMode(ayahSelectedListener);
+        ayahTrackerPresenter.endAyahMode();
       }
       lastLongPressPage = page;
-      ayahTrackerPresenter.handleLongClick(suraAyah, ayahSelectedListener);
+      ayahTrackerPresenter.onLongPress(suraAyah);
     }
   }
 
@@ -463,7 +463,7 @@ public class TabletFragment extends Fragment
   @Override
   public void endAyahMode() {
     if (isVisible()) {
-      ayahTrackerPresenter.endAyahMode(ayahSelectedListener);
+      ayahTrackerPresenter.endAyahMode();
     }
   }
 
