@@ -21,7 +21,7 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.*
 
-internal open class BaseTranslationPresenter<T> internal constructor(
+internal open class BaseTranslationPresenter<T : Any> internal constructor(
     private val translationModel: TranslationModel,
     private val translationsAdapter: TranslationsDBAdapter,
     private val translationUtil: TranslationUtil,
