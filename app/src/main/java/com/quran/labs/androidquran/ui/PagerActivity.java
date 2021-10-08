@@ -44,6 +44,7 @@ import androidx.viewpager.widget.NonRestoringViewPager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 import com.quran.data.core.QuranInfo;
+import com.quran.data.model.AyahSelection;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.page.provider.di.QuranPageExtrasComponent;
 import com.quran.data.page.provider.di.QuranPageExtrasComponentProvider;
@@ -52,6 +53,7 @@ import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
+import com.quran.labs.androidquran.bridge.ReadingEventPresenterBridge;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
@@ -103,6 +105,7 @@ import com.quran.labs.androidquran.view.IconPageIndicator;
 import com.quran.labs.androidquran.view.QuranSpinner;
 import com.quran.labs.androidquran.view.SlidingUpPanelLayout;
 import com.quran.page.common.factory.PageViewFactoryProvider;
+import com.quran.reading.common.ReadingEventPresenter;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
@@ -200,6 +203,7 @@ public class PagerActivity extends AppCompatActivity implements
   private boolean isInAyahMode;
   private SuraAyah start;
   private SuraAyah end;
+  private AyahSelection previousAyahSelection = AyahSelection.None.INSTANCE;
 
   private int numberOfPages;
   private int numberOfPagesDual;
@@ -225,7 +229,10 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject QuranFileUtils quranFileUtils;
   @Inject AudioPresenter audioPresenter;
   @Inject QuranEventLogger quranEventLogger;
+  @Inject ReadingEventPresenter readingEventPresenter;
   @Inject PageViewFactoryProvider pageProviderFactoryProvider;
+
+  private ReadingEventPresenterBridge readingEventPresenterBridge;
 
   private CompositeDisposable compositeDisposable;
   private final CompositeDisposable foregroundDisposable = new CompositeDisposable();
@@ -266,6 +273,11 @@ public class PagerActivity extends AppCompatActivity implements
     boolean shouldAdjustPageNumber = false;
     isDualPages = QuranUtils.isDualPages(this, quranScreenInfo);
     isSplitScreen = quranSettings.isQuranSplitWithTranslation();
+    readingEventPresenterBridge = new ReadingEventPresenterBridge(
+        readingEventPresenter,
+        () -> { onPageClicked(); return null; },
+        ayahSelection -> { onAyahSelectionChanged(ayahSelection); return null; }
+    );
 
     // remove the window background to avoid overdraw. note that, per Romain's blog, this is
     // acceptable (as long as we don't set the background color to null in the theme, since
@@ -589,6 +601,63 @@ public class PagerActivity extends AppCompatActivity implements
     }
   }
 
+  public void onPageClicked() {
+    toggleActionBar();
+  }
+
+  private void onAyahSelectionChanged(AyahSelection ayahSelection) {
+    final boolean haveSelection = ayahSelection != AyahSelection.None.INSTANCE;
+    if (previousAyahSelection instanceof AyahSelection.None && haveSelection) {
+      viewPager.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+    }
+
+    if (haveSelection) {
+      if (slidingPanel.isPaneVisible()) {
+        refreshPages();
+      }
+
+      final SuraAyah startPosition = startPosition(ayahSelection);
+      if (ayahToolBar.isShowing()) {
+        if (!startPosition.equals(start)) {
+          ayahToolBar.resetMenu();
+          updateToolbarPosition(startPosition);
+        }
+      } else {
+        updateToolbarPosition(startPosition);
+        ayahToolBar.showMenu();
+        updateLocalTranslations(startPosition);
+      }
+
+      // bridging code - hopefully not needed once we can clean up start/end
+      isInAyahMode = true;
+      if (ayahSelection instanceof AyahSelection.Ayah) {
+        start = startPosition;
+        end = startPosition;
+      } else if (ayahSelection instanceof AyahSelection.AyahRange) {
+        final AyahSelection.AyahRange range = ((AyahSelection.AyahRange) ayahSelection);
+        start = range.getStartSuraAyah();
+        end = range.getEndSuraAyah();
+      }
+    } else {
+      start = null;
+      end = null;
+      if (ayahToolBar.isShowing()) {
+        endAyahMode();
+      }
+    }
+    previousAyahSelection = ayahSelection;
+  }
+
+  private SuraAyah startPosition(AyahSelection ayahSelection) {
+    if (ayahSelection instanceof AyahSelection.Ayah) {
+      return ((AyahSelection.Ayah) ayahSelection).getSuraAyah();
+    } else if (ayahSelection instanceof AyahSelection.AyahRange) {
+      return ((AyahSelection.AyahRange) ayahSelection).getStartSuraAyah();
+    } else {
+      return null;
+    }
+  }
+
   private void setUiVisibility(boolean isVisible) {
     setUiVisibilityKitKat(isVisible);
     if (isInMultiWindowMode) {
@@ -896,6 +965,7 @@ public class PagerActivity extends AppCompatActivity implements
     }
 
     compositeDisposable.dispose();
+    readingEventPresenterBridge.dispose();
     handler.removeCallbacksAndMessages(null);
     dismissProgressDialog();
     super.onDestroy();
@@ -1666,55 +1736,6 @@ public class PagerActivity extends AppCompatActivity implements
 
   // region Ayah selection
 
-  @Override
-  public boolean isListeningForAyahSelection(EventType eventType) {
-    return eventType == EventType.LONG_PRESS ||
-        (eventType == EventType.SINGLE_TAP && isInAyahMode);
-  }
-
-  @Override
-  public boolean onAyahSelected(EventType eventType, SuraAyah suraAyah, AyahTracker tracker) {
-    switch (eventType) {
-      case SINGLE_TAP:
-        if (isInAyahMode) {
-          updateAyahStartSelection(suraAyah, tracker);
-          return true;
-        }
-        return false;
-      case LONG_PRESS:
-        if (isInAyahMode) {
-          updateAyahEndSelection(suraAyah);
-        } else {
-          startAyahMode(suraAyah, tracker);
-        }
-        viewPager.performHapticFeedback(
-            HapticFeedbackConstants.LONG_PRESS);
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  @Override
-  public boolean onClick(EventType eventType) {
-    switch (eventType) {
-      case SINGLE_TAP:
-        if (!isInAyahMode) {
-          toggleActionBar();
-          return true;
-        }
-        return false;
-      case DOUBLE_TAP:
-        if (isInAyahMode) {
-          endAyahMode();
-          return true;
-        }
-        return false;
-      default:
-        return false;
-    }
-  }
-
   public SuraAyah getSelectionStart() {
     return start;
   }
@@ -1727,24 +1748,11 @@ public class PagerActivity extends AppCompatActivity implements
     return lastAudioRequest;
   }
 
-  private void startAyahMode(SuraAyah suraAyah, AyahTracker tracker) {
-    if (!isInAyahMode) {
-      start = end = suraAyah;
-      updateToolbarPosition(suraAyah, tracker);
-      ayahToolBar.showMenu();
-      showAyahModeHighlights(suraAyah, tracker);
-      isInAyahMode = true;
-      lastActivatedLocalTranslations = tracker.getLocalTranslations();
-      lastSelectedTranslationAyah = tracker.getQuranAyahInfo(suraAyah.sura, suraAyah.ayah);
-    }
-  }
-
-  @Override
   public void endAyahMode() {
     ayahToolBar.hideMenu();
     slidingPanel.collapsePane();
-    clearAyahModeHighlights(true);
     isInAyahMode = false;
+    readingEventPresenter.onAyahSelection(AyahSelection.None.INSTANCE);
   }
 
   public void nextAyah() {
@@ -1778,50 +1786,35 @@ public class PagerActivity extends AppCompatActivity implements
   }
 
   private void selectAyah(SuraAyah s) {
-    final int page = quranInfo.getPageFromSuraAyah(s.sura, s.ayah);
-    final int position = quranInfo.getPositionFromPage(page, isDualPageVisible());
-    Fragment f = pagerAdapter.getFragmentIfExists(position);
-    if (f instanceof QuranPage && f.isVisible()) {
-      if (position != viewPager.getCurrentItem()) {
-        viewPager.setCurrentItem(position);
-      }
-      updateAyahStartSelection(s, ((QuranPage) f).getAyahTracker());
-    }
-  }
-
-  private void updateAyahStartSelection(SuraAyah suraAyah, AyahTracker tracker) {
-    if (isInAyahMode) {
-      clearAyahModeHighlights(false);
-      start = end = suraAyah;
-      lastSelectedTranslationAyah = tracker.getQuranAyahInfo(suraAyah.sura, suraAyah.ayah);
-      if (ayahToolBar.isShowing()) {
-        ayahToolBar.resetMenu();
-        updateToolbarPosition(suraAyah, tracker);
-      }
-      if (slidingPanel.isPaneVisible()) {
-        refreshPages();
-      }
-      showAyahModeHighlights(suraAyah, tracker);
-    }
-  }
-
-  private void updateAyahEndSelection(SuraAyah suraAyah) {
-    if (isInAyahMode) {
-      clearAyahModeHighlights(false);
-      if (suraAyah.after(start)) {
-        end = suraAyah;
-      } else {
-        end = start;
-        start = suraAyah;
-      }
-      if (slidingPanel.isPaneVisible()) {
-        refreshPages();
-      }
-      showAyahModeRangeHighlights();
-    }
+    readingEventPresenter.onAyahSelection(new AyahSelection.Ayah(s));
   }
 
   //endregion
+
+  private void updateLocalTranslations(final SuraAyah start) {
+    final AyahTracker ayahTracker = resolveCurrentTracker();
+    if (ayahTracker != null) {
+      lastActivatedLocalTranslations = ayahTracker.getLocalTranslations();
+      lastSelectedTranslationAyah = ayahTracker.getQuranAyahInfo(start.sura, start.ayah);
+    }
+  }
+
+  private void updateToolbarPosition(final SuraAyah start) {
+    final AyahTracker ayahTracker = resolveCurrentTracker();
+    if (ayahTracker != null) {
+      updateToolbarPosition(start, ayahTracker);
+    }
+  }
+
+  private AyahTracker resolveCurrentTracker() {
+    int position = viewPager.getCurrentItem();
+    Fragment f = pagerAdapter.getFragmentIfExists(position);
+    if (f instanceof QuranPage && f.isVisible()) {
+      return ((QuranPage) f).getAyahTracker();
+    } else {
+      return null;
+    }
+  }
 
   private void updateToolbarPosition(final SuraAyah start, AyahTracker tracker) {
     final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
@@ -1873,49 +1866,6 @@ public class PagerActivity extends AppCompatActivity implements
         if (f != null) {
           f.updateAyahSelection(start, end);
         }
-      }
-    }
-  }
-
-  private void showAyahModeRangeHighlights() {
-    // Determine the start and end of the selection
-    final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
-    final int endingPage = quranInfo.getPageFromSuraAyah(end.sura, end.ayah);
-    int minPage = Math.min(startPage, endingPage);
-    int maxPage = Math.max(startPage, endingPage);
-    SuraAyah start = SuraAyah.min(this.start, end);
-    SuraAyah end = SuraAyah.max(this.start, this.end);
-    // Iterate from beginning to end
-    for (int i = minPage; i <= maxPage; i++) {
-      QuranPage fragment = pagerAdapter.getFragmentIfExistsForPage(i);
-      if (fragment != null) {
-        Set<String> ayahKeys = quranDisplayData.getAyahKeysOnPage(i, start, end);
-        fragment.getAyahTracker().highlightAyat(i, ayahKeys, HighlightType.SELECTION);
-      }
-    }
-  }
-
-  private void showAyahModeHighlights(SuraAyah suraAyah, AyahTracker tracker) {
-    tracker.highlightAyah(
-        suraAyah.sura, suraAyah.ayah, HighlightType.SELECTION, false);
-  }
-
-  private void clearAyahModeHighlights(boolean shouldClear) {
-    if (isInAyahMode) {
-      final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
-      final int endingPage = quranInfo.getPageFromSuraAyah(end.sura, end.ayah);
-      for (int i = startPage; i <= endingPage; i++) {
-        QuranPage fragment = pagerAdapter.getFragmentIfExistsForPage(i);
-        if (fragment != null) {
-          fragment.getAyahTracker().unHighlightAyahs(HighlightType.SELECTION);
-        }
-      }
-
-      // when we end ayah mode, let's clear start and end to not affect future
-      // playbacks of audio.
-      if (shouldClear) {
-        start = null;
-        end = null;
       }
     }
   }

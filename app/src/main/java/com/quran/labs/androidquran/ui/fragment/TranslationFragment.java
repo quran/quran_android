@@ -180,14 +180,14 @@ public class TranslationFragment extends Fragment implements
   @Override
   public void handleLongPress(SuraAyah suraAyah) {
     if (isVisible()) {
-      ayahTrackerPresenter.handleLongClick(suraAyah, ayahSelectedListener);
+      ayahTrackerPresenter.onLongPress(suraAyah);
     }
   }
 
   @Override
   public void endAyahMode() {
     if (isVisible()) {
-      ayahTrackerPresenter.endAyahMode(ayahSelectedListener);
+      ayahTrackerPresenter.endAyahMode();
     }
   }
 
