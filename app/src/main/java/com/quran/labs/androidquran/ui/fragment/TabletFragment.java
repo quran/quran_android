@@ -412,11 +412,6 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void setBookmarksOnPage(List<Bookmark> bookmarks) {
-    ayahTrackerPresenter.setAyahBookmarks(bookmarks);
-  }
-
-  @Override
   public void setPageCoordinates(PageCoordinates pageCoordinates) {
     ayahTrackerPresenter.setPageBounds(pageCoordinates);
   }

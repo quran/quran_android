@@ -2,11 +2,11 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 
 import android.content.Context;
 import android.graphics.RectF;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.quran.data.core.QuranInfo;
-import com.quran.data.model.bookmark.Bookmark;
-import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.data.model.SuraAyah;
+import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
@@ -17,13 +17,9 @@ import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class AyahImageTrackerItem extends AyahTrackerItem {
   private final QuranInfo quranInfo;
@@ -86,22 +82,6 @@ public class AyahImageTrackerItem extends AyahTrackerItem {
         ayahView.setAyahData(ayahCoordinates);
         ayahView.invalidate();
       }
-    }
-  }
-
-  @Override
-  void onSetAyahBookmarks(@NonNull List<Bookmark> bookmarks) {
-    int highlighted = 0;
-    for (int i = 0, size = bookmarks.size(); i < size; i++) {
-      Bookmark bookmark = bookmarks.get(i);
-      if (bookmark.getPage() == page) {
-        highlighted++;
-        ayahView.highlightAyah(bookmark.getSura(), bookmark.getAyah(), HighlightType.BOOKMARK);
-      }
-    }
-
-    if (highlighted > 0) {
-      ayahView.invalidate();
     }
   }
 

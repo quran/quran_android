@@ -89,12 +89,6 @@ class AyahTrackerPresenter @Inject constructor(
     }
   }
 
-  fun setAyahBookmarks(bookmarks: List<Bookmark?>?) {
-    for (item in items) {
-      item.onSetAyahBookmarks(bookmarks!!)
-    }
-  }
-
   private fun onAyahSelectionChanged(ayahSelection: AyahSelection) {
     unHighlightAyahs(HighlightType.SELECTION)
     when (ayahSelection) {

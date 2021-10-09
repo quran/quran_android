@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 
 import android.graphics.Matrix;
 import android.graphics.RectF;
-
+import androidx.annotation.NonNull;
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
@@ -11,10 +11,7 @@ import com.quran.labs.androidquran.view.AyahToolBar;
 import com.quran.labs.androidquran.view.HighlightingImageView;
 import com.quran.labs.androidquran.view.QuranPageLayout;
 import com.quran.page.common.draw.ImageDrawHelper;
-
 import java.util.Set;
-
-import androidx.annotation.NonNull;
 
 public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
   @NonNull private final QuranPageLayout quranPageLayout;
