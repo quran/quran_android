@@ -126,12 +126,12 @@ class AyahTrackerPresenter @Inject constructor(
   private fun onBookmarksChanged(bookmarks: List<Bookmark>) {
     unHighlightAyahs(HighlightType.BOOKMARK)
     if (quranSettings.shouldHighlightBookmarks()) {
-      bookmarks.forEach {
-        val sura = it.sura
-        val ayah = it.ayah
-        if (sura != null && ayah != null) {
-          highlightAyah(sura, ayah, HighlightType.BOOKMARK, true)
-        }
+      items.forEach { tracker ->
+        val elements = bookmarks
+          .filter { it.page == tracker.page }
+          .map { "${it.sura}:${it.ayah}" }
+          .toSet()
+        tracker.onHighlightAyat(tracker.page, elements, HighlightType.BOOKMARK)
       }
     }
   }
