@@ -619,6 +619,8 @@ public class PagerActivity extends AppCompatActivity implements
     if (suraAyah != null) {
       lastPlayingSura = suraAyah.sura;
       lastPlayingAyah = suraAyah.ayah;
+      // continue to snap back to the page when the playback ayah changes
+      ensurePage(suraAyah.sura, suraAyah.ayah, true);
     } else {
       lastPlayingSura = null;
       lastPlayingAyah = null;
@@ -1388,21 +1390,24 @@ public class PagerActivity extends AppCompatActivity implements
     highlightAyah(sura, ayah, true, type);
   }
 
-  private void highlightAyah(int sura, int ayah,
-                             boolean force, HighlightType type) {
-    Timber.d("highlightAyah() - %s:%s", sura, ayah);
+  private int ensurePage(int sura, int ayah, boolean force) {
     int page = quranInfo.getPageFromSuraAyah(sura, ayah);
-    if (page < Constants.PAGES_FIRST ||
-        numberOfPages < page) {
-      return;
+    if (page < Constants.PAGES_FIRST || numberOfPages < page) {
+      return -1;
     }
 
     int position = quranInfo.getPositionFromPage(page, isDualPageVisible());
     if (position != viewPager.getCurrentItem() && force) {
-      unHighlightAyahs(type);
       viewPager.setCurrentItem(position);
     }
+    return position;
+  }
 
+  private void highlightAyah(int sura, int ayah,
+                             boolean force, HighlightType type) {
+    Timber.d("highlightAyah() - %s:%s", sura, ayah);
+
+    final int position = ensurePage(sura, ayah, force);
     Fragment f = pagerAdapter.getFragmentIfExists(position);
     if (f instanceof QuranPage && f.isAdded()) {
       ((QuranPage) f).getAyahTracker().highlightAyah(sura, ayah, type, true);
@@ -1414,14 +1419,6 @@ public class PagerActivity extends AppCompatActivity implements
     Fragment f = pagerAdapter.getFragmentIfExists(position);
     if (f instanceof QuranPage && f.isVisible()) {
       ((QuranPage) f).getAyahTracker().unHighlightAyah(sura, ayah, type);
-    }
-  }
-
-  private void unHighlightAyahs(HighlightType type) {
-    int position = viewPager.getCurrentItem();
-    Fragment f = pagerAdapter.getFragmentIfExists(position);
-    if (f instanceof QuranPage && f.isVisible()) {
-      ((QuranPage) f).getAyahTracker().unHighlightAyahs(type);
     }
   }
 
