@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.bridge
 
 import com.quran.data.model.AyahSelection
+import com.quran.data.model.SuraAyah
 import com.quran.reading.common.ReadingEventPresenter
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -8,7 +9,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class ReadingEventPresenterBridge constructor(
-  readingEventPresenter: ReadingEventPresenter,
+  private val readingEventPresenter: ReadingEventPresenter,
   private val handleClick: (() -> Unit),
   private val handleSelection: ((AyahSelection) -> Unit)
 ) {
@@ -27,6 +28,12 @@ class ReadingEventPresenterBridge constructor(
   }
 
   fun currentSelection(): AyahSelection = ayahSelectionFlow.value
+
+  // set highlighted sura / ayah in onCreate/onNewIntent
+  fun setSelection(sura: Int, ayah: Int) {
+    val ayahSelection = AyahSelection.Ayah(SuraAyah(sura, ayah))
+    readingEventPresenter.onAyahSelection(ayahSelection)
+  }
 
   fun dispose() {
     scope.cancel()

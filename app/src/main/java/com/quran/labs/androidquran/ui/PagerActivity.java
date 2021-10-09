@@ -124,8 +124,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
@@ -323,8 +321,14 @@ public class PagerActivity extends AppCompatActivity implements
       if (extras != null) {
         page = numberOfPages - extras.getInt("page", Constants.PAGES_FIRST);
         showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
-        highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
-        highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
+        final int highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
+        final int highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
+
+        if (highlightedSura > -1 && highlightedAyah > -1) {
+          this.highlightedSura = highlightedSura;
+          this.highlightedAyah = highlightedAyah;
+          readingEventPresenterBridge.setSelection(highlightedSura, highlightedAyah);
+        }
       }
     }
 
@@ -644,7 +648,7 @@ public class PagerActivity extends AppCompatActivity implements
           ayahToolBar.resetMenu();
           updateToolbarPosition(startPosition);
         }
-      } else {
+      } else if (startPosition.sura != highlightedSura && startPosition.ayah != highlightedAyah) {
         updateToolbarPosition(startPosition);
         ayahToolBar.showMenu();
         updateLocalTranslations(startPosition);
@@ -782,11 +786,6 @@ public class PagerActivity extends AppCompatActivity implements
           }));
     }
 
-    if (highlightedSura > 0 && highlightedAyah > 0) {
-      handler.postDelayed(() ->
-          highlightAyah(highlightedSura, highlightedAyah, false, HighlightType.SELECTION), 750);
-    }
-
     updateNavigationBar(quranSettings.isNightMode());
   }
 
@@ -914,8 +913,13 @@ public class PagerActivity extends AppCompatActivity implements
 
       boolean currentValue = showingTranslation;
       showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
-      highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
-      highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
+      final int highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
+      final int highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
+      if (highlightedSura > 0 && highlightedAyah > 0) {
+        this.highlightedSura = highlightedSura;
+        this.highlightedAyah = highlightedAyah;
+        readingEventPresenterBridge.setSelection(highlightedSura, highlightedAyah);
+      }
 
       if (showingTranslation != currentValue) {
         if (showingTranslation) {
@@ -931,7 +935,7 @@ public class PagerActivity extends AppCompatActivity implements
 
       if (highlightedAyah > 0 && highlightedSura > 0) {
         // this will jump to the right page automagically
-        highlightAyah(highlightedSura, highlightedAyah, true, HighlightType.SELECTION);
+        ensurePage(highlightedSura, highlightedAyah, true);
       } else {
         if (isDualPageVisible()) {
           page = page / 2;
@@ -1145,10 +1149,6 @@ public class PagerActivity extends AppCompatActivity implements
 
     supportInvalidateOptionsMenu();
     updateActionBarTitle(page);
-
-    if (highlightedSura > 0 && highlightedAyah > 0) {
-      highlightAyah(highlightedSura, highlightedAyah, false, HighlightType.SELECTION);
-    }
   }
 
   private void switchToTranslation() {
@@ -1171,10 +1171,6 @@ public class PagerActivity extends AppCompatActivity implements
       }
       supportInvalidateOptionsMenu();
       updateActionBarSpinner();
-
-      if (highlightedSura > 0 && highlightedAyah > 0) {
-        highlightAyah(highlightedSura, highlightedAyah, false, HighlightType.SELECTION);
-      }
     }
 
     if (!quranFileUtils.hasArabicSearchDatabase() && !promptedForExtraDownload) {
