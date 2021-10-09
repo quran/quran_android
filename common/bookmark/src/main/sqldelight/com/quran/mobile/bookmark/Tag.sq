@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS tags(
+  _ID INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  added_date INTEGER DEFAULT (strftime('%s', 'now')) NOT NULL
+);
+
+addTag:
+  INSERT INTO tags(name) VALUES(?);
+
+restoreTag:
+  INSERT INTO tags(_ID, name, added_date) VALUES(?, ?, ?);
+
+tagByName:
+  SELECT _ID, name, added_date FROM tags WHERE name = ?;
+
+updateTag:
+  UPDATE tags SET name = ? WHERE _ID = ?;
+
+getTags:
+  SELECT _ID, name, added_date FROM tags ORDER BY name ASC;
+
+deleteAll:
+  DELETE FROM tags;
+
+deleteByIds:
+  DELETE FROM tags WHERE _ID IN ?;

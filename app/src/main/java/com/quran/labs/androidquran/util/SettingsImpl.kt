@@ -15,4 +15,8 @@ class SettingsImpl @Inject constructor(private val quranSettings: QuranSettings)
   override suspend fun setShouldOverlayPageInfo(shouldOverlay: Boolean) {
     quranSettings.setShouldOverlayPageInfo(shouldOverlay)
   }
+
+  override suspend fun lastPage(): Int {
+    return quranSettings.lastPage
+  }
 }

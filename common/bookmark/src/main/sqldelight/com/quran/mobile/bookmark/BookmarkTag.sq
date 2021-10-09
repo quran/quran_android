@@ -1,0 +1,30 @@
+CREATE TABLE IF NOT EXISTS bookmark_tag(
+  _ID INTEGER PRIMARY KEY AUTOINCREMENT,
+  bookmark_id INTEGER NOT NULL,
+  tag_id INTEGER NOT NULL,
+  added_date INTEGER DEFAULT (strftime('%s', 'now')) NOT NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS
+  bookmark_tag_index ON bookmark_tag(bookmark_id, tag_id);
+
+getTagIdsForBookmark:
+  SELECT tag_id FROM bookmark_tag WHERE bookmark_id = ? ORDER BY tag_id ASC;
+
+addBookmarkTag:
+  INSERT INTO bookmark_tag(bookmark_id, tag_id) VALUES(?, ?);
+
+replaceBookmarkTag:
+  REPLACE INTO bookmark_tag(bookmark_id, tag_id) VALUES(?, ?);
+
+deleteAll:
+  DELETE FROM bookmark_tag;
+
+deleteByBookmarkIds:
+  DELETE FROM bookmark_tag WHERE bookmark_id IN ?;
+
+deleteByTagIds:
+  DELETE FROM bookmark_tag WHERE tag_id IN ?;
+
+untag:
+  DELETE FROM bookmark_tag WHERE bookmark_id = ? AND tag_id = ?;
