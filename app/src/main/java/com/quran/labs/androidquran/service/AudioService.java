@@ -77,6 +77,7 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.util.AudioUtils;
 import com.quran.labs.androidquran.util.NotificationChannelUtil;
+import com.quran.reading.common.AudioEventPresenter;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -212,6 +213,7 @@ public class AudioService extends Service implements OnCompletionListener,
   @Inject QuranInfo quranInfo;
   @Inject QuranDisplayData quranDisplayData;
   @Inject AudioUtils audioUtils;
+  @Inject AudioEventPresenter audioEventPresenter;
 
   private static final int MSG_INCOMING = 1;
   private static final int MSG_START_AUDIO = 2;
@@ -407,6 +409,7 @@ public class AudioService extends Service implements OnCompletionListener,
         audioRequest = playInfo;
 
         final SuraAyah start = audioRequest.getStart();
+        audioEventPresenter.onAyahPlayback(start);
         final boolean basmallah = !playInfo.isGapless() &&
             SuraAyahExtensionKt.requiresBasmallah(start);
         audioQueue = new AudioQueue(quranInfo, audioRequest,
@@ -786,12 +789,16 @@ public class AudioService extends Service implements OnCompletionListener,
       }
 
       // tell the ui we've stopped
+      audioEventPresenter.onAyahPlayback(null);
       notifyAudioStatus(AudioUpdateIntent.STOPPED);
     }
   }
 
   private void notifyAyahChanged() {
     if (audioRequest != null) {
+      audioEventPresenter.onAyahPlayback(
+          new SuraAyah(audioQueue.getCurrentSura(), audioQueue.getCurrentAyah())
+      );
       Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
       updateIntent.putExtra(AudioUpdateIntent.STATUS, AudioUpdateIntent.PLAYING);
       updateIntent.putExtra(AudioUpdateIntent.SURA, audioQueue.getCurrentSura());
@@ -955,6 +962,7 @@ public class AudioService extends Service implements OnCompletionListener,
       if (audioRequest == null || url == null) {
         Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
         updateIntent.putExtra(AudioUpdateIntent.STATUS, AudioUpdateIntent.STOPPED);
+        audioEventPresenter.onAyahPlayback(null);
         broadcastManager.sendBroadcast(updateIntent);
 
         processStopRequest(true); // stop everything!
@@ -968,6 +976,7 @@ public class AudioService extends Service implements OnCompletionListener,
           Intent updateIntent = new Intent(AudioUpdateIntent.INTENT_NAME);
           updateIntent.putExtra(AudioUpdateIntent.STATUS, AudioUpdateIntent.STOPPED);
           updateIntent.putExtra(EXTRA_PLAY_INFO, audioRequest);
+          audioEventPresenter.onAyahPlayback(null);
           broadcastManager.sendBroadcast(updateIntent);
 
           processStopRequest(true);

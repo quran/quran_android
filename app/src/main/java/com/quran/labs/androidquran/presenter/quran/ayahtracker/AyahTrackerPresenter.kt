@@ -25,7 +25,9 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.view.AyahToolBar.AyahToolBarPosition
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
+import com.quran.reading.common.AudioEventPresenter
 import com.quran.reading.common.ReadingEventPresenter
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
@@ -37,16 +39,24 @@ class AyahTrackerPresenter @Inject constructor(
   private val quranInfo: QuranInfo,
   private val quranFileUtils: QuranFileUtils,
   private val quranDisplayData: QuranDisplayData,
-  private val readingEventPresenter: ReadingEventPresenter
+  private val readingEventPresenter: ReadingEventPresenter,
+  private val audioEventPresenter: AudioEventPresenter
 ) : AyahTracker, Presenter<AyahInteractionHandler> {
-  private val scope = MainScope()
+  // we may bind and unbind several times, and each time we unbind, we cancel
+  // the scope, which means we can't launch new coroutines in that same scope.
+  // thus, leave this as a var so we replace it every time.
+  private lateinit var scope: CoroutineScope
 
   private var items: Array<AyahTrackerItem> = emptyArray()
   private var pendingHighlightInfo: HighlightInfo? = null
 
-  init {
+  private fun subscribe() {
     readingEventPresenter.ayahSelectionFlow
       .onEach { onAyahSelectionChanged(it) }
+      .launchIn(scope)
+
+    audioEventPresenter.audioPlaybackAyahFlow
+      .onEach { onAudioSelectionChanged(it) }
       .launchIn(scope)
   }
 
@@ -93,6 +103,13 @@ class AyahTrackerPresenter @Inject constructor(
         }
       }
       else -> { /* nothing is selected, and we already cleared */ }
+    }
+  }
+
+  private fun onAudioSelectionChanged(suraAyah: SuraAyah?) {
+    unHighlightAyahs(HighlightType.AUDIO)
+    if (suraAyah != null) {
+      highlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.AUDIO, true)
     }
   }
 
@@ -266,6 +283,8 @@ class AyahTrackerPresenter @Inject constructor(
 
   override fun bind(what: AyahInteractionHandler) {
     items = what.ayahTrackerItems
+    scope = MainScope()
+    subscribe()
   }
 
   override fun unbind(what: AyahInteractionHandler) {

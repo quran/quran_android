@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment;
 
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -11,25 +10,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-
 import androidx.annotation.NonNull;
-
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.util.TypefaceManager;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.view.QuranSpinner;
 import com.shawnlin.numberpicker.NumberPicker;
-
 import java.text.NumberFormat;
 import java.util.Locale;
-
 import javax.inject.Inject;
 
 public class AyahPlaybackFragment extends AyahActionFragment {
@@ -200,14 +194,6 @@ public class AyahPlaybackFragment extends AyahActionFragment {
           !currentEnding.equals(decidedEnd)) {
         // different range or not playing, so make a new request
         updatedRange = true;
-        if (this.start != null) {
-          final SuraAyah starting = decidedStart == null ? this.start : decidedStart;
-          final int origPage = quranInfo.getPageFromSuraAyah(starting.sura, starting.ayah);
-          if (page != origPage) {
-            pagerActivity.highlightAyah(currentStart.sura,
-                currentStart.ayah, HighlightType.AUDIO);
-          }
-        }
         pagerActivity.playFromAyah(currentStart, currentEnding, page, verseRepeat,
             rangeRepeat, enforceRange);
       } else if (shouldEnforce != enforceRange ||
