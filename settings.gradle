@@ -1,6 +1,7 @@
 include ':app'
 include ':common:analytics'
 include ':common:audio'
+include ':common:bookmark'
 include ':common:data'
 include ':common:networking'
 include ':common:pages'

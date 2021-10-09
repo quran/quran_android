@@ -17,8 +17,8 @@ import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.SettingsImpl
 import dagger.Module
 import dagger.Provides
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Scheduler
 import java.io.File
 import javax.inject.Named
 import javax.inject.Singleton
@@ -75,7 +75,6 @@ class ApplicationModule(private val application: Application) {
   }
 
   @Provides
-  @Singleton
   fun provideQuranFileManager(quranFileUtils: QuranFileUtils): QuranFileManager {
     return quranFileUtils
   }

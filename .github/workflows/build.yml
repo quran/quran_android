@@ -81,3 +81,6 @@ jobs:
 
       - name: Build debug APK
         run: ./gradlew assembleMadaniDebug
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx8G -XX:MaxMetaspaceSize=512m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC -Dfile.encoding=UTF-8"

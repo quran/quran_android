@@ -29,6 +29,9 @@ class BookmarksWidgetListProvider(private val context: Context) : RemoteViewsFac
   @Inject
   lateinit var quranRowFactory: QuranRowFactory
 
+  @Inject
+  lateinit var bookmarksDbAdapter: BookmarksDBAdapter
+
   init {
     (context.applicationContext as QuranApplication).applicationComponent.inject(this)
     populateListItem()
@@ -36,8 +39,7 @@ class BookmarksWidgetListProvider(private val context: Context) : RemoteViewsFac
 
   private fun populateListItem() {
     val appContext = context.applicationContext
-    val bookmarksDBAdapter = BookmarksDBAdapter(appContext)
-    val bookmarksList = bookmarksDBAdapter.getBookmarks(BookmarksDBAdapter.SORT_LOCATION)
+    val bookmarksList = bookmarksDbAdapter.getBookmarks(BookmarksDBAdapter.SORT_LOCATION)
     quranRowList = bookmarksList.map { quranRowFactory.fromBookmark(appContext, it) }
   }
 
