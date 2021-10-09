@@ -1,19 +1,17 @@
 package com.quran.labs.androidquran.presenter.quran
 
-import com.quran.data.model.bookmark.Bookmark
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.Response
 import com.quran.labs.androidquran.di.QuranPageScope
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.model.quran.CoordinatesModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.helpers.QuranPageLoader
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.observers.DisposableObserver
 import java.util.concurrent.TimeUnit
@@ -21,7 +19,6 @@ import javax.inject.Inject
 
 @QuranPageScope
 class QuranPagePresenter @Inject constructor(
-  private val bookmarkModel: BookmarkModel,
   private val coordinatesModel: CoordinatesModel,
   private val quranSettings: QuranSettings,
   private val quranPageLoader: QuranPageLoader,
@@ -68,22 +65,6 @@ class QuranPagePresenter @Inject constructor(
     )
   }
 
-  private fun getBookmarkedAyahs(pages: Array<out Int>) {
-    compositeDisposable.add(
-      bookmarkModel.getBookmarkedAyahsOnPageObservable(*pages)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(object : DisposableObserver<List<Bookmark?>>() {
-          override fun onNext(bookmarks: List<Bookmark?>) {
-            screen?.setBookmarksOnPage(bookmarks)
-          }
-
-          override fun onError(e: Throwable) {}
-
-          override fun onComplete() {}
-        })
-    )
-  }
-
   private fun getAyahCoordinates(pages: IntArray) {
     compositeDisposable.add(
       Completable.timer(500, TimeUnit.MILLISECONDS)
@@ -97,11 +78,7 @@ class QuranPagePresenter @Inject constructor(
 
           override fun onError(e: Throwable) {}
 
-          override fun onComplete() {
-            if (quranSettings.shouldHighlightBookmarks()) {
-              getBookmarkedAyahs(pages.toTypedArray())
-            }
-          }
+          override fun onComplete() {}
         })
     )
   }

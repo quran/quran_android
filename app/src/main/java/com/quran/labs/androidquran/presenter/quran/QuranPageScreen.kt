@@ -7,7 +7,6 @@ import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
 
 interface QuranPageScreen {
-  fun setBookmarksOnPage(bookmarks: List<Bookmark?>?)
   fun setPageCoordinates(pageCoordinates: PageCoordinates?)
   fun setAyahCoordinatesError()
   fun setPageBitmap(page: Int, pageBitmap: Bitmap)

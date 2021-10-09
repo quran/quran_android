@@ -4,17 +4,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.fragment.app.Fragment;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
-import com.quran.data.model.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
@@ -36,12 +34,8 @@ import com.quran.labs.androidquran.view.QuranImagePageLayout;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
-
-import java.util.List;
 import java.util.Set;
-
 import javax.inject.Inject;
-
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
@@ -170,11 +164,6 @@ public class QuranPageFragment extends Fragment implements PageController,
   @Override
   public void setPageCoordinates(PageCoordinates pageCoordinates) {
     ayahTrackerPresenter.setPageBounds(pageCoordinates);
-  }
-
-  @Override
-  public void setBookmarksOnPage(List<Bookmark> bookmarks) {
-    ayahTrackerPresenter.setAyahBookmarks(bookmarks);
   }
 
   @Override

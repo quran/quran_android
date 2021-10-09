@@ -22,7 +22,9 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.SIN
 import com.quran.labs.androidquran.ui.helpers.AyahTracker
 import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.labs.androidquran.util.QuranFileUtils
+import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.view.AyahToolBar.AyahToolBarPosition
+import com.quran.mobile.bookmark.model.BookmarkModel
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
 import com.quran.reading.common.AudioEventPresenter
@@ -39,8 +41,10 @@ class AyahTrackerPresenter @Inject constructor(
   private val quranInfo: QuranInfo,
   private val quranFileUtils: QuranFileUtils,
   private val quranDisplayData: QuranDisplayData,
+  private val quranSettings: QuranSettings,
   private val readingEventPresenter: ReadingEventPresenter,
-  private val audioEventPresenter: AudioEventPresenter
+  private val bookmarkModel: BookmarkModel,
+  private val audioEventPresenter: AudioEventPresenter,
 ) : AyahTracker, Presenter<AyahInteractionHandler> {
   // we may bind and unbind several times, and each time we unbind, we cancel
   // the scope, which means we can't launch new coroutines in that same scope.
@@ -58,6 +62,12 @@ class AyahTrackerPresenter @Inject constructor(
     audioEventPresenter.audioPlaybackAyahFlow
       .onEach { onAudioSelectionChanged(it) }
       .launchIn(scope)
+
+    items.forEach { trackerItem ->
+      bookmarkModel.bookmarksForPage(trackerItem.page)
+        .onEach { bookmarks -> onBookmarksChanged(bookmarks) }
+        .launchIn(scope)
+    }
   }
 
   fun setPageBounds(pageCoordinates: PageCoordinates?) {
@@ -76,12 +86,6 @@ class AyahTrackerPresenter @Inject constructor(
         pendingHighlightInfo!!.sura, pendingHighlightInfo!!.ayah,
         pendingHighlightInfo!!.highlightType, pendingHighlightInfo!!.scrollToAyah
       )
-    }
-  }
-
-  fun setAyahBookmarks(bookmarks: List<Bookmark?>?) {
-    for (item in items) {
-      item.onSetAyahBookmarks(bookmarks!!)
     }
   }
 
@@ -113,7 +117,20 @@ class AyahTrackerPresenter @Inject constructor(
     }
   }
 
-  override fun highlightAyah(sura: Int, ayah: Int, type: HighlightType, scrollToAyah: Boolean) {
+  private fun onBookmarksChanged(bookmarks: List<Bookmark>) {
+    unHighlightAyahs(HighlightType.BOOKMARK)
+    if (quranSettings.shouldHighlightBookmarks()) {
+      items.forEach { tracker ->
+        val elements = bookmarks
+          .filter { it.page == tracker.page }
+          .map { "${it.sura}:${it.ayah}" }
+          .toSet()
+        tracker.onHighlightAyat(tracker.page, elements, HighlightType.BOOKMARK)
+      }
+    }
+  }
+
+  private fun highlightAyah(sura: Int, ayah: Int, type: HighlightType, scrollToAyah: Boolean) {
     var handled = false
     val page = if (items.size == 1) items[0].page else quranInfo.getPageFromSuraAyah(sura, ayah)
     for (item in items) {
@@ -126,20 +143,7 @@ class AyahTrackerPresenter @Inject constructor(
     }
   }
 
-  override fun highlightAyat(page: Int, ayahKeys: Set<String>, type: HighlightType) {
-    for (item in items) {
-      item.onHighlightAyat(page, ayahKeys, type)
-    }
-  }
-
-  override fun unHighlightAyah(sura: Int, ayah: Int, type: HighlightType) {
-    val page = if (items.size == 1) items[0].page else quranInfo.getPageFromSuraAyah(sura, ayah)
-    for (item in items) {
-      item.onUnHighlightAyah(page, sura, ayah, type)
-    }
-  }
-
-  override fun unHighlightAyahs(type: HighlightType) {
+  private fun unHighlightAyahs(type: HighlightType) {
     for (item in items) {
       item.onUnHighlightAyahType(type)
     }

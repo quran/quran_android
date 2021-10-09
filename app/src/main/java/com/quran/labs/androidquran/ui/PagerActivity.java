@@ -85,7 +85,6 @@ import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
-import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.JumpDestination;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
@@ -1229,7 +1228,7 @@ public class PagerActivity extends AppCompatActivity implements
               .subscribeWith(new DisposableSingleObserver<Boolean>() {
                 @Override
                 public void onSuccess(@NonNull Boolean isBookmarked) {
-                  updateAyahBookmark(startRef, isBookmarked, true);
+                  updateAyahBookmark(startRef, isBookmarked);
                 }
 
                 @Override
@@ -1382,10 +1381,6 @@ public class PagerActivity extends AppCompatActivity implements
     }
   }
 
-  public void highlightAyah(int sura, int ayah, HighlightType type) {
-    highlightAyah(sura, ayah, true, type);
-  }
-
   private int ensurePage(int sura, int ayah, boolean force) {
     int page = quranInfo.getPageFromSuraAyah(sura, ayah);
     if (page < Constants.PAGES_FIRST || numberOfPages < page) {
@@ -1397,25 +1392,6 @@ public class PagerActivity extends AppCompatActivity implements
       viewPager.setCurrentItem(position);
     }
     return position;
-  }
-
-  private void highlightAyah(int sura, int ayah,
-                             boolean force, HighlightType type) {
-    Timber.d("highlightAyah() - %s:%s", sura, ayah);
-
-    final int position = ensurePage(sura, ayah, force);
-    Fragment f = pagerAdapter.getFragmentIfExists(position);
-    if (f instanceof QuranPage && f.isAdded()) {
-      ((QuranPage) f).getAyahTracker().highlightAyah(sura, ayah, type, true);
-    }
-  }
-
-  private void unHighlightAyah(int sura, int ayah, HighlightType type) {
-    int position = viewPager.getCurrentItem();
-    Fragment f = pagerAdapter.getFragmentIfExists(position);
-    if (f instanceof QuranPage && f.isVisible()) {
-      ((QuranPage) f).getAyahTracker().unHighlightAyah(sura, ayah, type);
-    }
   }
 
   private void requestTranslationsList() {
@@ -1486,7 +1462,7 @@ public class PagerActivity extends AppCompatActivity implements
             } else {
               // ayah bookmark
               SuraAyah suraAyah = new SuraAyah(sura, ayah);
-              updateAyahBookmark(suraAyah, isBookmarked, true);
+              updateAyahBookmark(suraAyah, isBookmarked);
             }
           }
 
@@ -1822,7 +1798,7 @@ public class PagerActivity extends AppCompatActivity implements
         .subscribeWith(new DisposableSingleObserver<Boolean>() {
           @Override
           public void onSuccess(@NonNull Boolean isBookmarked) {
-            updateAyahBookmark(start, isBookmarked, false);
+            updateAyahBookmark(start, isBookmarked);
           }
 
           @Override
@@ -2019,19 +1995,10 @@ public class PagerActivity extends AppCompatActivity implements
     });
   }
 
-  private void updateAyahBookmark(
-      SuraAyah suraAyah, boolean bookmarked, boolean refreshHighlight) {
+  private void updateAyahBookmark(SuraAyah suraAyah, boolean bookmarked) {
     // Refresh toolbar icon
     if (isInAyahMode && start.equals(suraAyah)) {
       ayahToolBar.setBookmarked(bookmarked);
-    }
-    // Refresh highlight
-    if (refreshHighlight && quranSettings.shouldHighlightBookmarks()) {
-      if (bookmarked) {
-        highlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.BOOKMARK);
-      } else {
-        unHighlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.BOOKMARK);
-      }
     }
   }
 
