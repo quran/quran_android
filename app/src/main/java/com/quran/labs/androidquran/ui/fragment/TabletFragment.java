@@ -15,7 +15,6 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
-import com.quran.data.model.bookmark.Bookmark;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranDisplayData;
@@ -49,8 +48,6 @@ import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 import timber.log.Timber;
-
-import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
 public class TabletFragment extends Fragment
     implements PageController, TranslationPresenter.TranslationScreen,
@@ -427,7 +424,7 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public boolean handleTouchEvent(MotionEvent event, EventType eventType, int page) {
+  public boolean handleTouchEvent(MotionEvent event, AyahSelectedListener.EventType eventType, int page) {
     return isVisible() && ayahTrackerPresenter.handleTouchEvent(getActivity(), event, eventType,
         page, ayahCoordinatesError);
   }

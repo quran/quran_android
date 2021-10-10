@@ -9,14 +9,13 @@ import androidx.core.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.quran.data.model.selection.AyahToolBarPlacementType;
 import com.quran.labs.androidquran.R;
-
-import static com.quran.labs.androidquran.view.AyahToolBar.PipPosition;
 
 public class AyahToolBarPip extends View {
   private Path mPath;
   private Paint mPaint;
-  private PipPosition mPosition;
+  private AyahToolBarPlacementType mPosition;
 
   public AyahToolBarPip(Context context) {
     super(context);
@@ -34,14 +33,14 @@ public class AyahToolBarPip extends View {
   }
 
   private void init(Context context) {
-    mPosition = PipPosition.DOWN;
+    mPosition = AyahToolBarPlacementType.BOTTOM;
     mPaint = new Paint();
     mPaint.setAntiAlias(true);
     mPaint.setColor(ContextCompat.getColor(context, R.color.toolbar_background));
     mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
   }
 
-  public void ensurePosition(PipPosition position) {
+  public void ensurePosition(AyahToolBarPlacementType position) {
     mPosition = position;
     updatePoints();
   }
@@ -52,7 +51,7 @@ public class AyahToolBarPip extends View {
     final Point pointA;
     final Point pointB;
     final Point pointC;
-    if (mPosition == PipPosition.DOWN) {
+    if (mPosition == AyahToolBarPlacementType.BOTTOM) {
       pointA = new Point(width / 2, height);
       pointB = new Point(0, 0);
       pointC = new Point(width, 0);

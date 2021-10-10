@@ -5,31 +5,27 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
-
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.DisplayCutoutCompat;
-
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.quran.data.model.SuraAyah;
-import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
+import com.quran.data.model.selection.AyahToolBarPlacementType;
+import com.quran.data.model.selection.AyahToolBarPosition;
 import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
-
-import com.quran.labs.androidquran.view.AyahToolBar;
 import dev.chrisbanes.insetter.Insetter;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class TranslationView extends FrameLayout implements View.OnClickListener,
     TranslationAdapter.OnVerseSelectedListener {
@@ -229,7 +225,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     return localTranslations;
   }
 
-  public AyahToolBar.AyahToolBarPosition getToolbarPosition() {
+  public AyahToolBarPosition getToolbarPosition() {
     int[] versePopupPosition = translationAdapter.getSelectedVersePopupPosition();
     if (versePopupPosition != null) {
       // for dual screen tablet mode, we need to add the view's x (so clicks on the
@@ -238,13 +234,13 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       getLocationOnScreen(positionOnScreen);
       final int xOffset = positionOnScreen[0];
 
-      return new AyahToolBar.AyahToolBarPosition(
+      return new AyahToolBarPosition(
           xOffset + versePopupPosition[0],
           versePopupPosition[1],
           0f,
           0f,
           0f,
-          AyahToolBar.PipPosition.UP
+          AyahToolBarPlacementType.TOP
       );
     }
     return null;
@@ -257,7 +253,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
    * update the RecyclerView cannot be called amidst scrolling or computing of a layout).
    */
   private void updateAyahToolBarPosition() {
-    final AyahToolBar.AyahToolBarPosition position = getToolbarPosition();
+    final AyahToolBarPosition position = getToolbarPosition();
     if (position != null && (position.getY() > getHeight() || position.getY() < 0)) {
         hideMenu();
     } else {

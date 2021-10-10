@@ -2,10 +2,10 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 
 import androidx.annotation.Nullable;
 import com.quran.data.model.SuraAyah;
+import com.quran.data.model.selection.AyahToolBarPosition;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.view.AyahToolBar;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import java.util.Set;
@@ -37,7 +37,7 @@ public class AyahTrackerItem {
   }
 
   @Nullable
-  AyahToolBar.AyahToolBarPosition getToolBarPosition(int page, int sura, int ayah,
+  AyahToolBarPosition getToolBarPosition(int page, int sura, int ayah,
                                                      int toolBarWidth, int toolBarHeight) {
     return null;
   }

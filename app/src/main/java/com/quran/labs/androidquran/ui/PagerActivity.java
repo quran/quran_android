@@ -46,6 +46,7 @@ import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.selection.AyahSelection;
 import com.quran.data.model.SuraAyah;
+import com.quran.data.model.selection.AyahToolBarPosition;
 import com.quran.data.page.provider.di.QuranPageExtrasComponent;
 import com.quran.data.page.provider.di.QuranPageExtrasComponentProvider;
 import com.quran.labs.androidquran.HelpActivity;
@@ -129,7 +130,6 @@ import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_P
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.PAGES;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
-import static com.quran.labs.androidquran.view.AyahToolBar.AyahToolBarPosition;
 
 /**
  * Activity that displays the Quran (in Arabic or translation mode).
@@ -403,8 +403,7 @@ public class PagerActivity extends AppCompatActivity implements
       }
 
       @Override
-      public void onPageScrolled(int position, float positionOffset,
-          int positionOffsetPixels) {
+      public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if (ayahToolBar.isShowing() && ayahToolBarPos != null) {
           final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
           int barPos = quranInfo.getPositionFromPage(startPage, isDualPageVisible());

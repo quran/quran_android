@@ -4,10 +4,10 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import androidx.annotation.NonNull;
 import com.quran.data.core.QuranInfo;
+import com.quran.data.model.selection.AyahToolBarPosition;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
-import com.quran.labs.androidquran.view.AyahToolBar;
 import com.quran.labs.androidquran.view.HighlightingImageView;
 import com.quran.labs.androidquran.view.QuranPageLayout;
 import com.quran.page.common.draw.ImageDrawHelper;
@@ -65,9 +65,9 @@ public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
   }
 
   @Override
-  AyahToolBar.AyahToolBarPosition getToolBarPosition(int page, int sura, int ayah, int toolBarWidth,
+  AyahToolBarPosition getToolBarPosition(int page, int sura, int ayah, int toolBarWidth,
                                                      int toolBarHeight) {
-    AyahToolBar.AyahToolBarPosition position =
+    AyahToolBarPosition position =
         super.getToolBarPosition(page, sura, ayah, toolBarWidth, toolBarHeight);
     if (position != null) {
       // If we're in landscape mode (wrapped in SV) update the y-offset

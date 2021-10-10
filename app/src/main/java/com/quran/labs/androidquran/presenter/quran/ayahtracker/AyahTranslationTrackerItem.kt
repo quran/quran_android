@@ -2,11 +2,11 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.selection.AyahToolBarPosition
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.labs.androidquran.ui.translation.TranslationView
-import com.quran.labs.androidquran.view.AyahToolBar.AyahToolBarPosition
 
 class AyahTranslationTrackerItem(
   page: Int,

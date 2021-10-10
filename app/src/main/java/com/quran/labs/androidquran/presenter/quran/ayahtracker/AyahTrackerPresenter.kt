@@ -6,6 +6,7 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.selection.AyahToolBarPosition
 import com.quran.labs.androidquran.common.HighlightInfo
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
@@ -23,7 +24,6 @@ import com.quran.labs.androidquran.ui.helpers.AyahTracker
 import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
-import com.quran.labs.androidquran.view.AyahToolBar.AyahToolBarPosition
 import com.quran.mobile.bookmark.model.BookmarkModel
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates

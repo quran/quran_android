@@ -2,20 +2,18 @@ package com.quran.labs.androidquran.ui.util;
 
 import android.graphics.Matrix;
 import android.graphics.RectF;
-import androidx.annotation.NonNull;
 import android.util.SparseArray;
 import android.widget.ImageView;
-
-import com.quran.page.common.data.AyahBounds;
+import androidx.annotation.NonNull;
 import com.quran.data.model.SuraAyah;
-import com.quran.labs.androidquran.view.AyahToolBar;
+import com.quran.data.model.selection.AyahToolBarPlacementType;
+import com.quran.data.model.selection.AyahToolBarPosition;
 import com.quran.labs.androidquran.view.HighlightingImageView;
-
+import com.quran.page.common.data.AyahBounds;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import timber.log.Timber;
 
 public class ImageAyahUtils {
@@ -121,11 +119,11 @@ public class ImageAyahUtils {
       return null;
    }
 
-  public static AyahToolBar.AyahToolBarPosition getToolBarPosition(
+  public static AyahToolBarPosition getToolBarPosition(
       @NonNull List<AyahBounds> bounds, @NonNull Matrix matrix,
       int screenWidth, int screenHeight, int toolBarWidth, int toolBarHeight) {
     boolean isToolBarUnderAyah = false;
-    AyahToolBar.AyahToolBarPosition result = null;
+    AyahToolBarPosition result = null;
     final int size = bounds.size();
 
     RectF chosenRect;
@@ -157,9 +155,9 @@ public class ImageAyahUtils {
         }
       }
 
-      final AyahToolBar.PipPosition pipPosition = isToolBarUnderAyah ?
-          AyahToolBar.PipPosition.UP : AyahToolBar.PipPosition.DOWN;
-      result = new AyahToolBar.AyahToolBarPosition(x, y, 0f, 0f, midpoint - x, pipPosition);
+      final AyahToolBarPlacementType pipPosition = isToolBarUnderAyah ?
+          AyahToolBarPlacementType.TOP : AyahToolBarPlacementType.BOTTOM;
+      result = new AyahToolBarPosition(x, y, 0f, 0f, midpoint - x, pipPosition);
     }
     return result;
   }

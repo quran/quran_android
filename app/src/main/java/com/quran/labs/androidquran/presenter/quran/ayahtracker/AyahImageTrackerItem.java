@@ -6,12 +6,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
+import com.quran.data.model.selection.AyahToolBarPosition;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.labs.androidquran.view.AyahToolBar;
 import com.quran.labs.androidquran.view.HighlightingImageView;
 import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
@@ -118,14 +118,14 @@ public class AyahImageTrackerItem extends AyahTrackerItem {
   }
 
   @Override
-  AyahToolBar.AyahToolBarPosition getToolBarPosition(int page, int sura, int ayah, int toolBarWidth,
+  AyahToolBarPosition getToolBarPosition(int page, int sura, int ayah, int toolBarWidth,
                                                      int toolBarHeight) {
     if (this.page == page) {
       final List<AyahBounds> bounds = coordinates == null ? null :
           coordinates.get(sura + ":" + ayah);
       final int screenWidth = ayahView.getWidth();
       if (bounds != null && screenWidth > 0) {
-        AyahToolBar.AyahToolBarPosition position =
+        AyahToolBarPosition position =
             ImageAyahUtils.getToolBarPosition(bounds, ayahView.getImageMatrix(),
                 screenWidth, screenHeight, toolBarWidth, toolBarHeight);
 
