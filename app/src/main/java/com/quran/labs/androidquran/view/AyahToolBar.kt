@@ -226,6 +226,7 @@ class AyahToolBar @JvmOverloads constructor(
     val pipPosition: PipPosition = DOWN
   ) {
     fun withX(x: Float) = copy(x = x)
+    fun withY(y: Float) = copy(y = y)
     fun withXScroll(xScroll: Float) = copy(xScroll = xScroll)
     fun withYScroll(yScroll: Float) = copy(yScroll = yScroll)
   }
