@@ -458,7 +458,7 @@ public class PagerActivity extends AppCompatActivity implements
         }
 
         // If we're more than 1 page away from ayah selection end ayah mode
-        if (isInAyahMode) {
+        if (isInAyahMode && start != null) {
           final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
           int ayahPos = quranInfo.getPositionFromPage(startPage, isDualPageVisible());
           if (Math.abs(ayahPos - position) > 1) {
@@ -666,6 +666,8 @@ public class PagerActivity extends AppCompatActivity implements
     } else {
       start = null;
       end = null;
+      highlightedSura = -1;
+      highlightedAyah = -1;
       if (ayahToolBar.isShowing()) {
         endAyahMode();
       }
