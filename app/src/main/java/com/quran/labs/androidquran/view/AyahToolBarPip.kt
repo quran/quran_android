@@ -10,8 +10,8 @@ import android.graphics.Point
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
-import com.quran.data.model.selection.AyahToolBarPlacementType
-import com.quran.data.model.selection.AyahToolBarPlacementType.BOTTOM
+import com.quran.data.model.selection.SelectedAyahPlacementType
+import com.quran.data.model.selection.SelectedAyahPlacementType.BOTTOM
 import com.quran.labs.androidquran.R
 
 class AyahToolBarPip @JvmOverloads constructor(
@@ -23,7 +23,7 @@ class AyahToolBarPip @JvmOverloads constructor(
   private val paint: Paint
 
   private var path: Path? = null
-  private var position: AyahToolBarPlacementType
+  private var position: SelectedAyahPlacementType
 
   init {
     position = BOTTOM
@@ -34,7 +34,7 @@ class AyahToolBarPip @JvmOverloads constructor(
     }
   }
 
-  fun ensurePosition(position: AyahToolBarPlacementType) {
+  fun ensurePosition(position: SelectedAyahPlacementType) {
     this.position = position
     updatePoints()
   }

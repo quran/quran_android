@@ -15,8 +15,8 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
-import com.quran.data.model.selection.AyahToolBarPlacementType
-import com.quran.data.model.selection.AyahToolBarPosition
+import com.quran.data.model.selection.SelectedAyahPlacementType
+import com.quran.data.model.selection.SelectedAyahPosition
 import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.ui.util.ToastCompat
@@ -36,7 +36,7 @@ class AyahToolBar @JvmOverloads constructor(
   private val toolBarPip: AyahToolBarPip
 
   private var pipOffset = 0f
-  private var pipPosition: AyahToolBarPlacementType
+  private var pipPosition: SelectedAyahPlacementType
   private var currentMenu: Menu? = null
   private var itemSelectedListener: OnMenuItemClickListener? = null
 
@@ -57,7 +57,7 @@ class AyahToolBar @JvmOverloads constructor(
     }
     addView(menuLayout)
 
-    pipPosition = AyahToolBarPlacementType.BOTTOM
+    pipPosition = SelectedAyahPlacementType.BOTTOM
     toolBarPip = AyahToolBarPip(context)
     toolBarPip.layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, pipHeight)
     addView(toolBarPip)
@@ -83,7 +83,7 @@ class AyahToolBar @JvmOverloads constructor(
     }
 
     // overlap the pip and toolbar by 1px to avoid occasional gap
-    if (pipPosition == AyahToolBarPlacementType.TOP) {
+    if (pipPosition == SelectedAyahPlacementType.TOP) {
       toolBarPip.layout(pipLeft, 0, pipLeft + pipWidth, pipHeight + 1)
       menuLayout.layout(0, pipHeight, menuWidth, pipHeight + menuHeight)
     } else {
@@ -156,7 +156,7 @@ class AyahToolBar @JvmOverloads constructor(
     bookmarkButton?.setImageDrawable(bookmarkItem.icon)
   }
 
-  fun updatePosition(position: AyahToolBarPosition) {
+  fun updatePosition(position: SelectedAyahPosition) {
     val needsLayout = position.pipPosition != pipPosition || pipOffset != position.pipOffset
     ensurePipPosition(position.pipPosition)
     pipOffset = position.pipOffset
@@ -173,7 +173,7 @@ class AyahToolBar @JvmOverloads constructor(
     translationY = y
   }
 
-  private fun ensurePipPosition(position: AyahToolBarPlacementType) {
+  private fun ensurePipPosition(position: SelectedAyahPlacementType) {
     pipPosition = position
     toolBarPip.ensurePosition(position)
   }

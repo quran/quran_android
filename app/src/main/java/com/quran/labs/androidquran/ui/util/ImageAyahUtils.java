@@ -6,8 +6,8 @@ import android.util.SparseArray;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import com.quran.data.model.SuraAyah;
-import com.quran.data.model.selection.AyahToolBarPlacementType;
-import com.quran.data.model.selection.AyahToolBarPosition;
+import com.quran.data.model.selection.SelectedAyahPlacementType;
+import com.quran.data.model.selection.SelectedAyahPosition;
 import com.quran.labs.androidquran.view.HighlightingImageView;
 import com.quran.page.common.data.AyahBounds;
 import java.util.ArrayList;
@@ -119,11 +119,11 @@ public class ImageAyahUtils {
       return null;
    }
 
-  public static AyahToolBarPosition getToolBarPosition(
+  public static SelectedAyahPosition getToolBarPosition(
       @NonNull List<AyahBounds> bounds, @NonNull Matrix matrix,
       int screenWidth, int screenHeight, int toolBarWidth, int toolBarHeight) {
     boolean isToolBarUnderAyah = false;
-    AyahToolBarPosition result = null;
+    SelectedAyahPosition result = null;
     final int size = bounds.size();
 
     RectF chosenRect;
@@ -155,9 +155,9 @@ public class ImageAyahUtils {
         }
       }
 
-      final AyahToolBarPlacementType pipPosition = isToolBarUnderAyah ?
-          AyahToolBarPlacementType.TOP : AyahToolBarPlacementType.BOTTOM;
-      result = new AyahToolBarPosition(x, y, 0f, 0f, midpoint - x, pipPosition);
+      final SelectedAyahPlacementType pipPosition = isToolBarUnderAyah ?
+          SelectedAyahPlacementType.TOP : SelectedAyahPlacementType.BOTTOM;
+      result = new SelectedAyahPosition(x, y, 0f, 0f, midpoint - x, pipPosition);
     }
     return result;
   }

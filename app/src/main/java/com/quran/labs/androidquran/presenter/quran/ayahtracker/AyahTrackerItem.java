@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker;
 
 import androidx.annotation.Nullable;
 import com.quran.data.model.SuraAyah;
-import com.quran.data.model.selection.AyahToolBarPosition;
+import com.quran.data.model.selection.SelectedAyahPosition;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
@@ -37,7 +37,7 @@ public class AyahTrackerItem {
   }
 
   @Nullable
-  AyahToolBarPosition getToolBarPosition(int page, int sura, int ayah,
+  SelectedAyahPosition getToolBarPosition(int page, int sura, int ayah,
                                                      int toolBarWidth, int toolBarHeight) {
     return null;
   }

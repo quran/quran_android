@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
-import com.quran.data.model.selection.AyahToolBarPosition
+import com.quran.data.model.selection.SelectedAyahPosition
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.ui.helpers.HighlightType
@@ -38,7 +38,7 @@ class AyahTranslationTrackerItem(
   public override fun getToolBarPosition(
     page: Int,
     sura: Int, ayah: Int, toolBarWidth: Int, toolBarHeight: Int
-  ): AyahToolBarPosition? {
+  ): SelectedAyahPosition? {
     val position = ayahView.toolbarPosition
     return position ?: super.getToolBarPosition(
       page, sura, ayah, toolBarWidth,

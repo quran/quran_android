@@ -46,7 +46,7 @@ import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.selection.AyahSelection;
 import com.quran.data.model.SuraAyah;
-import com.quran.data.model.selection.AyahToolBarPosition;
+import com.quran.data.model.selection.SelectedAyahPosition;
 import com.quran.data.page.provider.di.QuranPageExtrasComponent;
 import com.quran.data.page.provider.di.QuranPageExtrasComponentProvider;
 import com.quran.labs.androidquran.HelpActivity;
@@ -176,7 +176,7 @@ public class PagerActivity extends AppCompatActivity implements
   private boolean needsPermissionToDownloadOver3g = true;
   private AlertDialog promptDialog = null;
   private AyahToolBar ayahToolBar;
-  private AyahToolBarPosition ayahToolBarPos;
+  private SelectedAyahPosition ayahToolBarPos;
   private AudioRequest lastAudioRequest;
   private boolean isDualPages = false;
   private Integer lastPlayingSura;

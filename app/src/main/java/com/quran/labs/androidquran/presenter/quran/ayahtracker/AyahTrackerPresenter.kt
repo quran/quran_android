@@ -6,7 +6,7 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
-import com.quran.data.model.selection.AyahToolBarPosition
+import com.quran.data.model.selection.SelectedAyahPosition
 import com.quran.labs.androidquran.common.HighlightInfo
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
@@ -152,7 +152,7 @@ class AyahTrackerPresenter @Inject constructor(
   override fun getToolBarPosition(
     sura: Int, ayah: Int,
     toolBarWidth: Int, toolBarHeight: Int
-  ): AyahToolBarPosition? {
+  ): SelectedAyahPosition? {
     val page = if (items.size == 1) items[0].page else quranInfo.getPageFromSuraAyah(sura, ayah)
     for (item in items) {
       val position = item.getToolBarPosition(page, sura, ayah, toolBarWidth, toolBarHeight)

@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.quran.data.model.SuraAyah;
-import com.quran.data.model.selection.AyahToolBarPlacementType;
-import com.quran.data.model.selection.AyahToolBarPosition;
+import com.quran.data.model.selection.SelectedAyahPlacementType;
+import com.quran.data.model.selection.SelectedAyahPosition;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
@@ -225,7 +225,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     return localTranslations;
   }
 
-  public AyahToolBarPosition getToolbarPosition() {
+  public SelectedAyahPosition getToolbarPosition() {
     int[] versePopupPosition = translationAdapter.getSelectedVersePopupPosition();
     if (versePopupPosition != null) {
       // for dual screen tablet mode, we need to add the view's x (so clicks on the
@@ -234,13 +234,13 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       getLocationOnScreen(positionOnScreen);
       final int xOffset = positionOnScreen[0];
 
-      return new AyahToolBarPosition(
+      return new SelectedAyahPosition(
           xOffset + versePopupPosition[0],
           versePopupPosition[1],
           0f,
           0f,
           0f,
-          AyahToolBarPlacementType.TOP
+          SelectedAyahPlacementType.TOP
       );
     }
     return null;
@@ -253,7 +253,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
    * update the RecyclerView cannot be called amidst scrolling or computing of a layout).
    */
   private void updateAyahToolBarPosition() {
-    final AyahToolBarPosition position = getToolbarPosition();
+    final SelectedAyahPosition position = getToolbarPosition();
     if (position != null && (position.getY() > getHeight() || position.getY() < 0)) {
         hideMenu();
     } else {
