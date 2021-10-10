@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.bridge
 
-import com.quran.data.model.AyahSelection
+import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.SuraAyah
 import com.quran.reading.common.ReadingEventPresenter
 import kotlinx.coroutines.MainScope

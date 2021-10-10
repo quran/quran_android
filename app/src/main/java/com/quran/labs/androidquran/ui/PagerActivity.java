@@ -44,7 +44,7 @@ import androidx.viewpager.widget.NonRestoringViewPager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 import com.quran.data.core.QuranInfo;
-import com.quran.data.model.AyahSelection;
+import com.quran.data.model.selection.AyahSelection;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.page.provider.di.QuranPageExtrasComponent;
 import com.quran.data.page.provider.di.QuranPageExtrasComponentProvider;

@@ -1,4 +1,6 @@
-package com.quran.data.model
+package com.quran.data.model.selection
+
+import com.quran.data.model.SuraAyah
 
 sealed class AyahSelection {
   object None : AyahSelection()

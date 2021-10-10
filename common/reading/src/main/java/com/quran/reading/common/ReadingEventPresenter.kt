@@ -1,7 +1,7 @@
 package com.quran.reading.common
 
 import com.quran.data.di.ActivityScope
-import com.quran.data.model.AyahSelection
+import com.quran.data.model.selection.AyahSelection
 import kotlinx.coroutines.channels.BufferOverflow.DROP_OLDEST
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
