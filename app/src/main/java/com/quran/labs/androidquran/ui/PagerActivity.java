@@ -47,6 +47,7 @@ import com.quran.data.core.QuranInfo;
 import com.quran.data.model.selection.AyahSelection;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.model.selection.SelectedAyahPosition;
+import com.quran.data.model.selection.SelectionIndicator;
 import com.quran.data.page.provider.di.QuranPageExtrasComponent;
 import com.quran.data.page.provider.di.QuranPageExtrasComponentProvider;
 import com.quran.labs.androidquran.HelpActivity;
@@ -1761,7 +1762,7 @@ public class PagerActivity extends AppCompatActivity implements
   }
 
   private void selectAyah(SuraAyah s) {
-    readingEventPresenter.onAyahSelection(new AyahSelection.Ayah(s));
+    readingEventPresenter.onAyahSelection(new AyahSelection.Ayah(s, SelectionIndicator.None.INSTANCE));
   }
 
   //endregion
