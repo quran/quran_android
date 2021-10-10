@@ -71,8 +71,8 @@ public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
         super.getToolBarPosition(page, sura, ayah, toolBarWidth, toolBarHeight);
     if (position != null) {
       // If we're in landscape mode (wrapped in SV) update the y-offset
-      position.yScroll = 0 - quranPageLayout.getCurrentScrollY();
+      return position.withYScroll(-quranPageLayout.getCurrentScrollY());
     }
-    return position;
+    return null;
   }
 }

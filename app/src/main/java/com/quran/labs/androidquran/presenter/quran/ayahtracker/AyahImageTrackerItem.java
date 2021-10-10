@@ -130,7 +130,7 @@ public class AyahImageTrackerItem extends AyahTrackerItem {
                 screenWidth, screenHeight, toolBarWidth, toolBarHeight);
         if (isPageOnRightSide) {
           // need to adjust offset because our x is really x plus one page
-          position.x += ayahView.getWidth();
+          return position.withX(position.getX() + ayahView.getWidth());
         }
         return position;
       }

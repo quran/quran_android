@@ -157,12 +157,9 @@ public class ImageAyahUtils {
         }
       }
 
-      result = new AyahToolBar.AyahToolBarPosition();
-      result.x = x;
-      result.y = y;
-      result.pipOffset = midpoint - x;
-      result.pipPosition = isToolBarUnderAyah ?
+      final AyahToolBar.PipPosition pipPosition = isToolBarUnderAyah ?
           AyahToolBar.PipPosition.UP : AyahToolBar.PipPosition.DOWN;
+      result = new AyahToolBar.AyahToolBarPosition(x, y, 0f, 0f, midpoint - x, pipPosition);
     }
     return result;
   }
