@@ -410,10 +410,10 @@ public class PagerActivity extends AppCompatActivity implements
           int barPos = quranInfo.getPositionFromPage(startPage, isDualPageVisible());
           if (position == barPos) {
             // Swiping to next ViewPager page (i.e. prev quran page)
-            ayahToolBarPos.xScroll = -positionOffsetPixels;
+            ayahToolBarPos = ayahToolBarPos.withXScroll(-positionOffsetPixels);
           } else if (position == barPos - 1) {
             // Swiping to prev ViewPager page (i.e. next quran page)
-            ayahToolBarPos.xScroll = viewPager.getWidth() - positionOffsetPixels;
+            ayahToolBarPos = ayahToolBarPos.withXScroll(viewPager.getWidth() - positionOffsetPixels);
           } else {
             // Totally off screen, should hide toolbar
             ayahToolBar.setVisibility(View.GONE);
@@ -1821,7 +1821,7 @@ public class PagerActivity extends AppCompatActivity implements
   // Used to sync toolbar with page's SV (landscape non-tablet mode)
   public void onQuranPageScroll(int scrollY) {
     if (ayahToolBarPos != null) {
-      ayahToolBarPos.yScroll = -scrollY;
+      ayahToolBarPos = ayahToolBarPos.withYScroll(-scrollY);
       if (isInAyahMode) {
         ayahToolBar.updatePosition(ayahToolBarPos);
       }

@@ -128,9 +128,15 @@ public class AyahImageTrackerItem extends AyahTrackerItem {
         AyahToolBar.AyahToolBarPosition position =
             ImageAyahUtils.getToolBarPosition(bounds, ayahView.getImageMatrix(),
                 screenWidth, screenHeight, toolBarWidth, toolBarHeight);
+
+        final int topPadding = ayahView.getPaddingTop();
+        if (topPadding > 0) {
+          position = position.withY(position.getY() + topPadding);
+        }
+
         if (isPageOnRightSide) {
           // need to adjust offset because our x is really x plus one page
-          position.x += ayahView.getWidth();
+          return position.withX(position.getX() + ayahView.getWidth());
         }
         return position;
       }

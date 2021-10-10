@@ -238,11 +238,14 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       getLocationOnScreen(positionOnScreen);
       final int xOffset = positionOnScreen[0];
 
-      AyahToolBar.AyahToolBarPosition position = new AyahToolBar.AyahToolBarPosition();
-      position.x = xOffset + versePopupPosition[0];
-      position.y = versePopupPosition[1];
-      position.pipPosition = AyahToolBar.PipPosition.UP;
-      return position;
+      return new AyahToolBar.AyahToolBarPosition(
+          xOffset + versePopupPosition[0],
+          versePopupPosition[1],
+          0f,
+          0f,
+          0f,
+          AyahToolBar.PipPosition.UP
+      );
     }
     return null;
   }
@@ -255,7 +258,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
    */
   private void updateAyahToolBarPosition() {
     final AyahToolBar.AyahToolBarPosition position = getToolbarPosition();
-    if (position != null && (position.y > getHeight() || position.y < 0)) {
+    if (position != null && (position.getY() > getHeight() || position.getY() < 0)) {
         hideMenu();
     } else {
       pageController.requestMenuPositionUpdate();
