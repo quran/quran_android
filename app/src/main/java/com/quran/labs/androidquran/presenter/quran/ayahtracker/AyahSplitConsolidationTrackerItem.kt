@@ -12,12 +12,12 @@ class AyahSplitConsolidationTrackerItem(
   private val translationTrackerItem: AyahTranslationTrackerItem
 ) : AyahTrackerItem(page) {
 
-  override fun onSetPageBounds(pageCoordinates: PageCoordinates?) {
+  override fun onSetPageBounds(pageCoordinates: PageCoordinates) {
     imageTrackerItem.onSetPageBounds(pageCoordinates)
     translationTrackerItem.onSetPageBounds(pageCoordinates)
   }
 
-  override fun onSetAyahCoordinates(ayahCoordinates: AyahCoordinates?) {
+  override fun onSetAyahCoordinates(ayahCoordinates: AyahCoordinates) {
     imageTrackerItem.onSetAyahCoordinates(ayahCoordinates)
     translationTrackerItem.onSetAyahCoordinates(ayahCoordinates)
   }
@@ -30,7 +30,7 @@ class AyahSplitConsolidationTrackerItem(
     return firstResult && secondResult
   }
 
-  override fun onHighlightAyat(page: Int, ayahKeys: MutableSet<String>?, type: HighlightType?) {
+  override fun onHighlightAyat(page: Int, ayahKeys: Set<String>, type: HighlightType) {
     imageTrackerItem.onHighlightAyat(page, ayahKeys, type)
     translationTrackerItem.onHighlightAyat(page, ayahKeys, type)
   }

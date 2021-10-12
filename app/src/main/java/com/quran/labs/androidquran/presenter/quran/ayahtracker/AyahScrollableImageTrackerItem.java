@@ -30,8 +30,8 @@ public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
   }
 
   @Override
-  boolean onHighlightAyah(int page, int sura, int ayah, HighlightType type, boolean scrollToAyah) {
-    if (this.page == page && scrollToAyah && coordinates != null) {
+  public boolean onHighlightAyah(int page, int sura, int ayah, @NonNull HighlightType type, boolean scrollToAyah) {
+    if (getPage() == page && scrollToAyah && coordinates != null) {
       final RectF highlightBounds = ImageAyahUtils.getYBoundsForHighlight(coordinates, sura, ayah);
       if (highlightBounds != null) {
         Matrix matrix = ayahView.getImageMatrix();
@@ -65,7 +65,7 @@ public class AyahScrollableImageTrackerItem extends AyahImageTrackerItem {
   }
 
   @Override
-  SelectedAyahPosition getToolBarPosition(int page, int sura, int ayah, int toolBarWidth,
+  public SelectedAyahPosition getToolBarPosition(int page, int sura, int ayah, int toolBarWidth,
                                                      int toolBarHeight) {
     SelectedAyahPosition position =
         super.getToolBarPosition(page, sura, ayah, toolBarWidth, toolBarHeight);

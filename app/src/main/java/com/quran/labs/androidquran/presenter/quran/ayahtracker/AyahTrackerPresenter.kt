@@ -70,7 +70,7 @@ class AyahTrackerPresenter @Inject constructor(
     }
   }
 
-  fun setPageBounds(pageCoordinates: PageCoordinates?) {
+  fun setPageBounds(pageCoordinates: PageCoordinates) {
     for (item in items) {
       item.onSetPageBounds(pageCoordinates)
     }
@@ -175,7 +175,7 @@ class AyahTrackerPresenter @Inject constructor(
 
   override fun getLocalTranslations(): Array<LocalTranslation>? {
     for (item in items) {
-      val localTranslations = item.localTranslations
+      val localTranslations = item.getLocalTranslations()
       if (localTranslations != null) {
         return localTranslations
       }

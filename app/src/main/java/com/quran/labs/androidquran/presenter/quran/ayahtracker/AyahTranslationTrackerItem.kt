@@ -14,7 +14,7 @@ class AyahTranslationTrackerItem(
   private val ayahView: TranslationView
 ) : AyahTrackerItem(page) {
 
-  public override fun onHighlightAyah(
+  override fun onHighlightAyah(
     page: Int, sura: Int, ayah: Int, type: HighlightType, scrollToAyah: Boolean
   ): Boolean {
     if (this.page == page) {
@@ -25,17 +25,17 @@ class AyahTranslationTrackerItem(
     return false
   }
 
-  public override fun onUnHighlightAyah(page: Int, sura: Int, ayah: Int, type: HighlightType) {
+  override fun onUnHighlightAyah(page: Int, sura: Int, ayah: Int, type: HighlightType) {
     if (this.page == page) {
       ayahView.unhighlightAyah(type)
     }
   }
 
-  public override fun onUnHighlightAyahType(type: HighlightType) {
+  override fun onUnHighlightAyahType(type: HighlightType) {
     ayahView.unhighlightAyat()
   }
 
-  public override fun getToolBarPosition(
+  override fun getToolBarPosition(
     page: Int,
     sura: Int, ayah: Int, toolBarWidth: Int, toolBarHeight: Int
   ): SelectedAyahPosition? {
@@ -46,12 +46,12 @@ class AyahTranslationTrackerItem(
     )
   }
 
-  public override fun getQuranAyahInfo(sura: Int, ayah: Int): QuranAyahInfo? {
+  override fun getQuranAyahInfo(sura: Int, ayah: Int): QuranAyahInfo? {
     val quranAyahInfo = ayahView.getQuranAyahInfo(sura, ayah)
     return quranAyahInfo ?: super.getQuranAyahInfo(sura, ayah)
   }
 
-  public override fun getLocalTranslations(): Array<LocalTranslation>? {
+  override fun getLocalTranslations(): Array<LocalTranslation>? {
     val translations = ayahView.localTranslations
     return translations ?: super.getLocalTranslations()
   }

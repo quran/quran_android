@@ -57,8 +57,9 @@ public class AyahImageTrackerItem extends AyahTrackerItem {
   }
 
   @Override
-  void onSetPageBounds(PageCoordinates pageCoordinates) {
-    if (this.page == pageCoordinates.getPage()) {
+  public void onSetPageBounds(PageCoordinates pageCoordinates) {
+    final int page = getPage();
+    if (page == pageCoordinates.getPage()) {
       // this is only called if overlayText is set
       final RectF pageBounds = pageCoordinates.getPageBounds();
       if (!pageBounds.isEmpty()) {
@@ -75,8 +76,9 @@ public class AyahImageTrackerItem extends AyahTrackerItem {
   }
 
   @Override
-  void onSetAyahCoordinates(AyahCoordinates ayahCoordinates) {
-    if (this.page == ayahCoordinates.getPage()) {
+  public void onSetAyahCoordinates(AyahCoordinates ayahCoordinates) {
+    final int page = getPage();
+    if (page == ayahCoordinates.getPage()) {
       this.coordinates = ayahCoordinates.getAyahCoordinates();
       if (!coordinates.isEmpty()) {
         ayahView.setAyahData(ayahCoordinates);
@@ -86,8 +88,8 @@ public class AyahImageTrackerItem extends AyahTrackerItem {
   }
 
   @Override
-  boolean onHighlightAyah(int page, int sura, int ayah, HighlightType type, boolean scrollToAyah) {
-    if (this.page == page && coordinates != null) {
+  public boolean onHighlightAyah(int page, int sura, int ayah, @NonNull HighlightType type, boolean scrollToAyah) {
+    if (getPage() == page && coordinates != null) {
       ayahView.highlightAyah(sura, ayah, type);
       ayahView.invalidate();
       return true;
@@ -98,29 +100,29 @@ public class AyahImageTrackerItem extends AyahTrackerItem {
   }
 
   @Override
-  void onHighlightAyat(int page, Set<String> ayahKeys, HighlightType type) {
-    if (this.page == page) {
+  public void onHighlightAyat(int page, @NonNull Set<String> ayahKeys, @NonNull HighlightType type) {
+    if (getPage() == page) {
       ayahView.highlightAyat(ayahKeys, type);
       ayahView.invalidate();
     }
   }
 
   @Override
-  void onUnHighlightAyah(int page, int sura, int ayah, HighlightType type) {
-    if (this.page == page) {
+  public void onUnHighlightAyah(int page, int sura, int ayah, @NonNull HighlightType type) {
+    if (getPage() == page) {
       ayahView.unHighlight(sura, ayah, type);
     }
   }
 
   @Override
-  void onUnHighlightAyahType(HighlightType type) {
+  public void onUnHighlightAyahType(@NonNull HighlightType type) {
     ayahView.unHighlight(type);
   }
 
   @Override
-  SelectedAyahPosition getToolBarPosition(int page, int sura, int ayah, int toolBarWidth,
+  public SelectedAyahPosition getToolBarPosition(int page, int sura, int ayah, int toolBarWidth,
                                                      int toolBarHeight) {
-    if (this.page == page) {
+    if (getPage() == page) {
       final List<AyahBounds> bounds = coordinates == null ? null :
           coordinates.get(sura + ":" + ayah);
       final int screenWidth = ayahView.getWidth();
@@ -146,8 +148,8 @@ public class AyahImageTrackerItem extends AyahTrackerItem {
 
   @Nullable
   @Override
-  SuraAyah getAyahForPosition(int page, float x, float y) {
-    return this.page == page ?
+  public SuraAyah getAyahForPosition(int page, float x, float y) {
+    return getPage() == page ?
         ImageAyahUtils.getAyahFromCoordinates(coordinates, ayahView, x, y) : null;
   }
 }
