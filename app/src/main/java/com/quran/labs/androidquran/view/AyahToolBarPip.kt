@@ -10,9 +10,9 @@ import android.graphics.Point
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
-import com.quran.data.model.selection.SelectedAyahPlacementType
-import com.quran.data.model.selection.SelectedAyahPlacementType.BOTTOM
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.view.AyahToolBar.SelectedAyahPlacementType
+import com.quran.labs.androidquran.view.AyahToolBar.SelectedAyahPlacementType.BOTTOM
 
 class AyahToolBarPip @JvmOverloads constructor(
   context: Context,

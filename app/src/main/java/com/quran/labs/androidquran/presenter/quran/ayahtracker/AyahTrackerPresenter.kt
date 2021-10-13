@@ -6,7 +6,7 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
-import com.quran.data.model.selection.SelectedAyahPosition
+import com.quran.data.model.selection.SelectionIndicator
 import com.quran.labs.androidquran.common.HighlightInfo
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
@@ -81,10 +81,11 @@ class AyahTrackerPresenter @Inject constructor(
       item.onSetAyahCoordinates(ayahCoordinates)
     }
 
+    val pendingHighlightInfo = pendingHighlightInfo
     if (pendingHighlightInfo != null && ayahCoordinates.ayahCoordinates.isNotEmpty()) {
       highlightAyah(
-        pendingHighlightInfo!!.sura, pendingHighlightInfo!!.ayah,
-        pendingHighlightInfo!!.highlightType, pendingHighlightInfo!!.scrollToAyah
+        pendingHighlightInfo.sura, pendingHighlightInfo.ayah,
+        pendingHighlightInfo.highlightType, pendingHighlightInfo.scrollToAyah
       )
     }
   }
@@ -149,18 +150,15 @@ class AyahTrackerPresenter @Inject constructor(
     }
   }
 
-  override fun getToolBarPosition(
-    sura: Int, ayah: Int,
-    toolBarWidth: Int, toolBarHeight: Int
-  ): SelectedAyahPosition? {
+  override fun getToolBarPosition(sura: Int, ayah: Int): SelectionIndicator {
     val page = if (items.size == 1) items[0].page else quranInfo.getPageFromSuraAyah(sura, ayah)
     for (item in items) {
-      val position = item.getToolBarPosition(page, sura, ayah, toolBarWidth, toolBarHeight)
-      if (position != null) {
+      val position = item.getToolBarPosition(page, sura, ayah)
+      if (position != SelectionIndicator.None) {
         return position
       }
     }
-    return null
+    return SelectionIndicator.None
   }
 
   override fun getQuranAyahInfo(sura: Int, ayah: Int): QuranAyahInfo? {

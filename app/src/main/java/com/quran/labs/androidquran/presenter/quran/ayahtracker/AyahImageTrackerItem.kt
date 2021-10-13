@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
-import com.quran.data.model.selection.SelectedAyahPosition
+import com.quran.data.model.selection.SelectionIndicator
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
@@ -16,7 +16,6 @@ import com.quran.page.common.draw.ImageDrawHelper
 
 open class AyahImageTrackerItem @JvmOverloads constructor(
   page: Int,
-  private val screenHeight: Int,
   private val quranInfo: QuranInfo?,
   private val quranDisplayData: QuranDisplayData,
   private val isPageOnRightSide: Boolean = false,
@@ -26,8 +25,7 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
   @JvmField var coordinates: Map<String, List<AyahBounds>>? = null
 
   override fun onSetPageBounds(pageCoordinates: PageCoordinates) {
-    val page = page
-    if (page == pageCoordinates.page) {
+    if (this.page == pageCoordinates.page) {
       // this is only called if overlayText is set
       val pageBounds = pageCoordinates.pageBounds
       if (!pageBounds.isEmpty) {
@@ -44,8 +42,7 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
   }
 
   override fun onSetAyahCoordinates(ayahCoordinates: AyahCoordinates) {
-    val page = page
-    if (page == ayahCoordinates.page) {
+    if (this.page == ayahCoordinates.page) {
       val coordinates = ayahCoordinates.ayahCoordinates
       this.coordinates = coordinates
       if (coordinates.isNotEmpty()) {
@@ -62,7 +59,7 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
     type: HighlightType,
     scrollToAyah: Boolean
   ): Boolean {
-    if (page == page && coordinates != null) {
+    if (this.page == page && coordinates != null) {
       ayahView.highlightAyah(sura, ayah, type)
       ayahView.invalidate()
       return true
@@ -73,14 +70,14 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
   }
 
   override fun onHighlightAyat(page: Int, ayahKeys: Set<String>, type: HighlightType) {
-    if (page == page) {
+    if (this.page == page) {
       ayahView.highlightAyat(ayahKeys, type)
       ayahView.invalidate()
     }
   }
 
   override fun onUnHighlightAyah(page: Int, sura: Int, ayah: Int, type: HighlightType) {
-    if (page == page) {
+    if (this.page == page) {
       ayahView.unHighlight(sura, ayah, type)
     }
   }
@@ -89,30 +86,18 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
     ayahView.unHighlight(type)
   }
 
-  override fun getToolBarPosition(
-    page: Int, sura: Int, ayah: Int, toolBarWidth: Int,
-    toolBarHeight: Int
-  ): SelectedAyahPosition? {
-    if (page == page) {
+  override fun getToolBarPosition(page: Int, sura: Int, ayah: Int): SelectionIndicator {
+    if (this.page == page) {
       val coordinates = coordinates
       val bounds = if (coordinates == null) null else coordinates["$sura:$ayah"]
       val screenWidth = ayahView.width
       if (bounds != null && screenWidth > 0) {
-        var position = ImageAyahUtils.getToolBarPosition(
-          bounds, ayahView.imageMatrix,
-          screenWidth, screenHeight, toolBarWidth, toolBarHeight
-        )
-        val topPadding = ayahView.paddingTop
-        if (topPadding > 0) {
-          position = position.withY(position.y + topPadding)
-        }
-        return if (isPageOnRightSide) {
-          // need to adjust offset because our x is really x plus one page
-          position.withX(position.x + ayahView.width)
-        } else position
+        val yPadding = ayahView.paddingTop
+        val xPadding = if (isPageOnRightSide) ayahView.width else 0
+        return ImageAyahUtils.getToolBarPosition(bounds, ayahView.imageMatrix, xPadding, yPadding)
       }
     }
-    return null
+    return SelectionIndicator.None
   }
 
   override fun getAyahForPosition(page: Int, x: Float, y: Float): SuraAyah? {

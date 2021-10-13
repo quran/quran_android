@@ -1,20 +1,15 @@
 package com.quran.labs.androidquran.ui.util
 
 import android.graphics.Matrix
-import com.quran.data.model.SuraAyah
-import com.quran.page.common.data.AyahBounds
-import com.quran.labs.androidquran.view.HighlightingImageView
-import com.quran.labs.androidquran.ui.util.ImageAyahUtils
-import android.util.SparseArray
 import android.graphics.RectF
+import android.util.SparseArray
 import android.widget.ImageView
+import com.quran.data.model.SuraAyah
+import com.quran.data.model.selection.SelectionIndicator
+import com.quran.data.model.selection.SelectionRectangle
+import com.quran.labs.androidquran.view.HighlightingImageView
+import com.quran.page.common.data.AyahBounds
 import timber.log.Timber
-import com.quran.data.model.selection.SelectedAyahPosition
-import com.quran.data.model.selection.SelectedAyahPlacementType
-import com.quran.data.model.selection.SelectedAyahPlacementType.BOTTOM
-import com.quran.data.model.selection.SelectedAyahPlacementType.TOP
-import java.lang.Exception
-import java.util.ArrayList
 
 object ImageAyahUtils {
   private fun getAyahFromKey(key: String): SuraAyah? {
@@ -117,42 +112,38 @@ object ImageAyahUtils {
   }
 
   fun getToolBarPosition(
-    bounds: List<AyahBounds>, matrix: Matrix,
-    screenWidth: Int, screenHeight: Int, toolBarWidth: Int, toolBarHeight: Int
-  ): SelectedAyahPosition? {
-    var isToolBarUnderAyah = false
-    var result: SelectedAyahPosition? = null
-    val size = bounds.size
-    var chosenRect: RectF
-    if (size > 0) {
-      val firstRect = RectF()
-      var chosen = bounds[0]
-      matrix.mapRect(firstRect, chosen.bounds)
-      chosenRect = RectF(firstRect)
-      var y = firstRect.top - toolBarHeight
-      if (y < toolBarHeight) {
-        // too close to the top, let's move to the bottom
-        chosen = bounds[size - 1]
-        matrix.mapRect(chosenRect, chosen.bounds)
-        y = chosenRect.bottom
-        if (y > screenHeight - toolBarHeight) {
-          y = firstRect.bottom
-          chosenRect = firstRect
-        }
-        isToolBarUnderAyah = true
+    bounds: List<AyahBounds>,
+    matrix: Matrix,
+    xPadding: Int,
+    yPadding: Int
+  ): SelectionIndicator {
+
+    return if (bounds.isNotEmpty()) {
+      val first = bounds.first()
+      val last = bounds.last()
+
+      val mappedRect = RectF()
+      matrix.mapRect(mappedRect, first.bounds)
+      val top = SelectionRectangle(
+        mappedRect.left + xPadding,
+        mappedRect.top + yPadding,
+        mappedRect.right + xPadding,
+        mappedRect.bottom + yPadding
+      )
+      val bottom = if (first === last) { top }
+      else {
+        matrix.mapRect(mappedRect, last.bounds)
+        SelectionRectangle(
+          mappedRect.left + xPadding,
+          mappedRect.top + yPadding,
+          mappedRect.right + xPadding,
+          mappedRect.bottom + yPadding
+        )
       }
-      val midpoint = chosenRect.centerX()
-      var x = midpoint - toolBarWidth / 2
-      if (x < 0 || x + toolBarWidth > screenWidth) {
-        x = chosenRect.left
-        if (x + toolBarWidth > screenWidth) {
-          x = (screenWidth - toolBarWidth).toFloat()
-        }
-      }
-      val pipPosition = if (isToolBarUnderAyah) TOP else BOTTOM
-      result = SelectedAyahPosition(x, y, 0f, 0f, midpoint - x, pipPosition)
+      SelectionIndicator.SelectedItemPosition(top, bottom)
+    } else {
+      SelectionIndicator.None
     }
-    return result
   }
 
   private fun getPageXY(
@@ -172,7 +163,7 @@ object ImageAyahUtils {
   }
 
   fun getYBoundsForHighlight(
-    coordinateData: Map<String?, List<AyahBounds>?>, sura: Int, ayah: Int
+    coordinateData: Map<String, List<AyahBounds>?>, sura: Int, ayah: Int
   ): RectF? {
     val ayahBounds = coordinateData["$sura:$ayah"] ?: return null
     var ayahBoundsRect: RectF? = null

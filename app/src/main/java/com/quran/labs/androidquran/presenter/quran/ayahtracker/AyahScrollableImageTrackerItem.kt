@@ -1,7 +1,8 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
 import com.quran.data.core.QuranInfo
-import com.quran.data.model.selection.SelectedAyahPosition
+import com.quran.data.model.selection.SelectionIndicator
+import com.quran.data.model.selection.withYScroll
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils
@@ -19,7 +20,6 @@ class AyahScrollableImageTrackerItem(
   highlightingImageView: HighlightingImageView
 ) : AyahImageTrackerItem(
   page = page,
-  screenHeight = screenHeight,
   quranInfo = quranInfo,
   quranDisplayData = quranDisplayData,
   imageDrawHelpers = imageDrawHelpers,
@@ -33,6 +33,7 @@ class AyahScrollableImageTrackerItem(
     type: HighlightType,
     scrollToAyah: Boolean
   ): Boolean {
+    val coordinates = coordinates
     if (page == page && scrollToAyah && coordinates != null) {
       val highlightBounds = ImageAyahUtils.getYBoundsForHighlight(coordinates, sura, ayah)
       if (highlightBounds != null) {
@@ -63,10 +64,8 @@ class AyahScrollableImageTrackerItem(
     return super.onHighlightAyah(page, sura, ayah, type, scrollToAyah)
   }
 
-  override fun getToolBarPosition(
-    page: Int, sura: Int, ayah: Int, toolBarWidth: Int, toolBarHeight: Int
-  ): SelectedAyahPosition? {
-    val position = super.getToolBarPosition(page, sura, ayah, toolBarWidth, toolBarHeight)
-    return position?.withYScroll(-quranPageLayout.currentScrollY.toFloat())
+  override fun getToolBarPosition(page: Int, sura: Int, ayah: Int): SelectionIndicator {
+    val position = super.getToolBarPosition(page, sura, ayah)
+    return position.withYScroll(-quranPageLayout.currentScrollY.toFloat())
   }
 }

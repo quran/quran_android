@@ -259,14 +259,13 @@ public class TabletFragment extends Fragment
       final int screenHeight = quranScreenInfo.getHeight();
       if (mode == Mode.ARABIC) {
         left = new AyahImageTrackerItem(pageNumber,
-            screenHeight,
             quranInfo,
             quranDisplayData,
             false,
             imageDrawHelpers,
             leftImageView);
         right = new AyahImageTrackerItem(
-            pageNumber - 1, screenHeight, quranInfo, quranDisplayData, true, imageDrawHelpers,
+            pageNumber - 1, quranInfo, quranDisplayData, true, imageDrawHelpers,
             rightImageView);
       } else if (mode == Mode.TRANSLATION) {
         if (isSplitScreen) {
@@ -275,7 +274,6 @@ public class TabletFragment extends Fragment
           if (isQuranOnRight) {
             translationItem = new AyahTranslationTrackerItem(pageNumber, quranInfo, splitTranslationView);
             imageItem = new AyahImageTrackerItem(pageNumber,
-                screenHeight,
                 quranInfo,
                 quranDisplayData,
                 true,
@@ -283,7 +281,6 @@ public class TabletFragment extends Fragment
                 splitImageView);
           } else {
             imageItem = new AyahImageTrackerItem(pageNumber,
-                screenHeight,
                 quranInfo,
                 quranDisplayData,
                 false,

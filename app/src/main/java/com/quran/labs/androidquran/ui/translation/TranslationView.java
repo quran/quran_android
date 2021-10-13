@@ -12,8 +12,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.quran.data.model.SuraAyah;
-import com.quran.data.model.selection.SelectedAyahPlacementType;
-import com.quran.data.model.selection.SelectedAyahPosition;
+import com.quran.data.model.selection.SelectionIndicator;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
@@ -225,25 +224,35 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     return localTranslations;
   }
 
-  public SelectedAyahPosition getToolbarPosition() {
+  public SelectionIndicator getToolbarPosition(int sura, int ayah) {
+    int[] versePopupPosition = translationAdapter.getSelectedVersePopupPosition(sura, ayah);
+    if (versePopupPosition != null) {
+      return getToolbarPosition(versePopupPosition);
+    }
+    return SelectionIndicator.None.INSTANCE;
+  }
+
+  public SelectionIndicator getToolbarPosition() {
     int[] versePopupPosition = translationAdapter.getSelectedVersePopupPosition();
     if (versePopupPosition != null) {
-      // for dual screen tablet mode, we need to add the view's x (so clicks on the
-      // right page properly show on the right page and not on the left one).
-      final int[] positionOnScreen = new int[2];
-      getLocationOnScreen(positionOnScreen);
-      final int xOffset = positionOnScreen[0];
-
-      return new SelectedAyahPosition(
-          xOffset + versePopupPosition[0],
-          versePopupPosition[1],
-          0f,
-          0f,
-          0f,
-          SelectedAyahPlacementType.TOP
-      );
+      return getToolbarPosition(versePopupPosition);
     }
-    return null;
+    return SelectionIndicator.None.INSTANCE;
+  }
+
+  private SelectionIndicator getToolbarPosition(int[] versePopupPosition) {
+    // for dual screen tablet mode, we need to add the view's x (so clicks on the
+    // right page properly show on the right page and not on the left one).
+    final int[] positionOnScreen = new int[2];
+    getLocationOnScreen(positionOnScreen);
+    final int xOffset = positionOnScreen[0];
+
+    return new SelectionIndicator.SelectedPointPosition(
+        xOffset + versePopupPosition[0],
+        versePopupPosition[1],
+        0f,
+        0f
+    );
   }
 
   /**
@@ -253,11 +262,15 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
    * update the RecyclerView cannot be called amidst scrolling or computing of a layout).
    */
   private void updateAyahToolBarPosition() {
-    final SelectedAyahPosition position = getToolbarPosition();
-    if (position != null && (position.getY() > getHeight() || position.getY() < 0)) {
+    final SelectionIndicator position = getToolbarPosition();
+    if (position instanceof SelectionIndicator.SelectedPointPosition) {
+      final SelectionIndicator.SelectedPointPosition selectedPointPosition =
+          (SelectionIndicator.SelectedPointPosition) position;
+      if (selectedPointPosition.getY() > getHeight() || selectedPointPosition.getY() < 0) {
         hideMenu();
-    } else {
-      pageController.requestMenuPositionUpdate();
+      } else {
+        pageController.requestMenuPositionUpdate();
+      }
     }
   }
 

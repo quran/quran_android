@@ -44,10 +44,10 @@ import androidx.viewpager.widget.NonRestoringViewPager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 import com.quran.data.core.QuranInfo;
-import com.quran.data.model.selection.AyahSelection;
 import com.quran.data.model.SuraAyah;
-import com.quran.data.model.selection.SelectedAyahPosition;
+import com.quran.data.model.selection.AyahSelection;
 import com.quran.data.model.selection.SelectionIndicator;
+import com.quran.data.model.selection.SelectionIndicatorKt;
 import com.quran.data.page.provider.di.QuranPageExtrasComponent;
 import com.quran.data.page.provider.di.QuranPageExtrasComponentProvider;
 import com.quran.labs.androidquran.HelpActivity;
@@ -177,7 +177,7 @@ public class PagerActivity extends AppCompatActivity implements
   private boolean needsPermissionToDownloadOver3g = true;
   private AlertDialog promptDialog = null;
   private AyahToolBar ayahToolBar;
-  private SelectedAyahPosition ayahToolBarPos;
+  private SelectionIndicator ayahToolBarPos = SelectionIndicator.None.INSTANCE;
   private AudioRequest lastAudioRequest;
   private boolean isDualPages = false;
   private Integer lastPlayingSura;
@@ -405,15 +405,15 @@ public class PagerActivity extends AppCompatActivity implements
 
       @Override
       public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if (ayahToolBar.isShowing() && ayahToolBarPos != null) {
+        if (ayahToolBar.isShowing() && ayahToolBarPos != SelectionIndicator.None.INSTANCE) {
           final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
           int barPos = quranInfo.getPositionFromPage(startPage, isDualPageVisible());
           if (position == barPos) {
             // Swiping to next ViewPager page (i.e. prev quran page)
-            ayahToolBarPos = ayahToolBarPos.withXScroll(-positionOffsetPixels);
+            ayahToolBarPos = SelectionIndicatorKt.withXScroll(ayahToolBarPos, -positionOffsetPixels);
           } else if (position == barPos - 1) {
             // Swiping to prev ViewPager page (i.e. next quran page)
-            ayahToolBarPos = ayahToolBarPos.withXScroll(viewPager.getWidth() - positionOffsetPixels);
+            ayahToolBarPos = SelectionIndicatorKt.withXScroll(ayahToolBarPos, viewPager.getWidth() - positionOffsetPixels);
           } else {
             // Totally off screen, should hide toolbar
             ayahToolBar.setVisibility(View.GONE);
@@ -1808,8 +1808,7 @@ public class PagerActivity extends AppCompatActivity implements
           }
         }));
 
-    ayahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah,
-        ayahToolBar.getToolBarWidth(), ayahToolBarTotalHeight);
+    ayahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah);
     if (ayahToolBarPos != null) {
       ayahToolBar.updatePosition(ayahToolBarPos);
       if (ayahToolBar.getVisibility() != View.VISIBLE) {
@@ -1821,7 +1820,7 @@ public class PagerActivity extends AppCompatActivity implements
   // Used to sync toolbar with page's SV (landscape non-tablet mode)
   public void onQuranPageScroll(int scrollY) {
     if (ayahToolBarPos != null) {
-      ayahToolBarPos = ayahToolBarPos.withYScroll(-scrollY);
+      ayahToolBarPos = SelectionIndicatorKt.withYScroll(ayahToolBarPos, -scrollY);
       if (isInAyahMode) {
         ayahToolBar.updatePosition(ayahToolBarPos);
       }
@@ -1896,9 +1895,8 @@ public class PagerActivity extends AppCompatActivity implements
   @Override
   public void requestMenuPositionUpdate(AyahTracker tracker) {
     if (start != null) {
-      ayahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah,
-          ayahToolBar.getToolBarWidth(), ayahToolBarTotalHeight);
-      if (ayahToolBarPos != null) {
+      ayahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah);
+      if (ayahToolBarPos != SelectionIndicator.None.INSTANCE) {
         ayahToolBar.updatePosition(ayahToolBarPos);
         if (ayahToolBar.getVisibility() != View.VISIBLE) {
           ayahToolBar.setVisibility(View.VISIBLE);

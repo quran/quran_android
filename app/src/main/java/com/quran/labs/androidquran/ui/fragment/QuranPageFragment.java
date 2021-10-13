@@ -102,11 +102,13 @@ public class QuranPageFragment extends Fragment implements PageController,
     }
   }
 
+  @NonNull
   @Override
   public AyahTracker getAyahTracker() {
     return ayahTrackerPresenter;
   }
 
+  @NonNull
   @Override
   public AyahTrackerItem[] getAyahTrackerItems() {
     if (ayahTrackerItems == null) {
@@ -115,7 +117,7 @@ public class QuranPageFragment extends Fragment implements PageController,
         quranPageLayout.canScroll() ?
             new AyahScrollableImageTrackerItem(pageNumber, height,
                 quranInfo, quranDisplayData, quranPageLayout, imageDrawHelpers, imageView) :
-            new AyahImageTrackerItem(pageNumber, height, quranInfo, quranDisplayData, imageDrawHelpers, imageView)
+            new AyahImageTrackerItem(pageNumber, quranInfo, quranDisplayData, imageDrawHelpers, imageView)
       };
     }
     return ayahTrackerItems;
