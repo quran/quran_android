@@ -50,6 +50,7 @@ import com.quran.data.model.selection.SelectionIndicator;
 import com.quran.data.model.selection.SelectionIndicatorKt;
 import com.quran.data.page.provider.di.QuranPageExtrasComponent;
 import com.quran.data.page.provider.di.QuranPageExtrasComponentProvider;
+import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
@@ -102,7 +103,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.ShareUtil;
 import com.quran.labs.androidquran.view.AudioStatusBar;
-import com.quran.labs.androidquran.view.AyahToolBar;
+import com.quran.page.common.toolbar.AyahToolBar;
 import com.quran.labs.androidquran.view.IconPageIndicator;
 import com.quran.labs.androidquran.view.QuranSpinner;
 import com.quran.labs.androidquran.view.SlidingUpPanelLayout;
@@ -125,6 +126,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
@@ -388,6 +391,11 @@ public class PagerActivity extends AppCompatActivity implements
         pageProviderFactoryProvider.providePageViewFactory(quranSettings.getPageType())
     );
     ayahToolBar = findViewById(R.id.ayah_toolbar);
+    ayahToolBar.setFlavor(BuildConfig.FLAVOR);
+    ayahToolBar.setLongPressLambda(charSequence -> {
+      ToastCompat.makeText(PagerActivity.this, charSequence, Toast.LENGTH_SHORT).show();
+      return null;
+    });
 
     final NonRestoringViewPager nonRestoringViewPager = findViewById(R.id.quran_pager);
     nonRestoringViewPager.setIsDualPagesInLandscape(

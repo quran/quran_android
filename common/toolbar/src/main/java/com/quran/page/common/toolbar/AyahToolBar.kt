@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.view
+package com.quran.page.common.toolbar
 
 import android.content.Context
 import android.util.AttributeSet
@@ -12,16 +12,15 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.data.model.selection.SelectionIndicator.None
 import com.quran.data.model.selection.SelectionIndicator.SelectedItemPosition
 import com.quran.data.model.selection.SelectionIndicator.SelectedPointPosition
-import com.quran.labs.androidquran.BuildConfig
-import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.ui.util.ToastCompat
+import com.quran.labs.androidquran.common.toolbar.R
+import com.quran.page.common.toolbar.AyahToolBar.SelectedAyahPlacementType.BOTTOM
+import com.quran.page.common.toolbar.AyahToolBar.SelectedAyahPlacementType.TOP
 
 class AyahToolBar @JvmOverloads constructor(
   context: Context,
@@ -46,6 +45,9 @@ class AyahToolBar @JvmOverloads constructor(
   var isShowing = false
     private set
 
+  var flavor: String = ""
+  var longPressLambda: ((CharSequence) -> Unit) = {}
+
   init {
     val resources = context.resources
     itemWidth = resources.getDimensionPixelSize(R.dimen.toolbar_item_width)
@@ -62,7 +64,7 @@ class AyahToolBar @JvmOverloads constructor(
     }
     addView(menuLayout)
 
-    pipPosition = SelectedAyahPlacementType.BOTTOM
+    pipPosition = BOTTOM
     toolBarPip = AyahToolBarPip(context)
     toolBarPip.layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, pipHeight)
     addView(toolBarPip)
@@ -88,7 +90,7 @@ class AyahToolBar @JvmOverloads constructor(
     }
 
     // overlap the pip and toolbar by 1px to avoid occasional gap
-    if (pipPosition == SelectedAyahPlacementType.TOP) {
+    if (pipPosition == TOP) {
       toolBarPip.layout(pipLeft, 0, pipLeft + pipWidth, pipHeight + 1)
       menuLayout.layout(0, pipHeight, menuWidth, pipHeight + menuHeight)
     } else {
@@ -121,11 +123,10 @@ class AyahToolBar @JvmOverloads constructor(
 
     // disable sharing for warsh and qaloon
     val menuItem = menu.findItem(R.id.cab_share_ayah)
-    if (menuItem != null &&
-      (BuildConfig.FLAVOR == "warsh" || BuildConfig.FLAVOR == "qaloon")
-    ) {
+    if (menuItem != null && (flavor == "warsh" || flavor == "qaloon")) {
       menuItem.isVisible = false
     }
+
     menuLayout.removeAllViews()
     val count = menu.size()
     for (i in 0 until count) {
@@ -184,7 +185,7 @@ class AyahToolBar @JvmOverloads constructor(
         this.x + this.xScroll,
         this.y + this.yScroll,
         0f,
-        SelectedAyahPlacementType.TOP
+        TOP
       )
     }
   }
@@ -220,8 +221,7 @@ class AyahToolBar @JvmOverloads constructor(
 
     y += yScroll
 
-    val position =
-      if (isToolBarUnderAyah) SelectedAyahPlacementType.TOP else SelectedAyahPlacementType.BOTTOM
+    val position = if (isToolBarUnderAyah) TOP else BOTTOM
     // pip is offset from the box, so xScroll is only added to starting x point and not pipOffset
     return InternalPosition(x + xScroll, y, midpoint - x, position)
   }
@@ -267,7 +267,7 @@ class AyahToolBar @JvmOverloads constructor(
   override fun onLongClick(v: View): Boolean {
     val item = menu.findItem(v.id)
     if (item != null && item.title != null) {
-      ToastCompat.makeText(context, item.title, Toast.LENGTH_SHORT).show()
+      longPressLambda(item.title)
       return true
     }
     return false

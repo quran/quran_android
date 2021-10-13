@@ -276,14 +276,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   </string-array>
 
   <!-- long press -->
-  <string name="bookmark_ayah">Bladwijzer deze Ayah</string>
-  <string name="tag_ayah">Label deze Ayah</string>
-  <string name="share_ayah">Deel Ayah Link</string>
-  <string name="share_ayah_text">Deel Ayah Tekst</string>
-  <string name="translation_ayah">Ayah Vertaling/Tafseer</string>
-  <string name="play_from_here">Afspelen van hier</string>
-  <string name="search_key">Druk op de zoek-toets om een vers te zoeken.</string>
-  <string name="copy_ayah">Kopieer Ayah</string>
   <string name="ayah_copied_popup">Ayah Gekopieerd</string>
 
   <!-- bookmarks & tags contextual action bar -->

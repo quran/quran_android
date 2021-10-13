@@ -312,14 +312,6 @@
   <string name="starting_page_label">Sahifa boshlanishi</string>
 
   <!-- long press -->
-  <string name="bookmark_ayah">Oyatni xatchoʻplash</string>
-  <string name="tag_ayah">Oyatni teglash</string>
-  <string name="share_ayah">Oyat bogʻichini boʻlishish</string>
-  <string name="share_ayah_text">Oyat matnini boʻlishish</string>
-  <string name="translation_ayah">Oyat tarjimasi</string>
-  <string name="play_from_here">Shu yerdan boshlab chal</string>
-  <string name="search_key">Sura topish uchun izlash tugmasiga bosing</string>
-  <string name="copy_ayah">Oyatni koʻchirish</string>
   <string name="ayah_copied_popup">Oyat xotiraga koʻchirildi</string>
 
   <!-- bookmarks & tags contextual action bar -->

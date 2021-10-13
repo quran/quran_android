@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.view
+package com.quran.page.common.toolbar
 
 import android.content.Context
 import android.graphics.Canvas
@@ -10,9 +10,9 @@ import android.graphics.Point
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
-import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.view.AyahToolBar.SelectedAyahPlacementType
-import com.quran.labs.androidquran.view.AyahToolBar.SelectedAyahPlacementType.BOTTOM
+import com.quran.labs.androidquran.common.toolbar.R
+import com.quran.page.common.toolbar.AyahToolBar.SelectedAyahPlacementType
+import com.quran.page.common.toolbar.AyahToolBar.SelectedAyahPlacementType.BOTTOM
 
 class AyahToolBarPip @JvmOverloads constructor(
   context: Context,
