@@ -7,6 +7,7 @@ import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.selection.SelectionIndicator
+import com.quran.data.model.selection.startSuraAyah
 import com.quran.labs.androidquran.common.HighlightInfo
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
@@ -53,6 +54,7 @@ class AyahTrackerPresenter @Inject constructor(
 
   private var items: Array<AyahTrackerItem> = emptyArray()
   private var pendingHighlightInfo: HighlightInfo? = null
+  private var lastHighlightedAyah: SuraAyah? = null
 
   private fun subscribe() {
     readingEventPresenter.ayahSelectionFlow
@@ -91,7 +93,15 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   private fun onAyahSelectionChanged(ayahSelection: AyahSelection) {
-    unHighlightAyahs(HighlightType.SELECTION)
+    val startSuraAyah = ayahSelection.startSuraAyah()
+
+    // optimization - if the current ayah is still highlighted, don't issue a request
+    // to unhighlight.
+    if (startSuraAyah != lastHighlightedAyah) {
+      unHighlightAyahs(HighlightType.SELECTION)
+      lastHighlightedAyah = startSuraAyah
+    }
+
     when (ayahSelection) {
       is AyahSelection.Ayah -> {
         val suraAyah = ayahSelection.suraAyah
@@ -231,7 +241,9 @@ class AyahTrackerPresenter @Inject constructor(
     val result = getAyahForPosition(page, ev.x, ev.y)
     if (result != null) {
       if (eventType == SINGLE_TAP) {
-        readingEventPresenter.onAyahSelection(AyahSelection.Ayah(result))
+        readingEventPresenter.onAyahSelection(
+          AyahSelection.Ayah(result, getToolBarPosition(result.sura, result.ayah))
+        )
       } else if (eventType == LONG_PRESS) {
         handleLongPress(result)
       }
@@ -245,22 +257,29 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   private fun updateAyahRange(selectedAyah: SuraAyah, ayahSelection: AyahSelection): AyahSelection {
-    return when (ayahSelection) {
-      is AyahSelection.None -> AyahSelection.Ayah(selectedAyah)
+    val (startAyah, endAyah) = when (ayahSelection) {
+      is AyahSelection.None -> selectedAyah to null
       is AyahSelection.Ayah -> {
         if (selectedAyah > ayahSelection.suraAyah) {
-          AyahSelection.AyahRange(ayahSelection.suraAyah, selectedAyah)
+          ayahSelection.suraAyah to selectedAyah
         } else {
-          AyahSelection.AyahRange(selectedAyah, ayahSelection.suraAyah)
+          selectedAyah to ayahSelection.suraAyah
         }
       }
       is AyahSelection.AyahRange -> {
         if (selectedAyah > ayahSelection.startSuraAyah) {
-          AyahSelection.AyahRange(ayahSelection.startSuraAyah, selectedAyah)
+          ayahSelection.startSuraAyah to selectedAyah
         } else {
-          AyahSelection.AyahRange(selectedAyah, ayahSelection.startSuraAyah)
+          selectedAyah to ayahSelection.startSuraAyah
         }
       }
+    }
+
+    val toolBarPosition = getToolBarPosition(startAyah.sura, startAyah.ayah)
+    return if (endAyah == null) {
+      AyahSelection.Ayah(startAyah, toolBarPosition)
+    } else {
+      AyahSelection.AyahRange(startAyah, endAyah, toolBarPosition)
     }
   }
 

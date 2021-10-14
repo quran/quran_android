@@ -290,7 +290,6 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     }
 
     pageController.handleLongPress(suraAyah);
-    pageController.requestMenuPositionUpdate();
   }
 
   public int findFirstCompletelyVisibleItemPosition() {

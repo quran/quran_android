@@ -11,8 +11,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.quran.labs.androidquran.common.toolbar.R
-import com.quran.page.common.toolbar.AyahToolBar.SelectedAyahPlacementType
-import com.quran.page.common.toolbar.AyahToolBar.SelectedAyahPlacementType.BOTTOM
+import com.quran.page.common.toolbar.dao.SelectedAyahPlacementType
 
 class AyahToolBarPip @JvmOverloads constructor(
   context: Context,
@@ -26,7 +25,7 @@ class AyahToolBarPip @JvmOverloads constructor(
   private var position: SelectedAyahPlacementType
 
   init {
-    position = BOTTOM
+    position = SelectedAyahPlacementType.BOTTOM
     paint = Paint().apply {
       isAntiAlias = true
       color = ContextCompat.getColor(context, R.color.toolbar_background)
@@ -46,7 +45,7 @@ class AyahToolBarPip @JvmOverloads constructor(
     val pointA: Point
     val pointB: Point
     val pointC: Point
-    if (position === BOTTOM) {
+    if (position === SelectedAyahPlacementType.BOTTOM) {
       pointA = Point(width / 2, height)
       pointB = Point(0, 0)
       pointC = Point(width, 0)

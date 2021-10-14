@@ -1,7 +1,9 @@
 package com.quran.labs.androidquran.bridge
 
-import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.selection.AyahSelection
+import com.quran.data.model.selection.SelectionIndicator
+import com.quran.data.model.selection.withSelectionIndicator
 import com.quran.reading.common.ReadingEventPresenter
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -27,12 +29,40 @@ class ReadingEventPresenterBridge constructor(
       .launchIn(scope)
   }
 
-  fun currentSelection(): AyahSelection = ayahSelectionFlow.value
+  private fun currentSelection(): AyahSelection = ayahSelectionFlow.value
 
-  // set highlighted sura / ayah in onCreate/onNewIntent
+  /**
+   * Set the highlighted sura and ayah
+   */
   fun setSelection(sura: Int, ayah: Int) {
     val ayahSelection = AyahSelection.Ayah(SuraAyah(sura, ayah))
     readingEventPresenter.onAyahSelection(ayahSelection)
+  }
+
+  /**
+   * Clear the selected ayah
+   */
+  fun clearSelectedAyah() {
+    readingEventPresenter.onAyahSelection(AyahSelection.None)
+  }
+
+  /**
+   * Set the selection indicator for the current selected ayah
+   */
+  fun withSelectionIndicator(selectionIndicator: SelectionIndicator) {
+    readingEventPresenter.onAyahSelection(
+      currentSelection().withSelectionIndicator(selectionIndicator)
+    )
+  }
+
+  /**
+   * Keep current ayah selected, but clear the toolbar for it
+   */
+  fun clearMenuForSelection() {
+    val current = currentSelection()
+    if (current != AyahSelection.None) {
+      readingEventPresenter.onAyahSelection(current.withSelectionIndicator(SelectionIndicator.None))
+    }
   }
 
   fun dispose() {
