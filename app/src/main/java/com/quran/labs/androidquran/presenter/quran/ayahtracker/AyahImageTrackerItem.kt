@@ -101,7 +101,7 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
   }
 
   override fun getAyahForPosition(page: Int, x: Float, y: Float): SuraAyah? {
-    return if (page == page) ImageAyahUtils.getAyahFromCoordinates(
+    return if (this.page == page) ImageAyahUtils.getAyahFromCoordinates(
       coordinates,
       ayahView,
       x,
