@@ -82,7 +82,6 @@ import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
-import com.quran.labs.androidquran.ui.fragment.AyahActionFragment;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
 import com.quran.labs.androidquran.ui.fragment.TabletFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
@@ -131,7 +130,6 @@ import javax.inject.Inject;
 import timber.log.Timber;
 
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.PAGES;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
 
@@ -617,10 +615,6 @@ public class PagerActivity extends AppCompatActivity implements
     }
 
     if (haveSelection) {
-      if (slidingPanel.isPaneVisible()) {
-        refreshPages();
-      }
-
       final SuraAyah startPosition = startPosition(ayahSelection);
       updateLocalTranslations(startPosition);
     } else {
@@ -1374,8 +1368,6 @@ public class PagerActivity extends AppCompatActivity implements
                   // Since translation items have changed, need to
                   updateActionBarSpinner();
                 }
-
-                refreshPages();
               }
 
               @Override
@@ -1715,27 +1707,6 @@ public class PagerActivity extends AppCompatActivity implements
     }
   }
 
-  private void refreshPages() {
-    final SuraAyah start = getSelectionStart();
-    final SuraAyah end = getSelectionEnd();
-
-    for (int page : PAGES) {
-      final int mappedTagPage = slidingPagerAdapter.getPagePosition(TAG_PAGE);
-      if (page == mappedTagPage) {
-        Fragment fragment = slidingPagerAdapter.getFragmentIfExists(mappedTagPage);
-        if (fragment instanceof TagBookmarkDialog && start != null) {
-          ((TagBookmarkDialog) fragment).updateAyah(start);
-        }
-      } else {
-        AyahActionFragment f = (AyahActionFragment) slidingPagerAdapter
-            .getFragmentIfExists(page);
-        if (f != null) {
-          f.updateAyahSelection(start, end);
-        }
-      }
-    }
-  }
-
   private class AyahMenuItemSelectionHandler implements MenuItem.OnMenuItemClickListener {
     @Override
     public boolean onMenuItemClick(MenuItem item) {
@@ -1868,12 +1839,7 @@ public class PagerActivity extends AppCompatActivity implements
     // and it's false when the panel is GONE and showPane only calls
     // requestLayout, and only in onLayout does mCanSlide become true.
     // So by posting this later it gives time for onLayout to run.
-    // Another issue is that the fragments haven't been created yet
-    // (on first run), so calling refreshPages() before then won't work.
-    handler.post(() -> {
-      slidingPanel.expandPane();
-      refreshPages();
-    });
+    handler.post(() -> slidingPanel.expandPane());
   }
 
   private void updateAyahBookmark(SuraAyah suraAyah, boolean bookmarked) {

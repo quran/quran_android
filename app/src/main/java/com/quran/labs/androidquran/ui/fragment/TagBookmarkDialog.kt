@@ -23,12 +23,22 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AlertDialog.Builder
 import androidx.fragment.app.DialogFragment
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.selection.AyahSelection
+import com.quran.data.model.selection.startSuraAyah
 import com.quran.labs.androidquran.R.id
 import com.quran.labs.androidquran.R.layout
 import com.quran.labs.androidquran.R.string
+import com.quran.reading.common.AudioEventPresenter
+import com.quran.reading.common.ReadingEventPresenter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
 import java.util.HashSet
 
 class TagBookmarkDialog : DialogFragment() {
+  private var scope: CoroutineScope = MainScope()
   private var adapter: TagsAdapter? = null
 
   @Inject
@@ -37,12 +47,18 @@ class TagBookmarkDialog : DialogFragment() {
   @Inject
   lateinit var tagBookmarkPresenter: TagBookmarkPresenter
 
+  @Inject
+  lateinit var readingEventPresenter: ReadingEventPresenter
+
+  @Inject
+  lateinit var audioEventPresenter: AudioEventPresenter
+
   override fun onAttach(context: Context) {
     super.onAttach(context)
     (context.applicationContext as QuranApplication).applicationComponent.inject(this)
   }
 
-  fun updateAyah(suraAyah: SuraAyah) {
+  private fun updateAyah(suraAyah: SuraAyah) {
     val page = quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah)
     tagBookmarkPresenter.setAyahBookmarkMode(suraAyah.sura, suraAyah.ayah, page)
   }
@@ -56,6 +72,26 @@ class TagBookmarkDialog : DialogFragment() {
         tagBookmarkPresenter.setBookmarksMode(bookmarkIds)
       }
     }
+
+    scope = MainScope()
+    readingEventPresenter.ayahSelectionFlow
+      .combine(audioEventPresenter.audioPlaybackAyahFlow) { selectedAyah, playbackAyah ->
+        val start = when {
+          selectedAyah !is AyahSelection.None -> selectedAyah.startSuraAyah()
+          playbackAyah != null -> playbackAyah
+          else -> null
+        }
+
+        if (start != null) {
+          updateAyah(start)
+        }
+      }
+      .launchIn(scope)
+  }
+
+  override fun onDestroy() {
+    scope.cancel()
+    super.onDestroy()
   }
 
   private fun createTagsListView(): ListView {

@@ -1,6 +1,5 @@
 package com.quran.reading.common
 
-import com.quran.data.di.ActivityScope
 import com.quran.data.model.selection.AyahSelection
 import kotlinx.coroutines.channels.BufferOverflow.DROP_OLDEST
 import kotlinx.coroutines.flow.Flow
@@ -10,8 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@ActivityScope
+@Singleton
 class ReadingEventPresenter @Inject constructor() {
   private val clicksInternalFlow = MutableSharedFlow<Unit>(
     replay = 0,

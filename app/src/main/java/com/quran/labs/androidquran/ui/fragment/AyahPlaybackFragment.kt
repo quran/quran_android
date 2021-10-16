@@ -272,11 +272,11 @@ class AyahPlaybackFragment : AyahActionFragment() {
     val selectionEnd = end
     val selectionStart = start
     if (context is PagerActivity && selectionStart != null && selectionEnd != null) {
-      val playbackSuraAyah = context.currentPlaybackSuraAyah()
       val lastRequest = context.lastAudioRequest
       val start: SuraAyah
       val ending: SuraAyah
       if (lastRequest != null) {
+        // audio playback request is available
         start = lastRequest.start
         ending = lastRequest.end
         verseRepeatCount = lastRequest.repeatInfo
@@ -286,16 +286,15 @@ class AyahPlaybackFragment : AyahActionFragment() {
         decidedEnd = ending
         applyButton.setText(string.play_apply)
       } else {
-        val currentStartSuraAyah = playbackSuraAyah ?: selectionStart
-        val currentEndingSuraAyah = playbackSuraAyah ?: selectionEnd
-        start = currentStartSuraAyah
-        if (currentStartSuraAyah == currentEndingSuraAyah) {
+        // we have no last audio request, so we're not playing audio... yet
+        start = selectionStart
+        if (selectionStart == selectionEnd) {
           val startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah)
           val pageBounds = quranInfo.getPageBounds(startPage)
           ending = SuraAyah(pageBounds[2], pageBounds[3])
           shouldEnforce = false
         } else {
-          ending = currentEndingSuraAyah
+          ending = selectionEnd
           shouldEnforce = true
         }
         rangeRepeatCount = 0
