@@ -1747,14 +1747,6 @@ public class PagerActivity extends AppCompatActivity implements
     }
   }
 
-  // Used to sync toolbar with page's SV (landscape non-tablet mode)
-  public void onQuranPageScroll(int scrollY) {
-    if (ayahToolBarPos != null) {
-      ayahToolBarPos = SelectionIndicatorKt.withYScroll(ayahToolBarPos, -scrollY);
-      readingEventPresenterBridge.withSelectionIndicator(ayahToolBarPos);
-    }
-  }
-
   private void refreshPages() {
     for (int page : PAGES) {
       final int mappedTagPage = slidingPagerAdapter.getPagePosition(TAG_PAGE);

@@ -448,19 +448,7 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void onScrollChanged(int x, int y, int oldx, int oldy) {
-    // no-op - no image ScrollView in this mode.
-  }
-
-  @Override
-  public void endAyahMode() {
-    if (isVisible()) {
-      ayahTrackerPresenter.endAyahMode();
-    }
-  }
-
-  @Override
-  public void requestMenuPositionUpdate() {
+  public void onScrollChanged(float y) {
     if (isVisible()) {
       final TranslationView[] views = new TranslationView[] { rightTranslation, leftTranslation };
       for (TranslationView view : views) {
@@ -477,6 +465,13 @@ public class TabletFragment extends Fragment
           }
         }
       }
+    }
+  }
+
+  @Override
+  public void endAyahMode() {
+    if (isVisible()) {
+      ayahTrackerPresenter.endAyahMode();
     }
   }
 }

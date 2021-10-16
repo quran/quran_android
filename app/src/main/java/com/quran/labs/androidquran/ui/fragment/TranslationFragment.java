@@ -178,7 +178,19 @@ public class TranslationFragment extends Fragment implements
   }
 
   @Override
-  public void onScrollChanged(int x, int y, int oldx, int oldy) {
+  public void onScrollChanged(float y) {
+    if (isVisible()) {
+      final AyahSelection ayahSelection = readingEventPresenter.currentAyahSelection();
+      if (ayahSelection instanceof AyahSelection.Ayah) {
+        final AyahSelection.Ayah currentAyahSelection = ((AyahSelection.Ayah) ayahSelection);
+        final SuraAyah suraAyah = currentAyahSelection.getSuraAyah();
+
+        readingEventPresenter.onAyahSelection(
+            new AyahSelection.Ayah(suraAyah,
+                translationView.getToolbarPosition(suraAyah.sura, suraAyah.ayah))
+        );
+      }
+    }
   }
 
   @Override
@@ -194,22 +206,6 @@ public class TranslationFragment extends Fragment implements
   public void endAyahMode() {
     if (isVisible()) {
       ayahTrackerPresenter.endAyahMode();
-    }
-  }
-
-  @Override
-  public void requestMenuPositionUpdate() {
-    if (isVisible()) {
-      final AyahSelection ayahSelection = readingEventPresenter.currentAyahSelection();
-      if (ayahSelection instanceof AyahSelection.Ayah) {
-        final AyahSelection.Ayah currentAyahSelection = ((AyahSelection.Ayah) ayahSelection);
-        final SuraAyah suraAyah = currentAyahSelection.getSuraAyah();
-
-        readingEventPresenter.onAyahSelection(
-            new AyahSelection.Ayah(suraAyah,
-                translationView.getToolbarPosition(suraAyah.sura, suraAyah.ayah))
-        );
-      }
     }
   }
 }

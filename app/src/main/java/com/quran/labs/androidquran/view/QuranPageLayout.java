@@ -284,7 +284,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
   public void onScrollChanged(ObservableScrollView scrollView,
       int x, int y, int oldx, int oldy) {
     if (pageController != null) {
-      pageController.onScrollChanged(x, y, oldx, oldy);
+      pageController.onScrollChanged(y);
     }
   }
 }

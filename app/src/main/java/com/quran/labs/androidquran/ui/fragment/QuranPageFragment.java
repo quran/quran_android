@@ -13,6 +13,10 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
+import com.quran.data.model.selection.AyahSelection;
+import com.quran.data.model.selection.AyahSelectionKt;
+import com.quran.data.model.selection.SelectionIndicator;
+import com.quran.data.model.selection.SelectionIndicatorKt;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
@@ -34,6 +38,7 @@ import com.quran.labs.androidquran.view.QuranImagePageLayout;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
+import com.quran.reading.common.ReadingEventPresenter;
 import java.util.Set;
 import javax.inject.Inject;
 import timber.log.Timber;
@@ -55,6 +60,7 @@ public class QuranPageFragment extends Fragment implements PageController,
   @Inject AyahSelectedListener ayahSelectedListener;
   @Inject QuranScreenInfo quranScreenInfo;
   @Inject Set<ImageDrawHelper> imageDrawHelpers;
+  @Inject ReadingEventPresenter readingEventPresenter;
 
   private HighlightingImageView imageView;
   private QuranImagePageLayout quranPageLayout;
@@ -180,10 +186,15 @@ public class QuranPageFragment extends Fragment implements PageController,
   }
 
   @Override
-  public void onScrollChanged(int x, int y, int oldx, int oldy) {
-    PagerActivity activity = (PagerActivity) getActivity();
-    if (activity != null) {
-      activity.onQuranPageScroll(y);
+  public void onScrollChanged(float y) {
+    final AyahSelection selection = readingEventPresenter.currentAyahSelection();
+    if (!(selection instanceof AyahSelection.None)) {
+      final SelectionIndicator selectionIndicator = AyahSelectionKt.selectionIndicator(selection);
+      final SelectionIndicator updatedIndicator =
+          SelectionIndicatorKt.withYScroll(selectionIndicator, -y);
+      final AyahSelection updatedSelection =
+          AyahSelectionKt.withSelectionIndicator(selection, updatedIndicator);
+      readingEventPresenter.onAyahSelection(updatedSelection);
     }
   }
 
@@ -229,9 +240,5 @@ public class QuranPageFragment extends Fragment implements PageController,
     if (isVisible()) {
       ayahTrackerPresenter.endAyahMode();
     }
-  }
-
-  @Override
-  public void requestMenuPositionUpdate() {
   }
 }

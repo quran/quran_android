@@ -73,7 +73,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
         super.onScrollStateChanged(recyclerView, newState);
         isDragging = newState == RecyclerView.SCROLL_STATE_DRAGGING;
         if (selectedAyah != null && newState == RecyclerView.SCROLL_STATE_IDLE) {
-          pageController.requestMenuPositionUpdate();
+          updateAyahToolBarPosition();
         }
       }
     });
@@ -269,7 +269,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       if (selectedPointPosition.getY() > getHeight() || selectedPointPosition.getY() < 0) {
         hideMenu();
       } else {
-        pageController.requestMenuPositionUpdate();
+        pageController.onScrollChanged(0);
       }
     }
   }
