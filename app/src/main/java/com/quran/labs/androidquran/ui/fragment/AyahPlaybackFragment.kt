@@ -269,7 +269,9 @@ class AyahPlaybackFragment : AyahActionFragment() {
 
   override fun refreshView() {
     val context: Context? = activity
-    if (context is PagerActivity && start != null && end != null) {
+    val selectionEnd = end
+    val selectionStart = start
+    if (context is PagerActivity && selectionStart != null && selectionEnd != null) {
       val playbackSuraAyah = context.currentPlaybackSuraAyah()
       val lastRequest = context.lastAudioRequest
       val start: SuraAyah
@@ -284,8 +286,8 @@ class AyahPlaybackFragment : AyahActionFragment() {
         decidedEnd = ending
         applyButton.setText(string.play_apply)
       } else {
-        val currentStartSuraAyah = playbackSuraAyah ?: this.start
-        val currentEndingSuraAyah = playbackSuraAyah ?: end
+        val currentStartSuraAyah = playbackSuraAyah ?: selectionStart
+        val currentEndingSuraAyah = playbackSuraAyah ?: selectionEnd
         start = currentStartSuraAyah
         if (currentStartSuraAyah == currentEndingSuraAyah) {
           val startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah)
