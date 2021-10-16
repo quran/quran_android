@@ -5,31 +5,26 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
-
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.DisplayCutoutCompat;
-
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.quran.data.model.SuraAyah;
-import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
+import com.quran.data.model.selection.SelectionIndicator;
 import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
-
-import com.quran.labs.androidquran.view.AyahToolBar;
 import dev.chrisbanes.insetter.Insetter;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class TranslationView extends FrameLayout implements View.OnClickListener,
     TranslationAdapter.OnVerseSelectedListener {
@@ -78,7 +73,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
         super.onScrollStateChanged(recyclerView, newState);
         isDragging = newState == RecyclerView.SCROLL_STATE_DRAGGING;
         if (selectedAyah != null && newState == RecyclerView.SCROLL_STATE_IDLE) {
-          pageController.requestMenuPositionUpdate();
+          updateAyahToolBarPosition();
         }
       }
     });
@@ -229,25 +224,35 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     return localTranslations;
   }
 
-  public AyahToolBar.AyahToolBarPosition getToolbarPosition() {
+  public SelectionIndicator getToolbarPosition(int sura, int ayah) {
+    int[] versePopupPosition = translationAdapter.getSelectedVersePopupPosition(sura, ayah);
+    if (versePopupPosition != null) {
+      return getToolbarPosition(versePopupPosition);
+    }
+    return SelectionIndicator.None.INSTANCE;
+  }
+
+  public SelectionIndicator getToolbarPosition() {
     int[] versePopupPosition = translationAdapter.getSelectedVersePopupPosition();
     if (versePopupPosition != null) {
-      // for dual screen tablet mode, we need to add the view's x (so clicks on the
-      // right page properly show on the right page and not on the left one).
-      final int[] positionOnScreen = new int[2];
-      getLocationOnScreen(positionOnScreen);
-      final int xOffset = positionOnScreen[0];
-
-      return new AyahToolBar.AyahToolBarPosition(
-          xOffset + versePopupPosition[0],
-          versePopupPosition[1],
-          0f,
-          0f,
-          0f,
-          AyahToolBar.PipPosition.UP
-      );
+      return getToolbarPosition(versePopupPosition);
     }
-    return null;
+    return SelectionIndicator.None.INSTANCE;
+  }
+
+  private SelectionIndicator getToolbarPosition(int[] versePopupPosition) {
+    // for dual screen tablet mode, we need to add the view's x (so clicks on the
+    // right page properly show on the right page and not on the left one).
+    final int[] positionOnScreen = new int[2];
+    getLocationOnScreen(positionOnScreen);
+    final int xOffset = positionOnScreen[0];
+
+    return new SelectionIndicator.SelectedPointPosition(
+        xOffset + versePopupPosition[0],
+        versePopupPosition[1],
+        0f,
+        0f
+    );
   }
 
   /**
@@ -257,11 +262,15 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
    * update the RecyclerView cannot be called amidst scrolling or computing of a layout).
    */
   private void updateAyahToolBarPosition() {
-    final AyahToolBar.AyahToolBarPosition position = getToolbarPosition();
-    if (position != null && (position.getY() > getHeight() || position.getY() < 0)) {
+    final SelectionIndicator position = getToolbarPosition();
+    if (position instanceof SelectionIndicator.SelectedPointPosition) {
+      final SelectionIndicator.SelectedPointPosition selectedPointPosition =
+          (SelectionIndicator.SelectedPointPosition) position;
+      if (selectedPointPosition.getY() > getHeight() || selectedPointPosition.getY() < 0) {
         hideMenu();
-    } else {
-      pageController.requestMenuPositionUpdate();
+      } else {
+        pageController.onScrollChanged(0);
+      }
     }
   }
 
@@ -281,7 +290,6 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     }
 
     pageController.handleLongPress(suraAyah);
-    pageController.requestMenuPositionUpdate();
   }
 
   public int findFirstCompletelyVisibleItemPosition() {

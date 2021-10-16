@@ -119,6 +119,7 @@ dependencies {
   implementation project(path: ':common:pages')
   implementation project(path: ':common:reading')
   implementation project(path: ':common:search')
+  implementation project(path: ':common:toolbar')
   implementation project(path: ':common:upgrade')
 
   implementation project(path: ':feature:audio')

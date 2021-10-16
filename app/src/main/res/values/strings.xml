@@ -357,14 +357,6 @@
   <string name="starting_page_label">Beginning of Page</string>
 
   <!-- long press -->
-  <string name="bookmark_ayah">Bookmark this Ayah</string>
-  <string name="tag_ayah">Tag this Ayah</string>
-  <string name="share_ayah">Share Ayah Link</string>
-  <string name="share_ayah_text">Share Ayah Text</string>
-  <string name="translation_ayah">Ayah Translation/Tafseer</string>
-  <string name="play_from_here">Play from Here</string>
-  <string name="search_key">Press the search key to look up a verse</string>
-  <string name="copy_ayah">Copy Ayah</string>
   <string name="ayah_copied_popup">Ayah Copied</string>
 
   <!-- bookmarks & tags contextual action bar -->

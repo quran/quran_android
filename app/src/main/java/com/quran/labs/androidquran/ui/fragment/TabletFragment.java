@@ -15,7 +15,7 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
-import com.quran.data.model.bookmark.Bookmark;
+import com.quran.data.model.selection.AyahSelection;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranDisplayData;
@@ -43,14 +43,13 @@ import com.quran.labs.androidquran.view.TabletView;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
+import com.quran.reading.common.ReadingEventPresenter;
 import dagger.Lazy;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 import timber.log.Timber;
-
-import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
 public class TabletFragment extends Fragment
     implements PageController, TranslationPresenter.TranslationScreen,
@@ -94,6 +93,7 @@ public class TabletFragment extends Fragment
   @Inject QuranInfo quranInfo;
   @Inject QuranDisplayData quranDisplayData;
   @Inject Set<ImageDrawHelper> imageDrawHelpers;
+  @Inject ReadingEventPresenter readingEventPresenter;
 
   public static TabletFragment newInstance(int firstPage, int mode, boolean isSplitScreen) {
     final TabletFragment f = new TabletFragment();
@@ -262,14 +262,13 @@ public class TabletFragment extends Fragment
       final int screenHeight = quranScreenInfo.getHeight();
       if (mode == Mode.ARABIC) {
         left = new AyahImageTrackerItem(pageNumber,
-            screenHeight,
             quranInfo,
             quranDisplayData,
             false,
             imageDrawHelpers,
             leftImageView);
         right = new AyahImageTrackerItem(
-            pageNumber - 1, screenHeight, quranInfo, quranDisplayData, true, imageDrawHelpers,
+            pageNumber - 1, quranInfo, quranDisplayData, true, imageDrawHelpers,
             rightImageView);
       } else if (mode == Mode.TRANSLATION) {
         if (isSplitScreen) {
@@ -278,7 +277,6 @@ public class TabletFragment extends Fragment
           if (isQuranOnRight) {
             translationItem = new AyahTranslationTrackerItem(pageNumber, quranInfo, splitTranslationView);
             imageItem = new AyahImageTrackerItem(pageNumber,
-                screenHeight,
                 quranInfo,
                 quranDisplayData,
                 true,
@@ -286,7 +284,6 @@ public class TabletFragment extends Fragment
                 splitImageView);
           } else {
             imageItem = new AyahImageTrackerItem(pageNumber,
-                screenHeight,
                 quranInfo,
                 quranDisplayData,
                 false,
@@ -427,7 +424,7 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public boolean handleTouchEvent(MotionEvent event, EventType eventType, int page) {
+  public boolean handleTouchEvent(MotionEvent event, AyahSelectedListener.EventType eventType, int page) {
     return isVisible() && ayahTrackerPresenter.handleTouchEvent(getActivity(), event, eventType,
         page, ayahCoordinatesError);
   }
@@ -451,21 +448,30 @@ public class TabletFragment extends Fragment
   }
 
   @Override
-  public void onScrollChanged(int x, int y, int oldx, int oldy) {
-    // no-op - no image ScrollView in this mode.
+  public void onScrollChanged(float y) {
+    if (isVisible()) {
+      final TranslationView[] views = new TranslationView[] { rightTranslation, leftTranslation };
+      for (TranslationView view : views) {
+        if (view != null) {
+          final AyahSelection ayahSelection = readingEventPresenter.currentAyahSelection();
+          if (ayahSelection instanceof AyahSelection.Ayah) {
+            final AyahSelection.Ayah currentAyahSelection = ((AyahSelection.Ayah) ayahSelection);
+            final SuraAyah suraAyah = currentAyahSelection.getSuraAyah();
+
+            readingEventPresenter.onAyahSelection(
+                new AyahSelection.Ayah(suraAyah,
+                    view.getToolbarPosition(suraAyah.sura, suraAyah.ayah))
+            );
+          }
+        }
+      }
+    }
   }
 
   @Override
   public void endAyahMode() {
     if (isVisible()) {
       ayahTrackerPresenter.endAyahMode();
-    }
-  }
-
-  @Override
-  public void requestMenuPositionUpdate() {
-    if (isVisible()) {
-      ayahTrackerPresenter.requestMenuPositionUpdate(ayahSelectedListener);
     }
   }
 }

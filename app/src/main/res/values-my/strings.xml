@@ -254,14 +254,6 @@
   <string name="starting_page_label">Mula muka surat</string>
 
   <!-- long press -->
-  <string name="bookmark_ayah">Penanda ayat ini</string>
-  <string name="tag_ayah">Beri label ayat ini</string>
-  <string name="share_ayah">Kongsikan pautan (URL) ayat</string>
-  <string name="share_ayah_text">Kongsikan teks ayat</string>
-  <string name="translation_ayah">Terjemah/tafsir ayat</string>
-  <string name="play_from_here">Mainkan tilawah dari sini</string>
-  <string name="search_key">Tekan butang carian untuk mencari ayat</string>
-  <string name="copy_ayah">Salin ayat</string>
   <string name="ayah_copied_popup">Ayat telah disalin</string>
 
   <!-- bookmarks & tags contextual action bar -->

@@ -69,16 +69,28 @@ internal class TranslationAdapter(
 
       // find out where to position the popup based on the center of the box
       versePosition?.let {
-        val viewHolder =
-          recyclerView.findViewHolderForAdapterPosition(versePosition.index) as RowViewHolder?
-        viewHolder?.ayahNumber?.let { ayahNumberView ->
-          val x = (ayahNumberView.left + ayahNumberView.boxCenterX)
-          val y = (ayahNumberView.top + ayahNumberView.boxBottomY)
-          intArrayOf(x, y)
-        }
+        positionForViewHolderIndex(versePosition.index)
       }
     } else {
       null
+    }
+  }
+
+  fun getSelectedVersePopupPosition(sura: Int, ayah: Int): IntArray? {
+    val (startPosition, _) = adapterInfoForAyah(sura, ayah)
+    return if (startPosition > -1) {
+      positionForViewHolderIndex(startPosition)
+    } else {
+      null
+    }
+  }
+
+  private fun positionForViewHolderIndex(index: Int): IntArray? {
+    val viewHolder = recyclerView.findViewHolderForAdapterPosition(index) as RowViewHolder?
+    return viewHolder?.ayahNumber?.let { ayahNumberView ->
+      val x = (ayahNumberView.left + ayahNumberView.boxCenterX)
+      val y = (ayahNumberView.top + ayahNumberView.boxBottomY)
+      intArrayOf(x, y)
     }
   }
 
@@ -97,6 +109,17 @@ internal class TranslationAdapter(
 
   fun highlightedAyahInfo(): QuranAyahInfo? {
     return data.firstOrNull { it.ayahInfo.ayahId == highlightedAyah }?.ayahInfo
+  }
+
+  private fun adapterInfoForAyah(sura: Int, ayah: Int): Pair<Int, Int> {
+    val matches =
+      data.withIndex().filter {
+        it.value.ayahInfo.sura == sura &&
+            it.value.ayahInfo.ayah == ayah &&
+            // don't factor in basmalah or sura name
+            it.value.type > 1
+      }
+    return (matches.firstOrNull()?.index ?: -1) to matches.size
   }
 
   private fun highlightAyah(ayahId: Int, notify: Boolean, highlightedType: HighlightType) {

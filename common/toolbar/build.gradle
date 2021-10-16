@@ -1,0 +1,25 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.squareup.anvil'
+
+android {
+  compileSdkVersion deps.android.build.compileSdkVersion
+  defaultConfig {
+    minSdkVersion deps.android.build.minSdkVersion
+    targetSdkVersion deps.android.build.targetSdkVersion
+  }
+}
+
+anvil { generateDaggerFactories = true }
+
+dependencies {
+  implementation project(path: ':common:data')
+  implementation project(path: ':common:reading')
+  implementation project(path: ':common:bookmark')
+
+  implementation deps.dagger.runtime
+
+  implementation "androidx.appcompat:appcompat:${androidxAppcompatVersion}"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
+}

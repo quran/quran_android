@@ -163,15 +163,7 @@
   <string name="play">Reproducir</string>
   <string name="stop">Detener</string>
 
-  <!--long press-->
-  <string name="bookmark_ayah">Agregar este versículo a Favoritos</string>
-  <string name="tag_ayah">Etiquetar esta versículo</string>
-  <string name="share_ayah">Compartir enlace del versículo</string>
-  <string name="share_ayah_text">Compartir texto del versículo</string>
-  <string name="translation_ayah">Traducción del versículo / explicación</string>
-  <string name="play_from_here">Reproducir desde aquí</string>
-  <string name="search_key">Pulse la tecla de búsqueda para buscar un versículo</string>
-  <string name="copy_ayah">Copiar versículo</string>
+  <!-- long press -->
   <string name="ayah_copied_popup">Versículo copiado</string>
   <!--bookmarks & tags contextual action bar-->
   <string name="tag_bookmark">Etiquetar Favorito</string>

@@ -299,14 +299,6 @@
   <string name="starting_page_label">Početak stranice</string>
 
   <!-- long press -->
-  <string name="bookmark_ayah">Zabilježi ovaj ajet</string>
-  <string name="tag_ayah">Označi ovaj ajet</string>
-  <string name="share_ayah">Podijeli link ajeta</string>
-  <string name="share_ayah_text">Podijeli tekst ajeta</string>
-  <string name="translation_ayah">Prijevod/tefsir ajeta</string>
-  <string name="play_from_here">Pusti odavde</string>
-  <string name="search_key">Pritisnite tipku za pretragu da potražite ajet</string>
-  <string name="copy_ayah">Kopiraj ajet</string>
   <string name="ayah_copied_popup">Ajet kopiran</string>
 
   <!-- bookmarks & tags contextual action bar -->

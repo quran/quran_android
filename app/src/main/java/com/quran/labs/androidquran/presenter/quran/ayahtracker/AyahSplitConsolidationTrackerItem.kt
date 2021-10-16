@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.selection.SelectionIndicator
 import com.quran.labs.androidquran.ui.helpers.HighlightType
-import com.quran.labs.androidquran.view.AyahToolBar.AyahToolBarPosition
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
 
@@ -12,12 +12,12 @@ class AyahSplitConsolidationTrackerItem(
   private val translationTrackerItem: AyahTranslationTrackerItem
 ) : AyahTrackerItem(page) {
 
-  override fun onSetPageBounds(pageCoordinates: PageCoordinates?) {
+  override fun onSetPageBounds(pageCoordinates: PageCoordinates) {
     imageTrackerItem.onSetPageBounds(pageCoordinates)
     translationTrackerItem.onSetPageBounds(pageCoordinates)
   }
 
-  override fun onSetAyahCoordinates(ayahCoordinates: AyahCoordinates?) {
+  override fun onSetAyahCoordinates(ayahCoordinates: AyahCoordinates) {
     imageTrackerItem.onSetAyahCoordinates(ayahCoordinates)
     translationTrackerItem.onSetAyahCoordinates(ayahCoordinates)
   }
@@ -30,7 +30,7 @@ class AyahSplitConsolidationTrackerItem(
     return firstResult && secondResult
   }
 
-  override fun onHighlightAyat(page: Int, ayahKeys: MutableSet<String>?, type: HighlightType?) {
+  override fun onHighlightAyat(page: Int, ayahKeys: Set<String>, type: HighlightType) {
     imageTrackerItem.onHighlightAyat(page, ayahKeys, type)
     translationTrackerItem.onHighlightAyat(page, ayahKeys, type)
   }
@@ -45,10 +45,8 @@ class AyahSplitConsolidationTrackerItem(
     translationTrackerItem.onUnHighlightAyahType(type)
   }
 
-  override fun getToolBarPosition(
-    page: Int, sura: Int, ayah: Int, toolBarWidth: Int, toolBarHeight: Int
-  ): AyahToolBarPosition? {
-    return imageTrackerItem.getToolBarPosition(page, sura, ayah, toolBarWidth, toolBarHeight)
+  override fun getToolBarPosition(page: Int, sura: Int, ayah: Int): SelectionIndicator {
+    return imageTrackerItem.getToolBarPosition(page, sura, ayah)
   }
 
   override fun getAyahForPosition(

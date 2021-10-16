@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
+import com.quran.data.model.selection.AyahSelection;
+import com.quran.data.model.selection.SelectionIndicator;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranDisplayData;
@@ -27,6 +29,7 @@ import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.view.QuranTranslationPageLayout;
 
+import com.quran.reading.common.ReadingEventPresenter;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -54,6 +57,7 @@ public class TranslationFragment extends Fragment implements
   @Inject TranslationPresenter presenter;
   @Inject AyahTrackerPresenter ayahTrackerPresenter;
   @Inject AyahSelectedListener ayahSelectedListener;
+  @Inject ReadingEventPresenter readingEventPresenter;
 
   public static TranslationFragment newInstance(int page) {
     final TranslationFragment f = new TranslationFragment();
@@ -174,13 +178,27 @@ public class TranslationFragment extends Fragment implements
   }
 
   @Override
-  public void onScrollChanged(int x, int y, int oldx, int oldy) {
+  public void onScrollChanged(float y) {
+    if (isVisible()) {
+      final AyahSelection ayahSelection = readingEventPresenter.currentAyahSelection();
+      if (ayahSelection instanceof AyahSelection.Ayah) {
+        final AyahSelection.Ayah currentAyahSelection = ((AyahSelection.Ayah) ayahSelection);
+        final SuraAyah suraAyah = currentAyahSelection.getSuraAyah();
+
+        readingEventPresenter.onAyahSelection(
+            new AyahSelection.Ayah(suraAyah,
+                translationView.getToolbarPosition(suraAyah.sura, suraAyah.ayah))
+        );
+      }
+    }
   }
 
   @Override
   public void handleLongPress(SuraAyah suraAyah) {
     if (isVisible()) {
-      ayahTrackerPresenter.onLongPress(suraAyah);
+      readingEventPresenter.onAyahSelection(
+          new AyahSelection.Ayah(suraAyah, translationView.getToolbarPosition(suraAyah.sura, suraAyah.ayah))
+      );
     }
   }
 
@@ -188,13 +206,6 @@ public class TranslationFragment extends Fragment implements
   public void endAyahMode() {
     if (isVisible()) {
       ayahTrackerPresenter.endAyahMode();
-    }
-  }
-
-  @Override
-  public void requestMenuPositionUpdate() {
-    if (isVisible()) {
-      ayahTrackerPresenter.requestMenuPositionUpdate(ayahSelectedListener);
     }
   }
 }

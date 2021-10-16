@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.view
+package com.quran.page.common.toolbar
 
 import android.content.Context
 import android.util.AttributeSet
@@ -12,22 +12,20 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
-import com.quran.labs.androidquran.BuildConfig
-import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.ui.util.ToastCompat
-import com.quran.labs.androidquran.view.AyahToolBar.PipPosition.DOWN
-import com.quran.labs.androidquran.view.AyahToolBar.PipPosition.UP
+import com.quran.data.model.selection.SelectionIndicator
+import com.quran.labs.androidquran.common.toolbar.R
+import com.quran.page.common.toolbar.dao.SelectedAyahPlacementType
+import com.quran.page.common.toolbar.di.AyahToolBarInjector
+import com.quran.page.common.toolbar.extension.toInternalPosition
+import javax.inject.Inject
 
 class AyahToolBar @JvmOverloads constructor(
   context: Context,
   attrs: AttributeSet? = null,
   defStyle: Int = 0
-) : ViewGroup(context, attrs, defStyle), OnClickListener, OnLongClickListener {
-
-  enum class PipPosition { UP, DOWN }
+) : ViewGroup(context, attrs, defStyle), OnClickListener, OnLongClickListener, AyahSelectionReactor {
 
   private var menu: Menu
   private val pipWidth: Int
@@ -36,14 +34,21 @@ class AyahToolBar @JvmOverloads constructor(
   private val ayahMenu = R.menu.ayah_menu
   private val menuLayout: LinearLayout
   private val toolBarPip: AyahToolBarPip
+  private val toolBarTotalHeight: Int
 
   private var pipOffset = 0f
-  private var pipPosition: PipPosition
+  private var pipPosition: SelectedAyahPlacementType
   private var currentMenu: Menu? = null
   private var itemSelectedListener: OnMenuItemClickListener? = null
 
   var isShowing = false
     private set
+
+  var flavor: String = ""
+  var longPressLambda: ((CharSequence) -> Unit) = {}
+
+  @Inject
+  lateinit var ayahToolBarPresenter: AyahToolBarPresenter
 
   init {
     val resources = context.resources
@@ -53,13 +58,15 @@ class AyahToolBar @JvmOverloads constructor(
     pipWidth = resources.getDimensionPixelSize(R.dimen.toolbar_pip_width)
     val background = ContextCompat.getColor(context, R.color.toolbar_background)
 
+    toolBarTotalHeight = resources.getDimensionPixelSize(R.dimen.toolbar_total_height)
+
     menuLayout = LinearLayout(context).apply {
       layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, toolBarHeight)
       setBackgroundColor(background)
     }
     addView(menuLayout)
 
-    pipPosition = DOWN
+    pipPosition = SelectedAyahPlacementType.BOTTOM
     toolBarPip = AyahToolBarPip(context)
     toolBarPip.layoutParams = LayoutParams(LayoutParams.WRAP_CONTENT, pipHeight)
     addView(toolBarPip)
@@ -71,6 +78,18 @@ class AyahToolBar @JvmOverloads constructor(
     val inflater = MenuInflater(this.context)
     inflater.inflate(ayahMenu, menu)
     showMenu(menu)
+  }
+
+  override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
+    // inject the present and bind
+    (context as AyahToolBarInjector).injectToolBar(this)
+    ayahToolBarPresenter.bind(this)
+  }
+
+  override fun onDetachedFromWindow() {
+    ayahToolBarPresenter.unbind(this)
+    super.onDetachedFromWindow()
   }
 
   override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
@@ -85,7 +104,7 @@ class AyahToolBar @JvmOverloads constructor(
     }
 
     // overlap the pip and toolbar by 1px to avoid occasional gap
-    if (pipPosition == UP) {
+    if (pipPosition == SelectedAyahPlacementType.TOP) {
       toolBarPip.layout(pipLeft, 0, pipLeft + pipWidth, pipHeight + 1)
       menuLayout.layout(0, pipHeight, menuWidth, pipHeight + menuHeight)
     } else {
@@ -118,11 +137,10 @@ class AyahToolBar @JvmOverloads constructor(
 
     // disable sharing for warsh and qaloon
     val menuItem = menu.findItem(R.id.cab_share_ayah)
-    if (menuItem != null &&
-      (BuildConfig.FLAVOR == "warsh" || BuildConfig.FLAVOR == "qaloon")
-    ) {
+    if (menuItem != null && (flavor == "warsh" || flavor == "qaloon")) {
       menuItem.isVisible = false
     }
+
     menuLayout.removeAllViews()
     val count = menu.size()
     for (i in 0 until count) {
@@ -148,7 +166,7 @@ class AyahToolBar @JvmOverloads constructor(
 
   // relying on getWidth() may give us the width of a shorter
   // submenu instead of the actual menu
-  val toolBarWidth: Int
+  private val toolBarWidth: Int
     get() = menu.size() * itemWidth
 
   fun setBookmarked(bookmarked: Boolean) {
@@ -158,15 +176,40 @@ class AyahToolBar @JvmOverloads constructor(
     bookmarkButton?.setImageDrawable(bookmarkItem.icon)
   }
 
-  fun updatePosition(position: AyahToolBarPosition) {
-    val needsLayout = position.pipPosition != pipPosition || pipOffset != position.pipOffset
-    ensurePipPosition(position.pipPosition)
-    pipOffset = position.pipOffset
-    val x = position.x + position.xScroll
-    val y = position.y + position.yScroll
-    setPosition(x, y)
-    if (needsLayout) {
-      requestLayout()
+  override fun onSelectionChanged(selectionIndicator: SelectionIndicator, reset: Boolean) {
+    if (reset) {
+      resetMenu()
+    }
+
+    if (selectionIndicator is SelectionIndicator.None) {
+      hideMenu()
+    } else {
+      updatePosition(selectionIndicator)
+      showMenu()
+    }
+  }
+
+  override fun updateBookmarkStatus(isBookmarked: Boolean) {
+    setBookmarked(isBookmarked)
+  }
+
+  fun updatePosition(position: SelectionIndicator) {
+    val parentView = parent as View
+    val internalPosition = position.toInternalPosition(
+      parentView.width, parentView.height, toolBarWidth, toolBarTotalHeight
+    )
+
+    if (internalPosition != null) {
+      val needsLayout =
+        internalPosition.pipPosition != pipPosition || pipOffset != internalPosition.pipOffset
+      ensurePipPosition(internalPosition.pipPosition)
+      pipOffset = internalPosition.pipOffset
+      val x = internalPosition.x
+      val y = internalPosition.y
+      setPosition(x, y)
+      if (needsLayout) {
+        requestLayout()
+      }
     }
   }
 
@@ -175,7 +218,7 @@ class AyahToolBar @JvmOverloads constructor(
     translationY = y
   }
 
-  private fun ensurePipPosition(position: PipPosition) {
+  private fun ensurePipPosition(position: SelectedAyahPlacementType) {
     pipPosition = position
     toolBarPip.ensurePosition(position)
   }
@@ -211,23 +254,9 @@ class AyahToolBar @JvmOverloads constructor(
   override fun onLongClick(v: View): Boolean {
     val item = menu.findItem(v.id)
     if (item != null && item.title != null) {
-      ToastCompat.makeText(context, item.title, Toast.LENGTH_SHORT).show()
+      longPressLambda(item.title)
       return true
     }
     return false
-  }
-
-  data class AyahToolBarPosition(
-    val x: Float = 0f,
-    val y: Float = 0f,
-    val xScroll: Float = 0f,
-    val yScroll: Float = 0f,
-    val pipOffset: Float = 0f,
-    val pipPosition: PipPosition = DOWN
-  ) {
-    fun withX(x: Float) = copy(x = x)
-    fun withY(y: Float) = copy(y = y)
-    fun withXScroll(xScroll: Float) = copy(xScroll = xScroll)
-    fun withYScroll(yScroll: Float) = copy(yScroll = yScroll)
   }
 }

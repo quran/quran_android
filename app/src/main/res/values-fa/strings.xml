@@ -161,13 +161,6 @@
   </plurals>
 
   <!-- long press -->
-  <string name="bookmark_ayah">نشانک‌گذاری بر آیه</string>
-  <string name="tag_ayah">برچسب‌گذاری بر آیه</string>
-  <string name="share_ayah">اشتراک‌گذاری آیه</string>
-  <string name="translation_ayah">ترجمه آیه</string>
-  <string name="play_from_here">شروع پخش از این آیه</string>
-  <string name="search_key">دکمه جستجو را بفشارید</string>
-  <string name="copy_ayah">کپی کردن آیه</string>
   <string name="ayah_copied_popup">آیه کپی شد</string>
 
   <!-- bookmarks & tags contextual action bar -->
@@ -258,7 +251,6 @@
   <string name="prefs_volume_key_navigation_title">ورق زدن با دکمه‌های صدا</string>
   <string name="quran_ayah_details">%1$s - آیه %2$s، جزء %3$s</string>
   <string name="sdcard_error">کارت حافظه یافت نشد. آن را دوباره در دستگاه قرار داده و بار دیگر امتحان نمایید.</string>
-  <string name="share_ayah_text">اشتراک‌گذاری متن آیه</string>
   <string name="undo">واگرد</string>
   <string name="warning">هشدار</string>
   <string name="download_sura_ayah_progress">بارگذاری سوره %1$d آیه %2$d</string>

@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.presenter.bookmark;
 
+import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
 import com.quran.data.model.bookmark.Bookmark;
@@ -186,7 +187,7 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
   }
 
   @Override
-  public void bind(TagBookmarkDialog dialog) {
+  public void bind(@NonNull TagBookmarkDialog dialog) {
     this.dialog = dialog;
     if (tags != null) {
       // replay the last set of tags and checked tags that we had.

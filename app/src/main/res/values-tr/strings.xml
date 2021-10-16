@@ -280,14 +280,6 @@
   <string name="starting_page_label">Sayfa başlangıcı</string>
 
   <!-- long press -->
-  <string name="bookmark_ayah">Bu âyeti işaretle</string>
-  <string name="tag_ayah">Bu âyeti işaretle</string>
-  <string name="share_ayah">Âyet kısayolu paylaş</string>
-  <string name="share_ayah_text">Âyet meâlini paylaş</string>
-  <string name="translation_ayah">Âyet meâli</string>
-  <string name="play_from_here">Buradan dinlemeye başla</string>
-  <string name="search_key">"Kur'an'da arama yapmak için arama tuşuna bas"</string>
-  <string name="copy_ayah">Âyet kopyala</string>
   <string name="ayah_copied_popup">Âyet kopyalandı</string>
 
   <!-- bookmarks & tags contextual action bar -->
