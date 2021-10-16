@@ -46,6 +46,7 @@ import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.model.selection.AyahSelection;
+import com.quran.data.model.selection.AyahSelectionKt;
 import com.quran.data.model.selection.SelectionIndicator;
 import com.quran.data.model.selection.SelectionIndicatorKt;
 import com.quran.data.page.provider.di.QuranPageExtrasComponent;
@@ -177,7 +178,6 @@ public class PagerActivity extends AppCompatActivity implements
   private boolean needsPermissionToDownloadOver3g = true;
   private AlertDialog promptDialog = null;
   private AyahToolBar ayahToolBar;
-  private SelectionIndicator ayahToolBarPos = SelectionIndicator.None.INSTANCE;
   private AudioRequest lastAudioRequest;
   private boolean isDualPages = false;
   private Integer lastPlayingSura;
@@ -398,17 +398,21 @@ public class PagerActivity extends AppCompatActivity implements
 
       @Override
       public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if (ayahToolBarPos != SelectionIndicator.None.INSTANCE) {
+        final SelectionIndicator selectionIndicator =
+            AyahSelectionKt.selectionIndicator(readingEventPresenter.currentAyahSelection());
+        if (selectionIndicator != SelectionIndicator.None.INSTANCE) {
           final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
           int barPos = quranInfo.getPositionFromPage(startPage, isDualPageVisible());
           if (position == barPos) {
             // Swiping to next ViewPager page (i.e. prev quran page)
-            ayahToolBarPos = SelectionIndicatorKt.withXScroll(ayahToolBarPos, -positionOffsetPixels);
-            readingEventPresenterBridge.withSelectionIndicator(ayahToolBarPos);
+            final SelectionIndicator updatedSelectionIndicator =
+                SelectionIndicatorKt.withXScroll(selectionIndicator, -positionOffsetPixels);
+            readingEventPresenterBridge.withSelectionIndicator(updatedSelectionIndicator);
           } else if (position == barPos - 1) {
             // Swiping to prev ViewPager page (i.e. next quran page)
-            ayahToolBarPos = SelectionIndicatorKt.withXScroll(ayahToolBarPos, viewPager.getWidth() - positionOffsetPixels);
-            readingEventPresenterBridge.withSelectionIndicator(ayahToolBarPos);
+            final SelectionIndicator updatedSelectionIndicator =
+                SelectionIndicatorKt.withXScroll(selectionIndicator, viewPager.getWidth() - positionOffsetPixels);
+            readingEventPresenterBridge.withSelectionIndicator(updatedSelectionIndicator);
           } else {
             readingEventPresenterBridge.clearSelectedAyah();
           }
@@ -620,7 +624,8 @@ public class PagerActivity extends AppCompatActivity implements
 
   private void onAyahSelectionChanged(AyahSelection ayahSelection) {
     final boolean haveSelection = ayahSelection != AyahSelection.None.INSTANCE;
-    if (ayahToolBarPos instanceof SelectionIndicator.None && haveSelection) {
+    final SelectionIndicator currentSelection = AyahSelectionKt.selectionIndicator(ayahSelection);
+    if (currentSelection instanceof SelectionIndicator.None && haveSelection) {
       viewPager.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
     }
 
@@ -637,17 +642,14 @@ public class PagerActivity extends AppCompatActivity implements
       if (ayahSelection instanceof AyahSelection.Ayah) {
         start = startPosition;
         end = startPosition;
-        ayahToolBarPos = ((AyahSelection.Ayah) ayahSelection).getSelectionIndicator();
       } else if (ayahSelection instanceof AyahSelection.AyahRange) {
         final AyahSelection.AyahRange range = ((AyahSelection.AyahRange) ayahSelection);
         start = range.getStartSuraAyah();
         end = range.getEndSuraAyah();
-        ayahToolBarPos = range.getSelectionIndicator();
       }
     } else {
       start = null;
       end = null;
-      ayahToolBarPos = SelectionIndicator.None.INSTANCE;
       if (isInAyahMode) {
         endAyahMode();
       }
