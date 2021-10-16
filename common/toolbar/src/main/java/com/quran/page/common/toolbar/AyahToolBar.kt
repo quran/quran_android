@@ -78,11 +78,18 @@ class AyahToolBar @JvmOverloads constructor(
     val inflater = MenuInflater(this.context)
     inflater.inflate(ayahMenu, menu)
     showMenu(menu)
+  }
 
+  override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
     // inject the present and bind
-    (context as AyahToolBarInjector)
-      .injectToolBar(this)
+    (context as AyahToolBarInjector).injectToolBar(this)
     ayahToolBarPresenter.bind(this)
+  }
+
+  override fun onDetachedFromWindow() {
+    ayahToolBarPresenter.unbind(this)
+    super.onDetachedFromWindow()
   }
 
   override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {

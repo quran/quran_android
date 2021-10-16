@@ -17,13 +17,13 @@ import javax.inject.Inject
 
 class AyahToolBarPresenter @Inject constructor(
   bookmarkModel: BookmarkModel,
-  readingEventPresenter: ReadingEventPresenter
+  private val readingEventPresenter: ReadingEventPresenter
 ) {
   private val scope = MainScope()
   private val bookmarkToCheckChannel = Channel<SuraAyah>(Channel.CONFLATED)
 
   private var currentSuraAyah: SuraAyah? = null
-  private lateinit var ayahSelectionReactor: AyahSelectionReactor
+  private var ayahSelectionReactor: AyahSelectionReactor? = null
 
   init {
     readingEventPresenter
@@ -38,7 +38,7 @@ class AyahToolBarPresenter @Inject constructor(
         }
 
         if (readingEventPresenter.currentAyahSelection().startSuraAyah() == result.first) {
-          ayahSelectionReactor.updateBookmarkStatus(result.second)
+          ayahSelectionReactor?.updateBookmarkStatus(result.second)
         }
       }
       .launchIn(scope)
@@ -53,10 +53,18 @@ class AyahToolBarPresenter @Inject constructor(
       bookmarkToCheckChannel.trySend(selectedAyah)
     }
 
-    ayahSelectionReactor.onSelectionChanged(ayahSelection.selectionIndicator(), isDifferentSuraAyah)
+    ayahSelectionReactor?.onSelectionChanged(
+      ayahSelection.selectionIndicator(), isDifferentSuraAyah)
   }
 
   fun bind(reactor: AyahSelectionReactor) {
     ayahSelectionReactor = reactor
+    onAyahSelectionChanged(readingEventPresenter.ayahSelectionFlow.value)
+  }
+
+  fun unbind(reactor: AyahSelectionReactor) {
+    if (ayahSelectionReactor === reactor) {
+      ayahSelectionReactor = null
+    }
   }
 }
