@@ -84,7 +84,6 @@ interface ApplicationComponent {
   fun inject(quranAdvancedSettingsFragment: QuranAdvancedSettingsFragment)
   fun inject(suraListFragment: SuraListFragment)
   fun inject(juzListFragment: JuzListFragment)
-  fun inject(ayahPlaybackFragment: AyahPlaybackFragment)
   fun inject(jumpFragment: JumpFragment)
 
   // dialogs

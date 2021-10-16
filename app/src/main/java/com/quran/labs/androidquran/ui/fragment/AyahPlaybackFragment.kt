@@ -12,7 +12,6 @@ import android.widget.Button
 import android.widget.CheckBox
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
-import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.R.array
 import com.quran.labs.androidquran.R.dimen
@@ -134,7 +133,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
-    (context.applicationContext as QuranApplication).applicationComponent.inject(this)
+    (activity as? PagerActivity)?.pagerActivityComponent?.inject(this)
   }
 
   private val onClickListener = View.OnClickListener { v: View ->

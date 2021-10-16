@@ -7,6 +7,7 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.ui.fragment.AyahPlaybackFragment;
 import com.quran.labs.androidquran.ui.fragment.AyahTranslationFragment;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
+import com.quran.labs.androidquran.ui.fragment.TagBookmarkFragment;
 import com.quran.labs.androidquran.view.IconPageIndicator;
 
 public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
@@ -43,7 +44,7 @@ public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
     final int pos = getPagePosition(position);
     switch (pos) {
       case TAG_PAGE:
-        return new TagBookmarkDialog();
+        return new TagBookmarkFragment();
       case TRANSLATION_PAGE:
         return new AyahTranslationFragment();
       case AUDIO_PAGE:

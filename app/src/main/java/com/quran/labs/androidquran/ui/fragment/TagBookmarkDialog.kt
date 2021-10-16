@@ -2,18 +2,13 @@ package com.quran.labs.androidquran.ui.fragment
 
 import android.app.Dialog
 import android.content.Context
-import javax.inject.Inject
-import com.quran.data.core.QuranInfo
-import com.quran.labs.androidquran.presenter.bookmark.TagBookmarkPresenter
-import com.quran.labs.androidquran.QuranApplication
-import com.quran.data.model.SuraAyah
-import android.os.Bundle
-import android.widget.AdapterView.OnItemClickListener
-import android.widget.AdapterView
 import android.content.DialogInterface
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
 import android.widget.BaseAdapter
 import android.widget.CheckBox
 import android.widget.ImageView
@@ -23,45 +18,27 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AlertDialog.Builder
 import androidx.fragment.app.DialogFragment
 import com.quran.data.model.bookmark.Tag
-import com.quran.data.model.selection.AyahSelection
-import com.quran.data.model.selection.startSuraAyah
+import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R.id
 import com.quran.labs.androidquran.R.layout
 import com.quran.labs.androidquran.R.string
-import com.quran.reading.common.AudioEventPresenter
-import com.quran.reading.common.ReadingEventPresenter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import java.util.HashSet
+import com.quran.labs.androidquran.presenter.bookmark.TagBookmarkPresenter
+import javax.inject.Inject
 
-class TagBookmarkDialog : DialogFragment() {
-  private var scope: CoroutineScope = MainScope()
+open class TagBookmarkDialog : DialogFragment() {
   private var adapter: TagsAdapter? = null
-
-  @Inject
-  lateinit var quranInfo: QuranInfo
 
   @Inject
   lateinit var tagBookmarkPresenter: TagBookmarkPresenter
 
-  @Inject
-  lateinit var readingEventPresenter: ReadingEventPresenter
-
-  @Inject
-  lateinit var audioEventPresenter: AudioEventPresenter
-
   override fun onAttach(context: Context) {
     super.onAttach(context)
-    (context.applicationContext as QuranApplication).applicationComponent.inject(this)
+    if (shouldInject()) {
+      (context.applicationContext as QuranApplication).applicationComponent.inject(this)
+    }
   }
 
-  private fun updateAyah(suraAyah: SuraAyah) {
-    val page = quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah)
-    tagBookmarkPresenter.setAyahBookmarkMode(suraAyah.sura, suraAyah.ayah, page)
-  }
+  open fun shouldInject() = true
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -72,26 +49,6 @@ class TagBookmarkDialog : DialogFragment() {
         tagBookmarkPresenter.setBookmarksMode(bookmarkIds)
       }
     }
-
-    scope = MainScope()
-    readingEventPresenter.ayahSelectionFlow
-      .combine(audioEventPresenter.audioPlaybackAyahFlow) { selectedAyah, playbackAyah ->
-        val start = when {
-          selectedAyah !is AyahSelection.None -> selectedAyah.startSuraAyah()
-          playbackAyah != null -> playbackAyah
-          else -> null
-        }
-
-        if (start != null) {
-          updateAyah(start)
-        }
-      }
-      .launchIn(scope)
-  }
-
-  override fun onDestroy() {
-    scope.cancel()
-    super.onDestroy()
   }
 
   private fun createTagsListView(): ListView {

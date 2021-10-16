@@ -1,6 +1,7 @@
 package com.quran.reading.common
 
 import com.quran.data.core.QuranInfo
+import com.quran.data.di.ActivityScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.SelectionIndicator
@@ -13,9 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ActivityScope
 class ReadingEventPresenter @Inject constructor(private val quranInfo: QuranInfo) {
   private val clicksInternalFlow = MutableSharedFlow<Unit>(
     replay = 0,
