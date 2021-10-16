@@ -74,8 +74,15 @@ class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabas
 
   fun bulkDelete(tagIds: List<Long>, bookmarkIds: List<Long>, untag: List<Pair<Long, Long>>) {
     bookmarkQueries.transaction {
-      tagQueries.deleteByIds(tagIds)
-      bookmarkQueries.deleteByIds(bookmarkIds)
+      if (tagIds.isNotEmpty()) {
+        bookmarkTagQueries.deleteByTagIds(tagIds)
+        tagQueries.deleteByIds(tagIds)
+      }
+
+      if (bookmarkIds.isNotEmpty()) {
+        bookmarkQueries.deleteByIds(bookmarkIds)
+      }
+
       untag.forEach { bookmarkTagQueries.untag(it.first, it.second) }
     }
   }

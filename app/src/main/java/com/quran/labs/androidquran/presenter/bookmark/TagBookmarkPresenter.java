@@ -46,14 +46,11 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
     // and we don't need to worry about disposing it.
     this.bookmarkModel.tagsObservable()
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(tag -> {
+        .subscribe(ignore -> {
           shouldRefreshTags = true;
           if (tags != null && dialog != null) {
-            // change this if we support updating tags from outside of QuranActivity
-            tags.add(tags.size() - 1, tag);
-            checkedTags.add(tag.getId());
-            dialog.setData(tags, checkedTags);
-            setMadeChanges();
+            saveChanges();
+            refresh();
           }
         });
   }
