@@ -203,10 +203,6 @@ class AyahTrackerPresenter @Inject constructor(
     readingEventPresenter.onAyahSelection(AyahSelection.None)
   }
 
-  fun requestMenuPositionUpdate(ayahSelectedListener: AyahSelectedListener) {
-    ayahSelectedListener.requestMenuPositionUpdate(this)
-  }
-
   fun handleTouchEvent(
     activity: Activity,
     event: MotionEvent,

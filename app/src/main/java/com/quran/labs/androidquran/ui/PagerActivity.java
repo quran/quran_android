@@ -1820,16 +1820,6 @@ public class PagerActivity extends AppCompatActivity implements
     }
   }
 
-  @Override
-  public void requestMenuPositionUpdate(AyahTracker tracker) {
-    if (start != null) {
-      ayahToolBarPos = tracker.getToolBarPosition(start.sura, start.ayah);
-      if (ayahToolBarPos != SelectionIndicator.None.INSTANCE) {
-        readingEventPresenterBridge.withSelectionIndicator(ayahToolBarPos);
-      }
-    }
-  }
-
   private void shareAyah(SuraAyah start, SuraAyah end, final boolean isCopy) {
     if (start == null || end == null) {
       return;

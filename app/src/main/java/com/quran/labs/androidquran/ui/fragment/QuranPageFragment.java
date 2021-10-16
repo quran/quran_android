@@ -233,8 +233,5 @@ public class QuranPageFragment extends Fragment implements PageController,
 
   @Override
   public void requestMenuPositionUpdate() {
-    if (isVisible()) {
-      ayahTrackerPresenter.requestMenuPositionUpdate(ayahSelectedListener);
-    }
   }
 }

@@ -15,6 +15,7 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
+import com.quran.data.model.selection.AyahSelection;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranDisplayData;
@@ -42,6 +43,7 @@ import com.quran.labs.androidquran.view.TabletView;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
+import com.quran.reading.common.ReadingEventPresenter;
 import dagger.Lazy;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import java.util.List;
@@ -91,6 +93,7 @@ public class TabletFragment extends Fragment
   @Inject QuranInfo quranInfo;
   @Inject QuranDisplayData quranDisplayData;
   @Inject Set<ImageDrawHelper> imageDrawHelpers;
+  @Inject ReadingEventPresenter readingEventPresenter;
 
   public static TabletFragment newInstance(int firstPage, int mode, boolean isSplitScreen) {
     final TabletFragment f = new TabletFragment();
@@ -459,7 +462,21 @@ public class TabletFragment extends Fragment
   @Override
   public void requestMenuPositionUpdate() {
     if (isVisible()) {
-      ayahTrackerPresenter.requestMenuPositionUpdate(ayahSelectedListener);
+      final TranslationView[] views = new TranslationView[] { rightTranslation, leftTranslation };
+      for (TranslationView view : views) {
+        if (view != null) {
+          final AyahSelection ayahSelection = readingEventPresenter.currentAyahSelection();
+          if (ayahSelection instanceof AyahSelection.Ayah) {
+            final AyahSelection.Ayah currentAyahSelection = ((AyahSelection.Ayah) ayahSelection);
+            final SuraAyah suraAyah = currentAyahSelection.getSuraAyah();
+
+            readingEventPresenter.onAyahSelection(
+                new AyahSelection.Ayah(suraAyah,
+                    view.getToolbarPosition(suraAyah.sura, suraAyah.ayah))
+            );
+          }
+        }
+      }
     }
   }
 }
