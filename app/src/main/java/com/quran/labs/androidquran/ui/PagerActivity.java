@@ -603,7 +603,7 @@ public class PagerActivity extends AppCompatActivity implements
   private void onAudioPlaybackAyahChanged(@Nullable SuraAyah suraAyah) {
     if (suraAyah != null) {
       // continue to snap back to the page when the playback ayah changes
-      ensurePage(suraAyah.sura, suraAyah.ayah, true);
+      ensurePage(suraAyah.sura, suraAyah.ayah);
     }
   }
 
@@ -887,7 +887,7 @@ public class PagerActivity extends AppCompatActivity implements
 
       if (highlightedAyah > 0 && highlightedSura > 0) {
         // this will jump to the right page automagically
-        ensurePage(highlightedSura, highlightedAyah, true);
+        ensurePage(highlightedSura, highlightedAyah);
       } else {
         if (isDualPageVisible()) {
           page = page / 2;
@@ -1310,17 +1310,14 @@ public class PagerActivity extends AppCompatActivity implements
     }
   }
 
-  private int ensurePage(int sura, int ayah, boolean force) {
+  private void ensurePage(int sura, int ayah) {
     int page = quranInfo.getPageFromSuraAyah(sura, ayah);
-    if (page < Constants.PAGES_FIRST || numberOfPages < page) {
-      return -1;
+    if (page >= Constants.PAGES_FIRST && page <= numberOfPages) {
+      int position = quranInfo.getPositionFromPage(page, isDualPageVisible());
+      if (position != viewPager.getCurrentItem()) {
+        viewPager.setCurrentItem(position);
+      }
     }
-
-    int position = quranInfo.getPositionFromPage(page, isDualPageVisible());
-    if (position != viewPager.getCurrentItem() && force) {
-      viewPager.setCurrentItem(position);
-    }
-    return position;
   }
 
   private void requestTranslationsList() {
@@ -1628,16 +1625,12 @@ public class PagerActivity extends AppCompatActivity implements
 
   // region Ayah selection
 
-  public SuraAyah getSelectionStart() {
+  private SuraAyah getSelectionStart() {
     final AyahSelection currentSelection = readingEventPresenter.currentAyahSelection();
     return AyahSelectionKt.startSuraAyah(currentSelection);
   }
 
-  public SuraAyah currentPlaybackSuraAyah() {
-    return audioEventPresenter.currentPlaybackAyah();
-  }
-
-  public SuraAyah getSelectionEnd() {
+  private SuraAyah getSelectionEnd() {
     final AyahSelection currentSelection = readingEventPresenter.currentAyahSelection();
     return AyahSelectionKt.endSuraAyah(currentSelection);
   }
@@ -1648,43 +1641,6 @@ public class PagerActivity extends AppCompatActivity implements
 
   public void endAyahMode() {
     slidingPanel.collapsePane();
-    readingEventPresenter.onAyahSelection(AyahSelection.None.INSTANCE);
-  }
-
-  public void nextAyah() {
-    final SuraAyah end = getSelectionEnd();
-    if (end != null) {
-      final int ayat = quranInfo.getNumberOfAyahs(end.sura);
-
-      final SuraAyah s;
-      if (end.ayah + 1 <= ayat) {
-        s = new SuraAyah(end.sura, end.ayah + 1);
-      } else if (end.sura < 114) {
-        s = new SuraAyah(end.sura + 1, 1);
-      } else {
-        return;
-      }
-      selectAyah(s);
-    }
-  }
-
-  public void previousAyah() {
-    final SuraAyah end = getSelectionEnd();
-    if (end != null) {
-      final SuraAyah s;
-      if (end.ayah > 1) {
-        s = new SuraAyah(end.sura, end.ayah - 1);
-      } else if (end.sura > 1) {
-        s = new SuraAyah(end.sura - 1, quranInfo.getNumberOfAyahs(end.sura - 1));
-      } else {
-        return;
-      }
-      selectAyah(s);
-    }
-  }
-
-  private void selectAyah(SuraAyah s) {
-    readingEventPresenter.onAyahSelection(new AyahSelection.Ayah(s, SelectionIndicator.None.INSTANCE));
   }
 
   //endregion

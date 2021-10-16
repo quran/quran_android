@@ -86,8 +86,8 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
     if (activity is PagerActivity) {
       when (v.id) {
         R.id.get_translations_button -> activity.startTranslationManager()
-        R.id.next_ayah -> activity.nextAyah()
-        R.id.previous_ayah -> activity.previousAyah()
+        R.id.next_ayah -> readingEventPresenter.selectNextAyah()
+        R.id.previous_ayah -> readingEventPresenter.selectPreviousAyah()
       }
     }
   }
