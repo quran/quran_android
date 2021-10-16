@@ -18,4 +18,6 @@ class AudioEventPresenter @Inject constructor() {
       audioPlaybackAyahInternalFlow.value = suraAyah
     }
   }
+
+  fun currentPlaybackAyah(): SuraAyah? = audioPlaybackAyahFlow.value
 }

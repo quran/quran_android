@@ -281,8 +281,8 @@ public class AyahPlaybackFragment extends AyahActionFragment {
   protected void refreshView() {
     final Context context = getActivity();
     if (context instanceof PagerActivity && start != null && end != null) {
-      final AudioRequest lastRequest =
-          ((PagerActivity) context).getLastAudioRequest();
+      final SuraAyah playbackSuraAyah = ((PagerActivity) context).currentPlaybackSuraAyah();
+      final AudioRequest lastRequest = ((PagerActivity) context).getLastAudioRequest();
       final SuraAyah start;
       final SuraAyah ending;
       if (lastRequest != null) {
@@ -295,14 +295,18 @@ public class AyahPlaybackFragment extends AyahActionFragment {
         decidedEnd = ending;
         applyButton.setText(R.string.play_apply);
       } else {
-        start = this.start;
-        if (this.start.equals(end)) {
+        final SuraAyah currentStartSuraAyah =
+            playbackSuraAyah == null ? this.start : playbackSuraAyah;
+        final SuraAyah currentEndingSuraAyah =
+            playbackSuraAyah == null ? this.end : playbackSuraAyah;
+        start = currentStartSuraAyah;
+        if (currentStartSuraAyah.equals(currentEndingSuraAyah)) {
           final int startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah);
           final int[] pageBounds = quranInfo.getPageBounds(startPage);
           ending = new SuraAyah(pageBounds[2], pageBounds[3]);
           shouldEnforce = false;
         } else {
-          ending = end;
+          ending = currentEndingSuraAyah;
           shouldEnforce = true;
         }
         rangeRepeatCount = 0;

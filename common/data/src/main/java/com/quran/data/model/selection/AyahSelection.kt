@@ -39,3 +39,10 @@ fun AyahSelection.startSuraAyah(): SuraAyah? =
     is AyahRange -> startSuraAyah
     None -> null
   }
+
+fun AyahSelection.endSuraAyah(): SuraAyah? =
+  when (this) {
+    is Ayah -> suraAyah
+    is AyahRange -> endSuraAyah
+    None -> null
+  }
