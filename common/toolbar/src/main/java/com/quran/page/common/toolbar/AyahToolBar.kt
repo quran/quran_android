@@ -193,7 +193,7 @@ class AyahToolBar @JvmOverloads constructor(
     setBookmarked(isBookmarked)
   }
 
-  fun updatePosition(position: SelectionIndicator) {
+  private fun updatePosition(position: SelectionIndicator) {
     val parentView = parent as View
     val internalPosition = position.toInternalPosition(
       parentView.width, parentView.height, toolBarWidth, toolBarTotalHeight
@@ -223,17 +223,17 @@ class AyahToolBar @JvmOverloads constructor(
     toolBarPip.ensurePosition(position)
   }
 
-  fun resetMenu() {
+  private fun resetMenu() {
     showMenu(menu)
   }
 
-  fun showMenu() {
+  private fun showMenu() {
     showMenu(menu)
     visibility = VISIBLE
     isShowing = true
   }
 
-  fun hideMenu() {
+  private fun hideMenu() {
     isShowing = false
     visibility = GONE
   }
