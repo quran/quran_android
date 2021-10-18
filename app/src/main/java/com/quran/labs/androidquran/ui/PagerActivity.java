@@ -1615,6 +1615,7 @@ public class PagerActivity extends AppCompatActivity implements
   @Override
   public void onBackPressed() {
     if (getSelectionStart() != null) {
+      readingEventPresenterBridge.clearSelectedAyah();
       endAyahMode();
     } else if (showingTranslation) {
       switchToQuran();
