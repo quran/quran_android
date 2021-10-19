@@ -1615,7 +1615,6 @@ public class PagerActivity extends AppCompatActivity implements
   @Override
   public void onBackPressed() {
     if (getSelectionStart() != null) {
-      readingEventPresenterBridge.clearSelectedAyah();
       endAyahMode();
     } else if (showingTranslation) {
       switchToQuran();
@@ -1641,6 +1640,7 @@ public class PagerActivity extends AppCompatActivity implements
   }
 
   public void endAyahMode() {
+    readingEventPresenterBridge.clearSelectedAyah();
     slidingPanel.collapsePane();
   }
 
