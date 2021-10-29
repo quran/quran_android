@@ -70,13 +70,16 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
   private ObservableScrollView scrollView;
   private @BorderMode int leftBorder;
   private @BorderMode int rightBorder;
-  private final View innerView;
-  private final int viewPaddingSmall;
-  private final int viewPaddingLarge;
+  private View innerView;
+  private int viewPaddingSmall;
+  private int viewPaddingLarge;
 
   public QuranPageLayout(Context context) {
     super(context);
     this.context = context;
+  }
+
+  public void initialize() {
     ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_LTR);
     Resources resources = context.getResources();
     final boolean isLandscape =
@@ -192,7 +195,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     }
   }
 
-  protected abstract View generateContentView(Context context, boolean isLandscape);
+  protected abstract View generateContentView(@NonNull Context context, boolean isLandscape);
 
   protected boolean shouldWrapWithScrollView() {
     return true;
