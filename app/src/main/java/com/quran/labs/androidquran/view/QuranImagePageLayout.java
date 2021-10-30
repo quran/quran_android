@@ -21,10 +21,11 @@ public class QuranImagePageLayout extends QuranPageLayout {
 
   public QuranImagePageLayout(Context context) {
     super(context);
+    initialize();
   }
 
   @Override
-  protected View generateContentView(Context context, boolean isLandscape) {
+  protected View generateContentView(@NonNull Context context, boolean isLandscape) {
     imageView = new HighlightingImageView(context);
     imageView.setAdjustViewBounds(true);
     imageView.setIsScrollable(isLandscape && shouldWrapWithScrollView(), isLandscape);

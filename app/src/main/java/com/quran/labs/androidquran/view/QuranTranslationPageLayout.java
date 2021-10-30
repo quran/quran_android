@@ -16,10 +16,11 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
   public QuranTranslationPageLayout(Context context) {
     super(context);
     isFullWidth = true;
+    initialize();
   }
 
   @Override
-  protected View generateContentView(Context context, boolean isLandscape) {
+  protected View generateContentView(@NonNull Context context, boolean isLandscape) {
     translationView = new TranslationView(context);
     return translationView;
   }
