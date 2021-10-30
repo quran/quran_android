@@ -13,10 +13,6 @@ import android.widget.CheckBox
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.R.array
-import com.quran.labs.androidquran.R.dimen
-import com.quran.labs.androidquran.R.layout
-import com.quran.labs.androidquran.R.string
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
@@ -57,7 +53,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
     container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    val view = inflater.inflate(layout.audio_panel, container, false)
+    val view = inflater.inflate(R.layout.audio_panel, container, false)
     view.setOnClickListener(onClickListener)
     startSuraSpinner = view.findViewById(R.id.start_sura_spinner)
     startAyahSpinner = view.findViewById(R.id.start_ayah_spinner)
@@ -81,7 +77,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
     for (i in 1..MAX_REPEATS) {
       values[i - 1] = numberFormat.format(i.toLong())
     }
-    values[MAX_REPEATS] = getString(string.infinity)
+    values[MAX_REPEATS] = getString(R.string.infinity)
     if (isArabicNames) {
       repeatVersePicker.formatter = NumberPicker.Formatter { value: Int -> arFormat(value) }
       repeatRangePicker.formatter = NumberPicker.Formatter { value: Int -> arFormat(value) }
@@ -91,10 +87,10 @@ class AyahPlaybackFragment : AyahActionFragment() {
       repeatRangePicker.typeface = typeface
       repeatRangePicker.setSelectedTypeface(typeface)
       // Use larger text size since KFGQPC font is small
-      repeatVersePicker.setSelectedTextSize(dimen.arabic_number_picker_selected_text_size)
-      repeatRangePicker.setSelectedTextSize(dimen.arabic_number_picker_selected_text_size)
-      repeatVersePicker.setTextSize(dimen.arabic_number_picker_text_size)
-      repeatRangePicker.setTextSize(dimen.arabic_number_picker_text_size)
+      repeatVersePicker.setSelectedTextSize(R.dimen.arabic_number_picker_selected_text_size)
+      repeatRangePicker.setSelectedTextSize(R.dimen.arabic_number_picker_selected_text_size)
+      repeatVersePicker.setTextSize(R.dimen.arabic_number_picker_text_size)
+      repeatRangePicker.setTextSize(R.dimen.arabic_number_picker_text_size)
     }
     repeatVersePicker.minValue = 1
     repeatVersePicker.maxValue = MAX_REPEATS + 1
@@ -114,7 +110,8 @@ class AyahPlaybackFragment : AyahActionFragment() {
     endingAyahAdapter = initializeAyahSpinner(context, endingAyahSpinner)
     initializeSuraSpinner(context, startSuraSpinner, startAyahAdapter)
     initializeSuraSpinner(context, endingSuraSpinner, endingAyahAdapter)
-    val repeatOptions = context.resources.getStringArray(array.repeatValues)
+
+    val repeatOptions = context.resources.getStringArray(R.array.repeatValues)
     val rangeAdapter = ArrayAdapter<CharSequence>(context, ITEM_LAYOUT, repeatOptions)
     rangeAdapter.setDropDownViewResource(
       ITEM_DROPDOWN_LAYOUT
@@ -210,7 +207,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
     spinner: QuranSpinner,
     ayahAdapter: ArrayAdapter<CharSequence>?
   ) {
-    val suras = context.resources.getStringArray(array.sura_names)
+    val suras = context.resources.getStringArray(R.array.sura_names)
     for (i in suras.indices) {
       suras[i] = QuranUtils.getLocalizedNumber(context, i + 1) +
           ". " + suras[i]
@@ -241,6 +238,10 @@ class AyahPlaybackFragment : AyahActionFragment() {
   ): ArrayAdapter<CharSequence> {
     val ayahAdapter = ArrayAdapter<CharSequence>(context, ITEM_LAYOUT)
     ayahAdapter.setDropDownViewResource(ITEM_DROPDOWN_LAYOUT)
+    // initialize the ayah spinner with a single item - "100" - without
+    // doing this, measurement can't measure the item and makes the width
+    // less than what it should be
+    ayahAdapter.add(QuranUtils.getLocalizedNumber(context, 100))
     spinner.adapter = ayahAdapter
     return ayahAdapter
   }
@@ -283,7 +284,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
         shouldEnforce = lastRequest.enforceBounds
         decidedStart = start
         decidedEnd = ending
-        applyButton.setText(string.play_apply)
+        applyButton.setText(R.string.play_apply)
       } else {
         // we have no last audio request, so we're not playing audio... yet
         start = selectionStart
@@ -300,7 +301,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
         verseRepeatCount = 0
         decidedStart = null
         decidedEnd = null
-        applyButton.setText(string.play_apply_and_play)
+        applyButton.setText(R.string.play_apply_and_play)
       }
       val maxAyat = quranInfo.getNumberOfAyahs(start.sura)
       if (maxAyat == -1) {
@@ -322,8 +323,8 @@ class AyahPlaybackFragment : AyahActionFragment() {
   }
 
   companion object {
-    private const val ITEM_LAYOUT = layout.sherlock_spinner_item
-    private const val ITEM_DROPDOWN_LAYOUT = layout.sherlock_spinner_dropdown_item
+    private const val ITEM_LAYOUT = R.layout.sherlock_spinner_item
+    private const val ITEM_DROPDOWN_LAYOUT = R.layout.sherlock_spinner_dropdown_item
     private const val MAX_REPEATS = 25
   }
 }
