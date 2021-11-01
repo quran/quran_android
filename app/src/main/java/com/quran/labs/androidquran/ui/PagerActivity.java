@@ -1724,6 +1724,11 @@ public class PagerActivity extends AppCompatActivity implements
 
     final LocalTranslation[] translationNames = lastActivatedLocalTranslations;
     if (showingTranslation && translationNames != null) {
+
+      // temporarily required so "lastSelectedTranslationAyah" isn't null
+      // the real solution is to move this sharing logic out of PagerActivity
+      // in the future and avoid this back and forth with the translation fragment.
+      updateLocalTranslations(start);
       final QuranAyahInfo quranAyahInfo = lastSelectedTranslationAyah;
       if (quranAyahInfo != null) {
         final String shareText = shareUtil.getShareText(this, quranAyahInfo, translationNames);
