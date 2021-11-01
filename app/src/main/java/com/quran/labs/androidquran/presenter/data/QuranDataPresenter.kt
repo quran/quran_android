@@ -15,6 +15,7 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.model.QuranDataStatus
 import com.quran.data.source.PageProvider
 import com.quran.common.upgrade.LocalDataUpgrade
+import com.quran.data.source.PageContentType
 import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.presenter.Presenter
@@ -110,6 +111,17 @@ class QuranDataPresenter @Inject internal constructor(
     WorkManager.getInstance(appContext)
         .enqueueUniquePeriodicWork(Constants.AUDIO_UPDATE_UNIQUE_WORK,
             ExistingPeriodicWorkPolicy.KEEP, updateAudioTask)
+  }
+
+  fun imagesVersion() = quranPageProvider.getImageVersion()
+
+  fun canProceedWithoutDownload() = quranPageProvider.getPageContentType() == PageContentType.IMAGE
+
+  fun fallbackToImageType() {
+    val fallbackType = quranPageProvider.getFallbackPageType()
+    if (fallbackType != null) {
+      quranSettings.pageType = fallbackType
+    }
   }
 
   fun getDebugLog(): String = debugLog ?: ""

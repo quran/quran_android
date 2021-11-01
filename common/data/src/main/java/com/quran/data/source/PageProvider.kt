@@ -24,4 +24,5 @@ interface PageProvider {
   @StringRes fun getPreviewDescription(): Int
 
   fun getPageContentType(): PageContentType = PageContentType.IMAGE
+  fun getFallbackPageType(): String? = null
 }
