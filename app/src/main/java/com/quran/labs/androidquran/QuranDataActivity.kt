@@ -20,7 +20,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
 import com.quran.common.upgrade.PreferencesUpgrade
 import com.quran.data.model.QuranDataStatus
-import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.presenter.data.QuranDataPresenter
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
@@ -34,8 +33,8 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.worker.WorkerConstants
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -66,9 +65,6 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
 
   @Inject
   lateinit var quranScreenInfo: QuranScreenInfo
-
-  @Inject
-  lateinit var quranPageProvider: PageProvider
 
   @Inject
   lateinit var quranDataPresenter: QuranDataPresenter
@@ -181,7 +177,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
 
     if (path == null) {
       // error case: suggests that we're on m+ and we have no fallback
-      runListView()
+      runListViewWithoutPages()
       return
     }
 
@@ -234,7 +230,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
           } else {
             // set to null so we can try again next launch
             quranSettings.appCustomLocation = null
-            runListView()
+            runListViewWithoutPages()
           }
         }
         .create()
@@ -307,7 +303,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
         } else {
           // set to null so we can try again next launch
           quranSettings.appCustomLocation = null
-          runListView()
+          runListViewWithoutPages()
         }
       }
     }
@@ -375,7 +371,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
       errorDialog = null
       removeErrorPreferences()
       quranSettings.setShouldFetchPages(false)
-      runListView()
+      runListViewWithoutPages()
     }
     errorDialog = builder.create()
     errorDialog!!.show()
@@ -389,7 +385,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     updateDialog?.dismiss()
     updateDialog = null
     // no storage mounted, nothing we can do...
-    runListView()
+    runListViewWithoutPages()
   }
 
   fun onPagesChecked(quranDataStatus: QuranDataStatus) {
@@ -607,7 +603,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     // if we have a patch url, just use that
     val patchParam = dataStatus.patchParam
     if (!TextUtils.isEmpty(patchParam)) {
-      url = quranFileUtils.getPatchFileUrl(patchParam!!, quranPageProvider.getImageVersion())
+      url = quranFileUtils.getPatchFileUrl(patchParam!!, quranDataPresenter.imagesVersion())
     }
     val destination = quranFileUtils.getQuranImagesBaseDirectory(this@QuranDataActivity)
 
@@ -651,12 +647,26 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     ) { dialog12: DialogInterface, _: Int ->
       dialog12.dismiss()
       promptForDownloadDialog = null
-      runListView()
+      val isPatch = dataStatus.patchParam?.isNotEmpty() == true
+      if (isPatch) {
+        // for patches, we have the pages, so we can just show the list no problem
+        runListView()
+      } else {
+        runListViewWithoutPages()
+      }
     }
     val promptForDownloadDialog = dialog.create()
     promptForDownloadDialog.setTitle(R.string.downloadPrompt_title)
     promptForDownloadDialog.show()
     this.promptForDownloadDialog = promptForDownloadDialog
+  }
+
+  private fun runListViewWithoutPages() {
+    if (!quranDataPresenter.canProceedWithoutDownload()) {
+      // we only have download on demand for full page images, so fallback
+      quranDataPresenter.fallbackToImageType()
+    }
+    runListView()
   }
 
   private fun runListView() {
