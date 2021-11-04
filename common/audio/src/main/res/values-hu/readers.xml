@@ -59,5 +59,7 @@
   <string name="qari_fares_abbad_gapless">Fares Abbad (szünetmentes)</string>
   <string name="qari_khalifa_taniji_gapless">Khalifa Taniji (szünetmentes)</string>
   <string name="qari_abdullah_matroud_gapless">Abdullah Matroud (szünetmentes)</string>
- <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (szünetmentes)</string>
+  <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (szünetmentes)</string>
+  <string name="qari_hudhayfi_gapless">Ali Al-Hudhaify (szünetmentes)</string>
+  <string name="qari_khaled_muhanna_gapless">Khaled Al-Muhanna (szünetmentes)</string>
 </resources>
