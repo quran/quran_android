@@ -261,9 +261,7 @@ class JumpFragment : DialogFragment() {
 
     private fun prepareForSearch(input: String, isRtl: Boolean): String {
       return if (isRtl) {
-        input.replace(tashkeelRegex, "")
-          .replace(alifReplacementsRegex, "\u0627")
-          .replace(wawReplacementsRegex, "\u0648")
+        normalizeAlifsAndWaws(input.replace(tashkeelRegex, ""))
       } else {
         // via https://stackoverflow.com/questions/51731574/
         Normalizer.normalize(input, Normalizer.Form.NFD)
@@ -272,6 +270,11 @@ class JumpFragment : DialogFragment() {
           .lowercase()
       }
     }
+
+    private fun normalizeAlifsAndWaws(input: String): String =
+      input
+        .replace(alifReplacementsRegex, "\u0627")
+        .replace(wawReplacementsRegex, "\u0648")
 
     /**
      * Filter that do filtering by matching case-insensitive infix of the input.
@@ -285,7 +288,7 @@ class JumpFragment : DialogFragment() {
           results.values = originalItems
           results.count = originalItems.size
         } else {
-          val infix = constraint.toString().lowercase(Locale.getDefault())
+          val infix = cleanUpQueryString(constraint.toString())
           val filteredIndex = infix.toIntOrNull()?.toString()
           val filteredCopy = originalItems.filterIndexed { index, sura ->
             searchPreparedItems[index].contains(infix) ||
@@ -296,6 +299,14 @@ class JumpFragment : DialogFragment() {
           results.count = filteredCopy.size
         }
         return results
+      }
+
+      private fun cleanUpQueryString(query: String): String {
+        return if (QuranUtils.isRtl(query)) {
+          normalizeAlifsAndWaws(query)
+        } else {
+          query.lowercase()
+        }
       }
 
       override fun publishResults(constraint: CharSequence, results: FilterResults) {
