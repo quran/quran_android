@@ -37,13 +37,13 @@ class QuranActivityTest : BaseActivityTest() {
     //when
     Espresso.onView(
         Matchers.allOf(
-            ViewMatchers.withText("Surah Al-Fatihah"), ViewMatchers.isCompletelyDisplayed()
+            ViewMatchers.withText("Surah Al-Fâtihah"), ViewMatchers.isCompletelyDisplayed()
         )
     ).perform(ViewActions.click())
 
     //then
     Intents.intended(IntentMatchers.hasComponent(PagerActivity::class.java.name))
-    Espresso.onView(ViewMatchers.withText("Surah Al-Fatihah"))
+    Espresso.onView(ViewMatchers.withText("Surah Al-Fâtihah"))
         .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
   }
 }
