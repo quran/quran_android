@@ -228,6 +228,11 @@ class JumpFragment : DialogFragment() {
     // via https://stackoverflow.com/questions/25562974/
     private val tashkeelRegex = "[\\x{064B}-\\x{065B}]|[\\x{063B}-\\x{063F}]|[\\x{064B}-\\x{065E}]|[\\x{066A}-\\x{06FF}]".toRegex()
 
+    // alifs with hamzas that we'll replace with \u0627
+    private val alifReplacementsRegex = "[\\u0622\\u0623\\u0625\\u0649]".toRegex()
+    // waw with hamza to replace with \u0648
+    private val wawReplacementsRegex = "\\u0624".toRegex()
+
     // extra characters to remove when comparing non-Arabic strings
     private val charactersToReplaceRegex = "['`]".toRegex()
     private val searchPreparedItems = originalItems.map { prepareForSearch(it, isRtl) }
@@ -257,6 +262,8 @@ class JumpFragment : DialogFragment() {
     private fun prepareForSearch(input: String, isRtl: Boolean): String {
       return if (isRtl) {
         input.replace(tashkeelRegex, "")
+          .replace(alifReplacementsRegex, "\u0627")
+          .replace(wawReplacementsRegex, "\u0648")
       } else {
         // via https://stackoverflow.com/questions/51731574/
         Normalizer.normalize(input, Normalizer.Form.NFD)
