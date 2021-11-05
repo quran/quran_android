@@ -32,6 +32,7 @@ import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.ForceCompleteTextView
 import timber.log.Timber
+import java.text.Normalizer
 import java.util.Locale
 import javax.inject.Inject
 
@@ -128,7 +129,7 @@ class JumpFragment : DialogFragment() {
       //  trigger ayah change
       val ayahValue: CharSequence = ayahInput.text
       // space is intentional, to differentiate with value set by the user (delete/backspace)
-      ayahInput.setText(if (ayahValue.isNotEmpty()) ayahValue else " ")
+      ayahInput.setText(ayahValue.ifEmpty { " " })
     }
 
     ayahInput.addTextChangedListener(object : TextWatcher {
@@ -219,6 +220,22 @@ class JumpFragment : DialogFragment() {
     private var items: List<String>
     private val inflater: LayoutInflater
     private val filter: Filter = ItemFilter()
+    private val isRtl = QuranUtils.isRtl(originalItems.first())
+
+    // via https://stackoverflow.com/questions/51731574/
+    private val nonSpacingCombiningCharactersRegex = "\\p{Mn}+".toRegex()
+
+    // via https://stackoverflow.com/questions/25562974/
+    private val tashkeelRegex = "[\\x{064B}-\\x{065B}]|[\\x{063B}-\\x{063F}]|[\\x{064B}-\\x{065E}]|[\\x{066A}-\\x{06FF}]".toRegex()
+
+    // alifs with hamzas that we'll replace with \u0627
+    private val alifReplacementsRegex = "[\\u0622\\u0623\\u0625\\u0649]".toRegex()
+    // waw with hamza to replace with \u0648
+    private val wawReplacementsRegex = "\\u0624".toRegex()
+
+    // extra characters to remove when comparing non-Arabic strings
+    private val charactersToReplaceRegex = "['`]".toRegex()
+    private val searchPreparedItems = originalItems.map { prepareForSearch(it, isRtl) }
 
     init {
       this.items = originalItems
@@ -242,6 +259,23 @@ class JumpFragment : DialogFragment() {
 
     override fun getFilter() = filter
 
+    private fun prepareForSearch(input: String, isRtl: Boolean): String {
+      return if (isRtl) {
+        normalizeAlifsAndWaws(input.replace(tashkeelRegex, ""))
+      } else {
+        // via https://stackoverflow.com/questions/51731574/
+        Normalizer.normalize(input, Normalizer.Form.NFD)
+          .replace(nonSpacingCombiningCharactersRegex, "")
+          .replace(charactersToReplaceRegex, "")
+          .lowercase()
+      }
+    }
+
+    private fun normalizeAlifsAndWaws(input: String): String =
+      input
+        .replace(alifReplacementsRegex, "\u0627")
+        .replace(wawReplacementsRegex, "\u0648")
+
     /**
      * Filter that do filtering by matching case-insensitive infix of the input.
      */
@@ -254,10 +288,10 @@ class JumpFragment : DialogFragment() {
           results.values = originalItems
           results.count = originalItems.size
         } else {
-          val infix = constraint.toString().lowercase(Locale.getDefault())
+          val infix = cleanUpQueryString(constraint.toString())
           val filteredIndex = infix.toIntOrNull()?.toString()
           val filteredCopy = originalItems.filterIndexed { index, sura ->
-            sura.lowercase(Locale.getDefault()).contains(infix) ||
+            searchPreparedItems[index].contains(infix) ||
                 // support English numbers in Arabic mode
                 filteredIndex != null && (index + 1).toString().contains(filteredIndex)
           }
@@ -265,6 +299,14 @@ class JumpFragment : DialogFragment() {
           results.count = filteredCopy.size
         }
         return results
+      }
+
+      private fun cleanUpQueryString(query: String): String {
+        return if (QuranUtils.isRtl(query)) {
+          normalizeAlifsAndWaws(query)
+        } else {
+          query.lowercase()
+        }
       }
 
       override fun publishResults(constraint: CharSequence, results: FilterResults) {
