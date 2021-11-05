@@ -59,5 +59,7 @@
   <string name="qari_fares_abbad_gapless">Fares Abbad (muttasil)</string>
   <string name="qari_khalifa_taniji_gapless">Xalifa Tengi (muttasil)</string>
   <string name="qari_abdullah_matroud_gapless">Abdulloh Matroud (muttasil)</string>
- <string name="qari_salah_bukhatir_gapless">Saloh Buxotir (muttasil)</string>
+  <string name="qari_salah_bukhatir_gapless">Saloh Buxotir (muttasil)</string>
+  <string name="qari_hudhayfi_gapless">Ali al-Xuzayfiy (muttasil)</string>
+  <string name="qari_khaled_muhanna_gapless">Xolid al-Muhanna (muttasil)</string>
 </resources>
