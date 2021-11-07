@@ -42,7 +42,7 @@
   <string name="qari_mostafa_ismaeel_gapless">Mostafa Ismaeel (sem intervalo)</string>
   <string name="qari_husary_iza3a_gapless">Husary Broadcast (sem intervalo)</string>
   <string name="qari_abdulaziz_zahrani_gapless">Abdulaziz Az-Zahrani (sem intervalo)</string>
-  <string name="qari_ayman_suwaid">Dr. Ayman Suwaid</string>
+  <string name="qari_ayman_suwaid">Ayman Suwaid</string>
   <string name="qari_afasy_gapless">Mishary Al-Afasy (sem intervalo)</string>
   <string name="qari_hani_rifai_gapless">Hani Ar-Rifai (sem intervalo)</string>
   <string name="qari_ayyoub_gapless">Muhammad Ayyoub (sem intervalo)</string>
@@ -53,7 +53,7 @@
   <string name="qari_afasy_cali_gapless">Mishari Al-Afasy (Califórnia, sem intervalo)</string>
   <string name="qari_ajamy_gapless">Ahmed ibn Ali al-Ajamy (sem intervalo)</string>
   <string name="qari_ali_jaber_gapless">Ali Jaber (sem intervalo)</string>
-  <string name="qari_muaiqly_gapless">Maher Al Muaiqly (Haramain, sem intervalo)</string>
+  <string name="qari_muaiqly_haramain_gapless">Maher Al Muaiqly (Haramain, sem intervalo)</string>
   <string name="qari_juhany_gapless">Abdullah Al-Juhany (sem intervalo)</string>
   <string name="qari_abdulmuhsin_qasim_gapless">Abdul Mohsen Al-Qasim (sem intervalo)</string>
   <string name="qari_fares_abbad_gapless">Fares Abbad (sem intervalo)</string>
@@ -62,4 +62,9 @@
   <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (sem intervalo)</string>
   <string name="qari_hudhayfi_gapless">Ali Al-Hudhaify (sem intervalo)</string>
   <string name="qari_khaled_muhanna_gapless">Khaled Al-Muhanna (sem intervalo)</string>
+  <string name="qari_ayman_suwaid_gapless">Ayman Suwaid (sem intervalo)</string>
+  <string name="qari_husary_mujawwad_gapless">Hosary (Mujawwad, sem intervalo)</string>
+  <string name="qari_husary_muallim_gapless">Husary (Muallim, sem intervalo)</string>
+  <string name="qari_ibrahim_alakhdar_gapless">Ibrahim Al-Akhdar (sem intervalo)</string>
+  <string name="qari_muaiqly_gapless">Maher Al Muaiqly (sem intervalo)</string>
 </resources>

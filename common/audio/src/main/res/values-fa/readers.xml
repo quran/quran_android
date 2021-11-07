@@ -42,7 +42,7 @@
   <string name="qari_mostafa_ismaeel_gapless">مصطفي إسماعيل (بی‌وقفه)</string>
   <string name="qari_husary_iza3a_gapless">الحصري تسجيل الإذاعة (بی‌وقفه)</string>
   <string name="qari_abdulaziz_zahrani_gapless">عبد العزيز بن صالح الزهراني (بی‌وقفه)</string>
-  <string name="qari_ayman_suwaid">د. أيمن سويد</string>
+  <string name="qari_ayman_suwaid">أيمن سويد</string>
   <string name="qari_afasy_gapless">مشاري بن راشد العفاسي (بی‌وقفه)</string>
   <string name="qari_hani_rifai_gapless">هاني الرفاعي (بی‌وقفه)</string>
   <string name="qari_ayyoub_gapless">محمد أيوب (بی‌وقفه)</string>
@@ -53,7 +53,7 @@
   <string name="qari_afasy_cali_gapless">مشاري العفاسي (كاليفورنيا, بی‌وقفه)</string>
   <string name="qari_ajamy_gapless">أحمد بن علي العجمي (بی‌وقفه)</string>
   <string name="qari_ali_jaber_gapless">علی جابر (بی‌وقفه)</string>
-  <string name="qari_muaiqly_gapless">ماهر المعيلقي (الحرمين، بی‌وقفه)</string>
+  <string name="qari_muaiqly_haramain_gapless">ماهر المعيلقي (الحرمين، بی‌وقفه)</string>
   <string name="qari_juhany_gapless">عبدالله الجهني (بی‌وقفه)</string>
   <string name="qari_abdulmuhsin_qasim_gapless">عبد ال محسن القاسم (بی‌وقفه)</string>
   <string name="qari_fares_abbad_gapless">فارس عباد (بی‌وقفه)</string>
@@ -62,4 +62,9 @@
   <string name="qari_salah_bukhatir_gapless">صلاح بوخاطر (بی‌وقفه)</string>
   <string name="qari_hudhayfi_gapless">الحذيفي (بی‌وقفه)</string>
   <string name="qari_khaled_muhanna_gapless">خالد المهنا (بی‌وقفه)</string>
+  <string name="qari_ayman_suwaid_gapless">أيمن سويد (بی‌وقفه)</string>
+  <string name="qari_husary_mujawwad_gapless">الحصري  (مجود، بی‌وقفه)</string>
+ <string name="qari_husary_muallim_gapless">الحصري (معلم، بی‌وقفه)</string>
+ <string name="qari_ibrahim_alakhdar_gapless">ابراهیم الاخضر (بی‌وقفه)</string>
+ <string name="qari_muaiqly_gapless">ماهر المعيلقي (بی‌وقفه)</string>
 </resources>
