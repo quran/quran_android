@@ -62,9 +62,9 @@
   <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (lückenlos)</string>
   <string name="qari_hudhayfi_gapless">Ali Al-Hudhaify (lückenlos)</string>
   <string name="qari_khaled_muhanna_gapless">Khaled Al-Muhanna (lückenlos)</string>
-  <string name="qari_ayman_suwaid_gapless">Ayman Suwaid (lückenlos)</string>
   <string name="qari_husary_mujawwad_gapless">Husary (Mujawwad, lückenlos)</string>
- <string name="qari_husary_muallim_gapless">Husar (Muallim, lückenlos)</string>
- <string name="qari_ibrahim_alakhdar_gapless">Ibrahim Al-Akhdar (lückenlos)</string>
- <string name="qari_muaiqly_gapless">Maher Al Muaiqly (lückenlos)</string>
+  <string name="qari_husary_muallim_gapless">Husar (Muallim, lückenlos)</string>
+  <string name="qari_ibrahim_alakhdar_gapless">Ibrahim Al-Akhdar (lückenlos)</string>
+  <string name="qari_muaiqly_gapless">Maher Al Muaiqly (lückenlos)</string>
+  <string name="qari_yasser_salama_hadr_gapless">Yasser Salama (hadr, lückenlos)</string>
 </resources>

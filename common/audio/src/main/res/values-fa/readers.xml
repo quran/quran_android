@@ -62,9 +62,9 @@
   <string name="qari_salah_bukhatir_gapless">صلاح بوخاطر (بی‌وقفه)</string>
   <string name="qari_hudhayfi_gapless">الحذيفي (بی‌وقفه)</string>
   <string name="qari_khaled_muhanna_gapless">خالد المهنا (بی‌وقفه)</string>
-  <string name="qari_ayman_suwaid_gapless">أيمن سويد (بی‌وقفه)</string>
   <string name="qari_husary_mujawwad_gapless">الحصري  (مجود، بی‌وقفه)</string>
- <string name="qari_husary_muallim_gapless">الحصري (معلم، بی‌وقفه)</string>
- <string name="qari_ibrahim_alakhdar_gapless">ابراهیم الاخضر (بی‌وقفه)</string>
- <string name="qari_muaiqly_gapless">ماهر المعيلقي (بی‌وقفه)</string>
+  <string name="qari_husary_muallim_gapless">الحصري (معلم، بی‌وقفه)</string>
+  <string name="qari_ibrahim_alakhdar_gapless">ابراهیم الاخضر (بی‌وقفه)</string>
+  <string name="qari_muaiqly_gapless">ماهر المعيلقي (بی‌وقفه)</string>
+  <string name="qari_yasser_salama_hadr_gapless">یاسر سلامه (حدر، ی‌وقفه)</string>
 </resources>

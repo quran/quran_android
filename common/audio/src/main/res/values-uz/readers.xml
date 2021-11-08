@@ -62,9 +62,9 @@
   <string name="qari_salah_bukhatir_gapless">Saloh Buxotir (muttasil)</string>
   <string name="qari_hudhayfi_gapless">Ali al-Xuzayfiy (muttasil)</string>
   <string name="qari_khaled_muhanna_gapless">Xolid al-Muhanna (muttasil)</string>
-  <string name="qari_ayman_suwaid_gapless">Ayman Suvayd (muttasil)</string>
   <string name="qari_husary_mujawwad_gapless">Xusoriy (mujavvad, muttasil)</string>
   <string name="qari_husary_muallim_gapless">Husariy (muallim, muttasil)</string>
   <string name="qari_ibrahim_alakhdar_gapless">Ibrohim al-Axdar (muttasil)</string>
   <string name="qari_muaiqly_gapless">Mohir al-Muayqliy (muttasil)</string>
+  <string name="qari_yasser_salama_hadr_gapless">Yosir Salama (hadr, muttasil)</string>
 </resources>

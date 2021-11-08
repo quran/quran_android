@@ -62,9 +62,9 @@
   <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (مورەتەل)</string>
   <string name="qari_hudhayfi_gapless">عەلی حوزەیفی (مورەتەل)</string>
   <string name="qari_khaled_muhanna_gapless">Xalid Al-Muhanna (مورەتەل)</string>
-  <string name="qari_ayman_suwaid_gapless">Ayman Suwaid (مورەتەل)</string>
   <string name="qari_husary_mujawwad_gapless">الحصري (موجەوەد، مورەتەل)</string>
- <string name="qari_husary_muallim_gapless">الحصري (معلم, مورەتەل)</string>
- <string name="qari_ibrahim_alakhdar_gapless">Îbrahîm El-Axdar (مورەتەل)</string>
- <string name="qari_muaiqly_gapless">ماھیر موعەیقلی (مورەتەل)</string>
+  <string name="qari_husary_muallim_gapless">الحصري (معلم, مورەتەل)</string>
+  <string name="qari_ibrahim_alakhdar_gapless">Îbrahîm El-Axdar (مورەتەل)</string>
+  <string name="qari_muaiqly_gapless">ماھیر موعەیقلی (مورەتەل)</string>
+  <string name="qari_yasser_salama_hadr_gapless">Yasser Salama (حدر، مورەتەل)</string>
 </resources>

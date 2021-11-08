@@ -59,12 +59,12 @@
   <string name="qari_fares_abbad_gapless">Fares Abbad (يوچۇقسىز)</string>
   <string name="qari_khalifa_taniji_gapless">خەلىفە تېڭگى (يوچۇقسىز)</string>
   <string name="qari_abdullah_matroud_gapless">ئابدۇللا ماترود (يوچۇقسىز)</string>
- <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (يوچۇقسىز)</string>
+  <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (يوچۇقسىز)</string>
   <string name="qari_hudhayfi_gapless">ئالى ھۇدەيفى (يوچۇقسىز)</string>
- <string name="qari_khaled_muhanna_gapless">خالىد المهنا (يوچۇقسىز)</string>
-  <string name="qari_ayman_suwaid_gapless">Ayman Suwaid (يوچۇقسىز)</string>
+  <string name="qari_khaled_muhanna_gapless">خالىد المهنا (يوچۇقسىز)</string>
   <string name="qari_husary_mujawwad_gapless">الحصري (مۇجاۋۋاد، يوچۇقسىز)</string>
- <string name="qari_husary_muallim_gapless">الحصري (ئوقۇتقۇچى، يوچۇقسىز)</string>
- <string name="qari_ibrahim_alakhdar_gapless">ئىبراھىم ئەل ئاخدار (يوچۇقسىز)</string>
- <string name="qari_muaiqly_gapless">ماھەر ئال مۇئائىقلى (يوچۇقسىز)</string>
+  <string name="qari_husary_muallim_gapless">الحصري (ئوقۇتقۇچى، يوچۇقسىز)</string>
+  <string name="qari_ibrahim_alakhdar_gapless">ئىبراھىم ئەل ئاخدار (يوچۇقسىز)</string>
+  <string name="qari_muaiqly_gapless">ماھەر ئال مۇئائىقلى (يوچۇقسىز)</string>
+  <string name="qari_yasser_salama_hadr_gapless">ياسىر سالاما (حدر، يوچۇقسىز)</string>
 </resources>

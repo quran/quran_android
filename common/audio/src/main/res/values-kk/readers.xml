@@ -62,9 +62,9 @@
   <string name="qari_salah_bukhatir_gapless">Салах Бухатир (тұтас)</string>
   <string name="qari_hudhayfi_gapless">Әли Хұзайфи (тұтас)</string>
   <string name="qari_khaled_muhanna_gapless">Халед әл-Муханна (тұтас)</string>
-  <string name="qari_ayman_suwaid_gapless">Ayman Suwaid (тұтас)</string>
   <string name="qari_husary_mujawwad_gapless">Махмұд Һәлил Хусари (тәжуид, тұтас)</string>
   <string name="qari_husary_muallim_gapless">Гусари (мұғалім, тұтас)</string>
   <string name="qari_ibrahim_alakhdar_gapless">Ибрахим әл-Ахдар (тұтас)</string>
   <string name="qari_muaiqly_gapless">Мәһир Мұғайкли (тұтас)</string>
+ <string name="qari_yasser_salama_hadr_gapless">Ясир Салама (хадр, тұтас)</string>
 </resources>

@@ -62,9 +62,9 @@
   <string name="qari_salah_bukhatir_gapless">Салех Бухатир (безинтервальное)</string>
   <string name="qari_hudhayfi_gapless">Али аль-Хузайфи (безинтервальное)</string>
   <string name="qari_khaled_muhanna_gapless">Халед Аль-Муханна (безинтервальное)</string>
-  <string name="qari_ayman_suwaid_gapless">Айман Сувейд (безинтервальное)</string>
   <string name="qari_husary_mujawwad_gapless">Махмуд Халиль аль-Хусари (муджаввад, безинтервальное)</string>
   <string name="qari_husary_muallim_gapless">Хусари (учитель, безинтервальное)</string>
   <string name="qari_ibrahim_alakhdar_gapless">Ибрагим Аль-Ахдар (безинтервальное)</string>
   <string name="qari_muaiqly_gapless">Махир аль-Муаккили (безинтервальное)</string>
+  <string name="qari_yasser_salama_hadr_gapless">Ясир Салама (хадр, безинтервальное)</string>
 </resources>

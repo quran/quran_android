@@ -62,9 +62,9 @@
   <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (tiada jurang)</string>
   <string name="qari_hudhayfi_gapless">Ali Al-Hudhaify (tiada jurang)</string>
   <string name="qari_khaled_muhanna_gapless">Khaled Al-Muhanna (tiada jurang)</string>
-  <string name="qari_ayman_suwaid_gapless">Ayman Suwaid (tiada jurang)</string>
   <string name="qari_husary_mujawwad_gapless">Husary (Mujawwad, tiada jurang)</string>
   <string name="qari_husary_muallim_gapless">Husary (Muallim, tiada jurang)</string>
   <string name="qari_ibrahim_alakhdar_gapless">Ibrahim Al-Akhdar (tiada jurang)</string>
   <string name="qari_muaiqly_gapless">Maher Al Muaiqly (tiada jurang)</string>
+ <string name="qari_yasser_salama_hadr_gapless">Yasser Salama (hadr, tiada jurang)</string>
 </resources>
