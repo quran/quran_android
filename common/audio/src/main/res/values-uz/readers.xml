@@ -42,7 +42,7 @@
   <string name="qari_mostafa_ismaeel_gapless">Mustafa Ismoil (muttasil)</string>
   <string name="qari_husary_iza3a_gapless">Xusoriy (radio, muttasil)</string>
   <string name="qari_abdulaziz_zahrani_gapless">Abdulaziz Az-Zahroniy (muttasil)</string>
-  <string name="qari_ayman_suwaid">Doktor Ayman Suvayd</string>
+  <string name="qari_ayman_suwaid">Ayman Suvayd</string>
   <string name="qari_afasy_gapless">Mishariy al-Afasiy (muttasil)</string>
   <string name="qari_hani_rifai_gapless">Honiy Ar-Rifoiy (muttasil)</string>
   <string name="qari_ayyoub_gapless">Muhammad Ayyub (muttasil)</string>
@@ -53,7 +53,7 @@
   <string name="qari_afasy_cali_gapless">Mishariy al-Afasiy (Kalifornia, muttasil)</string>
   <string name="qari_ajamy_gapless">Ahmad ibn Ali al-Ajamiy (muttasil)</string>
   <string name="qari_ali_jaber_gapless">Ali Jaber (muttasil)</string>
-  <string name="qari_muaiqly_gapless">Mohir al-Muayqliy (Haramain, muttasil)</string>
+  <string name="qari_muaiqly_haramain_gapless">Mohir al-Muayqliy (Haramain, muttasil)</string>
   <string name="qari_juhany_gapless">Abdulloh al-Juhany (muttasil)</string>
   <string name="qari_abdulmuhsin_qasim_gapless">Abdul Mohsen al-Qasim (muttasil)</string>
   <string name="qari_fares_abbad_gapless">Fares Abbad (muttasil)</string>
@@ -62,4 +62,9 @@
   <string name="qari_salah_bukhatir_gapless">Saloh Buxotir (muttasil)</string>
   <string name="qari_hudhayfi_gapless">Ali al-Xuzayfiy (muttasil)</string>
   <string name="qari_khaled_muhanna_gapless">Xolid al-Muhanna (muttasil)</string>
+  <string name="qari_husary_mujawwad_gapless">Xusoriy (mujavvad, muttasil)</string>
+  <string name="qari_husary_muallim_gapless">Husariy (muallim, muttasil)</string>
+  <string name="qari_ibrahim_alakhdar_gapless">Ibrohim al-Axdar (muttasil)</string>
+  <string name="qari_muaiqly_gapless">Mohir al-Muayqliy (muttasil)</string>
+  <string name="qari_yasser_salama_hadr_gapless">Yosir Salama (hadr, muttasil)</string>
 </resources>

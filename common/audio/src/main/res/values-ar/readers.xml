@@ -42,7 +42,7 @@
   <string name="qari_mostafa_ismaeel_gapless">مصطفي إسماعيل (متصل)</string>
   <string name="qari_husary_iza3a_gapless">الحصري تسجيل الإذاعة (متصل)</string>
   <string name="qari_abdulaziz_zahrani_gapless">عبد العزيز بن صالح الزهراني (متصل)</string>
-  <string name="qari_ayman_suwaid">د. أيمن سويد</string>
+  <string name="qari_ayman_suwaid">أيمن سويد</string>
   <string name="qari_afasy_gapless">مشاري بن راشد العفاسي (متصل)</string>
   <string name="qari_hani_rifai_gapless">هاني الرفاعي (متصل)</string>
   <string name="qari_ayyoub_gapless">محمد أيوب (متصل)</string>
@@ -53,7 +53,7 @@
   <string name="qari_afasy_cali_gapless">مشاري العفاسي (كاليفورنيا, متصل)</string>
   <string name="qari_ajamy_gapless">أحمد بن علي العجمي (متصل)</string>
   <string name="qari_ali_jaber_gapless">علي جابر (متصل)</string>
-  <string name="qari_muaiqly_gapless">ماهر المعيقلي (الحرمين، متصل)</string>
+  <string name="qari_muaiqly_haramain_gapless">ماهر المعيقلي (الحرمين، متصل)</string>
   <string name="qari_juhany_gapless">عبدالله الجهني (متصل)</string>
   <string name="qari_abdulmuhsin_qasim_gapless">عبدالمحسن القاسم (متصل)</string>
   <string name="qari_fares_abbad_gapless">فارس عباد (متصل)</string>
@@ -62,4 +62,9 @@
   <string name="qari_salah_bukhatir_gapless">صلاح بوخاطر (متصل)</string>
   <string name="qari_hudhayfi_gapless">الحذيفي (متصل)</string>
   <string name="qari_khaled_muhanna_gapless">خالد المهنا (متصل)</string>
+  <string name="qari_husary_mujawwad_gapless">الحصري (مجود، متصل)</string>
+  <string name="qari_husary_muallim_gapless">الحصري (معلم، متصل)</string>
+  <string name="qari_ibrahim_alakhdar_gapless">إبراهيم الأخضر (متصل)</string>
+  <string name="qari_muaiqly_gapless">ماهر المعيقلي (متصل)</string>
+  <string name="qari_yasser_salama_hadr_gapless">ياسر سلامة (حدر، متصل)</string>
 </resources>
