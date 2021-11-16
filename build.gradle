@@ -19,7 +19,7 @@ buildscript {
     workManagerVersion = '2.7.0'
     materialComponentsVersion = '1.4.0'
 
-    anvilVersion = '2.3.9'
+    anvilVersion = '2.3.9-1-6-0'
     moshiVersion = '1.12.0'
     okhttpVersion = '4.9.2'
     okioVersion = '3.0.0'
