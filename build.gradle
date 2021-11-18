@@ -8,7 +8,7 @@ buildscript {
 
     androidxMediaVersion = '1.4.3'
     androidxAnnotationVersion = '1.3.0'
-    androidxFragmentVersion = '1.3.6'
+    androidxFragmentVersion = '1.4.0'
     androidxPreferencesVersion = '1.1.1'
     androidxAppcompatVersion = '1.3.1'
     androidxLocalBroadcastVersion = '1.0.0'
