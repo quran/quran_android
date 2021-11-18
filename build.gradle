@@ -16,7 +16,7 @@ buildscript {
     androidxRecyclerViewVersion = '1.2.1'
     androidxJunitExtVersion = '1.1.3'
     supportSqliteVersion = '2.1.0'
-    workManagerVersion = '2.7.0'
+    workManagerVersion = '2.7.1'
     materialComponentsVersion = '1.4.0'
 
     anvilVersion = '2.3.9'
