@@ -21,7 +21,7 @@ buildscript {
 
     anvilVersion = '2.3.9'
     moshiVersion = '1.12.0'
-    okhttpVersion = '4.9.2'
+    okhttpVersion = '4.9.3'
     okioVersion = '3.0.0'
     retrofitVersion = '2.9.0'
     sqldelightVersion = '1.5.2'
