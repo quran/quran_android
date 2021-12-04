@@ -3,7 +3,7 @@ buildscript {
     kotlinVersion = '1.5.31'
     coroutinesVersion = '1.5.2'
 
-    daggerVersion = '2.40.4'
+    daggerVersion = '2.40.3'
     composeVersion = '1.0.4'
 
     androidxMediaVersion = '1.4.3'
