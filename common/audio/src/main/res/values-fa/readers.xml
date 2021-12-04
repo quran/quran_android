@@ -65,6 +65,8 @@
   <string name="qari_husary_mujawwad_gapless">الحصري  (مجود، بی‌وقفه)</string>
   <string name="qari_husary_muallim_gapless">الحصري (معلم، بی‌وقفه)</string>
   <string name="qari_ibrahim_alakhdar_gapless">ابراهیم الاخضر (بی‌وقفه)</string>
-  <string name="qari_muaiqly_gapless">ماهر المعيلقي (بی‌وقفه)</string>
+  <string name="qari_muaiqly_gapless">ماهر المعيقلي (بی‌وقفه)</string>
   <string name="qari_yasser_salama_hadr_gapless">یاسر سلامه (حدر، ی‌وقفه)</string>
+  <string name="qari_khalid_qahtani_gapless">خالد القحطانی (بی‌وقفه)</string>
+  <string name="qari_mokhtasar_asmari_gapless">عبدالله الأسمري (المختصر الصوتي، بی‌وقفه)</string>
 </resources>
