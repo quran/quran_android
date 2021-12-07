@@ -66,5 +66,7 @@
   <string name="qari_husary_muallim_gapless">Гусари (мұғалім, тұтас)</string>
   <string name="qari_ibrahim_alakhdar_gapless">Ибрахим әл-Ахдар (тұтас)</string>
   <string name="qari_muaiqly_gapless">Мәһир Мұғайкли (тұтас)</string>
- <string name="qari_yasser_salama_hadr_gapless">Ясир Салама (хадр, тұтас)</string>
+  <string name="qari_yasser_salama_hadr_gapless">Ясир Салама (хадр, тұтас)</string>
+  <string name="qari_khalid_qahtani_gapless">Халид әл-Кахтани (тұтас)</string>
+  <string name="qari_mokhtasar_asmari_gapless">Абдулла Аль-Асмари (Арабский комментарий, тұтас)</string>
 </resources>

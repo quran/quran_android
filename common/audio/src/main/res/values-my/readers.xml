@@ -66,5 +66,7 @@
   <string name="qari_husary_muallim_gapless">Husary (Muallim, tiada jurang)</string>
   <string name="qari_ibrahim_alakhdar_gapless">Ibrahim Al-Akhdar (tiada jurang)</string>
   <string name="qari_muaiqly_gapless">Maher Al Muaiqly (tiada jurang)</string>
- <string name="qari_yasser_salama_hadr_gapless">Yasser Salama (hadr, tiada jurang)</string>
+  <string name="qari_yasser_salama_hadr_gapless">Yasser Salama (hadr, tiada jurang)</string>
+  <string name="qari_khalid_qahtani_gapless">Khalid Al Qahtani (tiada jurang)</string>
+  <string name="qari_mokhtasar_asmari_gapless">Abdullah Al-Asmari (Ulasan Bahasa Arab, tiada jurang)</string>
 </resources>

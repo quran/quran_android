@@ -67,4 +67,6 @@
   <string name="qari_ibrahim_alakhdar_gapless">Ibrahim Al-Akhdar (non espacé)</string>
   <string name="qari_muaiqly_gapless">Maher Al Muaiqly (non espacé)</string>
   <string name="qari_yasser_salama_hadr_gapless">Yasser Salama (hadr, non espacé)</string>
+  <string name="qari_khalid_qahtani_gapless">Khalid elkahtani (non espacé)</string>
+  <string name="qari_mokhtasar_asmari_gapless">Abdullah Al-Asmari (commentaire arabe, non espacé)</string>
 </resources>
