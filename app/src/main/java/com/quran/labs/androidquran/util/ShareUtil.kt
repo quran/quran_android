@@ -6,15 +6,13 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-
+import androidx.annotation.StringRes
 import com.quran.data.model.QuranText
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.ui.util.ToastCompat
-
-import androidx.annotation.StringRes
 import dagger.Reusable
 import javax.inject.Inject
 
@@ -56,25 +54,26 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
   ): String {
     return buildString {
       ayahInfo.arabicText?.let {
+        append("(")
         append(ayahInfo.arabicText)
-        append("\n\n")
+        append(")")
+        append("\n")
+        append("[")
+        append(quranDisplayData.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah))
+        append("]")
       }
 
       ayahInfo.texts.forEachIndexed { i, translation ->
         val text = translation.text
         if (text.isNotEmpty()) {
+          append("\n\n")
           if (i < translationNames.size) {
-            append('(')
             append(translationNames[i].getTranslatorName())
-            append(")\n")
+            append(":\n")
           }
           append(text)
-          append("\n\n")
         }
       }
-
-      append('-')
-      append(quranDisplayData.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah))
     }
   }
 
