@@ -20,7 +20,7 @@ buildscript {
     materialComponentsVersion = '1.4.0'
     coreKtxVersion = '1.7.0'
 
-    anvilVersion = '2.3.9'
+    anvilVersion = '2.3.10'
     moshiVersion = '1.12.0'
     okhttpVersion = '4.9.3'
     okioVersion = '3.0.0'
