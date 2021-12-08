@@ -207,6 +207,7 @@
   <string name="quran_ayah_details">%1$s - Ayat %2$s, Juz\' %3$s</string>
   <string name="quran_sura_title">Surat %1$s</string>
   <string name="sura_ayah_notification_str">Surat %1$s, Ayat %2$d</string>
+  <string name="sura_ayah_sharing_str">Surat %1$s: %2$d</string>
 
   <string name="index_loading">Memuat&#8230;</string>
 

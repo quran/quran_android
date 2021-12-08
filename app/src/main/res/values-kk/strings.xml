@@ -211,6 +211,7 @@
   <string name="quran_ayah_details">%1$s %2$s-аят, %3$s-пара</string>
   <string name="quran_sura_title">%1$s сүресі</string>
   <string name="sura_ayah_notification_str">%1$s сүресі, %2$d-аят</string>
+  <string name="sura_ayah_sharing_str">%1$s сүресі: %2$d</string>
 
   <string name="index_loading">Жүктеу…</string>
 

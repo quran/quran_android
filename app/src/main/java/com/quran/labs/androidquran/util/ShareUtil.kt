@@ -6,16 +6,16 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-
+import androidx.annotation.StringRes
 import com.quran.data.model.QuranText
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.ui.util.ToastCompat
-
-import androidx.annotation.StringRes
 import dagger.Reusable
+import java.text.NumberFormat
+import java.util.Locale
 import javax.inject.Inject
 
 @Reusable
@@ -56,55 +56,61 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
   ): String {
     return buildString {
       ayahInfo.arabicText?.let {
+        append("{ ")
         append(ayahInfo.arabicText)
-        append("\n\n")
+        append(" }")
+        append("\n")
+        append("[")
+        append(quranDisplayData.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah))
+        append("]")
       }
 
       ayahInfo.texts.forEachIndexed { i, translation ->
         val text = translation.text
         if (text.isNotEmpty()) {
+          append("\n\n")
           if (i < translationNames.size) {
-            append('(')
             append(translationNames[i].getTranslatorName())
-            append(")\n")
+            append(":\n")
           }
           append(text)
-          append("\n\n")
         }
       }
-
-      append('-')
-      append(quranDisplayData.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah))
     }
   }
 
   private fun getShareText(activity: Activity, verses: List<QuranText>): String {
     val size = verses.size
+    val isArabicNames = QuranSettings.getInstance(activity).isArabicNames
+    val locale = if (isArabicNames) Locale("ar") else Locale.getDefault()
+    val numberFormat = NumberFormat.getNumberInstance(locale)
     return buildString {
-      append("(")
+      append("{ ")
       for (i in 0 until size) {
         append(verses[i].text)
-        if (i + 1 < size) {
-          append(" \u06DD  ")
-        }
+        append(" (")
+        append(numberFormat.format(verses[i].ayah))
+        append(") ")
       }
 
-      // append ) and a new line after last ayah
-      append(")\n")
+      // append } and a new line after last ayah
+      append(" }\n")
       // append [ before sura label
       append("[")
       val (sura, ayah) = verses[0]
       append(quranDisplayData.getSuraName(activity, sura, true))
-      append(" ")
-      append(ayah)
+      append(": ")
+      append(numberFormat.format(ayah))
       if (size > 1) {
         val (sura1, ayah1) = verses[size - 1]
-        append(" - ")
         if (sura != sura1) {
+          append(" - ")
           append(quranDisplayData.getSuraName(activity, sura1, true))
-          append(" ")
+          append(": ")
+        } else {
+          append("-")
         }
-        append(ayah1)
+        append(numberFormat.format(ayah1))
       }
       // close sura label and append two new lines
       append("]")
