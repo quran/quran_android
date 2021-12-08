@@ -82,6 +82,11 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo) {
     return context.getString(R.string.sura_ayah_notification_str, suraName, ayah)
   }
 
+  fun getSuraAyahStringForSharing(context: Context, sura: Int, ayah: Int): String {
+    val suraName = getSuraName(context, sura, wantPrefix = false, wantTranslation = false)
+    return context.getString(R.string.sura_ayah_sharing_str, suraName, ayah)
+  }
+
   fun getNotificationTitle(
     context: Context, minVerse: SuraAyah, maxVerse: SuraAyah, isGapless: Boolean
   ): String {

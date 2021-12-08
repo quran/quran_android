@@ -201,6 +201,7 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
   <string name="quran_sura_title">Soera %1$s</string>
   <string name="sura_ayah_notification_str">Soera %1$s, Ayah %2$d</string>
+  <string name="sura_ayah_sharing_str">Soera %1$s: %2$d</string>
 
   <string name="index_loading">Laden&#8230;</string>
 
