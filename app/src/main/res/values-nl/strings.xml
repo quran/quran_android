@@ -103,7 +103,7 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="storage_permission_please_restart">Gelieve de app opnieuw opstarten om de veranderingen uit te voeren.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Gevonden in Soera %1$s, Ayah %2$d</string>
+  <string name="found_in_sura">Gevonden in Soera %1$s: %2$d (Pagina %3$d)</string>
   <string name="no_results">Geen resultaten gevonden voor \"%s\"</string>
   <string name="no_arabic_search_available">Je hebt \"Arabisch Zoeken\" niet gedownload. Download het en probeer uw zoekopdracht opnieuw.</string>
   <string name="get_arabic_search_db">Verkrijg "Arabisch Zoeken" Database</string>

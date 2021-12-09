@@ -208,7 +208,7 @@ public class SearchActivity extends AppCompatActivity
 
       ListView listView = findViewById(R.id.results_list);
       if (adapter == null) {
-        adapter = new ResultAdapter(this, cursor, quranDisplayData);
+        adapter = new ResultAdapter(this, cursor, quranDisplayData, quranInfo);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener((parent, view, position, id) -> {
           ListView p = (ListView) parent;
@@ -322,13 +322,15 @@ public class SearchActivity extends AppCompatActivity
   private static class ResultAdapter extends CursorAdapter {
     private final Context context;
     private final LayoutInflater inflater;
+    private final QuranInfo quranInfo;
     private final QuranDisplayData quranDisplayData;
 
-    ResultAdapter(Context context, Cursor cursor, QuranDisplayData quranDisplayData) {
+    ResultAdapter(Context context, Cursor cursor, QuranDisplayData quranDisplayData, QuranInfo quranInfo) {
       super(context, cursor, 0);
       inflater = LayoutInflater.from(context);
       this.context = context;
       this.quranDisplayData = quranDisplayData;
+      this.quranInfo = quranInfo;
     }
 
     @Override
@@ -346,10 +348,12 @@ public class SearchActivity extends AppCompatActivity
       final ViewHolder holder = (ViewHolder) view.getTag();
       int sura = cursor.getInt(1);
       int ayah = cursor.getInt(2);
+      int page = quranInfo.getPageFromSuraAyah(sura, ayah);
+
       String text = cursor.getString(3);
       String suraName = quranDisplayData.getSuraName(this.context, sura, false);
       holder.text.setText(Html.fromHtml(text));
-      holder.metadata.setText(this.context.getString(R.string.found_in_sura, suraName, ayah));
+      holder.metadata.setText(this.context.getString(R.string.found_in_sura, suraName, ayah, page));
     }
 
     static class ViewHolder {

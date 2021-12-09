@@ -62,7 +62,7 @@
   </plurals>
 
   <!-- Search messages -->
-  <string name="found_in_sura">دۆزرایەوە لە سورەتدا %1$s, %2$d ئایەت</string>
+  <string name="found_in_sura">دۆزرایەوە لە سورەتدا %1$s, %2$d ئایەت (پەڕەی %3$d)</string>
   <string name="no_results">ھیچ ئەنجامێک نەدۆزایەوە بۆ \"%s\"</string>
   <string name="no_arabic_search_available">داتاکانی گەڕان بە عەرەبی دانەگیراوە. تکایە دایبگرە و دووبارە هەوڵێ گەڕان بدەرەوە.</string>
   <string name="get_arabic_search_db">داگرتنی داتابەیسی گەڕانی عەرەبی</string>

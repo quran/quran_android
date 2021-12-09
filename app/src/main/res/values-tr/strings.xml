@@ -90,7 +90,7 @@
   <string name="storage_permission_please_restart">Bu değişikliğin geçerli olması için lütfen uygulamayı yeniden başlatın</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">%1$s suresi, %2$d.âyet</string>
+  <string name="found_in_sura">%1$s suresi, %2$d.âyet (Sayfa %3$d)</string>
   <string name="no_results">Bir sonuç bulunamadı \"%s\"</string>
   <string name="no_arabic_search_available">Arapça arama paketi indirilmedi. Lütfen indirip daha sonra tekrar deneyin</string>
   <string name="get_arabic_search_db">Arapça arama veritabanını indirin</string>

@@ -107,7 +107,7 @@
   <string name="storage_permission_please_restart">Harap hidupkan ulang aplikasi ini agar penyimpanan data bisa dilakukan.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Ditemukan dalam Surat %1$s, Ayat %2$d</string>
+  <string name="found_in_sura">Ditemukan dalam Surat %1$s: %2$d (Halaman %3$d)</string>
   <string name="no_results">Tak ada hasil pencarian untuk \"%s\"</string>
   <string name="no_arabic_search_available">Anda belum mengunduh paket pencarian bahasa Arab. Harap unduh dulu dan ulangi pencarian anda.</string>
   <string name="get_arabic_search_db">Dapatkan Basis Data Pencarian Bahasa Arab</string>
