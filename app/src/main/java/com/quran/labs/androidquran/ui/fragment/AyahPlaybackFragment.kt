@@ -13,6 +13,7 @@ import android.widget.CheckBox
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.dao.audio.AudioRequest
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
@@ -44,6 +45,8 @@ class AyahPlaybackFragment : AyahActionFragment() {
 
   private lateinit var startAyahAdapter: ArrayAdapter<CharSequence>
   private lateinit var endingAyahAdapter: ArrayAdapter<CharSequence>
+
+  private var lastSeenAudioRequest: AudioRequest? = null
 
   @Inject
   lateinit var quranInfo: QuranInfo
@@ -271,6 +274,8 @@ class AyahPlaybackFragment : AyahActionFragment() {
     val context: Context? = activity
     val selectionEnd = end
     val selectionStart = start
+
+    var shouldReset = true
     if (context is PagerActivity && selectionStart != null && selectionEnd != null) {
       val lastRequest = context.lastAudioRequest
       val start: SuraAyah
@@ -279,9 +284,13 @@ class AyahPlaybackFragment : AyahActionFragment() {
         // audio playback request is available
         start = lastRequest.start
         ending = lastRequest.end
-        verseRepeatCount = lastRequest.repeatInfo
-        rangeRepeatCount = lastRequest.rangeRepeatInfo
-        shouldEnforce = lastRequest.enforceBounds
+        if (lastRequest != lastSeenAudioRequest) {
+          verseRepeatCount = lastRequest.repeatInfo
+          rangeRepeatCount = lastRequest.rangeRepeatInfo
+          shouldEnforce = lastRequest.enforceBounds
+        } else {
+          shouldReset = false
+        }
         decidedStart = start
         decidedEnd = ending
         applyButton.setText(R.string.play_apply)
@@ -303,6 +312,8 @@ class AyahPlaybackFragment : AyahActionFragment() {
         decidedEnd = null
         applyButton.setText(R.string.play_apply_and_play)
       }
+      lastSeenAudioRequest = lastRequest
+
       val maxAyat = quranInfo.getNumberOfAyahs(start.sura)
       if (maxAyat == -1) {
         return
@@ -316,9 +327,11 @@ class AyahPlaybackFragment : AyahActionFragment() {
       )
       startSuraSpinner.setSelection(start.sura - 1)
       endingSuraSpinner.setSelection(ending.sura - 1)
-      restrictToRange.isChecked = shouldEnforce
-      repeatRangePicker.value = rangeRepeatCount + 1
-      repeatVersePicker.value = verseRepeatCount + 1
+      if (shouldReset) {
+        restrictToRange.isChecked = shouldEnforce
+        repeatRangePicker.value = rangeRepeatCount + 1
+        repeatVersePicker.value = verseRepeatCount + 1
+      }
     }
   }
 
