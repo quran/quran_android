@@ -111,7 +111,7 @@
   <string name="storage_permission_please_restart">Molimo restartujte aplikaciju da bi ovo imalo učinka.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Pronađeno u suri %1$s , %2$d. ajetu</string>
+  <string name="found_in_sura">Pronađeno u suri %1$s: %2$d (Stranica %3$d)</string>
   <string name="no_results">Nema rezultata za \"%s\"</string>
   <string name="no_arabic_search_available">Niste preuzeli Arapski paket za pretragu. Molimo preuzmite paket i pokušajte ponovo.</string>
   <string name="get_arabic_search_db">Preuzmite arapsku bazu za pretraživanje</string>

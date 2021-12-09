@@ -90,7 +90,7 @@
   <string name="storage_permission_please_restart">Sila keluar dan mulakan semula aplikasi untuk tetapan terkini.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Dijumpai dalam Surah %1$s, Ayat %2$d</string>
+  <string name="found_in_sura">Dijumpai dalam Surah %1$s: %2$d (Halaman %3$d)</string>
   <string name="no_results">Tidak dijumpai \"%s\"</string>
   <string name="no_arabic_search_available">Anda belum memuat turun paket pencarian Arab. Sila muat turun dan ulangi pencarian</string>
   <string name="get_arabic_search_db">Dapatkan Database Pencarian Arab</string>

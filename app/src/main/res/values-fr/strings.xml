@@ -79,7 +79,7 @@
   <string name="quranSearchType">Ayāt du Coran</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Trouvée dans la sourate %1$s Aya %2$d</string>
+  <string name="found_in_sura">Trouvée dans la sourate %1$s: %2$d (Page %3$d)</string>
   <string name="no_results">Aucun resultat pour \"%s\"</string>
   <string name="no_arabic_search_available">Vous n\'avez pas téléchargé le pack de recherche arabe.  S\'il vous plaît veuillez le télécharger et recommencez votre recherche.</string>
   <string name="get_arabic_search_db">Télécharger la base de données de recherche arabe</string>

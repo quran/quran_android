@@ -81,7 +81,7 @@
     </plurals>
 
     <!-- Search messages -->
-    <string name="found_in_sura">Találat itt: szúra %1$s, Ája %2$d</string>
+    <string name="found_in_sura">Találat itt: szúra %1$s: %2$d (Oldal %3$d)</string>
     <string name="no_results">Nincs találat erre: \"%s\"</string>
     <string name="no_arabic_search_available">Nincs letöltve az arab keresési csomag. Kérem, töltse le és próbálja újra a keresést.</string>
     <string name="get_arabic_search_db">Arab keresési adatbázis letöltése</string>

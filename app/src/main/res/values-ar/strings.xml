@@ -73,7 +73,7 @@
   </plurals>
 
   <!-- Search messages -->
-  <string name="found_in_sura">سورة %1$s آية %2$d</string>
+  <string name="found_in_sura">سورة %1$s: %2$d (صفحة %3$d)</string>
   <string name="no_results">لا توجد نتائج ل \"%s\"</string>
   <string name="no_arabic_search_available">لتفعيل البحث بالعربية يجب تحميل قاعدة البيانات.. هل ترغب في ذلك ؟</string>
   <string name="get_arabic_search_db">حمل قاعدة البيانات</string>

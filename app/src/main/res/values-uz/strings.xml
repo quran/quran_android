@@ -116,7 +116,7 @@
         ilovani qayta ishga tushiring.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">%1$s surasi, %2$d-oyat</string>
+  <string name="found_in_sura">%1$s surasi, %2$d-oyat (Sahifa %3$d)</string>
   <string name="no_results">\"%s\" boʻyicha natija topilmadi</string>
   <string name="no_arabic_search_available">Arabcha izlash moduli oʻrnatilmagan, iltimos, avval uni saqlab oling. Soʻngra qayta izlab koʻring.</string>
   <string name="get_arabic_search_db">Arabcha izlash bazasini oʻrnatish</string>

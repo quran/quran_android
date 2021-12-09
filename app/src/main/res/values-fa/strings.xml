@@ -62,7 +62,7 @@
   </plurals>
 
   <!-- Search messages -->
-  <string name="found_in_sura">در آیه %2$d از سوره %1$s</string>
+  <string name="found_in_sura">در آیه %2$d از سوره %1$s (صفحه %3$d)</string>
   <string name="no_results">جستجوی «%s» هیچ نتیجه‌ای دربرنداشت.</string>
   <string name="no_arabic_search_available">متن عربی قرآن هنوز بارگذاری نشده است. لطفاً ابتدا آن را دریافت نمایید.</string>
   <string name="get_arabic_search_db">متن عربی قرآن را برای جستجو در متن دریافت کنید.</string>
