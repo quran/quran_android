@@ -23,6 +23,7 @@
       app:np_value="3"
       app:np_min="1"
       app:np_textSize="21sp"
+      app:np_textColor="@color/inactive"
       app:np_selectedTextSize="24sp"
       app:np_selectedTextColor="@color/panel_label"
       app:np_dividerColor="@color/panel_label"
