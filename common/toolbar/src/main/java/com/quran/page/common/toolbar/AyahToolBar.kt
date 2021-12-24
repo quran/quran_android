@@ -137,7 +137,7 @@ class AyahToolBar @JvmOverloads constructor(
 
     // disable sharing for warsh and qaloon
     val menuItem = menu.findItem(R.id.cab_share_ayah)
-    if (menuItem != null && (flavor == "warsh" || flavor == "qaloon")) {
+    if (menuItem != null && flavor == "qaloon") {
       menuItem.isVisible = false
     }
 
