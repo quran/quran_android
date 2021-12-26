@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.data
 
 import android.content.Context
 import android.text.TextUtils
+import androidx.annotation.StringRes
 
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
@@ -78,8 +79,12 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo) {
   }
 
   fun getSuraAyahString(context: Context, sura: Int, ayah: Int): String {
+    return getSuraAyahString(context, sura, ayah, R.string.sura_ayah_notification_str)
+  }
+
+  fun getSuraAyahString(context: Context, sura: Int, ayah: Int, @StringRes resource: Int): String {
     val suraName = getSuraName(context, sura, wantPrefix = false, wantTranslation = false)
-    return context.getString(R.string.sura_ayah_notification_str, suraName, ayah)
+    return context.getString(resource, suraName, ayah)
   }
 
   fun getSuraAyahStringForSharing(context: Context, sura: Int, ayah: Int): String {

@@ -57,11 +57,11 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
     return buildString {
       ayahInfo.arabicText?.let {
         append("{ ")
-        append(ayahInfo.arabicText)
+        append(ayahInfo.arabicText.trim())
         append(" }")
         append("\n")
         append("[")
-        append(quranDisplayData.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah))
+        append(quranDisplayData.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah, R.string.sura_ayah_sharing_str))
         append("]")
       }
 
@@ -81,16 +81,19 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
 
   private fun getShareText(activity: Activity, verses: List<QuranText>): String {
     val size = verses.size
+    val wantInlineAyahNumbers = size > 1
     val isArabicNames = QuranSettings.getInstance(activity).isArabicNames
     val locale = if (isArabicNames) Locale("ar") else Locale.getDefault()
     val numberFormat = NumberFormat.getNumberInstance(locale)
     return buildString {
       append("{ ")
       for (i in 0 until size) {
-        append(verses[i].text)
-        append(" (")
-        append(numberFormat.format(verses[i].ayah))
-        append(") ")
+        append(verses[i].text.trim())
+        if (wantInlineAyahNumbers) {
+          append(" (")
+          append(numberFormat.format(verses[i].ayah))
+          append(") ")
+        }
       }
 
       // append } and a new line after last ayah
