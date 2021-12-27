@@ -503,12 +503,7 @@ public class AudioService extends Service implements OnCompletionListener,
         int ayah = audioQueue.getCurrentAyah();
         int time = gaplessSuraData.get(ayah);
         if (ayah == 1 && !isRepeating) {
-          final int whence = gaplessSuraData.get(0, -1);
-          if (whence == -1) {
-            return gaplessSuraData.get(1);
-          } else {
-            return whence;
-          }
+          return gaplessSuraData.get(0);
         }
         return time;
       }
