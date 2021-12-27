@@ -12,6 +12,7 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.util.ToastCompat
 import dagger.Reusable
 import java.text.NumberFormat
@@ -57,7 +58,7 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
     return buildString {
       ayahInfo.arabicText?.let {
         append("{ ")
-        append(ayahInfo.arabicText.trim())
+        append(ArabicDatabaseUtils.getAyahWithoutBasmallah(ayahInfo.sura, ayahInfo.ayah, ayahInfo.arabicText.trim()))
         append(" }")
         append("\n")
         append("[")
@@ -92,7 +93,7 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
           append(" ")
         }
 
-        append(verses[i].text.trim())
+        append(ArabicDatabaseUtils.getAyahWithoutBasmallah(verses[i].sura, verses[i].ayah, verses[i].text.trim()))
         if (wantInlineAyahNumbers) {
           append(" (")
           append(numberFormat.format(verses[i].ayah))
