@@ -88,11 +88,15 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
     return buildString {
       append("{ ")
       for (i in 0 until size) {
+        if (i > 0) {
+          append(" ")
+        }
+
         append(verses[i].text.trim())
         if (wantInlineAyahNumbers) {
           append(" (")
           append(numberFormat.format(verses[i].ayah))
-          append(") ")
+          append(")")
         }
       }
 
