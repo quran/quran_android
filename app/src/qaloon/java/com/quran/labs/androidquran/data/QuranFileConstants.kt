@@ -14,4 +14,5 @@ object QuranFileConstants {
   const val FETCH_QUARTER_NAMES_FROM_DATABASE = false
 
   const val FALLBACK_PAGE_TYPE = "qaloon"
+  const val SEARCH_EXTRA_REPLACEMENTS = ""
 }

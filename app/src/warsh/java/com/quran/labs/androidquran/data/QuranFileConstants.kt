@@ -14,4 +14,5 @@ object QuranFileConstants {
   const val FETCH_QUARTER_NAMES_FROM_DATABASE = true
 
   const val FALLBACK_PAGE_TYPE = "warsh"
+  const val SEARCH_EXTRA_REPLACEMENTS = "\u0626"
 }

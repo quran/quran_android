@@ -21,7 +21,6 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.TranslationUtil
 import timber.log.Timber
 import java.io.File
-import java.util.*
 
 class DatabaseHandler private constructor(
   context: Context,
@@ -85,7 +84,7 @@ class DatabaseHandler private constructor(
         ContextCompat.getColor(context, R.color.translation_highlight) +
         "\">"
     defaultSearcher = DefaultSearcher(matchString, MATCH_END, ELLIPSES)
-    arabicSearcher = ArabicSearcher(defaultSearcher, matchString, MATCH_END)
+    arabicSearcher = ArabicSearcher(defaultSearcher, matchString, MATCH_END, QuranFileConstants.SEARCH_EXTRA_REPLACEMENTS)
 
     // if there's no Quran base directory, there are no databases
     val base = quranFileUtils.getQuranDatabaseDirectory(context)
