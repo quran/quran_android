@@ -28,7 +28,6 @@ class MissingPageDownloadWorker(private val context: Context,
                                 private val quranFileUtils: QuranFileUtils
 ) : CoroutineWorker(context, params) {
 
-  @ExperimentalCoroutinesApi
   override suspend fun doWork(): Result = coroutineScope {
     Timber.d("MissingPageDownloadWorker")
     val pagesToDownload = findMissingPagesToDownload()
