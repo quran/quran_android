@@ -1,5 +1,9 @@
 package com.quran.labs.androidquran.ui;
 
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
+
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -27,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -43,6 +48,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.NonRestoringViewPager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
+
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.model.selection.AyahSelection;
@@ -111,6 +117,17 @@ import com.quran.page.common.toolbar.AyahToolBar;
 import com.quran.page.common.toolbar.di.AyahToolBarInjector;
 import com.quran.reading.common.AudioEventPresenter;
 import com.quran.reading.common.ReadingEventPresenter;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
@@ -119,19 +136,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.observers.DisposableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
 import timber.log.Timber;
-
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
 
 /**
  * Activity that displays the Quran (in Arabic or translation mode).
@@ -182,6 +187,8 @@ public class PagerActivity extends AppCompatActivity implements
   private ProgressDialog progressDialog;
   private ViewGroup.MarginLayoutParams audioBarParams;
   private boolean isInMultiWindowMode;
+
+  private MenuItem bookmarksMenuItem;
 
   private String[] translationNames;
   private List<LocalTranslation> translations;
@@ -436,6 +443,8 @@ public class PagerActivity extends AppCompatActivity implements
             // we don't have the key
             checkIfPageIsBookmarked(page);
           }
+        } else {
+          refreshBookmarksMenu();
         }
 
         // If we're more than 1 page away from ayah selection end ayah mode
@@ -974,27 +983,21 @@ public class PagerActivity extends AppCompatActivity implements
     searchView.setQueryHint(getString(R.string.search_hint));
     searchView.setSearchableInfo(searchManager.getSearchableInfo(
         new ComponentName(this, SearchActivity.class)));
+
+    // cache because invalidateOptionsMenu in a toolbar world always calls both
+    // onCreateOptionsMenu and onPrepareOptionsMenu, which can be expensive both
+    // due to inflation plus due to the search view specific setup work. we can
+    // directly modify the bookmark item using a reference to this instead.
+    bookmarksMenuItem = menu.findItem(R.id.favorite_item);
     return true;
   }
 
   @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
     super.onPrepareOptionsMenu(menu);
-    MenuItem item = menu.findItem(R.id.favorite_item);
+    MenuItem item = bookmarksMenuItem;
     if (item != null) {
-      int page = quranInfo.getPageFromPosition(viewPager.getCurrentItem(), isDualPageVisible());
-
-      boolean bookmarked = false;
-      if (bookmarksCache.indexOfKey(page) >= 0) {
-        bookmarked = bookmarksCache.get(page);
-      }
-
-      if (!bookmarked && isDualPageVisible() &&
-          bookmarksCache.indexOfKey(page - 1) >= 0) {
-        bookmarked = bookmarksCache.get(page - 1);
-      }
-
-      item.setIcon(bookmarked ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
+      refreshBookmarksMenu();
     }
 
     MenuItem quran = menu.findItem(R.id.goto_quran);
@@ -1382,7 +1385,7 @@ public class PagerActivity extends AppCompatActivity implements
             if (sura == null || ayah == null) {
               // page bookmark
               bookmarksCache.put(page, isBookmarked);
-              supportInvalidateOptionsMenu();
+              bookmarksMenuItem.setIcon(isBookmarked ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
             } else {
               // ayah bookmark
               SuraAyah suraAyah = new SuraAyah(sura, ayah);
@@ -1400,7 +1403,6 @@ public class PagerActivity extends AppCompatActivity implements
     compositeDisposable.add(bookmarkModel.getIsBookmarkedObservable(pages)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(new DisposableObserver<Pair<Integer, Boolean>>() {
-
           @Override
           public void onNext(@NonNull Pair<Integer, Boolean> result) {
             bookmarksCache.put(result.first, result.second);
@@ -1412,9 +1414,30 @@ public class PagerActivity extends AppCompatActivity implements
 
           @Override
           public void onComplete() {
-            supportInvalidateOptionsMenu();
+            refreshBookmarksMenu();
           }
         }));
+  }
+
+  private void refreshBookmarksMenu() {
+    final MenuItem menuItem = bookmarksMenuItem;
+    if (menuItem != null) {
+      int page = quranInfo.getPageFromPosition(viewPager.getCurrentItem(), isDualPageVisible());
+
+      boolean bookmarked = false;
+      if (bookmarksCache.indexOfKey(page) >= 0) {
+        bookmarked = bookmarksCache.get(page);
+      }
+
+      if (!bookmarked && isDualPageVisible() &&
+          bookmarksCache.indexOfKey(page - 1) >= 0) {
+        bookmarked = bookmarksCache.get(page - 1);
+      }
+
+      menuItem.setIcon(bookmarked ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
+    } else {
+      supportInvalidateOptionsMenu();
+    }
   }
 
   // region Audio playback
