@@ -307,8 +307,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
           });
     }
     spinner.setSelection(currentQari);
-    final LayoutParams params = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
-    params.weight = 1;
+    final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     if (isRtl) {
       ViewCompat.setLayoutDirection(spinner, ViewCompat.LAYOUT_DIRECTION_RTL);
       params.leftMargin = spinnerPadding;
