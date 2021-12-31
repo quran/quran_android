@@ -69,4 +69,6 @@
   <string name="qari_yasser_salama_hadr_gapless">Ясир Салама (хадр, безинтервальное)</string>
   <string name="qari_khalid_qahtani_gapless">Халид Аль Кахтани (безинтервальное)</string>
   <string name="qari_mokhtasar_asmari_gapless">Абдулла Аль-Асмари (Арабский комментарий, безинтервальное)</string>
+  <string name="qari_aloosi_gapless">Абдул Рахман Аль-Ауси (безинтервальное)</string>
+  <string name="qari_alzain_ahmad_gapless">Альзайн Мохаммед Ахмед (безинтервальное)</string>
 </resources>
