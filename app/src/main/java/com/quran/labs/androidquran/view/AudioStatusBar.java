@@ -307,7 +307,19 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
           });
     }
     spinner.setSelection(currentQari);
-    final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+    // in RTL, because this is currently an LTR LinearLayout, this shows
+    // the spinner and then the play button, so we can't match parent. this
+    // is less efficient than the LTR version. this should be fixed by making
+    // the parent a vanilla LinearLayout and setting the direction.
+    final LayoutParams params;
+    if (isRtl) {
+      params = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
+      params.weight = 1;
+    } else {
+      params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    }
+
     if (isRtl) {
       ViewCompat.setLayoutDirection(spinner, ViewCompat.LAYOUT_DIRECTION_RTL);
       params.leftMargin = spinnerPadding;
