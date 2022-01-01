@@ -69,4 +69,6 @@
   <string name="qari_yasser_salama_hadr_gapless">Yasser Salama (hadr, non espacé)</string>
   <string name="qari_khalid_qahtani_gapless">Khalid elkahtani (non espacé)</string>
   <string name="qari_mokhtasar_asmari_gapless">Abdullah Al-Asmari (commentaire arabe, non espacé)</string>
+  <string name="qari_aloosi_gapless">Abdul Rahman Aloosi (non espacé)</string>
+  <string name="qari_alzain_ahmad_gapless">Alzain Mohammed Ahmad (non espacé)</string>
 </resources>
