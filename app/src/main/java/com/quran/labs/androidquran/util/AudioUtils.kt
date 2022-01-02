@@ -14,7 +14,6 @@ import java.io.File
 import java.util.Locale
 import javax.inject.Inject
 
-@Reusable
 class AudioUtils @Inject
 constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranFileUtils) {
 
