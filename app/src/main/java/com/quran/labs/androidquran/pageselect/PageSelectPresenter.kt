@@ -99,7 +99,14 @@ constructor(
       val destinationQuranInfo = QuranInfo(destination)
 
       val suraAyahFromPage = { page: Int ->
-        sourcePageSuraStart[page - 1] to sourcePageAyahStart[page - 1]
+        val totalPages = sourcePageSuraStart.size
+        if (page >= totalPages) {
+          114 to 1
+        } else if (page < 1) {
+          1 to 1
+        } else {
+          sourcePageSuraStart[page - 1] to sourcePageAyahStart[page - 1]
+        }
       }
 
       // update the bookmarks
