@@ -2,18 +2,19 @@ package com.quran.labs.androidquran.presenter.bookmark;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import com.google.android.material.snackbar.Snackbar;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.bookmark.Bookmark;
 import com.quran.data.model.bookmark.BookmarkData;
 import com.quran.data.model.bookmark.RecentPage;
 import com.quran.data.model.bookmark.Tag;
+import com.quran.labs.androidquran.dao.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
-import com.quran.labs.androidquran.dao.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
@@ -31,16 +32,14 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import timber.log.Timber;
 
-@Singleton
 public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   @Snackbar.Duration public static final int DELAY_DELETION_DURATION_IN_MS = 4 * 1000; // 4 seconds
   private static final long BOOKMARKS_WITHOUT_TAGS_ID = -1;

@@ -1,19 +1,17 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import android.content.Context;
+
 import androidx.core.content.ContextCompat;
 
 import com.quran.data.core.QuranInfo;
-import com.quran.labs.androidquran.R;
 import com.quran.data.model.bookmark.Bookmark;
 import com.quran.data.model.bookmark.Tag;
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 
 import javax.inject.Inject;
 
-import dagger.Reusable;
-
-@Reusable
 public class QuranRowFactory {
   private final QuranInfo quranInfo;
   private final QuranDisplayData quranDisplayData;

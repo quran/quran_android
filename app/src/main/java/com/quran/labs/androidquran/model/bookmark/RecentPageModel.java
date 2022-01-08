@@ -11,9 +11,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.BehaviorSubject;
@@ -25,6 +25,7 @@ public class RecentPageModel {
 
   private final BookmarksDBAdapter bookmarksDBAdapter;
   private final Subject<Integer> lastPageSubject;
+  private final Subject<Boolean> refreshRecentPagePublishSubject;
 
   private DisposableSingleObserver<List<RecentPage>> initialDataSubscription;
   private final Observable<Boolean> recentPagesUpdatedObservable;
@@ -35,18 +36,25 @@ public class RecentPageModel {
     this.bookmarksDBAdapter = adapter;
     this.lastPageSubject = BehaviorSubject.create();
     this.recentWriterSubject = PublishSubject.create();
+    this.refreshRecentPagePublishSubject = PublishSubject.<Boolean>create().toSerialized();
 
-    recentPagesUpdatedObservable = this.recentWriterSubject.hide()
-        .observeOn(Schedulers.io())
-        .map(update -> {
-          if (update.deleteRangeStart != null) {
-            bookmarksDBAdapter.replaceRecentRangeWithPage(
-                update.deleteRangeStart, update.deleteRangeEnd, update.page);
-          } else {
-            bookmarksDBAdapter.addRecentPage(update.page);
-          }
-          return true;
-        }).share();
+    Observable<Boolean> recentWritesObservable =
+        this.recentWriterSubject.hide()
+            .observeOn(Schedulers.io())
+            .map(update -> {
+              if (update.deleteRangeStart != null) {
+                bookmarksDBAdapter.replaceRecentRangeWithPage(
+                    update.deleteRangeStart, update.deleteRangeEnd, update.page);
+              } else {
+                bookmarksDBAdapter.addRecentPage(update.page);
+              }
+              return true;
+            });
+
+    recentPagesUpdatedObservable = Observable.merge(
+            recentWritesObservable, refreshRecentPagePublishSubject.hide()
+        )
+        .share();
 
     // there needs to always be one subscriber in order for us to properly be able
     // to write updates to the database (even when no one else is subscribed).
@@ -68,6 +76,10 @@ public class RecentPageModel {
           public void onError(Throwable e) {
           }
         });
+  }
+
+  public void notifyRecentPagesUpdated() {
+    refreshRecentPagePublishSubject.onNext(true);
   }
 
   @UiThread
