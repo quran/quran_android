@@ -52,6 +52,14 @@ public class BookmarkModel {
     return bookmarksPublishSubject.hide();
   }
 
+  public void notifyBookmarksUpdated() {
+    bookmarksPublishSubject.onNext(true);
+  }
+
+  public void notifyRecentPagesUpdated() {
+    recentPageModel.notifyRecentPagesUpdated();
+  }
+
   public Single<BookmarkData> getBookmarkDataObservable(final int sortOrder) {
     return Single.zip(getTagsObservable(),
         getBookmarksObservable(sortOrder),

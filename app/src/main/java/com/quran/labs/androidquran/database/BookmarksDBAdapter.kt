@@ -48,6 +48,12 @@ class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabas
       .executeAsList()
   }
 
+  fun replaceRecentPages(pages: List<RecentPage>) {
+    lastPageQueries.transaction {
+      pages.forEach { addRecentPage(it.page) }
+    }
+  }
+
   fun replaceRecentRangeWithPage(deleteRangeStart: Int, deleteRangeEnd: Int, page: Int) {
     val maxPages = Constants.MAX_RECENT_PAGES.toLong()
     lastPageQueries.replaceRangeWithPage(deleteRangeStart, deleteRangeEnd, page, maxPages)

@@ -10,6 +10,9 @@ import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
 import com.quran.labs.androidquran.util.QuranSettings
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class PageSelectActivity : AppCompatActivity() {
@@ -18,6 +21,9 @@ class PageSelectActivity : AppCompatActivity() {
 
   private lateinit var adapter : PageSelectAdapter
   private lateinit var viewPager: ViewPager
+
+  private val scope = MainScope()
+  private var isProcessing = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -55,6 +61,7 @@ class PageSelectActivity : AppCompatActivity() {
 
   override fun onDestroy() {
     adapter.cleanUp()
+    scope.cancel()
     super.onDestroy()
   }
 
@@ -65,13 +72,26 @@ class PageSelectActivity : AppCompatActivity() {
   private fun onPageTypeSelected(type: String) {
     val pageType = quranSettings.pageType
     if (pageType != type) {
-      quranSettings.removeDidDownloadPages()
-      quranSettings.pageType = type
-      val intent = Intent(this, QuranDataActivity::class.java).apply {
-        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+      isProcessing = true
+      scope.launch {
+        // migrate the bookmarks
+        presenter.migrateBookmarksData(pageType, type)
+
+        // we need to re-check the pages now
+        quranSettings.removeDidDownloadPages()
+        // and we can set up our new page type
+        quranSettings.pageType = type
+
+        // go back to Quran Data Activity
+        val intent = Intent(this@PageSelectActivity, QuranDataActivity::class.java).apply {
+          addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
+        finish()
       }
-      startActivity(intent)
+    } else {
+      finish()
     }
-    finish()
+    isProcessing = false
   }
 }
