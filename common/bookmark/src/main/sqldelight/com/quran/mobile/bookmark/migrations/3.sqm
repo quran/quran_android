@@ -40,6 +40,10 @@ SELECT _ID, bookmark_id, tag_id, CAST(strftime('%s', added_date) AS INTEGER) FRO
 DROP TABLE bookmark_tag;
 ALTER TABLE bookmark_tag_replacement RENAME TO bookmark_tag;
 
+-- re-add the index if it doesn't exist
+CREATE UNIQUE INDEX IF NOT EXISTS
+  bookmark_tag_index ON bookmark_tag(bookmark_id, tag_id);
+
 -- last pages
 CREATE TABLE IF NOT EXISTS last_pages_replacement(
   _ID INTEGER PRIMARY KEY AUTOINCREMENT,
