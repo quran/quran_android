@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.pageselect
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.source.PageProvider
-import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.ImageUtil
@@ -13,8 +12,6 @@ import dagger.Reusable
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -99,14 +96,7 @@ constructor(
       val destinationQuranInfo = QuranInfo(destination)
 
       val suraAyahFromPage = { page: Int ->
-        val totalPages = sourcePageSuraStart.size
-        if (page >= totalPages) {
-          114 to 1
-        } else if (page < 1) {
-          1 to 1
-        } else {
-          sourcePageSuraStart[page - 1] to sourcePageAyahStart[page - 1]
-        }
+        sourcePageSuraStart[page - 1] to sourcePageAyahStart[page - 1]
       }
 
       // update the bookmarks
@@ -130,7 +120,7 @@ constructor(
 
       // and update the recents
       val updatedRecentPages = bookmarksDao.recentPages()
-        .sortedBy { it.timestamp }
+        .sortedByDescending { it.timestamp }
         .map {
           val page = it.page
           val (pageSura, pageAyah) = suraAyahFromPage(page)
@@ -140,8 +130,9 @@ constructor(
         }
 
       if (updatedRecentPages.isNotEmpty()) {
+        bookmarksDao.removeRecentPages()
         bookmarksDao.replaceRecentPages(updatedRecentPages)
-        bookmarkModel.notifyRecentPagesUpdated()
+        bookmarkModel.notifyRecentPagesUpdated(updatedRecentPages.first().page)
       }
     }
   }

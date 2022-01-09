@@ -11,6 +11,9 @@ addLastPage {
   );
 }
 
+removeLastPages:
+  DELETE FROM last_pages;
+
 replaceRangeWithPage {
   DELETE FROM last_pages WHERE page >= ? AND page <= ?;
   REPLACE INTO last_pages(page) VALUES(?);

@@ -34,4 +34,10 @@ class BookmarksDaoImpl @Inject constructor(
       bookmarksDBAdapter.replaceRecentPages(pages)
     }
   }
+
+  override suspend fun removeRecentPages() {
+    withContext(Dispatchers.IO) {
+      bookmarksDBAdapter.removeRecentPages()
+    }
+  }
 }
