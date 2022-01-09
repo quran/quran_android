@@ -64,6 +64,10 @@ class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabas
     lastPageQueries.addLastPage(page, maxPages)
   }
 
+  fun removeRecentPages() {
+    lastPageQueries.removeLastPages()
+  }
+
   fun getBookmarkTagIds(bookmarkId: Long): List<Long> {
     return bookmarkTagQueries.getTagIdsForBookmark(bookmarkId)
       .executeAsList()
