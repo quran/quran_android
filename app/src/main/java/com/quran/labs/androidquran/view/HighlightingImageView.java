@@ -371,10 +371,10 @@ public class HighlightingImageView extends AppCompatImageView {
     overlayParams.rub3Text = rub3Text;
     overlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
     overlayParams.paint.setTextSize(fontSize);
-    if (juzText.contains("ج")) {
-      // change typeface for Arabic
-      overlayParams.paint.setTypeface(TypefaceManager.getHeaderFooterTypeface(context));
-    }
+//    if (juzText.contains("ج")) {
+//      // change typeface for Arabic
+//      overlayParams.paint.setTypeface(TypefaceManager.getHeaderFooterTypeface(context));
+//    }
     if (!didDraw) {
       invalidate();
     }
