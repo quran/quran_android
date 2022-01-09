@@ -26,31 +26,6 @@ class BookmarkDataModule {
       name = "bookmarks.db",
       callback = AndroidSqliteDriver.Callback(
         BookmarksDatabase.Schema,
-        AfterVersionWithDriver(1) {
-          try {
-            // Copy over ayah bookmarks
-            it.execute(
-              identifier = null,
-              sql = "INSERT INTO bookmarks(_id, sura, ayah, page) " +
-                  "SELECT _id, sura, ayah, page FROM ayah_bookmarks WHERE " +
-                  "bookmarked = 1",
-              parameters = 0
-            )
-
-            // Copy over page bookmarks
-            it.execute(
-              identifier = null,
-              sql = "INSERT INTO bookmarks(page) " +
-                  "SELECT _id from page_bookmarks where bookmarked = 1",
-              parameters = 0
-            )
-
-            // Drop old tables
-            it.execute(null, "DROP TABLE IF EXISTS ayah_bookmarks", 0)
-            it.execute(null, "DROP TABLE IF EXISTS page_bookmarks", 0)
-          } catch (e: Exception) {
-          }
-        },
         AfterVersionWithDriver(2) {
           val lastPage = runBlocking { settings.lastPage() }
           if (lastPage > -1) {
