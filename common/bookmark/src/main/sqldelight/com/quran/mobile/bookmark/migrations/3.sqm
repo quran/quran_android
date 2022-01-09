@@ -8,7 +8,12 @@ CREATE TABLE IF NOT EXISTS bookmarks_replacement(
 );
 
 INSERT INTO bookmarks_replacement
-SELECT _ID, sura, ayah, page, CAST(strftime('%s', added_date) AS INTEGER) FROM bookmarks;
+SELECT _ID, sura, ayah, page,
+  IFNULL(
+    CAST(strftime('%s', added_date) AS INTEGER),
+    CAST(strftime('%s', 'now') AS INTEGER)
+  )
+FROM bookmarks;
 
 DROP TABLE bookmarks;
 ALTER TABLE bookmarks_replacement RENAME TO bookmarks;
@@ -21,7 +26,12 @@ CREATE TABLE IF NOT EXISTS tags_replacement(
 );
 
 INSERT INTO tags_replacement
-SELECT _ID, name, CAST(strftime('%s', added_date) AS INTEGER) FROM tags;
+SELECT _ID, name,
+  IFNULL(
+    CAST(strftime('%s', added_date) AS INTEGER),
+    CAST(strftime('%s', 'now') AS INTEGER)
+  )
+FROM tags;
 
 DROP TABLE tags;
 ALTER TABLE tags_replacement RENAME TO tags;
@@ -35,7 +45,12 @@ CREATE TABLE IF NOT EXISTS bookmark_tag_replacement(
 );
 
 INSERT INTO bookmark_tag_replacement
-SELECT _ID, bookmark_id, tag_id, CAST(strftime('%s', added_date) AS INTEGER) FROM bookmark_tag;
+SELECT _ID, bookmark_id, tag_id,
+  IFNULL(
+    CAST(strftime('%s', added_date) AS INTEGER),
+    CAST(strftime('%s', 'now') AS INTEGER)
+  )
+FROM bookmark_tag;
 
 DROP TABLE bookmark_tag;
 ALTER TABLE bookmark_tag_replacement RENAME TO bookmark_tag;
@@ -52,7 +67,12 @@ CREATE TABLE IF NOT EXISTS last_pages_replacement(
 );
 
 INSERT INTO last_pages_replacement
-SELECT _ID, page, CAST(strftime('%s', added_date) AS INTEGER) FROM last_pages;
+SELECT _ID, page,
+  IFNULL(
+    CAST(strftime('%s', added_date) AS INTEGER),
+    CAST(strftime('%s', 'now') AS INTEGER)
+  )
+FROM last_pages;
 
 DROP TABLE last_pages;
 ALTER TABLE last_pages_replacement RENAME TO last_pages;
