@@ -4,9 +4,8 @@
 
 # Quran for Android
 
-[![Build Status](https://travis-ci.org/quran/quran_android.svg?branch=master)](https://travis-ci.org/quran/quran_android)
+[![Build Status](https://github.com/quran/quran_android/actions/workflows/build.yml/badge.svg)](https://github.com/quran/quran_android/actions/workflows/build.yml)
 [![Version](https://img.shields.io/github/v/release/quran/quran_android?include_prereleases&sort=semver)](https://github.com/quran/quran_android/releases/latest)
-[![IzzyOnDroid Version](https://img.shields.io/endpoint?url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.quran.labs.androidquran)](https://apt.izzysoft.de/fdroid/index/apk/com.quran.labs.androidquran)
 [![Downloads](https://PlayBadges.pavi2410.me/badge/downloads?id=com.quran.labs.androidquran)](https://play.google.com/store/apps/details?id=com.quran.labs.androidquran)
 [![Github Downloads](https://img.shields.io/github/downloads/quran/quran_android/total?logo=Github)](https://github.com/quran/quran_android/releases)
 
@@ -18,9 +17,6 @@ This is a simple (Madani based) Quran app for Android.
 [<img src="https://user-images.githubusercontent.com/69304392/148696068-0cfea65d-b18f-4685-82b5-329a330b1c0d.png"
       alt='Get it on GitHub'
       height="80">](https://github.com/quran/quran_android/releases/latest)
-[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"
-      alt='Get it on IzzyOnDroid'
-      height="80">](https://apt.izzysoft.de/fdroid/index/apk/com.quran.labs.androidquran)
 
 <div align="left">
 
