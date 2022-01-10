@@ -39,6 +39,9 @@ jobs:
         with:
           java-version: 11
 
+      - name: Run SqlDelight migration tests
+        run: ./gradlew verifySqlDelightMigration
+
       - name: Run tests
         run: ./gradlew testMadaniDebug feature:audio:testDebug -PdisableCrashlytics -PdisableFirebase
 
