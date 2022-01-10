@@ -322,8 +322,7 @@
   <string name="get_translations">Get Translations</string>
 
   <!-- help -->
-  <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support.
-        Please note that we receive lots of emails, so we may not be able to reply to all of them.</string>
+  <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support.         Please note that we receive lots of emails, so we may not be able to reply to all of them.</string>
 
   <!-- sura metainfo -->
   <string name="makki">Makki</string>
