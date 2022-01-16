@@ -423,13 +423,21 @@ internal class TranslationAdapter(
   }
 
   private fun updateHighlight(row: TranslationViewRow, holder: RowViewHolder) {
-    // toggle highlighting of the ayah number and Quran text only
+    // toggle highlighting of the ayah, but not for sura headers and basmallah
     val isHighlighted = row.ayahInfo.ayahId == highlightedAyah
-    if (row.type == TranslationViewRow.Type.VERSE_NUMBER ||
-      row.type == TranslationViewRow.Type.QURAN_TEXT) {
+    if (row.type != TranslationViewRow.Type.SURA_HEADER &&
+      row.type != TranslationViewRow.Type.BASMALLAH &&
+      row.type != TranslationViewRow.Type.SPACER
+    ) {
       holder.wrapperView.setBackgroundColor(
         if (isHighlighted) ayahSelectionColor else 0
       )
+    } else if (holder.divider != null) { // SPACER type
+      if (isHighlighted) {
+        holder.divider.highlight(ayahSelectionColor)
+      } else {
+        holder.divider.unhighlight()
+      }
     }
   }
 
