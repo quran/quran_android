@@ -271,7 +271,7 @@ class AyahTrackerPresenter @Inject constructor(
       }
     }
 
-    val toolBarPosition = getToolBarPosition(startAyah.sura, startAyah.ayah)
+    val toolBarPosition = getToolBarPosition(selectedAyah.sura, selectedAyah.ayah)
     return if (endAyah == null) {
       AyahSelection.Ayah(startAyah, toolBarPosition)
     } else {
