@@ -404,8 +404,8 @@ public class PagerActivity extends AppCompatActivity implements
             final SelectionIndicator updatedSelectionIndicator =
                 SelectionIndicatorKt.withXScroll(selectionIndicator, -positionOffsetPixels);
             readingEventPresenterBridge.withSelectionIndicator(updatedSelectionIndicator);
-          } else if (position == barPos - 1) {
-            // Swiping to prev ViewPager page (i.e. next quran page)
+          } else if (position == barPos - 1 || position == barPos + 1) {
+            // Swiping to previous or next ViewPager page (i.e. next or previous quran page)
             final SelectionIndicator updatedSelectionIndicator =
                 SelectionIndicatorKt.withXScroll(selectionIndicator, viewPager.getWidth() - positionOffsetPixels);
             readingEventPresenterBridge.withSelectionIndicator(updatedSelectionIndicator);
