@@ -10,6 +10,7 @@ import com.quran.data.model.selection.SelectionRectangle
 import com.quran.labs.androidquran.view.HighlightingImageView
 import com.quran.page.common.data.AyahBounds
 import timber.log.Timber
+import kotlin.math.abs
 
 object ImageAyahUtils {
   private fun getAyahFromKey(key: String): SuraAyah? {
@@ -59,8 +60,8 @@ object ImageAyahUtils {
           return getAyahFromKey(key)
         }
         val delta = Math.min(
-          Math.abs(boundsRect.bottom - y).toInt(),
-          Math.abs(boundsRect.top - y).toInt()
+          abs(boundsRect.bottom - y).toInt(),
+          abs(boundsRect.top - y).toInt()
         )
         if (closestDelta == -1 || delta < closestDelta) {
           closestLine = b.line
@@ -91,8 +92,8 @@ object ImageAyahUtils {
 
               // otherwise, keep track of the least delta and return it
               val delta = Math.min(
-                Math.abs(boundsRect.right - x).toInt(),
-                Math.abs(boundsRect.left - x).toInt()
+                abs(boundsRect.right - x).toInt(),
+                abs(boundsRect.left - x).toInt()
               )
               if (leastDeltaX == -1 || delta < leastDeltaX) {
                 closestAyah = ayah
