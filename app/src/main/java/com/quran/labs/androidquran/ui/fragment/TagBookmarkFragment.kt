@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.ui.fragment
 import android.content.Context
 import android.os.Bundle
 import com.quran.data.core.QuranInfo
-import com.quran.data.model.SuraAyah
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.startSuraAyah
 import com.quran.labs.androidquran.ui.PagerActivity

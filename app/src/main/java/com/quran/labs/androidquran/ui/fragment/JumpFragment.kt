@@ -33,7 +33,6 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.ForceCompleteTextView
 import timber.log.Timber
 import java.text.Normalizer
-import java.util.Locale
 import javax.inject.Inject
 
 /**
