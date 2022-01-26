@@ -16,7 +16,6 @@ import com.quran.labs.androidquran.di.QuranPageScope
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter.AyahInteractionHandler
 import com.quran.labs.androidquran.ui.PagerActivity
-import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.DOUBLE_TAP
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.LONG_PRESS

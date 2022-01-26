@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
