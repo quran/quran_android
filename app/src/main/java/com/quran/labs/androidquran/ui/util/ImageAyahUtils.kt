@@ -11,6 +11,7 @@ import com.quran.labs.androidquran.view.HighlightingImageView
 import com.quran.page.common.data.AyahBounds
 import timber.log.Timber
 import kotlin.math.abs
+import kotlin.math.min
 
 object ImageAyahUtils {
   private fun getAyahFromKey(key: String): SuraAyah? {
@@ -59,7 +60,7 @@ object ImageAyahUtils {
         if (boundsRect.contains(x, y)) {
           return getAyahFromKey(key)
         }
-        val delta = Math.min(
+        val delta = min(
           abs(boundsRect.bottom - y).toInt(),
           abs(boundsRect.top - y).toInt()
         )
@@ -91,7 +92,7 @@ object ImageAyahUtils {
               }
 
               // otherwise, keep track of the least delta and return it
-              val delta = Math.min(
+              val delta = min(
                 abs(boundsRect.right - x).toInt(),
                 abs(boundsRect.left - x).toInt()
               )
