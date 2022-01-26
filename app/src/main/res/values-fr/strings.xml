@@ -227,6 +227,7 @@
   <string name="madani">Madani</string>
   <plurals name="verses">
     <item quantity="one">%s Aya</item>
+    <item quantity="many">%s Ayāt</item>
     <item quantity="other">%s Ayāt</item>
   </plurals>
 
@@ -271,6 +272,7 @@
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">résultat pour \"%1$s\": </item>
+    <item quantity="many">%2$d résultats pour \"%1$s\": </item>
     <item quantity="other">%2$d résultats pour \"%1$s\": </item>
   </plurals>
   <string name="undo">Annuler</string>
