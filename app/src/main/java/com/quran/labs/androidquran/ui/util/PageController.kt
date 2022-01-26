@@ -13,6 +13,6 @@ interface PageController {
 
   fun handleRetryClicked()
   fun onScrollChanged(y: Float)
-  fun handleLongPress(suraAyah: SuraAyah?)
+  fun handleLongPress(suraAyah: SuraAyah)
   fun endAyahMode()
 }
