@@ -12,20 +12,21 @@ import com.quran.labs.androidquran.di.module.application.PageAggregationModule
 import com.quran.labs.androidquran.di.module.widgets.BookmarksWidgetUpdaterModule
 import com.quran.labs.androidquran.di.quran.TestQuranActivityComponent
 import com.squareup.anvil.annotations.MergeComponent
-import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
 @MergeComponent(
   AppScope::class,
-  modules = [AnalyticsModule::class,
+  modules = [
+    AnalyticsModule::class,
     ApplicationModule::class,
     DatabaseModule::class,
     NetworkModule::class,
     PageAggregationModule::class,
     QuranDataModule::class,
     WorkerModule::class,
-    BookmarksWidgetUpdaterModule::class]
+    BookmarksWidgetUpdaterModule::class
+  ]
 )
 interface TestApplicationComponent : ApplicationComponent {
   override fun quranActivityComponentBuilder(): TestQuranActivityComponent.Builder
