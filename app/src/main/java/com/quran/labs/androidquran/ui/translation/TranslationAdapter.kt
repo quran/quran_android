@@ -49,7 +49,7 @@ internal class TranslationAdapter(
   private var highlightedStartPosition: Int = 0
   private var highlightType: HighlightType? = null
 
-  private val expandedTafaseerAyahs = mutableSetOf<Pair<Int, Int>>()
+  private val expandedTafseerAyahs = mutableSetOf<Pair<Int, Int>>()
   private val expandedHyperlinks = mutableSetOf<Pair<Int, Int>>()
 
   private val defaultClickListener = View.OnClickListener { this.handleClick(it) }
@@ -96,7 +96,7 @@ internal class TranslationAdapter(
 
   fun setData(data: List<TranslationViewRow>) {
     this.data.clear()
-    expandedTafaseerAyahs.clear()
+    expandedTafseerAyahs.clear()
     this.data.addAll(data)
     if (highlightedAyah > 0) {
       highlightAyah(highlightedAyah, false, highlightType ?: HighlightType.SELECTION)
@@ -235,10 +235,10 @@ internal class TranslationAdapter(
     if (position != RecyclerView.NO_POSITION) {
       val data = data[position]
       val what = data.ayahInfo.ayahId to data.translationIndex
-      if (expandedTafaseerAyahs.contains(what)) {
-        expandedTafaseerAyahs.remove(what)
+      if (expandedTafseerAyahs.contains(what)) {
+        expandedTafseerAyahs.remove(what)
       } else {
-        expandedTafaseerAyahs.add(what)
+        expandedTafseerAyahs.add(what)
       }
       notifyItemChanged(position)
     }
@@ -395,7 +395,7 @@ internal class TranslationAdapter(
     translationIndex: Int
   ): CharSequence {
     if (text.length > MAX_TAFSEER_LENGTH &&
-      !expandedTafaseerAyahs.contains(ayahId to translationIndex)
+      !expandedTafseerAyahs.contains(ayahId to translationIndex)
     ) {
       // let's truncate
       val lastSpace = text.indexOf(' ', MAX_TAFSEER_LENGTH)
