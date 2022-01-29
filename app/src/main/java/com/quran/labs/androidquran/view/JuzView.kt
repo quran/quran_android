@@ -17,6 +17,7 @@ class JuzView(
   private var circleY = 0
   private val percentage: Int
   private var textOffset = 0f
+
   private lateinit var circleRect: RectF
   private val circlePaint = Paint()
   private var overlayTextPaint: TextPaint? = null
@@ -26,16 +27,19 @@ class JuzView(
     val resources = context.resources
     val circleColor = ContextCompat.getColor(context, R.color.accent_color)
     val circleBackground = ContextCompat.getColor(context, R.color.accent_color_dark)
+
     circlePaint.apply {
       style = Paint.Style.FILL
       color = circleColor
       isAntiAlias = true
     }
+
     circleBackgroundPaint.apply {
       style = Paint.Style.FILL
       color = circleBackground
       isAntiAlias = true
     }
+
     if (!overlayText.isNullOrEmpty()) {
       val textPaintColor = ContextCompat.getColor(context, R.color.header_background)
       val textPaintSize = resources.getDimensionPixelSize(R.dimen.juz_overlay_text_size)
@@ -46,6 +50,7 @@ class JuzView(
         textSize = textPaintSize.toFloat()
         textAlign = Paint.Align.CENTER
       }
+
       overlayTextPaint?.let { textPaint ->
         val textHeight = textPaint.descent() - textPaint.ascent()
         textOffset = textHeight / 2 - textPaint.descent()
