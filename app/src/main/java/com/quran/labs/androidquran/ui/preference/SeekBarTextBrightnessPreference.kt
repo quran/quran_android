@@ -6,13 +6,15 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.SeekBar
 
-class SeekBarTextBrightnessPreference(context: Context?, attrs: AttributeSet?) : SeekBarPreference(context, attrs) {
+class SeekBarTextBrightnessPreference(
+  context: Context, attrs: AttributeSet
+) : SeekBarPreference(context, attrs) {
 
   override fun getPreviewVisibility(): Int = View.VISIBLE
 
-  override fun onProgressChanged(seek: SeekBar, value: Int, fromTouch: Boolean) {
-    super.onProgressChanged(seek, value, fromTouch)
-    val lineColor = Color.argb(value, 255, 255, 255)
-    mPreviewText.setTextColor(lineColor)
+  override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+    super.onProgressChanged(seekBar, progress, fromUser)
+    val lineColor = Color.argb(progress, 255, 255, 255)
+    previewText.setTextColor(lineColor)
   }
 }
