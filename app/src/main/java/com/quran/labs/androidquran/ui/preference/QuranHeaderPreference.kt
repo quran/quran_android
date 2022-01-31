@@ -10,9 +10,11 @@ import com.quran.labs.androidquran.R
 
 class QuranHeaderPreference : Preference {
 
-  constructor(
-    context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int
-  ) : super(context, attrs, defStyleAttr, defStyleRes) {
+  constructor(context: Context) : super(context) {
+    init()
+  }
+
+  constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
     init()
   }
 
@@ -22,11 +24,9 @@ class QuranHeaderPreference : Preference {
     init()
   }
 
-  constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-    init()
-  }
-
-  constructor(context: Context) : super(context) {
+  constructor(
+    context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int
+  ) : super(context, attrs, defStyleAttr, defStyleRes) {
     init()
   }
 
