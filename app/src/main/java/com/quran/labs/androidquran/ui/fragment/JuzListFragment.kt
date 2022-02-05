@@ -184,7 +184,7 @@ class JuzListFragment : Fragment() {
       }
       elements[ctr++] = builder.build()
     }
-    adapter?.setElements(elements)
+    adapter?.setElements(elements.filterNotNull().toTypedArray())
   }
 
   companion object {
