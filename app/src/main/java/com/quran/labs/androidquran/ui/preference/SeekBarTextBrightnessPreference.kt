@@ -12,7 +12,7 @@ class SeekBarTextBrightnessPreference(
 
   override fun getPreviewVisibility(): Int = View.VISIBLE
 
-  override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+  override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
     super.onProgressChanged(seekBar, progress, fromUser)
     val lineColor = Color.argb(progress, 255, 255, 255)
     previewText.setTextColor(lineColor)

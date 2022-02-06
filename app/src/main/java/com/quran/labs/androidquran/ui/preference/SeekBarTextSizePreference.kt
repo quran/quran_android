@@ -11,7 +11,7 @@ class SeekBarTextSizePreference(
 
   override fun getPreviewVisibility(): Int = View.VISIBLE
 
-  override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+  override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
     super.onProgressChanged(seekBar, progress, fromUser)
     previewText.textSize = progress.toFloat()
   }
