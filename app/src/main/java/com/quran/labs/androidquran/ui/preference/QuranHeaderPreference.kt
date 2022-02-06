@@ -8,26 +8,16 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import com.quran.labs.androidquran.R
 
-class QuranHeaderPreference : Preference {
+class QuranHeaderPreference @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null,
+  defStyleAttr: Int = 0,
+  defStyleRes: Int = 0,
+) : Preference(context, attrs, defStyleAttr, defStyleRes) {
 
-  constructor(context: Context) : super(context) {
-    init()
-  }
-
-  constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-    init()
-  }
-
-  constructor(
-    context: Context, attrs: AttributeSet, defStyleAttr: Int
-  ) : super(context, attrs, defStyleAttr) {
-    init()
-  }
-
-  constructor(
-    context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int
-  ) : super(context, attrs, defStyleAttr, defStyleRes) {
-    init()
+  init {
+    layoutResource = R.layout.about_header
+    isSelectable = false
   }
 
   override fun onBindViewHolder(holder: PreferenceViewHolder) {
@@ -36,10 +26,5 @@ class QuranHeaderPreference : Preference {
       val tv = holder.findViewById(R.id.title) as? TextView
       tv?.setTextColor(Color.WHITE)
     }
-  }
-
-  private fun init() {
-    layoutResource = R.layout.about_header
-    isSelectable = false
   }
 }
