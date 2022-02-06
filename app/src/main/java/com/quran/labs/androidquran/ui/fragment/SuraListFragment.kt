@@ -43,11 +43,17 @@ class SuraListFragment : Fragment() {
   private var showSuraTranslatedName = false
   private var disposable: Disposable? = null
 
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    (context.applicationContext as QuranApplication).applicationComponent.inject(this)
+    numberOfPages = quranInfo.numberOfPages
+  }
+
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
     savedInstanceState: Bundle?
-  ): View? {
+  ): View {
     val view: View = inflater.inflate(R.layout.quran_list, container, false)
     recyclerView = view.findViewById(R.id.recycler_view)
     recyclerView.apply {
@@ -56,12 +62,6 @@ class SuraListFragment : Fragment() {
       adapter = QuranListAdapter(requireActivity(), recyclerView, getSuraList(), false)
     }
     return view
-  }
-
-  override fun onAttach(context: Context) {
-    super.onAttach(context)
-    (context.applicationContext as QuranApplication).applicationComponent.inject(this)
-    numberOfPages = quranInfo.numberOfPages
   }
 
   override fun onResume() {
@@ -121,7 +121,9 @@ class SuraListFragment : Fragment() {
         .withText(headerTitle)
         .withPage(quranInfo.getStartingPageForJuz(juz))
       elements[pos++] = headerBuilder.build()
-      next = if (juz == JUZ2_COUNT) numberOfPages + 1 else quranInfo.getStartingPageForJuz(juz + 1)
+      next = if (juz == JUZ2_COUNT) {
+        numberOfPages + 1
+      } else quranInfo.getStartingPageForJuz(juz + 1)
 
       while (sura <= SURAS_COUNT && quranInfo.getPageNumberForSura(sura) < next) {
         val builder = QuranRow.Builder()
