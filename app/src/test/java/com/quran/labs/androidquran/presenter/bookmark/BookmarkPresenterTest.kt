@@ -37,7 +37,7 @@ class BookmarkPresenterTest {
 
   companion object {
     private val TAG_LIST: MutableList<Tag> = ArrayList(2)
-    private val RECENTS_LIST: MutableList<RecentPage> = ArrayList(1)
+    private val RECENT_LIST: MutableList<RecentPage> = ArrayList(1)
     private val AYAH_BOOKMARKS_LIST: MutableList<Bookmark> = ArrayList(2)
     private val MIXED_BOOKMARKS_LIST: MutableList<Bookmark>
     private val RESOURCE_ARRAY: Array<String>
@@ -56,7 +56,7 @@ class BookmarkPresenterTest {
       TAG_LIST.add(Tag(2, "Second Tag"))
 
       // recent page
-      RECENTS_LIST.add(RecentPage(42, System.currentTimeMillis()))
+      RECENT_LIST.add(RecentPage(42, System.currentTimeMillis()))
 
       // two ayah bookmarks
 
@@ -126,11 +126,10 @@ class BookmarkPresenterTest {
         return Single.zip(
           Single.just(ArrayList()),
           Single.just(AYAH_BOOKMARKS_LIST),
-          Single.just(ArrayList()),
-          { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
-            BookmarkData(tags, bookmarks, recentPages)
-          }
-        )
+          Single.just(ArrayList())
+        ) { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
+          BookmarkData(tags, bookmarks, recentPages)
+        }
       }
     }
 
@@ -148,11 +147,10 @@ class BookmarkPresenterTest {
         return Single.zip(
           Single.just(ArrayList()),
           Single.just(MIXED_BOOKMARKS_LIST),
-          Single.just(ArrayList()),
-          { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
-            BookmarkData(tags, bookmarks, recentPages)
-          }
-        )
+          Single.just(ArrayList())
+        ) { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
+          BookmarkData(tags, bookmarks, recentPages)
+        }
       }
     }
 
@@ -170,11 +168,10 @@ class BookmarkPresenterTest {
         return Single.zip(
           Single.just(TAG_LIST),
           Single.just(MIXED_BOOKMARKS_LIST),
-          Single.just(RECENTS_LIST),
-          { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
-            BookmarkData(tags, bookmarks, recentPages)
-          }
-        )
+          Single.just(RECENT_LIST)
+        ) { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
+          BookmarkData(tags, bookmarks, recentPages)
+        }
       }
     }
 
@@ -194,11 +191,10 @@ class BookmarkPresenterTest {
         return Single.zip(
           Single.just(TAG_LIST),
           Single.just(AYAH_BOOKMARKS_LIST),
-          Single.just(ArrayList()),
-          { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
-            BookmarkData(tags, bookmarks, recentPages)
-          }
-        )
+          Single.just(ArrayList())
+        ) { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
+          BookmarkData(tags, bookmarks, recentPages)
+        }
       }
     }
 
@@ -219,11 +215,10 @@ class BookmarkPresenterTest {
         return Single.zip(
           Single.just(TAG_LIST),
           Single.just(MIXED_BOOKMARKS_LIST),
-          Single.just(ArrayList()),
-          { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
-            BookmarkData(tags, bookmarks, recentPages)
-          }
-        )
+          Single.just(ArrayList())
+        ) { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
+          BookmarkData(tags, bookmarks, recentPages)
+        }
       }
     }
 
@@ -244,11 +239,10 @@ class BookmarkPresenterTest {
         return Single.zip(
           Single.just(TAG_LIST),
           Single.just(MIXED_BOOKMARKS_LIST),
-          Single.just(RECENTS_LIST),
-          { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
-            BookmarkData(tags, bookmarks, recentPages)
-          }
-        )
+          Single.just(RECENT_LIST)
+        ) { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
+          BookmarkData(tags, bookmarks, recentPages)
+        }
       }
     }
 
