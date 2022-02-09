@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.presenter.quran.ayahtracker
 import android.app.Activity
 import android.view.MotionEvent
 import com.quran.data.core.QuranInfo
+import com.quran.data.di.QuranPageScope
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
@@ -12,7 +13,6 @@ import com.quran.labs.androidquran.common.HighlightInfo
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.data.QuranDisplayData
-import com.quran.labs.androidquran.di.QuranPageScope
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter.AyahInteractionHandler
 import com.quran.labs.androidquran.ui.PagerActivity

@@ -34,6 +34,7 @@ import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import com.quran.labs.androidquran.widget.BookmarksWidget
 import com.quran.labs.androidquran.widget.BookmarksWidgetListProvider
 import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
+import com.quran.mobile.di.QuranApplicationComponent
 import com.squareup.anvil.annotations.MergeComponent
 import javax.inject.Singleton
 
@@ -51,7 +52,7 @@ import javax.inject.Singleton
     BookmarksWidgetUpdaterModule::class
   ]
 )
-interface ApplicationComponent {
+interface ApplicationComponent: QuranApplicationComponent {
   // subcomponents
   fun pagerActivityComponentBuilder(): PagerActivityComponent.Builder
   fun quranActivityComponentBuilder(): QuranActivityComponent.Builder

@@ -112,6 +112,9 @@ import com.quran.labs.androidquran.view.AudioStatusBar;
 import com.quran.labs.androidquran.view.IconPageIndicator;
 import com.quran.labs.androidquran.view.QuranSpinner;
 import com.quran.labs.androidquran.view.SlidingUpPanelLayout;
+import com.quran.mobile.di.AyahActionFragmentProvider;
+import com.quran.mobile.di.QuranReadingActivityComponent;
+import com.quran.mobile.di.QuranReadingActivityComponentProvider;
 import com.quran.page.common.factory.PageViewFactoryProvider;
 import com.quran.page.common.toolbar.AyahToolBar;
 import com.quran.page.common.toolbar.di.AyahToolBarInjector;
@@ -151,6 +154,7 @@ public class PagerActivity extends AppCompatActivity implements
     TagBookmarkDialog.OnBookmarkTagsUpdateListener,
     AyahSelectedListener,
     JumpDestination,
+    QuranReadingActivityComponentProvider,
     QuranPageExtrasComponentProvider,
     AyahToolBarInjector {
   private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
@@ -764,6 +768,12 @@ public class PagerActivity extends AppCompatActivity implements
           .build();
     }
     return pagerActivityComponent;
+  }
+
+  @NonNull
+  @Override
+  public QuranReadingActivityComponent provideQuranReadingActivityComponent() {
+    return getPagerActivityComponent();
   }
 
   @NonNull
