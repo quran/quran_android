@@ -13,8 +13,10 @@ import com.quran.labs.androidquran.util.QuranPageInfoImpl
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.TranslationUtil
+import com.quran.mobile.di.AyahActionFragmentProvider
 import dagger.Module
 import dagger.Provides
+import dagger.multibindings.ElementsIntoSet
 
 @Module
 class PagerActivityModule(private val pagerActivity: PagerActivity) {
@@ -49,5 +51,11 @@ class PagerActivityModule(private val pagerActivity: PagerActivity) {
       ContextCompat.getColor(context, R.color.translation_translator_color),
       quranInfo
     )
+  }
+
+  @Provides
+  @ElementsIntoSet
+  fun provideAdditionalAyahPanels(): Set<AyahActionFragmentProvider> {
+    return emptySet()
   }
 }

@@ -113,6 +113,7 @@ import com.quran.labs.androidquran.view.IconPageIndicator;
 import com.quran.labs.androidquran.view.QuranSpinner;
 import com.quran.labs.androidquran.view.SlidingUpPanelLayout;
 import com.quran.mobile.di.AyahActionFragmentProvider;
+import com.quran.mobile.di.AyahActionFragmentProvider;
 import com.quran.mobile.di.QuranReadingActivityComponent;
 import com.quran.mobile.di.QuranReadingActivityComponentProvider;
 import com.quran.page.common.factory.PageViewFactoryProvider;
@@ -235,6 +236,7 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject AudioEventPresenter audioEventPresenter;
   @Inject ReadingEventPresenter readingEventPresenter;
   @Inject PageViewFactoryProvider pageProviderFactoryProvider;
+  @Inject Set<AyahActionFragmentProvider> additionalAyahPanels;
 
   private AudioEventPresenterBridge audioEventPresenterBridge;
   private ReadingEventPresenterBridge readingEventPresenterBridge;
@@ -577,7 +579,8 @@ public class PagerActivity extends AppCompatActivity implements
 
     // Create and set fragment pager adapter
     slidingPagerAdapter = new SlidingPagerAdapter(getSupportFragmentManager(),
-        quranSettings.isArabicNames() || QuranUtils.isRtl());
+        quranSettings.isArabicNames() || QuranUtils.isRtl(),
+        additionalAyahPanels);
     slidingPager.setAdapter(slidingPagerAdapter);
 
     // Attach the view pager to the action bar

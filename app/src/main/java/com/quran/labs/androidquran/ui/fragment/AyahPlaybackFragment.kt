@@ -15,10 +15,12 @@ import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.dao.audio.AudioRequest
 import com.quran.labs.androidquran.ui.PagerActivity
+import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.QuranSpinner
+import com.quran.mobile.di.AyahActionFragmentProvider
 import com.shawnlin.numberpicker.NumberPicker
 import java.text.NumberFormat
 import java.util.Locale
@@ -50,6 +52,12 @@ class AyahPlaybackFragment : AyahActionFragment() {
 
   @Inject
   lateinit var quranInfo: QuranInfo
+
+  object Provider : AyahActionFragmentProvider {
+    override val order = SlidingPagerAdapter.AUDIO_PAGE
+    override val iconResId = R.drawable.ic_play
+    override fun newAyahActionFragment() = AyahPlaybackFragment()
+  }
 
   override fun onCreateView(
     inflater: LayoutInflater,
