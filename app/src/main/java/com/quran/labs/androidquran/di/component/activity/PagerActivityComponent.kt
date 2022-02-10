@@ -9,12 +9,13 @@ import com.quran.labs.androidquran.ui.fragment.AyahPlaybackFragment
 import com.quran.labs.androidquran.ui.fragment.AyahTranslationFragment
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkFragment
 import com.quran.page.common.toolbar.AyahToolBar
+import com.quran.mobile.di.QuranReadingActivityComponent
 import com.squareup.anvil.annotations.MergeSubcomponent
 import dagger.Subcomponent
 
 @ActivityScope
 @MergeSubcomponent(QuranReadingScope::class, modules = [PagerActivityModule::class])
-interface PagerActivityComponent {
+interface PagerActivityComponent : QuranReadingActivityComponent {
   // subcomponents
   fun quranPageComponentBuilder(): QuranPageComponent.Builder
 

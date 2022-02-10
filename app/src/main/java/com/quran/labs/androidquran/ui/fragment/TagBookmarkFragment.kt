@@ -5,7 +5,10 @@ import android.os.Bundle
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.startSuraAyah
+import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.ui.PagerActivity
+import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
+import com.quran.mobile.di.AyahActionFragmentProvider
 import com.quran.reading.common.AudioEventPresenter
 import com.quran.reading.common.ReadingEventPresenter
 import kotlinx.coroutines.CoroutineScope
@@ -26,6 +29,12 @@ class TagBookmarkFragment : TagBookmarkDialog() {
 
   @Inject
   lateinit var quranInfo: QuranInfo
+
+  object Provider : AyahActionFragmentProvider {
+    override val order = SlidingPagerAdapter.TAG_PAGE
+    override val iconResId = R.drawable.ic_tag
+    override fun newAyahActionFragment() = TagBookmarkFragment()
+  }
 
   override fun onAttach(context: Context) {
     super.onAttach(context)

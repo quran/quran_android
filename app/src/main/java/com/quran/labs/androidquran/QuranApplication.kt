@@ -12,15 +12,21 @@ import com.quran.labs.androidquran.di.module.application.ApplicationModule
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.RecordingLogTree
 import com.quran.labs.androidquran.widget.BookmarksWidgetSubscriber
+import com.quran.mobile.di.QuranApplicationComponent
+import com.quran.mobile.di.QuranApplicationComponentProvider
 import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 
-open class QuranApplication : Application() {
+open class QuranApplication : Application(), QuranApplicationComponentProvider {
   lateinit var applicationComponent: ApplicationComponent
 
   @Inject lateinit var quranWorkerFactory: QuranWorkerFactory
   @Inject lateinit var bookmarksWidgetSubscriber: BookmarksWidgetSubscriber
+
+  override fun provideQuranApplicationComponent(): QuranApplicationComponent {
+    return applicationComponent
+  }
 
   override fun onCreate() {
     super.onCreate()

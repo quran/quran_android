@@ -22,6 +22,8 @@ import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.R.layout
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter.TranslationScreen
+import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
+import com.quran.mobile.di.AyahActionFragmentProvider
 import kotlin.math.abs
 
 class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
@@ -41,6 +43,12 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
 
   @Inject
   lateinit var translationPresenter: InlineTranslationPresenter
+
+  object Provider : AyahActionFragmentProvider {
+    override val order = SlidingPagerAdapter.TRANSLATION_PAGE
+    override val iconResId = R.drawable.ic_translation
+    override fun newAyahActionFragment() = AyahTranslationFragment()
+  }
 
   override fun onAttach(context: Context) {
     super.onAttach(context)

@@ -112,6 +112,10 @@ import com.quran.labs.androidquran.view.AudioStatusBar;
 import com.quran.labs.androidquran.view.IconPageIndicator;
 import com.quran.labs.androidquran.view.QuranSpinner;
 import com.quran.labs.androidquran.view.SlidingUpPanelLayout;
+import com.quran.mobile.di.AyahActionFragmentProvider;
+import com.quran.mobile.di.AyahActionFragmentProvider;
+import com.quran.mobile.di.QuranReadingActivityComponent;
+import com.quran.mobile.di.QuranReadingActivityComponentProvider;
 import com.quran.page.common.factory.PageViewFactoryProvider;
 import com.quran.page.common.toolbar.AyahToolBar;
 import com.quran.page.common.toolbar.di.AyahToolBarInjector;
@@ -151,6 +155,7 @@ public class PagerActivity extends AppCompatActivity implements
     TagBookmarkDialog.OnBookmarkTagsUpdateListener,
     AyahSelectedListener,
     JumpDestination,
+    QuranReadingActivityComponentProvider,
     QuranPageExtrasComponentProvider,
     AyahToolBarInjector {
   private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
@@ -231,6 +236,7 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject AudioEventPresenter audioEventPresenter;
   @Inject ReadingEventPresenter readingEventPresenter;
   @Inject PageViewFactoryProvider pageProviderFactoryProvider;
+  @Inject Set<AyahActionFragmentProvider> additionalAyahPanels;
 
   private AudioEventPresenterBridge audioEventPresenterBridge;
   private ReadingEventPresenterBridge readingEventPresenterBridge;
@@ -573,7 +579,8 @@ public class PagerActivity extends AppCompatActivity implements
 
     // Create and set fragment pager adapter
     slidingPagerAdapter = new SlidingPagerAdapter(getSupportFragmentManager(),
-        quranSettings.isArabicNames() || QuranUtils.isRtl());
+        quranSettings.isArabicNames() || QuranUtils.isRtl(),
+        additionalAyahPanels);
     slidingPager.setAdapter(slidingPagerAdapter);
 
     // Attach the view pager to the action bar
@@ -764,6 +771,12 @@ public class PagerActivity extends AppCompatActivity implements
           .build();
     }
     return pagerActivityComponent;
+  }
+
+  @NonNull
+  @Override
+  public QuranReadingActivityComponent provideQuranReadingActivityComponent() {
+    return getPagerActivityComponent();
   }
 
   @NonNull

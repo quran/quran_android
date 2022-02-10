@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.presenter.quran
 
+import com.quran.data.di.QuranPageScope
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.Response
-import com.quran.labs.androidquran.di.QuranPageScope
 import com.quran.labs.androidquran.model.quran.CoordinatesModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.helpers.QuranPageLoader
