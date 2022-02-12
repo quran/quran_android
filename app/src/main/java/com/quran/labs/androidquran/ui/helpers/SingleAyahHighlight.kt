@@ -9,11 +9,7 @@ class SingleAyahHighlight : AyahHighlight {
   companion object {
     @JvmStatic
     fun createSet(ayahKeys: Set<String>): Set<AyahHighlight> {
-      val set: MutableSet<AyahHighlight> = HashSet()
-      for (ayahKey in ayahKeys) {
-        set.add(SingleAyahHighlight(ayahKey))
-      }
-      return set
+      return ayahKeys.map { SingleAyahHighlight(it) }.toSet()
     }
   }
 }
