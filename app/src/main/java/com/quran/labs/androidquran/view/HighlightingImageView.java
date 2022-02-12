@@ -14,7 +14,6 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.SparseArray;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -23,7 +22,6 @@ import com.quran.labs.androidquran.ui.helpers.HighlightAnimationConfig;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.SingleAyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.TransitionAyahHighlight;
-import com.quran.labs.androidquran.ui.util.TypefaceManager;
 import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
@@ -46,8 +44,6 @@ import dev.chrisbanes.insetter.Insetter;
 
 public class HighlightingImageView extends AppCompatImageView {
 
-  private static final SparseArray<Paint> SPARSE_PAINT_ARRAY = new SparseArray<>();
-
   private static int overlayTextColor = -1;
   private static int headerFooterSize;
   private static int headerFooterFontSize;
@@ -63,10 +59,6 @@ public class HighlightingImageView extends AppCompatImageView {
   private boolean isColorFilterOn;
   private int nightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
 
-  // cached objects for onDraw
-  private final RectF scaledRect = new RectF();
-  private final Set<AyahHighlight> alreadyHighlighted = new HashSet<>();
-
   // Params for drawing text
   private int fontSize;
   private OverlayParams overlayParams = null;
@@ -81,6 +73,11 @@ public class HighlightingImageView extends AppCompatImageView {
   private int bottomSafeOffset = 0;
   private int horizontalSafeOffset = 0;
   private int verticalOffsetForScrolling = 0;
+
+  private final ImageDrawHelper highlightsDrawer = new HighlightsDrawer(
+      () -> highlightCoordinates,
+      () -> currentHighlights
+  );
 
   public HighlightingImageView(Context context) {
     this(context, null);
@@ -184,8 +181,6 @@ public class HighlightingImageView extends AppCompatImageView {
     initOverlayParamsColor();
     adjustNightMode();
   }
-
-
 
   class AnimationUpdateListener implements ValueAnimator.AnimatorUpdateListener, Animator.AnimatorListener {
     /*
@@ -453,38 +448,12 @@ public class HighlightingImageView extends AppCompatImageView {
     didDraw = true;
   }
 
-  private Paint getPaintForHighlightType(HighlightType type) {
-    int color = type.getColor(getContext());
-    Paint paint = SPARSE_PAINT_ARRAY.get(color);
-    if (paint == null) {
-      paint = new Paint();
-      paint.setColor(color);
-      SPARSE_PAINT_ARRAY.put(color, paint);
-    }
-    return paint;
-  }
-
   @Override
   protected void onSizeChanged(int w, int h, int oldw, int oldh) {
     super.onSizeChanged(w, h, oldw, oldh);
     if (overlayParams != null) {
       overlayParams.init = false;
     }
-  }
-
-  private boolean alreadyHighlightedContains(AyahHighlight ayahHighlight) {
-    if(alreadyHighlighted.contains(ayahHighlight)) {
-      return true;
-    }
-
-    if(ayahHighlight.isTransition()) {
-      TransitionAyahHighlight transitionHighlight = (TransitionAyahHighlight)ayahHighlight;
-      return alreadyHighlighted.contains(transitionHighlight.getSource())
-          || // if x -> y, either x or y is already highlighted, then we don't show the highlight
-          alreadyHighlighted.contains(transitionHighlight.getDestination());
-    }
-
-    return false;
   }
 
   @Override
@@ -497,32 +466,15 @@ public class HighlightingImageView extends AppCompatImageView {
       return;
     }
 
-    final Matrix matrix = getImageMatrix();
-
     // Draw overlay text
     didDraw = false;
     if (overlayParams != null) {
-      overlayText(canvas, matrix);
+      overlayText(canvas, getImageMatrix());
     }
 
-    // Draw each ayah highlight
-    if (highlightCoordinates != null && !currentHighlights.isEmpty()) {
-      alreadyHighlighted.clear();
-      for (Map.Entry<HighlightType, Set<AyahHighlight>> entry : currentHighlights.entrySet()) {
-        Paint paint = getPaintForHighlightType(entry.getKey());
-        for (AyahHighlight ayahHighlight : entry.getValue()) {
-           if (alreadyHighlightedContains(ayahHighlight)) continue;
-           List<AyahBounds> rangesToDraw = highlightCoordinates.get(ayahHighlight);
-           if (rangesToDraw != null && !rangesToDraw.isEmpty()) {
-             for (AyahBounds b : rangesToDraw) {
-               matrix.mapRect(scaledRect, b.getBounds());
-               scaledRect.offset(getPaddingLeft(), getPaddingTop());
-               canvas.drawRect(scaledRect, paint);
-             }
-             alreadyHighlighted.add(ayahHighlight);
-           }
-        }
-      }
+    // Draw highlights
+    if (pageCoordinates != null) {
+      highlightsDrawer.draw(pageCoordinates, canvas, this);
     }
 
     // run additional image draw helpers if any
