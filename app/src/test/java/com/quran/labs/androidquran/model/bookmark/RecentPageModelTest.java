@@ -26,6 +26,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import androidx.annotation.NonNull;
+
 public class RecentPageModelTest {
   private static final List<RecentPage> SAMPLE_RECENT_PAGES = new ArrayList<>();
 
@@ -105,8 +107,9 @@ public class RecentPageModelTest {
 
     RecentPageModel recentPageModel = new RecentPageModel(bookmarksAdapter) {
 
+      @NonNull
       @Override
-      Single<List<RecentPage>> getRecentPagesObservable() {
+      public Single<List<RecentPage>> getRecentPagesObservable() {
         // use an implementation of getRecentPagesObservable that delays the results until
         // testScheduler simulates the passing of 5 seconds (the timer time).
         return Single.timer(5, TimeUnit.SECONDS, testScheduler)

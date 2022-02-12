@@ -125,7 +125,7 @@ class QuranActivity : AppCompatActivity(),
       )
     }
 
-    latestPageObservable = recentPageModel.latestPageObservable
+    latestPageObservable = recentPageModel.getLatestPageObservable()
     val intent = intent
     if (intent != null) {
       val extras = intent.extras
