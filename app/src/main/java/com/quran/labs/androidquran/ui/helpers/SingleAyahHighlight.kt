@@ -1,10 +1,10 @@
 package com.quran.labs.androidquran.ui.helpers
 
-class SingleAyahHighlight : AyahHighlight {
+class SingleAyahHighlight(
+  key: String
+) : AyahHighlight(key = key, isTransition = false) {
 
-  constructor(key: String) : super(key)
-
-  constructor(surah: Int, ayah: Int) : super("$surah:$ayah")
+  constructor(surah: Int, ayah: Int) : this("$surah:$ayah")
 
   companion object {
     @JvmStatic
