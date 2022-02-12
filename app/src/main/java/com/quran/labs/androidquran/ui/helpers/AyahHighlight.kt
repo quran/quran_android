@@ -1,23 +1,26 @@
 package com.quran.labs.androidquran.ui.helpers
 
-sealed class AyahHighlight(val key: String, val isTransition: Boolean) {
+sealed class AyahHighlight {
 
-  override fun equals(other: Any?): Boolean {
-    if (other === this) {
-      return true
+  abstract val key: String
+
+  fun isTransition() = this is TransitionAyahHighlight
+
+  data class SingleAyahHighlight(override val key: String) : AyahHighlight() {
+    constructor(surah: Int, ayah: Int) : this("$surah:$ayah")
+    companion object {
+      @JvmStatic
+      fun createSet(ayahKeys: Set<String>): Set<AyahHighlight> {
+        return ayahKeys.map { SingleAyahHighlight(it) }.toSet()
+      }
     }
-    if (other == null || other.javaClass != this.javaClass) {
-      return false
-    }
-    val ayahHighlight = other as AyahHighlight
-    return key == ayahHighlight.key
   }
 
-  override fun hashCode(): Int {
-    return key.hashCode()
+  data class TransitionAyahHighlight(
+    val source: AyahHighlight,
+    val destination: AyahHighlight
+  ) : AyahHighlight() {
+    override val key = "${source.key}->${destination.key}"
   }
 
-  override fun toString(): String {
-    return key
-  }
 }

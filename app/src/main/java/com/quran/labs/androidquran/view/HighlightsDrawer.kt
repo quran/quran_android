@@ -6,8 +6,8 @@ import android.graphics.RectF
 import android.widget.ImageView
 import androidx.annotation.ColorInt
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight
+import com.quran.labs.androidquran.ui.helpers.AyahHighlight.TransitionAyahHighlight
 import com.quran.labs.androidquran.ui.helpers.HighlightType
-import com.quran.labs.androidquran.ui.helpers.TransitionAyahHighlight
 import com.quran.page.common.data.AyahBounds
 import com.quran.page.common.data.PageCoordinates
 import com.quran.page.common.draw.ImageDrawHelper
@@ -38,7 +38,7 @@ class HighlightsDrawer(
     if (ayahHighlight in alreadyHighlighted) {
       return true
     }
-    if (ayahHighlight.isTransition) {
+    if (ayahHighlight.isTransition()) {
       val transitionHighlight = ayahHighlight as TransitionAyahHighlight
       // if x -> y, either x or y is already highlighted, then we don't show the highlight
       return transitionHighlight.source in alreadyHighlighted
