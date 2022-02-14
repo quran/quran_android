@@ -16,6 +16,7 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.SettingsImpl
 import com.quran.mobile.di.ExtraPreferencesProvider
+import com.quran.mobile.di.ExtraScreenProvider
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.ElementsIntoSet
@@ -94,6 +95,12 @@ class ApplicationModule(private val application: Application) {
   @Provides
   @ElementsIntoSet
   fun provideExtraPreferences(): Set<ExtraPreferencesProvider> {
+    return emptySet()
+  }
+
+  @Provides
+  @ElementsIntoSet
+  fun provideExtraScreens(): Set<ExtraScreenProvider> {
     return emptySet()
   }
 }
