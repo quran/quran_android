@@ -17,4 +17,5 @@ anvil { generateDaggerFactories = true }
 dependencies {
   implementation deps.dagger.runtime
   implementation "androidx.fragment:fragment-ktx:${androidxFragmentVersion}"
+  implementation "androidx.preference:preference-ktx:${androidxPreferencesVersion}"
 }

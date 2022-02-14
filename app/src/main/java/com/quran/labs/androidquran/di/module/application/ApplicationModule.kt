@@ -15,8 +15,10 @@ import com.quran.labs.androidquran.data.QuranFileConstants
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.SettingsImpl
+import com.quran.mobile.di.ExtraPreferencesProvider
 import dagger.Module
 import dagger.Provides
+import dagger.multibindings.ElementsIntoSet
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Scheduler
 import java.io.File
@@ -87,5 +89,11 @@ class ApplicationModule(private val application: Application) {
   @Provides
   fun provideCacheDirectory(): File {
     return application.cacheDir
+  }
+
+  @Provides
+  @ElementsIntoSet
+  fun provideExtraPreferences(): Set<ExtraPreferencesProvider> {
+    return emptySet()
   }
 }
