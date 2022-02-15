@@ -45,6 +45,7 @@ import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.SlidingTabLayout
+import com.quran.mobile.di.ExtraScreenProvider
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -90,6 +91,8 @@ class QuranActivity : AppCompatActivity(),
   lateinit var translationManagerPresenter: TranslationManagerPresenter
   @Inject
   lateinit var quranIndexEventLogger: QuranIndexEventLogger
+  @Inject
+  lateinit var extraScreens: Set<@JvmSuppressWildcards ExtraScreenProvider>
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     val quranApp = application as QuranApplication
@@ -189,11 +192,17 @@ class QuranActivity : AppCompatActivity(),
             ComponentName(this, SearchActivity::class.java)
         )
     )
+
+    // Add additional injected screens (if any)
+    extraScreens
+      .sortedBy { it.order }
+      .forEach { menu.add(Menu.NONE, it.id, Menu.NONE, it.titleResId) }
+
     return true
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    when (item.itemId) {
+    when (val itemId = item.itemId) {
       R.id.settings -> {
         startActivity(Intent(this, QuranPreferenceActivity::class.java))
       }
@@ -218,7 +227,8 @@ class QuranActivity : AppCompatActivity(),
         startActivity(intent)
       }
       else -> {
-        return super.onOptionsItemSelected(item)
+        val handled = extraScreens.firstOrNull { it.id == itemId }?.onClick(this) ?: false
+        return handled || super.onOptionsItemSelected(item)
       }
     }
     return true
