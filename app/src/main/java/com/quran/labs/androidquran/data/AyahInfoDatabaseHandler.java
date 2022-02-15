@@ -14,6 +14,7 @@ import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.AyahMarkerLocation;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.data.SuraHeaderLocation;
+import com.quran.page.common.data.coordinates.PageGlyphsCoords;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,12 +34,14 @@ public class AyahInfoDatabaseHandler {
   private static final String MIN_Y = "min_y";
   private static final String MAX_X = "max_x";
   private static final String MAX_Y = "max_y";
+  private static final String GLYPH_TYPE = "glyph_type";
   private static final String GLYPHS_TABLE = "glyphs";
 
   private static Map<String, AyahInfoDatabaseHandler> ayahInfoCache = new HashMap<>();
   private static String quranDatabaseDirectory = "";
 
   private final SQLiteDatabase database;
+  private final boolean hasGlyphData;
 
   static AyahInfoDatabaseHandler getAyahInfoDatabaseHandler(
       Context context, String databaseName, QuranFileUtils quranFileUtils) {
@@ -85,9 +88,11 @@ public class AyahInfoDatabaseHandler {
     String base = quranFileUtils.getQuranAyahDatabaseDirectory(context);
     if (base == null) {
       database = null;
+      hasGlyphData = false;
     } else {
       String path = base + File.separator + databaseName;
       database = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+      hasGlyphData = quranFileUtils.getAyahInfoDbHasGlyphData();
     }
   }
 
@@ -128,13 +133,28 @@ public class AyahInfoDatabaseHandler {
 
   @NonNull
   public AyahCoordinates getVersesBoundsForPage(int page) {
+    boolean includeGlyphData = hasGlyphData && haveGlyphData();
+    GlyphsBuilder glyphsBuilder = new GlyphsBuilder();
     Map<String, List<AyahBounds>> ayahBounds = new HashMap<>();
     Cursor cursor = null;
     try {
-      cursor = getVersesBoundsCursorForPage(page);
+      cursor = getVersesBoundsCursorForPage(page, includeGlyphData);
       while (cursor.moveToNext()) {
+        int line = cursor.getInt(1);
         int sura = cursor.getInt(2);
         int ayah = cursor.getInt(3);
+        int position = cursor.getInt(4);
+        int minX = cursor.getInt(5);
+        int minY = cursor.getInt(6);
+        int maxX = cursor.getInt(7);
+        int maxY = cursor.getInt(8);
+
+        if (includeGlyphData) {
+          String glyphType = cursor.getString(9);
+          RectF r = new RectF(minX, minY, maxX, maxY);
+          glyphsBuilder.append(sura, ayah, position, line, glyphType, r);
+        }
+
         String key = sura + ":" + ayah;
         List<AyahBounds> bounds = ayahBounds.get(key);
         if (bounds == null) {
@@ -146,10 +166,7 @@ public class AyahInfoDatabaseHandler {
           last = bounds.get(bounds.size() - 1);
         }
 
-        AyahBounds bound = new AyahBounds(cursor.getInt(1),
-            cursor.getInt(4), cursor.getInt(5),
-            cursor.getInt(6), cursor.getInt(7),
-            cursor.getInt(8));
+        AyahBounds bound = new AyahBounds(line, position, minX, minY, maxX, maxY);
         if (last != null && last.getLine() == bound.getLine()) {
           last.engulf(bound);
         } else {
@@ -161,7 +178,10 @@ public class AyahInfoDatabaseHandler {
       DatabaseUtils.closeCursor(cursor);
     }
 
-    return new AyahCoordinates(page, ayahBounds);
+    PageGlyphsCoords glyphCoords = includeGlyphData ?
+        new PageGlyphsCoords(page, glyphsBuilder.build()) : null;
+
+    return new AyahCoordinates(page, ayahBounds, glyphCoords);
   }
 
   private boolean haveVerseMarkerData() {
@@ -170,6 +190,20 @@ public class AyahInfoDatabaseHandler {
       cursor = database.rawQuery("SELECT count(1) from sqlite_master WHERE name = ?",
           new String[] { "ayah_markers" });
       return cursor.moveToFirst() && cursor.getInt(0) > 0;
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
+    }
+  }
+
+  private boolean haveGlyphData() {
+    Cursor cursor = null;
+    try {
+      cursor = database.query(GLYPHS_TABLE,
+          new String[]{GLYPH_TYPE}, null, null, null, null, null, "1");
+      return cursor.moveToFirst() && cursor.getString(0) != null;
+    } catch (Exception e) {
+      // we don't have glyph data (the column doesn't exist)
+      return false;
     } finally {
       DatabaseUtils.closeCursor(cursor);
     }
@@ -218,10 +252,13 @@ public class AyahInfoDatabaseHandler {
     return headers;
   }
 
-  private Cursor getVersesBoundsCursorForPage(int page) {
+  private Cursor getVersesBoundsCursorForPage(int page, boolean withGlyphData) {
+    String[] columns = withGlyphData ?
+        new String[]{COL_PAGE, COL_LINE, COL_SURA, COL_AYAH, COL_POSITION, MIN_X, MIN_Y, MAX_X, MAX_Y, GLYPH_TYPE} :
+        new String[]{COL_PAGE, COL_LINE, COL_SURA, COL_AYAH, COL_POSITION, MIN_X, MIN_Y, MAX_X, MAX_Y};
+
     return database.query(GLYPHS_TABLE,
-        new String[]{ COL_PAGE, COL_LINE, COL_SURA, COL_AYAH,
-            COL_POSITION, MIN_X, MIN_Y, MAX_X, MAX_Y },
+        columns,
         COL_PAGE + "=" + page,
         null, null, null,
         COL_SURA + "," + COL_AYAH + "," + COL_POSITION);

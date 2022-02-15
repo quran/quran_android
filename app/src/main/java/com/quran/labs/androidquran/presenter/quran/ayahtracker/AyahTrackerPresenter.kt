@@ -4,9 +4,12 @@ import android.app.Activity
 import android.view.MotionEvent
 import com.quran.data.core.QuranInfo
 import com.quran.data.di.QuranPageScope
-import com.quran.data.model.selection.AyahSelection
+import com.quran.data.model.AyahGlyph
+import com.quran.data.model.AyahGlyph.WordGlyph
+import com.quran.data.model.AyahWord
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.data.model.selection.startSuraAyah
 import com.quran.labs.androidquran.common.HighlightInfo
@@ -85,7 +88,7 @@ class AyahTrackerPresenter @Inject constructor(
     val pendingHighlightInfo = pendingHighlightInfo
     if (pendingHighlightInfo != null && ayahCoordinates.ayahCoordinates.isNotEmpty()) {
       highlightAyah(
-        pendingHighlightInfo.sura, pendingHighlightInfo.ayah,
+        pendingHighlightInfo.sura, pendingHighlightInfo.ayah, pendingHighlightInfo.word,
         pendingHighlightInfo.highlightType, pendingHighlightInfo.scrollToAyah
       )
     }
@@ -104,7 +107,7 @@ class AyahTrackerPresenter @Inject constructor(
     when (ayahSelection) {
       is AyahSelection.Ayah -> {
         val suraAyah = ayahSelection.suraAyah
-        highlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.SELECTION, false)
+        highlightAyah(suraAyah.sura, suraAyah.ayah, -1, HighlightType.SELECTION, false)
       }
       is AyahSelection.AyahRange -> {
         items.forEach {
@@ -123,7 +126,7 @@ class AyahTrackerPresenter @Inject constructor(
   private fun onAudioSelectionChanged(suraAyah: SuraAyah?) {
     unHighlightAyahs(HighlightType.AUDIO)
     if (suraAyah != null) {
-      highlightAyah(suraAyah.sura, suraAyah.ayah, HighlightType.AUDIO, true)
+      highlightAyah(suraAyah.sura, suraAyah.ayah, -1, HighlightType.AUDIO, true)
     }
   }
 
@@ -140,14 +143,14 @@ class AyahTrackerPresenter @Inject constructor(
     }
   }
 
-  private fun highlightAyah(sura: Int, ayah: Int, type: HighlightType, scrollToAyah: Boolean) {
+  private fun highlightAyah(sura: Int, ayah: Int, word: Int, type: HighlightType, scrollToAyah: Boolean) {
     var handled = false
     val page = if (items.size == 1) items[0].page else quranInfo.getPageFromSuraAyah(sura, ayah)
     for (item in items) {
-      handled = handled || item.onHighlightAyah(page, sura, ayah, type, scrollToAyah)
+      handled = handled || item.onHighlightAyah(page, sura, ayah, word, type, scrollToAyah)
     }
     pendingHighlightInfo = if (!handled) {
-      HighlightInfo(sura, ayah, type, scrollToAyah)
+      HighlightInfo(sura, ayah, word, type, scrollToAyah)
     } else {
       null
     }
@@ -286,6 +289,14 @@ class AyahTrackerPresenter @Inject constructor(
       }
     }
     return null
+  }
+
+  private fun getWordForPosition(page: Int, x: Float, y: Float): AyahWord? {
+    return (getGlyphForPosition(page, x, y) as? WordGlyph)?.toAyahWord()
+  }
+
+  private fun getGlyphForPosition(page: Int, x: Float, y: Float): AyahGlyph? {
+    return items.mapNotNull { it.getGlyphForPosition(page, x, y) }.firstOrNull()
   }
 
   private fun checkCoordinateData(activity: Activity) {

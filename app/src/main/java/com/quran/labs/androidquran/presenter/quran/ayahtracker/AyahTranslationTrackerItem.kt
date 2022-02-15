@@ -15,7 +15,7 @@ class AyahTranslationTrackerItem(
 ) : AyahTrackerItem(page) {
 
   override fun onHighlightAyah(
-    page: Int, sura: Int, ayah: Int, type: HighlightType, scrollToAyah: Boolean
+    page: Int, sura: Int, ayah: Int, word: Int, type: HighlightType, scrollToAyah: Boolean
   ): Boolean {
     if (this.page == page) {
       ayahView.highlightAyah(SuraAyah(sura, ayah), quranInfo.getAyahId(sura, ayah), type)

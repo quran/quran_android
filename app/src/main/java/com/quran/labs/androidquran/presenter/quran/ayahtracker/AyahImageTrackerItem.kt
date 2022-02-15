@@ -1,6 +1,8 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
 import com.quran.data.core.QuranInfo
+import com.quran.data.model.AyahGlyph
+import com.quran.data.model.AyahWord
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.labs.androidquran.data.QuranDisplayData
@@ -12,6 +14,7 @@ import com.quran.labs.androidquran.view.HighlightingImageView
 import com.quran.page.common.data.AyahBounds
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
+import com.quran.page.common.data.coordinates.PageGlyphsCoords
 import com.quran.page.common.draw.ImageDrawHelper
 
 open class AyahImageTrackerItem @JvmOverloads constructor(
@@ -23,6 +26,7 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
   val ayahView: HighlightingImageView
 ) : AyahTrackerItem(page) {
   @JvmField var coordinates: Map<String, List<AyahBounds>>? = null
+  @JvmField var pageGlyphsCoords: PageGlyphsCoords? = null
 
   override fun onSetPageBounds(pageCoordinates: PageCoordinates) {
     if (this.page == pageCoordinates.page) {
@@ -45,6 +49,7 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
     if (this.page == ayahCoordinates.page) {
       val coordinates = ayahCoordinates.ayahCoordinates
       this.coordinates = coordinates
+      this.pageGlyphsCoords = ayahCoordinates.glyphCoordinates
       if (coordinates.isNotEmpty()) {
         ayahView.setAyahData(ayahCoordinates)
         ayahView.invalidate()
@@ -56,11 +61,12 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
     page: Int,
     sura: Int,
     ayah: Int,
+    word: Int,
     type: HighlightType,
     scrollToAyah: Boolean
   ): Boolean {
     if (this.page == page && coordinates != null) {
-      ayahView.highlightAyah(sura, ayah, type)
+      ayahView.highlightAyah(sura, ayah, word, type)
       ayahView.invalidate()
       return true
     } else if (coordinates != null) {
@@ -79,6 +85,12 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
   override fun onUnHighlightAyah(page: Int, sura: Int, ayah: Int, type: HighlightType) {
     if (this.page == page) {
       ayahView.unHighlight(sura, ayah, type)
+    }
+  }
+
+  override fun onUnHighlightAyah(page: Int, sura: Int, ayah: Int, word: Int, type: HighlightType) {
+    if (this.page == page) {
+      ayahView.unHighlight(sura, ayah, word, type)
     }
   }
 
@@ -108,4 +120,17 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
       y
     ) else null
   }
+
+  override fun getWordForPosition(page: Int, x: Float, y: Float): AyahWord? {
+    return if (this.page == page) {
+      (ImageAyahUtils.getGlyphFromCoordinates(coordinates, pageGlyphsCoords, ayahView, x, y) as? AyahGlyph.WordGlyph)?.toAyahWord()
+    } else null
+  }
+
+  override fun getGlyphForPosition(page: Int, x: Float, y: Float): AyahGlyph? {
+    return if (this.page == page) {
+      ImageAyahUtils.getGlyphFromCoordinates(coordinates, pageGlyphsCoords, ayahView, x, y)
+    } else null
+  }
+
 }

@@ -7,7 +7,7 @@ import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.data.model.QuranText
 import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.data.model.SuraAyah
-import com.quran.labs.androidquran.data.SuraAyahIterator
+import com.quran.data.model.SuraAyahIterator
 import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.model.translation.TranslationModel

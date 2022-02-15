@@ -4,11 +4,13 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import android.util.SparseArray
 import android.widget.ImageView
+import com.quran.data.model.AyahGlyph
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.data.model.selection.SelectionRectangle
 import com.quran.labs.androidquran.view.HighlightingImageView
 import com.quran.page.common.data.AyahBounds
+import com.quran.page.common.data.coordinates.PageGlyphsCoords
 import timber.log.Timber
 import kotlin.math.abs
 import kotlin.math.min
@@ -26,12 +28,38 @@ object ImageAyahUtils {
     }
   }
 
-  fun getAyahFromCoordinates(
-    coords: Map<String, List<AyahBounds>>?,
-    imageView: HighlightingImageView?,
-    xc: Float,
-    yc: Float
-  ): SuraAyah? {
+  fun getGlyphFromCoordinates(coords: Map<String, List<AyahBounds>>?, pageGlyphsCoords: PageGlyphsCoords?,
+                              imageView: HighlightingImageView?, xc: Float, yc: Float): AyahGlyph? {
+    if (coords == null || pageGlyphsCoords == null || imageView == null) {
+      return null
+    }
+
+    val (x, y) = getPageXY(xc, yc, imageView) ?: return null
+
+    val (ayah, ayahBounds) = getAyahBoundsFromCoordinates(coords, imageView, xc, yc) ?: return null
+    if (ayah != null) {
+      val ayahGlyphsOnLine = pageGlyphsCoords.getAyahGlyphsOnLine(ayah, ayahBounds.line)
+      for (glyphCoords in ayahGlyphsOnLine) {
+        if (glyphCoords.bounds.left < x && x < glyphCoords.bounds.right) {
+          return pageGlyphsCoords.glyph(ayah, glyphCoords.glyph.position)
+        }
+      }
+    }
+
+    return null
+  }
+
+  fun getAyahFromCoordinates(coords: Map<String, List<AyahBounds>>?,
+                             imageView: HighlightingImageView?, xc: Float, yc: Float): SuraAyah? {
+    return getAyahBoundsFromCoordinates(coords, imageView, xc, yc)?.first
+  }
+
+  private fun getAyahBoundsFromCoordinates(
+      coords: Map<String, List<AyahBounds>>?,
+      imageView: HighlightingImageView?,
+      xc: Float,
+      yc: Float
+  ): Pair<SuraAyah?, AyahBounds>? {
     if (coords == null || imageView == null) {
       return null
     }
@@ -58,7 +86,7 @@ object ImageAyahUtils {
         lineAyahs.put(line, items)
         val boundsRect = b.bounds
         if (boundsRect.contains(x, y)) {
-          return getAyahFromKey(key)
+          return Pair(getAyahFromKey(key), b)
         }
         val delta = min(
           abs(boundsRect.bottom - y).toInt(),
@@ -74,6 +102,7 @@ object ImageAyahUtils {
     if (closestLine > -1) {
       var leastDeltaX = -1
       var closestAyah: String? = null
+      var closestAyahBounds: AyahBounds? = null
       val ayat: List<String>? = lineAyahs[closestLine]
       if (ayat != null) {
         Timber.d("no exact match, %d candidates.", ayat.size)
@@ -88,7 +117,7 @@ object ImageAyahUtils {
             if (b.line == closestLine) {
               // if x is within the x of this ayah, that's our answer
               if (boundsRect.right >= x && boundsRect.left <= x) {
-                return getAyahFromKey(ayah)
+                return Pair(getAyahFromKey(ayah), b)
               }
 
               // otherwise, keep track of the least delta and return it
@@ -98,6 +127,7 @@ object ImageAyahUtils {
               )
               if (leastDeltaX == -1 || delta < leastDeltaX) {
                 closestAyah = ayah
+                closestAyahBounds = b
                 leastDeltaX = delta
               }
             }
@@ -105,9 +135,9 @@ object ImageAyahUtils {
         }
       }
 
-      if (closestAyah != null) {
+      if (closestAyah != null && closestAyahBounds != null) {
         Timber.d("fell back to closest ayah of %s", closestAyah)
-        return getAyahFromKey(closestAyah)
+        return Pair(getAyahFromKey(closestAyah), closestAyahBounds)
       }
     }
     return null

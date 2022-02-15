@@ -20,6 +20,8 @@ interface PageProvider {
   fun getAyahInfoDirectoryName(): String
   fun getImagesDirectoryName(): String
 
+  fun ayahInfoDbHasGlyphData(): Boolean = false
+
   @StringRes fun getPreviewTitle(): Int
   @StringRes fun getPreviewDescription(): Int
 

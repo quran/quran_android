@@ -42,6 +42,12 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.DisplayCutoutCompat;
 import dev.chrisbanes.insetter.Insetter;
 
+import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.BACKGROUND;
+import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.COLOR;
+import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.HIDE;
+import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.HIGHLIGHT;
+import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.UNDERLINE;
+
 public class HighlightingImageView extends AppCompatImageView {
 
   private static int overlayTextColor = -1;
@@ -65,6 +71,7 @@ public class HighlightingImageView extends AppCompatImageView {
   private RectF pageBounds = null;
   private boolean didDraw = false;
   private PageCoordinates pageCoordinates;
+  private AyahCoordinates ayahCoordinates;
   private Map<AyahHighlight, List<AyahBounds>> highlightCoordinates;
   private Set<ImageDrawHelper> imageDrawHelpers;
   private ValueAnimator animator;
@@ -74,9 +81,22 @@ public class HighlightingImageView extends AppCompatImageView {
   private int horizontalSafeOffset = 0;
   private int verticalOffsetForScrolling = 0;
 
-  private final ImageDrawHelper highlightsDrawer = new HighlightsDrawer(
+  // Draws highlights that need to run before the page image is drawn (to apply clippings)
+  private final ImageDrawHelper clippingHighlightsDrawer = new HighlightsDrawer(
+      () -> ayahCoordinates,
       () -> highlightCoordinates,
-      () -> currentHighlights
+      () -> currentHighlights,
+      c -> { super.onDraw(c); return null; },
+      COLOR, HIDE
+  );
+
+  // Draws remaining highlights that need to run after the page image is drawn
+  private final ImageDrawHelper highlightsDrawer = new HighlightsDrawer(
+      () -> ayahCoordinates,
+      () -> highlightCoordinates,
+      () -> currentHighlights,
+      c -> { super.onDraw(c); return null; },
+      HIGHLIGHT, BACKGROUND, UNDERLINE
   );
 
   public HighlightingImageView(Context context) {
@@ -127,8 +147,12 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   public void unHighlight(int surah, int ayah, HighlightType type) {
+    unHighlight(surah, ayah, -1, type);
+  }
+
+  public void unHighlight(int surah, int ayah, int word, HighlightType type) {
     Set<AyahHighlight> highlights = currentHighlights.get(type);
-    if (highlights != null && highlights.remove(new SingleAyahHighlight(surah, ayah))) {
+    if (highlights != null && highlights.remove(new SingleAyahHighlight(surah, ayah, word))) {
       invalidate();
     }
   }
@@ -164,6 +188,7 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   public void setAyahData(AyahCoordinates ayahCoordinates) {
+    this.ayahCoordinates = ayahCoordinates;
     highlightCoordinates = new HashMap<>();
     for(Map.Entry<String, List<AyahBounds>> entry: ayahCoordinates.getAyahCoordinates().entrySet()) {
       highlightCoordinates.put(new SingleAyahHighlight(entry.getKey()), entry.getValue());
@@ -288,8 +313,12 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   public void highlightAyah(int surah, int ayah, HighlightType type) {
+    highlightAyah(surah, ayah, -1, type);
+  }
+
+  public void highlightAyah(int surah, int ayah, int word, HighlightType type) {
     final Set<AyahHighlight> highlights = currentHighlights.get(type);
-    final SingleAyahHighlight singleAyahHighlight = new SingleAyahHighlight(surah, ayah);
+    final SingleAyahHighlight singleAyahHighlight = new SingleAyahHighlight(surah, ayah, word);
     if (highlights == null) {
       final Set<AyahHighlight> updatedHighlights = new HashSet<>();
       updatedHighlights.add(singleAyahHighlight);
@@ -458,23 +487,37 @@ public class HighlightingImageView extends AppCompatImageView {
 
   @Override
   protected void onDraw(@NonNull Canvas canvas) {
-    super.onDraw(canvas);
-
     final Drawable d = getDrawable();
     if (d == null) {
       // no image, forget it.
       return;
     }
 
+    // Save the canvas before applying any clippings
+    canvas.save();
+
+    // Draw highlights that involve clipping the canvas (HIDE, COLOR)
+    // Note: this must be done before the super.onDraw call so that HighlightsDrawer has a chance
+    //       to apply canvas clippings (e.g. hiding) before the image is drawn
+    if (pageCoordinates != null) {
+      clippingHighlightsDrawer.draw(pageCoordinates, canvas, this);
+    }
+
+    // Draw the page image (excluding clipped out sections)
+    super.onDraw(canvas);
+
+    // Restore the canvas to remove any clippings so the remaining highlights/drawers don't get clipped
+    canvas.restore();
+
+    // Draw remaining highlights (other than HIDE, COLOR)
+    if (pageCoordinates != null) {
+      highlightsDrawer.draw(pageCoordinates, canvas, this);
+    }
+
     // Draw overlay text
     didDraw = false;
     if (overlayParams != null) {
       overlayText(canvas, getImageMatrix());
-    }
-
-    // Draw highlights
-    if (pageCoordinates != null) {
-      highlightsDrawer.draw(pageCoordinates, canvas, this);
     }
 
     // run additional image draw helpers if any
