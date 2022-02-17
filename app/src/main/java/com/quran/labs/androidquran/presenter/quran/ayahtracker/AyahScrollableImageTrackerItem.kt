@@ -1,10 +1,10 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
 import com.quran.data.core.QuranInfo
+import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.data.model.selection.withYScroll
 import com.quran.labs.androidquran.data.QuranDisplayData
-import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils
 import com.quran.labs.androidquran.view.HighlightingImageView
 import com.quran.labs.androidquran.view.QuranPageLayout

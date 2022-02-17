@@ -9,10 +9,11 @@ import com.quran.data.model.AyahGlyph.WordGlyph
 import com.quran.data.model.AyahWord
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.highlight.HighlightInfo
+import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.data.model.selection.startSuraAyah
-import com.quran.labs.androidquran.common.HighlightInfo
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.data.QuranDisplayData
@@ -24,7 +25,6 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.DOU
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.LONG_PRESS
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.SINGLE_TAP
 import com.quran.labs.androidquran.ui.helpers.AyahTracker
-import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.labs.androidquran.ui.helpers.HighlightTypes
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings

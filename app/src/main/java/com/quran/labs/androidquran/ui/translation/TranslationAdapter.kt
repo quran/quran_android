@@ -14,12 +14,12 @@ import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.quran.data.model.SuraAyah
+import com.quran.data.model.highlight.HighlightType
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
-import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.helpers.ExpandTafseerSpan
-import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.labs.androidquran.ui.helpers.HighlightTypes
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan
 import com.quran.labs.androidquran.ui.util.TypefaceManager

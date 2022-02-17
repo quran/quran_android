@@ -11,10 +11,15 @@ import android.os.Build
 import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
+import com.quran.data.model.highlight.HighlightType
+import com.quran.data.model.highlight.HighlightType.Mode.BACKGROUND
+import com.quran.data.model.highlight.HighlightType.Mode.COLOR
+import com.quran.data.model.highlight.HighlightType.Mode.HIDE
+import com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT
+import com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE
+import com.quran.data.model.highlight.HighlightType.Mode.values
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.TransitionAyahHighlight
-import com.quran.labs.androidquran.ui.helpers.HighlightType
-import com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.*
 import com.quran.page.common.data.AyahBounds
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates

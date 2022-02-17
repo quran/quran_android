@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.selection.SelectionIndicator
-import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
 

@@ -1,7 +1,8 @@
 package com.quran.labs.androidquran.ui.helpers
 
+import com.quran.data.model.highlight.HighlightType
+import com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.HIGHLIGHT
 
 object HighlightTypes {
 

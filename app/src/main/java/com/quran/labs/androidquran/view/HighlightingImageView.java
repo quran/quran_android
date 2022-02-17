@@ -15,13 +15,13 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
+import com.quran.data.model.highlight.HighlightType;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.SingleAyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.TransitionAyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.HighlightAnimationConfig;
-import com.quran.labs.androidquran.ui.helpers.HighlightType;
 import com.quran.labs.androidquran.ui.helpers.HighlightTypes;
 import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
@@ -43,11 +43,11 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.DisplayCutoutCompat;
 import dev.chrisbanes.insetter.Insetter;
 
-import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.BACKGROUND;
-import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.COLOR;
-import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.HIDE;
-import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.HIGHLIGHT;
-import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.UNDERLINE;
+import static com.quran.data.model.highlight.HighlightType.Mode.BACKGROUND;
+import static com.quran.data.model.highlight.HighlightType.Mode.COLOR;
+import static com.quran.data.model.highlight.HighlightType.Mode.HIDE;
+import static com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT;
+import static com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE;
 
 public class HighlightingImageView extends AppCompatImageView {
 
