@@ -22,6 +22,7 @@ import com.quran.labs.androidquran.ui.helpers.AyahHighlight.SingleAyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.TransitionAyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.HighlightAnimationConfig;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.HighlightTypes;
 import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
@@ -169,7 +170,7 @@ public class HighlightingImageView extends AppCompatImageView {
   public void unHighlight(HighlightType type) {
     if (!currentHighlights.isEmpty()) {
       currentHighlights.remove(type);
-      if(type.isFloatable()) {
+      if(type.isTransitionAnimated()) {
         //stop animation here
         if(animator != null) {
           // this check is essential because
@@ -292,7 +293,7 @@ public class HighlightingImageView extends AppCompatImageView {
 
   private boolean shouldFloatHighlight(Set<AyahHighlight> highlights, HighlightType type, int surah, int ayah) {
     // only animating AUDIO highlights, for now
-    if(!type.isFloatable()) {
+    if(!type.isTransitionAnimated()) {
       return false;
     }
 
@@ -323,12 +324,12 @@ public class HighlightingImageView extends AppCompatImageView {
       final Set<AyahHighlight> updatedHighlights = new HashSet<>();
       updatedHighlights.add(singleAyahHighlight);
       currentHighlights.put(type, updatedHighlights);
-    } else if (!type.isMultipleHighlightsAllowed()) {
+    } else if (type.isSingle()) {
       // If multiple highlighting not allowed (e.g. audio)
       // clear all others of this type first
       // only if highlight type is floatable
       if (shouldFloatHighlight(highlights, type, surah, ayah)) {
-        highlightFloatableAyah(highlights, singleAyahHighlight, type.getAnimationConfig());
+        highlightFloatableAyah(highlights, singleAyahHighlight, HighlightTypes.INSTANCE.getAnimationConfig(type));
       } else {
         highlights.clear();
         highlights.add(singleAyahHighlight);

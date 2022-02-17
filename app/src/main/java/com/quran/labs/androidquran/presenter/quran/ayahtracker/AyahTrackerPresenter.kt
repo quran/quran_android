@@ -25,6 +25,7 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.LON
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.SINGLE_TAP
 import com.quran.labs.androidquran.ui.helpers.AyahTracker
 import com.quran.labs.androidquran.ui.helpers.HighlightType
+import com.quran.labs.androidquran.ui.helpers.HighlightTypes
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.mobile.bookmark.model.BookmarkModel
@@ -100,14 +101,14 @@ class AyahTrackerPresenter @Inject constructor(
     // optimization - if the current ayah is still highlighted, don't issue a request
     // to unhighlight.
     if (startSuraAyah != lastHighlightedAyah) {
-      unHighlightAyahs(HighlightType.SELECTION)
+      unHighlightAyahs(HighlightTypes.SELECTION)
       lastHighlightedAyah = startSuraAyah
     }
 
     when (ayahSelection) {
       is AyahSelection.Ayah -> {
         val suraAyah = ayahSelection.suraAyah
-        highlightAyah(suraAyah.sura, suraAyah.ayah, -1, HighlightType.SELECTION, false)
+        highlightAyah(suraAyah.sura, suraAyah.ayah, -1, HighlightTypes.SELECTION, false)
       }
       is AyahSelection.AyahRange -> {
         items.forEach {
@@ -116,7 +117,7 @@ class AyahTrackerPresenter @Inject constructor(
             ayahSelection.startSuraAyah,
             ayahSelection.endSuraAyah
           )
-          it.onHighlightAyat(it.page, elements, HighlightType.SELECTION)
+          it.onHighlightAyat(it.page, elements, HighlightTypes.SELECTION)
         }
       }
       else -> { /* nothing is selected, and we already cleared */ }
@@ -124,21 +125,21 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   private fun onAudioSelectionChanged(suraAyah: SuraAyah?) {
-    unHighlightAyahs(HighlightType.AUDIO)
+    unHighlightAyahs(HighlightTypes.AUDIO)
     if (suraAyah != null) {
-      highlightAyah(suraAyah.sura, suraAyah.ayah, -1, HighlightType.AUDIO, true)
+      highlightAyah(suraAyah.sura, suraAyah.ayah, -1, HighlightTypes.AUDIO, true)
     }
   }
 
   private fun onBookmarksChanged(bookmarks: List<Bookmark>) {
-    unHighlightAyahs(HighlightType.BOOKMARK)
+    unHighlightAyahs(HighlightTypes.BOOKMARK)
     if (quranSettings.shouldHighlightBookmarks()) {
       items.forEach { tracker ->
         val elements = bookmarks
           .filter { it.page == tracker.page }
           .map { "${it.sura}:${it.ayah}" }
           .toSet()
-        tracker.onHighlightAyat(tracker.page, elements, HighlightType.BOOKMARK)
+        tracker.onHighlightAyat(tracker.page, elements, HighlightTypes.BOOKMARK)
       }
     }
   }

@@ -19,6 +19,7 @@ import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.HighlightTypes;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 import dev.chrisbanes.insetter.Insetter;
@@ -162,7 +163,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   }
 
   public void highlightAyah(SuraAyah suraAyah, int ayahId, HighlightType highlightType) {
-    if (highlightType == HighlightType.SELECTION) {
+    if (highlightType == HighlightTypes.SELECTION) {
       selectedAyah = suraAyah;
     } else if (selectedAyah != null) {
       hideMenu();
@@ -175,7 +176,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   }
 
   public void unhighlightAyah(HighlightType highlightType) {
-    if (highlightType == HighlightType.SELECTION) {
+    if (highlightType == HighlightTypes.SELECTION) {
       selectedAyah = null;
     }
     translationAdapter.unhighlight();

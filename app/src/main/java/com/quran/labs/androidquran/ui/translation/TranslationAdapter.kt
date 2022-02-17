@@ -20,6 +20,7 @@ import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.helpers.ExpandTafseerSpan
 import com.quran.labs.androidquran.ui.helpers.HighlightType
+import com.quran.labs.androidquran.ui.helpers.HighlightTypes
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan
 import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
@@ -99,7 +100,7 @@ internal class TranslationAdapter(
     expandedTafseerAyahs.clear()
     this.data.addAll(data)
     if (highlightedAyah > 0) {
-      highlightAyah(highlightedAyah, false, highlightType ?: HighlightType.SELECTION)
+      highlightAyah(highlightedAyah, false, highlightType ?: HighlightTypes.SELECTION)
     }
   }
 
@@ -156,7 +157,7 @@ internal class TranslationAdapter(
         recyclerView.handler.post {
           notifyItemRangeChanged(startChangeRange, startChangeCount, HIGHLIGHT_CHANGE)
           val layoutManager = recyclerView.layoutManager
-          if (highlightedType == HighlightType.AUDIO && layoutManager is LinearLayoutManager) {
+          if (highlightedType == HighlightTypes.AUDIO && layoutManager is LinearLayoutManager) {
             layoutManager.scrollToPositionWithOffset(startPosition, 64)
           } else {
             recyclerView.smoothScrollToPosition(startPosition)
@@ -211,7 +212,7 @@ internal class TranslationAdapter(
     val position = recyclerView.getChildAdapterPosition(view)
     if (highlightedAyah != 0 && position != RecyclerView.NO_POSITION) {
       val ayahInfo = data[position].ayahInfo
-      if (ayahInfo.ayahId != highlightedAyah && highlightType == HighlightType.SELECTION) {
+      if (ayahInfo.ayahId != highlightedAyah && highlightType == HighlightTypes.SELECTION) {
         onVerseSelectedListener.onVerseSelected(ayahInfo)
         return
       }
@@ -223,7 +224,7 @@ internal class TranslationAdapter(
     val position = recyclerView.getChildAdapterPosition(view)
     if (position != RecyclerView.NO_POSITION) {
       val ayahInfo = data[position].ayahInfo
-      highlightAyah(ayahInfo.ayahId, true, HighlightType.SELECTION)
+      highlightAyah(ayahInfo.ayahId, true, HighlightTypes.SELECTION)
       onVerseSelectedListener.onVerseSelected(ayahInfo)
       return true
     }
