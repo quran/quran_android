@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
+import com.quran.data.model.AyahGlyph
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.labs.androidquran.ui.helpers.HighlightType
@@ -49,11 +50,7 @@ class AyahSplitConsolidationTrackerItem(
     return imageTrackerItem.getToolBarPosition(page, sura, ayah)
   }
 
-  override fun getAyahForPosition(
-    page: Int,
-    x: Float,
-    y: Float
-  ): SuraAyah? {
+  override fun getAyahForPosition(page: Int, x: Float, y: Float): SuraAyah? {
     return imageTrackerItem.getAyahForPosition(page, x, y)
   }
 }

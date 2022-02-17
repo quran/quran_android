@@ -49,6 +49,9 @@ import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.HIGHLIGH
 import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.UNDERLINE;
 
 public class HighlightingImageView extends AppCompatImageView {
+  // for debugging / visualizing glyph bounds:
+  // when enabled, will draw bounds around each glyph to visualize the glyph bounds
+  private static final boolean DEBUG_BOUNDS = false;
 
   private static int overlayTextColor = -1;
   private static int headerFooterSize;
@@ -98,6 +101,9 @@ public class HighlightingImageView extends AppCompatImageView {
       c -> { super.onDraw(c); return null; },
       HIGHLIGHT, BACKGROUND, UNDERLINE
   );
+
+  private final ImageDrawHelper glyphBoundsDebuggingDrawer = DEBUG_BOUNDS ?
+      new GlyphBoundsDebuggingDrawer(() -> ayahCoordinates) : null;
 
   public HighlightingImageView(Context context) {
     this(context, null);
@@ -525,6 +531,11 @@ public class HighlightingImageView extends AppCompatImageView {
       for (ImageDrawHelper imageDrawHelper : imageDrawHelpers) {
         imageDrawHelper.draw(pageCoordinates, canvas, this);
       }
+    }
+
+    // for debugging
+    if (DEBUG_BOUNDS && pageCoordinates != null) {
+      glyphBoundsDebuggingDrawer.draw(pageCoordinates, canvas, this);
     }
   }
 }

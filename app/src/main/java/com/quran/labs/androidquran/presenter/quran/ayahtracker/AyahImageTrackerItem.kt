@@ -121,15 +121,12 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
     ) else null
   }
 
-  override fun getWordForPosition(page: Int, x: Float, y: Float): AyahWord? {
-    return if (this.page == page) {
-      (ImageAyahUtils.getGlyphFromCoordinates(coordinates, pageGlyphsCoords, ayahView, x, y) as? AyahGlyph.WordGlyph)?.toAyahWord()
-    } else null
-  }
-
   override fun getGlyphForPosition(page: Int, x: Float, y: Float): AyahGlyph? {
     return if (this.page == page) {
-      ImageAyahUtils.getGlyphFromCoordinates(coordinates, pageGlyphsCoords, ayahView, x, y)
+      // Convert screen x,y coordinates -> page x,y coordinates
+      val (pgX, pgY) = ImageAyahUtils.getPageXY(x, y, ayahView) ?: return null
+      // Return the glyph at that page x,y coordinates
+      pageGlyphsCoords?.getGlyphAtPoint(pgX, pgY)
     } else null
   }
 
