@@ -15,13 +15,14 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
+import com.quran.data.model.highlight.HighlightType;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.SingleAyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.TransitionAyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.HighlightAnimationConfig;
-import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.HighlightTypes;
 import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
@@ -42,11 +43,11 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.DisplayCutoutCompat;
 import dev.chrisbanes.insetter.Insetter;
 
-import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.BACKGROUND;
-import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.COLOR;
-import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.HIDE;
-import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.HIGHLIGHT;
-import static com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.UNDERLINE;
+import static com.quran.data.model.highlight.HighlightType.Mode.BACKGROUND;
+import static com.quran.data.model.highlight.HighlightType.Mode.COLOR;
+import static com.quran.data.model.highlight.HighlightType.Mode.HIDE;
+import static com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT;
+import static com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE;
 
 public class HighlightingImageView extends AppCompatImageView {
   // for debugging / visualizing glyph bounds:
@@ -175,7 +176,7 @@ public class HighlightingImageView extends AppCompatImageView {
   public void unHighlight(HighlightType type) {
     if (!currentHighlights.isEmpty()) {
       currentHighlights.remove(type);
-      if(type.isFloatable()) {
+      if(type.isTransitionAnimated()) {
         //stop animation here
         if(animator != null) {
           // this check is essential because
@@ -298,7 +299,7 @@ public class HighlightingImageView extends AppCompatImageView {
 
   private boolean shouldFloatHighlight(Set<AyahHighlight> highlights, HighlightType type, int surah, int ayah) {
     // only animating AUDIO highlights, for now
-    if(!type.isFloatable()) {
+    if(!type.isTransitionAnimated()) {
       return false;
     }
 
@@ -329,12 +330,12 @@ public class HighlightingImageView extends AppCompatImageView {
       final Set<AyahHighlight> updatedHighlights = new HashSet<>();
       updatedHighlights.add(singleAyahHighlight);
       currentHighlights.put(type, updatedHighlights);
-    } else if (!type.isMultipleHighlightsAllowed()) {
+    } else if (type.isSingle()) {
       // If multiple highlighting not allowed (e.g. audio)
       // clear all others of this type first
       // only if highlight type is floatable
       if (shouldFloatHighlight(highlights, type, surah, ayah)) {
-        highlightFloatableAyah(highlights, singleAyahHighlight, type.getAnimationConfig());
+        highlightFloatableAyah(highlights, singleAyahHighlight, HighlightTypes.INSTANCE.getAnimationConfig(type));
       } else {
         highlights.clear();
         highlights.add(singleAyahHighlight);

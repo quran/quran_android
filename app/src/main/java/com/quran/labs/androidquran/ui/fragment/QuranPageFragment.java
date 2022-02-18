@@ -28,7 +28,7 @@ import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresen
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
-import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.HighlightTypes;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -102,7 +102,7 @@ public class QuranPageFragment extends Fragment implements PageController,
     if (isAdded()) {
       quranPageLayout.updateView(quranSettings);
       if (!quranSettings.highlightBookmarks()) {
-        imageView.unHighlight(HighlightType.BOOKMARK);
+        imageView.unHighlight(HighlightTypes.BOOKMARK);
       }
       quranPagePresenter.refresh();
     }

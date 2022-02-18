@@ -4,9 +4,9 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.model.AyahGlyph
 import com.quran.data.model.AyahWord
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.labs.androidquran.data.QuranDisplayData
-import com.quran.labs.androidquran.ui.helpers.HighlightType
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
 import com.quran.labs.androidquran.ui.util.ImageAyahUtils
 import com.quran.labs.androidquran.util.QuranUtils

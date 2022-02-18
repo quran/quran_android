@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.view
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PorterDuff
@@ -9,10 +10,16 @@ import android.graphics.Region
 import android.os.Build
 import android.widget.ImageView
 import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
+import com.quran.data.model.highlight.HighlightType
+import com.quran.data.model.highlight.HighlightType.Mode.BACKGROUND
+import com.quran.data.model.highlight.HighlightType.Mode.COLOR
+import com.quran.data.model.highlight.HighlightType.Mode.HIDE
+import com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT
+import com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE
+import com.quran.data.model.highlight.HighlightType.Mode.values
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.TransitionAyahHighlight
-import com.quran.labs.androidquran.ui.helpers.HighlightType
-import com.quran.labs.androidquran.ui.helpers.HighlightType.Mode.*
 import com.quran.page.common.data.AyahBounds
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
@@ -35,9 +42,10 @@ class HighlightsDrawer(
   private object PaintCache {
     private val cache = mutableMapOf<Pair<HighlightType.Mode, @ColorInt Int>, Paint>()
 
-    fun getPaintForHighlightType(type: HighlightType, color: Int): Paint =
-      cache.getOrPut(Pair(type.mode, color)) {
+    fun getPaintForHighlightType(context: Context, type: HighlightType): Paint =
+      cache.getOrPut(Pair(type.mode, type.colorResId)) {
         Paint().apply {
+          val color = ContextCompat.getColor(context, type.colorResId)
           when (type.mode) {
             COLOR -> this.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
             else -> this.color = color
@@ -73,13 +81,13 @@ class HighlightsDrawer(
     val filteredHighlights = currentHighlights.filterKeys { it.mode in highlightTypesFilter }
 
     for ((highlightType, highlights) in filteredHighlights) {
-      val paint = PaintCache.getPaintForHighlightType(highlightType, highlightType.getColor(image.context))
+      val paint = PaintCache.getPaintForHighlightType(image.context, highlightType)
 
       for (highlight in highlights) {
         if (alreadyHighlightedContains(highlightType, highlight)) continue
 
-        val rangesToDraw = glyphsCoords?.takeIf { !highlightType.hasAnimation() }
-          ?.getBounds(highlight.key, true, highlightType.shouldExpandHorizontally())
+        val rangesToDraw = glyphsCoords?.takeIf { !highlightType.isTransitionAnimated }
+          ?.getBounds(highlight.key, true, highlightType.mode == BACKGROUND)
           ?: highlightCoordinates[highlight]?.map { it.bounds }
 
         if (rangesToDraw != null && rangesToDraw.isNotEmpty()) {
