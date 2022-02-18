@@ -4,13 +4,11 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import android.util.SparseArray
 import android.widget.ImageView
-import com.quran.data.model.AyahGlyph
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.data.model.selection.SelectionRectangle
 import com.quran.labs.androidquran.view.HighlightingImageView
 import com.quran.page.common.data.AyahBounds
-import com.quran.page.common.data.coordinates.PageGlyphsCoords
 import timber.log.Timber
 import kotlin.math.abs
 import kotlin.math.min
@@ -26,27 +24,6 @@ object ImageAyahUtils {
     } else {
       null
     }
-  }
-
-  fun getGlyphFromCoordinates(coords: Map<String, List<AyahBounds>>?, pageGlyphsCoords: PageGlyphsCoords?,
-                              imageView: HighlightingImageView?, xc: Float, yc: Float): AyahGlyph? {
-    if (coords == null || pageGlyphsCoords == null || imageView == null) {
-      return null
-    }
-
-    val (x, y) = getPageXY(xc, yc, imageView) ?: return null
-
-    val (ayah, ayahBounds) = getAyahBoundsFromCoordinates(coords, imageView, xc, yc) ?: return null
-    if (ayah != null) {
-      val ayahGlyphsOnLine = pageGlyphsCoords.getAyahGlyphsOnLine(ayah, ayahBounds.line)
-      for (glyphCoords in ayahGlyphsOnLine) {
-        if (glyphCoords.bounds.left < x && x < glyphCoords.bounds.right) {
-          return pageGlyphsCoords.glyph(ayah, glyphCoords.glyph.position)
-        }
-      }
-    }
-
-    return null
   }
 
   fun getAyahFromCoordinates(coords: Map<String, List<AyahBounds>>?,
@@ -178,7 +155,7 @@ object ImageAyahUtils {
     }
   }
 
-  private fun getPageXY(
+  fun getPageXY(
     screenX: Float, screenY: Float, imageView: ImageView
   ): FloatArray? {
     if (imageView.drawable == null) {

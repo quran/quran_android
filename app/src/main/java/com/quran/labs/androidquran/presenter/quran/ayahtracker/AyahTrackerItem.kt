@@ -45,8 +45,6 @@ open class AyahTrackerItem internal constructor(val page: Int) {
 
   open fun getAyahForPosition(page: Int, x: Float, y: Float): SuraAyah? = null
 
-  open fun getWordForPosition(page: Int, x: Float, y: Float): AyahWord? = null
-
   open fun getGlyphForPosition(page: Int, x: Float, y: Float): AyahGlyph? = null
 
   open fun getQuranAyahInfo(sura: Int, ayah: Int): QuranAyahInfo? = null
