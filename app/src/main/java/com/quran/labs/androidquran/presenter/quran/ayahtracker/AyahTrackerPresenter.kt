@@ -17,6 +17,7 @@ import com.quran.data.model.selection.startSuraAyah
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.data.SuraAyahIterator
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter.AyahInteractionHandler
 import com.quran.labs.androidquran.ui.PagerActivity
@@ -111,13 +112,15 @@ class AyahTrackerPresenter @Inject constructor(
         highlightAyah(suraAyah.sura, suraAyah.ayah, -1, HighlightTypes.SELECTION, false)
       }
       is AyahSelection.AyahRange -> {
+        val highlightAyatIterator =
+          SuraAyahIterator(quranInfo, ayahSelection.startSuraAyah, ayahSelection.endSuraAyah)
+        val highlightedAyat = highlightAyatIterator.asSet()
         items.forEach {
-          val elements = quranDisplayData.getAyahKeysOnPage(
-            it.page,
-            ayahSelection.startSuraAyah,
-            ayahSelection.endSuraAyah
-          )
-          it.onHighlightAyat(it.page, elements, HighlightTypes.SELECTION)
+          val pageAyat = quranDisplayData.getAyahKeysOnPage(it.page)
+          val elements = pageAyat.intersect(highlightedAyat)
+          if (elements.isNotEmpty()) {
+            it.onHighlightAyat(it.page, elements, HighlightTypes.SELECTION)
+          }
         }
       }
       else -> { /* nothing is selected, and we already cleared */ }
@@ -297,7 +300,7 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   private fun getGlyphForPosition(page: Int, x: Float, y: Float): AyahGlyph? {
-    return items.mapNotNull { it.getGlyphForPosition(page, x, y) }.firstOrNull()
+    return items.firstNotNullOfOrNull { it.getGlyphForPosition(page, x, y) }
   }
 
   private fun checkCoordinateData(activity: Activity) {

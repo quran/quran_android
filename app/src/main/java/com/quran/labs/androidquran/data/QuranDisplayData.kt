@@ -173,17 +173,12 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo) {
     return context.getString(R.string.quran_sura_title, getSuraNameFromPage(context, page))
   }
 
-  fun getAyahKeysOnPage(page: Int, lowerBound: SuraAyah?, upperBound: SuraAyah?): Set<String> {
+  fun getAyahKeysOnPage(page: Int): Set<String> {
     val ayahKeys: MutableSet<String> = LinkedHashSet()
     val bounds = quranInfo.getPageBounds(page)
-    var start = SuraAyah(bounds[0], bounds[1])
-    var end = SuraAyah(bounds[2], bounds[3])
-    if (lowerBound != null) {
-      start = SuraAyah.max(start, lowerBound)
-    }
-    if (upperBound != null) {
-      end = SuraAyah.min(end, upperBound)
-    }
+    val start = SuraAyah(bounds[0], bounds[1])
+    val end = SuraAyah(bounds[2], bounds[3])
+
     val iterator = SuraAyahIterator(quranInfo, start, end)
     while (iterator.next()) {
       ayahKeys.add(iterator.sura.toString() + ":" + iterator.ayah.toString())
