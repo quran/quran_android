@@ -100,7 +100,7 @@ internal class TranslationAdapter(
     expandedTafseerAyahs.clear()
     this.data.addAll(data)
     if (highlightedAyah > 0) {
-      highlightAyah(highlightedAyah, false, highlightType ?: HighlightTypes.SELECTION)
+      highlightAyah(highlightedAyah, true, highlightType ?: HighlightTypes.SELECTION, true)
     }
   }
 
@@ -123,8 +123,8 @@ internal class TranslationAdapter(
     return (matches.firstOrNull()?.index ?: -1) to matches.size
   }
 
-  private fun highlightAyah(ayahId: Int, notify: Boolean, highlightedType: HighlightType) {
-    if (ayahId != highlightedAyah) {
+  private fun highlightAyah(ayahId: Int, notify: Boolean, highlightedType: HighlightType, force: Boolean = false) {
+    if (ayahId != highlightedAyah || force) {
       val matches = data.withIndex().filter { it.value.ayahInfo.ayahId == ayahId }
       val (startPosition, count) = (matches.firstOrNull()?.index ?: -1) to matches.size
 
@@ -157,7 +157,7 @@ internal class TranslationAdapter(
         recyclerView.handler.post {
           notifyItemRangeChanged(startChangeRange, startChangeCount, HIGHLIGHT_CHANGE)
           val layoutManager = recyclerView.layoutManager
-          if (highlightedType == HighlightTypes.AUDIO && layoutManager is LinearLayoutManager) {
+          if ((force || highlightedType == HighlightTypes.AUDIO) && layoutManager is LinearLayoutManager) {
             layoutManager.scrollToPositionWithOffset(startPosition, 64)
           } else {
             recyclerView.smoothScrollToPosition(startPosition)

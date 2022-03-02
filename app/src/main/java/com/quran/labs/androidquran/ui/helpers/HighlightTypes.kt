@@ -8,6 +8,7 @@ object HighlightTypes {
 
   @JvmField
   val SELECTION = HighlightType(1,  R.color.selection_highlight, HIGHLIGHT, isSingle = true)
+  @JvmField
   val AUDIO =     HighlightType(2,  R.color.audio_highlight,     HIGHLIGHT, isSingle = true, isTransitionAnimated = true)
   val NOTE =      HighlightType(3,  R.color.note_highlight,      HIGHLIGHT)
   @JvmField
