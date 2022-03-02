@@ -32,6 +32,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   private final TranslationAdapter translationAdapter;
 
   private SuraAyah selectedAyah;
+  private int selectedAyahId = -1;
   private OnClickListener onClickListener;
   private final LinearLayoutManager layoutManager;
   private PageController pageController;
@@ -165,10 +166,18 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   public void highlightAyah(SuraAyah suraAyah, int ayahId, HighlightType highlightType) {
     if (highlightType == HighlightTypes.SELECTION) {
       selectedAyah = suraAyah;
+      selectedAyahId = ayahId;
     } else if (selectedAyah != null) {
       hideMenu();
     }
-    translationAdapter.setHighlightedAyah(ayahId, highlightType);
+
+    if (shouldHandleHighlightType(highlightType)) {
+      translationAdapter.setHighlightedAyah(ayahId, highlightType);
+    }
+  }
+
+  private boolean shouldHandleHighlightType(HighlightType highlightType) {
+    return highlightType == HighlightTypes.AUDIO || highlightType == HighlightTypes.SELECTION;
   }
 
   private void hideMenu() {
@@ -178,15 +187,31 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   public void unhighlightAyah(HighlightType highlightType) {
     if (highlightType == HighlightTypes.SELECTION) {
       selectedAyah = null;
+      selectedAyahId = -1;
     }
-    translationAdapter.unhighlight();
+
+    if (shouldHandleHighlightType(highlightType)) {
+      translationAdapter.unhighlight();
+      if (selectedAyah != null) {
+        // imples that it's not selection, so let's reselect the selected ayah
+        translationAdapter.setHighlightedAyah(selectedAyahId, HighlightTypes.SELECTION);
+      }
+    }
   }
 
-  public void unhighlightAyat() {
-    if (selectedAyah != null) {
+  public void unhighlightAyat(HighlightType highlightType) {
+    if (selectedAyah != null && highlightType == HighlightTypes.SELECTION) {
       selectedAyah = null;
+      selectedAyahId = -1;
     }
-    translationAdapter.unhighlight();
+
+    if (shouldHandleHighlightType(highlightType)) {
+      translationAdapter.unhighlight();
+      if (selectedAyah != null) {
+        // imples that it's not selection, so let's reselect the selected ayah
+        translationAdapter.setHighlightedAyah(selectedAyahId, HighlightTypes.SELECTION);
+      }
+    }
   }
 
   @Override
@@ -194,6 +219,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     if (selectedAyah != null) {
       hideMenu();
       selectedAyah = null;
+      selectedAyahId = -1;
       return;
     }
 

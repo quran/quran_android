@@ -32,7 +32,7 @@ class AyahTranslationTrackerItem(
   }
 
   override fun onUnHighlightAyahType(type: HighlightType) {
-    ayahView.unhighlightAyat()
+    ayahView.unhighlightAyat(type)
   }
 
   override fun getToolBarPosition(page: Int, sura: Int, ayah: Int): SelectionIndicator {

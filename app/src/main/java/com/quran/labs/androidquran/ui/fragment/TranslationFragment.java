@@ -8,10 +8,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.model.selection.AyahSelection;
-import com.quran.data.model.selection.SelectionIndicator;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranDisplayData;
@@ -28,14 +30,11 @@ import com.quran.labs.androidquran.ui.translation.TranslationView;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.view.QuranTranslationPageLayout;
-
 import com.quran.reading.common.ReadingEventPresenter;
+
 import java.util.List;
 
 import javax.inject.Inject;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 
 public class TranslationFragment extends Fragment implements
     AyahTrackerPresenter.AyahInteractionHandler, QuranPage,
@@ -115,11 +114,13 @@ public class TranslationFragment extends Fragment implements
     }
   }
 
+  @NonNull
   @Override
   public AyahTracker getAyahTracker() {
     return ayahTrackerPresenter;
   }
 
+  @NonNull
   @Override
   public AyahTrackerItem[] getAyahTrackerItems() {
     if (ayahTrackerItems == null) {
@@ -168,8 +169,9 @@ public class TranslationFragment extends Fragment implements
   }
 
   @Override
-  public boolean handleTouchEvent(MotionEvent event,
-      AyahSelectedListener.EventType eventType, int page) {
+  public boolean handleTouchEvent(@NonNull MotionEvent event,
+                                  @NonNull AyahSelectedListener.EventType eventType,
+                                  int page) {
     return false;
   }
 
@@ -194,7 +196,7 @@ public class TranslationFragment extends Fragment implements
   }
 
   @Override
-  public void handleLongPress(SuraAyah suraAyah) {
+  public void handleLongPress(@NonNull SuraAyah suraAyah) {
     if (isVisible()) {
       readingEventPresenter.onAyahSelection(
           new AyahSelection.Ayah(suraAyah, translationView.getToolbarPosition(suraAyah.sura, suraAyah.ayah))
