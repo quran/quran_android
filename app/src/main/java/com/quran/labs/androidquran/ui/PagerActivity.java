@@ -1887,10 +1887,12 @@ public class PagerActivity extends AppCompatActivity implements
         endAyahMode();
       }
       slidingPanel.hidePane();
+      readingEventPresenter.onPanelClosed();
     }
 
     @Override
     public void onPanelExpanded(View panel) {
+      readingEventPresenter.onPanelOpened();
     }
 
     @Override

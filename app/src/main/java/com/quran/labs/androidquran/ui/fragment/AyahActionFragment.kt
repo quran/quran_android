@@ -13,6 +13,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 abstract class AyahActionFragment : Fragment() {
@@ -44,12 +45,19 @@ abstract class AyahActionFragment : Fragment() {
       }
       .launchIn(scope)
 
+    readingEventPresenter.detailsPanelFlow
+      .map {
+        onToggleDetailsPanel(it)
+      }
+      .launchIn(scope)
   }
 
   override fun onDestroy() {
     scope.cancel()
     super.onDestroy()
   }
+
+  open fun onToggleDetailsPanel(isVisible: Boolean) { }
 
   protected abstract fun refreshView()
 }
