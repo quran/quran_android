@@ -54,4 +54,12 @@ class SuraAyahIterator(
     }
     return true
   }
+
+  fun asSet(): Set<String> {
+    val suraAyahSet = mutableSetOf<String>()
+    while (next()) {
+      suraAyahSet.add("$sura:$ayah")
+    }
+    return suraAyahSet
+  }
 }
