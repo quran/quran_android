@@ -176,9 +176,9 @@ public class HighlightingImageView extends AppCompatImageView {
   public void unHighlight(HighlightType type) {
     if (!currentHighlights.isEmpty()) {
       currentHighlights.remove(type);
-      if(type.isTransitionAnimated()) {
+      if (type.isTransitionAnimated()) {
         //stop animation here
-        if(animator != null) {
+        if (animator != null) {
           // this check is essential because
           // if playing first time and stopping
           // before animation is setup
@@ -197,7 +197,7 @@ public class HighlightingImageView extends AppCompatImageView {
   public void setAyahData(AyahCoordinates ayahCoordinates) {
     this.ayahCoordinates = ayahCoordinates;
     highlightCoordinates = new HashMap<>();
-    for(Map.Entry<String, List<AyahBounds>> entry: ayahCoordinates.getAyahCoordinates().entrySet()) {
+    for (Map.Entry<String, List<AyahBounds>> entry: ayahCoordinates.getAyahCoordinates().entrySet()) {
       highlightCoordinates.put(new SingleAyahHighlight(entry.getKey()), entry.getValue());
     }
   }
@@ -299,19 +299,19 @@ public class HighlightingImageView extends AppCompatImageView {
 
   private boolean shouldFloatHighlight(Set<AyahHighlight> highlights, HighlightType type, int surah, int ayah) {
     // only animating AUDIO highlights, for now
-    if(!type.isTransitionAnimated()) {
+    if (!type.isTransitionAnimated()) {
       return false;
     }
 
     // can only animate from one ayah to another, for now
-    if(highlights.size() != 1) {
+    if (highlights.size() != 1) {
       return false;
     }
 
     AyahHighlight currentAyahHighlight = new SingleAyahHighlight(surah, ayah);
     AyahHighlight previousAyahHighlight = highlights.iterator().next();
 
-    if(currentAyahHighlight.equals(previousAyahHighlight)) {
+    if (currentAyahHighlight.equals(previousAyahHighlight)) {
       // can't animate to the same location
       return false;
     }

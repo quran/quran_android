@@ -142,7 +142,9 @@ class AyahTrackerPresenter @Inject constructor(
           .filter { it.page == tracker.page }
           .map { "${it.sura}:${it.ayah}" }
           .toSet()
-        tracker.onHighlightAyat(tracker.page, elements, HighlightTypes.BOOKMARK)
+        if (elements.isNotEmpty()) {
+          tracker.onHighlightAyat(tracker.page, elements, HighlightTypes.BOOKMARK)
+        }
       }
     }
   }
