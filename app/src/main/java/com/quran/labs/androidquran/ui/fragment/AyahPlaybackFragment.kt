@@ -49,6 +49,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
   private lateinit var endingAyahAdapter: ArrayAdapter<CharSequence>
 
   private var lastSeenAudioRequest: AudioRequest? = null
+  private var isOpen: Boolean = false
 
   @Inject
   lateinit var quranInfo: QuranInfo
@@ -278,13 +279,20 @@ class AyahPlaybackFragment : AyahActionFragment() {
     }
   }
 
+  override fun onToggleDetailsPanel(isVisible: Boolean) {
+    isOpen = isVisible
+    if (!isOpen) {
+      refreshView()
+    }
+  }
+
   override fun refreshView() {
     val context: Context? = activity
     val selectionEnd = end
     val selectionStart = start
 
     var shouldReset = true
-    if (context is PagerActivity && selectionStart != null && selectionEnd != null) {
+    if (context is PagerActivity && selectionStart != null && selectionEnd != null && !isOpen) {
       val lastRequest = context.lastAudioRequest
       val start: SuraAyah
       val ending: SuraAyah

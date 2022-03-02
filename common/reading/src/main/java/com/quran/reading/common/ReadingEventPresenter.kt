@@ -22,9 +22,11 @@ class ReadingEventPresenter @Inject constructor(private val quranInfo: QuranInfo
     extraBufferCapacity = 1,
     onBufferOverflow = DROP_OLDEST
   )
+  private val detailsPanelInternalFlow = MutableStateFlow<Boolean>(false)
   private val ayahSelectionInternalFlow = MutableStateFlow<AyahSelection>(AyahSelection.None)
 
   val clicksFlow: Flow<Unit> = clicksInternalFlow.asSharedFlow()
+  val detailsPanelFlow: Flow<Boolean> = detailsPanelInternalFlow.asSharedFlow()
   val ayahSelectionFlow: StateFlow<AyahSelection> = ayahSelectionInternalFlow.asStateFlow()
 
   fun onClick() {
@@ -82,5 +84,13 @@ class ReadingEventPresenter @Inject constructor(private val quranInfo: QuranInfo
         onAyahSelection(AyahSelection.Ayah(updatedAyah, SelectionIndicator.None))
       }
     }
+  }
+
+  fun onPanelOpened() {
+    detailsPanelInternalFlow.value = true
+  }
+
+  fun onPanelClosed() {
+    detailsPanelInternalFlow.value = false
   }
 }
