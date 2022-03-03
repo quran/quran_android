@@ -13,6 +13,7 @@ include ':common:toolbar'
 include ':common:upgrade'
 include ':feature:analytics-noop'
 include ':feature:audio'
+include ':feature:recitation'
 include ':pages:madani'
 
 if (new File(rootDir, 'extras/settings-extra.gradle').exists()) {
