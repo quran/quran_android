@@ -6,13 +6,13 @@ import com.quran.page.common.data.AyahBounds
 
 class HighlightAnimationTypeEvaluator(
   private val strategy: HighlightNormalizingStrategy
-) : TypeEvaluator<List<AyahBounds>> {
+) : TypeEvaluator<MutableList<AyahBounds>> {
 
   override fun evaluate(
     fraction: Float,
-    start: List<AyahBounds>,
-    end: List<AyahBounds>
-  ): List<AyahBounds> {
+    start: MutableList<AyahBounds>,
+    end: MutableList<AyahBounds>
+  ): MutableList<AyahBounds> {
     strategy.apply(start, end)
 
     val size = start.size
