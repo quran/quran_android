@@ -10,9 +10,9 @@ abstract class HighlightNormalizingStrategy {
   /*
   The parameters are passed by reference, they will be modified
    */
-  abstract fun normalize(start: List<AyahBounds>, end: List<AyahBounds>)
+  abstract fun normalize(start: MutableList<AyahBounds>, end: MutableList<AyahBounds>)
   abstract fun isNormalized(start: List<AyahBounds>, end: List<AyahBounds>): Boolean
-  fun apply(start: List<AyahBounds>, end: List<AyahBounds>) {
+  fun apply(start: MutableList<AyahBounds>, end: MutableList<AyahBounds>) {
     if (isNormalized(start, end)) return
     normalize(start, end)
   }
@@ -30,12 +30,12 @@ open class NormalizeToMaxAyahBoundsWithDivisionStrategy : HighlightNormalizingSt
   4. animate x[i] to y[i] for i in 0 to b.length-1
    */
 
-  override fun normalize(start: List<AyahBounds>, end: List<AyahBounds>) {
+  override fun normalize(start: MutableList<AyahBounds>, end: MutableList<AyahBounds>) {
     val startSize = start.size
     val endSize = end.size
     val minSize = min(startSize, endSize)
     val maxSize = max(startSize, endSize)
-    val minList = (if (startSize < endSize) start else end).toMutableList()
+    val minList = if (startSize < endSize) start else end
     val diff = maxSize - minSize
 
     val rectToBeDivided = minList[minSize - 1].bounds
@@ -72,13 +72,13 @@ class NormalizeToMinAyahBoundsWithGrowingDivisionStrategy : NormalizeToMaxAyahBo
   4. animate x[i] to y[i] for i in 0 to x.length-1
    */
 
-  override fun normalize(start: List<AyahBounds>, end: List<AyahBounds>) {
+  override fun normalize(start: MutableList<AyahBounds>, end: MutableList<AyahBounds>) {
     val startSize = start.size
     val endSize = end.size
 
     if (startSize >= endSize) {
       val diff = abs(startSize - endSize)
-      val toBeDeleted = start.subList(0, diff).toMutableList()
+      val toBeDeleted = start.subList(0, diff)
       toBeDeleted.clear()
     } else {
       super.normalize(start, end)
