@@ -107,7 +107,8 @@ class AyahTrackerPresenter @Inject constructor(
     when (ayahSelection) {
       is AyahSelection.Ayah -> {
         val suraAyah = ayahSelection.suraAyah
-        highlightAyah(suraAyah.sura, suraAyah.ayah, -1, HighlightTypes.SELECTION, false)
+        val scrollToAyah = ayahSelection.selectionIndicator == SelectionIndicator.ScrollOnly
+        highlightAyah(suraAyah.sura, suraAyah.ayah, -1, HighlightTypes.SELECTION, scrollToAyah)
       }
       is AyahSelection.AyahRange -> {
         val highlightAyatIterator =
@@ -193,7 +194,7 @@ class AyahTrackerPresenter @Inject constructor(
     val page = quranInfo.getPageFromSuraAyah(sura, ayah)
     for (item in items) {
       val position = item.getToolBarPosition(page, sura, ayah)
-      if (position != SelectionIndicator.None) {
+      if (position != SelectionIndicator.None && position != SelectionIndicator.ScrollOnly) {
         return position
       }
     }

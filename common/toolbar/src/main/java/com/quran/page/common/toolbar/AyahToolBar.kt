@@ -181,7 +181,8 @@ class AyahToolBar @JvmOverloads constructor(
       resetMenu()
     }
 
-    if (selectionIndicator is SelectionIndicator.None) {
+    if (selectionIndicator is SelectionIndicator.None ||
+        selectionIndicator is SelectionIndicator.ScrollOnly) {
       hideMenu()
     } else {
       updatePosition(selectionIndicator)

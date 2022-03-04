@@ -35,7 +35,7 @@ class AyahScrollableImageTrackerItem(
     scrollToAyah: Boolean
   ): Boolean {
     val coordinates = coordinates
-    if (page == page && scrollToAyah && coordinates != null) {
+    if (this.page == page && scrollToAyah && coordinates != null) {
       val highlightBounds = ImageAyahUtils.getYBoundsForHighlight(coordinates, sura, ayah)
       if (highlightBounds != null) {
         val matrix = ayahView.imageMatrix

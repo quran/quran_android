@@ -324,7 +324,7 @@ public class PagerActivity extends AppCompatActivity implements
         final int highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
 
         if (highlightedSura > -1 && highlightedAyah > -1) {
-          readingEventPresenterBridge.setSelection(highlightedSura, highlightedAyah);
+          readingEventPresenterBridge.setSelection(highlightedSura, highlightedAyah, true);
         }
       }
     }
@@ -402,7 +402,9 @@ public class PagerActivity extends AppCompatActivity implements
         final SelectionIndicator selectionIndicator =
             AyahSelectionKt.selectionIndicator(currentSelection);
         final SuraAyah suraAyah = AyahSelectionKt.startSuraAyah(currentSelection);
-        if (selectionIndicator != SelectionIndicator.None.INSTANCE && suraAyah != null) {
+        if (selectionIndicator != SelectionIndicator.None.INSTANCE &&
+            selectionIndicator != SelectionIndicator.ScrollOnly.INSTANCE &&
+            suraAyah != null) {
           final int startPage = quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah);
           int barPos = quranInfo.getPositionFromPage(startPage, isDualPageVisible());
           if (position == barPos) {
@@ -892,7 +894,7 @@ public class PagerActivity extends AppCompatActivity implements
       final int highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
       final int highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
       if (highlightedSura > 0 && highlightedAyah > 0) {
-        readingEventPresenterBridge.setSelection(highlightedSura, highlightedAyah);
+        readingEventPresenterBridge.setSelection(highlightedSura, highlightedAyah, true);
       }
 
       if (showingTranslation != currentValue) {

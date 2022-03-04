@@ -14,7 +14,7 @@ fun SelectionIndicator.toInternalPosition(
   toolBarHeight: Int
 ): SelectionIndicatorPosition? {
   return when (this) {
-    None -> null
+    None, SelectionIndicator.ScrollOnly -> null
     is SelectedItemPosition -> toInternalPosition(width, height, toolBarWidth, toolBarHeight)
     is SelectedPointPosition -> SelectionIndicatorPosition(
       this.x + this.xScroll,
