@@ -1,9 +1,14 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
 import android.app.Activity
+import android.graphics.RectF
 import android.view.MotionEvent
+import android.widget.ImageView
 import com.quran.data.core.QuranInfo
 import com.quran.data.di.QuranPageScope
+import com.quran.data.model.AyahGlyph.AyahEndGlyph
+import com.quran.data.model.AyahGlyph.WordGlyph
+import com.quran.data.model.AyahWord
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.highlight.HighlightInfo
@@ -31,6 +36,13 @@ import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
 import com.quran.reading.common.AudioEventPresenter
 import com.quran.reading.common.ReadingEventPresenter
+import com.quran.recitation.events.RecitationEventPresenter
+import com.quran.recitation.presenter.RecitationHighlightsPresenter
+import com.quran.recitation.presenter.RecitationHighlightsPresenter.HighlightAction
+import com.quran.recitation.presenter.RecitationHighlightsPresenter.RecitationPage
+import com.quran.recitation.presenter.RecitationPopupPresenter
+import com.quran.recitation.presenter.RecitationPopupPresenter.PopupContainer
+import com.quran.recitation.presenter.RecitationPresenter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -47,7 +59,11 @@ class AyahTrackerPresenter @Inject constructor(
   private val readingEventPresenter: ReadingEventPresenter,
   private val bookmarkModel: BookmarkModel,
   private val audioEventPresenter: AudioEventPresenter,
-) : AyahTracker, Presenter<AyahInteractionHandler> {
+  private val recitationPresenter: RecitationPresenter,
+  private val recitationEventPresenter: RecitationEventPresenter,
+  private val recitationPopupPresenter: RecitationPopupPresenter,
+  private val recitationHighlightsPresenter: RecitationHighlightsPresenter,
+) : AyahTracker, Presenter<AyahInteractionHandler>, PopupContainer, RecitationPage {
   // we may bind and unbind several times, and each time we unbind, we cancel
   // the scope, which means we can't launch new coroutines in that same scope.
   // thus, leave this as a var so we replace it every time.
@@ -57,6 +73,8 @@ class AyahTrackerPresenter @Inject constructor(
   private var pendingHighlightInfo: HighlightInfo? = null
   private var lastHighlightedAyah: SuraAyah? = null
   private var lastHighlightedAudioAyah: SuraAyah? = null
+
+  private val isRecitationEnabled = recitationPresenter.isRecitationEnabled()
 
   private fun subscribe() {
     readingEventPresenter.ayahSelectionFlow
@@ -91,6 +109,10 @@ class AyahTrackerPresenter @Inject constructor(
         pendingHighlightInfo.sura, pendingHighlightInfo.ayah, pendingHighlightInfo.word,
         pendingHighlightInfo.highlightType, pendingHighlightInfo.scrollToAyah
       )
+    }
+
+    if (isRecitationEnabled) {
+      recitationHighlightsPresenter.refresh()
     }
   }
 
@@ -252,6 +274,8 @@ class AyahTrackerPresenter @Inject constructor(
         // either a press or a long press, but we're in selection mode
         handleAyahSelection(event, eventType, page)
       }
+    } else if (eventType == SINGLE_TAP && recitationEventPresenter.hasRecitationSession()) {
+      handleTap(event, eventType, page)
     } else {
       // normal click
       readingEventPresenter.onClick()
@@ -273,6 +297,24 @@ class AyahTrackerPresenter @Inject constructor(
       } else if (eventType == LONG_PRESS) {
         handleLongPress(result)
       }
+    }
+  }
+
+  private fun handleTap(
+    ev: MotionEvent,
+    eventType: EventType,
+    page: Int
+  ) {
+    for (item in items) {
+      val glyph = item.getGlyphForPosition(page, ev.x, ev.y) ?: continue
+
+      val portion = when (glyph) {
+        is WordGlyph -> glyph.toAyahWord()
+        is AyahEndGlyph -> glyph.ayah
+        else -> glyph.ayah
+      }
+
+      readingEventPresenter.onClick(portion)
     }
   }
 
@@ -331,10 +373,18 @@ class AyahTrackerPresenter @Inject constructor(
   override fun bind(what: AyahInteractionHandler) {
     items = what.ayahTrackerItems
     scope = MainScope()
+    if (isRecitationEnabled) {
+      recitationPopupPresenter.bind(this)
+      recitationHighlightsPresenter.bind(this)
+    }
     subscribe()
   }
 
   override fun unbind(what: AyahInteractionHandler) {
+    if (isRecitationEnabled) {
+      recitationHighlightsPresenter.unbind(this)
+      recitationPopupPresenter.unbind(this)
+    }
     items = emptyArray()
     scope.cancel()
   }
@@ -342,4 +392,61 @@ class AyahTrackerPresenter @Inject constructor(
   interface AyahInteractionHandler {
     val ayahTrackerItems: Array<AyahTrackerItem>
   }
+
+  // PopupContainer <--> AyahTrackerItem adapter
+
+  override fun getQuranPageImageView(page: Int): ImageView? {
+    val item = items.firstOrNull { it.page == page } ?: return null
+    val ayahView = item.getAyahView() ?: return null
+    return ayahView as? ImageView ?: return null
+  }
+
+  override fun getSelectionBoundsForWord(
+    page: Int,
+    word: AyahWord
+  ): SelectionIndicator.SelectedItemPosition? {
+    val item = items.firstOrNull { it.page == page } ?: return null
+    val selection = item.getToolBarPosition(item.page, word) as? SelectionIndicator.SelectedItemPosition ?: return null
+    return selection
+  }
+
+  override fun getBoundsForWord(word: AyahWord): List<RectF>? {
+    return (items[0] as? AyahImageTrackerItem)?.pageGlyphsCoords?.getBoundsForWord(word)
+  }
+
+  // RecitationPage <--> AyahTrackerItem adapter
+
+  override val pageNumbers: Set<Int>
+    get() = items.map { it.page }.toSet()
+
+  override fun applyHighlights(highlights: List<HighlightAction>) {
+    highlights.forEach {
+      when (it) {
+        is HighlightAction.Highlight -> highlight(it.highlightInfo)
+        is HighlightAction.Unhighlight -> unhighlight(it.highlightInfo)
+        is HighlightAction.UnhighlightAll -> unHighlightAyahs(it.highlightType, it.page)
+      }
+    }
+  }
+
+  private fun highlight(highlightInfo: HighlightInfo) {
+    val page = quranInfo.getPageFromSuraAyah(highlightInfo.sura, highlightInfo.ayah)
+    items.asSequence()
+      .filter { it.page == page }
+      .forEach { it.onHighlight(page, highlightInfo) }
+  }
+
+  private fun unhighlight(highlightInfo: HighlightInfo) {
+    val page = quranInfo.getPageFromSuraAyah(highlightInfo.sura, highlightInfo.ayah)
+    items.asSequence()
+      .filter { it.page == page }
+      .forEach { it.onUnhighlight(page, highlightInfo) }
+  }
+
+  private fun unHighlightAyahs(type: HighlightType, page: Int? = null) {
+    items.asSequence()
+      .filter { page == null || page == it.page }
+      .forEach { it.onUnHighlightAyahType(type) }
+  }
+
 }

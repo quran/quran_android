@@ -5,7 +5,10 @@ import androidx.annotation.WorkerThread
 interface QuranFileManager {
   fun quranImagesDirectory(): String?
   fun ayahInfoFileDirectory(): String?
-  
+
+  fun recitationSessionsDirectory(): String
+  fun recitationRecordingsDirectory(): String
+
   @WorkerThread
   fun isVersion(widthParam: String, version: Int): Boolean
 

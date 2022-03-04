@@ -27,4 +27,8 @@
     <item android:id="@+id/cab_play_from_here"
           android:icon="@drawable/ic_play"
           android:title="@string/play_from_here" />
+    <item android:id="@+id/cab_recite_from_here"
+          android:visible="false"
+          android:icon="@drawable/ic_mic"
+          android:title="@string/recite_from_here" />
 </menu>

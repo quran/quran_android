@@ -20,6 +20,7 @@ public class SlidingPagerAdapter extends FragmentStatePagerAdapter implements
   public static final int TAG_PAGE = 0;
   public static final int TRANSLATION_PAGE = 1;
   public static final int AUDIO_PAGE = 2;
+  public static final int TRANSCRIPT_PAGE = 3;
 
   private final boolean isRtl;
   private final List<AyahActionFragmentProvider> pages;

@@ -2,6 +2,7 @@ package com.quran.reading.common
 
 import com.quran.data.core.QuranInfo
 import com.quran.data.di.ActivityScope
+import com.quran.data.model.QuranRef.QuranId
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.SelectionIndicator
@@ -22,15 +23,22 @@ class ReadingEventPresenter @Inject constructor(private val quranInfo: QuranInfo
     extraBufferCapacity = 1,
     onBufferOverflow = DROP_OLDEST
   )
+  private val quranClickInternalFlow = MutableSharedFlow<QuranId>(
+    replay = 0, extraBufferCapacity = 1, onBufferOverflow = DROP_OLDEST)
   private val detailsPanelInternalFlow = MutableStateFlow<Boolean>(false)
   private val ayahSelectionInternalFlow = MutableStateFlow<AyahSelection>(AyahSelection.None)
 
   val clicksFlow: Flow<Unit> = clicksInternalFlow.asSharedFlow()
+  val quranClicksFlow: Flow<QuranId> = quranClickInternalFlow.asSharedFlow()
   val detailsPanelFlow: Flow<Boolean> = detailsPanelInternalFlow.asSharedFlow()
   val ayahSelectionFlow: StateFlow<AyahSelection> = ayahSelectionInternalFlow.asStateFlow()
 
   fun onClick() {
     clicksInternalFlow.tryEmit(Unit)
+  }
+
+  fun onClick(portion: QuranId) {
+    quranClickInternalFlow.tryEmit(portion)
   }
 
   fun currentAyahSelection(): AyahSelection = ayahSelectionFlow.value

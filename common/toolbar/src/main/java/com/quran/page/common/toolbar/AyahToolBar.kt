@@ -46,6 +46,7 @@ class AyahToolBar @JvmOverloads constructor(
 
   var flavor: String = ""
   var longPressLambda: ((CharSequence) -> Unit) = {}
+  var isRecitationEnabled = false
 
   @Inject
   lateinit var ayahToolBarPresenter: AyahToolBarPresenter
@@ -129,8 +130,8 @@ class AyahToolBar @JvmOverloads constructor(
     )
   }
 
-  private fun showMenu(menu: Menu) {
-    if (currentMenu === menu) {
+  private fun showMenu(menu: Menu, force: Boolean = false) {
+    if (currentMenu === menu && !force) {
       // no need to re-draw
       return
     }
@@ -139,6 +140,12 @@ class AyahToolBar @JvmOverloads constructor(
     val menuItem = menu.findItem(R.id.cab_share_ayah)
     if (menuItem != null && flavor == "qaloon") {
       menuItem.isVisible = false
+    }
+
+    // If recitation is enabled, show it in the menu
+    val recitationMenuItem = menu.findItem(R.id.cab_recite_from_here)
+    if (isRecitationEnabled) {
+      recitationMenuItem.isVisible = true
     }
 
     menuLayout.removeAllViews()
@@ -224,8 +231,8 @@ class AyahToolBar @JvmOverloads constructor(
     toolBarPip.ensurePosition(position)
   }
 
-  private fun resetMenu() {
-    showMenu(menu)
+  private fun resetMenu(force: Boolean = false) {
+    showMenu(menu, force)
   }
 
   private fun showMenu() {
@@ -259,5 +266,13 @@ class AyahToolBar @JvmOverloads constructor(
       return true
     }
     return false
+  }
+
+  fun setMenuItemVisibility(itemId: Int, isVisible: Boolean) {
+    val item = menu.findItem(itemId) ?: return
+    if (item.isVisible != isVisible) {
+      item.isVisible = isVisible
+      resetMenu(true)
+    }
   }
 }

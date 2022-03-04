@@ -8,6 +8,8 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.RectF
 import android.graphics.Region
 import android.os.Build
+import android.util.TypedValue
+import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
@@ -93,8 +95,10 @@ class HighlightsDrawer(
         if (rangesToDraw != null && rangesToDraw.isNotEmpty()) {
           for (bounds in rangesToDraw) {
             if (highlightType.mode == UNDERLINE) {
+              val underlineThickness = TypedValue.applyDimension(
+                COMPLEX_UNIT_DIP, UNDERLINE_THICKNESS_DIPS, image.resources.displayMetrics)
               bounds.top = bounds.bottom
-              bounds.bottom += 10f
+              bounds.bottom += underlineThickness
             }
 
             image.imageMatrix.mapRect(scaledRect, bounds)
@@ -142,4 +146,7 @@ class HighlightsDrawer(
     }
   }
 
+  companion object {
+    private const val UNDERLINE_THICKNESS_DIPS = 3f // dp
+  }
 }

@@ -94,6 +94,9 @@ android {
 
   packagingOptions {
     exclude "META-INF/*.kotlin_module"
+
+    exclude 'META-INF/DEPENDENCIES'
+    exclude 'META-INF/INDEX.LIST'
   }
 }
 

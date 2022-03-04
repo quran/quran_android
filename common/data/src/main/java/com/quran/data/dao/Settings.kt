@@ -11,5 +11,7 @@ interface Settings {
   suspend fun nightModeTextBrightness(): Int
   suspend fun shouldShowHeaderFooter(): Boolean
   suspend fun shouldShowBookmarks(): Boolean
+  suspend fun pageType(): String
+
   fun preferencesFlow(): Flow<String>
 }

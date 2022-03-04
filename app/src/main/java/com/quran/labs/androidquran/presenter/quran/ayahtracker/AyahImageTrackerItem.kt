@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
+import android.view.View
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.AyahGlyph
 import com.quran.data.model.AyahWord
@@ -102,6 +103,29 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
     if (this.page == page) {
       val coordinates = coordinates
       val bounds = if (coordinates == null) null else coordinates["$sura:$ayah"]
+      return getToolBarPosition(page, bounds)
+    }
+    return SelectionIndicator.None
+  }
+
+  override fun getToolBarPosition(page: Int, word: AyahWord): SelectionIndicator {
+    if (this.page == page) {
+      val bounds = pageGlyphsCoords?.getBoundsForWord(word)?.map { AyahBounds(-1, -1, it) }
+      return getToolBarPosition(page, bounds)
+    }
+    return SelectionIndicator.None
+  }
+
+  override fun getToolBarPosition(page: Int, glyph: AyahGlyph): SelectionIndicator {
+    if (this.page == page) {
+      val bounds = pageGlyphsCoords?.getBoundsForGlyph(glyph)?.map { AyahBounds(-1, -1, it) }
+      return getToolBarPosition(page, bounds)
+    }
+    return SelectionIndicator.None
+  }
+
+  private fun getToolBarPosition(page: Int, bounds: List<AyahBounds>?): SelectionIndicator {
+    if (this.page == page) {
       val screenWidth = ayahView.width
       if (bounds != null && screenWidth > 0) {
         val yPadding = ayahView.paddingTop
@@ -130,4 +154,7 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
     } else null
   }
 
+  override fun getAyahView(): View {
+    return ayahView
+  }
 }
