@@ -120,6 +120,7 @@ dependencies {
   implementation project(path: ':common:networking')
   implementation project(path: ':common:pages')
   implementation project(path: ':common:reading')
+  implementation project(path: ':common:recitation')
   implementation project(path: ':common:search')
   implementation project(path: ':common:toolbar')
   implementation project(path: ':common:upgrade')
