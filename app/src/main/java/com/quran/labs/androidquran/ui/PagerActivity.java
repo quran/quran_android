@@ -402,7 +402,9 @@ public class PagerActivity extends AppCompatActivity implements
         final SelectionIndicator selectionIndicator =
             AyahSelectionKt.selectionIndicator(currentSelection);
         final SuraAyah suraAyah = AyahSelectionKt.startSuraAyah(currentSelection);
-        if (selectionIndicator != SelectionIndicator.None.INSTANCE && suraAyah != null) {
+        if (selectionIndicator != SelectionIndicator.None.INSTANCE &&
+            selectionIndicator != SelectionIndicator.ScrollOnly.INSTANCE &&
+            suraAyah != null) {
           final int startPage = quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah);
           int barPos = quranInfo.getPositionFromPage(startPage, isDualPageVisible());
           if (position == barPos) {

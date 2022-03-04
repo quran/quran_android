@@ -194,7 +194,7 @@ class AyahTrackerPresenter @Inject constructor(
     val page = quranInfo.getPageFromSuraAyah(sura, ayah)
     for (item in items) {
       val position = item.getToolBarPosition(page, sura, ayah)
-      if (position != SelectionIndicator.None) {
+      if (position != SelectionIndicator.None && position != SelectionIndicator.ScrollOnly) {
         return position
       }
     }
