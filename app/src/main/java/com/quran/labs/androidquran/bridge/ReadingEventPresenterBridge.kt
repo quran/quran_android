@@ -34,8 +34,9 @@ class ReadingEventPresenterBridge constructor(
   /**
    * Set the highlighted sura and ayah
    */
-  fun setSelection(sura: Int, ayah: Int) {
-    val ayahSelection = AyahSelection.Ayah(SuraAyah(sura, ayah))
+  fun setSelection(sura: Int, ayah: Int, scrollToAyah: Boolean) {
+    val selectionIndicator = if (scrollToAyah) SelectionIndicator.ScrollOnly else SelectionIndicator.None
+    val ayahSelection = AyahSelection.Ayah(SuraAyah(sura, ayah), selectionIndicator)
     readingEventPresenter.onAyahSelection(ayahSelection)
   }
 

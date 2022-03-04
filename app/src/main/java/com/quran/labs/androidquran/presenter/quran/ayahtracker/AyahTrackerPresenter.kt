@@ -107,7 +107,8 @@ class AyahTrackerPresenter @Inject constructor(
     when (ayahSelection) {
       is AyahSelection.Ayah -> {
         val suraAyah = ayahSelection.suraAyah
-        highlightAyah(suraAyah.sura, suraAyah.ayah, -1, HighlightTypes.SELECTION, false)
+        val scrollToAyah = ayahSelection.selectionIndicator == SelectionIndicator.ScrollOnly
+        highlightAyah(suraAyah.sura, suraAyah.ayah, -1, HighlightTypes.SELECTION, scrollToAyah)
       }
       is AyahSelection.AyahRange -> {
         val highlightAyatIterator =

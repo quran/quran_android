@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -8,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
+
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.model.selection.AyahSelection;
@@ -39,11 +43,12 @@ import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
 import com.quran.reading.common.ReadingEventPresenter;
-import java.util.Set;
-import javax.inject.Inject;
-import timber.log.Timber;
 
-import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class QuranPageFragment extends Fragment implements PageController,
     QuranPage, QuranPageScreen, AyahTrackerPresenter.AyahInteractionHandler {
@@ -90,7 +95,7 @@ public class QuranPageFragment extends Fragment implements PageController,
   public View onCreateView(@NonNull LayoutInflater inflater,
                            ViewGroup container,
                            Bundle savedInstanceState) {
-    final Context context = getActivity();
+    final Context context = requireContext();
     quranPageLayout = new QuranImagePageLayout(context);
     quranPageLayout.setPageController(this, pageNumber);
     imageView = quranPageLayout.getImageView();
@@ -223,13 +228,13 @@ public class QuranPageFragment extends Fragment implements PageController,
   }
 
   @Override
-  public boolean handleTouchEvent(MotionEvent event, EventType eventType, int page) {
-    return isVisible() && ayahTrackerPresenter.handleTouchEvent(getActivity(), event, eventType,
+  public boolean handleTouchEvent(@NonNull MotionEvent event, @NonNull EventType eventType, int page) {
+    return isVisible() && ayahTrackerPresenter.handleTouchEvent(requireActivity(), event, eventType,
         page, ayahCoordinatesError);
   }
 
   @Override
-  public void handleLongPress(SuraAyah suraAyah) {
+  public void handleLongPress(@NonNull SuraAyah suraAyah) {
     if (isVisible()) {
       ayahTrackerPresenter.onLongPress(suraAyah);
     }

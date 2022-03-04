@@ -164,7 +164,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   }
 
   public void highlightAyah(SuraAyah suraAyah, int ayahId, HighlightType highlightType) {
-    if (highlightType == HighlightTypes.SELECTION) {
+    if (highlightType.equals(HighlightTypes.SELECTION)) {
       selectedAyah = suraAyah;
       selectedAyahId = ayahId;
     } else if (selectedAyah != null) {
@@ -177,7 +177,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   }
 
   private boolean shouldHandleHighlightType(HighlightType highlightType) {
-    return highlightType == HighlightTypes.AUDIO || highlightType == HighlightTypes.SELECTION;
+    return highlightType.equals(HighlightTypes.AUDIO) || highlightType.equals(HighlightTypes.SELECTION);
   }
 
   private void hideMenu() {
@@ -185,7 +185,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   }
 
   public void unhighlightAyah(HighlightType highlightType) {
-    if (highlightType == HighlightTypes.SELECTION) {
+    if (highlightType.equals(HighlightTypes.SELECTION)) {
       selectedAyah = null;
       selectedAyahId = -1;
     }
@@ -200,7 +200,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   }
 
   public void unhighlightAyat(HighlightType highlightType) {
-    if (selectedAyah != null && highlightType == HighlightTypes.SELECTION) {
+    if (selectedAyah != null && highlightType.equals(HighlightTypes.SELECTION)) {
       selectedAyah = null;
       selectedAyahId = -1;
     }

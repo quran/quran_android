@@ -6,6 +6,7 @@ import com.quran.data.model.selection.SelectionIndicator.SelectedPointPosition
 
 sealed class SelectionIndicator {
   object None : SelectionIndicator()
+  object ScrollOnly : SelectionIndicator()
   data class SelectedPointPosition(
     val x: Float,
     val y: Float,
@@ -22,7 +23,7 @@ sealed class SelectionIndicator {
 
 fun SelectionIndicator.withXScroll(xScroll: Float): SelectionIndicator {
   return when (this) {
-    None -> this
+    None, SelectionIndicator.ScrollOnly -> this
     is SelectedPointPosition -> this.copy(xScroll = xScroll)
     is SelectedItemPosition -> this.copy(xScroll = xScroll)
   }
@@ -30,7 +31,7 @@ fun SelectionIndicator.withXScroll(xScroll: Float): SelectionIndicator {
 
 fun SelectionIndicator.withYScroll(yScroll: Float): SelectionIndicator {
   return when (this) {
-    None -> this
+    None, SelectionIndicator.ScrollOnly -> this
     is SelectedPointPosition -> this.copy(yScroll = yScroll)
     is SelectedItemPosition -> this.copy(yScroll = yScroll)
   }
