@@ -4,9 +4,6 @@ import android.app.Activity
 import android.view.MotionEvent
 import com.quran.data.core.QuranInfo
 import com.quran.data.di.QuranPageScope
-import com.quran.data.model.AyahGlyph
-import com.quran.data.model.AyahGlyph.WordGlyph
-import com.quran.data.model.AyahWord
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.highlight.HighlightInfo
@@ -59,6 +56,7 @@ class AyahTrackerPresenter @Inject constructor(
   private var items: Array<AyahTrackerItem> = emptyArray()
   private var pendingHighlightInfo: HighlightInfo? = null
   private var lastHighlightedAyah: SuraAyah? = null
+  private var lastHighlightedAudioAyah: SuraAyah? = null
 
   private fun subscribe() {
     readingEventPresenter.ayahSelectionFlow
@@ -128,10 +126,33 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   private fun onAudioSelectionChanged(suraAyah: SuraAyah?) {
-    unHighlightAyahs(HighlightTypes.AUDIO)
+    val currentLastHighlightAudioAyah = lastHighlightedAudioAyah
+
+    // if there is no currently highlighted audio ayah, go ahead and clear all
+    if (currentLastHighlightAudioAyah == null) {
+      unHighlightAyahs(HighlightTypes.AUDIO)
+    }
+
+    // either way, whether we unhighlighted all or not, highlight the new ayah
     if (suraAyah != null) {
       highlightAyah(suraAyah.sura, suraAyah.ayah, -1, HighlightTypes.AUDIO, true)
     }
+
+    // if we had a highlighted ayah before, unhighlight it now.
+    // we do this *after* highlighting the new ayah so that the animations continue working.
+    if (suraAyah != currentLastHighlightAudioAyah && currentLastHighlightAudioAyah != null) {
+      val sura = currentLastHighlightAudioAyah.sura
+      val ayah = currentLastHighlightAudioAyah.ayah
+      val page = quranInfo.getPageFromSuraAyah(sura, ayah)
+
+      items.filter { it.page == page }
+        .onEach {
+          it.onUnHighlightAyah(page, sura, ayah, -1, HighlightTypes.AUDIO)
+        }
+    }
+
+    // and keep track of the last highlighted audio ayah
+    lastHighlightedAudioAyah = suraAyah
   }
 
   private fun onBookmarksChanged(bookmarks: List<Bookmark>) {
@@ -150,11 +171,11 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   private fun highlightAyah(sura: Int, ayah: Int, word: Int, type: HighlightType, scrollToAyah: Boolean) {
-    var handled = false
-    val page = if (items.size == 1) items[0].page else quranInfo.getPageFromSuraAyah(sura, ayah)
-    for (item in items) {
-      handled = handled || item.onHighlightAyah(page, sura, ayah, word, type, scrollToAyah)
+    val page = quranInfo.getPageFromSuraAyah(sura, ayah)
+    val handled = items.any {
+      it.page == page && it.onHighlightAyah(page, sura, ayah, word, type, scrollToAyah)
     }
+
     pendingHighlightInfo = if (!handled) {
       HighlightInfo(sura, ayah, word, type, scrollToAyah)
     } else {
@@ -169,7 +190,7 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   override fun getToolBarPosition(sura: Int, ayah: Int): SelectionIndicator {
-    val page = if (items.size == 1) items[0].page else quranInfo.getPageFromSuraAyah(sura, ayah)
+    val page = quranInfo.getPageFromSuraAyah(sura, ayah)
     for (item in items) {
       val position = item.getToolBarPosition(page, sura, ayah)
       if (position != SelectionIndicator.None) {
@@ -295,14 +316,6 @@ class AyahTrackerPresenter @Inject constructor(
       }
     }
     return null
-  }
-
-  private fun getWordForPosition(page: Int, x: Float, y: Float): AyahWord? {
-    return (getGlyphForPosition(page, x, y) as? WordGlyph)?.toAyahWord()
-  }
-
-  private fun getGlyphForPosition(page: Int, x: Float, y: Float): AyahGlyph? {
-    return items.firstNotNullOfOrNull { it.getGlyphForPosition(page, x, y) }
   }
 
   private fun checkCoordinateData(activity: Activity) {
