@@ -145,11 +145,10 @@ class AyahTrackerPresenter @Inject constructor(
       val ayah = currentLastHighlightAudioAyah.ayah
       val page = quranInfo.getPageFromSuraAyah(sura, ayah)
 
-      items.forEach {
-        if (it.page == page) {
+      items.filter { it.page == page }
+        .onEach {
           it.onUnHighlightAyah(page, sura, ayah, -1, HighlightTypes.AUDIO)
         }
-      }
     }
 
     // and keep track of the last highlighted audio ayah
@@ -172,12 +171,9 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   private fun highlightAyah(sura: Int, ayah: Int, word: Int, type: HighlightType, scrollToAyah: Boolean) {
-    var handled = false
     val page = quranInfo.getPageFromSuraAyah(sura, ayah)
-    for (item in items) {
-      if (item.page == page) {
-        handled = handled || item.onHighlightAyah(page, sura, ayah, word, type, scrollToAyah)
-      }
+    val handled = items.any {
+      it.page == page && it.onHighlightAyah(page, sura, ayah, word, type, scrollToAyah)
     }
 
     pendingHighlightInfo = if (!handled) {
@@ -194,7 +190,7 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   override fun getToolBarPosition(sura: Int, ayah: Int): SelectionIndicator {
-    val page = if (items.size == 1) items[0].page else quranInfo.getPageFromSuraAyah(sura, ayah)
+    val page = quranInfo.getPageFromSuraAyah(sura, ayah)
     for (item in items) {
       val position = item.getToolBarPosition(page, sura, ayah)
       if (position != SelectionIndicator.None) {
