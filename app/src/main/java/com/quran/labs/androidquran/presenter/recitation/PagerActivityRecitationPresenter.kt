@@ -8,14 +8,15 @@ import androidx.lifecycle.Lifecycle.Event.ON_PAUSE
 import androidx.lifecycle.Lifecycle.Event.ON_RESUME
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.viewpager.widget.ViewPager
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.selection.startSuraAyah
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.labs.androidquran.view.AudioStatusBar
 import com.quran.page.common.toolbar.AyahToolBar
+import com.quran.reading.common.ReadingEventPresenter
 import com.quran.recitation.common.RecitationSession
 import com.quran.recitation.events.RecitationEventPresenter
 import com.quran.recitation.events.RecitationPlaybackEventPresenter
@@ -32,6 +33,7 @@ import javax.inject.Inject
 
 class PagerActivityRecitationPresenter @Inject constructor(
   private val quranInfo: QuranInfo,
+  private val readingEventPresenter: ReadingEventPresenter,
   private val recitationPresenter: RecitationPresenter,
   private val recitationEventPresenter: RecitationEventPresenter,
   private val recitationPlaybackPresenter: RecitationPlaybackPresenter,
@@ -43,17 +45,11 @@ class PagerActivityRecitationPresenter @Inject constructor(
   private lateinit var bridge: Bridge
 
   class Bridge(
-    val numberOfPages: () -> Int,
-    val numberOfPagesDual: () -> Int,
     val isDualPageVisible: () -> Boolean,
-
-    val viewPager: () -> ViewPager?,
+    val currentPage: () -> Int,
     val audioStatusBar: () -> AudioStatusBar?,
     val ayahToolBar: () -> AyahToolBar?,
-    val slidingPagerAdapter: () -> SlidingPagerAdapter?,
-    val getSelectionStart: () -> SuraAyah?,
-
-    val ensurePage: (sura: Int, ayah: Int) -> Unit,
+    val ensurePage: (ayah: SuraAyah) -> Unit,
     val showSlider: (sliderPage: Int) -> Unit,
   )
 
@@ -161,11 +157,7 @@ class PagerActivityRecitationPresenter @Inject constructor(
 
   private fun onRecitationChange(ayah: SuraAyah) {
     val curAyah = recitationEventPresenter.recitationSession()?.currentAyah() ?: ayah
-    val currentAyahPage = quranInfo.getPageFromSuraAyah(curAyah.sura, curAyah.ayah)
-    val position = quranInfo.getPositionFromPage(currentAyahPage, bridge.isDualPageVisible())
-    if (position != bridge.viewPager()?.currentItem) {
-      bridge.viewPager()?.currentItem = position
-    }
+    bridge.ensurePage(curAyah)
     // temp workaround for forced into stopped mode on rotation because of audio service CONNECT
     refreshAudioStatusBarRecitationState()
   }
@@ -175,7 +167,7 @@ class PagerActivityRecitationPresenter @Inject constructor(
   }
 
   private fun onRecitationSelection(selection: RecitationSelection) {
-    selection.ayah()?.run { bridge.ensurePage(sura, ayah) }
+    selection.ayah()?.let { bridge.ensurePage(it) }
   }
 
   private fun onRecitationPlayingState(isPlaying: Boolean) {
@@ -183,7 +175,7 @@ class PagerActivityRecitationPresenter @Inject constructor(
   }
 
   private fun onRecitationPlayback(playback: RecitationSelection) {
-    playback.ayah()?.run { bridge.ensurePage(sura, ayah) }
+    playback.ayah()?.let { bridge.ensurePage(it) }
     // temp workaround for forced into stopped mode on rotation because of audio service CONNECT
     refreshAudioStatusBarRecitationState()
   }
@@ -217,9 +209,8 @@ class PagerActivityRecitationPresenter @Inject constructor(
   }
 
   override fun onRecitationTranscriptPressed() {
-    val slidingPagerAdapter = bridge.slidingPagerAdapter() ?: return
     if (recitationEventPresenter.hasRecitationSession()) {
-      bridge.showSlider(slidingPagerAdapter.getPagePosition(SlidingPagerAdapter.TRANSCRIPT_PAGE))
+      bridge.showSlider(SlidingPagerAdapter.TRANSCRIPT_PAGE)
     } else {
       Timber.e("Transcript pressed but we don't have a session; this should never happen")
     }
@@ -242,15 +233,16 @@ class PagerActivityRecitationPresenter @Inject constructor(
   }
 
   private fun ayahToStartFrom(): SuraAyah {
-    val position = bridge.viewPager()!!.currentItem
     val page = if (bridge.isDualPageVisible()) {
-      (bridge.numberOfPagesDual() - position) * 2 - 1
+      // subtracting 1 because in dual mode currentPage gives 2, 4, 6.. instead of 1, 3, 5..
+      // but we want to start from the first ayah of the first visible page
+      bridge.currentPage() - 1
     } else {
-      bridge.numberOfPages() - position
+      bridge.currentPage()
     }
 
     // If we're in ayah mode, start from selected ayah
-    return bridge.getSelectionStart()
+    return readingEventPresenter.currentAyahSelection().startSuraAyah()
       // If a sura starts on this page, assume the user meant to start there
       ?: quranInfo.getListOfSurahWithStartingOnPage(page).firstNotNullOfOrNull { SuraAyah(it, 1) }
       // Otherwise, start from the beginning of the page

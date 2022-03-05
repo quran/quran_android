@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -453,7 +452,6 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     addView(ll, lp);
   }
 
-  @SuppressLint("NewApi")
   private void showRecitationListeningMode() {
     currentMode = RECITATION_LISTENING_MODE;
     removeAllViews();

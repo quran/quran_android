@@ -532,16 +532,12 @@ public class PagerActivity extends AppCompatActivity implements
 
     // Setup recitation (if enabled)
     pagerActivityRecitationPresenter.bind(this, new PagerActivityRecitationPresenter.Bridge(
-        () -> numberOfPages,
-        () -> numberOfPagesDual,
-        () -> isDualPageVisible(),
-        () -> viewPager,
+        this::isDualPageVisible,
+        this::getCurrentPage,
         () -> audioStatusBar,
         () -> ayahToolBar,
-        () -> slidingPagerAdapter,
-        () -> getSelectionStart(),
-        (sura, ayah) -> { ensurePage(sura, ayah); return null; },
-        sliderPage -> { showSlider(sliderPage); return null; }
+        ayah -> { ensurePage(ayah.sura, ayah.ayah); return null; },
+        sliderPage -> { showSlider(slidingPagerAdapter.getPagePosition(sliderPage)); return null; }
     ));
   }
 
