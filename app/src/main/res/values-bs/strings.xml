@@ -135,6 +135,8 @@
   <string name="prefs_night_mode_summary">Koristite tamnu podlogu i svjetle fontove</string>
   <string name="prefs_night_mode_text_brightness_title">Osvijetljenost teksta</string>
   <string name="prefs_night_mode_text_brightness_summary">Osvijetljenost teksta kada je noćni način uključen</string>
+  <string name="prefs_night_mode_background_brightness_title">Pozadinska svjetlina</string>
+  <string name="prefs_night_mode_background_brightness_summary">Svjetlina stranice kada je noćni način uključen</string>
   <string name="prefs_overlay_page_info_title">Prikaži informacije o stranici</string>
   <string name="prefs_overlay_page_info_summary">Dodajte broj stranice, ime sure i broj džuza dok čitate</string>
   <string name="prefs_display_marker_title">Prikažite marker notifikaciju</string>

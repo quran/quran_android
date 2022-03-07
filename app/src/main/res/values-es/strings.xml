@@ -62,6 +62,8 @@
   <string name="prefs_night_mode_summary">Se utilizará fondo oscuro y fuentes claras</string>
   <string name="prefs_night_mode_text_brightness_title">Texto Brillante</string>
   <string name="prefs_night_mode_text_brightness_summary">Texto brillante cuando el modo nocturno está activo</string>
+  <string name="prefs_night_mode_background_brightness_title">Luminosidad de fondo</string>
+  <string name="prefs_night_mode_background_brightness_summary">Brillo de la página cuando se activa el modo nocturno</string>
   <string name="prefs_overlay_page_info_title">Mostrar información de la página</string>
   <string name="prefs_overlay_page_info_summary">Superposición del número de página, nombre del capítulo, y el número del yuz durante la lectura</string>
   <string name="prefs_display_marker_title">Mostrar marcador de ventanas emergentes</string>

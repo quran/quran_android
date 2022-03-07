@@ -86,6 +86,8 @@
   <string name="prefs_night_mode_summary">پشت شاشەی ڕەش و نوسینی سپی </string>
   <string name="prefs_night_mode_text_brightness_title">ڕووناکی نوسین</string>
   <string name="prefs_night_mode_text_brightness_summary">ڕووناکی نوسین کاتێک شیوازی شەو چالاککرا</string>
+  <string name="prefs_night_mode_background_brightness_title">درەوشانەوەی باکگراوند</string>
+  <string name="prefs_night_mode_background_brightness_summary">درەوشانەوەی لاپەڕە کاتێک مۆدی شەو چالاکە</string>
   <string name="prefs_overlay_page_info_title">پیشاندانی زانیاری پەڕە </string>
   <string name="prefs_overlay_page_info_summary">پیشاندانی ژمارەی پەڕە، ناوی سورەت، وە ژمارەی جوزئـ لەکاتی خوێندنەوەدا</string>
   <string name="prefs_display_marker_title">ئاگادارکردنەوە لە بەشەکان</string>

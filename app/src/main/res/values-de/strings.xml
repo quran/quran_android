@@ -139,6 +139,8 @@
   <string name="prefs_night_mode_text_brightness_title">Helligkeit des Textes</string>
   <string name="prefs_night_mode_text_brightness_summary">Die Helligkeit des Textes im Nachtmodus.
   </string>
+  <string name="prefs_night_mode_background_brightness_title">Helligkeit des Hintergrunds</string>
+  <string name="prefs_night_mode_background_brightness_summary">Helligkeit der Seite im Nachtmodus.</string>
   <string name="prefs_overlay_page_info_title">Seiteninfo anzeigen</string>
   <string name="prefs_overlay_page_info_summary">Blendet die Seitennummer, den Namen der Sure und
     die Juz\' Nummer während dem Lesen ein.

@@ -66,6 +66,15 @@
         android:persistent="true"
         android:summary="@string/prefs_night_mode_text_brightness_summary"
         android:title="@string/prefs_night_mode_text_brightness_title"/>
+
+    <com.quran.labs.androidquran.ui.preference.SeekBarBackgroundBrightnessPreference
+        android:defaultValue="0"
+        android:dependency="@string/prefs_night_mode"
+        android:key="@string/prefs_night_mode_background_brightness"
+        android:max="64"
+        android:persistent="true"
+        android:summary="@string/prefs_night_mode_background_brightness_summary"
+        android:title="@string/prefs_night_mode_background_brightness_title"/>
   </PreferenceCategory>
 
   <PreferenceCategory
