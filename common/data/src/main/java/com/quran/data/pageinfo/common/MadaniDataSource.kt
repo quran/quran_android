@@ -4,9 +4,9 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.source.QuranDataSource
 
 open class MadaniDataSource : QuranDataSource {
-  override fun getNumberOfPages() = 604
+  override val numberOfPages = 604
 
-  override fun getPageForSuraArray() = intArrayOf(
+  override val pageForSuraArray = intArrayOf(
       /*   1 -  10 */ 1, 2, 50, 77, 106, 128, 151, 177, 187, 208,
       /*  11 -  20 */ 221, 235, 249, 255, 262, 267, 282, 293, 305, 312,
       /*  21 -  30 */ 322, 332, 342, 350, 359, 367, 377, 385, 396, 404,
@@ -20,7 +20,7 @@ open class MadaniDataSource : QuranDataSource {
       /* 101 - 110 */ 600, 600, 601, 601, 601, 602, 602, 602, 603, 603,
       /* 111 - 114 */ 603, 604, 604, 604)
 
-  override fun getSuraForPageArray() = intArrayOf(1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+  override val suraForPageArray = intArrayOf(1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
       2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
       3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
@@ -49,7 +49,7 @@ open class MadaniDataSource : QuranDataSource {
       70, 70, 71, 72, 72, 73, 73, 74, 74, 75, 76, 76, 77, 78, 78, 79, 80, 81, 82, 83,
       83, 85, 86, 87, 89, 89, 91, 92, 95, 97, 98, 100, 103, 106, 109, 112)
 
-  override fun getAyahForPageArray() = intArrayOf(
+  override val ayahForPageArray = intArrayOf(
       1, 1, 6, 17, 25, 30, 38, 49, 58, 62, 70, 77, 84, 89,
       94, 102, 106, 113, 120, 127, 135, 142, 146, 154, 164, 170, 177, 182,
       187, 191, 197, 203, 211, 216, 220, 225, 231, 234, 238, 246, 249, 253,
@@ -95,14 +95,14 @@ open class MadaniDataSource : QuranDataSource {
       35, 1, 1, 16, 1, 24, 1, 15, 1, 1, 8, 10, 1, 1,
       1, 1)
 
-  override fun getPageForJuzArray() = intArrayOf(
+  override val pageForJuzArray = intArrayOf(
       /*  1 - 10 */ 1, 22, 42, 62, 82, 102, 121, 142, 162, 182,
       /* 11 - 20 */ 201, 222, 242, 262, 282, 302, 322, 342, 362, 382,
       /* 21 - 30 */ 402, 422, 442, 462, 482, 502, 522, 542, 562, 582)
 
-  override fun getJuzDisplayPageArrayOverride() = mapOf(121 to 6, 201 to 10)
+  override val juzDisplayPageArrayOverride = mapOf(121 to 6, 201 to 10)
 
-  override fun getNumberOfAyahsForSuraArray() = intArrayOf(
+  override val numberOfAyahsForSuraArray = intArrayOf(
       /*  1 -  14 */ 7, 286, 200, 176, 120, 165, 206, 75, 129, 109, 123, 111, 43, 52,
       /* 15 -  28 */ 99, 128, 111, 110, 98, 135, 112, 78, 118, 64, 77, 227, 93, 88,
       /* 29 -  42 */ 69, 60, 34, 30, 73, 54, 45, 83, 182, 88, 75, 85, 54, 53,
@@ -113,7 +113,7 @@ open class MadaniDataSource : QuranDataSource {
       /* 99 - 114 */ 8, 11, 11, 8, 3, 9, 5, 4, 7, 3, 6, 3, 5, 4, 5, 6
   )
 
-  override fun getIsMakkiBySuraArray() = booleanArrayOf(
+  override val isMakkiBySuraArray = booleanArrayOf(
       /*   1 -  10 */  true, false, false, false, false, true, true, false, false, true,
       /*  11 -  20 */  true, true, false, true, true, true, true, true, true, true,
       /*  21 -  30 */  true, false, true, false, true, true, true, true, true, true,
@@ -128,7 +128,7 @@ open class MadaniDataSource : QuranDataSource {
       /* 111 - 114 */  true, true, true, true
   )
 
-  override fun getQuarterStartByPage() = intArrayOf(-1, -1, -1, -1, 1, -1, 2, -1, 3,
+  override val quarterStartByPage = intArrayOf(-1, -1, -1, -1, 1, -1, 2, -1, 3,
       -1, 4, -1, -1, 5, -1, -1, 6, -1, 7, -1, -1, 8, -1, 9, -1, -1, 10, -1, 11, -1,
       -1, 12, -1, 13, -1, -1, 14, -1, 15, -1, -1, 16, -1, 17, -1, 18, -1, -1, 19,
       -1, 20, -1, -1, 21, -1, 22, -1, -1, 23, -1, -1, 24, -1, 25, -1, -1, 26, -1,
@@ -164,7 +164,7 @@ open class MadaniDataSource : QuranDataSource {
       -1, 233, -1, 234, -1, 235, -1, 236, -1, -1, 237, -1, 238, -1, -1, 239, -1, -1,
       -1, -1, -1)
 
-  override fun getQuartersArray() = arrayOf(
+  override val quartersArray = arrayOf(
     /* hizb 1  */ SuraAyah(1, 1), SuraAyah(2, 26), SuraAyah(2, 44), SuraAyah(2, 60),
     /* hizb 2  */ SuraAyah(2, 75), SuraAyah(2, 92), SuraAyah(2, 106), SuraAyah(2, 124),
     /* hizb 3  */ SuraAyah(2, 142), SuraAyah(2, 158), SuraAyah(2, 177), SuraAyah(2, 189),

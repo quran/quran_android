@@ -90,9 +90,9 @@ constructor(
   suspend fun migrateBookmarksData(sourcePageType: String, destinationPageType: String) {
     val source = pageTypes[sourcePageType]?.getDataSource()
     val destination = pageTypes[destinationPageType]?.getDataSource()
-    if (source != null && destination != null && source.getNumberOfPages() != destination.getNumberOfPages()) {
-      val sourcePageSuraStart = source.getSuraForPageArray()
-      val sourcePageAyahStart = source.getAyahForPageArray()
+    if (source != null && destination != null && source.numberOfPages != destination.numberOfPages) {
+      val sourcePageSuraStart = source.suraForPageArray
+      val sourcePageAyahStart = source.ayahForPageArray
       val destinationQuranInfo = QuranInfo(destination)
 
       val suraAyahFromPage = { page: Int ->
