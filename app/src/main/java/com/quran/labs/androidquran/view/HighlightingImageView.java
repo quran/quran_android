@@ -48,6 +48,7 @@ import static com.quran.data.model.highlight.HighlightType.Mode.COLOR;
 import static com.quran.data.model.highlight.HighlightType.Mode.HIDE;
 import static com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT;
 import static com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE;
+import java.lang.Math;
 
 public class HighlightingImageView extends AppCompatImageView {
   // for debugging / visualizing glyph bounds:
@@ -68,6 +69,7 @@ public class HighlightingImageView extends AppCompatImageView {
   private boolean isNightMode;
   private boolean isColorFilterOn;
   private int nightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
+  private int nightModeBackgroundBrightness = Constants.DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS;
 
   // Params for drawing text
   private int fontSize;
@@ -202,10 +204,13 @@ public class HighlightingImageView extends AppCompatImageView {
     }
   }
 
-  public void setNightMode(boolean isNightMode, int textBrightness) {
+  public void setNightMode(boolean isNightMode, int textBrightness, int backgroundBrightness) {
     this.isNightMode = isNightMode;
     if (isNightMode) {
-      nightModeTextBrightness = textBrightness;
+      // avoid damaging the looks of the Quran page
+      nightModeTextBrightness = (int) (50*Math.log1p(backgroundBrightness)+textBrightness);
+      if (nightModeTextBrightness > 255) nightModeTextBrightness = 255;
+      nightModeBackgroundBrightness = backgroundBrightness;
       // we need a new color filter now
       isColorFilterOn = false;
     }

@@ -103,6 +103,8 @@
   <string name="prefs_night_mode_summary">Un fond sombre et des polices lumineuses seront utilisés.</string>
   <string name="prefs_night_mode_text_brightness_title">Luminosité du texte</string>
   <string name="prefs_night_mode_text_brightness_summary">Luminosité du texte lorsque le mode nuit est actif</string>
+  <string name="prefs_night_mode_background_brightness_title">Luminosité de fond</string>
+  <string name="prefs_night_mode_background_brightness_summary">Luminosité de la page lorsque le mode nuit est actif</string>
   <string name="prefs_overlay_page_info_title">Afficher des infos </string>
   <string name="prefs_overlay_page_info_summary">Affiche le numéro de page, le nom de la sourate et le numéro du juz\' lors la lecture.</string>
   <string name="prefs_display_marker_title">Montrer un popup de repère</string>

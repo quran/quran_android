@@ -101,6 +101,8 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="prefs_night_mode_summary">Dark background and light fonts will be used</string>
   <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
   <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night mode is active</string>
+  <string name="prefs_night_mode_background_brightness_title">Brilho de fundo</string>
+  <string name="prefs_night_mode_background_brightness_summary">Luminosidade da página quando o modo nocturno está activo</string>
   <string name="prefs_overlay_page_info_title">Show page info (beta)</string>
   <string name="prefs_overlay_page_info_summary">sobreposicione númeoro da página, nome da sura, e número do juz\' durante a leitura</string>
   <string name="prefs_display_marker_title">Mostarar popups do marcador</string>

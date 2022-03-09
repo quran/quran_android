@@ -131,6 +131,8 @@
   <string name="prefs_night_mode_summary">Menggunkan latar gelap dan tulisan terang</string>
   <string name="prefs_night_mode_text_brightness_title">Kecerahan teks</string>
   <string name="prefs_night_mode_text_brightness_summary">Kecerahan teks saat mode malam diaktifkan</string>
+  <string name="prefs_night_mode_background_brightness_title">Kecerahan latar belakang</string>
+  <string name="prefs_night_mode_background_brightness_summary">Kecerahan halaman saat mode malam aktif</string>
   <string name="prefs_overlay_page_info_title">Tampilkan informasi halaman</string>
   <string name="prefs_overlay_page_info_summary">Munculkan nomor halaman, nama surat, dan nomer juz saat membaca</string>
   <string name="prefs_display_marker_title">Tampilkan munculan penanda</string>

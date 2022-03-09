@@ -86,6 +86,8 @@
   <string name="prefs_night_mode_summary">黑色背景和白色字体</string>
   <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
   <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night more is active</string>
+  <string name="prefs_night_mode_background_brightness_title">背景亮度</string>
+  <string name="prefs_night_mode_background_brightness_summary">夜间模式激活时的页面亮度</string>
   <string name="prefs_overlay_page_info_title">显示页面信息</string>
   <string name="prefs_overlay_page_info_summary">阅读时显示页数，章名和卷数</string>
   <string name="prefs_display_marker_title">显示卷章标记弹出窗口</string>

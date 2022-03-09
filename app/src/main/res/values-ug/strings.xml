@@ -59,6 +59,8 @@
   <string name="prefs_night_mode_summary">قارا تەگلىك يورۇق خەت نۇسخىسى ئىشلىتىلىدۇ</string>
   <string name="prefs_night_mode_text_brightness_title">تېكىست يورۇقلۇقى</string>
   <string name="prefs_night_mode_text_brightness_summary">كېچە ھالىتى قوزغىتىلغان ۋاقىتتىكى تېكىستنىڭ يورۇقلۇقى</string>
+  <string name="prefs_night_mode_background_brightness_title">تەگلىك يورۇقلۇقى</string>
+  <string name="prefs_night_mode_background_brightness_summary">كەچلىك ھالەت ئاكتىپ بولغاندا بەتنىڭ يورۇقلۇقى</string>
   <string name="prefs_overlay_page_info_title">بەت ئۇچۇرىنى كۆرسەت</string>
   <string name="prefs_overlay_page_info_summary">قىرائەت قىلىۋاتقاندا بەت سانى، سۈرە ئىسمى ۋە پارە سانىنى كۆرسىتىدۇ</string>
   <string name="prefs_display_marker_title">بەلگە قاڭقىش كۆزنىكىنى كۆرسەت</string>

@@ -9,6 +9,7 @@ object Constants {
 
   // Numerics
   const val DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS = 255
+  const val DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS = 0
   const val DEFAULT_TEXT_SIZE = 15
 
   // 10 days in ms
@@ -57,6 +58,7 @@ object Constants {
   const val PREF_ACTIVE_TRANSLATIONS = "activeTranslations"
   const val PREF_NIGHT_MODE = "nightMode"
   const val PREF_NIGHT_MODE_TEXT_BRIGHTNESS = "nightModeTextBrightness"
+  const val PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS = "nightModeBackgroundBrightness"
   const val PREF_DEFAULT_QARI = "defaultQari"
   const val PREF_SHOULD_FETCH_PAGES = "shouldFetchPages"
   const val PREF_OVERLAY_PAGE_INFO = "overlayPageInfo"

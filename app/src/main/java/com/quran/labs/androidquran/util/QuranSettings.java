@@ -87,6 +87,11 @@ public class QuranSettings {
         Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS);
   }
 
+  public int getNightModeBackgroundBrightness() {
+    return prefs.getInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS,
+        Constants.DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS);
+  }
+
   public boolean shouldOverlayPageInfo() {
     return prefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true);
   }

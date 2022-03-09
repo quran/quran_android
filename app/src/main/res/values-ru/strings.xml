@@ -164,6 +164,8 @@
   <string name="prefs_night_mode_summary">Будет использован темный фон и светлый шрифт</string>
   <string name="prefs_night_mode_text_brightness_title">Яркость текста</string>
   <string name="prefs_night_mode_text_brightness_summary">Яркость текста при включенном ночном режиме</string>
+  <string name="prefs_night_mode_background_brightness_title">Яркость фона</string>
+  <string name="prefs_night_mode_background_brightness_summary">Яркость страницы при активном ночном режиме</string>
   <string name="prefs_overlay_page_info_title">Показать инфо страницы</string>
   <string name="prefs_overlay_page_info_summary">При чтении использовать наложение поверх экрана номера страницы, название суры и номера джуза</string>
   <string name="prefs_display_marker_title">Всплывающие сообщения</string>
