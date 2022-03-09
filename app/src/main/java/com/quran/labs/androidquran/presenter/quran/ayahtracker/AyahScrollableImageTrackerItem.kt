@@ -1,6 +1,8 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
 import com.quran.data.core.QuranInfo
+import com.quran.data.model.AyahGlyph
+import com.quran.data.model.AyahWord
 import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.data.model.selection.withYScroll
@@ -67,6 +69,16 @@ class AyahScrollableImageTrackerItem(
 
   override fun getToolBarPosition(page: Int, sura: Int, ayah: Int): SelectionIndicator {
     val position = super.getToolBarPosition(page, sura, ayah)
+    return position.withYScroll(-quranPageLayout.currentScrollY.toFloat())
+  }
+
+  override fun getToolBarPosition(page: Int, word: AyahWord): SelectionIndicator {
+    val position = super.getToolBarPosition(page, word)
+    return position.withYScroll(-quranPageLayout.currentScrollY.toFloat())
+  }
+
+  override fun getToolBarPosition(page: Int, glyph: AyahGlyph): SelectionIndicator {
+    val position = super.getToolBarPosition(page, glyph)
     return position.withYScroll(-quranPageLayout.currentScrollY.toFloat())
   }
 }

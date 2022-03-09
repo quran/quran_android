@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.presenter.quran.ayahtracker
 
+import android.view.View
 import com.quran.data.model.AyahGlyph
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.highlight.HighlightType
@@ -24,10 +25,10 @@ class AyahSplitConsolidationTrackerItem(
   }
 
   override fun onHighlightAyah(
-    page: Int, sura: Int, ayah: Int, type: HighlightType, scrollToAyah: Boolean
+    page: Int, sura: Int, ayah: Int, word: Int, type: HighlightType, scrollToAyah: Boolean
   ): Boolean {
-    val firstResult = imageTrackerItem.onHighlightAyah(page, sura, ayah, type, scrollToAyah)
-    val secondResult = translationTrackerItem.onHighlightAyah(page, sura, ayah, type, scrollToAyah)
+    val firstResult = imageTrackerItem.onHighlightAyah(page, sura, ayah, word, type, scrollToAyah)
+    val secondResult = translationTrackerItem.onHighlightAyah(page, sura, ayah, word, type, scrollToAyah)
     return firstResult && secondResult
   }
 
@@ -52,5 +53,13 @@ class AyahSplitConsolidationTrackerItem(
 
   override fun getAyahForPosition(page: Int, x: Float, y: Float): SuraAyah? {
     return imageTrackerItem.getAyahForPosition(page, x, y)
+  }
+
+  override fun getGlyphForPosition(page: Int, x: Float, y: Float): AyahGlyph? {
+    return imageTrackerItem.getGlyphForPosition(page, x, y)
+  }
+
+  override fun getAyahView(): View {
+    return imageTrackerItem.ayahView
   }
 }

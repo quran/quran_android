@@ -55,5 +55,9 @@ class SettingsImpl @Inject constructor(private val quranSettings: QuranSettings)
     return quranSettings.shouldHighlightBookmarks()
   }
 
+  override suspend fun pageType(): String {
+    return quranSettings.pageType
+  }
+
   override fun preferencesFlow(): Flow<String> = preferencesFlow
 }

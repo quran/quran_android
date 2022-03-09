@@ -156,8 +156,17 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     return ayahId
   }
 
+  /** Returns how many ayahs away end is from start (-ve if end is before start)  */
+  fun diff(start: SuraAyah, end: SuraAyah): Int {
+    return getAyahId(end.sura, end.ayah) - getAyahId(start.sura, start.ayah)
+  }
+
   fun getNumberOfAyahs(sura: Int): Int {
     return if (sura < 1 || sura > NUMBER_OF_SURAS) -1 else suraNumAyahs[sura - 1]
+  }
+
+  fun getNumberOfAyahsInQuran(): Int {
+    return suraNumAyahs.sum()
   }
 
   fun getPageFromPosition(

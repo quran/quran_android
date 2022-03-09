@@ -463,6 +463,24 @@ class QuranFileUtils @Inject constructor(
         (if (imagesDirectory.isEmpty()) "" else imagesDirectory + File.separator) + "width" + widthParam
   }
 
+  private fun recitationsDirectory(): String {
+    val recitationDirectory = getQuranBaseDirectory(appContext).toString() + "recitation/"
+    makeDirectory(recitationDirectory)
+    return recitationDirectory
+  }
+
+  override fun recitationSessionsDirectory(): String {
+    val sessionsDirectory = recitationsDirectory() + "sessions/"
+    makeDirectory(sessionsDirectory)
+    return sessionsDirectory
+  }
+
+  override fun recitationRecordingsDirectory(): String {
+    val recordingsDirectory = recitationsDirectory() + "recordings/"
+    makeDirectory(recordingsDirectory)
+    return recordingsDirectory
+  }
+
   val zipFileUrl: String
     get() = getZipFileUrl(quranScreenInfo.widthParam)
 
