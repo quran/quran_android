@@ -806,7 +806,8 @@ public class AudioService extends Service implements OnCompletionListener,
       broadcastManager.sendBroadcast(updateIntent);
 
       MediaMetadataCompat.Builder metadataBuilder = new MediaMetadataCompat.Builder()
-          .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getTitle());
+          .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getTitle())
+          .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, audioRequest.getQari().getName());
       if (player.isPlaying()) {
         metadataBuilder.putLong(MediaMetadataCompat.METADATA_KEY_DURATION, player.getDuration());
       }
