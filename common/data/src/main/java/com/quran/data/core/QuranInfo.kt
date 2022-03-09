@@ -12,17 +12,17 @@ import javax.inject.Inject
 import kotlin.math.abs
 
 class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
-  private val suraPageStart = quranDataSource.getPageForSuraArray()
-  private val pageSuraStart = quranDataSource.getSuraForPageArray()
-  private val pageAyahStart = quranDataSource.getAyahForPageArray()
-  private val juzPageStart = quranDataSource.getPageForJuzArray()
-  private val juzPageOverride: Map<Int, Int> = quranDataSource.getJuzDisplayPageArrayOverride()
-  private val pageRub3Start = quranDataSource.getQuarterStartByPage()
-  private val suraNumAyahs = quranDataSource.getNumberOfAyahsForSuraArray()
-  private val suraIsMakki = quranDataSource.getIsMakkiBySuraArray()
-  val quarters = quranDataSource.getQuartersArray()
+  private val suraPageStart = quranDataSource.pageForSuraArray
+  private val pageSuraStart = quranDataSource.suraForPageArray
+  private val pageAyahStart = quranDataSource.ayahForPageArray
+  private val juzPageStart = quranDataSource.pageForJuzArray
+  private val juzPageOverride: Map<Int, Int> = quranDataSource.juzDisplayPageArrayOverride
+  private val pageRub3Start = quranDataSource.quarterStartByPage
+  private val suraNumAyahs = quranDataSource.numberOfAyahsForSuraArray
+  private val suraIsMakki = quranDataSource.isMakkiBySuraArray
+  val quarters = quranDataSource.quartersArray
 
-  val numberOfPages = quranDataSource.getNumberOfPages()
+  val numberOfPages = quranDataSource.numberOfPages
   val numberOfPagesDual = numberOfPages / 2
 
   fun getStartingPageForJuz(juz: Int): Int {
