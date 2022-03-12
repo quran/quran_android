@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import com.quran.labs.androidquran.R
@@ -19,6 +18,7 @@ open class SeekBarPreference(
 
   private lateinit var valueText: TextView
   protected lateinit var previewText: TextView
+  protected lateinit var previewBox: View
 
   private val suffix = attrs.getAttributeValue(ANDROID_NS, "text")
   private val default = attrs.getAttributeIntValue(
@@ -28,9 +28,7 @@ open class SeekBarPreference(
   )
   private val maxValue = attrs.getAttributeIntValue(ANDROID_NS, "max", 100)
   private var currentValue = 0
-  private var value = 0
-
-  private val tintColor = ContextCompat.getColor(context, R.color.accent_color)
+  protected var value = 0
 
   init {
     layoutResource = R.layout.seekbar_pref
@@ -41,6 +39,7 @@ open class SeekBarPreference(
     val seekBar = holder.findViewById(R.id.seekbar) as SeekBar
     valueText = holder.findViewById(R.id.value) as TextView
     previewText = holder.findViewById(R.id.pref_preview) as TextView
+    previewBox = holder.findViewById(R.id.preview_square)
     previewText.visibility = getPreviewVisibility()
     seekBar.setOnSeekBarChangeListener(this)
     value = if (shouldDisableView) getPersistedInt(default) else 0
