@@ -69,7 +69,6 @@ public class HighlightingImageView extends AppCompatImageView {
   private boolean isNightMode;
   private boolean isColorFilterOn;
   private int nightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
-  private int nightModeBackgroundBrightness = Constants.DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS;
 
   // Params for drawing text
   private int fontSize;
@@ -208,9 +207,8 @@ public class HighlightingImageView extends AppCompatImageView {
     this.isNightMode = isNightMode;
     if (isNightMode) {
       // avoid damaging the looks of the Quran page
-      nightModeTextBrightness = (int) (50*Math.log1p(backgroundBrightness)+textBrightness);
-      if (nightModeTextBrightness > 255) nightModeTextBrightness = 255;
-      nightModeBackgroundBrightness = backgroundBrightness;
+      nightModeTextBrightness = (int) (50 * Math.log1p(backgroundBrightness) + textBrightness);
+      if (nightModeTextBrightness > 255) { nightModeTextBrightness = 255; }
       // we need a new color filter now
       isColorFilterOn = false;
     }
@@ -322,10 +320,6 @@ public class HighlightingImageView extends AppCompatImageView {
     }
     // can't setup animation, if coordinates are not known beforehand
     return highlightCoordinates != null;
-  }
-
-  public void highlightAyah(int surah, int ayah, HighlightType type) {
-    highlightAyah(surah, ayah, -1, type);
   }
 
   public void highlightAyah(int surah, int ayah, int word, HighlightType type) {

@@ -9,6 +9,7 @@ interface Settings {
   suspend fun lastPage(): Int
   suspend fun isNightMode(): Boolean
   suspend fun nightModeTextBrightness(): Int
+  suspend fun nightModeBackgroundBrightness(): Int
   suspend fun shouldShowHeaderFooter(): Boolean
   suspend fun shouldShowBookmarks(): Boolean
   suspend fun pageType(): String
