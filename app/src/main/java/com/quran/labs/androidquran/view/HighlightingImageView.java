@@ -256,7 +256,6 @@ public class HighlightingImageView extends AppCompatImageView {
 
     @Override
     public void onAnimationRepeat(Animator animation) {
-
     }
   }
 
