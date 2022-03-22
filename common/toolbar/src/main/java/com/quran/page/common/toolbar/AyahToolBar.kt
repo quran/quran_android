@@ -143,9 +143,8 @@ class AyahToolBar @JvmOverloads constructor(
     }
 
     // If recitation is enabled, show it in the menu
-    val recitationMenuItem = menu.findItem(R.id.cab_recite_from_here)
     if (isRecitationEnabled) {
-      recitationMenuItem.isVisible = true
+      menu.findItem(R.id.cab_recite_from_here)?.apply { isVisible = true }
     }
 
     menuLayout.removeAllViews()
