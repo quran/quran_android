@@ -393,7 +393,7 @@ public class PagerActivity extends AppCompatActivity implements
     viewPager.setAdapter(pagerAdapter);
 
     ayahToolBar.setOnItemSelectedListener(new AyahMenuItemSelectionHandler());
-    viewPager.addOnPageChangeListener(new OnPageChangeListener() {
+    OnPageChangeListener onPageChangeListener = new OnPageChangeListener() {
 
       @Override
       public void onPageScrollStateChanged(int state) {
@@ -446,10 +446,8 @@ public class PagerActivity extends AppCompatActivity implements
         }
 
         if (bookmarksCache.indexOfKey(page) < 0) {
-          if (isDualPages && !isSplitScreen) {
-            if (bookmarksCache.indexOfKey(page - 1) < 0) {
-              checkIfPageIsBookmarked(page - 1, page);
-            }
+          if (isDualPageVisible() && bookmarksCache.indexOfKey(page - 1) < 0) {
+            checkIfPageIsBookmarked(page - 1, page);
           } else {
             // we don't have the key
             checkIfPageIsBookmarked(page);
@@ -468,7 +466,8 @@ public class PagerActivity extends AppCompatActivity implements
           }
         }
       }
-    });
+    };
+    viewPager.addOnPageChangeListener(onPageChangeListener);
 
     setUiVisibilityListener();
     audioStatusBar.setVisibility(View.VISIBLE);
@@ -495,6 +494,9 @@ public class PagerActivity extends AppCompatActivity implements
     }
 
     viewPager.setCurrentItem(page);
+    if (page == 0) {
+      onPageChangeListener.onPageSelected(0);
+    }
 
     // just got created, need to reconnect to service
     shouldReconnect = true;
