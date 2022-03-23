@@ -27,6 +27,8 @@ import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.AyahNumberView
 import com.quran.labs.androidquran.view.DividerView
+import kotlin.math.ln1p
+import kotlin.math.min
 
 internal class TranslationAdapter(
   private val context: Context,
@@ -189,7 +191,12 @@ internal class TranslationAdapter(
     this.fontSize = quranSettings.translationTextSize
     isNightMode = quranSettings.isNightMode
     if (isNightMode) {
-      val textBrightness = quranSettings.nightModeTextBrightness
+      val originalTextBrightness = quranSettings.nightModeTextBrightness
+      val backgroundBrightness = quranSettings.nightModeBackgroundBrightness
+      // avoid damaging the looks of the Quran page
+      val adjustedBrightness = (50 * ln1p(backgroundBrightness.toDouble()) + originalTextBrightness).toInt()
+      val textBrightness = min(adjustedBrightness.toFloat(), 255f).toInt()
+
       this.textColor = Color.rgb(textBrightness, textBrightness, textBrightness)
       this.arabicTextColor = textColor
       this.dividerColor = textColor
