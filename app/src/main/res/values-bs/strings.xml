@@ -334,4 +334,29 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Skidanje Kur\'ana</string>
   <string name="notification_channel_audio">Skidanje učenja Kur\'ana</string>
+    <string name="about_quran_enc" translatable="false">Enciklopedija Kur\'ana</string>
+  <string name="menu_show_date">Prikaži datum</string>
+  <string name="please_wait">Molim te čekaj...</string>
+  <string name="about_quran_enc_summary">Prijevodi za mnoge jezike</string>
+  <string name="search_full_results">Puni rezultati</string>
+  <string name="search_entire_mushaf">Pretraži cijeli mushaf</string>
+  <string name="prefs_sura_translated_name_summary">Prikaži prijevod imena Surah</string>
+  <string name="prefs_sura_translated_name_title">Surah prevedeno ime</string>
+  <string name="prefs_preview">Pregled</string>
+  <string name="move_up">Pomjeri gore</string>
+  <string name="move_down">Pomakni se dolje</string>
+  <string name="delete_translation">Ukloni prijevod</string>
+  <string name="audio_manager_remove_audio_title">Da uklonim Suru?</string>
+  <string name="audio_manager_remove_audio_msg">Jeste li sigurni da želite ukloniti %1$s?</string>
+  <string name="audio_manager_surah_download">Preuzmi surah</string>
+  <string name="audio_manager_surah_delete">Izbriši audio datoteku</string>
+  <string name="audio_manager_download_all">Preuzmi sve</string>
+  <string name="audio_manager_download_selection">Preuzmi odabir</string>
+  <string name="audio_manager_delete_selection">Izbriši selekciju</string>
+  <string name="audio_updated_title">Ažuriranje kuran audio datoteka</string>
+  <string name="audio_updated_text">Nekoliko kuranski audio fajlova je ažurirano. Quran za Android je uklonio vašu kopiju ovih fajlova tako da se nove verzije mogu preuzeti kada ih sljedeći put budete ponovo primili.</string>
+  <string name="prefs_category_dual_screen">Dual Page Preferences</string>
+  <string name="prefs_split_page_and_translation_title">Kur\'an i prijevod u dual modu</string>
+  <string name="prefs_split_page_and_translation_summary">U dual page modu sa prevodima, Prikazana je stranica i prijevod kur\'ana</string>
+  <string name="scoped_storage_message">Zbog Android promjena radi povećanja privatnosti korisnika, kopiranje datoteka izvan direktorija aplikacija može zaustaviti Quran za Android da pristupi svojim podacima u budućim verzijama Androida. Jeste li sigurni da biste voljeli koristiti ovu stazu?</string>
 </resources>
