@@ -321,5 +321,32 @@
   <string name="prefs_page_type_title">Tipe Halaman (eksperimental)</string>
   <string name="prefs_page_type_summary">Pilih tipe dari pembacaan halaman</string>
   <string name="more_translations">Terjemahan Lainnya</string>
+    <string name="menu_show_date">Tampilkan Tanggal</string>
+  <string name="please_wait">Harap tunggu...</string>
+  <string name="about_furqan_summary">Teks Utsmani dan Bahasa Arab Tafaseer</string>
+  <string name="about_quran_enc_summary">Terjemahan untuk banyak bahasa</string>
+  <string name="search_full_results">Hasil Lengkap</string>
+  <string name="search_entire_mushaf">Cari seluruh mushaf</string>
+  <string name="prefs_sura_translated_name_summary">Menunjukkan terjemahan nama surat</string>
+  <string name="prefs_sura_translated_name_title">Surat nama yang diterjemahkan</string>
+  <string name="prefs_preview">Pratayang</string>
+  <string name="move_up">Bergerak Ke Atas</string>
+  <string name="move_down">Bergerak Ke Bawah</string>
+  <string name="delete_translation">Hapus Terjemahan</string>
+  <string name="scoped_storage_message">Karena perubahan Android untuk meningkatkan privasi pengguna, menyalin file di luar direktori aplikasi mungkin menghentikan Quran mengakses datanya di versi Android yang akan datang. Apakah Anda yakin ingin menggunakan jalur ini?</string>
+  <string name="see_tafseer_of_verse">Tafsir Ayat ini disertakan dengan tafsir Ayat %d (Klik untuk memperluas).</string>
+  <string name="audio_manager_remove_audio_title">Hapus Surat?</string>
+  <string name="audio_manager_remove_audio_msg">Apakah Anda yakin ingin menghapus %1$s?</string>
+  <string name="audio_manager_surah_download">Unduh Surat</string>
+  <string name="audio_manager_surah_delete">Hapus Surat</string>
+  <string name="audio_manager_download_all">Unduh semua</string>
+  <string name="audio_manager_download_selection">Pemilihan unduhan</string>
+  <string name="audio_manager_delete_selection">Hapus pilihan</string>
+  <string name="audio_updated_title">Pembaruan file Audio Quran</string>
+  <string name="audio_updated_text">Beberapa file audio Quran telah diperbarui. Quran telah menghapus salinan file-file ini sehingga versi terbaru dapat diunduh saat berikutnya Anda memutarnya kembali.</string>
+  <string name="prefs_category_dual_screen">Preferensi Halaman Ganda</string>
+  <string name="prefs_split_page_and_translation_title">Al-Quran dan terjemahan dalam mode ganda</string>
+  <string name="prefs_split_page_and_translation_summary">Dalam mode halaman ganda dengan terjemahan, halaman Quran dan terjemahan ditampilkan</string>
+  <string name="about_quran_enc" translatable="false">Ensiklopedia Alquran Alkarim</string>
 
 </resources>

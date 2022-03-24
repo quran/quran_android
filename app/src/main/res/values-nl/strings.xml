@@ -302,4 +302,43 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
 
   <!-- audio manager -->
   <string name="audio_manager">Geluid Manager</string>
+    <string name="menu_show_date">Toon Datum</string>
+  <string name="please_wait">Wacht alstublieft...</string>
+  <string name="about_furqan_summary">Uthmani tekst en Arabische Tafaseer</string>
+  <string name="about_quran_enc_summary">Vertalingen voor vele talen</string>
+  <string name="search_full_results">Volledige resultaten</string>
+  <string name="search_entire_mushaf">Doorzoek de hele mushaf</string>
+  <string name="prefs_category_advanced_summary">Importeren/exporteren van bladwijzers, instellen van de Quran-gegevensmap, enz.</string>
+  <string name="prefs_import_title">Importeren</string>
+  <string name="prefs_import_summary">Bladwijzers en tags importeren</string>
+  <string name="prefs_page_type_title">Paginatype (experimenteel)</string>
+  <string name="prefs_page_type_summary">Selecteer het type leespagina</string>
+  <string name="prefs_sura_translated_name_summary">Toon de vertaling van de naam van de soera</string>
+  <string name="prefs_sura_translated_name_title">Surah vertaalde naam</string>
+  <string name="prefs_preview">Voorbeeld</string>
+  <string name="more_translations">Meer vertalingen</string>
+  <string name="move_up">Naar boven</string>
+  <string name="move_down">Naar beneden</string>
+  <string name="delete_translation">Vertaling verwijderen</string>
+  <string name="scoped_storage_message">Als gevolg van Android veranderingen om de privacy van gebruikers te verhogen, kan het kopiëren van bestanden buiten de app directories ervoor zorgen dat Quran voor Android geen toegang meer heeft tot zijn gegevens in toekomstige versies van Android. Weet u zeker dat u dit pad wilt gebruiken?</string>
+  <string name="see_tafseer_of_verse">De tafseer van deze ayah is opgenomen bij de tafseer van ayah %d (Klik om uit te breiden).</string>
+  <string name="playback_prompt_title">Start het afspelen vanaf:</string>
+  <string name="starting_page_label">Begin van pagina</string>
+  <string name="recent_pages">Recente pagina\'s</string>
+  <string name="tag_blank_tag_error">Tag namen mogen niet leeg zijn!</string>
+  <string name="tag_duplicate_tag_error">Tag naam bestaat al!</string>
+  <string name="audio_manager_remove_audio_title">Surah verwijderen?</string>
+  <string name="audio_manager_remove_audio_msg">Weet u zeker dat u %1$s wilt verwijderen?</string>
+  <string name="audio_manager_surah_download">Soera downloaden</string>
+  <string name="audio_manager_surah_delete">Verwijderen audiobestand</string>
+  <string name="audio_manager_download_all">Alles downloaden</string>
+  <string name="audio_manager_download_selection">Selectie downloaden</string>
+  <string name="audio_manager_delete_selection">Selectie verwijderen</string>
+  <string name="audio_updated_title">Koran Audiobestanden Update</string>
+  <string name="audio_updated_text">Verschillende Quran audio bestanden zijn bijgewerkt. Quran voor Android heeft uw kopie van deze bestanden verwijderd, zodat de nieuwste versies kunnen worden gedownload wanneer u ze de volgende keer afspeelt.</string>
+  <string name="prefs_category_dual_screen">Dubbele pagina voorkeuren</string>
+  <string name="prefs_split_page_and_translation_title">Koran en vertaling in duale modus</string>
+  <string name="prefs_split_page_and_translation_summary">In de dubbele pagina modus met vertalingen, wordt de Koran pagina en de vertaling getoond</string>
+  <string name="notification_channel_download">Koran downloads</string>
+  <string name="notification_channel_audio">Koran recitatie</string>
 </resources>

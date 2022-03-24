@@ -308,4 +308,21 @@
   <string name="notification_channel_download">Coran : Téléchargements</string>
   <string name="notification_channel_audio">Coran : Récitations</string>
   <string name="prefs_page_type_title">Type d\'affichage (expérimental)</string>
+    <string name="please_wait">Veuillez patienter...</string>
+  <string name="about_quran_enc_summary">Traductions dans de nombreuses langues</string>
+  <string name="search_full_results">Résultats complets</string>
+  <string name="search_entire_mushaf">Recherche dans l\'ensemble du mushaf</string>
+  <string name="prefs_sura_translated_name_summary">Montrez la traduction du nom de la sourate</string>
+  <string name="prefs_sura_translated_name_title">Nom traduit de la sourate</string>
+  <string name="prefs_preview">Prévisualisation</string>
+  <string name="move_up">Avancez</string>
+  <string name="move_down">Descendre</string>
+  <string name="delete_translation">Enlever la traduction</string>
+  <string name="scoped_storage_message">En raison des modifications apportées à Android pour augmenter la confidentialité des utilisateurs, la copie de fichiers en dehors des répertoires de l\'application peut empêcher Quran d\'accéder à ses données dans les futures versions d\'Android. d\'Android. Êtes-vous sûr de vouloir utiliser ce chemin ?</string>
+  <string name="audio_manager_remove_audio_title">Enlever la sourate ?</string>
+  <string name="audio_manager_remove_audio_msg">Êtes-vous sûr de vouloir supprimer %1$s?</string>
+  <string name="prefs_category_dual_screen">Préférences de la double page</string>
+  <string name="prefs_split_page_and_translation_title">Coran et traduction en mode dual</string>
+  <string name="prefs_split_page_and_translation_summary">En mode double page avec traductions, la page du Coran et la traduction sont affichées.</string>
+  <string name="about_quran_enc" translatable="false">Encyclopédie du Noble Coran (QuranEnc.com)</string>
 </resources>
