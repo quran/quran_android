@@ -21,4 +21,13 @@ data class Bookmark @JvmOverloads constructor(val id: Long,
   fun withAyahText(ayahText: String): Bookmark {
     return this.copy(ayahText = ayahText)
   }
+
+  fun getCommaSeparatedNames() =
+      "id, sura, page, timestamp, tags, ayahText"
+
+  fun getCommaSeparatedValues() =
+      "$id, $sura, $page, $timestamp, ${getSemiColonSeparatedTags()}, $ayahText"
+
+  private fun getSemiColonSeparatedTags() =
+      tags.map { "$it" }.reduceOrNull { tags, tag -> "$tags$tag;" }
 }

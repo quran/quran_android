@@ -139,31 +139,34 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
             .subscribeWith(new DisposableSingleObserver<Uri>() {
               @Override
               public void onSuccess(@NonNull Uri uri) {
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.setType("application/json");
-                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                List<ResolveInfo> intents = appContext.getPackageManager()
-                    .queryIntentActivities(shareIntent, 0);
-                if (intents.size() > 1) {
-                  // if only one, then that is likely Quran for Android itself, so don't show
-                  // the chooser since it doesn't really make sense.
-                  context.startActivity(Intent.createChooser(shareIntent,
-                      context.getString(R.string.prefs_export_title)));
-                } else {
-                  File exportedPath = new File(appContext.getExternalFilesDir(null), "backups");
-                  String exported = appContext.getString(
-                      R.string.exported_data, exportedPath.toString());
-                  ToastCompat.makeText(appContext, exported, Toast.LENGTH_LONG).show();
-                }
+                onBookmarkExportSuccess(uri, context);
               }
 
               @Override
               public void onError(@NonNull Throwable e) {
                 exportSubscription = null;
-                if (isAdded()) {
-                  ToastCompat.makeText(context, R.string.export_data_error, Toast.LENGTH_LONG).show();
-                }
+                onExportBookmarksError(context);
+              }
+            });
+      }
+      return true;
+    });
+
+    final Preference exportCSVPref = findPreference(Constants.PREF_EXPORT_CSV);
+    exportCSVPref.setOnPreferenceClickListener(preference -> {
+      if (exportSubscription == null) {
+        exportSubscription = bookmarkImportExportModel.exportBookmarksCSVObservable()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(new DisposableSingleObserver<Uri>() {
+              @Override
+              public void onSuccess(@NonNull Uri uri) {
+                onBookmarkExportSuccess(uri, context);
+              }
+
+              @Override
+              public void onError(@NonNull Throwable e) {
+                exportSubscription = null;
+                onExportBookmarksError(context);
               }
             });
       }
@@ -191,6 +194,38 @@ public class QuranAdvancedSettingsFragment extends PreferenceFragmentCompat {
       loadStorageOptionsTask = new LoadStorageOptionsTask(context, quranFileUtils);
       loadStorageOptionsTask.execute();
     }
+  }
+
+  private void onBookmarkExportSuccess(@NonNull Uri uri, Context context) {
+    Intent shareIntent = createShareIntent(uri);
+    List<ResolveInfo> intents = appContext.getPackageManager()
+        .queryIntentActivities(shareIntent, 0);
+    if (intents.size() > 1) {
+      // if only one, then that is likely Quran for Android itself, so don't show
+      // the chooser since it doesn't really make sense.
+      context.startActivity(Intent.createChooser(shareIntent,
+          context.getString(R.string.prefs_export_title)));
+    } else {
+      File exportedPath = new File(appContext.getExternalFilesDir(null), "backups");
+      String exported = appContext.getString(
+          R.string.exported_data, exportedPath.toString());
+      ToastCompat.makeText(appContext, exported, Toast.LENGTH_LONG).show();
+    }
+  }
+
+  private void onExportBookmarksError(Context context) {
+    if (isAdded()) {
+      ToastCompat.makeText(context, R.string.export_data_error, Toast.LENGTH_LONG).show();
+    }
+  }
+
+  @NonNull
+  private Intent createShareIntent(@NonNull Uri uri) {
+    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+    shareIntent.setType("application/json");
+    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+    shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+    return shareIntent;
   }
 
   @Override

@@ -26,6 +26,10 @@ class BookmarkJsonModel {
     jsonAdapter.toJson(sink, bookmarks);
   }
 
+  void toCSV(BufferedSink sink, BookmarkData bookmarks) throws IOException {
+    BookmarkCSVAdapterKt.toCSV(sink, bookmarks);
+  }
+
   @NonNull
   BookmarkData fromJson(BufferedSource jsonSource) throws IOException {
     return jsonAdapter.fromJson(jsonSource);
