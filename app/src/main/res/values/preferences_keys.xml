@@ -32,6 +32,7 @@
   <string translatable="false" name="prefs_audio_manager_key">audioManagerKey</string>
   <string translatable="false" name="prefs_import">importKey</string>
   <string translatable="false" name="prefs_export">exportKey</string>
+  <string translatable="false" name="prefs_export_csv">exportKeyCSV</string>
   <string translatable="false" name="prefs_send_logs">sendLogsKey</string>
   <string translatable="false" name="prefs_page_type">pageTypeKey</string>
   <string translatable="false" name="prefs_reading_category_key">readingCategoryKey</string>

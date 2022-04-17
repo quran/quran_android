@@ -2,11 +2,12 @@ package com.quran.labs.androidquran.model.bookmark;
 
 import android.content.Context;
 import android.net.Uri;
+
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 
-import com.quran.labs.androidquran.R;
 import com.quran.data.model.bookmark.BookmarkData;
+import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
 import java.io.File;
@@ -54,6 +55,27 @@ public class BookmarkImportExportModel {
       File file = new File(externalFilesDir, FILE_NAME);
       BufferedSink sink = Okio.buffer(Okio.sink(file));
       jsonModel.toJson(sink, data);
+      sink.close();
+
+      return FileProvider.getUriForFile(
+          appContext, appContext.getString(R.string.file_authority), file);
+    }
+    throw new IOException("Unable to write to external files directory.");
+  }
+
+  public Single<Uri> exportBookmarksCSVObservable() {
+    return bookmarkModel.getBookmarkDataObservable(BookmarksDBAdapter.SORT_DATE_ADDED)
+        .flatMap(bookmarkData -> Single.just(exportBookmarksCSV(bookmarkData)))
+        .subscribeOn(Schedulers.io());
+  }
+
+  @NonNull
+  private Uri exportBookmarksCSV(BookmarkData data) throws IOException {
+    File externalFilesDir = new File(appContext.getExternalFilesDir(null), "backups");
+    if (externalFilesDir.exists() || externalFilesDir.mkdir()) {
+      File file = new File(externalFilesDir, FILE_NAME + ".csv");
+      BufferedSink sink = Okio.buffer(Okio.sink(file));
+      jsonModel.toCSV(sink, data);
       sink.close();
 
       return FileProvider.getUriForFile(
