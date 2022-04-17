@@ -23,11 +23,11 @@ data class Bookmark @JvmOverloads constructor(val id: Long,
   }
 
   fun getCommaSeparatedNames() =
-      "id, sura, page, timestamp, tags, ayahText"
+      "type, sura, ayah, page, timestamp, tags"
 
-  fun getCommaSeparatedValues() =
-      "$id, $sura, $page, $timestamp, ${getSemiColonSeparatedTags()}, $ayahText"
+  fun getCommaSeparatedValues(tagsList: List<Tag>) =
+      "bookmark, $sura, $ayah, $page, $timestamp, ${getSemiColonSeparatedTags(tagsList)}"
 
-  private fun getSemiColonSeparatedTags() =
-      tags.map { "$it" }.reduceOrNull { tags, tag -> "$tags$tag;" }
+  private fun getSemiColonSeparatedTags(tagsList: List<Tag>) =
+      tags.map { tagsList.find { tag -> tag.id == it }?.name }.reduceOrNull { tags, tag -> "$tags$tag|" }
 }

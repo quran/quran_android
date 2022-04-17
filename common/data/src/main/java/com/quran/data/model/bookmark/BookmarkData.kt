@@ -14,12 +14,7 @@ data class BookmarkData(val tags: List<Tag> = emptyList(),
 
   fun getBookmarksByLine() =
       bookmarks
-          .map { "${it.getCommaSeparatedValues()} \n" }
+          .map { "${it.getCommaSeparatedValues(tags)} \n" }
           .reduceOrNull { acc, bookmark -> "$acc$bookmark" }
-
-  fun getTagsByLine() =
-      tags
-          .map { "${it.getCommaSeparatedValues()} \n" }
-          .reduceOrNull { acc, tag -> "$acc$tag" }
 
 }
