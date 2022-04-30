@@ -169,7 +169,7 @@ dependencies {
 
   testImplementation "junit:junit:${junitVersion}"
   testImplementation "com.google.truth:truth:${truthVersion}"
-  testImplementation "org.mockito:mockito-core:4.4.0"
+  testImplementation "org.mockito:mockito-core:4.5.1"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
 
   androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
