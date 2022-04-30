@@ -1,12 +1,12 @@
 package com.quran.labs.androidquran.ui.fragment
 
 import android.app.Activity
+import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -14,6 +14,7 @@ import android.text.TextUtils
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.coroutineScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
@@ -40,6 +41,9 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.observers.DisposableMaybeObserver
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -49,12 +53,10 @@ class QuranAdvancedSettingsFragment : PreferenceFragmentCompat() {
   private lateinit var storageList: List<StorageUtils.Storage>
   private lateinit var appContext: Context
 
-  private var moveFilesAsyncTask: MoveFilesAsyncTask? = null
-  private var loadStorageOptionsTask: LoadStorageOptionsTask? = null
   private var appSize = 0
   private var isPaused = false
   private var internalSdcardLocation: String? = null
-  private var dialog: AlertDialog? = null
+  private var dialog: Dialog? = null
   private var exportSubscription: Disposable? = null
   private var logsSubscription: Disposable? = null
 
@@ -184,8 +186,17 @@ class QuranAdvancedSettingsFragment : PreferenceFragmentCompat() {
       Timber.d("removing advanced settings from preferences")
       hideStorageListPref()
     } else {
-      loadStorageOptionsTask = LoadStorageOptionsTask(context, quranFileUtils)
-      loadStorageOptionsTask!!.execute()
+      lifecycle.coroutineScope.launch {
+        listStoragePref.setSummary(R.string.prefs_calculating_app_size)
+        appSize = withContext(Dispatchers.IO) {
+          quranFileUtils.getAppUsedSpace(appContext)
+        }
+
+        if (!isPaused) {
+          loadStorageOptions(appContext)
+          listStoragePref.setSummary(R.string.prefs_app_location_summary)
+        }
+      }
     }
   }
 
@@ -387,8 +398,35 @@ class QuranAdvancedSettingsFragment : PreferenceFragmentCompat() {
   fun moveFiles(newLocation: String) {
     val context = context
     if (context != null) {
-      moveFilesAsyncTask = MoveFilesAsyncTask(context, newLocation, quranFileUtils)
-      moveFilesAsyncTask!!.execute()
+      lifecycle.coroutineScope.launch {
+        val progressDialog: ProgressDialog = ProgressDialog(activity).apply {
+          setMessage(appContext.getString(R.string.prefs_copying_app_files))
+          setCancelable(false)
+        }
+        progressDialog.show()
+        dialog = progressDialog
+
+        val result = withContext(Dispatchers.IO) {
+          quranFileUtils.moveAppFiles(appContext, newLocation)
+        }
+
+        if (!isPaused) {
+          dialog?.dismiss()
+          if (result) {
+            val quranSettings = QuranSettings.getInstance(appContext)
+            quranSettings.appCustomLocation = newLocation
+            quranSettings.removeDidDownloadPages()
+            listStoragePref.value = newLocation
+          } else {
+            makeText(
+              appContext,
+              getString(R.string.prefs_err_moving_app_files),
+              Toast.LENGTH_LONG
+            ).show()
+          }
+          dialog = null
+        }
+      }
     }
   }
 
@@ -400,82 +438,6 @@ class QuranAdvancedSettingsFragment : PreferenceFragmentCompat() {
   override fun onPause() {
     isPaused = true
     super.onPause()
-  }
-
-  private inner class MoveFilesAsyncTask(
-    context: Context,
-    private val newLocation: String,
-    quranFileUtils: QuranFileUtils?
-  ) : AsyncTask<Void?, Void?, Boolean>() {
-    private var dialog: ProgressDialog? = null
-    private val appContext: Context
-    private val quranFileUtils: QuranFileUtils?
-
-    init {
-      this.appContext = context.applicationContext
-      this.quranFileUtils = quranFileUtils
-    }
-
-    override fun onPreExecute() {
-      dialog = ProgressDialog(activity)
-      dialog!!.setMessage(appContext.getString(R.string.prefs_copying_app_files))
-      dialog!!.setCancelable(false)
-      dialog!!.show()
-    }
-
-    protected override fun doInBackground(vararg voids: Void?): Boolean {
-      return quranFileUtils!!.moveAppFiles(appContext, newLocation)
-    }
-
-    override fun onPostExecute(result: Boolean) {
-      if (!isPaused) {
-        dialog!!.dismiss()
-        if (result) {
-          val quranSettings = QuranSettings.getInstance(appContext)
-          quranSettings.appCustomLocation = newLocation
-          quranSettings.removeDidDownloadPages()
-          listStoragePref.value = newLocation
-        } else {
-          makeText(
-            appContext,
-            getString(R.string.prefs_err_moving_app_files),
-            Toast.LENGTH_LONG
-          ).show()
-        }
-        dialog = null
-        moveFilesAsyncTask = null
-      }
-    }
-  }
-
-  private inner class LoadStorageOptionsTask(
-    context: Context,
-    quranFileUtils: QuranFileUtils
-  ) : AsyncTask<Void?, Void?, Void?>() {
-    private val appContext: Context
-    private val quranFileUtils: QuranFileUtils
-
-    init {
-      this.appContext = context.applicationContext
-      this.quranFileUtils = quranFileUtils
-    }
-
-    override fun onPreExecute() {
-      listStoragePref.setSummary(R.string.prefs_calculating_app_size)
-    }
-
-    protected override fun doInBackground(vararg voids: Void?): Void? {
-      appSize = quranFileUtils.getAppUsedSpace(appContext)
-      return null
-    }
-
-    override fun onPostExecute(aVoid: Void?) {
-      if (!isPaused) {
-        loadStorageOptions(appContext)
-        loadStorageOptionsTask = null
-        listStoragePref.setSummary(R.string.prefs_app_location_summary)
-      }
-    }
   }
 
   companion object {
