@@ -33,6 +33,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.ColorDrawable
+import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.MediaPlayer.OnCompletionListener
@@ -40,7 +41,7 @@ import android.media.MediaPlayer.OnPreparedListener
 import android.media.MediaPlayer.OnSeekCompleteListener
 import android.net.wifi.WifiManager
 import android.net.wifi.WifiManager.WifiLock
-import android.os.AsyncTask
+import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
@@ -75,8 +76,11 @@ import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.NotificationChannelUtil.setupNotificationChannel
 import com.quran.reading.common.AudioEventPresenter
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
 import java.io.File
@@ -173,8 +177,8 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
   @Volatile
   private var notificationIcon: Bitmap? = null
   private var displayIcon: Bitmap? = null
-  private var gaplessSuraData: SparseIntArray? = null
-  private var timingTask: AsyncTask<Int?, Void?, SparseIntArray?>? = null
+  private var gaplessSuraData: SparseIntArray = SparseIntArray()
+  private var timingDisposable: Disposable? = null
   private val compositeDisposable = CompositeDisposable()
 
   @Inject
@@ -264,10 +268,6 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     )
     val receiver = ComponentName(this, MediaButtonReceiver::class.java)
     mediaSession = MediaSessionCompat(appContext, "QuranMediaSession", receiver, null)
-    mediaSession.setFlags(
-      MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or
-          MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
-    )
     mediaSession.setCallback(MediaSessionCallback(), serviceHandler)
     val channelName = getString(R.string.notification_channel_audio)
     setupNotificationChannel(
@@ -405,20 +405,17 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     }
   }
 
-  private inner class ReadGaplessDataTask(private val databasePath: String) :
-    AsyncTask<Int?, Void?, SparseIntArray?>() {
-    private var mSura = 0
-    override fun doInBackground(vararg params: Int?): SparseIntArray? {
-      val sura = params[0] ?: 1
-      mSura = sura
+  private fun updateGaplessData(databasePath: String, sura: Int) {
+    timingDisposable?.dispose()
+    timingDisposable = Single.fromCallable {
       val db = getDatabaseHandler(databasePath)
-      var map: SparseIntArray? = null
+
+      val map = SparseIntArray()
       var cursor: Cursor? = null
       try {
         cursor = db.getAyahTimings(sura)
         Timber.d("got cursor of data")
         if (cursor != null && cursor.moveToFirst()) {
-          map = SparseIntArray()
           do {
             val ayah = cursor.getInt(1)
             val time = cursor.getInt(2)
@@ -431,14 +428,15 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       } finally {
         closeCursor(cursor)
       }
-      return map
-    }
 
-    override fun onPostExecute(map: SparseIntArray?) {
-      gaplessSura = mSura
-      gaplessSuraData = map
-      timingTask = null
+      map
     }
+      .subscribeOn(Schedulers.io())
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe { map, _ ->
+        gaplessSura = sura
+        gaplessSuraData = map
+      }
   }
 
   private fun getSeekPosition(isRepeating: Boolean): Int {
@@ -448,13 +446,11 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
 
     val localAudioQueue = audioQueue ?: return -1
     if (gaplessSura == localAudioQueue.getCurrentSura()) {
-      if (gaplessSuraData != null) {
-        val ayah = localAudioQueue.getCurrentAyah()
-        val time = gaplessSuraData!![ayah]
-        return if (ayah == 1 && !isRepeating) {
-          gaplessSuraData!![0]
-        } else time
-      }
+      val ayah = localAudioQueue.getCurrentAyah()
+      val time = gaplessSuraData[ayah]
+      return if (ayah == 1 && !isRepeating) {
+        gaplessSuraData[0]
+      } else time
     }
     return -1
   }
@@ -464,7 +460,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     val localAudioQueue = audioQueue ?: return
     val localPlayer = player
 
-    if (localPlayer != null && gaplessSuraData != null) {
+    if (localPlayer != null) {
       val sura = localAudioQueue.getCurrentSura()
       val ayah = localAudioQueue.getCurrentAyah()
       var updatedAyah = ayah
@@ -474,7 +470,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       }
       setState(PlaybackStateCompat.STATE_PLAYING)
       var pos = localPlayer.currentPosition
-      var ayahTime = gaplessSuraData!![ayah]
+      var ayahTime = gaplessSuraData[ayah]
       Timber.d(
         "updateAudioPlayPosition: %d:%d, currently at %d vs expected at %d",
         sura, ayah, pos, ayahTime
@@ -482,7 +478,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       var iterAyah = ayah
       if (ayahTime > pos) {
         while (--iterAyah > 0) {
-          ayahTime = gaplessSuraData!![iterAyah]
+          ayahTime = gaplessSuraData[iterAyah]
           if (ayahTime <= pos) {
             updatedAyah = iterAyah
             break
@@ -492,7 +488,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
         }
       } else {
         while (++iterAyah <= maxAyahs) {
-          ayahTime = gaplessSuraData!![iterAyah]
+          ayahTime = gaplessSuraData[iterAyah]
           if (ayahTime > pos) {
             updatedAyah = iterAyah - 1
             break
@@ -506,7 +502,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
         sura, ayah, updatedAyah
       )
       if (updatedAyah != ayah) {
-        ayahTime = gaplessSuraData!![ayah]
+        ayahTime = gaplessSuraData[ayah]
         if (abs(pos - ayahTime) < 150) {
           // shouldn't change ayahs if the delta is just 150ms...
           serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 150)
@@ -544,7 +540,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       } else {
         // if we have end of sura info and we bypassed end of sura
         // line, switch the sura.
-        ayahTime = gaplessSuraData!![999]
+        ayahTime = gaplessSuraData[999]
         if (ayahTime in 1..pos) {
           val success = localAudioQueue.playAt(sura + 1, 1, false)
           if (success && localAudioQueue.getCurrentSura() == sura) {
@@ -564,7 +560,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       }
       notifyAyahChanged()
       if (maxAyahs >= updatedAyah + 1) {
-        var t = gaplessSuraData!![updatedAyah + 1] - localPlayer.currentPosition
+        var t = gaplessSuraData[updatedAyah + 1] - localPlayer.currentPosition
         Timber.d("updateAudioPlayPosition postingDelayed after: %d", t)
         if (t < 100) {
           t = 100
@@ -593,7 +589,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     val localAudioQueue = audioQueue
     if (localAudioRequest == null || localAudioQueue == null) {
       // no audio request, what can we do?
-      relaxResources(true, true)
+      relaxResources(releaseMediaPlayer = true, stopForeground = true)
       return
     }
     tryToGetAudioFocus()
@@ -601,12 +597,9 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     // actually play the file
     if (State.Stopped == state) {
       if (localAudioRequest.isGapless()) {
-        timingTask?.cancel(true)
         val dbPath = localAudioRequest.audioPathInfo.gaplessDatabase
         if (dbPath != null) {
-          val localTimingTask = ReadGaplessDataTask(dbPath)
-          timingTask = localTimingTask
-          localTimingTask.execute(localAudioQueue.getCurrentSura())
+          updateGaplessData(dbPath, localAudioQueue.getCurrentSura())
         }
       }
 
@@ -727,7 +720,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       stopSelf()
 
       // stop async task if it's running
-      timingTask?.cancel(true)
+      timingDisposable?.dispose()
 
       // tell the ui we've stopped
       audioEventPresenter.onAyahPlayback(null)
@@ -951,7 +944,6 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       Timber.d("okay, we are preparing to play - streaming is: %b", isStreaming)
 
       val localPlayer = createMediaPlayerIfNeeded()
-      localPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
       setState(PlaybackStateCompat.STATE_CONNECTING)
       try {
         var playUrl = true
@@ -975,10 +967,15 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
           return
         }
         localPlayer.reset()
-        localPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
         localPlayer.setDataSource(url)
       }
       state = State.Preparing
+
+      val audioAttributes = AudioAttributes.Builder()
+        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+        .setUsage(AudioAttributes.USAGE_MEDIA)
+        .build()
+      localPlayer.setAudioAttributes(audioAttributes)
 
       // starts preparing the media player in the background. When it's
       // done, it will call our OnPreparedListener (that is, the
@@ -1051,7 +1048,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
         ) {
           // we're actually repeating, but we reached the end of the file before we could
           // seek to the proper place. so let's seek anyway.
-          player.seekTo(gaplessSuraData!![localAudioQueue.getCurrentAyah()])
+          player.seekTo(gaplessSuraData[localAudioQueue.getCurrentAyah()])
         } else {
           // we actually switched to a different ayah - so if the
           // sura changed, then play the basmala if the ayah is
@@ -1081,12 +1078,9 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     val localAudioRequest = audioRequest ?: return
     if (localAudioRequest.isGapless()) {
       if (gaplessSura != localAudioQueue.getCurrentSura()) {
-        timingTask?.cancel(true)
-
         val dbPath = localAudioRequest.audioPathInfo.gaplessDatabase
         if (dbPath != null) {
-          timingTask = ReadGaplessDataTask(dbPath)
-          timingTask?.execute(localAudioQueue.getCurrentSura())
+          updateGaplessData(dbPath, localAudioQueue.getCurrentSura())
         }
       }
     }
@@ -1163,17 +1157,23 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     notificationManager.cancel(QuranDownloadNotifier.DOWNLOADING_COMPLETE_NOTIFICATION)
     val appContext = applicationContext
     val pi = notificationPendingIntent
+
+    val mutabilityFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      PendingIntent.FLAG_IMMUTABLE
+    } else {
+      0
+    }
     val previousIntent = PendingIntent.getService(
       appContext, REQUEST_CODE_PREVIOUS, audioUtils.getAudioIntent(this, ACTION_REWIND),
-      PendingIntent.FLAG_UPDATE_CURRENT
+      PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
     )
     val nextIntent = PendingIntent.getService(
       appContext, REQUEST_CODE_SKIP, audioUtils.getAudioIntent(this, ACTION_SKIP),
-      PendingIntent.FLAG_UPDATE_CURRENT
+      PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
     )
     val pauseIntent = PendingIntent.getService(
       appContext, REQUEST_CODE_PAUSE, audioUtils.getAudioIntent(this, ACTION_PAUSE),
-      PendingIntent.FLAG_UPDATE_CURRENT
+      PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
     )
     val audioTitle = getTitle()
     val currentNotificationBuilder = notificationBuilder
@@ -1213,13 +1213,20 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
 
   private fun getPausedNotificationBuilder(): NotificationCompat.Builder {
     val appContext = applicationContext
+
+    val mutabilityFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      PendingIntent.FLAG_IMMUTABLE
+    } else {
+      0
+    }
+
     val resumeIntent = PendingIntent.getService(
       appContext, REQUEST_CODE_RESUME, audioUtils.getAudioIntent(this, ACTION_PLAYBACK),
-      PendingIntent.FLAG_UPDATE_CURRENT
+      PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
     )
     val stopIntent = PendingIntent.getService(
       appContext, REQUEST_CODE_STOP, audioUtils.getAudioIntent(this, ACTION_STOP),
-      PendingIntent.FLAG_UPDATE_CURRENT
+      PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
     )
     val pi = notificationPendingIntent
     val localPausedNotificationBuilder = pausedNotificationBuilder
@@ -1256,9 +1263,15 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
   private val notificationPendingIntent: PendingIntent
     get() {
       val appContext = applicationContext
+      val mutabilityFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        PendingIntent.FLAG_IMMUTABLE
+      } else {
+        0
+      }
+
       return PendingIntent.getActivity(
         appContext, REQUEST_CODE_MAIN, Intent(appContext, PagerActivity::class.java),
-        PendingIntent.FLAG_UPDATE_CURRENT
+        PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
       )
     }
 
@@ -1270,7 +1283,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
   override fun onError(mp: MediaPlayer, what: Int, extra: Int): Boolean {
     Timber.e("Error: what=%s, extra=%s", what.toString(), extra.toString())
     state = State.Stopped
-    relaxResources(true, true)
+    relaxResources(releaseMediaPlayer = true, stopForeground = true)
     giveUpAudioFocus()
     return true // true indicates we handled the error
   }
