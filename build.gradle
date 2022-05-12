@@ -3,7 +3,7 @@ buildscript {
     kotlinVersion = '1.6.21'
     coroutinesVersion = '1.6.1'
 
-    daggerVersion = '2.41'
+    daggerVersion = '2.42'
     composeVersion = '1.1.1'
     composeCompilerVersion = '1.2.0-dev-k1.6.21-56a408a3809'
 
