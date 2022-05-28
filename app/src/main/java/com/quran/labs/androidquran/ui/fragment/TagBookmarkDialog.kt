@@ -19,9 +19,7 @@ import androidx.appcompat.app.AlertDialog.Builder
 import androidx.fragment.app.DialogFragment
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.QuranApplication
-import com.quran.labs.androidquran.R.id
-import com.quran.labs.androidquran.R.layout
-import com.quran.labs.androidquran.R.string
+import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.presenter.bookmark.TagBookmarkPresenter
 import javax.inject.Inject
 
@@ -84,8 +82,8 @@ open class TagBookmarkDialog : DialogFragment() {
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val builder = Builder(requireActivity())
     builder.setView(createTagsListView())
-    builder.setPositiveButton(string.dialog_ok) { _: DialogInterface?, _: Int -> }
-    builder.setNegativeButton(string.cancel) { _: DialogInterface?, _: Int -> dismiss() }
+    builder.setPositiveButton(R.string.dialog_ok) { _: DialogInterface?, _: Int -> }
+    builder.setNegativeButton(R.string.cancel) { _: DialogInterface?, _: Int -> dismiss() }
     return builder.create()
   }
 
@@ -126,7 +124,7 @@ open class TagBookmarkDialog : DialogFragment() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private val tagBookmarkPresenter: TagBookmarkPresenter = presenter
-    private val newTagString: String = context.getString(string.new_tag)
+    private val newTagString: String = context.getString(R.string.new_tag)
     private var tags: List<Tag> = emptyList()
     private var checkedTags = HashSet<Long>()
 
@@ -148,11 +146,11 @@ open class TagBookmarkDialog : DialogFragment() {
 
       var holder: ViewHolder
       if (view == null) {
-        view = inflater.inflate(layout.tag_row, parent, false)
+        view = inflater.inflate(R.layout.tag_row, parent, false)
         holder = ViewHolder().apply {
-          checkBox = view.findViewById(id.tag_checkbox)
-          tagName = view.findViewById(id.tag_name)
-          addImage = view.findViewById(id.tag_add_image)
+          checkBox = view.findViewById(R.id.tag_checkbox)
+          tagName = view.findViewById(R.id.tag_name)
+          addImage = view.findViewById(R.id.tag_add_image)
         }
         view.tag = holder
       }
