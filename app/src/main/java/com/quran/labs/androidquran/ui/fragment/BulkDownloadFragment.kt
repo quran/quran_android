@@ -18,12 +18,11 @@ import androidx.appcompat.app.AlertDialog.Builder
 import androidx.fragment.app.DialogFragment
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.R.*
 import com.quran.labs.androidquran.ui.SheikhAudioManagerActivity
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.ForceCompleteTextView
 import timber.log.Timber
-import java.util.*
+import java.util.Locale
 import javax.inject.Inject
 import kotlin.math.max
 
@@ -43,14 +42,14 @@ class BulkDownloadFragment : DialogFragment() {
     val inflater = activity.layoutInflater
 
     @SuppressLint("InflateParams")
-    val layout = inflater.inflate(layout.bulk_download_dialog, null)
+    val layout = inflater.inflate(R.layout.bulk_download_dialog, null)
 
     val builder = Builder(activity)
-    builder.setTitle(activity.getString(string.audio_manager_download_all))
+    builder.setTitle(activity.getString(R.string.audio_manager_download_all))
 
     // First Sura chooser
     suraFirstInput = layout.findViewById(R.id.first_sura_spinner)
-    val suras = activity.resources.getStringArray(array.sura_names)
+    val suras = activity.resources.getStringArray(R.array.sura_names)
         .mapIndexed { index: Int, sura: String? ->
           QuranUtils.getLocalizedNumber(activity, index + 1) + ". " + sura
         }
@@ -111,7 +110,7 @@ class BulkDownloadFragment : DialogFragment() {
 
     builder.setView(layout)
     builder.setPositiveButton(
-        getString(string.audio_manager_download_selection)
+        getString(R.string.audio_manager_download_selection)
     ) { _: DialogInterface?, _: Int ->
       // trigger sura completion
       layout.requestFocus()

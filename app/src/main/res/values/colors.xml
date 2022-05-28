@@ -22,7 +22,7 @@
   <color name="translation_translator_color">#ff22a5ad</color>
   <color name="translation_text_color">#ff777777</color>
   <color name="translation_divider_color">#ffe8e8e8</color>
-  <color name="translation_background_color_night">#ff1d1f21</color>
+  
   <color name="translation_ayah_selected_color">#ffe0f2f1</color>
   <color name="translation_ayah_selected_color_night">#ff2d2d2d</color>
   <color name="overlay_text_color">#ff505050</color>
