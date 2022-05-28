@@ -1,8 +1,5 @@
-name: build
+name: Android Pull Request
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
