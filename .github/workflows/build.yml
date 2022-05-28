@@ -5,6 +5,40 @@ on:
       - master
 
 jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the Code
+        uses: actions/checkout@v2
+
+      - name: Setup JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Build debug APK
+        run: ./gradlew assembleMadaniDebug
+
+      - name: Download Previous Debug APK
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: post_merge.yml
+          name: latest-apk
+
+      - name: Run Apk Diff
+        run: |
+          curl -L -O "https://github.com/JakeWharton/diffuse/releases/download/0.1.0/diffuse-0.1.0-binary.jar"
+          java -jar diffuse-0.1.0-binary.jar diff app-madani-debug.apk app/build/outputs/apk/madani/debug/app-madani-debug.apk > apk_differences.txt
+          { echo "\`\`\`"; head -n 17 apk_differences.txt; echo "\`\`\`"; echo; } >> apk_differences_summary.txt
+          gh pr comment ${{ github.event.number }} -F apk_differences_summary.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   lint:
     needs: [build]
     name: Lint
@@ -12,6 +46,9 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
 
       - name: Run lint
         run: ./gradlew lintMadaniDebug
@@ -35,6 +72,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
 
       - name: Run SqlDelight migration tests
         run: ./gradlew verifySqlDelightMigration
@@ -61,14 +101,18 @@ jobs:
         with:
           java-version: 11
 
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
       - name: Run instrumentation tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 27
           script: ./gradlew connectedMadaniDebugAndroidTest -PdisableCrashlytics -PdisableFirebase
 
-  build:
-    name: Build
+  diffs:
+    needs: [lint, test]
+    name: Dependency Diff
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the Code
@@ -79,8 +123,30 @@ jobs:
         with:
           java-version: 11
 
-      - name: Build debug APK
-        run: ./gradlew assembleMadaniDebug
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Get dependencies list
+        run: ./gradlew :app:dependencies --configuration madaniReleaseRuntimeClasspath > current_dependencies.txt
+
+      - name: Download Previous Dependencies List
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          workflow: post_merge.yml
+          name: dependencies
+
+      - name: Download and run dependency-diff-tldr
+        run: |
+          curl -L -O "https://github.com/careem/dependency-diff-tldr/releases/download/v0.0.2/dependency-diff-tldr-r8.jar"
+          echo "Running Dependency Diff"
+          java -jar dependency-diff-tldr-r8.jar dependencies.txt current_dependencies.txt > difference.txt
+          if [ -s difference.txt ]; then
+            gh pr comment ${{ github.event.number }} -F difference.txt
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
 env:
   GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx8G -XX:MaxMetaspaceSize=512m -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC -Dfile.encoding=UTF-8"
