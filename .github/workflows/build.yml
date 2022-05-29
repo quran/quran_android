@@ -32,7 +32,7 @@ jobs:
 
       - name: Run Apk Diff
         run: |
-          curl -L -O "https://github.com/JakeWharton/diffuse/releases/download/0.1.0/diffuse-0.1.0-binary.jar"
+          gh release download -p '*.jar' -R jakewharton/diffuse 0.1.0
           java -jar diffuse-0.1.0-binary.jar diff app-madani-debug.apk app/build/outputs/apk/madani/debug/app-madani-debug.apk > apk_differences.txt
           { echo "\`\`\`"; head -n 17 apk_differences.txt; echo "\`\`\`"; echo; } >> apk_differences_summary.txt
           gh pr comment ${{ github.event.number }} -F apk_differences_summary.txt
@@ -138,7 +138,7 @@ jobs:
 
       - name: Download and run dependency-diff-tldr
         run: |
-          curl -L -O "https://github.com/careem/dependency-diff-tldr/releases/download/v0.0.2/dependency-diff-tldr-r8.jar"
+          gh release download -p '*.jar' -R careem/dependency-diff-tldr v0.0.2
           echo "Running Dependency Diff"
           java -jar dependency-diff-tldr-r8.jar dependencies.txt current_dependencies.txt > difference.txt
           if [ -s difference.txt ]; then
