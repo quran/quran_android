@@ -26,7 +26,7 @@ jobs:
       - name: Download Previous Debug APK
         uses: dawidd6/action-download-artifact@v2
         with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: post_merge.yml
           name: latest-apk
 
@@ -35,9 +35,15 @@ jobs:
           gh release download -p '*.jar' -R jakewharton/diffuse 0.1.0
           java -jar diffuse-0.1.0-binary.jar diff app-madani-debug.apk app/build/outputs/apk/madani/debug/app-madani-debug.apk > apk_differences.txt
           { echo "\`\`\`"; head -n 17 apk_differences.txt; echo "\`\`\`"; echo; } >> apk_differences_summary.txt
-          gh pr comment ${{ github.event.number }} -F apk_differences_summary.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Apk Diff Results
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          name: apk_differences
+          path: apk_differences_summary.txt
 
   lint:
     needs: [build]
@@ -132,7 +138,7 @@ jobs:
       - name: Download Previous Dependencies List
         uses: dawidd6/action-download-artifact@v2
         with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: post_merge.yml
           name: dependencies
 
@@ -141,11 +147,25 @@ jobs:
           gh release download -p '*.jar' -R careem/dependency-diff-tldr v0.0.2
           echo "Running Dependency Diff"
           java -jar dependency-diff-tldr-r8.jar dependencies.txt current_dependencies.txt > difference.txt
-          if [ -s difference.txt ]; then
-            gh pr comment ${{ github.event.number }} -F difference.txt
-          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Dependency Diff Results
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          name: dependency_differences
+          path: difference.txt
+
+      - name: Write the PR Number
+        run: |
+          echo ${{ github.event.number }} > pr.txt
+
+      - name: Upload PR Number
+        uses: actions/upload-artifact@v2
+        with:
+          name: pr
+          path: pr.txt
 
 
 env:
