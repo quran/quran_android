@@ -4,8 +4,8 @@ buildscript {
     coroutinesVersion = '1.6.2'
 
     daggerVersion = '2.42'
-    composeVersion = '1.1.1'
-    composeCompilerVersion = '1.2.0-dev-k1.6.21-56a408a3809'
+    composeVersion = '1.2.0-beta03'
+    composeCompilerVersion = '1.2.0-beta03'
 
     androidxMediaVersion = '1.6.0'
     androidxAnnotationVersion = '1.3.0'
@@ -38,7 +38,7 @@ buildscript {
             build: [
                 minSdkVersion    : 21,
                 targetSdkVersion : 30,
-                compileSdkVersion: 31
+                compileSdkVersion: 32
             ]
         ],
         dagger: [
