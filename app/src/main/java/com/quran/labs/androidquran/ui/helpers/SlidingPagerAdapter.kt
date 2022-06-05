@@ -24,9 +24,7 @@ class SlidingPagerAdapter(
 
     // Since additionalPanel Set may be unsorted, put them in a list and sort them by page number..
     val additionalPages: ArrayList<AyahActionFragmentProvider> = ArrayList(additionalPanels)
-    additionalPages.sortWith { o1: AyahActionFragmentProvider, o2: AyahActionFragmentProvider ->
-      o1.order.compareTo(o2.order)
-    }
+    additionalPages.sortWith { o1, o2 -> o1.order.compareTo(o2.order) }
     // ..then add them to the pages list
     pages.addAll(additionalPages)
   }
