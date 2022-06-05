@@ -5,7 +5,7 @@ import android.content.Intent
 import androidx.annotation.VisibleForTesting
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
-import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.audio.AudioConfiguration
 import com.quran.labs.androidquran.common.audio.QariItem
 import com.quran.labs.androidquran.service.AudioService
 import timber.log.Timber
@@ -13,8 +13,11 @@ import java.io.File
 import java.util.Locale
 import javax.inject.Inject
 
-class AudioUtils @Inject
-constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranFileUtils) {
+class AudioUtils @Inject constructor(
+  private val quranInfo: QuranInfo,
+  private val quranFileUtils: QuranFileUtils,
+  private val audioConfiguration: AudioConfiguration
+) {
 
   private val totalPages = quranInfo.numberOfPages
 
@@ -39,11 +42,11 @@ constructor(private val quranInfo: QuranInfo, private val quranFileUtils: QuranF
    */
   fun getQariList(context: Context): List<QariItem> {
     val resources = context.resources
-    val shuyookh = resources.getStringArray(R.array.quran_readers_name)
-    val paths = resources.getStringArray(R.array.quran_readers_path)
-    val urls = resources.getStringArray(R.array.quran_readers_urls)
-    val databases = resources.getStringArray(R.array.quran_readers_db_name)
-    val hasGaplessEquivalent = resources.getIntArray(R.array.quran_readers_have_gapless_equivalents)
+    val shuyookh = resources.getStringArray(audioConfiguration.quranReadersName)
+    val paths = resources.getStringArray(audioConfiguration.quranReadersPath)
+    val urls = resources.getStringArray(audioConfiguration.quranReadersUrls)
+    val databases = resources.getStringArray(audioConfiguration.quranReadersDatabaseNames)
+    val hasGaplessEquivalent = resources.getIntArray(audioConfiguration.quranReadersHaveGaplessEquivalents)
     val items = mutableListOf<QariItem>()
     for (i in shuyookh.indices) {
       if (hasGaplessEquivalent[i] == 0 || haveAnyFiles(context, paths[i])) {

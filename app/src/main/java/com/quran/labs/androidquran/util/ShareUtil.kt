@@ -39,7 +39,7 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
 
   fun shareVerses(activity: Activity, verses: List<QuranText>) {
     val text = getShareText(activity, verses)
-    shareViaIntent(activity, text, R.string.share_ayah_text)
+    shareViaIntent(activity, text, com.quran.labs.androidquran.common.toolbar.R.string.share_ayah_text)
   }
 
   fun shareViaIntent(activity: Activity, text: String?, @StringRes titleResId: Int) {

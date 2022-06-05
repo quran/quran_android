@@ -56,7 +56,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
 
   object Provider : AyahActionFragmentProvider {
     override val order = SlidingPagerAdapter.AUDIO_PAGE
-    override val iconResId = R.drawable.ic_play
+    override val iconResId = com.quran.labs.androidquran.common.toolbar.R.drawable.ic_play
     override fun newAyahActionFragment() = AyahPlaybackFragment()
   }
 
@@ -352,8 +352,8 @@ class AyahPlaybackFragment : AyahActionFragment() {
   }
 
   companion object {
-    private const val ITEM_LAYOUT = R.layout.sherlock_spinner_item
-    private const val ITEM_DROPDOWN_LAYOUT = R.layout.sherlock_spinner_dropdown_item
+    private val ITEM_LAYOUT = R.layout.sherlock_spinner_item
+    private val ITEM_DROPDOWN_LAYOUT = R.layout.sherlock_spinner_dropdown_item
     private const val MAX_REPEATS = 25
   }
 }

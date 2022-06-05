@@ -1240,7 +1240,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
         .setContentTitle(getString(R.string.app_name))
         .setContentIntent(pi)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        .addAction(R.drawable.ic_play, getString(R.string.play), resumeIntent)
+        .addAction(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_play, getString(R.string.play), resumeIntent)
         .addAction(R.drawable.ic_stop, getString(R.string.stop), stopIntent)
         .setShowWhen(false)
         .setWhen(0)
