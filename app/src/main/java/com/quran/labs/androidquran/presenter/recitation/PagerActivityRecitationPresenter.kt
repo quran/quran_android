@@ -11,7 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.selection.startSuraAyah
-import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.toolbar.R
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.labs.androidquran.view.AudioStatusBar
