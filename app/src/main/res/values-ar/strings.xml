@@ -159,7 +159,7 @@
   <string name="quran_ayah_details">%1$s - آية %2$s، جزء %3$s</string>
   <string name="quran_sura_title">سُورَةُ %1$s</string>
 
-  <string name="sura_ayah_notification_str">سورة %1$s، آية %2$d</string>
+  <string name="sura_ayah_notification_str">سُورَةُ %1$s، آية %2$d</string>
   <string name="sura_ayah_sharing_str">سُورَةُ %1$s: %2$d</string>
 
   <string name="index_loading">جاري التحميل…</string>
