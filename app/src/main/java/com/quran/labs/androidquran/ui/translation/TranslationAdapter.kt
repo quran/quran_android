@@ -359,6 +359,10 @@ internal class TranslationAdapter(
               }
             } else {
               holder.text.layoutDirection = View.LAYOUT_DIRECTION_INHERIT
+              val settings = QuranSettings.getInstance(context)
+              if (settings.wantDyslexicFontInTranslationView()){
+                holder.text.typeface = TypefaceManager.getDyslexicTypeface(context)
+              }
             }
 
             holder.text.movementMethod = LinkMovementMethod.getInstance()

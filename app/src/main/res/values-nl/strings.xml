@@ -140,6 +140,8 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="prefs_translations_summary">Downloaden en beheren van vertalingen</string>
   <string name="prefs_ayah_before_translation_title">Ayah voor vertaling</string>
   <string name="prefs_ayah_before_translation_summary">Toon ayah in het Arabisch boven de vertaling</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Download Opties</string>
   <string name="prefs_streaming_title">Streaming</string>
   <string name="prefs_streaming_summary">Audio streamen indien mogelijk</string>

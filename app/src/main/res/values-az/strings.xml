@@ -149,6 +149,8 @@
   <string name="prefs_calculating_app_size">Uygulama büyüklüğü hesaplanıyor</string>
   <string name="prefs_ayah_before_translation_title">Meâlden önce âyet</string>
   <string name="prefs_ayah_before_translation_summary">Âyet metnini tercümeden sonra göster</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_app_size">Uygulama büyüklüğü:</string>
   <string name="prefs_app_location_title">Uygulama konumu</string>
   <string name="prefs_app_location_summary">Lütfen hangi SD karta kopyalanacağını seçin</string>

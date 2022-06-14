@@ -127,6 +127,8 @@
   <string name="prefs_translations_summary">Muat turun dan penetapan terjemahan</string>
   <string name="prefs_ayah_before_translation_title">Papar ayat sebelum terjemahan</string>
   <string name="prefs_ayah_before_translation_summary">Papar ayat (dalam bahasa Arab) di atas terjemahan</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Pilihan Muat Turun</string>
   <string name="prefs_streaming_title">Streaming</string>
   <string name="prefs_streaming_summary">Stream audio apabila boleh</string>

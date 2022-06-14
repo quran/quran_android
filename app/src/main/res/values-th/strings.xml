@@ -126,6 +126,8 @@
   <string name="prefs_translations_summary">ดาวน์โหลดและจัดการคําแปล</string>
   <string name="prefs_ayah_before_translation_title">อายะฮฺก่อนแปล</string>
   <string name="prefs_ayah_before_translation_summary">แสดงอายะห์ในภาษาอาหรับเหนือคําแปล</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">ตัวเลือกการดาวน์โหลด</string>
   <string name="prefs_streaming_title">สต รีม มิ่ง</string>
   <string name="prefs_streaming_summary">สตรีมเสียงแทนการดาวน์โหลด</string>

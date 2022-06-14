@@ -116,6 +116,8 @@
   <string name="prefs_translations_summary">Télécharger et gérer les traductions</string>
   <string name="prefs_ayah_before_translation_title">Aya avant la traduction</string>
   <string name="prefs_ayah_before_translation_summary">Voir l\'Aya en arabe au-dessus de la traduction</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Options de téléchargement</string>
   <string name="prefs_streaming_title">Streaming</string>
   <string name="prefs_streaming_summary">Streaming lorsque cela est possible.</string>

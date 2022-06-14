@@ -112,6 +112,10 @@ public class QuranSettings {
     return prefs.getBoolean(Constants.PREF_AYAH_BEFORE_TRANSLATION, true);
   }
 
+  public boolean wantDyslexicFontInTranslationView() {
+    return prefs.getBoolean(Constants.PREF_USE_DYSLEXIC_FONT, false);
+  }
+
   public int getPreferredDownloadAmount() {
     String str = prefs.getString(Constants.PREF_DOWNLOAD_AMOUNT,
         "" + AudioUtils.LookAheadAmount.PAGE);

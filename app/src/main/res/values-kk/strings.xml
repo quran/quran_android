@@ -151,6 +151,8 @@
   <string name="prefs_translations_summary">Аудармалар жүктеу және басқару</string>
   <string name="prefs_ayah_before_translation_title">Алдымен аятты көрсету</string>
   <string name="prefs_ayah_before_translation_summary">Арабша аяттарды аудармалардың үстінен көрсету</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Жүктеу</string>
   <string name="prefs_streaming_title">Ағындық</string>
   <string name="prefs_streaming_summary">Мүмкіндігінше ағындық аудио пайдалану</string>

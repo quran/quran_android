@@ -65,6 +65,7 @@ object Constants {
   const val PREF_DISPLAY_MARKER_POPUP = "displayMarkerPopup"
   const val PREF_HIGHLIGHT_BOOKMARKS = "highlightBookmarks"
   const val PREF_AYAH_BEFORE_TRANSLATION = "ayahBeforeTranslation"
+  const val PREF_USE_DYSLEXIC_FONT = "useDyslexicFont"
   const val PREF_SPLIT_PAGE_AND_TRANSLATION = "splitPageAndTranslation"
   const val PREF_PREFER_STREAMING = "preferStreaming"
   const val PREF_DOWNLOAD_AMOUNT = "preferredDownloadAmount"

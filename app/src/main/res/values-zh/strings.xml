@@ -97,6 +97,8 @@
   <string name="prefs_translations_summary">下载与管理译文</string>
   <string name="prefs_ayah_before_translation_title">显示原文</string>
   <string name="prefs_ayah_before_translation_summary">在译文前显示阿拉伯语原文</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">下载选项</string>
   <string name="prefs_streaming_title">流式音频</string>
   <string name="prefs_streaming_summary">优先使用流式音频</string>

@@ -135,6 +135,8 @@
   <string name="prefs_translations_summary">Shkarko dhe menaxho përkthimet</string>
   <string name="prefs_ayah_before_translation_title">Ajah para përkthimit</string>
   <string name="prefs_ayah_before_translation_summary">Trego ajah në arabisht sipër përkthimit</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Opsionet e shkarkimit</string>
   <string name="prefs_streaming_title">Streaming</string>
   <string name="prefs_streaming_summary">Vëre audion në vend që të shkarkohet</string>
