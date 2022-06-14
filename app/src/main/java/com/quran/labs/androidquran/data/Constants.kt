@@ -85,6 +85,7 @@ object Constants {
   const val PREF_PAGE_TYPE = "pageTypeKey"
   const val PREF_IMPORT = "importKey"
   const val PREF_EXPORT = "exportKey"
+  const val PREF_EXPORT_CSV = "exportKeyCSV"
   const val PREF_LOGS = "sendLogsKey"
   const val PREF_DID_PRESENT_PERMISSIONS_DIALOG = "didPresentStoragePermissionDialog"
   const val PREF_WAS_SHOWING_TRANSLATION = "wasShowingTranslation"

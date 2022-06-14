@@ -37,8 +37,7 @@ class QuranAdvancedPreferenceActivity : AppCompatActivity() {
     AudioManagerUtils.clearCache()
 
     if (savedInstanceState != null) {
-      locationToWrite =
-        savedInstanceState.getString(SI_LOCATION_TO_WRITE)
+      locationToWrite = savedInstanceState.getString(SI_LOCATION_TO_WRITE)
     }
 
     val fm = supportFragmentManager
@@ -89,7 +88,10 @@ class QuranAdvancedPreferenceActivity : AppCompatActivity() {
       if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && locationToWrite != null) {
         val fragment = supportFragmentManager.findFragmentById(R.id.content)
         if (fragment is QuranAdvancedSettingsFragment) {
-          fragment.moveFiles(locationToWrite)
+          val location = locationToWrite
+          if (location != null) {
+            fragment.moveFiles(location)
+          }
         }
       }
       locationToWrite = null

@@ -1,7 +1,5 @@
 package com.quran.labs.androidquran.ui;
 
-import com.google.android.material.snackbar.Snackbar;
-
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -10,6 +8,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ActionMode;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.dao.translation.Translation;
@@ -37,14 +45,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import io.reactivex.rxjava3.disposables.Disposable;
 import timber.log.Timber;
 
@@ -507,17 +507,20 @@ public class TranslationManagerActivity extends AppCompatActivity
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-      switch(item.getItemId()) {
-        case R.id.dtm_delete:
-          if (downloadedItemActionListener != null) downloadedItemActionListener.handleDeleteItemAction();
-          endAction();
-          break;
-        case R.id.dtm_move_up:
-          if (downloadedItemActionListener != null) downloadedItemActionListener.handleRankUpItemAction();
-          break;
-        case R.id.dtm_move_down:
-          if (downloadedItemActionListener != null) downloadedItemActionListener.handleRankDownItemAction();
-          break;
+      final int itemId = item.getItemId();
+      if (itemId == R.id.dtm_delete) {
+        if (downloadedItemActionListener != null) {
+          downloadedItemActionListener.handleDeleteItemAction();
+        }
+        endAction();
+      } else if (itemId == R.id.dtm_move_up) {
+        if (downloadedItemActionListener != null) {
+          downloadedItemActionListener.handleRankUpItemAction();
+        }
+      } else if (itemId == R.id.dtm_move_down) {
+        if (downloadedItemActionListener != null) {
+          downloadedItemActionListener.handleRankDownItemAction();
+        }
       }
       return false;
     }

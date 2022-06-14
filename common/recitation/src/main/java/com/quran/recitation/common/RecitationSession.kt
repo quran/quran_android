@@ -7,6 +7,7 @@ interface RecitationSession {
 
   fun startAyah(): SuraAyah
   fun currentAyah(): SuraAyah
+  fun startedAt(): Long
 
   fun recitation(): Recitation
 }

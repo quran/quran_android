@@ -25,9 +25,6 @@ import androidx.fragment.app.DialogFragment
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.R.array
-import com.quran.labs.androidquran.R.layout
-import com.quran.labs.androidquran.R.string
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.ForceCompleteTextView
@@ -54,14 +51,14 @@ class JumpFragment : DialogFragment() {
     val inflater = activity.layoutInflater
 
     @SuppressLint("InflateParams")
-    val layout = inflater.inflate(layout.jump_dialog, null)
+    val layout = inflater.inflate(R.layout.jump_dialog, null)
 
     val builder = Builder(activity)
-    builder.setTitle(activity.getString(string.menu_jump))
+    builder.setTitle(activity.getString(R.string.menu_jump))
 
     // Sura chooser
     suraInput = layout.findViewById(R.id.sura_spinner)
-    val suras = activity.resources.getStringArray(array.sura_names)
+    val suras = activity.resources.getStringArray(R.array.sura_names)
         .mapIndexed { index: Int, sura: String? ->
           QuranUtils.getLocalizedNumber(activity, index + 1) + ". " + sura
         }
@@ -166,7 +163,7 @@ class JumpFragment : DialogFragment() {
 
     builder.setView(layout)
     builder.setPositiveButton(
-        getString(string.dialog_ok)
+        getString(R.string.dialog_ok)
     ) { _: DialogInterface?, _: Int ->
       // trigger sura completion
       layout.requestFocus()

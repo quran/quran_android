@@ -5,7 +5,7 @@ import android.os.Bundle
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.startSuraAyah
-import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.toolbar.R
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.mobile.di.AyahActionFragmentProvider

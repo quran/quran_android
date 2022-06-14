@@ -1427,7 +1427,7 @@ public class PagerActivity extends AppCompatActivity implements
             if (sura == null || ayah == null) {
               // page bookmark
               bookmarksCache.put(page, isBookmarked);
-              bookmarksMenuItem.setIcon(isBookmarked ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
+              bookmarksMenuItem.setIcon(isBookmarked ? com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite : com.quran.labs.androidquran.common.toolbar.R.drawable.ic_not_favorite);
             } else {
               // ayah bookmark
               SuraAyah suraAyah = new SuraAyah(sura, ayah);
@@ -1476,7 +1476,7 @@ public class PagerActivity extends AppCompatActivity implements
         bookmarked = bookmarksCache.get(page - 1);
       }
 
-      menuItem.setIcon(bookmarked ? R.drawable.ic_favorite : R.drawable.ic_not_favorite);
+      menuItem.setIcon(bookmarked ? com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite : com.quran.labs.androidquran.common.toolbar.R.drawable.ic_not_favorite);
     } else {
       supportInvalidateOptionsMenu();
     }
@@ -1741,40 +1741,31 @@ public class PagerActivity extends AppCompatActivity implements
         return false;
       }
 
-      switch (item.getItemId()) {
-        case R.id.cab_bookmark_ayah:
-          final int startPage = quranInfo.getPageFromSuraAyah(startSuraAyah.sura, startSuraAyah.ayah);
-          toggleBookmark(startSuraAyah.sura, startSuraAyah.ayah, startPage);
-          break;
-        case R.id.cab_tag_ayah:
-          sliderPage = slidingPagerAdapter.getPagePosition(TAG_PAGE);
-          break;
-        case R.id.cab_translate_ayah:
-          sliderPage = slidingPagerAdapter.getPagePosition(TRANSLATION_PAGE);
-          break;
-        case R.id.cab_play_from_here:
-          quranEventLogger.logAudioPlayback(QuranEventLogger.AudioPlaybackSource.AYAH,
-              audioStatusBar.getAudioInfo(), isDualPages, showingTranslation, isSplitScreen);
-          playFromAyah(getCurrentPage(), startSuraAyah.sura, startSuraAyah.ayah);
-          toggleActionBarVisibility(true);
-          sliderPage = -1;
-          break;
-        case R.id.cab_recite_from_here:
-          pagerActivityRecitationPresenter.onRecitationPressed();
-          sliderPage = -1;
-          break;
-        case R.id.cab_share_ayah_link:
-          shareAyahLink(startSuraAyah, endSuraAyah);
-          break;
-        case R.id.cab_share_ayah_text:
-          shareAyah(startSuraAyah, endSuraAyah, false);
-          break;
-        case R.id.cab_copy_ayah:
-          shareAyah(startSuraAyah, endSuraAyah, true);
-          break;
-        default:
-          return false;
+      final int itemId = item.getItemId();
+      if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_bookmark_ayah) {
+        final int startPage = quranInfo.getPageFromSuraAyah(startSuraAyah.sura, startSuraAyah.ayah);
+        toggleBookmark(startSuraAyah.sura, startSuraAyah.ayah, startPage);
+      } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_tag_ayah) {
+        sliderPage = slidingPagerAdapter.getPagePosition(TAG_PAGE);
+      } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_translate_ayah) {
+        sliderPage = slidingPagerAdapter.getPagePosition(TRANSLATION_PAGE);
+      } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_play_from_here) {
+        quranEventLogger.logAudioPlayback(QuranEventLogger.AudioPlaybackSource.AYAH,
+            audioStatusBar.getAudioInfo(), isDualPages, showingTranslation, isSplitScreen);
+        playFromAyah(getCurrentPage(), startSuraAyah.sura, startSuraAyah.ayah);
+        toggleActionBarVisibility(true);
+      } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_recite_from_here) {
+        pagerActivityRecitationPresenter.onRecitationPressed();
+      } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_share_ayah_link) {
+        shareAyahLink(startSuraAyah, endSuraAyah);
+      } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_share_ayah_text) {
+        shareAyah(startSuraAyah, endSuraAyah, false);
+      } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_copy_ayah) {
+        shareAyah(startSuraAyah, endSuraAyah, true);
+      } else {
+        return false;
       }
+
       if (sliderPage < 0) {
         endAyahMode();
       } else {
@@ -1805,7 +1796,7 @@ public class PagerActivity extends AppCompatActivity implements
         if (isCopy) {
           shareUtil.copyToClipboard(this, shareText);
         } else {
-          shareUtil.shareViaIntent(this, shareText, R.string.share_ayah_text);
+          shareUtil.shareViaIntent(this, shareText, com.quran.labs.androidquran.common.toolbar.R.string.share_ayah_text);
         }
       }
 
@@ -1834,7 +1825,7 @@ public class PagerActivity extends AppCompatActivity implements
             .subscribeWith(new DisposableSingleObserver<String>() {
               @Override
               public void onSuccess(@NonNull String url) {
-                shareUtil.shareViaIntent(PagerActivity.this, url, R.string.share_ayah);
+                shareUtil.shareViaIntent(PagerActivity.this, url, com.quran.labs.androidquran.common.toolbar.R.string.share_ayah);
                 dismissProgressDialog();
               }
 

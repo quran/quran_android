@@ -19,7 +19,6 @@ import android.view.View
 import android.widget.Button
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.data.model.VerseRange
-import com.quran.labs.androidquran.R.layout
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter.TranslationScreen
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
@@ -46,7 +45,7 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
 
   object Provider : AyahActionFragmentProvider {
     override val order = SlidingPagerAdapter.TRANSLATION_PAGE
-    override val iconResId = R.drawable.ic_translation
+    override val iconResId = com.quran.labs.androidquran.common.toolbar.R.drawable.ic_translation
     override fun newAyahActionFragment() = AyahTranslationFragment()
   }
 
@@ -61,7 +60,7 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
     savedInstanceState: Bundle?
   ): View? {
     val view = inflater.inflate(
-      layout.translation_panel, container, false
+      R.layout.translation_panel, container, false
     )
     translator = view.findViewById(R.id.translator)
     translationView = view.findViewById(R.id.translation_view)
@@ -125,7 +124,7 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
       if (adapter == null) {
         translationAdapter = TranslationsSpinnerAdapter(
           activity,
-          layout.translation_ab_spinner_item,
+          R.layout.translation_ab_spinner_item,
           activity.translationNames,
           translations,
           activeTranslationsFilesNames

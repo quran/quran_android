@@ -228,6 +228,8 @@
   <string name="prefs_import_summary">Import bookmarks and tags</string>
   <string name="prefs_export_title">Export</string>
   <string name="prefs_export_summary">Export a copy of bookmarks and tags</string>
+  <string name="prefs_export_csv_title">Export CSV</string>
+  <string name="prefs_export_csv_summary">Export a copy of bookmarks and tags in CSV</string>
   <string name="prefs_page_type_title">Page Type (experimental)</string>
   <string name="prefs_page_type_summary">Select the type of reading pages</string>
   <string name="prefs_sura_translated_name_summary">Show the translation of surah name</string>
