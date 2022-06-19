@@ -13,7 +13,7 @@ object TypefaceManager {
   private var typeface: Typeface? = null
   private var arabicTafseerTypeface: Typeface? = null
   private var arabicHeaderFooterTypeface: Typeface? = null
-  private var arabicDyslexicTypeface: Typeface? = null
+  private var dyslexicTypeface: Typeface? = null
 
   @JvmStatic
   fun getUthmaniTypeface(context: Context): Typeface {
@@ -38,9 +38,9 @@ object TypefaceManager {
   }
 
   fun getDyslexicTypeface(context: Context): Typeface {
-    return arabicDyslexicTypeface ?: run {
+    return dyslexicTypeface ?: run {
       val instance = Typeface.createFromAsset(context.assets, "OpenDyslexic.otf")
-      arabicDyslexicTypeface = instance
+      dyslexicTypeface = instance
       instance
     }
   }
