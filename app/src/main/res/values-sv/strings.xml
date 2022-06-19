@@ -134,6 +134,8 @@
   <string name="prefs_translations_summary">Ladda ner och hantera översättningar</string>
   <string name="prefs_ayah_before_translation_title">Ayah före översättning</string>
   <string name="prefs_ayah_before_translation_summary">Visa ayah på arabiska ovanför översättningen</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Hämta alternativ</string>
   <string name="prefs_streaming_title">Streaming</string>
   <string name="prefs_streaming_summary">Strömma ljud i stället för att ladda ner</string>

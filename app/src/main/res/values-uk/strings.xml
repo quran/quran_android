@@ -136,6 +136,8 @@
   <string name="prefs_translations_summary">Завантаження перекладів і керування ними</string>
   <string name="prefs_ayah_before_translation_title">Ая перед перекладом</string>
   <string name="prefs_ayah_before_translation_summary">Показати ая арабською мовою над перекладом</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Параметри завантаження</string>
   <string name="prefs_streaming_title">Потокове</string>
   <string name="prefs_streaming_summary">Потокове передавання звуку замість завантаження</string>

@@ -177,6 +177,8 @@
   <string name="prefs_translations_summary">Загрузка и управление переводами</string>
   <string name="prefs_ayah_before_translation_title">Аят до перевода</string>
   <string name="prefs_ayah_before_translation_summary">Показывать аят на арабском раньше перевода</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Настройки загрузки</string>
   <string name="prefs_streaming_title">Потоковое</string>
   <string name="prefs_streaming_summary">При возможности потоковое аудио</string>

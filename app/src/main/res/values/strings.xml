@@ -193,6 +193,8 @@
   <string name="prefs_translations_summary">Download and manage translations</string>
   <string name="prefs_ayah_before_translation_title">Ayah before translation</string>
   <string name="prefs_ayah_before_translation_summary">Show ayah in Arabic above the translation</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Download Options</string>
   <string name="prefs_streaming_title">Streaming</string>
   <string name="prefs_streaming_summary">Stream audio instead of downloading</string>

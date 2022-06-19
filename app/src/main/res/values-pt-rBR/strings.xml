@@ -112,6 +112,8 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="prefs_translations_summary">Fazer download e gerenciar as traduções</string>
   <string name="prefs_ayah_before_translation_title">Ayah antes da tradução</string>
   <string name="prefs_ayah_before_translation_summary">MOstrar ayah em Árabe em cima da tradução</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Opções de Download</string>
   <string name="prefs_streaming_title">Estreaming</string>
   <string name="prefs_streaming_summary">Fazer estreaming de audio quando possível.</string>

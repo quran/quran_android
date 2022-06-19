@@ -165,6 +165,14 @@
         android:title="@string/prefs_ayah_before_translation_title"
         app:iconSpaceReserved="false"/>
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/prefs_use_dyslexic_font"
+        android:persistent="true"
+        android:summary="@string/prefs_use_dyslexic_font_summary"
+        android:title="@string/prefs_use_dyslexic_font_title"
+        app:iconSpaceReserved="false"/>
+
     <com.quran.labs.androidquran.ui.preference.SeekBarTextSizePreference
         android:defaultValue="15"
         android:key="@string/prefs_translation_text_size"

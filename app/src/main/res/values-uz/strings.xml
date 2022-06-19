@@ -153,6 +153,8 @@
   <string name="prefs_translations_summary">Tarjimalarni saqlab olish va boshqarish</string>
   <string name="prefs_ayah_before_translation_title">Oyatni avval koʻrsatish</string>
   <string name="prefs_ayah_before_translation_summary">Arabcha oyatlarni tarjima matni ustida koʻrsatish</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Saqlab olish</string>
   <string name="prefs_streaming_title">Striming</string>
   <string name="prefs_streaming_summary">Imkon qadar audio strimingdan foydalanish</string>

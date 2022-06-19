@@ -156,6 +156,8 @@
   <string name="prefs_ayah_before_translation_summary">Das arabische Original vor jedem übersetzten
     Vers anzeigen.
   </string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Downloadoptionen</string>
   <string name="prefs_streaming_title">Streaming</string>
   <string name="prefs_streaming_summary">Wenn möglich, Audio streamen</string>

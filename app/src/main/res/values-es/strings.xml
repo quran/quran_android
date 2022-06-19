@@ -75,6 +75,8 @@
   <string name="prefs_translations_summary">Descargar y gestionar traducciones</string>
   <string name="prefs_ayah_before_translation_title">Mostrar versículo antes de la traducción</string>
   <string name="prefs_ayah_before_translation_summary">Mostrar versículo en árabe sobre la traducción</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Opciones de descarga</string>
   <string name="prefs_streaming_title">Transmisión</string>
   <string name="prefs_streaming_summary">Transmitir el audio cuando sea posible.</string>

@@ -88,6 +88,8 @@
   <string name="prefs_translations_summary">Scaricare e gestire le traduzioni</string>
   <string name="prefs_ayah_before_translation_title">Ayah prima della traduzione</string>
   <string name="prefs_ayah_before_translation_summary">Mostra l\'ayah in arabo sopra la traduzione</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Scaricare le opzioni</string>
   <string name="prefs_streaming_title">Streaming</string>
   <string name="prefs_streaming_summary">Streaming audio invece di scaricare</string>
