@@ -4,7 +4,7 @@ buildscript {
     coroutinesVersion = '1.6.3'
 
     daggerVersion = '2.42'
-    composeVersion = '1.2.0-beta03'
+    composeVersion = '1.2.0-rc02'
     composeCompilerVersion = '1.2.0-dev-k1.7.0-53370d83bb1'
 
     androidxMediaVersion = '1.6.0'
