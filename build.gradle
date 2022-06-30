@@ -4,8 +4,8 @@ buildscript {
     coroutinesVersion = '1.6.3'
 
     daggerVersion = '2.42'
-    composeVersion = '1.2.0-rc02'
-    composeCompilerVersion = '1.2.0-dev-k1.7.0-53370d83bb1'
+    composeVersion = '1.2.0-rc03'
+    composeCompilerVersion = '1.2.0'
 
     androidxMediaVersion = '1.6.0'
     androidxAnnotationVersion = '1.4.0'
@@ -75,6 +75,5 @@ allprojects {
   repositories {
     mavenCentral()
     google()
-    maven { url "https://androidx.dev/storage/compose-compiler/repository/" }
   }
 }
