@@ -77,6 +77,9 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
           append(text)
         }
       }
+      append("\n")
+      append("-")
+      append(quranDisplayData.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah, R.string.sura_ayah_notification_str))
     }
   }
 
