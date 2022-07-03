@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.feature.audio.util
 
-import com.quran.labs.androidquran.common.audio.QariItem
+import com.quran.labs.androidquran.common.audio.model.QariItem
 
 interface AudioFileChecker {
   fun isQariOnFilesystem(qari: QariItem): Boolean

@@ -69,7 +69,7 @@ import com.quran.labs.androidquran.bridge.ReadingEventPresenterBridge;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
-import com.quran.labs.androidquran.common.audio.QariItem;
+import com.quran.labs.androidquran.common.audio.model.QariItem;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;

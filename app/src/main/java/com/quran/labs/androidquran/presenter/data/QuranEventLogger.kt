@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.presenter.data
 
 import com.quran.analytics.AnalyticsProvider
-import com.quran.labs.androidquran.common.audio.QariItem
+import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.presenter.data.QuranEventLogger.AudioPlaybackSource.PAGE
 import com.quran.labs.androidquran.util.QuranSettings
 import dagger.Reusable

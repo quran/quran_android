@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.dao.audio
 
 import android.os.Parcelable
-import com.quran.labs.androidquran.common.audio.QariItem
+import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.data.model.SuraAyah
 import kotlinx.parcelize.Parcelize
 

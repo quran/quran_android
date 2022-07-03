@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.util;
 import android.util.Pair;
 import android.util.SparseBooleanArray;
 
-import com.quran.labs.androidquran.common.audio.QariItem;
+import com.quran.labs.androidquran.common.audio.model.QariItem;
 
 import java.util.Collections;
 import java.util.List;

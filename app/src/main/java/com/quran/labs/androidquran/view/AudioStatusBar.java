@@ -28,7 +28,7 @@ import androidx.annotation.StringRes;
 import androidx.core.view.ViewCompat;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.audio.QariItem;
+import com.quran.labs.androidquran.common.audio.model.QariItem;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;

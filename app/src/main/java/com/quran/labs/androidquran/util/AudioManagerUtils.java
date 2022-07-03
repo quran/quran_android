@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import android.util.Pair;
 
 import com.quran.data.core.QuranInfo;
-import com.quran.labs.androidquran.common.audio.QariItem;
+import com.quran.labs.androidquran.common.audio.model.QariItem;
 
 import java.io.File;
 import java.util.List;

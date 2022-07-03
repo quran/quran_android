@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.common.audio.util
 
 import android.content.Context
-import com.quran.labs.androidquran.common.audio.AudioConfiguration
-import com.quran.labs.androidquran.common.audio.QariItem
+import com.quran.labs.androidquran.common.audio.model.AudioConfiguration
+import com.quran.labs.androidquran.common.audio.model.QariItem
 import javax.inject.Inject
 
 class QariUtil @Inject constructor() {

@@ -5,7 +5,7 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.data.pageinfo.common.MadaniDataSource
 import com.quran.data.source.PageProvider
-import com.quran.labs.androidquran.common.audio.AudioConfiguration
+import com.quran.labs.androidquran.common.audio.model.AudioConfiguration
 import com.quran.labs.androidquran.common.audio.util.QariUtil
 import org.junit.Assert
 import org.junit.Test

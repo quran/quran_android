@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.feature.audio
 
 import com.google.common.truth.Truth.assertThat
-import com.quran.labs.androidquran.common.audio.QariItem
+import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.feature.audio.api.AudioFileUpdate
 import com.quran.labs.androidquran.feature.audio.api.AudioSetUpdate
 import com.quran.labs.androidquran.feature.audio.util.AudioFileChecker
