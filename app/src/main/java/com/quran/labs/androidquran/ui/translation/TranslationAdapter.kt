@@ -58,7 +58,7 @@ internal class TranslationAdapter(
   private val defaultClickListener = View.OnClickListener { this.handleClick(it) }
   private val defaultLongClickListener = View.OnLongClickListener { this.selectVerseRows(it) }
   private val expandClickListener = View.OnClickListener { v -> toggleExpandTafseer(v) }
-  private val expandHyperlinkClickListener = View.OnClickListener { v -> toggleExpandHyperlink(v) }
+  private val expandHyperlinkClickListener = View.OnClickListener { v -> toggleExpandTafseer(v) }
 
   fun getSelectedVersePopupPosition(): IntArray? {
     return if (highlightedStartPosition > -1) {
@@ -247,20 +247,6 @@ internal class TranslationAdapter(
         expandedTafseerAyahs.remove(what)
       } else {
         expandedTafseerAyahs.add(what)
-      }
-      notifyItemChanged(position)
-    }
-  }
-
-  private fun toggleExpandHyperlink(view: View) {
-    val position = recyclerView.getChildAdapterPosition(view)
-    if (position != RecyclerView.NO_POSITION) {
-      val data = data[position]
-      val what = data.ayahInfo.ayahId to data.translationIndex
-      if (expandedHyperlinks.contains(what)) {
-        expandedHyperlinks.remove(what)
-      } else {
-        expandedHyperlinks.add(what)
       }
       notifyItemChanged(position)
     }

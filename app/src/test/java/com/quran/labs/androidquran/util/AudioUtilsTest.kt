@@ -6,6 +6,7 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.pageinfo.common.MadaniDataSource
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.common.audio.AudioConfiguration
+import com.quran.labs.androidquran.common.audio.util.QariUtil
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito
@@ -27,7 +28,12 @@ class AudioUtilsTest {
       .thenReturn(MadaniDataSource())
     val quranInfo = QuranInfo(MadaniDataSource())
     val audioUtils =
-      AudioUtils(quranInfo, Mockito.mock(QuranFileUtils::class.java), audioConfiguration)
+      AudioUtils(
+        quranInfo,
+        Mockito.mock(QuranFileUtils::class.java),
+        audioConfiguration,
+        Mockito.mock(QariUtil::class.java)
+      )
     // mode 1 is PAGE
     val lastAyah = audioUtils.getLastAyahToPlay(
       SuraAyah(sura = 109, ayah = 1),
@@ -47,7 +53,12 @@ class AudioUtilsTest {
       .thenReturn(MadaniDataSource())
     val quranInfo = QuranInfo(MadaniDataSource())
     val audioUtils =
-      AudioUtils(quranInfo, Mockito.mock(QuranFileUtils::class.java), audioConfiguration)
+      AudioUtils(
+        quranInfo,
+        Mockito.mock(QuranFileUtils::class.java),
+        audioConfiguration,
+        Mockito.mock(QariUtil::class.java)
+      )
     // mode 2 is SURA
     val lastAyah = audioUtils.getLastAyahToPlay(SuraAyah(2, 6), 3, 2, false)
     Assert.assertNotNull(lastAyah)
@@ -59,7 +70,12 @@ class AudioUtilsTest {
   fun testSuraTawbaDoesNotNeedBasmallah() {
     val quranInfo = QuranInfo(MadaniDataSource())
     val audioUtils =
-      AudioUtils(quranInfo, Mockito.mock(QuranFileUtils::class.java), audioConfiguration)
+      AudioUtils(
+        quranInfo,
+        Mockito.mock(QuranFileUtils::class.java),
+        audioConfiguration,
+        Mockito.mock(QariUtil::class.java)
+      )
 
     // start after ayah 1 of sura anfal
     val start = SuraAyah(8, 2)
@@ -74,7 +90,12 @@ class AudioUtilsTest {
   fun testNeedBasmallahAcrossRange() {
     val quranInfo = QuranInfo(MadaniDataSource())
     val audioUtils =
-      AudioUtils(quranInfo, Mockito.mock(QuranFileUtils::class.java), audioConfiguration)
+      AudioUtils(
+        quranInfo,
+        Mockito.mock(QuranFileUtils::class.java),
+        audioConfiguration,
+        Mockito.mock(QariUtil::class.java)
+      )
     val start = SuraAyah(8, 1)
     val ending = SuraAyah(10, 2)
     // should need a basmallah due to 10:1
@@ -85,7 +106,9 @@ class AudioUtilsTest {
   fun testLastAyahForFirstAyahWithPageDownload() {
     val audioUtils = AudioUtils(
       QuranInfo(MadaniDataSource()),
-      Mockito.mock(QuranFileUtils::class.java), audioConfiguration
+      Mockito.mock(QuranFileUtils::class.java),
+      audioConfiguration,
+      Mockito.mock(QariUtil::class.java)
     )
     val start = SuraAyah(56, 51)
     val end = audioUtils.getLastAyahToPlay(

@@ -10,6 +10,7 @@ data class QariItem(
   val name: String,
   val url: String,
   val path: String,
+  val hasGaplessAlternative: Boolean,
   val db: String? = null
 ) : Parcelable {
   @IgnoredOnParcel

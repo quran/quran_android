@@ -3,10 +3,12 @@ package com.quran.labs.androidquran.util
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.VisibleForTesting
+import com.quran.data.core.QuranFileManager
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.common.audio.AudioConfiguration
 import com.quran.labs.androidquran.common.audio.QariItem
+import com.quran.labs.androidquran.common.audio.util.QariUtil
 import com.quran.labs.androidquran.service.AudioService
 import timber.log.Timber
 import java.io.File
@@ -16,7 +18,8 @@ import javax.inject.Inject
 class AudioUtils @Inject constructor(
   private val quranInfo: QuranInfo,
   private val quranFileUtils: QuranFileUtils,
-  private val audioConfiguration: AudioConfiguration
+  private val audioConfiguration: AudioConfiguration,
+  private val qariUtil: QariUtil
 ) {
 
   private val totalPages = quranInfo.numberOfPages
@@ -34,35 +37,30 @@ class AudioUtils @Inject constructor(
   /**
    * Get a list of QariItem representing the qaris to show
    *
-   * This method takes into account qaris that exist both in gapped and gapless, and, in those
-   * cases, hides the gapped version if it contains no files.
+   * This removes gapped qaris that have a gapless alternative if
+   * no files are downloaded for that qari.
    *
-   * @param context the current context
-   * @return a list of QariItem representing the qaris to show.
+   * This list sorts gapless qaris before gapped qaris, with each
+   * set being alphabetically sorted.
    */
   fun getQariList(context: Context): List<QariItem> {
-    val resources = context.resources
-    val shuyookh = resources.getStringArray(audioConfiguration.quranReadersName)
-    val paths = resources.getStringArray(audioConfiguration.quranReadersPath)
-    val urls = resources.getStringArray(audioConfiguration.quranReadersUrls)
-    val databases = resources.getStringArray(audioConfiguration.quranReadersDatabaseNames)
-    val hasGaplessEquivalent = resources.getIntArray(audioConfiguration.quranReadersHaveGaplessEquivalents)
-    val items = mutableListOf<QariItem>()
-    for (i in shuyookh.indices) {
-      if (hasGaplessEquivalent[i] == 0 || haveAnyFiles(context, paths[i])) {
-        items += QariItem(
-          i, shuyookh[i], urls[i], paths[i], databases[i]
-        )
+    return qariUtil.getQariList(context, audioConfiguration)
+      .filter {
+        it.isGapless || (it.hasGaplessAlternative && !haveAnyFiles(it.path))
       }
-    }
+      .sortedWith { lhs, rhs ->
+        if (lhs.isGapless != rhs.isGapless) {
+          if (lhs.isGapless) -1 else 1
+        } else {
+          lhs.name.compareTo(rhs.name)
+        }
+      }
+  }
 
-    return items.sortedWith { lhs, rhs ->
-      if (lhs.isGapless != rhs.isGapless) {
-        if (lhs.isGapless) -1 else 1
-      } else {
-        lhs.name.compareTo(rhs.name)
-      }
-    }
+  private fun haveAnyFiles(path: String): Boolean {
+    val basePath = quranFileUtils.audioFileDirectory()
+    val file = File(basePath, path)
+    return file.isDirectory && file.list()?.isNotEmpty() ?: false
   }
 
   fun getQariUrl(item: QariItem): String {
@@ -73,13 +71,13 @@ class AudioUtils @Inject constructor(
     }
   }
 
-  fun getLocalQariUrl(context: Context, item: QariItem): String? {
-    val rootDirectory = quranFileUtils.getQuranAudioDirectory(context)
+  fun getLocalQariUrl(item: QariItem): String? {
+    val rootDirectory = quranFileUtils.audioFileDirectory()
     return if (rootDirectory == null) null else rootDirectory + item.path
   }
 
-  fun getLocalQariUri(context: Context, item: QariItem): String? {
-    val rootDirectory = quranFileUtils.getQuranAudioDirectory(context)
+  fun getLocalQariUri(item: QariItem): String? {
+    val rootDirectory = quranFileUtils.audioFileDirectory()
     return if (rootDirectory == null) null else
       rootDirectory + item.path + File.separator + if (item.isGapless) {
         "%03d$AUDIO_EXTENSION"
@@ -88,24 +86,15 @@ class AudioUtils @Inject constructor(
       }
   }
 
-  fun getQariDatabasePathIfGapless(context: Context, item: QariItem): String? {
+  fun getQariDatabasePathIfGapless(item: QariItem): String? {
     var databaseName = item.databaseName
     if (databaseName != null) {
-      val path = getLocalQariUrl(context, item)
+      val path = getLocalQariUrl(item)
       if (path != null) {
         databaseName = path + File.separator + databaseName + DB_EXTENSION
       }
     }
     return databaseName
-  }
-
-  fun getGaplessDatabaseUrl(qari: QariItem): String? {
-    if (!qari.isGapless || qari.databaseName == null) {
-      return null
-    }
-
-    val dbName = qari.databaseName + ZIP_EXTENSION
-    return quranFileUtils.gaplessDatabaseRootUrl + "/" + dbName
   }
 
   fun getLastAyahToPlay(
@@ -222,12 +211,6 @@ class AudioUtils @Inject constructor(
     return false
   }
 
-  private fun haveAnyFiles(context: Context, path: String): Boolean {
-    val basePath = quranFileUtils.getQuranAudioDirectory(context)
-    val file = File(basePath, path)
-    return file.isDirectory && file.list()?.isNotEmpty() ?: false
-  }
-
   fun haveAllFiles(
     baseUrl: String,
     path: String,
@@ -302,15 +285,9 @@ class AudioUtils @Inject constructor(
   }
 
   companion object {
+    const val ZIP_EXTENSION = ".zip"
     const val AUDIO_EXTENSION = ".mp3"
 
     private const val DB_EXTENSION = ".db"
-    private const val ZIP_EXTENSION = ".zip"
-
-    fun haveSuraAyahForQari(baseDir: String, sura: Int, ayah: Int): Boolean {
-      val filename = baseDir + File.separator + sura +
-          File.separator + ayah + AUDIO_EXTENSION
-      return File(filename).exists()
-    }
   }
 }
