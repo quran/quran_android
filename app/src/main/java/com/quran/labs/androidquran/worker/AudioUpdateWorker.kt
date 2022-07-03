@@ -54,14 +54,14 @@ class AudioUpdateWorker(
           localFilesToDelete.forEach { localUpdate ->
             if (localUpdate.needsDatabaseUpgrade) {
               // delete the database
-              val dbPath = audioUtils.getQariDatabasePathIfGapless(context, localUpdate.qari)
+              val dbPath = audioUtils.getQariDatabasePathIfGapless(localUpdate.qari)
               dbPath?.let { SuraTimingDatabaseHandler.clearDatabaseHandlerIfExists(it) }
               Timber.d("would remove %s", dbPath)
               File(dbPath).delete()
             }
 
             val qari = localUpdate.qari
-            val path = audioUtils.getLocalQariUrl(context, qari)
+            val path = audioUtils.getLocalQariUrl(qari)
             localUpdate.files.forEach {
               // delete the file
               val filePath = if (qari.isGapless) {

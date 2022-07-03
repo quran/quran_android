@@ -1,6 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
+apply plugin: 'com.squareup.anvil'
+
+anvil { generateDaggerFactories = true }
 
 android {
   compileSdkVersion deps.android.build.compileSdkVersion
@@ -11,5 +14,7 @@ android {
 }
 
 dependencies {
+  implementation project(":common:data")
+  implementation deps.dagger.runtime
   implementation "androidx.annotation:annotation:${androidxAnnotationVersion}"
 }

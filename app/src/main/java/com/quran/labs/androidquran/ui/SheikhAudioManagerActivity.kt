@@ -270,7 +270,7 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
     }
 
   private fun deleteSurah(surah: Int): Boolean {
-    val fileUri = audioUtils.getLocalQariUri(this, qari) ?: return false
+    val fileUri = audioUtils.getLocalQariUri(qari) ?: return false
     var deletionSuccessful = true
     if (qari.isGapless) {
       val fileName = String.format(Locale.US, fileUri, surah)
