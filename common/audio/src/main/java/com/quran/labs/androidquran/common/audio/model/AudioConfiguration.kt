@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.common.audio
+package com.quran.labs.androidquran.common.audio.model
 
 import androidx.annotation.ArrayRes
 

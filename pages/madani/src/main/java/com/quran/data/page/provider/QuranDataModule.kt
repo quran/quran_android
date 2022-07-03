@@ -6,7 +6,7 @@ import com.quran.data.page.provider.madani.MadaniPageProvider
 import com.quran.data.pageinfo.mapper.AyahMapper
 import com.quran.data.pageinfo.mapper.IdentityAyahMapper
 import com.quran.data.source.PageProvider
-import com.quran.labs.androidquran.common.audio.AudioConfiguration
+import com.quran.labs.androidquran.common.audio.model.AudioConfiguration
 import com.quran.labs.androidquran.pages.madani.R
 import com.quran.page.common.draw.ImageDrawHelper
 import com.quran.page.common.factory.PageViewFactoryProvider

@@ -3,11 +3,10 @@ package com.quran.labs.androidquran.util
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.VisibleForTesting
-import com.quran.data.core.QuranFileManager
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
-import com.quran.labs.androidquran.common.audio.AudioConfiguration
-import com.quran.labs.androidquran.common.audio.QariItem
+import com.quran.labs.androidquran.common.audio.model.AudioConfiguration
+import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.QariUtil
 import com.quran.labs.androidquran.service.AudioService
 import timber.log.Timber
