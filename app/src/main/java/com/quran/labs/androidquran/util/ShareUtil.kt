@@ -14,6 +14,7 @@ import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.util.ToastCompat
+import com.quran.labs.androidquran.ui.util.TypefaceManager
 import dagger.Reusable
 import java.text.NumberFormat
 import java.util.Locale
@@ -77,9 +78,12 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
           append(text)
         }
       }
-      append("\n")
-      append("-")
-      append(quranDisplayData.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah, R.string.sura_ayah_notification_str))
+      val arabicIsShownBeforeTranslation = QuranSettings.getInstance(context).wantArabicInTranslationView()
+      if (!arabicIsShownBeforeTranslation){
+        append("\n")
+        append("-")
+        append(quranDisplayData.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah, R.string.sura_ayah_notification_str))
+      }
     }
   }
 
