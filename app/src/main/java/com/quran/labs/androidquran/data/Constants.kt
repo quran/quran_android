@@ -30,8 +30,8 @@ object Constants {
   const val MAX_RECENT_PAGES = 3
 
   // quranapp
-  const val QURAN_APP_BASE = "http://quranapp.com/"
-  const val QURAN_APP_ENDPOINT = "http://quranapp.com/note"
+  const val QURAN_APP_BASE = "http://quran.com/"
+  const val QURAN_APP_ENDPOINT = "http://quran.com/note"
 
   // Notification Ids
   const val NOTIFICATION_ID_DOWNLOADING = 1
