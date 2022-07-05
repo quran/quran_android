@@ -12,6 +12,7 @@ import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.common.audio.model.AudioConfiguration
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.QariUtil
+import com.quran.labs.androidquran.dao.audio.AudioPathInfo
 import com.quran.labs.androidquran.service.AudioService
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.util.audioConversionUtils.CheapSoundFile
@@ -291,9 +292,9 @@ class AudioUtils @Inject constructor(
   }
 
   fun getLocalAudioPathInfo(context: Context,qari: QariItem): AudioPathInfo? {
-    val localPath = getLocalQariUri(context, qari)
+    val localPath = getLocalQariUri(qari)
     if (localPath != null) {
-      val databasePath = getQariDatabasePathIfGapless(context, qari)
+      val databasePath = getQariDatabasePathIfGapless(qari)
       val urlFormat = if (databasePath.isNullOrEmpty()) {
         localPath + File.separator + "%d" + File.separator +
             "%d" + AUDIO_EXTENSION

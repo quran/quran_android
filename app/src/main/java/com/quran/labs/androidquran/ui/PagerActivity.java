@@ -75,6 +75,7 @@ import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.audio.model.QariItem;
+import com.quran.labs.androidquran.dao.audio.AudioPathInfo;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
@@ -1880,8 +1881,8 @@ public class PagerActivity extends AppCompatActivity implements
       actualEnd = (SuraAyah) pair2.component2();
     }
 
-    final QariItem qari = audioStatusBar.getAudioInfo();
-    AudioPathInfo audioPathInfo = audioUtils.getLocalAudioPathInfo(this,qari);
+    final QariItem qari          = audioStatusBar.getAudioInfo();
+    AudioPathInfo  audioPathInfo = audioUtils.getLocalAudioPathInfo(this,qari);
 
     assert audioPathInfo != null;
     if (audioPathInfo.getGaplessDatabase() != null) {
