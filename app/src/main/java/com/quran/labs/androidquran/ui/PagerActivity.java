@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.ui;
 
+import static com.quran.labs.androidquran.database.DatabaseUtils.closeCursor;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
@@ -15,13 +16,17 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.SQLException;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
+import android.util.SparseIntArray;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -74,6 +79,7 @@ import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranDisplayData;
+import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent;
 import com.quran.labs.androidquran.di.module.activity.PagerActivityModule;
@@ -123,8 +129,10 @@ import com.quran.page.common.toolbar.di.AyahToolBarInjector;
 import com.quran.reading.common.AudioEventPresenter;
 import com.quran.reading.common.ReadingEventPresenter;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -138,9 +146,12 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.observers.DisposableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import kotlin.TuplesKt;
+import kotlin.jvm.internal.Intrinsics;
 import timber.log.Timber;
 
 /**
@@ -231,7 +242,7 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject ShareUtil shareUtil;
   @Inject AudioUtils audioUtils;
   @Inject QuranDisplayData quranDisplayData;
-  @Inject QuranInfo quranInfo;
+  @Inject QuranInfo      quranInfo;
   @Inject QuranFileUtils quranFileUtils;
   @Inject AudioPresenter audioPresenter;
   @Inject QuranEventLogger quranEventLogger;
@@ -248,6 +259,13 @@ public class PagerActivity extends AppCompatActivity implements
   private final CompositeDisposable foregroundDisposable = new CompositeDisposable();
 
   private final PagerHandler handler = new PagerHandler(this);
+
+  private Disposable timingDisposable;
+  private int            gaplessSura;
+  private SparseIntArray gaplessSuraData = new SparseIntArray();
+  public static final File audioCacheDirectory= new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath() +
+      File.separator +"quran_android_cache");
+
 
   private static class PagerHandler extends Handler {
     private final WeakReference<PagerActivity> activity;
@@ -335,6 +353,11 @@ public class PagerActivity extends AppCompatActivity implements
     compositeDisposable = new CompositeDisposable();
 
     setContentView(R.layout.quran_page_activity_slider);
+    if (!audioCacheDirectory.exists()) {
+      if (!audioCacheDirectory.mkdirs()){
+        Toast.makeText(PagerActivity.this, "could not create directory", Toast.LENGTH_SHORT).show();
+      }
+    }
     audioStatusBar = findViewById(R.id.audio_area);
     audioStatusBar.setIsDualPageMode(quranScreenInfo.isDualPageMode());
     audioStatusBar.setQariList(audioUtils.getQariList(this));
@@ -1760,6 +1783,8 @@ public class PagerActivity extends AppCompatActivity implements
         shareAyahLink(startSuraAyah, endSuraAyah);
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_share_ayah_text) {
         shareAyah(startSuraAyah, endSuraAyah, false);
+      }else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_share_ayah_audio) {
+        shareAyahAudio(startSuraAyah, endSuraAyah);
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_copy_ayah) {
         shareAyah(startSuraAyah, endSuraAyah, true);
       } else {
@@ -1832,6 +1857,122 @@ public class PagerActivity extends AppCompatActivity implements
               @Override
               public void onError(@NonNull Throwable e) {
                 dismissProgressDialog();
+              }
+            })
+    );
+  }
+
+  public void shareAyahAudio(SuraAyah start, SuraAyah end) {
+    SuraAyah    actualStart,actualEnd;
+    if (start == null || end == null) {
+      return;
+    }else {
+      kotlin.Pair pair;
+      if (start.compareTo(end) <= 0) {
+        pair = TuplesKt.to(start, end);
+      } else {
+        Timber.Forest.e(new IllegalStateException("End isn't larger than the start: " + start + " to " + end));
+        pair = TuplesKt.to(end, start);
+      }
+
+      kotlin.Pair pair2       = pair;
+      actualStart = (SuraAyah) pair2.component1();
+      actualEnd = (SuraAyah) pair2.component2();
+    }
+
+    final QariItem qari = audioStatusBar.getAudioInfo();
+    AudioPathInfo audioPathInfo = audioUtils.getLocalAudioPathInfo(this,qari);
+
+    assert audioPathInfo != null;
+    if (audioPathInfo.getGaplessDatabase() != null) {
+      createAndShareAudio(actualStart,actualEnd,audioPathInfo);
+    }
+  }
+
+  private void createAndShareAudio(SuraAyah start, SuraAyah end, AudioPathInfo audioPathInfo) {
+    showProgressDialog();
+    String databasePath = audioPathInfo.getGaplessDatabase();
+    compositeDisposable.add(
+        Single.fromCallable(() -> {
+              assert databasePath != null;
+              SuraTimingDatabaseHandler db              = SuraTimingDatabaseHandler.Companion.getDatabaseHandler(databasePath);
+              SparseIntArray            firstSurahMap   = new SparseIntArray();
+              SparseIntArray            lastSurahMap    = new SparseIntArray();
+              Cursor                    firstSurahCursor;
+              Cursor                    lastSurahCursor = null;
+
+              try {
+                firstSurahCursor = db.getAyahTimings(start.sura);
+                Timber.Forest.d("got cursor of data");
+                if (firstSurahCursor != null && firstSurahCursor.moveToFirst()) {
+                  do {
+                    int ayah = firstSurahCursor.getInt(1);
+                    int time = firstSurahCursor.getInt(2);
+                    firstSurahMap.put(ayah, time);
+                  } while (firstSurahCursor.moveToNext());
+                }
+
+                lastSurahCursor = db.getAyahTimings(end.sura);
+                Timber.Forest.d("got cursor of data");
+                if (lastSurahCursor != null && lastSurahCursor.moveToFirst()) {
+                  do {
+                    int ayah = lastSurahCursor.getInt(1);
+                    int time = lastSurahCursor.getInt(2);
+                    lastSurahMap.put(ayah, time);
+                  } while (lastSurahCursor.moveToNext());
+                }
+              } catch (SQLException sqlException) {
+                Timber.Forest.e(sqlException);
+              } finally {
+                closeCursor(lastSurahCursor);
+              }
+              ArrayList<SparseIntArray> mapArray = new ArrayList<>(Arrays.asList(firstSurahMap, lastSurahMap));
+              return mapArray;
+            }).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(new DisposableSingleObserver<ArrayList<SparseIntArray>>() {
+              @Override
+              public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull ArrayList<SparseIntArray> sparseIntArrayList) {
+                Intrinsics.checkNotNullExpressionValue(sparseIntArrayList, "mapArray");
+
+                int startAyah = start.ayah;
+                int endAyah = end.ayah;
+                int startAyahTime = startAyah == 1?sparseIntArrayList.get(0).get(0):sparseIntArrayList.get(0).get(startAyah);
+                int endAyahTime = startAyah == 1?sparseIntArrayList.get(1).get(0):sparseIntArrayList.get(1).get(endAyah+1)==0?audioUtils.getSurahDuration(PagerActivity.this,audioUtils.getSurahAudioPath(audioPathInfo,end.sura)):sparseIntArrayList.get(1).get(endAyah+1);
+
+                if (start.sura == end.sura){
+                 shareUtil.shareAudioFileIntent(PagerActivity.this,new File(audioUtils.getSurahSegment(audioUtils.getSurahAudioPath(audioPathInfo,start.sura),startAyahTime,endAyahTime)));
+                }else {
+                  ArrayList<String> paths = new ArrayList<>();
+                  String path1  = audioUtils.getSurahAudioPath(audioPathInfo,start.sura);
+                  int upperCut = audioUtils.getSurahDuration(PagerActivity.this,path1);
+                  String firstSegment = audioUtils.getSurahSegment(path1,startAyahTime,upperCut);
+                  String path2  = audioUtils.getSurahAudioPath(audioPathInfo,end.sura);
+                  String lastSegment = audioUtils.getSurahSegment(path2,0,endAyahTime);
+
+                  for (int surahIndex = start.sura; surahIndex<=end.sura; surahIndex++){
+                    if (surahIndex == start.sura){
+                      paths.add(firstSegment);
+                      continue;
+                    }
+                    if (surahIndex != end.sura){
+                      paths.add(audioUtils.getSurahAudioPath(audioPathInfo,surahIndex));
+                      continue;
+                    }
+                    paths.add(lastSegment);
+                  }
+                  if (!paths.isEmpty()){
+                    File sharableAudioFile = audioUtils.getMergedAudioFromSegments(paths);
+                    shareUtil.shareAudioFileIntent(PagerActivity.this,sharableAudioFile);
+                  }
+                }
+                dismissProgressDialog();
+              }
+
+              @Override
+              public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
+                dismissProgressDialog();
+
               }
             })
     );

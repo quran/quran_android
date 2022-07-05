@@ -7,7 +7,10 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.quran.data.model.QuranText
+import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
@@ -15,6 +18,7 @@ import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.util.ToastCompat
 import dagger.Reusable
+import java.io.File
 import java.text.NumberFormat
 import java.util.Locale
 import javax.inject.Inject
@@ -123,5 +127,16 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
       // close sura label and append two new lines
       append("]")
     }
+  }
+
+
+  fun shareAudioFileIntent(activity: Activity, file: File) {
+    val authorities = BuildConfig.APPLICATION_ID + ".fileprovider"
+    val uri = FileProvider.getUriForFile(activity, authorities, file)
+    val shareIntent = Intent(Intent.ACTION_SEND)
+    shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+    shareIntent.type = "audio/mp3"
+    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    activity.startActivity(Intent.createChooser(shareIntent, "Share"))
   }
 }
