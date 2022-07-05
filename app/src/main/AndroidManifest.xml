@@ -97,25 +97,14 @@
         android:exported="false"
         android:authorities="@string/authority"/>
 
-<!--    <provider-->
-<!--        android:name="androidx.core.content.FileProvider"-->
-<!--        android:authorities="@string/file_authority"-->
-<!--        android:grantUriPermissions="true"-->
-<!--        android:exported="false">-->
-<!--      <meta-data-->
-<!--          android:name="android.support.FILE_PROVIDER_PATHS"-->
-<!--          android:resource="@xml/file_paths"/>-->
-<!--    </provider>-->
     <provider
         android:name="androidx.core.content.FileProvider"
         android:authorities="@string/file_authority"
-        android:exported="false"
         android:grantUriPermissions="true"
-        tools:replace="android:authorities">
+        android:exported="false">
       <meta-data
           android:name="android.support.FILE_PROVIDER_PATHS"
-          android:resource="@xml/file_paths"
-          tools:replace="android:resource" />
+          android:resource="@xml/file_paths"/>
     </provider>
 
     <receiver android:name="androidx.media.session.MediaButtonReceiver">

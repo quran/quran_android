@@ -3,13 +3,4 @@
   <external-files-path
       name="backups"
       path="backups/" />
-  <external-path name="external_files" path="."/>
-  <!--    <external-path path="Android/data/${applicationId}/" name="package_root" />-->
-  <cache-path path="Android/data/${applicationId}/" name="cache" />
-  <files-path path="Android/data/${applicationId}/" name="files" />
-  <!--
-  root-path is suggested in https://stackoverflow.com/q/42516126
-  as a workaround to access files only accessible via root
-  -->
-  <root-path path="/" name="storage_root" />
 </paths>
