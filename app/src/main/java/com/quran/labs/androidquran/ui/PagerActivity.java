@@ -1940,10 +1940,11 @@ public class PagerActivity extends AppCompatActivity implements
                 int startAyah = start.ayah;
                 int endAyah = end.ayah;
                 int startAyahTime = startAyah == 1?
-                    sparseIntArrayList.get(0).get(0):
+                    sparseIntArrayList.get(0).get(1):
                     sparseIntArrayList.get(0).get(startAyah);
 
-                int endAyahTime = endAyah == 1?sparseIntArrayList.get(1).get(0):
+                int endAyahTime = endAyah == 1?
+                    sparseIntArrayList.get(1).get(1):
                     sparseIntArrayList.get(1).get(endAyah+1)==0?
                         audioUtils.getSurahDuration(PagerActivity.this,audioUtils.getSurahAudioPath(audioPathInfo,end.sura)):
                         sparseIntArrayList.get(1).get(endAyah+1);
