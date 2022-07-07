@@ -291,7 +291,7 @@ class AudioUtils @Inject constructor(
     }
   }
 
-  fun getLocalAudioPathInfo(context: Context,qari: QariItem): AudioPathInfo? {
+  fun getLocalAudioPathInfo(qari: QariItem): AudioPathInfo? {
     val localPath = getLocalQariUri(qari)
     if (localPath != null) {
       val databasePath = getQariDatabasePathIfGapless(qari)
