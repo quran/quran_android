@@ -167,6 +167,7 @@
 
   <!-- long press -->
   <string name="ayah_copied_popup">آیه کپی شد</string>
+  <string name="share_audio_file_title">Share Audio File</string>
 
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">تعیین برچسب برای نشانک</string>

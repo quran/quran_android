@@ -170,6 +170,7 @@
 
   <!-- long press -->
   <string name="ayah_copied_popup">Versículo copiado</string>
+  <string name="share_audio_file_title">Share Audio File</string>
   <!--bookmarks & tags contextual action bar-->
   <string name="tag_bookmark">Etiquetar Favorito</string>
   <string name="delete_tag">Borrar Etiqueta</string>

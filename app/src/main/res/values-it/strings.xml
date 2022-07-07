@@ -123,6 +123,7 @@
   <string name="playback_prompt_title">Avviare la riproduzione da:</string>
   <string name="starting_page_label">Inizio della pagina</string>
   <string name="ayah_copied_popup">Ayah Copiato</string>
+  <string name="share_audio_file_title">Share Audio File</string>
   <string name="tag_bookmark">Segnalibro</string>
   <string name="delete_tag">Cancellare il tag</string>
   <string name="edit_tag">Modifica tag</string>

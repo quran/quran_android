@@ -365,6 +365,7 @@
 
   <!-- long press -->
   <string name="ayah_copied_popup">Ayah Copied</string>
+  <string name="share_audio_file_title">Share Audio File</string>
 
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Tag Bookmark</string>
@@ -410,6 +411,7 @@
   <string name="audio_manager_download_all">Download all</string>
   <string name="audio_manager_download_selection">Download selection</string>
   <string name="audio_manager_delete_selection">Delete selection</string>
+
 
   <!-- audio updates -->
   <string name="audio_updated_title">Quran Audio files Update</string>

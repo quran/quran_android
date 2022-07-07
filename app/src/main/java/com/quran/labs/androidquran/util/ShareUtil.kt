@@ -137,6 +137,6 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
     shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
     shareIntent.type = "audio/mp3"
     shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    activity.startActivity(Intent.createChooser(shareIntent, "Share"))
+    activity.startActivity(Intent.createChooser(shareIntent, activity.getString(R.string.share_audio_file_title)))
   }
 }
