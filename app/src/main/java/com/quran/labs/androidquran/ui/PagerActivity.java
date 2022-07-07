@@ -1866,6 +1866,7 @@ public class PagerActivity extends AppCompatActivity implements
 
   public void shareAyahAudio(SuraAyah start, SuraAyah end) {
     audioCacheFilePaths.clear();
+
     if (start == null || end == null) {
       return;
     }else {
@@ -1887,7 +1888,16 @@ public class PagerActivity extends AppCompatActivity implements
 
     assert audioPathInfo != null;
     if (audioPathInfo.getGaplessDatabase() != null) {
-      createAndShareAudio(selectedStartSuraAyah,selectedEndSuraAyah,audioPathInfo);
+      if (!audioUtils.haveAllFiles(audioPathInfo.getUrlFormat(),audioPathInfo.getLocalDirectory(),selectedStartSuraAyah,selectedEndSuraAyah,true)){
+        AudioRequest audioRequest = new AudioRequest(
+            selectedStartSuraAyah, selectedEndSuraAyah, selectedQari, 0, 0, true, false, audioPathInfo);
+        Intent downloadIntent = audioPresenter.getDownloadIntent(this, audioRequest);
+        if (downloadIntent != null) {
+          handleRequiredDownload(downloadIntent);
+        }
+      }else{
+        createAndShareAudio(selectedStartSuraAyah,selectedEndSuraAyah,audioPathInfo);
+      }
     }
   }
 
@@ -1939,15 +1949,16 @@ public class PagerActivity extends AppCompatActivity implements
 
                 int startAyah = start.ayah;
                 int endAyah = end.ayah;
-                int startAyahTime = startAyah == 1?
-                    sparseIntArrayList.get(0).get(1):
-                    sparseIntArrayList.get(0).get(startAyah);
+                int startAyahTime = 0;
+                int endAyahTime = sparseIntArrayList.get(1).get(endAyah+1);
 
-                int endAyahTime = endAyah == 1?
-                    sparseIntArrayList.get(1).get(1):
-                    sparseIntArrayList.get(1).get(endAyah+1)==0?
-                        audioUtils.getSurahDuration(PagerActivity.this,audioUtils.getSurahAudioPath(audioPathInfo,end.sura)):
-                        sparseIntArrayList.get(1).get(endAyah+1);
+                if (startAyah!=1){
+                  startAyahTime = sparseIntArrayList.get(0).get(startAyah);
+                }
+                if (endAyahTime == 0){
+                  endAyahTime = audioUtils.getSurahDuration(PagerActivity.this,audioUtils.getSurahAudioPath(audioPathInfo,end.sura));
+                }
+
 
                 if (start.sura == end.sura){
                   String audioSegmentPath = audioUtils.getSurahSegment(audioUtils.getSurahAudioPath(audioPathInfo,start.sura),startAyahTime,endAyahTime);

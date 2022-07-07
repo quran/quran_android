@@ -87,7 +87,7 @@ constructor(private val quranDisplayData: QuranDisplayData,
     lastAudioRequest?.let { play(it) }
   }
 
-  private fun getDownloadIntent(context: Context, request: AudioRequest): Intent? {
+  fun getDownloadIntent(context: Context, request: AudioRequest): Intent? {
     val qari = request.qari
     val audioPathInfo = request.audioPathInfo
     val path = audioPathInfo.localDirectory

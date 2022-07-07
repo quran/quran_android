@@ -292,7 +292,7 @@ class AudioUtils @Inject constructor(
   }
 
   fun getLocalAudioPathInfo(qari: QariItem): AudioPathInfo? {
-    val localPath = getLocalQariUri(qari)
+    val localPath = getLocalQariUrl(qari)
     if (localPath != null) {
       val databasePath = getQariDatabasePathIfGapless(qari)
       val urlFormat = if (databasePath.isNullOrEmpty()) {
@@ -383,7 +383,7 @@ class AudioUtils @Inject constructor(
   }
 
   fun getSurahAudioPath(audioPathInfo: AudioPathInfo, surah: Int): String? {
-    return String.format(Locale.US, audioPathInfo.localDirectory, surah)
+    return String.format(Locale.US, audioPathInfo.urlFormat, surah)
   }
 
   companion object {
