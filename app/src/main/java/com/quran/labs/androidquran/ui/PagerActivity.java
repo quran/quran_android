@@ -261,11 +261,12 @@ public class PagerActivity extends AppCompatActivity implements
 
   private final PagerHandler handler = new PagerHandler(this);
 
-  private Disposable timingDisposable;
-  private int            gaplessSura;
-  private SparseIntArray gaplessSuraData = new SparseIntArray();
   public static final File audioCacheDirectory= new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath() +
       File.separator +"quran_android_cache");
+  private ArrayList<String> audioCacheFilePaths = new ArrayList<>();
+  private SuraAyah selectedStartSuraAyah = null;
+  private SuraAyah selectedEndSuraAyah = null;
+  private QariItem selectedQari = null;
 
 
   private static class PagerHandler extends Handler {
@@ -1864,7 +1865,7 @@ public class PagerActivity extends AppCompatActivity implements
   }
 
   public void shareAyahAudio(SuraAyah start, SuraAyah end) {
-    SuraAyah    actualStart,actualEnd;
+    audioCacheFilePaths.clear();
     if (start == null || end == null) {
       return;
     }else {
@@ -1877,16 +1878,16 @@ public class PagerActivity extends AppCompatActivity implements
       }
 
       kotlin.Pair pair2       = pair;
-      actualStart = (SuraAyah) pair2.component1();
-      actualEnd = (SuraAyah) pair2.component2();
+      selectedStartSuraAyah = (SuraAyah) pair2.component1();
+      selectedEndSuraAyah = (SuraAyah) pair2.component2();
     }
 
-    final QariItem qari          = audioStatusBar.getAudioInfo();
-    AudioPathInfo  audioPathInfo = audioUtils.getLocalAudioPathInfo(this,qari);
+    selectedQari          = audioStatusBar.getAudioInfo();
+    AudioPathInfo  audioPathInfo = audioUtils.getLocalAudioPathInfo(this,selectedQari);
 
     assert audioPathInfo != null;
     if (audioPathInfo.getGaplessDatabase() != null) {
-      createAndShareAudio(actualStart,actualEnd,audioPathInfo);
+      createAndShareAudio(selectedStartSuraAyah,selectedEndSuraAyah,audioPathInfo);
     }
   }
 
@@ -1942,7 +1943,10 @@ public class PagerActivity extends AppCompatActivity implements
                 int endAyahTime = startAyah == 1?sparseIntArrayList.get(1).get(0):sparseIntArrayList.get(1).get(endAyah+1)==0?audioUtils.getSurahDuration(PagerActivity.this,audioUtils.getSurahAudioPath(audioPathInfo,end.sura)):sparseIntArrayList.get(1).get(endAyah+1);
 
                 if (start.sura == end.sura){
-                 shareUtil.shareAudioFileIntent(PagerActivity.this,new File(audioUtils.getSurahSegment(audioUtils.getSurahAudioPath(audioPathInfo,start.sura),startAyahTime,endAyahTime)));
+                  String audioSegmentPath = audioUtils.getSurahSegment(audioUtils.getSurahAudioPath(audioPathInfo,start.sura),startAyahTime,endAyahTime);
+                  audioCacheFilePaths.add(audioSegmentPath);
+                  renameSharableAudioFile(audioSegmentPath);
+                  shareUtil.shareAudioFileIntent(PagerActivity.this,new File(audioSegmentPath));
                 }else {
                   ArrayList<String> paths = new ArrayList<>();
                   String path1  = audioUtils.getSurahAudioPath(audioPathInfo,start.sura);
@@ -1963,7 +1967,9 @@ public class PagerActivity extends AppCompatActivity implements
                     paths.add(lastSegment);
                   }
                   if (!paths.isEmpty()){
+                    audioCacheFilePaths.addAll(paths);
                     File sharableAudioFile = audioUtils.getMergedAudioFromSegments(paths);
+                    renameSharableAudioFile(sharableAudioFile.getPath());
                     shareUtil.shareAudioFileIntent(PagerActivity.this,sharableAudioFile);
                   }
                 }
@@ -1977,6 +1983,17 @@ public class PagerActivity extends AppCompatActivity implements
               }
             })
     );
+  }
+
+  private void renameSharableAudioFile(String audioSegmentPath) {
+    String newAudioFileName = selectedQari.getPath() + "_" + selectedStartSuraAyah.sura + "-" + selectedStartSuraAyah.ayah + "_" + selectedEndSuraAyah.sura + "-" + selectedEndSuraAyah.ayah;
+    String newAudioFilePath = audioCacheDirectory + File.separator+ newAudioFileName + ".mp3";
+    new File(audioSegmentPath).renameTo(new File(newAudioFilePath));
+    audioCacheFilePaths.remove(audioSegmentPath);
+    for (String path : audioCacheFilePaths){
+      new File(path).delete();
+    }
+    audioCacheFilePaths.clear();
   }
 
   private void showProgressDialog() {
