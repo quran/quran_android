@@ -25,20 +25,29 @@ class AudioInfoCommand @Inject constructor(
     val qaris = qariUtil.getQariList(appContext)
     return qaris.map { qariItem ->
       val matchingPath = folders.firstOrNull { it.name == qariItem.path }
-      if (matchingPath == null) {
-        QariDownloadInfo(qariItem, emptyList(), emptyList())
-      } else {
-        generateQariDownloadInfo(qariItem, matchingPath)
-      }
+      generateQariDownloadInfoWithPath(qariItem, matchingPath)
     }
   }
 
-  fun generateQariDownloadInfo(qariItem: QariItem, path: Path): QariDownloadInfo {
-    val (fullDownloads, partialDownloads) = if (qariItem.isGapless) {
-      gaplessAudioInfoCommand.gaplessDownloads(path)
+  fun generateQariDownloadInfo(qariItem: QariItem, audioDirectory: String): QariDownloadInfo {
+    val path = audioDirectory.toPath()
+    val directories = fileSystem.listOrNull(path) ?: emptyList()
+
+    val folders = directories.filter { it.toFile().isDirectory }
+    val matchingPath = folders.firstOrNull { it.name == qariItem.path }
+    return generateQariDownloadInfoWithPath(qariItem, matchingPath)
+  }
+
+  private fun generateQariDownloadInfoWithPath(qariItem: QariItem, path: Path?): QariDownloadInfo {
+    return if (path == null) {
+      QariDownloadInfo(qariItem, emptyList(), emptyList())
     } else {
-      gappedAudioInfoCommand.gappedDownloads(path)
+      val (fullDownloads, partialDownloads) = if (qariItem.isGapless) {
+        gaplessAudioInfoCommand.gaplessDownloads(path)
+      } else {
+        gappedAudioInfoCommand.gappedDownloads(path)
+      }
+      QariDownloadInfo(qariItem, fullDownloads, partialDownloads)
     }
-    return QariDownloadInfo(qariItem, fullDownloads, partialDownloads)
   }
 }

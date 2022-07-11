@@ -15,6 +15,7 @@ android {
 
 dependencies {
   implementation project(":common:data")
+  implementation project(":common:download")
 
   implementation deps.dagger.runtime
   implementation "androidx.annotation:annotation:${androidxAnnotationVersion}"

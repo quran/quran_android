@@ -120,6 +120,7 @@ dependencies {
   implementation project(path: ':common:bookmark')
   implementation project(path: ':common:data')
   implementation project(path: ':common:di')
+  implementation project(path: ':common:download')
   implementation project(path: ':common:networking')
   implementation project(path: ':common:pages')
   implementation project(path: ':common:reading')
