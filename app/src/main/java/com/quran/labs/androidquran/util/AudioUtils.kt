@@ -306,14 +306,14 @@ class AudioUtils @Inject constructor(
     return null
   }
 
-  fun getMergedAudioFromSegments(segments: ArrayList<String>): File {
+  fun getMergedAudioFromSegments(segments: ArrayList<String>): String {
     var mergedAudioPath = segments[0]
     if (segments.size > 1) {
       for (i in 1 until segments.size) {
         mergedAudioPath = mergeAudios(mergedAudioPath, segments[i])!!
       }
     }
-    return File(mergedAudioPath)
+    return mergedAudioPath
   }
 
   private fun mergeAudios(path1: String, path2: String): String? {
@@ -353,26 +353,26 @@ class AudioUtils @Inject constructor(
   }
 
   fun getSurahSegment(path: String, lowerCut: Int, upperCut: Int): String? {
+    if (lowerCut == 0 && upperCut == 0) {
+      return null
+    }
     val tempAudioName = UUID.randomUUID().toString() + ".mp3"
     val destFile = File(PagerActivity.audioCacheDirectory.path + File.separator + tempAudioName)
     val mSoundFile = arrayOfNulls<CheapSoundFile>(1)
     try {
       mSoundFile[0] = CheapSoundFile.create(path, null)
-      if (lowerCut == 0 && upperCut == 0) {
-        return null
-      }
       val startTime = lowerCut.toFloat() / 1000
       val endTime = upperCut.toFloat() / 1000
       val samplesPerFrame = mSoundFile[0]?.samplesPerFrame
       val sampleRate = mSoundFile[0]?.sampleRate
       val avg = sampleRate?.div(samplesPerFrame!!)
       val startFrames = (startTime * avg!!).roundToInt()
-      val endFrames = (endTime * avg!!).roundToInt()
+      val endFrames = (endTime * avg).roundToInt()
       mSoundFile[0]?.WriteFile(destFile, startFrames, endFrames - startFrames)
     } catch (e: IOException) {
       e.printStackTrace()
     }
-    return destFile.path
+    return destFile.absolutePath
   }
 
   fun getSurahDuration(context: Context,path: String): Int {

@@ -147,7 +147,6 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.observers.DisposableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -228,8 +227,10 @@ public class PagerActivity extends AppCompatActivity implements
   private int defaultNavigationBarColor;
   private boolean isSplitScreen = false;
 
-  @Nullable private QuranAyahInfo lastSelectedTranslationAyah;
-  @Nullable private LocalTranslation[] lastActivatedLocalTranslations;
+  @Nullable
+  private QuranAyahInfo lastSelectedTranslationAyah;
+  @Nullable
+  private LocalTranslation[] lastActivatedLocalTranslations;
 
   private PagerActivityComponent pagerActivityComponent;
 
@@ -243,7 +244,7 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject ShareUtil shareUtil;
   @Inject AudioUtils audioUtils;
   @Inject QuranDisplayData quranDisplayData;
-  @Inject QuranInfo      quranInfo;
+  @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
   @Inject AudioPresenter audioPresenter;
   @Inject QuranEventLogger quranEventLogger;
@@ -261,8 +262,9 @@ public class PagerActivity extends AppCompatActivity implements
 
   private final PagerHandler handler = new PagerHandler(this);
 
-  public static final File audioCacheDirectory= new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath() +
-      File.separator +"quran_android_cache");
+  public static final File audioCacheDirectory = new File(
+      Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath() +
+          File.separator + "quran_android_cache");
   private ArrayList<String> audioCacheFilePaths = new ArrayList<>();
   private SuraAyah selectedStartSuraAyah = null;
   private SuraAyah selectedEndSuraAyah = null;
@@ -305,12 +307,21 @@ public class PagerActivity extends AppCompatActivity implements
     isSplitScreen = quranSettings.isQuranSplitWithTranslation();
     audioEventPresenterBridge = new AudioEventPresenterBridge(
         audioEventPresenter,
-        suraAyah -> { onAudioPlaybackAyahChanged(suraAyah); return null; }
+        suraAyah -> {
+          onAudioPlaybackAyahChanged(suraAyah);
+          return null;
+        }
     );
     readingEventPresenterBridge = new ReadingEventPresenterBridge(
         readingEventPresenter,
-        () -> { onPageClicked(); return null; },
-        ayahSelection -> { onAyahSelectionChanged(ayahSelection); return null; }
+        () -> {
+          onPageClicked();
+          return null;
+        },
+        ayahSelection -> {
+          onAyahSelectionChanged(ayahSelection);
+          return null;
+        }
     );
 
     // remove the window background to avoid overdraw. note that, per Romain's blog, this is
@@ -356,7 +367,7 @@ public class PagerActivity extends AppCompatActivity implements
 
     setContentView(R.layout.quran_page_activity_slider);
     if (!audioCacheDirectory.exists()) {
-      if (!audioCacheDirectory.mkdirs()){
+      if (!audioCacheDirectory.mkdirs()) {
         Toast.makeText(PagerActivity.this, "could not create directory", Toast.LENGTH_SHORT).show();
       }
     }
@@ -443,7 +454,8 @@ public class PagerActivity extends AppCompatActivity implements
           } else if (position == barPos - 1 || position == barPos + 1) {
             // Swiping to previous or next ViewPager page (i.e. next or previous quran page)
             final SelectionIndicator updatedSelectionIndicator =
-                SelectionIndicatorKt.withXScroll(selectionIndicator, viewPager.getWidth() - positionOffsetPixels);
+                SelectionIndicatorKt.withXScroll(selectionIndicator,
+                    viewPager.getWidth() - positionOffsetPixels);
             readingEventPresenterBridge.withSelectionIndicator(updatedSelectionIndicator);
           } else {
             readingEventPresenterBridge.clearSelectedAyah();
@@ -563,8 +575,14 @@ public class PagerActivity extends AppCompatActivity implements
         this::getCurrentPage,
         () -> audioStatusBar,
         () -> ayahToolBar,
-        ayah -> { ensurePage(ayah.sura, ayah.ayah); return null; },
-        sliderPage -> { showSlider(slidingPagerAdapter.getPagePosition(sliderPage)); return null; }
+        ayah -> {
+          ensurePage(ayah.sura, ayah.ayah);
+          return null;
+        },
+        sliderPage -> {
+          showSlider(slidingPagerAdapter.getPagePosition(sliderPage));
+          return null;
+        }
     ));
   }
 
@@ -1393,16 +1411,16 @@ public class PagerActivity extends AppCompatActivity implements
   private void requestTranslationsList() {
     compositeDisposable.add(
         Single.fromCallable(() ->
-            translationsDBAdapter.getTranslations())
+                translationsDBAdapter.getTranslations())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableSingleObserver<List<LocalTranslation>>() {
               @Override
               public void onSuccess(@NonNull List<LocalTranslation> translationList) {
                 final List<LocalTranslation> sortedTranslations = new ArrayList<>(translationList);
-              Collections.sort(sortedTranslations, new LocalTranslationDisplaySort());
+                Collections.sort(sortedTranslations, new LocalTranslationDisplaySort());
 
-              int items = sortedTranslations.size();
+                int items = sortedTranslations.size();
                 String[] titles = new String[items];
                 for (int i = 0; i < items; i++) {
                   LocalTranslation item = sortedTranslations.get(i);
@@ -1419,7 +1437,8 @@ public class PagerActivity extends AppCompatActivity implements
                 if (currentActiveTranslationsFilesNames.isEmpty() && items > 0) {
                   currentActiveTranslationsFilesNames = new HashSet<>();
                   for (int i = 0; i < items; i++) {
-                    currentActiveTranslationsFilesNames.add(sortedTranslations.get(i).getFilename());
+                    currentActiveTranslationsFilesNames.add(
+                        sortedTranslations.get(i).getFilename());
                   }
                 }
                 activeTranslationsFilesNames = currentActiveTranslationsFilesNames;
@@ -1452,7 +1471,8 @@ public class PagerActivity extends AppCompatActivity implements
             if (sura == null || ayah == null) {
               // page bookmark
               bookmarksCache.put(page, isBookmarked);
-              bookmarksMenuItem.setIcon(isBookmarked ? com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite : com.quran.labs.androidquran.common.toolbar.R.drawable.ic_not_favorite);
+              bookmarksMenuItem.setIcon(
+                  isBookmarked ? com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite : com.quran.labs.androidquran.common.toolbar.R.drawable.ic_not_favorite);
             } else {
               // ayah bookmark
               SuraAyah suraAyah = new SuraAyah(sura, ayah);
@@ -1501,7 +1521,8 @@ public class PagerActivity extends AppCompatActivity implements
         bookmarked = bookmarksCache.get(page - 1);
       }
 
-      menuItem.setIcon(bookmarked ? com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite : com.quran.labs.androidquran.common.toolbar.R.drawable.ic_not_favorite);
+      menuItem.setIcon(
+          bookmarked ? com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite : com.quran.labs.androidquran.common.toolbar.R.drawable.ic_not_favorite);
     } else {
       supportInvalidateOptionsMenu();
     }
@@ -1542,7 +1563,7 @@ public class PagerActivity extends AppCompatActivity implements
     final SuraAyah start = new SuraAyah(startSura, startAyah);
     final SuraAyah end = getSelectionEnd();
     // handle the case of multiple ayat being selected and play them as a range if so
-    final SuraAyah ending = (end == null || start.equals(end) || start.after(end))? null : end;
+    final SuraAyah ending = (end == null || start.equals(end) || start.after(end)) ? null : end;
     playFromAyah(start, ending, page, 0, 0, ending != null);
   }
 
@@ -1785,7 +1806,7 @@ public class PagerActivity extends AppCompatActivity implements
         shareAyahLink(startSuraAyah, endSuraAyah);
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_share_ayah_text) {
         shareAyah(startSuraAyah, endSuraAyah, false);
-      }else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_share_ayah_audio) {
+      } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_share_ayah_audio) {
         shareAyahAudio(startSuraAyah, endSuraAyah);
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_copy_ayah) {
         shareAyah(startSuraAyah, endSuraAyah, true);
@@ -1823,7 +1844,8 @@ public class PagerActivity extends AppCompatActivity implements
         if (isCopy) {
           shareUtil.copyToClipboard(this, shareText);
         } else {
-          shareUtil.shareViaIntent(this, shareText, com.quran.labs.androidquran.common.toolbar.R.string.share_ayah_text);
+          shareUtil.shareViaIntent(this, shareText,
+              com.quran.labs.androidquran.common.toolbar.R.string.share_ayah_text);
         }
       }
 
@@ -1852,7 +1874,8 @@ public class PagerActivity extends AppCompatActivity implements
             .subscribeWith(new DisposableSingleObserver<String>() {
               @Override
               public void onSuccess(@NonNull String url) {
-                shareUtil.shareViaIntent(PagerActivity.this, url, com.quran.labs.androidquran.common.toolbar.R.string.share_ayah);
+                shareUtil.shareViaIntent(PagerActivity.this, url,
+                    com.quran.labs.androidquran.common.toolbar.R.string.share_ayah);
                 dismissProgressDialog();
               }
 
@@ -1867,128 +1890,117 @@ public class PagerActivity extends AppCompatActivity implements
   public void shareAyahAudio(SuraAyah start, SuraAyah end) {
     audioCacheFilePaths.clear();
 
-    if (start == null || end == null) {
-      return;
-    }else {
-      kotlin.Pair pair;
-      if (start.compareTo(end) <= 0) {
-        pair = TuplesKt.to(start, end);
-      } else {
-        Timber.Forest.e(new IllegalStateException("End isn't larger than the start: " + start + " to " + end));
-        pair = TuplesKt.to(end, start);
-      }
+    kotlin.Pair pair2 = getReorderedAyatPair(start, end);
+    selectedStartSuraAyah = (SuraAyah) pair2.component1();
+    selectedEndSuraAyah = (SuraAyah) pair2.component2();
 
-      kotlin.Pair pair2       = pair;
-      selectedStartSuraAyah = (SuraAyah) pair2.component1();
-      selectedEndSuraAyah = (SuraAyah) pair2.component2();
-    }
-
-    selectedQari          = audioStatusBar.getAudioInfo();
-    AudioPathInfo  audioPathInfo = audioUtils.getLocalAudioPathInfo(selectedQari);
+    selectedQari = audioStatusBar.getAudioInfo();
+    AudioPathInfo audioPathInfo = audioUtils.getLocalAudioPathInfo(selectedQari);
 
     assert audioPathInfo != null;
-    if (audioPathInfo.getGaplessDatabase() != null) {
-      if (!audioUtils.haveAllFiles(audioPathInfo.getUrlFormat(),audioPathInfo.getLocalDirectory(),selectedStartSuraAyah,selectedEndSuraAyah,true)){
-        AudioRequest audioRequest = new AudioRequest(
-            selectedStartSuraAyah, selectedEndSuraAyah, selectedQari, 0, 0, true, false, audioPathInfo);
-        Intent downloadIntent = audioPresenter.getDownloadIntent(this, audioRequest);
-        if (downloadIntent != null) {
-          handleRequiredDownload(downloadIntent);
-        }
-      }else{
-        createAndShareAudio(selectedStartSuraAyah,selectedEndSuraAyah,audioPathInfo);
+    boolean gaplessDatabaseExists = audioPathInfo.getGaplessDatabase() != null;
+
+    if (gaplessDatabaseExists) {
+      if (audioFilesExist(audioPathInfo)) {
+        createAndShareAudio(selectedStartSuraAyah, selectedEndSuraAyah, audioPathInfo);
+      } else {
+        requestDownload(audioPathInfo);
       }
     }
   }
 
+  private kotlin.Pair getReorderedAyatPair(SuraAyah start, SuraAyah end) {
+    kotlin.Pair pair;
+    if (start.compareTo(end) <= 0) {
+      pair = TuplesKt.to(start, end);
+    } else {
+      Timber.Forest.e(
+          new IllegalStateException("End isn't larger than the start: " + start + " to " + end));
+      pair = TuplesKt.to(end, start);
+    }
+    return pair;
+  }
+
+  private boolean audioFilesExist(AudioPathInfo audioPathInfo) {
+    return audioUtils.haveAllFiles(audioPathInfo.getUrlFormat(), audioPathInfo.getLocalDirectory(),
+        selectedStartSuraAyah, selectedEndSuraAyah, true);
+  }
+
   private void createAndShareAudio(SuraAyah start, SuraAyah end, AudioPathInfo audioPathInfo) {
     showProgressDialog();
-    String databasePath = audioPathInfo.getGaplessDatabase();
     compositeDisposable.add(
-        Single.fromCallable(() -> {
-              assert databasePath != null;
-              SuraTimingDatabaseHandler db              = SuraTimingDatabaseHandler.Companion.getDatabaseHandler(databasePath);
-              SparseIntArray            firstSurahMap   = new SparseIntArray();
-              SparseIntArray            lastSurahMap    = new SparseIntArray();
-              Cursor                    firstSurahCursor;
-              Cursor                    lastSurahCursor = null;
-
-              try {
-                firstSurahCursor = db.getAyahTimings(start.sura);
-                Timber.Forest.d("got cursor of data");
-                if (firstSurahCursor != null && firstSurahCursor.moveToFirst()) {
-                  do {
-                    int ayah = firstSurahCursor.getInt(1);
-                    int time = firstSurahCursor.getInt(2);
-                    firstSurahMap.put(ayah, time);
-                  } while (firstSurahCursor.moveToNext());
-                }
-
-                lastSurahCursor = db.getAyahTimings(end.sura);
-                Timber.Forest.d("got cursor of data");
-                if (lastSurahCursor != null && lastSurahCursor.moveToFirst()) {
-                  do {
-                    int ayah = lastSurahCursor.getInt(1);
-                    int time = lastSurahCursor.getInt(2);
-                    lastSurahMap.put(ayah, time);
-                  } while (lastSurahCursor.moveToNext());
-                }
-              } catch (SQLException sqlException) {
-                Timber.Forest.e(sqlException);
-              } finally {
-                closeCursor(lastSurahCursor);
-              }
-              ArrayList<SparseIntArray> mapArray = new ArrayList<>(Arrays.asList(firstSurahMap, lastSurahMap));
-              return mapArray;
-            }).subscribeOn(Schedulers.io())
+        Single.fromCallable(() -> getTimingData(start, end, audioPathInfo))
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableSingleObserver<ArrayList<SparseIntArray>>() {
               @Override
-              public void onSuccess(@io.reactivex.rxjava3.annotations.NonNull ArrayList<SparseIntArray> sparseIntArrayList) {
+              public void onSuccess(
+                  @io.reactivex.rxjava3.annotations.NonNull ArrayList<SparseIntArray> sparseIntArrayList) {
                 Intrinsics.checkNotNullExpressionValue(sparseIntArrayList, "mapArray");
 
                 int startAyah = start.ayah;
                 int endAyah = end.ayah;
-                int startAyahTime = 0;
-                int endAyahTime = sparseIntArrayList.get(1).get(endAyah+1);
+                SparseIntArray startSurahTimingDataArray = sparseIntArrayList.get(0);
+                SparseIntArray endSurahTimingDataArray = sparseIntArrayList.get(1);
+                int startAyahTime;
+                int endAyahTime;
 
-                if (startAyah!=1){
-                  startAyahTime = sparseIntArrayList.get(0).get(startAyah);
+                boolean isFirstAyahInSurah = startAyah == 1;
+                int startTimeOfAyahAfterEndAyah = endSurahTimingDataArray.get(endAyah + 1);
+                boolean isLastAyahInSurah = startTimeOfAyahAfterEndAyah == 0;
+
+                if (isFirstAyahInSurah) {
+                  startAyahTime = 0;
+                } else {
+                  startAyahTime = startSurahTimingDataArray.get(startAyah);
                 }
-                if (endAyahTime == 0){
-                  endAyahTime = audioUtils.getSurahDuration(PagerActivity.this,audioUtils.getSurahAudioPath(audioPathInfo,end.sura));
+
+                if (isLastAyahInSurah) {
+                  endAyahTime = audioUtils.getSurahDuration(PagerActivity.this,
+                      audioUtils.getSurahAudioPath(audioPathInfo, end.sura));
+                } else {
+                  endAyahTime = startTimeOfAyahAfterEndAyah;
                 }
 
+                boolean startAndEndAyahAreInSameSurah = start.sura == end.sura;
 
-                if (start.sura == end.sura){
-                  String audioSegmentPath = audioUtils.getSurahSegment(audioUtils.getSurahAudioPath(audioPathInfo,start.sura),startAyahTime,endAyahTime);
+                if (startAndEndAyahAreInSameSurah) {
+                  String audioSegmentPath = audioUtils.getSurahSegment(
+                      audioUtils.getSurahAudioPath(audioPathInfo, start.sura), startAyahTime,
+                      endAyahTime);
                   audioCacheFilePaths.add(audioSegmentPath);
-                  renameSharableAudioFile(audioSegmentPath);
-                  shareUtil.shareAudioFileIntent(PagerActivity.this,new File(audioSegmentPath));
-                }else {
-                  ArrayList<String> paths = new ArrayList<>();
-                  String path1  = audioUtils.getSurahAudioPath(audioPathInfo,start.sura);
-                  int upperCut = audioUtils.getSurahDuration(PagerActivity.this,path1);
-                  String firstSegment = audioUtils.getSurahSegment(path1,startAyahTime,upperCut);
-                  String path2  = audioUtils.getSurahAudioPath(audioPathInfo,end.sura);
-                  String lastSegment = audioUtils.getSurahSegment(path2,0,endAyahTime);
+                  shareAudioSegment(renameSharableAudioFile(audioSegmentPath));
+                } else {
+                  ArrayList<String> segmentPaths = new ArrayList<>();
+                  int endOfSurah = -1;
+                  int startOfSurah = 0;
+                  String startSegmentPath = getSurahSegmentPath(audioPathInfo, start.sura,
+                      startAyahTime, endOfSurah);
+                  String lastSegmentPath = getSurahSegmentPath(audioPathInfo, end.sura,
+                      startOfSurah, endAyahTime);
 
-                  for (int surahIndex = start.sura; surahIndex<=end.sura; surahIndex++){
-                    if (surahIndex == start.sura){
-                      paths.add(firstSegment);
+                  for (int surahIndex = start.sura; surahIndex <= end.sura; surahIndex++) {
+                    boolean isTheFirstSurah = surahIndex == start.sura;
+                    boolean isMiddleSurah = (surahIndex != start.sura) && (surahIndex != end.sura);
+
+                    if (isTheFirstSurah) {
+                      segmentPaths.add(startSegmentPath);
                       continue;
                     }
-                    if (surahIndex != end.sura){
-                      paths.add(audioUtils.getSurahAudioPath(audioPathInfo,surahIndex));
+                    if (isMiddleSurah) {
+                      segmentPaths.add(audioUtils.getSurahAudioPath(audioPathInfo, surahIndex));
                       continue;
                     }
-                    paths.add(lastSegment);
+                    segmentPaths.add(lastSegmentPath);
                   }
-                  if (!paths.isEmpty()){
-                    audioCacheFilePaths.addAll(paths);
-                    File sharableAudioFile = audioUtils.getMergedAudioFromSegments(paths);
-                    renameSharableAudioFile(sharableAudioFile.getPath());
-                    shareUtil.shareAudioFileIntent(PagerActivity.this,sharableAudioFile);
+
+                  boolean audioSegmentsWereCreated = !segmentPaths.isEmpty();
+
+                  if (audioSegmentsWereCreated) {
+                    audioCacheFilePaths.addAll(segmentPaths);
+                    String sharableAudioFilePath = audioUtils.getMergedAudioFromSegments(
+                        segmentPaths);
+                    shareAudioSegment(renameSharableAudioFile(sharableAudioFilePath));
                   }
                 }
                 dismissProgressDialog();
@@ -1997,21 +2009,93 @@ public class PagerActivity extends AppCompatActivity implements
               @Override
               public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
                 dismissProgressDialog();
-
               }
             })
     );
   }
 
-  private void renameSharableAudioFile(String audioSegmentPath) {
+  private ArrayList<SparseIntArray> getTimingData(SuraAyah start, SuraAyah end,
+                                                  AudioPathInfo audioPathInfo) {
+    String databasePath = audioPathInfo.getGaplessDatabase();
+
+    assert databasePath != null;
+    SuraTimingDatabaseHandler db = SuraTimingDatabaseHandler.Companion.getDatabaseHandler(
+        databasePath);
+    SparseIntArray firstSurahMap = new SparseIntArray();
+    SparseIntArray lastSurahMap = new SparseIntArray();
+    Cursor firstSurahCursor = null;
+    Cursor lastSurahCursor = null;
+
+    try {
+      firstSurahCursor = db.getAyahTimings(start.sura);
+      firstSurahMap = populateArrayFromCursor(firstSurahCursor);
+
+      lastSurahCursor = db.getAyahTimings(end.sura);
+      lastSurahMap = populateArrayFromCursor(lastSurahCursor);
+
+    } catch (SQLException sqlException) {
+      Timber.Forest.e(sqlException);
+    } finally {
+      closeCursor(firstSurahCursor);
+      closeCursor(lastSurahCursor);
+    }
+
+    ArrayList<SparseIntArray> mapArray = new ArrayList<>(
+        Arrays.asList(firstSurahMap, lastSurahMap));
+    return mapArray;
+  }
+
+  private SparseIntArray populateArrayFromCursor(Cursor cursor) {
+    SparseIntArray sparseIntArray = new SparseIntArray();
+    if (cursor != null && cursor.moveToFirst()) {
+      do {
+        int ayah = cursor.getInt(1);
+        int time = cursor.getInt(2);
+        sparseIntArray.put(ayah, time);
+      } while (cursor.moveToNext());
+    }
+    return sparseIntArray;
+  }
+
+  private String renameSharableAudioFile(String audioSegmentPath) {
     String newAudioFileName = selectedQari.getPath() + "_" + selectedStartSuraAyah.sura + "-" + selectedStartSuraAyah.ayah + "_" + selectedEndSuraAyah.sura + "-" + selectedEndSuraAyah.ayah;
-    String newAudioFilePath = audioCacheDirectory + File.separator+ newAudioFileName + ".mp3";
+    String newAudioFilePath = audioCacheDirectory + File.separator + newAudioFileName + ".mp3";
     new File(audioSegmentPath).renameTo(new File(newAudioFilePath));
     audioCacheFilePaths.remove(audioSegmentPath);
-    for (String path : audioCacheFilePaths){
+    for (String path : audioCacheFilePaths) {
       new File(path).delete();
     }
     audioCacheFilePaths.clear();
+    return newAudioFilePath;
+  }
+
+  private void shareAudioSegment(String path) {
+    shareUtil.shareAudioFileIntent(PagerActivity.this, new File(path));
+  }
+
+  private String getSurahSegmentPath(AudioPathInfo audioPathInfo, int surah,
+                                     int startAyahTime, int endAyahTime) {
+    int lowerBoundTime = startAyahTime;
+    int upperBoundTime = endAyahTime;
+
+    String audioFilePath = audioUtils.getSurahAudioPath(audioPathInfo, surah);
+    boolean isFirstSegment = endAyahTime < 0;
+
+    if (isFirstSegment) {
+      upperBoundTime = audioUtils.getSurahDuration(PagerActivity.this, audioFilePath);
+    }
+
+    return audioUtils.getSurahSegment(audioFilePath, lowerBoundTime, upperBoundTime);
+  }
+
+  private void requestDownload(AudioPathInfo audioPathInfo) {
+    AudioRequest audioRequest = new AudioRequest(
+        selectedStartSuraAyah, selectedEndSuraAyah, selectedQari, 0, 0, true, false, audioPathInfo);
+
+    Intent downloadIntent = audioPresenter.getDownloadIntent(this, audioRequest);
+    if (downloadIntent != null) {
+      handleRequiredDownload(downloadIntent);
+    }
   }
 
   private void showProgressDialog() {
