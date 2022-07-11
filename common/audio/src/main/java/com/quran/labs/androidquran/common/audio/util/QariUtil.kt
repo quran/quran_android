@@ -5,16 +5,15 @@ import com.quran.labs.androidquran.common.audio.model.AudioConfiguration
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import javax.inject.Inject
 
-class QariUtil @Inject constructor() {
+class QariUtil @Inject constructor(private val audioConfiguration: AudioConfiguration) {
 
   /**
    * Get a list of all available qaris as [QariItem]s
    *
    * @param context the current context
-   * @param audioConfiguration the audio configuration
    * @return a list of [QariItem] representing the qaris to show.
    */
-  fun getQariList(context: Context, audioConfiguration: AudioConfiguration): List<QariItem> {
+  fun getQariList(context: Context): List<QariItem> {
     val resources = context.resources
     val shuyookh = resources.getStringArray(audioConfiguration.quranReadersName)
     val paths = resources.getStringArray(audioConfiguration.quranReadersPath)

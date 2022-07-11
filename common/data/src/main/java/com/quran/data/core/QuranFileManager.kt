@@ -5,6 +5,7 @@ import androidx.annotation.WorkerThread
 interface QuranFileManager {
   fun quranImagesDirectory(): String?
   fun ayahInfoFileDirectory(): String?
+  fun audioFileDirectory(): String?
 
   fun recitationSessionsDirectory(): String
   fun recitationRecordingsDirectory(): String

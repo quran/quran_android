@@ -90,7 +90,7 @@ jobs:
         run: ./gradlew verifySqlDelightMigration
 
       - name: Run tests
-        run: ./gradlew testMadaniDebug feature:audio:testDebug -PdisableCrashlytics -PdisableFirebase
+        run: ./gradlew test -PdisableCrashlytics -PdisableFirebase
 
       - name: Upload test report
         uses: actions/upload-artifact@v2
