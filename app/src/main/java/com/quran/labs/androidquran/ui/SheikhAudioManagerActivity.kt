@@ -29,9 +29,11 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.audio.cache.AudioCacheInvalidator
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.service.QuranDownloadService
+import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent
@@ -63,6 +65,9 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
 
   @Inject
   lateinit var audioUtils: AudioUtils
+
+  @Inject
+  lateinit var audioCacheInvalidator: AudioCacheInvalidator
 
   private lateinit var progressBar: ProgressBar
   private lateinit var recyclerView: RecyclerView
@@ -315,6 +320,7 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
       AudioManagerUtils.clearCacheKeyForSheikh(qari)
       readShuyookhData()
       finishActionMode()
+      audioCacheInvalidator.invalidateCacheForQari(qari.id)
     }
   }
 
@@ -348,6 +354,7 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
         SuraAyah(endSurah, quranInfo.getNumberOfAyahs(endSurah))
     )
     intent.putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless)
+    intent.putExtra(QuranDownloadService.EXTRA_METADATA, AudioDownloadMetadata(qari.id))
     startService(intent)
   }
 
