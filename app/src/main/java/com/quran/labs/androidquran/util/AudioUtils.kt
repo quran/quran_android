@@ -43,7 +43,7 @@ class AudioUtils @Inject constructor(
    * set being alphabetically sorted.
    */
   fun getQariList(context: Context): List<QariItem> {
-    return qariUtil.getQariList(context, audioConfiguration)
+    return qariUtil.getQariList(context)
       .filter {
         it.isGapless || (it.hasGaplessAlternative && !haveAnyFiles(it.path))
       }

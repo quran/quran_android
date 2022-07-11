@@ -434,7 +434,7 @@ class QuranFileUtils @Inject constructor(
     return if (base == null) null else base + ayahInfoDirectory
   }
 
-  fun audioFileDirectory(): String? = getQuranAudioDirectory(appContext)
+  override fun audioFileDirectory(): String? = getQuranAudioDirectory(appContext)
 
   fun getQuranAudioDirectory(context: Context): String? {
     var path = getQuranBaseDirectory(context) ?: return null
