@@ -78,8 +78,7 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
           append(text)
         }
       }
-      val arabicIsShownBeforeTranslation = QuranSettings.getInstance(context).wantArabicInTranslationView()
-      if (!arabicIsShownBeforeTranslation){
+      if (ayahInfo.arabicText == null) {
         append("\n")
         append("-")
         append(quranDisplayData.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah, R.string.sura_ayah_notification_str))
