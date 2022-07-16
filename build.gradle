@@ -5,7 +5,7 @@ buildscript {
 
     daggerVersion = '2.42'
     composeVersion = '1.2.0-rc03'
-    composeCompilerVersion = '1.2.0'
+    composeCompilerVersion = '1.2.1-dev-k1.7.10-27cf0868d10'
 
     androidxMediaVersion = '1.6.0'
     androidxAnnotationVersion = '1.4.0'
@@ -75,5 +75,6 @@ allprojects {
   repositories {
     mavenCentral()
     google()
+    maven { url "https://androidx.dev/storage/compose-compiler/repository/" }
   }
 }
