@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">اختر قارئ</string>
+  <string name="qarilist_ready_to_play">جاهز للتشغيل</string>
+  <string name="qarilist_qaris_with_downloads">قراء تم تحميلهم</string>
+  <string name="qarilist_gapless">تلاوات متواصلة</string>
+  <string name="qarilist_gapped">تلاوات غير متواصلة</string>
+  <string name="qarilist_selected">تم الإختيار</string>
+  <string name="qarilist_dismiss">رفض</string>
+</resources>

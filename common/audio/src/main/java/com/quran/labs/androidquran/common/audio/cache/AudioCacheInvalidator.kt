@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AudioCacheInvalidator @Inject constructor() {
-  private val cache = MutableSharedFlow<Int>(onBufferOverflow = BufferOverflow.DROP_OLDEST)
+  private val cache = MutableSharedFlow<Int>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
   fun qarisToInvalidate(): Flow<Int> = cache.filter { it > -1 }
 

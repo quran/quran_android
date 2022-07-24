@@ -1,9 +1,5 @@
 package com.quran.labs.androidquran.ui;
 
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
-
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -30,8 +26,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -49,7 +45,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.NonRestoringViewPager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
-
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.model.selection.AyahSelection;
@@ -111,28 +106,20 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.ShareUtil;
 import com.quran.labs.androidquran.view.AudioStatusBar;
+import com.quran.labs.androidquran.view.CurrentQariBridge;
 import com.quran.labs.androidquran.view.IconPageIndicator;
 import com.quran.labs.androidquran.view.QuranSpinner;
 import com.quran.labs.androidquran.view.SlidingUpPanelLayout;
 import com.quran.mobile.di.AyahActionFragmentProvider;
 import com.quran.mobile.di.QuranReadingActivityComponent;
 import com.quran.mobile.di.QuranReadingActivityComponentProvider;
+import com.quran.mobile.feature.qarilist.QariListWrapper;
+import com.quran.mobile.feature.qarilist.di.QariListWrapperInjector;
 import com.quran.page.common.factory.PageViewFactoryProvider;
 import com.quran.page.common.toolbar.AyahToolBar;
 import com.quran.page.common.toolbar.di.AyahToolBarInjector;
 import com.quran.reading.common.AudioEventPresenter;
 import com.quran.reading.common.ReadingEventPresenter;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Inject;
-
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
@@ -141,7 +128,19 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.observers.DisposableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
 import timber.log.Timber;
+
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
 
 /**
  * Activity that displays the Quran (in Arabic or translation mode).
@@ -159,6 +158,7 @@ public class PagerActivity extends AppCompatActivity implements
     QuranReadingActivityComponentProvider,
     QuranPageExtrasComponentProvider,
     AyahToolBarInjector,
+    QariListWrapperInjector,
     ActivityCompat.OnRequestPermissionsResultCallback {
   private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
   private static final String LAST_READ_PAGE = "LAST_READ_PAGE";
@@ -189,6 +189,7 @@ public class PagerActivity extends AppCompatActivity implements
   private AudioRequest lastAudioRequest;
   private boolean isDualPages = false;
   private View toolBarArea;
+  private FrameLayout overlay;
   private boolean promptedForExtraDownload;
   private QuranSpinner translationsSpinner;
   private ProgressDialog progressDialog;
@@ -234,6 +235,7 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
   @Inject AudioPresenter audioPresenter;
+  @Inject CurrentQariBridge currentQariBridge;
   @Inject QuranEventLogger quranEventLogger;
   @Inject AudioEventPresenter audioEventPresenter;
   @Inject ReadingEventPresenter readingEventPresenter;
@@ -336,13 +338,14 @@ public class PagerActivity extends AppCompatActivity implements
 
     setContentView(R.layout.quran_page_activity_slider);
     audioStatusBar = findViewById(R.id.audio_area);
+    audioStatusBar.setCurrentQariBridge(currentQariBridge);
     audioStatusBar.setIsDualPageMode(quranScreenInfo.isDualPageMode());
-    audioStatusBar.setQariList(audioUtils.getQariList(this));
     audioStatusBar.setAudioBarListener(this);
     audioBarParams = (ViewGroup.MarginLayoutParams) audioStatusBar.getLayoutParams();
 
     toolBarArea = findViewById(R.id.toolbar_area);
     translationsSpinner = findViewById(R.id.spinner);
+    overlay = findViewById(R.id.overlay);
 
     // this is the colored view behind the status bar on kitkat and above
     final View statusBarBackground = findViewById(R.id.status_bg);
@@ -706,9 +709,6 @@ public class PagerActivity extends AppCompatActivity implements
 
   private void animateToolBar(boolean visible) {
     isActionBarHidden = !visible;
-    if (visible) {
-      audioStatusBar.updateSelectedItem();
-    }
 
     // animate toolbar
     toolBarArea.animate()
@@ -795,6 +795,11 @@ public class PagerActivity extends AppCompatActivity implements
           .build();
     }
     return pagerActivityComponent;
+  }
+
+  @Override
+  public void injectQariListWrapper(@NonNull QariListWrapper qariListWrapper) {
+    getPagerActivityComponent().inject(qariListWrapper);
   }
 
   @NonNull
@@ -988,6 +993,7 @@ public class PagerActivity extends AppCompatActivity implements
       downloadReceiver = null;
     }
 
+    currentQariBridge.unsubscribeAll();
     compositeDisposable.dispose();
     audioEventPresenterBridge.dispose();
     readingEventPresenterBridge.dispose();
@@ -1600,6 +1606,26 @@ public class PagerActivity extends AppCompatActivity implements
   @Override
   public void onAudioSettingsPressed() {
     showSlider(slidingPagerAdapter.getPagePosition(AUDIO_PAGE));
+  }
+
+  @Override
+  public void onShowQariList() {
+    final int page = getCurrentPage();
+    final SuraAyah start = getSelectionStart();
+    final SuraAyah end = getSelectionEnd();
+
+    final int startSura = quranDisplayData.safelyGetSuraOnPage(page);
+    final int startAyah = quranInfo.getFirstAyahOnPage(page);
+
+    final SuraAyah starting = start != null ? start : new SuraAyah(startSura, startAyah);
+    final SuraAyah ending = end != null ? end :
+        audioUtils.getLastAyahToPlay(starting, page,
+            quranSettings.getPreferredDownloadAmount(), isDualPageVisible());
+    final QariListWrapper qariListWrapper = new QariListWrapper(this, starting, ending);
+    overlay.removeAllViews();
+    overlay.addView(qariListWrapper, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    overlay.setVisibility(View.VISIBLE);
+    toggleActionBarVisibility(false);
   }
 
   public boolean updatePlayOptions(int rangeRepeat,

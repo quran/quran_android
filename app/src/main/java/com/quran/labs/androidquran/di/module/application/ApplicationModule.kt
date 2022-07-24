@@ -22,6 +22,7 @@ import dagger.Provides
 import dagger.multibindings.ElementsIntoSet
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Scheduler
+import okio.FileSystem
 import java.io.File
 import javax.inject.Named
 import javax.inject.Singleton
@@ -80,6 +81,11 @@ class ApplicationModule(private val application: Application) {
   @Provides
   fun provideQuranFileManager(quranFileUtils: QuranFileUtils): QuranFileManager {
     return quranFileUtils
+  }
+
+  @Provides
+  fun provideFileSystem(): FileSystem {
+    return FileSystem.SYSTEM
   }
 
   @Provides

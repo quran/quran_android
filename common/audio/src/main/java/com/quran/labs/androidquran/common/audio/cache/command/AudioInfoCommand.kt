@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.common.audio.cache.command
 
 import android.content.Context
+import com.quran.labs.androidquran.common.audio.model.PartiallyDownloadedSura
 import com.quran.labs.androidquran.common.audio.model.QariDownloadInfo
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.QariUtil
@@ -39,15 +40,22 @@ class AudioInfoCommand @Inject constructor(
   }
 
   private fun generateQariDownloadInfoWithPath(qariItem: QariItem, path: Path?): QariDownloadInfo {
-    return if (path == null) {
-      QariDownloadInfo(qariItem, emptyList(), emptyList())
+    return if (qariItem.isGapless) {
+      val (fullDownloads, partialDownloads) =
+        if (path == null) {
+          emptyList<Int>() to emptyList()
+        } else {
+          gaplessAudioInfoCommand.gaplessDownloads(path)
+        }
+      QariDownloadInfo.GaplessQariDownloadInfo(qariItem, fullDownloads, partialDownloads)
     } else {
-      val (fullDownloads, partialDownloads) = if (qariItem.isGapless) {
-        gaplessAudioInfoCommand.gaplessDownloads(path)
-      } else {
-        gappedAudioInfoCommand.gappedDownloads(path)
-      }
-      QariDownloadInfo(qariItem, fullDownloads, partialDownloads)
+      val (fullDownloads, partiallyDownloadedSuras) =
+        if (path == null) {
+          emptyList<Int>() to emptyList()
+        } else {
+          gappedAudioInfoCommand.gappedDownloads(path)
+        }
+      QariDownloadInfo.GappedQariDownloadInfo(qariItem, fullDownloads, partiallyDownloadedSuras)
     }
   }
 }

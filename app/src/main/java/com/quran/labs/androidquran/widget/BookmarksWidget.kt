@@ -7,7 +7,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.RemoteViews
-import com.quran.labs.androidquran.*
+import com.quran.labs.androidquran.QuranApplication
+import com.quran.labs.androidquran.QuranDataActivity
+import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.SearchActivity
+import com.quran.labs.androidquran.ShortcutsActivity
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.QuranActivity
 import javax.inject.Inject
