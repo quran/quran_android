@@ -6,7 +6,7 @@ buildscript {
     daggerVersion = '2.42'
     composeVersion = '1.2.0'
     composeCompilerVersion = '1.3.0-rc01'
-    material3Version = '1.0.0-alpha14'
+    material3Version = '1.0.0-alpha15'
 
     androidxMediaVersion = '1.6.0'
     androidxAnnotationVersion = '1.4.0'
