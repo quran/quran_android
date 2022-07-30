@@ -7,6 +7,7 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Environment
 import android.util.SparseIntArray
+import android.widget.Toast
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.feature.audio.database.SuraTimingDatabaseHandler
@@ -52,6 +53,13 @@ class AudioShareUtils {
     selectedStartSuraAyah = getReorderedAyahPair(start, end).start
     selectedEndSuraAyah = getReorderedAyahPair(start, end).end
     selectedQari = qari
+
+    if (!audioCacheDirectory.exists()) {
+      if (!audioCacheDirectory.mkdirs()) {
+        Toast.makeText(context, "could not create directory", Toast.LENGTH_SHORT).show()
+        return null;
+      }
+    }
 
     var sharablePath: String? = null
 

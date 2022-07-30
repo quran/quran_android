@@ -263,9 +263,6 @@ public class PagerActivity extends AppCompatActivity implements
 
   private final PagerHandler handler = new PagerHandler(this);
 
-  public static final File audioCacheDirectory = new File(
-      Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getPath() +
-          File.separator + "quran_android_cache");
   private ArrayList<String> audioCacheFilePaths = new ArrayList<>();
   private SuraAyah selectedStartSuraAyah = null;
   private SuraAyah selectedEndSuraAyah = null;
@@ -367,11 +364,6 @@ public class PagerActivity extends AppCompatActivity implements
     compositeDisposable = new CompositeDisposable();
 
     setContentView(R.layout.quran_page_activity_slider);
-    if (!audioCacheDirectory.exists()) {
-      if (!audioCacheDirectory.mkdirs()) {
-        Toast.makeText(PagerActivity.this, "could not create directory", Toast.LENGTH_SHORT).show();
-      }
-    }
     audioStatusBar = findViewById(R.id.audio_area);
     audioStatusBar.setIsDualPageMode(quranScreenInfo.isDualPageMode());
     audioStatusBar.setQariList(audioUtils.getQariList(this));
@@ -1907,7 +1899,11 @@ public class PagerActivity extends AppCompatActivity implements
         String path = audioShareUtils.createSharableAudioFile(this, selectedStartSuraAyah,
             selectedEndSuraAyah, selectedQari, audioPathInfo.getUrlFormat(),
             audioPathInfo.getGaplessDatabase());
-        shareAudioSegment(path);
+        if(path != null && !path.isEmpty()){
+          shareAudioSegment(path);
+        }else{
+          Toast.makeText(this, "could not share audio ayah", Toast.LENGTH_SHORT).show();
+        }
       } else {
         requestDownload(audioPathInfo);
       }
