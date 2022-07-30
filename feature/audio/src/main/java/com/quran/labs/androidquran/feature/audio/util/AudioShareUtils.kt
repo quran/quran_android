@@ -210,17 +210,17 @@ class AudioShareUtils {
     }
     val tempAudioName = UUID.randomUUID().toString() + ".mp3"
     val destFile = File(audioCacheDirectory.path + File.separator + tempAudioName)
-    val mSoundFile = arrayOfNulls<CheapSoundFile>(1)
+    val soundFile = arrayOfNulls<CheapSoundFile>(1)
     try {
-      mSoundFile[0] = CheapSoundFile.create(path, null)
+      soundFile[0] = CheapSoundFile.create(path, null)
       val startTime = lowerCut.toFloat() / 1000
       val endTime = upperCut.toFloat() / 1000
-      val samplesPerFrame = mSoundFile[0]?.samplesPerFrame
-      val sampleRate = mSoundFile[0]?.sampleRate
+      val samplesPerFrame = soundFile[0]?.samplesPerFrame
+      val sampleRate = soundFile[0]?.sampleRate
       val avg = sampleRate?.div(samplesPerFrame!!)
       val startFrames = (startTime * avg!!).roundToInt()
       val endFrames = (endTime * avg).roundToInt()
-      mSoundFile[0]?.WriteFile(destFile, startFrames, endFrames - startFrames)
+      soundFile[0]?.WriteFile(destFile, startFrames, endFrames - startFrames)
     } catch (e: IOException) {
       e.printStackTrace()
     }
