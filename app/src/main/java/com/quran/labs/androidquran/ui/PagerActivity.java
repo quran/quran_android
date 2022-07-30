@@ -85,6 +85,7 @@ import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent;
 import com.quran.labs.androidquran.di.module.activity.PagerActivityModule;
 import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
+import com.quran.labs.androidquran.feature.audio.util.AudioShareUtils;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.presenter.audio.AudioPresenter;
@@ -1902,7 +1903,11 @@ public class PagerActivity extends AppCompatActivity implements
 
     if (gaplessDatabaseExists) {
       if (audioFilesExist(audioPathInfo)) {
-        createAndShareAudio(selectedStartSuraAyah, selectedEndSuraAyah, audioPathInfo);
+        AudioShareUtils audioShareUtils = new AudioShareUtils();
+        String path = audioShareUtils.createSharableAudioFile(this, selectedStartSuraAyah,
+            selectedEndSuraAyah, selectedQari, audioPathInfo.getUrlFormat(),
+            audioPathInfo.getGaplessDatabase());
+        shareAudioSegment(path);
       } else {
         requestDownload(audioPathInfo);
       }
@@ -1926,166 +1931,8 @@ public class PagerActivity extends AppCompatActivity implements
         selectedStartSuraAyah, selectedEndSuraAyah, true);
   }
 
-  private void createAndShareAudio(SuraAyah start, SuraAyah end, AudioPathInfo audioPathInfo) {
-    showProgressDialog();
-    compositeDisposable.add(
-        Single.fromCallable(() -> getTimingData(start, end, audioPathInfo))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(new DisposableSingleObserver<ArrayList<SparseIntArray>>() {
-              @Override
-              public void onSuccess(
-                  @io.reactivex.rxjava3.annotations.NonNull ArrayList<SparseIntArray> sparseIntArrayList) {
-                Intrinsics.checkNotNullExpressionValue(sparseIntArrayList, "mapArray");
-
-                int startAyah = start.ayah;
-                int endAyah = end.ayah;
-                SparseIntArray startSurahTimingDataArray = sparseIntArrayList.get(0);
-                SparseIntArray endSurahTimingDataArray = sparseIntArrayList.get(1);
-                int startAyahTime;
-                int endAyahTime;
-
-                boolean isFirstAyahInSurah = startAyah == 1;
-                int startTimeOfAyahAfterEndAyah = endSurahTimingDataArray.get(endAyah + 1);
-                boolean isLastAyahInSurah = startTimeOfAyahAfterEndAyah == 0;
-
-                if (isFirstAyahInSurah) {
-                  startAyahTime = 0;
-                } else {
-                  startAyahTime = startSurahTimingDataArray.get(startAyah);
-                }
-
-                if (isLastAyahInSurah) {
-                  endAyahTime = audioUtils.getSurahDuration(PagerActivity.this,
-                      audioUtils.getSurahAudioPath(audioPathInfo, end.sura));
-                } else {
-                  endAyahTime = startTimeOfAyahAfterEndAyah;
-                }
-
-                boolean startAndEndAyahAreInSameSurah = start.sura == end.sura;
-
-                if (startAndEndAyahAreInSameSurah) {
-                  String audioSegmentPath = audioUtils.getSurahSegment(
-                      audioUtils.getSurahAudioPath(audioPathInfo, start.sura), startAyahTime,
-                      endAyahTime);
-                  audioCacheFilePaths.add(audioSegmentPath);
-                  shareAudioSegment(renameSharableAudioFile(audioSegmentPath));
-                } else {
-                  ArrayList<String> segmentPaths = new ArrayList<>();
-                  int endOfSurah = -1;
-                  int startOfSurah = 0;
-                  String startSegmentPath = getSurahSegmentPath(audioPathInfo, start.sura,
-                      startAyahTime, endOfSurah);
-                  String lastSegmentPath = getSurahSegmentPath(audioPathInfo, end.sura,
-                      startOfSurah, endAyahTime);
-
-                  for (int surahIndex = start.sura; surahIndex <= end.sura; surahIndex++) {
-                    boolean isTheFirstSurah = surahIndex == start.sura;
-                    boolean isMiddleSurah = (surahIndex != start.sura) && (surahIndex != end.sura);
-
-                    if (isTheFirstSurah) {
-                      segmentPaths.add(startSegmentPath);
-                      continue;
-                    }
-                    if (isMiddleSurah) {
-                      segmentPaths.add(audioUtils.getSurahAudioPath(audioPathInfo, surahIndex));
-                      continue;
-                    }
-                    segmentPaths.add(lastSegmentPath);
-                  }
-
-                  boolean audioSegmentsWereCreated = !segmentPaths.isEmpty();
-
-                  if (audioSegmentsWereCreated) {
-                    audioCacheFilePaths.addAll(segmentPaths);
-                    String sharableAudioFilePath = audioUtils.getMergedAudioFromSegments(
-                        segmentPaths);
-                    shareAudioSegment(renameSharableAudioFile(sharableAudioFilePath));
-                  }
-                }
-                dismissProgressDialog();
-              }
-
-              @Override
-              public void onError(@io.reactivex.rxjava3.annotations.NonNull Throwable e) {
-                dismissProgressDialog();
-              }
-            })
-    );
-  }
-
-  private ArrayList<SparseIntArray> getTimingData(SuraAyah start, SuraAyah end,
-                                                  AudioPathInfo audioPathInfo) {
-    String databasePath = audioPathInfo.getGaplessDatabase();
-
-    assert databasePath != null;
-    SuraTimingDatabaseHandler db = SuraTimingDatabaseHandler.Companion.getDatabaseHandler(
-        databasePath);
-    SparseIntArray firstSurahMap = new SparseIntArray();
-    SparseIntArray lastSurahMap = new SparseIntArray();
-    Cursor firstSurahCursor = null;
-    Cursor lastSurahCursor = null;
-
-    try {
-      firstSurahCursor = db.getAyahTimings(start.sura);
-      firstSurahMap = populateArrayFromCursor(firstSurahCursor);
-
-      lastSurahCursor = db.getAyahTimings(end.sura);
-      lastSurahMap = populateArrayFromCursor(lastSurahCursor);
-
-    } catch (SQLException sqlException) {
-      Timber.Forest.e(sqlException);
-    } finally {
-      closeCursor(firstSurahCursor);
-      closeCursor(lastSurahCursor);
-    }
-
-    ArrayList<SparseIntArray> mapArray = new ArrayList<>(
-        Arrays.asList(firstSurahMap, lastSurahMap));
-    return mapArray;
-  }
-
-  private SparseIntArray populateArrayFromCursor(Cursor cursor) {
-    SparseIntArray sparseIntArray = new SparseIntArray();
-    if (cursor != null && cursor.moveToFirst()) {
-      do {
-        int ayah = cursor.getInt(1);
-        int time = cursor.getInt(2);
-        sparseIntArray.put(ayah, time);
-      } while (cursor.moveToNext());
-    }
-    return sparseIntArray;
-  }
-
-  private String renameSharableAudioFile(String audioSegmentPath) {
-    String newAudioFileName = selectedQari.getPath() + "_" + selectedStartSuraAyah.sura + "-" + selectedStartSuraAyah.ayah + "_" + selectedEndSuraAyah.sura + "-" + selectedEndSuraAyah.ayah;
-    String newAudioFilePath = audioCacheDirectory + File.separator + newAudioFileName + ".mp3";
-    new File(audioSegmentPath).renameTo(new File(newAudioFilePath));
-    audioCacheFilePaths.remove(audioSegmentPath);
-    for (String path : audioCacheFilePaths) {
-      new File(path).delete();
-    }
-    audioCacheFilePaths.clear();
-    return newAudioFilePath;
-  }
-
   private void shareAudioSegment(String path) {
     shareUtil.shareAudioFileIntent(PagerActivity.this, new File(path));
-  }
-
-  private String getSurahSegmentPath(AudioPathInfo audioPathInfo, int surah,
-                                     int startAyahTime, int endAyahTime) {
-    int lowerBoundTime = startAyahTime;
-    int upperBoundTime = endAyahTime;
-
-    String audioFilePath = audioUtils.getSurahAudioPath(audioPathInfo, surah);
-    boolean isFirstSegment = endAyahTime < 0;
-
-    if (isFirstSegment) {
-      upperBoundTime = audioUtils.getSurahDuration(PagerActivity.this, audioFilePath);
-    }
-
-    return audioUtils.getSurahSegment(audioFilePath, lowerBoundTime, upperBoundTime);
   }
 
   private void requestDownload(AudioPathInfo audioPathInfo) {

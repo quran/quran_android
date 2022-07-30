@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.quran.labs.androidquran.util.audioConversionUtils;
+package com.quran.labs.androidquran.feature.audio.util.soundfile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 /**
  * CheapSoundFile is the parent class of several subclasses that each
  * do a "cheap" scan of various sound file formats, parsing as little
@@ -203,7 +204,7 @@ public class CheapSoundFile {
       numFrames = 10;
     }
 
-    MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+    MessageDigest digest = MessageDigest.getInstance("MD5");
     FileInputStream in = new FileInputStream(mInputFile);
     int pos = 0;
     for (int i = 0; i < numFrames; i++) {
