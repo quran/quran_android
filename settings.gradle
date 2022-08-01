@@ -1,0 +1,28 @@
+includeBuild("build-logic")
+
+include ':app'
+include ':common:analytics'
+include ':common:audio'
+include ':common:bookmark'
+include ':common:data'
+include ':common:di'
+include ':common:download'
+include ':common:networking'
+include ':common:pages'
+include ':common:reading'
+include ':common:recitation'
+include ':common:search'
+include ':common:toolbar'
+include ':common:upgrade'
+include ':common:ui:core'
+include ':feature:analytics-noop'
+include ':feature:audio'
+include ':feature:downloadmanager'
+include ':feature:qarilist'
+include ':feature:recitation'
+include ':pages:madani'
+include ':autoquran'
+
+if (new File(rootDir, 'extras/settings-extra.gradle').exists()) {
+   apply from: new File(rootDir, 'extras/settings-extra.gradle')
+}
