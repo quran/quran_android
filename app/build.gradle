@@ -177,7 +177,7 @@ dependencies {
   androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
   androidTestImplementation "androidx.test.ext:junit:${androidxJunitExtVersion}"
 
-  errorprone 'com.google.errorprone:error_prone_core:2.14.0'
+  errorprone 'com.google.errorprone:error_prone_core:2.15.0'
 
   // Number Picker
   implementation 'io.github.ShawnLin013:number-picker:2.4.13'
