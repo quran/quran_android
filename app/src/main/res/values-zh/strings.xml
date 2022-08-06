@@ -62,7 +62,7 @@
   </plurals>
 
   <!-- Search messages -->
-  <string name="found_in_sura">对应章节 %1$s 节 %2$d</string>
+  <string name="found_in_sura">对应章节 %1$s 节 %2$d (页 %3$d)</string>
   <string name="no_results">未搜索到\"%s\"</string>
   <string name="no_arabic_search_available">还没有下载搜索包，请下载后再次进行搜索.</string>
   <string name="get_arabic_search_db">下载阿拉伯语搜索包</string>
@@ -86,6 +86,8 @@
   <string name="prefs_night_mode_summary">黑色背景和白色字体</string>
   <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
   <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night more is active</string>
+  <string name="prefs_night_mode_background_brightness_title">背景亮度</string>
+  <string name="prefs_night_mode_background_brightness_summary">夜间模式激活时的页面亮度</string>
   <string name="prefs_overlay_page_info_title">显示页面信息</string>
   <string name="prefs_overlay_page_info_summary">阅读时显示页数，章名和卷数</string>
   <string name="prefs_display_marker_title">显示卷章标记弹出窗口</string>
@@ -95,6 +97,8 @@
   <string name="prefs_translations_summary">下载与管理译文</string>
   <string name="prefs_ayah_before_translation_title">显示原文</string>
   <string name="prefs_ayah_before_translation_summary">在译文前显示阿拉伯语原文</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">下载选项</string>
   <string name="prefs_streaming_title">流式音频</string>
   <string name="prefs_streaming_summary">优先使用流式音频</string>
@@ -121,6 +125,7 @@
   <string name="quran_sura">章</string>
   <string name="quran_ayah">节 %1$d</string>
   <string name="sura_ayah_notification_str">第%1$s章，第%2$d节</string>
+  <string name="sura_ayah_sharing_str">第%1$s章: %2$d</string>
 
   <string name="index_loading">正在载入…</string>
 
@@ -169,13 +174,6 @@
   </plurals>
 
   <!-- long press -->
-  <string name="bookmark_ayah">收藏此节</string>
-  <string name="tag_ayah">为此节加上标签</string>
-  <string name="share_ayah">分享此节</string>
-  <string name="translation_ayah">翻译此节</string>
-  <string name="play_from_here">从当前节开始播放</string>
-  <string name="search_key">按住搜索键来查找某节</string>
-  <string name="copy_ayah">复制此节</string>
   <string name="ayah_copied_popup">复制成功</string>
 
   <!-- bookmarks & tags contextual action bar -->
@@ -191,4 +189,111 @@
 
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">没有收藏</string>
+    <string name="about_quran_enc" translatable="false">《古兰经》合辑</string>
+    <string name="downloadTabletPrompt">我们最近增加了改进的图像，用于 平板电脑。你想现在下载这些图片吗？</string>
+  <string name="downloadImportantPrompt">有一个小而重要的更新 对你设备上的古兰经图像进行了一个小而重要的更新。你想下载这个 补丁吗？</string>
+  <string name="menu_other_apps">其他应用程序</string>
+  <string name="menu_sort_group_by_tags">按标签分组</string>
+  <string name="menu_show_date">显示日期</string>
+  <string name="please_wait">请等待...</string>
+  <string name="about_description">安卓版古兰经是一款免费的古兰经应用程序。请不要在你的祈祷中忘记贡献者。</string>
+  <string name="about_data_sources">数据来源</string>
+  <string name="about_images">图片</string>
+  <string name="about_madani_images">古兰经图像是基于法赫德国王古兰经印刷厂的字体。</string>
+  <string name="about_naskh_images">Naskh应用程序的古兰经图像来自SHL信息系统（经许可）。</string>
+  <string name="about_qaloon_images">Qaloon图片经Nous Memes Editions Et Diffusion（突尼斯）许可使用。</string>
+  <string name="about_quranicaudio_summary">无间隙的MP3古兰经诵读</string>
+  <string name="about_quran_ksu">电子莫沙夫项目</string>
+  <string name="about_quran_ksu_summary">沙特国王大学电子Moshaf项目是该应用程序的阿拉伯语Tafaseer和各种语言的翻译来源。它也是艾曼-苏韦德博士朗诵的来源。</string>
+  <string name="about_furqan_summary">乌斯马尼文本和阿拉伯语Tafaseer</string>
+  <string name="about_quran_enc_summary">多种语言的翻译</string>
+  <string name="about_tanzil_summary">几种语言的翻译</string>
+  <string name="about_noorhidayat_summary">Noorehira字体和Mufti Taqi翻译</string>
+  <string name="about_open_source">开源项目</string>
+  <string name="about_others">其他</string>
+  <string name="about_contributors">撰稿人</string>
+  <string name="about_contributors_summary">为安卓版《古兰经》的开发做出贡献的人员名单</string>
+  <string name="search_full_results">全部结果</string>
+  <string name="search_entire_mushaf">搜索整个mushaf</string>
+  <string name="storage_permission_rationale">安卓版 \"古兰经 \"希望得到你的许可，将其数据存储在外部存储器上。Quran for Android在没有这个许可的情况下也能工作，但如果你清除数据或卸载该应用，所有下载的页面、音频和数据都会被删除。授予Quran for Android的权限？</string>
+  <string name="storage_permission_please_restart">请重新启动应用程序以使其生效。</string>
+  <string name="prefs_highlight_bookmarks_title">突出显示书签</string>
+  <string name="prefs_highlight_bookmarks_summary">在阅读时，突出显示书签上的阿亚。</string>
+  <string name="prefs_audio_manager_summary">管理和下载古兰经音频</string>
+  <string name="prefs_app_location_title">古兰经数据目录</string>
+  <string name="prefs_app_location_summary">选择存储古兰经文件的地方</string>
+  <string name="prefs_send_logs_title">发送日志</string>
+  <string name="prefs_send_logs_summary">发送调试日志给开发人员</string>
+  <string name="prefs_sdcard_internal">内部存储</string>
+  <string name="prefs_sdcard_external">外部存储 %1$d</string>
+  <string name="prefs_app_size">目前的数据大小是</string>
+  <string name="prefs_calculating_app_size">计算应用程序的大小</string>
+  <string name="prefs_copying_app_files">复制应用程序文件</string>
+  <string name="prefs_err_moving_app_files">移动应用程序文件失败</string>
+  <string name="prefs_no_enough_space_to_move_files">没有足够的空间来移动应用程序文件</string>
+  <string name="prefs_dual_page_mode_title">双页模式</string>
+  <string name="prefs_dual_page_mode_enabled">在横向情况下，两个页面将并排出现。</string>
+  <string name="prefs_dual_page_mode_disabled">在横屏状态下，将只出现一页。</string>
+  <string name="prefs_category_advanced">高级选项</string>
+  <string name="prefs_category_advanced_summary">导入/导出书签，设置古兰经数据目录，等等。</string>
+  <string name="prefs_import_title">进口</string>
+  <string name="prefs_import_summary">导入书签和标签</string>
+  <string name="prefs_export_title">出口</string>
+  <string name="prefs_export_summary">导出书签和标签的副本</string>
+  <string name="prefs_page_type_title">页面类型（实验性）</string>
+  <string name="prefs_page_type_summary">选择阅读页的类型</string>
+  <string name="prefs_sura_translated_name_summary">显示Surah名称的翻译</string>
+  <string name="prefs_sura_translated_name_title">苏拉译名</string>
+  <string name="prefs_preview">预览</string>
+  <string name="more_translations">更多翻译</string>
+  <string name="import_data_permissions_error">由于权限错误，无法读取备份文件。</string>
+  <string name="import_data_error">无效的备份文件（或无法读取备份文件）。</string>
+  <string name="import_data">进口数据</string>
+  <string name="import_data_and_override">如果你导入这个文件，它将用%1$d书签和%2$d标签替换你所有的书签。导入？</string>
+  <string name="import_successful">进口成功</string>
+  <string name="export_data_error">输出数据时出错</string>
+  <string name="exported_data">数据导出到%1$s</string>
+  <string name="move_up">上升</string>
+  <string name="move_down">下移</string>
+  <string name="delete_translation">移除翻译</string>
+  <string name="warning">警告</string>
+  <string name="kitkat_external_message">由于安卓系统的限制，如果你选择将古兰经数据放在外部SD卡上，后来卸载或清除古兰经安卓系统的数据，所有古兰经安卓系统的页面和音频将被删除，你将不得不重新下载它们。你确定你要使用外部SD卡吗？</string>
+  <string name="scoped_storage_message">由于安卓系统为增加用户隐私而做出的改变，在未来的安卓系统版本中，将文件复制到应用目录之外可能会阻止Quran for Android访问其数据。你确定你要使用这个路径吗？</string>
+  <string name="please_grant_permissions">请在应用程序设置中授予权限</string>
+  <string name="see_tafseer_of_verse">这段经文的塔夫赛尔与第%d段的塔夫赛尔包括在一起（点击展开）。</string>
+  <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
+  <string name="sdcard_error">无法找到SD卡。请安装它并重试。</string>
+  <string name="play_from">来自</string>
+  <string name="play_to">拟</string>
+  <string name="play_restrict_range">只播放上述阿亚特</string>
+  <string name="play_verses_range">听听这组阿亚特。</string>
+  <string name="play_each_verse">听听每一段经文。</string>
+  <string name="play_apply">申请</string>
+  <string name="play_apply_and_play">应用和倾听</string>
+  <string name="previous">上一篇</string>
+  <string name="play">播放</string>
+  <string name="pause">暂停</string>
+  <string name="stop">停止</string>
+  <string name="next">下一页</string>
+  <string name="playback_prompt_title">开始播放从。</string>
+  <string name="starting_page_label">页首</string>
+  <string name="undo">撤销</string>
+  <string name="recent_pages">最近的页面</string>
+  <string name="tag_blank_tag_error">标签名称不能是空白的!</string>
+  <string name="tag_duplicate_tag_error">标签名称已经存在!</string>
+  <string name="audio_manager">音频经理</string>
+  <string name="audio_manager_remove_audio_title">删除苏拉？</string>
+  <string name="audio_manager_remove_audio_msg">您确定要删除%1$s吗？</string>
+  <string name="audio_manager_surah_download">下载SURAH</string>
+  <string name="audio_manager_surah_delete">删除音频文件</string>
+  <string name="audio_manager_download_all">下载所有</string>
+  <string name="audio_manager_download_selection">下载选择</string>
+  <string name="audio_manager_delete_selection">删除选择</string>
+  <string name="audio_updated_title">古兰经音频文件更新</string>
+  <string name="audio_updated_text">几个古兰经音频文件已经更新。Quran for Android已经删除了你对这些文件的拷贝，以便在你下次回放时可以下载最新的版本。</string>
+  <string name="prefs_category_dual_screen">双页偏好</string>
+  <string name="prefs_split_page_and_translation_title">古兰经和翻译的双重模式</string>
+  <string name="prefs_split_page_and_translation_summary">在带翻译的双页模式下，显示古兰经页面和翻译。</string>
+  <string name="notification_channel_download">古兰经下载</string>
+  <string name="notification_channel_audio">古兰经诵读</string>
 </resources>

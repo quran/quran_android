@@ -112,7 +112,7 @@
     </string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Сүреде табылды %1$s, %2$d-аят</string>
+  <string name="found_in_sura">Сүреде табылды %1$s, %2$d-аят (Бет %3$d)</string>
   <string name="no_results">\"%s\" бойынша нәтиже табылмады</string>
   <string name="no_arabic_search_available">Арабша іздеу деректері орнатылмаған.
         Алдымен оны жүктеңіз. Кейін қайта іздеп көріңіз.
@@ -138,6 +138,8 @@
   <string name="prefs_night_mode_summary">Қара фон мен ашық түсті шрифт қолданылады</string>
   <string name="prefs_night_mode_text_brightness_title">Мәтін ашықтығы</string>
   <string name="prefs_night_mode_text_brightness_summary">Түнгі режимдегі мәтін ашықтығы</string>
+  <string name="prefs_night_mode_background_brightness_title">Фондық жарықтық</string>
+  <string name="prefs_night_mode_background_brightness_summary">Түнгі режим белсенді болған кездегі беттің жарықтығы</string>
   <string name="prefs_overlay_page_info_title">Бет деректері</string>
   <string name="prefs_overlay_page_info_summary">Сүре аты, бет және пара ретін көрсету</string>
   <string name="prefs_display_marker_title">Бөлім деректері</string>
@@ -149,6 +151,8 @@
   <string name="prefs_translations_summary">Аудармалар жүктеу және басқару</string>
   <string name="prefs_ayah_before_translation_title">Алдымен аятты көрсету</string>
   <string name="prefs_ayah_before_translation_summary">Арабша аяттарды аудармалардың үстінен көрсету</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Жүктеу</string>
   <string name="prefs_streaming_title">Ағындық</string>
   <string name="prefs_streaming_summary">Мүмкіндігінше ағындық аудио пайдалану</string>
@@ -211,6 +215,7 @@
   <string name="quran_ayah_details">%1$s %2$s-аят, %3$s-пара</string>
   <string name="quran_sura_title">%1$s сүресі</string>
   <string name="sura_ayah_notification_str">%1$s сүресі, %2$d-аят</string>
+  <string name="sura_ayah_sharing_str">%1$s сүресі: %2$d</string>
 
   <string name="index_loading">Жүктеу…</string>
 
@@ -285,14 +290,6 @@
   </string-array>
 
   <!-- long press -->
-  <string name="bookmark_ayah">Аятқа бетбелгі қою</string>
-  <string name="tag_ayah">Аятты белгілеу</string>
-  <string name="share_ayah">Аятпен бөлісу</string>
-  <string name="share_ayah_text">Аят мәтінімен бөлісу</string>
-  <string name="translation_ayah">Аят аудармасы/тәпсірі</string>
-  <string name="play_from_here">Осы жерден бастап тыңдау</string>
-  <string name="search_key">Сүрені табу үшін іздеу батырмасын басыңыз</string>
-  <string name="copy_ayah">Аятты көшіру</string>
   <string name="ayah_copied_popup">Аят көшірілді</string>
 
   <!-- bookmarks & tags contextual action bar -->
@@ -316,4 +313,45 @@
 
   <!-- audio manager -->
   <string name="audio_manager">Аудио менеджер</string>
+    <string name="menu_show_date">Күнді көрсету</string>
+  <string name="please_wait">Күте тұршы...</string>
+  <string name="about_furqan_summary">Утмани мәтіні және араб тафазері</string>
+  <string name="about_quran_enc_summary">Көптеген тілдер үшін аудармалар</string>
+  <string name="search_full_results">Толық нәтижелер</string>
+  <string name="search_entire_mushaf">Бүкіл мушафты іздеу</string>
+  <string name="prefs_send_logs_title">Журналдарды жіберу</string>
+  <string name="prefs_send_logs_summary">Әзірлеушіге есептен шығару журналдарын жіберу</string>
+  <string name="prefs_category_advanced_summary">Бетбелгілерді импорттау/экспорттау, Құран деректер каталогын орнату және т.б.</string>
+  <string name="prefs_import_title">Импорттау</string>
+  <string name="prefs_import_summary">Бетбелгілер мен тегтерді импорттау</string>
+  <string name="prefs_page_type_title">Бет түрі (эксперименттік)</string>
+  <string name="prefs_page_type_summary">Оқу беттерінің түрін таңдау</string>
+  <string name="prefs_sura_translated_name_summary">Сура атауының аудармасын көрсету</string>
+  <string name="prefs_sura_translated_name_title">Сура аударылған атауы</string>
+  <string name="prefs_preview">Алдын ала қарау</string>
+  <string name="more_translations">Қосымша аудармалар</string>
+  <string name="move_up">Жоғары жылжыту</string>
+  <string name="move_down">Төменге жылжу</string>
+  <string name="delete_translation">Аударманы жою</string>
+  <string name="scoped_storage_message">Пайдаланушы құпиялылығын арттыру үшін Android өзгерістеріне байланысты файлдарды бағдарлама каталогтарынан тыс көшіру Android құрылғысына арналған Құранның Android-тың болашақ нұсқаларында оның деректеріне қол жеткізуін тоқтатуы мүмкін. Осы жолды пайдаланғыңыз келетініне сенімдісіз бе?</string>
+  <string name="see_tafseer_of_verse">Бұл аях тафсеері аях% d (Кеңейту үшін басу) тафсеерімен қосылған.</string>
+  <string name="playback_prompt_title">Ойнатуды мынадан бастаңыз:</string>
+  <string name="starting_page_label">Беттің басы</string>
+  <string name="recent_pages">Соңғы беттер</string>
+  <string name="tag_blank_tag_error">Тег атаулары бос бола алмайды!</string>
+  <string name="tag_duplicate_tag_error">Тег атауы бұрыннан бар!</string>
+  <string name="audio_manager_remove_audio_title">Сураны жойып тастаңыз ба?</string>
+  <string name="audio_manager_remove_audio_msg">% 1$s жойғыңыз келетініне сенімдісіз бе?</string>
+  <string name="audio_manager_surah_download">Сурахты жүктеу</string>
+  <string name="audio_manager_surah_delete">Дыбыс файлын жою</string>
+  <string name="audio_manager_download_all">Барлығын жүктеу</string>
+  <string name="audio_manager_download_selection">Жүктеу таңдауы</string>
+  <string name="audio_manager_delete_selection">Таңдауды жою</string>
+  <string name="audio_updated_title">Құран дыбыс файлдарын жаңарту</string>
+  <string name="audio_updated_text">Бірнеше Құран аудиофайлдары жаңартылды. Android құрылғысына арналған Құран бұл файлдардың көшірмесін жойды, осылайша ең жаңа нұсқаларды келесі рет қайта ойнатқанда жүктеп алуға болады.</string>
+  <string name="prefs_category_dual_screen">Қос бет параметрлері</string>
+  <string name="prefs_split_page_and_translation_title">Құран және қосарлы режимдегі аударма</string>
+  <string name="prefs_split_page_and_translation_summary">Аудармалары бар қосарлы бет режимінде Құран беті мен аудармасы көрсетілген</string>
+  <string name="notification_channel_download">Құран жүктеулері</string>
+  <string name="notification_channel_audio">Құранды қайталау</string>
 </resources>

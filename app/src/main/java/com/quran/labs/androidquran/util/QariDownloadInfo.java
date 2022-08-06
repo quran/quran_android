@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.util;
 import android.util.Pair;
 import android.util.SparseBooleanArray;
 
-import com.quran.labs.androidquran.common.audio.QariItem;
+import com.quran.labs.androidquran.common.audio.model.QariItem;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +12,7 @@ public class QariDownloadInfo {
 
   public final QariItem qariItem;
   public SparseBooleanArray downloadedSuras;
-  private SparseBooleanArray partialSuras;
+  private final SparseBooleanArray partialSuras;
 
   QariDownloadInfo(QariItem item) {
     this(item, Collections.<Integer>emptyList());

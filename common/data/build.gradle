@@ -4,7 +4,13 @@ apply plugin: 'kotlin-kapt'
 dependencies {
   implementation "androidx.annotation:annotation:${androidxAnnotationVersion}"
 
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
+
   // dagger
   kapt deps.dagger.apt
   implementation deps.dagger.runtime
+
+  implementation "com.squareup.moshi:moshi:${moshiVersion}"
+  kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
 }

@@ -62,7 +62,7 @@
   </plurals>
 
   <!-- Search messages -->
-  <string name="found_in_sura">در آیه %2$d از سوره %1$s</string>
+  <string name="found_in_sura">در آیه %2$d از سوره %1$s (صفحه %3$d)</string>
   <string name="no_results">جستجوی «%s» هیچ نتیجه‌ای دربرنداشت.</string>
   <string name="no_arabic_search_available">متن عربی قرآن هنوز بارگذاری نشده است. لطفاً ابتدا آن را دریافت نمایید.</string>
   <string name="get_arabic_search_db">متن عربی قرآن را برای جستجو در متن دریافت کنید.</string>
@@ -83,6 +83,8 @@
   <string name="prefs_night_mode_summary">استفاده از پس‌زمینه تاریک و نوشته‌های روشن</string>
   <string name="prefs_night_mode_text_brightness_title">روشنایی متن</string>
   <string name="prefs_night_mode_text_brightness_summary">میزان روشنایی متن در حالت شبانه</string>
+  <string name="prefs_night_mode_background_brightness_title">درخشش پس زمینه</string>
+  <string name="prefs_night_mode_background_brightness_summary">روشنایی صفحه زمانی که حالت شب فعال است</string>
   <string name="prefs_display_marker_title">نمایش پیغام‌ها</string>
   <string name="prefs_display_marker_summary">فعال‌سازی پیغام‌های رسیدن به جزء، حزب و …</string>
   <string name="prefs_translation_text_title">اندازه قلم ترجمه</string>
@@ -90,6 +92,8 @@
   <string name="prefs_translations_summary">بارگذاری و مدیریت ترجمه‌ها</string>
   <string name="prefs_ayah_before_translation_title">آیه پیش از ترجمه</string>
   <string name="prefs_ayah_before_translation_summary">نمایش متن عربی آیه پیش از ترجمه</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">بارگذاری تنظیمات</string>
   <string name="prefs_streaming_title">پخش اینترنتی</string>
   <string name="prefs_streaming_summary">پخش جویباری صوت از اینترنت</string>
@@ -116,6 +120,7 @@
   <string name="quran_ayah">آیه %1$d</string>
   <string name="quran_sura_title">سوره %1$s</string>
   <string name="sura_ayah_notification_str">سوره %1$s، آیه %2$d</string>
+  <string name="sura_ayah_sharing_str">سوره %1$s: %2$d</string>
 
   <string name="index_loading">بارگذاری…</string>
 
@@ -161,13 +166,6 @@
   </plurals>
 
   <!-- long press -->
-  <string name="bookmark_ayah">نشانک‌گذاری بر آیه</string>
-  <string name="tag_ayah">برچسب‌گذاری بر آیه</string>
-  <string name="share_ayah">اشتراک‌گذاری آیه</string>
-  <string name="translation_ayah">ترجمه آیه</string>
-  <string name="play_from_here">شروع پخش از این آیه</string>
-  <string name="search_key">دکمه جستجو را بفشارید</string>
-  <string name="copy_ayah">کپی کردن آیه</string>
   <string name="ayah_copied_popup">آیه کپی شد</string>
 
   <!-- bookmarks & tags contextual action bar -->
@@ -258,7 +256,6 @@
   <string name="prefs_volume_key_navigation_title">ورق زدن با دکمه‌های صدا</string>
   <string name="quran_ayah_details">%1$s - آیه %2$s، جزء %3$s</string>
   <string name="sdcard_error">کارت حافظه یافت نشد. آن را دوباره در دستگاه قرار داده و بار دیگر امتحان نمایید.</string>
-  <string name="share_ayah_text">اشتراک‌گذاری متن آیه</string>
   <string name="undo">واگرد</string>
   <string name="warning">هشدار</string>
   <string name="download_sura_ayah_progress">بارگذاری سوره %1$d آیه %2$d</string>
@@ -286,4 +283,46 @@
     <item>سه بار</item>
     <item>بی‌پایان</item>
   </string-array>
+    <string name="about_quran_enc" translatable="false">دایرة المعارف قرآن کریم</string>
+    <string name="downloadTabletPrompt">ما به تازگی اضافه شده تصاویر بهبود یافته برای قرص. آیا می خواهید این تصاویر را اکنون دانلود کنید؟</string>
+  <string name="menu_show_date">تاریخ نمایش</string>
+  <string name="please_wait">لطفاً منتظر بمانید...</string>
+  <string name="about_naskh_images">تصاویر قرآنی برای برنامه ناسخ (با اجازه) از SHL Info Systems گرفته می شود</string>
+  <string name="about_qaloon_images">تصاویر قلون با اجازه Nous-Mêmes Éditions Et Diffusion (تونس) استفاده می شود</string>
+  <string name="about_furqan_summary">متن عثمانی و تفسیر عربی</string>
+  <string name="about_quran_enc_summary">ترجمه برای بسیاری از زبان ها</string>
+  <string name="search_full_results">نتایج کامل</string>
+  <string name="search_entire_mushaf">به کل قرآن نگاه کن.</string>
+  <string name="prefs_send_logs_title">ارسال سیاهههای مربوط</string>
+  <string name="prefs_send_logs_summary">ارسال سیاهههای مربوط به اشکال زدایی به توسعه دهنده</string>
+  <string name="prefs_page_type_title">نوع صفحه (تجربی)</string>
+  <string name="prefs_page_type_summary">نوع صفحات خواندن را انتخاب کنید</string>
+  <string name="prefs_sura_translated_name_summary">نمایش ترجمه نام سور</string>
+  <string name="prefs_sura_translated_name_title">نام ترجمه شده سوره</string>
+  <string name="prefs_preview">پیشنمایش</string>
+  <string name="move_up">حرکت به بالا</string>
+  <string name="move_down">حرکت به پایین</string>
+  <string name="delete_translation">حذف ترجمه</string>
+  <string name="kitkat_external_message">با توجه به محدودیت های اندروید، اگر انتخاب کنید که داده های قرآن را روی کارت SD خارجی خود قرار داده و بعداً داده های قرآن اندروید را حذف یا روشن کنید، تمام صفحات قرآن اندروید و صوتی حذف می شوند و شما مجبور خواهید بود دوباره آنها را دانلود کنید. آیا مطمئن هستید که می خواهید از کارت SD خارجی استفاده کنید؟</string>
+  <string name="scoped_storage_message">با توجه به تغییرات آندروید برای افزایش حریم خصوصی کاربر، کپی کردن فایل های خارج از مدیران برنامه ممکن است قرآن برای اندروید را از دسترسی به داده های خود در نسخه های آینده اندروید باز دارد. مطمئني ميخواي از اين مسير استفاده کني؟</string>
+  <string name="please_grant_permissions">لطفاً اجازه در تنظیمات برنامه را اعطا کنید</string>
+  <string name="see_tafseer_of_verse">تفسیر آیه متعلق به آیه %d است (برای مشاهده کلیک کنید).</string>
+  <string name="playback_prompt_title">شروع از:</string>
+  <string name="starting_page_label">آغاز صفحه</string>
+  <string name="tag_blank_tag_error">نام برچسب نمی تواند خالی باشد!</string>
+  <string name="tag_duplicate_tag_error">نام برچسب در حال حاضر وجود دارد!</string>
+  <string name="audio_manager_remove_audio_title">حذف فایل صوتی؟</string>
+  <string name="audio_manager_remove_audio_msg">آیا مطمئن هستید که می خواهید %1$s را حذف کنید؟</string>
+  <string name="audio_manager_surah_download">دانلود سوره</string>
+  <string name="audio_manager_surah_delete">حذف سوره</string>
+  <string name="audio_manager_download_all">دانلود همه</string>
+  <string name="audio_manager_download_selection">دانلود انتخاب</string>
+  <string name="audio_manager_delete_selection">حذف انتخاب</string>
+  <string name="audio_updated_title">به روز رسانی فایل های صوتی قرآن</string>
+  <string name="audio_updated_text">چندین فایل صوتی قرآن به روز شده است. قرآن برای اندروید کپی شما از این فایل ها را حذف کرده است به طوری که جدیدترین نسخه ها را می توانید دانلود کنید دفعه بعد که آنها را پخش می کنید.</string>
+  <string name="prefs_category_dual_screen">ترجیحات برای دو صفحه مجاور</string>
+  <string name="prefs_split_page_and_translation_title">مشاهده یک صفحه از قرآن و دیگری از ترجمه</string>
+  <string name="prefs_split_page_and_translation_summary">هنگامی که دو صفحه مجاور فعال می شوند، صفحه قرآن و ترجمه با هم نمایش داده می شوند</string>
+  <string name="notification_channel_download">دانلود فایل های قرآن</string>
+  <string name="notification_channel_audio">قرائت قرآن</string>
 </resources>

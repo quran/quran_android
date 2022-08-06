@@ -1,16 +1,20 @@
 package com.quran.labs.androidquran.view;
 
 import android.content.Context;
-
-import com.quran.labs.androidquran.ui.util.PageController;
-import com.quran.labs.androidquran.util.QuranSettings;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import android.view.View;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+
+import com.quran.labs.androidquran.ui.util.PageController;
+import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.page.common.data.PageMode;
+import com.quran.page.common.factory.PageViewFactory;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 public class TabletView extends QuranPageWrapperLayout {
   public static final int QURAN_PAGE = 1;
@@ -30,9 +34,14 @@ public class TabletView extends QuranPageWrapperLayout {
     this.context = context;
   }
 
-  public void init(@TabletPageType int leftPageType, @TabletPageType int rightPageType) {
-    leftPage = getPageLayout(leftPageType);
-    rightPage = getPageLayout(rightPageType);
+  public void init(
+      @TabletPageType int leftPageType,
+      @TabletPageType int rightPageType,
+      @Nullable PageViewFactory pageViewFactory,
+      int leftPageNumber,
+      int rightPageNumber) {
+    leftPage = getPageLayout(leftPageType, pageViewFactory, leftPageNumber);
+    rightPage = getPageLayout(rightPageType, pageViewFactory, rightPageNumber);
 
     addView(leftPage);
     addView(rightPage);
@@ -56,10 +65,20 @@ public class TabletView extends QuranPageWrapperLayout {
     rightPage.layout(width / 2, 0, width, height);
   }
 
-  private QuranPageLayout getPageLayout(@TabletPageType int type) {
+  private QuranPageLayout getPageLayout(
+      @TabletPageType int type,
+      @Nullable PageViewFactory pageViewFactory,
+      int page
+  ) {
     if (type == TRANSLATION_PAGE) {
       return new QuranTranslationPageLayout(context);
     } else {
+      if (pageViewFactory != null) {
+        final View view = pageViewFactory.providePageView(context, page, PageMode.DualScreenMode.Arabic.INSTANCE);
+        if (view != null) {
+          return new QuranCustomImagePageLayout(context, view);
+        }
+      }
       return new QuranTabletImagePageLayout(context);
     }
   }

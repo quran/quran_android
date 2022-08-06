@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.ui.translation
 
 import android.content.Context
 import android.graphics.Color
-import android.os.Build
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -15,24 +14,28 @@ import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.quran.data.model.SuraAyah
+import com.quran.data.model.highlight.HighlightType
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
-import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.helpers.ExpandTafseerSpan
-import com.quran.labs.androidquran.ui.helpers.HighlightType
+import com.quran.labs.androidquran.ui.helpers.HighlightTypes
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan
 import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.AyahNumberView
 import com.quran.labs.androidquran.view.DividerView
+import kotlin.math.ln1p
+import kotlin.math.min
 
-internal class TranslationAdapter(private val context: Context,
-                                  private val recyclerView: RecyclerView,
-                                  private val onClickListener: View.OnClickListener,
-                                  private val onVerseSelectedListener: OnVerseSelectedListener) :
-    RecyclerView.Adapter<TranslationAdapter.RowViewHolder>() {
+internal class TranslationAdapter(
+  private val context: Context,
+  private val recyclerView: RecyclerView,
+  private val onClickListener: View.OnClickListener,
+  private val onVerseSelectedListener: OnVerseSelectedListener
+) : RecyclerView.Adapter<TranslationAdapter.RowViewHolder>() {
   private val inflater: LayoutInflater = LayoutInflater.from(context)
   private val data: MutableList<TranslationViewRow> = mutableListOf()
 
@@ -49,13 +52,13 @@ internal class TranslationAdapter(private val context: Context,
   private var highlightedStartPosition: Int = 0
   private var highlightType: HighlightType? = null
 
-  private val expandedTafaseerAyahs = mutableSetOf<Pair<Int, Int>>()
+  private val expandedTafseerAyahs = mutableSetOf<Pair<Int, Int>>()
   private val expandedHyperlinks = mutableSetOf<Pair<Int, Int>>()
 
   private val defaultClickListener = View.OnClickListener { this.handleClick(it) }
   private val defaultLongClickListener = View.OnLongClickListener { this.selectVerseRows(it) }
   private val expandClickListener = View.OnClickListener { v -> toggleExpandTafseer(v) }
-  private val expandHyperlinkClickListener = View.OnClickListener { v -> toggleExpandHyperlink(v) }
+  private val expandHyperlinkClickListener = View.OnClickListener { v -> toggleExpandTafseer(v) }
 
   fun getSelectedVersePopupPosition(): IntArray? {
     return if (highlightedStartPosition > -1) {
@@ -64,29 +67,42 @@ internal class TranslationAdapter(private val context: Context,
       // find the row with the verse number
       val versePosition = data.withIndex().firstOrNull {
         it.index in highlightedStartPosition until highlightedEndPosition &&
-            it.value.type == TranslationViewRow.Type.VERSE_NUMBER }
+            it.value.type == TranslationViewRow.Type.VERSE_NUMBER
+      }
 
       // find out where to position the popup based on the center of the box
       versePosition?.let {
-        val viewHolder =
-            recyclerView.findViewHolderForAdapterPosition(versePosition.index) as RowViewHolder?
-        viewHolder?.ayahNumber?.let { ayahNumberView ->
-          val x = (ayahNumberView.left + ayahNumberView.boxCenterX)
-          val y = (ayahNumberView.top + ayahNumberView.boxBottomY)
-          intArrayOf(x, y)
-        }
+        positionForViewHolderIndex(versePosition.index)
       }
     } else {
       null
     }
   }
 
+  fun getSelectedVersePopupPosition(sura: Int, ayah: Int): IntArray? {
+    val (startPosition, _) = adapterInfoForAyah(sura, ayah)
+    return if (startPosition > -1) {
+      positionForViewHolderIndex(startPosition)
+    } else {
+      null
+    }
+  }
+
+  private fun positionForViewHolderIndex(index: Int): IntArray? {
+    val viewHolder = recyclerView.findViewHolderForAdapterPosition(index) as RowViewHolder?
+    return viewHolder?.ayahNumber?.let { ayahNumberView ->
+      val x = (ayahNumberView.left + ayahNumberView.boxCenterX)
+      val y = (ayahNumberView.top + ayahNumberView.boxBottomY)
+      intArrayOf(x, y)
+    }
+  }
+
   fun setData(data: List<TranslationViewRow>) {
     this.data.clear()
-    expandedTafaseerAyahs.clear();
+    expandedTafseerAyahs.clear()
     this.data.addAll(data)
     if (highlightedAyah > 0) {
-      highlightAyah(highlightedAyah, false, highlightType ?: HighlightType.SELECTION)
+      highlightAyah(highlightedAyah, true, highlightType ?: HighlightTypes.SELECTION, true)
     }
   }
 
@@ -98,8 +114,19 @@ internal class TranslationAdapter(private val context: Context,
     return data.firstOrNull { it.ayahInfo.ayahId == highlightedAyah }?.ayahInfo
   }
 
-  private fun highlightAyah(ayahId: Int, notify: Boolean, highlightedType: HighlightType) {
-    if (ayahId != highlightedAyah) {
+  private fun adapterInfoForAyah(sura: Int, ayah: Int): Pair<Int, Int> {
+    val matches =
+      data.withIndex().filter {
+        it.value.ayahInfo.sura == sura &&
+            it.value.ayahInfo.ayah == ayah &&
+            // don't factor in basmalah or sura name
+            it.value.type > 1
+      }
+    return (matches.firstOrNull()?.index ?: -1) to matches.size
+  }
+
+  private fun highlightAyah(ayahId: Int, notify: Boolean, highlightedType: HighlightType, force: Boolean = false) {
+    if (ayahId != highlightedAyah || force) {
       val matches = data.withIndex().filter { it.value.ayahInfo.ayahId == ayahId }
       val (startPosition, count) = (matches.firstOrNull()?.index ?: -1) to matches.size
 
@@ -132,7 +159,7 @@ internal class TranslationAdapter(private val context: Context,
         recyclerView.handler.post {
           notifyItemRangeChanged(startChangeRange, startChangeCount, HIGHLIGHT_CHANGE)
           val layoutManager = recyclerView.layoutManager
-          if (highlightedType == HighlightType.AUDIO && layoutManager is LinearLayoutManager) {
+          if ((force || highlightedType == HighlightTypes.AUDIO) && layoutManager is LinearLayoutManager) {
             layoutManager.scrollToPositionWithOffset(startPosition, 64)
           } else {
             recyclerView.smoothScrollToPosition(startPosition)
@@ -164,7 +191,12 @@ internal class TranslationAdapter(private val context: Context,
     this.fontSize = quranSettings.translationTextSize
     isNightMode = quranSettings.isNightMode
     if (isNightMode) {
-      val textBrightness = quranSettings.nightModeTextBrightness
+      val originalTextBrightness = quranSettings.nightModeTextBrightness
+      val backgroundBrightness = quranSettings.nightModeBackgroundBrightness
+      // avoid damaging the looks of the Quran page
+      val adjustedBrightness = (50 * ln1p(backgroundBrightness.toDouble()) + originalTextBrightness).toInt()
+      val textBrightness = min(adjustedBrightness.toFloat(), 255f).toInt()
+
       this.textColor = Color.rgb(textBrightness, textBrightness, textBrightness)
       this.arabicTextColor = textColor
       this.dividerColor = textColor
@@ -187,7 +219,7 @@ internal class TranslationAdapter(private val context: Context,
     val position = recyclerView.getChildAdapterPosition(view)
     if (highlightedAyah != 0 && position != RecyclerView.NO_POSITION) {
       val ayahInfo = data[position].ayahInfo
-      if (ayahInfo.ayahId != highlightedAyah && highlightType == HighlightType.SELECTION) {
+      if (ayahInfo.ayahId != highlightedAyah && highlightType == HighlightTypes.SELECTION) {
         onVerseSelectedListener.onVerseSelected(ayahInfo)
         return
       }
@@ -199,7 +231,7 @@ internal class TranslationAdapter(private val context: Context,
     val position = recyclerView.getChildAdapterPosition(view)
     if (position != RecyclerView.NO_POSITION) {
       val ayahInfo = data[position].ayahInfo
-      highlightAyah(ayahInfo.ayahId, true, HighlightType.SELECTION)
+      highlightAyah(ayahInfo.ayahId, true, HighlightTypes.SELECTION)
       onVerseSelectedListener.onVerseSelected(ayahInfo)
       return true
     }
@@ -211,24 +243,10 @@ internal class TranslationAdapter(private val context: Context,
     if (position != RecyclerView.NO_POSITION) {
       val data = data[position]
       val what = data.ayahInfo.ayahId to data.translationIndex
-      if (expandedTafaseerAyahs.contains(what)) {
-        expandedTafaseerAyahs.remove(what)
+      if (expandedTafseerAyahs.contains(what)) {
+        expandedTafseerAyahs.remove(what)
       } else {
-        expandedTafaseerAyahs.add(what)
-      }
-      notifyItemChanged(position)
-    }
-  }
-
-  private fun toggleExpandHyperlink(view: View) {
-    val position = recyclerView.getChildAdapterPosition(view)
-    if (position != RecyclerView.NO_POSITION) {
-      val data = data[position]
-      val what = data.ayahInfo.ayahId to data.translationIndex
-      if (expandedHyperlinks.contains(what)) {
-        expandedHyperlinks.remove(what)
-      } else {
-        expandedHyperlinks.add(what)
+        expandedTafseerAyahs.add(what)
       }
       notifyItemChanged(position)
     }
@@ -266,14 +284,17 @@ internal class TranslationAdapter(private val context: Context,
           text = row.data
           holder.text.setBackgroundColor(suraHeaderColor)
         } else if (row.type == TranslationViewRow.Type.BASMALLAH || row.type == TranslationViewRow.Type.QURAN_TEXT) {
-          val str = SpannableString(if (row.type == TranslationViewRow.Type.BASMALLAH)
-            ArabicDatabaseUtils.AR_BASMALLAH
-          else
-            ArabicDatabaseUtils.getAyahWithoutBasmallah(
-                row.ayahInfo.sura, row.ayahInfo.ayah, row.ayahInfo.arabicText))
-          if (USE_UTHMANI_SPAN) {
-            str.setSpan(UthmaniSpan(context), 0, str.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-          }
+          val str = SpannableString(
+            if (row.type == TranslationViewRow.Type.BASMALLAH) {
+              ArabicDatabaseUtils.AR_BASMALLAH
+            } else {
+              ArabicDatabaseUtils.getAyahWithoutBasmallah(
+                row.ayahInfo.sura, row.ayahInfo.ayah, row.ayahInfo.arabicText
+              )
+            }
+          )
+          str.setSpan(UthmaniSpan(context), 0, str.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
           text = str
           holder.text.setTextColor(arabicTextColor)
           holder.text.textSize = ARABIC_MULTIPLIER * fontSize
@@ -285,7 +306,7 @@ internal class TranslationAdapter(private val context: Context,
             text = row.data?.let { rowText ->
               val length = rowText.length
               val expandHyperlink =
-                  expandedHyperlinks.contains(row.ayahInfo.ayahId to row.translationIndex)
+                expandedHyperlinks.contains(row.ayahInfo.ayahId to row.translationIndex)
 
               if (row.link != null && !expandHyperlink) {
                 holder.text.setOnClickListener(expandHyperlinkClickListener)
@@ -310,21 +331,24 @@ internal class TranslationAdapter(private val context: Context,
             holder.text.typeface = null
 
             if (isRtl) {
-              // rtl tafseer, style it
-              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                holder.text.layoutDirection = View.LAYOUT_DIRECTION_RTL
+              // rtl tafseer, style it (SDK is always >= 21 now)
+              holder.text.layoutDirection = View.LAYOUT_DIRECTION_RTL
 
-                // allow the tafseer font for api 19 because it's fine there and
-                // is much better than the stock font (this is more lenient than
-                // the api 21 restriction on the hafs font). only allow this for
-                // Arabic though since the Arabic font isn't compatible with other
-                // RTL languages that share some Arabic characters.
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && row.isArabic) {
-                  holder.text.typeface = TypefaceManager.getTafseerTypeface(context)
-                }
+              // allow the tafseer font for api 19 because it's fine there and
+              // is much better than the stock font (this is more lenient than
+              // the api 21 restriction on the hafs font). only allow this for
+              // Arabic though since the Arabic font isn't compatible with other
+              // RTL languages that share some Arabic characters.
+              // SDK is always >= 21 now
+              if (row.isArabic) {
+                holder.text.typeface = TypefaceManager.getTafseerTypeface(context)
               }
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            } else {
               holder.text.layoutDirection = View.LAYOUT_DIRECTION_INHERIT
+              val settings = QuranSettings.getInstance(context)
+              if (settings.wantDyslexicFontInTranslationView()){
+                holder.text.typeface = TypefaceManager.getDyslexicTypeface(context)
+              }
             }
 
             holder.text.movementMethod = LinkMovementMethod.getInstance()
@@ -363,21 +387,26 @@ internal class TranslationAdapter(private val context: Context,
     return context.getString(R.string.see_tafseer_of_verse, link.ayah)
   }
 
-  private fun truncateTextIfNeeded(text: CharSequence,
-                                   ayahId: Int,
-                                   translationIndex: Int): CharSequence {
+  private fun truncateTextIfNeeded(
+    text: CharSequence,
+    ayahId: Int,
+    translationIndex: Int
+  ): CharSequence {
     if (text.length > MAX_TAFSEER_LENGTH &&
-        !expandedTafaseerAyahs.contains(ayahId to translationIndex)) {
+      !expandedTafseerAyahs.contains(ayahId to translationIndex)
+    ) {
       // let's truncate
       val lastSpace = text.indexOf(' ', MAX_TAFSEER_LENGTH)
       if (lastSpace != -1) {
-        val builder = SpannableStringBuilder(text.subSequence(0, lastSpace + 1))
-        builder.append(context.getString(R.string.more_arabic))
-        builder.setSpan(ExpandTafseerSpan(expandClickListener),
+        return SpannableStringBuilder(text.subSequence(0, lastSpace + 1)).apply {
+          append(context.getString(R.string.more_arabic))
+          setSpan(
+            ExpandTafseerSpan(expandClickListener),
             lastSpace + 1,
-            builder.length,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        return builder
+            this.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+          )
+        }
       }
     }
     return text
@@ -395,13 +424,12 @@ internal class TranslationAdapter(private val context: Context,
     // toggle highlighting of the ayah, but not for sura headers and basmallah
     val isHighlighted = row.ayahInfo.ayahId == highlightedAyah
     if (row.type != TranslationViewRow.Type.SURA_HEADER &&
-        row.type != TranslationViewRow.Type.BASMALLAH &&
-        row.type != TranslationViewRow.Type.SPACER) {
-      if (isHighlighted) {
-        holder.wrapperView.setBackgroundColor(ayahSelectionColor)
-      } else {
-        holder.wrapperView.setBackgroundColor(0)
-      }
+      row.type != TranslationViewRow.Type.BASMALLAH &&
+      row.type != TranslationViewRow.Type.SPACER
+    ) {
+      holder.wrapperView.setBackgroundColor(
+        if (isHighlighted) ayahSelectionColor else 0
+      )
     } else if (holder.divider != null) { // SPACER type
       if (isHighlighted) {
         holder.divider.highlight(ayahSelectionColor)
@@ -411,9 +439,7 @@ internal class TranslationAdapter(private val context: Context,
     }
   }
 
-  override fun getItemCount(): Int {
-    return data.size
-  }
+  override fun getItemCount(): Int = data.size
 
   internal inner class RowViewHolder(val wrapperView: View) : RecyclerView.ViewHolder(wrapperView) {
     val text: TextView? = wrapperView.findViewById(R.id.text)
@@ -431,8 +457,7 @@ internal class TranslationAdapter(private val context: Context,
   }
 
   companion object {
-    private val USE_UTHMANI_SPAN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-    private const val ARABIC_MULTIPLIER = 1.4f
+    const val ARABIC_MULTIPLIER = 1.4f
     private const val MAX_TAFSEER_LENGTH = 750
     private const val HIGHLIGHT_CHANGE = 1
   }

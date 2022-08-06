@@ -1,16 +1,16 @@
 package com.quran.labs.androidquran.presenter.translation
 
 import com.quran.data.core.QuranInfo
+import com.quran.data.di.QuranPageScope
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
-import com.quran.labs.androidquran.di.QuranPageScope
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.observers.DisposableObserver
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.observers.DisposableObserver
 import javax.inject.Inject
 
 @QuranPageScope
@@ -19,14 +19,14 @@ internal class TranslationPresenter @Inject internal constructor(translationMode
                      translationsAdapter: TranslationsDBAdapter,
                      translationUtil: TranslationUtil,
                      private val quranInfo: QuranInfo,
-                     private val pages: Array<Int?>) :
+                     private val pages: IntArray) :
     BaseTranslationPresenter<TranslationPresenter.TranslationScreen>(
         translationModel, translationsAdapter, translationUtil, quranInfo) {
 
   fun refresh() {
     disposable?.dispose()
 
-    disposable = Observable.fromArray(*pages)
+    disposable = Observable.fromArray(*pages.toTypedArray())
         .flatMap { page ->
           getVerses(quranSettings.wantArabicInTranslationView(),
               getTranslations(quranSettings), quranInfo.getVerseRangeForPage(page))
@@ -35,11 +35,12 @@ internal class TranslationPresenter @Inject internal constructor(translationMode
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(object : DisposableObserver<ResultHolder>() {
           override fun onNext(result: ResultHolder) {
-            if (translationScreen != null && result.ayahInformation.isNotEmpty()) {
-              translationScreen!!.setVerses(
+            val screen = translationScreen
+            if (screen != null && result.ayahInformation.isNotEmpty()) {
+              screen.setVerses(
                   getPage(result.ayahInformation), result.translations,
                   result.ayahInformation)
-              translationScreen!!.updateScrollPosition()
+              screen.updateScrollPosition()
             }
           }
 
@@ -50,7 +51,7 @@ internal class TranslationPresenter @Inject internal constructor(translationMode
   }
 
   private fun getPage(result: List<QuranAyahInfo>): Int {
-    val firstPage = pages.first()
+    val firstPage = pages.firstOrNull()
     return if (pages.size == 1 && firstPage != null) {
       firstPage
     } else {

@@ -12,17 +12,17 @@ import javax.inject.Inject
 import kotlin.math.abs
 
 class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
-  private val suraPageStart = quranDataSource.getPageForSuraArray()
-  private val pageSuraStart = quranDataSource.getSuraForPageArray()
-  private val pageAyahStart = quranDataSource.getAyahForPageArray()
-  private val juzPageStart = quranDataSource.getPageForJuzArray()
-  private val juzPageOverride: Map<Int, Int> = quranDataSource.getJuzDisplayPageArrayOverride()
-  private val pageRub3Start = quranDataSource.getQuarterStartByPage()
-  private val suraNumAyahs = quranDataSource.getNumberOfAyahsForSuraArray()
-  private val suraIsMakki = quranDataSource.getIsMakkiBySuraArray()
-  private val quarters = quranDataSource.getQuartersArray()
+  private val suraPageStart = quranDataSource.pageForSuraArray
+  private val pageSuraStart = quranDataSource.suraForPageArray
+  private val pageAyahStart = quranDataSource.ayahForPageArray
+  private val juzPageStart = quranDataSource.pageForJuzArray
+  private val juzPageOverride: Map<Int, Int> = quranDataSource.juzDisplayPageArrayOverride
+  private val pageRub3Start = quranDataSource.quarterStartByPage
+  private val suraNumAyahs = quranDataSource.numberOfAyahsForSuraArray
+  private val suraIsMakki = quranDataSource.isMakkiBySuraArray
+  val quarters = quranDataSource.quartersArray
 
-  val numberOfPages = quranDataSource.getNumberOfPages()
+  val numberOfPages = quranDataSource.numberOfPages
   val numberOfPagesDual = numberOfPages / 2
 
   fun getStartingPageForJuz(juz: Int): Int {
@@ -156,8 +156,17 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     return ayahId
   }
 
+  /** Returns how many ayahs away end is from start (-ve if end is before start)  */
+  fun diff(start: SuraAyah, end: SuraAyah): Int {
+    return getAyahId(end.sura, end.ayah) - getAyahId(start.sura, start.ayah)
+  }
+
   fun getNumberOfAyahs(sura: Int): Int {
     return if (sura < 1 || sura > NUMBER_OF_SURAS) -1 else suraNumAyahs[sura - 1]
+  }
+
+  fun getNumberOfAyahsInQuran(): Int {
+    return suraNumAyahs.sum()
   }
 
   fun getPageFromPosition(
@@ -197,7 +206,7 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     return overriddenJuz ?: actualJuz
   }
 
-  fun getSuraAyahFromAyahId(ayahId: Int): SuraAyah? {
+  fun getSuraAyahFromAyahId(ayahId: Int): SuraAyah {
     var sura = 0
     var ayahIdentifier = ayahId
     while (ayahIdentifier > suraNumAyahs[sura]) {
@@ -216,7 +225,7 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     // get the starting point of the next juz'
     val lastQuarter = quarters[juz * 8]
     // if we're after that starting point, return juz + 1
-    return if (sura > lastQuarter[0] || lastQuarter[0] == sura && ayah >= lastQuarter[1]) {
+    return if (sura > lastQuarter.sura || lastQuarter.sura == sura && ayah >= lastQuarter.ayah) {
       juz + 1
     } else {
       // otherwise just return this juz

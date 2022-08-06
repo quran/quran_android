@@ -15,14 +15,17 @@ import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.pageselect.PageSelectActivity
 import com.quran.labs.androidquran.ui.AudioManagerActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
+import com.quran.mobile.di.ExtraPreferencesProvider
 import javax.inject.Inject
 
 class QuranSettingsFragment : PreferenceFragmentCompat(),
   SharedPreferences.OnSharedPreferenceChangeListener {
 
   @Inject
-  lateinit var pageTypes:
-      Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>
+  lateinit var pageTypes: Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>
+
+  @Inject
+  lateinit var extraPreferences: Set<@JvmSuppressWildcards ExtraPreferencesProvider>
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.quran_preferences)
@@ -51,17 +54,20 @@ class QuranSettingsFragment : PreferenceFragmentCompat(),
       val readingPrefs: Preference? = findPreference(Constants.PREF_READING_CATEGORY)
       (readingPrefs as PreferenceGroup).removePreference(pageChangePref)
     }
+
+    // add additional injected preferences (if any)
+    extraPreferences
+      .sortedBy { it.order }
+      .forEach { it.addPreferences(preferenceScreen) }
   }
 
   override fun onResume() {
     super.onResume()
-    preferenceScreen.sharedPreferences
-      .registerOnSharedPreferenceChangeListener(this)
+    preferenceScreen.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
   }
 
   override fun onPause() {
-    preferenceScreen.sharedPreferences
-      .unregisterOnSharedPreferenceChangeListener(this)
+    preferenceScreen.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
     super.onPause()
   }
 
@@ -84,6 +90,12 @@ class QuranSettingsFragment : PreferenceFragmentCompat(),
       val intent = Intent(activity, PageSelectActivity::class.java)
       startActivity(intent)
       return true
+    }
+
+    for (extraPref in extraPreferences) {
+      if (extraPref.onPreferenceClick(preference)) {
+        return true
+      }
     }
 
     return super.onPreferenceTreeClick(preference)

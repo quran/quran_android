@@ -33,6 +33,7 @@
   <string name="menu_jump">Oʻtish</string>
   <string name="gotoPage">Sahifaga oʻtish</string>
   <string name="cancel">Bekor qilish</string>
+  <string name="please_wait">Iltimos, biroz kuting…</string>
 
   <!-- about -->
   <string name="about_description">\"Quran for Android\" - bu bepul Qurʼon ilovasidir. Iltimos, ilovani ishlab chiqarishda ishtirok etganlarni duolaringizda unutmang.</string>
@@ -47,7 +48,8 @@
     Shuningdek doktor Ayman Suvayd qiroati ham ushbu proyektdan olingan.
   </string>
   <string name="about_furqan_summary">Usmoniy matn hamda arabcha tafsirlar</string>
-  <string name="about_tanzil_summary">Koʻplab tillardagi Qurʼon maʼnolari tarjimalari</string>
+  <string name="about_quran_enc_summary">Koʻplab tillardagi Qurʼon maʼnolari tarjimalari</string>
+  <string name="about_tanzil_summary">Baʼzi tillardagi Qurʼon maʼnolari tarjimalari</string>
   <string name="about_noorhidayat_summary">\"Noorehira\" shrifti hamda Mufti Taqi Usmoniy tarjimasi</string>
   <string name="about_open_source">Ochiq kodli proyektlar</string>
   <string name="about_others">Boshqalar</string>
@@ -90,6 +92,8 @@
     </string>
   <string name="search_hint">Izlash</string>
   <string name="quranSearchType">Suralar</string>
+  <string name="search_full_results">Barcha natijalar</string>
+  <string name="search_entire_mushaf">Butun musʼhafni qidirish</string>
 
   <plurals name="files_downloaded">
     <item quantity="one">Bitta sura saqlangan</item>
@@ -112,7 +116,7 @@
         ilovani qayta ishga tushiring.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">%1$s surasi, %2$d-oyat</string>
+  <string name="found_in_sura">%1$s surasi, %2$d-oyat (Sahifa %3$d)</string>
   <string name="no_results">\"%s\" boʻyicha natija topilmadi</string>
   <string name="no_arabic_search_available">Arabcha izlash moduli oʻrnatilmagan, iltimos, avval uni saqlab oling. Soʻngra qayta izlab koʻring.</string>
   <string name="get_arabic_search_db">Arabcha izlash bazasini oʻrnatish</string>
@@ -136,6 +140,8 @@
   <string name="prefs_night_mode_summary">Qora fon va porloq shriftlardan foydalaniladi</string>
   <string name="prefs_night_mode_text_brightness_title">Matn porloqliligi</string>
   <string name="prefs_night_mode_text_brightness_summary">Tunggi rejim ishga tushirilgan paytdagi matn porloqliligi</string>
+  <string name="prefs_night_mode_background_brightness_title">Fon yorqinligi</string>
+  <string name="prefs_night_mode_background_brightness_summary">Tungi rejim faol boʼlganda sahifaning yorqinligi</string>
   <string name="prefs_overlay_page_info_title">Sahifa maʼlumotlari</string>
   <string name="prefs_overlay_page_info_summary">Sura nomi, sahifa va juz raqamlarini koʻrsatish</string>
   <string name="prefs_display_marker_title">Boʻlim maʼlumotlari</string>
@@ -147,6 +153,8 @@
   <string name="prefs_translations_summary">Tarjimalarni saqlab olish va boshqarish</string>
   <string name="prefs_ayah_before_translation_title">Oyatni avval koʻrsatish</string>
   <string name="prefs_ayah_before_translation_summary">Arabcha oyatlarni tarjima matni ustida koʻrsatish</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Saqlab olish</string>
   <string name="prefs_streaming_title">Striming</string>
   <string name="prefs_streaming_summary">Imkon qadar audio strimingdan foydalanish</string>
@@ -170,9 +178,9 @@
   <string name="prefs_no_enough_space_to_move_files">Fayllarni koʻchirib oʻtkazish uchun yetarli joy mavjud emas</string>
   <string name="prefs_megabytes_int">%1$d Mb</string>
   <string name="prefs_megabytes_str">%s Mb</string>
-  <string name="prefs_dual_page_mode_title">Planshet rejimi</string>
-  <string name="prefs_dual_page_mode_enabled">Yotiq holatda ikki bet yonma-yon koʻrinadi</string>
-  <string name="prefs_dual_page_mode_disabled">Yotiq holatda ham faqat bitta bet koʻrinadi</string>
+  <string name="prefs_dual_page_mode_title">Juft sahifa rejimi</string>
+  <string name="prefs_dual_page_mode_enabled">Yotiq holatda ikki sahifa yonma-yon koʻrinadi</string>
+  <string name="prefs_dual_page_mode_disabled">Yotiq holatda ham faqat bitta sahifa koʻrinadi</string>
   <string name="prefs_category_advanced">Ilgʻor</string>
   <string name="prefs_category_advanced_summary">Xatchoʻplarni import/eksport qilish, maʼlumotlar jildini tanlash va h.k.</string>
   <string name="prefs_export_title">Eksport</string>
@@ -181,6 +189,9 @@
   <string name="prefs_import_summary">Xatchoʻp va teglarni import qilish</string>
   <string name="prefs_page_type_title">Sahifa turi (eksperimental)</string>
   <string name="prefs_page_type_summary">Qurʼon sahifalari turini tanlash</string>
+  <string name="prefs_sura_translated_name_title">Sura nomi tarjimasi</string>
+  <string name="prefs_sura_translated_name_summary">Sura nomi tarjimasi koʻrsatilsin</string>
+  <string name="prefs_preview">Oldindan koʻrish</string>
 
   <string name="more_translations">Yana tarjimalar</string>
   <string name="import_data_permissions_error">Ruxsat xatoliklari tufayli zaxira faylini oʻqib boʻlmadi.</string>
@@ -191,11 +202,17 @@
   <string name="import_successful">Muvaffaqiyatli import qilindi</string>
   <string name="export_data_error">Eksport qilishda xatolik yuz berdi</string>
   <string name="exported_data">Maʼlumotlar \"%1$s\"ga eksport qilindi</string>
+  <string name="move_up">Yuqoriga</string>
+  <string name="move_down">Pastga</string>
+  <string name="delete_translation">Oʻchirish</string>
 
   <string name="warning">Ogohlantirish</string>
   <string name="kitkat_external_message">Ilovani tashqi xotiraga (SD kartaga) koʻchirib oʻtkazgach, agar u oʻchirib tashlab-qayta oʻrnatilsa
         yoki maʼlumotlari tozalansa barcha Qurʼon rasmlari va audio fayllar ham oʻchib ketadi va ushbu kerakli maʼlumotlarni yana qayta saqlab
         olishga toʻgʻri keladi. Baribir tashqi xotiradan foydalanmoqchimisiz?</string>
+  <string name="scoped_storage_message">Foydalanuvchilar xavfsizligini taʼminotini oshirish boʻyicha oʻzgarishlar tufayli Android tizimining
+    yangi versiyalarida ilovamiz ushbu jilddagi maʼlumotlarni oʻqiy olmay qolishi mumkin. Shunga qaramasdan hozir ushbu jilddan foydalanmoqchimisiz?
+  </string>
   <string name="please_grant_permissions">Iltimos, ilova sozlamalari orqali kerakli ruxsatlarni bering</string>
   <!-- Preferences End -->
 
@@ -220,6 +237,7 @@
   <string name="quran_ayah_details">%1$s %2$s-oyat, %3$s-juz</string>
   <string name="quran_sura_title">%1$s surasi</string>
   <string name="sura_ayah_notification_str">%1$s surasi %2$d-oyat</string>
+  <string name="sura_ayah_sharing_str">%1$s surasi: %2$d</string>
 
   <string name="index_loading">Yuklanmoqda&#8230;</string>
 
@@ -300,14 +318,6 @@
   <string name="starting_page_label">Sahifa boshlanishi</string>
 
   <!-- long press -->
-  <string name="bookmark_ayah">Oyatni xatchoʻplash</string>
-  <string name="tag_ayah">Oyatni teglash</string>
-  <string name="share_ayah">Oyat bogʻichini boʻlishish</string>
-  <string name="share_ayah_text">Oyat matnini boʻlishish</string>
-  <string name="translation_ayah">Oyat tarjimasi</string>
-  <string name="play_from_here">Shu yerdan boshlab chal</string>
-  <string name="search_key">Sura topish uchun izlash tugmasiga bosing</string>
-  <string name="copy_ayah">Oyatni koʻchirish</string>
   <string name="ayah_copied_popup">Oyat xotiraga koʻchirildi</string>
 
   <!-- bookmarks & tags contextual action bar -->
@@ -335,6 +345,8 @@
 
   <!-- audio manager -->
   <string name="audio_manager">Audio menejer</string>
+  <string name="audio_manager_remove_audio_title">@string/remove_button</string>
+  <string name="audio_manager_remove_audio_msg">%1$s audio fayllari oʻchirilsinmi?</string>
   <plurals name="audio_manager_delete_surah_success">
     <item quantity="one">Sura oʻchirildi</item>
     <item quantity="other">%1$d ta sura oʻchirildi</item>
@@ -354,6 +366,11 @@
   <string name="audio_updated_text">Bir necha Qurʼon audio fayllar yangilandi. Qurilmangizdagi eski
     versiyalar oʻchirildi, keyingi safar foydalanganingizda yangilangan versiyalari qayta saqlab olinadi.
   </string>
+
+  <!-- dual screen prefs -->
+  <string name="prefs_category_dual_screen">Juft sahifa sozlamalari</string>
+  <string name="prefs_split_page_and_translation_title">Tarjima rejimida Qurʼon</string>
+  <string name="prefs_split_page_and_translation_summary">Juft sahifa rejimi yoniq boʻlsa, tarjimalar ekranida Qurʼonning toʻliq sahifasi koʻrsatiladi</string>
 
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Qurʼon yuklamalari</string>

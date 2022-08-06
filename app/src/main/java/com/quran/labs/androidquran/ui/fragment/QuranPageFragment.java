@@ -1,20 +1,26 @@
 package com.quran.labs.androidquran.ui.fragment;
 
+import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.fragment.app.Fragment;
+
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
+import com.quran.data.model.selection.AyahSelection;
+import com.quran.data.model.selection.AyahSelectionKt;
+import com.quran.data.model.selection.SelectionIndicator;
+import com.quran.data.model.selection.SelectionIndicatorKt;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
@@ -26,7 +32,7 @@ import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresen
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
 import com.quran.labs.androidquran.ui.helpers.AyahTracker;
-import com.quran.labs.androidquran.ui.helpers.HighlightType;
+import com.quran.labs.androidquran.ui.helpers.HighlightTypes;
 import com.quran.labs.androidquran.ui.helpers.QuranPage;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranScreenInfo;
@@ -36,15 +42,13 @@ import com.quran.labs.androidquran.view.QuranImagePageLayout;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.draw.ImageDrawHelper;
+import com.quran.reading.common.ReadingEventPresenter;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import timber.log.Timber;
-
-import static com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType;
 
 public class QuranPageFragment extends Fragment implements PageController,
     QuranPage, QuranPageScreen, AyahTrackerPresenter.AyahInteractionHandler {
@@ -61,6 +65,7 @@ public class QuranPageFragment extends Fragment implements PageController,
   @Inject AyahSelectedListener ayahSelectedListener;
   @Inject QuranScreenInfo quranScreenInfo;
   @Inject Set<ImageDrawHelper> imageDrawHelpers;
+  @Inject ReadingEventPresenter readingEventPresenter;
 
   private HighlightingImageView imageView;
   private QuranImagePageLayout quranPageLayout;
@@ -90,7 +95,7 @@ public class QuranPageFragment extends Fragment implements PageController,
   public View onCreateView(@NonNull LayoutInflater inflater,
                            ViewGroup container,
                            Bundle savedInstanceState) {
-    final Context context = getActivity();
+    final Context context = requireContext();
     quranPageLayout = new QuranImagePageLayout(context);
     quranPageLayout.setPageController(this, pageNumber);
     imageView = quranPageLayout.getImageView();
@@ -102,17 +107,19 @@ public class QuranPageFragment extends Fragment implements PageController,
     if (isAdded()) {
       quranPageLayout.updateView(quranSettings);
       if (!quranSettings.highlightBookmarks()) {
-        imageView.unHighlight(HighlightType.BOOKMARK);
+        imageView.unHighlight(HighlightTypes.BOOKMARK);
       }
       quranPagePresenter.refresh();
     }
   }
 
+  @NonNull
   @Override
   public AyahTracker getAyahTracker() {
     return ayahTrackerPresenter;
   }
 
+  @NonNull
   @Override
   public AyahTrackerItem[] getAyahTrackerItems() {
     if (ayahTrackerItems == null) {
@@ -121,7 +128,7 @@ public class QuranPageFragment extends Fragment implements PageController,
         quranPageLayout.canScroll() ?
             new AyahScrollableImageTrackerItem(pageNumber, height,
                 quranInfo, quranDisplayData, quranPageLayout, imageDrawHelpers, imageView) :
-            new AyahImageTrackerItem(pageNumber, height, quranInfo, quranDisplayData, imageDrawHelpers, imageView)
+            new AyahImageTrackerItem(pageNumber, quranInfo, quranDisplayData, imageDrawHelpers, imageView)
       };
     }
     return ayahTrackerItems;
@@ -173,11 +180,6 @@ public class QuranPageFragment extends Fragment implements PageController,
   }
 
   @Override
-  public void setBookmarksOnPage(List<Bookmark> bookmarks) {
-    ayahTrackerPresenter.setAyahBookmarks(bookmarks);
-  }
-
-  @Override
   public void setAyahCoordinatesData(AyahCoordinates ayahCoordinates) {
     ayahTrackerPresenter.setAyahCoordinates(ayahCoordinates);
     ayahCoordinatesError = false;
@@ -189,17 +191,22 @@ public class QuranPageFragment extends Fragment implements PageController,
   }
 
   @Override
-  public void onScrollChanged(int x, int y, int oldx, int oldy) {
-    PagerActivity activity = (PagerActivity) getActivity();
-    if (activity != null) {
-      activity.onQuranPageScroll(y);
+  public void onScrollChanged(float y) {
+    final AyahSelection selection = readingEventPresenter.currentAyahSelection();
+    if (!(selection instanceof AyahSelection.None)) {
+      final SelectionIndicator selectionIndicator = AyahSelectionKt.selectionIndicator(selection);
+      final SelectionIndicator updatedIndicator =
+          SelectionIndicatorKt.withYScroll(selectionIndicator, -y);
+      final AyahSelection updatedSelection =
+          AyahSelectionKt.withSelectionIndicator(selection, updatedIndicator);
+      readingEventPresenter.onAyahSelection(updatedSelection);
     }
   }
 
   @Override
   public void setPageDownloadError(@StringRes int errorMessage) {
     quranPageLayout.showError(errorMessage);
-    quranPageLayout.setOnClickListener(v -> ayahSelectedListener.onClick(EventType.SINGLE_TAP));
+    quranPageLayout.setOnClickListener(v -> ayahTrackerPresenter.onPressIgnoringSelectionState());
   }
 
   @Override
@@ -221,29 +228,22 @@ public class QuranPageFragment extends Fragment implements PageController,
   }
 
   @Override
-  public boolean handleTouchEvent(MotionEvent event, EventType eventType, int page) {
-    return isVisible() && ayahTrackerPresenter.handleTouchEvent(getActivity(), event, eventType,
-        page, ayahSelectedListener, ayahCoordinatesError);
+  public boolean handleTouchEvent(@NonNull MotionEvent event, @NonNull EventType eventType, int page) {
+    return isVisible() && ayahTrackerPresenter.handleTouchEvent(requireActivity(), event, eventType,
+        page, ayahCoordinatesError);
   }
 
   @Override
-  public void handleLongPress(SuraAyah suraAyah) {
+  public void handleLongPress(@NonNull SuraAyah suraAyah) {
     if (isVisible()) {
-      ayahTrackerPresenter.handleLongClick(suraAyah, ayahSelectedListener);
+      ayahTrackerPresenter.onLongPress(suraAyah);
     }
   }
 
   @Override
   public void endAyahMode() {
     if (isVisible()) {
-      ayahTrackerPresenter.endAyahMode(ayahSelectedListener);
-    }
-  }
-
-  @Override
-  public void requestMenuPositionUpdate() {
-    if (isVisible()) {
-      ayahTrackerPresenter.requestMenuPositionUpdate(ayahSelectedListener);
+      ayahTrackerPresenter.endAyahMode();
     }
   }
 }

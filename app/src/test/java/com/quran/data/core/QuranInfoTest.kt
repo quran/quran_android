@@ -9,7 +9,7 @@ class QuranInfoTest {
   @Test
   fun testCorrectJuzBounds() {
     val quranInfo = QuranInfo(MadaniDataSource())
-    val data = MadaniDataSource().getPageForJuzArray()
+    val data = MadaniDataSource().pageForJuzArray
     data.forEachIndexed { index, value ->
       assertThat(quranInfo.getJuzFromPage(value)).isEqualTo(index + 1)
     }
@@ -18,7 +18,7 @@ class QuranInfoTest {
   @Test
   fun testCorrectJuzWithinJuz() {
     val quranInfo = QuranInfo(MadaniDataSource())
-    val data = MadaniDataSource().getPageForJuzArray()
+    val data = MadaniDataSource().pageForJuzArray
     data.forEachIndexed { index, value ->
       // juz' x page plus 10 pages should still be juz' x
       assertThat(quranInfo.getJuzFromPage(value + 10)).isEqualTo(index + 1)
@@ -31,7 +31,7 @@ class QuranInfoTest {
   fun testFirstJuz() {
     val quranInfo = QuranInfo(MadaniDataSource())
     val dataSource = MadaniDataSource()
-    val firstPageOfSecondJuz = dataSource.getPageForJuzArray()[1]
+    val firstPageOfSecondJuz = dataSource.pageForJuzArray[1]
     for (i in 1 until firstPageOfSecondJuz) {
       assertThat(quranInfo.getJuzFromPage(i)).isEqualTo(1)
     }
@@ -41,8 +41,8 @@ class QuranInfoTest {
   fun testThirtiethJuz() {
     val quranInfo = QuranInfo(MadaniDataSource())
     val dataSource = MadaniDataSource()
-    val firstPageOfLastJuz = dataSource.getPageForJuzArray()[29]
-    val lastPageOfMushaf = dataSource.getNumberOfPages()
+    val firstPageOfLastJuz = dataSource.pageForJuzArray[29]
+    val lastPageOfMushaf = dataSource.numberOfPages
     for (i in firstPageOfLastJuz until lastPageOfMushaf) {
       assertThat(quranInfo.getJuzFromPage(i)).isEqualTo(30)
     }

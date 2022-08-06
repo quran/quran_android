@@ -13,6 +13,7 @@
   <string translatable="false" name="prefs_night_mode">nightMode</string>
   <string translatable="false" name="prefs_sura_translated_name">suraTranslatedName</string>
   <string translatable="false" name="prefs_night_mode_text_brightness">nightModeTextBrightness</string>
+  <string translatable="false" name="prefs_night_mode_background_brightness">nightModeBackgroundBrightness</string>
   <string translatable="false" name="prefs_overlay_page_info">overlayPageInfo</string>
   <string translatable="false" name="prefs_display_marker_popup">displayMarkerPopup</string>
   <string translatable="false" name="prefs_highlight_bookmarks">highlightBookmarks</string>
@@ -20,6 +21,7 @@
   <string translatable="false" name="prefs_landscape_orientation">landscapeOrientation</string>
   <string translatable="false" name="prefs_translation_text_size">translationTextSize</string>
   <string translatable="false" name="prefs_ayah_before_translation">ayahBeforeTranslation</string>
+  <string translatable="false" name="prefs_use_dyslexic_font">useDyslexicFont</string>
   <string translatable="false" name="prefs_split_page_and_translation">splitPageAndTranslation</string>
   <string translatable="false" name="prefs_prefer_streaming">preferStreaming</string>
   <string translatable="false" name="prefs_download_amount">preferredDownloadAmount</string>
@@ -31,6 +33,7 @@
   <string translatable="false" name="prefs_audio_manager_key">audioManagerKey</string>
   <string translatable="false" name="prefs_import">importKey</string>
   <string translatable="false" name="prefs_export">exportKey</string>
+  <string translatable="false" name="prefs_export_csv">exportKeyCSV</string>
   <string translatable="false" name="prefs_send_logs">sendLogsKey</string>
   <string translatable="false" name="prefs_page_type">pageTypeKey</string>
   <string translatable="false" name="prefs_reading_category_key">readingCategoryKey</string>

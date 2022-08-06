@@ -42,7 +42,7 @@
   <string name="qari_mostafa_ismaeel_gapless">Mostafa Ismaeel (مورەتەل)</string>
   <string name="qari_husary_iza3a_gapless">Husary Broadcast (مورەتەل)</string>
   <string name="qari_abdulaziz_zahrani_gapless">Abdulaziz Az-Zahrani (مورەتەل)</string>
-  <string name="qari_ayman_suwaid">Dr. Ayman Suwaid</string>
+  <string name="qari_ayman_suwaid">Ayman Suwaid</string>
   <string name="qari_afasy_gapless">مەشاری ئەلعەفاسی (مورەتەل)</string>
   <string name="qari_hani_rifai_gapless">ھانی ڕەفاعی (مورەتەل)</string>
   <string name="qari_ayyoub_gapless">محەمەد ئەیوب (مورەتەل)</string>
@@ -53,11 +53,23 @@
   <string name="qari_afasy_cali_gapless">Mishari Al-Afasy (California, مورەتەل)</string>
   <string name="qari_ajamy_gapless">Ahmed ibn Ali al-Ajamy (مورەتەل)</string>
   <string name="qari_ali_jaber_gapless">Ali Jaber (مورەتەل)</string>
-  <string name="qari_muaiqly_gapless">ماھیر موعەیقلی (الحرمين، مورەتەل)</string>
+  <string name="qari_muaiqly_haramain_gapless">ماھیر موعەیقلی (الحرمين، مورەتەل)</string>
   <string name="qari_juhany_gapless">Abdullah Al-Juhany (مورەتەل)</string>
   <string name="qari_abdulmuhsin_qasim_gapless">Abdul Mohsen Al-Qasim (مورەتەل)</string>
   <string name="qari_fares_abbad_gapless">Fares Abbad (مورەتەل)</string>
   <string name="qari_khalifa_taniji_gapless">Xelîfe Tengî (مورەتەل)</string>
   <string name="qari_abdullah_matroud_gapless">Abdullah Matroud (مورەتەل)</string>
- <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (مورەتەل)</string>
+  <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (مورەتەل)</string>
+  <string name="qari_hudhayfi_gapless">عەلی حوزەیفی (مورەتەل)</string>
+  <string name="qari_khaled_muhanna_gapless">Xalid Al-Muhanna (مورەتەل)</string>
+  <string name="qari_husary_mujawwad_gapless">الحصري (موجەوەد، مورەتەل)</string>
+  <string name="qari_husary_muallim_gapless">الحصري (معلم, مورەتەل)</string>
+  <string name="qari_ibrahim_alakhdar_gapless">Îbrahîm El-Axdar (مورەتەل)</string>
+  <string name="qari_muaiqly_gapless">ماھیر موعەیقلی (مورەتەل)</string>
+  <string name="qari_yasser_salama_hadr_gapless">Yasser Salama (حدر، مورەتەل)</string>
+  <string name="qari_khalid_qahtani_gapless">Xalid El Qehtanî (مورەتەل)</string>
+  <string name="qari_mokhtasar_asmari_gapless">Abdullah Al-Asmari (Tefsîra erebî, مورەتەل)</string>
+  <string name="qari_aloosi_gapless">Abdul Rahman Aloosi (مورەتەل)</string>
+  <string name="qari_alzain_ahmad_gapless">Alzain Mihemed Ehmed (مورەتەل)</string>
+  <string name="qari_muhammad_rashad_shereef_gapless">Mihemed Reşad Al-Şerîf (مورەتەل)</string>
 </resources>

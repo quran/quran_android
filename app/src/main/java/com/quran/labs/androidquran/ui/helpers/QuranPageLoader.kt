@@ -2,11 +2,11 @@ package com.quran.labs.androidquran.ui.helpers
 
 import android.content.Context
 import com.quran.labs.androidquran.common.Response
-import com.quran.labs.androidquran.di.ActivityScope
+import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,7 +20,7 @@ class QuranPageLoader @Inject internal constructor(
   private val quranFileUtils: QuranFileUtils
 ) {
 
-  private fun loadImage(pageNumber: Int): Response? {
+  private fun loadImage(pageNumber: Int): Response {
     var response: Response? = null
     var oom: OutOfMemoryError? = null
     try {

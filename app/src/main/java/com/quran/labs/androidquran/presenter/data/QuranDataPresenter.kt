@@ -12,14 +12,13 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.quran.data.core.QuranInfo
+import com.quran.data.model.QuranDataStatus
 import com.quran.data.source.PageProvider
-import com.quran.labs.androidquran.BuildConfig
+import com.quran.common.upgrade.LocalDataUpgrade
+import com.quran.data.source.PageContentType
 import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.data.Constants
-import com.quran.labs.androidquran.data.QuranDataProvider
-import com.quran.labs.androidquran.data.QuranFileConstants
 import com.quran.labs.androidquran.presenter.Presenter
-import com.quran.labs.androidquran.util.CopyDatabaseUtil
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
@@ -27,12 +26,12 @@ import com.quran.labs.androidquran.worker.AudioUpdateWorker
 import com.quran.labs.androidquran.worker.MissingPageDownloadWorker
 import com.quran.labs.androidquran.worker.PartialPageCheckingWorker
 import com.quran.labs.androidquran.worker.WorkerConstants
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.functions.Consumer
+import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit.DAYS
@@ -43,8 +42,9 @@ class QuranDataPresenter @Inject internal constructor(
     val quranInfo: QuranInfo,
     val quranScreenInfo: QuranScreenInfo,
     private val quranPageProvider: PageProvider,
-    private val copyDatabaseUtil: CopyDatabaseUtil,
-    val quranFileUtils: QuranFileUtils) : Presenter<QuranDataActivity> {
+    val quranFileUtils: QuranFileUtils,
+    private val localDataUpgrade: LocalDataUpgrade
+) : Presenter<QuranDataActivity> {
 
   private var activity: QuranDataActivity? = null
   private var checkPagesDisposable: Disposable? = null
@@ -68,12 +68,11 @@ class QuranDataPresenter @Inject internal constructor(
       checkPagesDisposable =
           supportLegacyPages(pages)
               .andThen(actuallyCheckPages(pages))
-              .flatMap { copyLocalDataIfNecessary(it) }
+              .flatMap { Single.fromCallable { localDataUpgrade.processData(it) } }
               .map { checkPatchStatus(it) }
+              .flatMap { Single.fromCallable { localDataUpgrade.processPatch(it) } }
               .doOnSuccess {
-                if (it.havePages()) {
-                  copyArabicDatabaseIfNecessary()
-                } else {
+                if (!it.havePages()) {
                   try {
                     generateDebugLog()
                   } catch (e: Exception) {
@@ -98,20 +97,6 @@ class QuranDataPresenter @Inject internal constructor(
     }
   }
 
-  private fun copyLocalDataIfNecessary(status: QuranDataStatus): Single<QuranDataStatus> {
-    return Single.fromCallable {
-      if (!status.havePages() && QuranFileConstants.ARE_PAGES_BUNDLED) {
-        for (widthToDelete in QuranFileConstants.FORCE_DELETE_PAGES) {
-          quranFileUtils.removeFilesForWidth(appContext, widthToDelete)
-        }
-        quranFileUtils.copyQuranDataFromAssets(appContext, status.portraitWidth)
-        status.copy(havePortrait = true, haveLandscape = true)
-      } else {
-        status
-      }
-    }
-  }
-
   private fun scheduleAudioUpdater() {
     val audioUpdaterTaskConstraints = Constraints.Builder()
         .setRequiredNetworkType(CONNECTED)
@@ -126,6 +111,17 @@ class QuranDataPresenter @Inject internal constructor(
     WorkManager.getInstance(appContext)
         .enqueueUniquePeriodicWork(Constants.AUDIO_UPDATE_UNIQUE_WORK,
             ExistingPeriodicWorkPolicy.KEEP, updateAudioTask)
+  }
+
+  fun imagesVersion() = quranPageProvider.getImageVersion()
+
+  fun canProceedWithoutDownload() = quranPageProvider.getPageContentType() == PageContentType.IMAGE
+
+  fun fallbackToImageType() {
+    val fallbackType = quranPageProvider.getFallbackPageType()
+    if (fallbackType != null) {
+      quranSettings.pageType = fallbackType
+    }
   }
 
   fun getDebugLog(): String = debugLog ?: ""
@@ -219,7 +215,7 @@ class QuranDataPresenter @Inject internal constructor(
       }
 
       val pageType = quranSettings.pageType
-      if (!quranSettings.didCheckPartialImages(pageType)) {
+      if (!quranSettings.didCheckPartialImages(pageType) && !pageType.endsWith("lines")) {
         Timber.d("enqueuing work for $pageType...")
 
         // setup check pages task
@@ -276,12 +272,12 @@ class QuranDataPresenter @Inject internal constructor(
 
       val width = quranDataStatus.portraitWidth
       val needPortraitPatch =
-          !quranFileUtils.isVersion(appContext, width, latestImagesVersion)
+          !quranFileUtils.isVersion(width, latestImagesVersion)
 
       val tabletWidth = quranDataStatus.landscapeWidth
       if (width != tabletWidth) {
         val needLandscapePatch =
-            !quranFileUtils.isVersion(appContext, tabletWidth, latestImagesVersion)
+            !quranFileUtils.isVersion(tabletWidth, latestImagesVersion)
         if (needLandscapePatch) {
           return quranDataStatus.copy(patchParam = width + tabletWidth)
         }
@@ -294,24 +290,6 @@ class QuranDataPresenter @Inject internal constructor(
     return quranDataStatus
   }
 
-  @WorkerThread
-  private fun copyArabicDatabaseIfNecessary() {
-    // in 2.9.1 and above, the Arabic databases were renamed. To make it easier for
-    // people to get them, the app will bundle them with the apk for a few releases.
-    // if the database doesn't exist, let's try to copy it if we can. Only check this
-    // if we have all the files, since if not, they come bundled with the full pages
-    // zip file anyway. Note that, for now, this only applies for the madani app.
-    if ("madani" == BuildConfig.FLAVOR && !quranFileUtils.hasArabicSearchDatabase(appContext)) {
-      val success = copyDatabaseUtil.copyArabicDatabaseFromAssets(QuranDataProvider.QURAN_ARABIC_DATABASE)
-          .blockingGet()
-      if (success) {
-        Timber.d("copied Arabic database successfully")
-      } else {
-        Timber.d("failed to copy Arabic database")
-      }
-    }
-  }
-
   override fun bind(activity: QuranDataActivity) {
     this.activity = activity
   }
@@ -320,15 +298,5 @@ class QuranDataPresenter @Inject internal constructor(
     if (this.activity === activity) {
       this.activity = null
     }
-  }
-
-  data class QuranDataStatus(val portraitWidth: String,
-                             val landscapeWidth: String,
-                             val havePortrait: Boolean,
-                             val haveLandscape: Boolean,
-                             val patchParam: String?) {
-    fun needPortrait() = !havePortrait
-    fun needLandscape() = !haveLandscape
-    fun havePages() = havePortrait && haveLandscape
   }
 }

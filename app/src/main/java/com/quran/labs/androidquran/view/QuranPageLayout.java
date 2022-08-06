@@ -77,6 +77,9 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
   public QuranPageLayout(Context context) {
     super(context);
     this.context = context;
+  }
+
+  public void initialize() {
     ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_LTR);
     Resources resources = context.getResources();
     final boolean isLandscape =
@@ -192,7 +195,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     }
   }
 
-  protected abstract View generateContentView(Context context, boolean isLandscape);
+  protected abstract View generateContentView(@NonNull Context context, boolean isLandscape);
 
   protected boolean shouldWrapWithScrollView() {
     return true;
@@ -217,8 +220,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
       final WindowManager mgr =
           (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
       Display display = mgr.getDefaultDisplay();
-      int width = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ?
-          QuranDisplayHelper.getWidthKitKat(display) : display.getWidth();
+      int width = QuranDisplayHelper.getWidthKitKat(display);
       width = width / pagesVisible;
       leftGradient = QuranDisplayHelper.getPaintDrawable(width, 0);
       rightGradient = QuranDisplayHelper.getPaintDrawable(0, width);
@@ -254,7 +256,8 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
 
   protected void updateBackground(boolean nightMode, QuranSettings quranSettings) {
     if (nightMode) {
-      setBackgroundColor(Color.BLACK);
+      int bgColor = quranSettings.getNightModeBackgroundBrightness();
+      setBackgroundColor(Color.rgb(bgColor,bgColor,bgColor));
     } else if (quranSettings.useNewBackground()) {
       setBackgroundDrawable((pageNumber % 2 == 0 ? leftGradient : rightGradient));
     } else {
@@ -285,7 +288,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
   public void onScrollChanged(ObservableScrollView scrollView,
       int x, int y, int oldx, int oldy) {
     if (pageController != null) {
-      pageController.onScrollChanged(x, y, oldx, oldy);
+      pageController.onScrollChanged(y);
     }
   }
 }

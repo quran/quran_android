@@ -16,6 +16,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.view.ActionMode.Callback
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -25,29 +26,32 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.quran.data.core.QuranInfo
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.common.audio.QariItem
+import com.quran.labs.androidquran.common.audio.cache.AudioCacheInvalidator
+import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.data.QuranDisplayData
-import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.service.QuranDownloadService
+import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
+import com.quran.labs.androidquran.ui.fragment.BulkDownloadFragment
 import com.quran.labs.androidquran.ui.util.ToastCompat
 import com.quran.labs.androidquran.util.AudioManagerUtils
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QariDownloadInfo
 import com.quran.labs.androidquran.util.QuranFileUtils
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.io.File
 import java.util.ArrayList
 import java.util.Locale
 import javax.inject.Inject
 
-class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListener {
+class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
   private val compositeDisposable = CompositeDisposable()
 
   @Inject
@@ -61,6 +65,9 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
 
   @Inject
   lateinit var audioUtils: AudioUtils
+
+  @Inject
+  lateinit var audioCacheInvalidator: AudioCacheInvalidator
 
   private lateinit var progressBar: ProgressBar
   private lateinit var recyclerView: RecyclerView
@@ -98,7 +105,6 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
     surahAdapter = SurahAdapter(this)
 
     recyclerView = findViewById(R.id.recycler_view)
-    recyclerView.setHasFixedSize(true)
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.itemAnimator = DefaultItemAnimator()
     recyclerView.adapter = surahAdapter
@@ -155,7 +161,9 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
       R.id.download_all -> {
         val info = surahAdapter.qariDownloadInfo ?: return true
         if (info.downloadedSuras.size() != 114) {
-          download(1, 114)
+          val fm = supportFragmentManager
+          val bulkDownloadDialog = BulkDownloadFragment()
+          bulkDownloadDialog.show(fm, BulkDownloadFragment.TAG)
         }
       }
     }
@@ -267,7 +275,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
     }
 
   private fun deleteSurah(surah: Int): Boolean {
-    val fileUri = audioUtils.getLocalQariUri(this, qari) ?: return false
+    val fileUri = audioUtils.getLocalQariUri(qari) ?: return false
     var deletionSuccessful = true
     if (qari.isGapless) {
       val fileName = String.format(Locale.US, fileUri, surah)
@@ -312,6 +320,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
       AudioManagerUtils.clearCacheKeyForSheikh(qari)
       readShuyookhData()
       finishActionMode()
+      audioCacheInvalidator.invalidateCacheForQari(qari.id)
     }
   }
 
@@ -322,6 +331,10 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
       download(surah, surah)
     }
     finishActionMode()
+  }
+
+  fun downloadBulk(startSurah: Int, endSurah: Int){
+      download(startSurah,endSurah)
   }
 
   private fun download(startSurah: Int, endSurah: Int) {
@@ -341,6 +354,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
         SuraAyah(endSurah, quranInfo.getNumberOfAyahs(endSurah))
     )
     intent.putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless)
+    intent.putExtra(QuranDownloadService.EXTRA_METADATA, AudioDownloadMetadata(qari.id))
     startService(intent)
   }
 
@@ -354,7 +368,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
     readShuyookhData()
   }
 
-  private inner class SurahAdapter internal constructor(
+  private inner class SurahAdapter(
     private val context: Context
   ) : Adapter<SurahViewHolder>() {
     var qariDownloadInfo: QariDownloadInfo? = null
@@ -447,7 +461,7 @@ class SheikhAudioManagerActivity : QuranActionBarActivity(), SimpleDownloadListe
 
   }
 
-  private inner class SurahViewHolder internal constructor(val view: View) : ViewHolder(view) {
+  private inner class SurahViewHolder(val view: View) : ViewHolder(view) {
     val name: TextView = view.findViewById(R.id.name)
     val status: TextView = view.findViewById(R.id.quantity)
     val image: ImageView = view.findViewById(R.id.image)

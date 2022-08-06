@@ -11,6 +11,7 @@ import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
@@ -46,6 +47,7 @@ public class QuranDataProvider extends ContentProvider {
   @Inject QuranDisplayData quranDisplayData;
   @Inject TranslationsDBAdapter translationsDBAdapter;
   @Inject QuranFileUtils quranFileUtils;
+  @Inject QuranInfo quranInfo;
 
   private static UriMatcher buildUriMatcher() {
     UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -142,7 +144,7 @@ public class QuranDataProvider extends ContentProvider {
       String database;
       if (i < 0) {
         database = QURAN_ARABIC_DATABASE;
-        if (!quranFileUtils.hasArabicSearchDatabase(context)) {
+        if (!quranFileUtils.hasArabicSearchDatabase()) {
           continue;
         }
       } else {
@@ -172,9 +174,10 @@ public class QuranDataProvider extends ContentProvider {
             }
             int sura = suggestions.getInt(1);
             int ayah = suggestions.getInt(2);
+            int page = quranInfo.getPageFromSuraAyah(sura, ayah);
             String text = suggestions.getString(3);
             String foundText = context.getString(
-                R.string.found_in_sura, quranDisplayData.getSuraName(context, sura, false), ayah);
+                R.string.found_in_sura, quranDisplayData.getSuraName(context, sura, false), ayah, page);
 
             gotResults = true;
             MatrixCursor.RowBuilder row = mc.newRow();

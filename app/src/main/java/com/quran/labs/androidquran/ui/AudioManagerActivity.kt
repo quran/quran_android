@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,17 +19,17 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.common.audio.QariItem
+import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.util.AudioManagerUtils
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QariDownloadInfo
 import com.quran.labs.androidquran.util.QuranFileUtils
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.util.HashMap
 import javax.inject.Inject
 
-class AudioManagerActivity : QuranActionBarActivity() {
+class AudioManagerActivity : AppCompatActivity() {
   private val disposable: CompositeDisposable = CompositeDisposable()
 
   private lateinit var progressBar: ProgressBar
@@ -67,7 +68,6 @@ class AudioManagerActivity : QuranActionBarActivity() {
     shuyookhAdapter = ShuyookhAdapter(qariItems)
 
     recyclerView = findViewById(R.id.recycler_view)
-    recyclerView.setHasFixedSize(true)
     recyclerView.layoutManager = LinearLayoutManager(this)
     recyclerView.itemAnimator = DefaultItemAnimator()
     recyclerView.adapter = shuyookhAdapter
@@ -120,7 +120,7 @@ class AudioManagerActivity : QuranActionBarActivity() {
     return super.onOptionsItemSelected(item)
   }
 
-  private inner class ShuyookhAdapter internal constructor(val qariItems: List<QariItem>) :
+  private inner class ShuyookhAdapter(val qariItems: List<QariItem>) :
       Adapter<SheikhViewHolder>() {
     private val inflater: LayoutInflater = LayoutInflater.from(this@AudioManagerActivity)
     private val downloadInfoMap: MutableMap<QariItem, QariDownloadInfo> = HashMap()
@@ -164,7 +164,7 @@ class AudioManagerActivity : QuranActionBarActivity() {
     }
   }
 
-  private inner class SheikhViewHolder internal constructor(itemView: View) :
+  private inner class SheikhViewHolder(itemView: View) :
       ViewHolder(itemView) {
     val name: TextView = itemView.findViewById(R.id.name)
     val quantity: TextView = itemView.findViewById(R.id.quantity)

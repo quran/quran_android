@@ -11,7 +11,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 
 import com.quran.labs.androidquran.QuranImportActivity;
-import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
+import com.quran.data.model.bookmark.BookmarkData;
 import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.service.util.PermissionUtil;
@@ -24,12 +24,12 @@ import java.io.InputStream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Maybe;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.observers.DisposableMaybeObserver;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.observers.DisposableMaybeObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import okio.BufferedSource;
 import okio.Okio;
 

@@ -9,7 +9,6 @@ import com.quran.labs.androidquran.core.worker.WorkerTaskFactory
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flowOn
@@ -28,7 +27,6 @@ class MissingPageDownloadWorker(private val context: Context,
                                 private val quranFileUtils: QuranFileUtils
 ) : CoroutineWorker(context, params) {
 
-  @ExperimentalCoroutinesApi
   override suspend fun doWork(): Result = coroutineScope {
     Timber.d("MissingPageDownloadWorker")
     val pagesToDownload = findMissingPagesToDownload()

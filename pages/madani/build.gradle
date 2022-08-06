@@ -14,6 +14,7 @@ dependencies {
   implementation project(path: ':common:data')
   implementation project(path: ':common:pages')
   implementation project(path: ':common:audio')
+  implementation project(path: ':common:upgrade')
 
   kapt deps.dagger.apt
   implementation deps.dagger.runtime

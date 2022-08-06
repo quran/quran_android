@@ -1,0 +1,21 @@
+plugins {
+  id 'com.android.library'
+  id 'org.jetbrains.kotlin.android'
+  id 'com.squareup.anvil'
+}
+
+android {
+  compileSdkVersion deps.android.build.compileSdkVersion
+  defaultConfig {
+    minSdkVersion deps.android.build.minSdkVersion
+    targetSdkVersion deps.android.build.targetSdkVersion
+  }
+}
+
+anvil { generateDaggerFactories = true }
+
+dependencies {
+  implementation deps.dagger.runtime
+  implementation "androidx.fragment:fragment-ktx:${androidxFragmentVersion}"
+  implementation "androidx.preference:preference-ktx:${androidxPreferencesVersion}"
+}

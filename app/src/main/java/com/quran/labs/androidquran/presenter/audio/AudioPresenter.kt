@@ -2,14 +2,15 @@ package com.quran.labs.androidquran.presenter.audio
 
 import android.content.Context
 import android.content.Intent
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.common.audio.QariItem
+import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.dao.audio.AudioPathInfo
 import com.quran.labs.androidquran.dao.audio.AudioRequest
 import com.quran.labs.androidquran.data.QuranDisplayData
-import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.service.QuranDownloadService
+import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.util.AudioUtils
@@ -100,7 +101,7 @@ constructor(private val quranDisplayData: QuranDisplayData,
           context.getString(R.string.highlighting_database))
     } else if (gaplessDb != null && !File(gaplessDb).exists()) {
       getDownloadIntent(context,
-          audioUtil.getGaplessDatabaseUrl(qari)!!,
+          getGaplessDatabaseUrl(qari)!!,
           path,
           context.getString(R.string.timing_database))
     } else if (!request.shouldStream &&
@@ -121,6 +122,7 @@ constructor(private val quranDisplayData: QuranDisplayData,
         putExtra(QuranDownloadService.EXTRA_START_VERSE, request.start)
         putExtra(QuranDownloadService.EXTRA_END_VERSE, request.end)
         putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, qari.isGapless)
+        putExtra(QuranDownloadService.EXTRA_METADATA, AudioDownloadMetadata(qari.id))
       }
     } else {
       null
@@ -136,9 +138,9 @@ constructor(private val quranDisplayData: QuranDisplayData,
 
   private fun getLocalAudioPathInfo(qari: QariItem): AudioPathInfo? {
     pagerActivity?.let {
-      val localPath = audioUtil.getLocalQariUrl(it, qari)
+      val localPath = audioUtil.getLocalQariUrl(qari)
       if (localPath != null) {
-        val databasePath = audioUtil.getQariDatabasePathIfGapless(it, qari)
+        val databasePath = audioUtil.getQariDatabasePathIfGapless(qari)
         val urlFormat = if (databasePath.isNullOrEmpty()) {
           localPath + File.separator + "%d" + File.separator +
               "%d" + AudioUtils.AUDIO_EXTENSION
@@ -154,6 +156,15 @@ constructor(private val quranDisplayData: QuranDisplayData,
   private fun haveAllFiles(audioPathInfo: AudioPathInfo, start: SuraAyah, end: SuraAyah): Boolean {
     return audioUtil.haveAllFiles(audioPathInfo.urlFormat,
         audioPathInfo.localDirectory, start, end, audioPathInfo.gaplessDatabase != null)
+  }
+
+  private fun getGaplessDatabaseUrl(qari: QariItem): String? {
+    if (!qari.isGapless || qari.databaseName == null) {
+      return null
+    }
+
+    val dbName = qari.databaseName + AudioUtils.ZIP_EXTENSION
+    return quranFileUtils.gaplessDatabaseRootUrl + "/" + dbName
   }
 
   override fun bind(what: PagerActivity) {

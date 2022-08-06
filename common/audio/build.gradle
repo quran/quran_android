@@ -1,6 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
+apply plugin: 'com.squareup.anvil'
+
+anvil { generateDaggerFactories = true }
 
 android {
   compileSdkVersion deps.android.build.compileSdkVersion
@@ -8,11 +11,18 @@ android {
     minSdkVersion deps.android.build.minSdkVersion
     targetSdkVersion deps.android.build.targetSdkVersion
   }
-
-  androidExtensions {
-    experimental = true
-  }
 }
 
 dependencies {
+  implementation project(":common:data")
+  implementation project(":common:download")
+
+  implementation deps.dagger.runtime
+  implementation "androidx.annotation:annotation:${androidxAnnotationVersion}"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
+  implementation "com.squareup.okio:okio:${okioVersion}"
+
+  testImplementation "junit:junit:${junitVersion}"
+  testImplementation "com.google.truth:truth:${truthVersion}"
+  testImplementation "com.squareup.okio:okio-fakefilesystem:${okioVersion}"
 }

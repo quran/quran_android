@@ -42,7 +42,7 @@
   <string name="qari_mostafa_ismaeel_gapless">Mostafa Ismaeel (يوچۇقسىز)</string>
   <string name="qari_husary_iza3a_gapless">Husary Broadcast (يوچۇقسىز)</string>
   <string name="qari_abdulaziz_zahrani_gapless">Abdulaziz Az-Zahrani (يوچۇقسىز)</string>
-  <string name="qari_ayman_suwaid">Dr. Ayman Suwaid</string>
+  <string name="qari_ayman_suwaid">Ayman Suwaid</string>
   <string name="qari_afasy_gapless">مىشارى بىن راشىد ئافاسى (يوچۇقسىز)</string>
   <string name="qari_hani_rifai_gapless">ھانى رىفائى (يوچۇقسىز)</string>
   <string name="qari_ayyoub_gapless">مۇھەممەد ئەييۇب (يوچۇقسىز)</string>
@@ -53,11 +53,23 @@
   <string name="qari_afasy_cali_gapless">Mishari Al-Afasy (كالىفورنىيە, يوچۇقسىز)</string>
   <string name="qari_ajamy_gapless">Ahmed ibn Ali al-Ajamy (يوچۇقسىز)</string>
   <string name="qari_ali_jaber_gapless">Ali Jaber (يوچۇقسىز)</string>
-  <string name="qari_muaiqly_gapless">ماھەر ئال مۇئائىقلى (الحرمين، يوچۇقسىز)</string>
+  <string name="qari_muaiqly_haramain_gapless">ماھەر ئال مۇئائىقلى (الحرمين، يوچۇقسىز)</string>
   <string name="qari_juhany_gapless">ئابدۇللاھ ئەلجەھنى (يوچۇقسىز)</string>
   <string name="qari_abdulmuhsin_qasim_gapless">ئابدۇل مۇھسىن قاسىم (يوچۇقسىز)</string>
   <string name="qari_fares_abbad_gapless">Fares Abbad (يوچۇقسىز)</string>
   <string name="qari_khalifa_taniji_gapless">خەلىفە تېڭگى (يوچۇقسىز)</string>
   <string name="qari_abdullah_matroud_gapless">ئابدۇللا ماترود (يوچۇقسىز)</string>
- <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (يوچۇقسىز)</string>
+  <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (يوچۇقسىز)</string>
+  <string name="qari_hudhayfi_gapless">ئالى ھۇدەيفى (يوچۇقسىز)</string>
+  <string name="qari_khaled_muhanna_gapless">خالىد المهنا (يوچۇقسىز)</string>
+  <string name="qari_husary_mujawwad_gapless">الحصري (مۇجاۋۋاد، يوچۇقسىز)</string>
+  <string name="qari_husary_muallim_gapless">الحصري (ئوقۇتقۇچى، يوچۇقسىز)</string>
+  <string name="qari_ibrahim_alakhdar_gapless">ئىبراھىم ئەل ئاخدار (يوچۇقسىز)</string>
+  <string name="qari_muaiqly_gapless">ماھەر ئال مۇئائىقلى (يوچۇقسىز)</string>
+  <string name="qari_yasser_salama_hadr_gapless">ياسىر سالاما (حدر، يوچۇقسىز)</string>
+  <string name="qari_khalid_qahtani_gapless">خالىد ئەلقاھتانى (يوچۇقسىز)</string>
+  <string name="qari_mokhtasar_asmari_gapless">عبدالله الأسمري (ئاۋاز قىسقارتىلمىسى, يوچۇقسىز)</string>
+  <string name="qari_aloosi_gapless">عبدالرحمن العوسي (يوچۇقسىز)</string>
+  <string name="qari_alzain_ahmad_gapless">الزين محمد أحمد (يوچۇقسىز)</string>
+  <string name="qari_muhammad_rashad_shereef_gapless">محمد رشاد الشريف (يوچۇقسىز)</string>
 </resources>

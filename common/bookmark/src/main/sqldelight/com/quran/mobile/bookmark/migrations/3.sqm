@@ -1,0 +1,78 @@
+-- bookmarks
+CREATE TABLE IF NOT EXISTS bookmarks_replacement(
+  _ID INTEGER PRIMARY KEY AUTOINCREMENT,
+  sura INTEGER AS Int,
+  ayah INTEGER AS Int,
+  page INTEGER AS Int NOT NULL,
+  added_date INTEGER DEFAULT (strftime('%s', 'now')) NOT NULL
+);
+
+INSERT INTO bookmarks_replacement
+SELECT _ID, sura, ayah, page,
+  IFNULL(
+    CAST(strftime('%s', added_date) AS INTEGER),
+    CAST(strftime('%s', 'now') AS INTEGER)
+  )
+FROM bookmarks;
+
+DROP TABLE bookmarks;
+ALTER TABLE bookmarks_replacement RENAME TO bookmarks;
+
+-- tags
+CREATE TABLE IF NOT EXISTS tags_replacement(
+  _ID INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  added_date INTEGER DEFAULT (strftime('%s', 'now')) NOT NULL
+);
+
+INSERT INTO tags_replacement
+SELECT _ID, name,
+  IFNULL(
+    CAST(strftime('%s', added_date) AS INTEGER),
+    CAST(strftime('%s', 'now') AS INTEGER)
+  )
+FROM tags;
+
+DROP TABLE tags;
+ALTER TABLE tags_replacement RENAME TO tags;
+
+-- bookmark tags
+CREATE TABLE IF NOT EXISTS bookmark_tag_replacement(
+  _ID INTEGER PRIMARY KEY AUTOINCREMENT,
+  bookmark_id INTEGER NOT NULL,
+  tag_id INTEGER NOT NULL,
+  added_date INTEGER DEFAULT (strftime('%s', 'now')) NOT NULL
+);
+
+INSERT INTO bookmark_tag_replacement
+SELECT _ID, bookmark_id, tag_id,
+  IFNULL(
+    CAST(strftime('%s', added_date) AS INTEGER),
+    CAST(strftime('%s', 'now') AS INTEGER)
+  )
+FROM bookmark_tag;
+
+DROP TABLE bookmark_tag;
+ALTER TABLE bookmark_tag_replacement RENAME TO bookmark_tag;
+
+-- re-add the index if it doesn't exist
+CREATE UNIQUE INDEX IF NOT EXISTS
+  bookmark_tag_index ON bookmark_tag(bookmark_id, tag_id);
+
+-- last pages
+CREATE TABLE IF NOT EXISTS last_pages_replacement(
+  _ID INTEGER PRIMARY KEY AUTOINCREMENT,
+  page INTEGER AS Int NOT NULL UNIQUE,
+  added_date INTEGER DEFAULT (strftime('%s', 'now')) NOT NULL
+);
+
+INSERT INTO last_pages_replacement
+SELECT _ID, page,
+  IFNULL(
+    CAST(strftime('%s', added_date) AS INTEGER),
+    CAST(strftime('%s', 'now') AS INTEGER)
+  )
+FROM last_pages;
+
+DROP TABLE last_pages;
+ALTER TABLE last_pages_replacement RENAME TO last_pages;

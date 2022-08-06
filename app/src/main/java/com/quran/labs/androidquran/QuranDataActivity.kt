@@ -15,11 +15,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
-import com.quran.data.source.PageProvider
+import com.quran.common.upgrade.PreferencesUpgrade
+import com.quran.data.model.QuranDataStatus
 import com.quran.labs.androidquran.presenter.data.QuranDataPresenter
-import com.quran.labs.androidquran.presenter.data.QuranDataPresenter.QuranDataStatus
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
@@ -32,20 +33,17 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.worker.WorkerConstants
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
-import java.lang.IllegalArgumentException
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
@@ -69,10 +67,10 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   lateinit var quranScreenInfo: QuranScreenInfo
 
   @Inject
-  lateinit var quranPageProvider: PageProvider
+  lateinit var quranDataPresenter: QuranDataPresenter
 
   @Inject
-  lateinit var quranDataPresenter: QuranDataPresenter
+  lateinit var preferencesUpgrade: PreferencesUpgrade
 
   private lateinit var quranSettings: QuranSettings
 
@@ -91,7 +89,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     val quranApp = application as QuranApplication
     quranApp.applicationComponent.inject(this)
     quranSettings = QuranSettings.getInstance(this)
-    quranSettings.upgradePreferences()
+    quranSettings.upgradePreferences(preferencesUpgrade)
 
     // replace null app locations (especially those set to null due to failures
     // of finding a suitable data directory) with the default value to allow
@@ -170,29 +168,28 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   private fun checkPermissions() {
     // path is the current app location - if not set, it falls back to getExternalFilesDir
     val path = quranSettings.appCustomLocation
-    val fallbackFile = getExternalFilesDir(null)
-    val usesExternalFileDir = path != null && path.contains("com.quran")
-    if (path == null || usesExternalFileDir && fallbackFile == null) {
-      // error case: suggests that we're on m+ and getExternalFilesDir returned null at some point
-      runListView()
+    val fallbackFile = filesDir
+    val usesInternalDir = path != null && path == fallbackFile.absolutePath
+    val usesExternalFileDir = path != null &&
+        ContextCompat.getExternalFilesDirs(this, null).any { file: File? ->
+          file != null && file.absolutePath == path
+        }
+
+    if (path == null) {
+      // error case: suggests that we're on m+ and we have no fallback
+      runListViewWithoutPages()
       return
     }
 
-    val needsPermission = !usesExternalFileDir || path != fallbackFile!!.absolutePath
+    val needsPermission = (!usesExternalFileDir && !usesInternalDir)
     if (needsPermission && !PermissionUtil.haveWriteExternalStoragePermission(this)) {
       // we need permission and don't have it, so request it if we can
       if (PermissionUtil.canRequestWriteExternalStoragePermission(this)) {
         askIfCanRequestPermissions(fallbackFile)
       } else {
         // we can't request permissions, so try to fall back
-        if (fallbackFile != null) {
-          quranSettings.appCustomLocation = fallbackFile.absolutePath
-          checkPages()
-        } else {
-          // set to null so we can try again next launch
-          quranSettings.appCustomLocation = null
-          runListView()
-        }
+        quranSettings.appCustomLocation = fallbackFile.absolutePath
+        checkPages()
       }
    } else if (needsPermission && Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
       // we need permission (i.e. are writing to the sdcard) on Android 11 and above
@@ -203,7 +200,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
       // above, the only allowed custom paths are what is returned by getExternalFilesDirs,
       // none of which need write permissions. it's extremely unlikely for someone to upgrade
       // from Kitkat to Android 10 (10 years worth of upgrades!)
-      migrateFromTo(fallbackFile!!.absolutePath)
+      migrateFromTo(fallbackFile.absolutePath)
     } else {
       checkPages()
     }
@@ -233,7 +230,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
           } else {
             // set to null so we can try again next launch
             quranSettings.appCustomLocation = null
-            runListView()
+            runListViewWithoutPages()
           }
         }
         .create()
@@ -306,7 +303,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
         } else {
           // set to null so we can try again next launch
           quranSettings.appCustomLocation = null
-          runListView()
+          runListViewWithoutPages()
         }
       }
     }
@@ -374,7 +371,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
       errorDialog = null
       removeErrorPreferences()
       quranSettings.setShouldFetchPages(false)
-      runListView()
+      runListViewWithoutPages()
     }
     errorDialog = builder.create()
     errorDialog!!.show()
@@ -388,7 +385,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     updateDialog?.dismiss()
     updateDialog = null
     // no storage mounted, nothing we can do...
-    runListView()
+    runListViewWithoutPages()
   }
 
   fun onPagesChecked(quranDataStatus: QuranDataStatus) {
@@ -404,6 +401,14 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
         } catch (e: Exception) {
           Timber.e(e)
         }
+
+        // pages are lost, switch to internal storage if we aren't on it
+        val path = quranSettings.appCustomLocation
+        val internalDirectory = filesDir.absolutePath
+        if (path != internalDirectory) {
+          quranSettings.appCustomLocation = internalDirectory
+        }
+
         // clear the "pages downloaded" flag
         quranSettings.removeDidDownloadPages()
       }
@@ -433,9 +438,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
         File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
 
         // try writing a file to the app's internal no_backup directory
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-          File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
-        }
+        File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
         quranSettings.setDownloadedPages(
             System.currentTimeMillis(), appLocation,
             quranDataStatus.portraitWidth + "_" + quranDataStatus.landscapeWidth
@@ -495,18 +498,15 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
 
     // check for the existence of a .q4a file in the internal no_backup directory.
     var didInternalFileSurvive = false
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      try {
-        didInternalFileSurvive = File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).exists()
-      } catch (e: Exception) {
-        Timber.e(e)
-      }
+    try {
+      didInternalFileSurvive = File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).exists()
+    } catch (e: Exception) {
+      Timber.e(e)
     }
 
     // how recently did the files disappear?
     val downloadTime = quranSettings.previouslyDownloadedTime
-    val recencyOfRemoval: String
-    recencyOfRemoval = if (downloadTime == 0L) {
+    val recencyOfRemoval: String = if (downloadTime == 0L) {
       "no timestamp"
     } else {
       val deltaInSeconds = (System.currentTimeMillis() - downloadTime) / 1000
@@ -534,6 +534,27 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     Timber.w("isPagePathTheSame: %s", isPagePathTheSame)
     Timber.w("arePagesToDownloadTheSame: %s", arePageSetsEquivalent)
     Timber.e(IllegalStateException("Deleted Data"), "Unable to Download Pages")
+
+    // throw and log another exception if we have "com.quran" in appLocation but don't
+    // can't map it back eo either filesDir or any of the externalFilesDirs - this would
+    // suggest that one of these actually moved (which is possible according to the docs).
+    // doing this to gauge whether this is really an edge case as i suspect it is, or a
+    // real problem i should worry about and handle.
+    if ("com.quran" in appLocation) {
+      val internalDir = filesDir.absolutePath
+      val isInternal = appLocation == internalDir
+
+      val externalDirs = ContextCompat.getExternalFilesDirs(this, null)
+      val isExternal = !isInternal && externalDirs.any { it.absolutePath == appLocation }
+      if (!isInternal && !isExternal) {
+        Timber.w("appLocation: %s", appLocation)
+        Timber.w("internal: %s", internalDir)
+        externalDirs.forEach {
+          Timber.w("external: %s", it)
+        }
+        Timber.e(IllegalStateException("data deleted from unknown directory"))
+      }
+    }
   }
 
   /**
@@ -582,7 +603,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     // if we have a patch url, just use that
     val patchParam = dataStatus.patchParam
     if (!TextUtils.isEmpty(patchParam)) {
-      url = quranFileUtils.getPatchFileUrl(patchParam!!, quranPageProvider.getImageVersion())
+      url = quranFileUtils.getPatchFileUrl(patchParam!!, quranDataPresenter.imagesVersion())
     }
     val destination = quranFileUtils.getQuranImagesBaseDirectory(this@QuranDataActivity)
 
@@ -626,12 +647,26 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     ) { dialog12: DialogInterface, _: Int ->
       dialog12.dismiss()
       promptForDownloadDialog = null
-      runListView()
+      val isPatch = dataStatus.patchParam?.isNotEmpty() == true
+      if (isPatch) {
+        // for patches, we have the pages, so we can just show the list no problem
+        runListView()
+      } else {
+        runListViewWithoutPages()
+      }
     }
     val promptForDownloadDialog = dialog.create()
     promptForDownloadDialog.setTitle(R.string.downloadPrompt_title)
     promptForDownloadDialog.show()
     this.promptForDownloadDialog = promptForDownloadDialog
+  }
+
+  private fun runListViewWithoutPages() {
+    if (!quranDataPresenter.canProceedWithoutDownload()) {
+      // we only have download on demand for full page images, so fallback
+      quranDataPresenter.fallbackToImageType()
+    }
+    runListView()
   }
 
   private fun runListView() {

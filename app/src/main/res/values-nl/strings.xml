@@ -103,7 +103,7 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="storage_permission_please_restart">Gelieve de app opnieuw opstarten om de veranderingen uit te voeren.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Gevonden in Soera %1$s, Ayah %2$d</string>
+  <string name="found_in_sura">Gevonden in Soera %1$s: %2$d (Pagina %3$d)</string>
   <string name="no_results">Geen resultaten gevonden voor \"%s\"</string>
   <string name="no_arabic_search_available">Je hebt \"Arabisch Zoeken\" niet gedownload. Download het en probeer uw zoekopdracht opnieuw.</string>
   <string name="get_arabic_search_db">Verkrijg "Arabisch Zoeken" Database</string>
@@ -127,6 +127,8 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="prefs_night_mode_summary">Gebruik een donkere achtergrond en een lichte lettertype</string>
   <string name="prefs_night_mode_text_brightness_title">Tekst helderheid</string>
   <string name="prefs_night_mode_text_brightness_summary">Helederheid van de tekst wanneer de nacht modus zijn ingeschakeld.</string>
+  <string name="prefs_night_mode_background_brightness_title">Achtergrond helderheid</string>
+  <string name="prefs_night_mode_background_brightness_summary">Helderheid van de pagina wanneer de nachtmodus actief is</string>
   <string name="prefs_overlay_page_info_title">Toon pagina info</string>
   <string name="prefs_overlay_page_info_summary">Overlay page number, sura name, and juz\' number while reading</string>
   <string name="prefs_display_marker_title">Weergeef marker popups</string>
@@ -138,6 +140,8 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="prefs_translations_summary">Downloaden en beheren van vertalingen</string>
   <string name="prefs_ayah_before_translation_title">Ayah voor vertaling</string>
   <string name="prefs_ayah_before_translation_summary">Toon ayah in het Arabisch boven de vertaling</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Download Opties</string>
   <string name="prefs_streaming_title">Streaming</string>
   <string name="prefs_streaming_summary">Audio streamen indien mogelijk</string>
@@ -201,12 +205,13 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
   <string name="quran_sura_title">Soera %1$s</string>
   <string name="sura_ayah_notification_str">Soera %1$s, Ayah %2$d</string>
+  <string name="sura_ayah_sharing_str">Soera %1$s: %2$d</string>
 
   <string name="index_loading">Laden&#8230;</string>
 
   <string name="canceling">annuleren&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
-  <string name="page_description">pagina %1$s, Juz\' %2$s</string>
+  <string name="page_description">Pagina %1$s, Juz\' %2$s</string>
   <string name="highlighting_database">Vereiste Bestanden</string>
   <string name="timing_database">Vereiste Bestanden</string>
 
@@ -276,14 +281,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   </string-array>
 
   <!-- long press -->
-  <string name="bookmark_ayah">Bladwijzer deze Ayah</string>
-  <string name="tag_ayah">Label deze Ayah</string>
-  <string name="share_ayah">Deel Ayah Link</string>
-  <string name="share_ayah_text">Deel Ayah Tekst</string>
-  <string name="translation_ayah">Ayah Vertaling/Tafseer</string>
-  <string name="play_from_here">Afspelen van hier</string>
-  <string name="search_key">Druk op de zoek-toets om een vers te zoeken.</string>
-  <string name="copy_ayah">Kopieer Ayah</string>
   <string name="ayah_copied_popup">Ayah Gekopieerd</string>
 
   <!-- bookmarks & tags contextual action bar -->
@@ -307,4 +304,43 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
 
   <!-- audio manager -->
   <string name="audio_manager">Geluid Manager</string>
+    <string name="menu_show_date">Toon Datum</string>
+  <string name="please_wait">Wacht alstublieft...</string>
+  <string name="about_furqan_summary">Uthmani tekst en Arabische Tafaseer</string>
+  <string name="about_quran_enc_summary">Vertalingen voor vele talen</string>
+  <string name="search_full_results">Volledige resultaten</string>
+  <string name="search_entire_mushaf">Doorzoek de hele mushaf</string>
+  <string name="prefs_category_advanced_summary">Importeren/exporteren van bladwijzers, instellen van de Quran-gegevensmap, enz.</string>
+  <string name="prefs_import_title">Importeren</string>
+  <string name="prefs_import_summary">Bladwijzers en tags importeren</string>
+  <string name="prefs_page_type_title">Paginatype (experimenteel)</string>
+  <string name="prefs_page_type_summary">Selecteer het type leespagina</string>
+  <string name="prefs_sura_translated_name_summary">Toon de vertaling van de naam van de soera</string>
+  <string name="prefs_sura_translated_name_title">Surah vertaalde naam</string>
+  <string name="prefs_preview">Voorbeeld</string>
+  <string name="more_translations">Meer vertalingen</string>
+  <string name="move_up">Naar boven</string>
+  <string name="move_down">Naar beneden</string>
+  <string name="delete_translation">Vertaling verwijderen</string>
+  <string name="scoped_storage_message">Als gevolg van Android veranderingen om de privacy van gebruikers te verhogen, kan het kopiëren van bestanden buiten de app directories ervoor zorgen dat Quran voor Android geen toegang meer heeft tot zijn gegevens in toekomstige versies van Android. Weet u zeker dat u dit pad wilt gebruiken?</string>
+  <string name="see_tafseer_of_verse">De tafseer van deze ayah is opgenomen bij de tafseer van ayah %d (Klik om uit te breiden).</string>
+  <string name="playback_prompt_title">Start het afspelen vanaf:</string>
+  <string name="starting_page_label">Begin van pagina</string>
+  <string name="recent_pages">Recente pagina\'s</string>
+  <string name="tag_blank_tag_error">Tag namen mogen niet leeg zijn!</string>
+  <string name="tag_duplicate_tag_error">Tag naam bestaat al!</string>
+  <string name="audio_manager_remove_audio_title">Surah verwijderen?</string>
+  <string name="audio_manager_remove_audio_msg">Weet u zeker dat u %1$s wilt verwijderen?</string>
+  <string name="audio_manager_surah_download">Soera downloaden</string>
+  <string name="audio_manager_surah_delete">Verwijderen audiobestand</string>
+  <string name="audio_manager_download_all">Alles downloaden</string>
+  <string name="audio_manager_download_selection">Selectie downloaden</string>
+  <string name="audio_manager_delete_selection">Selectie verwijderen</string>
+  <string name="audio_updated_title">Koran Audiobestanden Update</string>
+  <string name="audio_updated_text">Verschillende Quran audio bestanden zijn bijgewerkt. Quran voor Android heeft uw kopie van deze bestanden verwijderd, zodat de nieuwste versies kunnen worden gedownload wanneer u ze de volgende keer afspeelt.</string>
+  <string name="prefs_category_dual_screen">Dubbele pagina voorkeuren</string>
+  <string name="prefs_split_page_and_translation_title">Koran en vertaling in duale modus</string>
+  <string name="prefs_split_page_and_translation_summary">In de dubbele pagina modus met vertalingen, wordt de Koran pagina en de vertaling getoond</string>
+  <string name="notification_channel_download">Koran downloads</string>
+  <string name="notification_channel_audio">Koran recitatie</string>
 </resources>

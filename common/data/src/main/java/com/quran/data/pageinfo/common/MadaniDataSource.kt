@@ -1,11 +1,12 @@
 package com.quran.data.pageinfo.common
 
+import com.quran.data.model.SuraAyah
 import com.quran.data.source.QuranDataSource
 
 open class MadaniDataSource : QuranDataSource {
-  override fun getNumberOfPages() = 604
+  override val numberOfPages = 604
 
-  override fun getPageForSuraArray() = intArrayOf(
+  override val pageForSuraArray = intArrayOf(
       /*   1 -  10 */ 1, 2, 50, 77, 106, 128, 151, 177, 187, 208,
       /*  11 -  20 */ 221, 235, 249, 255, 262, 267, 282, 293, 305, 312,
       /*  21 -  30 */ 322, 332, 342, 350, 359, 367, 377, 385, 396, 404,
@@ -19,7 +20,7 @@ open class MadaniDataSource : QuranDataSource {
       /* 101 - 110 */ 600, 600, 601, 601, 601, 602, 602, 602, 603, 603,
       /* 111 - 114 */ 603, 604, 604, 604)
 
-  override fun getSuraForPageArray() = intArrayOf(1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+  override val suraForPageArray = intArrayOf(1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
       2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
       2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
       3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
@@ -48,7 +49,7 @@ open class MadaniDataSource : QuranDataSource {
       70, 70, 71, 72, 72, 73, 73, 74, 74, 75, 76, 76, 77, 78, 78, 79, 80, 81, 82, 83,
       83, 85, 86, 87, 89, 89, 91, 92, 95, 97, 98, 100, 103, 106, 109, 112)
 
-  override fun getAyahForPageArray() = intArrayOf(
+  override val ayahForPageArray = intArrayOf(
       1, 1, 6, 17, 25, 30, 38, 49, 58, 62, 70, 77, 84, 89,
       94, 102, 106, 113, 120, 127, 135, 142, 146, 154, 164, 170, 177, 182,
       187, 191, 197, 203, 211, 216, 220, 225, 231, 234, 238, 246, 249, 253,
@@ -94,14 +95,14 @@ open class MadaniDataSource : QuranDataSource {
       35, 1, 1, 16, 1, 24, 1, 15, 1, 1, 8, 10, 1, 1,
       1, 1)
 
-  override fun getPageForJuzArray() = intArrayOf(
+  override val pageForJuzArray = intArrayOf(
       /*  1 - 10 */ 1, 22, 42, 62, 82, 102, 121, 142, 162, 182,
       /* 11 - 20 */ 201, 222, 242, 262, 282, 302, 322, 342, 362, 382,
       /* 21 - 30 */ 402, 422, 442, 462, 482, 502, 522, 542, 562, 582)
 
-  override fun getJuzDisplayPageArrayOverride() = mapOf(121 to 6, 201 to 10)
+  override val juzDisplayPageArrayOverride = mapOf(121 to 6, 201 to 10)
 
-  override fun getNumberOfAyahsForSuraArray() = intArrayOf(
+  override val numberOfAyahsForSuraArray = intArrayOf(
       /*  1 -  14 */ 7, 286, 200, 176, 120, 165, 206, 75, 129, 109, 123, 111, 43, 52,
       /* 15 -  28 */ 99, 128, 111, 110, 98, 135, 112, 78, 118, 64, 77, 227, 93, 88,
       /* 29 -  42 */ 69, 60, 34, 30, 73, 54, 45, 83, 182, 88, 75, 85, 54, 53,
@@ -112,7 +113,7 @@ open class MadaniDataSource : QuranDataSource {
       /* 99 - 114 */ 8, 11, 11, 8, 3, 9, 5, 4, 7, 3, 6, 3, 5, 4, 5, 6
   )
 
-  override fun getIsMakkiBySuraArray() = booleanArrayOf(
+  override val isMakkiBySuraArray = booleanArrayOf(
       /*   1 -  10 */  true, false, false, false, false, true, true, false, false, true,
       /*  11 -  20 */  true, true, false, true, true, true, true, true, true, true,
       /*  21 -  30 */  true, false, true, false, true, true, true, true, true, true,
@@ -127,7 +128,7 @@ open class MadaniDataSource : QuranDataSource {
       /* 111 - 114 */  true, true, true, true
   )
 
-  override fun getQuarterStartByPage() = intArrayOf(-1, -1, -1, -1, 1, -1, 2, -1, 3,
+  override val quarterStartByPage = intArrayOf(-1, -1, -1, -1, 1, -1, 2, -1, 3,
       -1, 4, -1, -1, 5, -1, -1, 6, -1, 7, -1, -1, 8, -1, 9, -1, -1, 10, -1, 11, -1,
       -1, 12, -1, 13, -1, -1, 14, -1, 15, -1, -1, 16, -1, 17, -1, 18, -1, -1, 19,
       -1, 20, -1, -1, 21, -1, 22, -1, -1, 23, -1, -1, 24, -1, 25, -1, -1, 26, -1,
@@ -163,65 +164,65 @@ open class MadaniDataSource : QuranDataSource {
       -1, 233, -1, 234, -1, 235, -1, 236, -1, -1, 237, -1, 238, -1, -1, 239, -1, -1,
       -1, -1, -1)
 
-  override fun getQuartersArray() = arrayOf(
-      /* hizb 1  */ intArrayOf(1, 1), intArrayOf(2, 26), intArrayOf(2, 44), intArrayOf(2, 60),
-      /* hizb 2  */ intArrayOf(2, 75), intArrayOf(2, 92), intArrayOf(2, 106), intArrayOf(2, 124),
-      /* hizb 3  */ intArrayOf(2, 142), intArrayOf(2, 158), intArrayOf(2, 177), intArrayOf(2, 189),
-      /* hizb 4  */ intArrayOf(2, 203), intArrayOf(2, 219), intArrayOf(2, 233), intArrayOf(2, 243),
-      /* hizb 5  */ intArrayOf(2, 253), intArrayOf(2, 263), intArrayOf(2, 272), intArrayOf(2, 283),
-      /* hizb 6  */ intArrayOf(3, 15), intArrayOf(3, 33), intArrayOf(3, 52), intArrayOf(3, 75),
-      /* hizb 7  */ intArrayOf(3, 93), intArrayOf(3, 113), intArrayOf(3, 133), intArrayOf(3, 153),
-      /* hizb 8  */ intArrayOf(3, 171), intArrayOf(3, 186), intArrayOf(4, 1), intArrayOf(4, 12),
-      /* hizb 9  */ intArrayOf(4, 24), intArrayOf(4, 36), intArrayOf(4, 58), intArrayOf(4, 74),
-      /* hizb 10 */ intArrayOf(4, 88), intArrayOf(4, 100), intArrayOf(4, 114), intArrayOf(4, 135),
-      /* hizb 11 */ intArrayOf(4, 148), intArrayOf(4, 163), intArrayOf(5, 1), intArrayOf(5, 12),
-      /* hizb 12 */ intArrayOf(5, 27), intArrayOf(5, 41), intArrayOf(5, 51), intArrayOf(5, 67),
-      /* hizb 13 */ intArrayOf(5, 82), intArrayOf(5, 97), intArrayOf(5, 109), intArrayOf(6, 13),
-      /* hizb 14 */ intArrayOf(6, 36), intArrayOf(6, 59), intArrayOf(6, 74), intArrayOf(6, 95),
-      /* hizb 15 */ intArrayOf(6, 111), intArrayOf(6, 127), intArrayOf(6, 141), intArrayOf(6, 151),
-      /* hizb 16 */ intArrayOf(7, 1), intArrayOf(7, 31), intArrayOf(7, 47), intArrayOf(7, 65),
-      /* hizb 17 */ intArrayOf(7, 88), intArrayOf(7, 117), intArrayOf(7, 142), intArrayOf(7, 156),
-      /* hizb 18 */ intArrayOf(7, 171), intArrayOf(7, 189), intArrayOf(8, 1), intArrayOf(8, 22),
-      /* hizb 19 */ intArrayOf(8, 41), intArrayOf(8, 61), intArrayOf(9, 1), intArrayOf(9, 19),
-      /* hizb 20 */ intArrayOf(9, 34), intArrayOf(9, 46), intArrayOf(9, 60), intArrayOf(9, 75),
-      /* hizb 21 */ intArrayOf(9, 93), intArrayOf(9, 111), intArrayOf(9, 122), intArrayOf(10, 11),
-      /* hizb 22 */ intArrayOf(10, 26), intArrayOf(10, 53), intArrayOf(10, 71), intArrayOf(10, 90),
-      /* hizb 23 */ intArrayOf(11, 6), intArrayOf(11, 24), intArrayOf(11, 41), intArrayOf(11, 61),
-      /* hizb 24 */ intArrayOf(11, 84), intArrayOf(11, 108), intArrayOf(12, 7), intArrayOf(12, 30),
-      /* hizb 25 */ intArrayOf(12, 53), intArrayOf(12, 77), intArrayOf(12, 101), intArrayOf(13, 5),
-      /* hizb 26 */ intArrayOf(13, 19), intArrayOf(13, 35), intArrayOf(14, 10), intArrayOf(14, 28),
-      /* hizb 27 */ intArrayOf(15, 1), intArrayOf(15, 49), intArrayOf(16, 1), intArrayOf(16, 30),
-      /* hizb 28 */ intArrayOf(16, 51), intArrayOf(16, 75), intArrayOf(16, 90), intArrayOf(16, 111),
-      /* hizb 29 */ intArrayOf(17, 1), intArrayOf(17, 23), intArrayOf(17, 50), intArrayOf(17, 70),
-      /* hizb 30 */ intArrayOf(17, 99), intArrayOf(18, 17), intArrayOf(18, 32), intArrayOf(18, 51),
-      /* hizb 31 */ intArrayOf(18, 75), intArrayOf(18, 99), intArrayOf(19, 22), intArrayOf(19, 59),
-      /* hizb 32 */ intArrayOf(20, 1), intArrayOf(20, 55), intArrayOf(20, 83), intArrayOf(20, 111),
-      /* hizb 33 */ intArrayOf(21, 1), intArrayOf(21, 29), intArrayOf(21, 51), intArrayOf(21, 83),
-      /* hizb 34 */ intArrayOf(22, 1), intArrayOf(22, 19), intArrayOf(22, 38), intArrayOf(22, 60),
-      /* hizb 35 */ intArrayOf(23, 1), intArrayOf(23, 36), intArrayOf(23, 75), intArrayOf(24, 1),
-      /* hizb 36 */ intArrayOf(24, 21), intArrayOf(24, 35), intArrayOf(24, 53), intArrayOf(25, 1),
-      /* hizb 37 */ intArrayOf(25, 21), intArrayOf(25, 53), intArrayOf(26, 1), intArrayOf(26, 52),
-      /* hizb 38 */ intArrayOf(26, 111), intArrayOf(26, 181), intArrayOf(27, 1), intArrayOf(27, 27),
-      /* hizb 39 */ intArrayOf(27, 56), intArrayOf(27, 82), intArrayOf(28, 12), intArrayOf(28, 29),
-      /* hizb 40 */ intArrayOf(28, 51), intArrayOf(28, 76), intArrayOf(29, 1), intArrayOf(29, 26),
-      /* hizb 41 */ intArrayOf(29, 46), intArrayOf(30, 1), intArrayOf(30, 31), intArrayOf(30, 54),
-      /* hizb 42 */ intArrayOf(31, 22), intArrayOf(32, 11), intArrayOf(33, 1), intArrayOf(33, 18),
-      /* hizb 43 */ intArrayOf(33, 31), intArrayOf(33, 51), intArrayOf(33, 60), intArrayOf(34, 10),
-      /* hizb 44 */ intArrayOf(34, 24), intArrayOf(34, 46), intArrayOf(35, 15), intArrayOf(35, 41),
-      /* hizb 45 */ intArrayOf(36, 28), intArrayOf(36, 60), intArrayOf(37, 22), intArrayOf(37, 83),
-      /* hizb 46 */ intArrayOf(37, 145), intArrayOf(38, 21), intArrayOf(38, 52), intArrayOf(39, 8),
-      /* hizb 47 */ intArrayOf(39, 32), intArrayOf(39, 53), intArrayOf(40, 1), intArrayOf(40, 21),
-      /* hizb 48 */ intArrayOf(40, 41), intArrayOf(40, 66), intArrayOf(41, 9), intArrayOf(41, 25),
-      /* hizb 49 */ intArrayOf(41, 47), intArrayOf(42, 13), intArrayOf(42, 27), intArrayOf(42, 51),
-      /* hizb 50 */ intArrayOf(43, 24), intArrayOf(43, 57), intArrayOf(44, 17), intArrayOf(45, 12),
-      /* hizb 51 */ intArrayOf(46, 1), intArrayOf(46, 21), intArrayOf(47, 10), intArrayOf(47, 33),
-      /* hizb 52 */ intArrayOf(48, 18), intArrayOf(49, 1), intArrayOf(49, 14), intArrayOf(50, 27),
-      /* hizb 53 */ intArrayOf(51, 31), intArrayOf(52, 24), intArrayOf(53, 26), intArrayOf(54, 9),
-      /* hizb 54 */ intArrayOf(55, 1), intArrayOf(56, 1), intArrayOf(56, 75), intArrayOf(57, 16),
-      /* hizb 55 */ intArrayOf(58, 1), intArrayOf(58, 14), intArrayOf(59, 11), intArrayOf(60, 7),
-      /* hizb 56 */ intArrayOf(62, 1), intArrayOf(63, 4), intArrayOf(65, 1), intArrayOf(66, 1),
-      /* hizb 57 */ intArrayOf(67, 1), intArrayOf(68, 1), intArrayOf(69, 1), intArrayOf(70, 19),
-      /* hizb 58 */ intArrayOf(72, 1), intArrayOf(73, 20), intArrayOf(75, 1), intArrayOf(76, 19),
-      /* hizb 59 */ intArrayOf(78, 1), intArrayOf(80, 1), intArrayOf(82, 1), intArrayOf(84, 1),
-      /* hizb 60 */ intArrayOf(87, 1), intArrayOf(90, 1), intArrayOf(94, 1), intArrayOf(100, 9))
+  override val quartersArray = arrayOf(
+    /* hizb 1  */ SuraAyah(1, 1), SuraAyah(2, 26), SuraAyah(2, 44), SuraAyah(2, 60),
+    /* hizb 2  */ SuraAyah(2, 75), SuraAyah(2, 92), SuraAyah(2, 106), SuraAyah(2, 124),
+    /* hizb 3  */ SuraAyah(2, 142), SuraAyah(2, 158), SuraAyah(2, 177), SuraAyah(2, 189),
+    /* hizb 4  */ SuraAyah(2, 203), SuraAyah(2, 219), SuraAyah(2, 233), SuraAyah(2, 243),
+    /* hizb 5  */ SuraAyah(2, 253), SuraAyah(2, 263), SuraAyah(2, 272), SuraAyah(2, 283),
+    /* hizb 6  */ SuraAyah(3, 15), SuraAyah(3, 33), SuraAyah(3, 52), SuraAyah(3, 75),
+    /* hizb 7  */ SuraAyah(3, 93), SuraAyah(3, 113), SuraAyah(3, 133), SuraAyah(3, 153),
+    /* hizb 8  */ SuraAyah(3, 171), SuraAyah(3, 186), SuraAyah(4, 1), SuraAyah(4, 12),
+    /* hizb 9  */ SuraAyah(4, 24), SuraAyah(4, 36), SuraAyah(4, 58), SuraAyah(4, 74),
+    /* hizb 10 */ SuraAyah(4, 88), SuraAyah(4, 100), SuraAyah(4, 114), SuraAyah(4, 135),
+    /* hizb 11 */ SuraAyah(4, 148), SuraAyah(4, 163), SuraAyah(5, 1), SuraAyah(5, 12),
+    /* hizb 12 */ SuraAyah(5, 27), SuraAyah(5, 41), SuraAyah(5, 51), SuraAyah(5, 67),
+    /* hizb 13 */ SuraAyah(5, 82), SuraAyah(5, 97), SuraAyah(5, 109), SuraAyah(6, 13),
+    /* hizb 14 */ SuraAyah(6, 36), SuraAyah(6, 59), SuraAyah(6, 74), SuraAyah(6, 95),
+    /* hizb 15 */ SuraAyah(6, 111), SuraAyah(6, 127), SuraAyah(6, 141), SuraAyah(6, 151),
+    /* hizb 16 */ SuraAyah(7, 1), SuraAyah(7, 31), SuraAyah(7, 47), SuraAyah(7, 65),
+    /* hizb 17 */ SuraAyah(7, 88), SuraAyah(7, 117), SuraAyah(7, 142), SuraAyah(7, 156),
+    /* hizb 18 */ SuraAyah(7, 171), SuraAyah(7, 189), SuraAyah(8, 1), SuraAyah(8, 22),
+    /* hizb 19 */ SuraAyah(8, 41), SuraAyah(8, 61), SuraAyah(9, 1), SuraAyah(9, 19),
+    /* hizb 20 */ SuraAyah(9, 34), SuraAyah(9, 46), SuraAyah(9, 60), SuraAyah(9, 75),
+    /* hizb 21 */ SuraAyah(9, 93), SuraAyah(9, 111), SuraAyah(9, 122), SuraAyah(10, 11),
+    /* hizb 22 */ SuraAyah(10, 26), SuraAyah(10, 53), SuraAyah(10, 71), SuraAyah(10, 90),
+    /* hizb 23 */ SuraAyah(11, 6), SuraAyah(11, 24), SuraAyah(11, 41), SuraAyah(11, 61),
+    /* hizb 24 */ SuraAyah(11, 84), SuraAyah(11, 108), SuraAyah(12, 7), SuraAyah(12, 30),
+    /* hizb 25 */ SuraAyah(12, 53), SuraAyah(12, 77), SuraAyah(12, 101), SuraAyah(13, 5),
+    /* hizb 26 */ SuraAyah(13, 19), SuraAyah(13, 35), SuraAyah(14, 10), SuraAyah(14, 28),
+    /* hizb 27 */ SuraAyah(15, 1), SuraAyah(15, 49), SuraAyah(16, 1), SuraAyah(16, 30),
+    /* hizb 28 */ SuraAyah(16, 51), SuraAyah(16, 75), SuraAyah(16, 90), SuraAyah(16, 111),
+    /* hizb 29 */ SuraAyah(17, 1), SuraAyah(17, 23), SuraAyah(17, 50), SuraAyah(17, 70),
+    /* hizb 30 */ SuraAyah(17, 99), SuraAyah(18, 17), SuraAyah(18, 32), SuraAyah(18, 51),
+    /* hizb 31 */ SuraAyah(18, 75), SuraAyah(18, 99), SuraAyah(19, 22), SuraAyah(19, 59),
+    /* hizb 32 */ SuraAyah(20, 1), SuraAyah(20, 55), SuraAyah(20, 83), SuraAyah(20, 111),
+    /* hizb 33 */ SuraAyah(21, 1), SuraAyah(21, 29), SuraAyah(21, 51), SuraAyah(21, 83),
+    /* hizb 34 */ SuraAyah(22, 1), SuraAyah(22, 19), SuraAyah(22, 38), SuraAyah(22, 60),
+    /* hizb 35 */ SuraAyah(23, 1), SuraAyah(23, 36), SuraAyah(23, 75), SuraAyah(24, 1),
+    /* hizb 36 */ SuraAyah(24, 21), SuraAyah(24, 35), SuraAyah(24, 53), SuraAyah(25, 1),
+    /* hizb 37 */ SuraAyah(25, 21), SuraAyah(25, 53), SuraAyah(26, 1), SuraAyah(26, 52),
+    /* hizb 38 */ SuraAyah(26, 111), SuraAyah(26, 181), SuraAyah(27, 1), SuraAyah(27, 27),
+    /* hizb 39 */ SuraAyah(27, 56), SuraAyah(27, 82), SuraAyah(28, 12), SuraAyah(28, 29),
+    /* hizb 40 */ SuraAyah(28, 51), SuraAyah(28, 76), SuraAyah(29, 1), SuraAyah(29, 26),
+    /* hizb 41 */ SuraAyah(29, 46), SuraAyah(30, 1), SuraAyah(30, 31), SuraAyah(30, 54),
+    /* hizb 42 */ SuraAyah(31, 22), SuraAyah(32, 11), SuraAyah(33, 1), SuraAyah(33, 18),
+    /* hizb 43 */ SuraAyah(33, 31), SuraAyah(33, 51), SuraAyah(33, 60), SuraAyah(34, 10),
+    /* hizb 44 */ SuraAyah(34, 24), SuraAyah(34, 46), SuraAyah(35, 15), SuraAyah(35, 41),
+    /* hizb 45 */ SuraAyah(36, 28), SuraAyah(36, 60), SuraAyah(37, 22), SuraAyah(37, 83),
+    /* hizb 46 */ SuraAyah(37, 145), SuraAyah(38, 21), SuraAyah(38, 52), SuraAyah(39, 8),
+    /* hizb 47 */ SuraAyah(39, 32), SuraAyah(39, 53), SuraAyah(40, 1), SuraAyah(40, 21),
+    /* hizb 48 */ SuraAyah(40, 41), SuraAyah(40, 66), SuraAyah(41, 9), SuraAyah(41, 25),
+    /* hizb 49 */ SuraAyah(41, 47), SuraAyah(42, 13), SuraAyah(42, 27), SuraAyah(42, 51),
+    /* hizb 50 */ SuraAyah(43, 24), SuraAyah(43, 57), SuraAyah(44, 17), SuraAyah(45, 12),
+    /* hizb 51 */ SuraAyah(46, 1), SuraAyah(46, 21), SuraAyah(47, 10), SuraAyah(47, 33),
+    /* hizb 52 */ SuraAyah(48, 18), SuraAyah(49, 1), SuraAyah(49, 14), SuraAyah(50, 27),
+    /* hizb 53 */ SuraAyah(51, 31), SuraAyah(52, 24), SuraAyah(53, 26), SuraAyah(54, 9),
+    /* hizb 54 */ SuraAyah(55, 1), SuraAyah(56, 1), SuraAyah(56, 75), SuraAyah(57, 16),
+    /* hizb 55 */ SuraAyah(58, 1), SuraAyah(58, 14), SuraAyah(59, 11), SuraAyah(60, 7),
+    /* hizb 56 */ SuraAyah(62, 1), SuraAyah(63, 4), SuraAyah(65, 1), SuraAyah(66, 1),
+    /* hizb 57 */ SuraAyah(67, 1), SuraAyah(68, 1), SuraAyah(69, 1), SuraAyah(70, 19),
+    /* hizb 58 */ SuraAyah(72, 1), SuraAyah(73, 20), SuraAyah(75, 1), SuraAyah(76, 19),
+    /* hizb 59 */ SuraAyah(78, 1), SuraAyah(80, 1), SuraAyah(82, 1), SuraAyah(84, 1),
+    /* hizb 60 */ SuraAyah(87, 1), SuraAyah(90, 1), SuraAyah(94, 1), SuraAyah(100, 9))
 }

@@ -14,8 +14,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 
 public class InlineTranslationPresenter extends
     BaseTranslationPresenter<InlineTranslationPresenter.TranslationScreen> {
@@ -40,7 +40,7 @@ public class InlineTranslationPresenter extends
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(new DisposableSingleObserver<ResultHolder>() {
           @Override
-          public void onSuccess(ResultHolder result) {
+          public void onSuccess(@NonNull ResultHolder result) {
             if (getTranslationScreen() != null) {
               getTranslationScreen()
                   .setVerses(result.getTranslations(), result.getAyahInformation());
@@ -48,7 +48,7 @@ public class InlineTranslationPresenter extends
           }
 
           @Override
-          public void onError(Throwable e) {
+          public void onError(@NonNull Throwable e) {
           }
         }));
   }

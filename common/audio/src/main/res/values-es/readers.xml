@@ -42,7 +42,7 @@
   <string name="qari_mostafa_ismaeel_gapless">Mostafa Ismaeel (sin pausas)</string>
   <string name="qari_husary_iza3a_gapless">Husary Broadcast (sin pausas)</string>
   <string name="qari_abdulaziz_zahrani_gapless">Abdulaziz Az-Zahrani (sin pausas)</string>
-  <string name="qari_ayman_suwaid">Dr. Ayman Suwaid</string>
+  <string name="qari_ayman_suwaid">Ayman Suwaid</string>
   <string name="qari_afasy_gapless">Mishary Al-Afasy (sin pausas)</string>
   <string name="qari_hani_rifai_gapless">Hani Ar-Rifai (sin pausas)</string>
   <string name="qari_ayyoub_gapless">Muhammad Ayyoub (sin pausas)</string>
@@ -53,11 +53,23 @@
   <string name="qari_afasy_cali_gapless">Mishari Al-Afasy (California, sin pausas)</string>
   <string name="qari_ajamy_gapless">Ahmed ibn Ali al-Ajamy (sin pausas)</string>
   <string name="qari_ali_jaber_gapless">Ali Jaber (sin pausas)</string>
-  <string name="qari_muaiqly_gapless">Maher Al Muaiqly (Haramain, sin pausas)</string>
+  <string name="qari_muaiqly_haramain_gapless">Maher Al Muaiqly (Haramain, sin pausas)</string>
   <string name="qari_juhany_gapless">Abdullah Al-Juhany (sin pausas)</string>
   <string name="qari_abdulmuhsin_qasim_gapless">Abdul Mohsen Al-Qasim (sin pausas)</string>
   <string name="qari_fares_abbad_gapless">Fares Abbad (sin pausas)</string>
   <string name="qari_khalifa_taniji_gapless">Khalifa Taniji (sin pausas)</string>
   <string name="qari_abdullah_matroud_gapless">Jeque Abdullah Matroud (sin pausas)</string>
- <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (sin pausas)</string>
+  <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (sin pausas)</string>
+  <string name="qari_hudhayfi_gapless">Ali Al-Hudhaify (sin pausas)</string>
+  <string name="qari_khaled_muhanna_gapless">Khaled Al-Muhanna (sin pausas)</string>
+  <string name="qari_husary_mujawwad_gapless">Husary (Mujawwad, sin pausas)</string>
+  <string name="qari_husary_muallim_gapless">Husary (Muallim, sin pausas)</string>
+  <string name="qari_ibrahim_alakhdar_gapless">Ibrahim Al-Akhdar (sin pausas)</string>
+  <string name="qari_muaiqly_gapless">Maher Al Muaiqly (sin pausas)</string>
+  <string name="qari_yasser_salama_hadr_gapless">Yasser Salama (hadr, sin pausas)</string>
+  <string name="qari_khalid_qahtani_gapless">Khalid Al Qahtani (sin pausas)</string>
+  <string name="qari_mokhtasar_asmari_gapless">Abdullah Al-Asmari (Comentario árabe, sin pausas)</string>
+  <string name="qari_aloosi_gapless">Abdul Rahman Aloosi (sin pausas)</string>
+  <string name="qari_alzain_ahmad_gapless">Alzain Muhammad Ahmad (sin pausas)</string>
+  <string name="qari_muhammad_rashad_shereef_gapless">Muhammad Rashad Al-Sherif (sin pausas)</string>
 </resources>

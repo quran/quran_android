@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="sura_names">
+    <item>Al-Fatihah</item>
+    <item>Al-Baqarah</item>
+    <item>Ali \'Imran</item>
+    <item>An-Nisa\'</item>
+    <item>Al-Ma\'idah</item>
+    <item>Al-An\'am</item>
+    <item>Al-A\'raf</item>
+    <item>Al-Anfal</item>
+    <item>At-Taubah</item>
+    <item>Yunus</item>
+    <item>Hud</item>
+    <item>Yusuf</item>
+    <item>Ar-Ra\'d</item>
+    <item>Ibrahim</item>
+    <item>Al-Hijr</item>
+    <item>An-Nahl</item>
+    <item>Al-Isra\'</item>
+    <item>Al-Kahfi</item>
+    <item>Maryam</item>
+    <item>Tha-Ha</item>
+    <item>Al-Anbiya\'</item>
+    <item>Al-Hajj</item>
+    <item>Al-Mu\'minun</item>
+    <item>An-Nur</item>
+    <item>Al-Furqan</item>
+    <item>Asy-Syu\'ara</item>
+    <item>An-Naml</item>
+    <item>Al-Qashash</item>
+    <item>Al-Ankabut</item>
+    <item>Ar-Rum</item>
+    <item>Luqman</item>
+    <item>As-Sajdah</item>
+    <item>Al-Ahzab</item>
+    <item>Saba\'</item>
+    <item>Fathir</item>
+    <item>Ya-Sin</item>
+    <item>Ash-Shaffat</item>
+    <item>Shad</item>
+    <item>Az-Zumar</item>
+    <item>Ghafir</item>
+    <item>Fushilat</item>
+    <item>Asy-Syura</item>
+    <item>Az-Zukhruf</item>
+    <item>Ad-Dukhan</item>
+    <item>Al-Jatsiyah</item>
+    <item>Al-Ahqaf</item>
+    <item>Muhammad</item>
+    <item>Al-Fath</item>
+    <item>Al-Hujurat</item>
+    <item>Qaf</item>
+    <item>Adz-Dzariyat</item>
+    <item>Ath-Thur</item>
+    <item>An-Najm</item>
+    <item>Al-Qamar</item>
+    <item>Ar-Rahman</item>
+    <item>Al-Waqi\'ah</item>
+    <item>Al-Hadid</item>
+    <item>Al-Mujadilah</item>
+    <item>Al-Hasyr</item>
+    <item>Al-Mumtahanah</item>
+    <item>Ash-Shaf</item>
+    <item>Al-Jumu\'ah</item>
+    <item>Al-Munafiqun</item>
+    <item>At-Taghabun</item>
+    <item>Ath-Thalaq</item>
+    <item>At-Tahrim</item>
+    <item>Al-Mulk</item>
+    <item>Al-Qalam</item>
+    <item>Al-Haqqah</item>
+    <item>Al-Ma\'arij</item>
+    <item>Nuh</item>
+    <item>Al-Jinn</item>
+    <item>Al-Muzzammil</item>
+    <item>Al-Muddatstsir</item>
+    <item>Al-Qiyamah</item>
+    <item>Al-Insan</item>
+    <item>Al-Mursalat</item>
+    <item>An-Naba\'</item>
+    <item>An-Nazi\'at</item>
+    <item>\'Abasa</item>
+    <item>At-Takwir</item>
+    <item>Al-Infithar</item>
+    <item>Al-Muthaffifin</item>
+    <item>Al-Insyiqaq</item>
+    <item>Al-Buruj</item>
+    <item>Ath-Thariq</item>
+    <item>Al-A\'la</item>
+    <item>Al-Ghasyiyah</item>
+    <item>Al-Fajr</item>
+    <item>Al-Balad</item>
+    <item>Asy-Syams</item>
+    <item>Al-Lail</item>
+    <item>Adh-Dhuhaa</item>
+    <item>Al-Insyirah</item>
+    <item>At-Tin</item>
+    <item>Al-\'Alaq</item>
+    <item>Al-Qadar</item>
+    <item>Al-Bayyinah</item>
+    <item>Az-Zalzalah</item>
+    <item>Al-\'Adiyat</item>
+    <item>Al-Qari\'ah</item>
+    <item>At-Takatsur</item>
+    <item>Al-\'Ashr</item>
+    <item>Al-Humazah</item>
+    <item>Al-Fil</item>
+    <item>Quraisy</item>
+    <item>Al-Ma\'un</item>
+    <item>Al-Kautsar</item>
+    <item>Al-Kafirun</item>
+    <item>An-Nashr</item>
+    <item>Al-Lahab</item>
+    <item>Al-Ikhlas</item>
+    <item>Al-Falaq</item>
+    <item>An-Nas</item>
+  </string-array>
+
+  <!-- If sura name has no translation, please add empty double quotes to the
+       respective item body to keep Android Studio happy -->
+  <string-array name="sura_names_translation">
+    <item>Pembukaan</item>
+    <item>Sapi</item>
+    <item>Keluarga Imran</item>
+    <item>Wanita</item>
+    <item>Hidangan</item>
+    <item>Binatang Ternak</item>
+    <item>Tempat Tertinggi</item>
+    <item>Rampasan Perang</item>
+    <item>Pengampunan</item>
+    <item>Yunus</item>
+    <item>Hud</item>
+    <item>Yusuf</item>
+    <item>Guruh</item>
+    <item>Ibrahim</item>
+    <item>Hijr</item>
+    <item>Lebah</item>
+    <item>Memperjalankan di Malam Hari</item>
+    <item>Gua</item>
+    <item>Maryam</item>
+    <item>TaHa</item>
+    <item>Para Nabi</item>
+    <item>Haji</item>
+    <item>Orang-orang Mukmin</item>
+    <item>Cahaya</item>
+    <item>Pembeda</item>
+    <item>Para Penyair</item>
+    <item>Semut</item>
+    <item>Kisah-kisah</item>
+    <item>Laba-laba</item>
+    <item>Romawi</item>
+    <item>Luqman</item>
+    <item>Sajdah</item>
+    <item>Golongan yang Bersekutu</item>
+    <item>Saba\'</item>
+    <item>Pencipta</item>
+    <item>Ya-Sin</item>
+    <item>Barisan-barisan</item>
+    <item>Shad</item>
+    <item>Rombongan</item>
+    <item>Maha Pengampun</item>
+    <item>Yang Dijelaskan</item>
+    <item>Musyawarah</item>
+    <item>Perhiasan</item>
+    <item>Kabut</item>
+    <item>BerLutut</item>
+    <item>Bukit Pasir</item>
+    <item>Muhammad</item>
+    <item>Kemenangan</item>
+    <item>Kamar-kamar</item>
+    <item>Qaf</item>
+    <item>Angin yang Menerbangkan</item>
+    <item>Bukit</item>
+    <item>Bintang</item>
+    <item>Bulan</item>
+    <item>Yang Maha Pengasih</item>
+    <item>Hari Kiamat yang Pasti Terjadi</item>
+    <item>Besi</item>
+    <item>Gugatan</item>
+    <item>Pengusiran</item>
+    <item>Wanita yang Diuji</item>
+    <item>Barisan</item>
+    <item>Jum\'at</item>
+    <item>Orang-orang Munafik</item>
+    <item>Pengungkapan Kesalahan</item>
+    <item>Talak</item>
+    <item>Pengharaman</item>
+    <item>Kerajaan</item>
+    <item>Pena</item>
+    <item>Hari Kiamat yang Pasti Datang</item>
+    <item>Tempat-tempat Naik</item>
+    <item>Nuh</item>
+    <item>Jin</item>
+    <item>Orang yang Berselimut</item>
+    <item>Orang yang Berkemul</item>
+    <item>Hari Berbangkit</item>
+    <item>Manusia</item>
+    <item>Malaikat yang Diutus</item>
+    <item>Berita Besar</item>
+    <item>Yang Mencabut dengan Keras</item>
+    <item>Bermuka Masam</item>
+    <item>Penggulungan</item>
+    <item>Terbelah</item>
+    <item>Orang-orang Curang</item>
+    <item>Terbelah</item>
+    <item>Gugusan Bintang</item>
+    <item>Yang Datang Pada Malam Hari</item>
+    <item>Yang Maha Tinggi</item>
+    <item>Hari Kiamat yang Menghilangkan Kesadaran</item>
+    <item>Fajar</item>
+    <item>Negeri</item>
+    <item>Matahari</item>
+    <item>Malam</item>
+    <item>Waktu Dhuha</item>
+    <item>Pelapangan</item>
+    <item>Buah Tin</item>
+    <item>Segumpal Darah</item>
+    <item>Kemuliaan</item>
+    <item>Bukti Nyata</item>
+    <item>Guncangan</item>
+    <item>Kuda Perang yang Berlari Kencang</item>
+    <item>Hari Kiamat yang Menggetarkan</item>
+    <item>Bermegah-megahan</item>
+    <item>Masa</item>
+    <item>Pengumpat</item>
+    <item>Gajah</item>
+    <item>Orang Quraisy</item>
+    <item>Barang yang Berguna</item>
+    <item>Nikmat yang Banyak</item>
+    <item>Orang-orang Kafir</item>
+    <item>Pertolongan</item>
+    <item>Gejolak Api (Sabut)</item>
+    <item>Ikhlash</item>
+    <item>Fajar</item>
+    <item>Manusia</item>
+  </string-array>
+</resources>

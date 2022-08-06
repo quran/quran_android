@@ -1,10 +1,7 @@
 package com.quran.labs.androidquran.view;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Build;
-import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -13,9 +10,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
+import com.quran.data.model.bookmark.Tag;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
 
@@ -27,7 +25,6 @@ public class TagsViewGroup extends LinearLayout {
   private int mTagsMargin;
   private int mTagsTextSize;
   private int mDefaultTagBackgroundColor;
-  private boolean mIsRtl;
   private Context mContext;
 
   private List<Tag> mTags;
@@ -45,7 +42,6 @@ public class TagsViewGroup extends LinearLayout {
     init(context);
   }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public TagsViewGroup(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
     init(context);
@@ -60,7 +56,6 @@ public class TagsViewGroup extends LinearLayout {
     mTagsTextSize = resources.getDimensionPixelSize(R.dimen.tag_text_size);
     mDefaultTagBackgroundColor = ContextCompat.getColor(context, R.color.accent_color_dark);
     mTagsToShow = MAX_TAGS;
-    mIsRtl = QuranSettings.getInstance(context).isArabicNames();
   }
 
   public void setTags(List<Tag> tags) {
@@ -100,23 +95,11 @@ public class TagsViewGroup extends LinearLayout {
   }
 
   private void setStartMargin(LayoutParams params, int value) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-      params.setMarginStart(value);
-    } else if (mIsRtl) {
-      params.rightMargin = value;
-    } else {
-      params.leftMargin = value;
-    }
+    params.setMarginStart(value);
   }
 
   private void setEndMargin(LayoutParams params, int value) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-      params.setMarginEnd(value);
-    } else if (mIsRtl) {
-      params.leftMargin = value;
-    } else {
-      params.rightMargin = value;
-    }
+    params.setMarginEnd(value);
   }
 
   @Override

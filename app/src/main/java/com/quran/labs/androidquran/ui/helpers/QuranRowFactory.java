@@ -1,19 +1,17 @@
 package com.quran.labs.androidquran.ui.helpers;
 
 import android.content.Context;
+
 import androidx.core.content.ContextCompat;
 
 import com.quran.data.core.QuranInfo;
+import com.quran.data.model.bookmark.Bookmark;
+import com.quran.data.model.bookmark.Tag;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.dao.Tag;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 
 import javax.inject.Inject;
 
-import dagger.Reusable;
-
-@Reusable
 public class QuranRowFactory {
   private final QuranInfo quranInfo;
   private final QuranDisplayData quranDisplayData;
@@ -68,7 +66,7 @@ public class QuranRowFactory {
           .withBookmark(bookmark)
           .withDate(bookmark.getTimestamp())
           .withSura(sura)
-          .withImageResource(R.drawable.ic_favorite);
+          .withImageResource(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite);
     } else {
       String ayahText = bookmark.getAyahText();
 
@@ -88,7 +86,7 @@ public class QuranRowFactory {
           .withType(QuranRow.AYAH_BOOKMARK)
           .withBookmark(bookmark)
           .withDate(bookmark.getTimestamp())
-          .withImageResource(R.drawable.ic_favorite)
+          .withImageResource(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite)
           .withImageOverlayColor(ContextCompat.getColor(context, R.color.ayah_bookmark_color));
     }
 

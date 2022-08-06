@@ -1,0 +1,20 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+  compileSdkVersion deps.android.build.compileSdkVersion
+  defaultConfig {
+    minSdkVersion deps.android.build.minSdkVersion
+    targetSdkVersion deps.android.build.targetSdkVersion
+  }
+}
+
+dependencies {
+  implementation project(":common:data")
+
+  kapt deps.dagger.apt
+  implementation deps.dagger.runtime
+
+  implementation "androidx.annotation:annotation:${androidxAnnotationVersion}"
+}

@@ -10,7 +10,6 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranPartialPageChecker
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
 import timber.log.Timber
 import java.io.File
@@ -26,7 +25,6 @@ class PartialPageCheckingWorker(private val context: Context,
                                 private val quranPartialPageChecker: QuranPartialPageChecker
 ) : CoroutineWorker(context, params) {
 
-  @ExperimentalCoroutinesApi
   override suspend fun doWork(): Result = coroutineScope {
     Timber.d("PartialPageCheckingWorker")
     val requestedPageType = params.inputData.getString(WorkerConstants.PAGE_TYPE)

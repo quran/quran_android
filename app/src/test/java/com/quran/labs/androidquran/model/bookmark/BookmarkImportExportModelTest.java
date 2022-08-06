@@ -2,7 +2,8 @@ package com.quran.labs.androidquran.model.bookmark;
 
 import android.content.Context;
 
-import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
+import com.quran.data.model.bookmark.BookmarkData;
+import com.quran.labs.BaseTestExtension;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +12,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 
-import io.reactivex.observers.TestObserver;
+import io.reactivex.rxjava3.observers.TestObserver;
 import okio.Buffer;
 
 public class BookmarkImportExportModelTest {
@@ -25,7 +26,7 @@ public class BookmarkImportExportModelTest {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(BookmarkImportExportModelTest.this);
+    MockitoAnnotations.openMocks(BookmarkImportExportModelTest.this);
     bookmarkImportExportModel = new BookmarkImportExportModel(
         context, new BookmarkJsonModel(), bookmarkModel);
   }
@@ -36,7 +37,7 @@ public class BookmarkImportExportModelTest {
     TestObserver<BookmarkData> testObserver = new TestObserver<>();
     bookmarkImportExportModel.readBookmarks(buffer)
         .subscribe(testObserver);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertValueCount(1);
     testObserver.assertNoErrors();
   }
@@ -50,7 +51,7 @@ public class BookmarkImportExportModelTest {
 
     bookmarkImportExportModel.readBookmarks(source)
         .subscribe(testObserver);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertValueCount(0);
     testObserver.assertError(IOException.class);
   }

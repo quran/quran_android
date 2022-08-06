@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
-import com.quran.labs.androidquran.dao.Tag
+import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog

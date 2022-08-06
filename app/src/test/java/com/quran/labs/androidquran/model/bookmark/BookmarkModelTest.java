@@ -1,7 +1,8 @@
 package com.quran.labs.androidquran.model.bookmark;
 
-import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
+import com.quran.data.model.bookmark.Tag;
+import com.quran.data.model.bookmark.Bookmark;
+import com.quran.labs.BaseTestExtension;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 
 import org.junit.Before;
@@ -15,15 +16,15 @@ import java.util.HashSet;
 import java.util.List;
 
 import androidx.core.util.Pair;
-import io.reactivex.observers.TestObserver;
+import io.reactivex.rxjava3.observers.TestObserver;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anySetOf;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anySet;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,7 +37,7 @@ public class BookmarkModelTest {
 
   @Before
   public void setupTest() {
-    MockitoAnnotations.initMocks(BookmarkModelTest.this);
+    MockitoAnnotations.openMocks(BookmarkModelTest.this);
     model = new BookmarkModel(bookmarksAdapter, recentPageModel);
   }
 
@@ -48,7 +49,7 @@ public class BookmarkModelTest {
     TestObserver<Void> testObserver = new TestObserver<>();
     model.updateTag(tag)
         .subscribe(testObserver);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertNoErrors();
     testObserver.assertComplete();
 
@@ -58,12 +59,12 @@ public class BookmarkModelTest {
   @Test
   public void testUpdateBookmarkTags() {
     when(bookmarksAdapter.tagBookmarks(
-        any(long[].class), anySetOf(long.class), anyBoolean())).thenReturn(true);
+        any(long[].class), anySet(), anyBoolean())).thenReturn(true);
 
     TestObserver<Boolean> testObserver = new TestObserver<>();
-    model.updateBookmarkTags(new long[] { }, new HashSet<Long>(), false)
+    model.updateBookmarkTags(new long[] { }, new HashSet<>(), false)
         .subscribe(testObserver);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertNoErrors();
     testObserver.assertComplete();
   }
@@ -83,7 +84,7 @@ public class BookmarkModelTest {
       TestObserver<List<Bookmark>> testObserver = new TestObserver<>();
       model.getBookmarkedAyahsOnPageObservable(input)
           .subscribe(testObserver);
-      testObserver.awaitTerminalEvent();
+      BaseTestExtension.awaitTerminalEvent(testObserver);
       testObserver.assertNoErrors();
       testObserver.assertValueCount(input.length);
       verify(bookmarksAdapter, times(input.length + total)).getBookmarkedAyahsOnPage(anyInt());
@@ -99,7 +100,7 @@ public class BookmarkModelTest {
     TestObserver<Pair<Integer, Boolean>> testObserver = new TestObserver<>();
     model.getIsBookmarkedObservable(42, 43)
         .subscribe(testObserver);
-    testObserver.awaitTerminalEvent();
+    BaseTestExtension.awaitTerminalEvent(testObserver);
     testObserver.assertNoErrors();
     testObserver.assertValueCount(2);
 

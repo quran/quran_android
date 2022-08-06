@@ -1,7 +1,6 @@
 package com.quran.common.search
 
 import android.database.Cursor
-import android.database.DatabaseUtils
 import android.database.MatrixCursor
 import android.database.sqlite.SQLiteDatabase
 import com.quran.common.search.arabic.ArabicCharacterHelper
@@ -9,7 +8,10 @@ import java.util.regex.Pattern
 
 class ArabicSearcher(private val defaultSearcher: Searcher,
                      private val matchStart: String,
-                     private val matchEnd: String) : Searcher {
+                     private val matchEnd: String,
+                     extraReplacements: String = "") : Searcher {
+  private val arabicRegex = "[$arabicRegexChars$extraReplacements]".toRegex()
+
   override fun getQuery(withSnippets: Boolean,
                         hasFTS: Boolean,
                         table: String,
@@ -77,6 +79,6 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
   }
 
   companion object {
-    private val arabicRegex =  "[\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649]".toRegex()
+    private const val arabicRegexChars =  "\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649"
   }
 }

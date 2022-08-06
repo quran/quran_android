@@ -2,27 +2,26 @@ package com.quran.labs.androidquran.presenter.translation
 
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.common.LocalTranslation
+import com.quran.labs.androidquran.common.LocalTranslationDisplaySort
 import com.quran.labs.androidquran.common.QuranAyahInfo
-import com.quran.labs.androidquran.common.QuranText
+import com.quran.data.model.QuranText
 import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.data.model.SuraAyah
-import com.quran.labs.androidquran.data.SuraAyahIterator
+import com.quran.data.model.SuraAyahIterator
 import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Function3
-import io.reactivex.schedulers.Schedulers
-import java.util.ArrayList
-import java.util.HashMap
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.*
 
-internal open class BaseTranslationPresenter<T> internal constructor(
+internal open class BaseTranslationPresenter<T : Any> internal constructor(
     private val translationModel: TranslationModel,
     private val translationsAdapter: TranslationsDBAdapter,
     private val translationUtil: TranslationUtil,
@@ -35,11 +34,21 @@ internal open class BaseTranslationPresenter<T> internal constructor(
   var disposable: Disposable? = null
 
   fun getVerses(getArabic: Boolean,
-                translations: List<String>,
+                translationsFileNames: List<String>,
                 verseRange: VerseRange
   ): Single<ResultHolder> {
-    // get all the translations for these verses, using a source of the list of active translations
-    val source = Observable.fromIterable(translations)
+    
+    val translations = translationsAdapter.getTranslations()
+    
+    val sortedTranslations: List<LocalTranslation> = ArrayList(translations)
+    Collections.sort(sortedTranslations, LocalTranslationDisplaySort())
+
+    val orderedTranslationsFileNames = sortedTranslations
+      .filter { translationsFileNames.contains(it.filename) }
+      .map { it.filename }
+
+    // get all the translations for these verses, using a source of the list of ordered active translations
+    val source = Observable.fromIterable(orderedTranslationsFileNames)
 
     val translationsObservable =
         source.concatMapEager { db ->
@@ -54,10 +63,10 @@ internal open class BaseTranslationPresenter<T> internal constructor(
     else
       translationModel.getArabicFromDatabase(verseRange).onErrorReturnItem(ArrayList())
     return Single.zip(arabicObservable, translationsObservable, getTranslationMapSingle(),
-        Function3 { arabic: List<QuranText>,
+        { arabic: List<QuranText>,
                     texts: List<List<QuranText>>,
                     map: Map<String, LocalTranslation> ->
-          val translationInfos = getTranslations(translations, map)
+          val translationInfos = getTranslations(orderedTranslationsFileNames, map)
           val ayahInfo = combineAyahData(verseRange, arabic, texts, translationInfos)
           ResultHolder(translationInfos, ayahInfo)
         })
@@ -99,9 +108,9 @@ internal open class BaseTranslationPresenter<T> internal constructor(
           if (element != null) {
             // replace with "" when a translation doesn't load to keep translations aligned
             val ayahTranslations = quranTexts.mapIndexed { index: Int, quranText: QuranText? ->
-              val translation = translationInfo.getOrNull(index);
+              val translation = translationInfo.getOrNull(index)
               val translationMinVersion = translation?.minimumVersion ?: 0
-              val translationId = translation?.id ?: -1;
+              val translationId = translation?.id ?: -1
               val shouldProcess =
                   translationMinVersion >= TranslationUtil.MINIMUM_PROCESSING_VERSION
               val text = quranText ?: QuranText(element.sura, element.ayah, "")
@@ -169,17 +178,15 @@ internal open class BaseTranslationPresenter<T> internal constructor(
   private fun getTranslationMapSingle(): Single<Map<String, LocalTranslation>> {
     return if (this.translationMap.isEmpty() ||
         this.lastCacheTime != translationsAdapter.lastWriteTime) {
-      Single.fromCallable<List<LocalTranslation>> { translationsAdapter.translations }
-          .map<Map<String, LocalTranslation>> { translations ->
-            translations.associateBy { it.filename }
-          }
-          .subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .doOnSuccess { map ->
-            this.lastCacheTime = translationsAdapter.lastWriteTime
-            this.translationMap.clear()
-            this.translationMap.putAll(map)
-          }
+          Single.fromCallable { translationsAdapter.getTranslations() }
+            .map { translations -> translations.associateBy { it.filename } }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSuccess { map ->
+              this.lastCacheTime = translationsAdapter.lastWriteTime
+              this.translationMap.clear()
+              this.translationMap.putAll(map)
+            }
     } else {
       Single.just(this.translationMap)
     }

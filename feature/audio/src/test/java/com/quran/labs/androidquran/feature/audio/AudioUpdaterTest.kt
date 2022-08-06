@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.feature.audio
 
 import com.google.common.truth.Truth.assertThat
-import com.quran.labs.androidquran.common.audio.QariItem
+import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.feature.audio.api.AudioFileUpdate
 import com.quran.labs.androidquran.feature.audio.api.AudioSetUpdate
 import com.quran.labs.androidquran.feature.audio.util.AudioFileChecker
@@ -37,8 +37,8 @@ class AudioUpdaterTest {
   }
 
   private val qaris = listOf(
-      QariItem(1, "Gapped Sheikh", "https://url1/", "sheikh1", null),
-      QariItem(2, "Gapless Sheikh", "https://url2/", "sheikh2", "sheikh2")
+      QariItem(1, "Gapped Sheikh", "https://url1/", "sheikh1", false, null),
+      QariItem(2, "Gapless Sheikh", "https://url2/", "sheikh2", false, "sheikh2")
   )
 
   @Test

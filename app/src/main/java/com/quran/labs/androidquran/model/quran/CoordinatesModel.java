@@ -4,7 +4,7 @@ import android.graphics.RectF;
 
 import com.quran.labs.androidquran.data.AyahInfoDatabaseHandler;
 import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider;
-import com.quran.labs.androidquran.di.ActivityScope;
+import com.quran.data.di.ActivityScope;
 import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.PageCoordinates;
@@ -19,8 +19,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 @ActivityScope
 public class CoordinatesModel {
@@ -66,7 +66,7 @@ public class CoordinatesModel {
         normalizedMap.put(key, normalizeAyahBounds(normalBounds));
       }
     }
-    return new AyahCoordinates(ayahCoordinates.getPage(), normalizedMap);
+    return new AyahCoordinates(ayahCoordinates.getPage(), normalizedMap, ayahCoordinates.getGlyphCoordinates());
   }
 
   private List<AyahBounds> normalizeAyahBounds(List<AyahBounds> ayahBounds) {

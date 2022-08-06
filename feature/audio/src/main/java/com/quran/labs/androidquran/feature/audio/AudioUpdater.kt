@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.feature.audio
 
-import com.quran.labs.androidquran.common.audio.QariItem
+import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.feature.audio.api.AudioSetUpdate
 import com.quran.labs.androidquran.feature.audio.dao.LocalUpdate
 import com.quran.labs.androidquran.feature.audio.util.AudioFileChecker
@@ -29,7 +29,8 @@ object AudioUpdater {
   private fun makeLocalUpdate(audioFileChecker: AudioFileChecker,
                               audioSetUpdate: AudioSetUpdate,
                               databaseChecker: VersionableDatabaseChecker,
-                              qari: QariItem): LocalUpdate {
+                              qari: QariItem
+  ): LocalUpdate {
     val existingFiles =
       audioSetUpdate.files.filter { audioFileChecker.doesFileExistForQari(qari, it.filename) }
     val filesToUpdate = existingFiles

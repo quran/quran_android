@@ -1,12 +1,14 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 apply plugin: 'net.ltgt.errorprone'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.squareup.anvil'
+
 if (getGradle().getStartParameter().getTaskRequests().toString().contains("Release") &&
-    !project.hasProperty("disableFirebase")) {
+    !project.hasProperty("disableFirebase") && !project.hasProperty("disableCrashlytics")) {
   apply plugin: 'com.google.gms.google-services'
+  apply plugin: 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -21,10 +23,9 @@ android {
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion
     targetSdkVersion deps.android.build.targetSdkVersion
-    versionCode 3031
-    versionName "3.0.3"
+    versionCode 3200
+    versionName "3.2.0"
     testInstrumentationRunner "com.quran.labs.androidquran.core.QuranTestRunner"
-    multiDexEnabled true
   }
 
   signingConfigs {
@@ -49,14 +50,10 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.cfg'
       signingConfig signingConfigs.release
       versionNameSuffix "-beta"
-      if (project.hasProperty('disableCrashlytics')) {
-        firebaseCrashlytics.mappingFileUploadEnabled false
-      }
       matchingFallbacks = ['debug']
     }
 
     debug {
-      firebaseCrashlytics.mappingFileUploadEnabled false
       applicationIdSuffix ".debug"
       versionNameSuffix "-debug"
     }
@@ -65,9 +62,6 @@ android {
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard.cfg'
       signingConfig signingConfigs.release
-      if (project.hasProperty('disableCrashlytics')) {
-        firebaseCrashlytics.mappingFileUploadEnabled false
-      }
     }
   }
 
@@ -79,10 +73,6 @@ android {
     }
   }
 
-  androidExtensions {
-    experimental = true
-  }
-
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
@@ -90,6 +80,7 @@ android {
 
   kotlinOptions {
     jvmTarget = "1.8"
+    freeCompilerArgs += [ "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi" ]
   }
 
   testOptions.unitTests.all {
@@ -101,12 +92,11 @@ android {
     }
   }
 
-  androidExtensions {
-    experimental = true
-  }
-
   packagingOptions {
     exclude "META-INF/*.kotlin_module"
+
+    exclude 'META-INF/DEPENDENCIES'
+    exclude 'META-INF/INDEX.LIST'
   }
 }
 
@@ -127,10 +117,17 @@ if (new File(rootDir, 'extras/extras.gradle').exists()) {
 dependencies {
   implementation project(path: ':common:analytics')
   implementation project(path: ':common:audio')
+  implementation project(path: ':common:bookmark')
   implementation project(path: ':common:data')
+  implementation project(path: ':common:di')
+  implementation project(path: ':common:download')
   implementation project(path: ':common:networking')
   implementation project(path: ':common:pages')
+  implementation project(path: ':common:reading')
+  implementation project(path: ':common:recitation')
   implementation project(path: ':common:search')
+  implementation project(path: ':common:toolbar')
+  implementation project(path: ':common:upgrade')
 
   implementation project(path: ':feature:audio')
 
@@ -147,11 +144,10 @@ dependencies {
   implementation "androidx.recyclerview:recyclerview:${androidxRecyclerViewVersion}"
   implementation "com.google.android.material:material:${materialComponentsVersion}"
   implementation "androidx.swiperefreshlayout:swiperefreshlayout:${androidxSwipeRefreshVersion}"
-  implementation "androidx.multidex:multidex:2.0.1"
 
   // rx
-  implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
-  implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+  implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
+  implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
 
   // dagger
   kapt deps.dagger.apt
@@ -168,20 +164,21 @@ dependencies {
   kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
 
   implementation "dev.chrisbanes:insetter-ktx:0.3.1"
-  implementation 'com.jakewharton.timber:timber:4.7.1'
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
-  implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
+  implementation 'com.jakewharton.timber:timber:5.0.1'
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+  implementation 'com.google.firebase:firebase-crashlytics:18.2.12'
 
-  testImplementation 'junit:junit:4.13'
-  testImplementation 'com.google.truth:truth:1.0.1'
-  testImplementation "org.mockito:mockito-core:3.5.10"
+  testImplementation "junit:junit:${junitVersion}"
+  testImplementation "com.google.truth:truth:${truthVersion}"
+  testImplementation "org.mockito:mockito-core:4.6.1"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
 
   androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
   androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
   androidTestImplementation "androidx.test.ext:junit:${androidxJunitExtVersion}"
 
-  errorprone 'com.google.errorprone:error_prone_core:2.3.3'
-  //noinspection GradleDynamicVersion
-  errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
+  errorprone 'com.google.errorprone:error_prone_core:2.15.0'
+
+  // Number Picker
+  implementation 'io.github.ShawnLin013:number-picker:2.4.13'
 }

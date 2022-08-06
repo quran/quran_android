@@ -73,7 +73,7 @@
   </plurals>
 
   <!-- Search messages -->
-  <string name="found_in_sura">سورة %1$s آية %2$d</string>
+  <string name="found_in_sura">سورة %1$s: %2$d (صفحة %3$d)</string>
   <string name="no_results">لا توجد نتائج ل \"%s\"</string>
   <string name="no_arabic_search_available">لتفعيل البحث بالعربية يجب تحميل قاعدة البيانات.. هل ترغب في ذلك ؟</string>
   <string name="get_arabic_search_db">حمل قاعدة البيانات</string>
@@ -95,6 +95,8 @@
   <string name="prefs_night_mode_summary">الخلفية باللون اﻷسود والخطوط باللون اﻷبيض</string>
   <string name="prefs_night_mode_text_brightness_title">إضاءة الخط</string>
   <string name="prefs_night_mode_text_brightness_summary">إضاءة الخط عند تفعيل القراءة الليلية</string>
+  <string name="prefs_night_mode_background_brightness_title">إضاءة الخلفية</string>
+  <string name="prefs_night_mode_background_brightness_summary">إضاءة الصفحة عند تفعيل القراءة الليلية</string>
   <string name="prefs_overlay_page_info_title">عرض بيانات الصفحة</string>
   <string name="prefs_overlay_page_info_summary">عرض رقم الصفحة، اسم السورة، ورقم الجزء أثناء القراءة</string>
   <string name="prefs_display_marker_title">التنبيه</string>
@@ -106,6 +108,8 @@
   <string name="prefs_translations_summary">حمّل واختر التفاسير والتراجم</string>
   <string name="prefs_ayah_before_translation_title">عرض اﻵية مع التفسير</string>
   <string name="prefs_ayah_before_translation_summary">اختر لعرض الآية مع التفسير</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">خيارات التحميل</string>
   <string name="prefs_streaming_title">استماع عبر اﻻنترنت</string>
   <string name="prefs_streaming_summary">" سيتم تشغيل الصوت عبر اﻻنترنت (لن يتم تنزيل الملفات على الجهاز)"</string>
@@ -155,15 +159,16 @@
   <string name="quran_sura">سورة</string>
   <string name="quran_ayah">آية %1$d</string>
   <string name="quran_ayah_details">%1$s - آية %2$s، جزء %3$s</string>
-  <string name="quran_sura_title">سورة %1$s</string>
+  <string name="quran_sura_title">سُورَةُ %1$s</string>
 
-  <string name="sura_ayah_notification_str">سورة %1$s، آية %2$d</string>
+  <string name="sura_ayah_notification_str">سُورَةُ %1$s، آية %2$d</string>
+  <string name="sura_ayah_sharing_str">سُورَةُ %1$s: %2$d</string>
 
   <string name="index_loading">جاري التحميل…</string>
 
   <string name="canceling">جاري إلغاء اﻷمر…</string>
   <string name="juz2_description">الجزء %1$s</string>
-  <string name="page_description">صفحة %1$s, جزء %2$s</string>
+  <string name="page_description">صفحة %1$s، جزء %2$s</string>
   <string name="highlighting_database">جاري تحميل الملفات المطلوبة</string>
   <string name="timing_database">جاري تحميل الملفات المطلوبة</string>
 
@@ -234,14 +239,6 @@
   <string name="starting_page_label">أول الصفحة</string>
 
   <!-- long press -->
-  <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>
-  <string name="tag_ayah">تصنيف الآية</string>
-  <string name="share_ayah">شارك رابط الآية</string>
-  <string name="share_ayah_text">شارك نص الآية</string>
-  <string name="translation_ayah">تفسير/ترجمة الآية</string>
-  <string name="play_from_here">بدء التلاوة من هذه الآية</string>
-  <string name="search_key">للبحث عن آية</string>
-  <string name="copy_ayah">نسخ الآية</string>
   <string name="ayah_copied_popup">تم نسخ الآية</string>
 
   <!-- bookmarks & tags contextual action bar -->
@@ -307,6 +304,7 @@
   <string name="tag_blank_tag_error">لا يمكن أن يكون اسم التصنيف فارغًا</string>
   <string name="tag_duplicate_tag_error">التصنيف مكرر، اكتب تصنيفا جديدا</string>
   <string name="more_translations">المزيد من الترجمات والتفاسير</string>
+  <string name="prefs_preview">معاينة</string>
   <string name="menu_show_date">إظهار تاريخ الإضافة</string>
   <string name="pause">وقف مؤقت</string>
   <string name="prefs_category_dual_screen">تفضيلات الصفحتين المتجاورتين</string>
@@ -349,5 +347,6 @@
     مكان غير مجلد التطبيق الافتراضي قد يؤدي إلى عدم تمكن التطبيق من الوصول لملفاته في إصدارات أندرويد
     القادمة، هل ترغب في نقل البيانات على أية حال؟
   </string>
+  <string name="comma_with_spaces">" ، "</string>
 
 </resources>

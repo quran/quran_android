@@ -5,18 +5,18 @@ import androidx.annotation.NonNull;
 import android.util.Pair;
 
 import com.quran.data.core.QuranInfo;
-import com.quran.labs.androidquran.common.audio.QariItem;
+import com.quran.labs.androidquran.common.audio.model.QariItem;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Single;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.ObservableSource;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.functions.Function;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
 public class AudioManagerUtils {

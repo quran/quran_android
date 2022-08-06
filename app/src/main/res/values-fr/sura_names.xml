@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="sura_names">
+    <item>AL-FÃTIHAH</item>
+    <item>AL-BAQARAH</item>
+    <item>ÃL-`IMRÃN</item>
+    <item>AN-NISÃ\'</item>
+    <item>AL-MÃ-\'IDAH</item>
+    <item>AL-AN`ÃM</item>
+    <item>AL-A`RÃF</item>
+    <item>AL-ANFÃL</item>
+    <item>AT-TAWBAH</item>
+    <item>YOUNUS</item>
+    <item>HOUD</item>
+    <item>YOUSUF</item>
+    <item>AR-RA`D</item>
+    <item>IBRÃHÎM</item>
+    <item>AL-HIJR</item>
+    <item>AN-NAHL</item>
+    <item>AL-ISRÃ\'</item>
+    <item>AL-KAHF</item>
+    <item>MARЇAM</item>
+    <item>TÃ-HÃ</item>
+    <item>AL-ANBIYÃ\'</item>
+    <item>AL-HAJJ</item>
+    <item>AL-MU\'MINOUN</item>
+    <item>AN-NOUR</item>
+    <item>AL-FURQÃN</item>
+    <item>ACH-CHU`ARÃ\'</item>
+    <item>AN-NAML</item>
+    <item>AL-QASAS</item>
+    <item>AL-`ANKABOUT</item>
+    <item>AR-ROUM</item>
+    <item>LUQMÃN</item>
+    <item>AS-SAJDAH</item>
+    <item>AL-AHZÃB</item>
+    <item>SABA\'</item>
+    <item>FÃTIR</item>
+    <item>YÃ-SÎN</item>
+    <item>AS-SÃFFÃT</item>
+    <item>SÃD</item>
+    <item>AZ-ZUMAR</item>
+    <item>GHÃFIR</item>
+    <item>FUSSILAT</item>
+    <item>ACH-CHOURÃ</item>
+    <item>AZ-ZUKHRUF</item>
+    <item>AD-DUKHÃN</item>
+    <item>AL-JÃTHIYAH</item>
+    <item>AL-AHQÃF</item>
+    <item>MUHAMMAD</item>
+    <item>AL-FATH</item>
+    <item>AL-HUJURÃT</item>
+    <item>QÃF</item>
+    <item>ADH-DHARIYÃT</item>
+    <item>AT-TOUR</item>
+    <item>AN-NAJM</item>
+    <item>AL-QAMAR</item>
+    <item>AR-RAHMÃN</item>
+    <item>AL-WÃQI`AH</item>
+    <item>AL-HADÎD</item>
+    <item>AL-MUJÃDALAH</item>
+    <item>AL-HASHR</item>
+    <item>AL-MUMTAHANAH</item>
+    <item>AS-SAFF</item>
+    <item>AL-JUMU`AH</item>
+    <item>AL-MUNÃFIQOUN</item>
+    <item>AT-TAGHÃBUN</item>
+    <item>AT-TALÃQ</item>
+    <item>AT-TAHRÎM</item>
+    <item>AL-MULK</item>
+    <item>AL-QALAM</item>
+    <item>AL-HÃQQAH</item>
+    <item>AL-MA`ÃRIJ</item>
+    <item>NOUH</item>
+    <item>AL-JINN</item>
+    <item>AL-MUZZAMMIL</item>
+    <item>Al-MUDDATHTHIR</item>
+    <item>AL-QIYÃMAH</item>
+    <item>AL-INSÃN</item>
+    <item>AL-MURSALÃTE</item>
+    <item>AN-NABA\'</item>
+    <item>AN-NÃZI`ÃTE</item>
+    <item>`ABASA</item>
+    <item>AT-TAKWÎR</item>
+    <item>AL-INFITÃR</item>
+    <item>AL-MUTAFFIFÎN</item>
+    <item>AL-INCHIQÃQ</item>
+    <item>AL-BUROUJ</item>
+    <item>AT-TÃRIQ</item>
+    <item>AL-A`LÃ</item>
+    <item>AL-GHÃCHIYAH</item>
+    <item>AL-FAJR</item>
+    <item>AL-BALAD</item>
+    <item>ACH-CHAMS</item>
+    <item>AL-LAЇL</item>
+    <item>AD-DUHÃ</item>
+    <item>ACH-CHARH</item>
+    <item>AT-TÎN</item>
+    <item>AL-`ALAQ</item>
+    <item>AL-QADR</item>
+    <item>AL-BAYYNAH</item>
+    <item>AZ-ZALZALAH</item>
+    <item>AL-`ÃDIYÃT</item>
+    <item>AL-QÃRI`AH</item>
+    <item>AT-TAKÃTHUR</item>
+    <item>AL-`ASR</item>
+    <item>AL-HUMAZAH</item>
+    <item>AL-FÎL</item>
+    <item>QURAYCH</item>
+    <item>AL-MÃ`OUN</item>
+    <item>AL-KAWTHAR</item>
+    <item>AL-KÃFIROUN</item>
+    <item>AN-NASR</item>
+    <item>AL-MASAD</item>
+    <item>AL-IKHLÃS</item>
+    <item>AL-FALAQ</item>
+    <item>AN-NÃS</item>
+  </string-array>
+
+  <string-array name="sura_names_translation">
+    <item>L\'ouverture</item>
+    <item>La vache</item>
+    <item>La famille d\'Imran</item>
+    <item>Les femmes</item>
+    <item>La table</item>
+    <item>Les bestiaux</item>
+    <item>Le mur d\'A\'raf</item>
+    <item>Le butin</item>
+    <item>Le repentir</item>
+    <item>Jonas</item>
+    <item>Hûd</item>
+    <item>Joseph</item>
+    <item>Le tonnerre</item>
+    <item>Abraham</item>
+    <item>Al-hijr</item>
+    <item>Les abeilles</item>
+    <item>Le voyage nocturne</item>
+    <item>La caverne</item>
+    <item>Marie</item>
+    <item>Ta-Ha</item>
+    <item>Les prophètes</item>
+    <item>Le pélerinage</item>
+    <item>Les croyants</item>
+    <item>La lumière</item>
+    <item>TLe discernement</item>
+    <item>Les poètes</item>
+    <item>Les fourmis</item>
+    <item>Le récit</item>
+    <item>L\'araignée</item>
+    <item>Les romains</item>
+    <item>Luqman</item>
+    <item>La prosternation</item>
+    <item>Les coalisés</item>
+    <item>Saba</item>
+    <item>Le Créateur</item>
+    <item>Ya sîn</item>
+    <item>Les rangés</item>
+    <item>La lettre Sad</item>
+    <item>Les groupes</item>
+    <item>Le pardonneur</item>
+    <item>Les versets détaillés</item>
+    <item>La consultation</item>
+    <item>L\'ornement</item>
+    <item>La fumée</item>
+    <item>L\'agenouillée</item>
+    <item>Les dunes</item>
+    <item>Muhammad</item>
+    <item>La victoire éclatante</item>
+    <item>Les appartements</item>
+    <item>La lettre &quot;Qaf&quot;</item>
+    <item>Qui éparpillent</item>
+    <item>Le mont Tur</item>
+    <item>L\'étoile</item>
+    <item>La Lune</item>
+    <item>Le miséricordieux</item>
+    <item>L\'événement</item>
+    <item>Le fer</item>
+    <item>La discussion</item>
+    <item>L\'exode</item>
+    <item>L\'éprouvée</item>
+    <item>Les rangs</item>
+    <item>Le vendredi</item>
+    <item>Les hypocrites</item>
+    <item>La grande perte</item>
+    <item>Le divorce</item>
+    <item>L\'interdiction</item>
+    <item>La royauté</item>
+    <item>La plume</item>
+    <item>Celle qui montre la vérité</item>
+    <item>Les voies d\'ascension</item>
+    <item>Noé</item>
+    <item>Les djinns</item>
+    <item>L\'enveloppé</item>
+    <item>Le revêtu d\'un manteau</item>
+    <item>La résurrection</item>
+    <item>L\'Homme</item>
+    <item>Les envoyés</item>
+    <item>La nouvelle</item>
+    <item>Les anges qui arrachent les âmes</item>
+    <item>Il s\'est renfrogné</item>
+    <item>L\'obscurcissement</item>
+    <item>La rupture</item>
+    <item>Les fraudeurs</item>
+    <item>La déchirure</item>
+    <item>Les constellations</item>
+    <item>L\'astre nocturne</item>
+    <item>Le Très-Haut</item>
+    <item>L\'enveloppante</item>
+    <item>L\'aube</item>
+    <item>La cité</item>
+    <item>Le soleil</item>
+    <item>La nuit</item>
+    <item>Le jour montant</item>
+    <item>L\'ouverture</item>
+    <item>Le figuier</item>
+    <item>L\'adhérence</item>
+    <item>La Destinée</item>
+    <item>La preuve</item>
+    <item>La secousse</item>
+    <item>Les Coursiers</item>
+    <item>Le fracas</item>
+    <item>La course aux richesses</item>
+    <item>Le temps</item>
+    <item>Le calomniateurs</item>
+    <item>L\'éléphant</item>
+    <item>Quraysh</item>
+    <item>L\'ustensile</item>
+    <item>L\'abondance</item>
+    <item>Les infidèles</item>
+    <item>Les secours</item>
+    <item>Les fibres</item>
+    <item>Le monothéisme pur</item>
+    <item>L\'aube naissante</item>
+    <item>Les Hommes</item>
+  </string-array>
+</resources>

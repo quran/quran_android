@@ -5,37 +5,34 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
-
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.DisplayCutoutCompat;
-
-import com.quran.data.model.SuraAyah;
-import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
-import com.quran.labs.androidquran.common.LocalTranslation;
-import com.quran.labs.androidquran.common.QuranAyahInfo;
-import com.quran.labs.androidquran.common.TranslationMetadata;
-import com.quran.labs.androidquran.data.QuranDisplayData;
-import com.quran.labs.androidquran.ui.helpers.HighlightType;
-import com.quran.labs.androidquran.ui.util.PageController;
-import com.quran.labs.androidquran.util.QuranSettings;
-
-import com.quran.labs.androidquran.view.AyahToolBar;
-import dev.chrisbanes.insetter.Insetter;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.quran.data.model.SuraAyah;
+import com.quran.data.model.highlight.HighlightType;
+import com.quran.data.model.selection.SelectionIndicator;
+import com.quran.labs.androidquran.common.LocalTranslation;
+import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
+import com.quran.labs.androidquran.common.QuranAyahInfo;
+import com.quran.labs.androidquran.common.TranslationMetadata;
+import com.quran.labs.androidquran.data.QuranDisplayData;
+import com.quran.labs.androidquran.ui.helpers.HighlightTypes;
+import com.quran.labs.androidquran.ui.util.PageController;
+import com.quran.labs.androidquran.util.QuranSettings;
+import dev.chrisbanes.insetter.Insetter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class TranslationView extends FrameLayout implements View.OnClickListener,
     TranslationAdapter.OnVerseSelectedListener {
   private final TranslationAdapter translationAdapter;
 
   private SuraAyah selectedAyah;
+  private int selectedAyahId = -1;
   private OnClickListener onClickListener;
   private final LinearLayoutManager layoutManager;
   private PageController pageController;
@@ -78,7 +75,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
         super.onScrollStateChanged(recyclerView, newState);
         isDragging = newState == RecyclerView.SCROLL_STATE_DRAGGING;
         if (selectedAyah != null && newState == RecyclerView.SCROLL_STATE_IDLE) {
-          pageController.requestMenuPositionUpdate();
+          updateAyahToolBarPosition();
         }
       }
     });
@@ -167,12 +164,20 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   }
 
   public void highlightAyah(SuraAyah suraAyah, int ayahId, HighlightType highlightType) {
-    if (highlightType == HighlightType.SELECTION) {
+    if (highlightType.equals(HighlightTypes.SELECTION)) {
       selectedAyah = suraAyah;
+      selectedAyahId = ayahId;
     } else if (selectedAyah != null) {
       hideMenu();
     }
-    translationAdapter.setHighlightedAyah(ayahId, highlightType);
+
+    if (shouldHandleHighlightType(highlightType)) {
+      translationAdapter.setHighlightedAyah(ayahId, highlightType);
+    }
+  }
+
+  private boolean shouldHandleHighlightType(HighlightType highlightType) {
+    return highlightType.equals(HighlightTypes.AUDIO) || highlightType.equals(HighlightTypes.SELECTION);
   }
 
   private void hideMenu() {
@@ -180,17 +185,33 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   }
 
   public void unhighlightAyah(HighlightType highlightType) {
-    if (highlightType == HighlightType.SELECTION) {
+    if (highlightType.equals(HighlightTypes.SELECTION)) {
       selectedAyah = null;
+      selectedAyahId = -1;
     }
-    translationAdapter.unhighlight();
+
+    if (shouldHandleHighlightType(highlightType)) {
+      translationAdapter.unhighlight();
+      if (selectedAyah != null) {
+        // imples that it's not selection, so let's reselect the selected ayah
+        translationAdapter.setHighlightedAyah(selectedAyahId, HighlightTypes.SELECTION);
+      }
+    }
   }
 
-  public void unhighlightAyat() {
-    if (selectedAyah != null) {
+  public void unhighlightAyat(HighlightType highlightType) {
+    if (selectedAyah != null && highlightType.equals(HighlightTypes.SELECTION)) {
       selectedAyah = null;
+      selectedAyahId = -1;
     }
-    translationAdapter.unhighlight();
+
+    if (shouldHandleHighlightType(highlightType)) {
+      translationAdapter.unhighlight();
+      if (selectedAyah != null) {
+        // imples that it's not selection, so let's reselect the selected ayah
+        translationAdapter.setHighlightedAyah(selectedAyahId, HighlightTypes.SELECTION);
+      }
+    }
   }
 
   @Override
@@ -198,6 +219,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     if (selectedAyah != null) {
       hideMenu();
       selectedAyah = null;
+      selectedAyahId = -1;
       return;
     }
 
@@ -229,17 +251,35 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     return localTranslations;
   }
 
-  public AyahToolBar.AyahToolBarPosition getToolbarPosition() {
+  public SelectionIndicator getToolbarPosition(int sura, int ayah) {
+    int[] versePopupPosition = translationAdapter.getSelectedVersePopupPosition(sura, ayah);
+    if (versePopupPosition != null) {
+      return getToolbarPosition(versePopupPosition);
+    }
+    return SelectionIndicator.None.INSTANCE;
+  }
+
+  public SelectionIndicator getToolbarPosition() {
     int[] versePopupPosition = translationAdapter.getSelectedVersePopupPosition();
     if (versePopupPosition != null) {
-      final int xOffset = ((View) getParent()).getLeft();
-      AyahToolBar.AyahToolBarPosition position = new AyahToolBar.AyahToolBarPosition();
-      position.x = xOffset + versePopupPosition[0];
-      position.y = versePopupPosition[1];
-      position.pipPosition = AyahToolBar.PipPosition.UP;
-      return position;
+      return getToolbarPosition(versePopupPosition);
     }
-    return null;
+    return SelectionIndicator.None.INSTANCE;
+  }
+
+  private SelectionIndicator getToolbarPosition(int[] versePopupPosition) {
+    // for dual screen tablet mode, we need to add the view's x (so clicks on the
+    // right page properly show on the right page and not on the left one).
+    final int[] positionOnScreen = new int[2];
+    getLocationOnScreen(positionOnScreen);
+    final int xOffset = positionOnScreen[0];
+
+    return new SelectionIndicator.SelectedPointPosition(
+        xOffset + versePopupPosition[0],
+        versePopupPosition[1],
+        0f,
+        0f
+    );
   }
 
   /**
@@ -249,11 +289,15 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
    * update the RecyclerView cannot be called amidst scrolling or computing of a layout).
    */
   private void updateAyahToolBarPosition() {
-    final AyahToolBar.AyahToolBarPosition position = getToolbarPosition();
-    if (position != null && (position.y > getHeight() || position.y < 0)) {
+    final SelectionIndicator position = getToolbarPosition();
+    if (position instanceof SelectionIndicator.SelectedPointPosition) {
+      final SelectionIndicator.SelectedPointPosition selectedPointPosition =
+          (SelectionIndicator.SelectedPointPosition) position;
+      if (selectedPointPosition.getY() > getHeight() || selectedPointPosition.getY() < 0) {
         hideMenu();
-    } else {
-      pageController.requestMenuPositionUpdate();
+      } else {
+        pageController.onScrollChanged(0);
+      }
     }
   }
 
@@ -266,10 +310,13 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       if (isUnselectingSelectedVerse) {
         return;
       }
+    } else {
+      // hide the menu because the previous page might have had
+      // something selected here (which would break selection).
+      hideMenu();
     }
 
     pageController.handleLongPress(suraAyah);
-    pageController.requestMenuPositionUpdate();
   }
 
   public int findFirstCompletelyVisibleItemPosition() {

@@ -42,7 +42,7 @@
   <string name="qari_mostafa_ismaeel_gapless">Mostafa Ismaeel (gapless)</string>
   <string name="qari_husary_iza3a_gapless">Husary Broadcast (gapless)</string>
   <string name="qari_abdulaziz_zahrani_gapless">Abdulaziz Az-Zahrani (gapless)</string>
-  <string name="qari_ayman_suwaid">Dr. Ayman Suwaid</string>
+  <string name="qari_ayman_suwaid">Ayman Suwaid</string>
   <string name="qari_afasy_gapless">Мишәри Әфаси (тұтас)</string>
   <string name="qari_hani_rifai_gapless">Һәни Рифаи (тұтас)</string>
   <string name="qari_ayyoub_gapless">Мұхаммед Әйюб (тұтас)</string>
@@ -53,11 +53,23 @@
   <string name="qari_afasy_cali_gapless">Мишари Афаси (Калифорния, тұтас)</string>
   <string name="qari_ajamy_gapless">Ахмед ибн Әли әл-Аджами (тұтас)</string>
   <string name="qari_ali_jaber_gapless">Али Джабер (тұтас)</string>
-  <string name="qari_muaiqly_gapless">Мәһир Мұғайкли (Харамейн, тұтас)</string>
+  <string name="qari_muaiqly_haramain_gapless">Мәһир Мұғайкли (Харамейн, тұтас)</string>
   <string name="qari_juhany_gapless">Абдулла әл-Джахани (тұтас)</string>
   <string name="qari_abdulmuhsin_qasim_gapless">Абдул Мохсен Қасым (тұтас)</string>
   <string name="qari_fares_abbad_gapless">Фарес Аббад (тұтас)</string>
   <string name="qari_khalifa_taniji_gapless">Халифа Тенги (тұтас)</string>
   <string name="qari_abdullah_matroud_gapless">Абдулла Матуд (тұтас)</string>
- <string name="qari_salah_bukhatir_gapless">Салах Бухатир (тұтас)</string>
+  <string name="qari_salah_bukhatir_gapless">Салах Бухатир (тұтас)</string>
+  <string name="qari_hudhayfi_gapless">Әли Хұзайфи (тұтас)</string>
+  <string name="qari_khaled_muhanna_gapless">Халед әл-Муханна (тұтас)</string>
+  <string name="qari_husary_mujawwad_gapless">Махмұд Һәлил Хусари (тәжуид, тұтас)</string>
+  <string name="qari_husary_muallim_gapless">Гусари (мұғалім, тұтас)</string>
+  <string name="qari_ibrahim_alakhdar_gapless">Ибрахим әл-Ахдар (тұтас)</string>
+  <string name="qari_muaiqly_gapless">Мәһир Мұғайкли (тұтас)</string>
+  <string name="qari_yasser_salama_hadr_gapless">Ясир Салама (хадр, тұтас)</string>
+  <string name="qari_khalid_qahtani_gapless">Халид әл-Кахтани (тұтас)</string>
+  <string name="qari_mokhtasar_asmari_gapless">Абдулла Аль-Асмари (Арабский комментарий, тұтас)</string>
+  <string name="qari_aloosi_gapless">Абдул Рахман Аль-Авси (тұтас)</string>
+  <string name="qari_alzain_ahmad_gapless">Альзаин Мохаммед Ахмед (тұтас)</string>
+ <string name="qari_muhammad_rashad_shereef_gapless">Мухаммад Рашад Аль-Шериф (тұтас)</string>
 </resources>

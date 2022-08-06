@@ -5,6 +5,6 @@ import javax.inject.Inject
 
 class AudioDatabaseVersionChecker @Inject constructor() : VersionableDatabaseChecker {
   override fun getVersionForDatabase(path: String): Int {
-    return SuraTimingDatabaseHandler.getDatabaseHandler(path).version
+    return SuraTimingDatabaseHandler.getDatabaseHandler(path).getVersion()
   }
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <dimen name="toolbar_height">42dp</dimen>
+  <dimen name="toolbar_pip_height">12dp</dimen>
+  <dimen name="toolbar_pip_width">14dp</dimen>
+  <dimen name="toolbar_item_width">42dp</dimen>
+  <dimen name="toolbar_total_height">54dp</dimen>
+</resources>

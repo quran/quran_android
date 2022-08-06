@@ -4,10 +4,7 @@
               android:layout_height="wrap_content"
               android:minHeight="?attr/listPreferredItemHeight"
               android:gravity="center_vertical"
-              android:paddingLeft="8dp"
-              android:paddingRight="8dp"
-              android:paddingTop="6dp"
-              android:paddingBottom="6dp"
+              android:padding="16dp"
               android:background="?attr/selectableItemBackground"
               android:orientation="vertical"
     >
@@ -18,6 +15,8 @@
       android:layout_height="wrap_content"
       android:singleLine="true"
       android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+      android:textColor="?android:attr/textColorPrimary"
+      android:textSize="16sp"
       android:ellipsize="marquee"
       android:fadingEdge="horizontal"
       />
@@ -43,6 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_gravity="center_vertical"
+        android:paddingVertical="8dp"
         />
 
     <TextView
@@ -51,7 +51,24 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         />
+
+    <View
+        android:id="@+id/preview_square"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:visibility="gone"
+        android:layout_gravity="center_vertical"
+      />
   </LinearLayout>
+
+  <TextView
+      android:id="@+id/pref_preview"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/prefs_preview"
+      android:layout_gravity="center"
+      />
+
 
   <LinearLayout
       android:id="@android:id/widget_frame"

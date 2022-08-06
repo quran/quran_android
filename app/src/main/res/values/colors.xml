@@ -22,16 +22,16 @@
   <color name="translation_translator_color">#ff22a5ad</color>
   <color name="translation_text_color">#ff777777</color>
   <color name="translation_divider_color">#ffe8e8e8</color>
-  <color name="translation_background_color_night">#ff1d1f21</color>
+  
   <color name="translation_ayah_selected_color">#ffe0f2f1</color>
   <color name="translation_ayah_selected_color_night">#ff2d2d2d</color>
-  <color name="overlay_text_color">#ff888888</color>
+  <color name="overlay_text_color">#ff505050</color>
+  <color name="inactive">#9e9e9e</color>
   <color name="selection_highlight">#404694A6</color>
   <color name="audio_highlight">#4046A646</color>
   <color name="note_highlight">#40EBEB21</color>
   <color name="bookmark_highlight">#40A4A4A4</color>
   <color name="translation_highlight">#ff33b5e5</color>
-  <color name="toolbar_background">#ed2b5836</color>
   <color name="toolbar_item_pressed">#552bff36</color>
   <color name="indicator_color">@color/accent_color</color>
   <color name="panel_label">@color/accent_color</color>

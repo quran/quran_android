@@ -42,7 +42,7 @@
   <string name="qari_mostafa_ismaeel_gapless">Mostafa Ismaeel (tiada jurang)</string>
   <string name="qari_husary_iza3a_gapless">Husary Broadcast (tiada jurang)</string>
   <string name="qari_abdulaziz_zahrani_gapless">Abdulaziz Az-Zahrani (tiada jurang)</string>
-  <string name="qari_ayman_suwaid">Dr. Ayman Suwaid</string>
+  <string name="qari_ayman_suwaid">Ayman Suwaid</string>
   <string name="qari_afasy_gapless">Mishary Al-Afasy (tiada jurang)</string>
   <string name="qari_hani_rifai_gapless">Hani Ar-Rifai (tiada jurang)</string>
   <string name="qari_ayyoub_gapless">Muhammad Ayyoub (tiada jurang)</string>
@@ -53,11 +53,23 @@
   <string name="qari_afasy_cali_gapless">Mishari Al-Afasy (California, tiada jurang)</string>
   <string name="qari_ajamy_gapless">Ahmed ibn Ali al-Ajamy (tiada jurang)</string>
   <string name="qari_ali_jaber_gapless">Ali Jaber (tiada jurang)</string>
-  <string name="qari_muaiqly_gapless">Maher Al Muaiqly (Haramain, tiada jurang)</string>
+  <string name="qari_muaiqly_haramain_gapless">Maher Al Muaiqly (Haramain, tiada jurang)</string>
   <string name="qari_juhany_gapless">Abdullah Al-Juhany (tiada jurang)</string>
   <string name="qari_abdulmuhsin_qasim_gapless">Abdul Mohsen Al-Qasim (tiada jurang)</string>
   <string name="qari_fares_abbad_gapless">Fares Abbad (tiada jurang)</string>
   <string name="qari_khalifa_taniji_gapless">Khalifa Taniji (tiada jurang)</string>
   <string name="qari_abdullah_matroud_gapless">Abdullah Matroud (tiada jurang)</string>
- <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (tiada jurang)</string>
+  <string name="qari_salah_bukhatir_gapless">Salah Bukhatir (tiada jurang)</string>
+  <string name="qari_hudhayfi_gapless">Ali Al-Hudhaify (tiada jurang)</string>
+  <string name="qari_khaled_muhanna_gapless">Khaled Al-Muhanna (tiada jurang)</string>
+  <string name="qari_husary_mujawwad_gapless">Husary (Mujawwad, tiada jurang)</string>
+  <string name="qari_husary_muallim_gapless">Husary (Muallim, tiada jurang)</string>
+  <string name="qari_ibrahim_alakhdar_gapless">Ibrahim Al-Akhdar (tiada jurang)</string>
+  <string name="qari_muaiqly_gapless">Maher Al Muaiqly (tiada jurang)</string>
+  <string name="qari_yasser_salama_hadr_gapless">Yasser Salama (hadr, tiada jurang)</string>
+  <string name="qari_khalid_qahtani_gapless">Khalid Al Qahtani (tiada jurang)</string>
+  <string name="qari_mokhtasar_asmari_gapless">Abdullah Al-Asmari (Ulasan Bahasa Arab, tiada jurang)</string>
+  <string name="qari_aloosi_gapless">Abdul Rahman Aloosi (tiada jurang)</string>
+  <string name="qari_alzain_ahmad_gapless">Alzain Mohammad Ahmad (tiada jurang)</string>
+  <string name="qari_muhammad_rashad_shereef_gapless">Muhammad Rashad Al-Shereef (tiada jurang)</string>
 </resources>

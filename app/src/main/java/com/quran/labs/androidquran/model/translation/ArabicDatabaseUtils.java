@@ -4,8 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.quran.data.core.QuranInfo;
-import com.quran.labs.androidquran.common.QuranText;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
+import com.quran.data.model.QuranText;
+import com.quran.data.model.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranFileConstants;
 import com.quran.data.model.SuraAyah;
@@ -23,8 +23,8 @@ import javax.inject.Singleton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 @Singleton
 public class ArabicDatabaseUtils {
@@ -106,7 +106,7 @@ public class ArabicDatabaseUtils {
         mergeBookmarksWithAyahText(bookmarks, getAyahTextForAyat(ayahIds));
   }
 
-  Map<Integer, String> getAyahTextForAyat(List<Integer> ayat) {
+  public Map<Integer, String> getAyahTextForAyat(List<Integer> ayat) {
     Map<Integer, String> result = new HashMap<>(ayat.size());
     DatabaseHandler arabicDatabaseHandler = getArabicDatabaseHandler();
     if (arabicDatabaseHandler != null) {

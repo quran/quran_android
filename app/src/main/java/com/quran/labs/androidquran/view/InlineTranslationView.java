@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.StyleRes;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
@@ -21,8 +23,6 @@ import com.quran.labs.androidquran.common.TranslationMetadata;
 import com.quran.labs.androidquran.util.QuranSettings;
 
 import java.util.List;
-
-import androidx.annotation.StyleRes;
 
 public class InlineTranslationView extends ScrollView {
   private Context context;
@@ -90,6 +90,7 @@ public class InlineTranslationView extends ScrollView {
         addTextForAyah(translations, ayat.get(i));
       }
       addFooterSpacer();
+      this.scrollTo(0, 0);
     }
   }
 

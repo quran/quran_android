@@ -4,13 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,10 +11,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkResult;
+import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter;
 import com.quran.labs.androidquran.presenter.bookmark.BookmarksContextualModePresenter;
 import com.quran.labs.androidquran.ui.QuranActivity;
@@ -45,7 +47,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
   }
 
   @Override
-  public void onAttach(Context context) {
+  public void onAttach(@NonNull Context context) {
     super.onAttach(context);
     ((QuranApplication) context.getApplicationContext()).getApplicationComponent().inject(this);
     setHasOptionsMenu(true);
@@ -57,7 +59,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
       @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.quran_list, container, false);
 
-    final Context context = getActivity();
+    final Context context = requireContext();
 
     recyclerView = view.findViewById(R.id.recycler_view);
     recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -84,7 +86,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
   }
 
   @Override
-  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+  public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
     super.onCreateOptionsMenu(menu, inflater);
     MenuItem sortItem = menu.findItem(R.id.sort);
     if (sortItem != null) {
@@ -114,32 +116,27 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int itemId = item.getItemId();
-    switch (itemId) {
-      case R.id.sort_date:
-        bookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_DATE_ADDED);
-        item.setChecked(true);
-        return true;
-      case R.id.sort_location: {
-        bookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_LOCATION);
-        item.setChecked(true);
-        return true;
-      }
-      case R.id.group_by_tags: {
-        bookmarkPresenter.toggleGroupByTags();
-        item.setChecked(bookmarkPresenter.isGroupedByTags());
-        return true;
-      }
-      case R.id.show_recents: {
-        bookmarkPresenter.toggleShowRecents();
-        item.setChecked(bookmarkPresenter.isShowingRecents());
-        return true;
-      }
-      case R.id.show_date: {
-        bookmarkPresenter.toogleShowDate();
-        bookmarksAdapter.setShowDate(bookmarkPresenter.isDateShowing());
-        item.setChecked(bookmarkPresenter.isDateShowing());
-        return true;
-      }
+    if (itemId == R.id.sort_date) {
+      bookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_DATE_ADDED);
+      item.setChecked(true);
+      return true;
+    } else if (itemId == R.id.sort_location) {
+      bookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_LOCATION);
+      item.setChecked(true);
+      return true;
+    } else if (itemId == R.id.group_by_tags) {
+      bookmarkPresenter.toggleGroupByTags();
+      item.setChecked(bookmarkPresenter.isGroupedByTags());
+      return true;
+    } else if (itemId == R.id.show_recents) {
+      bookmarkPresenter.toggleShowRecents();
+      item.setChecked(bookmarkPresenter.isShowingRecents());
+      return true;
+    } else if (itemId == R.id.show_date) {
+      bookmarkPresenter.toogleShowDate();
+      bookmarksAdapter.setShowDate(bookmarkPresenter.isDateShowing());
+      item.setChecked(bookmarkPresenter.isDateShowing());
+      return true;
     }
 
     return super.onOptionsItemSelected(item);
@@ -154,7 +151,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
   }
 
   @Override
-  public void onClick(QuranRow row, int position) {
+  public void onClick(@NonNull QuranRow row, int position) {
     if (bookmarksContextualModePresenter.isInActionMode()) {
       boolean checked = isValidSelection(row) &&
           !bookmarksAdapter.isItemChecked(position);
@@ -167,7 +164,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
   }
 
   @Override
-  public boolean onLongClick(QuranRow row, int position) {
+  public boolean onLongClick(@NonNull QuranRow row, int position) {
     if (isValidSelection(row)) {
       bookmarksAdapter.setItemChecked(position, !bookmarksAdapter.isItemChecked(position));
       if (bookmarksContextualModePresenter.isInActionMode() &&
@@ -185,7 +182,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
     return selected.isBookmark() || (selected.isBookmarkHeader() && selected.tagId >= 0);
   }
 
-  private View.OnClickListener mOnUndoClickListener = new View.OnClickListener() {
+  private final View.OnClickListener mOnUndoClickListener = new View.OnClickListener() {
     @Override
     public void onClick(View v) {
       bookmarkPresenter.cancelDeletion();
@@ -205,33 +202,28 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
     Activity currentActivity = getActivity();
     if (currentActivity instanceof QuranActivity) {
       QuranActivity activity = (QuranActivity) currentActivity;
-      switch (itemId) {
-        case R.id.cab_delete: {
-          final List<QuranRow> selected = bookmarksAdapter.getCheckedItems();
-          final int size = selected.size();
-          final Resources res = getResources();
-          bookmarkPresenter.deleteAfterSomeTime(selected);
-          Snackbar snackbar = Snackbar.make(recyclerView,
-              res.getQuantityString(R.plurals.bookmark_tag_deleted, size, size),
-              BookmarkPresenter.DELAY_DELETION_DURATION_IN_MS);
-          snackbar.setAction(R.string.undo, mOnUndoClickListener);
-          snackbar.getView().setBackgroundColor(ContextCompat.getColor(activity,
-              R.color.snackbar_background_color));
-          snackbar.show();
-          return true;
-        }
-        case R.id.cab_new_tag: {
-          activity.addTag();
-          return true;
-        }
-        case R.id.cab_edit_tag: {
-          handleTagEdit(activity, bookmarksAdapter.getCheckedItems());
-          return true;
-        }
-        case R.id.cab_tag_bookmark: {
-          handleTagBookmarks(activity, bookmarksAdapter.getCheckedItems());
-          return true;
-        }
+      if (itemId == R.id.cab_delete) {
+        final List<QuranRow> selected = bookmarksAdapter.getCheckedItems();
+        final int size = selected.size();
+        final Resources res = getResources();
+        bookmarkPresenter.deleteAfterSomeTime(selected);
+        Snackbar snackbar = Snackbar.make(recyclerView,
+            res.getQuantityString(R.plurals.bookmark_tag_deleted, size, size),
+            BookmarkPresenter.DELAY_DELETION_DURATION_IN_MS);
+        snackbar.setAction(R.string.undo, mOnUndoClickListener);
+        snackbar.getView().setBackgroundColor(ContextCompat.getColor(activity,
+            R.color.snackbar_background_color));
+        snackbar.show();
+        return true;
+      } else if (itemId == R.id.cab_new_tag) {
+        activity.addTag();
+        return true;
+      } else if (itemId == R.id.cab_edit_tag) {
+        handleTagEdit(activity, bookmarksAdapter.getCheckedItems());
+        return true;
+      } else if (itemId == R.id.cab_tag_bookmark) {
+        handleTagBookmarks(activity, bookmarksAdapter.getCheckedItems());
+        return true;
       }
     }
     return false;
