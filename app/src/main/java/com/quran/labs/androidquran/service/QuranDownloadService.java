@@ -5,13 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
-import android.os.*;
-
+import android.os.Environment;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
+import android.os.Parcelable;
+import android.os.StatFs;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.quran.data.core.QuranInfo;
-import com.quran.labs.androidquran.QuranApplication;
 import com.quran.data.model.SuraAyah;
+import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.extension.CloseableExtensionKt;
-import com.quran.mobile.common.download.DownloadInfoStreams;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.NotificationDetails;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent;
@@ -19,17 +25,14 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.UrlUtil;
 import com.quran.labs.androidquran.util.ZipUtils;
-
+import com.quran.mobile.common.download.DownloadInfoStreams;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.inject.Inject;
-
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -140,7 +143,6 @@ public class QuranDownloadService extends Service implements
     thread.start();
 
     Context appContext = getApplicationContext();
-    notifier = new QuranDownloadNotifier(this, this, downloadInfoStreams);
     wifiLock = ((WifiManager) appContext.getSystemService(Context.WIFI_SERVICE))
         .createWifiLock(WifiManager.WIFI_MODE_FULL, "downloadLock");
 
@@ -153,6 +155,7 @@ public class QuranDownloadService extends Service implements
 
     ((QuranApplication) getApplication()).getApplicationComponent().inject(this);
     broadcastManager = LocalBroadcastManager.getInstance(appContext);
+    notifier = new QuranDownloadNotifier(this, this, downloadInfoStreams);
   }
 
   private void handleOnStartCommand(Intent intent, int startId) {

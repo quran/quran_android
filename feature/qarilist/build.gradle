@@ -1,0 +1,58 @@
+plugins {
+  id 'com.android.library'
+  id 'org.jetbrains.kotlin.android'
+  id 'com.squareup.anvil'
+}
+
+android {
+  compileSdkVersion deps.android.build.compileSdkVersion
+  defaultConfig {
+    minSdkVersion deps.android.build.minSdkVersion
+    targetSdkVersion deps.android.build.targetSdkVersion
+  }
+
+  buildFeatures {
+    compose true
+  }
+
+  composeOptions {
+    kotlinCompilerVersion kotlinVersion
+    kotlinCompilerExtensionVersion composeCompilerVersion
+  }
+
+  kotlinOptions {
+    freeCompilerArgs += [
+        "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+        "-opt-in=androidx.compose.material.ExperimentalMaterialApi"
+    ]
+  }
+}
+
+anvil { generateDaggerFactories = true }
+
+dependencies {
+  implementation project(path: ':common:audio')
+  implementation project(path: ':common:data')
+  implementation project(path: ':common:ui:core')
+
+  implementation "androidx.annotation:annotation:${androidxAnnotationVersion}"
+
+  // dagger
+  implementation deps.dagger.runtime
+
+  // compose
+  implementation "androidx.compose.animation:animation:$composeVersion"
+  implementation "androidx.compose.compiler:compiler:$composeCompilerVersion"
+  implementation "androidx.compose.foundation:foundation:$composeVersion"
+  implementation "androidx.compose.material:material:$composeVersion"
+  implementation "androidx.compose.material3:material3:$material3Version"
+  // https://issuetracker.google.com/issues/209688774
+  api "androidx.compose.runtime:runtime:$composeVersion"
+  implementation "androidx.compose.ui:ui:$composeVersion"
+  implementation "androidx.compose.ui:ui-tooling-preview:$composeVersion"
+  debugImplementation "androidx.compose.ui:ui-tooling:$composeVersion"
+
+  // coroutines
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
+}

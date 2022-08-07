@@ -1,25 +1,25 @@
 package com.quran.labs.androidquran.presenter.translation
 
 import com.quran.data.core.QuranInfo
-import com.quran.labs.androidquran.common.LocalTranslation
-import com.quran.labs.androidquran.common.LocalTranslationDisplaySort
-import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.data.model.QuranText
-import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.SuraAyahIterator
 import com.quran.data.model.VerseRange
+import com.quran.labs.androidquran.common.LocalTranslation
+import com.quran.labs.androidquran.common.LocalTranslationDisplaySort
+import com.quran.labs.androidquran.common.QuranAyahInfo
+import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import java.util.*
+import java.util.Collections
 
 internal open class BaseTranslationPresenter<T : Any> internal constructor(
     private val translationModel: TranslationModel,
