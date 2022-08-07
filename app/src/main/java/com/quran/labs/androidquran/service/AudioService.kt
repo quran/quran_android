@@ -65,6 +65,7 @@ import com.quran.labs.androidquran.dao.audio.AudioPlaybackInfo
 import com.quran.labs.androidquran.dao.audio.AudioRequest
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.data.QuranFileConstants
 import com.quran.labs.androidquran.database.DatabaseUtils.closeCursor
 import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler.Companion.getDatabaseHandler
 import com.quran.labs.androidquran.extension.requiresBasmallah
@@ -1119,7 +1120,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     val appContext = applicationContext
     return try {
       val resources = appContext.resources
-      val logo = BitmapFactory.decodeResource(resources, R.drawable.icon)
+      val logo = BitmapFactory.decodeResource(resources, QuranFileConstants.ICON_RESOURCE_ID)
       val iconWidth = logo.width
       val iconHeight = logo.height
       val cd = ColorDrawable(
