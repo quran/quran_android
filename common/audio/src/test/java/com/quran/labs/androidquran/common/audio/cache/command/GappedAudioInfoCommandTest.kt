@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.common.audio.cache.command
 import com.google.common.truth.Truth
 import com.quran.data.core.QuranInfo
 import com.quran.data.pageinfo.common.MadaniDataSource
+import com.quran.labs.androidquran.common.audio.model.PartiallyDownloadedSura
 import okio.Path.Companion.toPath
 import okio.fakefilesystem.FakeFileSystem
 import org.junit.Test
@@ -27,7 +28,7 @@ class GappedAudioInfoCommandTest {
   }
 
   @Test
-  fun testGaplessAudioWithPartials() {
+  fun testGappedAudioWithPartials() {
     val qariPath = "/quran/audio/minshawi".toPath()
     val filesystem = FakeFileSystem()
     filesystem.createDirectories(qariPath)
@@ -37,16 +38,19 @@ class GappedAudioInfoCommandTest {
     filesystem.write(qariPath / "114001.mp3") { }
 
     val quranInfo = QuranInfo(MadaniDataSource())
-    val gaplessAudioInfoCommand = GappedAudioInfoCommand(quranInfo, filesystem)
-    val downloads = gaplessAudioInfoCommand.gappedDownloads(qariPath)
+    val gappedAudioInfoCommand = GappedAudioInfoCommand(quranInfo, filesystem)
+    val downloads = gappedAudioInfoCommand.gappedDownloads(qariPath)
     Truth.assertThat(downloads.first).hasSize(1)
     Truth.assertThat(downloads.second).hasSize(1)
     Truth.assertThat(downloads.first).containsExactly(103)
-    Truth.assertThat(downloads.second).containsExactly(114)
+    Truth.assertThat(downloads.second).hasSize(1)
+    Truth.assertThat(downloads.second.first()).isEqualTo(
+      PartiallyDownloadedSura(114, 6, listOf(1))
+    )
   }
 
   @Test
-  fun testGaplessAudioWithIllegalFilenames() {
+  fun testGappedAudioWithIllegalFilenames() {
     val qariPath = "/quran/audio/minshawi".toPath()
     val filesystem = FakeFileSystem()
     filesystem.createDirectories(qariPath)
@@ -57,8 +61,8 @@ class GappedAudioInfoCommandTest {
     filesystem.write(qariPath / "115001.mp3") { }
 
     val quranInfo = QuranInfo(MadaniDataSource())
-    val gaplessAudioInfoCommand = GappedAudioInfoCommand(quranInfo, filesystem)
-    val downloads = gaplessAudioInfoCommand.gappedDownloads(qariPath)
+    val gappedAudioInfoCommand = GappedAudioInfoCommand(quranInfo, filesystem)
+    val downloads = gappedAudioInfoCommand.gappedDownloads(qariPath)
     Truth.assertThat(downloads.first).isEmpty()
     Truth.assertThat(downloads.second).isEmpty()
   }

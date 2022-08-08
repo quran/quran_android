@@ -1,33 +1,29 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
 import androidx.core.util.Pair
-
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
-
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
-
-import java.util.ArrayList
-import java.util.concurrent.CountDownLatch
-
+import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
 import io.reactivex.rxjava3.schedulers.Schedulers
-
-import org.mockito.ArgumentMatchers.*
+import java.util.concurrent.CountDownLatch
+import org.junit.Before
+import org.junit.BeforeClass
+import org.junit.Test
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyBoolean
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when` as whenever
 import org.mockito.MockitoAnnotations
+import org.mockito.Mockito.`when` as whenever
 
 class TagBookmarkPresenterTest {
 

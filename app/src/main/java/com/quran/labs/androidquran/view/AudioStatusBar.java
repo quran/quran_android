@@ -1,39 +1,29 @@
 package com.quran.labs.androidquran.view;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Space;
 import android.widget.TextView;
-
 import androidx.annotation.DrawableRes;
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.core.view.ViewCompat;
-
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.audio.model.QariItem;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
-
-import java.util.List;
 
 public class AudioStatusBar extends LeftToRightLinearLayout {
 
@@ -56,10 +46,9 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private final int separatorSpacing;
   private final int textFontSize;
   private final int textFullFontSize;
-  private final int spinnerPadding;
-  private QariAdapter adapter;
+  private final int buttonPadding;
 
-  private int currentQari;
+  private QariItem currentQari;
   private int currentRepeat = 0;
   @DrawableRes private int itemBackground;
   private final boolean isRtl;
@@ -67,9 +56,8 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private boolean isRecitationEnabled;
   private boolean hasErrorText;
   private boolean haveCriticalError = false;
-  private final SharedPreferences sharedPreferences;
 
-  private QuranSpinner spinner;
+  private TextView qariView;
   private TextView progressText;
   private ProgressBar progressBar;
   private final RepeatButton repeatButton;
@@ -86,6 +74,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     void setRepeatCount(int repeatCount);
     void onAcceptPressed();
     void onAudioSettingsPressed();
+    void onShowQariList();
   }
 
   public interface AudioBarRecitationListener {
@@ -122,15 +111,12 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
         R.dimen.audiobar_text_font_size);
     textFullFontSize = resources.getDimensionPixelSize(
         R.dimen.audiobar_text_full_font_size);
-    spinnerPadding = resources
+    buttonPadding = resources
         .getDimensionPixelSize(R.dimen.audiobar_spinner_padding);
     setOrientation(LinearLayout.HORIZONTAL);
 
     // only flip the layout when the language is rtl and we're on api 17+
     isRtl = QuranSettings.getInstance(this.context).isArabicNames() || QuranUtils.isRtl();
-    sharedPreferences = PreferenceManager
-        .getDefaultSharedPreferences(context.getApplicationContext());
-    currentQari = sharedPreferences.getInt(Constants.PREF_DEFAULT_QARI, 0);
 
     itemBackground = 0;
     if (attrs != null) {
@@ -139,6 +125,14 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
           itemBackground);
       ta.recycle();
     }
+  }
+
+  public void setCurrentQariBridge(CurrentQariBridge currentQariBridge) {
+    currentQariBridge.listenToQaris(qariItem -> {
+      currentQari = qariItem;
+      updateButton();
+      return null;
+    });
   }
 
   public void setIsDualPageMode(boolean isDualPageMode) {
@@ -151,26 +145,6 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   public void setIsRecitationEnabled(boolean isEnabled) {
     this.isRecitationEnabled = isEnabled;
-  }
-
-  public void setQariList(List<QariItem> qariList) {
-    // TODO: optimize - PREF_DEFAULT_QARI is the qari id, should introduce a helper pref for pos
-    final int qaris = qariList.size();
-    if (currentQari >= qaris || qariList.get(currentQari).getId() != currentQari) {
-      // figure out the updated position for the index
-      int updatedIndex = 0;
-      for (int i = 0; i < qaris; i++) {
-        if (qariList.get(i).getId() == currentQari) {
-          updatedIndex = i;
-          break;
-        }
-      }
-      currentQari = updatedIndex;
-    }
-
-    adapter = new QariAdapter(this.context, qariList,
-        R.layout.sherlock_spinner_item, R.layout.sherlock_spinner_dropdown_item);
-    showStoppedMode();
   }
 
   public int getCurrentMode() {
@@ -207,14 +181,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   @NonNull
   public QariItem getAudioInfo() {
-    final int position = spinner != null ? spinner.getSelectedItemPosition() : currentQari;
-    return adapter.getItem(position);
-  }
-
-  public void updateSelectedItem() {
-    if (spinner != null) {
-      spinner.setSelection(currentQari, false);
-    }
+    return currentQari;
   }
 
   public void setProgress(int progress) {
@@ -256,13 +223,13 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
         addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_mic, false);
         addSeparator();
       }
-      addSpinner();
+      addButton();
       addSeparator();
       addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_play, false);
     } else {
       addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_play, false);
       addSeparator();
-      addSpinner();
+      addButton();
       if (isRecitationEnabled) {
         addSeparator();
         addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_mic, false);
@@ -270,86 +237,23 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     }
   }
 
-  private static class QariAdapter extends BaseAdapter {
-    @NonNull LayoutInflater inflater;
-    @NonNull private final List<QariItem> items;
-    @LayoutRes private final int layoutViewId;
-    @LayoutRes private final int dropDownViewId;
-
-    QariAdapter(@NonNull Context context,
-                @NonNull List<QariItem> items,
-                @LayoutRes int layoutViewId,
-                @LayoutRes int dropDownViewId) {
-      this.items = items;
-      this.layoutViewId = layoutViewId;
-      this.dropDownViewId = dropDownViewId;
-      inflater = LayoutInflater.from(context);
-    }
-
-    @Override
-    public int getCount() {
-      return items.size();
-    }
-
-    @Override
-    public QariItem getItem(int position) {
-      return items.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-      return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-      return getViewInternal(position, convertView, parent, layoutViewId);
-    }
-
-    @Override
-    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-      return getViewInternal(position, convertView, parent, dropDownViewId);
-    }
-
-    private View getViewInternal(int position, View convertView,
-        ViewGroup parent, @LayoutRes int resource) {
-      TextView textView;
-      if (convertView == null) {
-        textView = (TextView) inflater.inflate(resource, parent, false);
-      } else {
-        textView = (TextView) convertView;
-      }
-
-      QariItem item = getItem(position);
-      textView.setText(item.getName());
-      return textView;
+  private void updateButton() {
+    final TextView currentQariView = qariView;
+    if (currentQariView != null) {
+      currentQariView.setText(currentQari.getName());
     }
   }
 
-  private void addSpinner() {
-    if (spinner == null) {
-      spinner = new QuranSpinner(context, null,
-          androidx.appcompat.R.attr.actionDropDownStyle);
-      spinner.setDropDownVerticalOffset(spinnerPadding);
-      spinner.setAdapter(adapter);
-
-      spinner.setOnItemSelectedListener(
-          new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-              if (position != currentQari) {
-                sharedPreferences.edit().
-                    putInt(Constants.PREF_DEFAULT_QARI, adapter.getItem(position).getId()).apply();
-                currentQari = position;
-              }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-          });
+  private void addButton() {
+    if (qariView == null) {
+      qariView = new TextView(context);
+      qariView.setOnClickListener(view -> audioBarListener.onShowQariList());
+      qariView.setGravity(Gravity.CENTER_VERTICAL);
+      qariView.setTextColor(Color.WHITE);
+      qariView.setBackgroundResource(itemBackground);
+      qariView.setPadding(buttonPadding, 0, buttonPadding, 0);
     }
-    spinner.setSelection(currentQari);
+    qariView.setText(currentQari.getName());
 
     // in RTL, because this is currently an LTR LinearLayout, this shows
     // the spinner and then the play button, so we can't match parent. this
@@ -364,12 +268,9 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     }
 
     if (isRtl) {
-      ViewCompat.setLayoutDirection(spinner, ViewCompat.LAYOUT_DIRECTION_RTL);
-      params.leftMargin = spinnerPadding;
-    } else {
-      params.rightMargin = spinnerPadding;
+      ViewCompat.setLayoutDirection(qariView, ViewCompat.LAYOUT_DIRECTION_RTL);
     }
-    addView(spinner, params);
+    addView(qariView, params);
   }
 
   private void showPromptForDownloadMode() {
@@ -445,9 +346,9 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     lp.weight = 1;
     lp.setMargins(separatorSpacing, 0, separatorSpacing, 0);
     if (isRtl) {
-      lp.leftMargin = spinnerPadding;
+      lp.leftMargin = buttonPadding;
     } else {
-      lp.rightMargin = spinnerPadding;
+      lp.rightMargin = buttonPadding;
     }
     addView(ll, lp);
   }
@@ -578,10 +479,6 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     separator.setPadding(0, separatorSpacing, 0, separatorSpacing);
     LinearLayout.LayoutParams paddingParams =
         new LayoutParams(separatorWidth, LayoutParams.MATCH_PARENT);
-
-    final int right = isRtl ? 0 : separatorSpacing;
-    final int left = isRtl ? separatorSpacing : 0;
-    paddingParams.setMargins(left, 0, right, 0);
     addView(separator, paddingParams);
   }
 

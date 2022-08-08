@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.common.audio.cache.command
 
 import com.quran.data.core.QuranInfo
+import com.quran.labs.androidquran.common.audio.model.PartiallyDownloadedSura
 import com.quran.labs.androidquran.common.audio.util.AudioFileUtil
 import okio.FileSystem
 import okio.Path
@@ -11,7 +12,7 @@ class GappedAudioInfoCommand @Inject constructor(
   private val fileSystem: FileSystem
 ) {
 
-  fun gappedDownloads(path: Path): Pair<List<Int>, List<Int>> {
+  fun gappedDownloads(path: Path): Pair<List<Int>, List<PartiallyDownloadedSura>> {
     val gappedDownloads = AudioFileUtil.filesMatchingSuffixWithSuffixRemoved(fileSystem, path, ".mp3")
     val gappedSuras = gappedDownloads
       .filter { it.length == 6 }
@@ -23,11 +24,19 @@ class GappedAudioInfoCommand @Inject constructor(
         }
         .filter { it in 1..286 }
       }
-      .mapValues { it.value.size }
-      .toList()
-    val (fullyDownloaded, partiallyDownloaded) = gappedSuras.partition {
-        (sura, downloadedAyat) -> quranInfo.getNumberOfAyahs(sura) == downloadedAyat
-    }
-    return fullyDownloaded.map { it.first } to partiallyDownloaded.map { it.first }
+
+    val fullyDownloaded = gappedSuras
+      .filter { (sura, ayat) -> quranInfo.getNumberOfAyahs(sura) == ayat.size }
+      .map { it.key }
+    val partiallyDownloaded = gappedSuras
+      .filter { (sura, _) -> !fullyDownloaded.contains(sura) }
+      .map { (sura, partiallyDownloadedAyat) ->
+        PartiallyDownloadedSura(
+          sura,
+          quranInfo.getNumberOfAyahs(sura),
+          partiallyDownloadedAyat
+        )
+      }
+    return fullyDownloaded to partiallyDownloaded
   }
 }

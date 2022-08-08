@@ -7,7 +7,6 @@ import com.quran.data.core.QuranConstants.NUMBER_OF_SURAS
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.VerseRange
 import com.quran.data.source.QuranDataSource
-import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
 

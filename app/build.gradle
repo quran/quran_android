@@ -130,6 +130,7 @@ dependencies {
   implementation project(path: ':common:upgrade')
 
   implementation project(path: ':feature:audio')
+  implementation project(path: ':feature:qarilist')
 
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
@@ -144,6 +145,9 @@ dependencies {
   implementation "androidx.recyclerview:recyclerview:${androidxRecyclerViewVersion}"
   implementation "com.google.android.material:material:${materialComponentsVersion}"
   implementation "androidx.swiperefreshlayout:swiperefreshlayout:${androidxSwipeRefreshVersion}"
+
+  // okio
+  implementation "com.squareup.okio:okio:${okioVersion}"
 
   // rx
   implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
