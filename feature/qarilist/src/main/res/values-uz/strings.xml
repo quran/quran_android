@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Qori tanlang</string>
+  <string name="qarilist_ready_to_play">Eshitishga tayyor</string>
+  <string name="qarilist_qaris_with_downloads">Yuklab olish bilan tilovatchilar</string>
+  <string name="qarilist_gapless">uzluksiz</string>
+  <string name="qarilist_gapped">Bo\'shashgan</string>
+  <string name="qarilist_selected">Tanlangan</string>
+  <string name="qarilist_dismiss">Rad etish</string>
+</resources>

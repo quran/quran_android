@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Selectați un Qari</string>
+  <string name="qarilist_ready_to_play">Gata de ascultare</string>
+  <string name="qarilist_qaris_with_downloads">Reciteri cu descărcări</string>
+  <string name="qarilist_gapless">Continuă</string>
+  <string name="qarilist_gapped">Non-continuă</string>
+  <string name="qarilist_selected">Selectată</string>
+  <string name="qarilist_dismiss">Respingeți</string>
+</resources>

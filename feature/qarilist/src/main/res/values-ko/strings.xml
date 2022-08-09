@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">카리 선택</string>
+  <string name="qarilist_ready_to_play">듣기 준비 완료</string>
+  <string name="qarilist_qaris_with_downloads">다운로드가 있는 리사이터</string>
+  <string name="qarilist_gapless">지속적</string>
+  <string name="qarilist_gapped">비연속</string>
+  <string name="qarilist_selected">선택한</string>
+  <string name="qarilist_dismiss">해고하다</string>
+</resources>

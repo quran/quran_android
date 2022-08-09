@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Odaberite Qari</string>
+  <string name="qarilist_ready_to_play">Spremni za slušanje</string>
+  <string name="qarilist_qaris_with_downloads">Recitiri sa downloadima</string>
+  <string name="qarilist_gapless">Kontinuirano</string>
+  <string name="qarilist_gapped">ne Kontinuirano</string>
+  <string name="qarilist_selected">Izabrane</string>
+  <string name="qarilist_dismiss">Otpusti</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">选择一个卡里</string>
+  <string name="qarilist_ready_to_play">准备聆听</string>
+  <string name="qarilist_qaris_with_downloads">有下载的朗诵者</string>
+  <string name="qarilist_gapless">连续的</string>
+  <string name="qarilist_gapped">非连续的</string>
+  <string name="qarilist_selected">精选</string>
+  <string name="qarilist_dismiss">解散</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Кари параметрін таңдау</string>
+  <string name="qarilist_ready_to_play">Тыңдауға дайын</string>
+  <string name="qarilist_qaris_with_downloads">Жүктеулері бар реципитерлер</string>
+  <string name="qarilist_gapless">Үздіксіз</string>
+  <string name="qarilist_gapped">Үздіксіз емес</string>
+  <string name="qarilist_selected">Таңдалған</string>
+  <string name="qarilist_dismiss">Жұмыстан шығару</string>
+</resources>
