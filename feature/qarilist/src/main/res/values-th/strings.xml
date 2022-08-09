@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">เลือก Qari</string>
+  <string name="qarilist_ready_to_play">พร้อมสําหรับการฟัง</string>
+  <string name="qarilist_qaris_with_downloads">ผู้บรรยายพร้อมการดาวน์โหลด</string>
+  <string name="qarilist_gapless">ต่อเนื่อง</string>
+  <string name="qarilist_gapped">ไม่ต่อเนื่อง</string>
+  <string name="qarilist_selected">เลือก</string>
+  <string name="qarilist_dismiss">ไล่ออก</string>
+</resources>

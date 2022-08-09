@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Valitse Kari</string>
+  <string name="qarilist_ready_to_play">Valmis kuuntelemaan</string>
+  <string name="qarilist_qaris_with_downloads">Reciters kanssa Lataukset</string>
+  <string name="qarilist_gapless">Jatkuva</string>
+  <string name="qarilist_gapped">Ei-jatkuva</string>
+  <string name="qarilist_selected">Valitut</string>
+  <string name="qarilist_dismiss">Vapauttakaa</string>
+</resources>

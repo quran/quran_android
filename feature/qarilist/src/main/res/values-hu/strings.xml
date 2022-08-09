@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Válasszon egy Qari-t</string>
+  <string name="qarilist_ready_to_play">Készen áll a meghallgatásra</string>
+  <string name="qarilist_qaris_with_downloads">Reciterek letöltésekkel</string>
+  <string name="qarilist_gapless">Folyamatos</string>
+  <string name="qarilist_gapped">Nem folyamatos</string>
+  <string name="qarilist_selected">Kiválasztott</string>
+  <string name="qarilist_dismiss">Elbocsát</string>
+</resources>

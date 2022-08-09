@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Wybierz Qari</string>
+  <string name="qarilist_ready_to_play">Gotowy do słuchania</string>
+  <string name="qarilist_qaris_with_downloads">Recytatorzy z możliwością pobrania</string>
+  <string name="qarilist_gapless">Ciągłe</string>
+  <string name="qarilist_gapped">Nieprzerwanie</string>
+  <string name="qarilist_selected">Wybrane</string>
+  <string name="qarilist_dismiss">Odrzucić</string>
+</resources>

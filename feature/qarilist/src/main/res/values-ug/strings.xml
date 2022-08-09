@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">ئوقۇرمەننى تاللاڭ</string>
+  <string name="qarilist_ready_to_play">ئاڭلاشقا تەييار</string>
+  <string name="qarilist_qaris_with_downloads">چۈشۈرۈش بىلەن كارى</string>
+  <string name="qarilist_gapless">ئۈزلۈكسىز</string>
+  <string name="qarilist_gapped">ئىزچىل ئەمەس</string>
+  <string name="qarilist_selected">تاللانغان</string>
+  <string name="qarilist_dismiss">خىزمەتتىن ھەيدەش</string>
+</resources>
