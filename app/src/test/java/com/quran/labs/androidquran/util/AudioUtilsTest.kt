@@ -5,7 +5,6 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.data.pageinfo.common.MadaniDataSource
 import com.quran.data.source.PageProvider
-import com.quran.labs.androidquran.common.audio.model.AudioConfiguration
 import com.quran.labs.androidquran.common.audio.util.QariUtil
 import org.junit.Assert
 import org.junit.Test
@@ -13,13 +12,6 @@ import org.mockito.Mockito
 import org.mockito.Mockito.`when` as whenever
 
 class AudioUtilsTest {
-  private val audioConfiguration = AudioConfiguration(
-    quranReadersName = 0,
-    quranReadersPath = 0,
-    quranReadersDatabaseNames = 0,
-    quranReadersHaveGaplessEquivalents = 0,
-    quranReadersUrls = 0
-  )
 
   @Test
   fun testGetLastAyahWithNewSurahOnNextPageForMadani() {
@@ -31,7 +23,6 @@ class AudioUtilsTest {
       AudioUtils(
         quranInfo,
         Mockito.mock(QuranFileUtils::class.java),
-        audioConfiguration,
         Mockito.mock(QariUtil::class.java)
       )
     // mode 1 is PAGE
@@ -56,7 +47,6 @@ class AudioUtilsTest {
       AudioUtils(
         quranInfo,
         Mockito.mock(QuranFileUtils::class.java),
-        audioConfiguration,
         Mockito.mock(QariUtil::class.java)
       )
     // mode 2 is SURA
@@ -73,7 +63,6 @@ class AudioUtilsTest {
       AudioUtils(
         quranInfo,
         Mockito.mock(QuranFileUtils::class.java),
-        audioConfiguration,
         Mockito.mock(QariUtil::class.java)
       )
 
@@ -93,7 +82,6 @@ class AudioUtilsTest {
       AudioUtils(
         quranInfo,
         Mockito.mock(QuranFileUtils::class.java),
-        audioConfiguration,
         Mockito.mock(QariUtil::class.java)
       )
     val start = SuraAyah(8, 1)
@@ -107,7 +95,6 @@ class AudioUtilsTest {
     val audioUtils = AudioUtils(
       QuranInfo(MadaniDataSource()),
       Mockito.mock(QuranFileUtils::class.java),
-      audioConfiguration,
       Mockito.mock(QariUtil::class.java)
     )
     val start = SuraAyah(56, 51)

@@ -6,8 +6,6 @@ import com.quran.data.page.provider.madani.MadaniPageProvider
 import com.quran.data.pageinfo.mapper.AyahMapper
 import com.quran.data.pageinfo.mapper.IdentityAyahMapper
 import com.quran.data.source.PageProvider
-import com.quran.labs.androidquran.common.audio.model.AudioConfiguration
-import com.quran.labs.androidquran.pages.madani.R
 import com.quran.page.common.draw.ImageDrawHelper
 import com.quran.page.common.factory.PageViewFactoryProvider
 import dagger.Module
@@ -52,14 +50,4 @@ object QuranDataModule {
   @Reusable
   @Provides
   fun provideAyahMapper(): AyahMapper = IdentityAyahMapper()
-
-  @Provides
-  fun provideAudioConfiguration(): AudioConfiguration =
-    AudioConfiguration(
-      quranReadersName = R.array.quran_readers_name,
-      quranReadersPath = R.array.quran_readers_path,
-      quranReadersDatabaseNames = R.array.quran_readers_db_name,
-      quranReadersHaveGaplessEquivalents = R.array.quran_readers_have_gapless_equivalents,
-      quranReadersUrls = R.array.quran_readers_urls
-    )
 }

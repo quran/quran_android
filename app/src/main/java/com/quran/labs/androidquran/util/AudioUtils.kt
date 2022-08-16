@@ -5,19 +5,17 @@ import android.content.Intent
 import androidx.annotation.VisibleForTesting
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
-import com.quran.labs.androidquran.common.audio.model.AudioConfiguration
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.QariUtil
 import com.quran.labs.androidquran.service.AudioService
-import timber.log.Timber
 import java.io.File
 import java.util.Locale
 import javax.inject.Inject
+import timber.log.Timber
 
 class AudioUtils @Inject constructor(
   private val quranInfo: QuranInfo,
   private val quranFileUtils: QuranFileUtils,
-  private val audioConfiguration: AudioConfiguration,
   private val qariUtil: QariUtil
 ) {
 
