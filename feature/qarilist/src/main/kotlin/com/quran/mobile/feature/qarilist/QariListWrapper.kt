@@ -61,7 +61,7 @@ class QariListWrapper(
   @Composable
   fun QariListBottomSheet() {
     val state = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.HalfExpanded)
-    val qariListFlow = qariListPresenter.qariList(startAyah, endAyah)
+    val qariListFlow = qariListPresenter.qariList(startAyah, endAyah) { QariItem.fromQari(context, it) }
     val qariListState = qariListFlow.collectAsState(emptyList())
     val currentQariFlow = currentQariManager.flow()
     val currentQariState = currentQariFlow.collectAsState(null)
