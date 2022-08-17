@@ -15,4 +15,6 @@ object QuranFileConstants {
 
   const val FALLBACK_PAGE_TYPE = "qaloon"
   const val SEARCH_EXTRA_REPLACEMENTS = ""
+
+  var ICON_RESOURCE_ID = com.quran.labs.androidquran.pages.qaloon.R.drawable.icon
 }

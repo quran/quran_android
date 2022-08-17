@@ -64,7 +64,7 @@ class QariDownloadInfoManager @Inject constructor(
         val updated = storageCache.lastValue()
           .map {
             // latest last value, but replace the qari item with our updated one
-            if (it.qariItem.id == qariDownloadInfo.qariItem.id) qariDownloadInfo else it
+            if (it.qari.id == qariDownloadInfo.qari.id) qariDownloadInfo else it
           }
         storageCache.writeAll(updated)
       }
@@ -73,10 +73,10 @@ class QariDownloadInfoManager @Inject constructor(
 
   private fun getUpdatedQariInformation(qariId: Int): QariDownloadInfo? {
     val lastInfo = storageCache.lastValue()
-    val updatedQari = lastInfo.firstOrNull { it.qariItem.id == qariId } ?: return null
+    val updatedQari = lastInfo.firstOrNull { it.qari.id == qariId } ?: return null
     val audioDirectory = quranFileManager.audioFileDirectory()
     return if (audioDirectory != null) {
-      audioInfoCommand.generateQariDownloadInfo(updatedQari.qariItem, audioDirectory)
+      audioInfoCommand.generateQariDownloadInfo(updatedQari.qari, audioDirectory)
     } else {
       null
     }
