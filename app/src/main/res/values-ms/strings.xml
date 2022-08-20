@@ -72,11 +72,6 @@
   <string name="search_hint">Cari dalam Quran</string>
   <string name="quranSearchType">Ayat Quran</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">Satu surah telah dimuat turun</item>
-    <item quantity="other">%1$d surah telah dimuat turun</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">Satu hasil carian untuk \"%1$s\": </item>
@@ -282,14 +277,11 @@
   <!-- penanda & tag list -->
   <string name="bookmarks_list_empty">Tidak ada Penanda</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Pengurus Audio</string>
-
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Muat turun Quran</string>
   <string name="notification_channel_audio">Pembacaan Quran</string>
-    <string name="about_quran_enc" translatable="false">Ensiklopedia Alquran Alkarim</string>
-    <string name="menu_sort_group_by_tags">Kelompokkan berdasar Label</string>
+  <string name="about_quran_enc" translatable="false">Ensiklopedia Alquran Alkarim</string>
+  <string name="menu_sort_group_by_tags">Kelompokkan berdasar Label</string>
   <string name="menu_show_date">Tampilkan Tanggal</string>
   <string name="please_wait">Harap tunggu...</string>
   <string name="about_quran_enc_summary">Terjemahan untuk banyak bahasa</string>
@@ -320,13 +312,6 @@
   <string name="download_sura_ayah_progress">Mengunduh surat %1$d ayat %2$d</string>
   <string name="tag_blank_tag_error">Nama label tidak boleh kosong!</string>
   <string name="tag_duplicate_tag_error">Nama label sudah dipakai</string>
-  <string name="audio_manager_remove_audio_title">Hapus Surat?</string>
-  <string name="audio_manager_remove_audio_msg">Apakah Anda yakin ingin menghapus %1$s?</string>
-  <string name="audio_manager_surah_download">Unduh Surat</string>
-  <string name="audio_manager_surah_delete">Hapus Surat</string>
-  <string name="audio_manager_download_all">Unduh semua</string>
-  <string name="audio_manager_download_selection">Pemilihan unduhan</string>
-  <string name="audio_manager_delete_selection">Hapus pilihan</string>
   <string name="audio_updated_title">Pembaruan file Audio Quran</string>
   <string name="audio_updated_text">Beberapa file audio Quran telah diperbarui. Quran telah menghapus salinan file-file ini sehingga versi terbaru dapat diunduh saat berikutnya Anda memutarnya kembali.</string>
   <string name="prefs_category_dual_screen">Preferensi Halaman Ganda</string>

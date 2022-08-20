@@ -298,14 +298,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="recent_pages">Páginas recentes</string>
   <string name="tag_blank_tag_error">Os nomes das etiquetas não podem estar em branco!</string>
   <string name="tag_duplicate_tag_error">O nome da etiqueta já existe!</string>
-  <string name="audio_manager">Gerente de áudio</string>
-  <string name="audio_manager_remove_audio_title">Remover o Sura?</string>
-  <string name="audio_manager_remove_audio_msg">Você tem certeza de que gostaria de remover %1$s?</string>
-  <string name="audio_manager_surah_download">Baixar surah</string>
-  <string name="audio_manager_surah_delete">Excluir arquivo de áudio</string>
-  <string name="audio_manager_download_all">Baixar tudo</string>
-  <string name="audio_manager_download_selection">Seleção para download</string>
-  <string name="audio_manager_delete_selection">Eliminar seleção</string>
   <string name="audio_updated_title">Atualização dos arquivos de áudio do Alcorão</string>
   <string name="audio_updated_text">Vários arquivos de áudio do Alcorão foram atualizados. O Alcorão para Android removeu sua cópia desses arquivos para que as versões mais recentes possam ser baixadas na próxima vez que você os reproduzir.</string>
   <string name="prefs_category_dual_screen">Preferências de página dupla</string>

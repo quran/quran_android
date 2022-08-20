@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="other">%1$d surat telah diunduh</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Pengelola Audio</string>
+  <string name="audio_manager_remove_audio_title">Hapus Surat?</string>
+  <string name="audio_manager_remove_audio_msg">Apakah Anda yakin ingin menghapus %1$s?</string>
+  <string name="audio_manager_surah_download">Unduh Surat</string>
+  <string name="audio_manager_surah_delete">Hapus Surat</string>
+  <string name="audio_manager_download_all">Unduh semua</string>
+  <string name="audio_manager_download_selection">Pemilihan unduhan</string>
+  <string name="audio_manager_delete_selection">Hapus pilihan</string>
+</resources>

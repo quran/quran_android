@@ -90,10 +90,6 @@
   <string name="search_hint">Telusuri al Quran</string>
   <string name="quranSearchType">Ayat-ayat al Quran</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="other">%1$d surat telah diunduh</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="other">%2$d hasil pencarian untuk \"%1$s\": </item>
@@ -311,8 +307,6 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Tidak ada Penanda</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Pengelola Audio</string>
   <string name="tag_blank_tag_error">Nama label tidak boleh kosong!</string>
   <string name="tag_duplicate_tag_error">Nama label sudah dipakai</string>
   <string name="notification_channel_download">Unduhan Quran</string>
@@ -337,13 +331,6 @@
   <string name="delete_translation">Hapus Terjemahan</string>
   <string name="scoped_storage_message">Karena perubahan Android untuk meningkatkan privasi pengguna, menyalin file di luar direktori aplikasi mungkin menghentikan Quran mengakses datanya di versi Android yang akan datang. Apakah Anda yakin ingin menggunakan jalur ini?</string>
   <string name="see_tafseer_of_verse">Tafsir Ayat ini disertakan dengan tafsir Ayat %d (Klik untuk memperluas).</string>
-  <string name="audio_manager_remove_audio_title">Hapus Surat?</string>
-  <string name="audio_manager_remove_audio_msg">Apakah Anda yakin ingin menghapus %1$s?</string>
-  <string name="audio_manager_surah_download">Unduh Surat</string>
-  <string name="audio_manager_surah_delete">Hapus Surat</string>
-  <string name="audio_manager_download_all">Unduh semua</string>
-  <string name="audio_manager_download_selection">Pemilihan unduhan</string>
-  <string name="audio_manager_delete_selection">Hapus pilihan</string>
   <string name="audio_updated_title">Pembaruan file Audio Quran</string>
   <string name="audio_updated_text">Beberapa file audio Quran telah diperbarui. Quran telah menghapus salinan file-file ini sehingga versi terbaru dapat diunduh saat berikutnya Anda memutarnya kembali.</string>
   <string name="prefs_category_dual_screen">Preferensi Halaman Ganda</string>

@@ -81,11 +81,6 @@
   <string name="search_full_results">Fullständigt resultat</string>
   <string name="search_entire_mushaf">Sök i hela mushaf</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">1 sura hämtad</item>
-    <item quantity="other">%1$d surahs som laddas ner</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">Ett resultat för \"%1$s\": </item>
@@ -316,24 +311,6 @@
 
   <!-- widgets -->
   <string name="bookmarks_list_empty">Inga bokmärken</string>
-
-  <!-- audio manager -->
-  <string name="audio_manager">Ljudansvarig</string>
-  <string name="audio_manager_remove_audio_title">Ta bort Surah?</string>
-  <string name="audio_manager_remove_audio_msg">Är du säker på att du vill ta bort %1$s?</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">Lyckades ta bort surans ljud</item>
-    <item quantity="other">Lyckades ta bort %1$d surahs</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">Det uppstod ett fel när suran raderades.</item>
-    <item quantity="other">Det uppstod ett fel när du tog bort %1$d surahs</item>
-  </plurals>
-  <string name="audio_manager_surah_download">Ladda ner surah</string>
-  <string name="audio_manager_surah_delete">Ta bort ljudfilen</string>
-  <string name="audio_manager_download_all">Ladda ner alla</string>
-  <string name="audio_manager_download_selection">Nedladdning av urval</string>
-  <string name="audio_manager_delete_selection">Ta bort val</string>
 
   <!-- audio updates -->
   <string name="audio_updated_title">Koran Ljudfiler Uppdatering</string>

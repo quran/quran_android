@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">1 сүре жазылды</item>
+    <item quantity="other">%1$d сүре жазылды</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Аудио менеджер</string>
+  <string name="audio_manager_remove_audio_title">Сураны жойып тастаңыз ба?</string>
+  <string name="audio_manager_remove_audio_msg">% 1$s жойғыңыз келетініне сенімдісіз бе?</string>
+  <string name="audio_manager_surah_download">Сурахты жүктеу</string>
+  <string name="audio_manager_surah_delete">Дыбыс файлын жою</string>
+  <string name="audio_manager_download_all">Барлығын жүктеу</string>
+  <string name="audio_manager_download_selection">Жүктеу таңдауы</string>
+  <string name="audio_manager_delete_selection">Таңдауды жою</string>
+</resources>

@@ -53,15 +53,6 @@
   <string name="search_full_results">نتائج كاملة</string>
   <string name="search_entire_mushaf">ابحث في المصحف بأكمله</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="zero">لم يتم تحميل سور بعد‎</item>
-    <item quantity="one">تم تحميل سورة واحده</item>
-    <item quantity="two">تم تحميل سورتان</item>
-    <item quantity="few">تم تحميل %1$d سور</item>
-    <item quantity="many">تم تحميل %1$d سورة</item>
-    <item quantity="other">تم تحميل %1$d سورة</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="zero">لا توجد نتائج في البحث عن \"%1$s\"</item>
@@ -255,8 +246,6 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">لا توجد أي مرجعيات</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">إدارة الصوتيات</string>
   <string name="prefs_use_arabic_summary_on">سيتم تحويل التطبيق إلى اللغة العربية</string>
   <string name="prefs_use_arabic_title">الوضع العربي</string>
   <string name="play">تشغيل</string>
@@ -294,11 +283,6 @@
   <string name="undo">تراجع</string>
   <string name="notification_channel_download">تحميل ملفات القرآن</string>
   <string name="notification_channel_audio">تلاوة القرآن</string>
-  <string name="audio_manager_delete_selection">حذف التحديد</string>
-  <string name="audio_manager_download_selection">تحميل التحديد</string>
-  <string name="audio_manager_download_all">تحميل الكل</string>
-  <string name="audio_manager_surah_delete">حذف السورة</string>
-  <string name="audio_manager_surah_download">تحميل السورة</string>
   <string name="next">التالي</string>
   <string name="previous">السابق</string>
   <string name="tag_blank_tag_error">لا يمكن أن يكون اسم التصنيف فارغًا</string>
@@ -332,8 +316,6 @@
   <string name="about_tanzil_summary">ترجمات لبعض اللغات</string>
   <string name="please_wait">الرجاء الانتظار…</string>
   <string name="exported_data">صدرت البيانات إلى %1$s</string>
-  <string name="audio_manager_remove_audio_title">حذف الملف الصوتي؟</string>
-  <string name="audio_manager_remove_audio_msg">سيتم حذف الملف الصوتي ل%1$s. متأكد؟</string>
   <string name="about_noorhidayat_summary">خط نورحِرا وترجمة مفتي تقي</string>
   <string name="about_qaloon_images">صور صفحات القرآن برواية قالون مأخوذة بتصريح من Nous-Mêmes Éditions Et Diffusion (تونس)</string>
   <string name="audio_updated_title">تحديث الملفات الصوتية</string>

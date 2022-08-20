@@ -250,14 +250,6 @@
   <string name="recent_pages">Páginas recientes</string>
   <string name="tag_blank_tag_error">Los nombres de las etiquetas no pueden estar en blanco.</string>
   <string name="tag_duplicate_tag_error">El nombre de la etiqueta ya existe.</string>
-  <string name="audio_manager">Gestor de audio</string>
-  <string name="audio_manager_remove_audio_title">¿Quitar la Sura?</string>
-  <string name="audio_manager_remove_audio_msg">¿Está seguro de que desea eliminar %1$s?</string>
-  <string name="audio_manager_surah_download">Descargar sura</string>
-  <string name="audio_manager_surah_delete">Borrar sura</string>
-  <string name="audio_manager_download_all">Descargar todo</string>
-  <string name="audio_manager_download_selection">Descargar selección</string>
-  <string name="audio_manager_delete_selection">Borrar la selección</string>
   <string name="audio_updated_title">Actualización de los archivos de audio del Corán</string>
   <string name="audio_updated_text">Se han actualizado varios archivos de audio del Corán. Quran para Android ha eliminado su copia de estos archivos para que las versiones más nuevas se puedan descargar la próxima vez que los reproduzca.</string>
   <string name="prefs_category_dual_screen">Preferencias de doble página</string>

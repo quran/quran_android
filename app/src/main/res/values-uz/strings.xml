@@ -95,11 +95,6 @@
   <string name="search_full_results">Barcha natijalar</string>
   <string name="search_entire_mushaf">Butun musʼhafni qidirish</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">Bitta sura saqlangan</item>
-    <item quantity="other">%1$d ta sura saqlangan</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">\"%1$s\" boʻyicha bitta natija: </item>
@@ -342,24 +337,6 @@
 
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Xatchoʻplar mavjud emas</string>
-
-  <!-- audio manager -->
-  <string name="audio_manager">Audio menejer</string>
-  <string name="audio_manager_remove_audio_title">@string/remove_button</string>
-  <string name="audio_manager_remove_audio_msg">%1$s audio fayllari oʻchirilsinmi?</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">Sura oʻchirildi</item>
-    <item quantity="other">%1$d ta sura oʻchirildi</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">Surani oʻchirishda xatolik yuz berdi</item>
-    <item quantity="other">%1$d ta surani oʻchirishda xatolik yuz berdi</item>
-  </plurals>
-  <string name="audio_manager_surah_download">Saqlab olish</string>
-  <string name="audio_manager_surah_delete">Oʻchirish</string>
-  <string name="audio_manager_download_all">Hammasini saqlash</string>
-  <string name="audio_manager_download_selection">Tanlanganlarni saqlash</string>
-  <string name="audio_manager_delete_selection">Tanlanganlarni oʻchirish</string>
 
   <!-- audio updates -->
   <string name="audio_updated_title">Audio fayllar yangilandi</string>

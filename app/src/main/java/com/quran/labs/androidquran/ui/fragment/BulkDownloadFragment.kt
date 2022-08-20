@@ -45,7 +45,7 @@ class BulkDownloadFragment : DialogFragment() {
     val layout = inflater.inflate(R.layout.bulk_download_dialog, null)
 
     val builder = Builder(activity)
-    builder.setTitle(activity.getString(R.string.audio_manager_download_all))
+    builder.setTitle(activity.getString(com.quran.mobile.feature.downloadmanager.R.string.audio_manager_download_all))
 
     // First Sura chooser
     suraFirstInput = layout.findViewById(R.id.first_sura_spinner)
@@ -110,7 +110,7 @@ class BulkDownloadFragment : DialogFragment() {
 
     builder.setView(layout)
     builder.setPositiveButton(
-        getString(R.string.audio_manager_download_selection)
+        getString(com.quran.mobile.feature.downloadmanager.R.string.audio_manager_download_selection)
     ) { _: DialogInterface?, _: Int ->
       // trigger sura completion
       layout.requestFocus()

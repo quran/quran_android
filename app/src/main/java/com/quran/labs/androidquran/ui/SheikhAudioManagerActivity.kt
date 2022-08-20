@@ -30,10 +30,10 @@ import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.audio.cache.AudioCacheInvalidator
+import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.service.QuranDownloadService
-import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent
@@ -47,7 +47,6 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.io.File
-import java.util.ArrayList
 import java.util.Locale
 import javax.inject.Inject
 
@@ -83,7 +82,7 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
   override fun onCreate(savedInstanceState: Bundle?) {
     val quranApp = application as QuranApplication
     quranApp.applicationComponent
-        .inject(this)
+      .inject(this)
     quranApp.refreshLocale(this, false)
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_surah_audio_manager)
@@ -118,15 +117,15 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
   override fun onResume() {
     super.onResume()
     val receiver = DefaultDownloadReceiver(
-        this,
-        QuranDownloadService.DOWNLOAD_TYPE_AUDIO
+      this,
+      QuranDownloadService.DOWNLOAD_TYPE_AUDIO
     )
     receiver.setCanCancelDownload(true)
     LocalBroadcastManager.getInstance(this)
-        .registerReceiver(
-            receiver,
-            IntentFilter(ProgressIntent.INTENT_NAME)
-        )
+      .registerReceiver(
+        receiver,
+        IntentFilter(ProgressIntent.INTENT_NAME)
+      )
     receiver.setListener(this)
     downloadReceiver = receiver
   }
@@ -135,7 +134,7 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
     downloadReceiver?.let {
       it.setListener(null)
       LocalBroadcastManager.getInstance(this)
-          .unregisterReceiver(it)
+        .unregisterReceiver(it)
     }
     downloadReceiver = null
     super.onPause()
@@ -171,17 +170,17 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
   }
 
   private fun readShuyookhData() {
-      compositeDisposable.clear()
-      compositeDisposable.add(
-          AudioManagerUtils.shuyookhDownloadObservable(quranInfo, basePath, listOf(qari))
-              .observeOn(AndroidSchedulers.mainThread())
-              .subscribe { downloadInfo ->
-                progressBar.visibility = View.GONE
-                surahAdapter.setDownloadInfo(downloadInfo)
-                surahAdapter.notifyDataSetChanged()
-              }
-      )
-    }
+    compositeDisposable.clear()
+    compositeDisposable.add(
+      AudioManagerUtils.shuyookhDownloadObservable(quranInfo, basePath, listOf(qari))
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { downloadInfo ->
+          progressBar.visibility = View.GONE
+          surahAdapter.setDownloadInfo(downloadInfo)
+          surahAdapter.notifyDataSetChanged()
+        }
+    )
+  }
 
   private val actionModeCallback: Callback =
     object : Callback {
@@ -255,16 +254,21 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
             val downloaded = info.downloadedSuras[surah]
             if (downloaded) {
               val surahName = quranDisplayData.getSuraName(this, surah, true)
-              val msg = String.format(getString(R.string.audio_manager_remove_audio_msg), surahName)
+              val msg = String.format(
+                getString(com.quran.mobile.feature.downloadmanager.R.string.audio_manager_remove_audio_msg),
+                surahName
+              )
               val builder = AlertDialog.Builder(this)
-              builder.setTitle(R.string.audio_manager_remove_audio_title)
-                  .setMessage(msg)
-                  .setPositiveButton(R.string.remove_button
-                  ) { _, _ ->
-                    deleteSelection(ArrayList(listOf(surah)))
-                  }
-                  .setNegativeButton(R.string.cancel
-                  ) { dialog, _ -> dialog.dismiss() }
+              builder.setTitle(com.quran.mobile.feature.downloadmanager.R.string.audio_manager_remove_audio_title)
+                .setMessage(msg)
+                .setPositiveButton(
+                  R.string.remove_button
+                ) { _, _ ->
+                  deleteSelection(ArrayList(listOf(surah)))
+                }
+                .setNegativeButton(
+                  R.string.cancel
+                ) { dialog, _ -> dialog.dismiss() }
               dialogConfirm = builder.show()
             } else {
               download(surah, surah)
@@ -307,11 +311,11 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
     }
     val resultString = if (failureCount > 0) {
       resources.getQuantityString(
-          R.plurals.audio_manager_delete_surah_error, failureCount, failureCount
+        com.quran.mobile.feature.downloadmanager.R.plurals.audio_manager_delete_surah_error, failureCount, failureCount
       )
     } else {
       resources.getQuantityString(
-          R.plurals.audio_manager_delete_surah_success, successCount, successCount
+        com.quran.mobile.feature.downloadmanager.R.plurals.audio_manager_delete_surah_success, successCount, successCount
       )
     }
     ToastCompat.makeText(this, resultString, Toast.LENGTH_SHORT).show()
@@ -333,8 +337,8 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
     finishActionMode()
   }
 
-  fun downloadBulk(startSurah: Int, endSurah: Int){
-      download(startSurah,endSurah)
+  fun downloadBulk(startSurah: Int, endSurah: Int) {
+    download(startSurah, endSurah)
   }
 
   private fun download(startSurah: Int, endSurah: Int) {
@@ -342,16 +346,18 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
     val isGapless = qari.isGapless
     val sheikhName = qari.name
     val intent = ServiceIntentHelper.getDownloadIntent(
-        this,
-        audioUtils.getQariUrl(qari),
-        baseUri, sheikhName, AUDIO_DOWNLOAD_KEY + qari.id + startSurah,
-        QuranDownloadService.DOWNLOAD_TYPE_AUDIO
+      this,
+      audioUtils.getQariUrl(qari),
+      baseUri, sheikhName, AUDIO_DOWNLOAD_KEY + qari.id + startSurah,
+      QuranDownloadService.DOWNLOAD_TYPE_AUDIO
     )
-    intent.putExtra(QuranDownloadService.EXTRA_START_VERSE,
-        SuraAyah(startSurah, 1)
+    intent.putExtra(
+      QuranDownloadService.EXTRA_START_VERSE,
+      SuraAyah(startSurah, 1)
     )
-    intent.putExtra(QuranDownloadService.EXTRA_END_VERSE,
-        SuraAyah(endSurah, quranInfo.getNumberOfAyahs(endSurah))
+    intent.putExtra(
+      QuranDownloadService.EXTRA_END_VERSE,
+      SuraAyah(endSurah, quranInfo.getNumberOfAyahs(endSurah))
     )
     intent.putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless)
     intent.putExtra(QuranDownloadService.EXTRA_METADATA, AudioDownloadMetadata(qari.id))
@@ -390,12 +396,12 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
       val surahStatusImage: Int
       val surahStatusBackground: Int
       if (isItemFullyDownloaded(position)) {
-        surahStatus = R.string.audio_manager_surah_delete
+        surahStatus = com.quran.mobile.feature.downloadmanager.R.string.audio_manager_surah_delete
         surahStatusImage = R.drawable.ic_cancel
         surahStatusBackground = R.drawable.cancel_button_circle
       } else {
-        surahStatus = R.string.audio_manager_surah_download
-        surahStatusImage = R.drawable.ic_download
+        surahStatus = com.quran.mobile.feature.downloadmanager.R.string.audio_manager_surah_download
+        surahStatusImage = com.quran.mobile.feature.downloadmanager.R.drawable.ic_download
         surahStatusBackground = R.drawable.download_button_circle
       }
       holder.status.text = getString(surahStatus)
@@ -440,9 +446,9 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
     }
 
     val fullyDownloadedCheckedSurahCount: Int
-        get() = fullyDownloadedCheckedState.size()
+      get() = fullyDownloadedCheckedState.size()
     val notFullyDownloadedCheckedSurahCount: Int
-        get() = notFullyDownloadedCheckedState.size()
+      get() = notFullyDownloadedCheckedState.size()
 
     val checkedSurahs: Pair<List<Int>, List<Int>>
       get() {

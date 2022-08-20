@@ -93,12 +93,6 @@
   <string name="search_hint">Pretražite Kur\'an</string>
   <string name="quranSearchType">Ajeti Kur\'ana</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">%1$d sura preuzeta</item>
-    <item quantity="few">%1$d sure preuzete</item>
-    <item quantity="other">%1$d sura preuzeto</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">%2$d rezultat za \"%1$s\": </item>
@@ -330,9 +324,6 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Bez zabiljeških</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Menadžer zvuka</string>
-
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Skidanje Kur\'ana</string>
   <string name="notification_channel_audio">Skidanje učenja Kur\'ana</string>
@@ -348,13 +339,6 @@
   <string name="move_down">Premjesti dolje</string>
   <string name="delete_translation">Ukloni prijevod</string>
   <string name="scoped_storage_message">Zbog promjena na Androidu kako bi se povećala privatnost korisnika, kopiranje datoteka izvan direktorija aplikacija moglo bi spriječiti Quran da pristupi svojim podacima u budućim verzijama Androida. Jeste li sigurni da biste željeli koristiti ovaj put?</string>
-  <string name="audio_manager_remove_audio_title">Ukloniti Sura?</string>
-  <string name="audio_manager_remove_audio_msg">Jeste li sigurni da želite ukloniti %1$s?</string>
-  <string name="audio_manager_surah_download">Preuzmi sura</string>
-  <string name="audio_manager_surah_delete">Izbriši sura</string>
-  <string name="audio_manager_download_all">Preuzmi sve</string>
-  <string name="audio_manager_download_selection">Preuzmi odabir</string>
-  <string name="audio_manager_delete_selection">Izbriši označeno</string>
   <string name="audio_updated_title">Ažuriranje kuranskih audiodatoteka</string>
   <string name="audio_updated_text">Ažurirano je nekoliko Kur\'an audio datoteka. Kur\'an je uklonio vašu kopiju tih datoteka tako da se najnovije verzije mogu preuzeti sljedeći put kada ih reproducirate.</string>
   <string name="prefs_category_dual_screen">Preference dvostruke stranice</string>

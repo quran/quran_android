@@ -130,6 +130,7 @@ dependencies {
   implementation project(path: ':common:upgrade')
 
   implementation project(path: ':feature:audio')
+  implementation project(path: ':feature:downloadmanager')
   implementation project(path: ':feature:qarilist')
 
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"

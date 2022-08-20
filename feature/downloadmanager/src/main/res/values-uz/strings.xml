@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">Bitta sura saqlangan</item>
+    <item quantity="other">%1$d ta sura saqlangan</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Audio menejer</string>
+  <string name="audio_manager_remove_audio_title">@string/remove_button</string>
+  <string name="audio_manager_remove_audio_msg">%1$s audio fayllari oʻchirilsinmi?</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Sura oʻchirildi</item>
+    <item quantity="other">%1$d ta sura oʻchirildi</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">Surani oʻchirishda xatolik yuz berdi</item>
+    <item quantity="other">%1$d ta surani oʻchirishda xatolik yuz berdi</item>
+  </plurals>
+  <string name="audio_manager_surah_download">Saqlab olish</string>
+  <string name="audio_manager_surah_delete">Oʻchirish</string>
+  <string name="audio_manager_download_all">Hammasini saqlash</string>
+  <string name="audio_manager_download_selection">Tanlanganlarni saqlash</string>
+  <string name="audio_manager_delete_selection">Tanlanganlarni oʻchirish</string>
+</resources>

@@ -69,11 +69,6 @@
     <string name="search_hint">Keresés a Koránban</string>
     <string name="quranSearchType">A Korán versei</string>
 
-    <plurals name="files_downloaded">
-        <item quantity="one">1 szúra letöltve</item>
-        <item quantity="other">%1$d szúra letöltve</item>
-    </plurals>
-
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
         <item quantity="one">Egy találat erre: \"%1$s\": </item>
@@ -249,9 +244,7 @@
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Nincs könyvjelző</string>
 
-    <!-- audio manager -->
-    <string name="audio_manager">Hangkezelő</string>
-    <string name="menu_other_apps">Egyéb alkalmazások</string>
+  <string name="menu_other_apps">Egyéb alkalmazások</string>
   <string name="menu_sort_group_by_tags">Csoportosítás címkék szerint</string>
   <string name="menu_show_date">Megjelenítés dátuma</string>
   <string name="please_wait">Kérem várjon...</string>
@@ -318,13 +311,6 @@
   <string name="recent_pages">Legutóbbi oldalak</string>
   <string name="tag_blank_tag_error">A címkék neve nem lehet üres!</string>
   <string name="tag_duplicate_tag_error">A címke neve már létezik!</string>
-  <string name="audio_manager_remove_audio_title">Szúra eltávolítása?</string>
-  <string name="audio_manager_remove_audio_msg">Biztos, hogy el szeretné távolítani a %1$s -t?</string>
-  <string name="audio_manager_surah_download">Szúra letöltése</string>
-  <string name="audio_manager_surah_delete">Hangfájl törlése</string>
-  <string name="audio_manager_download_all">Minden letöltése</string>
-  <string name="audio_manager_download_selection">Válogatás letöltése</string>
-  <string name="audio_manager_delete_selection">Kijelölés törlése</string>
   <string name="audio_updated_title">Korán hangfájlok frissítése</string>
   <string name="audio_updated_text">Számos Korán hangfájl frissítésre került. A Quran for Android eltávolította a fájlok másolatát, hogy a legközelebbi lejátszáskor a legújabb verziókat tölthesse le.</string>
   <string name="prefs_category_dual_screen">Kettős oldal beállításai</string>

@@ -286,7 +286,6 @@
   <string name="storage_permission_please_restart">Redémarrez l\'application pour appliquer les changements.</string>
 
   <!-- audio manager -->
-  <string name="audio_manager">Gestionnaire audio</string>
   <string name="menu_show_date">" Afficher la date"</string>
   <string name="about_furqan_summary">Police de caractères Ottoman et explication en arabe</string>
   <string name="prefs_category_advanced_summary">Importer/exporter des signets, définir le répertoire des données, etc.</string>
@@ -300,11 +299,6 @@
   <string name="recent_pages">Pages récente</string>
   <string name="tag_blank_tag_error">Le nom du tag ne peux pas être vide</string>
   <string name="tag_duplicate_tag_error">Le nom du tag existe déjà!</string>
-  <string name="audio_manager_surah_download">Télécharger la sourate</string>
-  <string name="audio_manager_surah_delete">Supprimer la sourate</string>
-  <string name="audio_manager_download_all">Tout télécharger</string>
-  <string name="audio_manager_download_selection">Télécharger la sélection</string>
-  <string name="audio_manager_delete_selection">Supprimer la sélection</string>
   <string name="audio_updated_title">Mise à jour des fichiers audio du Coran</string>
   <string name="audio_updated_text">Des fichiers audio du Coran ont été mis à jour. Nous avons supprimé la copie local de ces fichiers afin de télécharger la nouvelle version la prochaine fois que vous les écouterez.</string>
   <string name="notification_channel_download">Coran : Téléchargements</string>
@@ -321,8 +315,6 @@
   <string name="move_down">Descendre</string>
   <string name="delete_translation">Enlever la traduction</string>
   <string name="scoped_storage_message">En raison des modifications apportées à Android pour augmenter la confidentialité des utilisateurs, la copie de fichiers en dehors des répertoires de l\'application peut empêcher Quran d\'accéder à ses données dans les futures versions d\'Android. d\'Android. Êtes-vous sûr de vouloir utiliser ce chemin ?</string>
-  <string name="audio_manager_remove_audio_title">Enlever la sourate ?</string>
-  <string name="audio_manager_remove_audio_msg">Êtes-vous sûr de vouloir supprimer %1$s?</string>
   <string name="prefs_category_dual_screen">Préférences de la double page</string>
   <string name="prefs_split_page_and_translation_title">Coran et traduction en mode dual</string>
   <string name="prefs_split_page_and_translation_summary">En mode double page avec traductions, la page du Coran et la traduction sont affichées.</string>

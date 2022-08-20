@@ -281,14 +281,6 @@
   <string name="recent_pages">最近的页面</string>
   <string name="tag_blank_tag_error">标签名称不能是空白的!</string>
   <string name="tag_duplicate_tag_error">标签名称已经存在!</string>
-  <string name="audio_manager">音频经理</string>
-  <string name="audio_manager_remove_audio_title">删除苏拉？</string>
-  <string name="audio_manager_remove_audio_msg">您确定要删除%1$s吗？</string>
-  <string name="audio_manager_surah_download">下载SURAH</string>
-  <string name="audio_manager_surah_delete">删除音频文件</string>
-  <string name="audio_manager_download_all">下载所有</string>
-  <string name="audio_manager_download_selection">下载选择</string>
-  <string name="audio_manager_delete_selection">删除选择</string>
   <string name="audio_updated_title">古兰经音频文件更新</string>
   <string name="audio_updated_text">几个古兰经音频文件已经更新。Quran for Android已经删除了你对这些文件的拷贝，以便在你下次回放时可以下载最新的版本。</string>
   <string name="prefs_category_dual_screen">双页偏好</string>

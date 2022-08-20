@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="zero">لم يتم تحميل سور بعد‎</item>
+    <item quantity="one">تم تحميل سورة واحده</item>
+    <item quantity="two">تم تحميل سورتان</item>
+    <item quantity="few">تم تحميل %1$d سور</item>
+    <item quantity="many">تم تحميل %1$d سورة</item>
+    <item quantity="other">تم تحميل %1$d سورة</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">إدارة الصوتيات</string>
+  <string name="audio_manager_delete_selection">حذف التحديد</string>
+  <string name="audio_manager_download_selection">تحميل التحديد</string>
+  <string name="audio_manager_download_all">تحميل الكل</string>
+  <string name="audio_manager_surah_delete">حذف السورة</string>
+  <string name="audio_manager_surah_download">تحميل السورة</string>
+  <string name="audio_manager_remove_audio_title">حذف الملف الصوتي؟</string>
+  <string name="audio_manager_remove_audio_msg">سيتم حذف الملف الصوتي ل%1$s. متأكد؟</string>
+</resources>

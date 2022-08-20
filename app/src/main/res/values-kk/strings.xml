@@ -90,11 +90,6 @@
   <string name="search_hint">Іздеу</string>
   <string name="quranSearchType">Сүрелер</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">1 сүре жазылды</item>
-    <item quantity="other">%1$d сүре жазылды</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">\"%1$s\" бойынша 1 нәтиже: </item>
@@ -311,9 +306,7 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Бетбелгі жоқ</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Аудио менеджер</string>
-    <string name="menu_show_date">Күнді көрсету</string>
+  <string name="menu_show_date">Күнді көрсету</string>
   <string name="please_wait">Күте тұршы...</string>
   <string name="about_furqan_summary">Утмани мәтіні және араб тафазері</string>
   <string name="about_quran_enc_summary">Көптеген тілдер үшін аудармалар</string>
@@ -340,13 +333,6 @@
   <string name="recent_pages">Соңғы беттер</string>
   <string name="tag_blank_tag_error">Тег атаулары бос бола алмайды!</string>
   <string name="tag_duplicate_tag_error">Тег атауы бұрыннан бар!</string>
-  <string name="audio_manager_remove_audio_title">Сураны жойып тастаңыз ба?</string>
-  <string name="audio_manager_remove_audio_msg">% 1$s жойғыңыз келетініне сенімдісіз бе?</string>
-  <string name="audio_manager_surah_download">Сурахты жүктеу</string>
-  <string name="audio_manager_surah_delete">Дыбыс файлын жою</string>
-  <string name="audio_manager_download_all">Барлығын жүктеу</string>
-  <string name="audio_manager_download_selection">Жүктеу таңдауы</string>
-  <string name="audio_manager_delete_selection">Таңдауды жою</string>
   <string name="audio_updated_title">Құран дыбыс файлдарын жаңарту</string>
   <string name="audio_updated_text">Бірнеше Құран аудиофайлдары жаңартылды. Android құрылғысына арналған Құран бұл файлдардың көшірмесін жойды, осылайша ең жаңа нұсқаларды келесі рет қайта ойнатқанда жүктеп алуға болады.</string>
   <string name="prefs_category_dual_screen">Қос бет параметрлері</string>

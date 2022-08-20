@@ -112,13 +112,6 @@
   <string name="search_full_results">Полные результаты</string>
   <string name="search_entire_mushaf">Обыскать весь мусхаф</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">Загружено %1$d сура</item>
-    <item quantity="few">Загружено %1$d суры</item>
-    <item quantity="many">Загружено %1$d сур</item>
-    <item quantity="other">Загружено %1$d сур</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">%2$d результат для \"%1$s\": </item>
@@ -369,28 +362,6 @@
 
   <!-- widgets -->
   <string name="bookmarks_list_empty">Закладки отсутствуют</string>
-
-  <!-- audio manager -->
-  <string name="audio_manager">Аудио менеджер</string>
-  <string name="audio_manager_remove_audio_title">Удалить суру?</string>
-  <string name="audio_manager_remove_audio_msg">Вы уверены, что хотите удалить %1$s?</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">Удалено %1$d сура</item>
-    <item quantity="few">Удалено %1$d суры</item>
-    <item quantity="many">Удалено %1$d сур</item>
-    <item quantity="other">Удалено %1$d сур</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">Произошла ошибка при удалении %1$d сура</item>
-    <item quantity="few">Произошла ошибка при удалении %d суры</item>
-    <item quantity="many">Произошла ошибка при удалении %d сур</item>
-    <item quantity="other">Произошла ошибка при удалении %1$d сур</item>
-  </plurals>
-  <string name="audio_manager_surah_download">Скачать суру</string>
-  <string name="audio_manager_surah_delete">Удалить суру</string>
-  <string name="audio_manager_download_all">Скачать все</string>
-  <string name="audio_manager_download_selection">Скачать выбранные</string>
-  <string name="audio_manager_delete_selection">Удалить выбранные</string>
 
   <!-- audio updates -->
   <string name="audio_updated_title">Обновление аудио файлов</string>

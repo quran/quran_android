@@ -288,14 +288,6 @@
   <string name="recent_pages">پەڕەکانی ئەم دواییە</string>
   <string name="tag_blank_tag_error">ناتوانرێت ناوی تاگ بەتاڵ بێت!</string>
   <string name="tag_duplicate_tag_error">ناوی تاگ پێشتر بوونی هەیە!</string>
-  <string name="audio_manager">بەڕێوەبەری دەنگ</string>
-  <string name="audio_manager_remove_audio_title">سورەت لاببە؟</string>
-  <string name="audio_manager_remove_audio_msg">ئایا دڵنیایت کە دەتەوێت %1$s لابدەیت؟</string>
-  <string name="audio_manager_surah_download">داگرتنی سورەت</string>
-  <string name="audio_manager_surah_delete">سڕینەوەی فایلی دەنگ</string>
-  <string name="audio_manager_download_all">داگرتنی هەموو</string>
-  <string name="audio_manager_download_selection">داگرتنی دەستنیشانکراو</string>
-  <string name="audio_manager_delete_selection">سڕینەوەی دەستنیشانکراو</string>
   <string name="audio_updated_title">بەڕۆژکردنەوەی فایلەکانی دەنگی قورئان</string>
   <string name="audio_updated_text">چەندین فایلی دەنگی قورئان نوێکرایەوە. قورئان بۆ ئەندرۆید کۆپی ئەم فایلانەی لابردووە بۆ ئەوەی نوێترین ڤێرژنەکان دابەزێنرێت بۆ جاری داهاتوو کە دووبارە یارییان دەکەیتەوە.</string>
   <string name="prefs_category_dual_screen">پەسەندەکانی پەڕەی دووانی</string>

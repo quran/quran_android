@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="audio_manager">بەڕێوەبەری دەنگ</string>
+  <string name="audio_manager_remove_audio_title">سورەت لاببە؟</string>
+  <string name="audio_manager_remove_audio_msg">ئایا دڵنیایت کە دەتەوێت %1$s لابدەیت؟</string>
+  <string name="audio_manager_surah_download">داگرتنی سورەت</string>
+  <string name="audio_manager_surah_delete">سڕینەوەی فایلی دەنگ</string>
+  <string name="audio_manager_download_all">داگرتنی هەموو</string>
+  <string name="audio_manager_download_selection">داگرتنی دەستنیشانکراو</string>
+  <string name="audio_manager_delete_selection">سڕینەوەی دەستنیشانکراو</string>
+</resources>

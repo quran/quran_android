@@ -73,11 +73,6 @@
   <string name="search_full_results">ผลลัพธ์ทั้งหมด</string>
   <string name="search_entire_mushaf">ค้นหามูชาฟทั้งหมด</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">ซูเราะฮฺหนึ่งคนดาวน์โหลด</item>
-    <item quantity="other">%1$d ซูเราะฮฺดาวน์โหลดแล้ว</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">ผลลัพธ์เดียวสําหรับ \"%1$s\": </item>
@@ -307,24 +302,6 @@
 
   <!-- widgets -->
   <string name="bookmarks_list_empty">ไม่มีที่คั่นหน้า</string>
-
-  <!-- audio manager -->
-  <string name="audio_manager">ตัวจัดการเสียง</string>
-  <string name="audio_manager_remove_audio_title">เอาซูราห์ออก?</string>
-  <string name="audio_manager_remove_audio_msg">คุณแน่ใจหรือไม่ว่าคุณต้องการเอา %1$s ออก?</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">ลบซูเราะฮฺสําเร็จแล้ว</item>
-    <item quantity="other">ลบ %1$d surahs สําเร็จแล้ว</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">มีข้อผิดพลาดขณะลบซูเราะฮฺ</item>
-    <item quantity="other">มีข้อผิดพลาดขณะลบ %1$d surahs</item>
-  </plurals>
-  <string name="audio_manager_surah_download">ดาวน์โหลด Sura</string>
-  <string name="audio_manager_surah_delete">ลบเสียงซูเราะฮฺ</string>
-  <string name="audio_manager_download_all">ดาวน์โหลดทั้งหมด</string>
-  <string name="audio_manager_download_selection">การเลือกดาวน์โหลด</string>
-  <string name="audio_manager_delete_selection">ลบการเลือก</string>
 
   <!-- audio updates -->
   <string name="audio_updated_title">อัปเดตไฟล์เสียงอัลกุรอาน</string>

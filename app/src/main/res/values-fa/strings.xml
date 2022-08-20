@@ -196,7 +196,6 @@
   <string name="about_contributors">همکاران</string>
   <string name="about_contributors_summary">فهرستی از افرادی که به توسعه این برنامه یاری رسانده‌اند.</string>
 
-  <string name="audio_manager">مدیریت فایل‌های صوتی</string>
   <string name="downloadImportantPrompt">یک به‌روزرسانی کوچک اما مهم برای تصاویر قرآن وجود دارد. آیا مایل‌اید این وصله را بارگذاری نمایید؟</string>
   <string name="download_extra_data">برای عملکرد مناسب امکانات اشتراک‌گذاری و ترجمه باید یکی دو فایل را بارگذاری نمایید. موافق‌اید؟</string>
   <string name="download_sura_progress">بارگذاری %1$s / %2$s از سوره %3$d</string>
@@ -267,11 +266,6 @@
     آیا اجازه ذخیره داده‌ها در حافظه خارجی را صادر می‌کنید؟</string>
   <string name="storage_permission_please_restart">برنامه را از نو آغاز کنید تا تغییرات اثر کند.</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">%1$d سوره بارگذاری شده است</item>
-    <item quantity="other">%1$d سوره بارگذاری شده است</item>
-  </plurals>
-
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">%d برچسب حذف شد</item>
     <item quantity="other">%d برچسب حذف شد</item>
@@ -311,13 +305,6 @@
   <string name="starting_page_label">آغاز صفحه</string>
   <string name="tag_blank_tag_error">نام برچسب نمی تواند خالی باشد!</string>
   <string name="tag_duplicate_tag_error">نام برچسب در حال حاضر وجود دارد!</string>
-  <string name="audio_manager_remove_audio_title">حذف فایل صوتی؟</string>
-  <string name="audio_manager_remove_audio_msg">آیا مطمئن هستید که می خواهید %1$s را حذف کنید؟</string>
-  <string name="audio_manager_surah_download">دانلود سوره</string>
-  <string name="audio_manager_surah_delete">حذف سوره</string>
-  <string name="audio_manager_download_all">دانلود همه</string>
-  <string name="audio_manager_download_selection">دانلود انتخاب</string>
-  <string name="audio_manager_delete_selection">حذف انتخاب</string>
   <string name="audio_updated_title">به روز رسانی فایل های صوتی قرآن</string>
   <string name="audio_updated_text">چندین فایل صوتی قرآن به روز شده است. قرآن برای اندروید کپی شما از این فایل ها را حذف کرده است به طوری که جدیدترین نسخه ها را می توانید دانلود کنید دفعه بعد که آنها را پخش می کنید.</string>
   <string name="prefs_category_dual_screen">ترجیحات برای دو صفحه مجاور</string>

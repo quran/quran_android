@@ -92,11 +92,6 @@
   <string name="search_hint">Durchsuche den Quran</string>
   <string name="quranSearchType">Quranverse</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">1 Sure heruntergeladen</item>
-    <item quantity="other">%1$d Suren heruntergeladen</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">Resultat für \"%1$s\":</item>
@@ -326,8 +321,6 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Keine Lesezeichen</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Audioverwaltung</string>
     <string name="about_quran_enc" translatable="false">Die Enzyklopädie von dem heiligen Quran</string>
   <string name="about_quran_enc_summary">Übersetzungen für viele Sprachen</string>
     <string name="menu_other_apps">Andere Apps</string>
@@ -395,13 +388,6 @@
   <string name="recent_pages">Neueste Seiten</string>
   <string name="tag_blank_tag_error">Tag-Namen dürfen nicht leer sein!</string>
   <string name="tag_duplicate_tag_error">Der Tag-Name existiert bereits!</string>
-  <string name="audio_manager_remove_audio_title">Sūra entfernen?</string>
-  <string name="audio_manager_remove_audio_msg">Sind Sie sicher, dass Sie %1$s entfernen möchten?</string>
-  <string name="audio_manager_surah_download">Sūra herunterladen</string>
-  <string name="audio_manager_surah_delete">Sūra löschen</string>
-  <string name="audio_manager_download_all">Alle herunterladen</string>
-  <string name="audio_manager_download_selection">Auswahl herunterladen</string>
-  <string name="audio_manager_delete_selection">Auswahl löschen</string>
   <string name="audio_updated_title">Quran Audio Dateien Update</string>
   <string name="audio_updated_text">Mehrere Quran-Audiodateien wurden aktualisiert. Quran für Android hat Ihre Kopie dieser Dateien entfernt, damit die neuesten Versionen heruntergeladen werden können, wenn Sie sie das nächste Mal abspielen zurück.</string>
   <string name="prefs_category_dual_screen">Voreinstellungen für zwei Seiten</string>

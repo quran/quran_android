@@ -93,12 +93,6 @@
   <string name="search_hint">Pretražite Kur\'an</string>
   <string name="quranSearchType">Ajeti Kur\'ana</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">%1$d sura preuzeta</item>
-    <item quantity="few">%1$d sure preuzete</item>
-    <item quantity="other">%1$d sura preuzeto</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">%2$d rezultat za \"%1$s\": </item>
@@ -330,9 +324,6 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Bez zabiljeških</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Menadžer zvuka</string>
-
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Skidanje Kur\'ana</string>
   <string name="notification_channel_audio">Skidanje učenja Kur\'ana</string>
@@ -348,13 +339,6 @@
   <string name="move_up">Pomjeri gore</string>
   <string name="move_down">Pomakni se dolje</string>
   <string name="delete_translation">Ukloni prijevod</string>
-  <string name="audio_manager_remove_audio_title">Da uklonim Suru?</string>
-  <string name="audio_manager_remove_audio_msg">Jeste li sigurni da želite ukloniti %1$s?</string>
-  <string name="audio_manager_surah_download">Preuzmi surah</string>
-  <string name="audio_manager_surah_delete">Izbriši audio datoteku</string>
-  <string name="audio_manager_download_all">Preuzmi sve</string>
-  <string name="audio_manager_download_selection">Preuzmi odabir</string>
-  <string name="audio_manager_delete_selection">Izbriši selekciju</string>
   <string name="audio_updated_title">Ažuriranje kuran audio datoteka</string>
   <string name="audio_updated_text">Nekoliko kuranski audio fajlova je ažurirano. Quran za Android je uklonio vašu kopiju ovih fajlova tako da se nove verzije mogu preuzeti kada ih sljedeći put budete ponovo primili.</string>
   <string name="prefs_category_dual_screen">Dual Page Preferences</string>

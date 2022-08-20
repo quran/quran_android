@@ -85,11 +85,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="search_hint">Zoeken in de Koran</string>
   <string name="quranSearchType">Verzen van de Koran</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">1 soera gedownload</item>
-    <item quantity="other">%1$d soera\'s gedownload</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">Eén resultaat voor \"%1$s\": </item>
@@ -303,8 +298,7 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="bookmarks_list_empty">Geen Favorieten</string>
 
   <!-- audio manager -->
-  <string name="audio_manager">Geluid Manager</string>
-    <string name="menu_show_date">Toon Datum</string>
+  <string name="menu_show_date">Toon Datum</string>
   <string name="please_wait">Wacht alstublieft...</string>
   <string name="about_furqan_summary">Uthmani tekst en Arabische Tafaseer</string>
   <string name="about_quran_enc_summary">Vertalingen voor vele talen</string>
@@ -329,13 +323,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="recent_pages">Recente pagina\'s</string>
   <string name="tag_blank_tag_error">Tag namen mogen niet leeg zijn!</string>
   <string name="tag_duplicate_tag_error">Tag naam bestaat al!</string>
-  <string name="audio_manager_remove_audio_title">Surah verwijderen?</string>
-  <string name="audio_manager_remove_audio_msg">Weet u zeker dat u %1$s wilt verwijderen?</string>
-  <string name="audio_manager_surah_download">Soera downloaden</string>
-  <string name="audio_manager_surah_delete">Verwijderen audiobestand</string>
-  <string name="audio_manager_download_all">Alles downloaden</string>
-  <string name="audio_manager_download_selection">Selectie downloaden</string>
-  <string name="audio_manager_delete_selection">Selectie verwijderen</string>
   <string name="audio_updated_title">Koran Audiobestanden Update</string>
   <string name="audio_updated_text">Verschillende Quran audio bestanden zijn bijgewerkt. Quran voor Android heeft uw kopie van deze bestanden verwijderd, zodat de nieuwste versies kunnen worden gedownload wanneer u ze de volgende keer afspeelt.</string>
   <string name="prefs_category_dual_screen">Dubbele pagina voorkeuren</string>

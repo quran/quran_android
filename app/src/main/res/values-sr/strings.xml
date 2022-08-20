@@ -93,12 +93,6 @@
   <string name="search_hint">Pretražite Kur\'an</string>
   <string name="quranSearchType">Ajeti Kur\'ana</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">%1$d sura preuzeta</item>
-    <item quantity="few">%1$d sure preuzete</item>
-    <item quantity="other">%1$d sura preuzeto</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">%2$d rezultat za \"%1$s\": </item>
@@ -330,13 +324,10 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Bez zabeleških</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Menadžer zvuka</string>
-
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Skidanje Kur\'ana</string>
   <string name="notification_channel_audio">Skidanje učenja Kur\'ana</string>
-    <string name="menu_show_date">Prikaži datum</string>
+  <string name="menu_show_date">Prikaži datum</string>
   <string name="please_wait">Molim te sačekaj...</string>
   <string name="about_quran_enc_summary">Prevodi za mnoge jezike</string>
   <string name="search_full_results">Potpuni rezultati</string>
@@ -348,13 +339,6 @@
   <string name="move_down">Premesti nadole</string>
   <string name="delete_translation">Ukloni prevod</string>
   <string name="scoped_storage_message">Zbog Android promena u cilju povećanja privatnosti korisnika, kopiranje fajlova izvan direktorijuma aplikacija moglo bi da zaustavi Quran za Android da pristupi svojim podacima u budućim verzijama Androida. Jeste li sigurni da želite da koristite ovu putanju?</string>
-  <string name="audio_manager_remove_audio_title">Da uklonim Suru?</string>
-  <string name="audio_manager_remove_audio_msg">Želite li zaista da uklonite %1$s?</string>
-  <string name="audio_manager_surah_download">Preuzmi surah</string>
-  <string name="audio_manager_surah_delete">Brisanje audio datoteke</string>
-  <string name="audio_manager_download_all">Preuzmi sve</string>
-  <string name="audio_manager_download_selection">Preuzmi selekciju</string>
-  <string name="audio_manager_delete_selection">Izbriši selekciju</string>
   <string name="audio_updated_title">Ažuriranje Quran audio datoteka</string>
   <string name="audio_updated_text">Nekoliko Quran audio datoteka je ažurirano. Quran za Android je uklonio vaš primerak ovih fajlova tako da se najnovije verzije mogu preuzeti kada ih sledeći put ponovo reprodukujete.</string>
   <string name="prefs_category_dual_screen">Željene postavke dvojne stranice</string>

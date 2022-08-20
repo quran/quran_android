@@ -81,12 +81,6 @@
   <string name="search_full_results">Повні результати</string>
   <string name="search_entire_mushaf">Пошук всієї каші</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">%1$d Сура завантажено</item>
-    <item quantity="few">%1$d Сури завантажено</item>
-    <item quantity="many">%1$d Сури завантажено</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">%2$d результат для \"%1$s\": </item>
@@ -320,26 +314,6 @@
 
   <!-- widgets -->
   <string name="bookmarks_list_empty">Без закладок</string>
-
-  <!-- audio manager -->
-  <string name="audio_manager">Аудіоменеджер</string>
-  <string name="audio_manager_remove_audio_title">Видалити Сура?</string>
-  <string name="audio_manager_remove_audio_msg">Ви дійсно бажаєте видалити %1$s?</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">Успішно видалено %1$d Сура</item>
-    <item quantity="few">Успішно видалено %1$d Сури</item>
-    <item quantity="many">Успішно видалено %1$d Сури</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">Під час видалення сталася помилка %1$d Сура</item>
-    <item quantity="few">Під час видалення сталася помилка %1$d Сури</item>
-    <item quantity="many">Під час видалення сталася помилка %1$d Сури</item>
-  </plurals>
-  <string name="audio_manager_surah_download">Завантажити Сура</string>
-  <string name="audio_manager_surah_delete">Видалення аудіофайлу</string>
-  <string name="audio_manager_download_all">Завантажити всі</string>
-  <string name="audio_manager_download_selection">Завантажити вибір</string>
-  <string name="audio_manager_delete_selection">Видалити виділений фрагмент</string>
 
   <!-- audio updates -->
   <string name="audio_updated_title">Оновлення аудіофайлів Корану</string>
