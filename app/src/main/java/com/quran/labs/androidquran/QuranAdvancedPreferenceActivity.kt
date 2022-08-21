@@ -11,7 +11,6 @@ import androidx.core.app.ActivityCompat
 import com.quran.labs.androidquran.service.util.PermissionUtil
 import com.quran.labs.androidquran.ui.fragment.QuranAdvancedSettingsFragment
 import com.quran.labs.androidquran.ui.util.ToastCompat
-import com.quran.labs.androidquran.util.AudioManagerUtils
 import com.quran.labs.androidquran.util.QuranSettings
 
 class QuranAdvancedPreferenceActivity : AppCompatActivity() {
@@ -33,8 +32,6 @@ class QuranAdvancedPreferenceActivity : AppCompatActivity() {
     setSupportActionBar(toolbar)
     val ab = supportActionBar
     ab?.setDisplayHomeAsUpEnabled(true)
-
-    AudioManagerUtils.clearCache()
 
     if (savedInstanceState != null) {
       locationToWrite = savedInstanceState.getString(SI_LOCATION_TO_WRITE)
