@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
@@ -23,7 +24,9 @@ import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInterface
 import com.quran.mobile.feature.downloadmanager.presenter.AudioManagerPresenter
+import com.quran.mobile.feature.downloadmanager.ui.LoadingIndicator
 import com.quran.mobile.feature.downloadmanager.ui.SheikhDownloadSummary
+import com.quran.mobile.feature.downloadmanager.ui.ShuyookhList
 import javax.inject.Inject
 
 
@@ -45,7 +48,10 @@ class AudioManagerActivity : ComponentActivity() {
     setContent {
       val downloadedShuyookhState = downloadedShuyookhFlow.collectAsState(emptyList())
       QuranTheme {
-        Column(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
+        Column(modifier = Modifier
+          .background(MaterialTheme.colorScheme.surface)
+          .fillMaxSize()
+        ) {
           TopAppBar(
             title = {
               Text(
@@ -65,10 +71,10 @@ class AudioManagerActivity : ComponentActivity() {
             backgroundColor = MaterialTheme.colorScheme.primary
           )
 
-          Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-            downloadedShuyookhState.value.forEach {
-              SheikhDownloadSummary(it, ::onQariClicked)
-            }
+          if (downloadedShuyookhState.value.isEmpty()) {
+            LoadingIndicator()
+          } else {
+            ShuyookhList(shuyookh = downloadedShuyookhState.value, onQariItemClicked = ::onQariClicked)
           }
         }
       }
