@@ -5,15 +5,23 @@ import android.text.TextUtils
 import androidx.annotation.StringRes
 
 import com.quran.data.core.QuranInfo
+import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.SuraAyahIterator
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.util.QuranUtils
+import com.quran.page.common.data.QuranNaming
+import com.squareup.anvil.annotations.ContributesBinding
 
 import timber.log.Timber
 import javax.inject.Inject
 
-class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo) {
+@ContributesBinding(AppScope::class)
+class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): QuranNaming {
+
+  override fun getSuraName(context: Context, sura: Int): String {
+    return getSuraName(context, sura, true)
+  }
 
   /**
    * Get localized sura name from resources

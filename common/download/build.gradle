@@ -12,6 +12,8 @@ android {
 }
 
 dependencies {
+  implementation project(":common:data")
+
   // dagger
   implementation deps.dagger.runtime
 

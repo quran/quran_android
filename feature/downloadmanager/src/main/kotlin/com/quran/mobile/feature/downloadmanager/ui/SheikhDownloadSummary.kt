@@ -3,14 +3,9 @@ package com.quran.mobile.feature.downloadmanager.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,6 +24,7 @@ import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.downloadmanager.R
 import com.quran.mobile.feature.downloadmanager.model.DownloadedSheikhUiModel
+import com.quran.mobile.feature.downloadmanager.ui.common.DownloadCommonRow
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -36,18 +32,20 @@ fun SheikhDownloadSummary(
   downloadedSheikhUiModel: DownloadedSheikhUiModel,
   onQariItemClicked: ((QariItem) -> Unit)
 ) {
-  Row(
-    modifier = Modifier
-      .fillMaxWidth()
-      .clickable { onQariItemClicked(downloadedSheikhUiModel.qariItem) }
-      .padding(16.dp)
-  ) {
-    val (color, tintColor) = if (downloadedSheikhUiModel.downloadedSuras > 0) {
-      Color(0xff5e8900) to MaterialTheme.colorScheme.onPrimary
-    } else {
-      MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
-    }
+  val (color, tintColor) = if (downloadedSheikhUiModel.downloadedSuras > 0) {
+    Color(0xff5e8900) to MaterialTheme.colorScheme.onPrimary
+  } else {
+    MaterialTheme.colorScheme.tertiary to MaterialTheme.colorScheme.onTertiary
+  }
 
+  DownloadCommonRow(
+    title = downloadedSheikhUiModel.qariItem.name,
+    subtitle = pluralStringResource(
+      R.plurals.audio_manager_files_downloaded,
+      downloadedSheikhUiModel.downloadedSuras, downloadedSheikhUiModel.downloadedSuras
+    ),
+    onRowPressed = { onQariItemClicked(downloadedSheikhUiModel.qariItem) }
+  ) {
     Image(
       painterResource(id = R.drawable.ic_download),
       contentDescription = "",
@@ -58,25 +56,6 @@ fun SheikhDownloadSummary(
         .background(color)
         .padding(8.dp)
     )
-
-    Column(modifier = Modifier
-      .padding(start = 8.dp)
-      .align(Alignment.CenterVertically)
-    ) {
-      Text(
-        text = downloadedSheikhUiModel.qariItem.name,
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.onSurface
-      )
-      Text(
-        text = pluralStringResource(
-          R.plurals.audio_manager_files_downloaded,
-          downloadedSheikhUiModel.downloadedSuras, downloadedSheikhUiModel.downloadedSuras
-        ),
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-      )
-    }
   }
 }
 

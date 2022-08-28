@@ -7,14 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -24,8 +16,8 @@ import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInterface
 import com.quran.mobile.feature.downloadmanager.presenter.AudioManagerPresenter
+import com.quran.mobile.feature.downloadmanager.ui.DownloadManagerToolbar
 import com.quran.mobile.feature.downloadmanager.ui.LoadingIndicator
-import com.quran.mobile.feature.downloadmanager.ui.SheikhDownloadSummary
 import com.quran.mobile.feature.downloadmanager.ui.ShuyookhList
 import javax.inject.Inject
 
@@ -52,29 +44,18 @@ class AudioManagerActivity : ComponentActivity() {
           .background(MaterialTheme.colorScheme.surface)
           .fillMaxSize()
         ) {
-          TopAppBar(
-            title = {
-              Text(
-                text = stringResource(R.string.audio_manager),
-                color = MaterialTheme.colorScheme.onPrimary
-              )
-            },
-            navigationIcon = {
-              IconButton(onClick = { finish() }) {
-                Icon(
-                  imageVector = Icons.Filled.ArrowBack,
-                  contentDescription = "",
-                  tint = MaterialTheme.colorScheme.onPrimary
-                )
-              }
-            },
-            backgroundColor = MaterialTheme.colorScheme.primary
+          DownloadManagerToolbar(
+            title = stringResource(R.string.audio_manager),
+            backgroundColor = MaterialTheme.colorScheme.primary,
+            tintColor = MaterialTheme.colorScheme.onPrimary,
+            onBackPressed = { finish() }
           )
 
-          if (downloadedShuyookhState.value.isEmpty()) {
+          val shuyookhDownloadInfo = downloadedShuyookhState.value
+          if (shuyookhDownloadInfo.isEmpty()) {
             LoadingIndicator()
           } else {
-            ShuyookhList(shuyookh = downloadedShuyookhState.value, onQariItemClicked = ::onQariClicked)
+            ShuyookhList(shuyookh = shuyookhDownloadInfo, onQariItemClicked = ::onQariClicked)
           }
         }
       }
@@ -82,9 +63,8 @@ class AudioManagerActivity : ComponentActivity() {
   }
 
   private fun onQariClicked(item: QariItem) {
-    val className = "com.quran.labs.androidquran.ui.SheikhAudioManagerActivity"
-    val intent = Intent(this, Class.forName(className)).apply {
-      putExtra("SurahAudioManager.EXTRA_SHEIKH", item)
+    val intent = Intent(this, SheikhAudioDownloadsActivity::class.java).apply {
+      putExtra(SheikhAudioDownloadsActivity.EXTRA_QARI_ID, item.id)
     }
     startActivity(intent)
   }

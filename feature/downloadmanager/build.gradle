@@ -22,7 +22,8 @@ android {
 
   kotlinOptions {
     freeCompilerArgs += [
-        "-Xopt-in=androidx.compose.ui.ExperimentalComposeUiApi"
+        "-Xopt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+        "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi"
     ]
   }
 }
@@ -32,7 +33,9 @@ anvil { generateDaggerFactories = true }
 dependencies {
   implementation project(path: ':common:audio')
   implementation project(path: ':common:data')
+  implementation project(path: ':common:download')
   implementation project(path: ':common:di')
+  implementation project(path: ':common:pages')
   implementation project(path: ':common:ui:core')
 
   implementation "androidx.annotation:annotation:${androidxAnnotationVersion}"
