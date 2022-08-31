@@ -37,7 +37,6 @@ Yasser Baghouli (zaterdag@outlook.com)
   <string name="menu_get_translations">Verkrijg Vertalingen</string>
   <string name="menu_jump">Ga</string>
   <string name="gotoPage">Ga naar pagina</string>
-  <string name="cancel">Annuleer</string>
 
   <!-- about -->
   <string name="about_description">Koran voor Android is een gratis Koran Applicatie. Vergeet a.u.b. de ontwikkelaars niet in uw gebeden.</string>
@@ -145,7 +144,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="prefs_audio_manager_summary">Beheer en download Koran audio</string>
   <string name="downloaded_translations">Gedownload</string>
   <string name="available_translations">Beschikbaar om te downloaden</string>
-  <string name="remove_button">Verwijder</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Koran gegevens bibliotheek</string>
   <string name="prefs_app_location_summary">Kies de locatie voor het opslaan van Koran gegevens.</string>

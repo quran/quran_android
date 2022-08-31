@@ -13,13 +13,11 @@
   <string name="menu_back_to_page">Mostra il Corano</string>
   <string name="menu_help">Aiuto</string>
   <string name="menu_search">Cerca</string>
-  <string name="cancel">Cancella</string>
   <string name="about_images">Immagini</string>
   <string name="about_others">Altri</string>
   <string name="prefs_use_arabic_title">Modo arabo (الوضع العربي)</string>
   <string name="prefs_night_mode_title">Modalità notturna</string>
   <string name="prefs_translations">Traduzioni</string>
-  <string name="remove_button">Rimuovi</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_import_title">Importazione</string>
   <string name="prefs_export_title">Esportazione</string>

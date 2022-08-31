@@ -10,6 +10,7 @@
   <string name="audio_manager">Menedżer dźwięku</string>
   <string name="audio_manager_remove_audio_title">Usunąć Sura?</string>
   <string name="audio_manager_remove_audio_msg">Czy na pewno chcesz usunąć %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Czy na pewno chcesz usunąć?</string>
   <plurals name="audio_manager_delete_surah_success">
     <item quantity="one">Udało się usunąć sura</item>
     <item quantity="few">Pomyślnie usunięto %1$d sura</item>

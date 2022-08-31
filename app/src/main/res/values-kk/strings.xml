@@ -32,7 +32,6 @@
   <string name="menu_get_translations">Аударма жүктеу</string>
   <string name="menu_jump">Өту</string>
   <string name="gotoPage">Бетке өту</string>
-  <string name="cancel">Болдырмау</string>
 
   <!-- about -->
   <string name="about_description">Quran for Android - тегін Құран бағдарламасы.
@@ -156,7 +155,6 @@
   <string name="prefs_audio_manager_summary">Құран аудио файлдарын жүктеу және басқару</string>
   <string name="downloaded_translations">Жүктелгендер</string>
   <string name="available_translations">Жүктеуге болатындар</string>
-  <string name="remove_button">Жою</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Деректер орны</string>
   <string name="prefs_app_location_summary">Құран файлдары сақталған орын</string>

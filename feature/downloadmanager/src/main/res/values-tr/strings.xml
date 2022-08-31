@@ -22,4 +22,5 @@
   <string name="audio_manager_surah_download">Sureyi indir</string>
   <string name="audio_manager_remove_audio_title">Sure kaldırılsın mı?</string>
   <string name="audio_manager_remove_audio_msg">%1$s\'yi kaldırmak istediğinizden emin misiniz?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Silmek istediğinize emin misiniz?</string>
 </resources>

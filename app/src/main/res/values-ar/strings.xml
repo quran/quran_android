@@ -26,7 +26,6 @@
   <string name="menu_get_translations">حمل التفاسير/التراجم</string>
   <string name="menu_jump">انتقال سريع</string>
   <string name="gotoPage">أدخل رقم الصفحة</string>
-  <string name="cancel">إلغاء</string>
 
   <string name="help_title">الأسئلة المتداولة</string>
   <string name="help">
@@ -129,7 +128,6 @@
 
   <string name="downloaded_translations">الملفات المحملة</string>
   <string name="available_translations">الملفات المتاحة للتحميل</string>
-  <string name="remove_button">احذف</string>
   <string name="dialog_ok">موافق</string>
 
   <!-- tafaseer -->

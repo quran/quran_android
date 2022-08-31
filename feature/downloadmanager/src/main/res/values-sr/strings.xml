@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <plurals name="audio_manager_files_downloaded">
     <item quantity="one">%1$d sura preuzeta</item>
     <item quantity="few">%1$d sure preuzete</item>
@@ -10,6 +10,7 @@
   <string name="audio_manager">Menadžer zvuka</string>
   <string name="audio_manager_remove_audio_title">Da uklonim Suru?</string>
   <string name="audio_manager_remove_audio_msg">Želite li zaista da uklonite %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Želite li zaista da uklonite?</string>
   <string name="audio_manager_surah_download">Preuzmi surah</string>
   <string name="audio_manager_surah_delete">Brisanje audio datoteke</string>
   <string name="audio_manager_download_all">Preuzmi sve</string>

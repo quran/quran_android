@@ -36,7 +36,6 @@
   <string name="menu_get_translations">Preuzmanje prijevoda</string>
   <string name="menu_jump">Idi na</string>
   <string name="gotoPage">Idi na stranicu</string>
-  <string name="cancel">Poništi</string>
 
   <!-- about -->
   <string name="about_description">Kur\'an za Android je besplatna aplikacija za Kur\'an. Molimo vas da nas ne zaboravite u vašim dovama.</string>
@@ -152,7 +151,6 @@
   <string name="prefs_audio_manager_summary">Upravljaj i preuzmi zvuk učenja Kur\'ana</string>
   <string name="downloaded_translations">Preuzeto</string>
   <string name="available_translations">Dostupno za preuzimanje</string>
-  <string name="remove_button">Ukloni</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Direktoriji za podatke Kur\'ana</string>
   <string name="prefs_app_location_summary">Izaberite gdje želite spremiti datoteke za Kur\'an</string>

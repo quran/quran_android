@@ -31,7 +31,6 @@
   <string name="menu_get_translations">Merr përkthime</string>
   <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">Shko në faqe</string>
-  <string name="cancel">Anulo</string>
   <string name="please_wait">Të lutem prit…</string>
 
   <!-- about -->
@@ -140,7 +139,6 @@
   <string name="prefs_audio_manager_summary">Menaxho dhe shkarko audion e Kuranit</string>
   <string name="downloaded_translations">Shkarkuar</string>
   <string name="available_translations">I disponueshëm për t\'u shkarkuar</string>
-  <string name="remove_button">Hiq</string>
   <string name="dialog_ok">NË RREGULL</string>
   <string name="prefs_app_location_title">Directory e të dhënave të Kuranit</string>
   <string name="prefs_app_location_summary">Zgjidh ku të ruaj skedarët e Kuranit</string>

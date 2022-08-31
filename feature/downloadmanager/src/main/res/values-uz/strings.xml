@@ -9,6 +9,7 @@
   <string name="audio_manager">Audio menejer</string>
   <string name="audio_manager_remove_audio_title">@string/remove_button</string>
   <string name="audio_manager_remove_audio_msg">%1$s audio fayllari oʻchirilsinmi?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Audio fayllari oʻchirilsinmi?</string>
   <plurals name="audio_manager_delete_surah_success">
     <item quantity="one">Sura oʻchirildi</item>
     <item quantity="other">%1$d ta sura oʻchirildi</item>

@@ -38,7 +38,6 @@
   <string name="menu_get_translations">Get Translations</string>
   <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">Go to page</string>
-  <string name="cancel">Cancel</string>
   <string name="please_wait">Please wait…</string>
 
   <!-- about -->
@@ -199,7 +198,6 @@
   <string name="prefs_audio_manager_summary">Manage and download Quranic audio</string>
   <string name="downloaded_translations">Downloaded</string>
   <string name="available_translations">Available for download</string>
-  <string name="remove_button">Remove</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Quran data directory</string>
   <string name="prefs_app_location_summary">Choose where to store Quran files</string>

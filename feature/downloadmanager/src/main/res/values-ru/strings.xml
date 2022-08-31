@@ -11,6 +11,7 @@
   <string name="audio_manager">Аудио менеджер</string>
   <string name="audio_manager_remove_audio_title">Удалить суру?</string>
   <string name="audio_manager_remove_audio_msg">Вы уверены, что хотите удалить %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Вы уверены, что хотите удалить?</string>
   <plurals name="audio_manager_delete_surah_success">
     <item quantity="one">Удалено %1$d сура</item>
     <item quantity="few">Удалено %1$d суры</item>

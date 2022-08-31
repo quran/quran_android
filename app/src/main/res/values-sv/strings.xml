@@ -31,7 +31,6 @@
   <string name="menu_get_translations">Få översättningar</string>
   <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">Gå till sidan</string>
-  <string name="cancel">Avbryt</string>
   <string name="please_wait">Vänta lite…</string>
 
   <!-- about -->
@@ -139,7 +138,6 @@
   <string name="prefs_audio_manager_summary">Hantera och ladda ner Koranljud</string>
   <string name="downloaded_translations">Nedladdat</string>
   <string name="available_translations">Tillgänglig för nedladdning</string>
-  <string name="remove_button">Ta bort</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Databok över Koranen</string>
   <string name="prefs_app_location_summary">Välj var du vill lagra Quran-filer</string>

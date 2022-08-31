@@ -9,6 +9,7 @@
   <string name="audio_manager">Ljudansvarig</string>
   <string name="audio_manager_remove_audio_title">Ta bort Surah?</string>
   <string name="audio_manager_remove_audio_msg">Är du säker på att du vill ta bort %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Är du säker på att du vill ta bort?</string>
   <plurals name="audio_manager_delete_surah_success">
     <item quantity="one">Lyckades ta bort surans ljud</item>
     <item quantity="other">Lyckades ta bort %1$d surahs</item>

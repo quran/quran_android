@@ -9,6 +9,7 @@
   <string name="audio_manager">Audioverwaltung</string>
   <string name="audio_manager_remove_audio_title">Sūra entfernen?</string>
   <string name="audio_manager_remove_audio_msg">Sind Sie sicher, dass Sie %1$s entfernen möchten?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Sind Sie sicher, dass Sie entfernen möchten?</string>
   <string name="audio_manager_surah_download">Sūra herunterladen</string>
   <string name="audio_manager_surah_delete">Sūra löschen</string>
   <string name="audio_manager_download_all">Alle herunterladen</string>

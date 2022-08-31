@@ -26,7 +26,6 @@
   <string name="menu_get_translations">Obtener traducciones</string>
   <string name="menu_jump">Saltar</string>
   <string name="gotoPage">Ir a la página</string>
-  <string name="cancel">Cancelar</string>
 
   <!-- help -->
   <string name="help_title">Preguntas Frecuentes</string>
@@ -84,7 +83,6 @@
   <string name="prefs_download_amount_summary">Cantidad preferente de descarga de audio sin pausas.</string>
   <string name="downloaded_translations">Descargado</string>
   <string name="available_translations">Disponible para descargar</string>
-  <string name="remove_button">Eliminar</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Directorio de Datos del Corán</string>
   <string name="prefs_app_location_summary">Elegir ubicación para almacenar los archivos del Corán.</string>

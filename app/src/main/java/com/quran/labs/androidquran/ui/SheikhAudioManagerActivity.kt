@@ -273,12 +273,12 @@ class SheikhAudioManagerActivity : AppCompatActivity(), SimpleDownloadListener {
               builder.setTitle(com.quran.mobile.feature.downloadmanager.R.string.audio_manager_remove_audio_title)
                 .setMessage(msg)
                 .setPositiveButton(
-                  R.string.remove_button
+                  com.quran.mobile.common.ui.core.R.string.remove_button
                 ) { _, _ ->
                   deleteSelection(ArrayList(listOf(surah)))
                 }
                 .setNegativeButton(
-                  R.string.cancel
+                  com.quran.mobile.common.ui.core.R.string.cancel
                 ) { dialog, _ -> dialog.dismiss() }
               dialogConfirm = builder.show()
             } else {

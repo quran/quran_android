@@ -25,7 +25,6 @@
   <string name="menu_get_translations">دریافت ترجمه‌ها</string>
   <string name="menu_jump">پرش</string>
   <string name="gotoPage">رفتن به صفحه</string>
-  <string name="cancel">لغو</string>
 
   <!-- help -->
   <string name="help_title">پرسش و پاسخ‌های متداول</string>
@@ -100,7 +99,6 @@
   <string name="prefs_download_amount_summary">میزان پیشنهادی برای بارگذاری فایل‌های صوتی</string>
   <string name="downloaded_translations">بارگذاری انجام گرفت</string>
   <string name="available_translations">آماده بارگذاری</string>
-  <string name="remove_button">حذف</string>
   <string name="dialog_ok">تأیید</string>
 
   <!-- translation updates -->

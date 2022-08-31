@@ -167,21 +167,10 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
       mProgressDialog.setCancelable(mCanCancelDownload);
       mProgressDialog.setCanceledOnTouchOutside(false);
       if (mCanCancelDownload) {
-        mProgressDialog.setOnCancelListener(
-            new DialogInterface.OnCancelListener() {
-              @Override
-              public void onCancel(DialogInterface dialog) {
-                cancelDownload();
-              }
-            });
+        mProgressDialog.setOnCancelListener(dialog -> cancelDownload());
         mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-            mContext.getString(R.string.cancel),
-            new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-                cancelDownload();
-              }
-            });
+            mContext.getString(com.quran.mobile.common.ui.core.R.string.cancel),
+            (dialog, which) -> cancelDownload());
       }
 
       mProgressDialog.setTitle(R.string.downloading_title);

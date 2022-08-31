@@ -29,7 +29,6 @@
   <string name="menu_get_translations">Obtenir des traductions</string>
   <string name="menu_jump">Aller à</string>
   <string name="gotoPage">Aller à la page</string>
-  <string name="cancel">Annuler</string>
 
   <!-- about -->
   <string name="about_description">Quran pour Android est une application Quran gratuite. S\'il vous plaît, n\'oubliez pas les contributeurs dans vos prières.</string>
@@ -126,7 +125,6 @@
   <string name="prefs_audio_manager_summary">Gérer et télécharger les audios coraniques</string>
   <string name="downloaded_translations">Téléchargées</string>
   <string name="available_translations">Disponible en téléchargement</string>
-  <string name="remove_button">Supprimer</string>
   <string name="dialog_ok">Ok</string>
   <string name="prefs_app_location_summary">Sélectionnez sur quelle sdcard sauvegarder les fichiers</string>
   <string name="prefs_app_location_title">Location de l\'application</string>

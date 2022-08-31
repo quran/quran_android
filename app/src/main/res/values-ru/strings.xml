@@ -38,7 +38,6 @@
   <string name="menu_get_translations">Скачать перевод</string>
   <string name="menu_jump">Перейти</string>
   <string name="gotoPage">Перейти на страницу</string>
-  <string name="cancel">Отмена</string>
   <string name="please_wait">Подождите пожалуйста…</string>
 
   <!-- about -->
@@ -180,7 +179,6 @@
   <string name="prefs_audio_manager_summary">Управлять и скачать аудио рецитация Корана</string>
   <string name="downloaded_translations">Загруженные переводы</string>
   <string name="available_translations">Доступные для загрузки</string>
-  <string name="remove_button">Удалить</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Расположение приложения</string>
   <string name="prefs_app_location_summary">Выберите место хранения файлов</string>

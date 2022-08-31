@@ -3,6 +3,7 @@
   <string name="audio_manager">Gerente de áudio</string>
   <string name="audio_manager_remove_audio_title">Remover o Sura?</string>
   <string name="audio_manager_remove_audio_msg">Você tem certeza de que gostaria de remover %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Você tem certeza de que gostaria de remover?</string>
   <string name="audio_manager_surah_download">Baixar surah</string>
   <string name="audio_manager_surah_delete">Excluir arquivo de áudio</string>
   <string name="audio_manager_download_all">Baixar tudo</string>

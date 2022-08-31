@@ -25,7 +25,6 @@
   <string name="menu_get_translations">译文下载</string>
   <string name="menu_jump">跳转</string>
   <string name="gotoPage">跳转到页数</string>
-  <string name="cancel">取消</string>
 
   <!-- help -->
   <string name="help_title">常见问题</string>
@@ -106,7 +105,6 @@
   <string name="prefs_download_amount_summary">non-gapless音频的下载方式。</string>
   <string name="downloaded_translations">已经下载</string>
   <string name="available_translations">可供下载</string>
-  <string name="remove_button">移除</string>
   <string name="dialog_ok">确认</string>
 
   <!-- translation updates -->

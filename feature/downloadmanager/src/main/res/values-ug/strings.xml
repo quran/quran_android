@@ -6,6 +6,7 @@
   <string name="audio_manager_delete_selection">تاللانغانلارنى ئۆچۈرۈڭ</string>
   <string name="audio_manager_surah_delete">ئاۋاز ھۆججىتىنى ئۆچۈرۈڭ</string>
   <string name="audio_manager_remove_audio_msg">سىز %1$s نى ئۆچۈرمەكچىمۇ؟</string>
+  <string name="audio_manager_remove_multiple_audio_msg">سىز نى ئۆچۈرمەكچىمۇ؟</string>
   <string name="audio_manager_download_selection">چۈشۈرۈش تاللاش</string>
   <string name="audio_manager_remove_audio_title">سۈرىنى ئۆچۈرەمسىز؟</string>
 </resources>

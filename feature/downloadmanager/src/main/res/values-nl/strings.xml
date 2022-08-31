@@ -13,6 +13,7 @@ Yasser Baghouli (zaterdag@outlook.com)
   <string name="audio_manager">Geluid Manager</string>
   <string name="audio_manager_remove_audio_title">Surah verwijderen?</string>
   <string name="audio_manager_remove_audio_msg">Weet u zeker dat u %1$s wilt verwijderen?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Weet u zeker dat wilt verwijderen?</string>
   <string name="audio_manager_surah_download">Soera downloaden</string>
   <string name="audio_manager_surah_delete">Verwijderen audiobestand</string>
   <string name="audio_manager_download_all">Alles downloaden</string>

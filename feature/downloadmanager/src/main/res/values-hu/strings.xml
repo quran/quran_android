@@ -9,6 +9,7 @@
   <string name="audio_manager">Hangkezelő</string>
   <string name="audio_manager_remove_audio_title">Szúra eltávolítása?</string>
   <string name="audio_manager_remove_audio_msg">Biztos, hogy el szeretné távolítani a %1$s -t?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Biztos, hogy el szeretné távolítani?</string>
   <string name="audio_manager_surah_download">Szúra letöltése</string>
   <string name="audio_manager_surah_delete">Hangfájl törlése</string>
   <string name="audio_manager_download_all">Minden letöltése</string>

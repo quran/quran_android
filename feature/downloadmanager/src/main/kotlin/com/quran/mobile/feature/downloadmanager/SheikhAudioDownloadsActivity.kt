@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +17,8 @@ import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInterface
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraForQari
 import com.quran.mobile.feature.downloadmanager.presenter.SheikhAudioPresenter
+import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.RemoveConfirmationDialog
+import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhDownloadDialog
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.SheikhDownloadToolbar
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.SheikhSuraInfoList
 import com.quran.page.common.data.QuranNaming
@@ -49,42 +52,79 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
     val sheikhDownloadsFlow = sheikhAudioPresenter.sheikhInfo(qariId)
 
     setContent {
+      val singleItemState = remember { mutableStateOf<SuraForQari?>(null) }
       val selectionState = remember { mutableStateOf(listOf<SuraForQari>()) }
       val sheikhDownloadsState = sheikhDownloadsFlow.collectAsState(null)
+      val currentDialog = remember { mutableStateOf(SheikhDownloadDialog.NONE)}
+
       QuranTheme {
-        Column(modifier = Modifier
+        val selectionInfo = selectionState.value
+        Box(modifier = Modifier
           .background(MaterialTheme.colorScheme.surface)
-          .fillMaxSize()
-        ) {
-          val currentDownloadState = sheikhDownloadsState.value
-          val titleResource = currentDownloadState?.qariItem?.nameResource ?: R.string.audio_manager
+          .fillMaxSize()) {
+          Column {
+            val currentDownloadState = sheikhDownloadsState.value
+            val titleResource =
+              currentDownloadState?.qariItem?.nameResource ?: R.string.audio_manager
 
-          val selectionInfo = selectionState.value
-          SheikhDownloadToolbar(
-            titleResource = titleResource,
-            isContextual = selectionInfo.isNotEmpty(),
-            selectionInfo.isEmpty() || selectionInfo.any { !it.isDownloaded },
-            selectionInfo.any { it.isDownloaded },
-            downloadAction = { onDownloadSelected(selectionInfo) },
-            eraseAction = { onRemoveSelected(selectionInfo) },
-            onBackAction = {
-              if (selectionInfo.isEmpty()) {
-                finish()
-              } else {
-                // end contextual mode on back with suras selected
-                selectionState.value = emptyList()
+            SheikhDownloadToolbar(
+              titleResource = titleResource,
+              isContextual = selectionInfo.isNotEmpty(),
+              selectionInfo.isEmpty() || selectionInfo.any { !it.isDownloaded },
+              selectionInfo.any { it.isDownloaded },
+              downloadAction = { onDownloadSelected(selectionInfo) },
+              eraseAction = {
+                if (selectionInfo.isNotEmpty()) {
+                  currentDialog.value = SheikhDownloadDialog.REMOVE_CONFIRMATION
+                } else {
+                  onDownloadSelected(selectionInfo)
+                }
+              },
+              onBackAction = {
+                if (selectionInfo.isEmpty()) {
+                  finish()
+                } else {
+                  // end contextual mode on back with suras selected
+                  selectionState.value = emptyList()
+                }
               }
-            }
-          )
-
-          if (currentDownloadState != null) {
-            SheikhSuraInfoList(
-              sheikhUiModel = currentDownloadState,
-              currentSelection = selectionState.value,
-              quranNaming = quranNaming,
-              onSelectionInfoChanged = { selectionState.value = it },
-              onSuraActionRequested = ::onActionRequested
             )
+
+            if (currentDownloadState != null) {
+              SheikhSuraInfoList(
+                sheikhUiModel = currentDownloadState,
+                currentSelection = selectionState.value,
+                quranNaming = quranNaming,
+                onSelectionInfoChanged = { selectionState.value = it },
+                onSuraActionRequested = {
+                  if (it.isDownloaded) {
+                    singleItemState.value = it
+                    currentDialog.value = SheikhDownloadDialog.REMOVE_CONFIRMATION
+                  } else {
+                    onDownloadSelected(listOf(it))
+                  }
+                }
+              )
+            }
+          }
+
+          when (currentDialog.value) {
+            SheikhDownloadDialog.REMOVE_CONFIRMATION ->
+              RemoveConfirmationDialog(
+                title = suraNameForRemovalOrNull(listOfNotNull(singleItemState.value) + selectionInfo),
+                onConfirmation = {
+                  currentDialog.value = SheikhDownloadDialog.NONE
+                  onRemoveSelected(listOfNotNull(singleItemState.value) + selectionInfo)
+                  singleItemState.value = null
+                },
+                onDismiss = {
+                  currentDialog.value = SheikhDownloadDialog.NONE
+                  singleItemState.value = null
+                }
+              )
+            SheikhDownloadDialog.DOWNLOAD_RANGE_SELECTION -> {}
+            SheikhDownloadDialog.DOWNLOAD_STATUS -> {}
+            SheikhDownloadDialog.NONE -> {}
           }
         }
       }
@@ -96,11 +136,12 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
     super.onDestroy()
   }
 
-  private fun onActionRequested(item: SuraForQari) {
-    if (item.isDownloaded) {
-      onRemoveSelected(listOf(item))
+  private fun suraNameForRemovalOrNull(items: List<SuraForQari>): String? {
+    val removals = items.filter { it.isDownloaded }
+    return if (removals.size == 1) {
+      quranNaming.getSuraName(this, items.first().sura)
     } else {
-      onDownloadSelected(listOf(item))
+      null
     }
   }
 

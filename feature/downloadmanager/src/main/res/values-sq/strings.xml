@@ -9,6 +9,7 @@
   <string name="audio_manager">Menaxhues Audio</string>
   <string name="audio_manager_remove_audio_title">Ta heqim suren?</string>
   <string name="audio_manager_remove_audio_msg">Je i sigurt që do të doje të hiqje %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Je i sigurt që do të doje të hiqje?</string>
   <plurals name="audio_manager_delete_surah_success">
     <item quantity="one">E fshiu me sukses suren</item>
     <item quantity="other">Eleminuar me sukses suret %1$d</item>

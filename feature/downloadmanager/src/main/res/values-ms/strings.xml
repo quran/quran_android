@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <plurals name="audio_manager_files_downloaded">
-    <item quantity="one">Satu surah telah dimuat turun</item>
     <item quantity="other">%1$d surah telah dimuat turun</item>
   </plurals>
 
@@ -9,6 +8,7 @@
   <string name="audio_manager">Pengurus Audio</string>
   <string name="audio_manager_remove_audio_title">Hapus Surat?</string>
   <string name="audio_manager_remove_audio_msg">Apakah Anda yakin ingin menghapus %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Apakah Anda yakin ingin menghapus?</string>
   <string name="audio_manager_surah_download">Unduh Surat</string>
   <string name="audio_manager_surah_delete">Hapus Surat</string>
   <string name="audio_manager_download_all">Unduh semua</string>

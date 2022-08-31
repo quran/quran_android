@@ -35,7 +35,6 @@
   <string name="menu_get_translations">Dapatkan Terjemahan</string>
   <string name="menu_jump">Loncat</string>
   <string name="gotoPage">Pergi ke halaman</string>
-  <string name="cancel">Batal</string>
 
   <!-- about -->
   <string name="about_description">Quran untuk Android adalah sebuah aplikasi Quran gratis. Mohon ingat dan sisipkan para kontributor dalam doa-doa anda.</string>
@@ -150,7 +149,6 @@
   <string name="prefs_audio_manager_summary">Kelola dan unduh audio Quran</string>
   <string name="downloaded_translations">Telah diunduh</string>
   <string name="available_translations">Tersedia untuk diunduh</string>
-  <string name="remove_button">Buang</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Penyimpanan data Quran</string>
   <string name="prefs_app_location_summary">Pilih lokasi berkas Quran disimpan</string>

@@ -33,7 +33,6 @@
   <string name="menu_get_translations">Obter Traduções</string>
   <string name="menu_jump">Pular</string>
   <string name="gotoPage">Ir para página</string>
-  <string name="cancel">Cancelar</string>
   <string name="about_description">Quran Android é um aplicativo para o Android, é um software livre gratuito do Alcorão. As imagens usadas são do projeto</string>
   <string name="help_title">Perguntas mais frequentes</string>
   <string name="help">
@@ -121,7 +120,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="prefs_download_amount_summary">Quantidade de download preferida para audio continuou.</string>
   <string name="downloaded_translations">Já foi baixado</string>
   <string name="available_translations">Disponível para Download</string>
-  <string name="remove_button">Remover</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Local da App</string>
   <string name="prefs_app_location_summary">Selecione qual sdcard para armazenar os arquivos</string>

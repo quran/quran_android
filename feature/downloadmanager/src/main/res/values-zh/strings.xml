@@ -3,6 +3,7 @@
   <string name="audio_manager">音频经理</string>
   <string name="audio_manager_remove_audio_title">删除苏拉？</string>
   <string name="audio_manager_remove_audio_msg">您确定要删除%1$s吗？</string>
+  <string name="audio_manager_remove_multiple_audio_msg">您确定要删除吗？</string>
   <string name="audio_manager_surah_download">下载SURAH</string>
   <string name="audio_manager_surah_delete">删除音频文件</string>
   <string name="audio_manager_download_all">下载所有</string>

@@ -25,7 +25,6 @@
   <string name="menu_get_translations">داگرتنی وەرگێڕان</string>
   <string name="menu_jump">چوون بۆ</string>
   <string name="gotoPage">چوون بۆ پەڕەی</string>
-  <string name="cancel">پاشگەزبونەوە</string>
 
   <!-- help -->
   <string name="help_title">ئەو پرسیارانەی کە زۆر کراون</string>
@@ -106,7 +105,6 @@
   <string name="prefs_download_amount_summary">ڕێژەی پەسەندی داگرتن بۆ دەنگە دانەگیراوەکان.</string>
   <string name="downloaded_translations">داگیرا</string>
   <string name="available_translations">ئامادەیە بۆ داگرتن</string>
-  <string name="remove_button">لابردن</string>
   <string name="dialog_ok">باشە</string>
   <string name="prefs_app_location_title">شوێنی بەرنامە</string>
   <string name="prefs_app_location_summary">شوێنێک دیاریبکە بۆ پاراستنی فایلەکانی بەرنامە</string>

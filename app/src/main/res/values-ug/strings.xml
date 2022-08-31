@@ -26,7 +26,6 @@
   <string name="menu_get_translations">تەرجىمىگە ئېرىش</string>
   <string name="menu_jump">يۆتكەل</string>
   <string name="gotoPage">بەتكە يۆتكەل</string>
-  <string name="cancel">ۋاز كەچ</string>
 
   <!-- help -->
   <string name="help_title">كۆپ سورىلىدىغان سوئاللار</string>
@@ -79,7 +78,6 @@
   <string name="prefs_download_amount_summary">ئالدى بىلەن غەيرى يوچۇقسىز ئاۋازنى چۈشۈرىدۇ</string>
   <string name="downloaded_translations">چۈشۈرۈلدى</string>
   <string name="available_translations">چۈشۈرگىلى بولىدۇ</string>
-  <string name="remove_button">چىقىرىۋەت</string>
   <string name="dialog_ok">جەزملە</string>
   <string name="prefs_app_location_title">ئەپ ئورنى</string>
   <string name="prefs_app_location_summary">ھۆججەتلەرنى قايسى sd كارتىغا ساقلايدىغانلىقىڭىزنى تاللاڭ</string>

@@ -31,7 +31,6 @@
   <string name="menu_get_translations">Отримати переклади</string>
   <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">Перейти на сторінку</string>
-  <string name="cancel">Скасувати</string>
   <string name="please_wait">Будь ласка, зачекай…</string>
 
   <!-- about -->
@@ -140,7 +139,6 @@
   <string name="prefs_audio_manager_summary">Керування та завантаження аудіо Quranic</string>
   <string name="downloaded_translations">Завантажити</string>
   <string name="available_translations">Доступно для завантаження</string>
-  <string name="remove_button">Видалити</string>
   <string name="dialog_ok">ГАРАЗД</string>
   <string name="prefs_app_location_title">Каталог даних Корану</string>
   <string name="prefs_app_location_summary">Виберіть розташування для зберігання файлів Корану</string>

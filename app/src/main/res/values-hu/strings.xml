@@ -32,7 +32,6 @@
     <string name="menu_get_translations">Fordítások letöltése</string>
     <string name="menu_jump">Ugrás</string>
     <string name="gotoPage">Ugrás erre az oldalra:</string>
-    <string name="cancel">Mégsem</string>
     <string name="help_title">Gyakran Ismételt Kérdések</string>
     <string name="help">
         &lt;b>Hogyan játszhatom le a hangot?&lt;/b>
@@ -123,7 +122,6 @@
     <string name="prefs_audio_manager_summary">Korán hangok kezelése és letöltése.</string>
     <string name="downloaded_translations">Letöltve</string>
     <string name="available_translations">Elérhető letöltésre</string>
-    <string name="remove_button">Eltávolítás</string>
     <string name="dialog_ok">OK</string>
     <string name="prefs_app_location_title">Korán adatkönyvtár</string>
     <string name="prefs_app_location_summary">Válassza ki, hogy hol legyenek eltárolva a Korán fájlok.</string>

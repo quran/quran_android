@@ -9,6 +9,7 @@
   <string name="audio_manager">Audio Manager</string>
   <string name="audio_manager_remove_audio_title">Remove Surah?</string>
   <string name="audio_manager_remove_audio_msg">Are you sure you would like to remove %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Are you sure you would like to remove?</string>
   <plurals name="audio_manager_delete_surah_success">
     <item quantity="one">Successfully deleted the surah</item>
     <item quantity="other">Successfully deleted %1$d surahs</item>

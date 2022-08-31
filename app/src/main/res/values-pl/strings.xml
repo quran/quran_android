@@ -31,7 +31,6 @@
   <string name="menu_get_translations">Pobierz tłumaczenia</string>
   <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">Przejdź do strony</string>
-  <string name="cancel">Anuluj</string>
   <string name="please_wait">Please wait…</string>
 
   <!-- about -->
@@ -139,7 +138,6 @@
   <string name="prefs_audio_manager_summary">Zarządzanie i pobieranie nagrań dźwiękowych Koranu</string>
   <string name="downloaded_translations">Pobrano</string>
   <string name="available_translations">Dostępne do pobrania</string>
-  <string name="remove_button">Usunąć</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Katalog danych Koranu</string>
   <string name="prefs_app_location_summary">Wybierz, gdzie mają być przechowywane pliki Koranu</string>

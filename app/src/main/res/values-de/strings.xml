@@ -37,7 +37,6 @@
   <string name="menu_get_translations">Lade die Übersetzungen</string>
   <string name="menu_jump">Springe zu</string>
   <string name="gotoPage">Gehe zur Seite</string>
-  <string name="cancel">Abbrechen</string>
 
   <!-- help -->
   <string name="help_title">Häufig gestellte Fragen</string>
@@ -163,7 +162,6 @@
   <string name="prefs_audio_manager_summary">Verwalten Sie Ihre Audiodateien.</string>
   <string name="downloaded_translations">Heruntergeladen</string>
   <string name="available_translations">Zum Download verfügbar</string>
-  <string name="remove_button">Entfernen</string>
   <string name="dialog_ok">Ok</string>
   <string name="prefs_app_location_title">Speicherort</string>
   <string name="prefs_app_location_summary">Wählen Sie den Speicherort der Dateien aus.</string>

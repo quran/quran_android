@@ -10,6 +10,7 @@
   <string name="audio_manager">Menadžer zvuka</string>
   <string name="audio_manager_remove_audio_title">Da uklonim Suru?</string>
   <string name="audio_manager_remove_audio_msg">Jeste li sigurni da želite ukloniti %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Jeste li sigurni da želite ukloniti?</string>
   <string name="audio_manager_surah_download">Preuzmi surah</string>
   <string name="audio_manager_surah_delete">Izbriši audio datoteku</string>
   <string name="audio_manager_download_all">Preuzmi sve</string>

@@ -24,7 +24,6 @@
   <string name="menu_translation">Mealini göster</string>
   <string name="menu_help">Yardım</string>
   <string name="menu_search">Ara</string>
-  <string name="cancel">İptal</string>
 
   <!-- about -->
   <string name="about_description">"Quran for Android ücretsiz bir Kur'an uygulamasıdır. Lütfen dualarınızda katkıda bulunanları unutmayın."</string>
@@ -138,7 +137,6 @@
   <string name="prefs_audio_manager_summary">"Kur'an seslerini yönetme ve indirme"</string>
   <string name="downloaded_translations">Yüklendi</string>
   <string name="available_translations">İndirmek için hazır</string>
-  <string name="remove_button">Kaldır</string>
   <string name="dialog_ok">Tamam</string>
   <string name="prefs_category_download">İndirme seçenekleri</string>
   <string name="prefs_calculating_app_size">Uygulama büyüklüğü hesaplanıyor</string>

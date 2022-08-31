@@ -29,7 +29,6 @@
   <string name="menu_get_translations">รับคําแปล</string>
   <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">ไปที่หน้า</string>
-  <string name="cancel">ยกเลิก</string>
   <string name="please_wait">กรุณารอสักครู่…</string>
 
   <!-- about -->
@@ -131,7 +130,6 @@
   <string name="prefs_audio_manager_summary">จัดการและดาวน์โหลดเสียงอัลกุรอาน</string>
   <string name="downloaded_translations">ดาวน์โหลด</string>
   <string name="available_translations">พร้อมให้ดาวน์โหลด</string>
-  <string name="remove_button">ถอด</string>
   <string name="dialog_ok">ตกลง, ได้</string>
   <string name="prefs_app_location_title">ไดเรกทอรีข้อมูลอัลกุรอาน</string>
   <string name="prefs_app_location_summary">เลือกตําแหน่งที่จะจัดเก็บแฟ้มอัลกุรอาน</string>
