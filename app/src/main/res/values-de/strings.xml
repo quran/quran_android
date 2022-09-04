@@ -287,8 +287,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Von</string>
-  <string name="play_to">Bis</string>
   <string name="play_restrict_range">Nur die oben genannten Verse abspielen</string>
   <string name="play_apply">Anwenden</string>
   <string name="play_apply_and_play">Anwenden und Abspielen</string>

@@ -2,4 +2,6 @@
 <resources>
   <string name="remove_button">Kaldır</string>
   <string name="cancel">İptal</string>
+  <string name="from">Başlangıç</string>
+  <string name="to">Son</string>
 </resources>

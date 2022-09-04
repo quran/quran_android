@@ -261,8 +261,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Från</string>
-  <string name="play_to">Till</string>
   <string name="play_restrict_range">Spela endast ovanstående ayat</string>
   <string name="play_verses_range">Spela upp ayat:</string>
   <string name="play_each_verse">Spela upp varje ayah:</string>

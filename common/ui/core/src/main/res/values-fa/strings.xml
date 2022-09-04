@@ -2,4 +2,6 @@
 <resources>
   <string name="remove_button">حذف</string>
   <string name="cancel">لغو</string>
+  <string name="from">از</string>
+  <string name="to">تا</string>
 </resources>

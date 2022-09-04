@@ -333,8 +333,8 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">From</string>
-  <string name="play_to">To</string>
+  <string name="play_from" translatable="false">@string/from</string>
+  <string name="play_to" translatable="false">@string/to</string>
   <string name="play_restrict_range">Only play the above verses</string>
   <string name="play_verses_range">Play set of verses:</string>
   <string name="play_each_verse">Play each verse:</string>

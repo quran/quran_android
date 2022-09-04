@@ -268,8 +268,6 @@
   <string name="sdcard_error">ناتوانێت کارتی SD بدۆزێتەوە. تکایە بیکەوە و دووبارە هەوڵ بدە.</string>
   <string name="download_sura_progress">داگرتنی %1$s / %2$s سورەتی %3$d</string>
   <string name="download_sura_ayah_progress">داگرتنی سورەتی %1$d آية %2$d</string>
-  <string name="play_from">لە</string>
-  <string name="play_to">بۆ</string>
   <string name="play_restrict_range">تەنیا گوێ لە ئایەتەکانی سەرەوە بگرن</string>
   <string name="play_verses_range">گوێ لە کۆمەڵە ئایەتێک بگرە:</string>
   <string name="play_each_verse">گوێ لە هەر ئایەتێک بگرە:</string>

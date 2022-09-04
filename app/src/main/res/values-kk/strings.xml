@@ -262,8 +262,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Басы</string>
-  <string name="play_to">Соңы</string>
   <string name="play_restrict_range">Тек жоғарыдағы аяттарды тыңдау</string>
   <string name="play_verses_range">Аят топтамасын тыңдау:</string>
   <string name="play_each_verse">Әр бір аятты тыңдау:</string>

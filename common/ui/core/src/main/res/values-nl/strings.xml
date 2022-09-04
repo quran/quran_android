@@ -2,4 +2,6 @@
 <resources>
   <string name="remove_button">Verwijder</string>
   <string name="cancel">Annuleer</string>
+  <string name="from">Van</string>
+  <string name="to">Naar</string>
 </resources>

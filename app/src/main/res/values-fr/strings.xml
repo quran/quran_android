@@ -234,8 +234,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Depuis</string>
-  <string name="play_to">À</string>
   <string name="play_restrict_range">Écouter uniquement les Ayāts sélectionnés</string>
   <string name="play_verses_range">Écouter la selection de Ayāt :</string>
   <string name="play_each_verse">Écouter chaque Aya :</string>

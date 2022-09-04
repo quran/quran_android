@@ -2,4 +2,6 @@
 <resources>
   <string name="remove_button">لابردن</string>
   <string name="cancel">پاشگەزبونەوە</string>
+  <string name="from">لە</string>
+  <string name="to">بۆ</string>
 </resources>

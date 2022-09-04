@@ -261,8 +261,6 @@
   <string name="see_tafseer_of_verse">这段经文的塔夫赛尔与第%d段的塔夫赛尔包括在一起（点击展开）。</string>
   <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
   <string name="sdcard_error">无法找到SD卡。请安装它并重试。</string>
-  <string name="play_from">来自</string>
-  <string name="play_to">拟</string>
   <string name="play_restrict_range">只播放上述阿亚特</string>
   <string name="play_verses_range">听听这组阿亚特。</string>
   <string name="play_each_verse">听听每一段经文。</string>

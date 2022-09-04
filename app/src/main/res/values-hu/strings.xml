@@ -210,8 +210,6 @@
     </plurals>
 
     <!-- ayah action panel -->
-    <string name="play_from">Innentől</string>
-    <string name="play_to">Idáig</string>
     <string name="play_restrict_range">Csak a fenti versek lejátszása</string>
     <string name="play_apply">Alkalmaz</string>
     <string name="play_apply_and_play">Alkalmaz és lejátszás</string>

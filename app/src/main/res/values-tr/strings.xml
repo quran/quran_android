@@ -254,8 +254,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Başlangıç</string>
-  <string name="play_to">Son</string>
   <string name="play_restrict_range">Sadece yukarıdaki âyetleri dinle</string>
   <string name="play_verses_range">âyetler grubu:</string>
   <string name="play_each_verse">Her âyeti</string>

@@ -263,8 +263,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Від</string>
-  <string name="play_to">До</string>
   <string name="play_restrict_range">Відтворюйте лише наведені вище вірші</string>
   <string name="play_verses_range">Послухай набір аятів:</string>
   <string name="play_each_verse">Прислухайтеся до кожного ая:</string>

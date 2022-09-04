@@ -262,8 +262,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Od</string>
-  <string name="play_to">Do</string>
   <string name="play_restrict_range">Odtwórz tylko powyższy ajat</string>
   <string name="play_verses_range">Odtwórz zestaw ajatów:</string>
   <string name="play_each_verse">Odtwórz każdą ayę:</string>

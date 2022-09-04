@@ -158,8 +158,6 @@
     <item quantity="other">%s versículos</item>
   </plurals>
   <!--ayah action panel-->
-  <string name="play_from">Desde</string>
-  <string name="play_to">Para</string>
   <string name="play_restrict_range">Sólo reproducir los versículos anteriores</string>
   <string name="play_apply">Aplicar</string>
   <string name="play_apply_and_play">Aplicar y reproducir</string>

@@ -259,8 +259,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Dari</string>
-  <string name="play_to">Sampai</string>
   <string name="play_restrict_range">Putar hanya ayat-ayat di atas saja</string>
   <string name="play_verses_range">Putar rangkaian ayat:</string>
   <string name="play_each_verse">Putar setiap ayat:</string>

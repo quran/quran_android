@@ -228,8 +228,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Dari</string>
-  <string name="play_to">Sehingga</string>
   <string name="play_restrict_range">Hanya mainkan ayat di atas</string>
   <string name="play_verses_range">Mainkan set ayat:</string>
   <string name="play_each_verse">Mainkan setiap ayat:</string>

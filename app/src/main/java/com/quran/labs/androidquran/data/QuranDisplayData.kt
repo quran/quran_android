@@ -19,10 +19,6 @@ import javax.inject.Inject
 @ContributesBinding(AppScope::class)
 class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): QuranNaming {
 
-  override fun getSuraName(context: Context, sura: Int): String {
-    return getSuraName(context, sura, true)
-  }
-
   /**
    * Get localized sura name from resources
    *
@@ -31,8 +27,14 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
    * @param wantPrefix Whether or not to show prefix "Sura"
    * @return Compiled sura name without translations
    */
-  fun getSuraName(context: Context, sura: Int, wantPrefix: Boolean): String {
+  override fun getSuraName(context: Context, sura: Int, wantPrefix: Boolean): String {
     return getSuraName(context, sura, wantPrefix, false)
+  }
+
+  override fun getSuraNameWithNumber(context: Context, sura: Int, wantPrefix: Boolean): String {
+    val name = getSuraName(context, sura, wantPrefix)
+    val prefix = QuranUtils.getLocalizedNumber(context, sura)
+    return "$prefix. $name"
   }
 
   /**
@@ -94,11 +96,6 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
   fun getSuraAyahString(context: Context, sura: Int, ayah: Int, @StringRes resource: Int): String {
     val suraName = getSuraName(context, sura, wantPrefix = false, wantTranslation = false)
     return context.getString(resource, suraName, ayah)
-  }
-
-  fun getSuraAyahStringForSharing(context: Context, sura: Int, ayah: Int): String {
-    val suraName = getSuraName(context, sura, wantPrefix = false, wantTranslation = false)
-    return context.getString(R.string.sura_ayah_sharing_str, suraName, ayah)
   }
 
   fun getNotificationTitle(

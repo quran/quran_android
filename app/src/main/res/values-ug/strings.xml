@@ -218,8 +218,6 @@
   <string name="previous">ئالدىنقى</string>
   <string name="download_sura_progress">چۈشۈرۈش سۈرە %3$d - %1$s / %2$s</string>
   <string name="download_sura_ayah_progress">چۈشۈرۈش سۈرە %1$d ئايەت %2$d</string>
-  <string name="play_from">ئايەتتىن</string>
-  <string name="play_to">ئايەتكىچە</string>
   <string name="recent_pages">يېقىنقى بەتلەر</string>
   <string name="stop">توختا</string>
   <string name="email_us">سوئالىڭىز يۇقىرىدىكى جاۋاب بولمىسا, قوللايدىغان quranandroid@gmail.com ئېلېكترونلۇق خەت ئەۋەتسىڭىز بولىدۇ. شۇنىڭغا دىققەت قىلىڭكى, بىز نۇرغۇن ئېلېكترونلۇق خەتلەرنى قوبۇل قىلالايمىز, شۇڭا بىز ئۇلارنىڭ ھەممىسىگە جاۋاب بېرەلمەسلىكى مۇمكىن.</string>

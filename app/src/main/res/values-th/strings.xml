@@ -252,8 +252,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">จาก</string>
-  <string name="play_to">ถึง</string>
   <string name="play_restrict_range">ฟังเฉพาะข้อข้างต้น</string>
   <string name="play_verses_range">ฟังชุดข้อ:</string>
   <string name="play_each_verse">ทําซ้ําแต่ละข้อ:</string>

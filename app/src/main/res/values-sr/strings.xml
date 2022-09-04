@@ -272,8 +272,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Od</string>
-  <string name="play_to">Do</string>
   <string name="play_restrict_range">Pokreni jedino ajete ajete iznad</string>
   <string name="play_verses_range">Pokrenite skupinu ajeta:</string>
   <string name="play_each_verse">Pokreni svaki ajet:</string>

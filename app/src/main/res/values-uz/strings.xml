@@ -287,8 +287,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Boshi</string>
-  <string name="play_to">Oxiri</string>
   <string name="play_restrict_range">Yuqorida oyatlarnigina eshitish</string>
   <string name="play_verses_range">Oyatlar toʻplamini:</string>
   <string name="play_each_verse">Har bir oyatni:</string>

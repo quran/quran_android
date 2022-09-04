@@ -253,8 +253,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Van</string>
-  <string name="play_to">Naar</string>
   <string name="play_restrict_range">Speel enkel de bovenstaande verzen af</string>
   <string name="play_verses_range">Speel een reeks verzen af:</string>
   <string name="play_each_verse">Speel elke vers af:</string>

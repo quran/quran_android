@@ -2,4 +2,6 @@
 <resources>
   <string name="remove_button">Rimuovi</string>
   <string name="cancel">Cancella</string>
+  <string name="from">Da</string>
+  <string name="to">A</string>
 </resources>

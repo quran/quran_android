@@ -278,8 +278,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="sdcard_error">Não foi possível encontrar o cartão SD. Por favor, monte-o e tente novamente.</string>
   <string name="download_sura_progress">Transferido %1$s / %2$s de surah %3$d</string>
   <string name="download_sura_ayah_progress">Baixar sura %1$d ayah %2$d</string>
-  <string name="play_from">De</string>
-  <string name="play_to">Para</string>
   <string name="play_restrict_range">Toque apenas o ayat acima</string>
   <string name="play_verses_range">Ouça o conjunto de ayat:</string>
   <string name="play_each_verse">Ouça cada ayah:</string>

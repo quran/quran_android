@@ -215,9 +215,7 @@
   <string name="play_apply">اِعمال</string>
   <string name="play_apply_and_play">اِعمال و پخش</string>
   <string name="play_each_verse">پخش هر آیه:</string>
-  <string name="play_from">از</string>
   <string name="play_restrict_range">تنها این آیات را پخش کن</string>
-  <string name="play_to">تا</string>
   <string name="play_verses_range">پخش مجموعه آیات:</string>
   <string name="previous">قبلی</string>
   <string name="pause">مکث</string>

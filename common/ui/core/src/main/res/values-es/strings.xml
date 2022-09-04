@@ -2,4 +2,6 @@
 <resources>
   <string name="remove_button">Eliminar</string>
   <string name="cancel">Cancelar</string>
+  <string name="from">Desde</string>
+  <string name="to">Para</string>
 </resources>

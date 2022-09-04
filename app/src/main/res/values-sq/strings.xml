@@ -261,8 +261,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Nga</string>
-  <string name="play_to">Në</string>
   <string name="play_restrict_range">Vetëm dëgjo ajatin e mësipërm.</string>
   <string name="play_verses_range">Dëgjoni setin e Ayat:</string>
   <string name="play_each_verse">Dëgjoni për të vendosur çdo Ayah:</string>

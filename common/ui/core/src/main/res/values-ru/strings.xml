@@ -2,4 +2,6 @@
 <resources>
   <string name="remove_button">Удалить</string>
   <string name="cancel">Отмена</string>
+  <string name="from">От</string>
+  <string name="to">До</string>
 </resources>

@@ -2,4 +2,6 @@
 <resources>
   <string name="remove_button">Oʻchirish</string>
   <string name="cancel">Bekor qilish</string>
+  <string name="from">Boshi</string>
+  <string name="to">Oxiri</string>
 </resources>
