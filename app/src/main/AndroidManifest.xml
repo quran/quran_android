@@ -187,8 +187,6 @@
         android:excludeFromRecents="true"
         android:theme="@style/QuranDialog" />
 
-    <activity android:name=".ui.SheikhAudioManagerActivity" />
-
     <!-- override WorkManager initialization -->
     <provider
         android:name="androidx.startup.InitializationProvider"
