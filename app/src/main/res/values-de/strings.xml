@@ -16,7 +16,6 @@
   </string>
   <string name="downloadPrompt_ok">Ja</string>
   <string name="downloadPrompt_no">Nein</string>
-  <string name="downloading_title">Dateien werden heruntergeladen&#8230;</string>
   <string name="downloading_message">Bitte warten Sie bis die Dateien heruntergeladen wurden.
     Sie dürfen den Vorgang unterbrechen, falls es nötig sein sollte.
   </string>
@@ -249,9 +248,6 @@
   </string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Heruntergeladen %1$s / %2$s</string>
-  <string name="download_sura_progress">Heruntergeladen %1$s / %2$s von Sure %3$d</string>
-  <string name="download_sura_ayah_progress">Herunterladen von Sure %1$d Vers %2$d</string>
   <string name="process_progress">Datei wird verarbeitet %1$d / %2$d</string>
   <string name="download_retry">Nochmals versuchen</string>
   <string name="download_cancel">Abbrechen</string>
@@ -347,7 +343,6 @@
   <string name="prefs_highlight_bookmarks_summary">Markieren von mit Lesezeichen versehenen Ayahs beim Lesen</string>
   <string name="prefs_send_logs_title">Protokolle senden</string>
   <string name="prefs_send_logs_summary">Senden von Debug-Protokollen an den Entwickler</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_category_advanced">Erweiterte Optionen</string>
   <string name="prefs_category_advanced_summary">Lesezeichen importieren/exportieren, Koran-Datenverzeichnis festlegen usw.</string>
   <string name="prefs_import_title">Importieren</string>

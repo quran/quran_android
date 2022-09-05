@@ -9,7 +9,6 @@
     </string>
   <string name="downloadPrompt_ok">Так</string>
   <string name="downloadPrompt_no">Ні</string>
-  <string name="downloading_title">Завантаження&#8230;</string>
   <string name="downloading_message">Зачекайте, поки файли завантажаться (підтримується резюме).</string>
   <string name="extracting_title">Обробки&#8230;</string>
   <string name="menu_about">Про нас</string>
@@ -152,7 +151,6 @@
   <string name="prefs_err_moving_app_files">Не вдалося перемістити файли програм</string>
   <string name="prefs_no_enough_space_to_move_files">Недостатньо місця для переміщення файлів програм</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Режим подвійної сторінки</string>
   <string name="prefs_dual_page_mode_enabled">У альбомі дві сторінки з\'являться поруч.</string>
   <string name="prefs_dual_page_mode_disabled">У альбомі з\'явиться лише одна сторінка.</string>
@@ -233,9 +231,6 @@
   <string name="download_non_wifi_prompt">Ви не користуєтеся Wi-Fi. Завантажити дані в будь-якому випадку?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Завантажити %1$s / %2$s</string>
-  <string name="download_sura_progress">Завантажити %1$s / %2$s від Сура %3$d</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Завантаження Сура %1$d ая %2$d</string>
   <string name="process_progress">Обробка файлу %1$d / %2$d</string>
   <string name="download_retry">Повторити</string>
   <string name="download_cancel">Скасувати</string>

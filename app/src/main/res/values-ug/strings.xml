@@ -7,7 +7,6 @@
   <string name="downloadImportantPrompt">ئۈسكۈنىڭىز ئۈچۈن ئۆزى كىچىك ئەمما مۇھىم بولغان قۇرئان سۈرەتلىرىنىڭ يېڭىلانمىسى بار. بۇ ياماقنى ھازىرلا چۈشۈرەمسىز؟</string>
   <string name="downloadPrompt_ok">ھەئە</string>
   <string name="downloadPrompt_no">ياق</string>
-  <string name="downloading_title">چۈشۈرۈۋاتىدۇ…</string>
   <string name="downloading_message">ھۆججەتلەرنى چۈشۈرۈشنى كۈتۈڭ. (داۋاملاشتۇرۇشنى قوللايدۇ)</string>
   <string name="extracting_title">بىر تەرەپ قىلىۋاتىدۇ…</string>
   <string name="menu_about">بىز ھەققىدە</string>
@@ -134,7 +133,6 @@
   <string name="download_non_wifi_prompt">سىز wifi تورىدا ئەمەس. سانلىق مەلۇماتنى چۈشۈرىۋېرەمسىز؟</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">%1$s / %2$s چۈشۈرۈلدى</string>
   <string name="process_progress">بىر تەرەپ قىلىۋاتقىنى %1$d / %2$d</string>
   <string name="download_retry">قايتا سىنا</string>
   <string name="download_cancel">ۋاز كەچ</string>
@@ -203,7 +201,6 @@
   <string name="prefs_audio_manager_summary">ئاۋاز باشقۇرۇش ۋە چۈشۈرۈش</string>
   <string name="prefs_send_logs_title">خاتىرىسىنى ئەۋەتىش</string>
   <string name="prefs_megabytes_int">%1$d م ب</string>
-  <string name="prefs_megabytes_str">%s م ب</string>
   <string name="prefs_category_advanced">تېخىمۇ كۆپ تەڭشەكلەر</string>
   <string name="prefs_import_title">ئىمپورت</string>
   <string name="prefs_import_summary">خەتكۈچ ۋە خەتكۈچلەرنى ئىمپورت قىلىڭ</string>
@@ -216,8 +213,6 @@
   <string name="more_translations">تېخىمۇ كۆپ تەرجىمىلەر</string>
   <string name="warning">ئاگاھلاندۇرۇش</string>
   <string name="previous">ئالدىنقى</string>
-  <string name="download_sura_progress">چۈشۈرۈش سۈرە %3$d - %1$s / %2$s</string>
-  <string name="download_sura_ayah_progress">چۈشۈرۈش سۈرە %1$d ئايەت %2$d</string>
   <string name="recent_pages">يېقىنقى بەتلەر</string>
   <string name="stop">توختا</string>
   <string name="email_us">سوئالىڭىز يۇقىرىدىكى جاۋاب بولمىسا, قوللايدىغان quranandroid@gmail.com ئېلېكترونلۇق خەت ئەۋەتسىڭىز بولىدۇ. شۇنىڭغا دىققەت قىلىڭكى, بىز نۇرغۇن ئېلېكترونلۇق خەتلەرنى قوبۇل قىلالايمىز, شۇڭا بىز ئۇلارنىڭ ھەممىسىگە جاۋاب بېرەلمەسلىكى مۇمكىن.</string>

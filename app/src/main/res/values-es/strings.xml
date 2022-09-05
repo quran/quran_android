@@ -7,7 +7,6 @@
   <string name="downloadImportantPrompt">Hay disponible una pequeña actualización, pero importante\npara las imágenes del Corán que tienes en tu dispositivo móvil. ¿Quieres descargar \nesta actualización ahora?</string>
   <string name="downloadPrompt_ok">Si</string>
   <string name="downloadPrompt_no">No</string>
-  <string name="downloading_title">Descargando…</string>
   <string name="downloading_message">Por favor, espera a la descarga de los archivos. (La aplicación se reiniciará)</string>
   <string name="extracting_title">Procesando…</string>
   <string name="menu_about">Acerca de Nosotros</string>
@@ -136,7 +135,6 @@
   <string name="notification_download_canceled">Descarga cancelada</string>
   <string name="download_non_wifi_prompt">No estás conectado a una red WiFi. ¿Descargar los datos de todos modos?</string>
   <!--downloading dialogs-->
-  <string name="download_progress">Descargado %1$s / %2$s</string>
   <string name="process_progress">Procesando archivo %1$d / %2$d</string>
   <string name="download_retry">Reintente</string>
   <string name="download_cancel">Cancelar</string>
@@ -207,7 +205,6 @@
   <string name="prefs_send_logs_title">Enviar registros</string>
   <string name="prefs_send_logs_summary">Enviar los registros de depuración al desarrollador</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_category_advanced">Opciones avanzadas</string>
   <string name="prefs_category_advanced_summary">Importar/exportar marcadores, establecer el directorio de datos del Corán, etc.</string>
   <string name="prefs_import_title">Importar</string>
@@ -233,8 +230,6 @@
   <string name="scoped_storage_message">Debido a los cambios de Android para aumentar la privacidad del usuario, copiar archivos fuera de los directorios de la aplicación podría impedir que Quran para Android acceda a sus datos en futuras versiones de Android. Estás seguro de que quieres usar esta ruta?</string>
   <string name="please_grant_permissions">Por favor, conceda el permiso en la configuración de la aplicación</string>
   <string name="see_tafseer_of_verse">El tafser de esta ayah está incluido en el tafser de la ayah %d (Haga clic para ampliar).</string>
-  <string name="download_sura_progress">Descargado %1$s / %2$s de la sura %3$d</string>
-  <string name="download_sura_ayah_progress">Descargando la sura %1$d ayah %2$d</string>
   <string name="play_verses_range">Escucha el conjunto de ayat:</string>
   <string name="play_each_verse">repite cada Ayah:</string>
   <string name="previous">Anteriormente</string>

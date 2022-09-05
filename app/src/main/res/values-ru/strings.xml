@@ -14,7 +14,6 @@
     </string>
   <string name="downloadPrompt_ok">Да</string>
   <string name="downloadPrompt_no">Нет</string>
-  <string name="downloading_title">Загрузка &#8230;</string>
   <string name="downloading_message">Пожалуйста, дождитесь загрузки файлов (имеется возможность
         возобновить).
     </string>
@@ -192,7 +191,6 @@
   <string name="prefs_err_moving_app_files">Ошибка перемещения файлов приложения</string>
   <string name="prefs_no_enough_space_to_move_files">Недостаточно свободного места для перемещения файлов приложения</string>
   <string name="prefs_megabytes_int">%1$d Mб</string>
-  <string name="prefs_megabytes_str">%s Mб</string>
   <string name="prefs_dual_page_mode_title">Режим планшета</string>
   <string name="prefs_dual_page_mode_enabled">В альбомном режиме две страницы будут отображаться рядом друг с другом</string>
   <string name="prefs_dual_page_mode_disabled">В альбомном режиме будет отображена только одна страницы</string>
@@ -279,9 +277,6 @@
   <string name="download_non_wifi_prompt">Вы не подключены к Wi-Fi. Все равно продолжить загрузку?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Загружено %1$s / %2$s</string>
-  <string name="download_sura_progress">Загружено %1$s / %2$s суры %3$d</string>
-  <string name="download_sura_ayah_progress">Загружается сура %1$d аят %2$d</string>
   <string name="process_progress">Загрузка файла %1$d / %2$d</string>
   <string name="download_retry">Повторить</string>
   <string name="download_cancel">Отмена</string>

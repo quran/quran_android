@@ -65,15 +65,7 @@ class SheikhAudioPresenter @Inject constructor(
       }
       .filter { (_, audioDownloadMetadata) -> audioDownloadMetadata.qariId == qariId }
       .map { (downloadInfo, _) -> downloadInfo }
-      .mapNotNull {
-        val suraString = it.filename.substringBeforeLast(".")
-        val sura = suraString.toIntOrNull()
-        if (sura != null) {
-          it.asSuraDownloadedStatusEvent(sura)
-        } else {
-          null
-        }
-      }
+      .mapNotNull { it.asSuraDownloadedStatusEvent() }
   }
 
   suspend fun downloadSuras(qariId: Int, suras: List<Int>) {
@@ -125,10 +117,19 @@ class SheikhAudioPresenter @Inject constructor(
     }
   }
 
-  private fun DownloadInfo.asSuraDownloadedStatusEvent(sura: Int): SuraDownloadStatusEvent {
+  private fun DownloadInfo.asSuraDownloadedStatusEvent(): SuraDownloadStatusEvent? {
     return when (this) {
-      is DownloadInfo.DownloadComplete -> SuraDownloadStatusEvent.Downloaded(sura)
-      is DownloadInfo.DownloadError -> SuraDownloadStatusEvent.Canceled(sura)
+      is DownloadInfo.FileDownloaded -> null
+      is DownloadInfo.DownloadBatchError -> SuraDownloadStatusEvent.Error(this.errorId)
+      is DownloadInfo.DownloadBatchSuccess -> SuraDownloadStatusEvent.Done
+      is DownloadInfo.FileDownloadProgress ->
+        SuraDownloadStatusEvent.Progress(
+          this.progress,
+          this.sura ?: -1,
+          this.ayah ?: -1,
+          this.downloadedSize ?: -1,
+          this.totalSize ?: -1
+        )
     }
   }
 }

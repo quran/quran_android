@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <plurals name="audio_manager_files_downloaded">
     <item quantity="one">1 surah downloaded</item>
     <item quantity="other">%1$d surahs downloaded</item>
@@ -23,4 +23,10 @@
   <string name="audio_manager_download_all">Download all</string>
   <string name="audio_manager_download_selection">Download selection</string>
   <string name="audio_manager_delete_selection">Delete selection</string>
+
+  <string name="downloading_title">Downloading&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">Downloaded %1$s / %2$s</string>
+  <string name="download_sura_progress">Downloaded %1$s / %2$s of surah %3$d</string>
+  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Downloading surah %1$d ayah %2$d</string>
 </resources>

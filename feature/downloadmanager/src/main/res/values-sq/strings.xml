@@ -23,4 +23,10 @@
   <string name="audio_manager_download_all">Shkarko të gjitha</string>
   <string name="audio_manager_download_selection">Përzgjedhja e shkarkimit</string>
   <string name="audio_manager_delete_selection">Elemino përzgjedhjen</string>
+
+  <string name="downloading_title">Shkarkim&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">Shkarkuar %1$s / %2$s</string>
+  <string name="download_sura_progress">Shkarkuar %1$s / %2$s e sures %3$d</string>
+  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Duke shkarkuar sura %1$d ayah %2$d</string>
 </resources>

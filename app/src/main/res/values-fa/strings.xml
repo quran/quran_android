@@ -5,7 +5,6 @@
   <string name="downloadPrompt">برای عملکرد بهینه بایستی تعدادی فایل از اینترنت دریافت گردد. این کار قدری طول خواهد کشید. آیا آمادگی این کار را دارید؟</string>
   <string name="downloadPrompt_ok">بلی</string>
   <string name="downloadPrompt_no">خیر</string>
-  <string name="downloading_title">بارگذاری…</string>
   <string name="downloading_message">لطفاً برای بارگذاری فایل‌ها صبر نمایید. (از ازسرگیری پشتیبانی می‌شود.(</string>
   <string name="extracting_title">در حال پردازش…</string>
   <string name="menu_about">درباره ما</string>
@@ -141,7 +140,6 @@
   <string name="download_non_wifi_prompt">شبکه بی‌سیم قطع است. بارگذاری انجام شود؟</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">بارگذاری %1$s / %2$s</string>
   <string name="process_progress">در حال پردازش %1$d / %2$d</string>
   <string name="download_retry">تلاش دوباره</string>
   <string name="download_cancel">لغو</string>
@@ -196,7 +194,6 @@
 
   <string name="downloadImportantPrompt">یک به‌روزرسانی کوچک اما مهم برای تصاویر قرآن وجود دارد. آیا مایل‌اید این وصله را بارگذاری نمایید؟</string>
   <string name="download_extra_data">برای عملکرد مناسب امکانات اشتراک‌گذاری و ترجمه باید یکی دو فایل را بارگذاری نمایید. موافق‌اید؟</string>
-  <string name="download_sura_progress">بارگذاری %1$s / %2$s از سوره %3$d</string>
   <string name="export_data_error">خطا در برون‌بُرد داده‌ها</string>
   <string name="exported_data">بُرون‌برد به %1$s انجام گرفت.</string>
   <string name="get_translations">دریافت ترجمه‌ها</string>
@@ -253,7 +250,6 @@
   <string name="sdcard_error">کارت حافظه یافت نشد. آن را دوباره در دستگاه قرار داده و بار دیگر امتحان نمایید.</string>
   <string name="undo">واگرد</string>
   <string name="warning">هشدار</string>
-  <string name="download_sura_ayah_progress">بارگذاری سوره %1$d آیه %2$d</string>
 
   <!-- m permissions stuff -->
   <string name="storage_permission_rationale">برنامه قرآن برای ذخیره داده‌ها در حافظه خارجی

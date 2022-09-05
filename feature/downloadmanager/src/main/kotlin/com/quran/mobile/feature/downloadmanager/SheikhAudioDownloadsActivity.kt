@@ -15,12 +15,14 @@ import androidx.compose.ui.Modifier
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInterface
-import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraForQari
-import com.quran.mobile.feature.downloadmanager.presenter.SheikhAudioPresenter
-import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.RemoveConfirmationDialog
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhDownloadDialog
+import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraDownloadStatusEvent
+import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraForQari
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraOption
 import com.quran.mobile.feature.downloadmanager.presenter.SearchTextUtil
+import com.quran.mobile.feature.downloadmanager.presenter.SheikhAudioPresenter
+import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.DownloadProgressDialog
+import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.RemoveConfirmationDialog
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.SheikhDownloadToolbar
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.SheikhSuraInfoList
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.SuraRangeDialog
@@ -65,7 +67,14 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
       val singleItemState = remember { mutableStateOf<SuraForQari?>(null) }
       val selectionState = remember { mutableStateOf(listOf<SuraForQari>()) }
       val sheikhDownloadsState = sheikhDownloadsFlow.collectAsState(null)
-      val currentDialog = remember { mutableStateOf(SheikhDownloadDialog.NONE)}
+      val currentDialog = remember { mutableStateOf(SheikhDownloadDialog.NONE) }
+      val shouldWaitForDownloadStateDialog = remember { mutableStateOf(false) }
+
+      val downloadProgressState =
+        sheikhAudioPresenter.subscribeToDownloadInfo(qariId).collectAsState(null)
+      if (downloadProgressState.value !is SuraDownloadStatusEvent.Done) {
+        shouldWaitForDownloadStateDialog.value = false
+      }
 
       QuranTheme {
         val selectionInfo = selectionState.value
@@ -88,6 +97,9 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
                 } else {
                   onDownloadSelected(selectionInfo)
                   selectionState.value = emptyList()
+                  shouldWaitForDownloadStateDialog.value =
+                    downloadProgressState.value is SuraDownloadStatusEvent.Done
+                  currentDialog.value = SheikhDownloadDialog.DOWNLOAD_STATUS
                 }
               },
               eraseAction = {
@@ -120,6 +132,9 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
                     currentDialog.value = SheikhDownloadDialog.REMOVE_CONFIRMATION
                   } else {
                     onDownloadSelected(listOf(it))
+                    shouldWaitForDownloadStateDialog.value =
+                      downloadProgressState.value is SuraDownloadStatusEvent.Done
+                    currentDialog.value = SheikhDownloadDialog.DOWNLOAD_STATUS
                   }
                 }
               )
@@ -151,10 +166,21 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
                   }
                   onDownloadSelected(toDownload)
                   selectionState.value = emptyList()
+                  shouldWaitForDownloadStateDialog.value =
+                    downloadProgressState.value is SuraDownloadStatusEvent.Done
+                  currentDialog.value = SheikhDownloadDialog.DOWNLOAD_STATUS
                 },
                 onDismiss = { currentDialog.value = SheikhDownloadDialog.NONE }
               )
-            SheikhDownloadDialog.DOWNLOAD_STATUS -> {}
+            SheikhDownloadDialog.DOWNLOAD_STATUS ->
+              if (!shouldWaitForDownloadStateDialog.value) {
+                DownloadProgressDialog(
+                  currentEvent = downloadProgressState.value,
+                  onDownloadDone = { currentDialog.value = SheikhDownloadDialog.NONE },
+                  onDownloadError = {},
+                  onCancel = {}
+                )
+              }
             SheikhDownloadDialog.NONE -> {}
           }
         }

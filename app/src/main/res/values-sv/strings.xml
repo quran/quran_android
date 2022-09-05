@@ -9,7 +9,6 @@
     </string>
   <string name="downloadPrompt_ok">Ja</string>
   <string name="downloadPrompt_no">Ingen</string>
-  <string name="downloading_title">Nedladdning av&#8230;</string>
   <string name="downloading_message">Vänta tills filerna har laddats ner (återupptas).</string>
   <string name="extracting_title">Bearbetning&#8230;</string>
   <string name="menu_about">Om oss</string>
@@ -151,7 +150,6 @@
   <string name="prefs_err_moving_app_files">Misslyckades med att flytta appfiler</string>
   <string name="prefs_no_enough_space_to_move_files">Otillräckligt utrymme för att flytta appfiler</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Läge med dubbla sidor</string>
   <string name="prefs_dual_page_mode_enabled">I liggande format visas två sidor sida vid sida.</string>
   <string name="prefs_dual_page_mode_disabled">I liggande läge visas endast en sida.</string>
@@ -232,9 +230,6 @@
   <string name="download_non_wifi_prompt">Du har inte tillgång till Wi-Fi. Hämta data ändå?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Nedladdat %1$s / %2$s</string>
-  <string name="download_sura_progress">Nedladdat %1$s / %2$s av surah %3$d</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Hämta surah %1$d ayah %2$d</string>
   <string name="process_progress">Bearbetning av fil %1$d / %2$d</string>
   <string name="download_retry">Försök igen</string>
   <string name="download_cancel">Avbryt</string>

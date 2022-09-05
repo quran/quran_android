@@ -7,7 +7,6 @@
   <string name="downloadImportantPrompt">มีการอัปเดตเล็กน้อย แต่สําคัญสําหรับภาพอัลกุรอานที่คุณมีบนอุปกรณ์ของคุณ คุณต้องการดาวน์โหลดโปรแกรมแก้ไขนี้เดี๋ยวนี้หรือไม่</string>
   <string name="downloadPrompt_ok">ใช่</string>
   <string name="downloadPrompt_no">ไม่ใช่</string>
-  <string name="downloading_title">ดาวน์โหลด&#8230;</string>
   <string name="downloading_message">โปรดรอให้แฟ้มดาวน์โหลด (สนับสนุนต่อ)</string>
   <string name="extracting_title">ประมวล ผล&#8230;</string>
   <string name="menu_about">เกี่ยวกับเรา</string>
@@ -143,7 +142,6 @@
   <string name="prefs_err_moving_app_files">ไม่สามารถย้ายไฟล์แอปได้</string>
   <string name="prefs_no_enough_space_to_move_files">มีเนื้อที่ไม่เพียงพอที่จะย้ายไฟล์แอป</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">โหมดหน้าคู่</string>
   <string name="prefs_dual_page_mode_enabled">ในแนวนอน จะมีสองหน้าปรากฏเคียงข้างกัน</string>
   <string name="prefs_dual_page_mode_disabled">ในแนวนอน จะปรากฏเพียงหน้าเดียว</string>
@@ -224,9 +222,6 @@
   <string name="download_non_wifi_prompt">คุณไม่ได้ใช้ Wi-Fi ดาวน์โหลดข้อมูลต่อไปหรือไม่?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">ดาวน์โหลด %1$s / %2$s</string>
-  <string name="download_sura_progress">ดาวน์โหลด %1$s / %2$s ของซูเราะฮฺ %3$d</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">กําลังดาวน์โหลดซูเราะฮฺ %1$d อายะห์ %2$d</string>
   <string name="process_progress">กําลังประมวลผลไฟล์ %1$d / %2$d</string>
   <string name="download_retry">ลอง</string>
   <string name="download_cancel">ยกเลิก</string>

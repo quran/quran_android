@@ -6,7 +6,6 @@
 		</string>
   <string name="downloadPrompt_ok">بەڵێ</string>
   <string name="downloadPrompt_no">نەخێر</string>
-  <string name="downloading_title">داگرتن&#8230;</string>
   <string name="downloading_message">تکایە چاوەڕوانبە ھەتا فایلەکان دادەگیرێت. (پشگیری بەردەوامبون دەکرێت)</string>
   <string name="extracting_title">ئەنجامدان&#8230;</string>
   <string name="menu_about">دەربارەی ئێمە</string>
@@ -158,7 +157,6 @@
   <string name="download_non_wifi_prompt">تۆ لەسەر تۆڕی بێتەل نیت WiFi. داگرتن بەهەرحاڵ؟</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">داگیرا %1$s / %2$s</string>
   <string name="process_progress">ئەنجامدان %1$d / %2$d</string>
   <string name="download_retry">ھەوڵدانەوە</string>
   <string name="download_cancel">پاشگەزبونەوە</string>
@@ -233,7 +231,6 @@
   <string name="prefs_send_logs_title">ناردنی لۆگەکان</string>
   <string name="prefs_send_logs_summary">ناردنی لۆگەکانی دیباگ بۆ گەشەپێدەرەکە</string>
   <string name="prefs_calculating_app_size">ژماردنی قەبارەی کاربەرنامە</string>
-  <string name="prefs_megabytes_str">%s م ب</string>
   <string name="prefs_dual_page_mode_title">مۆدی پەڕەی دووانی</string>
   <string name="prefs_dual_page_mode_enabled">لە دیمەنی سروشتیدا، دوو لاپەرە شان بە شان دەردەکەون.</string>
   <string name="prefs_dual_page_mode_disabled">لە دیمەنی سروشتیدا، تەنها یەک لاپەڕە دەردەکەوێت.</string>
@@ -266,8 +263,6 @@
   <string name="see_tafseer_of_verse">ئەم تەفسیفەی ئایەتە لەگەڵ تەفسیری ئەی ئەیە %d (کرتە بکە بۆ فراوانکردن).</string>
   <string name="quran_ayah_details">%1$s - آية %2$s، جزء %3$s</string>
   <string name="sdcard_error">ناتوانێت کارتی SD بدۆزێتەوە. تکایە بیکەوە و دووبارە هەوڵ بدە.</string>
-  <string name="download_sura_progress">داگرتنی %1$s / %2$s سورەتی %3$d</string>
-  <string name="download_sura_ayah_progress">داگرتنی سورەتی %1$d آية %2$d</string>
   <string name="play_restrict_range">تەنیا گوێ لە ئایەتەکانی سەرەوە بگرن</string>
   <string name="play_verses_range">گوێ لە کۆمەڵە ئایەتێک بگرە:</string>
   <string name="play_each_verse">گوێ لە هەر ئایەتێک بگرە:</string>

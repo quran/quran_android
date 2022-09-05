@@ -14,7 +14,6 @@
         este patch agora?</string>
   <string name="downloadPrompt_ok">Sim</string>
   <string name="downloadPrompt_no">Não</string>
-  <string name="downloading_title">Baixando&#8230;</string>
   <string name="downloading_message">Por favor aguarde o download dos aqruivos. (Resumo permitido)</string>
   <string name="extracting_title">Procesando&#8230;</string>
   <string name="menu_about">Sobre Nos</string>
@@ -176,7 +175,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="download_non_wifi_prompt">Voce não está no wifi. Deseja realmente baixar os dados?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Baixado %1$s / %2$s</string>
   <string name="process_progress">Procesando arquivo %1$d / %2$d</string>
   <string name="download_retry">Tentar Novamente</string>
   <string name="download_cancel">Cancelar</string>
@@ -276,8 +274,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="see_tafseer_of_verse">Este tafseer de ayah está incluído com o tafseer de ayah %d (Clique para expandir).</string>
   <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
   <string name="sdcard_error">Não foi possível encontrar o cartão SD. Por favor, monte-o e tente novamente.</string>
-  <string name="download_sura_progress">Transferido %1$s / %2$s de surah %3$d</string>
-  <string name="download_sura_ayah_progress">Baixar sura %1$d ayah %2$d</string>
   <string name="play_restrict_range">Toque apenas o ayat acima</string>
   <string name="play_verses_range">Ouça o conjunto de ayat:</string>
   <string name="play_each_verse">Ouça cada ayah:</string>

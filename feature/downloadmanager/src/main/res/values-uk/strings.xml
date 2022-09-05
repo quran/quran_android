@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
   <plurals name="audio_manager_files_downloaded">
     <item quantity="one">%1$d Сура завантажено</item>
     <item quantity="few">%1$d Сури завантажено</item>
@@ -26,4 +26,10 @@
   <string name="audio_manager_download_all">Завантажити всі</string>
   <string name="audio_manager_download_selection">Завантажити вибір</string>
   <string name="audio_manager_delete_selection">Видалити виділений фрагмент</string>
+
+  <string name="downloading_title">Завантаження&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">Завантажити %1$s / %2$s</string>
+  <string name="download_sura_progress">Завантажити %1$s / %2$s від Сура %3$d</string>
+  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Завантаження Сура %1$d ая %2$d</string>
 </resources>

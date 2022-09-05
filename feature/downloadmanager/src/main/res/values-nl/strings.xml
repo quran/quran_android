@@ -19,4 +19,10 @@ Yasser Baghouli (zaterdag@outlook.com)
   <string name="audio_manager_download_all">Alles downloaden</string>
   <string name="audio_manager_download_selection">Selectie downloaden</string>
   <string name="audio_manager_delete_selection">Selectie verwijderen</string>
+
+  <string name="downloading_title">Downloaden&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">%1$s Gedowload van %2$s</string>
+  <string name="download_sura_progress">%1$s Gedowload van %2$s van soera %3$d</string>
+  <string name="download_sura_ayah_progress">Downloaden van Soera %1$d ayah %2$d</string>
 </resources>

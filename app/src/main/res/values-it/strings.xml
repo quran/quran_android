@@ -3,7 +3,6 @@
   <string name="app_name">Corano</string>
   <string name="downloadPrompt_ok">Sì</string>
   <string name="downloadPrompt_no">No</string>
-  <string name="downloading_title">Scaricare&#8230;</string>
   <string name="extracting_title">Elaborazione&#8230;</string>
   <string name="menu_settings">Impostazioni</string>
   <string name="menu_bookmarks">Segnalibri</string>
@@ -156,9 +155,6 @@
   <string name="remove_dlg_msg">Sei sicuro di voler rimuovere il %1$s</string>
   <string name="email_us">Se la tua domanda non trova risposta qui sopra, puoi inviare un\'email a quranandroid@gmail.com per il supporto. Si prega di notare che riceviamo molte e-mail, quindi potremmo non essere in grado di rispondere a tutte.</string>
   <string name="notification_download_canceled">Scaricare annullato</string>
-  <string name="download_progress">Scaricato %1$s / %2$s</string>
-  <string name="download_sura_progress">Scaricato %1$s / %2$s di Sura %3$d</string>
-  <string name="download_sura_ayah_progress">Scaricare la Sura %1$d Ayah %2$d</string>
   <string name="process_progress">Elaborazione del file %1$d / %2$d</string>
   <string name="download_error_general">Scaricare fallito</string>
   <string name="download_successful">Scarica il successo</string>

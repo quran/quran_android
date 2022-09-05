@@ -9,7 +9,6 @@
     </string>
   <string name="downloadPrompt_ok">Po.</string>
   <string name="downloadPrompt_no">Jo</string>
-  <string name="downloading_title">Shkarkim&#8230;</string>
   <string name="downloading_message">Ju lutem prisni që skedarët të shkarkohen (rinisja e suportuar).</string>
   <string name="extracting_title">Përpunim&#8230;</string>
   <string name="menu_about">Rreth nesh</string>
@@ -152,7 +151,6 @@
   <string name="prefs_err_moving_app_files">I pamundur lëvizja e skedarëve të app</string>
   <string name="prefs_no_enough_space_to_move_files">Hapësirë e pamjaftueshme për të lëvizur skedarët e app</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Modaliteti i faqes së dyfishtë</string>
   <string name="prefs_dual_page_mode_enabled">Në peizazh, dy faqe do të shfaqen krah për krah.</string>
   <string name="prefs_dual_page_mode_disabled">Në peizazh do të shfaqet vetëm një faqe.</string>
@@ -233,9 +231,6 @@
   <string name="download_non_wifi_prompt">Ti nuk je në Wi-Fi. Shkarko të dhëna gjithsesi?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Shkarkuar %1$s / %2$s</string>
-  <string name="download_sura_progress">Shkarkuar %1$s / %2$s e sures %3$d</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Duke shkarkuar sura %1$d ayah %2$d</string>
   <string name="process_progress">Përpunimi i file %1$d / %2$d</string>
   <string name="download_retry">Ritry</string>
   <string name="download_cancel">Anulo</string>

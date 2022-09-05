@@ -215,14 +215,14 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
       String message;
       if (currentSura < 1) {
         message = String.format(
-            mContext.getString(R.string.download_progress),
+            mContext.getString(com.quran.mobile.feature.downloadmanager.R.string.download_progress),
             downloaded, total);
       } else if (currentAyah <= 0) {
         message = String.format(
-            mContext.getString(R.string.download_sura_progress),
+            mContext.getString(com.quran.mobile.feature.downloadmanager.R.string.download_sura_progress),
             downloaded, total, currentSura);
       } else {
-        message = String.format(mContext.getString(R.string.download_sura_ayah_progress),
+        message = String.format(mContext.getString(com.quran.mobile.feature.downloadmanager.R.string.download_sura_ayah_progress),
             currentSura, currentAyah);
       }
       mProgressDialog.setMessage(message);

@@ -11,23 +11,38 @@ import android.os.Parcelable
 sealed class DownloadInfo {
   abstract val key: String
   abstract val type: Int
-  abstract val filename: String
   abstract val metadata: Parcelable?
 
-  data class DownloadComplete(
+  data class DownloadBatchSuccess(
     override val key: String,
     override val type: Int,
-    override val filename: String,
     override val metadata: Parcelable?
   ) : DownloadInfo()
 
-  data class DownloadError(
+  data class DownloadBatchError(
     override val key: String,
     override val type: Int,
-    override val filename: String,
     override val metadata: Parcelable?,
-    val errorId: Int,
+    val errorId: Int
   ) : DownloadInfo()
 
-  // TODO: In the future, should add DownloadStarted, DownloadProgress
+  data class FileDownloaded(
+    override val key: String,
+    override val type: Int,
+    override val metadata: Parcelable?,
+    val filename: String,
+    val sura: Int?,
+    val ayah: Int?
+  ) : DownloadInfo()
+
+  data class FileDownloadProgress(
+    override val key: String,
+    override val type: Int,
+    override val metadata: Parcelable?,
+    val progress: Int,
+    val sura: Int?,
+    val ayah: Int?,
+    val downloadedSize: Long?,
+    val totalSize: Long?
+  ) : DownloadInfo()
 }

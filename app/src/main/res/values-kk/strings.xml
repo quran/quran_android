@@ -11,7 +11,6 @@
     </string>
   <string name="downloadPrompt_ok">Иә</string>
   <string name="downloadPrompt_no">Жоқ</string>
-  <string name="downloading_title">Жүктеу&#8230;</string>
   <string name="downloading_message">Файлдар толық жазылғанша күтіңіз</string>
   <string name="extracting_title">Шығару&#8230;</string>
   <string name="menu_about">Бағдарлама туралы</string>
@@ -166,7 +165,6 @@
   <string name="prefs_err_moving_app_files">Файлдарды көшіру барсындағы қателік</string>
   <string name="prefs_no_enough_space_to_move_files">Файлдарды көшіруге бос орын жетпейді</string>
   <string name="prefs_megabytes_int">%1$d Mб</string>
-  <string name="prefs_megabytes_str">%s Mб</string>
   <string name="prefs_dual_page_mode_title">Планшет режимі</string>
   <string name="prefs_dual_page_mode_enabled">Көлденең режимде екі бет қатарынан көрсетіледі.</string>
   <string name="prefs_dual_page_mode_disabled">Көлденең режимде тек бір бет көрсетіледі.</string>
@@ -233,9 +231,6 @@
   <string name="download_non_wifi_prompt">Wi-Fi қосылмаған. Бәрібір жүктелсін бе?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">%1$s/%2$s жүктелді</string>
-  <string name="download_sura_progress">%3$d-сүренің %1$s жүктелді (барлығы: %2$s)&#8230;</string>
-  <string name="download_sura_ayah_progress">%1$d-сүре %2$d-аят жүктелуде&#8230;</string>
   <string name="process_progress">%1$d/%2$d жүктелді</string>
   <string name="download_retry">Қайталау</string>
   <string name="download_cancel">Болдырмау</string>

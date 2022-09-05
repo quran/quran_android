@@ -10,7 +10,6 @@
   <string name="downloadImportantPrompt">"Kur'an resim dosyaları için küçük ama önemli bir güncelleme var. Bu güncellemeyi indirmek istiyor musunuz?"</string>
   <string name="downloadPrompt_ok">Evet</string>
   <string name="downloadPrompt_no">Hayır</string>
-  <string name="downloading_title">Yükleniyor&#8230;</string>
   <string name="downloading_message">Lütfen dosyaların indirilmesi için bekleyin</string>
   <string name="extracting_title">İşlem yapılıyor&#8230;</string>
   <string name="menu_jump">Atla</string>
@@ -153,7 +152,6 @@
   <string name="prefs_err_moving_app_files">Uygulama dosyalarını taşınamadı</string>
   <string name="prefs_no_enough_space_to_move_files">Uygulamayı taşımak için yeterli boş alan bulunamadı</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_page_type_title">Sayfa türü (deneysel)</string>
   <string name="prefs_page_type_summary">Okuma sayfası türünü seçin</string>
 
@@ -225,9 +223,6 @@
   <string name="download_non_wifi_prompt">Kablosuz bağlantı mevctu değil. Yine de indirmek istiyor musunuz?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">%1$s / %2$s indirildi</string>
-  <string name="download_sura_progress">%3$d suresinin %1$s / %2$s indirildi</string>
-  <string name="download_sura_ayah_progress">%1$d suresi %2$d. âyet indiriliyor</string>
   <string name="process_progress"> %1$d / %2$d dosya işleniyor</string>
   <string name="download_retry">Tekrar dene</string>
   <string name="download_cancel">İptal</string>

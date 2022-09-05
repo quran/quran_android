@@ -6,7 +6,6 @@
 		</string>
   <string name="downloadPrompt_ok">确认</string>
   <string name="downloadPrompt_no">取消</string>
-  <string name="downloading_title">下载中&#8230;</string>
   <string name="downloading_message">文件下载中，请等待。（支持续传）</string>
   <string name="extracting_title">处理中&#8230;</string>
   <string name="menu_about">关于</string>
@@ -147,7 +146,6 @@
   <string name="download_non_wifi_prompt">没有连接到wifi. 要继续下载吗？</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">已下载 %1$s / %2$s</string>
   <string name="process_progress">正在处理文件 %1$d / %2$d</string>
   <string name="download_retry">重试</string>
   <string name="download_cancel">取消</string>

@@ -6,15 +6,18 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.util.NotificationChannelUtil;
 import com.quran.mobile.common.download.DownloadInfo;
 import com.quran.mobile.common.download.DownloadInfoStreams;
-import com.quran.labs.androidquran.util.NotificationChannelUtil;
+
 import timber.log.Timber;
 
 public class QuranDownloadNotifier {
@@ -158,6 +161,19 @@ public class QuranDownloadNotifier {
         appContext.getString(R.string.downloading_title),
         DOWNLOADING_NOTIFICATION, true, max, progress, isIndeterminate, !isForeground);
 
+    final DownloadInfo downloadInfo =
+        new DownloadInfo.FileDownloadProgress(
+            details.key,
+            details.type,
+            details.metadata,
+            isIndeterminate ? -1 : progress,
+            details.sura > 0 ? details.sura : null,
+            details.ayah > 0 ? details.ayah : null,
+            isIndeterminate ? null : downloadedSize,
+            isIndeterminate ? null : totalSize
+        );
+    downloadInfoStreams.emitEvent(downloadInfo);
+
     // send broadcast
     Intent progressIntent = new Intent(ProgressIntent.INTENT_NAME);
     progressIntent.putExtra(ProgressIntent.NAME, details.title);
@@ -215,15 +231,17 @@ public class QuranDownloadNotifier {
     showNotification(details.title, successString,
         DOWNLOADING_COMPLETE_NOTIFICATION, false, false);
 
-    // no emission via downloadInfoStreams here since notifyFileDownloaded is used instead
-    // otherwise we'd duplicate - today, for range downloads, this is called only once.
-    // the notifyFileDownloaded version would call for any file completion.
+    // this emission is once per set of downloads (per batch). notifyFileDownload is per file.
+    final DownloadInfo downloadInfo =
+        new DownloadInfo.DownloadBatchSuccess(details.key, details.type, details.metadata);
+    downloadInfoStreams.emitEvent(downloadInfo);
+
 
     return broadcastDownloadSuccessful(details);
   }
 
   public void notifyFileDownloaded(NotificationDetails details, String filename) {
-    final DownloadInfo downloadInfo = new DownloadInfo.DownloadComplete(details.key, details.type, filename, details.metadata);
+    final DownloadInfo downloadInfo = new DownloadInfo.FileDownloaded(details.key, details.type, details.metadata, filename, details.sura, details.ayah);
     downloadInfoStreams.emitEvent(downloadInfo);
   }
 
@@ -281,7 +299,7 @@ public class QuranDownloadNotifier {
 
     if (isFatal) {
       final DownloadInfo downloadInfo =
-          new DownloadInfo.DownloadError(details.key, details.type, filename, details.metadata, errorCode);
+          new DownloadInfo.DownloadBatchError(details.key, details.type, details.metadata, errorCode);
       downloadInfoStreams.emitEvent(downloadInfo);
     }
 

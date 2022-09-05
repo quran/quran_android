@@ -9,7 +9,6 @@
     </string>
   <string name="downloadPrompt_ok">Tak</string>
   <string name="downloadPrompt_no">Nie</string>
-  <string name="downloading_title">Ściąganie&#8230;</string>
   <string name="downloading_message">Proszę poczekać na pobranie plików (obsługiwane jest wznawianie).</string>
   <string name="extracting_title">Przetwarzanie&#8230;</string>
   <string name="menu_about">O nas</string>
@@ -151,7 +150,6 @@
   <string name="prefs_err_moving_app_files">Nie udało się przenieść plików aplikacji</string>
   <string name="prefs_no_enough_space_to_move_files">Niewystarczająca ilość miejsca na przeniesienie plików aplikacji</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Tryb podwójnej strony</string>
   <string name="prefs_dual_page_mode_enabled">W trybie poziomym dwie strony będą wyświetlane obok siebie.</string>
   <string name="prefs_dual_page_mode_disabled">W trybie poziomym wyświetlana jest tylko jedna strona.</string>
@@ -232,9 +230,6 @@
   <string name="download_non_wifi_prompt">Nie masz połączenia z siecią Wi-Fi. I tak pobierasz dane?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Pobrano %1$s / %2$s</string>
-  <string name="download_sura_progress">Pobrano %1$s / %2$s z sura %3$d</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Pobieranie sura %1$d ayah %2$d</string>
   <string name="process_progress">Plik przetwarzania %1$d / %2$d</string>
   <string name="download_retry">Spróbować ponownie</string>
   <string name="download_cancel">Anuluj</string>

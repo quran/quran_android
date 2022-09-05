@@ -15,7 +15,6 @@
     </string>
   <string name="downloadPrompt_ok">Da</string>
   <string name="downloadPrompt_no">Ne</string>
-  <string name="downloading_title">Preuzimanje&#8230;</string>
   <string name="downloading_message">Molimo sačekajte da se datoteke preuzmu (nastavak podržan).</string>
   <string name="extracting_title">Obrada&#8230;</string>
   <string name="menu_about">O nama</string>
@@ -164,7 +163,6 @@
   <string name="prefs_err_moving_app_files">Premeštanje datoteka aplikacije nije uspelo</string>
   <string name="prefs_no_enough_space_to_move_files">Nedovoljno prostora za pomeranje datoteka aplikacije</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Prikaz dve stranica na zaslonu </string>
   <string name="prefs_dual_page_mode_enabled">U horizontalnom položaju će biti prikazane dve stranice jedna do druge.</string>
   <string name="prefs_dual_page_mode_disabled">Horizontalno će se prikazivati samo jedna stranica.</string>
@@ -241,9 +239,6 @@
   <string name="download_non_wifi_prompt">Wi-Fi vam nije uključen. Ipak preuzeti datoteke?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Preuzeto %1$s / %2$s</string>
-  <string name="download_sura_progress">Preuzeto %1$s / %2$s %3$d. sure</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Preuzimanje %2$d. ajeta %1$d. sure</string>
   <string name="process_progress">Procesiranje datoteke %1$d / %2$d</string>
   <string name="download_retry">Ponovi</string>
   <string name="download_cancel">Otkaži</string>

@@ -29,4 +29,10 @@
   <string name="audio_manager_download_all">Скачать все</string>
   <string name="audio_manager_download_selection">Скачать выбранные</string>
   <string name="audio_manager_delete_selection">Удалить выбранные</string>
+
+  <string name="downloading_title">Загрузка &#8230;</string>
+  <string name="download_amount_in_megabytes">%s Mб</string>
+  <string name="download_progress">Загружено %1$s / %2$s</string>
+  <string name="download_sura_progress">Загружено %1$s / %2$s суры %3$d</string>
+  <string name="download_sura_ayah_progress">Загружается сура %1$d аят %2$d</string>
 </resources>

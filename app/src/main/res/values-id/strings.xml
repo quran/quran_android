@@ -14,7 +14,6 @@
   <string name="downloadPrompt_title">Unduh Berkas yang Diperlukan?</string>
   <string name="downloadPrompt_ok">Ya</string>
   <string name="downloadPrompt_no">Tidak</string>
-  <string name="downloading_title">Mengunduh&#8230;</string>
   <string name="downloading_message">Harap tunggu berkas selesai diunduh (bisa dijeda).</string>
   <string name="extracting_title">Membongkar&#8230;</string>
   <string name="menu_about">Tentang Kami</string>
@@ -162,7 +161,6 @@
   <string name="prefs_err_moving_app_files">Gagal memindahkan berkas aplikasi</string>
   <string name="prefs_no_enough_space_to_move_files">Ruang tak mencukupi untuk memindahkan berkas aplikasi</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Mode Tablet</string>
   <string name="prefs_dual_page_mode_enabled">Saat tampilan mendatar, dua halaman saling bersandingan.</string>
   <string name="prefs_dual_page_mode_disabled">Saat tampilan mendatar, hanya satu halaman yang muncul.</string>
@@ -230,9 +228,6 @@
   <string name="download_non_wifi_prompt">Anda tidak tersambung ke Wi-Fi. Tetap unduh datanya?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Telah mengunduh %1$s / %2$s</string>
-  <string name="download_sura_progress">Telah mengunduh %1$s / %2$s dari surat %3$d</string>
-  <string name="download_sura_ayah_progress">Mengunduh surat %1$d ayat %2$d</string>
   <string name="process_progress">Memproses berkas %1$d / %2$d</string>
   <string name="download_retry">Coba Lagi</string>
   <string name="download_cancel">Batalkan</string>

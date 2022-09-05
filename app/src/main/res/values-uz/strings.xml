@@ -10,7 +10,6 @@
         Yangilangan fayllarni hozir saqlab olasizmi?</string>
   <string name="downloadPrompt_ok">Ha</string>
   <string name="downloadPrompt_no">Yoʻq</string>
-  <string name="downloading_title">Saqlanmoqda&#8230;</string>
   <string name="downloading_message">Iltimos, fayllar toʻliq saqlanib olinguncha biroz kutib turing.</string>
   <string name="extracting_title">Ishlanmoqda&#8230;</string>
   <string name="menu_about">Ilova haqida</string>
@@ -170,7 +169,6 @@
   <string name="prefs_err_moving_app_files">Fayllarni koʻchirib oʻtkazishda xatolik yuz berdi</string>
   <string name="prefs_no_enough_space_to_move_files">Fayllarni koʻchirib oʻtkazish uchun yetarli joy mavjud emas</string>
   <string name="prefs_megabytes_int">%1$d Mb</string>
-  <string name="prefs_megabytes_str">%s Mb</string>
   <string name="prefs_dual_page_mode_title">Juft sahifa rejimi</string>
   <string name="prefs_dual_page_mode_enabled">Yotiq holatda ikki sahifa yonma-yon koʻrinadi</string>
   <string name="prefs_dual_page_mode_disabled">Yotiq holatda ham faqat bitta sahifa koʻrinadi</string>
@@ -255,9 +253,6 @@
   <string name="download_non_wifi_prompt">Wi-Fi tarmogʻiga ulanmagansiz, baribir fayllarni saqlab olmoqchimisiz?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">%1$s/%2$s saqlandi</string>
-  <string name="download_sura_progress">%3$d-suraning %1$s (jami: %2$s) saqlanmoqda&#8230;</string>
-  <string name="download_sura_ayah_progress">%1$d-sura %2$d-oyat saqlanmoqda&#8230;</string>
   <string name="process_progress">%1$d/%2$d ishlandi</string>
   <string name="download_retry">Qayta harakat qilish</string>
   <string name="download_cancel">Bekor qilish</string>

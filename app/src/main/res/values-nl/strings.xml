@@ -16,7 +16,6 @@ Yasser Baghouli (zaterdag@outlook.com)
     </string>
   <string name="downloadPrompt_ok">Ja</string>
   <string name="downloadPrompt_no">Nee</string>
-  <string name="downloading_title">Downloaden&#8230;</string>
   <string name="downloading_message">Wacht tot de bestanden zijn gedownload (CV ondersteund).</string>
   <string name="extracting_title">Verwerken&#8230;</string>
   <string name="menu_about">Over Ons</string>
@@ -157,7 +156,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="prefs_err_moving_app_files">Kan app bestanden niet verplaatsen</string>
   <string name="prefs_no_enough_space_to_move_files">Onvoldoende ruimte om app bestanden te verplaatsen</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Tablet Mode</string>
   <string name="prefs_dual_page_mode_enabled">In landscape, worden twee pagina\'s naast elkaar weergegeven.</string>
   <string name="prefs_dual_page_mode_disabled">In landscape, zal slechts één pagina verschijnen.</string>
@@ -223,9 +221,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="download_non_wifi_prompt">Je maak geen gebruik van Wifi. Toch gegevens downloaden?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">%1$s Gedowload van %2$s</string>
-  <string name="download_sura_progress">%1$s Gedowload van %2$s van soera %3$d</string>
-  <string name="download_sura_ayah_progress">Downloaden van Soera %1$d ayah %2$d</string>
   <string name="process_progress">Processing file %1$d / %2$d</string>
   <string name="download_retry">Probeer opnieuw</string>
   <string name="download_cancel">Annuleren</string>
