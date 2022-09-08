@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.service.util
 
 import android.content.Context
+import android.content.Intent
 import com.quran.data.core.QuranFileManager
 import com.quran.data.core.QuranInfo
 import com.quran.data.di.AppScope
@@ -43,6 +44,13 @@ class DownloadStarter @Inject constructor(
       putExtra(QuranDownloadService.EXTRA_END_VERSE, SuraAyah(endSura, quranInfo.getNumberOfAyahs(endSura)))
       putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless)
       putExtra(QuranDownloadService.EXTRA_METADATA, AudioDownloadMetadata(qari.id))
+    }
+    context.startService(intent)
+  }
+
+  override fun cancelDownloads() {
+    val intent = Intent(context, QuranDownloadService::class.java).apply {
+      action = QuranDownloadService.ACTION_CANCEL_DOWNLOADS
     }
     context.startService(intent)
   }

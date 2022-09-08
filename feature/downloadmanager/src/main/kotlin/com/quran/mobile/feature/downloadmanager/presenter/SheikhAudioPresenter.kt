@@ -86,6 +86,10 @@ class SheikhAudioPresenter @Inject constructor(
     }
   }
 
+  fun cancelDownloads() {
+    downloader.cancelDownloads()
+  }
+
   suspend fun removeSuras(qariId: Int, suras: List<Int>) {
     withContext(Dispatchers.IO) {
       val qariInfo = qariInfoForId(qariId)

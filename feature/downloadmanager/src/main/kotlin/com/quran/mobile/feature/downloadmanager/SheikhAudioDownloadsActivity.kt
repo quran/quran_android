@@ -72,7 +72,8 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
 
       val downloadProgressState =
         sheikhAudioPresenter.subscribeToDownloadInfo(qariId).collectAsState(null)
-      if (downloadProgressState.value !is SuraDownloadStatusEvent.Done) {
+      if (downloadProgressState.value !is SuraDownloadStatusEvent.Done &&
+          downloadProgressState.value !is SuraDownloadStatusEvent.Error) {
         shouldWaitForDownloadStateDialog.value = false
       }
 
@@ -98,7 +99,8 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
                   onDownloadSelected(selectionInfo)
                   selectionState.value = emptyList()
                   shouldWaitForDownloadStateDialog.value =
-                    downloadProgressState.value is SuraDownloadStatusEvent.Done
+                    downloadProgressState.value is SuraDownloadStatusEvent.Done ||
+                        downloadProgressState.value is SuraDownloadStatusEvent.Error
                   currentDialog.value = SheikhDownloadDialog.DOWNLOAD_STATUS
                 }
               },
@@ -133,7 +135,8 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
                   } else {
                     onDownloadSelected(listOf(it))
                     shouldWaitForDownloadStateDialog.value =
-                      downloadProgressState.value is SuraDownloadStatusEvent.Done
+                      downloadProgressState.value is SuraDownloadStatusEvent.Done ||
+                          downloadProgressState.value is SuraDownloadStatusEvent.Error
                     currentDialog.value = SheikhDownloadDialog.DOWNLOAD_STATUS
                   }
                 }
@@ -167,7 +170,8 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
                   onDownloadSelected(toDownload)
                   selectionState.value = emptyList()
                   shouldWaitForDownloadStateDialog.value =
-                    downloadProgressState.value is SuraDownloadStatusEvent.Done
+                    downloadProgressState.value is SuraDownloadStatusEvent.Done ||
+                        downloadProgressState.value is SuraDownloadStatusEvent.Error
                   currentDialog.value = SheikhDownloadDialog.DOWNLOAD_STATUS
                 },
                 onDismiss = { currentDialog.value = SheikhDownloadDialog.NONE }
@@ -177,8 +181,8 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
                 DownloadProgressDialog(
                   currentEvent = downloadProgressState.value,
                   onDownloadDone = { currentDialog.value = SheikhDownloadDialog.NONE },
-                  onDownloadError = {},
-                  onCancel = {}
+                  onDownloadError = { /* TODO */ currentDialog.value = SheikhDownloadDialog.NONE },
+                  onCancel = ::onCancelSelected
                 )
               }
             SheikhDownloadDialog.NONE -> {}
@@ -214,6 +218,10 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
     scope.launch {
       sheikhAudioPresenter.removeSuras(qariId, surasToRemove)
     }
+  }
+
+  private fun onCancelSelected() {
+    sheikhAudioPresenter.cancelDownloads()
   }
 
   companion object {
