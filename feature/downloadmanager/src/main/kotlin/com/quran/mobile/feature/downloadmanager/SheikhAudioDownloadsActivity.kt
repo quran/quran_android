@@ -9,14 +9,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInterface
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhDownloadDialog
-import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraDownloadStatusEvent
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraForQari
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraOption
 import com.quran.mobile.feature.downloadmanager.presenter.SearchTextUtil
@@ -56,68 +53,41 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
       ?.provideQuranApplicationComponent() as? DownloadManagerComponentInterface
     injector?.downloadManagerComponentBuilder()?.build()?.inject(this)
 
-    val sheikhDownloadsFlow = sheikhAudioPresenter.sheikhInfo(qariId)
     val suras = (1..114).map {
       quranNaming.getSuraNameWithNumber(this, it, false)
     }.mapIndexed { suraIndex, name ->
       SuraOption(suraIndex + 1, name, SearchTextUtil.asSearchableString(name))
     }
+    val sheikhDownloadsFlow = sheikhAudioPresenter.sheikhInfo(qariId)
 
     setContent {
-      val singleItemState = remember { mutableStateOf<SuraForQari?>(null) }
-      val selectionState = remember { mutableStateOf(listOf<SuraForQari>()) }
       val sheikhDownloadsState = sheikhDownloadsFlow.collectAsState(null)
-      val currentDialog = remember { mutableStateOf(SheikhDownloadDialog.NONE) }
-      val shouldWaitForDownloadStateDialog = remember { mutableStateOf(false) }
-
-      val downloadProgressState =
-        sheikhAudioPresenter.subscribeToDownloadInfo(qariId).collectAsState(null)
-      if (downloadProgressState.value !is SuraDownloadStatusEvent.Done &&
-          downloadProgressState.value !is SuraDownloadStatusEvent.Error) {
-        shouldWaitForDownloadStateDialog.value = false
-      }
 
       QuranTheme {
-        val selectionInfo = selectionState.value
-        Box(modifier = Modifier
-          .background(MaterialTheme.colorScheme.surface)
-          .fillMaxSize()) {
+        val currentDownloadState = sheikhDownloadsState.value
+        Box(
+          modifier = Modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .fillMaxSize()
+        ) {
           Column {
-            val currentDownloadState = sheikhDownloadsState.value
             val titleResource =
               currentDownloadState?.qariItem?.nameResource ?: R.string.audio_manager
+            val selectionInfo = currentDownloadState?.selections ?: emptyList()
 
             SheikhDownloadToolbar(
               titleResource = titleResource,
               isContextual = selectionInfo.isNotEmpty(),
               selectionInfo.isEmpty() || selectionInfo.any { !it.isDownloaded },
               selectionInfo.any { it.isDownloaded },
-              downloadAction = {
-                if (selectionInfo.isEmpty()) {
-                  currentDialog.value = SheikhDownloadDialog.DOWNLOAD_RANGE_SELECTION
-                } else {
-                  onDownloadSelected(selectionInfo)
-                  selectionState.value = emptyList()
-                  shouldWaitForDownloadStateDialog.value =
-                    downloadProgressState.value is SuraDownloadStatusEvent.Done ||
-                        downloadProgressState.value is SuraDownloadStatusEvent.Error
-                  currentDialog.value = SheikhDownloadDialog.DOWNLOAD_STATUS
-                }
-              },
-              eraseAction = {
-                if (selectionInfo.isNotEmpty()) {
-                  currentDialog.value = SheikhDownloadDialog.REMOVE_CONFIRMATION
-                } else {
-                  onRemoveSelected(selectionInfo)
-                  selectionState.value = emptyList()
-                }
-              },
+              downloadAction = ::onDownloadSelectionSelected,
+              eraseAction = sheikhAudioPresenter::onRemoveSelection,
               onBackAction = {
                 if (selectionInfo.isEmpty()) {
                   finish()
                 } else {
                   // end contextual mode on back with suras selected
-                  selectionState.value = emptyList()
+                  sheikhAudioPresenter.clearSelection()
                 }
               }
             )
@@ -125,67 +95,33 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
             if (currentDownloadState != null) {
               SheikhSuraInfoList(
                 sheikhUiModel = currentDownloadState,
-                currentSelection = selectionState.value,
+                currentSelection = currentDownloadState.selections,
                 quranNaming = quranNaming,
-                onSelectionInfoChanged = { selectionState.value = it },
-                onSuraActionRequested = {
-                  if (it.isDownloaded) {
-                    singleItemState.value = it
-                    currentDialog.value = SheikhDownloadDialog.REMOVE_CONFIRMATION
-                  } else {
-                    onDownloadSelected(listOf(it))
-                    shouldWaitForDownloadStateDialog.value =
-                      downloadProgressState.value is SuraDownloadStatusEvent.Done ||
-                          downloadProgressState.value is SuraDownloadStatusEvent.Error
-                    currentDialog.value = SheikhDownloadDialog.DOWNLOAD_STATUS
-                  }
-                }
+                onSuraClicked = { onSuraClicked(currentDownloadState.selections, it) },
+                onSelectionStarted = { onSuraClicked(currentDownloadState.selections, it, true) }
               )
             }
           }
 
-          when (currentDialog.value) {
-            SheikhDownloadDialog.REMOVE_CONFIRMATION ->
+          when (val dialog = currentDownloadState?.dialog) {
+            is SheikhDownloadDialog.RemoveConfirmation ->
               RemoveConfirmationDialog(
-                title = suraNameForRemovalOrNull(listOfNotNull(singleItemState.value) + selectionInfo),
-                onConfirmation = {
-                  currentDialog.value = SheikhDownloadDialog.NONE
-                  onRemoveSelected(listOfNotNull(singleItemState.value) + selectionInfo)
-                  singleItemState.value = null
-                  selectionState.value = emptyList()
-                },
-                onDismiss = {
-                  currentDialog.value = SheikhDownloadDialog.NONE
-                  singleItemState.value = null
-                }
+                title = suraNameForRemovalOrNull(dialog.surasToRemove),
+                onConfirmation = { onRemoveSelectionConfirmed(currentDownloadState.selections) },
+                onDismiss = sheikhAudioPresenter::onCancelDialog
               )
-            SheikhDownloadDialog.DOWNLOAD_RANGE_SELECTION ->
+            is SheikhDownloadDialog.DownloadRangeSelection ->
               SuraRangeDialog(
                 suras,
-                onDownloadSelected = { start, end ->
-                  currentDialog.value = SheikhDownloadDialog.NONE
-                  val toDownload = (min(start, end)..max(start, end)).map {
-                    SuraForQari(it, false)
-                  }
-                  onDownloadSelected(toDownload)
-                  selectionState.value = emptyList()
-                  shouldWaitForDownloadStateDialog.value =
-                    downloadProgressState.value is SuraDownloadStatusEvent.Done ||
-                        downloadProgressState.value is SuraDownloadStatusEvent.Error
-                  currentDialog.value = SheikhDownloadDialog.DOWNLOAD_STATUS
-                },
-                onDismiss = { currentDialog.value = SheikhDownloadDialog.NONE }
+                onDownloadSelected = { start, end -> onDownloadRange(start, end) },
+                onDismiss = sheikhAudioPresenter::onCancelDialog
               )
-            SheikhDownloadDialog.DOWNLOAD_STATUS ->
-              if (!shouldWaitForDownloadStateDialog.value) {
-                DownloadProgressDialog(
-                  currentEvent = downloadProgressState.value,
-                  onDownloadDone = { currentDialog.value = SheikhDownloadDialog.NONE },
-                  onDownloadError = { /* TODO */ currentDialog.value = SheikhDownloadDialog.NONE },
-                  onCancel = ::onCancelSelected
-                )
-              }
-            SheikhDownloadDialog.NONE -> {}
+            is SheikhDownloadDialog.DownloadStatus ->
+              DownloadProgressDialog(
+                progressEvents = dialog.statusFlow,
+                onCancel = sheikhAudioPresenter::cancelDownloads
+              )
+            else -> {}
           }
         }
       }
@@ -206,22 +142,41 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
     }
   }
 
-  private fun onDownloadSelected(selectedSuras: List<SuraForQari>) {
-    val surasToDownload = selectedSuras.map { it.sura }
-    scope.launch {
-      sheikhAudioPresenter.downloadSuras(qariId, surasToDownload)
+  private fun onSuraClicked(
+    selectedSuras: List<SuraForQari>,
+    sura: SuraForQari,
+    isStartSelection: Boolean = false
+  ) {
+    if (selectedSuras.isEmpty()) {
+      sheikhAudioPresenter.selectSura(sura)
+      if (!isStartSelection) {
+        scope.launch {
+          sheikhAudioPresenter.onSuraAction(qariId, sura)
+        }
+      }
+    } else {
+      sheikhAudioPresenter.toggleSuraSelection(sura)
     }
   }
 
-  private fun onRemoveSelected(selectedSuras: List<SuraForQari>) {
+  private fun onDownloadSelectionSelected() {
+    scope.launch {
+      sheikhAudioPresenter.onDownloadSelection(qariId)
+    }
+  }
+
+  private fun onDownloadRange(start: Int, end: Int) {
+    val toDownload = (min(start, end)..max(start, end)).map { it }
+    scope.launch {
+      sheikhAudioPresenter.onDownloadRange(qariId, toDownload)
+    }
+  }
+
+  private fun onRemoveSelectionConfirmed(selectedSuras: List<SuraForQari>) {
     val surasToRemove = selectedSuras.map { it.sura }
     scope.launch {
       sheikhAudioPresenter.removeSuras(qariId, surasToRemove)
     }
-  }
-
-  private fun onCancelSelected() {
-    sheikhAudioPresenter.cancelDownloads()
   }
 
   companion object {

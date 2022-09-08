@@ -14,8 +14,8 @@ fun SheikhSuraInfoList(
   sheikhUiModel: SheikhUiModel,
   currentSelection: List<SuraForQari>,
   quranNaming: QuranNaming,
-  onSelectionInfoChanged: ((List<SuraForQari>) -> Unit),
-  onSuraActionRequested: ((SuraForQari) -> Unit)
+  onSuraClicked: ((SuraForQari) -> Unit),
+  onSelectionStarted: ((SuraForQari) -> Unit)
 ) {
   Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
     sheikhUiModel.suraUiModel.forEach { suraUiModel ->
@@ -24,19 +24,10 @@ fun SheikhSuraInfoList(
         sheikhSuraUiModel = suraUiModel,
         isSelected = isSuraSelected,
         quranNaming = quranNaming,
-        onSuraClicked = { clickedSura ->
-          if (currentSelection.isEmpty()) {
-            onSuraActionRequested(clickedSura)
-          } else if (isSuraSelected){
-            val updatedList = currentSelection.filter { it.sura != clickedSura.sura }
-            onSelectionInfoChanged(updatedList)
-          } else {
-            onSelectionInfoChanged(currentSelection + clickedSura)
-          }
-        },
+        onSuraClicked = { clickedSura -> onSuraClicked(clickedSura) },
         onSuraLongClicked = { clickedSura ->
           if (currentSelection.isEmpty()) {
-            onSelectionInfoChanged(currentSelection + clickedSura)
+            onSelectionStarted(clickedSura)
           }
         }
       )

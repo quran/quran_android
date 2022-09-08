@@ -10,35 +10,25 @@ import androidx.compose.material.Text
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.quran.mobile.feature.downloadmanager.R
+import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.NoProgress
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraDownloadStatusEvent
+import kotlinx.coroutines.flow.Flow
 import java.text.DecimalFormat
 
 @Composable
 fun DownloadProgressDialog(
-  currentEvent: SuraDownloadStatusEvent?,
-  onDownloadDone: (() -> Unit),
-  onDownloadError: (() -> Unit),
-  onCancel: (() -> Unit)
-) {
-  when (currentEvent) {
-    SuraDownloadStatusEvent.Done -> onDownloadDone()
-    is SuraDownloadStatusEvent.Error -> onDownloadError()
-    is SuraDownloadStatusEvent.Progress ->
-      DownloadProgressDialog(currentEvent, onCancel)
-    null -> {}
-  }
-}
-
-@Composable
-fun DownloadProgressDialog(
-  currentEvent: SuraDownloadStatusEvent.Progress,
+  progressEvents: Flow<SuraDownloadStatusEvent.Progress>,
   onCancel: () -> Unit
 ) {
+  val progressState = progressEvents.collectAsState(NoProgress)
+
+  val currentEvent = progressState.value
   AlertDialog(
     title = {
       Text(

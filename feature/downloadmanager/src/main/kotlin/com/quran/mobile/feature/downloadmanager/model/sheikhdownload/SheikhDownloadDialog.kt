@@ -1,5 +1,10 @@
 package com.quran.mobile.feature.downloadmanager.model.sheikhdownload
 
-enum class SheikhDownloadDialog {
-  NONE, REMOVE_CONFIRMATION, DOWNLOAD_RANGE_SELECTION, DOWNLOAD_STATUS
+import kotlinx.coroutines.flow.Flow
+
+sealed class SheikhDownloadDialog {
+  object None : SheikhDownloadDialog()
+  data class RemoveConfirmation(val surasToRemove: List<SuraForQari>): SheikhDownloadDialog()
+  object DownloadRangeSelection: SheikhDownloadDialog()
+  data class DownloadStatus(val statusFlow: Flow<SuraDownloadStatusEvent.Progress>): SheikhDownloadDialog()
 }

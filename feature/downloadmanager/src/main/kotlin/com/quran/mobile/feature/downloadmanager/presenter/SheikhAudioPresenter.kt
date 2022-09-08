@@ -9,16 +9,22 @@ import com.quran.labs.androidquran.common.audio.model.QariDownloadInfo
 import com.quran.mobile.common.download.DownloadInfo
 import com.quran.mobile.common.download.DownloadInfoStreams
 import com.quran.mobile.common.download.Downloader
+import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhDownloadDialog
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhUiModel
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraDownloadStatusEvent
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraForQari
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
@@ -31,44 +37,96 @@ class SheikhAudioPresenter @Inject constructor(
   private val audioCacheInvalidator: AudioCacheInvalidator,
   private val downloader: Downloader
 ) {
+  private val selectedSurasFlow = MutableStateFlow<List<SuraForQari>>(emptyList())
+  private val currentDialogFlow = MutableStateFlow<SheikhDownloadDialog>(SheikhDownloadDialog.None)
 
   fun sheikhInfo(qariId: Int): Flow<SheikhUiModel> {
     return sheikhInfoFlow(qariId)
   }
 
   private fun sheikhInfoFlow(qariId: Int): Flow<SheikhUiModel> {
-    return qariDownloadInfoManager.downloadedQariInfo()
-      .map { downloadInfo ->
+    return combine(qariDownloadInfoManager.downloadedQariInfo(), selectedSurasFlow, currentDialogFlow) {
+        downloadInfo, selectedSuras, currentDialog ->
         val qariInfo = downloadInfo.firstOrNull { it.qari.id == qariId }
         if (qariInfo == null) {
           null
         } else {
           val suraModels = (1..114)
-            .map { sura ->
-              SuraForQari(sura, qariInfo.fullyDownloadedSuras.contains(sura))
-            }
-          SheikhUiModel(qariInfo.qari, suraModels)
+            .map { sura -> SuraForQari(sura, qariInfo.fullyDownloadedSuras.contains(sura)) }
+          SheikhUiModel(qariInfo.qari, suraModels, selectedSuras, currentDialog)
         }
       }
       .filterNotNull()
   }
 
-  fun subscribeToDownloadInfo(qariId: Int): Flow<SuraDownloadStatusEvent> {
+  private fun downloadInfo(qariId: Int): Flow<SuraDownloadStatusEvent> {
     return downloadInfoStream.downloadInfoStream()
-      .mapNotNull {
-        val metadata = it.metadata as? AudioDownloadMetadata
-        if (metadata == null) {
-          null
-        } else {
-          it to metadata
-        }
+      .mapNotNull { download ->
+        (download.metadata as? AudioDownloadMetadata)?.let { metadata -> download to metadata }
       }
       .filter { (_, audioDownloadMetadata) -> audioDownloadMetadata.qariId == qariId }
       .map { (downloadInfo, _) -> downloadInfo }
       .mapNotNull { it.asSuraDownloadedStatusEvent() }
   }
 
-  suspend fun downloadSuras(qariId: Int, suras: List<Int>) {
+  fun selectSura(sura: SuraForQari) {
+    selectedSurasFlow.value = selectedSurasFlow.value + sura
+  }
+
+  fun toggleSuraSelection(sura: SuraForQari) {
+    val currentSelection = selectedSurasFlow.value
+    if (sura in currentSelection) {
+      selectedSurasFlow.value = currentSelection - sura
+    } else {
+      selectedSurasFlow.value = currentSelection + sura
+    }
+  }
+
+  fun clearSelection() {
+    selectedSurasFlow.value = emptyList()
+  }
+
+  suspend fun onSuraAction(qariId: Int, sura: SuraForQari) {
+    if (sura.isDownloaded) {
+      onRemoveSelection()
+    } else {
+      onDownloadSelection(qariId)
+    }
+  }
+
+  suspend fun onDownloadRange(qariId: Int, toDownload: List<Int>) {
+    onDownload(qariId, toDownload)
+  }
+
+  suspend fun onDownloadSelection(qariId: Int) {
+    val currentSelection = selectedSurasFlow.value
+    if (currentSelection.isEmpty()) {
+      currentDialogFlow.value = SheikhDownloadDialog.DownloadRangeSelection
+    } else {
+      selectedSurasFlow.value = emptyList()
+
+      val suras = currentSelection.map { it.sura }
+      onDownload(qariId, suras)
+    }
+  }
+
+  private suspend fun onDownload(qariId: Int, toDownload: List<Int>) {
+    val flow = downloadInfo(qariId)
+      .drop(1)
+      .onEach {
+        if (it is SuraDownloadStatusEvent.Done) {
+          currentDialogFlow.value = SheikhDownloadDialog.None
+        } else if (it is SuraDownloadStatusEvent.Error) {
+          // TODO: perhaps show an error dialog?
+          currentDialogFlow.value = SheikhDownloadDialog.None
+        }
+      }
+      .filterIsInstance<SuraDownloadStatusEvent.Progress>()
+    currentDialogFlow.value = SheikhDownloadDialog.DownloadStatus(flow)
+    downloadSuras(qariId, toDownload)
+  }
+
+  private suspend fun downloadSuras(qariId: Int, suras: List<Int>) {
     withContext(Dispatchers.IO) {
       val qariInfo = qariInfoForId(qariId)
       if (qariInfo != null) {
@@ -90,7 +148,16 @@ class SheikhAudioPresenter @Inject constructor(
     downloader.cancelDownloads()
   }
 
+  fun onRemoveSelection() {
+    currentDialogFlow.value = SheikhDownloadDialog.RemoveConfirmation(selectedSurasFlow.value)
+  }
+
+  fun onCancelDialog() {
+    currentDialogFlow.value = SheikhDownloadDialog.None
+  }
+
   suspend fun removeSuras(qariId: Int, suras: List<Int>) {
+    selectedSurasFlow.value = emptyList()
     withContext(Dispatchers.IO) {
       val qariInfo = qariInfoForId(qariId)
       val directory = quranFileManager.audioFileDirectory()
@@ -109,6 +176,7 @@ class SheikhAudioPresenter @Inject constructor(
         audioCacheInvalidator.invalidateCacheForQari(qariId)
       }
     }
+    currentDialogFlow.value = SheikhDownloadDialog.None
   }
 
   private suspend fun qariInfoForId(qariId: Int): QariDownloadInfo? {
