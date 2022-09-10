@@ -14,6 +14,7 @@ import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.quran.common.search.SearchTextUtil
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.highlight.HighlightType
 import com.quran.labs.androidquran.R
@@ -24,7 +25,6 @@ import com.quran.labs.androidquran.ui.helpers.HighlightTypes
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan
 import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
-import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.AyahNumberView
 import com.quran.labs.androidquran.view.DividerView
 import kotlin.math.ln1p
@@ -323,7 +323,7 @@ internal class TranslationAdapter(
             // determine text directionality
             val isRtl = when {
               row.isArabic -> true
-              text != null -> QuranUtils.isRtl(text.toString())
+              text != null -> SearchTextUtil.isRtl(text.toString())
               else -> false
             }
 

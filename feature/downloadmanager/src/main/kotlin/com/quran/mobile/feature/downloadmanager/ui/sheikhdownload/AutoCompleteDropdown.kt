@@ -17,8 +17,8 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.quran.common.search.SearchTextUtil
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraOption
-import com.quran.mobile.feature.downloadmanager.presenter.SearchTextUtil
 
 @Composable
 fun AutoCompleteDropdown(
@@ -33,8 +33,19 @@ fun AutoCompleteDropdown(
 
   val filtered by remember(items) {
     derivedStateOf {
-      val searchTerm = SearchTextUtil.asSearchableString(textState.value.text)
-      items.filter { it.searchName.contains(searchTerm, ignoreCase = true) }
+      val searchTerm = SearchTextUtil.asSearchableString(
+        textState.value.text,
+        SearchTextUtil.isRtl(textState.value.text)
+      )
+
+      // if you typed in "١٢" for example, `toIntOrNull` would give you 12.
+      val numericSearchTerm = searchTerm.toIntOrNull()
+
+      items.filter {
+        it.searchName.contains(searchTerm, ignoreCase = true) ||
+            // support English numbers in Arabic search
+            it.number == numericSearchTerm
+      }
     }
   }
 

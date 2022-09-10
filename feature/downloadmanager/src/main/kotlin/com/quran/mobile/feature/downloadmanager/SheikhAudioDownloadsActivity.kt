@@ -16,7 +16,7 @@ import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInter
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhDownloadDialog
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraForQari
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraOption
-import com.quran.mobile.feature.downloadmanager.presenter.SearchTextUtil
+import com.quran.common.search.SearchTextUtil
 import com.quran.mobile.feature.downloadmanager.presenter.SheikhAudioPresenter
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.DownloadProgressDialog
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.RemoveConfirmationDialog
@@ -53,10 +53,11 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
       ?.provideQuranApplicationComponent() as? DownloadManagerComponentInterface
     injector?.downloadManagerComponentBuilder()?.build()?.inject(this)
 
+    val isRtl = SearchTextUtil.isRtl(quranNaming.getSuraNameWithNumber(this, 1, false))
     val suras = (1..114).map {
       quranNaming.getSuraNameWithNumber(this, it, false)
     }.mapIndexed { suraIndex, name ->
-      SuraOption(suraIndex + 1, name, SearchTextUtil.asSearchableString(name))
+      SuraOption(suraIndex + 1, name, SearchTextUtil.asSearchableString(name, isRtl))
     }
     val sheikhDownloadsFlow = sheikhAudioPresenter.sheikhInfo(qariId)
 
