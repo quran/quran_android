@@ -6,6 +6,7 @@ import com.quran.labs.androidquran.common.audio.cache.AudioCacheInvalidator
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoManager
 import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
 import com.quran.labs.androidquran.common.audio.model.QariDownloadInfo
+import com.quran.mobile.common.download.DownloadConstants
 import com.quran.mobile.common.download.DownloadInfo
 import com.quran.mobile.common.download.DownloadInfoStreams
 import com.quran.mobile.common.download.Downloader
@@ -115,8 +116,11 @@ class SheikhAudioPresenter @Inject constructor(
         if (it is SuraDownloadStatusEvent.Done) {
           currentDialogFlow.value = SheikhDownloadDialog.None
         } else if (it is SuraDownloadStatusEvent.Error) {
-          // TODO: perhaps show an error dialog?
-          currentDialogFlow.value = SheikhDownloadDialog.None
+          if (it.errorCode == DownloadConstants.ERROR_CANCELLED) {
+            currentDialogFlow.value = SheikhDownloadDialog.None
+          } else {
+            currentDialogFlow.value = SheikhDownloadDialog.DownloadError(it.errorCode, it.errorMessage)
+          }
         }
       }
       .filterIsInstance<SuraDownloadStatusEvent.Progress>()
@@ -190,7 +194,7 @@ class SheikhAudioPresenter @Inject constructor(
   private fun DownloadInfo.asSuraDownloadedStatusEvent(): SuraDownloadStatusEvent? {
     return when (this) {
       is DownloadInfo.FileDownloaded -> null
-      is DownloadInfo.DownloadBatchError -> SuraDownloadStatusEvent.Error(this.errorId)
+      is DownloadInfo.DownloadBatchError -> SuraDownloadStatusEvent.Error(this.errorId, this.errorString)
       is DownloadInfo.DownloadBatchSuccess -> SuraDownloadStatusEvent.Done
       is DownloadInfo.FileDownloadProgress ->
         SuraDownloadStatusEvent.Progress(

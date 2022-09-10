@@ -10,14 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import com.quran.common.search.SearchTextUtil
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInterface
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhDownloadDialog
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraForQari
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraOption
-import com.quran.common.search.SearchTextUtil
 import com.quran.mobile.feature.downloadmanager.presenter.SheikhAudioPresenter
+import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.DownloadErrorDialog
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.DownloadProgressDialog
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.RemoveConfirmationDialog
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.SheikhDownloadToolbar
@@ -122,6 +123,8 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
                 progressEvents = dialog.statusFlow,
                 onCancel = sheikhAudioPresenter::cancelDownloads
               )
+            is SheikhDownloadDialog.DownloadError ->
+              DownloadErrorDialog(dialog.errorString, sheikhAudioPresenter::onCancelDialog)
             else -> {}
           }
         }

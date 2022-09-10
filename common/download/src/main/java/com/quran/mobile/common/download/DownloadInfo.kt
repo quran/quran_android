@@ -23,7 +23,8 @@ sealed class DownloadInfo {
     override val key: String,
     override val type: Int,
     override val metadata: Parcelable?,
-    val errorId: Int
+    val errorId: Int,
+    val errorString: String
   ) : DownloadInfo()
 
   data class FileDownloaded(

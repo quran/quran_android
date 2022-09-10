@@ -15,6 +15,7 @@ import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.util.NotificationChannelUtil;
+import com.quran.mobile.common.download.DownloadConstants;
 import com.quran.mobile.common.download.DownloadInfo;
 import com.quran.mobile.common.download.DownloadInfoStreams;
 
@@ -22,12 +23,12 @@ import timber.log.Timber;
 
 public class QuranDownloadNotifier {
   // error messages
-  public static final int ERROR_DISK_SPACE = 1;
-  public static final int ERROR_PERMISSIONS = 2;
-  public static final int ERROR_NETWORK = 3;
-  public static final int ERROR_INVALID_DOWNLOAD = 4;
-  public static final int ERROR_CANCELLED = 5;
-  public static final int ERROR_GENERAL = 6;
+  public static final int ERROR_DISK_SPACE = DownloadConstants.ERROR_DISK_SPACE;
+  public static final int ERROR_PERMISSIONS = DownloadConstants.ERROR_PERMISSIONS;
+  public static final int ERROR_NETWORK = DownloadConstants.ERROR_NETWORK;
+  public static final int ERROR_INVALID_DOWNLOAD = DownloadConstants.ERROR_INVALID_DOWNLOAD;
+  public static final int ERROR_CANCELLED = DownloadConstants.ERROR_CANCELLED;
+  public static final int ERROR_GENERAL = DownloadConstants.ERROR_GENERAL;
 
   // notification ids
   private static final int DOWNLOADING_NOTIFICATION = Constants.NOTIFICATION_ID_DOWNLOADING;
@@ -299,7 +300,7 @@ public class QuranDownloadNotifier {
 
     if (isFatal) {
       final DownloadInfo downloadInfo =
-          new DownloadInfo.DownloadBatchError(details.key, details.type, details.metadata, errorCode);
+          new DownloadInfo.DownloadBatchError(details.key, details.type, details.metadata, errorCode, errorString);
       downloadInfoStreams.emitEvent(downloadInfo);
     }
 
