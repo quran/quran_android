@@ -61,7 +61,7 @@ class TranslationsAdapter(private val downloadedMenuActionListener: DownloadedMe
             rightImage?.visibility = View.GONE
             itemView.setOnLongClickListener(actionMenuListener)
             if (item.needsUpgrade()) {
-              leftImage?.setImageResource(R.drawable.ic_download)
+              leftImage?.setImageResource(com.quran.mobile.feature.downloadmanager.R.drawable.ic_download)
               leftImage?.visibility = View.VISIBLE
               translationInfo?.setText(R.string.update_available)
             } else {
@@ -69,7 +69,7 @@ class TranslationsAdapter(private val downloadedMenuActionListener: DownloadedMe
             }
           } else {
             leftImage?.visibility = View.GONE
-            rightImage?.setImageResource(R.drawable.ic_download)
+            rightImage?.setImageResource(com.quran.mobile.feature.downloadmanager.R.drawable.ic_download)
             rightImage?.setOnClickListener(null)
             rightImage?.visibility = View.VISIBLE
             rightImage?.isClickable = false

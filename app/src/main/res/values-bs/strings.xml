@@ -15,7 +15,6 @@
     </string>
   <string name="downloadPrompt_ok">Da</string>
   <string name="downloadPrompt_no">Ne</string>
-  <string name="downloading_title">Preuzimanje&#8230;</string>
   <string name="downloading_message">Molimo sačekajte da se datoteke preuzmu (nastavak podržan).</string>
   <string name="extracting_title">Obrada&#8230;</string>
   <string name="menu_about">O nama</string>
@@ -36,7 +35,6 @@
   <string name="menu_get_translations">Preuzmanje prijevoda</string>
   <string name="menu_jump">Idi na</string>
   <string name="gotoPage">Idi na stranicu</string>
-  <string name="cancel">Poništi</string>
 
   <!-- about -->
   <string name="about_description">Kur\'an za Android je besplatna aplikacija za Kur\'an. Molimo vas da nas ne zaboravite u vašim dovama.</string>
@@ -92,12 +90,6 @@
     </string>
   <string name="search_hint">Pretražite Kur\'an</string>
   <string name="quranSearchType">Ajeti Kur\'ana</string>
-
-  <plurals name="files_downloaded">
-    <item quantity="one">%1$d sura preuzeta</item>
-    <item quantity="few">%1$d sure preuzete</item>
-    <item quantity="other">%1$d sura preuzeto</item>
-  </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -158,7 +150,6 @@
   <string name="prefs_audio_manager_summary">Upravljaj i preuzmi zvuk učenja Kur\'ana</string>
   <string name="downloaded_translations">Preuzeto</string>
   <string name="available_translations">Dostupno za preuzimanje</string>
-  <string name="remove_button">Ukloni</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Direktoriji za podatke Kur\'ana</string>
   <string name="prefs_app_location_summary">Izaberite gdje želite spremiti datoteke za Kur\'an</string>
@@ -172,7 +163,6 @@
   <string name="prefs_err_moving_app_files">Premještanje datoteka aplikacije nije uspjelo</string>
   <string name="prefs_no_enough_space_to_move_files">Nedovoljno prostora za pomjeranje datoteka aplikacije</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Prikaz dvije stranica na zaslonu </string>
   <string name="prefs_dual_page_mode_enabled">U horizontalnom položaju će biti prikazane dvije stranice jedna do druge.</string>
   <string name="prefs_dual_page_mode_disabled">Horizontalno će se prikazivati samo jedna stranica.</string>
@@ -249,9 +239,6 @@
   <string name="download_non_wifi_prompt">Wi-Fi vam nije uključen. Ipak preuzeti datoteke?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Preuzeto %1$s / %2$s</string>
-  <string name="download_sura_progress">Preuzeto %1$s / %2$s %3$d. sure</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Preuzimanje %2$d. ajeta %1$d. sure</string>
   <string name="process_progress">Procesiranje datoteke %1$d / %2$d</string>
   <string name="download_retry">Ponovi</string>
   <string name="download_cancel">Otkaži</string>
@@ -280,8 +267,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Od</string>
-  <string name="play_to">Do</string>
   <string name="play_restrict_range">Pokreni jedino ajete ajete iznad</string>
   <string name="play_verses_range">Pokrenite skupinu ajeta:</string>
   <string name="play_each_verse">Pokreni svaki ajet:</string>
@@ -330,9 +315,6 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Bez zabiljeških</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Menadžer zvuka</string>
-
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Skidanje Kur\'ana</string>
   <string name="notification_channel_audio">Skidanje učenja Kur\'ana</string>
@@ -348,13 +330,6 @@
   <string name="move_up">Pomjeri gore</string>
   <string name="move_down">Pomakni se dolje</string>
   <string name="delete_translation">Ukloni prijevod</string>
-  <string name="audio_manager_remove_audio_title">Da uklonim Suru?</string>
-  <string name="audio_manager_remove_audio_msg">Jeste li sigurni da želite ukloniti %1$s?</string>
-  <string name="audio_manager_surah_download">Preuzmi surah</string>
-  <string name="audio_manager_surah_delete">Izbriši audio datoteku</string>
-  <string name="audio_manager_download_all">Preuzmi sve</string>
-  <string name="audio_manager_download_selection">Preuzmi odabir</string>
-  <string name="audio_manager_delete_selection">Izbriši selekciju</string>
   <string name="audio_updated_title">Ažuriranje kuran audio datoteka</string>
   <string name="audio_updated_text">Nekoliko kuranski audio fajlova je ažurirano. Quran za Android je uklonio vašu kopiju ovih fajlova tako da se nove verzije mogu preuzeti kada ih sljedeći put budete ponovo primili.</string>
   <string name="prefs_category_dual_screen">Dual Page Preferences</string>

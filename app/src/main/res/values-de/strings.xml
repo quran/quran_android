@@ -16,7 +16,6 @@
   </string>
   <string name="downloadPrompt_ok">Ja</string>
   <string name="downloadPrompt_no">Nein</string>
-  <string name="downloading_title">Dateien werden heruntergeladen&#8230;</string>
   <string name="downloading_message">Bitte warten Sie bis die Dateien heruntergeladen wurden.
     Sie dürfen den Vorgang unterbrechen, falls es nötig sein sollte.
   </string>
@@ -37,7 +36,6 @@
   <string name="menu_get_translations">Lade die Übersetzungen</string>
   <string name="menu_jump">Springe zu</string>
   <string name="gotoPage">Gehe zur Seite</string>
-  <string name="cancel">Abbrechen</string>
 
   <!-- help -->
   <string name="help_title">Häufig gestellte Fragen</string>
@@ -91,11 +89,6 @@
   </string>
   <string name="search_hint">Durchsuche den Quran</string>
   <string name="quranSearchType">Quranverse</string>
-
-  <plurals name="files_downloaded">
-    <item quantity="one">1 Sure heruntergeladen</item>
-    <item quantity="other">%1$d Suren heruntergeladen</item>
-  </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -168,7 +161,6 @@
   <string name="prefs_audio_manager_summary">Verwalten Sie Ihre Audiodateien.</string>
   <string name="downloaded_translations">Heruntergeladen</string>
   <string name="available_translations">Zum Download verfügbar</string>
-  <string name="remove_button">Entfernen</string>
   <string name="dialog_ok">Ok</string>
   <string name="prefs_app_location_title">Speicherort</string>
   <string name="prefs_app_location_summary">Wählen Sie den Speicherort der Dateien aus.</string>
@@ -256,9 +248,6 @@
   </string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Heruntergeladen %1$s / %2$s</string>
-  <string name="download_sura_progress">Heruntergeladen %1$s / %2$s von Sure %3$d</string>
-  <string name="download_sura_ayah_progress">Herunterladen von Sure %1$d Vers %2$d</string>
   <string name="process_progress">Datei wird verarbeitet %1$d / %2$d</string>
   <string name="download_retry">Nochmals versuchen</string>
   <string name="download_cancel">Abbrechen</string>
@@ -294,8 +283,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Von</string>
-  <string name="play_to">Bis</string>
   <string name="play_restrict_range">Nur die oben genannten Verse abspielen</string>
   <string name="play_apply">Anwenden</string>
   <string name="play_apply_and_play">Anwenden und Abspielen</string>
@@ -326,8 +313,6 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Keine Lesezeichen</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Audioverwaltung</string>
     <string name="about_quran_enc" translatable="false">Die Enzyklopädie von dem heiligen Quran</string>
   <string name="about_quran_enc_summary">Übersetzungen für viele Sprachen</string>
     <string name="menu_other_apps">Andere Apps</string>
@@ -358,7 +343,6 @@
   <string name="prefs_highlight_bookmarks_summary">Markieren von mit Lesezeichen versehenen Ayahs beim Lesen</string>
   <string name="prefs_send_logs_title">Protokolle senden</string>
   <string name="prefs_send_logs_summary">Senden von Debug-Protokollen an den Entwickler</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_category_advanced">Erweiterte Optionen</string>
   <string name="prefs_category_advanced_summary">Lesezeichen importieren/exportieren, Koran-Datenverzeichnis festlegen usw.</string>
   <string name="prefs_import_title">Importieren</string>
@@ -395,13 +379,6 @@
   <string name="recent_pages">Neueste Seiten</string>
   <string name="tag_blank_tag_error">Tag-Namen dürfen nicht leer sein!</string>
   <string name="tag_duplicate_tag_error">Der Tag-Name existiert bereits!</string>
-  <string name="audio_manager_remove_audio_title">Sūra entfernen?</string>
-  <string name="audio_manager_remove_audio_msg">Sind Sie sicher, dass Sie %1$s entfernen möchten?</string>
-  <string name="audio_manager_surah_download">Sūra herunterladen</string>
-  <string name="audio_manager_surah_delete">Sūra löschen</string>
-  <string name="audio_manager_download_all">Alle herunterladen</string>
-  <string name="audio_manager_download_selection">Auswahl herunterladen</string>
-  <string name="audio_manager_delete_selection">Auswahl löschen</string>
   <string name="audio_updated_title">Quran Audio Dateien Update</string>
   <string name="audio_updated_text">Mehrere Quran-Audiodateien wurden aktualisiert. Quran für Android hat Ihre Kopie dieser Dateien entfernt, damit die neuesten Versionen heruntergeladen werden können, wenn Sie sie das nächste Mal abspielen zurück.</string>
   <string name="prefs_category_dual_screen">Voreinstellungen für zwei Seiten</string>

@@ -4,11 +4,13 @@ import com.quran.data.core.QuranFileManager
 import com.quran.labs.androidquran.common.audio.cache.command.AudioInfoCommand
 import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
 import com.quran.labs.androidquran.common.audio.model.QariDownloadInfo
+import com.quran.mobile.common.download.DownloadInfo
 import com.quran.mobile.common.download.DownloadInfoStreams
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.merge
@@ -48,6 +50,8 @@ class QariDownloadInfoManager @Inject constructor(
 
   private suspend fun subscribeToChanges() {
     val downloadStream = downloadInfoStreams.downloadInfoStream()
+        // only care to refresh after successful file downloads
+      .filter { it is DownloadInfo.FileDownloaded }
       .mapNotNull { it.metadata as? AudioDownloadMetadata }
       .map { it.qariId }
 

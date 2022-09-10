@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">Загружено %1$d сура</item>
+    <item quantity="few">Загружено %1$d суры</item>
+    <item quantity="many">Загружено %1$d сур</item>
+    <item quantity="other">Загружено %1$d сур</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Аудио менеджер</string>
+  <string name="audio_manager_remove_audio_title">Удалить суру?</string>
+  <string name="audio_manager_remove_audio_msg">Вы уверены, что хотите удалить %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Вы уверены, что хотите удалить?</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Удалено %1$d сура</item>
+    <item quantity="few">Удалено %1$d суры</item>
+    <item quantity="many">Удалено %1$d сур</item>
+    <item quantity="other">Удалено %1$d сур</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">Произошла ошибка при удалении %1$d сура</item>
+    <item quantity="few">Произошла ошибка при удалении %d суры</item>
+    <item quantity="many">Произошла ошибка при удалении %d сур</item>
+    <item quantity="other">Произошла ошибка при удалении %1$d сур</item>
+  </plurals>
+  <string name="audio_manager_surah_download">Скачать суру</string>
+  <string name="audio_manager_surah_delete">Удалить суру</string>
+  <string name="audio_manager_download_all">Скачать все</string>
+  <string name="audio_manager_download_selection">Скачать выбранные</string>
+  <string name="audio_manager_delete_selection">Удалить выбранные</string>
+
+  <string name="downloading_title">Загрузка &#8230;</string>
+  <string name="download_amount_in_megabytes">%s Mб</string>
+  <string name="download_progress">Загружено %1$s / %2$s</string>
+  <string name="download_sura_progress">Загружено %1$s / %2$s суры %3$d</string>
+  <string name="download_sura_ayah_progress">Загружается сура %1$d аят %2$d</string>
+</resources>

@@ -3,7 +3,6 @@
   <string name="app_name">Corano</string>
   <string name="downloadPrompt_ok">Sì</string>
   <string name="downloadPrompt_no">No</string>
-  <string name="downloading_title">Scaricare&#8230;</string>
   <string name="extracting_title">Elaborazione&#8230;</string>
   <string name="menu_settings">Impostazioni</string>
   <string name="menu_bookmarks">Segnalibri</string>
@@ -13,13 +12,11 @@
   <string name="menu_back_to_page">Mostra il Corano</string>
   <string name="menu_help">Aiuto</string>
   <string name="menu_search">Cerca</string>
-  <string name="cancel">Cancella</string>
   <string name="about_images">Immagini</string>
   <string name="about_others">Altri</string>
   <string name="prefs_use_arabic_title">Modo arabo (الوضع العربي)</string>
   <string name="prefs_night_mode_title">Modalità notturna</string>
   <string name="prefs_translations">Traduzioni</string>
-  <string name="remove_button">Rimuovi</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_import_title">Importazione</string>
   <string name="prefs_export_title">Esportazione</string>
@@ -30,8 +27,6 @@
   <string name="quran_page">Pagina</string>
   <string name="download_retry">Riprova</string>
   <string name="download_cancel">Cancella</string>
-  <string name="play_from">Da</string>
-  <string name="play_to">A</string>
   <string name="play_apply">Applica</string>
   <string name="previous">Precedente</string>
   <string name="pause">Pausa</string>
@@ -136,27 +131,7 @@
   <string name="tag_blank_tag_error">I nomi dei tag non possono essere vuoti!</string>
   <string name="tag_duplicate_tag_error">Il nome del tag esiste già!</string>
   <string name="bookmarks_list_empty">Nessun segnalibro</string>
-  <string name="audio_manager">Gestione dell\'audio</string>
-  <string name="audio_manager_remove_audio_title">Rimuovere la sura?</string>
-  <string name="audio_manager_remove_audio_msg">Sei sicuro di voler rimuovere %1$s?</string>
-  <string name="audio_manager_surah_download">Scaricare la sura</string>
-  <string name="audio_manager_surah_delete">Cancellare la sura</string>
-  <string name="audio_manager_download_all">Scarica tutti</string>
-  <string name="audio_manager_download_selection">Scarica la selezione</string>
-  <string name="audio_manager_delete_selection">Cancellare la selezione</string>
   <string name="audio_updated_title">Aggiornamento dei file audio del Corano</string>
-  <plurals name="files_downloaded">
-    <item quantity="one">1 sura scaricata</item>
-    <item quantity="other">%1$d sura scaricate</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">Cancellata con successo la sura</item>
-    <item quantity="other">Cancellato con successo %1$d sure</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">C\'è stato un errore durante la cancellazione della sura</item>
-    <item quantity="other">C\'è stato un errore durante la cancellazione di %1$d sure</item>
-  </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -180,9 +155,6 @@
   <string name="remove_dlg_msg">Sei sicuro di voler rimuovere il %1$s</string>
   <string name="email_us">Se la tua domanda non trova risposta qui sopra, puoi inviare un\'email a quranandroid@gmail.com per il supporto. Si prega di notare che riceviamo molte e-mail, quindi potremmo non essere in grado di rispondere a tutte.</string>
   <string name="notification_download_canceled">Scaricare annullato</string>
-  <string name="download_progress">Scaricato %1$s / %2$s</string>
-  <string name="download_sura_progress">Scaricato %1$s / %2$s di Sura %3$d</string>
-  <string name="download_sura_ayah_progress">Scaricare la Sura %1$d Ayah %2$d</string>
   <string name="process_progress">Elaborazione del file %1$d / %2$d</string>
   <string name="download_error_general">Scaricare fallito</string>
   <string name="download_successful">Scarica il successo</string>

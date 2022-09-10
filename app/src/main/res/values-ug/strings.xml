@@ -7,7 +7,6 @@
   <string name="downloadImportantPrompt">ئۈسكۈنىڭىز ئۈچۈن ئۆزى كىچىك ئەمما مۇھىم بولغان قۇرئان سۈرەتلىرىنىڭ يېڭىلانمىسى بار. بۇ ياماقنى ھازىرلا چۈشۈرەمسىز؟</string>
   <string name="downloadPrompt_ok">ھەئە</string>
   <string name="downloadPrompt_no">ياق</string>
-  <string name="downloading_title">چۈشۈرۈۋاتىدۇ…</string>
   <string name="downloading_message">ھۆججەتلەرنى چۈشۈرۈشنى كۈتۈڭ. (داۋاملاشتۇرۇشنى قوللايدۇ)</string>
   <string name="extracting_title">بىر تەرەپ قىلىۋاتىدۇ…</string>
   <string name="menu_about">بىز ھەققىدە</string>
@@ -26,7 +25,6 @@
   <string name="menu_get_translations">تەرجىمىگە ئېرىش</string>
   <string name="menu_jump">يۆتكەل</string>
   <string name="gotoPage">بەتكە يۆتكەل</string>
-  <string name="cancel">ۋاز كەچ</string>
 
   <!-- help -->
   <string name="help_title">كۆپ سورىلىدىغان سوئاللار</string>
@@ -79,7 +77,6 @@
   <string name="prefs_download_amount_summary">ئالدى بىلەن غەيرى يوچۇقسىز ئاۋازنى چۈشۈرىدۇ</string>
   <string name="downloaded_translations">چۈشۈرۈلدى</string>
   <string name="available_translations">چۈشۈرگىلى بولىدۇ</string>
-  <string name="remove_button">چىقىرىۋەت</string>
   <string name="dialog_ok">جەزملە</string>
   <string name="prefs_app_location_title">ئەپ ئورنى</string>
   <string name="prefs_app_location_summary">ھۆججەتلەرنى قايسى sd كارتىغا ساقلايدىغانلىقىڭىزنى تاللاڭ</string>
@@ -136,7 +133,6 @@
   <string name="download_non_wifi_prompt">سىز wifi تورىدا ئەمەس. سانلىق مەلۇماتنى چۈشۈرىۋېرەمسىز؟</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">%1$s / %2$s چۈشۈرۈلدى</string>
   <string name="process_progress">بىر تەرەپ قىلىۋاتقىنى %1$d / %2$d</string>
   <string name="download_retry">قايتا سىنا</string>
   <string name="download_cancel">ۋاز كەچ</string>
@@ -205,7 +201,6 @@
   <string name="prefs_audio_manager_summary">ئاۋاز باشقۇرۇش ۋە چۈشۈرۈش</string>
   <string name="prefs_send_logs_title">خاتىرىسىنى ئەۋەتىش</string>
   <string name="prefs_megabytes_int">%1$d م ب</string>
-  <string name="prefs_megabytes_str">%s م ب</string>
   <string name="prefs_category_advanced">تېخىمۇ كۆپ تەڭشەكلەر</string>
   <string name="prefs_import_title">ئىمپورت</string>
   <string name="prefs_import_summary">خەتكۈچ ۋە خەتكۈچلەرنى ئىمپورت قىلىڭ</string>
@@ -218,20 +213,11 @@
   <string name="more_translations">تېخىمۇ كۆپ تەرجىمىلەر</string>
   <string name="warning">ئاگاھلاندۇرۇش</string>
   <string name="previous">ئالدىنقى</string>
-  <string name="audio_manager">ئاۋاز تەڭشەكلىرى</string>
-  <string name="download_sura_progress">چۈشۈرۈش سۈرە %3$d - %1$s / %2$s</string>
-  <string name="download_sura_ayah_progress">چۈشۈرۈش سۈرە %1$d ئايەت %2$d</string>
-  <string name="play_from">ئايەتتىن</string>
-  <string name="play_to">ئايەتكىچە</string>
   <string name="recent_pages">يېقىنقى بەتلەر</string>
-  <string name="audio_manager_surah_download">چۈشۈرۈش سۈرە</string>
-  <string name="audio_manager_download_all">ھەممىنى چۈشۈرۈڭ</string>
   <string name="stop">توختا</string>
   <string name="email_us">سوئالىڭىز يۇقىرىدىكى جاۋاب بولمىسا, قوللايدىغان quranandroid@gmail.com ئېلېكترونلۇق خەت ئەۋەتسىڭىز بولىدۇ. شۇنىڭغا دىققەت قىلىڭكى, بىز نۇرغۇن ئېلېكترونلۇق خەتلەرنى قوبۇل قىلالايمىز, شۇڭا بىز ئۇلارنىڭ ھەممىسىگە جاۋاب بېرەلمەسلىكى مۇمكىن.</string>
-  <string name="audio_manager_delete_selection">تاللانغانلارنى ئۆچۈرۈڭ</string>
   <string name="audio_updated_title">ئاۋازلىق ھۆججەتلەر يېڭىلاندى</string>
   <string name="prefs_category_dual_screen">قوش بەت مايىللىقى</string>
-  <string name="audio_manager_surah_delete">ئاۋاز ھۆججىتىنى ئۆچۈرۈڭ</string>
   <string name="tag_blank_tag_error">خەتكۈچ ئىسىملىرى بوش ئەمەس!</string>
   <string name="tag_duplicate_tag_error">خەتكۈچ ئىسمى ئاللىبۇرۇن مەۋجۇت!</string>
   <string name="starting_page_label">بەت ئۈستى</string>
@@ -245,8 +231,6 @@
   <string name="play_apply_and_play">ئىلتىماس قىلىڭ ۋە قويۇش</string>
   <string name="next">كېيىنكى</string>
   <string name="playback_prompt_title">ئويناشنى باشلاڭ:</string>
-  <string name="audio_manager_remove_audio_msg">سىز %1$s نى ئۆچۈرمەكچىمۇ؟</string>
-  <string name="audio_manager_download_selection">چۈشۈرۈش تاللاش</string>
   <string name="notification_channel_download">قۇرئان چۈشۈرۈش</string>
   <string name="notification_channel_audio">قۇرئان تىلاۋەت قىلىش</string>
   <string name="export_data_error">سانلىق مەلۇمات ئېكسپورتىدا خاتالىق</string>
@@ -265,7 +249,6 @@
   <string name="play_verses_range">بىر يۈرۈش ئايەتلەرنى ئاڭلاڭ:</string>
   <string name="play_each_verse">ھەر بىر ئايەتنى ئاڭلاڭ:</string>
   <string name="sdcard_error">SD كارتىنى تاپالمىدى. ئۇنى ئورنىتىپ قايتا سىناڭ.</string>
-  <string name="audio_manager_remove_audio_title">سۈرىنى ئۆچۈرەمسىز؟</string>
   <string name="please_grant_permissions">ئىلتىماس تەڭشەكلىرىدە ئىجازەت بېرىڭ</string>
   <string name="see_tafseer_of_verse">بۇ ئايەتنىڭ تەفىرسى %d -ئايەتنىڭ تەفسىر بىلەن ئۆز ئىچىگە ئېلىنغان (كېڭەيتىش ئۈچۈن چېكىڭ).</string>
   <string name="kitkat_external_message">ئاندىرويىد چەكلىمىسى تۈپەيلىدىن ، ئەگەر سىز قۇرئان سانلىق مەلۇماتلىرىنى سىرتقى SD كارتىڭىزغا قويماقچى بولسىڭىز ، ئاندىن قۇرئان ئاندىرويىد ئۈچۈن سانلىق مەلۇماتلارنى ئۆچۈرۈۋەتسىڭىز ياكى ئۆچۈرسىڭىز ، قۇرئاننىڭ بارلىق ئاندىرويىد بەتلىرى ۋە ئاۋازلىرى ئۆچۈرۈلىدۇ ، ئۇلارنى قايتا چۈشۈرۈشىڭىز كېرەك. سىرتقى SD كارتىنى ئىشلىتىشنى خالامسىز؟</string>

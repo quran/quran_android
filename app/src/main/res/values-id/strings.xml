@@ -14,7 +14,6 @@
   <string name="downloadPrompt_title">Unduh Berkas yang Diperlukan?</string>
   <string name="downloadPrompt_ok">Ya</string>
   <string name="downloadPrompt_no">Tidak</string>
-  <string name="downloading_title">Mengunduh&#8230;</string>
   <string name="downloading_message">Harap tunggu berkas selesai diunduh (bisa dijeda).</string>
   <string name="extracting_title">Membongkar&#8230;</string>
   <string name="menu_about">Tentang Kami</string>
@@ -35,7 +34,6 @@
   <string name="menu_get_translations">Dapatkan Terjemahan</string>
   <string name="menu_jump">Loncat</string>
   <string name="gotoPage">Pergi ke halaman</string>
-  <string name="cancel">Batal</string>
 
   <!-- about -->
   <string name="about_description">Quran untuk Android adalah sebuah aplikasi Quran gratis. Mohon ingat dan sisipkan para kontributor dalam doa-doa anda.</string>
@@ -89,10 +87,6 @@
     </string>
   <string name="search_hint">Telusuri al Quran</string>
   <string name="quranSearchType">Ayat-ayat al Quran</string>
-
-  <plurals name="files_downloaded">
-    <item quantity="other">%1$d surat telah diunduh</item>
-  </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -154,7 +148,6 @@
   <string name="prefs_audio_manager_summary">Kelola dan unduh audio Quran</string>
   <string name="downloaded_translations">Telah diunduh</string>
   <string name="available_translations">Tersedia untuk diunduh</string>
-  <string name="remove_button">Buang</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Penyimpanan data Quran</string>
   <string name="prefs_app_location_summary">Pilih lokasi berkas Quran disimpan</string>
@@ -168,7 +161,6 @@
   <string name="prefs_err_moving_app_files">Gagal memindahkan berkas aplikasi</string>
   <string name="prefs_no_enough_space_to_move_files">Ruang tak mencukupi untuk memindahkan berkas aplikasi</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Mode Tablet</string>
   <string name="prefs_dual_page_mode_enabled">Saat tampilan mendatar, dua halaman saling bersandingan.</string>
   <string name="prefs_dual_page_mode_disabled">Saat tampilan mendatar, hanya satu halaman yang muncul.</string>
@@ -236,9 +228,6 @@
   <string name="download_non_wifi_prompt">Anda tidak tersambung ke Wi-Fi. Tetap unduh datanya?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Telah mengunduh %1$s / %2$s</string>
-  <string name="download_sura_progress">Telah mengunduh %1$s / %2$s dari surat %3$d</string>
-  <string name="download_sura_ayah_progress">Mengunduh surat %1$d ayat %2$d</string>
   <string name="process_progress">Memproses berkas %1$d / %2$d</string>
   <string name="download_retry">Coba Lagi</string>
   <string name="download_cancel">Batalkan</string>
@@ -265,8 +254,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Dari</string>
-  <string name="play_to">Sampai</string>
   <string name="play_restrict_range">Putar hanya ayat-ayat di atas saja</string>
   <string name="play_verses_range">Putar rangkaian ayat:</string>
   <string name="play_each_verse">Putar setiap ayat:</string>
@@ -311,8 +298,6 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Tidak ada Penanda</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Pengelola Audio</string>
   <string name="tag_blank_tag_error">Nama label tidak boleh kosong!</string>
   <string name="tag_duplicate_tag_error">Nama label sudah dipakai</string>
   <string name="notification_channel_download">Unduhan Quran</string>
@@ -337,13 +322,6 @@
   <string name="delete_translation">Hapus Terjemahan</string>
   <string name="scoped_storage_message">Karena perubahan Android untuk meningkatkan privasi pengguna, menyalin file di luar direktori aplikasi mungkin menghentikan Quran mengakses datanya di versi Android yang akan datang. Apakah Anda yakin ingin menggunakan jalur ini?</string>
   <string name="see_tafseer_of_verse">Tafsir Ayat ini disertakan dengan tafsir Ayat %d (Klik untuk memperluas).</string>
-  <string name="audio_manager_remove_audio_title">Hapus Surat?</string>
-  <string name="audio_manager_remove_audio_msg">Apakah Anda yakin ingin menghapus %1$s?</string>
-  <string name="audio_manager_surah_download">Unduh Surat</string>
-  <string name="audio_manager_surah_delete">Hapus Surat</string>
-  <string name="audio_manager_download_all">Unduh semua</string>
-  <string name="audio_manager_download_selection">Pemilihan unduhan</string>
-  <string name="audio_manager_delete_selection">Hapus pilihan</string>
   <string name="audio_updated_title">Pembaruan file Audio Quran</string>
   <string name="audio_updated_text">Beberapa file audio Quran telah diperbarui. Quran telah menghapus salinan file-file ini sehingga versi terbaru dapat diunduh saat berikutnya Anda memutarnya kembali.</string>
   <string name="prefs_category_dual_screen">Preferensi Halaman Ganda</string>

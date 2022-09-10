@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="remove_button">Видалити</string>
+  <string name="cancel">Скасувати</string>
+  <string name="from">Від</string>
+  <string name="to">До</string>
+</resources>

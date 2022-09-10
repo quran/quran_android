@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">1 sura pobrana</item>
+    <item quantity="few">Pobrano %1$d sura</item>
+    <item quantity="many">Pobrano %1$d sura</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Menedżer dźwięku</string>
+  <string name="audio_manager_remove_audio_title">Usunąć Sura?</string>
+  <string name="audio_manager_remove_audio_msg">Czy na pewno chcesz usunąć %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Czy na pewno chcesz usunąć?</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Udało się usunąć sura</item>
+    <item quantity="few">Pomyślnie usunięto %1$d sura</item>
+    <item quantity="many">Pomyślnie usunięto %1$d sura</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">Wystąpił błąd podczas usuwania sura</item>
+    <item quantity="few">Wystąpił błąd podczas usuwania %1$d sura</item>
+    <item quantity="many">Wystąpił błąd podczas usuwania %1$d sura</item>
+  </plurals>
+  <string name="audio_manager_surah_download">Pobierz sura</string>
+  <string name="audio_manager_surah_delete">Usuń plik audio</string>
+  <string name="audio_manager_download_all">Pobierz wszystkie</string>
+  <string name="audio_manager_download_selection">Wybór do pobrania</string>
+  <string name="audio_manager_delete_selection">Usuń zaznaczenie</string>
+
+  <string name="downloading_title">Ściąganie&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">Pobrano %1$s / %2$s</string>
+  <string name="download_sura_progress">Pobrano %1$s / %2$s z sura %3$d</string>
+  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Pobieranie sura %1$d ayah %2$d</string>
+</resources>

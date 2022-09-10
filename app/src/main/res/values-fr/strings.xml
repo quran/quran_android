@@ -8,7 +8,6 @@
   <string name="downloadImportantPrompt">Il y a une petite mais importante mise à jour pour les images du Coran. Voulez-vous télécharger cette mise à jour maintenant ?</string>
   <string name="downloadPrompt_ok">Oui</string>
   <string name="downloadPrompt_no">Non</string>
-  <string name="downloading_title">Téléchargement en cours…</string>
   <string name="downloading_message">Veuillez patienter jusqu\'à la fin du téléchargement. (Reprise supportée)</string>
   <string name="extracting_title">Traitement en cours…</string>
   <string name="menu_about">À propos</string>
@@ -29,7 +28,6 @@
   <string name="menu_get_translations">Obtenir des traductions</string>
   <string name="menu_jump">Aller à</string>
   <string name="gotoPage">Aller à la page</string>
-  <string name="cancel">Annuler</string>
 
   <!-- about -->
   <string name="about_description">Quran pour Android est une application Quran gratuite. S\'il vous plaît, n\'oubliez pas les contributeurs dans vos prières.</string>
@@ -126,7 +124,6 @@
   <string name="prefs_audio_manager_summary">Gérer et télécharger les audios coraniques</string>
   <string name="downloaded_translations">Téléchargées</string>
   <string name="available_translations">Disponible en téléchargement</string>
-  <string name="remove_button">Supprimer</string>
   <string name="dialog_ok">Ok</string>
   <string name="prefs_app_location_summary">Sélectionnez sur quelle sdcard sauvegarder les fichiers</string>
   <string name="prefs_app_location_title">Location de l\'application</string>
@@ -137,7 +134,6 @@
   <string name="prefs_copying_app_files">Copie des fichier de l\'application</string>
   <string name="prefs_err_moving_app_files">Echec du déplacement des fichiers de l\'application</string>
   <string name="prefs_megabytes_int">%1$d Mo</string>
-  <string name="prefs_megabytes_str">%s Mo</string>
   <string name="prefs_no_enough_space_to_move_files">Espace insuffisant pour déplacer les fichiers de l\'application</string>
   <string name="prefs_sdcard_internal">Stockage interne</string>
   <string name="prefs_sdcard_external">Carte SD externe %1$d</string>
@@ -207,9 +203,6 @@
   <string name="download_non_wifi_prompt">Vous n\'êtes pas en wifi.  Télécharger les données malgré tout ?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Téléchargé %1$s / %2$s</string>
-  <string name="download_sura_progress">Téléchargé %1$s / %2$s de la sourate %3$d</string>
-  <string name="download_sura_ayah_progress">Téléchargement de l\'Aya %2$d de la sourate %1$d</string>
   <string name="process_progress">Traitement du fichier %1$d / %2$d</string>
   <string name="download_retry">Réessayer</string>
   <string name="download_cancel">Annuler</string>
@@ -236,8 +229,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Depuis</string>
-  <string name="play_to">À</string>
   <string name="play_restrict_range">Écouter uniquement les Ayāts sélectionnés</string>
   <string name="play_verses_range">Écouter la selection de Ayāt :</string>
   <string name="play_each_verse">Écouter chaque Aya :</string>
@@ -286,7 +277,6 @@
   <string name="storage_permission_please_restart">Redémarrez l\'application pour appliquer les changements.</string>
 
   <!-- audio manager -->
-  <string name="audio_manager">Gestionnaire audio</string>
   <string name="menu_show_date">" Afficher la date"</string>
   <string name="about_furqan_summary">Police de caractères Ottoman et explication en arabe</string>
   <string name="prefs_category_advanced_summary">Importer/exporter des signets, définir le répertoire des données, etc.</string>
@@ -300,11 +290,6 @@
   <string name="recent_pages">Pages récente</string>
   <string name="tag_blank_tag_error">Le nom du tag ne peux pas être vide</string>
   <string name="tag_duplicate_tag_error">Le nom du tag existe déjà!</string>
-  <string name="audio_manager_surah_download">Télécharger la sourate</string>
-  <string name="audio_manager_surah_delete">Supprimer la sourate</string>
-  <string name="audio_manager_download_all">Tout télécharger</string>
-  <string name="audio_manager_download_selection">Télécharger la sélection</string>
-  <string name="audio_manager_delete_selection">Supprimer la sélection</string>
   <string name="audio_updated_title">Mise à jour des fichiers audio du Coran</string>
   <string name="audio_updated_text">Des fichiers audio du Coran ont été mis à jour. Nous avons supprimé la copie local de ces fichiers afin de télécharger la nouvelle version la prochaine fois que vous les écouterez.</string>
   <string name="notification_channel_download">Coran : Téléchargements</string>
@@ -321,8 +306,6 @@
   <string name="move_down">Descendre</string>
   <string name="delete_translation">Enlever la traduction</string>
   <string name="scoped_storage_message">En raison des modifications apportées à Android pour augmenter la confidentialité des utilisateurs, la copie de fichiers en dehors des répertoires de l\'application peut empêcher Quran d\'accéder à ses données dans les futures versions d\'Android. d\'Android. Êtes-vous sûr de vouloir utiliser ce chemin ?</string>
-  <string name="audio_manager_remove_audio_title">Enlever la sourate ?</string>
-  <string name="audio_manager_remove_audio_msg">Êtes-vous sûr de vouloir supprimer %1$s?</string>
   <string name="prefs_category_dual_screen">Préférences de la double page</string>
   <string name="prefs_split_page_and_translation_title">Coran et traduction en mode dual</string>
   <string name="prefs_split_page_and_translation_summary">En mode double page avec traductions, la page du Coran et la traduction sont affichées.</string>

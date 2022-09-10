@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.annotation.VisibleForTesting
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.QariUtil
 import com.quran.labs.androidquran.service.AudioService
@@ -58,6 +59,14 @@ class AudioUtils @Inject constructor(
     val basePath = quranFileUtils.audioFileDirectory()
     val file = File(basePath, path)
     return file.isDirectory && file.list()?.isNotEmpty() ?: false
+  }
+
+  fun getQariUrl(qari: Qari): String {
+    return qari.url + if (qari.isGapless) {
+      "%03d$AUDIO_EXTENSION"
+    } else {
+      "%03d%03d$AUDIO_EXTENSION"
+    }
   }
 
   fun getQariUrl(item: QariItem): String {

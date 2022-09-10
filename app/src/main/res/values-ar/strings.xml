@@ -6,7 +6,6 @@
   <string name="downloadImportantPrompt">هناك تحديث هام صغير على ملفات الصور على هاتفكم. هل تود  تحميل الملف حالا؟</string>
   <string name="downloadPrompt_ok">نعم</string>
   <string name="downloadPrompt_no">لا</string>
-  <string name="downloading_title">جاري التحميل....</string>
   <string name="downloading_message">يرجى الإنتظار حتى نهاية التحميل</string>
   <string name="extracting_title">تجهيز…</string>
   <string name="menu_about">عنا</string>
@@ -26,7 +25,6 @@
   <string name="menu_get_translations">حمل التفاسير/التراجم</string>
   <string name="menu_jump">انتقال سريع</string>
   <string name="gotoPage">أدخل رقم الصفحة</string>
-  <string name="cancel">إلغاء</string>
 
   <string name="help_title">الأسئلة المتداولة</string>
   <string name="help">
@@ -52,15 +50,6 @@
   <string name="quranSearchType">آيات القرآن</string>
   <string name="search_full_results">نتائج كاملة</string>
   <string name="search_entire_mushaf">ابحث في المصحف بأكمله</string>
-
-  <plurals name="files_downloaded">
-    <item quantity="zero">لم يتم تحميل سور بعد‎</item>
-    <item quantity="one">تم تحميل سورة واحده</item>
-    <item quantity="two">تم تحميل سورتان</item>
-    <item quantity="few">تم تحميل %1$d سور</item>
-    <item quantity="many">تم تحميل %1$d سورة</item>
-    <item quantity="other">تم تحميل %1$d سورة</item>
-  </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -138,7 +127,6 @@
 
   <string name="downloaded_translations">الملفات المحملة</string>
   <string name="available_translations">الملفات المتاحة للتحميل</string>
-  <string name="remove_button">احذف</string>
   <string name="dialog_ok">موافق</string>
 
   <!-- tafaseer -->
@@ -186,9 +174,6 @@
   <string name="sdcard_error">لم يتم العثور على بطاقه الذاكرة الرقمية. أعد وضعها و حاول مرة أخرى.</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">تم تحميل %1$s / %2$s</string>
-  <string name="download_sura_progress">جاري التحميل من سورة %3$d - %1$s / %2$s</string>
-  <string name="download_sura_ayah_progress">جاري تحميل السورة %1$d الآية %2$d</string>
   <string name="process_progress">جاري اﻹعداد %1$d / %2$d</string>
   <string name="download_retry">أعد المحاولة</string>
   <string name="download_cancel">إلغاء</string>
@@ -220,8 +205,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">من</string>
-  <string name="play_to">إلى</string>
   <string name="play_restrict_range">" شغل ما تم اختياره من الآيات فقط"</string>
   <string name="play_verses_range">تشغيل مجموعة الآيات:</string>
   <string name="play_each_verse">تشغيل كل آية:</string>
@@ -255,8 +238,6 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">لا توجد أي مرجعيات</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">إدارة الصوتيات</string>
   <string name="prefs_use_arabic_summary_on">سيتم تحويل التطبيق إلى اللغة العربية</string>
   <string name="prefs_use_arabic_title">الوضع العربي</string>
   <string name="play">تشغيل</string>
@@ -294,11 +275,6 @@
   <string name="undo">تراجع</string>
   <string name="notification_channel_download">تحميل ملفات القرآن</string>
   <string name="notification_channel_audio">تلاوة القرآن</string>
-  <string name="audio_manager_delete_selection">حذف التحديد</string>
-  <string name="audio_manager_download_selection">تحميل التحديد</string>
-  <string name="audio_manager_download_all">تحميل الكل</string>
-  <string name="audio_manager_surah_delete">حذف السورة</string>
-  <string name="audio_manager_surah_download">تحميل السورة</string>
   <string name="next">التالي</string>
   <string name="previous">السابق</string>
   <string name="tag_blank_tag_error">لا يمكن أن يكون اسم التصنيف فارغًا</string>
@@ -314,7 +290,6 @@
   <string name="move_down">تحريك للأسفل</string>
   <string name="delete_translation">حذف الترجمة</string>
   <string name="prefs_megabytes_int">%1$d م ب</string>
-  <string name="prefs_megabytes_str">%s م ب</string>
   <string name="storage_permission_please_restart">يرجى إعادة تشغيل التطبيق لتفعيل الإذن</string>
   <string name="storage_permission_rationale">تطبيق قرآن يحتاج إلى إذنك بالوصول إلى الذاكرة الخارجية. التطبيق سيعمل دون الإذن، لكن عند مسح البيانات أو حذف التطبيق، ستحذف جميع صفحات المصحف والبيانات والصوت. هل تريد الإذن لتطبيق قرآن؟</string>
   <string name="about_contributors_summary">قائمة بأسماء المساهمين في تطوير تطبيق قرآن أندرويد</string>
@@ -332,8 +307,6 @@
   <string name="about_tanzil_summary">ترجمات لبعض اللغات</string>
   <string name="please_wait">الرجاء الانتظار…</string>
   <string name="exported_data">صدرت البيانات إلى %1$s</string>
-  <string name="audio_manager_remove_audio_title">حذف الملف الصوتي؟</string>
-  <string name="audio_manager_remove_audio_msg">سيتم حذف الملف الصوتي ل%1$s. متأكد؟</string>
   <string name="about_noorhidayat_summary">خط نورحِرا وترجمة مفتي تقي</string>
   <string name="about_qaloon_images">صور صفحات القرآن برواية قالون مأخوذة بتصريح من Nous-Mêmes Éditions Et Diffusion (تونس)</string>
   <string name="audio_updated_title">تحديث الملفات الصوتية</string>

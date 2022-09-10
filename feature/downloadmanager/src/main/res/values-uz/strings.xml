@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">Bitta sura saqlangan</item>
+    <item quantity="other">%1$d ta sura saqlangan</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Audio menejer</string>
+  <string name="audio_manager_remove_audio_msg">%1$s audio fayllari oʻchirilsinmi?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Audio fayllari oʻchirilsinmi?</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Sura oʻchirildi</item>
+    <item quantity="other">%1$d ta sura oʻchirildi</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">Surani oʻchirishda xatolik yuz berdi</item>
+    <item quantity="other">%1$d ta surani oʻchirishda xatolik yuz berdi</item>
+  </plurals>
+  <string name="audio_manager_surah_download">Saqlab olish</string>
+  <string name="audio_manager_surah_delete">Oʻchirish</string>
+  <string name="audio_manager_download_all">Hammasini saqlash</string>
+  <string name="audio_manager_download_selection">Tanlanganlarni saqlash</string>
+  <string name="audio_manager_delete_selection">Tanlanganlarni oʻchirish</string>
+
+  <string name="downloading_title">Saqlanmoqda&#8230;</string>
+  <string name="download_amount_in_megabytes">%s Mb</string>
+  <string name="download_progress">%1$s/%2$s saqlandi</string>
+  <string name="download_sura_progress">%3$d-suraning %1$s (jami: %2$s) saqlanmoqda&#8230;</string>
+  <string name="download_sura_ayah_progress">%1$d-sura %2$d-oyat saqlanmoqda&#8230;</string>
+</resources>

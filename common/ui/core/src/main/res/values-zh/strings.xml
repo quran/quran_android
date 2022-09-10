@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="remove_button">移除</string>
+  <string name="cancel">取消</string>
+  <string name="from">来自</string>
+  <string name="to">拟</string>
+</resources>

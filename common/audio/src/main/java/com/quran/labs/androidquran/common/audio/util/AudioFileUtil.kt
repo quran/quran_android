@@ -10,7 +10,7 @@ object AudioFileUtil {
       .map { it.name.removeSuffix(suffix) }
   }
 
-  fun fileNamesMatchingSuffix(fileSystem: FileSystem, path: Path, suffix: String): List<Path> {
+  private fun fileNamesMatchingSuffix(fileSystem: FileSystem, path: Path, suffix: String): List<Path> {
     return fileSystem.listOrNull(path)
       ?.filter { it.name.endsWith(suffix) }
       ?: emptyList()

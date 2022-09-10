@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">1 szúra letöltve</item>
+    <item quantity="other">%1$d szúra letöltve</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Hangkezelő</string>
+  <string name="audio_manager_remove_audio_title">Szúra eltávolítása?</string>
+  <string name="audio_manager_remove_audio_msg">Biztos, hogy el szeretné távolítani a %1$s -t?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Biztos, hogy el szeretné távolítani?</string>
+  <string name="audio_manager_surah_download">Szúra letöltése</string>
+  <string name="audio_manager_surah_delete">Hangfájl törlése</string>
+  <string name="audio_manager_download_all">Minden letöltése</string>
+  <string name="audio_manager_download_selection">Válogatás letöltése</string>
+  <string name="audio_manager_delete_selection">Kijelölés törlése</string>
+
+  <string name="downloading_title">Letöltés&#8230;</string>
+  <string name="download_progress">Letöltve %1$s / %2$s</string>
+  <string name="download_sura_progress">Letöltve %1$s / %2$s szúra %3$d</string>
+  <string name="download_sura_ayah_progress">%1$d. szúra %2$d. ája letöltése</string>
+</resources>

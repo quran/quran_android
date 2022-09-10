@@ -10,6 +10,11 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
+import androidx.core.text.TextUtilsCompat;
+import androidx.core.view.ViewCompat;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 
@@ -18,30 +23,11 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.WorkerThread;
-import androidx.core.text.TextUtilsCompat;
-import androidx.core.view.ViewCompat;
-
 public class QuranUtils {
 
   private static boolean isArabicFormatter;
   private static NumberFormat numberFormat;
   private static Locale lastLocale;
-
-  public static boolean isRtl(@NonNull String s) {
-    final char[] characters = s.toCharArray();
-    for (char character : characters) {
-      final int directionality = Character.getDirectionality(character);
-      if (directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT ||
-          directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC) {
-        return true;
-      } else if (directionality == Character.DIRECTIONALITY_LEFT_TO_RIGHT) {
-        return false;
-      }
-    }
-    return false;
-  }
 
   /**
    * Returns a boolean indicating if this string contains Arabic

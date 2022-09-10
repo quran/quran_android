@@ -373,7 +373,7 @@ class QuranAdvancedSettingsFragment : PreferenceFragmentCompat() {
           currentDialog.dismiss()
           dialog = null
         }
-        .setNegativeButton(R.string.cancel) { currentDialog: DialogInterface, which: Int ->
+        .setNegativeButton(com.quran.mobile.common.ui.core.R.string.cancel) { currentDialog: DialogInterface, which: Int ->
           currentDialog.dismiss()
           dialog = null
         }
