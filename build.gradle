@@ -23,7 +23,7 @@ buildscript {
     coreKtxVersion = '1.7.0'
 
     anvilVersion = '2.4.2'
-    moshiVersion = '1.13.0'
+    moshiVersion = '1.14.0'
     okhttpVersion = '4.10.0'
     okioVersion = '3.2.0'
     retrofitVersion = '2.9.0'
