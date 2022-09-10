@@ -14,8 +14,7 @@ class GappedAudioInfoCommand @Inject constructor(
 
   fun gappedDownloads(path: Path): Pair<List<Int>, List<PartiallyDownloadedSura>> {
     val gappedSuras = fileSystem.list(path)
-      .filter { it.toFile().isDirectory }
-      .filter { it.toFile().nameWithoutExtension.toIntOrNull() in 1..114 }
+      .filter { it.name.toIntOrNull() in 1..114 }
       .associate { directory ->
         val gappedDownloads =
           AudioFileUtil.filesMatchingSuffixWithSuffixRemoved(fileSystem, directory, ".mp3")
@@ -29,6 +28,7 @@ class GappedAudioInfoCommand @Inject constructor(
       .map { it.key }
     val partiallyDownloaded = gappedSuras
       .filter { (sura, _) -> !fullyDownloaded.contains(sura) }
+      .filter { (_, partiallyDownloadedAyat) -> partiallyDownloadedAyat.isNotEmpty() }
       .map { (sura, partiallyDownloadedAyat) ->
         PartiallyDownloadedSura(
           sura,
