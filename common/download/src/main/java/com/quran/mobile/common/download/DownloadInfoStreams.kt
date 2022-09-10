@@ -1,8 +1,8 @@
 package com.quran.mobile.common.download
 
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,11 +13,12 @@ import javax.inject.Singleton
  */
 @Singleton
 class DownloadInfoStreams @Inject constructor() {
-  private val downloadInfoStream = MutableStateFlow<DownloadInfo?>(null)
+  private val downloadInfoStream =
+    MutableSharedFlow<DownloadInfo>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
   fun emitEvent(downloadInfo: DownloadInfo) {
-    downloadInfoStream.value = downloadInfo
+    downloadInfoStream.tryEmit(downloadInfo)
   }
 
-  fun downloadInfoStream(): Flow<DownloadInfo> = downloadInfoStream.filterNotNull()
+  fun downloadInfoStream(): Flow<DownloadInfo> = downloadInfoStream
 }

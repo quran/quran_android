@@ -17,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
@@ -112,7 +111,6 @@ class SheikhAudioPresenter @Inject constructor(
 
   private suspend fun onDownload(qariId: Int, toDownload: List<Int>) {
     val flow = downloadInfo(qariId)
-      .drop(1)
       .onEach {
         if (it is SuraDownloadStatusEvent.Done) {
           currentDialogFlow.value = SheikhDownloadDialog.None
