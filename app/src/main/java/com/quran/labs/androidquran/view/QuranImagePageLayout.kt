@@ -50,7 +50,7 @@ open class QuranImagePageLayout(context: Context) : QuranPageLayout(context) {
   fun getImageView(): HighlightingImageView = imageView
 
   inner class PageGestureDetector : GestureDetector.SimpleOnGestureListener() {
-    override fun onDown(e: MotionEvent?): Boolean = true
+    override fun onDown(e: MotionEvent): Boolean = true
 
     override fun onSingleTapUp(event: MotionEvent): Boolean {
       return pageController.handleTouchEvent(
