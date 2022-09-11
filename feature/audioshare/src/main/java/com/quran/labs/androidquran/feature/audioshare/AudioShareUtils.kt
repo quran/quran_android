@@ -52,14 +52,11 @@ class AudioShareUtils {
   ): String? {
     assert(end >= start)
 
-    val audioCacheDirectory = File(
-      Environment.getExternalStoragePublicDirectory(
-          Environment.DIRECTORY_MUSIC).path + File.separator + "quran_android_cache")
-
+    val audioCacheDirectory = context.cacheDir
     if (!audioCacheDirectory.exists()) {
       if (!audioCacheDirectory.mkdirs()) {
         Toast.makeText(context, "could not create directory", Toast.LENGTH_SHORT).show()
-        return null;
+        return null
       }
     }
 
@@ -211,7 +208,7 @@ class AudioShareUtils {
 
     try {
       firstSurahCursor = db.getAyahTimings(start.sura)
-      firstSurahMap = populateArrayFromCursor(firstSurahCursor)!!
+      firstSurahMap = populateArrayFromCursor(firstSurahCursor)
       lastSurahCursor = db.getAyahTimings(end.sura)
       lastSurahMap = populateArrayFromCursor(lastSurahCursor)
     } catch (sqlException: SQLException) {
