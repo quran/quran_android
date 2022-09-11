@@ -5,8 +5,9 @@ import android.content.Intent
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
+import com.quran.labs.androidquran.common.audio.model.AudioPathInfo
 import com.quran.labs.androidquran.common.audio.model.QariItem
-import com.quran.labs.androidquran.dao.audio.AudioPathInfo
+import com.quran.labs.androidquran.common.audio.util.AudioFileUtil
 import com.quran.labs.androidquran.dao.audio.AudioRequest
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.presenter.Presenter
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class AudioPresenter @Inject
 constructor(private val quranDisplayData: QuranDisplayData,
             private val audioUtil: AudioUtils,
+            private val audioFileUtil: AudioFileUtil,
             private val quranFileUtils: QuranFileUtils) : Presenter<PagerActivity> {
   private var pagerActivity: PagerActivity? = null
   private var lastAudioRequest: AudioRequest? = null
@@ -33,7 +35,7 @@ constructor(private val quranDisplayData: QuranDisplayData,
            rangeRepeat: Int,
            enforceRange: Boolean,
            shouldStream: Boolean) {
-    val audioPathInfo = audioUtil.getLocalAudioPathInfo(qari)
+    val audioPathInfo = audioFileUtil.getLocalAudioPathInfo(qari)
     if (audioPathInfo != null) {
       // override streaming if all the files are already downloaded
       val stream = if (shouldStream) {

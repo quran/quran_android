@@ -71,7 +71,8 @@ import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.audio.model.QariItem;
-import com.quran.labs.androidquran.dao.audio.AudioPathInfo;
+import com.quran.labs.androidquran.common.audio.model.AudioPathInfo;
+import com.quran.labs.androidquran.common.audio.util.AudioFileUtil;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
@@ -148,7 +149,6 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.observers.DisposableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import kotlin.TuplesKt;
 import timber.log.Timber;
 
 /**
@@ -240,6 +240,7 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject QuranAppUtils quranAppUtils;
   @Inject ShareUtil shareUtil;
   @Inject AudioUtils audioUtils;
+  @Inject AudioFileUtil audioFileUtil;
   @Inject QuranDisplayData quranDisplayData;
   @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
@@ -1897,30 +1898,19 @@ public class PagerActivity extends AppCompatActivity implements
   }
 
   public void shareAyahAudio(SuraAyah start, SuraAyah end) {
-    final SuraAyah selectedStartSuraAyah;
-    final SuraAyah selectedEndSuraAyah;
-    if (start.compareTo(end) <= 0) {
-      selectedStartSuraAyah = start;
-      selectedEndSuraAyah = end;
-    } else {
-      selectedStartSuraAyah = end;
-      selectedEndSuraAyah = start;
-      Timber.e(new IllegalStateException("End isn't larger than the start: " + start + " to " + end));
-    }
-
     final QariItem selectedQari = audioStatusBar.getAudioInfo();
-    AudioPathInfo audioPathInfo = audioUtils.getLocalAudioPathInfo(selectedQari);
+    AudioPathInfo audioPathInfo = audioFileUtil.getLocalAudioPathInfo(selectedQari);
 
     assert audioPathInfo != null;
     boolean gaplessDatabaseExists = audioPathInfo.getGaplessDatabase() != null;
 
     if (gaplessDatabaseExists) {
-      if (audioFilesExist(audioPathInfo, selectedStartSuraAyah, selectedEndSuraAyah)) {
+      if (audioFilesExist(audioPathInfo, start, end)) {
         AudioShareUtils audioShareUtils = new AudioShareUtils();
         String path = audioShareUtils.createBlockingSharableAudioFile(
             this,
-            selectedStartSuraAyah,
-            selectedEndSuraAyah,
+            start,
+            end,
             selectedQari,
             audioPathInfo.getUrlFormat(),
             audioPathInfo.getGaplessDatabase()

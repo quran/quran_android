@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.common.audio.cache.command
 
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.common.audio.model.PartiallyDownloadedSura
-import com.quran.labs.androidquran.common.audio.util.AudioFileUtil
+import com.quran.labs.androidquran.common.audio.util.AudioFileTools
 import okio.FileSystem
 import okio.Path
 import javax.inject.Inject
@@ -17,7 +17,7 @@ class GappedAudioInfoCommand @Inject constructor(
       .filter { it.name.toIntOrNull() in 1..114 }
       .associate { directory ->
         val gappedDownloads =
-          AudioFileUtil.filesMatchingSuffixWithSuffixRemoved(fileSystem, directory, ".mp3")
+          AudioFileTools.filesMatchingSuffixWithSuffixRemoved(fileSystem, directory, ".mp3")
             .mapNotNull { it.toIntOrNull() }
             .filter { it in 1..286 }
         directory.toFile().nameWithoutExtension.toInt() to gappedDownloads
