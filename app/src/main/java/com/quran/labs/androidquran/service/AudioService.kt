@@ -57,17 +57,17 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.session.MediaButtonReceiver
+import com.quran.common.util.database.DatabaseUtils
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.audio.timing.SuraTimingDatabaseHandler.Companion.getDatabaseHandler
 import com.quran.labs.androidquran.dao.audio.AudioPlaybackInfo
 import com.quran.labs.androidquran.dao.audio.AudioRequest
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.data.QuranFileConstants
-import com.quran.labs.androidquran.database.DatabaseUtils.closeCursor
-import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler.Companion.getDatabaseHandler
 import com.quran.labs.androidquran.extension.requiresBasmallah
 import com.quran.labs.androidquran.presenter.audio.service.AudioQueue
 import com.quran.labs.androidquran.service.util.AudioFocusHelper
@@ -427,7 +427,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
         // don't crash the app if the database is corrupt
         Timber.e(se)
       } finally {
-        closeCursor(cursor)
+        DatabaseUtils.closeCursor(cursor)
       }
 
       map

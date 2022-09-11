@@ -24,6 +24,7 @@ android {
 dependencies {
   implementation project(path: ':common:audio')
   implementation project(path: ':common:data')
+  implementation project(path: ':common:util')
 
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
@@ -37,4 +38,6 @@ dependencies {
 
   testImplementation "junit:junit:${junitVersion}"
   testImplementation "com.google.truth:truth:${truthVersion}"
+
+  implementation "com.jakewharton.timber:timber:${timberVersion}"
 }

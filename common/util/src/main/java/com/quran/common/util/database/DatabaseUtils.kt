@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.database
+package com.quran.common.util.database
 
 import android.database.Cursor
 import java.lang.Exception

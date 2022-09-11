@@ -80,7 +80,7 @@ import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent;
 import com.quran.labs.androidquran.di.module.activity.PagerActivityModule;
 import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
-import com.quran.labs.androidquran.feature.audio.util.AudioShareUtils;
+import com.quran.labs.androidquran.feature.audioshare.AudioShareUtils;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.presenter.audio.AudioPresenter;
@@ -1917,7 +1917,7 @@ public class PagerActivity extends AppCompatActivity implements
     if (gaplessDatabaseExists) {
       if (audioFilesExist(audioPathInfo)) {
         AudioShareUtils audioShareUtils = new AudioShareUtils();
-        String path = audioShareUtils.createSharableAudioFile(this, selectedStartSuraAyah,
+        String path = audioShareUtils.createBlockingSharableAudioFile(this, selectedStartSuraAyah,
             selectedEndSuraAyah, selectedQari, audioPathInfo.getUrlFormat(),
             audioPathInfo.getGaplessDatabase());
         if(path != null && !path.isEmpty()){

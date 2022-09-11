@@ -1,14 +1,13 @@
-package com.quran.labs.androidquran.database
+package com.quran.labs.androidquran.common.audio.timing
 
 import android.database.Cursor
 import android.database.DefaultDatabaseErrorHandler
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabaseCorruptException
+import com.quran.common.util.database.DatabaseUtils
 import timber.log.Timber
 import java.io.File
-import java.lang.Exception
-import java.util.HashMap
 
 class SuraTimingDatabaseHandler private constructor(path: String) {
   private var database: SQLiteDatabase? = null

@@ -21,6 +21,7 @@ buildscript {
     workManagerVersion = '2.7.1'
     materialComponentsVersion = '1.6.1'
     coreKtxVersion = '1.7.0'
+    timberVersion = '5.0.1'
 
     anvilVersion = '2.4.2'
     moshiVersion = '1.14.0'

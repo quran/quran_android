@@ -11,7 +11,7 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.core.worker.WorkerTaskFactory
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.database.AudioDatabaseVersionChecker
-import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler
+import com.quran.labs.androidquran.common.audio.timing.SuraTimingDatabaseHandler
 import com.quran.labs.androidquran.feature.audio.AudioUpdater
 import com.quran.labs.androidquran.feature.audio.api.AudioUpdateService
 import com.quran.labs.androidquran.feature.audio.util.AudioFileCheckerImpl
