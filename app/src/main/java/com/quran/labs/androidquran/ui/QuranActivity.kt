@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -253,7 +254,17 @@ class QuranActivity : AppCompatActivity(),
     } else if (searchItem != null && searchItem.isActionViewExpanded) {
       searchItem.collapseActionView()
     } else {
-      super.onBackPressed()
+      // work around a memory leak in Android Q
+      // https://issuetracker.google.com/issues/139738913
+      if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q &&
+        isTaskRoot &&
+        (supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.backStackEntryCount ?: 0) == 0 &&
+        supportFragmentManager.backStackEntryCount == 0
+      ) {
+        finishAfterTransition()
+      } else {
+        super.onBackPressed()
+      }
     }
   }
 
