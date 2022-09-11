@@ -260,11 +260,6 @@ public class PagerActivity extends AppCompatActivity implements
 
   private final PagerHandler handler = new PagerHandler(this);
 
-  private ArrayList<String> audioCacheFilePaths = new ArrayList<>();
-  private SuraAyah selectedStartSuraAyah = null;
-  private SuraAyah selectedEndSuraAyah = null;
-  private QariItem selectedQari = null;
-
 
   private static class PagerHandler extends Handler {
     private final WeakReference<PagerActivity> activity;
@@ -1902,59 +1897,58 @@ public class PagerActivity extends AppCompatActivity implements
   }
 
   public void shareAyahAudio(SuraAyah start, SuraAyah end) {
-    audioCacheFilePaths.clear();
+    final SuraAyah selectedStartSuraAyah;
+    final SuraAyah selectedEndSuraAyah;
+    if (start.compareTo(end) <= 0) {
+      selectedStartSuraAyah = start;
+      selectedEndSuraAyah = end;
+    } else {
+      selectedStartSuraAyah = end;
+      selectedEndSuraAyah = start;
+      Timber.e(new IllegalStateException("End isn't larger than the start: " + start + " to " + end));
+    }
 
-    kotlin.Pair pair2 = getReorderedAyatPair(start, end);
-    selectedStartSuraAyah = (SuraAyah) pair2.component1();
-    selectedEndSuraAyah = (SuraAyah) pair2.component2();
-
-    selectedQari = audioStatusBar.getAudioInfo();
+    final QariItem selectedQari = audioStatusBar.getAudioInfo();
     AudioPathInfo audioPathInfo = audioUtils.getLocalAudioPathInfo(selectedQari);
 
     assert audioPathInfo != null;
     boolean gaplessDatabaseExists = audioPathInfo.getGaplessDatabase() != null;
 
     if (gaplessDatabaseExists) {
-      if (audioFilesExist(audioPathInfo)) {
+      if (audioFilesExist(audioPathInfo, selectedStartSuraAyah, selectedEndSuraAyah)) {
         AudioShareUtils audioShareUtils = new AudioShareUtils();
-        String path = audioShareUtils.createBlockingSharableAudioFile(this, selectedStartSuraAyah,
-            selectedEndSuraAyah, selectedQari, audioPathInfo.getUrlFormat(),
-            audioPathInfo.getGaplessDatabase());
-        if(path != null && !path.isEmpty()){
+        String path = audioShareUtils.createBlockingSharableAudioFile(
+            this,
+            selectedStartSuraAyah,
+            selectedEndSuraAyah,
+            selectedQari,
+            audioPathInfo.getUrlFormat(),
+            audioPathInfo.getGaplessDatabase()
+        );
+
+        if (path != null && !path.isEmpty()){
           shareAudioSegment(path);
-        }else{
+        } else {
           Toast.makeText(this, "could not share audio ayah", Toast.LENGTH_SHORT).show();
         }
       } else {
-        requestDownload(audioPathInfo);
+        requestDownload(audioPathInfo, selectedQari, start, end);
       }
     }
   }
 
-  private kotlin.Pair getReorderedAyatPair(SuraAyah start, SuraAyah end) {
-    kotlin.Pair pair;
-    if (start.compareTo(end) <= 0) {
-      pair = TuplesKt.to(start, end);
-    } else {
-      Timber.Forest.e(
-          new IllegalStateException("End isn't larger than the start: " + start + " to " + end));
-      pair = TuplesKt.to(end, start);
-    }
-    return pair;
-  }
-
-  private boolean audioFilesExist(AudioPathInfo audioPathInfo) {
+  private boolean audioFilesExist(AudioPathInfo audioPathInfo, SuraAyah start, SuraAyah end) {
     return audioUtils.haveAllFiles(audioPathInfo.getUrlFormat(), audioPathInfo.getLocalDirectory(),
-        selectedStartSuraAyah, selectedEndSuraAyah, true);
+        start, end, true);
   }
 
   private void shareAudioSegment(String path) {
     shareUtil.shareAudioFileIntent(PagerActivity.this, new File(path));
   }
 
-  private void requestDownload(AudioPathInfo audioPathInfo) {
+  private void requestDownload(AudioPathInfo audioPathInfo, QariItem qari, SuraAyah start, SuraAyah end) {
     AudioRequest audioRequest = new AudioRequest(
-        selectedStartSuraAyah, selectedEndSuraAyah, selectedQari, 0, 0, true, false, audioPathInfo);
+        start, end, qari, 0, 0, true, false, audioPathInfo);
 
     Intent downloadIntent = audioPresenter.getDownloadIntent(this, audioRequest);
     if (downloadIntent != null) {

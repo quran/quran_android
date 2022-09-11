@@ -4,13 +4,13 @@ import android.content.Context
 import android.content.Intent
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.dao.audio.AudioPathInfo
 import com.quran.labs.androidquran.dao.audio.AudioRequest
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.service.QuranDownloadService
-import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.util.AudioUtils
@@ -33,7 +33,7 @@ constructor(private val quranDisplayData: QuranDisplayData,
            rangeRepeat: Int,
            enforceRange: Boolean,
            shouldStream: Boolean) {
-    val audioPathInfo = getLocalAudioPathInfo(qari)
+    val audioPathInfo = audioUtil.getLocalAudioPathInfo(qari)
     if (audioPathInfo != null) {
       // override streaming if all the files are already downloaded
       val stream = if (shouldStream) {
@@ -134,23 +134,6 @@ constructor(private val quranDisplayData: QuranDisplayData,
                                 destination: String,
                                 title: String): Intent {
     return ServiceIntentHelper.getAudioDownloadIntent(context, url, destination, title)
-  }
-
-  private fun getLocalAudioPathInfo(qari: QariItem): AudioPathInfo? {
-    pagerActivity?.let {
-      val localPath = audioUtil.getLocalQariUrl(qari)
-      if (localPath != null) {
-        val databasePath = audioUtil.getQariDatabasePathIfGapless(qari)
-        val urlFormat = if (databasePath.isNullOrEmpty()) {
-          localPath + File.separator + "%d" + File.separator +
-              "%d" + AudioUtils.AUDIO_EXTENSION
-        } else {
-          localPath + File.separator + "%03d" + AudioUtils.AUDIO_EXTENSION
-        }
-        return AudioPathInfo(urlFormat, localPath, databasePath)
-      }
-    }
-    return null
   }
 
   private fun haveAllFiles(audioPathInfo: AudioPathInfo, start: SuraAyah, end: SuraAyah): Boolean {
