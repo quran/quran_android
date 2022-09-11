@@ -9,7 +9,6 @@
     </string>
   <string name="downloadPrompt_ok">Ja</string>
   <string name="downloadPrompt_no">Ingen</string>
-  <string name="downloading_title">Nedladdning av&#8230;</string>
   <string name="downloading_message">Vänta tills filerna har laddats ner (återupptas).</string>
   <string name="extracting_title">Bearbetning&#8230;</string>
   <string name="menu_about">Om oss</string>
@@ -31,7 +30,6 @@
   <string name="menu_get_translations">Få översättningar</string>
   <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">Gå till sidan</string>
-  <string name="cancel">Avbryt</string>
   <string name="please_wait">Vänta lite…</string>
 
   <!-- about -->
@@ -80,11 +78,6 @@
   <string name="quranSearchType">Ayat i Koranen</string>
   <string name="search_full_results">Fullständigt resultat</string>
   <string name="search_entire_mushaf">Sök i hela mushaf</string>
-
-  <plurals name="files_downloaded">
-    <item quantity="one">1 sura hämtad</item>
-    <item quantity="other">%1$d surahs som laddas ner</item>
-  </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -144,7 +137,6 @@
   <string name="prefs_audio_manager_summary">Hantera och ladda ner Koranljud</string>
   <string name="downloaded_translations">Nedladdat</string>
   <string name="available_translations">Tillgänglig för nedladdning</string>
-  <string name="remove_button">Ta bort</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Databok över Koranen</string>
   <string name="prefs_app_location_summary">Välj var du vill lagra Quran-filer</string>
@@ -158,7 +150,6 @@
   <string name="prefs_err_moving_app_files">Misslyckades med att flytta appfiler</string>
   <string name="prefs_no_enough_space_to_move_files">Otillräckligt utrymme för att flytta appfiler</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Läge med dubbla sidor</string>
   <string name="prefs_dual_page_mode_enabled">I liggande format visas två sidor sida vid sida.</string>
   <string name="prefs_dual_page_mode_disabled">I liggande läge visas endast en sida.</string>
@@ -239,9 +230,6 @@
   <string name="download_non_wifi_prompt">Du har inte tillgång till Wi-Fi. Hämta data ändå?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Nedladdat %1$s / %2$s</string>
-  <string name="download_sura_progress">Nedladdat %1$s / %2$s av surah %3$d</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Hämta surah %1$d ayah %2$d</string>
   <string name="process_progress">Bearbetning av fil %1$d / %2$d</string>
   <string name="download_retry">Försök igen</string>
   <string name="download_cancel">Avbryt</string>
@@ -268,8 +256,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Från</string>
-  <string name="play_to">Till</string>
   <string name="play_restrict_range">Spela endast ovanstående ayat</string>
   <string name="play_verses_range">Spela upp ayat:</string>
   <string name="play_each_verse">Spela upp varje ayah:</string>
@@ -317,24 +303,6 @@
 
   <!-- widgets -->
   <string name="bookmarks_list_empty">Inga bokmärken</string>
-
-  <!-- audio manager -->
-  <string name="audio_manager">Ljudansvarig</string>
-  <string name="audio_manager_remove_audio_title">Ta bort Surah?</string>
-  <string name="audio_manager_remove_audio_msg">Är du säker på att du vill ta bort %1$s?</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">Lyckades ta bort surans ljud</item>
-    <item quantity="other">Lyckades ta bort %1$d surahs</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">Det uppstod ett fel när suran raderades.</item>
-    <item quantity="other">Det uppstod ett fel när du tog bort %1$d surahs</item>
-  </plurals>
-  <string name="audio_manager_surah_download">Ladda ner surah</string>
-  <string name="audio_manager_surah_delete">Ta bort ljudfilen</string>
-  <string name="audio_manager_download_all">Ladda ner alla</string>
-  <string name="audio_manager_download_selection">Nedladdning av urval</string>
-  <string name="audio_manager_delete_selection">Ta bort val</string>
 
   <!-- audio updates -->
   <string name="audio_updated_title">Koran Ljudfiler Uppdatering</string>

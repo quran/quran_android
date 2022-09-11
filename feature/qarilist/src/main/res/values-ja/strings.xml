@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">クアリを選択する</string>
+  <string name="qarilist_ready_to_play">試聴の準備</string>
+  <string name="qarilist_qaris_with_downloads">ダウンロードできる録音機</string>
+  <string name="qarilist_gapless">連続</string>
+  <string name="qarilist_gapped">非連続</string>
+  <string name="qarilist_selected">選択された</string>
+  <string name="qarilist_dismiss">解散</string>
+</resources>

@@ -7,7 +7,6 @@
   <string name="downloadImportantPrompt">Hay disponible una pequeña actualización, pero importante\npara las imágenes del Corán que tienes en tu dispositivo móvil. ¿Quieres descargar \nesta actualización ahora?</string>
   <string name="downloadPrompt_ok">Si</string>
   <string name="downloadPrompt_no">No</string>
-  <string name="downloading_title">Descargando…</string>
   <string name="downloading_message">Por favor, espera a la descarga de los archivos. (La aplicación se reiniciará)</string>
   <string name="extracting_title">Procesando…</string>
   <string name="menu_about">Acerca de Nosotros</string>
@@ -26,7 +25,6 @@
   <string name="menu_get_translations">Obtener traducciones</string>
   <string name="menu_jump">Saltar</string>
   <string name="gotoPage">Ir a la página</string>
-  <string name="cancel">Cancelar</string>
 
   <!-- help -->
   <string name="help_title">Preguntas Frecuentes</string>
@@ -84,7 +82,6 @@
   <string name="prefs_download_amount_summary">Cantidad preferente de descarga de audio sin pausas.</string>
   <string name="downloaded_translations">Descargado</string>
   <string name="available_translations">Disponible para descargar</string>
-  <string name="remove_button">Eliminar</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Directorio de Datos del Corán</string>
   <string name="prefs_app_location_summary">Elegir ubicación para almacenar los archivos del Corán.</string>
@@ -138,7 +135,6 @@
   <string name="notification_download_canceled">Descarga cancelada</string>
   <string name="download_non_wifi_prompt">No estás conectado a una red WiFi. ¿Descargar los datos de todos modos?</string>
   <!--downloading dialogs-->
-  <string name="download_progress">Descargado %1$s / %2$s</string>
   <string name="process_progress">Procesando archivo %1$d / %2$d</string>
   <string name="download_retry">Reintente</string>
   <string name="download_cancel">Cancelar</string>
@@ -160,8 +156,6 @@
     <item quantity="other">%s versículos</item>
   </plurals>
   <!--ayah action panel-->
-  <string name="play_from">Desde</string>
-  <string name="play_to">Para</string>
   <string name="play_restrict_range">Sólo reproducir los versículos anteriores</string>
   <string name="play_apply">Aplicar</string>
   <string name="play_apply_and_play">Aplicar y reproducir</string>
@@ -212,7 +206,6 @@
   <string name="prefs_send_logs_title">Enviar registros</string>
   <string name="prefs_send_logs_summary">Enviar los registros de depuración al desarrollador</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_category_advanced">Opciones avanzadas</string>
   <string name="prefs_category_advanced_summary">Importar/exportar marcadores, establecer el directorio de datos del Corán, etc.</string>
   <string name="prefs_import_title">Importar</string>
@@ -238,8 +231,6 @@
   <string name="scoped_storage_message">Debido a los cambios de Android para aumentar la privacidad del usuario, copiar archivos fuera de los directorios de la aplicación podría impedir que Quran para Android acceda a sus datos en futuras versiones de Android. Estás seguro de que quieres usar esta ruta?</string>
   <string name="please_grant_permissions">Por favor, conceda el permiso en la configuración de la aplicación</string>
   <string name="see_tafseer_of_verse">El tafser de esta ayah está incluido en el tafser de la ayah %d (Haga clic para ampliar).</string>
-  <string name="download_sura_progress">Descargado %1$s / %2$s de la sura %3$d</string>
-  <string name="download_sura_ayah_progress">Descargando la sura %1$d ayah %2$d</string>
   <string name="play_verses_range">Escucha el conjunto de ayat:</string>
   <string name="play_each_verse">repite cada Ayah:</string>
   <string name="previous">Anteriormente</string>
@@ -251,14 +242,6 @@
   <string name="recent_pages">Páginas recientes</string>
   <string name="tag_blank_tag_error">Los nombres de las etiquetas no pueden estar en blanco.</string>
   <string name="tag_duplicate_tag_error">El nombre de la etiqueta ya existe.</string>
-  <string name="audio_manager">Gestor de audio</string>
-  <string name="audio_manager_remove_audio_title">¿Quitar la Sura?</string>
-  <string name="audio_manager_remove_audio_msg">¿Está seguro de que desea eliminar %1$s?</string>
-  <string name="audio_manager_surah_download">Descargar sura</string>
-  <string name="audio_manager_surah_delete">Borrar sura</string>
-  <string name="audio_manager_download_all">Descargar todo</string>
-  <string name="audio_manager_download_selection">Descargar selección</string>
-  <string name="audio_manager_delete_selection">Borrar la selección</string>
   <string name="audio_updated_title">Actualización de los archivos de audio del Corán</string>
   <string name="audio_updated_text">Se han actualizado varios archivos de audio del Corán. Quran para Android ha eliminado su copia de estos archivos para que las versiones más nuevas se puedan descargar la próxima vez que los reproduzca.</string>
   <string name="prefs_category_dual_screen">Preferencias de doble página</string>

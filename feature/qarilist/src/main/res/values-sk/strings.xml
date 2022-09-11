@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Vyberte Qari</string>
+  <string name="qarilist_ready_to_play">Pripravené na počúvanie</string>
+  <string name="qarilist_qaris_with_downloads">Recitátori so súbormi na stiahnutie</string>
+  <string name="qarilist_gapless">Kontinuálne</string>
+  <string name="qarilist_gapped">nekontinuálne</string>
+  <string name="qarilist_selected">Vybrané</string>
+  <string name="qarilist_dismiss">Odmietnuť</string>
+</resources>

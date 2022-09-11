@@ -5,23 +5,30 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.quran.labs.androidquran.QuranDataActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.util.NotificationChannelUtil;
+import com.quran.mobile.common.download.DownloadConstants;
+import com.quran.mobile.common.download.DownloadInfo;
+import com.quran.mobile.common.download.DownloadInfoStreams;
+
 import timber.log.Timber;
 
 public class QuranDownloadNotifier {
   // error messages
-  public static final int ERROR_DISK_SPACE = 1;
-  public static final int ERROR_PERMISSIONS = 2;
-  public static final int ERROR_NETWORK = 3;
-  public static final int ERROR_INVALID_DOWNLOAD = 4;
-  public static final int ERROR_CANCELLED = 5;
-  public static final int ERROR_GENERAL = 6;
+  public static final int ERROR_DISK_SPACE = DownloadConstants.ERROR_DISK_SPACE;
+  public static final int ERROR_PERMISSIONS = DownloadConstants.ERROR_PERMISSIONS;
+  public static final int ERROR_NETWORK = DownloadConstants.ERROR_NETWORK;
+  public static final int ERROR_INVALID_DOWNLOAD = DownloadConstants.ERROR_INVALID_DOWNLOAD;
+  public static final int ERROR_CANCELLED = DownloadConstants.ERROR_CANCELLED;
+  public static final int ERROR_GENERAL = DownloadConstants.ERROR_GENERAL;
 
   // notification ids
   private static final int DOWNLOADING_NOTIFICATION = Constants.NOTIFICATION_ID_DOWNLOADING;
@@ -66,11 +73,13 @@ public class QuranDownloadNotifier {
     public int ayah;
     boolean sendIndeterminate;
     public boolean isGapless;
+    public Parcelable metadata;
 
-    public NotificationDetails(String title, String key, int type){
+    public NotificationDetails(String title, String key, int type, Parcelable metadata){
       this.key = key;
       this.title = title;
       this.type = type;
+      this.metadata = metadata;
       sendIndeterminate = false;
     }
 
@@ -88,12 +97,13 @@ public class QuranDownloadNotifier {
   private final Service service;
   private final NotificationManager notificationManager;
   private final LocalBroadcastManager broadcastManager;
+  private final DownloadInfoStreams downloadInfoStreams;
   private final int notificationColor;
   private int lastProgress;
   private int lastMaximum;
   private boolean isForeground;
 
-  public QuranDownloadNotifier(Context context, Service service) {
+  public QuranDownloadNotifier(Context context, Service service, DownloadInfoStreams downloadInfoStreams) {
     appContext = context.getApplicationContext();
     notificationManager = (NotificationManager) appContext
         .getSystemService(Context.NOTIFICATION_SERVICE);
@@ -102,6 +112,7 @@ public class QuranDownloadNotifier {
     lastProgress = -1;
     lastMaximum = -1;
     this.service = service;
+    this.downloadInfoStreams = downloadInfoStreams;
 
     final String channelName = appContext.getString(R.string.notification_channel_download);
     NotificationChannelUtil.INSTANCE.setupNotificationChannel(
@@ -150,6 +161,19 @@ public class QuranDownloadNotifier {
     showNotification(details.title,
         appContext.getString(R.string.downloading_title),
         DOWNLOADING_NOTIFICATION, true, max, progress, isIndeterminate, !isForeground);
+
+    final DownloadInfo downloadInfo =
+        new DownloadInfo.FileDownloadProgress(
+            details.key,
+            details.type,
+            details.metadata,
+            isIndeterminate ? -1 : progress,
+            details.sura > 0 ? details.sura : null,
+            details.ayah > 0 ? details.ayah : null,
+            isIndeterminate ? null : downloadedSize,
+            isIndeterminate ? null : totalSize
+        );
+    downloadInfoStreams.emitEvent(downloadInfo);
 
     // send broadcast
     Intent progressIntent = new Intent(ProgressIntent.INTENT_NAME);
@@ -207,8 +231,21 @@ public class QuranDownloadNotifier {
     lastProgress = -1;
     showNotification(details.title, successString,
         DOWNLOADING_COMPLETE_NOTIFICATION, false, false);
+
+    // this emission is once per set of downloads (per batch). notifyFileDownload is per file.
+    final DownloadInfo downloadInfo =
+        new DownloadInfo.DownloadBatchSuccess(details.key, details.type, details.metadata);
+    downloadInfoStreams.emitEvent(downloadInfo);
+
+
     return broadcastDownloadSuccessful(details);
   }
+
+  public void notifyFileDownloaded(NotificationDetails details, String filename) {
+    final DownloadInfo downloadInfo = new DownloadInfo.FileDownloaded(details.key, details.type, details.metadata, filename, details.sura, details.ayah);
+    downloadInfoStreams.emitEvent(downloadInfo);
+  }
+
 
   public Intent broadcastDownloadSuccessful(NotificationDetails details){
     // send broadcast
@@ -222,7 +259,7 @@ public class QuranDownloadNotifier {
     return progressIntent;
   }
 
-  public Intent notifyError(int errorCode, boolean isFatal, NotificationDetails details){
+  public Intent notifyError(int errorCode, boolean isFatal, String filename, NotificationDetails details){
     int errorId;
     switch (errorCode){
       case ERROR_DISK_SPACE:
@@ -260,6 +297,12 @@ public class QuranDownloadNotifier {
 
     String state = isFatal? ProgressIntent.STATE_ERROR :
         ProgressIntent.STATE_ERROR_WILL_RETRY;
+
+    if (isFatal) {
+      final DownloadInfo downloadInfo =
+          new DownloadInfo.DownloadBatchError(details.key, details.type, details.metadata, errorCode, errorString);
+      downloadInfoStreams.emitEvent(downloadInfo);
+    }
 
     // send broadcast
     Intent progressIntent = new Intent(ProgressIntent.INTENT_NAME);

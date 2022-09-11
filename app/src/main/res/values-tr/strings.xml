@@ -10,7 +10,6 @@
   <string name="downloadImportantPrompt">"Kur'an resim dosyaları için küçük ama önemli bir güncelleme var. Bu güncellemeyi indirmek istiyor musunuz?"</string>
   <string name="downloadPrompt_ok">Evet</string>
   <string name="downloadPrompt_no">Hayır</string>
-  <string name="downloading_title">Yükleniyor&#8230;</string>
   <string name="downloading_message">Lütfen dosyaların indirilmesi için bekleyin</string>
   <string name="extracting_title">İşlem yapılıyor&#8230;</string>
   <string name="menu_jump">Atla</string>
@@ -24,7 +23,6 @@
   <string name="menu_translation">Mealini göster</string>
   <string name="menu_help">Yardım</string>
   <string name="menu_search">Ara</string>
-  <string name="cancel">İptal</string>
 
   <!-- about -->
   <string name="about_description">"Quran for Android ücretsiz bir Kur'an uygulamasıdır. Lütfen dualarınızda katkıda bulunanları unutmayın."</string>
@@ -71,11 +69,6 @@
     </string>
   <string name="search_hint">"Kur'an'da arama"</string>
   <string name="quranSearchType">"Kur'an-i Kerîm âyetlerinde arama"</string>
-
-  <plurals name="files_downloaded">
-    <item quantity="one">1 sure indirildi</item>
-    <item quantity="other">%1$d sure indirildi</item>
-  </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -143,7 +136,6 @@
   <string name="prefs_audio_manager_summary">"Kur'an seslerini yönetme ve indirme"</string>
   <string name="downloaded_translations">Yüklendi</string>
   <string name="available_translations">İndirmek için hazır</string>
-  <string name="remove_button">Kaldır</string>
   <string name="dialog_ok">Tamam</string>
   <string name="prefs_category_download">İndirme seçenekleri</string>
   <string name="prefs_calculating_app_size">Uygulama büyüklüğü hesaplanıyor</string>
@@ -160,7 +152,6 @@
   <string name="prefs_err_moving_app_files">Uygulama dosyalarını taşınamadı</string>
   <string name="prefs_no_enough_space_to_move_files">Uygulamayı taşımak için yeterli boş alan bulunamadı</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_page_type_title">Sayfa türü (deneysel)</string>
   <string name="prefs_page_type_summary">Okuma sayfası türünü seçin</string>
 
@@ -232,9 +223,6 @@
   <string name="download_non_wifi_prompt">Kablosuz bağlantı mevctu değil. Yine de indirmek istiyor musunuz?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">%1$s / %2$s indirildi</string>
-  <string name="download_sura_progress">%3$d suresinin %1$s / %2$s indirildi</string>
-  <string name="download_sura_ayah_progress">%1$d suresi %2$d. âyet indiriliyor</string>
   <string name="process_progress"> %1$d / %2$d dosya işleniyor</string>
   <string name="download_retry">Tekrar dene</string>
   <string name="download_cancel">İptal</string>
@@ -261,8 +249,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Başlangıç</string>
-  <string name="play_to">Son</string>
   <string name="play_restrict_range">Sadece yukarıdaki âyetleri dinle</string>
   <string name="play_verses_range">âyetler grubu:</string>
   <string name="play_each_verse">Her âyeti</string>
@@ -311,22 +297,6 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Sayfa işareti yok</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Ses yöneticisi</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">Sure silindi</item>
-    <item quantity="other">%1$d sure silindi</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">Sure silinirken bir hata oluştu</item>
-    <item quantity="other">%1$d sure silinirken bir hata oluştu</item>
-  </plurals>
-  <string name="audio_manager_delete_selection">Seçimi sil</string>
-  <string name="audio_manager_download_selection">Seçimi indir</string>
-  <string name="audio_manager_download_all">Hepsini indir</string>
-  <string name="audio_manager_surah_delete">Sureyi sil</string>
-  <string name="audio_manager_surah_download">Sureyi indir</string>
-
   <!-- audio updates -->
   <string name="audio_updated_title">Ses dosyaları güncellendi</string>
   <string name="audio_updated_text">Birkaç ses dosyaları güncellendi. Güncellenen sürümün bir
@@ -348,8 +318,6 @@
   <string name="move_down">Aşağı Taşı</string>
   <string name="delete_translation">Çeviriyi Kaldır</string>
   <string name="scoped_storage_message">Kullanıcı gizliliğini artırmak için Android değişiklikleri nedeniyle, uygulama dizinlerinin dışındaki dosyaları kopyalamak, Android için Kuran\'ın android\'in gelecekteki sürümlerinde verilerine erişmesini durdurabilir. Bu yolu kullanmak istediğinizden emin misiniz?</string>
-  <string name="audio_manager_remove_audio_title">Sure kaldırılsın mı?</string>
-  <string name="audio_manager_remove_audio_msg">%1$s\'yi kaldırmak istediğinizden emin misiniz?</string>
   <string name="prefs_category_dual_screen">Çift Sayfa Tercihleri</string>
   <string name="prefs_split_page_and_translation_summary">Çevirilerle çift sayfa modunda, Kuran sayfası ve çevirisi gösterilir</string>
   <string name="prefs_split_page_and_translation_title">Kur\'an\'dan bir sayfayı ve çeviriden başka bir sayfa görüntüleme</string>

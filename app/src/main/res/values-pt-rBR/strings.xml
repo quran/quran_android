@@ -14,7 +14,6 @@
         este patch agora?</string>
   <string name="downloadPrompt_ok">Sim</string>
   <string name="downloadPrompt_no">Não</string>
-  <string name="downloading_title">Baixando&#8230;</string>
   <string name="downloading_message">Por favor aguarde o download dos aqruivos. (Resumo permitido)</string>
   <string name="extracting_title">Procesando&#8230;</string>
   <string name="menu_about">Sobre Nos</string>
@@ -33,7 +32,6 @@
   <string name="menu_get_translations">Obter Traduções</string>
   <string name="menu_jump">Pular</string>
   <string name="gotoPage">Ir para página</string>
-  <string name="cancel">Cancelar</string>
   <string name="about_description">Quran Android é um aplicativo para o Android, é um software livre gratuito do Alcorão. As imagens usadas são do projeto</string>
   <string name="help_title">Perguntas mais frequentes</string>
   <string name="help">
@@ -121,7 +119,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="prefs_download_amount_summary">Quantidade de download preferida para audio continuou.</string>
   <string name="downloaded_translations">Já foi baixado</string>
   <string name="available_translations">Disponível para Download</string>
-  <string name="remove_button">Remover</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Local da App</string>
   <string name="prefs_app_location_summary">Selecione qual sdcard para armazenar os arquivos</string>
@@ -178,7 +175,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="download_non_wifi_prompt">Voce não está no wifi. Deseja realmente baixar os dados?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Baixado %1$s / %2$s</string>
   <string name="process_progress">Procesando arquivo %1$d / %2$d</string>
   <string name="download_retry">Tentar Novamente</string>
   <string name="download_cancel">Cancelar</string>
@@ -279,10 +275,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="see_tafseer_of_verse">Este tafseer de ayah está incluído com o tafseer de ayah %d (Clique para expandir).</string>
   <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
   <string name="sdcard_error">Não foi possível encontrar o cartão SD. Por favor, monte-o e tente novamente.</string>
-  <string name="download_sura_progress">Transferido %1$s / %2$s de surah %3$d</string>
-  <string name="download_sura_ayah_progress">Baixar sura %1$d ayah %2$d</string>
-  <string name="play_from">De</string>
-  <string name="play_to">Para</string>
   <string name="play_restrict_range">Toque apenas o ayat acima</string>
   <string name="play_verses_range">Ouça o conjunto de ayat:</string>
   <string name="play_each_verse">Ouça cada ayah:</string>
@@ -299,14 +291,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="recent_pages">Páginas recentes</string>
   <string name="tag_blank_tag_error">Os nomes das etiquetas não podem estar em branco!</string>
   <string name="tag_duplicate_tag_error">O nome da etiqueta já existe!</string>
-  <string name="audio_manager">Gerente de áudio</string>
-  <string name="audio_manager_remove_audio_title">Remover o Sura?</string>
-  <string name="audio_manager_remove_audio_msg">Você tem certeza de que gostaria de remover %1$s?</string>
-  <string name="audio_manager_surah_download">Baixar surah</string>
-  <string name="audio_manager_surah_delete">Excluir arquivo de áudio</string>
-  <string name="audio_manager_download_all">Baixar tudo</string>
-  <string name="audio_manager_download_selection">Seleção para download</string>
-  <string name="audio_manager_delete_selection">Eliminar seleção</string>
   <string name="audio_updated_title">Atualização dos arquivos de áudio do Alcorão</string>
   <string name="audio_updated_text">Vários arquivos de áudio do Alcorão foram atualizados. O Alcorão para Android removeu sua cópia desses arquivos para que as versões mais recentes possam ser baixadas na próxima vez que você os reproduzir.</string>
   <string name="prefs_category_dual_screen">Preferências de página dupla</string>

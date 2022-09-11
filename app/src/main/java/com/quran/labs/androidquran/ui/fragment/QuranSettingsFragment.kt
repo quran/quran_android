@@ -13,9 +13,9 @@ import com.quran.labs.androidquran.QuranPreferenceActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.pageselect.PageSelectActivity
-import com.quran.labs.androidquran.ui.AudioManagerActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import com.quran.mobile.di.ExtraPreferencesProvider
+import com.quran.mobile.feature.downloadmanager.AudioManagerActivity
 import javax.inject.Inject
 
 class QuranSettingsFragment : PreferenceFragmentCompat(),

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Επιλέξτε ένα Καρί</string>
+  <string name="qarilist_ready_to_play">Έτοιμοι για ακρόαση</string>
+  <string name="qarilist_qaris_with_downloads">Απαγγελίες με λήψεις</string>
+  <string name="qarilist_gapless">Συνεχής</string>
+  <string name="qarilist_gapped">Μη συνεχής</string>
+  <string name="qarilist_selected">Επιλεγμένα</string>
+  <string name="qarilist_dismiss">Απορρίψτε το</string>
+</resources>

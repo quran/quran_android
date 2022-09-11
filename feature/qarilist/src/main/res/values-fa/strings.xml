@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">یک قاری را انتخاب کنید</string>
+  <string name="qarilist_ready_to_play">آماده برای گوش دادن</string>
+  <string name="qarilist_qaris_with_downloads">قاری با دانلود</string>
+  <string name="qarilist_gapless">مداوم</string>
+  <string name="qarilist_gapped">غیر پیوسته</string>
+  <string name="qarilist_selected">انتخاب</string>
+  <string name="qarilist_dismiss">اخراج</string>
+</resources>

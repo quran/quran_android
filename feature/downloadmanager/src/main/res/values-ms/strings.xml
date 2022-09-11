@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="other">%1$d surah telah dimuat turun</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Pengurus Audio</string>
+  <string name="audio_manager_remove_audio_title">Hapus Surat?</string>
+  <string name="audio_manager_remove_audio_msg">Apakah Anda yakin ingin menghapus %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Apakah Anda yakin ingin menghapus?</string>
+  <string name="audio_manager_surah_download">Unduh Surat</string>
+  <string name="audio_manager_surah_delete">Hapus Surat</string>
+  <string name="audio_manager_download_all">Unduh semua</string>
+  <string name="audio_manager_download_selection">Pemilihan unduhan</string>
+  <string name="audio_manager_delete_selection">Hapus pilihan</string>
+
+  <string name="downloading_title">Sedang memuat turun&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">Muat turun %1$s / %2$s</string>
+  <string name="download_sura_progress">Telah mengunduh %1$s / %2$s dari surat %3$d</string>
+  <string name="download_sura_ayah_progress">Mengunduh surat %1$d ayat %2$d</string>
+</resources>

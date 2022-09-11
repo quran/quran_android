@@ -5,20 +5,19 @@ import android.content.Intent
 import androidx.annotation.VisibleForTesting
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
-import com.quran.labs.androidquran.common.audio.model.AudioConfiguration
+import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.QariUtil
 import com.quran.labs.androidquran.dao.audio.AudioPathInfo
 import com.quran.labs.androidquran.service.AudioService
-import timber.log.Timber
 import java.io.File
 import java.util.Locale
 import javax.inject.Inject
+import timber.log.Timber
 
 class AudioUtils @Inject constructor(
   private val quranInfo: QuranInfo,
   private val quranFileUtils: QuranFileUtils,
-  private val audioConfiguration: AudioConfiguration,
   private val qariUtil: QariUtil
 ) {
 
@@ -44,7 +43,7 @@ class AudioUtils @Inject constructor(
    * set being alphabetically sorted.
    */
   fun getQariList(context: Context): List<QariItem> {
-    return qariUtil.getQariList(context, audioConfiguration)
+    return qariUtil.getQariList(context)
       .filter {
         it.isGapless || (it.hasGaplessAlternative && !haveAnyFiles(it.path))
       }
@@ -61,6 +60,14 @@ class AudioUtils @Inject constructor(
     val basePath = quranFileUtils.audioFileDirectory()
     val file = File(basePath, path)
     return file.isDirectory && file.list()?.isNotEmpty() ?: false
+  }
+
+  fun getQariUrl(qari: Qari): String {
+    return qari.url + if (qari.isGapless) {
+      "%03d$AUDIO_EXTENSION"
+    } else {
+      "%03d%03d$AUDIO_EXTENSION"
+    }
   }
 
   fun getQariUrl(item: QariItem): String {

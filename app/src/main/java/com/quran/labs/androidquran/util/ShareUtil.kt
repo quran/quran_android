@@ -17,6 +17,7 @@ import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.util.ToastCompat
+import com.quran.labs.androidquran.ui.util.TypefaceManager
 import dagger.Reusable
 import java.io.File
 import java.text.NumberFormat
@@ -80,6 +81,11 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
           }
           append(text)
         }
+      }
+      if (ayahInfo.arabicText == null) {
+        append("\n")
+        append("-")
+        append(quranDisplayData.getSuraAyahString(context, ayahInfo.sura, ayahInfo.ayah, R.string.sura_ayah_notification_str))
       }
     }
   }

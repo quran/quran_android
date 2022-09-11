@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Translated by 
+Abdelouali Benkheil (https://github.com/abdelouali) - (a.benkheil@gmail.com)
+Yasser Baghouli (zaterdag@outlook.com)
+-->
+<resources>
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">1 soera gedownload</item>
+    <item quantity="other">%1$d soera\'s gedownload</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Geluid Manager</string>
+  <string name="audio_manager_remove_audio_title">Surah verwijderen?</string>
+  <string name="audio_manager_remove_audio_msg">Weet u zeker dat u %1$s wilt verwijderen?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Weet u zeker dat wilt verwijderen?</string>
+  <string name="audio_manager_surah_download">Soera downloaden</string>
+  <string name="audio_manager_surah_delete">Verwijderen audiobestand</string>
+  <string name="audio_manager_download_all">Alles downloaden</string>
+  <string name="audio_manager_download_selection">Selectie downloaden</string>
+  <string name="audio_manager_delete_selection">Selectie verwijderen</string>
+
+  <string name="downloading_title">Downloaden&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">%1$s Gedowload van %2$s</string>
+  <string name="download_sura_progress">%1$s Gedowload van %2$s van soera %3$d</string>
+  <string name="download_sura_ayah_progress">Downloaden van Soera %1$d ayah %2$d</string>
+</resources>

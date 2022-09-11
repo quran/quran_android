@@ -15,4 +15,6 @@ object QuranFileConstants {
   const val FETCH_QUARTER_NAMES_FROM_DATABASE = false
   const val FALLBACK_PAGE_TYPE = "naskh"
   const val SEARCH_EXTRA_REPLACEMENTS = ""
+
+  var ICON_RESOURCE_ID = com.quran.labs.androidquran.pages.naskh.R.drawable.icon
 }

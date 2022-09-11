@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">1 Sure heruntergeladen</item>
+    <item quantity="other">%1$d Suren heruntergeladen</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Audioverwaltung</string>
+  <string name="audio_manager_remove_audio_title">Sūra entfernen?</string>
+  <string name="audio_manager_remove_audio_msg">Sind Sie sicher, dass Sie %1$s entfernen möchten?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Sind Sie sicher, dass Sie entfernen möchten?</string>
+  <string name="audio_manager_surah_download">Sūra herunterladen</string>
+  <string name="audio_manager_surah_delete">Sūra löschen</string>
+  <string name="audio_manager_download_all">Alle herunterladen</string>
+  <string name="audio_manager_download_selection">Auswahl herunterladen</string>
+  <string name="audio_manager_delete_selection">Auswahl löschen</string>
+
+  <string name="downloading_title">Dateien werden heruntergeladen&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">Heruntergeladen %1$s / %2$s</string>
+  <string name="download_sura_progress">Heruntergeladen %1$s / %2$s von Sure %3$d</string>
+  <string name="download_sura_ayah_progress">Herunterladen von Sure %1$d Vers %2$d</string>
+</resources>

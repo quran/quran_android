@@ -9,7 +9,6 @@
     </string>
   <string name="downloadPrompt_ok">Tak</string>
   <string name="downloadPrompt_no">Nie</string>
-  <string name="downloading_title">Ściąganie&#8230;</string>
   <string name="downloading_message">Proszę poczekać na pobranie plików (obsługiwane jest wznawianie).</string>
   <string name="extracting_title">Przetwarzanie&#8230;</string>
   <string name="menu_about">O nas</string>
@@ -31,7 +30,6 @@
   <string name="menu_get_translations">Pobierz tłumaczenia</string>
   <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">Przejdź do strony</string>
-  <string name="cancel">Anuluj</string>
   <string name="please_wait">Please wait…</string>
 
   <!-- about -->
@@ -79,12 +77,6 @@
   <string name="quranSearchType">Wersety Koranu</string>
   <string name="search_full_results">Pełne wyniki</string>
   <string name="search_entire_mushaf">Przeszukaj całą muzułmanów</string>
-
-  <plurals name="files_downloaded">
-    <item quantity="one">1 sura pobrana</item>
-    <item quantity="few">Pobrano %1$d sura</item>
-    <item quantity="many">Pobrano %1$d sura</item>
-  </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -145,7 +137,6 @@
   <string name="prefs_audio_manager_summary">Zarządzanie i pobieranie nagrań dźwiękowych Koranu</string>
   <string name="downloaded_translations">Pobrano</string>
   <string name="available_translations">Dostępne do pobrania</string>
-  <string name="remove_button">Usunąć</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Katalog danych Koranu</string>
   <string name="prefs_app_location_summary">Wybierz, gdzie mają być przechowywane pliki Koranu</string>
@@ -159,7 +150,6 @@
   <string name="prefs_err_moving_app_files">Nie udało się przenieść plików aplikacji</string>
   <string name="prefs_no_enough_space_to_move_files">Niewystarczająca ilość miejsca na przeniesienie plików aplikacji</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Tryb podwójnej strony</string>
   <string name="prefs_dual_page_mode_enabled">W trybie poziomym dwie strony będą wyświetlane obok siebie.</string>
   <string name="prefs_dual_page_mode_disabled">W trybie poziomym wyświetlana jest tylko jedna strona.</string>
@@ -240,9 +230,6 @@
   <string name="download_non_wifi_prompt">Nie masz połączenia z siecią Wi-Fi. I tak pobierasz dane?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Pobrano %1$s / %2$s</string>
-  <string name="download_sura_progress">Pobrano %1$s / %2$s z sura %3$d</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Pobieranie sura %1$d ayah %2$d</string>
   <string name="process_progress">Plik przetwarzania %1$d / %2$d</string>
   <string name="download_retry">Spróbować ponownie</string>
   <string name="download_cancel">Anuluj</string>
@@ -270,8 +257,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Od</string>
-  <string name="play_to">Do</string>
   <string name="play_restrict_range">Odtwórz tylko powyższy ajat</string>
   <string name="play_verses_range">Odtwórz zestaw ajatów:</string>
   <string name="play_each_verse">Odtwórz każdą ayę:</string>
@@ -320,26 +305,6 @@
 
   <!-- widgets -->
   <string name="bookmarks_list_empty">Brak zakładek</string>
-
-  <!-- audio manager -->
-  <string name="audio_manager">Menedżer dźwięku</string>
-  <string name="audio_manager_remove_audio_title">Usunąć Sura?</string>
-  <string name="audio_manager_remove_audio_msg">Czy na pewno chcesz usunąć %1$s?</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">Udało się usunąć sura</item>
-    <item quantity="few">Pomyślnie usunięto %1$d sura</item>
-    <item quantity="many">Pomyślnie usunięto %1$d sura</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">Wystąpił błąd podczas usuwania sura</item>
-    <item quantity="few">Wystąpił błąd podczas usuwania %1$d sura</item>
-    <item quantity="many">Wystąpił błąd podczas usuwania %1$d sura</item>
-  </plurals>
-  <string name="audio_manager_surah_download">Pobierz sura</string>
-  <string name="audio_manager_surah_delete">Usuń plik audio</string>
-  <string name="audio_manager_download_all">Pobierz wszystkie</string>
-  <string name="audio_manager_download_selection">Wybór do pobrania</string>
-  <string name="audio_manager_delete_selection">Usuń zaznaczenie</string>
 
   <!-- audio updates -->
   <string name="audio_updated_title">Pliki dźwiękowe Koranu Aktualizacja</string>

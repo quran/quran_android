@@ -13,7 +13,6 @@
     </string>
     <string name="downloadPrompt_ok">Igen</string>
     <string name="downloadPrompt_no">Nem</string>
-    <string name="downloading_title">Letöltés&#8230;</string>
     <string name="downloading_message">Kérem várjon, amíg a fájlok letöltődnek (a folytatás támogatott).</string>
     <string name="extracting_title">Feldolgozás&#8230;</string>
     <string name="menu_about">Névjegy</string>
@@ -32,7 +31,6 @@
     <string name="menu_get_translations">Fordítások letöltése</string>
     <string name="menu_jump">Ugrás</string>
     <string name="gotoPage">Ugrás erre az oldalra:</string>
-    <string name="cancel">Mégsem</string>
     <string name="help_title">Gyakran Ismételt Kérdések</string>
     <string name="help">
         &lt;b>Hogyan játszhatom le a hangot?&lt;/b>
@@ -68,11 +66,6 @@
     </string>
     <string name="search_hint">Keresés a Koránban</string>
     <string name="quranSearchType">A Korán versei</string>
-
-    <plurals name="files_downloaded">
-        <item quantity="one">1 szúra letöltve</item>
-        <item quantity="other">%1$d szúra letöltve</item>
-    </plurals>
 
     <!-- Shown above search results when we receive a search request. -->
     <plurals name="search_results">
@@ -128,7 +121,6 @@
     <string name="prefs_audio_manager_summary">Korán hangok kezelése és letöltése.</string>
     <string name="downloaded_translations">Letöltve</string>
     <string name="available_translations">Elérhető letöltésre</string>
-    <string name="remove_button">Eltávolítás</string>
     <string name="dialog_ok">OK</string>
     <string name="prefs_app_location_title">Korán adatkönyvtár</string>
     <string name="prefs_app_location_summary">Válassza ki, hogy hol legyenek eltárolva a Korán fájlok.</string>
@@ -187,9 +179,6 @@
     <string name="download_non_wifi_prompt">Nem használ Wi-Fi-t. Mindenképpen letölti az adatokat?</string>
 
     <!-- downloading dialogs -->
-    <string name="download_progress">Letöltve %1$s / %2$s</string>
-    <string name="download_sura_progress">Letöltve %1$s / %2$s szúra %3$d</string>
-    <string name="download_sura_ayah_progress">%1$d. szúra %2$d. ája letöltése</string>
     <string name="process_progress">Fájl feldolgozása %1$d / %2$d</string>
     <string name="download_retry">Ismét</string>
     <string name="download_cancel">Mégsem</string>
@@ -217,8 +206,6 @@
     </plurals>
 
     <!-- ayah action panel -->
-    <string name="play_from">Innentől</string>
-    <string name="play_to">Idáig</string>
     <string name="play_restrict_range">Csak a fenti versek lejátszása</string>
     <string name="play_apply">Alkalmaz</string>
     <string name="play_apply_and_play">Alkalmaz és lejátszás</string>
@@ -250,9 +237,7 @@
     <!-- bookmark & tag list -->
     <string name="bookmarks_list_empty">Nincs könyvjelző</string>
 
-    <!-- audio manager -->
-    <string name="audio_manager">Hangkezelő</string>
-    <string name="menu_other_apps">Egyéb alkalmazások</string>
+  <string name="menu_other_apps">Egyéb alkalmazások</string>
   <string name="menu_sort_group_by_tags">Csoportosítás címkék szerint</string>
   <string name="menu_show_date">Megjelenítés dátuma</string>
   <string name="please_wait">Kérem várjon...</string>
@@ -319,13 +304,6 @@
   <string name="recent_pages">Legutóbbi oldalak</string>
   <string name="tag_blank_tag_error">A címkék neve nem lehet üres!</string>
   <string name="tag_duplicate_tag_error">A címke neve már létezik!</string>
-  <string name="audio_manager_remove_audio_title">Szúra eltávolítása?</string>
-  <string name="audio_manager_remove_audio_msg">Biztos, hogy el szeretné távolítani a %1$s -t?</string>
-  <string name="audio_manager_surah_download">Szúra letöltése</string>
-  <string name="audio_manager_surah_delete">Hangfájl törlése</string>
-  <string name="audio_manager_download_all">Minden letöltése</string>
-  <string name="audio_manager_download_selection">Válogatás letöltése</string>
-  <string name="audio_manager_delete_selection">Kijelölés törlése</string>
   <string name="audio_updated_title">Korán hangfájlok frissítése</string>
   <string name="audio_updated_text">Számos Korán hangfájl frissítésre került. A Quran for Android eltávolította a fájlok másolatát, hogy a legközelebbi lejátszáskor a legújabb verziókat tölthesse le.</string>
   <string name="prefs_category_dual_screen">Kettős oldal beállításai</string>

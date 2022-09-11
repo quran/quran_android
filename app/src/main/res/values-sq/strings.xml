@@ -9,7 +9,6 @@
     </string>
   <string name="downloadPrompt_ok">Po.</string>
   <string name="downloadPrompt_no">Jo</string>
-  <string name="downloading_title">Shkarkim&#8230;</string>
   <string name="downloading_message">Ju lutem prisni që skedarët të shkarkohen (rinisja e suportuar).</string>
   <string name="extracting_title">Përpunim&#8230;</string>
   <string name="menu_about">Rreth nesh</string>
@@ -31,7 +30,6 @@
   <string name="menu_get_translations">Merr përkthime</string>
   <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">Shko në faqe</string>
-  <string name="cancel">Anulo</string>
   <string name="please_wait">Të lutem prit…</string>
 
   <!-- about -->
@@ -81,11 +79,6 @@
   <string name="quranSearchType">Ajat i Kuranit</string>
   <string name="search_full_results">Rezultate të plota</string>
   <string name="search_entire_mushaf">Kërko të gjithë mushafin</string>
-
-  <plurals name="files_downloaded">
-    <item quantity="one">1 sure e shkarkuar</item>
-    <item quantity="other"> Shkarkohen %1$d sura</item>
-  </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -145,7 +138,6 @@
   <string name="prefs_audio_manager_summary">Menaxho dhe shkarko audion e Kuranit</string>
   <string name="downloaded_translations">Shkarkuar</string>
   <string name="available_translations">I disponueshëm për t\'u shkarkuar</string>
-  <string name="remove_button">Hiq</string>
   <string name="dialog_ok">NË RREGULL</string>
   <string name="prefs_app_location_title">Directory e të dhënave të Kuranit</string>
   <string name="prefs_app_location_summary">Zgjidh ku të ruaj skedarët e Kuranit</string>
@@ -159,7 +151,6 @@
   <string name="prefs_err_moving_app_files">I pamundur lëvizja e skedarëve të app</string>
   <string name="prefs_no_enough_space_to_move_files">Hapësirë e pamjaftueshme për të lëvizur skedarët e app</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Modaliteti i faqes së dyfishtë</string>
   <string name="prefs_dual_page_mode_enabled">Në peizazh, dy faqe do të shfaqen krah për krah.</string>
   <string name="prefs_dual_page_mode_disabled">Në peizazh do të shfaqet vetëm një faqe.</string>
@@ -240,9 +231,6 @@
   <string name="download_non_wifi_prompt">Ti nuk je në Wi-Fi. Shkarko të dhëna gjithsesi?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Shkarkuar %1$s / %2$s</string>
-  <string name="download_sura_progress">Shkarkuar %1$s / %2$s e sures %3$d</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Duke shkarkuar sura %1$d ayah %2$d</string>
   <string name="process_progress">Përpunimi i file %1$d / %2$d</string>
   <string name="download_retry">Ritry</string>
   <string name="download_cancel">Anulo</string>
@@ -268,8 +256,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Nga</string>
-  <string name="play_to">Në</string>
   <string name="play_restrict_range">Vetëm dëgjo ajatin e mësipërm.</string>
   <string name="play_verses_range">Dëgjoni setin e Ayat:</string>
   <string name="play_each_verse">Dëgjoni për të vendosur çdo Ayah:</string>
@@ -317,24 +303,6 @@
 
   <!-- widgets -->
   <string name="bookmarks_list_empty">Asnjë libërshënues</string>
-
-  <!-- audio manager -->
-  <string name="audio_manager">Menaxhues Audio</string>
-  <string name="audio_manager_remove_audio_title">Ta heqim suren?</string>
-  <string name="audio_manager_remove_audio_msg">Je i sigurt që do të doje të hiqje %1$s?</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">E fshiu me sukses suren</item>
-    <item quantity="other">Eleminuar me sukses suret %1$d</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">Ka pasur një gabim gjatë fshirjes së sures</item>
-    <item quantity="other">Gabim gjatë fshirjes së sureve %1$d</item>
-  </plurals>
-  <string name="audio_manager_surah_download">Shkarko sura</string>
-  <string name="audio_manager_surah_delete">Elemino file audio</string>
-  <string name="audio_manager_download_all">Shkarko të gjitha</string>
-  <string name="audio_manager_download_selection">Përzgjedhja e shkarkimit</string>
-  <string name="audio_manager_delete_selection">Elemino përzgjedhjen</string>
 
   <!-- audio updates -->
   <string name="audio_updated_title">Rifreskim i skedarëve audio të Kuranit</string>

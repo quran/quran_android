@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">%1$d sura preuzeta</item>
+    <item quantity="few">%1$d sure preuzete</item>
+    <item quantity="other">%1$d sura preuzeto</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Menadžer zvuka</string>
+  <string name="audio_manager_remove_audio_title">Da uklonim Suru?</string>
+  <string name="audio_manager_remove_audio_msg">Jeste li sigurni da želite ukloniti %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Jeste li sigurni da želite ukloniti?</string>
+  <string name="audio_manager_surah_download">Preuzmi surah</string>
+  <string name="audio_manager_surah_delete">Izbriši audio datoteku</string>
+  <string name="audio_manager_download_all">Preuzmi sve</string>
+  <string name="audio_manager_download_selection">Preuzmi odabir</string>
+  <string name="audio_manager_delete_selection">Izbriši selekciju</string>
+
+  <string name="downloading_title">Preuzimanje&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">Preuzeto %1$s / %2$s</string>
+  <string name="download_sura_progress">Preuzeto %1$s / %2$s %3$d. sure</string>
+  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Preuzimanje %2$d. ajeta %1$d. sure</string>
+</resources>

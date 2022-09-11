@@ -15,4 +15,6 @@ object QuranFileConstants {
 
   const val FALLBACK_PAGE_TYPE = "warsh"
   const val SEARCH_EXTRA_REPLACEMENTS = "\u0626"
+
+  var ICON_RESOURCE_ID = com.quran.labs.androidquran.pages.warsh.R.drawable.icon
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Valige kari</string>
+  <string name="qarilist_ready_to_play">Valmis kuulamiseks</string>
+  <string name="qarilist_qaris_with_downloads">Ettekandjad koos allalaadimistega</string>
+  <string name="qarilist_gapless">Pidev</string>
+  <string name="qarilist_gapped">mittekontuurne</string>
+  <string name="qarilist_selected">Valitud</string>
+  <string name="qarilist_dismiss">Loobu</string>
+</resources>

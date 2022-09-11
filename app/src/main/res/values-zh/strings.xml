@@ -6,7 +6,6 @@
 		</string>
   <string name="downloadPrompt_ok">确认</string>
   <string name="downloadPrompt_no">取消</string>
-  <string name="downloading_title">下载中&#8230;</string>
   <string name="downloading_message">文件下载中，请等待。（支持续传）</string>
   <string name="extracting_title">处理中&#8230;</string>
   <string name="menu_about">关于</string>
@@ -25,7 +24,6 @@
   <string name="menu_get_translations">译文下载</string>
   <string name="menu_jump">跳转</string>
   <string name="gotoPage">跳转到页数</string>
-  <string name="cancel">取消</string>
 
   <!-- help -->
   <string name="help_title">常见问题</string>
@@ -106,7 +104,6 @@
   <string name="prefs_download_amount_summary">non-gapless音频的下载方式。</string>
   <string name="downloaded_translations">已经下载</string>
   <string name="available_translations">可供下载</string>
-  <string name="remove_button">移除</string>
   <string name="dialog_ok">确认</string>
 
   <!-- translation updates -->
@@ -149,7 +146,6 @@
   <string name="download_non_wifi_prompt">没有连接到wifi. 要继续下载吗？</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">已下载 %1$s / %2$s</string>
   <string name="process_progress">正在处理文件 %1$d / %2$d</string>
   <string name="download_retry">重试</string>
   <string name="download_cancel">取消</string>
@@ -264,8 +260,6 @@
   <string name="see_tafseer_of_verse">这段经文的塔夫赛尔与第%d段的塔夫赛尔包括在一起（点击展开）。</string>
   <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
   <string name="sdcard_error">无法找到SD卡。请安装它并重试。</string>
-  <string name="play_from">来自</string>
-  <string name="play_to">拟</string>
   <string name="play_restrict_range">只播放上述阿亚特</string>
   <string name="play_verses_range">听听这组阿亚特。</string>
   <string name="play_each_verse">听听每一段经文。</string>
@@ -282,14 +276,6 @@
   <string name="recent_pages">最近的页面</string>
   <string name="tag_blank_tag_error">标签名称不能是空白的!</string>
   <string name="tag_duplicate_tag_error">标签名称已经存在!</string>
-  <string name="audio_manager">音频经理</string>
-  <string name="audio_manager_remove_audio_title">删除苏拉？</string>
-  <string name="audio_manager_remove_audio_msg">您确定要删除%1$s吗？</string>
-  <string name="audio_manager_surah_download">下载SURAH</string>
-  <string name="audio_manager_surah_delete">删除音频文件</string>
-  <string name="audio_manager_download_all">下载所有</string>
-  <string name="audio_manager_download_selection">下载选择</string>
-  <string name="audio_manager_delete_selection">删除选择</string>
   <string name="audio_updated_title">古兰经音频文件更新</string>
   <string name="audio_updated_text">几个古兰经音频文件已经更新。Quran for Android已经删除了你对这些文件的拷贝，以便在你下次回放时可以下载最新的版本。</string>
   <string name="prefs_category_dual_screen">双页偏好</string>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="remove_button">Remover</string>
+  <string name="cancel">Cancelar</string>
+  <string name="from">De</string>
+  <string name="to">Para</string>
+</resources>

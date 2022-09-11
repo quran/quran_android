@@ -1,0 +1,23 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.squareup.anvil'
+
+anvil { generateDaggerFactories = true }
+
+android {
+  compileSdkVersion deps.android.build.compileSdkVersion
+  defaultConfig {
+    minSdkVersion deps.android.build.minSdkVersion
+  }
+}
+
+dependencies {
+  implementation project(":common:data")
+
+  // dagger
+  implementation deps.dagger.runtime
+
+  // coroutines
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
+}

@@ -7,7 +7,6 @@
   <string name="downloadImportantPrompt">มีการอัปเดตเล็กน้อย แต่สําคัญสําหรับภาพอัลกุรอานที่คุณมีบนอุปกรณ์ของคุณ คุณต้องการดาวน์โหลดโปรแกรมแก้ไขนี้เดี๋ยวนี้หรือไม่</string>
   <string name="downloadPrompt_ok">ใช่</string>
   <string name="downloadPrompt_no">ไม่ใช่</string>
-  <string name="downloading_title">ดาวน์โหลด&#8230;</string>
   <string name="downloading_message">โปรดรอให้แฟ้มดาวน์โหลด (สนับสนุนต่อ)</string>
   <string name="extracting_title">ประมวล ผล&#8230;</string>
   <string name="menu_about">เกี่ยวกับเรา</string>
@@ -29,7 +28,6 @@
   <string name="menu_get_translations">รับคําแปล</string>
   <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">ไปที่หน้า</string>
-  <string name="cancel">ยกเลิก</string>
   <string name="please_wait">กรุณารอสักครู่…</string>
 
   <!-- about -->
@@ -72,11 +70,6 @@
   <string name="quranSearchType">อายัตแห่งอัลกุรอาน</string>
   <string name="search_full_results">ผลลัพธ์ทั้งหมด</string>
   <string name="search_entire_mushaf">ค้นหามูชาฟทั้งหมด</string>
-
-  <plurals name="files_downloaded">
-    <item quantity="one">ซูเราะฮฺหนึ่งคนดาวน์โหลด</item>
-    <item quantity="other">%1$d ซูเราะฮฺดาวน์โหลดแล้ว</item>
-  </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -136,7 +129,6 @@
   <string name="prefs_audio_manager_summary">จัดการและดาวน์โหลดเสียงอัลกุรอาน</string>
   <string name="downloaded_translations">ดาวน์โหลด</string>
   <string name="available_translations">พร้อมให้ดาวน์โหลด</string>
-  <string name="remove_button">ถอด</string>
   <string name="dialog_ok">ตกลง, ได้</string>
   <string name="prefs_app_location_title">ไดเรกทอรีข้อมูลอัลกุรอาน</string>
   <string name="prefs_app_location_summary">เลือกตําแหน่งที่จะจัดเก็บแฟ้มอัลกุรอาน</string>
@@ -150,7 +142,6 @@
   <string name="prefs_err_moving_app_files">ไม่สามารถย้ายไฟล์แอปได้</string>
   <string name="prefs_no_enough_space_to_move_files">มีเนื้อที่ไม่เพียงพอที่จะย้ายไฟล์แอป</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">โหมดหน้าคู่</string>
   <string name="prefs_dual_page_mode_enabled">ในแนวนอน จะมีสองหน้าปรากฏเคียงข้างกัน</string>
   <string name="prefs_dual_page_mode_disabled">ในแนวนอน จะปรากฏเพียงหน้าเดียว</string>
@@ -231,9 +222,6 @@
   <string name="download_non_wifi_prompt">คุณไม่ได้ใช้ Wi-Fi ดาวน์โหลดข้อมูลต่อไปหรือไม่?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">ดาวน์โหลด %1$s / %2$s</string>
-  <string name="download_sura_progress">ดาวน์โหลด %1$s / %2$s ของซูเราะฮฺ %3$d</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">กําลังดาวน์โหลดซูเราะฮฺ %1$d อายะห์ %2$d</string>
   <string name="process_progress">กําลังประมวลผลไฟล์ %1$d / %2$d</string>
   <string name="download_retry">ลอง</string>
   <string name="download_cancel">ยกเลิก</string>
@@ -259,8 +247,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">จาก</string>
-  <string name="play_to">ถึง</string>
   <string name="play_restrict_range">ฟังเฉพาะข้อข้างต้น</string>
   <string name="play_verses_range">ฟังชุดข้อ:</string>
   <string name="play_each_verse">ทําซ้ําแต่ละข้อ:</string>
@@ -308,24 +294,6 @@
 
   <!-- widgets -->
   <string name="bookmarks_list_empty">ไม่มีที่คั่นหน้า</string>
-
-  <!-- audio manager -->
-  <string name="audio_manager">ตัวจัดการเสียง</string>
-  <string name="audio_manager_remove_audio_title">เอาซูราห์ออก?</string>
-  <string name="audio_manager_remove_audio_msg">คุณแน่ใจหรือไม่ว่าคุณต้องการเอา %1$s ออก?</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">ลบซูเราะฮฺสําเร็จแล้ว</item>
-    <item quantity="other">ลบ %1$d surahs สําเร็จแล้ว</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">มีข้อผิดพลาดขณะลบซูเราะฮฺ</item>
-    <item quantity="other">มีข้อผิดพลาดขณะลบ %1$d surahs</item>
-  </plurals>
-  <string name="audio_manager_surah_download">ดาวน์โหลด Sura</string>
-  <string name="audio_manager_surah_delete">ลบเสียงซูเราะฮฺ</string>
-  <string name="audio_manager_download_all">ดาวน์โหลดทั้งหมด</string>
-  <string name="audio_manager_download_selection">การเลือกดาวน์โหลด</string>
-  <string name="audio_manager_delete_selection">ลบการเลือก</string>
 
   <!-- audio updates -->
   <string name="audio_updated_title">อัปเดตไฟล์เสียงอัลกุรอาน</string>

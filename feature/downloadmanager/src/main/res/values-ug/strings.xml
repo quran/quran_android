@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="audio_manager">ئاۋاز تەڭشەكلىرى</string>
+  <string name="audio_manager_surah_download">چۈشۈرۈش سۈرە</string>
+  <string name="audio_manager_download_all">ھەممىنى چۈشۈرۈڭ</string>
+  <string name="audio_manager_delete_selection">تاللانغانلارنى ئۆچۈرۈڭ</string>
+  <string name="audio_manager_surah_delete">ئاۋاز ھۆججىتىنى ئۆچۈرۈڭ</string>
+  <string name="audio_manager_remove_audio_msg">سىز %1$s نى ئۆچۈرمەكچىمۇ؟</string>
+  <string name="audio_manager_remove_multiple_audio_msg">سىز نى ئۆچۈرمەكچىمۇ؟</string>
+  <string name="audio_manager_download_selection">چۈشۈرۈش تاللاش</string>
+  <string name="audio_manager_remove_audio_title">سۈرىنى ئۆچۈرەمسىز؟</string>
+
+  <string name="downloading_title">چۈشۈرۈۋاتىدۇ…</string>
+  <string name="download_amount_in_megabytes">%s م ب</string>
+  <string name="download_progress">%1$s / %2$s چۈشۈرۈلدى</string>
+  <string name="download_sura_progress">چۈشۈرۈش سۈرە %3$d - %1$s / %2$s</string>
+  <string name="download_sura_ayah_progress">چۈشۈرۈش سۈرە %1$d ئايەت %2$d</string>
+</resources>

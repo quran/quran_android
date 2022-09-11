@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Zgjidh një Qari</string>
+  <string name="qarilist_ready_to_play">Gati për të dëgjuar</string>
+  <string name="qarilist_qaris_with_downloads">Recitues me shkarkime</string>
+  <string name="qarilist_gapless">E vazhdueshme</string>
+  <string name="qarilist_gapped">Jo i vazhdueshëm</string>
+  <string name="qarilist_selected">Zgjedhur</string>
+  <string name="qarilist_dismiss">Hiqe</string>
+</resources>

@@ -16,7 +16,6 @@ Yasser Baghouli (zaterdag@outlook.com)
     </string>
   <string name="downloadPrompt_ok">Ja</string>
   <string name="downloadPrompt_no">Nee</string>
-  <string name="downloading_title">Downloaden&#8230;</string>
   <string name="downloading_message">Wacht tot de bestanden zijn gedownload (CV ondersteund).</string>
   <string name="extracting_title">Verwerken&#8230;</string>
   <string name="menu_about">Over Ons</string>
@@ -37,7 +36,6 @@ Yasser Baghouli (zaterdag@outlook.com)
   <string name="menu_get_translations">Verkrijg Vertalingen</string>
   <string name="menu_jump">Ga</string>
   <string name="gotoPage">Ga naar pagina</string>
-  <string name="cancel">Annuleer</string>
 
   <!-- about -->
   <string name="about_description">Koran voor Android is een gratis Koran Applicatie. Vergeet a.u.b. de ontwikkelaars niet in uw gebeden.</string>
@@ -84,11 +82,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
     </string>
   <string name="search_hint">Zoeken in de Koran</string>
   <string name="quranSearchType">Verzen van de Koran</string>
-
-  <plurals name="files_downloaded">
-    <item quantity="one">1 soera gedownload</item>
-    <item quantity="other">%1$d soera\'s gedownload</item>
-  </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -150,7 +143,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="prefs_audio_manager_summary">Beheer en download Koran audio</string>
   <string name="downloaded_translations">Gedownload</string>
   <string name="available_translations">Beschikbaar om te downloaden</string>
-  <string name="remove_button">Verwijder</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Koran gegevens bibliotheek</string>
   <string name="prefs_app_location_summary">Kies de locatie voor het opslaan van Koran gegevens.</string>
@@ -164,7 +156,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="prefs_err_moving_app_files">Kan app bestanden niet verplaatsen</string>
   <string name="prefs_no_enough_space_to_move_files">Onvoldoende ruimte om app bestanden te verplaatsen</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Tablet Mode</string>
   <string name="prefs_dual_page_mode_enabled">In landscape, worden twee pagina\'s naast elkaar weergegeven.</string>
   <string name="prefs_dual_page_mode_disabled">In landscape, zal slechts één pagina verschijnen.</string>
@@ -230,9 +221,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="download_non_wifi_prompt">Je maak geen gebruik van Wifi. Toch gegevens downloaden?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">%1$s Gedowload van %2$s</string>
-  <string name="download_sura_progress">%1$s Gedowload van %2$s van soera %3$d</string>
-  <string name="download_sura_ayah_progress">Downloaden van Soera %1$d ayah %2$d</string>
   <string name="process_progress">Processing file %1$d / %2$d</string>
   <string name="download_retry">Probeer opnieuw</string>
   <string name="download_cancel">Annuleren</string>
@@ -260,8 +248,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Van</string>
-  <string name="play_to">Naar</string>
   <string name="play_restrict_range">Speel enkel de bovenstaande verzen af</string>
   <string name="play_verses_range">Speel een reeks verzen af:</string>
   <string name="play_each_verse">Speel elke vers af:</string>
@@ -304,8 +290,7 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="bookmarks_list_empty">Geen Favorieten</string>
 
   <!-- audio manager -->
-  <string name="audio_manager">Geluid Manager</string>
-    <string name="menu_show_date">Toon Datum</string>
+  <string name="menu_show_date">Toon Datum</string>
   <string name="please_wait">Wacht alstublieft...</string>
   <string name="about_furqan_summary">Uthmani tekst en Arabische Tafaseer</string>
   <string name="about_quran_enc_summary">Vertalingen voor vele talen</string>
@@ -330,13 +315,6 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   <string name="recent_pages">Recente pagina\'s</string>
   <string name="tag_blank_tag_error">Tag namen mogen niet leeg zijn!</string>
   <string name="tag_duplicate_tag_error">Tag naam bestaat al!</string>
-  <string name="audio_manager_remove_audio_title">Surah verwijderen?</string>
-  <string name="audio_manager_remove_audio_msg">Weet u zeker dat u %1$s wilt verwijderen?</string>
-  <string name="audio_manager_surah_download">Soera downloaden</string>
-  <string name="audio_manager_surah_delete">Verwijderen audiobestand</string>
-  <string name="audio_manager_download_all">Alles downloaden</string>
-  <string name="audio_manager_download_selection">Selectie downloaden</string>
-  <string name="audio_manager_delete_selection">Selectie verwijderen</string>
   <string name="audio_updated_title">Koran Audiobestanden Update</string>
   <string name="audio_updated_text">Verschillende Quran audio bestanden zijn bijgewerkt. Quran voor Android heeft uw kopie van deze bestanden verwijderd, zodat de nieuwste versies kunnen worden gedownload wanneer u ze de volgende keer afspeelt.</string>
   <string name="prefs_category_dual_screen">Dubbele pagina voorkeuren</string>

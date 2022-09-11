@@ -11,7 +11,6 @@
     </string>
   <string name="downloadPrompt_ok">Иә</string>
   <string name="downloadPrompt_no">Жоқ</string>
-  <string name="downloading_title">Жүктеу&#8230;</string>
   <string name="downloading_message">Файлдар толық жазылғанша күтіңіз</string>
   <string name="extracting_title">Шығару&#8230;</string>
   <string name="menu_about">Бағдарлама туралы</string>
@@ -32,7 +31,6 @@
   <string name="menu_get_translations">Аударма жүктеу</string>
   <string name="menu_jump">Өту</string>
   <string name="gotoPage">Бетке өту</string>
-  <string name="cancel">Болдырмау</string>
 
   <!-- about -->
   <string name="about_description">Quran for Android - тегін Құран бағдарламасы.
@@ -89,11 +87,6 @@
     </string>
   <string name="search_hint">Іздеу</string>
   <string name="quranSearchType">Сүрелер</string>
-
-  <plurals name="files_downloaded">
-    <item quantity="one">1 сүре жазылды</item>
-    <item quantity="other">%1$d сүре жазылды</item>
-  </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -161,7 +154,6 @@
   <string name="prefs_audio_manager_summary">Құран аудио файлдарын жүктеу және басқару</string>
   <string name="downloaded_translations">Жүктелгендер</string>
   <string name="available_translations">Жүктеуге болатындар</string>
-  <string name="remove_button">Жою</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Деректер орны</string>
   <string name="prefs_app_location_summary">Құран файлдары сақталған орын</string>
@@ -173,7 +165,6 @@
   <string name="prefs_err_moving_app_files">Файлдарды көшіру барсындағы қателік</string>
   <string name="prefs_no_enough_space_to_move_files">Файлдарды көшіруге бос орын жетпейді</string>
   <string name="prefs_megabytes_int">%1$d Mб</string>
-  <string name="prefs_megabytes_str">%s Mб</string>
   <string name="prefs_dual_page_mode_title">Планшет режимі</string>
   <string name="prefs_dual_page_mode_enabled">Көлденең режимде екі бет қатарынан көрсетіледі.</string>
   <string name="prefs_dual_page_mode_disabled">Көлденең режимде тек бір бет көрсетіледі.</string>
@@ -240,9 +231,6 @@
   <string name="download_non_wifi_prompt">Wi-Fi қосылмаған. Бәрібір жүктелсін бе?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">%1$s/%2$s жүктелді</string>
-  <string name="download_sura_progress">%3$d-сүренің %1$s жүктелді (барлығы: %2$s)&#8230;</string>
-  <string name="download_sura_ayah_progress">%1$d-сүре %2$d-аят жүктелуде&#8230;</string>
   <string name="process_progress">%1$d/%2$d жүктелді</string>
   <string name="download_retry">Қайталау</string>
   <string name="download_cancel">Болдырмау</string>
@@ -269,8 +257,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Басы</string>
-  <string name="play_to">Соңы</string>
   <string name="play_restrict_range">Тек жоғарыдағы аяттарды тыңдау</string>
   <string name="play_verses_range">Аят топтамасын тыңдау:</string>
   <string name="play_each_verse">Әр бір аятты тыңдау:</string>
@@ -312,9 +298,7 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Бетбелгі жоқ</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Аудио менеджер</string>
-    <string name="menu_show_date">Күнді көрсету</string>
+  <string name="menu_show_date">Күнді көрсету</string>
   <string name="please_wait">Күте тұршы...</string>
   <string name="about_furqan_summary">Утмани мәтіні және араб тафазері</string>
   <string name="about_quran_enc_summary">Көптеген тілдер үшін аудармалар</string>
@@ -341,13 +325,6 @@
   <string name="recent_pages">Соңғы беттер</string>
   <string name="tag_blank_tag_error">Тег атаулары бос бола алмайды!</string>
   <string name="tag_duplicate_tag_error">Тег атауы бұрыннан бар!</string>
-  <string name="audio_manager_remove_audio_title">Сураны жойып тастаңыз ба?</string>
-  <string name="audio_manager_remove_audio_msg">% 1$s жойғыңыз келетініне сенімдісіз бе?</string>
-  <string name="audio_manager_surah_download">Сурахты жүктеу</string>
-  <string name="audio_manager_surah_delete">Дыбыс файлын жою</string>
-  <string name="audio_manager_download_all">Барлығын жүктеу</string>
-  <string name="audio_manager_download_selection">Жүктеу таңдауы</string>
-  <string name="audio_manager_delete_selection">Таңдауды жою</string>
   <string name="audio_updated_title">Құран дыбыс файлдарын жаңарту</string>
   <string name="audio_updated_text">Бірнеше Құран аудиофайлдары жаңартылды. Android құрылғысына арналған Құран бұл файлдардың көшірмесін жойды, осылайша ең жаңа нұсқаларды келесі рет қайта ойнатқанда жүктеп алуға болады.</string>
   <string name="prefs_category_dual_screen">Қос бет параметрлері</string>

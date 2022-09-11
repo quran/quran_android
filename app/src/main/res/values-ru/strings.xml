@@ -14,7 +14,6 @@
     </string>
   <string name="downloadPrompt_ok">Да</string>
   <string name="downloadPrompt_no">Нет</string>
-  <string name="downloading_title">Загрузка &#8230;</string>
   <string name="downloading_message">Пожалуйста, дождитесь загрузки файлов (имеется возможность
         возобновить).
     </string>
@@ -38,7 +37,6 @@
   <string name="menu_get_translations">Скачать перевод</string>
   <string name="menu_jump">Перейти</string>
   <string name="gotoPage">Перейти на страницу</string>
-  <string name="cancel">Отмена</string>
   <string name="please_wait">Подождите пожалуйста…</string>
 
   <!-- about -->
@@ -112,13 +110,6 @@
   <string name="search_full_results">Полные результаты</string>
   <string name="search_entire_mushaf">Обыскать весь мусхаф</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">Загружено %1$d сура</item>
-    <item quantity="few">Загружено %1$d суры</item>
-    <item quantity="many">Загружено %1$d сур</item>
-    <item quantity="other">Загружено %1$d сур</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">%2$d результат для \"%1$s\": </item>
@@ -187,7 +178,6 @@
   <string name="prefs_audio_manager_summary">Управлять и скачать аудио рецитация Корана</string>
   <string name="downloaded_translations">Загруженные переводы</string>
   <string name="available_translations">Доступные для загрузки</string>
-  <string name="remove_button">Удалить</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Расположение приложения</string>
   <string name="prefs_app_location_summary">Выберите место хранения файлов</string>
@@ -201,7 +191,6 @@
   <string name="prefs_err_moving_app_files">Ошибка перемещения файлов приложения</string>
   <string name="prefs_no_enough_space_to_move_files">Недостаточно свободного места для перемещения файлов приложения</string>
   <string name="prefs_megabytes_int">%1$d Mб</string>
-  <string name="prefs_megabytes_str">%s Mб</string>
   <string name="prefs_dual_page_mode_title">Режим планшета</string>
   <string name="prefs_dual_page_mode_enabled">В альбомном режиме две страницы будут отображаться рядом друг с другом</string>
   <string name="prefs_dual_page_mode_disabled">В альбомном режиме будет отображена только одна страницы</string>
@@ -288,9 +277,6 @@
   <string name="download_non_wifi_prompt">Вы не подключены к Wi-Fi. Все равно продолжить загрузку?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Загружено %1$s / %2$s</string>
-  <string name="download_sura_progress">Загружено %1$s / %2$s суры %3$d</string>
-  <string name="download_sura_ayah_progress">Загружается сура %1$d аят %2$d</string>
   <string name="process_progress">Загрузка файла %1$d / %2$d</string>
   <string name="download_retry">Повторить</string>
   <string name="download_cancel">Отмена</string>
@@ -319,8 +305,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">От</string>
-  <string name="play_to">До</string>
   <string name="play_restrict_range">Воспроизвести только вышестоящие аяты</string>
   <string name="play_verses_range">Вос-ти набор аятов:</string>
   <string name="play_each_verse">Вос-ти каждый аят:</string>
@@ -370,28 +354,6 @@
 
   <!-- widgets -->
   <string name="bookmarks_list_empty">Закладки отсутствуют</string>
-
-  <!-- audio manager -->
-  <string name="audio_manager">Аудио менеджер</string>
-  <string name="audio_manager_remove_audio_title">Удалить суру?</string>
-  <string name="audio_manager_remove_audio_msg">Вы уверены, что хотите удалить %1$s?</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">Удалено %1$d сура</item>
-    <item quantity="few">Удалено %1$d суры</item>
-    <item quantity="many">Удалено %1$d сур</item>
-    <item quantity="other">Удалено %1$d сур</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">Произошла ошибка при удалении %1$d сура</item>
-    <item quantity="few">Произошла ошибка при удалении %d суры</item>
-    <item quantity="many">Произошла ошибка при удалении %d сур</item>
-    <item quantity="other">Произошла ошибка при удалении %1$d сур</item>
-  </plurals>
-  <string name="audio_manager_surah_download">Скачать суру</string>
-  <string name="audio_manager_surah_delete">Удалить суру</string>
-  <string name="audio_manager_download_all">Скачать все</string>
-  <string name="audio_manager_download_selection">Скачать выбранные</string>
-  <string name="audio_manager_delete_selection">Удалить выбранные</string>
 
   <!-- audio updates -->
   <string name="audio_updated_title">Обновление аудио файлов</string>
