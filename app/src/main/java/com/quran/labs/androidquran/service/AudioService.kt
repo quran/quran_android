@@ -410,27 +410,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     timingDisposable?.dispose()
     timingDisposable = Single.fromCallable {
       val db = getDatabaseHandler(databasePath)
-
-      val map = SparseIntArray()
-      var cursor: Cursor? = null
-      try {
-        cursor = db.getAyahTimings(sura)
-        Timber.d("got cursor of data")
-        if (cursor != null && cursor.moveToFirst()) {
-          do {
-            val ayah = cursor.getInt(1)
-            val time = cursor.getInt(2)
-            map.put(ayah, time)
-          } while (cursor.moveToNext())
-        }
-      } catch (se: SQLException) {
-        // don't crash the app if the database is corrupt
-        Timber.e(se)
-      } finally {
-        DatabaseUtils.closeCursor(cursor)
-      }
-
-      map
+      db.getAyahTimings(sura)
     }
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())

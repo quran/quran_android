@@ -1,14 +1,9 @@
 package com.quran.labs.androidquran.feature.audioshare
 
 import android.content.Context
-import android.database.Cursor
-import android.database.SQLException
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.Environment
 import android.util.SparseIntArray
-import android.widget.Toast
-import com.quran.common.util.database.DatabaseUtils
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.timing.SuraTimingDatabaseHandler
@@ -20,7 +15,6 @@ import okio.BufferedSink
 import okio.buffer
 import okio.sink
 import okio.source
-import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -53,35 +47,32 @@ class AudioShareUtils {
     assert(end >= start)
 
     val audioCacheDirectory = context.cacheDir
-    if (!audioCacheDirectory.exists()) {
-      if (!audioCacheDirectory.mkdirs()) {
-        Toast.makeText(context, "could not create directory", Toast.LENGTH_SHORT).show()
-        return null
-      }
-    }
 
     var sharablePath: String?
     val audioCacheFilePaths = mutableListOf<String>()
     withContext(Dispatchers.IO) {
-      val mapArray = getTimingData(start, end, gaplessDatabase)
+      val (startSurahTimingData, endSurahTimingData) = getTimingData(start, end, gaplessDatabase)
 
       val startAyah = start.ayah
       val endAyah = end.ayah
-      val startSurahTimingDataArray: SparseIntArray = mapArray[0]
-      val endSurahTimingDataArray: SparseIntArray = mapArray[1]
 
       val isFirstAyahInSurah = startAyah == 1
-      val startTimeOfAyahAfterEndAyah = endSurahTimingDataArray[endAyah + 1]
+      val startTimeOfAyahAfterEndAyah = endSurahTimingData[endAyah + 1]
       val isLastAyahInSurah = startTimeOfAyahAfterEndAyah == 0
 
       val startAyahTime = if (isFirstAyahInSurah) {
         0
       } else {
-        startSurahTimingDataArray[startAyah]
+        startSurahTimingData[startAyah]
       }
 
       val endAyahTime = if (isLastAyahInSurah) {
-        getSurahDuration(context, getSurahAudioPath(urlFormat, end.sura))
+        val endMarker = endSurahTimingData.get(999, -1)
+        if (endMarker > 0) {
+          endMarker
+        } else {
+          getSurahDuration(context, getSurahAudioPath(urlFormat, end.sura))
+        }
       } else {
         startTimeOfAyahAfterEndAyah
       }
@@ -89,61 +80,68 @@ class AudioShareUtils {
       val startAndEndAyahAreInSameSurah = start.sura == end.sura
 
       if (startAndEndAyahAreInSameSurah) {
-        val audioSegmentPath: String = getSurahSegment(
+        val audioSegmentPath: String? = getSurahSegment(
           audioCacheDirectory, getSurahAudioPath(urlFormat, start.sura), startAyahTime, endAyahTime
-        )!!
-        audioCacheFilePaths.add(audioSegmentPath)
-        sharablePath = getRenamedSharableAudioFile(
-          qari,
-          start,
-          end,
-          audioSegmentPath,
-          audioCacheDirectory.toString(),
-          audioCacheFilePaths
         )
+
+        sharablePath = if (audioSegmentPath != null) {
+          audioCacheFilePaths.add(audioSegmentPath)
+          getRenamedSharableAudioFile(
+            qari,
+            start,
+            end,
+            audioSegmentPath,
+            audioCacheDirectory.toString(),
+            audioCacheFilePaths
+          )
+        } else {
+          null
+        }
         audioCacheFilePaths.clear()
       } else {
         val segmentPaths = mutableListOf<String>()
         val endOfSurah = -1
         val startOfSurah = 0
-        val startSegmentPath: String = getSurahSegmentPath(
+        val startSegmentPath: String? = getSurahSegmentPath(
           context, audioCacheDirectory, urlFormat, start.sura, startAyahTime, endOfSurah
         )
-        val lastSegmentPath: String = getSurahSegmentPath(
-          context, audioCacheDirectory , urlFormat, end.sura, startOfSurah, endAyahTime
+        val lastSegmentPath: String? = getSurahSegmentPath(
+          context, audioCacheDirectory, urlFormat, end.sura, startOfSurah, endAyahTime
         )
 
-        for (surahIndex in start.sura..end.sura) {
-          val isTheFirstSurah = surahIndex == start.sura
-          val isMiddleSurah = surahIndex != start.sura && surahIndex != end.sura
-          if (isTheFirstSurah) {
-            segmentPaths.add(startSegmentPath)
-            audioCacheFilePaths.add(startSegmentPath)
-            continue
+        if (startSegmentPath != null && lastSegmentPath != null) {
+          for (surahIndex in start.sura..end.sura) {
+            val isTheFirstSurah = surahIndex == start.sura
+            val isMiddleSurah = surahIndex != start.sura && surahIndex != end.sura
+            if (isTheFirstSurah) {
+              segmentPaths.add(startSegmentPath)
+              audioCacheFilePaths.add(startSegmentPath)
+            } else if (isMiddleSurah) {
+              segmentPaths.add(getSurahAudioPath(urlFormat, surahIndex))
+            } else {
+              segmentPaths.add(lastSegmentPath)
+              audioCacheFilePaths.add(lastSegmentPath)
+            }
           }
-          if (isMiddleSurah) {
-            segmentPaths.add(getSurahAudioPath(urlFormat, surahIndex))
-            continue
+
+          val audioSegmentsWereCreated = segmentPaths.isNotEmpty()
+
+          if (audioSegmentsWereCreated) {
+            val (sharableAudioFilePath, cacheUpdates) =
+              getMergedAudioFromSegments(audioCacheDirectory, segmentPaths)
+            audioCacheFilePaths.addAll(cacheUpdates)
+            sharablePath = getRenamedSharableAudioFile(
+              qari,
+              start,
+              end,
+              sharableAudioFilePath,
+              audioCacheDirectory.toString(),
+              audioCacheFilePaths
+            )
+            audioCacheFilePaths.clear()
+          } else {
+            sharablePath = null
           }
-          segmentPaths.add(lastSegmentPath)
-          audioCacheFilePaths.add(lastSegmentPath)
-        }
-
-        val audioSegmentsWereCreated = segmentPaths.isNotEmpty()
-
-        if (audioSegmentsWereCreated) {
-          val (sharableAudioFilePath, cacheUpdates) =
-            getMergedAudioFromSegments(audioCacheDirectory, segmentPaths)
-          audioCacheFilePaths.addAll(cacheUpdates)
-          sharablePath = getRenamedSharableAudioFile(
-            qari,
-            start,
-            end,
-            sharableAudioFilePath,
-            audioCacheDirectory.toString(),
-            audioCacheFilePaths
-          )
-          audioCacheFilePaths.clear()
         } else {
           sharablePath = null
         }
@@ -158,14 +156,14 @@ class AudioShareUtils {
                                   surah: Int,
                                   startAyahTime: Int,
                                   endAyahTime: Int
-  ): String {
+  ): String? {
     var upperBoundTime = endAyahTime
     val audioFilePath: String = getSurahAudioPath(urlFormat, surah)
     val isFirstSegment = endAyahTime < 0
     if (isFirstSegment) {
       upperBoundTime = getSurahDuration(context, audioFilePath)
     }
-    return getSurahSegment(audioCacheDirectory, audioFilePath, startAyahTime, upperBoundTime)!!
+    return getSurahSegment(audioCacheDirectory, audioFilePath, startAyahTime, upperBoundTime)
   }
 
   private fun getRenamedSharableAudioFile(
@@ -199,39 +197,21 @@ class AudioShareUtils {
     return String.format(Locale.US, urlFormat, surah)
   }
 
-  private fun getTimingData(start: SuraAyah, end: SuraAyah, gaplessDatabase: String): ArrayList<SparseIntArray> {
-    val db: SuraTimingDatabaseHandler = SuraTimingDatabaseHandler.getDatabaseHandler(gaplessDatabase)
-    var firstSurahMap = SparseIntArray()
-    var lastSurahMap = SparseIntArray()
-    var firstSurahCursor: Cursor? = null
-    var lastSurahCursor: Cursor? = null
-
-    try {
-      firstSurahCursor = db.getAyahTimings(start.sura)
-      firstSurahMap = populateArrayFromCursor(firstSurahCursor)
-      lastSurahCursor = db.getAyahTimings(end.sura)
-      lastSurahMap = populateArrayFromCursor(lastSurahCursor)
-    } catch (sqlException: SQLException) {
-      Timber.e(sqlException)
-    } finally {
-      DatabaseUtils.closeCursor(firstSurahCursor)
-      DatabaseUtils.closeCursor(lastSurahCursor)
+  private fun getTimingData(
+    start: SuraAyah,
+    end: SuraAyah,
+    gaplessDatabase: String
+  ): Pair<SparseIntArray, SparseIntArray> {
+    val db: SuraTimingDatabaseHandler =
+      SuraTimingDatabaseHandler.getDatabaseHandler(gaplessDatabase)
+    val firstSurahMap = db.getAyahTimings(start.sura)
+    val lastSurahMap = if (start.sura == end.sura) {
+      firstSurahMap
+    } else {
+      db.getAyahTimings(end.sura)
     }
 
-    return ArrayList(
-        listOf(firstSurahMap, lastSurahMap))
-  }
-
-  private fun populateArrayFromCursor(cursor: Cursor?): SparseIntArray {
-    val sparseIntArray = SparseIntArray()
-    if (cursor != null && cursor.moveToFirst()) {
-      do {
-        val ayah = cursor.getInt(1)
-        val time = cursor.getInt(2)
-        sparseIntArray.put(ayah, time)
-      } while (cursor.moveToNext())
-    }
-    return sparseIntArray
+    return firstSurahMap to lastSurahMap
   }
 
   private fun getSurahSegment(
@@ -245,17 +225,16 @@ class AudioShareUtils {
     }
     val tempAudioName = UUID.randomUUID().toString() + ".mp3"
     val destFile = File(audioCacheDirectory.path + File.separator + tempAudioName)
-    val soundFile = arrayOfNulls<CheapSoundFile>(1)
+    val soundFile = CheapSoundFile.create(path, null)
     try {
-      soundFile[0] = CheapSoundFile.create(path, null)
       val startTime = lowerCut.toFloat() / 1000
       val endTime = upperCut.toFloat() / 1000
-      val samplesPerFrame = soundFile[0]?.samplesPerFrame
-      val sampleRate = soundFile[0]?.sampleRate
-      val avg = sampleRate?.div(samplesPerFrame!!)
-      val startFrames = (startTime * avg!!).roundToInt()
+      val samplesPerFrame = soundFile.samplesPerFrame
+      val sampleRate = soundFile.sampleRate
+      val avg = sampleRate.div(samplesPerFrame)
+      val startFrames = (startTime * avg).roundToInt()
       val endFrames = (endTime * avg).roundToInt()
-      soundFile[0]?.WriteFile(destFile, startFrames, endFrames - startFrames)
+      soundFile.WriteFile(destFile, startFrames, endFrames - startFrames)
     } catch (e: IOException) {
       e.printStackTrace()
     }
