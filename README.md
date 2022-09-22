@@ -6,7 +6,6 @@
 
 [![Build Status](https://github.com/quran/quran_android/actions/workflows/build.yml/badge.svg)](https://github.com/quran/quran_android/actions/workflows/build.yml)
 [![Version](https://img.shields.io/github/v/release/quran/quran_android?include_prereleases&sort=semver)](https://github.com/quran/quran_android/releases/latest)
-[![Downloads](https://PlayBadges.pavi2410.me/badge/downloads?id=com.quran.labs.androidquran)](https://play.google.com/store/apps/details?id=com.quran.labs.androidquran)
 [![Github Downloads](https://img.shields.io/github/downloads/quran/quran_android/total?logo=Github)](https://github.com/quran/quran_android/releases)
 
 This is a simple (Madani based) Quran app for Android.
