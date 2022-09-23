@@ -5,6 +5,7 @@ plugins {
 }
 
 android {
+  namespace 'com.quran.mobile.di'
   compileSdkVersion deps.android.build.compileSdkVersion
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion

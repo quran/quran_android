@@ -6,6 +6,7 @@ apply plugin: 'com.squareup.anvil'
 anvil { generateDaggerFactories = true }
 
 android {
+  namespace 'com.quran.mobile.bookmark'
   compileSdkVersion deps.android.build.compileSdkVersion
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion
