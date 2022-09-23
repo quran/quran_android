@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.squareup.anvil'
 
 android {
+  namespace 'com.quran.labs.androidquran.common.toolbar'
   compileSdkVersion deps.android.build.compileSdkVersion
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion

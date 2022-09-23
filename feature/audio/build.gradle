@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+  namespace 'com.quran.labs.androidquran.feature.audio'
   compileSdkVersion deps.android.build.compileSdkVersion
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion

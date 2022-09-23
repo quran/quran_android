@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
+  namespace 'com.quran.mobile.common.ui.core'
   compileSdkVersion deps.android.build.compileSdkVersion
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion
