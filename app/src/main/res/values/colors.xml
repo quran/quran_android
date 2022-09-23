@@ -40,8 +40,8 @@
   <color name="audio_notification_background_color">#ffd8d8d8</color>
   <color name="ayah_bookmark_color">#ff81c784</color>
   <color name="download_button_background">#ff556f79</color>
-  <color name="downloaded_button_background">#ff5e9800</color>
-  <color name="cancel_button_background">#ffa50800</color>
+  
+  
   <color name="snackbar_background_color">@color/download_button_background</color>
   <color name="overlay_panel">#dd000000</color>
   <color name="navbar_night_color">#ff000000</color>
