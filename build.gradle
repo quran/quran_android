@@ -9,7 +9,7 @@ buildscript {
     material3Version = '1.0.0-beta02'
 
     androidxMediaVersion = '1.6.0'
-    androidxAnnotationVersion = '1.4.0'
+    androidxAnnotationVersion = '1.5.0'
     androidxFragmentVersion = '1.5.2'
     androidxPreferencesVersion = '1.2.0'
     androidxAppcompatVersion = '1.5.1'
