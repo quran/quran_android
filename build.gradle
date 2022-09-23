@@ -60,7 +60,7 @@ buildscript {
     classpath "com.google.firebase:firebase-crashlytics-gradle:2.9.2"
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     classpath "net.ltgt.gradle:gradle-errorprone-plugin:2.0.2"
-    classpath "com.google.gms:google-services:4.3.13"
+    classpath "com.google.gms:google-services:4.3.14"
     classpath "com.squareup.sqldelight:gradle-plugin:$sqldelightVersion"
     classpath "com.squareup.anvil:gradle-plugin:$anvilVersion"
   }
