@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.squareup.sqldelight'
+apply plugin: 'app.cash.sqldelight'
 apply plugin: 'com.squareup.anvil'
 
 anvil { generateDaggerFactories = true }
@@ -32,6 +32,7 @@ dependencies {
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
 
   // sqldelight
-  implementation "com.squareup.sqldelight:android-driver:$sqldelightVersion"
-  implementation "com.squareup.sqldelight:coroutines-extensions-jvm:$sqldelightVersion"
+  implementation "app.cash.sqldelight:android-driver:$sqldelightVersion"
+  implementation "app.cash.sqldelight:coroutines-extensions-jvm:$sqldelightVersion"
+  implementation "app.cash.sqldelight:primitive-adapters:$sqldelightVersion"
 }
