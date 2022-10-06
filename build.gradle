@@ -27,7 +27,7 @@ buildscript {
     okhttpVersion = '4.10.0'
     okioVersion = '3.2.0'
     retrofitVersion = '2.9.0'
-    sqldelightVersion = '2.0.0-alpha03'
+    sqldelightVersion = '2.0.0-alpha04'
 
     // testing
     junitVersion = '4.13.2'
