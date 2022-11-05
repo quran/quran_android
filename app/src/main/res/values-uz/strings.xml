@@ -305,6 +305,7 @@
 
   <!-- long press -->
   <string name="ayah_copied_popup">Oyat xotiraga koʻchirildi</string>
+  <string name="share_audio_file_title">Share Audio File</string>
 
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Xatchoʻpni teglash</string>

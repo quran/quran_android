@@ -270,6 +270,7 @@
 
   <!-- long press -->
   <string name="ayah_copied_popup">อายะห์ คัดลอก</string>
+  <string name="share_audio_file_title">Share Audio File</string>
 
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">ที่คั่นหน้าแท็ก</string>

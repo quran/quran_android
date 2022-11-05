@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import com.quran.common.search.ArabicSearcher
 import com.quran.common.search.DefaultSearcher
 import com.quran.common.search.Searcher
+import com.quran.common.util.database.DatabaseUtils
 import com.quran.data.model.QuranText
 import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.R

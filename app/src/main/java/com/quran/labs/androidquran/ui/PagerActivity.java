@@ -1,5 +1,9 @@
 package com.quran.labs.androidquran.ui;
 
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
+import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
+
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -28,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -45,6 +50,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.NonRestoringViewPager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
+
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.model.selection.AyahSelection;
@@ -65,6 +71,8 @@ import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.audio.model.QariItem;
+import com.quran.labs.androidquran.common.audio.model.AudioPathInfo;
+import com.quran.labs.androidquran.common.audio.util.AudioFileUtil;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
@@ -73,6 +81,7 @@ import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent;
 import com.quran.labs.androidquran.di.module.activity.PagerActivityModule;
 import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
+import com.quran.labs.androidquran.feature.audioshare.AudioShareUtils;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.presenter.audio.AudioPresenter;
@@ -120,6 +129,18 @@ import com.quran.page.common.toolbar.AyahToolBar;
 import com.quran.page.common.toolbar.di.AyahToolBarInjector;
 import com.quran.reading.common.AudioEventPresenter;
 import com.quran.reading.common.ReadingEventPresenter;
+
+import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
@@ -128,19 +149,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.observers.DisposableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
 import timber.log.Timber;
-
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_PAGE;
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
-import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
 
 /**
  * Activity that displays the Quran (in Arabic or translation mode).
@@ -231,6 +240,7 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject QuranAppUtils quranAppUtils;
   @Inject ShareUtil shareUtil;
   @Inject AudioUtils audioUtils;
+  @Inject AudioFileUtil audioFileUtil;
   @Inject QuranDisplayData quranDisplayData;
   @Inject QuranInfo quranInfo;
   @Inject QuranFileUtils quranFileUtils;
@@ -250,6 +260,7 @@ public class PagerActivity extends AppCompatActivity implements
   private final CompositeDisposable foregroundDisposable = new CompositeDisposable();
 
   private final PagerHandler handler = new PagerHandler(this);
+
 
   private static class PagerHandler extends Handler {
     private final WeakReference<PagerActivity> activity;
@@ -287,12 +298,21 @@ public class PagerActivity extends AppCompatActivity implements
     isSplitScreen = quranSettings.isQuranSplitWithTranslation();
     audioEventPresenterBridge = new AudioEventPresenterBridge(
         audioEventPresenter,
-        suraAyah -> { onAudioPlaybackAyahChanged(suraAyah); return null; }
+        suraAyah -> {
+          onAudioPlaybackAyahChanged(suraAyah);
+          return null;
+        }
     );
     readingEventPresenterBridge = new ReadingEventPresenterBridge(
         readingEventPresenter,
-        () -> { onPageClicked(); return null; },
-        ayahSelection -> { onAyahSelectionChanged(ayahSelection); return null; }
+        () -> {
+          onPageClicked();
+          return null;
+        },
+        ayahSelection -> {
+          onAyahSelectionChanged(ayahSelection);
+          return null;
+        }
     );
 
     // remove the window background to avoid overdraw. note that, per Romain's blog, this is
@@ -421,7 +441,8 @@ public class PagerActivity extends AppCompatActivity implements
           } else if (position == barPos - 1 || position == barPos + 1) {
             // Swiping to previous or next ViewPager page (i.e. next or previous quran page)
             final SelectionIndicator updatedSelectionIndicator =
-                SelectionIndicatorKt.withXScroll(selectionIndicator, viewPager.getWidth() - positionOffsetPixels);
+                SelectionIndicatorKt.withXScroll(selectionIndicator,
+                    viewPager.getWidth() - positionOffsetPixels);
             readingEventPresenterBridge.withSelectionIndicator(updatedSelectionIndicator);
           } else {
             readingEventPresenterBridge.clearSelectedAyah();
@@ -541,8 +562,14 @@ public class PagerActivity extends AppCompatActivity implements
         this::getCurrentPage,
         () -> audioStatusBar,
         () -> ayahToolBar,
-        ayah -> { ensurePage(ayah.sura, ayah.ayah); return null; },
-        sliderPage -> { showSlider(slidingPagerAdapter.getPagePosition(sliderPage)); return null; }
+        ayah -> {
+          ensurePage(ayah.sura, ayah.ayah);
+          return null;
+        },
+        sliderPage -> {
+          showSlider(slidingPagerAdapter.getPagePosition(sliderPage));
+          return null;
+        }
     ));
   }
 
@@ -1374,16 +1401,16 @@ public class PagerActivity extends AppCompatActivity implements
   private void requestTranslationsList() {
     compositeDisposable.add(
         Single.fromCallable(() ->
-            translationsDBAdapter.getTranslations())
+                translationsDBAdapter.getTranslations())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableSingleObserver<List<LocalTranslation>>() {
               @Override
               public void onSuccess(@NonNull List<LocalTranslation> translationList) {
                 final List<LocalTranslation> sortedTranslations = new ArrayList<>(translationList);
-              Collections.sort(sortedTranslations, new LocalTranslationDisplaySort());
+                Collections.sort(sortedTranslations, new LocalTranslationDisplaySort());
 
-              int items = sortedTranslations.size();
+                int items = sortedTranslations.size();
                 String[] titles = new String[items];
                 for (int i = 0; i < items; i++) {
                   LocalTranslation item = sortedTranslations.get(i);
@@ -1400,7 +1427,8 @@ public class PagerActivity extends AppCompatActivity implements
                 if (currentActiveTranslationsFilesNames.isEmpty() && items > 0) {
                   currentActiveTranslationsFilesNames = new HashSet<>();
                   for (int i = 0; i < items; i++) {
-                    currentActiveTranslationsFilesNames.add(sortedTranslations.get(i).getFilename());
+                    currentActiveTranslationsFilesNames.add(
+                        sortedTranslations.get(i).getFilename());
                   }
                 }
                 activeTranslationsFilesNames = currentActiveTranslationsFilesNames;
@@ -1433,7 +1461,8 @@ public class PagerActivity extends AppCompatActivity implements
             if (sura == null || ayah == null) {
               // page bookmark
               bookmarksCache.put(page, isBookmarked);
-              bookmarksMenuItem.setIcon(isBookmarked ? com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite : com.quran.labs.androidquran.common.toolbar.R.drawable.ic_not_favorite);
+              bookmarksMenuItem.setIcon(
+                  isBookmarked ? com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite : com.quran.labs.androidquran.common.toolbar.R.drawable.ic_not_favorite);
             } else {
               // ayah bookmark
               SuraAyah suraAyah = new SuraAyah(sura, ayah);
@@ -1482,7 +1511,8 @@ public class PagerActivity extends AppCompatActivity implements
         bookmarked = bookmarksCache.get(page - 1);
       }
 
-      menuItem.setIcon(bookmarked ? com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite : com.quran.labs.androidquran.common.toolbar.R.drawable.ic_not_favorite);
+      menuItem.setIcon(
+          bookmarked ? com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite : com.quran.labs.androidquran.common.toolbar.R.drawable.ic_not_favorite);
     } else {
       supportInvalidateOptionsMenu();
     }
@@ -1523,7 +1553,7 @@ public class PagerActivity extends AppCompatActivity implements
     final SuraAyah start = new SuraAyah(startSura, startAyah);
     final SuraAyah end = getSelectionEnd();
     // handle the case of multiple ayat being selected and play them as a range if so
-    final SuraAyah ending = (end == null || start.equals(end) || start.after(end))? null : end;
+    final SuraAyah ending = (end == null || start.equals(end) || start.after(end)) ? null : end;
     playFromAyah(start, ending, page, 0, 0, ending != null);
   }
 
@@ -1786,6 +1816,8 @@ public class PagerActivity extends AppCompatActivity implements
         shareAyahLink(startSuraAyah, endSuraAyah);
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_share_ayah_text) {
         shareAyah(startSuraAyah, endSuraAyah, false);
+      } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_share_ayah_audio) {
+        shareAyahAudio(startSuraAyah, endSuraAyah);
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_copy_ayah) {
         shareAyah(startSuraAyah, endSuraAyah, true);
       } else {
@@ -1822,7 +1854,8 @@ public class PagerActivity extends AppCompatActivity implements
         if (isCopy) {
           shareUtil.copyToClipboard(this, shareText);
         } else {
-          shareUtil.shareViaIntent(this, shareText, com.quran.labs.androidquran.common.toolbar.R.string.share_ayah_text);
+          shareUtil.shareViaIntent(this, shareText,
+              com.quran.labs.androidquran.common.toolbar.R.string.share_ayah_text);
         }
       }
 
@@ -1851,7 +1884,8 @@ public class PagerActivity extends AppCompatActivity implements
             .subscribeWith(new DisposableSingleObserver<String>() {
               @Override
               public void onSuccess(@NonNull String url) {
-                shareUtil.shareViaIntent(PagerActivity.this, url, com.quran.labs.androidquran.common.toolbar.R.string.share_ayah);
+                shareUtil.shareViaIntent(PagerActivity.this, url,
+                    com.quran.labs.androidquran.common.toolbar.R.string.share_ayah);
                 dismissProgressDialog();
               }
 
@@ -1861,6 +1895,55 @@ public class PagerActivity extends AppCompatActivity implements
               }
             })
     );
+  }
+
+  public void shareAyahAudio(SuraAyah start, SuraAyah end) {
+    final QariItem selectedQari = audioStatusBar.getAudioInfo();
+    AudioPathInfo audioPathInfo = audioFileUtil.getLocalAudioPathInfo(selectedQari);
+
+    assert audioPathInfo != null;
+    boolean gaplessDatabaseExists = audioPathInfo.getGaplessDatabase() != null;
+
+    if (gaplessDatabaseExists) {
+      if (audioFilesExist(audioPathInfo, start, end)) {
+        AudioShareUtils audioShareUtils = new AudioShareUtils();
+        String path = audioShareUtils.createBlockingSharableAudioFile(
+            this,
+            start,
+            end,
+            selectedQari,
+            audioPathInfo.getUrlFormat(),
+            audioPathInfo.getGaplessDatabase()
+        );
+
+        if (path != null && !path.isEmpty()){
+          shareAudioSegment(path);
+        } else {
+          Toast.makeText(this, "could not share audio ayah", Toast.LENGTH_SHORT).show();
+        }
+      } else {
+        requestDownload(audioPathInfo, selectedQari, start, end);
+      }
+    }
+  }
+
+  private boolean audioFilesExist(AudioPathInfo audioPathInfo, SuraAyah start, SuraAyah end) {
+    return audioUtils.haveAllFiles(audioPathInfo.getUrlFormat(), audioPathInfo.getLocalDirectory(),
+        start, end, true);
+  }
+
+  private void shareAudioSegment(String path) {
+    shareUtil.shareAudioFileIntent(PagerActivity.this, new File(path));
+  }
+
+  private void requestDownload(AudioPathInfo audioPathInfo, QariItem qari, SuraAyah start, SuraAyah end) {
+    AudioRequest audioRequest = new AudioRequest(
+        start, end, qari, 0, 0, true, false, audioPathInfo);
+
+    Intent downloadIntent = audioPresenter.getDownloadIntent(this, audioRequest);
+    if (downloadIntent != null) {
+      handleRequiredDownload(downloadIntent);
+    }
   }
 
   private void showProgressDialog() {

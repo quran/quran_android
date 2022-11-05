@@ -1,14 +1,14 @@
-package com.quran.labs.androidquran.database
+package com.quran.labs.androidquran.common.audio.timing
 
 import android.database.Cursor
 import android.database.DefaultDatabaseErrorHandler
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabaseCorruptException
+import android.util.SparseIntArray
+import com.quran.common.util.database.DatabaseUtils
 import timber.log.Timber
 import java.io.File
-import java.lang.Exception
-import java.util.HashMap
 
 class SuraTimingDatabaseHandler private constructor(path: String) {
   private var database: SQLiteDatabase? = null
@@ -73,7 +73,7 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
 
   private fun validDatabase(): Boolean = database?.isOpen ?: false
 
-  fun getAyahTimings(sura: Int): Cursor? {
+  private fun getAyahTimingsCursor(sura: Int): Cursor? {
     if (!validDatabase()) return null
 
     return try {
@@ -88,6 +88,28 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
     } catch (e: Exception) {
       null
     }
+  }
+
+  fun getAyahTimings(sura: Int): SparseIntArray {
+    val map = SparseIntArray()
+
+    var cursor: Cursor? = null
+    try {
+      cursor = getAyahTimingsCursor(sura)
+      if (cursor != null && cursor.moveToFirst()) {
+        do {
+          val ayah = cursor.getInt(1)
+          val time = cursor.getInt(2)
+          map.put(ayah, time)
+        } while (cursor.moveToNext())
+      }
+    } catch (exception: SQLException) {
+      Timber.e(exception)
+    } finally {
+      DatabaseUtils.closeCursor(cursor)
+    }
+
+    return map
   }
 
   fun getVersion(): Int {

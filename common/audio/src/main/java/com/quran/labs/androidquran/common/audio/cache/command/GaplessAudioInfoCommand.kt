@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.common.audio.cache.command
 
-import com.quran.labs.androidquran.common.audio.util.AudioFileUtil
+import com.quran.labs.androidquran.common.audio.util.AudioFileTools
 import okio.FileSystem
 import okio.Path
 import javax.inject.Inject
@@ -12,7 +12,7 @@ class GaplessAudioInfoCommand @Inject constructor(private val fileSystem: FileSy
   }
 
   private fun fullGaplessDownloads(path: Path): List<Int> {
-    val paths = AudioFileUtil.filesMatchingSuffixWithSuffixRemoved(fileSystem, path, ".mp3")
+    val paths = AudioFileTools.filesMatchingSuffixWithSuffixRemoved(fileSystem, path, ".mp3")
     return paths
       .filter { it.length == 3 }
       .mapNotNull { it.toIntOrNull() }
@@ -20,7 +20,7 @@ class GaplessAudioInfoCommand @Inject constructor(private val fileSystem: FileSy
   }
 
   private fun partialGaplessDownloads(path: Path): List<Int> {
-    val paths = AudioFileUtil.filesMatchingSuffixWithSuffixRemoved(fileSystem, path, ".mp3.part")
+    val paths = AudioFileTools.filesMatchingSuffixWithSuffixRemoved(fileSystem, path, ".mp3.part")
     return paths
       .filter { it.length == 3 }
       .mapNotNull { it.toIntOrNull() }

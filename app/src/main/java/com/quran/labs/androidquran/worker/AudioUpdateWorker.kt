@@ -8,10 +8,11 @@ import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.audio.timing.SuraTimingDatabaseHandler
+import com.quran.labs.androidquran.common.audio.util.AudioFileUtil
 import com.quran.labs.androidquran.core.worker.WorkerTaskFactory
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.database.AudioDatabaseVersionChecker
-import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler
 import com.quran.labs.androidquran.feature.audio.AudioUpdater
 import com.quran.labs.androidquran.feature.audio.api.AudioUpdateService
 import com.quran.labs.androidquran.feature.audio.util.AudioFileCheckerImpl
@@ -31,7 +32,8 @@ class AudioUpdateWorker(
   private val audioUpdateService: AudioUpdateService,
   private val audioUtils: AudioUtils,
   private val quranFileUtils: QuranFileUtils,
-  private val quranSettings: QuranSettings
+  private val quranSettings: QuranSettings,
+  private val audioFileUtil: AudioFileUtil
 ) : CoroutineWorker(context, params) {
 
   override suspend fun doWork(): Result = coroutineScope {
@@ -54,14 +56,14 @@ class AudioUpdateWorker(
           localFilesToDelete.forEach { localUpdate ->
             if (localUpdate.needsDatabaseUpgrade) {
               // delete the database
-              val dbPath = audioUtils.getQariDatabasePathIfGapless(localUpdate.qari)
+              val dbPath = audioFileUtil.getQariDatabasePathIfGapless(localUpdate.qari)
               dbPath?.let { SuraTimingDatabaseHandler.clearDatabaseHandlerIfExists(it) }
               Timber.d("would remove %s", dbPath)
               File(dbPath).delete()
             }
 
             val qari = localUpdate.qari
-            val path = audioUtils.getLocalQariUrl(qari)
+            val path = audioFileUtil.getLocalQariUrl(qari)
             localUpdate.files.forEach {
               // delete the file
               val filePath = if (qari.isGapless) {
@@ -116,15 +118,21 @@ class AudioUpdateWorker(
     private val audioUpdateService: AudioUpdateService,
     private val audioUtils: AudioUtils,
     private val quranFileUtils: QuranFileUtils,
-    private val quranSettings: QuranSettings
+    private val quranSettings: QuranSettings,
+    private val audioFileUtil: AudioFileUtil
   ) : WorkerTaskFactory {
     override fun makeWorker(
       appContext: Context,
       workerParameters: WorkerParameters
     ): ListenableWorker {
       return AudioUpdateWorker(
-          appContext, workerParameters, audioUpdateService, audioUtils, quranFileUtils,
-          quranSettings
+        appContext,
+        workerParameters,
+        audioUpdateService,
+        audioUtils,
+        quranFileUtils,
+        quranSettings,
+        audioFileUtil
       )
     }
   }

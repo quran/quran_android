@@ -268,6 +268,7 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
 
   <!-- long press -->
   <string name="ayah_copied_popup">Ayah Gekopieerd</string>
+  <string name="share_audio_file_title">Share Audio File</string>
 
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Label Bladwijzer</string>

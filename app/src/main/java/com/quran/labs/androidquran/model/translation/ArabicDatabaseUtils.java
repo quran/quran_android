@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.model.translation;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.quran.common.util.database.DatabaseUtils;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.QuranText;
 import com.quran.data.model.bookmark.Bookmark;
@@ -10,7 +11,6 @@ import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranFileConstants;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseHandler;
-import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 
 import java.util.ArrayList;

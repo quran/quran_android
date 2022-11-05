@@ -9,10 +9,10 @@ import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.QariUtil
 import com.quran.labs.androidquran.service.AudioService
+import timber.log.Timber
 import java.io.File
 import java.util.Locale
 import javax.inject.Inject
-import timber.log.Timber
 
 class AudioUtils @Inject constructor(
   private val quranInfo: QuranInfo,
@@ -75,32 +75,6 @@ class AudioUtils @Inject constructor(
     } else {
       "%03d%03d$AUDIO_EXTENSION"
     }
-  }
-
-  fun getLocalQariUrl(item: QariItem): String? {
-    val rootDirectory = quranFileUtils.audioFileDirectory()
-    return if (rootDirectory == null) null else rootDirectory + item.path
-  }
-
-  fun getLocalQariUri(item: QariItem): String? {
-    val rootDirectory = quranFileUtils.audioFileDirectory()
-    return if (rootDirectory == null) null else
-      rootDirectory + item.path + File.separator + if (item.isGapless) {
-        "%03d$AUDIO_EXTENSION"
-      } else {
-        "%d" + File.separator + "%d" + AUDIO_EXTENSION
-      }
-  }
-
-  fun getQariDatabasePathIfGapless(item: QariItem): String? {
-    var databaseName = item.databaseName
-    if (databaseName != null) {
-      val path = getLocalQariUrl(item)
-      if (path != null) {
-        databaseName = path + File.separator + databaseName + DB_EXTENSION
-      }
-    }
-    return databaseName
   }
 
   fun getLastAyahToPlay(
@@ -293,7 +267,5 @@ class AudioUtils @Inject constructor(
   companion object {
     const val ZIP_EXTENSION = ".zip"
     const val AUDIO_EXTENSION = ".mp3"
-
-    private const val DB_EXTENSION = ".db"
   }
 }

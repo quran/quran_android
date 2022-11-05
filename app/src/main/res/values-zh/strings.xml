@@ -171,6 +171,7 @@
 
   <!-- long press -->
   <string name="ayah_copied_popup">复制成功</string>
+  <string name="share_audio_file_title">Share Audio File</string>
 
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">为收藏加标签</string>

@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.RectF;
 import androidx.annotation.NonNull;
 
-import com.quran.labs.androidquran.database.DatabaseUtils;
+import com.quran.common.util.database.DatabaseUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.page.common.data.AyahBounds;
 import com.quran.page.common.data.AyahCoordinates;

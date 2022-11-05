@@ -11,13 +11,13 @@ import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.quran.common.util.database.DatabaseUtils;
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.database.DatabaseHandler;
-import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
