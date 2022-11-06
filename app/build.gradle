@@ -12,13 +12,8 @@ if (getGradle().getStartParameter().getTaskRequests().toString().contains("Relea
 }
 
 android {
+  namespace 'com.quran.labs.androidquran'
   compileSdkVersion deps.android.build.compileSdkVersion
-
-  lintOptions {
-    checkReleaseBuilds true
-    lintConfig file("lint.xml")
-    enable "Interoperability"
-  }
 
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion
@@ -92,11 +87,16 @@ android {
     }
   }
 
-  packagingOptions {
-    exclude "META-INF/*.kotlin_module"
+  lint {
+    checkReleaseBuilds true
+    enable 'Interoperability'
+    lintConfig file('lint.xml')
+  }
 
-    exclude 'META-INF/DEPENDENCIES'
-    exclude 'META-INF/INDEX.LIST'
+  packagingOptions {
+    resources {
+      excludes += ['META-INF/*.kotlin_module', 'META-INF/DEPENDENCIES', 'META-INF/INDEX.LIST']
+    }
   }
 }
 

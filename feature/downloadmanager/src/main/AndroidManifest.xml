@@ -1,5 +1,4 @@
-<manifest package="com.quran.mobile.feature.downloadmanager"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
   <application>
     <activity android:name=".AudioManagerActivity" />
     <activity android:name=".SheikhAudioDownloadsActivity" />
