@@ -366,7 +366,8 @@ public class QuranDownloadNotifier {
     }
 
     Intent notificationIntent = new Intent(appContext, QuranDataActivity.class);
-    PendingIntent contentIntent = PendingIntent.getActivity(appContext, 0, notificationIntent, 0);
+    PendingIntent contentIntent =
+        PendingIntent.getActivity(appContext, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
     builder.setContentIntent(contentIntent);
 
     try {

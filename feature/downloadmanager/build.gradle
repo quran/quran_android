@@ -27,6 +27,7 @@ android {
         "-Xopt-in=androidx.compose.material3.ExperimentalMaterial3Api"
     ]
   }
+    namespace 'com.quran.mobile.feature.downloadmanager'
 }
 
 anvil { generateDaggerFactories = true }
