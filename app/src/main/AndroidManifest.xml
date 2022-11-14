@@ -17,8 +17,8 @@
   <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
   <application
-      android:icon="@drawable/icon"
-      android:roundIcon="@drawable/icon"
+      android:icon="@mipmap/ic_launcher"
+      android:roundIcon="@mipmap/ic_launcher_round"
       android:label="@string/app_name"
       android:name=".QuranApplication"
       android:allowBackup="true"
