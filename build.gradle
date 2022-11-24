@@ -1,11 +1,11 @@
 buildscript {
   ext {
-    kotlinVersion = '1.7.20'
+    kotlinVersion = '1.7.21'
     coroutinesVersion = '1.6.4'
 
     daggerVersion = '2.44.2'
     composeVersion = '1.3.1'
-    composeCompilerVersion = '1.3.2'
+    composeCompilerVersion = '1.4.0-alpha02'
     material3Version = '1.0.1'
 
     androidxMediaVersion = '1.6.0'
