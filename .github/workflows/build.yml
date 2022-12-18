@@ -101,29 +101,6 @@ jobs:
           name: unit_test_report
           path: app/build/reports/tests/testMadaniDebugUnitTest/
 
-  ui_test:
-    name: Instrumentation tests
-    runs-on: macos-latest
-    timeout-minutes: 25
-    steps:
-      - name: Checkout the Code
-        uses: actions/checkout@v3
-
-      - name: Setup JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: zulu
-          java-version: 11
-
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-
-      - name: Run instrumentation tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 27
-          script: ./gradlew connectedMadaniDebugAndroidTest -PdisableCrashlytics -PdisableFirebase
-
   diffs:
     needs: [lint, test]
     name: Dependency Diff

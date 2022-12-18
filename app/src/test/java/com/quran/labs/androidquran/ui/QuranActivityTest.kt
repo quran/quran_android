@@ -7,14 +7,20 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import com.quran.labs.androidquran.base.BaseActivityTest
+import com.quran.labs.androidquran.base.TestApplication
 import org.hamcrest.Matchers
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-class QuranActivityTest : BaseActivityTest() {
+
+@Config(application = TestApplication::class)
+@RunWith(RobolectricTestRunner::class)
+class QuranActivityTest {
   @get:Rule
   val rule = ActivityScenarioRule(QuranActivity::class.java)
 

@@ -15,4 +15,7 @@ class TestApplication : QuranApplication() {
 
   override fun setupTimber() {
   }
+
+  override fun initializeWorkManager() {
+  }
 }
