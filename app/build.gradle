@@ -78,12 +78,17 @@ android {
     freeCompilerArgs += [ "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi" ]
   }
 
-  testOptions.unitTests.all {
-    testLogging {
-      events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
-      outputs.upToDateWhen { false }
-      showStandardStreams true
-      exceptionFormat "full"
+  testOptions {
+    unitTests {
+      includeAndroidResources = true
+      all {
+        testLogging {
+          events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+          outputs.upToDateWhen { false }
+          showStandardStreams true
+          exceptionFormat "full"
+        }
+      }
     }
   }
 
@@ -157,7 +162,7 @@ dependencies {
 
   // dagger
   kapt deps.dagger.apt
-  kaptAndroidTest deps.dagger.apt
+  kaptTest deps.dagger.apt
   implementation deps.dagger.runtime
 
   // workmanager
@@ -176,12 +181,12 @@ dependencies {
 
   testImplementation "junit:junit:${junitVersion}"
   testImplementation "com.google.truth:truth:${truthVersion}"
-  testImplementation "org.mockito:mockito-core:4.10.0"
+  testImplementation "org.mockito:mockito-core:${okhttpVersion}"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
-
-  androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
-  androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
-  androidTestImplementation "androidx.test.ext:junit:${androidxJunitExtVersion}"
+  testImplementation "androidx.test.ext:junit-ktx:${androidxJunitExtVersion}"
+  testImplementation "org.robolectric:robolectric:${robolectricVersion}"
+  testImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
+  testImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
 
   errorprone 'com.google.errorprone:error_prone_core:2.16'
 
