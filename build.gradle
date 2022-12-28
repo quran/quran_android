@@ -1,6 +1,6 @@
 buildscript {
   ext {
-    kotlinVersion = '1.7.21'
+    kotlinVersion = '1.8.0'
     coroutinesVersion = '1.6.4'
 
     daggerVersion = '2.44.2'
