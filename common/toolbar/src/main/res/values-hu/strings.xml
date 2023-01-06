@@ -6,6 +6,7 @@
   <string name="share_ayah_text">Ája szöveg megosztása</string>
   <string name="translation_ayah">Ája fordítás/tafszír</string>
   <string name="play_from_here">Lejátszás innen</string>
+  <string name="recite_from_here">Szavalni innen</string>
   <string name="search_key">Nyomja meg a keresés gombot egy vers kereséséhez</string>
   <string name="copy_ayah">Ája másolása</string>
 </resources>
