@@ -8,7 +8,7 @@
   <!-- audio manager -->
   <string name="audio_manager">Аудио менеджер</string>
   <string name="audio_manager_remove_audio_title">Сураны жойып тастаңыз ба?</string>
-  <string name="audio_manager_remove_audio_msg">% 1$s жойғыңыз келетініне сенімдісіз бе?</string>
+  <string name="audio_manager_remove_audio_msg">%1$s жойғыңыз келетініне сенімдісіз бе?</string>
   <string name="audio_manager_remove_multiple_audio_msg">жойғыңыз келетініне сенімдісіз бе?</string>
   <string name="audio_manager_surah_download">Сурахты жүктеу</string>
   <string name="audio_manager_surah_delete">Дыбыс файлын жою</string>
