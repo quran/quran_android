@@ -181,7 +181,7 @@ dependencies {
 
   testImplementation "junit:junit:${junitVersion}"
   testImplementation "com.google.truth:truth:${truthVersion}"
-  testImplementation "org.mockito:mockito-core:${okhttpVersion}"
+  testImplementation "org.mockito:mockito-core:${mockitoVersion}"
   testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
   testImplementation "androidx.test.ext:junit-ktx:${androidxJunitExtVersion}"
   testImplementation "org.robolectric:robolectric:${robolectricVersion}"
