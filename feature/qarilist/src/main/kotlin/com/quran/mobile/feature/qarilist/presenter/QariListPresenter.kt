@@ -22,9 +22,11 @@ class QariListPresenter @Inject constructor(private val qariDownloadInfoManager:
           val qari = qariDownloadInfo.qari
           val gappedItem = qariDownloadInfo as? QariDownloadInfo.GappedQariDownloadInfo
           qari.isGapless ||
-              (qari.hasGaplessAlternative && qariDownloadInfo.fullyDownloadedSuras.isEmpty() &&
-                  (gappedItem?.partiallyDownloadedSuras?.isEmpty() ?: false)
-              )
+              // gapped qaris are only shown if they don't have a gapless alternative or if
+              // some file for the qari is already downloaded.
+              (!qari.hasGaplessAlternative ||
+                  qariDownloadInfo.fullyDownloadedSuras.isNotEmpty() ||
+                  (gappedItem?.partiallyDownloadedSuras?.isNotEmpty() ?: false))
         }
       }
       .map { unsortedQariList ->
