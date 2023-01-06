@@ -6,6 +6,7 @@
   <string name="share_ayah_text">Compartilhar Texto da Ayah</string>
   <string name="translation_ayah">Ayah Tradução/Tafseer</string>
   <string name="play_from_here">Tocar daqui</string>
+  <string name="recite_from_here">Recite daqui</string>
   <string name="search_key">Clique o botão de pesquisa para procurar um versículo</string>
   <string name="copy_ayah">Copiar Ayah</string>
 </resources>

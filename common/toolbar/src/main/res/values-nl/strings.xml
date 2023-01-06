@@ -10,6 +10,7 @@ Yasser Baghouli (zaterdag@outlook.com)
   <string name="share_ayah_text">Deel Ayah Tekst</string>
   <string name="translation_ayah">Ayah Vertaling/Tafseer</string>
   <string name="play_from_here">Afspelen van hier</string>
+  <string name="recite_from_here">Reciteer vanaf hier</string>
   <string name="search_key">Druk op de zoek-toets om een vers te zoeken.</string>
   <string name="copy_ayah">Kopieer Ayah</string>
 </resources>

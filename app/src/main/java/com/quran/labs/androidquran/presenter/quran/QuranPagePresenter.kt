@@ -86,7 +86,7 @@ class QuranPagePresenter @Inject constructor(
   fun downloadImages() {
     screen?.hidePageDownloadError()
     compositeDisposable.add(
-      quranPageLoader.loadPages(*pages.toTypedArray())
+      quranPageLoader.loadPages(pages.toTypedArray())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(object : DisposableObserver<Response>() {
           override fun onNext(response: Response) {
