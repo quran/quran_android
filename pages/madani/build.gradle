@@ -1,15 +1,9 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-
-android {
-  namespace 'com.quran.labs.androidquran.pages.madani'
-  compileSdkVersion deps.android.build.compileSdkVersion
-  defaultConfig {
-    minSdkVersion deps.android.build.minSdkVersion
-    targetSdkVersion deps.android.build.targetSdkVersion
-  }
+plugins {
+  id 'quran.android.library.android'
+  id 'org.jetbrains.kotlin.kapt'
 }
+
+android.namespace 'com.quran.labs.androidquran.pages.madani'
 
 dependencies {
   implementation project(path: ':common:data')

@@ -1,5 +1,7 @@
-apply plugin: 'kotlin'
-apply plugin: 'com.squareup.anvil'
+plugins {
+  id 'quran.android.library'
+  id 'com.squareup.anvil'
+}
 
 anvil { generateDaggerFactories = true }
 

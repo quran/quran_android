@@ -1,18 +1,12 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-parcelize'
-apply plugin: 'com.squareup.anvil'
+plugins {
+  id 'quran.android.library.android'
+  id 'org.jetbrains.kotlin.plugin.parcelize'
+  id 'com.squareup.anvil'
+}
 
 anvil { generateDaggerFactories = true }
 
-android {
-  namespace 'com.quran.labs.androidquran.common.audio'
-  compileSdkVersion deps.android.build.compileSdkVersion
-  defaultConfig {
-    minSdkVersion deps.android.build.minSdkVersion
-    targetSdkVersion deps.android.build.targetSdkVersion
-  }
-}
+android.namespace 'com.quran.labs.androidquran.common.audio'
 
 dependencies {
   implementation project(":common:data")

@@ -1,5 +1,7 @@
-apply plugin: 'kotlin'
-apply plugin: 'kotlin-kapt'
+plugins {
+  id 'quran.android.library'
+  id 'org.jetbrains.kotlin.kapt'
+}
 
 java {
   sourceCompatibility JavaVersion.VERSION_1_8
@@ -11,5 +13,5 @@ dependencies {
   implementation deps.dagger.runtime
 
   implementation 'dnsjava:dnsjava:2.1.9'
-  implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:${okhttpVersion}"
+  implementation "com.squareup.okhttp3:okhttp-dnsoverhttps"
 }

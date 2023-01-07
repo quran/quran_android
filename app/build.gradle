@@ -1,9 +1,10 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-parcelize'
-apply plugin: 'net.ltgt.errorprone'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.squareup.anvil'
+plugins {
+  id 'quran.android.application'
+  id 'org.jetbrains.kotlin.kapt'
+  id 'org.jetbrains.kotlin.plugin.parcelize'
+  id 'net.ltgt.errorprone'
+  id 'com.squareup.anvil'
+}
 
 if (getGradle().getStartParameter().getTaskRequests().toString().contains("Release") &&
     !project.hasProperty("disableFirebase") && !project.hasProperty("disableCrashlytics")) {
@@ -13,11 +14,8 @@ if (getGradle().getStartParameter().getTaskRequests().toString().contains("Relea
 
 android {
   namespace 'com.quran.labs.androidquran'
-  compileSdkVersion deps.android.build.compileSdkVersion
 
   defaultConfig {
-    minSdkVersion deps.android.build.minSdkVersion
-    targetSdkVersion deps.android.build.targetSdkVersion
     versionCode 3200
     versionName "3.2.0"
     testInstrumentationRunner "com.quran.labs.androidquran.core.QuranTestRunner"
@@ -66,11 +64,6 @@ android {
     if (applicationId.endsWith("debug")) {
       mergedFlavor.manifestPlaceholders = [app_debug_label: "Quran " + flavorName.capitalize()]
     }
-  }
-
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
   }
 
   kotlinOptions {
@@ -169,7 +162,7 @@ dependencies {
   implementation "androidx.work:work-runtime-ktx:${workManagerVersion}"
 
   implementation "com.squareup.okio:okio:${okioVersion}"
-  implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+  implementation "com.squareup.okhttp3:okhttp"
 
   implementation "com.squareup.moshi:moshi:${moshiVersion}"
   kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
@@ -182,7 +175,7 @@ dependencies {
   testImplementation "junit:junit:${junitVersion}"
   testImplementation "com.google.truth:truth:${truthVersion}"
   testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-  testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
+  testImplementation "com.squareup.okhttp3:mockwebserver"
   testImplementation "androidx.test.ext:junit-ktx:${androidxJunitExtVersion}"
   testImplementation "org.robolectric:robolectric:${robolectricVersion}"
   testImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
