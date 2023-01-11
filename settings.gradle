@@ -1,3 +1,5 @@
+includeBuild("build-logic")
+
 include ':app'
 include ':common:analytics'
 include ':common:audio'

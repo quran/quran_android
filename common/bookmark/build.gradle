@@ -1,17 +1,12 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'app.cash.sqldelight'
-apply plugin: 'com.squareup.anvil'
+plugins {
+  id 'quran.android.library.android'
+  id 'app.cash.sqldelight'
+  id 'com.squareup.anvil'
+}
 
 anvil { generateDaggerFactories = true }
 
-android {
-  namespace 'com.quran.mobile.bookmark'
-  compileSdkVersion deps.android.build.compileSdkVersion
-  defaultConfig {
-    minSdkVersion deps.android.build.minSdkVersion
-  }
-}
+android.namespace 'com.quran.mobile.bookmark'
 
 sqldelight {
   BookmarksDatabase {
