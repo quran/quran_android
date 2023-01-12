@@ -18,7 +18,7 @@ class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
       }
 
       dependencies {
-        add("implementation", platform("androidx.compose:compose-bom:2022.12.00"))
+        add("implementation", platform("androidx.compose:compose-bom:2023.01.00"))
         // all compose projects need the runtime.
         // we can switch this to implementation instead of api once a fix is pushed for
         // https://issuetracker.google.com/issues/209688774.
