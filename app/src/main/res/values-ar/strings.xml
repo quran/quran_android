@@ -2,7 +2,7 @@
 <resources>
   <string name="app_name">قرآن</string>
   <string name="downloadPrompt_title">حمل الملفات المطلوبه؟</string>
-  <string name="downloadPrompt"> لكي يعمل التطبيق بنجاح تحتاج لتحميل بعض الملفات الان. إن لم يتم التحميل الان قد لا يعمل التطبيق بشكل صحيح و ستحتاج للاتصال بالنت للقراءة.هل تود التحميل الان؟</string>
+  <string name="downloadPrompt"> لكي يعمل التطبيق بنجاح تحتاج لتحميل بعض الملفات الان. إن لم يتم التحميل الان قد لا يعمل التطبيق بشكل صحيح و ستحتاج للاتصال بالإنترنت للقراءة. هل تود التحميل الان؟</string>
   <string name="downloadImportantPrompt">هناك تحديث هام صغير على ملفات الصور على هاتفكم. هل تود  تحميل الملف حالا؟</string>
   <string name="downloadPrompt_ok">نعم</string>
   <string name="downloadPrompt_no">لا</string>
