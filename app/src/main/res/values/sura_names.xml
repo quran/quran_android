@@ -1,120 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string-array name="sura_names">
-    <item>Al-Fâtihah</item>
+    <item>Al-Fātihah</item>
     <item>Al-Baqarah</item>
-    <item>Âl-`Imrân</item>
-    <item>An-Nisâ\'</item>
-    <item>Al-Mâ\'idah</item>
-    <item>Al-An`âm</item>
-    <item>Al-A`râf</item>
-    <item>Al-Anfâl</item>
+    <item>Āli-ʿImrān</item>
+    <item>An-Nisāʾ</item>
+    <item>Al-Māʾidah</item>
+    <item>Al-Anʿām</item>
+    <item>Al-Aʿrāf</item>
+    <item>Al-Anfāl</item>
     <item>At-Tawbah</item>
-    <item>Yûnus</item>
-    <item>Hûd</item>
-    <item>Yûsuf</item>
-    <item>Ar-Ra`d</item>
-    <item>Ibrâhîm</item>
-    <item>Al-Hijr</item>
-    <item>An-Nahl</item>
-    <item>Al-Isrâ’</item>
+    <item>Yūnus</item>
+    <item>Hūd</item>
+    <item>Yūsuf</item>
+    <item>Ar-Raʿd</item>
+    <item>Ibrāhīm</item>
+    <item>Al-Ḥijr</item>
+    <item>An-Naḥl</item>
+    <item>Al-Isrāʾ</item>
     <item>Al-Kahf</item>
     <item>Maryam</item>
-    <item>Tâ-hâ</item>
-    <item>Al-Anbiyâ’</item>
-    <item>Al-Hajj</item>
-    <item>Al-Mu’minûn</item>
-    <item>An-Nûr</item>
-    <item>Al-Furqân</item>
-    <item>Ash-Shu`arâ’</item>
+    <item>Ṭā-Hā</item>
+    <item>Al-Anbiyāʾ</item>
+    <item>Al-Ḥajj</item>
+    <item>Al-Muʾminūn</item>
+    <item>An-Nūr</item>
+    <item>Al-Furqān</item>
+    <item>Ash-Shuʿarāʾ</item>
     <item>An-Naml</item>
-    <item>Al-Qasas</item>
-    <item>Al-`Ankabût</item>
-    <item>Ar-Rûm</item>
-    <item>Luqmân</item>
+    <item>Al-Qaṣaṣ</item>
+    <item>Al-ʿAnkabūt</item>
+    <item>Ar-Rūm</item>
+    <item>Luqmān</item>
     <item>As-Sajdah</item>
-    <item>Al-Ahzâb</item>
-    <item>Saba’</item>
-    <item>Fâtir</item>
-    <item>Yâ-sîn</item>
-    <item>As-Sâffât</item>
-    <item>Sâd</item>
+    <item>Al-Aḥzāb</item>
+    <item>Sabaʾ</item>
+    <item>Fāṭir</item>
+    <item>Yā-Sīn</item>
+    <item>Aṣ-Ṣāffāt</item>
+    <item>Ṣād</item>
     <item>Az-Zumar</item>
-    <item>Ghâfir</item>
-    <item>Fussilat</item>
-    <item>Ash-Shûrâ</item>
+    <item>Ghāfir</item>
+    <item>Fuṣṣilat</item>
+    <item>Ash-Shūrā</item>
     <item>Az-Zukhruf</item>
-    <item>Ad-Dukhân</item>
-    <item>Al-Jâthiyah</item>
-    <item>Al-Ahqâf</item>
-    <item>Muhammad</item>
-    <item>Al-Fath</item>
-    <item>Al-Hujurât</item>
-    <item>Qâf</item>
-    <item>Adh-Dhâriyât</item>
-    <item>At-Tûr</item>
+    <item>Ad-Dukhān</item>
+    <item>Al-Jāthiyah</item>
+    <item>Al-Aḥqāf</item>
+    <item>Muḥammad</item>
+    <item>Al-Fatḥ</item>
+    <item>Al-Ḥujurāt</item>
+    <item>Qāf</item>
+    <item>Adh-Dhāriyāt</item>
+    <item>Aṭ-Ṭūr</item>
     <item>An-Najm</item>
     <item>Al-Qamar</item>
-    <item>Ar-Rahmân</item>
-    <item>Al-Wâqi`ah</item>
-    <item>Al-Hadîd</item>
-    <item>Al-Mujâdilah</item>
-    <item>Al-Hashr</item>
-    <item>Al-Mumtahanah</item>
-    <item>As-Saff</item>
-    <item>Al-Jumu`ah</item>
-    <item>Al-Munâfiqûn</item>
-    <item>At-Taghâbun</item>
-    <item>At-Talâq</item>
-    <item>At-Tahrîm</item>
+    <item>Ar-Raḥmān</item>
+    <item>Al-Wāqiʿah</item>
+    <item>Al-Ḥadīd</item>
+    <item>Al-Mujādilah</item>
+    <item>Al-Ḥashr</item>
+    <item>Al-Mumtaḥanah</item>
+    <item>Aṣ-Ṣaff</item>
+    <item>Al-Jumuʿah</item>
+    <item>Al-Munāfiqūn</item>
+    <item>At-Taghābun</item>
+    <item>Aṭ-Ṭalāq</item>
+    <item>At-Taḥrīm</item>
     <item>Al-Mulk</item>
     <item>Al-Qalam</item>
-    <item>Al-Hâqqah</item>
-    <item>Al-Ma`ârij</item>
-    <item>Nûh</item>
+    <item>Al-Ḥāqqah</item>
+    <item>Al-Maʿārij</item>
+    <item>Nūḥ</item>
     <item>Al-Jinn</item>
     <item>Al-Muzzammil</item>
     <item>Al-Muddaththir</item>
-    <item>Al-Qiyâmah</item>
-    <item>Al-Insân</item>
-    <item>Al-Mursalât</item>
-    <item>An-Naba’</item>
-    <item>An-Nâzi`ât</item>
-    <item>`Abasa</item>
-    <item>At-Takwîr</item>
-    <item>Al-Infitâr</item>
-    <item>Al-Mutaffifîn</item>
-    <item>Al-Inshiqâq</item>
-    <item>Al-Burûj</item>
-    <item>At-Târiq</item>
-    <item>Al-A`lâ</item>
-    <item>Al-Ghâshiyah</item>
+    <item>Al-Qiyāmah</item>
+    <item>Al-Insān</item>
+    <item>Al-Mursalāt</item>
+    <item>An-Nabaʾ</item>
+    <item>An-Nāziʿāt</item>
+    <item>ʿAbasa</item>
+    <item>At-Takwīr</item>
+    <item>Al-Infiṭār</item>
+    <item>Al-Muṭaffifīn</item>
+    <item>Al-Inshiqāq</item>
+    <item>Al-Burūj</item>
+    <item>Aṭ-Ṭāriq</item>
+    <item>Al-Aʿlā</item>
+    <item>Al-Ghāshiyah</item>
     <item>Al-Fajr</item>
     <item>Al-Balad</item>
     <item>Ash-Shams</item>
     <item>Al-Layl</item>
-    <item>Ad-Duhâ</item>
-    <item>Ash-Sharh</item>
-    <item>At-Tîn</item>
-    <item>Al-`Alaq</item>
+    <item>Aḍ-Ḍuḥā</item>
+    <item>Ash-Sharḥ</item>
+    <item>At-Tīn</item>
+    <item>Al-ʿAlaq</item>
     <item>Al-Qadr</item>
     <item>Al-Bayyinah</item>
     <item>Az-Zalzalah</item>
-    <item>Al-`Âdiyât</item>
-    <item>Al-Qâri`ah</item>
-    <item>At-Takâthur</item>
-    <item>Al-`Asr</item>
+    <item>Al-ʿĀdiyāt</item>
+    <item>Al-Qāriʿah</item>
+    <item>At-Takāthur</item>
+    <item>Al-ʿAṣr</item>
     <item>Al-Humazah</item>
-    <item>Al-Fîl</item>
+    <item>Al-Fīl</item>
     <item>Quraysh</item>
-    <item>Al-Mâ`ûn</item>
+    <item>Al-Māʿūn</item>
     <item>Al-Kawthar</item>
-    <item>Al-Kâfirûn</item>
-    <item>An-Nasr</item>
+    <item>Al-Kāfirūn</item>
+    <item>An-Naṣr</item>
     <item>Al-Masad</item>
-    <item>Al-Ikhlâs</item>
+    <item>Al-Ikhlāṣ</item>
     <item>Al-Falaq</item>
-    <item>An-Nâs</item>
+    <item>An-Nās</item>
   </string-array>
 
   <!-- If sura name has no translation, please add empty double quotes to the
