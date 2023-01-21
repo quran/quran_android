@@ -9,10 +9,12 @@ anvil { generateDaggerFactories = true }
 android.namespace 'com.quran.mobile.bookmark'
 
 sqldelight {
-  BookmarksDatabase {
-    packageName = "com.quran.labs.androidquran"
-    schemaOutputDirectory = file("src/main/sqldelight/databases")
-    verifyMigrations = true
+  databases {
+    BookmarksDatabase {
+      packageName = "com.quran.labs.androidquran"
+      schemaOutputDirectory = file("src/main/sqldelight/databases")
+      verifyMigrations = true
+    }
   }
 }
 
