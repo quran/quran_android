@@ -14,7 +14,7 @@ class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
 
       extensions.configure<LibraryExtension> {
         buildFeatures.compose = true
-        composeOptions.kotlinCompilerExtensionVersion = "1.4.0-dev-k1.8.0-33c0ad36f83"
+        composeOptions.kotlinCompilerExtensionVersion = "1.4.0"
       }
 
       dependencies {
