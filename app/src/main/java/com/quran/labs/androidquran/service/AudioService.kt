@@ -434,7 +434,9 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     }
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
-      .subscribe { map, _ ->
+      // have to annotate _ as Throwable? otherwise crashes
+      // https://github.com/ReactiveX/RxJava/issues/7444
+      .subscribe { map, _: Throwable? ->
         gaplessSura = sura
         gaplessSuraData = map
       }
