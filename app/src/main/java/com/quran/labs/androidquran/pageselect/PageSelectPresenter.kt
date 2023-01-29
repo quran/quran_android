@@ -7,7 +7,6 @@ import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.ImageUtil
 import com.quran.labs.androidquran.util.QuranFileUtils
-import com.quran.labs.androidquran.util.UrlUtil
 import dagger.Reusable
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -22,7 +21,6 @@ constructor(
   private val imageUtil: ImageUtil,
   private val quranFileUtils: QuranFileUtils,
   private val mainThreadScheduler: Scheduler,
-  private val urlUtil: UrlUtil,
   private val bookmarksDao: BookmarksDao,
   // unfortunately needed for now due to the old Rx code
   // not knowing about changes from BookmarksDao, etc.
@@ -31,7 +29,7 @@ constructor(
   Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>
 ) :
   Presenter<PageSelectActivity> {
-  private val baseUrl = "https://android.quran.com/data/pagetypes/snips"
+  private val baseUrl = "https://quran.app/data/pagetypes/snips"
   private val compositeDisposable = CompositeDisposable()
   private val downloadingSet = mutableSetOf<String>()
   private var currentView: PageSelectActivity? = null
@@ -56,7 +54,7 @@ constructor(
           compositeDisposable.add(
             imageUtil.downloadImage(url, previewImage)
               .onErrorResumeWith(
-                imageUtil.downloadImage(urlUtil.fallbackUrl(url), previewImage)
+                imageUtil.downloadImage(url, previewImage)
               )
               .subscribeOn(Schedulers.io())
               .observeOn(mainThreadScheduler)

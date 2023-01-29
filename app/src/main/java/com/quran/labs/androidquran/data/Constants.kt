@@ -5,7 +5,7 @@ import com.quran.data.core.QuranConstants
 object Constants {
 
   // data domain
-  const val HOST = "https://android.quran.com/"
+  const val HOST = "https://quran.app/"
 
   // Numerics
   const val DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS = 255
