@@ -30,7 +30,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.InterruptedIOException
 import java.text.NumberFormat
-import java.util.ArrayList
 import java.util.Collections
 import java.util.Locale
 import javax.inject.Inject
@@ -38,8 +37,7 @@ import javax.inject.Inject
 class QuranFileUtils @Inject constructor(
   context: Context,
   pageProvider: PageProvider,
-  private val quranScreenInfo: QuranScreenInfo,
-  private val urlUtil: UrlUtil
+  private val quranScreenInfo: QuranScreenInfo
 ): QuranFileManager {
   // server urls
   private val imageBaseUrl: String = pageProvider.getImagesBaseUrl()
@@ -299,7 +297,7 @@ class QuranFileUtils @Inject constructor(
     filename: String,
     isRetry: Boolean
   ): Response {
-    val base = if (isRetry) urlUtil.fallbackUrl(imageBaseUrl) else imageBaseUrl
+    val base = imageBaseUrl
     val urlString = (base + "width" + widthParam + File.separator + filename)
     Timber.d("want to download: %s", urlString)
     val request = Builder()

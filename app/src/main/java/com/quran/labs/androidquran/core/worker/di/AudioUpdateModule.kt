@@ -12,7 +12,7 @@ object AudioUpdateModule {
   @Provides
   fun provideAudioUpdateService(): AudioUpdateService {
     val retrofit = Builder()
-        .baseUrl("https://android.quran.com/")
+        .baseUrl("https://quran.app/")
         .addConverterFactory(MoshiConverterFactory.create())
         .build()
     return retrofit.create(AudioUpdateService::class.java)

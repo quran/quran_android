@@ -3,8 +3,10 @@ package com.quran.labs.androidquran.presenter.translation;
 import android.content.Context;
 import android.util.Pair;
 import android.util.SparseArray;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.dao.translation.Translation;
 import com.quran.labs.androidquran.dao.translation.TranslationItem;
@@ -16,20 +18,22 @@ import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.UrlUtil;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.observers.DisposableObserver;
-import io.reactivex.rxjava3.schedulers.Schedulers;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.observers.DisposableObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -48,7 +52,6 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   private final QuranSettings quranSettings;
   private final QuranFileUtils quranFileUtils;
   private final TranslationsDBAdapter translationsDBAdapter;
-  private final UrlUtil urlUtil;
 
   @VisibleForTesting String host;
   private TranslationManagerActivity currentActivity;
@@ -58,15 +61,13 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
                               OkHttpClient okHttpClient,
                               QuranSettings quranSettings,
                               TranslationsDBAdapter dbAdapter,
-                              QuranFileUtils quranFileUtils,
-                              UrlUtil urlUtil) {
+                              QuranFileUtils quranFileUtils) {
     this.host = Constants.HOST;
     this.appContext = appContext;
     this.okHttpClient = okHttpClient;
     this.quranSettings = quranSettings;
     this.quranFileUtils = quranFileUtils;
     this.translationsDBAdapter = dbAdapter;
-    this.urlUtil = urlUtil;
   }
 
   public void checkForUpdates() {
@@ -175,7 +176,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
     final String url = host + WEB_SERVICE_ENDPOINT;
     return
         downloadTranslationList(url)
-            .onErrorResumeWith(downloadTranslationList(urlUtil.fallbackUrl(url)))
+            .onErrorResumeWith(downloadTranslationList(url))
             .doOnNext(translationList -> {
               translationList.getTranslations();
               if (!translationList.getTranslations().isEmpty()) {

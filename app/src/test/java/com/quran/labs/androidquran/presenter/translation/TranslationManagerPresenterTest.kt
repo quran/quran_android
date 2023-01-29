@@ -1,29 +1,23 @@
 package com.quran.labs.androidquran.presenter.translation
 
 import android.content.Context
-
+import com.google.common.truth.Truth
 import com.quran.labs.androidquran.dao.translation.TranslationList
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
-import com.quran.labs.androidquran.util.UrlUtil
-
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-
-import java.io.File
-import java.io.IOException
-
+import com.quran.labs.awaitTerminalEvent
 import io.reactivex.rxjava3.observers.TestObserver
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okio.Buffer
 import okio.source
-
-import com.google.common.truth.Truth
-import com.quran.labs.awaitTerminalEvent
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.mockito.Mockito.mock
+import java.io.File
+import java.io.IOException
 
 class TranslationManagerPresenterTest {
 
@@ -42,7 +36,7 @@ class TranslationManagerPresenterTest {
     mockWebServer = MockWebServer()
     translationManager = object : TranslationManagerPresenter(
       mockAppContext, mockOkHttp, mockSettings, null,
-      mock(QuranFileUtils::class.java), UrlUtil()
+      mock(QuranFileUtils::class.java)
     ) {
       public override fun writeTranslationList(list: TranslationList) {
         // no op
