@@ -22,16 +22,20 @@ interface BookmarksWidgetUpdater {
   fun updateBookmarksWidget()
 }
 
-class BookmarksWidgetUpdaterImpl @Inject constructor(private val context: Context) : BookmarksWidgetUpdater {
+class BookmarksWidgetUpdaterImpl @Inject constructor(private val context: Context) :
+  BookmarksWidgetUpdater {
 
   override fun checkForAnyBookmarksWidgets() =
-      AppWidgetManager.getInstance(context)
-          .getAppWidgetIds(ComponentName(context, BookmarksWidget::class.java))
-          .isNotEmpty()
+    AppWidgetManager.getInstance(context)
+      ?.getAppWidgetIds(ComponentName(context, BookmarksWidget::class.java))
+      ?.isNotEmpty() == true
 
   override fun updateBookmarksWidget() {
     val appWidgetManager = AppWidgetManager.getInstance(context)
-    val appWidgetIds = appWidgetManager.getAppWidgetIds(ComponentName(context, BookmarksWidget::class.java))
-    appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view_widget)
+    if (appWidgetManager != null) {
+      val appWidgetIds =
+        appWidgetManager.getAppWidgetIds(ComponentName(context, BookmarksWidget::class.java))
+      appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_view_widget)
+    }
   }
 }
