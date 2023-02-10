@@ -3,7 +3,7 @@ buildscript {
     kotlinVersion = '1.8.10'
     coroutinesVersion = '1.6.4'
 
-    daggerVersion = '2.44.2'
+    daggerVersion = '2.45'
 
     androidxMediaVersion = '1.6.0'
     androidxAnnotationVersion = '1.5.0'
