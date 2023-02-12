@@ -64,7 +64,7 @@ class BookmarksWidget : AppWidgetProvider() {
         .getActivity(
           context, 0,
           clickIntent,
-          PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+          PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
       widget.setPendingIntentTemplate(R.id.list_view_widget, clickPendingIntent)
       widget.setEmptyView(R.id.list_view_widget, R.id.empty_view)
