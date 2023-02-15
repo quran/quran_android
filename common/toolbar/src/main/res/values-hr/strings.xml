@@ -6,6 +6,7 @@
   <string name="share_ayah_text">Podijeli tekst ajeta</string>
   <string name="translation_ayah">Prijevod/tefsir ajeta</string>
   <string name="play_from_here">Pusti odavde</string>
+  <string name="recite_from_here">Recitirajte odavde</string>
   <string name="search_key">Pritisnite tipku za pretragu da potražite ajet</string>
   <string name="copy_ayah">Kopiraj ajet</string>
 </resources>

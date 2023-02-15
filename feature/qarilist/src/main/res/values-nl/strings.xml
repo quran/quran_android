@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Kies een Qari</string>
+  <string name="qarilist_ready_to_play">Klaar om te luisteren</string>
+  <string name="qarilist_qaris_with_downloads">Recitanten met Downloads</string>
+  <string name="qarilist_gapless">continu</string>
+  <string name="qarilist_gapped">niet-continu</string>
+  <string name="qarilist_selected">Geselecteerd</string>
+  <string name="qarilist_dismiss">Ontsla</string>
+</resources>

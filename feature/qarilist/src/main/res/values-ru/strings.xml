@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Выберите Кари</string>
+  <string name="qarilist_ready_to_play">Готовность к прослушиванию</string>
+  <string name="qarilist_qaris_with_downloads">Чтецы с загрузками</string>
+  <string name="qarilist_gapless">Непрерывный</string>
+  <string name="qarilist_gapped">неконтинуальный</string>
+  <string name="qarilist_selected">Избранное</string>
+  <string name="qarilist_dismiss">Отклонить</string>
+</resources>

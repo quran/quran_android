@@ -20,6 +20,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.core.view.ViewCompat;
+import com.quran.data.model.audio.Qari;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.audio.model.QariItem;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -48,7 +49,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private final int textFullFontSize;
   private final int buttonPadding;
 
-  private QariItem currentQari;
+  private Qari currentQari;
   private int currentRepeat = 0;
   @DrawableRes private int itemBackground;
   private final boolean isRtl;
@@ -128,8 +129,8 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   }
 
   public void setCurrentQariBridge(CurrentQariBridge currentQariBridge) {
-    currentQariBridge.listenToQaris(qariItem -> {
-      currentQari = qariItem;
+    currentQariBridge.listenToQaris(qari -> {
+      currentQari = qari;
       updateButton();
       return null;
     });
@@ -181,7 +182,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   @NonNull
   public QariItem getAudioInfo() {
-    return currentQari;
+    return QariItem.Companion.fromQari(context, currentQari);
   }
 
   public void setProgress(int progress) {
@@ -240,7 +241,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private void updateButton() {
     final TextView currentQariView = qariView;
     if (currentQariView != null) {
-      currentQariView.setText(currentQari.getName());
+      currentQariView.setText(currentQari.getNameResource());
     }
   }
 
@@ -253,7 +254,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
       qariView.setBackgroundResource(itemBackground);
       qariView.setPadding(buttonPadding, 0, buttonPadding, 0);
     }
-    qariView.setText(currentQari.getName());
+    qariView.setText(currentQari.getNameResource());
 
     // in RTL, because this is currently an LTR LinearLayout, this shows
     // the spinner and then the play button, so we can't match parent. this

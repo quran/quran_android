@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="zero">لم يتم تحميل سور بعد‎</item>
+    <item quantity="one">تم تحميل سورة واحده</item>
+    <item quantity="two">تم تحميل سورتان</item>
+    <item quantity="few">تم تحميل %1$d سور</item>
+    <item quantity="many">تم تحميل %1$d سورة</item>
+    <item quantity="other">تم تحميل %1$d سورة</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">إدارة الصوتيات</string>
+  <string name="audio_manager_delete_selection">حذف التحديد</string>
+  <string name="audio_manager_download_selection">تحميل التحديد</string>
+  <string name="audio_manager_download_all">تحميل الكل</string>
+  <string name="audio_manager_surah_delete">حذف السورة</string>
+  <string name="audio_manager_surah_download">تحميل السورة</string>
+  <string name="audio_manager_remove_audio_title">حذف الملف الصوتي؟</string>
+  <string name="audio_manager_remove_audio_msg">سيتم حذف الملف الصوتي ل%1$s. متأكد؟</string>
+  <string name="audio_manager_remove_multiple_audio_msg">سيتم حذف الملفات الصوتيه. متأكد؟</string>
+
+  <string name="downloading_title">جاري التحميل....</string>
+  <string name="download_amount_in_megabytes">%s م ب</string>
+  <string name="download_progress">تم تحميل %1$s / %2$s</string>
+  <string name="download_sura_progress">جاري التحميل من سورة %3$d - %1$s / %2$s</string>
+  <string name="download_sura_ayah_progress">جاري تحميل السورة %1$d الآية %2$d</string>
+</resources>

@@ -1,3 +1,5 @@
+import kotlin.Int;
+
 CREATE TABLE IF NOT EXISTS bookmarks(
   _ID INTEGER PRIMARY KEY AUTOINCREMENT,
   sura INTEGER AS Int,

@@ -1,16 +1,9 @@
 plugins {
-  id 'com.android.library'
-  id 'org.jetbrains.kotlin.android'
+  id 'quran.android.library.android'
   id 'com.squareup.anvil'
 }
 
-android {
-  compileSdkVersion deps.android.build.compileSdkVersion
-  defaultConfig {
-    minSdkVersion deps.android.build.minSdkVersion
-    targetSdkVersion deps.android.build.targetSdkVersion
-  }
-}
+android.namespace 'com.quran.mobile.di'
 
 anvil { generateDaggerFactories = true }
 

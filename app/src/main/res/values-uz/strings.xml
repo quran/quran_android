@@ -10,7 +10,6 @@
         Yangilangan fayllarni hozir saqlab olasizmi?</string>
   <string name="downloadPrompt_ok">Ha</string>
   <string name="downloadPrompt_no">Yoʻq</string>
-  <string name="downloading_title">Saqlanmoqda&#8230;</string>
   <string name="downloading_message">Iltimos, fayllar toʻliq saqlanib olinguncha biroz kutib turing.</string>
   <string name="extracting_title">Ishlanmoqda&#8230;</string>
   <string name="menu_about">Ilova haqida</string>
@@ -32,7 +31,6 @@
   <string name="menu_get_translations">Tarjimalar yuklab olish</string>
   <string name="menu_jump">Oʻtish</string>
   <string name="gotoPage">Sahifaga oʻtish</string>
-  <string name="cancel">Bekor qilish</string>
   <string name="please_wait">Iltimos, biroz kuting…</string>
 
   <!-- about -->
@@ -94,11 +92,6 @@
   <string name="quranSearchType">Suralar</string>
   <string name="search_full_results">Barcha natijalar</string>
   <string name="search_entire_mushaf">Butun musʼhafni qidirish</string>
-
-  <plurals name="files_downloaded">
-    <item quantity="one">Bitta sura saqlangan</item>
-    <item quantity="other">%1$d ta sura saqlangan</item>
-  </plurals>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -163,7 +156,6 @@
   <string name="prefs_audio_manager_summary">Qurʼon audio fayllarini saqlab olish va boshqarish</string>
   <string name="downloaded_translations">Saqlab olingan</string>
   <string name="available_translations">Saqlab olish mumkin</string>
-  <string name="remove_button">Oʻchirish</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Maʼlumotlar jildi</string>
   <string name="prefs_app_location_summary">Qurʼon fayllari saqlanadigan joy</string>
@@ -177,7 +169,6 @@
   <string name="prefs_err_moving_app_files">Fayllarni koʻchirib oʻtkazishda xatolik yuz berdi</string>
   <string name="prefs_no_enough_space_to_move_files">Fayllarni koʻchirib oʻtkazish uchun yetarli joy mavjud emas</string>
   <string name="prefs_megabytes_int">%1$d Mb</string>
-  <string name="prefs_megabytes_str">%s Mb</string>
   <string name="prefs_dual_page_mode_title">Juft sahifa rejimi</string>
   <string name="prefs_dual_page_mode_enabled">Yotiq holatda ikki sahifa yonma-yon koʻrinadi</string>
   <string name="prefs_dual_page_mode_disabled">Yotiq holatda ham faqat bitta sahifa koʻrinadi</string>
@@ -262,9 +253,6 @@
   <string name="download_non_wifi_prompt">Wi-Fi tarmogʻiga ulanmagansiz, baribir fayllarni saqlab olmoqchimisiz?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">%1$s/%2$s saqlandi</string>
-  <string name="download_sura_progress">%3$d-suraning %1$s (jami: %2$s) saqlanmoqda&#8230;</string>
-  <string name="download_sura_ayah_progress">%1$d-sura %2$d-oyat saqlanmoqda&#8230;</string>
   <string name="process_progress">%1$d/%2$d ishlandi</string>
   <string name="download_retry">Qayta harakat qilish</string>
   <string name="download_cancel">Bekor qilish</string>
@@ -294,8 +282,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Boshi</string>
-  <string name="play_to">Oxiri</string>
   <string name="play_restrict_range">Yuqorida oyatlarnigina eshitish</string>
   <string name="play_verses_range">Oyatlar toʻplamini:</string>
   <string name="play_each_verse">Har bir oyatni:</string>
@@ -342,24 +328,6 @@
 
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Xatchoʻplar mavjud emas</string>
-
-  <!-- audio manager -->
-  <string name="audio_manager">Audio menejer</string>
-  <string name="audio_manager_remove_audio_title">@string/remove_button</string>
-  <string name="audio_manager_remove_audio_msg">%1$s audio fayllari oʻchirilsinmi?</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">Sura oʻchirildi</item>
-    <item quantity="other">%1$d ta sura oʻchirildi</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">Surani oʻchirishda xatolik yuz berdi</item>
-    <item quantity="other">%1$d ta surani oʻchirishda xatolik yuz berdi</item>
-  </plurals>
-  <string name="audio_manager_surah_download">Saqlab olish</string>
-  <string name="audio_manager_surah_delete">Oʻchirish</string>
-  <string name="audio_manager_download_all">Hammasini saqlash</string>
-  <string name="audio_manager_download_selection">Tanlanganlarni saqlash</string>
-  <string name="audio_manager_delete_selection">Tanlanganlarni oʻchirish</string>
 
   <!-- audio updates -->
   <string name="audio_updated_title">Audio fayllar yangilandi</string>

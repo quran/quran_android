@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Bir Kari Seçin</string>
+  <string name="qarilist_ready_to_play">Dinlemeye hazır</string>
+  <string name="qarilist_qaris_with_downloads">İndirilebilir Okuyucular</string>
+  <string name="qarilist_gapless">Sürekli</string>
+  <string name="qarilist_gapped">Sürekli Olmayan</string>
+  <string name="qarilist_selected">Seçilmiş</string>
+  <string name="qarilist_dismiss">Dağılın</string>
+</resources>

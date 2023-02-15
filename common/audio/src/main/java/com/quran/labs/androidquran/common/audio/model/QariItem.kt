@@ -1,6 +1,8 @@
 package com.quran.labs.androidquran.common.audio.model
 
+import android.content.Context
 import android.os.Parcelable
+import com.quran.data.model.audio.Qari
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
@@ -18,4 +20,17 @@ data class QariItem(
 
   val isGapless: Boolean
     get() = databaseName != null
+
+  companion object {
+    fun fromQari(context: Context, qari: Qari): QariItem {
+      return QariItem(
+        id = qari.id,
+        name = context.getString(qari.nameResource),
+        url = qari.url,
+        path = qari.path,
+        hasGaplessAlternative = qari.hasGaplessAlternative,
+        db = qari.db
+      )
+    }
+  }
 }

@@ -1,10 +1,14 @@
 package com.quran.labs.androidquran.common.ui.core
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 
 private val LightColors = lightColorScheme(
     primary = lightPrimary,
@@ -66,6 +70,8 @@ private val DarkColors = darkColorScheme(
     surfaceTint = darkSurfaceTint,
 )
 
+private val forceLtr = listOf("huawei", "lenovo", "tecno")
+
 @Composable
 fun QuranTheme(
   useDarkTheme: Boolean = isSystemInDarkTheme(),
@@ -77,9 +83,24 @@ fun QuranTheme(
     DarkColors
   }
 
-  MaterialTheme(
-    colorScheme = colors,
-    typography = AppTypography,
-    content = content
-  )
+  // hack workaround for https://issuetracker.google.com/issues/266059178
+  // crashes on Lollipop / MR1, mostly on Huawei and Lenovo devices due to
+  // Compose in RTL. Force LTR for all Composables on Lollipop to attempt
+  // to work around this crash for now.
+  val locals =
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M &&
+      Build.MANUFACTURER.lowercase() in forceLtr
+    ) {
+      arrayOf(LocalLayoutDirection provides LayoutDirection.Ltr)
+    } else {
+      emptyArray()
+    }
+
+  CompositionLocalProvider(*locals) {
+    MaterialTheme(
+      colorScheme = colors,
+      typography = AppTypography,
+      content = content
+    )
+  }
 }

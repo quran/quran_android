@@ -33,12 +33,7 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider {
     setupTimber()
     applicationComponent = initializeInjector()
     applicationComponent.inject(this)
-    WorkManager.initialize(
-        this,
-        Configuration.Builder()
-            .setWorkerFactory(quranWorkerFactory)
-            .build()
-    )
+    initializeWorkManager()
     bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
   }
 
@@ -50,6 +45,15 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider {
     return DaggerApplicationComponent.builder()
         .applicationModule(ApplicationModule(this))
         .build()
+  }
+
+  open fun initializeWorkManager() {
+    WorkManager.initialize(
+      this,
+      Configuration.Builder()
+        .setWorkerFactory(quranWorkerFactory)
+        .build()
+    )
   }
 
   fun refreshLocale(

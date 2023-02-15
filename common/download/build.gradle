@@ -1,17 +1,15 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'com.squareup.anvil'
+plugins {
+  id 'quran.android.library.android'
+  id 'com.squareup.anvil'
+}
 
 anvil { generateDaggerFactories = true }
 
-android {
-  compileSdkVersion deps.android.build.compileSdkVersion
-  defaultConfig {
-    minSdkVersion deps.android.build.minSdkVersion
-  }
-}
+android.namespace 'com.quran.mobile.common.download'
 
 dependencies {
+  implementation project(":common:data")
+
   // dagger
   implementation deps.dagger.runtime
 

@@ -1,17 +1,14 @@
 package com.quran.labs.androidquran.common.audio.cache.command
 
-import android.content.Context
-import com.quran.labs.androidquran.common.audio.model.PartiallyDownloadedSura
+import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.model.QariDownloadInfo
-import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.QariUtil
+import javax.inject.Inject
 import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
-import javax.inject.Inject
 
 class AudioInfoCommand @Inject constructor(
-  private val appContext: Context,
   private val fileSystem: FileSystem,
   private val qariUtil: QariUtil,
   private val gappedAudioInfoCommand: GappedAudioInfoCommand,
@@ -23,31 +20,31 @@ class AudioInfoCommand @Inject constructor(
     val directories = fileSystem.listOrNull(path) ?: emptyList()
 
     val folders = directories.filter { it.toFile().isDirectory }
-    val qaris = qariUtil.getQariList(appContext)
-    return qaris.map { qariItem ->
-      val matchingPath = folders.firstOrNull { it.name == qariItem.path }
-      generateQariDownloadInfoWithPath(qariItem, matchingPath)
+    val qaris = qariUtil.getQariList()
+    return qaris.map { qari ->
+      val matchingPath = folders.firstOrNull { it.name == qari.path }
+      generateQariDownloadInfoWithPath(qari, matchingPath)
     }
   }
 
-  fun generateQariDownloadInfo(qariItem: QariItem, audioDirectory: String): QariDownloadInfo {
+  fun generateQariDownloadInfo(qari: Qari, audioDirectory: String): QariDownloadInfo {
     val path = audioDirectory.toPath()
     val directories = fileSystem.listOrNull(path) ?: emptyList()
 
     val folders = directories.filter { it.toFile().isDirectory }
-    val matchingPath = folders.firstOrNull { it.name == qariItem.path }
-    return generateQariDownloadInfoWithPath(qariItem, matchingPath)
+    val matchingPath = folders.firstOrNull { it.name == qari.path }
+    return generateQariDownloadInfoWithPath(qari, matchingPath)
   }
 
-  private fun generateQariDownloadInfoWithPath(qariItem: QariItem, path: Path?): QariDownloadInfo {
-    return if (qariItem.isGapless) {
+  private fun generateQariDownloadInfoWithPath(qari: Qari, path: Path?): QariDownloadInfo {
+    return if (qari.isGapless) {
       val (fullDownloads, partialDownloads) =
         if (path == null) {
           emptyList<Int>() to emptyList()
         } else {
           gaplessAudioInfoCommand.gaplessDownloads(path)
         }
-      QariDownloadInfo.GaplessQariDownloadInfo(qariItem, fullDownloads, partialDownloads)
+      QariDownloadInfo.GaplessQariDownloadInfo(qari, fullDownloads, partialDownloads)
     } else {
       val (fullDownloads, partiallyDownloadedSuras) =
         if (path == null) {
@@ -55,7 +52,7 @@ class AudioInfoCommand @Inject constructor(
         } else {
           gappedAudioInfoCommand.gappedDownloads(path)
         }
-      QariDownloadInfo.GappedQariDownloadInfo(qariItem, fullDownloads, partiallyDownloadedSuras)
+      QariDownloadInfo.GappedQariDownloadInfo(qari, fullDownloads, partiallyDownloadedSuras)
     }
   }
 }

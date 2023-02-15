@@ -251,8 +251,9 @@ class AyahToolBar @JvmOverloads constructor(
 
   override fun onClick(v: View) {
     val item = menu.findItem(v.id) ?: return
-    if (item.hasSubMenu()) {
-      showMenu(item.subMenu)
+    val subMenu = if (item.hasSubMenu()) item.subMenu else null
+    if (subMenu != null) {
+      showMenu(subMenu)
     } else {
       itemSelectedListener?.onMenuItemClick(item)
     }
@@ -260,8 +261,9 @@ class AyahToolBar @JvmOverloads constructor(
 
   override fun onLongClick(v: View): Boolean {
     val item = menu.findItem(v.id)
-    if (item != null && item.title != null) {
-      longPressLambda(item.title)
+    val title = item?.title
+    if (title != null) {
+      longPressLambda(title)
       return true
     }
     return false

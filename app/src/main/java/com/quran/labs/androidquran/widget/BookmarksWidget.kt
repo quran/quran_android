@@ -24,7 +24,11 @@ class BookmarksWidget : AppWidgetProvider() {
   @Inject
   lateinit var bookmarksWidgetSubscriber: BookmarksWidgetSubscriber
 
-  override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+  override fun onUpdate(
+    context: Context,
+    appWidgetManager: AppWidgetManager,
+    appWidgetIds: IntArray
+  ) {
     for (appWidgetId in appWidgetIds) {
       val serviceIntent = Intent(context, BookmarksWidgetService::class.java).apply {
         putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
@@ -34,28 +38,34 @@ class BookmarksWidget : AppWidgetProvider() {
       val widget = RemoteViews(context.packageName, R.layout.bookmarks_widget)
 
       var intent = Intent(context, QuranDataActivity::class.java)
-      var pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+      var pendingIntent =
+        PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.widget_icon_button, pendingIntent)
 
       intent = Intent(context, SearchActivity::class.java)
-      pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+      pendingIntent =
+        PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.widget_btn_search, pendingIntent)
 
       intent = Intent(context, QuranActivity::class.java)
       intent.action = ShortcutsActivity.ACTION_JUMP_TO_LATEST
-      pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+      pendingIntent =
+        PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.widget_btn_go_to_quran, pendingIntent)
 
       intent = Intent(context, ShowJumpFragmentActivity::class.java)
-      pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+      pendingIntent =
+        PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.search_widget_btn_jump, pendingIntent)
 
       widget.setRemoteAdapter(R.id.list_view_widget, serviceIntent)
       val clickIntent = Intent(context, PagerActivity::class.java)
       val clickPendingIntent = PendingIntent
-          .getActivity(context, 0,
-              clickIntent,
-              PendingIntent.FLAG_UPDATE_CURRENT)
+        .getActivity(
+          context, 0,
+          clickIntent,
+          PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        )
       widget.setPendingIntentTemplate(R.id.list_view_widget, clickPendingIntent)
       widget.setEmptyView(R.id.list_view_widget, R.id.empty_view)
 

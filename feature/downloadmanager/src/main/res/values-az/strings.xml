@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">1 sure indirildi</item>
+    <item quantity="other">%1$d sure indirildi</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Ses yöneticisi</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Sure silindi</item>
+    <item quantity="other">%1$d sure silindi</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">Sure silinirken bir hata oluştu</item>
+    <item quantity="other">%1$d sure silinirken bir hata oluştu</item>
+  </plurals>
+  <string name="audio_manager_delete_selection">Seçimi sil</string>
+  <string name="audio_manager_download_selection">Seçimi indir</string>
+  <string name="audio_manager_download_all">Hepsini indir</string>
+  <string name="audio_manager_surah_delete">Sureyi sil</string>
+  <string name="audio_manager_surah_download">Sureyi indir</string>
+  <string name="audio_manager_remove_audio_title">Sure kaldırılsın mı?</string>
+  <string name="audio_manager_remove_audio_msg">%1$s\'yi kaldırmak istediğinizden emin misiniz?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Silmek istediğinize emin misiniz?</string>
+
+  <string name="downloading_title">Yükleniyor&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">%1$s / %2$s indirildi</string>
+  <string name="download_sura_progress">%3$d suresinin %1$s / %2$s indirildi</string>
+  <string name="download_sura_ayah_progress">%1$d suresi %2$d. âyet indiriliyor</string>
+</resources>

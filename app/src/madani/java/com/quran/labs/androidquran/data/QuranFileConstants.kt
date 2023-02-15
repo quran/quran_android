@@ -18,4 +18,6 @@ object QuranFileConstants {
 
   const val FALLBACK_PAGE_TYPE = "madani"
   const val SEARCH_EXTRA_REPLACEMENTS = ""
+
+  var ICON_RESOURCE_ID = com.quran.labs.androidquran.R.drawable.icon
 }

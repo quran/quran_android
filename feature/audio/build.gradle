@@ -1,13 +1,10 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+plugins {
+  id 'quran.android.library.android'
+  id 'org.jetbrains.kotlin.kapt'
+}
 
 android {
-  compileSdkVersion deps.android.build.compileSdkVersion
-  defaultConfig {
-    minSdkVersion deps.android.build.minSdkVersion
-    targetSdkVersion deps.android.build.targetSdkVersion
-  }
+  namespace 'com.quran.labs.androidquran.feature.audio'
 
   buildTypes {
      beta {

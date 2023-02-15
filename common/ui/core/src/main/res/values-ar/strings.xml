@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="remove_button">احذف</string>
+  <string name="cancel">إلغاء</string>
+  <string name="from">من</string>
+  <string name="to">إلى</string>
+</resources>

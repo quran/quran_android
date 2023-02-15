@@ -1,22 +1,20 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'com.squareup.sqldelight'
-apply plugin: 'com.squareup.anvil'
+plugins {
+  id 'quran.android.library.android'
+  id 'app.cash.sqldelight'
+  id 'com.squareup.anvil'
+}
 
 anvil { generateDaggerFactories = true }
 
-android {
-  compileSdkVersion deps.android.build.compileSdkVersion
-  defaultConfig {
-    minSdkVersion deps.android.build.minSdkVersion
-  }
-}
+android.namespace 'com.quran.mobile.bookmark'
 
 sqldelight {
-  BookmarksDatabase {
-    packageName = "com.quran.labs.androidquran"
-    schemaOutputDirectory = file("src/main/sqldelight/databases")
-    verifyMigrations = true
+  databases {
+    BookmarksDatabase {
+      packageName = "com.quran.labs.androidquran"
+      schemaOutputDirectory = file("src/main/sqldelight/databases")
+      verifyMigrations = true
+    }
   }
 }
 
@@ -31,6 +29,7 @@ dependencies {
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
 
   // sqldelight
-  implementation "com.squareup.sqldelight:android-driver:$sqldelightVersion"
-  implementation "com.squareup.sqldelight:coroutines-extensions-jvm:$sqldelightVersion"
+  implementation "app.cash.sqldelight:android-driver:$sqldelightVersion"
+  implementation "app.cash.sqldelight:coroutines-extensions-jvm:$sqldelightVersion"
+  implementation "app.cash.sqldelight:primitive-adapters:$sqldelightVersion"
 }

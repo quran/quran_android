@@ -1,9 +1,10 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-parcelize'
-apply plugin: 'net.ltgt.errorprone'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.squareup.anvil'
+plugins {
+  id 'quran.android.application'
+  id 'org.jetbrains.kotlin.kapt'
+  id 'org.jetbrains.kotlin.plugin.parcelize'
+  id 'net.ltgt.errorprone'
+  id 'com.squareup.anvil'
+}
 
 if (getGradle().getStartParameter().getTaskRequests().toString().contains("Release") &&
     !project.hasProperty("disableFirebase") && !project.hasProperty("disableCrashlytics")) {
@@ -12,19 +13,11 @@ if (getGradle().getStartParameter().getTaskRequests().toString().contains("Relea
 }
 
 android {
-  compileSdkVersion deps.android.build.compileSdkVersion
-
-  lintOptions {
-    checkReleaseBuilds true
-    lintConfig file("lint.xml")
-    enable "Interoperability"
-  }
+  namespace 'com.quran.labs.androidquran'
 
   defaultConfig {
-    minSdkVersion deps.android.build.minSdkVersion
-    targetSdkVersion deps.android.build.targetSdkVersion
-    versionCode 3200
-    versionName "3.2.0"
+    versionCode 3301
+    versionName "3.3.0"
     testInstrumentationRunner "com.quran.labs.androidquran.core.QuranTestRunner"
   }
 
@@ -73,30 +66,35 @@ android {
     }
   }
 
-  compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
-  }
-
   kotlinOptions {
     jvmTarget = "1.8"
     freeCompilerArgs += [ "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi" ]
   }
 
-  testOptions.unitTests.all {
-    testLogging {
-      events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
-      outputs.upToDateWhen { false }
-      showStandardStreams true
-      exceptionFormat "full"
+  testOptions {
+    unitTests {
+      includeAndroidResources = true
+      all {
+        testLogging {
+          events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+          outputs.upToDateWhen { false }
+          showStandardStreams true
+          exceptionFormat "full"
+        }
+      }
     }
   }
 
-  packagingOptions {
-    exclude "META-INF/*.kotlin_module"
+  lint {
+    checkReleaseBuilds true
+    enable 'Interoperability'
+    lintConfig file('lint.xml')
+  }
 
-    exclude 'META-INF/DEPENDENCIES'
-    exclude 'META-INF/INDEX.LIST'
+  packagingOptions {
+    resources {
+      excludes += ['META-INF/*.kotlin_module', 'META-INF/DEPENDENCIES', 'META-INF/INDEX.LIST']
+    }
   }
 }
 
@@ -128,8 +126,10 @@ dependencies {
   implementation project(path: ':common:search')
   implementation project(path: ':common:toolbar')
   implementation project(path: ':common:upgrade')
+  implementation project(path: ':common:ui:core')
 
   implementation project(path: ':feature:audio')
+  implementation project(path: ':feature:downloadmanager')
   implementation project(path: ':feature:qarilist')
 
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
@@ -150,38 +150,38 @@ dependencies {
   implementation "com.squareup.okio:okio:${okioVersion}"
 
   // rx
-  implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
-  implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+  implementation 'io.reactivex.rxjava3:rxjava:3.1.6'
+  implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
 
   // dagger
   kapt deps.dagger.apt
-  kaptAndroidTest deps.dagger.apt
+  kaptTest deps.dagger.apt
   implementation deps.dagger.runtime
 
   // workmanager
   implementation "androidx.work:work-runtime-ktx:${workManagerVersion}"
 
   implementation "com.squareup.okio:okio:${okioVersion}"
-  implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+  implementation "com.squareup.okhttp3:okhttp"
 
   implementation "com.squareup.moshi:moshi:${moshiVersion}"
   kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
 
-  implementation "dev.chrisbanes:insetter-ktx:0.3.1"
+  implementation "dev.chrisbanes.insetter:insetter:0.6.1"
   implementation 'com.jakewharton.timber:timber:5.0.1'
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
-  implementation 'com.google.firebase:firebase-crashlytics:18.2.12'
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.10'
+  implementation 'com.google.firebase:firebase-crashlytics:18.3.4'
 
   testImplementation "junit:junit:${junitVersion}"
   testImplementation "com.google.truth:truth:${truthVersion}"
-  testImplementation "org.mockito:mockito-core:4.6.1"
-  testImplementation "com.squareup.okhttp3:mockwebserver:${okhttpVersion}"
+  testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+  testImplementation "com.squareup.okhttp3:mockwebserver"
+  testImplementation "androidx.test.ext:junit-ktx:${androidxJunitExtVersion}"
+  testImplementation "org.robolectric:robolectric:${robolectricVersion}"
+  testImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
+  testImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
 
-  androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
-  androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
-  androidTestImplementation "androidx.test.ext:junit:${androidxJunitExtVersion}"
-
-  errorprone 'com.google.errorprone:error_prone_core:2.15.0'
+  errorprone 'com.google.errorprone:error_prone_core:2.18.0'
 
   // Number Picker
   implementation 'io.github.ShawnLin013:number-picker:2.4.13'

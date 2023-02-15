@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">قەرەییەک دیاریبکە</string>
+  <string name="qarilist_ready_to_play">ئامادەیە بۆ گوێگرتن</string>
+  <string name="qarilist_qaris_with_downloads">قەرەی لەگەڵ داگرتنەکان</string>
+  <string name="qarilist_gapless">بەردەوام</string>
+  <string name="qarilist_gapped">بێ بەردەوام</string>
+  <string name="qarilist_selected">هەڵبژێردراو</string>
+  <string name="qarilist_dismiss">لادان</string>
+</resources>

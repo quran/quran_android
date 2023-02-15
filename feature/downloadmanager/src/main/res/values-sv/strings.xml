@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">1 sura hämtad</item>
+    <item quantity="other">%1$d surahs som laddas ner</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Ljudansvarig</string>
+  <string name="audio_manager_remove_audio_title">Ta bort Surah?</string>
+  <string name="audio_manager_remove_audio_msg">Är du säker på att du vill ta bort %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Är du säker på att du vill ta bort?</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Lyckades ta bort surans ljud</item>
+    <item quantity="other">Lyckades ta bort %1$d surahs</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">Det uppstod ett fel när suran raderades.</item>
+    <item quantity="other">Det uppstod ett fel när du tog bort %1$d surahs</item>
+  </plurals>
+  <string name="audio_manager_surah_download">Ladda ner surah</string>
+  <string name="audio_manager_surah_delete">Ta bort ljudfilen</string>
+  <string name="audio_manager_download_all">Ladda ner alla</string>
+  <string name="audio_manager_download_selection">Nedladdning av urval</string>
+  <string name="audio_manager_delete_selection">Ta bort val</string>
+
+  <string name="downloading_title">Nedladdning av&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">Nedladdat %1$s / %2$s</string>
+  <string name="download_sura_progress">Nedladdat %1$s / %2$s av surah %3$d</string>
+  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Hämta surah %1$d ayah %2$d</string>
+</resources>

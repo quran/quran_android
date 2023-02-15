@@ -4,11 +4,13 @@ import com.quran.data.core.QuranFileManager
 import com.quran.labs.androidquran.common.audio.cache.command.AudioInfoCommand
 import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
 import com.quran.labs.androidquran.common.audio.model.QariDownloadInfo
+import com.quran.mobile.common.download.DownloadInfo
 import com.quran.mobile.common.download.DownloadInfoStreams
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.merge
@@ -48,6 +50,8 @@ class QariDownloadInfoManager @Inject constructor(
 
   private suspend fun subscribeToChanges() {
     val downloadStream = downloadInfoStreams.downloadInfoStream()
+        // only care to refresh after successful file downloads
+      .filter { it is DownloadInfo.FileDownloaded }
       .mapNotNull { it.metadata as? AudioDownloadMetadata }
       .map { it.qariId }
 
@@ -64,7 +68,7 @@ class QariDownloadInfoManager @Inject constructor(
         val updated = storageCache.lastValue()
           .map {
             // latest last value, but replace the qari item with our updated one
-            if (it.qariItem.id == qariDownloadInfo.qariItem.id) qariDownloadInfo else it
+            if (it.qari.id == qariDownloadInfo.qari.id) qariDownloadInfo else it
           }
         storageCache.writeAll(updated)
       }
@@ -73,10 +77,10 @@ class QariDownloadInfoManager @Inject constructor(
 
   private fun getUpdatedQariInformation(qariId: Int): QariDownloadInfo? {
     val lastInfo = storageCache.lastValue()
-    val updatedQari = lastInfo.firstOrNull { it.qariItem.id == qariId } ?: return null
+    val updatedQari = lastInfo.firstOrNull { it.qari.id == qariId } ?: return null
     val audioDirectory = quranFileManager.audioFileDirectory()
     return if (audioDirectory != null) {
-      audioInfoCommand.generateQariDownloadInfo(updatedQari.qariItem, audioDirectory)
+      audioInfoCommand.generateQariDownloadInfo(updatedQari.qari, audioDirectory)
     } else {
       null
     }

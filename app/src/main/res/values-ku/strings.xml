@@ -6,7 +6,6 @@
 		</string>
   <string name="downloadPrompt_ok">بەڵێ</string>
   <string name="downloadPrompt_no">نەخێر</string>
-  <string name="downloading_title">داگرتن&#8230;</string>
   <string name="downloading_message">تکایە چاوەڕوانبە ھەتا فایلەکان دادەگیرێت. (پشگیری بەردەوامبون دەکرێت)</string>
   <string name="extracting_title">ئەنجامدان&#8230;</string>
   <string name="menu_about">دەربارەی ئێمە</string>
@@ -25,7 +24,6 @@
   <string name="menu_get_translations">داگرتنی وەرگێڕان</string>
   <string name="menu_jump">چوون بۆ</string>
   <string name="gotoPage">چوون بۆ پەڕەی</string>
-  <string name="cancel">پاشگەزبونەوە</string>
 
   <!-- help -->
   <string name="help_title">ئەو پرسیارانەی کە زۆر کراون</string>
@@ -106,7 +104,6 @@
   <string name="prefs_download_amount_summary">ڕێژەی پەسەندی داگرتن بۆ دەنگە دانەگیراوەکان.</string>
   <string name="downloaded_translations">داگیرا</string>
   <string name="available_translations">ئامادەیە بۆ داگرتن</string>
-  <string name="remove_button">لابردن</string>
   <string name="dialog_ok">باشە</string>
   <string name="prefs_app_location_title">شوێنی بەرنامە</string>
   <string name="prefs_app_location_summary">شوێنێک دیاریبکە بۆ پاراستنی فایلەکانی بەرنامە</string>
@@ -160,7 +157,6 @@
   <string name="download_non_wifi_prompt">تۆ لەسەر تۆڕی بێتەل نیت WiFi. داگرتن بەهەرحاڵ؟</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">داگیرا %1$s / %2$s</string>
   <string name="process_progress">ئەنجامدان %1$d / %2$d</string>
   <string name="download_retry">ھەوڵدانەوە</string>
   <string name="download_cancel">پاشگەزبونەوە</string>
@@ -235,7 +231,6 @@
   <string name="prefs_send_logs_title">ناردنی لۆگەکان</string>
   <string name="prefs_send_logs_summary">ناردنی لۆگەکانی دیباگ بۆ گەشەپێدەرەکە</string>
   <string name="prefs_calculating_app_size">ژماردنی قەبارەی کاربەرنامە</string>
-  <string name="prefs_megabytes_str">%s م ب</string>
   <string name="prefs_dual_page_mode_title">مۆدی پەڕەی دووانی</string>
   <string name="prefs_dual_page_mode_enabled">لە دیمەنی سروشتیدا، دوو لاپەرە شان بە شان دەردەکەون.</string>
   <string name="prefs_dual_page_mode_disabled">لە دیمەنی سروشتیدا، تەنها یەک لاپەڕە دەردەکەوێت.</string>
@@ -268,10 +263,6 @@
   <string name="see_tafseer_of_verse">ئەم تەفسیفەی ئایەتە لەگەڵ تەفسیری ئەی ئەیە %d (کرتە بکە بۆ فراوانکردن).</string>
   <string name="quran_ayah_details">%1$s - آية %2$s، جزء %3$s</string>
   <string name="sdcard_error">ناتوانێت کارتی SD بدۆزێتەوە. تکایە بیکەوە و دووبارە هەوڵ بدە.</string>
-  <string name="download_sura_progress">داگرتنی %1$s / %2$s سورەتی %3$d</string>
-  <string name="download_sura_ayah_progress">داگرتنی سورەتی %1$d آية %2$d</string>
-  <string name="play_from">لە</string>
-  <string name="play_to">بۆ</string>
   <string name="play_restrict_range">تەنیا گوێ لە ئایەتەکانی سەرەوە بگرن</string>
   <string name="play_verses_range">گوێ لە کۆمەڵە ئایەتێک بگرە:</string>
   <string name="play_each_verse">گوێ لە هەر ئایەتێک بگرە:</string>
@@ -288,14 +279,6 @@
   <string name="recent_pages">پەڕەکانی ئەم دواییە</string>
   <string name="tag_blank_tag_error">ناتوانرێت ناوی تاگ بەتاڵ بێت!</string>
   <string name="tag_duplicate_tag_error">ناوی تاگ پێشتر بوونی هەیە!</string>
-  <string name="audio_manager">بەڕێوەبەری دەنگ</string>
-  <string name="audio_manager_remove_audio_title">سورەت لاببە؟</string>
-  <string name="audio_manager_remove_audio_msg">ئایا دڵنیایت کە دەتەوێت %1$s لابدەیت؟</string>
-  <string name="audio_manager_surah_download">داگرتنی سورەت</string>
-  <string name="audio_manager_surah_delete">سڕینەوەی فایلی دەنگ</string>
-  <string name="audio_manager_download_all">داگرتنی هەموو</string>
-  <string name="audio_manager_download_selection">داگرتنی دەستنیشانکراو</string>
-  <string name="audio_manager_delete_selection">سڕینەوەی دەستنیشانکراو</string>
   <string name="audio_updated_title">بەڕۆژکردنەوەی فایلەکانی دەنگی قورئان</string>
   <string name="audio_updated_text">چەندین فایلی دەنگی قورئان نوێکرایەوە. قورئان بۆ ئەندرۆید کۆپی ئەم فایلانەی لابردووە بۆ ئەوەی نوێترین ڤێرژنەکان دابەزێنرێت بۆ جاری داهاتوو کە دووبارە یارییان دەکەیتەوە.</string>
   <string name="prefs_category_dual_screen">پەسەندەکانی پەڕەی دووانی</string>

@@ -357,7 +357,7 @@ public class TranslationManagerActivity extends AppCompatActivity
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setTitle(R.string.remove_dlg_title)
         .setMessage(msg)
-        .setPositiveButton(R.string.remove_button,
+        .setPositiveButton(com.quran.mobile.common.ui.core.R.string.remove_button,
             (dialog, id) -> {
               if (removeTranslation(selectedItem.getTranslation().getFileName())) {
                 TranslationItem updatedItem = selectedItem.withTranslationRemoved();
@@ -371,7 +371,7 @@ public class TranslationManagerActivity extends AppCompatActivity
                 generateListItems();
               }
             })
-        .setNegativeButton(R.string.cancel,
+        .setNegativeButton(com.quran.mobile.common.ui.core.R.string.cancel,
             (dialog, i) -> dialog.dismiss());
     builder.show();
   }

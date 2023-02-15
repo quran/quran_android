@@ -15,9 +15,10 @@ class GappedAudioInfoCommandTest {
     val qariPath = "/quran/audio/minshawi".toPath()
     val filesystem = FakeFileSystem()
     filesystem.createDirectories(qariPath)
-    filesystem.write(qariPath / "103001.mp3") { }
-    filesystem.write(qariPath / "103002.mp3") { }
-    filesystem.write(qariPath / "103003.mp3") { }
+    filesystem.createDirectories(qariPath / "103")
+    filesystem.write(qariPath / "103" / "1.mp3") { }
+    filesystem.write(qariPath / "103" / "2.mp3") { }
+    filesystem.write(qariPath / "103" / "3.mp3") { }
 
     val quranInfo = QuranInfo(MadaniDataSource())
     val gaplessAudioInfoCommand = GappedAudioInfoCommand(quranInfo, filesystem)
@@ -32,10 +33,12 @@ class GappedAudioInfoCommandTest {
     val qariPath = "/quran/audio/minshawi".toPath()
     val filesystem = FakeFileSystem()
     filesystem.createDirectories(qariPath)
-    filesystem.write(qariPath / "103001.mp3") { }
-    filesystem.write(qariPath / "103002.mp3") { }
-    filesystem.write(qariPath / "103003.mp3") { }
-    filesystem.write(qariPath / "114001.mp3") { }
+    filesystem.createDirectories(qariPath / "103")
+    filesystem.createDirectories(qariPath / "114")
+    filesystem.write(qariPath / "103" / "1.mp3") { }
+    filesystem.write(qariPath / "103" / "2.mp3") { }
+    filesystem.write(qariPath / "103" / "3.mp3") { }
+    filesystem.write(qariPath / "114" / "1.mp3") { }
 
     val quranInfo = QuranInfo(MadaniDataSource())
     val gappedAudioInfoCommand = GappedAudioInfoCommand(quranInfo, filesystem)
@@ -54,11 +57,13 @@ class GappedAudioInfoCommandTest {
     val qariPath = "/quran/audio/minshawi".toPath()
     val filesystem = FakeFileSystem()
     filesystem.createDirectories(qariPath)
+    filesystem.createDirectories(qariPath / "114")
+    filesystem.createDirectories(qariPath / "115")
     filesystem.write(qariPath / "test.mp3") { }
     filesystem.write(qariPath / "2.mp3") { }
     filesystem.write(qariPath / "115.mp3") { }
-    filesystem.write(qariPath / "114001.mp3.part") { }
-    filesystem.write(qariPath / "115001.mp3") { }
+    filesystem.write(qariPath / "114" / "1.mp3.part") { }
+    filesystem.write(qariPath / "115" / "1.mp3") { }
 
     val quranInfo = QuranInfo(MadaniDataSource())
     val gappedAudioInfoCommand = GappedAudioInfoCommand(quranInfo, filesystem)

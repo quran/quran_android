@@ -65,8 +65,8 @@ class QuranPageLoader @Inject internal constructor(
     return response
   }
 
-  fun loadPages(vararg pages: Int?): Observable<Response?> {
-    return Observable.fromArray<Int>(*pages)
+  fun loadPages(pages: Array<Int>): Observable<Response> {
+    return Observable.fromArray(*pages)
         .flatMap { page: Int ->
           Observable.fromCallable { loadImage(page) }
         }

@@ -38,7 +38,6 @@
   <string name="menu_get_translations">Get Translations</string>
   <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">Go to page</string>
-  <string name="cancel">Cancel</string>
   <string name="please_wait">Please wait…</string>
 
   <!-- about -->
@@ -137,11 +136,6 @@
   <string name="search_full_results">Full Results</string>
   <string name="search_entire_mushaf">Search the entire mushaf</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">1 surah downloaded</item>
-    <item quantity="other">%1$d surahs downloaded</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">One result for \"%1$s\": </item>
@@ -204,7 +198,6 @@
   <string name="prefs_audio_manager_summary">Manage and download Quranic audio</string>
   <string name="downloaded_translations">Downloaded</string>
   <string name="available_translations">Available for download</string>
-  <string name="remove_button">Remove</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Quran data directory</string>
   <string name="prefs_app_location_summary">Choose where to store Quran files</string>
@@ -218,7 +211,7 @@
   <string name="prefs_err_moving_app_files">Failed to move app files</string>
   <string name="prefs_no_enough_space_to_move_files">Insufficient space to move app files</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
+  <string name="prefs_megabytes_str" translatable="false">@string/download_amount_in_megabytes</string>
   <string name="prefs_dual_page_mode_title">Dual Page Mode</string>
   <string name="prefs_dual_page_mode_enabled">In landscape, two pages will appear side by side.</string>
   <string name="prefs_dual_page_mode_disabled">In landscape, only one page will appear.</string>
@@ -311,9 +304,6 @@
   <string name="download_non_wifi_prompt">You are not on Wi-Fi. Download data anyway?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Downloaded %1$s / %2$s</string>
-  <string name="download_sura_progress">Downloaded %1$s / %2$s of surah %3$d</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Downloading surah %1$d ayah %2$d</string>
   <string name="process_progress">Processing file %1$d / %2$d</string>
   <string name="download_retry">Retry</string>
   <string name="download_cancel">Cancel</string>
@@ -340,8 +330,8 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">From</string>
-  <string name="play_to">To</string>
+  <string name="play_from" translatable="false">@string/from</string>
+  <string name="play_to" translatable="false">@string/to</string>
   <string name="play_restrict_range">Only play the above verses</string>
   <string name="play_verses_range">Play set of verses:</string>
   <string name="play_each_verse">Play each verse:</string>
@@ -392,24 +382,6 @@
 
   <!-- widgets -->
   <string name="bookmarks_list_empty">No Bookmarks</string>
-
-  <!-- audio manager -->
-  <string name="audio_manager">Audio Manager</string>
-  <string name="audio_manager_remove_audio_title">Remove Surah?</string>
-  <string name="audio_manager_remove_audio_msg">Are you sure you would like to remove %1$s?</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">Successfully deleted the surah</item>
-    <item quantity="other">Successfully deleted %1$d surahs</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">There was an error while deleting the surah</item>
-    <item quantity="other">There was an error while deleting %1$d surahs</item>
-  </plurals>
-  <string name="audio_manager_surah_download">Download surah</string>
-  <string name="audio_manager_surah_delete">Delete surah</string>
-  <string name="audio_manager_download_all">Download all</string>
-  <string name="audio_manager_download_selection">Download selection</string>
-  <string name="audio_manager_delete_selection">Delete selection</string>
 
   <!-- audio updates -->
   <string name="audio_updated_title">Quran Audio files Update</string>

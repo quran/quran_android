@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.view
 
+import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.repository.CurrentQariManager
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +16,7 @@ import kotlinx.coroutines.withContext
 class CurrentQariBridge @Inject constructor(private val currentQariManager: CurrentQariManager) {
   private val scope: CoroutineScope = CoroutineScope(SupervisorJob())
 
-  fun listenToQaris(lambda: ((QariItem) -> Unit)) {
+  fun listenToQaris(lambda: ((Qari) -> Unit)) {
     scope.launch {
       withContext(Dispatchers.Main) {
         currentQariManager

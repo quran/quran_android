@@ -13,16 +13,14 @@ class GappedAudioInfoCommand @Inject constructor(
 ) {
 
   fun gappedDownloads(path: Path): Pair<List<Int>, List<PartiallyDownloadedSura>> {
-    val gappedDownloads = AudioFileUtil.filesMatchingSuffixWithSuffixRemoved(fileSystem, path, ".mp3")
-    val gappedSuras = gappedDownloads
-      .filter { it.length == 6 }
-      .groupBy { it.take(3).toIntOrNull() ?: -1 }
-      .filterKeys { it in 1..114 }
-      .mapValues { entry ->
-        entry.value.mapNotNull {
-            item -> item.takeLast(3).toIntOrNull()
-        }
-        .filter { it in 1..286 }
+    val gappedSuras = fileSystem.list(path)
+      .filter { it.name.toIntOrNull() in 1..114 }
+      .associate { directory ->
+        val gappedDownloads =
+          AudioFileUtil.filesMatchingSuffixWithSuffixRemoved(fileSystem, directory, ".mp3")
+            .mapNotNull { it.toIntOrNull() }
+            .filter { it in 1..286 }
+        directory.toFile().nameWithoutExtension.toInt() to gappedDownloads
       }
 
     val fullyDownloaded = gappedSuras
@@ -30,6 +28,7 @@ class GappedAudioInfoCommand @Inject constructor(
       .map { it.key }
     val partiallyDownloaded = gappedSuras
       .filter { (sura, _) -> !fullyDownloaded.contains(sura) }
+      .filter { (_, partiallyDownloadedAyat) -> partiallyDownloadedAyat.isNotEmpty() }
       .map { (sura, partiallyDownloadedAyat) ->
         PartiallyDownloadedSura(
           sura,

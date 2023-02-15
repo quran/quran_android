@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="com.quran.labs.androidquran"
-          android:installLocation="auto">
+  android:installLocation="auto">
 
   <application
       android:icon="@drawable/debug_icon"
       android:roundIcon="@drawable/debug_icon"
       android:label="${app_debug_label}"
       android:name=".DebugApplication"
-      tools:replace="android:icon,android:roundIcon,android:label,android:name"
-      android:allowBackup="true"
-      android:fullBackupContent="@xml/backup">
+      tools:replace="android:icon,android:roundIcon,android:label,android:name">
 
-    <activity
-        android:name=".QuranDataActivity"
-        android:label="${app_debug_label}"
-        tools:replace="android:label" />
+    <activity android:name=".QuranDataActivity" />
 
     <meta-data
         android:name="firebase_crashlytics_collection_enabled"

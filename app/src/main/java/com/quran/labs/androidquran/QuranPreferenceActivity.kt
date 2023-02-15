@@ -5,7 +5,6 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment
-import com.quran.labs.androidquran.util.AudioManagerUtils
 
 class QuranPreferenceActivity : AppCompatActivity() {
 
@@ -19,8 +18,6 @@ class QuranPreferenceActivity : AppCompatActivity() {
     setSupportActionBar(toolbar)
     val ab = supportActionBar
     ab?.setDisplayHomeAsUpEnabled(true)
-
-    AudioManagerUtils.clearCache()
 
     val fm = supportFragmentManager
     val fragment = fm.findFragmentById(R.id.content)

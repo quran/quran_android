@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="remove_button">Жою</string>
+  <string name="cancel">Болдырмау</string>
+  <string name="from">Басы</string>
+  <string name="to">Соңы</string>
+</resources>

@@ -121,7 +121,7 @@ class QuranAdvancedSettingsFragment : PreferenceFragmentCompat() {
     }
     val importPref = findPreference<Preference>(Constants.PREF_IMPORT)
     importPref?.onPreferenceClickListener =
-      Preference.OnPreferenceClickListener { preference: Preference? ->
+      Preference.OnPreferenceClickListener {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.type = "*/*"
         val mimeTypes = arrayOf("application/*", "text/*")
@@ -139,6 +139,7 @@ class QuranAdvancedSettingsFragment : PreferenceFragmentCompat() {
             .subscribeWith(object : DisposableSingleObserver<Uri>() {
               override fun onSuccess(uri: Uri) {
                 onBookmarkExportSuccess(uri, context)
+                exportSubscription = null
               }
 
               override fun onError(e: Throwable) {
@@ -159,6 +160,7 @@ class QuranAdvancedSettingsFragment : PreferenceFragmentCompat() {
             .subscribeWith(object : DisposableSingleObserver<Uri>() {
               override fun onSuccess(uri: Uri) {
                 onBookmarkExportSuccess(uri, context)
+                exportSubscription = null
               }
 
               override fun onError(e: Throwable) {
@@ -230,9 +232,9 @@ class QuranAdvancedSettingsFragment : PreferenceFragmentCompat() {
 
   private fun createShareIntent(uri: Uri): Intent {
     val shareIntent = Intent(Intent.ACTION_SEND)
-    shareIntent.type = "application/json"
     shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+    shareIntent.setDataAndType(uri, "application/json")
     return shareIntent
   }
 
@@ -368,17 +370,18 @@ class QuranAdvancedSettingsFragment : PreferenceFragmentCompat() {
       val b = AlertDialog.Builder(context)
         .setTitle(R.string.warning)
         .setMessage(message)
-        .setPositiveButton(R.string.dialog_ok) { currentDialog: DialogInterface, which: Int ->
+        .setPositiveButton(R.string.dialog_ok) { currentDialog: DialogInterface, _: Int ->
           moveFiles(newLocation, storageLocation)
           currentDialog.dismiss()
           dialog = null
         }
-        .setNegativeButton(R.string.cancel) { currentDialog: DialogInterface, which: Int ->
+        .setNegativeButton(com.quran.mobile.common.ui.core.R.string.cancel) { currentDialog: DialogInterface, _: Int ->
           currentDialog.dismiss()
           dialog = null
         }
-      dialog = b.create()
-      dialog!!.show()
+      val dialog = b.create()
+      dialog.show()
+      this.dialog = dialog
     }
   }
 

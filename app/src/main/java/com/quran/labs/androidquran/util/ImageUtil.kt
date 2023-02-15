@@ -7,6 +7,7 @@ import okio.buffer
 import okio.sink
 import okio.source
 import java.io.File
+import java.io.IOException
 import java.io.InterruptedIOException
 import javax.inject.Inject
 
@@ -51,7 +52,7 @@ class ImageUtil @Inject constructor(private val okHttpClient: OkHttpClient) {
             // and delete the old one
             destination.delete()
           }
-        } catch (interruptedIoException: InterruptedIOException) {
+        } catch (ioException: IOException) {
           // if we're interrupted, pretend nothing happened. This happened
           // due to a dispose / cancellation. Maybe's fromCallable will not
           // actually emit in this case.
