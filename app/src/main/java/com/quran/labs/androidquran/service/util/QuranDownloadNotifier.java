@@ -371,13 +371,13 @@ public class QuranDownloadNotifier {
     builder.setContentIntent(contentIntent);
 
     try {
-      if (shouldForeground) {
+      if (shouldForeground && !isForeground) {
         service.startForeground(notificationId, builder.build());
         isForeground = true;
        } else {
         notificationManager.notify(notificationId, builder.build());
       }
-    } catch (SecurityException se) {
+    } catch (SecurityException | IllegalStateException se) {
       Timber.e(se);
     }
   }
