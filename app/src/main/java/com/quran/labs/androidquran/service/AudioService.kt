@@ -438,7 +438,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       // https://github.com/ReactiveX/RxJava/issues/7444
       .subscribe { map, _: Throwable? ->
         gaplessSura = sura
-        gaplessSuraData = map
+        gaplessSuraData = map ?: SparseIntArray()
       }
   }
 
@@ -787,8 +787,12 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     // stop and release the Media Player, if it's available
     val localPlayer = player
     if (releaseMediaPlayer && localPlayer != null) {
-      localPlayer.reset()
-      localPlayer.release()
+      try {
+        localPlayer.reset()
+        localPlayer.release()
+      } catch (ilse: IllegalStateException) {
+        // nothing to do here  ¯\_(ツ)_/¯
+      }
       player = null
       mediaSession.isActive = false
     }
@@ -969,7 +973,14 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
           playAudio(false)
           return
         }
-        localPlayer.reset()
+        try {
+          localPlayer.reset()
+        } catch (ilse: IllegalStateException) {
+          // we hit an error while trying to load, thus calling release, thus causing reset to
+          // throw - unlikely to work if we retry so just stop playback.
+          processStopRequest(true);
+          return;
+        }
         localPlayer.setDataSource(url)
       }
       state = State.Preparing
