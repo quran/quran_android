@@ -1,4 +1,4 @@
-package com.quran.mobile.feature.downloadmanager.ui
+package com.quran.mobile.feature.downloadmanager.ui.common
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Icon

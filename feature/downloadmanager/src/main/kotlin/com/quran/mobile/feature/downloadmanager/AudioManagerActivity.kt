@@ -16,7 +16,7 @@ import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInterface
 import com.quran.mobile.feature.downloadmanager.presenter.AudioManagerPresenter
-import com.quran.mobile.feature.downloadmanager.ui.DownloadManagerToolbar
+import com.quran.mobile.feature.downloadmanager.ui.common.DownloadManagerToolbar
 import com.quran.mobile.feature.downloadmanager.ui.LoadingIndicator
 import com.quran.mobile.feature.downloadmanager.ui.ShuyookhList
 import javax.inject.Inject

@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.quran.mobile.feature.downloadmanager.R
-import com.quran.mobile.feature.downloadmanager.ui.DownloadManagerToolbar
+import com.quran.mobile.feature.downloadmanager.ui.common.DownloadManagerToolbar
 
 @Composable
 fun SheikhDownloadToolbar(
