@@ -17,7 +17,7 @@ class AudioManagerPresenter @Inject constructor(
   fun downloadedShuyookh(
     lambda: ((Qari) -> QariItem)
   ): Flow<List<DownloadedSheikhUiModel>> {
-    return qariDownloadInfoManager.downloadedQariInfo()
+    return qariDownloadInfoManager.downloadQariInfoFilteringNonDownloadedGappedQaris()
       .map { qariDownloadInfoList ->
         qariDownloadInfoList
           .map { qariDownloadInfo ->
