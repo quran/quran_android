@@ -42,6 +42,21 @@ class QariDownloadInfoManager @Inject constructor(
     return storageCache.flow()
   }
 
+  fun downloadQariInfoFilteringNonDownloadedGappedQaris(): Flow<List<QariDownloadInfo>> {
+    return downloadedQariInfo().map { list ->
+      list.filter { qariDownloadInfo ->
+        val qari = qariDownloadInfo.qari
+        val gappedItem = qariDownloadInfo as? QariDownloadInfo.GappedQariDownloadInfo
+        qari.isGapless ||
+            // gapped qaris are only shown if they don't have a gapless alternative or if
+            // some file for the qari is already downloaded.
+            (!qari.hasGaplessAlternative ||
+                qariDownloadInfo.fullyDownloadedSuras.isNotEmpty() ||
+                (gappedItem?.partiallyDownloadedSuras?.isNotEmpty() ?: false))
+      }
+    }
+  }
+
   private fun populateCache() {
     val audioDirectory = quranFileManager.audioFileDirectory() ?: return
     val qariDownloadInfo = audioInfoCommand.generateAllQariDownloadInfo(audioDirectory)
