@@ -25,6 +25,7 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.Notificati
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.labs.androidquran.util.UrlUtil;
 import com.quran.labs.androidquran.util.ZipUtils;
 import com.quran.mobile.common.download.DownloadInfoStreams;
 
@@ -119,6 +120,7 @@ public class QuranDownloadService extends Service implements
 
   @Inject QuranInfo quranInfo;
   @Inject OkHttpClient okHttpClient;
+  @Inject UrlUtil urlUtil;
   @Inject DownloadInfoStreams downloadInfoStreams;
 
   private final class ServiceHandler extends Handler {
@@ -476,6 +478,8 @@ public class QuranDownloadService extends Service implements
 
       String url = urlString;
       if (fallbackByDefault || i > 0) {
+        url = urlUtil.fallbackUrl(url);
+
         // want to wait before retrying again
         try {
           Thread.sleep(WAIT_TIME);
