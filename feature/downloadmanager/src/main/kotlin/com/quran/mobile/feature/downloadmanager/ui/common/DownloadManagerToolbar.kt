@@ -8,8 +8,10 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import com.quran.labs.androidquran.common.ui.core.modifier.autoMirror
 
 @Composable
 fun DownloadManagerToolbar(
@@ -33,7 +35,8 @@ fun DownloadManagerToolbar(
         Icon(
           imageVector = Icons.Filled.ArrowBack,
           contentDescription = "",
-          tint = tintColor
+          tint = tintColor,
+          modifier = Modifier.autoMirror()
         )
       }
     },
