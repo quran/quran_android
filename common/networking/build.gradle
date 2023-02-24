@@ -3,11 +3,6 @@ plugins {
   id 'org.jetbrains.kotlin.kapt'
 }
 
-java {
-  sourceCompatibility JavaVersion.VERSION_1_8
-  targetCompatibility JavaVersion.VERSION_1_8
-}
-
 dependencies {
   kapt deps.dagger.apt
   implementation deps.dagger.runtime

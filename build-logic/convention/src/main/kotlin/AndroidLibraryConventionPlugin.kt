@@ -1,6 +1,7 @@
 import com.android.build.gradle.LibraryExtension
 import com.quran.labs.androidquran.buildutil.applyAndroidCommon
 import com.quran.labs.androidquran.buildutil.applyBoms
+import com.quran.labs.androidquran.buildutil.applyKotlinCommon
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -19,6 +20,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         defaultConfig.targetSdk = 32
       }
 
+      applyKotlinCommon()
       applyBoms()
     }
   }
