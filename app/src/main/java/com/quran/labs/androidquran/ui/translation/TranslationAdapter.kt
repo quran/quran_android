@@ -2,10 +2,14 @@ package com.quran.labs.androidquran.ui.translation
 
 import android.content.Context
 import android.graphics.Color
+import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.TextAppearanceSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,6 +45,8 @@ internal class TranslationAdapter(
 
   private var fontSize: Int = 0
   private var textColor: Int = 0
+  private var footnoteColor: Int = 0
+  private var inlineAyahColor: Int = 0
   private var dividerColor: Int = 0
   private var arabicTextColor: Int = 0
   private var suraHeaderColor: Int = 0
@@ -198,17 +204,20 @@ internal class TranslationAdapter(
       val textBrightness = min(adjustedBrightness.toFloat(), 255f).toInt()
 
       this.textColor = Color.rgb(textBrightness, textBrightness, textBrightness)
+      this.footnoteColor = ContextCompat.getColor(context, R.color.translation_footnote_color)
       this.arabicTextColor = textColor
       this.dividerColor = textColor
       this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header_night)
       this.ayahSelectionColor = ContextCompat.getColor(context, R.color.translation_ayah_selected_color_night)
     } else {
       this.textColor = ContextCompat.getColor(context, R.color.translation_text_color)
+      this.footnoteColor = ContextCompat.getColor(context, R.color.translation_footnote_color)
       this.dividerColor = ContextCompat.getColor(context, R.color.translation_divider_color)
       this.arabicTextColor = Color.BLACK
       this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header)
       this.ayahSelectionColor = ContextCompat.getColor(context, R.color.translation_ayah_selected_color)
     }
+    this.inlineAyahColor = ContextCompat.getColor(context, R.color.translation_translator_color)
 
     if (this.data.isNotEmpty()) {
       notifyDataSetChanged()
@@ -312,11 +321,24 @@ internal class TranslationAdapter(
                 holder.text.setOnClickListener(expandHyperlinkClickListener)
               }
 
+              val spannable = SpannableString(row.data)
+              row.ayat.forEach { range ->
+                val span = ForegroundColorSpan(inlineAyahColor)
+                spannable.setSpan(span, range.first, range.last + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+              }
+
+              row.footnotes.forEach { range ->
+                val span = RelativeSizeSpan(0.7f)
+                val colorSpan = ForegroundColorSpan(footnoteColor)
+                spannable.setSpan(span, range.first, range.last + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable.setSpan(colorSpan, range.first, range.last + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+              }
+
               when {
                 row.link != null && !expandHyperlink -> getAyahLink(row.link)
                 length > MAX_TAFSEER_LENGTH ->
-                  truncateTextIfNeeded(rowText, row.ayahInfo.ayahId, row.translationIndex)
-                else -> rowText
+                  truncateTextIfNeeded(spannable, row.ayahInfo.ayahId, row.translationIndex)
+                else -> spannable
               }
             }
 
@@ -331,15 +353,11 @@ internal class TranslationAdapter(
             holder.text.typeface = null
 
             if (isRtl) {
-              // rtl tafseer, style it (SDK is always >= 21 now)
+              // rtl tafseer, style it
               holder.text.layoutDirection = View.LAYOUT_DIRECTION_RTL
 
-              // allow the tafseer font for api 19 because it's fine there and
-              // is much better than the stock font (this is more lenient than
-              // the api 21 restriction on the hafs font). only allow this for
-              // Arabic though since the Arabic font isn't compatible with other
-              // RTL languages that share some Arabic characters.
-              // SDK is always >= 21 now
+              // only allow this for Arabic though since the Arabic font isn't compatible
+              // with other RTL languages that share some Arabic characters.
               if (row.isArabic) {
                 holder.text.typeface = TypefaceManager.getTafseerTypeface(context)
               }

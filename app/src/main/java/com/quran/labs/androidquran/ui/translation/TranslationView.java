@@ -25,6 +25,7 @@ import com.quran.labs.androidquran.util.QuranSettings;
 import dev.chrisbanes.insetter.Insetter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class TranslationView extends FrameLayout implements View.OnClickListener,
@@ -143,7 +144,10 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
           rows.add(new TranslationViewRow(
               TranslationViewRow.Type.TRANSLATION_TEXT, verse, text, j,
               metadata == null ? null : metadata.getLink(),
-              "ar".equals(sortedTranslations[j].getLanguageCode())));
+              "ar".equals(sortedTranslations[j].getLanguageCode()),
+              metadata == null ? Collections.emptyList() : metadata.getAyat(),
+              metadata == null ? Collections.emptyList() : metadata.getFootnotes()
+              ));
         }
       }
 

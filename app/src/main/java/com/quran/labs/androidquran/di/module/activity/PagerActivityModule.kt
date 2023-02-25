@@ -1,10 +1,7 @@
 package com.quran.labs.androidquran.di.module.activity
 
-import android.content.Context
-import androidx.core.content.ContextCompat
 import com.quran.data.core.QuranInfo
 import com.quran.data.core.QuranPageInfo
-import com.quran.labs.androidquran.R
 import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.ui.PagerActivity
@@ -46,11 +43,8 @@ class PagerActivityModule(private val pagerActivity: PagerActivity) {
 
   @Provides
   @ActivityScope
-  fun provideTranslationUtil(context: Context, quranInfo: QuranInfo): TranslationUtil {
-    return TranslationUtil(
-      ContextCompat.getColor(context, R.color.translation_translator_color),
-      quranInfo
-    )
+  fun provideTranslationUtil(quranInfo: QuranInfo): TranslationUtil {
+    return TranslationUtil(quranInfo)
   }
 
   @Provides

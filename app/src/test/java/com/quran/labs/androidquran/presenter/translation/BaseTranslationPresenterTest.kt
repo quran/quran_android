@@ -1,23 +1,18 @@
 package com.quran.labs.androidquran.presenter.translation
 
+import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.QuranText
 import com.quran.data.model.VerseRange
 import com.quran.data.pageinfo.common.MadaniDataSource
-
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.TranslationUtil
-
 import org.junit.Before
 import org.junit.Test
-
-import java.util.ArrayList
-import java.util.HashMap
-import com.google.common.truth.Truth.assertThat
 import org.mockito.Mockito
 
 class BaseTranslationPresenterTest {
@@ -29,7 +24,7 @@ class BaseTranslationPresenterTest {
     presenter = BaseTranslationPresenter(
         Mockito.mock(TranslationModel::class.java),
         Mockito.mock(TranslationsDBAdapter::class.java),
-        object : TranslationUtil(0, QuranInfo(MadaniDataSource())) {
+        object : TranslationUtil(QuranInfo(MadaniDataSource())) {
           override fun parseTranslationText(quranText: QuranText, translationId: Int): TranslationMetadata {
             return TranslationMetadata(quranText.sura, quranText.ayah, quranText.text, translationId)
           }
