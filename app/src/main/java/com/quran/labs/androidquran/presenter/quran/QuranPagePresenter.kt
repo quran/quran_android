@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.presenter.quran
 
+import com.quran.data.core.QuranInfo
 import com.quran.data.di.QuranPageScope
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.Response
@@ -22,6 +23,7 @@ class QuranPagePresenter @Inject constructor(
   private val coordinatesModel: CoordinatesModel,
   private val quranSettings: QuranSettings,
   private val quranPageLoader: QuranPageLoader,
+  private val quranInfo: QuranInfo,
   private val pages: IntArray,
 ) : Presenter<QuranPageScreen> {
 
@@ -85,8 +87,12 @@ class QuranPagePresenter @Inject constructor(
 
   fun downloadImages() {
     screen?.hidePageDownloadError()
+    // drop empty pages - this happens in Shemerly, for example, where there are an odd number of
+    // pages. in dual page mode, we have an empty page at the end, so we don't want to try to load
+    // the empty page.
+    val actualPages = pages.filter { it <= quranInfo.numberOfPages }
     compositeDisposable.add(
-      quranPageLoader.loadPages(pages.toTypedArray())
+      quranPageLoader.loadPages(actualPages.toTypedArray())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(object : DisposableObserver<Response>() {
           override fun onNext(response: Response) {

@@ -22,7 +22,7 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
   val quarters = quranDataSource.quartersArray
 
   val numberOfPages = quranDataSource.numberOfPages
-  val numberOfPagesDual = numberOfPages / 2
+  val numberOfPagesDual = numberOfPages / 2 + numberOfPages % 2
 
   fun getStartingPageForJuz(juz: Int): Int {
     return juzPageStart[juz - 1]
