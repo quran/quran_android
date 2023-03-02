@@ -109,7 +109,7 @@ class AudioUtils @Inject constructor(
     mode: Int,
     isDualPageVisible: Boolean
   ): SuraAyah? {
-    val page =
+    val potentialPage =
       if (isDualPageVisible &&
         mode == LookAheadAmount.PAGE &&
         currentPage % 2 == 1
@@ -121,13 +121,21 @@ class AudioUtils @Inject constructor(
         currentPage
       }
 
+    // in cases like Shermerly in dual screen where the last page is empty, use
+    // the page prior to the last page.
+    val page = if (isDualPageVisible && potentialPage == (totalPages + 1)) {
+      totalPages
+    } else {
+      potentialPage
+    }
+
     var pageLastSura = 114
     var pageLastAyah = 6
+
     // page < 0 - intentional, because nextPageAyah looks up the ayah on the next page
     if (page > totalPages || page < 0) {
       return null
     }
-
 
     if (mode == LookAheadAmount.SURA) {
       val sura = startAyah.sura

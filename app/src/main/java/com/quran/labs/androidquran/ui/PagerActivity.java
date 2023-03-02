@@ -437,7 +437,18 @@ public class PagerActivity extends AppCompatActivity implements
       @Override
       public void onPageSelected(int position) {
         Timber.d("onPageSelected(): %d", position);
-        final int page = quranInfo.getPageFromPosition(position, isDualPageVisible());
+        final int potentialPage = quranInfo.getPageFromPosition(position, isDualPageVisible());
+
+        // work around for empty pages at the end of the mushaf in dual screen mode
+        // Shemerly has an odd number of pages (521), so when showing in tablet mode,
+        // the last page is empty. default to the previous page title in those cases.
+        final int page;
+        if (isDualPages && !showingTranslation && potentialPage == quranInfo.getNumberOfPages() + 1) {
+          page = quranInfo.getNumberOfPages();
+        } else {
+          page = potentialPage;
+        }
+
         if (quranSettings.shouldDisplayMarkerPopup()) {
           lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
               PagerActivity.this, quranInfo, page, lastPopupTime);

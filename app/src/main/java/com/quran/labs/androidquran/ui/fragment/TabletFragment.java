@@ -27,6 +27,7 @@ import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahSplitConsolid
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerItem;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTranslationTrackerItem;
+import com.quran.labs.androidquran.presenter.quran.ayahtracker.NoOpImageTrackerItem;
 import com.quran.labs.androidquran.presenter.translation.TranslationPresenter;
 import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener;
@@ -286,12 +287,16 @@ public class TabletFragment extends Fragment
       AyahTrackerItem right;
       if (mode == Mode.ARABIC) {
         if (leftImageView != null && rightImageView != null) {
-          left = new AyahImageTrackerItem(pageNumber,
-              quranInfo,
-              quranDisplayData,
-              false,
-              imageDrawHelpers,
-              leftImageView);
+          if (quranInfo.getNumberOfPages() >= pageNumber) {
+            left = new AyahImageTrackerItem(pageNumber,
+                quranInfo,
+                quranDisplayData,
+                false,
+                imageDrawHelpers,
+                leftImageView);
+          } else {
+            left = new NoOpImageTrackerItem(pageNumber);
+          }
           right = new AyahImageTrackerItem(
               pageNumber - 1, quranInfo, quranDisplayData, true, imageDrawHelpers,
               rightImageView);
