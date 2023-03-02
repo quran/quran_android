@@ -1,6 +1,10 @@
 package com.quran.labs.androidquran.ui.translation;
 
+import static com.quran.labs.androidquran.ui.PagerActivity.EXTRA_HIGHLIGHT_AYAH;
+import static com.quran.labs.androidquran.ui.PagerActivity.EXTRA_HIGHLIGHT_SURA;
+
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -19,6 +23,7 @@ import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
 import com.quran.labs.androidquran.data.QuranDisplayData;
+import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.HighlightTypes;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -29,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class TranslationView extends FrameLayout implements View.OnClickListener,
-    TranslationAdapter.OnVerseSelectedListener {
+    TranslationAdapter.OnVerseSelectedListener, TranslationAdapter.OnJumpToAyahListener {
   private final TranslationAdapter translationAdapter;
 
   private SuraAyah selectedAyah;
@@ -53,7 +58,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     layoutManager = new LinearLayoutManager(context);
     translationRecycler.setLayoutManager(layoutManager);
     translationRecycler.setItemAnimator(new DefaultItemAnimator());
-    translationAdapter = new TranslationAdapter(context, translationRecycler, this, this);
+    translationAdapter = new TranslationAdapter(context, translationRecycler, this, this, this);
     translationRecycler.setAdapter(translationAdapter);
     addView(translationRecycler, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     translationRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -144,6 +149,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
           rows.add(new TranslationViewRow(
               TranslationViewRow.Type.TRANSLATION_TEXT, verse, text, j,
               metadata == null ? null : metadata.getLink(),
+              metadata == null ? null : metadata.getLinkPageNumber(),
               "ar".equals(sortedTranslations[j].getLanguageCode()),
               metadata == null ? Collections.emptyList() : metadata.getAyat(),
               metadata == null ? Collections.emptyList() : metadata.getFootnotes()
@@ -165,6 +171,16 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
 
   public void setTranslationClickedListener(OnClickListener listener) {
     onClickListener = listener;
+  }
+
+  @Override
+  public void onJumpToAyah(@NonNull SuraAyah target, int page) {
+    final Context context = getContext();
+    Intent i = new Intent(getContext(), PagerActivity.class);
+    i.putExtra("page", page);
+    i.putExtra(EXTRA_HIGHLIGHT_SURA, target.sura);
+    i.putExtra(EXTRA_HIGHLIGHT_AYAH, target.ayah);
+    context.startActivity(i);
   }
 
   public void highlightAyah(SuraAyah suraAyah, int ayahId, HighlightType highlightType) {

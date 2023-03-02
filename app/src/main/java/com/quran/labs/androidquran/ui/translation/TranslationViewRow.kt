@@ -10,6 +10,7 @@ internal class TranslationViewRow @JvmOverloads constructor(
   val data: CharSequence? = null,
   val translationIndex: Int = -1,
   val link: SuraAyah? = null,
+  val linkPage: Int? = null,
   val isArabic: Boolean = false,
   val ayat: List<IntRange> = emptyList(),
   val footnotes: List<IntRange> = emptyList()

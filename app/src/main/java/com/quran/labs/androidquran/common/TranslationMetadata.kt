@@ -8,6 +8,7 @@ data class TranslationMetadata(
   val text: String,
   val localTranslationId: Int? = null,
   val link: SuraAyah? = null,
+  val linkPageNumber: Int? = null,
   val ayat: List<IntRange> = emptyList(),
   val footnotes: List<IntRange> = emptyList()
 )

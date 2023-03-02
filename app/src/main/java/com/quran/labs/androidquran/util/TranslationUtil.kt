@@ -18,6 +18,10 @@ open class TranslationUtil(private val quranInfo: QuranInfo) {
       null
     }
 
+    val linkPage = if (suraAyah != null) {
+      quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah)
+    } else { null }
+
     val extraData = quranText.extraData
     val textToParse = if (suraAyah != null && extraData != null) {
       extraData
@@ -34,6 +38,7 @@ open class TranslationUtil(private val quranInfo: QuranInfo) {
       textToParse,
       translationId,
       suraAyah,
+      linkPage,
       ayat,
       footnotes
     )
