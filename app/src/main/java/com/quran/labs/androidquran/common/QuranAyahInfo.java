@@ -6,6 +6,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.quran.data.model.SuraAyah;
+
 /**
  * QuranAyahInfo
  * TODO: This should become QuranAyah at some point in the future
@@ -28,5 +30,9 @@ public class QuranAyahInfo {
     this.arabicText = arabicText;
     this.texts = Collections.unmodifiableList(texts);
     this.ayahId = ayahId;
+  }
+
+  public SuraAyah asSuraAyah() {
+    return new SuraAyah(this.sura, this.ayah);
   }
 }

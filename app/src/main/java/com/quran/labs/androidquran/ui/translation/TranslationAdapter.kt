@@ -38,7 +38,8 @@ internal class TranslationAdapter(
   private val context: Context,
   private val recyclerView: RecyclerView,
   private val onClickListener: View.OnClickListener,
-  private val onVerseSelectedListener: OnVerseSelectedListener
+  private val onVerseSelectedListener: OnVerseSelectedListener,
+  private val onJumpToVerseListener: OnJumpToAyahListener
 ) : RecyclerView.Adapter<TranslationAdapter.RowViewHolder>() {
   private val inflater: LayoutInflater = LayoutInflater.from(context)
   private val data: MutableList<TranslationViewRow> = mutableListOf()
@@ -64,7 +65,7 @@ internal class TranslationAdapter(
   private val defaultClickListener = View.OnClickListener { this.handleClick(it) }
   private val defaultLongClickListener = View.OnLongClickListener { this.selectVerseRows(it) }
   private val expandClickListener = View.OnClickListener { v -> toggleExpandTafseer(v) }
-  private val expandHyperlinkClickListener = View.OnClickListener { v -> toggleExpandTafseer(v) }
+  private val expandHyperlinkClickListener = View.OnClickListener { v -> toggleTafseerJump(v) }
 
   fun getSelectedVersePopupPosition(): IntArray? {
     return if (highlightedStartPosition > -1) {
@@ -258,6 +259,24 @@ internal class TranslationAdapter(
         expandedTafseerAyahs.add(what)
       }
       notifyItemChanged(position)
+    }
+  }
+
+  private fun toggleTafseerJump(view: View) {
+    val position = recyclerView.getChildAdapterPosition(view)
+    if (position != RecyclerView.NO_POSITION) {
+      val item = data[position]
+      val targetAyah = item.link
+      val targetPage = item.linkPage
+      if (targetAyah != null && targetPage != null) {
+        val match = data.indexOfFirst { it.ayahInfo.asSuraAyah() == targetAyah }
+        if (match > -1) {
+          recyclerView.smoothScrollToPosition(match)
+        } else {
+          // it's not on this page...
+          onJumpToVerseListener.onJumpToAyah(targetAyah, targetPage)
+        }
+      }
     }
   }
 
@@ -472,6 +491,10 @@ internal class TranslationAdapter(
 
   internal interface OnVerseSelectedListener {
     fun onVerseSelected(ayahInfo: QuranAyahInfo)
+  }
+
+  internal interface OnJumpToAyahListener {
+    fun onJumpToAyah(target: SuraAyah, page: Int)
   }
 
   companion object {
