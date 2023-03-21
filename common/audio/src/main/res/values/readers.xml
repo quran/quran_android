@@ -17,6 +17,7 @@
   <string name="qari_hudhayfi">Ali Al-Hudhaify (gapped)</string>
   <string name="qari_muaiqly">Maher Al Muaiqly (gapped)</string>
   <string name="qari_minshawi_mujawwad">Minshawy Mujawwad (gapped)</string>
+  <string name="qari_minshawi_mujawwad_gapless">Minshawy Mujawwad</string>
   <string name="qari_tablawy">Mohammad al Tablaway (gapped)</string>
   <string name="qari_ayyoub">Muhammad Ayyoub (gapped)</string>
   <string name="qari_jibreel">Muhammad Jibreel (gapped)</string>

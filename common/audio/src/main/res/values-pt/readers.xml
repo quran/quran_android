@@ -16,7 +16,8 @@
   <string name="qari_husary_mujawwad">Hosary Mujawwad (intervalo)</string>
   <string name="qari_hudhayfi">Ali Al-Hudhaify (intervalo)</string>
   <string name="qari_muaiqly">Maher Al Muaiqly (intervalo)</string>
-  <string name="qari_minshawi_mujawwad">Menshawy Mujawwad (intervalo)</string>
+  <string name="qari_minshawi_mujawwad">Minshawy Mujawwad (intervalo)</string>
+  <string name="qari_minshawi_mujawwad_gapless">Minshawy Mujawwad</string>
   <string name="qari_tablawy">Mohammad al Tablaway (intervalo)</string>
   <string name="qari_ayyoub">Muhammad Ayyoub (intervalo)</string>
   <string name="qari_jibreel">Muhammad Jebreel (intervalo)</string>
