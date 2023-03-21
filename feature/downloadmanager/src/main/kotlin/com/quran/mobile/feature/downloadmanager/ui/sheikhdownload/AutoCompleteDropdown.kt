@@ -1,8 +1,8 @@
 package com.quran.mobile.feature.downloadmanager.ui.sheikhdownload
 
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
@@ -70,13 +70,15 @@ fun AutoCompleteDropdown(
         )
       },
       colors = ExposedDropdownMenuDefaults.textFieldColors(),
-      modifier = Modifier.onFocusChanged { focusState ->
-        if (focusState.isFocused) {
-          val text = textState.value.text
-          textState.value = textState.value.copy(selection = TextRange(0, text.length))
-          restoreSelection.value = true
+      modifier = Modifier
+        .menuAnchor()
+        .onFocusChanged { focusState ->
+          if (focusState.isFocused) {
+            val text = textState.value.text
+            textState.value = textState.value.copy(selection = TextRange(0, text.length))
+            restoreSelection.value = true
+          }
         }
-      }
     )
 
     if (filtered.isNotEmpty()) {
@@ -87,14 +89,13 @@ fun AutoCompleteDropdown(
       ) {
         filtered.forEach {
           DropdownMenuItem(
+            text = { Text(it.name, color = MaterialTheme.colorScheme.onSecondaryContainer) },
             onClick = {
               textState.value = textState.value.copy(text = it.name)
               isExpanded.value = false
               onItemSelected(it.number)
             }
-          ) {
-            Text(it.name, color = MaterialTheme.colorScheme.onSecondaryContainer)
-          }
+          )
         }
       }
     }
