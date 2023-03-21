@@ -17,6 +17,7 @@
   <string name="qari_hudhayfi">ئالى ھۇدەيفى (gapped)</string>
   <string name="qari_muaiqly">ماھەر ئال مۇئائىقلى (gapped)</string>
   <string name="qari_minshawi_mujawwad">مىنشاۋى مۇجاۋۋاد (gapped)</string>
+  <string name="qari_minshawi_mujawwad_gapless">مىنشاۋى مۇجاۋۋاد</string>
   <string name="qari_tablawy">مۇھەممەد ئال تابلاۋى (gapped)</string>
   <string name="qari_ayyoub">مۇھەممەد ئەييۇب (gapped)</string>
   <string name="qari_jibreel">مۇھەممەد جىبرىل (gapped)</string>

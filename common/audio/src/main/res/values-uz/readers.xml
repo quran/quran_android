@@ -16,7 +16,8 @@
   <string name="qari_husary_mujawwad">Xusoriy (mujavvad)</string>
   <string name="qari_hudhayfi">Ali al-Xuzayfiy (doimiy emas)</string>
   <string name="qari_muaiqly">Mohir al-Muayqliy (doimiy emas)</string>
-  <string name="qari_minshawi_mujawwad">Minshoviy (mujavvad)</string>
+  <string name="qari_minshawi_mujawwad">Minshoviy (mujavvad, doimiy emas)</string>
+  <string name="qari_minshawi_mujawwad_gapless">Minshoviy (mujavvad)</string>
   <string name="qari_tablawy">Muhammad al-Toblaviy (doimiy emas)</string>
   <string name="qari_ayyoub">Muhammad Ayyub (doimiy emas)</string>
   <string name="qari_jibreel">Muhammad Jibriyl (doimiy emas)</string>

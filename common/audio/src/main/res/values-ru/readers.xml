@@ -17,6 +17,7 @@
   <string name="qari_hudhayfi">Али аль-Хузайфи (интервал)</string>
   <string name="qari_muaiqly">Махир аль-Муаккили (интервал)</string>
   <string name="qari_minshawi_mujawwad">Мухаммад Сиддик аль-Миншави (муджаввад)</string>
+  <string name="qari_minshawi_mujawwad_gapless">Мухаммад Сиддик аль-Миншави</string>
   <string name="qari_tablawy">Мухаммад ат-Таблави (интервал)</string>
   <string name="qari_ayyoub">Мухаммад Аюб (интервал)</string>
   <string name="qari_jibreel">Мухаммад Джибриль (интервал)</string>
