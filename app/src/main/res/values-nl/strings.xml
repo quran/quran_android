@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string name="app_name">Koran</string>
   <string name="downloadPrompt_title">Benodigde bestanden downloaden?</string>
   <string name="downloadPrompt">Om Koran Android goed te laten werken,
@@ -58,7 +58,7 @@
   <string name="about_quranicaudio_url" translatable="false">https://quranicaudio.com</string>
   <string name="about_quran_ksu">Electronic Moshaf Project</string>
   <string name="about_quran_ksu_summary">Het King Saud University Electronic Moshaf Project is de
-    app's bron van Arabische Tafaseer en vertalingen voor verschillende talen. Het is ook de bron
+    app\'s bron van Arabische Tafaseer en vertalingen voor verschillende talen. Het is ook de bron
     voor de recitatie van Dr. Ayman Suwaid.</string>
   <string name="about_quran_ksu_url" translatable="false">https://quran.ksu.edu.sa</string>
   <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (tafsir.app)</string>
@@ -174,7 +174,7 @@
 
   <!-- Quran Preference Activity -->
   <string name="prefs_volume_key_navigation_title">Volume-toets navigatie</string>
-  <string name="prefs_volume_key_navigation_summary">Blader tussen pagina's met de volumetoetsen</string>
+  <string name="prefs_volume_key_navigation_summary">Blader tussen pagina\'s met de volumetoetsen</string>
   <string name="prefs_category_reading">Leesvoorkeuren</string>
   <string name="prefs_category_translation">Vertaalvoorkeuren</string>
   <string name="prefs_category_display_settings">Weergave-instellingen</string>
@@ -196,12 +196,12 @@
   <string name="prefs_night_mode_background_brightness_summary">Helderheid van de pagina wanneer de
     nachtmodus actief is</string>
   <string name="prefs_overlay_page_info_title">Paginagegevens tonen</string>
-  <string name="prefs_overlay_page_info_summary">Overlay van paginanummer, soera naam en juz' nummer
+  <string name="prefs_overlay_page_info_summary">Overlay van paginanummer, soera naam en juz\' nummer
     tijdens het lezen</string>
   <string name="prefs_display_marker_title">Popup-markeringen tonen</string>
-  <string name="prefs_display_marker_summary">Popup tonen bij het bereiken van juz', hizb, enz.</string>
+  <string name="prefs_display_marker_summary">Popup tonen bij het bereiken van juz\', hizb, enz.</string>
   <string name="prefs_highlight_bookmarks_title">Bladwijzers markeren</string>
-  <string name="prefs_highlight_bookmarks_summary">Gemarkeerde ayah's markeren tijdens het lezen</string>
+  <string name="prefs_highlight_bookmarks_summary">Gemarkeerde ayah\'s markeren tijdens het lezen</string>
   <string name="prefs_translation_text_title">Tekstgrootte van vertalingen</string>
   <string name="prefs_translations">Vertalingen</string>
   <string name="prefs_translations_summary">Vertalingen downloaden en beheren</string>
@@ -236,7 +236,7 @@
   <string name="prefs_megabytes_int">%1$d MB</string>
   <string name="prefs_megabytes_str" translatable="false">@string/download_amount_in_megabytes</string>
   <string name="prefs_dual_page_mode_title">Dubbele Paginamodus</string>
-  <string name="prefs_dual_page_mode_enabled">In landschapmodus worden twee pagina's naast elkaar
+  <string name="prefs_dual_page_mode_enabled">In landschapmodus worden twee pagina\'s naast elkaar
     weergegeven.</string>
   <string name="prefs_dual_page_mode_disabled">In landschapmodus wordt slechts één pagina
     weergegeven.</string>
@@ -250,7 +250,7 @@
   <string name="prefs_export_csv_title">Exporteren naar CSV</string>
   <string name="prefs_export_csv_summary">Exporteer een kopie van bladwijzers en tags naar CSV</string>
   <string name="prefs_page_type_title">Paginatype (experimenteel)</string>
-  <string name="prefs_page_type_summary">Selecteer het type leespagina's</string>
+  <string name="prefs_page_type_summary">Selecteer het type leespagina\'s</string>
   <string name="prefs_sura_translated_name_summary">Toon de vertaling van de naam van de soera</string>
   <string name="prefs_sura_translated_name_title">Vertaalde naam van soera</string>
   <string name="prefs_preview">Voorbeeld</string>
@@ -403,7 +403,7 @@
   </plurals>
   <string name="undo">Ongedaan maken</string>
 
-  <string name="recent_pages">Recente pagina's</string>
+  <string name="recent_pages">Recente pagina\'s</string>
   <plurals name="plural_recent_pages" translatable="false">
     <item quantity="one">@string/menu_jump_last_page</item>
     <item quantity="other">@string/recent_pages</item>
@@ -428,7 +428,7 @@
   <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
 
   <!-- dual screen prefs -->
-  <string name="prefs_category_dual_screen">Voorkeuren voor dubbele pagina's</string>
+  <string name="prefs_category_dual_screen">Voorkeuren voor dubbele pagina\'s</string>
   <string name="prefs_split_page_and_translation_title">Koran en vertaling in dubbele modus</string>
   <string name="prefs_split_page_and_translation_summary">In dubbele paginamodus met vertalingen,
     koranpagina en vertaling wordt weergegeven</string>
