@@ -6,7 +6,7 @@ group = "com.quran.labs.androidquran.buildlogic"
 
 dependencies {
    compileOnly("com.android.tools.build:gradle:7.4.2")
-   compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10")
+   compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20")
 }
 
 gradlePlugin {
