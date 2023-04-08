@@ -133,7 +133,7 @@
     verwijderen.
     &lt;br/>
     &lt;br/>&lt;b>Hoe maak ik de tekst groter?&lt;/b>
-    &lt;br/>Houd je telefoon in landschapsmodus voor de Arabische pagina's. Dit maakt de tekst
+    &lt;br/>Houd je telefoon in landschapsmodus voor de Arabische pagina\'s. Dit maakt de tekst
     groter. Voor vertalingen ga je naar de instellingen en stel je de grootte van de vertalingstekst
     in.
     &lt;br/>
@@ -160,7 +160,7 @@
   <!-- m permissions stuff -->
   <string name="storage_permission_rationale">Koran wil toestemming om zijn gegevens op externe
     opslag op te slaan. Koran werkt zonder deze toestemming, maar als u gegevens wist of de app
-    verwijdert, worden alle gedownloade pagina's, audio en gegevens verwijderd. Wilt u Koran
+    verwijdert, worden alle gedownloade pagina\'s, audio en gegevens verwijderd. Wilt u Koran
     toestemming geven?</string>
   <string name="storage_permission_please_restart">Start de app opnieuw op zodat de wijzigingen van
     kracht worden.</string>
@@ -275,7 +275,7 @@
   <string name="warning">Waarschuwing</string>
   <string name="kitkat_external_message">Vanwege beperkingen in Android, als u ervoor kiest om
     Koran-gegevens op uw externe SD-kaart te plaatsen en later Koran Android verwijdert of gegevens
-    wist, worden alle pagina's en audio van Koran Android verwijderd en moet u deze opnieuw
+    wist, worden alle pagina\'s en audio van Koran Android verwijderd en moet u deze opnieuw
     downloaden. Weet u zeker dat u de externe SD-kaart wilt gebruiken?</string>
   <string name="scoped_storage_message">Vanwege wijzigingen in Android om de privacy van gebruikers
     te vergroten, kan het kopiëren van bestanden buiten de app-mappen voorkomen dat Koran in
