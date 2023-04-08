@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Translated by 
-Abdelouali Benkheil (https://github.com/abdelouali) - (a.benkheil@gmail.com)
-Yasser Baghouli (zaterdag@outlook.com)
--->
 <resources>
   <string name="app_name">Koran</string>
-  <string name="downloadPrompt_title">Download vereiste bestanden?</string>
+  <string name="downloadPrompt_title">Benodigde bestanden downloaden?</string>
   <string name="downloadPrompt">Om Koran Android goed te laten werken,
-         moeten we een aantal bestanden downloaden. Als u dit niet doet, werkt de app
-         mogelijk niet betrouwbaar en zal een internetverbinding vereist zijn voor het lezen.
-         Wilt u de benodigde bestanden nu downloaden?
-    </string>
-  <string name="downloadTabletPrompt">We hebben onlangs betere afbeeldingen toegevoegd voor Tablets. Wil je deze afbeeldingen nu toevoegen?</string>
-  <string name="downloadImportantPrompt">Er is een kleine maar belangrijke update voor Koran afbeeldingen die je op je apparaat hebt staat. Wil je deze patch nu downloaden?
-    </string>
+    moeten we enkele bestanden downloaden. Doe je dit nu niet, dan is de app
+    werkt mogelijk niet betrouwbaar en vereist een internetverbinding om te lezen.
+    Wilt u de benodigde bestanden nu downloaden?
+  </string>
+  <string name="downloadTabletPrompt">We hebben onlangs verbeterde afbeeldingen voor tablets
+    toegevoegd. Wilt u deze afbeeldingen nu downloaden?</string>
+  <string name="downloadImportantPrompt">Er is een kleine maar belangrijke update voor de
+    koranafbeeldingen die je op je apparaat hebt staan. Wilt u deze patch nu downloaden?
+  </string>
   <string name="downloadPrompt_ok">Ja</string>
   <string name="downloadPrompt_no">Nee</string>
-  <string name="downloading_message">Wacht tot de bestanden zijn gedownload (CV ondersteund).</string>
+  <string name="downloading_title">Downloaden&#8230;</string>
+  <string name="downloading_message">Wacht tot de bestanden zijn gedownload (hervatting wordt
+    ondersteund).</string>
   <string name="extracting_title">Verwerken&#8230;</string>
   <string name="menu_about">Over Ons</string>
   <string name="menu_other_apps">Andere apps</string>
@@ -25,63 +25,131 @@ Yasser Baghouli (zaterdag@outlook.com)
   <string name="menu_bookmarks">Bladwijzers</string>
   <string name="menu_bookmarks_page">Pagina Bladwijzers</string>
   <string name="menu_bookmarks_ayah">Ayah Bladwijzers</string>
-  <string name="menu_sort">Sorteren</string>
+  <string name="menu_sort">Sorteer</string>
   <string name="menu_sort_date">Datum Toegevoegd</string>
-  <string name="menu_sort_location">Locatie in Koran</string>
-  <string name="menu_sort_group_by_tags">Groepeer via Label</string>
-  <string name="menu_translation">Toon Vertalingen</string>
+  <string name="menu_sort_location">Locatie in de Koran</string>
+  <string name="menu_sort_group_by_tags">Groeperen op tags</string>
+  <string name="menu_show_recents" translatable="false">@string/recent_pages</string>
+  <string name="menu_show_date">Datum tonen</string>
+  <string name="menu_translation">Toon vertaling</string>
   <string name="menu_back_to_page">Toon Koran</string>
-  <string name="menu_help">Ondersteuning</string>
-  <string name="menu_search">Zoek</string>
-  <string name="menu_get_translations">Verkrijg Vertalingen</string>
-  <string name="menu_jump">Ga</string>
+  <string name="menu_help">Hulp</string>
+  <string name="menu_search">Zoeken</string>
+  <string name="menu_get_translations">Ontvang vertalingen</string>
+  <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">Ga naar pagina</string>
+  <string name="please_wait">Even geduld aub…</string>
 
   <!-- about -->
-  <string name="about_description">Koran voor Android is een gratis Koran Applicatie. Vergeet a.u.b. de ontwikkelaars niet in uw gebeden.</string>
-  <string name="about_data_sources">Gegevens bronnen</string>
+  <string name="about_description">Koran voor Android is een gratis Koran-applicatie. Vergeet de bijdragers niet in uw gebeden.</string>
+  <string name="about_data_sources">Data bronnen</string>
   <string name="about_images">Afbeeldingen</string>
-  <string name="about_madani_images">De Koran Afbeeldingen zijn gebaseerd op de lettertypen van de Koning Fahd Koran Printing Complex</string>
-  <string name="about_naskh_images">De koran beelden voor het Naskh app werden genomen (met toestemming) van SHL Info Systems</string>
-  <string name="about_qaloon_images">Qaloon afbeeldingen gebruikt met toestemming van Nous Memes Editions Et Diffusion (Tunisia)</string>
-  <string name="about_quranicaudio_summary">Gapless mp3 Quran recitations</string>
+  <string name="about_madani_images">De koranafbeeldingen zijn gebaseerd op de lettertypen van het
+    King Fahd Quran Printing Complex</string>
+  <string name="about_madani_images_url" translatable="false">
+    https://github.com/quran/quran.com-images</string>
+  <string name="about_naskh_images">De koranafbeeldingen voor de Naskh-app zijn (met toestemming)
+    afkomstig van SHL Info Systems</string>
+  <string name="about_naskh_images_url" translatable="false">http://www.shlinfosystems.com</string>
+  <string name="about_qaloon_images">Qaloon-afbeeldingen worden gebruikt met toestemming van Nous
+    Memes Editions Et Diffusion (Tunesië)</string>
+  <string name="about_quranicaudio" translatable="false">QuranicAudio</string>
+  <string name="about_quranicaudio_summary">Gapless mp3 koranrecitaties</string>
+  <string name="about_quranicaudio_url" translatable="false">https://quranicaudio.com</string>
   <string name="about_quran_ksu">Electronic Moshaf Project</string>
-  <string name="about_quran_ksu_summary">The King Saud University Electronic Moshaf Project was the app\'s source of Arabic Tafaseer and translations for various languages</string>
-  <string name="about_tanzil_summary">Vertalingen van vele talen</string>
-  <string name="about_noorhidayat_summary">Noorehira lettertype en Mufti Taqi Vertaling</string>
-  <string name="about_open_source">Open Source Projecten</string>
+  <string name="about_quran_ksu_summary">Het King Saud University Electronic Moshaf Project is de
+    app\'s bron van Arabische Tafaseer en vertalingen voor verschillende talen. Het is ook de bron
+    voor de recitatie van Dr. Ayman Suwaid.</string>
+  <string name="about_quran_ksu_url" translatable="false">https://quran.ksu.edu.sa</string>
+  <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (tafsir.app)</string>
+  <string name="about_furqan_summary">Uthmani-tekst en Arabische Tafseer</string>
+  <string name="about_furqan_url" translatable="false">https://tafsir.app</string>
+  <string name="about_quran_enc" translatable="false">Noble Quran Encyclopedia (QuranEnc)</string>
+  <string name="about_quran_enc_summary">Vertalingen voor vele talen</string>
+  <string name="about_quran_enc_url" translatable="false">https://quranenc.com</string>
+  <string name="about_tanzil" translatable="false">Tanzil</string>
+  <string name="about_tanzil_summary">Vertalingen voor enkele talen</string>
+  <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
+  <string name="about_noorhidayat" translatable="false">Noorhidayat</string>
+  <string name="about_noorhidayat_summary">Noorehira-lettertype en Mufti Taqi-vertaling</string>
+  <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
+  <string name="about_open_source">Open Source Projects</string>
+  <string name="about_androidx" translatable="false">AndroidX</string>
+  <string name="about_androidx_url" translatable="false">
+    https://developer.android.com/jetpack/androidx</string>
+  <string name="about_dagger2" translatable="false">Dagger 2</string>
+  <string name="about_dagger2_url" translatable="false">https://google.github.io/dagger</string>
+  <string name="about_dnsjava" translatable="false">dnsjava</string>
+  <string name="about_dnsjava_url" translatable="false">http://dnsjava.org</string>
+  <string name="about_material_components" translatable="false">Material Components for Android</string>
+  <string name="about_material_components_url" translatable="false">
+    https://github.com/material-components/material-components-android</string>
+  <string name="about_timber" translatable="false">Timber</string>
+  <string name="about_timber_url" translatable="false">https://github.com/JakeWharton/timber</string>
+  <string name="about_kotlin" translatable="false">Kotlin</string>
+  <string name="about_kotlin_url" translatable="false">https://kotlinlang.org</string>
+  <string name="about_numberPicker" translatable="false">Number Picker</string>
+  <string name="about_numberPicker_url" translatable="false">
+    https://github.com/ShawnLin013/NumberPicker</string>
+  <string name="about_okhttp" translatable="false">OkHttp</string>
+  <string name="about_okhttp_url" translatable="false">https://github.com/square/okhttp</string>
+  <string name="about_rxjava" translatable="false">RxJava</string>
+  <string name="about_rxjava_url" translatable="false">https://github.com/ReactiveX/RxJava</string>
+  <string name="about_rxandroid" translatable="false">RxAndroid</string>
+  <string name="about_rxandroid_url" translatable="false">https://github.com/ReactiveX/RxAndroid</string>
+  <string name="about_moshi" translatable="false">Moshi</string>
+  <string name="about_moshi_url" translatable="false">https://github.com/square/moshi</string>
+  <string name="about_sliding_panel" translatable="false">AndroidSlidingUpPanel</string>
+  <string name="about_sliding_panel_url" translatable="false">
+    https://github.com/umano/AndroidSlidingUpPanel</string>
   <string name="about_others">Andere</string>
   <string name="about_contributors">Bijdragers</string>
-  <string name="about_contributors_summary">Een lijst van personen die hebben bijgedragen aan de ontwikkeling van Koran voor Android</string>
+  <string name="about_contributors_summary">Een lijst met mensen die hebben bijgedragen aan de
+    ontwikkeling van Koran voor Android</string>
+  <string name="about_contributors_url" translatable="false">
+    https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md</string>
 
   <!-- help -->
   <string name="help_title">Veel Gestelde Vragen</string>
   <string name="help">
-        &lt;b>Hoe kan ik de audio afspelen?&lt;/b>
-        &lt;br/>Open even welke Koran pagina. Tik op het scherm eenmaal. Aan de onderkant, zult u
-een afspeelknop zien en wat tekst met de naam van de Qari. Klik op de naam van de qari
-        om een andere qari te selecteren. Klik op afspelen om te downloaden en de soera van de huidige pagina af te spelen.
-        &lt;br/>
-        &lt;br/>&lt;b>Hoe kan ik vertalingen tonen?&lt;/b>
-        &lt;br/>Open even welke Koran pagina. Tik op het scherm eenmaal. Aan de bovenkant, zal je een aardbol zien. Klik hier op en maak een keuze van vertaling.
-        &lt;br/>
-        Als je/u over geen enkele vertaling beschikt, wordt u naar een venster geleid waar u vertalingen kunt downloaden. 
-        Kies en download een vertaling. Keer dan terug en raak het aardbolicoontje opnieuw aan om de vertaling te bekijken.
-        &lt;br/>
-        &lt;br/>&lt;b>Hoe voeg ik een pagina toe als bladwijzer?&lt;/b>
-        &lt;br/>Open eender welke Koran-pagina. Raak het scherm één keer aan. Rechtsboven zal je nu een bladwijzer-icoontje zien. Raak het icoontje aan om de pagina toe te voegen als bladwijzer. (het icoontje wordt dan strak wit). Raak het icoontje opnieuw aan om de bladwijzer te verwijderen.
-        &lt;br/>
-        &lt;br/>&lt;b>Hoe vergroot ik de tekst (/ Hoe zoom ik in?)&lt;/b>
-        &lt;br/>Voor de Arabischtalige pagina\'s: Hou je smartphone horizontaal (/in landscape?). De tekst zal dan vanzelf groter worden.
-Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig de tekstgrootte naar uw voorkeur.
-        &lt;br/>
-        &lt;br/>&lt;b>Hoe deel ik een aya?&lt;/b>
-        &lt;br/>Als je op een Arabischtalige pagina bent: Hou de (/het?) gewenste aya (/vers?) ingedrukt totdat er een menu verschijnt waarop je kan kiezen om als bladwijzer toe te voegen, te taggen, de aya (/het vers?) te kopiëren of delen naar het clipboard, de vertaling te bekijken, of te luisteren naar de recitatie van de aya (/het vers?)&lt;br/>
-        &lt;br/>&lt;b>De lettertypes: Malayam, Tamil, Bengali en Urdu werken niet!&lt;/b>
-        &lt;br/>Helaas ondersteunen Android versies ouder dan 4.0 deze lettertypes niet en is er weinig dat wij hieraan kunnen doen.
-    </string>
-  <string name="search_hint">Zoeken in de Koran</string>
+    &lt;b>Hoe speel ik audio af?&lt;/b>
+    &lt;br/>Open een willekeurige pagina van de Koran. Tik eenmaal op het scherm. Onderaan zie je
+    een afspeelknop en wat tekst met de naam van een qari. Klik op de naam van de qari om een andere
+    qari te kiezen. Klik op afspelen om de huidige pagina of sura te downloaden en af te spelen.
+    &lt;br/>
+    &lt;br/>&lt;b>Hoe bekijk ik de vertaling?&lt;/b>
+    &lt;br/>Open een willekeurige pagina van de Koran. Tik eenmaal op het scherm. Bovenaan zie je
+    een wereldbolpictogram (of, als je het niet ziet, klik op een pictogram met drie vierkante
+    stippen) - klik hierop en kies vertaling om de vertaling te bekijken.
+    &lt;br/>
+    Als je geen vertalingen hebt gedownload, brengt het je naar een scherm waar je vertalingen kunt
+    downloaden. Kies en download een vertaling, keer dan terug en tik opnieuw op het
+    wereldbolpictogram om de vertaling te bekijken.
+    &lt;br/>
+    &lt;br/>&lt;b>Hoe maak ik een bladwijzer van een pagina?&lt;/b>
+    &lt;br/>Open een willekeurige pagina van de Koran. Tik eenmaal op het scherm. Rechtsboven zie je
+    een bladwijzerpictogram. Tik op het bladwijzerpictogram om de pagina als bladwijzer toe te
+    voegen (de kleur wordt wit). Tik opnieuw op het bladwijzerpictogram om de bladwijzer te
+    verwijderen.
+    &lt;br/>
+    &lt;br/>&lt;b>Hoe maak ik de tekst groter?&lt;/b>
+    &lt;br/>Houd je telefoon in landschapsmodus voor de Arabische pagina\'s. Dit maakt de tekst
+    groter. Voor vertalingen ga je naar de instellingen en stel je de grootte van de vertalingstekst
+    in.
+    &lt;br/>
+    &lt;br/>&lt;b>Hoe deel ik een ayah?&lt;/b>
+    &lt;br/>Terwijl je op een willekeurige Arabische pagina bent, druk en houd je op een ayah om een
+    menu te krijgen waar je kunt kiezen om de ayah als bladwijzer te markeren, taggen, delen of
+    kopiëren naar het klembord, de vertaling te bekijken, of naar de recitatie te luisteren.
+    &lt;br/>
+    &lt;br/>&lt;b>Malayalam/Tamil/Bengali/Urdu-lettertypen werken niet!&lt;/b>
+    &lt;br/>Helaas ondersteunen Android-versies vóór 4.0 deze lettertypen niet en er is weinig dat
+    we hieraan kunnen doen.
+  </string>
+  <string name="search_hint">Zoek in de Koran</string>
   <string name="quranSearchType">Verzen van de Koran</string>
+  <string name="search_full_results">Volledige resultaten</string>
+  <string name="search_entire_mushaf">Doorzoek de hele mushaf</string>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -90,97 +158,141 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   </plurals>
 
   <!-- m permissions stuff -->
-  <string name="storage_permission_rationale">Koran wil uw toestemming om zijn gegevens op te slaan op
-         uw externe opslag. Koran zal werken zonder deze toestemming, maar als je de app deinstalleerd zullen alle gedownloade pagina\'s, audio en gegevens verwijderd worden. Verleen je Koran toestemming?
-</string>
-  <string name="storage_permission_please_restart">Gelieve de app opnieuw opstarten om de veranderingen uit te voeren.</string>
+  <string name="storage_permission_rationale">Koran wil toestemming om zijn gegevens op externe
+    opslag op te slaan. Koran werkt zonder deze toestemming, maar als u gegevens wist of de app
+    verwijdert, worden alle gedownloade pagina\'s, audio en gegevens verwijderd. Wilt u Koran
+    toestemming geven?</string>
+  <string name="storage_permission_please_restart">Start de app opnieuw op zodat de wijzigingen van
+    kracht worden.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Gevonden in Soera %1$s: %2$d (Pagina %3$d)</string>
-  <string name="no_results">Geen resultaten gevonden voor \"%s\"</string>
-  <string name="no_arabic_search_available">Je hebt \"Arabisch Zoeken\" niet gedownload. Download het en probeer uw zoekopdracht opnieuw.</string>
-  <string name="get_arabic_search_db">Verkrijg "Arabisch Zoeken" Database</string>
+  <string name="found_in_sura">Gevonden in Soera %1$s: %2$d (pagina %3$d)</string>
+  <string name="no_results">Geen resultaten gevonden voor "%s"</string>
+  <string name="no_arabic_search_available">U heeft het Arabische zoekpakket niet gedownload.
+    Download het alstublieft en probeer uw zoekopdracht opnieuw.</string>
+  <string name="get_arabic_search_db">Arabische zoekdatabase verkrijgen</string>
 
   <!-- Quran Preference Activity -->
-  <string name="prefs_volume_key_navigation_title">Volumetoets navigatie</string>
-  <string name="prefs_volume_key_navigation_summary">Navigeren tussen pagina\'s met behulp van de volumetoetsen</string>
-  <string name="prefs_category_reading">Voorkeuren voor Lezen</string>
-  <string name="prefs_category_translation">Voorkeuren voor Vertalingen</string>
-  <string name="prefs_category_display_settings">Beeldscherminstellingen</string>
-  <string name="prefs_use_arabic_title">Arabisch-modus (الوضع العربي)</string>
-  <string name="prefs_use_arabic_summary_on">Gebruik Arabisch voor de applicatie-interface</string>
+  <string name="prefs_volume_key_navigation_title">Volume-toets navigatie</string>
+  <string name="prefs_volume_key_navigation_summary">Blader tussen pagina\'s met de volumetoetsen</string>
+  <string name="prefs_category_reading">Leesvoorkeuren</string>
+  <string name="prefs_category_translation">Vertaalvoorkeuren</string>
+  <string name="prefs_category_display_settings">Weergave-instellingen</string>
+  <string name="prefs_use_arabic_title">Arabische modus (الوضع العربي)</string>
+  <string name="prefs_use_arabic_summary_on">Gebruik Arabisch voor de toepassingsinterface</string>
   <string name="prefs_new_background_title">Nieuwe achtergrond</string>
-  <string name="prefs_lock_orientation_title">Vergrendel schermoriëntatie</string>
-  <string name="prefs_lock_orientation_summary_on">Gebruik vaste oriëntatie-modus</string>
-  <string name="prefs_lock_orientation_summary_off">Aanpassen aan de huidige oriëntatie mode</string>
-  <string name="prefs_landscape_orientation_title">Landscape modus</string>
-  <string name="prefs_landscape_orientation_summary_on">Gebruik altijd landscape modus</string>
-  <string name="prefs_landscape_orientation_summary_off">Gebruik altijd portret-modus</string>
-  <string name="prefs_night_mode_title">Nacht modus</string>
-  <string name="prefs_night_mode_summary">Gebruik een donkere achtergrond en een lichte lettertype</string>
-  <string name="prefs_night_mode_text_brightness_title">Tekst helderheid</string>
-  <string name="prefs_night_mode_text_brightness_summary">Helederheid van de tekst wanneer de nacht modus zijn ingeschakeld.</string>
-  <string name="prefs_night_mode_background_brightness_title">Achtergrond helderheid</string>
-  <string name="prefs_night_mode_background_brightness_summary">Helderheid van de pagina wanneer de nachtmodus actief is</string>
-  <string name="prefs_overlay_page_info_title">Toon pagina info</string>
-  <string name="prefs_overlay_page_info_summary">Overlay page number, sura name, and juz\' number while reading</string>
-  <string name="prefs_display_marker_title">Weergeef marker popups</string>
-  <string name="prefs_display_marker_summary">Er komt een popup bij het bereiken van juz\', hizb, etc.</string>
-  <string name="prefs_highlight_bookmarks_title">Markeer bladwijzers</string>
-  <string name="prefs_highlight_bookmarks_summary">Markeer opgeslagen ayah verzen</string>
-  <string name="prefs_translation_text_title">Vertaling tekstgrootte</string>
-  <string name="prefs_translations">Vertaling</string>
-  <string name="prefs_translations_summary">Downloaden en beheren van vertalingen</string>
-  <string name="prefs_ayah_before_translation_title">Ayah voor vertaling</string>
+  <string name="prefs_lock_orientation_title">Schermoriëntatie vergrendelen</string>
+  <string name="prefs_lock_orientation_summary_on">Gebruik de modus voor vaste oriëntatie</string>
+  <string name="prefs_lock_orientation_summary_off">Aanpasbare oriëntatiemodus</string>
+  <string name="prefs_landscape_orientation_title">Liggende modus</string>
+  <string name="prefs_landscape_orientation_summary_on">Gebruik altijd de liggende modus</string>
+  <string name="prefs_landscape_orientation_summary_off">Gebruik altijd de staande modus</string>
+  <string name="prefs_night_mode_title">Nachtmodus</string>
+  <string name="prefs_night_mode_summary">Gebruik een donkere achtergrond en lichte lettertypen</string>
+  <string name="prefs_night_mode_text_brightness_title">Teksthelderheid</string>
+  <string name="prefs_night_mode_text_brightness_summary">Helderheid van de tekst wanneer de
+    nachtmodus actief is</string>
+  <string name="prefs_night_mode_background_brightness_title">Achtergrondhelderheid</string>
+  <string name="prefs_night_mode_background_brightness_summary">Helderheid van de pagina wanneer de
+    nachtmodus actief is</string>
+  <string name="prefs_overlay_page_info_title">Paginagegevens tonen</string>
+  <string name="prefs_overlay_page_info_summary">Overlay van paginanummer, soera naam en juz\' nummer
+    tijdens het lezen</string>
+  <string name="prefs_display_marker_title">Popup-markeringen tonen</string>
+  <string name="prefs_display_marker_summary">Popup tonen bij het bereiken van juz\', hizb, enz.</string>
+  <string name="prefs_highlight_bookmarks_title">Bladwijzers markeren</string>
+  <string name="prefs_highlight_bookmarks_summary">Gemarkeerde ayah\'s markeren tijdens het lezen</string>
+  <string name="prefs_translation_text_title">Tekstgrootte van vertalingen</string>
+  <string name="prefs_translations">Vertalingen</string>
+  <string name="prefs_translations_summary">Vertalingen downloaden en beheren</string>
+  <string name="prefs_ayah_before_translation_title">Ayah vóór vertaling</string>
   <string name="prefs_ayah_before_translation_summary">Toon ayah in het Arabisch boven de vertaling</string>
-  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
-  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
-  <string name="prefs_category_download">Download Opties</string>
-  <string name="prefs_streaming_title">Streaming</string>
-  <string name="prefs_streaming_summary">Audio streamen indien mogelijk</string>
-  <string name="prefs_download_amount_title">Hoeveelheid te downloaden</string>
-  <string name="prefs_download_amount_summary">Preferred download amount for non-gapless audio</string>
-  <string name="prefs_audio_manager_summary">Beheer en download Koran audio</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexie-vriendelijk lettertype</string>
+  <string name="prefs_use_dyslexic_font_summary">Vertalingen weergeven in een dyslexie-vriendelijk
+    lettertype</string>
+  <string name="prefs_category_download">Downloadopties</string>
+  <string name="prefs_streaming_title">Streamen</string>
+  <string name="prefs_streaming_summary">Audio streamen in plaats van downloaden</string>
+  <string name="prefs_download_amount_title">Downloadhoeveelheid</string>
+  <string name="prefs_download_amount_summary">Voorkeurshoeveelheid voor het downloaden van
+    niet-gapless audio</string>
+  <string name="prefs_audio_manager" translatable="false">@string/audio_manager</string>
+  <string name="prefs_audio_manager_summary">Koran audio beheren en downloaden</string>
   <string name="downloaded_translations">Gedownload</string>
   <string name="available_translations">Beschikbaar om te downloaden</string>
   <string name="dialog_ok">OK</string>
-  <string name="prefs_app_location_title">Koran gegevens bibliotheek</string>
-  <string name="prefs_app_location_summary">Kies de locatie voor het opslaan van Koran gegevens.</string>
-  <string name="prefs_send_logs_title">Verstuur logbestanden</string>
-  <string name="prefs_send_logs_summary">Verstuur debug logbestanden naar de ontwikkelaar</string>
-  <string name="prefs_sdcard_internal">Interne geheugen</string>
-  <string name="prefs_sdcard_external">Externe SD kaart %1$d</string>
-  <string name="prefs_app_size">Huidige gegevens geheugen is</string>
-  <string name="prefs_calculating_app_size">Berekenen van App Grootte</string>
+  <string name="prefs_app_location_title">Koran gegevensmap</string>
+  <string name="prefs_app_location_summary">Kies waar Koran-bestanden moeten worden opgeslagen</string>
+  <string name="prefs_send_logs_title">Logs verzenden</string>
+  <string name="prefs_send_logs_summary">Debug logs naar de ontwikkelaar verzenden</string>
+  <string name="prefs_sdcard_internal">Intern geheugen</string>
+  <string name="prefs_sdcard_external">Externe opslag %1$d</string>
+  <string name="prefs_app_size">Huidige gegevensgrootte is</string>
+  <string name="prefs_calculating_app_size">App-grootte berekenen</string>
   <string name="prefs_copying_app_files">App-bestanden kopiëren</string>
-  <string name="prefs_err_moving_app_files">Kan app bestanden niet verplaatsen</string>
-  <string name="prefs_no_enough_space_to_move_files">Onvoldoende ruimte om app bestanden te verplaatsen</string>
+  <string name="prefs_err_moving_app_files">Fout bij het verplaatsen van app-bestanden</string>
+  <string name="prefs_no_enough_space_to_move_files">Onvoldoende ruimte om app-bestanden te
+    verplaatsen</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_dual_page_mode_title">Tablet Mode</string>
-  <string name="prefs_dual_page_mode_enabled">In landscape, worden twee pagina\'s naast elkaar weergegeven.</string>
-  <string name="prefs_dual_page_mode_disabled">In landscape, zal slechts één pagina verschijnen.</string>
+  <string name="prefs_megabytes_str" translatable="false">@string/download_amount_in_megabytes</string>
+  <string name="prefs_dual_page_mode_title">Dubbele Paginamodus</string>
+  <string name="prefs_dual_page_mode_enabled">In landschapmodus worden twee pagina\'s naast elkaar
+    weergegeven.</string>
+  <string name="prefs_dual_page_mode_disabled">In landschapmodus wordt slechts één pagina
+    weergegeven.</string>
   <string name="prefs_category_advanced">Geavanceerde opties</string>
+  <string name="prefs_category_advanced_summary">Bladwijzers importeren/exporteren,
+    Koran-gegevensdirectory instellen, enzovoort.</string>
+  <string name="prefs_import_title">Importeren</string>
+  <string name="prefs_import_summary">Importeer bladwijzers en tags</string>
   <string name="prefs_export_title">Exporteren</string>
-  <string name="prefs_export_summary">Exporteer een kopie van bladwijzers en labels</string>
+  <string name="prefs_export_summary">Exporteer een kopie van bladwijzers en tags</string>
+  <string name="prefs_export_csv_title">Exporteren naar CSV</string>
+  <string name="prefs_export_csv_summary">Exporteer een kopie van bladwijzers en tags naar CSV</string>
+  <string name="prefs_page_type_title">Paginatype (experimenteel)</string>
+  <string name="prefs_page_type_summary">Selecteer het type leespagina\'s</string>
+  <string name="prefs_sura_translated_name_summary">Toon de vertaling van de naam van de soera</string>
+  <string name="prefs_sura_translated_name_title">Vertaalde naam van soera</string>
+  <string name="prefs_preview">Voorbeeld</string>
 
-  <string name="import_data_permissions_error">Kan geen back-upbestand lezen wegens bevoegdheden fouten.</string>
-  <string name="import_data_error">Ongeldige backup-bestand (of niet in staat om back-up bestand te lezen).</string>
-  <string name="import_data">Importeer Gegevens</string>
-  <string name="import_data_and_override">Als je dit bestand importeer zal het al je bladwijzers vervangen met %1$d bladwijzer(s) en %2$d label(s). Importeren?</string>
-  <string name="import_successful">Import Successvol</string>
-  <string name="export_data_error">Fout bij het exporteren van gegevens.</string>
-  <string name="exported_data">Gegevens geëxporteerd naar %1$s.</string>
+  <string name="translations" translatable="false">@string/prefs_translations</string>
+  <string name="more_translations">Meer vertalingen</string>
+  <string name="import_data_permissions_error">Kan back-upbestand niet lezen vanwege
+    toestemmingsfout.</string>
+  <string name="import_data_error">Ongeldig back-upbestand (of kan back-upbestand niet lezen).</string>
+  <string name="import_data">Gegevens importeren</string>
+  <string name="import_data_and_override">Als je dit bestand importeert, worden alle bladwijzers
+    vervangen door %1$d bladwijzer(s) en %2$d tag(s). Importeren?</string>
+  <string name="import_successful">Importeren voltooid</string>
+  <string name="export_data_error">Fout bij exporteren van gegevens</string>
+  <string name="exported_data">Gegevens geëxporteerd naar %1$s</string>
 
+  <string name="move_up">Omhoog verplaatsen</string>
+  <string name="move_down">Omlaag verplaatsen</string>
+  <string name="delete_translation">Vertaling verwijderen</string>
+
+  <string name="logs_email" translatable="false">quranandroid+logs@gmail.com</string>
   <string name="warning">Waarschuwing</string>
-  <string name="kitkat_external_message">Als gevolg van Android beperkingen, als je ervoor kiest om Koran gegevens te plaatsen
-          op uw externe SD-kaart en deze later verwijderd, zal je al deze gegevens opnieuw moeten downloaden. Ben jij
-         zeker dat je de externe SD-kaart wilt gebruiken?</string>
-  <string name="please_grant_permissions">Gelieve toestemming te verlenen in programma-instellingen.</string>
+  <string name="kitkat_external_message">Vanwege beperkingen in Android, als u ervoor kiest om
+    Koran-gegevens op uw externe SD-kaart te plaatsen en later Koran Android verwijdert of gegevens
+    wist, worden alle pagina\'s en audio van Koran Android verwijderd en moet u deze opnieuw
+    downloaden. Weet u zeker dat u de externe SD-kaart wilt gebruiken?</string>
+  <string name="scoped_storage_message">Vanwege wijzigingen in Android om de privacy van gebruikers
+    te vergroten, kan het kopiëren van bestanden buiten de app-mappen voorkomen dat Koran in
+    toekomstige versies van Android toegang heeft tot zijn gegevens. Weet u zeker dat u deze locatie
+    wilt gebruiken?</string>
+  <string name="please_grant_permissions">Verleen toestemming in de applicatie-instellingen</string>
   <!-- Preferences End -->
 
+  <!-- tafaseer -->
+  <string name="more_arabic" translatable="false">المزيد…</string>
+  <string name="see_tafseer_of_verse">De tafseer van deze ayah is inbegrepen bij de tafseer van ayah
+    %d (Klik om uit te vouwen).</string>
+
   <!-- translation updates -->
-  <string name="update_available">Update Beschikbaar</string>
-  <string name="translation_updates_available">Er is een update beschikbaar voor een aantal van uw vertalingen. Bezoek het scherm vertalingen nu?</string>
+  <string name="update_available">Update beschikbaar</string>
+  <string name="translation_updates_available">Er is een update beschikbaar voor sommige van uw
+    vertalingen. Wilt u nu naar het vertalingenscherm gaan?</string>
   <string name="translation_dialog_yes">Ja</string>
   <string name="translation_dialog_later">Later</string>
 
@@ -200,44 +312,49 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
 
   <string name="index_loading">Laden&#8230;</string>
 
-  <string name="canceling">annuleren&#8230;</string>
+  <string name="canceling">Annuleren&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
+  <string name="comma_with_spaces" translatable="false"> , </string>
   <string name="page_description">Pagina %1$s, Juz\' %2$s</string>
   <string name="highlighting_database">Vereiste Bestanden</string>
   <string name="timing_database">Vereiste Bestanden</string>
+  <string name="infinity" translatable="false">&#8734;</string>
 
   <!-- download statuses and errors -->
-  <string name="sdcard_error">Kon geen SD-kaart vinden. Gelieve te dit te controleren en opnieuw te proberen.</string>
-  <string name="download_successful">Download Succesvol</string>
-  <string name="download_processing">Download Verwerken&#8230;</string>
-  <string name="download_error_general">Download mislukt</string>
-  <string name="download_error_disk">Er is onvoeldoende schijfruimte om te downloaden</string>
-  <string name="download_error_network">Er is een netwerk fout opgetreden tijdens het downloaden</string>
-  <string name="download_error_perms">Er is een toestemming fout opgetreden tijdens het downloaden</string>
-  <string name="download_error_invalid_download">Downloaded file was corrupted</string>
-  <string name="download_error_invalid_download_retry">Corrupted file, attempting to re-download</string>
-  <string name="download_error_network_retry">Network error, trying to resume&#8230;</string>
-  <string name="notification_download_canceled">Download canceled</string>
-  <string name="download_non_wifi_prompt">Je maak geen gebruik van Wifi. Toch gegevens downloaden?</string>
+  <string name="sdcard_error">SD-kaart niet gevonden. Monteer de kaart en probeer opnieuw.</string>
+  <string name="download_successful">Download succesvol</string>
+  <string name="download_processing">Download verwerken…</string>
+  <string name="download_error_general">Downloaden mislukt</string>
+  <string name="download_error_disk">Niet genoeg schijfruimte om te downloaden</string>
+  <string name="download_error_network">Downloaden mislukt vanwege netwerkfout</string>
+  <string name="download_error_perms">Downloaden mislukt vanwege machtigingsfout</string>
+  <string name="download_error_invalid_download">Gedownloade bestand was beschadigd</string>
+  <string name="download_error_invalid_download_retry">Beschadigd bestand, opnieuw downloaden wordt
+    geprobeerd</string>
+  <string name="download_error_network_retry">Netwerkfout, proberen te hervatten…</string>
+  <string name="notification_download_canceled">Download geannuleerd</string>
+  <string name="download_non_wifi_prompt">U bent niet verbonden met Wi-Fi. Data toch downloaden?</string>
 
   <!-- downloading dialogs -->
-  <string name="process_progress">Processing file %1$d / %2$d</string>
-  <string name="download_retry">Probeer opnieuw</string>
+  <string name="process_progress">Bestand verwerken %1$d / %2$d</string>
+  <string name="download_retry">Opnieuw Proberen</string>
   <string name="download_cancel">Annuleren</string>
-  <string name="download_extra_data">We moeten één of twee kleine bestanden downloaden om het delen en vertaling te ondersteunen. Download nu?</string>
+  <string name="download_extra_data">We moeten een of twee kleine bestanden downloaden om delen en
+    vertalen te ondersteunen. Download nu?</string>
 
   <!-- translation database stuff -->
   <string name="remove_dlg_title">Vertaling Verwijderen?</string>
-  <string name="remove_dlg_msg">Bent u zeker dat u %1$s wilt verwijderen?</string>
-  <string name="error_getting_translation_list">Kan geen lijst met vertalingen downloaden. Probeer het later opnieuw.</string>
-  <string name="search_data">Zoek Gegevens</string>
-  <string name="need_translation">Je heb geen enkele vertaling/tafseer gedownload</string>
-  <string name="get_translations">Ontvang Vertalingen</string>
+  <string name="remove_dlg_msg">Weet u zeker dat u de %1$s wilt verwijderen?</string>
+  <string name="error_getting_translation_list">Kan de lijst met vertalingen niet downloaden.
+    Probeer het later opnieuw.</string>
+  <string name="search_data">Data Zoeken</string>
+  <string name="need_translation">U heeft nog geen vertalingen/tafaseer gedownload.</string>
+  <string name="get_translations">Vertalingen Ophalen</string>
 
   <!-- help -->
-  <string name="email_us">Als uw vraag hierboven niet wordt beantwoord, kunt u een e-mail sturen naar quranandroid@gmail.com voor ondersteuning.
-         Houd er rekening mee dat we veel e-mails ontvangen. Wij zijn daarom niet instaat om deze allemaal te beantwoorden.
-    </string>
+  <string name="email_us">Als uw vraag hierboven niet wordt beantwoord, kunt u een e-mail sturen
+    naar quranandroid@gmail.com voor ondersteuning. Houd er rekening mee dat we veel e-mails
+    ontvangen, dus we kunnen ze mogelijk niet allemaal beantwoorden.</string>
 
   <!-- sura metainfo -->
   <string name="makki">Makki</string>
@@ -248,15 +365,17 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_restrict_range">Speel enkel de bovenstaande verzen af</string>
-  <string name="play_verses_range">Speel een reeks verzen af:</string>
+  <string name="play_from" translatable="false">@string/from</string>
+  <string name="play_to" translatable="false">@string/to</string>
+  <string name="play_restrict_range">Speel alleen bovenstaande verzen</string>
+  <string name="play_verses_range">Speel een set van verzen af:</string>
   <string name="play_each_verse">Speel elke vers af:</string>
-  <string name="play_apply">Pas toe</string>
-  <string name="play_apply_and_play">Pas toe en Speel af</string>
+  <string name="play_apply">Toepassen</string>
+  <string name="play_apply_and_play">Toepassen en Afspelen</string>
   <string name="previous">Vorige</string>
   <string name="play">Afspelen</string>
-  <string name="pause">Pauze</string>
-  <string name="stop">Stop</string>
+  <string name="pause">Pauzeren</string>
+  <string name="stop">Onderbreken</string>
   <string name="next">Volgende</string>
 
   <string-array name="repeatValues">
@@ -266,59 +385,55 @@ Voor de vertaalde pagina\'s (/voor vertalingen): Ga naar instellingen en wijzig 
     <item>lus</item>
   </string-array>
 
+  <string name="playback_prompt_title">Begin met afspelen vanaf:</string>
+  <string name="starting_page_label">Begin van Pagina</string>
+
   <!-- long press -->
   <string name="ayah_copied_popup">Ayah Gekopieerd</string>
 
   <!-- bookmarks & tags contextual action bar -->
-  <string name="tag_bookmark">Label Bladwijzer</string>
-  <string name="delete_tag">Label Verwijderen</string>
-  <string name="edit_tag">Label Bewerken</string>
-  <string name="new_tag">Nieuwe Label</string>
-  <string name="not_tagged">Niet Gelabeld</string>
+  <string name="tag_bookmark">Tag Bladwijzer</string>
+  <string name="delete_tag">Verwijder Tag</string>
+  <string name="edit_tag">Bewerk Tag</string>
+  <string name="new_tag">Nieuwe Tag</string>
+  <string name="not_tagged">Niet Getaged</string>
   <plurals name="bookmark_tag_deleted">
-    <item quantity="one">een item verwijderd</item>
+    <item quantity="one">Eén item verwijderd</item>
     <item quantity="other">%d items verwijderd</item>
   </plurals>
-  <string name="undo">Ongedaan Maken</string>
+  <string name="undo">Ongedaan maken</string>
+
+  <string name="recent_pages">Recente pagina\'s</string>
+  <plurals name="plural_recent_pages" translatable="false">
+    <item quantity="one">@string/menu_jump_last_page</item>
+    <item quantity="other">@string/recent_pages</item>
+  </plurals>
 
   <!-- tag dialog -->
-  <string name="tag_dlg_title">Label</string>
+  <string name="tag_dlg_title">Tags</string>
   <string name="tag_name">Naam</string>
+  <string name="tag_blank_tag_error">Tagnaam mag niet leeg zijn!</string>
+  <string name="tag_duplicate_tag_error">Tagnaam bestaat al!</string>
 
-  <!-- bookmark & tag list -->
-  <string name="bookmarks_list_empty">Geen Favorieten</string>
+  <!-- widgets -->
+  <string name="bookmarks_list_empty">Geen bladwijzers</string>
 
-  <!-- audio manager -->
-  <string name="menu_show_date">Toon Datum</string>
-  <string name="please_wait">Wacht alstublieft...</string>
-  <string name="about_furqan_summary">Uthmani tekst en Arabische Tafaseer</string>
-  <string name="about_quran_enc_summary">Vertalingen voor vele talen</string>
-  <string name="search_full_results">Volledige resultaten</string>
-  <string name="search_entire_mushaf">Doorzoek de hele mushaf</string>
-  <string name="prefs_category_advanced_summary">Importeren/exporteren van bladwijzers, instellen van de Quran-gegevensmap, enz.</string>
-  <string name="prefs_import_title">Importeren</string>
-  <string name="prefs_import_summary">Bladwijzers en tags importeren</string>
-  <string name="prefs_page_type_title">Paginatype (experimenteel)</string>
-  <string name="prefs_page_type_summary">Selecteer het type leespagina</string>
-  <string name="prefs_sura_translated_name_summary">Toon de vertaling van de naam van de soera</string>
-  <string name="prefs_sura_translated_name_title">Surah vertaalde naam</string>
-  <string name="prefs_preview">Voorbeeld</string>
-  <string name="more_translations">Meer vertalingen</string>
-  <string name="move_up">Naar boven</string>
-  <string name="move_down">Naar beneden</string>
-  <string name="delete_translation">Vertaling verwijderen</string>
-  <string name="scoped_storage_message">Als gevolg van Android veranderingen om de privacy van gebruikers te verhogen, kan het kopiëren van bestanden buiten de app directories ervoor zorgen dat Quran voor Android geen toegang meer heeft tot zijn gegevens in toekomstige versies van Android. Weet u zeker dat u dit pad wilt gebruiken?</string>
-  <string name="see_tafseer_of_verse">De tafseer van deze ayah is opgenomen bij de tafseer van ayah %d (Klik om uit te breiden).</string>
-  <string name="playback_prompt_title">Start het afspelen vanaf:</string>
-  <string name="starting_page_label">Begin van pagina</string>
-  <string name="recent_pages">Recente pagina\'s</string>
-  <string name="tag_blank_tag_error">Tag namen mogen niet leeg zijn!</string>
-  <string name="tag_duplicate_tag_error">Tag naam bestaat al!</string>
+  <!-- audio updates -->
   <string name="audio_updated_title">Koran Audiobestanden Update</string>
-  <string name="audio_updated_text">Verschillende Quran audio bestanden zijn bijgewerkt. Quran voor Android heeft uw kopie van deze bestanden verwijderd, zodat de nieuwste versies kunnen worden gedownload wanneer u ze de volgende keer afspeelt.</string>
-  <string name="prefs_category_dual_screen">Dubbele pagina voorkeuren</string>
-  <string name="prefs_split_page_and_translation_title">Koran en vertaling in duale modus</string>
-  <string name="prefs_split_page_and_translation_summary">In de dubbele pagina modus met vertalingen, wordt de Koran pagina en de vertaling getoond</string>
-  <string name="notification_channel_download">Koran downloads</string>
-  <string name="notification_channel_audio">Koran recitatie</string>
+  <string name="audio_updated_text">Verschillende koran-audiobestanden zijn bijgewerkt. Koran heeft
+    uw exemplaar van deze bestanden verwijderd, zodat de nieuwste versies kunnen worden gedownload
+    de volgende keer dat u ze afspeelt.</string>
+
+  <!-- format strings -->
+  <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
+
+  <!-- dual screen prefs -->
+  <string name="prefs_category_dual_screen">Voorkeuren voor dubbele pagina\'s</string>
+  <string name="prefs_split_page_and_translation_title">Koran en vertaling in dubbele modus</string>
+  <string name="prefs_split_page_and_translation_summary">In dubbele paginamodus met vertalingen,
+    koranpagina en vertaling wordt weergegeven</string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
+  <string name="notification_channel_download">Koran Downloads</string>
+  <string name="notification_channel_audio">Koran Recitaties</string>
 </resources>

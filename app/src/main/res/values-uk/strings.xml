@@ -170,7 +170,7 @@
   <string name="import_data_permissions_error">Не вдалося прочитати файл резервної копії через помилку дозволів.</string>
   <string name="import_data_error">Неприпустимий файл резервної копії (або не вдалося прочитати файл резервної копії).</string>
   <string name="import_data">Імпорт даних</string>
-  <string name="import_data_and_override">Якщо ви імпортуєте цей файл, він замінить усі ваші закладки закладками % 1$d і тегами %2$d. Імпорт?</string>
+  <string name="import_data_and_override">Якщо ви імпортуєте цей файл, він замінить усі ваші закладки закладками %1$d і тегами %2$d. Імпорт?</string>
   <string name="import_successful">Імпорт успішний</string>
   <string name="export_data_error">Помилка експорту даних</string>
   <string name="exported_data">Дані експортуються до %1$s</string>
