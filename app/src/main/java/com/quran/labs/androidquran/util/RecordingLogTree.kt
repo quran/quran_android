@@ -1,9 +1,8 @@
 package com.quran.labs.androidquran.util
 
 import android.util.Log
-import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.quran.analytics.provider.SystemCrashReporter
 import timber.log.Timber
-import java.lang.StringBuilder
 import java.util.ArrayDeque
 import java.util.Deque
 
@@ -30,7 +29,7 @@ class RecordingLogTree : Timber.Tree() {
     }
   }
 
-  private val crashlytics = FirebaseCrashlytics.getInstance()
+  private val crashlytics = SystemCrashReporter.crashReporter()
 
   // Adding one to the initial size accounts for the add before remove.
   private val buffer: Deque<String> = ArrayDeque(BUFFER_SIZE + 1)
