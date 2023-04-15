@@ -21,6 +21,8 @@ android {
     testInstrumentationRunner "com.quran.labs.androidquran.core.QuranTestRunner"
   }
 
+  buildFeatures.buildConfig = true
+
   signingConfigs {
     release {
       storeFile file(STORE_FILE)
@@ -30,7 +32,7 @@ android {
     }
   }
 
-  flavorDimensions "pageType"
+  flavorDimensions = ["pageType"]
   productFlavors {
     madani {
       applicationId "com.quran.labs.androidquran"
@@ -58,7 +60,7 @@ android {
     }
   }
 
-  applicationVariants.all { variant ->
+  applicationVariants.configureEach { variant ->
     resValue "string", "authority", applicationId + '.data.QuranDataProvider'
     resValue "string", "file_authority", applicationId + '.fileprovider'
     if (applicationId.endsWith("debug")) {
