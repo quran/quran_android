@@ -76,7 +76,7 @@ public class QuranRowFactory {
         title = quranDisplayData.getAyahString(bookmark.getSura(), bookmark.getAyah(), context);
         metadata = quranDisplayData.getPageSubtitle(context, bookmark.getPage());
       } else {
-        title = ayahText;
+        title = ayahText + "...";
         metadata = quranDisplayData.getAyahMetadata(bookmark.getSura(), bookmark.getAyah(),
             bookmark.getPage(), context);
       }

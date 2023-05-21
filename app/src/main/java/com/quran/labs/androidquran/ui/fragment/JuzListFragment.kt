@@ -170,8 +170,9 @@ class JuzListFragment : Fragment() {
         R.string.sura_ayah_notification_str,
         quranDisplayData.getSuraName(activity, pos.sura, false), pos.ayah
       )
+      val juzTextWithEllipsis = quarters[i] + "..."
       val builder = Builder()
-        .withText(quarters[i])
+        .withText(juzTextWithEllipsis)
         .withMetadata(metadata)
         .withPage(page)
         .withJuzType(ENTRY_TYPES[i % 4])
