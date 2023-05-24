@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="sura_names">
+    <item>Al-Fātihah</item>
+    <item>Al-Baqarah</item>
+    <item>Āli-ʿImrān</item>
+    <item>An-Nisāʾ</item>
+    <item>Al-Māʾidah</item>
+    <item>Al-Anʿām</item>
+    <item>Al-Aʿrāf</item>
+    <item>Al-Anfāl</item>
+    <item>At-Tawbah</item>
+    <item>Yūnus</item>
+    <item>Hūd</item>
+    <item>Yūsuf</item>
+    <item>Ar-Raʿd</item>
+    <item>Ibrāhīm</item>
+    <item>Al-Ḥijr</item>
+    <item>An-Naḥl</item>
+    <item>Al-Isrāʾ</item>
+    <item>Al-Kahf</item>
+    <item>Maryam</item>
+    <item>Ṭā-Hā</item>
+    <item>Al-Anbiyāʾ</item>
+    <item>Al-Ḥajj</item>
+    <item>Al-Muʾminūn</item>
+    <item>An-Nūr</item>
+    <item>Al-Furqān</item>
+    <item>Ash-Shuʿarāʾ</item>
+    <item>An-Naml</item>
+    <item>Al-Qaṣaṣ</item>
+    <item>Al-ʿAnkabūt</item>
+    <item>Ar-Rūm</item>
+    <item>Luqmān</item>
+    <item>As-Sajdah</item>
+    <item>Al-Aḥzāb</item>
+    <item>Sabaʾ</item>
+    <item>Fāṭir</item>
+    <item>Yā-Sīn</item>
+    <item>Aṣ-Ṣāffāt</item>
+    <item>Ṣād</item>
+    <item>Az-Zumar</item>
+    <item>Ghāfir</item>
+    <item>Fuṣṣilat</item>
+    <item>Ash-Shūrā</item>
+    <item>Az-Zukhruf</item>
+    <item>Ad-Dukhān</item>
+    <item>Al-Jāthiyah</item>
+    <item>Al-Aḥqāf</item>
+    <item>Muḥammad</item>
+    <item>Al-Fatḥ</item>
+    <item>Al-Ḥujurāt</item>
+    <item>Qāf</item>
+    <item>Adh-Dhāriyāt</item>
+    <item>Aṭ-Ṭūr</item>
+    <item>An-Najm</item>
+    <item>Al-Qamar</item>
+    <item>Ar-Raḥmān</item>
+    <item>Al-Wāqiʿah</item>
+    <item>Al-Ḥadīd</item>
+    <item>Al-Mujādilah</item>
+    <item>Al-Ḥashr</item>
+    <item>Al-Mumtaḥanah</item>
+    <item>Aṣ-Ṣaff</item>
+    <item>Al-Jumuʿah</item>
+    <item>Al-Munāfiqūn</item>
+    <item>At-Taghābun</item>
+    <item>Aṭ-Ṭalāq</item>
+    <item>At-Taḥrīm</item>
+    <item>Al-Mulk</item>
+    <item>Al-Qalam</item>
+    <item>Al-Ḥāqqah</item>
+    <item>Al-Maʿārij</item>
+    <item>Nūḥ</item>
+    <item>Al-Jinn</item>
+    <item>Al-Muzzammil</item>
+    <item>Al-Muddaththir</item>
+    <item>Al-Qiyāmah</item>
+    <item>Al-Insān</item>
+    <item>Al-Mursalāt</item>
+    <item>An-Nabaʾ</item>
+    <item>An-Nāziʿāt</item>
+    <item>ʿAbasa</item>
+    <item>At-Takwīr</item>
+    <item>Al-Infiṭār</item>
+    <item>Al-Muṭaffifīn</item>
+    <item>Al-Inshiqāq</item>
+    <item>Al-Burūj</item>
+    <item>Aṭ-Ṭāriq</item>
+    <item>Al-Aʿlā</item>
+    <item>Al-Ghāshiyah</item>
+    <item>Al-Fajr</item>
+    <item>Al-Balad</item>
+    <item>Ash-Shams</item>
+    <item>Al-Layl</item>
+    <item>Aḍ-Ḍuḥā</item>
+    <item>Ash-Sharḥ</item>
+    <item>At-Tīn</item>
+    <item>Al-ʿAlaq</item>
+    <item>Al-Qadr</item>
+    <item>Al-Bayyinah</item>
+    <item>Az-Zalzalah</item>
+    <item>Al-ʿĀdiyāt</item>
+    <item>Al-Qāriʿah</item>
+    <item>At-Takāthur</item>
+    <item>Al-ʿAṣr</item>
+    <item>Al-Humazah</item>
+    <item>Al-Fīl</item>
+    <item>Quraysh</item>
+    <item>Al-Māʿūn</item>
+    <item>Al-Kawthar</item>
+    <item>Al-Kāfirūn</item>
+    <item>An-Naṣr</item>
+    <item>Al-Masad</item>
+    <item>Al-Ikhlāṣ</item>
+    <item>Al-Falaq</item>
+    <item>An-Nās</item>
+  </string-array>
+
+  <!-- If sura name has no translation, please add empty double quotes to the
+       respective item body to keep Android Studio happy -->
+  <string-array name="sura_names_translation">
+    <item>Khai Đề</item>
+    <item>Con Bò Cái</item>
+    <item>Gia Đình Imran</item>t
+    <item>Người Phụ Nữ</item>
+    <item>Bàn Thức Ăn</item>
+    <item>Súc Vật</item>
+    <item>Các Gò Cao</item>
+    <item>Chiến Lợi Phẩm</item>
+    <item>Sám Hối</item>
+    <item>Nabi Jonah (Giô-na)</item>
+    <item>Nabi Hūd</item>
+    <item>Nabi Joseph (Giô-sép)</item>
+    <item>Sấm Sét</item>
+    <item>Nabi Abraham (Áp-ra-ham)</item>
+    <item>Vùng Núi Hijr</item>
+    <item>Con Ong</item>
+    <item>Đi Trong Đêm</item>
+    <item>Cái Hang</item>
+    <item>Maryam (Maria)</item>
+    <item>Ta-Ha</item>
+    <item>Các Vị Nabi</item>
+    <item>Hành Hương Hajj</item>
+    <item>Người Có Đức Tin</item>
+    <item>Ánh Sáng</item>
+    <item>Tiêu Chuẩn Phân Biệt</item>
+    <item>Các Thi Sĩ</item>
+    <item>Con Kiến</item>
+    <item>Những Câu Chuyện</item>
+    <item>Con Nhện</item>
+    <item>La Mã</item>
+    <item>Hiền Nhân Luqmān</item>
+    <item>Phủ Phục</item>
+    <item>Liên Quân</item>
+    <item>Vương Quốc Sheba</item>
+    <item>Đấng Tạo Hoá</item>
+    <item>Ya Sin</item>
+    <item>Những Thiên Thần Đứng Thẳng Hàng</item>
+    <item>Chữ &quot;Sad&quot;</item>
+    <item>Những Nhóm Người</item>
+    <item>Đấng Tha Thứ</item>
+    <item>Được Giải Thích Chi Tiết</item>
+    <item>Tham Khảo</item>
+    <item>Đồ Trang Trí Bằng Vàng</item>
+    <item>Khói Mờ</item>
+    <item>Quì Gối</item>
+    <item>Cồn Cát</item>
+    <item>Thiên Sứ Muhammad</item>
+    <item>Thắng Lợi</item>
+    <item>Nội Phòng</item>
+    <item>Chữ &quot;Qaf&quot;</item>
+    <item>Những Cơn Gió Thổi Bụi</item>
+    <item>Núi Tur</item>
+    <item>Tinh Tú</item>
+    <item>Mặt Trăng</item>
+    <item>Đấng Độ Lượng</item>
+    <item>Biến Cố Giờ Tận Thế</item>
+    <item>Sắt</item>
+    <item>Người Phụ Nữ Khiếu Nại</item>
+    <item>Cuộc Tập Họp</item>
+    <item>Cô Ấy Cần Được Kiểm Tra</item>
+    <item>Hàng Ngũ</item>
+    <item>Thứ Sáu</item>
+    <item>Kẻ Đạo Đức Giả</item>
+    <item>Người Thắng Kẻ Thua</item>
+    <item>Ly Dị</item>
+    <item>Cấm Đoán</item>
+    <item>Quyền Thống Trị</item>
+    <item>Cây Viết</item>
+    <item>Sự Thật</item>
+    <item>Đường Lên Trời</item>
+    <item>Nabi Noah (Nô-ê)</item>
+    <item>Loài Jinn</item>
+    <item>Người Cuộn Mình Trong Chiếc Áo</item>
+    <item>Người Phủ Áo Choàng Lên Mình</item>
+    <item>Ngày Phục Sinh</item>
+    <item>Loài Người</item>
+    <item>Các Luồng Gió Liên Tục</item>
+    <item>Các Nguồn Tin</item>
+    <item>Giật Mạnh</item>
+    <item>Y Cau Mày</item>
+    <item>Sự Cuốn Xếp</item>
+    <item>Phân Tách</item>
+    <item>Những Kẻ Giân Lận</item>
+    <item>Vỡ Nứt</item>
+    <item>Chòm Sao “Burūj”</item>
+    <item>Sao Mai</item>
+    <item>Đấng Tối Cao</item>
+    <item>Biến Cố Trần Ngập</item>
+    <item>Rạng Đông</item>
+    <item>Vùng Đất Al-Haram</item>
+    <item>Mặt Trời</item>
+    <item>Ban Đêm</item>
+    <item>Giờ Dhuha</item>
+    <item>Mở Rộng</item>
+    <item>Cây Sung</item>
+    <item>Cục Máu</item>
+    <item>Đêm Định Mệnh</item>
+    <item>Bằng Chứng Rõ Ràng</item>
+    <item>Động Đất</item>
+    <item>Những Con Chiến Mã</item>
+    <item>Giờ Kinh Hoàng</item>
+    <item>Tranh Tiền Của Và Con Cái</item>
+    <item>Thời Gian</item>
+    <item>Kẻ Vu Khống</item>
+    <item>Con Voi</item>
+    <item>Bộ Tộc Quraish</item>
+    <item>Vật Dụng Cần Thiết</item>
+    <item>Sông Kawthar</item>
+    <item>Kẻ Vô Đức Tin</item>
+    <item>Phù Trợ</item>
+    <item>Sợi Dây Được Xe Từ Xơ</item>
+    <item>Thành Tâm</item>
+    <item>Bình Minh</item>
+    <item>Nhân Loại</item>
+  </string-array>
+</resources>
