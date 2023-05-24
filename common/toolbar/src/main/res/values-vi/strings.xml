@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">Đánh dấu Ayah này</string>
+  <string name="tag_ayah">Gắn thẻ Ayah này</string>
+  <string name="share_ayah">Chia sẻ Link Ayah</string>
+  <string name="share_ayah_text">Chia sẻ văn bản Ayah</string>
+  <string name="translation_ayah">Bản dịch/Tafseer của Ayah</string>
+  <string name="play_from_here">Phát từ Đây</string>
+  <string name="recite_from_here">Đọc từ đây</string>
+  <string name="search_key">Ấn nút tìm để tìm một câu kinh</string>
+  <string name="copy_ayah">Sao chép Ayah</string>
+</resources>

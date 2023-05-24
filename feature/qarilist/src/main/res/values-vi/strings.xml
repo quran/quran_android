@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Chọn một Qari</string>
+  <string name="qarilist_ready_to_play">Có sẵn để Phát</string>
+  <string name="qarilist_qaris_with_downloads">Qaris với Tải xuống</string>
+  <string name="qarilist_gapless">Gapless (Liền mạch)</string>
+  <string name="qarilist_gapped">Gapped (Ngắt quãng)</string>
+  <string name="qarilist_selected">Đã chọn</string>
+  <string name="qarilist_dismiss">Bỏ qua</string>
+</resources>

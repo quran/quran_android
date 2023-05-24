@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">1 surah đã tải</item>
+    <item quantity="other">%1$d surahs đã tải</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Quản lý Âm thanh</string>
+  <string name="audio_manager_remove_audio_title">Xóa Surah?</string>
+  <string name="audio_manager_remove_audio_msg">Bạn có muốn xóa %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Bạn có chắc là muốn xóa?</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Xóa surah thành công</item>
+    <item quantity="other">Xóa %1$d surahs thành công</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">Đã xảy ra lỗi khi xóa surah</item>
+    <item quantity="other">Đã xảy ra lỗi khi xóa %1$d surahs</item>
+  </plurals>
+  <string name="audio_manager_surah_download">Tải surah</string>
+  <string name="audio_manager_surah_delete">Xóa surah</string>
+  <string name="audio_manager_download_all">Tải tất cả</string>
+  <string name="audio_manager_download_selection">Tải xuống lựa chọn</string>
+  <string name="audio_manager_delete_selection">Xóa lựa chọn</string>
+
+  <string name="downloading_title">Đang tải xuống&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">Đã tải xuống %1$s / %2$s</string>
+  <string name="download_sura_progress">Đã tải xuống %1$s / %2$s of surah %3$d</string>
+  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Đang tải xuống surah %1$d ayah %2$d</string>
+</resources>
