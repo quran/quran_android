@@ -6,6 +6,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 fun Project.applyKotlinCommon() {
   extensions.configure<KotlinProjectExtension> {
-    jvmToolchain(11)
+    jvmToolchain(17)
   }
 }
