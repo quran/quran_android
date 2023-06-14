@@ -1,5 +1,6 @@
 package com.quran.data.source
 
-enum class PageContentType {
-  IMAGE, LINE
+sealed class PageContentType {
+  object Image : PageContentType()
+  data class Line(val ratio: Float, val allowOverlapOfLines: Boolean): PageContentType()
 }
