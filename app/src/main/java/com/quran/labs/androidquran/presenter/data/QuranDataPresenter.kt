@@ -115,7 +115,7 @@ class QuranDataPresenter @Inject internal constructor(
 
   fun imagesVersion() = quranPageProvider.getImageVersion()
 
-  fun canProceedWithoutDownload() = quranPageProvider.getPageContentType() == PageContentType.IMAGE
+  fun canProceedWithoutDownload() = quranPageProvider.getPageContentType() == PageContentType.Image
 
   fun fallbackToImageType() {
     val fallbackType = quranPageProvider.getFallbackPageType()

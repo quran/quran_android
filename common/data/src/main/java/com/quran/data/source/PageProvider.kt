@@ -26,7 +26,7 @@ interface PageProvider {
   @StringRes fun getPreviewTitle(): Int
   @StringRes fun getPreviewDescription(): Int
 
-  fun getPageContentType(): PageContentType = PageContentType.IMAGE
+  fun getPageContentType(): PageContentType = PageContentType.Image
   fun getFallbackPageType(): String? = null
   fun getQaris(): List<Qari>
   fun pageType(): String = ""
