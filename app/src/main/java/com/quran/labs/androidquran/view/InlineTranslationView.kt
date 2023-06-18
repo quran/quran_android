@@ -3,9 +3,11 @@ package com.quran.labs.androidquran.view
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextUtils
+import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.util.AttributeSet
 import android.view.View
@@ -13,9 +15,11 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.annotation.StyleRes
+import androidx.core.content.ContextCompat
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
+import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.util.QuranSettings
 
 class InlineTranslationView @JvmOverloads constructor(
@@ -30,6 +34,7 @@ class InlineTranslationView @JvmOverloads constructor(
   private var textStyle = 0
   private var fontSize = 0
   private var footerSpacerHeight = 0
+  private var inlineAyahColor: Int = 0
 
   private lateinit var linearLayout: LinearLayout
 
@@ -56,6 +61,7 @@ class InlineTranslationView @JvmOverloads constructor(
     val settings = QuranSettings.getInstance(context)
     fontSize = settings.translationTextSize
     textStyle = R.style.TranslationText
+    inlineAyahColor = ContextCompat.getColor(context, R.color.translation_translator_color)
   }
 
   fun refresh() {
@@ -129,7 +135,7 @@ class InlineTranslationView @JvmOverloads constructor(
         }
 
         // irrespective of whether it's a link or not, show the text
-        builder.append(translationText)
+        builder.append(stylize(ayah.texts[i], translationText))
       }
     }
     ayahView.append(builder)
@@ -137,5 +143,41 @@ class InlineTranslationView @JvmOverloads constructor(
     params.setMargins(leftRightMargin, topBottomMargin, leftRightMargin, topBottomMargin)
     ayahView.setTextIsSelectable(true)
     linearLayout.addView(ayahView, params)
+  }
+
+  private fun collapsedFootnoteSpan(number: Int): SpannableString {
+    return SpannableString("")
+  }
+
+  private fun expandedFootnote(
+    spannableStringBuilder: SpannableStringBuilder,
+    start: Int,
+    end: Int
+  ): SpannableStringBuilder {
+    return spannableStringBuilder
+  }
+
+  private fun stylize(
+    metadata: TranslationMetadata,
+    translationText: String
+  ): CharSequence {
+    val spannableStringBuilder = SpannableStringBuilder(translationText)
+
+    metadata.ayat.forEach { range ->
+      val span = ForegroundColorSpan(inlineAyahColor)
+      spannableStringBuilder.setSpan(
+        span,
+        range.first,
+        range.last + 1,
+        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+      )
+    }
+
+    return metadata.footnoteCognizantText(
+      spannableStringBuilder,
+      listOf(),
+      ::collapsedFootnoteSpan,
+      ::expandedFootnote
+    )
   }
 }

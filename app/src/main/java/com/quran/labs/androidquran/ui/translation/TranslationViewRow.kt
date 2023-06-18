@@ -5,6 +5,7 @@ import android.text.SpannableStringBuilder
 import androidx.annotation.IntDef
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.common.QuranAyahInfo
+import com.quran.labs.androidquran.ui.helpers.TranslationFootnoteHelper
 
 internal class TranslationViewRow @JvmOverloads constructor(
   @field:Type val type: Int,
@@ -15,7 +16,7 @@ internal class TranslationViewRow @JvmOverloads constructor(
   val linkPage: Int? = null,
   val isArabic: Boolean = false,
   val ayat: List<IntRange> = emptyList(),
-  val footnotes: List<IntRange> = emptyList()
+  private val footnotes: List<IntRange> = emptyList()
 ) {
 
   fun footnoteCognizantText(
@@ -24,24 +25,14 @@ internal class TranslationViewRow @JvmOverloads constructor(
     collapsedFootnoteSpannableStyler: ((Int) -> SpannableString),
     expandedFootnoteSpannableStyler: ((SpannableStringBuilder, Int, Int) -> SpannableStringBuilder)
   ): CharSequence {
-    val data = data
-    return if (data != null) {
-      val ranges = footnotes.sortedByDescending { it.last }
-      ranges.foldIndexed(spannableStringBuilder) { index, builder, range ->
-        val number = ranges.size - index
-        if (number !in expandedFootnotes) {
-          builder.replace(
-            range.first,
-            range.last + 1,
-            collapsedFootnoteSpannableStyler(number)
-          )
-        } else {
-          expandedFootnoteSpannableStyler(builder, range.first, range.last + 1)
-        }
-      }
-    } else {
-      ""
-    }
+    return TranslationFootnoteHelper.footnoteCognizantText(
+      data,
+      footnotes,
+      spannableStringBuilder,
+      expandedFootnotes,
+      collapsedFootnoteSpannableStyler,
+      expandedFootnoteSpannableStyler
+    )
   }
 
   @IntDef(
