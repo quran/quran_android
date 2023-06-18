@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.ui.translation
 
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import androidx.annotation.IntDef
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.common.QuranAyahInfo
@@ -15,6 +17,33 @@ internal class TranslationViewRow @JvmOverloads constructor(
   val ayat: List<IntRange> = emptyList(),
   val footnotes: List<IntRange> = emptyList()
 ) {
+
+  fun footnoteCognizantText(
+    spannableStringBuilder: SpannableStringBuilder,
+    expandedFootnotes: List<Int>,
+    collapsedFootnoteSpannableStyler: ((Int) -> SpannableString),
+    expandedFootnoteSpannableStyler: ((SpannableStringBuilder, Int, Int) -> SpannableStringBuilder)
+  ): CharSequence {
+    val data = data
+    return if (data != null) {
+      val ranges = footnotes.sortedByDescending { it.last }
+      ranges.foldIndexed(spannableStringBuilder) { index, builder, range ->
+        val number = ranges.size - index
+        if (number !in expandedFootnotes) {
+          builder.replace(
+            range.first,
+            range.last + 1,
+            collapsedFootnoteSpannableStyler(number)
+          )
+        } else {
+          expandedFootnoteSpannableStyler(builder, range.first, range.last + 1)
+        }
+      }
+    } else {
+      ""
+    }
+  }
+
   @IntDef(
     Type.BASMALLAH,
     Type.SURA_HEADER,

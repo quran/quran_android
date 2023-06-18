@@ -2,14 +2,13 @@ package com.quran.labs.androidquran.ui.translation
 
 import android.content.Context
 import android.graphics.Color
-import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
-import android.text.style.TextAppearanceSpan
+import android.text.style.SuperscriptSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,11 +23,13 @@ import com.quran.data.model.highlight.HighlightType
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
+import com.quran.labs.androidquran.ui.helpers.ExpandFootnoteSpan
 import com.quran.labs.androidquran.ui.helpers.ExpandTafseerSpan
 import com.quran.labs.androidquran.ui.helpers.HighlightTypes
 import com.quran.labs.androidquran.ui.helpers.UthmaniSpan
 import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.AyahNumberView
 import com.quran.labs.androidquran.view.DividerView
 import kotlin.math.ln1p
@@ -61,6 +62,7 @@ internal class TranslationAdapter(
 
   private val expandedTafseerAyahs = mutableSetOf<Pair<Int, Int>>()
   private val expandedHyperlinks = mutableSetOf<Pair<Int, Int>>()
+  private val expandedFootnotes = mutableMapOf<QuranAyahInfo, List<Int>>()
 
   private val defaultClickListener = View.OnClickListener { this.handleClick(it) }
   private val defaultLongClickListener = View.OnLongClickListener { this.selectVerseRows(it) }
@@ -340,18 +342,22 @@ internal class TranslationAdapter(
                 holder.text.setOnClickListener(expandHyperlinkClickListener)
               }
 
-              val spannable = SpannableString(row.data)
+              val spannableBuilder = SpannableStringBuilder(row.data)
+
               row.ayat.forEach { range ->
                 val span = ForegroundColorSpan(inlineAyahColor)
-                spannable.setSpan(span, range.first, range.last + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannableBuilder.setSpan(span, range.first, range.last + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
               }
 
-              row.footnotes.forEach { range ->
-                val span = RelativeSizeSpan(0.7f)
-                val colorSpan = ForegroundColorSpan(footnoteColor)
-                spannable.setSpan(span, range.first, range.last + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spannable.setSpan(colorSpan, range.first, range.last + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-              }
+              val expandedFootnotes = expandedFootnotes[row.ayahInfo] ?: emptyList()
+              val spannable = SpannableString(
+                row.footnoteCognizantText(
+                  spannableBuilder,
+                  expandedFootnotes,
+                  ::collapsedFootnoteSpan,
+                  ::expandedFootnote
+                )
+              )
 
               when {
                 row.link != null && !expandHyperlink -> getAyahLink(row.link)
@@ -418,6 +424,37 @@ internal class TranslationAdapter(
       }
     }
     updateHighlight(row, holder)
+  }
+
+  private fun collapsedFootnoteSpan(number: Int): SpannableString {
+    val text = QuranUtils.getLocalizedNumber(context, number)
+    val spannable = SpannableString(text)
+    spannable.setSpan(SuperscriptSpan(), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    spannable.setSpan(RelativeSizeSpan(0.7f), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    spannable.setSpan(ExpandFootnoteSpan(number, ::expandFootnote), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    return spannable
+  }
+
+  private fun expandedFootnote(
+    spannableStringBuilder: SpannableStringBuilder,
+    start: Int,
+    end: Int
+  ): SpannableStringBuilder {
+    val span = RelativeSizeSpan(0.7f)
+    val colorSpan = ForegroundColorSpan(footnoteColor)
+    spannableStringBuilder.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    spannableStringBuilder.setSpan(colorSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    return spannableStringBuilder
+  }
+
+  private fun expandFootnote(view: View, number: Int) {
+    val position = recyclerView.getChildAdapterPosition(view)
+    if (position != RecyclerView.NO_POSITION) {
+      val data = data[position]
+      val expanded = expandedFootnotes[data.ayahInfo] ?: listOf()
+      expandedFootnotes[data.ayahInfo] = expanded + number
+      notifyItemChanged(position)
+    }
   }
 
   private fun getAyahLink(link: SuraAyah): CharSequence {
