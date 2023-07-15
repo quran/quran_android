@@ -13,12 +13,14 @@ class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
     with(target) {
       with(pluginManager) {
         apply("com.android.library")
+        apply("org.jetbrains.kotlin.android")
       }
 
       extensions.configure<LibraryExtension> {
-        applyAndroidCommon()
+        applyAndroidCommon(target)
+        defaultConfig.targetSdk = 32
         buildFeatures.compose = true
-        composeOptions.kotlinCompilerExtensionVersion = "1.4.8"
+        composeOptions.kotlinCompilerExtensionVersion = "1.5.0-dev-k1.9.0-6a60475e07f"
       }
 
       applyKotlinCommon()

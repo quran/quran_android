@@ -17,7 +17,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
       }
 
       extensions.configure<ApplicationExtension> {
-        applyAndroidCommon()
+        applyAndroidCommon(target)
         defaultConfig.targetSdk = 32
       }
 

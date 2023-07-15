@@ -2,10 +2,11 @@ package com.quran.labs.androidquran.buildutil
 
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.JavaVersion
+import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
-fun CommonExtension<*, *, *, *>.applyAndroidCommon() {
+fun CommonExtension<*, *, *, *>.applyAndroidCommon(project: Project) {
   compileSdk = 33
   defaultConfig.minSdk = 21
 
@@ -16,5 +17,11 @@ fun CommonExtension<*, *, *, *>.applyAndroidCommon() {
 
   (this as ExtensionAware).extensions.configure<KotlinJvmOptions>("kotlinOptions") {
     jvmTarget = JavaVersion.VERSION_17.toString()
+  }
+
+  lint {
+    checkReleaseBuilds = true
+    enable.add("Interoperability")
+    lintConfig = project.rootProject.file("lint.xml")
   }
 }
