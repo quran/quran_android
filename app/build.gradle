@@ -86,12 +86,6 @@ android {
     }
   }
 
-  lint {
-    checkReleaseBuilds true
-    enable 'Interoperability'
-    lintConfig file('lint.xml')
-  }
-
   packagingOptions {
     resources {
       excludes += ['META-INF/*.kotlin_module', 'META-INF/DEPENDENCIES', 'META-INF/INDEX.LIST']

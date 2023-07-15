@@ -1,5 +1,4 @@
 plugins {
-  id 'quran.android.library.android'
   id 'quran.android.library.compose'
 }
 
