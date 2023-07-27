@@ -22,7 +22,7 @@ buildscript {
     moshiVersion = '1.15.0'
     okioVersion = '3.4.0'
     retrofitVersion = '2.9.0'
-    sqldelightVersion = '2.0.0-rc02'
+    sqldelightVersion = '2.0.0'
 
     // testing
     junitVersion = '4.13.2'
