@@ -9,6 +9,7 @@ object TypefaceManager {
   const val TYPE_UTHMANI_HAFS = 1
   const val TYPE_NOOR_HAYAH = 2
   const val TYPE_UTHMANIC_WARSH = 3
+  const val TYPE_UTHMANIC_QALOON = 4
 
   private var typeface: Typeface? = null
   private var arabicTafseerTypeface: Typeface? = null
@@ -21,6 +22,7 @@ object TypefaceManager {
       val fontName = when (QuranFileConstants.FONT_TYPE) {
         TYPE_NOOR_HAYAH -> "noorehira.ttf"
         TYPE_UTHMANIC_WARSH -> "uthmanic_warsh_ver09.ttf"
+        TYPE_UTHMANIC_QALOON -> "uthmanic_qaloon_ver21.ttf"
         else -> "uthmanic_hafs_ver12.otf"
       }
       val instance = Typeface.createFromAsset(context.assets, fontName)

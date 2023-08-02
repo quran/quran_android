@@ -117,10 +117,6 @@ class DatabaseHandler private constructor(
 
   fun validDatabase(): Boolean = database?.isOpen ?: false
 
-  private fun getVerses(sura: Int, minAyah: Int, maxAyah: Int): Cursor? {
-    return getVerses(sura, minAyah, maxAyah, VERSE_TABLE)
-  }
-
   private fun getProperty(column: String): Int {
     var value = 1
     if (!validDatabase()) return value
@@ -282,16 +278,6 @@ class DatabaseHandler private constructor(
       whereQuery.toString(), null, null, null,
       "$COL_SURA,$COL_AYAH"
     )
-  }
-
-  /**
-   * @deprecated use {@link #getVerses(VerseRange, int)} instead
-   * @param sura the sura
-   * @param ayah the ayah
-   * @return the result
-   */
-  fun getVerse(sura: Int, ayah: Int): Cursor? {
-    return getVerses(sura, ayah, ayah)
   }
 
   fun getVersesByIds(ids: List<Int>): Cursor? {
