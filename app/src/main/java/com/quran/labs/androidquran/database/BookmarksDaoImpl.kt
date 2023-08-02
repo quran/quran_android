@@ -23,6 +23,12 @@ class BookmarksDaoImpl @Inject constructor(
     }
   }
 
+  override suspend fun removeBookmarksForPage(page: Int) {
+    withContext(Dispatchers.IO) {
+      bookmarksDBAdapter.removeBookmarksForPage(page)
+    }
+  }
+
   override suspend fun recentPages(): List<RecentPage> {
     return withContext(Dispatchers.IO) {
       bookmarksDBAdapter.getRecentPages()
@@ -38,6 +44,12 @@ class BookmarksDaoImpl @Inject constructor(
   override suspend fun removeRecentPages() {
     withContext(Dispatchers.IO) {
       bookmarksDBAdapter.removeRecentPages()
+    }
+  }
+
+  override suspend fun removeRecentsForPage(page: Int) {
+    withContext(Dispatchers.IO) {
+      bookmarksDBAdapter.removeRecentsForPage(page)
     }
   }
 }
