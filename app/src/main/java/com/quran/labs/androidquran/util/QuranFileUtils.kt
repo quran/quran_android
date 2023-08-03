@@ -250,6 +250,30 @@ class QuranFileUtils @Inject constructor(
     copyFromAssets(assetsPath, filename, actualDestination)
   }
 
+  override fun copyFromAssetsRelativeRecursive(
+    assetsPath: String,
+    directory: String,
+    destination: String
+  ) {
+    val destinationPath = File(getQuranBaseDirectory(appContext) + destination)
+    val directoryDestinationPath = File(destinationPath, directory)
+    if (!directoryDestinationPath.exists()) {
+      directoryDestinationPath.mkdirs()
+    }
+
+    val assets = appContext.assets
+    val files = assets.list(assetsPath) ?: emptyArray()
+    val destinationDirectory = "$destination${File.separator}$directory"
+    files.forEach {
+      val path = "$assetsPath${File.separator}$it"
+      if (assets.list(path)?.isNotEmpty() == true) {
+        copyFromAssetsRelativeRecursive(path, it, destinationDirectory)
+      } else {
+        copyFromAssetsRelative(path, it, destinationDirectory)
+      }
+    }
+  }
+
   @WorkerThread
   override fun removeOldArabicDatabase(): Boolean {
     val databaseQuranArabicDatabase = File(

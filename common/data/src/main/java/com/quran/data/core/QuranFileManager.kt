@@ -17,6 +17,9 @@ interface QuranFileManager {
   fun copyFromAssetsRelative(assetsPath: String, filename: String, destination: String)
 
   @WorkerThread
+  fun copyFromAssetsRelativeRecursive(assetsPath: String, directory: String, destination: String)
+
+  @WorkerThread
   fun removeOldArabicDatabase(): Boolean
 
   @WorkerThread
