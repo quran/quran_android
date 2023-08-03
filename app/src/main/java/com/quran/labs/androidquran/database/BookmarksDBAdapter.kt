@@ -54,6 +54,17 @@ class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabas
     }
   }
 
+  fun removeRecentsForPage(page: Int) {
+    lastPageQueries.transaction {
+      val lastPages = lastPageQueries.getLastPages().executeAsList()
+      val lastPagesWithoutPage = lastPages.filter { it.page != page }
+      if (lastPages.size != lastPagesWithoutPage.size) {
+        lastPageQueries.removeLastPages()
+        lastPagesWithoutPage.forEach { addRecentPage(it.page) }
+      }
+    }
+  }
+
   fun replaceRecentRangeWithPage(deleteRangeStart: Int, deleteRangeEnd: Int, page: Int) {
     val maxPages = Constants.MAX_RECENT_PAGES.toLong()
     lastPageQueries.replaceRangeWithPage(deleteRangeStart, deleteRangeEnd, page, maxPages)
@@ -102,6 +113,14 @@ class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabas
       bookmarks.forEach {
         bookmarkQueries.update(it.sura, it.ayah, it.page, it.id)
       }
+    }
+  }
+
+  fun removeBookmarksForPage(page: Int) {
+    val bookmarkId = bookmarkQueries.getBookmarkIdForPage(page).executeAsOneOrNull()
+    if (bookmarkId != null) {
+      bookmarkTagQueries.deleteByBookmarkIds(listOf(bookmarkId))
+      bookmarkQueries.deleteByIds(listOf(bookmarkId))
     }
   }
 
