@@ -15,7 +15,7 @@ import timber.log.Timber;
 public class ZipUtils {
 
   private static final int BUFFER_SIZE = 512;
-  private static final int MAX_FILES = 10000; // Max number of files
+  private static final int MAX_FILES = 12000; // Max number of files
 
   @VisibleForTesting
   static int MAX_UNZIPPED_SIZE = 0x1f400000; // Max size of unzipped data, 500MB
