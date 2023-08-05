@@ -57,8 +57,6 @@ import com.quran.data.model.selection.AyahSelection;
 import com.quran.data.model.selection.AyahSelectionKt;
 import com.quran.data.model.selection.SelectionIndicator;
 import com.quran.data.model.selection.SelectionIndicatorKt;
-import com.quran.data.page.provider.di.QuranPageExtrasComponent;
-import com.quran.data.page.provider.di.QuranPageExtrasComponentProvider;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.HelpActivity;
 import com.quran.labs.androidquran.QuranApplication;
@@ -119,6 +117,8 @@ import com.quran.labs.androidquran.view.SlidingUpPanelLayout;
 import com.quran.mobile.di.AyahActionFragmentProvider;
 import com.quran.mobile.di.QuranReadingActivityComponent;
 import com.quran.mobile.di.QuranReadingActivityComponentProvider;
+import com.quran.mobile.di.QuranReadingPageComponent;
+import com.quran.mobile.di.QuranReadingPageComponentProvider;
 import com.quran.mobile.feature.qarilist.QariListWrapper;
 import com.quran.mobile.feature.qarilist.di.QariListWrapperInjector;
 import com.quran.page.common.factory.PageViewFactoryProvider;
@@ -161,7 +161,7 @@ public class PagerActivity extends AppCompatActivity implements
     AyahSelectedListener,
     JumpDestination,
     QuranReadingActivityComponentProvider,
-    QuranPageExtrasComponentProvider,
+    QuranReadingPageComponentProvider,
     AyahToolBarInjector,
     QariListWrapperInjector,
     ActivityCompat.OnRequestPermissionsResultCallback {
@@ -826,7 +826,7 @@ public class PagerActivity extends AppCompatActivity implements
 
   @NonNull
   @Override
-  public QuranPageExtrasComponent provideQuranPageExtrasComponent(@NonNull int... pages) {
+  public QuranReadingPageComponent provideQuranReadingPageComponent(@NonNull int... pages) {
     return getPagerActivityComponent()
         .quranPageComponentBuilder()
         .withQuranPageModule(new QuranPageModule(pages))
