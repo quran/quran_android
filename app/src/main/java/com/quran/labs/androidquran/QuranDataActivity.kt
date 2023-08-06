@@ -158,8 +158,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
 
     errorDialog?.dismiss()
     errorDialog = null
-    updateDialog?.dismiss()
-    updateDialog = null
+    hideMigrationDialog()
 
     scope.cancel()
     super.onPause()
@@ -238,12 +237,23 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     permissionsDialog.show()
   }
 
-  private fun migrateFromTo(destination: String) {
-    val migrationDialog = AlertDialog.Builder(this)
+  private fun showMigrationDialog() {
+    if (updateDialog == null) {
+      val migrationDialog = AlertDialog.Builder(this)
         .setView(R.layout.migration_upgrade)
         .create()
-    updateDialog = migrationDialog
-    migrationDialog.show()
+      updateDialog = migrationDialog
+      migrationDialog.show()
+    }
+  }
+
+  private fun hideMigrationDialog() {
+    updateDialog?.dismiss()
+    updateDialog = null
+  }
+
+  private fun migrateFromTo(destination: String) {
+    showMigrationDialog()
 
     scope.launch {
       withContext(Dispatchers.IO) {
@@ -257,6 +267,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   }
 
   private fun checkPages() {
+    showMigrationDialog()
     quranDataPresenter.checkPages()
   }
 
@@ -382,15 +393,13 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   }
 
   fun onStorageNotAvailable() {
-    updateDialog?.dismiss()
-    updateDialog = null
+    hideMigrationDialog()
     // no storage mounted, nothing we can do...
     runListViewWithoutPages()
   }
 
   fun onPagesChecked(quranDataStatus: QuranDataStatus) {
-    updateDialog?.dismiss()
-    updateDialog = null
+    hideMigrationDialog()
 
     this.quranDataStatus = quranDataStatus
     if (!quranDataStatus.havePages()) {
