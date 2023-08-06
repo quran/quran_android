@@ -13,4 +13,5 @@ interface QuranDataSource {
   val isMakkiBySuraArray: BooleanArray
   val quarterStartByPage: IntArray
   val quartersArray: Array<SuraAyah>
+  val manzilPageArray: Array<Int>
 }

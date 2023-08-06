@@ -314,7 +314,6 @@
 
   <string name="canceling">Annuleren&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
-  <string name="comma_with_spaces" translatable="false"> , </string>
   <string name="page_description">Pagina %1$s, Juz\' %2$s</string>
   <string name="highlighting_database">Vereiste Bestanden</string>
   <string name="timing_database">Vereiste Bestanden</string>
