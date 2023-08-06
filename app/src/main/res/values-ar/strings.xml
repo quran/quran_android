@@ -156,6 +156,7 @@
 
   <string name="canceling">جاري إلغاء اﻷمر…</string>
   <string name="juz2_description">الجزء %1$s</string>
+  <string name="manzil_description">منزل %1$s</string>
   <string name="page_description">صفحة %1$s، جزء %2$s</string>
   <string name="highlighting_database">جاري تحميل الملفات المطلوبة</string>
   <string name="timing_database">جاري تحميل الملفات المطلوبة</string>
@@ -320,6 +321,6 @@
     مكان غير مجلد التطبيق الافتراضي قد يؤدي إلى عدم تمكن التطبيق من الوصول لملفاته في إصدارات أندرويد
     القادمة، هل ترغب في نقل البيانات على أية حال؟
   </string>
-  <string name="comma_with_spaces">" ، "</string>
+  <string name="comma">"،"</string>
 
 </resources>

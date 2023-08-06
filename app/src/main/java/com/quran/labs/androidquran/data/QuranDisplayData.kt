@@ -89,6 +89,15 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
       QuranUtils.getLocalizedNumber(context, quranInfo.getJuzForDisplayFromPage(page)))
   }
 
+  fun getManzilForPage(context: Context, page: Int): String {
+    val manzil = quranInfo.manzilForPage(page)
+    return if (manzil > 0) {
+      context.getString(R.string.comma) + ' ' + context.getString(R.string.manzil_description, QuranUtils.getLocalizedNumber(context, manzil))
+    } else {
+      ""
+    }
+  }
+
   fun getSuraAyahString(context: Context, sura: Int, ayah: Int): String {
     return getSuraAyahString(context, sura, ayah, R.string.sura_ayah_notification_str)
   }

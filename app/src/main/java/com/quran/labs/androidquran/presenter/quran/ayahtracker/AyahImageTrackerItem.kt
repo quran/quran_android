@@ -40,7 +40,8 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
         val juzText = quranDisplayData.getJuzDisplayStringForPage(context, page)
         val pageText = QuranUtils.getLocalizedNumber(context, page)
         val rub3Text = QuranDisplayHelper.displayRub3(context, quranInfo, page)
-        ayahView.setOverlayText(context, suraText, juzText, pageText, rub3Text)
+        val manzilText = quranDisplayData.getManzilForPage(context, page)
+        ayahView.setOverlayText(suraText, juzText, pageText, rub3Text, manzilText)
       }
       ayahView.setPageData(pageCoordinates, imageDrawHelpers)
     }

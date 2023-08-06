@@ -385,9 +385,10 @@ public class HighlightingImageView extends AppCompatImageView {
     String juzText = null;
     String pageText = null;
     String rub3Text = null;
+    String manzilText = null;
   }
 
-  public void setOverlayText(Context context, String suraText, String juzText, String pageText, String rub3Text) {
+  public void setOverlayText(String suraText, String juzText, String pageText, String rub3Text, String manzilText) {
     // Calculate page bounding rect from ayahinfo db
     if (pageBounds == null) {
       return;
@@ -398,6 +399,7 @@ public class HighlightingImageView extends AppCompatImageView {
     overlayParams.juzText = juzText;
     overlayParams.pageText = pageText;
     overlayParams.rub3Text = rub3Text;
+    overlayParams.manzilText = manzilText;
     overlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
     overlayParams.paint.setTextSize(fontSize);
 //    if (juzText.contains("ج")) {
@@ -475,7 +477,7 @@ public class HighlightingImageView extends AppCompatImageView {
         overlayParams.paint);
     // Merge the current rub3 text with the juz' text
     overlayParams.paint.setTextAlign(Align.RIGHT);
-    canvas.drawText(overlayParams.juzText + overlayParams.rub3Text,
+    canvas.drawText(overlayParams.juzText + overlayParams.rub3Text + overlayParams.manzilText,
         (getWidth() - overlayParams.offsetX) - horizontalSafeOffset,
         overlayParams.topBaseline + topSafeOffset,
         overlayParams.paint);

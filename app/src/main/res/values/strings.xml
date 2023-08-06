@@ -283,7 +283,8 @@
 
   <string name="canceling">Canceling&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
-  <string name="comma_with_spaces" translatable="false"> , </string>
+  <string name="manzil_description">Manzil %1$s</string>
+  <string name="comma" translatable="false">,</string>
   <string name="page_description">Page %1$s, Juz\' %2$s</string>
   <string name="highlighting_database">Required Files</string>
   <string name="timing_database">Required Files</string>

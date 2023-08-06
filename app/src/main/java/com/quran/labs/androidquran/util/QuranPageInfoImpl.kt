@@ -31,4 +31,8 @@ class QuranPageInfoImpl constructor(
   override fun pageForSuraAyah(sura: Int, ayah: Int): Int {
     return quranInfo.getPageFromSuraAyah(sura, ayah)
   }
+
+  override fun manzilForPage(page: Int): String {
+    return quranDisplayData.getManzilForPage(context, page)
+  }
 }

@@ -19,6 +19,7 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
   private val pageRub3Start = quranDataSource.quarterStartByPage
   private val suraNumAyahs = quranDataSource.numberOfAyahsForSuraArray
   private val suraIsMakki = quranDataSource.isMakkiBySuraArray
+  private val manazil = quranDataSource.manzilPageArray
   val quarters = quranDataSource.quartersArray
 
   val numberOfPages = quranDataSource.numberOfPages
@@ -30,6 +31,15 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
 
   fun getPageNumberForSura(sura: Int): Int {
     return suraPageStart[sura - 1]
+  }
+
+  fun manzilForPage(page: Int): Int {
+    val manzil = manazil.indexOfFirst { it > page }
+    return if (manzil == -1 && manazil.isNotEmpty() && page >= manazil.last()) {
+      manazil.size
+    } else {
+      manzil
+    }
   }
 
   fun getSuraNumberFromPage(page: Int): Int {
