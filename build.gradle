@@ -8,7 +8,7 @@ buildscript {
     androidxMediaVersion = '1.6.0'
     androidxAnnotationVersion = '1.6.0'
     androidxFragmentVersion = '1.6.1'
-    androidxPreferencesVersion = '1.2.0'
+    androidxPreferencesVersion = '1.2.1'
     androidxAppcompatVersion = '1.6.1'
     androidxLocalBroadcastVersion = '1.1.0'
     androidxSwipeRefreshVersion = '1.1.0'
