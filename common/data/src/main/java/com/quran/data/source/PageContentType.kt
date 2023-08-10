@@ -1,6 +1,6 @@
 package com.quran.data.source
 
 sealed class PageContentType {
-  object Image : PageContentType()
-  data class Line(val ratio: Float, val allowOverlapOfLines: Boolean): PageContentType()
+  data object Image : PageContentType()
+  data class Line(val ratio: Float, val lineHeight: Int, val allowOverlapOfLines: Boolean): PageContentType()
 }

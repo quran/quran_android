@@ -162,6 +162,10 @@ public class QuranSettings {
     return prefs.getString(Constants.PREF_PAGE_TYPE, null);
   }
 
+  public boolean isSidelines() {
+    return prefs.getBoolean(Constants.PREF_SHOW_SIDELINES, false);
+  }
+
   public void setPageType(String pageType) {
     prefs.edit().putString(Constants.PREF_PAGE_TYPE, pageType).apply();
     clearDefaultImagesDirectory();

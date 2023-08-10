@@ -227,4 +227,5 @@ open class MadaniDataSource : QuranDataSource {
     /* hizb 60 */ SuraAyah(87, 1), SuraAyah(90, 1), SuraAyah(94, 1), SuraAyah(100, 9))
 
   override val manzilPageArray: Array<Int> = emptyArray()
+  override val haveSidelines: Boolean = false
 }

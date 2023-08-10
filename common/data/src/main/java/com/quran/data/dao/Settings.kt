@@ -13,6 +13,7 @@ interface Settings {
   suspend fun shouldShowHeaderFooter(): Boolean
   suspend fun shouldShowBookmarks(): Boolean
   suspend fun pageType(): String
+  suspend fun showSidelines(): Boolean
 
   fun preferencesFlow(): Flow<String>
 }

@@ -36,6 +36,5 @@
   <string translatable="false" name="prefs_export_csv">exportKeyCSV</string>
   <string translatable="false" name="prefs_send_logs">sendLogsKey</string>
   <string translatable="false" name="prefs_page_type">pageTypeKey</string>
-  <string translatable="false" name="prefs_reading_category_key">readingCategoryKey</string>
   <string translatable="false" name="prefs_category_dual_screen_key">dualScreenKey</string>
 </resources>

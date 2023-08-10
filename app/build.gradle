@@ -116,6 +116,7 @@ dependencies {
   implementation project(path: ':common:download')
   implementation project(path: ':common:networking')
   implementation project(path: ':common:pages')
+  implementation project(path: ':common:preference')
   implementation project(path: ':common:reading')
   implementation project(path: ':common:recitation')
   implementation project(path: ':common:search')
