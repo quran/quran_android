@@ -14,4 +14,5 @@ interface QuranDataSource {
   val quarterStartByPage: IntArray
   val quartersArray: Array<SuraAyah>
   val manzilPageArray: Array<Int>
+  val haveSidelines: Boolean
 }

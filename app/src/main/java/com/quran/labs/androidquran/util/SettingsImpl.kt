@@ -63,5 +63,9 @@ class SettingsImpl @Inject constructor(private val quranSettings: QuranSettings)
     return quranSettings.pageType
   }
 
+  override suspend fun showSidelines(): Boolean {
+    return quranSettings.isSidelines
+  }
+
   override fun preferencesFlow(): Flow<String> = preferencesFlow
 }
