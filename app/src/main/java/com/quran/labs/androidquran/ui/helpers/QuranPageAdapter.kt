@@ -119,15 +119,6 @@ class QuranPageAdapter(
     }
   }
 
-  fun getFragmentIfExistsForPage(page: Int): QuranPage? {
-    if (page < Constants.PAGES_FIRST || totalPages < page) {
-      return null
-    }
-    val position = quranInfo.getPositionFromPage(page, isDualPagesVisible)
-    val fragment = getFragmentIfExists(position)
-    return if (fragment is QuranPage && fragment.isAdded) fragment else null
-  }
-
   private val isDualPagesVisible: Boolean
     get() = isDualPages && !(isSplitScreen && isShowingTranslation)
 }

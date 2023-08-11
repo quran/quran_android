@@ -287,7 +287,7 @@ public class TabletFragment extends Fragment
       AyahTrackerItem right;
       if (mode == Mode.ARABIC) {
         if (leftImageView != null && rightImageView != null) {
-          if (quranInfo.getNumberOfPages() >= pageNumber) {
+          if (quranInfo.isValidPage(pageNumber)) {
             left = new AyahImageTrackerItem(pageNumber,
                 quranInfo,
                 quranDisplayData,

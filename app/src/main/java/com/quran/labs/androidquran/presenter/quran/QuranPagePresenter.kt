@@ -90,7 +90,7 @@ class QuranPagePresenter @Inject constructor(
     // drop empty pages - this happens in Shemerly, for example, where there are an odd number of
     // pages. in dual page mode, we have an empty page at the end, so we don't want to try to load
     // the empty page.
-    val actualPages = pages.filter { it <= quranInfo.numberOfPages }
+    val actualPages = pages.filter { quranInfo.isValidPage(it) }
     compositeDisposable.add(
       quranPageLoader.loadPages(actualPages.toTypedArray())
         .observeOn(AndroidSchedulers.mainThread())
