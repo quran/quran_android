@@ -217,8 +217,6 @@ public class PagerActivity extends AppCompatActivity implements
   private ViewPager slidingPager;
   private SlidingPagerAdapter slidingPagerAdapter;
 
-  private int numberOfPages;
-  private int numberOfPagesDual;
   private int defaultNavigationBarColor;
   private boolean isSplitScreen = false;
 
@@ -305,17 +303,11 @@ public class PagerActivity extends AppCompatActivity implements
     // that is used to generate preview windows).
     getWindow().setBackgroundDrawable(null);
 
-    numberOfPages = quranInfo.getNumberOfPages();
-    numberOfPagesDual = quranInfo.getNumberOfPagesDual();
-
     int page = -1;
     isActionBarHidden = true;
     if (savedInstanceState != null) {
       Timber.d("non-null saved instance state!");
       page = savedInstanceState.getInt(LAST_READ_PAGE, -1);
-      if (page != -1) {
-        page = numberOfPages - page;
-      }
       showingTranslation = savedInstanceState
           .getBoolean(LAST_READING_MODE_IS_TRANSLATION, false);
       if (savedInstanceState.containsKey(LAST_ACTIONBAR_STATE)) {
@@ -328,7 +320,7 @@ public class PagerActivity extends AppCompatActivity implements
       Intent intent = getIntent();
       Bundle extras = intent.getExtras();
       if (extras != null) {
-        page = numberOfPages - extras.getInt("page", Constants.PAGES_FIRST);
+        page = extras.getInt("page", Constants.PAGES_FIRST);
         showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
         final int highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1);
         final int highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1);
@@ -374,7 +366,7 @@ public class PagerActivity extends AppCompatActivity implements
     if (showingTranslation && translationNames != null) {
       updateActionBarSpinner();
     } else {
-      updateActionBarTitle(numberOfPages - page);
+      updateActionBarTitle(page);
     }
 
     lastPopupTime = System.currentTimeMillis();
@@ -443,7 +435,7 @@ public class PagerActivity extends AppCompatActivity implements
         // Shemerly has an odd number of pages (521), so when showing in tablet mode,
         // the last page is empty. default to the previous page title in those cases.
         final int page;
-        if (isDualPages && !showingTranslation && potentialPage == quranInfo.getNumberOfPages() + 1) {
+        if (isDualPageVisible() && potentialPage == quranInfo.getNumberOfPages() + 1) {
           page = quranInfo.getNumberOfPages();
         } else {
           page = potentialPage;
@@ -495,24 +487,21 @@ public class PagerActivity extends AppCompatActivity implements
     if (shouldAdjustPageNumber) {
       // when going from two page per screen to one or vice versa, we adjust the page number,
       // such that the first page is always selected.
-      int curPage = numberOfPages - page;
+      int curPage = page;
       if (isDualPageVisible()) {
         if (curPage % 2 != 0) {
           curPage++;
         }
-        curPage = numberOfPagesDual - (curPage / 2);
       } else {
         if (curPage % 2 == 0) {
           curPage--;
         }
-        curPage = numberOfPages - curPage;
       }
       page = curPage;
-    } else if (isDualPageVisible()) {
-      page = page / 2;
     }
 
-    viewPager.setCurrentItem(page);
+    final int pageIndex = quranInfo.getPositionFromPage(page, isDualPageVisible());
+    viewPager.setCurrentItem(pageIndex);
     if (page == 0) {
       onPageChangeListener.onPageSelected(0);
     }
@@ -877,7 +866,7 @@ public class PagerActivity extends AppCompatActivity implements
     boolean haveDownload = false;
     if (!quranFileUtils.haveAyaPositionFile(this)) {
       String url = quranFileUtils.getAyaPositionFileUrl();
-      if (QuranUtils.isDualPages(this, quranScreenInfo)) {
+      if (isDualPages) {
         url = quranFileUtils.getAyaPositionFileUrl(
             quranScreenInfo.getTabletWidthParam());
       }
@@ -930,7 +919,7 @@ public class PagerActivity extends AppCompatActivity implements
     recentPagePresenter.onJump();
     Bundle extras = intent.getExtras();
     if (extras != null) {
-      int page = numberOfPages - extras.getInt("page", Constants.PAGES_FIRST);
+      int page = extras.getInt("page", Constants.PAGES_FIRST);
 
       boolean currentValue = showingTranslation;
       showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation);
@@ -946,7 +935,7 @@ public class PagerActivity extends AppCompatActivity implements
           updateActionBarSpinner();
         } else {
           pagerAdapter.setQuranMode();
-          updateActionBarTitle(numberOfPages - page);
+          updateActionBarTitle(page);
         }
 
         supportInvalidateOptionsMenu();
@@ -956,10 +945,8 @@ public class PagerActivity extends AppCompatActivity implements
         // this will jump to the right page automagically
         ensurePage(highlightedSura, highlightedAyah);
       } else {
-        if (isDualPageVisible()) {
-          page = page / 2;
-        }
-        viewPager.setCurrentItem(page);
+        final int pagePosition = quranInfo.getPositionFromPage(page, isDualPageVisible());
+        viewPager.setCurrentItem(pagePosition);
       }
 
       setIntent(intent);
@@ -1379,7 +1366,7 @@ public class PagerActivity extends AppCompatActivity implements
 
   private void ensurePage(int sura, int ayah) {
     int page = quranInfo.getPageFromSuraAyah(sura, ayah);
-    if (page >= Constants.PAGES_FIRST && page <= numberOfPages) {
+    if (quranInfo.isValidPage(page)) {
       int position = quranInfo.getPositionFromPage(page, isDualPageVisible());
       if (position != viewPager.getCurrentItem()) {
         viewPager.setCurrentItem(position);
@@ -1515,10 +1502,7 @@ public class PagerActivity extends AppCompatActivity implements
     }
 
     int position = viewPager.getCurrentItem();
-    int page = numberOfPages - position;
-    if (isDualPageVisible()) {
-      page = ((numberOfPagesDual - position) * 2) - 1;
-    }
+    int page = quranInfo.getPageFromPosition(position, isDualPageVisible());
 
     // log the event
     quranEventLogger.logAudioPlayback(QuranEventLogger.AudioPlaybackSource.PAGE,

@@ -48,6 +48,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private final BookmarkModel bookmarkModel;
   private final QuranSettings quranSettings;
   private final QuranRowFactory quranRowFactory;
+  private final QuranInfo quranInfo;
 
   private int sortOrder;
   private boolean groupByTags;
@@ -61,7 +62,6 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private DisposableSingleObserver<BookmarkResult> pendingRemoval;
   private List<QuranRow> itemsToRemove;
 
-  private final int totalPages;
 
   @Inject
   BookmarkPresenter(Context appContext,
@@ -75,12 +75,12 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     this.bookmarkModel = bookmarkModel;
     this.arabicDatabaseUtils = arabicDatabaseUtils;
     this.quranRowFactory = quranRowFactory;
+    this.quranInfo = quranInfo;
 
     sortOrder = quranSettings.getBookmarksSortOrder();
     groupByTags = quranSettings.getBookmarksGroupedByTags();
     showRecents = quranSettings.getShowRecents();
     showDate = quranSettings.getShowDate();
-    totalPages = quranInfo.getNumberOfPages();
     subscribeToChanges();
   }
 
@@ -323,7 +323,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
       rows.add(0, quranRowFactory.fromRecentPageHeader(appContext, size));
       for (int i = 0; i < size; i++) {
         int page = recentPages.get(i).getPage();
-        if (page < Constants.PAGES_FIRST || page > totalPages) {
+        if (!quranInfo.isValidPage(page)) {
           page = 1;
         }
         rows.add(i + 1, quranRowFactory.fromCurrentPage(appContext, page, recentPages.get(i).getTimestamp()));

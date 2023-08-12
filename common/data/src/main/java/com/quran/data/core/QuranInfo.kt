@@ -4,6 +4,7 @@ import com.quran.data.core.QuranConstants.LAST_SURA
 import com.quran.data.core.QuranConstants.MAX_AYAH
 import com.quran.data.core.QuranConstants.MIN_AYAH
 import com.quran.data.core.QuranConstants.NUMBER_OF_SURAS
+import com.quran.data.core.QuranConstants.PAGES_FIRST
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.VerseRange
 import com.quran.data.source.QuranDataSource
@@ -23,7 +24,7 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
   val quarters = quranDataSource.quartersArray
 
   val numberOfPages = quranDataSource.numberOfPages
-  val numberOfPagesDual = numberOfPages / 2 + numberOfPages % 2
+  private val numberOfPagesDual = numberOfPages / 2 + numberOfPages % 2
 
   fun getStartingPageForJuz(juz: Int): Int {
     return juzPageStart[juz - 1]
@@ -40,6 +41,10 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     } else {
       manzil
     }
+  }
+
+  fun isValidPage(page: Int): Boolean {
+    return page in PAGES_FIRST..numberOfPages
   }
 
   fun getSuraNumberFromPage(page: Int): Int {

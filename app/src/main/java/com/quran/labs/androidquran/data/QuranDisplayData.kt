@@ -157,7 +157,7 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
   }
 
   fun safelyGetSuraOnPage(page: Int): Int {
-    return if (page < Constants.PAGES_FIRST || page > quranInfo.numberOfPages) {
+    return if (!quranInfo.isValidPage(page)) {
       Timber.e(IllegalArgumentException("safelyGetSuraOnPage with page: $page"))
       quranInfo.getSuraOnPage(1)
     } else {
