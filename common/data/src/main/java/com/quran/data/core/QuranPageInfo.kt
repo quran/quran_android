@@ -7,4 +7,5 @@ interface QuranPageInfo {
   fun localizedPage(page: Int): String
   fun pageForSuraAyah(sura: Int, ayah: Int): Int
   fun manzilForPage(page: Int): String
+  fun skippedPagesCount(): Int
 }

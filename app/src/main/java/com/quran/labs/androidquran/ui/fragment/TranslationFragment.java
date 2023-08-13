@@ -81,7 +81,7 @@ public class TranslationFragment extends Fragment implements
                            ViewGroup container, Bundle savedInstanceState) {
     Context context = getActivity();
     mainView = new QuranTranslationPageLayout(context);
-    mainView.setPageController(this, pageNumber);
+    mainView.setPageController(this, pageNumber, quranInfo.getSkip());
 
     translationView = mainView.getTranslationView();
     translationView.setTranslationClickedListener(v -> {

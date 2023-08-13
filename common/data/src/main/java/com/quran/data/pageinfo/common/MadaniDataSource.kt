@@ -228,4 +228,5 @@ open class MadaniDataSource : QuranDataSource {
 
   override val manzilPageArray: Array<Int> = emptyArray()
   override val haveSidelines: Boolean = false
+  override val pagesToSkip: Int = 0
 }

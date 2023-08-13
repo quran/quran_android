@@ -83,17 +83,17 @@ public class TabletView extends QuranPageWrapperLayout {
     }
   }
 
-  public void setPageController(PageController controller, int leftPage, int rightPage) {
+  public void setPageController(PageController controller, int leftPage, int rightPage, int skips) {
     this.pageController = controller;
-    this.leftPage.setPageController(controller, leftPage);
-    this.rightPage.setPageController(controller, rightPage);
+    this.leftPage.setPageController(controller, leftPage, skips);
+    this.rightPage.setPageController(controller, rightPage, skips);
   }
 
-  public void setPageController(PageController controller, int pageNumber) {
+  public void setPageController(PageController controller, int pageNumber, int skips) {
     this.pageController = controller;
 
-    this.rightPage.setPageController(controller, pageNumber);
-    this.leftPage.setPageController(controller, pageNumber);
+    this.rightPage.setPageController(controller, pageNumber, skips);
+    this.leftPage.setPageController(controller, pageNumber, skips);
   }
 
   @Override

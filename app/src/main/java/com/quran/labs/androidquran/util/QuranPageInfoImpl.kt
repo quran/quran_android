@@ -6,7 +6,7 @@ import com.quran.data.core.QuranPageInfo
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
 
-class QuranPageInfoImpl constructor(
+class QuranPageInfoImpl(
   private val context: Context,
   private val quranInfo: QuranInfo,
   private val quranDisplayData: QuranDisplayData
@@ -35,4 +35,6 @@ class QuranPageInfoImpl constructor(
   override fun manzilForPage(page: Int): String {
     return quranDisplayData.getManzilForPage(context, page)
   }
+
+  override fun skippedPagesCount(): Int = quranInfo.skip
 }

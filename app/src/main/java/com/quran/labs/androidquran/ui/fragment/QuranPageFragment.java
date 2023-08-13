@@ -97,7 +97,7 @@ public class QuranPageFragment extends Fragment implements PageController,
                            Bundle savedInstanceState) {
     final Context context = requireContext();
     quranPageLayout = new QuranImagePageLayout(context);
-    quranPageLayout.setPageController(this, pageNumber);
+    quranPageLayout.setPageController(this, pageNumber, quranInfo.getSkip());
     imageView = quranPageLayout.getImageView();
     return quranPageLayout;
   }
