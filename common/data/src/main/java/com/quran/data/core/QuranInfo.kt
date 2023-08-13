@@ -192,7 +192,10 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
     isDualPagesVisible: Boolean
   ): Int {
     return if (isDualPagesVisible) {
-      ((numberOfPagesDual - position) * 2) + skip
+      // return the "first" page in a tablet view
+      // i.e. for [page 2][page 1] should return [page 1].
+      // similarly, for Naskh, [page 3][page 2] should return [page 2].
+      return (((numberOfPagesDual - position) * 2) + skip) - 1
     } else {
       (numberOfPagesConsideringSkipped - position) + skip
     }
