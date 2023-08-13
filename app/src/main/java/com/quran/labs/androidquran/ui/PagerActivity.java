@@ -429,17 +429,7 @@ public class PagerActivity extends AppCompatActivity implements
       @Override
       public void onPageSelected(int position) {
         Timber.d("onPageSelected(): %d", position);
-        final int potentialPage = quranInfo.getPageFromPosition(position, isDualPageVisible());
-
-        // work around for empty pages at the end of the mushaf in dual screen mode
-        // Shemerly has an odd number of pages (521), so when showing in tablet mode,
-        // the last page is empty. default to the previous page title in those cases.
-        final int page;
-        if (isDualPageVisible() && potentialPage == quranInfo.getNumberOfPages() + 1) {
-          page = quranInfo.getNumberOfPages();
-        } else {
-          page = potentialPage;
-        }
+        final int page = quranInfo.getPageFromPosition(position, isDualPageVisible());
 
         if (quranSettings.shouldDisplayMarkerPopup()) {
           lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
@@ -569,14 +559,7 @@ public class PagerActivity extends AppCompatActivity implements
             @Override
             public void onPageSelected(int position) {
               final int page = quranInfo.getPageFromPosition(position, isDualPageVisible());
-              // another workaround for shemerly where there is no page 522
-              final int pageToSelect;
-              if (isDualPageVisible() && page == quranInfo.getNumberOfPages() + 1) {
-                pageToSelect = page - 1;
-              } else {
-                pageToSelect = page;
-              }
-              e.onNext(pageToSelect);
+              e.onNext(page);
             }
           };
 
@@ -1169,9 +1152,6 @@ public class PagerActivity extends AppCompatActivity implements
       pagerAdapter.setTranslationMode();
       showingTranslation = true;
       if (shouldUpdatePageNumber()) {
-        if (page % 2 == 0) {
-          page--;
-        }
         final int position = quranInfo.getPositionFromPage(page, false);
         viewPager.setCurrentItem(position);
       }
@@ -1246,13 +1226,7 @@ public class PagerActivity extends AppCompatActivity implements
   }
 
   private int getCurrentPage() {
-    final int page = quranInfo.getPageFromPosition(viewPager.getCurrentItem(), isDualPageVisible());
-    if (isDualPageVisible() && page == quranInfo.getNumberOfPages() + 1) {
-      // hack for shemerly, where there is no page 522.
-      return page - 1;
-    } else {
-      return page;
-    }
+    return quranInfo.getPageFromPosition(viewPager.getCurrentItem(), isDualPageVisible());
   }
 
   private void updateActionBarSpinner() {
@@ -1512,8 +1486,7 @@ public class PagerActivity extends AppCompatActivity implements
     }
 
     int position = viewPager.getCurrentItem();
-    final int delta = isDualPageVisible() ? 1 : 0;
-    int page = quranInfo.getPageFromPosition(position, isDualPageVisible()) - delta;
+    int page = quranInfo.getPageFromPosition(position, isDualPageVisible());
 
     // log the event
     quranEventLogger.logAudioPlayback(QuranEventLogger.AudioPlaybackSource.PAGE,
@@ -1524,13 +1497,14 @@ public class PagerActivity extends AppCompatActivity implements
     List<Integer> startingSuraList = quranInfo.getListOfSurahWithStartingOnPage(page);
     if (startingSuraList.size() == 0 ||
         (startingSuraList.size() == 1 && startingSuraList.get(0) == startSura)) {
-      playFromAyah(page, startSura, startAyah);
+      playFromAyah(startSura, startAyah);
     } else {
       promptForMultipleChoicePlay(page, startSura, startAyah, startingSuraList);
     }
   }
 
-  private void playFromAyah(int page, int startSura, int startAyah) {
+  private void playFromAyah(int startSura, int startAyah) {
+    final int page = quranInfo.getPageFromSuraAyah(startSura, startAyah);
     final SuraAyah start = new SuraAyah(startSura, startAyah);
     final SuraAyah end = getSelectionEnd();
     // handle the case of multiple ayat being selected and play them as a range if so
@@ -1789,7 +1763,7 @@ public class PagerActivity extends AppCompatActivity implements
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_play_from_here) {
         quranEventLogger.logAudioPlayback(QuranEventLogger.AudioPlaybackSource.AYAH,
             audioStatusBar.getAudioInfo(), isDualPages, showingTranslation, isSplitScreen);
-        playFromAyah(getCurrentPage(), startSuraAyah.sura, startSuraAyah.ayah);
+        playFromAyah(startSuraAyah.sura, startSuraAyah.ayah);
         toggleActionBarVisibility(true);
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_recite_from_here) {
         pagerActivityRecitationPresenter.onRecitationPressed();
@@ -1926,9 +1900,9 @@ public class PagerActivity extends AppCompatActivity implements
         .setTitle(getString(R.string.playback_prompt_title))
         .setAdapter(adapter, (dialog, i) -> {
           if (i == 0) {
-            playFromAyah(page, startSura, startAyah);
+            playFromAyah(startSura, startAyah);
           } else {
-            playFromAyah(page, startingSuraList.get(i), 1);
+            playFromAyah(startingSuraList.get(i), 1);
           }
           dialog.dismiss();
           promptDialog = null;
