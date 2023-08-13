@@ -36,8 +36,8 @@ open class QuranImagePageLayout(context: Context) : QuranPageLayout(context) {
     imageView.setNightMode(quranSettings.isNightMode, quranSettings.nightModeTextBrightness, quranSettings.nightModeBackgroundBrightness)
   }
 
-  override fun setPageController(controller: PageController?, pageNumber: Int) {
-    super.setPageController(controller, pageNumber)
+  override fun setPageController(controller: PageController?, pageNumber: Int, skips: Int) {
+    super.setPageController(controller, pageNumber, skips)
     val gestureDetector = GestureDetector(context, PageGestureDetector())
     val gestureListener = OnTouchListener { _, event ->
       gestureDetector.onTouchEvent(event)

@@ -487,15 +487,11 @@ public class PagerActivity extends AppCompatActivity implements
     if (shouldAdjustPageNumber) {
       // when going from two page per screen to one or vice versa, we adjust the page number,
       // such that the first page is always selected.
-      int curPage = page;
+      final int curPage;
       if (isDualPageVisible()) {
-        if (curPage % 2 != 0) {
-          curPage++;
-        }
+        curPage = quranInfo.mapSinglePageToDualPage(page);
       } else {
-        if (curPage % 2 == 0) {
-          curPage--;
-        }
+        curPage = quranInfo.mapDualPageToSinglePage(page);
       }
       page = curPage;
     }
@@ -572,7 +568,15 @@ public class PagerActivity extends AppCompatActivity implements
           new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-              e.onNext(quranInfo.getPageFromPosition(position, isDualPageVisible()));
+              final int page = quranInfo.getPageFromPosition(position, isDualPageVisible());
+              // another workaround for shemerly where there is no page 522
+              final int pageToSelect;
+              if (isDualPageVisible() && page == quranInfo.getNumberOfPages() + 1) {
+                pageToSelect = page - 1;
+              } else {
+                pageToSelect = page;
+              }
+              e.onNext(pageToSelect);
             }
           };
 
@@ -1242,7 +1246,13 @@ public class PagerActivity extends AppCompatActivity implements
   }
 
   private int getCurrentPage() {
-    return quranInfo.getPageFromPosition(viewPager.getCurrentItem(), isDualPageVisible());
+    final int page = quranInfo.getPageFromPosition(viewPager.getCurrentItem(), isDualPageVisible());
+    if (isDualPageVisible() && page == quranInfo.getNumberOfPages() + 1) {
+      // hack for shemerly, where there is no page 522.
+      return page - 1;
+    } else {
+      return page;
+    }
   }
 
   private void updateActionBarSpinner() {
@@ -1502,7 +1512,8 @@ public class PagerActivity extends AppCompatActivity implements
     }
 
     int position = viewPager.getCurrentItem();
-    int page = quranInfo.getPageFromPosition(position, isDualPageVisible());
+    final int delta = isDualPageVisible() ? 1 : 0;
+    int page = quranInfo.getPageFromPosition(position, isDualPageVisible()) - delta;
 
     // log the event
     quranEventLogger.logAudioPlayback(QuranEventLogger.AudioPlaybackSource.PAGE,

@@ -26,8 +26,8 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
   }
 
   @Override
-  public void setPageController(PageController controller, int pageNumber) {
-    super.setPageController(controller, pageNumber);
+  public void setPageController(PageController controller, int pageNumber, int skips) {
+    super.setPageController(controller, pageNumber, skips);
     translationView.setPageController(controller);
   }
 

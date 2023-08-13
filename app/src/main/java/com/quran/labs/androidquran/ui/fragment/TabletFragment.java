@@ -136,7 +136,7 @@ public class TabletFragment extends Fragment
         leftImageView = ((QuranImagePageLayout) mainView.getLeftPage()).getImageView();
         rightImageView = ((QuranImagePageLayout) mainView.getRightPage()).getImageView();
       }
-      mainView.setPageController(this, pageNumber, pageNumber - 1);
+      mainView.setPageController(this, pageNumber, pageNumber - 1, quranInfo.getSkip());
     } else if (mode == Mode.TRANSLATION) {
       if (!isSplitScreen) {
         mainView.init(TabletView.TRANSLATION_PAGE, TabletView.TRANSLATION_PAGE, pageViewFactory, pageNumber, pageNumber - 1);
@@ -148,7 +148,7 @@ public class TabletFragment extends Fragment
         PagerActivity pagerActivity = (PagerActivity) context;
         leftTranslation.setTranslationClickedListener(v -> pagerActivity.toggleActionBar());
         rightTranslation.setTranslationClickedListener(v -> pagerActivity.toggleActionBar());
-        mainView.setPageController(this, pageNumber, pageNumber - 1);
+        mainView.setPageController(this, pageNumber, pageNumber - 1, quranInfo.getSkip());
       } else {
         initSplitMode();
       }
@@ -157,7 +157,8 @@ public class TabletFragment extends Fragment
   }
 
   private void initSplitMode() {
-    isQuranOnRight = pageNumber % 2 == 1;
+    final int skip = quranInfo.getSkip();
+    isQuranOnRight = (pageNumber + skip) % 2 == 1;
 
     final int leftPageType = isQuranOnRight ? TabletView.TRANSLATION_PAGE : TabletView.QURAN_PAGE;
     final int rightPageType = isQuranOnRight ? TabletView.QURAN_PAGE : TabletView.TRANSLATION_PAGE;
@@ -186,7 +187,7 @@ public class TabletFragment extends Fragment
 
     PagerActivity pagerActivity = (PagerActivity) getActivity();
     splitTranslationView.setTranslationClickedListener(v -> pagerActivity.toggleActionBar());
-    mainView.setPageController(this, pageNumber);
+    mainView.setPageController(this, pageNumber, quranInfo.getSkip());
   }
 
   @Override

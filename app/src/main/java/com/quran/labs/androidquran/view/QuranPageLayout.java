@@ -66,6 +66,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
   protected int pageNumber;
   protected boolean shouldHideLine;
   protected boolean isFullWidth;
+  private int skippedPages;
 
   private ObservableScrollView scrollView;
   private @BorderMode int leftBorder;
@@ -205,9 +206,10 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     return scrollView != null ? scrollView : innerView;
   }
 
-  public void setPageController(PageController controller, int pageNumber) {
+  public void setPageController(PageController controller, int pageNumber, int skippedPages) {
     this.pageNumber = pageNumber;
     this.pageController = controller;
+    this.skippedPages = skippedPages;
   }
 
   protected int getPagesVisible() {
@@ -239,7 +241,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
       lineColor = Color.argb(nightModeTextBrightness, 255, 255, 255);
     }
 
-    if (pageNumber % 2 == 0) {
+    if ((pageNumber + skippedPages) % 2 == 0) {
       leftBorder = nightMode ? BorderMode.DARK : BorderMode.LIGHT;
       rightBorder = BorderMode.HIDDEN;
     } else {

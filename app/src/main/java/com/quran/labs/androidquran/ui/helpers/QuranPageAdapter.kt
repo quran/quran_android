@@ -21,7 +21,7 @@ class QuranPageAdapter(
   private val pageViewFactory: PageViewFactory? = null
 ) : FragmentStatePagerAdapter(fm, if (isDualPages) "dualPages" else "singlePage") {
   private var pageMode: PageMode = makePageMode()
-  private val totalPages: Int = quranInfo.numberOfPages
+  private val totalPages: Int = quranInfo.numberOfPagesConsideringSkipped
   private val totalPagesDual: Int = totalPages / 2 + (totalPages % 2)
 
   fun setTranslationMode() {
