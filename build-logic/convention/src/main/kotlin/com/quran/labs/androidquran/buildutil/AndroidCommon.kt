@@ -7,7 +7,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
 fun CommonExtension<*, *, *, *, *>.applyAndroidCommon(project: Project) {
-  compileSdk = 33
+  compileSdk = 34
   defaultConfig.minSdk = 21
 
   compileOptions {
