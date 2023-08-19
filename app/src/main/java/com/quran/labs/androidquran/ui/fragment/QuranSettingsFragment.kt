@@ -71,7 +71,7 @@ class QuranSettingsFragment : PreferenceFragmentCompat(),
     super.onPause()
   }
 
-  override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+  override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
     if (key == Constants.PREF_USE_ARABIC_NAMES) {
       val context = activity
       if (context is QuranPreferenceActivity) {
