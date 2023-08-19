@@ -33,13 +33,6 @@ buildscript {
     androidxJunitExtVersion = '1.1.5'
 
     deps = [
-        android: [
-            build: [
-                minSdkVersion    : 21,
-                targetSdkVersion : 32,
-                compileSdkVersion: 33
-            ]
-        ],
         dagger: [
             apt: "com.google.dagger:dagger-compiler:${daggerVersion}",
             runtime: "com.google.dagger:dagger:${daggerVersion}"
