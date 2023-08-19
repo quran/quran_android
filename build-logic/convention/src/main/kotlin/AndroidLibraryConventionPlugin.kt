@@ -17,7 +17,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
       extensions.configure<LibraryExtension> {
         applyAndroidCommon(target)
-        defaultConfig.targetSdk = 32
       }
 
       applyKotlinCommon()
