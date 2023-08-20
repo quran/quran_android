@@ -263,10 +263,14 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     audioFocusHelper = AudioFocusHelper(appContext, this)
     broadcastManager = LocalBroadcastManager.getInstance(appContext)
     noisyAudioStreamReceiver = NoisyAudioStreamReceiver()
-    registerReceiver(
+
+    ContextCompat.registerReceiver(
+      this,
       noisyAudioStreamReceiver,
-      IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+      IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY),
+      ContextCompat.RECEIVER_EXPORTED
     )
+
     val receiver = ComponentName(this, MediaButtonReceiver::class.java)
     mediaSession = MediaSessionCompat(appContext, "QuranMediaSession", receiver, null)
     mediaSession.setCallback(MediaSessionCallback(), serviceHandler)
