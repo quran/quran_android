@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
@@ -81,6 +82,8 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   private var quranDataStatus: QuranDataStatus? = null
   private var updateDialog: AlertDialog? = null
   private var disposable: Disposable? = null
+  private var lastForceValue: Boolean = false
+  private var didCheckPermissions: Boolean = false
 
   private val scope = MainScope()
 
@@ -141,7 +144,11 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
             Timber.e(ise)
           }
         }
-    checkPermissions()
+
+    if (!didCheckPermissions) {
+      didCheckPermissions = true
+      checkPermissions()
+    }
   }
 
   override fun onPause() {
@@ -279,6 +286,14 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     quranSettings.setSdcardPermissionsDialogPresented()
   }
 
+  @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+  private fun requestPostNotificationPermission() {
+    ActivityCompat.requestPermissions(
+      this, arrayOf(permission.POST_NOTIFICATIONS),
+      REQUEST_POST_NOTIFICATION_PERMISSIONS
+    )
+  }
+
   override fun onRequestPermissionsResult(
     requestCode: Int,
     permissions: Array<String>,
@@ -317,6 +332,8 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
           runListViewWithoutPages()
         }
       }
+    } else if (requestCode == REQUEST_POST_NOTIFICATION_PERMISSIONS) {
+      actuallyDownloadQuranImages(lastForceValue)
     }
   }
 
@@ -583,6 +600,30 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
    * @param force whether to force the download to restart or not
    */
   private fun downloadQuranImages(force: Boolean) {
+    if (PermissionUtil.havePostNotificationPermission(this)) {
+      actuallyDownloadQuranImages(force)
+    } else if (PermissionUtil.canRequestPostNotificationPermission(this)) {
+      val dialog = PermissionUtil.buildPostPermissionDialog(
+        this,
+        onAccept = {
+          lastForceValue = force
+          permissionsDialog = null
+          requestPostNotificationPermission()
+        },
+        onDecline = {
+          permissionsDialog = null
+          actuallyDownloadQuranImages(force)
+        }
+      )
+      permissionsDialog = dialog
+      dialog.show()
+    } else {
+      lastForceValue = force
+      requestPostNotificationPermission()
+    }
+  }
+
+  private fun actuallyDownloadQuranImages(force: Boolean) {
     // if any broadcasts were received, then we are already downloading
     // so unless we know what we are doing (via force), don't ask the
     // service to restart the download
@@ -690,6 +731,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   companion object {
     const val PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY"
     private const val REQUEST_WRITE_TO_SDCARD_PERMISSIONS = 1
+    private const val REQUEST_POST_NOTIFICATION_PERMISSIONS = 2
     private const val QURAN_DIRECTORY_MARKER_FILE = "q4a"
     private const val QURAN_HIDDEN_DIRECTORY_MARKER_FILE = ".q4a"
   }

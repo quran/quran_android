@@ -13,6 +13,9 @@
   <!-- foreground services need this when targeting Android 9+ (Api 28+) -->
   <uses-permission-sdk-23 android:name="android.permission.FOREGROUND_SERVICE"/>
 
+  <!-- required for posting notifications on Android 13+ (Api 33+) -->
+  <uses-permission-sdk-23 android:name="android.permission.POST_NOTIFICATIONS"/>
+
   <!-- support chromebooks without touch screen -->
   <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
@@ -152,11 +155,13 @@
 
     <service
         android:exported="false"
-        android:name=".service.QuranDownloadService"/>
+        android:name=".service.QuranDownloadService"
+        android:foregroundServiceType="dataSync"/>
 
     <service
         android:exported="false"
-        android:name=".service.AudioService">
+        android:name=".service.AudioService"
+        android:foregroundServiceType="mediaPlayback">
       <intent-filter>
         <action android:name="android.intent.action.MEDIA_BUTTON"/>
       </intent-filter>

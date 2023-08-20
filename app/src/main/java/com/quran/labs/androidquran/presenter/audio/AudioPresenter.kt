@@ -67,12 +67,20 @@ constructor(private val quranDisplayData: QuranDisplayData,
     }
   }
 
-  fun play(audioRequest: AudioRequest) {
+  private fun play(audioRequest: AudioRequest) {
     lastAudioRequest = audioRequest
+    proceedWithAudioRequest(audioRequest)
+  }
+
+  private fun proceedWithAudioRequest(audioRequest: AudioRequest, bypassChecks: Boolean = false) {
     pagerActivity?.let {
       val downloadIntent = getDownloadIntent(it, audioRequest)
       if (downloadIntent != null) {
-        it.handleRequiredDownload(downloadIntent)
+        if (bypassChecks) {
+          it.proceedWithDownload(downloadIntent)
+        } else {
+          it.handleRequiredDownload(downloadIntent)
+        }
       } else {
         // play the audio
         it.handlePlayback(audioRequest)
@@ -82,6 +90,12 @@ constructor(private val quranDisplayData: QuranDisplayData,
 
   fun onDownloadPermissionGranted() {
     lastAudioRequest?.let { play(it) }
+  }
+
+  fun onPostNotificationsPermissionResponse(granted: Boolean) {
+    lastAudioRequest?.let { audioRequest ->
+      proceedWithAudioRequest(audioRequest, true)
+    }
   }
 
   fun onDownloadSuccess() {

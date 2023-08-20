@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Parcelable;
 
 import androidx.core.app.NotificationCompat;
@@ -374,7 +375,7 @@ public class QuranDownloadNotifier {
       if (shouldForeground && !isForeground) {
         service.startForeground(notificationId, builder.build());
         isForeground = true;
-       } else {
+       } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || notificationManager.areNotificationsEnabled()) {
         notificationManager.notify(notificationId, builder.build());
       }
     } catch (SecurityException | IllegalStateException se) {
