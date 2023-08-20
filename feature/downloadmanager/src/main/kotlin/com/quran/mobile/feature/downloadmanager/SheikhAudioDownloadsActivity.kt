@@ -1,8 +1,12 @@
 package com.quran.mobile.feature.downloadmanager
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.core.app.ActivityCompat
 import com.quran.common.search.SearchTextUtil
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.di.QuranApplicationComponentProvider
@@ -21,6 +26,7 @@ import com.quran.mobile.feature.downloadmanager.presenter.SheikhAudioPresenter
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.DownloadErrorDialog
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.DownloadProgressDialog
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.RemoveConfirmationDialog
+import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.RequestPostNotificationsPermissionDialog
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.SheikhDownloadToolbar
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.SheikhSuraInfoList
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.SuraRangeDialog
@@ -41,6 +47,15 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
 
   private var qariId: Int = -1
   private val scope = MainScope()
+
+  private var didRequestPostNotificationsPermission: Boolean = false
+
+  private val requestPermissionLauncher =
+    registerForActivityResult(
+      ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+      // do nothing for now
+    }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -125,6 +140,8 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
               )
             is SheikhDownloadDialog.DownloadError ->
               DownloadErrorDialog(dialog.errorString, sheikhAudioPresenter::onCancelDialog)
+            is SheikhDownloadDialog.PostNotificationsPermission ->
+              RequestPostNotificationsPermissionDialog(::onCanRequestPermissions, ::onDoNotRequestPermissions)
             else -> {}
           }
         }
@@ -154,8 +171,10 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
     if (selectedSuras.isEmpty()) {
       sheikhAudioPresenter.selectSura(sura)
       if (!isStartSelection) {
-        scope.launch {
-          sheikhAudioPresenter.onSuraAction(qariId, sura)
+        processPostNotificationsPermission {
+          scope.launch {
+            sheikhAudioPresenter.onSuraAction(qariId, sura)
+          }
         }
       }
     } else {
@@ -163,9 +182,39 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
     }
   }
 
+  private fun needPostNotificationsPermission(): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+    } else {
+      false
+    }
+  }
+
+  private fun processPostNotificationsPermission(lambda: (() -> Unit)) {
+    if (needPostNotificationsPermission() &&
+      !didRequestPostNotificationsPermission &&
+      Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+    ) {
+      didRequestPostNotificationsPermission = true
+      if (ActivityCompat.shouldShowRequestPermissionRationale(
+          this,
+          Manifest.permission.POST_NOTIFICATIONS
+        )
+      ) {
+        sheikhAudioPresenter.showPostNotificationsRationaleDialog()
+      } else {
+        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+      }
+    } else {
+      lambda()
+    }
+  }
+
   private fun onDownloadSelectionSelected() {
-    scope.launch {
-      sheikhAudioPresenter.onDownloadSelection(qariId)
+    processPostNotificationsPermission {
+      scope.launch {
+        sheikhAudioPresenter.onDownloadSelection(qariId)
+      }
     }
   }
 
@@ -181,6 +230,17 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
     scope.launch {
       sheikhAudioPresenter.removeSuras(qariId, surasToRemove)
     }
+  }
+
+  private fun onCanRequestPermissions() {
+    sheikhAudioPresenter.onCancelDialog()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
+  }
+
+  private fun onDoNotRequestPermissions() {
+    sheikhAudioPresenter.onCancelDialog()
   }
 
   companion object {

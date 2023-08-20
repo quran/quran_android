@@ -86,6 +86,10 @@ class SheikhAudioPresenter @Inject constructor(
     selectedSurasFlow.value = emptyList()
   }
 
+  fun showPostNotificationsRationaleDialog() {
+    currentDialogFlow.value = SheikhDownloadDialog.PostNotificationsPermission
+  }
+
   suspend fun onSuraAction(qariId: Int, sura: SuraForQari) {
     if (sura.isDownloaded) {
       onRemoveSelection()

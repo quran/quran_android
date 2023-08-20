@@ -310,6 +310,9 @@
   <string name="download_cancel">Cancel</string>
   <string name="download_extra_data">We need to download one or two small files to support sharing and translation. Download now?</string>
 
+  <!-- post notification dialog -->
+  <string name="post_notification_permission">Allow Quran for Android to post notifications? This is only used to give updates on download status, or to warn when audio files are automatically updated.</string>
+
   <!-- translation database stuff -->
   <string name="remove_dlg_title">Remove Translation?</string>
   <string name="remove_dlg_msg">Are you sure you would like to remove the %1$s?</string>

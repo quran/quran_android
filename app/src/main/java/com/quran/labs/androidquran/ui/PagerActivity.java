@@ -4,6 +4,7 @@ import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.AUDIO_P
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TAG_PAGE;
 import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLATION_PAGE;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
@@ -33,6 +34,8 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -86,6 +89,7 @@ import com.quran.labs.androidquran.presenter.recitation.PagerActivityRecitationP
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
+import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
@@ -216,6 +220,7 @@ public class PagerActivity extends AppCompatActivity implements
   private SlidingUpPanelLayout slidingPanel;
   private ViewPager slidingPager;
   private SlidingPagerAdapter slidingPagerAdapter;
+  private ActivityResultLauncher<String> requestPermissionLauncher;
 
   private int defaultNavigationBarColor;
   private boolean isSplitScreen = false;
@@ -535,6 +540,11 @@ public class PagerActivity extends AppCompatActivity implements
         ayah -> { ensurePage(ayah.sura, ayah.ayah); return null; },
         sliderPage -> { showSlider(slidingPagerAdapter.getPagePosition(sliderPage)); return null; }
     ));
+
+    requestPermissionLauncher =
+        registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+          audioPresenter.onPostNotificationsPermissionResponse(isGranted);
+        });
   }
 
   @Override
@@ -963,10 +973,17 @@ public class PagerActivity extends AppCompatActivity implements
       promptDialog.dismiss();
       promptDialog = null;
     }
-    audioPresenter.unbind(this);
     recentPagePresenter.unbind(this);
     quranSettings.setWasShowingTranslation(pagerAdapter.isShowingTranslation());
     super.onPause();
+  }
+
+  @Override
+  protected void onStop() {
+    // the activity will be paused when requesting notification
+    // permissions, which will otherwise break audio presenter.
+    audioPresenter.unbind(this);
+    super.onStop();
   }
 
   @Override
@@ -1544,14 +1561,34 @@ public class PagerActivity extends AppCompatActivity implements
 
     if (needsPermission) {
       audioStatusBar.switchMode(AudioStatusBar.PROMPT_DOWNLOAD_MODE);
+    } else if (!PermissionUtil.havePostNotificationPermission(this)) {
+        if (PermissionUtil.canRequestPostNotificationPermission(this)) {
+          promptDialog = PermissionUtil.buildPostPermissionDialog(this,
+              () -> {
+                promptDialog = null;
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+                return null;
+              }, () -> {
+                proceedWithDownload(downloadIntent);
+                promptDialog = null;
+                return null;
+              });
+          promptDialog.show();
+        } else {
+          requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
     } else {
-      if (isActionBarHidden) {
-        toggleActionBar();
-      }
-      audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
-      Timber.d("starting service in handleRequiredDownload");
-      startService(downloadIntent);
+      proceedWithDownload(downloadIntent);
     }
+  }
+
+  public void proceedWithDownload(Intent downloadIntent) {
+    if (isActionBarHidden) {
+      toggleActionBar();
+    }
+    audioStatusBar.switchMode(AudioStatusBar.DOWNLOADING_MODE);
+    Timber.d("starting service in handleRequiredDownload");
+    startService(downloadIntent);
   }
 
   public void handlePlayback(AudioRequest request) {
@@ -1743,7 +1780,7 @@ public class PagerActivity extends AppCompatActivity implements
 
   private class AyahMenuItemSelectionHandler implements MenuItem.OnMenuItemClickListener {
     @Override
-    public boolean onMenuItemClick(MenuItem item) {
+    public boolean onMenuItemClick(@NonNull MenuItem item) {
       int sliderPage = -1;
       final AyahSelection currentSelection = readingEventPresenter.currentAyahSelection();
       final SuraAyah startSuraAyah = AyahSelectionKt.startSuraAyah(currentSelection);
