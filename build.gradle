@@ -6,7 +6,7 @@ buildscript {
     daggerVersion = '2.48'
 
     androidxMediaVersion = '1.6.0'
-    androidxAnnotationVersion = '1.6.0'
+    androidxAnnotationVersion = '1.7.0'
     androidxFragmentVersion = '1.6.1'
     androidxPreferencesVersion = '1.2.1'
     androidxAppcompatVersion = '1.6.1'
