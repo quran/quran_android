@@ -18,7 +18,7 @@ buildscript {
     materialComponentsVersion = '1.9.0'
     coreKtxVersion = '1.9.0'
 
-    anvilVersion = '2.4.7'
+    anvilVersion = '2.4.8'
     moshiVersion = '1.15.0'
     okioVersion = '3.5.0'
     retrofitVersion = '2.9.0'
