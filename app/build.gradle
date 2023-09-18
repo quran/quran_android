@@ -175,7 +175,7 @@ dependencies {
   testImplementation libs.espresso.core
   testImplementation libs.espresso.intents
 
-  errorprone libs.error.prone.core
+  errorprone libs.errorprone.core
 
   // Number Picker
   implementation libs.number.picker
