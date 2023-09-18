@@ -52,6 +52,7 @@ reorderableComposeVersion = "0.9.6"
 
 # recitations
 grpcOkhttpVersion = "1.41.0"
+googleAuthVersion = "1.19.0"
 googleCloudSpeechVersion = "2.6.1"
 
 # testing
@@ -127,6 +128,7 @@ sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapte
 # recitation
 grpc-okhttp = { module = "io.grpc:grpc-okhttp", version.ref = "grpcOkhttpVersion" }
 google-cloud-speech = { module = "com.google.cloud:google-cloud-speech", version.ref = "googleCloudSpeechVersion" }
+google-auth = { module = "com.google.auth:google-auth-library-oauth2-http", version.ref = "googleAuthVersion" }
 
 # ui libraries
 balloon = { module = "com.github.skydoves:balloon", version.ref = "balloonVersion" }
