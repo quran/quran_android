@@ -48,7 +48,7 @@ tooltipComposeVersion = "0.2.0"
 insetterVersion = "0.6.1"
 materialComponentsVersion = "1.9.0"
 numberPickerVersion = "2.4.13"
-reorderableComposeVersion = "0.7.4"
+reorderableComposeVersion = "0.9.6"
 
 # recitations
 grpcOkhttpVersion = "1.41.0"
