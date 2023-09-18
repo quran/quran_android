@@ -11,6 +11,6 @@ dependencies {
   implementation project(path: ':common:audio')
   implementation project(path: ':common:upgrade')
 
-  kapt deps.dagger.apt
-  implementation deps.dagger.runtime
+  kapt libs.dagger.compiler
+  implementation libs.dagger.runtime
 }

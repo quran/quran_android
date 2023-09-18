@@ -128,56 +128,55 @@ dependencies {
   implementation project(path: ':feature:downloadmanager')
   implementation project(path: ':feature:qarilist')
 
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
+  implementation libs.kotlinx.coroutines.core
+  implementation libs.kotlinx.coroutines.android
 
-  implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
-  implementation "com.squareup.retrofit2:converter-moshi:${retrofitVersion}"
+  implementation libs.retrofit
+  implementation libs.converter.moshi
 
-  implementation "androidx.appcompat:appcompat:${androidxAppcompatVersion}"
-  implementation "androidx.media:media:${androidxMediaVersion}"
-  implementation "androidx.localbroadcastmanager:localbroadcastmanager:${androidxLocalBroadcastVersion}"
-  implementation "androidx.preference:preference-ktx:${androidxPreferencesVersion}"
-  implementation "androidx.recyclerview:recyclerview:${androidxRecyclerViewVersion}"
-  implementation "com.google.android.material:material:${materialComponentsVersion}"
-  implementation "androidx.swiperefreshlayout:swiperefreshlayout:${androidxSwipeRefreshVersion}"
+  implementation libs.androidx.appcompat
+  implementation libs.androidx.media
+  implementation libs.androidx.localbroadcastmanager
+  implementation libs.androidx.preference.ktx
+  implementation libs.androidx.recyclerview
+  implementation libs.material
+  implementation libs.androidx.swiperefreshlayout
 
   // okio
-  implementation "com.squareup.okio:okio:${okioVersion}"
+  implementation libs.okio
 
   // rx
-  implementation 'io.reactivex.rxjava3:rxjava:3.1.7'
-  implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
+  implementation libs.rxjava
+  implementation libs.rxandroid
 
   // dagger
-  kapt deps.dagger.apt
-  kaptTest deps.dagger.apt
-  implementation deps.dagger.runtime
+  kapt libs.dagger.compiler
+  kaptTest libs.dagger.compiler
+  implementation libs.dagger.runtime
 
   // workmanager
-  implementation "androidx.work:work-runtime-ktx:${workManagerVersion}"
+  implementation libs.androidx.work.runtime.ktx
 
-  implementation "com.squareup.okio:okio:${okioVersion}"
-  implementation "com.squareup.okhttp3:okhttp"
+  implementation libs.okhttp
 
-  implementation "com.squareup.moshi:moshi:${moshiVersion}"
-  kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
+  implementation libs.moshi
+  kapt(libs.moshi.codegen)
 
-  implementation "dev.chrisbanes.insetter:insetter:0.6.1"
-  implementation 'com.jakewharton.timber:timber:5.0.1'
-  debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
+  implementation libs.insetter
+  implementation libs.timber
+  debugImplementation libs.leakcanary.android
 
-  testImplementation "junit:junit:${junitVersion}"
-  testImplementation "com.google.truth:truth:${truthVersion}"
-  testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-  testImplementation "com.squareup.okhttp3:mockwebserver"
-  testImplementation "androidx.test.ext:junit-ktx:${androidxJunitExtVersion}"
-  testImplementation "org.robolectric:robolectric:${robolectricVersion}"
-  testImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
-  testImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
+  testImplementation libs.junit
+  testImplementation libs.truth
+  testImplementation libs.mockito.core
+  testImplementation libs.okhttp.mockserver
+  testImplementation libs.junit.ktx
+  testImplementation libs.robolectric
+  testImplementation libs.espresso.core
+  testImplementation libs.espresso.intents
 
-  errorprone 'com.google.errorprone:error_prone_core:2.21.1'
+  errorprone libs.error.prone.core
 
   // Number Picker
-  implementation 'io.github.ShawnLin013:number-picker:2.4.13'
+  implementation libs.number.picker
 }

@@ -5,9 +5,9 @@ plugins {
 
 dependencies {
   implementation project(":common:analytics")
-  implementation "androidx.annotation:annotation:${androidxAnnotationVersion}"
+  implementation libs.androidx.annotation
 
   // dagger
-  kapt deps.dagger.apt
-  implementation deps.dagger.runtime
+  kapt libs.dagger.compiler
+  implementation libs.dagger.runtime
 }

@@ -8,11 +8,11 @@ anvil { generateDaggerFactories = true }
 dependencies {
   implementation project(":common:data")
 
-  implementation "androidx.annotation:annotation:${androidxAnnotationVersion}"
+  implementation libs.androidx.annotation
 
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
+  implementation libs.kotlinx.coroutines.core
+  implementation libs.kotlinx.coroutines.android
 
   // dagger
-  implementation deps.dagger.runtime
+  implementation libs.dagger.runtime
 }

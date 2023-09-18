@@ -8,7 +8,7 @@ android.namespace 'com.quran.mobile.di'
 anvil { generateDaggerFactories = true }
 
 dependencies {
-  implementation deps.dagger.runtime
-  implementation "androidx.fragment:fragment-ktx:${androidxFragmentVersion}"
-  implementation "androidx.preference:preference-ktx:${androidxPreferencesVersion}"
+  implementation libs.dagger.runtime
+  implementation libs.androidx.fragment.ktx
+  implementation libs.androidx.preference.ktx
 }
