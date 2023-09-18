@@ -4,15 +4,15 @@ plugins {
 }
 
 dependencies {
-  implementation "androidx.annotation:annotation:${androidxAnnotationVersion}"
+  implementation libs.androidx.annotation
 
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
+  implementation libs.kotlinx.coroutines.core
+  implementation libs.kotlinx.coroutines.android
 
   // dagger
-  kapt deps.dagger.apt
-  implementation deps.dagger.runtime
+  kapt libs.dagger.compiler
+  implementation libs.dagger.runtime
 
-  implementation "com.squareup.moshi:moshi:${moshiVersion}"
-  kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
+  implementation libs.moshi
+  kapt(libs.moshi.codegen)
 }

@@ -7,8 +7,8 @@ android.namespace 'com.quran.labs.androidquran.common.pages'
 
 dependencies {
   implementation project(path: ':common:data')
-  implementation "androidx.fragment:fragment-ktx:${androidxFragmentVersion}"
+  implementation libs.androidx.fragment.ktx
 
-  kapt deps.dagger.apt
-  implementation deps.dagger.runtime
+  kapt libs.dagger.compiler
+  implementation libs.dagger.runtime
 }

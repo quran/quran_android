@@ -4,9 +4,9 @@ plugins {
 }
 
 dependencies {
-  kapt deps.dagger.apt
-  implementation deps.dagger.runtime
+  kapt libs.dagger.compiler
+  implementation libs.dagger.runtime
 
-  implementation 'dnsjava:dnsjava:2.1.9'
-  implementation "com.squareup.okhttp3:okhttp-dnsoverhttps"
+  implementation libs.dnsjava
+  implementation libs.okhttp.dnsoverhttps
 }

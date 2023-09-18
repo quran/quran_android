@@ -21,16 +21,16 @@ android {
 dependencies {
   implementation project(path: ':common:audio')
 
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
+  implementation libs.kotlinx.coroutines.core
+  implementation libs.kotlinx.coroutines.android
 
-  implementation "com.squareup.okio:okio:${okioVersion}"
+  implementation libs.okio
 
-  implementation "com.squareup.moshi:moshi:${moshiVersion}"
-  kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
+  implementation libs.moshi
+  kapt(libs.moshi.codegen)
 
-  implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+  implementation libs.retrofit
 
-  testImplementation "junit:junit:${junitVersion}"
-  testImplementation "com.google.truth:truth:${truthVersion}"
+  testImplementation libs.junit
+  testImplementation libs.truth
 }

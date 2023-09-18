@@ -21,21 +21,21 @@ dependencies {
   implementation project(path: ':common:data')
   implementation project(path: ':common:ui:core')
 
-  implementation "androidx.annotation:annotation:${androidxAnnotationVersion}"
+  implementation libs.androidx.annotation
 
   // dagger
-  implementation deps.dagger.runtime
+  implementation libs.dagger.runtime
 
   // compose
-  implementation "androidx.compose.animation:animation"
-  implementation "androidx.compose.foundation:foundation"
-  implementation "androidx.compose.material:material"
-  implementation "androidx.compose.material3:material3"
-  implementation "androidx.compose.ui:ui"
-  implementation "androidx.compose.ui:ui-tooling-preview"
-  debugImplementation "androidx.compose.ui:ui-tooling"
+  implementation libs.compose.animation
+  implementation libs.compose.foundation
+  implementation libs.compose.material
+  implementation libs.compose.material3
+  implementation libs.compose.ui
+  implementation libs.compose.ui.tooling.preview
+  debugImplementation libs.compose.ui.tooling
 
   // coroutines
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
+  implementation libs.kotlinx.coroutines.core
+  implementation libs.kotlinx.coroutines.android
 }

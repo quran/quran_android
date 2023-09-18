@@ -12,12 +12,12 @@ dependencies {
   implementation project(":common:data")
   implementation project(":common:download")
 
-  implementation deps.dagger.runtime
-  implementation "androidx.annotation:annotation:${androidxAnnotationVersion}"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
-  implementation "com.squareup.okio:okio:${okioVersion}"
+  implementation libs.dagger.runtime
+  implementation libs.androidx.annotation
+  implementation libs.kotlinx.coroutines.core
+  implementation libs.okio
 
-  testImplementation "junit:junit:${junitVersion}"
-  testImplementation "com.google.truth:truth:${truthVersion}"
-  testImplementation "com.squareup.okio:okio-fakefilesystem:${okioVersion}"
+  testImplementation libs.junit
+  testImplementation libs.truth
+  testImplementation libs.okio.fakefilesystem
 }
