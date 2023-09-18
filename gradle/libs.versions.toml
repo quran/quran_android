@@ -50,7 +50,7 @@ timberVersion = "5.0.1"
 truthVersion = "1.1.5"
 workManagerVersion = "2.8.1"
 grpcOkhttpVersion = "1.41.0"
-googleCloudSpeechVersion = "2.1.0"
+googleCloudSpeechVersion = "2.6.1"
 
 [libraries]
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutinesVersion" }
