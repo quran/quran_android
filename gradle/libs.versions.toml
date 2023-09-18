@@ -2,7 +2,7 @@
 agp = "8.1.1"
 kotlin = "1.9.10"
 
-anvil = "2.4.8"
+anvil = "2.4.8-1-8"
 crashlytics = "2.9.9"
 errorprone = "3.1.0"
 sqldelight = "2.0.0"
