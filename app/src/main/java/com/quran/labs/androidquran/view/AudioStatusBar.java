@@ -16,10 +16,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Space;
 import android.widget.TextView;
+
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.core.view.ViewCompat;
+
 import com.quran.data.model.audio.Qari;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.common.audio.model.QariItem;
@@ -59,6 +61,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private boolean haveCriticalError = false;
 
   private TextView qariView;
+  private ImageView dropdownIconView;
   private TextView progressText;
   private ProgressBar progressBar;
   private final RepeatButton repeatButton;
@@ -254,24 +257,33 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
       qariView.setBackgroundResource(itemBackground);
       qariView.setPadding(buttonPadding, 0, buttonPadding, 0);
     }
+
+    if (dropdownIconView == null) {
+      dropdownIconView = new ImageView(context);
+      dropdownIconView.setImageResource(R.drawable.ic_action_expand);
+      dropdownIconView.setBackgroundResource(itemBackground);
+      dropdownIconView.setOnClickListener(view -> audioBarListener.onShowQariList());
+      dropdownIconView.setPadding(buttonPadding, 0, buttonPadding, 0);
+    }
     qariView.setText(currentQari.getNameResource());
 
-    // in RTL, because this is currently an LTR LinearLayout, this shows
-    // the spinner and then the play button, so we can't match parent. this
-    // is less efficient than the LTR version. this should be fixed by making
-    // the parent a vanilla LinearLayout and setting the direction.
-    final LayoutParams params;
-    if (isRtl || isRecitationEnabled) {
-      params = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
-      params.weight = 1;
-    } else {
-      params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-    }
+    final ViewGroup.LayoutParams dropdownParams =
+        new ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        );
+
+    final LayoutParams params = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
+    params.weight = 1;
 
     if (isRtl) {
       ViewCompat.setLayoutDirection(qariView, ViewCompat.LAYOUT_DIRECTION_RTL);
+      addView(dropdownIconView, dropdownParams);
     }
     addView(qariView, params);
+    if (!isRtl) {
+      addView(dropdownIconView, dropdownParams);
+    }
   }
 
   private void showPromptForDownloadMode() {
