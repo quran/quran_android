@@ -43,7 +43,7 @@
   <string name="qari_mostafa_ismaeel_gapless">Mostafa Ismaeel</string>
   <string name="qari_husary_iza3a_gapless">Husary Broadcast</string>
   <string name="qari_abdulaziz_zahrani_gapless">Abdulaziz Az-Zahrani</string>
-  <string name="qari_ayman_suwaid">Ayman Suwaid (interrompu)</string>
+  <string name="qari_ayman_suwaid_gapped">Ayman Suwaid (interrompu)</string>
   <string name="qari_afasy_gapless">Mishary Al-Afasy</string>
   <string name="qari_hani_rifai_gapless">Hani Ar-Rifai</string>
   <string name="qari_ayyoub_gapless">Muhammad Ayyoub</string>
@@ -74,4 +74,10 @@
   <string name="qari_alzain_ahmad_gapless">Alzain Mohammed Ahmad</string>
   <string name="qari_muhammad_rashad_shereef_gapless">Muhammad Rashad Al-Chérif</string>
   <string name="qari_wadee3_alyamani_gapless">Wadee\' Al-Yamani</string>
+  <string name="qari_ayman_suwaid_gapless">Ayman Suwaid</string>
+  <string name="qari_hady_toure_gapless">Hady Toure</string>
+  <string name="qari_khalid_jalil_gapless">Khalid Al-Jalil</string>
+  <string name="qari_nabil_rifa3i_gapless">Nabil Ar-Rifai</string>
+  <string name="qari_noreen_siddiq_gapless">Noreen Siddiq</string>
+  <string name="qari_tawfeeq_as_sawaigh_gapless">Tawfeeq as-Sawaigh</string>
 </resources>

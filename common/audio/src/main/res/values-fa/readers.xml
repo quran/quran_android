@@ -43,7 +43,7 @@
   <string name="qari_mostafa_ismaeel_gapless">مصطفي إسماعيل</string>
   <string name="qari_husary_iza3a_gapless">الحصري تسجيل الإذاعة</string>
   <string name="qari_abdulaziz_zahrani_gapless">عبد العزيز بن صالح الزهراني</string>
-  <string name="qari_ayman_suwaid">أيمن سويد (شکاف زده)</string>
+  <string name="qari_ayman_suwaid_gapped">أيمن سويد (شکاف زده)</string>
   <string name="qari_afasy_gapless">مشاري بن راشد العفاسي</string>
   <string name="qari_hani_rifai_gapless">هاني الرفاعي</string>
   <string name="qari_ayyoub_gapless">محمد أيوب</string>
@@ -74,4 +74,10 @@
   <string name="qari_alzain_ahmad_gapless">الزين محمد احمد</string>
   <string name="qari_muhammad_rashad_shereef_gapless">محمد رشاد الشريف</string>
   <string name="qari_wadee3_alyamani_gapless">وديع اليمني</string>
+  <string name="qari_ayman_suwaid_gapless">أيمن سويد</string>
+  <string name="qari_hady_toure_gapless">محمد الهادي توري</string>
+  <string name="qari_khalid_jalil_gapless">خالد الجليل</string>
+  <string name="qari_nabil_rifa3i_gapless">نبيل الرفاعي</string>
+  <string name="qari_noreen_siddiq_gapless">نورين محمد صديق</string>
+  <string name="qari_tawfeeq_as_sawaigh_gapless">توفيق الصايغ</string>
 </resources>

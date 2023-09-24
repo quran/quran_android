@@ -43,7 +43,7 @@
   <string name="qari_mostafa_ismaeel_gapless">Мустафа Исмаил</string>
   <string name="qari_husary_iza3a_gapless">Махмуд Халиль аль-Хусари (радио)</string>
   <string name="qari_abdulaziz_zahrani_gapless">Абдульазиз аз-Захрани</string>
-  <string name="qari_ayman_suwaid">Айман Сувейд (интервал)</string>
+  <string name="qari_ayman_suwaid_gapped">Айман Сувейд (интервал)</string>
   <string name="qari_afasy_gapless">Мишари Рашид аль-Афаси</string>
   <string name="qari_hani_rifai_gapless">Хани ар-Рифаи</string>
   <string name="qari_ayyoub_gapless">Мухаммад Аюб</string>
@@ -74,4 +74,10 @@
   <string name="qari_alzain_ahmad_gapless">Альзайн Мохаммед Ахмед</string>
   <string name="qari_muhammad_rashad_shereef_gapless">Мухаммад Рашад Аль-Шериф</string>
   <string name="qari_wadee3_alyamani_gapless">Вадих Аль-Ямани</string>
+  <string name="qari_ayman_suwaid_gapless">Айман Сувейд</string>
+  <string name="qari_hady_toure_gapless">Hady Toure</string>
+  <string name="qari_khalid_jalil_gapless">Khalid Al-Jalil</string>
+  <string name="qari_nabil_rifa3i_gapless">Nabil Ar-Rifai</string>
+  <string name="qari_noreen_siddiq_gapless">Noreen Siddiq</string>
+  <string name="qari_tawfeeq_as_sawaigh_gapless">Tawfeeq as-Sawaigh</string>
  </resources>
