@@ -15,7 +15,7 @@ moshiVersion = "1.15.0"
 okioVersion = "3.5.0"
 retrofitVersion = "2.9.0"
 rxandroidVersion = "3.0.2"
-rxjavaVersion = "3.1.7"
+rxjavaVersion = "3.1.8"
 sqldelight = "2.0.0"
 timberVersion = "5.0.1"
 
