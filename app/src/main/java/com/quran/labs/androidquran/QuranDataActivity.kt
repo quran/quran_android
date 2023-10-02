@@ -248,6 +248,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     if (updateDialog == null) {
       val migrationDialog = AlertDialog.Builder(this)
         .setView(R.layout.migration_upgrade)
+        .setCancelable(false)
         .create()
       updateDialog = migrationDialog
       migrationDialog.show()
