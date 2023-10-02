@@ -5,6 +5,8 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.widget.Toast
 import androidx.annotation.StringRes
 import com.quran.data.model.QuranText
@@ -75,7 +77,16 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
             append(translationNames[i].getTranslatorName())
             append(":\n")
           }
-          append(text)
+
+          // remove footnotes for now
+          val spannableStringBuilder = SpannableStringBuilder(text)
+          translation.footnoteCognizantText(
+            spannableStringBuilder,
+            listOf(),
+            { _ -> SpannableString("") },
+            { builder, _, _ -> builder }
+          )
+          append(spannableStringBuilder)
         }
       }
       if (ayahInfo.arabicText == null) {
