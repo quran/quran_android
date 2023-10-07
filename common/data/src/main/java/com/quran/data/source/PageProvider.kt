@@ -29,5 +29,6 @@ interface PageProvider {
   fun getPageContentType(): PageContentType = PageContentType.Image
   fun getFallbackPageType(): String? = null
   fun getQaris(): List<Qari>
+  fun getDefaultQariId(): Int
   fun pageType(): String = ""
 }

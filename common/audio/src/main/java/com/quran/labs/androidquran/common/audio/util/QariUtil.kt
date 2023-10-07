@@ -19,6 +19,13 @@ class QariUtil @Inject constructor(private val pageProvider: PageProvider) {
   }
 
   /**
+   * Get the default qari id when no qari is selected.
+    */
+  fun getDefaultQariId(): Int {
+    return pageProvider.getDefaultQariId()
+  }
+
+  /**
    * Get a list of all available qaris as [QariItem]s
    *
    * @param context the current context
