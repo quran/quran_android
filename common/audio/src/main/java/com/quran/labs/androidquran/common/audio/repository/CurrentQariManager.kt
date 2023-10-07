@@ -13,11 +13,14 @@ import kotlinx.coroutines.flow.map
 @Singleton
 class CurrentQariManager @Inject constructor(appContext: Context, private val qariUtil: QariUtil) {
   private val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
-  private val currentQariFlow = MutableStateFlow(prefs.getInt(PREF_DEFAULT_QARI, 0))
+  private val currentQariFlow =
+    MutableStateFlow(prefs.getInt(PREF_DEFAULT_QARI, qariUtil.getDefaultQariId()))
   private val qaris by lazy { qariUtil.getQariList() }
 
   fun flow(): Flow<Qari> = currentQariFlow
     .map { qariId -> qaris.firstOrNull { it.id == qariId } ?: qaris.first() }
+
+  fun currentQariId(): Int = currentQariFlow.value
 
   fun setCurrentQari(qariId: Int) {
     prefs.edit().putInt(PREF_DEFAULT_QARI, qariId).apply()
