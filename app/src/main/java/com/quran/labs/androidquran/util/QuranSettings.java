@@ -167,9 +167,17 @@ public class QuranSettings {
     return prefs.getBoolean(Constants.PREF_SHOW_SIDELINES, false);
   }
 
+  public void setSidelines(boolean sidelines) {
+    prefs.edit().putBoolean(Constants.PREF_SHOW_SIDELINES, sidelines).apply();
+  }
+
   // only available for Naskh, should return false by default for non-Naskh pages
-  public boolean showLineDividers() {
+  public boolean isShowLineDividers() {
     return prefs.getBoolean(Constants.PREF_SHOW_LINE_DIVIDERS, false);
+  }
+
+  public void setShowLineDividers(boolean showLineDividers) {
+    prefs.edit().putBoolean(Constants.PREF_SHOW_LINE_DIVIDERS, showLineDividers).apply();
   }
 
   public void setPageType(String pageType) {
