@@ -162,8 +162,14 @@ public class QuranSettings {
     return prefs.getString(Constants.PREF_PAGE_TYPE, null);
   }
 
+  // only available for Naskh, should return false by default for non-Naskh pages
   public boolean isSidelines() {
     return prefs.getBoolean(Constants.PREF_SHOW_SIDELINES, false);
+  }
+
+  // only available for Naskh, should return false by default for non-Naskh pages
+  public boolean showLineDividers() {
+    return prefs.getBoolean(Constants.PREF_SHOW_LINE_DIVIDERS, false);
   }
 
   public void setPageType(String pageType) {
