@@ -14,6 +14,7 @@ interface Settings {
   suspend fun shouldShowBookmarks(): Boolean
   suspend fun pageType(): String
   suspend fun showSidelines(): Boolean
+  suspend fun showLineDividers(): Boolean
 
   fun preferencesFlow(): Flow<String>
 }

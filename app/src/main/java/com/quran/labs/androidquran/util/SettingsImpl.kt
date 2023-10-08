@@ -69,5 +69,9 @@ class SettingsImpl @Inject constructor(private val quranSettings: QuranSettings)
     return quranSettings.isSidelines
   }
 
+  override suspend fun showLineDividers(): Boolean {
+    return quranSettings.showLineDividers()
+  }
+
   override fun preferencesFlow(): Flow<String> = preferencesFlow
 }

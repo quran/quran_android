@@ -99,4 +99,5 @@ object Constants {
   const val PREF_CURRENT_AUDIO_REVISION = "currentAudioRevision"
   const val PREF_SURA_TRANSLATED_NAME = "suraTranslatedName"
   const val PREF_SHOW_SIDELINES = "showSidelines"
+  const val PREF_SHOW_LINE_DIVIDERS = "showLineDividers"
 }
