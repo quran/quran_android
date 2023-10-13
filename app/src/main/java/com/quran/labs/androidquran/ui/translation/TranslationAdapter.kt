@@ -432,6 +432,7 @@ internal class TranslationAdapter(
     spannable.setSpan(SuperscriptSpan(), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     spannable.setSpan(RelativeSizeSpan(0.7f), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     spannable.setSpan(ExpandFootnoteSpan(number, ::expandFootnote), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    spannable.setSpan(ForegroundColorSpan(inlineAyahColor), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     return spannable
   }
 
