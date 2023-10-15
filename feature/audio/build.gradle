@@ -1,6 +1,6 @@
 plugins {
   id 'quran.android.library.android'
-  id 'org.jetbrains.kotlin.kapt'
+  alias libs.plugins.ksp
 }
 
 android {
@@ -27,7 +27,7 @@ dependencies {
   implementation libs.okio
 
   implementation libs.moshi
-  kapt(libs.moshi.codegen)
+  ksp(libs.moshi.codegen)
 
   implementation libs.retrofit
 

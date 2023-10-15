@@ -1,6 +1,7 @@
 [versions]
 agp = "8.1.2"
 kotlin = "1.9.10"
+ksp = "1.9.10-1.0.13"
 
 anvil = "2.4.8"
 coroutinesVersion = "1.7.3"
@@ -162,6 +163,7 @@ truth = { module = "com.google.truth:truth", version.ref = "truthVersion" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 anvil = { id = "com.squareup.anvil", version.ref = "anvil"}
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }

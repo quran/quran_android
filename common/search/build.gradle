@@ -1,6 +1,5 @@
 plugins {
   id 'quran.android.library.android'
-  id 'org.jetbrains.kotlin.kapt'
 }
 
 android.namespace 'com.quran.labs.androidquran.common.search'
