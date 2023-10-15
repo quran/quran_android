@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.di.module.application
 
-import android.app.Application
 import android.content.Context
 import android.graphics.Point
 import android.view.Display
@@ -15,6 +14,7 @@ import com.quran.labs.androidquran.data.QuranFileConstants
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.SettingsImpl
+import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.di.ExtraScreenProvider
 import dagger.Module
@@ -28,15 +28,10 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
-class ApplicationModule(private val application: Application) {
+object ApplicationModule {
 
   @Provides
-  fun provideApplicationContext(): Context {
-    return application
-  }
-
-  @Provides
-  fun provideDisplay(appContext: Context): Display {
+  fun provideDisplay(@ApplicationContext appContext: Context): Display {
     val w = appContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     return w.defaultDisplay
   }
@@ -58,8 +53,8 @@ class ApplicationModule(private val application: Application) {
 
   @Provides
   @Singleton
-  fun provideQuranSettings(): QuranSettings {
-    return QuranSettings.getInstance(application)
+  fun provideQuranSettings(@ApplicationContext appContext: Context): QuranSettings {
+    return QuranSettings.getInstance(appContext)
   }
 
   @Provides
@@ -94,8 +89,8 @@ class ApplicationModule(private val application: Application) {
   }
 
   @Provides
-  fun provideCacheDirectory(): File {
-    return application.cacheDir
+  fun provideCacheDirectory(@ApplicationContext appContext: Context): File {
+    return appContext.cacheDir
   }
 
   @Provides

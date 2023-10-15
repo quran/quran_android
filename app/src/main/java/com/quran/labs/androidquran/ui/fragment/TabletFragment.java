@@ -9,17 +9,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
+
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.model.selection.AyahSelection;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranDisplayData;
-import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
 import com.quran.labs.androidquran.presenter.quran.QuranPageScreen;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahImageTrackerItem;
@@ -47,11 +48,14 @@ import com.quran.page.common.draw.ImageDrawHelper;
 import com.quran.page.common.factory.PageViewFactory;
 import com.quran.page.common.factory.PageViewFactoryProvider;
 import com.quran.reading.common.ReadingEventPresenter;
-import dagger.Lazy;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
+
 import java.util.List;
 import java.util.Set;
+
 import javax.inject.Inject;
+
+import dagger.Lazy;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import timber.log.Timber;
 
 public class TabletFragment extends Fragment
@@ -363,9 +367,8 @@ public class TabletFragment extends Fragment
         new int[]{ pageNumber } : new int[]{ pageNumber, pageNumber + 1 };
 
     ((PagerActivity) getActivity()).getPagerActivityComponent()
-        .quranPageComponentBuilder()
-        .withQuranPageModule(new QuranPageModule(pages))
-        .build()
+        .quranPageComponentFactory()
+        .generate(pages)
         .inject(this);
   }
 

@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.di.component.application
 
+import android.content.Context
 import com.quran.analytics.provider.AnalyticsModule
 import com.quran.common.networking.NetworkModule
 import com.quran.data.di.AppScope
@@ -33,7 +34,10 @@ import com.quran.labs.androidquran.widget.BookmarksWidget
 import com.quran.labs.androidquran.widget.BookmarksWidgetListProvider
 import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
 import com.quran.mobile.di.QuranApplicationComponent
+import com.quran.mobile.di.qualifier.ApplicationContext
 import com.squareup.anvil.annotations.MergeComponent
+import dagger.BindsInstance
+import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
@@ -52,8 +56,8 @@ import javax.inject.Singleton
 )
 interface ApplicationComponent: QuranApplicationComponent {
   // subcomponents
-  fun pagerActivityComponentBuilder(): PagerActivityComponent.Builder
-  fun quranActivityComponentBuilder(): QuranActivityComponent.Builder
+  fun pagerActivityComponentFactory(): PagerActivityComponent.Factory
+  fun quranActivityComponentFactory(): QuranActivityComponent.Factory
 
   // application
   fun inject(quranApplication: QuranApplication)
@@ -89,4 +93,9 @@ interface ApplicationComponent: QuranApplicationComponent {
   // widgets
   fun inject(bookmarksWidgetListProvider: BookmarksWidgetListProvider)
   fun inject(bookmarksWidget: BookmarksWidget)
+
+  @Component.Factory
+  interface Factory {
+    fun generate(@BindsInstance @ApplicationContext appContext: Context): ApplicationComponent
+  }
 }

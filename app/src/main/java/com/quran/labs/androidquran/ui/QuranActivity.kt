@@ -101,8 +101,8 @@ class QuranActivity : AppCompatActivity(),
 
     super.onCreate(savedInstanceState)
     quranApp.applicationComponent
-        .quranActivityComponentBuilder()
-        .build()
+        .quranActivityComponentFactory()
+        .generate()
         .inject(this)
 
     setContentView(R.layout.quran_index)

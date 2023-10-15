@@ -8,8 +8,8 @@ import dagger.Subcomponent
 @Subcomponent(modules = [TestQuranActivityModule::class])
 interface TestQuranActivityComponent : QuranActivityComponent {
 
-  @Subcomponent.Builder
-  interface Builder : QuranActivityComponent.Builder {
-    override fun build(): TestQuranActivityComponent
+  @Subcomponent.Factory
+  interface Factory : QuranActivityComponent.Factory {
+    override fun generate(): TestQuranActivityComponent
   }
 }

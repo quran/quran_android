@@ -1,20 +1,21 @@
 package com.quran.labs.androidquran.model.translation
 
 import android.content.Context
+import com.quran.data.di.ActivityScope
 import com.quran.data.model.QuranText
 import com.quran.data.model.VerseRange
 import com.quran.data.pageinfo.mapper.AyahMapper
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.database.DatabaseHandler
 import com.quran.labs.androidquran.database.DatabaseHandler.TextType
-import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.util.QuranFileUtils
+import com.quran.mobile.di.qualifier.ApplicationContext
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 @ActivityScope
 class TranslationModel @Inject internal constructor(
-  private val appContext: Context,
+  @ApplicationContext private val appContext: Context,
   private val quranFileUtils: QuranFileUtils,
   private val ayahMapper: AyahMapper
 ) {

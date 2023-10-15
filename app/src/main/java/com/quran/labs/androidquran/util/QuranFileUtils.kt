@@ -14,6 +14,7 @@ import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.common.Response
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.extension.closeQuietly
+import com.quran.mobile.di.qualifier.ApplicationContext
 import okhttp3.OkHttpClient
 import okhttp3.Request.Builder
 import okhttp3.ResponseBody
@@ -35,7 +36,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 class QuranFileUtils @Inject constructor(
-  context: Context,
+  @ApplicationContext context: Context,
   pageProvider: PageProvider,
   private val quranScreenInfo: QuranScreenInfo
 ): QuranFileManager {

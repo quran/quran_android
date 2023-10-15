@@ -3,11 +3,12 @@ package com.quran.labs.androidquran.data
 import android.content.Context
 import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.util.QuranFileUtils
+import com.quran.mobile.di.qualifier.ApplicationContext
 import javax.inject.Inject
 
 @ActivityScope
 class AyahInfoDatabaseProvider @Inject constructor(
-  private val context: Context,
+  @ApplicationContext private val context: Context,
   private val widthParameter: String,
   private val quranFileUtils: QuranFileUtils
 ) {

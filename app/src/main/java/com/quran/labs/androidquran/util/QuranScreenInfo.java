@@ -4,11 +4,13 @@ import android.content.Context;
 import android.graphics.Point;
 import android.view.Display;
 
+import androidx.annotation.NonNull;
+
 import com.quran.data.source.PageSizeCalculator;
+import com.quran.mobile.di.qualifier.ApplicationContext;
 
 import javax.inject.Inject;
 
-import androidx.annotation.NonNull;
 import timber.log.Timber;
 
 public class QuranScreenInfo {
@@ -20,7 +22,7 @@ public class QuranScreenInfo {
   private final PageSizeCalculator pageSizeCalculator;
 
   @Inject
-  public QuranScreenInfo(@NonNull Context appContext,
+  public QuranScreenInfo(@NonNull @ApplicationContext Context appContext,
                          @NonNull Display display,
                          @NonNull PageSizeCalculator pageSizeCalculator) {
     final Point point = new Point();

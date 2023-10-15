@@ -11,8 +11,8 @@ interface DownloadManagerComponent {
   fun inject(audioManagerActivity: AudioManagerActivity)
   fun inject(sheikhAudioDownloadsActivity: SheikhAudioDownloadsActivity)
 
-  @Subcomponent.Builder
-  interface Builder {
-    fun build(): DownloadManagerComponent
+  @Subcomponent.Factory
+  interface Factory {
+    fun generate(): DownloadManagerComponent
   }
 }

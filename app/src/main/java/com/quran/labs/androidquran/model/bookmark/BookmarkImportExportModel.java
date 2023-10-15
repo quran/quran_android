@@ -9,6 +9,7 @@ import androidx.core.content.FileProvider;
 import com.quran.data.model.bookmark.BookmarkData;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
+import com.quran.mobile.di.qualifier.ApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class BookmarkImportExportModel {
   private final BookmarkModel bookmarkModel;
 
   @Inject
-  BookmarkImportExportModel(Context appContext,
+  BookmarkImportExportModel(@ApplicationContext Context appContext,
                             BookmarkJsonModel model, BookmarkModel bookmarkModel) {
     this.appContext = appContext;
     this.jsonModel = model;
