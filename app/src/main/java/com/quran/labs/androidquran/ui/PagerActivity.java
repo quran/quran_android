@@ -78,8 +78,6 @@ import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent;
-import com.quran.labs.androidquran.di.module.activity.PagerActivityModule;
-import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.presenter.audio.AudioPresenter;
@@ -792,9 +790,8 @@ public class PagerActivity extends AppCompatActivity implements
     if (pagerActivityComponent == null) {
       pagerActivityComponent = ((QuranApplication) getApplication())
           .getApplicationComponent()
-          .pagerActivityComponentBuilder()
-          .withPagerActivityModule(new PagerActivityModule(this))
-          .build();
+          .pagerActivityComponentFactory()
+          .generate(this, this);
     }
     return pagerActivityComponent;
   }
@@ -814,9 +811,8 @@ public class PagerActivity extends AppCompatActivity implements
   @Override
   public QuranReadingPageComponent provideQuranReadingPageComponent(@NonNull int... pages) {
     return getPagerActivityComponent()
-        .quranPageComponentBuilder()
-        .withQuranPageModule(new QuranPageModule(pages))
-        .build();
+        .quranPageComponentFactory()
+        .generate(pages);
   }
 
   @Override

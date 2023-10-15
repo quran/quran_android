@@ -17,7 +17,6 @@ import com.quran.data.model.selection.AyahSelection;
 import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranDisplayData;
-import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerItem;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTranslationTrackerItem;
@@ -99,10 +98,10 @@ public class TranslationFragment extends Fragment implements
     super.onAttach(context);
 
     pageNumber = getArguments() != null ? getArguments().getInt(PAGE_NUMBER_EXTRA) : -1;
+    final int[] pages = { pageNumber };
     ((PagerActivity) getActivity()).getPagerActivityComponent()
-        .quranPageComponentBuilder()
-        .withQuranPageModule(new QuranPageModule(pageNumber))
-        .build()
+        .quranPageComponentFactory()
+        .generate(pages)
         .inject(this);
   }
 

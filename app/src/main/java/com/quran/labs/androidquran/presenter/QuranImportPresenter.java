@@ -6,16 +6,18 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 
-import com.quran.labs.androidquran.QuranImportActivity;
 import com.quran.data.model.bookmark.BookmarkData;
+import com.quran.labs.androidquran.QuranImportActivity;
 import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.service.util.PermissionUtil;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.mobile.di.qualifier.ApplicationContext;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -24,9 +26,9 @@ import java.io.InputStream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.observers.DisposableMaybeObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -48,7 +50,7 @@ public class QuranImportPresenter implements Presenter<QuranImportActivity> {
   private QuranImportActivity mCurrentActivity;
 
   @Inject
-  QuranImportPresenter(Context appContext,
+  QuranImportPresenter(@ApplicationContext Context appContext,
                        BookmarkImportExportModel model,
                        BookmarkModel bookmarkModel) {
     mAppContext = appContext;

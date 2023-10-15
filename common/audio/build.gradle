@@ -9,6 +9,7 @@ anvil { generateDaggerFactories = true }
 android.namespace 'com.quran.labs.androidquran.common.audio'
 
 dependencies {
+  implementation project(":common:di")
   implementation project(":common:data")
   implementation project(":common:download")
 

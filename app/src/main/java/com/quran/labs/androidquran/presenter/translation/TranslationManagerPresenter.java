@@ -18,6 +18,7 @@ import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.mobile.di.qualifier.ApplicationContext;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
@@ -57,7 +58,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
   private TranslationManagerActivity currentActivity;
 
   @Inject
-  TranslationManagerPresenter(Context appContext,
+  TranslationManagerPresenter(@ApplicationContext Context appContext,
                               OkHttpClient okHttpClient,
                               QuranSettings quranSettings,
                               TranslationsDBAdapter dbAdapter,

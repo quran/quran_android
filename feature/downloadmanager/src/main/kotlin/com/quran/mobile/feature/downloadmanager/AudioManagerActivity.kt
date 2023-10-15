@@ -32,7 +32,7 @@ class AudioManagerActivity : ComponentActivity() {
 
     val injector = (application as? QuranApplicationComponentProvider)
       ?.provideQuranApplicationComponent() as? DownloadManagerComponentInterface
-    injector?.downloadManagerComponentBuilder()?.build()?.inject(this)
+    injector?.downloadManagerComponentFactory()?.generate()?.inject(this)
 
     val downloadedShuyookhFlow =
       audioManagerPresenter.downloadedShuyookh { QariItem.fromQari(this, it) }

@@ -22,7 +22,6 @@ import com.quran.data.model.selection.AyahSelectionKt;
 import com.quran.data.model.selection.SelectionIndicator;
 import com.quran.data.model.selection.SelectionIndicatorKt;
 import com.quran.labs.androidquran.data.QuranDisplayData;
-import com.quran.labs.androidquran.di.module.fragment.QuranPageModule;
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter;
 import com.quran.labs.androidquran.presenter.quran.QuranPageScreen;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahImageTrackerItem;
@@ -139,10 +138,10 @@ public class QuranPageFragment extends Fragment implements PageController,
     super.onAttach(context);
 
     pageNumber = getArguments().getInt(PAGE_NUMBER_EXTRA);
+    final int[] pages = { pageNumber };
     ((PagerActivity) getActivity()).getPagerActivityComponent()
-        .quranPageComponentBuilder()
-        .withQuranPageModule(new QuranPageModule(pageNumber))
-        .build()
+        .quranPageComponentFactory()
+        .generate(pages)
         .inject(this);
   }
 

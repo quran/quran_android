@@ -3,11 +3,12 @@ package com.quran.labs.androidquran.database
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.quran.mobile.di.qualifier.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TranslationsDBHelper @Inject constructor(context: Context) :
+class TranslationsDBHelper @Inject constructor(@ApplicationContext context: Context) :
   SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
   companion object {

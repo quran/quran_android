@@ -11,11 +11,11 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.quran.common.upgrade.LocalDataUpgrade
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.QuranDataStatus
-import com.quran.data.source.PageProvider
-import com.quran.common.upgrade.LocalDataUpgrade
 import com.quran.data.source.PageContentType
+import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.presenter.Presenter
@@ -26,9 +26,10 @@ import com.quran.labs.androidquran.worker.AudioUpdateWorker
 import com.quran.labs.androidquran.worker.MissingPageDownloadWorker
 import com.quran.labs.androidquran.worker.PartialPageCheckingWorker
 import com.quran.labs.androidquran.worker.WorkerConstants
+import com.quran.mobile.di.qualifier.ApplicationContext
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.functions.Consumer
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -38,12 +39,12 @@ import java.util.concurrent.TimeUnit.DAYS
 import javax.inject.Inject
 
 class QuranDataPresenter @Inject internal constructor(
-    val appContext: Context,
-    val quranInfo: QuranInfo,
-    val quranScreenInfo: QuranScreenInfo,
-    private val quranPageProvider: PageProvider,
-    val quranFileUtils: QuranFileUtils,
-    private val localDataUpgrade: LocalDataUpgrade
+  @ApplicationContext val appContext: Context,
+  val quranInfo: QuranInfo,
+  val quranScreenInfo: QuranScreenInfo,
+  private val quranPageProvider: PageProvider,
+  val quranFileUtils: QuranFileUtils,
+  private val localDataUpgrade: LocalDataUpgrade
 ) : Presenter<QuranDataActivity> {
 
   private var activity: QuranDataActivity? = null

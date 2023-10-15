@@ -10,6 +10,7 @@ import com.quran.data.di.AppScope
 import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.mobile.bookmark.Bookmarks
 import com.quran.mobile.bookmark.Last_pages
+import com.quran.mobile.di.qualifier.ApplicationContext
 import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
@@ -22,7 +23,7 @@ class BookmarkDataModule {
 
   @Singleton
   @Provides
-  fun provideBookmarksDatabase(context: Context, settings: Settings): BookmarksDatabase {
+  fun provideBookmarksDatabase(@ApplicationContext context: Context, settings: Settings): BookmarksDatabase {
     val driver: SqlDriver = AndroidSqliteDriver(
       schema = BookmarksDatabase.Schema,
       context = context,

@@ -8,8 +8,8 @@ import dagger.Subcomponent
 interface QuranActivityComponent {
   fun inject(quranActivity: QuranActivity)
 
-  @Subcomponent.Builder
-  interface Builder {
-    fun build(): QuranActivityComponent
+  @Subcomponent.Factory
+  interface Factory {
+    fun generate(): QuranActivityComponent
   }
 }

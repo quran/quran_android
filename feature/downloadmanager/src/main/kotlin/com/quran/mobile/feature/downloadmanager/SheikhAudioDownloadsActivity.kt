@@ -67,7 +67,7 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
 
     val injector = (application as? QuranApplicationComponentProvider)
       ?.provideQuranApplicationComponent() as? DownloadManagerComponentInterface
-    injector?.downloadManagerComponentBuilder()?.build()?.inject(this)
+    injector?.downloadManagerComponentFactory()?.generate()?.inject(this)
 
     val isRtl = SearchTextUtil.isRtl(quranNaming.getSuraNameWithNumber(this, 1, false))
     val suras = (1..114).map {

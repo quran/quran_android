@@ -1,10 +1,11 @@
 package com.quran.labs.androidquran.ui.helpers
 
 import android.content.Context
-import com.quran.labs.androidquran.common.Response
 import com.quran.data.di.ActivityScope
+import com.quran.labs.androidquran.common.Response
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
+import com.quran.mobile.di.qualifier.ApplicationContext
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import okhttp3.OkHttpClient
@@ -13,7 +14,7 @@ import javax.inject.Inject
 
 @ActivityScope
 class QuranPageLoader @Inject internal constructor(
-  private val appContext: Context,
+  @ApplicationContext private val appContext: Context,
   private val okHttpClient: OkHttpClient,
   private val imageWidth: String,
   private val quranScreenInfo: QuranScreenInfo,

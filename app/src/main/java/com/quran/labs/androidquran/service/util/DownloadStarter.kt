@@ -11,12 +11,13 @@ import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.mobile.common.download.Downloader
+import com.quran.mobile.di.qualifier.ApplicationContext
 import com.squareup.anvil.annotations.ContributesBinding
 import javax.inject.Inject
 
 @ContributesBinding(AppScope::class)
 class DownloadStarter @Inject constructor(
-  private val context: Context,
+  @ApplicationContext private val appContext: Context,
   private val quranInfo: QuranInfo,
   private val fileManager: QuranFileManager,
   private val audioUtils: AudioUtils
@@ -30,10 +31,10 @@ class DownloadStarter @Inject constructor(
     val basePath = fileManager.audioFileDirectory()
     val baseUri = basePath + qari.path
     val isGapless = qari.isGapless
-    val sheikhName = context.getString(qari.nameResource)
+    val sheikhName = appContext.getString(qari.nameResource)
 
     val intent = ServiceIntentHelper.getDownloadIntent(
-      context,
+      appContext,
       audioUtils.getQariUrl(qari),
       baseUri,
       sheikhName,
@@ -45,14 +46,14 @@ class DownloadStarter @Inject constructor(
       putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless)
       putExtra(QuranDownloadService.EXTRA_METADATA, AudioDownloadMetadata(qari.id))
     }
-    context.startService(intent)
+    appContext.startService(intent)
   }
 
   override fun cancelDownloads() {
-    val intent = Intent(context, QuranDownloadService::class.java).apply {
+    val intent = Intent(appContext, QuranDownloadService::class.java).apply {
       action = QuranDownloadService.ACTION_CANCEL_DOWNLOADS
     }
-    context.startService(intent)
+    appContext.startService(intent)
   }
 
   companion object {

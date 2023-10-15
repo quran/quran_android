@@ -5,23 +5,20 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.SparseArray
-
+import androidx.annotation.WorkerThread
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.dao.translation.TranslationItem
 import com.quran.labs.androidquran.database.TranslationsDBHelper.TranslationsTable
 import com.quran.labs.androidquran.util.QuranFileUtils
-
-import java.util.ArrayList
-import java.util.Collections
+import com.quran.mobile.di.qualifier.ApplicationContext
 import timber.log.Timber
-
-import androidx.annotation.WorkerThread
+import java.util.Collections
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class TranslationsDBAdapter @Inject constructor(
-  private val context: Context,
+  @ApplicationContext private val context: Context,
   adapter: TranslationsDBHelper,
   private val quranFileUtils: QuranFileUtils
 ) {

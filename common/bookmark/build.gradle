@@ -19,6 +19,7 @@ sqldelight {
 }
 
 dependencies {
+  implementation project(path: ':common:di')
   implementation project(path: ':common:data')
 
   // dagger

@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.di
 
+import android.content.Context
 import com.quran.analytics.provider.AnalyticsModule
 import com.quran.common.networking.NetworkModule
 import com.quran.data.di.AppScope
@@ -11,7 +12,10 @@ import com.quran.labs.androidquran.di.module.application.DatabaseModule
 import com.quran.labs.androidquran.di.module.application.PageAggregationModule
 import com.quran.labs.androidquran.di.module.widgets.BookmarksWidgetUpdaterModule
 import com.quran.labs.androidquran.di.quran.TestQuranActivityComponent
+import com.quran.mobile.di.qualifier.ApplicationContext
 import com.squareup.anvil.annotations.MergeComponent
+import dagger.BindsInstance
+import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
@@ -29,5 +33,10 @@ import javax.inject.Singleton
   ]
 )
 interface TestApplicationComponent : ApplicationComponent {
-  override fun quranActivityComponentBuilder(): TestQuranActivityComponent.Builder
+  override fun quranActivityComponentFactory(): TestQuranActivityComponent.Factory
+
+  @Component.Factory
+  interface Factory {
+    fun generate(@BindsInstance @ApplicationContext appContext: Context): TestApplicationComponent
+  }
 }

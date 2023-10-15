@@ -5,5 +5,5 @@ import com.squareup.anvil.annotations.ContributesTo
 
 @ContributesTo(AppScope::class)
 interface DownloadManagerComponentInterface {
-  fun downloadManagerComponentBuilder(): DownloadManagerComponent.Builder
+  fun downloadManagerComponentFactory(): DownloadManagerComponent.Factory
 }
