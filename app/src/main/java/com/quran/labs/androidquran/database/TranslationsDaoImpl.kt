@@ -9,12 +9,13 @@ import com.quran.data.model.bookmark.Bookmark
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.database.DatabaseHandler.TextType.Companion.TRANSLATION
 import com.quran.labs.androidquran.util.QuranFileUtils
+import com.quran.mobile.di.qualifier.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class TranslationsDaoImpl @Inject constructor(
-  private val appContext: Context,
+  @ApplicationContext private val appContext: Context,
   private val quranFileUtils: QuranFileUtils,
 ) : TranslationsDao {
 
