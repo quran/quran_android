@@ -3,6 +3,12 @@ agp = "8.1.2"
 kotlin = "1.9.10"
 ksp = "1.9.10-1.0.13"
 
+# required within the Gradle convention plugins - not unused
+compose-compiler = "1.5.3"
+composeBomVersion = "2023.09.00"
+okhttpBomVersion = "4.10.0"
+
+# dependencies
 anvil = "2.4.8"
 coroutinesVersion = "1.7.3"
 crashlytics = "2.9.9"
@@ -66,6 +72,11 @@ robolectricVersion = "4.10.3"
 [libraries]
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutinesVersion" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutinesVersion" }
+
+# required within the Gradle convention plugins - not unused
+okhttp-bom = { module = "com.squareup.okhttp3:okhttp-bom", version.ref = "okhttpBomVersion" }
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
+compose-runtime = { module = "androidx.compose.runtime:runtime" }
 
 # androidx
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompatVersion" }
