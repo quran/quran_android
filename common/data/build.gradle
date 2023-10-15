@@ -1,7 +1,10 @@
 plugins {
   id 'quran.android.library'
-  id 'org.jetbrains.kotlin.kapt'
+  alias libs.plugins.anvil
+  alias libs.plugins.ksp
 }
+
+anvil { generateDaggerFactories = true }
 
 dependencies {
   implementation libs.androidx.annotation
@@ -10,9 +13,8 @@ dependencies {
   implementation libs.kotlinx.coroutines.android
 
   // dagger
-  kapt libs.dagger.compiler
   implementation libs.dagger.runtime
 
   implementation libs.moshi
-  kapt(libs.moshi.codegen)
+  ksp(libs.moshi.codegen)
 }

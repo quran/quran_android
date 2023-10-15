@@ -1,12 +1,13 @@
 plugins {
   id 'quran.android.library'
-  id 'org.jetbrains.kotlin.kapt'
+  alias libs.plugins.anvil
 }
+
+anvil { generateDaggerFactories = true }
 
 dependencies {
   implementation libs.androidx.annotation
 
   // dagger
-  kapt libs.dagger.compiler
   implementation libs.dagger.runtime
 }

@@ -1,9 +1,10 @@
 plugins {
-  id 'quran.android.application'
+  id "quran.android.application"
   id 'org.jetbrains.kotlin.kapt'
   id 'org.jetbrains.kotlin.plugin.parcelize'
-  id 'net.ltgt.errorprone'
-  id 'com.squareup.anvil'
+  alias libs.plugins.ksp
+  alias libs.plugins.errorprone
+  alias libs.plugins.anvil
 }
 
 if (getGradle().getStartParameter().getTaskRequests().toString().contains("Release") &&
@@ -160,7 +161,7 @@ dependencies {
   implementation libs.okhttp
 
   implementation libs.moshi
-  kapt(libs.moshi.codegen)
+  ksp(libs.moshi.codegen)
 
   implementation libs.insetter
   implementation libs.timber

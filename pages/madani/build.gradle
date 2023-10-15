@@ -1,7 +1,9 @@
 plugins {
   id 'quran.android.library.android'
-  id 'org.jetbrains.kotlin.kapt'
+  alias libs.plugins.anvil
 }
+
+anvil { generateDaggerFactories = true }
 
 android.namespace 'com.quran.labs.androidquran.pages.madani'
 
@@ -11,6 +13,5 @@ dependencies {
   implementation project(path: ':common:audio')
   implementation project(path: ':common:upgrade')
 
-  kapt libs.dagger.compiler
   implementation libs.dagger.runtime
 }
