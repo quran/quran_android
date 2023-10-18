@@ -46,7 +46,7 @@ androidxWorkManagerVersion = "2.8.1"
 
 # firebase
 firebaseAnalyticsVersion = "21.3.0"
-firebaseCrashlyticsVersion = "18.4.3"
+firebaseCrashlyticsVersion = "18.5.0"
 
 # ui libraries
 accompanistVersion = "0.32.0"
