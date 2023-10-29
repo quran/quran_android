@@ -15,6 +15,10 @@
 
   <!-- required for posting notifications on Android 13+ (Api 33+) -->
   <uses-permission-sdk-23 android:name="android.permission.POST_NOTIFICATIONS"/>
+  
+  <!-- required for foreground service types on Android 14+ (Api 34+) -->
+  <uses-permission-sdk-23 android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+  <uses-permission-sdk-23 android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
   <!-- support chromebooks without touch screen -->
   <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
