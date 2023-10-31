@@ -8,9 +8,8 @@ import java.util.regex.Pattern
 
 class ArabicSearcher(private val defaultSearcher: Searcher,
                      private val matchStart: String,
-                     private val matchEnd: String,
-                     extraReplacements: String = "") : Searcher {
-  private val arabicRegex = "[$arabicRegexChars$extraReplacements]".toRegex()
+                     private val matchEnd: String) : Searcher {
+  private val arabicRegex = "[$arabicRegexChars]".toRegex()
 
   override fun getQuery(withSnippets: Boolean,
                         hasFTS: Boolean,
@@ -79,6 +78,6 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
   }
 
   companion object {
-    private const val arabicRegexChars =  "\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649"
+    private const val arabicRegexChars =  "\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649\u0626"
   }
 }

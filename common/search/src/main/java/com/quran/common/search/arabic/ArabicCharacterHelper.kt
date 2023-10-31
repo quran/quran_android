@@ -37,7 +37,7 @@ object ArabicCharacterHelper {
 
       // given: ئ
       // match: ئﻯي
-      // this is helpful for rewayat Warsh, and thus only enabled on it
+      // this is especially helpful for rewayat Warsh
       "\u0626" to "\u0626\u0649\u064a",
   )
 
