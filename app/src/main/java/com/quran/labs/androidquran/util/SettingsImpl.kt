@@ -2,28 +2,43 @@ package com.quran.labs.androidquran.util
 
 import android.content.SharedPreferences
 import com.quran.data.dao.Settings
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.shareIn
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class SettingsImpl @Inject constructor(private val quranSettings: QuranSettings) : Settings {
-  private val preferencesFlow: Flow<String> by lazy {
+  private val scope = MainScope()
+
+  private val preferencesFlow =
     callbackFlow {
-      val callback =
+      val prefsCallback =
         SharedPreferences.OnSharedPreferenceChangeListener { _, pref ->
           if (pref != null) {
             trySendBlocking(pref)
               .onFailure {}
           }
         }
-      quranSettings.registerPreferencesListener(callback)
-
-      awaitClose { quranSettings.unregisterPreferencesListener(callback) }
+      quranSettings.registerPreferencesListener(prefsCallback)
+      awaitClose { quranSettings.unregisterPreferencesListener(prefsCallback) }
     }
-  }
+
+    // removing WhileSubscribed here breaks release versions of the app most likely
+    // due to being garbage collection with no strong references to the job (note
+    // that the callbacks are WeakReferences within SharedPreferences). see
+    // this issue for https://github.com/Kotlin/kotlinx.coroutines/issues/2557
+    // details. While the aforementioned issue is fixed in coroutines, this issue
+    // still happens unless we either use WhileSubscribed as here, or we keep a
+    // strong reference to the SharedPreferenceChangeListener. See also this issue
+    // https://github.com/Kotlin/kotlinx.coroutines/issues/1061.
+    .shareIn(scope, SharingStarted.WhileSubscribed())
 
   override suspend fun setVersion(version: Int) {
     quranSettings.version = version
