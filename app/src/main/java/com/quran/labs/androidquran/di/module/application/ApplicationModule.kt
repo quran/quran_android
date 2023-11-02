@@ -58,6 +58,7 @@ object ApplicationModule {
   }
 
   @Provides
+  @Singleton
   fun provideSettings(settingsImpl: SettingsImpl): Settings {
     return settingsImpl
   }
