@@ -5,7 +5,7 @@ plugins {
 group = "com.quran.labs.androidquran.buildlogic"
 
 dependencies {
-  compileOnly("com.android.tools.build:gradle:8.1.2")
+  compileOnly("com.android.tools.build:gradle:8.1.3")
   compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10")
   implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
