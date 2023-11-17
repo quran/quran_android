@@ -8,7 +8,9 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
+import android.text.style.TypefaceSpan
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
@@ -16,10 +18,14 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
+import com.quran.common.search.SearchTextUtil
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.common.TranslationMetadata
+import com.quran.labs.androidquran.ui.helpers.TypefaceWrappingSpan
+import com.quran.labs.androidquran.ui.translation.TranslationAdapter
+import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
 
 class InlineTranslationView @JvmOverloads constructor(
@@ -135,7 +141,7 @@ class InlineTranslationView @JvmOverloads constructor(
         }
 
         // irrespective of whether it's a link or not, show the text
-        builder.append(stylize(ayah.texts[i], translationText))
+        builder.append(stylize(ayah.texts[i], translations[i].languageCode, translationText))
       }
     }
     ayahView.append(builder)
@@ -159,9 +165,26 @@ class InlineTranslationView @JvmOverloads constructor(
 
   private fun stylize(
     metadata: TranslationMetadata,
+    languageCode: String? = null,
     translationText: String
   ): CharSequence {
     val spannableStringBuilder = SpannableStringBuilder(translationText)
+
+    if (languageCode == "ar") {
+      val spans = listOf(
+        TypefaceWrappingSpan(TypefaceManager.getTafseerTypeface(context)),
+        RelativeSizeSpan(1.1f)
+      )
+
+      spans.forEach { span ->
+        spannableStringBuilder.setSpan(
+          span,
+          0,
+          spannableStringBuilder.length,
+          Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+      }
+    }
 
     metadata.ayat.forEach { range ->
       val span = ForegroundColorSpan(inlineAyahColor)
