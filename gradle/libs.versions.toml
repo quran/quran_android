@@ -60,7 +60,7 @@ reorderableComposeVersion = "0.9.6"
 # recitations
 grpcOkhttpVersion = "1.59.1"
 googleAuthVersion = "1.20.0"
-googleCloudSpeechVersion = "4.25.0"
+googleCloudSpeechVersion = "4.26.0"
 
 # testing
 junitVersion = "4.13.2"
