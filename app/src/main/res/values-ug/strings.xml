@@ -2,11 +2,12 @@
 <resources>
   <string name="app_name">قۇرئان</string>
   <string name="downloadPrompt_title">لازىملىق ھۆججەتلەرنى چۈشۈرەمدۇ؟</string>
-  <string name="downloadPrompt">ئەڭ ياخشى ئۈنۈمگە ئېرىشىش ئۈچۈن، بەزى ھۆججەتلەرنى چۈشۈرۈش زۆرۈر. ئەگەر ھازىر بۇنداق قىلىشنى تاللىمىسىڭىز، ھەر بىر بەتنى يۈكلەشكە تېخىمۇ ئۇزۇن ۋاقىت كېتىدۇ. لازىملىق ھۆججەتلەرنى ھازىرلا چۈشۈرەمسىز؟</string>
+  <string name="downloadPrompt">قۇرئان ئاندىرويىدنىڭ نورمال ئىشلىشى ئۈچۈن بەزى ھۆججەتلەرنى چۈشۈرۈشىمىز كېرەك. ئەگەر ھازىر بۇنى قىلمىسىڭىز، بۇ دېتال ئىشەنچلىك ئىشلىمەسلىكى مۇمكىن، ئوقۇش ئۈچۈن ئىنتېرنېت ئۇلىنىشى تەلەپ قىلىنىدۇ. لازىملىق ھۆججەتلەرنى ھازىر چۈشۈرەمسىز؟</string>
   <string name="downloadTabletPrompt">بىز يېقىندا تاختا كومپيۇتېر ئۈچۈن ياخشىلانغان سۈرەتلەرنى قوشتۇق. ئۇ سۈرەتلەرنى ھازىر چۈشۈرەمسىز؟</string>
   <string name="downloadImportantPrompt">ئۈسكۈنىڭىز ئۈچۈن ئۆزى كىچىك ئەمما مۇھىم بولغان قۇرئان سۈرەتلىرىنىڭ يېڭىلانمىسى بار. بۇ ياماقنى ھازىرلا چۈشۈرەمسىز؟</string>
   <string name="downloadPrompt_ok">ھەئە</string>
   <string name="downloadPrompt_no">ياق</string>
+  <string name="downloading_title">چۈشۈرۈۋاتىدۇ…</string>
   <string name="downloading_message">ھۆججەتلەرنى چۈشۈرۈشنى كۈتۈڭ. (داۋاملاشتۇرۇشنى قوللايدۇ)</string>
   <string name="extracting_title">بىر تەرەپ قىلىۋاتىدۇ…</string>
   <string name="menu_about">بىز ھەققىدە</string>
@@ -26,15 +27,44 @@
   <string name="menu_jump">يۆتكەل</string>
   <string name="gotoPage">بەتكە يۆتكەل</string>
 
+  <!-- about -->
+  <string name="about_description">ئاندىرويىد قۇرئان ھەقسىز قۇرئان ئەپى. نامازلىرىڭىزدا تۆھپىكارلارغا دۇئا قىلىشنى ئۇنۇتماڭ.</string>
+  <string name="about_data_sources">سانلىق مەلۇمات مەنبەسى</string>
+  <string name="about_images">سۈرەتلەر</string>
+  <string name="about_madani_images">قۇرئان سۈرەتلىرى پادىشاھ فاھىد قۇرئان باسما زاۋۇتىنىڭ خەت نۇسخىسىنى ئاساس قىلغان</string>
+  <string name="about_naskh_images">Naskh ئەپىنىڭ قۇرئان سۈرەتلىرى (ئىجازەت بىلەن) SHL ئۇچۇر سىستېمىسىدىن ئېلىنغان</string>
+  <string name="about_qaloon_images">قالۇن سۈرەتلىرى Nous Memes Editions Et Diffusion (تۇنىس) نىڭ رۇخسىتى بىلەن ئىشلىتىلدى.</string>
+  <string name="about_quranicaudio_summary">يوچۇقسىز mp3 قۇرئان تىلاۋەتلىرى</string>
+  <string name="about_quran_ksu">ئېلېكترونلۇق موشاف قۇرۇلۇشى</string>
+  <string name="about_quran_ksu_summary">پادىشاھ سەئۇد ئۇنىۋېرسىتېتى ئېلېكترونلۇق موشاف قۇرۇلۇشى كۆپلىگەن تىلدىكى ئەرەبچە تەپسىر ۋە تەرجىمىلەرنىڭ مەنبەسى. ئۇ يەنە دوكتور ئايمان سۇۋەيدنىڭ قىرائىتىنىڭمۇ مەنبەسى.</string>
+  <string name="about_furqan_summary">ئۇسمانى تېكىست ۋە ئەرەبچە تەپسىر</string>
+  <string name="about_quran_enc_summary">نۇرغۇن تىللارنىڭ تەرجىمىسى</string>
+  <string name="about_tanzil_summary">ئازراق تىللارنىڭ تەرجىمىسى</string>
+  <string name="about_noorhidayat_summary">نۇرېخىرا خەت نۇسخىسى ۋە تەپسىرچى تاقى تەرجىمىسى</string>
+  <string name="about_open_source">ئوچۇق مەنبەلىك قۇرۇلۇش</string>
+  <string name="about_others">باشقىلار</string>
+  <string name="about_contributors">تۆھپىكارلار</string>
+  <string name="about_contributors_summary">قۇرئان ئاندىرويىدنىڭ تەرەققىياتىغا تۆھپە قوشقان كىشىلەر تىزىمى</string>
+  
   <!-- help -->
   <string name="help_title">كۆپ سورىلىدىغان سوئاللار</string>
-  <string name="help">&lt;b&gt;قىرائەت ئاۋازىنى قانداق چالىدۇ؟&lt;/b&gt; &lt;br/&gt; خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران ئاستىدا قىرائەت توپچىسى ۋە قىرائەت قىلغۇچىنىڭ ئىسمى كۆرۈنىدۇ. قىرائەت قىلغۇچىنىڭ ئىسمىنى چېكىپ قىرائەت قىلغۇچىلارنى تاللىغىلى بولىدۇ، چېلىش توپچىسىنى چېكىلسە نۆۋەتتىكى بەت ياكى نۆۋەتتىكى سۈرەنىڭ قىرائەت ئاۋازىنى چۈشۈرگەندىن كېيىن ئاۋازنى چېلىشنى باشلايدۇ . &lt;br/&gt; &lt;br/&gt;&lt;b&gt;تەرجىمىنى قانداق كۆرۈمەن؟&lt;/b&gt; &lt;br/&gt;خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران چوققىسىدىكى يەر شارى سىنبەلگە (ياكى ئۈچ يۇمۇلاق چېكىتتىن شەكىللەنگەن سىنبەلگە) نى چەككەندىن كېيىن تەرجىمە بېتىنى كۆرگىلى بولىدۇ. &lt;br/&gt; ئەگەر سىز تېخى ھېچقانداق تەرجىمە نەشرىنى چۈشۈرمىگەن بولسىڭىز، بۇ چاغدا تەرجىمە تېكىستىنى چۈشۈرۈش ۋە باشقۇرۇش بېتىگە كىرىدۇ، لازىملىق تەرجىمىنى تاللاپ چۈشۈرگەندىن كېيىن قايتىدۇ، يەر شارى سىنبەلگە قايتا چېكىلسە تەرجىمە تېكىست بېتىگە كىرىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;بەتكە خەتكۈچنى قانداق قوشىمەن؟&lt;/b&gt; &lt;br/&gt;خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران چوققىسىدا بەش يۇلتۇز سىنبەلگىسى كۆرۈنىدۇ، ئۇنى چەككەندىن كېيىن نۆۋەتتىكى بەتنى خەتكۈچكە قوشقىلى بولىدۇ، شۇنىڭ بىلەن بىللە كاۋاك بەش يۇلتۇز ئۇيۇل بەش يۇلتۇزغا ئۆزگىرىدۇ. سىنبەلگە قايتا چېكىلسە خەتكۈچ بىكار قىلىنىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;تېكىستنى قانداق چوڭايتىمەن؟&lt;/b&gt; &lt;br/&gt;ئەرەبچە ئەسلى تېكىست بېتىدە، توغرىسىغا ئېكرانغا ئالماشقاندا خەت چوڭىيىدۇ. تەرجىمە تېكىست بېتىدە تەڭشەكلەردىن خەت چوڭلۇقىنى تاللىغىلى بولىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;بىر ئايەتنى قانداق ھەمبەھىرلەيمەن؟&lt;/b&gt; &lt;br/&gt;ئەرەبچە ئەسلى تېكىست بېتىدە، مەلۇم بىر ئايەت ئۇزۇن چېكىلسە تىل مۇھىت تىزىملىكى قاڭقىپ چىقىدۇ، ئۇنىڭدا خەتكۈچ، ھەمبەھىر، تەرجىمىنى كۆرۈش، چاپلاش تاختىسىغا كۆچۈرۈش قاتارلىق ئىقتىدارلار بار. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;مالايالام/تامىل/بىنگال/ئوردۇچە خەت نۇسخىسى ئىشلىمەيدۇ!&lt;/b&gt; &lt;br/&gt;ناھايىتى ئەپسۇس، ئاندىرويىد 4.0 دىن ئىلگىرىكى نەشرىلىرىدە بۇ خەت نۇسخىلىرىنى قوللىماىدۇ، ھازىرچە ياخشىراق ھەل قىلىش چارىسى يوق.</string>
+  <string name="help">&quot;&lt;b&gt;قىرائەت ئاۋازىنى قانداق قويىدۇ؟&lt;/b&gt; &lt;br/&gt; خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران ئاستىدا قىرائەت توپچىسى ۋە قىرائەت قىلغۇچىنىڭ ئىسمى كۆرۈنىدۇ. قىرائەت قىلغۇچىنىڭ ئىسمىنى چېكىپ قىرائەت قىلغۇچىلارنى تاللىغىلى بولىدۇ، چېلىش توپچىسىنى چېكىلسە نۆۋەتتىكى بەت ياكى نۆۋەتتىكى سۈرەنىڭ قىرائەت ئاۋازىنى چۈشۈرگەندىن كېيىن ئاۋازنى قويۇشنى باشلايدۇ . &lt;br/&gt; &lt;br/&gt;&lt;b&gt;تەرجىمىنى قانداق كۆرۈمەن؟&lt;/b&gt; &lt;br/&gt;خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران چوققىسىدىكى يەر شارى سىنبەلگە (ياكى ئۈچ يۇمۇلاق چېكىتتىن شەكىللەنگەن سىنبەلگە) نى چەككەندىن كېيىن تەرجىمە بېتىنى كۆرگىلى بولىدۇ. &lt;br/&gt; ئەگەر سىز تېخى ھېچقانداق تەرجىمە نەشرىنى چۈشۈرمىگەن بولسىڭىز، بۇ چاغدا تەرجىمە تېكىستىنى چۈشۈرۈش ۋە باشقۇرۇش بېتىگە كىرىدۇ، لازىملىق تەرجىمىنى تاللاپ چۈشۈرگەندىن كېيىن قايتىدۇ، يەر شارى سىنبەلگە قايتا چېكىلسە تەرجىمە تېكىست بېتىگە كىرىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;بەتكە خەتكۈچنى قانداق قوشىمەن؟&lt;/b&gt; &lt;br/&gt;خالىغان قۇرئان بېتىنى ئېچىپ، بارماق ئېكرانغا بوش تەگكەندە، ئېكران چوققىسىدا بەش يۇلتۇز سىنبەلگىسى كۆرۈنىدۇ، ئۇنى چەككەندىن كېيىن نۆۋەتتىكى بەتنى خەتكۈچكە قوشقىلى بولىدۇ، شۇنىڭ بىلەن بىللە كاۋاك بەش يۇلتۇز ئۇيۇل بەش يۇلتۇزغا ئۆزگىرىدۇ. سىنبەلگە قايتا چېكىلسە خەتكۈچ بىكار قىلىنىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;تېكىستنى قانداق چوڭايتىمەن؟&lt;/b&gt; &lt;br/&gt;ئەرەبچە ئەسلى تېكىست بېتىدە، توغرىسىغا ئېكرانغا ئالماشقاندا خەت چوڭىيىدۇ. تەرجىمە تېكىست بېتىدە تەڭشەكلەردىن خەت چوڭلۇقىنى تاللىغىلى بولىدۇ. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;بىر ئايەتنى قانداق ھەمبەھىرلەيمەن؟&lt;/b&gt; &lt;br/&gt;ئەرەبچە ئەسلى تېكىست بېتىدە، مەلۇم بىر ئايەت ئۇزۇن چېكىلسە تىل مۇھىت تىزىملىكى قاڭقىپ چىقىدۇ، ئۇنىڭدا خەتكۈچ، ھەمبەھىر، تەرجىمىنى كۆرۈش، چاپلاش تاختىسىغا كۆچۈرۈش قاتارلىق ئىقتىدارلار بار. &lt;br/&gt; &lt;br/&gt;&lt;b&gt;مالايالام/تامىل/بىنگال/ئوردۇچە خەت نۇسخىسى ئىشلىمەيدۇ!&lt;/b&gt; &lt;br/&gt;ناھايىتى ئەپسۇس، ئاندىرويىد 4.0 دىن ئىلگىرىكى نەشرىلىرىدە بۇ خەت نۇسخىلىرىنى قوللىماىدۇ، ھازىرچە ياخشىراق ھەل قىلىش چارىسى يوق.&quot;</string>
   <string name="search_hint">قۇرئاندىن ئىزدە</string>
   <string name="quranSearchType">قۇرئان سۈرەلىرى</string>
 
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="one">\&quot;%s\&quot; نىڭ بىر نەتىجىسى:</item>
+    <item quantity="other">\&quot;%1$s\&quot; نىڭ %2$d نەتىجىسى:</item>
+  </plurals>
+
+  <!-- m permissions stuff -->
+  <string name="storage_permission_rationale">قۇرئان سانلىق مەلۇماتلىرىنى سىرتقى ساقلىغۇچقا ساقلاش ئۈچۈن ئىجازىتىڭىزگە موھتاج. قۇرئان بۇ ئىجازەتنى ئالماي ئىشلەيدۇ، ئەمما ئەگەر سانلىق مەلۇماتلارنى ئۆچۈرۈپ ياكى ئەپنى ئۆچۈرۈۋەتسىڭىز، چۈشۈرگەن بارلىق بەت، ئۈن ۋە سانلىق مەلۇماتلارنىڭ ھەممىسى ئۆچۈرۈلىدۇ، شۇڭا ئىجازەت بېرەمسىز؟</string>
+  <string name="storage_permission_please_restart">كۈچكە ئىگە بولۇشى ئۈچۈن ئەپنى قايتا قوزغىتىڭ.</string>
+
   <!-- Search messages -->
-  <string name="found_in_sura">سۈرىدە بايقالدى %1$s, ئايەت %2$d (بەت %3$d)</string>
-  <string name="no_results">"%s" نىڭ نەتىجىلىرى تېپىلمىدى</string>
+  <string name="found_in_sura">سۈرە %1$s تېپىلدى: %2$d (%3$d-بەت)</string>
+  <string name="no_results">\&quot;%s\&quot; نىڭ نەتىجىلىرى تېپىلمىدى</string>
   <string name="no_arabic_search_available">سىز ئەرەبچە ئىزدەش بوغچىسىنى چۈشۈرمىگەن. ئۇنى چۈشۈرۈپ ئاندىن قايتا ئىزدەڭ.</string>
   <string name="get_arabic_search_db">ئەرەبچە ئىزدەش ساندانىغا ئېرىش</string>
 
@@ -45,52 +75,92 @@
   <string name="prefs_category_translation">تەرجىمە مايىللىقى</string>
   <string name="prefs_category_display_settings">كۆرۈنۈش تەڭشەكلىرى</string>
   <string name="prefs_use_arabic_title">ئەرەبچە ھالەت (الوضع العربي)</string>
-  <string name="prefs_use_arabic_summary_on">ئەپ ئەرەبچە ئارايۈزنى ئىشلىتىدۇ</string>
+  <string name="prefs_use_arabic_summary_on">ئەپ ئارا يۈزىگە ئەرەبچە ئىشلىتىدۇ</string>
   <string name="prefs_new_background_title">يېڭى تەگلىك</string>
   <string name="prefs_lock_orientation_title">قۇلۇپ ئېكران يۆنىلىشى</string>
-  <string name="prefs_lock_orientation_summary_on">قۇرئان بەتلىرىنىڭ ئېكران ئايلاندۇرۇش يۆنىلىشى</string>
+  <string name="prefs_lock_orientation_summary_on">مۇقىم يۆنىلىش ھالىتىنى ئىشلىتىدۇ</string>
   <string name="prefs_lock_orientation_summary_off">نۆۋەتتىكى يۆنىلىش ھالىتىگە ماسلىشىدۇ</string>
   <string name="prefs_landscape_orientation_title">توغرىسىغا يۆنىلىش</string>
-  <string name="prefs_landscape_orientation_summary_on">توغرىسىغا يۆنىلىش ئىشلىتىلىدۇ</string>
-  <string name="prefs_landscape_orientation_summary_off">بويىغا يۆنىلىش ئىشلىتىلىدۇ</string>
+  <string name="prefs_landscape_orientation_summary_on">ھەمىشە توغرىسىغا يۆنىلىش ھالىتىنى ئىشلىتىدۇ</string>
+  <string name="prefs_landscape_orientation_summary_off">ھەمىشە بويىغا يۆنىلىش ھالىتىنى ئىشلىتىدۇ</string>
   <string name="prefs_night_mode_title">كېچە ھالىتى</string>
-  <string name="prefs_night_mode_summary">قارا تەگلىك يورۇق خەت نۇسخىسى ئىشلىتىلىدۇ</string>
+  <string name="prefs_night_mode_summary">قارا تەگلىك يورۇق خەت نۇسخىسى ئىشلىتىدۇ</string>
   <string name="prefs_night_mode_text_brightness_title">تېكىست يورۇقلۇقى</string>
   <string name="prefs_night_mode_text_brightness_summary">كېچە ھالىتى قوزغىتىلغان ۋاقىتتىكى تېكىستنىڭ يورۇقلۇقى</string>
   <string name="prefs_night_mode_background_brightness_title">تەگلىك يورۇقلۇقى</string>
-  <string name="prefs_night_mode_background_brightness_summary">كەچلىك ھالەت ئاكتىپ بولغاندا بەتنىڭ يورۇقلۇقى</string>
+  <string name="prefs_night_mode_background_brightness_summary">كېچە ھالىتى قوزغىتىلغان ۋاقىتتىكى بەتنىڭ يورۇقلۇقى</string>
   <string name="prefs_overlay_page_info_title">بەت ئۇچۇرىنى كۆرسەت</string>
   <string name="prefs_overlay_page_info_summary">قىرائەت قىلىۋاتقاندا بەت سانى، سۈرە ئىسمى ۋە پارە سانىنى كۆرسىتىدۇ</string>
   <string name="prefs_display_marker_title">بەلگە قاڭقىش كۆزنىكىنى كۆرسەت</string>
   <string name="prefs_display_marker_summary">يېتىپ كەلگەن پارە، ھىزب قاتارلىقلارنى قاڭقىش كۆزنىكىدە كۆرسىتىدۇ.</string>
+  <string name="prefs_highlight_bookmarks_title">خەتكۈچنى گەۋدىلەندۈرىدۇ</string>
+  <string name="prefs_highlight_bookmarks_summary">ئايەتلەرنى گەۋدىلەندۈرىدۇ</string>
   <string name="prefs_translation_text_title">تەرجىمە تېكىست چوڭلۇقى</string>
   <string name="prefs_translations">تەرجىمىلەر</string>
   <string name="prefs_translations_summary">تەرجىمىلەرنى چۈشۈرۈش ۋە باشقۇرۇش</string>
   <string name="prefs_ayah_before_translation_title">تەرجىمىدىن ئىلگىرى ئايەت</string>
   <string name="prefs_ayah_before_translation_summary">تەرجىمىدىن ئىلگىرى ئەرەبچە ئەسلى تېكىستنى كۆرسىتىدۇ</string>
-  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
-  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia دوستانە خەت نۇسخىسى</string>
+  <string name="prefs_use_dyslexic_font_summary">تەرجىمەنى دوستانە خەت نۇسخىسىدا كۆرسىتىدۇ</string>
   <string name="prefs_category_download">چۈشۈرۈش تاللانمىلىرى</string>
   <string name="prefs_streaming_title">ئېقىم</string>
-  <string name="prefs_streaming_summary">مۇمكىن بولسا ئېقىم ئاۋازىنى ئىشلىتىدۇ</string>
-  <string name="prefs_download_amount_title">چۈشۈرۈش ئۇسۇلى</string>
+  <string name="prefs_streaming_summary">چۈشۈرگەننىڭ ئورنىغا ئېقىم ئاۋازىنى ئىشلىتىدۇ</string>
+  <string name="prefs_download_amount_title">چۈشۈرۈش مىقدارى</string>
   <string name="prefs_download_amount_summary">ئالدى بىلەن غەيرى يوچۇقسىز ئاۋازنى چۈشۈرىدۇ</string>
+  <string name="prefs_audio_manager_summary">فۇرئان ئاۋازىنى چۈشۈرىدۇ ۋە باشقۇرىدۇ</string>
   <string name="downloaded_translations">چۈشۈرۈلدى</string>
   <string name="available_translations">چۈشۈرگىلى بولىدۇ</string>
   <string name="dialog_ok">جەزملە</string>
-  <string name="prefs_app_location_title">ئەپ ئورنى</string>
-  <string name="prefs_app_location_summary">ھۆججەتلەرنى قايسى sd كارتىغا ساقلايدىغانلىقىڭىزنى تاللاڭ</string>
+  <string name="prefs_app_location_title">قۇرئان سانلىق مەلۇمات مۇندەرىجىسى</string>
+  <string name="prefs_app_location_summary">قۇرئان ھۆججەتلىرىنى قەيەرگە ساقلاش تاللىنىدۇ</string>
+  <string name="prefs_send_logs_title">خاتىرە يوللا</string>
+  <string name="prefs_send_logs_summary">سازلاش خاتىرىسىنى ئىجادكارغا يوللايدۇ</string>
   <string name="prefs_sdcard_internal">ئىچىدىكى ساقلىغۇچ</string>
-  <string name="prefs_sdcard_external">سىرتقى SD كارتا %1$d</string>
-  <string name="prefs_app_size">ئەپ چوڭلۇقى</string>
+  <string name="prefs_sdcard_external">سىرتقى ساقلىغۇچ %1$d</string>
+  <string name="prefs_app_size">نۆۋەتتىكى سانلىق مەلۇمات چوڭلۇقى</string>
   <string name="prefs_calculating_app_size">ئەپ چوڭلۇقىنى ھېسابلاۋاتىدۇ</string>
   <string name="prefs_copying_app_files">ئەپ ھۆججەتلىرىنى كۆچۈرۈۋاتىدۇ</string>
   <string name="prefs_err_moving_app_files">ئەپ ھۆججەتلىرىنى يۆتكىيەلمىدى</string>
   <string name="prefs_no_enough_space_to_move_files">ئەپ ھۆججەتلىرىنى يۆتكەشكە يېتەرلىك بوشلۇق يوق</string>
-  <string name="prefs_dual_page_mode_title">تاختا كومپيۇتېر ھالىتى</string>
+  <string name="prefs_megabytes_int">%1$d MB</string>
+   <string name="prefs_dual_page_mode_title">قوش بەت ھالىتى</string>
   <string name="prefs_dual_page_mode_enabled">توغرىسىغا ھالەتتە، ئىككى بەت يانمۇيان كۆرۈنىدۇ.</string>
   <string name="prefs_dual_page_mode_disabled">توغرىسىغا ھالەتتە، بىرلا بەتنى كۆرسىتىدۇ.</string>
+  <string name="prefs_category_advanced">ئالىي تاللانما</string>
+  <string name="prefs_category_advanced_summary">خەتكۈچ ئەكىر/چىقار، قۇرئان سانلىق مەلۇماتلىرى مۇندەرىجىسىنى بەلگىلەش قاتارلىق.</string>
+  <string name="prefs_import_title">ئەكىر</string>
+  <string name="prefs_import_summary">خەتكۈچ ۋە بەلگىلەرنى ئەكىرىدۇ</string>
+  <string name="prefs_export_title">چىقار</string>
+  <string name="prefs_export_summary">خەتكۈچ ۋە بەلگىلەرنىڭ كۆپەيتىلمىسىنى چىقىرىدۇ</string>
+  <string name="prefs_export_csv_title">CSV غا چىقار</string>
+  <string name="prefs_export_csv_summary">خەتكۈچ ۋە بەلگىلەرنىڭ كۆپەيتىلمىسىنى CSV غا چىقىرىدۇ</string>
+  <string name="prefs_page_type_title">بەت تىپى (سىناق)</string>
+  <string name="prefs_page_type_summary">ئوقۇش بېتىنىڭ تىپى تاللىنىدۇ</string>
+  <string name="prefs_sura_translated_name_summary">سۈرە ئىسمىنىڭ تەرجىمىسىنى كۆرسەت</string>
+  <string name="prefs_sura_translated_name_title">سۈرىنىڭ تەرجىمە قىلىنغان ئىسمى</string>
+  <string name="prefs_preview">ئالدىن كۆزەت</string>
+
+  <string name="more_translations">تېخىمۇ كۆپ تەرجىمىلەر</string>
+  <string name="import_data_permissions_error">ئىجازەت خاتالىقى سەۋەبىدىن زاپاس ھۆججەتنى ئوقۇيالمىدى.</string>
+  <string name="import_data_error">ئىناۋەتسىز زاپاس ھۆججەت (ياكى زاپاس ھۆججەتنى ئوقۇيالمىدى).</string>
+  <string name="import_data">سانلىق مەلۇمات ئەكىر</string>
+  <string name="import_data_and_override">ئەگەر بۇ ھۆججەتنى ئەكىرسىڭىز، %1$d خەتكۈچ ۋە %2$d بەلگە بار ھەممە خەتكۈچلىرىڭىزنى ئالماشتۇرۇۋېتىدۇ. ئەكىرەمدۇ؟</string>
+  <string name="import_successful">مۇۋەپپەقىيەتلىك ئەكىرىلدى</string>
+  <string name="export_data_error">سانلىق مەلۇمات چىقارغاندا خاتالىق كۆرۈلدى</string>
+  <string name="exported_data">سانلىق مەلۇماتنى %1$s غا چىقاردى</string>
+
+  <string name="move_up">ئۈستىگە</string>
+  <string name="move_down">ئاستىغا</string>
+  <string name="delete_translation">تەرجىمىنى چىقىرىۋەت</string>
+
+  <string name="warning">ئاگاھلاندۇرۇش</string>
+  <string name="kitkat_external_message">ئاندىرويىدنىڭ چەكلىمىسى تۈپەيلىدىن، ئەگەر سىز قۇرئان سانلىق مەلۇماتلىرىنى سىرتقى SD كارتىڭىزغا ساقلىماقچى بولسىڭىز، كېيىن قۇرئان ئاندىرويىدنىڭ سانلىق مەلۇماتلارنى ئۆچۈرۈۋەتسىڭىز ياكى ئۆچۈرسىڭىز، بارلىق قۇرئان ئاندىرويىد بەتلىرى ۋە ئاۋازلىرى ئۆچۈرۈلىدۇ، ئۇلارنى قايتا چۈشۈرۈشىڭىز كېرەك. سىرتقى SD كارتىنى ئىشلىتىشنى خالامسىز؟</string>
+  <string name="scoped_storage_message">ئاندىرويىد ئىشلەتكۈچى شەخسىيەت ھوقۇقىنى يۇقىرىلىتىپ ئۆزگەرتكەنلىكتىن، ھۆججەتلەرنى ئەپ مۇندەرىجىسىنىڭ سىرتىغا كۆچۈرگەندە قۇرئان ئەپنىڭ سانلىق مەلۇماتنى زىيارەت قىلىشى كەلگۈسىدىكى ئاندىرويىد نەشرىدە توختىتىلىشى مۇمكىن. بۇ يولنى راستىنلا ئىشلىتەمسىز؟</string>
+  <string name="please_grant_permissions">ئەپ تەڭشىكىدە ئىجازەت بېرىڭ</string>
   <!-- Preferences End -->
+
+  <!-- tafaseer -->
+  <string name="see_tafseer_of_verse">بۇ ئايەتنىڭ تەپسىرى %d (چېكىلسە يايىدۇ) ئايەتنىڭ تەپسىرىسىدە بار.</string>
 
   <!-- translation updates -->
   <string name="update_available">يېڭىلانما بار</string>
@@ -106,20 +176,23 @@
   <string name="quran_juz2">پارە</string>
   <string name="quran_page">بەت</string>
   <string name="quran_sura">سۈرە</string>
-  <string name="quran_ayah">%1$d ئايەت</string>
-  <string name="quran_sura_title">%1$s - سۈرە</string>
-  <string name="sura_ayah_notification_str">%1$s -سۈرە، %2$d - ئايەت</string>
-  <string name="sura_ayah_sharing_str">سۈرە %1$: %2$d</string>
+  <string name="quran_ayah">%1$d-ئايەت</string>
+  <string name="quran_ayah_details">%1$s-ئايەت %2$s، %3$s-پارە</string>
+  <string name="quran_sura_title">سۈرە %1$s</string>
+  <string name="sura_ayah_notification_str">سۈرە %1$s، %2$d-ئايەت</string>
+  <string name="sura_ayah_sharing_str">سۈرە %1$s: %2$d</string>
 
   <string name="index_loading">يۈكلەۋاتىدۇ…</string>
 
   <string name="canceling">ۋاز كېچىۋاتىدۇ…</string>
   <string name="juz2_description">%1$s -پارە</string>
-  <string name="page_description">%2$s -پارە، %1$s -بەت</string>
+  <string name="manzil_description">مەنزىل  %1$s</string>
+  <string name="page_description">%1$s-بەت، %2$s-پارە</string>
   <string name="highlighting_database">زۆرۈر ھۆججەتلەر</string>
   <string name="timing_database">زۆرۈر ھۆججەتلەر</string>
 
   <!-- download statuses and errors -->
+  <string name="sdcard_error">SD كارتىنى تاپالمىدى. ئۇنى قىستۇرۇپ ئاندىن قايتا سىناڭ.</string>
   <string name="download_successful">چۈشۈرۈش مۇۋەپپەقىيەتلىك</string>
   <string name="download_processing">چۈشۈرۈشنى بىر تەرەپ قىلىۋاتىدۇ…</string>
   <string name="download_error_general">چۈشۈرەلمىدى</string>
@@ -130,13 +203,16 @@
   <string name="download_error_invalid_download_retry">ھۆججەت بۇزۇلغان، قايتا چۈشۈرۈشنى سىناۋاتىدۇ</string>
   <string name="download_error_network_retry">تور خاتالىقى، داۋاملاشتۇرۇشنى سىناۋاتىدۇ…</string>
   <string name="notification_download_canceled">چۈشۈرۈشتىن ۋاز كەچتى</string>
-  <string name="download_non_wifi_prompt">سىز wifi تورىدا ئەمەس. سانلىق مەلۇماتنى چۈشۈرىۋېرەمسىز؟</string>
+  <string name="download_non_wifi_prompt">سىز wifi تورىدا ئەمەس. سانلىق مەلۇماتنى چۈشۈرۈۋېرەمسىز؟</string>
 
   <!-- downloading dialogs -->
   <string name="process_progress">بىر تەرەپ قىلىۋاتقىنى %1$d / %2$d</string>
   <string name="download_retry">قايتا سىنا</string>
   <string name="download_cancel">ۋاز كەچ</string>
   <string name="download_extra_data">ھەمبەھىر ۋە تەرجىمە ئىقتىدارىنى قوللاش ئۈچۈن بىر ياكى ئىككى كىچىك ھۆججەت چۈشۈرۈشىمىز كېرەك. ھازىر چۈشۈرەمدۇ؟</string>
+
+  <!-- post notification dialog -->
+  <string name="post_notification_permission">قۇرئان ئاندىرويىدنىڭ ئۇقتۇرۇش يوللىشىغا يول قويامسىز؟ بۇ پەقەت يېڭىلاشنى چۈشۈرۈش ياكى ئاۋاز ھۆججىتى ئاپتوماتىك يېڭىلانغاندا ئاگاھلاندۇرۇش ئۈچۈن ئىشلىتىلىدۇ.</string>
 
   <!-- translation database stuff -->
   <string name="remove_dlg_title">تەرجىمىنى چىقىرىۋېتەمدۇ؟</string>
@@ -145,6 +221,9 @@
   <string name="search_data">سانلىق مەلۇمات ئىزدە</string>
   <string name="need_translation">سىز تېخى ھېچقانداق تەرجىمە/تەپسىر چۈشۈرمىگەن.</string>
   <string name="get_translations">تەرجىمىگە ئېرىش</string>
+
+  <!-- help -->
+  <string name="email_us">ئەگەر سوئالىڭىزنىڭ تۆۋەندە جاۋابى بولمىسا، سىز quranandroid@gmail.com ئېلخەت ئادرېسقا قوللاش ھەققىدە خەت يازسىڭىز بولىدۇ. بىز نۇرغۇن ئېلخەت تاپشۇرۇۋالىمىز، شۇڭلاشقا ھەممە ئېلخەتكە جاۋاب قايتۇرالىشىمىز ناتايىن.</string>
 
   <!-- sura metainfo -->
   <string name="makki">مەككە</string>
@@ -163,96 +242,53 @@
   <string name="edit_tag">بەلگە تەھرىر</string>
   <string name="new_tag">يېڭى بەلگە</string>
   <string name="not_tagged">بەلگە قوشۇلمىدى</string>
+  <plurals name="bookmark_tag_deleted">
+    <item quantity="one">بىر تۈر ئۆچۈرۈلدى</item>
+    <item quantity="other">%d تۈر ئۆچۈرۈلدى</item>
+  </plurals>
+  <string name="undo">يېنىۋال</string>
+
+  <string name="recent_pages">يېقىنقى بەتلەر</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">بەلگە</string>
   <string name="tag_name">ئاتى</string>
+  <string name="tag_blank_tag_error">بەلگە ئاتى بوش قالمايدۇ!</string>
+  <string name="tag_duplicate_tag_error">بەلگە ئاتى مەۋجۇت!</string>
 
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">خەتكۈچ يوق</string>
+
+  <!-- audio updates -->
+  <string name="audio_updated_title">قۇرئان ئاۋاز ھۆججىتى يېڭىلاش</string>
+  <string name="audio_updated_text">بىر قانچە قۇرئان ئاۋاز ھۆججىتى يېڭىلاندى. قۇرئان بۇ ھۆججەتلەرنىڭ كۆپەيتىلگەن نۇسخىسىنى چىقىرىۋەتتى، بۇنداق بولغاندا ئەڭ يېڭى نەشرىنى كېلەر قېتىم قايتا قويسىڭىز چۈشۈرگىلى بولىدۇ.</string>
+
+
+  <!-- dual screen prefs -->
   <string name="about_quran_enc" translatable="false">قۇرئان كەرىم ئىنىسكىلوپىدىيىسى</string>
     <string name="play">قويۇش</string>
   <string name="pause">ۋاقتىنچە توختاش</string>
   <string name="menu_other_apps">باشقا ئەپلەر</string>
-  <string name="menu_sort_group_by_tags">گۇرۇپپا</string>
-  <string name="menu_show_date">ۋاقىتنى كۆرسىتىش</string>
-  <string name="please_wait">ساقلاپ تۇرۇڭ…</string>
-  <string name="about_description">ئاندىرويىد ئۈچۈن قۇرئان گىرىپتار قۇرئان ئىلتىماس قىلىش. دۇئالىرىڭىزدا تۆھپىكارلىقنى ئۇنتۇپ قالماڭ.</string>
-  <string name="about_data_sources">سانلىق مەلۇمات مەنبەسى</string>
-  <string name="about_images">رەسىملەر</string>
-  <string name="about_madani_images">قۇرئان رەسىملىرى پادىشاھ فەھدتىن خەت نۇسخىنى ئاساس قىلغان</string>
-  <string name="about_naskh_images">SHL Info Systems دېتالى ئۈچۈن قۇرئان رەسىملىرى (ئىجازەت بىلەن)</string>
-  <string name="about_qaloon_images">قالون رەسىملىرى Nous Memes Editions Et Diffusion (تۇنىس) نىڭ رۇخسىتى بىلەن ئىشلىتىلىدۇ</string>
-  <string name="about_quranicaudio_summary">گالستۇكى MP3 ئوقۇتقۇچىسى پائالىيەت</string>
-  <string name="about_quran_ksu">ئېلېكترونلۇق قۇرئاننىڭ تۈرى</string>
-  <string name="about_furqan_summary">عثمانى نۇسخىسى ۋە ئەرەبچە تەپسىرلەر</string>
-  <string name="about_quran_enc_summary">نۇرغۇن تىللارغا تەرجىمە</string>
-  <string name="about_tanzil_summary">بەزى تىللارغا تەرجىمە</string>
-  <string name="about_noorhidayat_summary">نورحرا خەت نۇسخىسى ۋە مفتى تقى تەرجىمىسى</string>
-  <string name="about_open_source">ئوچۇق كود تۈرلىرى</string>
-  <string name="about_others">باشقىلار</string>
-  <string name="about_contributors">تۆھپىكار</string>
-  <string name="about_contributors_summary">ئاندىرويىد ئۈچۈن قۇرئاننى تەرەققىي قىلدۇرۇشقا تۆھپە قوشقانلارنىڭ تىزىملىكى</string>
-  <string name="search_full_results">تولۇق نەتىجىسى</string>
-  <string name="search_entire_mushaf">پۈتكۈل مصحف ئىزدەڭ</string>
-  <string name="storage_permission_please_restart">بۇنىڭ كۈچكە ئىگە بولۇشى ئۈچۈن بۇ دېتالنى قايتا قوزغىتىڭ.</string>
-  <string name="prefs_highlight_bookmarks_title">خەتكۈچنى گەۋدىلەندۈرىدۇ</string>
-  <string name="prefs_highlight_bookmarks_summary">ئايەتلەرنى گەۋدىلەندۈرىدۇ</string>
-  <string name="prefs_audio_manager_summary">ئاۋاز باشقۇرۇش ۋە چۈشۈرۈش</string>
-  <string name="prefs_send_logs_title">خاتىرىسىنى ئەۋەتىش</string>
-  <string name="prefs_megabytes_int">%1$d م ب</string>
-  <string name="prefs_category_advanced">تېخىمۇ كۆپ تەڭشەكلەر</string>
-  <string name="prefs_import_title">ئىمپورت</string>
-  <string name="prefs_import_summary">خەتكۈچ ۋە خەتكۈچلەرنى ئىمپورت قىلىڭ</string>
-  <string name="prefs_export_title">ئېكسپورت</string>
-  <string name="prefs_export_summary">خەتكۈچ ۋە خەتكۈچلەرنىڭ كۆپەيتىلگەن نۇسخىسىنى ئېكسپورت قىلىڭ</string>
-  <string name="prefs_page_type_title">بەت تىپى (تەجرىبە)</string>
-  <string name="prefs_page_type_summary">ئوقۇش بېتىنىڭ تۈرىنى تاللاڭ</string>
-  <string name="prefs_sura_translated_name_summary">تەرجىمىسىنى كۆرسىتىڭ سۈرە</string>
-  <string name="prefs_preview">مەسىلەن</string>
-  <string name="more_translations">تېخىمۇ كۆپ تەرجىمىلەر</string>
-  <string name="warning">ئاگاھلاندۇرۇش</string>
+  <string name="menu_sort_group_by_tags">بەلگە بويىچە گۇرۇپپىلا</string>
+  <string name="menu_show_date">چېسلانى كۆرسەت</string>
+  <string name="please_wait">سەل كۈتۈڭ…</string>
+  <string name="search_full_results">تولۇق نەتىجە</string>
+  <string name="search_entire_mushaf">پۈتكۈل سەھىپەدىن ئىزدە</string>
   <string name="previous">ئالدىنقى</string>
-  <string name="recent_pages">يېقىنقى بەتلەر</string>
   <string name="stop">توختا</string>
-  <string name="email_us">سوئالىڭىز يۇقىرىدىكى جاۋاب بولمىسا, قوللايدىغان quranandroid@gmail.com ئېلېكترونلۇق خەت ئەۋەتسىڭىز بولىدۇ. شۇنىڭغا دىققەت قىلىڭكى, بىز نۇرغۇن ئېلېكترونلۇق خەتلەرنى قوبۇل قىلالايمىز, شۇڭا بىز ئۇلارنىڭ ھەممىسىگە جاۋاب بېرەلمەسلىكى مۇمكىن.</string>
-  <string name="audio_updated_title">ئاۋازلىق ھۆججەتلەر يېڭىلاندى</string>
   <string name="prefs_category_dual_screen">قوش بەت مايىللىقى</string>
-  <string name="tag_blank_tag_error">خەتكۈچ ئىسىملىرى بوش ئەمەس!</string>
-  <string name="tag_duplicate_tag_error">خەتكۈچ ئىسمى ئاللىبۇرۇن مەۋجۇت!</string>
+  <string name="prefs_split_page_and_translation_title">قوش بەت ھالىتىدىكى قۇرئان ۋە تەرجىمە</string>
+  <string name="prefs_split_page_and_translation_summary">تەرجىمە بار قوش بەت ھالىتىدە ، قۇرئان بېتى ۋە تەرجىمە كۆرۈنىدۇ</string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="starting_page_label">بەت ئۈستى</string>
-  <string name="delete_translation">تەرجىمەنى ئۆچۈرۈڭ</string>
-  <string name="move_up">يۇقىرىدا يۆتكەڭ</string>
-  <string name="move_down">تۆۋەنگە يۆتكەڭ</string>
-  <string name="import_successful">ئىمپورت مۇۋەپپەقىيەتلىك</string>
-  <string name="import_data">سانلىق مەلۇمات ئىمپورت</string>
-  <string name="quran_ayah_details">%1$s - آية %2$s، جزء %3$s</string>
   <string name="play_apply">ئىلتىماس قىلىڭ</string>
   <string name="play_apply_and_play">ئىلتىماس قىلىڭ ۋە قويۇش</string>
   <string name="next">كېيىنكى</string>
   <string name="playback_prompt_title">ئويناشنى باشلاڭ:</string>
   <string name="notification_channel_download">قۇرئان چۈشۈرۈش</string>
-  <string name="notification_channel_audio">قۇرئان تىلاۋەت قىلىش</string>
-  <string name="export_data_error">سانلىق مەلۇمات ئېكسپورتىدا خاتالىق</string>
-  <string name="undo">ئەمەلدىن قالدۇرۇش</string>
-  <string name="audio_updated_text">بىر قانچە قۇرئان ئاۋاز ھۆججىتى يېڭىلاندى. «ئاندىرويىد ئۈچۈن قۇرئان» بۇ ھۆججەتلەرنىڭ كۆپەيتىلگەن نۇسخىسىنى ئېلىۋەتتى ، بۇنداق بولغاندا ئەڭ يېڭى نەشرىنى كېيىنكى قېتىم قايتا قويسىڭىز بولىدۇ.</string>
-  <string name="prefs_split_page_and_translation_title">قۇرئان ۋە تەرجىمە قوش ھالەتتە</string>
-  <string name="prefs_split_page_and_translation_summary">تەرجىمە بىلەن قوش بەت شەكلىدە ، قۇرئان بېتى ۋە تەرجىمىسى كۆرسىتىلدى</string>
-  <string name="prefs_send_logs_summary">ئاچقۇچىلارغا خاتالىق خاتىرىسىنى ئەۋەتىڭ</string>
-  <string name="import_data_permissions_error">ئىجازەت خاتالىقى سەۋەبىدىن زاپاس ھۆججەتنى ئوقۇيالمىدى.</string>
-  <string name="import_data_error">ئىناۋەتسىز زاپاس ھۆججەت (ياكى زاپاس ھۆججەتنى ئوقۇيالمايدۇ).</string>
-  <string name="prefs_category_advanced_summary">خەتكۈچلەرنى ئەكىرىش / چىقىرىش ، قۇرئان سانلىق مەلۇمات مۇندەرىجىسى قاتارلىقلارنى تەڭشەش.</string>
-  <string name="prefs_sura_translated_name_title">سۈرىنىڭ ئىسمى تەرجىمە قىلىنغان</string>
-  <string name="exported_data">%1$s غا ئېكسپورت قىلىنغان سانلىق مەلۇمات</string>
-  <string name="import_data_and_override">ئەگەر بۇ ھۆججەتنى ئىمپورت قىلسىڭىز ، ئۇ بارلىق خەتكۈچلىرىڭىزنى %1$d خەتكۈچ ۋە %2$d خەتكۈچكە ئالماشتۇرىدۇ. ئىمپورتمۇ؟</string>
+  <string name="notification_channel_audio">قۇرئان قىرائىتى</string>
   <string name="play_restrict_range">پەقەت يۇقىرىدىكى ئايەتلەرنىلا ئاڭلاڭ</string>
   <string name="play_verses_range">بىر يۈرۈش ئايەتلەرنى ئاڭلاڭ:</string>
   <string name="play_each_verse">ھەر بىر ئايەتنى ئاڭلاڭ:</string>
-  <string name="sdcard_error">SD كارتىنى تاپالمىدى. ئۇنى ئورنىتىپ قايتا سىناڭ.</string>
-  <string name="please_grant_permissions">ئىلتىماس تەڭشەكلىرىدە ئىجازەت بېرىڭ</string>
-  <string name="see_tafseer_of_verse">بۇ ئايەتنىڭ تەفىرسى %d -ئايەتنىڭ تەفسىر بىلەن ئۆز ئىچىگە ئېلىنغان (كېڭەيتىش ئۈچۈن چېكىڭ).</string>
-  <string name="kitkat_external_message">ئاندىرويىد چەكلىمىسى تۈپەيلىدىن ، ئەگەر سىز قۇرئان سانلىق مەلۇماتلىرىنى سىرتقى SD كارتىڭىزغا قويماقچى بولسىڭىز ، ئاندىن قۇرئان ئاندىرويىد ئۈچۈن سانلىق مەلۇماتلارنى ئۆچۈرۈۋەتسىڭىز ياكى ئۆچۈرسىڭىز ، قۇرئاننىڭ بارلىق ئاندىرويىد بەتلىرى ۋە ئاۋازلىرى ئۆچۈرۈلىدۇ ، ئۇلارنى قايتا چۈشۈرۈشىڭىز كېرەك. سىرتقى SD كارتىنى ئىشلىتىشنى خالامسىز؟</string>
-  <string name="scoped_storage_message">ئابونتلارنىڭ شەخسى مەخپىيەتلىكىنى ئاشۇرۇش ئۈچۈن ئاندىرويىد ئۆزگىرىشى سەۋەبىدىن ، ھۆججەت مۇندەرىجىسىنىڭ سىرتىدىكى ھۆججەتلەرنى كۆچۈرگەندە «ئاندىرويىد ئۈچۈن قۇرئان» نىڭ ئاندىرويىدنىڭ كەلگۈسى نەشرىدىكى سانلىق مەلۇماتلىرىنى زىيارەت قىلىشىنى توختىتىشى مۇمكىن. بۇ يولنى ئىشلىتىشنى خالامسىز؟</string>
-  <string name="storage_permission_rationale">«ئاندىرويىد ئۈچۈن قۇرئان» سىزنىڭ سانلىق مەلۇماتلىرىڭىزنى سىرتقى ساقلاشقا ساقلىشىڭىزغا رۇخسەت قىلىدۇ. «ئاندىرويىد ئۈچۈن قۇرئان» بۇ ئىجازەتسىز ئىشلەيدۇ ، ئەمما سانلىق مەلۇماتنى ئۆچۈرسىڭىز ياكى ئەپنى ئۆچۈرۈۋەتسىڭىز ، چۈشۈرۈلگەن بارلىق بەتلەر ، ئاۋاز ۋە سانلىق مەلۇماتلار ئۆچۈرۈلىدۇ. «ئاندىرويىد ئۈچۈن قۇرئان» ئىجازەت بېرەمسىز؟</string>
-  <string name="about_quran_ksu_summary">كىڭ سەئۇد ئۇنۋېرسىتىتى ئېلېكترونلۇق مصحف تۈرى بۇ دېتالنىڭ ئەرەبچە تەپسىرلەر نىڭ مەنبەسى ۋە ھەر خىل تىللارنىڭ تەرجىمىسى. ئۇ يەنە دوكتور ئايمان سۇۋەيدنىڭ دېكلاماتسىيە قىلىشىنىڭ مەنبەسى.</string>
 </resources>
