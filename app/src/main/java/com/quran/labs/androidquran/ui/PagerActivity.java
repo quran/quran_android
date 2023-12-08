@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
@@ -68,14 +67,12 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.bridge.AudioEventPresenterBridge;
 import com.quran.labs.androidquran.bridge.ReadingEventPresenterBridge;
-import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.audio.model.QariItem;
 import com.quran.labs.androidquran.dao.audio.AudioRequest;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranDisplayData;
-import com.quran.labs.androidquran.database.TranslationsDBAdapter;
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
@@ -83,6 +80,7 @@ import com.quran.labs.androidquran.presenter.audio.AudioPresenter;
 import com.quran.labs.androidquran.presenter.bookmark.RecentPagePresenter;
 import com.quran.labs.androidquran.presenter.data.QuranEventLogger;
 import com.quran.labs.androidquran.presenter.recitation.PagerActivityRecitationPresenter;
+import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
@@ -130,11 +128,10 @@ import com.quran.reading.common.AudioEventPresenter;
 import com.quran.reading.common.ReadingEventPresenter;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -142,11 +139,10 @@ import javax.inject.Inject;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.observers.DisposableObserver;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
-import io.reactivex.rxjava3.schedulers.Schedulers;
+import kotlinx.coroutines.Job;
 import timber.log.Timber;
 
 /**
@@ -233,7 +229,6 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject QuranSettings quranSettings;
   @Inject QuranScreenInfo quranScreenInfo;
   @Inject ArabicDatabaseUtils arabicDatabaseUtils;
-  @Inject TranslationsDBAdapter translationsDBAdapter;
   @Inject QuranAppUtils quranAppUtils;
   @Inject ShareUtil shareUtil;
   @Inject AudioUtils audioUtils;
@@ -248,10 +243,12 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject PageViewFactoryProvider pageProviderFactoryProvider;
   @Inject Set<AyahActionFragmentProvider> additionalAyahPanels;
   @Inject PagerActivityRecitationPresenter pagerActivityRecitationPresenter;
+  @Inject TranslationListPresenter translationListPresenter;
 
   private AudioEventPresenterBridge audioEventPresenterBridge;
   private ReadingEventPresenterBridge readingEventPresenterBridge;
 
+  private Job translationJob;
   private CompositeDisposable compositeDisposable;
   private final CompositeDisposable foregroundDisposable = new CompositeDisposable();
 
@@ -543,6 +540,9 @@ public class PagerActivity extends AppCompatActivity implements
         registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
           audioPresenter.onPostNotificationsPermissionResponse(isGranted);
         });
+
+    // read the list of translations
+    requestTranslationsList();
   }
 
   @Override
@@ -761,9 +761,6 @@ public class PagerActivity extends AppCompatActivity implements
     recentPagePresenter.bind(this);
     isInMultiWindowMode = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode();
 
-    // read the list of translations
-    requestTranslationsList();
-
     if (shouldReconnect) {
       foregroundDisposable.add(Completable.timer(500, TimeUnit.MILLISECONDS)
           .observeOn(AndroidSchedulers.mainThread())
@@ -971,6 +968,7 @@ public class PagerActivity extends AppCompatActivity implements
     }
     recentPagePresenter.unbind(this);
     quranSettings.setWasShowingTranslation(pagerAdapter.isShowingTranslation());
+
     super.onPause();
   }
 
@@ -996,6 +994,9 @@ public class PagerActivity extends AppCompatActivity implements
       downloadReceiver = null;
     }
 
+    if (translationJob != null) {
+      translationJob.cancel(new CancellationException());
+    }
     currentQariBridge.unsubscribeAll();
     compositeDisposable.dispose();
     audioEventPresenterBridge.dispose();
@@ -1372,56 +1373,29 @@ public class PagerActivity extends AppCompatActivity implements
   }
 
   private void requestTranslationsList() {
-    compositeDisposable.add(
-        Single.fromCallable(() ->
-            translationsDBAdapter.legacyGetTranslations())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(new DisposableSingleObserver<List<LocalTranslation>>() {
-              @Override
-              public void onSuccess(@NonNull List<LocalTranslation> translationList) {
-                final List<LocalTranslation> sortedTranslations = new ArrayList<>(translationList);
-              Collections.sort(sortedTranslations, new LocalTranslationDisplaySort());
+    translationJob = translationListPresenter.registerForTranslations((titles, updatedTranslations) -> {
+      Set<String> currentActiveTranslationsFilesNames = quranSettings.getActiveTranslations();
+      if (currentActiveTranslationsFilesNames.isEmpty() && !updatedTranslations.isEmpty()) {
+        currentActiveTranslationsFilesNames = new HashSet<>();
+        final int items = updatedTranslations.size();
+        for (int i = 0; i < items; i++) {
+          currentActiveTranslationsFilesNames.add(updatedTranslations.get(i).getFilename());
+        }
+      }
+      activeTranslationsFilesNames = currentActiveTranslationsFilesNames;
 
-              int items = sortedTranslations.size();
-                String[] titles = new String[items];
-                for (int i = 0; i < items; i++) {
-                  LocalTranslation item = sortedTranslations.get(i);
-                  if (!TextUtils.isEmpty(item.getTranslatorForeign())) {
-                    titles[i] = item.getTranslatorForeign();
-                  } else if (!TextUtils.isEmpty(item.getTranslator())) {
-                    titles[i] = item.getTranslator();
-                  } else {
-                    titles[i] = item.getName();
-                  }
-                }
+      if (translationsSpinnerAdapter != null) {
+        translationsSpinnerAdapter
+            .updateItems(titles, updatedTranslations, activeTranslationsFilesNames);
+      }
+      translationNames = titles;
+      translations = updatedTranslations;
 
-                Set<String> currentActiveTranslationsFilesNames = quranSettings.getActiveTranslations();
-                if (currentActiveTranslationsFilesNames.isEmpty() && items > 0) {
-                  currentActiveTranslationsFilesNames = new HashSet<>();
-                  for (int i = 0; i < items; i++) {
-                    currentActiveTranslationsFilesNames.add(sortedTranslations.get(i).getFilename());
-                  }
-                }
-                activeTranslationsFilesNames = currentActiveTranslationsFilesNames;
-
-                if (translationsSpinnerAdapter != null) {
-                  translationsSpinnerAdapter
-                      .updateItems(titles, sortedTranslations, activeTranslationsFilesNames);
-                }
-                translationNames = titles;
-                translations = sortedTranslations;
-
-                if (showingTranslation) {
-                  // Since translation items have changed, need to
-                  updateActionBarSpinner();
-                }
-              }
-
-              @Override
-              public void onError(@NonNull Throwable e) {
-              }
-            }));
+      if (showingTranslation) {
+        // Since translation items have changed, need to
+        updateActionBarSpinner();
+      }
+    });
   }
 
   private void toggleBookmark(final Integer sura, final Integer ayah, final int page) {
