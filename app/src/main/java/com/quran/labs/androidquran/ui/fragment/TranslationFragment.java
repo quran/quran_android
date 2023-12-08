@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment;
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.model.selection.AyahSelection;
-import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.data.QuranDisplayData;
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerItem;
@@ -29,6 +28,7 @@ import com.quran.labs.androidquran.ui.translation.TranslationView;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.view.QuranTranslationPageLayout;
+import com.quran.mobile.translation.model.LocalTranslation;
 import com.quran.reading.common.ReadingEventPresenter;
 
 import java.util.List;

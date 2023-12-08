@@ -1,0 +1,26 @@
+CREATE TABLE IF NOT EXISTS translations (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  translator TEXT,
+  filename TEXT NOT NULL,
+  url TEXT NOT NULL,
+  version INTEGER NOT NULL DEFAULT 0
+);
+
+-- adds translatorForeign
+CREATE TABLE translations_migration (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  translator TEXT,
+  translatorForeign TEXT,
+  filename TEXT NOT NULL,
+  url TEXT NOT NULL,
+  version INTEGER NOT NULL DEFAULT 0
+);
+
+INSERT INTO translations_migration
+SELECT id, name, translator, "", filename, url, version
+FROM translations;
+
+DROP TABLE translations;
+ALTER TABLE translations_migration RENAME TO translations;

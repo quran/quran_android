@@ -10,7 +10,6 @@ import android.text.TextUtils
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.text.style.StyleSpan
-import android.text.style.TypefaceSpan
 import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
@@ -18,15 +17,13 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.annotation.StyleRes
 import androidx.core.content.ContextCompat
-import com.quran.common.search.SearchTextUtil
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.ui.helpers.TypefaceWrappingSpan
-import com.quran.labs.androidquran.ui.translation.TranslationAdapter
 import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.mobile.translation.model.LocalTranslation
 
 class InlineTranslationView @JvmOverloads constructor(
   context: Context,

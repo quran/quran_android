@@ -162,14 +162,15 @@ public class TranslationManagerActivity extends AppCompatActivity
         }
       }
 
-      List<TranslationItem> sortedItems = sortedDownloadedItems();
-      int lastDisplayOrder = sortedItems.isEmpty() ? 1 :
-              sortedItems.get(sortedItems.size() - 1).getDisplayOrder();
-
+      // TODO: we can avoid the cost of sorting once we can listen to db updates
+      // in which case we'd set the local version as -1 so it gets properly assigned after.
+      final List<TranslationItem> sortedItems = sortedDownloadedItems();
+      int lastDisplayOrder = sortedItems.isEmpty() ? 0 :
+          sortedItems.get(sortedItems.size() - 1).getDisplayOrder();
       final Translation translation = downloadingItem.getTranslation();
-      TranslationItem updated = new TranslationItem(translation,
-              translation.getCurrentVersion(), lastDisplayOrder + 1);
-      updateTranslationItem(updated);
+      updateTranslationItem(downloadingItem.withLocalVersionAndDisplayOrder(
+          translation.getCurrentVersion(), lastDisplayOrder + 1)
+      );
 
       // update active translations and add this item to it
       QuranSettings settings = QuranSettings.getInstance(this);

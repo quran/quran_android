@@ -5,12 +5,12 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.model.QuranText
 import com.quran.data.model.VerseRange
 import com.quran.data.pageinfo.common.MadaniDataSource
-import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.TranslationUtil
+import com.quran.mobile.translation.model.LocalTranslation
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -53,7 +53,7 @@ class BaseTranslationPresenterTest {
   @Test
   fun testHashlessGetTranslationNames() {
     val databases = listOf("one.db", "two.db")
-    val map = HashMap<String, LocalTranslation>()
+    val map = HashMap<String, com.quran.mobile.translation.model.LocalTranslation>()
 
     val translations = presenter.getTranslations(databases, map)
     assertThat(translations).hasLength(2)
