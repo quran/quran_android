@@ -1,28 +1,28 @@
 package com.quran.labs.androidquran.ui.fragment
 
-import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter
-import android.widget.ProgressBar
-import com.quran.labs.androidquran.view.InlineTranslationView
-import com.quran.labs.androidquran.view.QuranSpinner
-import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
-import javax.inject.Inject
-import com.quran.data.core.QuranInfo
-import com.quran.labs.androidquran.util.QuranSettings
-import com.quran.labs.androidquran.ui.PagerActivity
-import android.view.LayoutInflater
-import android.view.ViewGroup
-import android.os.Bundle
-import com.quran.labs.androidquran.R
 import android.app.Activity
 import android.content.Context
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
-import com.quran.labs.androidquran.common.LocalTranslation
+import android.widget.ProgressBar
+import com.quran.data.core.QuranInfo
 import com.quran.data.model.VerseRange
+import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
+import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter
 import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter.TranslationScreen
+import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
+import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
+import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.view.InlineTranslationView
+import com.quran.labs.androidquran.view.QuranSpinner
 import com.quran.mobile.di.AyahActionFragmentProvider
+import com.quran.mobile.translation.model.LocalTranslation
+import javax.inject.Inject
 import kotlin.math.abs
 
 class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {

@@ -1,0 +1,29 @@
+CREATE TABLE translations (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  translator TEXT,
+  translatorForeign TEXT,
+  filename TEXT NOT NULL,
+  url TEXT NOT NULL,
+  languageCode TEXT,
+  version INTEGER NOT NULL DEFAULT 0,
+  minimumRequiredVersion INTEGER NOT NULL DEFAULT 0,
+  userDisplayOrder INTEGER NOT NULL DEFAULT -1
+);
+
+all:
+SELECT * FROM translations ORDER BY id ASC;
+
+update:
+REPLACE INTO translations(
+  id, name, translator, translatorForeign, filename, url, languageCode, version, minimumRequiredVersion, userDisplayOrder)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+greatestDisplayOrder:
+SELECT MAX(userDisplayOrder) FROM translations;
+
+deleteById:
+DELETE FROM translations WHERE id = ?;
+
+deleteByFileName:
+DELETE FROM translations WHERE filename = ?;

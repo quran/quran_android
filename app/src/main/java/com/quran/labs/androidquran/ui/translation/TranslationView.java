@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.quran.data.model.SuraAyah;
 import com.quran.data.model.highlight.HighlightType;
 import com.quran.data.model.selection.SelectionIndicator;
-import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.TranslationMetadata;
@@ -27,6 +26,8 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.labs.androidquran.ui.helpers.HighlightTypes;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
+import com.quran.mobile.translation.model.LocalTranslation;
+
 import dev.chrisbanes.insetter.Insetter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -137,7 +138,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       Arrays.sort(sortedTranslations, new LocalTranslationDisplaySort());
 
       for (int j = 0; j < sortedTranslations.length; j++) {
-        final TranslationMetadata metadata = findText(verse.texts, sortedTranslations[j].getId());
+        final TranslationMetadata metadata = findText(verse.texts, (int) sortedTranslations[j].getId());
         CharSequence text = metadata != null ? metadata.getText() : "";
         if (!TextUtils.isEmpty(text)) {
           if (wantTranslationHeaders) {

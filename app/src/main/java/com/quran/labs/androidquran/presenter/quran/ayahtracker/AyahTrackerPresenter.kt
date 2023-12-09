@@ -16,7 +16,6 @@ import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.data.model.selection.startSuraAyah
-import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.data.SuraAyahIterator
@@ -32,6 +31,7 @@ import com.quran.labs.androidquran.ui.helpers.HighlightTypes
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.mobile.bookmark.model.BookmarkModel
+import com.quran.mobile.translation.model.LocalTranslation
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
 import com.quran.reading.common.AudioEventPresenter

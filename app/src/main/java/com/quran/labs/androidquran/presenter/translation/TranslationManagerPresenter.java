@@ -7,7 +7,6 @@ import android.util.SparseArray;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
-import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.dao.translation.Translation;
 import com.quran.labs.androidquran.dao.translation.TranslationItem;
 import com.quran.labs.androidquran.dao.translation.TranslationList;
@@ -19,6 +18,7 @@ import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.mobile.di.qualifier.ApplicationContext;
+import com.quran.mobile.translation.model.LocalTranslation;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
@@ -140,16 +140,16 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
           // old file needs to be removed from the database explicitly
           final Translation translation = item.getTranslation();
           if (translation.getMinimumVersion() >= 5) {
-            translationsDBAdapter.deleteTranslationByFile(translation.getFileName());
+            translationsDBAdapter.legacyDeleteTranslationByFileName(translation.getFileName());
           }
-          return translationsDBAdapter.writeTranslationUpdates(Collections.singletonList(item));
+          return translationsDBAdapter.legacyWriteTranslationUpdates(Collections.singletonList(item));
         }
     ).subscribeOn(Schedulers.io())
         .subscribe();
   }
 
   public void updateItemOrdering(final List<TranslationItem> items) {
-    Observable.fromCallable(() -> translationsDBAdapter.writeTranslationUpdates(items))
+    Observable.fromCallable(() -> translationsDBAdapter.legacyWriteTranslationUpdates(items))
             .subscribeOn(Schedulers.io())
             .subscribe();
   }
@@ -247,6 +247,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
       TranslationItem override = null;
       if (exists) {
         if (local == null) {
+          // text version, schema version
           final Pair<Integer, Integer> versions = getVersionFromDatabase(translation.getFileName());
           item = new TranslationItem(translation, versions.first);
           if (versions.second != translation.getMinimumVersion()) {
@@ -272,7 +273,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
           // certain schema changes, especially those going to v5, keep the same filename while
           // changing the database entry id. this could cause duplicate entries in the database.
           // work around it by removing the existing entries before doing the updates.
-          translationsDBAdapter.deleteTranslationByFile(override.getTranslation().getFileName());
+          translationsDBAdapter.legacyDeleteTranslationByFileName(override.getTranslation().getFileName());
         }
         updates.add(override == null ? item : override);
       } else if (local != null && local.getLanguageCode() == null) {
@@ -283,7 +284,7 @@ public class TranslationManagerPresenter implements Presenter<TranslationManager
     }
 
     if (!updates.isEmpty()) {
-      translationsDBAdapter.writeTranslationUpdates(updates);
+      translationsDBAdapter.legacyWriteTranslationUpdates(updates);
     }
     return results;
   }

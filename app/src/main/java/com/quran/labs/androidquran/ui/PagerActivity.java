@@ -68,7 +68,6 @@ import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.bridge.AudioEventPresenterBridge;
 import com.quran.labs.androidquran.bridge.ReadingEventPresenterBridge;
-import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.common.LocalTranslationDisplaySort;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.audio.model.QariItem;
@@ -123,6 +122,7 @@ import com.quran.mobile.di.QuranReadingPageComponent;
 import com.quran.mobile.di.QuranReadingPageComponentProvider;
 import com.quran.mobile.feature.qarilist.QariListWrapper;
 import com.quran.mobile.feature.qarilist.di.QariListWrapperInjector;
+import com.quran.mobile.translation.model.LocalTranslation;
 import com.quran.page.common.factory.PageViewFactoryProvider;
 import com.quran.page.common.toolbar.AyahToolBar;
 import com.quran.page.common.toolbar.di.AyahToolBarInjector;
@@ -1374,7 +1374,7 @@ public class PagerActivity extends AppCompatActivity implements
   private void requestTranslationsList() {
     compositeDisposable.add(
         Single.fromCallable(() ->
-            translationsDBAdapter.getTranslations())
+            translationsDBAdapter.legacyGetTranslations())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(new DisposableSingleObserver<List<LocalTranslation>>() {

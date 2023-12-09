@@ -11,12 +11,11 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import com.quran.data.model.QuranText
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.common.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.util.ToastCompat
-import com.quran.labs.androidquran.ui.util.TypefaceManager
+import com.quran.mobile.translation.model.LocalTranslation
 import dagger.Reusable
 import java.text.NumberFormat
 import java.util.Locale
