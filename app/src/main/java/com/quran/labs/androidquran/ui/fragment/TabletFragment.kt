@@ -47,6 +47,9 @@ import com.quran.page.common.factory.PageViewFactoryProvider
 import com.quran.reading.common.ReadingEventPresenter
 import dagger.Lazy
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -88,6 +91,8 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
 
   private var pageViewFactory: PageViewFactory? = null
   private var isCustomArabicPageType = false
+
+  private val scope = MainScope()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -363,8 +368,9 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
   }
 
   override fun onDetach() {
-    super.onDetach()
     compositeDisposable.clear()
+    scope.cancel()
+    super.onDetach()
   }
 
   override fun setPageDownloadError(@StringRes errorMessage: Int) {
@@ -390,7 +396,9 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     if (mode == Mode.TRANSLATION) {
-      translationPresenter.get().legacyRefresh()
+      scope.launch {
+        translationPresenter.get().refresh()
+      }
     }
   }
 
@@ -420,7 +428,9 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
 
   fun refresh() {
     if (mode == Mode.TRANSLATION) {
-      translationPresenter.get().legacyRefresh()
+      scope.launch {
+        translationPresenter.get().refresh()
+      }
     }
   }
 
