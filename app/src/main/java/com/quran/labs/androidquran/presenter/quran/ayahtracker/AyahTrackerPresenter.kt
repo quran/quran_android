@@ -371,7 +371,7 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   override fun bind(what: AyahInteractionHandler) {
-    items = what.ayahTrackerItems
+    items = what.getAyahTrackerItems()
     scope = MainScope()
     if (isRecitationEnabled) {
       recitationPopupPresenter.bind(this)
@@ -390,7 +390,7 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   interface AyahInteractionHandler {
-    val ayahTrackerItems: Array<AyahTrackerItem>
+    fun getAyahTrackerItems(): Array<AyahTrackerItem>
   }
 
   // PopupContainer <--> AyahTrackerItem adapter

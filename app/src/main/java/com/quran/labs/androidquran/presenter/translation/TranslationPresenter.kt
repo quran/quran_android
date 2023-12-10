@@ -25,8 +25,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-@QuranPageScope
-internal class TranslationPresenter @Inject internal constructor(
+@QuranPageScope class TranslationPresenter @Inject internal constructor(
   translationModel: TranslationModel,
   private val quranSettings: QuranSettings,
   translationsAdapter: TranslationsDBAdapter,
