@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.database
 
 import android.content.Context
 import android.util.SparseArray
-import androidx.annotation.WorkerThread
 import com.quran.labs.androidquran.dao.translation.TranslationItem
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.mobile.di.qualifier.ApplicationContext
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,11 +29,6 @@ class TranslationsDBAdapter @Inject constructor(
       .map { translations ->
         translations.filter { quranFileUtils.hasTranslation(context, it.filename) }
       }
-  }
-
-  @WorkerThread
-  fun legacyGetTranslations(): List<LocalTranslation> {
-    return runBlocking { getTranslations().first() }
   }
 
   suspend fun translationsHash(): SparseArray<LocalTranslation> {
