@@ -21,7 +21,7 @@ class InlineTranslationPresenter @Inject constructor(
   dbAdapter: TranslationsDBAdapter,
   translationUtil: TranslationUtil,
   private val quranSettings: QuranSettings,
-  private val translationListPresenter: TranslationListPresenter,
+  translationListPresenter: TranslationListPresenter,
   quranInfo: QuranInfo
 ) : BaseTranslationPresenter<InlineTranslationPresenter.TranslationScreen>(
   translationModel, dbAdapter, translationUtil, quranInfo
