@@ -8,24 +8,12 @@ import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.translation.model.LocalTranslation
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.observers.DisposableObserver
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-@QuranPageScope class TranslationPresenter @Inject internal constructor(
+@QuranPageScope
+class TranslationPresenter @Inject internal constructor(
   translationModel: TranslationModel,
   private val quranSettings: QuranSettings,
   translationsAdapter: TranslationsDBAdapter,
@@ -36,14 +24,6 @@ import javax.inject.Inject
   BaseTranslationPresenter<TranslationPresenter.TranslationScreen>(
     translationModel, translationsAdapter, translationUtil, quranInfo
   ) {
-
-  private val scope = MainScope()
-
-  fun legacyRefresh() {
-    scope.launch {
-      refresh()
-    }
-  }
 
   suspend fun refresh() {
     pages

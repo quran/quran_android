@@ -28,6 +28,9 @@ import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.view.QuranTranslationPageLayout
 import com.quran.mobile.translation.model.LocalTranslation
 import com.quran.reading.common.ReadingEventPresenter
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TranslationFragment : Fragment(), AyahInteractionHandler, QuranPage,
@@ -46,6 +49,8 @@ class TranslationFragment : Fragment(), AyahInteractionHandler, QuranPage,
   @Inject lateinit var ayahTrackerPresenter: AyahTrackerPresenter
   @Inject lateinit var ayahSelectedListener: AyahSelectedListener
   @Inject lateinit var readingEventPresenter: ReadingEventPresenter
+
+  private val scope = MainScope()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -80,6 +85,11 @@ class TranslationFragment : Fragment(), AyahInteractionHandler, QuranPage,
       ?.quranPageComponentFactory()
       ?.generate(pages)
       ?.inject(this)
+  }
+
+  override fun onDetach() {
+    scope.cancel()
+    super.onDetach()
   }
 
   override fun updateView() {
@@ -132,7 +142,9 @@ class TranslationFragment : Fragment(), AyahInteractionHandler, QuranPage,
   }
 
   fun refresh() {
-    presenter.legacyRefresh()
+    scope.launch {
+      presenter.refresh()
+    }
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
