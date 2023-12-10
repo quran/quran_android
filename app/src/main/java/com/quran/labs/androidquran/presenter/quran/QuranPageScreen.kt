@@ -6,10 +6,10 @@ import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
 
 interface QuranPageScreen {
-  fun setPageCoordinates(pageCoordinates: PageCoordinates?)
+  fun setPageCoordinates(pageCoordinates: PageCoordinates)
   fun setAyahCoordinatesError()
   fun setPageBitmap(page: Int, pageBitmap: Bitmap)
   fun hidePageDownloadError()
   fun setPageDownloadError(@StringRes errorMessage: Int)
-  fun setAyahCoordinatesData(coordinates: AyahCoordinates?)
+  fun setAyahCoordinatesData(coordinates: AyahCoordinates)
 }
