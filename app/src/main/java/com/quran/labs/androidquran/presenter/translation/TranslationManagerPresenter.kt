@@ -9,18 +9,22 @@ import com.quran.labs.androidquran.dao.translation.TranslationList
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.database.DatabaseHandler.Companion.getDatabaseHandler
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
-import com.quran.labs.androidquran.presenter.Presenter
-import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.squareup.moshi.Moshi
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableSource
-import io.reactivex.rxjava3.functions.Supplier
-import io.reactivex.rxjava3.observers.DisposableObserver
-import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.buffer
@@ -28,146 +32,112 @@ import okio.sink
 import okio.source
 import timber.log.Timber
 import java.io.File
-import java.io.IOException
-import java.util.concurrent.Callable
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 open class TranslationManagerPresenter @Inject internal constructor(
-  @param:ApplicationContext private val appContext: Context,
+  @ApplicationContext private val appContext: Context,
   private val okHttpClient: OkHttpClient,
   private val quranSettings: QuranSettings,
   private val translationsDBAdapter: TranslationsDBAdapter,
   private val quranFileUtils: QuranFileUtils
-) : Presenter<TranslationManagerActivity> {
+) {
   @VisibleForTesting
   var host: String = Constants.HOST
 
-  private var currentActivity: TranslationManagerActivity? = null
+  private val scope = MainScope()
+
+  private val moshiTranslationListAdapter by lazy {
+    val moshi = Moshi.Builder().build()
+    moshi.adapter(TranslationList::class.java)
+  }
 
   fun checkForUpdates() {
-    getTranslationsList(true)
-  }
-
-  fun getTranslationsList(forceDownload: Boolean) {
+    Timber.d("checking whether we should update translations..")
     val isCacheStale = System.currentTimeMillis() -
         quranSettings.lastUpdatedTranslationDate > Constants.MIN_TRANSLATION_REFRESH_TIME
-    val source: Observable<TranslationList> = Observable.concat(
-      cachedTranslationListObservable, remoteTranslationListObservable
-    )
-    val observableSource: Observable<TranslationList> = if (forceDownload) {
-      // we only force if we pulled to refresh or are refreshing in the background,
-      // implying that we have data on the screen already (or don't need data in the
-      // background case), so just get remote data.
-      remoteTranslationListObservable
-    } else if (isCacheStale) {
-      source
-    } else {
-      source.take(1)
+    if (isCacheStale) {
+      Timber.d("updating translations list...")
+      getTranslations(true)
+        .catch { Timber.e(it) }
+        .launchIn(scope)
     }
-    observableSource
-      .filter { translationList: TranslationList -> translationList.translations.isNotEmpty() }
-      .map { translationList: TranslationList ->
-        mergeWithServerTranslations(translationList.translations)
-      }
-      .subscribeOn(Schedulers.io())
-      .observeOn(AndroidSchedulers.mainThread())
-      .subscribe(object : DisposableObserver<List<TranslationItem>>() {
-        override fun onNext(translationItems: List<TranslationItem>) {
-          currentActivity?.onTranslationsUpdated(translationItems)
-
-          // used for marking upgrades, irrespective of whether or not there is a bound activity
-          var updatedTranslations = false
-          for (item in translationItems) {
-            if (item.needsUpgrade()) {
-              updatedTranslations = true
-              break
-            }
-          }
-          quranSettings.setHaveUpdatedTranslations(updatedTranslations)
-        }
-
-        override fun onError(e: Throwable) {
-          if (e !is IOException) {
-            Timber.e(e, "error updating translations list")
-          }
-          currentActivity?.onErrorDownloadTranslations()
-        }
-
-        override fun onComplete() {}
-      })
   }
 
-  fun updateItem(item: TranslationItem) {
-    Observable.fromCallable {
+  fun getTranslations(forceDownload: Boolean): Flow<List<TranslationItem>> {
+    val isCacheStale = System.currentTimeMillis() -
+        quranSettings.lastUpdatedTranslationDate > Constants.MIN_TRANSLATION_REFRESH_TIME
+    val flow = if (forceDownload) {
+      remoteTranslationList()
+    } else {
+      val flow = merge(cachedTranslationList(), remoteTranslationList())
+      if (isCacheStale) {
+        flow
+      } else {
+        flow.take(1)
+      }
+    }
 
+    return flow
+      .map { mergeWithServerTranslations(it.translations) }
+      .onEach { translations ->
+        val updatedTranslations = translations.any { it.needsUpgrade() }
+        quranSettings.setHaveUpdatedTranslations(updatedTranslations)
+      }
+  }
+
+  suspend fun updateItem(item: TranslationItem) {
+    withContext(Dispatchers.IO) {
       // for upgrades, remove the old file to stop the tafseer from showing up
       // twice. this happens because old and new tafaseer (ex ibn kathir) have
       // different ids when they target different schema versions, and so the
       // old file needs to be removed from the database explicitly
       val (_, minimumVersion, _, _, _, fileName) = item.translation
       if (minimumVersion >= 5) {
-        translationsDBAdapter.legacyDeleteTranslationByFileName(fileName)
+        translationsDBAdapter.deleteTranslationByFileName(fileName)
       }
-      translationsDBAdapter.legacyWriteTranslationUpdates(listOf(item))
-    }.subscribeOn(Schedulers.io())
-      .subscribe()
+      translationsDBAdapter.writeTranslationUpdates(listOf(item))
+    }
   }
 
-  fun updateItemOrdering(items: List<TranslationItem>) {
-    Observable.fromCallable { translationsDBAdapter.legacyWriteTranslationUpdates(items) }
-      .subscribeOn(Schedulers.io())
-      .subscribe()
+  suspend fun updateItemOrdering(items: List<TranslationItem>) {
+    withContext(Dispatchers.IO) {
+      translationsDBAdapter.writeTranslationUpdates(items)
+    }
   }
 
-  val cachedTranslationListObservable: Observable<TranslationList>
-    get() = Observable.defer(Supplier<ObservableSource<out TranslationList>> {
+  internal fun cachedTranslationList(): Flow<TranslationList> {
+    return flow {
       try {
         val cachedFile = cachedFile
         if (cachedFile.exists()) {
-          val moshi = Moshi.Builder().build()
-          val jsonAdapter = moshi.adapter(
-            TranslationList::class.java
-          )
-          val list = jsonAdapter.fromJson(cachedFile.source().buffer())
-          if (list != null) {
-            return@Supplier Observable.just<TranslationList>(list)
+          val list = moshiTranslationListAdapter.fromJson(cachedFile.source().buffer())
+          if (list != null && list.translations.isNotEmpty()) {
+            emit(list)
           }
         }
       } catch (e: Exception) {
         Timber.e(e)
       }
-      Observable.empty()
-    })
-  val remoteTranslationListObservable: Observable<TranslationList>
-    get() {
-      val url = host + WEB_SERVICE_ENDPOINT
-      return downloadTranslationList(url)
-        .onErrorResumeWith(downloadTranslationList(url))
-        .doOnNext { translationList: TranslationList ->
-          translationList.translations
-          if (translationList.translations.isNotEmpty()) {
-            writeTranslationList(translationList)
-          }
-        }
     }
+    .flowOn(Dispatchers.IO)
+  }
 
-  private fun downloadTranslationList(url: String): Observable<TranslationList> {
-    return Observable.fromCallable(Callable<TranslationList> {
+  internal fun remoteTranslationList(): Flow<TranslationList> {
+    return flow {
+      val url = host + WEB_SERVICE_ENDPOINT
       val request: Request = Request.Builder()
         .url(url)
         .build()
       val response = okHttpClient.newCall(request).execute()
-      val moshi = Moshi.Builder().build()
-      val jsonAdapter = moshi.adapter(
-        TranslationList::class.java
-      )
       val responseBody = response.body
-      val result = jsonAdapter.fromJson(responseBody!!.source())
+      val result = moshiTranslationListAdapter.fromJson(responseBody!!.source())
       responseBody.close()
-      result
-    })
+      if (result != null && result.translations.isNotEmpty()) {
+        emit(result)
+      }
+    }.flowOn(Dispatchers.IO)
   }
 
   open fun writeTranslationList(list: TranslationList) {
@@ -179,12 +149,8 @@ open class TranslationManagerPresenter @Inject internal constructor(
         if (cacheFile.exists()) {
           cacheFile.delete()
         }
-        val moshi = Moshi.Builder().build()
-        val jsonAdapter = moshi.adapter(
-          TranslationList::class.java
-        )
         val sink = cacheFile.sink().buffer()
-        jsonAdapter.toJson(sink, list)
+        moshiTranslationListAdapter.toJson(sink, list)
         sink.close()
         quranSettings.lastUpdatedTranslationDate = System.currentTimeMillis()
       }
@@ -194,35 +160,32 @@ open class TranslationManagerPresenter @Inject internal constructor(
     }
   }
 
-  private val cachedFile: File
+  internal open val cachedFile: File
     get() {
       val dir = quranFileUtils.getQuranDatabaseDirectory(appContext)
       return File(dir + File.separator + CACHED_RESPONSE_FILE_NAME)
     }
 
-  private fun mergeWithServerTranslations(serverTranslations: List<Translation>): List<TranslationItem> {
-    val results: MutableList<TranslationItem> = ArrayList(serverTranslations.size)
-    val localTranslations = translationsDBAdapter.getTranslationsHash()
+  internal open suspend fun mergeWithServerTranslations(serverTranslations: List<Translation>): List<TranslationItem> {
+    val localTranslations = translationsDBAdapter.translationsHash()
     val databaseDir = quranFileUtils.getQuranDatabaseDirectory(appContext)
     val updates: MutableList<TranslationItem> = ArrayList()
-    var i = 0
-    val count = serverTranslations.size
-    while (i < count) {
-      val translation = serverTranslations[i]
+
+    val results = serverTranslations.mapIndexed { _, translation ->
       val local = localTranslations[translation.id]
       val dbFile = File(databaseDir, translation.fileName)
-      var exists = dbFile.exists()
-      var item: TranslationItem
+      val translationExists = dbFile.exists()
       var override: TranslationItem? = null
-      if (exists) {
+
+      val item: TranslationItem
+      if (translationExists) {
         if (local == null) {
           // text version, schema version
           val versions = getVersionFromDatabase(translation.fileName)
           item = TranslationItem(translation, versions.first)
           if (versions.second != translation.minimumVersion) {
             // schema change, write downloaded schema version to the db and return server item
-            override =
-              TranslationItem(translation.withSchema(versions.second), versions.first)
+            override = TranslationItem(translation.withSchema(versions.second), versions.first)
           }
         } else {
           item = TranslationItem(translation, local.version, local.displayOrder)
@@ -230,29 +193,32 @@ open class TranslationManagerPresenter @Inject internal constructor(
       } else {
         item = TranslationItem(translation)
       }
-      if (exists && !item.exists()) {
+
+      val exists = if (translationExists && !item.exists()) {
         // delete the file, it has been corrupted
-        if (dbFile.delete()) {
-          exists = false
-        }
+        dbFile.delete()
+        false
+      } else {
+        true
       }
+
       if (local == null && exists || local != null && !exists) {
         if (override != null && item.translation.minimumVersion >= 5) {
           // certain schema changes, especially those going to v5, keep the same filename while
           // changing the database entry id. this could cause duplicate entries in the database.
           // work around it by removing the existing entries before doing the updates.
-          translationsDBAdapter.legacyDeleteTranslationByFileName(override.translation.fileName)
+          translationsDBAdapter.deleteTranslationByFileName(override.translation.fileName)
         }
         updates.add(override ?: item)
       } else if (local != null && local.languageCode == null) {
         // older items don't have a language code
         updates.add(item)
       }
-      results.add(item)
-      i++
+      item
     }
-    if (!updates.isEmpty()) {
-      translationsDBAdapter.legacyWriteTranslationUpdates(updates)
+
+    if (updates.isNotEmpty()) {
+      translationsDBAdapter.writeTranslationUpdates(updates)
     }
     return results
   }
@@ -267,16 +233,6 @@ open class TranslationManagerPresenter @Inject internal constructor(
       Timber.d(e, "exception opening database: %s", filename)
     }
     return Pair(0, 0)
-  }
-
-  override fun bind(what: TranslationManagerActivity) {
-    currentActivity = what
-  }
-
-  override fun unbind(what: TranslationManagerActivity) {
-    if (what === currentActivity) {
-      currentActivity = null
-    }
   }
 
   companion object {

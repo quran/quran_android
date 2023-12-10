@@ -176,6 +176,8 @@ dependencies {
   testImplementation libs.robolectric
   testImplementation libs.espresso.core
   testImplementation libs.espresso.intents
+  testImplementation libs.turbine
+  testImplementation libs.kotlinx.coroutines.test
 
   errorprone libs.errorprone.core
 
