@@ -8,6 +8,7 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.mobile.translation.data.TranslationsDataSource
 import com.quran.mobile.translation.model.LocalTranslation
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -22,6 +23,8 @@ class TranslationsDBAdapter @Inject constructor(
   private val dataSource: TranslationsDataSource,
   private val quranFileUtils: QuranFileUtils
 ) {
+  private val scope = MainScope()
+
   fun getTranslations(): Flow<List<LocalTranslation>> {
     return dataSource.translations()
       .filterNotNull()

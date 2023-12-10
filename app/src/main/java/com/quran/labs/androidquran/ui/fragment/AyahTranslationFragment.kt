@@ -14,6 +14,7 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter
 import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter.TranslationScreen
+import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
@@ -22,6 +23,10 @@ import com.quran.labs.androidquran.view.InlineTranslationView
 import com.quran.labs.androidquran.view.QuranSpinner
 import com.quran.mobile.di.AyahActionFragmentProvider
 import com.quran.mobile.translation.model.LocalTranslation
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -99,33 +104,20 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
     }
   }
 
-  public override fun refreshView() {
-    val start = start
-    val end = end
-    if (start == null || end == null) {
-      return
-    }
-    val activity: Activity? = activity
-    if (activity is PagerActivity) {
-      val translations = activity.translations
-      if (translations == null || translations.size == 0) {
-        progressBar.visibility = View.GONE
-        emptyState.visibility = View.VISIBLE
-        translationControls.visibility = View.GONE
-        return
-      }
-
-      var activeTranslationsFilesNames = activity.activeTranslationsFilesNames
-      if (activeTranslationsFilesNames == null) {
-        activeTranslationsFilesNames = quranSettings.activeTranslations
-      }
+  override fun onTranslationsUpdated(translations: List<LocalTranslation>) {
+    if (translations.isEmpty()) {
+      progressBar.visibility = View.GONE
+      emptyState.visibility = View.VISIBLE
+      translationControls.visibility = View.GONE
+    } else {
+      val activeTranslationsFilesNames = quranSettings.activeTranslations
 
       val adapter = translationAdapter
       if (adapter == null) {
         translationAdapter = TranslationsSpinnerAdapter(
           activity,
           R.layout.translation_ab_spinner_item,
-          activity.translationNames,
+          translations.map { it.resolveTranslatorName() }.toTypedArray(),
           translations,
           activeTranslationsFilesNames
         ) { selectedItems: Set<String?>? ->
@@ -135,22 +127,31 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
         translator.adapter = translationAdapter
       } else {
         adapter.updateItems(
-          activity.translationNames,
+          translations.map { it.resolveTranslatorName() }.toTypedArray(),
           translations,
           activeTranslationsFilesNames
         )
+        refreshView()
       }
-      if (start == end) {
-        translationControls.visibility = View.VISIBLE
-      } else {
-        translationControls.visibility = View.GONE
-      }
-      val verses = 1 + abs(
-        quranInfo.getAyahId(start.sura, start.ayah) - quranInfo.getAyahId(end.sura, end.ayah)
-      )
-      val verseRange = VerseRange(start.sura, start.ayah, end.sura, end.ayah, verses)
-      translationPresenter.refresh(verseRange)
     }
+  }
+
+  public override fun refreshView() {
+    val start = start
+    val end = end
+    if (start == null || end == null) {
+      return
+    }
+    if (start == end) {
+      translationControls.visibility = View.VISIBLE
+    } else {
+      translationControls.visibility = View.GONE
+    }
+    val verses = 1 + abs(
+      quranInfo.getAyahId(start.sura, start.ayah) - quranInfo.getAyahId(end.sura, end.ayah)
+    )
+    val verseRange = VerseRange(start.sura, start.ayah, end.sura, end.ayah, verses)
+    translationPresenter.refresh(verseRange)
   }
 
   override fun setVerses(translations: Array<LocalTranslation>, verses: List<QuranAyahInfo>) {

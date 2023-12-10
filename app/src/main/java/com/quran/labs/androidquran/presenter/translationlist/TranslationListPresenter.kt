@@ -14,9 +14,22 @@ import javax.inject.Inject
 class TranslationListPresenter @Inject constructor(
   private val dataSource: TranslationsDataSource
 ) {
+  private val scope = MainScope()
+
   fun translations(): Flow<List<LocalTranslation>> {
     return dataSource.translations()
       .filterNotNull()
       .map { translations -> translations.sortedBy { it.displayOrder } }
+  }
+
+  fun registerForTranslations(callback: TranslationListCallback): Job {
+    return translations()
+      .onEach { translations ->
+        callback.onTranslationsUpdated(
+          titles = translations.map { translation -> translation.resolveTranslatorName() }.toTypedArray(),
+          translations = translations
+        )
+      }
+      .launchIn(scope)
   }
 }

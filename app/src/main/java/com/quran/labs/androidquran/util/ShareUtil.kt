@@ -73,7 +73,7 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
         if (text.isNotEmpty()) {
           append("\n\n")
           if (i < translationNames.size) {
-            append(translationNames[i].getTranslatorName())
+            append(translationNames[i].resolveTranslatorName())
             append(":\n")
           }
 

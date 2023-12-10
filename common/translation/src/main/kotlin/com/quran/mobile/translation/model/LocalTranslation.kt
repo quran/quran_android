@@ -12,7 +12,7 @@ data class LocalTranslation(
   val minimumVersion: Int = 2,
   val displayOrder: Int = -1) {
 
-  fun getTranslatorName(): String {
+  fun resolveTranslatorName(): String {
     return when {
       !translatorForeign.isNullOrEmpty() -> translatorForeign
       !translator.isNullOrEmpty() -> translator

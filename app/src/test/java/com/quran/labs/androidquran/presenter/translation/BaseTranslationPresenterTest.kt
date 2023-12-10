@@ -53,7 +53,7 @@ class BaseTranslationPresenterTest {
   @Test
   fun testHashlessGetTranslationNames() {
     val databases = listOf("one.db", "two.db")
-    val map = HashMap<String, com.quran.mobile.translation.model.LocalTranslation>()
+    val map = HashMap<String, LocalTranslation>()
 
     val translations = presenter.getTranslations(databases, map)
     assertThat(translations).hasLength(2)

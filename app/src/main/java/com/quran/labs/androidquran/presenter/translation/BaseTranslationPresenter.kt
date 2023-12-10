@@ -21,7 +21,7 @@ import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.Collections
 
-internal open class BaseTranslationPresenter<T : Any> internal constructor(
+open class BaseTranslationPresenter<T : Any> internal constructor(
     private val translationModel: TranslationModel,
     private val translationsAdapter: TranslationsDBAdapter,
     private val translationUtil: TranslationUtil,
@@ -189,8 +189,8 @@ internal open class BaseTranslationPresenter<T : Any> internal constructor(
     }
   }
 
-  internal class ResultHolder(val translations: Array<LocalTranslation>,
-                              val ayahInformation: List<QuranAyahInfo>)
+  class ResultHolder(val translations: Array<LocalTranslation>,
+                     val ayahInformation: List<QuranAyahInfo>)
 
   override fun bind(what: T) {
     translationScreen = what

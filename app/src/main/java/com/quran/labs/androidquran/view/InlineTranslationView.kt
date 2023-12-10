@@ -129,7 +129,7 @@ class InlineTranslationView @JvmOverloads constructor(
             builder.append("\n\n")
           }
           val start = builder.length
-          builder.append(translations[i].getTranslatorName())
+          builder.append(translations[i].resolveTranslatorName())
           builder.setSpan(
             StyleSpan(Typeface.BOLD),
             start, builder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
