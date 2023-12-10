@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.presenter.translation
 
 import android.content.Context
 import android.util.Pair
-import androidx.annotation.VisibleForTesting
 import com.quran.labs.androidquran.dao.translation.Translation
 import com.quran.labs.androidquran.dao.translation.TranslationItem
 import com.quran.labs.androidquran.dao.translation.TranslationList
@@ -43,8 +42,7 @@ open class TranslationManagerPresenter @Inject internal constructor(
   private val translationsDBAdapter: TranslationsDBAdapter,
   private val quranFileUtils: QuranFileUtils
 ) {
-  @VisibleForTesting
-  var host: String = Constants.HOST
+  internal var host: String = Constants.HOST
 
   private val scope = MainScope()
 

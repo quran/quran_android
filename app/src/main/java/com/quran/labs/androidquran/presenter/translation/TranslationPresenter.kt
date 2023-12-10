@@ -11,43 +11,61 @@ import com.quran.mobile.translation.model.LocalTranslation
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.observers.DisposableObserver
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @QuranPageScope
-internal class TranslationPresenter @Inject internal constructor(translationModel: TranslationModel,
-                     private val quranSettings: QuranSettings,
-                     translationsAdapter: TranslationsDBAdapter,
-                     translationUtil: TranslationUtil,
-                     private val quranInfo: QuranInfo,
-                     private val pages: IntArray) :
-    BaseTranslationPresenter<TranslationPresenter.TranslationScreen>(
-        translationModel, translationsAdapter, translationUtil, quranInfo) {
+internal class TranslationPresenter @Inject internal constructor(
+  translationModel: TranslationModel,
+  private val quranSettings: QuranSettings,
+  translationsAdapter: TranslationsDBAdapter,
+  translationUtil: TranslationUtil,
+  private val quranInfo: QuranInfo,
+  private val pages: IntArray
+) :
+  BaseTranslationPresenter<TranslationPresenter.TranslationScreen>(
+    translationModel, translationsAdapter, translationUtil, quranInfo
+  ) {
 
-  fun refresh() {
-    disposable?.dispose()
+  private val scope = MainScope()
 
-    disposable = Observable.fromArray(*pages.toTypedArray())
-        .flatMap { page ->
-          getVerses(quranSettings.wantArabicInTranslationView(),
-              getTranslations(quranSettings), quranInfo.getVerseRangeForPage(page))
-              .toObservable()
+  fun legacyRefresh() {
+    scope.launch {
+      refresh()
+    }
+  }
+
+  suspend fun refresh() {
+    pages
+      .map {
+        withContext(Dispatchers.IO) {
+          getVerses(
+            quranSettings.wantArabicInTranslationView(),
+            getTranslations(quranSettings), quranInfo.getVerseRangeForPage(it)
+          )
         }
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(object : DisposableObserver<ResultHolder>() {
-          override fun onNext(result: ResultHolder) {
-            val screen = translationScreen
-            if (screen != null && result.ayahInformation.isNotEmpty()) {
-              screen.setVerses(
-                  getPage(result.ayahInformation), result.translations,
-                  result.ayahInformation)
-              screen.updateScrollPosition()
-            }
-          }
-
-          override fun onError(e: Throwable) {}
-
-          override fun onComplete() {}
-        })
+      }
+      .onEach { result ->
+        val screen = translationScreen
+        if (screen != null && result.ayahInformation.isNotEmpty()) {
+          screen.setVerses(
+            getPage(result.ayahInformation), result.translations,
+            result.ayahInformation
+          )
+          screen.updateScrollPosition()
+        }
+      }
   }
 
   private fun getPage(result: List<QuranAyahInfo>): Int {
@@ -60,9 +78,12 @@ internal class TranslationPresenter @Inject internal constructor(translationMode
   }
 
   interface TranslationScreen {
-    fun setVerses(page: Int,
-                  translations: Array<LocalTranslation>,
-                  verses: List<@JvmSuppressWildcards QuranAyahInfo>)
+    fun setVerses(
+      page: Int,
+      translations: Array<LocalTranslation>,
+      verses: List<@JvmSuppressWildcards QuranAyahInfo>
+    )
+
     fun updateScrollPosition()
   }
 }
