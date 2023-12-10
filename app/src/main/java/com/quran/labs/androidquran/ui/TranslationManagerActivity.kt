@@ -41,13 +41,12 @@ import kotlin.math.max
 
 class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   DownloadedMenuActionListener {
-  private var allItems: MutableList<TranslationItem> = mutableListOf()
-  private var currentSortedDownloads: MutableList<TranslationItem> = mutableListOf()
-  private var originalSortedDownloads: MutableList<TranslationItem> = mutableListOf()
-  private var translationPositions: SparseIntArray? = null
+  private var allItems: List<TranslationItem> = emptyList()
+  private var currentSortedDownloads: List<TranslationItem> = emptyList()
+  private var originalSortedDownloads: List<TranslationItem> = emptyList()
+  private var translationPositions: SparseIntArray = SparseIntArray()
   private var downloadingItem: TranslationItem? = null
   private var databaseDirectory: String? = null
-  private var quranSettings: QuranSettings? = null
   private var downloadReceiver: DefaultDownloadReceiver? = null
   private var actionMode: ActionMode? = null
   private var downloadedItemActionListener: DownloadedItemActionListener? = null
@@ -57,6 +56,9 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
 
   @Inject
   lateinit var quranFileUtils: QuranFileUtils
+
+  @Inject
+  lateinit var quranSettings: QuranSettings
 
   private lateinit var adapter: TranslationsAdapter
   private lateinit var selectionListener: TranslationSelectionListener
@@ -85,7 +87,6 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
       actionBar.setDisplayHomeAsUpEnabled(true)
       actionBar.setTitle(R.string.prefs_translations)
     }
-    quranSettings = QuranSettings.getInstance(this)
     onClickDownloadDisposable = adapter.getOnClickDownloadSubject()
       .subscribe { translationRowData: TranslationRowData -> downloadItem(translationRowData) }
     onClickRemoveDisposable = adapter.getOnClickRemoveSubject()
@@ -195,10 +196,12 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
 
   private fun updateTranslationItem(updated: TranslationItem) {
     val id = updated.translation.id
-    val allItemsIndex = translationPositions!![id]
+    val allItemsIndex = translationPositions[id]
     if (allItems.size > allItemsIndex) {
-      allItems.removeAt(allItemsIndex)
-      allItems.add(allItemsIndex, updated)
+      allItems = allItems.toMutableList().apply {
+        removeAt(allItemsIndex)
+        add(allItemsIndex, updated)
+      }
     }
     presenter.updateItem(updated)
   }
@@ -237,27 +240,16 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
       itemsSparseArray.put(translation.id, i)
       i++
     }
-    allItems = items.toMutableList()
+    allItems = items
     translationPositions = itemsSparseArray
     generateListItems()
   }
 
   private fun generateListItems() {
-    val downloaded: MutableList<TranslationItem> = ArrayList()
-    val notDownloaded: MutableList<TranslationItem> = ArrayList()
-    var i = 0
-    val allItemsSize = allItems.size
-    while (i < allItemsSize) {
-      val item = allItems[i]
-      if (item.exists()) {
-        downloaded.add(item)
-      } else {
-        notDownloaded.add(item)
-      }
-      i++
-    }
+    val (downloaded, notDownloaded) = allItems.partition { it.exists() }
+
     val result: MutableList<TranslationRowData> = ArrayList()
-    if (downloaded.size > 0) {
+    if (downloaded.isNotEmpty()) {
       val hdr = TranslationHeader(getString(R.string.downloaded_translations))
       result.add(hdr)
 
@@ -269,7 +261,7 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
         needsUpgrade = needsUpgrade || item.needsUpgrade()
       }
       if (!needsUpgrade) {
-        quranSettings!!.setHaveUpdatedTranslations(false)
+        quranSettings.setHaveUpdatedTranslations(false)
       }
     }
     originalSortedDownloads = ArrayList(downloaded)
@@ -346,7 +338,7 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
       .setMessage(msg)
       .setPositiveButton(
         com.quran.mobile.common.ui.core.R.string.remove_button
-      ) { dialog: DialogInterface?, id: Int ->
+      ) { _: DialogInterface?, _: Int ->
         if (removeTranslation(selectedItem.translation.fileName)) {
           val updatedItem = selectedItem.withTranslationRemoved()
           updateTranslationItem(updatedItem)
@@ -377,21 +369,17 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   private fun rankDownItem(targetRow: TranslationRowData) {
     val targetItem = targetRow as TranslationItem
     val targetTranslationId = targetItem.translation.id
-    var targetIndex = -1
-    for (i in currentSortedDownloads.indices) {
-      if (currentSortedDownloads[i].translation.id == targetTranslationId) {
-        targetIndex = i
-        break
-      }
-    }
+    val targetIndex = currentSortedDownloads.indexOfFirst { it.translation.id == targetTranslationId }
     if (targetIndex >= 0) {
-      currentSortedDownloads.removeAt(targetIndex)
+      val sortedDownloads = currentSortedDownloads.toMutableList()
+      sortedDownloads.removeAt(targetIndex)
       val updatedItem = targetItem.withDisplayOrder(targetItem.displayOrder + 1)
-      if (targetIndex + 1 < currentSortedDownloads.size) {
-        currentSortedDownloads.add(targetIndex + 1, updatedItem)
+      if (targetIndex + 1 < sortedDownloads.size) {
+        sortedDownloads.add(targetIndex + 1, updatedItem)
       } else {
-        currentSortedDownloads.add(updatedItem)
+        sortedDownloads.add(updatedItem)
       }
+      currentSortedDownloads = sortedDownloads
       updateDownloadedItems()
     }
   }
@@ -399,31 +387,26 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   private fun rankUpItem(targetRow: TranslationRowData) {
     val targetItem = targetRow as TranslationItem
     val targetTranslationId = targetItem.translation.id
-    var targetIndex = -1
-    for (i in currentSortedDownloads.indices) {
-      if (currentSortedDownloads[i].translation.id == targetTranslationId) {
-        targetIndex = i
-        break
-      }
-    }
+    val targetIndex = currentSortedDownloads.indexOfFirst { it.translation.id == targetTranslationId }
     if (targetIndex >= 0) {
-      currentSortedDownloads.removeAt(targetIndex)
+      val sortedDownloads = currentSortedDownloads.toMutableList()
+      sortedDownloads.removeAt(targetIndex)
       val updatedItem = targetItem.withDisplayOrder(targetItem.displayOrder - 1)
-      currentSortedDownloads.add(max(targetIndex - 1, 0), updatedItem)
+      sortedDownloads.add(max(targetIndex - 1, 0), updatedItem)
+      currentSortedDownloads = sortedDownloads
       updateDownloadedItems()
     }
   }
 
   private fun updateTranslationOrdersIfNecessary() {
     if (originalSortedDownloads != currentSortedDownloads) {
-      val normalizedSortOrders: MutableList<TranslationItem> = ArrayList()
-      for (i in currentSortedDownloads!!.indices) {
-        normalizedSortOrders.add(currentSortedDownloads!![i].withDisplayOrder(i + 1))
-      }
-      originalSortedDownloads.clear()
-      originalSortedDownloads.addAll(normalizedSortOrders)
-      currentSortedDownloads.clear()
-      currentSortedDownloads.addAll(normalizedSortOrders)
+      val normalizedSortOrders: List<TranslationItem> =
+        currentSortedDownloads.mapIndexed { index, item ->
+          item.withDisplayOrder(index + 1)
+        }
+
+      originalSortedDownloads = normalizedSortOrders
+      currentSortedDownloads = normalizedSortOrders
       presenter.updateItemOrdering(normalizedSortOrders)
     }
   }
