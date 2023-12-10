@@ -19,6 +19,9 @@ import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.mobile.translation.model.LocalTranslation
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -68,7 +71,7 @@ class QuranDataProvider : ContentProvider() {
   }
 
   private fun availableTranslations(): List<LocalTranslation> {
-    return translationsDBAdapter.legacyGetTranslations()
+    return runBlocking { translationsDBAdapter.getTranslations().first() }
   }
 
   private fun getSuggestions(query: String): Cursor? {
