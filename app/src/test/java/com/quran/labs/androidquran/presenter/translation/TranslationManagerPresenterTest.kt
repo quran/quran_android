@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.presenter.translation
 import android.content.Context
 import com.google.common.truth.Truth
 import com.quran.labs.androidquran.dao.translation.TranslationList
+import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.awaitTerminalEvent
@@ -35,10 +36,10 @@ class TranslationManagerPresenterTest {
     val mockOkHttp = OkHttpClient.Builder().build()
     mockWebServer = MockWebServer()
     translationManager = object : TranslationManagerPresenter(
-      mockAppContext, mockOkHttp, mockSettings, null,
+      mockAppContext, mockOkHttp, mockSettings, mock(TranslationsDBAdapter::class.java),
       mock(QuranFileUtils::class.java)
     ) {
-      public override fun writeTranslationList(list: TranslationList) {
+      override fun writeTranslationList(list: TranslationList) {
         // no op
       }
     }
