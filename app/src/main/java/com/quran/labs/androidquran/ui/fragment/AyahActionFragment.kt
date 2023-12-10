@@ -34,6 +34,7 @@ abstract class AyahActionFragment : Fragment() {
     scope = MainScope()
     readingEventPresenter.ayahSelectionFlow
       .combine(audioEventPresenter.audioPlaybackAyahFlow) { selectedAyah, playbackAyah ->
+        val (previousStart, previousEnd) = start to end
         if (selectedAyah !is AyahSelection.None) {
           start = selectedAyah.startSuraAyah()
           end = selectedAyah.endSuraAyah()
@@ -41,7 +42,10 @@ abstract class AyahActionFragment : Fragment() {
           start = playbackAyah
           end = playbackAyah
         }
-        refreshView()
+
+        if (previousStart != start || previousEnd != end) {
+          refreshView()
+        }
       }
       .launchIn(scope)
 
