@@ -9,11 +9,11 @@ import com.quran.labs.androidquran.presenter.translationlist.TranslationListPres
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.translation.model.LocalTranslation
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.observers.DisposableSingleObserver
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class InlineTranslationPresenter @Inject constructor(
@@ -38,17 +38,11 @@ class InlineTranslationPresenter @Inject constructor(
       .launchIn(scope)
   }
 
-  fun refresh(verseRange: VerseRange) {
-    disposable?.dispose()
-    disposable = getVerses(false, getTranslations(quranSettings), verseRange)
-      .observeOn(AndroidSchedulers.mainThread())
-      .subscribeWith(object : DisposableSingleObserver<ResultHolder>() {
-        override fun onSuccess(result: ResultHolder) {
-          translationScreen?.setVerses(result.translations, result.ayahInformation)
-        }
-
-        override fun onError(e: Throwable) {}
-      })
+  suspend fun refresh(verseRange: VerseRange) {
+    val result = withContext(Dispatchers.IO) {
+      getVerses(false, getTranslations(quranSettings), verseRange)
+    }
+    translationScreen?.setVerses(result.translations, result.ayahInformation)
   }
 
   override fun bind(what: TranslationScreen) {

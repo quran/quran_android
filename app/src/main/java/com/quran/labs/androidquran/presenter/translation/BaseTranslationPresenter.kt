@@ -5,7 +5,6 @@ import com.quran.data.model.QuranText
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.SuraAyahIterator
 import com.quran.data.model.VerseRange
-import com.quran.labs.androidquran.common.LocalTranslationDisplaySort
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
@@ -14,12 +13,12 @@ import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.translation.model.LocalTranslation
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
-import java.util.Collections
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 open class BaseTranslationPresenter<T : Any> internal constructor(
     private val translationModel: TranslationModel,
@@ -30,46 +29,57 @@ open class BaseTranslationPresenter<T : Any> internal constructor(
   private val translationMap: MutableMap<String, LocalTranslation> = HashMap()
 
   var translationScreen: T? = null
-  var disposable: Disposable? = null
 
-  fun getVerses(getArabic: Boolean,
-                translationsFileNames: List<String>,
-                verseRange: VerseRange
-  ): Single<ResultHolder> {
-    
-    val translations = translationsAdapter.legacyGetTranslations()
-    val sortedTranslations: List<LocalTranslation> = ArrayList(translations)
-    Collections.sort(sortedTranslations, LocalTranslationDisplaySort())
+  suspend fun getVerses(
+    getArabic: Boolean,
+    translationsFileNames: List<String>,
+    verseRange: VerseRange
+  ): ResultHolder {
+    return withContext(Dispatchers.IO) {
+      val translations = translationsAdapter.getTranslations().first()
+      val sortedTranslations: List<LocalTranslation> = translations.sortedBy { it.displayOrder }
 
-    val orderedTranslationsFileNames = sortedTranslations
-      .filter { translationsFileNames.contains(it.filename) }
-      .map { it.filename }
+      val orderedTranslationsFileNames = sortedTranslations
+        .filter { translationsFileNames.contains(it.filename) }
+        .map { it.filename }
 
-    // get all the translations for these verses, using a source of the list of ordered active translations
-    val source = Observable.fromIterable(orderedTranslationsFileNames)
-
-    val translationsObservable =
-      source.concatMapEager { db ->
-        translationModel.getTranslationFromDatabase(verseRange, db)
-          .map { texts -> ensureProperTranslations(verseRange, texts) }
-          .onErrorReturnItem(ArrayList())
-          .toObservable()
+      val job = SupervisorJob()
+      // get all the translations for these verses, using a source of the list of ordered active translations
+      val translationData = orderedTranslationsFileNames.map {
+        async(job) {
+          val initialTexts = translationModel.getTranslationFromDatabase(verseRange, it)
+          ensureProperTranslations(verseRange, initialTexts)
+        }
       }
-        .toList()
-    val arabicObservable = if (!getArabic)
-      Single.just(ArrayList())
-    else
-      translationModel.getArabicFromDatabase(verseRange).onErrorReturnItem(ArrayList())
-    return Single.zip(
-      arabicObservable, translationsObservable, getTranslationMapSingle()
-    ) { arabic: List<QuranText>,
-        texts: List<List<QuranText>>,
-        map: Map<String, LocalTranslation> ->
-      val translationInfos = getTranslations(orderedTranslationsFileNames, map)
-      val ayahInfo = combineAyahData(verseRange, arabic, texts, translationInfos)
+
+      val arabic = async(job) {
+        if (getArabic) {
+          translationModel.getArabicFromDatabase(verseRange)
+        } else {
+          emptyList()
+        }
+      }
+
+      val arabicText =
+        try {
+          arabic.await()
+        } catch (e: Exception) {
+          emptyList()
+        }
+
+      val translationTexts = translationData.map { deferred ->
+        try {
+          deferred.await()
+        } catch (e: Exception) {
+          emptyList()
+        }
+      }
+      val translationMap = getTranslationMap()
+
+      val translationInfos = getTranslations(orderedTranslationsFileNames, translationMap)
+      val ayahInfo = combineAyahData(verseRange, arabicText, translationTexts, translationInfos)
       ResultHolder(translationInfos, ayahInfo)
     }
-      .subscribeOn(Schedulers.io())
   }
 
   fun getTranslations(quranSettings: QuranSettings): List<String> {
@@ -174,18 +184,19 @@ open class BaseTranslationPresenter<T : Any> internal constructor(
     return texts
   }
 
-  private fun getTranslationMapSingle(): Single<Map<String, LocalTranslation>> {
-    return if (this.translationMap.isEmpty()) {
-          Single.fromCallable { translationsAdapter.legacyGetTranslations() }
-            .map { translations -> translations.associateBy { it.filename } }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSuccess { map ->
-              this.translationMap.clear()
-              this.translationMap.putAll(map)
-            }
-    } else {
-      Single.just(this.translationMap)
+  private suspend fun getTranslationMap(): Map<String, LocalTranslation> {
+    val currentTranslationMap = translationMap
+    return withContext(Dispatchers.IO) {
+      if (currentTranslationMap.isEmpty()) {
+        val updatedTranslations = translationsAdapter.getTranslations()
+          .map { it.associateBy { it.filename } }
+          .first()
+        translationMap.clear()
+        translationMap.putAll(updatedTranslations)
+        updatedTranslations
+      } else {
+        currentTranslationMap
+      }
     }
   }
 
@@ -198,6 +209,5 @@ open class BaseTranslationPresenter<T : Any> internal constructor(
 
   override fun unbind(what: T) {
     translationScreen = null
-    disposable?.dispose()
   }
 }

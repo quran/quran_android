@@ -27,6 +27,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.abs
 
@@ -48,6 +49,8 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
   @Inject
   lateinit var translationPresenter: InlineTranslationPresenter
 
+  private val scope = MainScope()
+
   object Provider : AyahActionFragmentProvider {
     override val order = SlidingPagerAdapter.TRANSLATION_PAGE
     override val iconResId = com.quran.labs.androidquran.common.toolbar.R.drawable.ic_translation
@@ -57,6 +60,11 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
   override fun onAttach(context: Context) {
     super.onAttach(context)
     (activity as? PagerActivity)?.pagerActivityComponent?.inject(this)
+  }
+
+  override fun onDetach() {
+    scope.cancel()
+    super.onDetach()
   }
 
   override fun onCreateView(
@@ -151,7 +159,9 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
       quranInfo.getAyahId(start.sura, start.ayah) - quranInfo.getAyahId(end.sura, end.ayah)
     )
     val verseRange = VerseRange(start.sura, start.ayah, end.sura, end.ayah, verses)
-    translationPresenter.refresh(verseRange)
+    scope.launch {
+      translationPresenter.refresh(verseRange)
+    }
   }
 
   override fun setVerses(translations: Array<LocalTranslation>, verses: List<QuranAyahInfo>) {

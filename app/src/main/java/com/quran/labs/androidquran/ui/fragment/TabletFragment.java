@@ -408,7 +408,7 @@ public class TabletFragment extends Fragment
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     if (mode == Mode.TRANSLATION) {
-      translationPresenter.get().refresh();
+      translationPresenter.get().legacyRefresh();
     }
   }
 
@@ -438,7 +438,7 @@ public class TabletFragment extends Fragment
 
   public void refresh() {
     if (mode == Mode.TRANSLATION) {
-      translationPresenter.get().refresh();
+      translationPresenter.get().legacyRefresh();
     }
   }
 

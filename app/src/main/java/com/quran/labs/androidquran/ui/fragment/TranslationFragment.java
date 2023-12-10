@@ -157,7 +157,7 @@ public class TranslationFragment extends Fragment implements
   }
 
   public void refresh() {
-    presenter.refresh();
+    presenter.legacyRefresh();
   }
 
   @Override
