@@ -18,7 +18,6 @@ import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.dao.translation.TranslationHeader
 import com.quran.labs.androidquran.dao.translation.TranslationItem
-import com.quran.labs.androidquran.dao.translation.TranslationItemDisplaySort
 import com.quran.labs.androidquran.dao.translation.TranslationRowData
 import com.quran.labs.androidquran.database.DatabaseHandler.Companion.clearDatabaseHandlerIfExists
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter
@@ -33,9 +32,14 @@ import com.quran.labs.androidquran.ui.adapter.TranslationsAdapter
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import io.reactivex.rxjava3.disposables.Disposable
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
-import java.util.Collections
 import javax.inject.Inject
 import kotlin.math.max
 
@@ -70,6 +74,8 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   private lateinit var translationSwipeRefresh: SwipeRefreshLayout
   private lateinit var translationRecycler: RecyclerView
 
+  private val scope = MainScope()
+
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     (application as QuranApplication).applicationComponent.inject(this)
@@ -96,9 +102,8 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     onClickRankDownDisposable = adapter.getOnClickRankDownSubject()
       .subscribe { targetRow: TranslationRowData -> rankDownItem(targetRow) }
     translationSwipeRefresh.setOnRefreshListener { onRefresh() }
-    presenter.bind(this)
     translationSwipeRefresh.isRefreshing = true
-    presenter.getTranslationsList(false)
+    refreshTranslations()
   }
 
   public override fun onStop() {
@@ -113,7 +118,7 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   }
 
   override fun onDestroy() {
-    presenter.unbind(this)
+    scope.cancel()
     onClickDownloadDisposable.dispose()
     onClickRemoveDisposable.dispose()
     onClickRankUpDisposable.dispose()
@@ -191,7 +196,14 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   }
 
   private fun onRefresh() {
-    presenter.getTranslationsList(true)
+    refreshTranslations(true)
+  }
+
+  private fun refreshTranslations(forceDownload: Boolean = false) {
+    presenter.getTranslations(forceDownload)
+      .onEach { onTranslationsUpdated(it) }
+      .catch { onErrorDownloadTranslations() }
+      .launchIn(scope)
   }
 
   private fun updateTranslationItem(updated: TranslationItem) {
@@ -203,7 +215,9 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
         add(allItemsIndex, updated)
       }
     }
-    presenter.updateItem(updated)
+    scope.launch {
+      presenter.updateItem(updated)
+    }
   }
 
   private fun updateDownloadedItems() {
@@ -219,7 +233,7 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     }
   }
 
-  fun onErrorDownloadTranslations() {
+  private fun onErrorDownloadTranslations() {
     translationSwipeRefresh.isRefreshing = false
     Snackbar
       .make(
@@ -230,7 +244,7 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
       .show()
   }
 
-  fun onTranslationsUpdated(items: List<TranslationItem>) {
+  private fun onTranslationsUpdated(items: List<TranslationItem>) {
     translationSwipeRefresh.isRefreshing = false
     val itemsSparseArray = SparseIntArray(items.size)
     var i = 0
@@ -248,27 +262,26 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   private fun generateListItems() {
     val (downloaded, notDownloaded) = allItems.partition { it.exists() }
 
-    val result: MutableList<TranslationRowData> = ArrayList()
-    if (downloaded.isNotEmpty()) {
-      val hdr = TranslationHeader(getString(R.string.downloaded_translations))
-      result.add(hdr)
+    // sort by display order
+    val sortedDownloads = downloaded.sortedBy { it.displayOrder }
 
-      // sort by display order
-      Collections.sort(downloaded, TranslationItemDisplaySort())
-      var needsUpgrade = false
-      for (item in downloaded) {
-        result.add(item)
-        needsUpgrade = needsUpgrade || item.needsUpgrade()
+    val resultList = buildList {
+      if (downloaded.isNotEmpty()) {
+        add(TranslationHeader(getString(R.string.downloaded_translations)))
+        addAll(sortedDownloads)
       }
-      if (!needsUpgrade) {
-        quranSettings.setHaveUpdatedTranslations(false)
-      }
+      add(TranslationHeader(getString(R.string.available_translations)))
+      addAll(notDownloaded)
     }
+
+    val needsUpgrade = sortedDownloads.any { it.needsUpgrade() }
+    if (!needsUpgrade) {
+      quranSettings.setHaveUpdatedTranslations(false)
+    }
+
     originalSortedDownloads = ArrayList(downloaded)
     currentSortedDownloads = ArrayList(downloaded)
-    result.add(TranslationHeader(getString(R.string.available_translations)))
-    result.addAll(notDownloaded)
-    adapter.setTranslations(result)
+    adapter.setTranslations(resultList)
     adapter.notifyDataSetChanged()
   }
 
@@ -358,12 +371,7 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   }
 
   private fun sortedDownloadedItems(): List<TranslationItem> {
-    val result = ArrayList<TranslationItem>()
-    for (item in allItems) {
-      if (item.exists()) result.add(item)
-    }
-    Collections.sort(result, TranslationItemDisplaySort())
-    return result
+    return allItems.filter { it.exists() }.sortedBy { it.displayOrder }
   }
 
   private fun rankDownItem(targetRow: TranslationRowData) {
@@ -407,7 +415,9 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
 
       originalSortedDownloads = normalizedSortOrders
       currentSortedDownloads = normalizedSortOrders
-      presenter.updateItemOrdering(normalizedSortOrders)
+      scope.launch {
+        presenter.updateItemOrdering(normalizedSortOrders)
+      }
     }
   }
 
@@ -464,19 +474,17 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
 
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
       val itemId = item.itemId
-      if (itemId == R.id.dtm_delete) {
-        if (downloadedItemActionListener != null) {
-          downloadedItemActionListener!!.handleDeleteItemAction()
-        }
-        endAction()
-      } else if (itemId == R.id.dtm_move_up) {
-        if (downloadedItemActionListener != null) {
-          downloadedItemActionListener!!.handleRankUpItemAction()
-        }
-      } else if (itemId == R.id.dtm_move_down) {
-        if (downloadedItemActionListener != null) {
-          downloadedItemActionListener!!.handleRankDownItemAction()
-        }
+      when (itemId) {
+          R.id.dtm_delete -> {
+            downloadedItemActionListener?.handleDeleteItemAction()
+            endAction()
+          }
+          R.id.dtm_move_up -> {
+            downloadedItemActionListener?.handleRankUpItemAction()
+          }
+          R.id.dtm_move_down -> {
+            downloadedItemActionListener?.handleRankDownItemAction()
+          }
       }
       return false
     }
