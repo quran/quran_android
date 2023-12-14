@@ -30,7 +30,7 @@ jobs:
         run: ./gradlew assembleDebug
 
       - name: Upload Debug Apk
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           name: latest-apk
@@ -40,7 +40,7 @@ jobs:
         run: ./gradlew :app:dependencies --configuration madaniReleaseRuntimeClasspath > dependencies.txt
 
       - name: Upload dependencies list
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: success()
         with:
           name: dependencies
