@@ -1563,6 +1563,7 @@ public class PagerActivity extends AppCompatActivity implements
 
   public void handlePlayback(AudioRequest request) {
     needsPermissionToDownloadOver3g = true;
+    audioStatusBar.resetSpeed();
     final Intent intent = new Intent(this, AudioService.class);
     intent.setAction(AudioService.ACTION_PLAYBACK);
     if (request != null) {
@@ -1584,15 +1585,9 @@ public class PagerActivity extends AppCompatActivity implements
   }
 
   @Override
-  public void onUpPressed() {
+  public void setPlayBackSpeed(float speed) {
     startService(audioUtils.getAudioIntent(this,
-        AudioService.ACTION_SPEED_UP));
-  }
-
-  @Override
-  public void onDownPressed() {
-    startService(audioUtils.getAudioIntent(this,
-        AudioService.ACTION_SPEED_DOWN));
+        AudioService.ACTION_SPEED_UPDATE).putExtra(AudioService.EXTRA_PLAY_SPEED, speed));
   }
 
   @Override

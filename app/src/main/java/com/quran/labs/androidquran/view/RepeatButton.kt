@@ -11,6 +11,7 @@ import com.quran.labs.androidquran.R
 
 class RepeatButton @JvmOverloads constructor(
   context: Context,
+  private val shouldShiftText: Boolean = true,
   attrs: AttributeSet? = null,
   defStyleAttr: Int = 0
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
@@ -46,10 +47,11 @@ class RepeatButton @JvmOverloads constructor(
   private fun updateCoordinates() {
     canDraw = false
     val drawable = drawable
+    val xDivider = if (shouldShiftText) 2 else 1
     if (drawable != null) {
       val bounds = drawable.bounds
       if (bounds.width() > 0) {
-        textXPosition = viewWidth - (viewWidth - bounds.width()) / 2
+        textXPosition = viewWidth - (viewWidth - bounds.width()) / xDivider
         textYPosition = textYPadding + (viewHeight - bounds.height()) / 2
         canDraw = true
       }

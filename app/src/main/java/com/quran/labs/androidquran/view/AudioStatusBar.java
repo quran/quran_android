@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -53,6 +54,10 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   private Qari currentQari;
   private int currentRepeat = 0;
+  private int defaultSpeedIndex = 2;
+  private int currentSpeedIndex = defaultSpeedIndex;
+  private final float[] speeds = { 0.5f, 0.75f, 1f, 1.25f, 1.5f};
+  private float currentSpeed = speeds[currentSpeedIndex];
   @DrawableRes private int itemBackground;
   private final boolean isRtl;
   private boolean isDualPageMode;
@@ -65,8 +70,14 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private TextView progressText;
   private ProgressBar progressBar;
   private final RepeatButton repeatButton;
+  private final RepeatButton speedButton;
   private AudioBarListener audioBarListener;
   private AudioBarRecitationListener audioBarRecitationListener;
+
+  public void resetSpeed() {
+    currentSpeedIndex = defaultSpeedIndex;
+    updateSpeedButtonText();
+  }
 
   public interface AudioBarListener {
     void onPlayPressed();
@@ -74,8 +85,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     void onNextPressed();
     void onPreviousPressed();
     void onStopPressed();
-    void onDownPressed();
-    void onUpPressed();
+    void setPlayBackSpeed(float speed);
     void onCancelPressed(boolean stopDownload);
     void setRepeatCount(int repeatCount);
     void onAcceptPressed();
@@ -106,6 +116,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
     this.context = context;
     repeatButton = new RepeatButton(context);
+    speedButton = new RepeatButton(context , false);
     Resources resources = getResources();
     buttonWidth = resources.getDimensionPixelSize(
         R.dimen.audiobar_button_width);
@@ -462,11 +473,13 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     addButton(R.drawable.ic_previous, withWeight);
     addButton(button, withWeight);
     addButton(R.drawable.ic_next, withWeight);
-    addButton(R.drawable.ic_neg_1_24, withWeight);
-    addButton(R.drawable.ic_plus_1_24, withWeight);
 
     addButton(repeatButton, R.drawable.ic_repeat, withWeight);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+      addButton(speedButton, R.drawable.ic_speed, withWeight);
+    }
     updateRepeatButtonText();
+    updateSpeedButtonText();
 
     addButton(R.drawable.ic_action_settings, withWeight);
   }
@@ -515,6 +528,14 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     }
     updateRepeatButtonText();
   }
+  private void updatePlayBackSpeed() {
+    currentSpeedIndex+=1;
+    currentSpeedIndex %= speeds.length;
+    currentSpeed = speeds[currentSpeedIndex];
+    updateSpeedButtonText();
+   }
+
+
 
   private void updateRepeatButtonText() {
     String str;
@@ -526,6 +547,17 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
       str = String.valueOf(currentRepeat);
     }
     repeatButton.setText(str);
+  }
+
+  private void updateSpeedButtonText(){
+    String str;
+    currentSpeed = speeds[currentSpeedIndex];
+    if (currentSpeedIndex == 2) {
+      str = "";
+    } else {
+      str = String.valueOf(currentSpeed);
+    }
+    speedButton.setText(str);
   }
 
   public void setRepeatCount(int repeatCount) {
@@ -575,10 +607,9 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
           }
         } else if (tag == R.drawable.ic_next) {
           audioBarListener.onNextPressed();
-        } else if (tag == R.drawable.ic_neg_1_24) {
-          audioBarListener.onDownPressed();
-        } else if (tag == R.drawable.ic_plus_1_24) {
-          audioBarListener.onUpPressed();
+        } else if (tag == R.drawable.ic_speed) {
+          updatePlayBackSpeed();
+          audioBarListener.setPlayBackSpeed(currentSpeed);
         } else if (tag == R.drawable.ic_previous) {
           audioBarListener.onPreviousPressed();
         } else if (tag == R.drawable.ic_repeat) {

@@ -398,10 +398,9 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       processStopRequest()
     } else if (ACTION_REWIND == action) {
       processRewindRequest()
-    }else if (ACTION_SPEED_DOWN == action){
-      processSpeedDownPlayback()
-    }else if (ACTION_SPEED_UP == action){
-      processSpeedUpPlayback()
+    }else if (ACTION_SPEED_UPDATE == action){
+      val speed = intent.getFloatExtra(EXTRA_PLAY_SPEED, 1f)
+      processUpdatePlaybackSpeed(speed)
     }
     else if (ACTION_UPDATE_REPEAT == action) {
       val playInfo = intent.getParcelableExtra<AudioRequest>(EXTRA_PLAY_INFO)
@@ -682,43 +681,15 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       }
     }
   }
-  private fun processSpeedUpPlayback() {
-    if (State.Playing === state) {
-      speedUpPlayback()
-    }
-  }
-
-  private fun processSpeedDownPlayback() {
-    if (State.Playing === state) {
-      speedDownPlayback()
-    }
-  }
-
-  private fun speedUpPlayback() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        player?.playbackParams?.let { params ->
-          val newSpeed = params.speed + 0.15f
-          // todo should be handled based on Qari type
-          if (newSpeed <= 1.5){
-            params.setSpeed(newSpeed)
-            player?.playbackParams = params
-          }
-        }
-    }
-  }
-
-  private fun speedDownPlayback() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+  private fun processUpdatePlaybackSpeed(speed: Float) {
+    if (State.Playing === state && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       player?.playbackParams?.let { params ->
-        val newSpeed = params.speed - 0.1f
-        // todo should be handled based on Qari type
-        if (newSpeed >= 0.5){
-          params.setSpeed(newSpeed)
-          player?.playbackParams = params
-        }
+        params.setSpeed(speed)
+        player?.playbackParams = params
       }
     }
   }
+
   private fun processSkipRequest() {
     if (audioRequest == null) {
       return
@@ -1402,8 +1373,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     const val ACTION_STOP = "com.quran.labs.androidquran.action.STOP"
     const val ACTION_SKIP = "com.quran.labs.androidquran.action.SKIP"
     const val ACTION_REWIND = "com.quran.labs.androidquran.action.REWIND"
-    const val ACTION_SPEED_UP = "com.quran.labs.androidquran.action.SPEED_UP"
-    const val ACTION_SPEED_DOWN = "com.quran.labs.androidquran.action.SPEED_DOWN"
+    const val ACTION_SPEED_UPDATE = "com.quran.labs.androidquran.action.SPEED_UPDATE"
     const val ACTION_CONNECT = "com.quran.labs.androidquran.action.CONNECT"
     const val ACTION_UPDATE_REPEAT = "com.quran.labs.androidquran.action.UPDATE_REPEAT"
 
@@ -1421,6 +1391,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
 
     // so user can pass in a serializable LegacyAudioRequest to the intent
     const val EXTRA_PLAY_INFO = "com.quran.labs.androidquran.PLAY_INFO"
+    const val EXTRA_PLAY_SPEED = "com.quran.labs.androidquran.PLAY_SPEED"
     private const val NOTIFICATION_CHANNEL_ID = Constants.AUDIO_CHANNEL
     private const val MSG_INCOMING = 1
     private const val MSG_START_AUDIO = 2
