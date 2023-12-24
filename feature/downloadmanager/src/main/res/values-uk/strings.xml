@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">%1$d Сура завантажено</item>
+    <item quantity="few">%1$d Сури завантажено</item>
+    <item quantity="many">%1$d Сури завантажено</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Аудіоменеджер</string>
+  <string name="audio_manager_remove_audio_title">Видалити Сура?</string>
+  <string name="audio_manager_remove_audio_msg">Ви дійсно бажаєте видалити %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Ви дійсно бажаєте видалити?</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Успішно видалено %1$d Сура</item>
+    <item quantity="few">Успішно видалено %1$d Сури</item>
+    <item quantity="many">Успішно видалено %1$d Сури</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">Під час видалення сталася помилка %1$d Сура</item>
+    <item quantity="few">Під час видалення сталася помилка %1$d Сури</item>
+    <item quantity="many">Під час видалення сталася помилка %1$d Сури</item>
+  </plurals>
+  <string name="audio_manager_surah_download">Завантажити Сура</string>
+  <string name="audio_manager_surah_delete">Видалення аудіофайлу</string>
+  <string name="audio_manager_download_all">Завантажити всі</string>
+  <string name="audio_manager_download_selection">Завантажити вибір</string>
+  <string name="audio_manager_delete_selection">Видалити виділений фрагмент</string>
+
+  <string name="downloading_title">Завантаження&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">Завантажити %1$s / %2$s</string>
+  <string name="download_sura_progress">Завантажити %1$s / %2$s від Сура %3$d</string>
+  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Завантаження Сура %1$d ая %2$d</string>
+</resources>

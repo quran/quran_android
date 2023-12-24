@@ -14,7 +14,6 @@
     </string>
   <string name="downloadPrompt_ok">Да</string>
   <string name="downloadPrompt_no">Нет</string>
-  <string name="downloading_title">Загрузка &#8230;</string>
   <string name="downloading_message">Пожалуйста, дождитесь загрузки файлов (имеется возможность
         возобновить).
     </string>
@@ -38,7 +37,7 @@
   <string name="menu_get_translations">Скачать перевод</string>
   <string name="menu_jump">Перейти</string>
   <string name="gotoPage">Перейти на страницу</string>
-  <string name="cancel">Отмена</string>
+  <string name="please_wait">Подождите пожалуйста…</string>
 
   <!-- about -->
   <string name="about_description">Quran for Android - это бесплатное приложение Корана.
@@ -61,7 +60,8 @@
         служил источником арабского тафсира и переводов на нескольких языков
     </string>
   <string name="about_furqan_summary">Текст на Османи и тафсиры на арабском</string>
-  <string name="about_tanzil_summary">Перевод для многих языков</string>
+  <string name="about_quran_enc_summary">Переводы для многих языков</string>
+  <string name="about_tanzil_summary">Переводы для несколько языков</string>
   <string name="about_noorhidayat_summary">Шрифт Noorehira и перевод муфтия Мухаммада Таки Усмани</string>
   <string name="about_open_source">Проекты с открытыми исходниками</string>
   <string name="about_others">Другие</string>
@@ -107,13 +107,8 @@
     </string>
   <string name="search_hint">Поиск по Корану</string>
   <string name="quranSearchType">Стихи Корана</string>
-
-  <plurals name="files_downloaded">
-    <item quantity="one">Загружено %1$d сура</item>
-    <item quantity="few">Загружено %1$d суры</item>
-    <item quantity="many">Загружено %1$d сур</item>
-    <item quantity="other">Загружено %1$d сур</item>
-  </plurals>
+  <string name="search_full_results">Полные результаты</string>
+  <string name="search_entire_mushaf">Обыскать весь мусхаф</string>
 
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
@@ -134,7 +129,7 @@
     </string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Найдено в суре %1$s, Аят %2$d</string>
+  <string name="found_in_sura">Найдено в суре %1$s: %2$d (Страница %3$d)</string>
   <string name="no_results">Результатов для \"%s\" не найдено</string>
   <string name="no_arabic_search_available">Вы не скачали пакет данных для арабского поиска.
         Пожалуйста, сначала скачайте его и воспользуйтесь поиском снова.
@@ -160,6 +155,8 @@
   <string name="prefs_night_mode_summary">Будет использован темный фон и светлый шрифт</string>
   <string name="prefs_night_mode_text_brightness_title">Яркость текста</string>
   <string name="prefs_night_mode_text_brightness_summary">Яркость текста при включенном ночном режиме</string>
+  <string name="prefs_night_mode_background_brightness_title">Яркость фона</string>
+  <string name="prefs_night_mode_background_brightness_summary">Яркость страницы при активном ночном режиме</string>
   <string name="prefs_overlay_page_info_title">Показать инфо страницы</string>
   <string name="prefs_overlay_page_info_summary">При чтении использовать наложение поверх экрана номера страницы, название суры и номера джуза</string>
   <string name="prefs_display_marker_title">Всплывающие сообщения</string>
@@ -171,6 +168,8 @@
   <string name="prefs_translations_summary">Загрузка и управление переводами</string>
   <string name="prefs_ayah_before_translation_title">Аят до перевода</string>
   <string name="prefs_ayah_before_translation_summary">Показывать аят на арабском раньше перевода</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Настройки загрузки</string>
   <string name="prefs_streaming_title">Потоковое</string>
   <string name="prefs_streaming_summary">При возможности потоковое аудио</string>
@@ -179,21 +178,19 @@
   <string name="prefs_audio_manager_summary">Управлять и скачать аудио рецитация Корана</string>
   <string name="downloaded_translations">Загруженные переводы</string>
   <string name="available_translations">Доступные для загрузки</string>
-  <string name="remove_button">Удалить</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Расположение приложения</string>
   <string name="prefs_app_location_summary">Выберите место хранения файлов</string>
   <string name="prefs_send_logs_title">Отправить журналы</string>
   <string name="prefs_send_logs_summary">Отправить журналы отладки разработчику</string>
   <string name="prefs_sdcard_internal">Внутренняя память</string>
-  <string name="prefs_sdcard_external">Внешняя SD карта %1$d</string>
+  <string name="prefs_sdcard_external">Внешняя память %1$d</string>
   <string name="prefs_app_size">Размер приложения</string>
   <string name="prefs_calculating_app_size">Расчет размера приложения</string>
   <string name="prefs_copying_app_files">Копирование файлов приложения</string>
   <string name="prefs_err_moving_app_files">Ошибка перемещения файлов приложения</string>
   <string name="prefs_no_enough_space_to_move_files">Недостаточно свободного места для перемещения файлов приложения</string>
   <string name="prefs_megabytes_int">%1$d Mб</string>
-  <string name="prefs_megabytes_str">%s Mб</string>
   <string name="prefs_dual_page_mode_title">Режим планшета</string>
   <string name="prefs_dual_page_mode_enabled">В альбомном режиме две страницы будут отображаться рядом друг с другом</string>
   <string name="prefs_dual_page_mode_disabled">В альбомном режиме будет отображена только одна страницы</string>
@@ -205,6 +202,9 @@
   <string name="prefs_export_summary">Экспорт копию закладок и тегов</string>
   <string name="prefs_page_type_title">Тип страниц (экспериментальный)</string>
   <string name="prefs_page_type_summary">Выберите тип страниц</string>
+  <string name="prefs_sura_translated_name_summary">Показать перевод названия суры</string>
+  <string name="prefs_sura_translated_name_title">Перевод названия суры</string>
+  <string name="prefs_preview">Предварительный просмотр</string>
 
   <string name="more_translations">Ещё переводов</string>
   <string name="import_data_permissions_error">Не удается прочитать файл резервной копии из-за ошибки разрешения.</string>
@@ -216,11 +216,18 @@
   <string name="export_data_error">Ошибка экспорта данных</string>
   <string name="exported_data">Данные экспортированы в %1$s</string>
 
+  <string name="move_up">Вверх</string>
+  <string name="move_down">Вниз</string>
+  <string name="delete_translation">Удалить перевод</string>
+
   <string name="warning">Внимание</string>
   <string name="kitkat_external_message">Из-за ограничений Android, если Вы сейчас разместите исходные данные
         приложения Quran for Android на Вашей внешней SD карте, а затем очистите или деинсталлируете приложение,
         все страницы и аудио приложения Quran for Android будут удалены. Все эти данные нужно будет скачать снова. Вы уверены,
         что хотите использовать внешнюю SD карту?</string>
+  <string name="scoped_storage_message">Из-за изменений в системе Android, направленных на повышение конфиденциальности
+    пользователей, копирование файлов за пределами папок приложений может предотвратить приложению Корана получить доступ
+    к своим данным в будущих версиях Android. Вы уверены, что хотите использовать этот путь?</string>
   <string name="please_grant_permissions">Пожалуйста, предоставляйте разрешения в настройках приложения</string>
   <!-- Preferences End -->
 
@@ -245,6 +252,7 @@
   <string name="quran_ayah_details">%1$s - аят %2$s, джуз %3$s</string>
   <string name="quran_sura_title">Сура %1$s</string>
   <string name="sura_ayah_notification_str">Сура %1$s, аят %2$d</string>
+  <string name="sura_ayah_sharing_str">Сура %1$s: %2$d</string>
 
   <string name="index_loading">Загрузка…</string>
 
@@ -269,9 +277,6 @@
   <string name="download_non_wifi_prompt">Вы не подключены к Wi-Fi. Все равно продолжить загрузку?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Загружено %1$s / %2$s</string>
-  <string name="download_sura_progress">Загружено %1$s / %2$s суры %3$d</string>
-  <string name="download_sura_ayah_progress">Загружается сура %1$d аят %2$d</string>
   <string name="process_progress">Загрузка файла %1$d / %2$d</string>
   <string name="download_retry">Повторить</string>
   <string name="download_cancel">Отмена</string>
@@ -300,8 +305,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">От</string>
-  <string name="play_to">До</string>
   <string name="play_restrict_range">Воспроизвести только вышестоящие аяты</string>
   <string name="play_verses_range">Вос-ти набор аятов:</string>
   <string name="play_each_verse">Вос-ти каждый аят:</string>
@@ -324,14 +327,6 @@
   <string name="starting_page_label">Начало страницы</string>
 
   <!-- long press -->
-  <string name="bookmark_ayah">Создать закладку этого аята</string>
-  <string name="tag_ayah">Создать тег для этого аята</string>
-  <string name="share_ayah">Поделиться аятом</string>
-  <string name="share_ayah_text">Поделиться текстом аята</string>
-  <string name="translation_ayah">Перевод/тафсир аята</string>
-  <string name="play_from_here">Воспроизвести отсюда</string>
-  <string name="search_key">Нажмите кнопку поиска, чтобы найти стих</string>
-  <string name="copy_ayah">Скопировать аят</string>
   <string name="ayah_copied_popup">Аят скопирован</string>
 
   <!-- bookmarks & tags contextual action bar -->
@@ -356,34 +351,19 @@
   <string name="tag_blank_tag_error">Имена тегов не могут быть пустыми!</string>
   <string name="tag_duplicate_tag_error">Имя тега уже существует!</string>
 
-  <!-- bookmark & tag list -->
+  <!-- widgets -->
   <string name="bookmarks_list_empty">Закладки отсутствуют</string>
-
-  <!-- audio manager -->
-  <string name="audio_manager">Аудио менеджер</string>
-  <plurals name="audio_manager_delete_surah_success">
-    <item quantity="one">Удалено %1$d сура</item>
-    <item quantity="few">Удалено %1$d суры</item>
-    <item quantity="many">Удалено %1$d сур</item>
-    <item quantity="other">Удалено %1$d сур</item>
-  </plurals>
-  <plurals name="audio_manager_delete_surah_error">
-    <item quantity="one">Произошла ошибка при удалении %1$d сура</item>
-    <item quantity="few">Произошла ошибка при удалении %d суры</item>
-    <item quantity="many">Произошла ошибка при удалении %d сур</item>
-    <item quantity="other">Произошла ошибка при удалении %1$d сур</item>
-  </plurals>
-  <string name="audio_manager_surah_download">Скачать суру</string>
-  <string name="audio_manager_surah_delete">Удалить суру</string>
-  <string name="audio_manager_download_all">Скачать все</string>
-  <string name="audio_manager_download_selection">Скачать выбранные</string>
-  <string name="audio_manager_delete_selection">Удалить выбранные</string>
 
   <!-- audio updates -->
   <string name="audio_updated_title">Обновление аудио файлов</string>
   <string name="audio_updated_text">Несколько аудио файлов были обновлены. Ваша копия этих файлов
     была удалена, новые версии будут загружены при следующем воспроизведении.
   </string>
+
+  <!-- dual screen prefs -->
+  <string name="prefs_category_dual_screen">Настройки двойной страницы</string>
+  <string name="prefs_split_page_and_translation_title">Коран и перевод в двойном режиме</string>
+  <string name="prefs_split_page_and_translation_summary">В двухстраничном режиме отображаются страница Корана и перевод</string>
 
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_audio">Рецитация Корана</string>

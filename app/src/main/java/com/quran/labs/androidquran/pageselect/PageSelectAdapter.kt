@@ -12,10 +12,10 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.quran.labs.androidquran.R
-import io.reactivex.Maybe
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.lang.ref.WeakReference
 
 class PageSelectAdapter(val inflater: LayoutInflater,
@@ -92,7 +92,6 @@ class PageSelectAdapter(val inflater: LayoutInflater,
   }
 
   override fun destroyItem(container: ViewGroup, position: Int, o: Any) {
-    super.destroyItem(container, position, o)
     container.removeView(o as View)
   }
 }

@@ -58,7 +58,7 @@
         android:title="@string/prefs_night_mode_title"
         app:iconSpaceReserved="false"/>
 
-    <com.quran.labs.androidquran.ui.preference.SeekBarPreference
+    <com.quran.labs.androidquran.ui.preference.SeekBarTextBrightnessPreference
         android:defaultValue="255"
         android:dependency="@string/prefs_night_mode"
         android:key="@string/prefs_night_mode_text_brightness"
@@ -66,6 +66,15 @@
         android:persistent="true"
         android:summary="@string/prefs_night_mode_text_brightness_summary"
         android:title="@string/prefs_night_mode_text_brightness_title"/>
+
+    <com.quran.labs.androidquran.ui.preference.SeekBarBackgroundBrightnessPreference
+        android:defaultValue="0"
+        android:dependency="@string/prefs_night_mode"
+        android:key="@string/prefs_night_mode_background_brightness"
+        android:max="64"
+        android:persistent="true"
+        android:summary="@string/prefs_night_mode_background_brightness_summary"
+        android:title="@string/prefs_night_mode_background_brightness_title"/>
   </PreferenceCategory>
 
   <PreferenceCategory
@@ -156,7 +165,15 @@
         android:title="@string/prefs_ayah_before_translation_title"
         app:iconSpaceReserved="false"/>
 
-    <com.quran.labs.androidquran.ui.preference.SeekBarPreference
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/prefs_use_dyslexic_font"
+        android:persistent="true"
+        android:summary="@string/prefs_use_dyslexic_font_summary"
+        android:title="@string/prefs_use_dyslexic_font_title"
+        app:iconSpaceReserved="false"/>
+
+    <com.quran.labs.androidquran.ui.preference.SeekBarTextSizePreference
         android:defaultValue="15"
         android:key="@string/prefs_translation_text_size"
         android:max="40"

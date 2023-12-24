@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">Аятқа бетбелгі қою</string>
+  <string name="tag_ayah">Аятты белгілеу</string>
+  <string name="share_ayah">Аятпен бөлісу</string>
+  <string name="share_ayah_text">Аят мәтінімен бөлісу</string>
+  <string name="translation_ayah">Аят аудармасы/тәпсірі</string>
+  <string name="play_from_here">Осы жерден бастап тыңдау</string>
+  <string name="recite_from_here">Осы жерден айт</string>
+  <string name="search_key">Сүрені табу үшін іздеу батырмасын басыңыз</string>
+  <string name="copy_ayah">Аятты көшіру</string>
+</resources>

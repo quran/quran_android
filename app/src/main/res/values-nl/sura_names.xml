@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="sura_names">
+    <item>Al-Fātihah</item>
+    <item>Al-Baqarah</item>
+    <item>Āli-ʿImrān</item>
+    <item>An-Nisāʾ</item>
+    <item>Al-Māʾidah</item>
+    <item>Al-Anʿām</item>
+    <item>Al-Aʿrāf</item>
+    <item>Al-Anfāl</item>
+    <item>At-Tawbah</item>
+    <item>Yūnus</item>
+    <item>Hūd</item>
+    <item>Yūsuf</item>
+    <item>Ar-Raʿd</item>
+    <item>Ibrāhīm</item>
+    <item>Al-Ḥijr</item>
+    <item>An-Naḥl</item>
+    <item>Al-Isrāʾ</item>
+    <item>Al-Kahf</item>
+    <item>Maryam</item>
+    <item>Ṭā-Hā</item>
+    <item>Al-Anbiyāʾ</item>
+    <item>Al-Ḥajj</item>
+    <item>Al-Muʾminūn</item>
+    <item>An-Nūr</item>
+    <item>Al-Furqān</item>
+    <item>Ash-Shuʿarāʾ</item>
+    <item>An-Naml</item>
+    <item>Al-Qaṣaṣ</item>
+    <item>Al-ʿAnkabūt</item>
+    <item>Ar-Rūm</item>
+    <item>Luqmān</item>
+    <item>As-Sajdah</item>
+    <item>Al-Aḥzāb</item>
+    <item>Sabaʾ</item>
+    <item>Fāṭir</item>
+    <item>Yā-Sīn</item>
+    <item>Aṣ-Ṣāffāt</item>
+    <item>Ṣād</item>
+    <item>Az-Zumar</item>
+    <item>Ghāfir</item>
+    <item>Fuṣṣilat</item>
+    <item>Ash-Shūrā</item>
+    <item>Az-Zukhruf</item>
+    <item>Ad-Dukhān</item>
+    <item>Al-Jāthiyah</item>
+    <item>Al-Aḥqāf</item>
+    <item>Muḥammad</item>
+    <item>Al-Fatḥ</item>
+    <item>Al-Ḥujurāt</item>
+    <item>Qāf</item>
+    <item>Adh-Dhāriyāt</item>
+    <item>Aṭ-Ṭūr</item>
+    <item>An-Najm</item>
+    <item>Al-Qamar</item>
+    <item>Ar-Raḥmān</item>
+    <item>Al-Wāqiʿah</item>
+    <item>Al-Ḥadīd</item>
+    <item>Al-Mujādilah</item>
+    <item>Al-Ḥashr</item>
+    <item>Al-Mumtaḥanah</item>
+    <item>Aṣ-Ṣaff</item>
+    <item>Al-Jumuʿah</item>
+    <item>Al-Munāfiqūn</item>
+    <item>At-Taghābun</item>
+    <item>Aṭ-Ṭalāq</item>
+    <item>At-Taḥrīm</item>
+    <item>Al-Mulk</item>
+    <item>Al-Qalam</item>
+    <item>Al-Ḥāqqah</item>
+    <item>Al-Maʿārij</item>
+    <item>Nūḥ</item>
+    <item>Al-Jinn</item>
+    <item>Al-Muzzammil</item>
+    <item>Al-Muddaththir</item>
+    <item>Al-Qiyāmah</item>
+    <item>Al-Insān</item>
+    <item>Al-Mursalāt</item>
+    <item>An-Nabaʾ</item>
+    <item>An-Nāziʿāt</item>
+    <item>ʿAbasa</item>
+    <item>At-Takwīr</item>
+    <item>Al-Infiṭār</item>
+    <item>Al-Muṭaffifīn</item>
+    <item>Al-Inshiqāq</item>
+    <item>Al-Burūj</item>
+    <item>Aṭ-Ṭāriq</item>
+    <item>Al-Aʿlā</item>
+    <item>Al-Ghāshiyah</item>
+    <item>Al-Fajr</item>
+    <item>Al-Balad</item>
+    <item>Ash-Shams</item>
+    <item>Al-Layl</item>
+    <item>Aḍ-Ḍuḥā</item>
+    <item>Ash-Sharḥ</item>
+    <item>At-Tīn</item>
+    <item>Al-ʿAlaq</item>
+    <item>Al-Qadr</item>
+    <item>Al-Bayyinah</item>
+    <item>Az-Zalzalah</item>
+    <item>Al-ʿĀdiyāt</item>
+    <item>Al-Qāriʿah</item>
+    <item>At-Takāthur</item>
+    <item>Al-ʿAṣr</item>
+    <item>Al-Humazah</item>
+    <item>Al-Fīl</item>
+    <item>Quraysh</item>
+    <item>Al-Māʿūn</item>
+    <item>Al-Kawthar</item>
+    <item>Al-Kāfirūn</item>
+    <item>An-Naṣr</item>
+    <item>Al-Masad</item>
+    <item>Al-Ikhlāṣ</item>
+    <item>Al-Falaq</item>
+    <item>An-Nās</item>
+  </string-array>
+
+  <string-array name="sura_names_translation">
+    <item>De Opening</item>
+    <item>De Koe</item>
+    <item>De Familie van Imran</item>
+    <item>De Vrouwen</item>
+    <item>De Tafel</item>
+    <item>Het Vee</item>
+    <item>De Kantelen</item>
+    <item>De Buit</item>
+    <item>Het Berouw</item>
+    <item>De Profeet Jonas</item>
+    <item>De Profeet Hūd</item>
+    <item>De Profeet Jozef</item>
+    <item>De Donder	</item>
+    <item>Abraham</item>
+    <item>Al-Hidjr</item>
+    <item>De Bijen</item>
+    <item>De Nachtreis</item>
+    <item>De Grot</item>
+    <item>Maryam</item>
+    <item>Ta-Ha</item>
+    <item>De Profeten</item>
+    <item>De Bedevaart</item>
+    <item>De Gelovigen</item>
+    <item>Het Licht</item>
+    <item>Het Reddend Onderscheidingsmiddel</item>
+    <item>De Dichters</item>
+    <item>De Mieren</item>
+    <item>Het Verhaal</item>
+    <item>De Spin</item>
+    <item>De Romeinen</item>
+    <item>Luqmān</item>
+    <item>De Eerbiedige Neerbuiging</item>
+    <item>De Partijen</item>
+    <item>Saba</item>
+    <item>De Engelen</item>
+    <item>Ya Sin</item>
+    <item>De Zich Opstellenden</item>
+    <item>De Arabische Letter &quot;Saad&quot;</item>
+    <item>De Drommen</item>
+    <item>Hij Die Vergeeft</item>
+    <item>Zij Zijn Uiteengezet</item>
+    <item>Het Beraad</item>
+    <item>Pracht en Praal</item>
+    <item>De Rook</item>
+    <item>De Neergeknielden</item>
+    <item>De Zandduinen</item>
+    <item>Mohammed صَلَّى ٱللَّهُ عَلَيۡهِ وَسَلَّمَ</item>
+    <item>Het Succes</item>
+    <item>De Binnenste Vertrekken</item>
+    <item>De Arabische Letter &quot;Qaf&quot;</item>
+    <item>De Schiftende Winden</item>
+    <item>De Berg</item>
+    <item>De Sterren</item>
+    <item>De Maan</item>
+    <item>De Weldadige, de Weldoener</item>
+    <item>Het Onvermijdelijke</item>
+    <item>IJzer</item>
+    <item>De Vrouw die pleitte</item>
+    <item>Exodus, Ballingschap</item>
+    <item>De Vrouw die ondervraagd werd</item>
+    <item>De Gelederen</item>
+    <item>Vrijdag</item>
+    <item>De Hypocrieten</item>
+    <item>Wederzijdse Winst en Verlies</item>
+    <item>De Scheiding</item>
+    <item>Verbod</item>
+    <item>Heerschappij</item>
+    <item>De Pen</item>
+    <item>De Realiteit</item>
+    <item>De Stijgende Trap(pen)</item>
+    <item>(de profeet) Nuh</item>
+    <item>De Djinns</item>
+    <item>Degene Gekleed in een Mantel</item>
+    <item>Degene Omwikkeld met Gewaden</item>
+    <item>De Wederopstanding</item>
+    <item>De Mensheid</item>
+    <item>De Afgezanten</item>
+    <item>De Aankondiging</item>
+    <item>Zij die (de ziel) wegrukken (Engelen)</item>
+    <item>Hij Fronste</item>
+    <item>Het Rollen (of Opvouwen, Omverwerpen)</item>
+    <item>De Splijting</item>
+    <item>De Oplichters</item>
+    <item>De Scheuring</item>
+    <item>De Sterrenstelsels</item>
+    <item>De Heldere Ster ("Nachtkomer")</item>
+    <item>De Hoogste</item>
+    <item>De Overweldiging</item>
+    <item>De Dageraad</item>
+    <item>De Stad</item>
+    <item>De Zon</item>
+    <item>De Nacht</item>
+    <item>De Voormiddag</item>
+    <item>Soelaas</item>
+    <item>De Vijg</item>
+    <item>De Klonter</item>
+    <item>Het Noodlot</item>
+    <item>Het (duidelijke) Bewijs</item>
+    <item>De Aardbeving</item>
+    <item>De Renners (Paarden)</item>
+    <item>Dag des Oordeels</item>
+    <item>De Vergaring (van goederen)</item>
+    <item>De Namiddag	</item>
+    <item>De Roddelaar, Lasteraar</item>
+    <item>De Olifant</item>
+    <item>De Qoeraisj</item>
+    <item>Kleine Vriendelijkheden, Liefdadigheid</item>
+    <item>De (Rivier/Bron van) Overvloed</item>
+    <item>De Ongelovigen</item>
+    <item>Goddelijke Hulp</item>
+    <item>Doorns, Palmvezels</item>
+    <item>Oprechtheid</item>
+    <item>De Dageraad</item>
+    <item>De Mensheid</item>
+  </string-array>
+</resources>

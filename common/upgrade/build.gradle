@@ -1,0 +1,16 @@
+plugins {
+  id 'quran.android.library.android'
+  alias libs.plugins.anvil
+}
+
+anvil { generateDaggerFactories = true }
+
+android.namespace 'com.quran.labs.androidquran.common.upgrade'
+
+dependencies {
+  implementation project(":common:data")
+
+  implementation libs.dagger.runtime
+
+  implementation libs.androidx.annotation
+}

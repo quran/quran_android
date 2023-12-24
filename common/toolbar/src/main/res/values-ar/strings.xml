@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="bookmark_ayah">أضف الآية إلى المرجعيات</string>
+  <string name="tag_ayah">تصنيف الآية</string>
+  <string name="share_ayah">شارك رابط الآية</string>
+  <string name="share_ayah_text">شارك نص الآية</string>
+  <string name="translation_ayah">تفسير/ترجمة الآية</string>
+  <string name="play_from_here">بدء التلاوة من هذه الآية</string>
+  <string name="recite_from_here">اقرأ من هنا</string>
+  <string name="search_key">للبحث عن آية</string>
+  <string name="copy_ayah">نسخ الآية</string>
+</resources>

@@ -22,17 +22,14 @@ import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog.Builder
 import androidx.fragment.app.DialogFragment
+import com.quran.common.search.SearchTextUtil
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.R.array
-import com.quran.labs.androidquran.R.layout
-import com.quran.labs.androidquran.R.string
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.ForceCompleteTextView
 import timber.log.Timber
-import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -50,18 +47,18 @@ class JumpFragment : DialogFragment() {
   private lateinit var pageInput: EditText
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val activity: Activity? = activity
-    val inflater = activity!!.layoutInflater
+    val activity: Activity = requireActivity()
+    val inflater = activity.layoutInflater
 
     @SuppressLint("InflateParams")
-    val layout = inflater.inflate(layout.jump_dialog, null)
+    val layout = inflater.inflate(R.layout.jump_dialog, null)
 
     val builder = Builder(activity)
-    builder.setTitle(activity.getString(string.menu_jump))
+    builder.setTitle(activity.getString(R.string.menu_jump))
 
     // Sura chooser
     suraInput = layout.findViewById(R.id.sura_spinner)
-    val suras = activity.resources.getStringArray(array.sura_names)
+    val suras = activity.resources.getStringArray(R.array.sura_names)
         .mapIndexed { index: Int, sura: String? ->
           QuranUtils.getLocalizedNumber(activity, index + 1) + ". " + sura
         }
@@ -108,9 +105,8 @@ class JumpFragment : DialogFragment() {
 
     suraInput.setOnForceCompleteListener { _: ForceCompleteTextView?, position: Int, _: Long ->
       val enteredText = suraInput.text.toString()
-      val suraName: String?
 
-      suraName = when {
+      val suraName: String? = when {
         // user selects
         position >= 0 -> { suraAdapter.getItem(position) }
         suras.contains(enteredText) -> { enteredText }
@@ -129,7 +125,7 @@ class JumpFragment : DialogFragment() {
       //  trigger ayah change
       val ayahValue: CharSequence = ayahInput.text
       // space is intentional, to differentiate with value set by the user (delete/backspace)
-      ayahInput.setText(if (ayahValue.isNotEmpty()) ayahValue else " ")
+      ayahInput.setText(ayahValue.ifEmpty { " " })
     }
 
     ayahInput.addTextChangedListener(object : TextWatcher {
@@ -167,7 +163,7 @@ class JumpFragment : DialogFragment() {
 
     builder.setView(layout)
     builder.setPositiveButton(
-        getString(string.dialog_ok)
+        getString(R.string.dialog_ok)
     ) { _: DialogInterface?, _: Int ->
       // trigger sura completion
       layout.requestFocus()
@@ -212,7 +208,7 @@ class JumpFragment : DialogFragment() {
   /**
    * ListAdapter that supports filtering by using case-insensitive infix (substring).
    */
-  private class InfixFilterArrayAdapter internal constructor(
+  private class InfixFilterArrayAdapter(
     context: Context,
     @LayoutRes private val itemLayoutRes: Int,
     private val originalItems: List<String>
@@ -220,6 +216,8 @@ class JumpFragment : DialogFragment() {
     private var items: List<String>
     private val inflater: LayoutInflater
     private val filter: Filter = ItemFilter()
+    private val isRtl = SearchTextUtil.isRtl(originalItems.first())
+    private val searchPreparedItems = originalItems.map { prepareForSearch(it, isRtl) }
 
     init {
       this.items = originalItems
@@ -243,6 +241,10 @@ class JumpFragment : DialogFragment() {
 
     override fun getFilter() = filter
 
+    private fun prepareForSearch(input: String, isRtl: Boolean): String {
+      return SearchTextUtil.asSearchableString(input, isRtl)
+    }
+
     /**
      * Filter that do filtering by matching case-insensitive infix of the input.
      */
@@ -255,10 +257,10 @@ class JumpFragment : DialogFragment() {
           results.values = originalItems
           results.count = originalItems.size
         } else {
-          val infix = constraint.toString().toLowerCase(Locale.getDefault())
+          val infix = cleanUpQueryString(constraint.toString())
           val filteredIndex = infix.toIntOrNull()?.toString()
           val filteredCopy = originalItems.filterIndexed { index, sura ->
-            sura.toLowerCase(Locale.getDefault()).contains(infix) ||
+            searchPreparedItems[index].contains(infix) ||
                 // support English numbers in Arabic mode
                 filteredIndex != null && (index + 1).toString().contains(filteredIndex)
           }
@@ -266,6 +268,14 @@ class JumpFragment : DialogFragment() {
           results.count = filteredCopy.size
         }
         return results
+      }
+
+      private fun cleanUpQueryString(query: String): String {
+        return if (SearchTextUtil.isRtl(query)) {
+          SearchTextUtil.asSearchableString(query, true)
+        } else {
+          query.lowercase()
+        }
       }
 
       override fun publishResults(constraint: CharSequence, results: FilterResults) {

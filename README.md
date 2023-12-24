@@ -1,8 +1,25 @@
-[![Build Status](https://travis-ci.org/quran/quran_android.svg?branch=master)](https://travis-ci.org/quran/quran_android)
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/quran/quran_android/master/app/src/madani/res/drawable-xxhdpi/icon.png" alt='Quran for Android logo'/>
+
 # Quran for Android
-[<img align="right" alt="Get it on Google Play" height="128" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png">](https://play.google.com/store/apps/details?id=com.quran.labs.androidquran)
+
+[![Build Status](https://github.com/quran/quran_android/actions/workflows/build.yml/badge.svg)](https://github.com/quran/quran_android/actions/workflows/build.yml)
+[![Version](https://img.shields.io/github/v/release/quran/quran_android?include_prereleases&sort=semver)](https://github.com/quran/quran_android/releases/latest)
+[![Github Downloads](https://img.shields.io/github/downloads/quran/quran_android/total?logo=Github)](https://github.com/quran/quran_android/releases)
 
 This is a simple (Madani based) Quran app for Android.
+
+[<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+      alt='Get it on Google Play'
+      height="80">](https://play.google.com/store/apps/details?id=com.quran.labs.androidquran)
+[<img src="https://user-images.githubusercontent.com/69304392/148696068-0cfea65d-b18f-4685-82b5-329a330b1c0d.png"
+      alt='Get it on GitHub'
+      height="80">](https://github.com/quran/quran_android/releases/latest)
+
+<div align="left">
+
+## Credits
 
 * madani images from [quran images project](https://github.com/quran/quran.com-images) on github.
 * qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia).
@@ -16,8 +33,6 @@ If you'd like to contribute, please take a look at the [PRs Welcome](https://git
 Use [`quran_android-code_style.xml`](https://github.com/quran/quran_android/blob/master/quran_android-code_style.xml) for Android Studio / IntelliJ code styles. Import it by copying it to the Android Studio/IntelliJ IDEA codestyles folder. For Android Studio, that folder is located at `~/.AndroidStudio[Version]/config/codestyles` (the root folder name may differ depending on the host machine and Android Studio version, but the rest of the path should be same). After copying the `quran_android-code_style.xml`, go to Code Style preferences screen and choose `quran_android-code_style` from Code Style Schemes.
 
 Please set your Android studio kotlin code style based on [Kotlin Coding Conventions](https://kotlinlang.org/docs/reference/coding-conventions.html). You can configure it from menu Settings | Editor | Code Style | Kotlin, click on "Set from…" link in the upper right corner, and select "Predefined style / Kotlin style guide" from the menu.
-
-Though very rarely, we do push beta versions in Play Store for early testing. If you would like to participate in beta program, please join our [Quran for Android](https://plus.google.com/communities/100110719319613677297) community in Google+.
 
 May Allah reward all the awesome [Contributors and Translators](https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md).
 
@@ -56,3 +71,4 @@ Please keep use of this code for non-profit purposes only. Also, please note tha
 * [Dagger2](https://google.github.io/dagger/)
 * [Timber](https://github.com/JakeWharton/timber)
 * [dnsjava](http://dnsjava.org)
+* [NumberPicker](https://github.com/ShawnLin013/NumberPicker)

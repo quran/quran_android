@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">نشانک‌گذاری بر آیه</string>
+  <string name="tag_ayah">برچسب‌گذاری بر آیه</string>
+  <string name="share_ayah">اشتراک‌گذاری آیه</string>
+  <string name="share_ayah_text">اشتراک‌گذاری متن آیه</string>
+  <string name="translation_ayah">ترجمه آیه</string>
+  <string name="play_from_here">شروع پخش از این آیه</string>
+  <string name="recite_from_here">از اینجا بخوان</string>
+  <string name="search_key">دکمه جستجو را بفشارید</string>
+  <string name="copy_ayah">کپی کردن آیه</string>
+</resources>

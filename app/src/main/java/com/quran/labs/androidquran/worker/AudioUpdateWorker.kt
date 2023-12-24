@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.worker
 
 import android.app.NotificationManager
 import android.content.Context
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
@@ -54,14 +55,14 @@ class AudioUpdateWorker(
           localFilesToDelete.forEach { localUpdate ->
             if (localUpdate.needsDatabaseUpgrade) {
               // delete the database
-              val dbPath = audioUtils.getQariDatabasePathIfGapless(context, localUpdate.qari)
-              SuraTimingDatabaseHandler.clearDatabaseHandlerIfExists(dbPath)
+              val dbPath = audioUtils.getQariDatabasePathIfGapless(localUpdate.qari)
+              dbPath?.let { SuraTimingDatabaseHandler.clearDatabaseHandlerIfExists(it) }
               Timber.d("would remove %s", dbPath)
               File(dbPath).delete()
             }
 
             val qari = localUpdate.qari
-            val path = audioUtils.getLocalQariUrl(context, qari)
+            val path = audioUtils.getLocalQariUrl(qari)
             localUpdate.files.forEach {
               // delete the file
               val filePath = if (qari.isGapless) {
@@ -105,11 +106,14 @@ class AudioUpdateWorker(
     val notificationManager =
       context.applicationContext.getSystemService(Context.NOTIFICATION_SERVICE)
           as NotificationManager
-    NotificationChannelUtil.setupNotificationChannel(
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || notificationManager.areNotificationsEnabled()) {
+      NotificationChannelUtil.setupNotificationChannel(
         notificationManager,
         Constants.DOWNLOAD_CHANNEL, context.getString(R.string.notification_channel_download)
-    )
-    notificationManager.notify(Constants.NOTIFICATION_ID_AUDIO_UPDATE, notification)
+      )
+      notificationManager.notify(Constants.NOTIFICATION_ID_AUDIO_UPDATE, notification)
+    }
   }
 
   class Factory @Inject constructor(

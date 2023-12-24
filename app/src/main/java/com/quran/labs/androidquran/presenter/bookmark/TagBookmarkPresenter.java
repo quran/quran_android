@@ -1,9 +1,10 @@
 package com.quran.labs.androidquran.presenter.bookmark;
 
+import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.dao.Tag;
+import com.quran.data.model.bookmark.Bookmark;
+import com.quran.data.model.bookmark.Tag;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog;
@@ -15,9 +16,9 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 
 @Singleton
@@ -45,14 +46,11 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
     // and we don't need to worry about disposing it.
     this.bookmarkModel.tagsObservable()
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(tag -> {
+        .subscribe(ignore -> {
           shouldRefreshTags = true;
           if (tags != null && dialog != null) {
-            // change this if we support updating tags from outside of QuranActivity
-            tags.add(tags.size() - 1, tag);
-            checkedTags.add(tag.getId());
-            dialog.setData(tags, checkedTags);
-            setMadeChanges();
+            saveChanges();
+            refresh();
           }
         });
   }
@@ -182,12 +180,11 @@ public class TagBookmarkPresenter implements Presenter<TagBookmarkDialog> {
           bookmarkIds != null && bookmarkIds.length == 1 ? bookmarkIds[0] : 0);
     }
     return bookmarkModel.getBookmarkTagIds(bookmarkId)
-        .defaultIfEmpty(new ArrayList<>())
-        .toSingle();
+        .defaultIfEmpty(new ArrayList<>());
   }
 
   @Override
-  public void bind(TagBookmarkDialog dialog) {
+  public void bind(@NonNull TagBookmarkDialog dialog) {
     this.dialog = dialog;
     if (tags != null) {
       // replay the last set of tags and checked tags that we had.

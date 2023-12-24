@@ -1,0 +1,14 @@
+plugins {
+  id 'quran.android.library.android'
+  id 'com.squareup.anvil'
+}
+
+android.namespace 'com.quran.mobile.di'
+
+anvil { generateDaggerFactories = true }
+
+dependencies {
+  implementation libs.dagger.runtime
+  implementation libs.androidx.fragment.ktx
+  implementation libs.androidx.preference.ktx
+}

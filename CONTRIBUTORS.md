@@ -41,7 +41,7 @@ Quran Android Contributors
 * Turkish by Mehmed Mahmudoglu.
 * Turkish updates by [Shuhrat Dehkanov](http://github.com/ozbek).
 * Russian by Rinat [Ринат Валеев](https://github.com/Valey).
-* Kurdish by [Goran Gharib Karim](https://github.com/GorranKurd).
+* Kurdish by [Goran Gharib](https://github.com/GoRaN909).
 * French by Yasser [yasserkad](http://github.com/yasserkad).
 * French updates by [Abdullah ibn Nadjo](https://github.com/abdullahibnnadjo).
 * French updates 1441 Ramadan 13 (06/05/2020) [Saïd B](https://github.com/sbou88).

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">Tandai ayat ini</string>
+  <string name="tag_ayah">Label ayat ini</string>
+  <string name="share_ayah">Bagikan tautan ayat ini</string>
+  <string name="share_ayah_text">Bagikan teks ayat</string>
+  <string name="translation_ayah">Terjemahan/Tafsir ayat</string>
+  <string name="play_from_here">Putar mulai dari sini</string>
+  <string name="recite_from_here">Baca dari sini</string>
+  <string name="search_key">Tekan tombol pencarian untuk mencari ayat</string>
+  <string name="copy_ayah">Salin ayat</string>
+</resources>

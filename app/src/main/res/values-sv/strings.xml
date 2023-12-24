@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="app_name">Koranen</string>
+  <string name="downloadPrompt_title">Ladda ner nödvändiga filer?</string>
+  <string name="downloadPrompt">För att Quran Android ska fungera korrekt måste vi ladda ner några filer. Om du inte gör detta nu kan det hända att appen inte fungerar på ett tillförlitligt sätt och att det krävs en internetuppkoppling för att läsa. Vill du ladda ner de nödvändiga filerna nu?
+    </string>
+  <string name="downloadTabletPrompt">Vi har nyligen lagt till förbättrade bilder för surfplattor. Vill du ladda ner bilderna nu?</string>
+  <string name="downloadImportantPrompt">Det finns en liten men viktig uppdatering för de koranbilder du har på din enhet. Vill du ladda ner den här uppdateringen nu?
+    </string>
+  <string name="downloadPrompt_ok">Ja</string>
+  <string name="downloadPrompt_no">Ingen</string>
+  <string name="downloading_message">Vänta tills filerna har laddats ner (återupptas).</string>
+  <string name="extracting_title">Bearbetning&#8230;</string>
+  <string name="menu_about">Om oss</string>
+  <string name="menu_other_apps">Andra appar</string>
+  <string name="menu_settings">Inställningar</string>
+  <string name="menu_jump_last_page">Sista sidan</string>
+  <string name="menu_bookmarks">Bokmärken</string>
+  <string name="menu_bookmarks_page">Bokmärken på sidan</string>
+  <string name="menu_bookmarks_ayah">Ayah-bokmärken</string>
+  <string name="menu_sort">Sortera</string>
+  <string name="menu_sort_date">Datum som lagts till</string>
+  <string name="menu_sort_location">Plats i Koranen</string>
+  <string name="menu_sort_group_by_tags">Gruppera efter taggar</string>
+  <string name="menu_show_date">Datum för visning</string>
+  <string name="menu_translation">Visa översättning</string>
+  <string name="menu_back_to_page">Visa Koranen</string>
+  <string name="menu_help">Hjälp</string>
+  <string name="menu_search">Sök på</string>
+  <string name="menu_get_translations">Få översättningar</string>
+  <string name="menu_jump">@string/gotoPage</string>
+  <string name="gotoPage">Gå till sidan</string>
+  <string name="please_wait">Vänta lite…</string>
+
+  <!-- about -->
+  <string name="about_description">Quran för Android är en gratis Quran-applikation. Glöm inte bidragsgivarna i dina böner.</string>
+  <string name="about_data_sources">Uppgiftskällor</string>
+  <string name="about_images">Bilder</string>
+  <string name="about_madani_images">Koranbilderna är baserade på typsnitt från Kung Fahds anläggning för tryckning av den ädla Koranen.</string>
+  <string name="about_naskh_images">Koranbilderna för Naskh-appen är tagna (med tillstånd) från SHL Info Systems.</string>
+  <string name="about_qaloon_images">Bilderna från Qaloon används med tillstånd av Nous Memes Editions Et Diffusion (Tunisien).</string>
+  <string name="about_quranicaudio_summary">Läckfria mp3-koranrecitationer</string>
+  <string name="about_quran_ksu">Det elektroniska Moshaf-projektet</string>
+  <string name="about_quran_ksu_summary">King Saud University Electronic Moshaf Project är appens källa till arabiska Tafaseer och översättningar till olika språk. Det är också källan till Dr Ayman Suwaids recitation.</string>
+  <string name="about_furqan_summary">Uthmani text och arabisk Tafaseer</string>
+  <string name="about_quran_enc_summary">Prijevodi za mnoge jezike</string>
+  <string name="about_tanzil_summary">Translations for a few languages</string>
+  <string name="about_noorhidayat_summary">Noorehira font and Mufti Taqi Translation</string>
+  <string name="about_open_source">Open Source Projects</string>
+  <string name="about_others">Övriga</string>
+  <string name="about_contributors">Bidragsgivare</string>
+  <string name="about_contributors_summary">En lista över personer som bidragit till utvecklingen av Quran för Android</string>
+
+  <!-- help -->
+  <string name="help_title">Ofta ställda frågor</string>
+  <string name="help">
+        &lt;b>Hur spelar jag upp ljud?&lt;/b>
+        &lt;br/>Öppna någon sida i Koranen. Tryck på skärmen en gång. Längst ner ser du en uppspelningsknapp och en text med namnet på en qari. Klicka på namnet på qari för att välja en annan qari. Klicka på play för att ladda ner och spela upp den aktuella sidan eller suran.
+        &lt;br/>
+        &lt;br/>&lt;b>Hur ser jag översättningen?&lt;/b>
+        &lt;br/>Öppna någon sida i Koranen. Tryck på skärmen en gång. Överst ser du en globikonen (om du inte ser den klickar du på en ikon med tre fyrkantiga prickar) - klicka på den och välj översättning för att se översättningen.
+        &lt;br/>
+        Om du inte har några nedladdade översättningar kommer du till en skärm där du kan ladda ner översättningar. Välj och hämta en översättning, gå sedan tillbaka och tryck på globikonen igen för att visa översättningen.
+        &lt;br/>
+        &lt;br/>&lt;b>Hur gör jag ett bokmärke på en sida?&lt;/b>
+        &lt;br/>Öppna någon sida i Koranen. Tryck på skärmen en gång. Uppe till höger ser du en ikon för bokmärke. Tryck på bokmärkesikonen för att bokmärka sidan (färgen blir enfärgad vit). Tryck på bokmärkesikonen igen för att ta bort bokmärket.
+        &lt;br/>
+        &lt;br/>&lt;b>Hur gör jag texten större?&lt;/b>
+        &lt;br/>För de arabiska sidorna håller du telefonen i liggande läge. Då blir texten större.
+        För översättningar går du till inställningar och ställer in storleken på översättningstexten.
+        &lt;br/>
+        &lt;br/>&lt;b>Hur delar jag en ayah?&lt;/b>
+        &lt;br/>När du är på en arabisk sida kan du trycka och hålla ned på en ayah för att få upp en meny där du kan välja att bokmärka, tagga, dela eller kopiera ayahen till klippbordet, se översättningen eller lyssna på dess recitation.&lt;br/>
+        &lt;br/>&lt;b>Typsnitten Malayalam/Tamil/Bengali/Urdu fungerar inte!&lt;/b>
+        &lt;br/>Tyvärr har Android-versioner före 4.0 inte stöd för dessa teckensnitt, och det finns inte mycket vi kan göra för att hjälpa till med detta.
+    </string>
+  <string name="search_hint">Sök i Koranen</string>
+  <string name="quranSearchType">Ayat i Koranen</string>
+  <string name="search_full_results">Fullständigt resultat</string>
+  <string name="search_entire_mushaf">Sök i hela mushaf</string>
+
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="one">Ett resultat för \"%1$s\": </item>
+    <item quantity="other">%2$d resultat för \"%1$s\": </item>
+  </plurals>
+
+  <!-- m permissions stuff -->
+  <string name="storage_permission_rationale">Quran för Android vill ha din tillåtelse att lagra data på extern lagring. Quran for Android fungerar utan detta tillstånd, men om du rensar data eller avinstallerar appen tas alla nedladdade sidor, ljud och data bort. Ge Quran för Android tillstånd?</string>
+  <string name="storage_permission_please_restart">Starta om appen för att detta ska kunna träda i kraft.</string>
+
+  <!-- Search messages -->
+  <string name="found_in_sura">Finns i Surah %1$s: %2$d (sidan %3$d)</string>
+  <string name="no_results">Inga resultat hittades för \"%s\"</string>
+  <string name="no_arabic_search_available">Du har inte laddat ner det arabiska sökpaketet. Ladda ner det och försök söka igen.</string>
+  <string name="get_arabic_search_db">Få arabisk sökdatabas</string>
+
+  <!-- Quran Preference Activity -->
+  <string name="prefs_volume_key_navigation_title">Navigering med volymtangenten</string>
+  <string name="prefs_volume_key_navigation_summary">Navigera mellan sidorna med hjälp av volymtangenterna</string>
+  <string name="prefs_category_reading">Läsförmåga</string>
+  <string name="prefs_category_translation">Inställningar för översättning</string>
+  <string name="prefs_category_display_settings">Inställningar för visning</string>
+  <string name="prefs_use_arabic_title">Arabiskt läge (الوضع العربي)</string>
+  <string name="prefs_use_arabic_summary_on">Använd arabiska för tillämpningsgränssnittet.</string>
+  <string name="prefs_new_background_title">Ny bakgrund</string>
+  <string name="prefs_lock_orientation_title">Orientering av låsskärmen</string>
+  <string name="prefs_lock_orientation_summary_on">Använd läget för fast orientering</string>
+  <string name="prefs_lock_orientation_summary_off">Anpassar sig till det aktuella orienteringsläget</string>
+  <string name="prefs_landscape_orientation_title">Landskapsorientering</string>
+  <string name="prefs_landscape_orientation_summary_on">Använd alltid liggande läge</string>
+  <string name="prefs_landscape_orientation_summary_off">Använd alltid porträttläge</string>
+  <string name="prefs_night_mode_title">Nattläge</string>
+  <string name="prefs_night_mode_summary">Använd mörk bakgrund och ljusa typsnitt</string>
+  <string name="prefs_night_mode_text_brightness_title">Textens ljusstyrka</string>
+  <string name="prefs_night_mode_text_brightness_summary">Textens ljusstyrka när nattläget är aktivt.</string>
+  <string name="prefs_night_mode_background_brightness_title">Ljusstyrka i bakgrunden</string>
+  <string name="prefs_night_mode_background_brightness_summary">Sidans ljusstyrka när nattläget är aktivt.</string>
+  <string name="prefs_overlay_page_info_title">Visa information om sidan</string>
+  <string name="prefs_overlay_page_info_summary">Överlagra sidnummer, surah-namn och Del-nummer medan du läser</string>
+  <string name="prefs_display_marker_title">Display marker popups</string>
+  <string name="prefs_display_marker_summary">Visa popup-fönster när du når Del, hizb, etc.</string>
+  <string name="prefs_highlight_bookmarks_title">Markera bokmärken</string>
+  <string name="prefs_highlight_bookmarks_summary">Markera bokmärkta ayahs när du läser</string>
+  <string name="prefs_translation_text_title">Storlek på översättningstexten</string>
+  <string name="prefs_translations">Översättningar</string>
+  <string name="prefs_translations_summary">Ladda ner och hantera översättningar</string>
+  <string name="prefs_ayah_before_translation_title">Ayah före översättning</string>
+  <string name="prefs_ayah_before_translation_summary">Visa ayah på arabiska ovanför översättningen</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
+  <string name="prefs_category_download">Hämta alternativ</string>
+  <string name="prefs_streaming_title">Streaming</string>
+  <string name="prefs_streaming_summary">Strömma ljud i stället för att ladda ner</string>
+  <string name="prefs_download_amount_title">Nedladdning av belopp</string>
+  <string name="prefs_download_amount_summary">Föredragen nedladdningsmängd för ljud utan luckor</string>
+  <string name="prefs_audio_manager_summary">Hantera och ladda ner Koranljud</string>
+  <string name="downloaded_translations">Nedladdat</string>
+  <string name="available_translations">Tillgänglig för nedladdning</string>
+  <string name="dialog_ok">OK</string>
+  <string name="prefs_app_location_title">Databok över Koranen</string>
+  <string name="prefs_app_location_summary">Välj var du vill lagra Quran-filer</string>
+  <string name="prefs_send_logs_title">Skicka loggar</string>
+  <string name="prefs_send_logs_summary">Skicka felsökningsloggar till utvecklaren</string>
+  <string name="prefs_sdcard_internal">Intern lagring</string>
+  <string name="prefs_sdcard_external">Extern lagring %1$d</string>
+  <string name="prefs_app_size">Nuvarande datastorlek är</string>
+  <string name="prefs_calculating_app_size">Beräkning av appstorlek</string>
+  <string name="prefs_copying_app_files">Kopiering av appfiler</string>
+  <string name="prefs_err_moving_app_files">Misslyckades med att flytta appfiler</string>
+  <string name="prefs_no_enough_space_to_move_files">Otillräckligt utrymme för att flytta appfiler</string>
+  <string name="prefs_megabytes_int">%1$d MB</string>
+  <string name="prefs_dual_page_mode_title">Läge med dubbla sidor</string>
+  <string name="prefs_dual_page_mode_enabled">I liggande format visas två sidor sida vid sida.</string>
+  <string name="prefs_dual_page_mode_disabled">I liggande läge visas endast en sida.</string>
+  <string name="prefs_category_advanced">Avancerade alternativ</string>
+  <string name="prefs_category_advanced_summary">Importera/exportera bokmärken, ställa in en katalog för korandata osv.</string>
+  <string name="prefs_import_title">Import</string>
+  <string name="prefs_import_summary">Importera bokmärken och taggar</string>
+  <string name="prefs_export_title">Exportera</string>
+  <string name="prefs_export_summary">Exportera en kopia av bokmärken och taggar</string>
+  <string name="prefs_page_type_title">Sidtyp (experimentell)</string>
+  <string name="prefs_page_type_summary">Välj typ av lässidor</string>
+  <string name="prefs_sura_translated_name_summary">Visa översättningen av surah-namnet</string>
+  <string name="prefs_sura_translated_name_title">Surah översatt namn</string>
+  <string name="prefs_preview">Förhandsgranska</string>
+
+  <string name="more_translations">Fler översättningar</string>
+  <string name="import_data_permissions_error">Det går inte att läsa säkerhetskopian på grund av fel i behörigheterna.</string>
+  <string name="import_data_error">Ogiltig säkerhetskopieringsfil (eller kan inte läsa säkerhetskopieringsfilen).</string>
+  <string name="import_data">Importera data</string>
+  <string name="import_data_and_override">Om du importerar den här filen kommer alla dina bokmärken att ersättas med %1$d bokmärken och %2$d taggar. Importera?</string>
+  <string name="import_successful">Import lyckad</string>
+  <string name="export_data_error">Fel vid export av data</string>
+  <string name="exported_data">Uppgifter som exporteras till %1$s</string>
+
+  <string name="move_up">Flytta uppåt</string>
+  <string name="move_down">Flytta nedåt</string>
+  <string name="delete_translation">Ta bort översättning</string>
+
+  <string name="warning">Varning</string>
+  <string name="kitkat_external_message">Om du väljer att placera Quran-data på ditt externa SD-kort och senare avinstallerar eller rensar data för Quran Android, kommer alla Quran Android-sidor och ljud att raderas och du måste hämta dem igen på grund av begränsningar i Android. Är du säker på att du vill använda det externa SD-kortet?</string>
+  <string name="scoped_storage_message">På grund av ändringar i Android för att öka användarnas integritet kan kopiering av filer utanför appkatalogerna hindra Quran for Android från att komma åt sina data i framtida versioner av Android. Är du säker på att du vill använda den här sökvägen?</string>
+  <string name="please_grant_permissions">Ge tillstånd i programinställningarna</string>
+  <!-- Preferences End -->
+
+  <!-- tafaseer -->
+  <string name="see_tafseer_of_verse">Denna ayas tafseer är inkluderad med tafseer av ayas %d (Klicka för att expandera).</string>
+
+  <!-- translation updates -->
+  <string name="update_available">Uppdatering tillgänglig</string>
+  <string name="translation_updates_available">En uppdatering är tillgänglig för några av dina översättningar. Besöker du översättningsskärmen nu?</string>
+  <string name="translation_dialog_yes">Ja</string>
+  <string name="translation_dialog_later">Senare</string>
+
+  <!-- End Number picker Strings -->
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
+  <string name="quran_hizb">Hizb</string>
+  <string name="quran_juz2">Del</string>
+  <string name="quran_page">Sidan</string>
+  <string name="quran_sura">Surahs</string>
+  <string name="quran_ayah">Ayah %1$d</string>
+  <string name="quran_ayah_details">%1$s - Ayah %2$s, Del %3$s</string>
+  <string name="quran_sura_title">Surah %1$s</string>
+  <string name="sura_ayah_notification_str">Surah %1$s, Ayah %2$d</string>
+  <string name="sura_ayah_sharing_str">Surah %1$s: %2$d</string>
+
+  <string name="index_loading">Laddar&#8230;</string>
+
+  <string name="canceling">Avbryta&#8230;</string>
+  <string name="juz2_description">Del %1$s</string>
+  <string name="page_description">Sidan %1$s, Del %2$s</string>
+  <string name="highlighting_database">Krävda filer</string>
+  <string name="timing_database">Krävda filer</string>
+
+  <!-- download statuses and errors -->
+  <string name="sdcard_error">Kunde inte hitta SD-kortet. Montera det och försök igen.</string>
+  <string name="download_successful">Nedladdning Framgångsrikt</string>
+  <string name="download_processing">Nedladdning av bearbetning&#8230;</string>
+  <string name="download_error_general">Nedladdning misslyckades</string>
+  <string name="download_error_disk">Inte tillräckligt med diskutrymme för att ladda ner</string>
+  <string name="download_error_network">Det gick inte att ladda ner på grund av nätverksfel</string>
+  <string name="download_error_perms">Kunde inte ladda ner på grund av fel i behörigheter</string>
+  <string name="download_error_invalid_download">Den nedladdade filen var skadad</string>
+  <string name="download_error_invalid_download_retry">Korrupt fil, försöker ladda ner på nytt</string>
+  <string name="download_error_network_retry">Nätverksfel, försöker återuppta&#8230;</string>
+  <string name="notification_download_canceled">Nedladdning avbruten</string>
+  <string name="download_non_wifi_prompt">Du har inte tillgång till Wi-Fi. Hämta data ändå?</string>
+
+  <!-- downloading dialogs -->
+  <string name="process_progress">Bearbetning av fil %1$d / %2$d</string>
+  <string name="download_retry">Försök igen</string>
+  <string name="download_cancel">Avbryt</string>
+  <string name="download_extra_data">Vi behöver ladda ner en eller två små filer för att stödja delning och översättning. Ladda ner nu?</string>
+
+  <!-- translation database stuff -->
+  <string name="remove_dlg_title">Ta bort översättning?</string>
+  <string name="remove_dlg_msg">Är du säker på att du vill ta bort %1$s?</string>
+  <string name="error_getting_translation_list">Det går inte att ladda ner listan över översättningar. Försök igen senare.</string>
+  <string name="search_data">Sökuppgifter</string>
+  <string name="need_translation">Du har inte laddat ner några översättningar/tafaseer ännu.</string>
+  <string name="get_translations">Få översättningar</string>
+
+  <!-- help -->
+  <string name="email_us">Om din fråga inte besvaras ovan kan du skicka ett e-postmeddelande till quranandroid@gmail.com för support.
+        Observera att vi får många e-postmeddelanden, så vi kanske inte kan svara på alla.</string>
+
+  <!-- sura metainfo -->
+  <string name="makki">Mekka</string>
+  <string name="madani">Medina</string>
+  <plurals name="verses">
+    <item quantity="one">en ayah</item>
+    <item quantity="other">%s ayat</item>
+  </plurals>
+
+  <!-- ayah action panel -->
+  <string name="play_restrict_range">Spela endast ovanstående ayat</string>
+  <string name="play_verses_range">Spela upp ayat:</string>
+  <string name="play_each_verse">Spela upp varje ayah:</string>
+  <string name="play_apply">Ansök på</string>
+  <string name="play_apply_and_play">Ansök och spela</string>
+  <string name="previous">Föregående</string>
+  <string name="play">Spela upp</string>
+  <string name="pause">Pausa</string>
+  <string name="stop">Stoppa</string>
+  <string name="next">Nästa</string>
+
+  <string-array name="repeatValues">
+    <item>1 gång</item>
+    <item>2 gånger</item>
+    <item>3 gånger</item>
+    <item>slinga</item>
+  </string-array>
+
+  <string name="playback_prompt_title">Starta uppspelning från:</string>
+  <string name="starting_page_label">Början av sidan</string>
+
+  <!-- long press -->
+  <string name="ayah_copied_popup">Ayah Kopierad</string>
+
+  <!-- bookmarks & tags contextual action bar -->
+  <string name="tag_bookmark">Tag Bookmark</string>
+  <string name="delete_tag">Ta bort tagg</string>
+  <string name="edit_tag">Redigera tagg</string>
+  <string name="new_tag">Ny tagg</string>
+  <string name="not_tagged">Inte taggad</string>
+  <plurals name="bookmark_tag_deleted">
+    <item quantity="one">En punkt har strukits.</item>
+    <item quantity="other">Borttagna %d poster</item>
+  </plurals>
+  <string name="undo">Ångra</string>
+
+  <string name="recent_pages">Senaste sidorna</string>
+
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">Tag</string>
+  <string name="tag_name">Namn</string>
+  <string name="tag_blank_tag_error">Tagnamn kan inte vara tomma!</string>
+  <string name="tag_duplicate_tag_error">Tagnamnet finns redan!</string>
+
+  <!-- widgets -->
+  <string name="bookmarks_list_empty">Inga bokmärken</string>
+
+  <!-- audio updates -->
+  <string name="audio_updated_title">Koran Ljudfiler Uppdatering</string>
+  <string name="audio_updated_text">Flera ljudfiler med koran har uppdaterats. Quran för Android har tagit bort din kopia av dessa filer så att de nyaste versionerna kan laddas ner nästa gång du spelar upp dem.</string>
+
+  <!-- dual screen prefs -->
+  <string name="prefs_category_dual_screen">Inställningar för dubbla sidor</string>
+  <string name="prefs_split_page_and_translation_title">Koranen och översättning i dubbelt läge</string>
+  <string name="prefs_split_page_and_translation_summary">I läget med dubbla sidor och översättningar visas både Koransidan och översättningen.</string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
+  <string name="notification_channel_download">Nedladdningar av Koranen</string>
+  <string name="notification_channel_audio">Uppläsning av Koranen</string>
+</resources>

@@ -1,0 +1,53 @@
+name: Comment on the pull request
+
+on:
+  workflow_run:
+    workflows: ["Android Pull Request"]
+    types:
+      - completed
+
+jobs:
+  comment:
+    name: Comment on Pull Request
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Download PR Number
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          run_id: ${{ github.event.workflow_run.id }}
+          workflow: build.yml
+          name: pr
+
+      - name: Download Apk Diff Results
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          run_id: ${{ github.event.workflow_run.id }}
+          workflow: build.yml
+          name: apk_differences
+
+      - name: Comment with Apk Diff Results
+        run: |
+          export PR=`cat pr.txt | head -1`
+          gh pr -R quran/quran_android comment $PR -F apk_differences_summary.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Dependency Diff Results
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          run_id: ${{ github.event.workflow_run.id }}
+          workflow: build.yml
+          name: dependency_differences
+
+      - name: Comment with Dependency Diff Results
+        run: |
+          if [ -s difference.txt ]; then
+            export PR=`cat pr.txt | head -1`
+            gh pr -R quran/quran_android comment $PR -F difference.txt
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,20 @@
+plugins {
+  id 'quran.android.library.android'
+  id 'com.squareup.anvil'
+}
+
+android.namespace 'com.quran.labs.androidquran.common.toolbar'
+
+anvil { generateDaggerFactories = true }
+
+dependencies {
+  implementation project(path: ':common:data')
+  implementation project(path: ':common:reading')
+  implementation project(path: ':common:bookmark')
+
+  implementation libs.dagger.runtime
+
+  implementation libs.androidx.appcompat
+  implementation libs.kotlinx.coroutines.core
+  implementation libs.kotlinx.coroutines.android
+}

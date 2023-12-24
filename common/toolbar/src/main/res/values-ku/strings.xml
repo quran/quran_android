@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">نیشانەکردنی ئەم ئایەتە</string>
+  <string name="tag_ayah">بڕگەکردنی ئەم ئایەتە</string>
+  <string name="share_ayah">ناردنی ئایەت</string>
+  <string name="share_ayah_text">ناردنی دەقی ئایەت</string>
+  <string name="translation_ayah">وەرگێڕانی ئایەت/تەفسیر</string>
+  <string name="play_from_here">لێدان لێرەوە</string>
+  <string name="recite_from_here">لێرەوە بخوێنەوە</string>
+  <string name="search_key">پەنجە بنێ بە دوگمەی گەڕاندا بۆ دۆزینەوەی ئایەت</string>
+  <string name="copy_ayah">لەبەرگرتنەوەی ئایەت</string>
+</resources>

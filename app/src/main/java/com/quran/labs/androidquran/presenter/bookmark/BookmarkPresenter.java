@@ -2,18 +2,18 @@ package com.quran.labs.androidquran.presenter.bookmark;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import com.google.android.material.snackbar.Snackbar;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.quran.data.core.QuranInfo;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
-import com.quran.labs.androidquran.dao.RecentPage;
-import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
+import com.quran.data.model.bookmark.Bookmark;
+import com.quran.data.model.bookmark.BookmarkData;
+import com.quran.data.model.bookmark.RecentPage;
+import com.quran.data.model.bookmark.Tag;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkResult;
+import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
@@ -21,6 +21,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow;
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
+import com.quran.mobile.di.qualifier.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,16 +32,14 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.observers.DisposableSingleObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import timber.log.Timber;
 
-@Singleton
 public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   @Snackbar.Duration public static final int DELAY_DELETION_DURATION_IN_MS = 4 * 1000; // 4 seconds
   private static final long BOOKMARKS_WITHOUT_TAGS_ID = -1;
@@ -49,6 +48,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private final BookmarkModel bookmarkModel;
   private final QuranSettings quranSettings;
   private final QuranRowFactory quranRowFactory;
+  private final QuranInfo quranInfo;
 
   private int sortOrder;
   private boolean groupByTags;
@@ -62,10 +62,9 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   private DisposableSingleObserver<BookmarkResult> pendingRemoval;
   private List<QuranRow> itemsToRemove;
 
-  private final int totalPages;
 
   @Inject
-  BookmarkPresenter(Context appContext,
+  BookmarkPresenter(@ApplicationContext Context appContext,
                     BookmarkModel bookmarkModel,
                     QuranSettings quranSettings,
                     ArabicDatabaseUtils arabicDatabaseUtils,
@@ -76,12 +75,12 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     this.bookmarkModel = bookmarkModel;
     this.arabicDatabaseUtils = arabicDatabaseUtils;
     this.quranRowFactory = quranRowFactory;
+    this.quranInfo = quranInfo;
 
     sortOrder = quranSettings.getBookmarksSortOrder();
     groupByTags = quranSettings.getBookmarksGroupedByTags();
     showRecents = quranSettings.getShowRecents();
     showDate = quranSettings.getShowDate();
-    totalPages = quranInfo.getNumberOfPages();
     subscribeToChanges();
   }
 
@@ -324,7 +323,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
       rows.add(0, quranRowFactory.fromRecentPageHeader(appContext, size));
       for (int i = 0; i < size; i++) {
         int page = recentPages.get(i).getPage();
-        if (page < Constants.PAGES_FIRST || page > totalPages) {
+        if (!quranInfo.isValidPage(page)) {
           page = 1;
         }
         rows.add(i + 1, quranRowFactory.fromCurrentPage(appContext, page, recentPages.get(i).getTimestamp()));

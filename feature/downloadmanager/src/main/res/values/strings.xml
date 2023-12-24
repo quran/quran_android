@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">1 surah downloaded</item>
+    <item quantity="other">%1$d surahs downloaded</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Audio Manager</string>
+  <string name="audio_manager_remove_audio_title">Remove Surah?</string>
+  <string name="audio_manager_remove_audio_msg">Are you sure you would like to remove %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Are you sure you would like to remove?</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Successfully deleted the surah</item>
+    <item quantity="other">Successfully deleted %1$d surahs</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">There was an error while deleting the surah</item>
+    <item quantity="other">There was an error while deleting %1$d surahs</item>
+  </plurals>
+  <string name="audio_manager_surah_download">Download surah</string>
+  <string name="audio_manager_surah_delete">Delete surah</string>
+  <string name="audio_manager_download_all">Download all</string>
+  <string name="audio_manager_download_selection">Download selection</string>
+  <string name="audio_manager_delete_selection">Delete selection</string>
+  <string name="audio_manager_post_notifications_permission_title">Allow posting notifications?</string>
+  <string name="audio_manager_post_notifications_permission_description">This is only used to give updates on download status, or to warn when audio files are automatically updated.</string>
+
+  <string name="downloading_title">Downloading&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">Downloaded %1$s / %2$s</string>
+  <string name="download_sura_progress">Downloaded %1$s / %2$s of surah %3$d</string>
+  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Downloading surah %1$d ayah %2$d</string>
+</resources>

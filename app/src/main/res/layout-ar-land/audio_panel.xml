@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     >
   <ScrollView
       android:layout_width="match_parent"
@@ -86,47 +87,8 @@
         </LinearLayout>
       </LinearLayout>
 
-      <LinearLayout
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="16dp"
-          android:orientation="horizontal"
-          android:layout_gravity="end"
-          >
-        <com.quran.labs.androidquran.view.QuranSpinner
-            android:id="@+id/repeat_range_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/play_verses_range"
-            android:textAppearance="@style/PanelLabel"
-            />
-      </LinearLayout>
-
-      <LinearLayout
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="16dp"
-          android:orientation="horizontal"
-          android:layout_gravity="end"
-          >
-        <com.quran.labs.androidquran.view.QuranSpinner
-            android:id="@+id/repeat_verse_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/play_each_verse"
-            android:textAppearance="@style/PanelLabel"
-            />
-      </LinearLayout>
+      <include layout="@layout/play_set_of_verses" />
+      <include layout="@layout/play_each_verse" />
 
       <CheckBox
           android:id="@+id/restrict_to_range"

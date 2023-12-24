@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="app_name">Kinh Quran</string>
+  <string name="downloadPrompt_title">Tải xuống tệp cần thiết?</string>
+  <string name="downloadPrompt">Để Kinh Quran Android hoạt động bình thường,
+         chúng tôi cần tải xuống một số tệp. Nếu bạn không làm điều này bây giờ, ứng dụng
+         có thể không hoạt động đáng tin cậy và sẽ yêu cầu kết nối Internet để đọc.
+         Bạn có muốn tải xuống các tệp cần thiết ngay bây giờ không?
+    </string>
+  <string name="downloadTabletPrompt">Gần đây chúng tôi đã thêm hình ảnh cải tiến cho
+         máy tính bảng. Bạn có muốn tải xuống những hình ảnh này ngay bây giờ không?</string>
+  <string name="downloadImportantPrompt">Có một cập nhật nhỏ nhưng quan trọng
+         cho những hình ảnh Kinh Quran bạn có trên thiết bị của mình. Bạn có muốn tải bản vá này
+         bây giờ không?
+    </string>
+  <string name="downloadPrompt_ok">Có</string>
+  <string name="downloadPrompt_no">Không</string>
+  <string name="downloading_title">Đang tải&#8230;</string>
+  <string name="downloading_message">Vui lòng đợi tệp tải xuống (hỗ trợ tạm dừng).</string>
+  <string name="extracting_title">Đang xử lý&#8230;</string>
+  <string name="menu_about">Về Chúng tôi</string>
+  <string name="menu_other_apps">Ứng dụng khác</string>
+  <string name="menu_settings">Cài đặt</string>
+  <string name="menu_jump_last_page">Trang cuối</string>
+  <string name="menu_bookmarks">Đánh dấu</string>
+  <string name="menu_bookmarks_page">Dấu Trang</string>
+  <string name="menu_bookmarks_ayah">Dấu Ayah</string>
+  <string name="menu_sort">Sắp xếp</string>
+  <string name="menu_sort_date">Ngày Thêm</string>
+  <string name="menu_sort_location">Vị trí ở Quran</string>
+  <string name="menu_sort_group_by_tags">Nhóm theo Thẻ</string>
+  <string name="menu_show_date">Hiện Ngày</string>
+  <string name="menu_translation">Hiện Bản dịch</string>
+  <string name="menu_back_to_page">Hiện Quran</string>
+  <string name="menu_help">Trợ giúp</string>
+  <string name="menu_search">Tìm kiếm</string>
+  <string name="menu_get_translations">Tải Bản dịch</string>
+  <string name="menu_jump">@string/gotoPage</string>
+  <string name="gotoPage">Đến trang</string>
+  <string name="please_wait">Xin đợi…</string>
+
+  <!-- about -->
+  <string name="about_description">Kinh Quran cho Android là một ứng dụng Kinh Quran miễn phí. Xin đừng quên những người đóng góp trong lời cầu nguyện của bạn.</string>
+  <string name="about_data_sources">Nguồn Dữ liệu</string>
+  <string name="about_images">Ảnh</string>
+  <string name="about_madani_images">Các hình ảnh Kinh Quran dựa trên các phông chữ từ King Fahd Quran Printing Complex</string>
+  <string name="about_naskh_images">Hình ảnh Kinh Quran cho ứng dụng Naskh được lấy (với sự cho phép) từ SHL Info Systems</string>
+  <string name="about_qaloon_images">Hình ảnh Qaloon được sử dụng với sự cho phép của Nous Memes Editions Et Diffusion (Tunisia)</string>
+  <string name="about_quranicaudio_summary">Các bản xướng đọc gapless mp3 Quran</string>
+  <string name="about_quran_ksu">Electronic Moshaf Project</string>
+  <string name="about_quran_ksu_summary">King Saud University Electronic Moshaf Project là nguồn Tafaseer Ả Rập cho app và các bản dịch cho nhiều ngôn ngữ khác nhau. Nó cũng là nguồn cho bản đọc của Tiến sĩ Ayman Suwaid.</string>
+  <string name="about_furqan_summary">Văn bản Uthmani and Tafaseer Ả Rập</string>
+  <string name="about_quran_enc_summary">Bản dịch cho nhiều ngôn ngữ</string>
+  <string name="about_tanzil_summary">Bản dịch cho một vài ngôn ngữ</string>
+  <string name="about_noorhidayat_summary">Phông chữ Noorehira và Bản dịch Mufti Taqi</string>
+  <string name="about_open_source">Dự án Mã nguồn Mở</string>
+  <string name="about_others">Khác</string>
+  <string name="about_contributors">Những người đóng góp</string>
+  <string name="about_contributors_summary">Danh sách những người đã đóng góp vào sự phát triển của Kinh Quran cho Android</string>
+
+  <!-- help -->
+  <string name="help_title">(FAQ) Câu hỏi thường gặp</string>
+  <string name="help">
+        &lt;b>Làm cách nào để nghe Quran?&lt;/b>
+        &lt;br/>Mở bất kỳ trang Kinh Quran nào. Chạm vào màn hình một lần. Ở phía dưới, bạn sẽ nhận thấy
+         một nút phát và một danh sách tên các qari. Nhấp vào tên của qari để
+         chọn một qari khác. Nhấp vào phát để tải xuống và phát trang hoặc sura hiện tại.
+        &lt;br/>
+        &lt;br/>&lt;b>Làm cách nào để xem bản dịch?&lt;/b>
+        &lt;br/>Mở bất kỳ trang Kinh Quran nào. Chạm vào màn hình một lần. Ở trên cùng, bạn sẽ thấy một
+         biểu tượng quả địa cầu (hoặc, nếu bạn không nhìn thấy nó, hãy nhấp vào biểu tượng có ba chấm tròn) - nhấn
+         nó và chọn bản dịch để xem bản dịch.
+        &lt;br/>
+        Nếu bạn không có bất kỳ bản dịch nào được tải xuống, nó sẽ đưa
+         bạn đến một màn hình nơi bạn có thể tải xuống các bản dịch. Chọn và tải xuống bản dịch,
+         sau đó quay lại và nhấn lại vào biểu tượng quả địa cầu để xem bản dịch.
+        &lt;br/>
+        &lt;br/>&lt;b>Làm cách nào để đánh dấu trang?&lt;/b>
+        &lt;br/>Mở bất kỳ trang Kinh Quran nào. Chạm vào màn hình một lần. Ở trên cùng bên phải, bạn sẽ thấy một
+         biểu tượng dấu trang. Nhấn vào biểu tượng dấu trang để đánh dấu trang (màu sẽ chuyển sang màu trắng đặc). Nhấn vào biểu tượng dấu trang
+         một lần nữa để xóa dấu trang.
+        &lt;br/>
+        &lt;br/>&lt;b>Làm cách nào để làm cho văn bản lớn hơn?&lt;/b>
+        &lt;br/>Đối với các trang tiếng Ả Rập, hãy giữ điện thoại của bạn ở chế độ nằm ngang. Điều này làm cho văn bản lớn hơn.
+         Đối với bản dịch, hãy đi tới cài đặt và tăng cỡ chữ văn bản dịch.
+        &lt;br/>
+        &lt;br/>&lt;b>Làm cách nào để chia sẻ ayah?&lt;/b>
+        &lt;br/>Khi đang ở bất kỳ trang tiếng Ả Rập nào, hãy nhấn và giữ bất kỳ ayah nào để có menu nơi bạn có thể
+         chọn đánh dấu, gắn thẻ, chia sẻ hoặc sao chép ayah đó vào khay nhớ tạm, xem bản dịch,
+         hoặc nghe bản đọc của nó.&lt;br/>
+        &lt;br/>&lt;b>Phông Malayalam/Tamil/Bengali/Urdu không dùng được!&lt;/b>
+        &lt;br/>Rất tiếc, các phiên bản Android trước 4.0 không hỗ trợ các phông chữ này và
+         chúng tôi không giúp được gì nhiều.
+    </string>
+  <string name="search_hint">Tìm trong Quran</string>
+  <string name="quranSearchType">Những câu Kinh Quran</string>
+  <string name="search_full_results">Kết quả đầy đủ</string>
+  <string name="search_entire_mushaf">Tìm kiếm cả mushaf</string>
+
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="one">Một kết quả cho \"%1$s\": </item>
+    <item quantity="other">%2$d kết quả cho \"%1$s\": </item>
+  </plurals>
+
+  <!-- m permissions stuff -->
+  <string name="storage_permission_rationale">Kinh Quran muốn bạn cho phép lưu trữ dữ liệu của nó trên
+         lưu trữ ngoài. Kinh Quran sẽ vẫn hoạt động mà không cần quyền này, nhưng nếu bạn xóa dữ liệu hoặc
+         gỡ cài đặt ứng dụng, tất cả các trang, âm thanh và dữ liệu đã tải xuống sẽ bị xóa. Cấp quyền
+         cho kinh Quran?</string>
+  <string name="storage_permission_please_restart">Vui lòng khởi động lại ứng dụng để điều này có hiệu lực.</string>
+
+  <!-- Search messages -->
+  <string name="found_in_sura">Tìm thấy ở Surah %1$s: %2$d (page %3$d)</string>
+  <string name="no_results">Không kết quả cho \"%s\"</string>
+  <string name="no_arabic_search_available">Bạn chưa tải xuống gói tìm kiếm tiếng Ả Rập. Vui lòng tải xuống và thử tìm kiếm lại.</string>
+  <string name="get_arabic_search_db">Tải Gói dữ liệu Tìm kiếm tiếng Ả Rập</string>
+
+  <!-- Quran Preference Activity -->
+  <string name="prefs_volume_key_navigation_title">Điều hướng phím âm lượng</string>
+  <string name="prefs_volume_key_navigation_summary">Điều hướng giữa các trang bằng phím âm lượng</string>
+  <string name="prefs_category_reading">Tùy chọn Đọc</string>
+  <string name="prefs_category_translation">Tùy chọn Bản dịch</string>
+  <string name="prefs_category_display_settings">Cài đặt Hiển thị</string>
+  <string name="prefs_use_arabic_title">Chế độ Ả Rập (الوضع العربي)</string>
+  <string name="prefs_use_arabic_summary_on">Dùng tiếng Ả Rập cho giao diện ứng dụng</string>
+  <string name="prefs_new_background_title">Màu nền mới</string>
+  <string name="prefs_lock_orientation_title">Khóa hướng màn hình</string>
+  <string name="prefs_lock_orientation_summary_on">Khóa một hướng cố định</string>
+  <string name="prefs_lock_orientation_summary_off">Tự chuyển hướng cùng thiết bị</string>
+  <string name="prefs_landscape_orientation_title">Hướng ngang</string>
+  <string name="prefs_landscape_orientation_summary_on">Luôn dùng chế độ nằm ngang</string>
+  <string name="prefs_landscape_orientation_summary_off">Luôn dùng chế độ nằm dọc</string>
+  <string name="prefs_night_mode_title">Chế độ Tối</string>
+  <string name="prefs_night_mode_summary">Dùng nền tối và phông chữ sáng</string>
+  <string name="prefs_night_mode_text_brightness_title">Độ sáng của chữ</string>
+  <string name="prefs_night_mode_text_brightness_summary">Độ sáng của chữ khi chế độ tối được kích hoạt</string>
+  <string name="prefs_night_mode_background_brightness_title">Độ sáng nền</string>
+  <string name="prefs_night_mode_background_brightness_summary">Độ sáng của trang khi chế độ tối được kích hoạt</string>
+  <string name="prefs_overlay_page_info_title">Hiển thị thông tin trang</string>
+  <string name="prefs_overlay_page_info_summary">Hiện số trang, tên surah và số juz\' trong khi đọc</string>
+  <string name="prefs_display_marker_title">Hiện hộp thoại</string>
+  <string name="prefs_display_marker_summary">Hiển thị hộp thoại khi tới juz\', hizb, v.v kế tiếp</string>
+  <string name="prefs_highlight_bookmarks_title">Tô sáng các đánh dấu</string>
+  <string name="prefs_highlight_bookmarks_summary">Tô sáng ayahs đã được đánh dấu trong khi đọc</string>
+  <string name="prefs_translation_text_title">Cỡ chữ bản dịch</string>
+  <string name="prefs_translations">Bản dịch</string>
+  <string name="prefs_translations_summary">Tải xuống và quản lý bản dịch</string>
+  <string name="prefs_ayah_before_translation_title">Ayah trước bản dịch</string>
+  <string name="prefs_ayah_before_translation_summary">Hiển thị ayah tiếng Ả Rập phía trên bản dịch</string>
+  <string name="prefs_use_dyslexic_font_title">Phông chữ cho chứng khó đọc</string>
+  <string name="prefs_use_dyslexic_font_summary">Hiển thị bản dịch bằng phông chữ thân thiện với người mắc chứng khó đọc</string>
+  <string name="prefs_category_download">Tùy chọn Tải xuống</string>
+  <string name="prefs_streaming_title">Phát trực tuyến</string>
+  <string name="prefs_streaming_summary">Phát âm thanh trực tuyến thay vì tải xuống</string>
+  <string name="prefs_download_amount_title">Số lượng tải xuống</string>
+  <string name="prefs_download_amount_summary">Số lượng tải xuống ưu tiên cho âm thanh non-gapless</string>
+  <string name="prefs_audio_manager_summary">Quản lý và tải xuống bản đọc Kinh Quran</string>
+  <string name="downloaded_translations">Đã tải</string>
+  <string name="available_translations">Có sẵn để tải xuống</string>
+  <string name="dialog_ok">OK</string>
+  <string name="prefs_app_location_title">Nơi Kinh Quran lưu dữ liệu</string>
+  <string name="prefs_app_location_summary">Chọn nơi lưu trữ các tệp Kinh Quran</string>
+  <string name="prefs_send_logs_title">Gửi logs</string>
+  <string name="prefs_send_logs_summary">Gửi debug logs cho lập trình viên</string>
+  <string name="prefs_sdcard_internal">Bộ nhớ trong</string>
+  <string name="prefs_sdcard_external">Bộ nhớ ngoài %1$d</string>
+  <string name="prefs_app_size">Kích cỡ dữ liệu hiện tại là</string>
+  <string name="prefs_calculating_app_size">Tính Kích thước App</string>
+  <string name="prefs_copying_app_files">Sao chép tệp App</string>
+  <string name="prefs_err_moving_app_files">Lỗi di chuyển tệp của app</string>
+  <string name="prefs_no_enough_space_to_move_files">Không đủ dung lượng để di chuyển tệp app</string>
+  <string name="prefs_megabytes_int">%1$d MB</string>
+  <string name="prefs_dual_page_mode_title">Chế độ Trang Kép</string>
+  <string name="prefs_dual_page_mode_enabled">Ở chế độ ngang, hai trang sẽ xuất hiện cạnh nhau</string>
+  <string name="prefs_dual_page_mode_disabled">Ở chế độ ngang, chỉ một trang sẽ xuất hiện</string>
+  <string name="prefs_category_advanced">Tùy chọn Nâng cao</string>
+  <string name="prefs_category_advanced_summary">Nhập/xuất đánh dấu, đặt thư mục dữ liệu Kinh Quran, v.v.</string>
+  <string name="prefs_import_title">Nhập</string>
+  <string name="prefs_import_summary">Nhập đánh dấu và thẻ</string>
+  <string name="prefs_export_title">Xuất</string>
+  <string name="prefs_export_summary">Xuất bản sao của đánh dấu và thẻ</string>
+  <string name="prefs_export_csv_title">Xuất CSV</string>
+  <string name="prefs_export_csv_summary">Xuất bản sao của đánh dấu và thẻ dạng CSV</string>
+  <string name="prefs_page_type_title">Loại Trang (thử nghiệm)</string>
+  <string name="prefs_page_type_summary">Chọn loại trang đọc</string>
+  <string name="prefs_sura_translated_name_summary">Hiển thị bản dịch tên của các surah</string>
+  <string name="prefs_sura_translated_name_title">Dịch tên Surah</string>
+  <string name="prefs_preview">Xem trước</string>
+
+  <string name="more_translations">Bản dịch khác</string>
+  <string name="import_data_permissions_error">Không thể đọc tệp sao lưu do lỗi quyền.</string>
+  <string name="import_data_error">Tệp sao lưu không hợp lệ (hoặc không thể đọc tệp sao lưu).</string>
+  <string name="import_data">Nhập Data</string>
+  <string name="import_data_and_override">Nếu bạn nhập tệp này, nó sẽ thay thế tất cả đánh dấu của bạn bằng %1$d đánh dấu và %2$d thẻ. Nhập?</string>
+  <string name="import_successful">Nhập thành công</string>
+  <string name="export_data_error">Lỗi xuất dữ liệu</string>
+  <string name="exported_data">Dữ liệu được xuất sang %1$s</string>
+
+  <string name="move_up">Di Lên</string>
+  <string name="move_down">Di Xuống</string>
+  <string name="delete_translation">Xóa Bản dịch</string>
+
+  <string name="warning">Cảnh báo</string>
+  <string name="kitkat_external_message">Do những hạn chế của Android, nếu bạn chọn đặt dữ liệu Kinh Quran
+        trên thẻ nhớ SD ngoài và sau đó gỡ cài đặt hoặc xóa dữ liệu của Kinh Quran Android, tất cả các trang và âm thanh
+        của Kinh Quran Android sẽ bị xóa và bạn sẽ phải tải xuống lại. Bạn có
+        chắc chắn muốn sử dụng thẻ nhớ SD ngoài?</string>
+  <string name="scoped_storage_message">Do những thay đổi của Android để tăng quyền riêng tư của người dùng, việc sao chép
+     các tệp bên ngoài thư mục của ứng dụng có thể sẽ ngăn Kinh Quran truy cập dữ liệu của nó trong các phiên bản sau
+     của Android. Bạn có chắc chắn muốn sử dụng đường dẫn này không?</string>
+  <string name="please_grant_permissions">Vui lòng cấp quyền trong cài đặt ứng dụng</string>
+  <!-- Preferences End -->
+
+  <!-- tafaseer -->
+  <string name="see_tafseer_of_verse">Tafseer của ayah này đã có trong tafseer của ayah %d (Nhấp để mở rộng).</string>
+
+  <!-- translation updates -->
+  <string name="update_available">Có cập nhật mới</string>
+  <string name="translation_updates_available">Một bản cập nhật có sẵn cho một số bản dịch của bạn. Truy cập trang bản dịch ngay bây giờ?</string>
+  <string name="translation_dialog_yes">Có</string>
+  <string name="translation_dialog_later">Để sau</string>
+
+  <!-- End Number picker Strings -->
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
+  <string name="quran_hizb">Hizb</string>
+  <string name="quran_juz2">Juz\'</string>
+  <string name="quran_page">Trang</string>
+  <string name="quran_sura">Surahs</string>
+  <string name="quran_ayah">Ayah %1$d</string>
+  <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
+  <string name="quran_sura_title">Surah %1$s</string>
+  <string name="sura_ayah_notification_str">Surah %1$s, Ayah %2$d</string>
+  <string name="sura_ayah_sharing_str">Surah %1$s: %2$d</string>
+
+  <string name="index_loading">Đang tải&#8230;</string>
+
+  <string name="canceling">Đang hủy&#8230;</string>
+  <string name="juz2_description">Juz\' %1$s</string>
+  <string name="page_description">Trang %1$s, Juz\' %2$s</string>
+  <string name="highlighting_database">Tệp cần thiết</string>
+  <string name="timing_database">Tệp cần thiết</string>
+
+  <!-- download statuses and errors -->
+  <string name="sdcard_error">Không tìm thấy thẻ SD. Vui lòng gắn nó và thử lại.</string>
+  <string name="download_successful">Tải xuống thành công</string>
+  <string name="download_processing">Xử lý tải xuống&#8230;</string>
+  <string name="download_error_general">Không tải xuống được</string>
+  <string name="download_error_disk">Không đủ dung lượng đĩa để tải xuống</string>
+  <string name="download_error_network">Không tải được do lỗi mạng</string>
+  <string name="download_error_perms">Không thể tải xuống do lỗi quyền</string>
+  <string name="download_error_invalid_download">Tệp đã tải bị hỏng</string>
+  <string name="download_error_invalid_download_retry">Tệp bị hỏng, đang cố tải lại</string>
+  <string name="download_error_network_retry">Lỗi mạng, đang cố gắng tải tiếp&#8230;</string>
+  <string name="notification_download_canceled">Đã hủy tải xuống</string>
+  <string name="download_non_wifi_prompt">Bạn đang không dùng Wi-Fi. Vẫn tải xuống dữ liệu?</string>
+
+  <!-- downloading dialogs -->
+  <string name="process_progress">Đang xử lý tập tin %1$d / %2$d</string>
+  <string name="download_retry">Thử lại</string>
+  <string name="download_cancel">Hủy</string>
+  <string name="download_extra_data">Chúng tôi cần tải xuống một hoặc hai tệp nhỏ để hỗ trợ chia sẻ và dịch thuật. Tải ngay?</string>
+
+  <!-- translation database stuff -->
+  <string name="remove_dlg_title">Xóa Bản dịch?</string>
+  <string name="remove_dlg_msg">Bạn có chắc chắn muốn xóa %1$s?</string>
+  <string name="error_getting_translation_list">Không thể tải xuống danh sách các bản dịch. Vui lòng thử lại sau.</string>
+  <string name="search_data">Dữ liệu Tìm kiếm</string>
+  <string name="need_translation">Bạn chưa tải xuống bản dịch/tafaseer nào.</string>
+  <string name="get_translations">Tải Bản dịch</string>
+
+  <!-- help -->
+  <string name="email_us">Nếu câu hỏi của bạn không được trả lời ở trên, bạn có thể gửi email quranandroid@gmail.com để được hỗ trợ.
+         Xin lưu ý rằng chúng tôi nhận được rất nhiều email, vì vậy chúng tôi không thể trả lời tất cả chúng.</string>
+
+  <!-- sura metainfo -->
+  <string name="makki">Makki</string>
+  <string name="madani">Madani</string>
+  <plurals name="verses">
+    <item quantity="one">Một câu</item>
+    <item quantity="other">%s câu</item>
+  </plurals>
+
+  <!-- ayah action panel -->
+  <string name="play_restrict_range">Chỉ phát những câu trên</string>
+  <string name="play_verses_range">Lần phát cả bộ câu:</string>
+  <string name="play_each_verse">Lần phát từng câu:</string>
+  <string name="play_apply">Áp dụng</string>
+  <string name="play_apply_and_play">Áp dụng và Phát</string>
+  <string name="previous">Trước</string>
+  <string name="play">Phát</string>
+  <string name="pause">Nghỉ</string>
+  <string name="stop">Dừng</string>
+  <string name="next">Tiếp</string>
+
+  <string-array name="repeatValues">
+    <item>1 lần</item>
+    <item>2 lần</item>
+    <item>3 lần</item>
+    <item>lặp</item>
+  </string-array>
+
+  <string name="playback_prompt_title">Bắt đầu phát từ:</string>
+  <string name="starting_page_label">Đầu Trang</string>
+
+  <!-- long press -->
+  <string name="ayah_copied_popup">Đã sao chép Ayah</string>
+
+  <!-- bookmarks & tags contextual action bar -->
+  <string name="tag_bookmark">Đánh dấu Thẻ</string>
+  <string name="delete_tag">Xóa Thẻ</string>
+  <string name="edit_tag">Sửa Thẻ</string>
+  <string name="new_tag">Thẻ Mới</string>
+  <string name="not_tagged">Chưa được gắn thẻ</string>
+  <plurals name="bookmark_tag_deleted">
+    <item quantity="one">Đã xóa một mục</item>
+    <item quantity="other">Đã xóa %d mục</item>
+  </plurals>
+  <string name="undo">Hoàn tác</string>
+
+  <string name="recent_pages">Vừa Đọc</string>
+
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">Thẻ</string>
+  <string name="tag_name">Tên</string>
+  <string name="tag_blank_tag_error">Tên thẻ không được để trống!</string>
+  <string name="tag_duplicate_tag_error">Tên thẻ đã tồn tại!</string>
+
+  <!-- widgets -->
+  <string name="bookmarks_list_empty">Không có Đánh dấu</string>
+
+  <!-- audio updates -->
+  <string name="audio_updated_title">Cập nhật tệp âm thanh Kinh Quran</string>
+  <string name="audio_updated_text">Một số tệp âm thanh Kinh Quran đã được cập nhật. Kinh Quran đã loại bỏ
+   bản sao của các tệp này để có thể tải xuống các phiên bản mới nhất khi bạn phát lần sau.
+  </string>
+
+  <!-- format strings -->
+
+  <!-- dual screen prefs -->
+  <string name="prefs_category_dual_screen">Tùy chọn Trang Kép</string>
+  <string name="prefs_split_page_and_translation_title">Kinh Quran và bản dịch ở chế độ kép</string>
+  <string name="prefs_split_page_and_translation_summary">Ở chế độ trang kép có bản dịch, cả trang Kinh Quran và bản dịch được hiển thị</string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
+  <string name="notification_channel_download">Quran Tải xuống</string>
+  <string name="notification_channel_audio">Quran Xướng đọc</string>
+</resources>

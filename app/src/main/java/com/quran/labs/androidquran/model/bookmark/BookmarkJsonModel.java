@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.model.bookmark;
 
 import androidx.annotation.NonNull;
 
-import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
+import com.quran.data.model.bookmark.BookmarkData;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
@@ -24,6 +24,10 @@ class BookmarkJsonModel {
 
   void toJson(BufferedSink sink, BookmarkData bookmarks) throws IOException {
     jsonAdapter.toJson(sink, bookmarks);
+  }
+
+  void toCSV(BufferedSink sink, BookmarkData bookmarks) throws IOException {
+    BookmarkCSVAdapterKt.toCSV(sink, bookmarks);
   }
 
   @NonNull

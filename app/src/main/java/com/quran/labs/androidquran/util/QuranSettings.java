@@ -1,24 +1,18 @@
 package com.quran.labs.androidquran.util;
 
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.preference.PreferenceManager;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+import com.quran.common.upgrade.PreferencesUpgrade;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
-
-import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.annotation.VisibleForTesting;
 
 
 public class QuranSettings {
@@ -46,6 +40,14 @@ public class QuranSettings {
     this.appContext = appContext;
     prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
     perInstallationPrefs = appContext.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
+  }
+
+  public void registerPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+    prefs.registerOnSharedPreferenceChangeListener(listener);
+  }
+
+  public void unregisterPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+    prefs.unregisterOnSharedPreferenceChangeListener(listener);
   }
 
   public boolean isArabicNames() {
@@ -85,8 +87,17 @@ public class QuranSettings {
         Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS);
   }
 
+  public int getNightModeBackgroundBrightness() {
+    return prefs.getInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS,
+        Constants.DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS);
+  }
+
   public boolean shouldOverlayPageInfo() {
     return prefs.getBoolean(Constants.PREF_OVERLAY_PAGE_INFO, true);
+  }
+
+  public void setShouldOverlayPageInfo(boolean shouldOverlay) {
+    prefs.edit().putBoolean(Constants.PREF_OVERLAY_PAGE_INFO, shouldOverlay).apply();
   }
 
   public boolean shouldDisplayMarkerPopup() {
@@ -101,19 +112,23 @@ public class QuranSettings {
     return prefs.getBoolean(Constants.PREF_AYAH_BEFORE_TRANSLATION, true);
   }
 
+  public boolean wantDyslexicFontInTranslationView() {
+    return prefs.getBoolean(Constants.PREF_USE_DYSLEXIC_FONT, false);
+  }
+
   public int getPreferredDownloadAmount() {
     String str = prefs.getString(Constants.PREF_DOWNLOAD_AMOUNT,
-        "" + AudioUtils.LookAheadAmount.INSTANCE.getPAGE());
-    int val = AudioUtils.LookAheadAmount.INSTANCE.getPAGE();
+        "" + AudioUtils.LookAheadAmount.PAGE);
+    int val = AudioUtils.LookAheadAmount.PAGE;
     try {
       val = Integer.parseInt(str);
     } catch (Exception e) {
       // no op
     }
 
-    if (val > AudioUtils.LookAheadAmount.INSTANCE.getMAX() ||
-        val < AudioUtils.LookAheadAmount.INSTANCE.getMIN()) {
-      return AudioUtils.LookAheadAmount.INSTANCE.getPAGE();
+    if (val > AudioUtils.LookAheadAmount.MAX ||
+        val < AudioUtils.LookAheadAmount.MIN) {
+      return AudioUtils.LookAheadAmount.PAGE;
     }
     return val;
   }
@@ -147,6 +162,24 @@ public class QuranSettings {
     return prefs.getString(Constants.PREF_PAGE_TYPE, null);
   }
 
+  // only available for Naskh, should return false by default for non-Naskh pages
+  public boolean isSidelines() {
+    return prefs.getBoolean(Constants.PREF_SHOW_SIDELINES, false);
+  }
+
+  public void setSidelines(boolean sidelines) {
+    prefs.edit().putBoolean(Constants.PREF_SHOW_SIDELINES, sidelines).apply();
+  }
+
+  // only available for Naskh, should return false by default for non-Naskh pages
+  public boolean isShowLineDividers() {
+    return prefs.getBoolean(Constants.PREF_SHOW_LINE_DIVIDERS, false);
+  }
+
+  public void setShowLineDividers(boolean showLineDividers) {
+    prefs.edit().putBoolean(Constants.PREF_SHOW_LINE_DIVIDERS, showLineDividers).apply();
+  }
+
   public void setPageType(String pageType) {
     prefs.edit().putString(Constants.PREF_PAGE_TYPE, pageType).apply();
     clearDefaultImagesDirectory();
@@ -178,10 +211,11 @@ public class QuranSettings {
   }
 
   // probably should eventually move this to Application.onCreate..
-  public void upgradePreferences() {
+  public void upgradePreferences(PreferencesUpgrade preferencesUpgrade) {
     int version = getVersion();
     if (version != BuildConfig.VERSION_CODE) {
       if (version == 0) {
+        // try fetching from prefs instead of from per installation prefs
         version = prefs.getInt(Constants.PREF_VERSION, 0);
       }
 
@@ -190,8 +224,14 @@ public class QuranSettings {
         setAppCustomLocation(getAppCustomLocation());
       }
 
-      // make sure that the version code now says that we're up to date.
-      setVersion(BuildConfig.VERSION_CODE);
+      // allow specific flavors of the app to handle their own upgrade logic.
+      // this is important because different flavors have different version codes, so
+      // common code here would likely be wrong for other flavors (unless it depends on
+      // relative offsets to the version code instead of the actual version code).
+      if (preferencesUpgrade.upgrade(appContext, version, BuildConfig.VERSION_CODE)) {
+        // make sure that the version code now says that we're up to date.
+        setVersion(BuildConfig.VERSION_CODE);
+      }
     }
   }
 

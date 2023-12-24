@@ -1,41 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="com.quran.labs.androidquran"
-          android:installLocation="auto">
+  android:installLocation="auto">
 
   <uses-permission android:name="android.permission.INTERNET"/>
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission
+      android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+      android:maxSdkVersion="29" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
   <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
   <!-- foreground services need this when targeting Android 9+ (Api 28+) -->
   <uses-permission-sdk-23 android:name="android.permission.FOREGROUND_SERVICE"/>
 
+  <!-- required for posting notifications on Android 13+ (Api 33+) -->
+  <uses-permission-sdk-23 android:name="android.permission.POST_NOTIFICATIONS"/>
+  
+  <!-- required for foreground service types on Android 14+ (Api 34+) -->
+  <uses-permission-sdk-23 android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+  <uses-permission-sdk-23 android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
   <!-- support chromebooks without touch screen -->
   <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
-  <!-- minSdk 15 vs 14 - really doesn't matter tbh since no one uses 14 at all, but  ¯\_(ツ)_/¯ -->
-  <uses-sdk tools:overrideLibrary="timber.log, dev.chrisbanes.insetter, dev.chrisbanes.insetter.ktx, com.google.firebase.crashlytics"/>
-
   <application
-      android:icon="@drawable/icon"
-      android:roundIcon="@drawable/icon"
+      android:icon="@mipmap/ic_launcher"
+      android:roundIcon="@mipmap/ic_launcher_round"
       android:label="@string/app_name"
       android:name=".QuranApplication"
       android:allowBackup="true"
       android:fullBackupContent="@xml/backup"
+      android:dataExtractionRules="@xml/data_extraction"
       android:networkSecurityConfig="@xml/network_security_config"
       android:supportsRtl="true"
       android:theme="@style/Quran"
       android:requestLegacyExternalStorage="true"
-      tools:targetApi="n">
+      tools:targetApi="s">
 
     <activity
         android:name=".QuranDataActivity"
-        android:label="@string/app_name"
         android:configChanges="keyboardHidden|orientation|screenSize"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:theme="@style/QuranToolBar"
+        android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
@@ -48,30 +54,38 @@
               android:exported="true" />
     <activity
         android:name=".ui.QuranActivity"
-        android:theme="@style/QuranToolBar"/>
+        android:theme="@style/QuranToolBar"
+        android:exported="false"/>
     <activity
         android:name=".AboutUsActivity"
-        android:theme="@style/QuranToolBar"/>
-    <activity android:name=".HelpActivity"/>
+        android:theme="@style/QuranToolBar"
+        android:exported="false"/>
+    <activity android:name=".HelpActivity"
+        android:exported="false"/>
     <activity
         android:name=".ui.PagerActivity"
         android:launchMode="singleTop"
-        android:theme="@style/QuranToolBar.Overlay"/>
+        android:theme="@style/QuranToolBar.Overlay"
+        android:exported="false"/>
     <activity
         android:name=".ui.TranslationManagerActivity"
-        android:configChanges="keyboardHidden|orientation|screenSize"/>
+        android:configChanges="keyboardHidden|orientation|screenSize"
+        android:exported="false"/>
     <activity
         android:name=".QuranPreferenceActivity"
         android:theme="@style/QuranToolBar"
-        android:configChanges="keyboardHidden|orientation|screenSize"/>
+        android:configChanges="keyboardHidden|orientation|screenSize"
+        android:exported="false"/>
     <activity
         android:name=".QuranAdvancedPreferenceActivity"
         android:theme="@style/QuranToolBar"
-        android:configChanges="keyboardHidden|orientation|screenSize"/>
+        android:configChanges="keyboardHidden|orientation|screenSize"
+        android:exported="false"/>
 
     <activity
         android:name=".SearchActivity"
-        android:launchMode="singleTop">
+        android:launchMode="singleTop"
+        android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.SEARCH"/>
       </intent-filter>
@@ -79,16 +93,15 @@
           android:name="android.app.searchable"
           android:resource="@xml/searchable"/>
     </activity>
-    <activity android:name=".QuranForwarderActivity">
+
+    <activity android:name=".QuranForwarderActivity"
+        android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <data android:scheme="quran"/>
       </intent-filter>
     </activity>
-    <activity
-        android:name=".ui.AudioManagerActivity"
-        android:theme="@style/Quran"/>
 
     <!-- declare the default searchable Activity for the whole app -->
     <meta-data
@@ -110,13 +123,15 @@
           android:resource="@xml/file_paths"/>
     </provider>
 
-    <receiver android:name="androidx.media.session.MediaButtonReceiver">
+    <receiver android:name="androidx.media.session.MediaButtonReceiver"
+        android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MEDIA_BUTTON"/>
       </intent-filter>
     </receiver>
 
-    <activity android:name=".QuranImportActivity">
+    <activity android:name=".QuranImportActivity"
+        android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.SEND"/>
         <category android:name="android.intent.category.DEFAULT"/>
@@ -128,46 +143,41 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
 
-        <data
-            android:mimeType="*/*"
-            android:scheme="file"
-            android:pathPattern=".*\\.backup"
-            android:host="*"/>
-        <data
-            android:mimeType="*/*"
-            android:scheme="file"
-            android:pathPattern=".*\\..*\\.backup"
-            android:host="*"/>
-        <data
-            android:mimeType="*/*"
-            android:scheme="file"
-            android:pathPattern=".*\\..*\\..*\\.backup"
-            android:host="*"/>
-        <data
-            android:mimeType="*/*"
-            android:scheme="file"
-            android:pathPattern=".*\\..*\\..*\\..*\\.backup"
-            android:host="*"/>
+        <data android:scheme="file"/>
+        <data android:host="*"/>
+        <data android:mimeType="*/*"/>
+        <data android:pathPattern=".*\\.backup"/>
+        <data android:pathPattern=".*\\..*\\.backup"/>
+        <data android:pathPattern=".*\\..*\\..*\\.backup"/>
+        <data android:pathPattern=".*\\..*\\..*\\..*\\.backup"/>
       </intent-filter>
     </activity>
+
     <activity android:name=".pageselect.PageSelectActivity"
-        android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        android:theme="@style/QuranToolBar"
+        android:exported="false"/>
 
     <service
-        android:enabled="true"
-        android:name=".service.QuranDownloadService"/>
+        android:exported="false"
+        android:name=".service.QuranDownloadService"
+        android:foregroundServiceType="dataSync"/>
+
     <service
         android:exported="false"
-        android:name=".service.AudioService">
+        android:name=".service.AudioService"
+        android:foregroundServiceType="mediaPlayback">
       <intent-filter>
         <action android:name="android.intent.action.MEDIA_BUTTON"/>
       </intent-filter>
     </service>
+
     <service
         android:name=".widget.BookmarksWidgetService"
+        android:exported="false"
         android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-    <receiver android:name=".widget.BookmarksWidget">
+    <receiver android:name=".widget.BookmarksWidget"
+        android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
         <action android:name="com.quran.labs.androidquran.UPDATE_LIST" />
@@ -177,7 +187,9 @@
           android:name="android.appwidget.provider"
           android:resource="@xml/bookmarks_widget_info" />
     </receiver>
-    <receiver android:name=".widget.SearchWidget">
+
+    <receiver android:name=".widget.SearchWidget"
+        android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
       </intent-filter>
@@ -190,15 +202,14 @@
     <activity
         android:name=".widget.ShowJumpFragmentActivity"
         android:launchMode="singleInstance"
+        android:exported="false"
         android:excludeFromRecents="true"
-        android:theme="@style/Theme.AppCompat.Dialog" />
-
-    <activity android:name=".ui.SheikhAudioManagerActivity" />
+        android:theme="@style/QuranDialog" />
 
     <!-- override WorkManager initialization -->
     <provider
-        android:name="androidx.work.impl.WorkManagerInitializer"
-        android:authorities="${applicationId}.workmanager-init"
+        android:name="androidx.startup.InitializationProvider"
+        android:authorities="${applicationId}.androidx-startup"
         tools:node="remove" />
   </application>
 </manifest>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/cab_bookmark_ayah"
+          android:icon="@drawable/ic_not_favorite"
+          android:title="@string/bookmark_ayah" />
+    <item android:id="@+id/cab_tag_ayah"
+          android:icon="@drawable/ic_tag"
+          android:title="@string/tag_ayah" />
+    <item android:id="@+id/cab_share_ayah"
+          android:icon="@drawable/ic_share"
+          android:title="@string/share_ayah_text">
+        <menu>
+            <item android:id="@+id/cab_share_ayah_link"
+                android:icon="@drawable/ic_link"
+                android:title="@string/share_ayah" />
+            <item android:id="@+id/cab_share_ayah_text"
+                android:icon="@drawable/ic_share"
+                android:title="@string/share_ayah_text" />
+            <item android:id="@+id/cab_copy_ayah"
+                android:icon="@drawable/ic_copy"
+                android:title="@string/copy_ayah" />
+        </menu>
+    </item>
+    <item android:id="@+id/cab_translate_ayah"
+          android:icon="@drawable/ic_translation"
+          android:title="@string/translation_ayah" />
+    <item android:id="@+id/cab_play_from_here"
+          android:icon="@drawable/ic_play"
+          android:title="@string/play_from_here" />
+    <item android:id="@+id/cab_recite_from_here"
+          android:visible="false"
+          android:icon="@drawable/ic_mic"
+          android:title="@string/recite_from_here" />
+</menu>

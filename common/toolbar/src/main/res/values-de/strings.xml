@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">Lesezeichen für diesen Vers hinzufügen</string>
+  <string name="tag_ayah">Ein Schlagwort zum Vers hinzufügen</string>
+  <string name="share_ayah">Vers Link teilen</string>
+  <string name="share_ayah_text">Versinhalt teilen</string>
+  <string name="translation_ayah">Vers Übersetzung/Koranexegese</string>
+  <string name="play_from_here">Ab hier abspielen</string>
+  <string name="recite_from_here">Ab hier rezitieren</string>
+  <string name="search_key">Drücken Sie die Suchtaste zum Nachschlagen eines Verses</string>
+  <string name="copy_ayah">Kopiere Vers</string>
+</resources>

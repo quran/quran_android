@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="bookmark_ayah">Agregar este versículo a Favoritos</string>
+  <string name="tag_ayah">Etiquetar esta versículo</string>
+  <string name="share_ayah">Compartir enlace del versículo</string>
+  <string name="share_ayah_text">Compartir texto del versículo</string>
+  <string name="translation_ayah">Traducción del versículo / explicación</string>
+  <string name="play_from_here">Reproducir desde aquí</string>
+  <string name="recite_from_here">Recita desde aquí</string>
+  <string name="search_key">Pulse la tecla de búsqueda para buscar un versículo</string>
+  <string name="copy_ayah">Copiar versículo</string>
+</resources>

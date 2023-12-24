@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Quran</string>
+  <string name="downloadPrompt_title">Muat turun fail yang diperlukan?</string>
+  <string name="downloadPrompt">Untuk prestasi yang optimal, beberapa fail perlu dimuat turun. Jika anda memilih untuk tidak melakukannya sekarang, setiap halaman yang dibuka nanti akan mengambil lebih masa. Apakah anda ingin memuat turun fail yang diperlukan sekarang?</string>
+  <string name="downloadTabletPrompt">Kami baru saja meningkatkan kualiti halaman untuk tablet. Apakah anda ingin memuat turun sekarang?</string>
+  <string name="downloadImportantPrompt">Terdapat kemas kini penting untuk halaman Quran peranti anda. Apakah anda ingin memuat turun sekarang?</string>
+  <string name="downloadPrompt_ok">Ya</string>
+  <string name="downloadPrompt_no">Tidak</string>
+  <string name="downloading_message">Sila tunggu fail dimuat turun. (Boleh menyambung semula)</string>
+  <string name="extracting_title">Sedang Proses&#8230;</string>
+  <string name="menu_about">Tentang Kami</string>
+  <string name="menu_other_apps">Aplikasi lain</string>
+  <string name="menu_settings">Tetapan</string>
+  <string name="menu_jump_last_page">Halaman terakhir</string>
+  <string name="menu_bookmarks">Penanda</string>
+  <string name="menu_bookmarks_page">Penanda Halaman</string>
+  <string name="menu_bookmarks_ayah">Penanda Ayat</string>
+  <string name="menu_sort">Susunan</string>
+  <string name="menu_sort_date">Tarikh Dibuat</string>
+  <string name="menu_sort_location">Lokasi dalam Quran</string>
+  <string name="menu_translation">Tunjukkan Terjemahan</string>
+  <string name="menu_back_to_page">Tunjukkan Mushaf</string>
+  <string name="menu_help">Bantuan</string>
+  <string name="menu_search">Cari</string>
+  <string name="menu_get_translations">Dapatkan Terjemahan</string>
+  <string name="menu_jump">Capaian cepat</string>
+  <string name="gotoPage">Ke halaman</string>
+
+  <!-- about -->
+  <string name="about_description">Quran for Android adalah aplikasi Quran percuma. Sila panjangkan doa untuk para sukarela yang telah menyumbang.</string>
+  <string name="about_data_sources">Sumber data</string>
+  <string name="about_images">Gambar</string>
+  <string name="about_madani_images">Gambar Quran adalah berasaskan fon daripada King Fahd Quran Printing Complex</string>
+  <string name="about_naskh_images">Gambar-gambar Quran untuk aplikasi Naskh adalah diambil (dengan kebenaran) daripada SHL Info Systems</string>
+  <string name="about_qaloon_images">Gambar-gambar Qaloon adalah digunakan dengan kebenaran Nous Memes Editions Et Diffusion (Tunisia)</string>
+  <string name="about_quranicaudio_summary">mp3 pembacaan tanpa jurang Quran</string>
+  <string name="about_quran_ksu">Electronic Moshaf Project</string>
+  <string name="about_quran_ksu_summary">Projek King Saud University Electronic Moshaf adalah sumber terjemahan arab aplikasi ini dan beberapa bahasa lain. Ia juga adalah sumber bagi pembacaan Dr. Ayman Suwaid.</string>
+  <string name="about_furqan_summary">Teks Uthmani dan terjemahan Arab</string>
+  <string name="about_tanzil_summary">Terjemahan untuk pelbagai bahasa</string>
+  <string name="about_noorhidayat_summary">Fon terjemahan Noorehira dan Mufti Taqi</string>
+  <string name="about_open_source">Projek Sumber Terbuka</string>
+  <string name="about_others">Lain-lain</string>
+  <string name="about_contributors">Senarai Penyumbang</string>
+  <string name="about_contributors_summary">Senarai para penyumbang untuk projek aplikasi Quran for Android</string>
+
+  <!-- help -->
+  <string name="help_title">Soalan yang sering ditanya (FAQ)</string>
+  <string name="help">
+&lt;b>Bagaimana cara memainkan audio tilawah?&lt;/b>
+&lt;br/>Buka Quran pada halaman yang anda inginkan. Tekan pada skrin. Di bahagian bawah, anda akan lihat butang play dan beberapa teks dengan nama qari. Klik nama qari untuk mengganti pilihan qari. Klik butang play untuk memuat turun dan/atau memainkan audio dari halaman yang terpapar.
+&lt;br/>
+&lt;br/>&lt;b>Bagaimana cara memaparkan terjemahan?&lt;/b>
+&lt;br/>Buka Quran pada halaman yang anda inginkan. Tekan pada layar. Di bahagian atas, tekan pada ikon dunia. Atau, jika tiada, anda mungkin melihat ikon dengan tiga titik. Tekan ikon tersebut dan pilih terjemahan).
+&lt;br/>Jika anda tidak memiliki set data terjemahan yang diperlukan, anda akan diminta untuk memuat turun fail terjemahan yang diperlukan. Pilih dan muat turun terjemahan, kemudian kembali ke halaman ulangi proses di atas untuk melihat terjemahan.
+&lt;br/>
+&lt;br/>&lt;b>Bagaimana cara menanda halaman?&lt;/b>
+&lt;br/>Buka Quran pada halaman yang anda inginkan. Tekan pada layar. Di bahagian kanan atas, anda akan melihat ikon bintang. Tekan ikon bintang untuk menandanya (akan berwarna putih sepenuhnya). Tekan ikon bintang sekali lagi untuk membuang penanda.
+&lt;br/>
+&lt;br/>&lt;b>Bagaimana cara membesarkan teks?&lt;/b>
+&lt;br/>Pada mod halaman arab (paparan mushaf), pegang peranti anda dalam posisi melintang (landscape). Ini akan membuat teks lebih besar (bergantung pada tetapan). Pada mod terjemahan, masuk ke tetapan dan pilih saiz teks terjemahan.
+&lt;br/>
+&lt;br/>&lt;b>Bagaimana cara berkongsi ayat? &lt;/b>
+&lt;br/>Pada mod halaman arab, tekan dan tahan pada ayat yang diinginkan, sebuah menu akan terpapar dimana anda boleh memilih untuk menanda, berkongsi, lihat terjemahan atau menyalin ayat.
+&lt;br/>
+&lt;br/>&lt;b>Font Malayalam/Tamil/Bangla/Urdu tidak berfungsi! &lt;/b>
+&lt;br/>Android sebelum versi 4.0 memang tidak menyokong font tersebut.
+</string>
+  <string name="search_hint">Cari dalam Quran</string>
+  <string name="quranSearchType">Ayat Quran</string>
+
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="one">Satu hasil carian untuk \"%1$s\": </item>
+    <item quantity="other">%2$d hasil carian untuk \"%1$s\": </item>
+  </plurals>
+
+  <!-- m permissions stuff -->
+  <string name="storage_permission_rationale">Quran perlukan kebenaran untuk menyimpan data dalam storan luaran.
+    Quran masih akan berfungsi tanpa kebenaran ini tetapi jika anda nyahpasang aplikasi, segala data surah, audio dan lain-lain yang dimuat turun akan hilang.
+    Beri kebenaran?</string>
+  <string name="storage_permission_please_restart">Sila keluar dan mulakan semula aplikasi untuk tetapan terkini.</string>
+
+  <!-- Search messages -->
+  <string name="found_in_sura">Dijumpai dalam Surah %1$s: %2$d (Halaman %3$d)</string>
+  <string name="no_results">Tidak dijumpai \"%s\"</string>
+  <string name="no_arabic_search_available">Anda belum memuat turun paket pencarian Arab. Sila muat turun dan ulangi pencarian</string>
+  <string name="get_arabic_search_db">Dapatkan Database Pencarian Arab</string>
+
+  <!-- Quran Preference Activity -->
+  <string name="prefs_volume_key_navigation_title">Navigasi butang volume</string>
+  <string name="prefs_volume_key_navigation_summary">Berpindah halaman dengan menggunakan butang volume</string>
+  <string name="prefs_category_reading">Keutamaan Bacaan</string>
+  <string name="prefs_category_translation">Keutamaan Terjemahan</string>
+  <string name="prefs_category_display_settings">Tetapan Paparan</string>
+  <string name="prefs_use_arabic_title">Mod Aplikasi Arab (الوضع العربي)</string>
+  <string name="prefs_use_arabic_summary_on">Aplikasi keseluruhan akan menggunakan tulisan dan bahasa Arab</string>
+  <string name="prefs_new_background_title">Latar beakang baru</string>
+  <string name="prefs_lock_orientation_title">Kunci orientasi layar</string>
+  <string name="prefs_lock_orientation_summary_on">Halaman Quran akan berada dalam mod orientasi tetap</string>
+  <string name="prefs_lock_orientation_summary_off">Penyesuaian orientasi layar secara automatik</string>
+  <string name="prefs_landscape_orientation_title">Orientasi Landscape</string>
+  <string name="prefs_landscape_orientation_summary_on">Menggunakan orientasi layar landscape (melintang)</string>
+  <string name="prefs_landscape_orientation_summary_off">Menggunakan orientasi layar portrait (tegak)</string>
+  <string name="prefs_night_mode_title">Mod malam</string>
+  <string name="prefs_night_mode_summary">Menggunakan latar belakang gelap dan teks terang</string>
+  <string name="prefs_night_mode_text_brightness_title">Kecerahan teks</string>
+  <string name="prefs_night_mode_text_brightness_summary">Kecerahan teks ketika mod malam aktif</string>
+  <string name="prefs_night_mode_background_brightness_title">Kecerahan latar belakang</string>
+  <string name="prefs_night_mode_background_brightness_summary">Kecerahan halaman apabila mod malam aktif</string>
+  <string name="prefs_overlay_page_info_title">Papar maklumat halaman</string>
+  <string name="prefs_overlay_page_info_summary">Nombor halaman, nama surah dan nomor juz\' akan dipaparkan</string>
+  <string name="prefs_display_marker_title">Paparkan popup penanda</string>
+  <string name="prefs_display_marker_summary">Paparkan popup ketika mencapai pergantian juz\', hizb, dll</string>
+  <string name="prefs_highlight_bookmarks_title">Papar penanda</string>
+  <string name="prefs_highlight_bookmarks_summary">Papar penanda ketika membaca</string>
+  <string name="prefs_translation_text_title">Saiz teks terjemahan</string>
+  <string name="prefs_translations">Terjemahan</string>
+  <string name="prefs_translations_summary">Muat turun dan penetapan terjemahan</string>
+  <string name="prefs_ayah_before_translation_title">Papar ayat sebelum terjemahan</string>
+  <string name="prefs_ayah_before_translation_summary">Papar ayat (dalam bahasa Arab) di atas terjemahan</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
+  <string name="prefs_category_download">Pilihan Muat Turun</string>
+  <string name="prefs_streaming_title">Streaming</string>
+  <string name="prefs_streaming_summary">Stream audio apabila boleh</string>
+  <string name="prefs_download_amount_title">Paket Muat Turun</string>
+  <string name="prefs_download_amount_summary">Paket fail setiap muat turun untuk audio berjurang.</string>
+  <string name="prefs_audio_manager_summary">Urus dan muat turun audio Quran</string>
+  <string name="downloaded_translations">Telah dimuat turun</string>
+  <string name="available_translations">Boleh untuk dimuat turun</string>
+  <string name="dialog_ok">OK</string>
+  <string name="prefs_app_location_title">Lokasi aplikasi</string>
+  <string name="prefs_app_location_summary">Pilih lokasi untuk menyimpan fail</string>
+  <string name="prefs_send_logs_title">Hantar log</string>
+  <string name="prefs_send_logs_summary">Hantar log untuk membantu pemaju aplikasi</string>
+  <string name="prefs_sdcard_internal">Simpanan Dalaman</string>
+  <string name="prefs_sdcard_external">SD Card Luar %1$d</string>
+  <string name="prefs_app_size">Saiz aplikasi</string>
+  <string name="prefs_calculating_app_size">Mengira saiz aplikasi</string>
+  <string name="prefs_copying_app_files">Menyalin fail aplikasi</string>
+  <string name="prefs_err_moving_app_files">Gagal memindahkan fail aplikasi</string>
+  <string name="prefs_no_enough_space_to_move_files">Tidak cukup ruang untuk memindahkan fail aplikasi</string>
+  <string name="prefs_megabytes_int">%1$d MB</string>
+  <string name="prefs_dual_page_mode_title">Mod Tablet</string>
+  <string name="prefs_dual_page_mode_enabled">Dalam mod landscape, dua halaman akan muncul bersebelahan.</string>
+  <string name="prefs_dual_page_mode_disabled">Dalam mod landscape, hanya paparkan satu halaman.</string>
+  <string name="prefs_category_advanced">Pilihan lanjutan</string>
+  <string name="prefs_category_advanced_summary">Import/export penanda, tetapkan direktori data Quran, dll.</string>
+  <string name="prefs_import_title">Import</string>
+  <string name="prefs_import_summary">Import penanda dan tag</string>
+  <string name="prefs_export_title">Export</string>
+  <string name="prefs_export_summary">Export salinan penanda dan tag</string>
+  <string name="prefs_page_type_title">Jenis mukasurat (dalam cubaan)</string>
+  <string name="prefs_page_type_summary">Pilih jenis mukasurat bacaan</string>
+  <!-- Preferences End -->
+
+  <!-- tafaseer -->
+  <string name="see_tafseer_of_verse">Lihat terjemahan untuk ayat %d.</string>
+
+  <!-- translation updates -->
+  <string name="update_available">Kemaskini Ada</string>
+  <string name="translation_updates_available">Terdapat kemaskini untuk terjemahan anda. Paparkan terjemahan sekarang?</string>
+  <string name="translation_dialog_yes">Ya</string>
+  <string name="translation_dialog_later">Nanti</string>
+
+  <!-- End Number picker Strings -->
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
+  <string name="quran_hizb">Hizb</string>
+  <string name="quran_juz2">Juz\'</string>
+  <string name="quran_page">Halaman</string>
+  <string name="quran_sura">Surah</string>
+  <string name="quran_ayah">Ayat %1$d</string>
+  <string name="quran_sura_title">Surah %1$s</string>
+  <string name="sura_ayah_notification_str">Surah %1$s, Ayat %2$d</string>
+  <string name="sura_ayah_sharing_str">Surah %1$s: %2$d</string>
+
+  <string name="index_loading">Memuat…</string>
+
+  <string name="canceling">Membatalkan&#8230;</string>
+  <string name="juz2_description">Juz\' %1$s</string>
+  <string name="page_description">Halaman %1$s, Juz\' %2$s</string>
+  <string name="highlighting_database">Fail yang Diperlukan</string>
+  <string name="timing_database">Fail yang Diperlukan</string>
+
+  <!-- download statuses and errors -->
+  <string name="download_successful">Muat Turun Berjaya</string>
+  <string name="download_processing">Proses Muat Turun&#8230;</string>
+  <string name="download_error_general">Muat turun gagal</string>
+  <string name="download_error_disk">Tidak cukup ruangan untuk memuat turun</string>
+  <string name="download_error_network">Tidak dapat memuat turun kerana ralat jaringan</string>
+  <string name="download_error_perms">Tidak dapat memuat turun kerana ralat keizinan pada peranti</string>
+  <string name="download_error_invalid_download">Fail dimuat turun tidak lengkap</string>
+  <string name="download_error_invalid_download_retry">Fail dimuat turun tidak lengkap, mencuba untuk muat turun semula</string>
+  <string name="download_error_network_retry">Ralat jaringan, mencuba semula&#8230;</string>
+  <string name="notification_download_canceled">Muat turun dibatalkan</string>
+  <string name="download_non_wifi_prompt">Anda tidak berada pada jaringan wifi. Teruskan juga muat turun data?</string>
+
+  <!-- downloading dialogs -->
+  <string name="process_progress">Memproses fail %1$d / %2$d</string>
+  <string name="download_retry">Cuba semula</string>
+  <string name="download_cancel">Batal</string>
+  <string name="download_extra_data">Perlu memuat turun beberapa fail kecil untuk menyokong kemampuan berkongsi dan terjemahan. Muat turun sekarang?</string>
+
+  <!-- translation database stuff -->
+  <string name="remove_dlg_title">Hapus Terjemahan?</string>
+  <string name="remove_dlg_msg">Apakah anda yakin ingin menghapuskan %1$s?</string>
+  <string name="error_getting_translation_list">Tidak dapat memuat turun daftar terjemahan. Sila cuba lagi nanti.</string>
+  <string name="search_data">Cari Data</string>
+  <string name="need_translation">Anda belum memuat turun fail terjemahan/tafsir.</string>
+  <string name="get_translations">Muat Turun Terjemahan</string>
+
+  <!-- help -->
+  <string name="email_us">Jika soalan anda tidak terjawab di atas, anda boleh cuba untuk menghantar email kepada quranandroid@gmail.com untuk sokongan. Sila maklum bahawa kami menerima banyak email dan mungkin tidak mampu menjawab kesemuanya.</string>
+
+  <!-- sura metainfo -->
+  <string name="makki">Makkiyah</string>
+  <string name="madani">Madaniyah</string>
+  <plurals name="verses">
+    <item quantity="one">Satu ayat</item>
+    <item quantity="other">%s ayat-ayat</item>
+  </plurals>
+
+  <!-- ayah action panel -->
+  <string name="play_restrict_range">Hanya mainkan ayat di atas</string>
+  <string name="play_verses_range">Mainkan set ayat:</string>
+  <string name="play_each_verse">Mainkan setiap ayat:</string>
+  <string name="play_apply">Tetapkan</string>
+  <string name="play_apply_and_play">Tetapkan dan main</string>
+  <string name="previous">Sebelum</string>
+  <string name="play">Mainkan</string>
+  <string name="pause">Pause</string>
+  <string name="stop">Hentikan</string>
+  <string name="next">Seterus</string>
+
+  <string-array name="repeatValues">
+    <item>1 kali</item>
+    <item>2 kali</item>
+    <item>3 kali</item>
+    <item>Ulang</item>
+  </string-array>
+
+  <string name="playback_prompt_title">Main semula dari:</string>
+  <string name="starting_page_label">Mula muka surat</string>
+
+  <!-- long press -->
+  <string name="ayah_copied_popup">Ayat telah disalin</string>
+
+  <!-- bookmarks & tags contextual action bar -->
+  <string name="tag_bookmark">Beri Label pada Penanda</string>
+  <string name="delete_tag">Hapus Label</string>
+  <string name="edit_tag">Sunting Label</string>
+  <string name="new_tag">Label Baru</string>
+  <string name="not_tagged">Penanda tanpa Label</string>
+  <plurals name="bookmark_tag_deleted">
+    <item quantity="one">Penanda dipadamkan</item>
+    <item quantity="other">%d penanda telah dipadam</item>
+  </plurals>
+  <string name="undo">Batalkan</string>
+
+  <string name="recent_pages">Muka surat terkini</string>
+
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">Label</string>
+  <string name="tag_name">Nama</string>
+
+  <!-- penanda & tag list -->
+  <string name="bookmarks_list_empty">Tidak ada Penanda</string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
+  <string name="notification_channel_download">Muat turun Quran</string>
+  <string name="notification_channel_audio">Pembacaan Quran</string>
+  <string name="about_quran_enc" translatable="false">Ensiklopedia Alquran Alkarim</string>
+  <string name="menu_sort_group_by_tags">Kelompokkan berdasar Label</string>
+  <string name="menu_show_date">Tampilkan Tanggal</string>
+  <string name="please_wait">Harap tunggu...</string>
+  <string name="about_quran_enc_summary">Terjemahan untuk banyak bahasa</string>
+  <string name="search_full_results">Hasil Lengkap</string>
+  <string name="search_entire_mushaf">Cari seluruh mushaf</string>
+  <string name="prefs_sura_translated_name_summary">Menunjukkan terjemahan nama surat</string>
+  <string name="prefs_sura_translated_name_title">Surat nama yang diterjemahkan</string>
+  <string name="prefs_preview">Pratayang</string>
+  <string name="more_translations">Terjemahan Lainnya</string>
+  <string name="import_data_permissions_error">Tidak bisa membaca berkas cadangan karena masalah otentikasi.</string>
+  <string name="import_data_error">Berkas cadangan tidak sah (atau tak bisa membaca berkas cadangan).</string>
+  <string name="import_data">Impor Data</string>
+  <string name="import_data_and_override">Jika anda mengimpor berkas ini, ia akan menggantikan semua \
+        penanda anda dengan %1$d penanda dan %2$d label. Impor?</string>
+  <string name="import_successful">Impor Berhasil</string>
+  <string name="export_data_error">Kesalahan dalam mengekspor data.</string>
+  <string name="exported_data">Data diekspor ke %1$s.</string>
+  <string name="move_up">Bergerak Ke Atas</string>
+  <string name="move_down">Bergerak Ke Bawah</string>
+  <string name="delete_translation">Hapus Terjemahan</string>
+  <string name="warning">Peringatan</string>
+  <string name="kitkat_external_message">Karena batasan pada Android, jika anda memilih untuk menempatkan data Quran         pada kartu SD eksternal dan kemudian hari membuang atau menghapus data Quran Android, semua halaman dan audio Quran         Android akan dihapus dan anda harus mengunduh mereka lagi. Anda yakin ingin menggunakan         kartu SD eksternal?</string>
+  <string name="scoped_storage_message">Karena perubahan Android untuk meningkatkan privasi pengguna, menyalin file di luar direktori aplikasi mungkin menghentikan Quran mengakses datanya di versi Android yang akan datang. Apakah Anda yakin ingin menggunakan jalur ini?</string>
+  <string name="please_grant_permissions">Harap berikan izin dalam setelan aplikasi.</string>
+  <string name="quran_ayah_details">%1$s - Ayat %2$s, Juz\' %3$s</string>
+  <string name="sdcard_error">Tidak bisa menemukan kartu SD. Harap masukkan dan coba lagi.</string>
+  <string name="tag_blank_tag_error">Nama label tidak boleh kosong!</string>
+  <string name="tag_duplicate_tag_error">Nama label sudah dipakai</string>
+  <string name="audio_updated_title">Pembaruan file Audio Quran</string>
+  <string name="audio_updated_text">Beberapa file audio Quran telah diperbarui. Quran telah menghapus salinan file-file ini sehingga versi terbaru dapat diunduh saat berikutnya Anda memutarnya kembali.</string>
+  <string name="prefs_category_dual_screen">Preferensi Halaman Ganda</string>
+  <string name="prefs_split_page_and_translation_title">Al-Quran dan terjemahan dalam mode ganda</string>
+  <string name="prefs_split_page_and_translation_summary">Dalam mode halaman ganda dengan terjemahan, halaman Quran dan terjemahan ditampilkan</string>
+</resources>

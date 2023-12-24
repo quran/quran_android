@@ -1,0 +1,36 @@
+plugins {
+  id 'quran.android.library.android'
+  id 'app.cash.sqldelight'
+  id 'com.squareup.anvil'
+}
+
+anvil { generateDaggerFactories = true }
+
+android.namespace 'com.quran.mobile.bookmark'
+
+sqldelight {
+  databases {
+    BookmarksDatabase {
+      packageName = "com.quran.labs.androidquran"
+      schemaOutputDirectory = file("src/main/sqldelight/databases")
+      verifyMigrations = true
+    }
+  }
+}
+
+dependencies {
+  implementation project(path: ':common:di')
+  implementation project(path: ':common:data')
+
+  // dagger
+  implementation libs.dagger.runtime
+
+  // coroutines
+  implementation libs.kotlinx.coroutines.core
+  implementation libs.kotlinx.coroutines.android
+
+  // sqldelight
+  implementation libs.sqldelight.android.driver
+  implementation libs.sqldelight.coroutines.extensions
+  implementation libs.sqldelight.primitive.adapters
+}

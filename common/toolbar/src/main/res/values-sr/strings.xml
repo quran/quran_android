@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">Zabeleži ovaj ajet</string>
+  <string name="tag_ayah">Označi ovaj ajet</string>
+  <string name="share_ayah">Podeli link ajeta</string>
+  <string name="share_ayah_text">Podeli tekst ajeta</string>
+  <string name="translation_ayah">Prevod/tefsir ajeta</string>
+  <string name="play_from_here">Pusti odavde</string>
+  <string name="recite_from_here">Recitirajte odavde</string>
+  <string name="search_key">Pritisnite tipku za pretragu da potražite ajet</string>
+  <string name="copy_ayah">Kopiraj ajet</string>
+</resources>

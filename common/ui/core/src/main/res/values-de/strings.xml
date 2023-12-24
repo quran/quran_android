@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="remove_button">Entfernen</string>
+  <string name="cancel">Abbrechen</string>
+  <string name="from">Von</string>
+  <string name="to">Bis</string>
+</resources>

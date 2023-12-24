@@ -16,7 +16,6 @@
   </string>
   <string name="downloadPrompt_ok">Ja</string>
   <string name="downloadPrompt_no">Nein</string>
-  <string name="downloading_title">Dateien werden heruntergeladen&#8230;</string>
   <string name="downloading_message">Bitte warten Sie bis die Dateien heruntergeladen wurden.
     Sie dürfen den Vorgang unterbrechen, falls es nötig sein sollte.
   </string>
@@ -37,7 +36,6 @@
   <string name="menu_get_translations">Lade die Übersetzungen</string>
   <string name="menu_jump">Springe zu</string>
   <string name="gotoPage">Gehe zur Seite</string>
-  <string name="cancel">Abbrechen</string>
 
   <!-- help -->
   <string name="help_title">Häufig gestellte Fragen</string>
@@ -92,11 +90,6 @@
   <string name="search_hint">Durchsuche den Quran</string>
   <string name="quranSearchType">Quranverse</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">1 Sure heruntergeladen</item>
-    <item quantity="other">%1$d Suren heruntergeladen</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">Resultat für \"%1$s\":</item>
@@ -104,7 +97,7 @@
   </plurals>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Gefunden in Sure %1$s, Vers %2$d</string>
+  <string name="found_in_sura">Gefunden in Sure %1$s: %2$d (Seite %3$d)</string>
   <string name="no_results">Es wurden keine Resultate für \"%s\" gefunden.</string>
   <string name="no_arabic_search_available">Sie haben das arabische Such-Paket noch nicht
     heruntergeladen. Bitte laden Sie dieses herunter und versuchen Sie es danach erneut.
@@ -139,6 +132,8 @@
   <string name="prefs_night_mode_text_brightness_title">Helligkeit des Textes</string>
   <string name="prefs_night_mode_text_brightness_summary">Die Helligkeit des Textes im Nachtmodus.
   </string>
+  <string name="prefs_night_mode_background_brightness_title">Helligkeit des Hintergrunds</string>
+  <string name="prefs_night_mode_background_brightness_summary">Helligkeit der Seite im Nachtmodus.</string>
   <string name="prefs_overlay_page_info_title">Seiteninfo anzeigen</string>
   <string name="prefs_overlay_page_info_summary">Blendet die Seitennummer, den Namen der Sure und
     die Juz\' Nummer während dem Lesen ein.
@@ -154,6 +149,8 @@
   <string name="prefs_ayah_before_translation_summary">Das arabische Original vor jedem übersetzten
     Vers anzeigen.
   </string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Downloadoptionen</string>
   <string name="prefs_streaming_title">Streaming</string>
   <string name="prefs_streaming_summary">Wenn möglich, Audio streamen</string>
@@ -164,7 +161,6 @@
   <string name="prefs_audio_manager_summary">Verwalten Sie Ihre Audiodateien.</string>
   <string name="downloaded_translations">Heruntergeladen</string>
   <string name="available_translations">Zum Download verfügbar</string>
-  <string name="remove_button">Entfernen</string>
   <string name="dialog_ok">Ok</string>
   <string name="prefs_app_location_title">Speicherort</string>
   <string name="prefs_app_location_summary">Wählen Sie den Speicherort der Dateien aus.</string>
@@ -213,6 +209,7 @@
   <string name="quran_ayah">Vers %1$d</string>
   <string name="quran_sura_title">Sure %1$s</string>
   <string name="sura_ayah_notification_str">Sure %1$s, Vers %2$d</string>
+  <string name="sura_ayah_sharing_str">Sure %1$s: %2$d</string>
 
   <string name="index_loading">Lade&#8230;</string>
 
@@ -251,9 +248,6 @@
   </string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Heruntergeladen %1$s / %2$s</string>
-  <string name="download_sura_progress">Heruntergeladen %1$s / %2$s von Sure %3$d</string>
-  <string name="download_sura_ayah_progress">Herunterladen von Sure %1$d Vers %2$d</string>
   <string name="process_progress">Datei wird verarbeitet %1$d / %2$d</string>
   <string name="download_retry">Nochmals versuchen</string>
   <string name="download_cancel">Abbrechen</string>
@@ -289,8 +283,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Von</string>
-  <string name="play_to">Bis</string>
   <string name="play_restrict_range">Nur die oben genannten Verse abspielen</string>
   <string name="play_apply">Anwenden</string>
   <string name="play_apply_and_play">Anwenden und Abspielen</string>
@@ -305,14 +297,6 @@
   </string-array>
 
   <!-- long press -->
-  <string name="bookmark_ayah">Lesezeichen für diesen Vers hinzufügen</string>
-  <string name="tag_ayah">Ein Schlagwort zum Vers hinzufügen</string>
-  <string name="share_ayah">Vers Link teilen</string>
-  <string name="share_ayah_text">Versinhalt teilen</string>
-  <string name="translation_ayah">Vers Übersetzung/Koranexegese</string>
-  <string name="play_from_here">Ab hier abspielen</string>
-  <string name="search_key">Drücken Sie die Suchtaste zum Nachschlagen eines Verses</string>
-  <string name="copy_ayah">Kopiere Vers</string>
   <string name="ayah_copied_popup">Vers kopiert</string>
 
   <!-- bookmarks & tags contextual action bar -->
@@ -329,6 +313,78 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Keine Lesezeichen</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Audioverwaltung</string>
+    <string name="about_quran_enc" translatable="false">Die Enzyklopädie von dem heiligen Quran</string>
+  <string name="about_quran_enc_summary">Übersetzungen für viele Sprachen</string>
+    <string name="menu_other_apps">Andere Apps</string>
+  <string name="menu_sort_group_by_tags">Gruppieren nach Tags</string>
+  <string name="menu_show_date">Datum anzeigen</string>
+  <string name="please_wait">Bitte warten...</string>
+  <string name="about_description">Quran für Android ist eine kostenlose Korananwendung. Bitte vergessen Sie die Spender nicht in Ihren Gebeten.</string>
+  <string name="about_data_sources">Datenquellen</string>
+  <string name="about_images">Bilder</string>
+  <string name="about_madani_images">Die Koranbilder basieren auf den Schriftarten des König-Fahd-Komplex zum Druck vom Qurʾān</string>
+  <string name="about_naskh_images">Die Koranbilder für die Naskh-App stammen (mit Genehmigung) von SHL Info Systems</string>
+  <string name="about_qaloon_images">Die Bilder von Qaloon werden mit Genehmigung von Nous-Mêmes Éditions Et Diffusion (Tunesien) verwendet.</string>
+  <string name="about_quranicaudio_summary">Lückenlose mp3-Koranrezitationen</string>
+  <string name="about_quran_ksu">Elektronisches Moshaf-Projekt</string>
+  <string name="about_quran_ksu_summary">Das elektronische Moshaf-Projekt der König Saud Universität ist die Quelle der App für den arabischen Tafaseer und die Übersetzungen für verschiedene Sprachen. Es ist auch die Quelle für die Rezitation von Dr. Ayman Suwaid.</string>
+  <string name="about_furqan_summary">Uthmani-Text und arabischer Tafaseer</string>
+  <string name="about_tanzil_summary">Übersetzungen für einige Sprachen</string>
+  <string name="about_noorhidayat_summary">Noorehira Schrift und Mufti Taqi Übersetzung</string>
+  <string name="about_open_source">Open-Source-Projekte</string>
+  <string name="about_others">Andere</string>
+  <string name="about_contributors">Mitwirkende</string>
+  <string name="about_contributors_summary">Eine Liste von Personen, die zur Entwicklung von Quran für Android beigetragen haben</string>
+  <string name="search_full_results">Vollständige Ergebnisse</string>
+  <string name="search_entire_mushaf">Suche im gesamten Mushaf</string>
+  <string name="storage_permission_rationale">Quran für Android möchte Ihre Erlaubnis, seine Daten auf einem externen Speicher zu speichern. Quran für Android funktioniert auch ohne diese Erlaubnis, aber wenn Sie die Daten löschen oder die App deinstallieren, werden alle heruntergeladenen Seiten, Audios und Daten entfernt. Erlauben Sie Quran für Android die Speicherung?</string>
+  <string name="storage_permission_please_restart">Bitte starten Sie die App neu, damit dies wirksam wird.</string>
+  <string name="prefs_highlight_bookmarks_title">Lesezeichen hervorheben</string>
+  <string name="prefs_highlight_bookmarks_summary">Markieren von mit Lesezeichen versehenen Ayahs beim Lesen</string>
+  <string name="prefs_send_logs_title">Protokolle senden</string>
+  <string name="prefs_send_logs_summary">Senden von Debug-Protokollen an den Entwickler</string>
+  <string name="prefs_category_advanced">Erweiterte Optionen</string>
+  <string name="prefs_category_advanced_summary">Lesezeichen importieren/exportieren, Koran-Datenverzeichnis festlegen usw.</string>
+  <string name="prefs_import_title">Importieren</string>
+  <string name="prefs_import_summary">Lesezeichen und Tags importieren</string>
+  <string name="prefs_export_title">Exportieren</string>
+  <string name="prefs_export_summary">Exportieren einer Kopie von Lesezeichen und Tags</string>
+  <string name="prefs_page_type_title">Seitentyp (experimentell)</string>
+  <string name="prefs_page_type_summary">Wählen Sie die Art der Leseseiten</string>
+  <string name="prefs_sura_translated_name_summary">Zeigen Sie die Übersetzung des Namens der Sūra an</string>
+  <string name="prefs_sura_translated_name_title">Sūra übersetzt Name</string>
+  <string name="prefs_preview">Vorschau</string>
+  <string name="more_translations">Weitere Übersetzungen</string>
+  <string name="import_data_permissions_error">Die Sicherungsdatei kann aufgrund eines Berechtigungsfehlers nicht gelesen werden.</string>
+  <string name="import_data_error">Ungültige Sicherungsdatei (oder Sicherungsdatei kann nicht gelesen werden).</string>
+  <string name="import_data">Daten importieren</string>
+  <string name="import_data_and_override">Wenn Sie diese Datei importieren, ersetzt sie alle Ihre Lesezeichen durch %1$d Lesezeichen und %2$d Tags. Importieren?</string>
+  <string name="import_successful">Import erfolgreich</string>
+  <string name="export_data_error">Fehler beim Exportieren von Daten</string>
+  <string name="exported_data">In %1$s exportierte Daten</string>
+  <string name="move_up">Aufsteigen</string>
+  <string name="move_down">Abwärts bewegen</string>
+  <string name="delete_translation">Übersetzung entfernen</string>
+  <string name="scoped_storage_message">Aufgrund von Android-Änderungen zur Erhöhung des Datenschutzes kann das Kopieren von Dateien außerhalb der App-Verzeichnisse den Zugriff auf die Daten von Quran für Android in zukünftigen Android-Versionen verhindern. Sind Sie sicher, dass Sie diesen Pfad verwenden möchten?</string>
+  <string name="please_grant_permissions">Bitte erlauben Sie dies in den Anwendungseinstellungen</string>
+  <string name="see_tafseer_of_verse">Der Tafseer dieser Ayah ist im Tafseer der Ayah %d enthalten (Zum Erweitern klicken).</string>
+  <string name="play_verses_range">Abspielen einer Reihe von Ayat:</string>
+  <string name="play_each_verse">Abspielen Sie jede Ayah:</string>
+  <string name="previous">Vorherige</string>
+  <string name="pause">Pause</string>
+  <string name="next">Weiter</string>
+  <string name="playback_prompt_title">Starten Sie die Wiedergabe von:</string>
+  <string name="starting_page_label">Anfang der Seite</string>
+  <string name="undo">Rückgängig machen</string>
+  <string name="recent_pages">Neueste Seiten</string>
+  <string name="tag_blank_tag_error">Tag-Namen dürfen nicht leer sein!</string>
+  <string name="tag_duplicate_tag_error">Der Tag-Name existiert bereits!</string>
+  <string name="audio_updated_title">Quran Audio Dateien Update</string>
+  <string name="audio_updated_text">Mehrere Quran-Audiodateien wurden aktualisiert. Quran für Android hat Ihre Kopie dieser Dateien entfernt, damit die neuesten Versionen heruntergeladen werden können, wenn Sie sie das nächste Mal abspielen zurück.</string>
+  <string name="prefs_category_dual_screen">Voreinstellungen für zwei Seiten</string>
+  <string name="prefs_split_page_and_translation_title">Koran und Übersetzung im Doppelmodus</string>
+  <string name="prefs_split_page_and_translation_summary">Im Doppelseitenmodus mit Übersetzungen werden die Koranseite und die Übersetzung angezeigt</string>
+  <string name="notification_channel_download">Koran Downloads</string>
+  <string name="notification_channel_audio">Koran-Rezitation</string>
+  <string name="quran_ayah_details">%1$s - Ayah %2$s, Ğuzʾ %3$s</string>
 </resources>

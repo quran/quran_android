@@ -1,0 +1,41 @@
+plugins {
+  id 'quran.android.library.compose'
+  id 'com.squareup.anvil'
+}
+
+android {
+  namespace 'com.quran.mobile.feature.qarilist'
+
+  kotlinOptions {
+    freeCompilerArgs += [
+        "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+        "-opt-in=androidx.compose.material.ExperimentalMaterialApi"
+    ]
+  }
+}
+
+anvil { generateDaggerFactories = true }
+
+dependencies {
+  implementation project(path: ':common:audio')
+  implementation project(path: ':common:data')
+  implementation project(path: ':common:ui:core')
+
+  implementation libs.androidx.annotation
+
+  // dagger
+  implementation libs.dagger.runtime
+
+  // compose
+  implementation libs.compose.animation
+  implementation libs.compose.foundation
+  implementation libs.compose.material
+  implementation libs.compose.material3
+  implementation libs.compose.ui
+  implementation libs.compose.ui.tooling.preview
+  debugImplementation libs.compose.ui.tooling
+
+  // coroutines
+  implementation libs.kotlinx.coroutines.core
+  implementation libs.kotlinx.coroutines.android
+}

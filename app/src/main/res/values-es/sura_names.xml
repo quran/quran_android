@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string-array name="sura_names">
+	<string-array name="sura_names_translation">
 		<item>El Inicio</item>
 		<item>La Vaca</item>
 		<item>La Familia De ‘imrán</item>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">بۇ ئايەتنى خەتكۈچلە</string>
+  <string name="tag_ayah">بۇ ئايەتكە بەلگە قوش</string>
+  <string name="share_ayah">ئايەت ئۇلانمىسىنى ھەمبەھىرلە</string>
+  <string name="share_ayah_text">ئايەت تېكىستتىنى ھەمبەھىرلە</string>
+  <string name="translation_ayah">ئايەت تەرجىمە/تەپسىر</string>
+  <string name="play_from_here">بۇ جايدىن باشلاپ چال</string>
+  <string name="recite_from_here">بۇ يەردىن ئوقۇڭ</string>
+  <string name="search_key">ئىزدە كۇنۇپكىسى بېسىلسا سۈرە ئىزدەيدۇ</string>
+  <string name="copy_ayah">ئايەت كۆچۈر</string>
+</resources>

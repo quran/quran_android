@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">收藏此节</string>
+  <string name="tag_ayah">为此节加上标签</string>
+  <string name="share_ayah">分享此节</string>
+  <string name="translation_ayah">翻译此节</string>
+  <string name="play_from_here">从当前节开始播放</string>
+  <string name="search_key">按住搜索键来查找某节</string>
+  <string name="copy_ayah">复制此节</string>
+  <string name="share_ayah_text">分享文字</string>
+  <string name="recite_from_here">从这里背诵</string>
+</resources>

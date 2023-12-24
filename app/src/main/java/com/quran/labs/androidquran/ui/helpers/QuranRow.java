@@ -1,10 +1,6 @@
 package com.quran.labs.androidquran.ui.helpers;
 
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import com.quran.data.model.bookmark.Bookmark;
 
 public class QuranRow {
 

@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.ui.util;
 
 import android.content.Context;
 import android.content.res.Resources;
-import androidx.annotation.NonNull;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +10,11 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.LocalTranslation;
 import com.quran.labs.androidquran.ui.PagerActivity;
+import com.quran.mobile.translation.model.LocalTranslation;
 
 import java.util.ArrayList;
 import java.util.List;

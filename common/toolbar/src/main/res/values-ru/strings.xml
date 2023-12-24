@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">Создать закладку этого аята</string>
+  <string name="tag_ayah">Создать тег для этого аята</string>
+  <string name="share_ayah">Поделиться аятом</string>
+  <string name="share_ayah_text">Поделиться текстом аята</string>
+  <string name="translation_ayah">Перевод/тафсир аята</string>
+  <string name="play_from_here">Воспроизвести отсюда</string>
+  <string name="recite_from_here">Читать отсюда</string>
+  <string name="search_key">Нажмите кнопку поиска, чтобы найти стих</string>
+  <string name="copy_ayah">Скопировать аят</string>
+</resources>

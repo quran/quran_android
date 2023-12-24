@@ -11,10 +11,11 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.quran.common.upgrade.LocalDataUpgrade
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.QuranDataStatus
+import com.quran.data.source.PageContentType
 import com.quran.data.source.PageProvider
-import com.quran.data.upgrade.LocalDataUpgrade
 import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.presenter.Presenter
@@ -25,24 +26,26 @@ import com.quran.labs.androidquran.worker.AudioUpdateWorker
 import com.quran.labs.androidquran.worker.MissingPageDownloadWorker
 import com.quran.labs.androidquran.worker.PartialPageCheckingWorker
 import com.quran.labs.androidquran.worker.WorkerConstants
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
-import io.reactivex.schedulers.Schedulers
+import com.quran.mobile.di.qualifier.ApplicationContext
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.functions.Consumer
+import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit.DAYS
 import javax.inject.Inject
 
 class QuranDataPresenter @Inject internal constructor(
-    val appContext: Context,
-    val quranInfo: QuranInfo,
-    val quranScreenInfo: QuranScreenInfo,
-    private val quranPageProvider: PageProvider,
-    val quranFileUtils: QuranFileUtils,
-    private val localDataUpgrade: LocalDataUpgrade) : Presenter<QuranDataActivity> {
+  @ApplicationContext val appContext: Context,
+  val quranInfo: QuranInfo,
+  val quranScreenInfo: QuranScreenInfo,
+  private val quranPageProvider: PageProvider,
+  val quranFileUtils: QuranFileUtils,
+  private val localDataUpgrade: LocalDataUpgrade
+) : Presenter<QuranDataActivity> {
 
   private var activity: QuranDataActivity? = null
   private var checkPagesDisposable: Disposable? = null
@@ -68,6 +71,7 @@ class QuranDataPresenter @Inject internal constructor(
               .andThen(actuallyCheckPages(pages))
               .flatMap { Single.fromCallable { localDataUpgrade.processData(it) } }
               .map { checkPatchStatus(it) }
+              .flatMap { Single.fromCallable { localDataUpgrade.processPatch(it) } }
               .doOnSuccess {
                 if (!it.havePages()) {
                   try {
@@ -108,6 +112,17 @@ class QuranDataPresenter @Inject internal constructor(
     WorkManager.getInstance(appContext)
         .enqueueUniquePeriodicWork(Constants.AUDIO_UPDATE_UNIQUE_WORK,
             ExistingPeriodicWorkPolicy.KEEP, updateAudioTask)
+  }
+
+  fun imagesVersion() = quranPageProvider.getImageVersion()
+
+  fun canProceedWithoutDownload() = quranPageProvider.getPageContentType() == PageContentType.Image
+
+  fun fallbackToImageType() {
+    val fallbackType = quranPageProvider.getFallbackPageType()
+    if (fallbackType != null) {
+      quranSettings.pageType = fallbackType
+    }
   }
 
   fun getDebugLog(): String = debugLog ?: ""
@@ -201,7 +216,7 @@ class QuranDataPresenter @Inject internal constructor(
       }
 
       val pageType = quranSettings.pageType
-      if (!quranSettings.didCheckPartialImages(pageType)) {
+      if (!quranSettings.didCheckPartialImages(pageType) && !pageType.endsWith("lines")) {
         Timber.d("enqueuing work for $pageType...")
 
         // setup check pages task

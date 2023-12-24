@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment
 
 import android.os.Bundle
+import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import com.quran.labs.androidquran.BuildConfig
@@ -14,7 +15,10 @@ class AboutFragment : PreferenceFragmentCompat() {
     val flavor = BuildConfig.FLAVOR + "Images"
     val parent = findPreference("aboutDataSources") as PreferenceCategory?
     imagePrefKeys.filter { it != flavor }.map {
-      parent?.removePreference(findPreference(it))
+      val pref: Preference? = findPreference(it)
+      if (pref != null) {
+        parent?.removePreference(pref)
+      }
     }
   }
 

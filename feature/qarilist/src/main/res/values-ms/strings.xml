@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Pilih Qari</string>
+  <string name="qarilist_ready_to_play">Sedia untuk mendengar</string>
+  <string name="qarilist_qaris_with_downloads">Qari dengan Muat Turun</string>
+  <string name="qarilist_gapless">Berterusan</string>
+  <string name="qarilist_gapped">Tidak Berterusan</string>
+  <string name="qarilist_selected">Dipilih</string>
+  <string name="qarilist_dismiss">Memecat</string>
+</resources>

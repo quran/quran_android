@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="app_name">Коран</string>
+  <string name="downloadPrompt_title">Завантажити необхідні файли?</string>
+  <string name="downloadPrompt">Для того, щоб Quran Android працював належним чином, нам потрібно завантажити деякі файли. Якщо ви не зробите цього зараз, додаток може не працювати надійно і вимагатиме підключення до Інтернету для читання. Завантажити потрібні файли зараз?
+    </string>
+  <string name="downloadTabletPrompt">Нещодавно ми додали покращені зображення для планшетів. Завантажити ці зображення зараз?</string>
+  <string name="downloadImportantPrompt">Існує невелике, але важливе оновлення для зображень Корану, які ви маєте на своєму пристрої. Завантажити цей патч зараз?
+    </string>
+  <string name="downloadPrompt_ok">Так</string>
+  <string name="downloadPrompt_no">Ні</string>
+  <string name="downloading_message">Зачекайте, поки файли завантажаться (підтримується резюме).</string>
+  <string name="extracting_title">Обробки&#8230;</string>
+  <string name="menu_about">Про нас</string>
+  <string name="menu_other_apps">Інші програми</string>
+  <string name="menu_settings">Параметри</string>
+  <string name="menu_jump_last_page">Остання сторінка</string>
+  <string name="menu_bookmarks">Закладки</string>
+  <string name="menu_bookmarks_page">Закладки сторінок</string>
+  <string name="menu_bookmarks_ayah">Закладки Ая</string>
+  <string name="menu_sort">Сортувати</string>
+  <string name="menu_sort_date">Дата додавання</string>
+  <string name="menu_sort_location">Розташування в Корані</string>
+  <string name="menu_sort_group_by_tags">Групування за тегами</string>
+  <string name="menu_show_date">Показати дату</string>
+  <string name="menu_translation">Показати переклад</string>
+  <string name="menu_back_to_page">Показати Коран</string>
+  <string name="menu_help">Допомога</string>
+  <string name="menu_search">Шукати</string>
+  <string name="menu_get_translations">Отримати переклади</string>
+  <string name="menu_jump">@string/gotoPage</string>
+  <string name="gotoPage">Перейти на сторінку</string>
+  <string name="please_wait">Будь ласка, зачекай…</string>
+
+  <!-- about -->
+  <string name="about_description">Коран для Android - це безкоштовний коранський додаток. Будь ласка, не забувайте про учасників у ваших молитвах.</string>
+  <string name="about_data_sources">Джерела даних</string>
+  <string name="about_images">Зображення</string>
+  <string name="about_madani_images">Зображення Корану засновані на шрифтах з Центр імені Короля Фагда з Друку Преславного Сувою</string>
+  <string name="about_naskh_images">Зображення Корану для програми «Наш» приймаються (з дозволу) з інформаційних систем SHL</string>
+  <string name="about_qaloon_images">Зображення Qaloon використовуються з дозволу Nous Memes Editions Et Diffusion (Туніс)</string>
+  <string name="about_quranicaudio_summary">Безпроблемні декламації Корану mp3</string>
+  <string name="about_quran_ksu">Електронний проект Мошафа</string>
+  <string name="about_quran_ksu_summary">Електронний проект Університету Короля Сауда Moshaf є джерелом програми арабського Tafaseer та перекладів на різні мови. Він також є джерелом декламації доктора Аймана Сувейда.</string>
+  <string name="about_furqan_summary">Текст Утмані та арабський тафазеер арабською мовою</string>
+  <string name="about_quran_enc_summary">Переклади багатьма мовами</string>
+  <string name="about_tanzil_summary">Переклади на кілька мов</string>
+  <string name="about_noorhidayat_summary">Шрифт Noorehira та переклад Муфтія Такі</string>
+  <string name="about_open_source">Проекти з відкритим вихідним кодом</string>
+  <string name="about_others">Інші</string>
+  <string name="about_contributors">Вкладників</string>
+  <string name="about_contributors_summary">Список людей, які внесли свій внесок у розробку Корану для Android</string>
+
+  <!-- help -->
+  <string name="help_title">Часті питання</string>
+  <string name="help">
+        &lt;b>Як відтворити аудіо?&lt;/b>
+        &lt;br/>Відкрийте будь-яку сторінку Корану. Один раз торкніться екрана. Внизу ви помітите кнопку відтворення та деякий текст з назвою qari. Клацніть назву qari, щоб вибрати інший qari. Натисніть кнопку Відтворити, щоб завантажити та відтворити поточну сторінку або СУРА.
+        &lt;br/>
+        &lt;br/>&lt;b>Як переглянути переклад?&lt;/b>
+        &lt;br/>Відкрийте будь-яку сторінку Корану. Один раз торкніться екрана. У верхній частині ви помітите значок глобуса (або, якщо ви його не бачите, натисніть значок з трьома квадратними крапками) - натисніть на це і виберіть переклад, щоб переглянути переклад.
+        &lt;br/>
+        Якщо у вас немає завантажених перекладів, він перенесе вас на екран, де ви зможете завантажити переклади. Виберіть і завантажте переклад, а потім поверніться назад і знову торкніться значка глобуса, щоб переглянути переклад.
+        &lt;br/>
+        &lt;br/>&lt;b>Як додати сторінку в закладки?&lt;/b>
+        &lt;br/>Відкрийте будь-яку сторінку Корану. Один раз торкніться екрана. У верхньому правому куті ви побачите значок закладки. Торкніться піктограми закладки, щоб додати сторінку в закладки (колір стане суцільно білим). Торкніться піктограми закладки ще раз, щоб видалити закладку.
+        &lt;br/>
+        &lt;br/>&lt;b>Як збільшити текст?&lt;/b>
+        &lt;br/>Для арабських сторінок тримайте телефон у пейзажі. Це збільшує текст.
+        Для перекладів перейдіть до налаштувань і встановіть розмір тексту перекладу.
+        &lt;br/>
+        &lt;br/>&lt;b>Як поділитися ая?&lt;/b>
+        &lt;br/>Перебуваючи на будь-якій арабській сторінці, натисніть і утримуйте будь-який ayah, щоб отримати меню, де ви можете вибрати закладку, тег, поділитися або скопіювати цю ая в буфер обміну, побачити переклад або прослухати його декламацію.&lt;br/>
+        &lt;br/>&lt;b>Шрифти Malayalam/Tamil/Bengali/Urdu не працюють!&lt;/b>
+        &lt;br/>На жаль, версії Android до 4.0 не підтримують ці шрифти, і ми мало що можемо зробити, щоб допомогти в цьому.
+    </string>
+  <string name="search_hint">Пошук Корану</string>
+  <string name="quranSearchType">Вірші Корану</string>
+  <string name="search_full_results">Повні результати</string>
+  <string name="search_entire_mushaf">Пошук всієї каші</string>
+
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="one">%2$d результат для \"%1$s\": </item>
+    <item quantity="few">%2$d результат для \"%1$s\": </item>
+    <item quantity="many">%2$d результат для \"%1$s\": </item>
+  </plurals>
+
+  <!-- m permissions stuff -->
+  <string name="storage_permission_rationale">Коран для Android хоче отримати дозвіл на зберігання своїх даних на зовнішньому сховищі. Коран для Android буде працювати без цього дозволу, але якщо ви очистите дані або видалите додаток, всі завантажені сторінки, аудіо та дані будуть видалені. Надати Коран для дозволу android?</string>
+  <string name="storage_permission_please_restart">Перезапустіть програму, щоб вона набрала сили.</string>
+
+  <!-- Search messages -->
+  <string name="found_in_sura">Знайдено в Сура %1$s: %2$d (сторінка %3$d)</string>
+  <string name="no_results">Не знайдено результатів для \"%s\"</string>
+  <string name="no_arabic_search_available">Ви ще не завантажили арабський пошуковий пакет. Завантажте його та повторіть пошук.</string>
+  <string name="get_arabic_search_db">Отримати арабську базу даних пошуку</string>
+
+  <!-- Quran Preference Activity -->
+  <string name="prefs_volume_key_navigation_title">Навігація клавішами гучності</string>
+  <string name="prefs_volume_key_navigation_summary">Навігація між сторінками за допомогою клавіш гучності</string>
+  <string name="prefs_category_reading">Параметри читання</string>
+  <string name="prefs_category_translation">Параметри перекладу</string>
+  <string name="prefs_category_display_settings">Параметри відображення</string>
+  <string name="prefs_use_arabic_title">Арабський режим (الوضع العربي)</string>
+  <string name="prefs_use_arabic_summary_on">Використовуйте арабську мову для інтерфейсу програми</string>
+  <string name="prefs_new_background_title">Нове тло</string>
+  <string name="prefs_lock_orientation_title">Орієнтація екрана блокування</string>
+  <string name="prefs_lock_orientation_summary_on">Використання режиму фіксованої орієнтації</string>
+  <string name="prefs_lock_orientation_summary_off">Адаптивний до поточного режиму орієнтації</string>
+  <string name="prefs_landscape_orientation_title">Альбомна орієнтація</string>
+  <string name="prefs_landscape_orientation_summary_on">Завжди використовувати альбомний режим</string>
+  <string name="prefs_landscape_orientation_summary_off">Завжди використовувати книжковий режим</string>
+  <string name="prefs_night_mode_title">Нічний режим</string>
+  <string name="prefs_night_mode_summary">Використання темного фону та світлих шрифтів</string>
+  <string name="prefs_night_mode_text_brightness_title">Яскравість тексту</string>
+  <string name="prefs_night_mode_text_brightness_summary">Яскравість тексту, коли нічний режим активний</string>
+  <string name="prefs_night_mode_background_brightness_title">Яскравість тла</string>
+  <string name="prefs_night_mode_background_brightness_summary">Яскравість сторінки, коли активний нічний режим</string>
+  <string name="prefs_overlay_page_info_title">Показати відомості про сторінку</string>
+  <string name="prefs_overlay_page_info_summary">Накладання номера сторінки, Сура ім\'я та Частина номер під час читання</string>
+  <string name="prefs_display_marker_title">Відображати спливаючі вікна маркерів</string>
+  <string name="prefs_display_marker_summary">Відображати спливаюче вікно після досягнення Частина, Хізб і т.д.</string>
+  <string name="prefs_highlight_bookmarks_title">Виділення закладок</string>
+  <string name="prefs_highlight_bookmarks_summary">Виділення ая з закладками під час читання</string>
+  <string name="prefs_translation_text_title">Розмір тексту перекладу</string>
+  <string name="prefs_translations">Переклади</string>
+  <string name="prefs_translations_summary">Завантаження перекладів і керування ними</string>
+  <string name="prefs_ayah_before_translation_title">Ая перед перекладом</string>
+  <string name="prefs_ayah_before_translation_summary">Показати ая арабською мовою над перекладом</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
+  <string name="prefs_category_download">Параметри завантаження</string>
+  <string name="prefs_streaming_title">Потокове</string>
+  <string name="prefs_streaming_summary">Потокове передавання звуку замість завантаження</string>
+  <string name="prefs_download_amount_title">Сума завантаження</string>
+  <string name="prefs_download_amount_summary">Бажана сума завантаження для аудіо без пробілів</string>
+  <string name="prefs_audio_manager_summary">Керування та завантаження аудіо Quranic</string>
+  <string name="downloaded_translations">Завантажити</string>
+  <string name="available_translations">Доступно для завантаження</string>
+  <string name="dialog_ok">ГАРАЗД</string>
+  <string name="prefs_app_location_title">Каталог даних Корану</string>
+  <string name="prefs_app_location_summary">Виберіть розташування для зберігання файлів Корану</string>
+  <string name="prefs_send_logs_title">Надіслати журнали</string>
+  <string name="prefs_send_logs_summary">Надіслати журнали налагодження розробнику</string>
+  <string name="prefs_sdcard_internal">Внутрішня пам\'ять</string>
+  <string name="prefs_sdcard_external">Зовнішнє сховище %1$d</string>
+  <string name="prefs_app_size">Поточний розмір даних</string>
+  <string name="prefs_calculating_app_size">Обчислення розміру програми</string>
+  <string name="prefs_copying_app_files">Копіювання файлів програм</string>
+  <string name="prefs_err_moving_app_files">Не вдалося перемістити файли програм</string>
+  <string name="prefs_no_enough_space_to_move_files">Недостатньо місця для переміщення файлів програм</string>
+  <string name="prefs_megabytes_int">%1$d MB</string>
+  <string name="prefs_dual_page_mode_title">Режим подвійної сторінки</string>
+  <string name="prefs_dual_page_mode_enabled">У альбомі дві сторінки з\'являться поруч.</string>
+  <string name="prefs_dual_page_mode_disabled">У альбомі з\'явиться лише одна сторінка.</string>
+  <string name="prefs_category_advanced">Додаткові параметри</string>
+  <string name="prefs_category_advanced_summary">Імпорт/експорт закладок, встановлення каталогу даних Корану тощо.</string>
+  <string name="prefs_import_title">Імпорт</string>
+  <string name="prefs_import_summary">Імпорт закладок і тегів</string>
+  <string name="prefs_export_title">Експорт</string>
+  <string name="prefs_export_summary">Експорт копії закладок і тегів</string>
+  <string name="prefs_page_type_title">Тип сторінки (експериментальний)</string>
+  <string name="prefs_page_type_summary">Виберіть тип сторінок читання</string>
+  <string name="prefs_sura_translated_name_summary">Показати переклад Сура ім\'я</string>
+  <string name="prefs_sura_translated_name_title">Сура перекладене ім\'я</string>
+  <string name="prefs_preview">Попередній перегляд</string>
+
+  <string name="more_translations">Більше перекладів</string>
+  <string name="import_data_permissions_error">Не вдалося прочитати файл резервної копії через помилку дозволів.</string>
+  <string name="import_data_error">Неприпустимий файл резервної копії (або не вдалося прочитати файл резервної копії).</string>
+  <string name="import_data">Імпорт даних</string>
+  <string name="import_data_and_override">Якщо ви імпортуєте цей файл, він замінить усі ваші закладки закладками %1$d і тегами %2$d. Імпорт?</string>
+  <string name="import_successful">Імпорт успішний</string>
+  <string name="export_data_error">Помилка експорту даних</string>
+  <string name="exported_data">Дані експортуються до %1$s</string>
+
+  <string name="move_up">Перемістити вгору</string>
+  <string name="move_down">Перемістити вниз</string>
+  <string name="delete_translation">Видалити переклад</string>
+
+  <string name="warning">Попередження</string>
+  <string name="kitkat_external_message">Через обмеження Android, якщо ви вирішите розмістити дані Корану на зовнішній SD-карті, а потім видалити або очистити дані для Quran Android, всі сторінки та аудіо Quran Android будуть видалені, і вам доведеться завантажити їх знову. Ви дійсно бажаєте використовувати зовнішню SD-карту?</string>
+  <string name="scoped_storage_message">Через зміни в Android для підвищення конфіденційності користувачів копіювання файлів за межами каталогів додатків може перешкодити Quran для Android отримати доступ до своїх даних у майбутніх версіях Android. Ви дійсно бажаєте скористатися цим шляхом?</string>
+  <string name="please_grant_permissions">Будь ласка, надайте дозвіл у налаштуваннях програми</string>
+  <!-- Preferences End -->
+
+  <!-- tafaseer -->
+  <string name="see_tafseer_of_verse">Цей тафсир ая входить до складу тафсира ayah %d (Натисніть, щоб розгорнути).</string>
+
+  <!-- translation updates -->
+  <string name="update_available">Доступне оновлення</string>
+  <string name="translation_updates_available">Оновлення доступне для деяких ваших перекладів. Відвідайте екран перекладів зараз?</string>
+  <string name="translation_dialog_yes">Так</string>
+  <string name="translation_dialog_later">Пізніше</string>
+
+  <!-- End Number picker Strings -->
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
+  <string name="quran_hizb">Хізб</string>
+  <string name="quran_juz2">Частина</string>
+  <string name="quran_page">Сторінка</string>
+  <string name="quran_sura">Сури</string>
+  <string name="quran_ayah">Ая %1$d</string>
+  <string name="quran_ayah_details">%1$s - Ая %2$s, Частина %3$s</string>
+  <string name="quran_sura_title">Сура %1$s</string>
+  <string name="sura_ayah_notification_str">Сура %1$s, Ая %2$d</string>
+  <string name="sura_ayah_sharing_str">Сура %1$s: %2$d</string>
+
+  <string name="index_loading">Завантаження&#8230;</string>
+
+  <string name="canceling">Скасування&#8230;</string>
+  <string name="juz2_description">Частина %1$s</string>
+  <string name="page_description">Сторінка %1$s, Частина %2$s</string>
+  <string name="highlighting_database">Обов\'язкові файли</string>
+  <string name="timing_database">Обов\'язкові файли</string>
+
+  <!-- download statuses and errors -->
+  <string name="sdcard_error">Не вдалося знайти SD-карту. Змонтуйте його та повторіть спробу.</string>
+  <string name="download_successful">Завантажити успішно</string>
+  <string name="download_processing">Обробка завантаження&#8230;</string>
+  <string name="download_error_general">Спроба завантаження зазнала невдачі</string>
+  <string name="download_error_disk">Недостатньо місця на диску для завантаження</string>
+  <string name="download_error_network">Не вдалося завантажити через помилку мережі</string>
+  <string name="download_error_perms">Не вдалося завантажити через помилку дозволів</string>
+  <string name="download_error_invalid_download">Завантажений файл пошкоджено</string>
+  <string name="download_error_invalid_download_retry">Пошкоджений файл, спроба повторного завантаження</string>
+  <string name="download_error_network_retry">Мережева помилка, спроба відновити&#8230;</string>
+  <string name="notification_download_canceled">Завантажити скасовано</string>
+  <string name="download_non_wifi_prompt">Ви не користуєтеся Wi-Fi. Завантажити дані в будь-якому випадку?</string>
+
+  <!-- downloading dialogs -->
+  <string name="process_progress">Обробка файлу %1$d / %2$d</string>
+  <string name="download_retry">Повторити</string>
+  <string name="download_cancel">Скасувати</string>
+  <string name="download_extra_data">Нам потрібно завантажити один або два невеликих файли для підтримки спільного використання та перекладу. Завантажити зараз?</string>
+
+  <!-- translation database stuff -->
+  <string name="remove_dlg_title">Видалити переклад?</string>
+  <string name="remove_dlg_msg">Ви дійсно бажаєте видалити%1$s?</string>
+  <string name="error_getting_translation_list">Не вдалося завантажити список перекладів. Повторіть спробу пізніше.</string>
+  <string name="search_data">Дані пошуку</string>
+  <string name="need_translation">У вас ще немає завантажених перекладів / тафазерів.</string>
+  <string name="get_translations">Отримати переклади</string>
+
+  <!-- help -->
+  <string name="email_us">Якщо на ваше запитання немає відповіді вище, ви можете надіслати електронного листа quranandroid@gmail.com для підтримки.
+        Зверніть увагу, що ми отримуємо багато електронних листів, тому ми не зможемо відповісти на всі з них.</string>
+
+  <!-- sura metainfo -->
+  <string name="makki">Мекканська</string>
+  <string name="madani">Мединська</string>
+  <plurals name="verses">
+    <item quantity="one">%s ая</item>
+    <item quantity="few">%s  аятів</item>
+    <item quantity="many">%s аятів</item>
+  </plurals>
+
+  <!-- ayah action panel -->
+  <string name="play_restrict_range">Відтворюйте лише наведені вище вірші</string>
+  <string name="play_verses_range">Послухай набір аятів:</string>
+  <string name="play_each_verse">Прислухайтеся до кожного ая:</string>
+  <string name="play_apply">Застосовувати</string>
+  <string name="play_apply_and_play">Застосовуйте і слухайте</string>
+  <string name="previous">Попередній</string>
+  <string name="play">Слухати</string>
+  <string name="pause">Пауза</string>
+  <string name="stop">Зупинити</string>
+  <string name="next">Наступний</string>
+
+  <string-array name="repeatValues">
+    <item>1 раз</item>
+    <item>2 рази</item>
+    <item>3 рази</item>
+    <item>Петлі</item>
+  </string-array>
+
+  <string name="playback_prompt_title">Почати відтворення з:</string>
+  <string name="starting_page_label">Початок сторінки</string>
+
+  <!-- long press -->
+  <string name="ayah_copied_popup">Ая скопійований</string>
+
+  <!-- bookmarks & tags contextual action bar -->
+  <string name="tag_bookmark">Закладка тега</string>
+  <string name="delete_tag">Видалити тег</string>
+  <string name="edit_tag">Змінити тег</string>
+  <string name="new_tag">Створити тег</string>
+  <string name="not_tagged">Не позначено тегами</string>
+  <plurals name="bookmark_tag_deleted">
+    <item quantity="one">Видалено %d елемент</item>
+    <item quantity="few">Видалено %d елементи</item>
+    <item quantity="many">Видалено %d елементів</item>
+  </plurals>
+  <string name="undo">Скасувати</string>
+
+  <string name="recent_pages">Останні сторінки</string>
+
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">Тег</string>
+  <string name="tag_name">Ім\'я</string>
+  <string name="tag_blank_tag_error">Імена тегів не можуть бути пустими!</string>
+  <string name="tag_duplicate_tag_error">Ім\'я тега вже існує!</string>
+
+  <!-- widgets -->
+  <string name="bookmarks_list_empty">Без закладок</string>
+
+  <!-- audio updates -->
+  <string name="audio_updated_title">Оновлення аудіофайлів Корану</string>
+  <string name="audio_updated_text">Кілька аудіофайлів Корану були оновлені. Коран для Android видалив вашу копію цих файлів, щоб найновіші версії можна було завантажити наступного разу, коли ви їх відтворюєте.</string>
+
+  <!-- dual screen prefs -->
+  <string name="prefs_category_dual_screen">Параметри подвійної сторінки</string>
+  <string name="prefs_split_page_and_translation_title">Коран і переклад в подвійному режимі</string>
+  <string name="prefs_split_page_and_translation_summary">У режимі подвійної сторінки з перекладами відображається сторінка Корану та переклад</string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
+  <string name="notification_channel_download">Завантаження Корану</string>
+  <string name="notification_channel_audio">Читання Корану</string>
+</resources>

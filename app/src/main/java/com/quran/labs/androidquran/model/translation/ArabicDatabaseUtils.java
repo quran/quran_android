@@ -3,15 +3,19 @@ package com.quran.labs.androidquran.model.translation;
 import android.content.Context;
 import android.database.Cursor;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+
 import com.quran.data.core.QuranInfo;
-import com.quran.labs.androidquran.common.QuranText;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
+import com.quran.data.model.QuranText;
+import com.quran.data.model.SuraAyah;
+import com.quran.data.model.bookmark.Bookmark;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranFileConstants;
-import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.database.DatabaseHandler;
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;
+import com.quran.mobile.di.qualifier.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,10 +25,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 @Singleton
 public class ArabicDatabaseUtils {
@@ -39,7 +41,7 @@ public class ArabicDatabaseUtils {
   private DatabaseHandler arabicDatabaseHandler;
 
   @Inject
-  ArabicDatabaseUtils(Context context, QuranInfo quranInfo, QuranFileUtils quranFileUtils) {
+  ArabicDatabaseUtils(@ApplicationContext Context context, QuranInfo quranInfo, QuranFileUtils quranFileUtils) {
     this.appContext = context;
     this.quranInfo = quranInfo;
     arabicDatabaseHandler = getArabicDatabaseHandler();
@@ -106,7 +108,7 @@ public class ArabicDatabaseUtils {
         mergeBookmarksWithAyahText(bookmarks, getAyahTextForAyat(ayahIds));
   }
 
-  Map<Integer, String> getAyahTextForAyat(List<Integer> ayat) {
+  public Map<Integer, String> getAyahTextForAyat(List<Integer> ayat) {
     Map<Integer, String> result = new HashMap<>(ayat.size());
     DatabaseHandler arabicDatabaseHandler = getArabicDatabaseHandler();
     if (arabicDatabaseHandler != null) {

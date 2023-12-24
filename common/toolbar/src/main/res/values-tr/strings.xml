@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+  <string name="bookmark_ayah">Bu âyeti işaretle</string>
+  <string name="tag_ayah">Bu âyeti işaretle</string>
+  <string name="share_ayah">Âyet kısayolu paylaş</string>
+  <string name="share_ayah_text">Âyet meâlini paylaş</string>
+  <string name="translation_ayah">Âyet meâli</string>
+  <string name="play_from_here">Buradan dinlemeye başla</string>
+  <string name="recite_from_here">Buradan oku</string>
+  <string name="search_key">"Kur'an'da arama yapmak için arama tuşuna bas"</string>
+  <string name="copy_ayah">Âyet kopyala</string>
+</resources>

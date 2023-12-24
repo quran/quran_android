@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">قاری منتخب کریں</string>
+  <string name="qarilist_ready_to_play">سننے کے لئے تیار</string>
+  <string name="qarilist_qaris_with_downloads">ڈاؤن لوڈ کے ساتھ قاری</string>
+  <string name="qarilist_gapless">مسلسل</string>
+  <string name="qarilist_gapped">غیر متواتر</string>
+  <string name="qarilist_selected">منتخب</string>
+  <string name="qarilist_dismiss">برخاست کریں</string>
+</resources>

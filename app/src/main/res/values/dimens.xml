@@ -12,15 +12,12 @@
   <dimen name="translation_left_right_margin">20dp</dimen>
   <dimen name="translation_top_bottom_margin">10dp</dimen>
   <dimen name="translation_footer_spacer">48dp</dimen>
-  <dimen name="toolbar_height">42dp</dimen>
-  <dimen name="toolbar_pip_height">12dp</dimen>
-  <dimen name="toolbar_pip_width">14dp</dimen>
-  <dimen name="toolbar_item_width">42dp</dimen>
-  <dimen name="toolbar_total_height">54dp</dimen>
   <dimen name="juz_overlay_text_size">12sp</dimen>
   <dimen name="page_margin_small">7dp</dimen>
   <dimen name="page_margin_large">11dp</dimen>
   <dimen name="spinner_dropdown_item_height">48dp</dimen>
+  <dimen name="arabic_number_picker_text_size">27sp</dimen>
+  <dimen name="arabic_number_picker_selected_text_size">33sp</dimen>
 
   <!-- repeat -->
   <dimen name="repeat_superscript_text_size">10sp</dimen>
@@ -50,5 +47,5 @@
   Refer to App Widget Documentation for margin information
   http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     -->
-  <dimen name="widget_margin">8dp</dimen>
+  
 </resources>

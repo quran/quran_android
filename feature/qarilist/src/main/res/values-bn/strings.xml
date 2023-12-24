@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">একটি ক্বারী নির্বাচন করুন</string>
+  <string name="qarilist_ready_to_play">শোনার জন্য প্রস্তুত</string>
+  <string name="qarilist_qaris_with_downloads">ডাউনলোডসহ ক্বারীগণ</string>
+  <string name="qarilist_gapless">অবিরাম</string>
+  <string name="qarilist_gapped">অ-অবিচ্ছিন্ন</string>
+  <string name="qarilist_selected">নির্বাচিত</string>
+  <string name="qarilist_dismiss">বরখাস্ত করুন</string>
+</resources>

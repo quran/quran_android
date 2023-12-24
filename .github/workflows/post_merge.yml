@@ -1,0 +1,47 @@
+name: Upload Dependency List and Debug App
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apkdeps:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the Code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Build debug Apk
+        run: ./gradlew assembleDebug
+
+      - name: Upload Debug Apk
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: latest-apk
+          path: "app/build/outputs/apk/madani/debug/app-madani-debug.apk"
+
+      - name: Get dependencies list
+        run: ./gradlew :app:dependencies --configuration madaniReleaseRuntimeClasspath > dependencies.txt
+
+      - name: Upload dependencies list
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: dependencies
+          path: dependencies.txt

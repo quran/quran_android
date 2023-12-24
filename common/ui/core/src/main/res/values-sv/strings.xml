@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="remove_button">Ta bort</string>
+  <string name="cancel">Avbryt</string>
+  <string name="from">Från</string>
+  <string name="to">Till</string>
+</resources>

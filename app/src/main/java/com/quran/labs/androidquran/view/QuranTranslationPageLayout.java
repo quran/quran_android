@@ -2,10 +2,10 @@ package com.quran.labs.androidquran.view;
 
 import android.content.Context;
 import android.graphics.Color;
-import androidx.annotation.NonNull;
 import android.view.View;
 
-import com.quran.labs.androidquran.R;
+import androidx.annotation.NonNull;
+
 import com.quran.labs.androidquran.ui.translation.TranslationView;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
@@ -16,17 +16,18 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
   public QuranTranslationPageLayout(Context context) {
     super(context);
     isFullWidth = true;
+    initialize();
   }
 
   @Override
-  protected View generateContentView(Context context, boolean isLandscape) {
+  protected View generateContentView(@NonNull Context context, boolean isLandscape) {
     translationView = new TranslationView(context);
     return translationView;
   }
 
   @Override
-  public void setPageController(PageController controller, int pageNumber) {
-    super.setPageController(controller, pageNumber);
+  public void setPageController(PageController controller, int pageNumber, int skips) {
+    super.setPageController(controller, pageNumber, skips);
     translationView.setPageController(controller);
   }
 
@@ -39,7 +40,8 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
   @Override
   protected void updateBackground(boolean nightMode, QuranSettings quranSettings) {
     if (nightMode) {
-      setBackgroundResource(R.color.translation_background_color_night);
+      final int backgroundBrightness = quranSettings.getNightModeBackgroundBrightness();
+      setBackgroundColor(Color.rgb(backgroundBrightness, backgroundBrightness, backgroundBrightness));
     } else {
       setBackgroundColor(Color.WHITE);
     }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="qarilist_select_qari">Wählen Sie einen Qari</string>
+  <string name="qarilist_ready_to_play">Bereit zum Zuhören</string>
+  <string name="qarilist_qaris_with_downloads">Qaris mit Downloads</string>
+  <string name="qarilist_gapless">kontinuierlich</string>
+  <string name="qarilist_gapped">nicht-kontinuierlich</string>
+  <string name="qarilist_selected">Ausgewählte</string>
+  <string name="qarilist_dismiss">Ablehnen</string>
+</resources>

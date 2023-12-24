@@ -1,6 +1,7 @@
 package com.quran.common.search.arabic
 
 object ArabicCharacterHelper {
+  private const val bannedChars = "[()]"
   private val lookupTable = hashMapOf(
       // given: ا
       // match: آأإاﻯ
@@ -32,18 +33,24 @@ object ArabicCharacterHelper {
 
       // given: ﻯ
       // match: ﻯي
-      "\u0649" to "\u0649\u064a"
+      "\u0649" to "\u0649\u064a",
+
+      // given: ئ
+      // match: ئﻯي
+      // this is especially helpful for rewayat Warsh
+      "\u0626" to "\u0626\u0649\u064a",
   )
 
   fun generateRegex(query: String): String {
     val characters = query.toCharArray()
     val regexBuilder = StringBuilder()
     characters.forEach {
-      if (lookupTable.containsKey(it.toString())) {
+      val result = lookupTable[it.toString()]
+      if (result != null) {
         regexBuilder.append("[")
-        regexBuilder.append(lookupTable[it.toString()])
+        regexBuilder.append(result)
         regexBuilder.append("]")
-      } else {
+      } else if (it !in bannedChars){
         regexBuilder.append(it)
       }
     }

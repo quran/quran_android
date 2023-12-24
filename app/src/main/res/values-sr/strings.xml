@@ -15,7 +15,6 @@
     </string>
   <string name="downloadPrompt_ok">Da</string>
   <string name="downloadPrompt_no">Ne</string>
-  <string name="downloading_title">Preuzimanje&#8230;</string>
   <string name="downloading_message">Molimo sačekajte da se datoteke preuzmu (nastavak podržan).</string>
   <string name="extracting_title">Obrada&#8230;</string>
   <string name="menu_about">O nama</string>
@@ -36,7 +35,6 @@
   <string name="menu_get_translations">Preuzmanje prevoda</string>
   <string name="menu_jump">Idi na</string>
   <string name="gotoPage">Idi na stranicu</string>
-  <string name="cancel">Poništi</string>
 
   <!-- about -->
   <string name="about_description">Kur\'an za Android je besplatna aplikacija za Kur\'an. Molimo vas da nas ne zaboravite u vašim dovama.</string>
@@ -93,12 +91,6 @@
   <string name="search_hint">Pretražite Kur\'an</string>
   <string name="quranSearchType">Ajeti Kur\'ana</string>
 
-  <plurals name="files_downloaded">
-    <item quantity="one">%1$d sura preuzeta</item>
-    <item quantity="few">%1$d sure preuzete</item>
-    <item quantity="other">%1$d sura preuzeto</item>
-  </plurals>
-
   <!-- Shown above search results when we receive a search request. -->
   <plurals name="search_results">
     <item quantity="one">%2$d rezultat za \"%1$s\": </item>
@@ -111,7 +103,7 @@
   <string name="storage_permission_please_restart">Molimo restartujte aplikaciju da bi ovo imalo učinka.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Pronađeno u suri %1$s , %2$d. ajetu</string>
+  <string name="found_in_sura">Pronađeno u suri %1$s: %2$d (Stranica %3$d)</string>
   <string name="no_results">Nema rezultata za \"%s\"</string>
   <string name="no_arabic_search_available">Niste preuzeli Arapski paket za pretragu. Molimo preuzmite paket i pokušajte ponovo.</string>
   <string name="get_arabic_search_db">Preuzmite arapsku bazu za pretraživanje</string>
@@ -135,6 +127,8 @@
   <string name="prefs_night_mode_summary">Koristite tamnu podlogu i svetle fontove</string>
   <string name="prefs_night_mode_text_brightness_title">Osvetljenost teksta</string>
   <string name="prefs_night_mode_text_brightness_summary">Osvetljenost teksta kada je noćni način uključen</string>
+  <string name="prefs_night_mode_background_brightness_title">Svetlina pozadine</string>
+  <string name="prefs_night_mode_background_brightness_summary">Svetlina stranice kada je noćni režim aktivan</string>
   <string name="prefs_overlay_page_info_title">Prikaži informacije o stranici</string>
   <string name="prefs_overlay_page_info_summary">Dodajte broj stranice, ime sure i broj džuza dok čitate</string>
   <string name="prefs_display_marker_title">Prikažite marker notifikaciju</string>
@@ -146,6 +140,8 @@
   <string name="prefs_translations_summary">Skinite i upravljajte sa prevodima</string>
   <string name="prefs_ayah_before_translation_title">Ajet pre prevoda</string>
   <string name="prefs_ayah_before_translation_summary">Prikažite ajet na arapskom iznad prevoda</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
   <string name="prefs_category_download">Opcije za preuzimanja</string>
   <string name="prefs_streaming_title">Stalni tok podataka</string>
   <string name="prefs_streaming_summary">Tok (stream) zvuka umesto preuzimanja</string>
@@ -154,7 +150,6 @@
   <string name="prefs_audio_manager_summary">Upravljaj i preuzmi zvuk učenja Kur\'ana</string>
   <string name="downloaded_translations">Preuzeto</string>
   <string name="available_translations">Dostupno za preuzimanje</string>
-  <string name="remove_button">Ukloni</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_app_location_title">Direktoriji za podatke Kur\'ana</string>
   <string name="prefs_app_location_summary">Izaberite gde želite spremiti datoteke za Kur\'an</string>
@@ -168,7 +163,6 @@
   <string name="prefs_err_moving_app_files">Premeštanje datoteka aplikacije nije uspelo</string>
   <string name="prefs_no_enough_space_to_move_files">Nedovoljno prostora za pomeranje datoteka aplikacije</string>
   <string name="prefs_megabytes_int">%1$d MB</string>
-  <string name="prefs_megabytes_str">%s MB</string>
   <string name="prefs_dual_page_mode_title">Prikaz dve stranica na zaslonu </string>
   <string name="prefs_dual_page_mode_enabled">U horizontalnom položaju će biti prikazane dve stranice jedna do druge.</string>
   <string name="prefs_dual_page_mode_disabled">Horizontalno će se prikazivati samo jedna stranica.</string>
@@ -220,6 +214,7 @@
   <string name="quran_ayah_details">%1$s - ajet %2$s, džuz %3$s</string>
   <string name="quran_sura_title">Sura %1$s</string>
   <string name="sura_ayah_notification_str">Sura %1$s, %2$d. ajet</string>
+  <string name="sura_ayah_sharing_str">Sura %1$s: %2$d</string>
 
   <string name="index_loading">Učitavam…</string>
 
@@ -244,9 +239,6 @@
   <string name="download_non_wifi_prompt">Wi-Fi vam nije uključen. Ipak preuzeti datoteke?</string>
 
   <!-- downloading dialogs -->
-  <string name="download_progress">Preuzeto %1$s / %2$s</string>
-  <string name="download_sura_progress">Preuzeto %1$s / %2$s %3$d. sure</string>
-  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Preuzimanje %2$d. ajeta %1$d. sure</string>
   <string name="process_progress">Procesiranje datoteke %1$d / %2$d</string>
   <string name="download_retry">Ponovi</string>
   <string name="download_cancel">Otkaži</string>
@@ -275,8 +267,6 @@
   </plurals>
 
   <!-- ayah action panel -->
-  <string name="play_from">Od</string>
-  <string name="play_to">Do</string>
   <string name="play_restrict_range">Pokreni jedino ajete ajete iznad</string>
   <string name="play_verses_range">Pokrenite skupinu ajeta:</string>
   <string name="play_each_verse">Pokreni svaki ajet:</string>
@@ -299,14 +289,6 @@
   <string name="starting_page_label">Početak stranice</string>
 
   <!-- long press -->
-  <string name="bookmark_ayah">Zabeleži ovaj ajet</string>
-  <string name="tag_ayah">Označi ovaj ajet</string>
-  <string name="share_ayah">Podeli link ajeta</string>
-  <string name="share_ayah_text">Podeli tekst ajeta</string>
-  <string name="translation_ayah">Prevod/tefsir ajeta</string>
-  <string name="play_from_here">Pusti odavde</string>
-  <string name="search_key">Pritisnite tipku za pretragu da potražite ajet</string>
-  <string name="copy_ayah">Kopiraj ajet</string>
   <string name="ayah_copied_popup">Ajet kopiran</string>
 
   <!-- bookmarks & tags contextual action bar -->
@@ -333,10 +315,24 @@
   <!-- bookmark & tag list -->
   <string name="bookmarks_list_empty">Bez zabeleških</string>
 
-  <!-- audio manager -->
-  <string name="audio_manager">Menadžer zvuka</string>
-
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Skidanje Kur\'ana</string>
   <string name="notification_channel_audio">Skidanje učenja Kur\'ana</string>
+  <string name="menu_show_date">Prikaži datum</string>
+  <string name="please_wait">Molim te sačekaj...</string>
+  <string name="about_quran_enc_summary">Prevodi za mnoge jezike</string>
+  <string name="search_full_results">Potpuni rezultati</string>
+  <string name="search_entire_mushaf">Pretražite ceo mushaf</string>
+  <string name="prefs_sura_translated_name_summary">Prikaži prevod sura imena</string>
+  <string name="prefs_sura_translated_name_title">Prevedeno ime Sura</string>
+  <string name="prefs_preview">Pregled</string>
+  <string name="move_up">Premesti na gore</string>
+  <string name="move_down">Premesti nadole</string>
+  <string name="delete_translation">Ukloni prevod</string>
+  <string name="scoped_storage_message">Zbog Android promena u cilju povećanja privatnosti korisnika, kopiranje fajlova izvan direktorijuma aplikacija moglo bi da zaustavi Quran za Android da pristupi svojim podacima u budućim verzijama Androida. Jeste li sigurni da želite da koristite ovu putanju?</string>
+  <string name="audio_updated_title">Ažuriranje Quran audio datoteka</string>
+  <string name="audio_updated_text">Nekoliko Quran audio datoteka je ažurirano. Quran za Android je uklonio vaš primerak ovih fajlova tako da se najnovije verzije mogu preuzeti kada ih sledeći put ponovo reprodukujete.</string>
+  <string name="prefs_category_dual_screen">Željene postavke dvojne stranice</string>
+  <string name="prefs_split_page_and_translation_title">Kuran i prevod u dual modu</string>
+  <string name="prefs_split_page_and_translation_summary">U režimu dvojne stranice sa prevodima, prikazana je Stranica Kurana i prevod</string>
 </resources>

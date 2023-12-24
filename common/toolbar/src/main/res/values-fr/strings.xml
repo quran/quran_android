@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">Ajouter l\'Aya aux favoris</string>
+  <string name="tag_ayah">Étiqueter cette Aya</string>
+  <string name="share_ayah">Partager cette Aya</string>
+  <string name="share_ayah_text">Partager le texte de l\'Aya</string>
+  <string name="translation_ayah">Traduction/exégèse de l\'Aya</string>
+  <string name="play_from_here">Écouter à partir d\'ici</string>
+  <string name="recite_from_here">Récitez d\'ici</string>
+  <string name="search_key">Appuyez sur la touche de recherche pour rechercher une Aya</string>
+  <string name="copy_ayah">Copier l\'Aya</string>
+</resources>

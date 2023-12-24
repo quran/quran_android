@@ -1,0 +1,47 @@
+DROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS ayah_tag_map;
+
+CREATE TABLE IF NOT EXISTS bookmarks(
+  _ID INTEGER PRIMARY KEY AUTOINCREMENT,
+  sura INTEGER,
+  ayah INTEGER,
+  page INTEGER NOT NULL,
+  added_date INTEGER DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tags(
+  _ID INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  added_date INTEGER DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS bookmark_tag(
+  _ID INTEGER PRIMARY KEY AUTOINCREMENT,
+  bookmark_id INTEGER NOT NULL,
+  tag_id INTEGER NOT NULL,
+  added_date INTEGER DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS
+  bookmark_tag_index ON bookmark_tag(bookmark_id, tag_id);
+
+-- migrate ayah bookmarks
+CREATE TABLE IF NOT EXISTS ayah_bookmarks(
+  _ID INTEGER PRIMARY KEY,
+  page INTEGER NOT NULL,
+  sura INTEGER NOT NULL,
+  ayah INTEGER NOT NULL,
+  bookmarked INTEGER NOT NULL,
+  notes TEXT
+);
+
+INSERT INTO bookmarks(_ID, sura, ayah, page)
+SELECT _ID, sura, ayah, page FROM ayah_bookmarks WHERE bookmarked = 1;
+
+-- migrate page bookmarks
+CREATE TABLE IF NOT EXISTS page_bookmarks (_ID INTEGER PRIMARY KEY, bookmarked INTEGER NOT NULL);
+INSERT INTO bookmarks(page) SELECT _ID FROM page_bookmarks WHERE bookmarked = 1;
+
+-- drop old tables
+DROP TABLE IF EXISTS page_bookmarks;
+DROP TABLE IF EXISTS ayah_bookmarks;

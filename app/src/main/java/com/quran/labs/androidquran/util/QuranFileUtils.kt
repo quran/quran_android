@@ -14,6 +14,7 @@ import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.common.Response
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.extension.closeQuietly
+import com.quran.mobile.di.qualifier.ApplicationContext
 import okhttp3.OkHttpClient
 import okhttp3.Request.Builder
 import okhttp3.ResponseBody
@@ -30,16 +31,14 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.InterruptedIOException
 import java.text.NumberFormat
-import java.util.ArrayList
 import java.util.Collections
 import java.util.Locale
 import javax.inject.Inject
 
 class QuranFileUtils @Inject constructor(
-  context: Context,
-  private val pageProvider: PageProvider,
-  private val quranScreenInfo: QuranScreenInfo,
-  private val urlUtil: UrlUtil
+  @ApplicationContext context: Context,
+  pageProvider: PageProvider,
+  private val quranScreenInfo: QuranScreenInfo
 ): QuranFileManager {
   // server urls
   private val imageBaseUrl: String = pageProvider.getImagesBaseUrl()
@@ -53,6 +52,8 @@ class QuranFileUtils @Inject constructor(
   private val audioDirectory: String = pageProvider.getAudioDirectoryName()
   private val ayahInfoDirectory: String = pageProvider.getAyahInfoDirectoryName()
   private val imagesDirectory: String = pageProvider.getImagesDirectoryName()
+
+  val ayahInfoDbHasGlyphData = pageProvider.ayahInfoDbHasGlyphData()
 
   private val appContext: Context = context.applicationContext
   val gaplessDatabaseRootUrl: String = pageProvider.getAudioDatabasesBaseUrl()
@@ -97,14 +98,28 @@ class QuranFileUtils @Inject constructor(
     return null
   }
 
+  override fun quranImagesDirectory(): String? = getQuranImagesDirectory(appContext)
+  override fun ayahInfoFileDirectory(): String? {
+    val base = quranAyahDatabaseDirectory
+    return if (base != null) {
+      val filename = ayaPositionFileName
+      base + File.separator + filename
+    } else {
+      null
+    }
+  }
+
   @WorkerThread
-  override fun removeFilesForWidth(width: Int) {
+  override fun removeFilesForWidth(width: Int, directoryLambda: ((String) -> String)) {
     val widthParam = "_$width"
-    val quranDirectory = getQuranImagesDirectory(appContext, widthParam) ?: return
+    val quranDirectoryWithoutLambda = getQuranImagesDirectory(appContext, widthParam) ?: return
+    val quranDirectory = directoryLambda(quranDirectoryWithoutLambda)
     val file = File(quranDirectory)
     if (file.exists()) {
       deleteFileOrDirectory(file)
-      val ayahinfoFile = File(getQuranAyahDatabaseDirectory(appContext), "ayahinfo_$width.db")
+      val ayahDatabaseDirectoryWithoutLambda = getQuranAyahDatabaseDirectory(appContext) ?: return
+      val ayahDatabaseDirectory = directoryLambda(ayahDatabaseDirectoryWithoutLambda)
+      val ayahinfoFile = File(ayahDatabaseDirectory, "ayahinfo_$width.db")
       if (ayahinfoFile.exists()) {
         ayahinfoFile.delete()
       }
@@ -126,7 +141,8 @@ class QuranFileUtils @Inject constructor(
   fun haveAllImages(context: Context,
     widthParam: String,
     totalPages: Int,
-    makeDirectory: Boolean
+    makeDirectory: Boolean,
+    oneFilePerPage: Boolean = true
   ): Boolean {
     val quranDirectory = getQuranImagesDirectory(context, widthParam)
     Timber.d("haveAllImages: for width %s, directory is: %s", widthParam, quranDirectory)
@@ -142,9 +158,8 @@ class QuranFileUtils @Inject constructor(
         if (fileList == null) {
           Timber.d("haveAllImages: null fileList, checking page by page...")
           for (i in 1..totalPages) {
-            if (!File(dir, getPageFileName(i))
-                    .exists()
-            ) {
+            val name = if (oneFilePerPage) getPageFileName(i) else i.toString()
+            if (!File(dir, name).exists()) {
               Timber.d("haveAllImages: couldn't find page %d", i)
               return false
             }
@@ -170,7 +185,7 @@ class QuranFileUtils @Inject constructor(
   }
 
   private val isSDCardMounted: Boolean
-    private get() {
+    get() {
       val state = Environment.getExternalStorageState()
       return state == Environment.MEDIA_MOUNTED
     }
@@ -236,6 +251,42 @@ class QuranFileUtils @Inject constructor(
     copyFromAssets(assetsPath, filename, actualDestination)
   }
 
+  override fun copyFromAssetsRelativeRecursive(
+    assetsPath: String,
+    directory: String,
+    destination: String
+  ) {
+    val destinationPath = File(getQuranBaseDirectory(appContext) + destination)
+    val directoryDestinationPath = File(destinationPath, directory)
+    if (!directoryDestinationPath.exists()) {
+      directoryDestinationPath.mkdirs()
+    }
+
+    val assets = appContext.assets
+    val files = assets.list(assetsPath) ?: emptyArray()
+    val destinationDirectory = "$destination${File.separator}$directory"
+    files.forEach {
+      val path = "$assetsPath${File.separator}$it"
+      if (assets.list(path)?.isNotEmpty() == true) {
+        copyFromAssetsRelativeRecursive(path, it, destinationDirectory)
+      } else {
+        copyFromAssetsRelative(path, it, destinationDirectory)
+      }
+    }
+  }
+
+  @WorkerThread
+  override fun removeOldArabicDatabase(): Boolean {
+    val databaseQuranArabicDatabase = File(
+      getQuranDatabaseDirectory(appContext),
+      QuranDataProvider.QURAN_ARABIC_DATABASE
+    )
+
+    return if (databaseQuranArabicDatabase.exists()) {
+      databaseQuranArabicDatabase.delete()
+    } else true
+  }
+
   @WorkerThread
   private fun copyFromAssets(assetsPath: String, filename: String, destination: String) {
     val assets = appContext.assets
@@ -271,7 +322,7 @@ class QuranFileUtils @Inject constructor(
     filename: String,
     isRetry: Boolean
   ): Response {
-    val base = if (isRetry) urlUtil.fallbackUrl(imageBaseUrl) else imageBaseUrl
+    val base = imageBaseUrl
     val urlString = (base + "width" + widthParam + File.separator + filename)
     Timber.d("want to download: %s", urlString)
     val request = Builder()
@@ -282,7 +333,7 @@ class QuranFileUtils @Inject constructor(
     try {
       val response = call.execute()
       if (response.isSuccessful) {
-        responseBody = response.body()
+        responseBody = response.body
         if (responseBody != null) {
           // handling for BitmapFactory.decodeStream not throwing an error
           // when the download is interrupted or an exception occurs. This
@@ -406,6 +457,8 @@ class QuranFileUtils @Inject constructor(
     return if (base == null) null else base + ayahInfoDirectory
   }
 
+  override fun audioFileDirectory(): String? = getQuranAudioDirectory(appContext)
+
   fun getQuranAudioDirectory(context: Context): String? {
     var path = getQuranBaseDirectory(context) ?: return null
     path += audioDirectory
@@ -433,6 +486,24 @@ class QuranFileUtils @Inject constructor(
     val base = getQuranBaseDirectory(context)
     return if (base == null) null else base +
         (if (imagesDirectory.isEmpty()) "" else imagesDirectory + File.separator) + "width" + widthParam
+  }
+
+  private fun recitationsDirectory(): String {
+    val recitationDirectory = getQuranBaseDirectory(appContext).toString() + "recitation/"
+    makeDirectory(recitationDirectory)
+    return recitationDirectory
+  }
+
+  override fun recitationSessionsDirectory(): String {
+    val sessionsDirectory = recitationsDirectory() + "sessions/"
+    makeDirectory(sessionsDirectory)
+    return sessionsDirectory
+  }
+
+  override fun recitationRecordingsDirectory(): String {
+    val recordingsDirectory = recitationsDirectory() + "recordings/"
+    makeDirectory(recordingsDirectory)
+    return recordingsDirectory
   }
 
   val zipFileUrl: String

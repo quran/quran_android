@@ -7,7 +7,6 @@ import javax.inject.Singleton
 class UrlUtil @Inject constructor() {
 
   fun fallbackUrl(url: String): String {
-    return url.replace("android.quran.com", "quran.app")
-        .replace(".quranicaudio.com", ".quranicaudio.org")
+    return url.replace(".quranicaudio.com", ".quranicaudio.org")
   }
 }

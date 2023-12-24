@@ -12,14 +12,15 @@ import android.os.Bundle
 import android.os.Environment
 import android.text.TextUtils
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
+import com.quran.common.upgrade.PreferencesUpgrade
 import com.quran.data.model.QuranDataStatus
-import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.presenter.data.QuranDataPresenter
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
@@ -33,20 +34,17 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.worker.WorkerConstants
-import io.reactivex.Completable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
-import java.lang.IllegalArgumentException
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
@@ -70,10 +68,10 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   lateinit var quranScreenInfo: QuranScreenInfo
 
   @Inject
-  lateinit var quranPageProvider: PageProvider
+  lateinit var quranDataPresenter: QuranDataPresenter
 
   @Inject
-  lateinit var quranDataPresenter: QuranDataPresenter
+  lateinit var preferencesUpgrade: PreferencesUpgrade
 
   private lateinit var quranSettings: QuranSettings
 
@@ -84,6 +82,8 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   private var quranDataStatus: QuranDataStatus? = null
   private var updateDialog: AlertDialog? = null
   private var disposable: Disposable? = null
+  private var lastForceValue: Boolean = false
+  private var didCheckPermissions: Boolean = false
 
   private val scope = MainScope()
 
@@ -92,7 +92,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     val quranApp = application as QuranApplication
     quranApp.applicationComponent.inject(this)
     quranSettings = QuranSettings.getInstance(this)
-    quranSettings.upgradePreferences()
+    quranSettings.upgradePreferences(preferencesUpgrade)
 
     // replace null app locations (especially those set to null due to failures
     // of finding a suitable data directory) with the default value to allow
@@ -144,7 +144,11 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
             Timber.e(ise)
           }
         }
-    checkPermissions()
+
+    if (!didCheckPermissions) {
+      didCheckPermissions = true
+      checkPermissions()
+    }
   }
 
   override fun onPause() {
@@ -161,8 +165,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
 
     errorDialog?.dismiss()
     errorDialog = null
-    updateDialog?.dismiss()
-    updateDialog = null
+    hideMigrationDialog()
 
     scope.cancel()
     super.onPause()
@@ -180,7 +183,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
 
     if (path == null) {
       // error case: suggests that we're on m+ and we have no fallback
-      runListView()
+      runListViewWithoutPages()
       return
     }
 
@@ -233,7 +236,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
           } else {
             // set to null so we can try again next launch
             quranSettings.appCustomLocation = null
-            runListView()
+            runListViewWithoutPages()
           }
         }
         .create()
@@ -241,12 +244,24 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     permissionsDialog.show()
   }
 
-  private fun migrateFromTo(destination: String) {
-    val migrationDialog = AlertDialog.Builder(this)
+  private fun showMigrationDialog() {
+    if (updateDialog == null) {
+      val migrationDialog = AlertDialog.Builder(this)
         .setView(R.layout.migration_upgrade)
+        .setCancelable(false)
         .create()
-    updateDialog = migrationDialog
-    migrationDialog.show()
+      updateDialog = migrationDialog
+      migrationDialog.show()
+    }
+  }
+
+  private fun hideMigrationDialog() {
+    updateDialog?.dismiss()
+    updateDialog = null
+  }
+
+  private fun migrateFromTo(destination: String) {
+    showMigrationDialog()
 
     scope.launch {
       withContext(Dispatchers.IO) {
@@ -260,6 +275,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   }
 
   private fun checkPages() {
+    showMigrationDialog()
     quranDataPresenter.checkPages()
   }
 
@@ -269,6 +285,14 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
         REQUEST_WRITE_TO_SDCARD_PERMISSIONS
     )
     quranSettings.setSdcardPermissionsDialogPresented()
+  }
+
+  @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+  private fun requestPostNotificationPermission() {
+    ActivityCompat.requestPermissions(
+      this, arrayOf(permission.POST_NOTIFICATIONS),
+      REQUEST_POST_NOTIFICATION_PERMISSIONS
+    )
   }
 
   override fun onRequestPermissionsResult(
@@ -306,9 +330,11 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
         } else {
           // set to null so we can try again next launch
           quranSettings.appCustomLocation = null
-          runListView()
+          runListViewWithoutPages()
         }
       }
+    } else if (requestCode == REQUEST_POST_NOTIFICATION_PERMISSIONS) {
+      actuallyDownloadQuranImages(lastForceValue)
     }
   }
 
@@ -374,7 +400,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
       errorDialog = null
       removeErrorPreferences()
       quranSettings.setShouldFetchPages(false)
-      runListView()
+      runListViewWithoutPages()
     }
     errorDialog = builder.create()
     errorDialog!!.show()
@@ -385,15 +411,13 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   }
 
   fun onStorageNotAvailable() {
-    updateDialog?.dismiss()
-    updateDialog = null
+    hideMigrationDialog()
     // no storage mounted, nothing we can do...
-    runListView()
+    runListViewWithoutPages()
   }
 
   fun onPagesChecked(quranDataStatus: QuranDataStatus) {
-    updateDialog?.dismiss()
-    updateDialog = null
+    hideMigrationDialog()
 
     this.quranDataStatus = quranDataStatus
     if (!quranDataStatus.havePages()) {
@@ -404,6 +428,14 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
         } catch (e: Exception) {
           Timber.e(e)
         }
+
+        // pages are lost, switch to internal storage if we aren't on it
+        val path = quranSettings.appCustomLocation
+        val internalDirectory = filesDir.absolutePath
+        if (path != internalDirectory) {
+          quranSettings.appCustomLocation = internalDirectory
+        }
+
         // clear the "pages downloaded" flag
         quranSettings.removeDidDownloadPages()
       }
@@ -433,9 +465,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
         File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
 
         // try writing a file to the app's internal no_backup directory
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-          File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
-        }
+        File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
         quranSettings.setDownloadedPages(
             System.currentTimeMillis(), appLocation,
             quranDataStatus.portraitWidth + "_" + quranDataStatus.landscapeWidth
@@ -495,18 +525,15 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
 
     // check for the existence of a .q4a file in the internal no_backup directory.
     var didInternalFileSurvive = false
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      try {
-        didInternalFileSurvive = File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).exists()
-      } catch (e: Exception) {
-        Timber.e(e)
-      }
+    try {
+      didInternalFileSurvive = File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).exists()
+    } catch (e: Exception) {
+      Timber.e(e)
     }
 
     // how recently did the files disappear?
     val downloadTime = quranSettings.previouslyDownloadedTime
-    val recencyOfRemoval: String
-    recencyOfRemoval = if (downloadTime == 0L) {
+    val recencyOfRemoval: String = if (downloadTime == 0L) {
       "no timestamp"
     } else {
       val deltaInSeconds = (System.currentTimeMillis() - downloadTime) / 1000
@@ -574,6 +601,30 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
    * @param force whether to force the download to restart or not
    */
   private fun downloadQuranImages(force: Boolean) {
+    if (PermissionUtil.havePostNotificationPermission(this)) {
+      actuallyDownloadQuranImages(force)
+    } else if (PermissionUtil.canRequestPostNotificationPermission(this)) {
+      val dialog = PermissionUtil.buildPostPermissionDialog(
+        this,
+        onAccept = {
+          lastForceValue = force
+          permissionsDialog = null
+          requestPostNotificationPermission()
+        },
+        onDecline = {
+          permissionsDialog = null
+          actuallyDownloadQuranImages(force)
+        }
+      )
+      permissionsDialog = dialog
+      dialog.show()
+    } else {
+      lastForceValue = force
+      requestPostNotificationPermission()
+    }
+  }
+
+  private fun actuallyDownloadQuranImages(force: Boolean) {
     // if any broadcasts were received, then we are already downloading
     // so unless we know what we are doing (via force), don't ask the
     // service to restart the download
@@ -603,7 +654,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     // if we have a patch url, just use that
     val patchParam = dataStatus.patchParam
     if (!TextUtils.isEmpty(patchParam)) {
-      url = quranFileUtils.getPatchFileUrl(patchParam!!, quranPageProvider.getImageVersion())
+      url = quranFileUtils.getPatchFileUrl(patchParam!!, quranDataPresenter.imagesVersion())
     }
     val destination = quranFileUtils.getQuranImagesBaseDirectory(this@QuranDataActivity)
 
@@ -647,12 +698,26 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     ) { dialog12: DialogInterface, _: Int ->
       dialog12.dismiss()
       promptForDownloadDialog = null
-      runListView()
+      val isPatch = dataStatus.patchParam?.isNotEmpty() == true
+      if (isPatch) {
+        // for patches, we have the pages, so we can just show the list no problem
+        runListView()
+      } else {
+        runListViewWithoutPages()
+      }
     }
     val promptForDownloadDialog = dialog.create()
     promptForDownloadDialog.setTitle(R.string.downloadPrompt_title)
     promptForDownloadDialog.show()
     this.promptForDownloadDialog = promptForDownloadDialog
+  }
+
+  private fun runListViewWithoutPages() {
+    if (!quranDataPresenter.canProceedWithoutDownload()) {
+      // we only have download on demand for full page images, so fallback
+      quranDataPresenter.fallbackToImageType()
+    }
+    runListView()
   }
 
   private fun runListView() {
@@ -667,6 +732,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   companion object {
     const val PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY"
     private const val REQUEST_WRITE_TO_SDCARD_PERMISSIONS = 1
+    private const val REQUEST_POST_NOTIFICATION_PERMISSIONS = 2
     private const val QURAN_DIRECTORY_MARKER_FILE = "q4a"
     private const val QURAN_HIDDEN_DIRECTORY_MARKER_FILE = ".q4a"
   }

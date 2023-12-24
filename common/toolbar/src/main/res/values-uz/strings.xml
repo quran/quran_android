@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">Oyatni xatchoʻplash</string>
+  <string name="tag_ayah">Oyatni teglash</string>
+  <string name="share_ayah">Oyat bogʻichini boʻlishish</string>
+  <string name="share_ayah_text">Oyat matnini boʻlishish</string>
+  <string name="translation_ayah">Oyat tarjimasi</string>
+  <string name="play_from_here">Shu yerdan boshlab chal</string>
+  <string name="recite_from_here">Bu yerdan o\'qing</string>
+  <string name="search_key">Sura topish uchun izlash tugmasiga bosing</string>
+  <string name="copy_ayah">Oyatni koʻchirish</string>
+</resources>

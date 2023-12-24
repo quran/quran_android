@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran;
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,14 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranDisplayData;
@@ -27,24 +36,16 @@ import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.PagerActivity;
-import com.quran.labs.androidquran.ui.QuranActionBarActivity;
 import com.quran.labs.androidquran.ui.TranslationManagerActivity;
 import com.quran.labs.androidquran.util.QuranFileUtils;
 import com.quran.labs.androidquran.util.QuranUtils;
 
 import javax.inject.Inject;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SearchView;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.CursorLoader;
-import androidx.loader.content.Loader;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 /**
  * Activity for searching the Quran
  */
-public class SearchActivity extends QuranActionBarActivity
+public class SearchActivity extends AppCompatActivity
     implements DefaultDownloadReceiver.SimpleDownloadListener,
     LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -169,7 +170,7 @@ public class SearchActivity extends QuranActionBarActivity
   public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
     final boolean containsArabic = QuranUtils.doesStringContainArabic(query);
     isArabicSearch = containsArabic;
-    boolean showArabicWarning = (isArabicSearch &&
+    @SuppressLint("WrongThread") boolean showArabicWarning = (isArabicSearch &&
         !quranFileUtils.hasArabicSearchDatabase());
 
     if (showArabicWarning) {
@@ -207,7 +208,7 @@ public class SearchActivity extends QuranActionBarActivity
 
       ListView listView = findViewById(R.id.results_list);
       if (adapter == null) {
-        adapter = new ResultAdapter(this, cursor, quranDisplayData);
+        adapter = new ResultAdapter(this, cursor, quranDisplayData, quranInfo);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener((parent, view, position, id) -> {
           ListView p = (ListView) parent;
@@ -315,19 +316,21 @@ public class SearchActivity extends QuranActionBarActivity
   private void showResults(String query) {
     Bundle args = new Bundle();
     args.putString(EXTRA_QUERY, query);
-    getSupportLoaderManager().restartLoader(0, args, this);
+    LoaderManager.getInstance(this).restartLoader(0, args, this);
   }
 
   private static class ResultAdapter extends CursorAdapter {
-    private Context context;
-    private LayoutInflater inflater;
-    private QuranDisplayData quranDisplayData;
+    private final Context context;
+    private final LayoutInflater inflater;
+    private final QuranInfo quranInfo;
+    private final QuranDisplayData quranDisplayData;
 
-    ResultAdapter(Context context, Cursor cursor, QuranDisplayData quranDisplayData) {
+    ResultAdapter(Context context, Cursor cursor, QuranDisplayData quranDisplayData, QuranInfo quranInfo) {
       super(context, cursor, 0);
       inflater = LayoutInflater.from(context);
       this.context = context;
       this.quranDisplayData = quranDisplayData;
+      this.quranInfo = quranInfo;
     }
 
     @Override
@@ -345,10 +348,12 @@ public class SearchActivity extends QuranActionBarActivity
       final ViewHolder holder = (ViewHolder) view.getTag();
       int sura = cursor.getInt(1);
       int ayah = cursor.getInt(2);
+      int page = quranInfo.getPageFromSuraAyah(sura, ayah);
+
       String text = cursor.getString(3);
       String suraName = quranDisplayData.getSuraName(this.context, sura, false);
       holder.text.setText(Html.fromHtml(text));
-      holder.metadata.setText(this.context.getString(R.string.found_in_sura, suraName, ayah));
+      holder.metadata.setText(this.context.getString(R.string.found_in_sura, suraName, ayah, page));
     }
 
     static class ViewHolder {

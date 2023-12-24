@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="app_name">Quran</string>
+  <string name="downloadPrompt_title">ต้องการดาวน์โหลดแฟ้มที่ต้องการหรือไม่</string>
+  <string name="downloadPrompt">เพื่อให้อัลกุรอาน Android ทํางานได้อย่างถูกต้องเราจําเป็นต้องดาวน์โหลดไฟล์บางไฟล์ หากคุณไม่ทําเช่นนี้ในขณะนี้แอพอาจไม่ทํางานได้อย่างน่าเชื่อถือและจะต้องมีการเชื่อมต่ออินเทอร์เน็ตเพื่ออ่าน คุณต้องการดาวน์โหลดแฟ้มที่ต้องการเดี๋ยวนี้หรือไม่</string>
+  <string name="downloadTabletPrompt">เมื่อเร็ว ๆ นี้เราได้เพิ่มภาพที่ได้รับการปรับปรุงสําหรับแท็บเล็ต คุณต้องการดาวน์โหลดรูปเหล่านี้เดี๋ยวนี้หรือไม่</string>
+  <string name="downloadImportantPrompt">มีการอัปเดตเล็กน้อย แต่สําคัญสําหรับภาพอัลกุรอานที่คุณมีบนอุปกรณ์ของคุณ คุณต้องการดาวน์โหลดโปรแกรมแก้ไขนี้เดี๋ยวนี้หรือไม่</string>
+  <string name="downloadPrompt_ok">ใช่</string>
+  <string name="downloadPrompt_no">ไม่ใช่</string>
+  <string name="downloading_message">โปรดรอให้แฟ้มดาวน์โหลด (สนับสนุนต่อ)</string>
+  <string name="extracting_title">ประมวล ผล&#8230;</string>
+  <string name="menu_about">เกี่ยวกับเรา</string>
+  <string name="menu_other_apps">แอปอื่นๆ</string>
+  <string name="menu_settings">การตั้งค่า</string>
+  <string name="menu_jump_last_page">หน้าสุดท้าย</string>
+  <string name="menu_bookmarks">คั่น หน้า</string>
+  <string name="menu_bookmarks_page">ที่คั่นหน้า</string>
+  <string name="menu_bookmarks_ayah">ที่คั่นหน้า Ayah</string>
+  <string name="menu_sort">ประเภท</string>
+  <string name="menu_sort_date">วันที่เพิ่ม</string>
+  <string name="menu_sort_location">สถานที่ตั้งในอัลกุรอาน</string>
+  <string name="menu_sort_group_by_tags">จัดกลุ่มตามแท็ก</string>
+  <string name="menu_show_date">แสดงวันที่</string>
+  <string name="menu_translation">แสดงการแปล</string>
+  <string name="menu_back_to_page">แสดงอัลกุรอาน</string>
+  <string name="menu_help">วิธีใช้</string>
+  <string name="menu_search">ค้น</string>
+  <string name="menu_get_translations">รับคําแปล</string>
+  <string name="menu_jump">@string/gotoPage</string>
+  <string name="gotoPage">ไปที่หน้า</string>
+  <string name="please_wait">กรุณารอสักครู่…</string>
+
+  <!-- about -->
+  <string name="about_description">อัลกุรอานสําหรับ Android เป็นโปรแกรมอัลกุรอานฟรี โปรดอย่าลืมผู้มีส่วนร่วมในการสวดอ้อนวอนของคุณ</string>
+  <string name="about_data_sources">แหล่งข้อมูล</string>
+  <string name="about_images">ภาพ</string>
+  <string name="about_madani_images">ภาพอัลกุรอานอ้างอิงจากแบบอักษรจากศูนย์การพิมพ์อัลกุรอานกษัตริย์ฟ้าฮ่าน</string>
+  <string name="about_quranicaudio_summary">การท่องอัลกุรอาน mp3 ที่ไม่มีช่องว่าง</string>
+  <string name="about_quran_enc_summary">การแปลสําหรับหลายภาษา</string>
+  <string name="about_tanzil_summary">คําแปลสําหรับบางภาษา</string>
+  <string name="about_open_source">โครงการโอเพนซอร์ส</string>
+  <string name="about_others">อื่น ๆ</string>
+  <string name="about_contributors">ผู้ร่วมสมทบ</string>
+  <string name="about_contributors_summary">รายชื่อผู้ที่มีส่วนร่วมในการพัฒนาอัลกุรอานสําหรับ Android</string>
+
+  <!-- help -->
+  <string name="help_title">คําถามที่ถามบ่อย</string>
+  <string name="help">
+        &lt;b>ฉันจะฟังเสียงได้อย่างไร&lt;/b>
+        &lt;br/>เปิดหน้าอัลกุรอานใด ๆ แตะที่หน้าจอหนึ่งครั้ง ที่ด้านล่างคุณจะสังเกตเห็นปุ่มเล่นและข้อความบางข้อความที่มีชื่อของ qari คลิกชื่อของ qari เพื่อเลือก qari อื่น คลิกเล่นเพื่อดาวน์โหลดและฟังหน้าปัจจุบันหรือ sura
+        &lt;br/>
+        &lt;br/>&lt;b>ฉันจะดูคําแปลได้อย่างไร&lt;/b>
+        &lt;br/>เปิดหน้าอัลกุรอานใด ๆ แตะที่หน้าจอหนึ่งครั้ง ที่ด้านบนคุณจะสังเกตเห็นไอคอนลูกโลก (หรือถ้าคุณไม่เห็นให้คลิกไอคอนที่มีจุดสี่เหลี่ยมสามจุด) - คลิกสิ่งนี้และเลือกการแปลเพื่อดูการแปล
+        &lt;br/>
+        หากคุณไม่ได้ดาวน์โหลดคําแปลใด ๆ มันจะนําคุณไปยังหน้าจอที่คุณสามารถดาวน์โหลดคําแปลได้ เลือกและดาวน์โหลดคําแปล แล้วกลับมาและแตะไอคอนลูกโลกอีกครั้งเพื่อดูคําแปล
+        &lt;br/>
+        &lt;br/>&lt;b>ฉันจะบุ๊กมาร์กหน้าได้อย่างไร&lt;/b>
+        &lt;br/>เปิดหน้าอัลกุรอานใด ๆ แตะที่หน้าจอหนึ่งครั้ง ที่ด้านบนขวา คุณจะเห็นไอคอนบุ๊กมาร์ก แตะไอคอนบุ๊กมาร์กเพื่อบุ๊กมาร์กหน้า (สีจะเปลี่ยนเป็นสีขาวทึบ) แตะไอคอนบุ๊กมาร์กอีกครั้งเพื่อเอาบุ๊กมาร์กออก
+        &lt;br/>
+        &lt;br/>&lt;b>ฉันจะทําให้ข้อความมีขนาดใหญ่ขึ้นได้อย่างไร&lt;/b>
+        &lt;br/>สําหรับหน้าภาษาอาหรับ ให้ถือโทรศัพท์ในแนวนอน การทําเช่นนี้จะทําให้ข้อความมีขนาดใหญ่ขึ้น
+        สําหรับการแปล ให้ไปที่การตั้งค่าและตั้งค่าขนาดข้อความการแปล
+        &lt;br/>
+        &lt;br/>&lt;b>ฉันจะแบ่งปัน ayah ได้อย่างไร?&lt;/b>
+        &lt;br/>ในขณะที่อยู่ในหน้าภาษาอาหรับใด ๆ ให้กด ayah ใด ๆ ค้างไว้เพื่อรับเมนูที่คุณสามารถเลือกบุ๊กมาร์กแท็กแบ่งปันหรือคัดลอก ayah นั้นไปยังคลิปบอร์ดดูการแปลหรือฟังการท่องจํา&lt;br/>
+        &lt;br/>&lt;b>แบบอักษรมาลายาลัม/ทมิฬ/เบงกาลี/อูรดูไม่ทํางาน!&lt;/b>
+        &lt;br/>น่าเสียดายที่ Android เวอร์ชันก่อน 4.0 ไม่รองรับแบบอักษรเหล่านี้และมีน้อยที่เราสามารถทําได้เพื่อช่วยในเรื่องนี้
+    </string>
+  <string name="search_hint">ค้นหาอัลกุรอาน</string>
+  <string name="quranSearchType">อายัตแห่งอัลกุรอาน</string>
+  <string name="search_full_results">ผลลัพธ์ทั้งหมด</string>
+  <string name="search_entire_mushaf">ค้นหามูชาฟทั้งหมด</string>
+
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="one">ผลลัพธ์เดียวสําหรับ \"%1$s\": </item>
+    <item quantity="other">%2$d ผลการค้นหาสําหรับ \"%1$s\": </item>
+  </plurals>
+
+  <!-- m permissions stuff -->
+  <string name="storage_permission_rationale">อัลกุรอานสําหรับ Android ต้องการสิทธิ์ของคุณในการจัดเก็บข้อมูลบนที่เก็บข้อมูลภายนอก อัลกุรอานสําหรับ Android จะทํางานโดยไม่ได้รับอนุญาตนี้ แต่ถ้าคุณล้างข้อมูลหรือถอนการติดตั้งแอพหน้าเว็บที่ดาวน์โหลดทั้งหมดเสียงและข้อมูลจะถูกลบออก ให้อัลกุรอานสําหรับสิทธิ์ Android?</string>
+  <string name="storage_permission_please_restart">โปรดเริ่มแอปใหม่เพื่อให้แอปนี้มีผล</string>
+
+  <!-- Search messages -->
+  <string name="found_in_sura">พบในซูเราะฮฺ %1$s: %2$d (หน้า %3$d)</string>
+  <string name="no_results">ไม่พบผลลัพธ์สําหรับ \"%s\"</string>
+  <string name="no_arabic_search_available">คุณยังไม่ได้ดาวน์โหลดชุดค้นหาภาษาอาหรับ กรุณาดาวน์โหลดและลองค้นหาอีกครั้ง</string>
+  <string name="get_arabic_search_db">รับฐานข้อมูลการค้นหาภาษาอาหรับ</string>
+
+  <!-- Quran Preference Activity -->
+  <string name="prefs_volume_key_navigation_title">การนําทางแป้นปรับระดับเสียง</string>
+  <string name="prefs_volume_key_navigation_summary">นําทางระหว่างหน้าโดยใช้แป้นปรับระดับเสียง</string>
+  <string name="prefs_category_reading">การกําหนดลักษณะการอ่าน</string>
+  <string name="prefs_category_translation">การกําหนดลักษณะการแปล</string>
+  <string name="prefs_category_display_settings">การตั้งค่าการแสดงผล</string>
+  <string name="prefs_use_arabic_title">โหมดอาหรับ (الوضع العربي)</string>
+  <string name="prefs_use_arabic_summary_on">ใช้ภาษาอาหรับสําหรับอินเทอร์เฟซโปรแกรมประยุกต์</string>
+  <string name="prefs_new_background_title">พื้นหลังใหม่</string>
+  <string name="prefs_lock_orientation_title">การวางแนวหน้าจอเมื่อล็อก</string>
+  <string name="prefs_lock_orientation_summary_on">ใช้โหมดการวางแนวคงที่</string>
+  <string name="prefs_lock_orientation_summary_off">ปรับให้เข้ากับโหมดการวางแนวปัจจุบัน</string>
+  <string name="prefs_landscape_orientation_title">การวางแนวในแนวนอน</string>
+  <string name="prefs_landscape_orientation_summary_on">ใช้โหมดแนวนอนเสมอ</string>
+  <string name="prefs_landscape_orientation_summary_off">ใช้โหมดแนวตั้งเสมอ</string>
+  <string name="prefs_night_mode_title">โหมดกลางคืน</string>
+  <string name="prefs_night_mode_summary">ใช้พื้นหลังสีเข้มและแบบอักษรสีอ่อน</string>
+  <string name="prefs_night_mode_text_brightness_title">ความสว่างของข้อความ</string>
+  <string name="prefs_night_mode_text_brightness_summary">ความสว่างของข้อความเมื่อโหมดกลางคืนทํางานอยู่</string>
+  <string name="prefs_night_mode_background_brightness_title">ความสว่างของแบ็คกราวด์</string>
+  <string name="prefs_night_mode_background_brightness_summary">ความสว่างของหน้าเมื่อโหมดกลางคืนทํางานอยู่</string>
+  <string name="prefs_overlay_page_info_title">แสดงข้อมูลหน้า</string>
+  <string name="prefs_overlay_page_info_summary">ซ้อนทับหมายเลขหน้า ชื่อซูเราะห์ และหมายเลข ญชอฺที ขณะอ่าน</string>
+  <string name="prefs_display_marker_title">แสดงเครื่องหมายผุดขึ้น</string>
+  <string name="prefs_display_marker_summary">แสดงป๊อปอัปเมื่อถึง ญชอฺที, hizb ฯลฯ</string>
+  <string name="prefs_highlight_bookmarks_title">เน้นบุ๊กมาร์ก</string>
+  <string name="prefs_highlight_bookmarks_summary">เน้น อายะห์ ที่คั่นหน้าขณะอ่าน</string>
+  <string name="prefs_translation_text_title">ขนาดข้อความการแปล</string>
+  <string name="prefs_translations">แปล</string>
+  <string name="prefs_translations_summary">ดาวน์โหลดและจัดการคําแปล</string>
+  <string name="prefs_ayah_before_translation_title">อายะฮฺก่อนแปล</string>
+  <string name="prefs_ayah_before_translation_summary">แสดงอายะห์ในภาษาอาหรับเหนือคําแปล</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
+  <string name="prefs_category_download">ตัวเลือกการดาวน์โหลด</string>
+  <string name="prefs_streaming_title">สต รีม มิ่ง</string>
+  <string name="prefs_streaming_summary">สตรีมเสียงแทนการดาวน์โหลด</string>
+  <string name="prefs_download_amount_title">จํานวนเงินที่ดาวน์โหลด</string>
+  <string name="prefs_download_amount_summary">จํานวนการดาวน์โหลดที่ต้องการสําหรับเสียงที่ไม่มีช่องว่าง</string>
+  <string name="prefs_audio_manager_summary">จัดการและดาวน์โหลดเสียงอัลกุรอาน</string>
+  <string name="downloaded_translations">ดาวน์โหลด</string>
+  <string name="available_translations">พร้อมให้ดาวน์โหลด</string>
+  <string name="dialog_ok">ตกลง, ได้</string>
+  <string name="prefs_app_location_title">ไดเรกทอรีข้อมูลอัลกุรอาน</string>
+  <string name="prefs_app_location_summary">เลือกตําแหน่งที่จะจัดเก็บแฟ้มอัลกุรอาน</string>
+  <string name="prefs_send_logs_title">ส่งล็อก</string>
+  <string name="prefs_send_logs_summary">ส่งล็อกดีบักไปยังนักพัฒนา</string>
+  <string name="prefs_sdcard_internal">ที่เก็บข้อมูลภายใน</string>
+  <string name="prefs_sdcard_external">ที่เก็บข้อมูลภายนอก %1$d</string>
+  <string name="prefs_app_size">ขนาดข้อมูลปัจจุบันคือ</string>
+  <string name="prefs_calculating_app_size">การคํานวณขนาดแอป</string>
+  <string name="prefs_copying_app_files">การคัดลอกไฟล์แอป</string>
+  <string name="prefs_err_moving_app_files">ไม่สามารถย้ายไฟล์แอปได้</string>
+  <string name="prefs_no_enough_space_to_move_files">มีเนื้อที่ไม่เพียงพอที่จะย้ายไฟล์แอป</string>
+  <string name="prefs_megabytes_int">%1$d MB</string>
+  <string name="prefs_dual_page_mode_title">โหมดหน้าคู่</string>
+  <string name="prefs_dual_page_mode_enabled">ในแนวนอน จะมีสองหน้าปรากฏเคียงข้างกัน</string>
+  <string name="prefs_dual_page_mode_disabled">ในแนวนอน จะปรากฏเพียงหน้าเดียว</string>
+  <string name="prefs_category_advanced">ตัวเลือกขั้นสูง</string>
+  <string name="prefs_category_advanced_summary">นําเข้า/ส่งออกบุ๊กมาร์ก, ตั้งค่าไดเรกทอรีข้อมูลอัลกุรอาน, ฯลฯ</string>
+  <string name="prefs_import_title">นําเข้า</string>
+  <string name="prefs_import_summary">นําเข้าบุ๊กมาร์กและแท็ก</string>
+  <string name="prefs_export_title">ส่งออก</string>
+  <string name="prefs_export_summary">การส่งออกสําเนาของที่คั่นหน้าและแท็ก</string>
+  <string name="prefs_page_type_title">ชนิดหน้า (ทดลอง)</string>
+  <string name="prefs_page_type_summary">เลือกชนิดของหน้าที่จะอ่าน</string>
+  <string name="prefs_sura_translated_name_summary">แสดงคําแปลของชื่อซูเราะฮฺ</string>
+  <string name="prefs_sura_translated_name_title">ซูเราะฮฺที่แปลชื่อ</string>
+  <string name="prefs_preview">ดูตัวอย่าง</string>
+
+  <string name="more_translations">คําแปลเพิ่มเติม</string>
+  <string name="import_data_permissions_error">ไม่สามารถอ่านแฟ้มสํารองได้เนื่องจากข้อผิดพลาดเกี่ยวกับสิทธิ์</string>
+  <string name="import_data_error">แฟ้มสํารองไม่ถูกต้อง (หรือไม่สามารถอ่านแฟ้มสํารองได้)</string>
+  <string name="import_data">นําเข้าข้อมูล</string>
+  <string name="import_data_and_override">ถ้าคุณนําเข้าแฟ้มนี้ แฟ้มนี้จะแทนที่ที่คั่นหน้าทั้งหมดของคุณด้วยที่คั่นหน้า %1$d และแท็ก %2$d นําเข้า?</string>
+  <string name="import_successful">การนําเข้าเสร็จสมบูรณ์</string>
+  <string name="export_data_error">ข้อผิดพลาดในการส่งออกข้อมูล</string>
+  <string name="exported_data">ข้อมูลที่ส่งออกไปยัง %1$s</string>
+
+  <string name="move_up">เลื่อน</string>
+  <string name="move_down">ย้ายลง</string>
+  <string name="delete_translation">เอาการแปลออก</string>
+
+  <string name="warning">คำเตือน</string>
+  <string name="kitkat_external_message">เนื่องจากข้อ จํากัด ของ Android หากคุณเลือกที่จะวางข้อมูลอัลกุรอานในการ์ด SD ภายนอกของคุณและถอนการติดตั้งหรือล้างข้อมูลสําหรับ Quran Android ในภายหลังหน้าและเสียงของ Quran Android ทั้งหมดจะถูกลบและคุณจะต้องดาวน์โหลดอีกครั้ง คุณแน่ใจหรือไม่ว่าคุณต้องการใช้การ์ด SD ภายนอก</string>
+  <string name="scoped_storage_message">เนื่องจากการเปลี่ยนแปลงของ Android เพื่อเพิ่มความเป็นส่วนตัวของผู้ใช้การคัดลอกไฟล์นอกไดเรกทอรีแอพอาจหยุดอัลกุรอานไม่ให้เข้าถึงข้อมูลใน Android เวอร์ชันต่อ ๆ ไป คุณแน่ใจหรือไม่ว่าคุณต้องการใช้เส้นทางนี้</string>
+  <string name="please_grant_permissions">โปรดให้สิทธิ์ในการตั้งค่าโปรแกรมประยุกต์</string>
+  <!-- Preferences End -->
+
+  <!-- tafaseer -->
+  <string name="see_tafseer_of_verse">tafseer ของ ayah นี้รวมอยู่ใน tafseer ของ ayah %d (คลิกเพื่อขยาย)</string>
+
+  <!-- translation updates -->
+  <string name="update_available">การปรับปรุงพร้อมใช้งาน</string>
+  <string name="translation_updates_available">การอัปเดตพร้อมใช้งานสําหรับการแปลบางฉบับของคุณ เยี่ยมชมหน้าจอการแปลตอนนี้หรือไม่?</string>
+  <string name="translation_dialog_yes">ใช่</string>
+  <string name="translation_dialog_later">หลัง</string>
+
+  <!-- End Number picker Strings -->
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
+  <!-- <string name="quran_hizb">Hizb</string> -->
+  <string name="quran_juz2">ญชอฺที</string>
+  <string name="quran_page">หน้า</string>
+  <string name="quran_sura">ซูเราะห์</string>
+  <string name="quran_ayah">อายะห์ %1$d</string>
+  <string name="quran_ayah_details">%1$s - อายะห์ %2$s, ญชอฺที %3$s</string>
+  <string name="quran_sura_title">ซูเราะฮฺ %1$s</string>
+  <string name="sura_ayah_notification_str">ซูเราะฮฺ %1$s, อายะห์ %2$d</string>
+  <string name="sura_ayah_sharing_str">ซูเราะฮฺ %1$s: %2$d</string>
+
+  <string name="index_loading">การโหลด&#8230;</string>
+
+  <string name="canceling">ยก เลิก&#8230;</string>
+  <string name="juz2_description">ญชอฺที %1$s</string>
+  <string name="page_description">หน้า %1$s, ญชอฺที %2$s</string>
+  <string name="highlighting_database">แฟ้มที่ต้องการ</string>
+  <string name="timing_database">แฟ้มที่ต้องการ</string>
+
+  <!-- download statuses and errors -->
+  <string name="sdcard_error">ไม่พบการ์ด SD กรุณาเมาท์แล้วลองอีกครั้ง</string>
+  <string name="download_successful">ดาวน์โหลดเสร็จเรียบร้อยแล้ว</string>
+  <string name="download_processing">กําลังประมวลผล การดาวน์โหลด&#8230;</string>
+  <string name="download_error_general">การดาวน์โหลดล้มเหลว</string>
+  <string name="download_error_disk">มีเนื้อที่ดิสก์ไม่เพียงพอที่จะดาวน์โหลด</string>
+  <string name="download_error_network">ไม่สามารถดาวน์โหลดได้เนื่องจากข้อผิดพลาดของเครือข่าย</string>
+  <string name="download_error_perms">ไม่สามารถดาวน์โหลดได้เนื่องจากข้อผิดพลาดเกี่ยวกับสิทธิ์</string>
+  <string name="download_error_invalid_download">แฟ้มที่ดาวน์โหลดเสียหาย</string>
+  <string name="download_error_invalid_download_retry">แฟ้มเสียหาย กําลังพยายามดาวน์โหลดใหม่</string>
+  <string name="download_error_network_retry">ข้อผิดพลาดของเครือข่าย, กําลังพยายามดําเนินการต่อ&#8230;</string>
+  <string name="notification_download_canceled">ยกเลิกการดาวน์โหลด</string>
+  <string name="download_non_wifi_prompt">คุณไม่ได้ใช้ Wi-Fi ดาวน์โหลดข้อมูลต่อไปหรือไม่?</string>
+
+  <!-- downloading dialogs -->
+  <string name="process_progress">กําลังประมวลผลไฟล์ %1$d / %2$d</string>
+  <string name="download_retry">ลอง</string>
+  <string name="download_cancel">ยกเลิก</string>
+  <string name="download_extra_data">เราจําเป็นต้องดาวน์โหลดไฟล์ขนาดเล็กหนึ่งหรือสองไฟล์เพื่อสนับสนุนการแบ่งปันและการแปล ดาวน์โหลดเดี๋ยวนี้หรือไม่</string>
+
+  <!-- translation database stuff -->
+  <string name="remove_dlg_title">ลบการแปลหรือไม่?</string>
+  <string name="remove_dlg_msg">คุณแน่ใจหรือไม่ว่าคุณต้องการเอา %1$s ออก?</string>
+  <string name="error_getting_translation_list">ไม่สามารถดาวน์โหลดรายการคําแปลได้ โปรดลองอีกครั้งในภายหลัง</string>
+  <string name="search_data">ค้นหาข้อมูล</string>
+  <string name="need_translation">คุณยังไม่ได้ดาวน์โหลดคําแปล / tafaseer ใด ๆ</string>
+  <string name="get_translations">รับคําแปล</string>
+
+  <!-- help -->
+  <string name="email_us">หากคําถามของคุณไม่ได้รับคําตอบข้างต้นคุณสามารถส่งอีเมล quranandroid@gmail.com เพื่อขอรับการสนับสนุน. โปรดทราบว่าเราได้รับอีเมลจํานวนมากดังนั้นเราอาจไม่สามารถตอบกลับได้ทั้งหมด</string>
+
+  <!-- sura metainfo -->
+  <string name="makki">มักกียะฮุ</string>
+  <string name="madani">มะดะนิยะฮุ</string>
+  <plurals name="verses">
+    <item quantity="one">วัน อายะห์</item>
+    <item quantity="other">%s อายตนะ</item>
+  </plurals>
+
+  <!-- ayah action panel -->
+  <string name="play_restrict_range">ฟังเฉพาะข้อข้างต้น</string>
+  <string name="play_verses_range">ฟังชุดข้อ:</string>
+  <string name="play_each_verse">ทําซ้ําแต่ละข้อ:</string>
+  <string name="play_apply">ใช้</string>
+  <string name="play_apply_and_play">นําไปใช้และฟัง</string>
+  <string name="previous">ก่อน</string>
+  <string name="play">เล่น</string>
+  <string name="pause">หยุด</string>
+  <string name="stop">หยุด</string>
+  <string name="next">ต่อไป</string>
+
+  <string-array name="repeatValues">
+    <item>1 ครั้ง</item>
+    <item>2 ครั้ง</item>
+    <item>3 ครั้ง</item>
+    <item>ห่วง</item>
+  </string-array>
+
+  <string name="playback_prompt_title">เริ่มเล่นจาก:</string>
+  <string name="starting_page_label">จุดเริ่มต้นของเพจ</string>
+
+  <!-- long press -->
+  <string name="ayah_copied_popup">อายะห์ คัดลอก</string>
+
+  <!-- bookmarks & tags contextual action bar -->
+  <string name="tag_bookmark">ที่คั่นหน้าแท็ก</string>
+  <string name="delete_tag">ลบแท็ก</string>
+  <string name="edit_tag">แก้ไขแท็ก</string>
+  <string name="new_tag">สร้างแท็ก</string>
+  <string name="not_tagged">ไม่ได้ติดแท็ก</string>
+  <plurals name="bookmark_tag_deleted">
+    <item quantity="one">ลบไปหนึ่งรายการ</item>
+    <item quantity="other">รายการที่ถูกลบ %d</item>
+  </plurals>
+  <string name="undo">แก้</string>
+
+  <string name="recent_pages">หน้าล่าสุด</string>
+
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">ฉลาก</string>
+  <string name="tag_name">ชื่อ</string>
+  <string name="tag_blank_tag_error">ชื่อแท็กต้องไม่ว่างเปล่า!</string>
+  <string name="tag_duplicate_tag_error">ชื่อแท็กมีอยู่แล้ว!</string>
+
+  <!-- widgets -->
+  <string name="bookmarks_list_empty">ไม่มีที่คั่นหน้า</string>
+
+  <!-- audio updates -->
+  <string name="audio_updated_title">อัปเดตไฟล์เสียงอัลกุรอาน</string>
+  <string name="audio_updated_text">อัปเดตไฟล์เสียงอัลกุรอานหลายไฟล์แล้ว คัมภีร์อัลกุรอานสำหรับ Android ได้ลบสำเนาของไฟล์เหล่านี้ออกเพื่อให้สามารถดาวน์โหลดเวอร์ชันใหม่ล่าสุดในครั้งต่อไปที่คุณเล่นได้</string>
+
+  <!-- dual screen prefs -->
+  <string name="prefs_category_dual_screen">การตั้งค่าหน้าคู่</string>
+  <string name="prefs_split_page_and_translation_title">อัลกุรอานและการแปลในโหมดคู่</string>
+  <string name="prefs_split_page_and_translation_summary">ในโหมดหน้าคู่พร้อมการแปลหน้าอัลกุรอานและการแปลจะปรากฏขึ้น</string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
+  <string name="notification_channel_download">ดาวน์โหลดอัลกุรอาน</string>
+  <string name="notification_channel_audio">การบรรยายคัมภีร์กุรอาน</string>
+</resources>

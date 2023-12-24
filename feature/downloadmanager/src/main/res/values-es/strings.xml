@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="audio_manager">Gestor de audio</string>
+  <string name="audio_manager_remove_audio_title">¿Quitar la Sura?</string>
+  <string name="audio_manager_remove_audio_msg">¿Está seguro de que desea eliminar %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">¿Está seguro de que desea eliminar?</string>
+  <string name="audio_manager_surah_download">Descargar sura</string>
+  <string name="audio_manager_surah_delete">Borrar sura</string>
+  <string name="audio_manager_download_all">Descargar todo</string>
+  <string name="audio_manager_download_selection">Descargar selección</string>
+  <string name="audio_manager_delete_selection">Borrar la selección</string>
+
+  <string name="downloading_title">Descargando…</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">Descargado %1$s / %2$s</string>
+  <string name="download_sura_progress">Descargado %1$s / %2$s de la sura %3$d</string>
+  <string name="download_sura_ayah_progress">Descargando la sura %1$d ayah %2$d</string>
+</resources>

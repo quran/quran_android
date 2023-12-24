@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="audio_manager">Gestione dell\'audio</string>
+  <string name="audio_manager_remove_audio_title">Rimuovere la sura?</string>
+  <string name="audio_manager_remove_audio_msg">Sei sicuro di voler rimuovere %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Sei sicuro di voler rimuovere?</string>
+  <string name="audio_manager_surah_download">Scaricare la sura</string>
+  <string name="audio_manager_surah_delete">Cancellare la sura</string>
+  <string name="audio_manager_download_all">Scarica tutti</string>
+  <string name="audio_manager_download_selection">Scarica la selezione</string>
+  <string name="audio_manager_delete_selection">Cancellare la selezione</string>
+
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">1 sura scaricata</item>
+    <item quantity="other">%1$d sura scaricate</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">Cancellata con successo la sura</item>
+    <item quantity="other">Cancellato con successo %1$d sure</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">C\'è stato un errore durante la cancellazione della sura</item>
+    <item quantity="other">C\'è stato un errore durante la cancellazione di %1$d sure</item>
+  </plurals>
+
+  <string name="downloading_title">Scaricare&#8230;</string>
+  <string name="download_progress">Scaricato %1$s / %2$s</string>
+  <string name="download_sura_progress">Scaricato %1$s / %2$s di Sura %3$d</string>
+  <string name="download_sura_ayah_progress">Scaricare la Sura %1$d Ayah %2$d</string>
+</resources>

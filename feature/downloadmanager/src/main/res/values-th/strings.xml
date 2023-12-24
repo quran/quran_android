@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="other">%1$d ซูเราะฮฺดาวน์โหลดแล้ว</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">ตัวจัดการเสียง</string>
+  <string name="audio_manager_remove_audio_title">เอาซูราห์ออก?</string>
+  <string name="audio_manager_remove_audio_msg">คุณแน่ใจหรือไม่ว่าคุณต้องการเอา %1$s ออก?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">คุณแน่ใจหรือไม่ว่าคุณต้องการเอา ออก?</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="other">ลบ %1$d surahs สําเร็จแล้ว</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="other">มีข้อผิดพลาดขณะลบ %1$d surahs</item>
+  </plurals>
+  <string name="audio_manager_surah_download">ดาวน์โหลด Sura</string>
+  <string name="audio_manager_surah_delete">ลบเสียงซูเราะฮฺ</string>
+  <string name="audio_manager_download_all">ดาวน์โหลดทั้งหมด</string>
+  <string name="audio_manager_download_selection">การเลือกดาวน์โหลด</string>
+  <string name="audio_manager_delete_selection">ลบการเลือก</string>
+
+  <string name="downloading_title">ดาวน์โหลด&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">ดาวน์โหลด %1$s / %2$s</string>
+  <string name="download_sura_progress">ดาวน์โหลด %1$s / %2$s ของซูเราะฮฺ %3$d</string>
+  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">กําลังดาวน์โหลดซูเราะฮฺ %1$d อายะห์ %2$d</string>
+</resources>

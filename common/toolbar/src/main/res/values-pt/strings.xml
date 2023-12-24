@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">Adicionar Ayah aos Favoritos</string>
+  <string name="tag_ayah">Marcar esta Ayah</string>
+  <string name="share_ayah">Compartilhar Link da Ayah</string>
+  <string name="share_ayah_text">Compartilhar Texto da Ayah</string>
+  <string name="translation_ayah">Ayah Tradução/Tafseer</string>
+  <string name="play_from_here">Tocar daqui</string>
+  <string name="recite_from_here">Recite daqui</string>
+  <string name="search_key">Clique o botão de pesquisa para procurar um versículo</string>
+  <string name="copy_ayah">Copiar Ayah</string>
+</resources>

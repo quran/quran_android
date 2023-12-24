@@ -1,26 +1,27 @@
 package com.quran.labs.androidquran.ui.helpers
 
 import android.content.Context
+import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.common.Response
-import com.quran.labs.androidquran.di.ActivityScope
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
+import com.quran.mobile.di.qualifier.ApplicationContext
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import timber.log.Timber
 import javax.inject.Inject
 
 @ActivityScope
 class QuranPageLoader @Inject internal constructor(
-  private val appContext: Context,
+  @ApplicationContext private val appContext: Context,
   private val okHttpClient: OkHttpClient,
   private val imageWidth: String,
   private val quranScreenInfo: QuranScreenInfo,
   private val quranFileUtils: QuranFileUtils
 ) {
 
-  private fun loadImage(pageNumber: Int): Response? {
+  private fun loadImage(pageNumber: Int): Response {
     var response: Response? = null
     var oom: OutOfMemoryError? = null
     try {
@@ -65,8 +66,8 @@ class QuranPageLoader @Inject internal constructor(
     return response
   }
 
-  fun loadPages(vararg pages: Int?): Observable<Response?> {
-    return Observable.fromArray<Int>(*pages)
+  fun loadPages(pages: Array<Int>): Observable<Response> {
+    return Observable.fromArray(*pages)
         .flatMap { page: Int ->
           Observable.fromCallable { loadImage(page) }
         }

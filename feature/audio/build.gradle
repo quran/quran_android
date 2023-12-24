@@ -1,13 +1,10 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+plugins {
+  id 'quran.android.library.android'
+  alias libs.plugins.ksp
+}
 
 android {
-  compileSdkVersion deps.android.build.compileSdkVersion
-  defaultConfig {
-    minSdkVersion deps.android.build.minSdkVersion
-    targetSdkVersion deps.android.build.targetSdkVersion
-  }
+  namespace 'com.quran.labs.androidquran.feature.audio'
 
   buildTypes {
      beta {
@@ -24,16 +21,16 @@ android {
 dependencies {
   implementation project(path: ':common:audio')
 
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
+  implementation libs.kotlinx.coroutines.core
+  implementation libs.kotlinx.coroutines.android
 
-  implementation "com.squareup.okio:okio:${okioVersion}"
+  implementation libs.okio
 
-  implementation "com.squareup.moshi:moshi:${moshiVersion}"
-  kapt("com.squareup.moshi:moshi-kotlin-codegen:${moshiVersion}")
+  implementation libs.moshi
+  ksp(libs.moshi.codegen)
 
-  implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+  implementation libs.retrofit
 
-  testImplementation 'junit:junit:4.13.1'
-  testImplementation 'com.google.truth:truth:1.0.1'
+  testImplementation libs.junit
+  testImplementation libs.truth
 }

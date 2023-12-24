@@ -7,15 +7,16 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AlertDialog.Builder
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.MenuItemCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -30,7 +31,6 @@ import com.quran.labs.androidquran.ShortcutsActivity
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel
 import com.quran.labs.androidquran.presenter.data.QuranIndexEventLogger
-import com.quran.labs.androidquran.presenter.data.QuranIndexEventLoggerImpl
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter
 import com.quran.labs.androidquran.service.AudioService
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog
@@ -46,11 +46,11 @@ import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.SlidingTabLayout
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import timber.log.Timber
+import com.quran.mobile.di.ExtraScreenProvider
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 import kotlin.math.abs
@@ -69,7 +69,7 @@ import kotlin.math.abs
  *  * [com.quran.labs.androidquran.QuranDataActivity]
  *  * [ShortcutsActivity]
  */
-class QuranActivity : QuranActionBarActivity(),
+class QuranActivity : AppCompatActivity(),
     OnBookmarkTagsUpdateListener,
     JumpDestination {
   private var upgradeDialog: AlertDialog? = null
@@ -91,6 +91,8 @@ class QuranActivity : QuranActionBarActivity(),
   lateinit var translationManagerPresenter: TranslationManagerPresenter
   @Inject
   lateinit var quranIndexEventLogger: QuranIndexEventLogger
+  @Inject
+  lateinit var extraScreens: Set<@JvmSuppressWildcards ExtraScreenProvider>
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     val quranApp = application as QuranApplication
@@ -98,8 +100,8 @@ class QuranActivity : QuranActionBarActivity(),
 
     super.onCreate(savedInstanceState)
     quranApp.applicationComponent
-        .quranActivityComponentBuilder()
-        .build()
+        .quranActivityComponentFactory()
+        .generate()
         .inject(this)
 
     setContentView(R.layout.quran_index)
@@ -126,7 +128,7 @@ class QuranActivity : QuranActionBarActivity(),
       )
     }
 
-    latestPageObservable = recentPageModel.latestPageObservable
+    latestPageObservable = recentPageModel.getLatestPageObservable()
     val intent = intent
     if (intent != null) {
       val extras = intent.extras
@@ -182,7 +184,7 @@ class QuranActivity : QuranActionBarActivity(),
     val inflater = menuInflater
     inflater.inflate(R.menu.home_menu, menu)
     searchItem = menu.findItem(R.id.search)
-    val searchView = MenuItemCompat.getActionView(searchItem) as SearchView
+    val searchView = searchItem?.actionView as SearchView
     val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
     searchView.queryHint = getString(R.string.search_hint)
     searchView.setSearchableInfo(
@@ -190,11 +192,17 @@ class QuranActivity : QuranActionBarActivity(),
             ComponentName(this, SearchActivity::class.java)
         )
     )
+
+    // Add additional injected screens (if any)
+    extraScreens
+      .sortedBy { it.order }
+      .forEach { menu.add(Menu.NONE, it.id, Menu.NONE, it.titleResId) }
+
     return true
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    when (item.itemId) {
+    when (val itemId = item.itemId) {
       R.id.settings -> {
         startActivity(Intent(this, QuranPreferenceActivity::class.java))
       }
@@ -219,7 +227,8 @@ class QuranActivity : QuranActionBarActivity(),
         startActivity(intent)
       }
       else -> {
-        return super.onOptionsItemSelected(item)
+        val handled = extraScreens.firstOrNull { it.id == itemId }?.onClick(this) ?: false
+        return handled || super.onOptionsItemSelected(item)
       }
     }
     return true
@@ -244,7 +253,17 @@ class QuranActivity : QuranActionBarActivity(),
     } else if (searchItem != null && searchItem.isActionViewExpanded) {
       searchItem.collapseActionView()
     } else {
-      super.onBackPressed()
+      // work around a memory leak in Android Q
+      // https://issuetracker.google.com/issues/139738913
+      if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q &&
+        isTaskRoot &&
+        (supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.backStackEntryCount ?: 0) == 0 &&
+        supportFragmentManager.backStackEntryCount == 0
+      ) {
+        finishAfterTransition()
+      } else {
+        super.onBackPressed()
+      }
     }
   }
 
@@ -270,13 +289,8 @@ class QuranActivity : QuranActionBarActivity(),
 
   private fun updateTranslationsListAsNeeded() {
     if (!updatedTranslations) {
-      val time = settings.lastUpdatedTranslationDate
-      Timber.d("checking whether we should update translations..")
-      if (System.currentTimeMillis() - time > Constants.TRANSLATION_REFRESH_TIME) {
-        Timber.d("updating translations list...")
-        updatedTranslations = true
-        translationManagerPresenter.checkForUpdates()
-      }
+      translationManagerPresenter.checkForUpdates()
+      updatedTranslations = true
     }
   }
 
@@ -376,7 +390,7 @@ class QuranActivity : QuranActionBarActivity(),
     dialog.show(fm, AddTagDialog.TAG)
   }
 
-  private inner class PagerAdapter internal constructor(fm: FragmentManager) :
+  private inner class PagerAdapter(fm: FragmentManager) :
       FragmentPagerAdapter(fm) {
 
     override fun getCount() = 3
@@ -404,7 +418,7 @@ class QuranActivity : QuranActionBarActivity(),
       }
     }
 
-    override fun getPageTitle(position: Int): CharSequence? {
+    override fun getPageTitle(position: Int): CharSequence {
       val resId = if (isRtl) ARABIC_TITLES[position] else TITLES[position]
       return getString(resId)
     }

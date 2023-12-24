@@ -1,0 +1,28 @@
+import kotlin.Int;
+
+CREATE TABLE IF NOT EXISTS last_pages(
+  _ID INTEGER PRIMARY KEY AUTOINCREMENT,
+  page INTEGER AS Int NOT NULL UNIQUE,
+  added_date INTEGER DEFAULT (strftime('%s', 'now')) NOT NULL
+);
+
+addLastPage {
+  REPLACE INTO last_pages(page) VALUES(?);
+  DELETE FROM last_pages WHERE _ID NOT IN(
+    SELECT last_pages._ID FROM last_pages ORDER BY added_date DESC LIMIT ?
+  );
+}
+
+removeLastPages:
+  DELETE FROM last_pages;
+
+replaceRangeWithPage {
+  DELETE FROM last_pages WHERE page >= ? AND page <= ?;
+  REPLACE INTO last_pages(page) VALUES(?);
+  DELETE FROM last_pages WHERE _ID NOT IN(
+    SELECT last_pages._ID FROM last_pages ORDER BY added_date DESC LIMIT ?
+  );
+}
+
+getLastPages:
+  SELECT _ID, page, added_date FROM last_pages ORDER BY added_date DESC;

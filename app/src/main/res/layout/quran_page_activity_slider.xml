@@ -23,4 +23,11 @@
         android:layout_height="match_parent"
         layout="@layout/ayah_action_panel_layout"/>
 
+  <!-- overlay -->
+  <FrameLayout
+      android:id="@+id/overlay"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:visibility="gone"/>
+
 </com.quran.labs.androidquran.view.SlidingUpPanelLayout>

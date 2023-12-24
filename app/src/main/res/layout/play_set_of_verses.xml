@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:text="@string/play_verses_range"
+      android:textAppearance="@style/PanelLabel"
+      />
+  <com.shawnlin.numberpicker.NumberPicker
+      android:id="@+id/repeat_range_picker"
+      android:layout_width="120dp"
+      android:layout_height="40dp"
+      app:np_orientation="horizontal"
+      app:np_width="135dp"
+      app:np_height="48dp"
+      app:np_max="25"
+      app:np_value="7"
+      app:np_min="1"
+      app:np_textSize="21sp"
+      app:np_textColor="@color/inactive"
+      app:np_selectedTextSize="24sp"
+      app:np_selectedTextColor="@color/panel_label"
+      app:np_dividerColor="@color/panel_label"
+      app:np_dividerType="underline"
+      app:np_fadingEdgeEnabled="true"
+      app:np_wrapSelectorWheel="true"
+      />
+</LinearLayout>

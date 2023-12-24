@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="toolbar_background">#ed2b5836</color>
+  <color name="ripple_dark">#33ffffff</color>
+  <color name="toolbar_item_pressed">#552bff36</color>
+</resources>

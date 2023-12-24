@@ -41,6 +41,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_translation_next"
         android:contentDescription="@string/next"
+        android:padding="12dp"
         />
     <Space
         android:layout_width="0dp"
@@ -53,6 +54,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_translation_previous"
         android:contentDescription="@string/previous"
+        android:padding="12dp"
         />
   </com.quran.labs.androidquran.view.LeftToRightLinearLayout>
 

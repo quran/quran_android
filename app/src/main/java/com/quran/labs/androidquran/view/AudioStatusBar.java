@@ -1,38 +1,32 @@
 package com.quran.labs.androidquran.view;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.os.Build;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.core.view.ViewCompat;
 
+import com.quran.data.model.audio.Qari;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.common.audio.QariItem;
-import com.quran.labs.androidquran.data.Constants;
+import com.quran.labs.androidquran.common.audio.model.QariItem;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
-
-import java.util.List;
 
 public class AudioStatusBar extends LeftToRightLinearLayout {
 
@@ -42,6 +36,11 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   public static final int PLAYING_MODE = 4;
   public static final int PAUSED_MODE = 5;
   public static final int PROMPT_DOWNLOAD_MODE = 6;
+  public static final int RECITATION_LISTENING_MODE = 7;
+  public static final int RECITATION_STOPPED_MODE = 8;
+  public static final int RECITATION_PLAYING_MODE = 9;
+
+  private static final int MAX_AUDIOBAR_QUICK_REPEAT = 3;
 
   private final Context context;
   private int currentMode;
@@ -50,78 +49,47 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private final int separatorSpacing;
   private final int textFontSize;
   private final int textFullFontSize;
-  private final int spinnerPadding;
-  private QariAdapter adapter;
+  private final int buttonPadding;
 
-  private int currentQari;
+  private Qari currentQari;
   private int currentRepeat = 0;
+  @DrawableRes private int itemBackground;
   private final boolean isRtl;
-  private final SharedPreferences sharedPreferences;
   private boolean isDualPageMode;
+  private boolean isRecitationEnabled;
   private boolean hasErrorText;
   private boolean haveCriticalError = false;
-  private final int[] repeatValues = {0, 1, 2, 3, -1};
 
-  private QuranSpinner spinner;
+  private TextView qariView;
+  private ImageView dropdownIconView;
   private TextView progressText;
   private ProgressBar progressBar;
-  private RepeatButton repeatButton;
+  private final RepeatButton repeatButton;
   private AudioBarListener audioBarListener;
-  @DrawableRes
-  private int itemBackground;
-  OnClickListener onClickListener = new OnClickListener() {
-    @Override
-    public void onClick(View view) {
-      if (audioBarListener != null) {
-        int tag = (Integer) view.getTag();
-        switch (tag) {
-          case R.drawable.ic_play:
-            audioBarListener.onPlayPressed();
-            break;
-          case R.drawable.ic_stop:
-            audioBarListener.onStopPressed();
-            break;
+  private AudioBarRecitationListener audioBarRecitationListener;
 
-          case R.drawable.ic_plus_1_24:
-            audioBarListener.onUpPressed();
-            break;
+  public interface AudioBarListener {
+    void onPlayPressed();
+    void onPausePressed();
+    void onNextPressed();
+    void onPreviousPressed();
+    void onStopPressed();
+    void onCancelPressed(boolean stopDownload);
+    void setRepeatCount(int repeatCount);
+    void onAcceptPressed();
+    void onAudioSettingsPressed();
+    void onShowQariList();
+  }
 
-          case R.drawable.ic_neg_1_24:
-            audioBarListener.onDownPressed();
-            break;
-
-
-          case R.drawable.ic_pause:
-            audioBarListener.onPausePressed();
-            break;
-          case R.drawable.ic_next:
-            audioBarListener.onNextPressed();
-            break;
-          case R.drawable.ic_previous:
-            audioBarListener.onPreviousPressed();
-            break;
-          case R.drawable.ic_repeat:
-            incrementRepeat();
-            audioBarListener.setRepeatCount(repeatValues[currentRepeat]);
-            break;
-          case R.drawable.ic_cancel:
-            if (haveCriticalError) {
-              haveCriticalError = false;
-              switchMode(STOPPED_MODE);
-            } else {
-              audioBarListener.onCancelPressed(currentMode == DOWNLOADING_MODE);
-            }
-            break;
-          case R.drawable.ic_accept:
-            audioBarListener.onAcceptPressed();
-            break;
-          case R.drawable.ic_action_settings:
-            audioBarListener.onAudioSettingsPressed();
-            break;
-        }
-      }
-    }
-  };
+  public interface AudioBarRecitationListener {
+    void onRecitationPressed();
+    void onRecitationLongPressed();
+    void onRecitationTranscriptPressed();
+    void onHideVersesPressed();
+    void onEndRecitationSessionPressed();
+    void onPlayRecitationPressed();
+    void onPauseRecitationPressed();
+  }
 
   public AudioStatusBar(Context context) {
     this(context, null);
@@ -135,6 +103,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     super(context, attrs, defStyle);
 
     this.context = context;
+    repeatButton = new RepeatButton(context);
     Resources resources = getResources();
     buttonWidth = resources.getDimensionPixelSize(
         R.dimen.audiobar_button_width);
@@ -146,16 +115,12 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
         R.dimen.audiobar_text_font_size);
     textFullFontSize = resources.getDimensionPixelSize(
         R.dimen.audiobar_text_full_font_size);
-    spinnerPadding = resources
+    buttonPadding = resources
         .getDimensionPixelSize(R.dimen.audiobar_spinner_padding);
     setOrientation(LinearLayout.HORIZONTAL);
 
     // only flip the layout when the language is rtl and we're on api 17+
-    isRtl = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
-        (QuranSettings.getInstance(this.context).isArabicNames() || QuranUtils.isRtl());
-    sharedPreferences = PreferenceManager
-        .getDefaultSharedPreferences(context.getApplicationContext());
-    currentQari = sharedPreferences.getInt(Constants.PREF_DEFAULT_QARI, 0);
+    isRtl = QuranSettings.getInstance(this.context).isArabicNames() || QuranUtils.isRtl();
 
     itemBackground = 0;
     if (attrs != null) {
@@ -166,28 +131,24 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     }
   }
 
+  public void setCurrentQariBridge(CurrentQariBridge currentQariBridge) {
+    currentQariBridge.listenToQaris(qari -> {
+      currentQari = qari;
+      updateButton();
+      return null;
+    });
+  }
+
   public void setIsDualPageMode(boolean isDualPageMode) {
     this.isDualPageMode = isDualPageMode;
   }
 
-  public void setQariList(List<QariItem> qariList) {
-    // TODO: optimize - PREF_DEFAULT_QARI is the qari id, should introduce a helper pref for pos
-    final int qaris = qariList.size();
-    if (currentQari >= qaris || qariList.get(currentQari).getId() != currentQari) {
-      // figure out the updated position for the index
-      int updatedIndex = 0;
-      for (int i = 0; i < qaris; i++) {
-        if (qariList.get(i).getId() == currentQari) {
-          updatedIndex = i;
-          break;
-        }
-      }
-      currentQari = updatedIndex;
-    }
+  public boolean getIsRecitationEnabled() {
+    return isRecitationEnabled;
+  }
 
-    adapter = new QariAdapter(this.context, qariList,
-        R.layout.sherlock_spinner_item, R.layout.sherlock_spinner_dropdown_item);
-    showStoppedMode();
+  public void setIsRecitationEnabled(boolean isEnabled) {
+    this.isRecitationEnabled = isEnabled;
   }
 
   public int getCurrentMode() {
@@ -195,7 +156,11 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   }
 
   public void switchMode(int mode) {
-    if (mode == currentMode) {
+    switchMode(mode, false);
+  }
+
+  public void switchMode(int mode, boolean force) {
+    if (mode == currentMode && !force) {
       return;
     }
 
@@ -205,19 +170,22 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
       showPromptForDownloadMode();
     } else if (mode == DOWNLOADING_MODE || mode == LOADING_MODE) {
       showProgress(mode);
-    } else showPlayingMode(mode != PLAYING_MODE);
+    } else if (mode == PLAYING_MODE) {
+      showPlayingMode(false);
+    } else if (mode == PAUSED_MODE){
+      showPlayingMode(true);
+    } else if (mode == RECITATION_LISTENING_MODE){
+      showRecitationListeningMode();
+    } else if (mode == RECITATION_STOPPED_MODE){
+      showRecitationStoppedMode();
+    } else if (mode == RECITATION_PLAYING_MODE){
+      showRecitationPlayingMode();
+    }
   }
 
   @NonNull
   public QariItem getAudioInfo() {
-    final int position = spinner != null ? spinner.getSelectedItemPosition() : currentQari;
-    return adapter.getItem(position);
-  }
-
-  public void updateSelectedItem() {
-    if (spinner != null) {
-      spinner.setSelection(currentQari, false);
-    }
+    return QariItem.Companion.fromQari(context, currentQari);
   }
 
   public void setProgress(int progress) {
@@ -255,77 +223,67 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     removeAllViews();
 
     if (isRtl) {
-      addSpinner();
+      if (isRecitationEnabled) {
+        addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_mic, false);
+        addSeparator();
+      }
+      addButton();
       addSeparator();
-      addButton(R.drawable.ic_play, false);
+      addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_play, false);
     } else {
-      addButton(R.drawable.ic_play, false);
+      addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_play, false);
       addSeparator();
-      addSpinner();
+      addButton();
+      if (isRecitationEnabled) {
+        addSeparator();
+        addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_mic, false);
+      }
     }
   }
 
-  private void showPlayingMode(boolean isPaused) {
-    removeAllViews();
-
-    final boolean withWeight = !isDualPageMode;
-
-    int button;
-    if (isPaused) {
-      button = R.drawable.ic_play;
-      currentMode = PAUSED_MODE;
-    } else {
-      button = R.drawable.ic_pause;
-      currentMode = PLAYING_MODE;
+  private void updateButton() {
+    final TextView currentQariView = qariView;
+    if (currentQariView != null) {
+      currentQariView.setText(currentQari.getNameResource());
     }
-
-    addButton(R.drawable.ic_stop, withWeight);
-    addButton(R.drawable.ic_previous, withWeight);
-    addButton(button, withWeight);
-    addButton(R.drawable.ic_next, withWeight);
-    addButton(R.drawable.ic_plus_1_24, withWeight);
-    addButton(R.drawable.ic_neg_1_24, withWeight);
-
-    repeatButton = new RepeatButton(context);
-    addButton(repeatButton, R.drawable.ic_repeat, withWeight);
-    updateRepeatButtonText();
-
-    addButton(R.drawable.ic_action_settings, withWeight);
   }
 
-  private void addSpinner() {
-    if (spinner == null) {
-      spinner = new QuranSpinner(context, null,
-          R.attr.actionDropDownStyle);
-      spinner.setDropDownVerticalOffset(spinnerPadding);
-      spinner.setAdapter(adapter);
-
-      spinner.setOnItemSelectedListener(
-          new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-              if (position != currentQari) {
-                sharedPreferences.edit().
-                    putInt(Constants.PREF_DEFAULT_QARI, adapter.getItem(position).getId()).apply();
-                currentQari = position;
-              }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-          });
+  private void addButton() {
+    if (qariView == null) {
+      qariView = new TextView(context);
+      qariView.setOnClickListener(view -> audioBarListener.onShowQariList());
+      qariView.setGravity(Gravity.CENTER_VERTICAL);
+      qariView.setTextColor(Color.WHITE);
+      qariView.setBackgroundResource(itemBackground);
+      qariView.setPadding(buttonPadding, 0, buttonPadding, 0);
     }
-    spinner.setSelection(currentQari);
+
+    if (dropdownIconView == null) {
+      dropdownIconView = new ImageView(context);
+      dropdownIconView.setImageResource(R.drawable.ic_action_expand);
+      dropdownIconView.setBackgroundResource(itemBackground);
+      dropdownIconView.setOnClickListener(view -> audioBarListener.onShowQariList());
+      dropdownIconView.setPadding(buttonPadding, 0, buttonPadding, 0);
+    }
+    qariView.setText(currentQari.getNameResource());
+
+    final ViewGroup.LayoutParams dropdownParams =
+        new ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        );
+
     final LayoutParams params = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
     params.weight = 1;
+
     if (isRtl) {
-      ViewCompat.setLayoutDirection(spinner, ViewCompat.LAYOUT_DIRECTION_RTL);
-      params.leftMargin = spinnerPadding;
-    } else {
-      params.rightMargin = spinnerPadding;
+      ViewCompat.setLayoutDirection(qariView, ViewCompat.LAYOUT_DIRECTION_RTL);
+      addView(dropdownIconView, dropdownParams);
     }
-    addView(spinner, params);
+    addView(qariView, params);
+    if (!isRtl) {
+      addView(dropdownIconView, dropdownParams);
+    }
   }
 
   private void showPromptForDownloadMode() {
@@ -401,35 +359,112 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     lp.weight = 1;
     lp.setMargins(separatorSpacing, 0, separatorSpacing, 0);
     if (isRtl) {
-      lp.leftMargin = spinnerPadding;
+      lp.leftMargin = buttonPadding;
     } else {
-      lp.rightMargin = spinnerPadding;
+      lp.rightMargin = buttonPadding;
     }
     addView(ll, lp);
   }
 
-  public interface AudioBarListener {
-    void onPlayPressed();
+  private void showRecitationListeningMode() {
+    currentMode = RECITATION_LISTENING_MODE;
+    removeAllViews();
 
-    void onPausePressed();
+    ImageView recitationButton = new ImageView(context);
+    recitationButton.setImageTintList(ColorStateList.valueOf(Color.CYAN));
 
-    void onNextPressed();
+    if (isRtl) {
+      addButton(recitationButton, com.quran.labs.androidquran.common.toolbar.R.drawable.ic_mic, false);
+      addSeparator();
+      addButton(R.drawable.ic_transcript, false);
+      addSeparator();
+      addSpacer();
+      addSeparator();
+      addButton(R.drawable.ic_hide_page, false);
+    } else {
+      addButton(R.drawable.ic_hide_page, false);
+      addSeparator();
+      addSpacer();
+      addSeparator();
+      addButton(R.drawable.ic_transcript, false);
+      addSeparator();
+      addButton(recitationButton, com.quran.labs.androidquran.common.toolbar.R.drawable.ic_mic, false);
+    }
+  }
 
-    void onUpPressed();
+  private void showRecitationStoppedMode() {
+    currentMode = RECITATION_STOPPED_MODE;
+    removeAllViews();
 
-    void onDownPressed();
+    if (isRtl) {
+      addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_mic, false);
+      addSeparator();
+      addButton(R.drawable.ic_transcript, false);
+      addSeparator();
+      addSpacer();
+      addSeparator();
+      addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_play, false);
+      addButton(R.drawable.ic_cancel, false);
+    } else {
+      addButton(R.drawable.ic_cancel, false);
+      addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_play, false);
+      addSeparator();
+      addSpacer();
+      addSeparator();
+      addButton(R.drawable.ic_transcript, false);
+      addSeparator();
+      addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_mic, false);
+    }
+  }
 
-    void onPreviousPressed();
+  private void showRecitationPlayingMode() {
+    currentMode = RECITATION_PLAYING_MODE;
+    removeAllViews();
 
-    void onStopPressed();
+    if (isRtl) {
+      addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_mic, false);
+      addSeparator();
+      addButton(R.drawable.ic_transcript, false);
+      addSeparator();
+      addSpacer();
+      addSeparator();
+      addButton(R.drawable.ic_pause, false);
+      addButton(R.drawable.ic_cancel, false);
+    } else {
+      addButton(R.drawable.ic_cancel, false);
+      addButton(R.drawable.ic_pause, false);
+      addSeparator();
+      addSpacer();
+      addSeparator();
+      addButton(R.drawable.ic_transcript, false);
+      addSeparator();
+      addButton(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_mic, false);
+    }
+  }
 
-    void onCancelPressed(boolean stopDownload);
+  private void showPlayingMode(boolean isPaused) {
+    removeAllViews();
 
-    void setRepeatCount(int repeatCount);
+    final boolean withWeight = !isDualPageMode;
 
-    void onAcceptPressed();
+    int button;
+    if (isPaused) {
+      button = com.quran.labs.androidquran.common.toolbar.R.drawable.ic_play;
+      currentMode = PAUSED_MODE;
+    } else {
+      button = R.drawable.ic_pause;
+      currentMode = PLAYING_MODE;
+    }
 
-    void onAudioSettingsPressed();
+    addButton(R.drawable.ic_stop, withWeight);
+    addButton(R.drawable.ic_previous, withWeight);
+    addButton(button, withWeight);
+    addButton(R.drawable.ic_next, withWeight);
+
+    addButton(repeatButton, R.drawable.ic_repeat, withWeight);
+    updateRepeatButtonText();
+
+    addButton(R.drawable.ic_action_settings, withWeight);
   }
 
   private void addButton(int imageId, boolean withWeight) {
@@ -440,6 +475,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     button.setImageResource(imageId);
     button.setScaleType(ImageView.ScaleType.CENTER);
     button.setOnClickListener(onClickListener);
+    button.setOnLongClickListener(onLongClickListener);
     button.setTag(imageId);
     button.setBackgroundResource(itemBackground);
     final LayoutParams params = new LayoutParams(
@@ -456,16 +492,21 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     separator.setPadding(0, separatorSpacing, 0, separatorSpacing);
     LinearLayout.LayoutParams paddingParams =
         new LayoutParams(separatorWidth, LayoutParams.MATCH_PARENT);
-
-    final int right = isRtl ? 0 : separatorSpacing;
-    final int left = isRtl ? separatorSpacing : 0;
-    paddingParams.setMargins(left, 0, right, 0);
     addView(separator, paddingParams);
+  }
+
+  private void addSpacer() {
+    Space spacer = new Space(context);
+    LinearLayout.LayoutParams params = new LayoutParams(0, LayoutParams.MATCH_PARENT);
+    params.weight = 1;
+    addView(spacer, params);
   }
 
   private void incrementRepeat() {
     currentRepeat++;
-    if (currentRepeat == repeatValues.length) {
+    if (currentRepeat - 1 == MAX_AUDIOBAR_QUICK_REPEAT) {
+      currentRepeat = -1;
+    } else if (currentRepeat > MAX_AUDIOBAR_QUICK_REPEAT) {
       currentRepeat = 0;
     }
     updateRepeatButtonText();
@@ -473,27 +514,21 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   private void updateRepeatButtonText() {
     String str;
-    int value = repeatValues[currentRepeat];
-    if (value == 0) {
-      str = "";
-    } else if (value > 0) {
-      str = repeatValues[currentRepeat] + "";
-    } else {
+    if (currentRepeat == -1) {
       str = context.getString(R.string.infinity);
+    } else if (currentRepeat == 0) {
+      str = "";
+    } else {
+      str = String.valueOf(currentRepeat);
     }
     repeatButton.setText(str);
   }
 
   public void setRepeatCount(int repeatCount) {
     boolean updated = false;
-    for (int i = 0; i < repeatValues.length; i++) {
-      if (repeatValues[i] == repeatCount) {
-        if (currentRepeat != i) {
-          currentRepeat = i;
-          updated = true;
-        }
-        break;
-      }
+    if (currentRepeat != repeatCount) {
+      currentRepeat = repeatCount;
+      updated = true;
     }
 
     if (updated && repeatButton != null) {
@@ -505,63 +540,72 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     audioBarListener = listener;
   }
 
-  private static class QariAdapter extends BaseAdapter {
-    @NonNull
-    private final List<QariItem> items;
-    @LayoutRes
-    private final int layoutViewId;
-    @LayoutRes
-    private final int dropDownViewId;
-    @NonNull
-    LayoutInflater inflater;
-
-    QariAdapter(@NonNull Context context,
-                @NonNull List<QariItem> items,
-                @LayoutRes int layoutViewId,
-                @LayoutRes int dropDownViewId) {
-      this.items = items;
-      this.layoutViewId = layoutViewId;
-      this.dropDownViewId = dropDownViewId;
-      inflater = LayoutInflater.from(context);
-    }
-
-    @Override
-    public int getCount() {
-      return items.size();
-    }
-
-    @Override
-    public QariItem getItem(int position) {
-      return items.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-      return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-      return getViewInternal(position, convertView, parent, layoutViewId);
-    }
-
-    @Override
-    public View getDropDownView(int position, View convertView, ViewGroup parent) {
-      return getViewInternal(position, convertView, parent, dropDownViewId);
-    }
-
-    private View getViewInternal(int position, View convertView,
-                                 ViewGroup parent, @LayoutRes int resource) {
-      TextView textView;
-      if (convertView == null) {
-        textView = (TextView) inflater.inflate(resource, parent, false);
-      } else {
-        textView = (TextView) convertView;
-      }
-
-      QariItem item = getItem(position);
-      textView.setText(item.getName());
-      return textView;
-    }
+  public void setAudioBarRecitationListener(AudioBarRecitationListener listener) {
+    audioBarRecitationListener = listener;
   }
+
+  OnClickListener onClickListener = new OnClickListener() {
+    @Override
+    public void onClick(View view) {
+      if (audioBarListener != null) {
+        int tag = (Integer) view.getTag();
+        if (tag == com.quran.labs.androidquran.common.toolbar.R.drawable.ic_mic) {
+          audioBarRecitationListener.onRecitationPressed();
+        } else if (tag == R.drawable.ic_transcript) {
+          audioBarRecitationListener.onRecitationTranscriptPressed();
+        } else if (tag == R.drawable.ic_hide_page) {
+          audioBarRecitationListener.onHideVersesPressed();
+        } else if (tag == com.quran.labs.androidquran.common.toolbar.R.drawable.ic_play) {
+          if (currentMode == RECITATION_STOPPED_MODE) {
+            audioBarRecitationListener.onPlayRecitationPressed();
+          } else {
+            audioBarListener.onPlayPressed();
+          }
+        } else if (tag == R.drawable.ic_stop) {
+          audioBarListener.onStopPressed();
+        } else if (tag == R.drawable.ic_pause) {
+          if (currentMode == RECITATION_PLAYING_MODE) {
+            audioBarRecitationListener.onPauseRecitationPressed();
+          } else {
+            audioBarListener.onPausePressed();
+          }
+        } else if (tag == R.drawable.ic_next) {
+          audioBarListener.onNextPressed();
+        } else if (tag == R.drawable.ic_previous) {
+          audioBarListener.onPreviousPressed();
+        } else if (tag == R.drawable.ic_repeat) {
+          incrementRepeat();
+          audioBarListener.setRepeatCount(currentRepeat);
+        } else if (tag == R.drawable.ic_cancel) {
+          if (currentMode == RECITATION_STOPPED_MODE || currentMode == RECITATION_PLAYING_MODE) {
+            audioBarRecitationListener.onEndRecitationSessionPressed();
+          } else if (haveCriticalError) {
+            haveCriticalError = false;
+            switchMode(STOPPED_MODE);
+          } else {
+            audioBarListener.onCancelPressed(currentMode == DOWNLOADING_MODE);
+          }
+        } else if (tag == R.drawable.ic_accept) {
+          audioBarListener.onAcceptPressed();
+        } else if (tag == R.drawable.ic_action_settings) {
+          audioBarListener.onAudioSettingsPressed();
+        }
+      }
+    }
+  };
+
+  OnLongClickListener onLongClickListener = new OnLongClickListener() {
+    @Override
+    public boolean onLongClick(View view) {
+      if (audioBarListener != null) {
+        int tag = (Integer) view.getTag();
+        if (tag == com.quran.labs.androidquran.common.toolbar.R.drawable.ic_mic) {
+          audioBarRecitationListener.onRecitationLongPressed();
+          return true;
+        }
+      }
+      return false;
+    }
+  };
+
 }

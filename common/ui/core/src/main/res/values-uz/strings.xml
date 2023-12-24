@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="remove_button">Oʻchirish</string>
+  <string name="cancel">Bekor qilish</string>
+  <string name="from">Boshi</string>
+  <string name="to">Oxiri</string>
+</resources>

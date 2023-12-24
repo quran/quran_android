@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">Ája könyvjelzőzése</string>
+  <string name="tag_ayah">Ája címkézése</string>
+  <string name="share_ayah">Ája hivatkozás megosztása</string>
+  <string name="share_ayah_text">Ája szöveg megosztása</string>
+  <string name="translation_ayah">Ája fordítás/tafszír</string>
+  <string name="play_from_here">Lejátszás innen</string>
+  <string name="recite_from_here">Szavalni innen</string>
+  <string name="search_key">Nyomja meg a keresés gombot egy vers kereséséhez</string>
+  <string name="copy_ayah">Ája másolása</string>
+</resources>

@@ -1,0 +1,73 @@
+import kotlin.Int;
+
+CREATE TABLE IF NOT EXISTS bookmarks(
+  _ID INTEGER PRIMARY KEY AUTOINCREMENT,
+  sura INTEGER AS Int,
+  ayah INTEGER AS Int,
+  page INTEGER AS Int NOT NULL,
+  added_date INTEGER DEFAULT (strftime('%s', 'now')) NOT NULL
+);
+
+addBookmark:
+  INSERT INTO bookmarks(sura, ayah, page) VALUES(?, ?, ?);
+
+restoreBookmark:
+  INSERT INTO bookmarks(_ID, sura, ayah, page, added_date) VALUES(?, ?, ?, ?, ?);
+
+update:
+  UPDATE bookmarks SET sura = ?, ayah = ?, page = ? WHERE _ID = ?;
+
+getBookmarksByDateAdded:
+  SELECT
+    bookmarks._ID,
+    bookmarks.sura,
+    bookmarks.ayah,
+    bookmarks.page,
+    bookmarks.added_date,
+    bookmark_tag.tag_id
+  FROM
+    bookmarks LEFT JOIN bookmark_tag ON bookmarks._ID = bookmark_tag.bookmark_id
+  ORDER BY bookmarks.added_date DESC;
+
+getBookmarksByLocation:
+  SELECT
+    bookmarks._ID,
+    bookmarks.sura,
+    bookmarks.ayah,
+    bookmarks.page,
+    bookmarks.added_date,
+    bookmark_tag.tag_id
+  FROM
+    bookmarks LEFT JOIN bookmark_tag ON bookmarks._ID = bookmark_tag.bookmark_id
+  ORDER BY bookmarks.page ASC, bookmarks.sura ASC, bookmarks.ayah ASC;
+
+getBookmarksByPage:
+  SELECT
+    bookmarks._ID,
+    bookmarks.sura,
+    bookmarks.ayah,
+    bookmarks.page,
+    bookmarks.added_date,
+    bookmark_tag.tag_id
+  FROM
+    bookmarks LEFT JOIN bookmark_tag ON bookmarks._ID = bookmark_tag.bookmark_id
+  WHERE
+    page = ? AND sura IS NOT NULL AND ayah IS NOT NULL
+  ORDER BY bookmarks.page ASC, bookmarks.sura ASC, bookmarks.ayah ASC;
+
+getBookmarkIdForPage:
+  SELECT bookmarks._ID FROM bookmarks
+    WHERE bookmarks.page = ?
+    AND bookmarks.sura IS NULL
+    AND bookmarks.ayah IS NULL;
+
+getBookmarkIdForSuraAyah:
+  SELECT bookmarks._ID FROM bookmarks
+    WHERE bookmarks.sura = ?
+    AND bookmarks.ayah = ?;
+
+deleteAll:
+  DELETE FROM bookmarks;
+
+deleteByIds:
+  DELETE FROM bookmarks WHERE _ID IN ?;

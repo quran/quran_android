@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Translated by 
+Abdelouali Benkheil (https://github.com/abdelouali) - (a.benkheil@gmail.com)
+Yasser Baghouli (zaterdag@outlook.com)
+-->
+<resources>
+  <string name="bookmark_ayah">Bladwijzer deze Ayah</string>
+  <string name="tag_ayah">Label deze Ayah</string>
+  <string name="share_ayah">Deel Ayah Link</string>
+  <string name="share_ayah_text">Deel Ayah Tekst</string>
+  <string name="translation_ayah">Ayah Vertaling/Tafseer</string>
+  <string name="play_from_here">Afspelen van hier</string>
+  <string name="recite_from_here">Reciteer vanaf hier</string>
+  <string name="search_key">Druk op de zoek-toets om een vers te zoeken.</string>
+  <string name="copy_ayah">Kopieer Ayah</string>
+</resources>

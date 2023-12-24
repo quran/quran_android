@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">1 sure e shkarkuar</item>
+    <item quantity="other"> Shkarkohen %1$d sura</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">Menaxhues Audio</string>
+  <string name="audio_manager_remove_audio_title">Ta heqim suren?</string>
+  <string name="audio_manager_remove_audio_msg">Je i sigurt që do të doje të hiqje %1$s?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">Je i sigurt që do të doje të hiqje?</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">E fshiu me sukses suren</item>
+    <item quantity="other">Eleminuar me sukses suret %1$d</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">Ka pasur një gabim gjatë fshirjes së sures</item>
+    <item quantity="other">Gabim gjatë fshirjes së sureve %1$d</item>
+  </plurals>
+  <string name="audio_manager_surah_download">Shkarko sura</string>
+  <string name="audio_manager_surah_delete">Elemino file audio</string>
+  <string name="audio_manager_download_all">Shkarko të gjitha</string>
+  <string name="audio_manager_download_selection">Përzgjedhja e shkarkimit</string>
+  <string name="audio_manager_delete_selection">Elemino përzgjedhjen</string>
+
+  <string name="downloading_title">Shkarkim&#8230;</string>
+  <string name="download_amount_in_megabytes">%s MB</string>
+  <string name="download_progress">Shkarkuar %1$s / %2$s</string>
+  <string name="download_sura_progress">Shkarkuar %1$s / %2$s e sures %3$d</string>
+  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">Duke shkarkuar sura %1$d ayah %2$d</string>
+</resources>

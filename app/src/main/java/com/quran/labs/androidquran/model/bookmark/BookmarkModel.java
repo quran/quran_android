@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.model.bookmark;
 
-import com.quran.labs.androidquran.dao.Tag;
-import com.quran.labs.androidquran.dao.bookmark.Bookmark;
-import com.quran.labs.androidquran.dao.bookmark.BookmarkData;
+import com.quran.data.model.bookmark.Tag;
+import com.quran.data.model.bookmark.Bookmark;
+import com.quran.data.model.bookmark.BookmarkData;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
@@ -14,20 +14,21 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import androidx.core.util.Pair;
-import io.reactivex.Completable;
-import io.reactivex.Maybe;
-import io.reactivex.Observable;
-import io.reactivex.Single;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
+
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 
 
 @Singleton
 public class BookmarkModel {
   private final RecentPageModel recentPageModel;
   private final BookmarksDBAdapter bookmarksDBAdapter;
-  private final Subject<Tag> tagPublishSubject;
+  private final Subject<Boolean> tagPublishSubject;
   private final Subject<Boolean> bookmarksPublishSubject;
 
   @Inject
@@ -35,11 +36,11 @@ public class BookmarkModel {
     this.recentPageModel = recentPageModel;
     this.bookmarksDBAdapter = bookmarksAdapter;
 
-    tagPublishSubject = PublishSubject.<Tag>create().toSerialized();
+    tagPublishSubject = PublishSubject.<Boolean>create().toSerialized();
     bookmarksPublishSubject = PublishSubject.<Boolean>create().toSerialized();
   }
 
-  public Observable<Tag> tagsObservable() {
+  public Observable<Boolean> tagsObservable() {
     return tagPublishSubject.hide();
   }
 
@@ -49,6 +50,15 @@ public class BookmarkModel {
 
   public Observable<Boolean> bookmarksObservable() {
     return bookmarksPublishSubject.hide();
+  }
+
+  public void notifyBookmarksUpdated() {
+    bookmarksPublishSubject.onNext(true);
+  }
+
+  public void notifyRecentPagesUpdated(int page) {
+    recentPageModel.notifyRecentPagesUpdated();
+    recentPageModel.updateLatestPage(page);
   }
 
   public Single<BookmarkData> getBookmarkDataObservable(final int sortOrder) {
@@ -79,6 +89,9 @@ public class BookmarkModel {
       }
       bookmarksDBAdapter.bulkDelete(tagsToDelete, bookmarksToDelete, untag);
       bookmarksPublishSubject.onNext(true);
+      if (tagsToDelete.size() > 0) {
+        tagPublishSubject.onNext(true);
+      }
       return null;
     }).subscribeOn(Schedulers.io());
   }
@@ -86,7 +99,7 @@ public class BookmarkModel {
   public Observable<Long> addTagObservable(final String title) {
     return Observable.fromCallable(() -> {
       long result = bookmarksDBAdapter.addTag(title);
-      tagPublishSubject.onNext(new Tag(result, title));
+      tagPublishSubject.onNext(true);
       return result;
     }).subscribeOn(Schedulers.io());
   }
@@ -95,7 +108,7 @@ public class BookmarkModel {
     return Completable.fromCallable(() -> {
       boolean result = bookmarksDBAdapter.updateTag(tag.getId(), tag.getName());
       if (result) {
-        tagPublishSubject.onNext(tag);
+        tagPublishSubject.onNext(true);
       }
       return null;
     }).subscribeOn(Schedulers.io());
@@ -150,13 +163,6 @@ public class BookmarkModel {
   public Observable<Pair<Integer, Boolean>> getIsBookmarkedObservable(Integer... pages) {
     return Observable.fromArray(pages)
         .map(page -> new Pair<>(page, bookmarksDBAdapter.getBookmarkId(null, null, page) > 0))
-        .subscribeOn(Schedulers.io());
-  }
-
-  public Single<Boolean> getIsBookmarkedObservable(
-      final Integer sura, final Integer ayah, final int page) {
-    return getBookmarkId(sura, ayah, page)
-        .map(bookmarkId -> bookmarkId > 0)
         .subscribeOn(Schedulers.io());
   }
 

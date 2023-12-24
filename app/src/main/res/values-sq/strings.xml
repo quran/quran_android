@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="app_name">Kurani</string>
+  <string name="downloadPrompt_title">Shkarko Skedarët e Kërkuar?</string>
+  <string name="downloadPrompt">Në mënyrë që Kur\'ani Android të punojë siç duhet, ne duhet të shkarkojmë disa skedarë. Nëse nuk e bëni këtë tani, aplikacioni mund të mos funksionojë në mënyrë të besueshme dhe do të kërkojë një lidhje interneti për lexim. Dëshironi të shkarkoni skedarët e kërkuar tani?
+    </string>
+  <string name="downloadTabletPrompt">Kohët e fundit kemi shtuar imazhe të përmirësuara për tabletat. Dëshironi t\'i shkarkoni këto imazhe tani?</string>
+  <string name="downloadImportantPrompt">Ka një përditësim të vogël, por të rëndësishëm për imazhet e Kuranit që keni në pajisjen tuaj. Dëshiron ta shkarkosh këtë patch tani?
+    </string>
+  <string name="downloadPrompt_ok">Po.</string>
+  <string name="downloadPrompt_no">Jo</string>
+  <string name="downloading_message">Ju lutem prisni që skedarët të shkarkohen (rinisja e suportuar).</string>
+  <string name="extracting_title">Përpunim&#8230;</string>
+  <string name="menu_about">Rreth nesh</string>
+  <string name="menu_other_apps">Aplikacione të tjera</string>
+  <string name="menu_settings">Rregullimet</string>
+  <string name="menu_jump_last_page">Faqja e fundit</string>
+  <string name="menu_bookmarks">Libërshënues</string>
+  <string name="menu_bookmarks_page">Libërshënues faqesh</string>
+  <string name="menu_bookmarks_ayah">Ayah Bookmarks</string>
+  <string name="menu_sort">Renditja</string>
+  <string name="menu_sort_date">Data e shtuar</string>
+  <string name="menu_sort_location">Vendndodhja në Kuran</string>
+  <string name="menu_sort_group_by_tags">Grup nga Tags</string>
+  <string name="menu_show_date">Shfaq datën</string>
+  <string name="menu_translation">Shfaq përkthimin</string>
+  <string name="menu_back_to_page">Shfaq Kuranin</string>
+  <string name="menu_help">Ndihmë</string>
+  <string name="menu_search">Kërko</string>
+  <string name="menu_get_translations">Merr përkthime</string>
+  <string name="menu_jump">@string/gotoPage</string>
+  <string name="gotoPage">Shko në faqe</string>
+  <string name="please_wait">Të lutem prit…</string>
+
+  <!-- about -->
+  <string name="about_description">Kur\'ani për Android është një aplikacion falas i Kuranit. Ju lutem, mos harroni kontribuesit në lutjet tuaja.</string>
+  <string name="about_data_sources">Burimet e të dhënave</string>
+  <string name="about_images">Imazhe</string>
+  <string name="about_madani_images">Imazhet e Kuranit bazohen në gërmat nga Kompleksi i Mbretit Fehd për shtypjen e Kur\'anit të ndershëm</string>
+  <string name="about_naskh_images">Imazhet e Kuranit për aplikacionin Naskh janë marrë (me leje) nga SHL Info Systems</string>
+  <string name="about_qaloon_images">Imazhet Qaloon përdoren me lejen e Nous Memes Editions Et Diffusion (Tunizi)</string>
+  <string name="about_quranicaudio_summary">Recitime të Kuranit mp3 gapless</string>
+  <string name="about_quran_ksu">Projekti Elektronik i Mosf</string>
+  <string name="about_quran_ksu_summary">Projekti "King Saud University Electronic Epokaf" është burimi i app-it për Gjuhën Arabe Tafaseer dhe përkthimet për gjuhë të ndryshme. Ai është gjithashtu burimi për recitimin e Dr. Ajman Suwaid.</string>
+  <string name="about_furqan_summary">Teksti uthmani dhe tafaseeri arab</string>
+  <string name="about_quran_enc" translatable="false">Enciklopedia e Kuranit Fisnik</string>
+  <string name="about_quran_enc_summary">Përkthime për shumë gjuhë</string>
+  <string name="about_tanzil_summary">Përkthime për disa gjuhë</string>
+  <string name="about_noorhidayat_summary">Font Noorehira dhe Përkthimi Myftiu Taqi</string>
+  <string name="about_open_source">Projekte me burim të hapur</string>
+  <string name="about_others">Të tjerë</string>
+  <string name="about_contributors">Kontribues</string>
+  <string name="about_contributors_summary">Një listë e njerëzve që kontribuan në zhvillimin e Kuranit për Android</string>
+
+  <!-- help -->
+  <string name="help_title">Pyetje që bëhen shpesh</string>
+  <string name="help">
+        &lt;b>Si të luaj audio?&lt;/b>
+        &lt;br/>Hap çdo faqe kurani. Ngjitu një herë në ekran. Në fund, do të vëreni një buton luajtjeje dhe një tekst me emrin e një qari. Kliko emrin e qarit për të zgjedhur një qari tjetër. Kliko luaj për të shkarkuar dhe për të luajtur faqen apo surën aktuale.
+        &lt;br/>
+        &lt;br/>&lt;b>Si e konsideroj përkthimin?&lt;/b>
+        &lt;br/>Hap çdo faqe kurani. Ngjitu një herë në ekran. Në krye, do të vini re një ikonë globi (ose, nëse nuk e shihni, kliko një ikonë me tre pika katrore) - kliko këtë dhe zgjidh përkthimin për të parë përkthimin.
+        &lt;br/>
+        Nëse nuk keni ndonjë përkthim të shkarkuar, do t\'ju çojë në një ekran ku mund të shkarkosh përkthime. Zgjidh dhe shkarko një përkthim, pastaj kthehu dhe trokit përsëri ikonën e globit për të parë përkthimin.
+        &lt;br/>
+        &lt;br/>&lt;b>Si ta shënoj një faqe?&lt;/b>
+        &lt;br/>Hap çdo faqe kurani. Ngjitu një herë në ekran. Në krye djathtas, do të shihni një ikonë libërshënuesi. Ngjit ikonë libërshënues për të libërshënuar faqen (ngjyra do të bëhet e bardhë e fortë). Ngjite ikonën e libërshënuesit përsëri për të hequr libërshënuesin.
+        &lt;br/>
+        &lt;br/>&lt;b>Si ta bëj tekstin më të madh?&lt;/b>
+        &lt;br/>Për faqet arabe, mbaje telefonin në peizazh. Kjo e bën tekstin më të madh.
+        Për përkthimet, shko tek rregullimet dhe vendos madhësinë e tekstit të përkthimit.
+        &lt;br/>
+        &lt;br/>&lt;b>Si ta ndaj një ajah?&lt;/b>
+        &lt;br/>Kur jeni në ndonjë faqe arabe, shtypni dhe mbani çdo ayah për të marrë një menu ku mund të zgjidhni të shënoni libërshënues, etiketë, të ndani ose të kopjoni atë ajah në dërrasë, të shihni përkthimin ose të dëgjoni recitimin e tij.&lt;br/>
+        &lt;br/>&lt;b>Fontet Malayalam/Tamil/Bengali/Urdu nuk punojnë!&lt;/b>
+        &lt;br/>Për fat të keq, versionet Android para 4.0 nuk i mbështesin këto fonte, dhe ka pak që mund të bëjmë për të ndihmuar me këtë.
+    </string>
+  <string name="search_hint">Kërko Kur\'anin</string>
+  <string name="quranSearchType">Ajat i Kuranit</string>
+  <string name="search_full_results">Rezultate të plota</string>
+  <string name="search_entire_mushaf">Kërko të gjithë mushafin</string>
+
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="one">Një rezultat për \"%1$s\": </item>
+    <item quantity="other">%2$d rezultate për \"%1$s\": </item>
+  </plurals>
+
+  <!-- m permissions stuff -->
+  <string name="storage_permission_rationale">Kurani për Android dëshiron lejen tuaj për të ruajtur të dhënat e tij në ruajtjen e jashtme. Kurani për Android do të funksionojë pa këtë leje, por nëse pastroni të dhënat ose çinstaloni aplikacionin, të gjitha faqet e shkarkuara, audiot dhe të dhënat do të hiqen. Grant Kurani për lejen e Android?</string>
+  <string name="storage_permission_please_restart">Ju lutem rinisni aplikacionin që kjo të hyjë në fuqi.</string>
+
+  <!-- Search messages -->
+  <string name="found_in_sura">Gjendet në suren %1$s: %2$d (page %3$d)</string>
+  <string name="no_results">Nuk u gjet asnjë rezultat për \"%s\"</string>
+  <string name="no_arabic_search_available">Nuk e keni shkarkuar paketën e kërkimit arab. Ju lutem shkarkojeni dhe provoni kërkimin tuaj përsëri.</string>
+  <string name="get_arabic_search_db">Merr bazën e të dhënave të kërkimit në arabisht</string>
+
+  <!-- Quran Preference Activity -->
+  <string name="prefs_volume_key_navigation_title">Navigacion i çelësit të volumit</string>
+  <string name="prefs_volume_key_navigation_summary">Navigo midis faqeve duke përdorur çelësat e vëllimit</string>
+  <string name="prefs_category_reading">Preferencat e leximit</string>
+  <string name="prefs_category_translation">Preferencat e përkthimit</string>
+  <string name="prefs_category_display_settings">Shfaq Rregullimet</string>
+  <string name="prefs_use_arabic_title">Modaliteti arab (الوضع العربي)</string>
+  <string name="prefs_use_arabic_summary_on">Përdor arabisht për ndërfaqen e aplikimit</string>
+  <string name="prefs_new_background_title">Sfond i ri</string>
+  <string name="prefs_lock_orientation_title">Kyçi orientimin e ekranit</string>
+  <string name="prefs_lock_orientation_summary_on">Përdor modalitetin e orientimit fiks</string>
+  <string name="prefs_lock_orientation_summary_off">Përshtatës me mënyrën aktuale të orientimit</string>
+  <string name="prefs_landscape_orientation_title">Orientimi i peizazhit</string>
+  <string name="prefs_landscape_orientation_summary_on">Përdor gjithmonë mënyrën e peizazhit</string>
+  <string name="prefs_landscape_orientation_summary_off">Përdor gjithmonë modalitetin e portretit</string>
+  <string name="prefs_night_mode_title">Modaliteti i natës</string>
+  <string name="prefs_night_mode_summary">Përdor gërmat e sfondit të errët dhe të dritës</string>
+  <string name="prefs_night_mode_text_brightness_title">Shkëlqimi i tekstit</string>
+  <string name="prefs_night_mode_text_brightness_summary">Shkëlqimi i tekstit kur modaliteti i natës është aktiv</string>
+  <string name="prefs_night_mode_background_brightness_title">Shkëlqimi i sfondit</string>
+  <string name="prefs_night_mode_background_brightness_summary">Shkëlqimi i faqes kur modaliteti i natës është aktiv</string>
+  <string name="prefs_overlay_page_info_title">Shfaq informacionet e faqes</string>
+  <string name="prefs_overlay_page_info_summary">Numri i faqes mbishfaqëse, emri i sures dhe numri juz\' gjatë leximit</string>
+  <string name="prefs_display_marker_title">Shfaq popups shënues</string>
+  <string name="prefs_display_marker_summary">Shfaq popup në arritjen e juz\', hizb, etj.</string>
+  <string name="prefs_highlight_bookmarks_title">Nxirr në pah libërshënuesit</string>
+  <string name="prefs_highlight_bookmarks_summary">Nxirr në pah ajajtë e shënuar gjatë leximit</string>
+  <string name="prefs_translation_text_title">Madhësia e tekstit të përkthimit</string>
+  <string name="prefs_translations">Përkthime</string>
+  <string name="prefs_translations_summary">Shkarko dhe menaxho përkthimet</string>
+  <string name="prefs_ayah_before_translation_title">Ajah para përkthimit</string>
+  <string name="prefs_ayah_before_translation_summary">Trego ajah në arabisht sipër përkthimit</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
+  <string name="prefs_category_download">Opsionet e shkarkimit</string>
+  <string name="prefs_streaming_title">Streaming</string>
+  <string name="prefs_streaming_summary">Vëre audion në vend që të shkarkohet</string>
+  <string name="prefs_download_amount_title">Shkarko shumën</string>
+  <string name="prefs_download_amount_summary">Shuma e preferuar e shkarkimit për audio jo-gapless</string>
+  <string name="prefs_audio_manager_summary">Menaxho dhe shkarko audion e Kuranit</string>
+  <string name="downloaded_translations">Shkarkuar</string>
+  <string name="available_translations">I disponueshëm për t\'u shkarkuar</string>
+  <string name="dialog_ok">NË RREGULL</string>
+  <string name="prefs_app_location_title">Directory e të dhënave të Kuranit</string>
+  <string name="prefs_app_location_summary">Zgjidh ku të ruaj skedarët e Kuranit</string>
+  <string name="prefs_send_logs_title">Dërgo logs</string>
+  <string name="prefs_send_logs_summary">Dërgo logs debug tek zhvilluesi</string>
+  <string name="prefs_sdcard_internal">Ruajtje e brendshme</string>
+  <string name="prefs_sdcard_external">Ruajtje e jashtme%1$d</string>
+  <string name="prefs_app_size">Madhësia aktuale e të dhënave është</string>
+  <string name="prefs_calculating_app_size">Duke llogaritur madhësinë e app</string>
+  <string name="prefs_copying_app_files">Kopjimi i skedarëve të App</string>
+  <string name="prefs_err_moving_app_files">I pamundur lëvizja e skedarëve të app</string>
+  <string name="prefs_no_enough_space_to_move_files">Hapësirë e pamjaftueshme për të lëvizur skedarët e app</string>
+  <string name="prefs_megabytes_int">%1$d MB</string>
+  <string name="prefs_dual_page_mode_title">Modaliteti i faqes së dyfishtë</string>
+  <string name="prefs_dual_page_mode_enabled">Në peizazh, dy faqe do të shfaqen krah për krah.</string>
+  <string name="prefs_dual_page_mode_disabled">Në peizazh do të shfaqet vetëm një faqe.</string>
+  <string name="prefs_category_advanced">Opsione të avancuara</string>
+  <string name="prefs_category_advanced_summary">Importo/eksporto libërshënues, vendos directory e të dhënave të Kuranit, etj.</string>
+  <string name="prefs_import_title">Importo</string>
+  <string name="prefs_import_summary">Importo libërshënues dhe etiketa</string>
+  <string name="prefs_export_title">Eksporto</string>
+  <string name="prefs_export_summary">Eksporto një kopje të libërshënuesve dhe etiketave</string>
+  <string name="prefs_page_type_title">Lloji i faqes (eksperimental)</string>
+  <string name="prefs_page_type_summary">Zgjidh llojin e faqeve të leximit</string>
+  <string name="prefs_sura_translated_name_summary">Trego përkthimin e emrit të sures</string>
+  <string name="prefs_sura_translated_name_title">Sura përktheu emrin</string>
+  <string name="prefs_preview">Pamja e parë</string>
+
+  <string name="more_translations">Përkthime të tjera</string>
+  <string name="import_data_permissions_error">E pamundur leximi i file backup për shkak të gabimit të të drejtave.</string>
+  <string name="import_data_error">File backup i pavlefshëm (ose i pamundur leximi i file backup).</string>
+  <string name="import_data">Importo të dhënat</string>
+  <string name="import_data_and_override">Nëse importoni këtë file, ai do të zëvendësojë të gjitha libërshënuesit tuaj me %1$d libërshënues dhe tags %2$d. Importo?</string>
+  <string name="import_successful">Importo i suksesshëm</string>
+  <string name="export_data_error">Gabim gjatë eksportimit të të dhënave</string>
+  <string name="exported_data">Të dhënat e eksportuara në %1$s</string>
+
+  <string name="move_up">Ngjitu</string>
+  <string name="move_down">Lëviz poshtë</string>
+  <string name="delete_translation">Hiq përkthimin</string>
+
+  <string name="warning">Paralajmërim</string>
+  <string name="kitkat_external_message">Për shkak të kufizimeve Android, nëse zgjidhni të vendosni të dhënat e Kuranit në kartën tuaj të jashtme SD dhe më vonë të çinstaloni ose të qartësoni të dhënat për Kuranin Android, të gjitha faqet dhe audiot e Kuranit Android do të fshihen dhe do t\'ju duhet t\'i shkarkoni ato përsëri. Je i sigurt që do të përdorësh kartën e jashtme SD?</string>
+  <string name="scoped_storage_message">Për shkak të ndryshimeve në Android për të rritur privatësinë e përdoruesve, kopjimi i skedarëve jashtë drejtorive të aplikacionit mund të ndalojë Kuranin për Android nga qasja në të dhënat e tij në versionet e ardhshme të Android. Je i sigurt që do të doje ta përdorje këtë rrugë?</string>
+  <string name="please_grant_permissions">Të lutem jep leje në rregullimet e aplikimit</string>
+  <!-- Preferences End -->
+
+  <!-- tafaseer -->
+  <string name="see_tafseer_of_verse">Tafseeri i ajahut është përfshirë me tafseerin e ayah %d (Kliko për t\'u zgjeruar).</string>
+
+  <!-- translation updates -->
+  <string name="update_available">Përditëso në dispozicion</string>
+  <string name="translation_updates_available">Një përtëritje është në dispozicion për disa nga përkthimet tuaja. Të vizitosh ekranin e përkthimeve tani?</string>
+  <string name="translation_dialog_yes">Po.</string>
+  <string name="translation_dialog_later">Më vonë</string>
+
+  <!-- End Number picker Strings -->
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
+  <string name="quran_hizb">Hizb</string>
+  <string name="quran_juz2">Juz\'</string>
+  <string name="quran_page">Faqe</string>
+  <string name="quran_sura">Sura</string>
+  <string name="quran_ayah">Ajah %1$d</string>
+  <string name="quran_ayah_details">%1$s - Ajah %2$s, Juz\' %3$s</string>
+  <string name="quran_sura_title">Sura %1$s</string>
+  <string name="sura_ayah_notification_str">Sura %1$s, Ajah %2$d</string>
+  <string name="sura_ayah_sharing_str">Sura %1$s: %2$d</string>
+
+  <string name="index_loading">Ngarkimi&#8230;</string>
+
+  <string name="canceling">Anullimi&#8230;</string>
+  <string name="juz2_description">Juz\' %1$s</string>
+  <string name="page_description">Faqe %1$s, Juz\' %2$s</string>
+  <string name="highlighting_database">Files e kërkuar</string>
+  <string name="timing_database">Files e kërkuar</string>
+
+  <!-- download statuses and errors -->
+  <string name="sdcard_error">E pamundur gjetja e kartës SD. Të lutem hipe dhe provoje përsëri.</string>
+  <string name="download_successful">Shkarko i suksesshëm</string>
+  <string name="download_processing">Shkarkimi i përpunimit&#8230;</string>
+  <string name="download_error_general">Shkarkimi dështoi</string>
+  <string name="download_error_disk">Hapësirë e mjaftueshme disku për t\'u shkarkuar</string>
+  <string name="download_error_network">I pamundur shkarkimi për shkak të gabimit të rrjetit</string>
+  <string name="download_error_perms">I pamundur shkarkimi për shkak të gabimit të të drejtave</string>
+  <string name="download_error_invalid_download">File i shkarkuar u korruptua</string>
+  <string name="download_error_invalid_download_retry">File i korruptuar, duke u përpjekur të ri-shkarkojë</string>
+  <string name="download_error_network_retry">Gabim në rrjet, duke u përpjekur të rifillojë&#8230;</string>
+  <string name="notification_download_canceled">Shkarkimi u anullua</string>
+  <string name="download_non_wifi_prompt">Ti nuk je në Wi-Fi. Shkarko të dhëna gjithsesi?</string>
+
+  <!-- downloading dialogs -->
+  <string name="process_progress">Përpunimi i file %1$d / %2$d</string>
+  <string name="download_retry">Ritry</string>
+  <string name="download_cancel">Anulo</string>
+  <string name="download_extra_data">Duhet të shkarkojmë një ose dy skedarë të vegjël për të mbështetur ndarjen dhe përkthimin. Shkarko tani?</string>
+
+  <!-- translation database stuff -->
+  <string name="remove_dlg_title">Të heqim përkthimin?</string>
+  <string name="remove_dlg_msg">Je i sigurt që do të doje ta hiqje %1$s?</string>
+  <string name="error_getting_translation_list">E pamundur shkarkimi i listës së përkthimeve. Ju lutem provoni përsëri më vonë.</string>
+  <string name="search_data">Kërko Të dhënat</string>
+  <string name="need_translation">Ju nuk keni ndonjë përkthim / tafaseer shkarkuar ende.</string>
+  <string name="get_translations">Merr përkthime</string>
+
+  <!-- help -->
+  <string name="email_us">Nëse pyetja juaj nuk është përgjigjur më lart, ju mund të dërgoni email quranandroid@gmail.com për mbështetje. Ju lutem vini re se ne marrim shumë emaile, kështu që ne mund të mos jemi në gjendje t\'u përgjigjemi të gjithë atyre.</string>
+
+  <!-- sura metainfo -->
+  <string name="makki">Meke</string>
+  <string name="madani">Medine</string>
+  <plurals name="verses">
+    <item quantity="one">Një Ajah</item>
+    <item quantity="other">%s Ajat</item>
+  </plurals>
+
+  <!-- ayah action panel -->
+  <string name="play_restrict_range">Vetëm dëgjo ajatin e mësipërm.</string>
+  <string name="play_verses_range">Dëgjoni setin e Ayat:</string>
+  <string name="play_each_verse">Dëgjoni për të vendosur çdo Ayah:</string>
+  <string name="play_apply">Apliko</string>
+  <string name="play_apply_and_play">Apliko dhe dëgjo</string>
+  <string name="previous">I mëparshëm</string>
+  <string name="play">Dëgjo.</string>
+  <string name="pause">Pauzë</string>
+  <string name="stop">Ndalo.</string>
+  <string name="next">Në vazhdim</string>
+
+  <string-array name="repeatValues">
+    <item>1 herë</item>
+    <item>2 herë</item>
+    <item>3 herë</item>
+    <item>lak</item>
+  </string-array>
+
+  <string name="playback_prompt_title">Fillo luajtjen nga:</string>
+  <string name="starting_page_label">Fillimi i faqes</string>
+
+  <!-- long press -->
+  <string name="ayah_copied_popup">Ajahu kopjon</string>
+
+  <!-- bookmarks & tags contextual action bar -->
+  <string name="tag_bookmark">Tag Libërshënues</string>
+  <string name="delete_tag">Elemino Tag</string>
+  <string name="edit_tag">Ndrysho Tag</string>
+  <string name="new_tag">Etiketë e re</string>
+  <string name="not_tagged">Nuk është etiketuar</string>
+  <plurals name="bookmark_tag_deleted">
+    <item quantity="one">Eleminuar një element</item>
+    <item quantity="other">Eleminuar elementët %d</item>
+  </plurals>
+  <string name="undo">Zhbëje</string>
+
+  <string name="recent_pages">Faqet e fundit</string>
+
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">Etiketë</string>
+  <string name="tag_name">Emri</string>
+  <string name="tag_blank_tag_error">Emri i etiketës nuk mund të jetë bosh!</string>
+  <string name="tag_duplicate_tag_error">Emri i etiketës ekziston tashmë!</string>
+
+  <!-- widgets -->
+  <string name="bookmarks_list_empty">Asnjë libërshënues</string>
+
+  <!-- audio updates -->
+  <string name="audio_updated_title">Rifreskim i skedarëve audio të Kuranit</string>
+  <string name="audio_updated_text">Disa skedarë audio të Kuranit janë përditësuar. Kurani për Android ka hequr kopjen tuaj të këtyre skedarëve në mënyrë që versionet më të reja të mund të shkarkohen herën tjetër kur t\'i luani përsëri.</string>
+
+  <!-- dual screen prefs -->
+  <string name="prefs_category_dual_screen">Preferimet e faqeve të dyfishta</string>
+  <string name="prefs_split_page_and_translation_title">Kurani dhe përkthimi në modalitet të dyfishtë</string>
+  <string name="prefs_split_page_and_translation_summary">Në modalitetin e faqes së dyfishtë me përkthime, tregohet faqja e Kuranit dhe përkthimi</string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
+  <string name="notification_channel_download">Shkarkimet e Kuranit</string>
+  <string name="notification_channel_audio">Recitimi i Kuranit</string>
+</resources>
