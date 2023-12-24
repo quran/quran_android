@@ -1585,18 +1585,15 @@ public class PagerActivity extends AppCompatActivity implements
 
   @Override
   public void onUpPressed() {
-    startService(audioUtils.getAudioIntent(
-        this, AudioService.ACTION_INCREASE_SPEAD));
-    // audioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
+    startService(audioUtils.getAudioIntent(this,
+        AudioService.ACTION_SPEED_UP));
   }
 
   @Override
   public void onDownPressed() {
-    startService(audioUtils.getAudioIntent(
-        this, AudioService.ACTION_DECREASE_SPEAD));
-    //  audioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
+    startService(audioUtils.getAudioIntent(this,
+        AudioService.ACTION_SPEED_DOWN));
   }
-
 
   @Override
   public void onNextPressed() {

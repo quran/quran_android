@@ -74,6 +74,8 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     void onNextPressed();
     void onPreviousPressed();
     void onStopPressed();
+    void onDownPressed();
+    void onUpPressed();
     void onCancelPressed(boolean stopDownload);
     void setRepeatCount(int repeatCount);
     void onAcceptPressed();
@@ -460,6 +462,8 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     addButton(R.drawable.ic_previous, withWeight);
     addButton(button, withWeight);
     addButton(R.drawable.ic_next, withWeight);
+    addButton(R.drawable.ic_neg_1_24, withWeight);
+    addButton(R.drawable.ic_plus_1_24, withWeight);
 
     addButton(repeatButton, R.drawable.ic_repeat, withWeight);
     updateRepeatButtonText();
@@ -571,6 +575,10 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
           }
         } else if (tag == R.drawable.ic_next) {
           audioBarListener.onNextPressed();
+        } else if (tag == R.drawable.ic_neg_1_24) {
+          audioBarListener.onDownPressed();
+        } else if (tag == R.drawable.ic_plus_1_24) {
+          audioBarListener.onUpPressed();
         } else if (tag == R.drawable.ic_previous) {
           audioBarListener.onPreviousPressed();
         } else if (tag == R.drawable.ic_repeat) {
