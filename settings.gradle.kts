@@ -1,4 +1,5 @@
 pluginManagement {
+  includeBuild("build-logic")
   repositories {
     google()
     gradlePluginPortal()
@@ -13,8 +14,6 @@ dependencyResolutionManagement {
     maven("https://androidx.dev/storage/compose-compiler/repository/")
   }
 }
-
-includeBuild("build-logic")
 
 include(":app")
 include(":common:analytics")
