@@ -398,11 +398,10 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       processStopRequest()
     } else if (ACTION_REWIND == action) {
       processRewindRequest()
-    }else if (ACTION_SPEED_UPDATE == action){
+    } else if (ACTION_SPEED_UPDATE == action){
       val speed = intent.getFloatExtra(EXTRA_PLAY_SPEED, 1f)
       processUpdatePlaybackSpeed(speed)
-    }
-    else if (ACTION_UPDATE_REPEAT == action) {
+    } else if (ACTION_UPDATE_REPEAT == action) {
       val playInfo = intent.getParcelableExtra<AudioRequest>(EXTRA_PLAY_INFO)
       val localAudioQueue = audioQueue
       if (playInfo != null && localAudioQueue != null) {

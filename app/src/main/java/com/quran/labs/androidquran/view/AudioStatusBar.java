@@ -74,11 +74,6 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private AudioBarListener audioBarListener;
   private AudioBarRecitationListener audioBarRecitationListener;
 
-  public void resetSpeed() {
-    currentSpeedIndex = defaultSpeedIndex;
-    updateSpeedButtonText();
-  }
-
   public interface AudioBarListener {
     void onPlayPressed();
     void onPausePressed();
@@ -116,7 +111,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
     this.context = context;
     repeatButton = new RepeatButton(context);
-    speedButton = new RepeatButton(context , false);
+    speedButton = new RepeatButton(context);
     Resources resources = getResources();
     buttonWidth = resources.getDimensionPixelSize(
         R.dimen.audiobar_button_width);
@@ -199,6 +194,11 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   @NonNull
   public QariItem getAudioInfo() {
     return QariItem.Companion.fromQari(context, currentQari);
+  }
+
+  public void resetSpeed() {
+    currentSpeedIndex = defaultSpeedIndex;
+    updateSpeedButtonText();
   }
 
   public void setProgress(int progress) {
@@ -528,17 +528,15 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     }
     updateRepeatButtonText();
   }
+
   private void updatePlayBackSpeed() {
-    currentSpeedIndex+=1;
-    currentSpeedIndex %= speeds.length;
+    currentSpeedIndex = (currentSpeedIndex + 1) % speeds.length;
     currentSpeed = speeds[currentSpeedIndex];
     updateSpeedButtonText();
-   }
-
-
+  }
 
   private void updateRepeatButtonText() {
-    String str;
+    final String str;
     if (currentRepeat == -1) {
       str = context.getString(R.string.infinity);
     } else if (currentRepeat == 0) {
@@ -550,8 +548,8 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   }
 
   private void updateSpeedButtonText(){
-    String str;
     currentSpeed = speeds[currentSpeedIndex];
+    final String str;
     if (currentSpeedIndex == 2) {
       str = "";
     } else {
