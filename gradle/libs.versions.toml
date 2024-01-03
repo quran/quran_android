@@ -1,6 +1,6 @@
 [versions]
 agp = "8.2.1"
-kotlin = "1.9.21"
+kotlin = "1.9.22"
 ksp = "1.9.21-1.0.16"
 
 # required within the Gradle convention plugins - not unused
