@@ -9,13 +9,14 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical"
-      android:text="@string/play_verses_range"
+      android:text="@string/playback_speed"
       android:textAppearance="@style/PanelLabel"
       />
   <com.shawnlin.numberpicker.NumberPicker
-      android:id="@+id/repeat_range_picker"
+      android:id="@+id/playback_speed_picker"
       android:layout_width="120dp"
       android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
       app:np_orientation="horizontal"
       app:np_width="135dp"
       app:np_height="40dp"

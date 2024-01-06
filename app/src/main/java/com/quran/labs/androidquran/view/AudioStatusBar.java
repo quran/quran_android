@@ -54,7 +54,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   private Qari currentQari;
   private int currentRepeat = 0;
-  private int defaultSpeedIndex = 2;
+  private final int defaultSpeedIndex = 2;
   private int currentSpeedIndex = defaultSpeedIndex;
   private final float[] speeds = { 0.5f, 0.75f, 1f, 1.25f, 1.5f};
   private float currentSpeed = speeds[currentSpeedIndex];
@@ -80,7 +80,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     void onNextPressed();
     void onPreviousPressed();
     void onStopPressed();
-    void setPlayBackSpeed(float speed);
+    void setPlaybackSpeed(float speed);
     void onCancelPressed(boolean stopDownload);
     void setRepeatCount(int repeatCount);
     void onAcceptPressed();
@@ -196,9 +196,14 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     return QariItem.Companion.fromQari(context, currentQari);
   }
 
-  public void resetSpeed() {
-    currentSpeedIndex = defaultSpeedIndex;
-    updateSpeedButtonText();
+  public void setSpeed(float speed) {
+    for (int i = 0; i < speeds.length; i++) {
+      if (speeds[i] == speed) {
+        currentSpeedIndex = i;
+        updateSpeedButtonText();
+        return;
+      }
+    }
   }
 
   public void setProgress(int progress) {
@@ -529,7 +534,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     updateRepeatButtonText();
   }
 
-  private void updatePlayBackSpeed() {
+  private void updatePlaybackSpeed() {
     currentSpeedIndex = (currentSpeedIndex + 1) % speeds.length;
     currentSpeed = speeds[currentSpeedIndex];
     updateSpeedButtonText();
@@ -555,7 +560,12 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     } else {
       str = String.valueOf(currentSpeed);
     }
-    speedButton.setText(str);
+
+    post(() -> {
+      if (speedButton != null) {
+        speedButton.setText(str);
+      }
+    });
   }
 
   public void setRepeatCount(int repeatCount) {
@@ -606,8 +616,8 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
         } else if (tag == R.drawable.ic_next) {
           audioBarListener.onNextPressed();
         } else if (tag == R.drawable.ic_speed) {
-          updatePlayBackSpeed();
-          audioBarListener.setPlayBackSpeed(currentSpeed);
+          updatePlaybackSpeed();
+          audioBarListener.setPlaybackSpeed(currentSpeed);
         } else if (tag == R.drawable.ic_previous) {
           audioBarListener.onPreviousPressed();
         } else if (tag == R.drawable.ic_repeat) {

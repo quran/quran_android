@@ -1564,13 +1564,13 @@ public class PagerActivity extends AppCompatActivity implements
 
   public void handlePlayback(AudioRequest request) {
     needsPermissionToDownloadOver3g = true;
-    audioStatusBar.resetSpeed();
     final Intent intent = new Intent(this, AudioService.class);
     intent.setAction(AudioService.ACTION_PLAYBACK);
     if (request != null) {
       intent.putExtra(AudioService.EXTRA_PLAY_INFO, request);
       lastAudioRequest = request;
       audioStatusBar.setRepeatCount(request.getRepeatInfo());
+      audioStatusBar.setSpeed(request.getPlaybackSpeed());
       audioStatusBar.switchMode(AudioStatusBar.LOADING_MODE);
     }
 
@@ -1586,7 +1586,7 @@ public class PagerActivity extends AppCompatActivity implements
   }
 
   @Override
-  public void setPlayBackSpeed(float speed) {
+  public void setPlaybackSpeed(float speed) {
     if (lastAudioRequest != null) {
       final AudioRequest updatedAudioRequest = new AudioRequest(lastAudioRequest.getStart(),
           lastAudioRequest.getEnd(),
@@ -1645,7 +1645,8 @@ public class PagerActivity extends AppCompatActivity implements
 
   public boolean updatePlayOptions(int rangeRepeat,
                                    int verseRepeat,
-                                   boolean enforceRange) {
+                                   boolean enforceRange,
+                                   float playbackSpeed) {
     if (lastAudioRequest != null) {
       final AudioRequest updatedAudioRequest = new AudioRequest(lastAudioRequest.getStart(),
           lastAudioRequest.getEnd(),
@@ -1653,7 +1654,7 @@ public class PagerActivity extends AppCompatActivity implements
           verseRepeat,
           rangeRepeat,
           enforceRange,
-          lastAudioRequest.getPlaybackSpeed(),
+          playbackSpeed,
           lastAudioRequest.getShouldStream(),
           lastAudioRequest.getAudioPathInfo());
       Intent i = new Intent(this, AudioService.class);
@@ -1663,6 +1664,7 @@ public class PagerActivity extends AppCompatActivity implements
 
       lastAudioRequest = updatedAudioRequest;
       audioStatusBar.setRepeatCount(verseRepeat);
+      audioStatusBar.setSpeed(playbackSpeed);
       return true;
     } else {
       return false;
