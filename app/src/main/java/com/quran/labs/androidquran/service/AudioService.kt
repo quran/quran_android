@@ -398,14 +398,14 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       processStopRequest()
     } else if (ACTION_REWIND == action) {
       processRewindRequest()
-    } else if (ACTION_SPEED_UPDATE == action){
-      val speed = intent.getFloatExtra(EXTRA_PLAY_SPEED, 1f)
-      processUpdatePlaybackSpeed(speed)
-    } else if (ACTION_UPDATE_REPEAT == action) {
+    } else if (ACTION_UPDATE_SETTINGS == action) {
       val playInfo = intent.getParcelableExtra<AudioRequest>(EXTRA_PLAY_INFO)
       val localAudioQueue = audioQueue
       if (playInfo != null && localAudioQueue != null) {
         audioQueue = localAudioQueue.withUpdatedAudioRequest(playInfo)
+        if (playInfo.playbackSpeed != audioRequest?.playbackSpeed) {
+          processUpdatePlaybackSpeed(playInfo.playbackSpeed)
+        }
         audioRequest = playInfo
       }
     } else {
@@ -680,6 +680,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       }
     }
   }
+
   private fun processUpdatePlaybackSpeed(speed: Float) {
     if (State.Playing === state && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       player?.playbackParams?.let { params ->
@@ -1059,6 +1060,9 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     )
     player.start()
     state = State.Playing
+    audioRequest?.playbackSpeed?.let { speed ->
+      processUpdatePlaybackSpeed(speed)
+    }
     serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
   }
 
@@ -1362,19 +1366,15 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
   }
 
   companion object {
-    // These are the Intent actions that we are prepared to handle. Notice that
-    // the fact these constants exist in our class is a mere convenience: what
-    // really defines the actions our service can handle are the <action> tags
-    // in the <intent-filters> tag for our service in AndroidManifest.xml.
+    // These are the Intent actions that we are prepared to handle.
     const val ACTION_PLAYBACK = "com.quran.labs.androidquran.action.PLAYBACK"
     const val ACTION_PLAY = "com.quran.labs.androidquran.action.PLAY"
     const val ACTION_PAUSE = "com.quran.labs.androidquran.action.PAUSE"
     const val ACTION_STOP = "com.quran.labs.androidquran.action.STOP"
     const val ACTION_SKIP = "com.quran.labs.androidquran.action.SKIP"
     const val ACTION_REWIND = "com.quran.labs.androidquran.action.REWIND"
-    const val ACTION_SPEED_UPDATE = "com.quran.labs.androidquran.action.SPEED_UPDATE"
     const val ACTION_CONNECT = "com.quran.labs.androidquran.action.CONNECT"
-    const val ACTION_UPDATE_REPEAT = "com.quran.labs.androidquran.action.UPDATE_REPEAT"
+    const val ACTION_UPDATE_SETTINGS = "com.quran.labs.androidquran.action.UPDATE_SETTINGS"
 
     // pending notification request codes
     private const val REQUEST_CODE_MAIN = 0

@@ -32,6 +32,7 @@ constructor(private val quranDisplayData: QuranDisplayData,
            verseRepeat: Int,
            rangeRepeat: Int,
            enforceRange: Boolean,
+           playbackSpeed: Float,
            shouldStream: Boolean) {
     val audioPathInfo = getLocalAudioPathInfo(qari)
     if (audioPathInfo != null) {
@@ -62,7 +63,7 @@ constructor(private val quranDisplayData: QuranDisplayData,
       }
 
       val audioRequest = AudioRequest(
-          actualStart, actualEnd, qari, verseRepeat, rangeRepeat, enforceRange, stream, audioPath)
+          actualStart, actualEnd, qari, verseRepeat, rangeRepeat, enforceRange, playbackSpeed, stream, audioPath)
       play(audioRequest)
     }
   }

@@ -1,8 +1,8 @@
 package com.quran.labs.androidquran.dao.audio
 
 import android.os.Parcelable
-import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.data.model.SuraAyah
+import com.quran.labs.androidquran.common.audio.model.QariItem
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -12,6 +12,7 @@ data class AudioRequest(val start: SuraAyah,
                         val repeatInfo: Int = 0,
                         val rangeRepeatInfo: Int = 0,
                         val enforceBounds: Boolean,
+                        val playbackSpeed: Float = 1f,
                         val shouldStream: Boolean,
                         val audioPathInfo: AudioPathInfo) : Parcelable {
   fun isGapless() = qari.isGapless

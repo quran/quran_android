@@ -189,12 +189,13 @@ class AyahPlaybackFragment : AyahActionFragment() {
       val enforceRange = restrictToRange.isChecked
       var updatedRange = false
 
+      val speed = 1.0f // TODO: expose a setting within this fragment also
       if (currentStart != decidedStart || currentEnding != decidedEnd) {
         // different range or not playing, so make a new request
         updatedRange = true
         context.playFromAyah(
           currentStart, currentEnding, page, verseRepeat,
-          rangeRepeat, enforceRange
+          rangeRepeat, enforceRange, speed
         )
       } else if (shouldEnforce != enforceRange || rangeRepeatCount != rangeRepeat || verseRepeatCount != verseRepeat) {
         // can just update repeat settings
@@ -202,7 +203,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
         ) {
           // audio stopped in the process, let's start it
           context.playFromAyah(
-            currentStart, currentEnding, page, verseRepeat, rangeRepeat, enforceRange
+            currentStart, currentEnding, page, verseRepeat, rangeRepeat, enforceRange, speed
           )
         }
       }
