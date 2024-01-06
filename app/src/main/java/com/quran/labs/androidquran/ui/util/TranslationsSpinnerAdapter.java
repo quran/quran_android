@@ -17,6 +17,7 @@ import com.quran.labs.androidquran.ui.PagerActivity;
 import com.quran.mobile.translation.model.LocalTranslation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
                                     OnSelectionChangedListener listener) {
     // intentionally making a new ArrayList instead of using the constructor for String[].
     // this is because clear() relies on being able to clear the List passed into the constructor,
-    // and the String[] constructor makes a new (immutable) List with the items of the array.
+    // and the String[] constructor makes a fixed size List with the items of the array.
     super(context, resource, new ArrayList<>());
     this.context = context;
     this.layoutInflater = LayoutInflater.from(this.context);
@@ -50,7 +51,7 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
     addAll(translationNames);
   }
 
-  private View.OnClickListener onCheckedChangeListener = buttonView -> {
+  private final View.OnClickListener onCheckedChangeListener = buttonView -> {
     CheckBoxHolder holder = (CheckBoxHolder) ((View) buttonView.getParent()).getTag();
     LocalTranslation localTranslation = translations.get(holder.position);
 
@@ -66,11 +67,10 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
 
   };
 
-  private View.OnClickListener onTextClickedListener = textView -> {
+  private final View.OnClickListener onTextClickedListener = textView -> {
     CheckBoxHolder holder = (CheckBoxHolder) ((View) textView.getParent()).getTag();
     if (holder.position == translationNames.length - 1) {
-      if (this.context instanceof PagerActivity) {
-        final PagerActivity pagerActivity = (PagerActivity) this.context;
+      if (this.context instanceof PagerActivity pagerActivity) {
         pagerActivity.startTranslationManager();
       }
     } else {
@@ -167,12 +167,10 @@ public class TranslationsSpinnerAdapter extends ArrayAdapter<String> {
   }
 
   private String[] updateTranslationNames(String[] translationNames) {
-    List<String> translationsList = new ArrayList<>();
-    for (String translation : translationNames) {
-      translationsList.add(translation);
-    }
+    final List<String> translationsList = new ArrayList<>();
+    Collections.addAll(translationsList, translationNames);
     translationsList.add(getContext().getString(R.string.more_translations));
-    translationNames = translationsList.toArray(new String[translationsList.size()]);
+    translationNames = translationsList.toArray(new String[0]);
 
     return translationNames;
   }

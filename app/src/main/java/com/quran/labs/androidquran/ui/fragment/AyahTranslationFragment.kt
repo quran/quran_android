@@ -117,6 +117,8 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
       progressBar.visibility = View.GONE
       emptyState.visibility = View.VISIBLE
       translationControls.visibility = View.GONE
+      translator.visibility = View.GONE
+      translationView.visibility = View.GONE
     } else {
       val activeTranslationsFilesNames = quranSettings.activeTranslations
 
@@ -127,9 +129,10 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
           R.layout.translation_ab_spinner_item,
           translations.map { it.resolveTranslatorName() }.toTypedArray(),
           translations,
-          activeTranslationsFilesNames
+          activeTranslationsFilesNames,
         ) { selectedItems: Set<String?>? ->
           quranSettings.activeTranslations = selectedItems
+          // this is the refresh for when a translation is selected from the spinner
           refreshView()
         }
         translator.adapter = translationAdapter
@@ -139,8 +142,8 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
           translations,
           activeTranslationsFilesNames
         )
-        refreshView()
       }
+      refreshView()
     }
   }
 
@@ -150,11 +153,7 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
     if (start == null || end == null) {
       return
     }
-    if (start == end) {
-      translationControls.visibility = View.VISIBLE
-    } else {
-      translationControls.visibility = View.GONE
-    }
+
     val verses = 1 + abs(
       quranInfo.getAyahId(start.sura, start.ayah) - quranInfo.getAyahId(end.sura, end.ayah)
     )
@@ -168,6 +167,9 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
     progressBar.visibility = View.GONE
     if (verses.isNotEmpty()) {
       emptyState.visibility = View.GONE
+      translationControls.visibility = View.VISIBLE
+      translator.visibility = View.VISIBLE
+      translationView.visibility = View.VISIBLE
       translationView.setAyahs(translations, verses)
     } else {
       emptyState.visibility = View.VISIBLE

@@ -1,5 +1,5 @@
 [versions]
-agp = "8.2.0"
+agp = "8.2.1"
 kotlin = "1.9.21"
 ksp = "1.9.21-1.0.16"
 
@@ -15,9 +15,9 @@ crashlytics = "2.9.9"
 daggerVersion = "2.50"
 dnsjavaVersion = "2.1.9"
 errorprone = "3.1.0"
-errorproneCoreVersion = "2.24.0"
+errorproneCoreVersion = "2.24.1"
 googleServices = "4.4.0"
-leakcanaryAndroidVersion = "2.12"
+leakcanaryAndroidVersion = "2.13"
 moshiVersion = "1.15.0"
 okioVersion = "3.7.0"
 retrofitVersion = "2.9.0"
@@ -50,7 +50,7 @@ firebaseCrashlyticsVersion = "18.6.0"
 
 # ui libraries
 accompanistVersion = "0.32.0"
-balloonVersion = "1.6.3"
+balloonVersion = "1.6.4"
 tooltipComposeVersion = "0.2.0"
 insetterVersion = "0.6.1"
 materialComponentsVersion = "1.11.0"
@@ -59,7 +59,7 @@ reorderableComposeVersion = "0.9.6"
 
 # recitations
 grpcOkhttpVersion = "1.60.1"
-googleAuthVersion = "1.20.0"
+googleAuthVersion = "1.21.0"
 googleCloudSpeechVersion = "4.27.0"
 
 # testing

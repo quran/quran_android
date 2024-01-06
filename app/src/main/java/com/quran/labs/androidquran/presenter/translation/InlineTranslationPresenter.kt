@@ -48,9 +48,7 @@ class InlineTranslationPresenter @Inject constructor(
   override fun bind(what: TranslationScreen) {
     super.bind(what)
     val translations = cachedTranslations
-    if (translations.isNotEmpty()) {
-      what.onTranslationsUpdated(translations)
-    }
+    what.onTranslationsUpdated(translations)
   }
 
   interface TranslationScreen {
