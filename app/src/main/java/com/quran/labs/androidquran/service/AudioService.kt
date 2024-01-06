@@ -55,6 +55,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.util.SparseIntArray
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.math.MathUtils.clamp
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.session.MediaButtonReceiver
 import com.quran.data.core.QuranInfo
@@ -405,6 +406,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
         audioQueue = localAudioQueue.withUpdatedAudioRequest(playInfo)
         if (playInfo.playbackSpeed != audioRequest?.playbackSpeed) {
           processUpdatePlaybackSpeed(playInfo.playbackSpeed)
+          serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
         }
         audioRequest = playInfo
       }
@@ -570,14 +572,11 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       }
       notifyAyahChanged()
       if (maxAyahs >= updatedAyah + 1) {
-        var t = gaplessSuraData[updatedAyah + 1] - localPlayer.currentPosition
-        Timber.d("updateAudioPlayPosition postingDelayed after: %d", t)
-        if (t < 100) {
-          t = 100
-        } else if (t > 10000) {
-          t = 10000
-        }
-        serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, t.toLong())
+        val timeDelta = gaplessSuraData[updatedAyah + 1] - localPlayer.currentPosition
+        val t = clamp(timeDelta, 100, 10000)
+        val tAccountingForSpeed = t / (audioRequest?.playbackSpeed ?: 1f)
+        Timber.d("updateAudioPlayPosition after: %d, speed %f", t, tAccountingForSpeed)
+        serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, tAccountingForSpeed.toLong())
       } else if (maxAyahs == updatedAyah) {
         serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 150)
       }
