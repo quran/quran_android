@@ -291,6 +291,7 @@
   <string name="play">Chalish</string>
   <string name="pause">Pauza</string>
   <string name="stop">Toʻxtatish</string>
+  <string name="playback_speed">Tezlikni tomosha qilish:</string>
   <string name="next">Keyingi</string>
 
   <string-array name="repeatValues">

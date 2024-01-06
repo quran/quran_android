@@ -243,6 +243,7 @@
   <string name="prefs_use_arabic_title">الوضع العربي</string>
   <string name="play">تشغيل</string>
   <string name="stop">إيقاف</string>
+  <string name="playback_speed">سرعة التشغيل:</string>
 
   <string name="downloadTabletPrompt">تم تحسين الصور الخاصه بالتابلت. هل تود تحميلها الان؟</string>
   <string name="menu_sort_group_by_tags">رتب حسب التصنيفات</string>

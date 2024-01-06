@@ -265,6 +265,7 @@
   <string name="play">Spela upp</string>
   <string name="pause">Pausa</string>
   <string name="stop">Stoppa</string>
+  <string name="playback_speed">Uppspelningshastighet:</string>
   <string name="next">Nästa</string>
 
   <string-array name="repeatValues">

@@ -272,6 +272,7 @@
   <string name="play">گوێبگرە</string>
   <string name="pause">ڕاوەستان</string>
   <string name="stop">وەستان</string>
+  <string name="playback_speed">سرعة التشغيل:</string>
   <string name="next">دواتر</string>
   <string name="playback_prompt_title">دەست بکە بە پەخشکردنەوە لە:</string>
   <string name="starting_page_label">سەرەتای لاپەڕە</string>

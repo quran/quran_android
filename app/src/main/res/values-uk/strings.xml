@@ -267,6 +267,7 @@
   <string name="play">Слухати</string>
   <string name="pause">Пауза</string>
   <string name="stop">Зупинити</string>
+  <string name="playback_speed">Llais yn ôl:</string>
   <string name="next">Наступний</string>
 
   <string-array name="repeatValues">

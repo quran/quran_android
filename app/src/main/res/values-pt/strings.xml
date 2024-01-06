@@ -283,6 +283,7 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="play">Ouça</string>
   <string name="pause">Pausa</string>
   <string name="stop">Parada</string>
+  <string name="playback_speed">Velocidade de reprodução:</string>
   <string name="next">Próximo</string>
   <string name="playback_prompt_title">Iniciar a reprodução a partir de:</string>
   <string name="starting_page_label">Início da página</string>

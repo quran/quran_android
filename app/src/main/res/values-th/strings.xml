@@ -256,6 +256,7 @@
   <string name="play">เล่น</string>
   <string name="pause">หยุด</string>
   <string name="stop">หยุด</string>
+  <string name="playback_speed">ความเร็วในการเล่นเสียง:</string>
   <string name="next">ต่อไป</string>
 
   <string-array name="repeatValues">

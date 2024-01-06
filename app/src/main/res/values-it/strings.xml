@@ -31,6 +31,7 @@
   <string name="previous">Precedente</string>
   <string name="pause">Pausa</string>
   <string name="stop">Fermare</string>
+  <string name="playback_speed">Velocità di riproduzione:</string>
   <string name="next">Prossimo</string>
   <string name="undo">Undo</string>
   <string name="tag_dlg_title">Tag</string>

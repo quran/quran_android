@@ -375,6 +375,7 @@
   <string name="play">Afspelen</string>
   <string name="pause">Pauzeren</string>
   <string name="stop">Onderbreken</string>
+  <string name="playback_speed">Afspeelsnelheid:</string>
   <string name="next">Volgende</string>
 
   <string-array name="repeatValues">

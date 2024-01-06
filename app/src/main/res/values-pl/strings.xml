@@ -266,6 +266,7 @@
   <string name="play">Odtwórz</string>
   <string name="pause">Pauza</string>
   <string name="stop">Zatrzymać</string>
+  <string name="playback_speed">Prędkość odtwarzania:</string>
   <string name="next">Następny</string>
 
   <string-array name="repeatValues">
