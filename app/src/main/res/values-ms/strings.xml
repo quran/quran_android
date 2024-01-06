@@ -234,6 +234,7 @@
   <string name="play">Mainkan</string>
   <string name="pause">Pause</string>
   <string name="stop">Hentikan</string>
+  <string name="playback_speed">درجة سرعة التشغيل:</string>
   <string name="next">Seterus</string>
 
   <string-array name="repeatValues">

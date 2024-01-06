@@ -258,6 +258,7 @@
   <string name="play">Dinle</string>
   <string name="pause">Duraklat</string>
   <string name="stop">Durdur</string>
+  <string name="playback_speed">Oynatma Hızı:</string>
   <string name="next">Sonraki</string>
 
   <string-array name="repeatValues">

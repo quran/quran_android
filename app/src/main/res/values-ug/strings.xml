@@ -276,6 +276,7 @@
   <string name="search_entire_mushaf">پۈتكۈل سەھىپەدىن ئىزدە</string>
   <string name="previous">ئالدىنقى</string>
   <string name="stop">توختا</string>
+  <string name="playback_speed">Ujinu uri vifujio:</string>
   <string name="prefs_category_dual_screen">قوش بەت مايىللىقى</string>
   <string name="prefs_split_page_and_translation_title">قوش بەت ھالىتىدىكى قۇرئان ۋە تەرجىمە</string>
   <string name="prefs_split_page_and_translation_summary">تەرجىمە بار قوش بەت ھالىتىدە ، قۇرئان بېتى ۋە تەرجىمە كۆرۈنىدۇ</string>

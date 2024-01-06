@@ -266,6 +266,7 @@
   <string name="play">Тыңдау</string>
   <string name="pause">Кідірту</string>
   <string name="stop">Тоқтату</string>
+  <string name="playback_speed">Жүктеу жылдамдылығы:</string>
   <string name="next">Келесі</string>
 
   <string-array name="repeatValues">

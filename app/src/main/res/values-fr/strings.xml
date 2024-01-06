@@ -238,6 +238,7 @@
   <string name="play">Écouter</string>
   <string name="pause">Pause</string>
   <string name="stop">Stopper</string>
+  <string name="playback_speed">Vitesse de lecture :</string>
   <string name="next">Suivant</string>
 
   <string-array name="repeatValues">

@@ -288,6 +288,7 @@
   <string name="play_apply_and_play">Anwenden und Abspielen</string>
   <string name="play">Abspielen</string>
   <string name="stop">Stoppen</string>
+  <string name="playback_speed">Wiedergabegeschwindigkeit:</string>
 
   <string-array name="repeatValues">
     <item>einmal</item>

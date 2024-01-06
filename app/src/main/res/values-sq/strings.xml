@@ -265,6 +265,7 @@
   <string name="play">Dëgjo.</string>
   <string name="pause">Pauzë</string>
   <string name="stop">Ndalo.</string>
+  <string name="playback_speed">Shpejtesia e Ripertrajtimit:</string>
   <string name="next">Në vazhdim</string>
 
   <string-array name="repeatValues">

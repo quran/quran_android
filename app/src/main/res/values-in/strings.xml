@@ -263,6 +263,7 @@
   <string name="play">Putar</string>
   <string name="pause">Jeda</string>
   <string name="stop">Stop</string>
+  <string name="playback_speed">वापसी की गति:</string>
   <string name="next">Selanjutnya</string>
 
   <string-array name="repeatValues">

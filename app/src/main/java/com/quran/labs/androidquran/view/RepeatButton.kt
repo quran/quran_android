@@ -49,7 +49,12 @@ class RepeatButton @JvmOverloads constructor(
     if (drawable != null) {
       val bounds = drawable.bounds
       if (bounds.width() > 0) {
-        textXPosition = viewWidth - (viewWidth - bounds.width()) / 2
+        val x = viewWidth - (viewWidth - bounds.width()) / 2
+        textXPosition = if (x + bounds.width() > viewWidth) {
+          viewWidth - bounds.width()
+        } else {
+          x
+        }
         textYPosition = textYPadding + (viewHeight - bounds.height()) / 2
         canDraw = true
       }

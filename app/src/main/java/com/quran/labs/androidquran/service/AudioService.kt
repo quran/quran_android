@@ -55,6 +55,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.util.SparseIntArray
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.core.math.MathUtils.clamp
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.session.MediaButtonReceiver
 import com.quran.data.core.QuranInfo
@@ -398,11 +399,15 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       processStopRequest()
     } else if (ACTION_REWIND == action) {
       processRewindRequest()
-    } else if (ACTION_UPDATE_REPEAT == action) {
+    } else if (ACTION_UPDATE_SETTINGS == action) {
       val playInfo = intent.getParcelableExtra<AudioRequest>(EXTRA_PLAY_INFO)
       val localAudioQueue = audioQueue
       if (playInfo != null && localAudioQueue != null) {
         audioQueue = localAudioQueue.withUpdatedAudioRequest(playInfo)
+        if (playInfo.playbackSpeed != audioRequest?.playbackSpeed) {
+          processUpdatePlaybackSpeed(playInfo.playbackSpeed)
+          serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
+        }
         audioRequest = playInfo
       }
     } else {
@@ -567,14 +572,11 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       }
       notifyAyahChanged()
       if (maxAyahs >= updatedAyah + 1) {
-        var t = gaplessSuraData[updatedAyah + 1] - localPlayer.currentPosition
-        Timber.d("updateAudioPlayPosition postingDelayed after: %d", t)
-        if (t < 100) {
-          t = 100
-        } else if (t > 10000) {
-          t = 10000
-        }
-        serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, t.toLong())
+        val timeDelta = gaplessSuraData[updatedAyah + 1] - localPlayer.currentPosition
+        val t = clamp(timeDelta, 100, 10000)
+        val tAccountingForSpeed = t / (audioRequest?.playbackSpeed ?: 1f)
+        Timber.d("updateAudioPlayPosition after: %d, speed %f", t, tAccountingForSpeed)
+        serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, tAccountingForSpeed.toLong())
       } else if (maxAyahs == updatedAyah) {
         serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 150)
       }
@@ -674,6 +676,15 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
           return
         }
         playAudio()
+      }
+    }
+  }
+
+  private fun processUpdatePlaybackSpeed(speed: Float) {
+    if (State.Playing === state && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      player?.playbackParams?.let { params ->
+        params.setSpeed(speed)
+        player?.playbackParams = params
       }
     }
   }
@@ -1048,6 +1059,9 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     )
     player.start()
     state = State.Playing
+    audioRequest?.playbackSpeed?.let { speed ->
+      processUpdatePlaybackSpeed(speed)
+    }
     serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
   }
 
@@ -1351,10 +1365,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
   }
 
   companion object {
-    // These are the Intent actions that we are prepared to handle. Notice that
-    // the fact these constants exist in our class is a mere convenience: what
-    // really defines the actions our service can handle are the <action> tags
-    // in the <intent-filters> tag for our service in AndroidManifest.xml.
+    // These are the Intent actions that we are prepared to handle.
     const val ACTION_PLAYBACK = "com.quran.labs.androidquran.action.PLAYBACK"
     const val ACTION_PLAY = "com.quran.labs.androidquran.action.PLAY"
     const val ACTION_PAUSE = "com.quran.labs.androidquran.action.PAUSE"
@@ -1362,7 +1373,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     const val ACTION_SKIP = "com.quran.labs.androidquran.action.SKIP"
     const val ACTION_REWIND = "com.quran.labs.androidquran.action.REWIND"
     const val ACTION_CONNECT = "com.quran.labs.androidquran.action.CONNECT"
-    const val ACTION_UPDATE_REPEAT = "com.quran.labs.androidquran.action.UPDATE_REPEAT"
+    const val ACTION_UPDATE_SETTINGS = "com.quran.labs.androidquran.action.UPDATE_SETTINGS"
 
     // pending notification request codes
     private const val REQUEST_CODE_MAIN = 0
@@ -1378,6 +1389,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
 
     // so user can pass in a serializable LegacyAudioRequest to the intent
     const val EXTRA_PLAY_INFO = "com.quran.labs.androidquran.PLAY_INFO"
+    const val EXTRA_PLAY_SPEED = "com.quran.labs.androidquran.PLAY_SPEED"
     private const val NOTIFICATION_CHANNEL_ID = Constants.AUDIO_CHANNEL
     private const val MSG_INCOMING = 1
     private const val MSG_START_AUDIO = 2

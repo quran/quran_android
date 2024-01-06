@@ -64,6 +64,7 @@
 
     <include layout="@layout/play_set_of_verses" />
     <include layout="@layout/play_each_verse" />
+    <include layout="@layout/playback_speed" />
 
     <CheckBox
         android:id="@+id/restrict_to_range"

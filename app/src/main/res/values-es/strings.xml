@@ -161,6 +161,7 @@
   <string name="play_apply_and_play">Aplicar y reproducir</string>
   <string name="play">Reproducir</string>
   <string name="stop">Detener</string>
+  <string name="playback_speed">Velocidad de reproducción:</string>
 
   <!-- long press -->
   <string name="ayah_copied_popup">Versículo copiado</string>

@@ -276,6 +276,7 @@
   <string name="play">Pokreni</string>
   <string name="pause">Pauziraj</string>
   <string name="stop">Stani</string>
+  <string name="playback_speed">Брзина репродукције:</string>
   <string name="next">Sledeći</string>
 
   <string-array name="repeatValues">

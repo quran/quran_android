@@ -314,6 +314,7 @@
   <string name="play">Воспроизвести</string>
   <string name="pause">Пауза</string>
   <string name="stop">Приостановить</string>
+  <string name="playback_speed">Скорость воспроизведения:</string>
   <string name="next">Следующий</string>
 
   <string-array name="repeatValues">

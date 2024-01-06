@@ -35,6 +35,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
   private var shouldEnforce = false
   private var rangeRepeatCount = 0
   private var verseRepeatCount = 0
+  private var currentSpeed = 1.0f
 
   private lateinit var applyButton: Button
   private lateinit var startSuraSpinner: QuranSpinner
@@ -43,6 +44,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
   private lateinit var endingAyahSpinner: QuranSpinner
   private lateinit var repeatVersePicker: NumberPicker
   private lateinit var repeatRangePicker: NumberPicker
+  private lateinit var playbackSpeedPicker: NumberPicker
   private lateinit var restrictToRange: CheckBox
 
   private lateinit var startAyahAdapter: ArrayAdapter<CharSequence>
@@ -76,6 +78,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
     applyButton.setOnClickListener(onClickListener)
     repeatVersePicker = view.findViewById(R.id.repeat_verse_picker)
     repeatRangePicker = view.findViewById(R.id.repeat_range_picker)
+    playbackSpeedPicker = view.findViewById(R.id.playback_speed_picker)
 
     val context = requireContext()
     val isArabicNames = QuranSettings.getInstance(context).isArabicNames
@@ -91,18 +94,15 @@ class AyahPlaybackFragment : AyahActionFragment() {
     }
     values[MAX_REPEATS] = getString(R.string.infinity)
     if (isArabicNames) {
-      repeatVersePicker.formatter = NumberPicker.Formatter { value: Int -> arFormat(value) }
-      repeatRangePicker.formatter = NumberPicker.Formatter { value: Int -> arFormat(value) }
-      val typeface = TypefaceManager.getHeaderFooterTypeface(context)
-      repeatVersePicker.typeface = typeface
-      repeatVersePicker.setSelectedTypeface(typeface)
-      repeatRangePicker.typeface = typeface
-      repeatRangePicker.setSelectedTypeface(typeface)
-      // Use larger text size since KFGQPC font is small
-      repeatVersePicker.setSelectedTextSize(R.dimen.arabic_number_picker_selected_text_size)
-      repeatRangePicker.setSelectedTextSize(R.dimen.arabic_number_picker_selected_text_size)
-      repeatVersePicker.setTextSize(R.dimen.arabic_number_picker_text_size)
-      repeatRangePicker.setTextSize(R.dimen.arabic_number_picker_text_size)
+      listOf(repeatVersePicker, repeatRangePicker, playbackSpeedPicker).forEach {
+        it.formatter = NumberPicker.Formatter { value: Int -> arFormat(value) }
+        val typeface = TypefaceManager.getHeaderFooterTypeface(context)
+        it.typeface = typeface
+        it.setSelectedTypeface(typeface)
+        // Use larger text size since KFGQPC font is small
+        it.setSelectedTextSize(R.dimen.arabic_number_picker_selected_text_size)
+        it.setTextSize(R.dimen.arabic_number_picker_text_size)
+      }
     }
     repeatVersePicker.minValue = 1
     repeatVersePicker.maxValue = MAX_REPEATS + 1
@@ -112,6 +112,10 @@ class AyahPlaybackFragment : AyahActionFragment() {
     repeatRangePicker.displayedValues = values
     repeatRangePicker.value = defaultRangeRepeat
     repeatVersePicker.value = defaultVerseRepeat
+    playbackSpeedPicker.minValue = 1
+    playbackSpeedPicker.maxValue = SPEEDS.size
+    playbackSpeedPicker.displayedValues = SPEEDS.map { numberFormat.format(it) }.toTypedArray()
+    playbackSpeedPicker.value = DEFAULT_SPEED_INDEX + 1
     repeatRangePicker.setOnValueChangedListener { _: NumberPicker?, _: Int, newVal: Int ->
       if (newVal > 1) {
         // whenever we want to repeat the range, we have to enable restrictToRange
@@ -189,20 +193,21 @@ class AyahPlaybackFragment : AyahActionFragment() {
       val enforceRange = restrictToRange.isChecked
       var updatedRange = false
 
+      val speed = SPEEDS[playbackSpeedPicker.value - 1]
       if (currentStart != decidedStart || currentEnding != decidedEnd) {
         // different range or not playing, so make a new request
         updatedRange = true
         context.playFromAyah(
           currentStart, currentEnding, page, verseRepeat,
-          rangeRepeat, enforceRange
+          rangeRepeat, enforceRange, speed
         )
-      } else if (shouldEnforce != enforceRange || rangeRepeatCount != rangeRepeat || verseRepeatCount != verseRepeat) {
+      } else if (shouldEnforce != enforceRange || rangeRepeatCount != rangeRepeat || verseRepeatCount != verseRepeat || currentSpeed != speed) {
         // can just update repeat settings
-        if (!context.updatePlayOptions(rangeRepeat, verseRepeat, enforceRange)
+        if (!context.updatePlayOptions(rangeRepeat, verseRepeat, enforceRange, speed)
         ) {
           // audio stopped in the process, let's start it
           context.playFromAyah(
-            currentStart, currentEnding, page, verseRepeat, rangeRepeat, enforceRange
+            currentStart, currentEnding, page, verseRepeat, rangeRepeat, enforceRange, speed
           )
         }
       }
@@ -303,6 +308,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
         if (lastRequest != lastSeenAudioRequest) {
           verseRepeatCount = lastRequest.repeatInfo
           rangeRepeatCount = lastRequest.rangeRepeatInfo
+          currentSpeed = lastRequest.playbackSpeed
           shouldEnforce = lastRequest.enforceBounds
         } else {
           shouldReset = false
@@ -324,6 +330,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
         }
         rangeRepeatCount = 0
         verseRepeatCount = 0
+        currentSpeed = 1.0f
         decidedStart = null
         decidedEnd = null
         applyButton.setText(R.string.play_apply_and_play)
@@ -347,6 +354,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
         restrictToRange.isChecked = shouldEnforce
         repeatRangePicker.value = rangeRepeatCount + 1
         repeatVersePicker.value = verseRepeatCount + 1
+        playbackSpeedPicker.value = SPEEDS.indexOf(currentSpeed) + 1
       }
     }
   }
@@ -355,5 +363,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
     private val ITEM_LAYOUT = R.layout.sherlock_spinner_item
     private val ITEM_DROPDOWN_LAYOUT = R.layout.sherlock_spinner_dropdown_item
     private const val MAX_REPEATS = 25
+    private val SPEEDS = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f)
+    private const val DEFAULT_SPEED_INDEX = 2
   }
 }

@@ -1496,7 +1496,7 @@ public class PagerActivity extends AppCompatActivity implements
     final SuraAyah end = getSelectionEnd();
     // handle the case of multiple ayat being selected and play them as a range if so
     final SuraAyah ending = (end == null || start.equals(end) || start.after(end))? null : end;
-    playFromAyah(start, ending, page, 0, 0, ending != null);
+    playFromAyah(start, ending, page, 0, 0, ending != null, 1.0f);
   }
 
   public void playFromAyah(SuraAyah start,
@@ -1504,7 +1504,8 @@ public class PagerActivity extends AppCompatActivity implements
                            int page,
                            int verseRepeat,
                            int rangeRepeat,
-                           boolean enforceRange) {
+                           boolean enforceRange,
+                           float playbackSpeed) {
     final SuraAyah ending = end != null ? end :
         audioUtils.getLastAyahToPlay(start, page,
             quranSettings.getPreferredDownloadAmount(), isDualPageVisible());
@@ -1516,7 +1517,7 @@ public class PagerActivity extends AppCompatActivity implements
       final QariItem item = audioStatusBar.getAudioInfo();
       final boolean shouldStream = quranSettings.shouldStream();
       audioPresenter.play(
-          start, ending, item, verseRepeat, rangeRepeat, enforceRange, shouldStream);
+          start, ending, item, verseRepeat, rangeRepeat, enforceRange, playbackSpeed, shouldStream);
     }
   }
 
@@ -1569,6 +1570,7 @@ public class PagerActivity extends AppCompatActivity implements
       intent.putExtra(AudioService.EXTRA_PLAY_INFO, request);
       lastAudioRequest = request;
       audioStatusBar.setRepeatCount(request.getRepeatInfo());
+      audioStatusBar.setSpeed(request.getPlaybackSpeed());
       audioStatusBar.switchMode(AudioStatusBar.LOADING_MODE);
     }
 
@@ -1581,6 +1583,27 @@ public class PagerActivity extends AppCompatActivity implements
     startService(audioUtils.getAudioIntent(
         this, AudioService.ACTION_PAUSE));
     audioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
+  }
+
+  @Override
+  public void setPlaybackSpeed(float speed) {
+    if (lastAudioRequest != null) {
+      final AudioRequest updatedAudioRequest = new AudioRequest(lastAudioRequest.getStart(),
+          lastAudioRequest.getEnd(),
+          lastAudioRequest.getQari(),
+          lastAudioRequest.getRepeatInfo(),
+          lastAudioRequest.getRangeRepeatInfo(),
+          lastAudioRequest.getEnforceBounds(),
+          speed,
+          lastAudioRequest.getShouldStream(),
+          lastAudioRequest.getAudioPathInfo());
+
+      Intent i = new Intent(this, AudioService.class);
+      i.setAction(AudioService.ACTION_UPDATE_SETTINGS);
+      i.putExtra(AudioService.EXTRA_PLAY_INFO, updatedAudioRequest);
+      startService(i);
+      lastAudioRequest = updatedAudioRequest;
+    }
   }
 
   @Override
@@ -1621,7 +1644,9 @@ public class PagerActivity extends AppCompatActivity implements
   }
 
   public boolean updatePlayOptions(int rangeRepeat,
-                                   int verseRepeat, boolean enforceRange) {
+                                   int verseRepeat,
+                                   boolean enforceRange,
+                                   float playbackSpeed) {
     if (lastAudioRequest != null) {
       final AudioRequest updatedAudioRequest = new AudioRequest(lastAudioRequest.getStart(),
           lastAudioRequest.getEnd(),
@@ -1629,15 +1654,17 @@ public class PagerActivity extends AppCompatActivity implements
           verseRepeat,
           rangeRepeat,
           enforceRange,
+          playbackSpeed,
           lastAudioRequest.getShouldStream(),
           lastAudioRequest.getAudioPathInfo());
       Intent i = new Intent(this, AudioService.class);
-      i.setAction(AudioService.ACTION_UPDATE_REPEAT);
+      i.setAction(AudioService.ACTION_UPDATE_SETTINGS);
       i.putExtra(AudioService.EXTRA_PLAY_INFO, updatedAudioRequest);
       startService(i);
 
       lastAudioRequest = updatedAudioRequest;
       audioStatusBar.setRepeatCount(verseRepeat);
+      audioStatusBar.setSpeed(playbackSpeed);
       return true;
     } else {
       return false;
@@ -1653,11 +1680,12 @@ public class PagerActivity extends AppCompatActivity implements
           repeatCount,
           lastAudioRequest.getRangeRepeatInfo(),
           lastAudioRequest.getEnforceBounds(),
+          lastAudioRequest.getPlaybackSpeed(),
           lastAudioRequest.getShouldStream(),
           lastAudioRequest.getAudioPathInfo());
 
       Intent i = new Intent(this, AudioService.class);
-      i.setAction(AudioService.ACTION_UPDATE_REPEAT);
+      i.setAction(AudioService.ACTION_UPDATE_SETTINGS);
       i.putExtra(AudioService.EXTRA_PLAY_INFO, updatedAudioRequest);
       startService(i);
       lastAudioRequest = updatedAudioRequest;

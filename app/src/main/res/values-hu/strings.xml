@@ -211,6 +211,7 @@
     <string name="play_apply_and_play">Alkalmaz és lejátszás</string>
     <string name="play">Lejátszás</string>
     <string name="stop">Leállítás</string>
+  <string name="playback_speed">Lejátszási sebesség:</string>
 
     <string-array name="repeatValues">
         <item>egyszer</item>

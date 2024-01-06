@@ -15,10 +15,10 @@
   <com.shawnlin.numberpicker.NumberPicker
       android:id="@+id/repeat_verse_picker"
       android:layout_width="120dp"
-      android:layout_height="40dp"
+      android:layout_height="wrap_content"
       app:np_orientation="horizontal"
       app:np_width="135dp"
-      app:np_height="48dp"
+      app:np_height="40dp"
       app:np_max="25"
       app:np_value="3"
       app:np_min="1"

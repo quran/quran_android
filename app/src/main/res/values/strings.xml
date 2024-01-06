@@ -346,6 +346,7 @@
   <string name="pause">Pause</string>
   <string name="stop">Stop</string>
   <string name="next">Next</string>
+  <string name="playback_speed">Playback Speed:</string>
 
   <string-array name="repeatValues">
     <item>1 time</item>
