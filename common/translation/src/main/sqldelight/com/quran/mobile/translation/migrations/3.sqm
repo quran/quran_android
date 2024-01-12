@@ -1,4 +1,5 @@
--- adds minimumRequiredVersion
+-- adds minimumRequiredVersion - updated in v2.9.2
+-- renames translator_foreign to translatorForeign also.
 CREATE TABLE translations_migration (
   id INTEGER PRIMARY KEY,
   name TEXT NOT NULL,
@@ -12,7 +13,7 @@ CREATE TABLE translations_migration (
 );
 
 INSERT INTO translations_migration
-SELECT id, name, translator, translatorForeign, filename, url, languageCode, version, 2
+SELECT id, name, translator, translator_foreign, filename, url, languageCode, version, 2
 FROM translations;
 
 DROP TABLE translations;
