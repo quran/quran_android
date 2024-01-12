@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.ui
 
+import android.app.BackgroundServiceStartNotAllowedException
 import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
@@ -160,9 +161,14 @@ class QuranActivity : AppCompatActivity(),
           Completable.timer(500, MILLISECONDS)
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe {
-                startService(
+                try {
+                  startService(
                     audioUtils.getAudioIntent(this@QuranActivity, AudioService.ACTION_STOP)
-                )
+                  )
+                } catch (illegalStateException: IllegalStateException) {
+                  // do nothing, we might be in the background
+                  // onPause should have stopped us from needing this, but it sometimes happens
+                }
               }
       )
     }
