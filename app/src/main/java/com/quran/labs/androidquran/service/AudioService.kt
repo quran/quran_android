@@ -682,9 +682,15 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
 
   private fun processUpdatePlaybackSpeed(speed: Float) {
     if (State.Playing === state && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      player?.playbackParams?.let { params ->
-        params.setSpeed(speed)
-        player?.playbackParams = params
+      try {
+        player?.playbackParams?.let { params ->
+          params.setSpeed(speed)
+          player?.playbackParams = params
+        }
+      } catch (e: Exception) {
+        // catch an Android 6 crash [IllegalStateException], and report the speed since some
+        // non-Android 6 devices also crash here, but with [IllegalArgumentException]
+        Timber.e(e, "Failed to set speed to $speed")
       }
     }
   }

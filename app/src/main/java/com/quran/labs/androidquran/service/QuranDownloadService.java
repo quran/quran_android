@@ -239,13 +239,15 @@ public class QuranDownloadService extends Service implements
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    // if it's a download, it wants to be a foreground service.
-    // quickly start as foreground before actually enqueueing the request.
-    if (ACTION_DOWNLOAD_URL.equals(intent.getAction())) {
-      notifier.notifyDownloadStarting();
-    }
+    if (intent != null) {
+      // if it's a download, it wants to be a foreground service.
+      // quickly start as foreground before actually enqueueing the request.
+      if (ACTION_DOWNLOAD_URL.equals(intent.getAction())) {
+        notifier.notifyDownloadStarting();
+      }
 
-    handleOnStartCommand(intent, startId);
+      handleOnStartCommand(intent, startId);
+    }
     return START_NOT_STICKY;
   }
 
