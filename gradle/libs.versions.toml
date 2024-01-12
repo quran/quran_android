@@ -58,7 +58,7 @@ numberPickerVersion = "2.4.13"
 reorderableComposeVersion = "0.9.6"
 
 # recitations
-grpcOkhttpVersion = "1.60.1"
+grpcOkhttpVersion = "1.61.0"
 googleAuthVersion = "1.21.0"
 googleCloudSpeechVersion = "4.27.0"
 
