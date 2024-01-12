@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.ui.fragment
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -79,6 +80,11 @@ class AyahPlaybackFragment : AyahActionFragment() {
     repeatVersePicker = view.findViewById(R.id.repeat_verse_picker)
     repeatRangePicker = view.findViewById(R.id.repeat_range_picker)
     playbackSpeedPicker = view.findViewById(R.id.playback_speed_picker)
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      val speedArea = view.findViewById<View>(R.id.playback_speed_area)
+      speedArea.visibility = View.GONE
+    }
 
     val context = requireContext()
     val isArabicNames = QuranSettings.getInstance(context).isArabicNames
