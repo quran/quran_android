@@ -1,9 +1,9 @@
--- adds languageCode
+-- adds languageCode - updated in v2.7.5
 CREATE TABLE translations_migration (
   id INTEGER PRIMARY KEY,
   name TEXT NOT NULL,
   translator TEXT,
-  translatorForeign TEXT,
+  translator_foreign TEXT,
   filename TEXT NOT NULL,
   url TEXT NOT NULL,
   languageCode TEXT,
@@ -11,7 +11,7 @@ CREATE TABLE translations_migration (
 );
 
 INSERT INTO translations_migration
-SELECT id, name, translator, translatorForeign, filename, url, "", version
+SELECT id, name, translator, translator_foreign, filename, url, "", version
 FROM translations;
 
 DROP TABLE translations;

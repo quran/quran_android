@@ -1,4 +1,4 @@
--- adds userDisplayOrder
+-- adds userDisplayOrder, updated in v3.0.2
 CREATE TABLE translations_migration (
   id INTEGER PRIMARY KEY,
   name TEXT NOT NULL,
