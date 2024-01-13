@@ -55,6 +55,7 @@ class AudioQueue(private val quranInfo: QuranInfo,
 
   fun getCurrentSura() = playbackInfo.currentAyah.sura
   fun getCurrentAyah() = playbackInfo.currentAyah.ayah
+  fun getCurrentPlaybackAyah() = playbackInfo.currentAyah
 
   fun playNextAyah(skipAyahRepeat: Boolean = false): Boolean {
     if (playbackInfo.shouldPlayBasmallah) {

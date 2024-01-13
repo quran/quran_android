@@ -17,6 +17,8 @@ import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.data.model.selection.startSuraAyah
 import com.quran.labs.androidquran.common.QuranAyahInfo
+import com.quran.labs.androidquran.common.audio.model.playback.currentPlaybackAyah
+import com.quran.labs.androidquran.common.audio.repository.AudioStatusRepository
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.data.SuraAyahIterator
 import com.quran.labs.androidquran.presenter.Presenter
@@ -34,7 +36,6 @@ import com.quran.mobile.bookmark.model.BookmarkModel
 import com.quran.mobile.translation.model.LocalTranslation
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
-import com.quran.reading.common.AudioEventPresenter
 import com.quran.reading.common.ReadingEventPresenter
 import com.quran.recitation.events.RecitationEventPresenter
 import com.quran.recitation.presenter.RecitationHighlightsPresenter
@@ -58,8 +59,8 @@ class AyahTrackerPresenter @Inject constructor(
   private val quranSettings: QuranSettings,
   private val readingEventPresenter: ReadingEventPresenter,
   private val bookmarkModel: BookmarkModel,
-  private val audioEventPresenter: AudioEventPresenter,
-  private val recitationPresenter: RecitationPresenter,
+  private val audioStatusRepository: AudioStatusRepository,
+  recitationPresenter: RecitationPresenter,
   private val recitationEventPresenter: RecitationEventPresenter,
   private val recitationPopupPresenter: RecitationPopupPresenter,
   private val recitationHighlightsPresenter: RecitationHighlightsPresenter,
@@ -81,8 +82,8 @@ class AyahTrackerPresenter @Inject constructor(
       .onEach { onAyahSelectionChanged(it) }
       .launchIn(scope)
 
-    audioEventPresenter.audioPlaybackAyahFlow
-      .onEach { onAudioSelectionChanged(it) }
+    audioStatusRepository.audioPlaybackFlow
+      .onEach { onAudioSelectionChanged(it.currentPlaybackAyah()) }
       .launchIn(scope)
 
     items.forEach { trackerItem ->

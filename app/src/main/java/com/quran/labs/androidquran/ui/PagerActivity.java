@@ -7,7 +7,6 @@ import static com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter.TRANSLA
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -65,11 +64,12 @@ import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
-import com.quran.labs.androidquran.bridge.AudioEventPresenterBridge;
+import com.quran.labs.androidquran.bridge.AudioStatusRepositoryBridge;
 import com.quran.labs.androidquran.bridge.ReadingEventPresenterBridge;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.audio.model.QariItem;
 import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest;
+import com.quran.labs.androidquran.common.audio.repository.AudioStatusRepository;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranDisplayData;
@@ -124,7 +124,6 @@ import com.quran.mobile.translation.model.LocalTranslation;
 import com.quran.page.common.factory.PageViewFactoryProvider;
 import com.quran.page.common.toolbar.AyahToolBar;
 import com.quran.page.common.toolbar.di.AyahToolBarInjector;
-import com.quran.reading.common.AudioEventPresenter;
 import com.quran.reading.common.ReadingEventPresenter;
 
 import java.lang.ref.WeakReference;
@@ -189,7 +188,6 @@ public class PagerActivity extends AppCompatActivity implements
   private boolean needsPermissionToDownloadOver3g = true;
   private AlertDialog promptDialog = null;
   private AyahToolBar ayahToolBar;
-  private AudioRequest lastAudioRequest;
   private boolean isDualPages = false;
   private View toolBarArea;
   private FrameLayout overlay;
@@ -238,14 +236,14 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject AudioPresenter audioPresenter;
   @Inject CurrentQariBridge currentQariBridge;
   @Inject QuranEventLogger quranEventLogger;
-  @Inject AudioEventPresenter audioEventPresenter;
+  @Inject AudioStatusRepository audioStatusRepository;
   @Inject ReadingEventPresenter readingEventPresenter;
   @Inject PageViewFactoryProvider pageProviderFactoryProvider;
   @Inject Set<AyahActionFragmentProvider> additionalAyahPanels;
   @Inject PagerActivityRecitationPresenter pagerActivityRecitationPresenter;
   @Inject TranslationListPresenter translationListPresenter;
 
-  private AudioEventPresenterBridge audioEventPresenterBridge;
+  private AudioStatusRepositoryBridge audioStatusRepositoryBridge;
   private ReadingEventPresenterBridge readingEventPresenterBridge;
 
   private Job translationJob;
@@ -288,8 +286,9 @@ public class PagerActivity extends AppCompatActivity implements
     boolean shouldAdjustPageNumber = false;
     isDualPages = QuranUtils.isDualPages(this, quranScreenInfo);
     isSplitScreen = quranSettings.isQuranSplitWithTranslation();
-    audioEventPresenterBridge = new AudioEventPresenterBridge(
-        audioEventPresenter,
+    audioStatusRepositoryBridge = new AudioStatusRepositoryBridge(
+        audioStatusRepository,
+        () -> audioStatusBar,
         suraAyah -> { onAudioPlaybackAyahChanged(suraAyah); return null; }
     );
     readingEventPresenterBridge = new ReadingEventPresenterBridge(
@@ -315,7 +314,6 @@ public class PagerActivity extends AppCompatActivity implements
       }
       boolean lastWasDualPages = savedInstanceState.getBoolean(LAST_WAS_DUAL_PAGES, isDualPages);
       shouldAdjustPageNumber = (lastWasDualPages != isDualPages);
-      this.lastAudioRequest = savedInstanceState.getParcelable(LAST_AUDIO_REQUEST);
     } else {
       Intent intent = getIntent();
       Bundle extras = intent.getExtras();
@@ -509,10 +507,6 @@ public class PagerActivity extends AppCompatActivity implements
         return;
       }
     }
-
-    LocalBroadcastManager.getInstance(this).registerReceiver(
-        audioReceiver,
-        new IntentFilter(AudioService.AudioUpdateIntent.INTENT_NAME));
 
     downloadReceiver = new DefaultDownloadReceiver(this,
         QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
@@ -986,7 +980,6 @@ public class PagerActivity extends AppCompatActivity implements
     clearUiVisibilityListener();
 
     // remove broadcast receivers
-    LocalBroadcastManager.getInstance(this).unregisterReceiver(audioReceiver);
     if (downloadReceiver != null) {
       downloadReceiver.setListener(null);
       LocalBroadcastManager.getInstance(this)
@@ -999,7 +992,7 @@ public class PagerActivity extends AppCompatActivity implements
     }
     currentQariBridge.unsubscribeAll();
     compositeDisposable.dispose();
-    audioEventPresenterBridge.dispose();
+    audioStatusRepositoryBridge.dispose();
     readingEventPresenterBridge.dispose();
     handler.removeCallbacksAndMessages(null);
     dismissProgressDialog();
@@ -1017,9 +1010,6 @@ public class PagerActivity extends AppCompatActivity implements
     state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, showingTranslation);
     state.putBoolean(LAST_ACTIONBAR_STATE, isActionBarHidden);
     state.putBoolean(LAST_WAS_DUAL_PAGES, isDualPages);
-    if (lastAudioRequest != null) {
-      state.putParcelable(LAST_AUDIO_REQUEST, lastAudioRequest);
-    }
     super.onSaveInstanceState(state);
   }
 
@@ -1274,33 +1264,6 @@ public class PagerActivity extends AppCompatActivity implements
       translationsSpinner.setVisibility(View.VISIBLE);
     }
   }
-
-  private final BroadcastReceiver audioReceiver = new BroadcastReceiver() {
-    @Override
-    public void onReceive(Context context, Intent intent) {
-      if (intent != null) {
-        int state = intent.getIntExtra(
-            AudioService.AudioUpdateIntent.STATUS, -1);
-        int repeatCount = intent.getIntExtra(
-            AudioService.AudioUpdateIntent.REPEAT_COUNT, -200);
-        AudioRequest request = intent.getParcelableExtra(AudioService.AudioUpdateIntent.REQUEST);
-        if (request != null) {
-          lastAudioRequest = request;
-        }
-        if (state == AudioService.AudioUpdateIntent.PLAYING) {
-          audioStatusBar.switchMode(AudioStatusBar.PLAYING_MODE);
-          if (repeatCount >= -1) {
-            audioStatusBar.setRepeatCount(repeatCount);
-          }
-        } else if (state == AudioService.AudioUpdateIntent.PAUSED) {
-          audioStatusBar.switchMode(AudioStatusBar.PAUSED_MODE);
-        } else if (state == AudioService.AudioUpdateIntent.STOPPED) {
-          audioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
-          lastAudioRequest = null;
-        }
-      }
-    }
-  };
 
   @Override
   public void updateDownloadProgress(int progress,
@@ -1560,10 +1523,6 @@ public class PagerActivity extends AppCompatActivity implements
     intent.setAction(AudioService.ACTION_PLAYBACK);
     if (request != null) {
       intent.putExtra(AudioService.EXTRA_PLAY_INFO, request);
-      lastAudioRequest = request;
-      audioStatusBar.setRepeatCount(request.getRepeatInfo());
-      audioStatusBar.setSpeed(request.getPlaybackSpeed());
-      audioStatusBar.switchMode(AudioStatusBar.LOADING_MODE);
     }
 
     Timber.d("starting service for audio playback");
@@ -1579,6 +1538,7 @@ public class PagerActivity extends AppCompatActivity implements
 
   @Override
   public void setPlaybackSpeed(float speed) {
+    final AudioRequest lastAudioRequest = audioStatusRepositoryBridge.audioRequest();
     if (lastAudioRequest != null) {
       final AudioRequest updatedAudioRequest = new AudioRequest(lastAudioRequest.getStart(),
           lastAudioRequest.getEnd(),
@@ -1594,7 +1554,6 @@ public class PagerActivity extends AppCompatActivity implements
       i.setAction(AudioService.ACTION_UPDATE_SETTINGS);
       i.putExtra(AudioService.EXTRA_PLAY_INFO, updatedAudioRequest);
       startService(i);
-      lastAudioRequest = updatedAudioRequest;
     }
   }
 
@@ -1639,6 +1598,7 @@ public class PagerActivity extends AppCompatActivity implements
                                    int verseRepeat,
                                    boolean enforceRange,
                                    float playbackSpeed) {
+    final AudioRequest lastAudioRequest = audioStatusRepositoryBridge.audioRequest();
     if (lastAudioRequest != null) {
       final AudioRequest updatedAudioRequest = new AudioRequest(lastAudioRequest.getStart(),
           lastAudioRequest.getEnd(),
@@ -1653,10 +1613,6 @@ public class PagerActivity extends AppCompatActivity implements
       i.setAction(AudioService.ACTION_UPDATE_SETTINGS);
       i.putExtra(AudioService.EXTRA_PLAY_INFO, updatedAudioRequest);
       startService(i);
-
-      lastAudioRequest = updatedAudioRequest;
-      audioStatusBar.setRepeatCount(verseRepeat);
-      audioStatusBar.setSpeed(playbackSpeed);
       return true;
     } else {
       return false;
@@ -1665,6 +1621,7 @@ public class PagerActivity extends AppCompatActivity implements
 
   @Override
   public void setRepeatCount(int repeatCount) {
+    final AudioRequest lastAudioRequest = audioStatusRepositoryBridge.audioRequest();
     if (lastAudioRequest != null) {
       final AudioRequest updatedAudioRequest = new AudioRequest(lastAudioRequest.getStart(),
           lastAudioRequest.getEnd(),
@@ -1680,7 +1637,6 @@ public class PagerActivity extends AppCompatActivity implements
       i.setAction(AudioService.ACTION_UPDATE_SETTINGS);
       i.putExtra(AudioService.EXTRA_PLAY_INFO, updatedAudioRequest);
       startService(i);
-      lastAudioRequest = updatedAudioRequest;
     }
   }
 
@@ -1688,7 +1644,6 @@ public class PagerActivity extends AppCompatActivity implements
   public void onStopPressed() {
     startService(audioUtils.getAudioIntent(this, AudioService.ACTION_STOP));
     audioStatusBar.switchMode(AudioStatusBar.STOPPED_MODE);
-    lastAudioRequest = null;
   }
 
   @Override
@@ -1740,7 +1695,7 @@ public class PagerActivity extends AppCompatActivity implements
   }
 
   public AudioRequest getLastAudioRequest() {
-    return lastAudioRequest;
+    return audioStatusRepositoryBridge.audioRequest();
   }
 
   public void endAyahMode() {
