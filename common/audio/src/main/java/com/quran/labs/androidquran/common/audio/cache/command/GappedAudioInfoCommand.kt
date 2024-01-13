@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.common.audio.cache.command
 
 import com.quran.data.core.QuranInfo
-import com.quran.labs.androidquran.common.audio.model.PartiallyDownloadedSura
+import com.quran.labs.androidquran.common.audio.model.download.PartiallyDownloadedSura
 import com.quran.labs.androidquran.common.audio.util.AudioFileUtil
 import okio.FileSystem
 import okio.Path

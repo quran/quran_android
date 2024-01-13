@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.dao.audio
+package com.quran.labs.androidquran.common.audio.model.playback
 
 import android.os.Parcelable
 import com.quran.data.model.SuraAyah
@@ -14,7 +14,8 @@ data class AudioRequest(val start: SuraAyah,
                         val enforceBounds: Boolean,
                         val playbackSpeed: Float = 1f,
                         val shouldStream: Boolean,
-                        val audioPathInfo: AudioPathInfo) : Parcelable {
+                        val audioPathInfo: AudioPathInfo
+) : Parcelable {
   fun isGapless() = qari.isGapless
   fun needsIsti3athaAudio() =
       !isGapless() || audioPathInfo.gaplessDatabase?.contains("minshawi_murattal") ?: false

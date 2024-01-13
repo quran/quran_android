@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.common.audio.model
+package com.quran.labs.androidquran.common.audio.model.download
 
 import com.quran.data.model.audio.Qari
 

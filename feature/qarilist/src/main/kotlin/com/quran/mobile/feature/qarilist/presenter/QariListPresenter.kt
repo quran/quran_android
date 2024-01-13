@@ -5,7 +5,7 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoManager
 import com.quran.labs.androidquran.common.audio.extension.isRangeDownloaded
-import com.quran.labs.androidquran.common.audio.model.QariDownloadInfo
+import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.mobile.feature.qarilist.R
 import com.quran.mobile.feature.qarilist.model.QariUiModel

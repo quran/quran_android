@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.common.audio.cache.command
 import com.google.common.truth.Truth
 import com.quran.data.core.QuranInfo
 import com.quran.data.pageinfo.common.MadaniDataSource
-import com.quran.labs.androidquran.common.audio.model.PartiallyDownloadedSura
+import com.quran.labs.androidquran.common.audio.model.download.PartiallyDownloadedSura
 import okio.Path.Companion.toPath
 import okio.fakefilesystem.FakeFileSystem
 import org.junit.Test
