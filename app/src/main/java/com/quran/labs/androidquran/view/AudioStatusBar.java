@@ -261,7 +261,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   private void updateButton() {
     final TextView currentQariView = qariView;
-    if (currentQariView != null) {
+    if (currentQariView != null && currentQari != null) {
       currentQariView.setText(currentQari.getNameResource());
     }
   }
@@ -283,7 +283,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
       dropdownIconView.setOnClickListener(view -> audioBarListener.onShowQariList());
       dropdownIconView.setPadding(buttonPadding, 0, buttonPadding, 0);
     }
-    qariView.setText(currentQari.getNameResource());
+    updateButton();
 
     final ViewGroup.LayoutParams dropdownParams =
         new ViewGroup.LayoutParams(

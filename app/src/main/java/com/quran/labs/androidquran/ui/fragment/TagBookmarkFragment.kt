@@ -5,11 +5,12 @@ import android.os.Bundle
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.startSuraAyah
+import com.quran.labs.androidquran.common.audio.model.playback.currentPlaybackAyah
+import com.quran.labs.androidquran.common.audio.repository.AudioStatusRepository
 import com.quran.labs.androidquran.common.toolbar.R
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.mobile.di.AyahActionFragmentProvider
-import com.quran.reading.common.AudioEventPresenter
 import com.quran.reading.common.ReadingEventPresenter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -25,7 +26,7 @@ class TagBookmarkFragment : TagBookmarkDialog() {
   lateinit var readingEventPresenter: ReadingEventPresenter
 
   @Inject
-  lateinit var audioEventPresenter: AudioEventPresenter
+  lateinit var audioStatusRepository: AudioStatusRepository
 
   @Inject
   lateinit var quranInfo: QuranInfo
@@ -46,7 +47,8 @@ class TagBookmarkFragment : TagBookmarkDialog() {
 
     scope = MainScope()
     readingEventPresenter.ayahSelectionFlow
-      .combine(audioEventPresenter.audioPlaybackAyahFlow) { selectedAyah, playbackAyah ->
+      .combine(audioStatusRepository.audioPlaybackFlow) { selectedAyah, playbackState ->
+        val playbackAyah = playbackState.currentPlaybackAyah()
         val start = when {
           selectedAyah !is AyahSelection.None -> selectedAyah.startSuraAyah()
           playbackAyah != null -> playbackAyah

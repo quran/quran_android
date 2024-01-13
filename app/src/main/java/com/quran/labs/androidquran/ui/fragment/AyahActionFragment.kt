@@ -6,7 +6,8 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.endSuraAyah
 import com.quran.data.model.selection.startSuraAyah
-import com.quran.reading.common.AudioEventPresenter
+import com.quran.labs.androidquran.common.audio.model.playback.currentPlaybackAyah
+import com.quran.labs.androidquran.common.audio.repository.AudioStatusRepository
 import com.quran.reading.common.ReadingEventPresenter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -23,7 +24,7 @@ abstract class AyahActionFragment : Fragment() {
   lateinit var readingEventPresenter: ReadingEventPresenter
 
   @Inject
-  lateinit var audioEventPresenter: AudioEventPresenter
+  lateinit var audioStatusRepository: AudioStatusRepository
 
   protected var start: SuraAyah? = null
   protected var end: SuraAyah? = null
@@ -33,7 +34,8 @@ abstract class AyahActionFragment : Fragment() {
 
     scope = MainScope()
     readingEventPresenter.ayahSelectionFlow
-      .combine(audioEventPresenter.audioPlaybackAyahFlow) { selectedAyah, playbackAyah ->
+      .combine(audioStatusRepository.audioPlaybackFlow) { selectedAyah, playbackStatus ->
+        val playbackAyah = playbackStatus.currentPlaybackAyah()
         val (previousStart, previousEnd) = start to end
         if (selectedAyah !is AyahSelection.None) {
           start = selectedAyah.startSuraAyah()
