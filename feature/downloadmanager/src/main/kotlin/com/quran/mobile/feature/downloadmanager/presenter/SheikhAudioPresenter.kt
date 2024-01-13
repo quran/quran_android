@@ -4,8 +4,8 @@ import com.quran.data.core.QuranFileManager
 import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.common.audio.cache.AudioCacheInvalidator
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoManager
-import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
-import com.quran.labs.androidquran.common.audio.model.QariDownloadInfo
+import com.quran.labs.androidquran.common.audio.model.download.AudioDownloadMetadata
+import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
 import com.quran.mobile.common.download.DownloadConstants
 import com.quran.mobile.common.download.DownloadInfo
 import com.quran.mobile.common.download.DownloadInfoStreams

@@ -7,7 +7,7 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.audio.Qari
-import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
+import com.quran.labs.androidquran.common.audio.model.download.AudioDownloadMetadata
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.mobile.common.download.Downloader

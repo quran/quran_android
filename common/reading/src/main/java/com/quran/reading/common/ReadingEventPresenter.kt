@@ -25,7 +25,7 @@ class ReadingEventPresenter @Inject constructor(private val quranInfo: QuranInfo
   )
   private val quranClickInternalFlow = MutableSharedFlow<QuranId>(
     replay = 0, extraBufferCapacity = 1, onBufferOverflow = DROP_OLDEST)
-  private val detailsPanelInternalFlow = MutableStateFlow<Boolean>(false)
+  private val detailsPanelInternalFlow = MutableStateFlow(false)
   private val ayahSelectionInternalFlow = MutableStateFlow<AyahSelection>(AyahSelection.None)
 
   val clicksFlow: Flow<Unit> = clicksInternalFlow.asSharedFlow()

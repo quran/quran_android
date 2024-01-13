@@ -69,7 +69,7 @@ import com.quran.labs.androidquran.bridge.AudioEventPresenterBridge;
 import com.quran.labs.androidquran.bridge.ReadingEventPresenterBridge;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.audio.model.QariItem;
-import com.quran.labs.androidquran.dao.audio.AudioRequest;
+import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.data.QuranDataProvider;
 import com.quran.labs.androidquran.data.QuranDisplayData;
@@ -1159,7 +1159,7 @@ public class PagerActivity extends AppCompatActivity implements
       endAyahMode();
     }
 
-    if (translations.size() == 0) {
+    if (translations.isEmpty()) {
       startTranslationManager();
     } else {
       int page = getCurrentPage();
@@ -1202,14 +1202,6 @@ public class PagerActivity extends AppCompatActivity implements
 
   public List<LocalTranslation> getTranslations() {
     return translations;
-  }
-
-  public String[] getTranslationNames() {
-    return translationNames;
-  }
-
-  public Set<String> getActiveTranslationsFilesNames() {
-    return activeTranslationsFilesNames;
   }
 
   @Override
@@ -1852,7 +1844,7 @@ public class PagerActivity extends AppCompatActivity implements
     compositeDisposable.add(
         arabicDatabaseUtils
             .getVerses(start, end)
-            .filter(quranAyahs -> quranAyahs.size() > 0)
+            .filter(quranAyahs -> !quranAyahs.isEmpty())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(quranAyahs -> {
               if (isCopy) {

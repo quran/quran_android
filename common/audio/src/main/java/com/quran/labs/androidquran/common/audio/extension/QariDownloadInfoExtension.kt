@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.common.audio.extension
 
 import com.quran.data.model.SuraAyah
-import com.quran.labs.androidquran.common.audio.model.QariDownloadInfo
+import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
 
 /**
  * Determine whether the range of verses is downloaded

@@ -2,8 +2,8 @@ package com.quran.labs.androidquran.common.audio.extension
 
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.audio.Qari
-import com.quran.labs.androidquran.common.audio.model.PartiallyDownloadedSura
-import com.quran.labs.androidquran.common.audio.model.QariDownloadInfo
+import com.quran.labs.androidquran.common.audio.model.download.PartiallyDownloadedSura
+import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

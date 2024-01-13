@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.common.audio.cache
 
-import com.quran.labs.androidquran.common.audio.model.QariDownloadInfo
+import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 

@@ -2,8 +2,8 @@ package com.quran.labs.androidquran.common.audio.cache
 
 import com.quran.data.core.QuranFileManager
 import com.quran.labs.androidquran.common.audio.cache.command.AudioInfoCommand
-import com.quran.labs.androidquran.common.audio.model.AudioDownloadMetadata
-import com.quran.labs.androidquran.common.audio.model.QariDownloadInfo
+import com.quran.labs.androidquran.common.audio.model.download.AudioDownloadMetadata
+import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
 import com.quran.mobile.common.download.DownloadInfo
 import com.quran.mobile.common.download.DownloadInfoStreams
 import kotlinx.coroutines.CoroutineScope
