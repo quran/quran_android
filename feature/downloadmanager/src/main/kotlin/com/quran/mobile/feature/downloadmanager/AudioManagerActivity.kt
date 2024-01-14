@@ -46,8 +46,6 @@ class AudioManagerActivity : ComponentActivity() {
         ) {
           DownloadManagerToolbar(
             title = stringResource(R.string.audio_manager),
-            backgroundColor = MaterialTheme.colorScheme.primary,
-            tintColor = MaterialTheme.colorScheme.onPrimary,
             onBackPressed = { finish() }
           )
 

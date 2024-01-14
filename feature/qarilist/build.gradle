@@ -9,7 +9,8 @@ android {
   kotlinOptions {
     freeCompilerArgs += [
         "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-        "-opt-in=androidx.compose.material.ExperimentalMaterialApi"
+        "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
+        "-Xopt-in=androidx.compose.material3.ExperimentalMaterial3Api"
     ]
   }
 }
