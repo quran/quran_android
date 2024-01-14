@@ -3,16 +3,7 @@ plugins {
   id 'com.squareup.anvil'
 }
 
-android {
-  namespace 'com.quran.mobile.feature.downloadmanager'
-  kotlinOptions {
-    freeCompilerArgs += [
-        "-Xopt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-        "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-        "-Xopt-in=androidx.compose.material3.ExperimentalMaterial3Api"
-    ]
-  }
-}
+android.namespace 'com.quran.mobile.feature.downloadmanager'
 
 anvil { generateDaggerFactories = true }
 
