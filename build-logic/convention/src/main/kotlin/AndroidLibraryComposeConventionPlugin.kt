@@ -5,8 +5,10 @@ import com.quran.labs.androidquran.buildutil.applyKotlinCommon
 import com.quran.labs.androidquran.buildutil.withLibraries
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
 class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
 
@@ -24,6 +26,15 @@ class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
         buildFeatures.compose = true
         withLibraries { libs ->
           composeOptions.kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        }
+
+        (this as ExtensionAware).extensions.configure<KotlinJvmOptions>("kotlinOptions") {
+          freeCompilerArgs += listOf(
+            "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+            "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+          )
         }
       }
 

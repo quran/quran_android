@@ -3,17 +3,7 @@ plugins {
   id 'com.squareup.anvil'
 }
 
-android {
-  namespace 'com.quran.mobile.feature.qarilist'
-
-  kotlinOptions {
-    freeCompilerArgs += [
-        "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-        "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
-        "-Xopt-in=androidx.compose.material3.ExperimentalMaterial3Api"
-    ]
-  }
-}
+android.namespace 'com.quran.mobile.feature.qarilist'
 
 anvil { generateDaggerFactories = true }
 

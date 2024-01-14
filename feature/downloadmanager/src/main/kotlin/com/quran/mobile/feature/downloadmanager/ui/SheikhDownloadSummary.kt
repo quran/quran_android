@@ -9,7 +9,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -26,7 +25,6 @@ import com.quran.mobile.feature.downloadmanager.R
 import com.quran.mobile.feature.downloadmanager.model.DownloadedSheikhUiModel
 import com.quran.mobile.feature.downloadmanager.ui.common.DownloadCommonRow
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SheikhDownloadSummary(
   downloadedSheikhUiModel: DownloadedSheikhUiModel,
