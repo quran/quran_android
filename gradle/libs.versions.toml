@@ -66,7 +66,7 @@ googleCloudSpeechVersion = "4.28.0"
 junitVersion = "4.13.2"
 espressoVersion = "3.5.1"
 truthVersion = "1.2.0"
-mockitoVersion = "5.8.0"
+mockitoVersion = "5.9.0"
 robolectricVersion = "4.11.1"
 turbineVersion = "1.0.0"
 
