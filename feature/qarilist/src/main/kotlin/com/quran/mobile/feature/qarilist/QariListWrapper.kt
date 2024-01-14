@@ -13,17 +13,17 @@ import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.ModalBottomSheetDefaults
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -129,20 +129,17 @@ class QariListWrapper(
         sheetContent = {
           Column {
             TopAppBar(
-              backgroundColor = MaterialTheme.colorScheme.primary,
               title = {
                 Text(
                   stringResource(R.string.qarilist_select_qari),
-                  style = MaterialTheme.typography.titleLarge,
-                  color = MaterialTheme.colorScheme.primaryContainer
+                  style = MaterialTheme.typography.titleLarge
                 )
               },
               navigationIcon = {
                 IconButton(onClick = { closeDialog() }) {
                   Icon(
                     imageVector = Icons.Filled.Close,
-                    contentDescription = stringResource(R.string.qarilist_dismiss),
-                    tint = MaterialTheme.colorScheme.primaryContainer
+                    contentDescription = stringResource(R.string.qarilist_dismiss)
                   )
                 }
               }
