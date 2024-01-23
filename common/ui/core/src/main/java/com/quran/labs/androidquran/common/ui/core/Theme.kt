@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.common.ui.core
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -71,6 +72,8 @@ private val DarkColors = darkColorScheme(
 )
 
 private val forceLtr = listOf("huawei", "lenovo", "tecno")
+
+val QuranIcons = Icons.Filled
 
 @Composable
 fun QuranTheme(

@@ -4,7 +4,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.quran.data.core.QuranInfo
-import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment
 import com.quran.labs.androidquran.ui.fragment.TabletFragment
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment
