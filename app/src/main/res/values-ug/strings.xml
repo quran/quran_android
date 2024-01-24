@@ -7,7 +7,6 @@
   <string name="downloadImportantPrompt">ئۈسكۈنىڭىز ئۈچۈن ئۆزى كىچىك ئەمما مۇھىم بولغان قۇرئان سۈرەتلىرىنىڭ يېڭىلانمىسى بار. بۇ ياماقنى ھازىرلا چۈشۈرەمسىز؟</string>
   <string name="downloadPrompt_ok">ھەئە</string>
   <string name="downloadPrompt_no">ياق</string>
-  <string name="downloading_title">چۈشۈرۈۋاتىدۇ…</string>
   <string name="downloading_message">ھۆججەتلەرنى چۈشۈرۈشنى كۈتۈڭ. (داۋاملاشتۇرۇشنى قوللايدۇ)</string>
   <string name="extracting_title">بىر تەرەپ قىلىۋاتىدۇ…</string>
   <string name="menu_about">بىز ھەققىدە</string>
@@ -182,8 +181,6 @@
   <string name="sura_ayah_notification_str">سۈرە %1$s، %2$d-ئايەت</string>
   <string name="sura_ayah_sharing_str">سۈرە %1$s: %2$d</string>
 
-  <string name="index_loading">يۈكلەۋاتىدۇ…</string>
-
   <string name="canceling">ۋاز كېچىۋاتىدۇ…</string>
   <string name="juz2_description">%1$s -پارە</string>
   <string name="manzil_description">مەنزىل  %1$s</string>
@@ -203,8 +200,6 @@
   <string name="download_error_invalid_download_retry">ھۆججەت بۇزۇلغان، قايتا چۈشۈرۈشنى سىناۋاتىدۇ</string>
   <string name="download_error_network_retry">تور خاتالىقى، داۋاملاشتۇرۇشنى سىناۋاتىدۇ…</string>
   <string name="notification_download_canceled">چۈشۈرۈشتىن ۋاز كەچتى</string>
-  <string name="download_non_wifi_prompt">سىز wifi تورىدا ئەمەس. سانلىق مەلۇماتنى چۈشۈرۈۋېرەمسىز؟</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">بىر تەرەپ قىلىۋاتقىنى %1$d / %2$d</string>
   <string name="download_retry">قايتا سىنا</string>

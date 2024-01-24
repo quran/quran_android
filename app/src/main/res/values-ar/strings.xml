@@ -152,8 +152,6 @@
   <string name="sura_ayah_notification_str">سُورَةُ %1$s، آية %2$d</string>
   <string name="sura_ayah_sharing_str">سُورَةُ %1$s: %2$d</string>
 
-  <string name="index_loading">جاري التحميل…</string>
-
   <string name="canceling">جاري إلغاء اﻷمر…</string>
   <string name="juz2_description">الجزء %1$s</string>
   <string name="manzil_description">منزل %1$s</string>
@@ -180,8 +178,6 @@
   <string name="download_cancel">إلغاء</string>
   <string name="download_extra_data">لدعم الترجمة و المشاركة يجب تحميل بعض
        الملفات .. حمل الأن؟</string>
-  <string name="download_non_wifi_prompt">أنت لست على واي فاي.  تحميل البيانات على أية حال؟</string>
-
   <!-- translation database stuff -->
   <string name="remove_dlg_title">امسح التفسير/الترجمة؟</string>
   <string name="remove_dlg_msg">هل ترغب في حذف %1$s؟</string>

@@ -49,7 +49,6 @@
   <string name="quran_sura_title">Sura %1$s</string>
   <string name="sura_ayah_notification_str">Sura %1$s, Ayah %2$d</string>
   <string name="sura_ayah_sharing_str">Sura %1$s: %2$d</string>
-  <string name="index_loading">Caricamento&#8230;</string>
   <string name="canceling">Cancellazione di&#8230;</string>
   <string name="juz2_description">Ğuz\' %1$s</string>
   <string name="page_description">Pagina %1$s, Ğuz\' %2$s</string>
@@ -165,7 +164,6 @@
   <string name="download_error_invalid_download">Il file scaricato era corrotto</string>
   <string name="download_error_invalid_download_retry">File corrotto, tentativo di riscaricamento</string>
   <string name="download_error_network_retry">Errore di rete, cercando di riprendere&#8230;</string>
-  <string name="download_non_wifi_prompt">Non sei su Wi-Fi. Scaricare dati in ogni caso?</string>
   <string name="download_processing">Elaborazione Scarica&#8230;</string>
   <string name="translation_updates_available">È disponibile un aggiornamento per alcune delle tue traduzioni. Visita la schermata delle traduzioni ora?</string>
   <string name="please_grant_permissions">Si prega di concedere il permesso nelle impostazioni dell\'applicazione</string>

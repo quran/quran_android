@@ -199,8 +199,6 @@
   <string name="sura_ayah_notification_str">ซูเราะฮฺ %1$s, อายะห์ %2$d</string>
   <string name="sura_ayah_sharing_str">ซูเราะฮฺ %1$s: %2$d</string>
 
-  <string name="index_loading">การโหลด&#8230;</string>
-
   <string name="canceling">ยก เลิก&#8230;</string>
   <string name="juz2_description">ญชอฺที %1$s</string>
   <string name="page_description">หน้า %1$s, ญชอฺที %2$s</string>
@@ -219,8 +217,6 @@
   <string name="download_error_invalid_download_retry">แฟ้มเสียหาย กําลังพยายามดาวน์โหลดใหม่</string>
   <string name="download_error_network_retry">ข้อผิดพลาดของเครือข่าย, กําลังพยายามดําเนินการต่อ&#8230;</string>
   <string name="notification_download_canceled">ยกเลิกการดาวน์โหลด</string>
-  <string name="download_non_wifi_prompt">คุณไม่ได้ใช้ Wi-Fi ดาวน์โหลดข้อมูลต่อไปหรือไม่?</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">กําลังประมวลผลไฟล์ %1$d / %2$d</string>
   <string name="download_retry">ลอง</string>

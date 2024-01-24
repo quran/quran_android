@@ -23,7 +23,6 @@
     <item quantity="other">C\'è stato un errore durante la cancellazione di %1$d sure</item>
   </plurals>
 
-  <string name="downloading_title">Scaricare&#8230;</string>
   <string name="download_progress">Scaricato %1$s / %2$s</string>
   <string name="download_sura_progress">Scaricato %1$s / %2$s di Sura %3$d</string>
   <string name="download_sura_ayah_progress">Scaricare la Sura %1$d Ayah %2$d</string>

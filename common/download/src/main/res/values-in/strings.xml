@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="downloading">Mengunduh&#8230;</string>
+  <string name="download_non_wifi_prompt">Anda tidak tersambung ke Wi-Fi. Tetap unduh datanya?</string>
+</resources>

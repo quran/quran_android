@@ -4,4 +4,5 @@
   <string name="cancel">Anuluj</string>
   <string name="from">Od</string>
   <string name="to">Do</string>
+  <string name="loading">Ładowanie&#8230;</string>
 </resources>

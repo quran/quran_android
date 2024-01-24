@@ -211,8 +211,6 @@
   <string name="sura_ayah_notification_str">Sure %1$s, Vers %2$d</string>
   <string name="sura_ayah_sharing_str">Sure %1$s: %2$d</string>
 
-  <string name="index_loading">Lade&#8230;</string>
-
   <string name="canceling">Abbrechen&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
   <string name="page_description">Seite %1$s, Juz\' %2$s</string>
@@ -243,9 +241,6 @@
   <string name="download_error_network_retry">Netzwerk-Fehler, es wird versucht eine Verbindung
     aufzubauen&#8230;</string>
   <string name="notification_download_canceled">Download abgebrochen</string>
-  <string name="download_non_wifi_prompt">Sie sind nicht mit einem W-LAN verbunden. Möchten Sie die
-    Dateien trotzdem herunterladen?
-  </string>
 
   <!-- downloading dialogs -->
   <string name="process_progress">Datei wird verarbeitet %1$d / %2$d</string>

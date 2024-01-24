@@ -6,6 +6,7 @@ android.namespace = "com.quran.mobile.feature.audiobar"
 
 dependencies {
   implementation(project(":common:audio"))
+  implementation(project(":common:download"))
   implementation(project(":common:ui:core"))
 
   // compose

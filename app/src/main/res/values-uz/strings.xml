@@ -230,8 +230,6 @@
   <string name="sura_ayah_notification_str">%1$s surasi %2$d-oyat</string>
   <string name="sura_ayah_sharing_str">%1$s surasi: %2$d</string>
 
-  <string name="index_loading">Yuklanmoqda&#8230;</string>
-
   <string name="canceling">Bekor qilinmoqda&#8230;</string>
   <string name="juz2_description">%1$s-juz</string>
   <string name="page_description">%1$s-bet, %2$s-juz</string>
@@ -250,8 +248,6 @@
   <string name="download_error_invalid_download_retry">Fayl buzilgan, qayta saqlab olishga harakat qilinmoqda&#8230;</string>
   <string name="download_error_network_retry">Tarqmoq xatoligi, qayta harakat qilinmoqda&#8230;</string>
   <string name="notification_download_canceled">Saqlash bekor qilindi</string>
-  <string name="download_non_wifi_prompt">Wi-Fi tarmogʻiga ulanmagansiz, baribir fayllarni saqlab olmoqchimisiz?</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">%1$d/%2$d ishlandi</string>
   <string name="download_retry">Qayta harakat qilish</string>

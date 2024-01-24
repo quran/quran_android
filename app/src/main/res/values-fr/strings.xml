@@ -181,7 +181,6 @@
   <string name="quran_sura_title">Sourate %1$s</string>
   <string name="sura_ayah_notification_str">Sourate %1$s, Aya %2$d</string>
   <string name="sura_ayah_sharing_str">Sourate %1$s: %2$d</string>
-  <string name="index_loading">Chargement…</string>
   <string name="canceling">Annulation…</string>
   <string name="juz2_description">Juz\' %1$s</string>
   <string name="page_description">Page %1$s, Juz\' %2$s</string>
@@ -200,8 +199,6 @@
   <string name="download_error_invalid_download_retry">Fichier corrompu, nouvelle tentative de téléchargement</string>
   <string name="download_error_network_retry">Erreur réseau, tentative de reprise…</string>
   <string name="notification_download_canceled">Téléchargement annulé</string>
-  <string name="download_non_wifi_prompt">Vous n\'êtes pas en wifi.  Télécharger les données malgré tout ?</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">Traitement du fichier %1$d / %2$d</string>
   <string name="download_retry">Réessayer</string>

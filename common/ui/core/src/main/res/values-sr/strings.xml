@@ -4,4 +4,5 @@
   <string name="cancel">Poništi</string>
   <string name="from">Od</string>
   <string name="to">Do</string>
+  <string name="loading">Učitavam…</string>
 </resources>

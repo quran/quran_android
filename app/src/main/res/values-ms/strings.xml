@@ -178,8 +178,6 @@
   <string name="sura_ayah_notification_str">Surah %1$s, Ayat %2$d</string>
   <string name="sura_ayah_sharing_str">Surah %1$s: %2$d</string>
 
-  <string name="index_loading">Memuat…</string>
-
   <string name="canceling">Membatalkan&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
   <string name="page_description">Halaman %1$s, Juz\' %2$s</string>
@@ -197,8 +195,6 @@
   <string name="download_error_invalid_download_retry">Fail dimuat turun tidak lengkap, mencuba untuk muat turun semula</string>
   <string name="download_error_network_retry">Ralat jaringan, mencuba semula&#8230;</string>
   <string name="notification_download_canceled">Muat turun dibatalkan</string>
-  <string name="download_non_wifi_prompt">Anda tidak berada pada jaringan wifi. Teruskan juga muat turun data?</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">Memproses fail %1$d / %2$d</string>
   <string name="download_retry">Cuba semula</string>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="downloading">Đang tải xuống&#8230;</string>
+  <string name="download_non_wifi_prompt">Bạn đang không dùng Wi-Fi. Vẫn tải xuống dữ liệu?</string>
+</resources>

@@ -4,4 +4,5 @@
   <string name="cancel">Anulo</string>
   <string name="from">Nga</string>
   <string name="to">Në</string>
+  <string name="loading">Ngarkimi&#8230;</string>
 </resources>

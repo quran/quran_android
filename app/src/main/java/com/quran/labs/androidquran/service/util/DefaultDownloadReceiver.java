@@ -173,7 +173,7 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
             (dialog, which) -> cancelDownload());
       }
 
-      mProgressDialog.setTitle(R.string.downloading_title);
+      mProgressDialog.setTitle(com.quran.mobile.common.download.R.string.downloading);
       mProgressDialog.setMessage(mContext.getString(
           R.string.downloading_message));
     }
@@ -195,7 +195,7 @@ public class DefaultDownloadReceiver extends BroadcastReceiver {
         mProgressDialog.show();
       }
       if (progress == -1) {
-        int titleId = R.string.downloading_title;
+        int titleId = com.quran.mobile.common.download.R.string.downloading;
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setMessage(mContext.getString(titleId));
         return;

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="downloading">بارگذاری…</string>
+  <string name="download_non_wifi_prompt">شبکه بی‌سیم قطع است. بارگذاری انجام شود؟</string>
+</resources>

@@ -20,7 +20,6 @@
   <string name="audio_manager_remove_audio_msg">سيتم حذف الملف الصوتي ل%1$s. متأكد؟</string>
   <string name="audio_manager_remove_multiple_audio_msg">سيتم حذف الملفات الصوتيه. متأكد؟</string>
 
-  <string name="downloading_title">جاري التحميل....</string>
   <string name="download_amount_in_megabytes">%s م ب</string>
   <string name="download_progress">تم تحميل %1$s / %2$s</string>
   <string name="download_sura_progress">جاري التحميل من سورة %3$d - %1$s / %2$s</string>

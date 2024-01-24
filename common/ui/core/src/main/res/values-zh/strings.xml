@@ -4,4 +4,5 @@
   <string name="cancel">取消</string>
   <string name="from">来自</string>
   <string name="to">拟</string>
+  <string name="loading">正在载入…</string>
 </resources>

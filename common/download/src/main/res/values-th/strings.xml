@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="downloading">ดาวน์โหลด&#8230;</string>
+  <string name="download_non_wifi_prompt">คุณไม่ได้ใช้ Wi-Fi ดาวน์โหลดข้อมูลต่อไปหรือไม่?</string>
+</resources>

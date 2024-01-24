@@ -208,8 +208,6 @@
   <string name="sura_ayah_notification_str">Сура %1$s, Ая %2$d</string>
   <string name="sura_ayah_sharing_str">Сура %1$s: %2$d</string>
 
-  <string name="index_loading">Завантаження&#8230;</string>
-
   <string name="canceling">Скасування&#8230;</string>
   <string name="juz2_description">Частина %1$s</string>
   <string name="page_description">Сторінка %1$s, Частина %2$s</string>
@@ -228,8 +226,6 @@
   <string name="download_error_invalid_download_retry">Пошкоджений файл, спроба повторного завантаження</string>
   <string name="download_error_network_retry">Мережева помилка, спроба відновити&#8230;</string>
   <string name="notification_download_canceled">Завантажити скасовано</string>
-  <string name="download_non_wifi_prompt">Ви не користуєтеся Wi-Fi. Завантажити дані в будь-якому випадку?</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">Обробка файлу %1$d / %2$d</string>
   <string name="download_retry">Повторити</string>

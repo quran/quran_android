@@ -10,7 +10,6 @@
   <string name="audio_manager_download_selection">داگرتنی دەستنیشانکراو</string>
   <string name="audio_manager_delete_selection">سڕینەوەی دەستنیشانکراو</string>
 
-  <string name="downloading_title">داگرتن&#8230;</string>
   <string name="download_amount_in_megabytes">%s م ب</string>
   <string name="download_progress">داگیرا %1$s / %2$s</string>
   <string name="download_sura_progress">داگرتنی %1$s / %2$s سورەتی %3$d</string>
