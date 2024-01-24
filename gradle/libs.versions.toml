@@ -5,7 +5,7 @@ ksp = "1.9.22-1.0.16"
 
 # required within the Gradle convention plugins - not unused
 compose-compiler = "1.5.8"
-composeBomVersion = "2023.10.01"
+composeBomVersion = "2024.01.00"
 okhttpBomVersion = "4.12.0"
 
 # dependencies
