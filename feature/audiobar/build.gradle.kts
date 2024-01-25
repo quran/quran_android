@@ -5,8 +5,10 @@ plugins {
 android.namespace = "com.quran.mobile.feature.audiobar"
 
 dependencies {
+  implementation(project(":common:data"))
   implementation(project(":common:audio"))
   implementation(project(":common:download"))
+  implementation(project(":common:recitation"))
   implementation(project(":common:ui:core"))
 
   // compose

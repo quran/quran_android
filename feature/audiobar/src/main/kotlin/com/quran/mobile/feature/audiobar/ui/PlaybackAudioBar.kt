@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Icon
@@ -17,15 +18,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.mobile.feature.audiobar.AudioBarEvent
-import com.quran.mobile.feature.audiobar.AudioBarState
+import com.quran.mobile.feature.audiobar.state.AudioBarUiEvent
+import com.quran.mobile.feature.audiobar.state.AudioBarState
 
 @Composable
 fun PlayingAudioBar(state: AudioBarState.Playing, modifier: Modifier = Modifier) {
   val sink = state.playbackEventSink
 
   AudioBar(state, modifier) {
-    IconButton(onClick = { sink(AudioBarEvent.PlayingPlaybackEvent.Pause) }) {
+    IconButton(onClick = { sink(AudioBarUiEvent.PlayingPlaybackEvent.Pause) }) {
       Icon(QuranIcons.Pause, contentDescription = "")
     }
   }
@@ -36,7 +37,7 @@ fun PausedAudioBar(state: AudioBarState.Paused, modifier: Modifier = Modifier) {
   val sink = state.pausedEventSink
 
   AudioBar(state = state, modifier = modifier) {
-    IconButton(onClick = { sink(AudioBarEvent.PausedPlaybackEvent.Play) }) {
+    IconButton(onClick = { sink(AudioBarUiEvent.PausedPlaybackEvent.Play) }) {
       Icon(QuranIcons.PlayArrow, contentDescription = "")
     }
   }
@@ -54,17 +55,17 @@ fun AudioBar(
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier
   ) {
-    IconButton(onClick = { sink(AudioBarEvent.CommonPlaybackEvent.Stop) }) {
+    IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.Stop) }) {
       Icon(QuranIcons.Stop, contentDescription = "")
     }
 
-    IconButton(onClick = { sink(AudioBarEvent.CommonPlaybackEvent.Rewind) }) {
+    IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.Rewind) }) {
       Icon(QuranIcons.FastRewind, contentDescription = "")
     }
 
     actionButton()
 
-    IconButton(onClick = { sink(AudioBarEvent.CommonPlaybackEvent.FastForward) }) {
+    IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.FastForward) }) {
       Icon(QuranIcons.FastForward, contentDescription = "")
     }
 
@@ -76,7 +77,7 @@ fun AudioBar(
       defaultValue = 0,
       format = { it.toString() }
     ) {
-      sink(AudioBarEvent.CommonPlaybackEvent.SetRepeat(it))
+      sink(AudioBarUiEvent.CommonPlaybackEvent.SetRepeat(it))
     }
 
     RepeatableButton(
@@ -87,7 +88,11 @@ fun AudioBar(
       defaultValue = 1.0f,
       format = { it.toString() }
     ) {
-      sink(AudioBarEvent.CommonPlaybackEvent.SetSpeed(it))
+      sink(AudioBarUiEvent.CommonPlaybackEvent.SetSpeed(it))
+    }
+
+    IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.ShowSettings) }) {
+      Icon(QuranIcons.Settings, contentDescription = "")
     }
   }
 }

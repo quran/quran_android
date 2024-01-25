@@ -19,8 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.mobile.feature.audiobar.AudioBarEvent
-import com.quran.mobile.feature.audiobar.AudioBarState
+import com.quran.mobile.feature.audiobar.state.AudioBarUiEvent
+import com.quran.mobile.feature.audiobar.state.AudioBarState
 
 @Composable
 fun PromptingAudioBar(state: AudioBarState.Prompt, modifier: Modifier = Modifier) {
@@ -29,7 +29,7 @@ fun PromptingAudioBar(state: AudioBarState.Prompt, modifier: Modifier = Modifier
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier.height(IntrinsicSize.Min)
   ) {
-    IconButton(onClick = { sink(AudioBarEvent.PromptEvent.Acknowledge) }) {
+    IconButton(onClick = { sink(AudioBarUiEvent.PromptEvent.Acknowledge) }) {
       Icon(QuranIcons.Close, contentDescription = stringResource(id = android.R.string.ok))
     }
 
@@ -39,10 +39,10 @@ fun PromptingAudioBar(state: AudioBarState.Prompt, modifier: Modifier = Modifier
         .width(Dp.Hairline)
     )
 
-    Text(text = state.message)
+    Text(text = stringResource(state.messageResource))
     Spacer(modifier = Modifier.weight(1f))
 
-    IconButton(onClick = { sink(AudioBarEvent.PromptEvent.Cancel) }) {
+    IconButton(onClick = { sink(AudioBarUiEvent.PromptEvent.Cancel) }) {
       Icon(QuranIcons.Close, contentDescription = stringResource(id = android.R.string.cancel))
     }
   }
@@ -54,7 +54,7 @@ fun PromptingAudioBarPreview() {
   QuranTheme {
     PromptingAudioBar(
       state = AudioBarState.Prompt(
-        message = "Error message",
+        messageResource = android.R.string.httpErrorUnsupportedScheme,
         eventSink = {}
       )
     )

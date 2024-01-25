@@ -20,17 +20,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.mobile.feature.audiobar.AudioBarEvent
-import com.quran.mobile.feature.audiobar.AudioBarState
+import com.quran.mobile.feature.audiobar.state.AudioBarUiEvent
+import com.quran.mobile.feature.audiobar.state.AudioBarState
 
 @Composable
-fun LoadingAudioBar(state: AudioBarState.Loading, modifier: Modifier = Modifier) {
+internal fun LoadingAudioBar(state: AudioBarState.Loading, modifier: Modifier = Modifier) {
   val sink = state.eventSink
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier.height(IntrinsicSize.Min)
   ) {
-    IconButton(onClick = { sink(AudioBarEvent.CancelablePlaybackEvent.Cancel) }) {
+    IconButton(onClick = { sink(AudioBarUiEvent.CancelablePlaybackEvent.Cancel) }) {
       Icon(QuranIcons.Close, contentDescription = stringResource(id = android.R.string.cancel))
     }
 
@@ -45,7 +45,7 @@ fun LoadingAudioBar(state: AudioBarState.Loading, modifier: Modifier = Modifier)
         LinearProgressIndicator(progress = state.progress.toFloat() / 100f)
       }
 
-      Text(text = state.message)
+      Text(text = stringResource(id = state.messageResource))
     }
   }
 }
@@ -57,7 +57,7 @@ fun LoadingAudioBarPreview() {
     LoadingAudioBar(
       state = AudioBarState.Loading(
         progress = 50,
-        message = "Downloading...",
+        messageResource = com.quran.mobile.common.download.R.string.downloading,
         eventSink = {}
       )
     )
@@ -71,7 +71,7 @@ fun LoadingAudioBarIndeterminatePreview() {
     LoadingAudioBar(
       state = AudioBarState.Loading(
         progress = -1,
-        message = "Loading...",
+        messageResource = com.quran.mobile.common.ui.core.R.string.loading,
         eventSink = {}
       )
     )
