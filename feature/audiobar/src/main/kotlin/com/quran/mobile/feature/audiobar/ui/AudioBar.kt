@@ -9,38 +9,64 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.quran.data.di.AppScope
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.mobile.feature.audiobar.state.AudioBarState
+import com.quran.mobile.feature.audiobar.state.AudioBarScreen
+import com.slack.circuit.codegen.annotations.CircuitInject
 
+@CircuitInject(screen = AudioBarScreen::class, scope = AppScope::class)
 @Composable
-fun AudioBar(audioBarState: AudioBarState) {
-  val modifier = Modifier
+fun AudioBar(audioBarState: AudioBarScreen.AudioBarState, modifier: Modifier = Modifier) {
+  val updatedModifier = modifier
     .requiredWidthIn(max = 360.dp)
     .fillMaxWidth()
     .height(56.dp)
 
   when (audioBarState) {
-    is AudioBarState.Paused -> PausedAudioBar(state = audioBarState, modifier = modifier)
-    is AudioBarState.Playing -> PlayingAudioBar(state = audioBarState, modifier = modifier)
-    is AudioBarState.Error -> ErrorAudioBar(state = audioBarState, modifier = modifier)
-    is AudioBarState.Loading -> LoadingAudioBar(state = audioBarState, modifier = modifier)
-    is AudioBarState.Prompt -> PromptingAudioBar(state = audioBarState, modifier = modifier)
-    is AudioBarState.RecitationListening -> RecitationListeningAudioBar(
+    is AudioBarScreen.AudioBarState.Paused -> PausedAudioBar(
       state = audioBarState,
-      modifier = modifier
+      modifier = updatedModifier
     )
 
-    is AudioBarState.RecitationPlaying -> RecitationPlayingAudioBar(
+    is AudioBarScreen.AudioBarState.Playing -> PlayingAudioBar(
       state = audioBarState,
-      modifier = modifier
+      modifier = updatedModifier
     )
 
-    is AudioBarState.RecitationStopped -> RecitationStoppedAudioBar(
+    is AudioBarScreen.AudioBarState.Error -> ErrorAudioBar(
       state = audioBarState,
-      modifier = modifier
+      modifier = updatedModifier
     )
 
-    is AudioBarState.Stopped -> StoppedAudioBar(state = audioBarState, modifier = modifier)
+    is AudioBarScreen.AudioBarState.Loading -> LoadingAudioBar(
+      state = audioBarState,
+      modifier = updatedModifier
+    )
+
+    is AudioBarScreen.AudioBarState.Prompt -> PromptingAudioBar(
+      state = audioBarState,
+      modifier = updatedModifier
+    )
+
+    is AudioBarScreen.AudioBarState.RecitationListening -> RecitationListeningAudioBar(
+      state = audioBarState,
+      modifier = updatedModifier
+    )
+
+    is AudioBarScreen.AudioBarState.RecitationPlaying -> RecitationPlayingAudioBar(
+      state = audioBarState,
+      modifier = updatedModifier
+    )
+
+    is AudioBarScreen.AudioBarState.RecitationStopped -> RecitationStoppedAudioBar(
+      state = audioBarState,
+      modifier = updatedModifier
+    )
+
+    is AudioBarScreen.AudioBarState.Stopped -> StoppedAudioBar(
+      state = audioBarState,
+      modifier = updatedModifier
+    )
   }
 }
 
@@ -51,7 +77,7 @@ fun AudioBar(audioBarState: AudioBarState) {
 fun AudioBarStoppedPreview() {
   QuranTheme {
     Surface {
-      AudioBar(audioBarState = AudioBarState.Stopped(
+      AudioBar(audioBarState = AudioBarScreen.AudioBarState.Stopped(
         qariNameResource = com.quran.labs.androidquran.common.audio.R.string.qari_abdulbaset,
         enableRecording = false,
         eventSink = {}
@@ -67,7 +93,7 @@ fun AudioBarStoppedPreview() {
 fun AudioBarPlayingPreview() {
   QuranTheme {
     Surface {
-      AudioBar(audioBarState = AudioBarState.Playing(
+      AudioBar(audioBarState = AudioBarScreen.AudioBarState.Playing(
         repeat = 1,
         speed = 1.5f,
         eventSink = {},

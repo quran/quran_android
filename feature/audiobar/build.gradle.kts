@@ -1,8 +1,13 @@
 plugins {
-   id("quran.android.library.compose")
+  id("quran.android.library.compose")
+  id("org.jetbrains.kotlin.plugin.parcelize")
+  alias(libs.plugins.anvil)
+  alias(libs.plugins.ksp)
 }
 
 android.namespace = "com.quran.mobile.feature.audiobar"
+
+anvil { generateDaggerFactories = true }
 
 dependencies {
   implementation(project(":common:data"))
@@ -23,6 +28,11 @@ dependencies {
 
   // circuit
   implementation(libs.circuit.foundation)
+  api(libs.circuit.codegen.annotations)
+  ksp(libs.circuit.codegen)
+
+  // dagger
+  implementation(libs.dagger.runtime)
 
   // coroutines
   implementation(libs.kotlinx.coroutines.core)

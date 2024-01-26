@@ -20,23 +20,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.mobile.feature.audiobar.state.AudioBarUiEvent
-import com.quran.mobile.feature.audiobar.state.AudioBarState
+import com.quran.mobile.feature.audiobar.state.AudioBarScreen
 
 @Composable
-internal fun LoadingAudioBar(state: AudioBarState.Loading, modifier: Modifier = Modifier) {
+internal fun LoadingAudioBar(
+  state: AudioBarScreen.AudioBarState.Loading,
+  modifier: Modifier = Modifier
+) {
   val sink = state.eventSink
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier.height(IntrinsicSize.Min)
   ) {
-    IconButton(onClick = { sink(AudioBarUiEvent.CancelablePlaybackEvent.Cancel) }) {
+    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.CancelablePlaybackEvent.Cancel) }) {
       Icon(QuranIcons.Close, contentDescription = stringResource(id = android.R.string.cancel))
     }
 
-    Divider(modifier = Modifier
-      .fillMaxHeight()
-      .width(Dp.Hairline))
+    Divider(
+      modifier = Modifier
+        .fillMaxHeight()
+        .width(Dp.Hairline)
+    )
 
     Column {
       if (state.progress == -1) {
@@ -55,7 +59,7 @@ internal fun LoadingAudioBar(state: AudioBarState.Loading, modifier: Modifier = 
 fun LoadingAudioBarPreview() {
   QuranTheme {
     LoadingAudioBar(
-      state = AudioBarState.Loading(
+      state = AudioBarScreen.AudioBarState.Loading(
         progress = 50,
         messageResource = com.quran.mobile.common.download.R.string.downloading,
         eventSink = {}
@@ -69,7 +73,7 @@ fun LoadingAudioBarPreview() {
 fun LoadingAudioBarIndeterminatePreview() {
   QuranTheme {
     LoadingAudioBar(
-      state = AudioBarState.Loading(
+      state = AudioBarScreen.AudioBarState.Loading(
         progress = -1,
         messageResource = com.quran.mobile.common.ui.core.R.string.loading,
         eventSink = {}

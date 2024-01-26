@@ -151,6 +151,9 @@ dependencies {
   implementation libs.rxjava
   implementation libs.rxandroid
 
+  // circuit
+  implementation(libs.circuit.foundation)
+
   // dagger
   kapt libs.dagger.compiler
   kaptTest libs.dagger.compiler
