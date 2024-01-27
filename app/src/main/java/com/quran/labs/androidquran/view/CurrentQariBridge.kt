@@ -10,20 +10,20 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.observeOn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
 class CurrentQariBridge @Inject constructor(private val currentQariManager: CurrentQariManager) {
   private val scope: CoroutineScope = CoroutineScope(SupervisorJob())
 
   fun listenToQaris(lambda: ((Qari) -> Unit)) {
-    scope.launch {
-      withContext(Dispatchers.Main) {
-        currentQariManager
-          .flow()
-          .collect { lambda(it) }
-      }
-    }
+    currentQariManager
+      .flow()
+      .onEach { lambda(it) }
+      .flowOn(Dispatchers.Main)
+      .launchIn(scope)
   }
 
   fun unsubscribeAll() {

@@ -2,7 +2,6 @@ package com.quran.mobile.bookmark.model
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.labs.androidquran.BookmarksDatabase
@@ -21,10 +20,12 @@ class BookmarkModel @Inject constructor(bookmarksDatabase: BookmarksDatabase) {
       .mapToList(Dispatchers.IO)
 
   suspend fun isSuraAyahBookmarked(suraAyah: SuraAyah): Pair<SuraAyah, Boolean> {
-    val bookmarkId = bookmarkQueries.getBookmarkIdForSuraAyah(suraAyah.sura, suraAyah.ayah)
+    val bookmarkIds = bookmarkQueries.getBookmarkIdForSuraAyah(suraAyah.sura, suraAyah.ayah)
       .asFlow()
-      .mapToOneOrNull(Dispatchers.IO)
+      // was .mapToOneOrNull, but some people have multiple bookmarks for the same ayah
+      // should try to figure out why at some point or otherwise de-duplicate them
+      .mapToList(Dispatchers.IO)
       .first()
-    return suraAyah to (bookmarkId != null)
+    return suraAyah to bookmarkIds.isNotEmpty()
   }
 }

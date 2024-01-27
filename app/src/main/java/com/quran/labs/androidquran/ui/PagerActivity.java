@@ -759,8 +759,12 @@ public class PagerActivity extends AppCompatActivity implements
       foregroundDisposable.add(Completable.timer(500, TimeUnit.MILLISECONDS)
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe(() -> {
-            startService(
-                audioUtils.getAudioIntent(PagerActivity.this, AudioService.ACTION_CONNECT));
+            try {
+              startService(
+                  audioUtils.getAudioIntent(PagerActivity.this, AudioService.ACTION_CONNECT));
+            } catch (IllegalStateException ise) {
+              // we're likely in the background, so ignore.
+            }
             shouldReconnect = false;
           }));
     }

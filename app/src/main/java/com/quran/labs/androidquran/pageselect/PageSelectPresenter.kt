@@ -101,14 +101,33 @@ constructor(
       val updatedBookmarks = bookmarksDao.bookmarks()
         .map {
           val page = it.page
-          val (pageSura, pageAyah) = suraAyahFromPage(page)
-          val sura = it.sura ?: pageSura
-          val ayah = it.ayah ?: pageAyah
+          if (page - 1 >= sourcePageSuraStart.size) {
+            if (it.isPageBookmark()) {
+              // this bookmark is on a page that doesn't exist in the old page type
+              if (destination.suraForPageArray.size > page) {
+                // but it does exist on the new type, so it's ok, let's not re-map
+                it
+              } else {
+                // we can't map it, so let's just put it as the max page number to avoid bad data
+                it.copy(page = sourcePageAyahStart.size - 1)
+              }
+            } else {
+              // ayah bookmark, so let's just map it
+              val sura = requireNotNull(it.sura)
+              val ayah = requireNotNull(it.ayah)
+              val mappedPage = destinationQuranInfo.getPageFromSuraAyah(sura, ayah)
+              it.copy(page = mappedPage)
+            }
+          } else {
+            val (pageSura, pageAyah) = suraAyahFromPage(page)
+            val sura = it.sura ?: pageSura
+            val ayah = it.ayah ?: pageAyah
 
-          val mappedPage = destinationQuranInfo.getPageFromSuraAyah(sura, ayah)
+            val mappedPage = destinationQuranInfo.getPageFromSuraAyah(sura, ayah)
 
-          // we only copy the page because sura and ayah are the same.
-          it.copy(page = mappedPage)
+            // we only copy the page because sura and ayah are the same.
+            it.copy(page = mappedPage)
+          }
         }
 
       if (updatedBookmarks.isNotEmpty()) {
