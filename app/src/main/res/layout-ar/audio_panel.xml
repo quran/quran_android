@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fadeScrollbars="false"
@@ -82,6 +81,11 @@
         android:layout_height="wrap_content"
         android:text="@string/play_apply"
         android:layout_gravity="start"
+        />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
         />
   </LinearLayout>
 </ScrollView>
