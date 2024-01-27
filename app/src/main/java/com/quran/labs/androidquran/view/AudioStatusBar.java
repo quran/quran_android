@@ -261,8 +261,9 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   private void updateButton() {
     final TextView currentQariView = qariView;
-    if (currentQariView != null && currentQari != null) {
-      currentQariView.setText(currentQari.getNameResource());
+    final Qari qari = currentQari;
+    if (currentQariView != null && qari != null) {
+      currentQariView.setText(qari.getNameResource());
     }
   }
 

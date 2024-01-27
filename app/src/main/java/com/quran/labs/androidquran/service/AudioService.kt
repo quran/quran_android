@@ -221,6 +221,13 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       localPlayer.setOnCompletionListener(this)
       localPlayer.setOnErrorListener(this)
       localPlayer.setOnSeekCompleteListener(this)
+
+      val audioAttributes = AudioAttributes.Builder()
+        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+        .setUsage(AudioAttributes.USAGE_MEDIA)
+        .build()
+      localPlayer.setAudioAttributes(audioAttributes)
+
       mediaSession.isActive = true
       localPlayer
     } else {
@@ -979,12 +986,6 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       state = State.Preparing
       updateAudioPlaybackStatus()
 
-      val audioAttributes = AudioAttributes.Builder()
-        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-        .setUsage(AudioAttributes.USAGE_MEDIA)
-        .build()
-      localPlayer.setAudioAttributes(audioAttributes)
-
       // starts preparing the media player in the background. When it's
       // done, it will call our OnPreparedListener (that is, the
       // onPrepared() method on this class, since we set the listener
@@ -1018,15 +1019,47 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
     }
     val builder = PlaybackStateCompat.Builder()
     builder.setState(state, position, 1.0f)
-    builder.setActions(
-      PlaybackStateCompat.ACTION_PLAY or
-          PlaybackStateCompat.ACTION_STOP or
-          PlaybackStateCompat.ACTION_REWIND or
-          PlaybackStateCompat.ACTION_FAST_FORWARD or
-          PlaybackStateCompat.ACTION_PAUSE or
-          PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
-          PlaybackStateCompat.ACTION_SKIP_TO_NEXT
-    )
+
+    val actions = when (state) {
+      PlaybackStateCompat.STATE_PLAYING -> {
+        PlaybackStateCompat.ACTION_PAUSE or
+            PlaybackStateCompat.ACTION_STOP or
+            PlaybackStateCompat.ACTION_REWIND or
+            PlaybackStateCompat.ACTION_FAST_FORWARD or
+            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
+            PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+      }
+      PlaybackStateCompat.STATE_PAUSED -> {
+        PlaybackStateCompat.ACTION_PLAY or
+            PlaybackStateCompat.ACTION_STOP or
+            PlaybackStateCompat.ACTION_REWIND or
+            PlaybackStateCompat.ACTION_FAST_FORWARD or
+            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
+            PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+      }
+      PlaybackStateCompat.STATE_STOPPED -> {
+        PlaybackStateCompat.ACTION_PLAY
+      }
+      PlaybackStateCompat.STATE_CONNECTING -> {
+        PlaybackStateCompat.ACTION_STOP
+      }
+      PlaybackStateCompat.STATE_REWINDING -> {
+        PlaybackStateCompat.ACTION_STOP or
+            PlaybackStateCompat.ACTION_REWIND or
+            PlaybackStateCompat.ACTION_FAST_FORWARD or
+            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
+            PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+      }
+      PlaybackStateCompat.STATE_SKIPPING_TO_NEXT -> {
+        PlaybackStateCompat.ACTION_STOP or
+            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
+            PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
+            PlaybackStateCompat.ACTION_FAST_FORWARD or
+            PlaybackStateCompat.ACTION_REWIND
+      }
+      else -> { PlaybackStateCompat.ACTION_STOP }
+    }
+    builder.setActions(actions)
     mediaSession.setPlaybackState(builder.build())
   }
 

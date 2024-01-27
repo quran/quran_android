@@ -1,5 +1,11 @@
 package com.quran.labs.androidquran.view;
 
+import static com.quran.data.model.highlight.HighlightType.Mode.BACKGROUND;
+import static com.quran.data.model.highlight.HighlightType.Mode.COLOR;
+import static com.quran.data.model.highlight.HighlightType.Mode.HIDE;
+import static com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT;
+import static com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE;
+
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -14,6 +20,11 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.DisplayCutoutCompat;
 
 import com.quran.data.model.highlight.HighlightType;
 import com.quran.labs.androidquran.R;
@@ -37,18 +48,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.DisplayCutoutCompat;
 import dev.chrisbanes.insetter.Insetter;
-
-import static com.quran.data.model.highlight.HighlightType.Mode.BACKGROUND;
-import static com.quran.data.model.highlight.HighlightType.Mode.COLOR;
-import static com.quran.data.model.highlight.HighlightType.Mode.HIDE;
-import static com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT;
-import static com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE;
-import java.lang.Math;
 
 public class HighlightingImageView extends AppCompatImageView {
   // for debugging / visualizing glyph bounds:
@@ -275,6 +275,10 @@ public class HighlightingImageView extends AppCompatImageView {
     }
 
     final TransitionAyahHighlight transitionHighlight = new TransitionAyahHighlight(sourceHighlight, destinationHighlight);
+
+    if (startingBounds == null) {
+      startingBounds = new ArrayList<>();
+    }
 
     // yes we make copies, because normalizing the bounds will change them
     List<AyahBounds> sourceBounds = new ArrayList<>(startingBounds);

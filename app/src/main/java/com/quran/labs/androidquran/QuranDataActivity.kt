@@ -631,9 +631,16 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     if (downloadReceiver != null && downloadReceiver!!.didReceiveBroadcast() && !force) {
       return
     }
+
     val dataStatus = quranDataStatus
+    if (dataStatus == null) {
+      // we lost the cached data status, so just check again
+      checkPages()
+      return
+    }
+
     var url: String
-    url = if (dataStatus!!.needPortrait() && !dataStatus.needLandscape()) {
+    url = if (dataStatus.needPortrait() && !dataStatus.needLandscape()) {
       // phone (and tablet when upgrading on some devices, ex n10)
       quranFileUtils.zipFileUrl
     } else if (dataStatus.needLandscape() && !dataStatus.needPortrait()) {
