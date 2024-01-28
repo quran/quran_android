@@ -5,4 +5,5 @@
   <string name="from">من</string>
   <string name="to">إلى</string>
   <string name="loading">جاري التحميل…</string>
+  <string name="canceling">جاري إلغاء اﻷمر…</string>
 </resources>

@@ -115,7 +115,6 @@
   <string name="quran_sura_title">Capítulo %1$s</string>
   <string name="sura_ayah_notification_str">Capítulo %1$s, Versículo %2$d</string>
   <string name="sura_ayah_sharing_str">Capítulo %1$s: %2$d</string>
-  <string name="canceling">Cancelando…</string>
   <string name="juz2_description">Yuz %1$s</string>
   <string name="page_description">Página %1$s, Yuz %2$s</string>
   <string name="highlighting_database">Archivos requeridos</string>

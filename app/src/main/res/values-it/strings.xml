@@ -49,7 +49,6 @@
   <string name="quran_sura_title">Sura %1$s</string>
   <string name="sura_ayah_notification_str">Sura %1$s, Ayah %2$d</string>
   <string name="sura_ayah_sharing_str">Sura %1$s: %2$d</string>
-  <string name="canceling">Cancellazione di&#8230;</string>
   <string name="juz2_description">Ğuz\' %1$s</string>
   <string name="page_description">Pagina %1$s, Ğuz\' %2$s</string>
   <string name="highlighting_database">File richiesti</string>

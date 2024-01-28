@@ -5,4 +5,5 @@
   <string name="from">Von</string>
   <string name="to">Bis</string>
   <string name="loading">Lade&#8230;</string>
+  <string name="canceling">Abbrechen&#8230;</string>
 </resources>

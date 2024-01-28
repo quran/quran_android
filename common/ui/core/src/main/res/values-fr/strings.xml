@@ -5,4 +5,5 @@
   <string name="from">Depuis</string>
   <string name="to">À</string>
   <string name="loading">Chargement…</string>
+  <string name="canceling">Annulation…</string>
 </resources>

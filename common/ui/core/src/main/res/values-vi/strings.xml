@@ -5,4 +5,5 @@
   <string name="from">Từ</string>
   <string name="to">Đến</string>
   <string name="loading">Đang tải&#8230;</string>
+  <string name="canceling">Đang hủy&#8230;</string>
 </resources>

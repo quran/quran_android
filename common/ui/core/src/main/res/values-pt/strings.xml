@@ -5,4 +5,5 @@
   <string name="from">De</string>
   <string name="to">Para</string>
   <string name="loading">Carregando…</string>
+  <string name="canceling">Cancelando&#8230;</string>
 </resources>

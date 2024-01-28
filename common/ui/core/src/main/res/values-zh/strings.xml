@@ -5,4 +5,5 @@
   <string name="from">来自</string>
   <string name="to">拟</string>
   <string name="loading">正在载入…</string>
+  <string name="canceling">正在取消&#8230;</string>
 </resources>

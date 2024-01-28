@@ -9,15 +9,20 @@ import android.os.Parcelable
  * file by file basis, ignoring things like grouping or ranged downloads.
  */
 sealed class DownloadInfo {
-  abstract val key: String
-  abstract val type: Int
-  abstract val metadata: Parcelable?
+  data object DownloadRequested : DownloadInfo()
+  data object RequestDownloadNetworkPermission : DownloadInfo()
+
+  abstract class DownloadEvent : DownloadInfo() {
+    abstract val key: String
+    abstract val type: Int
+    abstract val metadata: Parcelable?
+  }
 
   data class DownloadBatchSuccess(
     override val key: String,
     override val type: Int,
     override val metadata: Parcelable?
-  ) : DownloadInfo()
+  ) : DownloadEvent()
 
   data class DownloadBatchError(
     override val key: String,
@@ -25,7 +30,7 @@ sealed class DownloadInfo {
     override val metadata: Parcelable?,
     val errorId: Int,
     val errorString: String
-  ) : DownloadInfo()
+  ) : DownloadEvent()
 
   data class FileDownloaded(
     override val key: String,
@@ -34,7 +39,7 @@ sealed class DownloadInfo {
     val filename: String,
     val sura: Int?,
     val ayah: Int?
-  ) : DownloadInfo()
+  ) : DownloadEvent()
 
   data class FileDownloadProgress(
     override val key: String,
@@ -45,5 +50,5 @@ sealed class DownloadInfo {
     val ayah: Int?,
     val downloadedSize: Long?,
     val totalSize: Long?
-  ) : DownloadInfo()
+  ) : DownloadEvent()
 }

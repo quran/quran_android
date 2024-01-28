@@ -5,4 +5,5 @@
   <string name="from">Від</string>
   <string name="to">До</string>
   <string name="loading">Завантаження&#8230;</string>
+  <string name="canceling">Скасування&#8230;</string>
 </resources>

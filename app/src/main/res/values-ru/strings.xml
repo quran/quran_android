@@ -254,7 +254,6 @@
   <string name="sura_ayah_notification_str">Сура %1$s, аят %2$d</string>
   <string name="sura_ayah_sharing_str">Сура %1$s: %2$d</string>
 
-  <string name="canceling">Отмена&#8230;</string>
   <string name="juz2_description">джуз %1$s</string>
   <string name="page_description">стр. %1$s, джуз %2$s</string>
   <string name="highlighting_database">Необходимые файлы</string>

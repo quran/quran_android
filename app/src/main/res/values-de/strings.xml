@@ -211,7 +211,6 @@
   <string name="sura_ayah_notification_str">Sure %1$s, Vers %2$d</string>
   <string name="sura_ayah_sharing_str">Sure %1$s: %2$d</string>
 
-  <string name="canceling">Abbrechen&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
   <string name="page_description">Seite %1$s, Juz\' %2$s</string>
   <string name="highlighting_database">Benötigte Dateien</string>

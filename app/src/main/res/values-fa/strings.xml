@@ -119,7 +119,6 @@
   <string name="sura_ayah_notification_str">سوره %1$s، آیه %2$d</string>
   <string name="sura_ayah_sharing_str">سوره %1$s: %2$d</string>
 
-  <string name="canceling">در حال لغو</string>
   <string name="page_description">صفحه %1$s، جزء %2$s</string>
   <string name="highlighting_database">فایل‌های موردنیاز</string>
   <string name="timing_database">فایل‌های موردنیاز</string>

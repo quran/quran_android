@@ -135,7 +135,6 @@
   <string name="sura_ayah_notification_str">سورەتی %1$s, ئایەتی %2$d</string>
   <string name="sura_ayah_sharing_str">سورەتی %1$s: %2$d</string>
 
-  <string name="canceling">هەڵوەشاندنەوە&#8230;</string>
   <string name="juz2_description">جوزئی %1$s</string>
   <string name="page_description">پەڕەی %1$s, جوزئی %2$s</string>
   <string name="highlighting_database">فایلە پێویستەکان</string>

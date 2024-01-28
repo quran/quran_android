@@ -208,7 +208,6 @@
   <string name="sura_ayah_notification_str">Сура %1$s, Ая %2$d</string>
   <string name="sura_ayah_sharing_str">Сура %1$s: %2$d</string>
 
-  <string name="canceling">Скасування&#8230;</string>
   <string name="juz2_description">Частина %1$s</string>
   <string name="page_description">Сторінка %1$s, Частина %2$s</string>
   <string name="highlighting_database">Обов\'язкові файли</string>

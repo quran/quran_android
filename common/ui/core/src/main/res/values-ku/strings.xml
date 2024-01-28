@@ -5,4 +5,5 @@
   <string name="from">لە</string>
   <string name="to">بۆ</string>
   <string name="loading">چاوەڕوانبە…</string>
+  <string name="canceling">هەڵوەشاندنەوە&#8230;</string>
 </resources>

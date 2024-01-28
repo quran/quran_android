@@ -23,6 +23,8 @@ class CurrentQariManager @Inject constructor(@ApplicationContext appContext: Con
 
   fun currentQariId(): Int = currentQariFlow.value
 
+  fun currentQari(): Qari = qaris.firstOrNull { it.id == currentQariId() } ?: qaris.first()
+
   fun setCurrentQari(qariId: Int) {
     prefs.edit().putInt(PREF_DEFAULT_QARI, qariId).apply()
     currentQariFlow.value = qariId
