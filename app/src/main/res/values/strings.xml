@@ -95,7 +95,7 @@
   <string name="about_others">Others</string>
   <string name="about_contributors">Contributors</string>
   <string name="about_contributors_summary">A list of people who contributed to the development of Quran for Android</string>
-  <string name="about_contributors_url" translatable="false">https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md</string>
+  <string name="about_contributors_url" translatable="false">https://github.com/quran/quran_android/blob/main/CONTRIBUTORS.md</string>
 
   <!-- help -->
   <string name="help_title">Frequently Asked Questions</string>

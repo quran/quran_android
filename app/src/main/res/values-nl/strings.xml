@@ -106,8 +106,6 @@
   <string name="about_contributors">Bijdragers</string>
   <string name="about_contributors_summary">Een lijst met mensen die hebben bijgedragen aan de
     ontwikkeling van Koran voor Android</string>
-  <string name="about_contributors_url" translatable="false">
-    https://github.com/quran/quran_android/blob/master/CONTRIBUTORS.md</string>
 
   <!-- help -->
   <string name="help_title">Veel Gestelde Vragen</string>
