@@ -1,6 +1,7 @@
 import com.android.build.api.dsl.ApplicationExtension
 import com.quran.labs.androidquran.buildutil.applyAndroidCommon
 import com.quran.labs.androidquran.buildutil.applyBoms
+import com.quran.labs.androidquran.buildutil.applyComposeCommon
 import com.quran.labs.androidquran.buildutil.applyKotlinCommon
 import com.quran.labs.androidquran.buildutil.withLibraries
 import org.gradle.api.Plugin
@@ -20,6 +21,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
 
       extensions.configure<ApplicationExtension> {
         applyAndroidCommon(target)
+        applyComposeCommon(target)
         defaultConfig.targetSdk = 34
       }
 
