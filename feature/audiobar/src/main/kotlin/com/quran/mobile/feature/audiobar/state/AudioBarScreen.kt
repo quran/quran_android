@@ -34,15 +34,21 @@ data object AudioBarScreen : Screen {
       val eventSink: (AudioBarUiEvent.StoppedPlaybackEvent) -> Unit
     ) : AudioBarState()
 
+    data class Downloading(
+      val progress: Int,
+      val messageResource: Int,
+      val eventSink: (AudioBarUiEvent.DownloadingPlaybackEvent) -> Unit
+    ) : AudioBarState()
+
     data class Loading(
       val progress: Int,
       val messageResource: Int,
-      val eventSink: (AudioBarUiEvent.LoadingPlaybackEvent) -> Unit
+      val eventSink: (AudioBarUiEvent.CancelablePlaybackEvent) -> Unit
     ) : AudioBarState()
 
     data class Error(
       val messageResource: Int,
-      val eventSink: (AudioBarUiEvent.ErrorPlaybackEvent) -> Unit
+      val eventSink: (AudioBarUiEvent.CancelablePlaybackEvent) -> Unit
     ) : AudioBarState()
 
     data class Prompt(
@@ -88,15 +94,15 @@ data object AudioBarScreen : Screen {
 
     sealed class PausedPlaybackEvent(audioBarEvent: AudioBarEvent) :
       AudioBarUiEvent(audioBarEvent) {
-      data object Play : PausedPlaybackEvent(AudioBarEvent.Play)
+      data object Play : PausedPlaybackEvent(AudioBarEvent.ResumePlayback)
     }
 
-    sealed class LoadingPlaybackEvent(event: AudioBarEvent) : AudioBarUiEvent(event) {
-      data object Cancel : LoadingPlaybackEvent(AudioBarEvent.Cancel)
+    sealed class DownloadingPlaybackEvent(event: AudioBarEvent) : AudioBarUiEvent(event) {
+      data object Cancel : DownloadingPlaybackEvent(AudioBarEvent.CancelDownload)
     }
 
-    sealed class ErrorPlaybackEvent(event: AudioBarEvent) : AudioBarUiEvent(event) {
-      data object Cancel : ErrorPlaybackEvent(AudioBarEvent.Cancel)
+    sealed class CancelablePlaybackEvent(event: AudioBarEvent) : AudioBarUiEvent(event) {
+      data object Cancel : CancelablePlaybackEvent(AudioBarEvent.Cancel)
     }
 
     sealed class StoppedPlaybackEvent(audioBarEvent: AudioBarEvent) :

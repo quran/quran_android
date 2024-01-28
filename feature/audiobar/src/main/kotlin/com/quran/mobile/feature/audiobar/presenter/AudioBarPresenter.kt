@@ -92,11 +92,11 @@ class AudioBarPresenter @Inject constructor(
   private fun DownloadInfo.toAudioBarState(): AudioBarScreen.AudioBarState {
     return when (this) {
       is DownloadInfo.DownloadBatchError -> AudioBarScreen.AudioBarState.Error(
-        errorId, errorEventSink
+        errorId, cancelableEventSink
       )
 
-      is DownloadInfo.FileDownloadProgress -> AudioBarScreen.AudioBarState.Loading(
-        progress, com.quran.mobile.common.download.R.string.downloading, loadingEventSink
+      is DownloadInfo.FileDownloadProgress -> AudioBarScreen.AudioBarState.Downloading(
+        progress, com.quran.mobile.common.download.R.string.downloading, downloadingEventSink
       )
 
       is DownloadInfo.FileDownloaded, is DownloadInfo.DownloadBatchSuccess -> AudioBarScreen.AudioBarState.Stopped(
@@ -109,8 +109,8 @@ class AudioBarPresenter @Inject constructor(
         com.quran.mobile.common.download.R.string.download_non_wifi_prompt, promptEventSink
       )
 
-      is DownloadInfo.DownloadRequested, is DownloadInfo.DownloadEvent -> AudioBarScreen.AudioBarState.Loading(
-        -1, com.quran.mobile.common.download.R.string.downloading, loadingEventSink
+      is DownloadInfo.DownloadRequested, is DownloadInfo.DownloadEvent -> AudioBarScreen.AudioBarState.Downloading(
+        -1, com.quran.mobile.common.download.R.string.downloading, downloadingEventSink
       )
     }
   }
@@ -122,7 +122,7 @@ class AudioBarPresenter @Inject constructor(
       is AudioStatus.Playback -> {
         when (audioStatus.playbackStatus) {
           PlaybackStatus.PREPARING -> AudioBarScreen.AudioBarState.Loading(
-            -1, R.string.loading, loadingEventSink
+            -1, R.string.loading, cancelableEventSink
           )
 
           PlaybackStatus.PLAYING -> AudioBarScreen.AudioBarState.Playing(
@@ -173,19 +173,19 @@ class AudioBarPresenter @Inject constructor(
 
   // event sinks - these only emit the underlying mapped event type to the stream today
   // we could easily specialize the handling of events per sink type in the future if necessary
-  private val loadingEventSink =
-    { event: AudioBarScreen.AudioBarUiEvent.LoadingPlaybackEvent ->
-      if (event is AudioBarScreen.AudioBarUiEvent.LoadingPlaybackEvent.Cancel) {
-        internalAudioBarFlow.value = AudioBarScreen.AudioBarState.Loading(
+  private val downloadingEventSink =
+    { event: AudioBarScreen.AudioBarUiEvent.DownloadingPlaybackEvent ->
+      if (event is AudioBarScreen.AudioBarUiEvent.DownloadingPlaybackEvent.Cancel) {
+        internalAudioBarFlow.value = AudioBarScreen.AudioBarState.Downloading(
           -1, R.string.canceling
         ) { /* can't cancel a cancel */ }
       }
       emit(event.audioBarEvent)
     }
 
-  private val errorEventSink =
-    { event: AudioBarScreen.AudioBarUiEvent.ErrorPlaybackEvent ->
-      if (event is AudioBarScreen.AudioBarUiEvent.ErrorPlaybackEvent.Cancel) {
+  private val cancelableEventSink =
+    { event: AudioBarScreen.AudioBarUiEvent.CancelablePlaybackEvent ->
+      if (event is AudioBarScreen.AudioBarUiEvent.CancelablePlaybackEvent.Cancel) {
         internalAudioBarFlow.value = AudioBarScreen.AudioBarState.Stopped(
           currentQariManager.currentQari().nameResource,
           recitationPresenter.isRecitationEnabled(),
@@ -215,6 +215,18 @@ class AudioBarPresenter @Inject constructor(
           recitationPresenter.isRecitationEnabled(),
           stoppedEventSink
         )
+      } else if (event is AudioBarScreen.AudioBarUiEvent.CommonPlaybackEvent.SetRepeat) {
+        // pre-emptively update the ui with the repeat even before the service gets it
+        val currentAudioBarValue = internalAudioBarFlow.value
+        if (currentAudioBarValue is AudioBarScreen.AudioBarState.Playing) {
+          internalAudioBarFlow.value = currentAudioBarValue.copy(repeat = event.repeat)
+        }
+      } else if (event is AudioBarScreen.AudioBarUiEvent.CommonPlaybackEvent.SetSpeed) {
+        // pre-emptively update the ui with the speed even before the service gets it
+        val currentAudioBarValue = internalAudioBarFlow.value
+        if (currentAudioBarValue is AudioBarScreen.AudioBarState.Playing) {
+          internalAudioBarFlow.value = currentAudioBarValue.copy(speed = event.speed)
+        }
       }
       emit(event.audioBarEvent)
     }
