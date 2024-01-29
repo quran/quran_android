@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui
 
-import android.app.BackgroundServiceStartNotAllowedException
 import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
@@ -101,9 +100,11 @@ class QuranActivity : AppCompatActivity(),
 
     super.onCreate(savedInstanceState)
     quranApp.applicationComponent
-        .quranActivityComponentFactory()
-        .generate()
-        .inject(this)
+      .activityComponentFactory()
+      .generate(this)
+      .quranActivityComponentFactory()
+      .generate()
+      .inject(this)
 
     setContentView(R.layout.quran_index)
     isRtl = isRtl()
