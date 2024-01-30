@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.mobile.feature.audiobar.AudioBarState
+import com.quran.mobile.feature.audiobar.state.AudioBarState
 
 @Composable
 fun AudioBar(audioBarState: AudioBarState) {
@@ -52,7 +52,7 @@ fun AudioBarStoppedPreview() {
   QuranTheme {
     Surface {
       AudioBar(audioBarState = AudioBarState.Stopped(
-        qariName = "Abdul Basit",
+        qariNameResource = com.quran.labs.androidquran.common.audio.R.string.qari_abdulbaset,
         enableRecording = false,
         eventSink = {}
       ))

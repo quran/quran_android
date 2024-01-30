@@ -18,8 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.mobile.feature.audiobar.AudioBarEvent
-import com.quran.mobile.feature.audiobar.AudioBarState
+import com.quran.mobile.feature.audiobar.state.AudioBarUiEvent
+import com.quran.mobile.feature.audiobar.state.AudioBarState
 
 @Composable
 fun ErrorAudioBar(state: AudioBarState.Error, modifier: Modifier = Modifier) {
@@ -28,7 +28,7 @@ fun ErrorAudioBar(state: AudioBarState.Error, modifier: Modifier = Modifier) {
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier.height(IntrinsicSize.Min)
   ) {
-    IconButton(onClick = { sink(AudioBarEvent.CancelablePlaybackEvent.Cancel) }) {
+    IconButton(onClick = { sink(AudioBarUiEvent.CancelablePlaybackEvent.Cancel) }) {
       Icon(QuranIcons.Close, contentDescription = stringResource(id = android.R.string.cancel))
     }
 
@@ -38,7 +38,7 @@ fun ErrorAudioBar(state: AudioBarState.Error, modifier: Modifier = Modifier) {
         .width(Dp.Hairline)
     )
 
-    Text(text = state.message)
+    Text(text = stringResource(id = state.messageResource))
   }
 }
 
@@ -48,7 +48,7 @@ fun ErrorAudioBarPreview() {
   QuranTheme {
     ErrorAudioBar(
       state = AudioBarState.Error(
-        message = "Error message",
+        messageResource = android.R.string.httpErrorUnsupportedScheme,
         eventSink = {}
       )
     )
