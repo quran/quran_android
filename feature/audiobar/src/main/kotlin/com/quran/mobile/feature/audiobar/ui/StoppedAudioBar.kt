@@ -22,16 +22,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.mobile.feature.audiobar.state.AudioBarScreen
+import com.quran.mobile.feature.audiobar.state.AudioBarState
+import com.quran.mobile.feature.audiobar.state.AudioBarUiEvent
 
 @Composable
-fun StoppedAudioBar(state: AudioBarScreen.AudioBarState.Stopped, modifier: Modifier = Modifier) {
-  val sink = state.eventSink
+internal fun StoppedAudioBar(
+  state: AudioBarState.Stopped,
+  eventSink: (AudioBarUiEvent.StoppedPlaybackEvent) -> Unit,
+  modifier: Modifier = Modifier
+) {
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier.height(IntrinsicSize.Min)
   ) {
-    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.StoppedPlaybackEvent.Play) }) {
+    IconButton(onClick = { eventSink(AudioBarUiEvent.StoppedPlaybackEvent.Play) }) {
       Icon(QuranIcons.PlayArrow, contentDescription = "")
     }
 
@@ -43,7 +47,7 @@ fun StoppedAudioBar(state: AudioBarScreen.AudioBarState.Stopped, modifier: Modif
 
     TextButton(
       modifier = Modifier.weight(1f),
-      onClick = { sink(AudioBarScreen.AudioBarUiEvent.StoppedPlaybackEvent.ChangeQari) }
+      onClick = { eventSink(AudioBarUiEvent.StoppedPlaybackEvent.ChangeQari) }
     ) {
       Text(text = stringResource(state.qariNameResource))
       Spacer(modifier = Modifier.weight(1f))
@@ -57,7 +61,7 @@ fun StoppedAudioBar(state: AudioBarScreen.AudioBarState.Stopped, modifier: Modif
           .width(Dp.Hairline)
       )
 
-      IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.StoppedPlaybackEvent.Record) }) {
+      IconButton(onClick = { eventSink(AudioBarUiEvent.StoppedPlaybackEvent.Record) }) {
         Icon(QuranIcons.Mic, contentDescription = "")
       }
     }
@@ -69,11 +73,11 @@ fun StoppedAudioBar(state: AudioBarScreen.AudioBarState.Stopped, modifier: Modif
 fun StoppedAudioBarPreview() {
   QuranTheme {
     StoppedAudioBar(
-      state = AudioBarScreen.AudioBarState.Stopped(
+      state = AudioBarState.Stopped(
         qariNameResource = com.quran.labs.androidquran.common.audio.R.string.qari_dussary,
-        enableRecording = false,
-        eventSink = {}
-      )
+        enableRecording = false
+      ),
+      eventSink = {}
     )
   }
 }
@@ -83,11 +87,11 @@ fun StoppedAudioBarPreview() {
 fun StoppedAudioBarWithRecordingPreview() {
   QuranTheme {
     StoppedAudioBar(
-      state = AudioBarScreen.AudioBarState.Stopped(
+      state = AudioBarState.Stopped(
         qariNameResource = com.quran.labs.androidquran.common.audio.R.string.qari_dussary,
-        enableRecording = true,
-        eventSink = {}
-      )
+        enableRecording = true
+      ),
+      eventSink = {}
     )
   }
 }

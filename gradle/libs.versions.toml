@@ -56,7 +56,7 @@ insetterVersion = "0.6.1"
 materialComponentsVersion = "1.11.0"
 numberPickerVersion = "2.4.13"
 reorderableComposeVersion = "0.9.6"
-circuit = "0.18.2"
+molecule = "1.3.2"
 
 # recitations
 grpcOkhttpVersion = "1.61.0"
@@ -153,11 +153,6 @@ accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayo
 tooltip-compose = { module = "com.github.skgmn:composetooltip", version.ref = "tooltipComposeVersion" }
 reorderable-compose = { module = "org.burnoutcrew.composereorderable:reorderable", version.ref = "reorderableComposeVersion" }
 
-# circuit
-circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
-circuit-codegen-annotations = { module = "com.slack.circuit:circuit-codegen-annotations", version.ref = "circuit" }
-circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
-
 # utils
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroidVersion" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timberVersion" }
@@ -193,3 +188,4 @@ anvil = { id = "com.squareup.anvil", version.ref = "anvil"}
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 errorprone = { id = "net.ltgt.errorprone", version.ref = "errorprone" }
+molecule = { id = "app.cash.molecule", version.ref = "molecule" }

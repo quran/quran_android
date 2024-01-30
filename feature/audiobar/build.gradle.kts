@@ -1,8 +1,8 @@
 plugins {
   id("quran.android.library.compose")
-  id("org.jetbrains.kotlin.plugin.parcelize")
   alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
+  alias(libs.plugins.molecule)
 }
 
 android.namespace = "com.quran.mobile.feature.audiobar"
@@ -25,11 +25,6 @@ dependencies {
   implementation(libs.compose.ui)
   implementation(libs.compose.ui.tooling.preview)
   debugImplementation(libs.compose.ui.tooling)
-
-  // circuit
-  implementation(libs.circuit.foundation)
-  api(libs.circuit.codegen.annotations)
-  ksp(libs.circuit.codegen)
 
   // dagger
   implementation(libs.dagger.runtime)

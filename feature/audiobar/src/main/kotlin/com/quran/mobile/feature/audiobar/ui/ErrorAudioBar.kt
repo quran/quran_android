@@ -18,16 +18,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.mobile.feature.audiobar.state.AudioBarScreen
+import com.quran.mobile.feature.audiobar.state.AudioBarState
+import com.quran.mobile.feature.audiobar.state.AudioBarUiEvent
 
 @Composable
-fun ErrorAudioBar(state: AudioBarScreen.AudioBarState.Error, modifier: Modifier = Modifier) {
-  val sink = state.eventSink
+internal fun ErrorAudioBar(
+  state: AudioBarState.Error,
+  eventSink: (AudioBarUiEvent.CancelablePlaybackEvent) -> Unit,
+  modifier: Modifier = Modifier
+) {
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier.height(IntrinsicSize.Min)
   ) {
-    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.CancelablePlaybackEvent.Cancel) }) {
+    IconButton(onClick = { eventSink(AudioBarUiEvent.CancelablePlaybackEvent.Cancel) }) {
       Icon(QuranIcons.Close, contentDescription = stringResource(id = android.R.string.cancel))
     }
 
@@ -46,10 +50,10 @@ fun ErrorAudioBar(state: AudioBarScreen.AudioBarState.Error, modifier: Modifier 
 fun ErrorAudioBarPreview() {
   QuranTheme {
     ErrorAudioBar(
-      state = AudioBarScreen.AudioBarState.Error(
-        messageResource = android.R.string.httpErrorUnsupportedScheme,
-        eventSink = {}
-      )
+      state = AudioBarState.Error(
+        messageResource = android.R.string.httpErrorUnsupportedScheme
+      ),
+      eventSink = {}
     )
   }
 }

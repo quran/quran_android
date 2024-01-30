@@ -41,7 +41,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.compose.ui.platform.ComposeView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
@@ -65,7 +64,6 @@ import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
-import com.quran.labs.androidquran.bridge.AudioBarComposeBridge;
 import com.quran.labs.androidquran.bridge.AudioStatusRepositoryBridge;
 import com.quran.labs.androidquran.bridge.ReadingEventPresenterBridge;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
@@ -121,6 +119,8 @@ import com.quran.mobile.di.QuranReadingActivityComponent;
 import com.quran.mobile.di.QuranReadingActivityComponentProvider;
 import com.quran.mobile.di.QuranReadingPageComponent;
 import com.quran.mobile.di.QuranReadingPageComponentProvider;
+import com.quran.mobile.feature.audiobar.AudioBarInjector;
+import com.quran.mobile.feature.audiobar.AudioBarWrapper;
 import com.quran.mobile.feature.audiobar.presenter.AudioBarEventRepository;
 import com.quran.mobile.feature.qarilist.QariListWrapper;
 import com.quran.mobile.feature.qarilist.di.QariListWrapperInjector;
@@ -165,6 +165,7 @@ public class PagerActivity extends AppCompatActivity implements
     QuranReadingPageComponentProvider,
     AyahToolBarInjector,
     QariListWrapperInjector,
+    AudioBarInjector,
     ActivityCompat.OnRequestPermissionsResultCallback {
   private static final String AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY";
   private static final String LAST_READ_PAGE = "LAST_READ_PAGE";
@@ -182,7 +183,7 @@ public class PagerActivity extends AppCompatActivity implements
 
   private long lastPopupTime = 0;
   private boolean isActionBarHidden = true;
-  private ComposeView audioStatusBar = null;
+  private AudioBarWrapper audioStatusBar = null;
   private ViewPager viewPager = null;
   private QuranPageAdapter pagerAdapter = null;
   private boolean shouldReconnect = false;
@@ -248,7 +249,6 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject AudioBarEventRepository audioBarEventRepository;
   @Inject DownloadInfoStreams downloadInfoStreams;
   @Inject CurrentQariManager qariManager;
-  @Inject AudioBarComposeBridge audioBarComposeBridge;
 
   private AudioStatusRepositoryBridge audioStatusRepositoryBridge;
   private ReadingEventPresenterBridge readingEventPresenterBridge;
@@ -342,7 +342,6 @@ public class PagerActivity extends AppCompatActivity implements
 
     setContentView(R.layout.quran_page_activity_slider);
     audioStatusBar = findViewById(R.id.audio_area);
-    audioBarComposeBridge.initializeAudioBar(audioStatusBar);
     audioBarParams = (ViewGroup.MarginLayoutParams) audioStatusBar.getLayoutParams();
 
     toolBarArea = findViewById(R.id.toolbar_area);
@@ -795,6 +794,11 @@ public class PagerActivity extends AppCompatActivity implements
           .generate(this);
     }
     return pagerActivityComponent;
+  }
+
+  @Override
+  public void inject(@NonNull AudioBarWrapper audioBarWrapper) {
+    getPagerActivityComponent().inject(audioBarWrapper);
   }
 
   @Override
