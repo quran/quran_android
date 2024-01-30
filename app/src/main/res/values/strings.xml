@@ -15,7 +15,6 @@
     </string>
   <string name="downloadPrompt_ok">Yes</string>
   <string name="downloadPrompt_no">No</string>
-  <string name="downloading_title">Downloading&#8230;</string>
   <string name="downloading_message">Please wait for the files to download (resume supported).</string>
   <string name="extracting_title">Processing&#8230;</string>
   <string name="menu_about">About Us</string>
@@ -279,8 +278,6 @@
   <string name="sura_ayah_notification_str">Surah %1$s, Ayah %2$d</string>
   <string name="sura_ayah_sharing_str">Surah %1$s: %2$d</string>
 
-  <string name="index_loading">Loading&#8230;</string>
-
   <string name="canceling">Canceling&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
   <string name="manzil_description">Manzil %1$s</string>
@@ -288,8 +285,6 @@
   <string name="page_description">Page %1$s, Juz\' %2$s</string>
   <string name="highlighting_database">Required Files</string>
   <string name="timing_database">Required Files</string>
-  <string name="infinity" translatable="false">&#8734;</string>
-
   <!-- download statuses and errors -->
   <string name="sdcard_error">Could not find SD card. Please mount it and try again.</string>
   <string name="download_successful">Download Successful</string>
@@ -302,8 +297,6 @@
   <string name="download_error_invalid_download_retry">Corrupted file, attempting to re-download</string>
   <string name="download_error_network_retry">Network error, trying to resume&#8230;</string>
   <string name="notification_download_canceled">Download canceled</string>
-  <string name="download_non_wifi_prompt">You are not on Wi-Fi. Download data anyway?</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">Processing file %1$d / %2$d</string>
   <string name="download_retry">Retry</string>

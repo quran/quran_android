@@ -5,13 +5,13 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.quran.mobile.feature.downloadmanager.R
+import com.quran.mobile.common.download.R
 
 @Composable
 fun DownloadErrorDialog(errorMessage: String, onAcknowledgementListener: (() -> Unit)) {
   AlertDialog(
     title = {
-      Text(text = stringResource(id = R.string.downloading_title))
+      Text(text = stringResource(id = R.string.downloading))
     },
     text = {
       Text(text = errorMessage)

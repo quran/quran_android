@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="downloading">Downloaden&#8230;</string>
+  <string name="download_non_wifi_prompt">U bent niet verbonden met Wi-Fi. Data toch downloaden?</string>
+</resources>

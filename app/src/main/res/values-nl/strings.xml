@@ -14,7 +14,6 @@
   </string>
   <string name="downloadPrompt_ok">Ja</string>
   <string name="downloadPrompt_no">Nee</string>
-  <string name="downloading_title">Downloaden&#8230;</string>
   <string name="downloading_message">Wacht tot de bestanden zijn gedownload (hervatting wordt
     ondersteund).</string>
   <string name="extracting_title">Verwerken&#8230;</string>
@@ -308,14 +307,11 @@
   <string name="sura_ayah_notification_str">Soera %1$s, Ayah %2$d</string>
   <string name="sura_ayah_sharing_str">Soera %1$s: %2$d</string>
 
-  <string name="index_loading">Laden&#8230;</string>
-
   <string name="canceling">Annuleren&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
   <string name="page_description">Pagina %1$s, Juz\' %2$s</string>
   <string name="highlighting_database">Vereiste Bestanden</string>
   <string name="timing_database">Vereiste Bestanden</string>
-  <string name="infinity" translatable="false">&#8734;</string>
 
   <!-- download statuses and errors -->
   <string name="sdcard_error">SD-kaart niet gevonden. Monteer de kaart en probeer opnieuw.</string>
@@ -330,8 +326,6 @@
     geprobeerd</string>
   <string name="download_error_network_retry">Netwerkfout, proberen te hervatten…</string>
   <string name="notification_download_canceled">Download geannuleerd</string>
-  <string name="download_non_wifi_prompt">U bent niet verbonden met Wi-Fi. Data toch downloaden?</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">Bestand verwerken %1$d / %2$d</string>
   <string name="download_retry">Opnieuw Proberen</string>

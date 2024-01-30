@@ -16,7 +16,6 @@
   <string name="audio_manager_download_selection">Auswahl herunterladen</string>
   <string name="audio_manager_delete_selection">Auswahl löschen</string>
 
-  <string name="downloading_title">Dateien werden heruntergeladen&#8230;</string>
   <string name="download_amount_in_megabytes">%s MB</string>
   <string name="download_progress">Heruntergeladen %1$s / %2$s</string>
   <string name="download_sura_progress">Heruntergeladen %1$s / %2$s von Sure %3$d</string>

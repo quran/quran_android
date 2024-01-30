@@ -32,7 +32,7 @@ fun DownloadProgressDialog(
   AlertDialog(
     title = {
       Text(
-        text = stringResource(id = R.string.downloading_title),
+        text = stringResource(id = com.quran.mobile.common.download.R.string.downloading),
         modifier = Modifier.padding(top = 16.dp)
       )
     },

@@ -24,7 +24,6 @@
   <string name="audio_manager_remove_audio_msg">%1$s\'yi kaldırmak istediğinizden emin misiniz?</string>
   <string name="audio_manager_remove_multiple_audio_msg">Silmek istediğinize emin misiniz?</string>
 
-  <string name="downloading_title">Yükleniyor&#8230;</string>
   <string name="download_amount_in_megabytes">%s MB</string>
   <string name="download_progress">%1$s / %2$s indirildi</string>
   <string name="download_sura_progress">%3$d suresinin %1$s / %2$s indirildi</string>

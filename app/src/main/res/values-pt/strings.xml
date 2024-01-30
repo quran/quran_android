@@ -153,8 +153,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="sura_ayah_notification_str">Sura %1$s, Ayah %2$d</string>
   <string name="sura_ayah_sharing_str">Sura %1$s: %2$d</string>
 
-  <string name="index_loading">Carregando…</string>
-
   <string name="canceling">Cancelando&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
   <string name="page_description">Página %1$s, Juz\' %2$s</string>
@@ -172,8 +170,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="download_error_invalid_download_retry">Arquivo corrumpido, tentando baixar novamente</string>
   <string name="download_error_network_retry">Erro de rede, tentando resumir&#8230;</string>
   <string name="notification_download_canceled">Download cancelado</string>
-  <string name="download_non_wifi_prompt">Voce não está no wifi. Deseja realmente baixar os dados?</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">Procesando arquivo %1$d / %2$d</string>
   <string name="download_retry">Tentar Novamente</string>

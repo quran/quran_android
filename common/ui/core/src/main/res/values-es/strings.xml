@@ -4,4 +4,5 @@
   <string name="cancel">Cancelar</string>
   <string name="from">Desde</string>
   <string name="to">Para</string>
+  <string name="loading">Cargando…</string>
 </resources>

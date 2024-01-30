@@ -208,7 +208,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
   public void setProgress(int progress) {
     if (hasErrorText) {
-      progressText.setText(R.string.downloading_title);
+      progressText.setText(com.quran.mobile.common.download.R.string.downloading);
       hasErrorText = false;
     }
 
@@ -329,7 +329,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
     mPromptText.setGravity(Gravity.CENTER_VERTICAL);
     mPromptText.setTextSize(TypedValue.COMPLEX_UNIT_PX,
         textFontSize);
-    mPromptText.setText(R.string.download_non_wifi_prompt);
+    mPromptText.setText(com.quran.mobile.common.download.R.string.download_non_wifi_prompt);
     LayoutParams params = new LayoutParams(0,
         LayoutParams.MATCH_PARENT);
     params.weight = 1;
@@ -341,7 +341,8 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
 
     removeAllViews();
 
-    final int text = mode == DOWNLOADING_MODE ? R.string.downloading_title : R.string.index_loading;
+    final int text = mode == DOWNLOADING_MODE ?
+        com.quran.mobile.common.download.R.string.downloading : com.quran.mobile.common.ui.core.R.string.loading;
     if (isRtl) {
       addDownloadProgress(text);
       addSeparator();
@@ -544,7 +545,7 @@ public class AudioStatusBar extends LeftToRightLinearLayout {
   private void updateRepeatButtonText() {
     final String str;
     if (currentRepeat == -1) {
-      str = context.getString(R.string.infinity);
+      str = context.getString(com.quran.mobile.common.ui.core.R.string.infinity);
     } else if (currentRepeat == 0) {
       str = "";
     } else {

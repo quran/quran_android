@@ -15,7 +15,6 @@
     </string>
   <string name="downloadPrompt_ok">Có</string>
   <string name="downloadPrompt_no">Không</string>
-  <string name="downloading_title">Đang tải&#8230;</string>
   <string name="downloading_message">Vui lòng đợi tệp tải xuống (hỗ trợ tạm dừng).</string>
   <string name="extracting_title">Đang xử lý&#8230;</string>
   <string name="menu_about">Về Chúng tôi</string>
@@ -235,8 +234,6 @@
   <string name="sura_ayah_notification_str">Surah %1$s, Ayah %2$d</string>
   <string name="sura_ayah_sharing_str">Surah %1$s: %2$d</string>
 
-  <string name="index_loading">Đang tải&#8230;</string>
-
   <string name="canceling">Đang hủy&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
   <string name="page_description">Trang %1$s, Juz\' %2$s</string>
@@ -255,8 +252,6 @@
   <string name="download_error_invalid_download_retry">Tệp bị hỏng, đang cố tải lại</string>
   <string name="download_error_network_retry">Lỗi mạng, đang cố gắng tải tiếp&#8230;</string>
   <string name="notification_download_canceled">Đã hủy tải xuống</string>
-  <string name="download_non_wifi_prompt">Bạn đang không dùng Wi-Fi. Vẫn tải xuống dữ liệu?</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">Đang xử lý tập tin %1$d / %2$d</string>
   <string name="download_retry">Thử lại</string>

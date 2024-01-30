@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="downloading">Nedladdning av&#8230;</string>
+  <string name="download_non_wifi_prompt">Du har inte tillgång till Wi-Fi. Hämta data ändå?</string>
+</resources>

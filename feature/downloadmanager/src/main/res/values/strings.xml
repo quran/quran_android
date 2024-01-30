@@ -26,7 +26,6 @@
   <string name="audio_manager_post_notifications_permission_title">Allow posting notifications?</string>
   <string name="audio_manager_post_notifications_permission_description">This is only used to give updates on download status, or to warn when audio files are automatically updated.</string>
 
-  <string name="downloading_title">Downloading&#8230;</string>
   <string name="download_amount_in_megabytes">%s MB</string>
   <string name="download_progress">Downloaded %1$s / %2$s</string>
   <string name="download_sura_progress">Downloaded %1$s / %2$s of surah %3$d</string>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="downloading">Sedang memuat turun&#8230;</string>
+  <string name="download_non_wifi_prompt">Anda tidak berada pada jaringan wifi. Teruskan juga muat turun data?</string>
+</resources>

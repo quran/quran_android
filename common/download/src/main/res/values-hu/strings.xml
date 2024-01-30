@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="downloading">Letöltés&#8230;</string>
+  <string name="download_non_wifi_prompt">Nem használ Wi-Fi-t. Mindenképpen letölti az adatokat?</string>
+</resources>

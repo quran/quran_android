@@ -208,8 +208,6 @@
   <string name="sura_ayah_notification_str">Sura %1$s, Ajah %2$d</string>
   <string name="sura_ayah_sharing_str">Sura %1$s: %2$d</string>
 
-  <string name="index_loading">Ngarkimi&#8230;</string>
-
   <string name="canceling">Anullimi&#8230;</string>
   <string name="juz2_description">Juz\' %1$s</string>
   <string name="page_description">Faqe %1$s, Juz\' %2$s</string>
@@ -228,8 +226,6 @@
   <string name="download_error_invalid_download_retry">File i korruptuar, duke u përpjekur të ri-shkarkojë</string>
   <string name="download_error_network_retry">Gabim në rrjet, duke u përpjekur të rifillojë&#8230;</string>
   <string name="notification_download_canceled">Shkarkimi u anullua</string>
-  <string name="download_non_wifi_prompt">Ti nuk je në Wi-Fi. Shkarko të dhëna gjithsesi?</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">Përpunimi i file %1$d / %2$d</string>
   <string name="download_retry">Ritry</string>

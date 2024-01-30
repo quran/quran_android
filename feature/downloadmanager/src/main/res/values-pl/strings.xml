@@ -27,7 +27,6 @@
   <string name="audio_manager_download_selection">Wybór do pobrania</string>
   <string name="audio_manager_delete_selection">Usuń zaznaczenie</string>
 
-  <string name="downloading_title">Ściąganie&#8230;</string>
   <string name="download_amount_in_megabytes">%s MB</string>
   <string name="download_progress">Pobrano %1$s / %2$s</string>
   <string name="download_sura_progress">Pobrano %1$s / %2$s z sura %3$d</string>

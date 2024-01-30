@@ -160,7 +160,7 @@ public class QuranDownloadNotifier {
     }
 
     showNotification(details.title,
-        appContext.getString(R.string.downloading_title),
+        appContext.getString(com.quran.mobile.common.download.R.string.downloading),
         DOWNLOADING_NOTIFICATION, true, max, progress, isIndeterminate, !isForeground);
 
     final DownloadInfo downloadInfo =
@@ -317,7 +317,7 @@ public class QuranDownloadNotifier {
   }
 
   public void notifyDownloadStarting(){
-    String title = appContext.getString(R.string.downloading_title);
+    String title = appContext.getString(com.quran.mobile.common.download.R.string.downloading);
     notificationManager.cancel(DOWNLOADING_ERROR_NOTIFICATION);
 
     lastMaximum = -1;

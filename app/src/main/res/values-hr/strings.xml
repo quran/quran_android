@@ -216,8 +216,6 @@
   <string name="sura_ayah_notification_str">Sura %1$s, %2$d. ajet</string>
   <string name="sura_ayah_sharing_str">Sura %1$s: %2$d</string>
 
-  <string name="index_loading">Učitavam…</string>
-
   <string name="canceling">Prekidam&#8230;</string>
   <string name="juz2_description">Džuz %1$s</string>
   <string name="page_description">Stranica %1$s, Džuz %2$s</string>
@@ -236,8 +234,6 @@
   <string name="download_error_invalid_download_retry">Greška kod datoteke, pokušavam da je ponovo preuzmem</string>
   <string name="download_error_network_retry">Problemi sa mrežom, pokušavam da nastavim&#8230;</string>
   <string name="notification_download_canceled">Preuzimanje otkazano</string>
-  <string name="download_non_wifi_prompt">Wi-Fi vam nije uključen. Ipak preuzeti datoteke?</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">Procesiranje datoteke %1$d / %2$d</string>
   <string name="download_retry">Ponovi</string>

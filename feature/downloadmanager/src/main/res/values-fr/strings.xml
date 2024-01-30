@@ -12,7 +12,6 @@
   <string name="audio_manager_remove_audio_msg">Êtes-vous sûr de vouloir supprimer %1$s?</string>
   <string name="audio_manager_remove_multiple_audio_msg">Êtes-vous sûr de vouloir supprimer?</string>
 
-  <string name="downloading_title">Téléchargement en cours…</string>
   <string name="download_amount_in_megabytes">%s Mo</string>
   <string name="download_progress">Téléchargé %1$s / %2$s</string>
   <string name="download_sura_progress">Téléchargé %1$s / %2$s de la sourate %3$d</string>

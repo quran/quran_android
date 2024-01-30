@@ -4,4 +4,5 @@
   <string name="cancel">İptal</string>
   <string name="from">Başlangıç</string>
   <string name="to">Son</string>
+  <string name="loading">Yükleniyor&#8230;</string>
 </resources>

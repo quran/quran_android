@@ -4,4 +4,5 @@
   <string name="cancel">Mégsem</string>
   <string name="from">Innentől</string>
   <string name="to">Idáig</string>
+  <string name="loading">Betöltés&#8230;</string>
 </resources>

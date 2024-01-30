@@ -892,7 +892,7 @@ public class PagerActivity extends AppCompatActivity implements
 
     if (downloadType != QuranDownloadService.DOWNLOAD_TYPE_AUDIO) {
       // if audio is playing, just show a status notification
-      ToastCompat.makeText(this, R.string.downloading_title,
+      ToastCompat.makeText(this, com.quran.mobile.common.download.R.string.downloading,
           Toast.LENGTH_SHORT).show();
     }
   }
@@ -1838,7 +1838,7 @@ public class PagerActivity extends AppCompatActivity implements
     if (progressDialog == null) {
       progressDialog = new ProgressDialog(this);
       progressDialog.setIndeterminate(true);
-      progressDialog.setMessage(getString(R.string.index_loading));
+      progressDialog.setMessage(getString(com.quran.mobile.common.ui.core.R.string.loading));
       progressDialog.show();
     }
   }

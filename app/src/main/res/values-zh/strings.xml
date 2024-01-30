@@ -124,8 +124,6 @@
   <string name="sura_ayah_notification_str">第%1$s章，第%2$d节</string>
   <string name="sura_ayah_sharing_str">第%1$s章: %2$d</string>
 
-  <string name="index_loading">正在载入…</string>
-
   <string name="canceling">正在取消&#8230;</string>
   <string name="juz2_description">第%1$s卷</string>
   <string name="page_description">第%2$s卷，第%1$s页</string>
@@ -143,8 +141,6 @@
   <string name="download_error_invalid_download_retry">文件损坏，正在尝试重新下载</string>
   <string name="download_error_network_retry">网络错误，正在重新连接&#8230;</string>
   <string name="notification_download_canceled">下载已取消</string>
-  <string name="download_non_wifi_prompt">没有连接到wifi. 要继续下载吗？</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">正在处理文件 %1$d / %2$d</string>
   <string name="download_retry">重试</string>

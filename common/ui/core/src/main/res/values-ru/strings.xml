@@ -4,4 +4,5 @@
   <string name="cancel">Отмена</string>
   <string name="from">От</string>
   <string name="to">До</string>
+  <string name="loading">Загрузка…</string>
 </resources>

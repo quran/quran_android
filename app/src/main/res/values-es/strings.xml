@@ -115,7 +115,6 @@
   <string name="quran_sura_title">Capítulo %1$s</string>
   <string name="sura_ayah_notification_str">Capítulo %1$s, Versículo %2$d</string>
   <string name="sura_ayah_sharing_str">Capítulo %1$s: %2$d</string>
-  <string name="index_loading">Cargando…</string>
   <string name="canceling">Cancelando…</string>
   <string name="juz2_description">Yuz %1$s</string>
   <string name="page_description">Página %1$s, Yuz %2$s</string>
@@ -133,7 +132,6 @@
   <string name="download_error_invalid_download_retry">Archivos dañados, tratando de volver a descargar</string>
   <string name="download_error_network_retry">Error de la red, intentando reanudar…</string>
   <string name="notification_download_canceled">Descarga cancelada</string>
-  <string name="download_non_wifi_prompt">No estás conectado a una red WiFi. ¿Descargar los datos de todos modos?</string>
   <!--downloading dialogs-->
   <string name="process_progress">Procesando archivo %1$d / %2$d</string>
   <string name="download_retry">Reintente</string>

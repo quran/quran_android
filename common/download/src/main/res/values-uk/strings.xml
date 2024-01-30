@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="downloading">Завантаження&#8230;</string>
+  <string name="download_non_wifi_prompt">Ви не користуєтеся Wi-Fi. Завантажити дані в будь-якому випадку?</string>
+</resources>

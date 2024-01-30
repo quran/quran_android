@@ -119,8 +119,6 @@
   <string name="sura_ayah_notification_str">سوره %1$s، آیه %2$d</string>
   <string name="sura_ayah_sharing_str">سوره %1$s: %2$d</string>
 
-  <string name="index_loading">بارگذاری…</string>
-
   <string name="canceling">در حال لغو</string>
   <string name="page_description">صفحه %1$s، جزء %2$s</string>
   <string name="highlighting_database">فایل‌های موردنیاز</string>
@@ -137,8 +135,6 @@
   <string name="download_error_invalid_download_retry">فایل خراب است. دوباره بارگذاری نمایید</string>
   <string name="download_error_network_retry">خطای شبکه، تلاش مجدد…</string>
   <string name="notification_download_canceled">بارگذاری لغو شد</string>
-  <string name="download_non_wifi_prompt">شبکه بی‌سیم قطع است. بارگذاری انجام شود؟</string>
-
   <!-- downloading dialogs -->
   <string name="process_progress">در حال پردازش %1$d / %2$d</string>
   <string name="download_retry">تلاش دوباره</string>
