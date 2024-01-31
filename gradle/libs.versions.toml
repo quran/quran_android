@@ -152,7 +152,11 @@ insetter = { module = "dev.chrisbanes.insetter:insetter", version.ref = "insette
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistVersion" }
 tooltip-compose = { module = "com.github.skgmn:composetooltip", version.ref = "tooltipComposeVersion" }
 reorderable-compose = { module = "org.burnoutcrew.composereorderable:reorderable", version.ref = "reorderableComposeVersion" }
+
+# circuit
 circuit-foundation = { module = "com.slack.circuit:circuit-foundation", version.ref = "circuit" }
+circuit-codegen-annotations = { module = "com.slack.circuit:circuit-codegen-annotations", version.ref = "circuit" }
+circuit-codegen = { module = "com.slack.circuit:circuit-codegen", version.ref = "circuit" }
 
 # utils
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroidVersion" }

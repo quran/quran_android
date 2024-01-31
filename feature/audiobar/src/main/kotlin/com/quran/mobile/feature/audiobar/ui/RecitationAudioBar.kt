@@ -34,17 +34,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.mobile.feature.audiobar.state.AudioBarUiEvent
-import com.quran.mobile.feature.audiobar.state.AudioBarState
+import com.quran.mobile.feature.audiobar.state.AudioBarScreen
 
 @Composable
 fun RecitationListeningAudioBar(
-  state: AudioBarState.RecitationListening,
+  state: AudioBarScreen.AudioBarState.RecitationListening,
   modifier: Modifier = Modifier
 ) {
   val sink = state.listeningEventSink
   RecitationAudioBar(state = state, modifier = modifier) {
-    IconButton(onClick = { sink(AudioBarUiEvent.RecitationListeningEvent.HideVerses) }) {
+    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.RecitationListeningEvent.HideVerses) }) {
       Icon(QuranIcons.MenuBook, contentDescription = "")
     }
   }
@@ -52,16 +51,16 @@ fun RecitationListeningAudioBar(
 
 @Composable
 fun RecitationPlayingAudioBar(
-  state: AudioBarState.RecitationPlaying,
+  state: AudioBarScreen.AudioBarState.RecitationPlaying,
   modifier: Modifier = Modifier
 ) {
   val sink = state.playingEventSink
   RecitationAudioBar(state = state, modifier = modifier) {
-    IconButton(onClick = { sink(AudioBarUiEvent.RecitationPlayingEvent.EndSession) }) {
+    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.RecitationPlayingEvent.EndSession) }) {
       Icon(QuranIcons.Close, contentDescription = "")
     }
 
-    IconButton(onClick = { sink(AudioBarUiEvent.RecitationPlayingEvent.PauseRecitation) }) {
+    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.RecitationPlayingEvent.PauseRecitation) }) {
       Icon(QuranIcons.Pause, contentDescription = "")
     }
   }
@@ -69,16 +68,16 @@ fun RecitationPlayingAudioBar(
 
 @Composable
 fun RecitationStoppedAudioBar(
-  state: AudioBarState.RecitationStopped,
+  state: AudioBarScreen.AudioBarState.RecitationStopped,
   modifier: Modifier = Modifier
 ) {
   val sink = state.stoppedEventSink
   RecitationAudioBar(state = state, modifier = modifier) {
-    IconButton(onClick = { sink(AudioBarUiEvent.RecitationStoppedEvent.EndSession) }) {
+    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.RecitationStoppedEvent.EndSession) }) {
       Icon(QuranIcons.Close, contentDescription = "")
     }
 
-    IconButton(onClick = { sink(AudioBarUiEvent.RecitationStoppedEvent.PlayRecitation) }) {
+    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.RecitationStoppedEvent.PlayRecitation) }) {
       Icon(QuranIcons.PlayArrow, contentDescription = "")
     }
   }
@@ -86,7 +85,7 @@ fun RecitationStoppedAudioBar(
 
 @Composable
 fun RecitationAudioBar(
-  state: AudioBarState.RecitationState,
+  state: AudioBarScreen.AudioBarState.RecitationState,
   modifier: Modifier = Modifier,
   actions: @Composable () -> Unit
 ) {
@@ -111,7 +110,7 @@ fun RecitationAudioBar(
         .width(Dp.Hairline)
     )
 
-    IconButton(onClick = { sink(AudioBarUiEvent.CommonRecordingEvent.Transcript) }) {
+    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.CommonRecordingEvent.Transcript) }) {
       Icon(QuranIcons.Chat, contentDescription = "")
     }
 
@@ -129,8 +128,8 @@ fun RecitationAudioBar(
         .background(color = Color.Transparent)
         .combinedClickable(
           role = Role.Button,
-          onClick = { sink(AudioBarUiEvent.CommonRecordingEvent.Recitation) },
-          onLongClick = { sink(AudioBarUiEvent.CommonRecordingEvent.RecitationLongPress) },
+          onClick = { sink(AudioBarScreen.AudioBarUiEvent.CommonRecordingEvent.Recitation) },
+          onLongClick = { sink(AudioBarScreen.AudioBarUiEvent.CommonRecordingEvent.RecitationLongPress) },
         ),
       contentAlignment = Alignment.Center
     ) {
@@ -149,7 +148,7 @@ fun RecitationAudioBar(
 fun RecitationListeningAudioBarPreview() {
   QuranTheme {
     RecitationListeningAudioBar(
-      state = AudioBarState.RecitationListening(
+      state = AudioBarScreen.AudioBarState.RecitationListening(
         eventSink = {},
         listeningEventSink = {},
       )
@@ -162,7 +161,7 @@ fun RecitationListeningAudioBarPreview() {
 fun RecitationPlayingAudioBarPreview() {
   QuranTheme {
     RecitationPlayingAudioBar(
-      state = AudioBarState.RecitationPlaying(
+      state = AudioBarScreen.AudioBarState.RecitationPlaying(
         eventSink = {},
         playingEventSink = {},
       )
@@ -175,7 +174,7 @@ fun RecitationPlayingAudioBarPreview() {
 fun RecitationStoppedAudioBarPreview() {
   QuranTheme {
     RecitationStoppedAudioBar(
-      state = AudioBarState.RecitationStopped(
+      state = AudioBarScreen.AudioBarState.RecitationStopped(
         eventSink = {},
         stoppedEventSink = {},
       )
