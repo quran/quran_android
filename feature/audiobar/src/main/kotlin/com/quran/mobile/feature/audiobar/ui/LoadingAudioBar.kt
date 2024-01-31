@@ -28,11 +28,40 @@ internal fun LoadingAudioBar(
   modifier: Modifier = Modifier
 ) {
   val sink = state.eventSink
+  ProgressAudioBar(
+    progress = state.progress,
+    messageResource = state.messageResource,
+    onClick = { sink(AudioBarScreen.AudioBarUiEvent.CancelablePlaybackEvent.Cancel) },
+    modifier = modifier
+  )
+}
+
+@Composable
+internal fun DownloadingAudioBar(
+  state: AudioBarScreen.AudioBarState.Downloading,
+  modifier: Modifier = Modifier
+) {
+  val sink = state.eventSink
+  ProgressAudioBar(
+    progress = state.progress,
+    messageResource = state.messageResource,
+    onClick = { sink(AudioBarScreen.AudioBarUiEvent.DownloadingPlaybackEvent.Cancel) },
+    modifier = modifier
+  )
+}
+
+@Composable
+internal fun ProgressAudioBar(
+  progress: Int,
+  messageResource: Int,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier
+) {
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier.height(IntrinsicSize.Min)
   ) {
-    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.LoadingPlaybackEvent.Cancel) }) {
+    IconButton(onClick = { onClick() }) {
       Icon(QuranIcons.Close, contentDescription = stringResource(id = android.R.string.cancel))
     }
 
@@ -43,13 +72,13 @@ internal fun LoadingAudioBar(
     )
 
     Column {
-      if (state.progress == -1) {
+      if (progress == -1) {
         LinearProgressIndicator()
       } else {
-        LinearProgressIndicator(progress = state.progress.toFloat() / 100f)
+        LinearProgressIndicator(progress = progress.toFloat() / 100f)
       }
 
-      Text(text = stringResource(id = state.messageResource))
+      Text(text = stringResource(id = messageResource))
     }
   }
 }

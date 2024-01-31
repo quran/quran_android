@@ -16,7 +16,7 @@ import javax.inject.Singleton
 class RecitationEventPresenter @Inject constructor() {
   private val _recitationChangeFlow = MutableSharedFlow<SuraAyah>(
       replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
-  private val _listeningStateFlow = MutableStateFlow<Boolean>(false)
+  private val _listeningStateFlow = MutableStateFlow(false)
   private val _recitationSessionFlow = MutableStateFlow<RecitationSession?>(null)
   private val _recitationSelectionFlow = MutableStateFlow<RecitationSelection>(RecitationSelection.None)
 

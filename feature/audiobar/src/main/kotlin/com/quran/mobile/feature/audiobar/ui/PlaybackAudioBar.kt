@@ -15,6 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
@@ -68,13 +69,20 @@ fun AudioBar(
       Icon(QuranIcons.FastForward, contentDescription = "")
     }
 
+    val infinity = stringResource(id = com.quran.mobile.common.ui.core.R.string.infinity)
     RepeatableButton(
       icon = QuranIcons.Repeat,
       contentDescription = "",
       values = REPEAT_VALUES,
       value = state.repeat,
       defaultValue = 0,
-      format = { it.toString() }
+      format = {
+        if (it > -1) {
+          it.toString()
+        } else {
+          infinity
+        }
+      }
     ) {
       sink(AudioBarScreen.AudioBarUiEvent.CommonPlaybackEvent.SetRepeat(it))
     }

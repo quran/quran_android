@@ -14,10 +14,9 @@ import com.quran.data.model.selection.startSuraAyah
 import com.quran.labs.androidquran.common.toolbar.R
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
-import com.quran.labs.androidquran.view.AudioStatusBar
+import com.quran.labs.androidquran.ui.listener.AudioBarRecitationListener
 import com.quran.page.common.toolbar.AyahToolBar
 import com.quran.reading.common.ReadingEventPresenter
-import com.quran.recitation.common.RecitationSession
 import com.quran.recitation.events.RecitationEventPresenter
 import com.quran.recitation.events.RecitationPlaybackEventPresenter
 import com.quran.recitation.events.RecitationSelection
@@ -39,7 +38,7 @@ class PagerActivityRecitationPresenter @Inject constructor(
   private val recitationPlaybackPresenter: RecitationPlaybackPresenter,
   private val recitationPlaybackEventPresenter: RecitationPlaybackEventPresenter,
   private val recitationSettings: RecitationSettings,
-) : AudioStatusBar.AudioBarRecitationListener, DefaultLifecycleObserver, LifecycleEventObserver {
+) : AudioBarRecitationListener, DefaultLifecycleObserver, LifecycleEventObserver {
   private val scope = MainScope()
 
   private lateinit var bridge: Bridge
@@ -47,7 +46,6 @@ class PagerActivityRecitationPresenter @Inject constructor(
   class Bridge(
     val isDualPageVisible: () -> Boolean,
     val currentPage: () -> Int,
-    val audioStatusBar: () -> AudioStatusBar?,
     val ayahToolBar: () -> AyahToolBar?,
     val ensurePage: (ayah: SuraAyah) -> Unit,
     val showSlider: (sliderPage: Int) -> Unit,
@@ -75,9 +73,6 @@ class PagerActivityRecitationPresenter @Inject constructor(
     when (event) {
       ON_CREATE -> {
         recitationPresenter.bind(activity)
-        bridge.audioStatusBar()?.setAudioBarRecitationListener(this)
-        // Show recitation button in audio bar and ayah toolbar
-        onRecitationEnabledStateChanged(isEnabled = true)
         subscribe()
       }
       ON_RESUME -> {
@@ -101,23 +96,14 @@ class PagerActivityRecitationPresenter @Inject constructor(
       .launchIn(scope)
 
     // Recitation Events
-    recitationEventPresenter.listeningStateFlow
-      .onEach { onListeningStateChange(it) }
-      .launchIn(scope)
     recitationEventPresenter.recitationChangeFlow
       .onEach { onRecitationChange(it) }
-      .launchIn(scope)
-    recitationEventPresenter.recitationSessionFlow
-      .onEach { onRecitationSessionChange(it) }
       .launchIn(scope)
     recitationEventPresenter.recitationSelectionFlow
       .onEach { onRecitationSelection(it) }
       .launchIn(scope)
 
     // Recitation Playback Events
-    recitationPlaybackEventPresenter.playingStateFlow
-      .onEach { onRecitationPlayingState(it) }
-      .launchIn(scope)
     recitationPlaybackPresenter.recitationPlaybackFlow
       .onEach { onRecitationPlayback(it) }
       .launchIn(scope)
@@ -137,12 +123,6 @@ class PagerActivityRecitationPresenter @Inject constructor(
   // Recitation Events
 
   private fun onRecitationEnabledStateChanged(isEnabled: Boolean) {
-    bridge.audioStatusBar()?.apply {
-      if (isRecitationEnabled != isEnabled) {
-        isRecitationEnabled = isEnabled
-        switchMode(currentMode, true)
-      }
-    }
     bridge.ayahToolBar()?.apply {
       if (isRecitationEnabled != isEnabled) {
         isRecitationEnabled = isEnabled
@@ -151,51 +131,17 @@ class PagerActivityRecitationPresenter @Inject constructor(
     }
   }
 
-  private fun onListeningStateChange(isListening: Boolean) {
-    refreshAudioStatusBarRecitationState()
-  }
-
   private fun onRecitationChange(ayah: SuraAyah) {
     val curAyah = recitationEventPresenter.recitationSession()?.currentAyah() ?: ayah
     bridge.ensurePage(curAyah)
-    // temp workaround for forced into stopped mode on rotation because of audio service CONNECT
-    refreshAudioStatusBarRecitationState()
-  }
-
-  private fun onRecitationSessionChange(session: RecitationSession?) {
-    refreshAudioStatusBarRecitationState()
   }
 
   private fun onRecitationSelection(selection: RecitationSelection) {
     selection.ayah()?.let { bridge.ensurePage(it) }
   }
 
-  private fun onRecitationPlayingState(isPlaying: Boolean) {
-    refreshAudioStatusBarRecitationState()
-  }
-
   private fun onRecitationPlayback(playback: RecitationSelection) {
     playback.ayah()?.let { bridge.ensurePage(it) }
-    // temp workaround for forced into stopped mode on rotation because of audio service CONNECT
-    refreshAudioStatusBarRecitationState()
-  }
-
-  private fun refreshAudioStatusBarRecitationState() {
-    val audioStatusBar = bridge.audioStatusBar() ?: return
-
-    val hasSession = recitationEventPresenter.hasRecitationSession()
-    val isListening = recitationEventPresenter.isListening()
-    val isPlaying = recitationPlaybackEventPresenter.isPlaying()
-
-    val curMode = audioStatusBar.currentMode
-    val newMode = when {
-      !hasSession -> AudioStatusBar.STOPPED_MODE // 1
-      isListening -> AudioStatusBar.RECITATION_LISTENING_MODE // 7
-      isPlaying -> AudioStatusBar.RECITATION_PLAYING_MODE // 9
-      else -> AudioStatusBar.RECITATION_STOPPED_MODE // 8
-    }
-
-    if (newMode != curMode) audioStatusBar.switchMode(newMode)
   }
 
   // AudioBarRecitationListener

@@ -27,7 +27,7 @@ fun ErrorAudioBar(state: AudioBarScreen.AudioBarState.Error, modifier: Modifier 
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier.height(IntrinsicSize.Min)
   ) {
-    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.ErrorPlaybackEvent.Cancel) }) {
+    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.CancelablePlaybackEvent.Cancel) }) {
       Icon(QuranIcons.Close, contentDescription = stringResource(id = android.R.string.cancel))
     }
 

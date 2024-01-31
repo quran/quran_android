@@ -379,6 +379,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
           serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
         }
         audioRequest = playInfo
+        updateAudioPlaybackStatus()
       }
     } else {
       MediaButtonReceiver.handleIntent(mediaSession, intent)

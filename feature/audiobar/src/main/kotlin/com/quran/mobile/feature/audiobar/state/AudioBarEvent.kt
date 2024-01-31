@@ -3,10 +3,12 @@ package com.quran.mobile.feature.audiobar.state
 sealed class AudioBarEvent {
   data object ChangeQari : AudioBarEvent()
   data object Cancel : AudioBarEvent()
+  data object CancelDownload : AudioBarEvent()
   data object Acknowledge : AudioBarEvent()
 
   // playback
   data object Play : AudioBarEvent()
+  data object ResumePlayback : AudioBarEvent()
   data object Pause : AudioBarEvent()
   data object Stop : AudioBarEvent()
   data object FastForward : AudioBarEvent()

@@ -3,18 +3,23 @@ package com.quran.labs.androidquran.bridge
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
 import com.quran.labs.androidquran.common.audio.model.playback.AudioStatus
-import com.quran.labs.androidquran.common.audio.model.playback.PlaybackStatus
 import com.quran.labs.androidquran.common.audio.repository.AudioStatusRepository
-import com.quran.labs.androidquran.view.AudioStatusBar
+import com.quran.labs.androidquran.ui.listener.AudioBarListener
+import com.quran.labs.androidquran.ui.listener.AudioBarRecitationListener
+import com.quran.mobile.feature.audiobar.presenter.AudioBarEventRepository
+import com.quran.mobile.feature.audiobar.state.AudioBarEvent
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class AudioStatusRepositoryBridge(
   audioStatusRepository: AudioStatusRepository,
-  audioStatusBar: () -> AudioStatusBar,
-  onPlaybackAyahChanged: ((SuraAyah?) -> Unit)
+  audioBarEventRepository: AudioBarEventRepository,
+  onPlaybackAyahChanged: ((SuraAyah?) -> Unit),
+  audioBarListener: AudioBarListener,
+  audioBarRecitationListener: AudioBarRecitationListener
 ) {
 
   private val scope = MainScope()
@@ -22,26 +27,34 @@ class AudioStatusRepositoryBridge(
 
   init {
     audioPlaybackAyahFlow
-      .onEach { status ->
-        when (status) {
-          is AudioStatus.Playback -> {
-            val statusBar = audioStatusBar()
-            if (status.playbackStatus == PlaybackStatus.PLAYING) {
-              statusBar.switchMode(AudioStatusBar.PLAYING_MODE)
-              if (status.audioRequest.repeatInfo >= -1) {
-                statusBar.setRepeatCount(status.audioRequest.repeatInfo)
-                statusBar.setSpeed(status.audioRequest.playbackSpeed)
-              }
-            } else if (status.playbackStatus == PlaybackStatus.PAUSED) {
-              statusBar.switchMode(AudioStatusBar.PAUSED_MODE)
-            } else if (status.playbackStatus == PlaybackStatus.PREPARING) {
-              statusBar.switchMode(AudioStatusBar.LOADING_MODE)
-            }
-            onPlaybackAyahChanged(status.currentAyah)
-          }
-          AudioStatus.Stopped -> {
-            audioStatusBar().switchMode(AudioStatusBar.STOPPED_MODE)
-          }
+      .filterIsInstance<AudioStatus.Playback>()
+      .onEach { status -> onPlaybackAyahChanged(status.currentAyah) }
+      .launchIn(scope)
+
+    audioBarEventRepository
+      .audioBarEventFlow
+      .onEach { event ->
+        when (event) {
+          AudioBarEvent.Acknowledge -> audioBarListener.onAcceptPressed()
+          AudioBarEvent.Cancel -> audioBarListener.onCancelPressed(false)
+          AudioBarEvent.CancelDownload -> audioBarListener.onCancelPressed(true)
+          AudioBarEvent.ChangeQari -> audioBarListener.onShowQariList()
+          AudioBarEvent.FastForward -> audioBarListener.onNextPressed()
+          AudioBarEvent.Pause -> audioBarListener.onPausePressed()
+          AudioBarEvent.Play -> audioBarListener.onPlayPressed()
+          AudioBarEvent.ResumePlayback -> audioBarListener.onContinuePlaybackPressed()
+          AudioBarEvent.Rewind -> audioBarListener.onPreviousPressed()
+          is AudioBarEvent.SetRepeat -> audioBarListener.setRepeatCount(event.repeat)
+          is AudioBarEvent.SetSpeed -> audioBarListener.setPlaybackSpeed(event.speed)
+          AudioBarEvent.ShowSettings -> audioBarListener.onAudioSettingsPressed()
+          AudioBarEvent.Stop -> audioBarListener.onStopPressed()
+          AudioBarEvent.EndSession -> audioBarRecitationListener.onEndRecitationSessionPressed()
+          AudioBarEvent.HideVerses -> audioBarRecitationListener.onHideVersesPressed()
+          AudioBarEvent.PauseRecitation -> audioBarRecitationListener.onPauseRecitationPressed()
+          AudioBarEvent.PlayRecitation -> audioBarRecitationListener.onPlayRecitationPressed()
+          AudioBarEvent.Recitation, AudioBarEvent.Record -> audioBarRecitationListener.onRecitationPressed()
+          AudioBarEvent.RecitationLongPress -> audioBarRecitationListener.onRecitationLongPressed()
+          AudioBarEvent.Transcript -> audioBarRecitationListener.onRecitationTranscriptPressed()
         }
       }
       .launchIn(scope)

@@ -127,6 +127,7 @@ dependencies {
   implementation project(path: ':common:ui:core')
 
   implementation project(path: ':feature:audio')
+  implementation project(path: ':feature:audiobar')
   implementation project(path: ':feature:downloadmanager')
   implementation project(path: ':feature:qarilist')
 
@@ -143,6 +144,9 @@ dependencies {
   implementation libs.androidx.recyclerview
   implementation libs.material
   implementation libs.androidx.swiperefreshlayout
+
+  // compose
+  implementation libs.compose.ui
 
   // okio
   implementation libs.okio

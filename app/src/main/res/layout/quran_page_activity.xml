@@ -47,13 +47,11 @@
     </androidx.appcompat.widget.Toolbar>
   </FrameLayout>
 
-  <com.quran.labs.androidquran.view.AudioStatusBar
+  <androidx.compose.ui.platform.ComposeView
       android:id="@+id/audio_area"
       android:layout_width="match_parent"
       android:layout_height="@dimen/audiobar_height"
       android:layout_alignParentBottom="true"
       android:visibility="gone"
-      android:itemBackground="?attr/selectableItemBackgroundBorderless"
-      android:background="@color/transparent_actionbar_color"
       />
 </com.quran.labs.androidquran.view.FitSystemRelativeLayout>

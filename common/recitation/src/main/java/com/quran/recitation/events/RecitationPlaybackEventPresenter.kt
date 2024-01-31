@@ -10,8 +10,8 @@ import javax.inject.Singleton
 class RecitationPlaybackEventPresenter @Inject constructor() {
 
   private val _loadedRecitationFlow = MutableStateFlow<String?>(null)
-  private val _playingStateFlow = MutableStateFlow<Boolean>(false)
-  private val _playbackPositionFlow = MutableStateFlow<Int>(0)
+  private val _playingStateFlow = MutableStateFlow(false)
+  private val _playbackPositionFlow = MutableStateFlow(0)
   val loadedRecitationFlow: StateFlow<String?> = _loadedRecitationFlow.asStateFlow()
   val playingStateFlow: StateFlow<Boolean> = _playingStateFlow.asStateFlow()
   val playbackPositionFlow: StateFlow<Int> = _playbackPositionFlow.asStateFlow()
