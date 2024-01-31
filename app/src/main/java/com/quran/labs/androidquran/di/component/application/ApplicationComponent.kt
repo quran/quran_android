@@ -12,8 +12,7 @@ import com.quran.labs.androidquran.QuranImportActivity
 import com.quran.labs.androidquran.SearchActivity
 import com.quran.labs.androidquran.core.worker.di.WorkerModule
 import com.quran.labs.androidquran.data.QuranDataProvider
-import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent
-import com.quran.labs.androidquran.di.component.activity.QuranActivityComponent
+import com.quran.labs.androidquran.di.component.activity.ActivityComponent
 import com.quran.labs.androidquran.di.module.application.ApplicationModule
 import com.quran.labs.androidquran.di.module.application.DatabaseModule
 import com.quran.labs.androidquran.di.module.application.PageAggregationModule
@@ -54,10 +53,9 @@ import javax.inject.Singleton
     BookmarksWidgetUpdaterModule::class
   ]
 )
-interface ApplicationComponent: QuranApplicationComponent {
+interface ApplicationComponent : QuranApplicationComponent {
   // subcomponents
-  fun pagerActivityComponentFactory(): PagerActivityComponent.Factory
-  fun quranActivityComponentFactory(): QuranActivityComponent.Factory
+  fun activityComponentFactory(): ActivityComponent.Factory
 
   // application
   fun inject(quranApplication: QuranApplication)

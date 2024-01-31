@@ -6,6 +6,7 @@ import com.quran.common.networking.NetworkModule
 import com.quran.data.di.AppScope
 import com.quran.data.page.provider.QuranDataModule
 import com.quran.labs.androidquran.core.worker.di.WorkerModule
+import com.quran.labs.androidquran.di.component.activity.ActivityComponent
 import com.quran.labs.androidquran.di.component.application.ApplicationComponent
 import com.quran.labs.androidquran.di.module.application.ApplicationModule
 import com.quran.labs.androidquran.di.module.application.DatabaseModule
@@ -33,7 +34,7 @@ import javax.inject.Singleton
   ]
 )
 interface TestApplicationComponent : ApplicationComponent {
-  override fun quranActivityComponentFactory(): TestQuranActivityComponent.Factory
+  override fun activityComponentFactory(): TestActivityComponent.Factory
 
   @Component.Factory
   interface Factory {

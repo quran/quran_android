@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.di.module.activity
 import android.content.Context
 import com.quran.data.core.QuranInfo
 import com.quran.data.core.QuranPageInfo
+import com.quran.data.di.ActivityLevelScope
 import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.util.QuranPageInfoImpl
@@ -11,10 +12,12 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.di.AyahActionFragmentProvider
 import com.quran.mobile.di.qualifier.ActivityContext
+import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.ElementsIntoSet
 
+@ContributesTo(ActivityLevelScope::class)
 @Module
 object PagerActivityModule {
 

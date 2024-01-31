@@ -2,8 +2,8 @@ package com.quran.mobile.feature.audiobar.presenter
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import com.quran.data.di.ActivityScope
-import com.quran.data.di.AppScope
+import com.quran.data.di.QuranReadingScope
+import com.quran.data.di.QuranScope
 import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.model.playback.AudioStatus
 import com.quran.labs.androidquran.common.audio.model.playback.PlaybackStatus
@@ -31,8 +31,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
-@CircuitInject(screen = AudioBarScreen::class, scope = AppScope::class)
-@ActivityScope
+@CircuitInject(screen = AudioBarScreen::class, scope = QuranReadingScope::class)
+@QuranScope
 class AudioBarPresenter @Inject constructor(
   downloadInfoStreams: DownloadInfoStreams,
   recitationEventPresenter: RecitationEventPresenter,

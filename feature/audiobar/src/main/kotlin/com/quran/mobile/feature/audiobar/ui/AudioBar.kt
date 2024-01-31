@@ -9,12 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.quran.data.di.AppScope
+import com.quran.data.di.QuranReadingScope
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.audiobar.state.AudioBarScreen
 import com.slack.circuit.codegen.annotations.CircuitInject
 
-@CircuitInject(screen = AudioBarScreen::class, scope = AppScope::class)
+@CircuitInject(screen = AudioBarScreen::class, scope = QuranReadingScope::class)
 @Composable
 fun AudioBar(audioBarState: AudioBarScreen.AudioBarState, modifier: Modifier = Modifier) {
   val updatedModifier = modifier

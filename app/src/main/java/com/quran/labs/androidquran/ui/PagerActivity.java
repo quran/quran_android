@@ -785,8 +785,10 @@ public class PagerActivity extends AppCompatActivity implements
     if (pagerActivityComponent == null) {
       pagerActivityComponent = ((QuranApplication) getApplication())
           .getApplicationComponent()
+          .activityComponentFactory()
+          .generate(this)
           .pagerActivityComponentFactory()
-          .generate(this, this);
+          .generate(this);
     }
     return pagerActivityComponent;
   }
