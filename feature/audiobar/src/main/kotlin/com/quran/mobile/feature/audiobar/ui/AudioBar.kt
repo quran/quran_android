@@ -3,6 +3,7 @@ package com.quran.mobile.feature.audiobar.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Card
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,7 +32,7 @@ internal fun AudioBar(
   modifier: Modifier = Modifier
 ) {
   val updatedModifier = Modifier.fillMaxSize()
-  Surface(tonalElevation = 16.dp, modifier = modifier.fillMaxSize()) {
+  Card(modifier = modifier.fillMaxSize()) {
     when (audioBarState) {
       is AudioBarState.Paused -> PausedAudioBar(
         state = audioBarState,
