@@ -230,7 +230,6 @@
   <string name="sura_ayah_notification_str">%1$s surasi %2$d-oyat</string>
   <string name="sura_ayah_sharing_str">%1$s surasi: %2$d</string>
 
-  <string name="canceling">Bekor qilinmoqda&#8230;</string>
   <string name="juz2_description">%1$s-juz</string>
   <string name="page_description">%1$s-bet, %2$s-juz</string>
   <string name="highlighting_database">Kerakli fayllar</string>

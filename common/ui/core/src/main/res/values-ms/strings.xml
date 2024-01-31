@@ -5,4 +5,5 @@
   <string name="from">Dari</string>
   <string name="to">Sehingga</string>
   <string name="loading">Memuat…</string>
+  <string name="canceling">Membatalkan&#8230;</string>
 </resources>

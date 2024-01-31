@@ -5,4 +5,5 @@
   <string name="from">Da</string>
   <string name="to">A</string>
   <string name="loading">Caricamento&#8230;</string>
+  <string name="canceling">Cancellazione di&#8230;</string>
 </resources>

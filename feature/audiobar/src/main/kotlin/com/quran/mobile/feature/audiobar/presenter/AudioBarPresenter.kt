@@ -35,18 +35,20 @@ import javax.inject.Inject
 @ActivityScope
 class AudioBarPresenter @Inject constructor(
   downloadInfoStreams: DownloadInfoStreams,
-  audioStatusRepository: AudioStatusRepository,
-  currentQariManager: CurrentQariManager,
-  recitationPresenter: RecitationPresenter,
   recitationEventPresenter: RecitationEventPresenter,
   recitationPlaybackEventPresenter: RecitationPlaybackEventPresenter,
+  private val audioStatusRepository: AudioStatusRepository,
+  private val currentQariManager: CurrentQariManager,
+  private val recitationPresenter: RecitationPresenter,
   private val audioBarEventRepository: AudioBarEventRepository
 ) : Presenter<AudioBarScreen.AudioBarState> {
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-  private val internalAudioBarFlow = MutableStateFlow<AudioBarScreen.AudioBarState>(
-    AudioBarScreen.AudioBarState.Loading(-1, R.string.loading) { /* noop */ }
-  )
+  private val internalAudioBarFlow =
+    MutableStateFlow<AudioBarScreen.AudioBarState>(AudioBarScreen.AudioBarState.Loading(
+      -1,
+      R.string.loading
+    ) { /* noop */ })
 
   init {
     downloadInfoStreams.downloadInfoStream()
@@ -56,9 +58,10 @@ class AudioBarPresenter @Inject constructor(
 
     combine(
       audioStatusRepository.audioPlaybackFlow,
-      currentQariManager.flow()
-    ) { audioStatus, qari ->
-      transformAudioBarState(audioStatus, recitationPresenter.isRecitationEnabled(), qari)
+      currentQariManager.flow(),
+      recitationPresenter.isRecitationEnabledFlow(),
+    ) { audioStatus, qari, isRecitationEnabled ->
+      transformAudioBarState(audioStatus, isRecitationEnabled, qari)
     }
       .onEach { internalAudioBarFlow.value = it }
       .launchIn(scope)
@@ -67,13 +70,10 @@ class AudioBarPresenter @Inject constructor(
       recitationPresenter.isRecitationEnabledFlow(),
       recitationEventPresenter.recitationSessionFlow,
       recitationEventPresenter.listeningStateFlow,
-      recitationPlaybackEventPresenter.playingStateFlow,
-      currentQariManager.flow()
-    ) { isRecitationEnabled, recitationSession, isListening, isPlaying, qari ->
+      recitationPlaybackEventPresenter.playingStateFlow
+    ) { isRecitationEnabled, recitationSession, isListening, isPlaying ->
       if (isRecitationEnabled) {
-        transformAudioBarRecitationState(
-          recitationSession, isListening, isPlaying, qari
-        )
+        transformAudioBarRecitationState(recitationSession, isListening, isPlaying)
       } else {
         null
       }
@@ -92,38 +92,38 @@ class AudioBarPresenter @Inject constructor(
   private fun DownloadInfo.toAudioBarState(): AudioBarScreen.AudioBarState {
     return when (this) {
       is DownloadInfo.DownloadBatchError -> AudioBarScreen.AudioBarState.Error(
-        errorId,
-        cancelableEventSink
+        errorId, errorEventSink
       )
 
       is DownloadInfo.FileDownloadProgress -> AudioBarScreen.AudioBarState.Loading(
-        progress,
-        com.quran.mobile.common.download.R.string.downloading,
-        cancelableEventSink
+        progress, com.quran.mobile.common.download.R.string.downloading, loadingEventSink
       )
 
-      is DownloadInfo.FileDownloaded, is DownloadInfo.DownloadBatchSuccess -> AudioBarScreen.AudioBarState.Loading(
-        -1,
-        R.string.loading,
-        cancelableEventSink
+      is DownloadInfo.FileDownloaded, is DownloadInfo.DownloadBatchSuccess -> AudioBarScreen.AudioBarState.Stopped(
+        currentQariManager.currentQari().nameResource,
+        recitationPresenter.isRecitationEnabled(),
+        stoppedEventSink
+      )
+
+      DownloadInfo.RequestDownloadNetworkPermission -> AudioBarScreen.AudioBarState.Prompt(
+        com.quran.mobile.common.download.R.string.download_non_wifi_prompt, promptEventSink
+      )
+
+      is DownloadInfo.DownloadRequested, is DownloadInfo.DownloadEvent -> AudioBarScreen.AudioBarState.Loading(
+        -1, com.quran.mobile.common.download.R.string.downloading, loadingEventSink
       )
     }
   }
 
   private fun transformAudioBarState(
-    audioStatus: AudioStatus,
-    enableRecitation: Boolean,
-    qari: Qari
+    audioStatus: AudioStatus, enableRecitation: Boolean, qari: Qari
   ): AudioBarScreen.AudioBarState {
     return when (audioStatus) {
       is AudioStatus.Playback -> {
         when (audioStatus.playbackStatus) {
-          PlaybackStatus.PREPARING ->
-            AudioBarScreen.AudioBarState.Loading(
-              -1,
-              R.string.loading,
-              cancelableEventSink
-            )
+          PlaybackStatus.PREPARING -> AudioBarScreen.AudioBarState.Loading(
+            -1, R.string.loading, loadingEventSink
+          )
 
           PlaybackStatus.PLAYING -> AudioBarScreen.AudioBarState.Playing(
             audioStatus.audioRequest.repeatInfo,
@@ -142,39 +142,27 @@ class AudioBarPresenter @Inject constructor(
       }
 
       AudioStatus.Stopped -> AudioBarScreen.AudioBarState.Stopped(
-        qari.nameResource,
-        enableRecitation,
-        stoppedEventSink
+        qari.nameResource, enableRecitation, stoppedEventSink
       )
     }
   }
 
   private fun transformAudioBarRecitationState(
-    recitationSession: RecitationSession?,
-    isListening: Boolean,
-    isPlaying: Boolean,
-    qari: Qari
-  ): AudioBarScreen.AudioBarState {
+    recitationSession: RecitationSession?, isListening: Boolean, isPlaying: Boolean
+  ): AudioBarScreen.AudioBarState? {
     return if (recitationSession == null) {
-      AudioBarScreen.AudioBarState.Stopped(
-        qari.nameResource,
-        false,
-        stoppedEventSink
-      )
+      null
     } else if (isListening) {
       AudioBarScreen.AudioBarState.RecitationListening(
-        commonRecordingEventSink,
-        recitationListeningEventSink
+        commonRecordingEventSink, recitationListeningEventSink
       )
     } else if (isPlaying) {
       AudioBarScreen.AudioBarState.RecitationPlaying(
-        commonRecordingEventSink,
-        recitationPlayingEventSink
+        commonRecordingEventSink, recitationPlayingEventSink
       )
     } else {
       AudioBarScreen.AudioBarState.RecitationStopped(
-        commonRecordingEventSink,
-        recitationStoppedEventSink
+        commonRecordingEventSink, recitationStoppedEventSink
       )
     }
   }
@@ -185,12 +173,68 @@ class AudioBarPresenter @Inject constructor(
 
   // event sinks - these only emit the underlying mapped event type to the stream today
   // we could easily specialize the handling of events per sink type in the future if necessary
-  private val cancelableEventSink =
-    { event: AudioBarScreen.AudioBarUiEvent.CancelablePlaybackEvent -> emit(event.audioBarEvent) }
+  private val loadingEventSink =
+    { event: AudioBarScreen.AudioBarUiEvent.LoadingPlaybackEvent ->
+      if (event is AudioBarScreen.AudioBarUiEvent.LoadingPlaybackEvent.Cancel) {
+        internalAudioBarFlow.value = AudioBarScreen.AudioBarState.Loading(
+          -1, R.string.canceling
+        ) { /* can't cancel a cancel */ }
+      }
+      emit(event.audioBarEvent)
+    }
+
+  private val errorEventSink =
+    { event: AudioBarScreen.AudioBarUiEvent.ErrorPlaybackEvent ->
+      if (event is AudioBarScreen.AudioBarUiEvent.ErrorPlaybackEvent.Cancel) {
+        internalAudioBarFlow.value = AudioBarScreen.AudioBarState.Stopped(
+          currentQariManager.currentQari().nameResource,
+          recitationPresenter.isRecitationEnabled(),
+          stoppedEventSink
+        )
+      }
+      emit(event.audioBarEvent)
+    }
+
+  private val promptEventSink =
+    { event: AudioBarScreen.AudioBarUiEvent.PromptEvent ->
+      if (event is AudioBarScreen.AudioBarUiEvent.PromptEvent.Cancel) {
+        internalAudioBarFlow.value = AudioBarScreen.AudioBarState.Stopped(
+          currentQariManager.currentQari().nameResource,
+          recitationPresenter.isRecitationEnabled(),
+          stoppedEventSink
+        )
+      }
+      emit(event.audioBarEvent)
+    }
+
   private val commonPlaybackEventSink =
-    { event: AudioBarScreen.AudioBarUiEvent.CommonPlaybackEvent -> emit(event.audioBarEvent) }
+    { event: AudioBarScreen.AudioBarUiEvent.CommonPlaybackEvent ->
+      if (event is AudioBarScreen.AudioBarUiEvent.CommonPlaybackEvent.Stop) {
+        internalAudioBarFlow.value = AudioBarScreen.AudioBarState.Stopped(
+          currentQariManager.currentQari().nameResource,
+          recitationPresenter.isRecitationEnabled(),
+          stoppedEventSink
+        )
+      }
+      emit(event.audioBarEvent)
+    }
+
   private val playingPlaybackEventSink =
-    { event: AudioBarScreen.AudioBarUiEvent.PlayingPlaybackEvent -> emit(event.audioBarEvent) }
+    { event: AudioBarScreen.AudioBarUiEvent.PlayingPlaybackEvent ->
+      if (event is AudioBarScreen.AudioBarUiEvent.PlayingPlaybackEvent.Pause) {
+        val audioStatus = audioStatusRepository.audioPlaybackFlow.value
+        if (audioStatus is AudioStatus.Playback) {
+          internalAudioBarFlow.value = AudioBarScreen.AudioBarState.Paused(
+            audioStatus.audioRequest.repeatInfo,
+            audioStatus.audioRequest.playbackSpeed,
+            commonPlaybackEventSink,
+            pausedPlaybackEvent
+          )
+        }
+      }
+      emit(event.audioBarEvent)
+    }
+
   private val pausedPlaybackEvent =
     { event: AudioBarScreen.AudioBarUiEvent.PausedPlaybackEvent -> emit(event.audioBarEvent) }
   private val stoppedEventSink =

@@ -208,7 +208,6 @@
   <string name="sura_ayah_notification_str">%1$s сүресі, %2$d-аят</string>
   <string name="sura_ayah_sharing_str">%1$s сүресі: %2$d</string>
 
-  <string name="canceling">Болдырмау&#8230;</string>
   <string name="juz2_description">%1$s-пара</string>
   <string name="page_description">%1$s-бет, %2$s-пара</string>
   <string name="highlighting_database">Керекті файлдар</string>

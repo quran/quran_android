@@ -5,4 +5,5 @@
   <string name="from">Nga</string>
   <string name="to">Në</string>
   <string name="loading">Ngarkimi&#8230;</string>
+  <string name="canceling">Anullimi&#8230;</string>
 </resources>

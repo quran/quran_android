@@ -204,8 +204,6 @@
   <string name="highlighting_database">Gerekli dosyalar</string>
   <string name="gotoPage">Sayfaya git</string>
   <string name="get_translations">Meâlleri getir</string>
-  <string name="canceling">İptal ediliyor</string>
-
   <!-- download statuses and errors -->
   <string name="sdcard_error">SD kart bulunamadı. Lütfen monte edip tekrar deneyin.</string>
   <string name="download_successful">Başarıyla indirildi</string>

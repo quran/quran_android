@@ -20,5 +20,13 @@ class DownloadInfoStreams @Inject constructor() {
     downloadInfoStream.tryEmit(downloadInfo)
   }
 
+  fun requestDownloadNetworkPermission() {
+    emitEvent(DownloadInfo.RequestDownloadNetworkPermission)
+  }
+
+  fun downloadRequested() {
+    emitEvent(DownloadInfo.DownloadRequested)
+  }
+
   fun downloadInfoStream(): Flow<DownloadInfo> = downloadInfoStream
 }

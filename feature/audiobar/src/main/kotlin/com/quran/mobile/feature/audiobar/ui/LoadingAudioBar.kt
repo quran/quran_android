@@ -32,7 +32,7 @@ internal fun LoadingAudioBar(
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier.height(IntrinsicSize.Min)
   ) {
-    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.CancelablePlaybackEvent.Cancel) }) {
+    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.LoadingPlaybackEvent.Cancel) }) {
       Icon(QuranIcons.Close, contentDescription = stringResource(id = android.R.string.cancel))
     }
 

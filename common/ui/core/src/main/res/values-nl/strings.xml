@@ -5,4 +5,5 @@
   <string name="from">Van</string>
   <string name="to">Naar</string>
   <string name="loading">Laden&#8230;</string>
+  <string name="canceling">Annuleren&#8230;</string>
 </resources>

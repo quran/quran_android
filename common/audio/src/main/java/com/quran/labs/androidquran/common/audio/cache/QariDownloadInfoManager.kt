@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.merge
@@ -66,7 +67,7 @@ class QariDownloadInfoManager @Inject constructor(
   private suspend fun subscribeToChanges() {
     val downloadStream = downloadInfoStreams.downloadInfoStream()
         // only care to refresh after successful file downloads
-      .filter { it is DownloadInfo.FileDownloaded }
+      .filterIsInstance<DownloadInfo.FileDownloaded>()
       .mapNotNull { it.metadata as? AudioDownloadMetadata }
       .map { it.qariId }
 

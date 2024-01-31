@@ -6,4 +6,5 @@
   <string name="to">To</string>
   <string name="loading">Loading&#8230;</string>
   <string name="infinity" translatable="false">&#8734;</string>
+  <string name="canceling">Canceling&#8230;</string>
 </resources>

@@ -5,4 +5,5 @@
   <string name="from">Boshi</string>
   <string name="to">Oxiri</string>
   <string name="loading">Yuklanmoqda&#8230;</string>
+  <string name="canceling">Bekor qilinmoqda&#8230;</string>
 </resources>

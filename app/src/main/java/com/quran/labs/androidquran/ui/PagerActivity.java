@@ -1655,7 +1655,7 @@ public class PagerActivity extends AppCompatActivity implements
     if (cancelDownload) {
       needsPermissionToDownloadOver3g = true;
 
-      int resId = R.string.canceling;
+      int resId = com.quran.mobile.common.ui.core.R.string.canceling;
       audioStatusBar.setProgressText(getString(resId), true);
       Intent i = new Intent(this, QuranDownloadService.class);
       i.setAction(QuranDownloadService.ACTION_CANCEL_DOWNLOADS);

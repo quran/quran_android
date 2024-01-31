@@ -152,7 +152,6 @@
   <string name="sura_ayah_notification_str">سُورَةُ %1$s، آية %2$d</string>
   <string name="sura_ayah_sharing_str">سُورَةُ %1$s: %2$d</string>
 
-  <string name="canceling">جاري إلغاء اﻷمر…</string>
   <string name="juz2_description">الجزء %1$s</string>
   <string name="manzil_description">منزل %1$s</string>
   <string name="page_description">صفحة %1$s، جزء %2$s</string>

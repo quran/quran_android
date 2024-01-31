@@ -61,6 +61,7 @@ class SheikhAudioPresenter @Inject constructor(
 
   private fun downloadInfo(qariId: Int): Flow<SuraDownloadStatusEvent> {
     return downloadInfoStream.downloadInfoStream()
+      .filterIsInstance<DownloadInfo.DownloadEvent>()
       .mapNotNull { download ->
         (download.metadata as? AudioDownloadMetadata)?.let { metadata -> download to metadata }
       }
@@ -208,6 +209,8 @@ class SheikhAudioPresenter @Inject constructor(
           this.downloadedSize ?: -1,
           this.totalSize ?: -1
         )
+
+      is DownloadInfo.DownloadEvent, DownloadInfo.DownloadRequested, DownloadInfo.RequestDownloadNetworkPermission -> null
     }
   }
 }

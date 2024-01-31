@@ -5,4 +5,5 @@
   <string name="from">จาก</string>
   <string name="to">ถึง</string>
   <string name="loading">การโหลด&#8230;</string>
+  <string name="canceling">ยก เลิก&#8230;</string>
 </resources>

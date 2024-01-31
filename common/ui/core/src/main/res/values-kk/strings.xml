@@ -5,4 +5,5 @@
   <string name="from">Басы</string>
   <string name="to">Соңы</string>
   <string name="loading">Жүктеу…</string>
+  <string name="canceling">Болдырмау&#8230;</string>
 </resources>

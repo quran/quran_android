@@ -5,4 +5,5 @@
   <string name="from">Från</string>
   <string name="to">Till</string>
   <string name="loading">Laddar&#8230;</string>
+  <string name="canceling">Avbryta&#8230;</string>
 </resources>
