@@ -19,53 +19,60 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.mobile.feature.audiobar.state.AudioBarScreen
+import com.quran.mobile.feature.audiobar.state.AudioBarState
+import com.quran.mobile.feature.audiobar.state.AudioBarUiEvent
 
 @Composable
-fun PlayingAudioBar(state: AudioBarScreen.AudioBarState.Playing, modifier: Modifier = Modifier) {
-  val sink = state.playbackEventSink
-
-  AudioBar(state, modifier) {
-    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.PlayingPlaybackEvent.Pause) }) {
+internal fun PlayingAudioBar(
+  state: AudioBarState.Playing,
+  eventSink: (AudioBarUiEvent.CommonPlaybackEvent) -> Unit,
+  playbackEventSink: (AudioBarUiEvent.PlayingPlaybackEvent) -> Unit,
+  modifier: Modifier = Modifier
+) {
+  AudioBar(state, eventSink, modifier) {
+    IconButton(onClick = { playbackEventSink(AudioBarUiEvent.PlayingPlaybackEvent.Pause) }) {
       Icon(QuranIcons.Pause, contentDescription = "")
     }
   }
 }
 
 @Composable
-fun PausedAudioBar(state: AudioBarScreen.AudioBarState.Paused, modifier: Modifier = Modifier) {
-  val sink = state.pausedEventSink
-
-  AudioBar(state = state, modifier = modifier) {
-    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.PausedPlaybackEvent.Play) }) {
+internal fun PausedAudioBar(
+  state: AudioBarState.Paused,
+  eventSink: (AudioBarUiEvent.CommonPlaybackEvent) -> Unit,
+  pausedEventSink: (AudioBarUiEvent.PausedPlaybackEvent) -> Unit,
+  modifier: Modifier = Modifier
+) {
+  AudioBar(state = state, eventSink, modifier = modifier) {
+    IconButton(onClick = { pausedEventSink(AudioBarUiEvent.PausedPlaybackEvent.Play) }) {
       Icon(QuranIcons.PlayArrow, contentDescription = "")
     }
   }
 }
 
 @Composable
-fun AudioBar(
-  state: AudioBarScreen.AudioBarState.ActivePlayback,
+internal fun AudioBar(
+  state: AudioBarState.ActivePlayback,
+  sink: (AudioBarUiEvent.CommonPlaybackEvent) -> Unit,
   modifier: Modifier = Modifier,
   actionButton: @Composable () -> Unit
 ) {
-  val sink = state.eventSink
   Row(
     horizontalArrangement = Arrangement.SpaceEvenly,
     verticalAlignment = Alignment.CenterVertically,
     modifier = modifier
   ) {
-    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.CommonPlaybackEvent.Stop) }) {
+    IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.Stop) }) {
       Icon(QuranIcons.Stop, contentDescription = "")
     }
 
-    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.CommonPlaybackEvent.Rewind) }) {
+    IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.Rewind) }) {
       Icon(QuranIcons.FastRewind, contentDescription = "")
     }
 
     actionButton()
 
-    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.CommonPlaybackEvent.FastForward) }) {
+    IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.FastForward) }) {
       Icon(QuranIcons.FastForward, contentDescription = "")
     }
 
@@ -84,7 +91,7 @@ fun AudioBar(
         }
       }
     ) {
-      sink(AudioBarScreen.AudioBarUiEvent.CommonPlaybackEvent.SetRepeat(it))
+      sink(AudioBarUiEvent.CommonPlaybackEvent.SetRepeat(it))
     }
 
     RepeatableButton(
@@ -95,10 +102,10 @@ fun AudioBar(
       defaultValue = 1.0f,
       format = { it.toString() }
     ) {
-      sink(AudioBarScreen.AudioBarUiEvent.CommonPlaybackEvent.SetSpeed(it))
+      sink(AudioBarUiEvent.CommonPlaybackEvent.SetSpeed(it))
     }
 
-    IconButton(onClick = { sink(AudioBarScreen.AudioBarUiEvent.CommonPlaybackEvent.ShowSettings) }) {
+    IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.ShowSettings) }) {
       Icon(QuranIcons.Settings, contentDescription = "")
     }
   }
@@ -112,12 +119,12 @@ private val SPEED_VALUES = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f)
 fun PlayingAudioBarPreview() {
   QuranTheme {
     PlayingAudioBar(
-      state = AudioBarScreen.AudioBarState.Playing(
+      state = AudioBarState.Playing(
         repeat = 0,
-        speed = 1.0f,
-        eventSink = {},
-        playbackEventSink = {}
-      )
+        speed = 1.0f
+      ),
+      eventSink = {},
+      playbackEventSink = {}
     )
   }
 }
@@ -127,12 +134,12 @@ fun PlayingAudioBarPreview() {
 fun PausedAudioBarPreview() {
   QuranTheme {
     PausedAudioBar(
-      state = AudioBarScreen.AudioBarState.Paused(
+      state = AudioBarState.Paused(
         repeat = 1,
-        speed = 0.5f,
-        eventSink = {},
-        pausedEventSink = {}
-      )
+        speed = 0.5f
+      ),
+      eventSink = {},
+      pausedEventSink = {}
     )
   }
 }

@@ -20,32 +20,33 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.mobile.feature.audiobar.state.AudioBarScreen
+import com.quran.mobile.feature.audiobar.state.AudioBarState
+import com.quran.mobile.feature.audiobar.state.AudioBarUiEvent
 
 @Composable
 internal fun LoadingAudioBar(
-  state: AudioBarScreen.AudioBarState.Loading,
+  state: AudioBarState.Loading,
+  eventSink: (AudioBarUiEvent.CancelablePlaybackEvent) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val sink = state.eventSink
   ProgressAudioBar(
     progress = state.progress,
     messageResource = state.messageResource,
-    onClick = { sink(AudioBarScreen.AudioBarUiEvent.CancelablePlaybackEvent.Cancel) },
+    onClick = { eventSink(AudioBarUiEvent.CancelablePlaybackEvent.Cancel) },
     modifier = modifier
   )
 }
 
 @Composable
 internal fun DownloadingAudioBar(
-  state: AudioBarScreen.AudioBarState.Downloading,
+  state: AudioBarState.Downloading,
+  eventSink: (AudioBarUiEvent.DownloadingPlaybackEvent) -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val sink = state.eventSink
   ProgressAudioBar(
     progress = state.progress,
     messageResource = state.messageResource,
-    onClick = { sink(AudioBarScreen.AudioBarUiEvent.DownloadingPlaybackEvent.Cancel) },
+    onClick = { eventSink(AudioBarUiEvent.DownloadingPlaybackEvent.Cancel) },
     modifier = modifier
   )
 }
@@ -88,11 +89,11 @@ internal fun ProgressAudioBar(
 fun LoadingAudioBarPreview() {
   QuranTheme {
     LoadingAudioBar(
-      state = AudioBarScreen.AudioBarState.Loading(
+      state = AudioBarState.Loading(
         progress = 50,
-        messageResource = com.quran.mobile.common.download.R.string.downloading,
-        eventSink = {}
-      )
+        messageResource = com.quran.mobile.common.download.R.string.downloading
+      ),
+      eventSink = {}
     )
   }
 }
@@ -102,11 +103,11 @@ fun LoadingAudioBarPreview() {
 fun LoadingAudioBarIndeterminatePreview() {
   QuranTheme {
     LoadingAudioBar(
-      state = AudioBarScreen.AudioBarState.Loading(
+      state = AudioBarState.Loading(
         progress = -1,
-        messageResource = com.quran.mobile.common.ui.core.R.string.loading,
-        eventSink = {}
-      )
+        messageResource = com.quran.mobile.common.ui.core.R.string.loading
+      ),
+      eventSink = {}
     )
   }
 }

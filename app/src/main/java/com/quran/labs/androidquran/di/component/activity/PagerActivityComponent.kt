@@ -9,6 +9,7 @@ import com.quran.labs.androidquran.ui.fragment.AyahTranslationFragment
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkFragment
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener
 import com.quran.mobile.di.QuranReadingActivityComponent
+import com.quran.mobile.feature.audiobar.AudioBarWrapper
 import com.quran.mobile.feature.qarilist.QariListWrapper
 import com.quran.page.common.toolbar.AyahToolBar
 import com.squareup.anvil.annotations.MergeSubcomponent
@@ -29,6 +30,7 @@ interface PagerActivityComponent : QuranReadingActivityComponent {
   fun inject(ayahTranslationFragment: AyahTranslationFragment)
 
   fun inject(qariListWrapper: QariListWrapper)
+  fun inject(audioBarWrapper: AudioBarWrapper)
 
   @Subcomponent.Factory
   interface Factory {
