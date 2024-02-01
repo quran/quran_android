@@ -1,13 +1,19 @@
 plugins {
   id "quran.android.application"
-  id 'org.jetbrains.kotlin.kapt'
-  id 'org.jetbrains.kotlin.plugin.parcelize'
+  alias libs.plugins.kotlin.kapt
+  alias libs.plugins.kotlin.parcelize
   alias libs.plugins.ksp
   alias libs.plugins.errorprone
   alias libs.plugins.anvil
 }
 
-def useFirebase = !project.hasProperty("disableFirebase") && !project.hasProperty("disableCrashlytics")
+// whether or not to use Firebase - Firebase is enabled by default, and is only disabled for
+// providing apks for open source distribution stores.
+def useFirebase = !project.hasProperty("disableFirebase") &&
+    !project.hasProperty("disableCrashlytics")
+
+// only want to apply the Firebase plugin if we're building a release build. moving this to the
+// release build type won't work, since debug builds would also implicitly get the plugin.
 if (getGradle().getStartParameter().getTaskRequests().toString().contains("Release") && useFirebase) {
   apply plugin: 'com.google.gms.google-services'
   apply plugin: 'com.google.firebase.crashlytics'

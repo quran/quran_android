@@ -1,6 +1,6 @@
 plugins {
   id 'quran.android.library.compose'
-  id 'com.squareup.anvil'
+  alias libs.plugins.anvil
 }
 
 android.namespace 'com.quran.mobile.feature.downloadmanager'
