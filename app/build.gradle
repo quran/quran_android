@@ -7,8 +7,8 @@ plugins {
   alias libs.plugins.anvil
 }
 
-if (getGradle().getStartParameter().getTaskRequests().toString().contains("Release") &&
-    !project.hasProperty("disableFirebase") && !project.hasProperty("disableCrashlytics")) {
+def useFirebase = !project.hasProperty("disableFirebase") && !project.hasProperty("disableCrashlytics")
+if (getGradle().getStartParameter().getTaskRequests().toString().contains("Release") && useFirebase) {
   apply plugin: 'com.google.gms.google-services'
   apply plugin: 'com.google.firebase.crashlytics'
 }
@@ -20,6 +20,12 @@ android {
     versionCode 3441
     versionName "3.4.4"
     testInstrumentationRunner "com.quran.labs.androidquran.core.QuranTestRunner"
+  }
+
+  dependenciesInfo {
+    // only keep dependency info block for builds with Firebase
+    includeInApk useFirebase
+    includeInBundle useFirebase
   }
 
   buildFeatures.buildConfig = true
