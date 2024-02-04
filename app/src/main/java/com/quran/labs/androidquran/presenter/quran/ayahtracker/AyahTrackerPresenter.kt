@@ -5,6 +5,7 @@ import android.graphics.RectF
 import android.view.MotionEvent
 import android.widget.ImageView
 import com.quran.data.core.QuranInfo
+import com.quran.data.dao.BookmarksDao
 import com.quran.data.di.QuranPageScope
 import com.quran.data.model.AyahGlyph.AyahEndGlyph
 import com.quran.data.model.AyahGlyph.WordGlyph
@@ -32,7 +33,6 @@ import com.quran.labs.androidquran.ui.helpers.AyahTracker
 import com.quran.labs.androidquran.ui.helpers.HighlightTypes
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
-import com.quran.mobile.bookmark.model.BookmarkModel
 import com.quran.mobile.translation.model.LocalTranslation
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
@@ -58,7 +58,7 @@ class AyahTrackerPresenter @Inject constructor(
   private val quranDisplayData: QuranDisplayData,
   private val quranSettings: QuranSettings,
   private val readingEventPresenter: ReadingEventPresenter,
-  private val bookmarkModel: BookmarkModel,
+  private val bookmarksDao: BookmarksDao,
   private val audioStatusRepository: AudioStatusRepository,
   recitationPresenter: RecitationPresenter,
   private val recitationEventPresenter: RecitationEventPresenter,
@@ -87,7 +87,7 @@ class AyahTrackerPresenter @Inject constructor(
       .launchIn(scope)
 
     items.forEach { trackerItem ->
-      bookmarkModel.bookmarksForPage(trackerItem.page)
+      bookmarksDao.bookmarksForPage(trackerItem.page)
         .onEach { bookmarks -> onBookmarksChanged(bookmarks) }
         .launchIn(scope)
     }

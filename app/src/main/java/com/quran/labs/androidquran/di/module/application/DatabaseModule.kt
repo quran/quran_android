@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.di.module.application
 
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.dao.TranslationsDao
-import com.quran.labs.androidquran.database.BookmarksDaoImpl
+import com.quran.mobile.bookmark.model.BookmarksDaoImpl
 import com.quran.labs.androidquran.database.TranslationsDaoImpl
 import dagger.Module
 import dagger.Provides
