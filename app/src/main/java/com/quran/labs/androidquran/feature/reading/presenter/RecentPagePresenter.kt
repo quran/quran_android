@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.presenter.bookmark
+package com.quran.labs.androidquran.feature.reading.presenter
 
 import com.quran.labs.androidquran.data.Constants
 import com.quran.data.di.ActivityScope
