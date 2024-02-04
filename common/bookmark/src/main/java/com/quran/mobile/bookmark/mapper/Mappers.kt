@@ -5,6 +5,9 @@ import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 
 object Mappers {
+  val pageBookmarkMapper: ((id: Long, page: Int, addedDate: Long) -> Bookmark) = { id, page, addedDate ->
+    Bookmark(id, null, null, page, addedDate)
+  }
 
   val bookmarkWithTagMapper: ((
     id: Long,
