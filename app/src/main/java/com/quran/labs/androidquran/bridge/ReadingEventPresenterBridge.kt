@@ -10,7 +10,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class ReadingEventPresenterBridge constructor(
+class ReadingEventPresenterBridge(
   private val readingEventPresenter: ReadingEventPresenter,
   private val handleClick: (() -> Unit),
   private val handleSelection: ((AyahSelection) -> Unit)
