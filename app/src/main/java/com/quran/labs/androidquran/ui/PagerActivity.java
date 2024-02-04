@@ -10,7 +10,6 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -18,6 +17,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.SparseBooleanArray;
@@ -47,7 +47,6 @@ import androidx.core.util.Pair;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.viewpager.widget.NonRestoringViewPager;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
@@ -65,6 +64,7 @@ import com.quran.labs.androidquran.QuranPreferenceActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.SearchActivity;
 import com.quran.labs.androidquran.bridge.AudioStatusRepositoryBridge;
+import com.quran.labs.androidquran.bridge.DownloadBridge;
 import com.quran.labs.androidquran.bridge.ReadingEventPresenterBridge;
 import com.quran.labs.androidquran.common.QuranAyahInfo;
 import com.quran.labs.androidquran.common.audio.model.QariItem;
@@ -84,9 +84,7 @@ import com.quran.labs.androidquran.presenter.recitation.PagerActivityRecitationP
 import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter;
 import com.quran.labs.androidquran.service.AudioService;
 import com.quran.labs.androidquran.service.QuranDownloadService;
-import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver;
 import com.quran.labs.androidquran.service.util.PermissionUtil;
-import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper;
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog;
 import com.quran.labs.androidquran.ui.fragment.JumpFragment;
@@ -157,7 +155,6 @@ import timber.log.Timber;
  */
 public class PagerActivity extends AppCompatActivity implements
     AudioBarListener,
-    DefaultDownloadReceiver.DownloadListener,
     TagBookmarkDialog.OnBookmarkTagsUpdateListener,
     AyahSelectedListener,
     JumpDestination,
@@ -172,7 +169,6 @@ public class PagerActivity extends AppCompatActivity implements
   private static final String LAST_READING_MODE_IS_TRANSLATION =
       "LAST_READING_MODE_IS_TRANSLATION";
   private static final String LAST_ACTIONBAR_STATE = "LAST_ACTIONBAR_STATE";
-  private static final String LAST_AUDIO_REQUEST = "LAST_AUDIO_REQUEST";
 
   public static final String EXTRA_JUMP_TO_TRANSLATION = "jumpToTranslation";
   public static final String EXTRA_HIGHLIGHT_SURA = "highlightSura";
@@ -189,7 +185,6 @@ public class PagerActivity extends AppCompatActivity implements
   private boolean shouldReconnect = false;
   private SparseBooleanArray bookmarksCache = null;
   private boolean showingTranslation = false;
-  private DefaultDownloadReceiver downloadReceiver;
   private boolean needsPermissionToDownloadOver3g = true;
   private AlertDialog promptDialog = null;
   private AyahToolBar ayahToolBar;
@@ -249,6 +244,7 @@ public class PagerActivity extends AppCompatActivity implements
   @Inject AudioBarEventRepository audioBarEventRepository;
   @Inject DownloadInfoStreams downloadInfoStreams;
   @Inject CurrentQariManager qariManager;
+  @Inject DownloadBridge downloadBridge;
 
   private AudioStatusRepositoryBridge audioStatusRepositoryBridge;
   private ReadingEventPresenterBridge readingEventPresenterBridge;
@@ -263,6 +259,7 @@ public class PagerActivity extends AppCompatActivity implements
     private final WeakReference<PagerActivity> activity;
 
     PagerHandler(PagerActivity activity) {
+      super(Looper.getMainLooper());
       this.activity = new WeakReference<>(activity);
     }
 
@@ -514,14 +511,6 @@ public class PagerActivity extends AppCompatActivity implements
       }
     }
 
-    downloadReceiver = new DefaultDownloadReceiver(this,
-        QuranDownloadService.DOWNLOAD_TYPE_AUDIO);
-    String action = QuranDownloadNotifier.ProgressIntent.INTENT_NAME;
-    LocalBroadcastManager.getInstance(this).registerReceiver(
-        downloadReceiver,
-        new IntentFilter(action));
-    downloadReceiver.setListener(this);
-
     defaultNavigationBarColor = getWindow().getNavigationBarColor();
 
     quranEventLogger.logAnalytics(isDualPages, showingTranslation, isSplitScreen);
@@ -542,6 +531,11 @@ public class PagerActivity extends AppCompatActivity implements
 
     // read the list of translations
     requestTranslationsList();
+
+    downloadBridge.subscribeToDownloads(() -> {
+      onDownloadSuccess();
+      return null;
+    });
   }
 
   @Override
@@ -992,20 +986,13 @@ public class PagerActivity extends AppCompatActivity implements
     Timber.d("onDestroy()");
     clearUiVisibilityListener();
 
-    // remove broadcast receivers
-    if (downloadReceiver != null) {
-      downloadReceiver.setListener(null);
-      LocalBroadcastManager.getInstance(this)
-          .unregisterReceiver(downloadReceiver);
-      downloadReceiver = null;
-    }
-
     if (translationJob != null) {
       translationJob.cancel(new CancellationException());
     }
     compositeDisposable.dispose();
     audioStatusRepositoryBridge.dispose();
     readingEventPresenterBridge.dispose();
+    downloadBridge.unsubscribe();
     handler.removeCallbacksAndMessages(null);
     dismissProgressDialog();
     super.onDestroy();
@@ -1277,28 +1264,9 @@ public class PagerActivity extends AppCompatActivity implements
     }
   }
 
-  @Override
-  public void updateDownloadProgress(int progress,
-                                     long downloadedSize, long totalSize) {
-  }
-
-  @Override
-  public void updateProcessingProgress(int progress,
-                                       int processFiles, int totalFiles) {
-  }
-
-  @Override
-  public void handleDownloadTemporaryError(int errorId) {
-  }
-
-  @Override
-  public void handleDownloadSuccess() {
+  private void onDownloadSuccess() {
     refreshQuranPages();
     audioPresenter.onDownloadSuccess();
-  }
-
-  @Override
-  public void handleDownloadFailure(int errId) {
   }
 
   public void toggleActionBarVisibility(boolean visible) {
