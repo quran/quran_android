@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.bridge
+package com.quran.labs.androidquran.feature.reading.bridge
 
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest

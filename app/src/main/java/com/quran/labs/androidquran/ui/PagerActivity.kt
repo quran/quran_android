@@ -55,9 +55,9 @@ import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.QuranPreferenceActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.SearchActivity
-import com.quran.labs.androidquran.bridge.AudioStatusRepositoryBridge
-import com.quran.labs.androidquran.bridge.DownloadBridge
-import com.quran.labs.androidquran.bridge.ReadingEventPresenterBridge
+import com.quran.labs.androidquran.feature.reading.bridge.AudioStatusRepositoryBridge
+import com.quran.labs.androidquran.feature.reading.bridge.DownloadBridge
+import com.quran.labs.androidquran.feature.reading.bridge.ReadingEventPresenterBridge
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.model.QariItem.Companion.fromQari
