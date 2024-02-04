@@ -14,7 +14,6 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.preference.PreferenceManager
-import android.util.SparseBooleanArray
 import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
 import android.view.Menu
@@ -173,7 +172,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private var bookmarksMenuItem: MenuItem? = null
 
   private var translationNames: Array<String> = emptyArray()
-  private val bookmarksCache: SparseBooleanArray = SparseBooleanArray()
   private var translations: List<LocalTranslation>? = null
   private var activeTranslationsFilesNames: Set<String?>? = null
   private var translationsSpinnerAdapter: TranslationsSpinnerAdapter? = null
