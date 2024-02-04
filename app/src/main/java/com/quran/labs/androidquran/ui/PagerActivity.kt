@@ -33,13 +33,13 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.util.Pair
 import androidx.core.view.ViewCompat
 import androidx.viewpager.widget.NonRestoringViewPager
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener
 import com.quran.data.core.QuranInfo
+import com.quran.data.dao.BookmarksDao
 import com.quran.data.model.QuranText
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.selection.AyahSelection
@@ -55,9 +55,6 @@ import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.QuranPreferenceActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.SearchActivity
-import com.quran.labs.androidquran.feature.reading.bridge.AudioStatusRepositoryBridge
-import com.quran.labs.androidquran.feature.reading.bridge.DownloadBridge
-import com.quran.labs.androidquran.feature.reading.bridge.ReadingEventPresenterBridge
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.model.QariItem.Companion.fromQari
@@ -68,12 +65,14 @@ import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel
-import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
+import com.quran.labs.androidquran.feature.reading.bridge.AudioStatusRepositoryBridge
+import com.quran.labs.androidquran.feature.reading.bridge.DownloadBridge
+import com.quran.labs.androidquran.feature.reading.bridge.ReadingEventPresenterBridge
 import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenter
 import com.quran.labs.androidquran.feature.reading.presenter.RecentPagePresenter
-import com.quran.labs.androidquran.presenter.data.QuranEventLogger
 import com.quran.labs.androidquran.feature.reading.presenter.recitation.PagerActivityRecitationPresenter
+import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
+import com.quran.labs.androidquran.presenter.data.QuranEventLogger
 import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.service.AudioService
 import com.quran.labs.androidquran.service.QuranDownloadService
@@ -124,12 +123,23 @@ import com.quran.page.common.toolbar.di.AyahToolBarInjector
 import com.quran.reading.common.ReadingEventPresenter
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.observers.DisposableObserver
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.concurrent.CancellationException
@@ -188,7 +198,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private var lastSelectedTranslationAyah: QuranAyahInfo? = null
   private var lastActivatedLocalTranslations: Array<LocalTranslation> = emptyArray()
 
-  @Inject lateinit var bookmarkModel: BookmarkModel
+  @Inject lateinit var bookmarksDao: BookmarksDao
   @Inject lateinit var recentPagePresenter: RecentPagePresenter
   @Inject lateinit var quranSettings: QuranSettings
   @Inject lateinit var quranScreenInfo: QuranScreenInfo
@@ -218,6 +228,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private var translationJob: Job? = null
   private lateinit var compositeDisposable: CompositeDisposable
   private val foregroundDisposable = CompositeDisposable()
+  private val scope = MainScope()
 
   val pagerActivityComponent: PagerActivityComponent by lazy {
     (application as QuranApplication)
@@ -425,17 +436,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
           refreshActionBarSpinner()
         }
 
-        if (bookmarksCache.indexOfKey(page) < 0) {
-          if (isDualPageVisible && bookmarksCache.indexOfKey(page - 1) < 0) {
-            checkIfPageIsBookmarked(page - 1, page)
-          } else {
-            // we don't have the key
-            checkIfPageIsBookmarked(page)
-          }
-        } else {
-          refreshBookmarksMenu()
-        }
-
         // If we're more than 1 page away from ayah selection end ayah mode
         val suraAyah: SuraAyah? = selectionStart
         if (suraAyah != null) {
@@ -514,6 +514,17 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     downloadBridge.subscribeToDownloads {
       onDownloadSuccess()
     }
+
+    bookmarksDao.pageBookmarksWithoutTags().combine(currentPageFlow) { bookmarks, currentPage ->
+      bookmarks to currentPage
+    }.onEach { (bookmarks, page) ->
+      val isBookmarked = if (isDualPages) {
+        bookmarks.any { it.page == page || it.page == page - 1 }
+      } else {
+        bookmarks.any { it.page == page }
+      }
+      refreshBookmarksMenu(isBookmarked)
+    }.launchIn(scope)
   }
 
   override fun onRequestPermissionsResult(
@@ -530,19 +541,21 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     return isDualPages && isSplitScreen
   }
 
-  val viewPagerObservable: Observable<Int>
-    get() = Observable.create { e: ObservableEmitter<Int> ->
+  private val currentPageFlow: Flow<Int> =
+    callbackFlow {
       val pageChangedListener: OnPageChangeListener =
         object : SimpleOnPageChangeListener() {
           override fun onPageSelected(position: Int) {
             val page = quranInfo.getPageFromPosition(position, isDualPageVisible)
-            e.onNext(page)
+            trySend(page)
           }
         }
       viewPager.addOnPageChangeListener(pageChangedListener)
-      e.onNext(currentPage)
-      e.setCancellable { viewPager.removeOnPageChangeListener(pageChangedListener) }
+      awaitClose { viewPager.removeOnPageChangeListener(pageChangedListener) }
     }
+    .onStart { emit(currentPage) }
+    .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    .shareIn(scope, SharingStarted.Eagerly, 1)
 
   private val statusBarHeight: Int
     get() {
@@ -592,7 +605,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     // When clicking any menu items, expand the panel
     slidingPageIndicator.setOnClickListener { v: View? ->
-      if (!slidingPanel.isExpanded()) {
+      if (!slidingPanel.isExpanded) {
         slidingPanel.expandPane()
       }
     }
@@ -718,7 +731,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     super.onResume()
 
     audioPresenter.bind(this)
-    recentPagePresenter.bind(this)
+    recentPagePresenter.bind(currentPageFlow)
     isInMultiWindowMode =
       Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode()
 
@@ -930,7 +943,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       promptDialog!!.dismiss()
       promptDialog = null
     }
-    recentPagePresenter.unbind(this)
+    recentPagePresenter.unbind()
     quranSettings.wasShowingTranslation = pagerAdapter.isShowingTranslation
 
     super.onPause()
@@ -953,6 +966,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     readingEventPresenterBridge.dispose()
     downloadBridge.unsubscribe()
     handler.removeCallbacksAndMessages(null)
+    scope.cancel()
     dismissProgressDialog()
     super.onDestroy()
   }
@@ -994,10 +1008,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   override fun onPrepareOptionsMenu(menu: Menu): Boolean {
     super.onPrepareOptionsMenu(menu)
-    val item = bookmarksMenuItem
-    if (item != null) {
-      refreshBookmarksMenu()
-    }
 
     val quran = menu.findItem(R.id.goto_quran)
     val translation = menu.findItem(R.id.goto_translation)
@@ -1024,8 +1034,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     val itemId = item.itemId
     if (itemId == R.id.favorite_item) {
-      val page = currentPage
-      toggleBookmark(null, null, page)
+      togglePageBookmark(currentPage)
       return true
     } else if (itemId == R.id.goto_quran) {
       switchToQuran()
@@ -1272,63 +1281,23 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
   }
 
-  private fun toggleBookmark(sura: Int?, ayah: Int?, page: Int) {
-    compositeDisposable.add(
-      bookmarkModel.toggleBookmarkObservable(sura, ayah, page)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(object : DisposableSingleObserver<Boolean>() {
-          override fun onSuccess(isBookmarked: Boolean) {
-            if (sura == null || ayah == null) {
-              // page bookmark
-              bookmarksCache.put(page, isBookmarked)
-              bookmarksMenuItem!!.setIcon(if (isBookmarked) com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite else com.quran.labs.androidquran.common.toolbar.R.drawable.ic_not_favorite)
-            } else {
-              // ayah bookmark
-              val suraAyah = SuraAyah(sura, ayah)
-              updateAyahBookmark(suraAyah, isBookmarked)
-            }
-          }
-
-          override fun onError(e: Throwable) {
-          }
-        })
-    )
+  private fun togglePageBookmark(page: Int) {
+    scope.launch {
+      bookmarksDao.togglePageBookmark(page)
+    }
   }
 
-  private fun checkIfPageIsBookmarked(vararg pages: Int) {
-    compositeDisposable.add(
-      bookmarkModel.getIsBookmarkedObservable(*pages.toTypedArray())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(object : DisposableObserver<Pair<Int, Boolean>>() {
-          override fun onNext(result: Pair<Int, Boolean>) {
-            bookmarksCache.put(result.first!!, result.second!!)
-          }
-
-          override fun onError(e: Throwable) {
-          }
-
-          override fun onComplete() {
-            refreshBookmarksMenu()
-          }
-        })
-    )
+  private fun toggleAyahBookmark(suraAyah: SuraAyah, page: Int) {
+    scope.launch {
+      val isBookmarked = bookmarksDao.toggleAyahBookmark(suraAyah, page)
+      updateAyahBookmark(suraAyah, isBookmarked)
+    }
   }
 
-  private fun refreshBookmarksMenu() {
+  private fun refreshBookmarksMenu(isBookmarked: Boolean) {
     val menuItem = bookmarksMenuItem
     if (menuItem != null) {
-      val page = quranInfo.getPageFromPosition(viewPager.currentItem, isDualPageVisible)
-
-      var bookmarked = false
-      if (bookmarksCache.indexOfKey(page) >= 0) {
-        bookmarked = bookmarksCache[page]
-      }
-
-      if (!bookmarked && isDualPageVisible && bookmarksCache.indexOfKey(page - 1) >= 0) {
-        bookmarked = bookmarksCache[page - 1]
-      }
-
-      menuItem.setIcon(if (bookmarked) com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite else com.quran.labs.androidquran.common.toolbar.R.drawable.ic_not_favorite)
+      menuItem.setIcon(if (isBookmarked) com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite else com.quran.labs.androidquran.common.toolbar.R.drawable.ic_not_favorite)
     } else {
       supportInvalidateOptionsMenu()
     }
@@ -1356,7 +1325,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     val startSura = quranDisplayData.safelyGetSuraOnPage(page)
     val startAyah = quranInfo.getFirstAyahOnPage(page)
     val startingSuraList = quranInfo.getListOfSurahWithStartingOnPage(page)
-    if (startingSuraList.size == 0 ||
+    if (startingSuraList.isEmpty() ||
       (startingSuraList.size == 1 && startingSuraList[0] == startSura)
     ) {
       playFromAyah(startSura, startAyah)
@@ -1678,7 +1647,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_bookmark_ayah) {
         val startPage =
           quranInfo.getPageFromSuraAyah(startSuraAyah.sura, startSuraAyah.ayah)
-        toggleBookmark(startSuraAyah.sura, startSuraAyah.ayah, startPage)
+        toggleAyahBookmark(startSuraAyah, startPage)
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_tag_ayah) {
         sliderPage = slidingPagerAdapter.getPagePosition(SlidingPagerAdapter.TAG_PAGE)
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_translate_ayah) {
@@ -1782,16 +1751,17 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private fun showProgressDialog() {
     if (progressDialog == null) {
-      progressDialog = ProgressDialog(this)
-      progressDialog!!.isIndeterminate = true
-      progressDialog!!.setMessage(getString(com.quran.mobile.common.ui.core.R.string.loading))
-      progressDialog!!.show()
+      progressDialog = ProgressDialog(this).apply {
+        isIndeterminate = true
+        setMessage(getString(com.quran.mobile.common.ui.core.R.string.loading))
+        show()
+      }
     }
   }
 
   private fun dismissProgressDialog() {
-    if (progressDialog != null && progressDialog!!.isShowing) {
-      progressDialog!!.dismiss()
+    if (progressDialog?.isShowing == true) {
+      progressDialog?.dismiss()
     }
     progressDialog = null
   }

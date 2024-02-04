@@ -167,23 +167,6 @@ public class BookmarkModel {
         .subscribeOn(Schedulers.io());
   }
 
-  public Single<Boolean> toggleBookmarkObservable(
-      final Integer sura, final Integer ayah, final int page) {
-    return getBookmarkId(sura, ayah, page)
-        .map(bookmarkId -> {
-          boolean result;
-          if (bookmarkId > 0) {
-            bookmarksDBAdapter.removeBookmark(bookmarkId);
-            result = false;
-          } else {
-            bookmarksDBAdapter.addBookmark(sura, ayah, page);
-            result = true;
-          }
-          bookmarksPublishSubject.onNext(true);
-          return result;
-        }).subscribeOn(Schedulers.io());
-  }
-
   public Observable<Boolean> importBookmarksObservable(final BookmarkData data) {
     return Observable.fromCallable(() -> {
       boolean result = bookmarksDBAdapter.importBookmarks(data);

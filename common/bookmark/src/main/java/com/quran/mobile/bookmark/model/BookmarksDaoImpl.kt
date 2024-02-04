@@ -12,6 +12,7 @@ import com.quran.mobile.bookmark.mapper.convergeCommonlyTagged
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -32,6 +33,12 @@ class BookmarksDaoImpl @Inject constructor(
 
   override fun bookmarksForPage(page: Int): Flow<List<Bookmark>> {
     return bookmarkQueries.getBookmarksByPage(page, Mappers.bookmarkWithTagMapper)
+      .asFlow()
+      .mapToList(Dispatchers.IO)
+  }
+
+  override fun pageBookmarksWithoutTags(): Flow<List<Bookmark>> {
+    return bookmarkQueries.getPageBookmarksWithoutTags(Mappers.pageBookmarkMapper)
       .asFlow()
       .mapToList(Dispatchers.IO)
   }
@@ -64,6 +71,42 @@ class BookmarksDaoImpl @Inject constructor(
       .mapToList(Dispatchers.IO)
       .first()
     return bookmarkIds.isNotEmpty()
+  }
+
+  override suspend fun togglePageBookmark(page: Int): Boolean {
+    return withContext(Dispatchers.IO) {
+      val bookmarkId = bookmarkQueries.getBookmarkIdForPage(page).executeAsOneOrNull()
+      if (bookmarkId != null) {
+        deleteBookmarkById(bookmarkId)
+        false
+      } else {
+        bookmarkQueries.addBookmark(null, null, page)
+        true
+      }
+    }
+  }
+
+  override suspend fun toggleAyahBookmark(suraAyah: SuraAyah, page: Int): Boolean {
+    return withContext(Dispatchers.IO) {
+      val bookmarkId = bookmarkQueries.getBookmarkIdForSuraAyah(suraAyah.sura, suraAyah.ayah)
+        .executeAsOneOrNull()
+      if (bookmarkId != null) {
+        deleteBookmarkById(bookmarkId)
+        false
+      } else {
+        bookmarkQueries.addBookmark(suraAyah.sura, suraAyah.ayah, page)
+        true
+      }
+    }
+  }
+
+  private suspend fun deleteBookmarkById(bookmarkId: Long) {
+    withContext(Dispatchers.IO) {
+      bookmarkTagQueries.transaction {
+        bookmarkTagQueries.deleteByBookmarkIds(listOf(bookmarkId))
+        bookmarkQueries.deleteByIds(listOf(bookmarkId))
+      }
+    }
   }
 
   override suspend fun recentPages(): List<RecentPage> {

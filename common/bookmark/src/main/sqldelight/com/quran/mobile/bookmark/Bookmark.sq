@@ -61,6 +61,10 @@ getBookmarkIdForPage:
     AND bookmarks.sura IS NULL
     AND bookmarks.ayah IS NULL;
 
+getPageBookmarksWithoutTags:
+  SELECT bookmarks._ID, bookmarks.page, bookmarks.added_date FROM bookmarks
+  WHERE sura IS NULL AND ayah IS NULL;
+
 getBookmarkIdForSuraAyah:
   SELECT bookmarks._ID FROM bookmarks
     WHERE bookmarks.sura = ?
