@@ -1,10 +1,10 @@
 package com.quran.page.common.toolbar
 
+import com.quran.data.dao.BookmarksDao
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.selectionIndicator
 import com.quran.data.model.selection.startSuraAyah
-import com.quran.mobile.bookmark.model.BookmarkModel
 import com.quran.reading.common.ReadingEventPresenter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -16,7 +16,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class AyahToolBarPresenter @Inject constructor(
-  bookmarkModel: BookmarkModel,
+  bookmarksDao: BookmarksDao,
   private val readingEventPresenter: ReadingEventPresenter
 ) {
   private val scope = MainScope()
@@ -34,7 +34,7 @@ class AyahToolBarPresenter @Inject constructor(
     bookmarkToCheckChannel.consumeAsFlow()
       .onEach {
         val result = withContext(Dispatchers.IO) {
-          bookmarkModel.isSuraAyahBookmarked(it)
+          bookmarksDao.isSuraAyahBookmarked(it)
         }
 
         if (readingEventPresenter.currentAyahSelection().startSuraAyah() == it) {
