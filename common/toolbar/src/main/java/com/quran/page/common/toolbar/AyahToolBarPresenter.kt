@@ -37,8 +37,8 @@ class AyahToolBarPresenter @Inject constructor(
           bookmarkModel.isSuraAyahBookmarked(it)
         }
 
-        if (readingEventPresenter.currentAyahSelection().startSuraAyah() == result.first) {
-          ayahSelectionReactor?.updateBookmarkStatus(result.second)
+        if (readingEventPresenter.currentAyahSelection().startSuraAyah() == it) {
+          ayahSelectionReactor?.updateBookmarkStatus(result)
         }
       }
       .launchIn(scope)

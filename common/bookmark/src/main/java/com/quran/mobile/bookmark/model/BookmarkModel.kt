@@ -19,13 +19,13 @@ class BookmarkModel @Inject constructor(bookmarksDatabase: BookmarksDatabase) {
       .asFlow()
       .mapToList(Dispatchers.IO)
 
-  suspend fun isSuraAyahBookmarked(suraAyah: SuraAyah): Pair<SuraAyah, Boolean> {
+  suspend fun isSuraAyahBookmarked(suraAyah: SuraAyah): Boolean {
     val bookmarkIds = bookmarkQueries.getBookmarkIdForSuraAyah(suraAyah.sura, suraAyah.ayah)
       .asFlow()
       // was .mapToOneOrNull, but some people have multiple bookmarks for the same ayah
       // should try to figure out why at some point or otherwise de-duplicate them
       .mapToList(Dispatchers.IO)
       .first()
-    return suraAyah to bookmarkIds.isNotEmpty()
+    return bookmarkIds.isNotEmpty()
   }
 }
