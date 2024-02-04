@@ -361,7 +361,7 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
         pageNumber,
         pageNumber + 1
       )
-    (activity as PagerActivity).getPagerActivityComponent()
+    (activity as PagerActivity).pagerActivityComponent
       .quranPageComponentFactory()
       .generate(pages)
       .inject(this)

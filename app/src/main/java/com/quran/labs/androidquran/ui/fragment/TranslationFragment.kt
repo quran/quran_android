@@ -81,7 +81,7 @@ class TranslationFragment : Fragment(), AyahInteractionHandler, QuranPage,
     val arguments = arguments
     pageNumber = arguments?.getInt(PAGE_NUMBER_EXTRA) ?: -1
     val pages = intArrayOf(pageNumber)
-    (activity as? PagerActivity)?.getPagerActivityComponent()
+    (activity as? PagerActivity)?.pagerActivityComponent
       ?.quranPageComponentFactory()
       ?.generate(pages)
       ?.inject(this)
