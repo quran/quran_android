@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.bridge
+package com.quran.labs.androidquran.feature.reading.bridge
 
 import com.quran.mobile.common.download.DownloadInfo
 import com.quran.mobile.common.download.DownloadInfoStreams
