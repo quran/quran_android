@@ -70,10 +70,10 @@ import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
-import com.quran.labs.androidquran.presenter.audio.AudioPresenter
-import com.quran.labs.androidquran.presenter.bookmark.RecentPagePresenter
+import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenter
+import com.quran.labs.androidquran.feature.reading.presenter.RecentPagePresenter
 import com.quran.labs.androidquran.presenter.data.QuranEventLogger
-import com.quran.labs.androidquran.presenter.recitation.PagerActivityRecitationPresenter
+import com.quran.labs.androidquran.feature.reading.presenter.recitation.PagerActivityRecitationPresenter
 import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.service.AudioService
 import com.quran.labs.androidquran.service.QuranDownloadService

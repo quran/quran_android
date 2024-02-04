@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.presenter.recitation
+package com.quran.labs.androidquran.feature.reading.presenter.recitation
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
@@ -18,7 +18,6 @@ import com.quran.labs.androidquran.ui.listener.AudioBarRecitationListener
 import com.quran.page.common.toolbar.AyahToolBar
 import com.quran.reading.common.ReadingEventPresenter
 import com.quran.recitation.events.RecitationEventPresenter
-import com.quran.recitation.events.RecitationPlaybackEventPresenter
 import com.quran.recitation.events.RecitationSelection
 import com.quran.recitation.presenter.RecitationPlaybackPresenter
 import com.quran.recitation.presenter.RecitationPresenter
@@ -36,7 +35,6 @@ class PagerActivityRecitationPresenter @Inject constructor(
   private val recitationPresenter: RecitationPresenter,
   private val recitationEventPresenter: RecitationEventPresenter,
   private val recitationPlaybackPresenter: RecitationPlaybackPresenter,
-  private val recitationPlaybackEventPresenter: RecitationPlaybackEventPresenter,
   private val recitationSettings: RecitationSettings,
 ) : AudioBarRecitationListener, DefaultLifecycleObserver, LifecycleEventObserver {
   private val scope = MainScope()

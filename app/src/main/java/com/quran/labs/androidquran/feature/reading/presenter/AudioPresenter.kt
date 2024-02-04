@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.presenter.audio
+package com.quran.labs.androidquran.feature.reading.presenter
 
 import android.content.Context
 import android.content.Intent
