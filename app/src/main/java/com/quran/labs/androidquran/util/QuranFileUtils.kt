@@ -368,7 +368,7 @@ class QuranFileUtils @Inject constructor(
     }
     return if (isRetry) Response(
         Response.ERROR_DOWNLOADING_ERROR
-    ) else getImageFromWeb(okHttpClient, context, filename, widthParam, true)
+    ) else getImageFromWeb(okHttpClient, context, widthParam, filename, true)
   }
 
   private fun decodeBitmapStream(`is`: InputStream): Bitmap? {
