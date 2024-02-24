@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -33,7 +34,7 @@ internal fun PromptingAudioBar(
     modifier = modifier.height(IntrinsicSize.Min)
   ) {
     IconButton(onClick = { eventSink(AudioBarUiEvent.PromptEvent.Acknowledge) }) {
-      Icon(QuranIcons.Close, contentDescription = stringResource(id = android.R.string.ok))
+      Icon(QuranIcons.Check, contentDescription = stringResource(id = android.R.string.ok))
     }
 
     Divider(

@@ -102,7 +102,7 @@ class AudioBarPresenter @Inject constructor(
 
   private fun DownloadInfo.toAudioBarState(): AudioBarState {
     return when (this) {
-      is DownloadInfo.DownloadBatchError -> AudioBarState.Error(errorId)
+      is DownloadInfo.DownloadBatchError -> AudioBarState.Error(errorResource)
 
       is DownloadInfo.FileDownloadProgress -> AudioBarState.Downloading(
         progress, com.quran.mobile.common.download.R.string.downloading

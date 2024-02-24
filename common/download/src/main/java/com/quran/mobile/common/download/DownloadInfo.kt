@@ -29,6 +29,7 @@ sealed class DownloadInfo {
     override val type: Int,
     override val metadata: Parcelable?,
     val errorId: Int,
+    val errorResource: Int,
     val errorString: String
   ) : DownloadEvent()
 

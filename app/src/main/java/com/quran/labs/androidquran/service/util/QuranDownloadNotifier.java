@@ -301,7 +301,7 @@ public class QuranDownloadNotifier {
 
     if (isFatal) {
       final DownloadInfo downloadInfo =
-          new DownloadInfo.DownloadBatchError(details.key, details.type, details.metadata, errorCode, errorString);
+          new DownloadInfo.DownloadBatchError(details.key, details.type, details.metadata, errorCode, errorId, errorString);
       downloadInfoStreams.emitEvent(downloadInfo);
     }
 

@@ -12,9 +12,6 @@ object Constants {
   const val DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS = 0
   const val DEFAULT_TEXT_SIZE = 15
 
-  // 10 days in ms
-  const val TRANSLATION_REFRESH_TIME = 60 * 60 * 24 * 10 * 1000
-
   // 1 hour in ms
   const val MIN_TRANSLATION_REFRESH_TIME = 60 * 60 * 1000
 
@@ -24,8 +21,6 @@ object Constants {
   const val SURA_LAST = QuranConstants.LAST_SURA
   const val SURAS_COUNT = QuranConstants.NUMBER_OF_SURAS
   const val JUZ2_COUNT = QuranConstants.JUZ2_COUNT
-  const val AYA_MIN = QuranConstants.MIN_AYAH
-  const val AYA_MAX = QuranConstants.MAX_AYAH
   const val NO_PAGE = -1
   const val MAX_RECENT_PAGES = 3
 
