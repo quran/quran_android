@@ -125,6 +125,7 @@ okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", versio
 okhttp = { module = "com.squareup.okhttp3:okhttp" }
 okhttp-mockserver = { module = "com.squareup.okhttp3:mockwebserver" }
 okhttp-dnsoverhttps = { module = "com.squareup.okhttp3:okhttp-dnsoverhttps" }
+okhttp-tls = { module = "com.squareup.okhttp3:okhttp-tls" }
 
 # rx
 rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxandroidVersion" }
