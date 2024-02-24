@@ -199,7 +199,7 @@ class SheikhAudioPresenter @Inject constructor(
   private fun DownloadInfo.asSuraDownloadedStatusEvent(): SuraDownloadStatusEvent? {
     return when (this) {
       is DownloadInfo.FileDownloaded -> null
-      is DownloadInfo.DownloadBatchError -> SuraDownloadStatusEvent.Error(this.errorId, this.errorString)
+      is DownloadInfo.DownloadBatchError -> SuraDownloadStatusEvent.Error(errorCode = this.errorId, this.errorString)
       is DownloadInfo.DownloadBatchSuccess -> SuraDownloadStatusEvent.Done
       is DownloadInfo.FileDownloadProgress ->
         SuraDownloadStatusEvent.Progress(

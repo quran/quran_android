@@ -8,7 +8,7 @@ sealed class SuraDownloadStatusEvent {
     val downloadedAmount: Long,
     val totalAmount: Long
   ) : SuraDownloadStatusEvent()
-  object Done: SuraDownloadStatusEvent()
+  data object Done: SuraDownloadStatusEvent()
   data class Error(val errorCode: Int, val errorMessage: String): SuraDownloadStatusEvent()
 }
 val NoProgress = SuraDownloadStatusEvent.Progress(-1, -1, -1, -1, -1)
