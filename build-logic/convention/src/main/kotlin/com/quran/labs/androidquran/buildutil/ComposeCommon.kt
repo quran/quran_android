@@ -6,7 +6,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
-fun CommonExtension<*, *, *, *, *>.applyComposeCommon(project: Project) {
+fun CommonExtension<*, *, *, *, *, *>.applyComposeCommon(project: Project) {
   buildFeatures.compose = true
   project.withLibraries { libs ->
     composeOptions.kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
