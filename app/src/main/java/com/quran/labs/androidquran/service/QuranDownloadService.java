@@ -341,9 +341,12 @@ public class QuranDownloadService extends Service implements
     lastSentIntent = notifier.notifyProgress(details, 0, 0);
     boolean result = downloadFileWrapper(urlString, destination, outputFile, details);
     if (result) {
+      // first notify that the file was downloaded
+      notifier.notifyFileDownloaded(details, outputFile);
+      // then download that the batch (containing only one file in this case)
+      // was downloaded.
       lastSentIntent = notifier.notifyDownloadSuccessful(details);
     }
-    notifier.notifyFileDownloaded(details, outputFile);
     return result;
   }
 
