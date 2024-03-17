@@ -10,13 +10,12 @@ import com.quran.data.dao.Settings
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
-import com.quran.labs.androidquran.data.QuranFileConstants
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.SettingsImpl
-import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.di.ExtraScreenProvider
+import com.quran.mobile.di.qualifier.ApplicationContext
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.ElementsIntoSet
@@ -65,9 +64,12 @@ object ApplicationModule {
 
   @Named(DependencyInjectionConstants.CURRENT_PAGE_TYPE)
   @Provides
-  fun provideCurrentPageType(quranSettings: QuranSettings): String {
+  fun provideCurrentPageType(
+    quranSettings: QuranSettings,
+    @Named(DependencyInjectionConstants.FALLBACK_PAGE_TYPE) fallbackPageType: String
+  ): String {
     val currentKey = quranSettings.pageType
-    val result = currentKey ?: QuranFileConstants.FALLBACK_PAGE_TYPE
+    val result = currentKey ?: fallbackPageType
     if (currentKey == null) {
       quranSettings.pageType = result
     }
