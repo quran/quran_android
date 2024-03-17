@@ -16,8 +16,5 @@ object QuranFileConstants {
   const val ARABIC_SHARE_TEXT_HAS_BASMALLAH = true
   const val FETCH_QUARTER_NAMES_FROM_DATABASE = false
 
-  const val FALLBACK_PAGE_TYPE = "madani"
-  const val SEARCH_EXTRA_REPLACEMENTS = ""
-
   var ICON_RESOURCE_ID = com.quran.labs.androidquran.R.drawable.icon
 }

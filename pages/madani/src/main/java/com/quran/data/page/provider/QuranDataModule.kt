@@ -2,6 +2,7 @@ package com.quran.data.page.provider
 
 import com.quran.common.upgrade.LocalDataUpgrade
 import com.quran.common.upgrade.PreferencesUpgrade
+import com.quran.data.constant.DependencyInjectionConstants
 import com.quran.data.page.provider.madani.MadaniPageProvider
 import com.quran.data.pageinfo.mapper.AyahMapper
 import com.quran.data.pageinfo.mapper.IdentityAyahMapper
@@ -14,6 +15,7 @@ import dagger.Reusable
 import dagger.multibindings.ElementsIntoSet
 import dagger.multibindings.IntoMap
 import dagger.multibindings.StringKey
+import javax.inject.Named
 
 @Module
 object QuranDataModule {
@@ -22,6 +24,11 @@ object QuranDataModule {
   fun providePageViewFactoryProvider(): PageViewFactoryProvider {
     return PageViewFactoryProvider { null }
   }
+
+  @Named(DependencyInjectionConstants.FALLBACK_PAGE_TYPE)
+  @JvmStatic
+  @Provides
+  fun provideFallbackPageType(): String = "madani"
 
   @JvmStatic
   @Provides
