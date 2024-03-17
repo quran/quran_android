@@ -14,7 +14,7 @@ class DownloadBridge @Inject constructor(private val downloadInfoStreams: Downlo
 
   fun subscribeToDownloads(onDownloadSuccess: () -> Unit) {
     downloadInfoStreams.downloadInfoStream()
-      .filter { it is DownloadInfo.DownloadBatchSuccess }
+      .filter { it is DownloadInfo.DownloadBatchSuccess || it is DownloadInfo.FileDownloaded }
       .onEach { onDownloadSuccess() }
       .launchIn(scope)
   }
