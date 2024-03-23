@@ -2,6 +2,7 @@ import com.android.build.api.dsl.ApplicationExtension
 import com.quran.labs.androidquran.buildutil.applyAndroidCommon
 import com.quran.labs.androidquran.buildutil.applyBoms
 import com.quran.labs.androidquran.buildutil.applyComposeCommon
+import com.quran.labs.androidquran.buildutil.applyJavaCommon
 import com.quran.labs.androidquran.buildutil.applyKotlinCommon
 import com.quran.labs.androidquran.buildutil.withLibraries
 import org.gradle.api.Plugin
@@ -25,6 +26,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
         defaultConfig.targetSdk = 34
       }
 
+      applyJavaCommon()
       applyKotlinCommon()
       applyBoms()
     }

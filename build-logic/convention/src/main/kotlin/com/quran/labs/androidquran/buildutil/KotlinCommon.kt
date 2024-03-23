@@ -1,13 +1,17 @@
 package com.quran.labs.androidquran.buildutil
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 
 fun Project.applyKotlinCommon() {
-  extensions.configure<KotlinProjectExtension> {
-    jvmToolchain(17)
+
+  tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+      jvmTarget = JavaVersion.VERSION_17.toString()
+    }
   }
 
   pluginManager.withPlugin("org.jetbrains.kotlin.kapt") {

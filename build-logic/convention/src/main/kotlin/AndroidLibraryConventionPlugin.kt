@@ -1,6 +1,7 @@
 import com.android.build.gradle.LibraryExtension
 import com.quran.labs.androidquran.buildutil.applyAndroidCommon
 import com.quran.labs.androidquran.buildutil.applyBoms
+import com.quran.labs.androidquran.buildutil.applyJavaCommon
 import com.quran.labs.androidquran.buildutil.applyKotlinCommon
 import com.quran.labs.androidquran.buildutil.withLibraries
 import org.gradle.api.Plugin
@@ -22,6 +23,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         applyAndroidCommon(target)
       }
 
+      applyJavaCommon()
       applyKotlinCommon()
       applyBoms()
     }
