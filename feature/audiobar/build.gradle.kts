@@ -8,6 +8,9 @@ plugins {
 android.namespace = "com.quran.mobile.feature.audiobar"
 
 anvil { generateDaggerFactories = true }
+molecule {
+  kotlinCompilerPlugin.set(libs.compose.compiler.get().toString())
+}
 
 dependencies {
   implementation(project(":common:data"))
