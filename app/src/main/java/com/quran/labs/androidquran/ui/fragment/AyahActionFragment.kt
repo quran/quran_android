@@ -46,7 +46,7 @@ abstract class AyahActionFragment : Fragment() {
         }
 
         if (previousStart != start || previousEnd != end) {
-          refreshView()
+          refreshView(ayahHasBeenChanged = true)
         }
       }
       .launchIn(scope)
@@ -65,5 +65,5 @@ abstract class AyahActionFragment : Fragment() {
 
   open fun onToggleDetailsPanel(isVisible: Boolean) { }
 
-  protected abstract fun refreshView()
+  protected abstract fun refreshView(ayahHasBeenChanged: Boolean)
 }

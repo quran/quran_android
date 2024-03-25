@@ -38,11 +38,11 @@ class InlineTranslationPresenter @Inject constructor(
       .launchIn(scope)
   }
 
-  suspend fun refresh(verseRange: VerseRange) {
+  suspend fun refresh(verseRange: VerseRange, ayahHasBeenChanged: Boolean) {
     val result = withContext(Dispatchers.IO) {
       getVerses(false, getTranslations(quranSettings), verseRange)
     }
-    translationScreen?.setVerses(result.translations, result.ayahInformation)
+    translationScreen?.setVerses(result.translations, result.ayahInformation, ayahHasBeenChanged)
   }
 
   override fun bind(what: TranslationScreen) {
@@ -52,7 +52,7 @@ class InlineTranslationPresenter @Inject constructor(
   }
 
   interface TranslationScreen {
-    fun setVerses(translations: Array<LocalTranslation>, verses: List<QuranAyahInfo>)
+    fun setVerses(translations: Array<LocalTranslation>, verses: List<QuranAyahInfo>, ayahHasBeenChanged: Boolean)
     fun onTranslationsUpdated(translations: List<LocalTranslation>)
   }
 }
