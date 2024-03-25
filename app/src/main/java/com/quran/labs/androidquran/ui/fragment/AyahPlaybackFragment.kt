@@ -293,11 +293,11 @@ class AyahPlaybackFragment : AyahActionFragment() {
   override fun onToggleDetailsPanel(isVisible: Boolean) {
     isOpen = isVisible
     if (!isOpen) {
-      refreshView()
+      refreshView(ayahHasBeenChanged = true)
     }
   }
 
-  override fun refreshView() {
+  override fun refreshView(ayahHasBeenChanged: Boolean) {
     val context: Context? = activity
     val selectionEnd = end
     val selectionStart = start

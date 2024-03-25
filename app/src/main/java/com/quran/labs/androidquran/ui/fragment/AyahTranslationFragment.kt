@@ -14,7 +14,6 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter
 import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter.TranslationScreen
-import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
@@ -25,8 +24,6 @@ import com.quran.mobile.di.AyahActionFragmentProvider
 import com.quran.mobile.translation.model.LocalTranslation
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.abs
@@ -133,7 +130,7 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
         ) { selectedItems: Set<String?>? ->
           quranSettings.activeTranslations = selectedItems
           // this is the refresh for when a translation is selected from the spinner
-          refreshView()
+          refreshView(ayahHasBeenChanged = false)
         }
         translator.adapter = translationAdapter
       } else {
@@ -143,11 +140,11 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
           activeTranslationsFilesNames
         )
       }
-      refreshView()
+      refreshView(ayahHasBeenChanged = false)
     }
   }
 
-  public override fun refreshView() {
+  public override fun refreshView(ayahHasBeenChanged: Boolean) {
     val start = start
     val end = end
     if (start == null || end == null) {
@@ -159,11 +156,11 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
     )
     val verseRange = VerseRange(start.sura, start.ayah, end.sura, end.ayah, verses)
     scope.launch {
-      translationPresenter.refresh(verseRange)
+      translationPresenter.refresh(verseRange, ayahHasBeenChanged)
     }
   }
 
-  override fun setVerses(translations: Array<LocalTranslation>, verses: List<QuranAyahInfo>) {
+  override fun setVerses(translations: Array<LocalTranslation>, verses: List<QuranAyahInfo>, ayahHasBeenChanged: Boolean) {
     progressBar.visibility = View.GONE
     if (verses.isNotEmpty()) {
       emptyState.visibility = View.GONE
@@ -171,6 +168,9 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
       translator.visibility = View.VISIBLE
       translationView.visibility = View.VISIBLE
       translationView.setAyahs(translations, verses)
+      if (ayahHasBeenChanged) {
+        translationView.resetScroll()
+      }
     } else {
       emptyState.visibility = View.VISIBLE
     }
