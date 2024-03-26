@@ -19,6 +19,7 @@
   <string translatable="false" name="prefs_highlight_bookmarks">highlightBookmarks</string>
   <string translatable="false" name="prefs_lock_orientation">lockOrientation</string>
   <string translatable="false" name="prefs_landscape_orientation">landscapeOrientation</string>
+  <string translatable="false" name="prefs_ayah_text_size">ayahTextSize</string>
   <string translatable="false" name="prefs_translation_text_size">translationTextSize</string>
   <string translatable="false" name="prefs_ayah_before_translation">ayahBeforeTranslation</string>
   <string translatable="false" name="prefs_use_dyslexic_font">useDyslexicFont</string>

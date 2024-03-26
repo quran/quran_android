@@ -173,12 +173,19 @@
         android:title="@string/prefs_use_dyslexic_font_title"
         app:iconSpaceReserved="false"/>
 
-    <com.quran.labs.androidquran.ui.preference.SeekBarTextSizePreference
+    <com.quran.labs.androidquran.ui.preference.SeekBarAyahTextSizePreference
         android:defaultValue="15"
-        android:key="@string/prefs_translation_text_size"
+        android:key="@string/prefs_ayah_text_size"
         android:max="40"
         android:persistent="true"
-        android:title="@string/prefs_translation_text_title"/>
+        android:title="@string/prefs_ayah_text_title"/>
+
+    <com.quran.labs.androidquran.ui.preference.SeekBarTranslationTextSizePreference
+      android:defaultValue="15"
+      android:key="@string/prefs_translation_text_size"
+      android:max="40"
+      android:persistent="true"
+      android:title="@string/prefs_translation_text_title"/>
   </PreferenceCategory>
 
   <PreferenceCategory

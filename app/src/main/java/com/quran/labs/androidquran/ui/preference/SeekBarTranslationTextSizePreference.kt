@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.SeekBar
 
-class SeekBarTextSizePreference(
+class SeekBarTranslationTextSizePreference(
   context: Context, attrs: AttributeSet
 ) : SeekBarPreference(context, attrs) {
 
