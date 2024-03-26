@@ -48,6 +48,7 @@ object Constants {
   const val PREF_LAST_PAGE = "lastPage"
   const val PREF_LOCK_ORIENTATION = "lockOrientation"
   const val PREF_LANDSCAPE_ORIENTATION = "landscapeOrientation"
+  const val PREF_AYAH_TEXT_SIZE = "ayahTextSize"
   const val PREF_TRANSLATION_TEXT_SIZE = "translationTextSize"
   const val PREF_ACTIVE_TRANSLATION = "activeTranslation"
   const val PREF_ACTIVE_TRANSLATIONS = "activeTranslations"
