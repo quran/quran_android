@@ -9,8 +9,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.text.TextUtils
+import androidx.core.net.toUri
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.utils.MediaConstants
 import com.quran.data.core.QuranConstants
@@ -93,10 +95,7 @@ class QuranAudioService : MediaBrowserServiceCompat(), MediaPlayer.OnPreparedLis
       val name = getSuraName(this, index + 1, true, false)
       mediaItems.add(
           createMediaItem(
-              name, name, "Quran", Uri.Builder()
-              .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-              .path(R.raw.sample.toString())
-              .build()
+              name, name, "Quran", "https://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/${makeThreeDigit(index + 1)}.mp3".toUri()
           )
       )
     }
@@ -179,8 +178,15 @@ class QuranAudioService : MediaBrowserServiceCompat(), MediaPlayer.OnPreparedLis
                   .setLegacyStreamType(AudioManager.STREAM_MUSIC)
                   .build()
           )
+          mSession.setMetadata(
+              MediaMetadataCompat.Builder()
+                  .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mediaUrl.description.title.toString())
+                  .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, mediaUrl.description.subtitle.toString())
+                  .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaUrl.description.mediaId.toString())
+                  .build()
+          )
           setOnPreparedListener(this@QuranAudioService)
-          setDataSource(baseContext, Uri.parse("android.resource://com.quran.labs.autoquran/" + R.raw.sample))
+          setDataSource(baseContext, mediaUrl.description.mediaUri ?: Uri.EMPTY)
           prepareAsync()
         }
       }
@@ -225,5 +231,13 @@ class QuranAudioService : MediaBrowserServiceCompat(), MediaPlayer.OnPreparedLis
     }
 
     return builder.toString()
+  }
+
+  private fun makeThreeDigit(number: Int): String {
+    var numStr = number.toString()
+    if (numStr.length < 3) {
+      numStr = "0".repeat(3 - numStr.length) + numStr
+    }
+    return numStr
   }
 }
