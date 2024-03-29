@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-  compileSdk 33
+  compileSdk 34
 
   defaultConfig {
     applicationId "com.quran.labs.autoquran"
@@ -26,6 +26,8 @@ android {
   }
 }
 
+android.namespace = "com.quran.labs.autoquran"
+
 dependencies {
 
   implementation 'androidx.core:core-ktx:1.9.0'
@@ -41,8 +43,8 @@ dependencies {
   implementation project(':common:upgrade')
 
   // dagger
-  kapt deps.dagger.apt
-  kaptTest deps.dagger.apt
-  implementation deps.dagger.runtime
+  kapt libs.dagger.compiler
+  kaptTest libs.dagger.compiler
+  implementation libs.dagger.runtime
 
 }
