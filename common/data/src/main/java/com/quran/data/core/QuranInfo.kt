@@ -12,7 +12,7 @@ import javax.inject.Inject
 import kotlin.math.abs
 
 class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
-  private val suraPageStart = quranDataSource.pageForSuraArray
+  val suraPageStart = quranDataSource.pageForSuraArray
   private val pageSuraStart = quranDataSource.suraForPageArray
   private val pageAyahStart = quranDataSource.ayahForPageArray
   private val juzPageStart = quranDataSource.pageForJuzArray
