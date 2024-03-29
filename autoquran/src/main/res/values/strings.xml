@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">AutoQuran</string>
+  <string name="app_name">AutoQuran</string>
+  <string name="quran_sura_title">Surah %1$s</string>
 </resources>

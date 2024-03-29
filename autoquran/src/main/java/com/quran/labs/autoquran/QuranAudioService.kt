@@ -1,6 +1,7 @@
 package com.quran.labs.autoquran
 
 import android.content.ContentResolver
+import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
@@ -9,10 +10,12 @@ import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaSessionCompat
+import android.text.TextUtils
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.utils.MediaConstants
+import com.quran.data.core.QuranConstants
 import com.quran.data.core.QuranInfo
-import com.quran.data.core.QuranPageInfo
+import com.quran.labs.autoquran.di.DaggerServiceComponent
 import javax.inject.Inject
 
 
@@ -71,17 +74,12 @@ import javax.inject.Inject
  *
  */
 class QuranAudioService : MediaBrowserServiceCompat(), MediaPlayer.OnPreparedListener {
-
+  @Inject
+  lateinit var quranInfo: QuranInfo
   private lateinit var mSession: MediaSessionCompat
   var mediaPlayer: MediaPlayer? = null
   val mediaItems = mutableListOf(
-      createBrowsableMediaItem("quran", "Quran"),
-      createMediaItem(
-          "quran_1", "Quran", "Quran", Uri.Builder()
-          .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-          .path(R.raw.sample.toString())
-          .build()
-      )
+      createBrowsableMediaItem("quran", "Quran")
   )
 
   override fun onCreate() {
@@ -89,17 +87,19 @@ class QuranAudioService : MediaBrowserServiceCompat(), MediaPlayer.OnPreparedLis
     mSession = MediaSessionCompat(baseContext, "QuranAudioService")
     setSessionToken(mSession.sessionToken)
     mSession.setCallback(MediaSessionCallback())
-//    quranInfo.suraPageStart.forEachIndexed { index, page ->
-//      val name = quranPageInfo.suraName(page)
-//      mediaItems.add(
-//          createMediaItem(
-//              name, "Quran: {$name}", "Quran", Uri.Builder()
-//              .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
-//              .path(R.raw.jazz_in_paris.toString())
-//              .build()
-//          )
-//      )
-//    }
+    val component = DaggerServiceComponent.create()
+    component.inject(this)
+    quranInfo.suraPageStart.forEachIndexed { index, page ->
+      val name = getSuraName(this, index + 1, true, false)
+      mediaItems.add(
+          createMediaItem(
+              name, name, "Quran", Uri.Builder()
+              .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+              .path(R.raw.sample.toString())
+              .build()
+          )
+      )
+    }
   }
 
   override fun onDestroy() {
@@ -200,5 +200,30 @@ class QuranAudioService : MediaBrowserServiceCompat(), MediaPlayer.OnPreparedLis
     override fun onSkipToPrevious() {}
     override fun onCustomAction(action: String, extras: Bundle) {}
     override fun onPlayFromSearch(query: String, extras: Bundle) {}
+  }
+
+  private fun getSuraName(
+      context: Context, sura: Int, wantPrefix: Boolean, wantTranslation: Boolean
+  ): String {
+    if (sura < QuranConstants.FIRST_SURA || sura > QuranConstants.LAST_SURA) return ""
+
+    val builder = StringBuilder()
+    val suraNames = context.resources.getStringArray(R.array.sura_names)
+    if (wantPrefix) {
+      builder.append(context.getString(R.string.quran_sura_title, suraNames[sura - 1]))
+    } else {
+      builder.append(suraNames[sura - 1])
+    }
+    if (wantTranslation) {
+      val translation = context.resources.getStringArray(R.array.sura_names_translation)[sura - 1]
+      if (!TextUtils.isEmpty(translation)) {
+        // Some sura names may not have translation
+        builder.append(" (")
+        builder.append(translation)
+        builder.append(")")
+      }
+    }
+
+    return builder.toString()
   }
 }
