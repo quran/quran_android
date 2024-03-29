@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="sura_names">
+    <item>Al-Fātihah</item>
+    <item>Al-Baqarah</item>
+    <item>Āli-ʿImrān</item>
+    <item>An-Nisāʾ</item>
+    <item>Al-Māʾidah</item>
+    <item>Al-Anʿām</item>
+    <item>Al-Aʿrāf</item>
+    <item>Al-Anfāl</item>
+    <item>At-Tawbah</item>
+    <item>Yūnus</item>
+    <item>Hūd</item>
+    <item>Yūsuf</item>
+    <item>Ar-Raʿd</item>
+    <item>Ibrāhīm</item>
+    <item>Al-Ḥijr</item>
+    <item>An-Naḥl</item>
+    <item>Al-Isrāʾ</item>
+    <item>Al-Kahf</item>
+    <item>Maryam</item>
+    <item>Ṭā-Hā</item>
+    <item>Al-Anbiyāʾ</item>
+    <item>Al-Ḥajj</item>
+    <item>Al-Muʾminūn</item>
+    <item>An-Nūr</item>
+    <item>Al-Furqān</item>
+    <item>Ash-Shuʿarāʾ</item>
+    <item>An-Naml</item>
+    <item>Al-Qaṣaṣ</item>
+    <item>Al-ʿAnkabūt</item>
+    <item>Ar-Rūm</item>
+    <item>Luqmān</item>
+    <item>As-Sajdah</item>
+    <item>Al-Aḥzāb</item>
+    <item>Sabaʾ</item>
+    <item>Fāṭir</item>
+    <item>Yā-Sīn</item>
+    <item>Aṣ-Ṣāffāt</item>
+    <item>Ṣād</item>
+    <item>Az-Zumar</item>
+    <item>Ghāfir</item>
+    <item>Fuṣṣilat</item>
+    <item>Ash-Shūrā</item>
+    <item>Az-Zukhruf</item>
+    <item>Ad-Dukhān</item>
+    <item>Al-Jāthiyah</item>
+    <item>Al-Aḥqāf</item>
+    <item>Muḥammad</item>
+    <item>Al-Fatḥ</item>
+    <item>Al-Ḥujurāt</item>
+    <item>Qāf</item>
+    <item>Adh-Dhāriyāt</item>
+    <item>Aṭ-Ṭūr</item>
+    <item>An-Najm</item>
+    <item>Al-Qamar</item>
+    <item>Ar-Raḥmān</item>
+    <item>Al-Wāqiʿah</item>
+    <item>Al-Ḥadīd</item>
+    <item>Al-Mujādilah</item>
+    <item>Al-Ḥashr</item>
+    <item>Al-Mumtaḥanah</item>
+    <item>Aṣ-Ṣaff</item>
+    <item>Al-Jumuʿah</item>
+    <item>Al-Munāfiqūn</item>
+    <item>At-Taghābun</item>
+    <item>Aṭ-Ṭalāq</item>
+    <item>At-Taḥrīm</item>
+    <item>Al-Mulk</item>
+    <item>Al-Qalam</item>
+    <item>Al-Ḥāqqah</item>
+    <item>Al-Maʿārij</item>
+    <item>Nūḥ</item>
+    <item>Al-Jinn</item>
+    <item>Al-Muzzammil</item>
+    <item>Al-Muddaththir</item>
+    <item>Al-Qiyāmah</item>
+    <item>Al-Insān</item>
+    <item>Al-Mursalāt</item>
+    <item>An-Nabaʾ</item>
+    <item>An-Nāziʿāt</item>
+    <item>ʿAbasa</item>
+    <item>At-Takwīr</item>
+    <item>Al-Infiṭār</item>
+    <item>Al-Muṭaffifīn</item>
+    <item>Al-Inshiqāq</item>
+    <item>Al-Burūj</item>
+    <item>Aṭ-Ṭāriq</item>
+    <item>Al-Aʿlā</item>
+    <item>Al-Ghāshiyah</item>
+    <item>Al-Fajr</item>
+    <item>Al-Balad</item>
+    <item>Ash-Shams</item>
+    <item>Al-Layl</item>
+    <item>Aḍ-Ḍuḥā</item>
+    <item>Ash-Sharḥ</item>
+    <item>At-Tīn</item>
+    <item>Al-ʿAlaq</item>
+    <item>Al-Qadr</item>
+    <item>Al-Bayyinah</item>
+    <item>Az-Zalzalah</item>
+    <item>Al-ʿĀdiyāt</item>
+    <item>Al-Qāriʿah</item>
+    <item>At-Takāthur</item>
+    <item>Al-ʿAṣr</item>
+    <item>Al-Humazah</item>
+    <item>Al-Fīl</item>
+    <item>Quraysh</item>
+    <item>Al-Māʿūn</item>
+    <item>Al-Kawthar</item>
+    <item>Al-Kāfirūn</item>
+    <item>An-Naṣr</item>
+    <item>Al-Masad</item>
+    <item>Al-Ikhlāṣ</item>
+    <item>Al-Falaq</item>
+    <item>An-Nās</item>
+  </string-array>
+
+  <!-- If sura name has no translation, please add empty double quotes to the
+       respective item body to keep Android Studio happy -->
+  <string-array name="sura_names_translation">
+    <item>The Opening</item>
+    <item>The Cow</item>
+    <item>The Family of Imran</item>
+    <item>The Women</item>
+    <item>The Table Spread With Food</item>
+    <item>The Cattle</item>
+    <item>The Heights (or The Wall with Elevations)</item>
+    <item>The Spoils of War</item>
+    <item>The Repentance</item>
+    <item>Jonah</item>
+    <item>(Prophet) Hūd</item>
+    <item>(Prophet) Joseph</item>
+    <item>The Thunder</item>
+    <item>Abraham</item>
+    <item>The Rocky Tract</item>
+    <item>The Bees</item>
+    <item>The Journey by Night</item>
+    <item>The Cave</item>
+    <item>Mary</item>
+    <item>Ta-Ha</item>
+    <item>The Prophets</item>
+    <item>The Pilgrimage</item>
+    <item>The Believers</item>
+    <item>The Light</item>
+    <item>The Criterion</item>
+    <item>The Poets</item>
+    <item>The Ants</item>
+    <item>The Narration</item>
+    <item>The Spider</item>
+    <item>The Romans</item>
+    <item>Luqmān</item>
+    <item>The Prostration</item>
+    <item>The Confederates</item>
+    <item>Sheba</item>
+    <item>The Originator of Creation</item>
+    <item>Ya Sin</item>
+    <item>Those Ranged in Ranks</item>
+    <item>The Letter &quot;Saad&quot;</item>
+    <item>The Groups</item>
+    <item>The Forgiver</item>
+    <item>They are explained in detail</item>
+    <item>The Consultation</item>
+    <item>The Gold Adornments</item>
+    <item>The Smoke</item>
+    <item>The Kneeling</item>
+    <item>The Curved Sand‑hills</item>
+    <item>Muḥammad صَلَّى ٱللَّهُ عَلَيۡهِ وَسَلَّمَ</item>
+    <item>The Victory</item>
+    <item>The Dwellings</item>
+    <item>The Letter &quot;Qaf&quot;</item>
+    <item>The Winds that Scatter</item>
+    <item>The Mount</item>
+    <item>The Star</item>
+    <item>The Moon</item>
+    <item>The Most Gracious</item>
+    <item>The Event</item>
+    <item>Iron</item>
+    <item>The Woman Who Disputes</item>
+    <item>The Gathering</item>
+    <item>The Woman to be examined</item>
+    <item>The Row or the Rank</item>
+    <item>Friday</item>
+    <item>The Hypocrites</item>
+    <item>Mutual Loss and Gain</item>
+    <item>The Divorce</item>
+    <item>The Prohibition</item>
+    <item>Dominion</item>
+    <item>The Pen</item>
+    <item>The Inevitable</item>
+    <item>The Ways of Ascent</item>
+    <item>Noah</item>
+    <item>The Jinn</item>
+    <item>The One wrapped in Garments</item>
+    <item>The One Enveloped</item>
+    <item>The Resurrection</item>
+    <item>Man</item>
+    <item>Those sent forth</item>
+    <item>The News</item>
+    <item>Those Who Pull Out</item>
+    <item>He Frowned</item>
+    <item>Winding Round and losing its Light</item>
+    <item>The Cleaving</item>
+    <item>Those Who Deal in Fraud</item>
+    <item>The Splitting Asunder</item>
+    <item>The Big Stars “Burūj”</item>
+    <item>The Night‑Comer</item>
+    <item>The Most High</item>
+    <item>The Overwhelming</item>
+    <item>The Break of Day or the Dawn</item>
+    <item>The City</item>
+    <item>The Sun</item>
+    <item>The Night</item>
+    <item>The Forenoon ‑ “After Sunrise”</item>
+    <item>The Opening Forth</item>
+    <item>The Fig</item>
+    <item>The Clot</item>
+    <item>The Night of Decree</item>
+    <item>The Clear Evidence</item>
+    <item>The Earthquake</item>
+    <item>Those That Run</item>
+    <item>The Striking Hour</item>
+    <item>The piling Up — The Emulous Desire</item>
+    <item>The Time</item>
+    <item>The Slanderer</item>
+    <item>The Elephant</item>
+    <item>Quraish</item>
+    <item>The Small Kindnesses</item>
+    <item>A River in Paradise</item>
+    <item>The Disbelievers</item>
+    <item>The Help</item>
+    <item>The Palm Fibre</item>
+    <item>The Purity</item>
+    <item>The Daybreak</item>
+    <item>Mankind</item>
+  </string-array>
+</resources>

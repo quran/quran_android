@@ -1,5 +1,6 @@
 plugins {
   id 'quran.android.application'
+  id 'org.jetbrains.kotlin.kapt'
   id 'org.jetbrains.kotlin.android'
   id 'com.squareup.anvil'
 }
@@ -37,8 +38,11 @@ dependencies {
   implementation project(":common:di")
   implementation project(":common:pages")
   implementation project(':pages:madani')
+  implementation project(':common:upgrade')
 
   // dagger
+  kapt deps.dagger.apt
+  kaptTest deps.dagger.apt
   implementation deps.dagger.runtime
 
 }
