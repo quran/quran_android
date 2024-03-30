@@ -17,6 +17,8 @@ interface Settings {
   suspend fun setShowSidelines(show: Boolean)
   suspend fun showLineDividers(): Boolean
   suspend fun setShouldShowLineDividers(show: Boolean)
+  suspend fun setAyahTextSize(value: Int)
+  suspend fun translationTextSize(): Int
 
   fun preferencesFlow(): Flow<String>
 }

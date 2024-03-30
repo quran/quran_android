@@ -96,5 +96,11 @@ class SettingsImpl @Inject constructor(private val quranSettings: QuranSettings)
     quranSettings.isShowLineDividers = show
   }
 
+  override suspend fun setAyahTextSize(value: Int) {
+    quranSettings.ayahTextSize = value
+  }
+
+  override suspend fun translationTextSize(): Int = quranSettings.translationTextSize
+
   override fun preferencesFlow(): Flow<String> = preferencesFlow
 }
