@@ -181,6 +181,7 @@
   <string name="prefs_display_marker_summary">Display popup on reaching juz\', hizb, etc.</string>
   <string name="prefs_highlight_bookmarks_title">Highlight bookmarks</string>
   <string name="prefs_highlight_bookmarks_summary">Highlight bookmarked ayahs while reading</string>
+  <string name="prefs_ayah_text_title">Ayah text size</string>
   <string name="prefs_translation_text_title">Translation text size</string>
   <string name="prefs_translations">Translations</string>
   <string name="prefs_translations_summary">Download and manage translations</string>

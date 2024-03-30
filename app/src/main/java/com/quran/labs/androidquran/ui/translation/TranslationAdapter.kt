@@ -45,7 +45,8 @@ internal class TranslationAdapter(
   private val inflater: LayoutInflater = LayoutInflater.from(context)
   private val data: MutableList<TranslationViewRow> = mutableListOf()
 
-  private var fontSize: Int = 0
+  private var ayahFontSize: Int = 0
+  private var translationFontSize: Int = 0
   private var textColor: Int = 0
   private var footnoteColor: Int = 0
   private var inlineAyahColor: Int = 0
@@ -197,7 +198,8 @@ internal class TranslationAdapter(
   }
 
   fun refresh(quranSettings: QuranSettings) {
-    this.fontSize = quranSettings.translationTextSize
+    this.ayahFontSize = quranSettings.ayahTextSize
+    this.translationFontSize = quranSettings.translationTextSize
     isNightMode = quranSettings.isNightMode
     if (isNightMode) {
       val originalTextBrightness = quranSettings.nightModeTextBrightness
@@ -327,7 +329,7 @@ internal class TranslationAdapter(
 
           text = str
           holder.text.setTextColor(arabicTextColor)
-          holder.text.textSize = ARABIC_MULTIPLIER * fontSize
+          holder.text.textSize = ARABIC_MULTIPLIER * ayahFontSize
         } else {
           if (row.type == TranslationViewRow.Type.TRANSLATOR) {
             text = row.data
@@ -396,7 +398,7 @@ internal class TranslationAdapter(
 
             holder.text.movementMethod = LinkMovementMethod.getInstance()
             holder.text.setTextColor(textColor)
-            holder.text.textSize = fontSize.toFloat()
+            holder.text.textSize = translationFontSize.toFloat()
           }
         }
         holder.text.text = text
