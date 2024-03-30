@@ -163,7 +163,7 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
     }
   }
 
-  override fun setVerses(translations: Array<LocalTranslation>, verses: List<QuranAyahInfo>) {
+  override fun setVerses(translations: Array<LocalTranslation>, verses: List<QuranAyahInfo>, ayahHasBeenChanged: Boolean) {
     progressBar.visibility = View.GONE
     if (verses.isNotEmpty()) {
       emptyState.visibility = View.GONE
@@ -171,6 +171,9 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
       translator.visibility = View.VISIBLE
       translationView.visibility = View.VISIBLE
       translationView.setAyahs(translations, verses)
+      if (ayahHasBeenChanged) {
+        translationView.resetScroll()
+      }
     } else {
       emptyState.visibility = View.VISIBLE
     }

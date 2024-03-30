@@ -88,8 +88,11 @@ class InlineTranslationView @JvmOverloads constructor(
         i++
       }
       addFooterSpacer()
-      scrollTo(0, 0)
     }
+  }
+
+  fun resetScroll() {
+    scrollTo(0, 0)
   }
 
   private fun addFooterSpacer() {
