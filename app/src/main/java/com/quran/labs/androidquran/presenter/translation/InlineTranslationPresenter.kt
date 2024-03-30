@@ -28,6 +28,7 @@ class InlineTranslationPresenter @Inject constructor(
 ) {
   private val scope = MainScope()
   private var cachedTranslations = emptyList<LocalTranslation>()
+  private var lastVerseRange: VerseRange? = null
 
   init {
     translationListPresenter.translations()
@@ -39,10 +40,12 @@ class InlineTranslationPresenter @Inject constructor(
   }
 
   suspend fun refresh(verseRange: VerseRange) {
+    val ayahHasBeenChanged = verseRange != lastVerseRange
     val result = withContext(Dispatchers.IO) {
       getVerses(false, getTranslations(quranSettings), verseRange)
     }
-    translationScreen?.setVerses(result.translations, result.ayahInformation)
+    translationScreen?.setVerses(result.translations, result.ayahInformation, ayahHasBeenChanged)
+    lastVerseRange = verseRange
   }
 
   override fun bind(what: TranslationScreen) {
@@ -52,7 +55,7 @@ class InlineTranslationPresenter @Inject constructor(
   }
 
   interface TranslationScreen {
-    fun setVerses(translations: Array<LocalTranslation>, verses: List<QuranAyahInfo>)
+    fun setVerses(translations: Array<LocalTranslation>, verses: List<QuranAyahInfo>, ayahHasBeenChanged: Boolean)
     fun onTranslationsUpdated(translations: List<LocalTranslation>)
   }
 }
