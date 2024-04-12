@@ -45,7 +45,7 @@ androidxPagingComposeVersion = "3.2.1"
 androidxWorkManagerVersion = "2.9.0"
 
 # firebase
-firebaseAnalyticsVersion = "21.6.1"
+firebaseAnalyticsVersion = "21.6.2"
 firebaseCrashlyticsVersion = "18.6.4"
 
 # ui libraries
