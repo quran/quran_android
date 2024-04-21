@@ -33,10 +33,15 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager.widget.NonRestoringViewPager
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowInfoTracker
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.model.QuranText
@@ -133,8 +138,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
@@ -168,6 +175,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private var promptedForExtraDownload = false
   private var progressDialog: ProgressDialog? = null
   private var isInMultiWindowMode = false
+  private var isFoldableDeviceOpenAndVertical = false
 
   private var bookmarksMenuItem: MenuItem? = null
 
@@ -262,8 +270,57 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     // field injection
     pagerActivityComponent.inject(this)
 
+    isFoldableDeviceOpenAndVertical =
+      savedInstanceState?.getBoolean(LAST_FOLDING_STATE, isFoldableDeviceOpenAndVertical)
+        ?: isFoldableDeviceOpenAndVertical
+
+    lifecycleScope.launch(scope.coroutineContext) {
+      lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        WindowInfoTracker.getOrCreate(this@PagerActivity)
+          .windowLayoutInfo(this@PagerActivity)
+          .mapNotNull { it.displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull() }
+          .collectLatest { foldingFeatures ->
+            val localState = foldingFeatures.state == FoldingFeature.State.FLAT &&
+                foldingFeatures.orientation == FoldingFeature.Orientation.VERTICAL
+            if (isFoldableDeviceOpenAndVertical != localState) {
+              isFoldableDeviceOpenAndVertical = localState
+              initialize(savedInstanceState)
+            }
+          }
+      }
+    }
+
+    setContentView(R.layout.quran_page_activity_slider)
+    initialize(savedInstanceState)
+    requestPermissionLauncher =
+      registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean? ->
+        audioPresenter.onPostNotificationsPermissionResponse(
+          isGranted!!
+        )
+      }
+
+    // read the list of translations
+    requestTranslationsList()
+
+    downloadBridge.subscribeToDownloads {
+      onDownloadSuccess()
+    }
+
+    bookmarksDao.pageBookmarksWithoutTags().combine(currentPageFlow) { bookmarks, currentPage ->
+      bookmarks to currentPage
+    }.onEach { (bookmarks, page) ->
+      val isBookmarked = if (isDualPages) {
+        bookmarks.any { it.page == page || it.page == page - 1 }
+      } else {
+        bookmarks.any { it.page == page }
+      }
+      refreshBookmarksMenu(isBookmarked)
+    }.launchIn(scope)
+  }
+
+  private fun initialize(savedInstanceState: Bundle?) {
     var shouldAdjustPageNumber = false
-    isDualPages = QuranUtils.isDualPages(this, quranScreenInfo)
+    isDualPages = QuranUtils.isDualPages(this, quranScreenInfo, isFoldableDeviceOpenAndVertical)
     isSplitScreen = quranSettings.isQuranSplitWithTranslation
     audioStatusRepositoryBridge = AudioStatusRepositoryBridge(
       audioStatusRepository,
@@ -323,7 +380,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     compositeDisposable = CompositeDisposable()
 
-    setContentView(R.layout.quran_page_activity_slider)
     audioStatusBar = findViewById(R.id.audio_area)
     audioBarParams = audioStatusBar.layoutParams as MarginLayoutParams
 
@@ -498,31 +554,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         { ayah: SuraAyah -> ensurePage(ayah.sura, ayah.ayah) },
         { sliderPage: Int -> showSlider(slidingPagerAdapter.getPagePosition(sliderPage)) }
       ))
-
-    requestPermissionLauncher =
-      registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean? ->
-        audioPresenter.onPostNotificationsPermissionResponse(
-          isGranted!!
-        )
-      }
-
-    // read the list of translations
-    requestTranslationsList()
-
-    downloadBridge.subscribeToDownloads {
-      onDownloadSuccess()
-    }
-
-    bookmarksDao.pageBookmarksWithoutTags().combine(currentPageFlow) { bookmarks, currentPage ->
-      bookmarks to currentPage
-    }.onEach { (bookmarks, page) ->
-      val isBookmarked = if (isDualPages) {
-        bookmarks.any { it.page == page || it.page == page - 1 }
-      } else {
-        bookmarks.any { it.page == page }
-      }
-      refreshBookmarksMenu(isBookmarked)
-    }.launchIn(scope)
   }
 
   override fun onRequestPermissionsResult(
@@ -551,9 +582,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       viewPager.addOnPageChangeListener(pageChangedListener)
       awaitClose { viewPager.removeOnPageChangeListener(pageChangedListener) }
     }
-    .onStart { emit(currentPage) }
-    .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
-    .shareIn(scope, SharingStarted.Eagerly, 1)
+      .onStart { emit(currentPage) }
+      .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
+      .shareIn(scope, SharingStarted.Eagerly, 1)
 
   private val statusBarHeight: Int
     get() {
@@ -646,9 +677,17 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private fun startPosition(ayahSelection: AyahSelection): SuraAyah? {
     return when (ayahSelection) {
-      is AyahSelection.Ayah -> { ayahSelection.suraAyah }
-      is AyahRange -> { ayahSelection.startSuraAyah }
-      else -> { null }
+      is AyahSelection.Ayah -> {
+        ayahSelection.suraAyah
+      }
+
+      is AyahRange -> {
+        ayahSelection.startSuraAyah
+      }
+
+      else -> {
+        null
+      }
     }
   }
 
@@ -979,6 +1018,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, showingTranslation)
     state.putBoolean(LAST_ACTIONBAR_STATE, isActionBarHidden)
     state.putBoolean(LAST_WAS_DUAL_PAGES, isDualPages)
+    state.putBoolean(LAST_FOLDING_STATE, isFoldableDeviceOpenAndVertical)
     super.onSaveInstanceState(state)
   }
 
@@ -1839,6 +1879,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     private const val LAST_READ_PAGE = "LAST_READ_PAGE"
     private const val LAST_READING_MODE_IS_TRANSLATION = "LAST_READING_MODE_IS_TRANSLATION"
     private const val LAST_ACTIONBAR_STATE = "LAST_ACTIONBAR_STATE"
+    private const val LAST_FOLDING_STATE = "LAST_FOLDING_STATE"
 
     const val EXTRA_JUMP_TO_TRANSLATION: String = "jumpToTranslation"
     const val EXTRA_HIGHLIGHT_SURA: String = "highlightSura"
