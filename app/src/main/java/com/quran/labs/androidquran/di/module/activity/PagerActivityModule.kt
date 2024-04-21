@@ -33,7 +33,7 @@ object PagerActivityModule {
   @Provides
   @ActivityScope
   fun provideImageWidth(@ActivityContext context: Context, screenInfo: QuranScreenInfo): String {
-    return if (QuranUtils.isDualPages(context, screenInfo)) {
+    return if (QuranUtils.isDualPages(context, screenInfo, false)) {
       screenInfo.tabletWidthParam
     } else {
       screenInfo.widthParam

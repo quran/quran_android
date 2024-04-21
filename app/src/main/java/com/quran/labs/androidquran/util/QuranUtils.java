@@ -106,12 +106,12 @@ public class QuranUtils {
     return numberFormat.format(number);
   }
 
-  public static boolean isDualPages(Context context, QuranScreenInfo qsi) {
+  public static boolean isDualPages(Context context, QuranScreenInfo qsi, boolean isValidFoldableDeviceAndOpen) {
     if (context != null && qsi != null) {
       final Resources resources = context.getResources();
-      if (qsi.isDualPageMode() &&
+      if ((qsi.isDualPageMode() &&
           resources.getConfiguration().orientation ==
-              Configuration.ORIENTATION_LANDSCAPE) {
+              Configuration.ORIENTATION_LANDSCAPE) || isValidFoldableDeviceAndOpen) {
         final SharedPreferences prefs =
             PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(Constants.PREF_DUAL_PAGE_ENABLED,

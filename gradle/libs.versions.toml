@@ -43,6 +43,7 @@ androidxSwipeRefreshVersion = "1.1.0"
 androidxPagingVersion = "3.2.1"
 androidxPagingComposeVersion = "3.2.1"
 androidxWorkManagerVersion = "2.9.0"
+androidxWindowManager = "1.2.0"
 
 # firebase
 firebaseAnalyticsVersion = "21.6.2"
@@ -96,7 +97,7 @@ androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version
 androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "androidxPagingVersion" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidxPagingComposeVersion" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigationVersion" }
-
+androidx-window = { module = "androidx.window:window", version.ref = "androidxWindowManager" }
 # compose
 compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 compose-foundation = { module = "androidx.compose.foundation:foundation" }

@@ -156,6 +156,7 @@ dependencies {
   implementation libs.androidx.recyclerview
   implementation libs.material
   implementation libs.androidx.swiperefreshlayout
+  implementation libs.androidx.window
 
   // compose
   implementation libs.compose.ui
