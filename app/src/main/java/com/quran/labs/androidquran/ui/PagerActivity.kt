@@ -204,52 +204,29 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private var lastSelectedTranslationAyah: QuranAyahInfo? = null
   private var lastActivatedLocalTranslations: Array<LocalTranslation> = emptyArray()
 
-  @Inject
-  lateinit var bookmarksDao: BookmarksDao
-  @Inject
-  lateinit var recentPagePresenter: RecentPagePresenter
-  @Inject
-  lateinit var quranSettings: QuranSettings
-  @Inject
-  lateinit var quranScreenInfo: QuranScreenInfo
-  @Inject
-  lateinit var arabicDatabaseUtils: ArabicDatabaseUtils
-  @Inject
-  lateinit var quranAppUtils: QuranAppUtils
-  @Inject
-  lateinit var shareUtil: ShareUtil
-  @Inject
-  lateinit var audioUtils: AudioUtils
-  @Inject
-  lateinit var quranDisplayData: QuranDisplayData
-  @Inject
-  lateinit var quranInfo: QuranInfo
-  @Inject
-  lateinit var quranFileUtils: QuranFileUtils
-  @Inject
-  lateinit var audioPresenter: AudioPresenter
-  @Inject
-  lateinit var quranEventLogger: QuranEventLogger
-  @Inject
-  lateinit var audioStatusRepository: AudioStatusRepository
-  @Inject
-  lateinit var readingEventPresenter: ReadingEventPresenter
-  @Inject
-  lateinit var pageProviderFactoryProvider: PageViewFactoryProvider
-  @Inject
-  lateinit var additionalAyahPanels: Set<@JvmSuppressWildcards AyahActionFragmentProvider>
-  @Inject
-  lateinit var pagerActivityRecitationPresenter: PagerActivityRecitationPresenter
-  @Inject
-  lateinit var translationListPresenter: TranslationListPresenter
-  @Inject
-  lateinit var audioBarEventRepository: AudioBarEventRepository
-  @Inject
-  lateinit var downloadInfoStreams: DownloadInfoStreams
-  @Inject
-  lateinit var qariManager: CurrentQariManager
-  @Inject
-  lateinit var downloadBridge: DownloadBridge
+  @Inject lateinit var bookmarksDao: BookmarksDao
+  @Inject lateinit var recentPagePresenter: RecentPagePresenter
+  @Inject lateinit var quranSettings: QuranSettings
+  @Inject lateinit var quranScreenInfo: QuranScreenInfo
+  @Inject lateinit var arabicDatabaseUtils: ArabicDatabaseUtils
+  @Inject lateinit var quranAppUtils: QuranAppUtils
+  @Inject lateinit var shareUtil: ShareUtil
+  @Inject lateinit var audioUtils: AudioUtils
+  @Inject lateinit var quranDisplayData: QuranDisplayData
+  @Inject lateinit var quranInfo: QuranInfo
+  @Inject lateinit var quranFileUtils: QuranFileUtils
+  @Inject lateinit var audioPresenter: AudioPresenter
+  @Inject lateinit var quranEventLogger: QuranEventLogger
+  @Inject lateinit var audioStatusRepository: AudioStatusRepository
+  @Inject lateinit var readingEventPresenter: ReadingEventPresenter
+  @Inject lateinit var pageProviderFactoryProvider: PageViewFactoryProvider
+  @Inject lateinit var additionalAyahPanels: Set<@JvmSuppressWildcards AyahActionFragmentProvider>
+  @Inject lateinit var pagerActivityRecitationPresenter: PagerActivityRecitationPresenter
+  @Inject lateinit var translationListPresenter: TranslationListPresenter
+  @Inject lateinit var audioBarEventRepository: AudioBarEventRepository
+  @Inject lateinit var downloadInfoStreams: DownloadInfoStreams
+  @Inject lateinit var qariManager: CurrentQariManager
+  @Inject lateinit var downloadBridge: DownloadBridge
 
   private lateinit var audioStatusRepositoryBridge: AudioStatusRepositoryBridge
   private lateinit var readingEventPresenterBridge: ReadingEventPresenterBridge
