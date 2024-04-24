@@ -917,11 +917,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
   }
 
-  public override fun onNewIntent(intent: Intent?) {
+  public override fun onNewIntent(intent: Intent) {
     super.onNewIntent(intent)
-    if (intent == null) {
-      return
-    }
 
     recentPagePresenter.onJump()
     val extras = intent.extras
