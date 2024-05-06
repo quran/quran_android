@@ -27,7 +27,7 @@ class TranslationsDBAdapter @Inject constructor(
     return dataSource.translations()
       .filterNotNull()
       .map { translations ->
-        translations.filter { quranFileUtils.hasTranslation(context, it.filename) }
+        translations.filter { quranFileUtils.hasTranslation(it.filename) }
       }
   }
 

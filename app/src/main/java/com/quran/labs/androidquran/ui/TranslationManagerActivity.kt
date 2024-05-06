@@ -50,7 +50,7 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   private var originalSortedDownloads: List<TranslationItem> = emptyList()
   private var translationPositions: SparseIntArray = SparseIntArray()
   private var downloadingItem: TranslationItem? = null
-  private var databaseDirectory: String? = null
+  private var databaseDirectory: File? = null
   private var downloadReceiver: DefaultDownloadReceiver? = null
   private var actionMode: ActionMode? = null
   private var downloadedItemActionListener: DownloadedItemActionListener? = null
@@ -87,7 +87,7 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     adapter = TranslationsAdapter(this)
     translationRecycler.setAdapter(adapter)
     selectionListener = TranslationSelectionListener(adapter)
-    databaseDirectory = quranFileUtils.getQuranDatabaseDirectory(this)
+    databaseDirectory = quranFileUtils.getQuranDatabaseDirectory()
     val actionBar = supportActionBar
     if (actionBar != null) {
       actionBar.setDisplayHomeAsUpEnabled(true)
@@ -332,7 +332,7 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     val notificationTitle = selectedItem.name()
     val intent = getDownloadIntent(
       this, url,
-      destination, notificationTitle, TRANSLATION_DOWNLOAD_KEY,
+      destination?.absolutePath ?: "", notificationTitle, TRANSLATION_DOWNLOAD_KEY,
       QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION
     )
     var filename = selectedItem.translation.fileName
@@ -422,13 +422,9 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   }
 
   private fun removeTranslation(fileName: String): Boolean {
-    var path = quranFileUtils.getQuranDatabaseDirectory(this@TranslationManagerActivity)
-    if (path != null) {
-      path += File.separator + fileName
-      val f = File(path)
-      return f.delete()
-    }
-    return false
+    var path = quranFileUtils.getQuranDatabaseDirectory()
+    val f = File(path, fileName)
+    return f.delete()
   }
 
   override fun startMenuAction(

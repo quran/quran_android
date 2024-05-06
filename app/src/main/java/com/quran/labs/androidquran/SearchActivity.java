@@ -130,7 +130,7 @@ public class SearchActivity extends AppCompatActivity
     String url = quranFileUtils.getArabicSearchDatabaseUrl();
     String notificationTitle = getString(R.string.search_data);
     Intent intent = ServiceIntentHelper.getDownloadIntent(this, url,
-        quranFileUtils.getQuranDatabaseDirectory(this),
+        quranFileUtils.getQuranDatabaseDirectory().getAbsolutePath(),
         notificationTitle, SEARCH_INFO_DOWNLOAD_KEY,
         QuranDownloadService.DOWNLOAD_TYPE_ARABIC_SEARCH_DB);
     final String extension = url.endsWith(".zip") ? ".zip" : "";

@@ -35,45 +35,43 @@ constructor(
   private var currentView: PageSelectActivity? = null
 
   private fun generateData() {
-    val base = quranFileUtils.quranBaseDirectory
-    if (base != null) {
-      val outputPath = File(File(base, "pagetypes"), "snips")
-      if (!outputPath.exists()) {
-        outputPath.mkdirs()
-        File(outputPath, ".nomedia").createNewFile()
-      }
-
-      val data = pageTypes.map {
-        val provider = it.value
-        val previewImage = File(outputPath, "${it.key}.png")
-        val downloadedImage = if (previewImage.exists()) {
-          previewImage
-        } else if (!downloadingSet.contains(it.key)) {
-          downloadingSet.add(it.key)
-          val url = "$baseUrl/${it.key}.png"
-          compositeDisposable.add(
-            imageUtil.downloadImage(url, previewImage)
-              .onErrorResumeWith(
-                imageUtil.downloadImage(url, previewImage)
-              )
-              .subscribeOn(Schedulers.io())
-              .observeOn(mainThreadScheduler)
-              .subscribe({ generateData() }, { e -> Timber.e(e) })
-          )
-          null
-        } else {
-          // already downloading
-          null
-        }
-        PageTypeItem(
-          it.key,
-          downloadedImage,
-          provider.getPreviewTitle(),
-          provider.getPreviewDescription()
-        )
-      }
-      currentView?.onUpdatedData(data)
+    val base = quranFileUtils.quranInternalStorage
+    val outputPath = File(File(base, "pagetypes"), "snips")
+    if (!outputPath.exists()) {
+      outputPath.mkdirs()
+      File(outputPath, ".nomedia").createNewFile()
     }
+
+    val data = pageTypes.map {
+      val provider = it.value
+      val previewImage = File(outputPath, "${it.key}.png")
+      val downloadedImage = if (previewImage.exists()) {
+        previewImage
+      } else if (!downloadingSet.contains(it.key)) {
+        downloadingSet.add(it.key)
+        val url = "$baseUrl/${it.key}.png"
+        compositeDisposable.add(
+          imageUtil.downloadImage(url, previewImage)
+            .onErrorResumeWith(
+              imageUtil.downloadImage(url, previewImage)
+            )
+            .subscribeOn(Schedulers.io())
+            .observeOn(mainThreadScheduler)
+            .subscribe({ generateData() }, { e -> Timber.e(e) })
+        )
+        null
+      } else {
+        // already downloading
+        null
+      }
+      PageTypeItem(
+        it.key,
+        downloadedImage,
+        provider.getPreviewTitle(),
+        provider.getPreviewDescription()
+      )
+    }
+    currentView?.onUpdatedData(data)
   }
 
   /**

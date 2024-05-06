@@ -160,13 +160,13 @@ open class TranslationManagerPresenter @Inject internal constructor(
 
   internal open val cachedFile: File
     get() {
-      val dir = quranFileUtils.getQuranDatabaseDirectory(appContext)
-      return File(dir + File.separator + CACHED_RESPONSE_FILE_NAME)
+      val dir = quranFileUtils.getQuranDatabaseDirectory()
+      return File(dir, CACHED_RESPONSE_FILE_NAME)
     }
 
   internal open suspend fun mergeWithServerTranslations(serverTranslations: List<Translation>): List<TranslationItem> {
     val localTranslations = translationsDBAdapter.translationsHash()
-    val databaseDir = quranFileUtils.getQuranDatabaseDirectory(appContext)
+    val databaseDir = quranFileUtils.getQuranDatabaseDirectory()
     val updates: MutableList<TranslationItem> = ArrayList()
 
     val results = serverTranslations.mapIndexed { _, translation ->

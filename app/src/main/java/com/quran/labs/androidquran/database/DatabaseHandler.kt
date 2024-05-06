@@ -87,9 +87,9 @@ class DatabaseHandler private constructor(
     arabicSearcher = ArabicSearcher(defaultSearcher, matchString, MATCH_END)
 
     // if there's no Quran base directory, there are no databases
-    val base = quranFileUtils.getQuranDatabaseDirectory(context)
-    base?.let {
-      val path = base + File.separator + databaseName
+    val base = quranFileUtils.getQuranDatabaseDirectory()
+    base.let {
+      val path = File(base, databaseName).absolutePath
       Timber.d("opening database file: %s", path)
       database = try {
         SQLiteDatabase.openDatabase(path, null,

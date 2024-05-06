@@ -540,8 +540,7 @@ public class QuranDownloadService extends Service implements
     if (result == DOWNLOAD_SUCCESS) {
       if (filename.endsWith("zip")) {
         final File actualFile = new File(path, filename);
-        if (!ZipUtils.unzipFile(actualFile.getAbsolutePath(),
-            path, notificationInfo, this)) {
+        if (!ZipUtils.unzipFile(actualFile, new File(path), notificationInfo, this)) {
           return !actualFile.delete() ?
               QuranDownloadNotifier.ERROR_PERMISSIONS :
               QuranDownloadNotifier.ERROR_INVALID_DOWNLOAD;

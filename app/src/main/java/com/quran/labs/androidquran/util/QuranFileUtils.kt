@@ -57,29 +57,24 @@ class QuranFileUtils @Inject constructor(
 
   private val appContext: Context = context.applicationContext
   val gaplessDatabaseRootUrl: String = pageProvider.getAudioDatabasesBaseUrl()
+  private val recitationPath = "recitation"
 
   // check if the images with the given width param have a version
   // that we specify (ex if version is 3, check for a .v3 file).
   @WorkerThread
   override fun isVersion(widthParam: String, version: Int): Boolean {
     // version 1 or below are true as long as you have images
-    return version <= 1 || hasVersionFile(appContext, widthParam, version)
+    return version <= 1 || hasVersionFile(widthParam, version)
   }
 
-  private fun hasVersionFile(context: Context, widthParam: String, version: Int): Boolean {
-    val quranDirectory = getQuranImagesDirectory(context, widthParam)
+  private fun hasVersionFile(widthParam: String, version: Int): Boolean {
+    val quranDirectory = getQuranImagesDirectory(widthParam)
     Timber.d(
         "isVersion: checking if version %d exists for width %s at %s",
         version, widthParam, quranDirectory
     )
-    return if (quranDirectory == null) {
-      false
-    } else try {
-      val vFile = File(
-          quranDirectory +
-              File.separator + ".v" + version
-      )
-      vFile.exists()
+    return try {
+      File(quranDirectory, ".v$version").exists()
     } catch (e: Exception) {
       Timber.e(e, "isVersion: exception while checking version file")
       false
@@ -88,37 +83,32 @@ class QuranFileUtils @Inject constructor(
     // check the version code
   }
 
-  fun getPotentialFallbackDirectory(context: Context, totalPages: Int): String? {
+  fun getPotentialFallbackDirectory(totalPages: Int): String? {
     val state = Environment.getExternalStorageState()
     if (state == Environment.MEDIA_MOUNTED) {
-      if (haveAllImages(context, "_1920", totalPages, false)) {
+      if (haveAllImages("_1920", totalPages, false)) {
         return "1920"
       }
     }
     return null
   }
 
-  override fun quranImagesDirectory(): String? = getQuranImagesDirectory(appContext)
-  override fun ayahInfoFileDirectory(): String? {
+  override fun quranImagesDirectory(): File = getQuranImagesDirectory()
+  override fun ayahInfoFileDirectory(): File {
     val base = quranAyahDatabaseDirectory
-    return if (base != null) {
-      val filename = ayaPositionFileName
-      base + File.separator + filename
-    } else {
-      null
-    }
+    return File(base, ayaPositionFileName)
   }
 
   @WorkerThread
   override fun removeFilesForWidth(width: Int, directoryLambda: ((String) -> String)) {
     val widthParam = "_$width"
-    val quranDirectoryWithoutLambda = getQuranImagesDirectory(appContext, widthParam) ?: return
-    val quranDirectory = directoryLambda(quranDirectoryWithoutLambda)
+    val quranDirectoryWithoutLambda = getQuranImagesDirectory(widthParam)
+    val quranDirectory = directoryLambda(quranDirectoryWithoutLambda.absolutePath)
     val file = File(quranDirectory)
     if (file.exists()) {
       deleteFileOrDirectory(file)
-      val ayahDatabaseDirectoryWithoutLambda = getQuranAyahDatabaseDirectory(appContext) ?: return
-      val ayahDatabaseDirectory = directoryLambda(ayahDatabaseDirectoryWithoutLambda)
+      val ayahDatabaseDirectoryWithoutLambda = quranAyahDatabaseDirectory
+      val ayahDatabaseDirectory = directoryLambda(ayahDatabaseDirectoryWithoutLambda.absolutePath)
       val ayahinfoFile = File(ayahDatabaseDirectory, "ayahinfo_$width.db")
       if (ayahinfoFile.exists()) {
         ayahinfoFile.delete()
@@ -128,57 +118,49 @@ class QuranFileUtils @Inject constructor(
 
   @WorkerThread
   override fun writeVersionFile(widthParam: String, version: Int) {
-    val quranDirectory = getQuranImagesDirectory(appContext, widthParam) ?: return
+    val quranDirectory = getQuranImagesDirectory(widthParam) ?: return
     File(quranDirectory, ".v$version").createNewFile()
   }
 
   @WorkerThread
   override fun writeNoMediaFileRelative(widthParam: String) {
-    val quranDirectory = getQuranImagesDirectory(appContext, widthParam) ?: return
+    val quranDirectory = getQuranImagesDirectory(widthParam)
     writeNoMediaFile(quranDirectory)
   }
 
-  fun haveAllImages(context: Context,
+  fun haveAllImages(
     widthParam: String,
     totalPages: Int,
     makeDirectory: Boolean,
-    oneFilePerPage: Boolean = true
   ): Boolean {
-    val quranDirectory = getQuranImagesDirectory(context, widthParam)
+    val quranDirectory = getQuranImagesDirectory(widthParam)
     Timber.d("haveAllImages: for width %s, directory is: %s", widthParam, quranDirectory)
-    if (quranDirectory == null) {
-      return false
-    }
-    val state = Environment.getExternalStorageState()
-    if (state == Environment.MEDIA_MOUNTED) {
-      val dir = File(quranDirectory + File.separator)
-      if (dir.isDirectory) {
-        Timber.d("haveAllImages: media state is mounted and directory exists")
-        val fileList = dir.list()
-        if (fileList == null) {
-          Timber.d("haveAllImages: null fileList, checking page by page...")
-          for (i in 1..totalPages) {
-            val name = if (oneFilePerPage) getPageFileName(i) else i.toString()
-            if (!File(dir, name).exists()) {
-              Timber.d("haveAllImages: couldn't find page %d", i)
-              return false
-            }
+    if (quranDirectory.isDirectory) {
+      Timber.d("haveAllImages: media state is mounted and directory exists")
+      val fileList = quranDirectory.list()
+      if (fileList == null) {
+        Timber.d("haveAllImages: null fileList, checking page by page...")
+        for (i in 1..totalPages) {
+          val name = getPageFileName(i)
+          if (!File(quranDirectory, name).exists() && !File(quranDirectory, i.toString()).exists()) {
+            Timber.d("haveAllImages: couldn't find page %d", i)
+            return false
           }
-        } else if (fileList.size < totalPages) {
-          // ideally, we should loop for each page and ensure
-          // all pages are there, but this will do for now.
-          Timber.d("haveAllImages: found %d files instead of 604.", fileList.size)
-          return false
         }
-        return true
-      } else {
-        Timber.d(
-            "haveAllImages: couldn't find the directory, so %s",
-            if (makeDirectory) "making it instead." else "doing nothing."
-        )
-        if (makeDirectory) {
-          makeQuranDirectory(context, widthParam)
-        }
+      } else if (fileList.size < totalPages) {
+        // ideally, we should loop for each page and ensure
+        // all pages are there, but this will do for now.
+        Timber.d("haveAllImages: found %d files instead of 604.", fileList.size)
+        return false
+      }
+      return true
+    } else {
+      Timber.d(
+        "haveAllImages: couldn't find the directory, so %s",
+        if (makeDirectory) "making it instead." else "doing nothing."
+      )
+      if (makeDirectory) {
+        makeQuranImagesDirectory(widthParam)
       }
     }
     return false
@@ -191,22 +173,20 @@ class QuranFileUtils @Inject constructor(
     }
 
   fun getImageFromSD(
-    context: Context,
     widthParam: String?,
     filename: String
   ): Response {
-    val location: String =
-      widthParam?.let { getQuranImagesDirectory(context, it) }
-          ?: getQuranImagesDirectory(context)
-          ?: return Response(Response.ERROR_SD_CARD_NOT_FOUND)
+    val location: File =
+      widthParam?.let { getQuranImagesDirectory(it) }
+          ?: getQuranImagesDirectory()
     val options = Options()
     options.inPreferredConfig = ALPHA_8
-    val bitmap = BitmapFactory.decodeFile(location + File.separator + filename, options)
+    val bitmap = BitmapFactory.decodeFile(File(location, filename).absolutePath, options)
     return bitmap?.let { Response(it) } ?: Response(Response.ERROR_FILE_NOT_FOUND)
   }
 
-  private fun writeNoMediaFile(parentDir: String): Boolean {
-    val f = File("$parentDir/.nomedia")
+  private fun writeNoMediaFile(parentDir: File): Boolean {
+    val f = File(parentDir, ".nomedia")
     return if (f.exists()) {
       true
     } else try {
@@ -216,37 +196,34 @@ class QuranFileUtils @Inject constructor(
     }
   }
 
-  fun makeQuranDirectory(context: Context, widthParam: String): Boolean {
-    val path = getQuranImagesDirectory(context, widthParam) ?: return false
-    val directory = File(path)
+  fun makeQuranImagesDirectory(widthParam: String): Boolean {
+    val directory = getQuranImagesDirectory(widthParam)
     return if (directory.exists() && directory.isDirectory) {
-      writeNoMediaFile(path)
+      writeNoMediaFile(directory)
     } else {
-      directory.mkdirs() && writeNoMediaFile(path)
+      directory.mkdirs() && writeNoMediaFile(directory)
     }
   }
 
   private fun makeDirectory(path: String?): Boolean {
     if (path == null) { return false }
     val directory = File(path)
+    return makeDirectory(directory)
+  }
+
+  private fun makeDirectory(directory: File): Boolean {
     return directory.exists() && directory.isDirectory || directory.mkdirs()
-  }
-
-  private fun makeQuranDatabaseDirectory(context: Context): Boolean {
-    return makeDirectory(getQuranDatabaseDirectory(context))
-  }
-
-  private fun makeQuranAyahDatabaseDirectory(context: Context): Boolean {
-    return makeQuranDatabaseDirectory(context) &&
-        makeDirectory(getQuranAyahDatabaseDirectory(context))
   }
 
   @WorkerThread
   override fun copyFromAssetsRelative(assetsPath: String, filename: String, destination: String) {
-    val actualDestination = getQuranBaseDirectory(appContext) + destination
-    val dir = File(actualDestination)
-    if (!dir.exists()) {
-      dir.mkdirs()
+    val actualDestination = File(quranInternalBaseDirectory, destination)
+    if (!actualDestination.exists()) {
+      if (actualDestination.absolutePath.endsWith(filename)) {
+        actualDestination.parentFile?.mkdirs()
+      } else {
+        actualDestination.mkdirs()
+      }
     }
     copyFromAssets(assetsPath, filename, actualDestination)
   }
@@ -256,7 +233,7 @@ class QuranFileUtils @Inject constructor(
     directory: String,
     destination: String
   ) {
-    val destinationPath = File(getQuranBaseDirectory(appContext) + destination)
+    val destinationPath = File(quranInternalBaseDirectory, destination)
     val directoryDestinationPath = File(destinationPath, directory)
     if (!directoryDestinationPath.exists()) {
       directoryDestinationPath.mkdirs()
@@ -278,7 +255,7 @@ class QuranFileUtils @Inject constructor(
   @WorkerThread
   override fun removeOldArabicDatabase(): Boolean {
     val databaseQuranArabicDatabase = File(
-      getQuranDatabaseDirectory(appContext),
+      getQuranDatabaseDirectory(),
       QuranDataProvider.QURAN_ARABIC_DATABASE
     )
 
@@ -288,7 +265,7 @@ class QuranFileUtils @Inject constructor(
   }
 
   @WorkerThread
-  private fun copyFromAssets(assetsPath: String, filename: String, destination: String) {
+  private fun copyFromAssets(assetsPath: String, filename: String, destination: File) {
     val assets = appContext.assets
     assets.open(assetsPath)
         .source()
@@ -299,10 +276,10 @@ class QuranFileUtils @Inject constructor(
         }
 
     if (filename.endsWith(".zip")) {
-      val zipFile = destination + File.separator + filename
+      val zipFile = File(destination, filename)
       ZipUtils.unzipFile(zipFile, destination, filename, null)
       // delete the zip file, since there's no need to have it twice
-      File(zipFile).delete()
+      zipFile.delete()
     }
   }
 
@@ -346,12 +323,12 @@ class QuranFileUtils @Inject constructor(
           // throw if an error occurred while decoding the stream
           exceptionCatchingSource.throwIfCaught()
           if (bitmap != null) {
-            var path = getQuranImagesDirectory(context, widthParam)
+            val path = getQuranImagesDirectory(widthParam)
             var warning = Response.WARN_SD_CARD_NOT_FOUND
-            if (path != null && makeQuranDirectory(context, widthParam)) {
-              path += File.separator + filename
+            if (makeQuranImagesDirectory(widthParam)) {
+              val resultPath = File(path, filename)
               warning = if (tryToSaveBitmap(
-                      bitmap, path
+                      bitmap, resultPath
                   )
               ) 0 else Response.WARN_COULD_NOT_SAVE_FILE
             }
@@ -377,7 +354,7 @@ class QuranFileUtils @Inject constructor(
     return BitmapFactory.decodeStream(`is`, null, options)
   }
 
-  private fun tryToSaveBitmap(bitmap: Bitmap, savePath: String): Boolean {
+  private fun tryToSaveBitmap(bitmap: Bitmap, savePath: File): Boolean {
     var output: FileOutputStream? = null
     try {
       output = FileOutputStream(savePath)
@@ -397,8 +374,14 @@ class QuranFileUtils @Inject constructor(
     return false
   }
 
+  private val quranInternalBaseDirectory: File
+    get() = File(appContext.filesDir, QURAN_BASE)
+
   val quranBaseDirectory: String?
     get() = getQuranBaseDirectory(appContext)
+
+  val quranInternalStorage: File
+    get() = quranInternalBaseDirectory
 
   fun getQuranBaseDirectory(context: Context): String? {
     var basePath = QuranSettings.getInstance(context).appCustomLocation
@@ -444,52 +427,43 @@ class QuranFileUtils @Inject constructor(
     return (size / (1024 * 1024).toLong()).toInt()
   }
 
-  fun getQuranDatabaseDirectory(context: Context): String? {
-    val base = getQuranBaseDirectory(context)
-    return if (base == null) null else base + databaseDirectory
+  fun getQuranDatabaseDirectory(): File {
+    val base = quranInternalBaseDirectory
+    return File(base, databaseDirectory)
   }
 
-  val quranAyahDatabaseDirectory: String?
-    get() = getQuranAyahDatabaseDirectory(appContext)
-
-  fun getQuranAyahDatabaseDirectory(context: Context): String? {
-    val base = getQuranBaseDirectory(context)
-    return if (base == null) null else base + ayahInfoDirectory
-  }
+  val quranAyahDatabaseDirectory: File
+    get() = File(quranInternalBaseDirectory, ayahInfoDirectory)
 
   override fun audioFileDirectory(): String? = getQuranAudioDirectory(appContext)
 
   fun getQuranAudioDirectory(context: Context): String? {
-    var path = getQuranBaseDirectory(context) ?: return null
-    path += audioDirectory
+    val path = getQuranBaseDirectory(context)?.let { it + audioDirectory } ?: return null
     val dir = File(path)
     if (!dir.exists() && !dir.mkdirs()) {
       return null
     }
-    writeNoMediaFile(path)
+    writeNoMediaFile(dir)
     return path + File.separator
   }
 
-  fun getQuranImagesBaseDirectory(context: Context): String? {
-    val s = getQuranBaseDirectory(context)
-    return if (s == null) null else s + imagesDirectory
+  fun getQuranImagesBaseDirectory(): File {
+    return File(quranInternalBaseDirectory, imagesDirectory)
   }
 
-  private fun getQuranImagesDirectory(context: Context): String? {
-    return getQuranImagesDirectory(context, quranScreenInfo.widthParam)
+  private fun getQuranImagesDirectory(): File {
+    return getQuranImagesDirectory(quranScreenInfo.widthParam)
   }
 
   fun getQuranImagesDirectory(
-    context: Context,
     widthParam: String
-  ): String? {
-    val base = getQuranBaseDirectory(context)
-    return if (base == null) null else base +
-        (if (imagesDirectory.isEmpty()) "" else imagesDirectory + File.separator) + "width" + widthParam
+  ): File {
+    val base = getQuranImagesBaseDirectory()
+    return File(base, "width$widthParam")
   }
 
   private fun recitationsDirectory(): String {
-    val recitationDirectory = getQuranBaseDirectory(appContext).toString() + "recitation/"
+    val recitationDirectory = getQuranBaseDirectory(appContext).toString() + "$recitationPath/"
     makeDirectory(recitationDirectory)
     return recitationDirectory
   }
@@ -537,46 +511,35 @@ class QuranFileUtils @Inject constructor(
     return ayahInfoBaseUrl + "ayahinfo" + widthParam + ".zip"
   }
 
-  fun haveAyaPositionFile(context: Context): Boolean {
-    val base = getQuranAyahDatabaseDirectory(context)
-    if (base == null && !makeQuranAyahDatabaseDirectory(context)) {
-      return false
-    }
+  fun haveAyaPositionFile(): Boolean {
+    val base = quranAyahDatabaseDirectory
     val filename = ayaPositionFileName
-    val ayaPositionDb = base + File.separator + filename
-    val f = File(ayaPositionDb)
-    return f.exists()
+    return File(base, filename).exists()
   }
 
-  fun hasTranslation(context: Context, fileName: String): Boolean {
-    var path = getQuranDatabaseDirectory(context)
-    if (path != null) {
-      path += File.separator + fileName
-      return File(path)
-          .exists()
-    }
-    return false
+  fun hasTranslation(fileName: String): Boolean {
+    val path = getQuranDatabaseDirectory()
+    return File(path, fileName)
+      .exists()
   }
 
   @WorkerThread
   override fun hasArabicSearchDatabase(): Boolean {
-    val context = appContext
-    if (hasTranslation(context, QuranDataProvider.QURAN_ARABIC_DATABASE)) {
+    if (hasTranslation(QuranDataProvider.QURAN_ARABIC_DATABASE)) {
       return true
     } else if (databaseDirectory != ayahInfoDirectory) {
       // non-hafs flavors copy their ayahinfo and arabic search database in a subdirectory,
       // so we copy back the arabic database into the translations directory where it can
       // be shared across all flavors of quran android
       val ayahInfoFile = File(
-          getQuranAyahDatabaseDirectory(context),
+          quranAyahDatabaseDirectory,
           QuranDataProvider.QURAN_ARABIC_DATABASE
       )
-      val baseDir = getQuranDatabaseDirectory(context)
-      if (ayahInfoFile.exists() && baseDir != null) {
-        val base = File(baseDir)
+      val base = getQuranDatabaseDirectory()
+      if (ayahInfoFile.exists()) {
         val translationsFile =
           File(base, QuranDataProvider.QURAN_ARABIC_DATABASE)
-        if (base.exists() || base.mkdir()) {
+        if (base.exists() || base.parentFile?.mkdirs() == true) {
           try {
             copyFile(ayahInfoFile, translationsFile)
             return true
@@ -606,20 +569,74 @@ class QuranFileUtils @Inject constructor(
       return true
     } else if (newDirectory.exists() || newDirectory.mkdirs()) {
       try {
-        copyFileOrDirectory(currentDirectory, newDirectory)
-        try {
-          Timber.d("Removing $currentDirectory due to move to $newDirectory")
-          deleteFileOrDirectory(currentDirectory)
-        } catch (e: IOException) {
-          // swallow silently
-          Timber.e(e, "warning while deleting app files")
+        // if we're copying to filesDir, copy everything - theoretically, due to upgrade
+        // happening first, this should only be audio files, but in rare cases (ex upgrading
+        // from a very old app version), it could actually be everything.
+        if (newLocation == appContext.filesDir.absolutePath) {
+          copyFileOrDirectory(currentDirectory, newDirectory)
+          try {
+            Timber.d("Removing $currentDirectory due to move to $newDirectory")
+            deleteFileOrDirectory(currentDirectory)
+          } catch (e: IOException) {
+            // swallow silently
+            Timber.e(e, "warning while deleting app files")
+          }
+          return true
+        } else {
+          // if we're copying to a custom location, only copy the audio files (and recitations)
+          val directories = listOf(audioDirectory, recitationPath)
+          for (dir in directories) {
+            val currentDir = File(currentDirectory, dir)
+            val newDir = File(newDirectory, dir)
+            if (currentDir.exists()) {
+              copyFileOrDirectory(currentDir, newDir)
+              try {
+                deleteFileOrDirectory(currentDir)
+              } catch (e: IOException) {
+                // swallow silently
+                Timber.e(e, "warning while deleting app files")
+              }
+            }
+          }
+          return true
         }
-        return true
       } catch (e: IOException) {
         Timber.e(e, "error moving app files")
       }
     }
     return false
+  }
+
+  override fun upgradeNonAudioFiles(portraitWidth: String, landscapeWidth: String, totalPages: Int): Boolean {
+    val baseDirectory = quranBaseDirectory
+    if (baseDirectory != null) {
+      val directories = if (imagesDirectory.isEmpty()) {
+        mapOf(
+          "width" + quranScreenInfo.widthParam to getQuranImagesDirectory(),
+          databaseDirectory to getQuranDatabaseDirectory(),
+          ayahInfoDirectory to quranAyahDatabaseDirectory
+        )
+      } else {
+        mapOf(
+          imagesDirectory to getQuranImagesBaseDirectory(),
+          databaseDirectory to getQuranDatabaseDirectory()
+        )
+      }
+
+      for ((dirName, dir) in directories) {
+        val oldDir = File(baseDirectory, dirName)
+        if (oldDir.exists()) {
+          try {
+            copyFileOrDirectory(oldDir, dir)
+            deleteFileOrDirectory(oldDir)
+          } catch (e: IOException) {
+            Timber.e(e, "error upgrading non-audio files")
+          }
+        }
+      }
+    }
+    return haveAllImages(portraitWidth, totalPages, true) &&
+        (portraitWidth == landscapeWidth || haveAllImages(landscapeWidth, totalPages, true))
   }
 
   private fun deleteFileOrDirectory(file: File) {

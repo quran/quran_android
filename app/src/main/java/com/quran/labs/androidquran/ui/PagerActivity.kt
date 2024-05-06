@@ -863,19 +863,19 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
 
     var haveDownload = false
-    if (!quranFileUtils.haveAyaPositionFile(this)) {
+    if (!quranFileUtils.haveAyaPositionFile()) {
       var url = quranFileUtils.ayaPositionFileUrl
       if (isDualPages) {
         url = quranFileUtils.getAyaPositionFileUrl(
           quranScreenInfo.tabletWidthParam
         )
       }
-      val destination = quranFileUtils.getQuranAyahDatabaseDirectory(this)
+      val destination = quranFileUtils.quranAyahDatabaseDirectory
       // start the download
       val notificationTitle = getString(R.string.highlighting_database)
       val intent = getDownloadIntent(
         this, url,
-        destination, notificationTitle, AUDIO_DOWNLOAD_KEY,
+        destination.absolutePath, notificationTitle, AUDIO_DOWNLOAD_KEY,
         downloadType
       )
       Timber.d("starting service to download ayah position file")
@@ -897,7 +897,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       val extension = if (url.endsWith(".zip")) ".zip" else ""
       val intent = getDownloadIntent(
         this, url,
-        quranFileUtils.getQuranDatabaseDirectory(this), notificationTitle,
+        quranFileUtils.getQuranDatabaseDirectory().absolutePath, notificationTitle,
         AUDIO_DOWNLOAD_KEY, downloadType
       )
       intent.putExtra(

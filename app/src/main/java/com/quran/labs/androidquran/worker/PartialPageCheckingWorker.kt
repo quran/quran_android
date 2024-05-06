@@ -37,9 +37,9 @@ class PartialPageCheckingWorker(private val context: Context,
 
       // prepare page widths and paths
       val width = quranScreenInfo.widthParam
-      val pagesDirectory = quranFileUtils.getQuranImagesDirectory(context, width)!!
+      val pagesDirectory = quranFileUtils.getQuranImagesDirectory(width)
       val tabletWidth = quranScreenInfo.tabletWidthParam
-      val tabletPagesDirectory = quranFileUtils.getQuranImagesDirectory(context, tabletWidth)!!
+      val tabletPagesDirectory = quranFileUtils.getQuranImagesDirectory(tabletWidth)
 
       // compute the partial page sets
       val partialPages =
@@ -88,7 +88,7 @@ class PartialPageCheckingWorker(private val context: Context,
 
   data class PartialPage(val width: String, val page: Int)
 
-  private fun deletePage(directory: String, page: Int): Boolean {
+  private fun deletePage(directory: File, page: Int): Boolean {
     val pageName = QuranFileUtils.getPageFileName(page)
     return File(directory, pageName).let { file ->
       if (file.exists()) {

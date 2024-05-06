@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.RectF;
+
 import androidx.annotation.NonNull;
 
 import com.quran.labs.androidquran.database.DatabaseUtils;
@@ -37,17 +38,16 @@ public class AyahInfoDatabaseHandler {
   private static final String GLYPH_TYPE = "glyph_type";
   private static final String GLYPHS_TABLE = "glyphs";
 
-  private static Map<String, AyahInfoDatabaseHandler> ayahInfoCache = new HashMap<>();
-  private static String quranDatabaseDirectory = "";
+  private static final Map<String, AyahInfoDatabaseHandler> ayahInfoCache = new HashMap<>();
+  private static File quranDatabaseDirectory = null;
 
   private final SQLiteDatabase database;
   private final boolean hasGlyphData;
 
   static AyahInfoDatabaseHandler getAyahInfoDatabaseHandler(
-      Context context, String databaseName, QuranFileUtils quranFileUtils) {
-    final String currentAyahDatabaseDirectory = quranFileUtils.getQuranAyahDatabaseDirectory();
-    if (currentAyahDatabaseDirectory != null &&
-        !currentAyahDatabaseDirectory.equals(quranDatabaseDirectory)) {
+      String databaseName, QuranFileUtils quranFileUtils) {
+    final File currentAyahDatabaseDirectory = quranFileUtils.getQuranAyahDatabaseDirectory();
+    if (!currentAyahDatabaseDirectory.equals(quranDatabaseDirectory)) {
       quranDatabaseDirectory = currentAyahDatabaseDirectory;
       clearAyahInfoCache();
     }
@@ -55,7 +55,7 @@ public class AyahInfoDatabaseHandler {
     AyahInfoDatabaseHandler handler = ayahInfoCache.get(databaseName);
     if (handler == null) {
       try {
-        AyahInfoDatabaseHandler db = new AyahInfoDatabaseHandler(context, databaseName, quranFileUtils);
+        AyahInfoDatabaseHandler db = new AyahInfoDatabaseHandler(databaseName, quranFileUtils);
         if (db.validDatabase()) {
           ayahInfoCache.put(databaseName, db);
           handler = db;
@@ -82,18 +82,12 @@ public class AyahInfoDatabaseHandler {
     ayahInfoCache.clear();
   }
 
-  private AyahInfoDatabaseHandler(Context context,
-                                  String databaseName,
+  private AyahInfoDatabaseHandler(String databaseName,
                                   QuranFileUtils quranFileUtils) throws SQLException {
-    String base = quranFileUtils.getQuranAyahDatabaseDirectory(context);
-    if (base == null) {
-      database = null;
-      hasGlyphData = false;
-    } else {
-      String path = base + File.separator + databaseName;
-      database = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-      hasGlyphData = quranFileUtils.getAyahInfoDbHasGlyphData();
-    }
+    File base = quranFileUtils.getQuranAyahDatabaseDirectory();
+    File path = new File(base, databaseName);
+    database = SQLiteDatabase.openDatabase(path.getAbsolutePath(), null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+    hasGlyphData = quranFileUtils.getAyahInfoDbHasGlyphData();
   }
 
   private boolean validDatabase() {

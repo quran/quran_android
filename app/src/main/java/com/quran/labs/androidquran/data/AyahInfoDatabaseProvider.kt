@@ -18,7 +18,7 @@ class AyahInfoDatabaseProvider @Inject constructor(
     if (databaseHandler == null) {
       val filename = quranFileUtils.getAyaPositionFileName(widthParameter)
       databaseHandler = AyahInfoDatabaseHandler.getAyahInfoDatabaseHandler(
-        context, filename,
+        filename,
         quranFileUtils
       )
     }

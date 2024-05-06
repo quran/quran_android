@@ -10,7 +10,7 @@ class QuranPartialPageChecker @Inject constructor() {
   /**
    * Checks all the pages to find partially downloaded images.
    */
-  fun checkPages(directory: String, numberOfPages: Int, width: String): List<Int> {
+  fun checkPages(directory: File, numberOfPages: Int, width: String): List<Int> {
     // past versions of the partial page checker didn't run the checker
     // whenever any .vX file exists. this was noted as a "works sometimes"
     // solution because not all zip files contain .vX files (ex naskh and
@@ -33,7 +33,7 @@ class QuranPartialPageChecker @Inject constructor() {
    * If the last few rows are blank, the image is assumed to be partial and
    * the image is returned.
    */
-  private fun checkPartialImages(directoryName: String,
+  private fun checkPartialImages(directory: File,
                                  width: String,
                                  numberOfPages: Int): List<Int> {
     val result = mutableListOf<Int>()
@@ -44,7 +44,6 @@ class QuranPartialPageChecker @Inject constructor() {
           inSampleSize = 16
         }
 
-    val directory = File(directoryName)
     // optimization to avoid re-generating the pixel array every time
     var pixelArray: IntArray? = null
 
@@ -53,7 +52,7 @@ class QuranPartialPageChecker @Inject constructor() {
       val filename = QuranFileUtils.getPageFileName(page)
       if (File(directory, filename).exists()) {
         val bitmap = BitmapFactory.decodeFile(
-            directoryName + File.separator + filename, options
+            File(directory, filename).absolutePath, options
         )
 
         // this is an optimization to avoid allocating 8 * width of memory

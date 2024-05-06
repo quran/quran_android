@@ -19,7 +19,6 @@ import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.mobile.translation.model.LocalTranslation
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
@@ -80,7 +79,7 @@ class QuranDataProvider : ContentProvider() {
     }
     val queryIsArabic = QuranUtils.doesStringContainArabic(query)
     val haveArabic = queryIsArabic &&
-        quranFileUtils.hasTranslation(context!!, QURAN_ARABIC_DATABASE)
+        quranFileUtils.hasTranslation(QURAN_ARABIC_DATABASE)
     val translations = availableTranslations()
     if (translations.isEmpty() && queryIsArabic && !haveArabic) {
       return null
@@ -170,10 +169,9 @@ class QuranDataProvider : ContentProvider() {
     translations: List<LocalTranslation> = availableTranslations()
   ): Cursor? {
     Timber.d("query: %s", query)
-    val context = context
     val queryIsArabic = QuranUtils.doesStringContainArabic(query)
     val haveArabic = queryIsArabic &&
-        quranFileUtils.hasTranslation(context!!, QURAN_ARABIC_DATABASE)
+        quranFileUtils.hasTranslation(QURAN_ARABIC_DATABASE)
     if (translations.isEmpty() && queryIsArabic && !haveArabic) {
       return null
     }

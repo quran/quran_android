@@ -132,8 +132,7 @@ class QuranDataPresenter @Inject internal constructor(
     directory?.let {
       val log = StringBuilder()
 
-      val quranImagesDirectoryName = quranFileUtils.getQuranImagesBaseDirectory(appContext)
-      val quranImagesDirectory = File(quranImagesDirectoryName)
+      val quranImagesDirectory = quranFileUtils.getQuranImagesBaseDirectory()
       val quranImagesDirectoryFiles = quranImagesDirectory.listFiles()
       quranImagesDirectoryFiles?.let { files ->
         val imageSubdirectories = files.filter { it.name.contains("width_") }
@@ -161,7 +160,7 @@ class QuranDataPresenter @Inject internal constructor(
       }
 
       if (quranImagesDirectoryFiles == null) {
-        log.append("null list of files in images directory: $quranImagesDirectoryName - ${quranImagesDirectory.isDirectory}")
+        log.append("null list of files in images directory: ${quranImagesDirectory.name}- ${quranImagesDirectory.isDirectory}")
       }
 
       val audioDirectory = quranFileUtils.getQuranAudioDirectory(appContext)
@@ -202,7 +201,7 @@ class QuranDataPresenter @Inject internal constructor(
          * folder of 1920 images, in which case it sets that in the pref
          * so we load those instead of 1260s.
          */
-        val fallback = quranFileUtils.getPotentialFallbackDirectory(appContext, totalPages)
+        val fallback = quranFileUtils.getPotentialFallbackDirectory(totalPages)
         if (fallback != null) {
           Timber.d("setting fallback pages to %s", fallback)
           quranSettings.setDefaultImagesDirectory(fallback)
@@ -247,11 +246,11 @@ class QuranDataPresenter @Inject internal constructor(
   private fun actuallyCheckPages(totalPages: Int): Single<QuranDataStatus> {
     return Single.fromCallable {
       val width = quranScreenInfo.widthParam
-      val havePortrait = quranFileUtils.haveAllImages(appContext, width, totalPages, true)
+      val havePortrait = quranFileUtils.haveAllImages(width, totalPages, true)
 
       val tabletWidth = quranScreenInfo.tabletWidthParam
       val needLandscapeImages = if (quranScreenInfo.isDualPageMode && width != tabletWidth) {
-        val haveLandscape = quranFileUtils.haveAllImages(appContext, tabletWidth, totalPages, true)
+        val haveLandscape = quranFileUtils.haveAllImages(tabletWidth, totalPages, true)
         Timber.d("checkPages: have portrait images: %s, have landscape images: %s",
             if (havePortrait) "yes" else "no", if (haveLandscape) "yes" else "no")
         !haveLandscape
@@ -261,7 +260,7 @@ class QuranDataPresenter @Inject internal constructor(
         false
       }
 
-      QuranDataStatus(width, tabletWidth, havePortrait, !needLandscapeImages, null)
+      QuranDataStatus(width, tabletWidth, havePortrait, !needLandscapeImages, null, totalPages)
     }
   }
 
