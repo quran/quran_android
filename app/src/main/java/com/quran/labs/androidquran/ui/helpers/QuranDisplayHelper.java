@@ -33,7 +33,7 @@ public class QuranDisplayHelper {
                                QuranFileUtils quranFileUtils) {
     Response response;
     String filename = QuranFileUtils.getPageFileName(page);
-    response = quranFileUtils.getImageFromSD(context, widthParam, filename);
+    response = quranFileUtils.getImageFromSD(widthParam, filename);
     if (!response.isSuccessful()) {
       // let's only try if an sdcard is found... otherwise, let's tell
       // the user to mount their sdcard and try again.

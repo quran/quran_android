@@ -109,10 +109,10 @@ constructor(private val quranDisplayData: QuranDisplayData,
     val path = audioPathInfo.localDirectory
     val gaplessDb = audioPathInfo.gaplessDatabase
 
-    return if (!quranFileUtils.haveAyaPositionFile(context)) {
+    return if (!quranFileUtils.haveAyaPositionFile()) {
       getDownloadIntent(context,
           quranFileUtils.ayaPositionFileUrl,
-          quranFileUtils.getQuranAyahDatabaseDirectory(context)!!,
+          quranFileUtils.quranAyahDatabaseDirectory.absolutePath,
           context.getString(R.string.highlighting_database))
     } else if (gaplessDb != null && !File(gaplessDb).exists()) {
       getDownloadIntent(context,

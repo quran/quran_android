@@ -31,17 +31,16 @@ public class ZipUtils {
    * @param <T> the type of the item passed in
    * @return a boolean representing whether we succeeded to unzip the file or not
    */
-  public static <T> boolean unzipFile(String zipFile,
-      String destDirectory, T item, ZipListener<T> listener){
+  public static <T> boolean unzipFile(File zipFile,
+      File destDirectory, T item, ZipListener<T> listener){
     try {
-      File file = new File(zipFile);
-      Timber.d("unzipping %s, size: %d", zipFile, file.length());
+      Timber.d("unzipping %s, size: %d", zipFile, zipFile.length());
 
-      try (ZipFile zip = new ZipFile(file, ZipFile.OPEN_READ)) {
+      try (ZipFile zip = new ZipFile(zipFile, ZipFile.OPEN_READ)) {
         int numberOfFiles = zip.size();
         Enumeration<? extends ZipEntry> entries = zip.entries();
 
-        String canonicalPath = new File(destDirectory).getCanonicalPath();
+        String canonicalPath = destDirectory.getCanonicalPath();
 
         long total = 0;
         int processedFiles = 0;

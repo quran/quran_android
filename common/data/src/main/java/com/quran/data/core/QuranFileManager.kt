@@ -1,10 +1,11 @@
 package com.quran.data.core
 
 import androidx.annotation.WorkerThread
+import java.io.File
 
 interface QuranFileManager {
-  fun quranImagesDirectory(): String?
-  fun ayahInfoFileDirectory(): String?
+  fun quranImagesDirectory(): File
+  fun ayahInfoFileDirectory(): File
   fun audioFileDirectory(): String?
 
   fun recitationSessionsDirectory(): String
@@ -33,4 +34,7 @@ interface QuranFileManager {
 
   @WorkerThread
   fun writeNoMediaFileRelative(widthParam: String)
+
+  @WorkerThread
+  fun upgradeNonAudioFiles(portraitWidth: String, landscapeWidth: String, totalPages: Int): Boolean
 }

@@ -364,7 +364,7 @@ class AyahTrackerPresenter @Inject constructor(
 
   private fun checkCoordinateData(activity: Activity) {
     if (activity is PagerActivity &&
-      (!quranFileUtils.haveAyaPositionFile(activity) ||
+      (!quranFileUtils.haveAyaPositionFile() ||
           !quranFileUtils.hasArabicSearchDatabase())
     ) {
       activity.showGetRequiredFilesDialog()

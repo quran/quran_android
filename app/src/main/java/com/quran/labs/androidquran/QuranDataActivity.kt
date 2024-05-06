@@ -343,7 +343,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     if (location != null) {
       try {
         if (File(location).exists() ||
-            quranFileUtils.makeQuranDirectory(this, quranScreenInfo.widthParam)
+            quranFileUtils.makeQuranImagesDirectory(quranScreenInfo.widthParam)
         ) {
           val f = File(location, "" + System.currentTimeMillis())
           if (f.createNewFile()) {
@@ -461,8 +461,11 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
       try {
         // try to write a directory to distinguish between the entire Quran directory
         // being removed versus just the images being somehow removed.
-        File(baseDirectory, QURAN_DIRECTORY_MARKER_FILE).createNewFile()
-        File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
+        if (baseDirectory != null) {
+          File(baseDirectory).mkdirs()
+          File(baseDirectory, QURAN_DIRECTORY_MARKER_FILE).createNewFile()
+          File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
+        }
 
         // try writing a file to the app's internal no_backup directory
         File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
@@ -663,12 +666,12 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     if (!TextUtils.isEmpty(patchParam)) {
       url = quranFileUtils.getPatchFileUrl(patchParam!!, quranDataPresenter.imagesVersion())
     }
-    val destination = quranFileUtils.getQuranImagesBaseDirectory(this@QuranDataActivity)
+    val destination = quranFileUtils.getQuranImagesBaseDirectory()
 
     // start service
     val intent = ServiceIntentHelper.getDownloadIntent(
         this, url,
-        destination, getString(R.string.app_name), PAGES_DOWNLOAD_KEY,
+        destination.absolutePath, getString(R.string.app_name), PAGES_DOWNLOAD_KEY,
         QuranDownloadService.DOWNLOAD_TYPE_PAGES
     )
     if (!force) {

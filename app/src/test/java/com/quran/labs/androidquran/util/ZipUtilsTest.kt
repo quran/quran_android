@@ -13,19 +13,19 @@ class ZipUtilsTest {
     private const val CLI_ROOT_DIRECTORY = "src/test/resources"
   }
 
-  private lateinit var destinationDirectory: String
+  private lateinit var destinationDirectory: File
   private val listener =
     ZipUtils.ZipListener { _: Any?, _: Int, _: Int -> }
 
   @Before
   fun setup() {
-    destinationDirectory = "$CLI_ROOT_DIRECTORY/tmp"
-    File(destinationDirectory).mkdir()
+    destinationDirectory = File(CLI_ROOT_DIRECTORY, "tmp")
+    destinationDirectory.mkdir()
   }
 
   @After
   fun cleanup() {
-    removeDirectory(File(destinationDirectory))
+    removeDirectory(destinationDirectory)
   }
 
   private fun removeDirectory(file: File) {
@@ -46,7 +46,7 @@ class ZipUtilsTest {
     var e: RuntimeException? = null
     try {
       // thanks to https://github.com/commonsguy/cwac-security for this zip file
-      ZipUtils.unzipFile("$CLI_ROOT_DIRECTORY/zip_file_100mb.zip",
+      ZipUtils.unzipFile(File(CLI_ROOT_DIRECTORY, "zip_file_100mb.zip"),
         destinationDirectory, null, listener)
     } catch (ise: IllegalStateException) {
       e = ise
@@ -60,7 +60,7 @@ class ZipUtilsTest {
     var e: RuntimeException? = null
     try {
       // thanks to https://github.com/commonsguy/cwac-security for this zip file
-      ZipUtils.unzipFile("$CLI_ROOT_DIRECTORY/zip_file_100mb.zip",
+      ZipUtils.unzipFile(File(CLI_ROOT_DIRECTORY, "zip_file_100mb.zip"),
         destinationDirectory, null, listener)
     } catch (ise: IllegalStateException) {
       e = ise
@@ -74,7 +74,7 @@ class ZipUtilsTest {
     var e: RuntimeException? = null
     try {
       // thanks to https://github.com/commonsguy/cwac-security for this zip file
-      ZipUtils.unzipFile("$CLI_ROOT_DIRECTORY/zip_file_writes_outside.zip",
+      ZipUtils.unzipFile(File(CLI_ROOT_DIRECTORY, "zip_file_writes_outside.zip"),
         destinationDirectory, null, listener)
     } catch (ise: IllegalStateException) {
       e = ise

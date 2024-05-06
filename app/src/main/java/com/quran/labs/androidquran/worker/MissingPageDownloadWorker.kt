@@ -62,7 +62,7 @@ class MissingPageDownloadWorker(private val context: Context,
 
   private fun findMissingPagesForWidth(width: String): List<PageToDownload> {
     val result = mutableListOf<PageToDownload>()
-    val pagesDirectory = File(quranFileUtils.getQuranImagesDirectory(context, width))
+    val pagesDirectory = quranFileUtils.getQuranImagesDirectory(width)
     for (page in 1..quranInfo.numberOfPages) {
       val pageFile = QuranFileUtils.getPageFileName(page)
       if (!File(pagesDirectory, pageFile).exists()) {

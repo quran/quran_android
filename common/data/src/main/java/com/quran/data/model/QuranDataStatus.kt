@@ -5,7 +5,8 @@ data class QuranDataStatus(
   val landscapeWidth: String,
   val havePortrait: Boolean,
   val haveLandscape: Boolean,
-  val patchParam: String?
+  val patchParam: String?,
+  val totalPages: Int
 ) {
   fun needPortrait() = !havePortrait
   fun needLandscape() = !haveLandscape
