@@ -52,8 +52,6 @@ class QuranDataPresenter @Inject internal constructor(
   private var cachedPageType: String? = null
   private var lastCachedResult: QuranDataStatus? = null
 
-  private var debugLog: String? = null
-
   private val quranSettings = QuranSettings.getInstance(appContext)
 
   @UiThread
@@ -73,12 +71,16 @@ class QuranDataPresenter @Inject internal constructor(
               .map { checkPatchStatus(it) }
               .flatMap { Single.fromCallable { localDataUpgrade.processPatch(it) } }
               .doOnSuccess {
-                if (!it.havePages()) {
-                  try {
-                    generateDebugLog()
-                  } catch (e: Exception) {
-                    Timber.e(e)
-                  }
+                try {
+                  val quranHiddenDirectoryMarkerFile = ".q4a"
+                  File(appContext.noBackupFilesDir, quranHiddenDirectoryMarkerFile).delete()
+
+                  val baseDirectory = quranFileUtils.quranBaseDirectory
+                  File(baseDirectory, quranHiddenDirectoryMarkerFile).delete()
+                  val quranDirectoryMarkerFile = "q4a"
+                  File(baseDirectory, quranDirectoryMarkerFile).delete()
+                } catch (e: Exception) {
+                  Timber.e(e)
                 }
               }
               .subscribeOn(Schedulers.io())
@@ -122,59 +124,6 @@ class QuranDataPresenter @Inject internal constructor(
     val fallbackType = quranPageProvider.getFallbackPageType()
     if (fallbackType != null) {
       quranSettings.pageType = fallbackType
-    }
-  }
-
-  fun getDebugLog(): String = debugLog ?: ""
-
-  private fun generateDebugLog() {
-    val directory = quranFileUtils.quranBaseDirectory
-    directory?.let {
-      val log = StringBuilder()
-
-      val quranImagesDirectory = quranFileUtils.getQuranImagesBaseDirectory()
-      val quranImagesDirectoryFiles = quranImagesDirectory.listFiles()
-      quranImagesDirectoryFiles?.let { files ->
-        val imageSubdirectories = files.filter { it.name.contains("width_") }
-        imageSubdirectories.map {
-          log.append("image directory: ")
-              .append(it.name)
-              .append(" - ")
-          val imageFiles = it.listFiles()
-          imageFiles?.let { images ->
-            val fileCount = images.size
-            log.append(fileCount)
-
-            if (fileCount == 1) {
-              log.append(" [")
-                  .append(images[0].name)
-                  .append("]")
-            }
-          }
-          log.append("\n")
-
-          if (imageFiles == null) {
-            log.append("null image file list, $it - ${it.isDirectory}")
-          }
-        }
-      }
-
-      if (quranImagesDirectoryFiles == null) {
-        log.append("null list of files in images directory: ${quranImagesDirectory.name}- ${quranImagesDirectory.isDirectory}")
-      }
-
-      val audioDirectory = quranFileUtils.getQuranAudioDirectory(appContext)
-      if (audioDirectory != null) {
-        log.append("audio files in audio root: ")
-            .append(File(audioDirectory).listFiles()?.size ?: "null")
-      } else {
-        log.append("audio directory is null")
-      }
-      debugLog = log.toString()
-    }
-
-    if (directory == null) {
-      debugLog = "can't find quranBaseDirectory"
     }
   }
 

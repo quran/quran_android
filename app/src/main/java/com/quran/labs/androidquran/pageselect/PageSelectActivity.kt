@@ -77,8 +77,6 @@ class PageSelectActivity : AppCompatActivity() {
         // migrate the bookmarks
         presenter.migrateBookmarksData(pageType, type)
 
-        // we need to re-check the pages now
-        quranSettings.removeDidDownloadPages()
         // and we can set up our new page type
         quranSettings.pageType = type
 

@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface Settings {
   suspend fun setVersion(version: Int)
-  suspend fun removeDidDownloadPages()
   suspend fun setShouldOverlayPageInfo(shouldOverlay: Boolean)
   suspend fun lastPage(): Int
   suspend fun isNightMode(): Boolean

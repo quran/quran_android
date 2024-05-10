@@ -241,6 +241,13 @@ public class QuranSettings {
         // make sure that the version code now says that we're up to date.
         setVersion(BuildConfig.VERSION_CODE);
       }
+
+      // remove debug info that is no longer needed
+      perInstallationPrefs.edit().remove("debugDidDownloadPages")
+          .remove("debugPageDownloadedPath")
+          .remove("debugPagesDownloadedTime")
+          .remove("debugPagesDownloaded")
+          .apply();
     }
   }
 
@@ -318,38 +325,6 @@ public class QuranSettings {
     perInstallationPrefs.edit().remove(Constants.PREF_SHOULD_FETCH_PAGES).apply();
   }
 
-  public void setDownloadedPages(long when, String path, String pageTypes) {
-    perInstallationPrefs.edit().putBoolean(Constants.DEBUG_DID_DOWNLOAD_PAGES, true)
-        .putString(Constants.DEBUG_PAGE_DOWNLOADED_PATH, path)
-        .putString(Constants.DEBUG_PAGES_DOWNLOADED, pageTypes)
-        .putLong(Constants.DEBUG_PAGES_DOWNLOADED_TIME, when)
-        .apply();
-  }
-
-  public void removeDidDownloadPages() {
-    perInstallationPrefs.edit().remove(Constants.DEBUG_DID_DOWNLOAD_PAGES)
-        .remove(Constants.DEBUG_PAGE_DOWNLOADED_PATH)
-        .remove(Constants.DEBUG_PAGES_DOWNLOADED_TIME)
-        .remove(Constants.DEBUG_PAGES_DOWNLOADED)
-        .apply();
-  }
-
-  public boolean didDownloadPages() {
-    return perInstallationPrefs.getBoolean(Constants.DEBUG_DID_DOWNLOAD_PAGES, false);
-  }
-
-  public long getPreviouslyDownloadedTime() {
-    return perInstallationPrefs.getLong(Constants.DEBUG_PAGES_DOWNLOADED_TIME, 0);
-  }
-
-  public String getPreviouslyDownloadedPath() {
-    return perInstallationPrefs.getString(Constants.DEBUG_PAGE_DOWNLOADED_PATH, "");
-  }
-
-  public String getPreviouslyDownloadedPageTypes() {
-    return perInstallationPrefs.getString(Constants.DEBUG_PAGES_DOWNLOADED, "");
-  }
-
   public boolean haveUpdatedTranslations() {
     return perInstallationPrefs.getBoolean(Constants.PREF_HAVE_UPDATED_TRANSLATIONS, false);
   }
@@ -419,7 +394,7 @@ public class QuranSettings {
     final Set<String> checkedSets =
         perInstallationPrefs.getStringSet(Constants.PREF_CHECKED_PARTIAL_IMAGES,
             Collections.emptySet());
-    return checkedSets != null && checkedSets.contains(pageType);
+    return checkedSets.contains(pageType);
   }
 
   public void setCheckedPartialImages(String pageType) {
