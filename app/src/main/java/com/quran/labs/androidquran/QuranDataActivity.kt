@@ -1,16 +1,13 @@
 package com.quran.labs.androidquran
 
 import android.Manifest.permission
-import android.R.string
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -28,7 +25,6 @@ import com.quran.labs.androidquran.service.util.PermissionUtil
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
 import com.quran.labs.androidquran.ui.QuranActivity
-import com.quran.labs.androidquran.ui.util.ToastCompat
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
@@ -91,13 +87,6 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     quranApp.applicationComponent.inject(this)
     quranSettings = QuranSettings.getInstance(this)
     quranSettings.upgradePreferences(preferencesUpgrade)
-
-    // replace null app locations (especially those set to null due to failures
-    // of finding a suitable data directory) with the default value to allow
-    // retrying to find a suitable location on app startup.
-    if (!quranSettings.isAppLocationSet) {
-      quranSettings.appCustomLocation = quranSettings.defaultLocation
-    }
   }
 
   override fun onResume() {
@@ -165,81 +154,37 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     errorDialog = null
     hideMigrationDialog()
 
-    scope.cancel()
     super.onPause()
   }
 
+  override fun onDestroy() {
+    scope.cancel()
+    super.onDestroy()
+  }
+
   private fun checkPermissions() {
-    // path is the current app location - if not set, it falls back to getExternalFilesDir
+    // path is the current app location - if not set, it falls back to filesDir
     val path = quranSettings.appCustomLocation
     val fallbackFile = filesDir
-    val usesInternalDir = path != null && path == fallbackFile.absolutePath
-    val usesExternalFileDir = path != null &&
+    val usesInternalDir = path == fallbackFile.absolutePath
+    val usesExternalFileDir =
         ContextCompat.getExternalFilesDirs(this, null).any { file: File? ->
-          file != null && file.absolutePath == path
+          file?.absolutePath == path
         }
-
-    if (path == null) {
-      // error case: suggests that we're on m+ and we have no fallback
-      runListViewWithoutPages()
-      return
-    }
 
     val needsPermission = (!usesExternalFileDir && !usesInternalDir)
     if (needsPermission && !PermissionUtil.haveWriteExternalStoragePermission(this)) {
-      // we need permission and don't have it, so request it if we can
-      if (PermissionUtil.canRequestWriteExternalStoragePermission(this)) {
-        askIfCanRequestPermissions(fallbackFile)
-      } else {
-        // we can't request permissions, so try to fall back
-        quranSettings.appCustomLocation = fallbackFile.absolutePath
-        checkPages()
-      }
+      // we need permission and don't have it, so fall back to internal storage
+      quranSettings.appCustomLocation = fallbackFile.absolutePath
+      checkPages()
    } else if (needsPermission && Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
       // we need permission (i.e. are writing to the sdcard) on Android 11 and above
-      // we should migrate because when we are required to target Android 11 next year
-      // in sha' Allah, we may lose legacy permissions.
-      //
-      // one question might be, "what if the person set a custom path?" - on Kitkat and
-      // above, the only allowed custom paths are what is returned by getExternalFilesDirs,
-      // none of which need write permissions. it's extremely unlikely for someone to upgrade
-      // from Kitkat to Android 10 (10 years worth of upgrades!)
+      // and we have it, but we should migrate because we target Android 11, which means
+      // new installations there must use scoped storage.
       migrateFromTo(fallbackFile.absolutePath)
     } else {
       checkPages()
     }
-  }
-
-  private fun askIfCanRequestPermissions(fallbackFile: File?) {
-    //show permission rationale dialog
-    val permissionsDialog = AlertDialog.Builder(this)
-        .setMessage(R.string.storage_permission_rationale)
-        .setCancelable(false)
-        .setPositiveButton(string.ok) { dialog: DialogInterface, _: Int ->
-          dialog.dismiss()
-          permissionsDialog = null
-
-          // request permissions
-          requestExternalSdcardPermission()
-        }
-        .setNegativeButton(string.cancel) { dialog: DialogInterface, _: Int ->
-          // dismiss the dialog
-          dialog.dismiss()
-          permissionsDialog = null
-
-          // fall back if we can
-          if (fallbackFile != null) {
-            quranSettings.appCustomLocation = fallbackFile.absolutePath
-            checkPages()
-          } else {
-            // set to null so we can try again next launch
-            quranSettings.appCustomLocation = null
-            runListViewWithoutPages()
-          }
-        }
-        .create()
-    this.permissionsDialog = permissionsDialog
-    permissionsDialog.show()
   }
 
   private fun showMigrationDialog() {
@@ -277,14 +222,6 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     quranDataPresenter.checkPages()
   }
 
-  private fun requestExternalSdcardPermission() {
-    ActivityCompat.requestPermissions(
-        this, arrayOf(permission.WRITE_EXTERNAL_STORAGE),
-        REQUEST_WRITE_TO_SDCARD_PERMISSIONS
-    )
-    quranSettings.setSdcardPermissionsDialogPresented()
-  }
-
   @RequiresApi(Build.VERSION_CODES.TIRAMISU)
   private fun requestPostNotificationPermission() {
     ActivityCompat.requestPermissions(
@@ -298,62 +235,9 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     permissions: Array<String>,
     grantResults: IntArray
   ) {
-    if (requestCode == REQUEST_WRITE_TO_SDCARD_PERMISSIONS) {
-      if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-        /*
-         * taking a risk here. on nexus 6, the permission is granted automatically. on the emulator,
-         * a restart is required. on reddit, someone with a nexus 9 said they also didn't need to
-         * restart for the permission to take effect.
-         *
-         * going to assume that it just works to avoid meh code (a check to see if i can actually
-         * write, and a PendingIntent plus System.exit to restart the app otherwise). logging to
-         * know if we should actually have that code or not.
-         *
-         * also see:
-         * http://stackoverflow.com/questions/32471888/
-         */
-        if (!canWriteSdcardAfterPermissions()) {
-          ToastCompat.makeText(
-              this,
-              R.string.storage_permission_please_restart, Toast.LENGTH_LONG
-          )
-              .show()
-        }
-        checkPages()
-      } else {
-        val fallbackFile = getExternalFilesDir(null)
-        if (fallbackFile != null) {
-          quranSettings.appCustomLocation = fallbackFile.absolutePath
-          checkPages()
-        } else {
-          // set to null so we can try again next launch
-          quranSettings.appCustomLocation = null
-          runListViewWithoutPages()
-        }
-      }
-    } else if (requestCode == REQUEST_POST_NOTIFICATION_PERMISSIONS) {
+    if (requestCode == REQUEST_POST_NOTIFICATION_PERMISSIONS) {
       actuallyDownloadQuranImages(lastForceValue)
     }
-  }
-
-  private fun canWriteSdcardAfterPermissions(): Boolean {
-    val location = quranFileUtils.getQuranBaseDirectory(this)
-    if (location != null) {
-      try {
-        if (File(location).exists() ||
-            quranFileUtils.makeQuranImagesDirectory(quranScreenInfo.widthParam)
-        ) {
-          val f = File(location, "" + System.currentTimeMillis())
-          if (f.createNewFile()) {
-            f.delete()
-            return true
-          }
-        }
-      } catch (e: Exception) {
-        // no op
-      }
-    }
-    return false
   }
 
   override fun handleDownloadSuccess() {
@@ -600,7 +484,6 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
 
   companion object {
     const val PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY"
-    private const val REQUEST_WRITE_TO_SDCARD_PERMISSIONS = 1
-    private const val REQUEST_POST_NOTIFICATION_PERMISSIONS = 2
+    private const val REQUEST_POST_NOTIFICATION_PERMISSIONS = 1
   }
 }
