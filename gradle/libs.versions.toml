@@ -10,7 +10,7 @@ okhttpBomVersion = "4.12.0"
 
 # dependencies
 anvil = "2.4.9"
-coroutinesVersion = "1.8.0"
+coroutinesVersion = "1.8.1"
 crashlytics = "2.9.9"
 daggerVersion = "2.51.1"
 dnsjavaVersion = "2.1.9"
