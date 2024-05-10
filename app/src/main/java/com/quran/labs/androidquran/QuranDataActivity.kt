@@ -9,7 +9,6 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.text.TextUtils
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -44,7 +43,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
-import java.io.IOException
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 
@@ -421,24 +419,6 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
 
     this.quranDataStatus = quranDataStatus
     if (!quranDataStatus.havePages()) {
-      if (quranSettings.didDownloadPages()) {
-        // log if we downloaded pages once before
-        try {
-          onPagesLost()
-        } catch (e: Exception) {
-          Timber.e(e)
-        }
-
-        // pages are lost, switch to internal storage if we aren't on it
-        val path = quranSettings.appCustomLocation
-        val internalDirectory = filesDir.absolutePath
-        if (path != internalDirectory) {
-          quranSettings.appCustomLocation = internalDirectory
-        }
-
-        // clear the "pages downloaded" flag
-        quranSettings.removeDidDownloadPages()
-      }
       val lastErrorItem = quranSettings.lastDownloadItemWithError
       Timber.d("checkPages: need to download pages... lastError: %s", lastErrorItem)
       when {
@@ -456,133 +436,12 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
         }
       }
     } else {
-      val appLocation = quranSettings.appCustomLocation
-      val baseDirectory = quranFileUtils.quranBaseDirectory
-      try {
-        // try to write a directory to distinguish between the entire Quran directory
-        // being removed versus just the images being somehow removed.
-        if (baseDirectory != null) {
-          File(baseDirectory).mkdirs()
-          File(baseDirectory, QURAN_DIRECTORY_MARKER_FILE).createNewFile()
-          File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
-        }
-
-        // try writing a file to the app's internal no_backup directory
-        File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).createNewFile()
-        quranSettings.setDownloadedPages(
-            System.currentTimeMillis(), appLocation,
-            quranDataStatus.portraitWidth + "_" + quranDataStatus.landscapeWidth
-        )
-      } catch (ioe: IOException) {
-        Timber.e(ioe)
-      }
       val patchParam = quranDataStatus.patchParam
       if (!TextUtils.isEmpty(patchParam)) {
         Timber.d("checkPages: have pages, but need patch %s", patchParam)
         promptForDownload()
       } else {
         runListView()
-      }
-    }
-  }
-
-  private fun onPagesLost() {
-    val appLocation = quranSettings.appCustomLocation
-    // check if appLocation matches either external files dir or the sdcard
-    val appDir = getExternalFilesDir(null)
-    val sdcard = Environment.getExternalStorageDirectory()
-
-    // see if the page path at the time of the first download hasn't changed
-    val lastDownloadedPagePath = quranSettings.previouslyDownloadedPath
-    val isPagePathTheSame = appLocation == lastDownloadedPagePath
-
-    // see if the last downloaded page types are the same as what we want to download now
-    val lastDownloadedPages = quranSettings.previouslyDownloadedPageTypes
-    val currentPagesToDownload = quranDataStatus!!.portraitWidth + "_" +
-        quranDataStatus!!.landscapeWidth
-    val arePageSetsEquivalent = lastDownloadedPages == currentPagesToDownload
-
-    // check for the existence of a .q4a file in the base directory to distinguish
-    // the case in which the whole directory was wiped (nothing we can really do here?)
-    // and the case when just the images disappeared.
-    var didHiddenFileSurvive = false
-    val baseDirectory = quranFileUtils.quranBaseDirectory
-    if (baseDirectory != null) {
-      try {
-        didHiddenFileSurvive = File(baseDirectory, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).exists()
-      } catch (e: Exception) {
-        Timber.e(e)
-      }
-    }
-
-    // check for the existence of a q4a file in the base directory - this is the same as
-    // above, but is there to see if, perhaps, hidden files survive but non-hidden ones don't.
-    var didNormalFileSurvive = false
-    if (baseDirectory != null) {
-      try {
-        didNormalFileSurvive = File(baseDirectory, QURAN_DIRECTORY_MARKER_FILE).exists()
-      } catch (e: Exception) {
-        Timber.e(e)
-      }
-    }
-
-    // check for the existence of a .q4a file in the internal no_backup directory.
-    var didInternalFileSurvive = false
-    try {
-      didInternalFileSurvive = File(noBackupFilesDir, QURAN_HIDDEN_DIRECTORY_MARKER_FILE).exists()
-    } catch (e: Exception) {
-      Timber.e(e)
-    }
-
-    // how recently did the files disappear?
-    val downloadTime = quranSettings.previouslyDownloadedTime
-    val recencyOfRemoval: String = if (downloadTime == 0L) {
-      "no timestamp"
-    } else {
-      val deltaInSeconds = (System.currentTimeMillis() - downloadTime) / 1000
-      when {
-        deltaInSeconds < 5 * 60 -> { "within 5 minutes" }
-        deltaInSeconds < 10 * 60 -> { "within 10 minutes" }
-        deltaInSeconds < 60 * 60 -> { "within an hour" }
-        deltaInSeconds < 24 * 60 * 60 -> { "within a day" }
-        else -> { "more than a day" }
-      }
-    }
-
-    // log an exception
-    Timber.w(quranDataStatus.toString())
-    Timber.w(quranDataPresenter.getDebugLog())
-    Timber.w("appLocation: %s", appLocation)
-    Timber.w("sdcard: %s, app dir: %s", sdcard, appDir)
-    Timber.w("didNormalFileSurvive: %s", didNormalFileSurvive)
-    Timber.w("didInternalFileSurvive: %s", didInternalFileSurvive)
-    Timber.w("didHiddenFileSurvive: %s", didHiddenFileSurvive)
-    Timber.w(
-        "seconds passed: %d, recency: %s",
-        (System.currentTimeMillis() - downloadTime) / 1000, recencyOfRemoval
-    )
-    Timber.w("isPagePathTheSame: %s", isPagePathTheSame)
-    Timber.w("arePagesToDownloadTheSame: %s", arePageSetsEquivalent)
-    Timber.e(IllegalStateException("Deleted Data"), "Unable to Download Pages")
-
-    // throw and log another exception if we have "com.quran" in appLocation but don't
-    // can't map it back eo either filesDir or any of the externalFilesDirs - this would
-    // suggest that one of these actually moved (which is possible according to the docs).
-    // doing this to gauge whether this is really an edge case as i suspect it is, or a
-    // real problem i should worry about and handle.
-    if ("com.quran" in appLocation) {
-      val internalDir = filesDir.absolutePath
-      val isInternal = appLocation == internalDir
-
-      val externalDirs = ContextCompat.getExternalFilesDirs(this, null)
-      val isExternal = !isInternal && externalDirs.any { it.absolutePath == appLocation }
-      if (!isInternal && !isExternal) {
-        Timber.w("appLocation: %s", appLocation)
-        Timber.w("internal: %s", internalDir)
-        externalDirs.forEach {
-          Timber.w("external: %s", it)
-        }
-        Timber.e(IllegalStateException("data deleted from unknown directory"))
       }
     }
   }
@@ -743,7 +602,5 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     const val PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY"
     private const val REQUEST_WRITE_TO_SDCARD_PERMISSIONS = 1
     private const val REQUEST_POST_NOTIFICATION_PERMISSIONS = 2
-    private const val QURAN_DIRECTORY_MARKER_FILE = "q4a"
-    private const val QURAN_HIDDEN_DIRECTORY_MARKER_FILE = ".q4a"
   }
 }

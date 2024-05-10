@@ -418,7 +418,6 @@ class QuranAdvancedSettingsFragment : PreferenceFragmentCompat() {
           if (result) {
             val quranSettings = QuranSettings.getInstance(appContext)
             quranSettings.appCustomLocation = newLocation
-            quranSettings.removeDidDownloadPages()
             listStoragePref.value = newLocation
           } else {
             makeText(

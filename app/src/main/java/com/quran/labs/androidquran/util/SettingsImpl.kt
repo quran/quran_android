@@ -44,10 +44,6 @@ class SettingsImpl @Inject constructor(private val quranSettings: QuranSettings)
     quranSettings.version = version
   }
 
-  override suspend fun removeDidDownloadPages() {
-    quranSettings.removeDidDownloadPages()
-  }
-
   override suspend fun setShouldOverlayPageInfo(shouldOverlay: Boolean) {
     quranSettings.setShouldOverlayPageInfo(shouldOverlay)
   }
