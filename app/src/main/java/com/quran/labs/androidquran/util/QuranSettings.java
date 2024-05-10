@@ -3,13 +3,16 @@ package com.quran.labs.androidquran.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+
 import com.quran.common.upgrade.PreferencesUpgrade;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -228,11 +231,6 @@ public class QuranSettings {
         version = prefs.getInt(Constants.PREF_VERSION, 0);
       }
 
-      // no matter which version we're upgrading from, make sure the app location is set
-      if (!isAppLocationSet()) {
-        setAppCustomLocation(getAppCustomLocation());
-      }
-
       // allow specific flavors of the app to handle their own upgrade logic.
       // this is important because different flavors have different version codes, so
       // common code here would likely be wrong for other flavors (unless it depends on
@@ -270,7 +268,12 @@ public class QuranSettings {
   }
 
   public String getAppCustomLocation() {
-    return perInstallationPrefs.getString(Constants.PREF_APP_LOCATION, getDefaultLocation());
+    final String path = perInstallationPrefs.getString(Constants.PREF_APP_LOCATION, getDefaultLocation());
+    if (path == null) {
+      return getDefaultLocation();
+    } else {
+      return path;
+    }
   }
 
   public String getDefaultLocation() {
@@ -278,11 +281,11 @@ public class QuranSettings {
   }
 
   public void setAppCustomLocation(String newLocation) {
-    perInstallationPrefs.edit().putString(Constants.PREF_APP_LOCATION, newLocation).apply();
-  }
-
-  public boolean isAppLocationSet() {
-    return perInstallationPrefs.getString(Constants.PREF_APP_LOCATION, null) != null;
+    if (newLocation == null) {
+      perInstallationPrefs.edit().remove(Constants.PREF_APP_LOCATION).apply();
+    } else {
+      perInstallationPrefs.edit().putString(Constants.PREF_APP_LOCATION, newLocation).apply();
+    }
   }
 
   public void setActiveTranslations(Set<String> activeTranslations) {
