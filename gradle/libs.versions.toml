@@ -1,15 +1,14 @@
 [versions]
 agp = "8.4.1"
-kotlin = "1.9.24"
-ksp = "1.9.24-1.0.20"
+kotlin = "2.0.0"
+ksp = "2.0.0-1.0.21"
 
 # required within the Gradle convention plugins - not unused
-compose-compiler = "1.5.14"
 composeBomVersion = "2024.05.00"
 okhttpBomVersion = "4.12.0"
 
 # dependencies
-anvil = "2.4.9"
+anvil = "2.5.0-beta09"
 coroutinesVersion = "1.8.1"
 crashlytics = "2.9.9"
 daggerVersion = "2.51.1"
@@ -99,7 +98,6 @@ androidx-paging-compose = { module = "androidx.paging:paging-compose", version.r
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigationVersion" }
 androidx-window = { module = "androidx.window:window", version.ref = "androidxWindowManager" }
 # compose
-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 compose-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-animation = { module = "androidx.compose.animation:animation" }
 compose-material = { module = "androidx.compose.material:material" }
@@ -187,6 +185,7 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 anvil = { id = "com.squareup.anvil", version.ref = "anvil"}

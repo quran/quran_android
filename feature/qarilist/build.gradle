@@ -5,7 +5,10 @@ plugins {
 
 android.namespace 'com.quran.mobile.feature.qarilist'
 
-anvil { generateDaggerFactories = true }
+anvil {
+  useKsp(true)
+  generateDaggerFactories.set(true)
+}
 
 dependencies {
   implementation project(path: ':common:audio')

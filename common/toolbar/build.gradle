@@ -5,7 +5,11 @@ plugins {
 
 android.namespace 'com.quran.labs.androidquran.common.toolbar'
 
-anvil { generateDaggerFactories = true }
+anvil {
+  useKsp(true)
+  generateDaggerFactories.set(true)
+}
+
 
 dependencies {
   implementation project(path: ':common:data')

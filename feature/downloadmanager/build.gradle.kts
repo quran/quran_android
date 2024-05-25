@@ -1,36 +1,38 @@
 plugins {
   id("quran.android.library.compose")
   alias(libs.plugins.anvil)
-  alias(libs.plugins.ksp)
-  alias(libs.plugins.molecule)
 }
 
-android.namespace = "com.quran.mobile.feature.audiobar"
+android.namespace = "com.quran.mobile.feature.downloadmanager"
 
 anvil {
-  useKsp(true)
+  useKsp(contributesAndFactoryGeneration = true)
   generateDaggerFactories.set(true)
 }
 
 dependencies {
-  implementation(project(":common:data"))
   implementation(project(":common:audio"))
+  implementation(project(":common:data"))
   implementation(project(":common:download"))
-  implementation(project(":common:recitation"))
+  implementation(project(":common:di"))
+  implementation(project(":common:pages"))
+  implementation(project(":common:search"))
   implementation(project(":common:ui:core"))
+
+  implementation(libs.androidx.annotation)
+  implementation(libs.androidx.activity.compose)
+
+  // dagger
+  implementation(libs.dagger.runtime)
 
   // compose
   implementation(libs.compose.animation)
   implementation(libs.compose.foundation)
   implementation(libs.compose.material)
   implementation(libs.compose.material3)
-  implementation(libs.compose.material.icons)
   implementation(libs.compose.ui)
   implementation(libs.compose.ui.tooling.preview)
   debugImplementation(libs.compose.ui.tooling)
-
-  // dagger
-  implementation(libs.dagger.runtime)
 
   // coroutines
   implementation(libs.kotlinx.coroutines.core)
