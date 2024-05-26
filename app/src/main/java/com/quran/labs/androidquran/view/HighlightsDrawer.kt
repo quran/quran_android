@@ -33,7 +33,7 @@ class HighlightsDrawer(
   private val highlightCoordinates: () -> Map<AyahHighlight, List<AyahBounds>>?,
   private val currentHighlights: () -> SortedMap<HighlightType, Set<AyahHighlight>>?,
   private val superOnDraw: (Canvas) -> Unit,
-  private vararg val highlightTypesFilter: HighlightType.Mode = values(),
+  private vararg val highlightTypesFilter: HighlightType.Mode = HighlightType.Mode.entries.toTypedArray(),
 ) : ImageDrawHelper {
 
   // cached objects for onDraw
