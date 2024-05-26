@@ -106,14 +106,6 @@ android {
   }
 }
 
-tasks.withType(KaptGenerateStubsTask).configureEach {
-  // TODO necessary until anvil supports something for K2 contribution merging
-  compilerOptions {
-    progressiveMode.set(false)
-    languageVersion.set(KotlinVersion.KOTLIN_1_9)
-  }
-}
-
 tasks.withType(KotlinCompile).configureEach {
   // TODO necessary until anvil supports something for K2 contribution merging
   compilerOptions {
