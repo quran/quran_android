@@ -2,23 +2,24 @@ package com.quran.labs.androidquran.buildutil
 
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
-import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.dependencies
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 fun CommonExtension<*, *, *, *, *, *>.applyComposeCommon(project: Project) {
   buildFeatures.compose = true
-  project.withLibraries { libs ->
-    composeOptions.kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-  }
 
-  (this as ExtensionAware).extensions.configure<KotlinJvmOptions>("kotlinOptions") {
-    freeCompilerArgs += listOf(
-      "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-      "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-      "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
-      "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
-    )
+  project.tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+      freeCompilerArgs.addAll(
+        listOf(
+          "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
+          "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
+          "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
+          "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api"
+        )
+      )
+    }
   }
 
   project.dependencies {

@@ -1,7 +1,7 @@
 plugins {
-   id("quran.android.library.android")
-   id("app.cash.sqldelight")
-   id("com.squareup.anvil")
+  id("quran.android.library.android")
+  id("app.cash.sqldelight")
+  alias(libs.plugins.anvil)
 }
 
 anvil {
@@ -9,17 +9,16 @@ anvil {
   generateDaggerFactories.set(true)
 }
 
-android.namespace = "com.quran.mobile.translation"
+android.namespace = "com.quran.mobile.bookmark"
 
 sqldelight {
-   databases {
-      create("TranslationsDatabase") {
-         packageName.set("com.quran.mobile.translation.data")
-         schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
-         verifyMigrations.set(true)
-         generateAsync.set(true)
-      }
-   }
+  databases {
+    create("BookmarksDatabase") {
+      packageName.set("com.quran.labs.androidquran")
+      schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
+      verifyMigrations.set(true)
+    }
+  }
 }
 
 dependencies {

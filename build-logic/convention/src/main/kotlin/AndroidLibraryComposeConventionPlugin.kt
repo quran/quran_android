@@ -17,6 +17,7 @@ class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
         withLibraries { libs ->
           apply(libs.plugins.android.library.get().pluginId)
           apply(libs.plugins.kotlin.android.get().pluginId)
+          apply(libs.plugins.compose.compiler.get().pluginId)
         }
       }
 
