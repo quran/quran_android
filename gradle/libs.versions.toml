@@ -26,7 +26,7 @@ sqldelight = "2.0.2"
 timberVersion = "5.0.1"
 
 # androidx library versions
-androidxAppcompatVersion = "1.6.1"
+androidxAppcompatVersion = "1.7.0"
 androidxActivityComposeVersion = "1.9.0"
 androidxAnnotationVersion = "1.8.0"
 androidxCoreVersion = "1.13.1"
