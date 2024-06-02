@@ -2,12 +2,10 @@ package com.quran.mobile.feature.downloadmanager.ui.sheikhdownload
 
 import android.content.Context
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Text
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,15 +41,15 @@ fun DownloadProgressDialog(
           currentEvent.asMessage(LocalContext.current),
           modifier = Modifier.padding(bottom = 8.dp, end = 16.dp)
         )
-        LinearProgressIndicator(progress = (progress / 100.0f))
+        LinearProgressIndicator(
+          progress = { (progress / 100.0f) },
+        )
       }
     },
-    buttons = {
-      Row(modifier = Modifier.padding(horizontal = 16.dp)) {
-        Spacer(modifier = Modifier.weight(1f))
-        TextButton(onClick = onCancel) {
-          Text(text = stringResource(id = com.quran.mobile.common.ui.core.R.string.cancel))
-        }
+    confirmButton = {},
+    dismissButton = {
+      TextButton(onClick = onCancel) {
+        Text(text = stringResource(id = com.quran.mobile.common.ui.core.R.string.cancel))
       }
     },
     onDismissRequest = onCancel
