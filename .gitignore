@@ -1,5 +1,6 @@
 .project
 .settings
+.kotlin
 bin
 gen
 out

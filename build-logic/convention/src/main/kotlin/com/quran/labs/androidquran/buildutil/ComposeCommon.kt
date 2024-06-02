@@ -2,12 +2,27 @@ package com.quran.labs.androidquran.buildutil
 
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 fun CommonExtension<*, *, *, *, *, *>.applyComposeCommon(project: Project) {
   buildFeatures.compose = true
+
+  project.withLibraries { libs ->
+    project.pluginManager.apply(libs.plugins.compose.compiler.get().pluginId)
+  }
+
+  project.extensions.configure<ComposeCompilerGradlePluginExtension> {
+    // https://issuetracker.google.com/issues/338842143
+    includeSourceInformation.set(true)
+    if (project.findProperty("composeCompilerReports") == "true") {
+      reportsDestination.set(project.layout.buildDirectory.get().asFile.resolve("compose_compiler"))
+      metricsDestination.set(project.layout.buildDirectory.get().asFile.resolve("compose_compiler"))
+    }
+  }
 
   project.tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions {
