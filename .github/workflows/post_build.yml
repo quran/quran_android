@@ -2,7 +2,7 @@ name: Comment on the pull request
 
 on:
   workflow_run:
-    workflows: ["Android Pull Request"]
+    workflows: ["Pull Request"]
     types:
       - completed
 

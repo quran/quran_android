@@ -1,4 +1,4 @@
-name: Android Merge Queue
+name: Merge Queue
 on:
   merge_group:
 
