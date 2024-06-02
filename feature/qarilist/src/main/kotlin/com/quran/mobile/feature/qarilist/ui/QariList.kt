@@ -8,7 +8,12 @@ import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.mobile.feature.qarilist.model.QariUiModel
 
 @Composable
-fun QariList(qaris: List<QariUiModel>, selectedQariId: Int, onQariSelected: ((QariItem) -> Unit), modifier: Modifier) {
+fun QariList(
+  qaris: List<QariUiModel>,
+  selectedQariId: Int,
+  onQariSelected: ((QariItem) -> Unit),
+  modifier: Modifier = Modifier
+) {
   val qarisBySection = qaris.groupBy { it.sectionHeader }
   LazyColumn(modifier = modifier) {
     qarisBySection.forEach { (section, sectionQaris) ->
