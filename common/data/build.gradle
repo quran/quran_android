@@ -2,6 +2,8 @@ plugins {
   id 'quran.android.library'
   alias libs.plugins.anvil
   alias libs.plugins.ksp
+  // needed for the stability of various model classes
+  alias libs.plugins.compose.compiler
 }
 
 anvil {
@@ -14,6 +16,9 @@ dependencies {
 
   implementation libs.kotlinx.coroutines.core
   implementation libs.kotlinx.coroutines.android
+
+  // required whenever we include the compiler plugin
+  implementation libs.compose.runtime
 
   // dagger
   implementation libs.dagger.runtime

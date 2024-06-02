@@ -16,6 +16,7 @@ dnsjavaVersion = "2.1.9"
 errorprone = "3.1.0"
 errorproneCoreVersion = "2.28.0"
 googleServices = "4.4.2"
+immutableCollectionsVersion = "0.3.7"
 leakcanaryAndroidVersion = "2.14"
 moshiVersion = "1.15.1"
 okioVersion = "3.9.0"
@@ -74,11 +75,11 @@ turbineVersion = "1.1.0"
 [libraries]
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutinesVersion" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutinesVersion" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableCollectionsVersion" }
 
 # required within the Gradle convention plugins - not unused
 okhttp-bom = { module = "com.squareup.okhttp3:okhttp-bom", version.ref = "okhttpBomVersion" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
-compose-runtime = { module = "androidx.compose.runtime:runtime" }
 
 # androidx
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompatVersion" }
@@ -103,6 +104,7 @@ compose-animation = { module = "androidx.compose.animation:animation" }
 compose-material = { module = "androidx.compose.material:material" }
 compose-material3 = { module = "androidx.compose.material3:material3", version = "1.2.1" }
 compose-material-icons = { module = "androidx.compose.material:material-icons-extended" }
+compose-runtime = { module = "androidx.compose.runtime:runtime" }
 compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }

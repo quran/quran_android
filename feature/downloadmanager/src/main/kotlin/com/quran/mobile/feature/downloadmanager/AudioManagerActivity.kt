@@ -19,6 +19,7 @@ import com.quran.mobile.feature.downloadmanager.presenter.AudioManagerPresenter
 import com.quran.mobile.feature.downloadmanager.ui.common.DownloadManagerToolbar
 import com.quran.mobile.feature.downloadmanager.ui.LoadingIndicator
 import com.quran.mobile.feature.downloadmanager.ui.ShuyookhList
+import kotlinx.collections.immutable.persistentListOf
 import javax.inject.Inject
 
 
@@ -38,7 +39,7 @@ class AudioManagerActivity : ComponentActivity() {
       audioManagerPresenter.downloadedShuyookh { QariItem.fromQari(this, it) }
 
     setContent {
-      val downloadedShuyookhState = downloadedShuyookhFlow.collectAsState(emptyList())
+      val downloadedShuyookhState = downloadedShuyookhFlow.collectAsState(persistentListOf())
       QuranTheme {
         Column(modifier = Modifier
           .background(MaterialTheme.colorScheme.surface)

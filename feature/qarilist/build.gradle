@@ -29,6 +29,9 @@ dependencies {
   implementation libs.compose.ui.tooling.preview
   debugImplementation libs.compose.ui.tooling
 
+  // immutable collections
+  implementation libs.kotlinx.collections.immutable
+
   // coroutines
   implementation libs.kotlinx.coroutines.core
   implementation libs.kotlinx.coroutines.android
