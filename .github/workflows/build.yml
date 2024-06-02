@@ -1,4 +1,4 @@
-name: Android Pull Request
+name: Pull Request
 on:
   pull_request:
     branches:
@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build
+    name: Validate PR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the Code
@@ -27,6 +27,29 @@ jobs:
 
       - name: Build debug APK
         run: ./gradlew assembleMadaniDebug
+
+      - name: Run lint
+        run: ./gradlew lintMadaniDebug
+
+      - name: Upload lint results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: lint_report
+          path: app/build/reports/lint-results-madaniDebug.html
+
+      - name: Run SqlDelight migration tests
+        run: ./gradlew verifySqlDelightMigration
+
+      - name: Run tests
+        run: ./gradlew test -PdisableCrashlytics -PdisableFirebase
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: unit_test_report
+          path: app/build/reports/tests/testMadaniDebugUnitTest/
 
       - name: Download Previous Debug APK
         uses: dawidd6/action-download-artifact@v3
@@ -49,80 +72,6 @@ jobs:
         with:
           name: apk_differences
           path: apk_differences_summary.txt
-
-  lint:
-    needs: [build]
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v4
-
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: zulu
-          java-version: 17
-
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
-
-      - name: Run lint
-        run: ./gradlew lintMadaniDebug
-
-      - name: Upload lint results
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: lint_report
-          path: app/build/reports/lint-results-madaniDebug.html
-
-  test:
-    needs: [build]
-    name: Unit tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v4
-
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: zulu
-          java-version: 17
-
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
-
-      - name: Run SqlDelight migration tests
-        run: ./gradlew verifySqlDelightMigration
-
-      - name: Run tests
-        run: ./gradlew test -PdisableCrashlytics -PdisableFirebase
-
-      - name: Upload test report
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: unit_test_report
-          path: app/build/reports/tests/testMadaniDebugUnitTest/
-
-  diffs:
-    needs: [lint, test]
-    name: Dependency Diff
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the Code
-        uses: actions/checkout@v4
-
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: zulu
-          java-version: 17
-
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
 
       - name: Get dependencies list
         run: ./gradlew :app:dependencies --configuration madaniReleaseRuntimeClasspath > current_dependencies.txt
@@ -158,7 +107,6 @@ jobs:
         with:
           name: pr
           path: pr.txt
-
 
 env:
   GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx8G -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC -Dfile.encoding=UTF-8"
