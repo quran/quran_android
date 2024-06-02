@@ -2,6 +2,8 @@ plugins {
   id 'quran.android.library.android'
   alias libs.plugins.kotlin.parcelize
   alias libs.plugins.anvil
+  // needed for the stability of various model classes
+  alias libs.plugins.compose.compiler
 }
 
 anvil {
@@ -20,6 +22,8 @@ dependencies {
   implementation libs.androidx.annotation
   implementation libs.kotlinx.coroutines.core
   implementation libs.okio
+  // required whenever we include the compiler plugin
+  implementation libs.compose.runtime
 
   testImplementation libs.junit
   testImplementation libs.truth

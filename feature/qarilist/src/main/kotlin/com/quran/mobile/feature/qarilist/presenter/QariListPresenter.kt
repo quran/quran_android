@@ -5,18 +5,21 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoManager
 import com.quran.labs.androidquran.common.audio.extension.isRangeDownloaded
-import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
 import com.quran.labs.androidquran.common.audio.model.QariItem
+import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
 import com.quran.mobile.feature.qarilist.R
 import com.quran.mobile.feature.qarilist.model.QariUiModel
-import javax.inject.Inject
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 @ActivityScope
 class QariListPresenter @Inject constructor(private val qariDownloadInfoManager: QariDownloadInfoManager) {
 
-  fun qariList(start: SuraAyah, end: SuraAyah, qariTranslationLambda: ((Qari) -> QariItem)): Flow<List<QariUiModel>> {
+  fun qariList(start: SuraAyah, end: SuraAyah, qariTranslationLambda: (
+    (Qari) -> QariItem)): Flow<ImmutableList<QariUiModel>> {
     return qariDownloadInfoManager.downloadQariInfoFilteringNonDownloadedGappedQaris()
       .map { unsortedQariList ->
         val readyToPlay = unsortedQariList.filter { it.isRangeDownloaded(start, end) }
@@ -32,6 +35,7 @@ class QariListPresenter @Inject constructor(private val qariDownloadInfoManager:
             gapless.map { QariUiModel(it, R.string.qarilist_gapless) } +
             gapped.map { QariUiModel(it, R.string.qarilist_gapped) }
       }
+      .map { it.toImmutableList() }
   }
 
   private fun List<QariDownloadInfo>.toSortedQariItemList(lambda: ((Qari) -> QariItem)): List<QariItem> {

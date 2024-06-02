@@ -7,10 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.mobile.feature.downloadmanager.model.DownloadedSheikhUiModel
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun ShuyookhList(
-  shuyookh: List<DownloadedSheikhUiModel>,
+  shuyookh: ImmutableList<DownloadedSheikhUiModel>,
   onQariItemClicked: ((QariItem) -> Unit)
 ) {
   Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
