@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - main
+  merge_group:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,6 +13,7 @@ jobs:
   build:
     name: Validate PR
     runs-on: ubuntu-latest
+    if: github.event_name != 'merge_group'
     steps:
       - name: Checkout the Code
         uses: actions/checkout@v4

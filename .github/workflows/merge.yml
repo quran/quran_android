@@ -1,11 +1,13 @@
 name: Merge Queue
 on:
+  pull_request:
   merge_group:
 
 jobs:
   build:
     name: Merge
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
     steps:
       - name: Checkout the Code
         uses: actions/checkout@v4
