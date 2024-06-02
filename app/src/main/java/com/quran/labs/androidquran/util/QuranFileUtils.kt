@@ -609,7 +609,12 @@ class QuranFileUtils @Inject constructor(
 
   override fun upgradeNonAudioFiles(portraitWidth: String, landscapeWidth: String, totalPages: Int): Boolean {
     val baseDirectory = quranBaseDirectory
-    if (baseDirectory != null) {
+    val quranFilesDir = baseDirectory?.let { File(baseDirectory).canonicalPath }
+    val internalFilesDir = appContext.filesDir.canonicalPath
+
+    // only do the copy if the base directory is not null, and the base directory is
+    // not already the same as the internal directory.
+    if (baseDirectory != null && quranFilesDir?.startsWith(internalFilesDir + File.separator) == false) {
       val directories = if (imagesDirectory.isEmpty()) {
         mapOf(
           "width" + quranScreenInfo.widthParam to getQuranImagesDirectory(),
