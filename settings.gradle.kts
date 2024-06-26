@@ -39,6 +39,7 @@ include(":feature:downloadmanager")
 include(":feature:qarilist")
 include(":feature:recitation")
 include(":pages:madani")
+include(":autoquran")
 
 if (File(rootDir, "extras/settings-extra.gradle").exists()) {
   apply(File(rootDir, "extras/settings-extra.gradle"))
