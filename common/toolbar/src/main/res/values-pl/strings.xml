@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">Dodaj ten Ajat do zakładek</string>
+  <string name="tag_ayah">Otaguj ten Ajat</string>
+  <string name="share_ayah">Udostępnij link do Ajatu</string>
+  <string name="share_ayah_text">Udostępnij tekst Ajatu</string>
+  <string name="translation_ayah">Tłumaczenie/Tafsir Ajatu</string>
+  <string name="play_from_here">Graj odtąd</string>
+  <string name="recite_from_here">Recytuj odtąd</string>
+  <string name="search_key">Naciśnij przycisk wyszukiwania, aby znaleźć werset</string>
+  <string name="copy_ayah">Kopiuj Ajat</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Koran - Łarsz</string>
+    <string name="credits">Obrazy Łarsz zostały użyte za zgodą tafisr.app.
+        Tłumaczenia i tekst arabski pochodzą z
+        &lt;a href="https://quranenc.com">quranenc.com&lt;/a> i
+        &lt;a href="https://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>.</string>
+</resources>

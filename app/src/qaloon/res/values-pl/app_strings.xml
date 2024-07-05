@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Koran - Kalun</string>
+    <string name="credits">Obrazy Kalun zostały użyte za zgodą Nous Memes
+        Editions Et Diffusion (Tunezja).
+        Tłumaczenia i tekst arabski pochodzą z
+        &lt;a href="http://tanzil.net">tanzil.net&lt;/a> i
+        &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>.</string>
+</resources>
