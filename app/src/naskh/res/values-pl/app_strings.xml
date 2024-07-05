@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Koran</string>
+    <string name="credits">Obrazy Koranu dla aplikacji Naskh zostały użyte za zgodą SHL Info Systems.
+        Tłumaczenia i tekst arabski pochodzą z
+        &lt;a href="http://tanzil.net">tanzil.net&lt;/a> i
+        &lt;a href="http://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>.
+        Czcionka tekstu arabskiego to Noorehira z
+        &lt;a href="http://noorehidayat.org">noorehidayat.org&lt;/a>.
+        Pamiętaj o wszystkich współtwórcach tej aplikacji w swoich modlitwach!</string>
+</resources>

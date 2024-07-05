@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="sura_names">
+    <item>Al-Fātihah</item>
+    <item>Al-Baqarah</item>
+    <item>Āli-ʿImrān</item>
+    <item>An-Nisāʾ</item>
+    <item>Al-Māʾidah</item>
+    <item>Al-Anʿām</item>
+    <item>Al-Aʿrāf</item>
+    <item>Al-Anfāl</item>
+    <item>At-Tawbah</item>
+    <item>Yūnus</item>
+    <item>Hūd</item>
+    <item>Yūsuf</item>
+    <item>Ar-Raʿd</item>
+    <item>Ibrāhīm</item>
+    <item>Al-Ḥijr</item>
+    <item>An-Naḥl</item>
+    <item>Al-Isrāʾ</item>
+    <item>Al-Kahf</item>
+    <item>Maryam</item>
+    <item>Ṭā-Hā</item>
+    <item>Al-Anbiyāʾ</item>
+    <item>Al-Ḥajj</item>
+    <item>Al-Muʾminūn</item>
+    <item>An-Nūr</item>
+    <item>Al-Furqān</item>
+    <item>Ash-Shuʿarāʾ</item>
+    <item>An-Naml</item>
+    <item>Al-Qaṣaṣ</item>
+    <item>Al-ʿAnkabūt</item>
+    <item>Ar-Rūm</item>
+    <item>Luqmān</item>
+    <item>As-Sajdah</item>
+    <item>Al-Aḥzāb</item>
+    <item>Sabaʾ</item>
+    <item>Fāṭir</item>
+    <item>Yā-Sīn</item>
+    <item>Aṣ-Ṣāffāt</item>
+    <item>Ṣād</item>
+    <item>Az-Zumar</item>
+    <item>Ghāfir</item>
+    <item>Fuṣṣilat</item>
+    <item>Ash-Shūrā</item>
+    <item>Az-Zukhruf</item>
+    <item>Ad-Dukhān</item>
+    <item>Al-Jāthiyah</item>
+    <item>Al-Aḥqāf</item>
+    <item>Muḥammad</item>
+    <item>Al-Fatḥ</item>
+    <item>Al-Ḥujurāt</item>
+    <item>Qāf</item>
+    <item>Adh-Dhāriyāt</item>
+    <item>Aṭ-Ṭūr</item>
+    <item>An-Najm</item>
+    <item>Al-Qamar</item>
+    <item>Ar-Raḥmān</item>
+    <item>Al-Wāqiʿah</item>
+    <item>Al-Ḥadīd</item>
+    <item>Al-Mujādilah</item>
+    <item>Al-Ḥashr</item>
+    <item>Al-Mumtaḥanah</item>
+    <item>Aṣ-Ṣaff</item>
+    <item>Al-Jumuʿah</item>
+    <item>Al-Munāfiqūn</item>
+    <item>At-Taghābun</item>
+    <item>Aṭ-Ṭalāq</item>
+    <item>At-Taḥrīm</item>
+    <item>Al-Mulk</item>
+    <item>Al-Qalam</item>
+    <item>Al-Ḥāqqah</item>
+    <item>Al-Maʿārij</item>
+    <item>Nūḥ</item>
+    <item>Al-Jinn</item>
+    <item>Al-Muzzammil</item>
+    <item>Al-Muddaththir</item>
+    <item>Al-Qiyāmah</item>
+    <item>Al-Insān</item>
+    <item>Al-Mursalāt</item>
+    <item>An-Nabaʾ</item>
+    <item>An-Nāziʿāt</item>
+    <item>ʿAbasa</item>
+    <item>At-Takwīr</item>
+    <item>Al-Infiṭār</item>
+    <item>Al-Muṭaffifīn</item>
+    <item>Al-Inshiqāq</item>
+    <item>Al-Burūj</item>
+    <item>Aṭ-Ṭāriq</item>
+    <item>Al-Aʿlā</item>
+    <item>Al-Ghāshiyah</item>
+    <item>Al-Fajr</item>
+    <item>Al-Balad</item>
+    <item>Ash-Shams</item>
+    <item>Al-Layl</item>
+    <item>Aḍ-Ḍuḥā</item>
+    <item>Ash-Sharḥ</item>
+    <item>At-Tīn</item>
+    <item>Al-ʿAlaq</item>
+    <item>Al-Qadr</item>
+    <item>Al-Bayyinah</item>
+    <item>Az-Zalzalah</item>
+    <item>Al-ʿĀdiyāt</item>
+    <item>Al-Qāriʿah</item>
+    <item>At-Takāthur</item>
+    <item>Al-ʿAṣr</item>
+    <item>Al-Humazah</item>
+    <item>Al-Fīl</item>
+    <item>Quraysh</item>
+    <item>Al-Māʿūn</item>
+    <item>Al-Kawthar</item>
+    <item>Al-Kāfirūn</item>
+    <item>An-Naṣr</item>
+    <item>Al-Masad</item>
+    <item>Al-Ikhlāṣ</item>
+    <item>Al-Falaq</item>
+    <item>An-Nās</item>
+  </string-array>
+
+  <!-- If sura name has no translation, please add empty double quotes to the
+       respective item body to keep Android Studio happy -->
+  <string-array name="sura_names_translation">
+    <item>Otwierająca</item>,
+    <item>Krowa</item>,
+    <item>Rodzina Imrana</item>,
+    <item>Kobiety</item>,
+    <item>Stół zastawiony</item>,
+    <item>Trzody</item>,
+    <item>Wzniesione Krawędzie</item>,
+    <item>Łupy</item>,
+    <item>Skrucha</item>,
+    <item>Jonasz</item>,
+    <item>Hud</item>,
+    <item>Józef</item>,
+    <item>Grom</item>,
+    <item>Abraham</item>,
+    <item>Kamienna</item>,
+    <item>Pszczoły</item>,
+    <item>Podróż nocna</item>,
+    <item>Grota</item>,
+    <item>Maria</item>,
+    <item>Ta Ha</item>,
+    <item>Prorocy</item>,
+    <item>Pielgrzymka</item>,
+    <item>Wierzący</item>,
+    <item>Światło</item>,
+    <item>Rozróżnienie</item>,
+    <item>Poeci</item>,
+    <item>Mrówki</item>,
+    <item>Opowieści</item>,
+    <item>Pająk</item>,
+    <item>Bizantyjczycy</item>,
+    <item>Lokman</item>,
+    <item>Pokłon</item>,
+    <item>Sprzymierzeni</item>,
+    <item>Saba</item>,
+    <item>Stwórca</item>,
+    <item>Ja Sin</item>,
+    <item>Szeregi</item>,
+    <item>Litera "Sad"</item>,
+    <item>Grupy</item>,
+    <item>Przebaczający</item>,
+    <item>Wyjaśnione</item>,
+    <item>Narada</item>,
+    <item>Ozdoby</item>,
+    <item>Dym</item>,
+    <item>Przyklękająca</item>,
+    <item>Piaszczyste wydmy</item>,
+    <item>Muhammad</item>,
+    <item>Zwycięstwo</item>,
+    <item>Komnaty</item>,
+    <item>Kaf</item>,
+    <item>Rozpraszające</item>,
+    <item>Góra</item>,
+    <item>Gwiazda</item>,
+    <item>Księżyc</item>,
+    <item>Miłosierny</item>,
+    <item>Wydarzenie</item>,
+    <item>Żelazo</item>,
+    <item>Skarżąca się</item>,
+    <item>Zebranie</item>,
+    <item>Doświadczana</item>,
+    <item>Szereg</item>,
+    <item>Zgromadzenie</item>,
+    <item>Obłudnicy</item>,
+    <item>Wzajemne Rozczarowanie</item>,
+    <item>Rozwód</item>,
+    <item>Zakazanie</item>,
+    <item>Władztwo</item>,
+    <item>Pióro</item>,
+    <item>Nieuniknione wydarzenie</item>,
+    <item>Stopnie</item>,
+    <item>Noe</item>,
+    <item>Dżinny</item>,
+    <item>Owinięty szatą</item>,
+    <item>Okryty płaszczem</item>,
+    <item>Zmartwychwstanie</item>,
+    <item>Człowiek</item>,
+    <item>Wysłannicy</item>,
+    <item>Wieść</item>,
+    <item>Wyrywający</item>,
+    <item>Zmarszczył brwi</item>,
+    <item>Zwijanie</item>,
+    <item>Rozdzielenie</item>,
+    <item>Oszukujący</item>,
+    <item>Rozerwanie</item>,
+    <item>Gwiazdozbiory</item>,
+    <item>Wędrująca nocą</item>,
+    <item>Najwyższy</item>,
+    <item>Przytłaczające</item>,
+    <item>Świt</item>,
+    <item>Miasto</item>,
+    <item>Słońce</item>,
+    <item>Noc</item>,
+    <item>Jasność poranka</item>,
+    <item>Otwarcie</item>,
+    <item>Drzewo figowe</item>,
+    <item>Zakrzepła krew</item>,
+    <item>Przeznaczenie</item>,
+    <item>Jasny dowód</item>,
+    <item>Trzęsienie ziemi</item>,
+    <item>Galopujące</item>,
+    <item>Nieszczęście</item>,
+    <item>Pomnażanie</item>,
+    <item>Czas przedwieczorny</item>,
+    <item>Oszczerca</item>,
+    <item>Słoń</item>,
+    <item>Kurajszyci</item>,
+    <item>Wspomożenie</item>,
+    <item>Obfitość</item>,
+    <item>Niewierni</item>,
+    <item>Pomoc</item>,
+    <item>Palmowe włókna</item>,
+    <item>Szczerość wiary</item>,
+    <item>Jutrzenka</item>,
+    <item>Ludzie</item>
+  </string-array>
+</resources>

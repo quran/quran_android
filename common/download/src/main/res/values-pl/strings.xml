@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="downloading">Ściąganie&#8230;</string>
-  <string name="download_non_wifi_prompt">Nie masz połączenia z siecią Wi-Fi. I tak pobierasz dane?</string>
+  <string name="downloading">Pobieranie&#8230;</string>
+  <string name="download_non_wifi_prompt">Masz wyłączone Wi-Fi. Pobrać przy użyciu danych komórkowych?</string>
 </resources>
