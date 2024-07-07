@@ -25,10 +25,10 @@ class DownloadStarter @Inject constructor(
 ) : Downloader {
 
   override fun downloadSura(qari: Qari, sura: Int) {
-    downloadSuras(qari, sura, sura)
+    downloadSuras(qari, sura, sura, false)
   }
 
-  override fun downloadSuras(qari: Qari, startSura: Int, endSura: Int) {
+  override fun downloadSuras(qari: Qari, startSura: Int, endSura: Int, downloadDatabase: Boolean) {
     val basePath = fileManager.audioFileDirectory()
     val baseUri = basePath + qari.path
     val isGapless = qari.isGapless
@@ -46,6 +46,9 @@ class DownloadStarter @Inject constructor(
       putExtra(QuranDownloadService.EXTRA_END_VERSE, SuraAyah(endSura, quranInfo.getNumberOfAyahs(endSura)))
       putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless)
       putExtra(QuranDownloadService.EXTRA_METADATA, AudioDownloadMetadata(qari.id))
+      if (downloadDatabase && isGapless) {
+        putExtra(QuranDownloadService.EXTRA_DOWNLOAD_DATABASE, fileManager.urlForDatabase(qari))
+      }
     }
     appContext.startService(intent)
   }
@@ -55,7 +58,7 @@ class DownloadStarter @Inject constructor(
     val intent = ServiceIntentHelper.getAudioDownloadIntent(
       appContext,
       databaseUri,
-      fileManager.audioFileDirectory() + File.separator + qari.path,
+      fileManager.audioFileDirectory() + qari.path,
       appContext.getString(com.quran.mobile.feature.downloadmanager.R.string.audio_manager_database)
     ).apply {
       putExtra(QuranDownloadService.EXTRA_METADATA, AudioDownloadMetadata(qari.id))

@@ -14,6 +14,7 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.os.StatFs;
 
+import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.quran.data.core.QuranInfo;
@@ -75,6 +76,7 @@ public class QuranDownloadService extends Service implements
   // extras for range downloads
   public static final String EXTRA_START_VERSE = "startVerse";
   public static final String EXTRA_END_VERSE = "endVerse";
+  public static final String EXTRA_DOWNLOAD_DATABASE = "downloadDatabase";
   public static final String EXTRA_IS_GAPLESS = "isGapless";
 
   // download types (also handler message types)
@@ -315,7 +317,8 @@ public class QuranDownloadService extends Service implements
 
       boolean result;
       if (startAyah != null && endAyah != null) {
-        result = downloadRange(url, destination, startAyah, endAyah, isGapless, details);
+        final String databaseUrl = intent.getStringExtra(EXTRA_DOWNLOAD_DATABASE);
+        result = downloadRange(url, destination, startAyah, endAyah, isGapless, details, databaseUrl);
       } else {
         result = download(url, destination, outputFile, details);
       }
@@ -355,7 +358,8 @@ public class QuranDownloadService extends Service implements
                                 SuraAyah startVerse,
                                 SuraAyah endVerse,
                                 boolean isGapless,
-      NotificationDetails details) {
+                                NotificationDetails details,
+                                @Nullable String databaseUrl) {
     details.setIsGapless(isGapless);
     new File(destination).mkdirs();
 
@@ -450,7 +454,22 @@ public class QuranDownloadService extends Service implements
       }
     }
 
-    if (!isGapless) {
+    if (isGapless) {
+      // gapless case, check if we're also bundling the database
+      if (databaseUrl != null) {
+        final String destDir = destination + File.separator;
+        Timber.d("gapless asking to download %s to %s", databaseUrl, destDir);
+        final String filename = QuranDownloadService.getFilenameFromUrl(databaseUrl);
+        if (!new File(destDir, filename).exists()) {
+          result = downloadFileWrapper(databaseUrl, destDir, filename, details);
+          if (!result) {
+            return false;
+          }
+          notifier.notifyFileDownloaded(details, filename);
+        }
+      }
+    } else {
+      // not gapless
       // attempt to download basmallah if it doesn't exist
       String destDir = destination + File.separator + 1 + File.separator;
       new File(destDir).mkdirs();

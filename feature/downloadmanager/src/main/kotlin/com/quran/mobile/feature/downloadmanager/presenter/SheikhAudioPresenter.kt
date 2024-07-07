@@ -152,19 +152,20 @@ class SheikhAudioPresenter @Inject constructor(
       val qariInfo = qariInfoForId(qariId)
       if (qariInfo != null) {
         val qari = qariInfo.qari
+        val qariDatabase = qari.databasePath()
         val alreadyDownloaded = qariInfo.fullyDownloadedSuras.toSet()
         val sorted = (suras - alreadyDownloaded).sorted()
         if (sorted.isNotEmpty()) {
           if (sorted.size == 1 || (1 + sorted.last() - sorted.first()) == sorted.size) {
-            downloader.downloadSuras(qari, sorted.first(), sorted.last())
+            downloader.downloadSuras(qari, sorted.first(), sorted.last(), downloadDatabase)
           } else {
             sorted.forEach { downloader.downloadSura(qari, it) }
+            if (downloadDatabase && qariDatabase != null && !qariDatabase.exists()) {
+              downloader.downloadAudioDatabase(qari)
+            }
           }
-        }
-
-        if (downloadDatabase) {
-          val path = qari.databasePath()
-          if (path?.exists() == false) {
+        } else if (downloadDatabase) {
+          if (qariDatabase != null && !qariDatabase.exists()) {
             downloader.downloadAudioDatabase(qari)
           }
         }
