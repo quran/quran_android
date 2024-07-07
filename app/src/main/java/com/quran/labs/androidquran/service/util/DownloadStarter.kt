@@ -13,6 +13,7 @@ import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.mobile.common.download.Downloader
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.squareup.anvil.annotations.ContributesBinding
+import java.io.File
 import javax.inject.Inject
 
 @ContributesBinding(AppScope::class)
@@ -44,6 +45,19 @@ class DownloadStarter @Inject constructor(
       putExtra(QuranDownloadService.EXTRA_START_VERSE, SuraAyah(startSura, 1))
       putExtra(QuranDownloadService.EXTRA_END_VERSE, SuraAyah(endSura, quranInfo.getNumberOfAyahs(endSura)))
       putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless)
+      putExtra(QuranDownloadService.EXTRA_METADATA, AudioDownloadMetadata(qari.id))
+    }
+    appContext.startService(intent)
+  }
+
+  override fun downloadAudioDatabase(qari: Qari) {
+    val databaseUri = fileManager.urlForDatabase(qari)
+    val intent = ServiceIntentHelper.getAudioDownloadIntent(
+      appContext,
+      databaseUri,
+      fileManager.audioFileDirectory() + File.separator + qari.path,
+      appContext.getString(com.quran.mobile.feature.downloadmanager.R.string.audio_manager_database)
+    ).apply {
       putExtra(QuranDownloadService.EXTRA_METADATA, AudioDownloadMetadata(qari.id))
     }
     appContext.startService(intent)

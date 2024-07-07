@@ -12,11 +12,19 @@ import com.quran.mobile.common.ui.core.R as commonR
 fun RemoveConfirmationDialog(
   onConfirmation: (() -> Unit),
   onDismiss: (() -> Unit),
-  title: String? = null
+  title: String? = null,
+  isSuraRemoval: Boolean
 ) {
+
+  val dialogTitle = if (isSuraRemoval) {
+    stringResource(id = R.string.audio_manager_remove_audio_title)
+  } else {
+    stringResource(id = R.string.audio_manager_database_delete)
+  }
+
   AlertDialog(
     title = {
-      Text(text = stringResource(id = R.string.audio_manager_remove_audio_title))
+      Text(text = dialogTitle)
     },
     text = {
       if (title != null) {

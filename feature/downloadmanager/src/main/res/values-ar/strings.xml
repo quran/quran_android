@@ -16,6 +16,10 @@
   <string name="audio_manager_download_all">تحميل الكل</string>
   <string name="audio_manager_surah_delete">حذف السورة</string>
   <string name="audio_manager_surah_download">تحميل السورة</string>
+  <string name="audio_manager_database">قاعدة بيانات الصوتيات</string>
+  <string name="audio_manager_database_download">تنزيل قاعدة البيانات</string>
+  <string name="audio_manager_database_delete">حذف قاعدة البيانات</string>
+
   <string name="audio_manager_remove_audio_title">حذف الملف الصوتي؟</string>
   <string name="audio_manager_remove_audio_msg">سيتم حذف الملف الصوتي ل%1$s. متأكد؟</string>
   <string name="audio_manager_remove_multiple_audio_msg">سيتم حذف الملفات الصوتيه. متأكد؟</string>

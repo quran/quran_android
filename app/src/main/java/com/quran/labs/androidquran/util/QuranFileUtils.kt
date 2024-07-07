@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory.Options
 import android.os.Environment
 import androidx.annotation.WorkerThread
 import com.quran.data.core.QuranFileManager
+import com.quran.data.model.audio.Qari
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.common.Response
@@ -445,6 +446,10 @@ class QuranFileUtils @Inject constructor(
     }
     writeNoMediaFile(dir)
     return path + File.separator
+  }
+
+  override fun urlForDatabase(qari: Qari): String {
+    return gaplessDatabaseRootUrl + qari.databaseName + AudioUtils.ZIP_EXTENSION
   }
 
   fun getQuranImagesBaseDirectory(): File {
