@@ -20,6 +20,9 @@
   </plurals>
   <string name="audio_manager_surah_download">Download surah</string>
   <string name="audio_manager_surah_delete">Delete surah</string>
+  <string name="audio_manager_database">Audio Database</string>
+  <string name="audio_manager_database_download">Download database</string>
+  <string name="audio_manager_database_delete">Delete database</string>
   <string name="audio_manager_download_all">Download all</string>
   <string name="audio_manager_download_selection">Download selection</string>
   <string name="audio_manager_delete_selection">Delete selection</string>

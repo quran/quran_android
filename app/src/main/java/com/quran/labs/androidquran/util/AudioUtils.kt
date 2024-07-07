@@ -82,16 +82,6 @@ class AudioUtils @Inject constructor(
     return if (rootDirectory == null) null else rootDirectory + item.path
   }
 
-  fun getLocalQariUri(item: QariItem): String? {
-    val rootDirectory = quranFileUtils.audioFileDirectory()
-    return if (rootDirectory == null) null else
-      rootDirectory + item.path + File.separator + if (item.isGapless) {
-        "%03d$AUDIO_EXTENSION"
-      } else {
-        "%d" + File.separator + "%d" + AUDIO_EXTENSION
-      }
-  }
-
   fun getQariDatabasePathIfGapless(item: QariItem): String? {
     var databaseName = item.databaseName
     if (databaseName != null) {

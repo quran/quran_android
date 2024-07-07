@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 sealed class SheikhDownloadDialog {
   data object None : SheikhDownloadDialog()
-  data class RemoveConfirmation(val surasToRemove: List<SuraForQari>): SheikhDownloadDialog()
+  data class RemoveConfirmation(val entriesToRemove: List<EntryForQari>): SheikhDownloadDialog()
   data object DownloadRangeSelection: SheikhDownloadDialog()
   data object PostNotificationsPermission : SheikhDownloadDialog()
   data class DownloadStatus(val statusFlow: Flow<SuraDownloadStatusEvent.Progress>): SheikhDownloadDialog()

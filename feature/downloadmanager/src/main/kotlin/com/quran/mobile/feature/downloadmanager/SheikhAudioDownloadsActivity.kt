@@ -19,8 +19,8 @@ import com.quran.common.search.SearchTextUtil
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInterface
+import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.EntryForQari
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhDownloadDialog
-import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraForQari
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraOption
 import com.quran.mobile.feature.downloadmanager.presenter.SheikhAudioPresenter
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.DownloadErrorDialog
@@ -114,7 +114,7 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
                 sheikhUiModel = currentDownloadState,
                 currentSelection = currentDownloadState.selections,
                 quranNaming = quranNaming,
-                onSuraClicked = { onSuraClicked(currentDownloadState.selections, it) },
+                onEntryClicked = { onSuraClicked(currentDownloadState.selections, it) },
                 onSelectionStarted = { onSuraClicked(currentDownloadState.selections, it, true) }
               )
             }
@@ -123,9 +123,10 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
           when (val dialog = currentDownloadState?.dialog) {
             is SheikhDownloadDialog.RemoveConfirmation ->
               RemoveConfirmationDialog(
-                title = suraNameForRemovalOrNull(dialog.surasToRemove),
+                title = suraNameForRemovalOrNull(dialog.entriesToRemove),
                 onConfirmation = { onRemoveSelectionConfirmed(currentDownloadState.selections) },
-                onDismiss = sheikhAudioPresenter::onCancelDialog
+                onDismiss = sheikhAudioPresenter::onCancelDialog,
+                isSuraRemoval = dialog.entriesToRemove.any { it is EntryForQari.SuraForQari }
               )
             is SheikhDownloadDialog.DownloadRangeSelection ->
               SuraRangeDialog(
@@ -154,22 +155,24 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
     super.onDestroy()
   }
 
-  private fun suraNameForRemovalOrNull(items: List<SuraForQari>): String? {
+  private fun suraNameForRemovalOrNull(items: List<EntryForQari>): String? {
     val removals = items.filter { it.isDownloaded }
-    return if (removals.size == 1) {
-      quranNaming.getSuraName(this, items.first().sura)
+    val suraRemovals = removals.filterIsInstance<EntryForQari.SuraForQari>()
+
+    return if (suraRemovals.size == 1) {
+      quranNaming.getSuraName(this, suraRemovals.first().sura)
     } else {
       null
     }
   }
 
   private fun onSuraClicked(
-    selectedSuras: List<SuraForQari>,
-    sura: SuraForQari,
+    selectedSuras: List<EntryForQari>,
+    sura: EntryForQari,
     isStartSelection: Boolean = false
   ) {
     if (selectedSuras.isEmpty()) {
-      sheikhAudioPresenter.selectSura(sura)
+      sheikhAudioPresenter.selectEntry(sura)
       if (!isStartSelection) {
         processPostNotificationsPermission {
           scope.launch {
@@ -178,7 +181,7 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
         }
       }
     } else {
-      sheikhAudioPresenter.toggleSuraSelection(sura)
+      sheikhAudioPresenter.toggleEntrySelection(sura)
     }
   }
 
@@ -221,14 +224,15 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
   private fun onDownloadRange(start: Int, end: Int) {
     val toDownload = (min(start, end)..max(start, end)).map { it }
     scope.launch {
-      sheikhAudioPresenter.onDownloadRange(qariId, toDownload)
+      sheikhAudioPresenter.onDownloadRange(qariId, toDownload, true)
     }
   }
 
-  private fun onRemoveSelectionConfirmed(selectedSuras: List<SuraForQari>) {
-    val surasToRemove = selectedSuras.map { it.sura }
+  private fun onRemoveSelectionConfirmed(selectedSuras: List<EntryForQari>) {
+    val surasToRemove = selectedSuras.filterIsInstance<EntryForQari.SuraForQari>().map { it.sura }
+    val removeDatabase = selectedSuras.filterIsInstance<EntryForQari.DatabaseForQari>().isNotEmpty()
     scope.launch {
-      sheikhAudioPresenter.removeSuras(qariId, surasToRemove)
+      sheikhAudioPresenter.removeSuras(qariId, surasToRemove, removeDatabase)
     }
   }
 

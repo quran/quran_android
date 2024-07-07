@@ -1,6 +1,7 @@
 package com.quran.data.core
 
 import androidx.annotation.WorkerThread
+import com.quran.data.model.audio.Qari
 import java.io.File
 
 interface QuranFileManager {
@@ -10,6 +11,8 @@ interface QuranFileManager {
 
   fun recitationSessionsDirectory(): String
   fun recitationRecordingsDirectory(): String
+
+  fun urlForDatabase(qari: Qari): String
 
   @WorkerThread
   fun isVersion(widthParam: String, version: Int): Boolean
