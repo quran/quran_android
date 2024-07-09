@@ -20,7 +20,7 @@ class GaplessDownloadStrategy(
 
   override fun fileCount(): Int {
     val lastSura = if (endAyah.ayah == 0) endAyah.sura - 1 else endAyah.sura
-    return (lastSura - startAyah.sura) + if (databaseUrl == null) 0 else 1
+    return (lastSura - startAyah.sura) + 1 + if (databaseUrl == null) 0 else 1
   }
 
   override fun downloadFiles(): Boolean {
@@ -52,6 +52,7 @@ class GaplessDownloadStrategy(
       val file = File(destDir, filename)
       return if (file.exists() || downloaderLambda(databaseUrl, destDir, filename, details)) {
         notifier.notifyFileDownloaded(details, filename)
+        details.currentFile++
         true
       } else {
         false

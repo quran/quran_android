@@ -42,7 +42,7 @@ public interface QuranDownloadNotifier {
     public static final String STATE_ERROR_WILL_RETRY = "errorWillRetry";
   }
 
-  public static class NotificationDetails {
+  class NotificationDetails {
     public String title;
     public String key;
     public int type;
