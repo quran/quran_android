@@ -28,6 +28,7 @@ import com.quran.labs.androidquran.service.download.SingleFileDownloadStrategy;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.NotificationDetails;
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent;
+import com.quran.labs.androidquran.service.util.QuranDownloadNotifierImpl;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.QuranUtils;
 import com.quran.labs.androidquran.util.UrlUtil;
@@ -165,7 +166,7 @@ public class QuranDownloadService extends Service implements
 
     ((QuranApplication) getApplication()).getApplicationComponent().inject(this);
     broadcastManager = LocalBroadcastManager.getInstance(appContext);
-    notifier = new QuranDownloadNotifier(this, this, downloadInfoStreams);
+    notifier = new QuranDownloadNotifierImpl(this, this, downloadInfoStreams);
   }
 
   private void handleOnStartCommand(Intent intent, int startId) {
