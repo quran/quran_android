@@ -14,13 +14,13 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.os.StatFs;
 
-import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.extension.CloseableExtensionKt;
+import com.quran.labs.androidquran.service.download.BatchDownloadStrategy;
 import com.quran.labs.androidquran.service.download.DownloadStrategy;
 import com.quran.labs.androidquran.service.download.GaplessDownloadStrategy;
 import com.quran.labs.androidquran.service.download.GappedDownloadStrategy;
@@ -81,6 +81,7 @@ public class QuranDownloadService extends Service implements
   public static final String EXTRA_START_VERSE = "startVerse";
   public static final String EXTRA_END_VERSE = "endVerse";
   public static final String EXTRA_DOWNLOAD_DATABASE = "downloadDatabase";
+  public static final String EXTRA_AUDIO_BATCH = "batchAudio";
   public static final String EXTRA_IS_GAPLESS = "isGapless";
 
   // download types (also handler message types)
@@ -318,13 +319,26 @@ public class QuranDownloadService extends Service implements
         return;
       }
 
-      boolean result;
+      final int[] batch = intent.getIntArrayExtra(EXTRA_AUDIO_BATCH);
+
+      final DownloadStrategy strategy;
       if (startAyah != null && endAyah != null) {
         final String databaseUrl = intent.getStringExtra(EXTRA_DOWNLOAD_DATABASE);
-        result = downloadRange(url, destination, startAyah, endAyah, isGapless, details, databaseUrl);
+        if (isGapless) {
+          strategy = new GaplessDownloadStrategy(startAyah, endAyah, url, destination, notifier, details, databaseUrl, this::downloadFileWrapper);
+        } else {
+          strategy = new GappedDownloadStrategy(startAyah, endAyah, url, quranInfo, destination, notifier, details, this::downloadFileWrapper);
+        }
+      } else if (batch != null) {
+        final String databaseUrl = intent.getStringExtra(EXTRA_DOWNLOAD_DATABASE);
+        strategy = new BatchDownloadStrategy(url, destination, isGapless, quranInfo, notifier, details, batch, databaseUrl, this::downloadFileWrapper);
       } else {
-        result = download(url, destination, outputFile, details);
+        strategy = new SingleFileDownloadStrategy(url, destination, outputFile, details, notifier, this::downloadFileWrapper);
       }
+
+      details.setIsGapless(isGapless);
+      final boolean result = downloadCommon(strategy, details);
+
       if (result && isZipFile) {
         successfulZippedDownloads.put(url, true);
       } else if (!result) {
@@ -334,33 +348,8 @@ public class QuranDownloadService extends Service implements
     }
   }
 
-  private boolean download(String urlString, String destination, String outputFile, NotificationDetails details) {
-    final DownloadStrategy strategy = new SingleFileDownloadStrategy(urlString, destination, outputFile, details, notifier, this::downloadFileWrapper);
+  private boolean downloadCommon(DownloadStrategy strategy, NotificationDetails details) {
     details.setFileStatus(1, strategy.fileCount());
-
-    lastSentIntent = notifier.notifyProgress(details, 0, 0);
-    if (strategy.downloadFiles()) {
-      lastSentIntent = notifier.notifyDownloadSuccessful(details);
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  private boolean downloadRange(String urlString, String destination, SuraAyah startVerse, SuraAyah endVerse, boolean isGapless, NotificationDetails details, @Nullable String databaseUrl) {
-    details.setIsGapless(isGapless);
-
-    final DownloadStrategy strategy;
-    if (isGapless) {
-      strategy = new GaplessDownloadStrategy(startVerse, endVerse, urlString, destination, notifier, details, databaseUrl, this::downloadFileWrapper);
-    } else {
-      strategy = new GappedDownloadStrategy(startVerse, endVerse, urlString, quranInfo, destination, notifier, details, this::downloadFileWrapper);
-    }
-
-    final int totalFiles = strategy.fileCount();
-    Timber.d("downloadRange for %d between %d:%d to %d:%d, gaplessFlag: %s", totalFiles, startVerse.sura, startVerse.ayah, endVerse.sura, endVerse.ayah, isGapless ? "true" : "false");
-
-    details.setFileStatus(1, totalFiles);
     lastSentIntent = notifier.notifyProgress(details, 0, 0);
 
     if (strategy.downloadFiles()) {

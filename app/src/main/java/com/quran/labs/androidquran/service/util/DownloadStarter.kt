@@ -13,7 +13,6 @@ import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.mobile.common.download.Downloader
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.squareup.anvil.annotations.ContributesBinding
-import java.io.File
 import javax.inject.Inject
 
 @ContributesBinding(AppScope::class)
@@ -24,10 +23,42 @@ class DownloadStarter @Inject constructor(
   private val audioUtils: AudioUtils
 ) : Downloader {
 
-  override fun downloadSura(qari: Qari, sura: Int) {
-    downloadSuras(qari, sura, sura, false)
+  /**
+   * This handles downloading a batch of suras, even if they are not contiguous.
+   *
+   * This is slightly less efficient than the below method, since it does more allocations.
+   * In the future, we should combine them into a single one.
+   */
+  override fun downloadBatchSuras(qari: Qari, suras: List<Int>, downloadDatabase: Boolean) {
+    val basePath = fileManager.audioFileDirectory()
+    val baseUri = basePath + qari.path
+    val isGapless = qari.isGapless
+    val sheikhName = appContext.getString(qari.nameResource)
+
+    val intent = ServiceIntentHelper.getDownloadIntent(
+      appContext,
+      audioUtils.getQariUrl(qari),
+      baseUri,
+      sheikhName,
+      AUDIO_DOWNLOAD_KEY + qari.id + suras.first(),
+      QuranDownloadService.DOWNLOAD_TYPE_AUDIO
+    ).apply {
+      putExtra(QuranDownloadService.EXTRA_AUDIO_BATCH, suras.toIntArray())
+      putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, isGapless)
+      putExtra(QuranDownloadService.EXTRA_METADATA, AudioDownloadMetadata(qari.id))
+      if (downloadDatabase && isGapless) {
+        putExtra(QuranDownloadService.EXTRA_DOWNLOAD_DATABASE, fileManager.urlForDatabase(qari))
+      }
+    }
+    appContext.startService(intent)
   }
 
+  /**
+   * This handles downloading of a consecutive range of suras.
+   *
+   * This is slightly more efficient than the above method, since it does less allocations.
+   * In the future, we should combine them into a single one.
+   */
   override fun downloadSuras(qari: Qari, startSura: Int, endSura: Int, downloadDatabase: Boolean) {
     val basePath = fileManager.audioFileDirectory()
     val baseUri = basePath + qari.path
