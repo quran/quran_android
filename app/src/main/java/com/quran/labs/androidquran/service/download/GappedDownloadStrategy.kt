@@ -2,14 +2,14 @@ package com.quran.labs.androidquran.service.download
 
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.NotificationDetails
 import java.io.File
 import java.util.Locale
 
 class GappedDownloadStrategy(
-  private val startAyah: SuraAyah,
-  private val endAyah: SuraAyah,
+  private val ranges: List<VerseRange>,
   private val audioUrlFormat: String,
   private val quranInfo: QuranInfo,
   private val destination: String,
@@ -18,36 +18,51 @@ class GappedDownloadStrategy(
   private val downloaderLambda: (String, String, String, NotificationDetails) -> Boolean
 ) : DownloadStrategy {
 
+  constructor(
+    startAyah: SuraAyah,
+    endAyah: SuraAyah,
+    audioUrlFormat: String,
+    quranInfo: QuranInfo,
+    destination: String,
+    notifier: QuranDownloadNotifier,
+    details: NotificationDetails,
+    downloaderLambda: (String, String, String, NotificationDetails) -> Boolean
+  ) :
+      this(
+        ranges = listOf(startAyah.asVerseRangeTo(endAyah, quranInfo)),
+        audioUrlFormat,
+        quranInfo,
+        destination,
+        notifier,
+        details,
+        downloaderLambda
+      )
+
   override fun fileCount(): Int {
-    return if (startAyah.sura == endAyah.sura) {
-      endAyah.ayah - startAyah.ayah + 1
-    } else {
-      val ayatInMiddleSuras = ((startAyah.sura + 1)..<endAyah.sura)
-        .sumOf { quranInfo.getNumberOfAyahs(it) }
-      val ayatInStartAyah = quranInfo.getNumberOfAyahs(startAyah.sura) - startAyah.ayah + 1
-      ayatInStartAyah + ayatInMiddleSuras + endAyah.ayah
-    } + 1 // always add 1 for basmallah, even if we don't need it for this play range
+    return ranges.sumOf { it.versesInRange } + 1 // +1 for basmallah
   }
 
   override fun downloadFiles(): Boolean {
     val extension = audioUrlFormat.substringAfterLast(".")
-    for (sura in startAyah.sura..endAyah.sura) {
-      details.sura = sura
-      val ayahStart = if (sura == startAyah.sura) startAyah.ayah else 1
-      val ayahEnd = if (sura == endAyah.sura) endAyah.ayah else quranInfo.getNumberOfAyahs(sura)
+    for (range in ranges) {
+      for (sura in range.startSura..range.endingSura) {
+        details.sura = sura
+        val ayahStart = if (sura == range.startSura) range.startAyah else 1
+        val ayahEnd = if (sura == range.endingSura) range.endingAyah else quranInfo.getNumberOfAyahs(sura)
 
-      val destDir = destination + File.separator + sura + File.separator
-      File(destDir).mkdirs()
-      for (ayah in ayahStart..ayahEnd) {
-        details.ayah = ayah
-        val url = audioUrlFormat.format(Locale.US, sura, ayah)
-        val filename = "$ayah$extension"
-        val file = File(destDir, filename)
-        if (file.exists() || downloaderLambda(url, destDir, filename, details)) {
-          notifier.notifyFileDownloaded(details, filename)
-          details.currentFile++
-        } else {
-          return false
+        val destDir = destination + File.separator + sura + File.separator
+        File(destDir).mkdirs()
+        for (ayah in ayahStart..ayahEnd) {
+          details.ayah = ayah
+          val url = audioUrlFormat.format(Locale.US, sura, ayah)
+          val filename = "$ayah$extension"
+          val file = File(destDir, filename)
+          if (file.exists() || downloaderLambda(url, destDir, filename, details)) {
+            notifier.notifyFileDownloaded(details, filename)
+            details.currentFile++
+          } else {
+            return false
+          }
         }
       }
     }

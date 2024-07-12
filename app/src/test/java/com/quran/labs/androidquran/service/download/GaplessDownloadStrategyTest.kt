@@ -1,7 +1,9 @@
 package com.quran.labs.androidquran.service.download
 
 import com.google.common.truth.Truth.assertThat
+import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
+import com.quran.data.pageinfo.common.MadaniDataSource
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.NotificationDetails
 import org.junit.Test
 
@@ -11,17 +13,6 @@ class GaplessDownloadStrategyTest {
   fun testDownloadFileCountOneSura() {
     val startAyah = SuraAyah(114, 1)
     val endAyah = SuraAyah(114, 6)
-    val strategy = strategy(startAyah, endAyah, false)
-    assertThat(strategy.fileCount()).isEqualTo(1)
-
-    val alternativeStrategy = strategy(startAyah, endAyah, true)
-    assertThat(alternativeStrategy.fileCount()).isEqualTo(2)
-  }
-
-  @Test
-  fun testDownloadFileCountOneSuraWithZeroEndOnSecond() {
-    val startAyah = SuraAyah(113, 1)
-    val endAyah = SuraAyah(114, 0)
     val strategy = strategy(startAyah, endAyah, false)
     assertThat(strategy.fileCount()).isEqualTo(1)
 
@@ -78,6 +69,7 @@ class GaplessDownloadStrategyTest {
     return GaplessDownloadStrategy(
       startAyah,
       endAyah,
+      QuranInfo(MadaniDataSource()),
       "https://test.quran.com/audio/sheikh/%d.mp3",
       "destination",
       NoOpQuranDownloadNotifier(),

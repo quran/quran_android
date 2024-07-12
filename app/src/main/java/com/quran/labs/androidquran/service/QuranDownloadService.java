@@ -18,9 +18,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.quran.data.core.QuranInfo;
 import com.quran.data.model.SuraAyah;
+import com.quran.data.model.VerseRange;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.extension.CloseableExtensionKt;
-import com.quran.labs.androidquran.service.download.BatchDownloadStrategy;
 import com.quran.labs.androidquran.service.download.DownloadStrategy;
 import com.quran.labs.androidquran.service.download.GaplessDownloadStrategy;
 import com.quran.labs.androidquran.service.download.GappedDownloadStrategy;
@@ -37,7 +37,9 @@ import com.quran.mobile.common.download.DownloadInfoStreams;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -325,13 +327,18 @@ public class QuranDownloadService extends Service implements
       if (startAyah != null && endAyah != null) {
         final String databaseUrl = intent.getStringExtra(EXTRA_DOWNLOAD_DATABASE);
         if (isGapless) {
-          strategy = new GaplessDownloadStrategy(startAyah, endAyah, url, destination, notifier, details, databaseUrl, this::downloadFileWrapper);
+          strategy = new GaplessDownloadStrategy(startAyah, endAyah, quranInfo, url, destination, notifier, details, databaseUrl, this::downloadFileWrapper);
         } else {
           strategy = new GappedDownloadStrategy(startAyah, endAyah, url, quranInfo, destination, notifier, details, this::downloadFileWrapper);
         }
       } else if (batch != null) {
         final String databaseUrl = intent.getStringExtra(EXTRA_DOWNLOAD_DATABASE);
-        strategy = new BatchDownloadStrategy(url, destination, isGapless, quranInfo, notifier, details, batch, databaseUrl, this::downloadFileWrapper);
+        final List<VerseRange> ranges = verseRangesFromSuraList(batch);
+        if (isGapless) {
+          strategy = new GaplessDownloadStrategy(ranges, url, destination, notifier, details, databaseUrl, this::downloadFileWrapper);
+        } else {
+          strategy = new GappedDownloadStrategy(ranges, url, quranInfo, destination, notifier, details, this::downloadFileWrapper);
+        }
       } else {
         strategy = new SingleFileDownloadStrategy(url, destination, outputFile, details, notifier, this::downloadFileWrapper);
       }
@@ -346,6 +353,15 @@ public class QuranDownloadService extends Service implements
       }
       lastSentIntent = null;
     }
+  }
+
+  private List<VerseRange> verseRangesFromSuraList(int[] suras) {
+    final List<VerseRange> results = new ArrayList<>();
+    for (int sura : suras) {
+      final int ayahCount = quranInfo.getNumberOfAyahs(sura);
+      results.add(new VerseRange(sura, 1, sura, ayahCount, ayahCount));
+    }
+    return results;
   }
 
   private boolean downloadCommon(DownloadStrategy strategy, NotificationDetails details) {
