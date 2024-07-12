@@ -16,7 +16,7 @@ interface AyahMapper {
   fun reverseMapAyah(suraAyah: SuraAyah): List<SuraAyah>
 
   /**
-   * Map the current counting [VerseRange] value to a correspodning kufi [VerseRange] value
+   * Map the current counting [VerseRange] value to a corresponding kufi [VerseRange] value
    */
   fun mapRange(verseRange: VerseRange): VerseRange
 

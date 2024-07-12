@@ -156,12 +156,7 @@ class SheikhAudioPresenter @Inject constructor(
         val alreadyDownloaded = qariInfo.fullyDownloadedSuras.toSet()
         val sorted = (suras - alreadyDownloaded).sorted()
         if (sorted.isNotEmpty()) {
-          if (sorted.size == 1 || (1 + sorted.last() - sorted.first()) == sorted.size) {
-            // if we're downloading "a consecutive range" this is slightly more efficient
-            downloader.downloadSuras(qari, sorted.first(), sorted.last(), downloadDatabase)
-          } else {
-            downloader.downloadBatchSuras(qari, sorted, downloadDatabase)
-          }
+          downloader.downloadCompleteSuras(qari, sorted, downloadDatabase)
         } else if (downloadDatabase) {
           if (qariDatabase != null && !qariDatabase.exists()) {
             downloader.downloadAudioDatabase(qari)
