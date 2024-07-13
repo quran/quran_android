@@ -67,7 +67,7 @@ googleCloudSpeechVersion = "4.41.0"
 # testing
 junitVersion = "4.13.2"
 espressoVersion = "3.6.1"
-truthVersion = "1.4.3"
+truthVersion = "1.4.4"
 mockitoVersion = "5.12.0"
 robolectricVersion = "4.13"
 turbineVersion = "1.1.0"
