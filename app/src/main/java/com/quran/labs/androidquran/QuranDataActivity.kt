@@ -426,15 +426,17 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
   }
 
   private fun promptForDownload() {
-    val dataStatus = quranDataStatus
-    var message = R.string.downloadPrompt
-    if (quranScreenInfo.isDualPageMode && dataStatus!!.needLandscape()) {
-      message = R.string.downloadTabletPrompt
+    val dataStatus = quranDataStatus ?: return
+    val message = if (dataStatus.needPortrait()) {
+      R.string.downloadPrompt
+    } else if (quranScreenInfo.isDualPageMode && dataStatus.needLandscape()) {
+      R.string.downloadTabletPrompt
+    } else if (dataStatus.patchParam?.isNotEmpty() == true) {
+      R.string.downloadImportantPrompt
+    } else {
+      R.string.downloadPrompt
     }
-    if (!TextUtils.isEmpty(dataStatus!!.patchParam)) {
-      // patch message if applicable
-      message = R.string.downloadImportantPrompt
-    }
+
     val dialog = AlertDialog.Builder(this)
     dialog.setMessage(message)
     dialog.setCancelable(false)
