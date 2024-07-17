@@ -24,11 +24,10 @@ open class QuranImagePageLayout(context: Context) : QuranPageLayout(context) {
   }
 
   override fun generateContentView(context: Context, isLandscape: Boolean): View {
-    imageView = HighlightingImageView(context).apply {
+    return HighlightingImageView(context).apply {
       adjustViewBounds = true
       setIsScrollable(isLandscape && shouldWrapWithScrollView(), isLandscape)
     }
-    return imageView
   }
 
   override fun updateView(quranSettings: QuranSettings) {
