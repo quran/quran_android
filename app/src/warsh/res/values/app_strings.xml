@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Quran - Warsh</string>
-    <string name="credits">Warsh images used with permission of tafisr.app.
+    <string name="credits">Warsh images used with permission of tafsir.app.
         The data used in the translations and Arabic comes from
         &lt;a href="https://quranenc.com">quranenc.com&lt;/a> and
         &lt;a href="https://quran.ksu.edu.sa">quran.ksu.edu.sa&lt;/a>.</string>
