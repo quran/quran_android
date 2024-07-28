@@ -1,0 +1,12 @@
+plugins {
+  id 'quran.android.library.android'
+  alias libs.plugins.anvil
+}
+
+android.namespace 'com.quran.labs.androidquran.common.drawing'
+
+dependencies {
+  implementation project(path: ':common:pages')
+
+  implementation libs.androidx.annotation
+}
