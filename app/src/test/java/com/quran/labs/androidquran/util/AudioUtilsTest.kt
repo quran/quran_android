@@ -3,9 +3,9 @@ package com.quran.labs.androidquran.util
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
-import com.quran.data.pageinfo.common.MadaniDataSource
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.common.audio.util.QariUtil
+import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito

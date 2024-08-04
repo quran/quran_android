@@ -1,4 +1,4 @@
-package com.quran.data.pageinfo.common
+package com.quran.labs.androidquran.pages.data.madani
 
 import com.quran.data.model.SuraAyah
 import com.quran.data.source.QuranDataSource

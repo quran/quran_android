@@ -3,21 +3,24 @@ plugins {
   alias(libs.plugins.anvil)
 }
 
+android.namespace = "com.quran.labs.androidquran.pages.common.madani"
+
 anvil {
   useKsp(contributesAndFactoryGeneration = true)
   generateDaggerFactories.set(true)
 }
 
-android.namespace = "com.quran.labs.androidquran.pages.madani"
-
 dependencies {
   implementation(project(":common:data"))
-  implementation(project(":common:pages"))
-  implementation(project(":common:audio"))
   implementation(project(":common:upgrade"))
 
-  implementation(project(":pages:common:madani"))
-  api(project(":pages:data:madani"))
+  // annotations
+  implementation(libs.androidx.annotation)
 
+  // dagger
   implementation(libs.dagger.runtime)
+
+  // coroutines
+  implementation(libs.kotlinx.coroutines.core)
+  implementation(libs.kotlinx.coroutines.android)
 }

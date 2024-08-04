@@ -1,11 +1,11 @@
 package com.quran.data.page.provider.madani
 
 import com.quran.data.model.audio.Qari
-import com.quran.data.pageinfo.common.MadaniDataSource
-import com.quran.data.pageinfo.common.size.DefaultPageSizeCalculator
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
+import com.quran.labs.androidquran.pages.common.madani.size.DefaultPageSizeCalculator
+import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.pages.madani.R
 import com.quran.labs.androidquran.common.audio.R as audioR
 

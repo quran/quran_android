@@ -203,6 +203,7 @@ dependencies {
   testImplementation libs.espresso.intents
   testImplementation libs.turbine
   testImplementation libs.kotlinx.coroutines.test
+  testImplementation project(":pages:data:madani")
 
   errorprone libs.errorprone.core
 

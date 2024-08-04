@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.service.download
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
-import com.quran.data.pageinfo.common.MadaniDataSource
+import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.NotificationDetails
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package com.quran.data.pageinfo.common.size
+package com.quran.labs.androidquran.pages.common.madani.size
 
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageSizeCalculator
