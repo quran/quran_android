@@ -17,6 +17,7 @@ dependencies {
   implementation project(":common:di")
   implementation project(":common:data")
   implementation project(":common:download")
+  testImplementation project(":pages:data:madani")
 
   implementation libs.dagger.runtime
   implementation libs.androidx.annotation

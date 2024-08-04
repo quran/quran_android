@@ -40,6 +40,8 @@ include(":feature:downloadmanager")
 include(":feature:qarilist")
 include(":feature:recitation")
 include(":pages:madani")
+include(":pages:data:madani")
+include(":pages:common:madani")
 
 if (File(rootDir, "extras/settings-extra.gradle").exists()) {
   apply(File(rootDir, "extras/settings-extra.gradle"))

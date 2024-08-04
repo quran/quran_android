@@ -1,7 +1,7 @@
 package com.quran.data.core
 
 import com.google.common.truth.Truth.assertThat
-import com.quran.data.pageinfo.common.MadaniDataSource
+import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import org.junit.Test
 
 class QuranInfoTest {

@@ -2,36 +2,31 @@ package com.quran.labs.androidquran.presenter.bookmark
 
 import android.content.Context
 import android.content.res.Resources
-
+import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
-import com.quran.data.pageinfo.common.MadaniDataSource
-
 import com.quran.labs.androidquran.dao.bookmark.BookmarkResult
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel
+import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
 import com.quran.labs.androidquran.util.QuranSettings
-
-import io.reactivex.rxjava3.core.Single
+import com.quran.labs.awaitTerminalEvent
 import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
-
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-
-import com.google.common.truth.Truth.assertThat
-import com.quran.labs.awaitTerminalEvent
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
-import org.mockito.Mockito.`when` as whenever
 import org.mockito.MockitoAnnotations
+import org.mockito.Mockito.`when` as whenever
 
 class BookmarkPresenterTest {
 

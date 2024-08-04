@@ -1,21 +1,17 @@
 package com.quran.labs.androidquran.model.translation
 
 import android.content.Context
-
+import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.bookmark.Bookmark
-import com.quran.data.pageinfo.common.MadaniDataSource
 import com.quran.labs.androidquran.database.DatabaseHandler
+import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.util.QuranFileUtils
-
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
-import com.google.common.truth.Truth.assertThat
-
-import java.util.ArrayList
 
 class ArabicDatabaseUtilsTest {
 
