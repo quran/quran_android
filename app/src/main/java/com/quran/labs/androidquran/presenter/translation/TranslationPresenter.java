@@ -115,7 +115,6 @@ public class TranslationPresenter extends
 
   public interface TranslationScreen {
     void setVerses(int page, @NonNull String[] translations, @NonNull List<QuranAyahInfo> verses);
-
     void updateScrollPosition();
   }
 }

@@ -32,7 +32,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     MenuItem.OnMenuItemClickListener {
   private final TranslationAdapter translationAdapter;
   private final AyahToolBar ayahToolBar;
-private List<LocalTranslation> translationList;
+  private List<LocalTranslation> translationList;
   private String[] translations;
   private QuranAyahInfo selectedAyah;
   private OnClickListener onClickListener;
@@ -85,7 +85,8 @@ private List<LocalTranslation> translationList;
         int items = translations.length;
         String[] titles = new String[items];
 
-        for (int i = 0; i < items; i++) {
+        for (int i = 0; i < items; i++) 
+        {
           popmenu.getMenu().add(Menu.NONE, i, 1, translations[i]);
         }
 
@@ -96,9 +97,8 @@ private List<LocalTranslation> translationList;
           public boolean onMenuItemClick(MenuItem item) {
             if (onTranslationActionListener != null && selectedAyah != null)
             {
-              int id=item.getItemId();
               String selectedTranslation=(String)item.getTitle();
-              onTranslationActionListener.onTranslationAction(selectedAyah, translations,selectedTranslation,R.id.cab_copy_ayah_text_menu);
+              onTranslationActionListener.onTranslationAction(selectedAyah, translations, selectedTranslation, R.id.cab_copy_ayah_text_menu);
               return true;
             }
             return false;
@@ -181,9 +181,7 @@ private List<LocalTranslation> translationList;
 
   @Override
   public boolean onMenuItemClick(MenuItem item) {
-    int id=item.getItemId();
     if (onTranslationActionListener != null && selectedAyah != null) {
-
       onTranslationActionListener.onTranslationAction(selectedAyah, translations,"", item.getItemId());
       return true;
     }

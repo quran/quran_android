@@ -55,7 +55,9 @@ public class ShareUtil {
 
   public String getShareTextperTranslation(Context context,
                                            QuranAyahInfo ayahInfo,
-                                           String[] translationNames, String selectedTranslation) {
+                                           String[] translationNames,
+                                           String selectedTranslation) 
+  {
     final StringBuilder sb = new StringBuilder();
 
     for (int i = 0, size = ayahInfo.texts.size(); i < size; i++) {
