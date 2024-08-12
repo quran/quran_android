@@ -85,7 +85,8 @@ private List<LocalTranslation> translationList;
         int items = translations.length;
         String[] titles = new String[items];
 
-        for (int i = 0; i < items; i++) {
+        for (int i = 0; i < items; i++) 
+        {
           popmenu.getMenu().add(Menu.NONE, i, 1, translations[i]);
         }
 
@@ -98,7 +99,7 @@ private List<LocalTranslation> translationList;
             {
               int id=item.getItemId();
               String selectedTranslation=(String)item.getTitle();
-              onTranslationActionListener.onTranslationAction(selectedAyah, translations,selectedTranslation,R.id.cab_copy_ayah_text_menu);
+              onTranslationActionListener.onTranslationAction(selectedAyah, translations, selectedTranslation, R.id.cab_copy_ayah_text_menu);
               return true;
             }
             return false;
