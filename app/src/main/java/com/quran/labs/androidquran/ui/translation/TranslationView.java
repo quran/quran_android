@@ -81,18 +81,17 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
 
       @Override
       public void onClick(View v) {
-        PopupMenu popmenu = new PopupMenu(context, v);
+        final PopupMenu popMenu = new PopupMenu(context, v);
         int items = translations.length;
         String[] titles = new String[items];
-
+        Menu menu = popMenu.getMenu();
         for (int i = 0; i < items; i++) 
         {
-          popmenu.getMenu().add(Menu.NONE, i, 1, translations[i]);
+          menu.getMenu().add(Menu.NONE, i, 1, translations[i]);
         }
-
-        popmenu.show();
-        popmenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
+        menu.show();
+        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+          
           @Override
           public boolean onMenuItemClick(MenuItem item) {
             if (onTranslationActionListener != null && selectedAyah != null)
