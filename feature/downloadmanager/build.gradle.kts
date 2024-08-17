@@ -6,7 +6,7 @@ plugins {
 android.namespace = "com.quran.mobile.feature.downloadmanager"
 
 anvil {
-  useKsp(contributesAndFactoryGeneration = true)
+  useKsp(contributesAndFactoryGeneration = true, componentMerging = true)
   generateDaggerFactories.set(true)
 }
 

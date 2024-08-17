@@ -1,12 +1,15 @@
 package com.quran.labs.androidquran.di.quran
 
+import com.quran.data.di.QuranActivityLevelScope
+import com.quran.data.di.QuranActivityScope
 import com.quran.labs.androidquran.di.component.activity.QuranActivityComponent
-import dagger.Subcomponent
+import com.squareup.anvil.annotations.MergeSubcomponent
 
-@Subcomponent(modules = [TestQuranActivityModule::class])
+@QuranActivityScope
+@MergeSubcomponent(scope = QuranActivityLevelScope::class, modules = [TestQuranActivityModule::class])
 interface TestQuranActivityComponent : QuranActivityComponent {
 
-  @Subcomponent.Factory
+  @MergeSubcomponent.Factory
   interface Factory : QuranActivityComponent.Factory {
     override fun generate(): TestQuranActivityComponent
   }

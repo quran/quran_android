@@ -1,14 +1,17 @@
 package com.quran.labs.androidquran.di.component.activity
 
+import com.quran.data.di.QuranActivityLevelScope
+import com.quran.data.di.QuranActivityScope
 import com.quran.labs.androidquran.di.module.activity.QuranActivityModule
 import com.quran.labs.androidquran.ui.QuranActivity
-import dagger.Subcomponent
+import com.squareup.anvil.annotations.MergeSubcomponent
 
-@Subcomponent(modules = [QuranActivityModule::class])
+@QuranActivityScope
+@MergeSubcomponent(scope = QuranActivityLevelScope::class, modules = [QuranActivityModule::class])
 interface QuranActivityComponent {
   fun inject(quranActivity: QuranActivity)
 
-  @Subcomponent.Factory
+  @MergeSubcomponent.Factory
   interface Factory {
     fun generate(): QuranActivityComponent
   }

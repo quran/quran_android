@@ -42,7 +42,7 @@ class HighlightsDrawer(
 
   // Singleton object so we can share the cache across all pages
   private object PaintCache {
-    private val cache = mutableMapOf<Pair<HighlightType.Mode, @ColorInt Int>, Paint>()
+    private val cache = mutableMapOf<Pair<HighlightType.Mode, /* @ColorInt */ Int>, Paint>()
 
     fun getPaintForHighlightType(context: Context, type: HighlightType): Paint =
       cache.getOrPut(Pair(type.mode, type.colorResId)) {

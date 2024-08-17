@@ -24,6 +24,13 @@ if (getGradle().startParameter.taskRequests.toString().contains("Release") && us
   apply(plugin = "com.google.firebase.crashlytics")
 }
 
+anvil {
+  useKsp(
+    contributesAndFactoryGeneration = true,
+    componentMerging = true
+  )
+}
+
 android {
   namespace = "com.quran.labs.androidquran"
 

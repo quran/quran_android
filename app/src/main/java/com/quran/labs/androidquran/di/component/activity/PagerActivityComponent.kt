@@ -14,7 +14,6 @@ import com.quran.mobile.feature.qarilist.QariListWrapper
 import com.quran.page.common.toolbar.AyahToolBar
 import com.squareup.anvil.annotations.MergeSubcomponent
 import dagger.BindsInstance
-import dagger.Subcomponent
 
 @QuranScope
 @MergeSubcomponent(QuranReadingScope::class)
@@ -32,7 +31,7 @@ interface PagerActivityComponent : QuranReadingActivityComponent {
   fun inject(qariListWrapper: QariListWrapper)
   fun inject(audioBarWrapper: AudioBarWrapper)
 
-  @Subcomponent.Factory
+  @MergeSubcomponent.Factory
   interface Factory {
     fun generate(
       @BindsInstance ayahSelectedListener: AyahSelectedListener

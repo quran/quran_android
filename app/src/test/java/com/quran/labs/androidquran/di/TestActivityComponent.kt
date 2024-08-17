@@ -8,7 +8,6 @@ import com.quran.labs.androidquran.di.quran.TestQuranActivityComponent
 import com.quran.mobile.di.qualifier.ActivityContext
 import com.squareup.anvil.annotations.MergeSubcomponent
 import dagger.BindsInstance
-import dagger.Subcomponent
 
 @ActivityScope
 @MergeSubcomponent(ActivityLevelScope::class)
@@ -16,7 +15,7 @@ interface TestActivityComponent : ActivityComponent {
   // subcomponents
   override fun quranActivityComponentFactory(): TestQuranActivityComponent.Factory
 
-  @Subcomponent.Factory
+  @MergeSubcomponent.Factory
   interface Factory : ActivityComponent.Factory {
     override fun generate(@BindsInstance @ActivityContext context: Context): TestActivityComponent
   }
