@@ -36,7 +36,6 @@ import com.quran.mobile.di.QuranApplicationComponent
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.squareup.anvil.annotations.MergeComponent
 import dagger.BindsInstance
-import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
@@ -92,7 +91,7 @@ interface ApplicationComponent : QuranApplicationComponent {
   fun inject(bookmarksWidgetListProvider: BookmarksWidgetListProvider)
   fun inject(bookmarksWidget: BookmarksWidget)
 
-  @Component.Factory
+  @MergeComponent.Factory
   interface Factory {
     fun generate(@BindsInstance @ApplicationContext appContext: Context): ApplicationComponent
   }

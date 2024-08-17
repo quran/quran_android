@@ -8,7 +8,6 @@ import com.quran.labs.androidquran.ui.fragment.TranslationFragment
 import com.quran.mobile.di.QuranReadingPageComponent
 import com.squareup.anvil.annotations.MergeSubcomponent
 import dagger.BindsInstance
-import dagger.Subcomponent
 
 @QuranPageScope
 @MergeSubcomponent(QuranReadingPageScope::class)
@@ -17,7 +16,7 @@ interface QuranPageComponent: QuranReadingPageComponent {
   fun inject(tabletFragment: TabletFragment)
   fun inject(translationFragment: TranslationFragment)
 
-  @Subcomponent.Factory
+  @MergeSubcomponent.Factory
   interface Factory {
     fun generate(@BindsInstance pages: IntArray): QuranPageComponent
   }

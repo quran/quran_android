@@ -8,7 +8,7 @@ composeBomVersion = "2024.06.00"
 okhttpBomVersion = "4.12.0"
 
 # dependencies
-anvil = "2.5.0-beta11"
+anvil = "0.2.4"
 coroutinesVersion = "1.8.1"
 crashlytics = "3.0.2"
 daggerVersion = "2.52"
@@ -191,7 +191,7 @@ kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref =
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
-anvil = { id = "com.squareup.anvil", version.ref = "anvil"}
+anvil = { id = "dev.zacsweers.anvil", version.ref = "anvil"}
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 errorprone = { id = "net.ltgt.errorprone", version.ref = "errorprone" }

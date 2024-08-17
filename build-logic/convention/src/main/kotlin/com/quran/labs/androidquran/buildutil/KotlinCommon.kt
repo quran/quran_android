@@ -11,8 +11,9 @@ fun Project.applyKotlinCommon() {
   tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     compilerOptions {
       jvmTarget.set(JvmTarget.JVM_17)
-      freeCompilerArgs.add(
-        "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+      freeCompilerArgs.addAll(
+        "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+        "-Xjvm-default=all"
       )
     }
   }
