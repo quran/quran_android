@@ -1,6 +1,6 @@
 plugins {
   id("quran.android.library.android")
-  id("app.cash.sqldelight")
+  alias(libs.plugins.sqldelight)
   alias(libs.plugins.anvil)
 }
 

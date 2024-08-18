@@ -2,8 +2,10 @@ import com.android.build.gradle.LibraryExtension
 import com.quran.labs.androidquran.buildutil.applyAndroidCommon
 import com.quran.labs.androidquran.buildutil.applyBoms
 import com.quran.labs.androidquran.buildutil.applyComposeCommon
+import com.quran.labs.androidquran.buildutil.applyDaggerAnvilCommon
 import com.quran.labs.androidquran.buildutil.applyJavaCommon
 import com.quran.labs.androidquran.buildutil.applyKotlinCommon
+import com.quran.labs.androidquran.buildutil.disableDebugVariant
 import com.quran.labs.androidquran.buildutil.withLibraries
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -24,11 +26,13 @@ class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
       extensions.configure<LibraryExtension> {
         applyAndroidCommon(target)
         applyComposeCommon(target)
+        disableDebugVariant()
       }
 
       applyJavaCommon()
       applyKotlinCommon()
       applyBoms()
+      applyDaggerAnvilCommon()
     }
   }
 }

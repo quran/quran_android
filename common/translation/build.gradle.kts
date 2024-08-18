@@ -1,7 +1,7 @@
 plugins {
-   id("quran.android.library.android")
-   id("app.cash.sqldelight")
-   id("com.squareup.anvil")
+  id("quran.android.library.android")
+  alias(libs.plugins.sqldelight)
+  alias(libs.plugins.anvil)
 }
 
 anvil {

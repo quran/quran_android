@@ -1,6 +1,6 @@
 plugins {
   id("quran.android.library.android")
-  id("com.squareup.anvil")
+  alias(libs.plugins.anvil)
 }
 
 anvil {

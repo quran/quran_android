@@ -16,8 +16,10 @@ fun CommonExtension<*, *, *, *, *, *>.applyComposeCommon(project: Project) {
   }
 
   project.extensions.configure<ComposeCompilerGradlePluginExtension> {
-    // https://issuetracker.google.com/issues/338842143
+    // manually enable source info until this is fixed:
+    // https://issuetracker.google.com/issues/362780328
     includeSourceInformation.set(true)
+
     if (project.findProperty("composeCompilerReports") == "true") {
       reportsDestination.set(project.layout.buildDirectory.get().asFile.resolve("compose_compiler"))
       metricsDestination.set(project.layout.buildDirectory.get().asFile.resolve("compose_compiler"))

@@ -5,7 +5,6 @@ import java.util.Locale
 
 plugins {
   id("quran.android.application")
-  alias(libs.plugins.kotlin.kapt)
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.ksp)
   alias(libs.plugins.errorprone)
@@ -70,12 +69,13 @@ android {
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard.cfg")
       signingConfig = signingConfigs.getByName("release")
       versionNameSuffix = "-beta"
-      matchingFallbacks += listOf("debug")
+      matchingFallbacks += listOf("debug", "release")
     }
 
     getByName("debug") {
       applicationIdSuffix = ".debug"
       versionNameSuffix = "-debug"
+      matchingFallbacks += "release"
     }
 
     getByName("release") {
@@ -186,8 +186,8 @@ dependencies {
   implementation(libs.rxandroid)
 
   // dagger
-  kapt(libs.dagger.compiler)
-  kaptTest(libs.dagger.compiler)
+  ksp(libs.dagger.compiler)
+  kspTest(libs.dagger.compiler)
   implementation(libs.dagger.runtime)
 
   // workmanager
