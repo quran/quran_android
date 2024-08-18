@@ -7,11 +7,6 @@ android {
   namespace 'com.quran.labs.androidquran.feature.audio'
 
   buildTypes {
-     beta {
-       consumerProguardFiles 'proguard.cfg'
-       matchingFallbacks = ['debug']
-     }
-
      release {
        consumerProguardFiles 'proguard.cfg'
      }

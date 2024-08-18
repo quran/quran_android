@@ -8,6 +8,8 @@ dependencies {
   compileOnly(libs.android.gradlePlugin)
   compileOnly(libs.kotlin.gradlePlugin)
   compileOnly(libs.compose.compiler.gradlePlugin)
+  compileOnly(libs.sqldelight.gradlePlugin)
+  compileOnly(libs.ksp.gradlePlugin)
   implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
 
