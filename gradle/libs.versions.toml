@@ -8,7 +8,7 @@ composeBomVersion = "2024.08.00"
 okhttpBomVersion = "4.12.0"
 
 # dependencies
-anvil = "0.2.5"
+anvil = "0.2.6"
 coroutinesVersion = "1.8.1"
 crashlytics = "3.0.2"
 daggerVersion = "2.52"
