@@ -1762,7 +1762,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         })
   }
 
-  fun shareAyahLink(start: SuraAyah?, end: SuraAyah?) {
+  fun shareAyahLink(start: SuraAyah, end: SuraAyah) {
     showProgressDialog()
     compositeDisposable.add(
       quranAppUtils.getQuranAppUrlObservable(getString(R.string.quranapp_key), start, end)
