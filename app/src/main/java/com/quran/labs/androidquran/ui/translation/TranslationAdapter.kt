@@ -321,7 +321,7 @@ internal class TranslationAdapter(
               ArabicDatabaseUtils.AR_BASMALLAH
             } else {
               ArabicDatabaseUtils.getAyahWithoutBasmallah(
-                row.ayahInfo.sura, row.ayahInfo.ayah, row.ayahInfo.arabicText
+                row.ayahInfo.sura, row.ayahInfo.ayah, row.ayahInfo.arabicText!!
               )
             }
           )
