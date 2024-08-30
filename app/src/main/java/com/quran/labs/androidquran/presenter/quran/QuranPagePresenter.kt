@@ -48,7 +48,7 @@ class QuranPagePresenter @Inject constructor(
 
   private fun getPageCoordinates(pages: IntArray) {
     compositeDisposable.add(
-      coordinatesModel.getPageCoordinates(quranSettings.shouldOverlayPageInfo(), *pages.toTypedArray())
+      coordinatesModel.getPageCoordinates(quranSettings.shouldOverlayPageInfo(), *pages)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(object : DisposableObserver<PageCoordinates>() {
           override fun onNext(pageCoordinates: PageCoordinates) {
