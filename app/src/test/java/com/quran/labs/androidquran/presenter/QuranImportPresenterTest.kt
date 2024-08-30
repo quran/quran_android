@@ -4,37 +4,34 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.os.ParcelFileDescriptor
-
+import com.google.common.truth.Truth.assertThat
 import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
-
+import com.quran.labs.awaitTerminalEvent
+import io.reactivex.rxjava3.observers.TestObserver
+import okio.BufferedSource
 import org.junit.Before
 import org.junit.Test
-
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito.mock
 import java.io.ByteArrayInputStream
 import java.io.FileNotFoundException
 import java.io.InputStream
-
-import io.reactivex.rxjava3.observers.TestObserver
-import okio.BufferedSource
-
-import com.google.common.truth.Truth.assertThat
-import com.quran.labs.awaitTerminalEvent
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.`when` as whenever
-import org.mockito.Mockito.mock
 
 class QuranImportPresenterTest {
 
   private lateinit var appContext: Context
   private lateinit var presenter: QuranImportPresenter
+  private lateinit var uri: Uri
 
   @Before
   fun setup() {
     appContext = mock(Context::class.java)
     val model = mock(BookmarkImportExportModel::class.java)
     presenter = QuranImportPresenter(appContext, model, mock(BookmarkModel::class.java))
+    uri = mock(Uri::class.java)
   }
 
   @Test
@@ -46,7 +43,7 @@ class QuranImportPresenterTest {
     whenever(appContext.contentResolver).thenReturn(resolver)
 
     val observer = TestObserver<BufferedSource>()
-    presenter.parseExternalFile(Uri.EMPTY)
+    presenter.parseExternalFile(uri)
       .subscribe(observer)
     observer.awaitTerminalEvent()
     observer.assertValueCount(1)
@@ -66,7 +63,7 @@ class QuranImportPresenterTest {
     whenever(appContext.contentResolver).thenReturn(resolver)
 
     val observer = TestObserver<BufferedSource>()
-    presenter.parseExternalFile(Uri.EMPTY)
+    presenter.parseExternalFile(uri)
       .subscribe(observer)
     observer.awaitTerminalEvent()
     observer.assertValueCount(0)
@@ -82,7 +79,7 @@ class QuranImportPresenterTest {
     whenever(appContext.contentResolver).thenReturn(resolver)
 
     val observer = TestObserver<BufferedSource>()
-    presenter.parseUri(Uri.EMPTY)
+    presenter.parseUri(uri)
       .subscribe(observer)
     observer.awaitTerminalEvent()
     observer.assertComplete()
@@ -101,7 +98,7 @@ class QuranImportPresenterTest {
     whenever(appContext.contentResolver).thenReturn(resolver)
 
     val observer = TestObserver<BufferedSource>()
-    presenter.parseUri(Uri.EMPTY)
+    presenter.parseUri(uri)
       .subscribe(observer)
     observer.awaitTerminalEvent()
     observer.assertError(NullPointerException::class.java)
