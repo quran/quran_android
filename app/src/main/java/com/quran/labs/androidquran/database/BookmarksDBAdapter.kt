@@ -88,7 +88,7 @@ class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabas
     }
   }
 
-  fun addBookmarkIfNotExists(sura: Int, ayah: Int, page: Int): Long {
+  fun addBookmarkIfNotExists(sura: Int?, ayah: Int?, page: Int): Long {
     var bookmarkId = getBookmarkId(sura, ayah, page)
     if (bookmarkId < 0) {
       bookmarkId = addBookmark(sura, ayah, page)

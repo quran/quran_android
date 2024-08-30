@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
-import androidx.core.util.Pair
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
@@ -10,24 +9,17 @@ import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
-import java.util.concurrent.CountDownLatch
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyBoolean
-import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.Mock
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import org.mockito.MockitoAnnotations
-import org.mockito.Mockito.`when` as whenever
+import java.util.concurrent.CountDownLatch
 
 class TagBookmarkPresenterTest {
 
-  @Mock
   private lateinit var bookmarkModel: BookmarkModel
 
   companion object {
@@ -40,13 +32,27 @@ class TagBookmarkPresenterTest {
 
   @Before
   fun setupTest() {
-    MockitoAnnotations.openMocks(this@TagBookmarkPresenterTest)
+    bookmarkModel = object : BookmarkModel(mock(), mock()), TagsObservableReporter {
+      var tagsObservableCalled: Int = 0
 
-    val tags: MutableList<Tag> = ArrayList()
-    tags.add(Tag(1, "Test"))
-    whenever(bookmarkModel.tagsObservable()).thenReturn(Observable.empty())
-    whenever(bookmarkModel.tagsObservable).thenReturn(Single.just(tags))
-    whenever(bookmarkModel.getBookmarkTagIds(any())).thenReturn(Maybe.empty())
+      override val tagsObservable: Single<List<Tag>>
+        get() = tagsObservableInternal()
+
+      override fun tagsObservableCalled(): Int = tagsObservableCalled
+
+      private fun tagsObservableInternal(): Single<List<Tag>> {
+        tagsObservableCalled++
+        return Single.just(listOf(Tag(1, "Test")))
+      }
+
+      override fun tagsObservable(): Observable<Boolean> {
+        return Observable.empty()
+      }
+
+      override fun getBookmarkTagIds(bookmarkIdSingle: Single<Long>): Maybe<List<Long>> {
+        return Maybe.empty()
+      }
+    }
   }
 
   @Test
@@ -55,13 +61,28 @@ class TagBookmarkPresenterTest {
     val latch = CountDownLatch(1)
     val secondLatch = CountDownLatch(2)
 
-    val presenter: TagBookmarkPresenter = spy(object : TagBookmarkPresenter(bookmarkModel) {
+    val tagPresenter: TagBookmarkPresenter = spy(object : TagBookmarkPresenter(bookmarkModel) {
       override fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
         super.onRefreshedData(data)
         latch.countDown()
         secondLatch.countDown()
       }
     })
+
+    val presenter = object : TagBookmarkPresenter(bookmarkModel), RefreshReporter {
+      var refreshesCalled: Int = 0
+
+      override fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
+        tagPresenter.onRefreshedData(data)
+      }
+
+      override fun refreshesCalled(): Int = refreshesCalled
+
+      override fun refresh() {
+        refreshesCalled++
+        return tagPresenter.refresh()
+      }
+    }
 
     presenter.setBookmarksMode(longArrayOf(1))
     latch.await()
@@ -70,53 +91,104 @@ class TagBookmarkPresenterTest {
     secondLatch.await()
 
     // make sure we called refresh twice
-    verify(presenter, times(2)).refresh()
+    assertThat(presenter.refreshesCalled()).isEqualTo(2)
 
     // but make sure we only queried tags from the database once
-    verify(bookmarkModel, times(1)).tagsObservable
+    val tagsReporter = bookmarkModel as TagsObservableReporter
+    assertThat(tagsReporter.tagsObservableCalled()).isEqualTo(1)
   }
 
   @Test
   @Throws(InterruptedException::class)
   fun testChangeShouldOnlySaveExplicitlyForBookmarkIds() {
-    whenever(bookmarkModel.updateBookmarkTags(any(LongArray::class.java), any(), anyBoolean()))
-      .thenReturn(Observable.just(true))
+    val bookmarkModel = object : BookmarkModel(mock(), mock()) {
+      override fun updateBookmarkTags(
+        bookmarkIds: LongArray,
+        tagIds: Set<Long>,
+        deleteNonTagged: Boolean
+      ): Observable<Boolean> {
+        return Observable.just(true)
+      }
+
+      override val tagsObservable: Single<List<Tag>>
+        get() = Single.just(listOf(Tag(1, "Test")))
+
+      override fun tagsObservable(): Observable<Boolean> {
+        return Observable.empty()
+      }
+
+      override fun getBookmarkTagIds(bookmarkIdSingle: Single<Long>): Maybe<List<Long>> {
+        return Maybe.empty()
+      }
+    }
 
     val saveLatch = CountDownLatch(1)
     val refreshLatch = CountDownLatch(1)
-    val presenter: TagBookmarkPresenter = spy(object : TagBookmarkPresenter(bookmarkModel) {
+
+    val presenter: TagBookmarkPresenter = object : TagBookmarkPresenter(bookmarkModel), SavesCalledReporter {
+      var savesCalled: Int = 0
+
+      override fun savesCalled(): Int = savesCalled
+
       override fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
         super.onRefreshedData(data)
         refreshLatch.countDown()
       }
 
       override fun saveChanges() {
+        savesCalled++
         // override because we aren't testing the save process here, just that save is called
         saveLatch.countDown()
       }
-    })
+    }
 
     presenter.setBookmarksMode(longArrayOf(1))
     refreshLatch.await()
 
     // try to modify a tag - save shouldn't be called
     assertThat(presenter.toggleTag(1)).isTrue()
-    verify(presenter, times(0)).saveChanges()
+
+    val savingPresenter = presenter as SavesCalledReporter
+    assertThat(savingPresenter.savesCalled()).isEqualTo(0)
 
     // explicitly call save
     presenter.saveChanges()
     saveLatch.countDown()
-    verify(presenter, times(1)).saveChanges()
+    assertThat(savingPresenter.savesCalled()).isEqualTo(1)
   }
 
   @Test
   @Throws(InterruptedException::class)
   fun testChangeShouldSaveImmediatelyForAyahBookmarks() {
-    whenever(bookmarkModel.updateBookmarkTags(any(LongArray::class.java), any(), anyBoolean()))
-      .thenReturn(Observable.just(true))
+    val bookmarkModel = object : BookmarkModel(mock(), mock()), UpdatedBookmarkTagsReporter {
+      var updateBookmarkTagsCalled: Int = 0
 
-    whenever(bookmarkModel.safeAddBookmark(anyInt(), anyInt(), anyInt()))
-      .thenReturn(Observable.just(2L))
+      override fun updateBookmarkTags(
+        bookmarkIds: LongArray,
+        tagIds: Set<Long>,
+        deleteNonTagged: Boolean
+      ): Observable<Boolean> {
+        updateBookmarkTagsCalled++
+        return Observable.just(true)
+      }
+
+      override val tagsObservable: Single<List<Tag>>
+        get() = Single.just(listOf(Tag(1, "Test")))
+
+      override fun tagsObservable(): Observable<Boolean> {
+        return Observable.empty()
+      }
+
+      override fun getBookmarkTagIds(bookmarkIdSingle: Single<Long>): Maybe<List<Long>> {
+        return Maybe.empty()
+      }
+
+      override fun safeAddBookmark(sura: Int?, ayah: Int?, page: Int): Observable<Long> {
+        return Observable.just(2L)
+      }
+
+      override fun updatedBookmarkTagsCalled(): Int = updateBookmarkTagsCalled
+    }
 
     // when refresh is done
     val refreshLatch = CountDownLatch(1)
@@ -125,18 +197,23 @@ class TagBookmarkPresenterTest {
     val latch = CountDownLatch(1)
     val secondLatch = CountDownLatch(2)
 
-    val presenter: TagBookmarkPresenter = spy(object : TagBookmarkPresenter(bookmarkModel) {
+    val presenter: TagBookmarkPresenter = object : TagBookmarkPresenter(bookmarkModel), SavesCalledReporter {
+      var savesCalled: Int = 0
+
       override fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
         super.onRefreshedData(data)
         refreshLatch.countDown()
       }
 
       override fun onSaveChangesDone() {
+        savesCalled++
         super.onSaveChangesDone()
         latch.countDown()
         secondLatch.countDown()
       }
-    })
+
+      override fun savesCalled(): Int = savesCalled
+    }
 
     presenter.setAyahBookmarkMode(6, 76, 137)
     // make sure refresh is done first
@@ -146,14 +223,15 @@ class TagBookmarkPresenterTest {
     assertThat(presenter.toggleTag(1)).isTrue()
     latch.await()
 
-    verify(presenter, times(1)).saveChanges()
+    val savesPresenter = presenter as SavesCalledReporter
+    assertThat(savesPresenter.savesCalled()).isEqualTo(1)
 
     // try to save again (should do nothing)
     presenter.saveChanges()
     secondLatch.await()
 
-    verify(bookmarkModel, times(1))
-      .updateBookmarkTags(any(LongArray::class.java), any(), anyBoolean())
+    val updateReportingBookmarkModel = bookmarkModel as UpdatedBookmarkTagsReporter
+    assertThat(updateReportingBookmarkModel.updatedBookmarkTagsCalled()).isEqualTo(1)
   }
 
   @Test
@@ -172,5 +250,21 @@ class TagBookmarkPresenterTest {
     val presenter = spy(TagBookmarkPresenter(bookmarkModel))
     assertThat(presenter.toggleTag(-1)).isFalse()
     verify(presenter, times(0)).setMadeChanges()
+  }
+
+  private interface TagsObservableReporter {
+    fun tagsObservableCalled(): Int
+  }
+
+  private interface SavesCalledReporter {
+    fun savesCalled(): Int
+  }
+
+  private interface UpdatedBookmarkTagsReporter {
+    fun updatedBookmarkTagsCalled(): Int
+  }
+
+  private interface RefreshReporter {
+    fun refreshesCalled(): Int
   }
 }
