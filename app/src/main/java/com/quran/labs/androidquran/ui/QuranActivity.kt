@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AlertDialog.Builder
 import androidx.appcompat.app.AppCompatActivity
@@ -81,6 +82,11 @@ class QuranActivity : AppCompatActivity(),
   private val compositeDisposable = CompositeDisposable()
   lateinit var latestPageObservable: Observable<Int>
 
+  private var backStackListener: FragmentManager.OnBackStackChangedListener? = null
+  private var androidQLeakClearingCallback: OnBackPressedCallback? = null
+  private lateinit var searchItemCollapserCallback: OnBackPressedCallback
+  private lateinit var supportActionModeClearingCallback: OnBackPressedCallback
+
   @Inject
   lateinit var settings: QuranSettings
   @Inject
@@ -106,6 +112,7 @@ class QuranActivity : AppCompatActivity(),
       .generate()
       .inject(this)
 
+    registerBackPressedCallbacks()
     setContentView(R.layout.quran_index)
     isRtl = isRtl()
 
@@ -182,6 +189,61 @@ class QuranActivity : AppCompatActivity(),
     super.onPause()
   }
 
+  override fun onDestroy() {
+    // only set to handle Android Q memory leaks
+    backStackListener?.let {
+      supportFragmentManager.removeOnBackStackChangedListener(it)
+    }
+    super.onDestroy()
+  }
+
+  // on back pressed, these are run in reverse order of registration
+  private fun registerBackPressedCallbacks() {
+    // this block works around a memory leak in Android Q
+    // https://issuetracker.google.com/issues/139738913
+    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q && isTaskRoot) {
+      val enabled = (supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.backStackEntryCount ?: 0) == 0 &&
+          supportFragmentManager.backStackEntryCount == 0
+      val callback = object : OnBackPressedCallback(enabled) {
+        override fun handleOnBackPressed() {
+          finishAfterTransition()
+        }
+      }
+      androidQLeakClearingCallback = callback
+      onBackPressedDispatcher.addCallback(this, callback)
+
+      val listener = FragmentManager.OnBackStackChangedListener {
+        androidQLeakClearingCallback?.isEnabled =
+          (supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.backStackEntryCount
+            ?: 0) == 0 &&
+              supportFragmentManager.backStackEntryCount == 0
+      }
+      backStackListener = listener
+      supportFragmentManager.addOnBackStackChangedListener(listener)
+    }
+
+    // collapse the search view if it's expanded on back press
+    val searchItemExpanded = searchItem?.isActionViewExpanded ?: false
+    searchItemCollapserCallback = object : OnBackPressedCallback(searchItemExpanded) {
+      override fun handleOnBackPressed() {
+        val searchItem = searchItem
+        if (searchItem != null && searchItem.isActionViewExpanded) {
+          searchItem.collapseActionView()
+        }
+        // once it's collapsed, disable it
+        isEnabled = false
+      }
+    }
+
+    // clear the action mode if it's active on back press
+    val supportActionModeEnabled = supportActionMode != null
+    supportActionModeClearingCallback = object : OnBackPressedCallback(supportActionModeEnabled) {
+      override fun handleOnBackPressed() {
+        supportActionMode?.finish()
+      }
+    }
+  }
+
   private fun isRtl(): Boolean {
     return settings.isArabicNames || QuranUtils.isRtl()
   }
@@ -191,6 +253,17 @@ class QuranActivity : AppCompatActivity(),
     val inflater = menuInflater
     inflater.inflate(R.menu.home_menu, menu)
     searchItem = menu.findItem(R.id.search)
+    searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+      override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+        searchItemCollapserCallback.isEnabled = true
+        return true
+      }
+
+      override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+        searchItemCollapserCallback.isEnabled = false
+        return true
+      }
+    })
     val searchView = searchItem?.actionView as SearchView
     val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
     searchView.queryHint = getString(R.string.search_hint)
@@ -243,35 +316,14 @@ class QuranActivity : AppCompatActivity(),
 
   override fun onSupportActionModeFinished(mode: ActionMode) {
     supportActionMode = null
+    supportActionModeClearingCallback.isEnabled = false
     super.onSupportActionModeFinished(mode)
   }
 
   override fun onSupportActionModeStarted(mode: ActionMode) {
     supportActionMode = mode
+    supportActionModeClearingCallback.isEnabled = true
     super.onSupportActionModeStarted(mode)
-  }
-
-  override fun onBackPressed() {
-    val searchItem = searchItem
-    val supportActionMode = supportActionMode
-
-    if (supportActionMode != null) {
-      supportActionMode.finish()
-    } else if (searchItem != null && searchItem.isActionViewExpanded) {
-      searchItem.collapseActionView()
-    } else {
-      // work around a memory leak in Android Q
-      // https://issuetracker.google.com/issues/139738913
-      if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q &&
-        isTaskRoot &&
-        (supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.backStackEntryCount ?: 0) == 0 &&
-        supportFragmentManager.backStackEntryCount == 0
-      ) {
-        finishAfterTransition()
-      } else {
-        super.onBackPressed()
-      }
-    }
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
