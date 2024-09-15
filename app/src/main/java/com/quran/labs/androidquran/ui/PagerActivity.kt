@@ -24,6 +24,7 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -201,6 +202,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private var defaultNavigationBarColor = 0
   private var isSplitScreen = false
 
+  private lateinit var onClearAyahModeBackCallback: OnBackPressedCallback
+  private lateinit var onShowingTranslationBackCallback: OnBackPressedCallback
+  private lateinit var onEndSessionBackCallback: OnBackPressedCallback
+
   private var lastSelectedTranslationAyah: QuranAyahInfo? = null
   private var lastActivatedLocalTranslations: Array<LocalTranslation> = emptyArray()
 
@@ -291,6 +296,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
 
     setContentView(R.layout.quran_page_activity_slider)
+
+    registerBackPressedCallbacks()
     initialize(savedInstanceState)
     requestPermissionLauncher =
       registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean? ->
@@ -336,7 +343,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       {
         onPageClicked()
       },
-      { ayahSelection: AyahSelection ->
+      handleSelection = { ayahSelection: AyahSelection ->
         onAyahSelectionChanged(ayahSelection)
       }
     )
@@ -377,6 +384,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         }
       }
     }
+    onShowingTranslationBackCallback.isEnabled = showingTranslation
 
     compositeDisposable = CompositeDisposable()
 
@@ -556,6 +564,30 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       ))
   }
 
+  private fun registerBackPressedCallbacks() {
+    val isSessionEnabled = false
+    onEndSessionBackCallback = object : OnBackPressedCallback(isSessionEnabled) {
+      override fun handleOnBackPressed() {
+        onSessionEnd()
+      }
+    }
+    onBackPressedDispatcher.addCallback(this, onEndSessionBackCallback)
+
+    onShowingTranslationBackCallback = object : OnBackPressedCallback(showingTranslation) {
+      override fun handleOnBackPressed() {
+        switchToQuran()
+      }
+    }
+    onBackPressedDispatcher.addCallback(this, onShowingTranslationBackCallback)
+
+    onClearAyahModeBackCallback = object : OnBackPressedCallback(selectionStart != null) {
+      override fun handleOnBackPressed() {
+        endAyahMode()
+      }
+    }
+    onBackPressedDispatcher.addCallback(this, onClearAyahModeBackCallback)
+  }
+
   override fun onRequestPermissionsResult(
     requestCode: Int, permissions: Array<String>, grantResults: IntArray
   ) {
@@ -670,8 +702,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     if (haveSelection) {
       val startPosition = startPosition(ayahSelection)
       updateLocalTranslations(startPosition)
+      onClearAyahModeBackCallback.isEnabled = selectionStart != null
     } else {
       endAyahMode()
+      onClearAyahModeBackCallback.isEnabled = false
     }
   }
 
@@ -937,9 +971,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         if (showingTranslation) {
           pagerAdapter.setTranslationMode()
           updateActionBarSpinner()
+          onShowingTranslationBackCallback.isEnabled = true
         } else {
           pagerAdapter.setQuranMode()
           updateActionBarTitle(page)
+          onShowingTranslationBackCallback.isEnabled = false
         }
 
         supportInvalidateOptionsMenu()
@@ -1006,6 +1042,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   private fun onSessionEnd() {
+    onEndSessionBackCallback.isEnabled = false
     pagerActivityRecitationPresenter.onSessionEnd()
   }
 
@@ -1131,6 +1168,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     val page = currentPage
     pagerAdapter.setQuranMode()
     showingTranslation = false
+    onShowingTranslationBackCallback.isEnabled = false
     if (shouldUpdatePageNumber()) {
       val position = quranInfo.getPositionFromPage(page, true)
       viewPager.currentItem = position
@@ -1151,6 +1189,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       val page = currentPage
       pagerAdapter.setTranslationMode()
       showingTranslation = true
+      onShowingTranslationBackCallback.isEnabled = true
       if (shouldUpdatePageNumber()) {
         val position = quranInfo.getPositionFromPage(page, false)
         viewPager.currentItem = position
@@ -1617,17 +1656,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   //endregion
 
-  override fun onBackPressed() {
-    if (selectionStart != null) {
-      endAyahMode()
-    } else if (showingTranslation) {
-      switchToQuran()
-    } else {
-      onSessionEnd()
-      super.onBackPressed()
-    }
-  }
-
   private val selectionStart: SuraAyah?
     // region Ayah selection
     get() {
@@ -1696,6 +1724,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         playFromAyah(startSuraAyah.sura, startSuraAyah.ayah)
         toggleActionBarVisibility(true)
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_recite_from_here) {
+        onEndSessionBackCallback.isEnabled = true
         pagerActivityRecitationPresenter.onRecitationPressed()
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_share_ayah_link) {
         shareAyahLink(startSuraAyah, endSuraAyah)

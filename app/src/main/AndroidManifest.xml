@@ -35,7 +35,8 @@
       android:supportsRtl="true"
       android:theme="@style/Quran"
       android:requestLegacyExternalStorage="true"
-      tools:targetApi="s">
+      android:enableOnBackInvokedCallback="true"
+      tools:targetApi="tiramisu">
 
     <activity
         android:name=".QuranDataActivity"
