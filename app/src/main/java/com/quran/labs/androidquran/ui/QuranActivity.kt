@@ -6,18 +6,25 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AlertDialog.Builder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -83,7 +90,6 @@ class QuranActivity : AppCompatActivity(),
   lateinit var latestPageObservable: Observable<Int>
 
   private var backStackListener: FragmentManager.OnBackStackChangedListener? = null
-  private var androidQLeakClearingCallback: OnBackPressedCallback? = null
   private lateinit var searchItemCollapserCallback: OnBackPressedCallback
   private lateinit var supportActionModeClearingCallback: OnBackPressedCallback
 
@@ -104,6 +110,13 @@ class QuranActivity : AppCompatActivity(),
     val quranApp = application as QuranApplication
     quranApp.refreshLocale(this, false)
 
+    // override these to always be dark since the app doesn't really
+    // have a light theme until now. without this, the clock color in
+    // the status bar will be dark on a dark background.
+    enableEdgeToEdge(
+      statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+      navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+    )
     super.onCreate(savedInstanceState)
     quranApp.applicationComponent
       .activityComponentFactory()
@@ -115,6 +128,24 @@ class QuranActivity : AppCompatActivity(),
     registerBackPressedCallbacks()
     setContentView(R.layout.quran_index)
     isRtl = isRtl()
+
+    val root = findViewById<ViewGroup>(R.id.root)
+    ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
+      val insets = windowInsets.getInsets(
+        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+      )
+      root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        topMargin = insets.top
+        bottomMargin = insets.bottom
+        leftMargin = insets.left
+        rightMargin = insets.right
+      }
+
+      // if we return WindowInsetsCompat.CONSUMED, the SnackBar won't
+      // be properly positioned on Android 29 and below (will be under
+      // the navigation bar).
+      windowInsets
+    }
 
     val tb = findViewById<Toolbar>(R.id.toolbar)
     setSupportActionBar(tb)
@@ -209,11 +240,10 @@ class QuranActivity : AppCompatActivity(),
           finishAfterTransition()
         }
       }
-      androidQLeakClearingCallback = callback
       onBackPressedDispatcher.addCallback(this, callback)
 
       val listener = FragmentManager.OnBackStackChangedListener {
-        androidQLeakClearingCallback?.isEnabled =
+        callback.isEnabled =
           (supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.backStackEntryCount
             ?: 0) == 0 &&
               supportFragmentManager.backStackEntryCount == 0

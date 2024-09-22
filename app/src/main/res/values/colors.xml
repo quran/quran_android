@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <color name="dark_background">#ff212121</color>
+  <color name="secondary_dark_background">#ff303030</color>
   <color name="accent_color">#ffb2dfdb</color>
   <color name="accent_color_dark">@color/color_control_normal</color>
   <color name="color_control_activated">@color/accent_color</color>
