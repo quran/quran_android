@@ -19,7 +19,6 @@ import com.quran.labs.androidquran.view.JuzView
 import com.quran.labs.androidquran.view.TagsViewGroup
 import java.text.SimpleDateFormat
 import java.util.Date
-import kotlin.collections.ArrayList
 
 class QuranListAdapter(
   private val context: Context,
