@@ -8,6 +8,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -20,11 +21,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -34,6 +36,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -195,7 +199,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private lateinit var translationsSpinner: QuranSpinner
   private lateinit var overlay: FrameLayout
   private lateinit var toolBarArea: View
-  private lateinit var audioBarParams: MarginLayoutParams
 
   private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
@@ -270,6 +273,14 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   public override fun onCreate(savedInstanceState: Bundle?) {
     val quranApp = application as QuranApplication
     quranApp.refreshLocale(this, false)
+
+    // override these to always be dark since the app doesn't really
+    // have a light theme until now. without this, the clock color in
+    // the status bar will be dark on a dark background.
+    enableEdgeToEdge(
+      statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+      navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+    )
     super.onCreate(savedInstanceState)
 
     // field injection
@@ -389,21 +400,22 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     compositeDisposable = CompositeDisposable()
 
     audioStatusBar = findViewById(R.id.audio_area)
-    audioBarParams = audioStatusBar.layoutParams as MarginLayoutParams
 
     toolBarArea = findViewById(R.id.toolbar_area)
     translationsSpinner = findViewById(R.id.spinner)
     overlay = findViewById(R.id.overlay)
 
-    // this is the colored view behind the status bar on kitkat and above
-    val statusBarBackground = findViewById<View>(R.id.status_bg)
-    statusBarBackground.layoutParams.height = statusBarHeight
+    ViewCompat.setOnApplyWindowInsetsListener(toolBarArea) { view, windowInsets ->
+      val insets = windowInsets.getInsets(
+        WindowInsetsCompat.Type.statusBars() or
+            WindowInsetsCompat.Type.displayCutout() or
+            WindowInsetsCompat.Type.navigationBars()
+      )
+      view.updatePadding(insets.left, insets.top, insets.right, 0)
+      windowInsets
+    }
 
     val toolbar = findViewById<Toolbar>(R.id.toolbar)
-    if (quranSettings.isArabicNames || QuranUtils.isRtl()) {
-      // remove when we remove LTR from quran_page_activity's root
-      ViewCompat.setLayoutDirection(toolbar, ViewCompat.LAYOUT_DIRECTION_RTL)
-    }
     setSupportActionBar(toolbar)
 
     supportActionBar?.setDisplayShowHomeEnabled(true)
@@ -618,19 +630,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
       .shareIn(scope, SharingStarted.Eagerly, 1)
 
-  private val statusBarHeight: Int
-    get() {
-      // thanks to https://github.com/jgilfelt/SystemBarTint for this
-      val resources = resources
-      val resId = resources.getIdentifier(
-        "status_bar_height", "dimen", "android"
-      )
-      if (resId > 0) {
-        return resources.getDimensionPixelSize(resId)
-      }
-      return 0
-    }
-
   private fun initAyahActionPanel() {
     slidingPanel = findViewById(R.id.sliding_panel)
     val slidingLayout =
@@ -765,13 +764,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       .setDuration(250)
       .start()
 
-    // the bottom margin on the audio bar is not part of its height, and so we have to
-    // take it into account when animating the audio bar off the screen.
-    val bottomMargin = audioBarParams.bottomMargin
-
     // and audio bar
     audioStatusBar.animate()
-      .translationY((if (visible) 0 else audioStatusBar.height + bottomMargin).toFloat())
+      .translationY((if (visible) 0 else audioStatusBar.height).toFloat())
       .setDuration(250)
       .start()
   }
