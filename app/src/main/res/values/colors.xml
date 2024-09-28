@@ -12,6 +12,7 @@
   <color name="title_color">#ffffffff</color>
   <color name="sura_number_color">#7fffffff</color>
   <color name="sura_details_color">#b2ffffff</color>
+  <color name="nav_status_bar_colors">#ff424242</color>
   <color name="transparent_actionbar_color">#AA000000</color>
   <color name="panel_background_color">#ff424242</color>
   <color name="translation_hdr_color">#ff777777</color>
