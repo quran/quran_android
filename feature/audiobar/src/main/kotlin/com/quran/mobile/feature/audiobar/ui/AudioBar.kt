@@ -3,15 +3,10 @@ package com.quran.mobile.feature.audiobar.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
@@ -35,85 +30,70 @@ internal fun AudioBar(
   eventListeners: AudioBarUiEvents,
   modifier: Modifier = Modifier
 ) {
-  val updatedModifier = Modifier.fillMaxSize()
-  Card(
-    shape = CardDefaults.shape.topOnly(),
-    modifier = modifier.fillMaxSize()
-  ) {
-    when (audioBarState) {
-      is AudioBarState.Paused -> PausedAudioBar(
-        state = audioBarState,
-        modifier = updatedModifier,
-        eventSink = eventListeners.commonPlaybackEventSink,
-        pausedEventSink = eventListeners.pausedPlaybackEventSink
-      )
+  val updatedModifier = modifier.fillMaxSize()
 
-      is AudioBarState.Playing -> PlayingAudioBar(
-        state = audioBarState,
-        modifier = updatedModifier,
-        eventSink = eventListeners.commonPlaybackEventSink,
-        playbackEventSink = eventListeners.playingPlaybackEventSink
-      )
-
-      is AudioBarState.Error -> ErrorAudioBar(
-        state = audioBarState,
-        modifier = updatedModifier,
-        eventSink = eventListeners.cancelableEventSink
-      )
-
-      is AudioBarState.Loading -> LoadingAudioBar(
-        state = audioBarState,
-        modifier = updatedModifier,
-        eventSink = eventListeners.cancelableEventSink
-      )
-
-      is AudioBarState.Downloading -> DownloadingAudioBar(
-        state = audioBarState,
-        modifier = updatedModifier,
-        eventSink = eventListeners.downloadingEventSink
-      )
-
-      is AudioBarState.Prompt -> PromptingAudioBar(
-        state = audioBarState,
-        modifier = updatedModifier,
-        eventSink = eventListeners.promptEventSink
-      )
-
-      is AudioBarState.RecitationListening -> RecitationListeningAudioBar(
-        eventSink = eventListeners.commonRecordingEventSink,
-        listeningEventSink = eventListeners.recitationListeningEventSink,
-        modifier = updatedModifier
-      )
-
-      is AudioBarState.RecitationPlaying -> RecitationPlayingAudioBar(
-        eventSink = eventListeners.commonRecordingEventSink,
-        playingEventSink = eventListeners.recitationPlayingEventSink,
-        modifier = updatedModifier
-      )
-
-      is AudioBarState.RecitationStopped -> RecitationStoppedAudioBar(
-        eventSink = eventListeners.commonRecordingEventSink,
-        stoppedEventSink = eventListeners.recitationStoppedEventSink,
-        modifier = updatedModifier
-      )
-
-      is AudioBarState.Stopped -> StoppedAudioBar(
-        state = audioBarState,
-        modifier = updatedModifier,
-        eventSink = eventListeners.stoppedEventSink
-      )
-    }
-  }
-}
-
-private fun Shape.topOnly(): Shape {
-  return if (this is RoundedCornerShape) {
-    this.copy(
-      bottomStart = CornerSize(0.dp),
-      bottomEnd = CornerSize(0.dp)
+  when (audioBarState) {
+    is AudioBarState.Paused -> PausedAudioBar(
+      state = audioBarState,
+      modifier = updatedModifier,
+      eventSink = eventListeners.commonPlaybackEventSink,
+      pausedEventSink = eventListeners.pausedPlaybackEventSink
     )
-  } else {
-    this
+
+    is AudioBarState.Playing -> PlayingAudioBar(
+      state = audioBarState,
+      modifier = updatedModifier,
+      eventSink = eventListeners.commonPlaybackEventSink,
+      playbackEventSink = eventListeners.playingPlaybackEventSink
+    )
+
+    is AudioBarState.Error -> ErrorAudioBar(
+      state = audioBarState,
+      modifier = updatedModifier,
+      eventSink = eventListeners.cancelableEventSink
+    )
+
+    is AudioBarState.Loading -> LoadingAudioBar(
+      state = audioBarState,
+      modifier = updatedModifier,
+      eventSink = eventListeners.cancelableEventSink
+    )
+
+    is AudioBarState.Downloading -> DownloadingAudioBar(
+      state = audioBarState,
+      modifier = updatedModifier,
+      eventSink = eventListeners.downloadingEventSink
+    )
+
+    is AudioBarState.Prompt -> PromptingAudioBar(
+      state = audioBarState,
+      modifier = updatedModifier,
+      eventSink = eventListeners.promptEventSink
+    )
+
+    is AudioBarState.RecitationListening -> RecitationListeningAudioBar(
+      eventSink = eventListeners.commonRecordingEventSink,
+      listeningEventSink = eventListeners.recitationListeningEventSink,
+      modifier = updatedModifier
+    )
+
+    is AudioBarState.RecitationPlaying -> RecitationPlayingAudioBar(
+      eventSink = eventListeners.commonRecordingEventSink,
+      playingEventSink = eventListeners.recitationPlayingEventSink,
+      modifier = updatedModifier
+    )
+
+    is AudioBarState.RecitationStopped -> RecitationStoppedAudioBar(
+      eventSink = eventListeners.commonRecordingEventSink,
+      stoppedEventSink = eventListeners.recitationStoppedEventSink,
+      modifier = updatedModifier
+    )
+
+    is AudioBarState.Stopped -> StoppedAudioBar(
+      state = audioBarState,
+      modifier = updatedModifier,
+      eventSink = eventListeners.stoppedEventSink
+    )
   }
 }
 

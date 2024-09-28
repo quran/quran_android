@@ -8,7 +8,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -25,8 +24,6 @@ import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.SystemBarStyle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -34,9 +31,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -202,7 +200,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
-  private var defaultNavigationBarColor = 0
   private var isSplitScreen = false
 
   private lateinit var onClearAyahModeBackCallback: OnBackPressedCallback
@@ -238,6 +235,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private lateinit var audioStatusRepositoryBridge: AudioStatusRepositoryBridge
   private lateinit var readingEventPresenterBridge: ReadingEventPresenterBridge
+  private lateinit var windowInsetsController: WindowInsetsControllerCompat
 
   private var translationJob: Job? = null
   private lateinit var compositeDisposable: CompositeDisposable
@@ -274,13 +272,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     val quranApp = application as QuranApplication
     quranApp.refreshLocale(this, false)
 
-    // override these to always be dark since the app doesn't really
-    // have a light theme until now. without this, the clock color in
-    // the status bar will be dark on a dark background.
-    enableEdgeToEdge(
-      statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
-      navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
-    )
+    WindowCompat.setDecorFitsSystemWindows(window, false)
     super.onCreate(savedInstanceState)
 
     // field injection
@@ -308,6 +300,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     setContentView(R.layout.quran_page_activity_slider)
 
+    windowInsetsController = WindowInsetsControllerCompat(
+      window, findViewById<ViewGroup>(R.id.sliding_panel)
+    )
     registerBackPressedCallbacks()
     initialize(savedInstanceState)
     requestPermissionLauncher =
@@ -561,8 +556,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
     }
 
-    defaultNavigationBarColor = window.navigationBarColor
-
     quranEventLogger.logAnalytics(isDualPages, showingTranslation, isSplitScreen)
 
     // Setup recitation (if enabled)
@@ -725,9 +718,26 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   private fun setUiVisibility(isVisible: Boolean) {
-    setUiVisibilityKitKat(isVisible)
-    if (isInMultiWindowMode) {
-      animateToolBar(isVisible)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      setUiVisibilityR(isVisible)
+    } else {
+      setUiVisibilityKitKat(isVisible)
+    }
+  }
+
+  private fun setUiVisibilityR(isVisible: Boolean) {
+    if (isVisible) {
+      windowInsetsController.show(
+        WindowInsetsCompat.Type.statusBars() or
+            WindowInsetsCompat.Type.navigationBars()
+      )
+    } else {
+      windowInsetsController.hide(
+        WindowInsetsCompat.Type.statusBars() or
+            WindowInsetsCompat.Type.navigationBars()
+      )
+      windowInsetsController.systemBarsBehavior =
+        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
   }
 
@@ -742,12 +752,32 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
           or View.SYSTEM_UI_FLAG_IMMERSIVE)
     }
     viewPager.systemUiVisibility = flags
+
+    if (isInMultiWindowMode) {
+      animateToolBar(isVisible)
+    }
   }
 
   private fun setUiVisibilityListener() {
-    viewPager.setOnSystemUiVisibilityChangeListener { flags: Int ->
-      val visible = (flags and View.SYSTEM_UI_FLAG_FULLSCREEN) == 0
-      animateToolBar(visible)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
+        val isStatusBarVisible = insets.isVisible(WindowInsetsCompat.Type.statusBars())
+        // on devices with "hide full screen indicator" or "hide the bottom bar,"
+        // this always returns false, which causes the touches to not work.
+        val isNavigationBarVisible = insets.isVisible(WindowInsetsCompat.Type.navigationBars())
+
+        // as a fix for the aforementioned point, make either one's visibility suggest
+        // visibility (instead of requiring both to agree).
+        val isVisible = isStatusBarVisible || isNavigationBarVisible
+
+        animateToolBar(isVisible)
+        insets
+      }
+    } else {
+      viewPager.setOnSystemUiVisibilityChangeListener { flags: Int ->
+        val visible = (flags and View.SYSTEM_UI_FLAG_FULLSCREEN) == 0
+        animateToolBar(visible)
+      }
     }
   }
 
@@ -799,7 +829,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
     isInMultiWindowMode =
-      Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode()
+      Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode
 
     if (shouldReconnect) {
       foregroundDisposable.add(
@@ -819,17 +849,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
             shouldReconnect = false
           })
     }
-
-    updateNavigationBar(quranSettings.isNightMode)
-  }
-
-  private fun updateNavigationBar(isNightMode: Boolean) {
-    val color =
-      if (isNightMode) ContextCompat.getColor(
-        this,
-        R.color.navbar_night_color
-      ) else defaultNavigationBarColor
-    window.navigationBarColor = color
   }
 
   override fun inject(audioBarWrapper: AudioBarWrapper) {
@@ -1119,9 +1138,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       val isNightMode = !item.isChecked
       prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, isNightMode).apply()
       item.setIcon(if (isNightMode) R.drawable.ic_night_mode else R.drawable.ic_day_mode)
-      item.setChecked(isNightMode)
+      item.isChecked = isNightMode
       refreshQuranPages()
-      updateNavigationBar(isNightMode)
       return true
     } else if (itemId == R.id.settings) {
       val i = Intent(this, QuranPreferenceActivity::class.java)
