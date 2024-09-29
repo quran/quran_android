@@ -1,8 +1,13 @@
 plugins {
   id 'quran.android.application'
-  id 'org.jetbrains.kotlin.kapt'
   id 'org.jetbrains.kotlin.android'
-  id 'com.squareup.anvil'
+  alias libs.plugins.anvil
+  alias libs.plugins.ksp
+}
+
+anvil {
+  useKsp(true)
+  generateDaggerFactories.set(false)
 }
 
 android {
@@ -23,6 +28,10 @@ android {
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }
+
+    getByName("debug") {
+      matchingFallbacks += "release"
+    }
   }
 }
 
@@ -42,9 +51,9 @@ dependencies {
   implementation project(':pages:madani')
   implementation project(':common:upgrade')
 
-  // dagger
-  kapt libs.dagger.compiler
-  kaptTest libs.dagger.compiler
+  ksp libs.dagger.compiler
+  kspTest libs.dagger.compiler
+
   implementation libs.dagger.runtime
 
 }

@@ -12,7 +12,7 @@ import dagger.Provides
 class ServiceModule {
   @Provides
   fun provideQuranPageProvider(
-      providers: Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>
+    providers: Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>
   ): PageProvider {
     return providers["madani"]!!
   }
