@@ -1,84 +1,35 @@
 package com.quran.labs.autoquran
 
-import android.content.ContentResolver
-import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.support.v4.media.MediaBrowserCompat.MediaItem
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
-import android.text.TextUtils
+import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.net.toUri
 import androidx.media.MediaBrowserServiceCompat
 import androidx.media.utils.MediaConstants
-import com.quran.data.core.QuranConstants
 import com.quran.data.core.QuranInfo
+import com.quran.labs.autoquran.common.getSuraName
+import com.quran.labs.autoquran.common.makeThreeDigit
 import com.quran.labs.autoquran.di.DaggerServiceComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
-/**
- * This class provides a MediaBrowser through a service. It exposes the media library to a browsing
- * client, through the onGetRoot and onLoadChildren methods. It also creates a MediaSession and
- * exposes it through its MediaSession.Token, which allows the client to create a MediaController
- * that connects to and send control commands to the MediaSession remotely. This is useful for
- * user interfaces that need to interact with your media session, like Android Auto. You can
- * (should) also use the same service from your app's UI, which gives a seamless playback
- * experience to the user.
- *
- *
- * To implement a MediaBrowserService, you need to:
- *
- *
- *
- *  *  Extend [MediaBrowserServiceCompat], implementing the media browsing
- * related methods [MediaBrowserServiceCompat.onGetRoot] and
- * [MediaBrowserServiceCompat.onLoadChildren];
- *  *  In onCreate, start a new [MediaSessionCompat] and notify its parent
- * with the session"s token [MediaBrowserServiceCompat.setSessionToken];
- *
- *  *  Set a callback on the [MediaSessionCompat.setCallback].
- * The callback will receive all the user"s actions, like play, pause, etc;
- *
- *  *  Handle all the actual music playing using any method your app prefers (for example,
- * [android.media.MediaPlayer])
- *
- *  *  Update playbackState, "now playing" metadata and queue, using MediaSession proper methods
- * [MediaSessionCompat.setPlaybackState]
- * [MediaSessionCompat.setMetadata] and
- * [MediaSessionCompat.setQueue])
- *
- *  *  Declare and export the service in AndroidManifest with an intent receiver for the action
- * android.media.browse.MediaBrowserService
- *
- *
- *
- *
- * To make your app compatible with Android Auto, you also need to:
- *
- *
- *
- *  *  Declare a meta-data tag in AndroidManifest.xml linking to a xml resource
- * with a &lt;automotiveApp&gt; root element. For a media app, this must include
- * an &lt;uses name="media"/&gt; element as a child.
- * For example, in AndroidManifest.xml:
- * &lt;meta-data android:name="com.google.android.gms.car.application"
- * android:resource="@xml/automotive_app_desc"/&gt;
- * And in res/values/automotive_app_desc.xml:
- * &lt;automotiveApp&gt;
- * &lt;uses name="media"/&gt;
- * &lt;/automotiveApp&gt;
- *
- *
- */
 class QuranAudioService : MediaBrowserServiceCompat(), MediaPlayer.OnPreparedListener {
   @Inject
   lateinit var quranInfo: QuranInfo
   private lateinit var mSession: MediaSessionCompat
+  private var job: Job? = null
   var mediaPlayer: MediaPlayer? = null
   val mediaItems = mutableListOf(
       createBrowsableMediaItem("quran", "Quran")
@@ -91,7 +42,7 @@ class QuranAudioService : MediaBrowserServiceCompat(), MediaPlayer.OnPreparedLis
     mSession.setCallback(MediaSessionCallback())
     val component = DaggerServiceComponent.create()
     component.inject(this)
-    quranInfo.suraPageStart.forEachIndexed { index, page ->
+    quranInfo.suraPageStart.forEachIndexed { index, _ ->
       val name = getSuraName(this, index + 1, true, false)
       mediaItems.add(
           createMediaItem(
@@ -127,13 +78,20 @@ class QuranAudioService : MediaBrowserServiceCompat(), MediaPlayer.OnPreparedLis
     val extras = Bundle()
     extras.putInt(
         MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_SINGLE_ITEM,
-        MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_CATEGORY_LIST_ITEM)
+        MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_CATEGORY_LIST_ITEM
+    )
     extras.putInt(
         MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_BROWSABLE,
-        MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_LIST_ITEM)
+        MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_LIST_ITEM
+    )
     extras.putInt(
         MediaConstants.DESCRIPTION_EXTRAS_KEY_CONTENT_STYLE_PLAYABLE,
-        MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM)
+        MediaConstants.DESCRIPTION_EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM
+    )
+    extras.putDouble(
+        MediaConstants.DESCRIPTION_EXTRAS_KEY_COMPLETION_PERCENTAGE,
+        0.0
+    )
     mediaDescriptionBuilder.setExtras(extras)
     return MediaItem(
         mediaDescriptionBuilder.build(), MediaItem.FLAG_BROWSABLE)
@@ -156,12 +114,16 @@ class QuranAudioService : MediaBrowserServiceCompat(), MediaPlayer.OnPreparedLis
 
   override fun onPrepared(mp: MediaPlayer) {
     mp.start()
+    setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+    startUpdatingProgress(mediaPlayer!!)
   }
 
   private inner class MediaSessionCallback : MediaSessionCompat.Callback() {
     override fun onPlay() {
       if (mediaPlayer?.isPlaying == false) {
         mediaPlayer?.start()
+        setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+        startUpdatingProgress(mediaPlayer!!)
       }
     }
 
@@ -169,32 +131,14 @@ class QuranAudioService : MediaBrowserServiceCompat(), MediaPlayer.OnPreparedLis
     override fun onSeekTo(position: Long) {}
     override fun onPlayFromMediaId(mediaId: String, extras: Bundle) {
       val mediaUrl: MediaItem? = mediaItems.find { mediaId == it.description.mediaId }
-      if (mediaUrl != null) {
-        mediaPlayer = MediaPlayer().apply {
-          setAudioAttributes(
-              AudioAttributes.Builder()
-                  .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                  .setUsage(AudioAttributes.USAGE_MEDIA)
-                  .setLegacyStreamType(AudioManager.STREAM_MUSIC)
-                  .build()
-          )
-          mSession.setMetadata(
-              MediaMetadataCompat.Builder()
-                  .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mediaUrl.description.title.toString())
-                  .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, mediaUrl.description.subtitle.toString())
-                  .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaUrl.description.mediaId.toString())
-                  .build()
-          )
-          setOnPreparedListener(this@QuranAudioService)
-          setDataSource(baseContext, mediaUrl.description.mediaUri ?: Uri.EMPTY)
-          prepareAsync()
-        }
-      }
+      prepareMediaItem(mediaUrl)
     }
 
     override fun onPause() {
       if (mediaPlayer?.isPlaying == true) {
         mediaPlayer?.pause()
+        setMediaPlaybackState(PlaybackStateCompat.STATE_PAUSED, mediaPlayer?.duration?.div(100)?.toLong())
+        stopUpdatingProgress()
       }
     }
 
@@ -208,36 +152,59 @@ class QuranAudioService : MediaBrowserServiceCompat(), MediaPlayer.OnPreparedLis
     override fun onPlayFromSearch(query: String, extras: Bundle) {}
   }
 
-  private fun getSuraName(
-      context: Context, sura: Int, wantPrefix: Boolean, wantTranslation: Boolean
-  ): String {
-    if (sura < QuranConstants.FIRST_SURA || sura > QuranConstants.LAST_SURA) return ""
-
-    val builder = StringBuilder()
-    val suraNames = context.resources.getStringArray(R.array.sura_names)
-    if (wantPrefix) {
-      builder.append(context.getString(R.string.quran_sura_title, suraNames[sura - 1]))
-    } else {
-      builder.append(suraNames[sura - 1])
-    }
-    if (wantTranslation) {
-      val translation = context.resources.getStringArray(R.array.sura_names_translation)[sura - 1]
-      if (!TextUtils.isEmpty(translation)) {
-        // Some sura names may not have translation
-        builder.append(" (")
-        builder.append(translation)
-        builder.append(")")
+  private fun prepareMediaItem(mediaUrl: MediaItem?) {
+    if (mediaUrl != null) {
+      mediaPlayer = MediaPlayer().apply {
+        setAudioAttributes()
+        setMetaData(mediaUrl)
+        setOnPreparedListener(this@QuranAudioService)
+        setDataSource(baseContext, mediaUrl.description.mediaUri ?: Uri.EMPTY)
+        prepareAsync()
       }
     }
-
-    return builder.toString()
   }
 
-  private fun makeThreeDigit(number: Int): String {
-    var numStr = number.toString()
-    if (numStr.length < 3) {
-      numStr = "0".repeat(3 - numStr.length) + numStr
+  private fun MediaPlayer.setAudioAttributes() {
+    setAudioAttributes(
+        AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+            .setUsage(AudioAttributes.USAGE_MEDIA)
+            .setLegacyStreamType(AudioManager.STREAM_MUSIC)
+            .build()
+    )
+  }
+
+  private fun setMetaData(mediaUrl: MediaItem) {
+    mSession.setMetadata(
+        MediaMetadataCompat.Builder()
+            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mediaUrl.description.title.toString())
+            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, mediaUrl.description.subtitle.toString())
+            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, mediaUrl.description.mediaId.toString())
+            .build()
+    )
+  }
+
+  private fun setMediaPlaybackState(state: Int, currentPosition: Long? = 0) {
+    mSession.setPlaybackState(
+        PlaybackStateCompat.Builder()
+            .setState(state, currentPosition ?: 0, 1.0f, SystemClock.elapsedRealtime())
+            .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_STOP or PlaybackStateCompat.ACTION_SEEK_TO)
+            .build()
+    )
+  }
+
+  private fun startUpdatingProgress(mediaPlayer: MediaPlayer) {
+    job = CoroutineScope(Dispatchers.Main).launch {
+      while (mediaPlayer.isPlaying) {
+        val currentPosition = mediaPlayer.currentPosition
+        setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING, currentPosition.toLong())
+        delay(1000) // Update progress every second, adjust as needed
+      }
     }
-    return numStr
+    job?.start()
+  }
+
+  private fun stopUpdatingProgress() {
+    job?.cancel()
   }
 }
