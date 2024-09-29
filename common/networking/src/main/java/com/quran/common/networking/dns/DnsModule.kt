@@ -29,10 +29,12 @@ class DnsModule {
         .cache(dnsCache)
         .build()
 
+    // dns fallback tries the equivalent of Dns.SYSTEM first,
+    // so no need to explicitly add Dns.SYSTEM here.
     val dnsFallback = DnsFallback()
     val cloudflareDns = provideCloudflareDns(bootstrapClient)
 
-    val result = mutableListOf<Dns>(Dns.SYSTEM)
+    val result = mutableListOf<Dns>()
     if (cloudflareDns != null) result.add(cloudflareDns)
     result.add(dnsFallback)
     return result
