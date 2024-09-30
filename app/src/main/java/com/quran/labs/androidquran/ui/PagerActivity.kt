@@ -144,7 +144,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
@@ -286,13 +286,21 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
         WindowInfoTracker.getOrCreate(this@PagerActivity)
           .windowLayoutInfo(this@PagerActivity)
-          .mapNotNull { it.displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull() }
-          .collectLatest { foldingFeatures ->
-            val localState = foldingFeatures.state == FoldingFeature.State.FLAT &&
-                foldingFeatures.orientation == FoldingFeature.Orientation.VERTICAL
-            if (isFoldableDeviceOpenAndVertical != localState) {
-              isFoldableDeviceOpenAndVertical = localState
-              initialize(savedInstanceState)
+          .map { it.displayFeatures }
+          .collectLatest {
+            val foldingFeatures = it.filterIsInstance<FoldingFeature>().firstOrNull()
+            if (foldingFeatures != null) {
+              val localState = foldingFeatures.state == FoldingFeature.State.FLAT &&
+                  foldingFeatures.orientation == FoldingFeature.Orientation.VERTICAL
+              if (isFoldableDeviceOpenAndVertical != localState) {
+                isFoldableDeviceOpenAndVertical = localState
+                updateDualPageMode()
+              }
+            } else if (isFoldableDeviceOpenAndVertical) {
+              // this else case suggests that the device is not open and vertical, otherwise
+              // we'd have some information given via the folding features.
+              isFoldableDeviceOpenAndVertical = false
+              updateDualPageMode()
             }
           }
       }
@@ -329,6 +337,34 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
       refreshBookmarksMenu(isBookmarked)
     }.launchIn(scope)
+  }
+
+  private fun updateDualPageMode() {
+    val lastIsDualPages = isDualPages
+    isDualPages = QuranUtils.isDualPages(this, quranScreenInfo, isFoldableDeviceOpenAndVertical)
+    if (lastIsDualPages != isDualPages) {
+      val page = currentPage
+
+      pagerAdapter = QuranPageAdapter(
+        supportFragmentManager,
+        isDualPages,
+        showingTranslation,
+        quranInfo,
+        isSplitScreen,
+        pageProviderFactoryProvider.providePageViewFactory(quranSettings.pageType)
+      )
+      viewPager.adapter = pagerAdapter
+      // when going from two page per screen to one or vice versa, we adjust the page number,
+      // such that the first page is always selected.
+      val curPage = if (isDualPageVisible) {
+        quranInfo.mapSinglePageToDualPage(page)
+      } else {
+        quranInfo.mapDualPageToSinglePage(page)
+      }
+
+      val pageIndex = quranInfo.getPositionFromPage(curPage, isDualPageVisible)
+      viewPager.setCurrentItem(pageIndex)
+    }
   }
 
   private fun initialize(savedInstanceState: Bundle?) {
