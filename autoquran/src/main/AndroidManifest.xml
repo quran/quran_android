@@ -12,9 +12,9 @@
   <application
       android:allowBackup="true"
       android:appCategory="audio"
-      android:icon="@mipmap/ic_launcher"
+      android:icon="@drawable/icon"
       android:label="@string/app_name"
-      android:roundIcon="@mipmap/ic_launcher_round"
+      android:roundIcon="@drawable/icon"
       android:supportsRtl="true"
       android:theme="@style/Theme.Quran_android">
     <meta-data
