@@ -46,7 +46,7 @@ androidxWorkManagerVersion = "2.9.1"
 androidxWindowManager = "1.3.0"
 
 # firebase
-firebaseAnalyticsVersion = "22.1.0"
+firebaseAnalyticsVersion = "22.1.2"
 firebaseCrashlyticsVersion = "19.2.0"
 
 # ui libraries
