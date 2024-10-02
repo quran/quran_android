@@ -4,7 +4,7 @@ kotlin = "2.0.20"
 ksp = "2.0.20-1.0.25"
 
 # required within the Gradle convention plugins - not unused
-composeBomVersion = "2024.09.02"
+composeBomVersion = "2024.09.03"
 okhttpBomVersion = "4.12.0"
 
 # dependencies
