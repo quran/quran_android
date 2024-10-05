@@ -2,13 +2,20 @@ package com.quran.labs.androidquran.ui
 
 import android.content.DialogInterface
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import android.util.SparseIntArray
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -78,9 +85,32 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    // override these to always be dark since the app doesn't really
+    // have a light theme until now. without this, the clock color in
+    // the status bar will be dark on a dark background.
+    enableEdgeToEdge(
+      statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+      navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+    )
+
     (application as QuranApplication).applicationComponent.inject(this)
     setContentView(R.layout.translation_manager)
     translationSwipeRefresh = findViewById(R.id.translation_swipe_refresh)
+
+    ViewCompat.setOnApplyWindowInsetsListener(translationSwipeRefresh) { _, windowInsets ->
+      val insets = windowInsets.getInsets(
+        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+      )
+      translationSwipeRefresh.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        topMargin = insets.top
+        bottomMargin = insets.bottom
+        leftMargin = insets.left
+        rightMargin = insets.right
+      }
+
+      windowInsets
+    }
+
     translationRecycler = findViewById(R.id.translation_recycler)
     val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
     translationRecycler.setLayoutManager(layoutManager)
