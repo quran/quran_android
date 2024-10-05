@@ -1,9 +1,16 @@
 package com.quran.labs.androidquran.pageselect
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.viewpager.widget.ViewPager
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.QuranDataActivity
@@ -26,6 +33,14 @@ class PageSelectActivity : AppCompatActivity() {
   private var isProcessing = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    // override these to always be dark since the app doesn't really
+    // have a light theme until now. without this, the clock color in
+    // the status bar will be dark on a dark background.
+    enableEdgeToEdge(
+      statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+      navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
+    )
+
     super.onCreate(savedInstanceState)
     (application as QuranApplication).applicationComponent.inject(this)
 
@@ -40,6 +55,20 @@ class PageSelectActivity : AppCompatActivity() {
 
     viewPager = findViewById(R.id.pager)
     viewPager.adapter = adapter
+
+    ViewCompat.setOnApplyWindowInsetsListener(viewPager) { _, windowInsets ->
+      val insets = windowInsets.getInsets(
+        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+      )
+      viewPager.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        topMargin = insets.top
+        bottomMargin = insets.bottom
+        leftMargin = insets.left
+        rightMargin = insets.right
+      }
+
+      windowInsets
+    }
 
     // let the next and previous pages be slightly visible
     val pageMargin = resources.getDimensionPixelSize(R.dimen.page_margin)
