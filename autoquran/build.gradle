@@ -38,22 +38,21 @@ android {
 android.namespace = "com.quran.labs.autoquran"
 
 dependencies {
-
-  implementation libs.androidx.core.ktx
-  implementation libs.androidx.appcompat
-  implementation libs.androidx.media
-  testImplementation libs.junit
-  androidTestImplementation libs.androidx.junit
-  androidTestImplementation libs.espresso.core
-  implementation project(":common:data")
+  implementation project(":feature:autoquran")
   implementation project(":common:di")
+  implementation project(":common:data")
   implementation project(":common:pages")
-  implementation project(':pages:madani')
-  implementation project(':common:upgrade')
+  // should be api in modules that implement LocalDataUpgrade
+  implementation project(":common:upgrade")
 
   ksp libs.dagger.compiler
   kspTest libs.dagger.compiler
 
   implementation libs.dagger.runtime
 
+  if (new File(rootDir, "extras/extras.gradle").exists()) {
+    implementation project(":extras:pages:default")
+  } else {
+    implementation project(":pages:madani")
+  }
 }

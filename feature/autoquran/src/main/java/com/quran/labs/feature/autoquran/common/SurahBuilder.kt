@@ -1,4 +1,4 @@
-package com.quran.labs.autoquran.common
+package com.quran.labs.feature.autoquran.common
 
 import android.content.Context
 import android.net.Uri
@@ -19,27 +19,28 @@ class SurahBuilder @Inject constructor(
 
   fun create(context: Context): MutableList<MediaItem> {
     val mediaItems = mutableListOf<MediaItem>()
-    pageProvider.getQaris().filter { it.isGapless }.forEach { qari ->
-      mediaItems.add(
-        createBrowsableMediaItem(
-          "quran_${qari.id}",
-          "Quran(${context.getString(qari.nameResource)})"
-        )
-      )
-      quranInfo.suraPageStart.forEachIndexed { index, _ ->
-        val name = getSuraName(context, index + 1, true, false)
+    pageProvider.getQaris()
+      .filter { it.isGapless }
+      .take(2)
+      .forEach { qari ->
         mediaItems.add(
-          createMediaItem(
-            "${name}_${qari.id}",
-            name,
-            context.getString(qari.nameResource),
-            "${qari.url}/${
-              makeThreeDigit(index + 1)
-            }.mp3".toUri()
+          createBrowsableMediaItem(
+            "quran_${qari.id}",
+            "Quran(${context.getString(qari.nameResource)})"
           )
         )
+        quranInfo.suraPageStart.forEachIndexed { index, _ ->
+          val name = getSuraName(context, index + 1, true, false)
+          mediaItems.add(
+            createMediaItem(
+              "${name}_${qari.id}",
+              name,
+              context.getString(qari.nameResource),
+              (qari.url + makeThreeDigit(index + 1) + ".mp3").toUri()
+            )
+          )
+        }
       }
-    }
     return mediaItems
   }
 

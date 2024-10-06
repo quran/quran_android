@@ -160,6 +160,9 @@ dependencies {
   implementation(project(":feature:downloadmanager"))
   implementation(project(":feature:qarilist"))
 
+  // android auto support
+  implementation(project(":feature:autoquran"))
+
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.kotlinx.coroutines.android)
 
