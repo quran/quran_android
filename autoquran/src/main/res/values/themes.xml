@@ -1,4 +1,3 @@
 <resources>
-
     <style name="Theme.Quran_android" parent="android:Theme.Material.Light.DarkActionBar" />
 </resources>

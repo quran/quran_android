@@ -11,12 +11,12 @@ anvil {
 }
 
 android {
-  compileSdk 34
+  compileSdk 35
 
   defaultConfig {
     applicationId "com.quran.labs.autoquran"
     minSdk 28
-    targetSdk 33
+    targetSdk 35
     versionCode 1
     versionName "1.0"
 
@@ -38,22 +38,22 @@ android {
 android.namespace = "com.quran.labs.autoquran"
 
 dependencies {
+  implementation project(":feature:autoquran")
 
-  implementation 'androidx.core:core-ktx:1.13.1'
-  implementation 'androidx.appcompat:appcompat:1.6.1'
-  implementation 'androidx.media:media:1.6.0'
-  testImplementation 'junit:junit:4.13.2'
-  androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-  androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-  implementation project(":common:data")
   implementation project(":common:di")
+  implementation project(":common:data")
   implementation project(":common:pages")
-  implementation project(':pages:madani')
-  implementation project(':common:upgrade')
+  // should be api in modules that implement LocalDataUpgrade
+  implementation project(":common:upgrade")
 
   ksp libs.dagger.compiler
   kspTest libs.dagger.compiler
 
   implementation libs.dagger.runtime
 
+  if (new File(rootDir, "extras/extras.gradle").exists()) {
+    implementation project(":extras:pages:default")
+  } else {
+    implementation project(":pages:madani")
+  }
 }
