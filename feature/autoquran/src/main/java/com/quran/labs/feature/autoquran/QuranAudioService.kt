@@ -1,4 +1,4 @@
-package com.quran.labs.autoquran
+package com.quran.labs.feature.autoquran
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -7,16 +7,17 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.media.MediaBrowserServiceCompat
-import com.quran.labs.autoquran.common.MediaSessionCallback
-import com.quran.labs.autoquran.common.SurahBuilder
-import com.quran.labs.autoquran.common.filterWithQari
-import com.quran.labs.autoquran.di.DaggerServiceComponent
+import com.quran.labs.feature.autoquran.common.MediaSessionCallback
+import com.quran.labs.feature.autoquran.common.SurahBuilder
+import com.quran.labs.feature.autoquran.common.filterWithQari
+import com.quran.labs.feature.autoquran.di.QuranAutoInjector
+import com.quran.mobile.di.QuranApplicationComponentProvider
 import javax.inject.Inject
 
 class QuranAudioService : MediaBrowserServiceCompat() {
   @Inject
   lateinit var surahBuilder: SurahBuilder
-  private lateinit var mSession: MediaSessionCompat
+  private lateinit var session: MediaSessionCompat
   private var mediaPlayer: MediaPlayer? = null
   private var mediaItems = mutableListOf<MediaItem>()
   private val mediaSessionCallback = MediaSessionCallback(
@@ -28,18 +29,20 @@ class QuranAudioService : MediaBrowserServiceCompat() {
 
   override fun onCreate() {
     super.onCreate()
-    val component = DaggerServiceComponent.create()
-    component.inject(this)
+    val injector = (application as? QuranApplicationComponentProvider)
+      ?.provideQuranApplicationComponent() as? QuranAutoInjector
+    injector?.inject(this)
     mediaItems = surahBuilder.create(this)
-    mSession = MediaSessionCompat(baseContext, "QuranAudioService")
-    setSessionToken(mSession.sessionToken)
+    session = MediaSessionCompat(baseContext, "QuranAudioService")
+    setSessionToken(session.sessionToken)
     mediaSessionCallback.setMediaItems(mediaItems)
-    mSession.setCallback(mediaSessionCallback)
+    session.setCallback(mediaSessionCallback)
   }
 
   override fun onDestroy() {
-    mSession.release()
+    session.release()
     mediaPlayer?.release()
+    super.onDestroy()
   }
 
   override fun onGetRoot(
@@ -62,7 +65,7 @@ class QuranAudioService : MediaBrowserServiceCompat() {
 
 
   private fun setMediaPlaybackState(state: Int, currentPosition: Long? = 0) {
-    mSession.setPlaybackState(
+    session.setPlaybackState(
       PlaybackStateCompat.Builder()
         .setState(state, currentPosition ?: 0, 1.0f)
         .setActions(
@@ -78,7 +81,7 @@ class QuranAudioService : MediaBrowserServiceCompat() {
   }
 
   private fun setMetaData(mediaUrl: MediaItem) {
-    mSession.setMetadata(
+    session.setMetadata(
       MediaMetadataCompat.Builder()
         .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mediaUrl.description.title.toString())
         .putString(

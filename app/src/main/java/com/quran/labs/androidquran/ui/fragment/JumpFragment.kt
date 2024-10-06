@@ -31,6 +31,7 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.ForceCompleteTextView
 import timber.log.Timber
 import javax.inject.Inject
+import com.quran.mobile.common.ui.core.R as UiCoreR
 
 /**
  * [DialogFragment] of a dialog for quickly selecting and jumping to a particular location in the
@@ -58,7 +59,7 @@ class JumpFragment : DialogFragment() {
 
     // Sura chooser
     suraInput = layout.findViewById(R.id.sura_spinner)
-    val suras = activity.resources.getStringArray(R.array.sura_names)
+    val suras = activity.resources.getStringArray(UiCoreR.array.sura_names)
         .mapIndexed { index: Int, sura: String? ->
           QuranUtils.getLocalizedNumber(activity, index + 1) + ". " + sura
         }

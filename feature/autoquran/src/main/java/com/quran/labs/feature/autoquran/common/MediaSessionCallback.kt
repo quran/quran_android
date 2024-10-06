@@ -1,4 +1,4 @@
-package com.quran.labs.autoquran.common
+package com.quran.labs.feature.autoquran.common
 
 import android.content.Context
 import android.media.AudioAttributes

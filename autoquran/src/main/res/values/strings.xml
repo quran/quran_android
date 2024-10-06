@@ -1,4 +1,3 @@
 <resources>
   <string name="app_name">Quran</string>
-  <string name="quran_sura_title">Surah %1$s</string>
 </resources>
