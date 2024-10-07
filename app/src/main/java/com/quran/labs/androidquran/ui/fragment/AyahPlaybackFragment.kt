@@ -26,6 +26,7 @@ import com.shawnlin.numberpicker.NumberPicker
 import java.text.NumberFormat
 import java.util.Locale
 import javax.inject.Inject
+import com.quran.mobile.common.ui.core.R as UiCoreR
 
 class AyahPlaybackFragment : AyahActionFragment() {
   private val defaultVerseRepeat = 1
@@ -230,7 +231,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
     spinner: QuranSpinner,
     ayahAdapter: ArrayAdapter<CharSequence>?
   ) {
-    val suras = context.resources.getStringArray(R.array.sura_names)
+    val suras = context.resources.getStringArray(UiCoreR.array.sura_names)
     for (i in suras.indices) {
       suras[i] = QuranUtils.getLocalizedNumber(context, i + 1) +
           ". " + suras[i]

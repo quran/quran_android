@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.data
 import android.content.Context
 import android.text.TextUtils
 import androidx.annotation.StringRes
-
 import com.quran.data.core.QuranInfo
 import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
@@ -12,9 +11,9 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.page.common.data.QuranNaming
 import com.squareup.anvil.annotations.ContributesBinding
-
 import timber.log.Timber
 import javax.inject.Inject
+import com.quran.mobile.common.ui.core.R as UiCoreR
 
 @ContributesBinding(AppScope::class)
 class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): QuranNaming {
@@ -52,14 +51,14 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
     if (sura < Constants.SURA_FIRST || sura > Constants.SURA_LAST) return ""
 
     val builder = StringBuilder()
-    val suraNames = context.resources.getStringArray(R.array.sura_names)
+    val suraNames = context.resources.getStringArray(UiCoreR.array.sura_names)
     if (wantPrefix) {
       builder.append(context.getString(R.string.quran_sura_title, suraNames[sura - 1]))
     } else {
       builder.append(suraNames[sura - 1])
     }
     if (wantTranslation) {
-      val translation = context.resources.getStringArray(R.array.sura_names_translation)[sura - 1]
+      val translation = context.resources.getStringArray(UiCoreR.array.sura_names_translation)[sura - 1]
       if (!TextUtils.isEmpty(translation)) {
         // Some sura names may not have translation
         builder.append(" (")
