@@ -16,7 +16,7 @@ class MadaniPageProvider : PageProvider {
   override fun getPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator =
       DefaultPageSizeCalculator(displaySize)
 
-  override fun getImageVersion() = 7
+  override fun getImageVersion() = 8
 
   override fun getImagesBaseUrl() = "$baseUrl/"
 
