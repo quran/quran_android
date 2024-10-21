@@ -51,7 +51,7 @@ firebaseCrashlyticsVersion = "19.2.0"
 
 # ui libraries
 accompanistVersion = "0.36.0"
-balloonVersion = "1.6.8"
+balloonVersion = "1.6.9"
 tooltipComposeVersion = "0.2.0"
 insetterVersion = "0.6.1"
 materialComponentsVersion = "1.12.0"
