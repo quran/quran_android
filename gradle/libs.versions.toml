@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.2"
+junit = "1.2.1"
 kotlin = "2.0.21"
 ksp = "2.0.21-1.0.26"
 
@@ -73,6 +74,7 @@ robolectricVersion = "4.13"
 turbineVersion = "1.2.0"
 
 [libraries]
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junit" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutinesVersion" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutinesVersion" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableCollectionsVersion" }
