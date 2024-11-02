@@ -11,12 +11,12 @@ anvil {
 }
 
 android {
-  compileSdk 34
+  compileSdk 35
 
   defaultConfig {
     applicationId "com.quran.labs.autoquran"
     minSdk 28
-    targetSdk 33
+    targetSdk 35
     versionCode 1
     versionName "1.0"
 
@@ -39,12 +39,12 @@ android.namespace = "com.quran.labs.autoquran"
 
 dependencies {
 
-  implementation 'androidx.core:core-ktx:1.15.0'
-  implementation 'androidx.appcompat:appcompat:1.7.0'
-  implementation 'androidx.media:media:1.7.0'
-  testImplementation 'junit:junit:4.13.2'
-  androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-  androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+  implementation libs.androidx.core.ktx
+  implementation libs.androidx.appcompat
+  implementation libs.androidx.media
+  testImplementation libs.junit
+  androidTestImplementation libs.androidx.junit
+  androidTestImplementation libs.espresso.core
   implementation project(":common:data")
   implementation project(":common:di")
   implementation project(":common:pages")
