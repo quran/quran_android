@@ -3,7 +3,6 @@ package com.quran.labs.autoquran.di
 import com.quran.data.page.provider.QuranDataModule
 import com.quran.data.source.PageProvider
 import com.quran.data.source.QuranDataSource
-import com.quran.labs.feature.autoquran.QuranAudioService
 import dagger.Component
 import dagger.Module
 import dagger.Provides
