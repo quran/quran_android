@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
   <uses-feature
       android:name="android.hardware.type.automotive"
@@ -12,15 +13,15 @@
     <meta-data
         android:name="com.google.android.gms.car.application"
         android:resource="@xml/automotive_app_desc" />
-    <!--
-         Main music service, provides media browsing and media playback services to
-         consumers through MediaBrowserService and MediaSession. Consumers connect to it through
-         MediaBrowser (for browsing) and MediaController (for playback control)
-        -->
+
     <service
-        android:name=".QuranAudioService"
-        android:exported="true">
+        android:name=".service.QuranBrowsableAudioPlaybackService"
+        android:enabled="true"
+        android:exported="true"
+        android:foregroundServiceType="mediaPlayback"
+        tools:ignore="ExportedService">
       <intent-filter>
+        <action android:name="androidx.media3.session.MediaLibraryService" />
         <action android:name="android.media.browse.MediaBrowserService" />
       </intent-filter>
     </service>
