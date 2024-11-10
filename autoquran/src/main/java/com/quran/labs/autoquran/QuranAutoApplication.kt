@@ -2,6 +2,7 @@ package com.quran.labs.autoquran
 
 import android.app.Application
 import com.quran.labs.autoquran.di.DaggerServiceComponent
+import com.quran.labs.autoquran.di.ServiceModule
 import com.quran.labs.feature.autoquran.di.QuranAutoInjector
 import com.quran.labs.feature.autoquran.service.QuranBrowsableAudioPlaybackService
 import com.quran.mobile.di.QuranApplicationComponent
@@ -13,7 +14,11 @@ class QuranAutoApplication : Application(), QuranApplicationComponentProvider {
   override fun onCreate() {
     super.onCreate()
     quranAutoApplicationComponent = object : QuranApplicationComponent, QuranAutoInjector {
-      private val serviceComponent by lazy { DaggerServiceComponent.create() }
+      private val serviceComponent by lazy {
+        DaggerServiceComponent.builder()
+          .serviceModule(ServiceModule(this@QuranAutoApplication))
+          .build()
+      }
 
       override fun inject(service: QuranBrowsableAudioPlaybackService) {
         serviceComponent.inject(service)
