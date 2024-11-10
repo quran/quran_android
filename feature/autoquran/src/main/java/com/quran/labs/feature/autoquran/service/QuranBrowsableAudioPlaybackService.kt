@@ -50,7 +50,7 @@ class QuranBrowsableAudioPlaybackService : MediaSessionService() {
 
   private val rootMediaItem: MediaItem by lazy {
     MediaItem.Builder()
-      .setMediaId("root")
+      .setMediaId(BrowsableSurahBuilder.ROOT_ID)
       .setMediaMetadata(
         MediaMetadata.Builder()
           .setIsBrowsable(true)
@@ -108,8 +108,6 @@ class QuranBrowsableAudioPlaybackService : MediaSessionService() {
       val rootExtras = Bundle().apply {
         putInt(MediaConstants.EXTRAS_KEY_CONTENT_STYLE_BROWSABLE, MediaConstants.EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM)
         putInt(MediaConstants.EXTRAS_KEY_CONTENT_STYLE_PLAYABLE, MediaConstants.EXTRAS_VALUE_CONTENT_STYLE_LIST_ITEM)
-        // TODO: support search and remove this line
-        putBoolean(MEDIA_SEARCH_SUPPORTED, false)
       }
       val libraryParams = MediaLibraryService.LibraryParams.Builder().setExtras(rootExtras).build()
       return Futures.immediateFuture(LibraryResult.ofItem(rootMediaItem, libraryParams))
@@ -173,19 +171,58 @@ class QuranBrowsableAudioPlaybackService : MediaSessionService() {
       startIndex: Int,
       startPositionMs: Long
     ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
-      // TODO: expand to a playlist if number of items to play is 1 - see
-      // https://github.com/androidx/media/blob/release/demos/session_service/src/main/java/androidx/media3/demo/session/DemoMediaLibrarySessionCallback.kt
-      return super.onSetMediaItems(
-        mediaSession,
-        controller,
-        mediaItems,
-        startIndex,
-        startPositionMs
-      )
+      return if (mediaItems.size == 1) {
+        val settable = SettableFuture.create<MediaSession.MediaItemsWithStartPosition>()
+        scope.launch {
+          val firstItem = mediaItems.first()
+          val items = surahBuilder.expandMediaItem(firstItem.mediaId)
+          val index = items.indexOfFirst { it.mediaId == firstItem.mediaId }
+          val startPosition = if (index != -1) index else 0
+          val result = MediaSession.MediaItemsWithStartPosition(items, startPosition, 0)
+          settable.set(result)
+        }
+        settable
+      } else {
+        super.onSetMediaItems(
+          mediaSession,
+          controller,
+          mediaItems,
+          startIndex,
+          startPositionMs
+        )
+      }
     }
-  }
 
-  companion object {
-    private const val MEDIA_SEARCH_SUPPORTED = "android.media.browse.SEARCH_SUPPORTED"
+    override fun onSearch(
+      session: MediaLibrarySession,
+      browser: MediaSession.ControllerInfo,
+      query: String,
+      params: MediaLibraryService.LibraryParams?
+    ): ListenableFuture<LibraryResult<Void>> {
+      val settable = SettableFuture.create<LibraryResult<Void>>()
+      scope.launch {
+        session.notifySearchResultChanged(browser, query, surahBuilder.search(query).size, params)
+        settable.set(LibraryResult.ofVoid(params))
+      }
+      return settable
+    }
+
+    override fun onGetSearchResult(
+      session: MediaLibrarySession,
+      browser: MediaSession.ControllerInfo,
+      query: String,
+      page: Int,
+      pageSize: Int,
+      params: MediaLibraryService.LibraryParams?
+    ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
+      val settable = SettableFuture.create<LibraryResult<ImmutableList<MediaItem>>>()
+      scope.launch {
+        val items = surahBuilder.search(query)
+        settable.set(
+          LibraryResult.ofItemList(items, MediaLibraryService.LibraryParams.Builder().build())
+        )
+      }
+      return settable
+    }
   }
 }
