@@ -135,14 +135,16 @@ open class TranslationManagerPresenter @Inject internal constructor(
       if (result != null && result.translations.isNotEmpty()) {
         emit(result)
       }
-    }.flowOn(Dispatchers.IO)
+    }
+      .onEach { list -> writeTranslationList(list) }
+      .flowOn(Dispatchers.IO)
   }
 
   open fun writeTranslationList(list: TranslationList) {
     val cacheFile = cachedFile
     try {
       val directory = cacheFile.getParentFile()
-      val directoryExists = directory.mkdirs() || directory.isDirectory()
+      val directoryExists = directory != null && (directory.mkdirs() || directory.isDirectory())
       if (directoryExists) {
         if (cacheFile.exists()) {
           cacheFile.delete()

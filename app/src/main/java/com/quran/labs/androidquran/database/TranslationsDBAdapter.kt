@@ -1,10 +1,8 @@
 package com.quran.labs.androidquran.database
 
-import android.content.Context
 import android.util.SparseArray
 import com.quran.labs.androidquran.dao.translation.TranslationItem
 import com.quran.labs.androidquran.util.QuranFileUtils
-import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.mobile.translation.data.TranslationsDataSource
 import com.quran.mobile.translation.model.LocalTranslation
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +16,6 @@ import javax.inject.Singleton
 
 @Singleton
 class TranslationsDBAdapter @Inject constructor(
-  @ApplicationContext private val context: Context,
   private val dataSource: TranslationsDataSource,
   private val quranFileUtils: QuranFileUtils
 ) {

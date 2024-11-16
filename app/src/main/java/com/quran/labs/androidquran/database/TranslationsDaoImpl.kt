@@ -1,11 +1,9 @@
 package com.quran.labs.androidquran.database
 
 import android.content.Context
-import com.quran.data.dao.BookmarksDao
 import com.quran.data.dao.TranslationsDao
 import com.quran.data.model.QuranText
 import com.quran.data.model.VerseRange
-import com.quran.data.model.bookmark.Bookmark
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.database.DatabaseHandler.TextType.Companion.TRANSLATION
 import com.quran.labs.androidquran.util.QuranFileUtils
