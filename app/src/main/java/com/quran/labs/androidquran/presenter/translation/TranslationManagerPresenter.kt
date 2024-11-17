@@ -199,7 +199,7 @@ open class TranslationManagerPresenter @Inject internal constructor(
         dbFile.delete()
         false
       } else {
-        true
+        translationExists
       }
 
       if (local == null && exists || local != null && !exists) {
