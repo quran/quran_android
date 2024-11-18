@@ -1,7 +1,6 @@
 package com.quran.mobile.translation.di
 
 import android.content.Context
-import app.cash.sqldelight.async.coroutines.synchronous
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.quran.data.di.AppScope
 import com.quran.mobile.di.qualifier.ApplicationContext
@@ -20,7 +19,7 @@ class TranslationDataModule {
   fun provideTranslationDatabase(@ApplicationContext context: Context): TranslationsDatabase {
     return TranslationsDatabase(
       AndroidSqliteDriver(
-        schema = TranslationsDatabase.Schema.synchronous(),
+        schema = TranslationsDatabase.Schema,
         context = context,
         name = "translations.db"
       )

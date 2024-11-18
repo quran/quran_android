@@ -1,6 +1,5 @@
 package com.quran.mobile.translation.data
 
-import app.cash.sqldelight.async.coroutines.awaitAsOne
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.quran.mobile.translation.mapper.LocalTranslationMapper
@@ -10,6 +9,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,37 +28,45 @@ class TranslationsDataSource @Inject constructor(translationsDatabase: Translati
   fun translations(): StateFlow<List<LocalTranslation>?> = translations
 
   suspend fun updateTranslations(items: List<LocalTranslation>) {
-    translationsQueries.transaction {
-      items.forEach {
-        translationsQueries.update(
-          id = it.id,
-          name = it.name,
-          translator = it.translator,
-          translatorForeign = it.translatorForeign,
-          filename = it.filename,
-          url = it.url,
-          languageCode = it.languageCode,
-          version = it.version.toLong(),
-          minimumRequiredVersion = it.minimumVersion.toLong(),
-          userDisplayOrder = it.displayOrder.toLong()
-        )
+    withContext(Dispatchers.IO) {
+      translationsQueries.transaction {
+        items.forEach {
+          translationsQueries.update(
+            id = it.id,
+            name = it.name,
+            translator = it.translator,
+            translatorForeign = it.translatorForeign,
+            filename = it.filename,
+            url = it.url,
+            languageCode = it.languageCode,
+            version = it.version.toLong(),
+            minimumRequiredVersion = it.minimumVersion.toLong(),
+            userDisplayOrder = it.displayOrder.toLong()
+          )
+        }
       }
     }
   }
 
   suspend fun removeTranslation(filename: String) {
-    translationsQueries.deleteByFileName(filename)
+    withContext(Dispatchers.IO) {
+      translationsQueries.deleteByFileName(filename)
+    }
   }
 
   suspend fun removeTranslationsById(ids: List<Long>) {
-    translationsQueries.transaction {
-      ids.forEach {
-        translationsQueries.deleteById(it)
+    withContext(Dispatchers.IO) {
+      translationsQueries.transaction {
+        ids.forEach {
+          translationsQueries.deleteById(it)
+        }
       }
     }
   }
 
   suspend fun maximumDisplayOrder(): Long {
-    return translationsQueries.greatestDisplayOrder().awaitAsOne().MAX ?: 0
+    return withContext(Dispatchers.IO) {
+      translationsQueries.greatestDisplayOrder().executeAsOne().MAX ?: 0
+    }
   }
 }

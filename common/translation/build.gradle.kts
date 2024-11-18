@@ -17,7 +17,6 @@ sqldelight {
          packageName.set("com.quran.mobile.translation.data")
          schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
          verifyMigrations.set(true)
-         generateAsync.set(true)
       }
    }
 }
