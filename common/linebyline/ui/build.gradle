@@ -1,0 +1,17 @@
+plugins {
+  id 'quran.android.library.compose'
+}
+
+android.namespace 'com.quran.mobile.linebyline.ui'
+
+dependencies {
+  implementation libs.androidx.core.ktx
+  implementation libs.androidx.appcompat
+  implementation libs.material
+
+  implementation libs.compose.ui
+  implementation libs.compose.material
+  implementation libs.compose.ui.tooling.preview
+
+  debugImplementation libs.compose.ui.tooling
+}

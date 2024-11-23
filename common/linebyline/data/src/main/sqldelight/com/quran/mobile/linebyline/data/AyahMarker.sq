@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS ayah_markers(
+  ayah_id INTEGER NOT NULL,
+  page INTEGER NOT NULL,
+  sura INTEGER NOT NULL,
+  ayah INTEGER NOT NULL,
+  line INTEGER NOT NULL,
+  code_point TEXT NOT NULL,
+  center_x REAL NOT NULL,
+  center_y REAL NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS ayah_markers_page_index ON ayah_markers(page);
+
+selectByPage:
+SELECT * FROM ayah_markers WHERE page = ?;
