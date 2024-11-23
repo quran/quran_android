@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS ayah_highlights(
+  ayah_id INTEGER NOT NULL,
+  page INTEGER NOT NULL,
+  sura INTEGER NOT NULL,
+  ayah INTEGER NOT NULL,
+  line INTEGER NOT NULL,
+  left REAL NOT NULL,
+  right REAL NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS ayah_highlights_page_index ON ayah_highlights(page);
+
+selectByPage:
+SELECT * FROM ayah_highlights WHERE page = ?;

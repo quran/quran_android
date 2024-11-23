@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS sura_headers(
+  sura INTEGER NOT NULL,
+  page INTEGER NOT NULL,
+  line INTEGER NOT NULL,
+  center_x REAL NOT NULL,
+  center_y REAL NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS sura_headers_page_index ON sura_headers(page);
+
+selectByPage:
+SELECT * FROM sura_headers WHERE page = ?;
