@@ -92,4 +92,5 @@ object Constants {
   const val PREF_SURA_TRANSLATED_NAME = "suraTranslatedName"
   const val PREF_SHOW_SIDELINES = "showSidelines"
   const val PREF_SHOW_LINE_DIVIDERS = "showLineDividers"
+  const val PREFS_PREFER_DNS_OVER_HTTPS = "preferDnsOverHttps"
 }

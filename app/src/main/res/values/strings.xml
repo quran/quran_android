@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string name="app_name">Quran</string>
   <string name="downloadPrompt_title">Download Required Files?</string>
   <string name="downloadPrompt">In order for Quran Android to work properly,
@@ -175,6 +175,9 @@
   <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night mode is active</string>
   <string name="prefs_night_mode_background_brightness_title">Background brightness</string>
   <string name="prefs_night_mode_background_brightness_summary">Brightness of the page when night mode is active</string>
+  <string name="prefs_dns_over_https_title">DNS over HTTPS</string>
+  <string name="prefs_dns_over_https_summary_on">Prefer DNS over HTTPS</string>
+  <string name="prefs_dns_over_https_summary_off">Do not use DNS over HTTPS</string>
   <string name="prefs_overlay_page_info_title">Show page info</string>
   <string name="prefs_overlay_page_info_summary">Overlay page number, surah name, and juz\' number while reading</string>
   <string name="prefs_display_marker_title">Display marker popups</string>

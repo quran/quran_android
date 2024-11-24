@@ -28,6 +28,14 @@
       android:title="@string/prefs_app_location_title"
       app:iconSpaceReserved="false"/>
 
+  <CheckBoxPreference
+      android:key="@string/prefs_prefer_dns_over_https"
+      android:persistent="true"
+      android:title="@string/prefs_dns_over_https_title"
+      android:summaryOn="@string/prefs_dns_over_https_summary_on"
+      android:summaryOff="@string/prefs_dns_over_https_summary_off"
+      app:iconSpaceReserved="false"/>
+
   <Preference
       android:key="@string/prefs_send_logs"
       android:summary="@string/prefs_send_logs_summary"
