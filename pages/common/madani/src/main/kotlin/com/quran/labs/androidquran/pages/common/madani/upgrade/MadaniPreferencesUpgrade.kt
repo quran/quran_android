@@ -16,6 +16,7 @@ class MadaniPreferencesUpgrade @Inject constructor(private val settings: Setting
     scope.launch(Dispatchers.Main.immediate) {
       if (from <= 3441) {
         settings.setAyahTextSize(settings.translationTextSize())
+        settings.setPreferDnsOverHttps(true)
       }
     }
     return true

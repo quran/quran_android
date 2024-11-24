@@ -98,5 +98,11 @@ class SettingsImpl @Inject constructor(private val quranSettings: QuranSettings)
 
   override suspend fun translationTextSize(): Int = quranSettings.translationTextSize
 
+  override suspend fun preferDnsOverHttps(): Boolean = quranSettings.preferDnsOverHttps
+
+  override suspend fun setPreferDnsOverHttps(value: Boolean) {
+    quranSettings.preferDnsOverHttps = value
+  }
+
   override fun preferencesFlow(): Flow<String> = preferencesFlow
 }

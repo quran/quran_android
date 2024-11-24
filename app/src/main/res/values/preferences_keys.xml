@@ -38,4 +38,5 @@
   <string translatable="false" name="prefs_send_logs">sendLogsKey</string>
   <string translatable="false" name="prefs_page_type">pageTypeKey</string>
   <string translatable="false" name="prefs_category_dual_screen_key">dualScreenKey</string>
+  <string translatable="false" name="prefs_prefer_dns_over_https">preferDnsOverHttps</string>
 </resources>
