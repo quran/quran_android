@@ -200,7 +200,7 @@ class QuranDataProvider : ContentProvider() {
 
   private fun search(query: String, databaseName: String, wantSnippets: Boolean): Cursor? {
     val handler = getDatabaseHandler(context!!, databaseName, quranFileUtils)
-    return handler.search(query, wantSnippets, QURAN_ARABIC_DATABASE == databaseName)
+    return handler.search(query.trim(), wantSnippets, QURAN_ARABIC_DATABASE == databaseName)
   }
 
   override fun getType(uri: Uri): String? {
