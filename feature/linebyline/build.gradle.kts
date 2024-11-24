@@ -10,6 +10,11 @@ anvil {
   generateDaggerFactories.set(true)
 }
 
+// https://issuetracker.google.com/issues/372756067
+android.lint {
+   disable.add("SuspiciousModifierThen")
+}
+
 dependencies {
   implementation(project(":common:di"))
   implementation(project(":common:data"))
