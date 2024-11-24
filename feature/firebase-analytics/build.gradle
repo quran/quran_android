@@ -1,0 +1,25 @@
+plugins {
+  id 'quran.android.library.android'
+  alias libs.plugins.anvil
+}
+
+anvil {
+  useKsp(true)
+  generateDaggerFactories.set(true)
+}
+
+android.namespace "com.quran.mobile.feature.firebase_analytics"
+android.buildFeatures.buildConfig = true
+
+dependencies {
+  implementation project(path: ':common:pages')
+  implementation project(path: ':common:analytics')
+
+  implementation libs.androidx.annotation
+
+  implementation libs.firebase.analytics.ktx
+  implementation libs.firebase.crashlytics
+
+  // dagger
+  implementation libs.dagger.runtime
+}
