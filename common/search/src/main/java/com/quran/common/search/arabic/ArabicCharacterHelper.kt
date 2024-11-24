@@ -13,11 +13,11 @@ object ArabicCharacterHelper {
 
       // given: ﺃ
       // match: ﺃﺀﺆﺋ
-      "\u0623" to "\u0621\u0623\u0624\u0626",
+      "\u0623" to "\u0621\u0623\u0624\u0626\u0627",
 
       // given: ﺀ
       // match: ﺀﺃﺆ
-      "\u0621" to "\u0621\u0623\u0624\u0626",
+      "\u0621" to "\u0621\u0623\u0624\u0626\u0627",
 
       // given: ﺕ
       // match: ﺕﺓ

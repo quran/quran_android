@@ -20,7 +20,15 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
   }
 
   override fun getLimit(withSnippets: Boolean): String {
-    return if (withSnippets) { "" } else { "LIMIT 250" }
+    // this used to be something like:
+    // if (withSnippets) { "" } else { "LIMIT 250" }
+    // but for Arabic, this is problematic because sometimes, results are only in the
+    // end of the mushaf, and people can't find them if we only look through most of
+    // sura Baqarah.
+    //
+    // the plan, in the future, in sha' Allah, is to make suggestions and results
+    // the same thing, since the query under the hood is already the same anyway.
+    return ""
   }
 
   override fun processSearchText(searchText: String, hasFTS: Boolean): String {
@@ -41,9 +49,10 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
     var cursorCopy: Cursor? = null
     try {
       cursorCopy = database.rawQuery(query, arrayOf(searchText))
-      cursorCopy?.let { cursor ->
+      cursorCopy.let { cursor ->
             cursorCopy = cursor
 
+            var records = 0
             while (cursor.moveToNext()) {
               val text = cursor.getString(3)
 
@@ -56,13 +65,19 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
                 }
 
                 matrixCursor.addRow(
-                    arrayOf(
+                    arrayOf<Any>(
                         cursor.getInt(0),
                         cursor.getInt(1),
                         cursor.getInt(2),
                         matchText
                     )
                 )
+                records++
+
+                // short circuit for search suggestions
+                if (!withSnippets && records == 6) {
+                  break
+                }
               }
             }
           }
