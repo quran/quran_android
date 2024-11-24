@@ -3,4 +3,5 @@
   <bool name="use_tablet_interface_by_default">false</bool>
   <bool name="show_surat_prefix">true</bool>
   <bool name="show_sura_names_translation">false</bool>
+  <bool name="light_navigation_bar">true</bool>
 </resources>
