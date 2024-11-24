@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <style name="QuranToolBar.Overlay">
-    <item name="android:statusBarColor">@color/transparent_actionbar_color</item>
-    <item name="android:navigationBarColor">@color/transparent_actionbar_color</item>
+    <item name="android:statusBarColor">@color/toolbar</item>
+    <item name="android:navigationBarColor">@color/toolbar</item>
   </style>
 </resources>

@@ -10,6 +10,12 @@
 
     <style name="ToolBarArea" />
 
+  <style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+    <item name="iconTint">@color/toolbar_icon_tint</item>
+    <item name="android:textColorPrimary">@color/toolbar_text</item>
+    <item name="android:textColorSecondary">@color/toolbar_secondary_text</item>
+  </style>
+
     <style name="NotificationText"
         parent="android:TextAppearance.StatusBar.EventContent" />
 

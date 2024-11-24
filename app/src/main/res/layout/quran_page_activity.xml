@@ -24,13 +24,13 @@
       android:id="@+id/toolbar_area"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="@color/transparent_actionbar_color"
+      android:background="@color/toolbar"
       >
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:theme="@style/ToolbarStyle"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
         >
       <com.quran.labs.androidquran.view.QuranSpinner

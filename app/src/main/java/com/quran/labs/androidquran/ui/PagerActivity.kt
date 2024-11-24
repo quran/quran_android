@@ -308,9 +308,13 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     setContentView(R.layout.quran_page_activity_slider)
 
+    val lightStatusBar = resources.getBoolean(R.bool.light_navigation_bar)
     windowInsetsController = WindowInsetsControllerCompat(
       window, findViewById<ViewGroup>(R.id.sliding_panel)
-    )
+    ).apply {
+      isAppearanceLightStatusBars = lightStatusBar
+      isAppearanceLightNavigationBars = lightStatusBar
+    }
     registerBackPressedCallbacks()
     initialize(savedInstanceState)
     requestPermissionLauncher =
@@ -1135,11 +1139,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     val translation = menu.findItem(R.id.goto_translation)
     if (quran != null && translation != null) {
       if (!showingTranslation) {
-        quran.setVisible(false)
-        translation.setVisible(true)
+        quran.isVisible = false
+        translation.isVisible = true
       } else {
-        quran.setVisible(true)
-        translation.setVisible(false)
+        quran.isVisible = true
+        translation.isVisible = false
       }
     }
 
@@ -1147,7 +1151,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     if (nightMode != null) {
       val prefs = PreferenceManager.getDefaultSharedPreferences(this)
       val isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)
-      nightMode.setChecked(isNightMode)
+      nightMode.isChecked = isNightMode
       nightMode.setIcon(if (isNightMode) R.drawable.ic_night_mode else R.drawable.ic_day_mode)
     }
     return true
