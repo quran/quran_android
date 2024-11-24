@@ -35,7 +35,7 @@ class QuranPageCalculator : PageCalculator {
   }
 
   companion object {
-    private const val headerFooterHeightRatio = 0.03f
+    private const val headerFooterHeightRatio = 0.04f
     private const val quranImageMinWidthToHeightRatio = 1 / 1.60f
     private const val quranImageMaxWidthToHeightRatio = 1 / 1.84f
     private const val headerFooterMarginRatio = 0.027f
