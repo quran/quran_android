@@ -13,6 +13,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
@@ -97,11 +98,18 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     setContentView(R.layout.translation_manager)
     translationSwipeRefresh = findViewById(R.id.translation_swipe_refresh)
 
-    ViewCompat.setOnApplyWindowInsetsListener(translationSwipeRefresh) { _, windowInsets ->
+    val toolbar = findViewById<Toolbar>(R.id.toolbar)
+    toolbar.setTitle(R.string.menu_translation)
+    setSupportActionBar(toolbar)
+    val ab = supportActionBar
+    ab?.setDisplayHomeAsUpEnabled(true)
+
+    val root = findViewById<ViewGroup>(R.id.root)
+    ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
       val insets = windowInsets.getInsets(
         WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
       )
-      translationSwipeRefresh.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+      root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
         topMargin = insets.top
         bottomMargin = insets.bottom
         leftMargin = insets.left

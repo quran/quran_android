@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/translation_swipe_refresh"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:keepScreenOn="true">
-  <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/translation_recycler"
+    android:id="@+id/root"
+    android:orientation="vertical">
+
+  <androidx.appcompat.widget.Toolbar
+      android:id="@+id/toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="?attr/colorPrimary"/>
+
+  <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+      android:id="@+id/translation_swipe_refresh"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:scrollbars="vertical"/>
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+      android:keepScreenOn="true">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/translation_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
+  </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</LinearLayout>

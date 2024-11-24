@@ -70,6 +70,7 @@
         android:exported="false"/>
     <activity
         android:name=".ui.TranslationManagerActivity"
+        android:theme="@style/QuranToolBar"
         android:configChanges="keyboardHidden|orientation|screenSize"
         android:exported="false"/>
     <activity
