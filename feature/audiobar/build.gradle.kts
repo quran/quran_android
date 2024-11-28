@@ -2,7 +2,6 @@ plugins {
   id("quran.android.library.compose")
   alias(libs.plugins.anvil)
   alias(libs.plugins.ksp)
-  alias(libs.plugins.molecule)
 }
 
 android.namespace = "com.quran.mobile.feature.audiobar"
@@ -35,4 +34,7 @@ dependencies {
   // coroutines
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.kotlinx.coroutines.android)
+
+  // molecule
+  implementation(libs.molecule)
 }
