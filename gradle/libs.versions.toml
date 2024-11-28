@@ -1,8 +1,8 @@
 [versions]
 agp = "8.7.2"
 junit = "1.2.1"
-kotlin = "2.0.21"
-ksp = "2.0.21-1.0.28"
+kotlin = "2.1.0"
+ksp = "2.1.0-1.0.29"
 
 # required within the Gradle convention plugins - not unused
 composeBomVersion = "2024.11.00"
@@ -59,7 +59,7 @@ insetterVersion = "0.6.1"
 materialComponentsVersion = "1.12.0"
 numberPickerVersion = "2.4.13"
 reorderableComposeVersion = "0.9.6"
-molecule = "1.4.3"
+molecule = "2.0.0"
 
 # recitations
 grpcOkhttpVersion = "1.68.1"
@@ -121,6 +121,9 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 # dagger
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerVersion"}
 dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "daggerVersion" }
+
+# molecule
+molecule = { module = "app.cash.molecule:molecule-runtime", version.ref = "molecule" }
 
 # moshi
 moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshiVersion" }
@@ -204,4 +207,3 @@ anvil = { id = "dev.zacsweers.anvil", version.ref = "anvil"}
 crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 errorprone = { id = "net.ltgt.errorprone", version.ref = "errorprone" }
-molecule = { id = "app.cash.molecule", version.ref = "molecule" }
