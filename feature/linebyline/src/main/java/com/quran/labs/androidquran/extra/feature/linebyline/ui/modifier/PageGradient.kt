@@ -11,17 +11,14 @@ fun Modifier.pageGradient(startWithWidth: Boolean): Modifier {
   val startOffset = if (startWithWidth) Offset(Float.POSITIVE_INFINITY, 0f) else Offset(0f, 0f)
   val endOffset = if (startWithWidth) Offset(0f, 0f) else Offset(Float.POSITIVE_INFINITY, 0f)
 
-  return this.then(
-    background(
-      brush = Brush.linearGradient(
-        0f to Color(0xdc, 0xda, 0xd5),
-        0.18f to Color(0xfd, 0xfd, 0xf4),
-        0.48f to Color.White,
-        1f to Color(0xfd, 0xfb, 0xef),
-        start = startOffset,
-        end = endOffset,
-        tileMode = TileMode.Repeated
-      )
+  return background(
+    brush = Brush.linearGradient(
+      0f to Color(0xf0, 0xea, 0xdf),
+      0.46f to Color(0xff, 0xfe, 0xfa),
+      1f to Color(0xf0, 0xea, 0xdf),
+      start = startOffset,
+      end = endOffset,
+      tileMode = TileMode.Repeated
     )
   )
 }

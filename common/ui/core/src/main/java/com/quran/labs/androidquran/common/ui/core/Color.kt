@@ -29,6 +29,7 @@ val lightInverseSurface = Color(0xFF2D3131)
 val lightInversePrimary = Color(0xFF4DD9E4)
 val lightShadow = Color(0xFF000000)
 val lightSurfaceTint = Color(0xFF00696F)
+val lightSurfaceColorHighest = Color(0xfffaf8f7)
 
 val darkPrimary = Color(0xFF4DD9E4)
 val darkOnPrimary = Color(0xFF00363A)
