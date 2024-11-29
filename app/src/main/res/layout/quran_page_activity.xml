@@ -32,6 +32,7 @@
         android:layout_height="?attr/actionBarSize"
         android:theme="@style/ToolbarStyle"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        android:elevation="4dp"
         >
       <com.quran.labs.androidquran.view.QuranSpinner
           android:id="@+id/spinner"
@@ -40,6 +41,12 @@
           android:visibility="gone"
           />
     </androidx.appcompat.widget.Toolbar>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/toolbar_shadow"
+        android:layout_gravity="bottom" />
   </FrameLayout>
 
   <com.quran.mobile.feature.audiobar.AudioBarWrapper

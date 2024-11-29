@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import com.quran.labs.androidquran.common.ui.core.LocalQuranColors
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.audiobar.state.AudioBarState
@@ -49,7 +50,10 @@ internal fun StoppedAudioBar(
       modifier = Modifier.weight(1f),
       onClick = { eventSink(AudioBarUiEvent.StoppedPlaybackEvent.ChangeQari) }
     ) {
-      Text(text = stringResource(state.qariNameResource))
+      Text(
+        text = stringResource(state.qariNameResource),
+        color = LocalQuranColors.current.defaultTextColor
+      )
       Spacer(modifier = Modifier.weight(1f))
       Icon(QuranIcons.ExpandMore, contentDescription = "")
     }

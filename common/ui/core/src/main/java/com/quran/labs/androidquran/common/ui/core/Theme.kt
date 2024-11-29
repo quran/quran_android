@@ -39,6 +39,7 @@ private val LightColors = lightColorScheme(
     inverseSurface = lightInverseSurface,
     inversePrimary = lightInversePrimary,
     surfaceTint = lightSurfaceTint,
+    surfaceContainerHighest = lightSurfaceColorHighest
 )
 
 private val DarkColors = darkColorScheme(
@@ -86,6 +87,12 @@ fun QuranTheme(
     DarkColors
   }
 
+  val quranColors = if (useDarkTheme) {
+    darkQuranColors
+  } else {
+    lightQuranColors
+  }
+
   // hack workaround for https://issuetracker.google.com/issues/266059178
   // crashes on Lollipop / MR1, mostly on Huawei and Lenovo devices due to
   // Compose in RTL. Force LTR for all Composables on Lollipop to attempt
@@ -100,10 +107,12 @@ fun QuranTheme(
     }
 
   CompositionLocalProvider(*locals) {
-    MaterialTheme(
-      colorScheme = colors,
-      typography = AppTypography,
-      content = content
-    )
+    CompositionLocalProvider(LocalQuranColors provides quranColors) {
+      MaterialTheme(
+        colorScheme = colors,
+        typography = AppTypography,
+        content = content
+      )
+    }
   }
 }
