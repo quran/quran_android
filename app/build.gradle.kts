@@ -1,6 +1,4 @@
 import net.ltgt.gradle.errorprone.ErrorProneOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Locale
 
 plugins {
@@ -94,6 +92,7 @@ android {
     }
   }
 
+  @Suppress("UnstableApiUsage")
   testOptions {
     unitTests {
       isIncludeAndroidResources = true
@@ -110,14 +109,6 @@ android {
     resources {
       excludes += setOf("META-INF/*.kotlin_module", "META-INF/DEPENDENCIES", "META-INF/INDEX.LIST")
     }
-  }
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-  // TODO necessary until anvil supports something for K2 contribution merging
-  compilerOptions {
-    progressiveMode.set(false)
-    languageVersion.set(KotlinVersion.KOTLIN_1_9)
   }
 }
 
@@ -192,6 +183,15 @@ dependencies {
   ksp(libs.dagger.compiler)
   kspTest(libs.dagger.compiler)
   implementation(libs.dagger.runtime)
+
+  // analytics
+  debugImplementation(project(":feature:analytics-noop"))
+  add("betaImplementation", project(":feature:analytics-noop"))
+  if (useFirebase) {
+    releaseImplementation(project(":feature:firebase-analytics"))
+  } else {
+    releaseImplementation(project(":feature:analytics-noop"))
+  }
 
   // workmanager
   implementation(libs.androidx.work.runtime.ktx)

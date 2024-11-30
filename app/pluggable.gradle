@@ -1,6 +1,5 @@
 dependencies {
    implementation project(path: ':pages:madani')
    implementation project(path: ':pages:common:madani')
-   implementation project(path: ':feature:analytics-noop')
    implementation project(path: ':feature:recitation')
 }
