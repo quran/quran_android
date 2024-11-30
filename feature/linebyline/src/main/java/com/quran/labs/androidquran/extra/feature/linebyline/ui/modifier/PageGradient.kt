@@ -13,9 +13,9 @@ fun Modifier.pageGradient(startWithWidth: Boolean): Modifier {
 
   return background(
     brush = Brush.linearGradient(
-      0f to Color(0xf0, 0xea, 0xdf, 0xff / 2),
-      0.46f to Color(0xff, 0xfe, 0xfa, 0xff / 2),
-      1f to Color(0xf0, 0xea, 0xdf, 0xff / 2),
+      0f to Color(0xf0, 0xea, 0xdf),
+      0.46f to Color(0xff, 0xfe, 0xfa),
+      1f to Color(0xf0, 0xea, 0xdf),
       start = startOffset,
       end = endOffset,
       tileMode = TileMode.Repeated
