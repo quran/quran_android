@@ -1063,10 +1063,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   public override fun onPause() {
     foregroundDisposable.clear()
-    if (promptDialog != null) {
-      promptDialog!!.dismiss()
-      promptDialog = null
-    }
+    promptDialog?.dismiss()
+    promptDialog = null
     recentPagePresenter.unbind()
     quranSettings.wasShowingTranslation = pagerAdapter.isShowingTranslation
 

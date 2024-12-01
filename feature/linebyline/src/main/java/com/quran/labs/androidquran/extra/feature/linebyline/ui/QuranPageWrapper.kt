@@ -39,7 +39,7 @@ fun QuranPageWrapper(
   val adjustedBrightness = (50 * ln1p(backgroundBrightness.toDouble()) + originalTextBrightness).toInt()
   val textBrightness = min(adjustedBrightness.toFloat(), 255f)
 
-  val overlayColor = Color(0x50, 0x50, 0x50)
+  val overlayColor = Color(0x60, 0x60, 0x60)
 
   val displayInfo = pageInfo.displayText
   val showHeaderFooter = displaySettings.showHeaderFooter

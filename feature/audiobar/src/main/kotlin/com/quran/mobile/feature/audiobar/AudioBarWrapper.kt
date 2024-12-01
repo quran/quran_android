@@ -69,6 +69,8 @@ class AudioBarWrapper @JvmOverloads constructor(
                   .only(WindowInsetsSides.Horizontal.plus(WindowInsetsSides.Bottom))
                 .asPaddingValues()
             )
+            .padding(top = 8.dp)
+            .padding(horizontal = 16.dp)
             .height(dimensionResource(id = R.dimen.audiobar_height))
         )
       }
