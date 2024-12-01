@@ -3,11 +3,10 @@ package com.quran.mobile.feature.audiobar.ui
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -17,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.audiobar.state.AudioBarState
@@ -66,17 +65,20 @@ internal fun ProgressAudioBar(
       Icon(QuranIcons.Close, contentDescription = stringResource(id = android.R.string.cancel))
     }
 
-    Divider(
-      modifier = Modifier
-        .fillMaxHeight()
-        .width(Dp.Hairline)
-    )
-
-    Column {
+    Column(modifier = Modifier.weight(1f)) {
       if (progress == -1) {
-        LinearProgressIndicator()
+        LinearProgressIndicator(
+          modifier = Modifier.fillMaxWidth()
+            .padding(end = 8.dp)
+        )
       } else {
-        LinearProgressIndicator(progress = progress.toFloat() / 100f)
+        LinearProgressIndicator(
+          progress = { progress.toFloat() / 100f },
+          gapSize = 0.dp,
+          drawStopIndicator = {},
+          modifier = Modifier.fillMaxWidth()
+            .padding(end = 8.dp)
+        )
       }
 
       Text(text = stringResource(id = messageResource))

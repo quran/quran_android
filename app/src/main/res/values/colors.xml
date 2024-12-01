@@ -4,7 +4,6 @@
   <color name="toolbar_text">#ff44464e</color>
   <color name="toolbar_icon_tint">#ff44464e</color>
   <color name="toolbar_secondary_text">#ff44464e</color>
-  <color name="toolbar_shadow">#ffe4e4e7</color>
 
   <color name="dark_background">#ff212121</color>
   <color name="secondary_dark_background">#ff303030</color>
