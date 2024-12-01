@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <style name="ToolbarTitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+    <!-- 22sp in m3 -->
+    <item name="android:textSize">18sp</item>
+  </style>
+
+  <style name="ToolbarSubtitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+    <!-- 16sp in m3 -->
+    <item name="android:textSize">14sp</item>
+  </style>
+</resources>
