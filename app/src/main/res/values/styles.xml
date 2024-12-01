@@ -16,6 +16,9 @@
     <item name="android:textColorSecondary">@color/toolbar_secondary_text</item>
   </style>
 
+  <style name="ToolbarTitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title" />
+  <style name="ToolbarSubtitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle" />
+
     <style name="NotificationText"
         parent="android:TextAppearance.StatusBar.EventContent" />
 

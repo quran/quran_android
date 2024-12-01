@@ -32,6 +32,8 @@
         android:layout_height="?attr/actionBarSize"
         android:theme="@style/ToolbarStyle"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        app:titleTextAppearance="@style/ToolbarTitleText"
+        app:subtitleTextAppearance="@style/ToolbarSubtitleText"
         android:elevation="4dp"
         >
       <com.quran.labs.androidquran.view.QuranSpinner
