@@ -11,8 +11,7 @@ plugins {
 
 // whether or not to use Firebase - Firebase is enabled by default, and is only disabled for
 // providing apks for open source distribution stores.
-val useFirebase = !project.hasProperty("disableFirebase") &&
-    !project.hasProperty("disableCrashlytics")
+val useFirebase = !project.hasProperty("disableFirebase")
 
 // only want to apply the Firebase plugin if we're building a release build. moving this to the
 // release build type won't work, since debug builds would also implicitly get the plugin.
