@@ -13,10 +13,13 @@ import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.audiobar.state.AudioBarState
@@ -57,56 +60,58 @@ internal fun AudioBar(
   modifier: Modifier = Modifier,
   actionButton: @Composable () -> Unit
 ) {
-  Row(
-    horizontalArrangement = Arrangement.SpaceEvenly,
-    verticalAlignment = Alignment.CenterVertically,
-    modifier = modifier
-  ) {
-    IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.Stop) }) {
-      Icon(QuranIcons.Stop, contentDescription = "")
-    }
-
-    IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.Rewind) }) {
-      Icon(QuranIcons.FastRewind, contentDescription = "")
-    }
-
-    actionButton()
-
-    IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.FastForward) }) {
-      Icon(QuranIcons.FastForward, contentDescription = "")
-    }
-
-    val infinity = stringResource(id = com.quran.mobile.common.ui.core.R.string.infinity)
-    RepeatableButton(
-      icon = QuranIcons.Repeat,
-      contentDescription = "",
-      values = REPEAT_VALUES,
-      value = state.repeat,
-      defaultValue = 0,
-      format = {
-        if (it > -1) {
-          it.toString()
-        } else {
-          infinity
-        }
+  CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+    Row(
+      horizontalArrangement = Arrangement.SpaceEvenly,
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = modifier
+    ) {
+      IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.Stop) }) {
+        Icon(QuranIcons.Stop, contentDescription = "")
       }
-    ) {
-      sink(AudioBarUiEvent.CommonPlaybackEvent.SetRepeat(it))
-    }
 
-    RepeatableButton(
-      icon = QuranIcons.Speed,
-      contentDescription = "",
-      values = SPEED_VALUES,
-      value = state.speed,
-      defaultValue = 1.0f,
-      format = { it.toString() }
-    ) {
-      sink(AudioBarUiEvent.CommonPlaybackEvent.SetSpeed(it))
-    }
+      IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.Rewind) }) {
+        Icon(QuranIcons.FastRewind, contentDescription = "")
+      }
 
-    IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.ShowSettings) }) {
-      Icon(QuranIcons.Settings, contentDescription = "")
+      actionButton()
+
+      IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.FastForward) }) {
+        Icon(QuranIcons.FastForward, contentDescription = "")
+      }
+
+      val infinity = stringResource(id = com.quran.mobile.common.ui.core.R.string.infinity)
+      RepeatableButton(
+        icon = QuranIcons.Repeat,
+        contentDescription = "",
+        values = REPEAT_VALUES,
+        value = state.repeat,
+        defaultValue = 0,
+        format = {
+          if (it > -1) {
+            it.toString()
+          } else {
+            infinity
+          }
+        }
+      ) {
+        sink(AudioBarUiEvent.CommonPlaybackEvent.SetRepeat(it))
+      }
+
+      RepeatableButton(
+        icon = QuranIcons.Speed,
+        contentDescription = "",
+        values = SPEED_VALUES,
+        value = state.speed,
+        defaultValue = 1.0f,
+        format = { it.toString() }
+      ) {
+        sink(AudioBarUiEvent.CommonPlaybackEvent.SetSpeed(it))
+      }
+
+      IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.ShowSettings) }) {
+        Icon(QuranIcons.Settings, contentDescription = "")
+      }
     }
   }
 }
