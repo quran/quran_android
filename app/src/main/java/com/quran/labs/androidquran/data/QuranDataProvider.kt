@@ -78,8 +78,7 @@ class QuranDataProvider : ContentProvider() {
       return null
     }
     val queryIsArabic = QuranUtils.doesStringContainArabic(query)
-    val haveArabic = queryIsArabic &&
-        quranFileUtils.hasTranslation(QURAN_ARABIC_DATABASE)
+    val haveArabic = queryIsArabic && quranFileUtils.hasArabicSearchDatabase()
     val translations = availableTranslations()
     if (translations.isEmpty() && queryIsArabic && !haveArabic) {
       return null
