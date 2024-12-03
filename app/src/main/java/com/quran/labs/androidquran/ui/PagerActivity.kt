@@ -451,6 +451,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
 
     val toolbar = findViewById<Toolbar>(R.id.toolbar)
+    if (quranSettings.isArabicNames || QuranUtils.isRtl()) {
+      // remove when we remove LTR from quran_page_activity's root
+      ViewCompat.setLayoutDirection(toolbar, ViewCompat.LAYOUT_DIRECTION_RTL)
+    }
     setSupportActionBar(toolbar)
 
     supportActionBar?.setDisplayShowHomeEnabled(true)
