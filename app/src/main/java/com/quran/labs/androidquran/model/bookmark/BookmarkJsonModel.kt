@@ -23,7 +23,7 @@ internal class BookmarkJsonModel @Inject constructor() {
 
   @Throws(IOException::class)
   fun toCSV(sink: BufferedSink, bookmarks: BookmarkData) {
-    toCSV(sink, bookmarks)
+    com.quran.labs.androidquran.model.bookmark.toCSV(sink, bookmarks)
   }
 
   @Throws(IOException::class)

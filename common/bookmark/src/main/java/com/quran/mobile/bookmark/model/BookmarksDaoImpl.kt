@@ -12,7 +12,6 @@ import com.quran.mobile.bookmark.mapper.convergeCommonlyTagged
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -75,7 +74,12 @@ class BookmarksDaoImpl @Inject constructor(
 
   override suspend fun togglePageBookmark(page: Int): Boolean {
     return withContext(Dispatchers.IO) {
-      val bookmarkId = bookmarkQueries.getBookmarkIdForPage(page).executeAsOneOrNull()
+      val bookmarkIds = bookmarkQueries.getBookmarkIdForPage(page).executeAsList()
+      if (bookmarkIds.size > 1) {
+        bookmarkIds.drop(1).forEach { deleteBookmarkById(it) }
+      }
+
+      val bookmarkId = bookmarkIds.firstOrNull()
       if (bookmarkId != null) {
         deleteBookmarkById(bookmarkId)
         false

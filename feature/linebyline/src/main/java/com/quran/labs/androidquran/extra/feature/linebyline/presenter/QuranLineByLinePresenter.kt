@@ -304,15 +304,17 @@ class QuranLineByLinePresenter @Inject constructor(
       val lines = mutableListOf<LineModel>()
       val whence = quranFileManager.quranImagesDirectory()
       for (lineNumber in 1..15) {
+        val file = File(File(whence, page.toString()), "$lineNumber.png")
         try {
-          val fileName = File(File(whence, page.toString()), "$lineNumber.png").toString()
+          val fileName = file.toString()
           val sourceBitmap = BitmapFactory.decodeFile(fileName, options)
           val bitmap = sourceBitmap.extractAlpha()
           sourceBitmap.recycle()
           lines.add(LineModel(lineNumber - 1, bitmap.asImageBitmap()))
         } catch (exception: Exception) {
+          val status = if (file.exists()) { "exists" } else { "missing" }
           // make sure to add the line number and page to the crash metadata
-          crashReporter.log("Failed to load line $lineNumber for page $page")
+          crashReporter.log("Failed to load line $lineNumber for page $page - file $status")
           throw exception
         }
       }
