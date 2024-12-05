@@ -95,7 +95,7 @@ open class BookmarkModel @Inject constructor(
       }
       bookmarksDBAdapter.bulkDelete(tagsToDelete, bookmarksToDelete, untag)
       bookmarksPublishSubject.onNext(true)
-      if (tagsToDelete.size > 0) {
+      if (tagsToDelete.isNotEmpty()) {
         tagPublishSubject.onNext(true)
       }
       null
