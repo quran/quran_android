@@ -43,10 +43,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.MotionEventCompat;
-import androidx.core.view.ViewCompat;
-import androidx.customview.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -56,9 +52,12 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 
-import com.quran.labs.androidquran.R;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.ViewCompat;
+import androidx.customview.widget.ViewDragHelper;
 
-import timber.log.Timber;
+import com.quran.labs.androidquran.R;
 
 public class SlidingUpPanelLayout extends ViewGroup {
 
@@ -591,7 +590,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     final int childCount = getChildCount();
 
     if (childCount > 2) {
-      Timber.e("onMeasure: More than two child views are not supported.");
+      // Timber.e("onMeasure: More than two child views are not supported.");
     } else if (getChildAt(1).getVisibility() == GONE) {
       panelHeight = 0;
     }
