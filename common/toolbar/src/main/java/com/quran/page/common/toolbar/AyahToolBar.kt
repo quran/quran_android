@@ -47,6 +47,7 @@ class AyahToolBar @JvmOverloads constructor(
   var flavor: String = ""
   var longPressLambda: ((CharSequence) -> Unit) = {}
   var isRecitationEnabled = false
+  var lastMeasuredWidth = 0
 
   @Inject
   lateinit var ayahToolBarPresenter: AyahToolBarPresenter
@@ -111,6 +112,15 @@ class AyahToolBar @JvmOverloads constructor(
     } else {
       toolBarPip.layout(pipLeft, menuHeight - 1, pipLeft + pipWidth, menuHeight + pipHeight)
       menuLayout.layout(0, 0, menuWidth, menuHeight)
+    }
+
+    // handle first layout of toolbar
+    if (lastMeasuredWidth != totalWidth && lastMeasuredWidth == 0) {
+      // whenever we're RTL, we need to adjust the translationX
+      if (layoutDirection == LAYOUT_DIRECTION_RTL) {
+        translationX = translationX - totalWidth
+      }
+      lastMeasuredWidth = totalWidth
     }
   }
 
@@ -213,7 +223,21 @@ class AyahToolBar @JvmOverloads constructor(
       pipOffset = internalPosition.pipOffset
       val x = internalPosition.x
       val y = internalPosition.y
-      setPosition(x, y)
+
+      // hack to help fix RTL when measuredWidth is not yet set. if this is set,
+      // we adjust the translationX _after_ onLayout
+      lastMeasuredWidth = measuredWidth
+      val actualX = if (layoutDirection == LAYOUT_DIRECTION_RTL) {
+        // in RTL, x=0 is on the very right of the screen. translationX is still to the
+        // right, however (i.e. translationX of 100 is 100 off the screen to the right).
+        // consequently, we need to subtract the width of the view to get the actual x,
+        // which is some negative value between -measuredWidth and 0 to properly render
+        // when RTL.
+        x - measuredWidth
+      } else {
+        x
+      }
+      setPosition(actualX, y)
       if (needsLayout) {
         requestLayout()
       }
