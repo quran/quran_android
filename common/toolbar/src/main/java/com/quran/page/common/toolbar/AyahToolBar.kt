@@ -14,6 +14,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.Insets
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.labs.androidquran.common.toolbar.R
 import com.quran.page.common.toolbar.dao.SelectedAyahPlacementType
@@ -48,6 +49,9 @@ class AyahToolBar @JvmOverloads constructor(
   var longPressLambda: ((CharSequence) -> Unit) = {}
   var isRecitationEnabled = false
   var lastMeasuredWidth = 0
+  var lastSelectionShouldPadForCutout = false
+
+  var insets: Insets = Insets.NONE
 
   @Inject
   lateinit var ayahToolBarPresenter: AyahToolBarPresenter
@@ -115,10 +119,12 @@ class AyahToolBar @JvmOverloads constructor(
     }
 
     // handle first layout of toolbar
+    val parentWidth = (parent as View).width
     if (lastMeasuredWidth != totalWidth && lastMeasuredWidth == 0) {
       // whenever we're RTL, we need to adjust the translationX
       if (layoutDirection == LAYOUT_DIRECTION_RTL) {
-        translationX = translationX - totalWidth
+        val insetToAdd = if (lastSelectionShouldPadForCutout) insets.left + insets.right else 0
+        translationX = translationX - (parentWidth - measuredWidth) + insetToAdd
       }
       lastMeasuredWidth = totalWidth
     }
@@ -227,17 +233,38 @@ class AyahToolBar @JvmOverloads constructor(
       // hack to help fix RTL when measuredWidth is not yet set. if this is set,
       // we adjust the translationX _after_ onLayout
       lastMeasuredWidth = measuredWidth
-      val actualX = if (layoutDirection == LAYOUT_DIRECTION_RTL) {
-        // in RTL, x=0 is on the very right of the screen. translationX is still to the
-        // right, however (i.e. translationX of 100 is 100 off the screen to the right).
-        // consequently, we need to subtract the width of the view to get the actual x,
-        // which is some negative value between -measuredWidth and 0 to properly render
-        // when RTL.
-        x - measuredWidth
+      val leftInset = if (position is SelectionIndicator.SelectedPointPosition) {
+        lastSelectionShouldPadForCutout = true
+        insets.left + insets.right
       } else {
-        x
+        lastSelectionShouldPadForCutout = false
+        0
       }
-      setPosition(actualX, y)
+
+      val actualX = if (layoutDirection == LAYOUT_DIRECTION_RTL) {
+        if (measuredWidth > 0) {
+          // in RTL, x=0 means the end of the toolbar is touching the very right of the screen, with
+          // the toolbar itself appearing before the very right of the screen. translationX is still
+          // to the right, however (i.e. translationX of 100 is 100 off the screen to the right).
+          // consequently, we need to subtract the width of the view to get the actual x,
+          // which is some negative value between -measuredWidth and 0 to properly render
+          // when RTL.
+          x - (parentView.width - measuredWidth) + leftInset
+        } else {
+          // if measuredWidth is not set, we do this step in onLayout instead
+          x
+        }
+      } else {
+        x + leftInset
+      }
+
+      val actualY = if (position is SelectionIndicator.SelectedPointPosition) {
+        y + insets.top
+      } else {
+        y
+      }
+
+      setPosition(actualX, actualY)
       if (needsLayout) {
         requestLayout()
       }
