@@ -21,6 +21,7 @@ import com.quran.page.common.toolbar.dao.SelectedAyahPlacementType
 import com.quran.page.common.toolbar.di.AyahToolBarInjector
 import com.quran.page.common.toolbar.extension.toInternalPosition
 import javax.inject.Inject
+import kotlin.math.max
 
 class AyahToolBar @JvmOverloads constructor(
   context: Context,
@@ -123,7 +124,7 @@ class AyahToolBar @JvmOverloads constructor(
     if (lastMeasuredWidth != totalWidth && lastMeasuredWidth == 0) {
       // whenever we're RTL, we need to adjust the translationX
       if (layoutDirection == LAYOUT_DIRECTION_RTL) {
-        val insetToAdd = if (lastSelectionShouldPadForCutout) insets.left + insets.right else 0
+        val insetToAdd = if (lastSelectionShouldPadForCutout) max(insets.left, insets.right) else 0
         translationX = translationX - (parentWidth - measuredWidth) + insetToAdd
       }
       lastMeasuredWidth = totalWidth
@@ -235,7 +236,7 @@ class AyahToolBar @JvmOverloads constructor(
       lastMeasuredWidth = measuredWidth
       val leftInset = if (position is SelectionIndicator.SelectedPointPosition) {
         lastSelectionShouldPadForCutout = true
-        insets.left + insets.right
+        max(insets.left, insets.right)
       } else {
         lastSelectionShouldPadForCutout = false
         0
@@ -258,13 +259,7 @@ class AyahToolBar @JvmOverloads constructor(
         x + leftInset
       }
 
-      val actualY = if (position is SelectionIndicator.SelectedPointPosition) {
-        y + insets.top
-      } else {
-        y
-      }
-
-      setPosition(actualX, actualY)
+      setPosition(actualX, y)
       if (needsLayout) {
         requestLayout()
       }

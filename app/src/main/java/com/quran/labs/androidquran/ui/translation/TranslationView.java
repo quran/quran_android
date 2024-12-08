@@ -9,12 +9,14 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.DisplayCutoutCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.quran.data.model.SuraAyah;
 import com.quran.data.model.highlight.HighlightType;
 import com.quran.data.model.selection.SelectionIndicator;
@@ -28,11 +30,12 @@ import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.mobile.translation.model.LocalTranslation;
 
-import dev.chrisbanes.insetter.Insetter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import dev.chrisbanes.insetter.Insetter;
 
 public class TranslationView extends FrameLayout implements View.OnClickListener,
     TranslationAdapter.OnVerseSelectedListener, TranslationAdapter.OnJumpToAyahListener {
@@ -44,6 +47,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
   private final LinearLayoutManager layoutManager;
   private PageController pageController;
   private LocalTranslation[] localTranslations;
+  private SpacerDecoration spacerDecoration;
 
   public TranslationView(Context context) {
     this(context, null);
@@ -95,10 +99,17 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
             final int bottomSafeOffset = cutout.getSafeInsetBottom();
             final int horizontalSafeOffset =
                 Math.max(cutout.getSafeInsetLeft(), cutout.getSafeInsetRight());
-            setPadding(horizontalSafeOffset,
-                topSafeOffset,
-                horizontalSafeOffset,
-                bottomSafeOffset);
+
+            if (spacerDecoration == null) {
+              spacerDecoration = new SpacerDecoration(topSafeOffset, bottomSafeOffset);
+              translationRecycler.addItemDecoration(spacerDecoration);
+            } else {
+              if (spacerDecoration.setOffsets(topSafeOffset, bottomSafeOffset)) {
+                translationRecycler.invalidateItemDecorations();
+              }
+            }
+
+            setPadding(horizontalSafeOffset, 0, horizontalSafeOffset, 0);
           }
         })
         .applyToView(this);
