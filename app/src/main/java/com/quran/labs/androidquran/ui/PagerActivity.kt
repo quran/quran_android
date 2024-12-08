@@ -31,11 +31,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.core.view.marginEnd
 import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -1348,9 +1348,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
             val sura =
               quranDisplayData.getSuraNameFromPage(this@PagerActivity, page, true)
             holder.title.text = sura
+            holder.title.setTextColor(ResourcesCompat.getColor(resources, R.color.toolbar_text, null))
             val desc = quranDisplayData.getPageSubtitle(this@PagerActivity, page)
             holder.subtitle.text = desc
             holder.subtitle.visibility = View.VISIBLE
+            holder.subtitle.setTextColor(ResourcesCompat.getColor(resources, R.color.toolbar_secondary_text, null))
           }
           return view
         }
