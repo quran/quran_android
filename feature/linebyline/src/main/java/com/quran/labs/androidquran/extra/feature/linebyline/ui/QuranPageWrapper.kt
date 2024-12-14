@@ -5,12 +5,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import com.quran.data.source.PageContentType
 import com.quran.labs.androidquran.extra.feature.linebyline.model.PageInfo
 import com.quran.labs.androidquran.extra.feature.linebyline.model.SidelinesPosition
@@ -132,12 +135,19 @@ fun QuranPageWrapper(
           "" to displayInfo.localizedPageText
         }
 
-        QuranHeaderFooter(
-          leftText,
-          rightText,
-          overlayColor,
-          modifier = Modifier
-        )
+        // always render the footer as LTR, otherwise, the page number will be rendered
+        // on the wrong side of the page for RTL due to Row being smart and flipping the
+        // children based on LTR/RTL. We want this flipping for the header, but not for
+        // the footer, so that the page number is always on the right side for odd numbered
+        // pages and always on the left side for even numbered pages.
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+          QuranHeaderFooter(
+            leftText,
+            rightText,
+            overlayColor,
+            modifier = Modifier
+          )
+        }
       } else {
         Spacer(modifier = Modifier)
       }
