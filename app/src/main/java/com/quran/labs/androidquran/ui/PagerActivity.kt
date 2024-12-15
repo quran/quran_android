@@ -179,7 +179,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private var isDualPages = false
   private var promptedForExtraDownload = false
   private var progressDialog: ProgressDialog? = null
-  private var isInMultiWindowMode = false
   private var isFoldableDeviceOpenAndVertical = false
 
   private var bookmarksMenuItem: MenuItem? = null
@@ -529,7 +528,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
           } else if (position == barPos - 1 || position == barPos + 1) {
             // Swiping to previous or next ViewPager page (i.e. next or previous quran page)
             val updatedSelectionIndicator =
-              selectionIndicator.withXScroll((viewPager.getWidth() - positionOffsetPixels).toFloat())
+              selectionIndicator.withXScroll((viewPager.width - positionOffsetPixels).toFloat())
             readingEventPresenterBridge.withSelectionIndicator(
               updatedSelectionIndicator
             )
@@ -794,6 +793,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       windowInsetsController.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode) {
+      animateToolBar(isVisible)
+    }
   }
 
   private fun setUiVisibilityKitKat(isVisible: Boolean) {
@@ -808,7 +811,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
     viewPager.systemUiVisibility = flags
 
-    if (isInMultiWindowMode) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode) {
       animateToolBar(isVisible)
     }
   }
@@ -883,8 +886,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
-    isInMultiWindowMode =
-      Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode
 
     if (shouldReconnect) {
       foregroundDisposable.add(
