@@ -3,6 +3,7 @@ package com.quran.labs.androidquran
 import android.app.Application
 import android.content.Context
 import android.content.res.Resources
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.quran.labs.androidquran.core.worker.QuranWorkerFactory
@@ -34,6 +35,9 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider {
     applicationComponent.inject(this)
     initializeWorkManager()
     bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
+
+    // set dark mode as the default for now
+    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
   }
 
   open fun setupTimber() {
