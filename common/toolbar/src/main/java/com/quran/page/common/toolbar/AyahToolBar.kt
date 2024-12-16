@@ -71,6 +71,7 @@ class AyahToolBar @JvmOverloads constructor(
       layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, toolBarHeight)
       setBackgroundColor(background)
     }
+    menuLayout.layoutDirection = LAYOUT_DIRECTION_LTR
     addView(menuLayout)
 
     pipPosition = SelectedAyahPlacementType.BOTTOM
