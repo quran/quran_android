@@ -2,6 +2,7 @@ package com.quran.mobile.feature.downloadmanager.ui.sheikhdownload
 
 import android.content.Context
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.LinearProgressIndicator
@@ -36,7 +37,7 @@ fun DownloadProgressDialog(
     },
     text = {
       val progress = if (currentEvent.progress == -1) 0 else currentEvent.progress
-      Column {
+      Column(modifier = Modifier.height(56.dp)) {
         Text(
           currentEvent.asMessage(LocalContext.current),
           modifier = Modifier.padding(bottom = 8.dp, end = 16.dp)
