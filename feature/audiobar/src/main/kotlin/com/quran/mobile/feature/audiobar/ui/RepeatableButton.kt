@@ -24,9 +24,10 @@ fun <T> RepeatableButton(
   value: T,
   defaultValue: T,
   format: (T) -> String,
+  modifier: Modifier = Modifier,
   onValueChanged: (T) -> Unit
 ) {
-  Box {
+  Box(contentAlignment = Alignment.Center, modifier = modifier) {
     IconButton(onClick = {
       val index = (values.indexOf(value) + 1) % values.size
       onValueChanged(values[index])

@@ -2,6 +2,8 @@ package com.quran.mobile.feature.audiobar.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.Pause
@@ -20,6 +22,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.audiobar.state.AudioBarState
@@ -33,7 +36,11 @@ internal fun PlayingAudioBar(
   modifier: Modifier = Modifier
 ) {
   AudioBar(state, eventSink, modifier) {
-    IconButton(onClick = { playbackEventSink(AudioBarUiEvent.PlayingPlaybackEvent.Pause) }) {
+    IconButton(
+      modifier = Modifier
+        .width(40.dp)
+        .weight(1f),
+      onClick = { playbackEventSink(AudioBarUiEvent.PlayingPlaybackEvent.Pause) }) {
       Icon(QuranIcons.Pause, contentDescription = "")
     }
   }
@@ -47,7 +54,11 @@ internal fun PausedAudioBar(
   modifier: Modifier = Modifier
 ) {
   AudioBar(state = state, eventSink, modifier = modifier) {
-    IconButton(onClick = { pausedEventSink(AudioBarUiEvent.PausedPlaybackEvent.Play) }) {
+    IconButton(
+      modifier = Modifier
+        .width(40.dp)
+        .weight(1f),
+      onClick = { pausedEventSink(AudioBarUiEvent.PausedPlaybackEvent.Play) }) {
       Icon(QuranIcons.PlayArrow, contentDescription = "")
     }
   }
@@ -58,7 +69,7 @@ internal fun AudioBar(
   state: AudioBarState.ActivePlayback,
   sink: (AudioBarUiEvent.CommonPlaybackEvent) -> Unit,
   modifier: Modifier = Modifier,
-  actionButton: @Composable () -> Unit
+  actionButton: @Composable RowScope.() -> Unit
 ) {
   CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
     Row(
@@ -66,18 +77,30 @@ internal fun AudioBar(
       verticalAlignment = Alignment.CenterVertically,
       modifier = modifier
     ) {
-      IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.Stop) }) {
-        Icon(QuranIcons.Stop, contentDescription = "")
+      IconButton(
+        modifier = Modifier
+          .width(40.dp)
+          .weight(1f),
+        onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.Stop) }) {
+        Icon(QuranIcons.Stop, contentDescription = "", modifier = Modifier.width(40.dp))
       }
 
-      IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.Rewind) }) {
-        Icon(QuranIcons.FastRewind, contentDescription = "")
+      IconButton(
+        modifier = Modifier
+          .width(40.dp)
+          .weight(1f),
+        onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.Rewind) }) {
+        Icon(QuranIcons.FastRewind, contentDescription = "", modifier = Modifier.width(40.dp))
       }
 
       actionButton()
 
-      IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.FastForward) }) {
-        Icon(QuranIcons.FastForward, contentDescription = "")
+      IconButton(
+        modifier = Modifier
+          .width(40.dp)
+          .weight(1f),
+        onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.FastForward) }) {
+        Icon(QuranIcons.FastForward, contentDescription = "", modifier = Modifier.width(40.dp))
       }
 
       val infinity = stringResource(id = com.quran.mobile.common.ui.core.R.string.infinity)
@@ -87,6 +110,9 @@ internal fun AudioBar(
         values = REPEAT_VALUES,
         value = state.repeat,
         defaultValue = 0,
+        modifier = Modifier
+          .width(40.dp)
+          .weight(1f),
         format = {
           if (it > -1) {
             it.toString()
@@ -104,12 +130,19 @@ internal fun AudioBar(
         values = SPEED_VALUES,
         value = state.speed,
         defaultValue = 1.0f,
+        modifier = Modifier
+          .width(40.dp)
+          .weight(1f),
         format = { it.toString() }
       ) {
         sink(AudioBarUiEvent.CommonPlaybackEvent.SetSpeed(it))
       }
 
-      IconButton(onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.ShowSettings) }) {
+      IconButton(
+        modifier = Modifier
+          .width(40.dp)
+          .weight(1f),
+        onClick = { sink(AudioBarUiEvent.CommonPlaybackEvent.ShowSettings) }) {
         Icon(QuranIcons.Settings, contentDescription = "")
       }
     }
