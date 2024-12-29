@@ -20,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.quran.labs.androidquran.common.audio.model.QariItem
+import com.quran.labs.androidquran.common.ui.LanguageEnforcer
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInterface
@@ -30,13 +31,14 @@ import com.quran.mobile.feature.downloadmanager.ui.common.DownloadManagerToolbar
 import kotlinx.collections.immutable.persistentListOf
 import javax.inject.Inject
 
-
 class AudioManagerActivity : ComponentActivity() {
 
   @Inject
   lateinit var audioManagerPresenter: AudioManagerPresenter
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    (application as? LanguageEnforcer)?.refreshLocale(this, false)
+
     super.onCreate(savedInstanceState)
 
     val injector = (application as? QuranApplicationComponentProvider)
