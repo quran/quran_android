@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="sync_with_quran_com">Sync with Quran.com</string>
+  <string name="sync_with_quran_com_details">Quran for Android can synchronize bookmarks and reading
+  statuses with Quran.com, so that reading can be continued on other Quran.com applications and
+  devices.</string>
+  <string name="login">Login</string>
+  <string name="logout">Logout</string>
+</resources>

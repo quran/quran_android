@@ -1,0 +1,23 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+  <application>
+    <activity
+        android:name=".QuranLoginActivity"
+        android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+    <activity
+        android:name="net.openid.appauth.RedirectUriReceiverActivity"
+        android:exported="true"
+        tools:node="replace">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+
+        <data android:scheme="com.quran.labs.androidquran" />
+      </intent-filter>
+    </activity>
+  </application>
+</manifest>
