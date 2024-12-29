@@ -6,6 +6,7 @@ import android.content.res.Resources
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.Configuration
 import androidx.work.WorkManager
+import com.quran.labs.androidquran.common.ui.LanguageEnforcer
 import com.quran.labs.androidquran.core.worker.QuranWorkerFactory
 import com.quran.labs.androidquran.di.component.application.ApplicationComponent
 import com.quran.labs.androidquran.di.component.application.DaggerApplicationComponent
@@ -18,7 +19,7 @@ import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 
-open class QuranApplication : Application(), QuranApplicationComponentProvider {
+open class QuranApplication : Application(), QuranApplicationComponentProvider, LanguageEnforcer {
   lateinit var applicationComponent: ApplicationComponent
 
   @Inject lateinit var quranWorkerFactory: QuranWorkerFactory
@@ -58,7 +59,7 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider {
     )
   }
 
-  fun refreshLocale(
+  override fun refreshLocale(
     context: Context,
     force: Boolean
   ) {
