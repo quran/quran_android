@@ -349,9 +349,15 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private fun updateDualPageMode() {
     val lastIsDualPages = isDualPages
-    isDualPages = QuranUtils.isDualPages(this, quranScreenInfo, isFoldableDeviceOpenAndVertical)
-    if (lastIsDualPages != isDualPages) {
+    val nextIsDualPages = QuranUtils.isDualPages(this, quranScreenInfo, isFoldableDeviceOpenAndVertical)
+    if (lastIsDualPages != nextIsDualPages) {
+      // due to the conversion after setting the adapter, we need this page to be
+      // the page _before_ we switched from dual to single or vice versa. otherwise,
+      // we end up double-converting the page.
+      //
+      // might be worth trying later to undo this and just remove the conversion below.
       val page = currentPage
+      isDualPages = nextIsDualPages
 
       pagerAdapter = QuranPageAdapter(
         supportFragmentManager,
