@@ -16,6 +16,7 @@ import com.quran.labs.androidquran.pageselect.PageSelectActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.feature.downloadmanager.AudioManagerActivity
+import com.quran.mobile.feature.sync.QuranLoginActivity
 import javax.inject.Inject
 
 class QuranSettingsFragment : PreferenceFragmentCompat(),
@@ -53,6 +54,12 @@ class QuranSettingsFragment : PreferenceFragmentCompat(),
     if (pageTypes.size < 2 && pageChangePref != null) {
       val readingPrefs: Preference? = findPreference(Constants.PREF_READING_CATEGORY)
       (readingPrefs as PreferenceGroup).removePreference(pageChangePref)
+    }
+
+    val quranSyncPref: Preference? = findPreference(Constants.PREFS_QURAN_SYNC)
+    quranSyncPref?.setOnPreferenceClickListener {
+      startActivity(Intent(activity, QuranLoginActivity::class.java))
+      true
     }
 
     // add additional injected preferences (if any)
