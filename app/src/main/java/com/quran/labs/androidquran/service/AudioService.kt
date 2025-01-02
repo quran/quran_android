@@ -39,6 +39,7 @@ import android.media.MediaPlayer
 import android.media.MediaPlayer.OnCompletionListener
 import android.media.MediaPlayer.OnPreparedListener
 import android.media.MediaPlayer.OnSeekCompleteListener
+import android.media.PlaybackParams
 import android.net.wifi.WifiManager
 import android.net.wifi.WifiManager.WifiLock
 import android.os.Build
@@ -661,10 +662,7 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
   private fun processUpdatePlaybackSpeed(speed: Float) {
     if (State.Playing === state && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       try {
-        player?.playbackParams?.let { params ->
-          params.setSpeed(speed)
-          player?.playbackParams = params
-        }
+        player?.playbackParams = PlaybackParams().allowDefaults().setSpeed(speed)
       } catch (e: Exception) {
         // catch an Android 6 crash [IllegalStateException], and report the speed since some
         // non-Android 6 devices also crash here, but with [IllegalArgumentException]
@@ -1070,12 +1068,13 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
       "seek complete! %d vs %d",
       mediaPlayer.currentPosition, player.currentPosition
     )
-    player.start()
-    state = State.Playing
-    updateAudioPlaybackStatus()
+
     audioRequest?.playbackSpeed?.let { speed ->
       processUpdatePlaybackSpeed(speed)
     }
+    player.start()
+    state = State.Playing
+    updateAudioPlaybackStatus()
     serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
   }
 
