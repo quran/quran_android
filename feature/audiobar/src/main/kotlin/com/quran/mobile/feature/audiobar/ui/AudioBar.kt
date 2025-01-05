@@ -101,7 +101,7 @@ internal fun AudioBar(
 @Preview("arabic", locale = "ar")
 @Preview("dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun AudioBarStoppedPreview() {
+private fun AudioBarStoppedPreview() {
   QuranTheme {
     Surface {
       AudioBar(
@@ -120,7 +120,7 @@ fun AudioBarStoppedPreview() {
 @Preview("arabic", locale = "ar")
 @Preview("dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun AudioBarPlayingPreview() {
+private fun AudioBarPlayingPreview() {
   QuranTheme {
     Surface {
       AudioBar(

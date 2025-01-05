@@ -88,7 +88,7 @@ internal fun ProgressAudioBar(
 
 @Preview
 @Composable
-fun LoadingAudioBarPreview() {
+private fun LoadingAudioBarPreview() {
   QuranTheme {
     LoadingAudioBar(
       state = AudioBarState.Loading(
@@ -102,7 +102,7 @@ fun LoadingAudioBarPreview() {
 
 @Preview
 @Composable
-fun LoadingAudioBarIndeterminatePreview() {
+private fun LoadingAudioBarIndeterminatePreview() {
   QuranTheme {
     LoadingAudioBar(
       state = AudioBarState.Loading(
