@@ -38,7 +38,7 @@ internal fun ErrorAudioBar(
 
     Text(
       text = stringResource(id = state.messageResource),
-      modifier = Modifier.padding(horizontal = 8.dp)
+      modifier = Modifier.padding(horizontal = 12.dp)
     )
   }
 }
