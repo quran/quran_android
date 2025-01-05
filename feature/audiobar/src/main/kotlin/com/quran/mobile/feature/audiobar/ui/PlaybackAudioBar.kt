@@ -154,7 +154,7 @@ private val SPEED_VALUES = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f)
 
 @Preview
 @Composable
-fun PlayingAudioBarPreview() {
+private fun PlayingAudioBarPreview() {
   QuranTheme {
     PlayingAudioBar(
       state = AudioBarState.Playing(
@@ -169,7 +169,7 @@ fun PlayingAudioBarPreview() {
 
 @Preview
 @Composable
-fun PausedAudioBarPreview() {
+private fun PausedAudioBarPreview() {
   QuranTheme {
     PausedAudioBar(
       state = AudioBarState.Paused(

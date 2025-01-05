@@ -145,7 +145,7 @@ internal fun RecitationAudioBar(
 
 @Preview
 @Composable
-fun RecitationListeningAudioBarPreview() {
+private fun RecitationListeningAudioBarPreview() {
   QuranTheme {
     RecitationListeningAudioBar(
       eventSink = {},
@@ -156,7 +156,7 @@ fun RecitationListeningAudioBarPreview() {
 
 @Preview
 @Composable
-fun RecitationPlayingAudioBarPreview() {
+private fun RecitationPlayingAudioBarPreview() {
   QuranTheme {
     RecitationPlayingAudioBar(
       eventSink = {},
@@ -167,7 +167,7 @@ fun RecitationPlayingAudioBarPreview() {
 
 @Preview
 @Composable
-fun RecitationStoppedAudioBarPreview() {
+private fun RecitationStoppedAudioBarPreview() {
   QuranTheme {
     RecitationStoppedAudioBar(
       eventSink = {},

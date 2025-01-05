@@ -59,7 +59,7 @@ internal fun StoppedAudioBar(
 
 @Preview
 @Composable
-fun StoppedAudioBarPreview() {
+private fun StoppedAudioBarPreview() {
   QuranTheme {
     StoppedAudioBar(
       state = AudioBarState.Stopped(
@@ -73,7 +73,7 @@ fun StoppedAudioBarPreview() {
 
 @Preview
 @Composable
-fun StoppedAudioBarWithRecordingPreview() {
+private fun StoppedAudioBarWithRecordingPreview() {
   QuranTheme {
     StoppedAudioBar(
       state = AudioBarState.Stopped(

@@ -49,7 +49,7 @@ fun <T> RepeatableButton(
 
 @Preview
 @Composable
-fun RepeatableButtonPreview() {
+private fun RepeatableButtonPreview() {
   QuranTheme {
     RepeatableButton(
       icon = QuranIcons.Repeat,
