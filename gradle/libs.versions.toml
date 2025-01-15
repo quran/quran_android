@@ -30,7 +30,7 @@ timberVersion = "5.0.1"
 
 # androidx library versions
 androidxAppcompatVersion = "1.7.0"
-androidxActivityComposeVersion = "1.9.3"
+androidxActivityComposeVersion = "1.10.0"
 androidxAnnotationVersion = "1.9.1"
 androidxCoreVersion = "1.15.0"
 androidxNavigationVersion = "2.8.5"
