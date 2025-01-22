@@ -54,7 +54,7 @@ jobs:
           path: app/build/reports/tests/testMadaniDebugUnitTest/
 
       - name: Download Previous Debug APK
-        uses: dawidd6/action-download-artifact@v7
+        uses: dawidd6/action-download-artifact@v8
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: post_merge.yml
@@ -79,7 +79,7 @@ jobs:
         run: ./gradlew :app:dependencies --configuration madaniReleaseRuntimeClasspath > current_dependencies.txt
 
       - name: Download Previous Dependencies List
-        uses: dawidd6/action-download-artifact@v7
+        uses: dawidd6/action-download-artifact@v8
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: post_merge.yml
