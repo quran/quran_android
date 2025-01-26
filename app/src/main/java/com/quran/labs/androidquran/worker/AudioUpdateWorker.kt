@@ -41,9 +41,10 @@ class AudioUpdateWorker(
       val currentVersion = quranSettings.currentAudioRevision
       val updates = audioUpdateService.getUpdates(currentVersion)
 
-      Timber.d("local version: %d - server version: %d",
+      if (updates != null && currentVersion != updates.currentRevision) {
+        Timber.d("local version: %d - server version: %d",
           currentVersion, updates.currentRevision)
-      if (currentVersion != updates.currentRevision) {
+
         val localFilesToDelete = AudioUpdater.computeUpdates(
             updates.updates, audioUtils.getQariList(context),
             AudioFileCheckerImpl(MD5Calculator, audioPathRoot),
@@ -84,6 +85,8 @@ class AudioUpdateWorker(
         }
         Timber.d("updating audio to revision: %d", updates.currentRevision)
         quranSettings.currentAudioRevision = updates.currentRevision
+      } else {
+        Timber.d("no audio updates found")
       }
     }
     Result.success()
