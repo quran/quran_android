@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 open class BaseTranslationPresenter<T : Any> internal constructor(
     private val translationModel: TranslationModel,
@@ -40,7 +39,6 @@ open class BaseTranslationPresenter<T : Any> internal constructor(
   init {
     translationListPresenter.translations()
       .onEach { translations ->
-        Timber.w("BaseTranslationListPresenter emit with ${translations.size}")
         updateTranslationsMap(translations)
         onAvailableTranslationsChanged(translations)
       }
