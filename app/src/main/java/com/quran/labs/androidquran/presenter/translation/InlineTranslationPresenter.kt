@@ -10,9 +10,6 @@ import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.translation.model.LocalTranslation
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -24,20 +21,10 @@ class InlineTranslationPresenter @Inject constructor(
   translationListPresenter: TranslationListPresenter,
   quranInfo: QuranInfo
 ) : BaseTranslationPresenter<InlineTranslationPresenter.TranslationScreen>(
-  translationModel, dbAdapter, translationUtil, quranInfo
+  translationModel, dbAdapter, translationUtil, quranInfo, translationListPresenter
 ) {
-  private val scope = MainScope()
   private var cachedTranslations = emptyList<LocalTranslation>()
   private var lastVerseRange: VerseRange? = null
-
-  init {
-    translationListPresenter.translations()
-      .onEach { translations ->
-        cachedTranslations = translations
-        translationScreen?.onTranslationsUpdated(translations)
-      }
-      .launchIn(scope)
-  }
 
   suspend fun refresh(verseRange: VerseRange) {
     val ayahHasBeenChanged = verseRange != lastVerseRange
@@ -52,6 +39,12 @@ class InlineTranslationPresenter @Inject constructor(
     super.bind(what)
     val translations = cachedTranslations
     what.onTranslationsUpdated(translations)
+  }
+
+  override fun onAvailableTranslationsChanged(localTranslations: List<LocalTranslation>) {
+    super.onAvailableTranslationsChanged(localTranslations)
+    cachedTranslations = localTranslations
+    translationScreen?.onTranslationsUpdated(localTranslations)
   }
 
   interface TranslationScreen {

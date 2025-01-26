@@ -10,25 +10,42 @@ import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.presenter.Presenter
+import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.translation.model.LocalTranslation
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 open class BaseTranslationPresenter<T : Any> internal constructor(
     private val translationModel: TranslationModel,
     private val translationsAdapter: TranslationsDBAdapter,
     private val translationUtil: TranslationUtil,
-    private val quranInfo: QuranInfo
+    private val quranInfo: QuranInfo,
+    translationListPresenter: TranslationListPresenter,
 ) : Presenter<T> {
   private val translationMap: MutableMap<String, LocalTranslation> = HashMap()
+  private val scope = MainScope()
 
   var translationScreen: T? = null
+
+  init {
+    translationListPresenter.translations()
+      .onEach { translations ->
+        Timber.w("BaseTranslationListPresenter emit with ${translations.size}")
+        updateTranslationsMap(translations)
+        onAvailableTranslationsChanged(translations)
+      }
+      .launchIn(scope)
+  }
 
   suspend fun getVerses(
     getArabic: Boolean,
@@ -184,6 +201,19 @@ open class BaseTranslationPresenter<T : Any> internal constructor(
     return texts
   }
 
+  open fun onAvailableTranslationsChanged(localTranslations: List<LocalTranslation>) {
+  }
+
+  suspend fun updateTranslationsMap(localTranslations: List<LocalTranslation>) {
+    // mutate on the main thread only to avoid contention
+    withContext(Dispatchers.Main.immediate) {
+      localTranslations.associateBy { it.filename }.let {
+        translationMap.clear()
+        translationMap.putAll(it)
+      }
+    }
+  }
+
   private suspend fun getTranslationMap(): Map<String, LocalTranslation> {
     val currentTranslationMap = translationMap
     return withContext(Dispatchers.IO) {
@@ -191,8 +221,12 @@ open class BaseTranslationPresenter<T : Any> internal constructor(
         val updatedTranslations = translationsAdapter.getTranslations()
           .map { it.associateBy { it.filename } }
           .first()
-        translationMap.clear()
-        translationMap.putAll(updatedTranslations)
+
+        // only mutate on the main thread
+        withContext(Dispatchers.Main) {
+          translationMap.clear()
+          translationMap.putAll(updatedTranslations)
+        }
         updatedTranslations
       } else {
         currentTranslationMap

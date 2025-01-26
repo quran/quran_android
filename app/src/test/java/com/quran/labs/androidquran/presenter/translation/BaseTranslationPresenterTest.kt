@@ -9,8 +9,14 @@ import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.presenter.Presenter
+import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.translation.model.LocalTranslation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -19,8 +25,11 @@ class BaseTranslationPresenterTest {
 
   private lateinit var presenter: BaseTranslationPresenter<TestPresenter>
 
+  private val testDispatcher = UnconfinedTestDispatcher()
+
   @Before
   fun setupTest() {
+    Dispatchers.setMain(testDispatcher)
     presenter = BaseTranslationPresenter(
         Mockito.mock(TranslationModel::class.java),
         Mockito.mock(TranslationsDBAdapter::class.java),
@@ -29,8 +38,14 @@ class BaseTranslationPresenterTest {
             return TranslationMetadata(quranText.sura, quranText.ayah, quranText.text, translationId)
           }
         },
-        QuranInfo(MadaniDataSource())
+        QuranInfo(MadaniDataSource()),
+        Mockito.mock(TranslationListPresenter::class.java)
     )
+  }
+
+  @After
+  fun tearDown() {
+    Dispatchers.resetMain()
   }
 
   @Test
