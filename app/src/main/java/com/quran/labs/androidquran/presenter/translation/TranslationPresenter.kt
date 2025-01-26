@@ -5,6 +5,7 @@ import com.quran.data.di.QuranPageScope
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.model.translation.TranslationModel
+import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.translation.model.LocalTranslation
@@ -18,11 +19,12 @@ class TranslationPresenter @Inject internal constructor(
   private val quranSettings: QuranSettings,
   translationsAdapter: TranslationsDBAdapter,
   translationUtil: TranslationUtil,
+  translationListPresenter: TranslationListPresenter,
   private val quranInfo: QuranInfo,
   private val pages: IntArray
 ) :
   BaseTranslationPresenter<TranslationPresenter.TranslationScreen>(
-    translationModel, translationsAdapter, translationUtil, quranInfo
+    translationModel, translationsAdapter, translationUtil, quranInfo, translationListPresenter
   ) {
 
   suspend fun refresh() {
