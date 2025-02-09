@@ -219,6 +219,18 @@
   </PreferenceCategory>
 
   <PreferenceCategory
+      android:key="@string/prefs_sync"
+      android:title="@string/prefs_category_sync"
+      app:iconSpaceReserved="false">
+
+    <Preference
+        android:key="@string/prefs_quran_sync_key"
+        android:summary="@string/prefs_quran_sync_summary"
+        android:title="@string/prefs_quran_sync"
+        app:iconSpaceReserved="false"/>
+  </PreferenceCategory>
+
+  <PreferenceCategory
       android:key="@string/prefs_advanced_path"
       android:title="@string/prefs_category_advanced"
       app:iconSpaceReserved="false">

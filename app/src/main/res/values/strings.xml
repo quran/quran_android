@@ -231,6 +231,9 @@
   <string name="prefs_sura_translated_name_summary">Show the translation of surah name</string>
   <string name="prefs_sura_translated_name_title">Surah translated name</string>
   <string name="prefs_preview">Preview</string>
+  <string name="prefs_category_sync">Synchronization Options</string>
+  <string name="prefs_quran_sync">Synchronization with Quran.com</string>
+  <string name="prefs_quran_sync_summary">Synchronize data with Quran.com</string>
 
   <string name="translations" translatable="false">@string/prefs_translations</string>
   <string name="more_translations">More Translations</string>
