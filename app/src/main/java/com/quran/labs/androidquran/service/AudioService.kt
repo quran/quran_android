@@ -660,7 +660,8 @@ class AudioService : Service(), OnCompletionListener, OnPreparedListener,
   }
 
   private fun processUpdatePlaybackSpeed(speed: Float) {
-    if (State.Playing === state && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    val shouldUpdatePlaybackSpeed = State.Playing === state || State.Preparing === state
+    if (shouldUpdatePlaybackSpeed && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       try {
         player?.playbackParams = PlaybackParams().allowDefaults().setSpeed(speed)
       } catch (e: Exception) {
