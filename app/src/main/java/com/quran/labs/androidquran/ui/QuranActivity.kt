@@ -425,6 +425,7 @@ class QuranActivity : AppCompatActivity(),
     i.putExtra("page", page)
     i.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura)
     i.putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah)
+    i.putExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, settings.wasShowingTranslation)
     startActivity(i)
   }
 
