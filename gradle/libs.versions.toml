@@ -59,7 +59,7 @@ insetterVersion = "0.6.1"
 materialComponentsVersion = "1.12.0"
 numberPickerVersion = "2.4.13"
 reorderableComposeVersion = "0.9.6"
-molecule = "2.0.0"
+molecule = "2.1.0"
 
 # recitations
 grpcOkhttpVersion = "1.71.0"
