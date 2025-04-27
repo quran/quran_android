@@ -54,9 +54,17 @@ open class BaseTranslationPresenter<T : Any> internal constructor(
       val translations = translationsAdapter.getTranslations().first()
       val sortedTranslations: List<LocalTranslation> = translations.sortedBy { it.displayOrder }
 
-      val orderedTranslationsFileNames = sortedTranslations
+      val filteredTranslationsFileNames = sortedTranslations
         .filter { translationsFileNames.contains(it.filename) }
         .map { it.filename }
+
+      // the list might be empty for 2 reasons:
+      // 1. all available translations were unchecked
+      // 2. there are checked translations that don't exist
+      // in either of these cases, enable all available translations.
+      val orderedTranslationsFileNames = filteredTranslationsFileNames.ifEmpty {
+        sortedTranslations.map { it.filename }
+      }
 
       val job = SupervisorJob()
       // get all the translations for these verses, using a source of the list of ordered active translations
