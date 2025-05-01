@@ -2,7 +2,7 @@
 agp = "8.9.2"
 junit = "1.2.1"
 kotlin = "2.1.20"
-ksp = "2.1.20-2.0.0"
+ksp = "2.1.20-2.0.1"
 
 # required within the Gradle convention plugins - not unused
 composeBomVersion = "2025.04.01"
