@@ -5,7 +5,7 @@ kotlin = "2.1.21"
 ksp = "2.1.21-2.0.1"
 
 # required within the Gradle convention plugins - not unused
-composeBomVersion = "2025.05.00"
+composeBomVersion = "2025.05.01"
 media3ExoplayerVersion = "1.7.1"
 okhttpBomVersion = "4.12.0"
 
