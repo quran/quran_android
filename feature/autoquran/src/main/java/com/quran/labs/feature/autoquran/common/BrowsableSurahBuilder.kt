@@ -7,13 +7,17 @@ import androidx.media3.common.MimeTypes
 import com.google.common.collect.ImmutableList
 import com.quran.data.model.audio.Qari
 import com.quran.data.source.PageProvider
+import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
 import com.quran.mobile.di.qualifier.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class BrowsableSurahBuilder @Inject constructor(@ApplicationContext private val appContext: Context,
-                                                private val pageProvider: PageProvider) {
+class BrowsableSurahBuilder @Inject constructor(
+  @ApplicationContext private val appContext: Context,
+  private val pageProvider: PageProvider,
+  private val audioExtensionDecider: AudioExtensionDecider
+) {
 
   private val qariMediaItem: MediaItem by lazy {
     MediaItem.Builder()
@@ -130,7 +134,8 @@ class BrowsableSurahBuilder @Inject constructor(@ApplicationContext private val 
    * Make a [MediaItem] representing a sura for a [Qari]
    */
   private fun makeSuraMediaItem(qari: Qari, sura: Int): MediaItem {
-    val suraName = getSuraName(appContext, sura, true, false)
+    val suraName = getSuraName(appContext, sura, wantPrefix = true, wantTranslation = false)
+    val extension = audioExtensionDecider.audioExtensionForQari(qari)
     return MediaItem.Builder()
       .setMediaId("sura_${sura}_${qari.id}")
       .setMediaMetadata(
@@ -145,7 +150,7 @@ class BrowsableSurahBuilder @Inject constructor(@ApplicationContext private val 
           .build()
       )
       .setMimeType(MimeTypes.AUDIO_MPEG)
-      .setUri(qari.url + makeThreeDigit(sura) + ".mp3")
+      .setUri(qari.url + makeThreeDigit(sura) + ".$extension")
       .build()
   }
 

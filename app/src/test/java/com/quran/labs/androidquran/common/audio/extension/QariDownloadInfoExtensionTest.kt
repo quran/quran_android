@@ -12,7 +12,7 @@ class QariDownloadInfoExtensionTest {
 
   @Test
   fun checkDownloadedGaplessFiles() {
-    val qari = Qari(1, 0, "url", "path", false, "database")
+    val qari = Qari(1, 0, "url", null, "path", false, "database")
     val qariDownloadInfo = QariDownloadInfo.GaplessQariDownloadInfo(qari, listOf(1, 2), listOf(3))
     assertTrue(qariDownloadInfo.isRangeDownloaded(SuraAyah(1, 1), SuraAyah(2, 286)))
     // ranges are inclusive, and there are no partial files
@@ -22,7 +22,7 @@ class QariDownloadInfoExtensionTest {
 
   @Test
   fun checkDownloadedGappedFiles() {
-    val qari = Qari(1, 0, "url", "path", false, null)
+    val qari = Qari(1, 0, "url", null, "path", false, null)
     val qariDownloadInfo = QariDownloadInfo.GappedQariDownloadInfo(
       qari,
       listOf(1, 2),

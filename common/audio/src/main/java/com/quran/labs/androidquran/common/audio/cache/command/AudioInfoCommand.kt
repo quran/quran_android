@@ -2,15 +2,17 @@ package com.quran.labs.androidquran.common.audio.cache.command
 
 import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
+import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
 import com.quran.labs.androidquran.common.audio.util.QariUtil
-import javax.inject.Inject
 import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
+import javax.inject.Inject
 
 class AudioInfoCommand @Inject constructor(
   private val fileSystem: FileSystem,
   private val qariUtil: QariUtil,
+  private val audioExtensionDecider: AudioExtensionDecider,
   private val gappedAudioInfoCommand: GappedAudioInfoCommand,
   private val gaplessAudioInfoCommand: GaplessAudioInfoCommand
 ) {
@@ -37,12 +39,13 @@ class AudioInfoCommand @Inject constructor(
   }
 
   private fun generateQariDownloadInfoWithPath(qari: Qari, path: Path?): QariDownloadInfo {
+    val allowedExtensions = audioExtensionDecider.allowedAudioExtensions(qari)
     return if (qari.isGapless) {
       val (fullDownloads, partialDownloads) =
         if (path == null) {
           emptyList<Int>() to emptyList()
         } else {
-          gaplessAudioInfoCommand.gaplessDownloads(path)
+          gaplessAudioInfoCommand.gaplessDownloads(path, allowedExtensions)
         }
       QariDownloadInfo.GaplessQariDownloadInfo(qari, fullDownloads, partialDownloads)
     } else {
@@ -50,7 +53,7 @@ class AudioInfoCommand @Inject constructor(
         if (path == null) {
           emptyList<Int>() to emptyList()
         } else {
-          gappedAudioInfoCommand.gappedDownloads(path)
+          gappedAudioInfoCommand.gappedDownloads(path, allowedExtensions)
         }
       QariDownloadInfo.GappedQariDownloadInfo(qari, fullDownloads, partiallyDownloadedSuras)
     }

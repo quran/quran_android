@@ -11,6 +11,7 @@ data class QariItem(
   val id: Int,
   val name: String,
   val url: String,
+  val opusUrl: String? = null,
   val path: String,
   val hasGaplessAlternative: Boolean,
   val db: String? = null
@@ -21,12 +22,23 @@ data class QariItem(
   val isGapless: Boolean
     get() = databaseName != null
 
+  fun hasOpus() = opusUrl != null && opusUrl.isNotEmpty()
+
+  fun url(extension: String): String {
+    return when (extension) {
+      "opus" -> opusUrl ?: throw IllegalArgumentException("Opus is not available for qari $id")
+      "mp3" -> url
+      else -> throw IllegalArgumentException("Unsupported audio format: $extension")
+    }
+  }
+
   companion object {
     fun fromQari(context: Context, qari: Qari): QariItem {
       return QariItem(
         id = qari.id,
         name = context.getString(qari.nameResource),
         url = qari.url,
+        opusUrl = qari.opusUrl,
         path = qari.path,
         hasGaplessAlternative = qari.hasGaplessAlternative,
         db = qari.db

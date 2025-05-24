@@ -57,9 +57,11 @@ class AudioUpdateWorker(
             if (localUpdate.needsDatabaseUpgrade) {
               // delete the database
               val dbPath = audioUtils.getQariDatabasePathIfGapless(localUpdate.qari)
-              dbPath?.let { SuraTimingDatabaseHandler.clearDatabaseHandlerIfExists(it) }
-              Timber.d("would remove %s", dbPath)
-              File(dbPath).delete()
+              if (dbPath != null) {
+                SuraTimingDatabaseHandler.clearDatabaseHandlerIfExists(dbPath)
+                Timber.d("would remove %s", dbPath)
+                File(dbPath).delete()
+              }
             }
 
             val qari = localUpdate.qari
@@ -72,7 +74,8 @@ class AudioUpdateWorker(
                 // this is a hack to drop the leading 0s in the file name
                 val sura = it.substring(0, 3).toInt().toString()
                 val ayah = it.substring(3, 6).toInt().toString()
-                path + File.separator + sura + File.separator + ayah + ".mp3"
+                val extension = it.substringAfterLast(".")
+                path + File.separator + sura + File.separator + ayah + ".$extension"
               }
               Timber.d("would remove %s", filePath)
               File(filePath).delete()

@@ -5,12 +5,13 @@ import android.content.Intent
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.audio.model.QariItem
+import com.quran.labs.androidquran.common.audio.model.download.AudioDownloadMetadata
 import com.quran.labs.androidquran.common.audio.model.playback.AudioPathInfo
 import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
+import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.service.QuranDownloadService
-import com.quran.labs.androidquran.common.audio.model.download.AudioDownloadMetadata
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.util.AudioUtils
@@ -20,20 +21,25 @@ import java.io.File
 import javax.inject.Inject
 
 class AudioPresenter @Inject
-constructor(private val quranDisplayData: QuranDisplayData,
-            private val audioUtil: AudioUtils,
-            private val quranFileUtils: QuranFileUtils) : Presenter<PagerActivity> {
+constructor(
+  private val quranDisplayData: QuranDisplayData,
+  private val audioUtil: AudioUtils,
+  private val audioExtensionDecider: AudioExtensionDecider,
+  private val quranFileUtils: QuranFileUtils
+) : Presenter<PagerActivity> {
   private var pagerActivity: PagerActivity? = null
   private var lastAudioRequest: AudioRequest? = null
 
-  fun play(start: SuraAyah,
-           end: SuraAyah,
-           qari: QariItem,
-           verseRepeat: Int,
-           rangeRepeat: Int,
-           enforceRange: Boolean,
-           playbackSpeed: Float,
-           shouldStream: Boolean) {
+  fun play(
+    start: SuraAyah,
+    end: SuraAyah,
+    qari: QariItem,
+    verseRepeat: Int,
+    rangeRepeat: Int,
+    enforceRange: Boolean,
+    playbackSpeed: Float,
+    shouldStream: Boolean
+  ) {
     val audioPathInfo = getLocalAudioPathInfo(qari)
     if (audioPathInfo != null) {
       // override streaming if all the files are already downloaded
@@ -46,7 +52,12 @@ constructor(private val quranDisplayData: QuranDisplayData,
       // if we're still streaming, change the base qari format in audioPathInfo
       // to a remote url format (instead of a path to a local directory)
       val audioPath = if (stream) {
-        audioPathInfo.copy(urlFormat = audioUtil.getQariUrl(qari))
+        audioPathInfo.copy(
+          urlFormat = audioUtil.getQariUrl(
+            qari,
+            audioExtensionDecider.audioExtensionForQari(qari)
+          )
+        )
       } else {
         audioPathInfo
       }
@@ -55,15 +66,24 @@ constructor(private val quranDisplayData: QuranDisplayData,
         start to end
       } else {
         Timber.e(
-            IllegalStateException(
-                "End isn't larger than the start: $start to $end"
-            )
+          IllegalStateException(
+            "End isn't larger than the start: $start to $end"
+          )
         )
         end to start
       }
 
       val audioRequest = AudioRequest(
-          actualStart, actualEnd, qari, verseRepeat, rangeRepeat, enforceRange, playbackSpeed, stream, audioPath)
+        actualStart,
+        actualEnd,
+        qari,
+        verseRepeat,
+        rangeRepeat,
+        enforceRange,
+        playbackSpeed,
+        stream,
+        audioPath
+      )
       play(audioRequest)
     }
   }
@@ -110,30 +130,50 @@ constructor(private val quranDisplayData: QuranDisplayData,
     val gaplessDb = audioPathInfo.gaplessDatabase
 
     return if (!quranFileUtils.haveAyaPositionFile()) {
-      getDownloadIntent(context,
-          quranFileUtils.ayaPositionFileUrl,
-          quranFileUtils.quranAyahDatabaseDirectory.absolutePath,
-          context.getString(R.string.highlighting_database))
+      getDownloadIntent(
+        context,
+        quranFileUtils.ayaPositionFileUrl,
+        quranFileUtils.quranAyahDatabaseDirectory.absolutePath,
+        context.getString(R.string.highlighting_database)
+      )
     } else if (gaplessDb != null && !File(gaplessDb).exists()) {
-      getDownloadIntent(context,
-          getGaplessDatabaseUrl(qari)!!,
-          path,
-          context.getString(R.string.timing_database))
+      getDownloadIntent(
+        context,
+        getGaplessDatabaseUrl(qari)!!,
+        path,
+        context.getString(R.string.timing_database)
+      )
     } else if (!request.shouldStream &&
-        audioUtil.shouldDownloadBasmallah(path,
-            request.start,
-            request.end,
-            qari.isGapless)) {
+      audioUtil.shouldDownloadBasmallah(
+        path,
+        request.start,
+        request.end,
+        qari.isGapless,
+        audioExtensionDecider.allowedAudioExtensions(qari)
+      )
+    ) {
       val title = quranDisplayData.getNotificationTitle(
-          context, request.start, request.start, qari.isGapless)
-      getDownloadIntent(context, audioUtil.getQariUrl(qari), path, title).apply {
+        context, request.start, request.start, qari.isGapless
+      )
+      getDownloadIntent(
+        context,
+        audioUtil.getQariUrl(qari, audioExtensionDecider.audioExtensionForQari(qari)),
+        path,
+        title
+      ).apply {
         putExtra(QuranDownloadService.EXTRA_START_VERSE, request.start)
         putExtra(QuranDownloadService.EXTRA_END_VERSE, request.start)
       }
     } else if (!request.shouldStream && !haveAllFiles(audioPathInfo, request.start, request.end)) {
       val title = quranDisplayData.getNotificationTitle(
-          context, request.start, request.end, qari.isGapless)
-      getDownloadIntent(context, audioUtil.getQariUrl(qari), path, title).apply {
+        context, request.start, request.end, qari.isGapless
+      )
+      getDownloadIntent(
+        context,
+        audioUtil.getQariUrl(qari, audioExtensionDecider.audioExtensionForQari(qari)),
+        path,
+        title
+      ).apply {
         putExtra(QuranDownloadService.EXTRA_START_VERSE, request.start)
         putExtra(QuranDownloadService.EXTRA_END_VERSE, request.end)
         putExtra(QuranDownloadService.EXTRA_IS_GAPLESS, qari.isGapless)
@@ -144,10 +184,12 @@ constructor(private val quranDisplayData: QuranDisplayData,
     }
   }
 
-  private fun getDownloadIntent(context: Context,
-                                url: String,
-                                destination: String,
-                                title: String): Intent {
+  private fun getDownloadIntent(
+    context: Context,
+    url: String,
+    destination: String,
+    title: String
+  ): Intent {
     return ServiceIntentHelper.getAudioDownloadIntent(context, url, destination, title)
   }
 
@@ -156,21 +198,27 @@ constructor(private val quranDisplayData: QuranDisplayData,
       val localPath = audioUtil.getLocalQariUrl(qari)
       if (localPath != null) {
         val databasePath = audioUtil.getQariDatabasePathIfGapless(qari)
+        val extension = audioExtensionDecider.audioExtensionForQari(qari)
         val urlFormat = if (databasePath.isNullOrEmpty()) {
-          localPath + File.separator + "%d" + File.separator +
-              "%d" + AudioUtils.AUDIO_EXTENSION
+          localPath + File.separator + "%d" + File.separator + "%d" + ".$extension"
         } else {
-          localPath + File.separator + "%03d" + AudioUtils.AUDIO_EXTENSION
+          localPath + File.separator + "%03d" + ".$extension"
         }
-        return AudioPathInfo(urlFormat, localPath, databasePath)
+        return AudioPathInfo(
+          urlFormat, localPath, databasePath,
+          audioExtensionDecider.allowedAudioExtensions(qari)
+        )
       }
     }
     return null
   }
 
   private fun haveAllFiles(audioPathInfo: AudioPathInfo, start: SuraAyah, end: SuraAyah): Boolean {
-    return audioUtil.haveAllFiles(audioPathInfo.urlFormat,
-        audioPathInfo.localDirectory, start, end, audioPathInfo.gaplessDatabase != null)
+    return audioUtil.haveAllFiles(
+      audioPathInfo.urlFormat,
+      audioPathInfo.localDirectory, start, end, audioPathInfo.gaplessDatabase != null,
+      audioPathInfo.allowedExtensions
+    )
   }
 
   private fun getGaplessDatabaseUrl(qari: QariItem): String? {
