@@ -49,26 +49,26 @@ class MadaniPageProvider : PageProvider {
       Qari(
         0,
         audioR.string.qari_minshawi_murattal_gapless,
-        "https://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/",
-        "minshawi_murattal",
-        false,
-        "minshawi_murattal"
+        url = "https://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/",
+        path = "minshawi_murattal",
+        hasGaplessAlternative = false,
+        db = "minshawi_murattal"
       ),
       Qari(
         1,
         audioR.string.qari_husary_gapless,
-        "https://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree/",
-        "husary",
-        false,
-        "husary"
+        url = "https://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree/",
+        path = "husary",
+        hasGaplessAlternative = false,
+        db = "husary"
       ),
       Qari(
         2,
         audioR.string.qari_basfar,
-        "https://mirrors.quranicaudio.com/everyayah/Abdullah_Basfar_192kbps/",
-        "2",
-        false,
-        null
+        url = "https://mirrors.quranicaudio.com/everyayah/Abdullah_Basfar_192kbps/",
+        path = "2",
+        hasGaplessAlternative = false,
+        db = null
       )
     )
   }

@@ -32,15 +32,6 @@ class QariUtil @Inject constructor(private val pageProvider: PageProvider) {
    * @return a list of [QariItem] representing the qaris to show.
    */
   fun getQariList(context: Context): List<QariItem> {
-    return getQariList().map { item ->
-       QariItem(
-        id = item.id,
-        name = context.getString(item.nameResource),
-        url = item.url,
-        path = item.path,
-        hasGaplessAlternative = item.hasGaplessAlternative,
-        db = item.db
-      )
-    }
+    return getQariList().map { item -> QariItem.fromQari(context, item) }
   }
 }

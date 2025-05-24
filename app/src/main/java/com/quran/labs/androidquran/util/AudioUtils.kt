@@ -9,10 +9,10 @@ import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.QariUtil
 import com.quran.labs.androidquran.service.AudioService
+import timber.log.Timber
 import java.io.File
 import java.util.Locale
 import javax.inject.Inject
-import timber.log.Timber
 
 class AudioUtils @Inject constructor(
   private val quranInfo: QuranInfo,
@@ -61,19 +61,19 @@ class AudioUtils @Inject constructor(
     return file.isDirectory && file.list()?.isNotEmpty() ?: false
   }
 
-  fun getQariUrl(qari: Qari): String {
-    return qari.url + if (qari.isGapless) {
-      "%03d$AUDIO_EXTENSION"
+  fun getQariUrl(qari: Qari, extension: String): String {
+    return qari.url(extension) + if (qari.isGapless) {
+      "%03d.$extension"
     } else {
-      "%03d%03d$AUDIO_EXTENSION"
+      "%03d%03d.$extension"
     }
   }
 
-  fun getQariUrl(item: QariItem): String {
-    return item.url + if (item.isGapless) {
-      "%03d$AUDIO_EXTENSION"
+  fun getQariUrl(item: QariItem, extension: String): String {
+    return item.url(extension) + if (item.isGapless) {
+      "%03d.$extension"
     } else {
-      "%03d%03d$AUDIO_EXTENSION"
+      "%03d%03d.$extension"
     }
   }
 
@@ -174,18 +174,20 @@ class AudioUtils @Inject constructor(
     baseDirectory: String,
     start: SuraAyah,
     end: SuraAyah,
-    isGapless: Boolean
+    isGapless: Boolean,
+    allowedExtensions: List<String>
   ): Boolean {
     if (isGapless) {
       return false
     }
 
     if (baseDirectory.isNotEmpty()) {
-      var f = File(baseDirectory)
+      val f = File(baseDirectory)
       if (f.exists()) {
-        val filename = 1.toString() + File.separator + 1 + AUDIO_EXTENSION
-        f = File(baseDirectory + File.separator + filename)
-        if (f.exists()) {
+        val haveFile = allowedExtensions.any { ext ->
+          File(baseDirectory + File.separator + "1" + ".$ext").exists()
+        }
+        if (haveFile) {
           Timber.d("already have basmalla...")
           return false
         }
@@ -220,13 +222,14 @@ class AudioUtils @Inject constructor(
     path: String,
     start: SuraAyah,
     end: SuraAyah,
-    isGapless: Boolean
+    isGapless: Boolean,
+    allowedExtensions: List<String>
   ): Boolean {
     if (path.isEmpty()) {
       return false
     }
 
-    var f = File(path)
+    val f = File(path)
     if (!f.exists()) {
       f.mkdirs()
       return false
@@ -261,19 +264,26 @@ class AudioUtils @Inject constructor(
           continue
         }
         val fileName = String.format(Locale.US, baseUrl, i)
+        val fileNameWithoutExtension = fileName.substringBeforeLast('.')
         Timber.d("gapless, checking if we have %s", fileName)
-        f = File(fileName)
-        if (!f.exists()) {
+        val haveFile = allowedExtensions.any { ext ->
+          File("$fileNameWithoutExtension.$ext").exists()
+        }
+        if (haveFile) {
+          continue
+        }
+        else {
           return false
         }
-        continue
       }
 
       Timber.d("not gapless, checking each ayah...")
       for (j in firstAyah..lastAyah) {
-        val filename = i.toString() + File.separator + j + AUDIO_EXTENSION
-        f = File(path + File.separator + filename)
-        if (!f.exists()) {
+        val filename = i.toString() + File.separator + j
+        val haveFile = allowedExtensions.any { ext ->
+          File(path + File.separator + filename + "." + ext).exists()
+        }
+        if (!haveFile) {
           return false
         }
       }
@@ -290,8 +300,6 @@ class AudioUtils @Inject constructor(
 
   companion object {
     const val ZIP_EXTENSION = ".zip"
-    const val AUDIO_EXTENSION = ".mp3"
-
     private const val DB_EXTENSION = ".db"
   }
 }

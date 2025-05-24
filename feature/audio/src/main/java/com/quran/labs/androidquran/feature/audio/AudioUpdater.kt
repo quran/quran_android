@@ -23,7 +23,7 @@ object AudioUpdater {
     audioSetUpdate: AudioSetUpdate,
     qaris: List<QariItem>
   ): QariItem? {
-    return qaris.firstOrNull { it.url == audioSetUpdate.path }
+    return qaris.firstOrNull { it.url == audioSetUpdate.path || it.opusUrl == audioSetUpdate.path }
   }
 
   private fun makeLocalUpdate(audioFileChecker: AudioFileChecker,
