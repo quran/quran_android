@@ -62,6 +62,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 import kotlin.math.abs
+import androidx.core.net.toUri
 
 /**
  * The home screen activity for the app. Displays a toolbar and 3 fragments:
@@ -106,10 +107,9 @@ class QuranActivity : AppCompatActivity(),
   @Inject
   lateinit var extraScreens: Set<@JvmSuppressWildcards ExtraScreenProvider>
 
-  public override fun onCreate(savedInstanceState: Bundle?) {
-    val quranApp = application as QuranApplication
-    quranApp.refreshLocale(this, false)
+  private var jumpToPageOnResume: Int? = null
 
+  public override fun onCreate(savedInstanceState: Bundle?) {
     // override these to always be dark since the app doesn't really
     // have a light theme until now. without this, the clock color in
     // the status bar will be dark on a dark background.
@@ -118,6 +118,7 @@ class QuranActivity : AppCompatActivity(),
       navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
     )
     super.onCreate(savedInstanceState)
+    val quranApp = application as QuranApplication
     quranApp.applicationComponent
       .activityComponentFactory()
       .generate(this)
@@ -158,8 +159,10 @@ class QuranActivity : AppCompatActivity(),
     pager.adapter = pagerAdapter
     val indicator = findViewById<SlidingTabLayout>(R.id.indicator)
     indicator.setViewPager(pager)
-    if (isRtl) {
-      pager.currentItem = TITLES.size - 1
+    jumpToPageOnResume = if (isRtl) {
+      TITLES.size - 1
+    } else {
+      0
     }
 
     if (savedInstanceState != null) {
@@ -196,6 +199,12 @@ class QuranActivity : AppCompatActivity(),
       finish()
       startActivity(i)
     } else {
+      val pageToJumpTo = jumpToPageOnResume
+      if (pageToJumpTo != null) {
+        findViewById<ViewPager>(R.id.index_pager).currentItem = pageToJumpTo
+        jumpToPageOnResume = null
+      }
+
       compositeDisposable.add(
           Completable.timer(500, MILLISECONDS)
               .observeOn(AndroidSchedulers.mainThread())
@@ -204,7 +213,7 @@ class QuranActivity : AppCompatActivity(),
                   startService(
                     audioUtils.getAudioIntent(this@QuranActivity, AudioService.ACTION_STOP)
                   )
-                } catch (illegalStateException: IllegalStateException) {
+                } catch (_: IllegalStateException) {
                   // do nothing, we might be in the background
                   // onPause should have stopped us from needing this, but it sometimes happens
                 }
@@ -275,7 +284,7 @@ class QuranActivity : AppCompatActivity(),
   }
 
   private fun isRtl(): Boolean {
-    return settings.isArabicNames || QuranUtils.isRtl()
+    return QuranUtils.isRtl()
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -330,9 +339,9 @@ class QuranActivity : AppCompatActivity(),
       }
       R.id.other_apps -> {
         val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse("market://search?q=pub:quran.com")
+        intent.data = "market://search?q=pub:quran.com".toUri()
         if (packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY) == null) {
-          intent.data = Uri.parse("https://play.google.com/store/search?q=pub:quran.com")
+          intent.data = "https://play.google.com/store/search?q=pub:quran.com".toUri()
         }
         startActivity(intent)
       }

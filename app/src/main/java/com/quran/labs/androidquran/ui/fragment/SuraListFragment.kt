@@ -89,7 +89,9 @@ class SuraListFragment : Fragment() {
           override fun onError(e: Throwable) {}
         })
 
-      if (quranSettings.isArabicNames) updateScrollBarPositionHoneycomb()
+      if (QuranUtils.isRtl()) {
+        updateScrollBarPositionHoneycomb()
+      }
     }
   }
 
@@ -114,7 +116,7 @@ class SuraListFragment : Fragment() {
     for (juz in 1..JUZ2_COUNT) {
       val headerTitle = activity.getString(
         R.string.juz2_description,
-        QuranUtils.getLocalizedNumber(activity, juz)
+        QuranUtils.getLocalizedNumber(juz)
       )
       val headerBuilder = QuranRow.Builder()
         .withType(QuranRow.HEADER)

@@ -9,9 +9,10 @@ import android.graphics.drawable.PaintDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
-import androidx.annotation.NonNull;
 import android.view.Display;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.quran.data.core.QuranInfo;
 import com.quran.labs.androidquran.R;
@@ -68,8 +69,7 @@ public class QuranDisplayHelper {
 
     if (rub3 % 8 == 0) {
       sb.append(context.getString(R.string.quran_juz2)).append(' ')
-          .append(QuranUtils.getLocalizedNumber(context,
-              (hizb / 2) + 1));
+          .append(QuranUtils.getLocalizedNumber((hizb / 2) + 1));
     } else {
       int remainder = rub3 % 4;
       if (remainder == 1) {
@@ -80,7 +80,7 @@ public class QuranDisplayHelper {
         sb.append(context.getString(R.string.quran_talt_arb3)).append(' ');
       }
       sb.append(context.getString(R.string.quran_hizb)).append(' ')
-          .append(QuranUtils.getLocalizedNumber(context, hizb));
+          .append(QuranUtils.getLocalizedNumber(hizb));
     }
 
     String result = sb.toString();
@@ -107,7 +107,7 @@ public class QuranDisplayHelper {
       sb.append(context.getString(R.string.quran_talt_arb3)).append(' ');
     }
     sb.append(context.getString(R.string.quran_hizb)).append(' ')
-            .append(QuranUtils.getLocalizedNumber(context, hizb));
+            .append(QuranUtils.getLocalizedNumber(hizb));
 
     return sb.toString();
   }

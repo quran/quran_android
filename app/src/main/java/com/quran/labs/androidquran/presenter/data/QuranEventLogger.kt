@@ -4,6 +4,7 @@ import com.quran.analytics.AnalyticsProvider
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.presenter.data.QuranEventLogger.AudioPlaybackSource.PAGE
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.util.QuranUtils
 import dagger.Reusable
 import javax.inject.Inject
 
@@ -25,7 +26,7 @@ class QuranEventLogger @Inject constructor(
         "mode" to getScreenMode(isDualPages, showingTranslations, isSplitScreen),
         "pageType" to quranSettings.pageType,
         "isNightMode" to quranSettings.isNightMode,
-        "isArabic" to quranSettings.isArabicNames,
+        "isArabic" to (QuranUtils.getCurrentLocale().language == "ar"),
         "background" to if (quranSettings.useNewBackground()) "default" else "legacy",
         "isLockingOrientation" to lockingOrientation,
         "overlayInfo" to quranSettings.shouldOverlayPageInfo(),

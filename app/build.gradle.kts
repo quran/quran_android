@@ -36,6 +36,17 @@ android {
     testInstrumentationRunner = "com.quran.labs.androidquran.core.QuranTestRunner"
   }
 
+  androidResources {
+    // Indonesian is still in instead of id due to https://issuetracker.google.com/issues/36911507
+    @Suppress("UnstableApiUsage")
+    localeFilters += listOf(
+      "ar", "az", "bg", "bn", "bs", "cs", "da", "de", "el", "es", "et", "fa",
+      "fi", "fr", "hi", "hr", "hu", "in", "it", "ja", "kk", "ko", "ku", "lt",
+      "lv", "ms", "nl", "pl", "ps", "pt", "ro", "ru", "sk", "sl", "sq", "sr",
+      "sv", "th", "tr", "ug", "uk", "ur", "uz", "vi", "zh"
+    )
+  }
+
   dependenciesInfo {
     // only keep dependency info block for builds with Firebase
     includeInApk = useFirebase
@@ -91,7 +102,6 @@ android {
     }
   }
 
-  @Suppress("UnstableApiUsage")
   testOptions {
     unitTests {
       isIncludeAndroidResources = true

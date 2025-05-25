@@ -61,7 +61,7 @@ class JumpFragment : DialogFragment() {
     suraInput = layout.findViewById(R.id.sura_spinner)
     val suras = activity.resources.getStringArray(UiCoreR.array.sura_names)
         .mapIndexed { index: Int, sura: String? ->
-          QuranUtils.getLocalizedNumber(activity, index + 1) + ". " + sura
+          QuranUtils.getLocalizedNumber(index + 1) + ". " + sura
         }
 
     val suraAdapter = InfixFilterArrayAdapter(
@@ -148,7 +148,7 @@ class JumpFragment : DialogFragment() {
             // ensure in 1..ayahCount
             ayah = ayah.coerceIn(1..ayahCount)
             val page = quranInfo.getPageFromSuraAyah(sura, ayah)
-            pageInput.hint = QuranUtils.getLocalizedNumber(context, page)
+            pageInput.hint = QuranUtils.getLocalizedNumber(page)
             pageInput.text = null
           }
           ayahInput.tag = ayah

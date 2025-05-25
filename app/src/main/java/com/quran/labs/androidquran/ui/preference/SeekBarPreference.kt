@@ -59,7 +59,7 @@ open class SeekBarPreference(
   }
 
   override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-    val t = QuranUtils.getLocalizedNumber(context, progress)
+    val t = QuranUtils.getLocalizedNumber(progress)
     valueText.text = if (suffix == null) t else "$t$suffix"
     currentValue = progress
   }

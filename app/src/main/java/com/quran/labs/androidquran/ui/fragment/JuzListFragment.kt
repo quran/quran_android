@@ -21,7 +21,6 @@ import com.quran.labs.androidquran.ui.QuranActivity
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.ui.helpers.QuranRow.Builder
-import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.JuzView
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -117,8 +116,7 @@ class JuzListFragment : Fragment() {
         })
     }
 
-    val settings = QuranSettings.getInstance(activity)
-    if (settings.isArabicNames) {
+    if (QuranUtils.isRtl()) {
       updateScrollBarPositionHoneycomb()
     }
     super.onResume()
@@ -158,7 +156,7 @@ class JuzListFragment : Fragment() {
         val juz = 1 + i / 8
         val juzTitle = activity.getString(
           R.string.juz2_description,
-          QuranUtils.getLocalizedNumber(activity, juz)
+          QuranUtils.getLocalizedNumber(juz)
         )
         val builder = Builder()
           .withType(QuranRow.HEADER)
@@ -177,7 +175,7 @@ class JuzListFragment : Fragment() {
         .withPage(page)
         .withJuzType(ENTRY_TYPES[i % 4])
       if (i % 4 == 0) {
-        val overlayText = QuranUtils.getLocalizedNumber(activity, 1 + i / 4)
+        val overlayText = QuranUtils.getLocalizedNumber(1 + i / 4)
         builder.withJuzOverlayText(overlayText)
       }
       elements[ctr++] = builder.build()

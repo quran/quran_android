@@ -429,7 +429,7 @@ internal class TranslationAdapter(
   }
 
   private fun collapsedFootnoteSpan(number: Int): SpannableString {
-    val text = QuranUtils.getLocalizedNumber(context, number)
+    val text = QuranUtils.getLocalizedNumber(number)
     val spannable = SpannableString(text)
     spannable.setSpan(SuperscriptSpan(), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
     spannable.setSpan(RelativeSizeSpan(0.7f), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
