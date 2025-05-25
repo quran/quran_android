@@ -24,7 +24,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import com.quran.common.search.SearchTextUtil
-import com.quran.labs.androidquran.common.ui.LanguageEnforcer
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInterface
@@ -67,8 +66,6 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
     }
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    (application as? LanguageEnforcer)?.refreshLocale(this, false)
-
     super.onCreate(savedInstanceState)
     qariId = intent.getIntExtra(EXTRA_QARI_ID, -1)
     if (qariId < 0) {

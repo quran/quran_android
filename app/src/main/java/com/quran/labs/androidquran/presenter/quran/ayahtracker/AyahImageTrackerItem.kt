@@ -38,7 +38,7 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
         val context = ayahView.context
         val suraText = quranDisplayData.getSuraNameFromPage(context, page, true)
         val juzText = quranDisplayData.getJuzDisplayStringForPage(context, page)
-        val pageText = QuranUtils.getLocalizedNumber(context, page)
+        val pageText = QuranUtils.getLocalizedNumber(page)
         val rub3Text = QuranDisplayHelper.displayRub3(context, quranInfo, page)
         val manzilText = quranDisplayData.getManzilForPage(context, page)
         ayahView.setOverlayText(suraText, juzText, pageText, rub3Text, manzilText)

@@ -30,8 +30,6 @@ class QuranAdvancedPreferenceActivity : AppCompatActivity() {
   private var locationToWrite: String? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    (application as QuranApplication).refreshLocale(this, false)
-
     // override these to always be dark since the app doesn't really
     // have a light theme until now. without this, the clock color in
     // the status bar will be dark on a dark background.

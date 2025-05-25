@@ -25,7 +25,7 @@ class QuranPageInfoImpl(
   }
 
   override fun localizedPage(page: Int): String {
-    return QuranUtils.getLocalizedNumber(context, page)
+    return QuranUtils.getLocalizedNumber(page)
   }
 
   override fun pageForSuraAyah(sura: Int, ayah: Int): Int {

@@ -9,11 +9,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
 import androidx.core.text.TextUtilsCompat;
-import androidx.core.view.ViewCompat;
 
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
@@ -25,7 +27,6 @@ import java.util.Locale;
 
 public class QuranUtils {
 
-  private static boolean isArabicFormatter;
   private static NumberFormat numberFormat;
   private static Locale lastLocale;
 
@@ -68,8 +69,8 @@ public class QuranUtils {
   }
 
   public static boolean isRtl() {
-    return TextUtilsCompat.getLayoutDirectionFromLocale(Locale.getDefault())
-        == ViewCompat.LAYOUT_DIRECTION_RTL;
+    return TextUtilsCompat.getLayoutDirectionFromLocale(QuranUtils.getCurrentLocale())
+        == View.LAYOUT_DIRECTION_RTL;
   }
 
   public static boolean isOnWifiNetwork(Context context) {
@@ -89,19 +90,23 @@ public class QuranUtils {
     return networkInfo != null && networkInfo.isConnectedOrConnecting();
   }
 
-  public static String getLocalizedNumber(Context context, int number) {
-    Locale locale = Locale.getDefault();
-    boolean isArabicNames = QuranSettings.getInstance(context).isArabicNames();
-    boolean change = numberFormat == null ||
-        !locale.equals(lastLocale) ||
-        isArabicNames != isArabicFormatter;
+  public static Locale getCurrentLocale() {
+    final LocaleListCompat localeList = AppCompatDelegate.getApplicationLocales();
+    if (localeList.isEmpty()) {
+      return Locale.getDefault();
+    } else {
+      final Locale firstLocale = localeList.get(0);
+      return firstLocale != null ? firstLocale : Locale.getDefault();
+    }
+  }
+
+  public static String getLocalizedNumber(int number) {
+    final Locale locale = getCurrentLocale();
+    boolean change = numberFormat == null || !locale.equals(lastLocale);
 
     if (change) {
-      numberFormat = isArabicNames ?
-          DecimalFormat.getIntegerInstance(new Locale("ar")) :
-          DecimalFormat.getIntegerInstance(locale);
+      numberFormat = DecimalFormat.getIntegerInstance(locale);
       lastLocale = locale;
-      isArabicFormatter = isArabicNames;
     }
     return numberFormat.format(number);
   }

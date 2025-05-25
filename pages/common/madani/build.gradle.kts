@@ -17,6 +17,10 @@ dependencies {
   // annotations
   implementation(libs.androidx.annotation)
 
+  // androidx
+  implementation(libs.androidx.appcompat)
+  implementation(libs.androidx.core.ktx)
+
   // dagger
   implementation(libs.dagger.runtime)
 

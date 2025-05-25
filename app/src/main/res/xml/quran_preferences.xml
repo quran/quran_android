@@ -12,8 +12,8 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:disableDependentsState="false"
-        android:key="@string/prefs_use_arabic_names"
-        android:persistent="true"
+        android:key="@string/use_arabic_names"
+        android:persistent="false"
         android:summary="@string/prefs_use_arabic_summary_on"
         android:title="@string/prefs_use_arabic_title"
         app:iconSpaceReserved="false"/>

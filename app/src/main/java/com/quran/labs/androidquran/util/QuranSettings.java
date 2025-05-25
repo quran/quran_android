@@ -53,10 +53,6 @@ public class QuranSettings {
     prefs.unregisterOnSharedPreferenceChangeListener(listener);
   }
 
-  public boolean isArabicNames() {
-    return prefs.getBoolean(Constants.PREF_USE_ARABIC_NAMES, false);
-  }
-
   public boolean isLockOrientation() {
     return prefs.getBoolean(Constants.PREF_LOCK_ORIENTATION, false);
   }

@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran
 
 import android.Manifest.permission
-import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
@@ -10,6 +9,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
@@ -53,7 +53,7 @@ import javax.inject.Inject
  * and [QuranDownloadService] is (mostly) used to perform the actual downloading of
  * any Quran data.
  */
-class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissionsResultCallback {
+class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequestPermissionsResultCallback {
 
   @Inject
   lateinit var quranFileUtils: QuranFileUtils
@@ -235,6 +235,7 @@ class QuranDataActivity : Activity(), SimpleDownloadListener, OnRequestPermissio
     permissions: Array<String>,
     grantResults: IntArray
   ) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     if (requestCode == REQUEST_POST_NOTIFICATION_PERMISSIONS) {
       actuallyDownloadQuranImages(lastForceValue)
     }

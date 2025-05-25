@@ -427,9 +427,9 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
 
   @Override
-  public void bind(BookmarksFragment fragment) {
+  public void bind(@NonNull BookmarksFragment fragment) {
     this.fragment = fragment;
-    boolean isRtl = quranSettings.isArabicNames() || QuranUtils.isRtl();
+    boolean isRtl = QuranUtils.isRtl();
     if (isRtl == this.isRtl) {
       requestData(true);
     } else {

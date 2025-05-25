@@ -1,12 +1,11 @@
 package com.quran.labs.androidquran.view;
 
-import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.quran.labs.androidquran.util.QuranUtils;
 
 public class QuranHeaderView extends ViewGroup {
 
@@ -24,7 +23,7 @@ public class QuranHeaderView extends ViewGroup {
 
   public QuranHeaderView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-    mIsRtl = QuranSettings.getInstance(context).isArabicNames() || QuranUtils.isRtl();
+    mIsRtl = QuranUtils.isRtl();
   }
 
   @Override

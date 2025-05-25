@@ -32,7 +32,7 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
 
   override fun getSuraNameWithNumber(context: Context, sura: Int, wantPrefix: Boolean): String {
     val name = getSuraName(context, sura, wantPrefix)
-    val prefix = QuranUtils.getLocalizedNumber(context, sura)
+    val prefix = QuranUtils.getLocalizedNumber(sura)
     return "$prefix. $name"
   }
 
@@ -78,20 +78,20 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
   fun getPageSubtitle(context: Context, page: Int): String {
     val description = context.getString(R.string.page_description)
     return String.format(description,
-      QuranUtils.getLocalizedNumber(context, page),
-      QuranUtils.getLocalizedNumber(context, quranInfo.getJuzForDisplayFromPage(page)))
+      QuranUtils.getLocalizedNumber(page),
+      QuranUtils.getLocalizedNumber(quranInfo.getJuzForDisplayFromPage(page)))
   }
 
   fun getJuzDisplayStringForPage(context: Context, page: Int): String {
     val description = context.getString(R.string.juz2_description)
     return String.format(description,
-      QuranUtils.getLocalizedNumber(context, quranInfo.getJuzForDisplayFromPage(page)))
+      QuranUtils.getLocalizedNumber(quranInfo.getJuzForDisplayFromPage(page)))
   }
 
   fun getManzilForPage(context: Context, page: Int): String {
     val manzil = quranInfo.manzilForPage(page)
     return if (manzil > 0) {
-      context.getString(R.string.comma) + ' ' + context.getString(R.string.manzil_description, QuranUtils.getLocalizedNumber(context, manzil))
+      context.getString(R.string.comma) + ' ' + context.getString(R.string.manzil_description, QuranUtils.getLocalizedNumber(manzil))
     } else {
       ""
     }
@@ -152,7 +152,7 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
     val ayahs = quranInfo.getNumberOfAyahs(sura)
     return info + context.resources.getQuantityString(
       R.plurals.verses, ayahs,
-      QuranUtils.getLocalizedNumber(context, ayahs))
+      QuranUtils.getLocalizedNumber(ayahs))
   }
 
   fun safelyGetSuraOnPage(page: Int): Int {
@@ -177,8 +177,8 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
     val juz = quranInfo.getJuzForDisplayFromPage(page)
     return context.getString(R.string.quran_ayah_details,
       getSuraName(context, sura, true),
-      QuranUtils.getLocalizedNumber(context, ayah),
-      QuranUtils.getLocalizedNumber(context, quranInfo.getJuzFromSuraAyah(sura, ayah, juz)))
+      QuranUtils.getLocalizedNumber(ayah),
+      QuranUtils.getLocalizedNumber(quranInfo.getJuzFromSuraAyah(sura, ayah, juz)))
   }
 
   // do not remove the nullable return type

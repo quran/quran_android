@@ -19,9 +19,8 @@ class QuranImportActivity : AppCompatActivity(), ActivityCompat.OnRequestPermiss
   lateinit var presenter: QuranImportPresenter
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val quranApp = application as QuranApplication
-    quranApp.refreshLocale(this, false)
     super.onCreate(savedInstanceState)
+    val quranApp = application as QuranApplication
     quranApp.applicationComponent.inject(this)
   }
 
