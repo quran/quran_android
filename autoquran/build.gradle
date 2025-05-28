@@ -42,6 +42,7 @@ dependencies {
   implementation project(":common:di")
   implementation project(":common:data")
   implementation project(":common:pages")
+  implementation project(":common:audio")
   // should be api in modules that implement LocalDataUpgrade
   implementation project(":common:upgrade")
 
