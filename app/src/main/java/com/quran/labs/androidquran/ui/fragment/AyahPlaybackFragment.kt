@@ -93,7 +93,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
     for (i in 1..MAX_REPEATS) {
       values[i - 1] = numberFormat.format(i.toLong())
     }
-    values[MAX_REPEATS] = getString(com.quran.mobile.common.ui.core.R.string.infinity)
+    values[MAX_REPEATS] = getString(UiCoreR.string.infinity)
     val isArabicNames = locale.language == "ar"
     if (isArabicNames) {
       listOf(repeatVersePicker, repeatRangePicker, playbackSpeedPicker).forEach {
@@ -142,7 +142,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
   }
 
   private fun arFormat(value: Int): String {
-    val numberFormat = NumberFormat.getNumberInstance(Locale("ar"))
+    val numberFormat = NumberFormat.getNumberInstance(Locale("ar", "EG"))
     return numberFormat.format(value.toLong())
   }
 
