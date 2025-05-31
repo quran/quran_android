@@ -12,7 +12,7 @@ import java.text.NumberFormat
 import java.util.Locale
 
 class AyahMarkerDrawer(private val drawable: AyahMarkerDrawable) : ImageDrawHelper {
-  private val formatter = NumberFormat.getIntegerInstance(Locale("ar"))
+  private val formatter = NumberFormat.getIntegerInstance(Locale("ar", "EG"))
 
   private val textRatio = 0.0375f
   private val largeTextRatio = 0.03f
