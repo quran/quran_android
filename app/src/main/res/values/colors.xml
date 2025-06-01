@@ -6,17 +6,16 @@
   <color name="toolbar_secondary_text">#ff44464e</color>
 
   <color name="dark_background">#ff212121</color>
-  <color name="secondary_dark_background">#ff303030</color>
-  <color name="accent_color">#ffb2dfdb</color>
+  <color name="accent_color">#ff00838f</color>
   <color name="accent_color_dark">@color/color_control_normal</color>
-  <color name="color_control_activated">@color/accent_color</color>
-  <color name="color_control_normal">#89b2dfdb</color>
   <color name="page_background">#FFF4CB</color>
-  <color name="header_background">#ff424242</color>
+  <color name="secondary_dark_background">@color/toolbar</color>
+  <color name="header_background">#dee2e6</color>
   <color name="header_text_color">@color/sura_number_color</color>
-  <color name="title_color">#ffffffff</color>
-  <color name="sura_number_color">#7fffffff</color>
-  <color name="sura_details_color">#b2ffffff</color>
+  <color name="ripple_dark">#1f000000</color>
+  <color name="title_color">#212529</color>
+  <color name="sura_number_color">#ff212529</color>
+  <color name="sura_details_color">#ff6c757d</color>
   <color name="nav_status_bar_colors">#ff424242</color>
   <color name="transparent_actionbar_color">#AA000000</color>
   <color name="panel_background_color">#ff424242</color>
@@ -40,13 +39,17 @@
   <color name="note_highlight">#40EBEB21</color>
   <color name="bookmark_highlight">#40A4A4A4</color>
   <color name="translation_highlight">#ff33b5e5</color>
-  <color name="indicator_color">@color/accent_color</color>
   <color name="panel_label">@color/accent_color</color>
   <color name="notification_color">#ff112e44</color>
   <color name="audio_notification_color">@color/download_button_background</color>
   <color name="audio_notification_background_color">#ffd8d8d8</color>
   <color name="ayah_bookmark_color">#ff81c784</color>
   <color name="download_button_background">#ff556f79</color>
+
+  <color name="icon_tint">#ff212529</color>
+  <color name="indicator_color">@color/accent_color</color>
+  <color name="color_control_activated">@color/accent_color</color>
+  <color name="color_control_normal">#4d00838f</color>
   
   
   <color name="snackbar_background_color">@color/download_button_background</color>

@@ -5,23 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+  <LinearLayout
+      android:id="@+id/toolbar_area"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:background="@color/toolbar">
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
+        style="@style/ToolBarArea"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:theme="@style/ToolbarStyle"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
-        android:background="?attr/colorPrimary"
-        style="@style/ToolBarArea"/>
+        app:subtitleTextAppearance="@style/ToolbarSubtitleText"
+        app:titleTextAppearance="@style/ToolbarTitleText" />
+
     <com.quran.labs.androidquran.view.SlidingTabLayout
         android:id="@+id/indicator"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
         style="@style/ToolBarArea"
-        />
-    <com.quran.labs.androidquran.view.QuranViewPager
-        android:id="@+id/index_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content" />
+  </LinearLayout>
+
+  <com.quran.labs.androidquran.view.QuranViewPager
+      android:id="@+id/index_pager"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
 </LinearLayout>

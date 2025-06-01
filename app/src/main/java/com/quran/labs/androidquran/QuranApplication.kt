@@ -1,11 +1,9 @@
 package com.quran.labs.androidquran
 
 import android.app.Application
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.quran.labs.androidquran.core.worker.QuranWorkerFactory
-import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.di.component.application.ApplicationComponent
 import com.quran.labs.androidquran.di.component.application.DaggerApplicationComponent
 import com.quran.labs.androidquran.util.QuranSettings

@@ -6,15 +6,12 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AlertDialog.Builder
@@ -22,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
@@ -62,7 +60,6 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import javax.inject.Inject
 import kotlin.math.abs
-import androidx.core.net.toUri
 
 /**
  * The home screen activity for the app. Displays a toolbar and 3 fragments:
@@ -110,13 +107,7 @@ class QuranActivity : AppCompatActivity(),
   private var jumpToPageOnResume: Int? = null
 
   public override fun onCreate(savedInstanceState: Bundle?) {
-    // override these to always be dark since the app doesn't really
-    // have a light theme until now. without this, the clock color in
-    // the status bar will be dark on a dark background.
-    enableEdgeToEdge(
-      statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
-      navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
-    )
+    enableEdgeToEdge()
     super.onCreate(savedInstanceState)
     val quranApp = application as QuranApplication
     quranApp.applicationComponent

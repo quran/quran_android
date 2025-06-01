@@ -1,47 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="TitleText">
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/title_color</item>
-        <item name="android:lines">1</item>
-        <item name="android:maxLines">1</item>
-    </style>
+  <style name="TitleText">
+    <item name="android:textSize">16sp</item>
+    <item name="android:textColor">@color/title_color</item>
+    <item name="android:lines">1</item>
+    <item name="android:maxLines">1</item>
+  </style>
 
-    <style name="ToolBarArea" />
+  <style name="ToolBarArea" />
 
-  <style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+  <style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
     <item name="iconTint">@color/toolbar_icon_tint</item>
     <item name="android:textColorPrimary">@color/toolbar_text</item>
     <item name="android:textColorSecondary">@color/toolbar_secondary_text</item>
   </style>
 
   <style name="ToolbarTitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title" />
+
   <style name="ToolbarSubtitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle" />
 
-    <style name="NotificationText"
-        parent="android:TextAppearance.StatusBar.EventContent" />
+  <style name="NotificationText" parent="android:TextAppearance.StatusBar.EventContent" />
 
-    <style name="NotificationTitle"
-        parent="android:TextAppearance.StatusBar.EventContent.Title" />
+  <style name="NotificationTitle" parent="android:TextAppearance.StatusBar.EventContent.Title" />
 
-    <style name="TranslationText">
-        <item name="android:textColor">@android:color/black</item>
-        <item name="android:textSize">14sp</item>
-    </style>
+  <style name="TranslationText">
+    <item name="android:textColor">@android:color/black</item>
+    <item name="android:textSize">14sp</item>
+  </style>
 
-    <style name="TranslationText.Highlighted">
-        <item name="android:textColor">@color/translation_highlight</item>
-    </style>
+  <style name="TranslationText.Highlighted">
+    <item name="android:textColor">@color/translation_highlight</item>
+  </style>
 
-    <style name="TranslationText.NightMode">
-        <item name="android:background">@android:color/black</item>
-        <item name="android:textColor">@android:color/white</item>
-    </style>
+  <style name="TranslationText.NightMode">
+    <item name="android:background">@android:color/black</item>
+    <item name="android:textColor">@android:color/white</item>
+  </style>
 
-    <style name="TranslationText.NightMode.Highlighted">
-        <item name="android:textColor">@color/translation_highlight</item>
-    </style>
+  <style name="TranslationText.NightMode.Highlighted">
+    <item name="android:textColor">@color/translation_highlight</item>
+  </style>
 
   <style name="PageTypeTitle">
     <item name="android:textColor">@android:color/white</item>
@@ -54,49 +53,49 @@
     <item name="android:textSize">16sp</item>
   </style>
 
-    <style name="SearchResult">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">16sp</item>
-    </style>
+  <style name="SearchResult">
+    <item name="android:textColor">@android:color/white</item>
+    <item name="android:textSize">16sp</item>
+  </style>
 
-    <style name="SearchResult.Location">
-        <item name="android:textColor">#aaaaaa</item>
-        <item name="android:textSize">14sp</item>
-    </style>
+  <style name="SearchResult.Location">
+    <item name="android:textColor">#aaaaaa</item>
+    <item name="android:textSize">14sp</item>
+  </style>
 
-    <style name="PanelLabel">
-        <item name="android:textColor">@color/panel_label</item>
-        <item name="android:textSize">16sp</item>
-    </style>
+  <style name="PanelLabel">
+    <item name="android:textColor">@color/panel_label</item>
+    <item name="android:textSize">16sp</item>
+  </style>
 
-    <style name="SherlockDropDownItem">
-        <item name="android:textAppearance">@style/SherlockDropDownItemText</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-        <item name="android:gravity">center_vertical</item>
-    </style>
+  <style name="SherlockDropDownItem">
+    <item name="android:textAppearance">@style/SherlockDropDownItemText</item>
+    <item name="android:paddingLeft">8dp</item>
+    <item name="android:paddingRight">8dp</item>
+    <item name="android:gravity">center_vertical</item>
+  </style>
 
-    <style name="SherlockDropDownItemText">
-        <item name="android:textColor">@color/sherlock_primary_text_disable</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">normal</item>
-    </style>
+  <style name="SherlockDropDownItemText">
+    <item name="android:textColor">@color/sherlock_primary_text_disable</item>
+    <item name="android:textSize">16sp</item>
+    <item name="android:textStyle">normal</item>
+  </style>
 
-    <style name="SherlockSpinnerItem">
-        <item name="android:textAppearance">@style/SherlockSpinnerItemText</item>
-        <item name="android:paddingLeft">8dp</item>
-        <item name="android:paddingRight">8dp</item>
-    </style>
+  <style name="SherlockSpinnerItem">
+    <item name="android:textAppearance">@style/SherlockSpinnerItemText</item>
+    <item name="android:paddingLeft">8dp</item>
+    <item name="android:paddingRight">8dp</item>
+  </style>
 
-    <style name="SherlockSpinnerItemText">
-        <item name="android:textColor">@color/sherlock_primary_text</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">normal</item>
-    </style>
+  <style name="SherlockSpinnerItemText">
+    <item name="android:textColor">@color/sherlock_primary_text</item>
+    <item name="android:textSize">16sp</item>
+    <item name="android:textStyle">normal</item>
+  </style>
 
-    <style name="ToastText">
-      <item name="android:textSize">14sp</item>
-      <item name="android:textStyle">normal</item>
-      <item name="fontFamily">sans-serif</item>
-    </style>
+  <style name="ToastText">
+    <item name="android:textSize">14sp</item>
+    <item name="android:textStyle">normal</item>
+    <item name="fontFamily">sans-serif</item>
+  </style>
 </resources>
