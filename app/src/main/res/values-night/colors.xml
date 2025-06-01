@@ -21,4 +21,7 @@
   <color name="download_button_background">#ff556f79</color>
 
   <color name="default_text">#ffffffff</color>
+
+  <color name="text_primary">#ffffffff</color>
+  <color name="text_hint_color">#80ffffff</color>
 </resources>
