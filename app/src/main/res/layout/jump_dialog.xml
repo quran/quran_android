@@ -10,7 +10,8 @@
   <TextView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/gotoPage"/>
+      android:text="@string/gotoPage"
+      android:textColor="@color/default_text"/>
 
   <EditText
       android:id="@+id/page_number"
@@ -18,14 +19,18 @@
       android:layout_height="wrap_content"
       android:imeOptions="actionGo|flagNoExtractUi"
       android:inputType="number"
-      android:maxLength="3"/>
+      android:maxLength="3"
+      android:textColor="@color/edit_text_input_text_color"
+      android:backgroundTint="@color/edit_text_line_color"
+      android:textColorHint="@color/edit_text_hint_color"/>
 
   <TextView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:paddingTop="8dp"
       android:paddingBottom="8dp"
-      android:text="@string/menu_jump"/>
+      android:text="@string/sura_and_ayah"
+      android:textColor="@color/default_text"/>
 
   <LinearLayout
       android:layout_width="match_parent"
@@ -39,7 +44,10 @@
         android:layout_weight="1"
         android:inputType="text|textAutoComplete"
         android:imeOptions="flagNoExtractUi"
-        android:selectAllOnFocus="true"/>
+        android:selectAllOnFocus="true"
+        android:textColor="@color/edit_text_input_text_color"
+        android:backgroundTint="@color/edit_text_line_color"
+        android:textColorHint="@color/edit_text_hint_color"/>
 
     <EditText
         android:id="@+id/ayah_spinner"
@@ -49,6 +57,9 @@
         android:minWidth="64dp"
         android:inputType="number"
         android:imeOptions="flagNoExtractUi"
-        android:selectAllOnFocus="true"/>
+        android:selectAllOnFocus="true"
+        android:textColor="@color/edit_text_input_text_color"
+        android:backgroundTint="@color/edit_text_line_color"
+        android:textColorHint="@color/edit_text_hint_color"/>
   </LinearLayout>
 </LinearLayout>

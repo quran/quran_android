@@ -54,7 +54,7 @@ class JumpFragment : DialogFragment() {
     @SuppressLint("InflateParams")
     val layout = inflater.inflate(R.layout.jump_dialog, null)
 
-    val builder = Builder(activity)
+    val builder = Builder(activity, R.style.QuranDialogTheme)
     builder.setTitle(activity.getString(R.string.menu_jump))
 
     // Sura chooser
@@ -135,7 +135,6 @@ class JumpFragment : DialogFragment() {
       override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
       override fun afterTextChanged(s: Editable) {
-        val context: Context? = getActivity()
         val ayahString = s.toString()
         var ayah = ayahString.toIntOrNull() ?: 1
         if (suppressJump) {

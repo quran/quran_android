@@ -37,6 +37,7 @@
   <string name="menu_get_translations">Get Translations</string>
   <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">Go to page</string>
+  <string name="sura_and_ayah">Sura and Ayah</string>
   <string name="please_wait">Please wait…</string>
 
   <!-- about -->
