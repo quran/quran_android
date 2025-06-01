@@ -86,14 +86,14 @@ open class BaseTranslationPresenter<T : Any> internal constructor(
       val arabicText =
         try {
           arabic.await()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
           emptyList()
         }
 
       val translationTexts = translationData.map { deferred ->
         try {
           deferred.await()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
           emptyList()
         }
       }
