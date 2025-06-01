@@ -10,5 +10,6 @@
       android:layout_height="wrap_content"
       android:inputType="text"
       android:hint="@string/tag_name"
+      android:textColor="@color/default_text"
       />
 </com.google.android.material.textfield.TextInputLayout>

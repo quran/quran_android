@@ -24,6 +24,10 @@
 
   <style name="NotificationTitle" parent="android:TextAppearance.StatusBar.EventContent.Title" />
 
+  <style name="QuranDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+    <item name="android:backgroundDimAmount">0.3</item>
+  </style>
+
   <style name="TranslationText">
     <item name="android:textColor">@android:color/black</item>
     <item name="android:textSize">14sp</item>

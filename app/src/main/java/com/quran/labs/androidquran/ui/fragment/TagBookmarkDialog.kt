@@ -51,13 +51,14 @@ open class TagBookmarkDialog : DialogFragment() {
 
   private fun createTagsListView(): ListView {
     val context = requireContext()
-    adapter = TagsAdapter(context, tagBookmarkPresenter)
+    val adapter = TagsAdapter(context, tagBookmarkPresenter)
+    this.adapter = adapter
     val listview = ListView(context)
     listview.adapter = adapter
     listview.choiceMode = ListView.CHOICE_MODE_MULTIPLE
     listview.onItemClickListener =
       OnItemClickListener { _: AdapterView<*>?, view: View, position: Int, _: Long ->
-        val tag = adapter!!.getItem(position)
+        val tag = adapter.getItem(position)
         val isChecked = tagBookmarkPresenter.toggleTag(tag.id)
         val viewTag = view.tag
         if (viewTag is ViewHolder) {
@@ -75,12 +76,12 @@ open class TagBookmarkDialog : DialogFragment() {
   }
 
   fun setData(tags: List<Tag>?, checkedTags: HashSet<Long>) {
-    adapter!!.setData(tags, checkedTags)
-    adapter!!.notifyDataSetChanged()
+    adapter?.setData(tags, checkedTags)
+    adapter?.notifyDataSetChanged()
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val builder = Builder(requireActivity())
+    val builder = Builder(requireActivity(), R.style.QuranDialogTheme)
     builder.setView(createTagsListView())
     builder.setPositiveButton(R.string.dialog_ok) { _: DialogInterface?, _: Int -> }
     builder.setNegativeButton(com.quran.mobile.common.ui.core.R.string.cancel) { _: DialogInterface?, _: Int -> dismiss() }
@@ -142,21 +143,22 @@ open class TagBookmarkDialog : DialogFragment() {
     override fun hasStableIds(): Boolean = false
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-      var view = convertView
-
       var holder: ViewHolder
-      if (view == null) {
-        view = inflater.inflate(R.layout.tag_row, parent, false)
+      val view = if (convertView == null) {
+        val view = inflater.inflate(R.layout.tag_row, parent, false)
         holder = ViewHolder().apply {
           checkBox = view.findViewById(R.id.tag_checkbox)
           tagName = view.findViewById(R.id.tag_name)
           addImage = view.findViewById(R.id.tag_add_image)
         }
         view.tag = holder
+        view
+      } else {
+        convertView
       }
 
       val (id, name) = getItem(position)
-      holder = view!!.tag as ViewHolder
+      holder = view.tag as ViewHolder
       if (id == -1L) {
         holder.apply {
           addImage.visibility = View.VISIBLE

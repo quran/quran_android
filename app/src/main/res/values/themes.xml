@@ -8,7 +8,7 @@
     <item name="spinnerItemStyle">@style/SherlockSpinnerItem</item>
   </style>
 
-  <style name="QuranToolBar" parent="Theme.AppCompat.NoActionBar">
+  <style name="QuranToolBar" parent="Theme.AppCompat.DayNight.NoActionBar">
     <item name="android:windowBackground">@color/dark_background</item>
     <item name="colorAccent">@color/accent_color</item>
     <item name="windowActionModeOverlay">true</item>
