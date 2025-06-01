@@ -226,6 +226,22 @@ public class QuranSettings {
         appContext.getResources().getBoolean(R.bool.show_sura_names_translation));
   }
 
+  public String currentTheme() {
+    final String theme = prefs.getString(Constants.PREF_APP_THEME, null);
+    if (theme == null) {
+      final int version = getVersion();
+      final String defaultTheme;
+      if (version == 0) {
+        defaultTheme = Constants.THEME_DEFAULT;
+      } else {
+        defaultTheme = Constants.THEME_DARK;
+      }
+      prefs.edit().putString(Constants.PREF_APP_THEME, defaultTheme).apply();
+      return defaultTheme;
+    }
+    return theme;
+  }
+
   // probably should eventually move this to Application.onCreate..
   public void upgradePreferences(PreferencesUpgrade preferencesUpgrade) {
     int version = getVersion();

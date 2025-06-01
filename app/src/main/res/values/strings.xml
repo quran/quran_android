@@ -155,6 +155,7 @@
   <string name="get_arabic_search_db">Get Arabic Search Database</string>
 
   <!-- Quran Preference Activity -->
+  <string name="appearance">Appearance</string>
   <string name="prefs_volume_key_navigation_title">Volume key navigation</string>
   <string name="prefs_volume_key_navigation_summary">Navigate between pages using volume keys</string>
   <string name="prefs_category_reading">Reading Preferences</string>
