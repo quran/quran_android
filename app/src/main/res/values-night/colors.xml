@@ -4,4 +4,6 @@
   <color name="toolbar_text">#ffffffff</color>
   <color name="toolbar_icon_tint">#ffffffff</color>
   <color name="toolbar_secondary_text">#ffffffff</color>
+  <color name="panel_background_color">#ff101114</color>
+  <color name="translation_translator_color">#ff34d399</color>
 </resources>

@@ -80,7 +80,7 @@ class InlineTranslationView @JvmOverloads constructor(
 
   fun setAyahs(translations: Array<LocalTranslation>, ayat: List<QuranAyahInfo>) {
     linearLayout.removeAllViews()
-    if (ayat.isNotEmpty() && ayat[0].texts.size > 0) {
+    if (ayat.isNotEmpty() && ayat[0].texts.isNotEmpty()) {
       this.ayat = ayat
       this.translations = translations
       var i = 0
