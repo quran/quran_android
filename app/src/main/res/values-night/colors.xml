@@ -18,4 +18,7 @@
   <color name="indicator_color">@color/accent_color</color>
   <color name="color_control_activated">@color/accent_color</color>
   <color name="color_control_normal">#89b2dfdb</color>
+  <color name="download_button_background">#ff556f79</color>
+
+  <color name="default_text">#ffffffff</color>
 </resources>

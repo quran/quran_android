@@ -44,7 +44,7 @@
   <color name="audio_notification_color">@color/download_button_background</color>
   <color name="audio_notification_background_color">#ffd8d8d8</color>
   <color name="ayah_bookmark_color">#ff81c784</color>
-  <color name="download_button_background">#ff556f79</color>
+  <color name="download_button_background">#ffe8f4f8</color>
 
   <color name="icon_tint">#ff212529</color>
   <color name="indicator_color">@color/accent_color</color>
@@ -59,4 +59,6 @@
   <color name="toast_text_color">#ff000000</color>
   <color name="toast_background_color_night">#ff2d2d2d</color>
   <color name="toast_text_color_night">#ffffffff</color>
+
+  <color name="default_text">#ff000000</color>
 </resources>

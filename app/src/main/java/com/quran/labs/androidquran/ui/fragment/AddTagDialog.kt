@@ -8,9 +8,9 @@ import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
+import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
-import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.presenter.bookmark.AddTagDialogPresenter
 import javax.inject.Inject
 
@@ -68,7 +68,7 @@ class AddTagDialog : DialogFragment() {
     @SuppressLint("InflateParams")
     val layout = inflater.inflate(R.layout.tag_dialog, null)
 
-    val builder = AlertDialog.Builder(activity)
+    val builder = AlertDialog.Builder(activity, R.style.QuranDialogTheme)
     builder.setTitle(getString(R.string.tag_dlg_title))
 
     val text = layout.findViewById<TextInputEditText>(R.id.tag_name)
@@ -95,7 +95,7 @@ class AddTagDialog : DialogFragment() {
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
-    dialog?.window!!.setSoftInputMode(
+    dialog?.window?.setSoftInputMode(
         WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE or
             WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
   }
