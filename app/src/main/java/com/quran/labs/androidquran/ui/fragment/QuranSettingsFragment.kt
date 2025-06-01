@@ -16,6 +16,7 @@ import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.pageselect.PageSelectActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import com.quran.labs.androidquran.util.QuranUtils
+import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.feature.downloadmanager.AudioManagerActivity
 import javax.inject.Inject
@@ -53,6 +54,13 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
         LocaleListCompat.forLanguageTags("ar-EG")
       }
       AppCompatDelegate.setApplicationLocales(localeList)
+      true
+    }
+
+    // handle theme preference
+    val themePref: Preference? = findPreference(Constants.PREF_APP_THEME)
+    themePref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+      ThemeUtil.setTheme(newValue as String)
       true
     }
 

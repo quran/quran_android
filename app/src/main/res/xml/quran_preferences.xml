@@ -18,6 +18,15 @@
         android:title="@string/prefs_use_arabic_title"
         app:iconSpaceReserved="false"/>
 
+    <androidx.preference.ListPreference
+        android:defaultValue="default"
+        android:dialogTitle="@string/appearance"
+        android:entries="@array/themes"
+        android:entryValues="@array/theme_values"
+        android:key="@string/prefs_app_theme"
+        android:title="@string/appearance"
+        app:iconSpaceReserved="false" />
+
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/prefs_new_background"

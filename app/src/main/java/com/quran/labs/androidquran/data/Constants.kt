@@ -91,4 +91,10 @@ object Constants {
   const val PREF_SHOW_SIDELINES = "showSidelines"
   const val PREF_SHOW_LINE_DIVIDERS = "showLineDividers"
   const val PREFS_PREFER_DNS_OVER_HTTPS = "preferDnsOverHttps"
+  const val PREF_APP_THEME = "appTheme"
+
+  // Themes
+  const val THEME_LIGHT = "light"
+  const val THEME_DARK = "dark"
+  const val THEME_DEFAULT = "default"
 }

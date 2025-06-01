@@ -68,6 +68,7 @@
   <string name="get_arabic_search_db">حمل قاعدة البيانات</string>
 
   <!-- Quran Preference Activity -->
+  <string name="appearance">المظهر</string>
   <string name="prefs_volume_key_navigation_title">تصفح بمفاتيح الصوت</string>
   <string name="prefs_volume_key_navigation_summary">استخدم مفاتيح الصوت للتصفح بين الصفحات</string>
   <string name="prefs_category_reading">إعدادات القراءة</string>
