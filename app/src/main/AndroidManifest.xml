@@ -93,6 +93,7 @@
     <activity
         android:name=".SearchActivity"
         android:launchMode="singleTop"
+        android:theme="@style/QuranDayNight"
         android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.SEARCH"/>
