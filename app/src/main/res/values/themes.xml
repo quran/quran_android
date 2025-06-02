@@ -8,7 +8,15 @@
     <item name="spinnerItemStyle">@style/SherlockSpinnerItem</item>
   </style>
 
-  <style name="QuranToolBar" parent="Theme.AppCompat.DayNight.NoActionBar">
+  <style name="QuranDayNight" parent="Theme.AppCompat.DayNight">
+    <item name="colorAccent">@color/accent_color</item>
+    <item name="iconTint">@color/icon_tint</item>
+    <item name="spinnerStyle">?attr/actionDropDownStyle</item>
+    <item name="spinnerDropDownItemStyle">@style/SherlockDropDownItem</item>
+    <item name="spinnerItemStyle">@style/SherlockSpinnerItem</item>
+  </style>
+
+  <style name="QuranToolBar" parent="Theme.AppCompat.NoActionBar">
     <item name="android:windowBackground">@color/dark_background</item>
     <item name="colorAccent">@color/accent_color</item>
     <item name="windowActionModeOverlay">true</item>

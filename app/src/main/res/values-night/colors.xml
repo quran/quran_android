@@ -14,7 +14,7 @@
   <color name="toolbar_secondary_text">#ffffffff</color>
   <color name="panel_background_color">#ff101114</color>
   <color name="translation_translator_color">#ff34d399</color>
-  <color name="icon_tint">#00000000</color>
+  <color name="icon_tint">#ffffffff</color>
   <color name="indicator_color">@color/accent_color</color>
   <color name="color_control_activated">@color/accent_color</color>
   <color name="color_control_normal">#89b2dfdb</color>

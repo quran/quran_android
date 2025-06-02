@@ -75,10 +75,7 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
     // override these to always be dark since the app doesn't really
     // have a light theme until now. without this, the clock color in
     // the status bar will be dark on a dark background.
-    enableEdgeToEdge(
-      statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
-      navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
-    )
+    enableEdgeToEdge()
     super.onCreate(savedInstanceState)
 
     (application as QuranApplication)
@@ -103,10 +100,10 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
       windowInsets
     }
 
-    messageView = findViewById<TextView>(R.id.search_area)
-    warningView = findViewById<TextView>(R.id.search_warning)
-    buttonGetTranslations = findViewById<Button>(R.id.btnGetTranslations)
-    buttonGetTranslations.setOnClickListener(View.OnClickListener { v: View? ->
+    messageView = findViewById(R.id.search_area)
+    warningView = findViewById(R.id.search_warning)
+    buttonGetTranslations = findViewById(R.id.btnGetTranslations)
+    buttonGetTranslations.setOnClickListener { v: View? ->
       var intent: Intent?
       if (downloadArabicSearchDb) {
         downloadArabicSearchDb()
@@ -115,7 +112,7 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
         startActivity(intent)
         finish()
       }
-    })
+    }
     handleIntent(intent)
   }
 
@@ -359,8 +356,8 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
     override fun newView(context: Context?, cursor: Cursor?, parent: ViewGroup?): View {
       val view = inflater.inflate(R.layout.search_result, parent, false)
       val holder = ViewHolder()
-      holder.text = view.findViewById<TextView>(R.id.verseText)
-      holder.metadata = view.findViewById<TextView>(R.id.verseLocation)
+      holder.text = view.findViewById(R.id.verseText)
+      holder.metadata = view.findViewById(R.id.verseLocation)
       view.tag = holder
       return view
     }

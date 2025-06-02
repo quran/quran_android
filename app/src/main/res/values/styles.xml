@@ -58,12 +58,12 @@
   </style>
 
   <style name="SearchResult">
-    <item name="android:textColor">@android:color/white</item>
+    <item name="android:textColor">@color/text_primary</item>
     <item name="android:textSize">16sp</item>
   </style>
 
   <style name="SearchResult.Location">
-    <item name="android:textColor">#aaaaaa</item>
+    <item name="android:textColor">@color/text_hint_color</item>
     <item name="android:textSize">14sp</item>
   </style>
 
