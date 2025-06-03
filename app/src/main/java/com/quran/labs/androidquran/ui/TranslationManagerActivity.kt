@@ -86,13 +86,7 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    // override these to always be dark since the app doesn't really
-    // have a light theme until now. without this, the clock color in
-    // the status bar will be dark on a dark background.
-    enableEdgeToEdge(
-      statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
-      navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
-    )
+    enableEdgeToEdge()
 
     (application as QuranApplication).applicationComponent.inject(this)
     setContentView(R.layout.translation_manager)
@@ -111,7 +105,6 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
       )
       root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
         topMargin = insets.top
-        bottomMargin = insets.bottom
         leftMargin = insets.left
         rightMargin = insets.right
       }
@@ -124,13 +117,28 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     translationRecycler.setLayoutManager(layoutManager)
     adapter = TranslationsAdapter(this)
     translationRecycler.setAdapter(adapter)
+
+    ViewCompat.setOnApplyWindowInsetsListener(translationRecycler) { view, windowInsets ->
+      val insets = windowInsets.getInsets(
+        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+      )
+      translationRecycler.updateLayoutParams<ViewGroup.LayoutParams> {
+        // top, left, right are handled by QuranActivity
+        view.setPadding(0, 0, 0, insets.bottom)
+      }
+
+      windowInsets
+    }
+
     selectionListener = TranslationSelectionListener(adapter)
     databaseDirectory = quranFileUtils.getQuranDatabaseDirectory()
+
     val actionBar = supportActionBar
     if (actionBar != null) {
       actionBar.setDisplayHomeAsUpEnabled(true)
       actionBar.setTitle(R.string.prefs_translations)
     }
+
     onClickDownloadDisposable = adapter.getOnClickDownloadSubject()
       .subscribe { translationRowData: TranslationRowData -> downloadItem(translationRowData) }
     onClickRemoveDisposable = adapter.getOnClickRemoveSubject()
