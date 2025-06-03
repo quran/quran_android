@@ -13,7 +13,9 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -68,6 +70,24 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
     bookmarksAdapter = new QuranListAdapter(context, recyclerView, new QuranRow[0], true);
     bookmarksAdapter.setQuranTouchListener(this);
     recyclerView.setAdapter(bookmarksAdapter);
+
+    ViewCompat.setOnApplyWindowInsetsListener(
+        recyclerView,
+        (v, insets) -> {
+          Insets innerPadding = insets.getInsets(
+              WindowInsetsCompat.Type.systemBars() |
+                  WindowInsetsCompat.Type.displayCutout()
+          );
+          // top, left, right are handled by QuranActivity
+          v.setPadding(
+              0,
+              0,
+              0,
+              innerPadding.bottom
+          );
+          return insets;
+        }
+    );
     return view;
   }
 
