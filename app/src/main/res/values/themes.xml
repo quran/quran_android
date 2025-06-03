@@ -25,8 +25,13 @@
     <item name="spinnerItemStyle">@style/SherlockSpinnerItem</item>
   </style>
 
-  <style name="QuranToolBar.DayNight">
+  <style name="QuranToolBarDayNight" parent="Theme.AppCompat.DayNight.NoActionBar">
     <item name="android:windowBackground">@color/toolbar</item>
+    <item name="colorAccent">@color/accent_color</item>
+    <item name="windowActionModeOverlay">true</item>
+    <item name="spinnerStyle">?attr/actionDropDownStyle</item>
+    <item name="spinnerDropDownItemStyle">@style/SherlockDropDownItem</item>
+    <item name="spinnerItemStyle">@style/SherlockSpinnerItem</item>
     <item name="android:selectableItemBackground">@drawable/quran_row_background</item>
   </style>
 

@@ -61,7 +61,7 @@
               android:exported="true" />
     <activity
         android:name=".ui.QuranActivity"
-        android:theme="@style/QuranToolBar.DayNight"
+        android:theme="@style/QuranToolBarDayNight"
         android:exported="false"/>
     <activity
         android:name=".AboutUsActivity"
@@ -81,12 +81,12 @@
         android:exported="false"/>
     <activity
         android:name=".QuranPreferenceActivity"
-        android:theme="@style/QuranToolBar"
+        android:theme="@style/QuranToolBarDayNight"
         android:configChanges="keyboardHidden|orientation|screenSize"
         android:exported="false"/>
     <activity
         android:name=".QuranAdvancedPreferenceActivity"
-        android:theme="@style/QuranToolBar"
+        android:theme="@style/QuranToolBarDayNight"
         android:configChanges="keyboardHidden|orientation|screenSize"
         android:exported="false"/>
 
