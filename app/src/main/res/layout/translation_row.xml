@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:paddingLeft="10dp"
-              android:paddingRight="10dp"
-              android:paddingTop="4dp"
-              android:paddingBottom="4dp"
-              android:orientation="horizontal"
-              android:background="@drawable/translation_row_background"
-    >
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:orientation="horizontal"
+    android:background="@drawable/translation_row_background">
   <ImageView
       android:id="@+id/translation_icon"
       android:src="@drawable/ic_translation"
@@ -17,6 +17,7 @@
       android:layout_height="48dp"
       android:scaleType="center"
       android:contentDescription="@null"
+      app:tint="@color/icon_tint"
       />
   <LinearLayout
       android:id="@+id/translation_area"
@@ -28,16 +29,15 @@
       >
     <TextView
         android:id="@+id/translation_title"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#F3F4E6"
+        android:textColor="@color/text_primary"
         android:textSize="16sp"
         />
     <TextView
         android:id="@+id/translation_info"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="left"
         android:textSize="12sp"
         />
   </LinearLayout>

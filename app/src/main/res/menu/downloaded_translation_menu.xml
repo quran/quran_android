@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/dtm_move_up"
-          android:icon="@drawable/arrow_circle_up"
+          android:icon="@drawable/arrow_up"
           android:title="@string/move_up"
           app:showAsAction="ifRoom" />
     <item android:id="@+id/dtm_move_down"
-          android:icon="@drawable/arrow_circle_down"
+          android:icon="@drawable/arrow_down"
           android:title="@string/move_down"
           app:showAsAction="ifRoom" />
     <item android:id="@+id/dtm_delete"

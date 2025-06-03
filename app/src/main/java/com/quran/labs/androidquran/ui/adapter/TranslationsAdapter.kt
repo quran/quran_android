@@ -8,13 +8,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.dao.translation.TranslationItem
 import com.quran.labs.androidquran.dao.translation.TranslationRowData
-
-import java.util.ArrayList
-
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.UnicastSubject
 
@@ -32,7 +28,7 @@ class TranslationsAdapter(private val downloadedMenuActionListener: DownloadedMe
 
   private var selectedItem: TranslationItem? = null
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TranslationsAdapter.TranslationViewHolder {
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TranslationViewHolder {
     val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
     return TranslationViewHolder(view, viewType)
   }
@@ -48,8 +44,13 @@ class TranslationsAdapter(private val downloadedMenuActionListener: DownloadedMe
             (selectedItem != null) && (item.translation.id == selectedItem?.translation?.id)
           translationTitle?.text = item.name()
 
+          holder.translationInfo?.visibility = View.VISIBLE
           if (TextUtils.isEmpty(item.translation.translatorNameLocalized)) {
-            holder.translationInfo?.text = item.translation.translator
+            if (item.translation.translator.isNullOrBlank()) {
+              holder.translationInfo?.visibility = View.GONE
+            } else {
+              holder.translationInfo?.text = item.translation.translator
+            }
           } else {
             holder.translationInfo?.text = item.translation.translatorNameLocalized
           }
