@@ -1,10 +1,8 @@
 package com.quran.labs.androidquran
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.ViewGroup
-import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -17,14 +15,7 @@ class AboutUsActivity : AppCompatActivity() {
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
-    // override these to always be dark since the app doesn't really
-    // have a light theme until now. without this, the clock color in
-    // the status bar will be dark on a dark background.
-    enableEdgeToEdge(
-      statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
-      navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT)
-    )
+    enableEdgeToEdge()
 
     setContentView(R.layout.about_us)
 

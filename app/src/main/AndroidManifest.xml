@@ -65,9 +65,10 @@
         android:exported="false"/>
     <activity
         android:name=".AboutUsActivity"
-        android:theme="@style/QuranToolBar"
+        android:theme="@style/QuranToolBarDayNight"
         android:exported="false"/>
     <activity android:name=".HelpActivity"
+        android:theme="@style/QuranDayNight"
         android:exported="false"/>
     <activity
         android:name=".ui.PagerActivity"
@@ -163,7 +164,7 @@
     </activity>
 
     <activity android:name=".pageselect.PageSelectActivity"
-        android:theme="@style/QuranToolBar"
+        android:theme="@style/QuranToolBarDayNight"
         android:exported="false"/>
 
     <service
