@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:theme="@style/ToolbarStyle"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
         app:titleTextAppearance="@style/ToolbarTitleText"
         app:subtitleTextAppearance="@style/ToolbarSubtitleText"
         android:elevation="4dp"
