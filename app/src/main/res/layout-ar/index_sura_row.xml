@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -13,13 +12,25 @@
     >
 
   <TextView
-      android:id="@+id/pageNumber"
-      android:layout_width="wrap_content"
+      android:id="@+id/suraNumber"
+      android:layout_width="56dp"
       android:layout_height="wrap_content"
+      android:gravity="center"
+      android:layout_gravity="center"
+      android:textColor="@color/sura_number_color"
+      android:textSize="24sp"
+      tools:text="23"
+      />
+
+  <ImageView
+      android:id="@+id/rowIcon"
+      android:layout_width="40dp"
+      android:layout_height="match_parent"
+      android:layout_marginEnd="16dp"
       android:layout_gravity="center_vertical"
-      android:textColor="@color/sura_details_color"
-      android:textSize="14sp"
-      tools:text="1"
+      android:scaleType="center"
+      android:visibility="gone"
+      android:contentDescription="@null"
       />
 
   <LinearLayout
@@ -37,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:ellipsize="end"
-        android:layout_gravity="end"
+        android:gravity="start"
         android:scrollHorizontally="true"
         android:textAppearance="@style/TitleText"
         tools:text="Al-Baqara"
@@ -47,7 +58,7 @@
         android:id="@+id/metadata"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
+        android:gravity="start"
         android:textColor="@color/sura_details_color"
         android:textSize="14sp"
         tools:text="Makki - 286 Verses"
@@ -57,32 +68,19 @@
         android:id="@+id/tags"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:layout_gravity="end"
+        android:layout_gravity="start"
         android:layout_marginTop="4dp"
-        android:gravity="end"
+        android:gravity="start"
         />
   </LinearLayout>
 
-  <ImageView
-      android:id="@+id/rowIcon"
-      android:layout_width="40dp"
-      android:layout_height="match_parent"
-      android:layout_marginLeft="16dp"
-      android:layout_marginStart="16dp"
-      android:layout_gravity="center_vertical"
-      android:scaleType="center"
-      android:visibility="gone"
-      android:contentDescription="@null"
-      />
-
   <TextView
-      android:id="@+id/suraNumber"
-      android:layout_width="56dp"
+      android:id="@+id/pageNumber"
+      android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:gravity="center"
-      android:layout_gravity="center"
-      android:textColor="@color/sura_number_color"
-      android:textSize="24sp"
-      tools:text="23"
+      android:layout_gravity="center_vertical"
+      android:textColor="@color/sura_details_color"
+      android:textSize="14sp"
+      tools:text="1"
       />
 </LinearLayout>

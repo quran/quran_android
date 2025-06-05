@@ -3,20 +3,19 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
     >
   <ScrollView
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:fadeScrollbars="false"
-      android:verticalScrollbarPosition="left"
       >
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:paddingRight="12dp"
-        android:paddingLeft="12dp"
+        android:layout_marginBottom="12dp"
         >
       <LinearLayout
           android:layout_width="match_parent"
@@ -29,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginBottom="4dp"
-            android:text="@string/play_to"
+            android:text="@string/play_from"
             android:textAppearance="@style/PanelLabel"
             />
         <TextView
@@ -37,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginBottom="4dp"
-            android:text="@string/play_from"
+            android:text="@string/play_to"
             android:textAppearance="@style/PanelLabel"
             />
       </LinearLayout>
@@ -52,16 +51,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="end"
             android:orientation="horizontal"
             >
           <com.quran.labs.androidquran.view.QuranSpinner
-              android:id="@+id/end_ayah_spinner"
+              android:id="@+id/start_sura_spinner"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               />
           <com.quran.labs.androidquran.view.QuranSpinner
-              android:id="@+id/end_sura_spinner"
+              android:id="@+id/start_ayah_spinner"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               />
@@ -70,16 +68,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="end"
             android:orientation="horizontal"
             >
           <com.quran.labs.androidquran.view.QuranSpinner
-              android:id="@+id/start_ayah_spinner"
+              android:id="@+id/end_sura_spinner"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               />
           <com.quran.labs.androidquran.view.QuranSpinner
-              android:id="@+id/start_sura_spinner"
+              android:id="@+id/end_ayah_spinner"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               />
@@ -92,26 +89,19 @@
 
       <CheckBox
           android:id="@+id/restrict_to_range"
-          android:layout_width="wrap_content"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_gravity="end"
           android:text="@string/play_restrict_range"
           />
     </LinearLayout>
   </ScrollView>
 
-  <FrameLayout
+  <Button
+      android:id="@+id/apply"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:paddingLeft="12dp"
-      android:paddingRight="12dp"
-      android:layout_gravity="start|bottom"
-      >
-    <Button
-        android:id="@+id/apply"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/play_apply"
-        />
-  </FrameLayout>
+      android:text="@string/play_apply"
+      android:layout_gravity="end|bottom"
+      android:layout_marginEnd="12dp"
+      />
 </FrameLayout>
