@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.util.set
 import androidx.recyclerview.widget.RecyclerView
 import com.quran.data.model.bookmark.Tag
@@ -155,11 +156,11 @@ class QuranListAdapter(
         }
         else -> {
           image.setImageResource(item.imageResource)
-          if (item.imageFilterColor == null) {
+          if (item.imageFilterColorResource == null) {
             image.colorFilter = null
           } else {
             image.setColorFilter(
-              item.imageFilterColor, PorterDuff.Mode.SRC_ATOP
+              ContextCompat.getColor(context, item.imageFilterColorResource), PorterDuff.Mode.SRC_ATOP
             )
           }
 

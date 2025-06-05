@@ -1,5 +1,8 @@
 package com.quran.labs.androidquran.ui.helpers;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+
 import com.quran.data.model.bookmark.Bookmark;
 
 public class QuranRow {
@@ -18,7 +21,7 @@ public class QuranRow {
   public String metadata;
   public int rowType;
   public Integer imageResource;
-  public Integer imageFilterColor;
+  public Integer imageFilterColorResource;
   public Integer juzType;
   public String juzOverlayText;
   public long dateAddedInMillis;
@@ -41,7 +44,7 @@ public class QuranRow {
     private long bookmarkId = -1;
     private String juzOverlayText;
     private long dateAddedInMillis;
-    private Integer imageFilterColor;
+    private Integer imageFilterColorResource;
     private Bookmark bookmark;
 
     public Builder withType(int type) {
@@ -80,13 +83,13 @@ public class QuranRow {
       return this;
     }
 
-    public Builder withImageResource(int resId) {
+    public Builder withImageResource(@DrawableRes int resId) {
       imageResource = resId;
       return this;
     }
 
-    public Builder withImageOverlayColor(int color) {
-      imageFilterColor = color;
+    public Builder withImageOverlayColorResource(@ColorRes int colorResource) {
+      imageFilterColorResource = colorResource;
       return this;
     }
 
@@ -112,13 +115,13 @@ public class QuranRow {
 
     public QuranRow build() {
       return new QuranRow(text, metadata, rowType, sura,
-          ayah, page, imageResource, imageFilterColor, juzType,
+          ayah, page, imageResource, imageFilterColorResource, juzType,
           juzOverlayText, bookmarkId, tagId, bookmark, dateAddedInMillis);
     }
   }
 
   private QuranRow(String text, String metadata, int rowType,
-      int sura, int ayah, int page, Integer imageResource, Integer filterColor,
+      int sura, int ayah, int page, Integer imageResource, Integer filterColorResource,
       Integer juzType, String juzOverlayText, long bookmarkId, long tagId, Bookmark bookmark,
                    long dateAddedInMillis) {
     this.text = text;
@@ -128,7 +131,7 @@ public class QuranRow {
     this.page = page;
     this.metadata = metadata;
     this.imageResource = imageResource;
-    this.imageFilterColor = filterColor;
+    this.imageFilterColorResource = filterColorResource;
     this.juzType = juzType;
     this.juzOverlayText = juzOverlayText;
     this.tagId = tagId;
