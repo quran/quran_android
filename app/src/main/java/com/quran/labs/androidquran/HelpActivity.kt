@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 
 class HelpActivity : AppCompatActivity() {
@@ -33,10 +34,25 @@ class HelpActivity : AppCompatActivity() {
       )
       root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
         topMargin = insets.top
-        bottomMargin = insets.bottom
         leftMargin = insets.left
         rightMargin = insets.right
       }
+
+      windowInsets
+    }
+
+    val helpWrapper = findViewById<ViewGroup>(R.id.help_wrapper)
+    ViewCompat.setOnApplyWindowInsetsListener(helpWrapper) { _, windowInsets ->
+      val insets = windowInsets.getInsets(
+        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+      )
+
+      helpWrapper.setPadding(
+        helpWrapper.paddingLeft,
+        helpWrapper.paddingTop,
+        helpWrapper.paddingRight,
+        helpWrapper.paddingBottom + insets.bottom
+      )
 
       windowInsets
     }

@@ -6,12 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.database.Cursor
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Html
 import android.text.SpannableString
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -20,10 +20,10 @@ import android.widget.Button
 import android.widget.CursorAdapter
 import android.widget.ListView
 import android.widget.TextView
-import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
@@ -32,7 +32,6 @@ import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.quran.data.core.QuranInfo
-import com.quran.labs.androidquran.SearchActivity.ResultAdapter
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.service.QuranDownloadService
@@ -44,7 +43,6 @@ import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranUtils
-import java.lang.NumberFormatException
 import javax.inject.Inject
 
 /**
@@ -89,7 +87,6 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
       )
       root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
         topMargin = insets.top
-        bottomMargin = insets.bottom
         leftMargin = insets.left
         rightMargin = insets.right
       }
@@ -99,6 +96,22 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
       // the navigation bar).
       windowInsets
     }
+
+    val listView = findViewById<ListView>(R.id.results_list)
+    ViewCompat.setOnApplyWindowInsetsListener(listView) { _, windowInsets ->
+      val insets = windowInsets.getInsets(
+        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+      )
+
+      listView.setPadding(0, 0, 0, insets.bottom)
+      windowInsets
+    }
+
+    val toolbar = findViewById<Toolbar>(R.id.toolbar)
+    toolbar.setTitle(R.string.menu_search)
+    setSupportActionBar(toolbar)
+    val ab = supportActionBar
+    ab?.setDisplayHomeAsUpEnabled(true)
 
     messageView = findViewById(R.id.search_area)
     warningView = findViewById(R.id.search_warning)
@@ -133,6 +146,14 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
       searchItem.expandActionView()
     }
     return true
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    if (item.itemId == android.R.id.home) {
+      finish()
+      return true
+    }
+    return super.onOptionsItemSelected(item)
   }
 
   public override fun onPause() {
