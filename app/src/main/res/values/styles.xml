@@ -8,7 +8,9 @@
     <item name="android:maxLines">1</item>
   </style>
 
-  <style name="ToolBarArea" />
+  <style name="ToolBarArea">
+    <item name="android:elevation">4dp</item>
+  </style>
 
   <style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
     <item name="iconTint">@color/toolbar_icon_tint</item>

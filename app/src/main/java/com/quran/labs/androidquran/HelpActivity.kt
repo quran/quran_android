@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -19,13 +20,13 @@ class HelpActivity : AppCompatActivity() {
 
     super.onCreate(savedInstanceState)
 
-    val actionBar = supportActionBar
-    if (actionBar != null) {
-      actionBar.setDisplayShowHomeEnabled(true)
-      actionBar.setDisplayHomeAsUpEnabled(true)
-    }
-
     setContentView(R.layout.help)
+
+    val toolbar = findViewById<Toolbar>(R.id.toolbar)
+    toolbar.setTitle(R.string.menu_help)
+    setSupportActionBar(toolbar)
+    val ab = supportActionBar
+    ab?.setDisplayHomeAsUpEnabled(true)
 
     val root = findViewById<ViewGroup>(R.id.root)
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
