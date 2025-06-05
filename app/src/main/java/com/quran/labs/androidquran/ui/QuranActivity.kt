@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -353,6 +355,26 @@ class QuranActivity : AppCompatActivity(),
     supportActionMode = mode
     supportActionModeClearingCallback.isEnabled = true
     super.onSupportActionModeStarted(mode)
+
+    /**
+     * hack to fix the status bar color when action mode starts.
+     * unfortunately, despite being edge to edge, switching to contextual action mode causes
+     * [androidx.appcompat.app.AppCompatDelegate] and its implementation to set a status guard
+     * under the status bar (white in light mode, black in dark mode). this breaks the edge to
+     * edge look and feel, so we manually set the status guard's background color.
+     */
+    val abRoot = findViewById<ViewGroup>(androidx.appcompat.R.id.action_bar_root)
+    // has to be .post otherwise the background is set to the default color overriding this
+    abRoot.post {
+      val statusGuard = abRoot.getChildAt(abRoot.childCount - 1)
+      statusGuard?.let {
+        // not using `is` here because i literally want a View, not a subclass of View.
+        // checking top to be 0 is just a second just in case check.
+        if (statusGuard::class == View::class && statusGuard.top == 0) {
+          statusGuard.setBackgroundColor(ContextCompat.getColor(this, R.color.toolbar))
+        }
+      }
+    }
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
