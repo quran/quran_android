@@ -348,7 +348,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
     // add untagged bookmarks
     List<Bookmark> untagged = tagsMapping.get(BOOKMARKS_WITHOUT_TAGS_ID);
-    if (untagged != null && untagged.size() > 0) {
+    if (untagged != null && !untagged.isEmpty()) {
       rows.add(QuranRowFactory.fromNotTaggedHeader(appContext));
       for (int i = 0, untaggedSize = untagged.size(); i < untaggedSize; i++) {
         rows.add(quranRowFactory.fromBookmark(appContext, untagged.get(i)));
@@ -372,12 +372,12 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     }
 
     // add page bookmarks header if needed
-    if (rows.size() > 0) {
+    if (!rows.isEmpty()) {
       rows.add(0, quranRowFactory.fromPageBookmarksHeader(appContext));
     }
 
     // add ayah bookmarks if any
-    if (ayahBookmarks.size() > 0) {
+    if (!ayahBookmarks.isEmpty()) {
       rows.add(quranRowFactory.fromAyahBookmarksHeader(appContext));
       for (int i = 0, ayahBookmarksSize = ayahBookmarks.size(); i < ayahBookmarksSize; i++) {
         rows.add(quranRowFactory.fromBookmark(appContext, ayahBookmarks.get(i)));
