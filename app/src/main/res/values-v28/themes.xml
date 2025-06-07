@@ -4,5 +4,7 @@
       <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
       <item name="android:statusBarColor">@color/toolbar</item>
       <item name="android:navigationBarColor">@color/toolbar</item>
+      <item name="actionButtonStyle">@style/QuranToolBarActionButton</item>
+      <item name="actionModeCloseButtonStyle">@style/QuranToolBarActionButton</item>
     </style>
 </resources>

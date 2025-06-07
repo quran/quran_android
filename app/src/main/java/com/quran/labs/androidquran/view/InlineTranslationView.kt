@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.view
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -39,6 +38,7 @@ class InlineTranslationView @JvmOverloads constructor(
   private var translationFontSize = 0
   private var footerSpacerHeight = 0
   private var inlineAyahColor: Int = 0
+  private var ayahTextColor: Int = 0
 
   private lateinit var linearLayout: LinearLayout
 
@@ -67,6 +67,7 @@ class InlineTranslationView @JvmOverloads constructor(
     translationFontSize = settings.translationTextSize
     textStyle = R.style.TranslationText
     inlineAyahColor = ContextCompat.getColor(context, R.color.translation_translator_color)
+    ayahTextColor = ContextCompat.getColor(context, R.color.text_primary)
   }
 
   fun refresh() {
@@ -113,14 +114,14 @@ class InlineTranslationView @JvmOverloads constructor(
     val suraNumber = ayah.sura
     val ayahNumber = ayah.ayah
     val ayahHeader = TextView(context)
-    ayahHeader.setTextColor(Color.WHITE)
+    ayahHeader.setTextColor(ayahTextColor)
     ayahHeader.textSize = ayahFontSize.toFloat()
     ayahHeader.setTypeface(null, Typeface.BOLD)
     ayahHeader.text = context.resources.getString(R.string.sura_ayah, suraNumber, ayahNumber)
     linearLayout.addView(ayahHeader, params)
     val ayahView = TextView(context)
     ayahView.setTextAppearance(context, textStyle)
-    ayahView.setTextColor(Color.WHITE)
+    ayahView.setTextColor(ayahTextColor)
     ayahView.textSize = ayahFontSize.toFloat()
 
     // translation

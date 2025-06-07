@@ -214,6 +214,7 @@ internal class TranslationAdapter(
       this.dividerColor = textColor
       this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header_night)
       this.ayahSelectionColor = ContextCompat.getColor(context, R.color.translation_ayah_selected_color_night)
+      this.inlineAyahColor = ContextCompat.getColor(context, R.color.translation_inline_ayah_highlight_night_color)
     } else {
       this.textColor = ContextCompat.getColor(context, R.color.translation_text_color)
       this.footnoteColor = ContextCompat.getColor(context, R.color.translation_footnote_color)
@@ -221,8 +222,8 @@ internal class TranslationAdapter(
       this.arabicTextColor = Color.BLACK
       this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header)
       this.ayahSelectionColor = ContextCompat.getColor(context, R.color.translation_ayah_selected_color)
+      this.inlineAyahColor = ContextCompat.getColor(context, R.color.translation_inline_ayah_highlight_color)
     }
-    this.inlineAyahColor = ContextCompat.getColor(context, R.color.translation_translator_color)
 
     if (this.data.isNotEmpty()) {
       notifyDataSetChanged()
@@ -333,6 +334,7 @@ internal class TranslationAdapter(
         } else {
           if (row.type == TranslationViewRow.Type.TRANSLATOR) {
             text = row.data
+            holder.text.setTextColor(inlineAyahColor)
           } else {
             // translation
             text = row.data?.let { rowText ->
