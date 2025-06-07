@@ -8,7 +8,7 @@
     <item name="spinnerItemStyle">@style/SherlockSpinnerItem</item>
   </style>
 
-  <style name="QuranToolBar" parent="Theme.AppCompat.NoActionBar">
+  <style name="QuranToolBar" parent="Theme.AppCompat.DayNight.NoActionBar">
     <item name="android:windowBackground">@color/dark_background</item>
     <item name="colorAccent">@color/accent_color</item>
     <item name="windowActionModeOverlay">true</item>
@@ -30,10 +30,16 @@
     <item name="android:selectableItemBackground">@drawable/quran_row_background</item>
   </style>
 
+  <style name="QuranToolBarActionButton" parent="Widget.AppCompat.ActionButton">
+    <item name="android:tint">@color/icon_tint</item>
+  </style>
+
   <style name="QuranToolBar.Overlay">
     <item name="windowActionBarOverlay">true</item>
     <item name="android:statusBarColor">@color/toolbar</item>
     <item name="android:navigationBarColor">@color/toolbar</item>
+    <item name="actionButtonStyle">@style/QuranToolBarActionButton</item>
+    <item name="actionModeCloseButtonStyle">@style/QuranToolBarActionButton</item>
   </style>
 
     <style name="QuranDialog" parent="Theme.AppCompat.DayNight.Dialog" />
