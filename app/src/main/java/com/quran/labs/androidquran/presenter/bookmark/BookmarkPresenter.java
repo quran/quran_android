@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.presenter.bookmark;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -12,16 +11,14 @@ import com.quran.data.model.bookmark.Bookmark;
 import com.quran.data.model.bookmark.BookmarkData;
 import com.quran.data.model.bookmark.RecentPage;
 import com.quran.data.model.bookmark.Tag;
-import com.quran.labs.androidquran.dao.bookmark.BookmarkResult;
+import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult;
+import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData;
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel;
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils;
 import com.quran.labs.androidquran.presenter.Presenter;
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
-import com.quran.labs.androidquran.ui.helpers.QuranRowFactory;
 import com.quran.labs.androidquran.util.QuranSettings;
-import com.quran.labs.androidquran.util.QuranUtils;
-import com.quran.mobile.di.qualifier.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,37 +41,30 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   @Snackbar.Duration public static final int DELAY_DELETION_DURATION_IN_MS = 4 * 1000; // 4 seconds
   private static final long BOOKMARKS_WITHOUT_TAGS_ID = -1;
 
-  private final Context appContext;
   private final BookmarkModel bookmarkModel;
   private final QuranSettings quranSettings;
-  private final QuranRowFactory quranRowFactory;
   private final QuranInfo quranInfo;
 
   private int sortOrder;
   private boolean groupByTags;
   private boolean showRecents;
   private boolean showDate;
-  private BookmarkResult cachedData;
+  private BookmarkRawResult cachedData;
   private BookmarksFragment fragment;
-  private ArabicDatabaseUtils arabicDatabaseUtils;
+  private final ArabicDatabaseUtils arabicDatabaseUtils;
 
-  private boolean isRtl;
-  private DisposableSingleObserver<BookmarkResult> pendingRemoval;
+  private DisposableSingleObserver<BookmarkRawResult> pendingRemoval;
   private List<QuranRow> itemsToRemove;
 
 
   @Inject
-  BookmarkPresenter(@ApplicationContext Context appContext,
-                    BookmarkModel bookmarkModel,
+  BookmarkPresenter(BookmarkModel bookmarkModel,
                     QuranSettings quranSettings,
                     ArabicDatabaseUtils arabicDatabaseUtils,
-                    QuranRowFactory quranRowFactory,
                     QuranInfo quranInfo) {
-    this.appContext = appContext;
     this.quranSettings = quranSettings;
     this.bookmarkModel = bookmarkModel;
     this.arabicDatabaseUtils = arabicDatabaseUtils;
-    this.quranRowFactory = quranRowFactory;
     this.quranInfo = quranInfo;
 
     sortOrder = quranSettings.getBookmarksSortOrder();
@@ -167,7 +157,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
     if (canCache && cachedData != null) {
       if (fragment != null) {
         Timber.d("sending cached bookmark data");
-        fragment.onNewData(cachedData);
+        fragment.onNewRawData(cachedData);
       }
     } else {
       Timber.d("requesting bookmark data from the database");
@@ -177,7 +167,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
   public void deleteAfterSomeTime(List<QuranRow> remove) {
     // the fragment just called this, so fragment should be valid
-    fragment.onNewData(predictQuranListAfterDeletion(remove));
+    fragment.onNewRawData(predictQuranListAfterDeletion(remove));
 
     if (pendingRemoval != null) {
       // handle a new delete request when one is already happening by adding those items to delete
@@ -193,14 +183,14 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         .flatMap(ignore -> removeItemsObservable())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(new DisposableSingleObserver<BookmarkResult>() {
+        .subscribeWith(new DisposableSingleObserver<BookmarkRawResult>() {
 
           @Override
-          public void onSuccess(@NonNull BookmarkResult result) {
+          public void onSuccess(@NonNull BookmarkRawResult result) {
             pendingRemoval = null;
             cachedData = result;
             if (fragment != null) {
-              fragment.onNewData(result);
+              fragment.onNewRawData(result);
             }
           }
 
@@ -210,41 +200,148 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         });
   }
 
-  private BookmarkResult predictQuranListAfterDeletion(List<QuranRow> remove) {
-    if (cachedData != null) {
-      List<QuranRow> placeholder = new ArrayList<>(Math.max(0, cachedData.getRows().size() - remove.size()));
-      List<QuranRow> rows = cachedData.getRows();
-      List<Long> removedTags = new ArrayList<>();
-      for (int i = 0, rowsSize = rows.size(); i < rowsSize; i++) {
-        QuranRow row = rows.get(i);
-        if (!remove.contains(row)) {
-          placeholder.add(row);
-        }
-      }
-
-      for (int i = 0, removedSize = remove.size(); i < removedSize; i++) {
-        QuranRow row = remove.get(i);
-        if (row.isHeader() && row.tagId > 0) {
-          removedTags.add(row.tagId);
-        }
-      }
-
-      Map<Long, Tag> tagMap;
-      if (removedTags.isEmpty()) {
-        tagMap = cachedData.getTagMap();
-      } else {
-        tagMap = new HashMap<>(cachedData.getTagMap());
-        for (int i = 0, removedTagsSize = removedTags.size(); i < removedTagsSize; i++) {
-          Long tagId = removedTags.get(i);
-          tagMap.remove(tagId);
-        }
-      }
-      return new BookmarkResult(placeholder, tagMap);
+  private BookmarkRawResult predictQuranListAfterDeletion(List<QuranRow> remove) {
+    if (cachedData == null) {
+      return null;
     }
-    return null;
+
+    final List<BookmarkRowData> cachedRows = cachedData.getRows();
+    // Extract the IDs and context of items to remove
+    final Set<Long> bookmarkIdsToRemove = new HashSet<>();
+    final Set<Long> tagIdsToUntag = new HashSet<>();
+    final Map<Long, Set<Long>> bookmarkTagContext = new HashMap<>(); // bookmarkId -> set of tagId contexts
+    
+    for (QuranRow row : remove) {
+      if (row.isBookmark() && row.bookmarkId > 0) {
+        if (groupByTags && row.tagId > 0) {
+          // When grouped by tags, removing a bookmark removes it from that specific tag
+          // The same bookmark can appear multiple times in this case.
+          final Set<Long> currentTags = bookmarkTagContext.get(row.bookmarkId);
+          final Set<Long> updatedTags = currentTags != null ? currentTags : new HashSet<>();
+          updatedTags.add(row.tagId);
+          bookmarkTagContext.put(row.bookmarkId, updatedTags);
+        } else {
+          // When not grouped by tags, or untagged bookmark, remove the bookmark entirely
+          bookmarkIdsToRemove.add(row.bookmarkId);
+        }
+      } else if (row.isBookmarkHeader() && row.tagId > 0) {
+        // Removing a tag header untags all bookmarks with that tag (only when grouped by tags)
+        tagIdsToUntag.add(row.tagId);
+      }
+    }
+
+    // Filter the rows from cached data
+    final List<BookmarkRowData> filteredRows = new ArrayList<>();
+    final Set<Bookmark> removedBookmarks = new HashSet<>();
+
+    boolean haveUntaggedSection = false;
+    for (BookmarkRowData rowData : cachedRows) {
+      boolean shouldKeep = true;
+      
+      if (rowData instanceof BookmarkRowData.BookmarkItem bookmarkItem) {
+        final long bookmarkId = bookmarkItem.getBookmark().getId();
+        final Long currentTagId = bookmarkItem.getTagId();
+        
+        if (bookmarkIdsToRemove.contains(bookmarkId)) {
+          // Remove bookmark entirely
+          shouldKeep = false;
+        } else if (bookmarkTagContext.containsKey(bookmarkId)) {
+          // Check if this bookmark should be removed from this specific tag context
+          final Set<Long> contextTagIds = bookmarkTagContext.get(bookmarkId);
+          if (contextTagIds != null && currentTagId != null && contextTagIds.contains(currentTagId)) {
+            shouldKeep = false;
+          } else if (tagIdsToUntag.contains(currentTagId)) {
+            shouldKeep = false;
+          }
+        } else if (currentTagId != null && tagIdsToUntag.contains(currentTagId)) {
+          // we're removing this tag from all bookmarks that contain it
+          shouldKeep = false;
+        }
+        
+        if (shouldKeep) {
+          filteredRows.add(rowData);
+        } else {
+          removedBookmarks.add(bookmarkItem.getBookmark());
+        }
+      } else if (rowData instanceof BookmarkRowData.TagHeader tagHeader) {
+        final long tagId = tagHeader.getTag().getId();
+        if (!tagIdsToUntag.contains(tagId)) {
+          filteredRows.add(rowData);
+        }
+      } else if (rowData instanceof BookmarkRowData.NotTaggedHeader) {
+        haveUntaggedSection = true;
+        filteredRows.add(rowData);
+      } else {
+        // Keep other types (recent pages, etc.)
+        filteredRows.add(rowData);
+      }
+    }
+    
+    // Second pass: identify bookmarks that will become completely untagged
+    final Set<Bookmark> newlyUntaggedBookmarks = new HashSet<>();
+
+    for (Bookmark removedBookmark : removedBookmarks) {
+      final Set<Long> tags = new HashSet<>(removedBookmark.getTags());
+      if (!tags.isEmpty()) {
+        final Set<Long> tagsExplicitlyRemovedFromBookmark = bookmarkTagContext.get(removedBookmark.getId());
+        final Set<Long> tagHeaderDeletions = new HashSet<>(tagIdsToUntag);
+        tagHeaderDeletions.retainAll(tags);
+        final Set<Long> tagsDeletedFromBookmark = new HashSet<>(tagHeaderDeletions);
+        if (tagsExplicitlyRemovedFromBookmark != null) {
+          tagsDeletedFromBookmark.addAll(tagsExplicitlyRemovedFromBookmark);
+        }
+
+        if (tagsDeletedFromBookmark.equals(tags)) {
+          newlyUntaggedBookmarks.add(removedBookmark);
+        }
+      }
+    }
+
+    final Set<BookmarkRowData.BookmarkItem> newlyUntaggedBookmarkItems = new HashSet<>();
+    if (!newlyUntaggedBookmarks.isEmpty()) {
+      for (Bookmark newlyUntaggedBookmark : newlyUntaggedBookmarks) {
+        // Find first BookmarkItem that contains a bookmark from newlyUntaggedBookmarks
+        BookmarkRowData.BookmarkItem item = null;
+        for (BookmarkRowData rowData : cachedRows) {
+          if (rowData instanceof BookmarkRowData.BookmarkItem bookmarkItem) {
+            if (newlyUntaggedBookmark.equals(bookmarkItem.getBookmark())) {
+              item = bookmarkItem;
+              break;
+            }
+          }
+        }
+
+        if (item != null) {
+          newlyUntaggedBookmarkItems.add(item);
+        }
+      }
+    }
+
+    if (!newlyUntaggedBookmarkItems.isEmpty()) {
+      if (!haveUntaggedSection) {
+        // If we don't have an untagged section, add it
+        filteredRows.add(BookmarkRowData.NotTaggedHeader.INSTANCE);
+      }
+
+      for (BookmarkRowData.BookmarkItem untaggedItem : newlyUntaggedBookmarkItems) {
+        // Create untagged version of this bookmark
+        final BookmarkRowData.BookmarkItem untaggedBookmark = new BookmarkRowData.BookmarkItem(
+            untaggedItem.getBookmark(), null);
+        filteredRows.add(untaggedBookmark);
+      }
+    }
+    
+    // Update tag map: remove tags that were explicitly deleted via tag header deletion
+    // Keep tags that just became empty due to bookmark removal
+    final Map<Long, Tag> filteredTagMap = new HashMap<>(cachedData.getTagMap());
+    for (Long tagId : tagIdsToUntag) {
+      filteredTagMap.remove(tagId);
+    }
+
+    return new BookmarkRawResult(filteredRows, filteredTagMap);
   }
 
-  private Single<BookmarkResult> removeItemsObservable() {
+  private Single<BookmarkRawResult> removeItemsObservable() {
     return bookmarkModel.removeItemsObservable(new ArrayList<>(itemsToRemove))
         .andThen(getBookmarksListObservable(sortOrder, groupByTags));
   }
@@ -270,14 +367,14 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         });
   }
 
-  @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-  Single<BookmarkResult> getBookmarksListObservable(
+  @VisibleForTesting
+  Single<BookmarkRawResult> getBookmarksListObservable(
       int sortOrder, final boolean groupByTags) {
     return getBookmarksWithAyatObservable(sortOrder)
         .map(bookmarkData -> {
-          List<QuranRow> rows = getBookmarkRows(bookmarkData, groupByTags);
+          List<BookmarkRowData> rows = getBookmarkRowData(bookmarkData, groupByTags);
           Map<Long, Tag> tagMap = generateTagMap(bookmarkData.getTags());
-          return new BookmarkResult(rows, tagMap);
+          return new BookmarkRawResult(rows, tagMap);
         })
         .subscribeOn(Schedulers.io());
   }
@@ -292,24 +389,24 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
           cachedData = result;
           if (fragment != null) {
             if (pendingRemoval != null && itemsToRemove != null) {
-              fragment.onNewData(predictQuranListAfterDeletion(itemsToRemove));
+              fragment.onNewRawData(predictQuranListAfterDeletion(itemsToRemove));
             } else {
-              fragment.onNewData(result);
+              fragment.onNewRawData(result);
             }
           }
         });
   }
 
-  private List<QuranRow> getBookmarkRows(BookmarkData data, boolean groupByTags) {
-    List<QuranRow> rows;
+  private List<BookmarkRowData> getBookmarkRowData(BookmarkData data, boolean groupByTags) {
+    List<BookmarkRowData> rows;
 
     List<Tag> tags = data.getTags();
     List<Bookmark> bookmarks = data.getBookmarks();
 
     if (groupByTags) {
-      rows = getRowsSortedByTags(tags, bookmarks);
+      rows = getRowDataSortedByTags(tags, bookmarks);
     } else {
-      rows = getSortedRows(bookmarks);
+      rows = getSortedRowData(bookmarks);
     }
 
     List<RecentPage> recentPages = data.getRecentPages();
@@ -320,52 +417,48 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
         // only show the last bookmark if show recents is off
         size = 1;
       }
-      rows.add(0, quranRowFactory.fromRecentPageHeader(appContext, size));
+      rows.add(0, new BookmarkRowData.RecentPageHeader(size));
       for (int i = 0; i < size; i++) {
-        int page = recentPages.get(i).getPage();
-        if (!quranInfo.isValidPage(page)) {
-          page = 1;
-        }
-        rows.add(i + 1, quranRowFactory.fromCurrentPage(appContext, page, recentPages.get(i).getTimestamp()));
+        rows.add(i + 1, new BookmarkRowData.RecentPage(recentPages.get(i)));
       }
     }
 
     return rows;
   }
 
-  private List<QuranRow> getRowsSortedByTags(List<Tag> tags, List<Bookmark> bookmarks) {
-    List<QuranRow> rows = new ArrayList<>();
+  private List<BookmarkRowData> getRowDataSortedByTags(List<Tag> tags, List<Bookmark> bookmarks) {
+    List<BookmarkRowData> rows = new ArrayList<>();
     // sort by tags, alphabetical
     Map<Long, List<Bookmark>> tagsMapping = generateTagsMapping(tags, bookmarks);
     for (int i = 0, tagsSize = tags.size(); i < tagsSize; i++) {
       Tag tag = tags.get(i);
-      rows.add(quranRowFactory.fromTag(tag));
+      rows.add(new BookmarkRowData.TagHeader(tag));
       List<Bookmark> tagBookmarks = tagsMapping.get(tag.getId());
       for (int j = 0, tagBookmarksSize = tagBookmarks == null ? 0 : tagBookmarks.size(); j < tagBookmarksSize; j++) {
-        rows.add(quranRowFactory.fromBookmark(appContext, tagBookmarks.get(j), tag.getId()));
+        rows.add(new BookmarkRowData.BookmarkItem(tagBookmarks.get(j), tag.getId()));
       }
     }
 
     // add untagged bookmarks
     List<Bookmark> untagged = tagsMapping.get(BOOKMARKS_WITHOUT_TAGS_ID);
     if (untagged != null && !untagged.isEmpty()) {
-      rows.add(QuranRowFactory.fromNotTaggedHeader(appContext));
+      rows.add(BookmarkRowData.NotTaggedHeader.INSTANCE);
       for (int i = 0, untaggedSize = untagged.size(); i < untaggedSize; i++) {
-        rows.add(quranRowFactory.fromBookmark(appContext, untagged.get(i)));
+        rows.add(new BookmarkRowData.BookmarkItem(untagged.get(i), null));
       }
     }
     return rows;
   }
 
-  private List<QuranRow> getSortedRows(List<Bookmark> bookmarks) {
-    List<QuranRow> rows = new ArrayList<>(bookmarks.size());
+  private List<BookmarkRowData> getSortedRowData(List<Bookmark> bookmarks) {
+    List<BookmarkRowData> rows = new ArrayList<>(bookmarks.size());
     List<Bookmark> ayahBookmarks = new ArrayList<>();
 
     // add the page bookmarks directly, save ayah bookmarks for later
     for (int i = 0, bookmarksSize = bookmarks.size(); i < bookmarksSize; i++) {
       Bookmark bookmark = bookmarks.get(i);
       if (bookmark.isPageBookmark()) {
-        rows.add(quranRowFactory.fromBookmark(appContext, bookmark));
+        rows.add(new BookmarkRowData.BookmarkItem(bookmark, null));
       } else {
         ayahBookmarks.add(bookmark);
       }
@@ -373,14 +466,14 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
 
     // add page bookmarks header if needed
     if (!rows.isEmpty()) {
-      rows.add(0, quranRowFactory.fromPageBookmarksHeader(appContext));
+      rows.add(0, BookmarkRowData.PageBookmarksHeader.INSTANCE);
     }
 
     // add ayah bookmarks if any
     if (!ayahBookmarks.isEmpty()) {
-      rows.add(quranRowFactory.fromAyahBookmarksHeader(appContext));
+      rows.add(BookmarkRowData.AyahBookmarksHeader.INSTANCE);
       for (int i = 0, ayahBookmarksSize = ayahBookmarks.size(); i < ayahBookmarksSize; i++) {
-        rows.add(quranRowFactory.fromBookmark(appContext, ayahBookmarks.get(i)));
+        rows.add(new BookmarkRowData.BookmarkItem(ayahBookmarks.get(i), null));
       }
     }
 
@@ -429,14 +522,7 @@ public class BookmarkPresenter implements Presenter<BookmarksFragment> {
   @Override
   public void bind(@NonNull BookmarksFragment fragment) {
     this.fragment = fragment;
-    boolean isRtl = QuranUtils.isRtl();
-    if (isRtl == this.isRtl) {
-      requestData(true);
-    } else {
-      // don't use the cache if rtl changed
-      this.isRtl = isRtl;
-      requestData(false);
-    }
+    requestData(true);
   }
 
   @Override

@@ -24,11 +24,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 import com.quran.labs.androidquran.QuranApplication;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult;
 import com.quran.labs.androidquran.dao.bookmark.BookmarkResult;
 import com.quran.labs.androidquran.database.BookmarksDBAdapter;
 import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter;
 import com.quran.labs.androidquran.presenter.bookmark.BookmarksContextualModePresenter;
 import com.quran.labs.androidquran.ui.QuranActivity;
+import com.quran.labs.androidquran.ui.helpers.BookmarkUIConverter;
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter;
 import com.quran.labs.androidquran.ui.helpers.QuranRow;
 
@@ -43,6 +45,7 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
 
   @Inject BookmarkPresenter bookmarkPresenter;
   @Inject BookmarksContextualModePresenter bookmarksContextualModePresenter;
+  @Inject BookmarkUIConverter bookmarkUIConverter;
 
   public static BookmarksFragment newInstance(){
     return new BookmarksFragment();
@@ -162,7 +165,8 @@ public class BookmarksFragment extends Fragment implements QuranListAdapter.Qura
     return super.onOptionsItemSelected(item);
   }
 
-  public void onNewData(BookmarkResult items) {
+  public void onNewRawData(BookmarkRawResult rawItems) {
+    BookmarkResult items = bookmarkUIConverter.convertToUIResult(requireContext(), rawItems);
     bookmarksAdapter.setShowTags(bookmarkPresenter.shouldShowInlineTags());
     bookmarksAdapter.setShowDate(bookmarkPresenter.isDateShowing());
     bookmarksAdapter.setElements(

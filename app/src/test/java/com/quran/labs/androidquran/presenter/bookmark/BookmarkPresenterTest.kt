@@ -8,13 +8,11 @@ import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
-import com.quran.labs.androidquran.dao.bookmark.BookmarkResult
-import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
-import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.awaitTerminalEvent
 import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
@@ -254,13 +252,10 @@ class BookmarkPresenterTest {
 
   private fun makeBookmarkPresenter(model: BookmarkModel): BookmarkPresenter {
     val quranInfo = QuranInfo(MadaniDataSource())
-    val quranDisplayData = QuranDisplayData(quranInfo)
     return object : BookmarkPresenter(
-      appContext,
       model,
       settings,
       null,
-      QuranRowFactory(quranInfo, quranDisplayData),
       quranInfo
     ) {
       public override fun subscribeToChanges() {
@@ -272,7 +267,7 @@ class BookmarkPresenterTest {
   private fun getBookmarkResultByDateAndValidate(
     presenter: BookmarkPresenter,
     groupByTags: Boolean,
-  ): BookmarkResult {
+  ): BookmarkRawResult {
     val testObserver = presenter
       .getBookmarksListObservable(BookmarksDBAdapter.SORT_DATE_ADDED, groupByTags)
       .test()
