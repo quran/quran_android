@@ -485,6 +485,12 @@ internal class TranslationAdapter(
             this.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
           )
+          setSpan(
+            ForegroundColorSpan(inlineAyahColor),
+            lastSpace + 1,
+            this.length,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+          )
         }
       }
     }
