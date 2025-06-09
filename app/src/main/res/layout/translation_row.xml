@@ -48,7 +48,7 @@
       android:layout_height="match_parent"
       android:scaleType="center"
       android:contentDescription="@null"
-      />
+      app:tint="@color/icon_tint" />
 
   <!-- content description set in code -->
   <ImageView
@@ -57,5 +57,6 @@
       android:layout_height="match_parent"
       android:scaleType="center"
       tools:ignore="ContentDescription"
+      app:tint="@color/icon_tint" />
       />
 </LinearLayout>

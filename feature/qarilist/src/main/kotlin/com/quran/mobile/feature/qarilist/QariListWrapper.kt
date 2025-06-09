@@ -102,7 +102,7 @@ class QariListWrapper(
         sheetPeekHeight = 0.dp,
         sheetDragHandle = null,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-        containerColor = MaterialTheme.colorScheme.surface,
+        sheetContainerColor = MaterialTheme.colorScheme.surface,
         sheetContentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.background),
         sheetContent = {
           Column {
