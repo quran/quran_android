@@ -59,5 +59,6 @@ val darkInverseSurface = Color(0xFFE0E3E3)
 val darkInversePrimary = Color(0xFF00696F)
 val darkShadow = Color(0xFF000000)
 val darkSurfaceTint = Color(0xFF4DD9E4)
+val darkSurfaceColorHighest = Color(0xFF212121)
 
 // generated with a seed of #ff1b6b71

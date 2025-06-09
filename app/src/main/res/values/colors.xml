@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="toolbar">#fffaf8f7</color>
+  <color name="toolbar">@color/surface</color>
   <color name="toolbar_text">#ff44464e</color>
   <color name="toolbar_icon_tint">#ff44464e</color>
   <color name="toolbar_secondary_text">#ff44464e</color>
 
-  <color name="dark_background">#ff212121</color>
+  <color name="surface">#fffaf8f7</color>
   <color name="accent_color">#ff00838f</color>
   <color name="accent_color_dark">@color/color_control_normal</color>
   <color name="page_background">#FFF4CB</color>
-  <color name="secondary_dark_background">@color/toolbar</color>
+  <color name="secondary_dark_background">#ffffffff</color>
   <color name="header_background">#dee2e6</color>
   <color name="header_text_color">@color/sura_number_color</color>
   <color name="ripple_dark">#1f000000</color>

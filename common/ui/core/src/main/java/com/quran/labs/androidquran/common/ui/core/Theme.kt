@@ -70,6 +70,7 @@ private val DarkColors = darkColorScheme(
     inverseSurface = darkInverseSurface,
     inversePrimary = darkInversePrimary,
     surfaceTint = darkSurfaceTint,
+    surfaceContainerHighest = darkSurfaceColorHighest
 )
 
 private val forceLtr = listOf("huawei", "lenovo", "tecno")

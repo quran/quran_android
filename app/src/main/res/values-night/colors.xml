@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="accent_color">#ffb2dfdb</color>
-  <color name="toolbar">#ff303030</color>
+  <color name="toolbar">@color/surface</color>
   <color name="toolbar_text">#ffffffff</color>
   <color name="toolbar_icon_tint">#ffffffff</color>
+  <color name="accent_color">#ffb2dfdb</color>
   <color name="header_background">#ff424242</color>
   <color name="header_text_color">@color/sura_number_color</color>
   <color name="sura_number_color">#7fffffff</color>
-  <color name="secondary_dark_background">@color/toolbar</color>
+  <color name="surface">#ff212121</color>
+  <color name="secondary_dark_background">#ff303030</color>
   <color name="ripple_dark">#33ffffff</color>
   <color name="title_color">#ffffffff</color>
   <color name="sura_details_color">#b2ffffff</color>
   <color name="toolbar_secondary_text">#ffffffff</color>
-  <color name="panel_background_color">#ff101114</color>
+  <color name="panel_background_color">#ff212121</color>
   <color name="translation_translator_color">#ffa7ffeb</color>
   <color name="icon_tint">#ffffffff</color>
   <color name="indicator_color">@color/accent_color</color>
