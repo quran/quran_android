@@ -71,7 +71,7 @@ junitVersion = "4.13.2"
 espressoVersion = "3.6.1"
 truthVersion = "1.4.4"
 mockitoVersion = "5.18.0"
-robolectricVersion = "4.14.1"
+robolectricVersion = "4.15.1"
 turbineVersion = "1.2.1"
 
 [libraries]
