@@ -16,7 +16,7 @@ jobs:
     if: github.event_name != 'merge_group'
     steps:
       - name: Checkout the Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup JDK
         uses: actions/setup-java@v4
