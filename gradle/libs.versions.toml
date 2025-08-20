@@ -173,7 +173,7 @@ dnsjava = { module = "dnsjava:dnsjava", version.ref = "dnsjavaVersion" }
 
 # tools
 errorprone-core = { module = "com.google.errorprone:error_prone_core", version.ref = "errorproneCoreVersion" }
-firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebaseAnalyticsVersion" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalyticsVersion" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlyticsVersion" }
 
 # testing
