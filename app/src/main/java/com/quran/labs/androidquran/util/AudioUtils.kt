@@ -185,7 +185,7 @@ class AudioUtils @Inject constructor(
       val f = File(baseDirectory)
       if (f.exists()) {
         val haveFile = allowedExtensions.any { ext ->
-          File(baseDirectory + File.separator + "1" + ".$ext").exists()
+          File(baseDirectory + File.separator + "1" + File.separator + "1" + ".$ext").exists()
         }
         if (haveFile) {
           Timber.d("already have basmalla...")

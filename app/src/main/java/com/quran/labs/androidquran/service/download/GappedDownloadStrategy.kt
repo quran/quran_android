@@ -55,7 +55,7 @@ class GappedDownloadStrategy(
         for (ayah in ayahStart..ayahEnd) {
           details.ayah = ayah
           val url = audioUrlFormat.format(Locale.US, sura, ayah)
-          val filename = "$ayah$extension"
+          val filename = "$ayah.$extension"
           val file = File(destDir, filename)
           if (file.exists() || downloaderLambda(url, destDir, filename, details)) {
             notifier.notifyFileDownloaded(details, filename)
@@ -71,11 +71,11 @@ class GappedDownloadStrategy(
     // attempt to download basmallah if it doesn't exist
     val destDir = destination + File.separator + 1 + File.separator
     File(destDir).mkdirs()
-    val basmallah = File(destDir, "1$extension")
+    val basmallah = File(destDir, "1.$extension")
     val url = audioUrlFormat.format(Locale.US, 1, 1)
-    val destFile = "1$extension"
+    val destFile = "1.$extension"
     return if (basmallah.exists() || downloaderLambda(url, destDir, destFile, details)) {
-      notifier.notifyFileDownloaded(details, "1$extension")
+      notifier.notifyFileDownloaded(details, "1.$extension")
       details.currentFile++
       true
     } else {
