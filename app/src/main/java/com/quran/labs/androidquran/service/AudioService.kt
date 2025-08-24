@@ -751,9 +751,9 @@ class AudioService : Service(), Player.Listener {
     if (playerOverride) {
       if (!player.isPlaying) {
         player.play()
-        state = State.Playing
-        updateAudioPlaybackStatus()
       }
+      state = State.Playing
+      updateAudioPlaybackStatus()
       return
     }
 
@@ -771,13 +771,16 @@ class AudioService : Service(), Player.Listener {
           serviceHandler.sendEmptyMessageDelayed(MSG_START_AUDIO, 200)
         }
         return
-      } else if (audioRequest.isGapless()) {
-        serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
       }
       player.play()
-      state = State.Playing
-      updateAudioPlaybackStatus()
     }
+
+    if (audioRequest.isGapless()) {
+      serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
+    }
+
+    state = State.Playing
+    updateAudioPlaybackStatus()
   }
 
 
