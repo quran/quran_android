@@ -21,6 +21,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.SparseIntArray
+import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
@@ -31,7 +32,16 @@ import androidx.media3.common.AudioAttributes
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.Renderer
+import androidx.media3.exoplayer.RenderersFactory
+import androidx.media3.exoplayer.audio.AudioRendererEventListener
+import androidx.media3.exoplayer.audio.MediaCodecAudioRenderer
+import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
+import androidx.media3.exoplayer.metadata.MetadataOutput
+import androidx.media3.exoplayer.text.TextOutput
+import androidx.media3.exoplayer.video.VideoRendererEventListener
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
@@ -160,10 +170,26 @@ class AudioService : Service(), Player.Listener {
    * the ExoPlayer if needed, or reset the existing player if one
    * already exists.
    */
+  @OptIn(UnstableApi::class)
   private fun makeOrResetExoPlayer(): ExoPlayer {
     val currentPlayer = player
     return if (currentPlayer == null) {
-      val localPlayer = ExoPlayer.Builder(applicationContext)
+      // we only need audio, so allow r8 to remove video renderers
+      // via https://developer.android.com/media/media3/exoplayer/shrinking
+      val audioOnlyRenderersFactory =
+        RenderersFactory {
+            handler: Handler,
+            videoListener: VideoRendererEventListener,
+            audioListener: AudioRendererEventListener,
+            textOutput: TextOutput,
+            metadataOutput: MetadataOutput,
+          ->
+          arrayOf<Renderer>(
+            MediaCodecAudioRenderer(applicationContext, MediaCodecSelector.DEFAULT, handler, audioListener)
+          )
+        }
+
+      val localPlayer = ExoPlayer.Builder(applicationContext, audioOnlyRenderersFactory)
         .setWakeMode(androidx.media3.common.C.WAKE_MODE_NETWORK)
         .build()
       player = localPlayer
