@@ -29,6 +29,7 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.core.math.MathUtils.clamp
 import androidx.media.session.MediaButtonReceiver
 import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -199,8 +200,8 @@ class AudioService : Service(), Player.Listener {
 
       // Configure audio attributes for music playback
       val audioAttributes = AudioAttributes.Builder()
-        .setContentType(androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC)
-        .setUsage(androidx.media3.common.C.USAGE_MEDIA)
+        .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+        .setUsage(C.USAGE_MEDIA)
         .build()
       localPlayer.setAudioAttributes(audioAttributes, true)
 
@@ -406,52 +407,34 @@ class AudioService : Service(), Player.Listener {
 
   private fun updateAudioPlayPosition() {
     Timber.d("updateAudioPlayPosition")
-    val localAudioQueue = audioQueue ?: return
+    val localAudioQueue = audioQueue
     val localPlayer = player
 
-    if (localPlayer != null) {
-      val sura = localAudioQueue.getCurrentSura()
+    val sura = localAudioQueue?.getCurrentSura()
+    if (localPlayer != null && localAudioQueue != null && sura == gaplessSura) {
       val ayah = localAudioQueue.getCurrentAyah()
-      var updatedAyah = ayah
       val maxAyahs = quranInfo.getNumberOfAyahs(sura)
-      if (sura != gaplessSura) {
-        return
-      }
+
       setState(PlaybackStateCompat.STATE_PLAYING)
       val pos = localPlayer.currentPosition
-      var ayahTime = gaplessSuraData[ayah]
+      val currentAyahTime = gaplessSuraData[ayah]
       Timber.d(
         "updateAudioPlayPosition: %d:%d, currently at %d vs expected at %d",
-        sura, ayah, pos, ayahTime
+        sura, ayah, pos, currentAyahTime
       )
-      var iterAyah = ayah
-      if (ayahTime > pos) {
-        while (--iterAyah > 0) {
-          ayahTime = gaplessSuraData[iterAyah]
-          if (ayahTime <= pos) {
-            updatedAyah = iterAyah
-            break
-          } else {
-            updatedAyah--
-          }
-        }
+      val updatedAyah = if (currentAyahTime > pos) {
+        // the ayah is ahead of the current playback time, so search backwards
+        (1 until ayah).findLast { gaplessSuraData[it] <= pos } ?: 1
       } else {
-        while (++iterAyah <= maxAyahs) {
-          ayahTime = gaplessSuraData[iterAyah]
-          if (ayahTime > pos) {
-            updatedAyah = iterAyah - 1
-            break
-          } else {
-            updatedAyah++
-          }
-        }
+        // the audio position is after this ayah, find out which ayah we're at
+        ((ayah + 1)..maxAyahs).find { gaplessSuraData[it] > pos }?.minus(1) ?: maxAyahs
       }
       Timber.d(
         "updateAudioPlayPosition: %d:%d, decided ayah should be: %d",
         sura, ayah, updatedAyah
       )
       if (updatedAyah != ayah) {
-        ayahTime = gaplessSuraData[ayah]
+        val ayahTime = gaplessSuraData[ayah]
         if (abs(pos - ayahTime) < 150) {
           // shouldn't change ayahs if the delta is just 150ms...
           serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 150)
@@ -489,7 +472,7 @@ class AudioService : Service(), Player.Listener {
       } else {
         // if we have end of sura info and we bypassed end of sura
         // line, switch the sura.
-        ayahTime = gaplessSuraData[999]
+        val ayahTime = gaplessSuraData[999]
         if (ayahTime in 1..pos) {
           val success = localAudioQueue.playAt(sura + 1, 1, false)
           if (success && localAudioQueue.getCurrentSura() == sura) {
