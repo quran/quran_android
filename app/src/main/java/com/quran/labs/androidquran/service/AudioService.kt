@@ -865,10 +865,6 @@ class AudioService : Service(), Player.Listener {
 
         localPlayer.setMediaItem(mediaItem)
         localPlayer.prepare()
-        
-        state = State.Preparing
-        updateAudioPlaybackStatus()
-
         Timber.d("prepared media item: $overrideResource, $url")
       } catch (e: IllegalStateException) {
         Timber.e("IllegalStateException while setting media item: %s", e.message)
@@ -946,11 +942,7 @@ class AudioService : Service(), Player.Listener {
         onPlayerCompleted()
       }
       Player.STATE_BUFFERING -> {
-        Timber.d("Player buffering...")
-        if (state == State.Stopped) {
-          state = State.Preparing
-          updateAudioPlaybackStatus()
-        }
+        onPlayerBuffering()
       }
       Player.STATE_IDLE -> {
         Timber.d("Player idle")
@@ -1001,6 +993,18 @@ class AudioService : Service(), Player.Listener {
     }
     updateAudioPlaybackStatus()
     serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
+  }
+
+  private fun onPlayerBuffering() {
+    Timber.d("Player buffering...")
+    val previousState = state
+    state = State.Preparing
+
+    val audioRequest = audioRequest
+    // only actually update the status if we are streaming or if we are not stopped
+    if (previousState != State.Stopped || (audioRequest == null || audioRequest.audioPathInfo.urlFormat.startsWith("http"))) {
+      updateAudioPlaybackStatus()
+    }
   }
 
   private fun onPlayerCompleted() {
