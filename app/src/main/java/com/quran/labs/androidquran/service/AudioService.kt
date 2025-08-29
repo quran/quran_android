@@ -5,8 +5,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
-import android.database.Cursor
-import android.database.SQLException
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -20,7 +18,7 @@ import android.os.Process
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.util.SparseIntArray
+import android.util.SparseLongArray
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -54,20 +52,21 @@ import com.quran.labs.androidquran.dao.audio.AudioPlaybackInfo
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.data.QuranFileConstants
-import com.quran.labs.androidquran.database.DatabaseUtils.closeCursor
-import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler.Companion.getDatabaseHandler
+import com.quran.labs.androidquran.data.TimingRepository
 import com.quran.labs.androidquran.extension.requiresBasmallah
 import com.quran.labs.androidquran.presenter.audio.service.AudioQueue
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.NotificationChannelUtil.setupNotificationChannel
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.android.asCoroutineDispatcher
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -137,9 +136,9 @@ class AudioService : Service(), Player.Listener {
   @Volatile
   private var notificationIcon: Bitmap? = null
   private var displayIcon: Bitmap? = null
-  private var gaplessSuraData: SparseIntArray = SparseIntArray()
-  private var timingDisposable: Disposable? = null
+  private var gaplessSuraData: SparseLongArray = SparseLongArray()
   private val compositeDisposable = CompositeDisposable()
+  private lateinit var scope: CoroutineScope
 
   @Inject
   lateinit var quranInfo: QuranInfo
@@ -153,13 +152,14 @@ class AudioService : Service(), Player.Listener {
   @Inject
   lateinit var audioStatusRepository: AudioStatusRepository
 
+  @Inject
+  lateinit var timingRepository: TimingRepository
+
   private inner class ServiceHandler(looper: Looper) : Handler(looper) {
     override fun handleMessage(msg: Message) {
       if (msg.what == MSG_INCOMING && msg.obj != null) {
         val intent = msg.obj as Intent
         handleIntent(intent)
-      } else if (msg.what == MSG_START_AUDIO) {
-        configAndStartExoPlayer()
       } else if (msg.what == MSG_UPDATE_AUDIO_POS) {
         updateAudioPlayPosition()
       }
@@ -191,7 +191,7 @@ class AudioService : Service(), Player.Listener {
         }
 
       val localPlayer = ExoPlayer.Builder(applicationContext, audioOnlyRenderersFactory)
-        .setWakeMode(androidx.media3.common.C.WAKE_MODE_NETWORK)
+        .setWakeMode(C.WAKE_MODE_NETWORK)
         .build()
       player = localPlayer
 
@@ -227,6 +227,8 @@ class AudioService : Service(), Player.Listener {
     // Get the HandlerThread's Looper and use it for our Handler
     serviceLooper = thread.looper
     serviceHandler = ServiceHandler(serviceLooper)
+    scope = CoroutineScope(serviceHandler.asCoroutineDispatcher() + SupervisorJob())
+
     val appContext = applicationContext
     (appContext as QuranApplication).applicationComponent.inject(this)
     notificationManager =
@@ -353,43 +355,16 @@ class AudioService : Service(), Player.Listener {
     }
   }
 
-  private fun updateGaplessData(databasePath: String, sura: Int) {
-    timingDisposable?.dispose()
-    timingDisposable = Single.fromCallable {
-      val db = getDatabaseHandler(databasePath)
-
-      val map = SparseIntArray()
-      var cursor: Cursor? = null
-      try {
-        cursor = db.getAyahTimings(sura)
-        Timber.d("got cursor of data")
-        if (cursor != null && cursor.moveToFirst()) {
-          do {
-            val ayah = cursor.getInt(1)
-            val time = cursor.getInt(2)
-            map.put(ayah, time)
-          } while (cursor.moveToNext())
-        }
-      } catch (se: SQLException) {
-        // don't crash the app if the database is corrupt
-        Timber.e(se)
-      } finally {
-        closeCursor(cursor)
-      }
-
-      map
-    }
-      .subscribeOn(Schedulers.io())
-      .observeOn(AndroidSchedulers.mainThread())
-      // have to annotate _ as Throwable? otherwise crashes
-      // https://github.com/ReactiveX/RxJava/issues/7444
-      .subscribe { map, _: Throwable? ->
-        gaplessSura = sura
-        gaplessSuraData = map ?: SparseIntArray()
-      }
+  private suspend fun updateGaplessData(databasePath: String, sura: Int): SparseLongArray {
+    // note - we rely on the cache from timing repository instead of checking the cache here
+    // because we do not have a variable for the database path here.
+    val timings = timingRepository.timings(databasePath, sura)
+    gaplessSura = sura
+    gaplessSuraData = timings
+    return timings
   }
 
-  private fun getSeekPosition(isRepeating: Boolean): Int {
+  private fun getSeekPosition(isRepeating: Boolean): Long {
     if (audioRequest == null) {
       return -1
     }
@@ -458,7 +433,7 @@ class AudioService : Service(), Player.Listener {
           if (ayahRepeat) {
             // jump back to the ayah we should repeat and play it
             val seekPos = getSeekPosition(true)
-            localPlayer.seekTo(seekPos.toLong())
+            localPlayer.seekTo(seekPos)
           } else {
             // we're repeating into a different sura
             val flag = sura != localAudioQueue.getCurrentSura()
@@ -481,7 +456,7 @@ class AudioService : Service(), Player.Listener {
 
             // jump back to the ayah we should repeat and play it
             val seekPos = getSeekPosition(false)
-            localPlayer.seekTo(seekPos.toLong())
+            localPlayer.seekTo(seekPos)
           } else if (!success) {
             processStopRequest()
           } else {
@@ -528,13 +503,6 @@ class AudioService : Service(), Player.Listener {
     }
     // actually play the file
     if (State.Stopped == state) {
-      if (localAudioRequest.isGapless()) {
-        val dbPath = localAudioRequest.audioPathInfo.gaplessDatabase
-        if (dbPath != null) {
-          updateGaplessData(dbPath, localAudioQueue.getCurrentSura())
-        }
-      }
-
       // If we're stopped, just go ahead to the next file and start playing
       playAudio(localAudioQueue.getCurrentSura() == 9 && localAudioQueue.getCurrentAyah() == 1)
     } else if (State.Paused == state) {
@@ -544,7 +512,7 @@ class AudioService : Service(), Player.Listener {
       if (!isSetupAsForeground) {
         setUpAsForeground()
       }
-      configAndStartExoPlayer(false)
+      configAndStartExoPlayer()
       updateAudioPlaybackStatus()
     }
   }
@@ -577,7 +545,7 @@ class AudioService : Service(), Player.Listener {
       val localAudioQueue = audioQueue ?: return
       val localAudioRequest = audioRequest ?: return
 
-      var seekTo = 0
+      var seekTo = 0L
       var pos = localPlayer.currentPosition
       if (localAudioRequest.isGapless()) {
         seekTo = getSeekPosition(true)
@@ -585,7 +553,7 @@ class AudioService : Service(), Player.Listener {
       }
 
       if (pos > 1500 && !playerOverride) {
-        localPlayer.seekTo(seekTo.toLong())
+        localPlayer.seekTo(seekTo)
         state = State.Playing // in case we were paused
       } else {
         val sura = localAudioQueue.getCurrentSura()
@@ -593,7 +561,7 @@ class AudioService : Service(), Player.Listener {
         if (localAudioRequest.isGapless() && sura == localAudioQueue.getCurrentSura()) {
           val timing = getSeekPosition(true)
           if (timing > -1) {
-            localPlayer.seekTo(timing.toLong())
+            localPlayer.seekTo(timing)
           }
           updateNotification()
           state = State.Playing // in case we were paused
@@ -629,7 +597,7 @@ class AudioService : Service(), Player.Listener {
         if (localAudioRequest.isGapless() && sura == localAudioQueue.getCurrentSura()) {
           val timing = getSeekPosition(false)
           if (timing > -1) {
-            localPlayer.seekTo(timing.toLong())
+            localPlayer.seekTo(timing)
             state = State.Playing // in case we were paused
           }
           updateNotification()
@@ -657,9 +625,6 @@ class AudioService : Service(), Player.Listener {
       // service is no longer necessary. Will be started again if needed.
       serviceHandler.removeCallbacksAndMessages(null)
       stopSelf()
-
-      // stop async task if it's running
-      timingDisposable?.dispose()
     }
   }
 
@@ -746,7 +711,7 @@ class AudioService : Service(), Player.Listener {
   /**
    * Configures and starts playback after the player is ready.
    */
-  private fun configAndStartExoPlayer(canSeek: Boolean = true) {
+  private fun configAndStartExoPlayer() {
     Timber.d("configAndStartExoPlayer()")
 
     val player = player ?: return
@@ -757,39 +722,15 @@ class AudioService : Service(), Player.Listener {
       return
     }
 
-    if (playerOverride) {
-      if (!player.isPlaying) {
-        player.play()
-      }
-      state = State.Playing
-      updateAudioPlaybackStatus()
-      return
-    }
-
-    Timber.d("checking if playing...")
-    val audioRequest = audioRequest ?: return
     if (!player.isPlaying) {
-      if (canSeek && audioRequest.isGapless()) {
-        val timing = getSeekPosition(false)
-        if (timing != -1) {
-          Timber.d("got timing: %d, seeking and updating later...", timing)
-          player.seekTo(timing.toLong())
-        } else {
-          Timber.d("no timing data yet, will try again...")
-          // try to play again after 200 ms
-          serviceHandler.sendEmptyMessageDelayed(MSG_START_AUDIO, 200)
-        }
-        return
-      }
       player.play()
     }
-
-    if (audioRequest.isGapless()) {
-      serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
-    }
-
     state = State.Playing
     updateAudioPlaybackStatus()
+
+    if (audioRequest?.isGapless() == true) {
+      serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
+    }
   }
 
 
@@ -816,6 +757,23 @@ class AudioService : Service(), Player.Listener {
     state = State.Stopped
     relaxResources(releaseExoPlayer = false, stopForeground = false)
     playerOverride = false
+
+    val localAudioQueue = audioQueue
+    val localAudioRequest = audioRequest
+    if (localAudioQueue != null && localAudioRequest != null) {
+      val dbPath = localAudioRequest.audioPathInfo.gaplessDatabase
+      if (localAudioRequest.isGapless() && dbPath != null) {
+        scope.launch {
+          val timings = updateGaplessData(dbPath, localAudioQueue.getCurrentSura())
+          playAudio(playRepeatSeparator, timings)
+        }
+      } else {
+        playAudio(playRepeatSeparator, null)
+      }
+    }
+  }
+
+  private fun playAudio(playRepeatSeparator: Boolean, timings: SparseLongArray?) {
     try {
       val localAudioQueue = audioQueue
       val localAudioRequest = audioRequest
@@ -863,7 +821,12 @@ class AudioService : Service(), Player.Listener {
           MediaItem.fromUri(url)
         }
 
-        localPlayer.setMediaItem(mediaItem)
+        val potentialTiming = timings?.get(localAudioQueue.getCurrentAyah(), -1) ?: -1
+        if (potentialTiming > -1 && overrideResource == 0) {
+          localPlayer.setMediaItem(mediaItem, potentialTiming)
+        } else {
+          localPlayer.setMediaItem(mediaItem)
+        }
         localPlayer.prepare()
         Timber.d("prepared media item: $overrideResource, $url")
       } catch (e: IllegalStateException) {
@@ -1021,7 +984,7 @@ class AudioService : Service(), Player.Listener {
         ) {
           // we're actually repeating, but we reached the end of the file before we could
           // seek to the proper place. so let's seek anyway.
-          player?.seekTo(gaplessSuraData[localAudioQueue.getCurrentAyah()].toLong())
+          player?.seekTo(gaplessSuraData[localAudioQueue.getCurrentAyah()])
         } else {
           // we actually switched to a different ayah - so if the
           // sura changed, then play the basmala if the ayah is
@@ -1046,17 +1009,7 @@ class AudioService : Service(), Player.Listener {
     }
 
     // if gapless and sura changed, get the new data
-    val localAudioQueue = audioQueue ?: return
     val localAudioRequest = audioRequest ?: return
-    if (localAudioRequest.isGapless()) {
-      if (gaplessSura != localAudioQueue.getCurrentSura()) {
-        val dbPath = localAudioRequest.audioPathInfo.gaplessDatabase
-        if (dbPath != null) {
-          updateGaplessData(dbPath, localAudioQueue.getCurrentSura())
-        }
-      }
-    }
-
     if (playerOverride || !localAudioRequest.isGapless()) {
       notifyAyahChanged()
     }
@@ -1257,7 +1210,6 @@ class AudioService : Service(), Player.Listener {
     relaxResources(releaseExoPlayer = true, stopForeground = true)
   }
 
-
   override fun onDestroy() {
     compositeDisposable.clear()
     // Service is being killed, so make sure we release our resources
@@ -1266,6 +1218,8 @@ class AudioService : Service(), Player.Listener {
     state = State.Stopped
     relaxResources(true, true)
     mediaSession.release()
+    timingRepository.clear()
+    scope.cancel()
     super.onDestroy()
   }
 
@@ -1298,7 +1252,6 @@ class AudioService : Service(), Player.Listener {
     const val EXTRA_PLAY_INFO = "com.quran.labs.androidquran.PLAY_INFO"
     private const val NOTIFICATION_CHANNEL_ID = Constants.AUDIO_CHANNEL
     private const val MSG_INCOMING = 1
-    private const val MSG_START_AUDIO = 2
-    private const val MSG_UPDATE_AUDIO_POS = 3
+    private const val MSG_UPDATE_AUDIO_POS = 2
   }
 }
