@@ -964,8 +964,8 @@ class AudioService : Service(), Player.Listener {
     state = State.Preparing
 
     val audioRequest = audioRequest
-    // only actually update the status if we are streaming or if we are not stopped
-    if (previousState != State.Stopped || (audioRequest == null || audioRequest.audioPathInfo.urlFormat.startsWith("http"))) {
+    // only actually update the status if we are streaming
+    if (audioRequest == null || audioRequest.audioPathInfo.urlFormat.startsWith("http")) {
       updateAudioPlaybackStatus()
     }
   }
