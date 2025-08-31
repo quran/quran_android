@@ -1,9 +1,7 @@
 package com.quran.common.networking.dns
 
-import com.quran.data.dao.Settings
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.runBlocking
 import okhttp3.Cache
 import okhttp3.Dns
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -26,24 +24,12 @@ class DnsModule {
   }
 
   @Provides
-  fun provideServers(dnsCache: Cache, settings: Settings): List<Dns> {
+  fun provideServers(dnsCache: Cache): List<Dns> {
     val bootstrapClient = OkHttpClient.Builder()
         .cache(dnsCache)
         .build()
 
-    // dns fallback tries the equivalent of Dns.SYSTEM first,
-    // so no need to explicitly add Dns.SYSTEM here.
-    val dnsFallback = DnsFallback()
-    val cloudflareDns = provideCloudflareDns(bootstrapClient)
-
-    val result = mutableListOf<Dns>()
-
-    val preferDnsOverHttps = runBlocking { settings.preferDnsOverHttps() }
-    if (preferDnsOverHttps) {
-      if (cloudflareDns != null) result.add(cloudflareDns)
-    }
-    result.add(dnsFallback)
-    return result
+    return listOfNotNull(Dns.SYSTEM, DnsFallback(), provideCloudflareDns(bootstrapClient))
   }
 
   private fun provideCloudflareDns(bootstrapClient: OkHttpClient): Dns? {
@@ -52,7 +38,7 @@ class DnsModule {
           .client(bootstrapClient)
           .url("https://1.1.1.1/dns-query".toHttpUrl())
           .build()
-    } catch (exception: UnknownHostException) {
+    } catch (_: UnknownHostException) {
       null
     }
   }

@@ -18,8 +18,6 @@ interface Settings {
   suspend fun setShouldShowLineDividers(show: Boolean)
   suspend fun setAyahTextSize(value: Int)
   suspend fun translationTextSize(): Int
-  suspend fun preferDnsOverHttps(): Boolean
-  suspend fun setPreferDnsOverHttps(value: Boolean)
 
   fun preferencesFlow(): Flow<String>
 }

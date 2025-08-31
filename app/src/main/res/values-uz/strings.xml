@@ -184,9 +184,6 @@
   <string name="prefs_sura_translated_name_title">Sura nomi tarjimasi</string>
   <string name="prefs_sura_translated_name_summary">Sura nomi tarjimasi koʻrsatilsin</string>
   <string name="prefs_preview">Oldindan koʻrish</string>
-  <string name="prefs_dns_over_https_title">HTTPS orqali DNS</string>
-  <string name="prefs_dns_over_https_summary_on">""</string>
-  <string name="prefs_dns_over_https_summary_off">""</string>
   <string name="prefs_ayah_text_title">Oyat matni hajmi</string>
   <string name="prefs_export_csv_title">CSV formatda eksport</string>
   <string name="prefs_export_csv_summary">Xatchoʻp va teglarni CSV formatda eksport qilish</string>

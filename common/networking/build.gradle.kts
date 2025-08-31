@@ -21,4 +21,6 @@ dependencies {
   implementation(libs.dnsjava)
   implementation(libs.okhttp.dnsoverhttps)
   api(libs.okhttp.tls)
+
+  implementation(libs.timber)
 }
