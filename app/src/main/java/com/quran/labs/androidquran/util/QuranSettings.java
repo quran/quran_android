@@ -146,14 +146,6 @@ public class QuranSettings {
         Constants.DEFAULT_TEXT_SIZE);
   }
 
-  public boolean getPreferDnsOverHttps() {
-    return prefs.getBoolean(Constants.PREFS_PREFER_DNS_OVER_HTTPS, true);
-  }
-
-  public void setPreferDnsOverHttps(boolean preferDnsOverHttps) {
-    prefs.edit().putBoolean(Constants.PREFS_PREFER_DNS_OVER_HTTPS, preferDnsOverHttps).apply();
-  }
-
   public int getLastPage() {
     return prefs.getInt(Constants.PREF_LAST_PAGE, Constants.NO_PAGE);
   }
