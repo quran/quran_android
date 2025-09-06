@@ -86,4 +86,8 @@
   <string name="qari_idrees_abkar_gapless">إدريس أبكر</string>
   <string name="qari_luhaidan_gapless">محمد اللحيدان</string>
   <string name="qari_raad_al_kurdi_gapless">رعد الكردي</string>
+  <string name="qari_ahmed_al_nufais_gapless">أحمد النفيس</string>
+  <string name="qari_abdulhadi_kanakeri_gapless">عبدالهادي كناكري</string>
+  <string name="qari_peshawa_qadir_al_qurdi_gapless">بيشاوا قادر الكردي</string>
+  <string name="qari_farman_shawani_gapless">فرمان شواني</string>
 </resources>

@@ -86,4 +86,8 @@
   <string name="qari_idrees_abkar_gapless">Idrees Abkar</string>
   <string name="qari_luhaidan_gapless">Muhammad Al-Luhaidan</string>
   <string name="qari_raad_al_kurdi_gapless">Raad Al-Kurdi</string>
+  <string name="qari_ahmed_al_nufais_gapless">Ehmed El-Nufeys</string>
+  <string name="qari_abdulhadi_kanakeri_gapless">Ebdulhadî Kanakerî</string>
+  <string name="qari_peshawa_qadir_al_qurdi_gapless">پێشەوا قادر الکردي</string>
+  <string name="qari_farman_shawani_gapless">فەرمان شوانی</string>
 </resources>
