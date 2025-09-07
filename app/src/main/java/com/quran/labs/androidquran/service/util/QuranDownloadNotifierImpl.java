@@ -108,7 +108,11 @@ public class QuranDownloadNotifierImpl implements QuranDownloadNotifier {
             details.sura > 0 ? details.sura : null,
             details.ayah > 0 ? details.ayah : null,
             isIndeterminate ? null : downloadedSize,
-            isIndeterminate ? null : totalSize
+            isIndeterminate ? null : totalSize,
+            // currentFile is 0-based, but we want to send 1-based since it doesn't make sense
+            // to say "downloading file 0/1"
+            details.currentFile + 1,
+            details.totalFiles
         );
     downloadInfoStreams.emitEvent(downloadInfo);
 
