@@ -108,7 +108,7 @@ class AudioBarPresenter @Inject constructor(
         progress, com.quran.mobile.common.download.R.string.downloading
       )
 
-      is DownloadInfo.FileDownloaded, is DownloadInfo.DownloadBatchSuccess -> AudioBarState.Stopped(
+      is DownloadInfo.DownloadBatchSuccess -> AudioBarState.Stopped(
         currentQariManager.currentQari().nameResource,
         recitationPresenter.isRecitationEnabled()
       )

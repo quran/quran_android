@@ -50,6 +50,8 @@ sealed class DownloadInfo {
     val sura: Int?,
     val ayah: Int?,
     val downloadedSize: Long?,
-    val totalSize: Long?
+    val totalSize: Long?,
+    val currentFile: Int,
+    val totalFiles: Int
   ) : DownloadEvent()
 }
