@@ -1,7 +1,7 @@
 [versions]
 agp = "8.13.0"
 junit = "1.3.0"
-kotlin = "2.2.10"
+kotlin = "2.2.20"
 ksp = "2.2.20-2.0.2"
 
 # required within the Gradle convention plugins - not unused
@@ -33,7 +33,7 @@ androidxAppcompatVersion = "1.7.1"
 androidxActivityComposeVersion = "1.10.1"
 androidxAnnotationVersion = "1.9.1"
 androidxCoreVersion = "1.17.0"
-androidxNavigationVersion = "2.9.3"
+androidxNavigationVersion = "2.9.4"
 androidxDynamicAnimationVersion = "1.1.0"
 androidxFragmentVersion = "1.8.9"
 androidxJunitExtVersion = "1.3.0"
@@ -44,7 +44,7 @@ androidxRecyclerViewVersion = "1.4.0"
 androidxSwipeRefreshVersion = "1.1.0"
 androidxPagingVersion = "3.3.6"
 androidxPagingComposeVersion = "3.3.6"
-androidxWorkManagerVersion = "2.10.3"
+androidxWorkManagerVersion = "2.10.4"
 androidxWindowManager = "1.4.0"
 
 # firebase
@@ -69,7 +69,7 @@ googleCloudSpeechVersion = "4.68.0"
 # testing
 junitVersion = "4.13.2"
 espressoVersion = "3.7.0"
-truthVersion = "1.4.4"
+truthVersion = "1.4.5"
 mockitoVersion = "5.19.0"
 robolectricVersion = "4.16"
 turbineVersion = "1.2.1"
