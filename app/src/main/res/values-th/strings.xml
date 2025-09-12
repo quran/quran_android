@@ -82,7 +82,7 @@
   <string name="storage_permission_please_restart">โปรดเริ่มแอปใหม่เพื่อให้แอปนี้มีผล</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">พบในซูเราะฮฺ %1$s: %2$d (หน้า %3$d)</string>
+  <string name="found_in_sura">พบในซูเราะฮฺ (%1$d) %2$s: %3$d (หน้า %4$d)</string>
   <string name="no_results">ไม่พบผลลัพธ์สําหรับ \"%s\"</string>
   <string name="no_arabic_search_available">คุณยังไม่ได้ดาวน์โหลดชุดค้นหาภาษาอาหรับ กรุณาดาวน์โหลดและลองค้นหาอีกครั้ง</string>
   <string name="get_arabic_search_db">รับฐานข้อมูลการค้นหาภาษาอาหรับ</string>

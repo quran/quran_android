@@ -129,7 +129,7 @@
     </string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Найдено в суре %1$s: %2$d (Страница %3$d)</string>
+  <string name="found_in_sura">Найдено в суре (%1$d) %2$s: %3$d (Страница %4$d)</string>
   <string name="no_results">Результатов для \"%s\" не найдено</string>
   <string name="no_arabic_search_available">Вы не скачали пакет данных для арабского поиска.
         Пожалуйста, сначала скачайте его и воспользуйтесь поиском снова.

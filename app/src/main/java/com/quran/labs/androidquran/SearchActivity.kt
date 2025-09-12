@@ -394,6 +394,7 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
       holder.text.text = Html.fromHtml(text)
       holder.metadata.text = this.context.getString(
         R.string.found_in_sura,
+        sura,
         suraName,
         ayah,
         page

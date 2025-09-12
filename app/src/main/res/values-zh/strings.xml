@@ -60,7 +60,7 @@
   </plurals>
 
   <!-- Search messages -->
-  <string name="found_in_sura">对应章节 %1$s 节 %2$d (页 %3$d)</string>
+  <string name="found_in_sura">对应章节 (%1$d) %2$s 节 %3$d (页 %4$d)</string>
   <string name="no_results">未搜索到\"%s\"</string>
   <string name="no_arabic_search_available">还没有下载搜索包，请下载后再次进行搜索.</string>
   <string name="get_arabic_search_db">下载阿拉伯语搜索包</string>

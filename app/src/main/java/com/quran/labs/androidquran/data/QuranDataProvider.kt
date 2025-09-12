@@ -134,6 +134,7 @@ class QuranDataProvider : ContentProvider() {
             val text = suggestions.getString(3)
             val foundText = context.getString(
               R.string.found_in_sura,
+              sura,
               quranDisplayData.getSuraName(context, sura, false),
               ayah,
               page

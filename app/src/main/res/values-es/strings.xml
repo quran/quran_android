@@ -37,7 +37,7 @@
     <item quantity="other">%2$d resultados para \"%1$s\": </item>
   </plurals>
   <!--Search messages-->
-  <string name="found_in_sura">Capítulo encontrado %1$s: %2$d (Página %3$d)</string>
+  <string name="found_in_sura">Capítulo encontrado (%1$d) %2$s: %3$d (Página %4$d)</string>
   <string name="no_results">No se encontró \"%s\"</string>
   <string name="no_arabic_search_available">Usted no ha descargado el paquete de búsqueda árabe. Por favor descargue y pruebe nuevamente su búsqueda.</string>
   <string name="get_arabic_search_db">Buscar en la Base de Datos Árabe</string>

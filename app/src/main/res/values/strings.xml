@@ -150,7 +150,7 @@
   <string name="storage_permission_please_restart">Please restart the app for this to take effect.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Found in Surah %1$s: %2$d (page %3$d)</string>
+  <string name="found_in_sura">Found in Surah (%1$d) %2$s: %3$d (page %4$d)</string>
   <string name="no_results">No results found for \"%s\"</string>
   <string name="no_arabic_search_available">You have not downloaded the Arabic search pack. Please download it and try your search again.</string>
   <string name="get_arabic_search_db">Get Arabic Search Database</string>

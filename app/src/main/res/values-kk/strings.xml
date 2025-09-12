@@ -105,7 +105,7 @@
     </string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Сүреде табылды %1$s, %2$d-аят (Бет %3$d)</string>
+  <string name="found_in_sura">Сүреде табылды (%1$d) %2$s, %3$d-аят (Бет %4$d)</string>
   <string name="no_results">\"%s\" бойынша нәтиже табылмады</string>
   <string name="no_arabic_search_available">Арабша іздеу деректері орнатылмаған.
         Алдымен оны жүктеңіз. Кейін қайта іздеп көріңіз.

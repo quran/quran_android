@@ -90,7 +90,7 @@
   <string name="storage_permission_please_restart">Zrestartuj aplikację, aby zaaplikować zmiany.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Znaleziono w Surze %1$s: %2$d (strona %3$d)</string>
+  <string name="found_in_sura">Znaleziono w Surze (%1$d) %2$s: %3$d (strona %4$d)</string>
   <string name="no_results">Nie znaleziono wyników dla \"%s\"</string>
   <string name="no_arabic_search_available">Nie został pobrany pakiet do wyszukiwania w języku arabskim. Pobierz go i spróbuj wyszukać ponownie.</string>
   <string name="get_arabic_search_db">Pobierz bazę danych wyszukiwania w języku arabskim</string>

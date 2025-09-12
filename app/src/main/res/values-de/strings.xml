@@ -97,7 +97,7 @@
   </plurals>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Gefunden in Sure %1$s: %2$d (Seite %3$d)</string>
+  <string name="found_in_sura">Gefunden in Sure (%1$d) %2$s: %3$d (Seite %4$d)</string>
   <string name="no_results">Es wurden keine Resultate für \"%s\" gefunden.</string>
   <string name="no_arabic_search_available">Sie haben das arabische Such-Paket noch nicht
     heruntergeladen. Bitte laden Sie dieses herunter und versuchen Sie es danach erneut.

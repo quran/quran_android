@@ -163,7 +163,7 @@
     kracht worden.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Gevonden in Soera %1$s: %2$d (pagina %3$d)</string>
+  <string name="found_in_sura">Gevonden in Soera (%1$d) %2$s: %3$d (pagina %4$d)</string>
   <string name="no_results">Geen resultaten gevonden voor "%s"</string>
   <string name="no_arabic_search_available">U heeft het Arabische zoekpakket niet gedownload.
     Download het alstublieft en probeer uw zoekopdracht opnieuw.</string>

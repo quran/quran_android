@@ -91,7 +91,7 @@
   <string name="storage_permission_please_restart">Перезапустіть програму, щоб вона набрала сили.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Знайдено в Сура %1$s: %2$d (сторінка %3$d)</string>
+  <string name="found_in_sura">Знайдено в Сура (%1$d) %2$s: %3$d (сторінка %4$d)</string>
   <string name="no_results">Не знайдено результатів для \"%s\"</string>
   <string name="no_arabic_search_available">Ви ще не завантажили арабський пошуковий пакет. Завантажте його та повторіть пошук.</string>
   <string name="get_arabic_search_db">Отримати арабську базу даних пошуку</string>

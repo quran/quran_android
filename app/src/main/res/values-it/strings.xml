@@ -191,7 +191,7 @@
   <string name="get_arabic_search_db">Ottieni il database di ricerca arabo</string>
   <string name="no_arabic_search_available">Non hai scaricato il pacchetto di ricerca arabo. Per favore, scaricalo e riprova la tua ricerca.</string>
   <string name="no_results">Nessun risultato trovato per \"%s\"</string>
-  <string name="found_in_sura">Trovato in Sura %1$s: %2$d (pagina %3$d)</string>
+  <string name="found_in_sura">Trovato in Sura (%1$d) %2$s: %3$d (pagina %4$d)</string>
   <string name="search_full_results">Risultati completi</string>
   <string name="search_entire_mushaf">Cerca l\'intero mushaf</string>
   <string name="storage_permission_please_restart">Si prega di riavviare l\'applicazione perché questo abbia effetto.</string>
