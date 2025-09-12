@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -71,7 +71,7 @@ class AudioBarWrapper @JvmOverloads constructor(
             )
             .padding(top = 8.dp)
             .padding(horizontal = 16.dp)
-            .height(dimensionResource(id = R.dimen.audiobar_height))
+            .heightIn(min = dimensionResource(id = R.dimen.audiobar_height))
         )
       }
     }
