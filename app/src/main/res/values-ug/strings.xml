@@ -62,7 +62,7 @@
   <string name="storage_permission_please_restart">كۈچكە ئىگە بولۇشى ئۈچۈن ئەپنى قايتا قوزغىتىڭ.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">سۈرە %1$s تېپىلدى: %2$d (%3$d-بەت)</string>
+  <string name="found_in_sura">سۈرە (%1$d) %2$s تېپىلدى: %3$d (%4$d-بەت)</string>
   <string name="no_results">\&quot;%s\&quot; نىڭ نەتىجىلىرى تېپىلمىدى</string>
   <string name="no_arabic_search_available">سىز ئەرەبچە ئىزدەش بوغچىسىنى چۈشۈرمىگەن. ئۇنى چۈشۈرۈپ ئاندىن قايتا ئىزدەڭ.</string>
   <string name="get_arabic_search_db">ئەرەبچە ئىزدەش ساندانىغا ئېرىش</string>

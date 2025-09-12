@@ -91,7 +91,7 @@
   <string name="storage_permission_please_restart">Ju lutem rinisni aplikacionin që kjo të hyjë në fuqi.</string>
 
   <!-- Search messages -->
-  <string name="found_in_sura">Gjendet në suren %1$s: %2$d (page %3$d)</string>
+  <string name="found_in_sura">Gjendet në suren (%1$d) %2$s: %3$d (page %4$d)</string>
   <string name="no_results">Nuk u gjet asnjë rezultat për \"%s\"</string>
   <string name="no_arabic_search_available">Nuk e keni shkarkuar paketën e kërkimit arab. Ju lutem shkarkojeni dhe provoni kërkimin tuaj përsëri.</string>
   <string name="get_arabic_search_db">Merr bazën e të dhënave të kërkimit në arabisht</string>
