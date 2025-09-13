@@ -29,6 +29,7 @@ buildscript {
         android: [
             build: [
                 minSdkVersion    : 14,
+                maxSdkVersion    : 20,
                 targetSdkVersion : 29,
                 compileSdkVersion: 29
             ]

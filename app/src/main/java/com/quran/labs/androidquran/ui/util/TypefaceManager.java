@@ -2,15 +2,14 @@ package com.quran.labs.androidquran.ui.util;
 
 import android.content.Context;
 import android.graphics.Typeface;
-
-import com.quran.labs.androidquran.data.QuranFileConstants;
-
 import androidx.annotation.NonNull;
+import com.quran.labs.androidquran.data.QuranFileConstants;
 
 public class TypefaceManager {
   public static final int TYPE_UTHMANI_HAFS = 1;
   public static final int TYPE_NOOR_HAYAH = 2;
   public static final int TYPE_UTHMANIC_WARSH = 3;
+  public static final int TYPE_UTHMANIC_QALOON = 4;
 
   private static Typeface typeface;
   private static Typeface arabicTafseerTypeface;
@@ -26,6 +25,10 @@ public class TypefaceManager {
         }
         case TYPE_UTHMANIC_WARSH: {
           fontName = "uthmanic_warsh_ver09.ttf";
+          break;
+        }
+        case TYPE_UTHMANIC_QALOON: {
+          fontName = "uthmanic_qaloon_ver21.ttf";
           break;
         }
         case TYPE_UTHMANI_HAFS:

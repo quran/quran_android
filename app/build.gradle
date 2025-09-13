@@ -20,9 +20,10 @@ android {
 
   defaultConfig {
     minSdkVersion deps.android.build.minSdkVersion
+    maxSdkVersion deps.android.build.maxSdkVersion
     targetSdkVersion deps.android.build.targetSdkVersion
-    versionCode 3070
-    versionName "3.0.7"
+    versionCode 3080
+    versionName "3.0.8"
     testInstrumentationRunner "com.quran.labs.androidquran.core.QuranTestRunner"
     multiDexEnabled true
   }
@@ -179,5 +180,5 @@ dependencies {
   errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
 
   // Number Picker
-  implementation 'com.shawnlin:number-picker:2.4.12'
+  implementation 'io.github.ShawnLin013:number-picker:2.4.13'
 }

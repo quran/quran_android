@@ -12,4 +12,5 @@ dependencies {
 
   implementation 'dnsjava:dnsjava:2.1.9'
   implementation "com.squareup.okhttp3:okhttp-dnsoverhttps:${okhttpVersion}"
+  implementation "com.squareup.okhttp3:okhttp-tls:${okhttpVersion}"
 }
