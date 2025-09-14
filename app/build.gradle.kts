@@ -74,6 +74,7 @@ android {
   buildTypes {
     create("beta") {
       isMinifyEnabled = true
+      isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard.cfg")
       signingConfig = signingConfigs.getByName("release")
       versionNameSuffix = "-beta"
@@ -88,6 +89,7 @@ android {
 
     getByName("release") {
       isMinifyEnabled = true
+      isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard.cfg")
       signingConfig = signingConfigs.getByName("release")
     }
