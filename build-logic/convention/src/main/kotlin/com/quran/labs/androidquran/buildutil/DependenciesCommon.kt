@@ -18,6 +18,7 @@ fun Project.applyBoms() {
     withLibraries { libs ->
       add("implementation", platform(libs.okhttp.bom))
       add("implementation", platform(libs.compose.bom))
+      add("implementation", platform(libs.firebase.bom))
     }
   }
 }

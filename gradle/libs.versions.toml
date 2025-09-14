@@ -8,6 +8,7 @@ ksp = "2.2.20-2.0.3"
 composeBomVersion = "2025.09.00"
 media3ExoplayerVersion = "1.8.0"
 okhttpBomVersion = "5.1.0"
+firebaseBomVersion = "33.16.0"
 
 # dependencies
 anvil = "0.4.1"
@@ -47,10 +48,6 @@ androidxPagingComposeVersion = "3.3.6"
 androidxWorkManagerVersion = "2.10.4"
 androidxWindowManager = "1.4.0"
 
-# firebase
-firebaseAnalyticsVersion = "22.5.0"
-firebaseCrashlyticsVersion = "19.4.4"
-
 # ui libraries
 accompanistVersion = "0.36.0"
 balloonVersion = "1.6.13"
@@ -86,6 +83,7 @@ kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collec
 # required within the Gradle convention plugins - not unused
 okhttp-bom = { module = "com.squareup.okhttp3:okhttp-bom", version.ref = "okhttpBomVersion" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
 
 # androidx
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompatVersion" }
@@ -172,8 +170,8 @@ dnsjava = { module = "dnsjava:dnsjava", version.ref = "dnsjavaVersion" }
 
 # tools
 errorprone-core = { module = "com.google.errorprone:error_prone_core", version.ref = "errorproneCoreVersion" }
-firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebaseAnalyticsVersion" }
-firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlyticsVersion" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 
 # testing
 espresso-intents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espressoVersion" }
