@@ -8,7 +8,7 @@ ksp = "2.2.20-2.0.3"
 composeBomVersion = "2025.09.00"
 media3ExoplayerVersion = "1.8.0"
 okhttpBomVersion = "5.1.0"
-firebaseBomVersion = "33.16.0"
+firebaseBomVersion = "34.3.0"
 
 # dependencies
 anvil = "0.4.1"
