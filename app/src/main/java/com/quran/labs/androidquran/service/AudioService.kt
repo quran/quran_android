@@ -825,8 +825,12 @@ class AudioService : Service(), Player.Listener {
           MediaItem.fromUri(url)
         }
 
-        val potentialTiming = timings?.get(localAudioQueue.getCurrentAyah(), -1) ?: -1
-        if (potentialTiming > -1 && overrideResource == 0) {
+        val potentialTiming = if (timings != null && overrideResource == 0) {
+          getSeekPosition(false)
+        } else {
+          -1
+        }
+        if (potentialTiming > -1) {
           localPlayer.setMediaItem(mediaItem, potentialTiming)
         } else {
           localPlayer.setMediaItem(mediaItem)
