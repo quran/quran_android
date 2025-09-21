@@ -39,7 +39,8 @@ class AudioUpdateWorker(
     val audioPathRoot = quranFileUtils.getQuranAudioDirectory(context)
     if (audioPathRoot != null) {
       val currentVersion = quranSettings.currentAudioRevision
-      val updates = audioUpdateService.getUpdates(currentVersion)
+      val response = audioUpdateService.getUpdates(currentVersion)
+      val updates = if (response.isSuccessful) response.body() else null
 
       if (updates != null && currentVersion != updates.currentRevision) {
         Timber.d("local version: %d - server version: %d",
