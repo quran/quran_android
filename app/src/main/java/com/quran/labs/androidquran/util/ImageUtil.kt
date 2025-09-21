@@ -30,8 +30,8 @@ class ImageUtil @Inject constructor(private val okHttpClient: OkHttpClient) {
           if (response.isSuccessful) {
             // save the png from the download to a temporary file
             response.body
-              ?.source()
-              ?.use { source ->
+              .source()
+              .use { source ->
                 destination.sink()
                   .buffer()
                   .use { destination ->
@@ -52,13 +52,12 @@ class ImageUtil @Inject constructor(private val okHttpClient: OkHttpClient) {
             // and delete the old one
             destination.delete()
           }
-        } catch (ioException: IOException) {
+        } catch (_: IOException) {
+          // if the download fails, not much we can do
+        } catch (_: InterruptedException) {
           // if we're interrupted, pretend nothing happened. This happened
           // due to a dispose / cancellation. Maybe's fromCallable will not
           // actually emit in this case.
-          //
-          // a more proper fix would probably be to use Maybe.create and
-          // set a cancellation handler to stop the network call.
         }
       }
       outputPath
