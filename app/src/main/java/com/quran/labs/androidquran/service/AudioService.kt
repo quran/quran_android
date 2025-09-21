@@ -743,7 +743,8 @@ class AudioService : Service(), Player.Listener {
       processUpdatePlaybackSpeed(speed)
     }
 
-    if (audioRequest?.isGapless() == true) {
+    if (audioRequest?.isGapless() == true && !playerOverride) {
+      Timber.d("configAndStartExoPlayer: restarting position updates")
       serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
     }
   }
