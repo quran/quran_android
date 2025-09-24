@@ -45,7 +45,7 @@ androidxRecyclerViewVersion = "1.4.0"
 androidxSwipeRefreshVersion = "1.1.0"
 androidxPagingVersion = "3.3.6"
 androidxPagingComposeVersion = "3.3.6"
-androidxWorkManagerVersion = "2.10.4"
+androidxWorkManagerVersion = "2.10.5"
 androidxWindowManager = "1.4.0"
 
 # ui libraries
