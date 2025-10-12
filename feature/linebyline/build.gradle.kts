@@ -35,6 +35,9 @@ dependencies {
 
   implementation(libs.compose.ui)
   implementation(libs.compose.material)
+
+  // implementation but removed for release builds
+  implementation(libs.compose.ui.tooling)
   implementation(libs.compose.ui.tooling.preview)
 
   implementation(libs.kotlinx.collections.immutable)
@@ -46,5 +49,5 @@ dependencies {
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.kotlinx.coroutines.android)
 
-  debugImplementation(libs.compose.ui.tooling)
+  implementation(libs.compose.ui.tooling)
 }

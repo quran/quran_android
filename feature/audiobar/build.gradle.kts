@@ -24,8 +24,10 @@ dependencies {
   implementation(libs.compose.material)
   implementation(libs.compose.material3)
   implementation(libs.compose.ui)
+
+  // implementation but removed for release builds
   implementation(libs.compose.ui.tooling.preview)
-  debugImplementation(libs.compose.ui.tooling)
+  implementation(libs.compose.ui.tooling)
 
   // dagger
   implementation(libs.dagger.runtime)

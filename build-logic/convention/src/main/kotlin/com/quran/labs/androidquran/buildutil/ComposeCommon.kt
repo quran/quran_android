@@ -48,3 +48,16 @@ fun CommonExtension<*, *, *, *, *, *>.applyComposeCommon(project: Project) {
     }
   }
 }
+
+private const val ComposeUiGroup = "androidx.compose.ui"
+private const val ComposeUiTooling = "ui-tooling"
+private const val ComposeUiToolingData = "ui-tooling-data"
+
+fun Project.excludeComposeUiToolingFromRelease() {
+  configurations
+    .matching { it.name.contains("release", ignoreCase = true) }
+    .configureEach {
+      exclude(mapOf("group" to ComposeUiGroup, "module" to ComposeUiTooling))
+      exclude(mapOf("group" to ComposeUiGroup, "module" to ComposeUiToolingData))
+    }
+}

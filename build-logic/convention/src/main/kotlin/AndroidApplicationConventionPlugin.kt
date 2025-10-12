@@ -4,6 +4,7 @@ import com.quran.labs.androidquran.buildutil.applyBoms
 import com.quran.labs.androidquran.buildutil.applyComposeCommon
 import com.quran.labs.androidquran.buildutil.applyJavaCommon
 import com.quran.labs.androidquran.buildutil.applyKotlinCommon
+import com.quran.labs.androidquran.buildutil.excludeComposeUiToolingFromRelease
 import com.quran.labs.androidquran.buildutil.withLibraries
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -30,6 +31,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
       applyJavaCommon()
       applyKotlinCommon()
       applyBoms()
+      excludeComposeUiToolingFromRelease()
     }
   }
 }
