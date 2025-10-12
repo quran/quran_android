@@ -4,8 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.audio.model.QariItem
+import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.mobile.feature.qarilist.R
 
 @Composable
@@ -38,7 +37,7 @@ fun QariRow(
 
     if (isSelected) {
       Icon(
-        imageVector = Icons.Filled.Check,
+        imageVector = QuranIcons.Check,
         contentDescription = stringResource(R.string.qarilist_selected),
         tint = MaterialTheme.colorScheme.primary,
         modifier = Modifier.align(Alignment.CenterVertically)

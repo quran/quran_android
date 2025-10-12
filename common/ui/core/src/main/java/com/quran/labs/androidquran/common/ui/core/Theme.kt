@@ -2,80 +2,96 @@ package com.quran.labs.androidquran.common.ui.core
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 
 private val LightColors = lightColorScheme(
-    primary = lightPrimary,
-    onPrimary = lightOnPrimary,
-    primaryContainer = lightPrimaryContainer,
-    onPrimaryContainer = lightOnPrimaryContainer,
-    secondary = lightSecondary,
-    onSecondary = lightOnSecondary,
-    secondaryContainer = lightSecondaryContainer,
-    onSecondaryContainer = lightOnSecondaryContainer,
-    tertiary = lightTertiary,
-    onTertiary = lightOnTertiary,
-    tertiaryContainer = lightTertiaryContainer,
-    onTertiaryContainer = lightOnTertiaryContainer,
-    error = lightError,
-    errorContainer = lightErrorContainer,
-    onError = lightOnError,
-    onErrorContainer = lightOnErrorContainer,
-    background = lightBackground,
-    onBackground = lightOnBackground,
-    surface = lightSurface,
-    onSurface = lightOnSurface,
-    surfaceVariant = lightSurfaceVariant,
-    onSurfaceVariant = lightOnSurfaceVariant,
-    outline = lightOutline,
-    inverseOnSurface = lightInverseOnSurface,
-    inverseSurface = lightInverseSurface,
-    inversePrimary = lightInversePrimary,
-    surfaceTint = lightSurfaceTint,
-    surfaceContainerHighest = lightSurfaceColorHighest
+  primary = lightPrimary,
+  onPrimary = lightOnPrimary,
+  primaryContainer = lightPrimaryContainer,
+  onPrimaryContainer = lightOnPrimaryContainer,
+  secondary = lightSecondary,
+  onSecondary = lightOnSecondary,
+  secondaryContainer = lightSecondaryContainer,
+  onSecondaryContainer = lightOnSecondaryContainer,
+  tertiary = lightTertiary,
+  onTertiary = lightOnTertiary,
+  tertiaryContainer = lightTertiaryContainer,
+  onTertiaryContainer = lightOnTertiaryContainer,
+  error = lightError,
+  errorContainer = lightErrorContainer,
+  onError = lightOnError,
+  onErrorContainer = lightOnErrorContainer,
+  background = lightBackground,
+  onBackground = lightOnBackground,
+  surface = lightSurface,
+  onSurface = lightOnSurface,
+  surfaceVariant = lightSurfaceVariant,
+  onSurfaceVariant = lightOnSurfaceVariant,
+  outline = lightOutline,
+  inverseOnSurface = lightInverseOnSurface,
+  inverseSurface = lightInverseSurface,
+  inversePrimary = lightInversePrimary,
+  surfaceTint = lightSurfaceTint,
+  surfaceContainerHighest = lightSurfaceColorHighest
 )
 
 private val DarkColors = darkColorScheme(
-    primary = darkPrimary,
-    onPrimary = darkOnPrimary,
-    primaryContainer = darkPrimaryContainer,
-    onPrimaryContainer = darkOnPrimaryContainer,
-    secondary = darkSecondary,
-    onSecondary = darkOnSecondary,
-    secondaryContainer = darkSecondaryContainer,
-    onSecondaryContainer = darkOnSecondaryContainer,
-    tertiary = darkTertiary,
-    onTertiary = darkOnTertiary,
-    tertiaryContainer = darkTertiaryContainer,
-    onTertiaryContainer = darkOnTertiaryContainer,
-    error = darkError,
-    errorContainer = darkErrorContainer,
-    onError = darkOnError,
-    onErrorContainer = darkOnErrorContainer,
-    background = darkBackground,
-    onBackground = darkOnBackground,
-    surface = darkSurface,
-    onSurface = darkOnSurface,
-    surfaceVariant = darkSurfaceVariant,
-    onSurfaceVariant = darkOnSurfaceVariant,
-    outline = darkOutline,
-    inverseOnSurface = darkInverseOnSurface,
-    inverseSurface = darkInverseSurface,
-    inversePrimary = darkInversePrimary,
-    surfaceTint = darkSurfaceTint,
-    surfaceContainerHighest = darkSurfaceColorHighest
+  primary = darkPrimary,
+  onPrimary = darkOnPrimary,
+  primaryContainer = darkPrimaryContainer,
+  onPrimaryContainer = darkOnPrimaryContainer,
+  secondary = darkSecondary,
+  onSecondary = darkOnSecondary,
+  secondaryContainer = darkSecondaryContainer,
+  onSecondaryContainer = darkOnSecondaryContainer,
+  tertiary = darkTertiary,
+  onTertiary = darkOnTertiary,
+  tertiaryContainer = darkTertiaryContainer,
+  onTertiaryContainer = darkOnTertiaryContainer,
+  error = darkError,
+  errorContainer = darkErrorContainer,
+  onError = darkOnError,
+  onErrorContainer = darkOnErrorContainer,
+  background = darkBackground,
+  onBackground = darkOnBackground,
+  surface = darkSurface,
+  onSurface = darkOnSurface,
+  surfaceVariant = darkSurfaceVariant,
+  onSurfaceVariant = darkOnSurfaceVariant,
+  outline = darkOutline,
+  inverseOnSurface = darkInverseOnSurface,
+  inverseSurface = darkInverseSurface,
+  inversePrimary = darkInversePrimary,
+  surfaceTint = darkSurfaceTint,
+  surfaceContainerHighest = darkSurfaceColorHighest
 )
 
 private val forceLtr = listOf("huawei", "lenovo", "tecno")
 
-val QuranIcons = Icons.Filled
+object QuranIcons {
+  val ArrowBack: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ArrowBack
+  val Chat: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Chat
+  val Check: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Check
+  val Close: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Close
+  val ExpandMore: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ExpandMore
+  val FastForward: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.FastForward
+  val FastRewind: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.FastRewind
+  val MenuBook: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.MenuBook
+  val Mic: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Mic
+  val Pause: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Pause
+  val PlayArrow: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.PlayArrow
+  val Repeat: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Repeat
+  val Settings: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Settings
+  val Speed: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Speed
+  val Stop: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Stop
+}
 
 @Composable
 fun QuranTheme(

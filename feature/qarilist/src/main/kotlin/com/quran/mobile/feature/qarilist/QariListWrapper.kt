@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.repository.CurrentQariManager
+import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.qarilist.di.QariListWrapperInjector
 import com.quran.mobile.feature.qarilist.presenter.QariListPresenter
@@ -116,7 +115,7 @@ class QariListWrapper(
               navigationIcon = {
                 IconButton(onClick = { closeDialog() }) {
                   Icon(
-                    imageVector = Icons.Filled.Close,
+                    imageVector = QuranIcons.Close,
                     contentDescription = stringResource(R.string.qarilist_dismiss)
                   )
                 }

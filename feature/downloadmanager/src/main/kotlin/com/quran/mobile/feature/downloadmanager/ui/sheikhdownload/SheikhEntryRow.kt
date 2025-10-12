@@ -6,8 +6,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.mobile.feature.downloadmanager.R
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.EntryForQari
 import com.quran.mobile.feature.downloadmanager.ui.common.DownloadCommonRow
@@ -51,7 +50,7 @@ fun SheikhEntryRow(
       onRowLongPressed = { onEntryLongClicked(sheikhEntryUiModel) }
     ) {
       Image(
-        imageVector = Icons.Filled.Close,
+        imageVector = QuranIcons.Close,
         contentDescription = stringResource(deleteEntryResourceId),
         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onError),
         modifier = Modifier
@@ -82,4 +81,3 @@ fun SheikhEntryRow(
     }
   }
 }
-
