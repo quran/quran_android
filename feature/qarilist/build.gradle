@@ -26,8 +26,10 @@ dependencies {
   implementation libs.compose.material
   implementation libs.compose.material3
   implementation libs.compose.ui
+
+  // implementation but removed for release builds
+  implementation libs.compose.ui.tooling
   implementation libs.compose.ui.tooling.preview
-  debugImplementation libs.compose.ui.tooling
 
   // immutable collections
   implementation libs.kotlinx.collections.immutable

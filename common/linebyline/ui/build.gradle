@@ -11,7 +11,8 @@ dependencies {
 
   implementation libs.compose.ui
   implementation libs.compose.material
-  implementation libs.compose.ui.tooling.preview
 
-  debugImplementation libs.compose.ui.tooling
+  // implementation but removed for release builds
+  implementation libs.compose.ui.tooling.preview
+  implementation libs.compose.ui.tooling
 }
