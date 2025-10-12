@@ -1,13 +1,12 @@
 package com.quran.mobile.feature.downloadmanager.ui.sheikhdownload
 
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.mobile.feature.downloadmanager.R
 import com.quran.mobile.feature.downloadmanager.ui.common.DownloadManagerToolbar
 
@@ -35,7 +34,7 @@ fun SheikhDownloadToolbar(
     if (removeIcon) {
       IconButton(onClick = eraseAction) {
         Icon(
-          imageVector = Icons.Filled.Close,
+          imageVector = QuranIcons.Close,
           contentDescription = stringResource(id = R.string.audio_manager_delete_selection)
         )
       }
