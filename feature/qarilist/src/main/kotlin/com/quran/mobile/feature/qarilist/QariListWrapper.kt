@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -101,6 +102,7 @@ class QariListWrapper(
         sheetPeekHeight = 0.dp,
         sheetDragHandle = null,
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        containerColor = Color.Transparent,
         sheetContainerColor = MaterialTheme.colorScheme.surface,
         sheetContentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.background),
         sheetContent = {
