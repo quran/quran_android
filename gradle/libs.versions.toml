@@ -46,7 +46,7 @@ androidxSwipeRefreshVersion = "1.1.0"
 androidxPagingVersion = "3.3.6"
 androidxPagingComposeVersion = "3.3.6"
 androidxWorkManagerVersion = "2.10.5"
-androidxWindowManager = "1.4.0"
+androidxWindowManager = "1.5.0"
 
 # ui libraries
 accompanistVersion = "0.36.0"
