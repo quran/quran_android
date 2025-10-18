@@ -3,14 +3,16 @@ package com.quran.data.model.bookmark
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class Bookmark @JvmOverloads constructor(val id: Long,
-                                              // sura and ayah are nullable for page bookmarks
-                                              val sura: Int?,
-                                              val ayah: Int?,
-                                              val page: Int,
-                                              val timestamp: Long = System.currentTimeMillis(),
-                                              val tags: List<Long> = emptyList(),
-                                              val ayahText: String? = null) {
+data class Bookmark @JvmOverloads constructor(
+  val id: Long,
+  // sura and ayah are nullable for page bookmarks
+  val sura: Int?,
+  val ayah: Int?,
+  val page: Int,
+  val timestamp: Long = System.currentTimeMillis(),
+  val tags: List<Long> = emptyList(),
+  val ayahText: String? = null
+) {
 
   fun isPageBookmark() = sura == null && ayah == null
 
@@ -23,11 +25,12 @@ data class Bookmark @JvmOverloads constructor(val id: Long,
   }
 
   fun getCommaSeparatedNames() =
-      "type, sura, ayah, page, timestamp, tags"
+    "type, sura, ayah, page, timestamp, tags"
 
   fun getCommaSeparatedValues(tagsList: List<Tag>) =
-      "bookmark, $sura, $ayah, $page, $timestamp, ${getSemiColonSeparatedTags(tagsList)}"
+    "bookmark, $sura, $ayah, $page, $timestamp, ${getSemiColonSeparatedTags(tagsList)}"
 
   private fun getSemiColonSeparatedTags(tagsList: List<Tag>) =
-      tags.map { tagsList.find { tag -> tag.id == it }?.name }.reduceOrNull { tags, tag -> "$tags$tag|" }
+    tags.map { tagsList.find { tag -> tag.id == it }?.name }
+      .reduceOrNull { tags, tag -> "$tags$tag|" }
 }
