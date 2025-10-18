@@ -1,14 +1,16 @@
 plugins {
   id("quran.android.library.android")
   id("app.cash.sqldelight")
-  alias(libs.plugins.anvil)
+  alias(libs.plugins.metro)
 }
 
 android.namespace = "com.quran.mobile.linebyline.data"
 
-anvil {
-  useKsp(contributesAndFactoryGeneration = true)
-  generateDaggerFactories.set(true)
+metro {
+  interop {
+    includeDagger()
+    includeAnvil()
+  }
 }
 
 dependencies {

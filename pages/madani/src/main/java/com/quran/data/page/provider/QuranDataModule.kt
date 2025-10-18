@@ -11,7 +11,6 @@ import com.quran.page.common.draw.ImageDrawHelper
 import com.quran.page.common.factory.PageViewFactoryProvider
 import dagger.Module
 import dagger.Provides
-import dagger.Reusable
 import dagger.multibindings.ElementsIntoSet
 import dagger.multibindings.IntoMap
 import dagger.multibindings.StringKey
@@ -54,7 +53,6 @@ object QuranDataModule {
   fun providePreferencesUpgrade(): PreferencesUpgrade = PreferencesUpgrade { _, _, _ -> true }
 
   @JvmStatic
-  @Reusable
   @Provides
   fun provideAyahMapper(): AyahMapper = IdentityAyahMapper()
 }

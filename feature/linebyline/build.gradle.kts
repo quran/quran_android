@@ -1,13 +1,15 @@
 plugins {
   id("quran.android.library.compose")
-  alias(libs.plugins.anvil)
+  alias(libs.plugins.metro)
 }
 
 android.namespace = "com.quran.labs.androidquran.extra.feature.linebyline"
 
-anvil {
-  useKsp(contributesAndFactoryGeneration = true)
-  generateDaggerFactories.set(true)
+metro {
+  interop {
+    includeDagger()
+    includeAnvil()
+  }
 }
 
 // https://issuetracker.google.com/issues/372756067

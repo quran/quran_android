@@ -5,10 +5,8 @@ import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.presenter.data.QuranEventLogger.AudioPlaybackSource.PAGE
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
-import dagger.Reusable
 import javax.inject.Inject
 
-@Reusable
 class QuranEventLogger @Inject constructor(
   private val analyticsProvider: AnalyticsProvider,
   private val quranSettings: QuranSettings

@@ -34,14 +34,14 @@ import com.quran.labs.androidquran.widget.BookmarksWidgetListProvider
 import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
 import com.quran.mobile.di.QuranApplicationComponent
 import com.quran.mobile.di.qualifier.ApplicationContext
-import com.squareup.anvil.annotations.MergeComponent
-import dagger.BindsInstance
+import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Provides
 import javax.inject.Singleton
 
 @Singleton
-@MergeComponent(
+@DependencyGraph(
   AppScope::class,
-  modules = [
+  bindingContainers = [
     AnalyticsModule::class,
     ApplicationModule::class,
     DatabaseModule::class,
@@ -91,8 +91,8 @@ interface ApplicationComponent : QuranApplicationComponent {
   fun inject(bookmarksWidgetListProvider: BookmarksWidgetListProvider)
   fun inject(bookmarksWidget: BookmarksWidget)
 
-  @MergeComponent.Factory
+  @DependencyGraph.Factory
   interface Factory {
-    fun generate(@BindsInstance @ApplicationContext appContext: Context): ApplicationComponent
+    fun generate(@Provides @ApplicationContext appContext: Context): ApplicationComponent
   }
 }

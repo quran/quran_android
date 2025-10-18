@@ -7,7 +7,6 @@ import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.ImageUtil
 import com.quran.labs.androidquran.util.QuranFileUtils
-import dagger.Reusable
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -15,7 +14,6 @@ import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
-@Reusable
 class PageSelectPresenter @Inject
 constructor(
   private val imageUtil: ImageUtil,

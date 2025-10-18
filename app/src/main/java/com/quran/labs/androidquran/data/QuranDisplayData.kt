@@ -10,7 +10,7 @@ import com.quran.data.model.SuraAyahIterator
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.page.common.data.QuranNaming
-import com.squareup.anvil.annotations.ContributesBinding
+import dev.zacsweers.metro.ContributesBinding
 import timber.log.Timber
 import javax.inject.Inject
 import com.quran.mobile.common.ui.core.R as UiCoreR

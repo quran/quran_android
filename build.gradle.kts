@@ -9,5 +9,5 @@ plugins {
   alias(libs.plugins.errorprone) apply false
   alias(libs.plugins.google.services) apply false
   alias(libs.plugins.sqldelight) apply false
-  alias(libs.plugins.anvil) apply false
+  alias(libs.plugins.metro) apply false
 }

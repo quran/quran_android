@@ -2,10 +2,8 @@ package com.quran.labs.androidquran.presenter.data
 
 import com.quran.analytics.AnalyticsProvider
 import com.quran.labs.androidquran.util.QuranSettings
-import dagger.Reusable
 import javax.inject.Inject
 
-@Reusable
 class QuranIndexEventLoggerImpl @Inject constructor(
   private val analyticsProvider: AnalyticsProvider,
   private val quranSettings: QuranSettings

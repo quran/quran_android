@@ -1,14 +1,16 @@
 plugins {
   id("quran.android.library.compose")
-  alias(libs.plugins.anvil)
+  alias(libs.plugins.metro)
   alias(libs.plugins.ksp)
 }
 
 android.namespace = "com.quran.mobile.feature.audiobar"
 
-anvil {
-  useKsp(true)
-  generateDaggerFactories.set(true)
+metro {
+  interop {
+    includeDagger()
+    includeAnvil()
+  }
 }
 
 dependencies {

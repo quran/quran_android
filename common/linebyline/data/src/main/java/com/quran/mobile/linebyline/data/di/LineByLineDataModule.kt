@@ -7,9 +7,9 @@ import com.quran.data.di.QuranReadingScope
 import com.quran.data.di.QuranScope
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.mobile.linebyline.data.Database
-import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
+import dev.zacsweers.metro.ContributesTo
 
 @Module
 @ContributesTo(QuranReadingScope::class)

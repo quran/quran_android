@@ -12,11 +12,11 @@ import com.quran.mobile.di.QuranReadingActivityComponent
 import com.quran.mobile.feature.audiobar.AudioBarWrapper
 import com.quran.mobile.feature.qarilist.QariListWrapper
 import com.quran.page.common.toolbar.AyahToolBar
-import com.squareup.anvil.annotations.MergeSubcomponent
-import dagger.BindsInstance
+import dev.zacsweers.metro.GraphExtension
+import dev.zacsweers.metro.Provides
 
 @QuranScope
-@MergeSubcomponent(QuranReadingScope::class)
+@GraphExtension(QuranReadingScope::class)
 interface PagerActivityComponent : QuranReadingActivityComponent {
   // subcomponents
   fun quranPageComponentFactory(): QuranPageComponent.Factory
@@ -31,10 +31,8 @@ interface PagerActivityComponent : QuranReadingActivityComponent {
   fun inject(qariListWrapper: QariListWrapper)
   fun inject(audioBarWrapper: AudioBarWrapper)
 
-  @MergeSubcomponent.Factory
+  @GraphExtension.Factory
   interface Factory {
-    fun generate(
-      @BindsInstance ayahSelectedListener: AyahSelectedListener
-    ): PagerActivityComponent
+    fun generate(@Provides ayahSelectedListener: AyahSelectedListener): PagerActivityComponent
   }
 }

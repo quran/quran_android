@@ -6,18 +6,18 @@ import com.quran.labs.androidquran.ui.fragment.QuranPageFragment
 import com.quran.labs.androidquran.ui.fragment.TabletFragment
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment
 import com.quran.mobile.di.QuranReadingPageComponent
-import com.squareup.anvil.annotations.MergeSubcomponent
-import dagger.BindsInstance
+import dev.zacsweers.metro.GraphExtension
+import dev.zacsweers.metro.Provides
 
 @QuranPageScope
-@MergeSubcomponent(QuranReadingPageScope::class)
+@GraphExtension(QuranReadingPageScope::class)
 interface QuranPageComponent: QuranReadingPageComponent {
   fun inject(quranPageFragment: QuranPageFragment)
   fun inject(tabletFragment: TabletFragment)
   fun inject(translationFragment: TranslationFragment)
 
-  @MergeSubcomponent.Factory
+  @GraphExtension.Factory
   interface Factory {
-    fun generate(@BindsInstance pages: IntArray): QuranPageComponent
+    fun generate(@Provides pages: IntArray): QuranPageComponent
   }
 }

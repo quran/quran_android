@@ -4,18 +4,18 @@ import android.content.Context
 import com.quran.data.di.ActivityLevelScope
 import com.quran.data.di.ActivityScope
 import com.quran.mobile.di.qualifier.ActivityContext
-import com.squareup.anvil.annotations.MergeSubcomponent
-import dagger.BindsInstance
+import dev.zacsweers.metro.GraphExtension
+import dev.zacsweers.metro.Provides
 
 @ActivityScope
-@MergeSubcomponent(ActivityLevelScope::class)
+@GraphExtension(ActivityLevelScope::class)
 interface ActivityComponent {
   // subcomponents
   fun pagerActivityComponentFactory(): PagerActivityComponent.Factory
   fun quranActivityComponentFactory(): QuranActivityComponent.Factory
 
-  @MergeSubcomponent.Factory
+  @GraphExtension.Factory
   interface Factory {
-    fun generate(@BindsInstance @ActivityContext context: Context): ActivityComponent
+    fun generate(@Provides @ActivityContext context: Context): ActivityComponent
   }
 }

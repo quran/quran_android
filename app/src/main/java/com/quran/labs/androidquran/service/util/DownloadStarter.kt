@@ -11,12 +11,12 @@ import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.mobile.common.download.Downloader
 import com.quran.mobile.di.qualifier.ApplicationContext
-import com.squareup.anvil.annotations.ContributesBinding
+import dev.zacsweers.metro.ContributesBinding
 import javax.inject.Inject
 
 @ContributesBinding(AppScope::class)
 class DownloadStarter @Inject constructor(
-  @ApplicationContext private val appContext: Context,
+  @param:ApplicationContext private val appContext: Context,
   private val fileManager: QuranFileManager,
   private val audioUtils: AudioUtils,
   private val audioExtensionDecider: AudioExtensionDecider

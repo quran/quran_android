@@ -5,13 +5,13 @@ import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.quran.labs.androidquran.core.worker.QuranWorkerFactory
 import com.quran.labs.androidquran.di.component.application.ApplicationComponent
-import com.quran.labs.androidquran.di.component.application.DaggerApplicationComponent
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.RecordingLogTree
 import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.labs.androidquran.widget.BookmarksWidgetSubscriber
 import com.quran.mobile.di.QuranApplicationComponent
 import com.quran.mobile.di.QuranApplicationComponentProvider
+import dev.zacsweers.metro.createGraphFactory
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -44,7 +44,7 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider {
   }
 
   open fun initializeInjector(): ApplicationComponent {
-    return DaggerApplicationComponent.factory()
+    return createGraphFactory<ApplicationComponent.Factory>()
       .generate(this)
   }
 

@@ -1,7 +1,7 @@
 package com.quran.mobile.feature.downloadmanager.di
 
 import com.quran.data.di.AppScope
-import com.squareup.anvil.annotations.ContributesTo
+import dev.zacsweers.metro.ContributesTo
 
 @ContributesTo(AppScope::class)
 interface DownloadManagerComponentInterface {
