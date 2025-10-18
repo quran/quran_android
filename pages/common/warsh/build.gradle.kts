@@ -1,13 +1,15 @@
 plugins {
   id("quran.android.library.android")
-  alias(libs.plugins.anvil)
+  alias(libs.plugins.metro)
 }
 
 android.namespace = "com.quran.labs.androidquran.pages.common.warsh"
 
-anvil {
-  useKsp(contributesAndFactoryGeneration = true)
-  generateDaggerFactories.set(true)
+metro {
+  interop {
+    includeDagger()
+    includeAnvil()
+  }
 }
 
 dependencies {

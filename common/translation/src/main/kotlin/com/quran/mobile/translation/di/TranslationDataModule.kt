@@ -5,9 +5,9 @@ import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.quran.data.di.AppScope
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.mobile.translation.data.TranslationsDatabase
-import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
+import dev.zacsweers.metro.ContributesTo
 import javax.inject.Singleton
 
 @Module

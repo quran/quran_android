@@ -4,7 +4,7 @@ import com.quran.data.di.AppScope
 import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
-import com.squareup.anvil.annotations.ContributesBinding
+import dev.zacsweers.metro.ContributesBinding
 import javax.inject.Inject
 
 @ContributesBinding(AppScope::class)

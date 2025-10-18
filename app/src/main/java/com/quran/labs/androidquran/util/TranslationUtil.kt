@@ -3,9 +3,7 @@ package com.quran.labs.androidquran.util
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.QuranText
 import com.quran.labs.androidquran.common.TranslationMetadata
-import dagger.Reusable
 
-@Reusable
 open class TranslationUtil(private val quranInfo: QuranInfo) {
 
   open fun parseTranslationText(quranText: QuranText, translationId: Int): TranslationMetadata {

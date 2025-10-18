@@ -16,11 +16,9 @@ import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.util.ToastCompat
 import com.quran.mobile.translation.model.LocalTranslation
-import dagger.Reusable
 import java.text.NumberFormat
 import javax.inject.Inject
 
-@Reusable
 class ShareUtil @Inject internal constructor(private val quranDisplayData: QuranDisplayData) {
 
   fun copyVerses(activity: Activity, verses: List<QuranText>) {

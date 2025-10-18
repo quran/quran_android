@@ -4,15 +4,15 @@ import com.quran.data.di.ActivityLevelScope
 import com.quran.data.di.ActivityScope
 import com.quran.mobile.feature.downloadmanager.AudioManagerActivity
 import com.quran.mobile.feature.downloadmanager.SheikhAudioDownloadsActivity
-import com.squareup.anvil.annotations.MergeSubcomponent
+import dev.zacsweers.metro.GraphExtension
 
 @ActivityScope
-@MergeSubcomponent(ActivityLevelScope::class)
+@GraphExtension(ActivityLevelScope::class)
 interface DownloadManagerComponent {
   fun inject(audioManagerActivity: AudioManagerActivity)
   fun inject(sheikhAudioDownloadsActivity: SheikhAudioDownloadsActivity)
 
-  @MergeSubcomponent.Factory
+  @GraphExtension.Factory
   interface Factory {
     fun generate(): DownloadManagerComponent
   }

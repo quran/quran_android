@@ -11,9 +11,9 @@ import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.mobile.bookmark.Bookmarks
 import com.quran.mobile.bookmark.Last_pages
 import com.quran.mobile.di.qualifier.ApplicationContext
-import com.squareup.anvil.annotations.ContributesTo
 import dagger.Module
 import dagger.Provides
+import dev.zacsweers.metro.ContributesTo
 import kotlinx.coroutines.runBlocking
 import javax.inject.Singleton
 

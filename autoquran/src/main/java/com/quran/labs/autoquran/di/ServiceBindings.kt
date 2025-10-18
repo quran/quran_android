@@ -2,19 +2,16 @@ package com.quran.labs.autoquran.di
 
 import android.content.Context
 import com.quran.data.model.audio.Qari
-import com.quran.data.page.provider.QuranDataModule
 import com.quran.data.source.PageProvider
 import com.quran.data.source.QuranDataSource
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
-import com.quran.labs.feature.autoquran.service.QuranBrowsableAudioPlaybackService
 import com.quran.mobile.di.qualifier.ApplicationContext
-import dagger.Component
-import dagger.Module
 import dagger.Provides
+import dev.zacsweers.metro.BindingContainer
 
-@Module
-class ServiceModule(private val appContext: Context) {
+@BindingContainer
+class ServiceBindings(private val appContext: Context) {
 
   @ApplicationContext
   @Provides
@@ -41,9 +38,4 @@ class ServiceModule(private val appContext: Context) {
       override fun allowedAudioExtensions(qariItem: QariItem): List<String> = listOf("mp3")
     }
   }
-}
-
-@Component(modules = [ServiceModule::class, QuranDataModule::class])
-interface ServiceComponent {
-  fun inject(service: QuranBrowsableAudioPlaybackService)
 }

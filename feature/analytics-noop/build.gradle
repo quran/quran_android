@@ -1,13 +1,14 @@
 plugins {
   id 'quran.android.library'
-  alias libs.plugins.anvil
+  alias libs.plugins.metro
 }
 
-anvil {
-  useKsp(true)
-  generateDaggerFactories.set(true)
+metro {
+  interop {
+    includeDagger()
+    includeAnvil()
+  }
 }
-
 
 dependencies {
   implementation project(":common:analytics")

@@ -2,16 +2,16 @@ package com.quran.labs.androidquran.di.component.activity
 
 import com.quran.data.di.QuranActivityLevelScope
 import com.quran.data.di.QuranActivityScope
-import com.quran.labs.androidquran.di.module.activity.QuranActivityModule
+import com.quran.labs.androidquran.di.module.activity.QuranActivityBindingContainer
 import com.quran.labs.androidquran.ui.QuranActivity
-import com.squareup.anvil.annotations.MergeSubcomponent
+import dev.zacsweers.metro.GraphExtension
 
 @QuranActivityScope
-@MergeSubcomponent(scope = QuranActivityLevelScope::class, modules = [QuranActivityModule::class])
+@GraphExtension(scope = QuranActivityLevelScope::class, bindingContainers = [QuranActivityBindingContainer::class])
 interface QuranActivityComponent {
   fun inject(quranActivity: QuranActivity)
 
-  @MergeSubcomponent.Factory
+  @GraphExtension.Factory
   interface Factory {
     fun generate(): QuranActivityComponent
   }

@@ -1,12 +1,14 @@
 plugins {
   // only Android because of the build version check
   id("quran.android.library.android")
-  alias(libs.plugins.anvil)
+  alias(libs.plugins.metro)
 }
 
-anvil {
-  useKsp(contributesAndFactoryGeneration = true)
-  generateDaggerFactories.set(true)
+metro {
+  interop {
+    includeDagger()
+    includeAnvil()
+  }
 }
 
 android.namespace = "com.quran.common.networking"

@@ -1,12 +1,12 @@
 import net.ltgt.gradle.errorprone.ErrorProneOptions
-import java.util.Locale
+import java.util.*
 
 plugins {
   id("quran.android.application")
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.ksp)
   alias(libs.plugins.errorprone)
-  alias(libs.plugins.anvil)
+  alias(libs.plugins.metro)
 }
 
 // whether or not to use Firebase - Firebase is enabled by default, and is only disabled for
@@ -20,11 +20,11 @@ if (getGradle().startParameter.taskRequests.toString().contains("Release") && us
   apply(plugin = "com.google.firebase.crashlytics")
 }
 
-anvil {
-  useKsp(
-    contributesAndFactoryGeneration = true,
-    componentMerging = true
-  )
+metro {
+  interop {
+    includeDagger()
+    includeAnvil()
+  }
 }
 
 android {
@@ -228,7 +228,6 @@ dependencies {
   testImplementation(libs.espresso.intents)
   testImplementation(libs.turbine)
   testImplementation(libs.kotlinx.coroutines.test)
-  testImplementation(project(":pages:data:madani"))
 
   errorprone(libs.errorprone.core)
 
