@@ -14,7 +14,6 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter
 import com.quran.labs.androidquran.presenter.translation.InlineTranslationPresenter.TranslationScreen
-import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
@@ -23,12 +22,10 @@ import com.quran.labs.androidquran.view.InlineTranslationView
 import com.quran.labs.androidquran.view.QuranSpinner
 import com.quran.mobile.di.AyahActionFragmentProvider
 import com.quran.mobile.translation.model.LocalTranslation
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlin.math.abs
 
 class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {

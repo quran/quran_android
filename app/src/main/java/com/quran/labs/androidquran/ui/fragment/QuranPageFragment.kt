@@ -38,8 +38,8 @@ import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
 import com.quran.page.common.draw.ImageDrawHelper
 import com.quran.reading.common.ReadingEventPresenter
+import dev.zacsweers.metro.Inject
 import timber.log.Timber
-import javax.inject.Inject
 
 class QuranPageFragment : Fragment(), PageController, QuranPage, QuranPageScreen,
   AyahInteractionHandler {

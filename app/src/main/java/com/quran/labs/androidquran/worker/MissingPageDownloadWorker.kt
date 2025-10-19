@@ -8,6 +8,7 @@ import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.core.worker.WorkerTaskFactory
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.asFlow
@@ -17,7 +18,6 @@ import kotlinx.coroutines.flow.toList
 import okhttp3.OkHttpClient
 import timber.log.Timber
 import java.io.File
-import javax.inject.Inject
 
 class MissingPageDownloadWorker(private val context: Context,
                                 params: WorkerParameters,

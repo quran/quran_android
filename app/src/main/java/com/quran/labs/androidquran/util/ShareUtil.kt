@@ -16,8 +16,8 @@ import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.util.ToastCompat
 import com.quran.mobile.translation.model.LocalTranslation
+import dev.zacsweers.metro.Inject
 import java.text.NumberFormat
-import javax.inject.Inject
 
 class ShareUtil @Inject internal constructor(private val quranDisplayData: QuranDisplayData) {
 

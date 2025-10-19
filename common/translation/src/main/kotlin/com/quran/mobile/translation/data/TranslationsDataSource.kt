@@ -2,18 +2,19 @@ package com.quran.mobile.translation.data
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.quran.data.di.AppScope
 import com.quran.mobile.translation.mapper.LocalTranslationMapper
 import com.quran.mobile.translation.model.LocalTranslation
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 class TranslationsDataSource @Inject constructor(translationsDatabase: TranslationsDatabase) {
   private val translationsQueries = translationsDatabase.translationsQueries
 

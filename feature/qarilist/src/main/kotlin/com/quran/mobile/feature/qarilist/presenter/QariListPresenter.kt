@@ -9,11 +9,11 @@ import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
 import com.quran.mobile.feature.qarilist.R
 import com.quran.mobile.feature.qarilist.model.QariUiModel
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 @ActivityScope
 class QariListPresenter @Inject constructor(private val qariDownloadInfoManager: QariDownloadInfoManager) {

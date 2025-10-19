@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string name="app_name">Kurani</string>
   <string name="downloadPrompt_title">Shkarko Skedarët e Kërkuar?</string>
   <string name="downloadPrompt">Në mënyrë që Kur\'ani Android të punojë siç duhet, ne duhet të shkarkojmë disa skedarë. Nëse nuk e bëni këtë tani, aplikacioni mund të mos funksionojë në mënyrë të besueshme dhe do të kërkojë një lidhje interneti për lexim. Dëshironi të shkarkoni skedarët e kërkuar tani?

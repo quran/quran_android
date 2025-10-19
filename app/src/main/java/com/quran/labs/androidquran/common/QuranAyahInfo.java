@@ -1,12 +1,12 @@
 package com.quran.labs.androidquran.common;
 
-import java.util.Collections;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.quran.data.model.SuraAyah;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * QuranAyahInfo

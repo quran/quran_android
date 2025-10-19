@@ -6,9 +6,9 @@ import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider
 import com.quran.page.common.data.AyahBounds
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
+import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import javax.inject.Inject
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min

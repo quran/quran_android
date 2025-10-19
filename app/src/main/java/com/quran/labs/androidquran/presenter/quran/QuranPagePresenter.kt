@@ -10,13 +10,13 @@ import com.quran.labs.androidquran.ui.helpers.QuranPageLoader
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
+import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.observers.DisposableObserver
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 @QuranPageScope
 class QuranPagePresenter @Inject constructor(

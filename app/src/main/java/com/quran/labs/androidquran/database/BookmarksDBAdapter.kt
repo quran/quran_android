@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.database
 
 import androidx.core.util.Pair
+import com.quran.data.di.AppScope
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.RecentPage
@@ -9,11 +10,11 @@ import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.labs.androidquran.data.Constants
 import com.quran.mobile.bookmark.mapper.Mappers
 import com.quran.mobile.bookmark.mapper.convergeCommonlyTagged
-import javax.inject.Inject
-import javax.inject.Singleton
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
 @Deprecated("Use BookmarksDao instead")
-@Singleton
+@SingleIn(AppScope::class)
 class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabase) {
   private val tagQueries = bookmarksDatabase.tagQueries
   private val bookmarkQueries = bookmarksDatabase.bookmarkQueries

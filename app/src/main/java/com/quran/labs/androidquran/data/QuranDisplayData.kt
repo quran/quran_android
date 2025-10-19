@@ -11,8 +11,8 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.page.common.data.QuranNaming
 import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.Inject
 import timber.log.Timber
-import javax.inject.Inject
 import com.quran.mobile.common.ui.core.R as UiCoreR
 
 @ContributesBinding(AppScope::class)

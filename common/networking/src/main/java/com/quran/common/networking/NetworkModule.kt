@@ -2,8 +2,12 @@ package com.quran.common.networking
 
 import android.os.Build
 import com.quran.common.networking.dns.DnsModule
-import dagger.Module
-import dagger.Provides
+import com.quran.data.di.AppScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.Named
+import dev.zacsweers.metro.Provider
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import okhttp3.Dns
 import okhttp3.OkHttpClient
 import okhttp3.tls.HandshakeCertificates
@@ -11,11 +15,8 @@ import java.io.ByteArrayInputStream
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
-import javax.inject.Named
-import javax.inject.Provider
-import javax.inject.Singleton
 
-@Module(includes = [DnsModule::class])
+@BindingContainer(includes = [DnsModule::class])
 object NetworkModule {
   private const val DEFAULT_READ_TIMEOUT_SECONDS = 20
   private const val DEFAULT_CONNECT_TIMEOUT_SECONDS = 20
@@ -23,21 +24,21 @@ object NetworkModule {
   private const val LEGACY_OKHTTP_CLIENT = "LEGACY_OKHTTP_CLIENT"
 
   @Provides
-  @Singleton
+  @SingleIn(AppScope::class)
   fun provideOkHttpClient(
     @Named(DEFAULT_OKHTTP_CLIENT) okHttpClientProvider: Provider<OkHttpClient>,
     @Named(LEGACY_OKHTTP_CLIENT) legacyOkHttpClientProvider: Provider<OkHttpClient>
   ): OkHttpClient {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      okHttpClientProvider.get()
+      okHttpClientProvider()
     } else {
-      legacyOkHttpClientProvider.get()
+      legacyOkHttpClientProvider()
     }
   }
 
   @Provides
   @Named(DEFAULT_OKHTTP_CLIENT)
-  @Singleton
+  @SingleIn(AppScope::class)
   fun provideDefaultOkHttpClient(dns: Dns): OkHttpClient {
     return OkHttpClient.Builder()
       .readTimeout(DEFAULT_READ_TIMEOUT_SECONDS.toLong(), TimeUnit.SECONDS)
@@ -48,7 +49,7 @@ object NetworkModule {
 
   @Provides
   @Named(LEGACY_OKHTTP_CLIENT)
-  @Singleton
+  @SingleIn(AppScope::class)
   fun provideLegacyOkHttpClient(dns: Dns, certificates: HandshakeCertificates): OkHttpClient {
     // https://stackoverflow.com/questions/64844311
     return OkHttpClient.Builder()
@@ -60,7 +61,7 @@ object NetworkModule {
   }
 
   @Provides
-  @Singleton
+  @SingleIn(AppScope::class)
   fun provideHandshakeCertificates(): HandshakeCertificates {
     // https://stackoverflow.com/questions/64844311
     val certificate = readCertificate()

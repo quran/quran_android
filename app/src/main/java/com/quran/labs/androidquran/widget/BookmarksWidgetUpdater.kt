@@ -5,7 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import com.quran.labs.androidquran.R
 import com.quran.mobile.di.qualifier.ApplicationContext
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 /**
  * Interface to allow for checking for [BookmarksWidget]s and updating them.

@@ -4,11 +4,12 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import com.quran.data.di.AppScope
 import com.quran.labs.androidquran.common.drawing.util.getDrawableAsAlpha8
-import javax.inject.Inject
-import javax.inject.Singleton
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
-@Singleton
+@SingleIn(AppScope::class)
 class ImageBitmapUtil @Inject constructor() {
   private val cache = mutableMapOf<Int, ImageBitmap>()
 

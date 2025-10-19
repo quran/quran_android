@@ -1,9 +1,9 @@
 package com.quran.labs.androidquran.presenter.audio.service
 
 import com.quran.data.core.QuranInfo
-import com.quran.labs.androidquran.dao.audio.AudioPlaybackInfo
-import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
 import com.quran.data.model.SuraAyah
+import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
+import com.quran.labs.androidquran.dao.audio.AudioPlaybackInfo
 import com.quran.labs.androidquran.extension.requiresBasmallah
 import java.util.Locale
 

@@ -2,10 +2,11 @@ package com.quran.labs.androidquran.view;
 
 import android.content.Context;
 import android.graphics.Rect;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import android.util.AttributeSet;
 import android.widget.AdapterView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 
 /**
  * AutoCompleteTextView that forces to use value from one of the values in adapter (choices).

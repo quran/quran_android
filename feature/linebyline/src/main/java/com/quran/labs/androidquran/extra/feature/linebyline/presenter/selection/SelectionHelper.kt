@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.extra.feature.linebyline.presenter.selection
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.selection.SelectionRectangle
 import com.quran.mobile.linebyline.data.dao.AyahHighlight
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 class SelectionHelper @Inject constructor() {
   private var currentSelectionPoint: Point? = null

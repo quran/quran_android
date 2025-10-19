@@ -6,13 +6,13 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
+import androidx.preference.ListPreference;
+
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.util.QuranSettings;
 import com.quran.labs.androidquran.util.StorageUtils;
 
 import java.util.List;
-
-import androidx.preference.ListPreference;
 
 /**
  * Here we show storage title and free space amount (currently, in MB) in summary.

@@ -27,7 +27,7 @@ import com.quran.labs.androidquran.ui.helpers.BookmarkUIConverter
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter.QuranTouchListener
 import com.quran.labs.androidquran.ui.helpers.QuranRow
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 class BookmarksFragment : Fragment(), QuranTouchListener {
   private var recyclerView: RecyclerView? = null

@@ -1,5 +1,12 @@
 package com.quran.labs.androidquran.model.bookmark;
 
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import androidx.annotation.NonNull;
+
 import com.quran.data.model.bookmark.RecentPage;
 import com.quran.labs.BaseTestExtension;
 import com.quran.labs.androidquran.data.Constants;
@@ -15,18 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.observers.TestObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.schedulers.TestScheduler;
-
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import androidx.annotation.NonNull;
 
 public class RecentPageModelTest {
   private static final List<RecentPage> SAMPLE_RECENT_PAGES = new ArrayList<>();

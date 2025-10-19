@@ -5,13 +5,6 @@ plugins {
 
 android.namespace = "com.quran.labs.androidquran.extra.feature.linebyline"
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 // https://issuetracker.google.com/issues/372756067
 android.lint {
    disable.add("SuspiciousModifierThen")
@@ -26,7 +19,7 @@ dependencies {
   implementation(project(":common:analytics"))
   implementation(project(":common:drawing"))
   implementation(project(":common:linebyline:ui"))
-  // has to be api, otherwise Anvil can't add classes to the correct components
+  // has to be api, otherwise can't add classes to the correct components
   api(project(":common:linebyline:data"))
 
   implementation(libs.androidx.fragment.ktx)
@@ -43,9 +36,6 @@ dependencies {
   implementation(libs.compose.ui.tooling.preview)
 
   implementation(libs.kotlinx.collections.immutable)
-
-  // dagger
-  implementation(libs.dagger.runtime)
 
   // coroutines
   implementation(libs.kotlinx.coroutines.core)

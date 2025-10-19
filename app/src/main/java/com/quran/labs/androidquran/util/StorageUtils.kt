@@ -4,12 +4,9 @@ import android.content.Context
 import android.os.Build
 import android.os.Environment
 import android.os.StatFs
-
 import androidx.core.content.ContextCompat
 import com.quran.labs.androidquran.R
-
 import java.io.File
-import java.util.ArrayList
 
 /**
  * Based on:

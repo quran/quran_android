@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.ui.PagerActivity
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 class QuranForwarderActivity : Activity() {
   @Inject

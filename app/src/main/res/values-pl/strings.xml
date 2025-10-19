@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string name="app_name">Koran</string>
   <string name="downloadPrompt_title">Pobrać wymagane pliki?</string>
   <string name="downloadPrompt">Aby aplikacja Koran Android działała prawidłowo, musimy pobrać pewne pliki. Jeśli nie zrobisz tego teraz, aplikacja może działać nieprawidłowo i będzie wymagać stałego połączenia z Internetem podczas czytania Koranu. Czy chcesz pobrać wymagane pliki teraz?

@@ -6,7 +6,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.quran.analytics.AnalyticsProvider
 import com.quran.mobile.feature.firebase_analytics.BuildConfig
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 class FirebaseProvider @Inject constructor(): AnalyticsProvider {
   private val firebaseAnalytics: FirebaseAnalytics by lazy { Firebase.analytics }

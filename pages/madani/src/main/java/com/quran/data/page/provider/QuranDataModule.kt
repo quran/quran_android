@@ -9,14 +9,15 @@ import com.quran.data.pageinfo.mapper.IdentityAyahMapper
 import com.quran.data.source.PageProvider
 import com.quran.page.common.draw.ImageDrawHelper
 import com.quran.page.common.factory.PageViewFactoryProvider
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.ElementsIntoSet
-import dagger.multibindings.IntoMap
-import dagger.multibindings.StringKey
-import javax.inject.Named
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ElementsIntoSet
+import dev.zacsweers.metro.IntoMap
+import dev.zacsweers.metro.Named
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.StringKey
 
-@Module
+
+@BindingContainer
 object QuranDataModule {
 
   @Provides

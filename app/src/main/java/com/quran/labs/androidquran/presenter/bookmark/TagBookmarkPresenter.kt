@@ -1,17 +1,18 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
+import com.quran.data.di.AppScope
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 open class TagBookmarkPresenter @Inject internal constructor(private val bookmarkModel: BookmarkModel) :
   Presenter<TagBookmarkDialog> {
   private val checkedTags = HashSet<Long>()

@@ -4,10 +4,10 @@ import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
 import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
 import com.quran.labs.androidquran.common.audio.util.QariUtil
+import dev.zacsweers.metro.Inject
 import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
-import javax.inject.Inject
 
 class AudioInfoCommand @Inject constructor(
   private val fileSystem: FileSystem,

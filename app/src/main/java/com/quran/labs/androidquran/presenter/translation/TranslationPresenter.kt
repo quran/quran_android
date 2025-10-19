@@ -9,9 +9,9 @@ import com.quran.labs.androidquran.presenter.translationlist.TranslationListPres
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.translation.model.LocalTranslation
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @QuranPageScope
 class TranslationPresenter @Inject internal constructor(

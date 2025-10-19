@@ -4,18 +4,10 @@ plugins {
   alias(libs.plugins.metro)
 }
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 android.namespace = "com.quran.common.networking"
 
 dependencies {
   implementation(project(":common:data"))
-  implementation(libs.dagger.runtime)
 
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.kotlinx.coroutines.android)

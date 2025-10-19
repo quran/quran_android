@@ -5,8 +5,8 @@ import android.graphics.Point
 import android.view.Display
 import com.quran.data.source.PageSizeCalculator
 import com.quran.mobile.di.qualifier.ApplicationContext
+import dev.zacsweers.metro.Inject
 import timber.log.Timber
-import javax.inject.Inject
 import kotlin.math.max
 
 class QuranScreenInfo @Inject constructor(

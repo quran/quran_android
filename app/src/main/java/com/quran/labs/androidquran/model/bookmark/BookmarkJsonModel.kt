@@ -3,10 +3,10 @@ package com.quran.labs.androidquran.model.bookmark
 import com.quran.data.model.bookmark.BookmarkData
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import dev.zacsweers.metro.Inject
 import okio.BufferedSink
 import okio.BufferedSource
 import java.io.IOException
-import javax.inject.Inject
 
 internal class BookmarkJsonModel @Inject constructor() {
   private val jsonAdapter: JsonAdapter<BookmarkData>

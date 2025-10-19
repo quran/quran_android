@@ -3,20 +3,10 @@ plugins {
   alias libs.plugins.metro
 }
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 android.namespace 'com.quran.mobile.common.download'
 
 dependencies {
   implementation project(":common:data")
-
-  // dagger
-  implementation libs.dagger.runtime
 
   // coroutines
   implementation libs.kotlinx.coroutines.core

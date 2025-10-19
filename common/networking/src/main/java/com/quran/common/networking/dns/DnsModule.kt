@@ -1,7 +1,7 @@
 package com.quran.common.networking.dns
 
-import dagger.Module
-import dagger.Provides
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.Provides
 import okhttp3.Cache
 import okhttp3.Dns
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -10,7 +10,7 @@ import okhttp3.dnsoverhttps.DnsOverHttps
 import java.io.File
 import java.net.UnknownHostException
 
-@Module
+@BindingContainer
 class DnsModule {
 
   @Provides

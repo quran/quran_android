@@ -1,7 +1,10 @@
 package com.quran.recitation.events
 
+import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.recitation.common.RecitationSession
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -9,10 +12,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 class RecitationEventPresenter @Inject constructor() {
   private val _recitationChangeFlow = MutableSharedFlow<SuraAyah>(
       replay = 0, extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)

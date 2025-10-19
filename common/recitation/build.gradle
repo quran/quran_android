@@ -5,20 +5,10 @@ plugins {
 
 android.namespace 'com.quran.recitation.common'
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 dependencies {
   implementation project(path: ':common:data')
 
   implementation libs.androidx.annotation
-
-  // dagger
-  implementation libs.dagger.runtime
 
   // coroutines
   implementation libs.kotlinx.coroutines.core

@@ -5,7 +5,7 @@ import com.quran.labs.feature.autoquran.service.QuranBrowsableAudioPlaybackServi
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Includes
 
-@DependencyGraph(bindingContainers = [ServiceBindings::class, QuranDataModule::class])
+@DependencyGraph(bindingContainers = [QuranDataModule::class])
 interface ServiceGraph {
   fun inject(service: QuranBrowsableAudioPlaybackService)
 

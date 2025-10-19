@@ -19,6 +19,7 @@ import com.quran.recitation.common.RecitationSession
 import com.quran.recitation.events.RecitationEventPresenter
 import com.quran.recitation.events.RecitationPlaybackEventPresenter
 import com.quran.recitation.presenter.RecitationPresenter
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -28,7 +29,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
 @QuranScope
 class AudioBarPresenter @Inject constructor(

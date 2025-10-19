@@ -1,7 +1,6 @@
 import com.android.build.gradle.LibraryExtension
 import com.quran.labs.androidquran.buildutil.applyAndroidCommon
 import com.quran.labs.androidquran.buildutil.applyBoms
-import com.quran.labs.androidquran.buildutil.applyDaggerAnvilCommon
 import com.quran.labs.androidquran.buildutil.applyJavaCommon
 import com.quran.labs.androidquran.buildutil.applyKotlinCommon
 import com.quran.labs.androidquran.buildutil.disableDebugVariant
@@ -29,7 +28,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
       applyJavaCommon()
       applyKotlinCommon()
       applyBoms()
-      applyDaggerAnvilCommon()
     }
   }
 }

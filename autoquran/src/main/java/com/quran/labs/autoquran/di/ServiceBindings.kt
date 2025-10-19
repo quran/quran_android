@@ -7,8 +7,8 @@ import com.quran.data.source.QuranDataSource
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
 import com.quran.mobile.di.qualifier.ApplicationContext
-import dagger.Provides
 import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.Provides
 
 @BindingContainer
 class ServiceBindings(private val appContext: Context) {

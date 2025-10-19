@@ -21,10 +21,10 @@ import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.NotificationChannelUtil
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.coroutineScope
 import timber.log.Timber
 import java.io.File
-import javax.inject.Inject
 
 class AudioUpdateWorker(
   private val context: Context,

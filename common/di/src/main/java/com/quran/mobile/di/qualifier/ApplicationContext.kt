@@ -1,6 +1,6 @@
 package com.quran.mobile.di.qualifier
 
-import javax.inject.Qualifier
+import dev.zacsweers.metro.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)

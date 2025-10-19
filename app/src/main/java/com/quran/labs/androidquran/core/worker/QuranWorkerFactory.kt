@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
-import javax.inject.Inject
-import javax.inject.Provider
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import kotlin.reflect.KClass
 
 class QuranWorkerFactory @Inject constructor(
@@ -18,6 +18,6 @@ class QuranWorkerFactory @Inject constructor(
   ): ListenableWorker? {
     val workerClass = Class.forName(workerClassName)
     val factory = workerTaskFactories.entries.find { workerClass.kotlin == it.key }?.value
-    return factory?.get()?.makeWorker(appContext, workerParameters)
+    return factory?.invoke()?.makeWorker(appContext, workerParameters)
   }
 }

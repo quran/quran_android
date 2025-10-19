@@ -32,6 +32,7 @@ import com.quran.labs.androidquran.extra.feature.linebyline.presenter.selection.
 import com.quran.labs.androidquran.extra.feature.linebyline.presenter.selection.mergeWith
 import com.quran.mobile.linebyline.data.model.PageModel
 import com.quran.reading.common.ReadingEventPresenter
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -45,7 +46,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import java.io.File
-import javax.inject.Inject
 
 class QuranLineByLinePresenter @Inject constructor(
   private val quranFileManager: QuranFileManager,

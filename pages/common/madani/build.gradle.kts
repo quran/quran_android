@@ -5,13 +5,6 @@ plugins {
 
 android.namespace = "com.quran.labs.androidquran.pages.common.madani"
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 dependencies {
   implementation(project(":common:data"))
   implementation(project(":common:upgrade"))
@@ -22,9 +15,6 @@ dependencies {
   // androidx
   implementation(libs.androidx.appcompat)
   implementation(libs.androidx.core.ktx)
-
-  // dagger
-  implementation(libs.dagger.runtime)
 
   // coroutines
   implementation(libs.kotlinx.coroutines.core)

@@ -2,12 +2,12 @@ package com.quran.labs.androidquran.feature.reading.bridge
 
 import com.quran.mobile.common.download.DownloadInfo
 import com.quran.mobile.common.download.DownloadInfoStreams
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
 class DownloadBridge @Inject constructor(private val downloadInfoStreams: DownloadInfoStreams) {
   private val scope = MainScope()

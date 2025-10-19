@@ -43,7 +43,7 @@ import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranUtils
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 /**
  * Activity for searching the Quran

@@ -1,20 +1,21 @@
 package com.quran.labs.androidquran.database
 
 import android.util.SparseArray
+import com.quran.data.di.AppScope
 import com.quran.labs.androidquran.dao.translation.TranslationItem
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.mobile.translation.data.TranslationsDataSource
 import com.quran.mobile.translation.model.LocalTranslation
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 class TranslationsDBAdapter @Inject constructor(
   private val dataSource: TranslationsDataSource,
   private val quranFileUtils: QuranFileUtils

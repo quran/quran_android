@@ -1,23 +1,24 @@
 package com.quran.labs.androidquran.model.bookmark
 
 import androidx.core.util.Pair
+import com.quran.data.di.AppScope
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.ui.helpers.QuranRow
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Deprecated("") // Use BookmarksDao instead
-@Singleton
+@SingleIn(AppScope::class)
 open class BookmarkModel @Inject constructor(
   private val bookmarksDBAdapter: BookmarksDBAdapter,
   private val recentPageModel: RecentPageModel

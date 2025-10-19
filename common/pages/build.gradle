@@ -3,18 +3,9 @@ plugins {
   alias libs.plugins.metro
 }
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 android.namespace 'com.quran.labs.androidquran.common.pages'
 
 dependencies {
   implementation project(path: ':common:data')
   implementation libs.androidx.fragment.ktx
-
-  implementation libs.dagger.runtime
 }

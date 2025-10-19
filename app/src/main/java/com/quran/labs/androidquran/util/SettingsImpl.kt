@@ -2,6 +2,9 @@ package com.quran.labs.androidquran.util
 
 import android.content.SharedPreferences
 import com.quran.data.dao.Settings
+import com.quran.data.di.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.onFailure
@@ -10,10 +13,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.shareIn
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 class SettingsImpl @Inject constructor(private val quranSettings: QuranSettings) : Settings {
   private val scope = MainScope()
 

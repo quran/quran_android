@@ -1,9 +1,9 @@
 package com.quran.labs.androidquran.common.audio.cache.command
 
 import com.quran.labs.androidquran.common.audio.util.AudioFileUtil
+import dev.zacsweers.metro.Inject
 import okio.FileSystem
 import okio.Path
-import javax.inject.Inject
 
 class GaplessAudioInfoCommand @Inject constructor(private val fileSystem: FileSystem) {
 

@@ -6,11 +6,11 @@ import com.quran.labs.androidquran.worker.AudioUpdateWorker
 import com.quran.labs.androidquran.worker.MissingPageDownloadWorker
 import com.quran.labs.androidquran.worker.PartialPageCheckingWorker
 import com.quran.labs.androidquran.worker.PartialPageCheckingWorker.Factory
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.IntoMap
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.IntoMap
 
-@Module(includes = [ AudioUpdateModule::class ])
+@BindingContainer(includes = [ AudioUpdateModule::class ])
 abstract class WorkerModule {
 
   @Binds

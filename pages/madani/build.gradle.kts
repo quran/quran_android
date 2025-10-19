@@ -3,13 +3,6 @@ plugins {
   alias(libs.plugins.metro)
 }
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 android.namespace = "com.quran.labs.androidquran.pages.madani"
 
 dependencies {
@@ -20,6 +13,4 @@ dependencies {
 
   implementation(project(":pages:common:madani"))
   api(project(":pages:data:madani"))
-
-  implementation(libs.dagger.runtime)
 }

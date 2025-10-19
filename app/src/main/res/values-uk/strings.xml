@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string name="app_name">Коран</string>
   <string name="downloadPrompt_title">Завантажити необхідні файли?</string>
   <string name="downloadPrompt">Для того, щоб Quran Android працював належним чином, нам потрібно завантажити деякі файли. Якщо ви не зробите цього зараз, додаток може не працювати надійно і вимагатиме підключення до Інтернету для читання. Завантажити потрібні файли зараз?

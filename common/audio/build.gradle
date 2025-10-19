@@ -6,13 +6,6 @@ plugins {
   alias libs.plugins.compose.compiler
 }
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 android.namespace 'com.quran.labs.androidquran.common.audio'
 
 dependencies {
@@ -21,7 +14,6 @@ dependencies {
   implementation project(":common:download")
   testImplementation project(":pages:data:madani")
 
-  implementation libs.dagger.runtime
   implementation libs.androidx.annotation
   implementation libs.kotlinx.coroutines.core
   implementation libs.okio

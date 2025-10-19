@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string name="app_name">Quran</string>
   <string name="downloadPrompt_title">ต้องการดาวน์โหลดแฟ้มที่ต้องการหรือไม่</string>
   <string name="downloadPrompt">เพื่อให้อัลกุรอาน Android ทํางานได้อย่างถูกต้องเราจําเป็นต้องดาวน์โหลดไฟล์บางไฟล์ หากคุณไม่ทําเช่นนี้ในขณะนี้แอพอาจไม่ทํางานได้อย่างน่าเชื่อถือและจะต้องมีการเชื่อมต่ออินเทอร์เน็ตเพื่ออ่าน คุณต้องการดาวน์โหลดแฟ้มที่ต้องการเดี๋ยวนี้หรือไม่</string>

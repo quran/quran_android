@@ -4,7 +4,7 @@ import android.content.Context
 import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.mobile.di.qualifier.ApplicationContext
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 @ActivityScope
 class AyahInfoDatabaseProvider @Inject constructor(

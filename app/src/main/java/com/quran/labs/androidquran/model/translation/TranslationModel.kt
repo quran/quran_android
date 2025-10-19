@@ -10,9 +10,9 @@ import com.quran.labs.androidquran.database.DatabaseHandler
 import com.quran.labs.androidquran.database.DatabaseHandler.TextType
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.mobile.di.qualifier.ApplicationContext
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @ActivityScope
 class TranslationModel @Inject internal constructor(

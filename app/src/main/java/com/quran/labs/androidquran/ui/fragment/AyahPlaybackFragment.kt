@@ -22,9 +22,9 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.QuranSpinner
 import com.quran.mobile.di.AyahActionFragmentProvider
 import com.shawnlin.numberpicker.NumberPicker
+import dev.zacsweers.metro.Inject
 import java.text.NumberFormat
 import java.util.Locale
-import javax.inject.Inject
 import com.quran.mobile.common.ui.core.R as UiCoreR
 
 class AyahPlaybackFragment : AyahActionFragment() {

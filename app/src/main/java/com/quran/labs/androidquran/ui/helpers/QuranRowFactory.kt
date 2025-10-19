@@ -6,7 +6,7 @@ import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.data.QuranDisplayData
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 class QuranRowFactory @Inject constructor(
   private val quranInfo: QuranInfo,

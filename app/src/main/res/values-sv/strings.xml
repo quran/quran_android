@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
   <string name="app_name">Koranen</string>
   <string name="downloadPrompt_title">Ladda ner nödvändiga filer?</string>
   <string name="downloadPrompt">För att Quran Android ska fungera korrekt måste vi ladda ner några filer. Om du inte gör detta nu kan det hända att appen inte fungerar på ett tillförlitligt sätt och att det krävs en internetuppkoppling för att läsa. Vill du ladda ner de nödvändiga filerna nu?

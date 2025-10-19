@@ -7,6 +7,7 @@ import android.view.WindowManager
 import com.quran.data.constant.DependencyInjectionConstants
 import com.quran.data.core.QuranFileManager
 import com.quran.data.dao.Settings
+import com.quran.data.di.AppScope
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
@@ -16,17 +17,17 @@ import com.quran.labs.androidquran.util.SettingsImpl
 import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.di.ExtraScreenProvider
 import com.quran.mobile.di.qualifier.ApplicationContext
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.ElementsIntoSet
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ElementsIntoSet
+import dev.zacsweers.metro.Named
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Scheduler
 import okio.FileSystem
 import java.io.File
-import javax.inject.Named
-import javax.inject.Singleton
 
-@Module
+@BindingContainer
 object ApplicationModule {
 
   @Provides
@@ -51,13 +52,13 @@ object ApplicationModule {
   }
 
   @Provides
-  @Singleton
+  @SingleIn(AppScope::class)
   fun provideQuranSettings(@ApplicationContext appContext: Context): QuranSettings {
     return QuranSettings.getInstance(appContext)
   }
 
   @Provides
-  @Singleton
+  @SingleIn(AppScope::class)
   fun provideSettings(settingsImpl: SettingsImpl): Settings {
     return settingsImpl
   }

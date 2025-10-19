@@ -4,9 +4,9 @@ import android.app.Activity
 import com.quran.data.di.ActivityScope
 import com.quran.recitation.events.RecitationSelection
 import com.quran.recitation.presenter.RecitationPlaybackPresenter
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import javax.inject.Inject
 
 @ActivityScope
 class RecitationPlaybackPresenterImpl @Inject constructor(): RecitationPlaybackPresenter {

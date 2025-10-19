@@ -27,8 +27,8 @@ import com.quran.mobile.feature.downloadmanager.presenter.AudioManagerPresenter
 import com.quran.mobile.feature.downloadmanager.ui.LoadingIndicator
 import com.quran.mobile.feature.downloadmanager.ui.ShuyookhList
 import com.quran.mobile.feature.downloadmanager.ui.common.DownloadManagerToolbar
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.persistentListOf
-import javax.inject.Inject
 
 class AudioManagerActivity : ComponentActivity() {
 

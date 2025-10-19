@@ -22,12 +22,12 @@ import com.quran.recitation.events.RecitationSelection
 import com.quran.recitation.presenter.RecitationPlaybackPresenter
 import com.quran.recitation.presenter.RecitationPresenter
 import com.quran.recitation.presenter.RecitationSettings
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
-import javax.inject.Inject
 
 class PagerActivityRecitationPresenter @Inject constructor(
   private val quranInfo: QuranInfo,

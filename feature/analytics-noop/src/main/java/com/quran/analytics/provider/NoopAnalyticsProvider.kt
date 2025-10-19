@@ -1,7 +1,7 @@
 package com.quran.analytics.provider
 
 import com.quran.analytics.AnalyticsProvider
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 class NoopAnalyticsProvider @Inject constructor() : AnalyticsProvider {
 

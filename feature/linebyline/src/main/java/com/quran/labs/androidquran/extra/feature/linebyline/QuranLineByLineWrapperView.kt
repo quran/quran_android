@@ -13,10 +13,10 @@ import com.quran.labs.androidquran.common.drawing.R
 import com.quran.labs.androidquran.extra.feature.linebyline.presenter.QuranLineByLinePresenter
 import com.quran.labs.androidquran.extra.feature.linebyline.resource.ImageBitmapUtil
 import com.quran.labs.androidquran.extra.feature.linebyline.ui.QuranPageWrapper
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import java.text.NumberFormat
 import java.util.Locale
-import javax.inject.Inject
 
 class QuranLineByLineWrapperView(
   context: Context,

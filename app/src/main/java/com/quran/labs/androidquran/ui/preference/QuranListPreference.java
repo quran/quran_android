@@ -5,10 +5,11 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.ListPreference;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 public class QuranListPreference extends ListPreference {
 

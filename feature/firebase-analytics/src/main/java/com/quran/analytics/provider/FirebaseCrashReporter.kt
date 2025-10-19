@@ -2,7 +2,7 @@ package com.quran.analytics.provider
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.quran.analytics.CrashReporter
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 class FirebaseCrashReporter @Inject constructor() : CrashReporter {
   private val crashlytics = FirebaseCrashlytics.getInstance()
