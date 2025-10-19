@@ -1,12 +1,13 @@
 package com.quran.recitation.events
 
+import com.quran.data.di.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 class RecitationPlaybackEventPresenter @Inject constructor() {
 
   private val _loadedRecitationFlow = MutableStateFlow<String?>(null)

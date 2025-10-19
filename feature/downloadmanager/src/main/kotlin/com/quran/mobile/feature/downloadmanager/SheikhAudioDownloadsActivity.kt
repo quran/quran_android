@@ -39,10 +39,10 @@ import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.SheikhDownload
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.SheikhSuraInfoList
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.SuraRangeDialog
 import com.quran.page.common.data.QuranNaming
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
 

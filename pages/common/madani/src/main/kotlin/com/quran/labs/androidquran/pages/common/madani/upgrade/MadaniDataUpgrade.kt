@@ -4,7 +4,7 @@ import androidx.annotation.WorkerThread
 import com.quran.common.upgrade.LocalDataUpgrade
 import com.quran.data.core.QuranFileManager
 import com.quran.data.model.QuranDataStatus
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 class MadaniDataUpgrade @Inject constructor(
   private val fileManager: QuranFileManager

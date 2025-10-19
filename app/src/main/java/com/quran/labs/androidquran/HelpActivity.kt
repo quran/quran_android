@@ -10,7 +10,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 
 class HelpActivity : AppCompatActivity() {

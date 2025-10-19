@@ -1,12 +1,12 @@
 package com.quran.labs.androidquran.core.worker.di
 
 import com.quran.labs.androidquran.feature.audio.api.AudioUpdateService
-import dagger.Module
-import dagger.Provides
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.Provides
 import retrofit2.Retrofit.Builder
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-@Module
+@BindingContainer
 object AudioUpdateModule {
 
   @Provides

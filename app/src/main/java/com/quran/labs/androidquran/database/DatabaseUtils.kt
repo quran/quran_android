@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.database
 
 import android.database.Cursor
-import java.lang.Exception
 
 object DatabaseUtils {
   @JvmStatic

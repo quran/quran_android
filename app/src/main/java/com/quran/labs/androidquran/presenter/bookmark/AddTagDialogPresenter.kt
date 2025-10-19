@@ -5,7 +5,7 @@ import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog
 
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 class AddTagDialogPresenter @Inject
 internal constructor(private val bookmarkModel: BookmarkModel) : Presenter<AddTagDialog> {

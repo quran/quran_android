@@ -18,6 +18,8 @@ import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.QuranSettings
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -25,8 +27,6 @@ import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
-import javax.inject.Provider
 
 open class BookmarkPresenter @Inject internal constructor(
   private val bookmarkModel: BookmarkModel,
@@ -282,7 +282,7 @@ open class BookmarkPresenter @Inject internal constructor(
       .map { bookmarkData ->
         try {
           bookmarkData.copy(
-            bookmarks = arabicDatabaseUtils.get().hydrateAyahText(bookmarkData.bookmarks.toMutableList())
+            bookmarks = arabicDatabaseUtils().hydrateAyahText(bookmarkData.bookmarks.toMutableList())
           )
         } catch (exception: Exception) {
           bookmarkData

@@ -1,9 +1,9 @@
 package com.quran.labs.androidquran.util
 
 import android.graphics.BitmapFactory
+import dev.zacsweers.metro.Inject
 import timber.log.Timber
 import java.io.File
-import javax.inject.Inject
 
 class QuranPartialPageChecker @Inject constructor() {
 

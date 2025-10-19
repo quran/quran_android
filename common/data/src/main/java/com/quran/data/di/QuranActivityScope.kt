@@ -1,6 +1,7 @@
 package com.quran.data.di
 
-import javax.inject.Scope
+import dev.zacsweers.metro.Scope
+
 
 @Scope
 annotation class QuranActivityScope

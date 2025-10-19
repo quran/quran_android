@@ -11,7 +11,7 @@ import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.fragment.JumpFragment
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.util.QuranSettings
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 /**
  * Transparent activity that just shows a [JumpFragment]. Clicking outside or closing the dialog

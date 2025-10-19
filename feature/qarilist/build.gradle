@@ -5,22 +5,12 @@ plugins {
 
 android.namespace 'com.quran.mobile.feature.qarilist'
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 dependencies {
   implementation project(path: ':common:audio')
   implementation project(path: ':common:data')
   implementation project(path: ':common:ui:core')
 
   implementation libs.androidx.annotation
-
-  // dagger
-  implementation libs.dagger.runtime
 
   // compose
   implementation libs.compose.animation

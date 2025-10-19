@@ -16,6 +16,7 @@ import com.quran.labs.androidquran.common.Response
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.extension.closeQuietly
 import com.quran.mobile.di.qualifier.ApplicationContext
+import dev.zacsweers.metro.Inject
 import okhttp3.OkHttpClient
 import okhttp3.Request.Builder
 import okhttp3.ResponseBody
@@ -33,7 +34,6 @@ import java.io.InputStream
 import java.text.NumberFormat
 import java.util.Collections
 import java.util.Locale
-import javax.inject.Inject
 
 class QuranFileUtils @Inject constructor(
   @ApplicationContext context: Context,

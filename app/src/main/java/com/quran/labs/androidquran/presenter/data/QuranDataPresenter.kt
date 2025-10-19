@@ -27,6 +27,7 @@ import com.quran.labs.androidquran.worker.MissingPageDownloadWorker
 import com.quran.labs.androidquran.worker.PartialPageCheckingWorker
 import com.quran.labs.androidquran.worker.WorkerConstants
 import com.quran.mobile.di.qualifier.ApplicationContext
+import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
@@ -36,7 +37,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit.DAYS
-import javax.inject.Inject
 
 class QuranDataPresenter @Inject internal constructor(
   @ApplicationContext val appContext: Context,

@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.model.bookmark;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import com.quran.data.model.bookmark.BookmarkData;
 import com.quran.data.model.bookmark.Tag;
 
@@ -12,8 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import okio.Buffer;
-
-import static com.google.common.truth.Truth.assertThat;
 
 public class BookmarkJsonModelTest {
   private static final List<Tag> TAGS =

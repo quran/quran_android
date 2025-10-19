@@ -12,7 +12,7 @@ import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.presenter.bookmark.AddTagDialogPresenter
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 class AddTagDialog : DialogFragment() {
 

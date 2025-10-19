@@ -4,13 +4,6 @@ plugins {
   alias(libs.plugins.metro)
 }
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 android.namespace = "com.quran.mobile.bookmark"
 
 sqldelight {
@@ -26,9 +19,6 @@ sqldelight {
 dependencies {
   implementation(project(":common:di"))
   implementation(project(":common:data"))
-
-  // dagger
-  implementation(libs.dagger.runtime)
 
   // coroutines
   implementation(libs.kotlinx.coroutines.core)

@@ -4,9 +4,9 @@ import android.app.Activity
 import com.quran.data.di.QuranScope
 import com.quran.data.model.SuraAyah
 import com.quran.recitation.presenter.RecitationPresenter
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import javax.inject.Inject
 
 @QuranScope
 class RecitationPresenterImpl @Inject constructor(): RecitationPresenter {

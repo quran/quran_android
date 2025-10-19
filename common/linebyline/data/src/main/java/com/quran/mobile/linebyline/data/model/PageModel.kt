@@ -10,12 +10,12 @@ import com.quran.mobile.linebyline.data.dao.SuraHeader
 import com.quran.mobile.linebyline.data.dao.asAyahHighlight
 import com.quran.mobile.linebyline.data.dao.asAyahMarker
 import com.quran.mobile.linebyline.data.dao.asSuraHeader
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 @QuranScope
 class PageModel @Inject constructor(private val database: Database) {

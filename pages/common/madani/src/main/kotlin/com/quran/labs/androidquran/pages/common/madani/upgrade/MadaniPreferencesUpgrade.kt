@@ -6,10 +6,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import com.quran.common.upgrade.PreferencesUpgrade
 import com.quran.data.dao.Settings
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class MadaniPreferencesUpgrade @Inject constructor(private val settings: Settings): PreferencesUpgrade {
 

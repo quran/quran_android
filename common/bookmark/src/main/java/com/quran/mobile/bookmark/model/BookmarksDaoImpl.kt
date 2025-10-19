@@ -3,22 +3,23 @@ package com.quran.mobile.bookmark.model
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.quran.data.dao.BookmarksDao
+import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.mobile.bookmark.mapper.Mappers
 import com.quran.mobile.bookmark.mapper.convergeCommonlyTagged
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 class BookmarksDaoImpl @Inject constructor(
   bookmarksDatabase: BookmarksDatabase
 ) : BookmarksDao {

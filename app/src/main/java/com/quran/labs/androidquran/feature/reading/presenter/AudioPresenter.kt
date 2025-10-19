@@ -16,9 +16,9 @@ import com.quran.labs.androidquran.service.util.ServiceIntentHelper
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QuranFileUtils
+import dev.zacsweers.metro.Inject
 import timber.log.Timber
 import java.io.File
-import javax.inject.Inject
 
 class AudioPresenter @Inject
 constructor(

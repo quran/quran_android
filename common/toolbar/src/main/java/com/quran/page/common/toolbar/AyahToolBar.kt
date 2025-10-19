@@ -20,7 +20,7 @@ import com.quran.labs.androidquran.common.toolbar.R
 import com.quran.page.common.toolbar.dao.SelectedAyahPlacementType
 import com.quran.page.common.toolbar.di.AyahToolBarInjector
 import com.quran.page.common.toolbar.extension.toInternalPosition
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 import kotlin.math.max
 
 class AyahToolBar @JvmOverloads constructor(

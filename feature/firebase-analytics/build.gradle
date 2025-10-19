@@ -3,13 +3,6 @@ plugins {
   alias libs.plugins.metro
 }
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 android.namespace "com.quran.mobile.feature.firebase_analytics"
 android.buildFeatures.buildConfig = true
 
@@ -21,7 +14,4 @@ dependencies {
 
   implementation libs.firebase.analytics
   implementation libs.firebase.crashlytics
-
-  // dagger
-  implementation libs.dagger.runtime
 }

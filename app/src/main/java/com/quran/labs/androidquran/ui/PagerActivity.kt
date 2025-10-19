@@ -130,6 +130,7 @@ import com.quran.page.common.factory.PageViewFactoryProvider
 import com.quran.page.common.toolbar.AyahToolBar
 import com.quran.page.common.toolbar.di.AyahToolBarInjector
 import com.quran.reading.common.ReadingEventPresenter
+import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -155,7 +156,6 @@ import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 import kotlin.math.abs
 
 /**

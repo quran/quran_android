@@ -8,7 +8,7 @@ import com.quran.data.core.QuranConstants.PAGES_FIRST
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.VerseRange
 import com.quran.data.source.QuranDataSource
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 import kotlin.math.abs
 
 class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {

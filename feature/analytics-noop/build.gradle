@@ -3,17 +3,7 @@ plugins {
   alias libs.plugins.metro
 }
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 dependencies {
   implementation project(":common:analytics")
   implementation libs.androidx.annotation
-
-  // dagger
-  implementation libs.dagger.runtime
 }

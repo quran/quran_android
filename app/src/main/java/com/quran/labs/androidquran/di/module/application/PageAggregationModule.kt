@@ -3,11 +3,11 @@ package com.quran.labs.androidquran.di.module.application
 import com.quran.data.constant.DependencyInjectionConstants
 import com.quran.data.source.PageProvider
 import com.quran.data.source.QuranDataSource
-import dagger.Module
-import dagger.Provides
-import javax.inject.Named
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.Named
+import dev.zacsweers.metro.Provides
 
-@Module
+@BindingContainer
 object PageAggregationModule {
 
   @Provides

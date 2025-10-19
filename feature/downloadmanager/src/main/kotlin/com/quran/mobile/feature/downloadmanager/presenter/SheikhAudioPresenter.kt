@@ -16,6 +16,7 @@ import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.EntryForQar
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhDownloadDialog
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhUiModel
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraDownloadStatusEvent
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +30,6 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import java.io.File
-import javax.inject.Inject
 
 @ActivityScope
 class SheikhAudioPresenter @Inject constructor(

@@ -28,10 +28,10 @@ import app.cash.molecule.launchMolecule
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.audiobar.presenter.AudioBarPresenter
 import com.quran.mobile.feature.audiobar.ui.AudioBar
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import javax.inject.Inject
 
 class AudioBarWrapper @JvmOverloads constructor(
   context: Context,

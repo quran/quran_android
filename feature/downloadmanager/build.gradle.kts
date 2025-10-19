@@ -5,13 +5,6 @@ plugins {
 
 android.namespace = "com.quran.mobile.feature.downloadmanager"
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 dependencies {
   implementation(project(":common:audio"))
   implementation(project(":common:data"))
@@ -23,9 +16,6 @@ dependencies {
 
   implementation(libs.androidx.annotation)
   implementation(libs.androidx.activity.compose)
-
-  // dagger
-  implementation(libs.dagger.runtime)
 
   // compose
   implementation(libs.compose.animation)

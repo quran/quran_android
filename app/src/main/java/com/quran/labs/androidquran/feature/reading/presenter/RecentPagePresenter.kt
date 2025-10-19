@@ -2,12 +2,12 @@ package com.quran.labs.androidquran.feature.reading.presenter
 
 import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.min
 

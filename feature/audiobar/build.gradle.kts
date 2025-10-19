@@ -6,13 +6,6 @@ plugins {
 
 android.namespace = "com.quran.mobile.feature.audiobar"
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 dependencies {
   implementation(project(":common:data"))
   implementation(project(":common:audio"))
@@ -30,9 +23,6 @@ dependencies {
   // implementation but removed for release builds
   implementation(libs.compose.ui.tooling.preview)
   implementation(libs.compose.ui.tooling)
-
-  // dagger
-  implementation(libs.dagger.runtime)
 
   // coroutines
   implementation(libs.kotlinx.coroutines.core)

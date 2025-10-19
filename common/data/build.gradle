@@ -6,13 +6,6 @@ plugins {
   alias libs.plugins.compose.compiler
 }
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 dependencies {
   implementation libs.androidx.annotation
 
@@ -21,9 +14,6 @@ dependencies {
 
   // required whenever we include the compiler plugin
   implementation libs.compose.runtime
-
-  // dagger
-  implementation libs.dagger.runtime
 
   implementation libs.moshi
   ksp(libs.moshi.codegen)

@@ -2,12 +2,10 @@ package com.quran.labs.androidquran
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar

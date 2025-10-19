@@ -14,7 +14,7 @@ import com.quran.labs.androidquran.SearchActivity
 import com.quran.labs.androidquran.ShortcutsActivity
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.QuranActivity
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 /**
  * Widget that displays a list of bookmarks and some buttons for jumping into the app

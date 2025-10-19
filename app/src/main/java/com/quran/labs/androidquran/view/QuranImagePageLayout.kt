@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener
 import com.quran.labs.androidquran.ui.util.PageController
 import com.quran.labs.androidquran.util.QuranSettings

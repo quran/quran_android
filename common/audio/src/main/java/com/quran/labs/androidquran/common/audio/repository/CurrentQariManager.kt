@@ -2,16 +2,17 @@ package com.quran.labs.androidquran.common.audio.repository
 
 import android.content.Context
 import android.preference.PreferenceManager
+import com.quran.data.di.AppScope
 import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.util.QariUtil
 import com.quran.mobile.di.qualifier.ApplicationContext
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 class CurrentQariManager @Inject constructor(@ApplicationContext appContext: Context, private val qariUtil: QariUtil) {
   private val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
   private val currentQariFlow =

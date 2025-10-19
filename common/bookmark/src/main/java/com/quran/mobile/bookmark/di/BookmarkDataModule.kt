@@ -11,17 +11,17 @@ import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.mobile.bookmark.Bookmarks
 import com.quran.mobile.bookmark.Last_pages
 import com.quran.mobile.di.qualifier.ApplicationContext
-import dagger.Module
-import dagger.Provides
+import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.runBlocking
-import javax.inject.Singleton
 
-@Module
+@BindingContainer
 @ContributesTo(AppScope::class)
 class BookmarkDataModule {
 
-  @Singleton
+  @SingleIn(AppScope::class)
   @Provides
   fun provideBookmarksDatabase(@ApplicationContext context: Context, settings: Settings): BookmarksDatabase {
     val driver: SqlDriver = AndroidSqliteDriver(

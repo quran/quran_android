@@ -1,26 +1,26 @@
 package com.quran.labs.androidquran.common.audio.cache
 
 import com.quran.data.core.QuranFileManager
+import com.quran.data.di.AppScope
 import com.quran.labs.androidquran.common.audio.cache.command.AudioInfoCommand
 import com.quran.labs.androidquran.common.audio.model.download.AudioDownloadMetadata
 import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
 import com.quran.mobile.common.download.DownloadInfo
 import com.quran.mobile.common.download.DownloadInfoStreams
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 class QariDownloadInfoManager @Inject constructor(
   private val quranFileManager: QuranFileManager,
   private val audioInfoCommand: AudioInfoCommand,

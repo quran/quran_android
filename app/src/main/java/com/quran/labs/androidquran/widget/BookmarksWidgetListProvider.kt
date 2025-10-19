@@ -14,7 +14,7 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 /**
  * [RemoteViewsFactory] implementation responsible for providing a list of bookmark views to be

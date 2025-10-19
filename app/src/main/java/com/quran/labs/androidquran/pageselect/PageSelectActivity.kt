@@ -15,10 +15,10 @@ import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
 import com.quran.labs.androidquran.util.QuranSettings
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class PageSelectActivity : AppCompatActivity() {
   @Inject lateinit var presenter : PageSelectPresenter

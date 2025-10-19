@@ -2,9 +2,9 @@ package com.quran.labs.androidquran.presenter.data
 
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class JuzListPresenter @Inject constructor(
   private val quranInfo: QuranInfo,

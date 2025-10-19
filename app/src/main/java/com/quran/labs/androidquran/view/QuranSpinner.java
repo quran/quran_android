@@ -3,10 +3,11 @@ package com.quran.labs.androidquran.view;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import androidx.appcompat.widget.AppCompatSpinner;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SpinnerAdapter;
+
+import androidx.appcompat.widget.AppCompatSpinner;
 
 /**
  * An {@link AppCompatSpinner} that uses the last items in an adapter and a multiplier to

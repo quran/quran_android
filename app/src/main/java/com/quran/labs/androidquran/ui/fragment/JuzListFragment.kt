@@ -26,13 +26,13 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.ui.helpers.QuranRow.Builder
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.JuzView
+import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * Fragment that displays a list of all Juz (using [QuranListAdapter], each divided into

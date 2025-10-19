@@ -45,13 +45,12 @@ import com.quran.page.common.draw.ImageDrawHelper
 import com.quran.page.common.factory.PageViewFactory
 import com.quran.page.common.factory.PageViewFactoryProvider
 import com.quran.reading.common.ReadingEventPresenter
-import dagger.Lazy
+import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 class TabletFragment : Fragment(), PageController, TranslationPresenter.TranslationScreen,
   QuranPage, QuranPageScreen, AyahInteractionHandler {
@@ -183,16 +182,16 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
     ayahTrackerPresenter.bind(this)
     if (mode == Mode.ARABIC) {
       if (!isCustomArabicPageType) {
-        quranPagePresenter.get().bind(this)
+        quranPagePresenter.value.bind(this)
       }
     } else {
       if (isSplitScreen) {
-        translationPresenter.get().bind(this)
+        translationPresenter.value.bind(this)
         if (!isCustomArabicPageType) {
-          quranPagePresenter.get().bind(this)
+          quranPagePresenter.value.bind(this)
         }
       } else {
-        translationPresenter.get().bind(this)
+        translationPresenter.value.bind(this)
       }
     }
   }
@@ -213,13 +212,13 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
   override fun onStop() {
     ayahTrackerPresenter.unbind(this)
     if (mode == Mode.ARABIC) {
-      quranPagePresenter.get().unbind(this)
+      quranPagePresenter.value.unbind(this)
     } else {
       if (isSplitScreen) {
-        translationPresenter.get().unbind(this)
-        quranPagePresenter.get().unbind(this)
+        translationPresenter.value.unbind(this)
+        quranPagePresenter.value.unbind(this)
       } else {
-        translationPresenter.get().unbind(this)
+        translationPresenter.value.unbind(this)
       }
     }
     super.onStop()
@@ -397,7 +396,7 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
     super.onViewCreated(view, savedInstanceState)
     if (mode == Mode.TRANSLATION) {
       scope.launch {
-        translationPresenter.get().refresh()
+        translationPresenter.value.refresh()
       }
     }
   }
@@ -429,7 +428,7 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
   fun refresh() {
     if (mode == Mode.TRANSLATION) {
       scope.launch {
-        translationPresenter.get().refresh()
+        translationPresenter.value.refresh()
       }
     }
   }
@@ -477,7 +476,7 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
 
   override fun handleRetryClicked() {
     hidePageDownloadError()
-    quranPagePresenter.get().downloadImages()
+    quranPagePresenter.value.downloadImages()
   }
 
   override fun onScrollChanged(y: Float) {

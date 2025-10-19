@@ -1,9 +1,10 @@
 package com.quran.labs.androidquran.util
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.quran.data.di.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
-@Singleton
+@SingleIn(AppScope::class)
 class UrlUtil @Inject constructor() {
 
   fun fallbackUrl(url: String): String {

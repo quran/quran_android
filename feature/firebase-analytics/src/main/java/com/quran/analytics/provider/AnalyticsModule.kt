@@ -2,15 +2,12 @@ package com.quran.analytics.provider
 
 import com.quran.analytics.AnalyticsProvider
 import com.quran.analytics.CrashReporter
-import dagger.Binds
-import dagger.Module
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.Binds
 
-@Module
+@BindingContainer
 interface AnalyticsModule {
 
-  @Binds
-  fun provideCrashReporter(crashReporter: FirebaseCrashReporter): CrashReporter
-
-  @Binds
-  fun provideAnalyticsProvider(firebaseAnalyticsProvider: FirebaseProvider): AnalyticsProvider
+  @Binds val FirebaseCrashReporter.bind: CrashReporter
+  @Binds val FirebaseProvider.bind: AnalyticsProvider
 }

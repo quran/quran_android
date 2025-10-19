@@ -6,7 +6,7 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.VerseRange
 import com.quran.data.pageinfo.mapper.AyahMapper
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 /**
  * Madani to Kufi Mapper

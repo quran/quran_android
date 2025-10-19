@@ -6,18 +6,9 @@ plugins {
 
 android.namespace = "com.quran.mobile.linebyline.data"
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 dependencies {
   implementation(project(":common:di"))
   implementation(project(":common:data"))
-
-  implementation(libs.dagger.runtime)
 
   implementation(libs.kotlinx.collections.immutable)
 

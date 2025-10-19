@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.Cursor
 import androidx.annotation.VisibleForTesting
 import com.quran.data.core.QuranInfo
+import com.quran.data.di.AppScope
 import com.quran.data.model.QuranText
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
@@ -14,12 +15,12 @@ import com.quran.labs.androidquran.database.DatabaseHandler.Companion.getDatabas
 import com.quran.labs.androidquran.database.DatabaseUtils.closeCursor
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.mobile.di.qualifier.ApplicationContext
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 open class ArabicDatabaseUtils @Inject internal constructor(
   @param:ApplicationContext private val appContext: Context,
   private val quranInfo: QuranInfo,

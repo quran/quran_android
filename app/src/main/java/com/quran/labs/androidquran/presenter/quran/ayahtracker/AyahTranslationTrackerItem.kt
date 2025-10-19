@@ -4,9 +4,9 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.selection.SelectionIndicator
-import com.quran.mobile.translation.model.LocalTranslation
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.ui.translation.TranslationView
+import com.quran.mobile.translation.model.LocalTranslation
 
 class AyahTranslationTrackerItem(
   page: Int,

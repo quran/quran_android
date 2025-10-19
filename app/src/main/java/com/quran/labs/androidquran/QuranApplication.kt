@@ -11,9 +11,9 @@ import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.labs.androidquran.widget.BookmarksWidgetSubscriber
 import com.quran.mobile.di.QuranApplicationComponent
 import com.quran.mobile.di.QuranApplicationComponentProvider
+import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.createGraphFactory
 import timber.log.Timber
-import javax.inject.Inject
 
 open class QuranApplication : Application(), QuranApplicationComponentProvider {
   lateinit var applicationComponent: ApplicationComponent

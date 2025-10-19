@@ -2,12 +2,11 @@ package com.quran.labs.androidquran.di.module.widgets
 
 import com.quran.labs.androidquran.widget.BookmarksWidgetUpdater
 import com.quran.labs.androidquran.widget.BookmarksWidgetUpdaterImpl
-import dagger.Binds
-import dagger.Module
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.Binds
 
-@Module
+@BindingContainer
 interface BookmarksWidgetUpdaterModule {
 
-  @Binds
-  fun bindBookmarksWidgetUpdater(impl: BookmarksWidgetUpdaterImpl): BookmarksWidgetUpdater
+  @Binds val BookmarksWidgetUpdaterImpl.bind: BookmarksWidgetUpdater
 }

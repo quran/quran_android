@@ -8,7 +8,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import kotlin.math.ceil
-import kotlin.math.floor
 
 @Composable
 fun Highlight(lineId: Int, left: Float, right: Float, lineRatio: Float, color: Color) {

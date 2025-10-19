@@ -5,15 +5,7 @@ plugins {
 
 android.namespace 'com.quran.mobile.di'
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 dependencies {
-  implementation libs.dagger.runtime
   implementation libs.androidx.fragment.ktx
   implementation libs.androidx.preference.ktx
 }

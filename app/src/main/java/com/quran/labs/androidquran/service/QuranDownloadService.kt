@@ -32,6 +32,7 @@ import com.quran.labs.androidquran.util.UrlUtil
 import com.quran.labs.androidquran.util.ZipUtils
 import com.quran.labs.androidquran.util.ZipUtils.ZipListener
 import com.quran.mobile.common.download.DownloadInfoStreams
+import dev.zacsweers.metro.Inject
 import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -42,7 +43,6 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicInteger
-import javax.inject.Inject
 import kotlin.concurrent.Volatile
 
 class QuranDownloadService : Service(), ZipListener<NotificationDetails> {

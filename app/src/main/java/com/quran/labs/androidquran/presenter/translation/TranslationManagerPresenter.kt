@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.presenter.translation
 
 import android.content.Context
 import android.util.Pair
+import com.quran.data.di.AppScope
 import com.quran.labs.androidquran.dao.translation.Translation
 import com.quran.labs.androidquran.dao.translation.TranslationItem
 import com.quran.labs.androidquran.dao.translation.TranslationList
@@ -12,6 +13,8 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.squareup.moshi.Moshi
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.Flow
@@ -31,10 +34,8 @@ import okio.sink
 import okio.source
 import timber.log.Timber
 import java.io.File
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 open class TranslationManagerPresenter @Inject internal constructor(
   @ApplicationContext private val appContext: Context,
   private val okHttpClient: OkHttpClient,

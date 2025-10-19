@@ -12,13 +12,13 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.di.AyahActionFragmentProvider
 import com.quran.mobile.di.qualifier.ActivityContext
-import dagger.Module
-import dagger.Provides
-import dagger.multibindings.ElementsIntoSet
+import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.ElementsIntoSet
+import dev.zacsweers.metro.Provides
 
 @ContributesTo(ActivityLevelScope::class)
-@Module
+@BindingContainer
 object PagerActivityModule {
 
   @Provides

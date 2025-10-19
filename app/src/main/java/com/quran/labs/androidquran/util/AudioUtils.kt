@@ -9,10 +9,10 @@ import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.QariUtil
 import com.quran.labs.androidquran.service.AudioService
+import dev.zacsweers.metro.Inject
 import timber.log.Timber
 import java.io.File
 import java.util.Locale
-import javax.inject.Inject
 
 class AudioUtils @Inject constructor(
   private val quranInfo: QuranInfo,

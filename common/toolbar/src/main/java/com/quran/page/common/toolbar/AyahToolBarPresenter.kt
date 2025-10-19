@@ -6,6 +6,7 @@ import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.selectionIndicator
 import com.quran.data.model.selection.startSuraAyah
 import com.quran.reading.common.ReadingEventPresenter
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.channels.Channel
@@ -13,7 +14,6 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class AyahToolBarPresenter @Inject constructor(
   bookmarksDao: BookmarksDao,

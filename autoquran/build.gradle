@@ -2,23 +2,11 @@ plugins {
   id 'quran.android.application'
   id 'org.jetbrains.kotlin.android'
   alias libs.plugins.metro
-  alias libs.plugins.ksp
-}
-
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
 }
 
 android {
-  compileSdk 36
-
   defaultConfig {
     applicationId "com.quran.labs.autoquran"
-    minSdk 28
-    targetSdk 36
     versionCode 1
     versionName "1.0"
 
@@ -31,7 +19,7 @@ android {
       proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }
 
-    getByName("debug") {
+    named("debug") {
       matchingFallbacks += "release"
     }
   }
@@ -47,11 +35,6 @@ dependencies {
   implementation project(":common:audio")
   // should be api in modules that implement LocalDataUpgrade
   implementation project(":common:upgrade")
-
-  ksp libs.dagger.compiler
-  kspTest libs.dagger.compiler
-
-  implementation libs.dagger.runtime
 
   if (new File(rootDir, "extras/extras.gradle").exists()) {
     implementation project(":extras:pages:default")

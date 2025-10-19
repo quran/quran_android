@@ -12,12 +12,12 @@ import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.mobile.di.AyahActionFragmentProvider
 import com.quran.reading.common.ReadingEventPresenter
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
-import javax.inject.Inject
 
 class TagBookmarkFragment : TagBookmarkDialog() {
   private var scope: CoroutineScope = MainScope()

@@ -36,9 +36,9 @@ import com.quran.mobile.di.QuranApplicationComponent
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
-import javax.inject.Singleton
+import dev.zacsweers.metro.SingleIn
 
-@Singleton
+@SingleIn(AppScope::class)
 @DependencyGraph(
   AppScope::class,
   bindingContainers = [

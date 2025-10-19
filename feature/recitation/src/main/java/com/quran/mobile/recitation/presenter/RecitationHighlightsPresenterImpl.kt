@@ -3,7 +3,7 @@ package com.quran.mobile.recitation.presenter
 import com.quran.data.di.QuranPageScope
 import com.quran.recitation.presenter.RecitationHighlightsPresenter
 import com.quran.recitation.presenter.RecitationHighlightsPresenter.RecitationPage
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 @QuranPageScope
 class RecitationHighlightsPresenterImpl @Inject constructor(): RecitationHighlightsPresenter {

@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.util
 
+import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.core.Maybe
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -8,8 +9,6 @@ import okio.sink
 import okio.source
 import java.io.File
 import java.io.IOException
-import java.io.InterruptedIOException
-import javax.inject.Inject
 
 class ImageUtil @Inject constructor(private val okHttpClient: OkHttpClient) {
 

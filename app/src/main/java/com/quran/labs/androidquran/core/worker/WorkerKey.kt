@@ -1,7 +1,7 @@
 package com.quran.labs.androidquran.core.worker
 
 import androidx.work.ListenableWorker
-import dagger.MapKey
+import dev.zacsweers.metro.MapKey
 import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.RUNTIME)

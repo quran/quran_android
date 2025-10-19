@@ -2,13 +2,11 @@ package com.quran.labs.androidquran.ui
 
 import android.content.DialogInterface
 import android.content.IntentFilter
-import android.graphics.Color
 import android.os.Bundle
 import android.util.SparseIntArray
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
-import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -39,6 +37,7 @@ import com.quran.labs.androidquran.ui.adapter.DownloadedMenuActionListener
 import com.quran.labs.androidquran.ui.adapter.TranslationsAdapter
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
+import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -48,7 +47,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
-import javax.inject.Inject
 import kotlin.math.max
 
 class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,

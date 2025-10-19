@@ -12,7 +12,7 @@ import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.mobile.common.download.Downloader
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.ContributesBinding
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 @ContributesBinding(AppScope::class)
 class DownloadStarter @Inject constructor(

@@ -7,11 +7,11 @@ import com.quran.data.di.QuranReadingScope
 import com.quran.data.di.QuranScope
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.mobile.linebyline.data.Database
-import dagger.Module
-import dagger.Provides
+import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
 
-@Module
+@BindingContainer
 @ContributesTo(QuranReadingScope::class)
 class LineByLineDataModule {
 

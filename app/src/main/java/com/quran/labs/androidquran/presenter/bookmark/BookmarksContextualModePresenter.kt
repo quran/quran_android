@@ -4,13 +4,14 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
+import com.quran.data.di.AppScope
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment
-import javax.inject.Inject
-import javax.inject.Singleton
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
-@Singleton
+@SingleIn(AppScope::class)
 class BookmarksContextualModePresenter @Inject constructor() : Presenter<BookmarksFragment> {
 
   private var actionMode: ActionMode? = null

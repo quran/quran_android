@@ -25,7 +25,7 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.feature.downloadmanager.AudioManagerActivity
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 class QuranSettingsFragment : PreferenceFragmentCompat() {
 

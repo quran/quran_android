@@ -44,12 +44,12 @@ import com.quran.recitation.presenter.RecitationHighlightsPresenter.RecitationPa
 import com.quran.recitation.presenter.RecitationPopupPresenter
 import com.quran.recitation.presenter.RecitationPopupPresenter.PopupContainer
 import com.quran.recitation.presenter.RecitationPresenter
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
 @QuranPageScope
 class AyahTrackerPresenter @Inject constructor(

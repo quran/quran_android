@@ -2,10 +2,10 @@ package com.quran.mobile.feature.audiobar.presenter
 
 import com.quran.data.di.ActivityScope
 import com.quran.mobile.feature.audiobar.state.AudioBarEvent
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import javax.inject.Inject
 
 @ActivityScope
 class AudioBarEventRepository @Inject constructor() {

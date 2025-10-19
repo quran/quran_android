@@ -2,12 +2,10 @@ package com.quran.labs.androidquran.ui.helpers
 
 import android.content.Context
 import com.quran.data.core.QuranInfo
-import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.dao.bookmark.BookmarkResult
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData
-import com.quran.labs.androidquran.data.QuranDisplayData
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 class BookmarkUIConverter @Inject constructor(
   private val quranRowFactory: QuranRowFactory,

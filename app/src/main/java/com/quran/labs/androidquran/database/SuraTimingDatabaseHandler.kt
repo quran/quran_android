@@ -7,8 +7,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabaseCorruptException
 import timber.log.Timber
 import java.io.File
-import java.lang.Exception
-import java.util.HashMap
 
 class SuraTimingDatabaseHandler private constructor(path: String) {
   private var database: SQLiteDatabase? = null

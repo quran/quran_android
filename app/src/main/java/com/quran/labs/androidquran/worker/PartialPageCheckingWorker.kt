@@ -10,11 +10,11 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranPartialPageChecker
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.coroutineScope
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
-import javax.inject.Inject
 
 class PartialPageCheckingWorker(private val context: Context,
                                 private val params: WorkerParameters,

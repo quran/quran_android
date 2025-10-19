@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.presenter.data
 
 import com.quran.analytics.AnalyticsProvider
 import com.quran.labs.androidquran.util.QuranSettings
-import javax.inject.Inject
+import dev.zacsweers.metro.Inject
 
 class QuranIndexEventLoggerImpl @Inject constructor(
   private val analyticsProvider: AnalyticsProvider,

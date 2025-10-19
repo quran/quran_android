@@ -1,9 +1,12 @@
 package com.quran.labs.androidquran.model.bookmark
 
 import androidx.annotation.UiThread
+import com.quran.data.di.AppScope
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -11,10 +14,8 @@ import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 open class RecentPageModel @Inject constructor(
   private val bookmarksDBAdapter: BookmarksDBAdapter
 ) {

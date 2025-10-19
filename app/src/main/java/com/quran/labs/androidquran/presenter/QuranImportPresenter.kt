@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import androidx.core.app.ActivityCompat
+import com.quran.data.di.AppScope
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.labs.androidquran.QuranImportActivity
 import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel
@@ -15,6 +16,8 @@ import com.quran.labs.androidquran.service.util.PermissionUtil.canRequestWriteEx
 import com.quran.labs.androidquran.service.util.PermissionUtil.haveWriteExternalStoragePermission
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.mobile.di.qualifier.ApplicationContext
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
@@ -25,10 +28,8 @@ import okio.BufferedSource
 import okio.buffer
 import okio.source
 import java.io.FileInputStream
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@SingleIn(AppScope::class)
 class QuranImportPresenter @Inject internal constructor(
   @ApplicationContext private val appContext: Context,
   private val bookmarkImportExportModel: BookmarkImportExportModel,

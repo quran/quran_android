@@ -9,9 +9,9 @@ import com.quran.data.model.audio.Qari
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
 import com.quran.mobile.di.qualifier.ApplicationContext
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class BrowsableSurahBuilder @Inject constructor(
   @ApplicationContext private val appContext: Context,

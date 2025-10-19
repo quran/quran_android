@@ -28,10 +28,10 @@ import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.view.QuranTranslationPageLayout
 import com.quran.mobile.translation.model.LocalTranslation
 import com.quran.reading.common.ReadingEventPresenter
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class TranslationFragment : Fragment(), AyahInteractionHandler, QuranPage,
   TranslationPresenter.TranslationScreen, PageController {

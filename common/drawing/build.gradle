@@ -3,13 +3,6 @@ plugins {
   alias libs.plugins.metro
 }
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 android.namespace 'com.quran.labs.androidquran.common.drawing'
 
 dependencies {

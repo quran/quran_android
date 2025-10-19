@@ -41,6 +41,7 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.RecordingLogTree
 import com.quran.labs.androidquran.util.StorageUtils
 import com.quran.labs.androidquran.util.StorageUtils.getAllStorageLocations
+import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -52,7 +53,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
-import javax.inject.Inject
 
 class QuranAdvancedSettingsFragment : PreferenceFragmentCompat() {
   private lateinit var listStoragePref: DataListPreference

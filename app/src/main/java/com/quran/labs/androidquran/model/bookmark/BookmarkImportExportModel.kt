@@ -7,6 +7,7 @@ import com.quran.data.model.bookmark.BookmarkData
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.mobile.di.qualifier.ApplicationContext
+import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import okio.BufferedSource
@@ -14,7 +15,6 @@ import okio.buffer
 import okio.sink
 import java.io.File
 import java.io.IOException
-import javax.inject.Inject
 
 class BookmarkImportExportModel @Inject internal constructor(
   @param:ApplicationContext private val appContext: Context,

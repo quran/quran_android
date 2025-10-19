@@ -6,11 +6,11 @@ import com.quran.labs.androidquran.common.Response
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.mobile.di.qualifier.ApplicationContext
+import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import timber.log.Timber
-import javax.inject.Inject
 
 @ActivityScope
 class QuranPageLoader @Inject internal constructor(

@@ -6,10 +6,10 @@ import android.util.SparseLongArray
 import androidx.collection.LruCache
 import com.quran.labs.androidquran.database.DatabaseUtils.closeCursor
 import com.quran.labs.androidquran.database.SuraTimingDatabaseHandler
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import javax.inject.Inject
 
 class TimingRepository @Inject constructor() {
   private val lruCache: LruCache<SuraEntry, SparseLongArray> = LruCache(3)

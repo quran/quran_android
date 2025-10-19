@@ -36,11 +36,11 @@ import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.qarilist.di.QariListWrapperInjector
 import com.quran.mobile.feature.qarilist.presenter.QariListPresenter
 import com.quran.mobile.feature.qarilist.ui.QariList
+import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class QariListWrapper(
   context: Context,

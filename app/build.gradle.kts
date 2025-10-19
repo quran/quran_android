@@ -1,5 +1,5 @@
 import net.ltgt.gradle.errorprone.ErrorProneOptions
-import java.util.*
+import java.util.Locale
 
 plugins {
   id("quran.android.application")
@@ -18,13 +18,6 @@ val useFirebase = !project.hasProperty("disableFirebase")
 if (getGradle().startParameter.taskRequests.toString().contains("Release") && useFirebase) {
   apply(plugin = "com.google.gms.google-services")
   apply(plugin = "com.google.firebase.crashlytics")
-}
-
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
 }
 
 android {
@@ -191,11 +184,6 @@ dependencies {
   // rx
   implementation(libs.rxjava)
   implementation(libs.rxandroid)
-
-  // dagger
-  ksp(libs.dagger.compiler)
-  kspTest(libs.dagger.compiler)
-  implementation(libs.dagger.runtime)
 
   // analytics
   debugImplementation(project(":feature:analytics-noop"))

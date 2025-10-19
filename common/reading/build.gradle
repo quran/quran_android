@@ -3,13 +3,6 @@ plugins {
   alias libs.plugins.metro
 }
 
-metro {
-  interop {
-    includeDagger()
-    includeAnvil()
-  }
-}
-
 dependencies {
   implementation project(":common:data")
 
@@ -17,7 +10,4 @@ dependencies {
 
   implementation libs.kotlinx.coroutines.core
   implementation libs.kotlinx.coroutines.android
-
-  // dagger
-  implementation libs.dagger.runtime
 }

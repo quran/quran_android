@@ -13,7 +13,6 @@ firebaseBomVersion = "34.4.0"
 # dependencies
 coroutinesVersion = "1.10.2"
 crashlytics = "3.0.6"
-daggerVersion = "2.57.2"
 dnsjavaVersion = "2.1.9"
 errorprone = "4.3.0"
 metro = "0.7.0"
@@ -113,10 +112,6 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 
 material = { module = "com.google.android.material:material", version.ref = "materialComponentsVersion" }
-
-# dagger
-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerVersion"}
-dagger-runtime = { module = "com.google.dagger:dagger", version.ref = "daggerVersion" }
 
 # molecule
 molecule = { module = "app.cash.molecule:molecule-runtime", version.ref = "molecule" }

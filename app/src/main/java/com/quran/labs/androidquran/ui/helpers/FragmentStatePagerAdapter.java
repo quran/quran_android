@@ -19,13 +19,14 @@ package com.quran.labs.androidquran.ui.helpers;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.PagerAdapter;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
 

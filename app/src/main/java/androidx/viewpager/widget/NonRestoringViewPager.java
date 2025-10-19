@@ -5,8 +5,6 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import androidx.viewpager.widget.ViewPager;
-
 /**
  * NonRestoringViewPager is a hack to sometimes prevent ViewPager from restoring its
  * page in onRestoreInstanceState. This is done because in some cases, the ViewPager
