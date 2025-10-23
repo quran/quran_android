@@ -45,8 +45,6 @@ object Constants {
   // Settings Key (some of these have corresponding values in preference_keys.xml)
   const val PREF_APP_LOCATION = "appLocation"
   const val PREF_LAST_PAGE = "lastPage"
-  const val PREF_LOCK_ORIENTATION = "lockOrientation"
-  const val PREF_LANDSCAPE_ORIENTATION = "landscapeOrientation"
   const val PREF_AYAH_TEXT_SIZE = "ayahTextSize"
   const val PREF_TRANSLATION_TEXT_SIZE = "translationTextSize"
   const val PREF_ACTIVE_TRANSLATION = "activeTranslation"

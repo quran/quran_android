@@ -165,12 +165,6 @@
   <string name="prefs_use_arabic_title">Arabic mode (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Use Arabic for application interface</string>
   <string name="prefs_new_background_title">New background</string>
-  <string name="prefs_lock_orientation_title">Lock screen orientation</string>
-  <string name="prefs_lock_orientation_summary_on">Use fixed orientation mode</string>
-  <string name="prefs_lock_orientation_summary_off">Adaptive to current orientation mode</string>
-  <string name="prefs_landscape_orientation_title">Landscape orientation</string>
-  <string name="prefs_landscape_orientation_summary_on">Always use landscape mode</string>
-  <string name="prefs_landscape_orientation_summary_off">Always use portrait mode</string>
   <string name="prefs_night_mode_title">Night mode</string>
   <string name="prefs_night_mode_summary">Use dark background and light fonts</string>
   <string name="prefs_night_mode_text_brightness_title">Text brightness</string>

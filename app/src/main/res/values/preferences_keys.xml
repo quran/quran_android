@@ -17,8 +17,6 @@
   <string translatable="false" name="prefs_overlay_page_info">overlayPageInfo</string>
   <string translatable="false" name="prefs_display_marker_popup">displayMarkerPopup</string>
   <string translatable="false" name="prefs_highlight_bookmarks">highlightBookmarks</string>
-  <string translatable="false" name="prefs_lock_orientation">lockOrientation</string>
-  <string translatable="false" name="prefs_landscape_orientation">landscapeOrientation</string>
   <string translatable="false" name="prefs_ayah_text_size">ayahTextSize</string>
   <string translatable="false" name="prefs_translation_text_size">translationTextSize</string>
   <string translatable="false" name="prefs_ayah_before_translation">ayahBeforeTranslation</string>

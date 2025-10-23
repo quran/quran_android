@@ -35,25 +35,6 @@
         app:iconSpaceReserved="false"/>
 
     <CheckBoxPreference
-        android:defaultValue="false"
-        android:disableDependentsState="false"
-        android:key="@string/prefs_lock_orientation"
-        android:persistent="true"
-        android:summaryOff="@string/prefs_lock_orientation_summary_off"
-        android:summaryOn="@string/prefs_lock_orientation_summary_on"
-        android:title="@string/prefs_lock_orientation_title"
-        app:iconSpaceReserved="false"/>
-
-    <CheckBoxPreference
-        android:dependency="@string/prefs_lock_orientation"
-        android:key="@string/prefs_landscape_orientation"
-        android:persistent="true"
-        android:summaryOff="@string/prefs_landscape_orientation_summary_off"
-        android:summaryOn="@string/prefs_landscape_orientation_summary_on"
-        android:title="@string/prefs_landscape_orientation_title"
-        app:iconSpaceReserved="false"/>
-
-    <CheckBoxPreference
         android:key="@string/prefs_sura_translated_name"
         android:persistent="true"
         android:summary="@string/prefs_sura_translated_name_summary"

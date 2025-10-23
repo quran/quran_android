@@ -104,12 +104,6 @@
   <string name="prefs_use_arabic_title">Arabiskt läge (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Använd arabiska för tillämpningsgränssnittet.</string>
   <string name="prefs_new_background_title">Ny bakgrund</string>
-  <string name="prefs_lock_orientation_title">Orientering av låsskärmen</string>
-  <string name="prefs_lock_orientation_summary_on">Använd läget för fast orientering</string>
-  <string name="prefs_lock_orientation_summary_off">Anpassar sig till det aktuella orienteringsläget</string>
-  <string name="prefs_landscape_orientation_title">Landskapsorientering</string>
-  <string name="prefs_landscape_orientation_summary_on">Använd alltid liggande läge</string>
-  <string name="prefs_landscape_orientation_summary_off">Använd alltid porträttläge</string>
   <string name="prefs_night_mode_title">Nattläge</string>
   <string name="prefs_night_mode_summary">Använd mörk bakgrund och ljusa typsnitt</string>
   <string name="prefs_night_mode_text_brightness_title">Textens ljusstyrka</string>

@@ -6,8 +6,6 @@ import android.app.SearchManager
 import android.content.ComponentName
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -599,20 +597,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     // just got created, need to reconnect to service
     shouldReconnect = true
 
-    // enforce orientation lock
-    if (quranSettings.isLockOrientation) {
-      val current = resources.configuration.orientation
-      if (quranSettings.isLandscapeOrientation) {
-        if (current == Configuration.ORIENTATION_PORTRAIT) {
-          requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-          return
-        }
-      } else if (current == Configuration.ORIENTATION_LANDSCAPE) {
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        return
-      }
-    }
-
+    // log analytics
     quranEventLogger.logAnalytics(isDualPages, showingTranslation, isSplitScreen)
 
     // Setup recitation (if enabled)

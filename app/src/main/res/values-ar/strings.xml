@@ -76,12 +76,6 @@
   <string name="prefs_category_translation">إعدادات التفسير والترجمة</string>
   <string name="prefs_category_display_settings">إعدادات العرض</string>
   <string name="prefs_new_background_title">الخلفية الجديدة</string>
-  <string name="prefs_lock_orientation_title">اﻹبقاء على وضع العرض</string>
-  <string name="prefs_lock_orientation_summary_on">وضع العرض سيتم الحفاظ عليه</string>
-  <string name="prefs_lock_orientation_summary_off">وضع العرض يتغير تلقائيا</string>
-  <string name="prefs_landscape_orientation_title">الوضع اﻷفقي</string>
-  <string name="prefs_landscape_orientation_summary_on">سيتم استخدام الوضع اﻷفقي</string>
-  <string name="prefs_landscape_orientation_summary_off">سيتم استخدام الوضع الرأسي</string>
   <string name="prefs_night_mode_title">القراءة الليلية</string>
   <string name="prefs_night_mode_summary">الخلفية باللون اﻷسود والخطوط باللون اﻷبيض</string>
   <string name="prefs_night_mode_text_brightness_title">إضاءة الخط</string>

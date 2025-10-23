@@ -88,13 +88,7 @@
     <string name="prefs_use_arabic_title">Arab mód (الوضع العربي)</string>
     <string name="prefs_use_arabic_summary_on">Az alkalmazás arab nyelvű lesz</string>
     <string name="prefs_new_background_title">Új háttér</string>
-    <string name="prefs_lock_orientation_title">Képernyőtájolás zárolása</string>
-    <string name="prefs_lock_orientation_summary_on">A Korán oldal rögzített tájolási módban lesz</string>
-    <string name="prefs_lock_orientation_summary_off">Alkalmazkodás a jelenlegi tájolási módhoz</string>
-    <string name="prefs_landscape_orientation_title">Fekvő tájolás</string>
-    <string name="prefs_landscape_orientation_summary_on">Fekvő tájolás lesz használva</string>
-    <string name="prefs_landscape_orientation_summary_off">Álló tájolás lesz használva</string>
-    <string name="prefs_night_mode_title">Éjszakai mód</string>
+  <string name="prefs_night_mode_title">Éjszakai mód</string>
     <string name="prefs_night_mode_summary">Sötét háttér és világos betűk lesznek használva</string>
     <string name="prefs_night_mode_text_brightness_title">Szöveg fényerőssége</string>
     <string name="prefs_night_mode_text_brightness_summary">A szöveg fényerőssége éjszakai mód bekapcsolásánál</string>

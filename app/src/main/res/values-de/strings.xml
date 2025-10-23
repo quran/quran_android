@@ -115,16 +115,6 @@
   <string name="prefs_use_arabic_title">Arabischer Modus (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Das Programm wird ins Arabische umgestellt</string>
   <string name="prefs_new_background_title">Neuen Hintergrund verwenden</string>
-  <string name="prefs_lock_orientation_title">Bildschirmausrichtung sperren</string>
-  <string name="prefs_lock_orientation_summary_on">Die Quranseiten werden immer in einer bestimmten
-    Bildschirmausrichtung angezeigt.
-  </string>
-  <string name="prefs_lock_orientation_summary_off">Verwendet für die Bildschirmausrichtung die
-    aktuellen System-Einstellungen.
-  </string>
-  <string name="prefs_landscape_orientation_title">Querformat</string>
-  <string name="prefs_landscape_orientation_summary_on">Querformat wird genutzt.</string>
-  <string name="prefs_landscape_orientation_summary_off">Hochformat wird genutzt.</string>
   <string name="prefs_night_mode_title">Nachtmodus</string>
   <string name="prefs_night_mode_summary">Es werden ein dunkler Hintergrund und eine helle Schrift
     benutzt.

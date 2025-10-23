@@ -13,20 +13,12 @@ class QuranEventLogger @Inject constructor(
 ) {
 
   fun logAnalytics(isDualPages: Boolean, showingTranslations: Boolean, isSplitScreen: Boolean) {
-    val isLockOrientation = quranSettings.isLockOrientation
-    val lockingOrientation =  when {
-      isLockOrientation && quranSettings.isLandscapeOrientation -> "landscape"
-      isLockOrientation -> "portrait"
-      else -> "no"
-    }
-
     val params : Map<String, Any> = mapOf(
         "mode" to getScreenMode(isDualPages, showingTranslations, isSplitScreen),
         "pageType" to quranSettings.pageType,
         "isNightMode" to quranSettings.isNightMode,
         "isArabic" to (QuranUtils.getCurrentLocale().language == "ar"),
         "background" to if (quranSettings.useNewBackground()) "default" else "legacy",
-        "isLockingOrientation" to lockingOrientation,
         "overlayInfo" to quranSettings.shouldOverlayPageInfo(),
         "markerPopups" to quranSettings.shouldDisplayMarkerPopup(),
         "navigation" to if (quranSettings.navigateWithVolumeKeys()) "with_volume" else "default",

@@ -124,12 +124,6 @@
   <string name="prefs_use_arabic_title">Chế độ Ả Rập (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Dùng tiếng Ả Rập cho giao diện ứng dụng</string>
   <string name="prefs_new_background_title">Màu nền mới</string>
-  <string name="prefs_lock_orientation_title">Khóa hướng màn hình</string>
-  <string name="prefs_lock_orientation_summary_on">Khóa một hướng cố định</string>
-  <string name="prefs_lock_orientation_summary_off">Tự chuyển hướng cùng thiết bị</string>
-  <string name="prefs_landscape_orientation_title">Hướng ngang</string>
-  <string name="prefs_landscape_orientation_summary_on">Luôn dùng chế độ nằm ngang</string>
-  <string name="prefs_landscape_orientation_summary_off">Luôn dùng chế độ nằm dọc</string>
   <string name="prefs_night_mode_title">Chế độ Tối</string>
   <string name="prefs_night_mode_summary">Dùng nền tối và phông chữ sáng</string>
   <string name="prefs_night_mode_text_brightness_title">Độ sáng của chữ</string>
