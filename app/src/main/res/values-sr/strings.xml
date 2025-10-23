@@ -117,12 +117,6 @@
   <string name="prefs_use_arabic_title">Arapski (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Koristite aplikaciju na arapskom</string>
   <string name="prefs_new_background_title">Nova pozadina</string>
-  <string name="prefs_lock_orientation_title">Zabranite rotaciju zaslona u aplikaciji</string>
-  <string name="prefs_lock_orientation_summary_on">Koristite fiksni način orentacije</string>
-  <string name="prefs_lock_orientation_summary_off">Prilagodite trenutnom načinu orentacije</string>
-  <string name="prefs_landscape_orientation_title">Horizontalna orentacija</string>
-  <string name="prefs_landscape_orientation_summary_on">Uvek koristi horizontalni način orentacije</string>
-  <string name="prefs_landscape_orientation_summary_off">Uvek koristi vertikalni način orentacije</string>
   <string name="prefs_night_mode_title">Noćni način </string>
   <string name="prefs_night_mode_summary">Koristite tamnu podlogu i svetle fontove</string>
   <string name="prefs_night_mode_text_brightness_title">Osvetljenost teksta</string>

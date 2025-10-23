@@ -121,12 +121,6 @@
   <string name="prefs_use_arabic_title">Арабша режим (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Бағдарлама араб тілінде істейді </string>
   <string name="prefs_new_background_title">Жаңа фон</string>
-  <string name="prefs_lock_orientation_title">Экран бағытын құлыптау</string>
-  <string name="prefs_lock_orientation_summary_on">Құран беттері экранның белгіленген бағытында ұсталады</string>
-  <string name="prefs_lock_orientation_summary_off">Ағымдық бағытта пайдалану</string>
-  <string name="prefs_landscape_orientation_title">Көлденең бағыт</string>
-  <string name="prefs_landscape_orientation_summary_on">Көлденең бағытта пайдалану</string>
-  <string name="prefs_landscape_orientation_summary_off">Тік бағытта пайдалану</string>
   <string name="prefs_night_mode_title">Түнгі режим</string>
   <string name="prefs_night_mode_summary">Қара фон мен ашық түсті шрифт қолданылады</string>
   <string name="prefs_night_mode_text_brightness_title">Мәтін ашықтығы</string>

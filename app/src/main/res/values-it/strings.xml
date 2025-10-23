@@ -66,12 +66,6 @@
   <string name="about_data_sources">Fonti di dati</string>
   <string name="about_contributors">Collaboratori</string>
   <string name="prefs_new_background_title">Nuovo sfondo</string>
-  <string name="prefs_lock_orientation_title">Orientamento della schermata di blocco</string>
-  <string name="prefs_lock_orientation_summary_on">Utilizzare la modalità di orientamento fisso</string>
-  <string name="prefs_lock_orientation_summary_off">Adattabile alla modalità di orientamento corrente</string>
-  <string name="prefs_landscape_orientation_title">Orientamento orizzontale</string>
-  <string name="prefs_landscape_orientation_summary_on">Usa sempre la modalità orizzontale</string>
-  <string name="prefs_landscape_orientation_summary_off">Usa sempre la modalità ritratto</string>
   <string name="prefs_night_mode_summary">Usa uno sfondo scuro e caratteri chiari</string>
   <string name="prefs_night_mode_text_brightness_title">Luminosità del testo</string>
   <string name="prefs_overlay_page_info_title">Mostra informazioni sulla pagina</string>

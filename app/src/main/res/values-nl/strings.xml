@@ -178,12 +178,6 @@
   <string name="prefs_use_arabic_title">Arabische modus (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Gebruik Arabisch voor de toepassingsinterface</string>
   <string name="prefs_new_background_title">Nieuwe achtergrond</string>
-  <string name="prefs_lock_orientation_title">Schermoriëntatie vergrendelen</string>
-  <string name="prefs_lock_orientation_summary_on">Gebruik de modus voor vaste oriëntatie</string>
-  <string name="prefs_lock_orientation_summary_off">Aanpasbare oriëntatiemodus</string>
-  <string name="prefs_landscape_orientation_title">Liggende modus</string>
-  <string name="prefs_landscape_orientation_summary_on">Gebruik altijd de liggende modus</string>
-  <string name="prefs_landscape_orientation_summary_off">Gebruik altijd de staande modus</string>
   <string name="prefs_night_mode_title">Nachtmodus</string>
   <string name="prefs_night_mode_summary">Gebruik een donkere achtergrond en lichte lettertypen</string>
   <string name="prefs_night_mode_text_brightness_title">Teksthelderheid</string>

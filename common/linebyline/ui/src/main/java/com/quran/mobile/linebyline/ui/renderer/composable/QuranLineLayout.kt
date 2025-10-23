@@ -55,7 +55,7 @@ fun QuranPageLayoutPreview() {
   MaterialTheme {
     QuranLineLayout(
       lineHeightWidthRatio = 174f / 1080f,
-      allowLinesToOverlap = true,
+      allowLinesToOverlap = false,
       modifier = Modifier.fillMaxSize()
     ) {
       repeat(15) {

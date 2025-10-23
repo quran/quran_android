@@ -91,12 +91,6 @@
   <string name="prefs_use_arabic_title">Mode arabe (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">L\'application sera traduite en arabe</string>
   <string name="prefs_new_background_title">Nouvel arrière-plan</string>
-  <string name="prefs_lock_orientation_title">Verrouiller l\'orientation de l\'écran</string>
-  <string name="prefs_lock_orientation_summary_on">L\'affichage du coran ne s\'adaptera pas au changement d\'orientation de l\'écran.</string>
-  <string name="prefs_lock_orientation_summary_off">L\'affichage du coran s\'adaptera au changement d\'orientation de l\'écran.</string>
-  <string name="prefs_landscape_orientation_title">Mode paysage</string>
-  <string name="prefs_landscape_orientation_summary_on">L\'orientation paysage sera utilisée.</string>
-  <string name="prefs_landscape_orientation_summary_off">L\'orientation portrait sera utilisée.</string>
   <string name="prefs_night_mode_title">Mode nuit</string>
   <string name="prefs_night_mode_summary">Un fond sombre et des polices lumineuses seront utilisés.</string>
   <string name="prefs_night_mode_text_brightness_title">Luminosité du texte</string>

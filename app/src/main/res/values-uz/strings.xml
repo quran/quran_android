@@ -124,12 +124,6 @@
   <string name="prefs_use_arabic_title">Arabcha rejim (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Ilova arab tilida ishlaydi </string>
   <string name="prefs_new_background_title">Yangi fon</string>
-  <string name="prefs_lock_orientation_title">Ekran oriyentatsiyasini qulflash</string>
-  <string name="prefs_lock_orientation_summary_on">Qurʼon sahifalari doim belgilangan oriyentatsiyada boʻladi</string>
-  <string name="prefs_lock_orientation_summary_off">Joriy oriyentatsiyadan foydalaniladi</string>
-  <string name="prefs_landscape_orientation_title">Landshaft rejim</string>
-  <string name="prefs_landscape_orientation_summary_on">Yotiq oriyentatsiyadan foydalaniladi</string>
-  <string name="prefs_landscape_orientation_summary_off">Tik oriyentatsiyadan foydalaniladi</string>
   <string name="prefs_night_mode_title">Tungi rejim</string>
   <string name="prefs_night_mode_summary">Qora fon va porloq shriftlardan foydalaniladi</string>
   <string name="prefs_night_mode_text_brightness_title">Matn porloqliligi</string>
