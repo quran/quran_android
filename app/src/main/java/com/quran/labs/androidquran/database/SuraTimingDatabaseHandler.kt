@@ -16,6 +16,9 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
     const val COL_SURA = "sura"
     const val COL_AYAH = "ayah"
     const val COL_TIME = "time"
+
+    // only in version 2
+    const val COL_WORDS = "words"
   }
 
   object PropertiesTable {
@@ -72,41 +75,59 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
   private fun validDatabase(): Boolean = database?.isOpen ?: false
 
   fun getAyahTimings(sura: Int): Cursor? {
-    if (!validDatabase()) return null
-
-    return try {
-      database?.query(
-        TimingsTable.TABLE_NAME, arrayOf(
-          TimingsTable.COL_SURA,
-          TimingsTable.COL_AYAH, TimingsTable.COL_TIME
-        ),
-        TimingsTable.COL_SURA + "=" + sura,
-        null, null, null, TimingsTable.COL_AYAH + " ASC"
-      )
-    } catch (e: Exception) {
+    return if (!validDatabase()) {
       null
+    } else {
+      val version = getSchemaVersion()
+      val extraColumns = if (version > 1) {
+        arrayOf(TimingsTable.COL_WORDS)
+      } else {
+        arrayOf()
+      }
+
+      try {
+        database?.query(
+          TimingsTable.TABLE_NAME, arrayOf(
+            TimingsTable.COL_SURA,
+            TimingsTable.COL_AYAH,
+            TimingsTable.COL_TIME
+          ) + extraColumns,
+          TimingsTable.COL_SURA + "=" + sura,
+          null, null, null, TimingsTable.COL_AYAH + " ASC"
+        )
+      } catch (_: Exception) {
+        null
+      }
     }
   }
 
   fun getVersion(): Int {
-      if (!validDatabase()) {
-        return -1
-      }
-      var cursor: Cursor? = null
-      return try {
-        cursor = database?.query(
-          PropertiesTable.TABLE_NAME, arrayOf(PropertiesTable.COL_VALUE),
-          PropertiesTable.COL_PROPERTY + "= 'version'", null, null, null, null
-        )
-        if (cursor != null && cursor.moveToFirst()) {
-          cursor.getInt(0)
-        } else {
-          1
-        }
-      } catch (e: Exception) {
-        1
-      } finally {
-        DatabaseUtils.closeCursor(cursor)
-      }
+    return findIntegerProperty("version")
+  }
+
+  fun getSchemaVersion(): Int {
+    return findIntegerProperty("schema_version")
+  }
+
+  private fun findIntegerProperty(property: String): Int {
+    if (!validDatabase()) {
+      return -1
     }
+    var cursor: Cursor? = null
+    return try {
+      cursor = database?.query(
+        PropertiesTable.TABLE_NAME, arrayOf(PropertiesTable.COL_VALUE),
+        PropertiesTable.COL_PROPERTY + "= '$property'", null, null, null, null
+      )
+      if (cursor != null && cursor.moveToFirst()) {
+        cursor.getInt(0)
+      } else {
+        1
+      }
+    } catch (_: Exception) {
+      1
+    } finally {
+      DatabaseUtils.closeCursor(cursor)
+    }
+  }
 }
