@@ -7,7 +7,8 @@ sealed class AudioStatus {
   data class Playback(
     val currentAyah: SuraAyah,
     val audioRequest: AudioRequest,
-    val playbackStatus: PlaybackStatus
+    val playbackStatus: PlaybackStatus,
+    val currentWord: Int? = null
   ) : AudioStatus()
 }
 

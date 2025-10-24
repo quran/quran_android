@@ -23,7 +23,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
-import androidx.core.math.MathUtils.clamp
 import androidx.media.session.MediaButtonReceiver
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
@@ -137,6 +136,7 @@ class AudioService : Service(), Player.Listener {
   private var notificationIcon: Bitmap? = null
   private var displayIcon: Bitmap? = null
   private var gaplessSuraData: SuraTimings = SuraTimings.EMPTY
+  private var currentWord: Int? = null
   private val compositeDisposable = CompositeDisposable()
   private lateinit var scope: CoroutineScope
 
@@ -436,6 +436,7 @@ class AudioService : Service(), Player.Listener {
         } else if (nextSura != sura || nextAyah != updatedAyah) {
           // remove any messages currently in the queue
           serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS)
+          currentWord = null
 
           // if the ayah hasn't changed, we're repeating the ayah,
           // otherwise, we're repeating a range. this variable is
@@ -476,10 +477,52 @@ class AudioService : Service(), Player.Listener {
           return
         }
       }
+
+      // handle word by word tracking if enabled
+      val localAudioRequest = audioRequest
+      var nextUpdateDelay: Long? = null
+
+      if (localAudioRequest?.wordHighlighting == true) {
+        val wordTimings = gaplessSuraData.wordTimings[updatedAyah]
+        if (wordTimings != null && wordTimings.isNotEmpty()) {
+          // find the current word based on position
+          val updatedWordIndex = wordTimings.indexOfLast { it.startTime <= pos }
+          val nextWordIndex = if (updatedWordIndex >= 0) {
+            updatedWordIndex + 1
+          } else {
+            0
+          }
+
+          if (nextWordIndex < wordTimings.size) {
+            val timeDelta = wordTimings[nextWordIndex].startTime - localPlayer.currentPosition
+            val t = timeDelta.coerceIn(50, 10000)
+            val tAccountingForSpeed = t / localAudioRequest.playbackSpeed
+            nextUpdateDelay = tAccountingForSpeed.toLong()
+          }
+
+          currentWord = if (updatedWordIndex >= 0) {
+            wordTimings[updatedWordIndex].word
+          } else {
+            null
+          }
+        } else {
+          // no word timings available, clear current word
+          currentWord = null
+        }
+      } else {
+        // word highlighting disabled, clear current word
+        currentWord = null
+      }
+
+      // Notify once about the current state
       notifyAyahChanged()
-      if (maxAyahs >= updatedAyah + 1) {
+
+      // schedule next the update
+      if (nextUpdateDelay != null) {
+        serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, nextUpdateDelay)
+      } else if (maxAyahs >= updatedAyah + 1) {
         val timeDelta = gaplessSuraData.ayahTimings[updatedAyah + 1] - localPlayer.currentPosition
-        val t = clamp(timeDelta, 100, 10000)
+        val t = timeDelta.coerceIn(100, 10000)
         val tAccountingForSpeed = t / (audioRequest?.playbackSpeed ?: 1f)
         if (DEBUG_TIMINGS) {
           Timber.d(
@@ -622,6 +665,7 @@ class AudioService : Service(), Player.Listener {
   private fun processStopRequest(force: Boolean = false) {
     setState(PlaybackStateCompat.STATE_STOPPED)
     serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS)
+    currentWord = null
     if (State.Preparing == state) {
       shouldStop = true
       relaxResources(releaseExoPlayer = false, stopForeground = true)
@@ -673,7 +717,8 @@ class AudioService : Service(), Player.Listener {
         AudioStatus.Playback(
           localAudioQueue.getCurrentPlaybackAyah(),
           localAudioRequest,
-          state.asPlayingPlaybackStatus()
+          state.asPlayingPlaybackStatus(),
+          currentWord
         )
       }
     }
@@ -773,6 +818,7 @@ class AudioService : Service(), Player.Listener {
     state = State.Stopped
     relaxResources(releaseExoPlayer = false, stopForeground = false)
     playerOverride = false
+    currentWord = null
 
     val localAudioQueue = audioQueue
     val localAudioRequest = audioRequest
