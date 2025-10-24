@@ -1592,17 +1592,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   override fun setPlaybackSpeed(speed: Float) {
     val lastAudioRequest = audioStatusRepositoryBridge.audioRequest()
     if (lastAudioRequest != null) {
-      val updatedAudioRequest = AudioRequest(
-        lastAudioRequest.start,
-        lastAudioRequest.end,
-        lastAudioRequest.qari,
-        lastAudioRequest.repeatInfo,
-        lastAudioRequest.rangeRepeatInfo,
-        lastAudioRequest.enforceBounds,
-        speed,
-        lastAudioRequest.shouldStream,
-        lastAudioRequest.audioPathInfo
-      )
+      val updatedAudioRequest = lastAudioRequest.copy(playbackSpeed = speed)
 
       val i = Intent(this, AudioService::class.java)
       i.setAction(AudioService.ACTION_UPDATE_SETTINGS)
@@ -1666,16 +1656,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   ): Boolean {
     val lastAudioRequest = audioStatusRepositoryBridge.audioRequest()
     if (lastAudioRequest != null) {
-      val updatedAudioRequest = AudioRequest(
-        lastAudioRequest.start,
-        lastAudioRequest.end,
-        lastAudioRequest.qari,
-        verseRepeat,
-        rangeRepeat,
-        enforceRange,
-        playbackSpeed,
-        lastAudioRequest.shouldStream,
-        lastAudioRequest.audioPathInfo
+      val updatedAudioRequest = lastAudioRequest.copy(
+        repeatInfo = verseRepeat,
+        rangeRepeatInfo = rangeRepeat,
+        enforceBounds = enforceRange,
+        playbackSpeed = playbackSpeed
       )
       val i = Intent(this, AudioService::class.java)
       i.setAction(AudioService.ACTION_UPDATE_SETTINGS)
@@ -1690,17 +1675,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   override fun setRepeatCount(repeatCount: Int) {
     val lastAudioRequest = audioStatusRepositoryBridge.audioRequest()
     if (lastAudioRequest != null) {
-      val updatedAudioRequest = AudioRequest(
-        lastAudioRequest.start,
-        lastAudioRequest.end,
-        lastAudioRequest.qari,
-        repeatCount,
-        lastAudioRequest.rangeRepeatInfo,
-        lastAudioRequest.enforceBounds,
-        lastAudioRequest.playbackSpeed,
-        lastAudioRequest.shouldStream,
-        lastAudioRequest.audioPathInfo
-      )
+      val updatedAudioRequest = lastAudioRequest.copy(repeatInfo = repeatCount)
 
       val i = Intent(this, AudioService::class.java)
       i.setAction(AudioService.ACTION_UPDATE_SETTINGS)
