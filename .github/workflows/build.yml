@@ -34,7 +34,7 @@ jobs:
         run: ./gradlew lintMadaniDebug
 
       - name: Upload lint results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: lint_report
@@ -48,7 +48,7 @@ jobs:
         run: ./gradlew testMadaniDebug -PdisableFirebase
 
       - name: Upload test report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: unit_test_report
@@ -71,7 +71,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Apk Diff Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           name: apk_differences
@@ -97,7 +97,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Dependency Diff Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: success()
         with:
           name: dependency_differences
@@ -109,7 +109,7 @@ jobs:
           echo ${{ github.event.number }} > pr.txt
 
       - name: Upload PR Number
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: pr
           path: pr.txt
