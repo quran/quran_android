@@ -7,7 +7,7 @@ ksp = "2.3.0"
 # required within the Gradle convention plugins - not unused
 composeBomVersion = "2025.10.01"
 media3ExoplayerVersion = "1.8.0"
-okhttpBomVersion = "5.2.1"
+okhttpBomVersion = "5.3.0"
 firebaseBomVersion = "34.5.0"
 
 # dependencies
