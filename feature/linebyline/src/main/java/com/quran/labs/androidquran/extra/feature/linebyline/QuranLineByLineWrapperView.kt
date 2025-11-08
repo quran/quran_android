@@ -5,6 +5,7 @@ import android.widget.FrameLayout
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.quran.data.page.provider.di.inject
@@ -15,6 +16,7 @@ import com.quran.labs.androidquran.extra.feature.linebyline.resource.ImageBitmap
 import com.quran.labs.androidquran.extra.feature.linebyline.ui.QuranPageWrapper
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -43,6 +45,7 @@ class QuranLineByLineWrapperView(
       setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
       consumeWindowInsets = false
       setContent {
+        val scope = rememberCoroutineScope()
         val pageInfo = pageFlow.collectAsState(quranLineByLinePresenter.emptyState(), Dispatchers.IO)
 
         MaterialTheme {
@@ -57,9 +60,9 @@ class QuranLineByLineWrapperView(
             ayahNumberFormatter = NumberFormat.getIntegerInstance(Locale("ar", "EG")),
             onClick = quranLineByLinePresenter::onClick,
             onPagePositioned = quranLineByLinePresenter::onPagePositioned,
-            onSelectionStart = quranLineByLinePresenter::startSelection,
-            onSelectionModified = quranLineByLinePresenter::modifySelectionRange,
-            onSelectionEnd = quranLineByLinePresenter::endSelection
+            onSelectionStart = { x, y -> scope.launch { quranLineByLinePresenter.startSelection(x, y) } },
+            onSelectionModified = { offsetX, offsetY -> scope.launch { quranLineByLinePresenter.modifySelectionRange(offsetX, offsetY) } },
+            onSelectionEnd = { scope.launch { quranLineByLinePresenter.endSelection() } }
           )
         }
       }

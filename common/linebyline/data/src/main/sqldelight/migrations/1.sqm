@@ -1,0 +1,16 @@
+-- schema version 2 includes ayah_glyphs. having this migration is
+-- necessary since not all customers will upgrade the ayahinfo database
+-- from v1 to v2 when prompted, so the database needs to work with both
+CREATE TABLE IF NOT EXISTS ayah_glyphs(
+  id INTEGER NOT NULL,
+  page INTEGER NOT NULL,
+  line INTEGER NOT NULL,
+  sura INTEGER NOT NULL,
+  ayah INTEGER NOT NULL,
+  glyph_position INTEGER NOT NULL,
+  left REAL NOT NULL,
+  right REAL NOT NULL,
+  glyph_type TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ayah_glyphs_sura_ayah_idx ON ayah_glyphs(sura, ayah);
+CREATE INDEX IF NOT EXISTS ayah_glyphs_page_idx ON ayah_glyphs(page);

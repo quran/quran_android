@@ -30,6 +30,10 @@ import com.quran.labs.androidquran.extra.feature.linebyline.model.SidelineDirect
 import com.quran.labs.androidquran.extra.feature.linebyline.model.SidelineModel
 import com.quran.labs.androidquran.extra.feature.linebyline.presenter.selection.SelectionHelper
 import com.quran.labs.androidquran.extra.feature.linebyline.presenter.selection.mergeWith
+import com.quran.mobile.linebyline.data.dao.AyahHighlight
+import com.quran.mobile.linebyline.data.dao.AyahMarkerInfo
+import com.quran.mobile.linebyline.data.dao.SuraHeader
+import com.quran.mobile.linebyline.data.dao.WordHighlight
 import com.quran.mobile.linebyline.data.model.PageModel
 import com.quran.reading.common.ReadingEventPresenter
 import dev.zacsweers.metro.Inject
@@ -37,13 +41,12 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -64,22 +67,36 @@ class QuranLineByLinePresenter @Inject constructor(
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
   private val page = pages[0]
-  private val ayahHighlightFlow =
-    pageModel.ayahHighlight(pages[0])
-      .stateIn(scope, SharingStarted.Lazily, emptyList())
 
   private var lastXOffset: Float = 0f
   private var lastYOffset: Float = 0f
   private var selectionStartSuraAyah: SuraAyah? = null
 
+  private data class PageDetails(
+    val lines: ImmutableList<LineModel>,
+    val suraHeaders: ImmutableList<SuraHeader>,
+    val ayahMarkers: ImmutableList<AyahMarkerInfo>,
+    val ayahBounds: ImmutableList<AyahHighlight>,
+    val wordBounds: ImmutableList<WordHighlight>
+  )
+
+  private val pageDetailsFetcher: Deferred<PageDetails> by lazy {
+    scope.async {
+      PageDetails(
+        lines = linesForPage(page),
+        suraHeaders = pageModel.suraHeaders(page),
+        ayahMarkers = pageModel.ayahMarkers(page),
+        ayahBounds = pageModel.ayahHighlight(page),
+        wordBounds = pageModel.wordHighlights(page)
+      )
+    }
+  }
+
   fun loadPage(): Flow<PageInfo> {
     return combine(
-      linesForPage(page),
-      pageModel.suraHeaders(page),
-      pageModel.ayahMarkers(page),
       pageSelection(),
       lineByLineSettings.displaySettingsFlow
-    ) { lines, suraHeaders, ayahMarkers, highlights, displaySettings ->
+    ) { highlights, displaySettings ->
       val displayText = DisplayText(
         quranPageInfo.suraName(page),
         quranPageInfo.juz(page),
@@ -101,14 +118,16 @@ class QuranLineByLinePresenter @Inject constructor(
       } else {
         -1
       }
+
+      val pageDetails = pageDetailsFetcher.await()
       PageInfo(
         page,
         pageProvider.pageType(),
         displayText,
         displaySettings,
-        lines,
-        suraHeaders,
-        ayahMarkers,
+        pageDetails.lines,
+        pageDetails.suraHeaders,
+        pageDetails.ayahMarkers,
         highlights,
         sidelines,
         targetScrollPosition,
@@ -129,7 +148,7 @@ class QuranLineByLinePresenter @Inject constructor(
     }
   }
 
-  fun startSelection(x: Float, y: Float) {
+  suspend fun startSelection(x: Float, y: Float) {
     selectionStartSuraAyah = null
     selectionHelper.startSelection(x, y)
     modifySelectionRange(0f, 0f)
@@ -146,9 +165,10 @@ class QuranLineByLinePresenter @Inject constructor(
     }
   }
 
-  fun modifySelectionRange(offsetX: Float, offsetY: Float) {
+  suspend fun modifySelectionRange(offsetX: Float, offsetY: Float) {
     val previousSelection = readingEventPresenter.ayahSelectionFlow.value
-    val selectedAyah = selectionHelper.modifySelectionRange(offsetX, offsetY, ayahHighlightFlow.value)
+    val ayahHighlights = pageDetailsFetcher.await().ayahBounds
+    val selectedAyah = selectionHelper.modifySelectionRange(offsetX, offsetY, ayahHighlights)
     if (selectedAyah != null) {
       val selectionStart = selectionStartSuraAyah ?: selectedAyah
       selectionStartSuraAyah = selectionStart
@@ -178,7 +198,7 @@ class QuranLineByLinePresenter @Inject constructor(
     }
   }
 
-  fun endSelection() {
+  suspend fun endSelection() {
     selectionStartSuraAyah = null
     selectionHelper.endSelection()
     val currentSelection = readingEventPresenter.ayahSelectionFlow.value
@@ -214,11 +234,11 @@ class QuranLineByLinePresenter @Inject constructor(
     }
   }
 
-  private fun boundsFor(selection: AyahSelection): Pair<SelectionRectangle, SelectionRectangle>? {
+  private suspend fun boundsFor(selection: AyahSelection): Pair<SelectionRectangle, SelectionRectangle>? {
     val startAyah = selection.startSuraAyah() ?: return null
     val endAyah = selection.endSuraAyah() ?: return null
 
-    val highlights = ayahHighlightFlow.value
+    val highlights = pageDetailsFetcher.await().ayahBounds
     val initialStartBounds = highlights.firstOrNull { it.sura == startAyah.sura && it.ayah == startAyah.ayah }
     val initialEndBounds = highlights.lastOrNull { it.sura == endAyah.sura && it.ayah == endAyah.ayah }
 
@@ -245,11 +265,11 @@ class QuranLineByLinePresenter @Inject constructor(
 
   private fun pageSelection(): Flow<ImmutableList<HighlightAyah>> {
     return combine(
-      ayahHighlightFlow,
       bookmarksDao.bookmarksForPage(page),
       readingEventPresenter.ayahSelectionFlow,
       audioStatusRepository.audioPlaybackFlow,
-    ) { ayahHighlights, bookmarks, selectedAyah, audioPlaybackStatus ->
+    ) { bookmarks, selectedAyah, audioPlaybackStatus ->
+      val ayahHighlights = pageDetailsFetcher.await().ayahBounds
       val currentBookmarkHighlights = bookmarks.map {
           bookmark -> ayahHighlights.filter { it.sura == bookmark.sura && it.ayah == bookmark.ayah }
       }.map { HighlightAyah(HighlightType.BOOKMARK, it) }
@@ -299,8 +319,8 @@ class QuranLineByLinePresenter @Inject constructor(
     return SuraAyah(sura, ayah) in start..end
   }
 
-  private fun linesForPage(page: Int): Flow<ImmutableList<LineModel>> {
-    return flow {
+  private suspend fun linesForPage(page: Int): ImmutableList<LineModel> {
+    return withContext(Dispatchers.IO) {
       val lines = mutableListOf<LineModel>()
       val whence = quranFileManager.quranImagesDirectory()
       for (lineNumber in 1..15) {
@@ -318,7 +338,7 @@ class QuranLineByLinePresenter @Inject constructor(
           throw exception
         }
       }
-      emit(lines.toImmutableList())
+      lines.toImmutableList()
     }
   }
 
