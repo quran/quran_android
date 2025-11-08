@@ -218,15 +218,21 @@ class QuranFileUtils @Inject constructor(
   @WorkerThread
   override fun copyFromAssetsRelative(assetsPath: String, filename: String, destination: String) {
     val actualDestination = File(quranInternalBaseDirectory, destination)
-    if (!actualDestination.exists()) {
-      if (actualDestination.absolutePath.endsWith(filename)) {
-        actualDestination.parentFile?.mkdirs()
+    copyFromAssetsRelative(assetsPath, filename, actualDestination)
+  }
+
+  @WorkerThread
+  override fun copyFromAssetsRelative(assetsPath: String, filename: String, destination: File) {
+    if (!destination.exists()) {
+      if (destination.absolutePath.endsWith(filename)) {
+        destination.parentFile?.mkdirs()
       } else {
-        actualDestination.mkdirs()
+        destination.mkdirs()
       }
     }
-    copyFromAssets(assetsPath, filename, actualDestination)
+    copyFromAssets(assetsPath, filename, destination)
   }
+
 
   override fun copyFromAssetsRelativeRecursive(
     assetsPath: String,
@@ -434,6 +440,8 @@ class QuranFileUtils @Inject constructor(
     get() = File(quranInternalBaseDirectory, ayahInfoDirectory)
 
   override fun audioFileDirectory(): String? = getQuranAudioDirectory(appContext)
+
+  override fun databaseDirectory(): File = getQuranDatabaseDirectory()
 
   fun getQuranAudioDirectory(context: Context): String? {
     val path = getQuranBaseDirectory(context)?.let { it + audioDirectory } ?: return null

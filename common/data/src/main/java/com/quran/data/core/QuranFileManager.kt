@@ -8,6 +8,7 @@ interface QuranFileManager {
   fun quranImagesDirectory(): File
   fun ayahInfoFileDirectory(): File
   fun audioFileDirectory(): String?
+  fun databaseDirectory(): File
 
   fun recitationSessionsDirectory(): String
   fun recitationRecordingsDirectory(): String
@@ -19,6 +20,8 @@ interface QuranFileManager {
 
   @WorkerThread
   fun copyFromAssetsRelative(assetsPath: String, filename: String, destination: String)
+  @WorkerThread
+  fun copyFromAssetsRelative(assetsPath: String, filename: String, destination: File)
 
   @WorkerThread
   fun copyFromAssetsRelativeRecursive(assetsPath: String, directory: String, destination: String)

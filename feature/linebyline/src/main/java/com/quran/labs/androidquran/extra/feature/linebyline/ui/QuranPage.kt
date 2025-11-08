@@ -132,6 +132,7 @@ fun QuranPage(
             val color = when (highlightAyah.highlightType) {
               HighlightType.SELECTION -> Color(0x46, 0x94, 0xa6, 0x40)
               HighlightType.AUDIO -> Color(0x46, 0xa6, 0x46, 0x40)
+              HighlightType.AUDIO_WORD -> Color(0xff, 0xb3, 0x3d, 0x60)
               HighlightType.BOOKMARK -> Color(0xa4, 0xa4, 0xa4, 0x40)
             }
 

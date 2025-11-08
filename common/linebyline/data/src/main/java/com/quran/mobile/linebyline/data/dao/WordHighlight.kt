@@ -13,6 +13,9 @@ data class WordHighlight(
   val right: Float
 )
 
+fun WordHighlight.asAyahHighlight(): AyahHighlight =
+  AyahHighlight(id, page, sura, ayah, line, left, right)
+
 fun Ayah_glyphs.asWordHighlight(): WordHighlight =
   WordHighlight(
     id.toInt(),
