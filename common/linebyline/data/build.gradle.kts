@@ -4,6 +4,16 @@ plugins {
   alias(libs.plugins.metro)
 }
 
+sqldelight {
+  databases {
+    create("LineByLineAyahInfoDatabase") {
+      packageName.set("com.quran.mobile.linebyline.data")
+      schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
+      verifyMigrations.set(true)
+    }
+  }
+}
+
 android.namespace = "com.quran.mobile.linebyline.data"
 
 dependencies {

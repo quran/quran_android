@@ -5,11 +5,6 @@ plugins {
 
 android.namespace = "com.quran.labs.androidquran.extra.feature.linebyline"
 
-// https://issuetracker.google.com/issues/372756067
-android.lint {
-   disable.add("SuspiciousModifierThen")
-}
-
 dependencies {
   implementation(project(":common:di"))
   implementation(project(":common:data"))
@@ -40,6 +35,4 @@ dependencies {
   // coroutines
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.kotlinx.coroutines.android)
-
-  implementation(libs.compose.ui.tooling)
 }
