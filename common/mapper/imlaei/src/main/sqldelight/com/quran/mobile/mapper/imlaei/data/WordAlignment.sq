@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS word_alignment(
+  sura INTEGER NOT NULL,
+  ayah INTEGER NOT NULL,
+  audio_word_number INTEGER NOT NULL,
+  glyph_word_numbers TEXT NOT NULL,
+  PRIMARY KEY(sura, ayah, audio_word_number)
+);
+
+CREATE INDEX IF NOT EXISTS word_alignment_sura_ayah ON word_alignment(sura, ayah);
+
+findWordAlignmentsInSuraForAyahRange:
+SELECT * FROM word_alignment WHERE sura = ? AND ayah >= ? AND ayah <= ?;
+
+findWordAlignmentsInSuraUntilEnd:
+SELECT * FROM word_alignment WHERE sura = ? AND ayah >= ?;
+

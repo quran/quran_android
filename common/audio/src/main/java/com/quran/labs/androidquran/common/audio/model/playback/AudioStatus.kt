@@ -14,3 +14,6 @@ sealed class AudioStatus {
 
 fun AudioStatus.currentPlaybackAyah() =
   (this as? AudioStatus.Playback)?.currentAyah
+
+fun AudioStatus.currentPlaybackWord() =
+  (this as? AudioStatus.Playback)?.currentWord

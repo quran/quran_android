@@ -1,5 +1,5 @@
 package com.quran.labs.androidquran.extra.feature.linebyline.model
 
 enum class HighlightType {
-  SELECTION, AUDIO, BOOKMARK
+  SELECTION, AUDIO, AUDIO_WORD, BOOKMARK
 }

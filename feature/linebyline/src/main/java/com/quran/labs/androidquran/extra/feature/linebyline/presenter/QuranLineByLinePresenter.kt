@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.asImageBitmap
 import com.quran.analytics.CrashReporter
 import com.quran.data.core.QuranFileManager
+import com.quran.data.core.QuranInfo
 import com.quran.data.core.QuranPageInfo
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.dao.Settings
@@ -19,6 +20,7 @@ import com.quran.data.model.selection.withSelectionIndicator
 import com.quran.data.model.selection.withYScroll
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.common.audio.model.playback.currentPlaybackAyah
+import com.quran.labs.androidquran.common.audio.model.playback.currentPlaybackWord
 import com.quran.labs.androidquran.common.audio.repository.AudioStatusRepository
 import com.quran.labs.androidquran.extra.feature.linebyline.model.DisplayText
 import com.quran.labs.androidquran.extra.feature.linebyline.model.EmptyPageInfo
@@ -34,7 +36,10 @@ import com.quran.mobile.linebyline.data.dao.AyahHighlight
 import com.quran.mobile.linebyline.data.dao.AyahMarkerInfo
 import com.quran.mobile.linebyline.data.dao.SuraHeader
 import com.quran.mobile.linebyline.data.dao.WordHighlight
+import com.quran.mobile.linebyline.data.dao.asAyahHighlight
 import com.quran.mobile.linebyline.data.model.PageModel
+import com.quran.mobile.mapper.imlaei.data.ImlaeiUthmaniMapper
+import com.quran.mobile.mapper.imlaei.data.WordAlignment
 import com.quran.reading.common.ReadingEventPresenter
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
@@ -62,6 +67,8 @@ class QuranLineByLinePresenter @Inject constructor(
   private val settings: Settings,
   private val lineByLineSettings: QuranLineByLineSettingsPresenter,
   private val crashReporter: CrashReporter,
+  private val quranInfo: QuranInfo,
+  private val imlaeiUthmaniMapper: ImlaeiUthmaniMapper,
   pages: IntArray
 ) {
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -77,18 +84,26 @@ class QuranLineByLinePresenter @Inject constructor(
     val suraHeaders: ImmutableList<SuraHeader>,
     val ayahMarkers: ImmutableList<AyahMarkerInfo>,
     val ayahBounds: ImmutableList<AyahHighlight>,
-    val wordBounds: ImmutableList<WordHighlight>
+    val wordBounds: ImmutableList<WordHighlight>,
+    val imlaeiUthmaniMappings: List<WordAlignment>
   )
 
   private val pageDetailsFetcher: Deferred<PageDetails> by lazy {
     scope.async {
-      PageDetails(
-        lines = linesForPage(page),
-        suraHeaders = pageModel.suraHeaders(page),
-        ayahMarkers = pageModel.ayahMarkers(page),
-        ayahBounds = pageModel.ayahHighlight(page),
-        wordBounds = pageModel.wordHighlights(page)
-      )
+      withContext(Dispatchers.IO) {
+        val range = quranInfo.getVerseRangeForPage(page)
+        val startAyah = SuraAyah(range.startSura, range.startAyah)
+        val endAyah = SuraAyah(range.endingSura, range.endingAyah)
+
+        PageDetails(
+          lines = linesForPage(page),
+          suraHeaders = pageModel.suraHeaders(page),
+          ayahMarkers = pageModel.ayahMarkers(page),
+          ayahBounds = pageModel.ayahHighlight(page),
+          wordBounds = pageModel.wordHighlights(page),
+          imlaeiUthmaniMappings = imlaeiUthmaniMapper.mapWords(startAyah, endAyah)
+        )
+      }
     }
   }
 
@@ -269,7 +284,8 @@ class QuranLineByLinePresenter @Inject constructor(
       readingEventPresenter.ayahSelectionFlow,
       audioStatusRepository.audioPlaybackFlow,
     ) { bookmarks, selectedAyah, audioPlaybackStatus ->
-      val ayahHighlights = pageDetailsFetcher.await().ayahBounds
+      val pageDetails = pageDetailsFetcher.await()
+      val ayahHighlights = pageDetails.ayahBounds
       val currentBookmarkHighlights = bookmarks.map {
           bookmark -> ayahHighlights.filter { it.sura == bookmark.sura && it.ayah == bookmark.ayah }
       }.map { HighlightAyah(HighlightType.BOOKMARK, it) }
@@ -307,9 +323,28 @@ class QuranLineByLinePresenter @Inject constructor(
           it.sura == audioPlaybackAyah.sura && it.ayah == audioPlaybackAyah.ayah
         }
       }
-      val audioHighlights = HighlightAyah(HighlightType.AUDIO, audioHighlight, true)
 
-      (bookmarkHighlights + selectedHighlights + audioHighlights)
+      val audioPlaybackWord = audioPlaybackStatus.currentPlaybackWord()
+      val wordHighlights = if (audioPlaybackAyah == null || audioPlaybackWord == null) {
+        emptyList()
+      } else {
+        val ayahWords = pageDetails.wordBounds.filter { it.sura == audioPlaybackAyah.sura && it.ayah == audioPlaybackAyah.ayah }
+
+        // find the corresponding mapping from imlaei => uthmani, since audioWordNumber is imlaei
+        val targetWord = pageDetails.imlaeiUthmaniMappings.find {
+          it.sura == audioPlaybackAyah.sura && it.ayah == audioPlaybackAyah.ayah && it.audioWordNumber == audioPlaybackWord
+        }
+
+        // each word in imlaei might correspond to one or more words in uthmani
+        targetWord?.glyphWordNumbers.orEmpty()
+          .mapNotNull { ayahWords.getOrNull(it - 1) }
+          .map { it.asAyahHighlight() }
+      }
+
+      val audioAyahHighlights = HighlightAyah(HighlightType.AUDIO, audioHighlight, wordHighlights.isEmpty())
+      val audioWordHighlights = HighlightAyah(HighlightType.AUDIO_WORD, wordHighlights, true)
+
+      (bookmarkHighlights + selectedHighlights + audioAyahHighlights + audioWordHighlights)
         .filter { it.ayahHighlights.isNotEmpty() }
         .toImmutableList()
     }
