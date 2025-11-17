@@ -72,7 +72,6 @@
   <string name="menu_get_translations">Ottenere traduzioni</string>
   <string name="about_data_sources">Fonti di dati</string>
   <string name="about_contributors">Collaboratori</string>
-  <string name="prefs_new_background_title">Nuovo sfondo</string>
   <string name="prefs_lock_orientation_title">Orientamento della schermata di blocco</string>
   <string name="prefs_lock_orientation_summary_on">Utilizzare la modalità di orientamento fisso</string>
   <string name="prefs_lock_orientation_summary_off">Adattabile alla modalità di orientamento corrente</string>

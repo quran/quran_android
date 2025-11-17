@@ -86,7 +86,6 @@
     <string name="prefs_category_display_settings">Megjelenítési beállítások</string>
     <string name="prefs_use_arabic_title">Arab mód (الوضع العربي)</string>
     <string name="prefs_use_arabic_summary_on">Az alkalmazás arab nyelvű lesz</string>
-    <string name="prefs_new_background_title">Új háttér</string>
     <string name="prefs_lock_orientation_title">Képernyőtájolás zárolása</string>
     <string name="prefs_lock_orientation_summary_on">A Korán oldal rögzített tájolási módban lesz</string>
     <string name="prefs_lock_orientation_summary_off">Alkalmazkodás a jelenlegi tájolási módhoz</string>
