@@ -223,6 +223,7 @@
   <string name="prefs_page_type_summary">Select the type of reading pages</string>
   <string name="prefs_sura_translated_name_summary">Show the translation of surah name</string>
   <string name="prefs_sura_translated_name_title">Surah translated name</string>
+  <string name="prefs_page_background_title">Page Background</string>
   <string name="prefs_preview">Preview</string>
 
   <string name="translations" translatable="false">@string/prefs_translations</string>
@@ -394,4 +395,24 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Quran Downloads</string>
   <string name="notification_channel_audio">Quran Recitation</string>
+
+  <!-- Color picker strings -->
+  <string name="color_rgb_values">R: %1$d G: %2$d B: %3$d</string>
+  <string name="color_picker_red">Red</string>
+  <string name="color_picker_green">Green</string>
+  <string name="color_picker_blue">Blue</string>
+  <string name="color_picker_values">Color Values</string>
+
+  <!-- Page background picker strings -->
+  <string name="page_background_picker_title">Choose Page Background</string>
+  <string name="page_background_white">White (Default)</string>
+  <string name="page_background_cream">Cream</string>
+  <string name="page_background_light_parchment">Light Parchment</string>
+  <string name="page_background_soft_ivory">Soft Ivory</string>
+  <string name="page_background_custom_color">Custom Color</string>
+
+  <!-- Color picker dialog strings -->
+  <string name="color_picker_dialog_title">Choose Color</string>
+  <string name="color_picker_apply">Apply</string>
+  <string name="color_picker_reset_default">Reset to Default</string>
 </resources>
