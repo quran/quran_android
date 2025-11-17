@@ -95,7 +95,6 @@
   <string name="prefs_category_display_settings">การตั้งค่าการแสดงผล</string>
   <string name="prefs_use_arabic_title">โหมดอาหรับ (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">ใช้ภาษาอาหรับสําหรับอินเทอร์เฟซโปรแกรมประยุกต์</string>
-  <string name="prefs_new_background_title">พื้นหลังใหม่</string>
   <string name="prefs_night_mode_title">โหมดกลางคืน</string>
   <string name="prefs_night_mode_summary">ใช้พื้นหลังสีเข้มและแบบอักษรสีอ่อน</string>
   <string name="prefs_night_mode_text_brightness_title">ความสว่างของข้อความ</string>
