@@ -164,7 +164,7 @@
   <string name="prefs_category_display_settings">Display Settings</string>
   <string name="prefs_use_arabic_title">Arabic mode (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Use Arabic for application interface</string>
-  <string name="prefs_new_background_title">New background</string>
+  <string name="prefs_page_background_title">Page Background</string>
   <string name="prefs_night_mode_title">Night mode</string>
   <string name="prefs_night_mode_summary">Use dark background and light fonts</string>
   <string name="prefs_night_mode_text_brightness_title">Text brightness</string>
@@ -223,7 +223,6 @@
   <string name="prefs_page_type_summary">Select the type of reading pages</string>
   <string name="prefs_sura_translated_name_summary">Show the translation of surah name</string>
   <string name="prefs_sura_translated_name_title">Surah translated name</string>
-  <string name="prefs_page_background_title">Page Background</string>
   <string name="prefs_preview">Preview</string>
 
   <string name="translations" translatable="false">@string/prefs_translations</string>
