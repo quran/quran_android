@@ -74,7 +74,6 @@
   <string name="prefs_category_display_settings">كۆرۈنۈش تەڭشەكلىرى</string>
   <string name="prefs_use_arabic_title">ئەرەبچە ھالەت (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">ئەپ ئارا يۈزىگە ئەرەبچە ئىشلىتىدۇ</string>
-  <string name="prefs_new_background_title">يېڭى تەگلىك</string>
   <string name="prefs_lock_orientation_title">قۇلۇپ ئېكران يۆنىلىشى</string>
   <string name="prefs_lock_orientation_summary_on">مۇقىم يۆنىلىش ھالىتىنى ئىشلىتىدۇ</string>
   <string name="prefs_lock_orientation_summary_off">نۆۋەتتىكى يۆنىلىش ھالىتىگە ماسلىشىدۇ</string>

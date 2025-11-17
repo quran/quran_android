@@ -102,7 +102,6 @@
   <string name="prefs_category_display_settings">Inställningar för visning</string>
   <string name="prefs_use_arabic_title">Arabiskt läge (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Använd arabiska för tillämpningsgränssnittet.</string>
-  <string name="prefs_new_background_title">Ny bakgrund</string>
   <string name="prefs_lock_orientation_title">Orientering av låsskärmen</string>
   <string name="prefs_lock_orientation_summary_on">Använd läget för fast orientering</string>
   <string name="prefs_lock_orientation_summary_off">Anpassar sig till det aktuella orienteringsläget</string>
