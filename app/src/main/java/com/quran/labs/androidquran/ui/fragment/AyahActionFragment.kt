@@ -9,6 +9,7 @@ import com.quran.data.model.selection.startSuraAyah
 import com.quran.labs.androidquran.common.audio.model.playback.currentPlaybackAyah
 import com.quran.labs.androidquran.common.audio.repository.AudioStatusRepository
 import com.quran.reading.common.ReadingEventPresenter
+import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 
+@HasMemberInjections
 abstract class AyahActionFragment : Fragment() {
   private var scope: CoroutineScope = MainScope()
 
