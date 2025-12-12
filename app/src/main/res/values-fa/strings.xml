@@ -223,7 +223,6 @@
   <string name="prefs_import_summary">درون‌برد نشانک‌ها و برچسب‌ها</string>
   <string name="prefs_export_summary">برون‌بُرد نشانک‌ها و برچسب‌ها</string>
   <string name="prefs_export_title">برون‌بُرد</string>
-  <string name="prefs_new_background_title">پس‌زمینه جدید</string>
   <string name="prefs_highlight_bookmarks_summary">برجسته‌سازی آیه‌های نشانکدار</string>
   <string name="prefs_highlight_bookmarks_title">برجسته‌سازی نشانک‌ها</string>
   <string name="prefs_no_enough_space_to_move_files">فضای کافی برای جابجایی فایل‌های برنامه وجود ندارد</string>

@@ -120,7 +120,6 @@
   <string name="prefs_category_display_settings">Көрініс</string>
   <string name="prefs_use_arabic_title">Арабша режим (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Бағдарлама араб тілінде істейді </string>
-  <string name="prefs_new_background_title">Жаңа фон</string>
   <string name="prefs_night_mode_title">Түнгі режим</string>
   <string name="prefs_night_mode_summary">Қара фон мен ашық түсті шрифт қолданылады</string>
   <string name="prefs_night_mode_text_brightness_title">Мәтін ашықтығы</string>

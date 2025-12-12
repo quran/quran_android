@@ -104,7 +104,6 @@
   <string name="prefs_category_display_settings">Shfaq Rregullimet</string>
   <string name="prefs_use_arabic_title">Modaliteti arab (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Përdor arabisht për ndërfaqen e aplikimit</string>
-  <string name="prefs_new_background_title">Sfond i ri</string>
   <string name="prefs_night_mode_title">Modaliteti i natës</string>
   <string name="prefs_night_mode_summary">Përdor gërmat e sfondit të errët dhe të dritës</string>
   <string name="prefs_night_mode_text_brightness_title">Shkëlqimi i tekstit</string>

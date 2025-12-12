@@ -49,7 +49,6 @@
   <string name="prefs_category_display_settings">Configuración de pantalla</string>
   <string name="prefs_use_arabic_title">Modo Árabe (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">La aplicación se mostrará en Árabe </string>
-  <string name="prefs_new_background_title">Nuevo fondo</string>
   <string name="prefs_night_mode_title">Modo nocturno</string>
   <string name="prefs_night_mode_summary">Se utilizará fondo oscuro y fuentes claras</string>
   <string name="prefs_night_mode_text_brightness_title">Texto Brillante</string>
