@@ -124,7 +124,6 @@
   <string name="prefs_night_mode_text_brightness_summary">Gece modu açıkken metin parlaklığı</string>
   <string name="prefs_night_mode_background_brightness_title">Arka plan parlaklığı</string>
   <string name="prefs_night_mode_background_brightness_summary">Gece modu etkinken sayfanın parlaklığı</string>
-  <string name="prefs_new_background_title">Yeni arkaplan</string>
   <string name="prefs_download_amount_title">İndirme miktarı</string>
   <string name="prefs_download_amount_summary">Ayrık olan ses dosyaları için indrime miktarı</string>
   <string name="prefs_audio_manager_summary">"Kur'an seslerini yönetme ve indirme"</string>
