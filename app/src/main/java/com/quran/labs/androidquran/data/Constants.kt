@@ -89,9 +89,23 @@ object Constants {
   const val PREF_SHOW_SIDELINES = "showSidelines"
   const val PREF_SHOW_LINE_DIVIDERS = "showLineDividers"
   const val PREF_APP_THEME = "appTheme"
+  const val PREF_PAGE_BACKGROUND = "pageBackground"
 
   // Themes
   const val THEME_LIGHT = "light"
   const val THEME_DARK = "dark"
   const val THEME_DEFAULT = "default"
+
+  // Page Backgrounds
+  const val BACKGROUND_WHITE = "white"
+  const val BACKGROUND_CREAM = "cream"
+  const val BACKGROUND_LIGHT_PARCHMENT = "light_parchment"
+  const val BACKGROUND_SOFT_IVORY = "soft_ivory"
+  const val BACKGROUND_CUSTOM = "custom"
+
+  // Page Background Colors (hex values)
+  const val COLOR_WHITE = "#FFFFFF"
+  const val COLOR_CREAM = "#FFF8E7"
+  const val COLOR_LIGHT_PARCHMENT = "#FFF4CB"
+  const val COLOR_SOFT_IVORY = "#FFFFF0"
 }
