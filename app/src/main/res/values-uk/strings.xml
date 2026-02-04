@@ -104,7 +104,6 @@
   <string name="prefs_category_display_settings">Параметри відображення</string>
   <string name="prefs_use_arabic_title">Арабський режим (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Використовуйте арабську мову для інтерфейсу програми</string>
-  <string name="prefs_new_background_title">Нове тло</string>
   <string name="prefs_night_mode_title">Нічний режим</string>
   <string name="prefs_night_mode_summary">Використання темного фону та світлих шрифтів</string>
   <string name="prefs_night_mode_text_brightness_title">Яскравість тексту</string>

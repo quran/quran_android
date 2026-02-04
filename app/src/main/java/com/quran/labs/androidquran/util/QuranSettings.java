@@ -226,6 +226,40 @@ public class QuranSettings {
     return theme;
   }
 
+  public void setPageBackground(String pageBackground) {
+    prefs.edit().putString(Constants.PREF_PAGE_BACKGROUND, pageBackground).apply();
+  }
+
+  public void setCustomPageBackgroundColor(int color) {
+    String hexColor = String.format("#%06X", 0xFFFFFF & color);
+    prefs.edit()
+      .putString(Constants.PREF_PAGE_BACKGROUND, Constants.BACKGROUND_CUSTOM)
+      .putString(Constants.PREF_PAGE_BACKGROUND + "_custom", hexColor)
+      .apply();
+  }
+
+  public int getCustomPageBackgroundInt() {
+    String backgroundSetting = prefs.getString(Constants.PREF_PAGE_BACKGROUND, Constants.BACKGROUND_WHITE);
+
+    switch (backgroundSetting) {
+      case Constants.BACKGROUND_CREAM:
+        return android.graphics.Color.parseColor(Constants.COLOR_CREAM);
+      case Constants.BACKGROUND_LIGHT_PARCHMENT:
+        return android.graphics.Color.parseColor(Constants.COLOR_LIGHT_PARCHMENT);
+      case Constants.BACKGROUND_SOFT_IVORY:
+        return android.graphics.Color.parseColor(Constants.COLOR_SOFT_IVORY);
+      case Constants.BACKGROUND_CUSTOM:
+        String customColor = prefs.getString(Constants.PREF_PAGE_BACKGROUND + "_custom", Constants.COLOR_WHITE);
+        try {
+          return android.graphics.Color.parseColor(customColor);
+        } catch (IllegalArgumentException e) {
+          return android.graphics.Color.WHITE;
+        }
+      default:
+        return android.graphics.Color.WHITE;
+    }
+  }
+
   // probably should eventually move this to Application.onCreate..
   public void upgradePreferences(PreferencesUpgrade preferencesUpgrade) {
     int version = getVersion();

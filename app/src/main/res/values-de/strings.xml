@@ -114,7 +114,6 @@
   <string name="prefs_category_display_settings">Bildschirmoptionen</string>
   <string name="prefs_use_arabic_title">Arabischer Modus (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Das Programm wird ins Arabische umgestellt</string>
-  <string name="prefs_new_background_title">Neuen Hintergrund verwenden</string>
   <string name="prefs_night_mode_title">Nachtmodus</string>
   <string name="prefs_night_mode_summary">Es werden ein dunkler Hintergrund und eine helle Schrift
     benutzt.

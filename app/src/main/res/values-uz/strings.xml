@@ -123,7 +123,6 @@
   <string name="prefs_category_display_settings">Displey</string>
   <string name="prefs_use_arabic_title">Arabcha rejim (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Ilova arab tilida ishlaydi </string>
-  <string name="prefs_new_background_title">Yangi fon</string>
   <string name="prefs_night_mode_title">Tungi rejim</string>
   <string name="prefs_night_mode_summary">Qora fon va porloq shriftlardan foydalaniladi</string>
   <string name="prefs_night_mode_text_brightness_title">Matn porloqliligi</string>
