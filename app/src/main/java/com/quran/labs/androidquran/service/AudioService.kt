@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.service
 
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import android.graphics.Bitmap
@@ -11,7 +10,6 @@ import android.graphics.Canvas
 import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
-import android.os.IBinder
 import android.os.Looper
 import android.os.Message
 import android.os.Process
@@ -39,6 +37,8 @@ import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
 import androidx.media3.exoplayer.metadata.MetadataOutput
 import androidx.media3.exoplayer.text.TextOutput
 import androidx.media3.exoplayer.video.VideoRendererEventListener
+import androidx.media3.session.MediaLibraryService
+import androidx.media3.session.MediaSession
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
@@ -78,7 +78,9 @@ import kotlin.math.abs
  * (which come from our main activity, [PagerActivity], which signal
  * the service to perform specific operations: Play, Pause, Rewind, Skip, etc.
  */
-class AudioService : Service(), Player.Listener {
+class AudioService : MediaLibraryService(), Player.Listener {
+
+  private var mediaLibrarySession: MediaLibrarySession? = null
 
   // our exo player
   private var player: ExoPlayer? = null
@@ -139,6 +141,7 @@ class AudioService : Service(), Player.Listener {
   private var currentWord: Int? = null
   private val compositeDisposable = CompositeDisposable()
   private lateinit var scope: CoroutineScope
+  private val quranServiceCallback = QuranServiceCallback()
 
   @Inject
   lateinit var quranInfo: QuranInfo
@@ -217,6 +220,7 @@ class AudioService : Service(), Player.Listener {
   }
 
   override fun onCreate() {
+    super.onCreate()
     Timber.i("debug: Creating service")
     val thread = HandlerThread(
       "AyahAudioService",
@@ -261,7 +265,19 @@ class AudioService : Service(), Player.Listener {
           .subscribeOn(Schedulers.io())
           .subscribe { bitmap: Bitmap? -> notificationIcon = bitmap })
     }
+
+    // init the mediaLibrarySession
+    serviceHandler.post {
+      // Initialize ExoPlayer
+      val player = makeOrResetExoPlayer()
+
+      // Initialize MediaLibrarySession
+      mediaLibrarySession = MediaLibrarySession.Builder(this, player, quranServiceCallback)
+        .build()
+    }
   }
+
+  override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? = mediaLibrarySession
 
   private inner class MediaSessionCallback : MediaSessionCompat.Callback() {
     override fun onPlay() {
@@ -286,6 +302,7 @@ class AudioService : Service(), Player.Listener {
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    super.onStartCommand(intent, flags, startId)
     if (intent == null) {
       // handle a crash that occurs where intent comes in as null
       if (State.Stopped == state) {
@@ -1279,22 +1296,25 @@ class AudioService : Service(), Player.Listener {
   }
 
   override fun onDestroy() {
-    compositeDisposable.clear()
+    Timber.i("debug: destroying the service")
     // Service is being killed, so make sure we release our resources
-    serviceHandler.removeCallbacksAndMessages(null)
-    serviceLooper.quitSafely()
+    compositeDisposable.clear()
     state = State.Stopped
     relaxResources(true, true)
     mediaSession.release()
     timingRepository.clear()
     scope.cancel()
+    serviceHandler.post {
+      mediaLibrarySession?.run {
+        player.release()
+        release()
+        mediaLibrarySession = null
+      }
+      serviceHandler.removeCallbacksAndMessages(null)
+      serviceLooper.quitSafely()
+    }
     super.onDestroy()
   }
-
-  override fun onBind(arg0: Intent): IBinder? {
-    return null
-  }
-
 
   companion object {
     // These are the Intent actions that we are prepared to handle.
