@@ -230,13 +230,14 @@ kover {
   reports {
     filters {
       excludes {
-        // Exclude generated code
+        // Exclude generated code (patterns target DI-generated classes only)
         classes(
           "*_Factory",
           "*_Factory\$*",
           "*_MembersInjector",
-          "*Module",
-          "*Module\$*",
+          "*_Module",
+          "*_Module\$*",
+          "*Module_*",
           "*Binding*",
           "*_Impl",
           "*_Impl\$*",
