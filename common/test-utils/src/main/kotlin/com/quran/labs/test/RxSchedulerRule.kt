@@ -32,36 +32,51 @@ import org.junit.runner.Description
  */
 class RxSchedulerRule : TestWatcher() {
 
+  private var rxAndroidAvailable = true
+
   override fun starting(description: Description) {
-    // Override IO scheduler
+    // Override RxJava schedulers
     RxJavaPlugins.setIoSchedulerHandler { Schedulers.trampoline() }
-    // Override computation scheduler
     RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
-    // Override new thread scheduler
     RxJavaPlugins.setNewThreadSchedulerHandler { Schedulers.trampoline() }
-    // Override single scheduler
     RxJavaPlugins.setSingleSchedulerHandler { Schedulers.trampoline() }
 
-    // Override Android main thread scheduler (requires rxandroid)
-    try {
-      RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
-      RxAndroidPlugins.setMainThreadSchedulerHandler { Schedulers.trampoline() }
-    } catch (e: ExceptionInInitializerError) {
-      // RxAndroid not available, skip
-    } catch (e: NoClassDefFoundError) {
-      // RxAndroid not available, skip
-    }
+    // Override Android main thread scheduler
+    // Only catches class loading errors - other exceptions propagate
+    rxAndroidAvailable = trySetupRxAndroid()
   }
 
   override fun finished(description: Description) {
-    // Reset all schedulers
     RxJavaPlugins.reset()
+    if (rxAndroidAvailable) {
+      tryResetRxAndroid()
+    }
+  }
+
+  /**
+   * Attempts to set up RxAndroid schedulers.
+   * @return true if RxAndroid is available, false otherwise
+   */
+  private fun trySetupRxAndroid(): Boolean {
+    return try {
+      RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
+      RxAndroidPlugins.setMainThreadSchedulerHandler { Schedulers.trampoline() }
+      true
+    } catch (e: NoClassDefFoundError) {
+      // RxAndroid not in classpath - this is expected in pure JVM tests
+      false
+    }
+  }
+
+  /**
+   * Attempts to reset RxAndroid schedulers.
+   * Only called if setup succeeded.
+   */
+  private fun tryResetRxAndroid() {
     try {
       RxAndroidPlugins.reset()
-    } catch (e: ExceptionInInitializerError) {
-      // RxAndroid not available, skip
     } catch (e: NoClassDefFoundError) {
-      // RxAndroid not available, skip
+      // Should not happen if setup succeeded, but handle gracefully
     }
   }
 }

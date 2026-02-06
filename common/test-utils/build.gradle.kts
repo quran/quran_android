@@ -5,6 +5,9 @@ plugins {
 android.namespace = "com.quran.labs.test"
 
 dependencies {
+  // Access to real domain models for test factories
+  api(project(":common:data"))
+
   // Coroutines test support
   api(libs.kotlinx.coroutines.core)
   api(libs.kotlinx.coroutines.test)

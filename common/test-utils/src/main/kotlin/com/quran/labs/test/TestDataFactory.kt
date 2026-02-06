@@ -1,16 +1,21 @@
 package com.quran.labs.test
 
+import com.quran.data.model.SuraAyah
+import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.RecentPage
+import com.quran.data.model.bookmark.Tag
+
 /**
- * Factory for creating test data objects.
+ * Factory for creating test data using REAL domain models.
  *
  * This factory provides methods to create consistent test fixtures
- * for common data types used throughout the Quran app.
+ * using the actual domain classes from the codebase, ensuring tests
+ * validate real behavior.
  *
  * Usage:
  * ```
- * val sura = TestDataFactory.createSura(number = 1)
- * val ayah = TestDataFactory.createAyah(sura = 1, ayah = 1)
- * val page = TestDataFactory.createPage(page = 1, sura = 1, ayah = 1)
+ * val bookmark = TestDataFactory.createBookmark(sura = 1, ayah = 1)
+ * val suraAyah = TestDataFactory.createSuraAyah(sura = 2, ayah = 255)
  * ```
  */
 object TestDataFactory {
@@ -23,163 +28,73 @@ object TestDataFactory {
     const val TOTAL_AYAHS = 6236
     const val TOTAL_PAGES_MADANI = 604
     const val FIRST_JUZ_PAGE = 1
-    const val BISMILLAH_SURA_INDEX = 0
     const val FATIHA_SURA = 1
     const val BAQARAH_SURA = 2
     const val LAST_SURA = 114
+    const val FATIHA_AYAH_COUNT = 7
+    const val BAQARAH_AYAH_COUNT = 286
   }
 
-  /**
-   * Test data for a Sura (chapter).
-   */
-  data class TestSura(
-    val number: Int,
-    val name: String,
-    val englishName: String,
-    val ayahCount: Int,
-    val startPage: Int,
-    val isMakki: Boolean
-  )
+  // ==================== SuraAyah Factory ====================
 
   /**
-   * Test data for an Ayah (verse).
+   * Creates a [SuraAyah] with default values.
    */
-  data class TestAyah(
-    val sura: Int,
-    val ayah: Int,
-    val page: Int,
-    val text: String = "Test ayah text for sura $sura, ayah $ayah"
-  )
-
-  /**
-   * Test data for a Page.
-   */
-  data class TestPage(
-    val page: Int,
-    val sura: Int,
-    val ayah: Int,
-    val juz: Int = calculateJuz(page)
-  )
-
-  /**
-   * Test data for a Bookmark.
-   */
-  data class TestBookmark(
-    val id: Long,
-    val sura: Int?,
-    val ayah: Int?,
-    val page: Int,
-    val timestamp: Long = System.currentTimeMillis()
-  )
-
-  /**
-   * Creates a test Sura with default values.
-   */
-  fun createSura(
-    number: Int = 1,
-    name: String = "Test Sura $number",
-    englishName: String = "Test Chapter $number",
-    ayahCount: Int = 7,
-    startPage: Int = 1,
-    isMakki: Boolean = true
-  ): TestSura = TestSura(
-    number = number,
-    name = name,
-    englishName = englishName,
-    ayahCount = ayahCount,
-    startPage = startPage,
-    isMakki = isMakki
-  )
-
-  /**
-   * Creates Al-Fatiha with accurate data.
-   */
-  fun createFatiha(): TestSura = TestSura(
-    number = 1,
-    name = "الفاتحة",
-    englishName = "Al-Fatiha",
-    ayahCount = 7,
-    startPage = 1,
-    isMakki = true
-  )
-
-  /**
-   * Creates Al-Baqarah with accurate data.
-   */
-  fun createBaqarah(): TestSura = TestSura(
-    number = 2,
-    name = "البقرة",
-    englishName = "Al-Baqarah",
-    ayahCount = 286,
-    startPage = 2,
-    isMakki = false
-  )
-
-  /**
-   * Creates a test Ayah with default values.
-   */
-  fun createAyah(
+  fun createSuraAyah(
     sura: Int = 1,
-    ayah: Int = 1,
-    page: Int = 1,
-    text: String = "Test ayah text for sura $sura, ayah $ayah"
-  ): TestAyah = TestAyah(
-    sura = sura,
-    ayah = ayah,
-    page = page,
-    text = text
-  )
+    ayah: Int = 1
+  ): SuraAyah = SuraAyah(sura, ayah)
 
   /**
-   * Creates a list of test Ayahs for a range.
+   * Creates SuraAyah for Al-Fatiha 1:1
    */
-  fun createAyahRange(
+  fun fatihaStart(): SuraAyah = SuraAyah(1, 1)
+
+  /**
+   * Creates SuraAyah for the last ayah of Al-Fatiha (1:7)
+   */
+  fun fatihaEnd(): SuraAyah = SuraAyah(1, 7)
+
+  /**
+   * Creates SuraAyah for Al-Baqarah 2:255 (Ayat al-Kursi)
+   */
+  fun ayatAlKursi(): SuraAyah = SuraAyah(2, 255)
+
+  /**
+   * Creates SuraAyah for the last ayah of the Quran (114:6)
+   */
+  fun lastAyah(): SuraAyah = SuraAyah(114, 6)
+
+  /**
+   * Creates a list of SuraAyah for a range within a sura.
+   */
+  fun createSuraAyahRange(
     sura: Int,
     startAyah: Int,
-    endAyah: Int,
-    page: Int = 1
-  ): List<TestAyah> = (startAyah..endAyah).map { ayahNum ->
-    createAyah(sura = sura, ayah = ayahNum, page = page)
+    endAyah: Int
+  ): List<SuraAyah> = (startAyah..endAyah).map { ayahNum ->
+    SuraAyah(sura, ayahNum)
   }
 
-  /**
-   * Creates a test Page with default values.
-   */
-  fun createPage(
-    page: Int = 1,
-    sura: Int = 1,
-    ayah: Int = 1,
-    juz: Int = calculateJuz(page)
-  ): TestPage = TestPage(
-    page = page,
-    sura = sura,
-    ayah = ayah,
-    juz = juz
-  )
+  // ==================== Bookmark Factory ====================
 
   /**
-   * Creates a list of test Pages.
-   */
-  fun createPages(startPage: Int, endPage: Int): List<TestPage> =
-    (startPage..endPage).map { pageNum ->
-      createPage(page = pageNum)
-    }
-
-  /**
-   * Creates a test Bookmark with default values.
+   * Creates a [Bookmark] for a specific ayah with default values.
    */
   fun createBookmark(
     id: Long = 1L,
     sura: Int? = 1,
     ayah: Int? = 1,
     page: Int = 1,
-    timestamp: Long = System.currentTimeMillis()
-  ): TestBookmark = TestBookmark(
+    timestamp: Long = System.currentTimeMillis(),
+    tags: List<Long> = emptyList()
+  ): Bookmark = Bookmark(
     id = id,
     sura = sura,
     ayah = ayah,
     page = page,
-    timestamp = timestamp
+    timestamp = timestamp,
+    tags = tags
   )
 
   /**
@@ -189,7 +104,7 @@ object TestDataFactory {
     id: Long = 1L,
     page: Int = 1,
     timestamp: Long = System.currentTimeMillis()
-  ): TestBookmark = TestBookmark(
+  ): Bookmark = Bookmark(
     id = id,
     sura = null,
     ayah = null,
@@ -200,7 +115,7 @@ object TestDataFactory {
   /**
    * Creates multiple bookmarks for testing.
    */
-  fun createBookmarks(count: Int): List<TestBookmark> =
+  fun createBookmarks(count: Int): List<Bookmark> =
     (1..count).map { index ->
       createBookmark(
         id = index.toLong(),
@@ -210,17 +125,46 @@ object TestDataFactory {
       )
     }
 
+  // ==================== Tag Factory ====================
+
   /**
-   * Calculates the Juz number for a given page (approximate).
-   * Note: This is a simplified calculation for testing purposes.
+   * Creates a [Tag] with default values.
    */
-  private fun calculateJuz(page: Int): Int {
-    return when {
-      page <= 0 -> 1
-      page > QuranConstants.TOTAL_PAGES_MADANI -> 30
-      else -> ((page - 1) / 20) + 1
-    }.coerceIn(1, 30)
-  }
+  fun createTag(
+    id: Long = 1L,
+    name: String = "Test Tag"
+  ): Tag = Tag(id, name)
+
+  /**
+   * Creates multiple tags for testing.
+   */
+  fun createTags(count: Int): List<Tag> =
+    (1..count).map { index ->
+      Tag(index.toLong(), "Tag $index")
+    }
+
+  // ==================== RecentPage Factory ====================
+
+  /**
+   * Creates a [RecentPage] with default values.
+   */
+  fun createRecentPage(
+    page: Int = 1,
+    timestamp: Long = System.currentTimeMillis()
+  ): RecentPage = RecentPage(page, timestamp)
+
+  /**
+   * Creates multiple recent pages for testing.
+   */
+  fun createRecentPages(count: Int): List<RecentPage> =
+    (1..count).map { index ->
+      RecentPage(
+        page = (index % QuranConstants.TOTAL_PAGES_MADANI) + 1,
+        timestamp = System.currentTimeMillis() - (index * 1000L)
+      )
+    }
+
+  // ==================== Boundary Test Helpers ====================
 
   /**
    * Returns valid page numbers for boundary testing.
