@@ -178,18 +178,9 @@ app/src/test/
 // gradle/libs.versions.toml additions
 
 [versions]
-kotestVersion = "5.8.0"
-mockkVersion = "1.13.9"
-koverVersion = "0.7.5"
+koverVersion = "0.9.1"
 
 [libraries]
-# Enhanced assertions
-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotestVersion" }
-
-# Kotlin-first mocking
-mockk = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
-mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkVersion" }
-
 # Already present - keep using
 turbine = { module = "app.cash.turbine:turbine-jvm", version.ref = "turbineVersion" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutinesVersion" }
@@ -205,29 +196,56 @@ kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "koverVersion" }
 |-----------|---------|-----|
 | **JUnit 4** | Test runner | Already in use, stable |
 | **Truth** | Assertions | Already in use, readable |
-| **Kotest Assertions** | Enhanced assertions | Better collection/flow assertions |
-| **MockK** | Mocking | Kotlin-first, coroutine support |
-| **Mockito** | Legacy mocking | Keep for existing tests |
+| **Fakes** | Test doubles | Preferred over mocks for better test clarity |
+| **Mockito** | Legacy mocking | Keep for existing tests only |
 | **Turbine** | Flow testing | Already in use, essential |
 | **Robolectric** | Android unit tests | Already in use |
 | **Compose Test** | Compose UI tests | Official, well-supported |
 | **Kover** | Coverage | Kotlin-native, accurate |
 
-### 4.3 Test Dependencies by Module Type
+### 4.3 Fakes Over Mocks Philosophy
+
+This project prefers **fakes over mocks** for test doubles:
+
+- **Fakes** are simpler implementations that behave like the real thing
+- **Mocks** verify interactions but can make tests brittle
+- Fakes lead to more readable, maintainable tests
+
+```kotlin
+// PREFERRED: Fake implementation
+class FakeBookmarkDao : BookmarkDao {
+    private val bookmarks = mutableListOf<Bookmark>()
+
+    override suspend fun getBookmarks(): List<Bookmark> = bookmarks.toList()
+    override suspend fun addBookmark(bookmark: Bookmark) { bookmarks.add(bookmark) }
+    override suspend fun removeBookmark(id: Long) { bookmarks.removeAll { it.id == id } }
+}
+
+// Use in tests
+class BookmarkRepositoryTest {
+    private val fakeDao = FakeBookmarkDao()
+    private val repository = BookmarkRepository(fakeDao)
+
+    @Test
+    fun `adding bookmark persists it`() = runTest {
+        repository.addBookmark(testBookmark)
+        assertThat(repository.getBookmarks()).contains(testBookmark)
+    }
+}
+```
+
+### 4.4 Test Dependencies by Module Type
 
 ```kotlin
 // Pure Kotlin module (common:data, common:audio, etc.)
 testImplementation(libs.junit)
 testImplementation(libs.truth)
-testImplementation(libs.kotest.assertions)
-testImplementation(libs.mockk)
 testImplementation(libs.kotlinx.coroutines.test)
 testImplementation(libs.turbine)
 
 // Android Library module
 testImplementation(libs.junit)
 testImplementation(libs.truth)
-testImplementation(libs.mockk.android)
 testImplementation(libs.robolectric)
 testImplementation(libs.kotlinx.coroutines.test)
 testImplementation(libs.turbine)
@@ -235,7 +253,6 @@ testImplementation(libs.turbine)
 // Compose module (feature:audiobar, feature:qarilist, etc.)
 testImplementation(libs.junit)
 testImplementation(libs.truth)
-testImplementation(libs.mockk)
 testImplementation(libs.kotlinx.coroutines.test)
 testImplementation(libs.turbine)
 // Compose testing
@@ -253,38 +270,33 @@ The app uses MVP pattern extensively. Presenters are the primary business logic 
 
 ```kotlin
 class BookmarkPresenterTest {
-    // 1. Mock dependencies
-    private val bookmarkModel: BookmarkModel = mockk(relaxed = true)
-    private val settings: QuranSettings = mockk(relaxed = true)
-    private val view: BookmarkScreen = mockk(relaxed = true)
+    // 1. Use fake dependencies
+    private val fakeBookmarkModel = FakeBookmarkModel()
+    private val fakeSettings = FakeQuranSettings()
+    private val fakeView = FakeBookmarkScreen()
 
     // 2. Use test dispatchers
-    private val testDispatcher = UnconfinedTestDispatcher()
+    @get:Rule
+    val dispatcherRule = TestDispatcherRule()
 
     private lateinit var presenter: BookmarkPresenter
 
     @Before
     fun setup() {
-        Dispatchers.setMain(testDispatcher)
-        presenter = BookmarkPresenter(bookmarkModel, settings)
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
+        presenter = BookmarkPresenter(fakeBookmarkModel, fakeSettings)
     }
 
     @Test
-    fun `should load bookmarks when bound`() {
+    fun `should load bookmarks when bound`() = runTest {
         // Given
         val bookmarks = listOf(testBookmark())
-        coEvery { bookmarkModel.getBookmarks() } returns flowOf(bookmarks)
+        fakeBookmarkModel.setBookmarks(bookmarks)
 
         // When
-        presenter.bind(view)
+        presenter.bind(fakeView)
 
         // Then
-        verify { view.showBookmarks(bookmarks) }
+        assertThat(fakeView.displayedBookmarks).isEqualTo(bookmarks)
     }
 
     @Test
@@ -297,14 +309,29 @@ class BookmarkPresenterTest {
         presenter.addBookmark(sura, ayah)
 
         // Then
-        coVerify { bookmarkModel.addBookmark(sura, ayah) }
+        assertThat(fakeBookmarkModel.addedBookmarks).contains(SuraAyah(sura, ayah))
     }
+}
+
+// Fake implementations
+class FakeBookmarkModel : BookmarkModel {
+    private val bookmarks = mutableListOf<Bookmark>()
+    val addedBookmarks = mutableListOf<SuraAyah>()
+
+    fun setBookmarks(list: List<Bookmark>) { bookmarks.clear(); bookmarks.addAll(list) }
+    override fun getBookmarks(): Flow<List<Bookmark>> = flowOf(bookmarks.toList())
+    override suspend fun addBookmark(sura: Int, ayah: Int) { addedBookmarks.add(SuraAyah(sura, ayah)) }
+}
+
+class FakeBookmarkScreen : BookmarkScreen {
+    var displayedBookmarks: List<Bookmark> = emptyList()
+    override fun showBookmarks(bookmarks: List<Bookmark>) { displayedBookmarks = bookmarks }
 }
 ```
 
 ### 5.2 RxJava Observable Testing
 
-Many models use RxJava3. Use TestObserver pattern.
+Many models use RxJava3. Use TestObserver pattern with fakes.
 
 ```kotlin
 class BookmarkModelTest {
@@ -314,9 +341,9 @@ class BookmarkModelTest {
     @Test
     fun `should emit bookmarks on subscription`() {
         // Given
-        val dao: BookmarksDBAdapter = mockk()
-        every { dao.getBookmarks() } returns listOf(testBookmark())
-        val model = BookmarkModel(dao)
+        val fakeDao = FakeBookmarksDBAdapter()
+        fakeDao.setBookmarks(listOf(testBookmark()))
+        val model = BookmarkModel(fakeDao)
 
         // When
         val testObserver = model.bookmarksObservable().test()
@@ -327,6 +354,13 @@ class BookmarkModelTest {
         testObserver.assertValueCount(1)
         testObserver.assertValue { it.size == 1 }
     }
+}
+
+// Fake DAO implementation
+class FakeBookmarksDBAdapter : BookmarksDBAdapter {
+    private val bookmarks = mutableListOf<Bookmark>()
+    fun setBookmarks(list: List<Bookmark>) { bookmarks.clear(); bookmarks.addAll(list) }
+    override fun getBookmarks(): List<Bookmark> = bookmarks.toList()
 }
 
 // Rule for synchronous RxJava execution
@@ -906,10 +940,13 @@ class FakeBookmarkRepository : BookmarkRepository {
     // ... implementation
 }
 
-// Use mocks for simple dependencies or verification
-val analytics: AnalyticsProvider = mockk(relaxed = true)
+// Use fakes for all dependencies
+class FakeAnalyticsProvider : AnalyticsProvider {
+    val loggedEvents = mutableListOf<String>()
+    override fun logEvent(event: String) { loggedEvents.add(event) }
+}
 
-// Avoid over-mocking - if you need 5+ mocks, consider integration test
+// If you need 5+ fakes, consider integration test instead
 ```
 
 ### 10.6 Flaky Test Prevention
@@ -931,7 +968,6 @@ val analytics: AnalyticsProvider = mockk(relaxed = true)
 package com.quran.labs.androidquran.presenter
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.*
 import kotlinx.coroutines.test.*
 import org.junit.*
 
@@ -940,17 +976,17 @@ class ExamplePresenterTest {
     @get:Rule
     val dispatcherRule = TestDispatcherRule()
 
-    private val dependency: Dependency = mockk(relaxed = true)
+    private val fakeDependency = FakeDependency()
     private lateinit var presenter: ExamplePresenter
 
     @Before
     fun setup() {
-        presenter = ExamplePresenter(dependency)
+        presenter = ExamplePresenter(fakeDependency)
     }
 
     @After
     fun tearDown() {
-        clearAllMocks()
+        // Reset fakes if needed
     }
 
     @Test
@@ -995,9 +1031,9 @@ fun `should emit states in order`() = runTest {
 - [Testing Kotlin Coroutines](https://developer.android.com/kotlin/coroutines/test)
 - [Compose Testing](https://developer.android.com/jetpack/compose/testing)
 - [Truth Assertions](https://truth.dev/)
-- [MockK](https://mockk.io/)
 - [Turbine](https://github.com/cashapp/turbine)
 - [Kover](https://github.com/Kotlin/kotlinx-kover)
+- [Fakes vs Mocks](https://testing.googleblog.com/2013/07/testing-on-toilet-know-your-test-doubles.html)
 
 ---
 
