@@ -16,7 +16,6 @@ dependencies {
   // Testing frameworks - exposed as api so consumers get them transitively
   api(libs.junit)
   api(libs.truth)
-  api(libs.mockk)
   api(libs.turbine)
 
   // Android test support

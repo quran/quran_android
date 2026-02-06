@@ -223,8 +223,6 @@ dependencies {
   // Number Picker
   implementation(libs.number.picker)
 
-  // MockK for Kotlin-first mocking
-  testImplementation(libs.mockk)
 }
 
 // Kover coverage configuration
