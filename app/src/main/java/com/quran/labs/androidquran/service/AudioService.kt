@@ -9,10 +9,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.os.Build
 import android.os.Handler
-import android.os.HandlerThread
-import android.os.Looper
-import android.os.Message
-import android.os.Process
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -63,9 +59,12 @@ import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.android.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
@@ -124,9 +123,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
   private lateinit var notificationManager: NotificationManager
   private lateinit var mediaSession: MediaSessionCompat
 
-  private lateinit var serviceLooper: Looper
-  private lateinit var serviceHandler: ServiceHandler
-
   private var notificationBuilder: NotificationCompat.Builder? = null
   private var pausedNotificationBuilder: NotificationCompat.Builder? = null
   private var didSetNotificationIconOnNotificationBuilder = false
@@ -140,8 +136,9 @@ class AudioService : MediaLibraryService(), Player.Listener {
   private var gaplessSuraData: SuraTimings = SuraTimings.EMPTY
   private var currentWord: Int? = null
   private val compositeDisposable = CompositeDisposable()
-  private lateinit var scope: CoroutineScope
+  internal lateinit var scope: CoroutineScope
   private val quranServiceCallback = QuranServiceCallback()
+  private var updateAudioPositionJob: Job? = null
 
   @Inject
   lateinit var quranInfo: QuranInfo
@@ -157,17 +154,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
 
   @Inject
   lateinit var timingRepository: TimingRepository
-
-  private inner class ServiceHandler(looper: Looper) : Handler(looper) {
-    override fun handleMessage(msg: Message) {
-      if (msg.what == MSG_INCOMING && msg.obj != null) {
-        val intent = msg.obj as Intent
-        handleIntent(intent)
-      } else if (msg.what == MSG_UPDATE_AUDIO_POS) {
-        updateAudioPlayPosition()
-      }
-    }
-  }
 
   /**
    * Makes sure the ExoPlayer exists and has been reset. This will make
@@ -222,16 +208,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
   override fun onCreate() {
     super.onCreate()
     Timber.i("debug: Creating service")
-    val thread = HandlerThread(
-      "AyahAudioService",
-      Process.THREAD_PRIORITY_BACKGROUND
-    )
-    thread.start()
-
-    // Get the HandlerThread's Looper and use it for our Handler
-    serviceLooper = thread.looper
-    serviceHandler = ServiceHandler(serviceLooper)
-    scope = CoroutineScope(serviceHandler.asCoroutineDispatcher() + SupervisorJob())
+    scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
 
     val appContext = applicationContext
     (appContext as QuranApplication).applicationComponent.inject(this)
@@ -241,7 +218,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
 
     val receiver = ComponentName(this, MediaButtonReceiver::class.java)
     mediaSession = MediaSessionCompat(appContext, "QuranMediaSession", receiver, null)
-    mediaSession.setCallback(MediaSessionCallback(), serviceHandler)
+    mediaSession.setCallback(MediaSessionCallback(), null)
     val channelName = getString(R.string.notification_channel_audio)
     setupNotificationChannel(
       notificationManager, NOTIFICATION_CHANNEL_ID, channelName
@@ -266,15 +243,13 @@ class AudioService : MediaLibraryService(), Player.Listener {
           .subscribe { bitmap: Bitmap? -> notificationIcon = bitmap })
     }
 
-    // init the mediaLibrarySession
-    serviceHandler.post {
-      // Initialize ExoPlayer
-      val player = makeOrResetExoPlayer()
+    // Initialize ExoPlayer
+    val player = makeOrResetExoPlayer()
 
-      // Initialize MediaLibrarySession
-      mediaLibrarySession = MediaLibrarySession.Builder(this, player, quranServiceCallback)
-        .build()
-    }
+    // Initialize MediaLibrarySession
+
+    mediaLibrarySession = MediaLibrarySession.Builder(this, player, quranServiceCallback)
+      .build()
   }
 
   override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? = mediaLibrarySession
@@ -302,11 +277,10 @@ class AudioService : MediaLibraryService(), Player.Listener {
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-    super.onStartCommand(intent, flags, startId)
     if (intent == null) {
       // handle a crash that occurs where intent comes in as null
       if (State.Stopped == state) {
-        serviceHandler.removeCallbacksAndMessages(null)
+        stopUpdateAudioPositionJob()
         stopSelf()
       }
     } else {
@@ -315,10 +289,9 @@ class AudioService : MediaLibraryService(), Player.Listener {
         // go to the foreground as quickly as possible.
         setUpAsForeground()
       }
-      val message = serviceHandler.obtainMessage(MSG_INCOMING, intent)
-      serviceHandler.sendMessage(message)
+      handleIntent(intent)
     }
-    return START_NOT_STICKY
+    return super.onStartCommand(intent, flags, startId)
   }
 
   private fun handleIntent(intent: Intent) {
@@ -362,7 +335,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
         audioQueue = localAudioQueue.withUpdatedAudioRequest(playInfo)
         if (playInfo.playbackSpeed != audioRequest?.playbackSpeed) {
           processUpdatePlaybackSpeed(playInfo.playbackSpeed)
-          serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
+          startUpdateAudioPositionJob(200)
         }
         audioRequest = playInfo
         updateAudioPlaybackStatus()
@@ -395,6 +368,21 @@ class AudioService : MediaLibraryService(), Player.Listener {
       } else time
     }
     return -1
+  }
+
+  private fun startUpdateAudioPositionJob(delayMs: Long) {
+    stopUpdateAudioPositionJob()
+    updateAudioPositionJob = scope.launch {
+      delay(delayMs)
+      if (isActive) {
+        updateAudioPlayPosition()
+      }
+    }
+  }
+
+  private fun stopUpdateAudioPositionJob() {
+    updateAudioPositionJob?.cancel()
+    updateAudioPositionJob = null
   }
 
   private fun updateAudioPlayPosition() {
@@ -440,7 +428,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
         val ayahTime = gaplessSuraData.ayahTimings[ayah]
         if (abs(pos - ayahTime) < 150) {
           // shouldn't change ayahs if the delta is just 150ms...
-          serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 150)
+          startUpdateAudioPositionJob(150)
           return
         }
         val success = localAudioQueue.playAt(sura, updatedAyah, false)
@@ -452,7 +440,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
           return
         } else if (nextSura != sura || nextAyah != updatedAyah) {
           // remove any messages currently in the queue
-          serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS)
+          stopUpdateAudioPositionJob()
           currentWord = null
 
           // if the ayah hasn't changed, we're repeating the ayah,
@@ -481,7 +469,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
           val success = localAudioQueue.playAt(sura + 1, 1, false)
           if (success && localAudioQueue.getCurrentSura() == sura) {
             // remove any messages currently in the queue
-            serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS)
+            stopUpdateAudioPositionJob()
 
             // jump back to the ayah we should repeat and play it
             val seekPos = getSeekPosition(false)
@@ -536,7 +524,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
 
       // schedule next the update
       if (nextUpdateDelay != null) {
-        serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, nextUpdateDelay)
+        startUpdateAudioPositionJob(nextUpdateDelay)
       } else if (maxAyahs >= updatedAyah + 1) {
         val timeDelta = gaplessSuraData.ayahTimings[updatedAyah + 1] - localPlayer.currentPosition
         val t = timeDelta.coerceIn(100, 10000)
@@ -547,9 +535,9 @@ class AudioService : MediaLibraryService(), Player.Listener {
             t, tAccountingForSpeed, audioRequest?.playbackSpeed
           )
         }
-        serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, tAccountingForSpeed.toLong())
+        startUpdateAudioPositionJob(tAccountingForSpeed.toLong())
       } else if (maxAyahs == updatedAyah) {
-        serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 150)
+        startUpdateAudioPositionJob(150)
       }
       // if we're on the last ayah, don't do anything - let the file
       // complete on its own to avoid getCurrentPosition() bugs.
@@ -592,7 +580,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
     if (State.Playing == state) {
       // Pause exo player and cancel the 'foreground service' state.
       state = State.Paused
-      serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS)
+      stopUpdateAudioPositionJob()
       player?.pause()
       setState(PlaybackStateCompat.STATE_PAUSED)
       // on jellybean and above, stay in the foreground and
@@ -681,7 +669,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
 
   private fun processStopRequest(force: Boolean = false) {
     setState(PlaybackStateCompat.STATE_STOPPED)
-    serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS)
+    stopUpdateAudioPositionJob()
     currentWord = null
     if (State.Preparing == state) {
       shouldStop = true
@@ -695,7 +683,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
       relaxResources(releaseExoPlayer = true, stopForeground = true)
 
       // service is no longer necessary. Will be started again if needed.
-      serviceHandler.removeCallbacksAndMessages(null)
+      stopUpdateAudioPositionJob()
       stopSelf()
     }
   }
@@ -807,7 +795,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
 
     if (audioRequest?.isGapless() == true && !playerOverride) {
       Timber.d("configAndStartExoPlayer: restarting position updates")
-      serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
+      startUpdateAudioPositionJob(200)
     }
   }
 
@@ -1039,7 +1027,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
     }
     updateAudioPlaybackStatus()
     Timber.d("onSeekComplete: restarting position updates")
-    serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
+    startUpdateAudioPositionJob(200)
   }
 
   private fun onPlayerBuffering() {
@@ -1304,15 +1292,9 @@ class AudioService : MediaLibraryService(), Player.Listener {
     mediaSession.release()
     timingRepository.clear()
     scope.cancel()
-    serviceHandler.post {
-      mediaLibrarySession?.run {
-        player.release()
-        release()
-        mediaLibrarySession = null
-      }
-      serviceHandler.removeCallbacksAndMessages(null)
-      serviceLooper.quitSafely()
-    }
+    mediaLibrarySession?.release()
+    mediaLibrarySession = null
+    stopUpdateAudioPositionJob()
     super.onDestroy()
   }
 
@@ -1339,8 +1321,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
     // so user can pass in a serializable LegacyAudioRequest to the intent
     const val EXTRA_PLAY_INFO = "com.quran.labs.androidquran.PLAY_INFO"
     private const val NOTIFICATION_CHANNEL_ID = Constants.AUDIO_CHANNEL
-    private const val MSG_INCOMING = 1
-    private const val MSG_UPDATE_AUDIO_POS = 2
     private const val DEBUG_TIMINGS = false
   }
 }
