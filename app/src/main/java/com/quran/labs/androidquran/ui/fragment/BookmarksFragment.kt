@@ -33,17 +33,14 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   private var recyclerView: RecyclerView? = null
   private var bookmarksAdapter: QuranListAdapter? = null
 
-  @JvmField
   @Inject
-  var bookmarkPresenter: BookmarkPresenter? = null
+  lateinit var bookmarkPresenter: BookmarkPresenter
 
-  @JvmField
   @Inject
-  var bookmarksContextualModePresenter: BookmarksContextualModePresenter? = null
+  lateinit var bookmarksContextualModePresenter: BookmarksContextualModePresenter
 
-  @JvmField
   @Inject
-  var bookmarkUIConverter: BookmarkUIConverter? = null
+  lateinit var bookmarkUIConverter: BookmarkUIConverter
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
@@ -91,13 +88,13 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
 
   override fun onStart() {
     super.onStart()
-    bookmarkPresenter?.bind(this)
-    bookmarksContextualModePresenter?.bind(this)
+    bookmarkPresenter.bind(this)
+    bookmarksContextualModePresenter.bind(this)
   }
 
   override fun onStop() {
-    bookmarkPresenter?.unbind(this)
-    bookmarksContextualModePresenter?.unbind(this)
+    bookmarkPresenter.unbind(this)
+    bookmarksContextualModePresenter.unbind(this)
     super.onStop()
   }
 
@@ -115,24 +112,22 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
       sortItem.isEnabled = true
 
       val bookmarkPresenter = bookmarkPresenter
-      if (bookmarkPresenter != null) {
-        if (BookmarksDBAdapter.SORT_DATE_ADDED == bookmarkPresenter.getSortOrder()) {
-          val sortByDate = menu.findItem(R.id.sort_date)
-          sortByDate.isChecked = true
-        } else {
-          val sortByLocation = menu.findItem(R.id.sort_location)
-          sortByLocation.isChecked = true
-        }
-
-        val groupByTags = menu.findItem(R.id.group_by_tags)
-        groupByTags.isChecked = bookmarkPresenter.isGroupedByTags
-
-        val showRecents = menu.findItem(R.id.show_recents)
-        showRecents.isChecked = bookmarkPresenter.isShowingRecents
-
-        val showDates = menu.findItem(R.id.show_date)
-        showDates.isChecked = bookmarkPresenter.isDateShowing
+      if (BookmarksDBAdapter.SORT_DATE_ADDED == bookmarkPresenter.getSortOrder()) {
+        val sortByDate = menu.findItem(R.id.sort_date)
+        sortByDate.isChecked = true
+      } else {
+        val sortByLocation = menu.findItem(R.id.sort_location)
+        sortByLocation.isChecked = true
       }
+
+      val groupByTags = menu.findItem(R.id.group_by_tags)
+      groupByTags.isChecked = bookmarkPresenter.isGroupedByTags
+
+      val showRecents = menu.findItem(R.id.show_recents)
+      showRecents.isChecked = bookmarkPresenter.isShowingRecents
+
+      val showDates = menu.findItem(R.id.show_date)
+      showDates.isChecked = bookmarkPresenter.isDateShowing
     }
   }
 
@@ -140,38 +135,36 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     val itemId = item.itemId
     val bookmarkPresenter = bookmarkPresenter
 
-    if (bookmarkPresenter != null) {
-      when (itemId) {
-        R.id.sort_date -> {
-          bookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_DATE_ADDED)
-          item.isChecked = true
-          return true
-        }
+    when (itemId) {
+      R.id.sort_date -> {
+        bookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_DATE_ADDED)
+        item.isChecked = true
+        return true
+      }
 
-        R.id.sort_location -> {
-          bookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_LOCATION)
-          item.isChecked = true
-          return true
-        }
+      R.id.sort_location -> {
+        bookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_LOCATION)
+        item.isChecked = true
+        return true
+      }
 
-        R.id.group_by_tags -> {
-          bookmarkPresenter.toggleGroupByTags()
-          item.isChecked = bookmarkPresenter.isGroupedByTags
-          return true
-        }
+      R.id.group_by_tags -> {
+        bookmarkPresenter.toggleGroupByTags()
+        item.isChecked = bookmarkPresenter.isGroupedByTags
+        return true
+      }
 
-        R.id.show_recents -> {
-          bookmarkPresenter.toggleShowRecents()
-          item.isChecked = bookmarkPresenter.isShowingRecents
-          return true
-        }
+      R.id.show_recents -> {
+        bookmarkPresenter.toggleShowRecents()
+        item.isChecked = bookmarkPresenter.isShowingRecents
+        return true
+      }
 
-        R.id.show_date -> {
-          bookmarkPresenter.toggleShowDate()
-          bookmarksAdapter?.setShowDate(bookmarkPresenter.isDateShowing)
-          item.isChecked = bookmarkPresenter.isDateShowing
-          return true
-        }
+      R.id.show_date -> {
+        bookmarkPresenter.toggleShowDate()
+        bookmarksAdapter?.setShowDate(bookmarkPresenter.isDateShowing)
+        item.isChecked = bookmarkPresenter.isDateShowing
+        return true
       }
     }
 
@@ -183,7 +176,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
 
     val bookmarksAdapter = bookmarksAdapter
     val bookmarkPresenter = bookmarkPresenter
-    if (bookmarksAdapter != null && items != null && bookmarkPresenter != null) {
+    if (bookmarksAdapter != null && items != null) {
       bookmarksAdapter.setShowTags(bookmarkPresenter.shouldShowInlineTags())
       bookmarksAdapter.setShowDate(bookmarkPresenter.isDateShowing)
       bookmarksAdapter.setElements(
@@ -196,7 +189,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   override fun onClick(row: QuranRow, position: Int) {
     val bookmarksAdapter = bookmarksAdapter
     val bookmarksContextualModePresenter = bookmarksContextualModePresenter
-    if (bookmarksAdapter != null && bookmarksContextualModePresenter != null) {
+    if (bookmarksAdapter != null) {
       if (bookmarksContextualModePresenter.isInActionMode()) {
         val checked = isValidSelection(row) && !bookmarksAdapter.isItemChecked(position)
         bookmarksAdapter.setItemChecked(position, checked)
@@ -212,7 +205,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     if (isValidSelection(row)) {
       val bookmarksAdapter = bookmarksAdapter
       val bookmarksContextualModePresenter = bookmarksContextualModePresenter
-      if (bookmarksAdapter != null && bookmarksContextualModePresenter != null) {
+      if (bookmarksAdapter != null) {
         bookmarksAdapter.setItemChecked(position, !bookmarksAdapter.isItemChecked(position))
         if (bookmarksContextualModePresenter.isInActionMode() && bookmarksAdapter.getCheckedItems()
             .isEmpty()
@@ -232,14 +225,14 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   }
 
   private val mOnUndoClickListener: View.OnClickListener = View.OnClickListener {
-    bookmarkPresenter?.cancelDeletion()
-    bookmarkPresenter?.requestData(true)
+    bookmarkPresenter.cancelDeletion()
+    bookmarkPresenter.requestData(true)
   }
 
   fun prepareContextualMenu(menu: Menu) {
     val bookmarksAdapter = bookmarksAdapter
     val bookmarkPresenter = bookmarkPresenter
-    if (bookmarkPresenter != null && bookmarksAdapter != null) {
+    if (bookmarksAdapter != null) {
       val menuVisibility =
         bookmarkPresenter.getContextualOperationsForItems(bookmarksAdapter.getCheckedItems())
       menu.findItem(R.id.cab_edit_tag).isVisible = menuVisibility[0]
