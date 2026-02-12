@@ -112,19 +112,6 @@ object TestDataFactory {
     timestamp = timestamp
   )
 
-  /**
-   * Creates multiple bookmarks for testing.
-   */
-  fun createBookmarks(count: Int): List<Bookmark> =
-    (1..count).map { index ->
-      createBookmark(
-        id = index.toLong(),
-        sura = (index % QuranConstants.TOTAL_SURAS) + 1,
-        ayah = index,
-        page = (index % QuranConstants.TOTAL_PAGES_MADANI) + 1
-      )
-    }
-
   // ==================== Tag Factory ====================
 
   /**
