@@ -166,7 +166,7 @@ internal class TranslationAdapter(
         }
 
         // and update rows to be highlighted
-        recyclerView.handler.post {
+        recyclerView.post {
           notifyItemRangeChanged(startChangeRange, startChangeCount, HIGHLIGHT_CHANGE)
           val layoutManager = recyclerView.layoutManager
           if ((force || highlightedType == HighlightTypes.AUDIO) && layoutManager is LinearLayoutManager) {
