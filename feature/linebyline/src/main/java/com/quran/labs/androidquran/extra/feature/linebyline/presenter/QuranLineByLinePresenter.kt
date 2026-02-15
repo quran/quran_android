@@ -27,6 +27,7 @@ import com.quran.labs.androidquran.extra.feature.linebyline.model.EmptyPageInfo
 import com.quran.labs.androidquran.extra.feature.linebyline.model.HighlightAyah
 import com.quran.labs.androidquran.extra.feature.linebyline.model.HighlightType
 import com.quran.labs.androidquran.extra.feature.linebyline.model.LineModel
+import com.quran.labs.androidquran.extra.feature.linebyline.model.MissingLineByLineImagesException
 import com.quran.labs.androidquran.extra.feature.linebyline.model.PageInfo
 import com.quran.labs.androidquran.extra.feature.linebyline.model.SidelineDirection
 import com.quran.labs.androidquran.extra.feature.linebyline.model.SidelineModel
@@ -154,6 +155,18 @@ class QuranLineByLinePresenter @Inject constructor(
 
   fun emptyState(): PageInfo {
     return EmptyPageInfo.copy(displaySettings = lineByLineSettings.latestDisplaySettings())
+  }
+
+  suspend fun fallbackToImageType(): Boolean {
+    val currentPageType = settings.pageType()
+    val fallbackType = pageProvider.getFallbackPageType()
+    return if (fallbackType != null && currentPageType != fallbackType) {
+      settings.setPageType(fallbackType)
+      crashReporter.log("Line-by-line fallback from $currentPageType to $fallbackType")
+      true
+    } else {
+      false
+    }
   }
 
   fun onClick() {
@@ -360,17 +373,20 @@ class QuranLineByLinePresenter @Inject constructor(
       val whence = quranFileManager.quranImagesDirectory()
       for (lineNumber in 1..15) {
         val file = File(File(whence, page.toString()), "$lineNumber.png")
-        try {
-          val fileName = file.toString()
-          val sourceBitmap = BitmapFactory.decodeFile(fileName, options)
+
+        val fileName = file.toString()
+        val sourceBitmap = BitmapFactory.decodeFile(fileName, options)
+        if (sourceBitmap != null) {
           val bitmap = sourceBitmap.extractAlpha()
           sourceBitmap.recycle()
           lines.add(LineModel(lineNumber - 1, bitmap.asImageBitmap()))
-        } catch (exception: Exception) {
-          val status = if (file.exists()) { "exists" } else { "missing" }
-          // make sure to add the line number and page to the crash metadata
-          crashReporter.log("Failed to load line $lineNumber for page $page - file $status")
-          throw exception
+        } else {
+          val status = if (file.exists()) {
+            "exists: ${file.name} with length ${file.length()}"
+          } else {
+            "missing"
+          }
+          throw MissingLineByLineImagesException("Failed to load line $lineNumber for page $page - file $status")
         }
       }
       lines.toImmutableList()
@@ -390,7 +406,7 @@ class QuranLineByLinePresenter @Inject constructor(
             it.extension == "png" &&
                 filenameWithoutOverrides.toIntOrNull() != null
           } ?: emptyList()
-        files.map {
+        files.mapNotNull {
           val filenameWithoutOverrides =
             it.nameWithoutExtension.replace("_down", "").replace("_up", "")
           val number = filenameWithoutOverrides.toInt()
@@ -404,9 +420,14 @@ class QuranLineByLinePresenter @Inject constructor(
           }
 
           val sourceBitmap = BitmapFactory.decodeFile(it.toString(), options)
-          val bitmap = sourceBitmap.extractAlpha()
-          sourceBitmap.recycle()
-          SidelineModel(bitmap.asImageBitmap(), number, actualDirection)
+          if (sourceBitmap != null) {
+            val bitmap = sourceBitmap.extractAlpha()
+            sourceBitmap.recycle()
+            SidelineModel(bitmap.asImageBitmap(), number, actualDirection)
+          } else {
+            crashReporter.log("failed to load sideline image [$it] on page [$page]")
+            null
+          }
         }.toImmutableList()
       } else {
         persistentListOf()
