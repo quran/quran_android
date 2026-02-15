@@ -1,9 +1,8 @@
-package com.quran.labs.androidquran.data
+package com.quran.labs.androidquran.common.audio.util
 
 import com.quran.data.di.AppScope
 import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.model.QariItem
-import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 

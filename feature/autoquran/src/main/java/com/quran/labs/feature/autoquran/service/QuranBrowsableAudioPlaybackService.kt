@@ -95,7 +95,7 @@ class QuranBrowsableAudioPlaybackService : MediaSessionService() {
   override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? =
     mediaSession
 
-  private inner class PlayerEventListener : Player.Listener
+  private class PlayerEventListener : Player.Listener
 
   private inner class QuranServiceCallback : MediaLibrarySession.Callback {
 

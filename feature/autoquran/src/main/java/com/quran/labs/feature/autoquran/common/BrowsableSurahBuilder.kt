@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class BrowsableSurahBuilder @Inject constructor(
-  @ApplicationContext private val appContext: Context,
+  @param:ApplicationContext private val appContext: Context,
   private val pageProvider: PageProvider,
   private val audioExtensionDecider: AudioExtensionDecider
 ) {
@@ -136,6 +136,12 @@ class BrowsableSurahBuilder @Inject constructor(
   private fun makeSuraMediaItem(qari: Qari, sura: Int): MediaItem {
     val suraName = getSuraName(appContext, sura, wantPrefix = true, wantTranslation = false)
     val extension = audioExtensionDecider.audioExtensionForQari(qari)
+    val (baseUrl, mimeType) = if (extension == "opus" && qari.opusUrl != null) {
+      qari.opusUrl to MimeTypes.AUDIO_OPUS
+    } else {
+      qari.url to MimeTypes.AUDIO_MPEG
+    }
+
     return MediaItem.Builder()
       .setMediaId("sura_${sura}_${qari.id}")
       .setMediaMetadata(
@@ -149,8 +155,8 @@ class BrowsableSurahBuilder @Inject constructor(
           .setArtist(appContext.getString(qari.nameResource))
           .build()
       )
-      .setMimeType(MimeTypes.AUDIO_MPEG)
-      .setUri(qari.url + makeThreeDigit(sura) + ".$extension")
+      .setMimeType(mimeType)
+      .setUri(baseUrl + makeThreeDigit(sura) + ".$extension")
       .build()
   }
 
