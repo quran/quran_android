@@ -17,29 +17,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
-import app.cash.molecule.AndroidUiDispatcher
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.audiobar.presenter.AudioBarPresenter
 import com.quran.mobile.feature.audiobar.ui.AudioBar
 import dev.zacsweers.metro.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 
 class AudioBarWrapper @JvmOverloads constructor(
   context: Context,
   attrs: AttributeSet? = null,
   defStyleAttr: Int = 0
 ) : AbstractComposeView(context, attrs, defStyleAttr) {
-
-  private val scope = CoroutineScope(SupervisorJob() + AndroidUiDispatcher.Main)
 
   @Inject
   lateinit var audioBarPresenter: AudioBarPresenter
@@ -51,10 +47,13 @@ class AudioBarWrapper @JvmOverloads constructor(
   @Composable
   override fun Content() {
     QuranTheme {
-      val eventListeners = audioBarPresenter.eventListeners()
-      val flow = scope.launchMolecule(mode = RecompositionMode.ContextClock) {
-        audioBarPresenter.audioBarPresenter()
+      val scope = rememberCoroutineScope()
+      val flow = remember {
+        scope.launchMolecule(mode = RecompositionMode.ContextClock) {
+          audioBarPresenter.audioBarPresenter()
+        }
       }
+      val eventListeners = remember(audioBarPresenter) { audioBarPresenter.eventListeners() }
 
       Card(
         shape = CardDefaults.shape.topOnly(),
@@ -75,11 +74,6 @@ class AudioBarWrapper @JvmOverloads constructor(
         )
       }
     }
-  }
-
-  override fun onDetachedFromWindow() {
-    scope.cancel()
-    super.onDetachedFromWindow()
   }
 
   private fun Shape.topOnly(): Shape {
