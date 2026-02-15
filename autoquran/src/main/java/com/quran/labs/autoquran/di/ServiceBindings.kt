@@ -1,11 +1,10 @@
 package com.quran.labs.autoquran.di
 
 import android.content.Context
-import com.quran.data.model.audio.Qari
 import com.quran.data.source.PageProvider
 import com.quran.data.source.QuranDataSource
-import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
+import com.quran.labs.androidquran.common.audio.util.QuranAudioExtensionDecider
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.Provides
@@ -30,12 +29,6 @@ class ServiceBindings(private val appContext: Context) {
   }
 
   @Provides
-  fun provideAudioExtensionDecider(): AudioExtensionDecider {
-    return object : AudioExtensionDecider {
-      override fun audioExtensionForQari(qari: Qari): String = "mp3"
-      override fun audioExtensionForQari(qariItem: QariItem): String = "mp3"
-      override fun allowedAudioExtensions(qari: Qari): List<String> = listOf("mp3")
-      override fun allowedAudioExtensions(qariItem: QariItem): List<String> = listOf("mp3")
-    }
-  }
+  fun provideAudioExtensionDecider(quranAudioExtensionDecider: QuranAudioExtensionDecider): AudioExtensionDecider =
+    quranAudioExtensionDecider
 }
