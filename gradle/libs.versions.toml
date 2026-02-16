@@ -69,7 +69,7 @@ truthVersion = "1.4.5"
 mockitoVersion = "5.21.0"
 robolectricVersion = "4.16.1"
 turbineVersion = "1.2.1"
-koverVersion = "0.9.1"
+koverVersion = "0.9.6"
 
 [libraries]
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junit" }
