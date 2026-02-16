@@ -144,10 +144,8 @@ class QuranPagePresenterTest {
     // Act
     presenter.bind(screen)
 
-    // Wait for timer (500ms delay in code) + processing time
-    Thread.sleep(600)
-
     // Assert: ayah coordinates are loaded for all pages after page coordinates complete
+    // Note: RxSchedulerRule makes trampoline scheduler execute timer immediately (no actual 500ms wait)
     verify(coordinatesModel).getAyahCoordinates(1)
     verify(coordinatesModel).getAyahCoordinates(2)
     verify(coordinatesModel).getAyahCoordinates(3)
