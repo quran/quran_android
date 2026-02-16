@@ -6,13 +6,12 @@ import com.quran.labs.androidquran.common.Response
 import com.quran.labs.androidquran.model.quran.CoordinatesModel
 import com.quran.labs.androidquran.ui.helpers.QuranPageLoader
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.test.RxSchedulerRule
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
-import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import org.junit.Before
-import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.mock
@@ -33,14 +32,8 @@ import org.mockito.MockitoAnnotations
  */
 class QuranPagePresenterTest {
 
-  companion object {
-    @BeforeClass
-    @JvmStatic
-    fun setupClass() {
-      // Use Schedulers.trampoline() for synchronous testing
-      RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
-    }
-  }
+  @get:Rule
+  val rxRule = RxSchedulerRule()
 
   @Mock private lateinit var coordinatesModel: CoordinatesModel
   @Mock private lateinit var quranSettings: QuranSettings
