@@ -207,6 +207,7 @@ dependencies {
   implementation(libs.timber)
   debugImplementation(libs.leakcanary.android)
 
+  testImplementation(project(":common:test-utils"))
   testImplementation(libs.junit)
   testImplementation(libs.truth)
   testImplementation(libs.mockito.core)
