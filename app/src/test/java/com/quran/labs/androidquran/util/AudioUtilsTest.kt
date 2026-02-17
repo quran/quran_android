@@ -1,24 +1,47 @@
 package com.quran.labs.androidquran.util
 
+import android.content.Context
+import android.view.WindowManager
+import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
+import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.common.audio.util.QariUtil
+import com.quran.labs.androidquran.fakes.FakePageProvider
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import org.junit.Assert
 import org.junit.Test
-import org.mockito.Mockito
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+@Config(application = TestApplication::class, sdk = [33])
+@RunWith(RobolectricTestRunner::class)
 class AudioUtilsTest {
 
-  // QuranFileUtils requires Android Context to construct, QariUtil requires PageProvider (15-method
-  // interface). Neither is invoked by getLastAyahToPlay or doesRequireBasmallah — both are
-  // constructor fillers. Mockito is retained until Robolectric is added (see Group A plan).
-  private fun audioUtils() = AudioUtils(
-    QuranInfo(MadaniDataSource()),
-    Mockito.mock(QuranFileUtils::class.java),
-    Mockito.mock(QariUtil::class.java)
-  )
+  // QuranFileUtils is constructed with a real Robolectric context and FakePageProvider.
+  // QariUtil is constructed with FakePageProvider directly — no Android context needed.
+  // Neither QuranFileUtils nor QariUtil is invoked by getLastAyahToPlay or
+  // doesRequireBasmallah, so stubs for their collaborators are sufficient.
+  private fun audioUtils(): AudioUtils {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val fakePageProvider = FakePageProvider()
+    val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    @Suppress("DEPRECATION")
+    val display = windowManager.defaultDisplay
+    val pageSizeCalculator = fakePageProvider.getPageSizeCalculator(
+      com.quran.data.source.DisplaySize(0, 0)
+    )
+    val quranScreenInfo = QuranScreenInfo(context, display, pageSizeCalculator)
+    val quranFileUtils = QuranFileUtils(context, fakePageProvider, quranScreenInfo)
+    val qariUtil = QariUtil(fakePageProvider)
+    return AudioUtils(
+      QuranInfo(MadaniDataSource()),
+      quranFileUtils,
+      qariUtil
+    )
+  }
 
   @Test
   fun testGetLastAyahWithNewSurahOnNextPageForMadani() {
