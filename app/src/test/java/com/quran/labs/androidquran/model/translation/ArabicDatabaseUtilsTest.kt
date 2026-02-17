@@ -1,25 +1,35 @@
 package com.quran.labs.androidquran.model.translation
 
 import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.database.DatabaseHandler
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.util.QuranFileUtils
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+@Config(application = TestApplication::class, sdk = [33])
+@RunWith(RobolectricTestRunner::class)
 class ArabicDatabaseUtilsTest {
 
-  @Mock
-  lateinit var context: Context
+  private val context = ApplicationProvider.getApplicationContext<Context>()
 
+  // DatabaseHandler is not open and has a private constructor; keep as mock
   @Mock
   lateinit var arabicHandler: DatabaseHandler
+
+  // QuranFileUtils requires PageProvider and QuranScreenInfo; keep as mock
+  @Mock
+  lateinit var quranFileUtils: QuranFileUtils
 
   @Before
   fun setUp() {
@@ -61,7 +71,7 @@ class ArabicDatabaseUtilsTest {
   private fun getArabicDatabaseUtils(): ArabicDatabaseUtils {
     return object : ArabicDatabaseUtils(context,
       QuranInfo(MadaniDataSource()),
-      mock(QuranFileUtils::class.java)) {
+      quranFileUtils) {
 
       override fun getArabicDatabaseHandler(): DatabaseHandler {
         return arabicHandler
