@@ -13,11 +13,10 @@ import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.awaitTerminalEvent
-import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
+import com.quran.labs.test.RxSchedulerRule
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
 import org.junit.Before
-import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mock
@@ -25,6 +24,9 @@ import org.mockito.MockitoAnnotations
 import org.mockito.Mockito.`when` as whenever
 
 class BookmarkPresenterTest {
+
+  @get:Rule
+  val rxRule = RxSchedulerRule()
 
   companion object {
     private val TAG_LIST: MutableList<Tag> = ArrayList(2)
@@ -34,12 +36,6 @@ class BookmarkPresenterTest {
     private val RESOURCE_ARRAY: Array<String>
     private val AYAH_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG: Int
     private val MIXED_BOOKMARKS_ROW_COUNT_WHEN_GROUPED_BY_TAG: Int
-
-    @BeforeClass
-    @JvmStatic
-    fun setup() {
-      RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.io() }
-    }
 
     init {
       // a list of two tags
