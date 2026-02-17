@@ -3,30 +3,27 @@ package com.quran.labs.androidquran.util
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
-import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.common.audio.util.QariUtil
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito
-import org.mockito.Mockito.`when` as whenever
 
 class AudioUtilsTest {
 
+  // QuranFileUtils requires Android Context to construct, QariUtil requires PageProvider (15-method
+  // interface). Neither is invoked by getLastAyahToPlay or doesRequireBasmallah — both are
+  // constructor fillers. Mockito is retained until Robolectric is added (see Group A plan).
+  private fun audioUtils() = AudioUtils(
+    QuranInfo(MadaniDataSource()),
+    Mockito.mock(QuranFileUtils::class.java),
+    Mockito.mock(QariUtil::class.java)
+  )
+
   @Test
   fun testGetLastAyahWithNewSurahOnNextPageForMadani() {
-    val pageProviderMock = Mockito.mock(PageProvider::class.java)
-    whenever(pageProviderMock.getDataSource())
-      .thenReturn(MadaniDataSource())
-    val quranInfo = QuranInfo(MadaniDataSource())
-    val audioUtils =
-      AudioUtils(
-        quranInfo,
-        Mockito.mock(QuranFileUtils::class.java),
-        Mockito.mock(QariUtil::class.java)
-      )
     // mode 1 is PAGE
-    val lastAyah = audioUtils.getLastAyahToPlay(
+    val lastAyah = audioUtils().getLastAyahToPlay(
       SuraAyah(sura = 109, ayah = 1),
       currentPage = 603,
       mode = 1,
@@ -39,18 +36,8 @@ class AudioUtilsTest {
 
   @Test
   fun testGetLastAyahWhenPlayingWithSuraBounds() {
-    val pageProviderMock = Mockito.mock(PageProvider::class.java)
-    whenever(pageProviderMock.getDataSource())
-      .thenReturn(MadaniDataSource())
-    val quranInfo = QuranInfo(MadaniDataSource())
-    val audioUtils =
-      AudioUtils(
-        quranInfo,
-        Mockito.mock(QuranFileUtils::class.java),
-        Mockito.mock(QariUtil::class.java)
-      )
     // mode 2 is SURA
-    val lastAyah = audioUtils.getLastAyahToPlay(SuraAyah(2, 6), 3, 2, false)
+    val lastAyah = audioUtils().getLastAyahToPlay(SuraAyah(2, 6), 3, 2, false)
     Assert.assertNotNull(lastAyah)
     Assert.assertEquals(286, lastAyah!!.ayah.toLong())
     Assert.assertEquals(2, lastAyah.sura.toLong())
@@ -58,47 +45,24 @@ class AudioUtilsTest {
 
   @Test
   fun testSuraTawbaDoesNotNeedBasmallah() {
-    val quranInfo = QuranInfo(MadaniDataSource())
-    val audioUtils =
-      AudioUtils(
-        quranInfo,
-        Mockito.mock(QuranFileUtils::class.java),
-        Mockito.mock(QariUtil::class.java)
-      )
-
-    // start after ayah 1 of sura anfal
     val start = SuraAyah(8, 2)
-    // finish in sura tawbah, so no basmallah needed here
     val ending = SuraAyah(9, 100)
-
-    // overall don't need a basmallah
-    Assert.assertFalse(audioUtils.doesRequireBasmallah(start, ending))
+    // start after ayah 1 of sura anfal, finish in sura tawbah — no basmallah needed
+    Assert.assertFalse(audioUtils().doesRequireBasmallah(start, ending))
   }
 
   @Test
   fun testNeedBasmallahAcrossRange() {
-    val quranInfo = QuranInfo(MadaniDataSource())
-    val audioUtils =
-      AudioUtils(
-        quranInfo,
-        Mockito.mock(QuranFileUtils::class.java),
-        Mockito.mock(QariUtil::class.java)
-      )
     val start = SuraAyah(8, 1)
     val ending = SuraAyah(10, 2)
     // should need a basmallah due to 10:1
-    Assert.assertTrue(audioUtils.doesRequireBasmallah(start, ending))
+    Assert.assertTrue(audioUtils().doesRequireBasmallah(start, ending))
   }
 
   @Test
   fun testLastAyahForFirstAyahWithPageDownload() {
-    val audioUtils = AudioUtils(
-      QuranInfo(MadaniDataSource()),
-      Mockito.mock(QuranFileUtils::class.java),
-      Mockito.mock(QariUtil::class.java)
-    )
     val start = SuraAyah(56, 51)
-    val end = audioUtils.getLastAyahToPlay(
+    val end = audioUtils().getLastAyahToPlay(
       start,
       currentPage = 536,
       mode = 1,

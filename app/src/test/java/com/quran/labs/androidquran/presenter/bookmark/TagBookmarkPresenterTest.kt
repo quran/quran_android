@@ -1,15 +1,20 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
+import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
+import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.model.bookmark.Tag
+import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
+import com.quran.labs.androidquran.fakes.FakeRecentPageModel
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
-import com.quran.labs.androidquran.model.bookmark.RecentPageModel
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
+import com.quran.labs.test.RxSchedulerRule
+import com.quran.mobile.bookmark.Bookmarks
+import com.quran.mobile.bookmark.Last_pages
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import com.quran.labs.test.RxSchedulerRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -17,6 +22,17 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import java.util.concurrent.CountDownLatch
+
+private fun inMemoryBookmarksAdapter(): BookmarksDBAdapter {
+  val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
+  BookmarksDatabase.Schema.create(driver)
+  val database = BookmarksDatabase(
+    driver,
+    Bookmarks.Adapter(IntColumnAdapter, IntColumnAdapter, IntColumnAdapter),
+    Last_pages.Adapter(IntColumnAdapter)
+  )
+  return BookmarksDBAdapter(database)
+}
 
 class TagBookmarkPresenterTest {
 
@@ -28,8 +44,8 @@ class TagBookmarkPresenterTest {
   @Before
   fun setupTest() {
     bookmarkModel = object : BookmarkModel(
-      mock(BookmarksDBAdapter::class.java),
-      mock(RecentPageModel::class.java)
+      inMemoryBookmarksAdapter(),
+      FakeRecentPageModel()
     ), TagsObservableReporter {
       var tagsObservableCalled: Int = 0
 
@@ -100,8 +116,8 @@ class TagBookmarkPresenterTest {
   @Throws(InterruptedException::class)
   fun testChangeShouldOnlySaveExplicitlyForBookmarkIds() {
     val bookmarkModel = object : BookmarkModel(
-      mock(BookmarksDBAdapter::class.java),
-      mock(RecentPageModel::class.java)
+      inMemoryBookmarksAdapter(),
+      FakeRecentPageModel()
     ) {
       override fun updateBookmarkTags(
         bookmarkIds: LongArray,
@@ -162,8 +178,8 @@ class TagBookmarkPresenterTest {
   @Throws(InterruptedException::class)
   fun testChangeShouldSaveImmediatelyForAyahBookmarks() {
     val bookmarkModel = object : BookmarkModel(
-      mock(BookmarksDBAdapter::class.java),
-      mock(RecentPageModel::class.java)
+      inMemoryBookmarksAdapter(),
+      FakeRecentPageModel()
     ), UpdatedBookmarkTagsReporter {
       var updateBookmarkTagsCalled: Int = 0
 
