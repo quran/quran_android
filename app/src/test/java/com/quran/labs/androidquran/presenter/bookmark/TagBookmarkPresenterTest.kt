@@ -18,9 +18,13 @@ import io.reactivex.rxjava3.core.Single
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import com.quran.labs.androidquran.base.TestApplication
 import java.util.concurrent.CountDownLatch
 
 private fun inMemoryBookmarksAdapter(): BookmarksDBAdapter {
@@ -34,6 +38,8 @@ private fun inMemoryBookmarksAdapter(): BookmarksDBAdapter {
   return BookmarksDBAdapter(database)
 }
 
+@Config(application = TestApplication::class, sdk = [33])
+@RunWith(RobolectricTestRunner::class)
 class TagBookmarkPresenterTest {
 
   @get:Rule

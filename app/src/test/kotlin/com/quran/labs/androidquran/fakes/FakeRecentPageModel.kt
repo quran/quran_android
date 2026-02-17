@@ -75,7 +75,7 @@ class FakeRecentPageModel : RecentPageModel(inMemoryBookmarksAdapter()) {
     }
   }
 
-  fun getGetRecentPagesObservableCallCount(): Int = getRecentPagesObservableCalls.size
+  fun getRecentPagesObservableCallCount(): Int = getRecentPagesObservableCalls.size
 
   fun getCurrentRecentPages(): List<RecentPage> = recentPages.toList()
 

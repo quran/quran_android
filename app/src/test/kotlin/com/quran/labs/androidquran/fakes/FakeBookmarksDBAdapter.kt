@@ -53,7 +53,7 @@ class FakeBookmarksDBAdapter {
   // Data classes for call tracking
   data class UpdateTagCall(val tagId: Long, val newName: String)
   data class ReplaceRangeCall(val startPage: Int, val endPage: Int, val page: Int)
-  data class TagBookmarksCall(val bookmarkIds: LongArray, val tagIds: Set<Long>, val deleteNonTagged: Boolean)
+  data class TagBookmarksCall(val bookmarkIds: List<Long>, val tagIds: Set<Long>, val deleteNonTagged: Boolean)
   data class BulkDeleteCall(val tagIds: List<Long>, val bookmarkIds: List<Long>, val untag: List<Pair<Long, Long>>)
 
   // Configuration methods
@@ -128,7 +128,7 @@ class FakeBookmarksDBAdapter {
   }
 
   fun tagBookmarks(bookmarkIds: LongArray, tagIds: Set<Long>, deleteNonTagged: Boolean): Boolean {
-    tagBookmarksCalls.add(TagBookmarksCall(bookmarkIds, tagIds, deleteNonTagged))
+    tagBookmarksCalls.add(TagBookmarksCall(bookmarkIds.toList(), tagIds, deleteNonTagged))
 
     if (!tagBookmarksResult) {
       return false
@@ -282,15 +282,14 @@ class FakeBookmarksDBAdapter {
   }
 
   fun assertTagBookmarksCalled(bookmarkIds: LongArray, tagIds: Set<Long>, deleteNonTagged: Boolean) {
+    val expectedIds = bookmarkIds.toList()
     val call = tagBookmarksCalls.find {
-      it.bookmarkIds.contentEquals(bookmarkIds) &&
-      it.tagIds == tagIds &&
-      it.deleteNonTagged == deleteNonTagged
+      it.bookmarkIds == expectedIds && it.tagIds == tagIds && it.deleteNonTagged == deleteNonTagged
     }
     if (call == null) {
       throw AssertionError(
-        "Expected tagBookmarks(${bookmarkIds.toList()}, $tagIds, $deleteNonTagged) but was not called. " +
-        "Actual calls: ${tagBookmarksCalls.map { "(${it.bookmarkIds.toList()}, ${it.tagIds}, ${it.deleteNonTagged})" }}"
+        "Expected tagBookmarks($expectedIds, $tagIds, $deleteNonTagged) but was not called. " +
+        "Actual calls: ${tagBookmarksCalls.map { "(${it.bookmarkIds}, ${it.tagIds}, ${it.deleteNonTagged})" }}"
       )
     }
   }

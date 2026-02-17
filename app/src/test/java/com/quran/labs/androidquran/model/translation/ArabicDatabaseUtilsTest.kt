@@ -36,6 +36,9 @@ class ArabicDatabaseUtilsTest {
   // are both overridden in the anonymous subclass used by each test.
   private val quranFileUtils: QuranFileUtils by lazy {
     val fakePageProvider = FakePageProvider()
+    // QuranScreenInfo requires a Display object; Robolectric has no replacement shadow for
+    // DisplayManager.getDisplay(), so the deprecated WindowManager.defaultDisplay is used.
+    // Can be removed once QuranScreenInfo is refactored to not require Display.
     @Suppress("DEPRECATION")
     val display = (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
     val pageSizeCalculator = fakePageProvider.getPageSizeCalculator(DisplaySize(0, 0))
@@ -52,10 +55,11 @@ class ArabicDatabaseUtilsTest {
   fun testHydrateAyahText() {
     val arabicDatabaseUtils = getArabicDatabaseUtils()
 
-    val bookmarks = ArrayList<Bookmark>(3)
-    bookmarks.add(Bookmark(1, 1, 1, 1))
-    bookmarks.add(Bookmark(2, null, null, 3))
-    bookmarks.add(Bookmark(3, 114, 6, 604))
+    val bookmarks = mutableListOf(
+      Bookmark(1, 1, 1, 1),
+      Bookmark(2, null, null, 3),
+      Bookmark(3, 114, 6, 604),
+    )
 
     val result = arabicDatabaseUtils.hydrateAyahText(bookmarks)
     assertThat(result).hasSize(3)
@@ -71,8 +75,7 @@ class ArabicDatabaseUtilsTest {
   fun testHydrateAyahTextEmpty() {
     val arabicDatabaseUtils = getArabicDatabaseUtils()
 
-    val bookmarks = ArrayList<Bookmark>(1)
-    bookmarks.add(Bookmark(1, null, null, 3))
+    val bookmarks = mutableListOf(Bookmark(1, null, null, 3))
 
     val result = arabicDatabaseUtils.hydrateAyahText(bookmarks)
     assertThat(result).hasSize(1)
