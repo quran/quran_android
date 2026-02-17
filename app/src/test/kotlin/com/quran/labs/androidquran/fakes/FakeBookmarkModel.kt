@@ -35,6 +35,8 @@ import org.mockito.Mockito.mock
  * ```
  */
 open class FakeBookmarkModel : BookmarkModel(
+  // Safe: BookmarkModel's constructor only stores these references, never calls methods on them.
+  // All methods that use the adapter are overridden below, so this mock is never invoked.
   mock(BookmarksDBAdapter::class.java),
   FakeRecentPageModel()
 ) {
