@@ -27,6 +27,11 @@ private fun inMemoryBookmarksAdapter(): BookmarksDBAdapter {
  * This fake provides configurable behavior and tracks method calls for assertions.
  * Since RecentPageModel is open, we can extend it and override open methods.
  *
+ * NOTE: RecentPageModel.init calls getRecentPagesObservable() before this class's own
+ * field initializers run (JVM: superclass constructor runs first). Fields accessed in
+ * the overridden method must therefore use lazy-init backing vars to survive the
+ * pre-init window safely.
+ *
  * Usage:
  * ```
  * val fake = FakeRecentPageModel()
@@ -41,11 +46,15 @@ private fun inMemoryBookmarksAdapter(): BookmarksDBAdapter {
  */
 class FakeRecentPageModel : RecentPageModel(inMemoryBookmarksAdapter()) {
 
-  // State
-  private val recentPages = mutableListOf<RecentPage>()
+  // State - backed by nullable vars for safe access during super() constructor call
+  private var _recentPages: MutableList<RecentPage>? = null
+  private val recentPages: MutableList<RecentPage>
+    get() = _recentPages ?: mutableListOf<RecentPage>().also { _recentPages = it }
 
-  // Call tracking
-  private val getRecentPagesObservableCalls = mutableListOf<Unit>()
+  // Call tracking - backed by nullable var for same reason
+  private var _observableCalls: MutableList<Unit>? = null
+  private val getRecentPagesObservableCalls: MutableList<Unit>
+    get() = _observableCalls ?: mutableListOf<Unit>().also { _observableCalls = it }
 
   // Configuration methods
   fun setRecentPages(pages: List<RecentPage>) {
