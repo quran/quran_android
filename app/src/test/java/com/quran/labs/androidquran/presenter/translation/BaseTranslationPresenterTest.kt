@@ -50,13 +50,11 @@ class BaseTranslationPresenterTest {
   @Test
   fun testGetTranslationNames() {
     val databases = listOf("one.db", "two.db")
-    val map = object : HashMap<String, LocalTranslation>() {
-      init {
-        put("one.db", LocalTranslation(1, "one.db", "One", "First", null, "", null, 1, 2))
-        put("two.db", LocalTranslation(2, "two.db", "Two", "Second", null, "", null, 1, 2))
-        put("three.db", LocalTranslation(3, "three.db", "Three", "Third", null, "", null, 1, 2))
-      }
-    }
+    val map = mapOf(
+      "one.db" to LocalTranslation(1, "one.db", "One", "First", null, "", null, 1, 2),
+      "two.db" to LocalTranslation(2, "two.db", "Two", "Second", null, "", null, 1, 2),
+      "three.db" to LocalTranslation(3, "three.db", "Three", "Third", null, "", null, 1, 2),
+    )
 
     val translations = presenter.getTranslations(databases, map)
     assertThat(translations).hasLength(2)
@@ -124,7 +122,7 @@ class BaseTranslationPresenterTest {
         QuranText(1, 1, "first ayah"),
         QuranText(1, 2, "second ayah")
     )
-    val info = presenter.combineAyahData(verseRange, arabic, ArrayList(), emptyArray())
+    val info = presenter.combineAyahData(verseRange, arabic, emptyList(), emptyArray())
     assertThat(info).hasSize(2)
     assertThat(info[0].sura).isEqualTo(1)
     assertThat(info[0].ayah).isEqualTo(1)
