@@ -25,7 +25,8 @@ import org.mockito.Mockito.mock
  * ```
  */
 class FakeRecentPageModel : RecentPageModel(
-  // Pass a mock adapter since we override the methods that use it
+  // Safe: RecentPageModel's constructor only stores this reference, never calls methods on it.
+  // All methods that use the adapter are overridden below, so this mock is never invoked.
   mock(BookmarksDBAdapter::class.java)
 ) {
 
