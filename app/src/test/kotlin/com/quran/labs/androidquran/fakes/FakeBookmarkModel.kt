@@ -66,7 +66,7 @@ open class FakeBookmarkModel : BookmarkModel(inMemoryBookmarksAdapter(), FakeRec
   private val safeAddBookmarkCalls = mutableListOf<AddBookmarkCall>()
   private val getBookmarkTagIdsCalls = mutableListOf<Long>()
 
-  data class UpdateTagsCall(val bookmarkIds: LongArray, val tagIds: Set<Long>, val deleteNonTagged: Boolean)
+  data class UpdateTagsCall(val bookmarkIds: List<Long>, val tagIds: Set<Long>, val deleteNonTagged: Boolean)
   data class AddBookmarkCall(val sura: Int?, val ayah: Int?, val page: Int)
 
   // Configuration methods
@@ -115,7 +115,7 @@ open class FakeBookmarkModel : BookmarkModel(inMemoryBookmarksAdapter(), FakeRec
     tagIds: Set<Long>,
     deleteNonTagged: Boolean
   ): Observable<Boolean> {
-    updateBookmarkTagsCalls.add(UpdateTagsCall(bookmarkIds, tagIds, deleteNonTagged))
+    updateBookmarkTagsCalls.add(UpdateTagsCall(bookmarkIds.toList(), tagIds, deleteNonTagged))
 
     if (updateBookmarkTagsResult) {
       // Update in-memory state
@@ -155,15 +155,14 @@ open class FakeBookmarkModel : BookmarkModel(inMemoryBookmarksAdapter(), FakeRec
 
   // Assertion methods
   fun assertUpdateBookmarkTagsCalled(bookmarkIds: LongArray, tagIds: Set<Long>, deleteNonTagged: Boolean) {
+    val expectedIds = bookmarkIds.toList()
     val call = updateBookmarkTagsCalls.find {
-      it.bookmarkIds.contentEquals(bookmarkIds) &&
-      it.tagIds == tagIds &&
-      it.deleteNonTagged == deleteNonTagged
+      it.bookmarkIds == expectedIds && it.tagIds == tagIds && it.deleteNonTagged == deleteNonTagged
     }
     if (call == null) {
       throw AssertionError(
-        "Expected updateBookmarkTags(${bookmarkIds.toList()}, $tagIds, $deleteNonTagged) but was not called. " +
-        "Actual calls: ${updateBookmarkTagsCalls.map { "(${it.bookmarkIds.toList()}, ${it.tagIds}, ${it.deleteNonTagged})" }}"
+        "Expected updateBookmarkTags($expectedIds, $tagIds, $deleteNonTagged) but was not called. " +
+        "Actual calls: ${updateBookmarkTagsCalls.map { "(${it.bookmarkIds}, ${it.tagIds}, ${it.deleteNonTagged})" }}"
       )
     }
   }
@@ -191,7 +190,7 @@ open class FakeBookmarkModel : BookmarkModel(inMemoryBookmarksAdapter(), FakeRec
 
   fun getUpdateBookmarkTagsCallCount(): Int = updateBookmarkTagsCalls.size
   fun getSafeAddBookmarkCallCount(): Int = safeAddBookmarkCalls.size
-  fun getGetBookmarkTagIdsCallCount(): Int = getBookmarkTagIdsCalls.size
+  fun getBookmarkTagIdsCallCount(): Int = getBookmarkTagIdsCalls.size
 
   fun getCurrentTags(): List<Tag> = tags.toList()
   fun getCurrentBookmarks(): List<Bookmark> = bookmarks.toList()
