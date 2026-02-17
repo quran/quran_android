@@ -28,6 +28,9 @@ class AudioUtilsTest {
     val context = ApplicationProvider.getApplicationContext<Context>()
     val fakePageProvider = FakePageProvider()
     val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+    // QuranScreenInfo requires a Display object; Robolectric has no replacement shadow for
+    // DisplayManager.getDisplay(), so the deprecated WindowManager.defaultDisplay is used.
+    // Can be removed once QuranScreenInfo is refactored to not require Display.
     @Suppress("DEPRECATION")
     val display = windowManager.defaultDisplay
     val pageSizeCalculator = fakePageProvider.getPageSizeCalculator(
