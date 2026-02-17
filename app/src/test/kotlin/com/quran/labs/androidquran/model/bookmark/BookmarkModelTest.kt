@@ -9,15 +9,25 @@ import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.mobile.bookmark.Bookmarks
 import com.quran.mobile.bookmark.Last_pages
+import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.test.RxSchedulerRule
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Tests for BookmarkModel using in-memory SQLite database.
  * Migrated from Mockito to real database implementation.
+ *
+ * Uses RobolectricTestRunner so that the SQLite JDBC driver loads in the same sandbox
+ * classloader as other Robolectric tests, preventing DriverManager classloader conflicts
+ * when the full test suite runs.
  */
+@Config(application = TestApplication::class, sdk = [33])
+@RunWith(RobolectricTestRunner::class)
 class BookmarkModelTest {
 
   @get:Rule
