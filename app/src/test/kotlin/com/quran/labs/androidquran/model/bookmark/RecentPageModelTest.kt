@@ -29,13 +29,11 @@ class RecentPageModelTest {
   val rxRule = RxSchedulerRule()
 
   companion object {
-    private val SAMPLE_RECENT_PAGES = mutableListOf<RecentPage>()
-
-    init {
-      val timestamp = System.currentTimeMillis()
-      SAMPLE_RECENT_PAGES.add(RecentPage(49, timestamp))
-      SAMPLE_RECENT_PAGES.add(RecentPage(100, timestamp - 10000))
-    }
+    private val timestamp = System.currentTimeMillis()
+    private val SAMPLE_RECENT_PAGES: List<RecentPage> = listOf(
+      RecentPage(49, timestamp),
+      RecentPage(100, timestamp - 10000)
+    )
   }
 
   private lateinit var database: BookmarksDatabase

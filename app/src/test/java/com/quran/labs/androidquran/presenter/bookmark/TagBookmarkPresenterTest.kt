@@ -6,13 +6,12 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
-import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
+import com.quran.labs.test.RxSchedulerRule
 import org.junit.Before
-import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
@@ -21,15 +20,10 @@ import java.util.concurrent.CountDownLatch
 
 class TagBookmarkPresenterTest {
 
-  private lateinit var bookmarkModel: BookmarkModel
+  @get:Rule
+  val rxRule = RxSchedulerRule()
 
-  companion object {
-    @BeforeClass
-    @JvmStatic
-    fun setup() {
-      RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.io() }
-    }
-  }
+  private lateinit var bookmarkModel: BookmarkModel
 
   @Before
   fun setupTest() {
