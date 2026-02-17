@@ -10,6 +10,7 @@ import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.mobile.bookmark.Bookmarks
 import com.quran.mobile.bookmark.Last_pages
+import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.test.RxSchedulerRule
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -17,12 +18,20 @@ import io.reactivex.rxjava3.schedulers.TestScheduler
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import java.util.concurrent.TimeUnit
 
 /**
  * Tests for RecentPageModel using in-memory SQLite database.
  * Migrated from Mockito to real database implementation.
+ *
+ * Uses RobolectricTestRunner so the SQLite JDBC driver loads in the same sandbox
+ * classloader as other Robolectric tests, preventing DriverManager classloader conflicts.
  */
+@Config(application = TestApplication::class, sdk = [33])
+@RunWith(RobolectricTestRunner::class)
 class RecentPageModelTest {
 
   @get:Rule
