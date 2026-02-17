@@ -234,6 +234,8 @@ dependencies {
   testImplementation(libs.espresso.intents)
   testImplementation(libs.turbine)
   testImplementation(libs.kotlinx.coroutines.test)
+  testImplementation(libs.sqldelight.sqlite.driver)
+  testImplementation(libs.sqldelight.primitive.adapters)
 
   errorprone(libs.errorprone.core)
 
