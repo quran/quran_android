@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.fakes
 
 import android.util.SparseArray
 import com.quran.labs.androidquran.dao.translation.TranslationItem
+import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.mobile.translation.model.LocalTranslation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.flowOf
  * Provides in-memory storage for translations and configurable responses.
  * Used by TranslationManagerPresenterTest and BaseTranslationPresenterTest.
  */
-class FakeTranslationsDBAdapter {
+class FakeTranslationsDBAdapter : TranslationsDBAdapter {
 
   private val translations = mutableListOf<LocalTranslation>()
 
@@ -29,11 +30,11 @@ class FakeTranslationsDBAdapter {
     translations.clear()
   }
 
-  fun getTranslations(): Flow<List<LocalTranslation>> {
+  override fun getTranslations(): Flow<List<LocalTranslation>> {
     return flowOf(translations.toList())
   }
 
-  suspend fun translationsHash(): SparseArray<LocalTranslation> {
+  override suspend fun translationsHash(): SparseArray<LocalTranslation> {
     val result = SparseArray<LocalTranslation>()
     for (item in translations) {
       result.put(item.id.toInt(), item)
@@ -41,11 +42,11 @@ class FakeTranslationsDBAdapter {
     return result
   }
 
-  suspend fun deleteTranslationByFileName(filename: String) {
+  override suspend fun deleteTranslationByFileName(filename: String) {
     translations.removeAll { it.filename == filename }
   }
 
-  suspend fun writeTranslationUpdates(updates: List<TranslationItem>): Boolean {
+  override suspend fun writeTranslationUpdates(updates: List<TranslationItem>): Boolean {
     // For testing purposes, just add the translations
     updates.forEach { item ->
       if (item.exists()) {

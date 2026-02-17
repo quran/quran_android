@@ -6,6 +6,8 @@ import com.quran.data.core.QuranPageInfo
 import com.quran.data.di.ActivityLevelScope
 import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.model.translation.TranslationModel
+import com.quran.labs.androidquran.model.translation.TranslationModelImpl
 import com.quran.labs.androidquran.util.QuranPageInfoImpl
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranUtils
@@ -50,5 +52,11 @@ object PagerActivityModule {
   @ElementsIntoSet
   fun provideAdditionalAyahPanels(): Set<AyahActionFragmentProvider> {
     return emptySet()
+  }
+
+  @Provides
+  @ActivityScope
+  fun provideTranslationModel(impl: TranslationModelImpl): TranslationModel {
+    return impl
   }
 }
