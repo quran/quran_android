@@ -5,11 +5,11 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.model.QuranText
 import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.common.TranslationMetadata
-import com.quran.labs.androidquran.database.TranslationsDBAdapter
-import com.quran.labs.androidquran.model.translation.TranslationModel
+import com.quran.labs.androidquran.fakes.FakeTranslationListPresenter
+import com.quran.labs.androidquran.fakes.FakeTranslationModel
+import com.quran.labs.androidquran.fakes.FakeTranslationsDBAdapter
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.presenter.Presenter
-import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.translation.model.LocalTranslation
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +19,6 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
 
 class BaseTranslationPresenterTest {
 
@@ -31,15 +30,15 @@ class BaseTranslationPresenterTest {
   fun setupTest() {
     Dispatchers.setMain(testDispatcher)
     presenter = BaseTranslationPresenter(
-        Mockito.mock(TranslationModel::class.java),
-        Mockito.mock(TranslationsDBAdapter::class.java),
+        FakeTranslationModel(),
+        FakeTranslationsDBAdapter(),
         object : TranslationUtil(QuranInfo(MadaniDataSource())) {
           override fun parseTranslationText(quranText: QuranText, translationId: Int): TranslationMetadata {
             return TranslationMetadata(quranText.sura, quranText.ayah, quranText.text, translationId)
           }
         },
         QuranInfo(MadaniDataSource()),
-        Mockito.mock(TranslationListPresenter::class.java)
+        FakeTranslationListPresenter()
     )
   }
 

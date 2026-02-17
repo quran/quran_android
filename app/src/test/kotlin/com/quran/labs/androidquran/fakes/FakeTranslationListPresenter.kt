@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.fakes
 
+import com.quran.labs.androidquran.presenter.translationlist.TranslationListCallback
+import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.mobile.translation.model.LocalTranslation
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +13,7 @@ import kotlinx.coroutines.flow.flowOf
  * Provides minimal implementation with configurable translation data.
  * Used by BaseTranslationPresenterTest.
  */
-class FakeTranslationListPresenter {
+class FakeTranslationListPresenter : TranslationListPresenter {
 
   private var translationsList: List<LocalTranslation> = emptyList()
 
@@ -19,16 +21,11 @@ class FakeTranslationListPresenter {
     translationsList = translations
   }
 
-  fun translations(): Flow<List<LocalTranslation>> {
+  override fun translations(): Flow<List<LocalTranslation>> {
     return flowOf(translationsList.sortedBy { it.displayOrder })
   }
 
-  fun registerForTranslations(callback: TranslationListCallback): Job {
-    // Minimal implementation - just return a no-op job
+  override fun registerForTranslations(callback: TranslationListCallback): Job {
     return Job()
-  }
-
-  interface TranslationListCallback {
-    fun onTranslationsUpdated(titles: Array<String>, translations: List<LocalTranslation>)
   }
 }
