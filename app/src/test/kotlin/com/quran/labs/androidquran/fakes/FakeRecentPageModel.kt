@@ -1,10 +1,25 @@
 package com.quran.labs.androidquran.fakes
 
+import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
+import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.quran.data.model.bookmark.RecentPage
+import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel
+import com.quran.mobile.bookmark.Bookmarks
+import com.quran.mobile.bookmark.Last_pages
 import io.reactivex.rxjava3.core.Single
-import org.mockito.Mockito.mock
+
+private fun inMemoryBookmarksAdapter(): BookmarksDBAdapter {
+  val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
+  BookmarksDatabase.Schema.create(driver)
+  val database = BookmarksDatabase(
+    driver,
+    Bookmarks.Adapter(IntColumnAdapter, IntColumnAdapter, IntColumnAdapter),
+    Last_pages.Adapter(IntColumnAdapter)
+  )
+  return BookmarksDBAdapter(database)
+}
 
 /**
  * Fake implementation of RecentPageModel for testing.
@@ -24,11 +39,7 @@ import org.mockito.Mockito.mock
  * fake.assertGetRecentPagesObservableCalled()
  * ```
  */
-class FakeRecentPageModel : RecentPageModel(
-  // Safe: RecentPageModel's constructor only stores this reference, never calls methods on it.
-  // All methods that use the adapter are overridden below, so this mock is never invoked.
-  mock(BookmarksDBAdapter::class.java)
-) {
+class FakeRecentPageModel : RecentPageModel(inMemoryBookmarksAdapter()) {
 
   // State
   private val recentPages = mutableListOf<RecentPage>()
