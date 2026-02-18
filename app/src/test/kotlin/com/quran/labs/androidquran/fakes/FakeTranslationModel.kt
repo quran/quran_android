@@ -14,6 +14,8 @@ class FakeTranslationModel : TranslationModel {
 
   private val arabicTexts = mutableMapOf<VerseRange, List<QuranText>>()
   private val translationTexts = mutableMapOf<Pair<VerseRange, String>, List<QuranText>>()
+  private var arabicError: Exception? = null
+  private val translationErrors = mutableMapOf<String, Exception>()
 
   fun setArabicText(verses: VerseRange, text: List<QuranText>) {
     arabicTexts[verses] = text
@@ -23,16 +25,28 @@ class FakeTranslationModel : TranslationModel {
     translationTexts[verses to database] = text
   }
 
+  fun setArabicError(e: Exception) {
+    arabicError = e
+  }
+
+  fun setTranslationError(db: String, e: Exception) {
+    translationErrors[db] = e
+  }
+
   fun clearAll() {
     arabicTexts.clear()
     translationTexts.clear()
+    arabicError = null
+    translationErrors.clear()
   }
 
   override suspend fun getArabicFromDatabase(verses: VerseRange): List<QuranText> {
+    arabicError?.let { throw it }
     return arabicTexts[verses] ?: emptyList()
   }
 
   override suspend fun getTranslationFromDatabase(verses: VerseRange, db: String): List<QuranText> {
+    translationErrors[db]?.let { throw it }
     return translationTexts[verses to db] ?: emptyList()
   }
 }
