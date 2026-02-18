@@ -68,9 +68,8 @@ class BookmarkModelTest {
 
     // Verify: Tag was actually updated in database
     val allTags = bookmarksAdapter.getTags()
-    val updatedTag = allTags.find { it.id == tagId }
-    assertThat(updatedTag).isNotNull()
-    assertThat(updatedTag!!.name).isEqualTo("Updated Tag")
+    val updatedTag = requireNotNull(allTags.find { it.id == tagId })
+    assertThat(updatedTag.name).isEqualTo("Updated Tag")
   }
 
   @Test
