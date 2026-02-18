@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-**Phase 2 Complete**: Core testing infrastructure established with 33 new tests. Current focus: Presenter layer testing with pragmatic fake/mock strategy.
+**Phase 3 Complete**: Mockito migration done. 146 tests, 0 flaky. Remaining Mockito use is all justified (verify() interaction tests + unavoidable mocks for non-open classes).
 
 ---
 
@@ -98,6 +98,7 @@ Located at `common/test-utils/`, provides:
 
 - **TestDataFactory** - Creates real domain models for tests
 - **RxSchedulerRule** - Synchronous RxJava execution
+- **DatabaseTestHelpers** - Shared in-memory database factory (`inMemoryBookmarksAdapter()`) used by bookmark test classes
 
 ```kotlin
 // TestDataFactory usage
@@ -298,11 +299,21 @@ fun `should add bookmark successfully`() = runTest {
 - Intent creation tests → Deferred (requires Robolectric)
 - Test data → TestDataFactory for consistency
 
-### Phase 3: Mockito Migration (Next)
-- [ ] Analyze existing Mockito usage (~7 test files, ~100 calls)
-- [ ] Migrate tests to fakes where beneficial
-- [ ] Create fakes for commonly mocked dependencies
-- [ ] Reduce Mockito dependency footprint
+### Phase 3: Mockito Migration ✅ **COMPLETE**
+- [x] Analyze existing Mockito usage (~7 test files, ~100 calls)
+- [x] Migrate tests to fakes where beneficial
+- [x] Create fakes for commonly mocked dependencies
+- [x] Reduce Mockito dependency footprint
+
+**Branch**: `feature/testing-infrastructure-phase1`
+
+**Key Decisions**:
+- Fakes created: FakeBookmarkModel, FakeRecentPageModel, FakeTranslationModel,
+  FakeTranslationsDBAdapter, FakeTranslationListPresenter, FakePageProvider, FakeBookmarksDBAdapter
+- Interface extraction (DIP): TranslationModel, TranslationsDBAdapter, TranslationListPresenter
+- Robolectric adopted for SQLite-backed tests (fixes JDBC classloader flakiness)
+- Remaining Mockito (10 files): all justified — `verify()` interaction tests and
+  unavoidable mocks for non-open classes (DatabaseHandler, ShadowContentResolver gaps)
 
 ### Phase 4: Feature Modules
 - [ ] Audio, Search, Download module tests
@@ -323,22 +334,33 @@ fun `should add bookmark successfully`() = runTest {
 
 ---
 
-## Current Status (Phase 2 Complete)
+## Current Status (Phase 3 Complete)
 
-**Test Count**: 33 new tests added
+**Test Count**: 146 tests total, 0 failures, 0 flaky
 - QuranInfo: 21 tests (domain logic)
 - BookmarksDaoImpl: 16 tests (DAO layer, in-memory SQLite)
 - QuranPagePresenter: 9 tests (presenter logic, RxJava)
-- AudioPresenter: 8 tests (audio logic, streaming)
+- AudioPresenter: 13 tests (audio logic, streaming, all download paths)
+- BookmarkModel: 2 tests (in-memory SQLite)
+- RecentPageModel: 6 tests (in-memory SQLite)
+- TagBookmarkPresenter: 5 tests
+- QuranImportPresenter: 4 tests (Robolectric + ShadowContentResolver)
+- BaseTranslationPresenter: 4 tests (fakes, Robolectric context, covers getVerses$2 lambda)
+- ArabicDatabaseUtils: tests migrated to Robolectric real context
+- BookmarkImportExportModel: 4 tests (Robolectric, import + export paths covered)
+- AudioUtils: tests migrated to Robolectric real context
 
 **Patterns Established**:
-- Fakes over mocks philosophy documented
+- Fakes over mocks philosophy documented and implemented
 - TestDataFactory for consistent fixtures
 - RxSchedulerRule for synchronous RxJava
-- Pragmatic mocking for framework classes
+- Robolectric for Android context + SQLite (fixes JDBC classloader flakiness)
+- In-memory SQLite (JdbcSqliteDriver.IN_MEMORY) for database tests
+- Interface extraction (DIP) for testability without `open` classes
+- DatabaseTestHelpers for shared in-memory adapter factory (DRY across bookmark test classes)
 
-**Next**: Phase 3 - Mockito migration analysis
+**Next**: Phase 4 - Feature module tests (Audio, Search, Download)
 
 ---
 
-*Last Updated: 2026-02-15*
+*Last Updated: 2026-02-18*
