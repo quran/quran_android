@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.QuranText
 import com.quran.data.model.VerseRange
+import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.fakes.FakeTranslationListPresenter
 import com.quran.labs.androidquran.fakes.FakeTranslationModel
@@ -15,22 +16,30 @@ import com.quran.mobile.translation.model.LocalTranslation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+@Config(application = TestApplication::class, sdk = [33])
+@RunWith(RobolectricTestRunner::class)
 class BaseTranslationPresenterTest {
 
   private lateinit var presenter: BaseTranslationPresenter<TestPresenter>
+  private lateinit var fakeTranslationModel: FakeTranslationModel
 
   private val testDispatcher = UnconfinedTestDispatcher()
 
   @Before
   fun setupTest() {
     Dispatchers.setMain(testDispatcher)
+    fakeTranslationModel = FakeTranslationModel()
     presenter = BaseTranslationPresenter(
-        FakeTranslationModel(),
+        fakeTranslationModel,
         FakeTranslationsDBAdapter(),
         object : TranslationUtil(QuranInfo(MadaniDataSource())) {
           override fun parseTranslationText(quranText: QuranText, translationId: Int): TranslationMetadata {
@@ -151,6 +160,26 @@ class BaseTranslationPresenterTest {
     assertThat(second.sura).isEqualTo(1)
     assertThat(second.ayah).isEqualTo(2)
     assertThat(second.text).isEmpty()
+  }
+
+  @Test
+  fun `getVerses returns empty ayah info when arabic database throws`() = runTest {
+    fakeTranslationModel.setArabicError(Exception("DB error"))
+    val range = VerseRange(2, 255, 2, 255, 1)
+
+    val result = presenter.getVerses(true, listOf(), range)
+
+    assertThat(result.ayahInformation).isEmpty()
+  }
+
+  @Test
+  fun `getVerses returns empty texts when translation database throws`() = runTest {
+    fakeTranslationModel.setTranslationError("my_translation.db", Exception("DB error"))
+    val range = VerseRange(2, 255, 2, 255, 1)
+
+    val result = presenter.getVerses(false, listOf("my_translation.db"), range)
+
+    assertThat(result.ayahInformation).isEmpty()
   }
 
   private class TestPresenter : Presenter<Any> {
