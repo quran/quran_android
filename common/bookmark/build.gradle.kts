@@ -28,4 +28,12 @@ dependencies {
   implementation(libs.sqldelight.android.driver)
   implementation(libs.sqldelight.coroutines.extensions)
   implementation(libs.sqldelight.primitive.adapters)
+
+  // testing
+  testImplementation(project(":common:test-utils"))
+  testImplementation(libs.junit)
+  testImplementation(libs.truth)
+  testImplementation(libs.kotlinx.coroutines.test)
+  testImplementation(libs.turbine)
+  testImplementation(libs.sqldelight.sqlite.driver)
 }

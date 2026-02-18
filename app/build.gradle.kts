@@ -7,6 +7,7 @@ plugins {
   alias(libs.plugins.ksp)
   alias(libs.plugins.errorprone)
   alias(libs.plugins.metro)
+  alias(libs.plugins.kover)
 }
 
 // whether or not to use Firebase - Firebase is enabled by default, and is only disabled for
@@ -206,6 +207,7 @@ dependencies {
   implementation(libs.timber)
   debugImplementation(libs.leakcanary.android)
 
+  testImplementation(project(":common:test-utils"))
   testImplementation(libs.junit)
   testImplementation(libs.truth)
   testImplementation(libs.mockito.core)
@@ -221,4 +223,46 @@ dependencies {
 
   // Number Picker
   implementation(libs.number.picker)
+
+}
+
+// Kover coverage configuration
+kover {
+  reports {
+    filters {
+      excludes {
+        // Exclude generated code (patterns target DI-generated classes only)
+        classes(
+          "*_Factory",
+          "*_Factory\$*",
+          "*_MembersInjector",
+          "*_Module",
+          "*_Module\$*",
+          "*Module_*",
+          "*Binding*",
+          "*_Impl",
+          "*_Impl\$*",
+          "*.BuildConfig",
+          "*.databinding.*",
+          "*.R",
+          "*.R\$*",
+          "*Hilt*",
+          "*_HiltModules*",
+          "*_ComponentTreeDeps*",
+          "*_Provide*Factory*"
+        )
+        packages(
+          "*.di.*",
+          "*.generated.*",
+          "dagger.hilt.*",
+          "hilt_aggregated_deps.*"
+        )
+        annotatedBy(
+          "dagger.*",
+          "javax.inject.*",
+          "androidx.compose.ui.tooling.preview.Preview"
+        )
+      }
+    }
+  }
 }
