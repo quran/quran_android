@@ -358,7 +358,7 @@ class AudioPresenterTest {
     val intent = captor.value
     assertThat(intent.getSerializableExtra(QuranDownloadService.EXTRA_START_VERSE) as SuraAyah?).isEqualTo(start)
     assertThat(intent.getSerializableExtra(QuranDownloadService.EXTRA_END_VERSE) as SuraAyah?).isEqualTo(end)
-    assertThat(intent.getBooleanExtra(QuranDownloadService.EXTRA_IS_GAPLESS, true)).isFalse()
+    assertThat(intent.getBooleanExtra(QuranDownloadService.EXTRA_IS_GAPLESS, false)).isFalse()
   }
 
   @Test
