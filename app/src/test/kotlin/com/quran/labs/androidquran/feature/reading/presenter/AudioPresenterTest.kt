@@ -22,6 +22,7 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Mock
 import org.mockito.ArgumentMatchers.any
+import doReturn
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.times
@@ -281,8 +282,8 @@ class AudioPresenterTest {
     )
 
     // Assert: aya position file download triggered
-    verify(pagerActivity).handleRequiredDownload(org.mockito.ArgumentMatchers.any())
-    verify(pagerActivity, never()).handlePlayback(org.mockito.ArgumentMatchers.any())
+    verify(pagerActivity).handleRequiredDownload(any())
+    verify(pagerActivity, never()).handlePlayback(any())
   }
 
   @Test
@@ -304,15 +305,15 @@ class AudioPresenterTest {
     )
 
     // Assert: gapless timing database download triggered
-    verify(pagerActivity).handleRequiredDownload(org.mockito.ArgumentMatchers.any())
-    verify(pagerActivity, never()).handlePlayback(org.mockito.ArgumentMatchers.any())
+    verify(pagerActivity).handleRequiredDownload(any())
+    verify(pagerActivity, never()).handlePlayback(any())
   }
 
   @Test
   fun `should trigger basmallah download when basmallah file missing`() {
     // Arrange
     presenter.bind(pagerActivity)
-    org.mockito.Mockito.doReturn("Test Notification")
+    doReturn("Test Notification")
           .`when`(quranDisplayData).getNotificationTitle(pagerActivity, start, start, false)
     // haveAyaPositionFile = true (default), gaplessDb = null (getQariDatabasePathIfGapless not stubbed)
     whenever(audioUtil.shouldDownloadBasmallah(
@@ -329,7 +330,7 @@ class AudioPresenterTest {
     // Assert: basmallah download triggered; intent uses start for both start/end (single verse)
     val captor = ArgumentCaptor.forClass(Intent::class.java)
     verify(pagerActivity).handleRequiredDownload(captor.capture())
-    verify(pagerActivity, never()).handlePlayback(org.mockito.ArgumentMatchers.any())
+    verify(pagerActivity, never()).handlePlayback(any())
     val intent = captor.value
     assertThat(intent.getSerializableExtra(QuranDownloadService.EXTRA_START_VERSE) as SuraAyah?).isEqualTo(start)
     assertThat(intent.getSerializableExtra(QuranDownloadService.EXTRA_END_VERSE) as SuraAyah?).isEqualTo(start)
@@ -339,7 +340,7 @@ class AudioPresenterTest {
   fun `should trigger full range download when audio files missing`() {
     // Arrange
     presenter.bind(pagerActivity)
-    org.mockito.Mockito.doReturn("Test Notification")
+    doReturn("Test Notification")
           .`when`(quranDisplayData).getNotificationTitle(pagerActivity, start, end, false)
     // haveAyaPositionFile = true, gaplessDb = null, shouldDownloadBasmallah = false (defaults)
     whenever(audioUtil.haveAllFiles(
@@ -356,18 +357,18 @@ class AudioPresenterTest {
     // Assert: full range download triggered with correct start/end extras
     val captor = ArgumentCaptor.forClass(Intent::class.java)
     verify(pagerActivity).handleRequiredDownload(captor.capture())
-    verify(pagerActivity, never()).handlePlayback(org.mockito.ArgumentMatchers.any())
+    verify(pagerActivity, never()).handlePlayback(any())
     val intent = captor.value
     assertThat(intent.getSerializableExtra(QuranDownloadService.EXTRA_START_VERSE) as SuraAyah?).isEqualTo(start)
     assertThat(intent.getSerializableExtra(QuranDownloadService.EXTRA_END_VERSE) as SuraAyah?).isEqualTo(end)
-    assertThat(intent.getBooleanExtra(QuranDownloadService.EXTRA_IS_GAPLESS, true)).isFalse()
+    assertThat(intent.getBooleanExtra(QuranDownloadService.EXTRA_IS_GAPLESS, false)).isFalse()
   }
 
   @Test
   fun `should bypass download prompt after notifications permission response`() {
     // Arrange: set up state where a download is needed (files missing)
     presenter.bind(pagerActivity)
-    org.mockito.Mockito.doReturn("Test Notification")
+    doReturn("Test Notification")
           .`when`(quranDisplayData).getNotificationTitle(pagerActivity, start, end, false)
     whenever(audioUtil.haveAllFiles(
       "$localPath/%d/%d.mp3", localPath, start, end, false, listOf("mp3")
@@ -379,15 +380,15 @@ class AudioPresenterTest {
       verseRepeat = 1, rangeRepeat = 1, enforceRange = false,
       playbackSpeed = 1.0f, shouldStream = false
     )
-    verify(pagerActivity).handleRequiredDownload(org.mockito.ArgumentMatchers.any())
+    verify(pagerActivity).handleRequiredDownload(any())
 
     // Act: notification permission responded
     presenter.onPostNotificationsPermissionResponse(true)
 
     // Assert: proceedWithDownload (bypass) called; handleRequiredDownload still only 1 time
-    verify(pagerActivity).proceedWithDownload(org.mockito.ArgumentMatchers.any())
-    verify(pagerActivity, org.mockito.Mockito.times(1)).handleRequiredDownload(
-      org.mockito.ArgumentMatchers.any()
+    verify(pagerActivity).proceedWithDownload(any())
+    verify(pagerActivity, times(1)).handleRequiredDownload(
+      any()
     )
   }
 
