@@ -3,7 +3,7 @@ package com.quran.mobile.feature.qarilist.presenter
 import com.quran.data.di.ActivityScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.audio.Qari
-import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoManager
+import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoSource
 import com.quran.labs.androidquran.common.audio.extension.isRangeDownloaded
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 @ActivityScope
-class QariListPresenter @Inject constructor(private val qariDownloadInfoManager: QariDownloadInfoManager) {
+class QariListPresenter @Inject constructor(private val qariDownloadInfoManager: QariDownloadInfoSource) {
 
   fun qariList(start: SuraAyah, end: SuraAyah, qariTranslationLambda: (
     (Qari) -> QariItem)): Flow<ImmutableList<QariUiModel>> {
