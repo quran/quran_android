@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-**Phase 3 Complete**: Mockito migration done. 146 tests, 0 flaky. Remaining Mockito use is all justified (verify() interaction tests + unavoidable mocks for non-open classes).
+**Phase 4 Complete**: Feature module tests added. 289 tests total, 0 flaky. 154 new tests across 6 modules in Phase 4.
 
 ---
 
@@ -104,6 +104,31 @@ Located at `common/test-utils/`, provides:
 // TestDataFactory usage
 val bookmark = TestDataFactory.createBookmark(sura = 2, ayah = 255)
 val suraAyah = TestDataFactory.ayatAlKursi()  // 2:255
+```
+
+### Phase 4 Fakes
+
+New fakes introduced in Phase 4:
+
+- **FakeSettings** (`feature:linebyline/src/test`) — implements `com.quran.data.dao.Settings` backed by a MutableMap; used by `QuranLineByLineSettingsPresenter` tests
+- **FakeQariDownloadInfoSource** (`feature:qarilist/src/test`) — implements `QariDownloadInfoSource` via `MutableStateFlow`; used by `QariListPresenter` tests
+- **FakeHashCalculator** (`feature:audio/src/test`) — implements `HashCalculator` with deterministic results; used by `AudioFileCheckerImpl` tests
+
+### File System Testing
+
+Use `TemporaryFolder` (JUnit rule) for classes that use `java.io.File` directly:
+
+```kotlin
+class AudioFileCheckerImplTest {
+    @get:Rule
+    val tempFolder = TemporaryFolder()
+
+    @Test
+    fun `file exists when present on disk`() {
+        val file = tempFolder.newFile("audio.mp3")
+        // Use real file, not fake filesystem
+    }
+}
 ```
 
 ### JUnit Rules (Composition over Inheritance)
@@ -315,8 +340,21 @@ fun `should add bookmark successfully`() = runTest {
 - Remaining Mockito (10 files): all justified — `verify()` interaction tests and
   unavoidable mocks for non-open classes (DatabaseHandler, ShadowContentResolver gaps)
 
-### Phase 4: Feature Modules
-- [ ] Audio, Search, Download module tests
+### Phase 4: Feature Modules ✅ **COMPLETE**
+- [x] common:search tests (55 tests): SearchTextUtil, ArabicCharacterHelper, DefaultSearcher, ArabicSearcher
+- [x] feature:linebyline tests (44 tests): LineCalculation, AyahSelectionExtension, SelectionHelper, QuranLineByLineSettingsPresenter
+- [x] feature:qarilist tests (7 tests): QariListPresenter + QariDownloadInfoSource interface extraction
+- [x] feature:audiobar tests (12 tests): AudioBarEventRepository
+- [x] common:audio tests (19 tests): PartiallyDownloadedSuraExtension, AudioStatusRepository, GaplessAudioInfoCommand, GappedAudioInfoCommand
+- [x] feature:audio tests (17 tests): AudioFileCheckerImpl, MD5Calculator, AudioUpdater
+
+**Branch**: `feature/testing-phase4`
+
+**Key Decisions**:
+- `QariDownloadInfoSource` interface extracted to `common:audio` (not `feature:qarilist`) to avoid circular dependency
+- `QariDownloadInfoManager` implements `QariDownloadInfoSource`; `QariListPresenter` depends on interface (DIP)
+- `TemporaryFolder` (JUnit rule) used for classes that use `java.io.File` directly; `FakeFileSystem` not suitable here
+- Fakes created: `FakeSettings`, `FakeQariDownloadInfoSource`, `FakeHashCalculator`
 
 ### Phase 5: Integration & E2E
 - [ ] Database integration tests
@@ -334,9 +372,11 @@ fun `should add bookmark successfully`() = runTest {
 
 ---
 
-## Current Status (Phase 3 Complete)
+## Current Status (Phase 4 Complete)
 
-**Test Count**: 146 tests total, 0 failures, 0 flaky
+**Test Count**: 289 tests total, 0 failures, 0 flaky
+
+**Phase 1-3 (146 tests)**:
 - QuranInfo: 21 tests (domain logic)
 - BookmarksDaoImpl: 16 tests (DAO layer, in-memory SQLite)
 - QuranPagePresenter: 9 tests (presenter logic, RxJava)
@@ -350,6 +390,25 @@ fun `should add bookmark successfully`() = runTest {
 - BookmarkImportExportModel: 4 tests (Robolectric, import + export paths covered)
 - AudioUtils: tests migrated to Robolectric real context
 
+**Phase 4 (143+ tests)**:
+- SearchTextUtil: 19 tests (common:search)
+- ArabicCharacterHelper: 15 tests (common:search)
+- DefaultSearcher: 11 tests (common:search)
+- ArabicSearcher: 10 tests (common:search)
+- LineCalculation: 14 tests (feature:linebyline)
+- SelectionHelper: 12 tests (feature:linebyline)
+- QuranLineByLineSettingsPresenter: 10 tests (feature:linebyline)
+- AyahSelectionExtension: 8 tests (feature:linebyline)
+- QariListPresenter: 7 tests (feature:qarilist)
+- AudioBarEventRepository: 12 tests (feature:audiobar)
+- PartiallyDownloadedSuraExtension: 8 tests (common:audio)
+- AudioStatusRepository: 5 tests (common:audio)
+- GaplessAudioInfoCommand: 3 tests (common:audio)
+- GappedAudioInfoCommand: 3 tests (common:audio)
+- AudioFileCheckerImpl: 12 tests (feature:audio)
+- AudioUpdater: 4 tests (feature:audio)
+- MD5Calculator: 1 test (feature:audio)
+
 **Patterns Established**:
 - Fakes over mocks philosophy documented and implemented
 - TestDataFactory for consistent fixtures
@@ -358,9 +417,13 @@ fun `should add bookmark successfully`() = runTest {
 - In-memory SQLite (JdbcSqliteDriver.IN_MEMORY) for database tests
 - Interface extraction (DIP) for testability without `open` classes
 - DatabaseTestHelpers for shared in-memory adapter factory (DRY across bookmark test classes)
+- `FakeSettings` — implements `com.quran.data.dao.Settings` with a MutableMap backend
+- `FakeQariDownloadInfoSource` — MutableStateFlow-backed fake for `QariDownloadInfoSource`
+- `FakeHashCalculator` — deterministic hash fake for `AudioFileCheckerImpl` tests
+- `TemporaryFolder` (JUnit rule) preferred over `FakeFileSystem` for classes using `java.io.File`
 
-**Next**: Phase 4 - Feature module tests (Audio, Search, Download)
+**Next**: Phase 5 - Integration & E2E tests
 
 ---
 
-*Last Updated: 2026-02-18*
+*Last Updated: 2026-02-19*
