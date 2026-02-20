@@ -19,6 +19,15 @@
         app:iconSpaceReserved="false"/>
 
     <androidx.preference.ListPreference
+        android:defaultValue="eastern"
+        android:entries="@array/prefs_arabic_numerals_entries"
+        android:entryValues="@array/prefs_arabic_numerals_values"
+        android:key="@string/prefs_arabic_numerals"
+        android:summary="%s"
+        android:title="@string/prefs_arabic_numerals_title"
+        app:iconSpaceReserved="false" />
+
+    <androidx.preference.ListPreference
         android:defaultValue="default"
         android:dialogTitle="@string/appearance"
         android:entries="@array/themes"

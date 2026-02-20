@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.preference.CheckBoxPreference
+import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
@@ -49,6 +50,17 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
       arabicPref.isChecked = isCurrentlyArabic()
     }
 
+    val arabicNumeralsPref: ListPreference? = findPreference(ARABIC_NUMERALS_KEY)
+    arabicNumeralsPref?.isVisible = isCurrentlyArabic()
+    arabicNumeralsPref?.onPreferenceChangeListener =
+      Preference.OnPreferenceChangeListener { _, newValue ->
+        if (isCurrentlyArabic()) {
+          val localeTag = QuranUtils.getArabicLocaleTagForNumeralSystem(newValue as String)
+          AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(localeTag))
+        }
+        true
+      }
+
     arabicPref?.setOnPreferenceClickListener {
       val localeList = if (isCurrentlyArabic()) {
         val locales = LocaleListCompat.getDefault()
@@ -57,8 +69,11 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
         val tagString = tags.joinToString(",").ifEmpty { "en" }
         LocaleListCompat.forLanguageTags(tagString)
       } else {
-        LocaleListCompat.forLanguageTags("ar-EG")
+        val numeralSystem = arabicNumeralsPref?.value ?: Constants.PREF_ARABIC_NUMERALS_EASTERN
+        val localeTag = QuranUtils.getArabicLocaleTagForNumeralSystem(numeralSystem)
+        LocaleListCompat.forLanguageTags(localeTag)
       }
+      arabicNumeralsPref?.isVisible = !isCurrentlyArabic()
       AppCompatDelegate.setApplicationLocales(localeList)
       true
     }
@@ -146,5 +161,6 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
 
   companion object {
     private const val ARABIC_KEY = "useArabicNames"
+    private const val ARABIC_NUMERALS_KEY = Constants.PREF_ARABIC_NUMERALS
   }
 }

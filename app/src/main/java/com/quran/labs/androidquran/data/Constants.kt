@@ -89,6 +89,9 @@ object Constants {
   const val PREF_SHOW_SIDELINES = "showSidelines"
   const val PREF_SHOW_LINE_DIVIDERS = "showLineDividers"
   const val PREF_APP_THEME = "appTheme"
+  const val PREF_ARABIC_NUMERALS = "arabicNumerals"
+  const val PREF_ARABIC_NUMERALS_EASTERN = "eastern"
+  const val PREF_ARABIC_NUMERALS_WESTERN = "western"
 
   // Themes
   const val THEME_LIGHT = "light"

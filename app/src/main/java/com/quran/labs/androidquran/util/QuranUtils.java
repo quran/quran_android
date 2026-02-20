@@ -27,6 +27,9 @@ import java.util.Locale;
 
 public class QuranUtils {
 
+  private static final String ARABIC_EASTERN_LOCALE_TAG = "ar-EG-u-nu-arab";
+  private static final String ARABIC_WESTERN_LOCALE_TAG = "ar-EG-u-nu-latn";
+
   private static NumberFormat numberFormat;
   private static Locale lastLocale;
 
@@ -109,6 +112,20 @@ public class QuranUtils {
       lastLocale = locale;
     }
     return numberFormat.format(number);
+  }
+
+  public static String getArabicLocaleTagForNumeralSystem(@NonNull String numeralSystem) {
+    return Constants.PREF_ARABIC_NUMERALS_WESTERN.equals(numeralSystem)
+        ? ARABIC_WESTERN_LOCALE_TAG
+        : ARABIC_EASTERN_LOCALE_TAG;
+  }
+
+  public static Locale getArabicNumeralLocale(@NonNull Locale appLocale) {
+    if ("ar".equals(appLocale.getLanguage())) {
+      return appLocale;
+    }
+
+    return Locale.forLanguageTag(ARABIC_EASTERN_LOCALE_TAG);
   }
 
   public static boolean isDualPages(Context context, QuranScreenInfo qsi, boolean isValidFoldableDeviceAndOpen) {

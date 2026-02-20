@@ -39,6 +39,7 @@
 
   <!-- Preference but value controlled by AppCompat or the OS -->
   <string translatable="false" name="use_arabic_names">useArabicNames</string>
+  <string translatable="false" name="prefs_arabic_numerals">arabicNumerals</string>
 
   <!-- theme property values, do not translate -->
   <array name="theme_values" translatable="false">
