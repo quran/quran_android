@@ -3,6 +3,7 @@ package com.quran.labs.autoquran
 import android.app.Application
 import com.quran.labs.autoquran.di.ServiceBindings
 import com.quran.labs.autoquran.di.ServiceGraph
+import com.quran.labs.feature.autoquran.common.QariArtworkContentProvider
 import com.quran.labs.feature.autoquran.di.QuranAutoInjector
 import com.quran.labs.feature.autoquran.service.QuranBrowsableAudioPlaybackService
 import com.quran.mobile.di.QuranApplicationComponent
@@ -22,6 +23,10 @@ class QuranAutoApplication : Application(), QuranApplicationComponentProvider {
 
       override fun inject(service: QuranBrowsableAudioPlaybackService) {
         serviceGraph.inject(service)
+      }
+
+      override fun inject(provider: QariArtworkContentProvider) {
+        serviceGraph.inject(provider)
       }
     }
   }
