@@ -12,6 +12,7 @@ interface Settings {
   suspend fun shouldShowHeaderFooter(): Boolean
   suspend fun shouldShowBookmarks(): Boolean
   suspend fun pageType(): String
+  suspend fun setPageType(pageType: String)
   suspend fun showSidelines(): Boolean
   suspend fun setShowSidelines(show: Boolean)
   suspend fun showLineDividers(): Boolean

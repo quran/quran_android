@@ -279,7 +279,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       savedInstanceState?.getBoolean(LAST_FOLDING_STATE, isFoldableDeviceOpenAndVertical)
         ?: isFoldableDeviceOpenAndVertical
 
-    lifecycleScope.launch(scope.coroutineContext) {
+    lifecycleScope.launch {
       lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
         WindowInfoTracker.getOrCreate(this@PagerActivity)
           .windowLayoutInfo(this@PagerActivity)
@@ -287,8 +287,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
           .collectLatest {
             val foldingFeatures = it.filterIsInstance<FoldingFeature>().firstOrNull()
             if (foldingFeatures != null) {
-              val localState = foldingFeatures.state == FoldingFeature.State.FLAT &&
-                  foldingFeatures.orientation == FoldingFeature.Orientation.VERTICAL
+              val localState =
+                foldingFeatures.orientation == FoldingFeature.Orientation.VERTICAL &&
+                    (foldingFeatures.state == FoldingFeature.State.FLAT || foldingFeatures.state == FoldingFeature.State.HALF_OPENED)
               if (isFoldableDeviceOpenAndVertical != localState) {
                 isFoldableDeviceOpenAndVertical = localState
                 updateDualPageMode()

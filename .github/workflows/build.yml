@@ -16,7 +16,7 @@ jobs:
     if: github.event_name != 'merge_group'
     steps:
       - name: Checkout the Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup JDK
         uses: actions/setup-java@v5
@@ -34,7 +34,7 @@ jobs:
         run: ./gradlew lintMadaniDebug
 
       - name: Upload lint results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: lint_report
@@ -48,7 +48,7 @@ jobs:
         run: ./gradlew testMadaniDebug -PdisableFirebase
 
       - name: Upload test report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure()
         with:
           name: unit_test_report
@@ -56,7 +56,7 @@ jobs:
           retention-days: 3
 
       - name: Download Previous Debug APK
-        uses: dawidd6/action-download-artifact@v11
+        uses: dawidd6/action-download-artifact@v15
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: post_merge.yml
@@ -71,7 +71,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Apk Diff Results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: success()
         with:
           name: apk_differences
@@ -82,7 +82,7 @@ jobs:
         run: ./gradlew :app:dependencies --configuration madaniReleaseRuntimeClasspath > current_dependencies.txt
 
       - name: Download Previous Dependencies List
-        uses: dawidd6/action-download-artifact@v11
+        uses: dawidd6/action-download-artifact@v15
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           workflow: post_merge.yml
@@ -97,7 +97,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Dependency Diff Results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: success()
         with:
           name: dependency_differences
@@ -109,7 +109,7 @@ jobs:
           echo ${{ github.event.number }} > pr.txt
 
       - name: Upload PR Number
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: pr
           path: pr.txt
