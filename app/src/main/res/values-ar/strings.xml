@@ -75,7 +75,7 @@
   <string name="prefs_category_reading">إعدادات القراءة</string>
   <string name="prefs_category_translation">إعدادات التفسير والترجمة</string>
   <string name="prefs_category_display_settings">إعدادات العرض</string>
-  <string name="prefs_page_background_title">خلفية الصفحة</string>
+  <string name="prefs_page_theme_title">سمة الصفحة</string>
   <string name="prefs_night_mode_title">القراءة الليلية</string>
   <string name="prefs_night_mode_summary">الخلفية باللون اﻷسود والخطوط باللون اﻷبيض</string>
   <string name="prefs_night_mode_text_brightness_title">إضاءة الخط</string>
@@ -315,23 +315,12 @@
   </string>
   <string name="comma">"،"</string>
 
-  <!-- Color picker strings -->
-  <string name="color_rgb_values">R: %1$d G: %2$d B: %3$d</string>
-  <string name="color_picker_red">أحمر</string>
-  <string name="color_picker_green">أخضر</string>
-  <string name="color_picker_blue">أزرق</string>
-  <string name="color_picker_values">قيم اللون</string>
-
-  <!-- Page background picker strings -->
-  <string name="page_background_picker_title">اختر خلفية الصفحة</string>
-  <string name="page_background_white">أبيض (افتراضي)</string>
-  <string name="page_background_cream">كريمي</string>
-  <string name="page_background_light_parchment">رقّي فاتح</string>
-  <string name="page_background_soft_ivory">عاجي ناعم</string>
-  <string name="page_background_custom_color">لون مخصص</string>
-
-  <!-- Color picker dialog strings -->
-  <string name="color_picker_dialog_title">اختر اللون</string>
-  <string name="color_picker_apply">تطبيق</string>
-  <string name="color_picker_reset_default">إعادة تعيين إلى الافتراضي</string>
+  <!-- Page theme picker strings -->
+  <string name="page_theme_title">السمات والإعدادات</string>
+  <string name="page_theme_auto">تلقائي</string>
+  <string name="page_theme_paper">ورقي</string>
+  <string name="page_theme_original">أصلي</string>
+  <string name="page_theme_quiet">هادئ</string>
+  <string name="page_theme_calm">مريح</string>
+  <string name="page_theme_focus">تركيز</string>
 </resources>

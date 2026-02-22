@@ -89,23 +89,27 @@ object Constants {
   const val PREF_SHOW_SIDELINES = "showSidelines"
   const val PREF_SHOW_LINE_DIVIDERS = "showLineDividers"
   const val PREF_APP_THEME = "appTheme"
-  const val PREF_PAGE_BACKGROUND = "pageBackground"
+  const val PREF_PAGE_THEME = "pageTheme"
 
   // Themes
   const val THEME_LIGHT = "light"
   const val THEME_DARK = "dark"
   const val THEME_DEFAULT = "default"
 
-  // Page Backgrounds
-  const val BACKGROUND_WHITE = "white"
-  const val BACKGROUND_CREAM = "cream"
-  const val BACKGROUND_LIGHT_PARCHMENT = "light_parchment"
-  const val BACKGROUND_SOFT_IVORY = "soft_ivory"
-  const val BACKGROUND_CUSTOM = "custom"
+  // Page Themes
+  const val PAGE_THEME_AUTO = "auto"
+  const val PAGE_THEME_PAPER = "paper"
+  const val PAGE_THEME_ORIGINAL = "original"
+  const val PAGE_THEME_QUIET = "quiet"
+  const val PAGE_THEME_CALM = "calm"
+  const val PAGE_THEME_FOCUS = "focus"
 
-  // Page Background Colors (hex values)
-  const val COLOR_WHITE = "#FFFFFF"
-  const val COLOR_CREAM = "#FFF8E7"
-  const val COLOR_LIGHT_PARCHMENT = "#FFF4CB"
-  const val COLOR_SOFT_IVORY = "#FFFFF0"
+  // Page Theme Colors (hex values)
+  const val COLOR_THEME_AUTO_LIGHT = "#FFFFFF"
+  const val COLOR_THEME_AUTO_DARK = "#1C1C1C"
+  const val COLOR_THEME_PAPER = "#FFF8E7"
+  const val COLOR_THEME_ORIGINAL = "#FFFFFF"
+  const val COLOR_THEME_QUIET = "#F5F5DC"
+  const val COLOR_THEME_CALM = "#E8F5E9"
+  const val COLOR_THEME_FOCUS = "#FFF3E0"
 }

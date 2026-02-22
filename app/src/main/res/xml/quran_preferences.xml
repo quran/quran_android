@@ -34,9 +34,9 @@
         android:title="@string/prefs_sura_translated_name_title"
         app:iconSpaceReserved="false"/>
 
-    <com.quran.labs.androidquran.ui.preference.PageBackgroundPickerPreference
-        android:key="@string/prefs_page_background"
-        android:title="@string/prefs_page_background_title"
+    <Preference
+        android:key="@string/prefs_page_theme"
+        android:title="@string/prefs_page_theme_title"
         app:allowDividerAbove="false"
         app:iconSpaceReserved="false" />
 
