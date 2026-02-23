@@ -14,11 +14,45 @@
         android:padding="16dp"
         android:text="@string/page_theme_title"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@color/text_primary" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/page_theme_app_theme_label"
+            android:textSize="14sp"
+            android:textColor="@color/text_primary"
+            android:layout_marginEnd="12dp" />
+
+        <Spinner
+            android:id="@+id/app_theme_spinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingVertical="8dp"
+            android:popupTheme="@style/Theme.AppCompat.DayNight" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
         android:background="?android:attr/listDivider" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -26,6 +60,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipToPadding="false"
-        android:paddingBottom="8dp" />
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="8dp" />
 
 </LinearLayout>

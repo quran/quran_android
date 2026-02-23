@@ -69,6 +69,7 @@ public class HighlightingImageView extends AppCompatImageView {
   private final SortedMap<HighlightType, Set<AyahHighlight>> currentHighlights = new TreeMap<>();
 
   private boolean isNightMode;
+  private boolean isPageThemeDark;
   private boolean isColorFilterOn;
   private int nightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
 
@@ -216,8 +217,9 @@ public class HighlightingImageView extends AppCompatImageView {
     }
   }
 
-  public void setNightMode(boolean isNightMode, int textBrightness, int backgroundBrightness) {
+  public void setNightMode(boolean isNightMode, int textBrightness, int backgroundBrightness, boolean isPageThemeDark) {
     this.isNightMode = isNightMode;
+    this.isPageThemeDark = isPageThemeDark;
     if (isNightMode) {
       // avoid damaging the looks of the Quran page
       nightModeTextBrightness = (int) (50 * Math.log1p(backgroundBrightness) + textBrightness);
@@ -391,7 +393,9 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   public void adjustNightMode() {
-    if (isNightMode && !isColorFilterOn) {
+    boolean shouldApplyFilter = (isNightMode || isPageThemeDark) && !isColorFilterOn;
+
+    if (shouldApplyFilter) {
       float[] matrix = {
           -1, 0, 0, 0, nightModeTextBrightness,
           0, -1, 0, 0, nightModeTextBrightness,
@@ -400,7 +404,7 @@ public class HighlightingImageView extends AppCompatImageView {
       };
       setColorFilter(new ColorMatrixColorFilter(matrix));
       isColorFilterOn = true;
-    } else if (!isNightMode) {
+    } else if (!isNightMode && !isPageThemeDark) {
       clearColorFilter();
       isColorFilterOn = false;
     }
