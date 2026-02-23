@@ -241,20 +241,15 @@ public class QuranSettings {
 
   public int getPageThemeBackgroundColor() {
     String theme = getPageTheme();
-    String colorHex = switch (theme) {
-      case Constants.PAGE_THEME_PAPER -> Constants.COLOR_THEME_PAPER;
-      case Constants.PAGE_THEME_CALM -> Constants.COLOR_THEME_CALM;
-      case Constants.PAGE_THEME_FOCUS -> Constants.COLOR_THEME_FOCUS;
-      case Constants.PAGE_THEME_QUIET -> Constants.COLOR_THEME_QUIET;
-      case Constants.PAGE_THEME_BLACK -> Constants.COLOR_THEME_BLACK;
-      default -> Constants.COLOR_THEME_ORIGINAL;
+    int colorResId = switch (theme) {
+      case Constants.PAGE_THEME_PAPER -> R.color.theme_paper;
+      case Constants.PAGE_THEME_CALM -> R.color.theme_calm;
+      case Constants.PAGE_THEME_FOCUS -> R.color.theme_focus;
+      case Constants.PAGE_THEME_QUIET -> R.color.theme_quiet;
+      case Constants.PAGE_THEME_BLACK -> R.color.theme_black;
+      default -> R.color.theme_original;
     };
-
-    try {
-      return android.graphics.Color.parseColor(colorHex);
-    } catch (IllegalArgumentException e) {
-      return android.graphics.Color.WHITE;
-    }
+    return androidx.core.content.ContextCompat.getColor(appContext, colorResId);
   }
 
   public boolean isPageThemeDark() {

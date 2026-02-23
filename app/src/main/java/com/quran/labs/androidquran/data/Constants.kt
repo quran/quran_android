@@ -103,16 +103,4 @@ object Constants {
   const val PAGE_THEME_FOCUS = "focus"
   const val PAGE_THEME_QUIET = "quiet"
   const val PAGE_THEME_BLACK = "black"
-
-  // Page Theme Background Colors (hex values)
-  const val COLOR_THEME_PAPER = "#EEEDED"
-  const val COLOR_THEME_ORIGINAL = "#FFFFFF"
-  const val COLOR_THEME_CALM = "#EEE2CC"
-  const val COLOR_THEME_FOCUS = "#F6FCF5"
-  const val COLOR_THEME_QUIET = "#4A4A52"
-  const val COLOR_THEME_BLACK = "#000000"
-
-  // Page Theme Text Colors (hex values)
-  const val COLOR_THEME_TEXT_DARK = "#212121"
-  const val COLOR_THEME_TEXT_LIGHT = "#FFFFFF"
 }

@@ -134,8 +134,8 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
         private val selectionBorder: View = itemView.findViewById(R.id.selection_border)
 
         fun bind(theme: PageTheme) {
-            cardView.setCardBackgroundColor(theme.getBackgroundColor())
-            arabicText.setTextColor(theme.getPreviewTextColor())
+            cardView.setCardBackgroundColor(theme.getBackgroundColor(itemView.context))
+            arabicText.setTextColor(theme.getPreviewTextColor(itemView.context))
             themeName.text = theme.getDisplayName(itemView.context)
 
             val isSelected = theme.storageKey == currentTheme.storageKey
