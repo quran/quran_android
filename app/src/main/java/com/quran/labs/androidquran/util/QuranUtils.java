@@ -27,8 +27,9 @@ import java.util.Locale;
 
 public class QuranUtils {
 
-  private static final String ARABIC_EASTERN_LOCALE_TAG = "ar-EG-u-nu-arab";
-  private static final String ARABIC_WESTERN_LOCALE_TAG = "ar-EG-u-nu-latn";
+  private static final String ARABIC_LANGUAGE = "ar";
+  private static final String ARABIC_EASTERN_NUMBERING_SYSTEM = "arab";
+  private static final String ARABIC_WESTERN_NUMBERING_SYSTEM = "latn";
 
   private static NumberFormat numberFormat;
   private static Locale lastLocale;
@@ -115,17 +116,33 @@ public class QuranUtils {
   }
 
   public static String getArabicLocaleTagForNumeralSystem(@NonNull String numeralSystem) {
-    return Constants.PREF_ARABIC_NUMERALS_WESTERN.equals(numeralSystem)
-        ? ARABIC_WESTERN_LOCALE_TAG
-        : ARABIC_EASTERN_LOCALE_TAG;
+    final Locale locale = getArabicNumeralLocale(getCurrentLocale());
+    final Locale.Builder builder = new Locale.Builder().setLanguage(ARABIC_LANGUAGE);
+    final String country = locale.getCountry();
+    if (!country.isEmpty()) {
+      builder.setRegion(country);
+    }
+
+    final String numberingSystem = Constants.PREF_ARABIC_NUMERALS_WESTERN.equals(numeralSystem)
+        ? ARABIC_WESTERN_NUMBERING_SYSTEM
+        : ARABIC_EASTERN_NUMBERING_SYSTEM;
+    builder.setUnicodeLocaleKeyword("nu", numberingSystem);
+    return builder.build().toLanguageTag();
   }
 
   public static Locale getArabicNumeralLocale(@NonNull Locale appLocale) {
-    if ("ar".equals(appLocale.getLanguage())) {
+    if (ARABIC_LANGUAGE.equals(appLocale.getLanguage())) {
       return appLocale;
     }
 
-    return Locale.forLanguageTag(ARABIC_EASTERN_LOCALE_TAG);
+    final String country = !appLocale.getCountry().isEmpty()
+        ? appLocale.getCountry()
+        : Locale.getDefault().getCountry();
+    final Locale.Builder builder = new Locale.Builder().setLanguage(ARABIC_LANGUAGE);
+    if (!country.isEmpty()) {
+      builder.setRegion(country);
+    }
+    return builder.build();
   }
 
   public static boolean isDualPages(Context context, QuranScreenInfo qsi, boolean isValidFoldableDeviceAndOpen) {

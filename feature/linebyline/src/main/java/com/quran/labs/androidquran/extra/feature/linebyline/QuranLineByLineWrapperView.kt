@@ -120,7 +120,12 @@ class QuranLineByLineWrapperView(
     return if (appLocale.language == "ar") {
       appLocale
     } else {
-      Locale.forLanguageTag("ar-EG")
+      val country = appLocale.country.ifEmpty { Locale.getDefault().country }
+      Locale.Builder().setLanguage("ar").apply {
+        if (country.isNotEmpty()) {
+          setRegion(country)
+        }
+      }.build()
     }
   }
 
