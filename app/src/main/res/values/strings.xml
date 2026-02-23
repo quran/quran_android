@@ -164,7 +164,7 @@
   <string name="prefs_category_display_settings">Display Settings</string>
   <string name="prefs_use_arabic_title">Arabic mode (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Use Arabic for application interface</string>
-  <string name="prefs_new_background_title">New background</string>
+  <string name="prefs_page_theme_title">Page Theme</string>
   <string name="prefs_night_mode_title">Night mode</string>
   <string name="prefs_night_mode_summary">Use dark background and light fonts</string>
   <string name="prefs_night_mode_text_brightness_title">Text brightness</string>
@@ -394,4 +394,21 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Quran Downloads</string>
   <string name="notification_channel_audio">Quran Recitation</string>
+
+  <!-- Page theme picker strings -->
+  <string name="page_theme_title">Themes &amp; Settings</string>
+  <string name="page_theme_app_theme_label">App Theme</string>
+  <string name="page_theme_preview_text">نور</string>
+  <string name="page_theme_select_content_description">Select %s theme</string>
+  <string name="page_theme_paper">Paper</string>
+  <string name="page_theme_original">Original</string>
+  <string name="page_theme_calm">Calm</string>
+  <string name="page_theme_focus">Focus</string>
+  <string name="page_theme_quiet">Quiet</string>
+  <string name="page_theme_black">Black</string>
+
+  <!-- App theme options -->
+  <string name="theme_light">Light</string>
+  <string name="theme_dark">Dark</string>
+  <string name="theme_system">System default</string>
 </resources>

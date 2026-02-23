@@ -89,9 +89,18 @@ object Constants {
   const val PREF_SHOW_SIDELINES = "showSidelines"
   const val PREF_SHOW_LINE_DIVIDERS = "showLineDividers"
   const val PREF_APP_THEME = "appTheme"
+  const val PREF_PAGE_THEME = "pageTheme"
 
   // Themes
   const val THEME_LIGHT = "light"
   const val THEME_DARK = "dark"
   const val THEME_DEFAULT = "default"
+
+  // Page Themes
+  const val PAGE_THEME_PAPER = "paper"
+  const val PAGE_THEME_ORIGINAL = "original"
+  const val PAGE_THEME_CALM = "calm"
+  const val PAGE_THEME_FOCUS = "focus"
+  const val PAGE_THEME_QUIET = "quiet"
+  const val PAGE_THEME_BLACK = "black"
 }

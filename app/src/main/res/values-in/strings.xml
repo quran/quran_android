@@ -114,7 +114,6 @@
   <string name="prefs_category_display_settings">Setelan Tampilan</string>
   <string name="prefs_use_arabic_title">Mode bahasa Arab (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Menggunakan bahasa Arab untuk antarmuka aplikasi</string>
-  <string name="prefs_new_background_title">Latar baru</string>
   <string name="prefs_night_mode_title">Mode malam</string>
   <string name="prefs_night_mode_summary">Menggunkan latar gelap dan tulisan terang</string>
   <string name="prefs_night_mode_text_brightness_title">Kecerahan teks</string>

@@ -75,7 +75,7 @@
   <string name="prefs_category_reading">إعدادات القراءة</string>
   <string name="prefs_category_translation">إعدادات التفسير والترجمة</string>
   <string name="prefs_category_display_settings">إعدادات العرض</string>
-  <string name="prefs_new_background_title">الخلفية الجديدة</string>
+  <string name="prefs_page_theme_title">سمة الصفحة</string>
   <string name="prefs_night_mode_title">القراءة الليلية</string>
   <string name="prefs_night_mode_summary">الخلفية باللون اﻷسود والخطوط باللون اﻷبيض</string>
   <string name="prefs_night_mode_text_brightness_title">إضاءة الخط</string>
@@ -315,4 +315,19 @@
   </string>
   <string name="comma">"،"</string>
 
+  <!-- Page theme picker strings -->
+  <string name="page_theme_title">السمات والإعدادات</string>
+  <string name="page_theme_app_theme_label">مظهر التطبيق</string>
+  <string name="page_theme_select_content_description">اختر سمة %s</string>
+  <string name="page_theme_paper">ورقي</string>
+  <string name="page_theme_original">أصلي</string>
+  <string name="page_theme_calm">هادئ</string>
+  <string name="page_theme_focus">تركيز</string>
+  <string name="page_theme_quiet">سكين</string>
+  <string name="page_theme_black">أسود</string>
+
+  <!-- App theme options -->
+  <string name="theme_light">فاتح</string>
+  <string name="theme_dark">داكن</string>
+  <string name="theme_system">إعداد النظام</string>
 </resources>

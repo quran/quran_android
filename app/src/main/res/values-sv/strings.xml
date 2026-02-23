@@ -103,7 +103,6 @@
   <string name="prefs_category_display_settings">Inställningar för visning</string>
   <string name="prefs_use_arabic_title">Arabiskt läge (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Använd arabiska för tillämpningsgränssnittet.</string>
-  <string name="prefs_new_background_title">Ny bakgrund</string>
   <string name="prefs_night_mode_title">Nattläge</string>
   <string name="prefs_night_mode_summary">Använd mörk bakgrund och ljusa typsnitt</string>
   <string name="prefs_night_mode_text_brightness_title">Textens ljusstyrka</string>

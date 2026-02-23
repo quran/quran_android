@@ -2,12 +2,7 @@ package com.quran.labs.androidquran.ui.helpers;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.LinearGradient;
 import android.graphics.Point;
-import android.graphics.Shader;
-import android.graphics.drawable.PaintDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.view.Display;
 import android.widget.Toast;
@@ -110,27 +105,6 @@ public class QuranDisplayHelper {
             .append(QuranUtils.getLocalizedNumber(hizb));
 
     return sb.toString();
-  }
-
-  public static PaintDrawable getPaintDrawable(int startX, int endX) {
-    PaintDrawable drawable = new PaintDrawable();
-    drawable.setShape(new RectShape());
-    drawable.setShaderFactory(getShaderFactory(startX, endX));
-    return drawable;
-  }
-
-  private static ShapeDrawable.ShaderFactory getShaderFactory(final int startX, final int endX) {
-    return new ShapeDrawable.ShaderFactory() {
-
-      @Override
-      public Shader resize(int width, int height) {
-        return new LinearGradient(startX, 0, endX, 0,
-            new int[]{0xFFDCDAD5, 0xFFFDFDF4,
-                0xFFFFFFFF, 0xFFFDFBEF},
-            new float[]{0, 0.18f, 0.48f, 1},
-            Shader.TileMode.REPEAT);
-      }
-    };
   }
 
   @TargetApi(Build.VERSION_CODES.KITKAT)

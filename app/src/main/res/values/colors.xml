@@ -8,8 +8,18 @@
   <color name="surface">#fffaf8f7</color>
   <color name="accent_color">#ff00838f</color>
   <color name="accent_color_dark">@color/color_control_normal</color>
-  <color name="page_background">#FFF4CB</color>
   <color name="secondary_dark_background">#ffffffff</color>
+
+  <!-- Page theme colors -->
+  <color name="theme_paper">#EEEDED</color>
+  <color name="theme_original">#FFFFFF</color>
+  <color name="theme_calm">#EEE2CC</color>
+  <color name="theme_focus">#F6FCF5</color>
+  <color name="theme_quiet">#4A4A52</color>
+  <color name="theme_black">#000000</color>
+  <color name="theme_text_dark">#212121</color>
+  <color name="theme_text_light">#FFFFFF</color>
+
   <color name="header_background">#dee2e6</color>
   <color name="header_text_color">@color/sura_number_color</color>
   <color name="ripple_dark">#1f000000</color>

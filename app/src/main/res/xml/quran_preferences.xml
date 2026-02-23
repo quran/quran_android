@@ -28,18 +28,17 @@
         app:iconSpaceReserved="false" />
 
     <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="@string/prefs_new_background"
-        android:persistent="true"
-        android:title="@string/prefs_new_background_title"
-        app:iconSpaceReserved="false"/>
-
-    <CheckBoxPreference
         android:key="@string/prefs_sura_translated_name"
         android:persistent="true"
         android:summary="@string/prefs_sura_translated_name_summary"
         android:title="@string/prefs_sura_translated_name_title"
         app:iconSpaceReserved="false"/>
+
+    <Preference
+        android:key="@string/prefs_page_theme"
+        android:title="@string/prefs_page_theme_title"
+        app:allowDividerAbove="false"
+        app:iconSpaceReserved="false" />
 
     <CheckBoxPreference
         android:key="@string/prefs_night_mode"

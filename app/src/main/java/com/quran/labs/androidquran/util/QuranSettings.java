@@ -12,6 +12,7 @@ import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
+import com.quran.labs.androidquran.ui.bottomsheet.PageTheme;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -224,6 +225,35 @@ public class QuranSettings {
       return defaultTheme;
     }
     return theme;
+  }
+
+  public void setAppTheme(String appTheme) {
+    prefs.edit().putString(Constants.PREF_APP_THEME, appTheme).apply();
+  }
+
+  public String getPageTheme() {
+    return prefs.getString(Constants.PREF_PAGE_THEME, Constants.PAGE_THEME_ORIGINAL);
+  }
+
+  public void setPageTheme(String pageTheme) {
+    prefs.edit().putString(Constants.PREF_PAGE_THEME, pageTheme).apply();
+  }
+
+  public int getPageThemeBackgroundColor() {
+    String theme = getPageTheme();
+    int colorResId = switch (theme) {
+      case Constants.PAGE_THEME_PAPER -> R.color.theme_paper;
+      case Constants.PAGE_THEME_CALM -> R.color.theme_calm;
+      case Constants.PAGE_THEME_FOCUS -> R.color.theme_focus;
+      case Constants.PAGE_THEME_QUIET -> R.color.theme_quiet;
+      case Constants.PAGE_THEME_BLACK -> R.color.theme_black;
+      default -> R.color.theme_original;
+    };
+    return androidx.core.content.ContextCompat.getColor(appContext, colorResId);
+  }
+
+  public boolean isPageThemeDark() {
+    return PageTheme.isDarkTheme(getPageTheme());
   }
 
   // probably should eventually move this to Application.onCreate..

@@ -65,7 +65,6 @@
   <string name="menu_get_translations">Ottenere traduzioni</string>
   <string name="about_data_sources">Fonti di dati</string>
   <string name="about_contributors">Collaboratori</string>
-  <string name="prefs_new_background_title">Nuovo sfondo</string>
   <string name="prefs_night_mode_summary">Usa uno sfondo scuro e caratteri chiari</string>
   <string name="prefs_night_mode_text_brightness_title">Luminosità del testo</string>
   <string name="prefs_overlay_page_info_title">Mostra informazioni sulla pagina</string>
