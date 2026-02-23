@@ -12,6 +12,7 @@ dependencies {
   implementation(libs.androidx.media3.exoplayer)
   api(libs.androidx.media3.session)
   implementation(libs.androidx.media3.ui)
+  implementation(libs.timber)
 
   implementation project(":common:audio")
   implementation project(":common:data")

@@ -22,7 +22,7 @@ class GappedAudioInfoCommandTest {
 
     val quranInfo = QuranInfo(MadaniDataSource())
     val gaplessAudioInfoCommand = GappedAudioInfoCommand(quranInfo, filesystem)
-    val downloads = gaplessAudioInfoCommand.gappedDownloads(qariPath)
+    val downloads = gaplessAudioInfoCommand.gappedDownloads(qariPath, listOf("mp3"))
     Truth.assertThat(downloads.first).hasSize(1)
     Truth.assertThat(downloads.second).isEmpty()
     Truth.assertThat(downloads.first).containsExactly(103)
@@ -42,7 +42,7 @@ class GappedAudioInfoCommandTest {
 
     val quranInfo = QuranInfo(MadaniDataSource())
     val gappedAudioInfoCommand = GappedAudioInfoCommand(quranInfo, filesystem)
-    val downloads = gappedAudioInfoCommand.gappedDownloads(qariPath)
+    val downloads = gappedAudioInfoCommand.gappedDownloads(qariPath, listOf("mp3"))
     Truth.assertThat(downloads.first).hasSize(1)
     Truth.assertThat(downloads.second).hasSize(1)
     Truth.assertThat(downloads.first).containsExactly(103)
@@ -67,7 +67,7 @@ class GappedAudioInfoCommandTest {
 
     val quranInfo = QuranInfo(MadaniDataSource())
     val gappedAudioInfoCommand = GappedAudioInfoCommand(quranInfo, filesystem)
-    val downloads = gappedAudioInfoCommand.gappedDownloads(qariPath)
+    val downloads = gappedAudioInfoCommand.gappedDownloads(qariPath, listOf("mp3"))
     Truth.assertThat(downloads.first).isEmpty()
     Truth.assertThat(downloads.second).isEmpty()
   }
