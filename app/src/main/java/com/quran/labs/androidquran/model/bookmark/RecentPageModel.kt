@@ -115,6 +115,13 @@ open class RecentPageModel @Inject constructor(
     return Single.fromCallable { bookmarksDBAdapter.getRecentPages() }
       .subscribeOn(Schedulers.io())
   }
+  fun getReadingHistory() = 
+    Single.fromCallable { bookmarksDBAdapter.getReadingHistory() }
+      .subscribeOn(Schedulers.io())
+
+  fun clearReadingHistory() =
+    Single.fromCallable { bookmarksDBAdapter.clearReadingHistory() }
+      .subscribeOn(Schedulers.io())
 
   private class PersistRecentPagesRequest(
     val page: Int,
