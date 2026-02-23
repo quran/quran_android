@@ -317,10 +317,16 @@
 
   <!-- Page theme picker strings -->
   <string name="page_theme_title">السمات والإعدادات</string>
-  <string name="page_theme_auto">تلقائي</string>
+  <string name="page_theme_app_theme_label">مظهر التطبيق</string>
   <string name="page_theme_paper">ورقي</string>
   <string name="page_theme_original">أصلي</string>
-  <string name="page_theme_quiet">هادئ</string>
-  <string name="page_theme_calm">مريح</string>
+  <string name="page_theme_calm">هادئ</string>
   <string name="page_theme_focus">تركيز</string>
+  <string name="page_theme_quiet">سكين</string>
+  <string name="page_theme_black">أسود</string>
+
+  <!-- App theme options -->
+  <string name="theme_light">فاتح</string>
+  <string name="theme_dark">داكن</string>
+  <string name="theme_system">إعداد النظام</string>
 </resources>

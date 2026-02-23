@@ -97,19 +97,22 @@ object Constants {
   const val THEME_DEFAULT = "default"
 
   // Page Themes
-  const val PAGE_THEME_AUTO = "auto"
   const val PAGE_THEME_PAPER = "paper"
   const val PAGE_THEME_ORIGINAL = "original"
-  const val PAGE_THEME_QUIET = "quiet"
   const val PAGE_THEME_CALM = "calm"
   const val PAGE_THEME_FOCUS = "focus"
+  const val PAGE_THEME_QUIET = "quiet"
+  const val PAGE_THEME_BLACK = "black"
 
-  // Page Theme Colors (hex values)
-  const val COLOR_THEME_AUTO_LIGHT = "#FFFFFF"
-  const val COLOR_THEME_AUTO_DARK = "#1C1C1C"
-  const val COLOR_THEME_PAPER = "#FFF8E7"
+  // Page Theme Background Colors (hex values)
+  const val COLOR_THEME_PAPER = "#EEEDED"
   const val COLOR_THEME_ORIGINAL = "#FFFFFF"
-  const val COLOR_THEME_QUIET = "#F5F5DC"
-  const val COLOR_THEME_CALM = "#E8F5E9"
-  const val COLOR_THEME_FOCUS = "#FFF3E0"
+  const val COLOR_THEME_CALM = "#EEE2CC"
+  const val COLOR_THEME_FOCUS = "#F6FCF5"
+  const val COLOR_THEME_QUIET = "#4A4A52"
+  const val COLOR_THEME_BLACK = "#000000"
+
+  // Page Theme Text Colors (hex values)
+  const val COLOR_THEME_TEXT_DARK = "#212121"
+  const val COLOR_THEME_TEXT_LIGHT = "#FFFFFF"
 }

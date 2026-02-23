@@ -12,6 +12,7 @@ import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
+import com.quran.labs.androidquran.ui.bottomsheet.PageTheme;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -226,23 +227,27 @@ public class QuranSettings {
     return theme;
   }
 
+  public void setAppTheme(String appTheme) {
+    prefs.edit().putString(Constants.PREF_APP_THEME, appTheme).apply();
+  }
+
   public String getPageTheme() {
-    return prefs.getString(Constants.PREF_PAGE_THEME, Constants.PAGE_THEME_AUTO);
+    return prefs.getString(Constants.PREF_PAGE_THEME, Constants.PAGE_THEME_ORIGINAL);
   }
 
   public void setPageTheme(String pageTheme) {
     prefs.edit().putString(Constants.PREF_PAGE_THEME, pageTheme).apply();
   }
 
-  public int getPageThemeBackgroundColor(boolean isDarkMode) {
+  public int getPageThemeBackgroundColor() {
     String theme = getPageTheme();
     String colorHex = switch (theme) {
       case Constants.PAGE_THEME_PAPER -> Constants.COLOR_THEME_PAPER;
-      case Constants.PAGE_THEME_ORIGINAL -> Constants.COLOR_THEME_ORIGINAL;
-      case Constants.PAGE_THEME_QUIET -> Constants.COLOR_THEME_QUIET;
       case Constants.PAGE_THEME_CALM -> Constants.COLOR_THEME_CALM;
       case Constants.PAGE_THEME_FOCUS -> Constants.COLOR_THEME_FOCUS;
-      default -> isDarkMode ? Constants.COLOR_THEME_AUTO_DARK : Constants.COLOR_THEME_AUTO_LIGHT;
+      case Constants.PAGE_THEME_QUIET -> Constants.COLOR_THEME_QUIET;
+      case Constants.PAGE_THEME_BLACK -> Constants.COLOR_THEME_BLACK;
+      default -> Constants.COLOR_THEME_ORIGINAL;
     };
 
     try {
@@ -250,6 +255,10 @@ public class QuranSettings {
     } catch (IllegalArgumentException e) {
       return android.graphics.Color.WHITE;
     }
+  }
+
+  public boolean isPageThemeDark() {
+    return PageTheme.isDarkTheme(getPageTheme());
   }
 
   // probably should eventually move this to Application.onCreate..

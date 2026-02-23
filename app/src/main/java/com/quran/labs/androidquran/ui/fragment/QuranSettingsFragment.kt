@@ -131,11 +131,6 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
       return true
     } else if (Constants.PREF_PAGE_THEME == key) {
       val bottomSheet = PageThemeBottomSheet()
-      bottomSheet.setOnThemeSelectedListener(object : PageThemeBottomSheet.OnThemeSelectedListener {
-        override fun onThemeSelected(theme: com.quran.labs.androidquran.ui.bottomsheet.PageTheme) {
-          activity?.recreate()
-        }
-      })
       bottomSheet.show(childFragmentManager, PageThemeBottomSheet.TAG)
       return true
     }
