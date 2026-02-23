@@ -137,6 +137,10 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
             cardView.setCardBackgroundColor(theme.getBackgroundColor(itemView.context))
             arabicText.setTextColor(theme.getPreviewTextColor(itemView.context))
             themeName.text = theme.getDisplayName(itemView.context)
+            cardView.contentDescription = itemView.context.getString(
+                R.string.page_theme_select_content_description,
+                theme.getDisplayName(itemView.context)
+            )
 
             val isSelected = theme.storageKey == currentTheme.storageKey
             selectionBorder.visibility = if (isSelected) View.VISIBLE else View.GONE

@@ -399,6 +399,7 @@
   <string name="page_theme_title">Themes &amp; Settings</string>
   <string name="page_theme_app_theme_label">App Theme</string>
   <string name="page_theme_preview_text">نور</string>
+  <string name="page_theme_select_content_description">Select %s theme</string>
   <string name="page_theme_paper">Paper</string>
   <string name="page_theme_original">Original</string>
   <string name="page_theme_calm">Calm</string>
