@@ -105,6 +105,7 @@ import com.quran.labs.androidquran.ui.listener.AudioBarListener
 import com.quran.labs.androidquran.ui.util.ToastCompat.makeText
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
 import com.quran.labs.androidquran.util.AudioUtils
+import com.quran.labs.androidquran.util.OrientationLockUtils
 import com.quran.labs.androidquran.util.QuranAppUtils
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
@@ -601,7 +602,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     shouldReconnect = true
 
     // enforce orientation lock
-    if (quranSettings.isLockOrientation) {
+    if (quranSettings.isLockOrientation &&
+      OrientationLockUtils.isOrientationLockSupported(resources.configuration)
+    ) {
       val current = resources.configuration.orientation
       if (quranSettings.isLandscapeOrientation) {
         if (current == Configuration.ORIENTATION_PORTRAIT) {
