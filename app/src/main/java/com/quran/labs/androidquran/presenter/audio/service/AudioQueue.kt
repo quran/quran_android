@@ -5,6 +5,7 @@ import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
 import com.quran.labs.androidquran.dao.audio.AudioPlaybackInfo
 import com.quran.labs.androidquran.extension.requiresBasmallah
+import java.io.File
 import java.util.Locale
 
 /**
@@ -83,7 +84,18 @@ class AudioQueue(private val quranInfo: QuranInfo,
     }
 
     val (sura, ayah) = if (playbackInfo.shouldPlayBasmallah) 1 to 1 else currentSura to currentAyah
-    return String.format(Locale.US, audioRequest.audioPathInfo.urlFormat, sura, ayah)
+    val url = String.format(Locale.US, audioRequest.audioPathInfo.urlFormat, sura, ayah)
+    return if (url.startsWith("http://") || url.startsWith("https://")) {
+      url
+    } else if (File(url).exists()) {
+      url
+    } else {
+      val basePath = url.substringBeforeLast('.')
+      audioRequest.audioPathInfo.allowedExtensions
+        .asSequence()
+        .map { extension -> "$basePath.$extension" }
+        .firstOrNull { path -> File(path).exists() } ?: url
+    }
   }
 
   fun withUpdatedAudioRequest(audioRequest: AudioRequest): AudioQueue {
