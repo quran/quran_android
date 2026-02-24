@@ -109,6 +109,14 @@
         android:summary="@string/prefs_volume_key_navigation_summary"
         android:title="@string/prefs_volume_key_navigation_title"
         app:iconSpaceReserved="false"/>
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/prefs_focus_mode"
+        android:persistent="true"
+        android:summary="@string/prefs_focus_mode_summary"
+        android:title="@string/prefs_focus_mode_title"
+        app:iconSpaceReserved="false"/>
   </PreferenceCategory>
 
   <PreferenceCategory

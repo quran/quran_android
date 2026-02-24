@@ -103,6 +103,7 @@ import com.quran.labs.androidquran.ui.listener.AudioBarListener
 import com.quran.labs.androidquran.ui.util.ToastCompat.makeText
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
 import com.quran.labs.androidquran.util.AudioUtils
+import com.quran.labs.androidquran.util.FocusModeManager
 import com.quran.labs.androidquran.util.QuranAppUtils
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
@@ -208,6 +209,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private var lastSelectedTranslationAyah: QuranAyahInfo? = null
   private var lastActivatedLocalTranslations: Array<LocalTranslation> = emptyArray()
 
+  private lateinit var focusModeManager: FocusModeManager
+
   @Inject lateinit var bookmarksDao: BookmarksDao
   @Inject lateinit var recentPagePresenter: RecentPagePresenter
   @Inject lateinit var quranSettings: QuranSettings
@@ -278,6 +281,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     isFoldableDeviceOpenAndVertical =
       savedInstanceState?.getBoolean(LAST_FOLDING_STATE, isFoldableDeviceOpenAndVertical)
         ?: isFoldableDeviceOpenAndVertical
+
+    focusModeManager = FocusModeManager(this)
 
     lifecycleScope.launch {
       lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -876,6 +881,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
 
+    if (QuranSettings.getInstance(this).isFocusModeEnabled()) {
+      focusModeManager.enableFocusMode()
+    }
+
     if (shouldReconnect) {
       foregroundDisposable.add(
         Completable.timer(500, TimeUnit.MILLISECONDS)
@@ -1072,6 +1081,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     promptDialog = null
     recentPagePresenter.unbind()
     quranSettings.wasShowingTranslation = pagerAdapter.isShowingTranslation
+
+    focusModeManager.restorePreviousDndState()
 
     super.onPause()
   }
