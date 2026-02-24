@@ -50,6 +50,12 @@
   <string name="prefs_use_arabic_title">Modo Árabe (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">La aplicación se mostrará en Árabe </string>
   <string name="prefs_new_background_title">Nuevo fondo</string>
+  <string name="prefs_lock_orientation_title">Bloquear orientación de la pantalla</string>
+  <string name="prefs_lock_orientation_summary_on">La Página del Corán estará en modo de orientación fija</string>
+  <string name="prefs_lock_orientation_summary_off">Adaptable a la orientación actual</string>
+  <string name="prefs_landscape_orientation_title">Orientación horizontal</string>
+  <string name="prefs_landscape_orientation_summary_on">Se utilizará orientación horizontal</string>
+  <string name="prefs_landscape_orientation_summary_off">Se utilizará la orientación vertical</string>
   <string name="prefs_night_mode_title">Modo nocturno</string>
   <string name="prefs_night_mode_summary">Se utilizará fondo oscuro y fuentes claras</string>
   <string name="prefs_night_mode_text_brightness_title">Texto Brillante</string>
