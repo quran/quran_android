@@ -71,4 +71,23 @@ class GappedAudioInfoCommandTest {
     Truth.assertThat(downloads.first).isEmpty()
     Truth.assertThat(downloads.second).isEmpty()
   }
+
+  @Test
+  fun testGappedAudioWithMixedExtensionsDoesNotDoubleCountAyat() {
+    val qariPath = "/quran/audio/minshawi".toPath()
+    val filesystem = FakeFileSystem()
+    filesystem.createDirectories(qariPath)
+    filesystem.createDirectories(qariPath / "1")
+    for (ayah in 1..7) {
+      filesystem.write(qariPath / "1" / "$ayah.mp3") { }
+      filesystem.write(qariPath / "1" / "$ayah.opus") { }
+    }
+
+    val quranInfo = QuranInfo(MadaniDataSource())
+    val gappedAudioInfoCommand = GappedAudioInfoCommand(quranInfo, filesystem)
+    val downloads = gappedAudioInfoCommand.gappedDownloads(qariPath, listOf("opus", "mp3"))
+
+    Truth.assertThat(downloads.first).containsExactly(1)
+    Truth.assertThat(downloads.second).isEmpty()
+  }
 }

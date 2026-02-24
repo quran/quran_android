@@ -30,19 +30,21 @@ class QuranAudioExtensionDecider @Inject constructor() : AudioExtensionDecider {
   }
 
   /**
-   * For today, a Qari can either have mp3s or opus files, but not both.
-   * In the future, this constraint may be relaxed, and this method allows this possibility.
+   * For qaris with opus support, we allow both opus and mp3 as valid local file extensions.
+   * This allows playback/download checks to use legacy mp3 files while still preferring opus
+   * for new downloads/streaming.
    */
   override fun allowedAudioExtensions(qari: Qari): List<String> {
-    return listOf(audioExtensionForQari(qari))
+    return if (qari.opusUrl != null) listOf("opus", "mp3") else listOf("mp3")
   }
 
   /**
-   * For today, a Qari can either have mp3s or opus files, but not both.
-   * In the future, this constraint may be relaxed, and this method allows this possibility.
+   * For qaris with opus support, we allow both opus and mp3 as valid local file extensions.
+   * This allows playback/download checks to use legacy mp3 files while still preferring opus
+   * for new downloads/streaming.
    */
   override fun allowedAudioExtensions(qariItem: QariItem): List<String> {
-    return listOf(audioExtensionForQari(qariItem))
+    return if (qariItem.opusUrl != null) listOf("opus", "mp3") else listOf("mp3")
   }
 
 }
