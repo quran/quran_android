@@ -50,7 +50,7 @@ class TimingRepository @Inject constructor() {
 
             if (haveWords) {
               val words = cursor.getString(3)
-              val items = words.split(",")
+              val items = words.orEmpty().split(",")
                 .mapNotNull { entry ->
                   val pieces = entry.split(":")
                   val ayah = pieces.getOrNull(0)?.toIntOrNull()
