@@ -76,6 +76,12 @@
   <string name="prefs_use_arabic_title">ئەرەبچە ھالەت (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">ئەپ ئارا يۈزىگە ئەرەبچە ئىشلىتىدۇ</string>
   <string name="prefs_new_background_title">يېڭى تەگلىك</string>
+  <string name="prefs_lock_orientation_title">قۇلۇپ ئېكران يۆنىلىشى</string>
+  <string name="prefs_lock_orientation_summary_on">مۇقىم يۆنىلىش ھالىتىنى ئىشلىتىدۇ</string>
+  <string name="prefs_lock_orientation_summary_off">نۆۋەتتىكى يۆنىلىش ھالىتىگە ماسلىشىدۇ</string>
+  <string name="prefs_landscape_orientation_title">توغرىسىغا يۆنىلىش</string>
+  <string name="prefs_landscape_orientation_summary_on">ھەمىشە توغرىسىغا يۆنىلىش ھالىتىنى ئىشلىتىدۇ</string>
+  <string name="prefs_landscape_orientation_summary_off">ھەمىشە بويىغا يۆنىلىش ھالىتىنى ئىشلىتىدۇ</string>
   <string name="prefs_night_mode_title">كېچە ھالىتى</string>
   <string name="prefs_night_mode_summary">قارا تەگلىك يورۇق خەت نۇسخىسى ئىشلىتىدۇ</string>
   <string name="prefs_night_mode_text_brightness_title">تېكىست يورۇقلۇقى</string>

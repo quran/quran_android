@@ -96,6 +96,12 @@
   <string name="prefs_use_arabic_title">โหมดอาหรับ (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">ใช้ภาษาอาหรับสําหรับอินเทอร์เฟซโปรแกรมประยุกต์</string>
   <string name="prefs_new_background_title">พื้นหลังใหม่</string>
+  <string name="prefs_lock_orientation_title">การวางแนวหน้าจอเมื่อล็อก</string>
+  <string name="prefs_lock_orientation_summary_on">ใช้โหมดการวางแนวคงที่</string>
+  <string name="prefs_lock_orientation_summary_off">ปรับให้เข้ากับโหมดการวางแนวปัจจุบัน</string>
+  <string name="prefs_landscape_orientation_title">การวางแนวในแนวนอน</string>
+  <string name="prefs_landscape_orientation_summary_on">ใช้โหมดแนวนอนเสมอ</string>
+  <string name="prefs_landscape_orientation_summary_off">ใช้โหมดแนวตั้งเสมอ</string>
   <string name="prefs_night_mode_title">โหมดกลางคืน</string>
   <string name="prefs_night_mode_summary">ใช้พื้นหลังสีเข้มและแบบอักษรสีอ่อน</string>
   <string name="prefs_night_mode_text_brightness_title">ความสว่างของข้อความ</string>

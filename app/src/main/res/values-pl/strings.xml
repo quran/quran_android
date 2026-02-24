@@ -104,6 +104,12 @@
   <string name="prefs_use_arabic_title">Tryb arabski (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Użyj języka arabskiego jako interfejsu aplikacji</string>
   <string name="prefs_new_background_title">Nowe tło (bielsze)</string>
+  <string name="prefs_lock_orientation_title">Zablokuj orientację ekranu</string>
+  <string name="prefs_lock_orientation_summary_on">Używana jest jedna, stała orientacja ekranu</string>
+  <string name="prefs_lock_orientation_summary_off">Używana jest systemowa orientacja ekranu</string>
+  <string name="prefs_landscape_orientation_title">Stała orientacja ekranu</string>
+  <string name="prefs_landscape_orientation_summary_on">Zawsze używaj orientacji poziomej</string>
+  <string name="prefs_landscape_orientation_summary_off">Zawsze używaj orientacji pionowej</string>
   <string name="prefs_night_mode_title">Tryb nocny</string>
   <string name="prefs_night_mode_summary">Użyj ciemnego tła i jasnych czcionek</string>
   <string name="prefs_night_mode_text_brightness_title">Jasność tekstu</string>
