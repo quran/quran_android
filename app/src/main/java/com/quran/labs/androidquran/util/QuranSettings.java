@@ -53,6 +53,14 @@ public class QuranSettings {
     prefs.unregisterOnSharedPreferenceChangeListener(listener);
   }
 
+  public boolean isLockOrientation() {
+    return prefs.getBoolean(Constants.PREF_LOCK_ORIENTATION, false);
+  }
+
+  public boolean isLandscapeOrientation() {
+    return prefs.getBoolean(Constants.PREF_LANDSCAPE_ORIENTATION, false);
+  }
+
   public boolean navigateWithVolumeKeys() {
     return prefs.getBoolean(Constants.PREF_USE_VOLUME_KEY_NAV, false);
   }
@@ -248,13 +256,11 @@ public class QuranSettings {
         setVersion(BuildConfig.VERSION_CODE);
       }
 
-      // remove debug info and other preferences that are no longer needed
+      // remove debug info that is no longer needed
       perInstallationPrefs.edit().remove("debugDidDownloadPages")
           .remove("debugPageDownloadedPath")
           .remove("debugPagesDownloadedTime")
           .remove("debugPagesDownloaded")
-          .remove("lockOrientation")
-          .remove("landscapeOrientation")
           .apply();
     }
   }

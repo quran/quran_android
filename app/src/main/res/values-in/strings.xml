@@ -115,6 +115,12 @@
   <string name="prefs_use_arabic_title">Mode bahasa Arab (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Menggunakan bahasa Arab untuk antarmuka aplikasi</string>
   <string name="prefs_new_background_title">Latar baru</string>
+  <string name="prefs_lock_orientation_title">Kunci orientasi layar</string>
+  <string name="prefs_lock_orientation_summary_on">Menggunakan mode tampilan tetap</string>
+  <string name="prefs_lock_orientation_summary_off">Mengikuti orientasi perangkat</string>
+  <string name="prefs_landscape_orientation_title">Orientasi mendatar</string>
+  <string name="prefs_landscape_orientation_summary_on">Selalu gunakan mode mendatar</string>
+  <string name="prefs_landscape_orientation_summary_off">Selalu gunakan mode tegak</string>
   <string name="prefs_night_mode_title">Mode malam</string>
   <string name="prefs_night_mode_summary">Menggunkan latar gelap dan tulisan terang</string>
   <string name="prefs_night_mode_text_brightness_title">Kecerahan teks</string>

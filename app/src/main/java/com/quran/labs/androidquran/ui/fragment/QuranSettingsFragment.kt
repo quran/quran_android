@@ -25,6 +25,7 @@ import com.quran.labs.androidquran.pageselect.PageSelectActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import com.quran.labs.androidquran.util.FocusModeManager
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.util.OrientationLockUtils
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.mobile.di.ExtraPreferencesProvider
@@ -46,6 +47,10 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
 
     // field injection
     (appContext as QuranApplication).applicationComponent.inject(this)
+
+    if (!OrientationLockUtils.isOrientationLockSupported(resources.configuration)) {
+      hideUnsupportedOrientationPreferences()
+    }
 
     // handle Arabic names preference
     val arabicPref: Preference? = findPreference(ARABIC_KEY)
@@ -167,6 +172,19 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
   private fun isCurrentlyArabic(): Boolean {
     val locale = QuranUtils.getCurrentLocale()
     return locale.language == "ar"
+  }
+
+  private fun hideUnsupportedOrientationPreferences() {
+    val displayPrefs = findPreference<PreferenceGroup>(getString(R.string.prefs_display_category_key))
+    val lockOrientationPref = findPreference<Preference>(Constants.PREF_LOCK_ORIENTATION)
+    val landscapeOrientationPref = findPreference<Preference>(Constants.PREF_LANDSCAPE_ORIENTATION)
+
+    if (displayPrefs != null && lockOrientationPref != null) {
+      displayPrefs.removePreference(lockOrientationPref)
+    }
+    if (displayPrefs != null && landscapeOrientationPref != null) {
+      displayPrefs.removePreference(landscapeOrientationPref)
+    }
   }
 
   companion object {

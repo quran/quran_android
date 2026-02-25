@@ -6,6 +6,8 @@ import android.app.SearchManager
 import android.content.ComponentName
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -104,6 +106,7 @@ import com.quran.labs.androidquran.ui.util.ToastCompat.makeText
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.FocusModeManager
+import com.quran.labs.androidquran.util.OrientationLockUtils
 import com.quran.labs.androidquran.util.QuranAppUtils
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
@@ -603,7 +606,22 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     // just got created, need to reconnect to service
     shouldReconnect = true
 
-    // log analytics
+    // enforce orientation lock
+    if (quranSettings.isLockOrientation &&
+      OrientationLockUtils.isOrientationLockSupported(resources.configuration)
+    ) {
+      val current = resources.configuration.orientation
+      if (quranSettings.isLandscapeOrientation) {
+        if (current == Configuration.ORIENTATION_PORTRAIT) {
+          requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+          return
+        }
+      } else if (current == Configuration.ORIENTATION_LANDSCAPE) {
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        return
+      }
+    }
+
     quranEventLogger.logAnalytics(isDualPages, showingTranslation, isSplitScreen)
 
     // Setup recitation (if enabled)
