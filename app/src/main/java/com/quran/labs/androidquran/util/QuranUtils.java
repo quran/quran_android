@@ -27,6 +27,10 @@ import java.util.Locale;
 
 public class QuranUtils {
 
+  private static final String ARABIC_LANGUAGE = "ar";
+  private static final String ARABIC_EASTERN_NUMBERING_SYSTEM = "arab";
+  private static final String ARABIC_WESTERN_NUMBERING_SYSTEM = "latn";
+
   private static NumberFormat numberFormat;
   private static Locale lastLocale;
 
@@ -109,6 +113,36 @@ public class QuranUtils {
       lastLocale = locale;
     }
     return numberFormat.format(number);
+  }
+
+  public static String getArabicLocaleTagForNumeralSystem(@NonNull String numeralSystem) {
+    final Locale locale = getArabicNumeralLocale(getCurrentLocale());
+    final Locale.Builder builder = new Locale.Builder().setLanguage(ARABIC_LANGUAGE);
+    final String country = locale.getCountry();
+    if (!country.isEmpty()) {
+      builder.setRegion(country);
+    }
+
+    final String numberingSystem = Constants.PREF_ARABIC_NUMERALS_WESTERN.equals(numeralSystem)
+        ? ARABIC_WESTERN_NUMBERING_SYSTEM
+        : ARABIC_EASTERN_NUMBERING_SYSTEM;
+    builder.setUnicodeLocaleKeyword("nu", numberingSystem);
+    return builder.build().toLanguageTag();
+  }
+
+  public static Locale getArabicNumeralLocale(@NonNull Locale appLocale) {
+    if (ARABIC_LANGUAGE.equals(appLocale.getLanguage())) {
+      return appLocale;
+    }
+
+    final String country = !appLocale.getCountry().isEmpty()
+        ? appLocale.getCountry()
+        : Locale.getDefault().getCountry();
+    final Locale.Builder builder = new Locale.Builder().setLanguage(ARABIC_LANGUAGE);
+    if (!country.isEmpty()) {
+      builder.setRegion(country);
+    }
+    return builder.build();
   }
 
   public static boolean isDualPages(Context context, QuranScreenInfo qsi, boolean isValidFoldableDeviceAndOpen) {

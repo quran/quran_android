@@ -164,6 +164,9 @@
   <string name="prefs_category_display_settings">Display Settings</string>
   <string name="prefs_use_arabic_title">Arabic mode (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Use Arabic for application interface</string>
+  <string name="prefs_arabic_numerals_title">Arabic numerals in Arabic mode</string>
+  <string name="prefs_arabic_numerals_eastern">Eastern Arabic (١٢٣٤٥٦٧٨٩٠)</string>
+  <string name="prefs_arabic_numerals_western">Western (1234567890)</string>
   <string name="prefs_new_background_title">New background</string>
   <string name="prefs_lock_orientation_title">Lock screen orientation</string>
   <string name="prefs_lock_orientation_summary_on">Use fixed orientation mode</string>

@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.common.drawing.helper
 
+import android.content.Context
+import android.os.Build
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -12,7 +14,8 @@ import java.text.NumberFormat
 import java.util.Locale
 
 class AyahMarkerDrawer(private val drawable: AyahMarkerDrawable) : ImageDrawHelper {
-  private val formatter = NumberFormat.getIntegerInstance(Locale("ar", "EG"))
+  private var formatter: NumberFormat? = null
+  private var formatterLocale: Locale? = null
 
   private val textRatio = 0.0375f
   private val largeTextRatio = 0.03f
@@ -39,10 +42,11 @@ class AyahMarkerDrawer(private val drawable: AyahMarkerDrawable) : ImageDrawHelp
       val markerDimen = (0.025f * 2 * width).toInt()
       drawable.bounds.set(0, 0, markerDimen, markerDimen)
 
+      val formatter = ayahNumberFormatter(image.context)
       pageCoordinates.ayahMarkers
-          .forEach {
-            points[0] = it.x.toFloat()
-            points[1] = it.y.toFloat()
+          .forEach { marker ->
+            points[0] = marker.x.toFloat()
+            points[1] = marker.y.toFloat()
             imageMatrix.mapPoints(points)
 
             val x = points[0] - (markerDimen / 2) + image.paddingLeft
@@ -51,13 +55,50 @@ class AyahMarkerDrawer(private val drawable: AyahMarkerDrawable) : ImageDrawHelp
             drawable.draw(canvas)
             canvas.translate(-x, -y)
 
-            paint.textSize = width * if (it.ayah > 100) largeTextRatio else textRatio
+            paint.textSize = width * if (marker.ayah > 100) largeTextRatio else textRatio
             val yOffset = (paint.descent() - paint.ascent()) / 2 - paint.descent()
-            canvas.drawText(formatter.format(it.ayah),
+            canvas.drawText(formatter.format(marker.ayah),
                 points[0] + image.paddingLeft,
                 points[1] + yOffset + image.paddingTop + 4,
                 paint)
           }
+    }
+  }
+
+  private fun ayahNumberFormatter(context: Context): NumberFormat {
+    val locale = resolveAyahNumberLocale(context)
+    val currentFormatter = formatter
+    return if (currentFormatter == null || formatterLocale != locale) {
+      NumberFormat.getIntegerInstance(locale).also {
+        formatter = it
+        formatterLocale = locale
+      }
+    } else {
+      currentFormatter
+    }
+  }
+
+  private fun resolveAyahNumberLocale(context: Context): Locale {
+    val appLocale = currentLocale(context)
+    return if (appLocale.language == "ar") {
+      appLocale
+    } else {
+      val country = appLocale.country.ifEmpty { Locale.getDefault().country }
+      Locale.Builder().setLanguage("ar").apply {
+        if (country.isNotEmpty()) {
+          setRegion(country)
+        }
+      }.build()
+    }
+  }
+
+  private fun currentLocale(context: Context): Locale {
+    val configuration = context.resources.configuration
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      configuration.locales[0]
+    } else {
+      @Suppress("DEPRECATION")
+      configuration.locale
     }
   }
 }

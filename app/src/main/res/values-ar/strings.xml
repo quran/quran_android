@@ -238,6 +238,9 @@
 
   <string name="prefs_use_arabic_summary_on">سيتم تحويل التطبيق إلى اللغة العربية</string>
   <string name="prefs_use_arabic_title">الوضع العربي</string>
+  <string name="prefs_arabic_numerals_title">شكل الأرقام في الوضع العربي</string>
+  <string name="prefs_arabic_numerals_eastern">الأرقام العربية الشرقية (١٢٣٤٥٦٧٨٩٠)</string>
+  <string name="prefs_arabic_numerals_western">الأرقام الغربية (1234567890)</string>
   <string name="play">تشغيل</string>
   <string name="stop">إيقاف</string>
   <string name="playback_speed">سرعة التشغيل:</string>

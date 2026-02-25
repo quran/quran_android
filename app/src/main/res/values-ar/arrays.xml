@@ -5,4 +5,9 @@
     <item>داكن</item>
     <item>تلقائي</item>
   </array>
+
+  <array name="prefs_arabic_numerals_entries">
+    <item>@string/prefs_arabic_numerals_eastern</item>
+    <item>@string/prefs_arabic_numerals_western</item>
+  </array>
 </resources>

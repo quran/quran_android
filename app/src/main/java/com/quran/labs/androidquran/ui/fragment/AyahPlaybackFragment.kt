@@ -96,8 +96,11 @@ class AyahPlaybackFragment : AyahActionFragment() {
     values[MAX_REPEATS] = getString(UiCoreR.string.infinity)
     val isArabicNames = locale.language == "ar"
     if (isArabicNames) {
+      val arabicNumberFormat = NumberFormat.getNumberInstance(locale)
       listOf(repeatVersePicker, repeatRangePicker, playbackSpeedPicker).forEach {
-        it.formatter = NumberPicker.Formatter { value: Int -> arFormat(value) }
+        it.formatter = NumberPicker.Formatter { value: Int ->
+          arabicNumberFormat.format(value.toLong())
+        }
         val typeface = TypefaceManager.getHeaderFooterTypeface(context)
         it.typeface = typeface
         it.setSelectedTypeface(typeface)
@@ -139,11 +142,6 @@ class AyahPlaybackFragment : AyahActionFragment() {
       ITEM_DROPDOWN_LAYOUT
     )
     return view
-  }
-
-  private fun arFormat(value: Int): String {
-    val numberFormat = NumberFormat.getNumberInstance(Locale("ar", "EG"))
-    return numberFormat.format(value.toLong())
   }
 
   override fun onAttach(context: Context) {
