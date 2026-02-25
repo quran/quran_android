@@ -1,6 +1,8 @@
 package com.quran.labs.androidquran.ui.fragment
 
 import android.content.Intent
+import android.provider.Settings
+import android.widget.Toast
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +23,8 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.pageselect.PageSelectActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
+import com.quran.labs.androidquran.util.FocusModeManager
+import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.OrientationLockUtils
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.ThemeUtil
@@ -72,6 +76,27 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
     val themePref: Preference? = findPreference(Constants.PREF_APP_THEME)
     themePref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
       ThemeUtil.setTheme(newValue as String)
+      true
+    }
+
+    // handle Focus Mode preference
+    val focusModePref: Preference? = findPreference(Constants.PREF_FOCUS_MODE)
+    focusModePref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
+      if (newValue == true) {
+        val focusModeManager = FocusModeManager(requireContext())
+        if (!focusModeManager.isPermissionGranted()) {
+          // Show explanation and open settings
+          Toast.makeText(
+            requireContext(),
+            R.string.focus_mode_permission_required,
+            Toast.LENGTH_LONG
+          ).show()
+          focusModeManager.requestPermission(requireActivity())
+          // Don't actually enable yet - user needs to grant permission first
+          (preference as? CheckBoxPreference)?.isChecked = false
+          return@OnPreferenceChangeListener false
+        }
+      }
       true
     }
 
