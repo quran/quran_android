@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS reading_history(
+  _ID INTEGER PRIMARY KEY AUTOINCREMENT,
+  page INTEGER NOT NULL,
+  visited_date INTEGER DEFAULT (strftime('%s', 'now')) NOT NULL
+);
