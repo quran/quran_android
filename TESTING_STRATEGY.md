@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-Current state: **~1.5% test coverage** (24 test files for 540+ source files). This strategy establishes testing patterns, tooling, and coverage targets.
+**Phase 3 Complete**: Mockito migration done. 146 tests, 0 flaky. Remaining Mockito use is all justified (verify() interaction tests + unavoidable mocks for non-open classes).
 
 ---
 
@@ -98,6 +98,7 @@ Located at `common/test-utils/`, provides:
 
 - **TestDataFactory** - Creates real domain models for tests
 - **RxSchedulerRule** - Synchronous RxJava execution
+- **DatabaseTestHelpers** - Shared in-memory database factory (`inMemoryBookmarksAdapter()`) used by bookmark test classes
 
 ```kotlin
 // TestDataFactory usage
@@ -262,30 +263,62 @@ fun `should add bookmark successfully`() = runTest {
 
 ### Flaky Test Prevention
 
-1. Never use `Thread.sleep()` - use `advanceTimeBy()` or `runCurrent()`
-2. Always use test dispatchers for coroutines
-3. Use `RxSchedulerRule` for RxJava
-4. Use MockWebServer for network tests
-5. Reset state in `@After`
+1. **Timing**: Prefer `advanceTimeBy()` or `runCurrent()` over `Thread.sleep()`
+   - Exception: RxJava timers with trampoline scheduler may need small sleeps
+2. **Coroutines**: Always use test dispatchers (`runTest`, `TestScope`)
+3. **RxJava**: Use `RxSchedulerRule` or `trampoline()` for synchronous execution
+4. **Network**: Use MockWebServer for deterministic responses
+5. **State**: Reset mocks and state in `@After` hooks
 
 ---
 
 ## Implementation Roadmap
 
-### Phase 1: Foundation (Current)
+### Phase 1: Foundation ✅ **COMPLETE**
 - [x] Add Kover plugin and configure coverage
-- [x] Create common:test-utils module
-- [ ] Write QuranInfo tests (20+ tests)
-- [ ] Write BookmarksDaoImpl tests (15+ tests)
+- [x] Create common:test-utils module with TestDataFactory
+- [x] Add RxSchedulerRule for synchronous RxJava testing
+- [x] Write QuranInfo tests (21 tests)
+- [x] Remove MockK dependency, establish fakes-over-mocks pattern
+- [x] Write BookmarksDaoImpl tests (16 tests)
 
-### Phase 2: Core Business Logic
-- [ ] Presenter tests (30+ tests)
-- [ ] Model tests (20+ tests)
+**PR**: [#3520](https://github.com/quran/quran_android/pull/3520)
 
-### Phase 3: Feature Modules
-- [ ] Audio, Search, Download tests
+### Phase 2: Core Business Logic ✅ **COMPLETE**
+- [x] Document fake patterns and circular dependency solutions
+- [x] Create presenter tests (17 tests total):
+  - [x] QuranPagePresenter (9 tests) - RxJava, async timers, lifecycle
+  - [x] AudioPresenter (8 tests) - Audio logic, streaming, permissions
+- [x] Establish pragmatic mocking strategy for framework classes
+- [x] Add test-utils dependency to app module
 
-### Phase 4: Integration & E2E
+**Branch**: `feature/testing-phase2`
+
+**Key Decisions**:
+- Framework-dependent classes (QuranSettings) → Mockito
+- Intent creation tests → Deferred (requires Robolectric)
+- Test data → TestDataFactory for consistency
+
+### Phase 3: Mockito Migration ✅ **COMPLETE**
+- [x] Analyze existing Mockito usage (~7 test files, ~100 calls)
+- [x] Migrate tests to fakes where beneficial
+- [x] Create fakes for commonly mocked dependencies
+- [x] Reduce Mockito dependency footprint
+
+**Branch**: `feature/testing-infrastructure-phase1`
+
+**Key Decisions**:
+- Fakes created: FakeBookmarkModel, FakeRecentPageModel, FakeTranslationModel,
+  FakeTranslationsDBAdapter, FakeTranslationListPresenter, FakePageProvider, FakeBookmarksDBAdapter
+- Interface extraction (DIP): TranslationModel, TranslationsDBAdapter, TranslationListPresenter
+- Robolectric adopted for SQLite-backed tests (fixes JDBC classloader flakiness)
+- Remaining Mockito (10 files): all justified — `verify()` interaction tests and
+  unavoidable mocks for non-open classes (DatabaseHandler, ShadowContentResolver gaps)
+
+### Phase 4: Feature Modules
+- [ ] Audio, Search, Download module tests
+
+### Phase 5: Integration & E2E
 - [ ] Database integration tests
 - [ ] Critical user journey E2E tests
 
@@ -301,4 +334,33 @@ fun `should add bookmark successfully`() = runTest {
 
 ---
 
-*Last Updated: 2026-02-07*
+## Current Status (Phase 3 Complete)
+
+**Test Count**: 146 tests total, 0 failures, 0 flaky
+- QuranInfo: 21 tests (domain logic)
+- BookmarksDaoImpl: 16 tests (DAO layer, in-memory SQLite)
+- QuranPagePresenter: 9 tests (presenter logic, RxJava)
+- AudioPresenter: 13 tests (audio logic, streaming, all download paths)
+- BookmarkModel: 2 tests (in-memory SQLite)
+- RecentPageModel: 6 tests (in-memory SQLite)
+- TagBookmarkPresenter: 5 tests
+- QuranImportPresenter: 4 tests (Robolectric + ShadowContentResolver)
+- BaseTranslationPresenter: 4 tests (fakes, Robolectric context, covers getVerses$2 lambda)
+- ArabicDatabaseUtils: tests migrated to Robolectric real context
+- BookmarkImportExportModel: 4 tests (Robolectric, import + export paths covered)
+- AudioUtils: tests migrated to Robolectric real context
+
+**Patterns Established**:
+- Fakes over mocks philosophy documented and implemented
+- TestDataFactory for consistent fixtures
+- RxSchedulerRule for synchronous RxJava
+- Robolectric for Android context + SQLite (fixes JDBC classloader flakiness)
+- In-memory SQLite (JdbcSqliteDriver.IN_MEMORY) for database tests
+- Interface extraction (DIP) for testability without `open` classes
+- DatabaseTestHelpers for shared in-memory adapter factory (DRY across bookmark test classes)
+
+**Next**: Phase 4 - Feature module tests (Audio, Search, Download)
+
+---
+
+*Last Updated: 2026-02-18*
