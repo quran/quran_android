@@ -23,4 +23,6 @@ dependencies {
   testImplementation libs.junit
   testImplementation libs.truth
   testImplementation libs.okio.fakefilesystem
+  testImplementation libs.kotlinx.coroutines.test
+  testImplementation libs.turbine
 }

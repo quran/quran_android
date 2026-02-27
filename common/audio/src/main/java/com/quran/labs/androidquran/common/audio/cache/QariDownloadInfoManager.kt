@@ -26,7 +26,7 @@ class QariDownloadInfoManager @Inject constructor(
   private val audioInfoCommand: AudioInfoCommand,
   private val downloadInfoStreams: DownloadInfoStreams,
   private val audioCacheInvalidator: AudioCacheInvalidator
-) {
+) : QariDownloadInfoSource {
   private val scope: CoroutineScope = CoroutineScope(SupervisorJob())
   private val storageCache = QariDownloadInfoStorageCache()
 
@@ -43,7 +43,7 @@ class QariDownloadInfoManager @Inject constructor(
     return storageCache.flow()
   }
 
-  fun downloadQariInfoFilteringNonDownloadedGappedQaris(): Flow<List<QariDownloadInfo>> {
+  override fun downloadQariInfoFilteringNonDownloadedGappedQaris(): Flow<List<QariDownloadInfo>> {
     return downloadedQariInfo().map { list ->
       list.filter { qariDownloadInfo ->
         val qari = qariDownloadInfo.qari

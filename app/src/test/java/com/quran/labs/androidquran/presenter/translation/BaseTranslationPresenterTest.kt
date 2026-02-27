@@ -4,42 +4,50 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.QuranText
 import com.quran.data.model.VerseRange
+import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.common.TranslationMetadata
-import com.quran.labs.androidquran.database.TranslationsDBAdapter
-import com.quran.labs.androidquran.model.translation.TranslationModel
+import com.quran.labs.androidquran.fakes.FakeTranslationListPresenter
+import com.quran.labs.androidquran.fakes.FakeTranslationModel
+import com.quran.labs.androidquran.fakes.FakeTranslationsDBAdapter
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.presenter.Presenter
-import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.translation.model.LocalTranslation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+@Config(application = TestApplication::class, sdk = [33])
+@RunWith(RobolectricTestRunner::class)
 class BaseTranslationPresenterTest {
 
   private lateinit var presenter: BaseTranslationPresenter<TestPresenter>
+  private lateinit var fakeTranslationModel: FakeTranslationModel
 
   private val testDispatcher = UnconfinedTestDispatcher()
 
   @Before
   fun setupTest() {
     Dispatchers.setMain(testDispatcher)
+    fakeTranslationModel = FakeTranslationModel()
     presenter = BaseTranslationPresenter(
-        Mockito.mock(TranslationModel::class.java),
-        Mockito.mock(TranslationsDBAdapter::class.java),
+        fakeTranslationModel,
+        FakeTranslationsDBAdapter(),
         object : TranslationUtil(QuranInfo(MadaniDataSource())) {
           override fun parseTranslationText(quranText: QuranText, translationId: Int): TranslationMetadata {
             return TranslationMetadata(quranText.sura, quranText.ayah, quranText.text, translationId)
           }
         },
         QuranInfo(MadaniDataSource()),
-        Mockito.mock(TranslationListPresenter::class.java)
+        FakeTranslationListPresenter()
     )
   }
 
@@ -51,13 +59,11 @@ class BaseTranslationPresenterTest {
   @Test
   fun testGetTranslationNames() {
     val databases = listOf("one.db", "two.db")
-    val map = object : HashMap<String, LocalTranslation>() {
-      init {
-        put("one.db", LocalTranslation(1, "one.db", "One", "First", null, "", null, 1, 2))
-        put("two.db", LocalTranslation(2, "two.db", "Two", "Second", null, "", null, 1, 2))
-        put("three.db", LocalTranslation(3, "three.db", "Three", "Third", null, "", null, 1, 2))
-      }
-    }
+    val map = mapOf(
+      "one.db" to LocalTranslation(1, "one.db", "One", "First", null, "", null, 1, 2),
+      "two.db" to LocalTranslation(2, "two.db", "Two", "Second", null, "", null, 1, 2),
+      "three.db" to LocalTranslation(3, "three.db", "Three", "Third", null, "", null, 1, 2),
+    )
 
     val translations = presenter.getTranslations(databases, map)
     assertThat(translations).hasLength(2)
@@ -125,7 +131,7 @@ class BaseTranslationPresenterTest {
         QuranText(1, 1, "first ayah"),
         QuranText(1, 2, "second ayah")
     )
-    val info = presenter.combineAyahData(verseRange, arabic, ArrayList(), emptyArray())
+    val info = presenter.combineAyahData(verseRange, arabic, emptyList(), emptyArray())
     assertThat(info).hasSize(2)
     assertThat(info[0].sura).isEqualTo(1)
     assertThat(info[0].ayah).isEqualTo(1)
@@ -154,6 +160,26 @@ class BaseTranslationPresenterTest {
     assertThat(second.sura).isEqualTo(1)
     assertThat(second.ayah).isEqualTo(2)
     assertThat(second.text).isEmpty()
+  }
+
+  @Test
+  fun `getVerses returns empty ayah info when arabic database throws`() = runTest {
+    fakeTranslationModel.setArabicError(Exception("DB error"))
+    val range = VerseRange(2, 255, 2, 255, 1)
+
+    val result = presenter.getVerses(true, listOf(), range)
+
+    assertThat(result.ayahInformation).isEmpty()
+  }
+
+  @Test
+  fun `getVerses returns empty texts when translation database throws`() = runTest {
+    fakeTranslationModel.setTranslationError("my_translation.db", Exception("DB error"))
+    val range = VerseRange(2, 255, 2, 255, 1)
+
+    val result = presenter.getVerses(false, listOf("my_translation.db"), range)
+
+    assertThat(result.ayahInformation).isEmpty()
   }
 
   private class TestPresenter : Presenter<Any> {

@@ -37,4 +37,10 @@ dependencies {
   // coroutines
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.kotlinx.coroutines.android)
+
+  // testing
+  testImplementation(libs.junit)
+  testImplementation(libs.truth)
+  testImplementation(libs.kotlinx.coroutines.test)
+  testImplementation(libs.turbine)
 }

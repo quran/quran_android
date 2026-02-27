@@ -37,8 +37,8 @@ class AudioUpdaterTest {
   }
 
   private val qaris = listOf(
-      QariItem(1, "Gapped Sheikh", "https://url1/", null, "sheikh1", false, null),
-      QariItem(2, "Gapless Sheikh", "https://url2/", null, "sheikh2", false, "sheikh2")
+      QariItem(1, "Gapped Sheikh", "https://url1/", path = "sheikh1", hasGaplessAlternative = false, db = null),
+      QariItem(2, "Gapless Sheikh", "https://url2/", path = "sheikh2", hasGaplessAlternative = false, db = "sheikh2")
   )
 
   @Test

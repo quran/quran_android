@@ -30,4 +30,9 @@ dependencies {
 
   // molecule
   implementation(libs.molecule)
+
+  testImplementation(libs.junit)
+  testImplementation(libs.truth)
+  testImplementation(libs.kotlinx.coroutines.test)
+  testImplementation(libs.turbine)
 }

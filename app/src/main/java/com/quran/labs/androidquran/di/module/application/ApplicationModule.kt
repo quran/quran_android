@@ -11,6 +11,8 @@ import com.quran.data.di.AppScope
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
+import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoManager
+import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoSource
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.SettingsImpl
@@ -80,6 +82,12 @@ object ApplicationModule {
   @Provides
   fun provideQuranFileManager(quranFileUtils: QuranFileUtils): QuranFileManager {
     return quranFileUtils
+  }
+
+  @Provides
+  @SingleIn(AppScope::class)
+  fun provideQariDownloadInfoSource(manager: QariDownloadInfoManager): QariDownloadInfoSource {
+    return manager
   }
 
   @Provides
