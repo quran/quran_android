@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.os.Build
 import android.widget.FrameLayout
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material.MaterialTheme
@@ -85,7 +86,7 @@ class QuranLineByLineWrapperView(
               context.applicationContext,
               R.drawable.chapter_hdr
             ),
-            ayahNumberFormatter = NumberFormat.getIntegerInstance(Locale("ar", "EG")),
+            ayahNumberFormatter = NumberFormat.getIntegerInstance(resolveAyahNumberLocale(context)),
             onClick = quranLineByLinePresenter::onClick,
             onPagePositioned = quranLineByLinePresenter::onPagePositioned,
             onSelectionStart = { x, y -> scope.launch { quranLineByLinePresenter.startSelection(x, y) } },
@@ -111,6 +112,30 @@ class QuranLineByLineWrapperView(
       val restartIntent = Intent(activity.intent)
       activity.finish()
       activity.startActivity(restartIntent)
+    }
+  }
+
+  private fun resolveAyahNumberLocale(context: Context): Locale {
+    val appLocale = currentLocale(context)
+    return if (appLocale.language == "ar") {
+      appLocale
+    } else {
+      val country = appLocale.country.ifEmpty { Locale.getDefault().country }
+      Locale.Builder().setLanguage("ar").apply {
+        if (country.isNotEmpty()) {
+          setRegion(country)
+        }
+      }.build()
+    }
+  }
+
+  private fun currentLocale(context: Context): Locale {
+    val configuration = context.resources.configuration
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      configuration.locales[0]
+    } else {
+      @Suppress("DEPRECATION")
+      configuration.locale
     }
   }
 }
