@@ -18,6 +18,7 @@ class BrowsableSurahBuilder @Inject constructor(
   private val pageProvider: PageProvider,
   private val audioExtensionDecider: AudioExtensionDecider,
   private val qariArtworkProvider: QariArtworkProvider,
+  private val recentQariManager: RecentQariManager,
 ) {
 
   private val qariMediaItem: MediaItem by lazy {
@@ -25,6 +26,21 @@ class BrowsableSurahBuilder @Inject constructor(
       .setMediaId(QARI_ID)
       .setMediaMetadata(
         MediaMetadata.Builder()
+          .setTitle("Qaris")
+          .setIsBrowsable(true)
+          .setMediaType(MediaMetadata.MEDIA_TYPE_MIXED)
+          .setIsPlayable(false)
+          .build()
+      )
+      .build()
+  }
+
+  private val recentMediaItem: MediaItem by lazy {
+    MediaItem.Builder()
+      .setMediaId(RECENT_ID)
+      .setMediaMetadata(
+        MediaMetadata.Builder()
+          .setTitle("Recently Played")
           .setIsBrowsable(true)
           .setMediaType(MediaMetadata.MEDIA_TYPE_MIXED)
           .setIsPlayable(false)
@@ -39,7 +55,13 @@ class BrowsableSurahBuilder @Inject constructor(
   suspend fun children(parentId: String): ImmutableList<MediaItem> {
     return withContext(Dispatchers.IO) {
       if (parentId == ROOT_ID) {
-        ImmutableList.of(qariMediaItem)
+        if (recentQariManager.getRecentQaris().isNotEmpty()) {
+          ImmutableList.of(recentMediaItem, qariMediaItem)
+        } else {
+          ImmutableList.of(qariMediaItem)
+        }
+      } else if (parentId == RECENT_ID) {
+        recentChildren()
       } else if (parentId == QARI_ID) {
         val items = pageProvider.getQaris()
           .filter { it.isGapless }
@@ -99,6 +121,25 @@ class BrowsableSurahBuilder @Inject constructor(
   }
 
   /**
+   * Return playable [MediaItem]s for the most recently played qaris.
+   * Each item represents the last sura played for that qari.
+   */
+  private fun recentChildren(): ImmutableList<MediaItem> {
+    val recents = recentQariManager.getRecentQaris()
+    if (recents.isEmpty()) return ImmutableList.of()
+    val qaris = pageProvider.getQaris()
+    val items = recents.mapNotNull { recent ->
+      val qari = qaris.firstOrNull { it.id == recent.qariId }
+      if (qari != null && recent.lastSura in 1..114) {
+        makeSuraMediaItem(qari, recent.lastSura, showQariSubtitle = true)
+      } else {
+        null
+      }
+    }
+    return ImmutableList.copyOf(items)
+  }
+
+  /**
    * Given the id of a [Qari], return all the [MediaItem]s for that qari.
    * Typically, this is a list of 114 [MediaItem]s, one for each sura.
    */
@@ -136,7 +177,11 @@ class BrowsableSurahBuilder @Inject constructor(
   /**
    * Make a [MediaItem] representing a sura for a [Qari]
    */
-  private fun makeSuraMediaItem(qari: Qari, sura: Int): MediaItem {
+  private fun makeSuraMediaItem(
+    qari: Qari,
+    sura: Int,
+    showQariSubtitle: Boolean = false
+  ): MediaItem {
     val suraName = getSuraName(appContext, sura, wantPrefix = true, wantTranslation = false)
     val extension = audioExtensionDecider.audioExtensionForQari(qari)
     val (baseUrl, mimeType) = if (extension == "opus" && qari.opusUrl != null) {
@@ -145,6 +190,7 @@ class BrowsableSurahBuilder @Inject constructor(
       qari.url to MimeTypes.AUDIO_MPEG
     }
     val artworkUri = qariArtworkProvider.suraArtworkUriFor(qari, sura)
+    val qariName = appContext.getString(qari.nameResource)
 
     return MediaItem.Builder()
       .setMediaId("sura_${sura}_${qari.id}")
@@ -156,8 +202,11 @@ class BrowsableSurahBuilder @Inject constructor(
           .setDisplayTitle(suraName)
           .setTrackNumber(sura)
           .setTotalTrackCount(114)
-          .setArtist(appContext.getString(qari.nameResource))
-          .apply { setArtworkUri(artworkUri) }
+          .setArtist(qariName)
+          .apply {
+            if (showQariSubtitle) setSubtitle(qariName)
+            setArtworkUri(artworkUri)
+          }
           .build()
       )
       .setMimeType(mimeType)
@@ -168,5 +217,6 @@ class BrowsableSurahBuilder @Inject constructor(
   companion object {
     const val ROOT_ID = "__ROOT__"
     const val QARI_ID = "__QARI__"
+    const val RECENT_ID = "__RECENT__"
   }
 }

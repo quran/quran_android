@@ -20,4 +20,8 @@ dependencies {
   implementation project(":common:ui:core")
   implementation project(":common:pages")
   implementation project(':common:upgrade')
+
+  testImplementation libs.junit
+  testImplementation libs.truth
+  testImplementation libs.robolectric
 }
