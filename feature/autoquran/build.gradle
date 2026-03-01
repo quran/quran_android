@@ -5,6 +5,8 @@ plugins {
 
 android.namespace = "com.quran.labs.feature.autoquran"
 
+android.testOptions.unitTests.includeAndroidResources = true
+
 dependencies {
   implementation libs.androidx.core.ktx
   implementation libs.androidx.appcompat
@@ -24,4 +26,5 @@ dependencies {
   testImplementation libs.junit
   testImplementation libs.truth
   testImplementation libs.robolectric
+  testImplementation libs.kotlinx.coroutines.test
 }
