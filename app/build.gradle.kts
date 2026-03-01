@@ -147,6 +147,7 @@ dependencies {
   implementation(project(":common:recitation"))
   implementation(project(":common:search"))
   implementation(project(":common:toolbar"))
+  implementation(project(":common:voicesearch"))
   implementation(project(":common:translation"))
   implementation(project(":common:upgrade"))
   implementation(project(":common:ui:core"))
@@ -155,6 +156,7 @@ dependencies {
   implementation(project(":feature:audiobar"))
   implementation(project(":feature:downloadmanager"))
   implementation(project(":feature:qarilist"))
+  implementation(project(":feature:voicesearch"))
 
   // android auto support
   implementation(project(":feature:autoquran"))

@@ -8,4 +8,10 @@
       android:title="@string/menu_search"
       app:actionViewClass="androidx.appcompat.widget.SearchView"
       app:showAsAction="always|collapseActionView" />
+
+  <item
+      android:id="@+id/voice_search"
+      android:icon="@drawable/ic_mic"
+      android:title="@string/voice_search"
+      app:showAsAction="always" />
 </menu>
