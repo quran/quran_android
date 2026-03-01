@@ -14,13 +14,13 @@ import androidx.media3.session.MediaConstants
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaLibraryService.MediaLibrarySession
 import androidx.media3.session.MediaSession
-import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionError
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
 import com.quran.labs.feature.autoquran.common.BrowsableSurahBuilder
+import com.quran.labs.feature.autoquran.common.RecentQariManager
 import com.quran.labs.feature.autoquran.di.QuranAutoInjector
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import dev.zacsweers.metro.Inject
@@ -32,9 +32,12 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @OptIn(UnstableApi::class)
-class QuranBrowsableAudioPlaybackService : MediaSessionService() {
+class QuranBrowsableAudioPlaybackService : MediaLibraryService() {
   @Inject
   lateinit var surahBuilder: BrowsableSurahBuilder
+
+  @Inject
+  lateinit var recentQariManager: RecentQariManager
 
   private var mediaSession: MediaLibrarySession? = null
 
@@ -65,11 +68,23 @@ class QuranBrowsableAudioPlaybackService : MediaSessionService() {
       .build()
   }
 
+  private val recentRootMediaItem: MediaItem by lazy {
+    MediaItem.Builder()
+      .setMediaId(BrowsableSurahBuilder.RECENT_ID)
+      .setMediaMetadata(
+        MediaMetadata.Builder()
+          .setIsBrowsable(true)
+          .setMediaType(MediaMetadata.MEDIA_TYPE_MIXED)
+          .setIsPlayable(false)
+          .build()
+      )
+      .build()
+  }
+
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
   override fun onCreate() {
     super.onCreate()
-    Timber.d("onCreate()")
     val injector = (application as? QuranApplicationComponentProvider)
       ?.provideQuranApplicationComponent() as? QuranAutoInjector
     if (injector == null) {
@@ -100,18 +115,55 @@ class QuranBrowsableAudioPlaybackService : MediaSessionService() {
     super.onDestroy()
   }
 
-  override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? =
+  override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? =
     mediaSession
 
-  private class PlayerEventListener : Player.Listener
+  private inner class PlayerEventListener : Player.Listener {
+    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+      if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_REPEAT) return
+      val mediaId = mediaItem?.mediaId ?: return
+      if (!mediaId.startsWith("sura_")) return
+      val parts = mediaId.split("_")
+      if (parts.size != 3) return
+      val sura = parts[1].toIntOrNull() ?: return
+      val qariId = parts[2].toIntOrNull() ?: return
+      if (::recentQariManager.isInitialized) {
+        recentQariManager.recordQari(qariId, sura)
+        val recentCount = recentQariManager.getRecentQaris().size
+        mediaSession?.notifyChildrenChanged(
+          BrowsableSurahBuilder.RECENT_ID, recentCount, null
+        )
+        mediaSession?.notifyChildrenChanged(
+          BrowsableSurahBuilder.ROOT_ID, recentCount + 1, null
+        )
+      }
+    }
+  }
 
   private inner class QuranServiceCallback : MediaLibrarySession.Callback {
+
+    override fun onSubscribe(
+      session: MediaLibrarySession,
+      browser: MediaSession.ControllerInfo,
+      parentId: String,
+      params: MediaLibraryService.LibraryParams?
+    ): ListenableFuture<LibraryResult<Void>> {
+      return Futures.immediateFuture(LibraryResult.ofVoid())
+    }
 
     override fun onGetLibraryRoot(
       session: MediaLibrarySession,
       browser: MediaSession.ControllerInfo,
       params: MediaLibraryService.LibraryParams?
     ): ListenableFuture<LibraryResult<MediaItem>> {
+      if (params?.isRecent == true) {
+        val recentParams = MediaLibraryService.LibraryParams.Builder()
+          .setRecent(true)
+          .build()
+        return Futures.immediateFuture(
+          LibraryResult.ofItem(recentRootMediaItem, recentParams)
+        )
+      }
       val rootExtras = Bundle().apply {
         putInt(MediaConstants.EXTRAS_KEY_CONTENT_STYLE_BROWSABLE, MediaConstants.EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM)
         putInt(MediaConstants.EXTRAS_KEY_CONTENT_STYLE_PLAYABLE, MediaConstants.EXTRAS_VALUE_CONTENT_STYLE_LIST_ITEM)
@@ -261,4 +313,5 @@ class QuranBrowsableAudioPlaybackService : MediaSessionService() {
       return settable
     }
   }
+
 }
