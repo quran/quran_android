@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList
 import com.quran.data.model.audio.Qari
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
+import com.quran.labs.feature.autoquran.R
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +27,7 @@ class BrowsableSurahBuilder @Inject constructor(
       .setMediaId(QARI_ID)
       .setMediaMetadata(
         MediaMetadata.Builder()
-          .setTitle("Qaris")
+          .setTitle(appContext.getString(R.string.autoquran_qaris_title))
           .setIsBrowsable(true)
           .setMediaType(MediaMetadata.MEDIA_TYPE_MIXED)
           .setIsPlayable(false)
@@ -40,7 +41,7 @@ class BrowsableSurahBuilder @Inject constructor(
       .setMediaId(RECENT_ID)
       .setMediaMetadata(
         MediaMetadata.Builder()
-          .setTitle("Recently Played")
+          .setTitle(appContext.getString(R.string.autoquran_recently_played_title))
           .setIsBrowsable(true)
           .setMediaType(MediaMetadata.MEDIA_TYPE_MIXED)
           .setIsPlayable(false)
