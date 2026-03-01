@@ -134,7 +134,7 @@ class QuranBrowsableAudioPlaybackService : MediaLibraryService() {
           BrowsableSurahBuilder.RECENT_ID, recentCount, null
         )
         mediaSession?.notifyChildrenChanged(
-          BrowsableSurahBuilder.ROOT_ID, recentCount + 1, null
+          BrowsableSurahBuilder.ROOT_ID, 2, null
         )
       }
     }
