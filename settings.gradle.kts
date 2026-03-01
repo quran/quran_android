@@ -6,6 +6,9 @@ pluginManagement {
     mavenCentral()
   }
 }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
 
 dependencyResolutionManagement {
   repositories {
@@ -34,6 +37,7 @@ include(":common:recitation")
 include(":common:preference")
 include(":common:search")
 include(":common:toolbar")
+include(":common:voicesearch")
 include(":common:translation")
 include(":common:upgrade")
 include(":common:test-utils")
@@ -47,6 +51,7 @@ include(":feature:downloadmanager")
 include(":feature:linebyline")
 include(":feature:qarilist")
 include(":feature:recitation")
+include(":feature:voicesearch")
 include(":pages:madani")
 include(":pages:data:madani")
 include(":pages:data:warsh")

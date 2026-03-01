@@ -1,5 +1,8 @@
 package com.quran.labs.androidquran.ui
 
+import android.Manifest
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
@@ -12,8 +15,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AlertDialog.Builder
 import androidx.appcompat.app.AppCompatActivity
@@ -28,14 +34,18 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.quran.labs.androidquran.AboutUsActivity
 import com.quran.labs.androidquran.HelpActivity
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.QuranPreferenceActivity
 import com.quran.labs.androidquran.R
+import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.SearchActivity
 import com.quran.labs.androidquran.ShortcutsActivity
+import com.quran.mobile.di.InlineVoiceSearchController
+import com.quran.mobile.di.InlineVoiceSearchState
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel
 import com.quran.labs.androidquran.presenter.data.QuranIndexEventLogger
@@ -60,6 +70,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import kotlin.math.abs
 
@@ -85,6 +96,8 @@ class QuranActivity : AppCompatActivity(),
   private var isRtl = false
   private var isPaused = false
   private var searchItem: MenuItem? = null
+  private var voiceSearchItem: MenuItem? = null
+  private var micAnimator: ObjectAnimator? = null
   private var supportActionMode: ActionMode? = null
   private val compositeDisposable = CompositeDisposable()
   lateinit var latestPageObservable: Observable<Int>
@@ -105,6 +118,23 @@ class QuranActivity : AppCompatActivity(),
   lateinit var quranIndexEventLogger: QuranIndexEventLogger
   @Inject
   lateinit var extraScreens: Set<@JvmSuppressWildcards ExtraScreenProvider>
+
+  @Inject
+  lateinit var inlineVoiceSearchControllers: Set<@JvmSuppressWildcards InlineVoiceSearchController>
+
+  @Inject
+  lateinit var quranInfo: QuranInfo
+
+  private val inlineController: InlineVoiceSearchController?
+    get() = inlineVoiceSearchControllers.firstOrNull()
+
+  private val recordPermissionLauncher = registerForActivityResult(
+    ActivityResultContracts.RequestPermission()
+  ) { granted ->
+    if (granted) {
+      startInlineRecording()
+    }
+  }
 
   private var jumpToPageOnResume: Int? = null
 
@@ -180,6 +210,110 @@ class QuranActivity : AppCompatActivity(),
     }
     updateTranslationsListAsNeeded()
     quranIndexEventLogger.logAnalytics()
+
+    observeInlineVoiceSearchState()
+  }
+
+  private fun observeInlineVoiceSearchState() {
+    val controller = inlineController ?: return
+    lifecycleScope.launch {
+      controller.state.collect { state ->
+        when (state) {
+          is InlineVoiceSearchState.Recording -> {
+            showPulsingMic()
+            if (state.partialText.isNotEmpty()) {
+              val sv = searchItem?.actionView as? SearchView
+              if (searchItem?.isActionViewExpanded == true && sv != null) {
+                sv.setQuery(state.partialText, false)
+              }
+            }
+          }
+          is InlineVoiceSearchState.FinalResult -> {
+            stopPulsingMic()
+            if (state.text.isNotEmpty()) {
+              val searchIntent = Intent(this@QuranActivity, SearchActivity::class.java).apply {
+                action = Intent.ACTION_SEARCH
+                putExtra(SearchManager.QUERY, state.text)
+              }
+              startActivity(searchIntent)
+            }
+            controller.reset()
+          }
+          is InlineVoiceSearchState.ModelNotReady -> {
+            stopPulsingMic()
+            showModelNotReadyDialog()
+            controller.reset()
+          }
+          is InlineVoiceSearchState.Error -> {
+            stopPulsingMic()
+            Toast.makeText(this@QuranActivity, state.message, Toast.LENGTH_SHORT).show()
+            controller.reset()
+          }
+          is InlineVoiceSearchState.Idle -> {
+            stopPulsingMic()
+          }
+        }
+      }
+    }
+  }
+
+  private fun showModelNotReadyDialog() {
+    AlertDialog.Builder(this)
+      .setTitle(R.string.voice_search)
+      .setMessage(R.string.voice_search_model_not_ready)
+      .setPositiveButton(R.string.menu_settings) { dialog, _ ->
+        dialog.dismiss()
+        startActivity(Intent(this, QuranPreferenceActivity::class.java))
+      }
+      .setNegativeButton(android.R.string.cancel, null)
+      .show()
+  }
+
+  private fun showPulsingMic() {
+    val item = voiceSearchItem ?: return
+    if (micAnimator != null) return
+
+    val micImage = ImageView(this).apply {
+      setImageResource(R.drawable.ic_mic)
+      imageTintList = ContextCompat.getColorStateList(this@QuranActivity, R.color.voice_search_recording)
+    }
+    item.actionView = micImage
+    micImage.setOnClickListener { toggleRecording() }
+
+    val scaleX = PropertyValuesHolder.ofFloat(View.SCALE_X, 1.0f, 1.3f, 1.0f)
+    val scaleY = PropertyValuesHolder.ofFloat(View.SCALE_Y, 1.0f, 1.3f, 1.0f)
+    micAnimator = ObjectAnimator.ofPropertyValuesHolder(micImage, scaleX, scaleY).apply {
+      duration = 800
+      repeatCount = ObjectAnimator.INFINITE
+      start()
+    }
+  }
+
+  private fun stopPulsingMic() {
+    micAnimator?.cancel()
+    micAnimator = null
+    voiceSearchItem?.actionView = null
+  }
+
+  private fun toggleRecording() {
+    val controller = inlineController ?: return
+    when (controller.state.value) {
+      is InlineVoiceSearchState.Recording -> controller.stopRecording()
+      is InlineVoiceSearchState.Idle -> {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+          == PackageManager.PERMISSION_GRANTED
+        ) {
+          startInlineRecording()
+        } else {
+          recordPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+      }
+      else -> { /* ignore during transitional states */ }
+    }
+  }
+
+  private fun startInlineRecording() {
+    inlineController?.startRecording()
   }
 
   public override fun onResume() {
@@ -222,6 +356,10 @@ class QuranActivity : AppCompatActivity(),
   }
 
   override fun onDestroy() {
+    val controller = inlineController
+    if (controller != null && controller.state.value is InlineVoiceSearchState.Recording) {
+      controller.stopRecording()
+    }
     // only set to handle Android Q memory leaks
     backStackListener?.let {
       supportFragmentManager.removeOnBackStackChangedListener(it)
@@ -284,14 +422,19 @@ class QuranActivity : AppCompatActivity(),
     val inflater = menuInflater
     inflater.inflate(R.menu.home_menu, menu)
     searchItem = menu.findItem(R.id.search)
+    voiceSearchItem = menu.findItem(R.id.voice_search)
+    val voiceSearchEnabled = inlineController?.isEnabled == true
+
     searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
       override fun onMenuItemActionExpand(item: MenuItem): Boolean {
         searchItemCollapserCallback.isEnabled = true
+        voiceSearchItem?.isVisible = voiceSearchEnabled
         return true
       }
 
       override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
         searchItemCollapserCallback.isEnabled = false
+        voiceSearchItem?.isVisible = false
         return true
       }
     })
@@ -328,6 +471,9 @@ class QuranActivity : AppCompatActivity(),
       }
       R.id.jump -> {
         gotoPageDialog()
+      }
+      R.id.voice_search -> {
+        toggleRecording()
       }
       R.id.other_apps -> {
         val intent = Intent(Intent.ACTION_VIEW)

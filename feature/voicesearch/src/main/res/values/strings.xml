@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="voice_search_title">Voice Search</string>
+  <string name="voice_search_back">Back</string>
+  <string name="voice_search_description">Recite a Quran verse and find its location</string>
+  <string name="voice_search_model_required">A speech recognition model (~155 MB) needs to be downloaded for offline use.</string>
+  <string name="voice_search_download_model">Download Model</string>
+  <string name="voice_search_downloading_model">Downloading speech model…</string>
+  <string name="voice_search_model_size">~155 MB — stored on device for offline use</string>
+  <string name="voice_search_cancel">Cancel</string>
+  <string name="voice_search_tap_to_recite">Tap the microphone and recite a verse</string>
+  <string name="voice_search_start">Start recording</string>
+  <string name="voice_search_listening">Listening…</string>
+  <string name="voice_search_stop">Stop recording</string>
+  <string name="voice_search_tap_to_stop">Tap to stop</string>
+  <string name="voice_search_recognizing">Recognizing…</string>
+  <string name="voice_search_setting_title">Voice Search</string>
+  <string name="voice_search_setting_summary">Search for verses by reciting them aloud (requires microphone permission and ~155 MB model download)</string>
+  <string name="voice_search_setting_summary_ready">Search for verses by reciting them aloud</string>
+  <string name="voice_search_model_downloaded">Speech model downloaded. Enable to search by voice.</string>
+  <string name="voice_search_no_matches">No matching verses found</string>
+  <string name="voice_search_search_text">Search text</string>
+  <string name="voice_search_try_again">Try again</string>
+</resources>

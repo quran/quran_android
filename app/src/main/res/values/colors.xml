@@ -67,4 +67,6 @@
   <color name="text_primary">#ff212121</color>
   <color name="disabled_color">#ffbdbdbd</color>
   <color name="text_hint_color">#ff9e9e9e</color>
+
+  <color name="voice_search_recording">#FFE53935</color>
 </resources>

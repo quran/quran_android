@@ -3,3 +3,8 @@ plugins {
 }
 
 android.namespace 'com.quran.labs.androidquran.common.search'
+
+dependencies {
+  testImplementation libs.junit
+  testImplementation libs.truth
+}
