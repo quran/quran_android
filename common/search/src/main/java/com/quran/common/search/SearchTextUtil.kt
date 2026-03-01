@@ -30,6 +30,44 @@ object SearchTextUtil {
     }
   }
 
+  // Unicode ranges for Arabic diacritics (tashkeel) - more comprehensive than tashkeelRegex above
+  private val DIACRITICS_REGEX = Regex("[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]")
+
+  // Tatweel (kashida)
+  private const val TATWEEL = '\u0640'
+
+  fun normalizeArabic(text: String): String {
+    var result = text
+
+    // Remove diacritics (harakat)
+    result = DIACRITICS_REGEX.replace(result, "")
+
+    // Remove tatweel
+    result = result.replace(TATWEEL.toString(), "")
+
+    // Normalize alif variants to plain alif
+    result = result.replace('\u0622', '\u0627') // Alif madda -> Alif
+    result = result.replace('\u0623', '\u0627') // Alif hamza above -> Alif
+    result = result.replace('\u0625', '\u0627') // Alif hamza below -> Alif
+    result = result.replace('\u0671', '\u0627') // Alif wasla -> Alif
+
+    // Normalize taa marbuta to haa
+    result = result.replace('\u0629', '\u0647') // Taa marbuta -> Haa
+
+    // Normalize alif maksura to yaa
+    result = result.replace('\u0649', '\u064A') // Alif maksura -> Yaa
+
+    // Normalize hamza variants
+    result = result.replace('\u0624', '\u0648') // Waw hamza -> Waw
+    result = result.replace('\u0626', '\u064A') // Yaa hamza -> Yaa
+
+    return result.trim()
+  }
+
+  fun tokenizeArabic(normalizedText: String): List<String> {
+    return normalizedText.split(Regex("\\s+")).filter { it.isNotBlank() }
+  }
+
   fun isRtl(s: String): Boolean {
     val characters = s.toCharArray()
     for (character in characters) {
