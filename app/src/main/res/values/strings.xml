@@ -160,6 +160,9 @@
   <string name="prefs_volume_key_navigation_title">Volume key navigation</string>
   <string name="prefs_volume_key_navigation_summary">Navigate between pages using volume keys</string>
   <string name="prefs_category_reading">Reading Preferences</string>
+  <string name="prefs_focus_mode_title">Focus Mode</string>
+  <string name="prefs_focus_mode_summary">Enable Do Not Disturb while reading</string>
+  <string name="focus_mode_permission_required">Focus Mode requires Do Not Disturb access. Please grant permission in settings.</string>
   <string name="prefs_category_translation">Translation Preferences</string>
   <string name="prefs_category_display_settings">Display Settings</string>
   <string name="prefs_use_arabic_title">Arabic mode (الوضع العربي)</string>
