@@ -207,6 +207,7 @@ dependencies {
   implementation(libs.timber)
   debugImplementation(libs.leakcanary.android)
 
+  testImplementation(project(":common:test-utils"))
   testImplementation(libs.junit)
   testImplementation(libs.truth)
   testImplementation(libs.mockito.core)
@@ -217,6 +218,8 @@ dependencies {
   testImplementation(libs.espresso.intents)
   testImplementation(libs.turbine)
   testImplementation(libs.kotlinx.coroutines.test)
+  testImplementation(libs.sqldelight.sqlite.driver)
+  testImplementation(libs.sqldelight.primitive.adapters)
 
   errorprone(libs.errorprone.core)
 

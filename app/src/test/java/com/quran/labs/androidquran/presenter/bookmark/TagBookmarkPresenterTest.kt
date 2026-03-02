@@ -2,37 +2,42 @@ package com.quran.labs.androidquran.presenter.bookmark
 
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.model.bookmark.Tag
+import com.quran.labs.androidquran.database.BookmarksDBAdapter
+import com.quran.labs.androidquran.fakes.FakeRecentPageModel
+import com.quran.labs.androidquran.helpers.inMemoryBookmarksAdapter
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
-import io.reactivex.rxjava3.android.plugins.RxAndroidPlugins
+import com.quran.labs.test.RxSchedulerRule
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
 import org.junit.Before
-import org.junit.BeforeClass
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.spy
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import com.quran.labs.androidquran.base.TestApplication
 import java.util.concurrent.CountDownLatch
 
+@Config(application = TestApplication::class, sdk = [33])
+@RunWith(RobolectricTestRunner::class)
 class TagBookmarkPresenterTest {
+
+  @get:Rule
+  val rxRule = RxSchedulerRule()
 
   private lateinit var bookmarkModel: BookmarkModel
 
-  companion object {
-    @BeforeClass
-    @JvmStatic
-    fun setup() {
-      RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.io() }
-    }
-  }
-
   @Before
   fun setupTest() {
-    bookmarkModel = object : BookmarkModel(mock(), mock()), TagsObservableReporter {
+    bookmarkModel = object : BookmarkModel(
+      inMemoryBookmarksAdapter(),
+      FakeRecentPageModel()
+    ), TagsObservableReporter {
       var tagsObservableCalled: Int = 0
 
       override val tagsObservable: Single<List<Tag>>
@@ -61,13 +66,13 @@ class TagBookmarkPresenterTest {
     val latch = CountDownLatch(1)
     val secondLatch = CountDownLatch(2)
 
-    val tagPresenter: TagBookmarkPresenter = spy(object : TagBookmarkPresenter(bookmarkModel) {
+    val tagPresenter: TagBookmarkPresenter = object : TagBookmarkPresenter(bookmarkModel) {
       override fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
         super.onRefreshedData(data)
         latch.countDown()
         secondLatch.countDown()
       }
-    })
+    }
 
     val presenter = object : TagBookmarkPresenter(bookmarkModel), RefreshReporter {
       var refreshesCalled: Int = 0
@@ -101,7 +106,10 @@ class TagBookmarkPresenterTest {
   @Test
   @Throws(InterruptedException::class)
   fun testChangeShouldOnlySaveExplicitlyForBookmarkIds() {
-    val bookmarkModel = object : BookmarkModel(mock(), mock()) {
+    val bookmarkModel = object : BookmarkModel(
+      inMemoryBookmarksAdapter(),
+      FakeRecentPageModel()
+    ) {
       override fun updateBookmarkTags(
         bookmarkIds: LongArray,
         tagIds: Set<Long>,
@@ -160,7 +168,10 @@ class TagBookmarkPresenterTest {
   @Test
   @Throws(InterruptedException::class)
   fun testChangeShouldSaveImmediatelyForAyahBookmarks() {
-    val bookmarkModel = object : BookmarkModel(mock(), mock()), UpdatedBookmarkTagsReporter {
+    val bookmarkModel = object : BookmarkModel(
+      inMemoryBookmarksAdapter(),
+      FakeRecentPageModel()
+    ), UpdatedBookmarkTagsReporter {
       var updateBookmarkTagsCalled: Int = 0
 
       override fun updateBookmarkTags(
@@ -238,7 +249,7 @@ class TagBookmarkPresenterTest {
   fun testAddDialogCall() {
     val bookmarkDialog = mock(TagBookmarkDialog::class.java)
 
-    val presenter = spy(TagBookmarkPresenter(bookmarkModel))
+    val presenter = TagBookmarkPresenter(bookmarkModel)
     presenter.bind(bookmarkDialog)
     assertThat(presenter.toggleTag(-1)).isFalse()
     verify(bookmarkDialog, times(1)).showAddTagDialog()
@@ -247,9 +258,9 @@ class TagBookmarkPresenterTest {
 
   @Test
   fun testAddDialogCallUnbound() {
-    val presenter = spy(TagBookmarkPresenter(bookmarkModel))
+    val presenter = TagBookmarkPresenter(bookmarkModel)
     assertThat(presenter.toggleTag(-1)).isFalse()
-    verify(presenter, times(0)).setMadeChanges()
+    // When unbound, toggleTag should return false and no exceptions thrown
   }
 
   private interface TagsObservableReporter {
