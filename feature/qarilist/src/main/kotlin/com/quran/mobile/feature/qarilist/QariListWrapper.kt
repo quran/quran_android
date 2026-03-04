@@ -6,11 +6,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -20,9 +24,12 @@ import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
@@ -38,6 +45,7 @@ import com.quran.mobile.feature.qarilist.presenter.QariListPresenter
 import com.quran.mobile.feature.qarilist.ui.QariList
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -93,6 +101,20 @@ class QariListWrapper(
       currentQariManager.setCurrentQari(qari.id)
     }
 
+    var searchQuery by remember { mutableStateOf("") }
+    val filteredQaris by remember(qariListState.value) {
+      derivedStateOf {
+        val query = searchQuery
+        if (query.isBlank()) {
+          qariListState.value
+        } else {
+          qariListState.value
+            .filter { it.qariItem.name.contains(query, ignoreCase = true) }
+            .toImmutableList()
+        }
+      }
+    }
+
     Box(modifier = Modifier
       .fillMaxSize()
       .displayCutoutPadding()
@@ -106,7 +128,7 @@ class QariListWrapper(
         sheetContainerColor = MaterialTheme.colorScheme.surface,
         sheetContentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.background),
         sheetContent = {
-          Column {
+          Column(modifier = Modifier.imePadding()) {
             TopAppBar(
               title = {
                 Text(
@@ -124,8 +146,28 @@ class QariListWrapper(
               }
             )
 
+            OutlinedTextField(
+              value = searchQuery,
+              onValueChange = { searchQuery = it },
+              modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+              placeholder = { Text(stringResource(R.string.qarilist_search_hint)) },
+              leadingIcon = {
+                Icon(imageVector = QuranIcons.Search, contentDescription = null)
+              },
+              trailingIcon = {
+                if (searchQuery.isNotEmpty()) {
+                  IconButton(onClick = { searchQuery = "" }) {
+                    Icon(imageVector = QuranIcons.Close, contentDescription = null)
+                  }
+                }
+              },
+              singleLine = true
+            )
+
             QariList(
-              qariListState.value,
+              filteredQaris,
               selectedQariId = currentQariState.value?.id ?: -1,
               onQariSelected = onQariSelected
             )
