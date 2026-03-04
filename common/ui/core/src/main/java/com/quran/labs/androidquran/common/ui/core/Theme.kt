@@ -88,6 +88,7 @@ object QuranIcons {
   val Pause: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Pause
   val PlayArrow: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.PlayArrow
   val Repeat: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Repeat
+  val Search: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Search
   val Settings: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Settings
   val Speed: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Speed
   val Stop: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Stop
