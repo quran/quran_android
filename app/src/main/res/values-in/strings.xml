@@ -23,7 +23,7 @@
   <string name="menu_bookmarks">Penanda</string>
   <string name="menu_bookmarks_page">Penanda Halaman</string>
   <string name="menu_bookmarks_ayah">Penanda Ayat</string>
-  <string name="menu_sort">Sortir</string>
+  <string name="menu_sort">Urutkan</string>
   <string name="menu_sort_date">Tanggal Dibuat</string>
   <string name="menu_sort_location">Lokasi dalam Quran</string>
   <string name="menu_sort_group_by_tags">Kelompokkan berdasar Label</string>
@@ -32,7 +32,7 @@
   <string name="menu_help">Bantuan</string>
   <string name="menu_search">Pencarian</string>
   <string name="menu_get_translations">Dapatkan Terjemahan</string>
-  <string name="menu_jump">Loncat</string>
+  <string name="menu_jump">Lompat</string>
   <string name="gotoPage">Pergi ke halaman</string>
 
   <!-- about -->
@@ -57,7 +57,7 @@
   <string name="help">
         &lt;b>Bagaimana cara memainkan audio?&lt;/b>
         &lt;br/>Buka halaman Quran mana saja. Sentuh layar sekali. Di bagian bawah, anda akan lihat
-        tombol putar dan teks dengan nama seorang qari. Klik nama qari untuk memilih qari laiinya.
+        tombol putar dan teks dengan nama seorang qari. Klik nama qari untuk memilih qari lainnya.
         Klik tombol putar untuk mengunduh audio dan mendengarkan bacaan halaman atau surat yang terbuka.
         &lt;br/>
         &lt;br/>&lt;b>Bagaimana menampilkan terjemahan?&lt;/b>
@@ -122,14 +122,14 @@
   <string name="prefs_landscape_orientation_summary_on">Selalu gunakan mode mendatar</string>
   <string name="prefs_landscape_orientation_summary_off">Selalu gunakan mode tegak</string>
   <string name="prefs_night_mode_title">Mode malam</string>
-  <string name="prefs_night_mode_summary">Menggunkan latar gelap dan tulisan terang</string>
+  <string name="prefs_night_mode_summary">Menggunakan latar gelap dan tulisan terang</string>
   <string name="prefs_night_mode_text_brightness_title">Kecerahan teks</string>
   <string name="prefs_night_mode_text_brightness_summary">Kecerahan teks saat mode malam diaktifkan</string>
   <string name="prefs_night_mode_background_brightness_title">Kecerahan latar belakang</string>
   <string name="prefs_night_mode_background_brightness_summary">Kecerahan halaman saat mode malam aktif</string>
   <string name="prefs_overlay_page_info_title">Tampilkan informasi halaman</string>
   <string name="prefs_overlay_page_info_summary">Munculkan nomor halaman, nama surat, dan nomer juz saat membaca</string>
-  <string name="prefs_display_marker_title">Tampilkan munculan penanda</string>
+  <string name="prefs_display_marker_title">Tampilkan penanda</string>
   <string name="prefs_display_marker_summary">Munculkan tanda saat mencapai juz, hizb, dll.</string>
   <string name="prefs_highlight_bookmarks_title">Sorotan penanda</string>
   <string name="prefs_highlight_bookmarks_summary">Sorot ayat yang ditandai saat membaca</string>
@@ -138,8 +138,8 @@
   <string name="prefs_translations_summary">Unduh dan kelola terjemahan</string>
   <string name="prefs_ayah_before_translation_title">Ayat sebelum terjemahan</string>
   <string name="prefs_ayah_before_translation_summary">Tampilkan ayat berbahasa arab di atas terjemahan</string>
-  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
-  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_title">Font ramah disleksia</string>
+  <string name="prefs_use_dyslexic_font_summary">Tampilkan terjemahan dengan font ramah disleksia</string>
   <string name="prefs_category_download">Pilihan Pengunduhan</string>
   <string name="prefs_streaming_title">Streaming</string>
   <string name="prefs_streaming_summary">Alirkan audio jika memungkinkan</string>
@@ -258,7 +258,7 @@
   <string name="play">Putar</string>
   <string name="pause">Jeda</string>
   <string name="stop">Stop</string>
-  <string name="playback_speed">वापसी की गति:</string>
+  <string name="playback_speed">Kecepatan pemutaran:</string>
   <string name="next">Selanjutnya</string>
 
   <string-array name="repeatValues">
