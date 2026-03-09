@@ -1588,6 +1588,12 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     startService(downloadIntent)
   }
 
+  fun startBackgroundAudioDownload(downloadIntent: Intent) {
+    Timber.d("starting background audio download while streaming")
+    downloadInfoStreams.downloadRequested()
+    startService(downloadIntent)
+  }
+
   fun handlePlayback(request: AudioRequest?) {
     needsPermissionToDownloadOver3g = true
     val intent = Intent(this, AudioService::class.java)
