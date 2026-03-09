@@ -91,10 +91,14 @@ class AudioQueue(private val quranInfo: QuranInfo,
       url
     } else {
       val basePath = url.substringBeforeLast('.')
-      audioRequest.audioPathInfo.allowedExtensions
+      val localMatch = audioRequest.audioPathInfo.allowedExtensions
         .asSequence()
         .map { extension -> "$basePath.$extension" }
-        .firstOrNull { path -> File(path).exists() } ?: url
+        .firstOrNull { path -> File(path).exists() }
+      // if no local file found, fall back to streaming URL if available
+      localMatch ?: audioRequest.audioPathInfo.streamingUrlFormat?.let { streamingFormat ->
+        String.format(Locale.US, streamingFormat, sura, ayah)
+      } ?: url
     }
   }
 

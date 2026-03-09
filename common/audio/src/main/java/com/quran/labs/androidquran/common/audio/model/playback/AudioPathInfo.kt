@@ -8,5 +8,6 @@ data class AudioPathInfo(
   val urlFormat: String,
   val localDirectory: String,
   val gaplessDatabase: String?,
-  val allowedExtensions: List<String>
+  val allowedExtensions: List<String>,
+  val streamingUrlFormat: String? = null
 ) : Parcelable
