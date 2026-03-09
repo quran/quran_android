@@ -114,6 +114,9 @@ android {
     resources {
       excludes += setOf("META-INF/*.kotlin_module", "META-INF/DEPENDENCIES", "META-INF/INDEX.LIST")
     }
+    jniLibs {
+      pickFirsts += setOf("**/libonnxruntime.so")
+    }
   }
 }
 
@@ -155,6 +158,7 @@ dependencies {
   implementation(project(":feature:audiobar"))
   implementation(project(":feature:downloadmanager"))
   implementation(project(":feature:qarilist"))
+  implementation(project(":feature:voicesearch"))
 
   // android auto support
   implementation(project(":feature:autoquran"))
