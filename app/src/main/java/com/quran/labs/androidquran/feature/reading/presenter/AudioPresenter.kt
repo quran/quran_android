@@ -54,18 +54,10 @@ constructor(
         audioExtensionDecider.audioExtensionForQari(qari)
       )
 
-      // if we're still streaming, change the base qari format in audioPathInfo
-      // to a remote url format (instead of a path to a local directory).
-      // always attach the streaming url so AudioQueue can fall back to it
-      // for files that aren't downloaded yet.
-      val audioPath = if (stream) {
-        audioPathInfo.copy(
-          urlFormat = streamingUrl,
-          streamingUrlFormat = streamingUrl
-        )
-      } else {
-        audioPathInfo.copy(streamingUrlFormat = streamingUrl)
-      }
+      // always keep local url format as primary so AudioQueue tries local
+      // files first, and attach the streaming url as fallback for files
+      // that aren't downloaded yet.
+      val audioPath = audioPathInfo.copy(streamingUrlFormat = streamingUrl)
 
       val (actualStart, actualEnd) = if (start <= end) {
         start to end
@@ -100,16 +92,38 @@ constructor(
 
   private fun proceedWithAudioRequest(audioRequest: AudioRequest, bypassChecks: Boolean = false) {
     pagerActivity?.let {
-      val downloadIntent = getDownloadIntent(it, audioRequest)
-      if (downloadIntent != null) {
+      // check for required prerequisite downloads (databases) that must complete
+      // before playback can begin
+      val prerequisiteIntent = getPrerequisiteDownloadIntent(it, audioRequest)
+      if (prerequisiteIntent != null) {
         if (bypassChecks) {
-          it.proceedWithDownload(downloadIntent)
+          it.proceedWithDownload(prerequisiteIntent)
         } else {
-          it.handleRequiredDownload(downloadIntent)
+          it.handleRequiredDownload(prerequisiteIntent)
+        }
+        return@let
+      }
+
+      if (audioRequest.shouldStream) {
+        // start playback immediately via streaming, and also trigger a
+        // background download so future ayahs can play from local files
+        it.handlePlayback(audioRequest)
+        val audioDownloadIntent = getAudioDownloadIntent(it, audioRequest)
+        if (audioDownloadIntent != null) {
+          it.startBackgroundAudioDownload(audioDownloadIntent)
         }
       } else {
-        // play the audio
-        it.handlePlayback(audioRequest)
+        // not streaming - check if audio files need to be downloaded first
+        val audioDownloadIntent = getAudioDownloadIntent(it, audioRequest)
+        if (audioDownloadIntent != null) {
+          if (bypassChecks) {
+            it.proceedWithDownload(audioDownloadIntent)
+          } else {
+            it.handleRequiredDownload(audioDownloadIntent)
+          }
+        } else {
+          it.handlePlayback(audioRequest)
+        }
       }
     }
   }
@@ -125,10 +139,21 @@ constructor(
   }
 
   fun onDownloadSuccess() {
-    lastAudioRequest?.let { play(it) }
+    lastAudioRequest?.let { request ->
+      // if the last request was streaming, playback is already active and
+      // AudioQueue will automatically resolve to local files as they are
+      // downloaded, so we don't need to restart playback.
+      if (!request.shouldStream) {
+        play(request)
+      }
+    }
   }
 
-  private fun getDownloadIntent(context: Context, request: AudioRequest): Intent? {
+  /**
+   * Returns a download intent for prerequisite files (highlighting database,
+   * gapless timing database) that must be downloaded before playback can start.
+   */
+  private fun getPrerequisiteDownloadIntent(context: Context, request: AudioRequest): Intent? {
     val qari = request.qari
     val audioPathInfo = request.audioPathInfo
     val path = audioPathInfo.localDirectory
@@ -148,8 +173,21 @@ constructor(
         path,
         context.getString(R.string.timing_database)
       )
-    } else if (!request.shouldStream &&
-      audioUtil.shouldDownloadBasmallah(
+    } else {
+      null
+    }
+  }
+
+  /**
+   * Returns a download intent for audio files (basmallah and/or ayah audio)
+   * that are not yet downloaded locally.
+   */
+  private fun getAudioDownloadIntent(context: Context, request: AudioRequest): Intent? {
+    val qari = request.qari
+    val audioPathInfo = request.audioPathInfo
+    val path = audioPathInfo.localDirectory
+
+    return if (audioUtil.shouldDownloadBasmallah(
         path,
         request.start,
         request.end,
@@ -169,7 +207,7 @@ constructor(
         putExtra(QuranDownloadService.EXTRA_START_VERSE, request.start)
         putExtra(QuranDownloadService.EXTRA_END_VERSE, request.start)
       }
-    } else if (!request.shouldStream && !haveAllFiles(audioPathInfo, request.start, request.end)) {
+    } else if (!haveAllFiles(audioPathInfo, request.start, request.end)) {
       val title = quranDisplayData.getNotificationTitle(
         context, request.start, request.end, qari.isGapless
       )
