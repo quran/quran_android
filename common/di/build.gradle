@@ -8,4 +8,5 @@ android.namespace 'com.quran.mobile.di'
 dependencies {
   implementation libs.androidx.fragment.ktx
   implementation libs.androidx.preference.ktx
+  implementation libs.kotlinx.coroutines.core
 }
