@@ -59,7 +59,41 @@ class AudioQueueTest {
     assertThat(queue.getUrl()).isEqualTo("https://example.com/audio/1/1.opus")
   }
 
-  private fun audioRequest(urlFormat: String, allowedExtensions: List<String>): AudioRequest {
+  @Test
+  fun testGetUrlFallsBackToStreamingUrlWhenNoLocalFileExists() {
+    val baseDir = Files.createTempDirectory("audio-queue-streaming-fallback").toFile()
+    val format = baseDir.absolutePath + File.separator + "%d" + File.separator + "%d.opus"
+    val streamingFormat = "https://example.com/audio/%03d%03d.opus"
+
+    val queue = AudioQueue(
+      quranInfo,
+      audioRequest(format, listOf("opus", "mp3"), streamingFormat)
+    )
+
+    assertThat(queue.getUrl()).isEqualTo("https://example.com/audio/001001.opus")
+  }
+
+  @Test
+  fun testGetUrlPrefersLocalFileOverStreamingUrl() {
+    val baseDir = Files.createTempDirectory("audio-queue-local-over-streaming").toFile()
+    val suraDir = File(baseDir, "1").apply { mkdirs() }
+    val expectedFile = File(suraDir, "1.mp3").apply { writeText("test") }
+    val format = baseDir.absolutePath + File.separator + "%d" + File.separator + "%d.opus"
+    val streamingFormat = "https://example.com/audio/%03d%03d.opus"
+
+    val queue = AudioQueue(
+      quranInfo,
+      audioRequest(format, listOf("opus", "mp3"), streamingFormat)
+    )
+
+    assertThat(queue.getUrl()).isEqualTo(expectedFile.absolutePath)
+  }
+
+  private fun audioRequest(
+    urlFormat: String,
+    allowedExtensions: List<String>,
+    streamingUrlFormat: String? = null
+  ): AudioRequest {
     val qariItem = QariItem(
       id = 1,
       name = "Test Qari",
@@ -79,7 +113,8 @@ class AudioQueueTest {
         urlFormat = urlFormat,
         localDirectory = "",
         gaplessDatabase = null,
-        allowedExtensions = allowedExtensions
+        allowedExtensions = allowedExtensions,
+        streamingUrlFormat = streamingUrlFormat
       )
     )
   }

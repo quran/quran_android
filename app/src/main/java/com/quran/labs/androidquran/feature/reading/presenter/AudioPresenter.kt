@@ -49,17 +49,22 @@ constructor(
         false
       }
 
+      val streamingUrl = audioUtil.getQariUrl(
+        qari,
+        audioExtensionDecider.audioExtensionForQari(qari)
+      )
+
       // if we're still streaming, change the base qari format in audioPathInfo
-      // to a remote url format (instead of a path to a local directory)
+      // to a remote url format (instead of a path to a local directory).
+      // always attach the streaming url so AudioQueue can fall back to it
+      // for files that aren't downloaded yet.
       val audioPath = if (stream) {
         audioPathInfo.copy(
-          urlFormat = audioUtil.getQariUrl(
-            qari,
-            audioExtensionDecider.audioExtensionForQari(qari)
-          )
+          urlFormat = streamingUrl,
+          streamingUrlFormat = streamingUrl
         )
       } else {
-        audioPathInfo
+        audioPathInfo.copy(streamingUrlFormat = streamingUrl)
       }
 
       val (actualStart, actualEnd) = if (start <= end) {
