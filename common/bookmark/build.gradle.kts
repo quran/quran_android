@@ -28,4 +28,5 @@ dependencies {
   implementation(libs.sqldelight.android.driver)
   implementation(libs.sqldelight.coroutines.extensions)
   implementation(libs.sqldelight.primitive.adapters)
+  implementation(libs.quran.mobile.sync)
 }
