@@ -18,14 +18,13 @@ import dev.zacsweers.metro.SingleIn
 class MobileSyncSession @Inject constructor(
   @ApplicationContext context: Context
 ) {
-  private val appContext = context
+  private val applicationContext = context
+  private val environment = SynchronizationEnvironment(
+    endPointURL = endpoint(applicationContext)
+  )
+  private val driverFactory = DriverFactory(context = applicationContext)
 
-  private val graph by lazy {
-    SharedDependencyGraph.init(
-      driverFactory = DriverFactory(appContext),
-      environment = SynchronizationEnvironment(endPointURL = endpoint(appContext))
-    )
-  }
+  private val graph by lazy { SharedDependencyGraph.init(driverFactory, environment) }
 
   val authService: AuthService
     get() = graph.authService
