@@ -22,6 +22,7 @@ immutableCollectionsVersion = "0.4.0"
 leakcanaryAndroidVersion = "2.14"
 moshiVersion = "1.15.2"
 okioVersion = "3.16.4"
+quranMobileSyncVersion = "0.0.4"
 retrofitVersion = "3.0.0"
 rxandroidVersion = "3.0.2"
 rxjavaVersion = "3.1.12"
@@ -144,6 +145,7 @@ sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", ver
 sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions-jvm", version.ref = "sqldelight" }
 sqldelight-paging3-extensions = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
 sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
+quran-mobile-sync = { module = "com.quran:mobile-sync", version.ref = "quranMobileSyncVersion" }
 
 # recitation
 grpc-okhttp = { module = "io.grpc:grpc-okhttp", version.ref = "grpcOkhttpVersion" }
