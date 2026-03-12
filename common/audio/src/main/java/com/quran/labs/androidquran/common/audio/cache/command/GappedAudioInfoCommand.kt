@@ -20,6 +20,7 @@ class GappedAudioInfoCommand @Inject constructor(
           AudioFileUtil.filesMatchingSuffixWithSuffixRemoved(fileSystem, directory, ".$extension")
         }.mapNotNull { it.toIntOrNull() }
          .filter { it in 1..286 }
+         .distinct()
         directory.toFile().nameWithoutExtension.toInt() to gappedDownloads
       }
 

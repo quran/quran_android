@@ -5,18 +5,18 @@ kotlin = "2.3.10"
 ksp = "2.3.6"
 
 # required within the Gradle convention plugins - not unused
-composeBomVersion = "2026.02.00"
+composeBomVersion = "2026.02.01"
 media3ExoplayerVersion = "1.9.2"
 okhttpBomVersion = "5.3.2"
-firebaseBomVersion = "34.9.0"
+firebaseBomVersion = "34.10.0"
 
 # dependencies
 coroutinesVersion = "1.10.2"
 crashlytics = "3.0.6"
 dnsjavaVersion = "2.1.9"
-errorprone = "5.0.0"
-metro = "0.10.4"
-errorproneCoreVersion = "2.47.0"
+errorprone = "5.1.0"
+metro = "0.11.1"
+errorproneCoreVersion = "2.48.0"
 googleServices = "4.4.4"
 immutableCollectionsVersion = "0.4.0"
 leakcanaryAndroidVersion = "2.14"
@@ -60,15 +60,16 @@ molecule = "2.2.0"
 # recitations
 grpcOkhttpVersion = "1.79.0"
 googleAuthVersion = "1.43.0"
-googleCloudSpeechVersion = "4.80.0"
+googleCloudSpeechVersion = "4.81.0"
 
 # testing
 junitVersion = "4.13.2"
 espressoVersion = "3.7.0"
 truthVersion = "1.4.5"
-mockitoVersion = "5.21.0"
+mockitoVersion = "5.22.0"
 robolectricVersion = "4.16.1"
 turbineVersion = "1.2.1"
+koverVersion = "0.9.7"
 
 [libraries]
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junit" }
@@ -198,3 +199,4 @@ crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlyti
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 errorprone = { id = "net.ltgt.errorprone", version.ref = "errorprone" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "koverVersion" }

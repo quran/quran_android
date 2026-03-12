@@ -10,6 +10,12 @@
         android:name="com.google.android.gms.car.application"
         android:resource="@xml/automotive_app_desc" />
 
+    <provider
+        android:name=".common.QariArtworkContentProvider"
+        android:authorities="${applicationId}.autoquran.artwork"
+        android:exported="true"
+        android:grantUriPermissions="true" />
+
     <service
         android:name=".service.QuranBrowsableAudioPlaybackService"
         android:enabled="true"

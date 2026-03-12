@@ -18,7 +18,7 @@ class GaplessAudioInfoCommandTest {
     filesystem.write(qariPath / "114.mp3") { }
 
     val gaplessAudioInfoCommand = GaplessAudioInfoCommand(filesystem)
-    val downloads = gaplessAudioInfoCommand.gaplessDownloads(qariPath)
+    val downloads = gaplessAudioInfoCommand.gaplessDownloads(qariPath, listOf("mp3"))
     assertThat(downloads.first).hasSize(3)
     assertThat(downloads.second).isEmpty()
     assertThat(downloads.first).containsExactly(1, 2, 114)
@@ -34,7 +34,7 @@ class GaplessAudioInfoCommandTest {
     filesystem.write(qariPath / "114.mp3.part") { }
 
     val gaplessAudioInfoCommand = GaplessAudioInfoCommand(filesystem)
-    val downloads = gaplessAudioInfoCommand.gaplessDownloads(qariPath)
+    val downloads = gaplessAudioInfoCommand.gaplessDownloads(qariPath, listOf("mp3"))
     assertThat(downloads.first).hasSize(2)
     assertThat(downloads.second).hasSize(1)
     assertThat(downloads.first).containsExactly(1, 2)
@@ -52,7 +52,7 @@ class GaplessAudioInfoCommandTest {
     filesystem.write(qariPath / "114001.mp3.part") { }
 
     val gaplessAudioInfoCommand = GaplessAudioInfoCommand(filesystem)
-    val downloads = gaplessAudioInfoCommand.gaplessDownloads(qariPath)
+    val downloads = gaplessAudioInfoCommand.gaplessDownloads(qariPath, listOf("mp3"))
     assertThat(downloads.first).isEmpty()
     assertThat(downloads.second).isEmpty()
   }
