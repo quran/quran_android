@@ -111,6 +111,7 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
+import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.labs.androidquran.util.ShareUtil
 import com.quran.labs.androidquran.view.IconPageIndicator
 import com.quran.labs.androidquran.view.QuranSpinner
@@ -1174,8 +1175,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     val nightMode = menu.findItem(R.id.night_mode)
     if (nightMode != null) {
-      val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-      val isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)
+      val isNightMode = quranSettings.isNightMode
       nightMode.isChecked = isNightMode
       nightMode.setIcon(if (isNightMode) R.drawable.ic_night_mode else R.drawable.ic_day_mode)
     }
@@ -1197,14 +1197,20 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
       return true
     } else if (itemId == R.id.night_mode) {
-      val prefs = PreferenceManager
-        .getDefaultSharedPreferences(this)
-      val prefsEditor = prefs.edit()
-      val isNightMode = !item.isChecked
-      prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, isNightMode).apply()
-      item.setIcon(if (isNightMode) R.drawable.ic_night_mode else R.drawable.ic_day_mode)
-      item.isChecked = isNightMode
-      refreshQuranPages()
+      val isNightMode = quranSettings.isNightMode
+      val newAppTheme: String
+      if (isNightMode) {
+        newAppTheme = Constants.THEME_LIGHT
+        if (quranSettings.pageTheme == Constants.PAGE_THEME_QUIET) {
+          quranSettings.pageTheme = Constants.PAGE_THEME_ORIGINAL
+        }
+      } else {
+        newAppTheme = Constants.THEME_DARK
+      }
+
+      quranSettings.setAppTheme(newAppTheme)
+      ThemeUtil.setTheme(newAppTheme, quranSettings.pageTheme)
+      recreate()
       return true
     } else if (itemId == R.id.settings) {
       val i = Intent(this, QuranPreferenceActivity::class.java)

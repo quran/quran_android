@@ -73,7 +73,6 @@
   <string name="prefs_category_display_settings">ڕێکخستنی پیشاندان</string>
   <string name="prefs_use_arabic_title">شێوازی عەرەبی (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">زمانی بەرنامەکە ئەبێت بە عەرەبی </string>
-  <string name="prefs_new_background_title">پشت شاشەی نوێ</string>
   <string name="prefs_lock_orientation_title">قفڵکردنی گۆڕینی ئاڕاستەی شاشە</string>
   <string name="prefs_lock_orientation_summary_on">پەڕەکانی قورئان تەنها بەیەک ئاڕاستە پیشان ئەدرێن</string>
   <string name="prefs_lock_orientation_summary_off">گونجاندن بۆ شێوازی ئاڕاستەی ئێستا</string>
@@ -81,11 +80,6 @@
   <string name="prefs_landscape_orientation_summary_on">شێوازی ئاسۆیی بەکاردێت</string>
   <string name="prefs_landscape_orientation_summary_off">شێوازی ستوونی بەکاردێت</string>
   <string name="prefs_night_mode_title">شێوازی شەو (تاریک)</string>
-  <string name="prefs_night_mode_summary">پشت شاشەی ڕەش و نوسینی سپی </string>
-  <string name="prefs_night_mode_text_brightness_title">ڕووناکی نوسین</string>
-  <string name="prefs_night_mode_text_brightness_summary">ڕووناکی نوسین کاتێک شیوازی شەو چالاککرا</string>
-  <string name="prefs_night_mode_background_brightness_title">درەوشانەوەی باکگراوند</string>
-  <string name="prefs_night_mode_background_brightness_summary">درەوشانەوەی لاپەڕە کاتێک مۆدی شەو چالاکە</string>
   <string name="prefs_overlay_page_info_title">پیشاندانی زانیاری پەڕە </string>
   <string name="prefs_overlay_page_info_summary">پیشاندانی ژمارەی پەڕە، ناوی سورەت، وە ژمارەی جوزئـ لەکاتی خوێندنەوەدا</string>
   <string name="prefs_display_marker_title">ئاگادارکردنەوە لە بەشەکان</string>
