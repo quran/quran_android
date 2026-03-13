@@ -68,8 +68,8 @@ public class HighlightingImageView extends AppCompatImageView {
 
   private boolean isNightMode;
   private boolean isPageThemeDark;
-  private boolean isColorFilterOn;
-  private int nightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
+  private int themeBackgroundColor = Color.WHITE;
+  private int themeTextColor = Color.BLACK;
 
   // Params for drawing text
   private int fontSize;
@@ -114,18 +114,16 @@ public class HighlightingImageView extends AppCompatImageView {
 
   public HighlightingImageView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    if (overlayTextColor == -1) {
-      final Resources res = context.getResources();
-      overlayTextColor = ContextCompat.getColor(context, R.color.overlay_text_color);
-      headerFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size);
-      scrollableHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_scrollable);
-      dualPageHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_dualPage);
-      headerFooterFontSize = res.getDimensionPixelSize(R.dimen.page_overlay_font_size);
-      scrollableHeaderFooterFontSize =
-          res.getDimensionPixelSize(R.dimen.page_overlay_font_size_scrollable);
-      dualPageHeaderFooterFontSize =
-          res.getDimensionPixelSize(R.dimen.page_overlay_font_size_dualPage);
-    }
+    final Resources res = context.getResources();
+    overlayTextColor = ContextCompat.getColor(context, R.color.overlay_text_color);
+    headerFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size);
+    scrollableHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_scrollable);
+    dualPageHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_dualPage);
+    headerFooterFontSize = res.getDimensionPixelSize(R.dimen.page_overlay_font_size);
+    scrollableHeaderFooterFontSize =
+        res.getDimensionPixelSize(R.dimen.page_overlay_font_size_scrollable);
+    dualPageHeaderFooterFontSize =
+        res.getDimensionPixelSize(R.dimen.page_overlay_font_size_dualPage);
 
     Insetter.builder()
         .setOnApplyInsetsListener((view, insets, initialState) -> {
@@ -204,16 +202,12 @@ public class HighlightingImageView extends AppCompatImageView {
     }
   }
 
-  public void setNightMode(boolean isNightMode, int textBrightness, int backgroundBrightness, boolean isPageThemeDark) {
+  public void setNightMode(boolean isNightMode, boolean isPageThemeDark,
+                           int themeBackgroundColor, int themeTextColor) {
     this.isNightMode = isNightMode;
     this.isPageThemeDark = isPageThemeDark;
-    if (isNightMode) {
-      // avoid damaging the looks of the Quran page
-      nightModeTextBrightness = (int) (50 * Math.log1p(backgroundBrightness) + textBrightness);
-      if (nightModeTextBrightness > 255) { nightModeTextBrightness = 255; }
-      // we need a new color filter now
-      isColorFilterOn = false;
-    }
+    this.themeBackgroundColor = themeBackgroundColor;
+    this.themeTextColor = themeTextColor;
     // Re-init overlay params color based on the new night mode setting
     initOverlayParamsColor();
     adjustNightMode();
@@ -354,8 +348,6 @@ public class HighlightingImageView extends AppCompatImageView {
   public void setImageDrawable(Drawable bitmap) {
     // clear the color filter before setting the image
     clearColorFilter();
-    // this allows the filter to be enabled again if needed
-    isColorFilterOn = false;
 
     super.setImageDrawable(bitmap);
     if (bitmap != null) {
@@ -364,20 +356,33 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   public void adjustNightMode() {
-    boolean shouldApplyFilter = (isNightMode || isPageThemeDark) && !isColorFilterOn;
+    boolean isOriginalInLightMode = !isNightMode && !isPageThemeDark &&
+        themeBackgroundColor == Color.WHITE && themeTextColor == Color.BLACK;
 
-    if (shouldApplyFilter) {
+    if (!isOriginalInLightMode) {
+      float tr = Color.red(themeTextColor);
+      float tg = Color.green(themeTextColor);
+      float tb = Color.blue(themeTextColor);
+
+      float br = Color.red(themeBackgroundColor);
+      float bg = Color.green(themeBackgroundColor);
+      float bb = Color.blue(themeBackgroundColor);
+
+      // Calculate scale factor for each channel: (Background - Text) / 255
+      float sr = (br - tr) / 255f;
+      float sg = (bg - tg) / 255f;
+      float sb = (bb - tb) / 255f;
+
       float[] matrix = {
-          -1, 0, 0, 0, nightModeTextBrightness,
-          0, -1, 0, 0, nightModeTextBrightness,
-          0, 0, -1, 0, nightModeTextBrightness,
+          sr, 0, 0, 0, tr,
+          0, sg, 0, 0, tg,
+          0, 0, sb, 0, tb,
           0, 0, 0, 1, 0
       };
+
       setColorFilter(new ColorMatrixColorFilter(matrix));
-      isColorFilterOn = true;
-    } else if (!isNightMode && !isPageThemeDark) {
+    } else {
       clearColorFilter();
-      isColorFilterOn = false;
     }
 
     invalidate();
@@ -460,10 +465,11 @@ public class HighlightingImageView extends AppCompatImageView {
     if (overlayParams == null) {
       return;
     }
-    int overlayColor = overlayTextColor;
-    if (isNightMode) {
-      overlayColor = Color.rgb(nightModeTextBrightness,
-          nightModeTextBrightness, nightModeTextBrightness);
+    int overlayColor;
+    if (isNightMode || isPageThemeDark) {
+      overlayColor = themeTextColor;
+    } else {
+      overlayColor = overlayTextColor;
     }
     overlayParams.paint.setColor(overlayColor);
   }

@@ -110,11 +110,6 @@
   <string name="prefs_landscape_orientation_summary_on">Zawsze używaj orientacji poziomej</string>
   <string name="prefs_landscape_orientation_summary_off">Zawsze używaj orientacji pionowej</string>
   <string name="prefs_night_mode_title">Tryb nocny</string>
-  <string name="prefs_night_mode_summary">Użyj ciemnego tła i jasnych czcionek</string>
-  <string name="prefs_night_mode_text_brightness_title">Jasność tekstu</string>
-  <string name="prefs_night_mode_text_brightness_summary">Jasność tekstu w trybie nocnym</string>
-  <string name="prefs_night_mode_background_brightness_title">Jasność tła</string>
-  <string name="prefs_night_mode_background_brightness_summary">Jasność strony w trybie nocnym</string>
   <string name="prefs_overlay_page_info_title">Pokaż informacje na stronie</string>
   <string name="prefs_overlay_page_info_summary">Pokaż numer strony, nazwę sury i dżuzu podczas czytania</string>
   <string name="prefs_display_marker_title">Wyskakujące okienka kamieni milowych</string>

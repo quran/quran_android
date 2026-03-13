@@ -34,9 +34,9 @@ open class QuranImagePageLayout(context: Context) : QuranPageLayout(context) {
     super.updateView(quranSettings)
     imageView.setNightMode(
       quranSettings.isNightMode,
-      quranSettings.nightModeTextBrightness,
-      quranSettings.nightModeBackgroundBrightness,
-      quranSettings.isPageThemeDark
+      quranSettings.isPageThemeDark,
+      quranSettings.pageThemeBackgroundColor,
+      quranSettings.pageThemeTextColor
     )
   }
 

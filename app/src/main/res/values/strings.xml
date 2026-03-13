@@ -172,11 +172,6 @@
   <string name="prefs_landscape_orientation_summary_on">Always use landscape mode</string>
   <string name="prefs_landscape_orientation_summary_off">Always use portrait mode</string>
   <string name="prefs_night_mode_title">Night mode</string>
-  <string name="prefs_night_mode_summary">Use dark background and light fonts</string>
-  <string name="prefs_night_mode_text_brightness_title">Text brightness</string>
-  <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night mode is active</string>
-  <string name="prefs_night_mode_background_brightness_title">Background brightness</string>
-  <string name="prefs_night_mode_background_brightness_summary">Brightness of the page when night mode is active</string>
   <string name="prefs_overlay_page_info_title">Show page info</string>
   <string name="prefs_overlay_page_info_summary">Overlay page number, surah name, and juz\' number while reading</string>
   <string name="prefs_display_marker_title">Display marker popups</string>
@@ -411,7 +406,6 @@
   <string name="page_theme_calm">Calm</string>
   <string name="page_theme_focus">Focus</string>
   <string name="page_theme_quiet">Quiet</string>
-  <string name="page_theme_black">Black</string>
 
   <!-- App theme options -->
   <string name="theme_light">Light</string>

@@ -76,7 +76,6 @@
   <string name="prefs_category_translation">إعدادات التفسير والترجمة</string>
   <string name="prefs_category_display_settings">إعدادات العرض</string>
   <string name="prefs_page_theme_title">سمة الصفحة</string>
-  <string name="prefs_new_background_title">الخلفية الجديدة</string>
   <string name="prefs_lock_orientation_title">اﻹبقاء على وضع العرض</string>
   <string name="prefs_lock_orientation_summary_on">وضع العرض سيتم الحفاظ عليه</string>
   <string name="prefs_lock_orientation_summary_off">وضع العرض يتغير تلقائيا</string>
@@ -84,11 +83,6 @@
   <string name="prefs_landscape_orientation_summary_on">سيتم استخدام الوضع اﻷفقي</string>
   <string name="prefs_landscape_orientation_summary_off">سيتم استخدام الوضع الرأسي</string>
   <string name="prefs_night_mode_title">القراءة الليلية</string>
-  <string name="prefs_night_mode_summary">الخلفية باللون اﻷسود والخطوط باللون اﻷبيض</string>
-  <string name="prefs_night_mode_text_brightness_title">إضاءة الخط</string>
-  <string name="prefs_night_mode_text_brightness_summary">إضاءة الخط عند تفعيل القراءة الليلية</string>
-  <string name="prefs_night_mode_background_brightness_title">إضاءة الخلفية</string>
-  <string name="prefs_night_mode_background_brightness_summary">إضاءة الصفحة عند تفعيل القراءة الليلية</string>
   <string name="prefs_overlay_page_info_title">عرض بيانات الصفحة</string>
   <string name="prefs_overlay_page_info_summary">عرض رقم الصفحة، اسم السورة، ورقم الجزء أثناء القراءة</string>
   <string name="prefs_display_marker_title">التنبيه</string>
@@ -331,7 +325,6 @@
   <string name="page_theme_calm">هادئ</string>
   <string name="page_theme_focus">تركيز</string>
   <string name="page_theme_quiet">سكين</string>
-  <string name="page_theme_black">أسود</string>
 
   <!-- App theme options -->
   <string name="theme_light">فاتح</string>

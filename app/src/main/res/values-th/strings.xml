@@ -102,11 +102,6 @@
   <string name="prefs_landscape_orientation_summary_on">ใช้โหมดแนวนอนเสมอ</string>
   <string name="prefs_landscape_orientation_summary_off">ใช้โหมดแนวตั้งเสมอ</string>
   <string name="prefs_night_mode_title">โหมดกลางคืน</string>
-  <string name="prefs_night_mode_summary">ใช้พื้นหลังสีเข้มและแบบอักษรสีอ่อน</string>
-  <string name="prefs_night_mode_text_brightness_title">ความสว่างของข้อความ</string>
-  <string name="prefs_night_mode_text_brightness_summary">ความสว่างของข้อความเมื่อโหมดกลางคืนทํางานอยู่</string>
-  <string name="prefs_night_mode_background_brightness_title">ความสว่างของแบ็คกราวด์</string>
-  <string name="prefs_night_mode_background_brightness_summary">ความสว่างของหน้าเมื่อโหมดกลางคืนทํางานอยู่</string>
   <string name="prefs_overlay_page_info_title">แสดงข้อมูลหน้า</string>
   <string name="prefs_overlay_page_info_summary">ซ้อนทับหมายเลขหน้า ชื่อซูเราะห์ และหมายเลข ญชอฺที ขณะอ่าน</string>
   <string name="prefs_display_marker_title">แสดงเครื่องหมายผุดขึ้น</string>

@@ -82,11 +82,6 @@
   <string name="prefs_landscape_orientation_summary_on">ھەمىشە توغرىسىغا يۆنىلىش ھالىتىنى ئىشلىتىدۇ</string>
   <string name="prefs_landscape_orientation_summary_off">ھەمىشە بويىغا يۆنىلىش ھالىتىنى ئىشلىتىدۇ</string>
   <string name="prefs_night_mode_title">كېچە ھالىتى</string>
-  <string name="prefs_night_mode_summary">قارا تەگلىك يورۇق خەت نۇسخىسى ئىشلىتىدۇ</string>
-  <string name="prefs_night_mode_text_brightness_title">تېكىست يورۇقلۇقى</string>
-  <string name="prefs_night_mode_text_brightness_summary">كېچە ھالىتى قوزغىتىلغان ۋاقىتتىكى تېكىستنىڭ يورۇقلۇقى</string>
-  <string name="prefs_night_mode_background_brightness_title">تەگلىك يورۇقلۇقى</string>
-  <string name="prefs_night_mode_background_brightness_summary">كېچە ھالىتى قوزغىتىلغان ۋاقىتتىكى بەتنىڭ يورۇقلۇقى</string>
   <string name="prefs_overlay_page_info_title">بەت ئۇچۇرىنى كۆرسەت</string>
   <string name="prefs_overlay_page_info_summary">قىرائەت قىلىۋاتقاندا بەت سانى، سۈرە ئىسمى ۋە پارە سانىنى كۆرسىتىدۇ</string>
   <string name="prefs_display_marker_title">بەلگە قاڭقىش كۆزنىكىنى كۆرسەت</string>

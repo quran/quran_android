@@ -110,11 +110,6 @@
   <string name="prefs_landscape_orientation_summary_on">Använd alltid liggande läge</string>
   <string name="prefs_landscape_orientation_summary_off">Använd alltid porträttläge</string>
   <string name="prefs_night_mode_title">Nattläge</string>
-  <string name="prefs_night_mode_summary">Använd mörk bakgrund och ljusa typsnitt</string>
-  <string name="prefs_night_mode_text_brightness_title">Textens ljusstyrka</string>
-  <string name="prefs_night_mode_text_brightness_summary">Textens ljusstyrka när nattläget är aktivt.</string>
-  <string name="prefs_night_mode_background_brightness_title">Ljusstyrka i bakgrunden</string>
-  <string name="prefs_night_mode_background_brightness_summary">Sidans ljusstyrka när nattläget är aktivt.</string>
   <string name="prefs_overlay_page_info_title">Visa information om sidan</string>
   <string name="prefs_overlay_page_info_summary">Överlagra sidnummer, surah-namn och Del-nummer medan du läser</string>
   <string name="prefs_display_marker_title">Display marker popups</string>

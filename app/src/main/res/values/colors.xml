@@ -11,14 +11,16 @@
   <color name="secondary_dark_background">#ffffffff</color>
 
   <!-- Page theme colors -->
-  <color name="theme_paper">#EEEDED</color>
-  <color name="theme_original">#FFFFFF</color>
-  <color name="theme_calm">#EEE2CC</color>
-  <color name="theme_focus">#F6FCF5</color>
-  <color name="theme_quiet">#4A4A52</color>
-  <color name="theme_black">#000000</color>
-  <color name="theme_text_dark">#212121</color>
-  <color name="theme_text_light">#FFFFFF</color>
+  <color name="theme_paper_bg">#EEECEB</color>
+  <color name="theme_paper_text">#1D1A1A</color>
+  <color name="theme_original_bg">#FFFFFF</color>
+  <color name="theme_original_text">#000000</color>
+  <color name="theme_calm_bg">#EDE2CC</color>
+  <color name="theme_calm_text">#32281E</color>
+  <color name="theme_focus_bg">#FEFCF5</color>
+  <color name="theme_focus_text">#141202</color>
+  <color name="theme_quiet_bg">#4A4A4D</color>
+  <color name="theme_quiet_text">#EBEBF4</color>
 
   <color name="header_background">#dee2e6</color>
   <color name="header_text_color">@color/sura_number_color</color>
