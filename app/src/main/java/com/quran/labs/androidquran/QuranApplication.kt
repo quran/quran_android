@@ -39,7 +39,7 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
 
     // theme setup
     val theme = quranSettings.currentTheme()
-    ThemeUtil.setTheme(theme)
+    ThemeUtil.setTheme(theme, quranSettings.pageTheme)
   }
 
   open fun setupTimber() {

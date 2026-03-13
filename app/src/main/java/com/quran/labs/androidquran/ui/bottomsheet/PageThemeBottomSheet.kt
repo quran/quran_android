@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
@@ -48,11 +49,12 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupAppThemeDropdown(view)
-        setupThemesGrid(view)
+        val quranSettings = QuranSettings.getInstance(requireContext())
+        setupAppThemeDropdown(view, quranSettings)
+        setupThemesGrid(view, quranSettings)
     }
 
-    private fun setupAppThemeDropdown(view: View) {
+    private fun setupAppThemeDropdown(view: View, quranSettings: QuranSettings) {
         val spinner = view.findViewById<Spinner>(R.id.app_theme_spinner)
         val appThemes = arrayOf(
             getString(R.string.theme_light),
@@ -64,7 +66,7 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
-        val currentAppTheme = QuranSettings.getInstance(requireContext()).currentTheme()
+        val currentAppTheme = quranSettings.currentTheme()
         val selectedIndex = when (currentAppTheme) {
             Constants.THEME_LIGHT -> 0
             Constants.THEME_DARK -> 1
@@ -73,8 +75,8 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
 
         spinner.setSelection(selectedIndex, false)
         var lastSelectedPosition = selectedIndex
-        spinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: android.widget.AdapterView<*>, v: View?, position: Int, id: Long) {
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, v: View?, position: Int, id: Long) {
                 if (position == lastSelectedPosition) return
                 lastSelectedPosition = position
 
@@ -83,41 +85,54 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
                     1 -> Constants.THEME_DARK
                     else -> Constants.THEME_DEFAULT
                 }
-                QuranSettings.getInstance(requireContext()).setAppTheme(newTheme)
-                ThemeUtil.setTheme(newTheme)
-                dismiss()
+                quranSettings.setAppTheme(newTheme)
+                ThemeUtil.setTheme(newTheme, quranSettings.pageTheme)
+
+                // since this changes the app's overall theme, it's safer to recreate the activity
                 requireActivity().recreate()
+                dismiss()
             }
 
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>) {}
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
     }
 
-    private fun setupThemesGrid(view: View) {
+    private fun setupThemesGrid(view: View, quranSettings: QuranSettings) {
         themesRecyclerView = view.findViewById(R.id.themes_recycler_view)
         themesRecyclerView?.layoutManager = GridLayoutManager(requireContext(), 3)
-        themesRecyclerView?.adapter = ThemeCardAdapter()
+        themesRecyclerView?.adapter = ThemeCardAdapter(quranSettings)
     }
 
-    private fun onThemeClicked(theme: PageTheme) {
-        val previousPosition = themes.indexOfFirst { it.storageKey == currentTheme.storageKey }
+    private fun onThemeClicked(theme: PageTheme, quranSettings: QuranSettings) {
+        val previousPageTheme = quranSettings.pageTheme
+        val previousPosition = themes.indexOfFirst { it.storageKey == previousPageTheme }
         val newPosition = themes.indexOf(theme)
 
+        if (previousPageTheme == theme.storageKey) return
+
         currentTheme = theme
-        QuranSettings.getInstance(requireContext()).pageTheme = theme.storageKey
+        quranSettings.pageTheme = theme.storageKey
+        ThemeUtil.setTheme(quranSettings.currentTheme(), theme.storageKey)
 
         val adapter = themesRecyclerView?.adapter
         if (previousPosition >= 0) adapter?.notifyItemChanged(previousPosition)
         if (newPosition >= 0 && newPosition != previousPosition) adapter?.notifyItemChanged(newPosition)
 
-        view?.postDelayed({ dismiss() }, 150)
+        // quiet theme forces dark mode, so we might need to recreate activity
+        if (theme.storageKey == Constants.PAGE_THEME_QUIET || previousPageTheme == Constants.PAGE_THEME_QUIET) {
+            requireActivity().recreate()
+            dismiss()
+        } else {
+            // delay dismissal slightly to show selection
+            view?.postDelayed({ dismiss() }, 150)
+        }
     }
 
-    private inner class ThemeCardAdapter : RecyclerView.Adapter<ThemeCardViewHolder>() {
+    private inner class ThemeCardAdapter(private val quranSettings: QuranSettings) : RecyclerView.Adapter<ThemeCardViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ThemeCardViewHolder {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_page_theme_card, parent, false)
-            return ThemeCardViewHolder(view)
+            return ThemeCardViewHolder(view, quranSettings)
         }
 
         override fun onBindViewHolder(holder: ThemeCardViewHolder, position: Int) {
@@ -127,7 +142,7 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
         override fun getItemCount(): Int = themes.size
     }
 
-    private inner class ThemeCardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private inner class ThemeCardViewHolder(itemView: View, private val quranSettings: QuranSettings) : RecyclerView.ViewHolder(itemView) {
         private val cardView: CardView = itemView.findViewById(R.id.theme_card)
         private val arabicText: TextView = itemView.findViewById(R.id.arabic_preview)
         private val themeName: TextView = itemView.findViewById(R.id.theme_name)
@@ -146,7 +161,7 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
             selectionBorder.visibility = if (isSelected) View.VISIBLE else View.GONE
 
             cardView.setOnClickListener {
-                onThemeClicked(theme)
+                onThemeClicked(theme, quranSettings)
             }
         }
     }

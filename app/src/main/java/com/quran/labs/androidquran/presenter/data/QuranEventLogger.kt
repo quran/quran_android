@@ -25,7 +25,6 @@ class QuranEventLogger @Inject constructor(
         "pageType" to quranSettings.pageType,
         "isNightMode" to quranSettings.isNightMode,
         "isArabic" to (QuranUtils.getCurrentLocale().language == "ar"),
-        "background" to if (quranSettings.useNewBackground()) "default" else "legacy",
         "isLockingOrientation" to lockingOrientation,
         "overlayInfo" to quranSettings.shouldOverlayPageInfo(),
         "markerPopups" to quranSettings.shouldDisplayMarkerPopup(),
