@@ -149,8 +149,10 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
         private val selectionBorder: View = itemView.findViewById(R.id.selection_border)
 
         fun bind(theme: PageTheme) {
+            val textColor = theme.getPreviewTextColor(itemView.context)
             cardView.setCardBackgroundColor(theme.getBackgroundColor(itemView.context))
-            arabicText.setTextColor(theme.getPreviewTextColor(itemView.context))
+            arabicText.setTextColor(textColor)
+            themeName.setTextColor(textColor)
             themeName.text = theme.getDisplayName(itemView.context)
             cardView.contentDescription = itemView.context.getString(
                 R.string.page_theme_select_content_description,
