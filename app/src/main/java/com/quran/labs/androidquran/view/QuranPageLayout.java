@@ -202,10 +202,8 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     super.updateView(quranSettings);
     boolean nightMode = quranSettings.isNightMode();
     int lineColor = Color.BLACK;
-    final int nightModeTextBrightness = nightMode ?
-        quranSettings.getNightModeTextBrightness() : Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
     if (nightMode) {
-      lineColor = Color.argb(nightModeTextBrightness, 255, 255, 255);
+      lineColor = Color.argb(255, 255, 255, 255);
     }
 
     if ((pageNumber + skippedPages) % 2 == 0) {
@@ -220,16 +218,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
       leftBorder = BorderMode.LINE;
     }
 
-    updateBackground(nightMode, quranSettings);
-  }
-
-  protected void updateBackground(boolean nightMode, QuranSettings quranSettings) {
-    if (nightMode) {
-      int bgColor = quranSettings.getNightModeBackgroundBrightness();
-      setBackgroundColor(Color.rgb(bgColor,bgColor,bgColor));
-    } else {
-      setBackgroundColor(quranSettings.getPageThemeBackgroundColor());
-    }
+    setBackgroundColor(quranSettings.getPageThemeBackgroundColor());
   }
 
   @Override
