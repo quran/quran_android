@@ -62,7 +62,7 @@ sealed class PageTheme(val storageKey: String) {
     }
 
     companion object {
-        fun getAllThemes(): List<PageTheme> = listOf(Paper, Original, Calm, Focus, Quiet)
+        fun getAllThemes(): List<PageTheme> = listOf(Paper, Original, Quiet, Calm, Focus)
 
         fun fromKey(key: String): PageTheme = when (key) {
             Constants.PAGE_THEME_PAPER -> Paper
