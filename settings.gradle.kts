@@ -16,6 +16,7 @@ dependencyResolutionManagement {
 }
 
 include(":app")
+include(":app-tv")
 include(":common:analytics")
 include(":common:audio")
 include(":common:bookmark")

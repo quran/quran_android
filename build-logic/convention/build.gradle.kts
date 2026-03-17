@@ -34,5 +34,10 @@ gradlePlugin {
       id = "quran.android.library"
       implementationClass = "KotlinLibraryConventionPlugin"
     }
+
+    register("androidApplicationTv") {
+      id = "quran.android.application.tv"
+      implementationClass = "AndroidApplicationTvConventionPlugin"
+    }
   }
 }
