@@ -1,5 +1,7 @@
 package com.quran.labs.androidquran.tv.settings
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,16 +20,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Switch
 import androidx.tv.material3.Text
+import kotlinx.coroutines.launch
 
 /**
  * Simple setting item model
@@ -40,52 +46,74 @@ data class SettingItem(
 )
 
 sealed class SettingType {
-  data class Toggle(val defaultValue: Boolean) : SettingType()
+  data class Toggle(val defaultValue: Boolean, val key: String) : SettingType()
   data class Navigation(val route: String) : SettingType()
   data class Action(val action: () -> Unit) : SettingType()
 }
 
 /**
- * Sample settings for demonstration
+ * SharedPreferences keys
  */
-val sampleSettings = listOf(
-  SettingItem(
-    id = "dark_mode",
-    title = "Dark Mode",
-    description = "Use dark theme",
-    type = SettingType.Toggle(false)
-  ),
-  SettingItem(
-    id = "arabic_names",
-    title = "Arabic Surah Names",
-    description = "Show surah names in Arabic",
-    type = SettingType.Toggle(true)
-  ),
-  SettingItem(
-    id = "translations",
-    title = "Translations",
-    description = "Manage Quran translations",
-    type = SettingType.Navigation("translations")
-  ),
-  SettingItem(
-    id = "audio",
-    title = "Audio Settings",
-    description = "Configure audio playback",
-    type = SettingType.Navigation("audio")
-  ),
-  SettingItem(
-    id = "about",
-    title = "About",
-    description = "App version and information",
-    type = SettingType.Navigation("about")
+object QuranPreferences {
+  const val PREFS_NAME = "com.quran.labs.androidquran.preferences"
+  const val PREF_ARABIC_NAMES = "useArabicNames"
+  const val PREF_NIGHT_MODE = "nightMode"
+  const val PREF_KEEP_SCREEN_ON = "keepScreenOn"
+  const val PREF_LANDSCAPE_MODE = "landscapeMode"
+  const val PREF_TRANSLATION_TEXT_SIZE = "translationTextSize"
+}
+
+/**
+ * Sample settings for TV
+ */
+fun getTvSettings(): List<SettingItem> {
+  return listOf(
+    SettingItem(
+      id = "arabic_names",
+      title = "Arabic Surah Names",
+      description = "Show surah names in Arabic",
+      type = SettingType.Toggle(false, QuranPreferences.PREF_ARABIC_NAMES)
+    ),
+    SettingItem(
+      id = "night_mode",
+      title = "Night Mode",
+      description = "Use dark theme",
+      type = SettingType.Toggle(false, QuranPreferences.PREF_NIGHT_MODE)
+    ),
+    SettingItem(
+      id = "audio_settings",
+      title = "Audio Settings",
+      description = "Quran playback and audio controls",
+      type = SettingType.Navigation("audio")
+    ),
+    SettingItem(
+      id = "keep_screen_on",
+      title = "Keep Screen On",
+      description = "Prevent screen from sleeping while reading",
+      type = SettingType.Toggle(true, QuranPreferences.PREF_KEEP_SCREEN_ON)
+    ),
+    SettingItem(
+      id = "about",
+      title = "About",
+      description = "App version and information",
+      type = SettingType.Action({})
+    )
   )
-)
+}
 
 @Composable
 fun TvSettingsScreen(
+  onNavigateToAudio: () -> Unit = {},
   modifier: Modifier = Modifier
 ) {
-  val settings = remember { sampleSettings.toMutableList() }
+  val context = LocalContext.current
+  val scope = rememberCoroutineScope()
+  val settings = remember { getTvSettings() }
+
+  // Get SharedPreferences
+  val prefs = remember {
+    context.getSharedPreferences(QuranPreferences.PREFS_NAME, Context.MODE_PRIVATE)
+  }
 
   Box(
     modifier = modifier
@@ -108,7 +136,15 @@ fun TvSettingsScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
       ) {
         items(settings) { setting ->
-          SettingCard(setting = setting)
+          TvSettingCard(
+            setting = setting,
+            prefs = prefs,
+            onNavigate = { route ->
+              if (route == "audio") {
+                onNavigateToAudio()
+              }
+            }
+          )
         }
       }
     }
@@ -116,21 +152,25 @@ fun TvSettingsScreen(
 }
 
 @Composable
-fun SettingCard(
+fun TvSettingCard(
   setting: SettingItem,
+  prefs: SharedPreferences,
+  onNavigate: (String) -> Unit = {},
   modifier: Modifier = Modifier
 ) {
   var isFocused by remember { mutableStateOf(false) }
 
   // Handle toggle state
-  var checkedState by remember {
-    mutableStateOf(
-      when (setting.type) {
-        is SettingType.Toggle -> (setting.type as SettingType.Toggle).defaultValue
-        else -> false
-      }
-    )
+  val initialValue = remember {
+    when (setting.type) {
+      is SettingType.Toggle -> prefs.getBoolean(
+        (setting.type as SettingType.Toggle).key,
+        (setting.type as SettingType.Toggle).defaultValue
+      )
+      else -> false
+    }
   }
+  var checkedState by remember { mutableStateOf(initialValue) }
 
   Box(
     modifier = modifier
@@ -159,23 +199,24 @@ fun SettingCard(
           else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
         shape = RoundedCornerShape(12.dp)
       )
-      .padding(24.dp)
-      .onFocusChanged { focusState ->
-        isFocused = focusState.hasFocus
-      }
       .clickable {
         when (setting.type) {
           is SettingType.Toggle -> {
             checkedState = !checkedState
+            prefs.edit().putBoolean((setting.type as SettingType.Toggle).key, checkedState).apply()
           }
           is SettingType.Navigation -> {
-            // Handle navigation
+            onNavigate((setting.type as SettingType.Navigation).route)
           }
           is SettingType.Action -> {
             (setting.type as SettingType.Action).action()
           }
         }
-      },
+      }
+      .onFocusChanged { focusState ->
+        isFocused = focusState.hasFocus
+      }
+      .padding(24.dp),
     contentAlignment = Alignment.CenterStart
   ) {
     Row(
@@ -208,18 +249,13 @@ fun SettingCard(
         is SettingType.Toggle -> {
           Switch(
             checked = checkedState,
-            onCheckedChange = { checkedState = it }
+            onCheckedChange = { checked ->
+              checkedState = checked
+              prefs.edit().putBoolean((setting.type as SettingType.Toggle).key, checked).apply()
+            }
           )
         }
-        is SettingType.Navigation -> {
-          Text(
-            text = ">",
-            style = MaterialTheme.typography.headlineMedium,
-            color = if (isFocused) MaterialTheme.colorScheme.primary
-              else MaterialTheme.colorScheme.onSurfaceVariant
-          )
-        }
-        is SettingType.Action -> {
+        is SettingType.Navigation, is SettingType.Action -> {
           Text(
             text = ">",
             style = MaterialTheme.typography.headlineMedium,

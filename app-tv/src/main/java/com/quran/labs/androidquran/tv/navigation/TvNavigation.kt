@@ -19,6 +19,11 @@ import com.quran.labs.androidquran.tv.juz.TvJuzGridScreen
 import com.quran.labs.androidquran.tv.surah.TvSurahGridScreen
 import com.quran.labs.androidquran.tv.bookmark.TvBookmarksScreen
 import com.quran.labs.androidquran.tv.settings.TvSettingsScreen
+import com.quran.labs.androidquran.tv.search.TvSearchScreen
+import com.quran.labs.androidquran.tv.reading.TvPageViewerScreen
+import com.quran.labs.androidquran.tv.audio.TvAudioScreen
+import com.quran.labs.androidquran.tv.audio.TvAudioControlOverlay
+import com.quran.labs.androidquran.tv.audio.AudioState
 
 sealed class TvScreen(val route: String) {
   object Home : TvScreen("home")
@@ -26,6 +31,8 @@ sealed class TvScreen(val route: String) {
   object JuzGrid : TvScreen("juz")
   object Bookmarks : TvScreen("bookmarks")
   object Settings : TvScreen("settings")
+  object Search : TvScreen("search")
+  object Audio : TvScreen("audio")
   object PageViewer : TvScreen("page_viewer") {
     fun createRoute(page: Int) = "page_viewer/$page"
   }
@@ -52,7 +59,7 @@ fun TvNavHost(
             "juz" -> navController.navigate(TvScreen.JuzGrid.route)
             "bookmarks" -> navController.navigate(TvScreen.Bookmarks.route)
             "settings" -> navController.navigate(TvScreen.Settings.route)
-            "search" -> { /* TODO: Implement search screen */ }
+            "search" -> navController.navigate(TvScreen.Search.route)
             "continue_reading" -> {
               // Navigate to page viewer with last read page (604 for now)
               navController.navigate(TvScreen.PageViewer.createRoute(604))
@@ -88,15 +95,34 @@ fun TvNavHost(
     }
 
     composable(TvScreen.Settings.route) {
-      TvSettingsScreen()
+      TvSettingsScreen(
+        onNavigateToAudio = {
+          navController.navigate(TvScreen.Audio.route)
+        }
+      )
+    }
+
+    composable(TvScreen.Search.route) {
+      TvSearchScreen(
+        onSearchResultClick = { sura, ayah, page ->
+          navController.navigate(TvScreen.PageViewer.createRoute(page))
+        }
+      )
+    }
+
+    composable(TvScreen.Audio.route) {
+      TvAudioScreen()
     }
 
     composable(
       route = "${TvScreen.PageViewer.route}/{page}",
       arguments = listOf(navArgument("page") { type = NavType.IntType })
-    ) {
-      // TvPageViewerScreen - to be implemented in Phase 7
-      PlaceholderScreen("Page Viewer")
+    ) { backStackEntry ->
+      val page = backStackEntry.arguments?.getInt("page") ?: 1
+      TvPageViewerScreen(
+        initialPage = page,
+        onBackClick = { navController.popBackStack() }
+      )
     }
 
     composable(

@@ -50,6 +50,7 @@ androidxWindowManager = "1.5.1"
 # tv library versions
 tvFoundationVersion = "1.0.0-beta01"
 tvMaterialVersion = "1.0.0-beta01"
+coilVersion = "2.5.0"
 
 # ui libraries
 accompanistVersion = "0.36.0"
@@ -108,6 +109,7 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-window = { module = "androidx.window:window", version.ref = "androidxWindowManager" }
 androidx-tv-foundation = { module = "androidx.tv:tv-foundation", version.ref = "tvFoundationVersion" }
 androidx-tv-material = { module = "androidx.tv:tv-material", version.ref = "tvMaterialVersion" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilVersion" }
 # compose
 compose-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-animation = { module = "androidx.compose.animation:animation" }
