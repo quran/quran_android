@@ -14,7 +14,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when` as whenever
 import org.mockito.MockitoAnnotations
@@ -195,17 +197,18 @@ class QuranPagePresenterTest {
   }
 
   @Test
-  fun `should clear disposables when screen unbound`() {
-    // Arrange
+  fun `should not deliver results to screen after unbind`() {
+    // Arrange: observable that emits after unbind
+    val subject = io.reactivex.rxjava3.subjects.PublishSubject.create<PageCoordinates>()
     whenever(coordinatesModel.getPageCoordinates(true, 1, 2, 3))
-      .thenReturn(Observable.never()) // Never completes
+      .thenReturn(subject)
 
     // Act
     presenter.bind(screen)
     presenter.unbind(screen)
+    subject.onNext(mock(PageCoordinates::class.java))
 
-    // Assert
-    // After unbind, subscription should be disposed
-    // We verify this indirectly - no crash, cleanup successful
+    // Assert: screen should NOT receive the late emission
+    verify(screen, never()).setPageCoordinates(any())
   }
 }
