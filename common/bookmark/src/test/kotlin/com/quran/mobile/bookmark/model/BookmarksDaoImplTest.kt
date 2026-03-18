@@ -181,6 +181,54 @@ class BookmarksDaoImplTest {
     }
   }
 
+  @Test
+  fun `should replace bookmarks transactionally`() = runTest {
+    val suraAyah1 = TestDataFactory.createSuraAyah(sura = 1, ayah = 1)
+    val suraAyah2 = TestDataFactory.createSuraAyah(sura = 2, ayah = 1)
+    dao.toggleAyahBookmark(suraAyah1, 1)
+    dao.toggleAyahBookmark(suraAyah2, 20)
+
+    val bookmarks = dao.bookmarks()
+    assertThat(bookmarks).hasSize(2)
+
+    // Replace: update page numbers for both bookmarks
+    val updated = bookmarks.map { it.copy(page = it.page + 100) }
+    dao.replaceBookmarks(updated)
+
+    val result = dao.bookmarks()
+    assertThat(result).hasSize(2)
+    result.forEach { assertThat(it.page).isGreaterThan(100) }
+  }
+
+  @Test
+  fun `should return page bookmarks without tags via flow`() = runTest {
+    dao.togglePageBookmark(10)
+    dao.togglePageBookmark(20)
+    dao.toggleAyahBookmark(TestDataFactory.createSuraAyah(sura = 1, ayah = 1), 1)
+
+    val pageBookmarks = dao.pageBookmarksWithoutTags().first()
+
+    // Only page bookmarks (sura/ayah null), no ayah bookmarks
+    assertThat(pageBookmarks).hasSize(2)
+    pageBookmarks.forEach {
+      assertThat(it.sura).isNull()
+      assertThat(it.ayah).isNull()
+    }
+  }
+
+  @Test
+  fun `should emit change notification when bookmark removed`() = runTest {
+    val suraAyah = TestDataFactory.createSuraAyah(sura = 1, ayah = 1)
+    dao.toggleAyahBookmark(suraAyah, 1) // add
+
+    dao.changes.test {
+      val addTimestamp = awaitItem() // consume the add notification
+      dao.toggleAyahBookmark(suraAyah, 1) // remove
+      val removeTimestamp = awaitItem()
+      assertThat(removeTimestamp).isGreaterThan(addTimestamp)
+    }
+  }
+
   // ==================== Recent Pages Tests ====================
 
   @Test

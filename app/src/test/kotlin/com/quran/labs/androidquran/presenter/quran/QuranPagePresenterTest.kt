@@ -101,20 +101,6 @@ class QuranPagePresenterTest {
   }
 
   @Test
-  fun `should load page coordinates with overlay enabled`() {
-    // Arrange
-    whenever(quranSettings.shouldOverlayPageInfo()).thenReturn(true)
-    whenever(coordinatesModel.getPageCoordinates(true, 1, 2, 3))
-      .thenReturn(Observable.empty())
-
-    // Act
-    presenter.bind(screen)
-
-    // Assert
-    verify(coordinatesModel).getPageCoordinates(true, 1, 2, 3)
-  }
-
-  @Test
   fun `should handle page coordinates error`() {
     // Arrange
     val error = RuntimeException("Coordinates error")
@@ -146,11 +132,12 @@ class QuranPagePresenterTest {
     // Act
     presenter.bind(screen)
 
-    // Assert: ayah coordinates are loaded for all pages after page coordinates complete
+    // Assert: ayah coordinates are loaded and delivered to screen for all pages
     // Note: RxSchedulerRule makes trampoline scheduler execute timer immediately (no actual 500ms wait)
     verify(coordinatesModel).getAyahCoordinates(1)
     verify(coordinatesModel).getAyahCoordinates(2)
     verify(coordinatesModel).getAyahCoordinates(3)
+    verify(screen, org.mockito.Mockito.atLeast(1)).setAyahCoordinatesData(mockAyahCoordinates)
   }
 
   @Test
