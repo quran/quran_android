@@ -27,6 +27,7 @@ class FakeSettings : Settings {
   override suspend fun nightModeBackgroundBrightness(): Int = data["nightModeBackgroundBrightness"] as? Int ?: 0
   override suspend fun shouldShowHeaderFooter(): Boolean = data["shouldShowHeaderFooter"] as? Boolean ?: false
   override suspend fun shouldShowBookmarks(): Boolean = false
+  override suspend fun setPageType(pageType: String) {}
   override suspend fun pageType(): String = ""
   override suspend fun showSidelines(): Boolean = data["showSidelines"] as? Boolean ?: false
   override suspend fun setShowSidelines(show: Boolean) { data["showSidelines"] = show }
