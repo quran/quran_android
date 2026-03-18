@@ -47,10 +47,11 @@ class FakeTranslationsDBAdapter : TranslationsDBAdapter {
   }
 
   override suspend fun writeTranslationUpdates(updates: List<TranslationItem>): Boolean {
-    // For testing purposes, just add the translations
     updates.forEach { item ->
       if (item.exists()) {
         addTranslation(item.asLocalTranslation())
+      } else {
+        translations.removeAll { it.id == item.translation.id.toLong() }
       }
     }
     return true

@@ -14,7 +14,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.atLeast
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
@@ -137,7 +137,7 @@ class QuranPagePresenterTest {
     verify(coordinatesModel).getAyahCoordinates(1)
     verify(coordinatesModel).getAyahCoordinates(2)
     verify(coordinatesModel).getAyahCoordinates(3)
-    verify(screen, org.mockito.Mockito.atLeast(1)).setAyahCoordinatesData(mockAyahCoordinates)
+    verify(screen, atLeast(1)).setAyahCoordinatesData(mockAyahCoordinates)
   }
 
   @Test
@@ -193,9 +193,10 @@ class QuranPagePresenterTest {
     // Act
     presenter.bind(screen)
     presenter.unbind(screen)
-    subject.onNext(mock(PageCoordinates::class.java))
+    val lateCoordinates = mock(PageCoordinates::class.java)
+    subject.onNext(lateCoordinates)
 
     // Assert: screen should NOT receive the late emission
-    verify(screen, never()).setPageCoordinates(any())
+    verify(screen, never()).setPageCoordinates(lateCoordinates)
   }
 }
