@@ -19,8 +19,10 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Mock
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when` as whenever
 import org.mockito.MockitoAnnotations
@@ -290,7 +292,7 @@ class AudioPresenterTest {
     presenter.onDownloadPermissionGranted()
 
     // Assert: should replay (handlePlayback called twice - initial + after permission)
-    verify(pagerActivity, org.mockito.Mockito.times(2)).handlePlayback(org.mockito.ArgumentMatchers.any())
+    verify(pagerActivity, times(2)).handlePlayback(any())
   }
 
 
@@ -327,7 +329,7 @@ class AudioPresenterTest {
     presenter.onDownloadSuccess()
 
     // Assert: should replay
-    verify(pagerActivity, org.mockito.Mockito.times(2)).handlePlayback(org.mockito.ArgumentMatchers.any())
+    verify(pagerActivity, times(2)).handlePlayback(any())
   }
 
   // ==================== Lifecycle Tests ====================
@@ -349,8 +351,8 @@ class AudioPresenterTest {
     )
 
     // Assert: nothing should happen (safe-call on null)
-    verify(pagerActivity, never()).handlePlayback(org.mockito.ArgumentMatchers.any())
-    verify(pagerActivity, never()).handleRequiredDownload(org.mockito.ArgumentMatchers.any())
+    verify(pagerActivity, never()).handlePlayback(any())
+    verify(pagerActivity, never()).handleRequiredDownload(any())
   }
 
   @Test
@@ -374,7 +376,7 @@ class AudioPresenterTest {
     )
 
     // Assert: nothing should happen after unbind
-    verify(pagerActivity, never()).handlePlayback(org.mockito.ArgumentMatchers.any())
-    verify(pagerActivity, never()).handleRequiredDownload(org.mockito.ArgumentMatchers.any())
+    verify(pagerActivity, never()).handlePlayback(any())
+    verify(pagerActivity, never()).handleRequiredDownload(any())
   }
 }

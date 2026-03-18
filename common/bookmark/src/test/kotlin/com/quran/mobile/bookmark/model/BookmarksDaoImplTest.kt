@@ -11,7 +11,6 @@ import com.quran.mobile.bookmark.Bookmarks
 import com.quran.mobile.bookmark.Last_pages
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
@@ -41,12 +40,6 @@ class BookmarksDaoImplTest {
       Last_pages.Adapter(IntColumnAdapter)
     )
     dao = BookmarksDaoImpl(database)
-  }
-
-  @After
-  fun tearDown() {
-    database.bookmarkQueries
-    // Driver will be garbage collected
   }
 
   // ==================== Bookmark Tests ====================
