@@ -15,10 +15,10 @@ class QariListPresenterTest {
   private val start = SuraAyah(1, 1)
   private val end = SuraAyah(1, 7)
 
-  private fun makeGaplessQari(id: Int, name: String): Qari =
+  private fun makeGaplessQari(id: Int): Qari =
     Qari(id = id, nameResource = 0, url = "url/$id", path = "path/$id", hasGaplessAlternative = false, db = "gapless_$id.db")
 
-  private fun makeGappedQari(id: Int, name: String, hasGaplessAlternative: Boolean = false): Qari =
+  private fun makeGappedQari(id: Int, hasGaplessAlternative: Boolean = false): Qari =
     Qari(id = id, nameResource = 0, url = "url/$id", path = "path/$id", hasGaplessAlternative = hasGaplessAlternative)
 
   private fun qariToItem(qari: Qari, name: String): QariItem =
@@ -46,7 +46,7 @@ class QariListPresenterTest {
   fun `gapless qari without downloads appears in gapless section`() = runTest {
     val source = FakeQariDownloadInfoSource()
     val presenter = QariListPresenter(source)
-    val gaplessQari = makeGaplessQari(1, "Gapless Qari")
+    val gaplessQari = makeGaplessQari(1)
     val downloadInfo = makeGaplessDownloadInfo(gaplessQari)
 
     presenter.qariList(start, end) { qari -> qariToItem(qari, "Qari ${qari.id}") }.test {
@@ -63,7 +63,7 @@ class QariListPresenterTest {
   fun `gapless qari with all suras downloaded for range appears in ready to play section`() = runTest {
     val source = FakeQariDownloadInfoSource()
     val presenter = QariListPresenter(source)
-    val gaplessQari = makeGaplessQari(2, "Downloaded Gapless")
+    val gaplessQari = makeGaplessQari(2)
     val downloadInfo = makeGaplessDownloadInfo(gaplessQari, fullyDownloaded = listOf(1))
 
     presenter.qariList(start, end) { qari -> qariToItem(qari, "Q${qari.id}") }.test {
@@ -84,9 +84,9 @@ class QariListPresenterTest {
   fun `multiple qaris are all included in the output`() = runTest {
     val source = FakeQariDownloadInfoSource()
     val presenter = QariListPresenter(source)
-    val gapless1 = makeGaplessQari(1, "Alpha")
-    val gapless2 = makeGaplessQari(2, "Beta")
-    val gapped1 = makeGappedQari(3, "Gamma")
+    val gapless1 = makeGaplessQari(1)
+    val gapless2 = makeGaplessQari(2)
+    val gapped1 = makeGappedQari(3)
 
     presenter.qariList(start, end) { qari -> qariToItem(qari, "Q${qari.id}") }.test {
       awaitItem()
@@ -106,7 +106,7 @@ class QariListPresenterTest {
   fun `updated source emission is reflected in subsequent flow values`() = runTest {
     val source = FakeQariDownloadInfoSource()
     val presenter = QariListPresenter(source)
-    val qari = makeGaplessQari(5, "Update Qari")
+    val qari = makeGaplessQari(5)
 
     presenter.qariList(start, end) { qari -> qariToItem(qari, "Q${qari.id}") }.test {
       val first = awaitItem()
@@ -124,8 +124,8 @@ class QariListPresenterTest {
   fun `qari name ordering is alphabetical within each section`() = runTest {
     val source = FakeQariDownloadInfoSource()
     val presenter = QariListPresenter(source)
-    val qariZ = makeGaplessQari(1, "Zaid")
-    val qariA = makeGaplessQari(2, "Abul")
+    val qariZ = makeGaplessQari(1)
+    val qariA = makeGaplessQari(2)
 
     val nameMap = mapOf(1 to "Zaid", 2 to "Abul")
 
@@ -148,7 +148,7 @@ class QariListPresenterTest {
   fun `clearing source emits empty list after non-empty state`() = runTest {
     val source = FakeQariDownloadInfoSource()
     val presenter = QariListPresenter(source)
-    val qari = makeGaplessQari(1, "Test")
+    val qari = makeGaplessQari(1)
 
     presenter.qariList(start, end) { q -> qariToItem(q, "Q${q.id}") }.test {
       awaitItem()
