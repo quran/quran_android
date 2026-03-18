@@ -32,7 +32,7 @@ class LineCalculationTest {
     val firstLineBottom = lineHeight
     val result = calc.lineIndexForY(yBeyondFirstLine)
     // either returns -1 (gap) or 1 (second line), both valid depending on exact geometry
-    assertThat(result).isAtLeast(-1)
+    assertThat(result).isAnyOf(-1, 1)
   }
 
   @Test

@@ -7,6 +7,7 @@ android {
 
   testOptions {
     unitTests {
+      // Required: Searcher interface references android.database types in method signatures
       returnDefaultValues = true
     }
   }

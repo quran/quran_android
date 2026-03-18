@@ -56,12 +56,19 @@ class ArabicSearcherTest {
 
   private lateinit var fakeDefaultSearcher: FakeSearcher
   private lateinit var arabicSearcher: ArabicSearcher
+  // Real searcher for processSearchText tests (needs full DefaultSearcher chain)
+  private lateinit var realArabicSearcher: ArabicSearcher
 
   @Before
   fun setUp() {
     fakeDefaultSearcher = FakeSearcher()
     arabicSearcher = ArabicSearcher(
       defaultSearcher = fakeDefaultSearcher,
+      matchStart = "<b>",
+      matchEnd = "</b>"
+    )
+    realArabicSearcher = ArabicSearcher(
+      defaultSearcher = DefaultSearcher("<b>", "</b>", "..."),
       matchStart = "<b>",
       matchEnd = "</b>"
     )
@@ -138,34 +145,18 @@ class ArabicSearcherTest {
     // Arrange: ا (\u0627) is in arabicRegexChars, so it should become '_'
     val arabicInput = "\u0627\u0644\u0644\u0647"
     // Act
-    val result = arabicSearcher.processSearchText(arabicInput, hasFTS = false)
-    // Assert: every Arabic replacement char should have become _
-    // The result is then wrapped by DefaultSearcher (our fake returns "fake_processed"),
-    // but we need to call the real DefaultSearcher to verify the wrapping.
-    // Instead, test with the real DefaultSearcher wired in.
-    val realSearcher = ArabicSearcher(
-      defaultSearcher = DefaultSearcher("<b>", "</b>", "..."),
-      matchStart = "<b>",
-      matchEnd = "</b>"
-    )
-    val realResult = realSearcher.processSearchText(arabicInput, hasFTS = false)
-    // The plain-alef char should have been replaced by _ before LIKE wrapping
-    assertThat(realResult).contains("_")
-    // Should be wrapped in % for LIKE
-    assertThat(realResult).startsWith("%")
-    assertThat(realResult).endsWith("%")
+    val result = realArabicSearcher.processSearchText(arabicInput, hasFTS = false)
+    // Assert: the plain-alef char should have been replaced by _ before LIKE wrapping
+    assertThat(result).contains("_")
+    assertThat(result).startsWith("%")
+    assertThat(result).endsWith("%")
   }
 
   @Test
   fun `processSearchText on empty string produces double percent for LIKE`() {
     // Arrange
-    val realSearcher = ArabicSearcher(
-      defaultSearcher = DefaultSearcher("<b>", "</b>", "..."),
-      matchStart = "<b>",
-      matchEnd = "</b>"
-    )
     // Act
-    val result = realSearcher.processSearchText("", hasFTS = false)
+    val result = realArabicSearcher.processSearchText("", hasFTS = false)
     // Assert
     assertThat(result).isEqualTo("%%")
   }
@@ -174,13 +165,8 @@ class ArabicSearcherTest {
   fun `processSearchText keeps non-arabic characters intact`() {
     // Arrange: Latin letters are not in arabicRegexChars
     val latinInput = "abc"
-    val realSearcher = ArabicSearcher(
-      defaultSearcher = DefaultSearcher("<b>", "</b>", "..."),
-      matchStart = "<b>",
-      matchEnd = "</b>"
-    )
     // Act
-    val result = realSearcher.processSearchText(latinInput, hasFTS = false)
+    val result = realArabicSearcher.processSearchText(latinInput, hasFTS = false)
     // Assert: wrapped in % but the core text is untouched
     assertThat(result).isEqualTo("%$latinInput%")
   }
@@ -189,13 +175,8 @@ class ArabicSearcherTest {
   fun `processSearchText converts all recognized arabic chars to underscores`() {
     // Arrange: all arabicRegexChars = اأءتةهوىئ (\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649\u0626)
     val allArabicRegexChars = "\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649\u0626"
-    val realSearcher = ArabicSearcher(
-      defaultSearcher = DefaultSearcher("<b>", "</b>", "..."),
-      matchStart = "<b>",
-      matchEnd = "</b>"
-    )
     // Act
-    val result = realSearcher.processSearchText(allArabicRegexChars, hasFTS = false)
+    val result = realArabicSearcher.processSearchText(allArabicRegexChars, hasFTS = false)
     // Assert: inner content should be all underscores (one per input char), wrapped in %
     val innerContent = result.removeSurrounding("%")
     assertThat(innerContent).isEqualTo("_".repeat(allArabicRegexChars.length))
@@ -205,14 +186,9 @@ class ArabicSearcherTest {
   fun `processSearchText always uses LIKE wildcards regardless of hasFTS value`() {
     // Arrange: ArabicSearcher hard-codes hasFTS=false when delegating to DefaultSearcher,
     // so the result is always LIKE-formatted even when the caller passes hasFTS=true.
-    val realSearcher = ArabicSearcher(
-      defaultSearcher = DefaultSearcher("<b>", "</b>", "..."),
-      matchStart = "<b>",
-      matchEnd = "</b>"
-    )
     // Act
-    val resultWhenFts = realSearcher.processSearchText("abc", hasFTS = true)
-    val resultWhenNoFts = realSearcher.processSearchText("abc", hasFTS = false)
+    val resultWhenFts = realArabicSearcher.processSearchText("abc", hasFTS = true)
+    val resultWhenNoFts = realArabicSearcher.processSearchText("abc", hasFTS = false)
     // Assert: both cases produce LIKE-style %...% wrapping, never FTS-style *
     assertThat(resultWhenFts).isEqualTo("%abc%")
     assertThat(resultWhenNoFts).isEqualTo("%abc%")
