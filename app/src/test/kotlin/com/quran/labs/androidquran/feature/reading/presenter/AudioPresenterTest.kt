@@ -7,7 +7,6 @@ import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.common.audio.model.QariItem
-import com.quran.labs.androidquran.common.audio.model.playback.AudioPathInfo
 import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
 import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
 import com.quran.labs.androidquran.data.QuranDisplayData
@@ -22,7 +21,7 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Mock
 import org.mockito.ArgumentMatchers.any
-import doReturn
+import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.times
@@ -396,75 +395,66 @@ class AudioPresenterTest {
 
   @Test
   fun `should replay audio after download permission granted`() {
-    // Arrange
+    // Arrange: files missing initially → triggers download
     presenter.bind(pagerActivity)
+    doReturn("Test Notification")
+      .`when`(quranDisplayData).getNotificationTitle(pagerActivity, start, end, false)
     whenever(audioUtil.haveAllFiles(
-      "$localPath/%d/%d.mp3", // baseUrl
-      localPath, // path
-      start,
-      end,
-      false, // isGapless
-      listOf("mp3") // allowedExtensions
-    )).thenReturn(true)
+      "$localPath/%d/%d.mp3", localPath, start, end, false, listOf("mp3")
+    )).thenReturn(false)
 
+    presenter.play(
+      start = start, end = end, qari = testQariGapped,
+      verseRepeat = 1, rangeRepeat = 1, enforceRange = false,
+      playbackSpeed = 1.0f, shouldStream = false
+    )
+    verify(pagerActivity).handleRequiredDownload(any())
+
+    // Now files are available after download
+    whenever(audioUtil.haveAllFiles(
+      "$localPath/%d/%d.mp3", localPath, start, end, false, listOf("mp3")
+    )).thenReturn(true)
     whenever(audioUtil.shouldDownloadBasmallah(
       localPath, start, end, false, listOf("mp3")
     )).thenReturn(false)
 
-    // First play to set lastAudioRequest
-    presenter.play(
-      start = start,
-      end = end,
-      qari = testQariGapped,
-      verseRepeat = 1,
-      rangeRepeat = 1,
-      enforceRange = false,
-      playbackSpeed = 1.0f,
-      shouldStream = false
-    )
-
-    // Act: grant permission
+    // Act: grant permission → replays stored request
     presenter.onDownloadPermissionGranted()
 
-    // Assert: should replay (handlePlayback called twice - initial + after permission)
-    verify(pagerActivity, times(2)).handlePlayback(any())
+    // Assert: handlePlayback called once (after permission), not during initial play
+    verify(pagerActivity).handlePlayback(any())
   }
-
 
   @Test
   fun `should replay audio after download success`() {
-    // Arrange
+    // Arrange: files missing initially → triggers download
     presenter.bind(pagerActivity)
+    doReturn("Test Notification")
+      .`when`(quranDisplayData).getNotificationTitle(pagerActivity, start, end, false)
     whenever(audioUtil.haveAllFiles(
-      "$localPath/%d/%d.mp3", // baseUrl
-      localPath, // path
-      start,
-      end,
-      false, // isGapless
-      listOf("mp3") // allowedExtensions
-    )).thenReturn(true)
+      "$localPath/%d/%d.mp3", localPath, start, end, false, listOf("mp3")
+    )).thenReturn(false)
 
+    presenter.play(
+      start = start, end = end, qari = testQariGapped,
+      verseRepeat = 1, rangeRepeat = 1, enforceRange = false,
+      playbackSpeed = 1.0f, shouldStream = false
+    )
+    verify(pagerActivity).handleRequiredDownload(any())
+
+    // Now files are available after download completed
+    whenever(audioUtil.haveAllFiles(
+      "$localPath/%d/%d.mp3", localPath, start, end, false, listOf("mp3")
+    )).thenReturn(true)
     whenever(audioUtil.shouldDownloadBasmallah(
       localPath, start, end, false, listOf("mp3")
     )).thenReturn(false)
 
-    // First play to set lastAudioRequest
-    presenter.play(
-      start = start,
-      end = end,
-      qari = testQariGapped,
-      verseRepeat = 1,
-      rangeRepeat = 1,
-      enforceRange = false,
-      playbackSpeed = 1.0f,
-      shouldStream = false
-    )
-
-    // Act: notify download success
+    // Act: download success → replays stored request
     presenter.onDownloadSuccess()
 
-    // Assert: should replay
-    verify(pagerActivity, times(2)).handlePlayback(any())
+    // Assert: handlePlayback called once (after download), not during initial play
+    verify(pagerActivity).handlePlayback(any())
   }
 
   // ==================== Lifecycle Tests ====================
