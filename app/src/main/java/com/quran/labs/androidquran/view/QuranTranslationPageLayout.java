@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.view;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -35,16 +34,6 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
   public void updateView(@NonNull QuranSettings quranSettings) {
     super.updateView(quranSettings);
     translationView.refresh(quranSettings);
-  }
-
-  @Override
-  protected void updateBackground(boolean nightMode, QuranSettings quranSettings) {
-    if (nightMode) {
-      final int backgroundBrightness = quranSettings.getNightModeBackgroundBrightness();
-      setBackgroundColor(Color.rgb(backgroundBrightness, backgroundBrightness, backgroundBrightness));
-    } else {
-      setBackgroundColor(Color.WHITE);
-    }
   }
 
   @Override
