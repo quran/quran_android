@@ -67,6 +67,10 @@
         android:name=".AboutUsActivity"
         android:theme="@style/QuranToolBarDayNight"
         android:exported="false"/>
+    <activity
+        android:name=".ReadingHistoryActivity"
+        android:theme="@style/QuranToolBarDayNight"
+        android:exported="false"/>
     <activity android:name=".HelpActivity"
         android:theme="@style/QuranToolBarDayNight"
         android:exported="false"/>
