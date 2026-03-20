@@ -27,6 +27,7 @@
   <string translatable="false" name="prefs_prefer_streaming">preferStreaming</string>
   <string translatable="false" name="prefs_download_amount">preferredDownloadAmount</string>
   <string translatable="false" name="prefs_volume_key_navigation">volumeKeyNavigation</string>
+  <string translatable="false" name="prefs_focus_mode">focusMode</string>
   <string translatable="false" name="prefs_app_location">appLocation</string>
   <string translatable="false" name="prefs_display_category_key">displayCategoryKey</string>
   <string translatable="false" name="prefs_download_category_key">downloadCategoryKey</string>

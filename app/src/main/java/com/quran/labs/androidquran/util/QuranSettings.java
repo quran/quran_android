@@ -65,6 +65,10 @@ public class QuranSettings {
     return prefs.getBoolean(Constants.PREF_USE_VOLUME_KEY_NAV, false);
   }
 
+  public boolean isFocusModeEnabled() {
+    return prefs.getBoolean(Constants.PREF_FOCUS_MODE, false);
+  }
+
   public boolean shouldStream() {
     return prefs.getBoolean(Constants.PREF_PREFER_STREAMING, false);
   }
