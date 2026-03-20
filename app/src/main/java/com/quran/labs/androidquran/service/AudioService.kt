@@ -4,10 +4,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
@@ -30,12 +32,23 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.database.StandaloneDatabaseProvider
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.datasource.cache.CacheKeyFactory
+import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
+import androidx.media3.datasource.cache.SimpleCache
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.Renderer
 import androidx.media3.exoplayer.RenderersFactory
 import androidx.media3.exoplayer.audio.AudioRendererEventListener
 import androidx.media3.exoplayer.audio.MediaCodecAudioRenderer
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.metadata.MetadataOutput
 import androidx.media3.exoplayer.text.TextOutput
 import androidx.media3.exoplayer.video.VideoRendererEventListener
@@ -58,6 +71,7 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.NotificationChannelUtil.setupNotificationChannel
+import com.quran.labs.androidquran.util.QuranSettings
 import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -71,6 +85,7 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import kotlin.math.abs
+import androidx.core.net.toUri
 
 /**
  * Service that handles media playback. This is the Service through which we
@@ -155,6 +170,9 @@ class AudioService : Service(), Player.Listener {
   @Inject
   lateinit var timingRepository: TimingRepository
 
+  @Inject
+  lateinit var quranSettings: QuranSettings
+
   private inner class ServiceHandler(looper: Looper) : Handler(looper) {
     override fun handleMessage(msg: Message) {
       if (msg.what == MSG_INCOMING && msg.obj != null) {
@@ -180,17 +198,24 @@ class AudioService : Service(), Player.Listener {
       val audioOnlyRenderersFactory =
         RenderersFactory {
             handler: Handler,
-            videoListener: VideoRendererEventListener,
+            _: VideoRendererEventListener,
             audioListener: AudioRendererEventListener,
-            textOutput: TextOutput,
-            metadataOutput: MetadataOutput,
+            _: TextOutput,
+            _: MetadataOutput,
           ->
           arrayOf<Renderer>(
             MediaCodecAudioRenderer(applicationContext, MediaCodecSelector.DEFAULT, handler, audioListener)
           )
         }
 
+      val loadControl = DefaultLoadControl.Builder()
+        .setBackBuffer(EXO_BACK_BUFFER_MS, true)
+        .build()
+      val mediaSourceFactory = DefaultMediaSourceFactory(buildDefaultDataSourceFactory())
+
       val localPlayer = ExoPlayer.Builder(applicationContext, audioOnlyRenderersFactory)
+        .setLoadControl(loadControl)
+        .setMediaSourceFactory(mediaSourceFactory)
         .setWakeMode(C.WAKE_MODE_NETWORK)
         .build()
       player = localPlayer
@@ -214,6 +239,41 @@ class AudioService : Service(), Player.Listener {
       currentPlayer.clearMediaItems()
       currentPlayer
     }
+  }
+
+  @OptIn(UnstableApi::class)
+  private fun buildDefaultDataSourceFactory(): DataSource.Factory {
+    return DefaultDataSource.Factory(
+      applicationContext,
+      DefaultHttpDataSource.Factory()
+    )
+  }
+
+  @OptIn(UnstableApi::class)
+  private fun buildCachedDataSourceFactory(): DataSource.Factory {
+    return CacheDataSource.Factory()
+      .setCache(getAudioStreamCache(applicationContext))
+      .setCacheKeyFactory(streamCacheKeyFactory())
+      .setUpstreamDataSourceFactory(buildDefaultDataSourceFactory())
+      .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+  }
+
+  @OptIn(UnstableApi::class)
+  private fun streamCacheKeyFactory(): CacheKeyFactory {
+    return CacheKeyFactory { dataSpec ->
+      val baseKey = dataSpec.key ?: dataSpec.uri.toString()
+      "$baseKey|audio_revision=${quranSettings.currentAudioRevision}"
+    }
+  }
+
+  @OptIn(UnstableApi::class)
+  private fun buildMediaSource(uri: Uri): MediaSource {
+    val dataSourceFactory = if (uri.scheme == "http" || uri.scheme == "https") {
+      buildCachedDataSourceFactory()
+    } else {
+      buildDefaultDataSourceFactory()
+    }
+    return DefaultMediaSourceFactory(dataSourceFactory).createMediaSource(MediaItem.fromUri(uri))
   }
 
   override fun onCreate() {
@@ -835,6 +895,7 @@ class AudioService : Service(), Player.Listener {
     }
   }
 
+  @OptIn(UnstableApi::class)
   private fun playAudio(playRepeatSeparator: Boolean, timings: SuraTimings?) {
     try {
       val localAudioQueue = audioQueue
@@ -872,16 +933,17 @@ class AudioService : Service(), Player.Listener {
       val localPlayer = makeOrResetExoPlayer()
       setState(PlaybackStateCompat.STATE_CONNECTING)
       try {
-        val mediaItem = if (overrideResource != 0) {
+        val mediaUri = if (overrideResource != 0) {
           // For raw resources, we need to create a URI pointing to the resource
           val resourceUri = "android.resource://$packageName/$overrideResource"
           playerOverride = true
-          MediaItem.fromUri(resourceUri)
+          resourceUri.toUri()
         } else {
           // For regular URLs (both local files and streaming URLs)
           overrideResource = 0
-          MediaItem.fromUri(url)
+          url.toUri()
         }
+        val mediaSource = buildMediaSource(mediaUri)
 
         val potentialTiming = if (timings != null && overrideResource == 0) {
           getSeekPosition(false)
@@ -889,9 +951,9 @@ class AudioService : Service(), Player.Listener {
           -1
         }
         if (potentialTiming > -1) {
-          localPlayer.setMediaItem(mediaItem, potentialTiming)
+          localPlayer.setMediaSource(mediaSource, potentialTiming)
         } else {
-          localPlayer.setMediaItem(mediaItem)
+          localPlayer.setMediaSource(mediaSource)
         }
         localPlayer.prepare()
         Timber.d("prepared media item: $overrideResource, $url")
@@ -1027,7 +1089,6 @@ class AudioService : Service(), Player.Listener {
 
   private fun onPlayerBuffering() {
     Timber.d("Player buffering...")
-    val previousState = state
     state = State.Preparing
 
     val audioRequest = audioRequest
@@ -1149,11 +1210,7 @@ class AudioService : Service(), Player.Listener {
     val appContext = applicationContext
     val pi = notificationPendingIntent
 
-    val mutabilityFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      PendingIntent.FLAG_IMMUTABLE
-    } else {
-      0
-    }
+    val mutabilityFlag = PendingIntent.FLAG_IMMUTABLE
     val previousIntent = PendingIntent.getService(
       appContext, REQUEST_CODE_PREVIOUS, audioUtils.getAudioIntent(this, ACTION_REWIND),
       PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
@@ -1205,12 +1262,7 @@ class AudioService : Service(), Player.Listener {
   private fun getPausedNotificationBuilder(): NotificationCompat.Builder {
     val appContext = applicationContext
 
-    val mutabilityFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      PendingIntent.FLAG_IMMUTABLE
-    } else {
-      0
-    }
-
+    val mutabilityFlag = PendingIntent.FLAG_IMMUTABLE
     val resumeIntent = PendingIntent.getService(
       appContext, REQUEST_CODE_RESUME, audioUtils.getAudioIntent(this, ACTION_PLAYBACK),
       PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
@@ -1254,11 +1306,7 @@ class AudioService : Service(), Player.Listener {
   private val notificationPendingIntent: PendingIntent
     get() {
       val appContext = applicationContext
-      val mutabilityFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        PendingIntent.FLAG_IMMUTABLE
-      } else {
-        0
-      }
+      val mutabilityFlag = PendingIntent.FLAG_IMMUTABLE
 
       return PendingIntent.getActivity(
         appContext, REQUEST_CODE_MAIN, Intent(appContext, PagerActivity::class.java),
@@ -1322,5 +1370,38 @@ class AudioService : Service(), Player.Listener {
     private const val MSG_INCOMING = 1
     private const val MSG_UPDATE_AUDIO_POS = 2
     private const val DEBUG_TIMINGS = false
+
+    // 5 minutes
+    private const val EXO_BACK_BUFFER_MS = 300_000
+    private const val STREAM_CACHE_DIR = "audio_stream_cache"
+    private const val STREAM_CACHE_SIZE_BYTES = 128L * 1024L * 1024L
+
+    @Volatile
+    @UnstableApi
+    private var audioStreamCache: SimpleCache? = null
+
+    @OptIn(UnstableApi::class)
+    private fun getAudioStreamCache(context: Context): SimpleCache {
+      val existing = audioStreamCache
+      if (existing != null) {
+        return existing
+      }
+
+      return synchronized(this) {
+        val initialized = audioStreamCache
+        if (initialized != null) {
+          initialized
+        } else {
+          val cacheDirectory = File(context.cacheDir, STREAM_CACHE_DIR)
+          val cache = SimpleCache(
+            cacheDirectory,
+            LeastRecentlyUsedCacheEvictor(STREAM_CACHE_SIZE_BYTES),
+            StandaloneDatabaseProvider(context)
+          )
+          audioStreamCache = cache
+          cache
+        }
+      }
+    }
   }
 }
