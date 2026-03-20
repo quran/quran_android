@@ -18,7 +18,7 @@ object DatabaseModule {
 
   @Provides
   @SingleIn(AppScope::class)
-  fun provideBookamrksDao(daoImpl: BookmarksDaoImpl): BookmarksDao {
+  fun provideBookmarksDao(daoImpl: BookmarksDaoImpl): BookmarksDao {
     return daoImpl
   }
 
