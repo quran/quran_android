@@ -1,10 +1,12 @@
 package com.quran.labs.androidquran
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Bundle
 import android.text.Html
@@ -20,13 +22,18 @@ import android.widget.Button
 import android.widget.CursorAdapter
 import android.widget.ListView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.lifecycleScope
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
@@ -43,7 +50,11 @@ import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranUtils
+import com.quran.labs.androidquran.view.PulsingMicView
+import com.quran.mobile.di.InlineVoiceSearchController
+import com.quran.mobile.di.InlineVoiceSearchState
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.launch
 
 /**
  * Activity for searching the Quran
@@ -60,6 +71,10 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
   private lateinit var warningView: TextView
   private lateinit var buttonGetTranslations: Button
 
+  private var searchView: SearchView? = null
+  private var voiceSearchItem: MenuItem? = null
+  private var pulsingMicView: PulsingMicView? = null
+
   @Inject
   lateinit var quranInfo: QuranInfo
 
@@ -68,6 +83,20 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
 
   @Inject
   lateinit var quranFileUtils: QuranFileUtils
+
+  @Inject
+  lateinit var inlineVoiceSearchControllers: Set<@JvmSuppressWildcards InlineVoiceSearchController>
+
+  private val inlineController: InlineVoiceSearchController?
+    get() = inlineVoiceSearchControllers.firstOrNull()
+
+  private val recordPermissionLauncher = registerForActivityResult(
+    ActivityResultContracts.RequestPermission()
+  ) { granted ->
+    if (granted) {
+      startInlineRecording()
+    }
+  }
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     // override these to always be dark since the app doesn't really
@@ -127,22 +156,150 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
       }
     }
     handleIntent(intent)
+
+    observeInlineVoiceSearchState()
+  }
+
+  private fun observeInlineVoiceSearchState() {
+    val controller = inlineController ?: return
+    lifecycleScope.launch {
+      controller.state.collect { state ->
+        when (state) {
+          is InlineVoiceSearchState.Recording -> {
+            showPulsingMic()
+            lockSearchInput()
+            if (state.partialText.isNotEmpty()) {
+              searchView?.setQuery(state.partialText, false)
+            }
+          }
+          is InlineVoiceSearchState.FinalResult -> {
+            stopPulsingMic()
+            unlockSearchInput()
+            if (state.text.isNotEmpty()) {
+              showResults(state.text)
+            }
+            controller.reset()
+          }
+          is InlineVoiceSearchState.ModelNotReady -> {
+            stopPulsingMic()
+            unlockSearchInput()
+            showModelNotReadyDialog()
+            controller.reset()
+          }
+          is InlineVoiceSearchState.Error -> {
+            stopPulsingMic()
+            unlockSearchInput()
+            Toast.makeText(this@SearchActivity, state.message, Toast.LENGTH_SHORT).show()
+            controller.reset()
+          }
+          is InlineVoiceSearchState.Idle -> {
+            stopPulsingMic()
+            unlockSearchInput()
+          }
+        }
+      }
+    }
+  }
+
+  private fun showModelNotReadyDialog() {
+    AlertDialog.Builder(this)
+      .setTitle(R.string.voice_search)
+      .setMessage(R.string.voice_search_model_not_ready)
+      .setPositiveButton(R.string.menu_settings) { dialog, _ ->
+        dialog.dismiss()
+        startActivity(Intent(this, QuranPreferenceActivity::class.java))
+      }
+      .setNegativeButton(android.R.string.cancel, null)
+      .show()
+  }
+
+  private fun lockSearchInput() {
+    val sv = searchView ?: return
+    if (!sv.isEnabled) return
+    sv.clearFocus()
+    sv.isEnabled = false
+  }
+
+  private fun unlockSearchInput() {
+    val sv = searchView ?: return
+    sv.isEnabled = true
+  }
+
+  private fun showPulsingMic() {
+    val item = voiceSearchItem ?: return
+    if (pulsingMicView != null) return
+
+    val color = ContextCompat.getColor(this, R.color.voice_search_recording)
+    val micView = PulsingMicView(this, color)
+    micView.setOnClickListener { toggleRecording() }
+    item.actionView = micView
+    micView.startAnimation()
+    pulsingMicView = micView
+  }
+
+  private fun stopPulsingMic() {
+    pulsingMicView?.stopAnimation()
+    pulsingMicView = null
+    voiceSearchItem?.actionView = null
+  }
+
+  private fun toggleRecording() {
+    val controller = inlineController ?: return
+    when (controller.state.value) {
+      is InlineVoiceSearchState.Recording -> controller.stopRecording()
+      is InlineVoiceSearchState.Idle -> {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+          == PackageManager.PERMISSION_GRANTED
+        ) {
+          startInlineRecording()
+        } else {
+          recordPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+      }
+      else -> { /* ignore during transitional states */ }
+    }
+  }
+
+  private fun startInlineRecording() {
+    inlineController?.startRecording()
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     super.onCreateOptionsMenu(menu)
     menuInflater.inflate(R.menu.search_menu, menu)
     val searchItem = menu.findItem(R.id.search)
-    val searchView = searchItem.actionView as SearchView?
+    searchView = searchItem.actionView as SearchView?
     val searchManager = (getSystemService(SEARCH_SERVICE) as SearchManager)
     searchView?.setSearchableInfo(searchManager.getSearchableInfo(componentName))
 
+    // Only show voice search icon if the feature is enabled in settings
+    voiceSearchItem = menu.findItem(R.id.voice_search)
+    val voiceSearchEnabled = inlineController?.isEnabled == true
+
+    searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+      override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+        voiceSearchItem?.isVisible = voiceSearchEnabled
+        return true
+      }
+
+      override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+        // Post to avoid interfering with the toolbar collapse re-layout
+        findViewById<Toolbar>(R.id.toolbar).post {
+          voiceSearchItem?.isVisible = false
+        }
+        return true
+      }
+    })
+
     val intent = getIntent()
     if (Intent.ACTION_SEARCH == intent.action) {
-      // Make sure the keyboard is hidden if doing a search from within this activity
+      searchItem.expandActionView()
+      val query = intent.getStringExtra(SearchManager.QUERY)
+      searchView?.setQuery(query, false)
       searchView?.clearFocus()
+      voiceSearchItem?.isVisible = voiceSearchEnabled
     } else if (intent.action == null) {
-      // If no action is specified, just open the keyboard so the user can quickly start searching
+      // Open the keyboard so the user can quickly start searching
       searchItem.expandActionView()
     }
     return true
@@ -151,6 +308,9 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     if (item.itemId == android.R.id.home) {
       finish()
+      return true
+    } else if (item.itemId == R.id.voice_search) {
+      toggleRecording()
       return true
     }
     return super.onOptionsItemSelected(item)
@@ -164,6 +324,14 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
       downloadReceiver = null
     }
     super.onPause()
+  }
+
+  override fun onDestroy() {
+    val controller = inlineController
+    if (controller != null && controller.state.value is InlineVoiceSearchState.Recording) {
+      controller.stopRecording()
+    }
+    super.onDestroy()
   }
 
   private fun downloadArabicSearchDb() {
@@ -349,6 +517,11 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
   }
 
   private fun jumpToResult(sura: Int, ayah: Int) {
+    val controller = inlineController
+    if (controller != null && controller.state.value is InlineVoiceSearchState.Recording) {
+      controller.reset()
+    }
+
     val page = quranInfo.getPageFromSuraAyah(sura, ayah)
     val intent = Intent(this, PagerActivity::class.java)
     intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura)

@@ -51,6 +51,12 @@
       app:actionViewClass="androidx.appcompat.widget.SearchView"
       app:showAsAction="ifRoom|collapseActionView" />
   <item
+      android:id="@+id/voice_search"
+      android:icon="@drawable/ic_mic"
+      android:title="@string/voice_search"
+      android:visible="false"
+      app:showAsAction="always" />
+  <item
       android:id="@+id/jump"
       android:title="@string/menu_jump"
       app:showAsAction="never" />
