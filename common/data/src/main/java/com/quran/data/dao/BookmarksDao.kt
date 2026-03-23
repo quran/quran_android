@@ -6,7 +6,7 @@ import com.quran.data.model.bookmark.RecentPage
 import kotlinx.coroutines.flow.Flow
 
 interface BookmarksDao {
-  val changes: Flow<Long>
+  val changes: Flow<Unit>
 
   suspend fun bookmarks(): List<Bookmark>
   fun bookmarksForPage(page: Int): Flow<List<Bookmark>>
