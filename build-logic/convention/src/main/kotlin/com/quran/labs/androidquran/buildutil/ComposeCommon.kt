@@ -8,7 +8,7 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
-fun CommonExtension<*, *, *, *, *, *>.applyComposeCommon(project: Project) {
+fun CommonExtension.applyComposeCommon(project: Project) {
   buildFeatures.compose = true
 
   project.withLibraries { libs ->

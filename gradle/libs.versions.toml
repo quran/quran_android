@@ -1,38 +1,38 @@
 [versions]
-agp = "8.13.2"
+agp = "9.1.0"
 junit = "1.3.0"
-kotlin = "2.3.10"
+kotlin = "2.3.20"
 ksp = "2.3.6"
 
 # required within the Gradle convention plugins - not unused
-composeBomVersion = "2026.02.01"
-media3ExoplayerVersion = "1.9.2"
+composeBomVersion = "2026.03.00"
+media3ExoplayerVersion = "1.9.3"
 okhttpBomVersion = "5.3.2"
-firebaseBomVersion = "34.10.0"
+firebaseBomVersion = "34.11.0"
 
 # dependencies
 coroutinesVersion = "1.10.2"
 crashlytics = "3.0.6"
 dnsjavaVersion = "2.1.9"
 errorprone = "5.1.0"
-metro = "0.11.1"
+metro = "0.11.4"
 errorproneCoreVersion = "2.48.0"
 googleServices = "4.4.4"
 immutableCollectionsVersion = "0.4.0"
 leakcanaryAndroidVersion = "2.14"
 moshiVersion = "1.15.2"
-okioVersion = "3.16.4"
+okioVersion = "3.17.0"
 retrofitVersion = "3.0.0"
 rxandroidVersion = "3.0.2"
 rxjavaVersion = "3.1.12"
-sqldelight = "2.2.1"
+sqldelight = "2.3.2"
 timberVersion = "5.0.1"
 
 # androidx library versions
 androidxAppcompatVersion = "1.7.1"
-androidxActivityComposeVersion = "1.12.4"
+androidxActivityComposeVersion = "1.13.0"
 androidxAnnotationVersion = "1.9.1"
-androidxCoreVersion = "1.17.0"
+androidxCoreVersion = "1.18.0"
 androidxNavigationVersion = "2.9.7"
 androidxDynamicAnimationVersion = "1.1.0"
 androidxFragmentVersion = "1.8.9"
@@ -42,14 +42,14 @@ androidxMediaVersion = "1.7.1"
 androidxPreferencesVersion = "1.2.1"
 androidxRecyclerViewVersion = "1.4.0"
 androidxSwipeRefreshVersion = "1.2.0"
-androidxPagingVersion = "3.4.1"
-androidxPagingComposeVersion = "3.4.1"
+androidxPagingVersion = "3.4.2"
+androidxPagingComposeVersion = "3.4.2"
 androidxWorkManagerVersion = "2.11.1"
 androidxWindowManager = "1.5.1"
 
 # ui libraries
 accompanistVersion = "0.36.0"
-balloonVersion = "1.7.3"
+balloonVersion = "1.7.5"
 tooltipComposeVersion = "0.2.0"
 insetterVersion = "0.6.1"
 materialComponentsVersion = "1.13.0"
@@ -58,15 +58,15 @@ reorderableComposeVersion = "0.9.6"
 molecule = "2.2.0"
 
 # recitations
-grpcOkhttpVersion = "1.79.0"
+grpcOkhttpVersion = "1.80.0"
 googleAuthVersion = "1.43.0"
-googleCloudSpeechVersion = "4.81.0"
+googleCloudSpeechVersion = "4.83.0"
 
 # testing
 junitVersion = "4.13.2"
 espressoVersion = "3.7.0"
 truthVersion = "1.4.5"
-mockitoVersion = "5.22.0"
+mockitoVersion = "5.23.0"
 robolectricVersion = "4.16.1"
 turbineVersion = "1.2.1"
 koverVersion = "0.9.7"
@@ -190,7 +190,6 @@ ksp-gradlePlugin = { module = "com.google.devtools.ksp:symbol-processing-gradle-
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

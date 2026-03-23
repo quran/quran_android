@@ -1,4 +1,4 @@
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import com.quran.labs.androidquran.buildutil.applyAndroidCommon
 import com.quran.labs.androidquran.buildutil.applyBoms
 import com.quran.labs.androidquran.buildutil.applyComposeCommon
@@ -17,7 +17,6 @@ class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
       with(pluginManager) {
         withLibraries { libs ->
           apply(libs.plugins.android.library.get().pluginId)
-          apply(libs.plugins.kotlin.android.get().pluginId)
           apply(libs.plugins.compose.compiler.get().pluginId)
         }
       }
