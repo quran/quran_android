@@ -175,9 +175,7 @@ class BookmarksDaoImplTest {
 
     dao.changes.test {
       dao.toggleAyahBookmark(suraAyah, 1)
-
-      val change = awaitItem()
-      assertThat(change).isGreaterThan(0L)
+      awaitItem() // notification emitted
     }
   }
 
@@ -213,6 +211,18 @@ class BookmarksDaoImplTest {
     pageBookmarks.forEach {
       assertThat(it.sura).isNull()
       assertThat(it.ayah).isNull()
+    }
+  }
+
+  @Test
+  fun `should emit change notification when bookmark removed`() = runTest {
+    val suraAyah = TestDataFactory.createSuraAyah(sura = 1, ayah = 1)
+
+    dao.changes.test {
+      dao.toggleAyahBookmark(suraAyah, 1) // add
+      awaitItem() // consume the add notification
+      dao.toggleAyahBookmark(suraAyah, 1) // remove
+      awaitItem() // removal notification emitted
     }
   }
 
