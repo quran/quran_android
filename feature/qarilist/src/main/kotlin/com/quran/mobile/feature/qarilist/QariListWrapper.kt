@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -131,7 +132,11 @@ class QariListWrapper(
         sheetContainerColor = MaterialTheme.colorScheme.surface,
         sheetContentColor = MaterialTheme.colorScheme.contentColorFor(MaterialTheme.colorScheme.background),
         sheetContent = {
-          Column(modifier = Modifier.imePadding()) {
+          Column(
+            modifier = Modifier
+              .fillMaxHeight()
+              .imePadding()
+          ) {
             TopAppBar(
               title = {
                 Text(
@@ -172,7 +177,8 @@ class QariListWrapper(
             QariList(
               filteredQaris,
               selectedQariId = currentQariState.value?.id ?: -1,
-              onQariSelected = onQariSelected
+              onQariSelected = onQariSelected,
+              modifier = Modifier.weight(1f)
             )
           }
         }
