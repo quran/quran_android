@@ -20,11 +20,22 @@ class BrowsableSurahBuilderTest {
 
   private lateinit var recentQariManager: RecentQariManager
   private lateinit var builder: BrowsableSurahBuilder
+  private lateinit var qaris: List<Qari>
 
   @Before
   fun setUp() {
     val context = RuntimeEnvironment.getApplication()
     recentQariManager = RecentQariManager(context)
+    qaris = listOf(
+      Qari(
+        id = 1,
+        nameResource = android.R.string.copy,
+        url = "https://example.com/1/",
+        path = "qari_1",
+        hasGaplessAlternative = false,
+        db = "gapless.sqlite",
+      )
+    )
     builder = BrowsableSurahBuilder(
       appContext = context,
       pageProvider = object : PageProvider {
@@ -44,11 +55,11 @@ class BrowsableSurahBuilderTest {
         override fun getImagesDirectoryName(): String = throw NotImplementedError()
         override fun getPreviewTitle(): Int = throw NotImplementedError()
         override fun getPreviewDescription(): Int = throw NotImplementedError()
-        override fun getQaris(): List<Qari> = emptyList()
+        override fun getQaris(): List<Qari> = qaris
         override fun getDefaultQariId(): Int = throw NotImplementedError()
       },
       audioExtensionDecider = object : AudioExtensionDecider {
-        override fun audioExtensionForQari(qari: Qari): String = throw NotImplementedError()
+        override fun audioExtensionForQari(qari: Qari): String = "mp3"
         override fun audioExtensionForQari(qariItem: QariItem): String = throw NotImplementedError()
         override fun allowedAudioExtensions(qari: Qari): List<String> = throw NotImplementedError()
         override fun allowedAudioExtensions(qariItem: QariItem): List<String> =
@@ -70,5 +81,27 @@ class BrowsableSurahBuilderTest {
     recentQariManager.recordQari(qariId = 1, sura = 36)
     val children = builder.children(BrowsableSurahBuilder.ROOT_ID)
     assertThat(children).hasSize(2)
+  }
+
+  @Test
+  fun `root hides recents when stored entries are stale`() = runTest {
+    recentQariManager.recordQari(qariId = 99, sura = 36)
+
+    val children = builder.children(BrowsableSurahBuilder.ROOT_ID)
+    val recentChildren = builder.children(BrowsableSurahBuilder.RECENT_ID)
+
+    assertThat(children).hasSize(1)
+    assertThat(recentChildren).isEmpty()
+  }
+
+  @Test
+  fun `child returns browsable parents`() = runTest {
+    val recentItem = builder.child(BrowsableSurahBuilder.RECENT_ID)
+    val qariRootItem = builder.child(BrowsableSurahBuilder.QARI_ID)
+    val qariItem = builder.child("quran_1")
+
+    assertThat(recentItem?.mediaMetadata?.isBrowsable).isTrue()
+    assertThat(qariRootItem?.mediaMetadata?.isBrowsable).isTrue()
+    assertThat(qariItem?.mediaMetadata?.isBrowsable).isTrue()
   }
 }
