@@ -56,7 +56,8 @@ class BrowsableSurahBuilder @Inject constructor(
   suspend fun children(parentId: String): ImmutableList<MediaItem> {
     return withContext(Dispatchers.IO) {
       if (parentId == ROOT_ID) {
-        if (recentQariManager.getRecentQaris().isNotEmpty()) {
+        val qaris = pageProvider.getQaris()
+        if (recentChildren(qaris).isNotEmpty()) {
           ImmutableList.of(recentMediaItem, qariMediaItem)
         } else {
           ImmutableList.of(qariMediaItem)
@@ -81,18 +82,24 @@ class BrowsableSurahBuilder @Inject constructor(
    */
   suspend fun child(mediaId: String): MediaItem? {
     return withContext(Dispatchers.IO) {
+      when (mediaId) {
+        RECENT_ID -> return@withContext recentMediaItem
+        QARI_ID -> return@withContext qariMediaItem
+      }
+
       val qariId = mediaId.substringAfterLast("_").toIntOrNull() ?: -1
       val qari = pageProvider.getQaris().firstOrNull { it.id == qariId }
-      val isSura = mediaId.startsWith("sura_")
-      if (isSura) {
-        val sura = mediaId.substringAfter("_").substringBefore("_").toIntOrNull() ?: -1
-        if (qari != null && sura in 1..114) {
-          makeSuraMediaItem(qari, sura)
-        } else {
-          null
+      when {
+        mediaId.startsWith("quran_") && qari != null -> makeMediaItem(qari)
+        mediaId.startsWith("sura_") -> {
+          val sura = mediaId.substringAfter("_").substringBefore("_").toIntOrNull() ?: -1
+          if (qari != null && sura in 1..114) {
+            makeSuraMediaItem(qari, sura)
+          } else {
+            null
+          }
         }
-      } else {
-        null
+        else -> null
       }
     }
   }
@@ -126,9 +133,13 @@ class BrowsableSurahBuilder @Inject constructor(
    * Each item represents the last sura played for that qari.
    */
   private fun recentChildren(): ImmutableList<MediaItem> {
+    val qaris = pageProvider.getQaris()
+    return recentChildren(qaris)
+  }
+
+  private fun recentChildren(qaris: List<Qari>): ImmutableList<MediaItem> {
     val recents = recentQariManager.getRecentQaris()
     if (recents.isEmpty()) return ImmutableList.of()
-    val qaris = pageProvider.getQaris()
     val items = recents.mapNotNull { recent ->
       val qari = qaris.firstOrNull { it.id == recent.qariId }
       if (qari != null && recent.lastSura in 1..114) {

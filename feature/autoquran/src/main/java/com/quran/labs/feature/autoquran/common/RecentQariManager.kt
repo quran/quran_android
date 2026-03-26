@@ -7,6 +7,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import dev.zacsweers.metro.Inject
 import timber.log.Timber
+import androidx.core.content.edit
 
 class RecentQariManager @Inject constructor(
   @ApplicationContext appContext: Context,
@@ -34,7 +35,7 @@ class RecentQariManager @Inject constructor(
     current.removeAll { it.qariId == qariId && it.lastSura == sura }
     current.add(0, RecentQari(qariId, sura, System.currentTimeMillis()))
     val trimmed = current.take(MAX_RECENT)
-    prefs.edit().putString(KEY_RECENT_QARIS, adapter.toJson(trimmed)).apply()
+    prefs.edit { putString(KEY_RECENT_QARIS, adapter.toJson(trimmed)) }
   }
 
   companion object {
