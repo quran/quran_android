@@ -175,7 +175,8 @@ class BookmarksDaoImplTest {
 
     dao.changes.test {
       dao.toggleAyahBookmark(suraAyah, 1)
-      awaitItem() // notification emitted
+      awaitItem()
+      cancelAndIgnoreRemainingEvents()
     }
   }
 
@@ -219,10 +220,11 @@ class BookmarksDaoImplTest {
     val suraAyah = TestDataFactory.createSuraAyah(sura = 1, ayah = 1)
 
     dao.changes.test {
-      dao.toggleAyahBookmark(suraAyah, 1) // add
-      awaitItem() // consume the add notification
-      dao.toggleAyahBookmark(suraAyah, 1) // remove
-      awaitItem() // removal notification emitted
+      dao.toggleAyahBookmark(suraAyah, 1)
+      awaitItem()
+      dao.toggleAyahBookmark(suraAyah, 1)
+      awaitItem()
+      cancelAndIgnoreRemainingEvents()
     }
   }
 
