@@ -11,11 +11,13 @@ import com.quran.data.di.AppScope
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
+import com.quran.labs.androidquran.model.translation.QuranVerseProviderImpl
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.SettingsImpl
 import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.di.ExtraScreenProvider
+import com.quran.mobile.feature.voicesearch.matching.QuranVerseProvider
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ElementsIntoSet
@@ -107,5 +109,11 @@ object ApplicationModule {
   @ElementsIntoSet
   fun provideExtraScreens(): Set<ExtraScreenProvider> {
     return emptySet()
+  }
+
+  @Provides
+  @SingleIn(AppScope::class)
+  fun provideQuranVerseProvider(impl: QuranVerseProviderImpl): QuranVerseProvider {
+    return impl
   }
 }
