@@ -104,7 +104,6 @@
   <string name="prefs_category_display_settings">Shfaq Rregullimet</string>
   <string name="prefs_use_arabic_title">Modaliteti arab (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Përdor arabisht për ndërfaqen e aplikimit</string>
-  <string name="prefs_new_background_title">Sfond i ri</string>
   <string name="prefs_lock_orientation_title">Kyçi orientimin e ekranit</string>
   <string name="prefs_lock_orientation_summary_on">Përdor modalitetin e orientimit fiks</string>
   <string name="prefs_lock_orientation_summary_off">Përshtatës me mënyrën aktuale të orientimit</string>
@@ -112,11 +111,6 @@
   <string name="prefs_landscape_orientation_summary_on">Përdor gjithmonë mënyrën e peizazhit</string>
   <string name="prefs_landscape_orientation_summary_off">Përdor gjithmonë modalitetin e portretit</string>
   <string name="prefs_night_mode_title">Modaliteti i natës</string>
-  <string name="prefs_night_mode_summary">Përdor gërmat e sfondit të errët dhe të dritës</string>
-  <string name="prefs_night_mode_text_brightness_title">Shkëlqimi i tekstit</string>
-  <string name="prefs_night_mode_text_brightness_summary">Shkëlqimi i tekstit kur modaliteti i natës është aktiv</string>
-  <string name="prefs_night_mode_background_brightness_title">Shkëlqimi i sfondit</string>
-  <string name="prefs_night_mode_background_brightness_summary">Shkëlqimi i faqes kur modaliteti i natës është aktiv</string>
   <string name="prefs_overlay_page_info_title">Shfaq informacionet e faqes</string>
   <string name="prefs_overlay_page_info_summary">Numri i faqes mbishfaqëse, emri i sures dhe numri juz\' gjatë leximit</string>
   <string name="prefs_display_marker_title">Shfaq popups shënues</string>
