@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 
 class FakeSettings : Settings {
   private val data = mutableMapOf<String, Any>()
-  val preferencesSharedFlow = MutableSharedFlow<String>(replay = 1)
+  val preferencesSharedFlow = MutableSharedFlow<String>()
 
   fun setNightMode(value: Boolean) { data["isNightMode"] = value }
   fun setTextBrightness(value: Int) { data["nightModeTextBrightness"] = value }

@@ -19,7 +19,7 @@ class ArabicSearcherTest {
 
   /** A fake [Searcher] that records what arguments were passed to it. */
   private class FakeSearcher(
-    private val queryResponse: String = "fake_query",
+    val queryResponse: String = "fake_query",
     private val limitResponse: String = "LIMIT 5",
     private val processedText: String = "fake_processed"
   ) : Searcher {
@@ -106,8 +106,6 @@ class ArabicSearcherTest {
 
   @Test
   fun `getQuery returns the value produced by the default searcher`() {
-    // Arrange
-    val expectedQuery = "fake_query"
     // Act
     val result = arabicSearcher.getQuery(
       withSnippets = false,
@@ -117,7 +115,7 @@ class ArabicSearcherTest {
       searchColumn = "text"
     )
     // Assert
-    assertThat(result).isEqualTo(expectedQuery)
+    assertThat(result).isEqualTo(fakeDefaultSearcher.queryResponse)
   }
 
   // region getLimit

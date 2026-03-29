@@ -123,8 +123,8 @@ class SelectionHelperTest {
   fun `modifySelectionRange returns null when point lands outside all highlights`() {
     // Arrange
     val helper = buildHelper()
-    // highlight with right = 0.1 means x must be < 0.1 * 1080 = 108
-    // We'll start and stay at x=200 which is past the right of the highlight
+    // highlight with right = 0.09f means x must be < 0.09 * 1080 ≈ 97
+    // x=200 is well past this boundary so the filter excludes the highlight
     val highlights = listOf(buildHighlight(lineId = 0, left = 0f, right = 0.09f))
 
     // Act

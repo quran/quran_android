@@ -133,8 +133,7 @@ class DefaultSearcherTest {
     // Act
     val limit = searcher.getLimit(withSnippets = false)
     // Assert
-    assertThat(limit).contains("LIMIT")
-    assertThat(limit).contains("10")
+    assertThat(limit).isEqualTo("LIMIT 10")
   }
 
   // region processSearchText

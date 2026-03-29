@@ -149,4 +149,25 @@ class AyahSelectionExtensionTest {
     val ayah = result as AyahSelection.Ayah
     assertThat(ayah.suraAyah).isEqualTo(startAyah)
   }
+
+  @Test
+  fun `mergeWith on AyahRange when selectionStart is endAyah extends start toward incoming`() {
+    // Arrange: range (5, 10), anchor = 10 (the end), incoming = 7
+    // Since 7 < selectionStart(10), the incoming is "before" the anchor
+    // → extend the start: new range should be (7, 10)
+    val startAyah = SuraAyah(2, 5)
+    val endAyah = SuraAyah(2, 10)
+    val selectionStart = endAyah   // anchor is the end
+    val base = AyahSelection.AyahRange(startAyah, endAyah)
+    val incoming = AyahSelection.Ayah(SuraAyah(2, 7))
+
+    // Act
+    val result = base.mergeWith(incoming, selectionStart)
+
+    // Assert: incoming(7) < selectionStart(10) → startSuraAyah = incoming
+    assertThat(result).isInstanceOf(AyahSelection.AyahRange::class.java)
+    val range = result as AyahSelection.AyahRange
+    assertThat(range.startSuraAyah).isEqualTo(SuraAyah(2, 7))
+    assertThat(range.endSuraAyah).isEqualTo(endAyah)
+  }
 }

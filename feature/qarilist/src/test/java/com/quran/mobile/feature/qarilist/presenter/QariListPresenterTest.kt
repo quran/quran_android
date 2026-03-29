@@ -70,8 +70,9 @@ class QariListPresenterTest {
       awaitItem() // initial empty
       source.emit(listOf(downloadInfo))
       val items = awaitItem()
-      // The qari appears in "ready to play" section and also in the "gapless" section,
-      // since the presenter accumulates sections without deduplication.
+      // The qari appears in "ready to play" (downloaded sura 1 covers the range 1:1-1:7)
+      // and again in the "gapless" section (gapless section is not deduped from readyToPlay).
+      // qarisWithDownloads IS deduped from readyToPlay, but gapless/gapped are not.
       val ids = items.map { it.qariItem.id }
       assertThat(ids).contains(2)
       // Verify the first occurrence has the qari appearing in the ready-to-play position
@@ -140,6 +141,30 @@ class QariListPresenterTest {
       assertThat(gaplessItems).hasSize(2)
       assertThat(gaplessItems[0].qariItem.name).isEqualTo("Abul")
       assertThat(gaplessItems[1].qariItem.name).isEqualTo("Zaid")
+      cancel()
+    }
+  }
+
+  @Test
+  fun `qari name ordering is alphabetical within gapped section`() = runTest {
+    val source = FakeQariDownloadInfoSource()
+    val presenter = QariListPresenter(source)
+    val qariZ = makeGappedQari(1)
+    val qariA = makeGappedQari(2)
+
+    val nameMap = mapOf(1 to "Zaid", 2 to "Abul")
+
+    presenter.qariList(start, end) { qari -> qariToItem(qari, nameMap[qari.id] ?: "Unknown") }.test {
+      awaitItem()
+      source.emit(listOf(
+        makeGappedDownloadInfo(qariZ),
+        makeGappedDownloadInfo(qariA)
+      ))
+      val items = awaitItem()
+      val gappedItems = items.filter { !it.qariItem.isGapless }
+      assertThat(gappedItems).hasSize(2)
+      assertThat(gappedItems[0].qariItem.name).isEqualTo("Abul")
+      assertThat(gappedItems[1].qariItem.name).isEqualTo("Zaid")
       cancel()
     }
   }
