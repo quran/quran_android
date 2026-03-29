@@ -120,17 +120,18 @@ class PartiallyDownloadedSuraExtensionTest {
   }
 
   @Test
-  fun `downloadedAyat count matches the size of the provided list`() {
-    // Arrange
-    val downloadedAyat = listOf(1, 3, 5, 7)
+  fun `didDownloadAyat returns false for sparse list when queried range contains gap`() {
+    // Arrange — odd ayahs only: 1, 3, 5, 7 — even ayahs (2, 4, 6) are missing
     val sura = PartiallyDownloadedSura(
       sura = 6,
       expectedAyahCount = 165,
-      downloadedAyat = downloadedAyat
+      downloadedAyat = listOf(1, 3, 5, 7)
     )
 
-    // Act + Assert
-    assertThat(sura.downloadedAyat).hasSize(4)
-    assertThat(sura.downloadedAyat).containsExactlyElementsIn(downloadedAyat)
+    // Act — query a range that includes ayah 2 (a gap)
+    val result = sura.didDownloadAyat(currentSura = 6, start = 1, end = 3)
+
+    // Assert — the range 1..3 includes ayah 2 which is missing → false
+    assertThat(result).isFalse()
   }
 }

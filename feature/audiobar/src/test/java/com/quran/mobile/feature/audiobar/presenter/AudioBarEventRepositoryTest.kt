@@ -3,7 +3,10 @@ package com.quran.mobile.feature.audiobar.presenter
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.quran.mobile.feature.audiobar.state.AudioBarEvent
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.yield
 import org.junit.Test
 
 class AudioBarEventRepositoryTest {
@@ -119,16 +122,23 @@ class AudioBarEventRepositoryTest {
   @Test
   fun `multiple collectors each receive emitted events`() = runTest {
     val repository = createRepository()
+    val received1 = mutableListOf<AudioBarEvent>()
+    val received2 = mutableListOf<AudioBarEvent>()
 
-    repository.audioBarEventFlow.test {
-      val secondCollector = repository.audioBarEventFlow.test {
-        repository.onAudioBarEvent(AudioBarEvent.FastForward)
-        assertThat(awaitItem()).isEqualTo(AudioBarEvent.FastForward)
-        cancel()
-      }
-      assertThat(awaitItem()).isEqualTo(AudioBarEvent.FastForward)
-      cancel()
-    }
+    val job1 = launch { repository.audioBarEventFlow.collect { received1 += it } }
+    val job2 = launch { repository.audioBarEventFlow.collect { received2 += it } }
+
+    // yield so both collectors are subscribed before emitting
+    yield()
+
+    repository.onAudioBarEvent(AudioBarEvent.FastForward)
+    advanceUntilIdle()
+
+    assertThat(received1).containsExactly(AudioBarEvent.FastForward)
+    assertThat(received2).containsExactly(AudioBarEvent.FastForward)
+
+    job1.cancel()
+    job2.cancel()
   }
 
   @Test

@@ -28,11 +28,9 @@ class LineCalculationTest {
 
     // Assert that it does not find a line in the gap
     // (if the gap is larger than line height, y will be between lines)
-    val firstLineTop = 0
-    val firstLineBottom = lineHeight
     val result = calc.lineIndexForY(yBeyondFirstLine)
-    // either returns -1 (gap) or 1 (second line), both valid depending on exact geometry
-    assertThat(result).isAnyOf(-1, 1)
+    // y=175 is in the 1572-pixel gap between line 0 (0..174) and line 1 (1746..1920)
+    assertThat(result).isEqualTo(-1)
   }
 
   @Test
@@ -164,15 +162,11 @@ class LineCalculationTest {
 
   @Test
   fun `lineIndexForY returns correct line for middle of page`() {
-    // Arrange
     val height = 1920
     val calc = LineCalculation(width = 1080, height = height)
-
-    // Act - test at y = 0 (should be line 0)
-    val firstLine = calc.lineIndexForY(0f)
-
-    // Assert
-    assertThat(firstLine).isEqualTo(0)
+    // Middle of page: y = 960; lineHeight=174, positions[7]=873 → 960 in [873,1047]
+    val result = calc.lineIndexForY((height / 2).toFloat())
+    assertThat(result).isEqualTo(7)
   }
 
   @Test
@@ -187,10 +181,9 @@ class LineCalculationTest {
       resizeLinesToFit = true
     )
 
-    // Act - first line should be at y=0
-    val result = calc.lineIndexForY(0f)
-
-    // Assert
-    assertThat(result).isEqualTo(0)
+    // resizeLinesToFit=true makes lineHeight=height/lines=128, filling the full page.
+    // Bottom of page: lineIndexForY(height-1) should reach the last line.
+    assertThat(calc.lineIndexForY(0f)).isEqualTo(0)
+    assertThat(calc.lineIndexForY((height - 1).toFloat())).isEqualTo(lines - 1)
   }
 }
