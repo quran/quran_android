@@ -11,7 +11,7 @@ import com.quran.labs.androidquran.fakes.FakeQuranFileUtils
 import com.quran.labs.androidquran.fakes.FakeTranslationsDBAdapter
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
-import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
@@ -110,17 +110,17 @@ class TranslationManagerPresenterTest {
 
   @Test
   fun `getTranslations with fresh cache emits only one item`() = runTest {
-    // Arrange
+    // Arrange: fresh timestamp means isCacheStale=false → take(1) is applied inside getTranslations.
     quranSettings.setLastUpdatedTranslationDate(System.currentTimeMillis())
-    // Enqueue a response so MockWebServer doesn't close the connection before cache emits.
-    // The key assertion is that take(1) causes only 1 item to be emitted, not 2.
+    // Enqueue a network response so the concurrent remoteTranslationList() flow inside merge()
+    // can complete cleanly rather than propagating a connection error before take(1) cancels it.
     enqueueMockResponse()
     val manager = translationManager(withCache = true)
 
-    // Act - collect all items; take(1) internal to getTranslations means flow completes after 1
+    // Act
     val allItems = manager.getTranslations(false).toList()
 
-    // Assert - take(1) is used (fresh cache), so exactly 1 item is emitted
+    // Assert: take(1) guarantees exactly one emission regardless of whether cache or network wins.
     Truth.assertThat(allItems).hasSize(1)
   }
 
@@ -128,13 +128,14 @@ class TranslationManagerPresenterTest {
   fun `updateItem writes translation to adapter`() = runTest {
     // Arrange
     val translation = makeTranslation(id = 1, fileName = "test_v4.db", minimumVersion = 4)
+    // TranslationItem.exists() = localVersion > 0; localVersion=1 signals "installed"
     val item = TranslationItem(translation, localVersion = 1)
 
     // Act
     translationManager().updateItem(item)
 
     // Assert
-    val stored = fakeTranslationsAdapter.getTranslations().toList().flatten()
+    val stored = fakeTranslationsAdapter.getTranslations().first()
     Truth.assertThat(stored).hasSize(1)
     Truth.assertThat(stored[0].filename).isEqualTo("test_v4.db")
   }
@@ -156,13 +157,14 @@ class TranslationManagerPresenterTest {
     )
     fakeTranslationsAdapter.addTranslation(oldEntry)
     val translation = makeTranslation(id = 2, fileName = "old_schema.db", minimumVersion = 5)
+    // TranslationItem.exists() = localVersion > 0; localVersion=1 signals "installed"
     val item = TranslationItem(translation, localVersion = 1)
 
     // Act
     translationManager().updateItem(item)
 
     // Assert - old entry deleted by filename, new entry written
-    val stored = fakeTranslationsAdapter.getTranslations().toList().flatten()
+    val stored = fakeTranslationsAdapter.getTranslations().first()
     Truth.assertThat(stored).hasSize(1)
     Truth.assertThat(stored[0].id).isEqualTo(2L)
   }
@@ -180,7 +182,7 @@ class TranslationManagerPresenterTest {
     translationManager().updateItemOrdering(items)
 
     // Assert
-    val stored = fakeTranslationsAdapter.getTranslations().toList().flatten()
+    val stored = fakeTranslationsAdapter.getTranslations().first()
     Truth.assertThat(stored).hasSize(3)
   }
 
