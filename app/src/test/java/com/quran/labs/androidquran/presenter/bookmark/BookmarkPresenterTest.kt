@@ -234,7 +234,7 @@ class BookmarkPresenterTest {
   }
 
   @Test
-  fun `groups by tags produces correct row count regardless of sort order`() {
+  fun `grouped-by-tags row count is independent of sort order`() {
     // Arrange
     fakeModel.setTags(TAG_LIST)
     fakeModel.setBookmarks(MIXED_BOOKMARKS_LIST)

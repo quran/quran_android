@@ -1,7 +1,8 @@
 package com.quran.labs.androidquran.fakes
 
 import android.content.Context
-import android.view.WindowManager
+import android.hardware.display.DisplayManager
+import android.view.Display
 import com.quran.data.source.DisplaySize
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
@@ -18,9 +19,8 @@ import com.quran.labs.androidquran.util.QuranScreenInfo
 object FakeQuranFileUtils {
   fun create(context: Context): QuranFileUtils {
     val pageProvider = FakePageProvider()
-    val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-    @Suppress("DEPRECATION")
-    val display = windowManager.defaultDisplay
+    val display = context.getSystemService(DisplayManager::class.java)
+      .getDisplay(Display.DEFAULT_DISPLAY)!!
     val screenInfo = QuranScreenInfo(
       context,
       display,
