@@ -14,8 +14,7 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
@@ -27,8 +26,8 @@ class BookmarksDaoImpl @Inject constructor(
   private val lastPageQueries = bookmarksDatabase.lastPageQueries
   private val bookmarkTagQueries = bookmarksDatabase.bookmarkTagQueries
 
-  private val internalChanges = MutableStateFlow<Long?>(null)
-  override val changes: Flow<Long> = internalChanges.filterNotNull()
+  private val internalChanges = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+  override val changes: Flow<Unit> = internalChanges
 
   override suspend fun bookmarks(): List<Bookmark> {
     return withContext(Dispatchers.IO) {
@@ -57,7 +56,7 @@ class BookmarksDaoImpl @Inject constructor(
           bookmarkQueries.update(it.sura, it.ayah, it.page, it.id)
         }
       }
-      internalChanges.value = System.currentTimeMillis()
+      internalChanges.emit(Unit)
     }
   }
 
@@ -67,7 +66,7 @@ class BookmarksDaoImpl @Inject constructor(
       if (bookmarkId != null) {
         bookmarkTagQueries.deleteByBookmarkIds(listOf(bookmarkId))
         bookmarkQueries.deleteByIds(listOf(bookmarkId))
-        internalChanges.value = System.currentTimeMillis()
+        internalChanges.emit(Unit)
       }
     }
   }
@@ -92,11 +91,11 @@ class BookmarksDaoImpl @Inject constructor(
       val bookmarkId = bookmarkIds.firstOrNull()
       if (bookmarkId != null) {
         deleteBookmarkById(bookmarkId)
-        internalChanges.value = System.currentTimeMillis()
+        internalChanges.emit(Unit)
         false
       } else {
         bookmarkQueries.addBookmark(null, null, page)
-        internalChanges.value = System.currentTimeMillis()
+        internalChanges.emit(Unit)
         true
       }
     }
@@ -108,11 +107,11 @@ class BookmarksDaoImpl @Inject constructor(
         .executeAsOneOrNull()
       if (bookmarkId != null) {
         deleteBookmarkById(bookmarkId)
-        internalChanges.value = System.currentTimeMillis()
+        internalChanges.emit(Unit)
         false
       } else {
         bookmarkQueries.addBookmark(suraAyah.sura, suraAyah.ayah, page)
-        internalChanges.value = System.currentTimeMillis()
+        internalChanges.emit(Unit)
         true
       }
     }
@@ -124,7 +123,6 @@ class BookmarksDaoImpl @Inject constructor(
         bookmarkTagQueries.deleteByBookmarkIds(listOf(bookmarkId))
         bookmarkQueries.deleteByIds(listOf(bookmarkId))
       }
-      internalChanges.value = System.currentTimeMillis()
     }
   }
 

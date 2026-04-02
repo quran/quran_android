@@ -1,9 +1,12 @@
 plugins {
   id 'quran.android.library.android'
+  alias libs.plugins.ksp
   alias libs.plugins.metro
 }
 
 android.namespace = "com.quran.labs.feature.autoquran"
+
+android.testOptions.unitTests.includeAndroidResources = true
 
 dependencies {
   implementation libs.androidx.core.ktx
@@ -13,6 +16,8 @@ dependencies {
   api(libs.androidx.media3.session)
   implementation(libs.androidx.media3.ui)
   implementation(libs.timber)
+  implementation(libs.moshi)
+  ksp(libs.moshi.codegen)
 
   implementation project(":common:audio")
   implementation project(":common:data")
@@ -20,4 +25,9 @@ dependencies {
   implementation project(":common:ui:core")
   implementation project(":common:pages")
   implementation project(':common:upgrade')
+
+  testImplementation libs.junit
+  testImplementation libs.truth
+  testImplementation libs.robolectric
+  testImplementation libs.kotlinx.coroutines.test
 }

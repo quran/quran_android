@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.R
@@ -84,6 +87,14 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
     prev.setOnClickListener(onClickListener)
     val getTranslations = view.findViewById<Button>(R.id.get_translations_button)
     getTranslations.setOnClickListener(onClickListener)
+
+    ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+      val navBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
+      translationControls.updatePadding(bottom = navBarInsets.bottom)
+      translationView.updatePadding(bottom = navBarInsets.bottom)
+      insets
+    }
+
     return view
   }
 

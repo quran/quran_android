@@ -2,4 +2,19 @@ plugins {
   id 'quran.android.library.android'
 }
 
-android.namespace 'com.quran.labs.androidquran.common.search'
+android {
+  namespace 'com.quran.labs.androidquran.common.search'
+
+  testOptions {
+    unitTests {
+      // Required: Searcher interface references android.database types in method signatures
+      returnDefaultValues = true
+    }
+  }
+}
+
+dependencies {
+  testImplementation libs.junit
+  testImplementation libs.truth
+  testImplementation libs.kotlinx.coroutines.test
+}

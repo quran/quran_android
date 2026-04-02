@@ -7,4 +7,5 @@
   <string name="qarilist_gapped">Gapped</string>
   <string name="qarilist_selected">Selected</string>
   <string name="qarilist_dismiss">Dismiss</string>
+  <string name="qarilist_search_hint">Search</string>
 </resources>
