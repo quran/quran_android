@@ -80,6 +80,7 @@ class ArabicDatabaseUtilsTest {
       QuranInfo(MadaniDataSource()),
       quranFileUtils) {
 
+      // safe: getAyahTextForAyat() is also overridden, so the handler is never called
       override fun getArabicDatabaseHandler(): DatabaseHandler? = null
 
       override fun getAyahTextForAyat(ayat: List<Int>): Map<Int, String> {

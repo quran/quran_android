@@ -13,6 +13,7 @@ class FakeAudioUtils : AudioUtilsInterface {
 
   override fun getLocalQariUrl(item: QariItem): String? = localQariUrls[item]
 
+  // Fail-fast: populate qariUrls[item to extension] before calling this.
   override fun getQariUrl(item: QariItem, extension: String): String {
     return qariUrls[item to extension]
       ?: error("Not stubbed: getQariUrl($item, $extension)")
