@@ -20,7 +20,6 @@ import org.robolectric.annotation.Config
 
 /**
  * Tests for BookmarkModel using in-memory SQLite database.
- * Migrated from Mockito to real database implementation.
  *
  * Uses RobolectricTestRunner so that the SQLite JDBC driver loads in the same sandbox
  * classloader as other Robolectric tests, preventing DriverManager classloader conflicts
