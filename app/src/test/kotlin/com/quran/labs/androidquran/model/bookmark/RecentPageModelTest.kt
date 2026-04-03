@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Tests for RecentPageModel using in-memory SQLite database.
- * Migrated from Mockito to real database implementation.
  *
  * Uses RobolectricTestRunner so the SQLite JDBC driver loads in the same sandbox
  * classloader as other Robolectric tests, preventing DriverManager classloader conflicts.

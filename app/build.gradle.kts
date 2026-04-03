@@ -226,7 +226,6 @@ dependencies {
   testImplementation(project(":common:test-utils"))
   testImplementation(libs.junit)
   testImplementation(libs.truth)
-  testImplementation(libs.mockito.core)
   testImplementation(libs.okhttp.mockserver)
   testImplementation(libs.junit.ktx)
   testImplementation(libs.robolectric)
