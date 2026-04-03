@@ -23,6 +23,10 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
     private val themes = PageTheme.getAllThemes()
     private var themesRecyclerView: RecyclerView? = null
 
+    override fun getTheme(): Int {
+        return R.style.Quran_BottomSheetDialog
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val themeKey = QuranSettings.getInstance(requireContext()).pageTheme
