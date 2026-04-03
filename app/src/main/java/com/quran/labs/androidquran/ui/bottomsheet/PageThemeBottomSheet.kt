@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.bottomsheet
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.data.Constants
@@ -29,15 +27,6 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         val themeKey = QuranSettings.getInstance(requireContext()).pageTheme
         currentTheme = PageTheme.fromKey(themeKey)
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        dialog.setOnShowListener {
-            val bottomSheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.setBackgroundResource(R.drawable.bottom_sheet_background)
-        }
-        return dialog
     }
 
     override fun onCreateView(
@@ -90,7 +79,6 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
 
                 // since this changes the app's overall theme, it's safer to recreate the activity
                 requireActivity().recreate()
-                dismiss()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -121,10 +109,6 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
         // quiet theme forces dark mode, so we might need to recreate activity
         if (theme.storageKey == Constants.PAGE_THEME_QUIET || previousPageTheme == Constants.PAGE_THEME_QUIET) {
             requireActivity().recreate()
-            dismiss()
-        } else {
-            // delay dismissal slightly to show selection
-            view?.postDelayed({ dismiss() }, 150)
         }
     }
 
