@@ -33,7 +33,8 @@ import java.io.FileInputStream
 class QuranImportPresenter @Inject internal constructor(
   @ApplicationContext private val appContext: Context,
   private val bookmarkImportExportModel: BookmarkImportExportModel,
-  private val bookmarkModel: BookmarkModel
+  private val bookmarkModel: BookmarkModel,
+  private val contentResolverOps: ContentResolverOps
 ) : Presenter<QuranImportActivity> {
   private val compositeDisposable = CompositeDisposable()
 
@@ -157,7 +158,7 @@ class QuranImportPresenter @Inject internal constructor(
   @VisibleForTesting
   fun parseUri(uri: Uri): Maybe<BufferedSource> {
     return Maybe.defer {
-      val pfd = appContext.contentResolver.openFileDescriptor(uri, "r")
+      val pfd = contentResolverOps.openFileDescriptor(uri, "r")
       if (pfd != null) {
         val fd = pfd.fileDescriptor
         return@defer Maybe.just<BufferedSource>(
@@ -173,7 +174,7 @@ class QuranImportPresenter @Inject internal constructor(
   @VisibleForTesting
   fun parseExternalFile(uri: Uri): Maybe<BufferedSource> {
     return Maybe.defer {
-      val stream = appContext.contentResolver.openInputStream(uri)
+      val stream = contentResolverOps.openInputStream(uri)
       if (stream != null) {
         return@defer Maybe.just<BufferedSource>(
           stream.source().buffer()
