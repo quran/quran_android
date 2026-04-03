@@ -104,6 +104,7 @@ import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.labs.androidquran.ui.listener.AudioBarListener
 import com.quran.labs.androidquran.ui.util.ToastCompat.makeText
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
+import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenterScreen
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.OrientationLockUtils
 import com.quran.labs.androidquran.util.QuranAppUtils
@@ -170,7 +171,7 @@ import kotlin.math.abs
 class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdateListener,
   AyahSelectedListener, JumpDestination, QuranReadingActivityComponentProvider,
   QuranReadingPageComponentProvider, AyahToolBarInjector, QariListWrapperInjector,
-  AudioBarInjector, ActivityCompat.OnRequestPermissionsResultCallback {
+  AudioBarInjector, ActivityCompat.OnRequestPermissionsResultCallback, AudioPresenterScreen {
   private var lastPopupTime: Long = 0
   private var isActionBarHidden = true
   private var shouldReconnect = false
@@ -1548,7 +1549,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
   }
 
-  fun handleRequiredDownload(downloadIntent: Intent?) {
+  override fun handleRequiredDownload(downloadIntent: Intent?) {
     var needsPermission = needsPermissionToDownloadOver3g
     if (needsPermission) {
       if (QuranUtils.isOnWifiNetwork(this)) {
@@ -1579,7 +1580,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
   }
 
-  fun proceedWithDownload(downloadIntent: Intent?) {
+  override fun proceedWithDownload(downloadIntent: Intent?) {
     if (isActionBarHidden) {
       toggleActionBar()
     }
@@ -1588,7 +1589,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     startService(downloadIntent)
   }
 
-  fun handlePlayback(request: AudioRequest?) {
+  override fun handlePlayback(request: AudioRequest?) {
     needsPermissionToDownloadOver3g = true
     val intent = Intent(this, AudioService::class.java)
     intent.setAction(AudioService.ACTION_PLAYBACK)

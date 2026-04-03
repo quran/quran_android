@@ -14,8 +14,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 @ActivityScope
-class CoordinatesModel @Inject internal constructor(private val ayahInfoDatabaseProvider: AyahInfoDatabaseProvider) {
-  fun getPageCoordinates(wantPageBounds: Boolean, vararg pages: Int): Observable<PageCoordinates> {
+class CoordinatesModel @Inject internal constructor(private val ayahInfoDatabaseProvider: AyahInfoDatabaseProvider) : CoordinatesModelInterface {
+  override fun getPageCoordinates(wantPageBounds: Boolean, vararg pages: Int): Observable<PageCoordinates> {
     val database = ayahInfoDatabaseProvider.getAyahInfoHandler()
       ?: return Observable.error(NoSuchElementException("No AyahInfoDatabaseHandler found!"))
 
@@ -28,7 +28,7 @@ class CoordinatesModel @Inject internal constructor(private val ayahInfoDatabase
       .subscribeOn(Schedulers.computation())
   }
 
-  fun getAyahCoordinates(vararg pages: Int): Observable<AyahCoordinates> {
+  override fun getAyahCoordinates(vararg pages: Int): Observable<AyahCoordinates> {
     val database = ayahInfoDatabaseProvider.getAyahInfoHandler()
       ?: return Observable.error(NoSuchElementException("No AyahInfoDatabaseHandler found!"))
 
