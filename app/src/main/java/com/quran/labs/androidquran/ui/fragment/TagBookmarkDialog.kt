@@ -70,7 +70,7 @@ open class TagBookmarkDialog : DialogFragment() {
     return listview
   }
 
-  fun showAddTagDialog() {
+  open fun showAddTagDialog() {
     val context: Context? = activity
     if (context is OnBookmarkTagsUpdateListener) {
       (context as OnBookmarkTagsUpdateListener).onAddTagSelected()

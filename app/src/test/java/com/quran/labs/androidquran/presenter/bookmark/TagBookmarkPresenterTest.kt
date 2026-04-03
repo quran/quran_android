@@ -6,6 +6,7 @@ import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.fakes.FakeRecentPageModel
 import com.quran.labs.androidquran.helpers.inMemoryBookmarksAdapter
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
+import com.quran.labs.androidquran.fakes.FakeTagBookmarkDialog
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import com.quran.labs.test.RxSchedulerRule
 import io.reactivex.rxjava3.core.Maybe
@@ -15,9 +16,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import com.quran.labs.androidquran.base.TestApplication
@@ -247,12 +245,12 @@ class TagBookmarkPresenterTest {
 
   @Test
   fun testAddDialogCall() {
-    val bookmarkDialog = mock(TagBookmarkDialog::class.java)
+    val bookmarkDialog = FakeTagBookmarkDialog()
 
     val presenter = TagBookmarkPresenter(bookmarkModel)
     presenter.bind(bookmarkDialog)
     assertThat(presenter.toggleTag(-1)).isFalse()
-    verify(bookmarkDialog, times(1)).showAddTagDialog()
+    assertThat(bookmarkDialog.showAddTagDialogCallCount).isEqualTo(1)
     presenter.unbind(bookmarkDialog)
   }
 

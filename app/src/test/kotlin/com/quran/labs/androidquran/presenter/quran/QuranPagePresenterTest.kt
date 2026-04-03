@@ -1,25 +1,28 @@
 package com.quran.labs.androidquran.presenter.quran
 
+import android.graphics.RectF
+import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
+import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.common.Response
-import com.quran.labs.androidquran.model.quran.CoordinatesModel
-import com.quran.labs.androidquran.ui.helpers.QuranPageLoader
+import com.quran.labs.androidquran.fakes.FakeCoordinatesModel
+import com.quran.labs.androidquran.fakes.FakeQuranPageLoader
+import com.quran.labs.androidquran.fakes.FakeQuranPageScreen
+import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.test.RxSchedulerRule
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.PublishSubject
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mock
-import org.mockito.Mockito.atLeast
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when` as whenever
-import org.mockito.MockitoAnnotations
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Tests for QuranPagePresenter.
@@ -32,185 +35,182 @@ import org.mockito.MockitoAnnotations
  * - Error handling
  * - Settings integration (overlay page info)
  */
+@RunWith(RobolectricTestRunner::class)
+@Config(application = TestApplication::class, sdk = [33])
 class QuranPagePresenterTest {
 
   @get:Rule
   val rxRule = RxSchedulerRule()
 
-  @Mock private lateinit var coordinatesModel: CoordinatesModel
-  @Mock private lateinit var quranSettings: QuranSettings
-  @Mock private lateinit var quranPageLoader: QuranPageLoader
-  @Mock private lateinit var quranInfo: QuranInfo
-  @Mock private lateinit var screen: QuranPageScreen
-
+  private lateinit var fakeCoordinatesModel: FakeCoordinatesModel
+  private lateinit var quranSettings: QuranSettings
+  private lateinit var fakeQuranPageLoader: FakeQuranPageLoader
+  private lateinit var quranInfo: QuranInfo
+  private lateinit var fakeScreen: FakeQuranPageScreen
   private lateinit var presenter: QuranPagePresenter
   private val testPages = intArrayOf(1, 2, 3)
 
   @Before
   fun setup() {
-    MockitoAnnotations.openMocks(this)
+    QuranSettings.setInstance(null)
+    quranSettings = QuranSettings.getInstance(ApplicationProvider.getApplicationContext())
 
-    // Default mock behaviors
-    whenever(quranInfo.isValidPage(1)).thenReturn(true)
-    whenever(quranInfo.isValidPage(2)).thenReturn(true)
-    whenever(quranInfo.isValidPage(3)).thenReturn(true)
-    whenever(quranSettings.shouldOverlayPageInfo()).thenReturn(true)
-
-    // Default: return empty observables to avoid null pointer issues
-    whenever(coordinatesModel.getPageCoordinates(true, 1, 2, 3))
-      .thenReturn(Observable.empty())
-    whenever(quranPageLoader.loadPages(arrayOf(1, 2, 3)))
-      .thenReturn(Observable.empty())
+    fakeCoordinatesModel = FakeCoordinatesModel()
+    fakeCoordinatesModel.pageCoordinatesResult = Observable.empty()
+    fakeQuranPageLoader = FakeQuranPageLoader()
+    fakeQuranPageLoader.loadPagesResult = Observable.empty()
+    fakeScreen = FakeQuranPageScreen()
+    quranInfo = QuranInfo(MadaniDataSource())
 
     presenter = QuranPagePresenter(
-      coordinatesModel = coordinatesModel,
+      coordinatesModel = fakeCoordinatesModel,
       quranSettings = quranSettings,
-      quranPageLoader = quranPageLoader,
+      quranPageLoader = fakeQuranPageLoader,
       quranInfo = quranInfo,
       pages = testPages
     )
   }
 
+  @After
+  fun teardown() {
+    QuranSettings.setInstance(null)
+  }
+
   @Test
   fun `should load page coordinates when screen bound`() {
     // Arrange
-    val mockPageCoordinates = mock(PageCoordinates::class.java)
-    whenever(coordinatesModel.getPageCoordinates(true, 1, 2, 3))
-      .thenReturn(Observable.just(mockPageCoordinates))
+    val pageCoordinates = PageCoordinates(
+      page = 1, pageBounds = RectF(), suraHeaders = emptyList(), ayahMarkers = emptyList()
+    )
+    fakeCoordinatesModel.pageCoordinatesResult = Observable.just(pageCoordinates)
 
     // Act
-    presenter.bind(screen)
+    presenter.bind(fakeScreen)
 
     // Assert
-    verify(coordinatesModel).getPageCoordinates(true, 1, 2, 3)
-    verify(screen).setPageCoordinates(mockPageCoordinates)
+    assertThat(fakeCoordinatesModel.lastWantPageBoundsArg).isTrue()
+    assertThat(fakeScreen.pageCoordinatesSet).contains(pageCoordinates)
   }
 
   @Test
   fun `should respect shouldOverlayPageInfo setting when loading coordinates`() {
     // Arrange
-    whenever(quranSettings.shouldOverlayPageInfo()).thenReturn(false)
-    whenever(coordinatesModel.getPageCoordinates(false, 1, 2, 3))
-      .thenReturn(Observable.empty())
+    quranSettings.setShouldOverlayPageInfo(false)
 
     // Act
-    presenter.bind(screen)
+    presenter.bind(fakeScreen)
 
     // Assert
-    verify(coordinatesModel).getPageCoordinates(false, 1, 2, 3)
+    assertThat(fakeCoordinatesModel.lastWantPageBoundsArg).isFalse()
   }
 
   @Test
   fun `should load page coordinates with overlay enabled`() {
-    // Arrange
-    whenever(quranSettings.shouldOverlayPageInfo()).thenReturn(true)
-    whenever(coordinatesModel.getPageCoordinates(true, 1, 2, 3))
-      .thenReturn(Observable.empty())
+    // Arrange — shouldOverlayPageInfo defaults to true
 
     // Act
-    presenter.bind(screen)
+    presenter.bind(fakeScreen)
 
     // Assert
-    verify(coordinatesModel).getPageCoordinates(true, 1, 2, 3)
+    assertThat(fakeCoordinatesModel.lastWantPageBoundsArg).isTrue()
   }
 
   @Test
   fun `should handle page coordinates error`() {
     // Arrange
-    val error = RuntimeException("Coordinates error")
-    whenever(coordinatesModel.getPageCoordinates(true, 1, 2, 3))
-      .thenReturn(Observable.error(error))
+    fakeCoordinatesModel.pageCoordinatesResult =
+      Observable.error(RuntimeException("Coordinates error"))
 
     // Act
-    presenter.bind(screen)
+    presenter.bind(fakeScreen)
 
     // Assert
-    verify(screen).setAyahCoordinatesError()
+    assertThat(fakeScreen.ayahCoordinatesErrorCalled).isTrue()
   }
 
   @Test
   fun `should load ayah coordinates after page coordinates complete`() {
     // Arrange
-    val mockPageCoordinates = mock(PageCoordinates::class.java)
-    val mockAyahCoordinates = mock(AyahCoordinates::class.java)
+    val pageCoordinates = PageCoordinates(
+      page = 1, pageBounds = RectF(), suraHeaders = emptyList(), ayahMarkers = emptyList()
+    )
+    val ayahCoordinates = AyahCoordinates(
+      page = 1, ayahCoordinates = emptyMap(), glyphCoordinates = null
+    )
 
-    whenever(coordinatesModel.getPageCoordinates(true, 1, 2, 3))
-      .thenReturn(Observable.just(mockPageCoordinates))
-    whenever(coordinatesModel.getAyahCoordinates(1))
-      .thenReturn(Observable.just(mockAyahCoordinates))
-    whenever(coordinatesModel.getAyahCoordinates(2))
-      .thenReturn(Observable.just(mockAyahCoordinates))
-    whenever(coordinatesModel.getAyahCoordinates(3))
-      .thenReturn(Observable.just(mockAyahCoordinates))
+    fakeCoordinatesModel.pageCoordinatesResult = Observable.just(pageCoordinates)
+    fakeCoordinatesModel.ayahCoordinatesResponses[1] = Observable.just(ayahCoordinates)
+    fakeCoordinatesModel.ayahCoordinatesResponses[2] = Observable.just(ayahCoordinates)
+    fakeCoordinatesModel.ayahCoordinatesResponses[3] = Observable.just(ayahCoordinates)
 
     // Act
-    presenter.bind(screen)
+    presenter.bind(fakeScreen)
 
     // Assert: ayah coordinates are loaded for all pages after page coordinates complete
     // Note: RxSchedulerRule makes trampoline scheduler execute timer immediately (no actual 500ms wait)
-    verify(coordinatesModel).getAyahCoordinates(1)
-    verify(coordinatesModel).getAyahCoordinates(2)
-    verify(coordinatesModel).getAyahCoordinates(3)
-    verify(screen, atLeast(1)).setAyahCoordinatesData(mockAyahCoordinates)
+    assertThat(fakeCoordinatesModel.getAyahCoordinatesCalledWith).contains(1)
+    assertThat(fakeCoordinatesModel.getAyahCoordinatesCalledWith).contains(2)
+    assertThat(fakeCoordinatesModel.getAyahCoordinatesCalledWith).contains(3)
+    assertThat(fakeScreen.ayahCoordinatesDataSet).isNotEmpty()
   }
 
   @Test
   fun `should download images on first bind`() {
     // Arrange
-    val mockResponse = mock(Response::class.java)
-    whenever(quranPageLoader.loadPages(arrayOf(1, 2, 3)))
-      .thenReturn(Observable.just(mockResponse))
+    val response = Response(null as android.graphics.Bitmap?)
+    fakeQuranPageLoader.loadPagesResult = Observable.just(response)
 
     // Act
-    presenter.bind(screen)
+    presenter.bind(fakeScreen)
 
     // Assert: bind() automatically triggers download
-    verify(quranPageLoader).loadPages(arrayOf(1, 2, 3))
+    assertThat(fakeQuranPageLoader.lastLoadedPages?.toList()).containsExactly(1, 2, 3)
   }
 
   @Test
   fun `should filter invalid pages when downloading`() {
-    // Arrange
-    whenever(quranInfo.isValidPage(1)).thenReturn(true)
-    whenever(quranInfo.isValidPage(2)).thenReturn(false) // Invalid page
-    whenever(quranInfo.isValidPage(3)).thenReturn(true)
-    whenever(quranPageLoader.loadPages(arrayOf(1, 3))) // Only valid pages
-      .thenReturn(Observable.empty())
+    // Arrange: page 605 exceeds MadaniDataSource's 604-page range
+    val localFakeLoader = FakeQuranPageLoader()
+    localFakeLoader.loadPagesResult = Observable.empty()
+    val localPresenter = QuranPagePresenter(
+      coordinatesModel = fakeCoordinatesModel,
+      quranSettings = quranSettings,
+      quranPageLoader = localFakeLoader,
+      quranInfo = quranInfo,
+      pages = intArrayOf(1, 605, 3)
+    )
 
     // Act: bind() triggers download automatically
-    presenter.bind(screen)
+    localPresenter.bind(fakeScreen)
 
     // Assert: only valid pages are downloaded
-    verify(quranPageLoader).loadPages(arrayOf(1, 3))
+    assertThat(localFakeLoader.lastLoadedPages?.toList()).containsExactly(1, 3)
   }
 
   @Test
   fun `should hide page download error when downloading images`() {
-    // Arrange
-    whenever(quranPageLoader.loadPages(arrayOf(1, 2, 3)))
-      .thenReturn(Observable.empty())
-
     // Act: bind() triggers download automatically
-    presenter.bind(screen)
+    presenter.bind(fakeScreen)
 
     // Assert
-    verify(screen).hidePageDownloadError()
+    assertThat(fakeScreen.hidePageDownloadErrorCalled).isTrue()
   }
 
   @Test
   fun `should not deliver results to screen after unbind`() {
     // Arrange: observable that emits after unbind
-    val subject = io.reactivex.rxjava3.subjects.PublishSubject.create<PageCoordinates>()
-    whenever(coordinatesModel.getPageCoordinates(true, 1, 2, 3))
-      .thenReturn(subject)
+    val subject = PublishSubject.create<PageCoordinates>()
+    fakeCoordinatesModel.pageCoordinatesResult = subject
 
     // Act
-    presenter.bind(screen)
-    presenter.unbind(screen)
-    val lateCoordinates = mock(PageCoordinates::class.java)
+    presenter.bind(fakeScreen)
+    presenter.unbind(fakeScreen)
+    val lateCoordinates = PageCoordinates(
+      page = 99, pageBounds = RectF(), suraHeaders = emptyList(), ayahMarkers = emptyList()
+    )
     subject.onNext(lateCoordinates)
 
     // Assert: screen should NOT receive the late emission
-    verify(screen, never()).setPageCoordinates(lateCoordinates)
+    assertThat(fakeScreen.pageCoordinatesSet).doesNotContain(lateCoordinates)
   }
 }

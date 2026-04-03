@@ -19,7 +19,7 @@ class QuranPageLoader @Inject internal constructor(
   private val imageWidth: String,
   private val quranScreenInfo: QuranScreenInfo,
   private val quranFileUtils: QuranFileUtils
-) {
+) : QuranPageLoaderInterface {
 
   private fun loadImage(pageNumber: Int): Response {
     var response: Response? = null
@@ -66,7 +66,7 @@ class QuranPageLoader @Inject internal constructor(
     return response
   }
 
-  fun loadPages(pages: Array<Int>): Observable<Response> {
+  override fun loadPages(pages: Array<Int>): Observable<Response> {
     return Observable.fromArray(*pages)
         .flatMap { page: Int ->
           Observable.fromCallable { loadImage(page) }

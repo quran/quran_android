@@ -13,6 +13,12 @@ import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoManager
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoSource
+import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.data.QuranDisplayInterface
+import com.quran.page.common.data.QuranNaming
+import com.quran.labs.androidquran.util.AudioFileUtils
+import com.quran.labs.androidquran.util.AudioUtils
+import com.quran.labs.androidquran.util.AudioUtilsInterface
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.SettingsImpl
@@ -116,4 +122,16 @@ object ApplicationModule {
   fun provideExtraScreens(): Set<ExtraScreenProvider> {
     return emptySet()
   }
+
+  @Provides
+  fun provideAudioUtilsInterface(impl: AudioUtils): AudioUtilsInterface = impl
+
+  @Provides
+  fun provideAudioFileUtils(impl: QuranFileUtils): AudioFileUtils = impl
+
+  @Provides
+  fun provideQuranNaming(impl: QuranDisplayData): QuranNaming = impl
+
+  @Provides
+  fun provideQuranDisplayInterface(impl: QuranDisplayData): QuranDisplayInterface = impl
 }

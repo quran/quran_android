@@ -1,7 +1,8 @@
 package com.quran.labs.androidquran.model.translation
 
 import android.content.Context
-import android.view.WindowManager
+import android.hardware.display.DisplayManager
+import android.view.Display
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
@@ -16,8 +17,6 @@ import com.quran.labs.androidquran.util.QuranScreenInfo
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -27,20 +26,13 @@ class ArabicDatabaseUtilsTest {
 
   private val context = ApplicationProvider.getApplicationContext<Context>()
 
-  // DatabaseHandler is not open and has a private constructor; keep as mock
-  @Mock
-  lateinit var arabicHandler: DatabaseHandler
-
   // QuranFileUtils constructed with real Robolectric context + FakePageProvider.
   // Its methods are never invoked: getArabicDatabaseHandler() and getAyahTextForAyat()
   // are both overridden in the anonymous subclass used by each test.
   private val quranFileUtils: QuranFileUtils by lazy {
     val fakePageProvider = FakePageProvider()
-    // QuranScreenInfo requires a Display object; Robolectric has no replacement shadow for
-    // DisplayManager.getDisplay(), so the deprecated WindowManager.defaultDisplay is used.
-    // Can be removed once QuranScreenInfo is refactored to not require Display.
-    @Suppress("DEPRECATION")
-    val display = (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+    val display = context.getSystemService(DisplayManager::class.java)
+      .getDisplay(Display.DEFAULT_DISPLAY)!!
     val pageSizeCalculator = fakePageProvider.getPageSizeCalculator(DisplaySize(0, 0))
     val quranScreenInfo = QuranScreenInfo(context, display, pageSizeCalculator)
     QuranFileUtils(context, fakePageProvider, quranScreenInfo)
@@ -48,7 +40,7 @@ class ArabicDatabaseUtilsTest {
 
   @Before
   fun setUp() {
-    MockitoAnnotations.openMocks(this@ArabicDatabaseUtilsTest)
+    // no-op: all state is isolated per test via getArabicDatabaseUtils()
   }
 
   @Test
@@ -88,9 +80,7 @@ class ArabicDatabaseUtilsTest {
       QuranInfo(MadaniDataSource()),
       quranFileUtils) {
 
-      override fun getArabicDatabaseHandler(): DatabaseHandler {
-        return arabicHandler
-      }
+      override fun getArabicDatabaseHandler(): DatabaseHandler? = null
 
       override fun getAyahTextForAyat(ayat: List<Int>): Map<Int, String> {
         return ayat.map { ayahId -> ayahId to "verse $ayahId" }.toMap()

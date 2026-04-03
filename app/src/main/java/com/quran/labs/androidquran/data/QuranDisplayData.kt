@@ -10,13 +10,11 @@ import com.quran.data.model.SuraAyahIterator
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.page.common.data.QuranNaming
-import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import timber.log.Timber
 import com.quran.mobile.common.ui.core.R as UiCoreR
 
-@ContributesBinding(AppScope::class)
-class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): QuranNaming {
+class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): QuranNaming, QuranDisplayInterface {
 
   /**
    * Get localized sura name from resources
@@ -106,7 +104,7 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
     return context.getString(resource, suraName, ayah)
   }
 
-  fun getNotificationTitle(
+  override fun getNotificationTitle(
     context: Context, minVerse: SuraAyah, maxVerse: SuraAyah, isGapless: Boolean
   ): String {
     val minSura = minVerse.sura
