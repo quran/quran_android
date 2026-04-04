@@ -843,7 +843,7 @@ class SheikhAudioPresenterTest {
   }
 
   @Test
-  fun `removeSuras gapless skips database deletion when databaseName is null`() = runTest {
+  fun `removeSuras gapped ignores removeDatabase flag when no databaseName`() = runTest {
     val qari = makeGappedQari(1) // gapped = no databaseName
     emitQariInfo(makeGappedInfo(qari, listOf(1)))
 
@@ -856,6 +856,37 @@ class SheikhAudioPresenterTest {
     // Gapped qari deletes directories, no database to delete
     assertThat(suraDir.exists()).isFalse()
     assertThat(fakeAudioCacheInvalidator.invalidatedQariIds).containsExactly(1)
+  }
+
+  @Test
+  fun `sheikhInfo emits nothing for unknown qariId`() = runTest {
+    val qari = makeGaplessQari(1)
+    emitQariInfo(makeGaplessInfo(qari, emptyList()))
+
+    val presenter = createPresenter()
+    presenter.sheikhInfo(99).test {
+      expectNoEvents()
+      cancelAndIgnoreRemainingEvents()
+    }
+  }
+
+  @Test
+  fun `download does nothing when all suras downloaded and downloadDatabase is false`() = runTest {
+    val qari = makeGaplessQari(1)
+    emitQariInfo(makeGaplessInfo(qari, listOf(1, 2, 3)))
+
+    val presenter = createPresenter()
+    presenter.sheikhInfo(1).test {
+      awaitItem() // initial
+
+      presenter.onDownloadRange(1, listOf(1, 2, 3), false)
+      awaitItem() // DownloadStatus dialog
+
+      assertThat(fakeDownloader.downloadCompleteSurasCalls).isEmpty()
+      assertThat(fakeDownloader.downloadAudioDatabaseCalls).isEmpty()
+
+      cancelAndIgnoreRemainingEvents()
+    }
   }
 
   // --- cancelDownloads and onSuraAction ---
