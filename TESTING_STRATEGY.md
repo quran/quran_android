@@ -467,7 +467,7 @@ Eliminated all remaining Mockito usage from `BookmarkPresenterTest` and `Transla
 ---
 
 ### Phase 6 — Zero Mockito in `app/src/test`
-**branch: feature/testing-phase6** · 2026-04-03
+**PR #3609** · merged 2026-04-04
 
 Achieved zero `@Mock` annotations and zero Mockito imports across all of `app/src/test`. Migrated five test files and extracted six new production interfaces.
 
@@ -522,13 +522,14 @@ Achieved zero `@Mock` annotations and zero Mockito imports across all of `app/sr
 
 | Metric | Value |
 |--------|-------|
-| PRs merged | 5 (#3520, #3538, #3539, #3542, #3603) + Phase 6 branch |
+| PRs merged | 6 (#3520, #3538, #3539, #3542, #3603, #3609) |
 | Net new tests | 413+ |
 | Modules with coverage added | 11 |
 | Mockito files eliminated or migrated | ~17 |
-| Fakes created | 32+ |
-| Production interface extractions | 12 |
+| Fakes created | 33+ |
+| Production interface extractions | 13 |
 | `@Mock` annotations remaining in `app/src/test` | **0** |
+| Mockito imports remaining in `app/src/test` | **0** |
 
 ---
 
@@ -553,4 +554,4 @@ Achieved zero `@Mock` annotations and zero Mockito imports across all of `app/sr
 
 ---
 
-*Last updated: 2026-04-02*
+*Last updated: 2026-04-04*
