@@ -4,7 +4,7 @@ import com.quran.data.core.QuranFileManager
 import com.quran.data.di.ActivityScope
 import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.common.audio.cache.AudioCacheInvalidator
-import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoManager
+import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoSource
 import com.quran.labs.androidquran.common.audio.model.download.AudioDownloadMetadata
 import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
 import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
@@ -33,7 +33,7 @@ import java.io.File
 
 @ActivityScope
 class SheikhAudioPresenter @Inject constructor(
-  private val qariDownloadInfoManager: QariDownloadInfoManager,
+  private val qariDownloadInfoSource: QariDownloadInfoSource,
   private val downloadInfoStream: DownloadInfoStreams,
   private val quranFileManager: QuranFileManager,
   private val audioCacheInvalidator: AudioCacheInvalidator,
@@ -48,7 +48,7 @@ class SheikhAudioPresenter @Inject constructor(
   }
 
   private fun sheikhInfoFlow(qariId: Int): Flow<SheikhUiModel> {
-    return combine(qariDownloadInfoManager.downloadedQariInfo(), selectedEntriesFlow, currentDialogFlow) {
+    return combine(qariDownloadInfoSource.downloadedQariInfo(), selectedEntriesFlow, currentDialogFlow) {
         downloadInfo, selectedSuras, currentDialog ->
         val qariInfo = downloadInfo.firstOrNull { it.qari.id == qariId }
         if (qariInfo == null) {
@@ -215,7 +215,7 @@ class SheikhAudioPresenter @Inject constructor(
 
   private suspend fun qariInfoForId(qariId: Int): QariDownloadInfo? {
     return withContext(Dispatchers.IO) {
-      qariDownloadInfoManager.downloadedQariInfo()
+      qariDownloadInfoSource.downloadedQariInfo()
         .map { qariDownloadInfo ->
           qariDownloadInfo.firstOrNull { it.qari.id == qariId }
         }
