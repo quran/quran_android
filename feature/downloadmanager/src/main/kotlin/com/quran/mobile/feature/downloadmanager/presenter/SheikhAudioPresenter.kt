@@ -3,7 +3,7 @@ package com.quran.mobile.feature.downloadmanager.presenter
 import com.quran.data.core.QuranFileManager
 import com.quran.data.di.ActivityScope
 import com.quran.data.model.audio.Qari
-import com.quran.labs.androidquran.common.audio.cache.AudioCacheInvalidator
+import com.quran.labs.androidquran.common.audio.cache.AudioCacheInvalidatorInterface
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoSource
 import com.quran.labs.androidquran.common.audio.model.download.AudioDownloadMetadata
 import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
@@ -36,7 +36,7 @@ class SheikhAudioPresenter @Inject constructor(
   private val qariDownloadInfoSource: QariDownloadInfoSource,
   private val downloadInfoStream: DownloadInfoStreams,
   private val quranFileManager: QuranFileManager,
-  private val audioCacheInvalidator: AudioCacheInvalidator,
+  private val audioCacheInvalidator: AudioCacheInvalidatorInterface,
   private val audioExtensionDecider: AudioExtensionDecider,
   private val downloader: Downloader
 ) {

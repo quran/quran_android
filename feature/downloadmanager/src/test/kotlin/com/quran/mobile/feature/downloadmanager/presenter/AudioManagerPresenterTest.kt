@@ -36,7 +36,7 @@ class AudioManagerPresenterTest {
 
   @Test
   fun `returns empty list when no qaris are downloaded`() = runTest {
-    source.emit(emptyList())
+    source.emitFiltered(emptyList())
     presenter.downloadedShuyookh(defaultLambda).test {
       val result = awaitItem()
       assertThat(result).isEmpty()
@@ -47,7 +47,7 @@ class AudioManagerPresenterTest {
   @Test
   fun `maps qari download info to DownloadedSheikhUiModel`() = runTest {
     val qari = makeGaplessQari(1)
-    source.emit(listOf(makeGaplessInfo(qari, listOf(1, 2, 3))))
+    source.emitFiltered(listOf(makeGaplessInfo(qari, listOf(1, 2, 3))))
 
     presenter.downloadedShuyookh(defaultLambda).test {
       val result = awaitItem()
@@ -62,7 +62,7 @@ class AudioManagerPresenterTest {
   fun `sorts results alphabetically by qari name`() = runTest {
     val qari1 = makeGaplessQari(1)
     val qari2 = makeGaplessQari(2)
-    source.emit(listOf(makeGaplessInfo(qari1, emptyList()), makeGaplessInfo(qari2, emptyList())))
+    source.emitFiltered(listOf(makeGaplessInfo(qari1, emptyList()), makeGaplessInfo(qari2, emptyList())))
 
     val lambda: (Qari) -> QariItem = { qari ->
       when (qari.id) {
@@ -83,7 +83,7 @@ class AudioManagerPresenterTest {
   @Test
   fun `applies lambda to transform Qari to QariItem`() = runTest {
     val qari = makeGaplessQari(1)
-    source.emit(listOf(makeGaplessInfo(qari, emptyList())))
+    source.emitFiltered(listOf(makeGaplessInfo(qari, emptyList())))
 
     val lambda: (Qari) -> QariItem = { q ->
       qariToItem(q, "Custom Name")
@@ -104,11 +104,11 @@ class AudioManagerPresenterTest {
       val first = awaitItem()
       assertThat(first).isEmpty()
 
-      source.emit(listOf(makeGaplessInfo(qari, listOf(1))))
+      source.emitFiltered(listOf(makeGaplessInfo(qari, listOf(1))))
       val second = awaitItem()
       assertThat(second).hasSize(1)
 
-      source.emit(emptyList())
+      source.emitFiltered(emptyList())
       val third = awaitItem()
       assertThat(third).isEmpty()
 
@@ -121,7 +121,7 @@ class AudioManagerPresenterTest {
     val qari1 = makeGaplessQari(1)
     val qari2 = makeGaplessQari(2)
     val qari3 = makeGaplessQari(3)
-    source.emit(
+    source.emitFiltered(
       listOf(
         makeGaplessInfo(qari1, emptyList()),
         makeGaplessInfo(qari2, listOf(1, 2, 3, 4, 5)),
@@ -142,7 +142,7 @@ class AudioManagerPresenterTest {
 
   @Test
   fun `result is an ImmutableList`() = runTest {
-    source.emit(emptyList())
+    source.emitFiltered(emptyList())
     presenter.downloadedShuyookh(defaultLambda).test {
       val result = awaitItem()
       assertThat(result).isInstanceOf(ImmutableList::class.java)
@@ -158,7 +158,7 @@ class AudioManagerPresenterTest {
       fullyDownloadedSuras = listOf(1, 2),
       partiallyDownloadedSuras = listOf(3, 4, 5)
     )
-    source.emit(listOf(info))
+    source.emitFiltered(listOf(info))
 
     presenter.downloadedShuyookh(defaultLambda).test {
       val result = awaitItem()
