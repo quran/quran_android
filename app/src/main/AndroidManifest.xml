@@ -41,6 +41,7 @@
       android:requestLegacyExternalStorage="true"
       android:enableOnBackInvokedCallback="true"
       android:localeConfig="@xml/locales_config"
+      tools:replace="android:fullBackupContent,android:dataExtractionRules"
       tools:targetApi="tiramisu">
 
     <activity

@@ -31,6 +31,7 @@ android {
     versionCode = 3630
     versionName = "3.6.3"
     testInstrumentationRunner = "com.quran.labs.androidquran.core.QuranTestRunner"
+    manifestPlaceholders["oidcRedirectScheme"] = "com.quran.oauth"
   }
 
   buildFeatures.resValues = true
