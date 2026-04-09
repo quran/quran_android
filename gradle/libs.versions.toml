@@ -12,7 +12,7 @@ firebaseBomVersion = "34.11.0"
 
 # dependencies
 coroutinesVersion = "1.10.2"
-crashlytics = "3.0.6"
+crashlytics = "3.0.7"
 dnsjavaVersion = "2.1.9"
 errorprone = "5.1.0"
 metro = "0.13.2"
