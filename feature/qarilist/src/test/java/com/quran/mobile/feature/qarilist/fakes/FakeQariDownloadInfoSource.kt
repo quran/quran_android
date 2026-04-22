@@ -15,6 +15,8 @@ class FakeQariDownloadInfoSource : QariDownloadInfoSource {
     internalFlow.value = items
   }
 
+  override fun downloadedQariInfo(): Flow<List<QariDownloadInfo>> = internalFlow
+
   override fun downloadQariInfoFilteringNonDownloadedGappedQaris(): Flow<List<QariDownloadInfo>> {
     return internalFlow
   }
