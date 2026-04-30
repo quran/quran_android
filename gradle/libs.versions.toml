@@ -59,7 +59,7 @@ reorderableComposeVersion = "0.9.6"
 molecule = "2.2.0"
 
 # recitations
-grpcOkhttpVersion = "1.80.0"
+grpcOkhttpVersion = "1.81.0"
 googleAuthVersion = "1.46.0"
 googleCloudSpeechVersion = "4.86.0"
 
