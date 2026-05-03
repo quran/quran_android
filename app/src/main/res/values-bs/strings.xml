@@ -116,7 +116,6 @@
   <string name="prefs_category_display_settings">Prikažite postavke</string>
   <string name="prefs_use_arabic_title">Arapski (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Koristite aplikaciju na arapskom</string>
-  <string name="prefs_new_background_title">Nova pozadina</string>
   <string name="prefs_lock_orientation_title">Zabranite rotaciju zaslona u aplikaciji</string>
   <string name="prefs_lock_orientation_summary_on">Koristite fiksni način orijentacije</string>
   <string name="prefs_lock_orientation_summary_off">Prilagodite trenutnom načinu orijentacije</string>
@@ -124,11 +123,6 @@
   <string name="prefs_landscape_orientation_summary_on">Uvijek koristi horizontalni način orijentacije</string>
   <string name="prefs_landscape_orientation_summary_off">Uvijek koristi vertikalni način orijentacije</string>
   <string name="prefs_night_mode_title">Noćni način </string>
-  <string name="prefs_night_mode_summary">Koristite tamnu podlogu i svjetle fontove</string>
-  <string name="prefs_night_mode_text_brightness_title">Osvijetljenost teksta</string>
-  <string name="prefs_night_mode_text_brightness_summary">Osvijetljenost teksta kada je noćni način uključen</string>
-  <string name="prefs_night_mode_background_brightness_title">Pozadinska svjetlina</string>
-  <string name="prefs_night_mode_background_brightness_summary">Svjetlina stranice kada je noćni način uključen</string>
   <string name="prefs_overlay_page_info_title">Prikaži informacije o stranici</string>
   <string name="prefs_overlay_page_info_summary">Dodajte broj stranice, ime sure i broj džuza dok čitate</string>
   <string name="prefs_display_marker_title">Prikažite marker notifikaciju</string>

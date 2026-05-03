@@ -8,8 +8,6 @@ object Constants {
   const val HOST = "https://quran.app/"
 
   // Numerics
-  const val DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS = 255
-  const val DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS = 0
   const val DEFAULT_TEXT_SIZE = 15
 
   // 1 hour in ms
@@ -51,9 +49,6 @@ object Constants {
   const val PREF_TRANSLATION_TEXT_SIZE = "translationTextSize"
   const val PREF_ACTIVE_TRANSLATION = "activeTranslation"
   const val PREF_ACTIVE_TRANSLATIONS = "activeTranslations"
-  const val PREF_NIGHT_MODE = "nightMode"
-  const val PREF_NIGHT_MODE_TEXT_BRIGHTNESS = "nightModeTextBrightness"
-  const val PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS = "nightModeBackgroundBrightness"
   const val PREF_SHOULD_FETCH_PAGES = "shouldFetchPages"
   const val PREF_OVERLAY_PAGE_INFO = "overlayPageInfo"
   const val PREF_DISPLAY_MARKER_POPUP = "displayMarkerPopup"
@@ -65,7 +60,6 @@ object Constants {
   const val PREF_DOWNLOAD_AMOUNT = "preferredDownloadAmount"
   const val PREF_LAST_UPDATED_TRANSLATIONS = "lastTranslationsUpdate"
   const val PREF_HAVE_UPDATED_TRANSLATIONS = "haveUpdatedTranslations"
-  const val PREF_USE_NEW_BACKGROUND = "useNewBackground"
   const val PREF_USE_VOLUME_KEY_NAV = "volumeKeyNavigation"
   const val PREF_SORT_BOOKMARKS = "sortBookmarks"
   const val PREF_GROUP_BOOKMARKS_BY_TAG = "groupBookmarksByTag"
@@ -91,9 +85,17 @@ object Constants {
   const val PREF_SHOW_SIDELINES = "showSidelines"
   const val PREF_SHOW_LINE_DIVIDERS = "showLineDividers"
   const val PREF_APP_THEME = "appTheme"
+  const val PREF_PAGE_THEME = "pageTheme"
 
   // Themes
   const val THEME_LIGHT = "light"
   const val THEME_DARK = "dark"
   const val THEME_DEFAULT = "default"
+
+  // Page Themes
+  const val PAGE_THEME_PAPER = "paper"
+  const val PAGE_THEME_ORIGINAL = "original"
+  const val PAGE_THEME_CALM = "calm"
+  const val PAGE_THEME_FOCUS = "focus"
+  const val PAGE_THEME_QUIET = "quiet"
 }

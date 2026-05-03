@@ -78,11 +78,6 @@
   <string name="prefs_landscape_orientation_summary_on">استفاده در جهت افقی</string>
   <string name="prefs_landscape_orientation_summary_off">استفاده در جهت عمودی</string>
   <string name="prefs_night_mode_title">نمایش شبانه</string>
-  <string name="prefs_night_mode_summary">استفاده از پس‌زمینه تاریک و نوشته‌های روشن</string>
-  <string name="prefs_night_mode_text_brightness_title">روشنایی متن</string>
-  <string name="prefs_night_mode_text_brightness_summary">میزان روشنایی متن در حالت شبانه</string>
-  <string name="prefs_night_mode_background_brightness_title">درخشش پس زمینه</string>
-  <string name="prefs_night_mode_background_brightness_summary">روشنایی صفحه زمانی که حالت شب فعال است</string>
   <string name="prefs_display_marker_title">نمایش پیغام‌ها</string>
   <string name="prefs_display_marker_summary">فعال‌سازی پیغام‌های رسیدن به جزء، حزب و …</string>
   <string name="prefs_translation_text_title">اندازه قلم ترجمه</string>
@@ -229,7 +224,6 @@
   <string name="prefs_import_summary">درون‌برد نشانک‌ها و برچسب‌ها</string>
   <string name="prefs_export_summary">برون‌بُرد نشانک‌ها و برچسب‌ها</string>
   <string name="prefs_export_title">برون‌بُرد</string>
-  <string name="prefs_new_background_title">پس‌زمینه جدید</string>
   <string name="prefs_highlight_bookmarks_summary">برجسته‌سازی آیه‌های نشانکدار</string>
   <string name="prefs_highlight_bookmarks_title">برجسته‌سازی نشانک‌ها</string>
   <string name="prefs_no_enough_space_to_move_files">فضای کافی برای جابجایی فایل‌های برنامه وجود ندارد</string>

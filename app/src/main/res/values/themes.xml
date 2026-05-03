@@ -42,4 +42,12 @@
   </style>
 
     <style name="QuranDialog" parent="Theme.AppCompat.DayNight.Dialog" />
+
+    <style name="Quran.BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Quran.BottomSheet</item>
+    </style>
+
+    <style name="Quran.BottomSheet" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@color/surface</item>
+    </style>
 </resources>

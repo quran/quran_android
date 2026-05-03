@@ -103,7 +103,6 @@
   <string name="prefs_category_display_settings">Inställningar för visning</string>
   <string name="prefs_use_arabic_title">Arabiskt läge (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Använd arabiska för tillämpningsgränssnittet.</string>
-  <string name="prefs_new_background_title">Ny bakgrund</string>
   <string name="prefs_lock_orientation_title">Orientering av låsskärmen</string>
   <string name="prefs_lock_orientation_summary_on">Använd läget för fast orientering</string>
   <string name="prefs_lock_orientation_summary_off">Anpassar sig till det aktuella orienteringsläget</string>
@@ -111,11 +110,6 @@
   <string name="prefs_landscape_orientation_summary_on">Använd alltid liggande läge</string>
   <string name="prefs_landscape_orientation_summary_off">Använd alltid porträttläge</string>
   <string name="prefs_night_mode_title">Nattläge</string>
-  <string name="prefs_night_mode_summary">Använd mörk bakgrund och ljusa typsnitt</string>
-  <string name="prefs_night_mode_text_brightness_title">Textens ljusstyrka</string>
-  <string name="prefs_night_mode_text_brightness_summary">Textens ljusstyrka när nattläget är aktivt.</string>
-  <string name="prefs_night_mode_background_brightness_title">Ljusstyrka i bakgrunden</string>
-  <string name="prefs_night_mode_background_brightness_summary">Sidans ljusstyrka när nattläget är aktivt.</string>
   <string name="prefs_overlay_page_info_title">Visa information om sidan</string>
   <string name="prefs_overlay_page_info_summary">Överlagra sidnummer, surah-namn och Del-nummer medan du läser</string>
   <string name="prefs_display_marker_title">Display marker popups</string>

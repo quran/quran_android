@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
@@ -12,6 +13,7 @@ import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
+import com.quran.labs.androidquran.ui.bottomsheet.PageTheme;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -70,25 +72,26 @@ public class QuranSettings {
   }
 
   public boolean isNightMode() {
-    return prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
-  }
+    String pageTheme = getPageTheme();
+    if (Constants.PAGE_THEME_QUIET.equals(pageTheme)) {
+      return true;
+    }
 
-  public boolean useNewBackground() {
-    return prefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true);
+    String appTheme = currentTheme();
+    if (Constants.THEME_DARK.equals(appTheme)) {
+      return true;
+    }
+
+    if (Constants.THEME_DEFAULT.equals(appTheme)) {
+      return (appContext.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK)
+          == Configuration.UI_MODE_NIGHT_YES;
+    }
+
+    return false;
   }
 
   public boolean highlightBookmarks() {
     return prefs.getBoolean(Constants.PREF_HIGHLIGHT_BOOKMARKS, true);
-  }
-
-  public int getNightModeTextBrightness() {
-    return prefs.getInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
-        Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS);
-  }
-
-  public int getNightModeBackgroundBrightness() {
-    return prefs.getInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS,
-        Constants.DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS);
   }
 
   public boolean shouldOverlayPageInfo() {
@@ -232,6 +235,57 @@ public class QuranSettings {
       return defaultTheme;
     }
     return theme;
+  }
+
+  public void setAppTheme(String appTheme) {
+    prefs.edit().putString(Constants.PREF_APP_THEME, appTheme).apply();
+  }
+
+  public String getPageTheme() {
+    return prefs.getString(Constants.PREF_PAGE_THEME, Constants.PAGE_THEME_ORIGINAL);
+  }
+
+  public void setPageTheme(String pageTheme) {
+    prefs.edit().putString(Constants.PREF_PAGE_THEME, pageTheme).apply();
+  }
+
+  public int getPageThemeBackgroundColor() {
+    return getThemeColor(getPageTheme(), true);
+  }
+
+  public int getPageThemeTextColor() {
+    return getThemeColor(getPageTheme(), false);
+  }
+
+  private int getThemeColor(String theme, boolean isBackground) {
+    int colorResId;
+    if (isBackground) {
+      colorResId = switch (theme) {
+        case Constants.PAGE_THEME_PAPER -> R.color.theme_paper_bg;
+        case Constants.PAGE_THEME_CALM -> R.color.theme_calm_bg;
+        case Constants.PAGE_THEME_FOCUS -> R.color.theme_focus_bg;
+        case Constants.PAGE_THEME_QUIET -> R.color.theme_quiet_bg;
+        default -> R.color.theme_original_bg;
+      };
+    } else {
+      colorResId = switch (theme) {
+        case Constants.PAGE_THEME_PAPER -> R.color.theme_paper_text;
+        case Constants.PAGE_THEME_CALM -> R.color.theme_calm_text;
+        case Constants.PAGE_THEME_FOCUS -> R.color.theme_focus_text;
+        case Constants.PAGE_THEME_QUIET -> R.color.theme_quiet_text;
+        default -> R.color.theme_original_text;
+      };
+    }
+
+    Configuration config = new Configuration(appContext.getResources().getConfiguration());
+    boolean nightMode = isNightMode();
+    config.uiMode = (config.uiMode & ~Configuration.UI_MODE_NIGHT_MASK) |
+        (nightMode ? Configuration.UI_MODE_NIGHT_YES : Configuration.UI_MODE_NIGHT_NO);
+    return appContext.createConfigurationContext(config).getColor(colorResId);
+  }
+
+  public boolean isPageThemeDark() {
+    return PageTheme.isDarkTheme(getPageTheme());
   }
 
   // probably should eventually move this to Application.onCreate..

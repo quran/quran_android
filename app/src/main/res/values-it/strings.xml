@@ -65,17 +65,13 @@
   <string name="menu_get_translations">Ottenere traduzioni</string>
   <string name="about_data_sources">Fonti di dati</string>
   <string name="about_contributors">Collaboratori</string>
-  <string name="prefs_new_background_title">Nuovo sfondo</string>
   <string name="prefs_lock_orientation_title">Orientamento della schermata di blocco</string>
   <string name="prefs_lock_orientation_summary_on">Utilizzare la modalità di orientamento fisso</string>
   <string name="prefs_lock_orientation_summary_off">Adattabile alla modalità di orientamento corrente</string>
   <string name="prefs_landscape_orientation_title">Orientamento orizzontale</string>
   <string name="prefs_landscape_orientation_summary_on">Usa sempre la modalità orizzontale</string>
   <string name="prefs_landscape_orientation_summary_off">Usa sempre la modalità ritratto</string>
-  <string name="prefs_night_mode_summary">Usa uno sfondo scuro e caratteri chiari</string>
-  <string name="prefs_night_mode_text_brightness_title">Luminosità del testo</string>
   <string name="prefs_overlay_page_info_title">Mostra informazioni sulla pagina</string>
-  <string name="prefs_night_mode_text_brightness_summary">Luminosità del testo quando la modalità notturna è attiva</string>
   <string name="prefs_display_marker_title">Visualizzare i popup degli indicatori</string>
   <string name="prefs_highlight_bookmarks_title">Evidenziare i segnalibri</string>
   <string name="prefs_translation_text_title">Dimensione del testo della traduzione</string>
@@ -224,8 +220,6 @@
   <string name="see_tafseer_of_verse">Il tafseer di questo ayah è incluso nel tafseer dell\'ayah %d (Clicca per espandere).</string>
   <string name="about_quran_enc" translatable="false">L\'Enciclopedia del Nobile Corano</string>
     <string name="storage_permission_rationale">Quran per Android vuole il tuo permesso per memorizzare i suoi dati su una memoria esterna. Quran per Android funzionerà senza questo permesso, ma se cancelli i dati o disinstalli l\'applicazione, tutte le pagine scaricate, l\'audio e i dati saranno rimossi. Concedere il permesso a Quran for Android?</string>
-  <string name="prefs_night_mode_background_brightness_title">Luminosità dello sfondo</string>
-  <string name="prefs_night_mode_background_brightness_summary">Luminosità della pagina quando la modalità notturna è attiva</string>
   <string name="kitkat_external_message">A causa delle limitazioni di Android, se scegli di mettere i dati del Corano sulla tua scheda SD esterna e successivamente disinstalli o cancelli i dati di Corano Android, tutte le pagine e l\'audio di Corano Android saranno cancellati e dovrai scaricarli di nuovo. Sei sicuro di voler utilizzare la scheda SD esterna?</string>
   <string name="scoped_storage_message">A causa dei cambiamenti di Android per aumentare la privacy dell\'utente, copiare i file al di fuori delle directory dell\'app potrebbe impedire a Quran for Android di accedere ai suoi dati nelle future versioni di Android. Sei sicuro di voler utilizzare questo percorso?</string>
   <string name="sdcard_error">Impossibile trovare la scheda SD. Si prega di montarla e riprovare.</string>

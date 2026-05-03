@@ -88,7 +88,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="prefs_category_display_settings">Configurações de Visualização</string>
   <string name="prefs_use_arabic_title">Modo de Árabe (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Aplicação irá ser alterada para Árabe (Requer reinicialização)</string>
-  <string name="prefs_new_background_title">New background</string>
   <string name="prefs_lock_orientation_title">Lock screen orientation</string>
   <string name="prefs_lock_orientation_summary_on">Quran page will be in fixed orientation mode</string>
   <string name="prefs_lock_orientation_summary_off">Adaptive to current orientation mode</string>
@@ -96,11 +95,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="prefs_landscape_orientation_summary_on">Landscape orientation will be used</string>
   <string name="prefs_landscape_orientation_summary_off">Portrait orientation will be used</string>
   <string name="prefs_night_mode_title">Night mode</string>
-  <string name="prefs_night_mode_summary">Dark background and light fonts will be used</string>
-  <string name="prefs_night_mode_text_brightness_title">Text Brightness</string>
-  <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night mode is active</string>
-  <string name="prefs_night_mode_background_brightness_title">Brilho de fundo</string>
-  <string name="prefs_night_mode_background_brightness_summary">Luminosidade da página quando o modo nocturno está activo</string>
   <string name="prefs_overlay_page_info_title">Show page info (beta)</string>
   <string name="prefs_overlay_page_info_summary">sobreposicione númeoro da página, nome da sura, e número do juz\' durante a leitura</string>
   <string name="prefs_display_marker_title">Mostarar popups do marcador</string>
