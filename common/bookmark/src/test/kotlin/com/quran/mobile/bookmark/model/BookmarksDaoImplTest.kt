@@ -4,12 +4,18 @@ import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.quran.data.dao.RecentPagesDao
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.bookmark.RecentPage
 import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.labs.test.TestDataFactory
 import com.quran.mobile.bookmark.Bookmarks
 import com.quran.mobile.bookmark.Last_pages
+import dev.zacsweers.metro.Provider
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -27,6 +33,7 @@ import org.junit.Test
 class BookmarksDaoImplTest {
 
   private lateinit var database: BookmarksDatabase
+  private lateinit var recentPagesDao: FakeRecentPagesDao
   private lateinit var dao: BookmarksDaoImpl
 
   @Before
@@ -39,7 +46,8 @@ class BookmarksDaoImplTest {
       Bookmarks.Adapter(IntColumnAdapter, IntColumnAdapter, IntColumnAdapter),
       Last_pages.Adapter(IntColumnAdapter)
     )
-    dao = BookmarksDaoImpl(database)
+    recentPagesDao = FakeRecentPagesDao()
+    dao = BookmarksDaoImpl(database, Provider { recentPagesDao })
   }
 
   // ==================== Bookmark Tests ====================
@@ -296,5 +304,50 @@ class BookmarksDaoImplTest {
 
     assertThat(recentPages).hasSize(2)
     assertThat(recentPages.map { it.page }).containsExactly(1, 3)
+  }
+
+  private class FakeRecentPagesDao : RecentPagesDao {
+    private val recentPages = MutableStateFlow<List<RecentPage>>(emptyList())
+
+    override fun recentPagesFlow(): Flow<List<RecentPage>> {
+      return recentPages
+    }
+
+    override suspend fun recentPages(): List<RecentPage> {
+      return recentPages.value
+    }
+
+    override suspend fun addRecentPage(page: Int) {
+      recentPages.update { pages ->
+        listOf(RecentPage(page, System.currentTimeMillis() / 1000)) +
+          pages.filterNot { it.page == page }
+      }
+      trimRecents()
+    }
+
+    override suspend fun replaceRecentRangeWithPage(deleteRangeStart: Int, deleteRangeEnd: Int, page: Int) {
+      recentPages.update { pages -> pages.filterNot { it.page in deleteRangeStart..deleteRangeEnd } }
+      addRecentPage(page)
+    }
+
+    override suspend fun removeRecentPages() {
+      recentPages.value = emptyList()
+    }
+
+    override suspend fun replaceRecentPages(pages: List<RecentPage>) {
+      recentPages.value = pages.take(MAX_RECENT_PAGES)
+    }
+
+    override suspend fun removeRecentsForPage(page: Int) {
+      recentPages.update { pages -> pages.filterNot { it.page == page } }
+    }
+
+    private fun trimRecents() {
+      recentPages.update { pages -> pages.take(MAX_RECENT_PAGES) }
+    }
+  }
+
+  companion object {
+    private const val MAX_RECENT_PAGES = 3
   }
 }

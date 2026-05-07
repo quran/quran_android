@@ -4,7 +4,6 @@ import androidx.core.util.Pair
 import com.quran.data.di.AppScope
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
-import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.ui.helpers.QuranRow
@@ -20,8 +19,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 @Deprecated("") // Use BookmarksDao instead
 @SingleIn(AppScope::class)
 open class BookmarkModel @Inject constructor(
-  private val bookmarksDBAdapter: BookmarksDBAdapter,
-  private val recentPageModel: RecentPageModel
+  private val bookmarksDBAdapter: BookmarksDBAdapter
 ) {
   private val tagPublishSubject =
     PublishSubject.create<Boolean>().toSerialized()
@@ -32,10 +30,6 @@ open class BookmarkModel @Inject constructor(
     return tagPublishSubject.hide()
   }
 
-  fun recentPagesUpdatedObservable(): Observable<Boolean> {
-    return recentPageModel.getRecentPagesUpdatedObservable()
-  }
-
   fun bookmarksObservable(): Observable<Boolean> {
     return bookmarksPublishSubject.hide()
   }
@@ -44,21 +38,14 @@ open class BookmarkModel @Inject constructor(
     bookmarksPublishSubject.onNext(true)
   }
 
-  fun notifyRecentPagesUpdated(page: Int) {
-    recentPageModel.notifyRecentPagesUpdated()
-    recentPageModel.updateLatestPage(page)
-  }
-
   open fun getBookmarkDataObservable(sortOrder: Int): Single<BookmarkData> {
     return Single.zip(
       tagsObservable,
-      getBookmarksObservable(sortOrder),
-      recentPageModel.getRecentPagesObservable()
-    ) { tags: List<Tag>, bookmarks: List<Bookmark>, recentPages: List<RecentPage> ->
+      getBookmarksObservable(sortOrder)
+    ) { tags: List<Tag>, bookmarks: List<Bookmark> ->
       BookmarkData(
         tags,
-        bookmarks,
-        recentPages
+        bookmarks
       )
     }
       .subscribeOn(Schedulers.io())

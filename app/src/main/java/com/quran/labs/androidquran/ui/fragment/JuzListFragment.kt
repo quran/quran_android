@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,9 +28,6 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow.Builder
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.JuzView
 import dev.zacsweers.metro.Inject
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -42,7 +40,6 @@ import kotlinx.coroutines.launch
  */
 class JuzListFragment : Fragment() {
   private var recyclerView: RecyclerView? = null
-  private var disposable: Disposable? = null
   private var adapter: QuranListAdapter? = null
   private val mainScope: CoroutineScope = MainScope()
 
@@ -110,28 +107,17 @@ class JuzListFragment : Fragment() {
     }
   }
 
-  override fun onPause() {
-    disposable?.dispose()
-    super.onPause()
-  }
-
   override fun onResume() {
     val activity = requireActivity()
     if (activity is QuranActivity) {
-      disposable = activity.latestPageObservable
-        .first(Constants.NO_PAGE)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(object : DisposableSingleObserver<Int>() {
-          override fun onSuccess(recentPage: Int) {
-            if (recentPage != Constants.NO_PAGE) {
-              val juz = quranInfo.getJuzFromPage(recentPage)
-              val position = (juz - 1) * 9
-              recyclerView?.scrollToPosition(position)
-            }
-          }
-
-          override fun onError(e: Throwable) {}
-        })
+      viewLifecycleOwner.lifecycleScope.launch {
+        val recentPage = activity.latestPage()
+        if (recentPage != Constants.NO_PAGE) {
+          val juz = quranInfo.getJuzFromPage(recentPage)
+          val position = (juz - 1) * 9
+          recyclerView?.scrollToPosition(position)
+        }
+      }
     }
 
     if (QuranUtils.isRtl()) {

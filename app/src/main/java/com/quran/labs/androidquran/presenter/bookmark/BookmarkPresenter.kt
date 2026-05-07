@@ -3,8 +3,10 @@ package com.quran.labs.androidquran.presenter.bookmark
 import android.annotation.SuppressLint
 import androidx.annotation.VisibleForTesting
 import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.quran.data.dao.RecentPagesDao
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
+import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData
@@ -25,11 +27,16 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 open class BookmarkPresenter @Inject internal constructor(
   private val bookmarkModel: BookmarkModel,
+  private val recentPagesDao: RecentPagesDao,
   private val quranSettings: QuranSettings,
   private val arabicDatabaseUtils: Provider<ArabicDatabaseUtils>,
 ) : Presenter<BookmarksFragment> {
@@ -46,6 +53,7 @@ open class BookmarkPresenter @Inject internal constructor(
 
   private var pendingRemoval: DisposableSingleObserver<BookmarkRawResult>? = null
   private var itemsToRemove: MutableList<QuranRow>? = null
+  private val presenterScope = MainScope()
 
   init {
     subscribeToChanges()
@@ -55,8 +63,7 @@ open class BookmarkPresenter @Inject internal constructor(
   open fun subscribeToChanges() {
     Observable.merge(
       bookmarkModel.tagsObservable(),
-      bookmarkModel.bookmarksObservable(),
-      bookmarkModel.recentPagesUpdatedObservable()
+      bookmarkModel.bookmarksObservable()
     )
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe({ _ ->
@@ -68,6 +75,22 @@ open class BookmarkPresenter @Inject internal constructor(
       }, { throwable ->
         Timber.e(throwable, "Error observing bookmark changes")
       })
+
+    presenterScope.launch {
+      try {
+        recentPagesDao.recentPagesFlow()
+          .drop(1)
+          .collect {
+            if (fragment != null) {
+              requestData(false)
+            } else {
+              cachedData = null
+            }
+          }
+      } catch (throwable: Throwable) {
+        Timber.e(throwable, "Error observing recent page changes")
+      }
+    }
   }
 
   fun getSortOrder(): Int = sortOrder
@@ -278,7 +301,12 @@ open class BookmarkPresenter @Inject internal constructor(
   }
 
   private fun getBookmarksWithAyatObservable(sortOrder: Int): Single<BookmarkData> {
-    return bookmarkModel.getBookmarkDataObservable(sortOrder)
+    return Single.zip(
+      bookmarkModel.getBookmarkDataObservable(sortOrder),
+      getRecentPagesObservable()
+    ) { bookmarkData: BookmarkData, recentPages: List<RecentPage> ->
+      bookmarkData.copy(recentPages = recentPages)
+    }
       .map { bookmarkData ->
         try {
           bookmarkData.copy(
@@ -288,6 +316,12 @@ open class BookmarkPresenter @Inject internal constructor(
           bookmarkData
         }
       }
+  }
+
+  private fun getRecentPagesObservable(): Single<List<RecentPage>> {
+    return Single.fromCallable {
+      runBlocking { recentPagesDao.recentPages() }
+    }.subscribeOn(Schedulers.io())
   }
 
   @VisibleForTesting

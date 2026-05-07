@@ -9,6 +9,7 @@ import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.fakes.FakeBookmarkModel
+import com.quran.labs.androidquran.fakes.FakeRecentPagesDao
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.awaitTerminalEvent
@@ -78,12 +79,14 @@ class BookmarkPresenterTest {
 
   private lateinit var quranSettings: QuranSettings
   private lateinit var fakeModel: FakeBookmarkModel
+  private lateinit var fakeRecentPagesDao: FakeRecentPagesDao
 
   @Before
   fun setupTest() {
     QuranSettings.setInstance(null)
     quranSettings = QuranSettings.getInstance(ApplicationProvider.getApplicationContext())
     fakeModel = FakeBookmarkModel()
+    fakeRecentPagesDao = FakeRecentPagesDao()
   }
 
   @After
@@ -96,7 +99,7 @@ class BookmarkPresenterTest {
     // Arrange
     fakeModel.setTags(emptyList())
     fakeModel.setBookmarks(AYAH_BOOKMARKS_LIST)
-    fakeModel.setRecentPages(emptyList())
+    fakeRecentPagesDao.setRecentPages(emptyList())
 
     // Act
     val presenter = makeBookmarkPresenter()
@@ -113,7 +116,7 @@ class BookmarkPresenterTest {
     // Arrange
     fakeModel.setTags(emptyList())
     fakeModel.setBookmarks(MIXED_BOOKMARKS_LIST)
-    fakeModel.setRecentPages(emptyList())
+    fakeRecentPagesDao.setRecentPages(emptyList())
 
     // Act
     val presenter = makeBookmarkPresenter()
@@ -130,7 +133,7 @@ class BookmarkPresenterTest {
     // Arrange
     fakeModel.setTags(TAG_LIST)
     fakeModel.setBookmarks(MIXED_BOOKMARKS_LIST)
-    fakeModel.setRecentPages(RECENT_LIST)
+    fakeRecentPagesDao.setRecentPages(RECENT_LIST)
 
     // Act
     val presenter = makeBookmarkPresenter()
@@ -147,7 +150,7 @@ class BookmarkPresenterTest {
     // Arrange
     fakeModel.setTags(TAG_LIST)
     fakeModel.setBookmarks(AYAH_BOOKMARKS_LIST)
-    fakeModel.setRecentPages(emptyList())
+    fakeRecentPagesDao.setRecentPages(emptyList())
 
     // Act
     val presenter = makeBookmarkPresenter()
@@ -166,7 +169,7 @@ class BookmarkPresenterTest {
     // Arrange
     fakeModel.setTags(TAG_LIST)
     fakeModel.setBookmarks(MIXED_BOOKMARKS_LIST)
-    fakeModel.setRecentPages(emptyList())
+    fakeRecentPagesDao.setRecentPages(emptyList())
 
     // Act
     val presenter = makeBookmarkPresenter()
@@ -185,7 +188,7 @@ class BookmarkPresenterTest {
     // Arrange
     fakeModel.setTags(TAG_LIST)
     fakeModel.setBookmarks(MIXED_BOOKMARKS_LIST)
-    fakeModel.setRecentPages(RECENT_LIST)
+    fakeRecentPagesDao.setRecentPages(RECENT_LIST)
 
     // Act
     val presenter = makeBookmarkPresenter()
@@ -336,6 +339,7 @@ class BookmarkPresenterTest {
   private fun makeBookmarkPresenter(): BookmarkPresenter {
     return object : BookmarkPresenter(
       fakeModel,
+      fakeRecentPagesDao,
       quranSettings,
       { throw IllegalStateException("ArabicDatabaseUtils not wired up in test") },
     ) {

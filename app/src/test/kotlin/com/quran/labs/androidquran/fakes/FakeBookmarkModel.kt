@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.fakes
 
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
-import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.helpers.inMemoryBookmarksAdapter
@@ -22,7 +21,6 @@ import io.reactivex.rxjava3.core.Single
  * val fake = FakeBookmarkModel()
  * fake.setTags(listOf(Tag(1, "Important")))
  * fake.setBookmarks(listOf(bookmark1, bookmark2))
- * fake.setRecentPages(listOf(RecentPage(42, timestamp)))
  *
  * // Configure behavior
  * fake.setUpdateBookmarkTagsResult(false) // Force update to fail
@@ -34,12 +32,11 @@ import io.reactivex.rxjava3.core.Single
  * fake.assertUpdateBookmarkTagsCalled(longArrayOf(1, 2), setOf(1L), false)
  * ```
  */
-open class FakeBookmarkModel : BookmarkModel(inMemoryBookmarksAdapter(), FakeRecentPageModel()) {
+open class FakeBookmarkModel : BookmarkModel(inMemoryBookmarksAdapter()) {
 
   // State
   private val tags = mutableListOf<Tag>()
   private val bookmarks = mutableListOf<Bookmark>()
-  private val recentPages = mutableListOf<RecentPage>()
   private val bookmarkTagIds = mutableMapOf<Long, List<Long>>() // bookmarkId -> tagIds
 
   // Configurable results
@@ -65,11 +62,6 @@ open class FakeBookmarkModel : BookmarkModel(inMemoryBookmarksAdapter(), FakeRec
     bookmarks.addAll(newBookmarks)
   }
 
-  fun setRecentPages(pages: List<RecentPage>) {
-    recentPages.clear()
-    recentPages.addAll(pages)
-  }
-
   fun setBookmarkTagIds(bookmarkId: Long, tagIds: List<Long>) {
     bookmarkTagIds[bookmarkId] = tagIds
   }
@@ -92,7 +84,7 @@ open class FakeBookmarkModel : BookmarkModel(inMemoryBookmarksAdapter(), FakeRec
       1 -> bookmarks.sortedBy { it.page } // SORT_LOCATION
       else -> bookmarks
     }
-    return Single.just(BookmarkData(tags.toList(), sortedBookmarks, recentPages.toList()))
+    return Single.just(BookmarkData(tags.toList(), sortedBookmarks))
   }
 
   override fun updateBookmarkTags(
@@ -179,7 +171,6 @@ open class FakeBookmarkModel : BookmarkModel(inMemoryBookmarksAdapter(), FakeRec
 
   fun getCurrentTags(): List<Tag> = tags.toList()
   fun getCurrentBookmarks(): List<Bookmark> = bookmarks.toList()
-  fun getCurrentRecentPages(): List<RecentPage> = recentPages.toList()
 
   // Clear methods for test isolation
   fun clearCallHistory() {
@@ -191,7 +182,6 @@ open class FakeBookmarkModel : BookmarkModel(inMemoryBookmarksAdapter(), FakeRec
   fun reset() {
     tags.clear()
     bookmarks.clear()
-    recentPages.clear()
     bookmarkTagIds.clear()
     clearCallHistory()
     updateBookmarkTagsResult = true
