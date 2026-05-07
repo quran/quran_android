@@ -34,6 +34,8 @@ dependencies {
 
   // testing
   testImplementation(project(":common:test-utils"))
+  testImplementation(project(":pages:data:madani"))
+  testImplementation(project(":pages:data:warsh"))
   testImplementation(libs.junit)
   testImplementation(libs.truth)
   testImplementation(libs.kotlinx.coroutines.test)

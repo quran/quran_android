@@ -131,22 +131,8 @@ constructor(
         bookmarkModel.notifyBookmarksUpdated()
       }
 
-      // and update the recents
-      val updatedRecentPages = bookmarksDao.recentPages()
-        .sortedByDescending { it.timestamp }
-        .map {
-          val page = it.page
-          val (pageSura, pageAyah) = suraAyahFromPage(page)
-
-          val mappedPage = destinationQuranInfo.getPageFromSuraAyah(pageSura, pageAyah)
-          it.copy(page = mappedPage)
-        }
-
-      if (updatedRecentPages.isNotEmpty()) {
-        bookmarksDao.removeRecentPages()
-        bookmarksDao.replaceRecentPages(updatedRecentPages)
-        bookmarkModel.notifyRecentPagesUpdated(updatedRecentPages.first().page)
-      }
+      // Recent pages are backed by mobile-sync ReadingSession records, which store sura/ayah
+      // rather than page numbers. RecentPagesDao remaps them for the active page type when read.
     }
   }
 

@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.presenter.bookmark
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
-import com.quran.labs.androidquran.fakes.FakeRecentPageModel
 import com.quran.labs.androidquran.helpers.inMemoryBookmarksAdapter
 import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.fakes.FakeTagBookmarkDialog
@@ -33,8 +32,7 @@ class TagBookmarkPresenterTest {
   @Before
   fun setupTest() {
     bookmarkModel = object : BookmarkModel(
-      inMemoryBookmarksAdapter(),
-      FakeRecentPageModel()
+      inMemoryBookmarksAdapter()
     ), TagsObservableReporter {
       var tagsObservableCalled: Int = 0
 
@@ -105,8 +103,7 @@ class TagBookmarkPresenterTest {
   @Throws(InterruptedException::class)
   fun testChangeShouldOnlySaveExplicitlyForBookmarkIds() {
     val bookmarkModel = object : BookmarkModel(
-      inMemoryBookmarksAdapter(),
-      FakeRecentPageModel()
+      inMemoryBookmarksAdapter()
     ) {
       override fun updateBookmarkTags(
         bookmarkIds: LongArray,
@@ -167,8 +164,7 @@ class TagBookmarkPresenterTest {
   @Throws(InterruptedException::class)
   fun testChangeShouldSaveImmediatelyForAyahBookmarks() {
     val bookmarkModel = object : BookmarkModel(
-      inMemoryBookmarksAdapter(),
-      FakeRecentPageModel()
+      inMemoryBookmarksAdapter()
     ), UpdatedBookmarkTagsReporter {
       var updateBookmarkTagsCalled: Int = 0
 

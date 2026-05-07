@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,9 +27,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import dev.zacsweers.metro.Inject
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.observers.DisposableSingleObserver
+import kotlinx.coroutines.launch
 
 class SuraListFragment : Fragment() {
 
@@ -44,7 +43,6 @@ class SuraListFragment : Fragment() {
   private lateinit var recyclerView: RecyclerView
   private var numberOfPages = 0
   private var showSuraTranslatedName = false
-  private var disposable: Disposable? = null
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
@@ -91,31 +89,20 @@ class SuraListFragment : Fragment() {
         showHideSuraTranslatedName()
         showSuraTranslatedName = newValueOfShowSuraTranslatedName
       }
-      disposable = (requireActivity() as QuranActivity).latestPageObservable
-        .first(Constants.NO_PAGE)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(object : DisposableSingleObserver<Int>() {
-          override fun onSuccess(recentPage: Int) {
-            if (recentPage != Constants.NO_PAGE) {
-              val sura = quranDisplayData.safelyGetSuraOnPage(recentPage)
-              val juz = quranInfo.getJuzFromPage(recentPage)
-              val position = sura + juz - 1
-              recyclerView.scrollToPosition(position)
-            }
-          }
-
-          override fun onError(e: Throwable) {}
-        })
+      viewLifecycleOwner.lifecycleScope.launch {
+        val recentPage = activity.latestPage()
+        if (recentPage != Constants.NO_PAGE) {
+          val sura = quranDisplayData.safelyGetSuraOnPage(recentPage)
+          val juz = quranInfo.getJuzFromPage(recentPage)
+          val position = sura + juz - 1
+          recyclerView.scrollToPosition(position)
+        }
+      }
 
       if (QuranUtils.isRtl()) {
         updateScrollBarPositionHoneycomb()
       }
     }
-  }
-
-  override fun onPause() {
-    disposable?.dispose()
-    super.onPause()
   }
 
   private fun updateScrollBarPositionHoneycomb() {

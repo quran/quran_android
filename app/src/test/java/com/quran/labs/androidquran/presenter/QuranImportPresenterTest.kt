@@ -7,6 +7,7 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.fakes.FakeBookmarkModel
 import com.quran.labs.androidquran.fakes.FakeContentResolverOps
+import com.quran.labs.androidquran.fakes.FakeRecentPagesDao
 import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel
 import com.quran.labs.androidquran.model.bookmark.BookmarkJsonModel
 import com.quran.labs.awaitTerminalEvent
@@ -31,7 +32,12 @@ class QuranImportPresenterTest {
   @Before
   fun setup() {
     context = ApplicationProvider.getApplicationContext()
-    importExportModel = BookmarkImportExportModel(context, BookmarkJsonModel(), FakeBookmarkModel())
+    importExportModel = BookmarkImportExportModel(
+      context,
+      BookmarkJsonModel(),
+      FakeBookmarkModel(),
+      FakeRecentPagesDao()
+    )
   }
 
   // ---- parseExternalFile tests ----

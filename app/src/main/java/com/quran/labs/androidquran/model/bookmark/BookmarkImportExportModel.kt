@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.model.bookmark
 import android.content.Context
 import android.net.Uri
 import androidx.core.content.FileProvider
+import com.quran.data.dao.RecentPagesDao
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
@@ -10,6 +11,7 @@ import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.runBlocking
 import okio.BufferedSource
 import okio.buffer
 import okio.sink
@@ -19,7 +21,8 @@ import java.io.IOException
 class BookmarkImportExportModel @Inject internal constructor(
   @param:ApplicationContext private val appContext: Context,
   private val jsonModel: BookmarkJsonModel,
-  private val bookmarkModel: BookmarkModel
+  private val bookmarkModel: BookmarkModel,
+  private val recentPagesDao: RecentPagesDao
 ) {
   fun readBookmarks(source: BufferedSource): Single<BookmarkData> {
     return Single.defer {
@@ -29,7 +32,7 @@ class BookmarkImportExportModel @Inject internal constructor(
   }
 
   fun exportBookmarksObservable(): Single<Uri> {
-    return bookmarkModel.getBookmarkDataObservable(BookmarksDBAdapter.SORT_DATE_ADDED)
+    return bookmarkDataWithRecentsObservable()
       .flatMap { bookmarkData: BookmarkData ->
         Single.just(
           exportBookmarks(bookmarkData)
@@ -55,7 +58,7 @@ class BookmarkImportExportModel @Inject internal constructor(
   }
 
   fun exportBookmarksCSVObservable(): Single<Uri> {
-    return bookmarkModel.getBookmarkDataObservable(BookmarksDBAdapter.SORT_DATE_ADDED)
+    return bookmarkDataWithRecentsObservable()
       .flatMap { bookmarkData: BookmarkData ->
         Single.just(
           exportBookmarksCSV(bookmarkData)
@@ -79,6 +82,20 @@ class BookmarkImportExportModel @Inject internal constructor(
     }
     throw IOException("Unable to write to external files directory.")
   }
+
+  private fun bookmarkDataWithRecentsObservable(): Single<BookmarkData> {
+    return Single.zip(
+      bookmarkModel.getBookmarkDataObservable(BookmarksDBAdapter.SORT_DATE_ADDED),
+      recentPagesObservable()
+    ) { bookmarkData, recentPages ->
+      bookmarkData.copy(recentPages = recentPages)
+    }
+  }
+
+  private fun recentPagesObservable() =
+    Single.fromCallable {
+      runBlocking { recentPagesDao.recentPages() }
+    }.subscribeOn(Schedulers.io())
 
   companion object {
     private const val FILE_NAME = "quran_android.backup"

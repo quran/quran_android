@@ -3,6 +3,7 @@ package com.quran.mobile.bookmark.model
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.quran.data.dao.BookmarksDao
+import com.quran.data.dao.RecentPagesDao
 import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
@@ -11,6 +12,7 @@ import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.mobile.bookmark.mapper.Mappers
 import com.quran.mobile.bookmark.mapper.convergeCommonlyTagged
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -20,10 +22,10 @@ import kotlinx.coroutines.withContext
 
 @SingleIn(AppScope::class)
 class BookmarksDaoImpl @Inject constructor(
-  bookmarksDatabase: BookmarksDatabase
+  bookmarksDatabase: BookmarksDatabase,
+  private val recentPagesDaoProvider: Provider<RecentPagesDao>
 ) : BookmarksDao {
   private val bookmarkQueries = bookmarksDatabase.bookmarkQueries
-  private val lastPageQueries = bookmarksDatabase.lastPageQueries
   private val bookmarkTagQueries = bookmarksDatabase.bookmarkTagQueries
 
   private val internalChanges = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
@@ -127,45 +129,18 @@ class BookmarksDaoImpl @Inject constructor(
   }
 
   override suspend fun recentPages(): List<RecentPage> {
-    return withContext(Dispatchers.IO) {
-      lastPageQueries.getLastPages(Mappers.recentPageMapper)
-        .executeAsList()
-    }
+    return recentPagesDaoProvider().recentPages()
   }
 
   override suspend fun replaceRecentPages(pages: List<RecentPage>) {
-    withContext(Dispatchers.IO) {
-      lastPageQueries.transaction {
-        pages.forEach { addRecentPage(it.page) }
-      }
-    }
+    recentPagesDaoProvider().replaceRecentPages(pages)
   }
 
   override suspend fun removeRecentPages() {
-    withContext(Dispatchers.IO) {
-      lastPageQueries.removeLastPages()
-    }
+    recentPagesDaoProvider().removeRecentPages()
   }
 
   override suspend fun removeRecentsForPage(page: Int) {
-    withContext(Dispatchers.IO) {
-      lastPageQueries.transaction {
-        val lastPages = lastPageQueries.getLastPages().executeAsList()
-        val lastPagesWithoutPage = lastPages.filter { it.page != page }
-        if (lastPages.size != lastPagesWithoutPage.size) {
-          lastPageQueries.removeLastPages()
-          lastPagesWithoutPage.forEach { addRecentPage(it.page) }
-        }
-      }
-    }
-  }
-
-  private fun addRecentPage(page: Int) {
-    val maxPages = MAX_RECENT_PAGES.toLong()
-    lastPageQueries.addLastPage(page, maxPages)
-  }
-
-  companion object {
-    private const val MAX_RECENT_PAGES = 3
+    recentPagesDaoProvider().removeRecentsForPage(page)
   }
 }

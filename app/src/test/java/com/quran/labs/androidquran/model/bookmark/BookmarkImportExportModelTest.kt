@@ -7,17 +7,22 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
+import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.BaseTestExtension
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.fakes.FakeBookmarkModel
+import com.quran.labs.androidquran.fakes.FakeRecentPagesDao
 import io.reactivex.rxjava3.observers.TestObserver
 import okio.Buffer
+import okio.buffer
+import okio.source
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.io.File
 import java.io.IOException
 
 @Config(application = TestApplication::class, sdk = [33])
@@ -26,14 +31,16 @@ class BookmarkImportExportModelTest {
 
   private val context = ApplicationProvider.getApplicationContext<Context>()
   private val bookmarkModel = FakeBookmarkModel()
+  private val recentPagesDao = FakeRecentPagesDao()
   private lateinit var bookmarkImportExportModel: BookmarkImportExportModel
 
   @Before
   fun setUp() {
     bookmarkModel.reset()
+    recentPagesDao.setRecentPages(emptyList())
     clearFileProviderCache()
     bookmarkImportExportModel = BookmarkImportExportModel(
-      context, BookmarkJsonModel(), bookmarkModel
+      context, BookmarkJsonModel(), bookmarkModel, recentPagesDao
     )
   }
 
@@ -87,6 +94,7 @@ class BookmarkImportExportModelTest {
     bookmarkModel.setBookmarks(
       listOf(Bookmark(1L, 2, 255, 50, System.currentTimeMillis()))
     )
+    recentPagesDao.setRecentPages(listOf(RecentPage(50, 1000), RecentPage(51, 900)))
 
     val testObserver = TestObserver<Uri>()
     bookmarkImportExportModel.exportBookmarksObservable()
@@ -96,6 +104,11 @@ class BookmarkImportExportModelTest {
     testObserver.assertNoErrors()
     testObserver.assertValueCount(1)
     assertThat(testObserver.values()[0]).isNotNull()
+
+    val exportedData = BookmarkJsonModel().fromJson(backupFile().source().buffer())
+    assertThat(exportedData.recentPages)
+      .containsExactly(RecentPage(50, 1000), RecentPage(51, 900))
+      .inOrder()
   }
 
   @Test
@@ -104,6 +117,7 @@ class BookmarkImportExportModelTest {
     bookmarkModel.setBookmarks(
       listOf(Bookmark(1L, 1, 1, 1, System.currentTimeMillis()))
     )
+    recentPagesDao.setRecentPages(listOf(RecentPage(12, 1000)))
 
     val testObserver = TestObserver<Uri>()
     bookmarkImportExportModel.exportBookmarksCSVObservable()
@@ -113,7 +127,14 @@ class BookmarkImportExportModelTest {
     testObserver.assertNoErrors()
     testObserver.assertValueCount(1)
     assertThat(testObserver.values()[0]).isNotNull()
+    assertThat(csvBackupFile().readText()).contains("recent,,, 12, 1000")
   }
+
+  private fun backupFile(): File =
+    File(File(context.getExternalFilesDir(null), "backups"), "quran_android.backup")
+
+  private fun csvBackupFile(): File =
+    File(File(context.getExternalFilesDir(null), "backups"), "quran_android.backup.csv")
 
   companion object {
     private const val TAGS_JSON =

@@ -45,7 +45,7 @@ jobs:
         run: ./gradlew verifySqlDelightMigration
 
       - name: Run tests
-        run: ./gradlew testMadaniDebug -PdisableFirebase
+        run: ./gradlew testMadaniDebug testReleaseUnitTest -PdisableFirebase
 
       - name: Upload test report
         uses: actions/upload-artifact@v7
