@@ -17,4 +17,14 @@
     <item>Dark</item>
     <item>Automatic</item>
   </array>
+
+  <array name="prefs_arabic_numerals_entries">
+    <item>@string/prefs_arabic_numerals_eastern</item>
+    <item>@string/prefs_arabic_numerals_western</item>
+  </array>
+
+  <array name="prefs_arabic_numerals_values" translatable="false">
+    <item>eastern</item>
+    <item>western</item>
+  </array>
 </resources>
