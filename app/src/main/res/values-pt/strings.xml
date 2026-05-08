@@ -255,7 +255,7 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="import_data_permissions_error">Não foi possível ler o arquivo de backup devido a erro de permissão.</string>
   <string name="import_data_error">Arquivo de backup inválido (ou incapaz de ler o arquivo de backup).</string>
   <string name="import_data">Dados de importação</string>
-  <string name="import_data_and_override">Se você importar este arquivo, ele substituirá todos os seus bookmarks por %1$d bookmarks e %2$d tags. Importar?</string>
+  <string name="import_data_and_merge">Se você importar este arquivo, ele adicionará %1$d favoritos e %2$d tags aos seus dados atuais. Importar?</string>
   <string name="import_successful">Importação bem sucedida</string>
   <string name="export_data_error">Erro ao exportar dados</string>
   <string name="exported_data">Dados exportados para %1$s</string>
@@ -284,6 +284,7 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="starting_page_label">Início da página</string>
   <string name="undo">Desfazer</string>
   <string name="recent_pages">Páginas recentes</string>
+  <string name="old_page_bookmarks">Favoritos de páginas antigas</string>
   <string name="tag_blank_tag_error">Os nomes das etiquetas não podem estar em branco!</string>
   <string name="tag_duplicate_tag_error">O nome da etiqueta já existe!</string>
   <string name="audio_updated_title">Atualização dos arquivos de áudio do Alcorão</string>

@@ -143,7 +143,7 @@
   <string name="import_data_permissions_error">ئىجازەت خاتالىقى سەۋەبىدىن زاپاس ھۆججەتنى ئوقۇيالمىدى.</string>
   <string name="import_data_error">ئىناۋەتسىز زاپاس ھۆججەت (ياكى زاپاس ھۆججەتنى ئوقۇيالمىدى).</string>
   <string name="import_data">سانلىق مەلۇمات ئەكىر</string>
-  <string name="import_data_and_override">ئەگەر بۇ ھۆججەتنى ئەكىرسىڭىز، %1$d خەتكۈچ ۋە %2$d بەلگە بار ھەممە خەتكۈچلىرىڭىزنى ئالماشتۇرۇۋېتىدۇ. ئەكىرەمدۇ؟</string>
+  <string name="import_data_and_merge">ئەگەر بۇ ھۆججەتنى ئەكىرسىڭىز، ھازىرقى سانلىق مەلۇماتىڭىزغا %1$d خەتكۈچ ۋە %2$d بەلگە قوشۇلىدۇ. ئەكىرەمدۇ؟</string>
   <string name="import_successful">مۇۋەپپەقىيەتلىك ئەكىرىلدى</string>
   <string name="export_data_error">سانلىق مەلۇمات چىقارغاندا خاتالىق كۆرۈلدى</string>
   <string name="exported_data">سانلىق مەلۇماتنى %1$s غا چىقاردى</string>
@@ -243,6 +243,7 @@
   <string name="undo">يېنىۋال</string>
 
   <string name="recent_pages">يېقىنقى بەتلەر</string>
+  <string name="old_page_bookmarks">كونا بەت خەتكۈچلىرى</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">بەلگە</string>

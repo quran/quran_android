@@ -192,8 +192,7 @@
   <string name="import_data_permissions_error">Ruxsat xatoliklari tufayli zaxira faylini oʻqib boʻlmadi.</string>
   <string name="import_data_error">Yaroqsiz zaxira fayl (yoxud zaxira faylni oʻqib boʻlmadi).</string>
   <string name="import_data">Import</string>
-  <string name="import_data_and_override">Ushbu import barcha xatchoʻplarni %1$d ta xatchoʻp(lar) va %2$d ta teg(lar) bilan almashtiradi.
-        Import qilasizmi?</string>
+  <string name="import_data_and_merge">Ushbu fayl import qilinsa, joriy maʼlumotlaringizga %1$d ta xatchoʻp va %2$d ta teg qoʻshiladi. Import qilinsinmi?</string>
   <string name="import_successful">Muvaffaqiyatli import qilindi</string>
   <string name="export_data_error">Eksport qilishda xatolik yuz berdi</string>
   <string name="exported_data">Maʼlumotlar \"%1$s\"ga eksport qilindi</string>
@@ -323,6 +322,7 @@
   <string name="undo">@string/cancel</string>
 
   <string name="recent_pages">Soʻnggi sahifalar</string>
+  <string name="old_page_bookmarks">Eski sahifa xatchoʻplari</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Teg</string>

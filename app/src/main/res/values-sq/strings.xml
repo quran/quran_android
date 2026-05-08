@@ -170,7 +170,7 @@
   <string name="import_data_permissions_error">E pamundur leximi i file backup për shkak të gabimit të të drejtave.</string>
   <string name="import_data_error">File backup i pavlefshëm (ose i pamundur leximi i file backup).</string>
   <string name="import_data">Importo të dhënat</string>
-  <string name="import_data_and_override">Nëse importoni këtë file, ai do të zëvendësojë të gjitha libërshënuesit tuaj me %1$d libërshënues dhe tags %2$d. Importo?</string>
+  <string name="import_data_and_merge">Nëse importoni këtë skedar, ai do të shtojë %1$d libërshënues dhe %2$d etiketa te të dhënat tuaja aktuale. Të importohet?</string>
   <string name="import_successful">Importo i suksesshëm</string>
   <string name="export_data_error">Gabim gjatë eksportimit të të dhënave</string>
   <string name="exported_data">Të dhënat e eksportuara në %1$s</string>
@@ -289,6 +289,7 @@
   <string name="undo">Zhbëje</string>
 
   <string name="recent_pages">Faqet e fundit</string>
+  <string name="old_page_bookmarks">Libërshënues të vjetër faqesh</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Etiketë</string>

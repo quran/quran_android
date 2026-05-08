@@ -218,7 +218,7 @@
   <string name="import_data_permissions_error">No se puede leer el archivo de copia de seguridad debido a un error de permisos.</string>
   <string name="import_data_error">Archivo de copia de seguridad no válido (o no se puede leer el archivo de copia de seguridad).</string>
   <string name="import_data">Importar datos</string>
-  <string name="import_data_and_override">Si importas este archivo, reemplazará todos tus marcadores con %1$d marcador(es) y %2$d etiqueta(s). ¿Importar?</string>
+  <string name="import_data_and_merge">Si importas este archivo, agregará %1$d marcador(es) y %2$d etiqueta(s) a tus datos actuales. ¿Importar?</string>
   <string name="import_successful">Importar con éxito</string>
   <string name="export_data_error">Error en la exportación de datos</string>
   <string name="exported_data">Datos exportados a %1$s</string>
@@ -237,6 +237,7 @@
   <string name="starting_page_label">Inicio de página</string>
   <string name="undo">Deshacer</string>
   <string name="recent_pages">Páginas recientes</string>
+  <string name="old_page_bookmarks">Marcadores de páginas antiguos</string>
   <string name="tag_blank_tag_error">Los nombres de las etiquetas no pueden estar en blanco.</string>
   <string name="tag_duplicate_tag_error">El nombre de la etiqueta ya existe.</string>
   <string name="audio_updated_title">Actualización de los archivos de audio del Corán</string>
