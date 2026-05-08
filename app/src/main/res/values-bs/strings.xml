@@ -179,8 +179,7 @@
   <string name="import_data_permissions_error">Nije moguće pročitati backup datoteke zbog grešaka sa dozvolama.</string>
   <string name="import_data_error">Nevalidna backup datoteka (ili nije moguće da se pročita backup datoteka).</string>
   <string name="import_data">Uvezi podatke</string>
-  <string name="import_data_and_override">Ako uvezete ovu datoteku onda će ona zamijenite sve vaše \
-        zabilješke sa %1$d zabilješkama i %2$d oznakama. Ipak uvesti?</string>
+  <string name="import_data_and_merge">Ako uvezete ovu datoteku, dodat će %1$d bilješki i %2$d oznaka vašim postojećim podacima. Uvesti?</string>
   <string name="import_successful">Uvoz uspješno završen</string>
   <string name="export_data_error">Problem izvoza podataka.</string>
   <string name="exported_data">Podaci izvezeni na %1$s.</string>
@@ -301,6 +300,7 @@
   <string name="undo">Poništi</string>
 
   <string name="recent_pages">Nedavno otvarane stranice</string>
+  <string name="old_page_bookmarks">Stare bilješke stranica</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Oznaka</string>

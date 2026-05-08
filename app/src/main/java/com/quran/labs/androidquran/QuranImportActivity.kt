@@ -53,7 +53,7 @@ class QuranImportActivity : AppCompatActivity(), ActivityCompat.OnRequestPermiss
 
   fun showImportConfirmationDialog(bookmarkData: BookmarkData) {
     val dialogMessage = getString(
-      R.string.import_data_and_override,
+      R.string.import_data_and_merge,
       bookmarkData.bookmarks.size,
       bookmarkData.tags.size
     )

@@ -258,6 +258,7 @@
   <string name="undo">Batalkan</string>
 
   <string name="recent_pages">Muka surat terkini</string>
+  <string name="old_page_bookmarks">Penanda halaman lama</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Label</string>
@@ -283,8 +284,7 @@
   <string name="import_data_permissions_error">Tidak bisa membaca berkas cadangan karena masalah otentikasi.</string>
   <string name="import_data_error">Berkas cadangan tidak sah (atau tak bisa membaca berkas cadangan).</string>
   <string name="import_data">Impor Data</string>
-  <string name="import_data_and_override">Jika anda mengimpor berkas ini, ia akan menggantikan semua \
-        penanda anda dengan %1$d penanda dan %2$d label. Impor?</string>
+  <string name="import_data_and_merge">Jika anda mengimport fail ini, ia akan menambah %1$d penanda halaman dan %2$d tag pada data semasa anda. Import?</string>
   <string name="import_successful">Impor Berhasil</string>
   <string name="export_data_error">Kesalahan dalam mengekspor data.</string>
   <string name="exported_data">Data diekspor ke %1$s.</string>

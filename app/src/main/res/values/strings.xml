@@ -236,7 +236,7 @@
   <string name="import_data_permissions_error">Unable to read backup file due to permissions error.</string>
   <string name="import_data_error">Invalid backup file (or unable to read backup file).</string>
   <string name="import_data">Import Data</string>
-  <string name="import_data_and_override">If you import this file, it will replace all your bookmarks with %1$d bookmark(s) and %2$d tag(s). Import?</string>
+  <string name="import_data_and_merge">If you import this file, it will add %1$d bookmark(s) and %2$d tag(s) to your current data. Import?</string>
   <string name="import_successful">Import Successful</string>
   <string name="export_data_error">Error exporting data</string>
   <string name="exported_data">Data exported to %1$s</string>
@@ -369,6 +369,7 @@
   <string name="undo">Undo</string>
 
   <string name="recent_pages">Recent pages</string>
+  <string name="old_page_bookmarks">Old Page Bookmarks</string>
   <plurals name="plural_recent_pages" translatable="false">
     <item quantity="one">@string/menu_jump_last_page</item>
     <item quantity="other">@string/recent_pages</item>

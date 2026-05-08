@@ -161,7 +161,7 @@
   <string name="import_data_permissions_error">ไม่สามารถอ่านแฟ้มสํารองได้เนื่องจากข้อผิดพลาดเกี่ยวกับสิทธิ์</string>
   <string name="import_data_error">แฟ้มสํารองไม่ถูกต้อง (หรือไม่สามารถอ่านแฟ้มสํารองได้)</string>
   <string name="import_data">นําเข้าข้อมูล</string>
-  <string name="import_data_and_override">ถ้าคุณนําเข้าแฟ้มนี้ แฟ้มนี้จะแทนที่ที่คั่นหน้าทั้งหมดของคุณด้วยที่คั่นหน้า %1$d และแท็ก %2$d นําเข้า?</string>
+  <string name="import_data_and_merge">หากคุณนำเข้าไฟล์นี้ จะเพิ่มบุ๊กมาร์ก %1$d รายการและแท็ก %2$d รายการลงในข้อมูลปัจจุบันของคุณ นำเข้า?</string>
   <string name="import_successful">การนําเข้าเสร็จสมบูรณ์</string>
   <string name="export_data_error">ข้อผิดพลาดในการส่งออกข้อมูล</string>
   <string name="exported_data">ข้อมูลที่ส่งออกไปยัง %1$s</string>
@@ -280,6 +280,7 @@
   <string name="undo">แก้</string>
 
   <string name="recent_pages">หน้าล่าสุด</string>
+  <string name="old_page_bookmarks">บุ๊กมาร์กหน้าเก่า</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">ฉลาก</string>

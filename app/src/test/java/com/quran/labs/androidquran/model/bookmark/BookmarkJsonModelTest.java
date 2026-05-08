@@ -37,6 +37,7 @@ public class BookmarkJsonModelTest {
     BookmarkData data = jsonModel.fromJson(buffer);
     assertThat(data).isNotNull();
     assertThat(data.getBookmarks()).isEmpty();
+    assertThat(data.getReadingBookmark()).isNull();
     assertThat(data.getTags()).hasSize(TAGS.size());
     assertThat(data.getTags()).isEqualTo(TAGS);
   }
