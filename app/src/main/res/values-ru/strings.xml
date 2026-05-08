@@ -210,8 +210,7 @@
   <string name="import_data_permissions_error">Не удается прочитать файл резервной копии из-за ошибки разрешения.</string>
   <string name="import_data_error">Неверный файл резервной копии (или не удалось открыть файл с резервной копией).</string>
   <string name="import_data">Импорт данных</string>
-  <string name="import_data_and_override">Если вы будете импортировать этот файл, все ваши закладки будут заменены
-        с %1$d закладки и %2$d тегов. Импортировать?</string>
+  <string name="import_data_and_merge">Если вы импортируете этот файл, к текущим данным будут добавлены %1$d закладок и %2$d тегов. Импортировать?</string>
   <string name="import_successful">Данные успешно импортированы</string>
   <string name="export_data_error">Ошибка экспорта данных</string>
   <string name="exported_data">Данные экспортированы в %1$s</string>
@@ -340,6 +339,7 @@
   <string name="undo">@string/cancel</string>
 
   <string name="recent_pages">Недавние страницы</string>
+  <string name="old_page_bookmarks">Старые закладки страниц</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Тег</string>

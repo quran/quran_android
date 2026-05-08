@@ -15,6 +15,7 @@ class FakeBookmarksDao : BookmarksDao {
   private val bookmarks = MutableStateFlow<List<Bookmark>>(emptyList())
   private val tags = MutableStateFlow<List<Tag>>(emptyList())
   private val changesFlow = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+  private val addedTagNames = mutableListOf<String>()
 
   override val changes: Flow<Unit> = changesFlow
 
@@ -26,6 +27,18 @@ class FakeBookmarksDao : BookmarksDao {
   fun setTags(newTags: List<Tag>) {
     tags.value = newTags
     changesFlow.tryEmit(Unit)
+  }
+
+  fun currentBookmarks(): List<Bookmark> {
+    return bookmarks.value
+  }
+
+  fun currentTags(): List<Tag> {
+    return tags.value
+  }
+
+  fun addedTagNames(): List<String> {
+    return addedTagNames.toList()
   }
 
   override suspend fun bookmarks(sortOrder: Int): List<Bookmark> {
@@ -51,6 +64,7 @@ class FakeBookmarksDao : BookmarksDao {
 
   override suspend fun addTag(name: String): Long {
     val id = (tags.value.maxOfOrNull { it.id } ?: 0L) + 1
+    addedTagNames += name
     tags.update { current -> current + Tag(id, name) }
     changesFlow.tryEmit(Unit)
     return id

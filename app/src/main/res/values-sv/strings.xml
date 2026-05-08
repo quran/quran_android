@@ -169,7 +169,7 @@
   <string name="import_data_permissions_error">Det går inte att läsa säkerhetskopian på grund av fel i behörigheterna.</string>
   <string name="import_data_error">Ogiltig säkerhetskopieringsfil (eller kan inte läsa säkerhetskopieringsfilen).</string>
   <string name="import_data">Importera data</string>
-  <string name="import_data_and_override">Om du importerar den här filen kommer alla dina bokmärken att ersättas med %1$d bokmärken och %2$d taggar. Importera?</string>
+  <string name="import_data_and_merge">Om du importerar den här filen läggs %1$d bokmärken och %2$d taggar till i dina nuvarande data. Importera?</string>
   <string name="import_successful">Import lyckad</string>
   <string name="export_data_error">Fel vid export av data</string>
   <string name="exported_data">Uppgifter som exporteras till %1$s</string>
@@ -289,6 +289,7 @@
   <string name="undo">Ångra</string>
 
   <string name="recent_pages">Senaste sidorna</string>
+  <string name="old_page_bookmarks">Gamla sidbokmärken</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Tag</string>

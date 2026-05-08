@@ -11,7 +11,6 @@ import com.quran.data.di.AppScope
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.labs.androidquran.QuranImportActivity
 import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.service.util.PermissionUtil.canRequestWriteExternalStoragePermission
 import com.quran.labs.androidquran.service.util.PermissionUtil.haveWriteExternalStoragePermission
 import com.quran.labs.androidquran.util.QuranSettings
@@ -31,9 +30,8 @@ import java.io.FileInputStream
 
 @SingleIn(AppScope::class)
 class QuranImportPresenter @Inject internal constructor(
-  @ApplicationContext private val appContext: Context,
+  @param:ApplicationContext private val appContext: Context,
   private val bookmarkImportExportModel: BookmarkImportExportModel,
-  private val bookmarkModel: BookmarkModel,
   private val contentResolverOps: ContentResolverOps
 ) : Presenter<QuranImportActivity> {
   private val compositeDisposable = CompositeDisposable()
@@ -57,7 +55,7 @@ class QuranImportPresenter @Inject internal constructor(
   }
 
   fun importData(data: BookmarkData) {
-    importObservable = bookmarkModel.importBookmarksObservable(data)
+    importObservable = bookmarkImportExportModel.importBookmarksObservable(data)
     subscribeToImportData()
   }
 
@@ -161,7 +159,7 @@ class QuranImportPresenter @Inject internal constructor(
       val pfd = contentResolverOps.openFileDescriptor(uri, "r")
       if (pfd != null) {
         val fd = pfd.fileDescriptor
-        return@defer Maybe.just<BufferedSource>(
+        return@defer Maybe.just(
           FileInputStream(
             fd
           ).source().buffer()
@@ -176,7 +174,7 @@ class QuranImportPresenter @Inject internal constructor(
     return Maybe.defer {
       val stream = contentResolverOps.openInputStream(uri)
       if (stream != null) {
-        return@defer Maybe.just<BufferedSource>(
+        return@defer Maybe.just(
           stream.source().buffer()
         )
       }

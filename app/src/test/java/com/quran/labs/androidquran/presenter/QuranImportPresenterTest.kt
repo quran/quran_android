@@ -4,12 +4,15 @@ import android.content.Context
 import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.base.TestApplication
-import com.quran.labs.androidquran.fakes.FakeBookmarkModel
+import com.quran.labs.androidquran.fakes.FakeBookmarksDao
 import com.quran.labs.androidquran.fakes.FakeContentResolverOps
+import com.quran.labs.androidquran.fakes.FakeReadingBookmarksDao
 import com.quran.labs.androidquran.fakes.FakeRecentPagesDao
 import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel
 import com.quran.labs.androidquran.model.bookmark.BookmarkJsonModel
+import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.awaitTerminalEvent
 import io.reactivex.rxjava3.observers.TestObserver
 import okio.BufferedSource
@@ -35,8 +38,10 @@ class QuranImportPresenterTest {
     importExportModel = BookmarkImportExportModel(
       context,
       BookmarkJsonModel(),
-      FakeBookmarkModel(),
-      FakeRecentPagesDao()
+      FakeBookmarksDao(),
+      FakeRecentPagesDao(),
+      FakeReadingBookmarksDao(),
+      QuranInfo(MadaniDataSource())
     )
   }
 
@@ -49,7 +54,7 @@ class QuranImportPresenterTest {
     val stream: InputStream = ByteArrayInputStream(ByteArray(32))
     val fakeOps = FakeContentResolverOps(inputStream = stream)
 
-    val presenter = QuranImportPresenter(context, importExportModel, FakeBookmarkModel(), fakeOps)
+    val presenter = QuranImportPresenter(context, importExportModel, fakeOps)
 
     val observer = TestObserver<BufferedSource>()
     presenter.parseExternalFile(uri).subscribe(observer)
@@ -70,7 +75,7 @@ class QuranImportPresenterTest {
     // FakeContentResolverOps returns null inputStream by default
     val fakeOps = FakeContentResolverOps()
 
-    val presenter = QuranImportPresenter(context, importExportModel, FakeBookmarkModel(), fakeOps)
+    val presenter = QuranImportPresenter(context, importExportModel, fakeOps)
 
     val observer = TestObserver<BufferedSource>()
     presenter.parseExternalFile(uri).subscribe(observer)
@@ -89,7 +94,7 @@ class QuranImportPresenterTest {
     // FakeContentResolverOps returns null fileDescriptor by default
     val fakeOps = FakeContentResolverOps()
 
-    val presenter = QuranImportPresenter(context, importExportModel, FakeBookmarkModel(), fakeOps)
+    val presenter = QuranImportPresenter(context, importExportModel, fakeOps)
 
     val observer = TestObserver<BufferedSource>()
     presenter.parseUri(uri).subscribe(observer)
@@ -105,7 +110,7 @@ class QuranImportPresenterTest {
     val uri = Uri.parse("content://quran.test/backup")
     val fakeOps = FakeContentResolverOps(fileDescriptorException = NullPointerException())
 
-    val presenter = QuranImportPresenter(context, importExportModel, FakeBookmarkModel(), fakeOps)
+    val presenter = QuranImportPresenter(context, importExportModel, fakeOps)
 
     val observer = TestObserver<BufferedSource>()
     presenter.parseUri(uri).subscribe(observer)

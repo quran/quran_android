@@ -172,7 +172,7 @@
   <string name="import_data_permissions_error">Nie można odczytać pliku kopii zapasowej z powodu błędu uprawnień.</string>
   <string name="import_data_error">Nieprawidłowy plik kopii zapasowej (lub błąd przy jego odczycie).</string>
   <string name="import_data">Zaimportuj dane</string>
-  <string name="import_data_and_override">Zaimportowanie tego pliku spowoduje zastąpienie wszystkich zakładek %1$d zakładką(ami) i %2$d tagiem(ami). Zaimportować?</string>
+  <string name="import_data_and_merge">Zaimportowanie tego pliku doda %1$d zakładkę/zakładki i %2$d tag/tagi do bieżących danych. Zaimportować?</string>
   <string name="import_successful">Import danych zakończony sukcesem</string>
   <string name="export_data_error">Błąd przy eksporcie danych</string>
   <string name="exported_data">Dane zostały wyeksportowane do %1$s</string>
@@ -297,6 +297,7 @@
   <string name="undo">Cofnij</string>
 
   <string name="recent_pages">Ostatnie strony</string>
+  <string name="old_page_bookmarks">Stare zakładki stron</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Tag</string>
