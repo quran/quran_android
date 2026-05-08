@@ -50,7 +50,6 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.model.QuranText
 import com.quran.data.model.SuraAyah
-import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.AyahSelection.AyahRange
 import com.quran.data.model.selection.SelectionIndicator
@@ -147,8 +146,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -241,7 +238,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private lateinit var windowInsetsController: WindowInsetsControllerCompat
 
   private var translationJob: Job? = null
-  private var currentBookmarks: List<Bookmark> = listOf()
   private lateinit var compositeDisposable: CompositeDisposable
   private val foregroundDisposable = CompositeDisposable()
   private val scope = MainScope()
@@ -333,18 +329,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       onDownloadSuccess()
     }
 
-    bookmarksDao.pageBookmarksWithoutTags().combine(currentPageFlow) { bookmarks, currentPage ->
-      bookmarks to currentPage
-    }.onEach { (bookmarks, page) ->
-      currentBookmarks = bookmarks
-
-      val isBookmarked = if (isDualPages) {
-        bookmarks.any { it.page == page || it.page == page - 1 }
-      } else {
-        bookmarks.any { it.page == page }
-      }
-      refreshBookmarksMenu(isBookmarked)
-    }.launchIn(scope)
   }
 
   private fun updateDualPageMode() {
@@ -1186,7 +1170,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     val itemId = item.itemId
     if (itemId == R.id.favorite_item) {
-      togglePageBookmark(currentPage)
       return true
     } else if (itemId == R.id.goto_quran) {
       switchToQuran()
@@ -1436,12 +1419,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
   }
 
-  private fun togglePageBookmark(page: Int) {
-    scope.launch {
-      bookmarksDao.togglePageBookmark(page)
-    }
-  }
-
   private fun toggleAyahBookmark(suraAyah: SuraAyah, page: Int) {
     scope.launch {
       val isBookmarked = bookmarksDao.toggleAyahBookmark(suraAyah, page)
@@ -1450,18 +1427,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   private fun refreshBookmarksMenu() {
-    val currentPage = currentPage
-    val isBookmarked = if (isDualPages) {
-      currentBookmarks.any { it.page == currentPage || it.page == currentPage - 1 }
-    } else {
-      currentBookmarks.any { it.page == currentPage }
-    }
-
-    if (isBookmarked) {
-      refreshBookmarksMenu(true)
-    }
-    // don't refresh if it's not bookmarked since it'll cause a loop (since this method is called
-    // from onPrepareOptionsMenu).
+    refreshBookmarksMenu(false)
   }
 
   private fun refreshBookmarksMenu(isBookmarked: Boolean) {

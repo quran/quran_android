@@ -1,20 +1,27 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
+import com.quran.data.dao.BookmarksDao
 import com.quran.data.di.AppScope
+import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import timber.log.Timber
 
 @SingleIn(AppScope::class)
-open class TagBookmarkPresenter @Inject internal constructor(private val bookmarkModel: BookmarkModel) :
-  Presenter<TagBookmarkDialog> {
+open class TagBookmarkPresenter @Inject internal constructor(
+  private val bookmarksDao: BookmarksDao
+) : Presenter<TagBookmarkDialog> {
   private val checkedTags = HashSet<Long>()
 
   private var dialog: TagBookmarkDialog? = null
@@ -25,20 +32,24 @@ open class TagBookmarkPresenter @Inject internal constructor(private val bookmar
   private var saveImmediate = false
   private var shouldRefreshTags = false
   private var potentialAyahBookmark: Bookmark? = null
-
+  private val presenterScope = MainScope()
 
   init {
-    // this is unrelated to which views are attached, so it should be run
-    // and we don't need to worry about disposing it.
-    bookmarkModel.tagsObservable()
-      .observeOn(AndroidSchedulers.mainThread())
-      .subscribe { ignore: Boolean? ->
-        shouldRefreshTags = true
-        if (tags != null && dialog != null) {
-          saveChanges()
-          refresh()
-        }
+    presenterScope.launch {
+      try {
+        bookmarksDao.tagsFlow()
+          .drop(1)
+          .collect {
+            shouldRefreshTags = true
+            if (tags != null && dialog != null) {
+              saveChanges()
+              refresh()
+            }
+          }
+      } catch (throwable: Throwable) {
+        Timber.e(throwable, "Error observing bookmark tags")
       }
+    }
   }
 
   fun setBookmarksMode(bookmarkIds: LongArray?) {
@@ -58,17 +69,19 @@ open class TagBookmarkPresenter @Inject internal constructor(private val bookmar
   }
 
   open fun refresh() {
-    // even though this is called from the presenter, we'll cache the result even if the
-    // view ends up detaching.
     Single.zip(
-      tagsObservable, bookmarkTagIdsObservable
+      tagsObservable,
+      bookmarkTagIdsObservable
     ) { first: List<Tag>, second: List<Long> ->
       Pair(first, second)
     }
+      .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
-      .subscribe { data: Pair<List<Tag>, List<Long>> ->
+      .subscribe({ data: Pair<List<Tag>, List<Long>> ->
         this.onRefreshedData(data)
-      }
+      }, { throwable ->
+        Timber.e(throwable, "Unable to refresh bookmark tags")
+      })
   }
 
   open fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
@@ -94,7 +107,7 @@ open class TagBookmarkPresenter @Inject internal constructor(private val bookmar
     get() {
       val tags = tags
       return if (tags == null || shouldRefreshTags) {
-        bookmarkModel.tagsObservable
+        Single.fromCallable { runBlocking { bookmarksDao.tags() } }
       } else {
         Single.just(tags)
       }
@@ -102,16 +115,31 @@ open class TagBookmarkPresenter @Inject internal constructor(private val bookmar
 
   open fun saveChanges() {
     if (madeChanges) {
-      bookmarkIdsObservable
-        .flatMap { bookmarkIds: LongArray ->
-          bookmarkModel.updateBookmarkTags(
-            bookmarkIds,
-            checkedTags,
-            bookmarkIds.size == 1
-          )
+      Single.fromCallable {
+        runBlocking {
+          val ayahBookmark = potentialAyahBookmark
+          if (ayahBookmark != null) {
+            bookmarksDao.updateAyahBookmarkTags(
+              suraAyah = SuraAyah(requireNotNull(ayahBookmark.sura), requireNotNull(ayahBookmark.ayah)),
+              page = ayahBookmark.page,
+              tagIds = checkedTags,
+              deleteNonTagged = true
+            )
+          } else {
+            val bookmarkIds = bookmarkIds ?: longArrayOf()
+            bookmarksDao.updateBookmarkTags(
+              bookmarkIds = bookmarkIds,
+              tagIds = checkedTags,
+              deleteNonTagged = bookmarkIds.size == 1
+            )
+          }
         }
+      }
+        .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { ignored: Boolean? -> onSaveChangesDone() }
+        .subscribe({ onSaveChangesDone() }, { throwable ->
+          Timber.e(throwable, "Unable to save bookmark tags")
+        })
     } else {
       onSaveChangesDone()
     }
@@ -120,33 +148,6 @@ open class TagBookmarkPresenter @Inject internal constructor(private val bookmar
   open fun onSaveChangesDone() {
     madeChanges = false
   }
-
-  private val bookmarkIdsObservable: Observable<LongArray>
-    /**
-     * Get an Observable with the list of bookmark ids that will be tagged.
-     *
-     * @return the list of bookmark ids to tag
-     */
-    get() {
-      val bookmarkIds = bookmarkIds
-      val potentialAyahBookmark = potentialAyahBookmark
-      val observable: Observable<LongArray> = if (bookmarkIds != null) {
-        // if we already have a list, we just use that
-        Observable.just(bookmarkIds)
-      } else {
-        if (potentialAyahBookmark != null) {
-          // if we don't have a bookmark id, we'll add the bookmark and use its id
-          bookmarkModel.safeAddBookmark(
-            potentialAyahBookmark.sura,
-            potentialAyahBookmark.ayah,
-            potentialAyahBookmark.page
-          ).map { bookmarkId: Long -> longArrayOf(bookmarkId) }
-        } else {
-          Observable.just(longArrayOf())
-        }
-      }
-      return observable
-    }
 
   fun toggleTag(id: Long): Boolean {
     var result = false
@@ -174,21 +175,23 @@ open class TagBookmarkPresenter @Inject internal constructor(private val bookmar
 
   private val bookmarkTagIdsObservable: Single<List<Long>>
     get() {
-      val ayahBookmark = potentialAyahBookmark
-      val bookmarkId = if (ayahBookmark != null) {
-        bookmarkModel.getBookmarkId(
-          ayahBookmark.sura,
-          ayahBookmark.ayah,
-          ayahBookmark.page
-        )
-      } else {
-        val ids = bookmarkIds
-        Single.just(
-          if (ids != null && ids.size == 1) ids[0] else 0
-        )
+      return Single.fromCallable {
+        runBlocking {
+          val ayahBookmark = potentialAyahBookmark
+          if (ayahBookmark != null) {
+            bookmarksDao.getAyahBookmarkTagIds(
+              SuraAyah(requireNotNull(ayahBookmark.sura), requireNotNull(ayahBookmark.ayah))
+            )
+          } else {
+            val ids = bookmarkIds
+            if (ids != null && ids.size == 1) {
+              bookmarksDao.getBookmarkTagIds(ids[0])
+            } else {
+              emptyList()
+            }
+          }
+        }
       }
-      return bookmarkModel.getBookmarkTagIds(bookmarkId)
-        .defaultIfEmpty(ArrayList())
     }
 
   override fun bind(what: TagBookmarkDialog) {

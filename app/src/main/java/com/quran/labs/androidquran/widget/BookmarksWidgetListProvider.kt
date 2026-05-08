@@ -8,13 +8,15 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService.RemoteViewsFactory
 import androidx.core.content.ContextCompat
 import com.quran.data.core.QuranInfo
+import com.quran.data.dao.BookmarkSortOrder
+import com.quran.data.dao.BookmarksDao
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.runBlocking
 
 /**
  * [RemoteViewsFactory] implementation responsible for providing a list of bookmark views to be
@@ -31,7 +33,7 @@ class BookmarksWidgetListProvider(private val context: Context) : RemoteViewsFac
   lateinit var quranRowFactory: QuranRowFactory
 
   @Inject
-  lateinit var bookmarksDbAdapter: BookmarksDBAdapter
+  lateinit var bookmarksDao: BookmarksDao
 
   init {
     (context.applicationContext as QuranApplication).applicationComponent.inject(this)
@@ -40,7 +42,9 @@ class BookmarksWidgetListProvider(private val context: Context) : RemoteViewsFac
 
   private fun populateListItem() {
     val appContext = context.applicationContext
-    val bookmarksList = bookmarksDbAdapter.getBookmarks(BookmarksDBAdapter.SORT_LOCATION)
+    val bookmarksList = runBlocking {
+      bookmarksDao.bookmarks(BookmarkSortOrder.SORT_LOCATION)
+    }
     quranRowList = bookmarksList.map { quranRowFactory.fromBookmark(appContext, it) }
   }
 

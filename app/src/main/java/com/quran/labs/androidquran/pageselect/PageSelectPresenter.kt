@@ -1,9 +1,6 @@
 package com.quran.labs.androidquran.pageselect
 
-import com.quran.data.core.QuranInfo
-import com.quran.data.dao.BookmarksDao
 import com.quran.data.source.PageProvider
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.ImageUtil
 import com.quran.labs.androidquran.util.QuranFileUtils
@@ -19,10 +16,6 @@ constructor(
   private val imageUtil: ImageUtil,
   private val quranFileUtils: QuranFileUtils,
   private val mainThreadScheduler: Scheduler,
-  private val bookmarksDao: BookmarksDao,
-  // unfortunately needed for now due to the old Rx code
-  // not knowing about changes from BookmarksDao, etc.
-  private val bookmarkModel: BookmarkModel,
   private val pageTypes:
   Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>
 ) :
@@ -70,70 +63,6 @@ constructor(
       )
     }
     currentView?.onUpdatedData(data)
-  }
-
-  /**
-   * Migrate bookmark and recent page data between two page types
-   * Consider a page set like madani (604 pages) versus one like Shemerly (521 pages).
-   * When switching between them, bookmarks need to be mapped so that the same bookmark
-   * retains its meaning.
-   *
-   * Note that this does not support non-Hafs qira'at yet, where the ayah numbers may
-   * have changed due to kufi versus madani counting.
-   */
-  suspend fun migrateBookmarksData(sourcePageType: String, destinationPageType: String) {
-    val source = pageTypes[sourcePageType]?.getDataSource()
-    val destination = pageTypes[destinationPageType]?.getDataSource()
-    if (source != null && destination != null && source.numberOfPages != destination.numberOfPages) {
-      val sourcePageSuraStart = source.suraForPageArray
-      val sourcePageAyahStart = source.ayahForPageArray
-      val destinationQuranInfo = QuranInfo(destination)
-
-      val suraAyahFromPage = { page: Int ->
-        sourcePageSuraStart[page - 1] to sourcePageAyahStart[page - 1]
-      }
-
-      // update the bookmarks
-      val updatedBookmarks = bookmarksDao.bookmarks()
-        .map {
-          val page = it.page
-          if (page - 1 >= sourcePageSuraStart.size) {
-            if (it.isPageBookmark()) {
-              // this bookmark is on a page that doesn't exist in the old page type
-              if (destination.suraForPageArray.size > page) {
-                // but it does exist on the new type, so it's ok, let's not re-map
-                it
-              } else {
-                // we can't map it, so let's just put it as the max page number to avoid bad data
-                it.copy(page = sourcePageAyahStart.size - 1)
-              }
-            } else {
-              // ayah bookmark, so let's just map it
-              val sura = requireNotNull(it.sura)
-              val ayah = requireNotNull(it.ayah)
-              val mappedPage = destinationQuranInfo.getPageFromSuraAyah(sura, ayah)
-              it.copy(page = mappedPage)
-            }
-          } else {
-            val (pageSura, pageAyah) = suraAyahFromPage(page)
-            val sura = it.sura ?: pageSura
-            val ayah = it.ayah ?: pageAyah
-
-            val mappedPage = destinationQuranInfo.getPageFromSuraAyah(sura, ayah)
-
-            // we only copy the page because sura and ayah are the same.
-            it.copy(page = mappedPage)
-          }
-        }
-
-      if (updatedBookmarks.isNotEmpty()) {
-        bookmarksDao.replaceBookmarks(updatedBookmarks)
-        bookmarkModel.notifyBookmarksUpdated()
-      }
-
-      // Recent pages are backed by mobile-sync ReadingSession records, which store sura/ayah
-      // rather than page numbers. RecentPagesDao remaps them for the active page type when read.
-    }
   }
 
   override fun bind(what: PageSelectActivity) {
