@@ -78,6 +78,7 @@ import com.quran.labs.androidquran.feature.reading.bridge.DownloadBridge
 import com.quran.labs.androidquran.feature.reading.bridge.ReadingEventPresenterBridge
 import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenter
 import com.quran.labs.androidquran.feature.reading.presenter.RecentPagePresenter
+import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkPresenter
 import com.quran.labs.androidquran.feature.reading.presenter.recitation.PagerActivityRecitationPresenter
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.presenter.data.QuranEventLogger
@@ -168,7 +169,8 @@ import kotlin.math.abs
 class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdateListener,
   AyahSelectedListener, JumpDestination, QuranReadingActivityComponentProvider,
   QuranReadingPageComponentProvider, AyahToolBarInjector, QariListWrapperInjector,
-  AudioBarInjector, ActivityCompat.OnRequestPermissionsResultCallback, AudioPresenterScreen {
+  AudioBarInjector, ActivityCompat.OnRequestPermissionsResultCallback, AudioPresenterScreen,
+  ReadingBookmarkPresenter.Screen {
   private var lastPopupTime: Long = 0
   private var isActionBarHidden = true
   private var shouldReconnect = false
@@ -181,6 +183,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private var isFoldableDeviceOpenAndVertical = false
 
   private var bookmarksMenuItem: MenuItem? = null
+  private var isCurrentPageReadingBookmarked = false
 
   private var translationNames: Array<String> = emptyArray()
   private var translations: List<LocalTranslation>? = null
@@ -211,6 +214,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   @Inject lateinit var bookmarksDao: BookmarksDao
   @Inject lateinit var recentPagePresenter: RecentPagePresenter
+  @Inject lateinit var readingBookmarkPresenter: ReadingBookmarkPresenter
   @Inject lateinit var quranSettings: QuranSettings
   @Inject lateinit var quranScreenInfo: QuranScreenInfo
   @Inject lateinit var arabicDatabaseUtils: ArabicDatabaseUtils
@@ -878,6 +882,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
+    readingBookmarkPresenter.bind(currentPageFlow, this)
 
     if (shouldReconnect) {
       foregroundDisposable.add(
@@ -1074,6 +1079,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     promptDialog?.dismiss()
     promptDialog = null
     recentPagePresenter.unbind()
+    readingBookmarkPresenter.unbind(this)
     quranSettings.wasShowingTranslation = pagerAdapter.isShowingTranslation
 
     super.onPause()
@@ -1170,6 +1176,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     val itemId = item.itemId
     if (itemId == R.id.favorite_item) {
+      readingBookmarkPresenter.togglePageReadingBookmark(currentPage)
       return true
     } else if (itemId == R.id.goto_quran) {
       switchToQuran()
@@ -1427,7 +1434,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   private fun refreshBookmarksMenu() {
-    refreshBookmarksMenu(false)
+    refreshBookmarksMenu(isCurrentPageReadingBookmarked)
   }
 
   private fun refreshBookmarksMenu(isBookmarked: Boolean) {
@@ -1437,6 +1444,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     } else {
       supportInvalidateOptionsMenu()
     }
+  }
+
+  override fun setPageReadingBookmarkSelected(isBookmarked: Boolean) {
+    isCurrentPageReadingBookmarked = isBookmarked
+    refreshBookmarksMenu(isBookmarked)
   }
 
   // region Audio playback
