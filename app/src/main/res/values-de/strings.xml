@@ -353,7 +353,7 @@
   <string name="import_data_permissions_error">Die Sicherungsdatei kann aufgrund eines Berechtigungsfehlers nicht gelesen werden.</string>
   <string name="import_data_error">Ungültige Sicherungsdatei (oder Sicherungsdatei kann nicht gelesen werden).</string>
   <string name="import_data">Daten importieren</string>
-  <string name="import_data_and_override">Wenn Sie diese Datei importieren, ersetzt sie alle Ihre Lesezeichen durch %1$d Lesezeichen und %2$d Tags. Importieren?</string>
+  <string name="import_data_and_merge">Wenn Sie diese Datei importieren, werden %1$d Lesezeichen und %2$d Tags zu Ihren aktuellen Daten hinzugefügt. Importieren?</string>
   <string name="import_successful">Import erfolgreich</string>
   <string name="export_data_error">Fehler beim Exportieren von Daten</string>
   <string name="exported_data">In %1$s exportierte Daten</string>
@@ -372,6 +372,7 @@
   <string name="starting_page_label">Anfang der Seite</string>
   <string name="undo">Rückgängig machen</string>
   <string name="recent_pages">Neueste Seiten</string>
+  <string name="old_page_bookmarks">Alte Seitenlesezeichen</string>
   <string name="tag_blank_tag_error">Tag-Namen dürfen nicht leer sein!</string>
   <string name="tag_duplicate_tag_error">Der Tag-Name existiert bereits!</string>
   <string name="audio_updated_title">Quran Audio Dateien Update</string>

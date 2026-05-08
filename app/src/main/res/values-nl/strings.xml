@@ -258,8 +258,7 @@
     toestemmingsfout.</string>
   <string name="import_data_error">Ongeldig back-upbestand (of kan back-upbestand niet lezen).</string>
   <string name="import_data">Gegevens importeren</string>
-  <string name="import_data_and_override">Als je dit bestand importeert, worden alle bladwijzers
-    vervangen door %1$d bladwijzer(s) en %2$d tag(s). Importeren?</string>
+  <string name="import_data_and_merge">Als je dit bestand importeert, worden %1$d bladwijzers en %2$d tags aan je huidige gegevens toegevoegd. Importeren?</string>
   <string name="import_successful">Importeren voltooid</string>
   <string name="export_data_error">Fout bij exporteren van gegevens</string>
   <string name="exported_data">Gegevens geëxporteerd naar %1$s</string>
@@ -395,6 +394,7 @@
   <string name="undo">Ongedaan maken</string>
 
   <string name="recent_pages">Recente pagina\'s</string>
+  <string name="old_page_bookmarks">Oude paginabladwijzers</string>
   <plurals name="plural_recent_pages" translatable="false">
     <item quantity="one">@string/menu_jump_last_page</item>
     <item quantity="other">@string/recent_pages</item>

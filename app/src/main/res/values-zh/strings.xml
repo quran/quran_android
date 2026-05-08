@@ -240,7 +240,7 @@
   <string name="import_data_permissions_error">由于权限错误，无法读取备份文件。</string>
   <string name="import_data_error">无效的备份文件（或无法读取备份文件）。</string>
   <string name="import_data">进口数据</string>
-  <string name="import_data_and_override">如果你导入这个文件，它将用%1$d书签和%2$d标签替换你所有的书签。导入？</string>
+  <string name="import_data_and_merge">如果导入此文件，它会将 %1$d 个书签和 %2$d 个标签添加到你当前的数据中。导入？</string>
   <string name="import_successful">进口成功</string>
   <string name="export_data_error">输出数据时出错</string>
   <string name="exported_data">数据导出到%1$s</string>
@@ -269,6 +269,7 @@
   <string name="starting_page_label">页首</string>
   <string name="undo">撤销</string>
   <string name="recent_pages">最近的页面</string>
+  <string name="old_page_bookmarks">旧页面书签</string>
   <string name="tag_blank_tag_error">标签名称不能是空白的!</string>
   <string name="tag_duplicate_tag_error">标签名称已经存在!</string>
   <string name="audio_updated_title">古兰经音频文件更新</string>

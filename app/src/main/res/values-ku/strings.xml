@@ -244,7 +244,7 @@
   <string name="import_data_permissions_error">ناتوانێت فایلی پاڵپشت بخوێنێتەوە بەهۆی هەڵەی ڕێپێدانەکان.</string>
   <string name="import_data_error">فایلی پاشەکەوت نادروستە (یان ناتوانێت فایلی پاڵپشت بخوێنێتەوە).</string>
   <string name="import_data">هێنانی داتا</string>
-  <string name="import_data_and_override">ئەگەر ئەم فایلە هاوردە بکەیت، ئەوە هەموو نیشانەکانت بە %1$d نیشانە و %2$d تاگ جێگۆڕکێ دەکات. هاوردن؟</string>
+  <string name="import_data_and_merge">ئەگەر ئەم فایلە هاوردە بکەیت، %1$d نیشانە و %2$d تاگ بۆ داتاکانی ئێستات زیاد دەکرێت. هاوردن؟</string>
   <string name="import_successful">هێنانی سەرکەوتوو</string>
   <string name="export_data_error">هەڵە لە هەناردەکردنی داتا</string>
   <string name="exported_data">داتا نێردراوە بۆ %1$s</string>
@@ -273,6 +273,7 @@
   <string name="starting_page_label">سەرەتای لاپەڕە</string>
   <string name="undo">پاشگەزبەوە</string>
   <string name="recent_pages">پەڕەکانی ئەم دواییە</string>
+  <string name="old_page_bookmarks">نیشانەکانی پەڕەی کۆن</string>
   <string name="tag_blank_tag_error">ناتوانرێت ناوی تاگ بەتاڵ بێت!</string>
   <string name="tag_duplicate_tag_error">ناوی تاگ پێشتر بوونی هەیە!</string>
   <string name="audio_updated_title">بەڕۆژکردنەوەی فایلەکانی دەنگی قورئان</string>

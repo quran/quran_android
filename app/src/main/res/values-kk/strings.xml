@@ -175,8 +175,7 @@
   <string name="import_data_permissions_error">Рұқсат қателіктеріне байланысты резервтік файлдарды оқу мүмкін емес.</string>
   <string name="import_data_error">Жарамсыз резервтік файл (немесе резервтік файл оқылмайды).</string>
   <string name="import_data">Импорт</string>
-  <string name="import_data_and_override">Бұл импорт барлық бетбелгілерді %1$d бетбелгі(лер) және %2$d белгі(лер)ге алмастырады.
-        Импорттау керек пе?</string>
+  <string name="import_data_and_merge">Бұл файлды импорттасаңыз, ағымдағы деректеріңізге %1$d бетбелгі және %2$d белгі қосылады. Импорттау керек пе?</string>
   <string name="import_successful">Деректер импортталды</string>
   <string name="export_data_error">Экспорт қателігі</string>
   <string name="exported_data">Деректер %1$s жеріне экспортталды</string>
@@ -318,6 +317,7 @@
   <string name="playback_prompt_title">Ойнатуды мынадан бастаңыз:</string>
   <string name="starting_page_label">Беттің басы</string>
   <string name="recent_pages">Соңғы беттер</string>
+  <string name="old_page_bookmarks">Ескі бет бетбелгілері</string>
   <string name="tag_blank_tag_error">Тег атаулары бос бола алмайды!</string>
   <string name="tag_duplicate_tag_error">Тег атауы бұрыннан бар!</string>
   <string name="audio_updated_title">Құран дыбыс файлдарын жаңарту</string>

@@ -276,7 +276,7 @@
   <string name="import_data_permissions_error">Jogosultsági hiba miatt nem lehetett beolvasni a mentési fájlt.</string>
   <string name="import_data_error">Érvénytelen mentési fájl (vagy a mentési fájl nem olvasható).</string>
   <string name="import_data">Adatok importálása</string>
-  <string name="import_data_and_override">Ha importálja ezt a fájlt, akkor az összes könyvjelzőjét %1$d könyvjelzőre és %2$d címkére cseréli. Importálás?</string>
+  <string name="import_data_and_merge">Ha importálja ezt a fájlt, %1$d könyvjelző és %2$d címke hozzáadódik a jelenlegi adataihoz. Importálja?</string>
   <string name="import_successful">Sikeres importálás</string>
   <string name="export_data_error">Hiba az adatok exportálásában</string>
   <string name="exported_data">A %1$s címre exportált adatok</string>
@@ -296,6 +296,7 @@
   <string name="starting_page_label">Az oldal eleje</string>
   <string name="undo">Undo</string>
   <string name="recent_pages">Legutóbbi oldalak</string>
+  <string name="old_page_bookmarks">Régi oldal-könyvjelzők</string>
   <string name="tag_blank_tag_error">A címkék neve nem lehet üres!</string>
   <string name="tag_duplicate_tag_error">A címke neve már létezik!</string>
   <string name="audio_updated_title">Korán hangfájlok frissítése</string>

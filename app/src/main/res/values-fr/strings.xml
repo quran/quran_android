@@ -147,7 +147,7 @@
   <string name="import_data_permissions_error">Impossible de lire le fichier de sauvegarde à cause d\'une erreur de permissions.</string>
   <string name="import_data_error">Fichier de sauvegarde invalide (ou impossible de lire le fichier de sauvegarde).</string>
   <string name="import_data">Importer des données</string>
-  <string name="import_data_and_override">Si vous importez ce fichier, cela remplacera tous vos marque-pages par %1$d marque-page(s) et %2$d tag(s). Effectuer l\'importation ?</string>
+  <string name="import_data_and_merge">Si vous importez ce fichier, %1$d favori(s) et %2$d tag(s) seront ajoutés à vos données actuelles. Importer ?</string>
   <string name="import_successful">Données importées avec succès</string>
   <string name="export_data_error">Erreur lors de l\'export des données.</string>
   <string name="exported_data">Données exportées dans %1$s.</string>
@@ -285,6 +285,7 @@
   <string name="playback_prompt_title">Lecture depuis :</string>
   <string name="starting_page_label">Début de la page</string>
   <string name="recent_pages">Pages récente</string>
+  <string name="old_page_bookmarks">Anciens favoris de pages</string>
   <string name="tag_blank_tag_error">Le nom du tag ne peux pas être vide</string>
   <string name="tag_duplicate_tag_error">Le nom du tag existe déjà!</string>
   <string name="audio_updated_title">Mise à jour des fichiers audio du Coran</string>
