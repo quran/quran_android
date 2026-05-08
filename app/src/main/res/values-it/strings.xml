@@ -105,7 +105,7 @@
   <string name="import_data_permissions_error">Impossibile leggere il file di backup a causa di un errore di autorizzazione.</string>
   <string name="import_data_error">File di backup non valido (o impossibile leggere il file di backup).</string>
   <string name="import_data">Importazione di dati</string>
-  <string name="import_data_and_override">Se importi questo file, sostituirà tutti i tuoi segnalibri con %1$d segnalibri e %2$d tag. Importare?</string>
+  <string name="import_data_and_merge">Se importi questo file, aggiungerà %1$d segnalibri e %2$d tag ai tuoi dati attuali. Importare?</string>
   <string name="import_successful">Importazione riuscita</string>
   <string name="export_data_error">Errore nell\'esportazione dei dati</string>
   <string name="exported_data">Dati esportati in %1$s</string>
@@ -127,6 +127,7 @@
     <item quantity="other">Cancellati %d elementi</item>
   </plurals>
   <string name="recent_pages">Pagine recenti</string>
+  <string name="old_page_bookmarks">Vecchi segnalibri di pagina</string>
   <string name="tag_blank_tag_error">I nomi dei tag non possono essere vuoti!</string>
   <string name="tag_duplicate_tag_error">Il nome del tag esiste già!</string>
   <string name="bookmarks_list_empty">Nessun segnalibro</string>

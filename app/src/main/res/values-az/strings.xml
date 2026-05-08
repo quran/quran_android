@@ -159,7 +159,7 @@
   <string name="import_data_permissions_error">İzinler hatası nedeniyle yedekleme dosyası okunamıyor</string>
   <string name="import_data_error">Geçersiz yedekleme dosyası (veya yedekleme dosyası okunamıyor)</string>
   <string name="import_data">Verileri içe aktar</string>
-  <string name="import_data_and_override">Bu dosyayı içe aktarırsanız, tüm işaretlerinizi %1$d işaret ve %2$d etiketle değiştirilir. Devam etmek istiyor musunuz?</string>
+  <string name="import_data_and_merge">Bu faylı içə aktarsanız, cari məlumatlarınıza %1$d işarə və %2$d etiket əlavə ediləcək. İdxal edilsin?</string>
   <string name="import_successful">İçe aktarma başarıyla tamamlandı</string>
   <string name="export_data_error">Veriler dışa aktarılırken hata oluştu</string>
   <string name="exported_data">"Veriler %1$s'e aktarıldı"</string>
@@ -281,6 +281,7 @@
   <string name="undo">Geri alma</string>
 
   <string name="recent_pages">Son sayfalar</string>
+  <string name="old_page_bookmarks">Köhnə səhifə işarələri</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Etiket</string>

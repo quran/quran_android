@@ -11,6 +11,7 @@
   <string name="menu_settings">تنظیمات</string>
   <string name="menu_jump_last_page">آخرین صفحه</string>
   <string name="recent_pages">آخرین صفحات</string>
+  <string name="old_page_bookmarks">نشانک‌های قدیمی صفحات</string>
   <string name="menu_bookmarks">نشانک‌ها</string>
   <string name="menu_bookmarks_page">نشانک‌های صفحه</string>
   <string name="menu_bookmarks_ayah">نشانک‌های آیه</string>
@@ -193,7 +194,7 @@
   <string name="exported_data">بُرون‌برد به %1$s انجام گرفت.</string>
   <string name="get_translations">دریافت ترجمه‌ها</string>
   <string name="import_data">درون‌بُرد داده‌ها</string>
-  <string name="import_data_and_override">عملیات درون‌بُرد نشانک‌های فعلی را با %1$d نشانک و %2$d برچسب جایگزین می‌نماید. موافق‌اید؟</string>
+  <string name="import_data_and_merge">اگر این پرونده را درون‌ریزی کنید، %1$d نشانک و %2$d برچسب به داده‌های فعلی شما افزوده می‌شود. درون‌ریزی شود؟</string>
   <string name="import_successful">درون‌بُرد موفقیت‌آمیز</string>
   <string name="import_data_permissions_error">هنگام عملیات درون‌برد خطای دسترسی رخ داد.</string>
   <string name="import_data_error">درون‌برد با خطا مواجه شد.  داده‌ها معتبر نیست.</string>

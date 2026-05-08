@@ -191,7 +191,7 @@
   <string name="import_data_permissions_error">Không thể đọc tệp sao lưu do lỗi quyền.</string>
   <string name="import_data_error">Tệp sao lưu không hợp lệ (hoặc không thể đọc tệp sao lưu).</string>
   <string name="import_data">Nhập Data</string>
-  <string name="import_data_and_override">Nếu bạn nhập tệp này, nó sẽ thay thế tất cả đánh dấu của bạn bằng %1$d đánh dấu và %2$d thẻ. Nhập?</string>
+  <string name="import_data_and_merge">Nếu bạn nhập tệp này, %1$d đánh dấu và %2$d thẻ sẽ được thêm vào dữ liệu hiện tại của bạn. Nhập?</string>
   <string name="import_successful">Nhập thành công</string>
   <string name="export_data_error">Lỗi xuất dữ liệu</string>
   <string name="exported_data">Dữ liệu được xuất sang %1$s</string>
@@ -316,6 +316,7 @@
   <string name="undo">Hoàn tác</string>
 
   <string name="recent_pages">Vừa Đọc</string>
+  <string name="old_page_bookmarks">Đánh dấu trang cũ</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Thẻ</string>
