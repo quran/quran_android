@@ -1,23 +1,30 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
+import com.quran.data.dao.BookmarksDao
 import com.quran.data.model.bookmark.Tag
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog
 
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class AddTagDialogPresenter @Inject
-internal constructor(private val bookmarkModel: BookmarkModel) : Presenter<AddTagDialog> {
+internal constructor(private val bookmarksDao: BookmarksDao) : Presenter<AddTagDialog> {
   private var dialog: AddTagDialog? = null
   private var tags: List<Tag> = emptyList()
+  private val presenterScope = MainScope()
 
   init {
-    bookmarkModel.tagsObservable
-        .subscribe { it -> this.tags = it }
+    presenterScope.launch {
+      tags = bookmarksDao.tags()
+      bookmarksDao.tagsFlow().collect { tags -> this@AddTagDialogPresenter.tags = tags }
+    }
   }
 
   fun validate(tagName: String, tagId: Long): Boolean {
+    tags = runBlocking { bookmarksDao.tags() }
     if (tagName.isBlank()) {
       dialog?.onBlankTagName()
       return false
@@ -31,13 +38,15 @@ internal constructor(private val bookmarkModel: BookmarkModel) : Presenter<AddTa
   }
 
   fun addTag(tagName: String) {
-    bookmarkModel.addTagObservable(tagName)
-        .subscribe()
+    presenterScope.launch {
+      bookmarksDao.addTag(tagName)
+    }
   }
 
   fun updateTag(tag: Tag) {
-    bookmarkModel.updateTag(tag)
-        .subscribe()
+    presenterScope.launch {
+      bookmarksDao.updateTag(tag)
+    }
   }
 
   override fun bind(dialog: AddTagDialog) {

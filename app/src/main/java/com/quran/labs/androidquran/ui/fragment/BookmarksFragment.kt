@@ -18,8 +18,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
+import com.quran.data.dao.BookmarkSortOrder
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
-import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter
 import com.quran.labs.androidquran.presenter.bookmark.BookmarksContextualModePresenter
 import com.quran.labs.androidquran.ui.QuranActivity
@@ -112,7 +112,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
       sortItem.isEnabled = true
 
       val bookmarkPresenter = bookmarkPresenter
-      if (BookmarksDBAdapter.SORT_DATE_ADDED == bookmarkPresenter.getSortOrder()) {
+      if (BookmarkSortOrder.SORT_DATE_ADDED == bookmarkPresenter.getSortOrder()) {
         val sortByDate = menu.findItem(R.id.sort_date)
         sortByDate.isChecked = true
       } else {
@@ -121,6 +121,8 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
       }
 
       val groupByTags = menu.findItem(R.id.group_by_tags)
+      groupByTags.isVisible = true
+      groupByTags.isEnabled = true
       groupByTags.isChecked = bookmarkPresenter.isGroupedByTags
 
       val showRecents = menu.findItem(R.id.show_recents)
@@ -137,13 +139,13 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
 
     when (itemId) {
       R.id.sort_date -> {
-        bookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_DATE_ADDED)
+        bookmarkPresenter.setSortOrder(BookmarkSortOrder.SORT_DATE_ADDED)
         item.isChecked = true
         return true
       }
 
       R.id.sort_location -> {
-        bookmarkPresenter.setSortOrder(BookmarksDBAdapter.SORT_LOCATION)
+        bookmarkPresenter.setSortOrder(BookmarkSortOrder.SORT_LOCATION)
         item.isChecked = true
         return true
       }
@@ -250,7 +252,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
           val selected: List<QuranRow> = bookmarksAdapter.getCheckedItems()
           val size = selected.size
           val res = resources
-          bookmarkPresenter?.deleteAfterSomeTime(selected)
+          bookmarkPresenter.deleteAfterSomeTime(selected)
           val recyclerView = recyclerView
           if (recyclerView != null) {
             val snackbar = Snackbar.make(
