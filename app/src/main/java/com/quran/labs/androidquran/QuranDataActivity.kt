@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran
 
 import android.Manifest.permission
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
@@ -17,6 +18,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
 import com.quran.common.upgrade.PreferencesUpgrade
 import com.quran.data.model.QuranDataStatus
+import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.presenter.data.QuranDataPresenter
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
@@ -24,10 +26,12 @@ import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDo
 import com.quran.labs.androidquran.service.util.PermissionUtil
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
+import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.QuranActivity
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
 import com.quran.labs.androidquran.worker.WorkerConstants
 import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -477,16 +481,90 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
   }
 
   private fun runListView() {
-    val i = Intent(this, QuranActivity::class.java)
-    i.putExtra(
-        QuranActivity.EXTRA_SHOW_TRANSLATION_UPGRADE, quranSettings.haveUpdatedTranslations()
-    )
-    startActivity(i)
+    startActivity(targetIntent())
     finish()
   }
 
+  private fun targetIntent(): Intent {
+    val sourceIntent = intent
+    return when (sourceIntent?.action) {
+      ShortcutsActivity.ACTION_JUMP_TO_LATEST -> {
+        Intent(this, QuranActivity::class.java).apply {
+          action = ShortcutsActivity.ACTION_JUMP_TO_LATEST
+          putExtra(
+            QuranActivity.EXTRA_SHOW_TRANSLATION_UPGRADE,
+            quranSettings.haveUpdatedTranslations()
+          )
+        }
+      }
+      ShortcutsActivity.ACTION_JUMP_TO -> {
+        Intent(this, ShowJumpFragmentActivity::class.java)
+      }
+      ACTION_OPEN_PAGE -> {
+        Intent(this, PagerActivity::class.java).apply {
+          val extras = sourceIntent.extras
+          putExtra(
+            "page",
+            extras?.getInt("page", Constants.PAGES_FIRST) ?: Constants.PAGES_FIRST
+          )
+          if (extras != null) {
+            if (extras.containsKey(PagerActivity.EXTRA_HIGHLIGHT_SURA)) {
+              putExtra(
+                PagerActivity.EXTRA_HIGHLIGHT_SURA,
+                extras.getInt(PagerActivity.EXTRA_HIGHLIGHT_SURA)
+              )
+            }
+            if (extras.containsKey(PagerActivity.EXTRA_HIGHLIGHT_AYAH)) {
+              putExtra(
+                PagerActivity.EXTRA_HIGHLIGHT_AYAH,
+                extras.getInt(PagerActivity.EXTRA_HIGHLIGHT_AYAH)
+              )
+            }
+            if (extras.containsKey(PagerActivity.EXTRA_JUMP_TO_TRANSLATION)) {
+              putExtra(
+                PagerActivity.EXTRA_JUMP_TO_TRANSLATION,
+                extras.getBoolean(PagerActivity.EXTRA_JUMP_TO_TRANSLATION)
+              )
+            }
+          }
+        }
+      }
+      else -> {
+        Intent(this, QuranActivity::class.java).apply {
+          putExtra(
+            QuranActivity.EXTRA_SHOW_TRANSLATION_UPGRADE,
+            quranSettings.haveUpdatedTranslations()
+          )
+        }
+      }
+    }
+  }
+
   companion object {
+    const val ACTION_OPEN_PAGE = "com.quran.labs.androidquran.open_page"
     const val PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY"
     private const val REQUEST_POST_NOTIFICATION_PERMISSIONS = 1
+
+    fun openPageIntent(
+      context: Context,
+      page: Int,
+      sura: Int? = null,
+      ayah: Int? = null,
+      jumpToTranslation: Boolean = false
+    ): Intent {
+      return Intent(context, QuranDataActivity::class.java).apply {
+        action = ACTION_OPEN_PAGE
+        putExtra("page", page)
+        if (sura != null) {
+          putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura)
+        }
+        if (ayah != null) {
+          putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah)
+        }
+        if (jumpToTranslation) {
+          putExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, true)
+        }
+      }
+    }
   }
 }
