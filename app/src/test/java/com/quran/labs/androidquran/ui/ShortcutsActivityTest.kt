@@ -6,9 +6,9 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
+import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.ShortcutsActivity
 import com.quran.labs.androidquran.base.TestApplication
-import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
 import org.hamcrest.Matchers
 import org.junit.After
 import org.junit.Before
@@ -37,22 +37,24 @@ class ShortcutsActivityTest {
   }
 
   @Test
-  fun testJumpToLatestShortcutLaunchesQuranActivity() {
+  fun testJumpToLatestShortcutLaunchesQuranDataActivity() {
     shortcutsActivityIntent.action = ShortcutsActivity.ACTION_JUMP_TO_LATEST
 
     ActivityScenario.launch<ShortcutsActivity>(shortcutsActivityIntent).use {
       Intents.intended(Matchers.allOf(
-          IntentMatchers.hasComponent(QuranActivity::class.java.name),
+          IntentMatchers.hasComponent(QuranDataActivity::class.java.name),
           IntentMatchers.hasAction(ShortcutsActivity.ACTION_JUMP_TO_LATEST)))
     }
   }
 
   @Test
-  fun testJumpToShortcutLaunchesShowJumpFragmentActivity() {
+  fun testJumpToShortcutLaunchesQuranDataActivity() {
     shortcutsActivityIntent.action = ShortcutsActivity.ACTION_JUMP_TO
 
     ActivityScenario.launch<ShortcutsActivity>(shortcutsActivityIntent).use {
-      Intents.intended(IntentMatchers.hasComponent(ShowJumpFragmentActivity::class.java.name))
+      Intents.intended(Matchers.allOf(
+          IntentMatchers.hasComponent(QuranDataActivity::class.java.name),
+          IntentMatchers.hasAction(ShortcutsActivity.ACTION_JUMP_TO)))
     }
   }
 }
