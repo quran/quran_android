@@ -6,8 +6,6 @@ import android.content.pm.ShortcutManager
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.quran.labs.androidquran.ui.QuranActivity
-import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
 
 /**
  * Handle shortcuts by lauching the appropriate activity.
@@ -22,12 +20,13 @@ class ShortcutsActivity : AppCompatActivity() {
     val shortcutSelected: String
     when (action) {
         ACTION_JUMP_TO_LATEST -> {
-          intentToLaunch = Intent(this, QuranActivity::class.java)
+          intentToLaunch = Intent(this, QuranDataActivity::class.java)
           intentToLaunch.action = action
           shortcutSelected = JUMP_TO_LATEST_SHORTCUT_NAME
         }
         ACTION_JUMP_TO -> {
-          intentToLaunch = Intent(this, ShowJumpFragmentActivity::class.java)
+          intentToLaunch = Intent(this, QuranDataActivity::class.java)
+          intentToLaunch.action = action
           shortcutSelected = JUMP_TO_SHORTCUT_NAME
         }
       else -> {

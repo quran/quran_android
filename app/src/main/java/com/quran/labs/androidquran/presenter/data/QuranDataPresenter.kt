@@ -18,6 +18,7 @@ import com.quran.data.source.PageContentType
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.data.Constants
+import com.quran.labs.androidquran.model.bookmark.LegacyBookmarksMigrator
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
@@ -34,6 +35,7 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.functions.Consumer
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit.DAYS
@@ -44,7 +46,9 @@ class QuranDataPresenter @Inject internal constructor(
   val quranScreenInfo: QuranScreenInfo,
   private val quranPageProvider: PageProvider,
   val quranFileUtils: QuranFileUtils,
-  private val localDataUpgrade: LocalDataUpgrade
+  private val localDataUpgrade: LocalDataUpgrade,
+  private val legacyBookmarksMigrator: LegacyBookmarksMigrator,
+  private val readerReadinessTracker: ReaderReadinessTracker
 ) : Presenter<QuranDataActivity> {
 
   private var activity: QuranDataActivity? = null
@@ -56,33 +60,14 @@ class QuranDataPresenter @Inject internal constructor(
 
   @UiThread
   fun checkPages() {
-    val lastCachedResult = lastCachedResult
     if (quranFileUtils.getQuranBaseDirectory(appContext) == null) {
       activity?.onStorageNotAvailable()
-    } else if (lastCachedResult != null && cachedPageType == quranSettings.pageType) {
-      activity?.onPagesChecked(lastCachedResult)
     } else if (checkPagesDisposable == null) {
       val pages = quranInfo.numberOfPages
       val pageType = quranSettings.pageType
       checkPagesDisposable =
-          supportLegacyPages(pages)
-              .andThen(actuallyCheckPages(pages))
-              .flatMap { Single.fromCallable { localDataUpgrade.processData(it) } }
-              .map { checkPatchStatus(it) }
-              .flatMap { Single.fromCallable { localDataUpgrade.processPatch(it) } }
-              .doOnSuccess {
-                try {
-                  val quranHiddenDirectoryMarkerFile = ".q4a"
-                  File(appContext.noBackupFilesDir, quranHiddenDirectoryMarkerFile).delete()
-
-                  val baseDirectory = quranFileUtils.quranBaseDirectory
-                  File(baseDirectory, quranHiddenDirectoryMarkerFile).delete()
-                  val quranDirectoryMarkerFile = "q4a"
-                  File(baseDirectory, quranDirectoryMarkerFile).delete()
-                } catch (e: Exception) {
-                  Timber.e(e)
-                }
-              }
+          migrateLegacyBookmarks()
+              .andThen(pageCheckResult(pages))
               .subscribeOn(Schedulers.io())
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe(Consumer {
@@ -92,11 +77,46 @@ class QuranDataPresenter @Inject internal constructor(
                   // done, though the cached data suggests otherwise.
                   cachedPageType = pageType
                   this.lastCachedResult = it
+                  readerReadinessTracker.markReady(pageType)
                 }
                 activity?.onPagesChecked(it)
                 checkPagesDisposable = null
               })
       scheduleAudioUpdater()
+    }
+  }
+
+  private fun migrateLegacyBookmarks(): Completable {
+    return Completable.fromAction {
+      runBlocking {
+        legacyBookmarksMigrator.migrateIfNeeded()
+      }
+    }
+  }
+
+  private fun pageCheckResult(pages: Int): Single<QuranDataStatus> {
+    val lastCachedResult = lastCachedResult
+    return if (lastCachedResult != null && cachedPageType == quranSettings.pageType) {
+      Single.just(lastCachedResult)
+    } else {
+      supportLegacyPages(pages)
+          .andThen(actuallyCheckPages(pages))
+          .flatMap { Single.fromCallable { localDataUpgrade.processData(it) } }
+          .map { checkPatchStatus(it) }
+          .flatMap { Single.fromCallable { localDataUpgrade.processPatch(it) } }
+          .doOnSuccess {
+            try {
+              val quranHiddenDirectoryMarkerFile = ".q4a"
+              File(appContext.noBackupFilesDir, quranHiddenDirectoryMarkerFile).delete()
+
+              val baseDirectory = quranFileUtils.quranBaseDirectory
+              File(baseDirectory, quranHiddenDirectoryMarkerFile).delete()
+              val quranDirectoryMarkerFile = "q4a"
+              File(baseDirectory, quranDirectoryMarkerFile).delete()
+            } catch (e: Exception) {
+              Timber.e(e)
+            }
+          }
     }
   }
 
