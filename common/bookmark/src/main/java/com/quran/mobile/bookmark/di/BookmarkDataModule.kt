@@ -11,6 +11,11 @@ import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.mobile.bookmark.Bookmarks
 import com.quran.mobile.bookmark.Last_pages
 import com.quran.mobile.di.qualifier.ApplicationContext
+import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepository
+import com.quran.shared.persistence.repository.collection.repository.CollectionsRepository
+import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepository
+import com.quran.shared.persistence.repository.readingbookmark.repository.ReadingBookmarksRepository
+import com.quran.shared.persistence.repository.readingsession.repository.ReadingSessionsRepository
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
@@ -43,5 +48,35 @@ class BookmarkDataModule {
       Bookmarks.Adapter(IntColumnAdapter, IntColumnAdapter, IntColumnAdapter),
       Last_pages.Adapter(IntColumnAdapter)
     )
+  }
+
+  @SingleIn(AppScope::class)
+  @Provides
+  fun provideBookmarksRepository(repositories: MobileSyncRepositories): BookmarksRepository {
+    return repositories.bookmarksRepository
+  }
+
+  @SingleIn(AppScope::class)
+  @Provides
+  fun provideCollectionsRepository(repositories: MobileSyncRepositories): CollectionsRepository {
+    return repositories.collectionsRepository
+  }
+
+  @SingleIn(AppScope::class)
+  @Provides
+  fun provideCollectionBookmarksRepository(repositories: MobileSyncRepositories): CollectionBookmarksRepository {
+    return repositories.collectionBookmarksRepository
+  }
+
+  @SingleIn(AppScope::class)
+  @Provides
+  fun provideReadingBookmarksRepository(repositories: MobileSyncRepositories): ReadingBookmarksRepository {
+    return repositories.readingBookmarksRepository
+  }
+
+  @SingleIn(AppScope::class)
+  @Provides
+  fun provideReadingSessionsRepository(repositories: MobileSyncRepositories): ReadingSessionsRepository {
+    return repositories.readingSessionsRepository
   }
 }

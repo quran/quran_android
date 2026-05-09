@@ -9,8 +9,11 @@ import com.quran.data.di.AppCoroutineScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
+import com.quran.mobile.bookmark.sync.FakeLocalDataChangeNotifier
 import com.quran.shared.persistence.QuranDatabase
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
+import com.quran.shared.persistence.repository.collection.repository.CollectionsRepositoryImpl
+import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepositoryImpl
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -24,6 +27,7 @@ class BookmarksDaoImplTest {
   private lateinit var quranInfo: QuranInfo
   private lateinit var dao: BookmarksDaoImpl
   private lateinit var appCoroutineScope: AppCoroutineScope
+  private lateinit var localDataChangeNotifier: FakeLocalDataChangeNotifier
 
   @Before
   fun setup() {
@@ -32,7 +36,15 @@ class BookmarksDaoImplTest {
     database = QuranDatabase(driver)
     quranInfo = QuranInfo(MadaniDataSource())
     appCoroutineScope = AppCoroutineScope()
-    dao = BookmarksDaoImpl({ quranInfo }, database, appCoroutineScope)
+    localDataChangeNotifier = FakeLocalDataChangeNotifier()
+    dao = BookmarksDaoImpl(
+      quranInfoProvider = { quranInfo },
+      bookmarksRepository = BookmarksRepositoryImpl(database),
+      collectionsRepository = CollectionsRepositoryImpl(database),
+      collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database),
+      localDataChangeNotifier = localDataChangeNotifier,
+      appCoroutineScope = appCoroutineScope
+    )
   }
 
   @After
@@ -45,6 +57,7 @@ class BookmarksDaoImplTest {
   @Test
   fun `bookmarks are empty when no mobile sync bookmarks exist`() = runTest {
     assertThat(dao.bookmarks()).isEmpty()
+    assertThat(localDataChangeNotifier.updateCount).isEqualTo(0)
   }
 
   @Test
@@ -60,6 +73,7 @@ class BookmarksDaoImplTest {
     assertThat(bookmarks.single().ayah).isEqualTo(255)
     assertThat(bookmarks.single().page).isEqualTo(quranInfo.getPageFromSuraAyah(2, 255))
     assertThat(bookmarks.single().isPageBookmark()).isFalse()
+    assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
 
   @Test
@@ -71,6 +85,18 @@ class BookmarksDaoImplTest {
 
     assertThat(removed).isFalse()
     assertThat(dao.bookmarks()).isEmpty()
+    assertThat(localDataChangeNotifier.updateCount).isEqualTo(2)
+  }
+
+  @Test
+  fun `notifier failures do not fail bookmark writes`() = runTest {
+    localDataChangeNotifier.throwOnUpdate = true
+
+    val added = dao.toggleAyahBookmark(SuraAyah(2, 255), quranInfo.getPageFromSuraAyah(2, 255))
+
+    assertThat(added).isTrue()
+    assertThat(dao.bookmarks().map { it.sura to it.ayah }).containsExactly(2 to 255)
+    assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
 
   @Test
@@ -189,6 +215,19 @@ class BookmarksDaoImplTest {
   }
 
   @Test
+  fun `bookmark tag updates notify once per high level write`() = runTest {
+    val tagId = dao.addTag("Review")
+    val suraAyah = SuraAyah(2, 255)
+    dao.toggleAyahBookmark(suraAyah, quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah))
+    val bookmark = dao.bookmarks().single()
+    localDataChangeNotifier.reset()
+
+    dao.updateBookmarkTags(longArrayOf(bookmark.id), setOf(tagId), deleteNonTagged = true)
+
+    assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
+  }
+
+  @Test
   fun `updating single bookmark tags replaces old collection links`() = runTest {
     val firstTagId = dao.addTag("First")
     val secondTagId = dao.addTag("Second")
@@ -260,5 +299,19 @@ class BookmarksDaoImplTest {
 
     assertThat(dao.bookmarks()).isEmpty()
     assertThat(dao.getBookmarkTagIds(bookmark.id)).isEmpty()
+  }
+
+  @Test
+  fun `removing bookmark with tags notifies once`() = runTest {
+    val tagId = dao.addTag("Review")
+    val suraAyah = SuraAyah(2, 255)
+    dao.toggleAyahBookmark(suraAyah, quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah))
+    val bookmark = dao.bookmarks().single()
+    dao.updateBookmarkTags(longArrayOf(bookmark.id), setOf(tagId), deleteNonTagged = true)
+    localDataChangeNotifier.reset()
+
+    dao.removeBookmarks(listOf(bookmark))
+
+    assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
 }
