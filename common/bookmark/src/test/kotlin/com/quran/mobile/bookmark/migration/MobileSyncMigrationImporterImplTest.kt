@@ -7,6 +7,10 @@ import com.quran.data.di.AppCoroutineScope
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
 import com.quran.mobile.bookmark.model.BookmarksDaoImpl
+import com.quran.mobile.bookmark.sync.NoOpLocalDataChangeNotifier
+import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
+import com.quran.shared.persistence.repository.collection.repository.CollectionsRepositoryImpl
+import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepositoryImpl
 import com.quran.shared.persistence.repository.readingsession.repository.ReadingSessionsRepositoryImpl
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.runTest
@@ -33,7 +37,10 @@ class MobileSyncMigrationImporterImplTest {
     appCoroutineScope = AppCoroutineScope()
     bookmarksDao = BookmarksDaoImpl(
       quranInfoProvider = { QuranInfo(MadaniDataSource()) },
-      mobileSyncDatabase = mobileSyncDatabase,
+      bookmarksRepository = BookmarksRepositoryImpl(mobileSyncDatabase.database),
+      collectionsRepository = CollectionsRepositoryImpl(mobileSyncDatabase.database),
+      collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(mobileSyncDatabase.database),
+      localDataChangeNotifier = NoOpLocalDataChangeNotifier(),
       appCoroutineScope = appCoroutineScope
     )
     importer = MobileSyncMigrationImporterImpl(mobileSyncDatabase)

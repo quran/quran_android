@@ -10,8 +10,9 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
-import com.quran.mobile.bookmark.di.MobileSyncDatabase
-import com.quran.shared.persistence.repository.readingbookmark.repository.ReadingBookmarksRepositoryImpl
+import com.quran.mobile.bookmark.sync.LocalDataChangeNotifier
+import com.quran.mobile.bookmark.sync.notifyLocalDataChanged
+import com.quran.shared.persistence.repository.readingbookmark.repository.ReadingBookmarksRepository
 import com.quran.shared.persistence.util.fromPlatform
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
@@ -31,11 +32,10 @@ import com.quran.shared.persistence.model.ReadingBookmark as SyncReadingBookmark
 @SingleIn(AppScope::class)
 class ReadingBookmarksDaoImpl @Inject constructor(
   private val quranInfoProvider: () -> QuranInfo,
-  mobileSyncDatabase: MobileSyncDatabase,
+  private val readingBookmarksRepository: ReadingBookmarksRepository,
+  private val localDataChangeNotifier: LocalDataChangeNotifier,
   appCoroutineScope: AppCoroutineScope
 ) : ReadingBookmarksDao {
-
-  private val readingBookmarksRepository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database)
   private val readingBookmarkState: StateFlow<ReadingBookmarkState> =
     readingBookmarksRepository.getReadingBookmarkFlow()
       .map { bookmark -> ReadingBookmarkState.Loaded(toReadingBookmark(bookmark)) }
@@ -56,23 +56,35 @@ class ReadingBookmarksDaoImpl @Inject constructor(
   }
 
   override suspend fun setPageReadingBookmark(page: Int): Boolean {
-    return withContext(Dispatchers.IO) {
+    val set = withContext(Dispatchers.IO) {
       readingBookmarksRepository.addPageReadingBookmark(page)
       true
     }
+    if (set) {
+      localDataChangeNotifier.notifyLocalDataChanged()
+    }
+    return set
   }
 
   override suspend fun setAyahReadingBookmark(suraAyah: SuraAyah): Boolean {
-    return withContext(Dispatchers.IO) {
+    val set = withContext(Dispatchers.IO) {
       readingBookmarksRepository.addAyahReadingBookmark(suraAyah.sura, suraAyah.ayah)
       true
     }
+    if (set) {
+      localDataChangeNotifier.notifyLocalDataChanged()
+    }
+    return set
   }
 
   override suspend fun deleteReadingBookmark(): Boolean {
-    return withContext(Dispatchers.IO) {
+    val deleted = withContext(Dispatchers.IO) {
       readingBookmarksRepository.deleteReadingBookmark()
     }
+    if (deleted) {
+      localDataChangeNotifier.notifyLocalDataChanged()
+    }
+    return deleted
   }
 
   override suspend fun isPageReadingBookmark(page: Int): Boolean {
@@ -83,16 +95,19 @@ class ReadingBookmarksDaoImpl @Inject constructor(
   }
 
   override suspend fun togglePageReadingBookmark(page: Int): Boolean {
-    return withContext(Dispatchers.IO) {
+    val (isBookmarked, updated) = withContext(Dispatchers.IO) {
       val bookmark = readingBookmarksRepository.getReadingBookmark()
       if (bookmark is SyncPageReadingBookmark && bookmark.page == page) {
-        readingBookmarksRepository.deleteReadingBookmark()
-        false
+        false to readingBookmarksRepository.deleteReadingBookmark()
       } else {
         readingBookmarksRepository.addPageReadingBookmark(page)
-        true
+        true to true
       }
     }
+    if (updated) {
+      localDataChangeNotifier.notifyLocalDataChanged()
+    }
+    return isBookmarked
   }
 
   private fun toReadingBookmark(bookmark: SyncReadingBookmark?): ReadingBookmark? {
