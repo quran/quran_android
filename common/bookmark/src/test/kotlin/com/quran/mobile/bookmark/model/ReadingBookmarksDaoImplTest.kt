@@ -10,6 +10,7 @@ import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
+import com.quran.mobile.bookmark.sync.FakeLocalDataChangeNotifier
 import com.quran.shared.persistence.repository.readingbookmark.repository.ReadingBookmarksRepositoryImpl
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.runTest
@@ -27,6 +28,7 @@ class ReadingBookmarksDaoImplTest {
   private lateinit var quranInfo: QuranInfo
   private lateinit var dao: ReadingBookmarksDaoImpl
   private lateinit var appCoroutineScope: AppCoroutineScope
+  private lateinit var localDataChangeNotifier: FakeLocalDataChangeNotifier
 
   @Before
   fun setup() {
@@ -36,9 +38,11 @@ class ReadingBookmarksDaoImplTest {
     repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database)
     quranInfo = QuranInfo(MadaniDataSource())
     appCoroutineScope = AppCoroutineScope()
+    localDataChangeNotifier = FakeLocalDataChangeNotifier()
     dao = ReadingBookmarksDaoImpl(
       quranInfoProvider = { quranInfo },
-      mobileSyncDatabase = mobileSyncDatabase,
+      readingBookmarksRepository = repository,
+      localDataChangeNotifier = localDataChangeNotifier,
       appCoroutineScope = appCoroutineScope
     )
   }
@@ -53,6 +57,7 @@ class ReadingBookmarksDaoImplTest {
   @Test
   fun `reading bookmark is null when no mobile sync reading bookmark exists`() = runTest {
     assertThat(dao.readingBookmark()).isNull()
+    assertThat(localDataChangeNotifier.updateCount).isEqualTo(0)
   }
 
   @Test
@@ -62,6 +67,7 @@ class ReadingBookmarksDaoImplTest {
     val bookmark = dao.readingBookmark() as PageReadingBookmark
     assertThat(bookmark.page).isEqualTo(42)
     assertThat(dao.isPageReadingBookmark(42)).isTrue()
+    assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
 
   @Test
@@ -94,6 +100,15 @@ class ReadingBookmarksDaoImplTest {
 
     assertThat(isBookmarked).isFalse()
     assertThat(dao.readingBookmark()).isNull()
+    assertThat(localDataChangeNotifier.updateCount).isEqualTo(2)
+  }
+
+  @Test
+  fun `deleting no reading bookmark does not notify`() = runTest {
+    val deleted = dao.deleteReadingBookmark()
+
+    assertThat(deleted).isFalse()
+    assertThat(localDataChangeNotifier.updateCount).isEqualTo(0)
   }
 
   @Test
