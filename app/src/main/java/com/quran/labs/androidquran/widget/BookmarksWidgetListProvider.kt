@@ -12,9 +12,10 @@ import com.quran.data.dao.BookmarkSortOrder
 import com.quran.data.dao.BookmarksDao
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.ui.PagerActivity
+import com.quran.labs.androidquran.model.bookmark.LegacyBookmarksMigrator
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
+import com.quran.labs.androidquran.ui.PagerActivity
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.runBlocking
 
@@ -35,6 +36,9 @@ class BookmarksWidgetListProvider(private val context: Context) : RemoteViewsFac
   @Inject
   lateinit var bookmarksDao: BookmarksDao
 
+  @Inject
+  lateinit var legacyBookmarksMigrator: LegacyBookmarksMigrator
+
   init {
     (context.applicationContext as QuranApplication).applicationComponent.inject(this)
     populateListItem()
@@ -43,6 +47,7 @@ class BookmarksWidgetListProvider(private val context: Context) : RemoteViewsFac
   private fun populateListItem() {
     val appContext = context.applicationContext
     val bookmarksList = runBlocking {
+      legacyBookmarksMigrator.migrateIfNeeded()
       bookmarksDao.bookmarks(BookmarkSortOrder.SORT_LOCATION)
     }
     quranRowList = bookmarksList.map { quranRowFactory.fromBookmark(appContext, it) }

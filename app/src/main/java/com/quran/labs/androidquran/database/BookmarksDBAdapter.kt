@@ -8,6 +8,7 @@ import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.labs.androidquran.data.Constants
+import com.quran.labs.androidquran.model.bookmark.LegacyBookmarkTag
 import com.quran.mobile.bookmark.mapper.Mappers
 import com.quran.mobile.bookmark.mapper.convergeCommonlyTagged
 import dev.zacsweers.metro.Inject
@@ -24,6 +25,8 @@ class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabas
   companion object {
     const val SORT_DATE_ADDED = 0
     const val SORT_LOCATION = 1
+
+    private const val MILLIS_TIMESTAMP_THRESHOLD = 10_000_000_000L
   }
 
   fun getBookmarkedAyahsOnPage(page: Int): List<Bookmark> = getBookmarks(SORT_LOCATION, page)
@@ -113,6 +116,12 @@ class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabas
     return tagQueries.getTags(Mappers.tagMapper).executeAsList()
   }
 
+  fun getTagsForMigration(): List<LegacyBookmarkTag> {
+    return tagQueries.getTags { id, name, addedDate ->
+      LegacyBookmarkTag(id, name, addedDate.legacyTimestampSeconds())
+    }.executeAsList()
+  }
+
   fun addTag(name: String): Long {
     val existingTag = haveMatchingTag(name)
     return if (existingTag == -1L) {
@@ -179,5 +188,9 @@ class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabas
       }
     }
     return true
+  }
+
+  private fun Long.legacyTimestampSeconds(): Long {
+    return if (this > MILLIS_TIMESTAMP_THRESHOLD) this / 1000 else this
   }
 }
