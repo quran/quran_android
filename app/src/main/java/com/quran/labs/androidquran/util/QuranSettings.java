@@ -270,6 +270,17 @@ public class QuranSettings {
         .putInt(Constants.PREF_CURRENT_AUDIO_REVISION, version).apply();
   }
 
+  public boolean haveMigratedLegacyBookmarksToMobileSync() {
+    return perInstallationPrefs.getBoolean(
+        Constants.PREF_MOBILE_SYNC_LEGACY_BOOKMARKS_MIGRATED, false);
+  }
+
+  public void setMigratedLegacyBookmarksToMobileSync() {
+    perInstallationPrefs.edit()
+        .putBoolean(Constants.PREF_MOBILE_SYNC_LEGACY_BOOKMARKS_MIGRATED, true)
+        .apply();
+  }
+
   public boolean didPresentSdcardPermissionsDialog() {
     return perInstallationPrefs.getBoolean(Constants.PREF_DID_PRESENT_PERMISSIONS_DIALOG, false);
   }

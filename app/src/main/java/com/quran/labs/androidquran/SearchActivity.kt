@@ -34,6 +34,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.presenter.data.ReaderReadinessTracker
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
@@ -42,6 +43,7 @@ import com.quran.labs.androidquran.service.util.ServiceIntentHelper.getDownloadI
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import com.quran.labs.androidquran.util.QuranFileUtils
+import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import dev.zacsweers.metro.Inject
 
@@ -68,6 +70,12 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
 
   @Inject
   lateinit var quranFileUtils: QuranFileUtils
+
+  @Inject
+  lateinit var quranSettings: QuranSettings
+
+  @Inject
+  lateinit var readerReadinessTracker: ReaderReadinessTracker
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     // override these to always be dark since the app doesn't really
@@ -350,14 +358,30 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
 
   private fun jumpToResult(sura: Int, ayah: Int) {
     val page = quranInfo.getPageFromSuraAyah(sura, ayah)
-    val intent = Intent(this, PagerActivity::class.java)
-    intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura)
-    intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah)
-    if (!isArabicSearch) {
-      intent.putExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, true)
+    val intent = if (canOpenReaderDirectly()) {
+      Intent(this, PagerActivity::class.java).apply {
+        putExtra("page", page)
+        putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura)
+        putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah)
+        if (!isArabicSearch) {
+          putExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, true)
+        }
+      }
+    } else {
+      QuranDataActivity.openPageIntent(
+        context = this,
+        page = page,
+        sura = sura,
+        ayah = ayah,
+        jumpToTranslation = !isArabicSearch
+      )
     }
-    intent.putExtra("page", page)
     startActivity(intent)
+  }
+
+  private fun canOpenReaderDirectly(): Boolean {
+    return quranSettings.haveMigratedLegacyBookmarksToMobileSync() &&
+      readerReadinessTracker.isReady(quranSettings.pageType)
   }
 
   private fun showResults(query: String?) {
