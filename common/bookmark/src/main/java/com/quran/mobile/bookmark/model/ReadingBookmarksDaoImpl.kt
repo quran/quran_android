@@ -2,7 +2,6 @@
 
 package com.quran.mobile.bookmark.model
 
-import com.quran.data.core.QuranInfo
 import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.di.AppCoroutineScope
 import com.quran.data.di.AppScope
@@ -21,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
@@ -32,15 +32,19 @@ import com.quran.shared.persistence.model.ReadingBookmark as SyncReadingBookmark
 
 @SingleIn(AppScope::class)
 class ReadingBookmarksDaoImpl @Inject constructor(
-  private val quranInfoProvider: () -> QuranInfo,
+  private val pageMapper: ReadingBookmarkPageMapper,
   private val readingBookmarksRepository: ReadingBookmarksRepository,
   private val localDataChangeNotifier: LocalDataChangeNotifier,
   private val timestampProvider: MobileSyncTimestampProvider,
   appCoroutineScope: AppCoroutineScope
 ) : ReadingBookmarksDao {
   private val readingBookmarkState: StateFlow<ReadingBookmarkState> =
-    readingBookmarksRepository.getReadingBookmarkFlow()
-      .map { bookmark -> ReadingBookmarkState.Loaded(toReadingBookmark(bookmark)) }
+    combine(
+      readingBookmarksRepository.getReadingBookmarkFlow(),
+      pageMapper.pageTypeFlow()
+    ) { bookmark, pageType ->
+      ReadingBookmarkState.Loaded(toReadingBookmark(bookmark, pageType))
+    }
       .distinctUntilChanged()
       .stateIn(appCoroutineScope, SharingStarted.Eagerly, ReadingBookmarkState.Loading)
 
@@ -53,14 +57,17 @@ class ReadingBookmarksDaoImpl @Inject constructor(
 
   override suspend fun readingBookmark(): ReadingBookmark? {
     return withContext(Dispatchers.IO) {
-      toReadingBookmark(readingBookmarksRepository.getReadingBookmark())
+      toReadingBookmark(
+        readingBookmarksRepository.getReadingBookmark(),
+        pageMapper.currentPageType()
+      )
     }
   }
 
   override suspend fun setPageReadingBookmark(page: Int): Boolean {
     val timestamp = timestampProvider.now()
     val set = withContext(Dispatchers.IO) {
-      readingBookmarksRepository.addPageReadingBookmark(page, timestamp)
+      readingBookmarksRepository.addPageReadingBookmark(pageMapper.currentPageToStoragePage(page), timestamp)
       true
     }
     if (set) {
@@ -93,19 +100,21 @@ class ReadingBookmarksDaoImpl @Inject constructor(
 
   override suspend fun isPageReadingBookmark(page: Int): Boolean {
     return withContext(Dispatchers.IO) {
+      val storagePage = pageMapper.currentPageToStoragePage(page)
       val bookmark = readingBookmarksRepository.getReadingBookmark()
-      bookmark is SyncPageReadingBookmark && bookmark.page == page
+      bookmark is SyncPageReadingBookmark && bookmark.page == storagePage
     }
   }
 
   override suspend fun togglePageReadingBookmark(page: Int): Boolean {
     val timestamp = timestampProvider.now()
     val (isBookmarked, updated) = withContext(Dispatchers.IO) {
+      val storagePage = pageMapper.currentPageToStoragePage(page)
       val bookmark = readingBookmarksRepository.getReadingBookmark()
-      if (bookmark is SyncPageReadingBookmark && bookmark.page == page) {
+      if (bookmark is SyncPageReadingBookmark && bookmark.page == storagePage) {
         false to readingBookmarksRepository.deleteReadingBookmark()
       } else {
-        readingBookmarksRepository.addPageReadingBookmark(page, timestamp)
+        readingBookmarksRepository.addPageReadingBookmark(storagePage, timestamp)
         true to true
       }
     }
@@ -115,10 +124,10 @@ class ReadingBookmarksDaoImpl @Inject constructor(
     return isBookmarked
   }
 
-  private fun toReadingBookmark(bookmark: SyncReadingBookmark?): ReadingBookmark? {
+  private fun toReadingBookmark(bookmark: SyncReadingBookmark?, pageType: String): ReadingBookmark? {
     return when (bookmark) {
       is SyncAyahReadingBookmark -> {
-        val page = quranInfoProvider().getPageFromSuraAyah(bookmark.sura, bookmark.ayah)
+        val page = pageMapper.suraAyahToPage(bookmark.sura, bookmark.ayah, pageType)
         AyahReadingBookmark(
           sura = bookmark.sura,
           ayah = bookmark.ayah,
@@ -127,7 +136,7 @@ class ReadingBookmarksDaoImpl @Inject constructor(
         )
       }
       is SyncPageReadingBookmark -> PageReadingBookmark(
-        page = bookmark.page,
+        page = pageMapper.storagePageToPage(bookmark.page, pageType),
         timestamp = bookmark.lastUpdated.fromPlatform().toEpochMilliseconds() / 1000
       )
       null -> null
