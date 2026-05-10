@@ -74,33 +74,33 @@ class MobileSyncImporterImplTest {
             importId = "bookmark-2-255",
             sura = 2,
             ayah = 255,
-            timestampSeconds = 1234L
+            timestampMillis = 1_234_000L
           )
         ),
         collections = listOf(
           MobileSyncImportCollection(
             importId = "tag-1",
             name = "Reading",
-            timestampSeconds = 1200L
+            timestampMillis = 1_200_000L
           )
         ),
         collectionBookmarks = listOf(
           MobileSyncImportCollectionBookmark(
             collectionImportId = "tag-1",
             bookmarkImportId = "bookmark-2-255",
-            timestampSeconds = 1234L
+            timestampMillis = 1_234_000L
           )
         ),
         readingSessions = listOf(
           MobileSyncImportReadingSession(
             sura = 18,
             ayah = 1,
-            timestampSeconds = 1100L
+            timestampMillis = 1_100_000L
           )
         ),
         readingBookmark = MobileSyncImportReadingBookmark.Page(
           page = 42,
-          timestampSeconds = 1300L
+          timestampMillis = 1_300_000L
         )
       )
     )
@@ -128,7 +128,7 @@ class MobileSyncImporterImplTest {
             importId = "bookmark-2-255",
             sura = 2,
             ayah = 255,
-            timestampSeconds = 1234L
+            timestampMillis = 1_234_000L
           )
         )
       )
@@ -141,7 +141,7 @@ class MobileSyncImporterImplTest {
             importId = "bookmark-3-2",
             sura = 3,
             ayah = 2,
-            timestampSeconds = 1300L
+            timestampMillis = 1_300_000L
           )
         )
       ),

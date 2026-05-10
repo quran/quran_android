@@ -200,11 +200,11 @@ class BookmarkImportExportModelTest {
 
     val importedData = importedData()
     assertThat(importedData.collections.map { collection -> collection.name }).containsExactly("Missing")
-    assertThat(importedData.collections.single().timestampSeconds).isGreaterThan(0)
+    assertThat(importedData.collections.single().timestampMillis).isGreaterThan(0)
     assertThat(importedData.bookmarks.single().sura).isEqualTo(2)
     assertThat(importedData.bookmarks.single().ayah).isEqualTo(255)
-    assertThat(importedData.bookmarks.single().timestampSeconds).isEqualTo(1000)
-    assertThat(importedData.collectionBookmarks.single().timestampSeconds).isEqualTo(1000)
+    assertThat(importedData.bookmarks.single().timestampMillis).isEqualTo(1_000_000)
+    assertThat(importedData.collectionBookmarks.single().timestampMillis).isEqualTo(1_000_000)
   }
 
   @Test
@@ -243,14 +243,14 @@ class BookmarkImportExportModelTest {
     }
     val readingBookmark = importedData.readingBookmark as MobileSyncImportReadingBookmark.Page
 
-    assertThat(importedData.bookmarks.single().timestampSeconds)
-      .isEqualTo(bookmarkTimestampMillis / 1000)
-    assertThat(importedData.collectionBookmarks.map { link -> link.timestampSeconds })
-      .containsExactly(bookmarkTimestampMillis / 1000, bookmarkTimestampMillis / 1000)
-    assertThat(oldPageCollection.timestampSeconds).isEqualTo(bookmarkTimestampMillis / 1000)
-    assertThat(importedData.readingSessions.single().timestampSeconds)
-      .isEqualTo(recentTimestampMillis / 1000)
-    assertThat(readingBookmark.timestampSeconds).isEqualTo(readingBookmarkTimestampMillis / 1000)
+    assertThat(importedData.bookmarks.single().timestampMillis)
+      .isEqualTo(bookmarkTimestampMillis)
+    assertThat(importedData.collectionBookmarks.map { link -> link.timestampMillis })
+      .containsExactly(bookmarkTimestampMillis, bookmarkTimestampMillis)
+    assertThat(oldPageCollection.timestampMillis).isEqualTo(bookmarkTimestampMillis)
+    assertThat(importedData.readingSessions.single().timestampMillis)
+      .isEqualTo(recentTimestampMillis)
+    assertThat(readingBookmark.timestampMillis).isEqualTo(readingBookmarkTimestampMillis)
   }
 
   @Test
@@ -295,8 +295,8 @@ class BookmarkImportExportModelTest {
       quranInfo.getPageFromSuraAyah(session.sura, session.ayah)
     }
     assertThat(importedPages).containsExactly(50, 51).inOrder()
-    assertThat(importedData().readingSessions.map { session -> session.timestampSeconds })
-      .containsExactly(1000L, 900L)
+    assertThat(importedData().readingSessions.map { session -> session.timestampMillis })
+      .containsExactly(1_000_000L, 900_000L)
       .inOrder()
   }
 
@@ -317,7 +317,7 @@ class BookmarkImportExportModelTest {
     val readingBookmark = importedData().readingBookmark as MobileSyncImportReadingBookmark.Ayah
     assertThat(readingBookmark.sura).isEqualTo(2)
     assertThat(readingBookmark.ayah).isEqualTo(255)
-    assertThat(readingBookmark.timestampSeconds).isEqualTo(1000)
+    assertThat(readingBookmark.timestampMillis).isEqualTo(1_000_000)
   }
 
   private fun importData(data: BookmarkData) {
