@@ -7,6 +7,7 @@ import com.quran.data.dao.BookmarkSortOrder
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.dao.RecentPagesDao
+import com.quran.data.dao.Settings
 import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.labs.androidquran.R
@@ -30,6 +31,7 @@ class BookmarkImportExportModel @Inject internal constructor(
   private val bookmarksDao: BookmarksDao,
   private val recentPagesDao: RecentPagesDao,
   private val readingBookmarksDao: ReadingBookmarksDao,
+  private val settings: Settings,
   private val backupImportNormalizer: BookmarkBackupImportNormalizer,
   private val mobileSyncImporter: MobileSyncImporter
 ) {
@@ -101,7 +103,8 @@ class BookmarkImportExportModel @Inject internal constructor(
             .filterNot { bookmark -> bookmark.isPageBookmark() },
           recentPages = recentPagesDao.recentPages(),
           readingBookmark = readingBookmarksDao.readingBookmark()
-            ?.let(BackupReadingBookmark::fromReadingBookmark)
+            ?.let(BackupReadingBookmark::fromReadingBookmark),
+          pageType = settings.pageType()
         )
       }
     }.subscribeOn(Schedulers.io())
