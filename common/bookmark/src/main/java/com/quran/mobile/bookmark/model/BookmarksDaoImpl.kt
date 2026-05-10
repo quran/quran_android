@@ -264,11 +264,7 @@ class BookmarksDaoImpl @Inject constructor(
         .filterNot { it.isPageBookmark() }
         .forEach { bookmark ->
           val ayahBookmark = findAyahBookmark(bookmark) ?: return@forEach
-          removeAllTagsFromBookmark(ayahBookmark)
-          bookmarksRepository.deleteBookmark(
-            sura = ayahBookmark.sura,
-            ayah = ayahBookmark.ayah
-          )
+          bookmarksRepository.deleteBookmark(ayahBookmark.localId)
           didWrite = true
         }
       didWrite
@@ -286,8 +282,7 @@ class BookmarksDaoImpl @Inject constructor(
           quranInfo.getPageFromSuraAyah(bookmark.sura, bookmark.ayah) == page
         }
       bookmarksToRemove.forEach { bookmark ->
-        removeAllTagsFromBookmark(bookmark)
-        bookmarksRepository.deleteBookmark(bookmark.sura, bookmark.ayah)
+        bookmarksRepository.deleteBookmark(bookmark.localId)
       }
       bookmarksToRemove.isNotEmpty()
     }
@@ -301,8 +296,7 @@ class BookmarksDaoImpl @Inject constructor(
       val quranInfo = quranInfoProvider()
       val ayahBookmarks = bookmarks.normalizedAyahBookmarks(quranInfo)
       bookmarksRepository.getAllBookmarks().forEach { bookmark ->
-        removeAllTagsFromBookmark(bookmark)
-        bookmarksRepository.deleteBookmark(bookmark.sura, bookmark.ayah)
+        bookmarksRepository.deleteBookmark(bookmark.localId)
       }
       val collectionsById = collectionsById()
       ayahBookmarks.forEach { bookmark ->
@@ -334,8 +328,7 @@ class BookmarksDaoImpl @Inject constructor(
     val bookmarked = withContext(Dispatchers.IO) {
       val existingBookmark = bookmarkForSuraAyah(suraAyah)
       if (existingBookmark != null) {
-        removeAllTagsFromBookmark(existingBookmark)
-        bookmarksRepository.deleteBookmark(suraAyah.sura, suraAyah.ayah)
+        bookmarksRepository.deleteBookmark(existingBookmark.localId)
         false
       } else {
         bookmarksRepository.addBookmark(suraAyah.sura, suraAyah.ayah, timestamp)
@@ -373,15 +366,6 @@ class BookmarksDaoImpl @Inject constructor(
       }
     }
     return didWrite
-  }
-
-  private suspend fun removeAllTagsFromBookmark(bookmark: AyahBookmark) {
-    val collectionsById = collectionsById()
-    tagIdsForBookmark(bookmark.localId).forEach { tagId ->
-      collectionsById[tagId]?.let { collection ->
-        collectionBookmarksRepository.removeBookmarkFromCollection(collection.localId, bookmark)
-      }
-    }
   }
 
   private suspend fun tagIdsForBookmark(bookmarkLocalId: String): List<Long> {
