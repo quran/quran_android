@@ -11,6 +11,7 @@ import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.pages.data.warsh.WarshDataSource
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
 import com.quran.mobile.bookmark.sync.FakeLocalDataChangeNotifier
+import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.repository.readingsession.repository.ReadingSessionsRepositoryImpl
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +33,7 @@ class RecentPagesDaoImplTest {
   private lateinit var appCoroutineScope: AppCoroutineScope
   private lateinit var settings: FakeSettings
   private lateinit var localDataChangeNotifier: FakeLocalDataChangeNotifier
+  private lateinit var timestampProvider: FakeMobileSyncTimestampProvider
 
   @Before
   fun setup() {
@@ -44,11 +46,13 @@ class RecentPagesDaoImplTest {
     settings = FakeSettings()
     appCoroutineScope = AppCoroutineScope()
     localDataChangeNotifier = FakeLocalDataChangeNotifier()
+    timestampProvider = FakeMobileSyncTimestampProvider()
     dao = RecentPagesDaoImpl(
       quranInfoProvider = { quranInfo },
       settings = settings,
       readingSessionsRepository = repository,
       localDataChangeNotifier = localDataChangeNotifier,
+      timestampProvider = timestampProvider,
       appCoroutineScope = appCoroutineScope
     )
   }
@@ -78,6 +82,7 @@ class RecentPagesDaoImplTest {
     assertThat(sessions).hasSize(1)
     assertThat(sessions.single().sura).isEqualTo(pageBounds[0])
     assertThat(sessions.single().ayah).isEqualTo(pageBounds[1])
+    assertThat(recentPages.single().timestamp).isEqualTo(timestampProvider.timestampSeconds)
     assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
 

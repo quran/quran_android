@@ -9,9 +9,12 @@ import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.util.QuranSettings
-import com.quran.mobile.bookmark.migration.MobileSyncMigrationData
-import com.quran.mobile.bookmark.migration.MobileSyncMigrationImportResult
-import com.quran.mobile.bookmark.migration.MobileSyncMigrationImporter
+import com.quran.mobile.bookmark.importdata.MobileSyncImportData
+import com.quran.mobile.bookmark.importdata.MobileSyncImportResult
+import com.quran.mobile.bookmark.importdata.MobileSyncImporter
+import com.quran.mobile.bookmark.migration.LegacyBookmarkMigrationNormalizer
+import com.quran.mobile.bookmark.migration.LegacyBookmarksDataSource
+import com.quran.mobile.bookmark.migration.LegacyBookmarksSnapshot
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -31,7 +34,7 @@ class LegacyBookmarksMigratorTest {
   private val context = ApplicationProvider.getApplicationContext<Context>()
   private lateinit var quranSettings: QuranSettings
   private lateinit var dataSource: FakeLegacyBookmarksDataSource
-  private lateinit var importer: FakeMobileSyncMigrationImporter
+  private lateinit var importer: FakeMobileSyncImporter
   private lateinit var migrator: LegacyBookmarksMigrator
 
   @Before
@@ -42,12 +45,12 @@ class LegacyBookmarksMigratorTest {
     QuranSettings.setInstance(null)
     quranSettings = QuranSettings.getInstance(context)
     dataSource = FakeLegacyBookmarksDataSource()
-    importer = FakeMobileSyncMigrationImporter()
+    importer = FakeMobileSyncImporter()
     migrator = LegacyBookmarksMigrator(
       quranSettings = quranSettings,
       legacyBookmarksDataSource = dataSource,
       normalizer = LegacyBookmarkMigrationNormalizer(context, QuranInfo(MadaniDataSource())),
-      mobileSyncMigrationImporter = importer
+      mobileSyncImporter = importer
     )
   }
 
@@ -60,6 +63,7 @@ class LegacyBookmarksMigratorTest {
     assertThat(migrated).isTrue()
     assertThat(quranSettings.haveMigratedLegacyBookmarksToMobileSync()).isTrue()
     assertThat(importer.importedData?.bookmarks).hasSize(1)
+    assertThat(importer.deleteExisting).isFalse()
   }
 
   @Test
@@ -142,24 +146,30 @@ class LegacyBookmarksMigratorTest {
     }
   }
 
-  private class FakeMobileSyncMigrationImporter : MobileSyncMigrationImporter {
-    var importedData: MobileSyncMigrationData? = null
+  private class FakeMobileSyncImporter : MobileSyncImporter {
+    var importedData: MobileSyncImportData? = null
     var exception: Exception? = null
     var delayBeforeReturn: Boolean = false
     var importCount: Int = 0
+    var deleteExisting: Boolean? = null
 
-    override suspend fun importData(data: MobileSyncMigrationData): MobileSyncMigrationImportResult {
+    override suspend fun importData(
+      data: MobileSyncImportData,
+      deleteExisting: Boolean
+    ): MobileSyncImportResult {
       exception?.let { throw it }
       importCount++
+      this.deleteExisting = deleteExisting
       if (delayBeforeReturn) {
         delay(1)
       }
       importedData = data
-      return MobileSyncMigrationImportResult(
+      return MobileSyncImportResult(
         bookmarksImported = data.bookmarks.size,
         collectionsImported = data.collections.size,
         collectionBookmarksImported = data.collectionBookmarks.size,
-        readingSessionsImported = data.readingSessions.size
+        readingSessionsImported = data.readingSessions.size,
+        readingBookmarkImported = data.readingBookmark != null
       )
     }
   }
