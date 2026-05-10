@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.model.bookmark
+package com.quran.mobile.bookmark.migration
 
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.RecentPage
