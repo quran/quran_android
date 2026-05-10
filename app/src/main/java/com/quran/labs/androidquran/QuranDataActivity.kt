@@ -502,6 +502,7 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
       }
       ACTION_OPEN_PAGE -> {
         Intent(this, PagerActivity::class.java).apply {
+          addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
           val extras = sourceIntent.extras
           putExtra(
             "page",
