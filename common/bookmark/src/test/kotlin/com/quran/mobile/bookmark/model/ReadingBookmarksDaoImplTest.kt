@@ -11,6 +11,7 @@ import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
 import com.quran.mobile.bookmark.sync.FakeLocalDataChangeNotifier
+import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.repository.readingbookmark.repository.ReadingBookmarksRepositoryImpl
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.runTest
@@ -29,6 +30,7 @@ class ReadingBookmarksDaoImplTest {
   private lateinit var dao: ReadingBookmarksDaoImpl
   private lateinit var appCoroutineScope: AppCoroutineScope
   private lateinit var localDataChangeNotifier: FakeLocalDataChangeNotifier
+  private lateinit var timestampProvider: FakeMobileSyncTimestampProvider
 
   @Before
   fun setup() {
@@ -39,10 +41,12 @@ class ReadingBookmarksDaoImplTest {
     quranInfo = QuranInfo(MadaniDataSource())
     appCoroutineScope = AppCoroutineScope()
     localDataChangeNotifier = FakeLocalDataChangeNotifier()
+    timestampProvider = FakeMobileSyncTimestampProvider()
     dao = ReadingBookmarksDaoImpl(
       quranInfoProvider = { quranInfo },
       readingBookmarksRepository = repository,
       localDataChangeNotifier = localDataChangeNotifier,
+      timestampProvider = timestampProvider,
       appCoroutineScope = appCoroutineScope
     )
   }
@@ -66,6 +70,7 @@ class ReadingBookmarksDaoImplTest {
 
     val bookmark = dao.readingBookmark() as PageReadingBookmark
     assertThat(bookmark.page).isEqualTo(42)
+    assertThat(bookmark.timestamp).isEqualTo(timestampProvider.timestampSeconds)
     assertThat(dao.isPageReadingBookmark(42)).isTrue()
     assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }

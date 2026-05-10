@@ -9,6 +9,9 @@ import com.quran.data.model.bookmark.RecentPage
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
+import com.quran.mobile.bookmark.migration.LegacyBookmarkMigrationNormalizer
+import com.quran.mobile.bookmark.migration.LegacyBookmarkTag
+import com.quran.mobile.bookmark.migration.LegacyBookmarksSnapshot
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
