@@ -20,39 +20,39 @@ data class MobileSyncImportBookmark(
   val importId: String,
   val sura: Int,
   val ayah: Int,
-  val timestampSeconds: Long
+  val timestampMillis: Long
 )
 
 data class MobileSyncImportCollection(
   val importId: String,
   val name: String,
-  val timestampSeconds: Long
+  val timestampMillis: Long
 )
 
 data class MobileSyncImportCollectionBookmark(
   val collectionImportId: String,
   val bookmarkImportId: String,
-  val timestampSeconds: Long
+  val timestampMillis: Long
 )
 
 data class MobileSyncImportReadingSession(
   val sura: Int,
   val ayah: Int,
-  val timestampSeconds: Long
+  val timestampMillis: Long
 )
 
 sealed interface MobileSyncImportReadingBookmark {
-  val timestampSeconds: Long
+  val timestampMillis: Long
 
   data class Ayah(
     val sura: Int,
     val ayah: Int,
-    override val timestampSeconds: Long
+    override val timestampMillis: Long
   ) : MobileSyncImportReadingBookmark
 
   data class Page(
     val page: Int,
-    override val timestampSeconds: Long
+    override val timestampMillis: Long
   ) : MobileSyncImportReadingBookmark
 }
 
