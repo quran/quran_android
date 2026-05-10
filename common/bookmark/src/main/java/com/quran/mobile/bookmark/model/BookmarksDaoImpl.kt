@@ -23,6 +23,7 @@ import com.quran.shared.persistence.util.fromPlatform
 import com.quran.shared.persistence.util.toPlatform
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.CancellationException
 import kotlin.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -135,8 +136,23 @@ class BookmarksDaoImpl @Inject constructor(
   override suspend fun updateTag(tag: Tag): Boolean {
     val timestamp = timestampProvider.now()
     val updated = withContext(Dispatchers.IO) {
-      collectionsRepository.updateCollection(tag.id.toString(), tag.name, timestamp)
-      true
+      val localId = tag.id.toString()
+      val collections = collectionsRepository.getAllCollections()
+      val existingCollection = collections.firstOrNull { collection -> collection.localId == localId }
+        ?: return@withContext false
+      if (existingCollection.name == tag.name ||
+        collections.any { collection -> collection.localId != localId && collection.name == tag.name }
+      ) {
+        return@withContext false
+      }
+      try {
+        collectionsRepository.updateCollection(localId, tag.name, timestamp)
+        true
+      } catch (exception: CancellationException) {
+        throw exception
+      } catch (exception: Exception) {
+        false
+      }
     }
     if (updated) {
       localDataChangeNotifier.notifyLocalDataChanged()
