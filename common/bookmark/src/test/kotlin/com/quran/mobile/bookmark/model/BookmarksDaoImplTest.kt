@@ -333,6 +333,66 @@ class BookmarksDaoImplTest {
   }
 
   @Test
+  fun `toggling a bookmark off clears collection links`() = runTest {
+    val tagId = dao.addTag("Review")
+    val suraAyah = SuraAyah(2, 255)
+    dao.toggleAyahBookmark(suraAyah, quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah))
+    val bookmark = dao.bookmarks().single()
+    dao.updateBookmarkTags(longArrayOf(bookmark.id), setOf(tagId), deleteNonTagged = true)
+
+    val removed = dao.toggleAyahBookmark(suraAyah, quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah))
+
+    assertThat(removed).isFalse()
+    assertThat(dao.bookmarks()).isEmpty()
+    assertThat(dao.getBookmarkTagIds(bookmark.id)).isEmpty()
+  }
+
+  @Test
+  fun `removing bookmarks for page clears collection links`() = runTest {
+    val tagId = dao.addTag("Review")
+    val target = SuraAyah(2, 255)
+    val other = SuraAyah(36, 1)
+    dao.toggleAyahBookmark(target, quranInfo.getPageFromSuraAyah(target.sura, target.ayah))
+    dao.toggleAyahBookmark(other, quranInfo.getPageFromSuraAyah(other.sura, other.ayah))
+    val targetBookmark = dao.bookmarks().first { it.sura == target.sura && it.ayah == target.ayah }
+    dao.updateBookmarkTags(longArrayOf(targetBookmark.id), setOf(tagId), deleteNonTagged = true)
+
+    dao.removeBookmarksForPage(quranInfo.getPageFromSuraAyah(target.sura, target.ayah))
+
+    assertThat(dao.bookmarks().map { it.sura to it.ayah }).containsExactly(other.sura to other.ayah)
+    assertThat(dao.getBookmarkTagIds(targetBookmark.id)).isEmpty()
+  }
+
+  @Test
+  fun `replacing ayah bookmarks clears old collection links`() = runTest {
+    val oldTagId = dao.addTag("Old")
+    val newTagId = dao.addTag("New")
+    val oldSuraAyah = SuraAyah(2, 255)
+    val newSuraAyah = SuraAyah(36, 1)
+    dao.toggleAyahBookmark(oldSuraAyah, quranInfo.getPageFromSuraAyah(oldSuraAyah.sura, oldSuraAyah.ayah))
+    val oldBookmark = dao.bookmarks().single()
+    dao.updateBookmarkTags(longArrayOf(oldBookmark.id), setOf(oldTagId), deleteNonTagged = true)
+
+    dao.replaceAyahBookmarks(
+      listOf(
+        Bookmark(
+          id = 999,
+          sura = newSuraAyah.sura,
+          ayah = newSuraAyah.ayah,
+          page = quranInfo.getPageFromSuraAyah(newSuraAyah.sura, newSuraAyah.ayah),
+          timestamp = timestampProvider.timestampSeconds,
+          tags = listOf(newTagId)
+        )
+      )
+    )
+
+    assertThat(dao.getBookmarkTagIds(oldBookmark.id)).isEmpty()
+    val bookmarks = dao.bookmarks()
+    assertThat(bookmarks.map { it.sura to it.ayah }).containsExactly(newSuraAyah.sura to newSuraAyah.ayah)
+    assertThat(bookmarks.single().tags).containsExactly(newTagId)
+  }
+
+  @Test
   fun `removing bookmark with tags notifies once`() = runTest {
     val tagId = dao.addTag("Review")
     val suraAyah = SuraAyah(2, 255)
