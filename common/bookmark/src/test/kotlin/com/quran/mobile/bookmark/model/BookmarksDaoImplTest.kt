@@ -10,6 +10,7 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.mobile.bookmark.sync.FakeLocalDataChangeNotifier
+import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.QuranDatabase
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepositoryImpl
@@ -28,6 +29,7 @@ class BookmarksDaoImplTest {
   private lateinit var dao: BookmarksDaoImpl
   private lateinit var appCoroutineScope: AppCoroutineScope
   private lateinit var localDataChangeNotifier: FakeLocalDataChangeNotifier
+  private lateinit var timestampProvider: FakeMobileSyncTimestampProvider
 
   @Before
   fun setup() {
@@ -37,12 +39,14 @@ class BookmarksDaoImplTest {
     quranInfo = QuranInfo(MadaniDataSource())
     appCoroutineScope = AppCoroutineScope()
     localDataChangeNotifier = FakeLocalDataChangeNotifier()
+    timestampProvider = FakeMobileSyncTimestampProvider()
     dao = BookmarksDaoImpl(
       quranInfoProvider = { quranInfo },
       bookmarksRepository = BookmarksRepositoryImpl(database),
       collectionsRepository = CollectionsRepositoryImpl(database),
       collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database),
       localDataChangeNotifier = localDataChangeNotifier,
+      timestampProvider = timestampProvider,
       appCoroutineScope = appCoroutineScope
     )
   }
@@ -72,6 +76,7 @@ class BookmarksDaoImplTest {
     assertThat(bookmarks.single().sura).isEqualTo(2)
     assertThat(bookmarks.single().ayah).isEqualTo(255)
     assertThat(bookmarks.single().page).isEqualTo(quranInfo.getPageFromSuraAyah(2, 255))
+    assertThat(bookmarks.single().timestamp).isEqualTo(timestampProvider.timestampSeconds)
     assertThat(bookmarks.single().isPageBookmark()).isFalse()
     assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
