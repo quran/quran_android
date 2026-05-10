@@ -7,7 +7,8 @@ data class BookmarkData @JvmOverloads constructor(
   val tags: List<Tag> = emptyList(),
   val bookmarks: List<Bookmark> = emptyList(),
   val recentPages: List<RecentPage> = emptyList(),
-  val readingBookmark: BackupReadingBookmark? = null
+  val readingBookmark: BackupReadingBookmark? = null,
+  val pageType: String? = null
 ) {
 
   fun getRecentPagesByLine() =
