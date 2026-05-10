@@ -1,7 +1,6 @@
 package com.quran.mobile.bookmark.importdata
 
 import android.content.Context
-import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
@@ -9,6 +8,7 @@ import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.mobile.bookmark.R
+import com.quran.mobile.bookmark.model.ReadingBookmarkPageMapper
 import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
 import com.quran.mobile.bookmark.time.legacyTimestampMillis
 import com.quran.mobile.di.qualifier.ApplicationContext
@@ -16,17 +16,18 @@ import dev.zacsweers.metro.Inject
 
 class BookmarkBackupImportNormalizer @Inject constructor(
   @param:ApplicationContext private val appContext: Context,
-  private val quranInfo: QuranInfo,
+  private val pageMapper: ReadingBookmarkPageMapper,
   private val timestampProvider: MobileSyncTimestampProvider
 ) {
-  fun normalize(data: BookmarkData): MobileSyncImportData {
+  suspend fun normalize(data: BookmarkData): MobileSyncImportData {
+    val sourcePageType = data.pageType ?: pageMapper.currentPageType()
     val importTimestampMillis = timestampProvider.nowEpochMillis()
     val collectionState = CollectionState.from(data.tags, importTimestampMillis)
     val bookmarkState = linkedMapOf<SuraAyah, BookmarkState>()
     var oldPageCollectionImportId: String? = null
 
     data.bookmarks.forEach { bookmark ->
-      val normalizedBookmark = normalizeBookmark(bookmark) ?: return@forEach
+      val normalizedBookmark = normalizeBookmark(bookmark, sourcePageType) ?: return@forEach
       val tagImportIds = bookmark.tags.mapNotNull { tagId ->
         collectionState.importIdForBackupTagId[tagId]
       }
@@ -60,8 +61,8 @@ class BookmarkBackupImportNormalizer @Inject constructor(
           )
         }
       },
-      readingSessions = normalizeRecentPages(data.recentPages),
-      readingBookmark = normalizeReadingBookmark(data.readingBookmark)
+      readingSessions = normalizeRecentPages(data.recentPages, sourcePageType),
+      readingBookmark = normalizeReadingBookmark(data.readingBookmark, sourcePageType)
     )
   }
 
@@ -79,21 +80,19 @@ class BookmarkBackupImportNormalizer @Inject constructor(
       }
   }
 
-  private fun normalizeBookmark(bookmark: Bookmark): NormalizedBookmark? {
+  private fun normalizeBookmark(bookmark: Bookmark, pageType: String?): NormalizedBookmark? {
     val timestamp = bookmark.timestamp.legacyTimestampMillis()
     return if (bookmark.isPageBookmark()) {
-      val page = bookmark.page
-      if (!quranInfo.isValidPage(page)) return null
-      val bounds = quranInfo.getPageBounds(page)
+      val suraAyah = pageMapper.sourcePageToSuraAyah(bookmark.page, pageType)
       NormalizedBookmark(
-        suraAyah = SuraAyah(bounds[0], bounds[1]),
+        suraAyah = suraAyah,
         timestamp = timestamp,
         fromPageBookmark = true
       )
     } else {
       val sura = bookmark.sura ?: return null
       val ayah = bookmark.ayah ?: return null
-      validPageForSuraAyah(sura, ayah) ?: return null
+      if (!isValidSuraAyah(sura, ayah)) return null
       NormalizedBookmark(
         suraAyah = SuraAyah(sura, ayah),
         timestamp = timestamp,
@@ -102,12 +101,13 @@ class BookmarkBackupImportNormalizer @Inject constructor(
     }
   }
 
-  private fun normalizeRecentPages(recentPages: List<RecentPage>): List<MobileSyncImportReadingSession> {
+  private fun normalizeRecentPages(
+    recentPages: List<RecentPage>,
+    pageType: String?
+  ): List<MobileSyncImportReadingSession> {
     val sessions = linkedMapOf<SuraAyah, MobileSyncImportReadingSession>()
     recentPages.forEach { recentPage ->
-      if (!quranInfo.isValidPage(recentPage.page)) return@forEach
-      val bounds = quranInfo.getPageBounds(recentPage.page)
-      val suraAyah = SuraAyah(bounds[0], bounds[1])
+      val suraAyah = pageMapper.sourcePageToSuraAyah(recentPage.page, pageType)
       val existingSession = sessions[suraAyah]
       val timestamp = recentPage.timestamp.legacyTimestampMillis()
       if (existingSession == null || timestamp > existingSession.timestampMillis) {
@@ -121,12 +121,15 @@ class BookmarkBackupImportNormalizer @Inject constructor(
     return sessions.values.toList()
   }
 
-  private fun normalizeReadingBookmark(readingBookmark: BackupReadingBookmark?): MobileSyncImportReadingBookmark? {
+  private fun normalizeReadingBookmark(
+    readingBookmark: BackupReadingBookmark?,
+    pageType: String?
+  ): MobileSyncImportReadingBookmark? {
     return when (readingBookmark?.type) {
       BackupReadingBookmark.TYPE_AYAH -> {
         val sura = readingBookmark.sura ?: return null
         val ayah = readingBookmark.ayah ?: return null
-        validPageForSuraAyah(sura, ayah) ?: return null
+        if (!isValidSuraAyah(sura, ayah)) return null
         MobileSyncImportReadingBookmark.Ayah(
           sura = sura,
           ayah = ayah,
@@ -135,9 +138,8 @@ class BookmarkBackupImportNormalizer @Inject constructor(
       }
       BackupReadingBookmark.TYPE_PAGE -> {
         val page = readingBookmark.page ?: return null
-        if (!quranInfo.isValidPage(page)) return null
         MobileSyncImportReadingBookmark.Page(
-          page = page,
+          page = pageMapper.sourcePageToStoragePage(page, pageType),
           timestampMillis = readingBookmark.timestamp.legacyTimestampMillis()
         )
       }
@@ -165,12 +167,7 @@ class BookmarkBackupImportNormalizer @Inject constructor(
     bookmark.mergeTimestamp(normalizedBookmark)
   }
 
-  private fun validPageForSuraAyah(sura: Int, ayah: Int): Int? {
-    val numberOfAyahs = quranInfo.getNumberOfAyahs(sura)
-    if (ayah !in 1..numberOfAyahs) return null
-    return quranInfo.getPageFromSuraAyah(sura, ayah)
-      .takeIf { page -> quranInfo.isValidPage(page) }
-  }
+  private fun isValidSuraAyah(sura: Int, ayah: Int): Boolean = pageMapper.isValidSuraAyah(sura, ayah)
 
   private data class NormalizedBookmark(
     val suraAyah: SuraAyah,
