@@ -1,32 +1,33 @@
-package com.quran.labs.androidquran.model.bookmark
+package com.quran.mobile.bookmark.importdata
 
 import android.content.Context
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.RecentPage
-import com.quran.labs.androidquran.R
-import com.quran.mobile.bookmark.migration.MobileSyncMigrationBookmark
-import com.quran.mobile.bookmark.migration.MobileSyncMigrationCollection
-import com.quran.mobile.bookmark.migration.MobileSyncMigrationCollectionBookmark
-import com.quran.mobile.bookmark.migration.MobileSyncMigrationData
-import com.quran.mobile.bookmark.migration.MobileSyncMigrationReadingSession
+import com.quran.data.model.bookmark.Tag
+import com.quran.mobile.bookmark.R
+import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject
 
-class LegacyBookmarkMigrationNormalizer @Inject constructor(
+class BookmarkBackupImportNormalizer @Inject constructor(
   @param:ApplicationContext private val appContext: Context,
-  private val quranInfo: QuranInfo
+  private val quranInfo: QuranInfo,
+  private val timestampProvider: MobileSyncTimestampProvider
 ) {
-  fun normalize(snapshot: LegacyBookmarksSnapshot): MobileSyncMigrationData {
-    val collectionState = CollectionState.from(snapshot.tags)
+  fun normalize(data: BookmarkData): MobileSyncImportData {
+    val importTimestampSeconds = timestampProvider.nowEpochSeconds()
+    val collectionState = CollectionState.from(data.tags, importTimestampSeconds)
     val bookmarkState = linkedMapOf<SuraAyah, BookmarkState>()
     var oldPageCollectionImportId: String? = null
 
-    snapshot.bookmarks.forEach { bookmark ->
+    data.bookmarks.forEach { bookmark ->
       val normalizedBookmark = normalizeBookmark(bookmark) ?: return@forEach
       val tagImportIds = bookmark.tags.mapNotNull { tagId ->
-        collectionState.importIdForLegacyTagId[tagId]
+        collectionState.importIdForBackupTagId[tagId]
       }
       val importTagIds = if (normalizedBookmark.fromPageBookmark) {
         val collectionImportId = oldPageCollectionImportId
@@ -39,30 +40,27 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
       bookmarkState.addOrMerge(normalizedBookmark, importTagIds)
     }
 
-    val migrationBookmarks = bookmarkState.values.map { bookmark ->
-      MobileSyncMigrationBookmark(
-        importId = bookmark.importId,
-        sura = bookmark.suraAyah.sura,
-        ayah = bookmark.suraAyah.ayah,
-        timestampSeconds = bookmark.timestamp
-      )
-    }
-
-    val collectionBookmarks = bookmarkState.values.flatMap { bookmark ->
-      bookmark.collectionTimestamps.map { (collectionImportId, timestamp) ->
-        MobileSyncMigrationCollectionBookmark(
-          collectionImportId = collectionImportId,
-          bookmarkImportId = bookmark.importId,
-          timestampSeconds = timestamp
+    return MobileSyncImportData(
+      bookmarks = bookmarkState.values.map { bookmark ->
+        MobileSyncImportBookmark(
+          importId = bookmark.importId,
+          sura = bookmark.suraAyah.sura,
+          ayah = bookmark.suraAyah.ayah,
+          timestampSeconds = bookmark.timestamp
         )
-      }
-    }
-
-    return MobileSyncMigrationData(
-      bookmarks = migrationBookmarks,
+      },
       collections = collectionState.collections,
-      collectionBookmarks = collectionBookmarks,
-      readingSessions = normalizeRecentPages(snapshot.recentPages)
+      collectionBookmarks = bookmarkState.values.flatMap { bookmark ->
+        bookmark.collectionTimestamps.map { (collectionImportId, timestamp) ->
+          MobileSyncImportCollectionBookmark(
+            collectionImportId = collectionImportId,
+            bookmarkImportId = bookmark.importId,
+            timestampSeconds = timestamp
+          )
+        }
+      },
+      readingSessions = normalizeRecentPages(data.recentPages),
+      readingBookmark = normalizeReadingBookmark(data.readingBookmark)
     )
   }
 
@@ -71,7 +69,7 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
     return importIdForName[oldPageBookmarksName]
       ?: OLD_PAGE_BOOKMARKS_COLLECTION_ID.also { importId ->
         add(
-          MobileSyncMigrationCollection(
+          MobileSyncImportCollection(
             importId = importId,
             name = oldPageBookmarksName,
             timestampSeconds = timestamp
@@ -81,13 +79,14 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
   }
 
   private fun normalizeBookmark(bookmark: Bookmark): NormalizedBookmark? {
+    val timestamp = bookmark.timestamp.legacyBackupTimestampSeconds()
     return if (bookmark.isPageBookmark()) {
       val page = bookmark.page
       if (!quranInfo.isValidPage(page)) return null
       val bounds = quranInfo.getPageBounds(page)
       NormalizedBookmark(
         suraAyah = SuraAyah(bounds[0], bounds[1]),
-        timestamp = bookmark.timestamp,
+        timestamp = timestamp,
         fromPageBookmark = true
       )
     } else {
@@ -96,27 +95,53 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
       validPageForSuraAyah(sura, ayah) ?: return null
       NormalizedBookmark(
         suraAyah = SuraAyah(sura, ayah),
-        timestamp = bookmark.timestamp,
+        timestamp = timestamp,
         fromPageBookmark = false
       )
     }
   }
 
-  private fun normalizeRecentPages(recentPages: List<RecentPage>): List<MobileSyncMigrationReadingSession> {
-    val sessions = linkedMapOf<SuraAyah, MobileSyncMigrationReadingSession>()
+  private fun normalizeRecentPages(recentPages: List<RecentPage>): List<MobileSyncImportReadingSession> {
+    val sessions = linkedMapOf<SuraAyah, MobileSyncImportReadingSession>()
     recentPages.forEach { recentPage ->
       if (!quranInfo.isValidPage(recentPage.page)) return@forEach
       val bounds = quranInfo.getPageBounds(recentPage.page)
       val suraAyah = SuraAyah(bounds[0], bounds[1])
-      sessions.getOrPut(suraAyah) {
-        MobileSyncMigrationReadingSession(
+      val existingSession = sessions[suraAyah]
+      val timestamp = recentPage.timestamp.legacyBackupTimestampSeconds()
+      if (existingSession == null || timestamp > existingSession.timestampSeconds) {
+        sessions[suraAyah] = MobileSyncImportReadingSession(
           sura = suraAyah.sura,
           ayah = suraAyah.ayah,
-          timestampSeconds = recentPage.timestamp
+          timestampSeconds = timestamp
         )
       }
     }
     return sessions.values.toList()
+  }
+
+  private fun normalizeReadingBookmark(readingBookmark: BackupReadingBookmark?): MobileSyncImportReadingBookmark? {
+    return when (readingBookmark?.type) {
+      BackupReadingBookmark.TYPE_AYAH -> {
+        val sura = readingBookmark.sura ?: return null
+        val ayah = readingBookmark.ayah ?: return null
+        validPageForSuraAyah(sura, ayah) ?: return null
+        MobileSyncImportReadingBookmark.Ayah(
+          sura = sura,
+          ayah = ayah,
+          timestampSeconds = readingBookmark.timestamp.legacyBackupTimestampSeconds()
+        )
+      }
+      BackupReadingBookmark.TYPE_PAGE -> {
+        val page = readingBookmark.page ?: return null
+        if (!quranInfo.isValidPage(page)) return null
+        MobileSyncImportReadingBookmark.Page(
+          page = page,
+          timestampSeconds = readingBookmark.timestamp.legacyBackupTimestampSeconds()
+        )
+      }
+      else -> null
+    }
   }
 
   private fun MutableMap<SuraAyah, BookmarkState>.addOrMerge(
@@ -171,31 +196,31 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
   }
 
   private data class CollectionState(
-    val importIdForLegacyTagId: MutableMap<Long, String> = mutableMapOf(),
+    val importIdForBackupTagId: MutableMap<Long, String> = mutableMapOf(),
     val importIdForName: MutableMap<String, String> = mutableMapOf(),
-    val collections: MutableList<MobileSyncMigrationCollection> = mutableListOf()
+    val collections: MutableList<MobileSyncImportCollection> = mutableListOf()
   ) {
-    fun add(collection: MobileSyncMigrationCollection) {
+    fun add(collection: MobileSyncImportCollection) {
       importIdForName[collection.name] = collection.importId
       collections.add(collection)
     }
 
     companion object {
-      fun from(tags: List<LegacyBookmarkTag>): CollectionState {
+      fun from(tags: List<Tag>, importTimestampSeconds: Long): CollectionState {
         val state = CollectionState()
         tags.sortedBy { tag -> tag.id }.forEach { tag ->
           val name = tag.name
           if (name.isBlank()) return@forEach
           val existingImportId = state.importIdForName[name]
           if (existingImportId != null) {
-            state.importIdForLegacyTagId[tag.id] = existingImportId
+            state.importIdForBackupTagId[tag.id] = existingImportId
           } else {
-            val collection = MobileSyncMigrationCollection(
+            val collection = MobileSyncImportCollection(
               importId = "tag-${tag.id}",
               name = name,
-              timestampSeconds = tag.timestamp
+              timestampSeconds = importTimestampSeconds
             )
-            state.importIdForLegacyTagId[tag.id] = collection.importId
+            state.importIdForBackupTagId[tag.id] = collection.importId
             state.add(collection)
           }
         }
@@ -207,4 +232,11 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
   companion object {
     private const val OLD_PAGE_BOOKMARKS_COLLECTION_ID = "old-page-bookmarks"
   }
+}
+
+private const val MILLIS_TIMESTAMP_THRESHOLD = 10_000_000_000L
+
+private fun Long.legacyBackupTimestampSeconds(): Long {
+  // Legacy backup models can contain either epoch seconds or epoch milliseconds.
+  return if (this > MILLIS_TIMESTAMP_THRESHOLD) this / 1000 else this
 }
