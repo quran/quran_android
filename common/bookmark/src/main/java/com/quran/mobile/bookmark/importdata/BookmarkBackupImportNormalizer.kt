@@ -10,6 +10,7 @@ import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.mobile.bookmark.R
 import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
+import com.quran.mobile.bookmark.time.legacyTimestampMillis
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject
 
@@ -19,8 +20,8 @@ class BookmarkBackupImportNormalizer @Inject constructor(
   private val timestampProvider: MobileSyncTimestampProvider
 ) {
   fun normalize(data: BookmarkData): MobileSyncImportData {
-    val importTimestampSeconds = timestampProvider.nowEpochSeconds()
-    val collectionState = CollectionState.from(data.tags, importTimestampSeconds)
+    val importTimestampMillis = timestampProvider.nowEpochMillis()
+    val collectionState = CollectionState.from(data.tags, importTimestampMillis)
     val bookmarkState = linkedMapOf<SuraAyah, BookmarkState>()
     var oldPageCollectionImportId: String? = null
 
@@ -46,7 +47,7 @@ class BookmarkBackupImportNormalizer @Inject constructor(
           importId = bookmark.importId,
           sura = bookmark.suraAyah.sura,
           ayah = bookmark.suraAyah.ayah,
-          timestampSeconds = bookmark.timestamp
+          timestampMillis = bookmark.timestamp
         )
       },
       collections = collectionState.collections,
@@ -55,7 +56,7 @@ class BookmarkBackupImportNormalizer @Inject constructor(
           MobileSyncImportCollectionBookmark(
             collectionImportId = collectionImportId,
             bookmarkImportId = bookmark.importId,
-            timestampSeconds = timestamp
+            timestampMillis = timestamp
           )
         }
       },
@@ -72,14 +73,14 @@ class BookmarkBackupImportNormalizer @Inject constructor(
           MobileSyncImportCollection(
             importId = importId,
             name = oldPageBookmarksName,
-            timestampSeconds = timestamp
+            timestampMillis = timestamp
           )
         )
       }
   }
 
   private fun normalizeBookmark(bookmark: Bookmark): NormalizedBookmark? {
-    val timestamp = bookmark.timestamp.legacyBackupTimestampSeconds()
+    val timestamp = bookmark.timestamp.legacyTimestampMillis()
     return if (bookmark.isPageBookmark()) {
       val page = bookmark.page
       if (!quranInfo.isValidPage(page)) return null
@@ -108,12 +109,12 @@ class BookmarkBackupImportNormalizer @Inject constructor(
       val bounds = quranInfo.getPageBounds(recentPage.page)
       val suraAyah = SuraAyah(bounds[0], bounds[1])
       val existingSession = sessions[suraAyah]
-      val timestamp = recentPage.timestamp.legacyBackupTimestampSeconds()
-      if (existingSession == null || timestamp > existingSession.timestampSeconds) {
+      val timestamp = recentPage.timestamp.legacyTimestampMillis()
+      if (existingSession == null || timestamp > existingSession.timestampMillis) {
         sessions[suraAyah] = MobileSyncImportReadingSession(
           sura = suraAyah.sura,
           ayah = suraAyah.ayah,
-          timestampSeconds = timestamp
+          timestampMillis = timestamp
         )
       }
     }
@@ -129,7 +130,7 @@ class BookmarkBackupImportNormalizer @Inject constructor(
         MobileSyncImportReadingBookmark.Ayah(
           sura = sura,
           ayah = ayah,
-          timestampSeconds = readingBookmark.timestamp.legacyBackupTimestampSeconds()
+          timestampMillis = readingBookmark.timestamp.legacyTimestampMillis()
         )
       }
       BackupReadingBookmark.TYPE_PAGE -> {
@@ -137,7 +138,7 @@ class BookmarkBackupImportNormalizer @Inject constructor(
         if (!quranInfo.isValidPage(page)) return null
         MobileSyncImportReadingBookmark.Page(
           page = page,
-          timestampSeconds = readingBookmark.timestamp.legacyBackupTimestampSeconds()
+          timestampMillis = readingBookmark.timestamp.legacyTimestampMillis()
         )
       }
       else -> null
@@ -206,7 +207,7 @@ class BookmarkBackupImportNormalizer @Inject constructor(
     }
 
     companion object {
-      fun from(tags: List<Tag>, importTimestampSeconds: Long): CollectionState {
+      fun from(tags: List<Tag>, importTimestampMillis: Long): CollectionState {
         val state = CollectionState()
         tags.sortedBy { tag -> tag.id }.forEach { tag ->
           val name = tag.name
@@ -218,7 +219,7 @@ class BookmarkBackupImportNormalizer @Inject constructor(
             val collection = MobileSyncImportCollection(
               importId = "tag-${tag.id}",
               name = name,
-              timestampSeconds = importTimestampSeconds
+              timestampMillis = importTimestampMillis
             )
             state.importIdForBackupTagId[tag.id] = collection.importId
             state.add(collection)
@@ -232,11 +233,4 @@ class BookmarkBackupImportNormalizer @Inject constructor(
   companion object {
     private const val OLD_PAGE_BOOKMARKS_COLLECTION_ID = "old-page-bookmarks"
   }
-}
-
-private const val MILLIS_TIMESTAMP_THRESHOLD = 10_000_000_000L
-
-private fun Long.legacyBackupTimestampSeconds(): Long {
-  // Legacy backup models can contain either epoch seconds or epoch milliseconds.
-  return if (this > MILLIS_TIMESTAMP_THRESHOLD) this / 1000 else this
 }

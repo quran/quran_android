@@ -160,6 +160,16 @@ class FakeBookmarksDao : BookmarksDao {
     changesFlow.tryEmit(Unit)
   }
 
+  override suspend fun removeBookmarksForPage(page: Int) {
+    bookmarks.update { current -> current.filterNot { it.page == page } }
+    changesFlow.tryEmit(Unit)
+  }
+
+  override suspend fun replaceAyahBookmarks(bookmarks: List<Bookmark>) {
+    this.bookmarks.value = bookmarks.filterNot { it.isPageBookmark() }
+    changesFlow.tryEmit(Unit)
+  }
+
   override suspend fun isSuraAyahBookmarked(suraAyah: SuraAyah): Boolean {
     return bookmarks.value.any { it.sura == suraAyah.sura && it.ayah == suraAyah.ayah }
   }

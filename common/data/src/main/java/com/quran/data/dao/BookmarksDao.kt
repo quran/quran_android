@@ -39,6 +39,8 @@ interface BookmarksDao {
   suspend fun removeBookmarkFromTag(bookmark: Bookmark, tagId: Long): Boolean
 
   suspend fun removeBookmarks(bookmarks: List<Bookmark>)
+  suspend fun removeBookmarksForPage(page: Int)
+  suspend fun replaceAyahBookmarks(bookmarks: List<Bookmark>)
   suspend fun isSuraAyahBookmarked(suraAyah: SuraAyah): Boolean
   suspend fun toggleAyahBookmark(suraAyah: SuraAyah, page: Int): Boolean
 }
