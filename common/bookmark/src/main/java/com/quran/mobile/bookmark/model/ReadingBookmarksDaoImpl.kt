@@ -12,6 +12,7 @@ import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.mobile.bookmark.sync.LocalDataChangeNotifier
 import com.quran.mobile.bookmark.sync.notifyLocalDataChanged
+import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
 import com.quran.shared.persistence.repository.readingbookmark.repository.ReadingBookmarksRepository
 import com.quran.shared.persistence.util.fromPlatform
 import dev.zacsweers.metro.Inject
@@ -34,6 +35,7 @@ class ReadingBookmarksDaoImpl @Inject constructor(
   private val quranInfoProvider: () -> QuranInfo,
   private val readingBookmarksRepository: ReadingBookmarksRepository,
   private val localDataChangeNotifier: LocalDataChangeNotifier,
+  private val timestampProvider: MobileSyncTimestampProvider,
   appCoroutineScope: AppCoroutineScope
 ) : ReadingBookmarksDao {
   private val readingBookmarkState: StateFlow<ReadingBookmarkState> =
@@ -56,8 +58,9 @@ class ReadingBookmarksDaoImpl @Inject constructor(
   }
 
   override suspend fun setPageReadingBookmark(page: Int): Boolean {
+    val timestamp = timestampProvider.now()
     val set = withContext(Dispatchers.IO) {
-      readingBookmarksRepository.addPageReadingBookmark(page)
+      readingBookmarksRepository.addPageReadingBookmark(page, timestamp)
       true
     }
     if (set) {
@@ -67,8 +70,9 @@ class ReadingBookmarksDaoImpl @Inject constructor(
   }
 
   override suspend fun setAyahReadingBookmark(suraAyah: SuraAyah): Boolean {
+    val timestamp = timestampProvider.now()
     val set = withContext(Dispatchers.IO) {
-      readingBookmarksRepository.addAyahReadingBookmark(suraAyah.sura, suraAyah.ayah)
+      readingBookmarksRepository.addAyahReadingBookmark(suraAyah.sura, suraAyah.ayah, timestamp)
       true
     }
     if (set) {
@@ -95,12 +99,13 @@ class ReadingBookmarksDaoImpl @Inject constructor(
   }
 
   override suspend fun togglePageReadingBookmark(page: Int): Boolean {
+    val timestamp = timestampProvider.now()
     val (isBookmarked, updated) = withContext(Dispatchers.IO) {
       val bookmark = readingBookmarksRepository.getReadingBookmark()
       if (bookmark is SyncPageReadingBookmark && bookmark.page == page) {
         false to readingBookmarksRepository.deleteReadingBookmark()
       } else {
-        readingBookmarksRepository.addPageReadingBookmark(page)
+        readingBookmarksRepository.addPageReadingBookmark(page, timestamp)
         true to true
       }
     }

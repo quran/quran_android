@@ -8,9 +8,9 @@ import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.labs.androidquran.data.Constants
-import com.quran.labs.androidquran.model.bookmark.LegacyBookmarkTag
 import com.quran.mobile.bookmark.mapper.Mappers
 import com.quran.mobile.bookmark.mapper.convergeCommonlyTagged
+import com.quran.mobile.bookmark.migration.LegacyBookmarkTag
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 

@@ -14,6 +14,11 @@ import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel
 import com.quran.labs.androidquran.model.bookmark.BookmarkJsonModel
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.awaitTerminalEvent
+import com.quran.mobile.bookmark.importdata.BookmarkBackupImportNormalizer
+import com.quran.mobile.bookmark.importdata.MobileSyncImportData
+import com.quran.mobile.bookmark.importdata.MobileSyncImportResult
+import com.quran.mobile.bookmark.importdata.MobileSyncImporter
+import com.quran.mobile.bookmark.time.DefaultMobileSyncTimestampProvider
 import io.reactivex.rxjava3.observers.TestObserver
 import okio.BufferedSource
 import org.junit.Before
@@ -35,13 +40,19 @@ class QuranImportPresenterTest {
   @Before
   fun setup() {
     context = ApplicationProvider.getApplicationContext()
+    val quranInfo = QuranInfo(MadaniDataSource())
     importExportModel = BookmarkImportExportModel(
       context,
       BookmarkJsonModel(),
       FakeBookmarksDao(),
       FakeRecentPagesDao(),
       FakeReadingBookmarksDao(),
-      QuranInfo(MadaniDataSource())
+      BookmarkBackupImportNormalizer(
+        context,
+        quranInfo,
+        DefaultMobileSyncTimestampProvider()
+      ),
+      FakeMobileSyncImporter()
     )
   }
 
@@ -117,5 +128,20 @@ class QuranImportPresenterTest {
     observer.awaitTerminalEvent()
     observer.assertError(NullPointerException::class.java)
     observer.assertValueCount(0)
+  }
+
+  private class FakeMobileSyncImporter : MobileSyncImporter {
+    override suspend fun importData(
+      data: MobileSyncImportData,
+      deleteExisting: Boolean
+    ): MobileSyncImportResult {
+      return MobileSyncImportResult(
+        bookmarksImported = data.bookmarks.size,
+        collectionsImported = data.collections.size,
+        collectionBookmarksImported = data.collectionBookmarks.size,
+        readingSessionsImported = data.readingSessions.size,
+        readingBookmarkImported = data.readingBookmark != null
+      )
+    }
   }
 }
