@@ -14,8 +14,8 @@ import kotlin.time.Clock
 interface MobileSyncTimestampProvider {
   fun now(): PlatformDateTime
 
-  fun nowEpochSeconds(): Long {
-    return now().fromPlatform().toEpochMilliseconds() / 1000
+  fun nowEpochMillis(): Long {
+    return now().fromPlatform().toEpochMilliseconds()
   }
 }
 
