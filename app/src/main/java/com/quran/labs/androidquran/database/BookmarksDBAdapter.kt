@@ -25,8 +25,6 @@ class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabas
   companion object {
     const val SORT_DATE_ADDED = 0
     const val SORT_LOCATION = 1
-
-    private const val MILLIS_TIMESTAMP_THRESHOLD = 10_000_000_000L
   }
 
   fun getBookmarkedAyahsOnPage(page: Int): List<Bookmark> = getBookmarks(SORT_LOCATION, page)
@@ -118,7 +116,7 @@ class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabas
 
   fun getTagsForMigration(): List<LegacyBookmarkTag> {
     return tagQueries.getTags { id, name, addedDate ->
-      LegacyBookmarkTag(id, name, addedDate.legacyTimestampSeconds())
+      LegacyBookmarkTag(id, name, addedDate)
     }.executeAsList()
   }
 
@@ -188,9 +186,5 @@ class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabas
       }
     }
     return true
-  }
-
-  private fun Long.legacyTimestampSeconds(): Long {
-    return if (this > MILLIS_TIMESTAMP_THRESHOLD) this / 1000 else this
   }
 }

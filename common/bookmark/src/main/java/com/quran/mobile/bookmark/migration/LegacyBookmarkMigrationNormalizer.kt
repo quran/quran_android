@@ -11,6 +11,7 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImportCollection
 import com.quran.mobile.bookmark.importdata.MobileSyncImportCollectionBookmark
 import com.quran.mobile.bookmark.importdata.MobileSyncImportData
 import com.quran.mobile.bookmark.importdata.MobileSyncImportReadingSession
+import com.quran.mobile.bookmark.time.legacyTimestampMillis
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject
 
@@ -44,7 +45,7 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
         importId = bookmark.importId,
         sura = bookmark.suraAyah.sura,
         ayah = bookmark.suraAyah.ayah,
-        timestampSeconds = bookmark.timestamp
+        timestampMillis = bookmark.timestamp
       )
     }
 
@@ -53,7 +54,7 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
         MobileSyncImportCollectionBookmark(
           collectionImportId = collectionImportId,
           bookmarkImportId = bookmark.importId,
-          timestampSeconds = timestamp
+          timestampMillis = timestamp
         )
       }
     }
@@ -74,20 +75,21 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
           MobileSyncImportCollection(
             importId = importId,
             name = oldPageBookmarksName,
-            timestampSeconds = timestamp
+            timestampMillis = timestamp
           )
         )
       }
   }
 
   private fun normalizeBookmark(bookmark: Bookmark): NormalizedBookmark? {
+    val timestamp = bookmark.timestamp.legacyTimestampMillis()
     return if (bookmark.isPageBookmark()) {
       val page = bookmark.page
       if (!quranInfo.isValidPage(page)) return null
       val bounds = quranInfo.getPageBounds(page)
       NormalizedBookmark(
         suraAyah = SuraAyah(bounds[0], bounds[1]),
-        timestamp = bookmark.timestamp,
+        timestamp = timestamp,
         fromPageBookmark = true
       )
     } else {
@@ -96,7 +98,7 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
       validPageForSuraAyah(sura, ayah) ?: return null
       NormalizedBookmark(
         suraAyah = SuraAyah(sura, ayah),
-        timestamp = bookmark.timestamp,
+        timestamp = timestamp,
         fromPageBookmark = false
       )
     }
@@ -109,10 +111,11 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
       val bounds = quranInfo.getPageBounds(recentPage.page)
       val suraAyah = SuraAyah(bounds[0], bounds[1])
       sessions.getOrPut(suraAyah) {
+        val timestamp = recentPage.timestamp.legacyTimestampMillis()
         MobileSyncImportReadingSession(
           sura = suraAyah.sura,
           ayah = suraAyah.ayah,
-          timestampSeconds = recentPage.timestamp
+          timestampMillis = timestamp
         )
       }
     }
@@ -193,7 +196,7 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
             val collection = MobileSyncImportCollection(
               importId = "tag-${tag.id}",
               name = name,
-              timestampSeconds = tag.timestamp
+              timestampMillis = tag.timestamp.legacyTimestampMillis()
             )
             state.importIdForLegacyTagId[tag.id] = collection.importId
             state.add(collection)
