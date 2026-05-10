@@ -6,6 +6,7 @@ import androidx.core.content.FileProvider
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
+import com.quran.data.dao.Settings
 import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
@@ -16,6 +17,7 @@ import com.quran.labs.BaseTestExtension
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.fakes.FakeBookmarksDao
+import com.quran.labs.androidquran.fakes.FakePageProvider
 import com.quran.labs.androidquran.fakes.FakeReadingBookmarksDao
 import com.quran.labs.androidquran.fakes.FakeRecentPagesDao
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
@@ -24,8 +26,11 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImportData
 import com.quran.mobile.bookmark.importdata.MobileSyncImportReadingBookmark
 import com.quran.mobile.bookmark.importdata.MobileSyncImportResult
 import com.quran.mobile.bookmark.importdata.MobileSyncImporter
+import com.quran.mobile.bookmark.model.ReadingBookmarkPageMapper
 import com.quran.mobile.bookmark.time.DefaultMobileSyncTimestampProvider
 import io.reactivex.rxjava3.observers.TestObserver
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import okio.Buffer
 import okio.buffer
 import okio.source
@@ -45,6 +50,7 @@ class BookmarkImportExportModelTest {
   private lateinit var bookmarksDao: FakeBookmarksDao
   private lateinit var recentPagesDao: FakeRecentPagesDao
   private lateinit var readingBookmarksDao: FakeReadingBookmarksDao
+  private lateinit var settings: FakeSettings
   private lateinit var quranInfo: QuranInfo
   private lateinit var mobileSyncImporter: FakeMobileSyncImporter
   private lateinit var bookmarkImportExportModel: BookmarkImportExportModel
@@ -54,18 +60,25 @@ class BookmarkImportExportModelTest {
     bookmarksDao = FakeBookmarksDao()
     recentPagesDao = FakeRecentPagesDao()
     readingBookmarksDao = FakeReadingBookmarksDao()
+    settings = FakeSettings()
     quranInfo = QuranInfo(MadaniDataSource())
     mobileSyncImporter = FakeMobileSyncImporter()
     clearFileProviderCache()
+    val pageMapper = ReadingBookmarkPageMapper(
+      settings = settings,
+      pageProviders = mapOf("madani" to FakePageProvider()),
+      fallbackPageType = "madani"
+    )
     bookmarkImportExportModel = BookmarkImportExportModel(
       context,
       BookmarkJsonModel(),
       bookmarksDao,
       recentPagesDao,
       readingBookmarksDao,
+      settings,
       BookmarkBackupImportNormalizer(
         context,
-        quranInfo,
+        pageMapper,
         DefaultMobileSyncTimestampProvider()
       ),
       mobileSyncImporter
@@ -144,6 +157,7 @@ class BookmarkImportExportModelTest {
     assertThat(exportedData.recentPages)
       .containsExactly(RecentPage(50, 1000), RecentPage(51, 900))
       .inOrder()
+    assertThat(exportedData.pageType).isEqualTo("madani")
     assertThat(exportedData.readingBookmark).isEqualTo(
       BackupReadingBookmark(
         type = BackupReadingBookmark.TYPE_PAGE,
@@ -359,6 +373,48 @@ class BookmarkImportExportModelTest {
         readingBookmarkImported = data.readingBookmark != null
       )
     }
+  }
+
+  private class FakeSettings : Settings {
+    private val preferences = MutableSharedFlow<String>(extraBufferCapacity = 1)
+    private var pageType = "madani"
+
+    override suspend fun setVersion(version: Int) = Unit
+
+    override suspend fun setShouldOverlayPageInfo(shouldOverlay: Boolean) = Unit
+
+    override suspend fun lastPage(): Int = 1
+
+    override suspend fun isNightMode(): Boolean = false
+
+    override suspend fun nightModeTextBrightness(): Int = 0
+
+    override suspend fun nightModeBackgroundBrightness(): Int = 0
+
+    override suspend fun shouldShowHeaderFooter(): Boolean = false
+
+    override suspend fun shouldShowBookmarks(): Boolean = false
+
+    override suspend fun pageType(): String = pageType
+
+    override suspend fun setPageType(pageType: String) {
+      this.pageType = pageType
+      preferences.emit("pageType")
+    }
+
+    override suspend fun showSidelines(): Boolean = false
+
+    override suspend fun setShowSidelines(show: Boolean) = Unit
+
+    override suspend fun showLineDividers(): Boolean = false
+
+    override suspend fun setShouldShowLineDividers(show: Boolean) = Unit
+
+    override suspend fun setAyahTextSize(value: Int) = Unit
+
+    override suspend fun translationTextSize(): Int = 0
+
+    override fun preferencesFlow(): Flow<String> = preferences
   }
 
   companion object {
