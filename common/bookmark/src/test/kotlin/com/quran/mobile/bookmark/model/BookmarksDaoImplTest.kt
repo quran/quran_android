@@ -205,6 +205,32 @@ class BookmarksDaoImplTest {
   }
 
   @Test
+  fun `update tag returns false when name already exists`() = runTest {
+    val firstId = dao.addTag("First")
+    val secondId = dao.addTag("Second")
+    localDataChangeNotifier.reset()
+
+    val updated = dao.updateTag(com.quran.data.model.bookmark.Tag(firstId, "Second"))
+
+    assertThat(updated).isFalse()
+    assertThat(dao.tags()).containsExactly(
+      com.quran.data.model.bookmark.Tag(firstId, "First"),
+      com.quran.data.model.bookmark.Tag(secondId, "Second")
+    )
+    assertThat(localDataChangeNotifier.updateCount).isEqualTo(0)
+  }
+
+  @Test
+  fun `update tag returns false when tag no longer exists`() = runTest {
+    localDataChangeNotifier.reset()
+
+    val updated = dao.updateTag(com.quran.data.model.bookmark.Tag(999, "Missing"))
+
+    assertThat(updated).isFalse()
+    assertThat(localDataChangeNotifier.updateCount).isEqualTo(0)
+  }
+
+  @Test
   fun `bookmark tags are populated from collection bookmarks`() = runTest {
     val tagId = dao.addTag("Review")
     val suraAyah = SuraAyah(2, 255)
