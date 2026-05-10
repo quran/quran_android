@@ -56,28 +56,28 @@ class MobileSyncImporterImpl @Inject constructor(
           importId = bookmark.importId,
           sura = bookmark.sura,
           ayah = bookmark.ayah,
-          lastUpdated = bookmark.timestampSeconds.toPlatformDateTime()
+          lastUpdated = bookmark.timestampMillis.toPlatformDateTime()
         )
       },
       collections = collections.map { collection ->
         ImportCollection(
           importId = collection.importId,
           name = collection.name,
-          lastUpdated = collection.timestampSeconds.toPlatformDateTime()
+          lastUpdated = collection.timestampMillis.toPlatformDateTime()
         )
       },
       collectionBookmarks = collectionBookmarks.map { collectionBookmark ->
         ImportCollectionAyahBookmark(
           collectionImportId = collectionBookmark.collectionImportId,
           bookmarkImportId = collectionBookmark.bookmarkImportId,
-          lastUpdated = collectionBookmark.timestampSeconds.toPlatformDateTime()
+          lastUpdated = collectionBookmark.timestampMillis.toPlatformDateTime()
         )
       },
       readingSessions = readingSessions.map { readingSession ->
         ImportReadingSession(
           sura = readingSession.sura,
           ayah = readingSession.ayah,
-          lastUpdated = readingSession.timestampSeconds.toPlatformDateTime()
+          lastUpdated = readingSession.timestampMillis.toPlatformDateTime()
         )
       },
       readingBookmark = readingBookmark?.toImportReadingBookmark()
@@ -89,11 +89,11 @@ class MobileSyncImporterImpl @Inject constructor(
       is MobileSyncImportReadingBookmark.Ayah -> ImportReadingBookmark.Ayah(
         sura = sura,
         ayah = ayah,
-        lastUpdated = timestampSeconds.toPlatformDateTime()
+        lastUpdated = timestampMillis.toPlatformDateTime()
       )
       is MobileSyncImportReadingBookmark.Page -> ImportReadingBookmark.Page(
         page = page,
-        lastUpdated = timestampSeconds.toPlatformDateTime()
+        lastUpdated = timestampMillis.toPlatformDateTime()
       )
     }
   }
@@ -108,5 +108,5 @@ class MobileSyncImporterImpl @Inject constructor(
     )
   }
 
-  private fun Long.toPlatformDateTime() = Instant.fromEpochSeconds(this).toPlatform()
+  private fun Long.toPlatformDateTime() = Instant.fromEpochMilliseconds(this).toPlatform()
 }

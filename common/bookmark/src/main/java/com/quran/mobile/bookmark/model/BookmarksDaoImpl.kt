@@ -20,8 +20,10 @@ import com.quran.shared.persistence.repository.collection.repository.Collections
 import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepository
 import com.quran.shared.persistence.util.PlatformDateTime
 import com.quran.shared.persistence.util.fromPlatform
+import com.quran.shared.persistence.util.toPlatform
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import kotlin.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -260,6 +262,51 @@ class BookmarksDaoImpl @Inject constructor(
     }
   }
 
+  override suspend fun removeBookmarksForPage(page: Int) {
+    val removed = withContext(Dispatchers.IO) {
+      val quranInfo = quranInfoProvider()
+      val bookmarksToRemove = bookmarksRepository.getAllBookmarks()
+        .filter { bookmark ->
+          quranInfo.getPageFromSuraAyah(bookmark.sura, bookmark.ayah) == page
+        }
+      bookmarksToRemove.forEach { bookmark ->
+        removeAllTagsFromBookmark(bookmark)
+        bookmarksRepository.deleteBookmark(bookmark.sura, bookmark.ayah)
+      }
+      bookmarksToRemove.isNotEmpty()
+    }
+    if (removed) {
+      localDataChangeNotifier.notifyLocalDataChanged()
+    }
+  }
+
+  override suspend fun replaceAyahBookmarks(bookmarks: List<Bookmark>) {
+    val replaced = withContext(Dispatchers.IO) {
+      val quranInfo = quranInfoProvider()
+      val ayahBookmarks = bookmarks.normalizedAyahBookmarks(quranInfo)
+      bookmarksRepository.getAllBookmarks().forEach { bookmark ->
+        removeAllTagsFromBookmark(bookmark)
+        bookmarksRepository.deleteBookmark(bookmark.sura, bookmark.ayah)
+      }
+      val collectionsById = collectionsById()
+      ayahBookmarks.forEach { bookmark ->
+        val sura = bookmark.sura ?: return@forEach
+        val ayah = bookmark.ayah ?: return@forEach
+        val timestamp = bookmark.timestamp.toPlatformDateTime()
+        val ayahBookmark = bookmarksRepository.addBookmark(sura, ayah, timestamp)
+        bookmark.tags.forEach { tagId ->
+          collectionsById[tagId]?.let { collection ->
+            collectionBookmarksRepository.addBookmarkToCollection(collection.localId, ayahBookmark, timestamp)
+          }
+        }
+      }
+      true
+    }
+    if (replaced) {
+      localDataChangeNotifier.notifyLocalDataChanged()
+    }
+  }
+
   override suspend fun isSuraAyahBookmarked(suraAyah: SuraAyah): Boolean {
     return withContext(Dispatchers.IO) {
       bookmarkForSuraAyah(suraAyah) != null
@@ -410,6 +457,24 @@ class BookmarksDaoImpl @Inject constructor(
       }
   }
 
+  private fun List<Bookmark>.normalizedAyahBookmarks(quranInfo: QuranInfo): List<Bookmark> {
+    return filter { bookmark ->
+      val sura = bookmark.sura
+      val ayah = bookmark.ayah
+      sura != null &&
+        sura in 1..QURAN_SURA_COUNT &&
+        ayah != null &&
+        ayah in 1..quranInfo.getNumberOfAyahs(sura)
+    }
+      .groupBy { bookmark -> SuraAyah(bookmark.sura!!, bookmark.ayah!!) }
+      .map { (_, bookmarks) ->
+        val latestBookmark = bookmarks.maxBy { bookmark -> bookmark.timestamp }
+        latestBookmark.copy(
+          tags = bookmarks.flatMap { bookmark -> bookmark.tags }.distinct()
+        )
+      }
+  }
+
   private fun toBookmark(bookmark: AyahBookmark, tagIds: List<Long>): Bookmark {
     val timestampSeconds = bookmark.lastUpdated.fromPlatform().toEpochMilliseconds() / 1000
     val page = quranInfoProvider().getPageFromSuraAyah(bookmark.sura, bookmark.ayah)
@@ -433,5 +498,13 @@ class BookmarksDaoImpl @Inject constructor(
         bookmarks.sortedWith(compareBy<Bookmark> { it.page }.thenBy { it.sura }.thenBy { it.ayah })
       else -> bookmarks.sortedByDescending { it.timestamp }
     }
+  }
+
+  private fun Long.toPlatformDateTime(): PlatformDateTime {
+    return Instant.fromEpochSeconds(this).toPlatform()
+  }
+
+  private companion object {
+    private const val QURAN_SURA_COUNT = 114
   }
 }

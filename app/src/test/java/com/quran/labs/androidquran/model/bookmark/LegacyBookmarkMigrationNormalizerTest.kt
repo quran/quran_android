@@ -55,7 +55,7 @@ class LegacyBookmarkMigrationNormalizerTest {
     assertThat(data.bookmarks).hasSize(1)
     assertThat(data.bookmarks.single().sura).isEqualTo(pageBounds[0])
     assertThat(data.bookmarks.single().ayah).isEqualTo(pageBounds[1])
-    assertThat(data.bookmarks.single().timestampSeconds).isEqualTo(1000L)
+    assertThat(data.bookmarks.single().timestampMillis).isEqualTo(1_000_000L)
     assertThat(data.collections.map { collection -> collection.name })
       .containsExactly("Reading", oldPageBookmarksName)
       .inOrder()
@@ -82,10 +82,10 @@ class LegacyBookmarkMigrationNormalizerTest {
     assertThat(data.bookmarks).hasSize(1)
     assertThat(data.bookmarks.single().sura).isEqualTo(pageBounds[0])
     assertThat(data.bookmarks.single().ayah).isEqualTo(pageBounds[1])
-    assertThat(data.bookmarks.single().timestampSeconds).isEqualTo(1000L)
+    assertThat(data.bookmarks.single().timestampMillis).isEqualTo(1_000_000L)
     assertThat(data.collections.map { collection -> collection.name })
       .containsExactly(context.getString(R.string.old_page_bookmarks))
-    assertThat(data.collectionBookmarks.single().timestampSeconds).isEqualTo(2000L)
+    assertThat(data.collectionBookmarks.single().timestampMillis).isEqualTo(2_000_000L)
   }
 
   @Test
@@ -107,8 +107,29 @@ class LegacyBookmarkMigrationNormalizerTest {
         secondPageBounds[0] to secondPageBounds[1]
       )
       .inOrder()
-    assertThat(data.readingSessions.map { session -> session.timestampSeconds })
-      .containsExactly(1000L, 900L)
+    assertThat(data.readingSessions.map { session -> session.timestampMillis })
+      .containsExactly(1_000_000L, 900_000L)
       .inOrder()
+  }
+
+  @Test
+  fun `legacy millisecond timestamps remain milliseconds`() {
+    val timestampMillis = 1_700_000_001_234L
+    val page = 50
+
+    val data = normalizer.normalize(
+      LegacyBookmarksSnapshot(
+        tags = listOf(LegacyBookmarkTag(10L, "Reading", timestampMillis)),
+        bookmarks = listOf(
+          Bookmark(1L, 2, 255, page, timestampMillis, tags = listOf(10L))
+        ),
+        recentPages = listOf(RecentPage(page, timestampMillis))
+      )
+    )
+
+    assertThat(data.collections.single().timestampMillis).isEqualTo(timestampMillis)
+    assertThat(data.bookmarks.single().timestampMillis).isEqualTo(timestampMillis)
+    assertThat(data.collectionBookmarks.single().timestampMillis).isEqualTo(timestampMillis)
+    assertThat(data.readingSessions.single().timestampMillis).isEqualTo(timestampMillis)
   }
 }
