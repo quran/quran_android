@@ -2,7 +2,9 @@ package com.quran.labs.androidquran.model.bookmark
 
 import com.quran.data.di.AppScope
 import com.quran.labs.androidquran.util.QuranSettings
-import com.quran.mobile.bookmark.migration.MobileSyncMigrationImporter
+import com.quran.mobile.bookmark.importdata.MobileSyncImporter
+import com.quran.mobile.bookmark.migration.LegacyBookmarkMigrationNormalizer
+import com.quran.mobile.bookmark.migration.LegacyBookmarksDataSource
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
@@ -17,7 +19,7 @@ class LegacyBookmarksMigrator @Inject constructor(
   private val quranSettings: QuranSettings,
   private val legacyBookmarksDataSource: LegacyBookmarksDataSource,
   private val normalizer: LegacyBookmarkMigrationNormalizer,
-  private val mobileSyncMigrationImporter: MobileSyncMigrationImporter
+  private val mobileSyncImporter: MobileSyncImporter
 ) {
   private val migrationMutex = Mutex()
 
@@ -40,7 +42,7 @@ class LegacyBookmarksMigrator @Inject constructor(
         if (!snapshot.isEmpty()) {
           val migrationData = normalizer.normalize(snapshot)
           if (!migrationData.isEmpty()) {
-            mobileSyncMigrationImporter.importData(migrationData)
+            mobileSyncImporter.importData(migrationData, deleteExisting = false)
           }
         }
 

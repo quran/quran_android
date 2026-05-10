@@ -12,11 +12,13 @@ import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
 import com.quran.mobile.bookmark.sync.LocalDataChangeNotifier
 import com.quran.mobile.bookmark.sync.notifyLocalDataChanged
+import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
 import com.quran.shared.persistence.model.AyahBookmark
 import com.quran.shared.persistence.model.CollectionAyahBookmark
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepository
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepository
 import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepository
+import com.quran.shared.persistence.util.PlatformDateTime
 import com.quran.shared.persistence.util.fromPlatform
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
@@ -42,6 +44,7 @@ class BookmarksDaoImpl @Inject constructor(
   private val collectionsRepository: CollectionsRepository,
   private val collectionBookmarksRepository: CollectionBookmarksRepository,
   private val localDataChangeNotifier: LocalDataChangeNotifier,
+  private val timestampProvider: MobileSyncTimestampProvider,
   appCoroutineScope: AppCoroutineScope
 ) : BookmarksDao {
   private val bookmarksState: StateFlow<List<AyahBookmark>?> =
@@ -119,16 +122,18 @@ class BookmarksDaoImpl @Inject constructor(
   }
 
   override suspend fun addTag(name: String): Long {
+    val timestamp = timestampProvider.now()
     val tagId = withContext(Dispatchers.IO) {
-      collectionsRepository.addCollection(name).localId.toLong()
+      collectionsRepository.addCollection(name, timestamp).localId.toLong()
     }
     localDataChangeNotifier.notifyLocalDataChanged()
     return tagId
   }
 
   override suspend fun updateTag(tag: Tag): Boolean {
+    val timestamp = timestampProvider.now()
     val updated = withContext(Dispatchers.IO) {
-      collectionsRepository.updateCollection(tag.id.toString(), tag.name)
+      collectionsRepository.updateCollection(tag.id.toString(), tag.name, timestamp)
       true
     }
     if (updated) {
@@ -166,6 +171,7 @@ class BookmarksDaoImpl @Inject constructor(
     tagIds: Set<Long>,
     deleteNonTagged: Boolean
   ): Boolean {
+    val timestamp = timestampProvider.now()
     val updated = withContext(Dispatchers.IO) {
       val collectionsById = collectionsById()
       val bookmarksById = bookmarksRepository.getAllBookmarks()
@@ -176,7 +182,8 @@ class BookmarksDaoImpl @Inject constructor(
         .distinct()
         .forEach { bookmarkId ->
           val bookmark = bookmarksById[bookmarkId] ?: return@forEach
-          didWrite = updateBookmarkTagsInternal(bookmark, tagIds, deleteNonTagged, collectionsById) || didWrite
+          didWrite = updateBookmarkTagsInternal(bookmark, tagIds, deleteNonTagged, collectionsById, timestamp) ||
+            didWrite
         }
       didWrite
     }
@@ -192,19 +199,21 @@ class BookmarksDaoImpl @Inject constructor(
     tagIds: Set<Long>,
     deleteNonTagged: Boolean
   ): Boolean {
+    val timestamp = timestampProvider.now()
     val updated = withContext(Dispatchers.IO) {
       val collectionsById = collectionsById()
       val targetTagIds = tagIds.filter { tagId -> tagId > 0 && collectionsById.containsKey(tagId) }.toSet()
       val existingBookmark = bookmarkForSuraAyah(suraAyah)
       if (existingBookmark != null) {
-        updateBookmarkTagsInternal(existingBookmark, targetTagIds, deleteNonTagged, collectionsById)
+        updateBookmarkTagsInternal(existingBookmark, targetTagIds, deleteNonTagged, collectionsById, timestamp)
       } else if (targetTagIds.isNotEmpty()) {
         targetTagIds.forEach { tagId ->
           val collection = collectionsById[tagId] ?: return@forEach
           collectionBookmarksRepository.addAyahBookmarkToCollection(
             collectionLocalId = collection.localId,
             sura = suraAyah.sura,
-            ayah = suraAyah.ayah
+            ayah = suraAyah.ayah,
+            timestamp = timestamp
           )
         }
         true
@@ -258,6 +267,7 @@ class BookmarksDaoImpl @Inject constructor(
   }
 
   override suspend fun toggleAyahBookmark(suraAyah: SuraAyah, page: Int): Boolean {
+    val timestamp = timestampProvider.now()
     val bookmarked = withContext(Dispatchers.IO) {
       val existingBookmark = bookmarkForSuraAyah(suraAyah)
       if (existingBookmark != null) {
@@ -265,7 +275,7 @@ class BookmarksDaoImpl @Inject constructor(
         bookmarksRepository.deleteBookmark(suraAyah.sura, suraAyah.ayah)
         false
       } else {
-        bookmarksRepository.addBookmark(suraAyah.sura, suraAyah.ayah)
+        bookmarksRepository.addBookmark(suraAyah.sura, suraAyah.ayah, timestamp)
         true
       }
     }
@@ -277,7 +287,8 @@ class BookmarksDaoImpl @Inject constructor(
     bookmark: AyahBookmark,
     tagIds: Set<Long>,
     deleteNonTagged: Boolean,
-    collectionsById: Map<Long, SyncCollection>
+    collectionsById: Map<Long, SyncCollection>,
+    timestamp: PlatformDateTime
   ): Boolean {
     val currentTagIds = tagIdsForBookmark(bookmark.localId).toSet()
     val targetTagIds = tagIds.filter { tagId -> tagId > 0 && collectionsById.containsKey(tagId) }.toSet()
@@ -294,7 +305,7 @@ class BookmarksDaoImpl @Inject constructor(
 
     (targetTagIds - currentTagIds).forEach { tagId ->
       collectionsById[tagId]?.let { collection ->
-        collectionBookmarksRepository.addBookmarkToCollection(collection.localId, bookmark)
+        collectionBookmarksRepository.addBookmarkToCollection(collection.localId, bookmark, timestamp)
         didWrite = true
       }
     }
