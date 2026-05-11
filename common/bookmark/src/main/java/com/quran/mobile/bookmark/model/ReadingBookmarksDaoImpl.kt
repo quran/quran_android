@@ -3,7 +3,6 @@
 package com.quran.mobile.bookmark.model
 
 import com.quran.data.dao.ReadingBookmarksDao
-import com.quran.data.di.AppCoroutineScope
 import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
@@ -18,41 +17,43 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import com.quran.shared.persistence.model.AyahReadingBookmark as SyncAyahReadingBookmark
 import com.quran.shared.persistence.model.PageReadingBookmark as SyncPageReadingBookmark
 import com.quran.shared.persistence.model.ReadingBookmark as SyncReadingBookmark
 
+/**
+ * Reading bookmark DAO backed by mobile-sync persistence.
+ *
+ * Page bookmarks are stored in canonical page coordinates and mapped to the current page type before they
+ * are returned to app callers.
+ *
+ * @param pageMapper maps between current UI page coordinates and canonical storage page coordinates.
+ * @param readingBookmarksRepository mobile-sync repository that owns persisted reading bookmark rows.
+ * @param localDataChangeNotifier notifies sync when this device changes reading bookmark data.
+ * @param timestampProvider provides the timestamp assigned to locally written bookmarks.
+ */
 @SingleIn(AppScope::class)
 class ReadingBookmarksDaoImpl @Inject constructor(
   private val pageMapper: ReadingBookmarkPageMapper,
   private val readingBookmarksRepository: ReadingBookmarksRepository,
   private val localDataChangeNotifier: LocalDataChangeNotifier,
-  private val timestampProvider: MobileSyncTimestampProvider,
-  appCoroutineScope: AppCoroutineScope
+  private val timestampProvider: MobileSyncTimestampProvider
 ) : ReadingBookmarksDao {
-  private val readingBookmarkState: StateFlow<ReadingBookmarkState> =
-    combine(
+  override fun readingBookmarkFlow(): Flow<ReadingBookmark?> {
+    // Keep this flow cold so new collectors start from the repository's current value instead of a
+    // previously cached null. The IO dispatcher preserves the old off-main mapping behavior.
+    return combine(
       readingBookmarksRepository.getReadingBookmarkFlow(),
       pageMapper.pageTypeFlow()
     ) { bookmark, pageType ->
-      ReadingBookmarkState.Loaded(toReadingBookmark(bookmark, pageType))
+      toReadingBookmark(bookmark, pageType)
     }
       .distinctUntilChanged()
-      .stateIn(appCoroutineScope, SharingStarted.Eagerly, ReadingBookmarkState.Loading)
-
-  override fun readingBookmarkFlow(): Flow<ReadingBookmark?> {
-    return readingBookmarkState
-      .filterIsInstance<ReadingBookmarkState.Loaded>()
-      .map { state -> state.bookmark }
-      .distinctUntilChanged()
+      .flowOn(Dispatchers.IO)
   }
 
   override suspend fun readingBookmark(): ReadingBookmark? {
@@ -141,10 +142,5 @@ class ReadingBookmarksDaoImpl @Inject constructor(
       )
       null -> null
     }
-  }
-
-  private sealed interface ReadingBookmarkState {
-    data object Loading : ReadingBookmarkState
-    data class Loaded(val bookmark: ReadingBookmark?) : ReadingBookmarkState
   }
 }
