@@ -5,7 +5,6 @@ import android.content.Context
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.Settings
-import com.quran.data.di.AppCoroutineScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
@@ -21,11 +20,9 @@ import com.quran.mobile.bookmark.sync.FakeLocalDataChangeNotifier
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.model.PageReadingBookmark as SyncPageReadingBookmark
 import com.quran.shared.persistence.repository.readingbookmark.repository.ReadingBookmarksRepositoryImpl
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -38,7 +35,6 @@ class ReadingBookmarksDaoImplTest {
   private lateinit var repository: ReadingBookmarksRepositoryImpl
   private lateinit var quranInfo: QuranInfo
   private lateinit var dao: ReadingBookmarksDaoImpl
-  private lateinit var appCoroutineScope: AppCoroutineScope
   private lateinit var pageMapper: ReadingBookmarkPageMapper
   private lateinit var settings: FakeSettings
   private lateinit var localDataChangeNotifier: FakeLocalDataChangeNotifier
@@ -52,7 +48,6 @@ class ReadingBookmarksDaoImplTest {
     repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database)
     quranInfo = QuranInfo(MadaniDataSource())
     settings = FakeSettings()
-    appCoroutineScope = AppCoroutineScope()
     localDataChangeNotifier = FakeLocalDataChangeNotifier()
     timestampProvider = FakeMobileSyncTimestampProvider()
     pageMapper = ReadingBookmarkPageMapper(
@@ -67,16 +62,8 @@ class ReadingBookmarksDaoImplTest {
       pageMapper = pageMapper,
       readingBookmarksRepository = repository,
       localDataChangeNotifier = localDataChangeNotifier,
-      timestampProvider = timestampProvider,
-      appCoroutineScope = appCoroutineScope
+      timestampProvider = timestampProvider
     )
-  }
-
-  @After
-  fun tearDown() {
-    if (::appCoroutineScope.isInitialized) {
-      appCoroutineScope.cancel()
-    }
   }
 
   @Test
