@@ -2,6 +2,9 @@ package com.quran.labs.androidquran.feature.reading.presenter
 
 import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.model.bookmark.RecentPageModel
+import android.content.Context
+import android.content.Intent
+import com.quran.labs.androidquran.ReadingHistoryActivity
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
@@ -38,6 +41,11 @@ class RecentPagePresenter @Inject constructor(private val model: RecentPageModel
   fun onJump() {
     saveAndReset()
   }
+
+fun openHistory(context: Context) {
+    val intent = Intent(context, ReadingHistoryActivity::class.java)
+    context.startActivity(intent)
+}
 
   fun bind(pageFlow: Flow<Int>) {
     recentPage = RecentPage.NoPage

@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS reading_history(
+  _ID INTEGER PRIMARY KEY AUTOINCREMENT,
+  page INTEGER AS Int NOT NULL,
+  visited_date INTEGER DEFAULT (strftime('%s', 'now')) NOT NULL
+);
+
+addReadingHistory:
+  INSERT INTO reading_history(page) VALUES(?);
+
+getReadingHistory:
+  SELECT _ID, page, visited_date 
+  FROM reading_history 
+  ORDER BY visited_date DESC;
+
+deleteAllHistory:
+  DELETE FROM reading_history;
