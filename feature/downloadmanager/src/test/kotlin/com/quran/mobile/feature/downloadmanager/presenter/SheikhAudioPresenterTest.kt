@@ -510,7 +510,7 @@ class SheikhAudioPresenterTest {
       awaitItem() // initial
 
       presenter.onDownloadRange(1, listOf(1, 2, 3), true)
-      awaitItem() // DownloadStatus dialog
+      awaitItem() // TODO potential bug: dialog stays in DownloadStatus
 
       assertThat(fakeDownloader.downloadCompleteSurasCalls).isEmpty()
       assertThat(fakeDownloader.downloadAudioDatabaseCalls).isEmpty()
@@ -529,7 +529,7 @@ class SheikhAudioPresenterTest {
       awaitItem() // initial
 
       presenter.onDownloadRange(99, listOf(1, 2), false)
-      awaitItem() // DownloadStatus dialog
+      awaitItem() // TODO potential bug: dialog stays in DownloadStatus
 
       assertThat(fakeDownloader.downloadCompleteSurasCalls).isEmpty()
       assertThat(fakeDownloader.downloadAudioDatabaseCalls).isEmpty()
@@ -880,7 +880,7 @@ class SheikhAudioPresenterTest {
       awaitItem() // initial
 
       presenter.onDownloadRange(1, listOf(1, 2, 3), false)
-      awaitItem() // DownloadStatus dialog
+      awaitItem() // TODO potential bug: dialog stays in DownloadStatus
 
       assertThat(fakeDownloader.downloadCompleteSurasCalls).isEmpty()
       assertThat(fakeDownloader.downloadAudioDatabaseCalls).isEmpty()

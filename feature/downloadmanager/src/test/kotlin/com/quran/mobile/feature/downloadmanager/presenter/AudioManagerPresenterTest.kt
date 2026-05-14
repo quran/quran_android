@@ -18,17 +18,11 @@ class AudioManagerPresenterTest {
   private fun makeGaplessQari(id: Int, db: String = "db_$id") =
     Qari(id, 0, "url/$id", path = "path/$id", hasGaplessAlternative = false, db = db)
 
-  private fun makeGappedQari(id: Int) =
-    Qari(id, 0, "url/$id", path = "path/$id", hasGaplessAlternative = false)
-
   private fun qariToItem(qari: Qari, name: String) =
     QariItem(qari.id, name, qari.url, path = qari.path, hasGaplessAlternative = qari.hasGaplessAlternative, db = qari.db)
 
   private fun makeGaplessInfo(qari: Qari, fullyDownloaded: List<Int>) =
     QariDownloadInfo.GaplessQariDownloadInfo(qari, fullyDownloaded, emptyList())
-
-  private fun makeGappedInfo(qari: Qari, fullyDownloaded: List<Int>) =
-    QariDownloadInfo.GappedQariDownloadInfo(qari, fullyDownloaded, emptyList())
 
   private val defaultLambda: (Qari) -> QariItem = { qari ->
     qariToItem(qari, "Qari ${qari.id}")
