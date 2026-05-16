@@ -2,24 +2,19 @@ package com.quran.labs.androidquran.service
 
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.net.Uri
-import android.os.Build
 import android.os.Handler
-import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
-import androidx.media.session.MediaButtonReceiver
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -136,8 +131,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
 
 
   private lateinit var notificationManager: NotificationManager
-  private lateinit var mediaSession: MediaSessionCompat
-
   private var notificationBuilder: NotificationCompat.Builder? = null
   private var pausedNotificationBuilder: NotificationCompat.Builder? = null
   private var didSetNotificationIconOnNotificationBuilder = false
@@ -170,9 +163,9 @@ class AudioService : MediaLibraryService(), Player.Listener {
   @Inject
   lateinit var timingRepository: TimingRepository
 
-<<<<<<< HEAD
   @Inject
   lateinit var quranSettings: QuranSettings
+
   /**
    * Makes sure the ExoPlayer exists and has been reset. This will make
    * the ExoPlayer if needed, or reset the existing player if one
@@ -208,6 +201,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
         .setWakeMode(C.WAKE_MODE_NETWORK)
         .build()
       player = localPlayer
+      mediaLibrarySession?.setPlayer(localPlayer)
 
       // Set up listener for playback events
       localPlayer.addListener(this)
@@ -219,7 +213,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
         .build()
       localPlayer.setAudioAttributes(audioAttributes, true)
 
-      mediaSession.isActive = true
       localPlayer
     } else {
       Timber.d("resetting player...")
@@ -276,9 +269,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
       appContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
 
-    val receiver = ComponentName(this, MediaButtonReceiver::class.java)
-    mediaSession = MediaSessionCompat(appContext, "QuranMediaSession", receiver, null)
-    mediaSession.setCallback(MediaSessionCallback(), null)
     val channelName = getString(R.string.notification_channel_audio)
     setupNotificationChannel(
       notificationManager, NOTIFICATION_CHANNEL_ID, channelName
@@ -314,27 +304,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
 
   override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? = mediaLibrarySession
 
-  private inner class MediaSessionCallback : MediaSessionCompat.Callback() {
-    override fun onPlay() {
-      processPlayRequest()
-    }
-
-    override fun onSkipToNext() {
-      processSkipRequest()
-    }
-
-    override fun onSkipToPrevious() {
-      processRewindRequest()
-    }
-
-    override fun onPause() {
-      processPauseRequest()
-    }
-
-    override fun onStop() {
-      processStopRequest()
-    }
-  }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     if (intent == null) {
@@ -400,8 +369,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
         audioRequest = playInfo
         updateAudioPlaybackStatus()
       }
-    } else {
-      MediaButtonReceiver.handleIntent(mediaSession, intent)
     }
   }
 
@@ -458,7 +425,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
       val ayah = localAudioQueue.getCurrentAyah()
       val maxAyahs = quranInfo.getNumberOfAyahs(sura)
 
-      setState(PlaybackStateCompat.STATE_PLAYING)
       val pos = localPlayer.currentPosition
       val currentAyahTime = gaplessSuraData.ayahTimings[ayah]
 
@@ -642,7 +608,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
       state = State.Paused
       stopUpdateAudioPositionJob()
       player?.pause()
-      setState(PlaybackStateCompat.STATE_PAUSED)
       // on jellybean and above, stay in the foreground and
       // update the notification.
       relaxResources(releaseExoPlayer = false, stopForeground = false)
@@ -651,7 +616,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
     } else if (State.Stopped == state) {
       // if we get a pause while we're already stopped, it means we likely woke up because
       // of AudioIntentReceiver, so just stop in this case.
-      setState(PlaybackStateCompat.STATE_STOPPED)
       updateAudioPlaybackStatus()
       stopSelf()
     }
@@ -659,7 +623,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
 
   private fun processRewindRequest() {
     if (State.Playing == state || State.Paused == state) {
-      setState(PlaybackStateCompat.STATE_REWINDING)
       val localPlayer = player ?: return
       val localAudioQueue = audioQueue ?: return
       val localAudioRequest = audioRequest ?: return
@@ -703,7 +666,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
       return
     }
     if (State.Playing == state || State.Paused == state) {
-      setState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT)
       if (playerOverride) {
         playAudio(false)
       } else {
@@ -728,7 +690,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
   }
 
   private fun processStopRequest(force: Boolean = false) {
-    setState(PlaybackStateCompat.STATE_STOPPED)
     stopUpdateAudioPositionJob()
     currentWord = null
     if (State.Preparing == state) {
@@ -743,7 +704,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
       relaxResources(releaseExoPlayer = true, stopForeground = true)
 
       // service is no longer necessary. Will be started again if needed.
-      stopUpdateAudioPositionJob()
       stopSelf()
     }
   }
@@ -751,25 +711,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
   private fun notifyAyahChanged() {
     val localAudioRequest = audioRequest ?: return
     updateAudioPlaybackStatus()
-
-    val metadataBuilder = MediaMetadataCompat.Builder()
-      .putString(MediaMetadataCompat.METADATA_KEY_TITLE, getTitle())
-      .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, localAudioRequest.qari.name)
-    val localPlayer = player
-    if (localPlayer?.isPlaying == true) {
-      metadataBuilder.putLong(
-        MediaMetadataCompat.METADATA_KEY_DURATION,
-        localPlayer.duration
-      )
-    }
-
-    if (displayIcon != null) {
-      metadataBuilder.putBitmap(
-        MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON,
-        displayIcon
-      )
-    }
-    mediaSession.setMetadata(metadataBuilder.build())
   }
 
   private fun updateAudioPlaybackStatus() {
@@ -824,7 +765,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
         // nothing to do here  ¯\_(ツ)_/¯
       }
       player = null
-      mediaSession.isActive = false
     }
 
   }
@@ -936,7 +876,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
       Timber.d("okay, we are preparing to play - streaming is: %b", isStreaming)
 
       val localPlayer = makeOrResetExoPlayer()
-      setState(PlaybackStateCompat.STATE_CONNECTING)
       try {
         val mediaUri = if (overrideResource != 0) {
           // For raw resources, we need to create a URI pointing to the resource
@@ -975,57 +914,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
     }
   }
 
-  private fun setState(state: Int) {
-    var position: Long = 0
-    val localPlayer = player
-    if (localPlayer != null && localPlayer.isPlaying) {
-      position = localPlayer.currentPosition
-    }
-    val builder = PlaybackStateCompat.Builder()
-    builder.setState(state, position, 1.0f)
-
-    val actions = when (state) {
-      PlaybackStateCompat.STATE_PLAYING -> {
-        PlaybackStateCompat.ACTION_PAUSE or
-            PlaybackStateCompat.ACTION_STOP or
-            PlaybackStateCompat.ACTION_REWIND or
-            PlaybackStateCompat.ACTION_FAST_FORWARD or
-            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
-            PlaybackStateCompat.ACTION_SKIP_TO_NEXT
-      }
-      PlaybackStateCompat.STATE_PAUSED -> {
-        PlaybackStateCompat.ACTION_PLAY or
-            PlaybackStateCompat.ACTION_STOP or
-            PlaybackStateCompat.ACTION_REWIND or
-            PlaybackStateCompat.ACTION_FAST_FORWARD or
-            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
-            PlaybackStateCompat.ACTION_SKIP_TO_NEXT
-      }
-      PlaybackStateCompat.STATE_STOPPED -> {
-        PlaybackStateCompat.ACTION_PLAY
-      }
-      PlaybackStateCompat.STATE_CONNECTING -> {
-        PlaybackStateCompat.ACTION_STOP
-      }
-      PlaybackStateCompat.STATE_REWINDING -> {
-        PlaybackStateCompat.ACTION_STOP or
-            PlaybackStateCompat.ACTION_REWIND or
-            PlaybackStateCompat.ACTION_FAST_FORWARD or
-            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
-            PlaybackStateCompat.ACTION_SKIP_TO_NEXT
-      }
-      PlaybackStateCompat.STATE_SKIPPING_TO_NEXT -> {
-        PlaybackStateCompat.ACTION_STOP or
-            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS or
-            PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
-            PlaybackStateCompat.ACTION_FAST_FORWARD or
-            PlaybackStateCompat.ACTION_REWIND
-      }
-      else -> { PlaybackStateCompat.ACTION_STOP }
-    }
-    builder.setActions(actions)
-    mediaSession.setPlaybackState(builder.build())
-  }
 
   override fun onPlaybackStateChanged(playbackState: Int) {
     when (playbackState) {
@@ -1047,7 +935,11 @@ class AudioService : MediaLibraryService(), Player.Listener {
         Timber.d("Player idle")
         if (state != State.Stopped) {
           state = State.Stopped
+          stopUpdateAudioPositionJob()
+          currentWord = null
           updateAudioPlaybackStatus()
+          relaxResources(releaseExoPlayer = true, stopForeground = true)
+          stopSelf()
         }
       }
     }
@@ -1072,9 +964,16 @@ class AudioService : MediaLibraryService(), Player.Listener {
     if (isPlaying && state == State.Paused) {
       state = State.Playing
       updateAudioPlaybackStatus()
+      // Restart position updates for gapless audio in case we were paused
+      // by audio focus loss or an external controller
+      if (audioRequest?.isGapless() == true && !playerOverride) {
+        startUpdateAudioPositionJob(200)
+      }
     } else if (!isPlaying && state == State.Playing) {
-      // Handle automatic pause (audio focus loss, etc.)
+      // Handle automatic pause (audio focus loss, external controller, etc.)
       state = State.Paused
+      stopUpdateAudioPositionJob()
+      pauseNotification()
       updateAudioPlaybackStatus()
     }
   }
@@ -1209,6 +1108,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
    * (such as playing music), and must appear to the user as a notification.
    * That's why we create the notification here.
    */
+  @OptIn(UnstableApi::class)
   private fun setUpAsForeground() {
     // clear the "downloading complete" notification (if it exists)
     notificationManager.cancel(QuranDownloadNotifier.DOWNLOADING_COMPLETE_NOTIFICATION)
@@ -1249,7 +1149,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
         .setStyle(
           androidx.media.app.NotificationCompat.MediaStyle()
             .setShowActionsInCompactView(0, 1, 2)
-            .setMediaSession(mediaSession.sessionToken)
+            .setMediaSession(MediaSessionCompat.Token.fromToken(mediaLibrarySession!!.platformToken))
         )
       didSetNotificationIconOnNotificationBuilder = icon != null
       notificationBuilder = builder
@@ -1264,6 +1164,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
     isSetupAsForeground = true
   }
 
+  @OptIn(UnstableApi::class)
   private fun getPausedNotificationBuilder(): NotificationCompat.Builder {
     val appContext = applicationContext
 
@@ -1296,7 +1197,7 @@ class AudioService : MediaLibraryService(), Player.Listener {
         .setStyle(
           androidx.media.app.NotificationCompat.MediaStyle()
             .setShowActionsInCompactView(0, 1)
-            .setMediaSession(mediaSession.sessionToken)
+            .setMediaSession(MediaSessionCompat.Token.fromToken(mediaLibrarySession!!.platformToken))
         )
       pausedNotificationBuilder = builder
       builder
@@ -1337,7 +1238,6 @@ class AudioService : MediaLibraryService(), Player.Listener {
     compositeDisposable.clear()
     state = State.Stopped
     relaxResources(true, true)
-    mediaSession.release()
     timingRepository.clear()
     scope.cancel()
     mediaLibrarySession?.release()
