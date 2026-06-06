@@ -5,7 +5,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 
 fun CommonExtension.applyAndroidCommon(project: Project) {
-  compileSdk = 36
+  compileSdk = 37
   defaultConfig.minSdk = 23
 
   compileOptions.apply {
