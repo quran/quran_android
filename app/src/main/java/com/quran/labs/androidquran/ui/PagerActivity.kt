@@ -441,13 +441,13 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     translationsSpinner = findViewById(R.id.spinner)
     overlay = findViewById(R.id.overlay)
 
-    // The menu toolbar now lives at the bottom of the screen, so it needs to clear
-    // the navigation bar / display cutout at the bottom instead of the status bar.
-    ViewCompat.setOnApplyWindowInsetsListener(toolBarArea) { view, windowInsets ->
+    // The menu toolbar and audio bar live at the bottom of the screen, so the
+    // container needs to clear the navigation bar / cutout and the keyboard.
+    ViewCompat.setOnApplyWindowInsetsListener(bottomBarArea) { view, windowInsets ->
       val insets = windowInsets.getInsets(
-        WindowInsetsCompat.Type.statusBars() or
+        WindowInsetsCompat.Type.systemBars() or
             WindowInsetsCompat.Type.displayCutout() or
-            WindowInsetsCompat.Type.navigationBars()
+            WindowInsetsCompat.Type.ime()
       )
       view.updatePadding(insets.left, 0, insets.right, insets.bottom)
       windowInsets
