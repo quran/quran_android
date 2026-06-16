@@ -179,6 +179,17 @@ class QuranActivity : AppCompatActivity(),
     pager.adapter = pagerAdapter
 
     val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
+    // Material BottomNavigationView applies a default elevation that casts a shadow onto
+    // the action toolbar below; force a flat surface for both bottom chrome bars.
+    listOf(
+      findViewById<View>(R.id.bottom_chrome),
+      bottomNav,
+      findViewById(R.id.toolbar_area),
+      findViewById<View>(R.id.toolbar),
+    ).forEach { view ->
+      ViewCompat.setElevation(view, 0f)
+      ViewCompat.setTranslationZ(view, 0f)
+    }
     // guards against the page-change -> nav-select -> page-change feedback loop
     var syncingNavSelection = false
     bottomNav.setOnItemSelectedListener { item ->
