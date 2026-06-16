@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+  <com.quran.labs.androidquran.view.QuranViewPager
+      android:id="@+id/index_pager"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1" />
+
   <LinearLayout
       android:id="@+id/toolbar_area"
       android:layout_width="match_parent"
@@ -23,12 +29,6 @@
         app:subtitleTextAppearance="@style/ToolbarSubtitleText"
         app:titleTextAppearance="@style/ToolbarTitleText" />
   </LinearLayout>
-
-  <com.quran.labs.androidquran.view.QuranViewPager
-      android:id="@+id/index_pager"
-      android:layout_width="match_parent"
-      android:layout_height="0dp"
-      android:layout_weight="1" />
 
   <com.google.android.material.bottomnavigation.BottomNavigationView
       android:id="@+id/bottom_nav"
