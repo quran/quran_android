@@ -37,8 +37,8 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="0dp"
-        android:theme="@style/ToolbarStyle"
-        app:popupTheme="@style/ThemeOverlay.AppCompat"
+        android:theme="@style/BottomNavTheme"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
         app:subtitleTextAppearance="@style/ToolbarSubtitleText"
         app:titleTextAppearance="@style/ToolbarTitleText" />
   </LinearLayout>
