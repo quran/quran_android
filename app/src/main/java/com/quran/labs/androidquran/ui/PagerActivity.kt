@@ -200,6 +200,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private lateinit var translationsSpinner: QuranSpinner
   private lateinit var overlay: FrameLayout
   private lateinit var toolBarArea: View
+  private lateinit var bottomBarArea: View
 
   private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
@@ -435,16 +436,19 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     audioStatusBar = findViewById(R.id.audio_area)
 
     toolBarArea = findViewById(R.id.toolbar_area)
+    bottomBarArea = findViewById(R.id.bottom_bar_area)
     translationsSpinner = findViewById(R.id.spinner)
     overlay = findViewById(R.id.overlay)
 
+    // The menu toolbar now lives at the bottom of the screen, so it needs to clear
+    // the navigation bar / display cutout at the bottom instead of the status bar.
     ViewCompat.setOnApplyWindowInsetsListener(toolBarArea) { view, windowInsets ->
       val insets = windowInsets.getInsets(
         WindowInsetsCompat.Type.statusBars() or
             WindowInsetsCompat.Type.displayCutout() or
             WindowInsetsCompat.Type.navigationBars()
       )
-      view.updatePadding(insets.left, insets.top, insets.right, 0)
+      view.updatePadding(insets.left, 0, insets.right, insets.bottom)
       windowInsets
     }
 
@@ -842,15 +846,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private fun animateToolBar(visible: Boolean) {
     isActionBarHidden = !visible
 
-    // animate toolbar
-    toolBarArea.animate()
-      .translationY((if (visible) 0 else -toolBarArea.height).toFloat())
-      .setDuration(250)
-      .start()
-
-    // and audio bar
-    audioStatusBar.animate()
-      .translationY((if (visible) 0 else audioStatusBar.height).toFloat())
+    // The menu toolbar and audio bar both live in a bottom container now, so they
+    // hide by sliding down off the bottom of the screen together.
+    bottomBarArea.animate()
+      .translationY((if (visible) 0 else bottomBarArea.height).toFloat())
       .setDuration(250)
       .start()
   }
