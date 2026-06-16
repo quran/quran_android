@@ -442,20 +442,20 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     translationsSpinner = findViewById(R.id.spinner)
     overlay = findViewById(R.id.overlay)
 
-    // The menu toolbar and audio bar live at the bottom of the screen; reserve
-    // navigation-bar space on the container and lift only the toolbar for IME.
-    ViewCompat.setOnApplyWindowInsetsListener(bottomBarArea) { view, windowInsets ->
-      val insets = windowInsets.getInsets(
+    // The menu toolbar is bottom-most and has a solid background, so apply the
+    // navigation-bar / cutout inset and IME lift here (not on the container).
+    ViewCompat.setOnApplyWindowInsetsListener(toolBarArea) { view, windowInsets ->
+      val systemBars = windowInsets.getInsets(
         WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
       )
-      view.updatePadding(insets.left, 0, insets.right, insets.bottom)
-      windowInsets
-    }
-    ViewCompat.setOnApplyWindowInsetsListener(toolBarArea) { view, windowInsets ->
-      val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
       val ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
       val keyboardOverlap = (ime.bottom - systemBars.bottom).coerceAtLeast(0)
-      view.updatePadding(0, 0, 0, keyboardOverlap)
+      view.updatePadding(
+        systemBars.left,
+        0,
+        systemBars.right,
+        systemBars.bottom + keyboardOverlap,
+      )
       windowInsets
     }
 
