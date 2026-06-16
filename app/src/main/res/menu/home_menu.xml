@@ -55,6 +55,10 @@
       android:title="@string/menu_jump"
       app:showAsAction="never" />
   <item
+      android:id="@+id/random_ayah"
+      android:title="@string/menu_random_ayah"
+      app:showAsAction="never" />
+  <item
       android:id="@+id/settings"
       android:icon="@drawable/ic_action_settings"
       android:title="@string/menu_settings"

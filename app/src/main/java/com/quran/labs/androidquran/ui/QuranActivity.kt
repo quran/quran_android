@@ -30,6 +30,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
+import com.quran.data.core.QuranInfo
 import com.quran.data.dao.RecentPagesDao
 import com.quran.data.model.Page
 import com.quran.data.model.SuraAyah
@@ -136,6 +137,8 @@ class QuranActivity : AppCompatActivity(),
   lateinit var quranIndexEventLogger: QuranIndexEventLogger
   @Inject
   lateinit var extraScreens: Set<@JvmSuppressWildcards ExtraScreenProvider>
+  @Inject
+  lateinit var quranInfo: QuranInfo
 
   private var jumpToPageOnResume: Int? = null
 
@@ -358,6 +361,9 @@ class QuranActivity : AppCompatActivity(),
       R.id.jump -> {
         gotoPageDialog()
       }
+      R.id.random_ayah -> {
+        jumpToRandomAyah()
+      }
       R.id.other_apps -> {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = "market://search?q=pub:quran.com".toUri()
@@ -475,6 +481,12 @@ class QuranActivity : AppCompatActivity(),
       Page(row.page)
     }
     quranNavigator.jumpTo(location, row.readingBookmarkType, settings.wasShowingTranslation)
+  }
+
+  private fun jumpToRandomAyah() {
+    val randomAyah = quranInfo.getRandomAyah()
+    val page = quranInfo.getPageFromSuraAyah(randomAyah.sura, randomAyah.ayah)
+    jumpToAndHighlight(page, randomAyah.sura, randomAyah.ayah)
   }
 
   private fun gotoPageDialog() {
