@@ -226,6 +226,18 @@ class QuranInfoTest {
   }
 
   @Test
+  fun testGetRandomAyah_isAlwaysAValidAyah() {
+    // run many iterations to exercise the randomness while asserting bounds
+    repeat(10_000) {
+      val randomAyah = quranInfo.getRandomAyah()
+      assertThat(randomAyah.sura).isAtLeast(1)
+      assertThat(randomAyah.sura).isAtMost(114)
+      assertThat(randomAyah.ayah).isAtLeast(1)
+      assertThat(randomAyah.ayah).isAtMost(quranInfo.getNumberOfAyahs(randomAyah.sura))
+    }
+  }
+
+  @Test
   fun testIsMakki() {
     // Al-Fatiha is Makki
     assertThat(quranInfo.isMakki(1)).isTrue()

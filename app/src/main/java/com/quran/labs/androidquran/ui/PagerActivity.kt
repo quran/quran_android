@@ -1214,6 +1214,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       val jumpDialog = JumpFragment()
       jumpDialog.show(fm, JumpFragment.TAG)
       return true
+    } else if (itemId == R.id.random_ayah) {
+      val randomAyah = quranInfo.getRandomAyah()
+      val page = quranInfo.getPageFromSuraAyah(randomAyah.sura, randomAyah.ayah)
+      jumpToAndHighlight(page, randomAyah.sura, randomAyah.ayah)
+      return true
     }
     return super.onOptionsItemSelected(item)
   }
