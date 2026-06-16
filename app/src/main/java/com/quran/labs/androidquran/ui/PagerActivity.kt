@@ -202,6 +202,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private lateinit var overlay: FrameLayout
   private lateinit var toolBarArea: View
   private lateinit var bottomBarArea: View
+  private var audioBarVisibleBeforeSearch = false
 
   private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
@@ -441,15 +442,20 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     translationsSpinner = findViewById(R.id.spinner)
     overlay = findViewById(R.id.overlay)
 
-    // The menu toolbar and audio bar live at the bottom of the screen, so the
-    // container needs to clear the navigation bar / cutout and the keyboard.
+    // The menu toolbar and audio bar live at the bottom of the screen; reserve
+    // navigation-bar space on the container and lift only the toolbar for IME.
     ViewCompat.setOnApplyWindowInsetsListener(bottomBarArea) { view, windowInsets ->
       val insets = windowInsets.getInsets(
-        WindowInsetsCompat.Type.systemBars() or
-            WindowInsetsCompat.Type.displayCutout() or
-            WindowInsetsCompat.Type.ime()
+        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
       )
       view.updatePadding(insets.left, 0, insets.right, insets.bottom)
+      windowInsets
+    }
+    ViewCompat.setOnApplyWindowInsetsListener(toolBarArea) { view, windowInsets ->
+      val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+      val ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
+      val keyboardOverlap = (ime.bottom - systemBars.bottom).coerceAtLeast(0)
+      view.updatePadding(0, 0, 0, keyboardOverlap)
       windowInsets
     }
 
@@ -1132,6 +1138,20 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     val inflater = menuInflater
     inflater.inflate(R.menu.quran_menu, menu)
     val item = menu.findItem(R.id.search)
+    item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+      override fun onMenuItemActionExpand(menuItem: MenuItem): Boolean {
+        audioBarVisibleBeforeSearch = audioStatusBar.visibility == View.VISIBLE
+        audioStatusBar.visibility = View.GONE
+        return true
+      }
+
+      override fun onMenuItemActionCollapse(menuItem: MenuItem): Boolean {
+        if (audioBarVisibleBeforeSearch) {
+          audioStatusBar.visibility = View.VISIBLE
+        }
+        return true
+      }
+    })
     val searchView = item.actionView as SearchView
     val searchManager = getSystemService(SEARCH_SERVICE) as SearchManager
     searchView.queryHint = getString(R.string.search_hint)
