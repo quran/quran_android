@@ -28,7 +28,18 @@
           app:showAsAction="never" />
     <item android:id="@+id/random_ayah"
           android:title="@string/menu_random_ayah"
-          app:showAsAction="never" />
+          app:showAsAction="never">
+      <menu>
+        <item android:id="@+id/random_ayah_whole"
+              android:title="@string/menu_random_ayah_whole" />
+        <item android:id="@+id/random_ayah_sura_range"
+              android:title="@string/menu_random_ayah_sura_range" />
+        <item android:id="@+id/random_ayah_ayah_range"
+              android:title="@string/menu_random_ayah_ayah_range" />
+        <item android:id="@+id/random_ayah_juz_range"
+              android:title="@string/menu_random_ayah_juz_range" />
+      </menu>
+    </item>
     <item android:id="@+id/settings"
           android:icon="@drawable/ic_action_settings"
           android:title="@string/menu_settings"

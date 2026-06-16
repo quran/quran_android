@@ -49,6 +49,7 @@ import com.quran.labs.androidquran.ui.fragment.AddTagDialog.Companion.newInstanc
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment
 import com.quran.labs.androidquran.ui.fragment.JumpFragment
 import com.quran.labs.androidquran.ui.fragment.JuzListFragment
+import com.quran.labs.androidquran.ui.fragment.RandomAyahRangeDialogFragment
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog.OnBookmarkTagsUpdateListener
@@ -355,8 +356,17 @@ class QuranActivity : AppCompatActivity(),
       R.id.jump -> {
         gotoPageDialog()
       }
-      R.id.random_ayah -> {
+      R.id.random_ayah_whole -> {
         jumpToRandomAyah()
+      }
+      R.id.random_ayah_sura_range -> {
+        showRandomAyahRangeDialog(RandomAyahRangeDialogFragment.Mode.SURA)
+      }
+      R.id.random_ayah_ayah_range -> {
+        showRandomAyahRangeDialog(RandomAyahRangeDialogFragment.Mode.AYAH)
+      }
+      R.id.random_ayah_juz_range -> {
+        showRandomAyahRangeDialog(RandomAyahRangeDialogFragment.Mode.JUZ)
       }
       R.id.other_apps -> {
         val intent = Intent(Intent.ACTION_VIEW)
@@ -480,6 +490,13 @@ class QuranActivity : AppCompatActivity(),
     val randomAyah = quranInfo.getRandomAyah()
     val page = quranInfo.getPageFromSuraAyah(randomAyah.sura, randomAyah.ayah)
     jumpToAndHighlight(page, randomAyah.sura, randomAyah.ayah)
+  }
+
+  private fun showRandomAyahRangeDialog(mode: RandomAyahRangeDialogFragment.Mode) {
+    if (!isPaused) {
+      RandomAyahRangeDialogFragment.newInstance(mode)
+          .show(supportFragmentManager, RandomAyahRangeDialogFragment.TAG)
+    }
   }
 
   private fun gotoPageDialog() {

@@ -238,6 +238,68 @@ class QuranInfoTest {
   }
 
   @Test
+  fun testGetJuzStart_knownBoundaries() {
+    // Juz' 1 starts at al-Fatiha 1:1
+    assertThat(quranInfo.getJuzStart(1)).isEqualTo(SuraAyah(1, 1))
+    // Juz' 30 starts at an-Naba' 78:1
+    assertThat(quranInfo.getJuzStart(30)).isEqualTo(SuraAyah(78, 1))
+  }
+
+  @Test
+  fun testGetRandomAyahInRange_withinSuraRange() {
+    val start = SuraAyah(2, 1)
+    val end = SuraAyah(5, quranInfo.getNumberOfAyahs(5))
+    val lo = quranInfo.getAyahId(start.sura, start.ayah)
+    val hi = quranInfo.getAyahId(end.sura, end.ayah)
+    repeat(10_000) {
+      val result = quranInfo.getRandomAyahInRange(start, end)
+      val id = quranInfo.getAyahId(result.sura, result.ayah)
+      assertThat(id).isAtLeast(lo)
+      assertThat(id).isAtMost(hi)
+    }
+  }
+
+  @Test
+  fun testGetRandomAyahInRange_reversedEndpointsAreHandled() {
+    // pass the endpoints in reverse order; result must still fall within the span
+    val a = SuraAyah(10, 5)
+    val b = SuraAyah(3, 2)
+    val lo = quranInfo.getAyahId(b.sura, b.ayah)
+    val hi = quranInfo.getAyahId(a.sura, a.ayah)
+    repeat(10_000) {
+      val result = quranInfo.getRandomAyahInRange(a, b)
+      val id = quranInfo.getAyahId(result.sura, result.ayah)
+      assertThat(id).isAtLeast(lo)
+      assertThat(id).isAtMost(hi)
+    }
+  }
+
+  @Test
+  fun testGetRandomAyahInRange_singleAyahRange() {
+    val only = SuraAyah(1, 1)
+    repeat(100) {
+      assertThat(quranInfo.getRandomAyahInRange(only, only)).isEqualTo(only)
+    }
+  }
+
+  @Test
+  fun testGetRandomAyahInRange_juzRangeIncludingLastJuz() {
+    // juz' 29 start .. end of Quran (juz' 30)
+    val start = quranInfo.getJuzStart(29)
+    val end = quranInfo.getSuraAyahFromAyahId(quranInfo.getNumberOfAyahsInQuran())
+    val lo = quranInfo.getAyahId(start.sura, start.ayah)
+    val hi = quranInfo.getAyahId(end.sura, end.ayah)
+    // the very last ayah of the Quran should be reachable / valid
+    assertThat(end).isEqualTo(SuraAyah(114, 6))
+    repeat(10_000) {
+      val result = quranInfo.getRandomAyahInRange(start, end)
+      val id = quranInfo.getAyahId(result.sura, result.ayah)
+      assertThat(id).isAtLeast(lo)
+      assertThat(id).isAtMost(hi)
+    }
+  }
+
+  @Test
   fun testIsMakki() {
     // Al-Fatiha is Makki
     assertThat(quranInfo.isMakki(1)).isTrue()
