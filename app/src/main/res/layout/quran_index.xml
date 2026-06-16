@@ -12,34 +12,46 @@
       android:layout_height="0dp"
       android:layout_weight="1" />
 
-  <com.google.android.material.bottomnavigation.BottomNavigationView
-      android:id="@+id/bottom_nav"
-      style="@style/ToolBarArea"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="@color/toolbar"
-      android:theme="@style/BottomNavTheme"
-      app:itemIconTint="@color/bottom_nav_item_color"
-      app:itemTextColor="@color/bottom_nav_item_color"
-      app:labelVisibilityMode="labeled"
-      app:menu="@menu/bottom_nav_menu" />
-
   <LinearLayout
-      android:id="@+id/toolbar_area"
+      android:id="@+id/bottom_chrome"
+      style="@style/ToolBarArea"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical"
       android:background="@color/toolbar"
-      android:elevation="0dp">
+      android:clipToPadding="false"
+      android:clipChildren="false">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
+        android:background="@color/toolbar"
         android:elevation="0dp"
         android:theme="@style/BottomNavTheme"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
-        app:subtitleTextAppearance="@style/ToolbarSubtitleText"
-        app:titleTextAppearance="@style/ToolbarTitleText" />
+        app:itemIconTint="@color/bottom_nav_item_color"
+        app:itemTextColor="@color/bottom_nav_item_color"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_nav_menu" />
+
+    <LinearLayout
+        android:id="@+id/toolbar_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/toolbar"
+        android:elevation="0dp">
+
+      <androidx.appcompat.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="?attr/actionBarSize"
+          android:background="@color/toolbar"
+          android:elevation="0dp"
+          android:theme="@style/BottomNavTheme"
+          app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
+          app:subtitleTextAppearance="@style/ToolbarSubtitleText"
+          app:titleTextAppearance="@style/ToolbarTitleText" />
+    </LinearLayout>
   </LinearLayout>
 </LinearLayout>
