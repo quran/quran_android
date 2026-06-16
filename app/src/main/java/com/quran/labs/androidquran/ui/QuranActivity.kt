@@ -57,7 +57,7 @@ import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
-import com.quran.labs.androidquran.view.SlidingTabLayout
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.quran.mobile.di.ExtraScreenProvider
 import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -178,8 +178,25 @@ class QuranActivity : AppCompatActivity(),
     pager.offscreenPageLimit = 3
     val pagerAdapter = PagerAdapter(supportFragmentManager)
     pager.adapter = pagerAdapter
-    val indicator = findViewById<SlidingTabLayout>(R.id.indicator)
-    indicator.setViewPager(pager)
+
+    val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
+    // guards against the page-change -> nav-select -> page-change feedback loop
+    var syncingNavSelection = false
+    bottomNav.setOnItemSelectedListener { item ->
+      if (!syncingNavSelection) {
+        pager.currentItem = pagerPositionForMenuItem(item.itemId)
+      }
+      true
+    }
+    pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+      override fun onPageSelected(position: Int) {
+        syncingNavSelection = true
+        bottomNav.selectedItemId = menuItemForPagerPosition(position)
+        syncingNavSelection = false
+      }
+    })
+    bottomNav.selectedItemId = menuItemForPagerPosition(pager.currentItem)
+
     jumpToPageOnResume = if (isRtl) {
       TITLES.size - 1
     } else {
@@ -208,6 +225,28 @@ class QuranActivity : AppCompatActivity(),
     }
     updateTranslationsListAsNeeded()
     quranIndexEventLogger.logAnalytics()
+  }
+
+  /** Maps a bottom navigation menu item to its ViewPager position (RTL reverses the order). */
+  private fun pagerPositionForMenuItem(itemId: Int): Int {
+    val logical = when (itemId) {
+      R.id.nav_surahs -> SURA_LIST
+      R.id.nav_juz -> JUZ2_LIST
+      R.id.nav_bookmarks -> BOOKMARKS_LIST
+      else -> SURA_LIST
+    }
+    return if (isRtl) abs(logical - 2) else logical
+  }
+
+  /** Maps a ViewPager position to its bottom navigation menu item (RTL reverses the order). */
+  private fun menuItemForPagerPosition(position: Int): Int {
+    val logical = if (isRtl) abs(position - 2) else position
+    return when (logical) {
+      SURA_LIST -> R.id.nav_surahs
+      JUZ2_LIST -> R.id.nav_juz
+      BOOKMARKS_LIST -> R.id.nav_bookmarks
+      else -> R.id.nav_surahs
+    }
   }
 
   public override fun onResume() {
