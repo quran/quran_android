@@ -22,16 +22,23 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat"
         app:subtitleTextAppearance="@style/ToolbarSubtitleText"
         app:titleTextAppearance="@style/ToolbarTitleText" />
-
-    <com.quran.labs.androidquran.view.SlidingTabLayout
-        android:id="@+id/indicator"
-        style="@style/ToolBarArea"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
   </LinearLayout>
 
   <com.quran.labs.androidquran.view.QuranViewPager
       android:id="@+id/index_pager"
       android:layout_width="match_parent"
-      android:layout_height="match_parent" />
+      android:layout_height="0dp"
+      android:layout_weight="1" />
+
+  <com.google.android.material.bottomnavigation.BottomNavigationView
+      android:id="@+id/bottom_nav"
+      style="@style/ToolBarArea"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@color/toolbar"
+      android:theme="@style/BottomNavTheme"
+      app:itemIconTint="@color/bottom_nav_item_color"
+      app:itemTextColor="@color/bottom_nav_item_color"
+      app:labelVisibilityMode="labeled"
+      app:menu="@menu/bottom_nav_menu" />
 </LinearLayout>
