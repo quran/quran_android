@@ -151,14 +151,16 @@ class QuranActivity : AppCompatActivity(),
     val root = findViewById<ViewGroup>(R.id.root)
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
       val insets = windowInsets.getInsets(
-        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+        WindowInsetsCompat.Type.systemBars() or
+            WindowInsetsCompat.Type.displayCutout() or
+            WindowInsetsCompat.Type.ime()
       )
       root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
         topMargin = insets.top
         leftMargin = insets.left
         rightMargin = insets.right
         // the toolbar and bottom navigation live at the bottom of the screen,
-        // so reserve space for the navigation/gesture bar as well.
+        // so reserve space for the navigation/gesture bar and the keyboard.
         bottomMargin = insets.bottom
       }
 
