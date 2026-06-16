@@ -25,6 +25,7 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -92,6 +93,7 @@ class QuranActivity : AppCompatActivity(),
   private var isRtl = false
   private var isPaused = false
   private var searchItem: MenuItem? = null
+  private lateinit var bottomNav: BottomNavigationView
   private var supportActionMode: ActionMode? = null
   private val compositeDisposable = CompositeDisposable()
   private val latestPageFlow: Flow<Int> by lazy {
@@ -151,22 +153,31 @@ class QuranActivity : AppCompatActivity(),
     val root = findViewById<ViewGroup>(R.id.root)
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
       val insets = windowInsets.getInsets(
-        WindowInsetsCompat.Type.systemBars() or
-            WindowInsetsCompat.Type.displayCutout() or
-            WindowInsetsCompat.Type.ime()
+        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
       )
       root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
         topMargin = insets.top
         leftMargin = insets.left
         rightMargin = insets.right
         // the toolbar and bottom navigation live at the bottom of the screen,
-        // so reserve space for the navigation/gesture bar and the keyboard.
+        // so reserve space for the navigation/gesture bar as well.
         bottomMargin = insets.bottom
       }
 
       // if we return WindowInsetsCompat.CONSUMED, the SnackBar won't
       // be properly positioned on Android 29 and below (will be under
       // the navigation bar).
+      windowInsets
+    }
+
+    val toolbarArea = findViewById<View>(R.id.toolbar_area)
+    // lift only the search toolbar above the keyboard; the bottom nav stays hidden
+    // while search is expanded (see onCreateOptionsMenu).
+    ViewCompat.setOnApplyWindowInsetsListener(toolbarArea) { view, windowInsets ->
+      val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+      val ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
+      val keyboardOverlap = (ime.bottom - systemBars.bottom).coerceAtLeast(0)
+      view.updatePadding(0, 0, 0, keyboardOverlap)
       windowInsets
     }
 
@@ -180,7 +191,7 @@ class QuranActivity : AppCompatActivity(),
     val pagerAdapter = PagerAdapter(supportFragmentManager)
     pager.adapter = pagerAdapter
 
-    val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
+    bottomNav = findViewById(R.id.bottom_nav)
     // Material BottomNavigationView applies a default elevation that casts a shadow onto
     // the action toolbar below; force a flat surface for both bottom chrome bars.
     listOf(
@@ -365,11 +376,13 @@ class QuranActivity : AppCompatActivity(),
     searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
       override fun onMenuItemActionExpand(item: MenuItem): Boolean {
         searchItemCollapserCallback.isEnabled = true
+        bottomNav.visibility = View.GONE
         return true
       }
 
       override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
         searchItemCollapserCallback.isEnabled = false
+        bottomNav.visibility = View.VISIBLE
         return true
       }
     })
