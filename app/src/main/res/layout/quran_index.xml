@@ -14,13 +14,11 @@
 
   <LinearLayout
       android:id="@+id/bottom_chrome"
-      style="@style/ToolBarArea"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical"
-      android:background="@color/toolbar"
-      android:clipToPadding="false"
-      android:clipChildren="false">
+      android:background="@drawable/bottom_chrome_background"
+      android:elevation="0dp">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
@@ -28,7 +26,10 @@
         android:layout_height="wrap_content"
         android:background="@color/toolbar"
         android:elevation="0dp"
+        android:outlineProvider="none"
+        android:stateListAnimator="@null"
         android:theme="@style/BottomNavTheme"
+        app:elevation="0dp"
         app:itemIconTint="@color/bottom_nav_item_color"
         app:itemTextColor="@color/bottom_nav_item_color"
         app:labelVisibilityMode="labeled"
@@ -40,7 +41,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/toolbar"
-        android:elevation="0dp">
+        android:elevation="0dp"
+        android:outlineProvider="none">
 
       <androidx.appcompat.widget.Toolbar
           android:id="@+id/toolbar"
@@ -48,6 +50,8 @@
           android:layout_height="?attr/actionBarSize"
           android:background="@color/toolbar"
           android:elevation="0dp"
+          android:outlineProvider="none"
+          android:stateListAnimator="@null"
           android:theme="@style/BottomNavTheme"
           app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
           app:subtitleTextAppearance="@style/ToolbarSubtitleText"

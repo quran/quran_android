@@ -56,5 +56,6 @@
     <item name="colorControlNormal">@color/color_control_normal</item>
     <item name="android:textColorPrimary">@color/color_control_normal</item>
     <item name="iconTint">@color/color_control_normal</item>
+    <item name="elevationOverlayEnabled">false</item>
   </style>
 </resources>
