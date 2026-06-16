@@ -45,10 +45,11 @@
 
   <!--
     The app uses an AppCompat (non-Material) theme, but BottomNavigationView requires a
-    Material Components theme to inflate. This overlay is applied only on the bottom navigation
-    view (via android:theme) so the rest of the AppCompat styling is left untouched.
+    Material Components theme to inflate. The Bridge theme provides the Material attributes on
+    top of AppCompat; it is applied only on the bottom navigation view (via android:theme) so
+    the rest of the AppCompat styling is left untouched.
   -->
-  <style name="BottomNavTheme" parent="ThemeOverlay.MaterialComponents.DayNight">
+  <style name="BottomNavTheme" parent="Theme.MaterialComponents.DayNight.Bridge">
     <item name="colorPrimary">@color/accent_color</item>
     <item name="colorSurface">@color/toolbar</item>
     <item name="colorOnSurface">@color/color_control_normal</item>
