@@ -161,6 +161,9 @@ class QuranActivity : AppCompatActivity(),
         topMargin = insets.top
         leftMargin = insets.left
         rightMargin = insets.right
+        // the toolbar and bottom navigation live at the bottom of the screen,
+        // so reserve space for the navigation/gesture bar as well.
+        bottomMargin = insets.bottom
       }
 
       // if we return WindowInsetsCompat.CONSUMED, the SnackBar won't
