@@ -305,6 +305,43 @@ class BookmarksDaoImplTest {
   }
 
   @Test
+  fun `clearing tags from default bookmark preserves bookmark`() = runTest {
+    val tagId = dao.addTag("Review")
+    val suraAyah = SuraAyah(2, 255)
+    dao.toggleAyahBookmark(suraAyah, quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah))
+    val bookmark = dao.bookmarks().single()
+    dao.updateBookmarkTags(longArrayOf(bookmark.id), setOf(tagId), deleteNonTagged = true)
+
+    dao.updateBookmarkTags(longArrayOf(bookmark.id), emptySet(), deleteNonTagged = true)
+
+    val remainingBookmark = dao.bookmarks().single()
+    assertThat(remainingBookmark.sura).isEqualTo(suraAyah.sura)
+    assertThat(remainingBookmark.ayah).isEqualTo(suraAyah.ayah)
+    assertThat(remainingBookmark.tags).isEmpty()
+  }
+
+  @Test
+  fun `clearing tags from custom only bookmark removes bookmark`() = runTest {
+    val tagId = dao.addTag("Review")
+    val suraAyah = SuraAyah(6, 76)
+    dao.updateAyahBookmarkTags(
+      suraAyah = suraAyah,
+      page = quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah),
+      tagIds = setOf(tagId),
+      deleteNonTagged = true
+    )
+
+    dao.updateAyahBookmarkTags(
+      suraAyah = suraAyah,
+      page = quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah),
+      tagIds = emptySet(),
+      deleteNonTagged = true
+    )
+
+    assertThat(dao.bookmarks()).isEmpty()
+  }
+
+  @Test
   fun `removing bookmark from tag unlinks only that collection`() = runTest {
     val firstTagId = dao.addTag("First")
     val secondTagId = dao.addTag("Second")

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com Sync</string>
+  <string name="quran_sync_settings_category">Account</string>
+  <string name="quran_sync_settings_summary">Bookmarks, collections, and reading history</string>
+  <string name="quran_sync_not_signed_in">Not signed in</string>
+  <string name="quran_sync_signed_in">Signed in</string>
+  <string name="quran_sync_loading">Signing in</string>
+  <string name="quran_sync_login">Log in</string>
+  <string name="quran_sync_logout">Log out</string>
+  <string name="quran_sync_name">Name</string>
+  <string name="quran_sync_email">Email</string>
+  <string name="quran_sync_account_id">Account ID</string>
+  <string name="quran_sync_action_error">Unable to update sync right now.</string>
+  <string name="quran_sync_oauth_client_id" translatable="false"></string>
+  <string name="quran_sync_oauth_issuer_url" translatable="false"></string>
+  <string name="quran_sync_oauth_redirect_scheme" translatable="false"></string>
+  <string name="quran_sync_environment" translatable="false"></string>
+</resources>
