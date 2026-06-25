@@ -52,31 +52,37 @@ class BookmarkDataModule {
 
   @SingleIn(AppScope::class)
   @Provides
-  fun provideBookmarksRepository(repositories: MobileSyncRepositories): BookmarksRepository {
+  fun provideBookmarksRepository(repositories: MobileSyncRepositoryProvider): BookmarksRepository {
     return repositories.bookmarksRepository
   }
 
   @SingleIn(AppScope::class)
   @Provides
-  fun provideCollectionsRepository(repositories: MobileSyncRepositories): CollectionsRepository {
+  fun provideCollectionsRepository(repositories: MobileSyncRepositoryProvider): CollectionsRepository {
     return repositories.collectionsRepository
   }
 
   @SingleIn(AppScope::class)
   @Provides
-  fun provideCollectionBookmarksRepository(repositories: MobileSyncRepositories): CollectionBookmarksRepository {
+  fun provideCollectionBookmarksRepository(
+    repositories: MobileSyncRepositoryProvider
+  ): CollectionBookmarksRepository {
     return repositories.collectionBookmarksRepository
   }
 
   @SingleIn(AppScope::class)
   @Provides
-  fun provideReadingBookmarksRepository(repositories: MobileSyncRepositories): ReadingBookmarksRepository {
+  fun provideReadingBookmarksRepository(
+    repositories: MobileSyncRepositoryProvider
+  ): ReadingBookmarksRepository {
     return repositories.readingBookmarksRepository
   }
 
   @SingleIn(AppScope::class)
   @Provides
-  fun provideReadingSessionsRepository(repositories: MobileSyncRepositories): ReadingSessionsRepository {
+  fun provideReadingSessionsRepository(
+    repositories: MobileSyncRepositoryProvider
+  ): ReadingSessionsRepository {
     return repositories.readingSessionsRepository
   }
 }

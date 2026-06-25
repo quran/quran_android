@@ -15,6 +15,7 @@ import com.quran.mobile.bookmark.sync.notifyLocalDataChanged
 import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
 import com.quran.shared.persistence.model.AyahBookmark
 import com.quran.shared.persistence.model.CollectionAyahBookmark
+import com.quran.shared.persistence.model.DEFAULT_COLLECTION_ID
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepository
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepository
 import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepository
@@ -192,6 +193,9 @@ class BookmarksDaoImpl @Inject constructor(
     val timestamp = timestampProvider.now()
     val updated = withContext(Dispatchers.IO) {
       val collectionsById = collectionsById()
+      val targetTagIds = validTagIds(tagIds, collectionsById)
+      val currentTagsByBookmarkId = bookmarkTagsByBookmarkId()
+      val defaultBookmarkIds = defaultBookmarkIds()
       val bookmarksById = bookmarksRepository.getAllBookmarks()
         .associateBy { bookmark -> bookmark.localId.toLongOrNull() }
       var didWrite = false
@@ -200,7 +204,18 @@ class BookmarksDaoImpl @Inject constructor(
         .distinct()
         .forEach { bookmarkId ->
           val bookmark = bookmarksById[bookmarkId] ?: return@forEach
-          didWrite = updateBookmarkTagsInternal(bookmark, tagIds, deleteNonTagged, collectionsById, timestamp) ||
+          val nextTagIds = if (deleteNonTagged) {
+            targetTagIds
+          } else {
+            currentTagsByBookmarkId[bookmarkId].orEmpty().toSet() + targetTagIds
+          }
+          didWrite = replaceBookmarkMemberships(
+            bookmark = bookmark,
+            tagIds = nextTagIds,
+            isInDefaultCollection = bookmarkId in defaultBookmarkIds,
+            collectionsById = collectionsById,
+            timestamp = timestamp
+          ) ||
             didWrite
         }
       didWrite
@@ -220,21 +235,29 @@ class BookmarksDaoImpl @Inject constructor(
     val timestamp = timestampProvider.now()
     val updated = withContext(Dispatchers.IO) {
       val collectionsById = collectionsById()
-      val targetTagIds = tagIds.filter { tagId -> tagId > 0 && collectionsById.containsKey(tagId) }.toSet()
+      val targetTagIds = validTagIds(tagIds, collectionsById)
       val existingBookmark = bookmarkForSuraAyah(suraAyah)
       if (existingBookmark != null) {
-        updateBookmarkTagsInternal(existingBookmark, targetTagIds, deleteNonTagged, collectionsById, timestamp)
-      } else if (targetTagIds.isNotEmpty()) {
-        targetTagIds.forEach { tagId ->
-          val collection = collectionsById[tagId] ?: return@forEach
-          collectionBookmarksRepository.addAyahBookmarkToCollection(
-            collectionLocalId = collection.localId,
-            sura = suraAyah.sura,
-            ayah = suraAyah.ayah,
-            timestamp = timestamp
-          )
+        val bookmarkId = existingBookmark.localId.toLongOrNull() ?: return@withContext false
+        val nextTagIds = if (deleteNonTagged) {
+          targetTagIds
+        } else {
+          bookmarkTagsByBookmarkId()[bookmarkId].orEmpty().toSet() + targetTagIds
         }
-        true
+        replaceBookmarkMemberships(
+          bookmark = existingBookmark,
+          tagIds = nextTagIds,
+          isInDefaultCollection = bookmarkId in defaultBookmarkIds(),
+          collectionsById = collectionsById,
+          timestamp = timestamp
+        )
+      } else if (targetTagIds.isNotEmpty()) {
+        bookmarksRepository.replaceAyahBookmarkCollections(
+          sura = suraAyah.sura,
+          ayah = suraAyah.ayah,
+          collectionLocalIds = collectionLocalIds(targetTagIds, collectionsById),
+          timestamp = timestamp
+        ).changed
       } else {
         false
       }
@@ -339,33 +362,24 @@ class BookmarksDaoImpl @Inject constructor(
     return bookmarked
   }
 
-  private suspend fun updateBookmarkTagsInternal(
+  private suspend fun replaceBookmarkMemberships(
     bookmark: AyahBookmark,
     tagIds: Set<Long>,
-    deleteNonTagged: Boolean,
+    isInDefaultCollection: Boolean,
     collectionsById: Map<Long, SyncCollection>,
     timestamp: PlatformDateTime
   ): Boolean {
-    val currentTagIds = tagIdsForBookmark(bookmark.localId).toSet()
-    val targetTagIds = tagIds.filter { tagId -> tagId > 0 && collectionsById.containsKey(tagId) }.toSet()
-    var didWrite = false
-
-    if (deleteNonTagged) {
-      (currentTagIds - targetTagIds).forEach { tagId ->
-        collectionsById[tagId]?.let { collection ->
-          collectionBookmarksRepository.removeBookmarkFromCollection(collection.localId, bookmark)
-          didWrite = true
-        }
+    val collectionLocalIds = buildList {
+      if (isInDefaultCollection) {
+        add(DEFAULT_COLLECTION_ID)
       }
+      addAll(collectionLocalIds(tagIds, collectionsById))
     }
-
-    (targetTagIds - currentTagIds).forEach { tagId ->
-      collectionsById[tagId]?.let { collection ->
-        collectionBookmarksRepository.addBookmarkToCollection(collection.localId, bookmark, timestamp)
-        didWrite = true
-      }
+    return if (collectionLocalIds.isEmpty()) {
+      bookmarksRepository.deleteBookmark(bookmark.localId)
+    } else {
+      bookmarksRepository.replaceBookmarkCollections(bookmark.localId, collectionLocalIds, timestamp)
     }
-    return didWrite
   }
 
   private suspend fun tagIdsForBookmark(bookmarkLocalId: String): List<Long> {
@@ -418,6 +432,12 @@ class BookmarksDaoImpl @Inject constructor(
     return loadBookmarkTagsByBookmarkId(collectionsRepository.getAllCollections())
   }
 
+  private suspend fun defaultBookmarkIds(): Set<Long> {
+    return collectionBookmarksRepository.getBookmarksForCollection(DEFAULT_COLLECTION_ID)
+      .mapNotNull { bookmark -> bookmark.bookmarkLocalId.toLongOrNull() }
+      .toSet()
+  }
+
   private suspend fun loadBookmarkTagsByBookmarkId(
     collections: List<SyncCollection>
   ): Map<Long, List<Long>> {
@@ -429,6 +449,20 @@ class BookmarksDaoImpl @Inject constructor(
         )
       }
       .groupBy({ it.first }, { it.second })
+  }
+
+  private fun validTagIds(
+    tagIds: Set<Long>,
+    collectionsById: Map<Long, SyncCollection>
+  ): Set<Long> {
+    return tagIds.filter { tagId -> tagId > 0 && collectionsById.containsKey(tagId) }.toSet()
+  }
+
+  private fun collectionLocalIds(
+    tagIds: Set<Long>,
+    collectionsById: Map<Long, SyncCollection>
+  ): List<String> {
+    return tagIds.mapNotNull { tagId -> collectionsById[tagId]?.localId }
   }
 
   private suspend fun collectionsById(): Map<Long, SyncCollection> {
