@@ -69,7 +69,7 @@ class BookmarkBackupImportNormalizer @Inject constructor(
   private fun CollectionState.oldPageBookmarkCollectionId(timestamp: Long): String {
     val oldPageBookmarksName = appContext.getString(R.string.old_page_bookmarks)
     return importIdForName[oldPageBookmarksName]
-      ?: OLD_PAGE_BOOKMARKS_COLLECTION_ID.also { importId ->
+      ?: nextCollectionImportId().also { importId ->
         add(
           MobileSyncImportCollection(
             importId = importId,
@@ -194,40 +194,62 @@ class BookmarkBackupImportNormalizer @Inject constructor(
   }
 
   private data class CollectionState(
-    val importIdForBackupTagId: MutableMap<Long, String> = mutableMapOf(),
+    val importIdForBackupTagId: MutableMap<String, String> = mutableMapOf(),
     val importIdForName: MutableMap<String, String> = mutableMapOf(),
-    val collections: MutableList<MobileSyncImportCollection> = mutableListOf()
+    val collections: MutableList<MobileSyncImportCollection> = mutableListOf(),
+    val reservedCollectionImportIds: MutableSet<String> = mutableSetOf()
   ) {
+    private var nextCollectionImportIndex = 0
+
     fun add(collection: MobileSyncImportCollection) {
       importIdForName[collection.name] = collection.importId
+      reservedCollectionImportIds.add(collection.importId)
       collections.add(collection)
     }
 
     companion object {
       fun from(tags: List<Tag>, importTimestampMillis: Long): CollectionState {
         val state = CollectionState()
-        tags.sortedBy { tag -> tag.id }.forEach { tag ->
-          val name = tag.name
-          if (name.isBlank()) return@forEach
-          val existingImportId = state.importIdForName[name]
-          if (existingImportId != null) {
-            state.importIdForBackupTagId[tag.id] = existingImportId
-          } else {
-            val collection = MobileSyncImportCollection(
-              importId = "tag-${tag.id}",
-              name = name,
-              timestampMillis = importTimestampMillis
-            )
-            state.importIdForBackupTagId[tag.id] = collection.importId
-            state.add(collection)
+        state.reservedCollectionImportIds.addAll(tags.map { tag -> tag.id })
+        tags.sortedWith(
+          compareBy<Tag> { tag -> legacyTagNumber(tag.id) ?: Long.MAX_VALUE }
+            .thenBy { tag -> tag.id }
+        )
+          .forEach { tag ->
+            val name = tag.name
+            if (name.isBlank()) return@forEach
+            val existingImportId = state.importIdForName[name]
+            if (existingImportId != null) {
+              state.importIdForBackupTagId[tag.id] = existingImportId
+            } else {
+              val collection = MobileSyncImportCollection(
+                importId = state.nextCollectionImportId(),
+                name = name,
+                timestampMillis = importTimestampMillis
+              )
+              state.importIdForBackupTagId[tag.id] = collection.importId
+              state.add(collection)
+            }
           }
-        }
         return state
       }
-    }
-  }
 
-  companion object {
-    private const val OLD_PAGE_BOOKMARKS_COLLECTION_ID = "old-page-bookmarks"
+      private fun legacyTagNumber(tagId: String): Long? {
+        return tagId.toLongOrNull()
+      }
+    }
+
+    /**
+     * Import IDs only correlate this import payload's collections to its bookmark links. They are
+     * not mobile-sync local IDs, so do not reuse backup-provided tag IDs here.
+     */
+    fun nextCollectionImportId(): String {
+      while (true) {
+        val importId = "backup-collection-${nextCollectionImportIndex++}"
+        if (reservedCollectionImportIds.add(importId)) {
+          return importId
+        }
+      }
+    }
   }
 }

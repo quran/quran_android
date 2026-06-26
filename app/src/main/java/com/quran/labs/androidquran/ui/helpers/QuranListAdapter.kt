@@ -31,7 +31,7 @@ class QuranListAdapter(
   private val inflater = LayoutInflater.from(context)
   private val checkedState = SparseBooleanArray()
   private val locale = QuranUtils.getCurrentLocale()
-  private var tagMap: Map<Long, Tag> = emptyMap()
+  private var tagMap: Map<String, Tag> = emptyMap()
   private var showTags = false
   private var showDate = false
 
@@ -115,7 +115,7 @@ class QuranListAdapter(
     touchListener = listener
   }
 
-  fun setElements(elements: Array<QuranRow>, tagMap: Map<Long, Tag>) {
+  fun setElements(elements: Array<QuranRow>, tagMap: Map<String, Tag>) {
     this.elements = elements
     this.tagMap = tagMap
   }

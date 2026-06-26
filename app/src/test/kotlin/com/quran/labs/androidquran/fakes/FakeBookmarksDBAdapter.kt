@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.fakes
 
 import androidx.core.util.Pair
 import com.quran.data.model.bookmark.Bookmark
-import com.quran.data.model.bookmark.BookmarkData
+import com.quran.data.model.bookmark.LegacyBookmarkIds
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 
@@ -18,7 +18,7 @@ import com.quran.data.model.bookmark.Tag
  * Usage:
  * ```
  * val fake = FakeBookmarksDBAdapter()
- * fake.setTags(listOf(Tag(1, "Important")))
+ * fake.setTags(listOf(Tag("1", "Important")))
  * fake.setBookmarks(listOf(bookmark1, bookmark2))
  * fake.setRecentPages(listOf(RecentPage(42, timestamp)))
  *
@@ -36,12 +36,11 @@ class FakeBookmarksDBAdapter {
   private val tags = mutableListOf<Tag>()
   private val bookmarks = mutableListOf<Bookmark>()
   private val recentPages = mutableListOf<RecentPage>()
-  private val bookmarkTags = mutableMapOf<Long, MutableList<Long>>() // bookmarkId -> list of tagIds
+  private val bookmarkTags = mutableMapOf<Long, MutableList<Long>>() // old bookmarkId -> old tagIds
 
   // Configurable behavior
   private var updateTagResult = true
   private var tagBookmarksResult = true
-  private var importBookmarksResult = true
 
   // Call tracking for assertions
   private val updateTagCalls = mutableListOf<UpdateTagCall>()
@@ -80,10 +79,6 @@ class FakeBookmarksDBAdapter {
     tagBookmarksResult = result
   }
 
-  fun setImportBookmarksResult(result: Boolean) {
-    importBookmarksResult = result
-  }
-
   // Public API methods matching BookmarksDBAdapter
   fun getRecentPages(): List<RecentPage> {
     return recentPages.toList()
@@ -114,14 +109,15 @@ class FakeBookmarksDBAdapter {
     }
 
     // Check if name already exists (would fail)
-    if (tags.any { it.name == newName && it.id != id }) {
+    val runtimeTagId = LegacyBookmarkIds.tagId(id)
+    if (tags.any { it.name == newName && it.id != runtimeTagId }) {
       return false
     }
 
     // Update the tag
-    val index = tags.indexOfFirst { it.id == id }
+    val index = tags.indexOfFirst { it.id == runtimeTagId }
     if (index >= 0) {
-      tags[index] = Tag(id, newName)
+      tags[index] = Tag(runtimeTagId, newName)
       return true
     }
     return false
@@ -154,10 +150,10 @@ class FakeBookmarksDBAdapter {
     bulkDeleteCalls.add(BulkDeleteCall(tagIds, bookmarkIds, untag))
 
     // Remove tags
-    tags.removeIf { it.id in tagIds }
+    tags.removeIf { it.id.oldDatabaseIdToLongOrNull() in tagIds }
 
     // Remove bookmarks
-    bookmarks.removeIf { it.id in bookmarkIds }
+    bookmarks.removeIf { it.id.oldDatabaseIdToLongOrNull() in bookmarkIds }
 
     // Remove bookmark-tag associations for deleted bookmarks
     bookmarkIds.forEach { bookmarkTags.remove(it) }
@@ -192,12 +188,12 @@ class FakeBookmarksDBAdapter {
     val bookmark = bookmarks.find {
       it.sura == sura && it.ayah == ayah && it.page == page
     }
-    return bookmark?.id ?: -1L
+    return bookmark?.id?.oldDatabaseIdToLongOrNull() ?: -1L
   }
 
   fun addBookmark(sura: Int?, ayah: Int?, page: Int): Long {
-    val newId = (bookmarks.maxOfOrNull { it.id } ?: 0) + 1
-    val bookmark = Bookmark(newId, sura, ayah, page, System.currentTimeMillis())
+    val newId = (bookmarks.mapNotNull { it.id.oldDatabaseIdToLongOrNull() }.maxOrNull() ?: 0) + 1
+    val bookmark = Bookmark(LegacyBookmarkIds.bookmarkId(newId), sura, ayah, page, System.currentTimeMillis())
     bookmarks.add(bookmark)
     return newId
   }
@@ -212,41 +208,19 @@ class FakeBookmarksDBAdapter {
   }
 
   fun removeBookmark(bookmarkId: Long) {
-    bookmarks.removeIf { it.id == bookmarkId }
+    bookmarks.removeIf { it.id == LegacyBookmarkIds.bookmarkId(bookmarkId) }
     bookmarkTags.remove(bookmarkId)
   }
 
   fun addTag(name: String): Long {
     val existingTag = tags.find { it.name == name }
     if (existingTag != null) {
-      return existingTag.id
+      return existingTag.id.oldDatabaseIdToLongOrNull() ?: -1L
     }
 
-    val newId = (tags.maxOfOrNull { it.id } ?: 0) + 1
-    tags.add(Tag(newId, name))
+    val newId = (tags.mapNotNull { it.id.oldDatabaseIdToLongOrNull() }.maxOrNull() ?: 0) + 1
+    tags.add(Tag(LegacyBookmarkIds.tagId(newId), name))
     return newId
-  }
-
-  fun importBookmarks(data: BookmarkData): Boolean {
-    if (!importBookmarksResult) {
-      return false
-    }
-
-    // Clear all existing data
-    tags.clear()
-    bookmarks.clear()
-    bookmarkTags.clear()
-
-    // Import new data
-    tags.addAll(data.tags)
-    bookmarks.addAll(data.bookmarks)
-
-    // Rebuild bookmark-tag associations
-    data.bookmarks.forEach { bookmark ->
-      bookmarkTags[bookmark.id] = bookmark.tags.toMutableList()
-    }
-
-    return true
   }
 
   // Assertion methods
@@ -317,11 +291,12 @@ class FakeBookmarksDBAdapter {
     clearCallHistory()
     updateTagResult = true
     tagBookmarksResult = true
-    importBookmarksResult = true
   }
 
   companion object {
     const val SORT_DATE_ADDED = 0
     const val SORT_LOCATION = 1
   }
+
+  private fun String.oldDatabaseIdToLongOrNull(): Long? = toLongOrNull()
 }

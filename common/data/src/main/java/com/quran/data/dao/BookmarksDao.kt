@@ -19,24 +19,24 @@ interface BookmarksDao {
 
   suspend fun tags(): List<Tag>
   fun tagsFlow(): Flow<List<Tag>>
-  suspend fun addTag(name: String): Long
+  suspend fun addTag(name: String): String
   suspend fun updateTag(tag: Tag): Boolean
   suspend fun removeTags(tags: List<Tag>)
 
-  suspend fun getBookmarkTagIds(bookmarkId: Long): List<Long>
-  suspend fun getAyahBookmarkTagIds(suraAyah: SuraAyah): List<Long>
+  suspend fun getBookmarkTagIds(bookmarkId: String): List<String>
+  suspend fun getAyahBookmarkTagIds(suraAyah: SuraAyah): List<String>
   suspend fun updateBookmarkTags(
-    bookmarkIds: LongArray,
-    tagIds: Set<Long>,
+    bookmarkIds: Array<String>,
+    tagIds: Set<String>,
     deleteNonTagged: Boolean
   ): Boolean
   suspend fun updateAyahBookmarkTags(
     suraAyah: SuraAyah,
     page: Int,
-    tagIds: Set<Long>,
+    tagIds: Set<String>,
     deleteNonTagged: Boolean
   ): Boolean
-  suspend fun removeBookmarkFromTag(bookmark: Bookmark, tagId: Long): Boolean
+  suspend fun removeBookmarkFromTag(bookmark: Bookmark, tagId: String): Boolean
 
   suspend fun removeBookmarks(bookmarks: List<Bookmark>)
   suspend fun removeBookmarksForPage(page: Int)

@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.fakes
 
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
+import com.quran.data.model.bookmark.LegacyBookmarkIds
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.helpers.inMemoryBookmarksAdapter
@@ -19,7 +20,7 @@ import io.reactivex.rxjava3.core.Single
  * Usage:
  * ```
  * val fake = FakeBookmarkModel()
- * fake.setTags(listOf(Tag(1, "Important")))
+ * fake.setTags(listOf(Tag("1", "Important")))
  * fake.setBookmarks(listOf(bookmark1, bookmark2))
  *
  * // Configure behavior
@@ -37,7 +38,7 @@ open class FakeBookmarkModel : BookmarkModel(inMemoryBookmarksAdapter()) {
   // State
   private val tags = mutableListOf<Tag>()
   private val bookmarks = mutableListOf<Bookmark>()
-  private val bookmarkTagIds = mutableMapOf<Long, List<Long>>() // bookmarkId -> tagIds
+  private val bookmarkTagIds = mutableMapOf<Long, List<Long>>() // legacy bookmarkId -> legacy tagIds
 
   // Configurable results
   private var updateBookmarkTagsResult = true
@@ -115,7 +116,13 @@ open class FakeBookmarkModel : BookmarkModel(inMemoryBookmarksAdapter()) {
     safeAddBookmarkCalls.add(AddBookmarkCall(sura, ayah, page))
 
     // Add to in-memory state
-    val newBookmark = Bookmark(safeAddBookmarkResult, sura, ayah, page, System.currentTimeMillis())
+    val newBookmark = Bookmark(
+      LegacyBookmarkIds.bookmarkId(safeAddBookmarkResult),
+      sura,
+      ayah,
+      page,
+      System.currentTimeMillis()
+    )
     bookmarks.add(newBookmark)
 
     return Observable.just(safeAddBookmarkResult)

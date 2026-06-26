@@ -44,7 +44,7 @@ open class TagBookmarkDialog : DialogFragment() {
     super.onCreate(savedInstanceState)
     val args = arguments
     if (args != null) {
-      val bookmarkIds = args.getLongArray(EXTRA_BOOKMARK_IDS)
+      val bookmarkIds = args.getStringArray(EXTRA_BOOKMARK_IDS)
       if (bookmarkIds != null) {
         tagBookmarkPresenter.setBookmarksMode(bookmarkIds)
       }
@@ -60,7 +60,11 @@ open class TagBookmarkDialog : DialogFragment() {
     listview.choiceMode = ListView.CHOICE_MODE_MULTIPLE
     listview.onItemClickListener =
       OnItemClickListener { _: AdapterView<*>?, view: View, position: Int, _: Long ->
-        val tag = adapter.getItem(position)
+        if (adapter.isAddTagPosition(position)) {
+          tagBookmarkPresenter.addTag()
+          return@OnItemClickListener
+        }
+        val tag = adapter.getItem(position) ?: return@OnItemClickListener
         val isChecked = tagBookmarkPresenter.toggleTag(tag.id)
         val viewTag = view.tag
         if (viewTag is ViewHolder) {
@@ -77,7 +81,7 @@ open class TagBookmarkDialog : DialogFragment() {
     }
   }
 
-  fun setData(tags: List<Tag>?, checkedTags: HashSet<Long>) {
+  fun setData(tags: List<Tag>?, checkedTags: HashSet<String>) {
     adapter?.setData(tags, checkedTags)
     adapter?.notifyDataSetChanged()
   }
@@ -129,18 +133,18 @@ open class TagBookmarkDialog : DialogFragment() {
     private val tagBookmarkPresenter: TagBookmarkPresenter = presenter
     private val newTagString: String = context.getString(R.string.new_tag)
     private var tags: List<Tag> = emptyList()
-    private var checkedTags = HashSet<Long>()
+    private var checkedTags = HashSet<String>()
 
-    fun setData(tags: List<Tag>?, checkedTags: HashSet<Long>) {
+    fun setData(tags: List<Tag>?, checkedTags: HashSet<String>) {
       this.tags = (tags ?: emptyList())
       this.checkedTags = checkedTags
     }
 
-    override fun getCount(): Int = tags.size
+    override fun getCount(): Int = tags.size + 1
 
-    override fun getItem(position: Int): Tag = tags[position]
+    override fun getItem(position: Int): Tag? = tags.getOrNull(position)
 
-    override fun getItemId(position: Int): Long = tags[position].id
+    override fun getItemId(position: Int): Long = position.toLong()
 
     override fun hasStableIds(): Boolean = false
 
@@ -159,15 +163,15 @@ open class TagBookmarkDialog : DialogFragment() {
         convertView
       }
 
-      val (id, name) = getItem(position)
       holder = view.tag as ViewHolder
-      if (id == -1L) {
+      if (isAddTagPosition(position)) {
         holder.apply {
           addImage.visibility = View.VISIBLE
           checkBox.visibility = View.GONE
           tagName.text = newTagString
         }
       } else {
+        val (id, name) = requireNotNull(getItem(position))
         holder.apply {
           addImage.visibility = View.GONE
           checkBox.visibility = View.VISIBLE
@@ -178,6 +182,8 @@ open class TagBookmarkDialog : DialogFragment() {
       }
       return view
     }
+
+    fun isAddTagPosition(position: Int): Boolean = position == tags.size
   }
 
   internal class ViewHolder {
@@ -193,13 +199,13 @@ open class TagBookmarkDialog : DialogFragment() {
   companion object {
     const val TAG = "TagBookmarkDialog"
     private const val EXTRA_BOOKMARK_IDS = "bookmark_ids"
-    fun newInstance(bookmarkId: Long): TagBookmarkDialog {
-      return newInstance(longArrayOf(bookmarkId))
+    fun newInstance(bookmarkId: String): TagBookmarkDialog {
+      return newInstance(arrayOf(bookmarkId))
     }
 
-    fun newInstance(bookmarkIds: LongArray?): TagBookmarkDialog {
+    fun newInstance(bookmarkIds: Array<String>?): TagBookmarkDialog {
       val args = Bundle()
-      args.putLongArray(EXTRA_BOOKMARK_IDS, bookmarkIds)
+      args.putStringArray(EXTRA_BOOKMARK_IDS, bookmarkIds)
       val dialog = TagBookmarkDialog()
       dialog.arguments = args
       return dialog

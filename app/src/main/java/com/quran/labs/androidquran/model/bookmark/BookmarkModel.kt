@@ -7,6 +7,7 @@ import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.database.BookmarksDBAdapter
 import com.quran.labs.androidquran.ui.helpers.QuranRow
+import com.quran.mobile.bookmark.model.isDefaultBookmarkCollectionId
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import io.reactivex.rxjava3.core.Completable
@@ -65,18 +66,20 @@ open class BookmarkModel @Inject constructor(
       val size = itemsToRemoveRef.size
       while (i < size) {
         val row = itemsToRemoveRef[i]
-        if (row.isBookmarkHeader && row.tagId > 0) {
-          tagsToDelete.add(row.tagId)
-        } else if (row.isBookmark && row.bookmarkId > 0) {
-          if (row.tagId > 0) {
+        val tagId = row.oldDatabaseTagId()
+        val bookmarkId = row.bookmarkId?.oldDatabaseIdToLongOrNull()
+        if (row.isBookmarkHeader && tagId != null) {
+          tagsToDelete.add(tagId)
+        } else if (row.isBookmark && bookmarkId != null) {
+          if (tagId != null) {
             untag.add(
               Pair(
-                row.bookmarkId,
-                row.tagId
+                bookmarkId,
+                tagId
               )
             )
           } else {
-            bookmarksToDelete.add(row.bookmarkId)
+            bookmarksToDelete.add(bookmarkId)
           }
         }
         i++
@@ -100,7 +103,9 @@ open class BookmarkModel @Inject constructor(
 
   fun updateTag(tag: Tag): Completable {
     return Completable.fromCallable {
-      val result = bookmarksDBAdapter.updateTag(tag.id, tag.name)
+      val result = tag.id.oldDatabaseIdToLongOrNull()
+        ?.let { tagId -> bookmarksDBAdapter.updateTag(tagId, tag.name) }
+        ?: false
       if (result) {
         tagPublishSubject.onNext(true)
       }
@@ -162,13 +167,11 @@ open class BookmarkModel @Inject constructor(
       .subscribeOn(Schedulers.io())
   }
 
-  fun importBookmarksObservable(data: BookmarkData): Observable<Boolean> {
-    return Observable.fromCallable {
-      val result = bookmarksDBAdapter.importBookmarks(data)
-      if (result) {
-        bookmarksPublishSubject.onNext(true)
-      }
-      result
-    }.subscribeOn(Schedulers.io()).cache()
+  private fun QuranRow.oldDatabaseTagId(): Long? {
+    return tagId
+      ?.takeUnless { tagId -> tagId.isDefaultBookmarkCollectionId() }
+      ?.oldDatabaseIdToLongOrNull()
   }
+
+  private fun String.oldDatabaseIdToLongOrNull(): Long? = toLongOrNull()
 }

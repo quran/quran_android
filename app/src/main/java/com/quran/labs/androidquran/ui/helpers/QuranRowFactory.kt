@@ -46,7 +46,7 @@ class QuranRowFactory @Inject constructor(
   }
 
   @JvmOverloads
-  fun fromBookmark(context: Context, bookmark: Bookmark, tagId: Long? = null): QuranRow {
+  fun fromBookmark(context: Context, bookmark: Bookmark, tagId: String? = null): QuranRow {
     val builder = QuranRow.Builder()
 
     if (bookmark.isPageBookmark()) {

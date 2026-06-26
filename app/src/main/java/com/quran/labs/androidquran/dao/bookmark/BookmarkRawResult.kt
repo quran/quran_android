@@ -4,5 +4,5 @@ import com.quran.data.model.bookmark.Tag
 
 data class BookmarkRawResult(
   val rows: List<BookmarkRowData>,
-  val tagMap: Map<Long, Tag>
+  val tagMap: Map<String, Tag>
 )

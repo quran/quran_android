@@ -20,6 +20,7 @@ import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.mobile.bookmark.model.isDefaultBookmarkCollectionId
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Provider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -119,7 +120,7 @@ open class BookmarkPresenter @Inject internal constructor(
   fun shouldShowInlineTags(): Boolean = !isGroupedByTags
 
   fun getContextualOperationsForItems(rows: List<QuranRow>): BooleanArray {
-    val headers = rows.count { row -> row.isBookmarkHeader }
+    val headers = rows.count { row -> row.isBookmarkHeader && row.userTagId() != null }
     val bookmarks = rows.count { row -> row.isBookmark }
     return booleanArrayOf(
       headers == 1 && bookmarks == 0,
@@ -184,24 +185,26 @@ open class BookmarkPresenter @Inject internal constructor(
     val currentData = cachedData ?: return null
     val cachedRows = currentData.rows
 
-    val bookmarkIdsToRemove = mutableSetOf<Long>()
-    val tagIdsToUntag = mutableSetOf<Long>()
-    val bookmarkTagContext = mutableMapOf<Long, MutableSet<Long>>()
+    val bookmarkIdsToRemove = mutableSetOf<String>()
+    val tagIdsToUntag = mutableSetOf<String>()
+    val bookmarkTagContext = mutableMapOf<String, MutableSet<String>>()
 
     for (row in remove) {
+      val bookmarkId = row.bookmarkId
+      val tagId = row.userTagId()
       when {
-        row.isBookmark && row.bookmarkId > 0 -> {
-          if (isGroupedByTags && row.tagId > 0) {
-            val contextTags = bookmarkTagContext[row.bookmarkId] ?: mutableSetOf<Long>().also {
-              bookmarkTagContext[row.bookmarkId] = it
+        row.isBookmark && bookmarkId != null -> {
+          if (isGroupedByTags && tagId != null) {
+            val contextTags = bookmarkTagContext[bookmarkId] ?: mutableSetOf<String>().also {
+              bookmarkTagContext[bookmarkId] = it
             }
-            contextTags.add(row.tagId)
+            contextTags.add(tagId)
           } else {
-            bookmarkIdsToRemove.add(row.bookmarkId)
+            bookmarkIdsToRemove.add(bookmarkId)
           }
         }
 
-        row.isBookmarkHeader && row.tagId > 0 -> tagIdsToUntag.add(row.tagId)
+        row.isBookmarkHeader && tagId != null -> tagIdsToUntag.add(tagId)
       }
     }
 
@@ -213,7 +216,7 @@ open class BookmarkPresenter @Inject internal constructor(
       when (rowData) {
         is BookmarkItem -> {
           val bookmarkId = rowData.bookmark.id
-          val currentTagId = rowData.tagId
+          val currentTagId = rowData.tagId?.takeUnless { tagId -> tagId.isDefaultBookmarkCollectionId() }
           var shouldKeep = true
 
           if (bookmarkIdsToRemove.contains(bookmarkId)) {
@@ -293,17 +296,18 @@ open class BookmarkPresenter @Inject internal constructor(
       runBlocking {
         val tagsToDelete = mutableListOf<Tag>()
         val bookmarksToDelete = mutableListOf<Bookmark>()
-        val bookmarksToUntag = mutableListOf<Pair<Bookmark, Long>>()
+        val bookmarksToUntag = mutableListOf<Pair<Bookmark, String>>()
 
         items.forEach { row ->
+          val tagId = row.userTagId()
           when {
-            row.isBookmarkHeader && row.tagId > 0 -> {
-              tagsToDelete += Tag(row.tagId, row.text)
+            row.isBookmarkHeader && tagId != null -> {
+              tagsToDelete += Tag(tagId, row.text)
             }
 
             row.isBookmark && row.bookmark != null -> {
-              if (row.tagId > 0) {
-                bookmarksToUntag += row.bookmark to row.tagId
+              if (tagId != null) {
+                bookmarksToUntag += row.bookmark to tagId
               } else {
                 bookmarksToDelete += row.bookmark
               }
@@ -429,13 +433,13 @@ open class BookmarkPresenter @Inject internal constructor(
 
     for (tag in tags) {
       rows.add(TagHeader(tag))
-      val tagBookmarks = tagsMapping[tag.id].orEmpty()
+      val tagBookmarks = tagsMapping.byTagId[tag.id].orEmpty()
       for (bookmark in tagBookmarks) {
         rows.add(BookmarkItem(bookmark, tag.id))
       }
     }
 
-    val untagged = tagsMapping[BOOKMARKS_WITHOUT_TAGS_ID].orEmpty()
+    val untagged = tagsMapping.bookmarksWithoutUserTags
     if (untagged.isNotEmpty()) {
       rows.add(NotTaggedHeader)
       for (bookmark in untagged) {
@@ -460,9 +464,9 @@ open class BookmarkPresenter @Inject internal constructor(
   private fun generateTagsMapping(
     tags: List<Tag>,
     bookmarks: List<Bookmark>
-  ): Map<Long, List<Bookmark>> {
-    val seenBookmarks = mutableSetOf<Long>()
-    val tagMappings = mutableMapOf<Long, MutableList<Bookmark>>()
+  ): TagsMapping {
+    val seenBookmarks = mutableSetOf<String>()
+    val tagMappings = mutableMapOf<String, MutableList<Bookmark>>()
 
     for (tag in tags) {
       val matchingBookmarks = mutableListOf<Bookmark>()
@@ -481,13 +485,16 @@ open class BookmarkPresenter @Inject internal constructor(
         untaggedBookmarks.add(bookmark)
       }
     }
-    tagMappings[BOOKMARKS_WITHOUT_TAGS_ID] = untaggedBookmarks
 
-    return tagMappings
+    return TagsMapping(tagMappings, untaggedBookmarks)
   }
 
-  private fun generateTagMap(tags: List<Tag>): Map<Long, Tag> {
+  private fun generateTagMap(tags: List<Tag>): Map<String, Tag> {
     return tags.associateByTo(mutableMapOf()) { it.id }
+  }
+
+  private fun QuranRow.userTagId(): String? {
+    return tagId?.takeUnless { tagId -> tagId.isDefaultBookmarkCollectionId() }
   }
 
   override fun bind(fragment: BookmarksFragment) {
@@ -504,6 +511,14 @@ open class BookmarkPresenter @Inject internal constructor(
   companion object {
     @BaseTransientBottomBar.Duration
     const val DELAY_DELETION_DURATION_IN_MS: Int = 4 * 1000 // 4 seconds
-    private const val BOOKMARKS_WITHOUT_TAGS_ID: Long = -1
   }
+
+  private data class TagsMapping(
+    val byTagId: Map<String, List<Bookmark>>,
+    /**
+     * The default collection is not exposed as a user tag, so this is the visible "no user tags"
+     * section rather than a persisted collection ID.
+     */
+    val bookmarksWithoutUserTags: List<Bookmark>
+  )
 }

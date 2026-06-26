@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.database
 import androidx.core.util.Pair
 import com.quran.data.di.AppScope
 import com.quran.data.model.bookmark.Bookmark
-import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.BookmarksDatabase
@@ -162,27 +161,6 @@ class BookmarksDBAdapter @Inject constructor(bookmarksDatabase: BookmarksDatabas
         for (bookmarkId in bookmarkIds) {
           bookmarkTagQueries.replaceBookmarkTag(bookmarkId, tagId)
         }
-      }
-    }
-    return true
-  }
-
-  fun importBookmarks(data: BookmarkData): Boolean {
-    bookmarkQueries.transaction {
-      bookmarkTagQueries.deleteAll()
-      tagQueries.deleteAll()
-      bookmarkQueries.deleteAll()
-
-      data.tags.forEach { tagQueries.restoreTag(it.id, it.name, System.currentTimeMillis()) }
-      data.bookmarks.forEach { bookmark ->
-        bookmarkQueries.restoreBookmark(
-          bookmark.id,
-          bookmark.sura,
-          bookmark.ayah,
-          bookmark.page,
-          bookmark.timestamp
-        )
-        bookmark.tags.forEach { tagId -> bookmarkTagQueries.addBookmarkTag(bookmark.id, tagId) }
       }
     }
     return true
