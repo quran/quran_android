@@ -27,8 +27,8 @@ public class QuranRow {
   public long dateAddedInMillis;
 
   // For Bookmarks
-  public long tagId;
-  public long bookmarkId;
+  public String tagId;
+  public String bookmarkId;
   public Bookmark bookmark;
 
   public static class Builder {
@@ -40,8 +40,8 @@ public class QuranRow {
     private int rowType = NONE;
     private Integer imageResource;
     private Integer juzType;
-    private long tagId = -1;
-    private long bookmarkId = -1;
+    private String tagId;
+    private String bookmarkId;
     private String juzOverlayText;
     private long dateAddedInMillis;
     private Integer imageFilterColorResource;
@@ -103,7 +103,7 @@ public class QuranRow {
       return this;
     }
 
-    public Builder withTagId(long id) {
+    public Builder withTagId(String id) {
       tagId = id;
       return this;
     }
@@ -122,7 +122,7 @@ public class QuranRow {
 
   private QuranRow(String text, String metadata, int rowType,
       int sura, int ayah, int page, Integer imageResource, Integer filterColorResource,
-      Integer juzType, String juzOverlayText, long bookmarkId, long tagId, Bookmark bookmark,
+      Integer juzType, String juzOverlayText, String bookmarkId, String tagId, Bookmark bookmark,
                    long dateAddedInMillis) {
     this.text = text;
     this.rowType = rowType;

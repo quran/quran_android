@@ -40,11 +40,11 @@ class AddTagDialog : DialogFragment() {
     (dialog as AlertDialog).let {
       it.getButton(Dialog.BUTTON_POSITIVE)
           .setOnClickListener {
-            val id = arguments?.getLong(EXTRA_ID, -1) ?: -1
+            val id = arguments?.getString(EXTRA_ID)
             val name = textInputEditText?.text.toString()
             val success = addTagDialogPresenter.validate(name, id)
             if (success) {
-              if (id > -1) {
+              if (id != null) {
                 addTagDialogPresenter.updateTag(Tag(id, name))
               } else {
                 addTagDialogPresenter.addTag(name)
@@ -59,7 +59,7 @@ class AddTagDialog : DialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val args = arguments
-    val id = args?.getLong(EXTRA_ID, -1) ?: -1
+    val id = args?.getString(EXTRA_ID)
     val originalName = args?.getString(EXTRA_NAME, "") ?: ""
 
     val activity = requireActivity()
@@ -72,7 +72,7 @@ class AddTagDialog : DialogFragment() {
     builder.setTitle(getString(R.string.tag_dlg_title))
 
     val text = layout.findViewById<TextInputEditText>(R.id.tag_name)
-    if (id > -1) {
+    if (id != null) {
       text.setText(originalName)
       text.setSelection(originalName.length)
     }
@@ -106,9 +106,9 @@ class AddTagDialog : DialogFragment() {
     private const val EXTRA_ID = "id"
     private const val EXTRA_NAME = "name"
 
-    fun newInstance(id: Long, name: String): AddTagDialog {
+    fun newInstance(id: String, name: String): AddTagDialog {
       val args = Bundle()
-      args.putLong(EXTRA_ID, id)
+      args.putString(EXTRA_ID, id)
       args.putString(EXTRA_NAME, name)
       val dialog = AddTagDialog()
       dialog.arguments = args

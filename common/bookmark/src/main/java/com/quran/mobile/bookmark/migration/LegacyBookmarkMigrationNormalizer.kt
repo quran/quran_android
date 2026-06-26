@@ -4,6 +4,7 @@ import android.content.Context
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.LegacyBookmarkIds
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.mobile.bookmark.R
 import com.quran.mobile.bookmark.importdata.MobileSyncImportBookmark
@@ -70,7 +71,7 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
   private fun CollectionState.oldPageBookmarkCollectionId(timestamp: Long): String {
     val oldPageBookmarksName = appContext.getString(R.string.old_page_bookmarks)
     return importIdForName[oldPageBookmarksName]
-      ?: OLD_PAGE_BOOKMARKS_COLLECTION_ID.also { importId ->
+      ?: nextCollectionImportId().also { importId ->
         add(
           MobileSyncImportCollection(
             importId = importId,
@@ -174,10 +175,12 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
   }
 
   private data class CollectionState(
-    val importIdForLegacyTagId: MutableMap<Long, String> = mutableMapOf(),
+    val importIdForLegacyTagId: MutableMap<String, String> = mutableMapOf(),
     val importIdForName: MutableMap<String, String> = mutableMapOf(),
     val collections: MutableList<MobileSyncImportCollection> = mutableListOf()
   ) {
+    private var nextCollectionImportIndex = 0
+
     fun add(collection: MobileSyncImportCollection) {
       importIdForName[collection.name] = collection.importId
       collections.add(collection)
@@ -187,27 +190,32 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
       fun from(tags: List<LegacyBookmarkTag>): CollectionState {
         val state = CollectionState()
         tags.sortedBy { tag -> tag.id }.forEach { tag ->
+          val runtimeTagId = LegacyBookmarkIds.tagId(tag.id)
           val name = tag.name
           if (name.isBlank()) return@forEach
           val existingImportId = state.importIdForName[name]
           if (existingImportId != null) {
-            state.importIdForLegacyTagId[tag.id] = existingImportId
+            state.importIdForLegacyTagId[runtimeTagId] = existingImportId
           } else {
             val collection = MobileSyncImportCollection(
-              importId = "tag-${tag.id}",
+              importId = state.nextCollectionImportId(),
               name = name,
               timestampMillis = tag.timestamp.legacyTimestampMillis()
             )
-            state.importIdForLegacyTagId[tag.id] = collection.importId
+            state.importIdForLegacyTagId[runtimeTagId] = collection.importId
             state.add(collection)
           }
         }
         return state
       }
     }
-  }
 
-  companion object {
-    private const val OLD_PAGE_BOOKMARKS_COLLECTION_ID = "old-page-bookmarks"
+    /**
+     * Import IDs only correlate this migration payload's collections to its bookmark links. They
+     * are not mobile-sync local IDs, so do not reuse old SQLite tag IDs here.
+     */
+    fun nextCollectionImportId(): String {
+      return "legacy-collection-${nextCollectionImportIndex++}"
+    }
   }
 }

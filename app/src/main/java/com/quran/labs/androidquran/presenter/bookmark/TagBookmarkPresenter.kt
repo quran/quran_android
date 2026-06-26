@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.presenter.bookmark
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
-import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
@@ -22,16 +21,16 @@ import timber.log.Timber
 open class TagBookmarkPresenter @Inject internal constructor(
   private val bookmarksDao: BookmarksDao
 ) : Presenter<TagBookmarkDialog> {
-  private val checkedTags = HashSet<Long>()
+  private val checkedTags = HashSet<String>()
 
   private var dialog: TagBookmarkDialog? = null
 
   private var tags: List<Tag>? = null
-  private var bookmarkIds: LongArray? = null
+  private var bookmarkIds: Array<String>? = null
   private var madeChanges = false
   private var saveImmediate = false
   private var shouldRefreshTags = false
-  private var potentialAyahBookmark: Bookmark? = null
+  private var potentialAyahBookmark: PotentialAyahBookmark? = null
   private val presenterScope = MainScope()
 
   init {
@@ -52,15 +51,15 @@ open class TagBookmarkPresenter @Inject internal constructor(
     }
   }
 
-  fun setBookmarksMode(bookmarkIds: LongArray?) {
+  fun setBookmarksMode(bookmarkIds: Array<String>?) {
     setMode(bookmarkIds, null)
   }
 
   fun setAyahBookmarkMode(sura: Int, ayah: Int, page: Int) {
-    setMode(null, Bookmark(-1, sura, ayah, page))
+    setMode(null, PotentialAyahBookmark(SuraAyah(sura, ayah), page))
   }
 
-  private fun setMode(bookmarkIds: LongArray?, potentialAyahBookmark: Bookmark?) {
+  private fun setMode(bookmarkIds: Array<String>?, potentialAyahBookmark: PotentialAyahBookmark?) {
     this.bookmarkIds = bookmarkIds
     this.potentialAyahBookmark = potentialAyahBookmark
     saveImmediate = this.potentialAyahBookmark != null
@@ -72,33 +71,26 @@ open class TagBookmarkPresenter @Inject internal constructor(
     Single.zip(
       tagsObservable,
       bookmarkTagIdsObservable
-    ) { first: List<Tag>, second: List<Long> ->
+    ) { first: List<Tag>, second: List<String> ->
       Pair(first, second)
     }
       .subscribeOn(Schedulers.io())
       .observeOn(AndroidSchedulers.mainThread())
-      .subscribe({ data: Pair<List<Tag>, List<Long>> ->
+      .subscribe({ data: Pair<List<Tag>, List<String>> ->
         this.onRefreshedData(data)
       }, { throwable ->
         Timber.e(throwable, "Unable to refresh bookmark tags")
       })
   }
 
-  open fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
-    val numberOfTags = data.first.size
-    val tags1 = if (numberOfTags == 0 || data.first[numberOfTags - 1].id != -1L) {
-      data.first + listOf(Tag(-1, ""))
-    } else {
-      data.first
-    }
-
+  open fun onRefreshedData(data: Pair<List<Tag>, List<String>>) {
     val bookmarkTags = data.second
-    val updatedCheckedTags = tags1.filter { tag: Tag -> bookmarkTags.contains(tag.id) }
+    val updatedCheckedTags = data.first.filter { tag: Tag -> bookmarkTags.contains(tag.id) }
     checkedTags.clear()
     checkedTags.addAll(updatedCheckedTags.map { it.id })
 
     madeChanges = false
-    this@TagBookmarkPresenter.tags = tags1
+    this@TagBookmarkPresenter.tags = data.first
     shouldRefreshTags = false
     dialog?.setData(this@TagBookmarkPresenter.tags, checkedTags)
   }
@@ -120,13 +112,13 @@ open class TagBookmarkPresenter @Inject internal constructor(
           val ayahBookmark = potentialAyahBookmark
           if (ayahBookmark != null) {
             bookmarksDao.updateAyahBookmarkTags(
-              suraAyah = SuraAyah(requireNotNull(ayahBookmark.sura), requireNotNull(ayahBookmark.ayah)),
+              suraAyah = ayahBookmark.suraAyah,
               page = ayahBookmark.page,
               tagIds = checkedTags,
               deleteNonTagged = true
             )
           } else {
-            val bookmarkIds = bookmarkIds ?: longArrayOf()
+            val bookmarkIds = bookmarkIds ?: emptyArray()
             bookmarksDao.updateBookmarkTags(
               bookmarkIds = bookmarkIds,
               tagIds = checkedTags,
@@ -149,21 +141,21 @@ open class TagBookmarkPresenter @Inject internal constructor(
     madeChanges = false
   }
 
-  fun toggleTag(id: Long): Boolean {
+  fun toggleTag(id: String): Boolean {
     var result = false
 
-    if (id > 0) {
-      if (checkedTags.contains(id)) {
-        checkedTags.remove(id)
-      } else {
-        checkedTags.add(id)
-        result = true
-      }
-      setMadeChanges()
+    if (checkedTags.contains(id)) {
+      checkedTags.remove(id)
     } else {
-      dialog?.showAddTagDialog()
+      checkedTags.add(id)
+      result = true
     }
+    setMadeChanges()
     return result
+  }
+
+  fun addTag() {
+    dialog?.showAddTagDialog()
   }
 
   fun setMadeChanges() {
@@ -173,14 +165,14 @@ open class TagBookmarkPresenter @Inject internal constructor(
     }
   }
 
-  private val bookmarkTagIdsObservable: Single<List<Long>>
+  private val bookmarkTagIdsObservable: Single<List<String>>
     get() {
       return Single.fromCallable {
         runBlocking {
           val ayahBookmark = potentialAyahBookmark
           if (ayahBookmark != null) {
             bookmarksDao.getAyahBookmarkTagIds(
-              SuraAyah(requireNotNull(ayahBookmark.sura), requireNotNull(ayahBookmark.ayah))
+              ayahBookmark.suraAyah
             )
           } else {
             val ids = bookmarkIds
@@ -207,4 +199,6 @@ open class TagBookmarkPresenter @Inject internal constructor(
       this.dialog = null
     }
   }
+
+  private data class PotentialAyahBookmark(val suraAyah: SuraAyah, val page: Int)
 }

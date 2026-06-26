@@ -15,6 +15,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.awaitTerminalEvent
 import com.quran.labs.test.RxSchedulerRule
+import com.quran.mobile.bookmark.model.DEFAULT_BOOKMARK_COLLECTION_ID
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -54,7 +55,7 @@ class BookmarkPresenterTest {
 
     val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
 
-    assertThat(result.tagMap).containsExactly(1L, TAGS[0], 2L, TAGS[1])
+    assertThat(result.tagMap).containsExactly("tag-1", TAGS[0], "tag-2", TAGS[1])
     assertThat(result.rows.first()).isInstanceOf(BookmarkRowData.AyahBookmarksHeader::class.java)
     assertThat(result.rows.filterIsInstance<BookmarkRowData.BookmarkItem>()).hasSize(2)
   }
@@ -93,9 +94,9 @@ class BookmarkPresenterTest {
 
     assertThat(result.rows).containsAtLeast(
       BookmarkRowData.TagHeader(TAGS[0]),
-      BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], 1),
+      BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], "tag-1"),
       BookmarkRowData.TagHeader(TAGS[1]),
-      BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], 2),
+      BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], "tag-2"),
       BookmarkRowData.NotTaggedHeader,
       BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[1], null),
     ).inOrder()
@@ -117,7 +118,7 @@ class BookmarkPresenterTest {
   fun `contextual actions allow editing one tag header and tagging bookmark rows`() {
     val presenter = makeBookmarkPresenter()
     val tagHeaderResult = presenter.getContextualOperationsForItems(
-      listOf(QuranRow.Builder().withType(QuranRow.BOOKMARK_HEADER).withTagId(1).build())
+      listOf(QuranRow.Builder().withType(QuranRow.BOOKMARK_HEADER).withTagId("tag-1").build())
     )
     val bookmarkResult = presenter.getContextualOperationsForItems(
       listOf(
@@ -130,18 +131,33 @@ class BookmarkPresenterTest {
   }
 
   @Test
+  fun `contextual actions ignore default collection header`() {
+    val presenter = makeBookmarkPresenter()
+    val result = presenter.getContextualOperationsForItems(
+      listOf(
+        QuranRow.Builder()
+          .withType(QuranRow.BOOKMARK_HEADER)
+          .withTagId(DEFAULT_BOOKMARK_COLLECTION_ID)
+          .build()
+      )
+    )
+
+    assertThat(result.asList()).containsExactly(false, false, false).inOrder()
+  }
+
+  @Test
   fun `location sort delegates to bookmarks dao`() {
     fakeBookmarksDao.setBookmarks(
       listOf(
-        Bookmark(1, 4, 1, 75, 2),
-        Bookmark(2, 2, 255, 42, 1)
+        Bookmark("bookmark-1", 4, 1, 75, 2),
+        Bookmark("bookmark-2", 2, 255, 42, 1)
       )
     )
 
     val result = getBookmarkResultAndValidate(makeBookmarkPresenter(), BookmarkSortOrder.SORT_LOCATION)
 
     assertThat(result.rows.filterIsInstance<BookmarkRowData.BookmarkItem>().map { it.bookmark.id })
-      .containsExactly(2L, 1L)
+      .containsExactly("bookmark-2", "bookmark-1")
       .inOrder()
   }
 
@@ -178,14 +194,14 @@ class BookmarkPresenterTest {
 
   private companion object {
     private val TAGS = listOf(
-      Tag(1, "Review"),
-      Tag(2, "Important")
+      Tag("tag-1", "Review"),
+      Tag("tag-2", "Important")
     )
     private val AYAH_BOOKMARKS = listOf(
-      Bookmark(42, 46, 1, 502, 200, listOf(1, 2)),
-      Bookmark(2, 2, 4, 2, 100)
+      Bookmark("bookmark-42", 46, 1, 502, 200, listOf("tag-1", "tag-2")),
+      Bookmark("bookmark-2", 2, 4, 2, 100)
     )
-    private val PAGE_BOOKMARK = Bookmark(23, null, null, 400, 300)
+    private val PAGE_BOOKMARK = Bookmark("bookmark-23", null, null, 400, 300)
     private val RECENT_PAGES = listOf(
       RecentPage(42, 200),
       RecentPage(43, 100)

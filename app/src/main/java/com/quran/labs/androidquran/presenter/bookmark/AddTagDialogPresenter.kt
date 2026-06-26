@@ -23,7 +23,7 @@ internal constructor(private val bookmarksDao: BookmarksDao) : Presenter<AddTagD
     }
   }
 
-  fun validate(tagName: String, tagId: Long): Boolean {
+  fun validate(tagName: String, tagId: String?): Boolean {
     tags = runBlocking { bookmarksDao.tags() }
     if (tagName.isBlank()) {
       dialog?.onBlankTagName()

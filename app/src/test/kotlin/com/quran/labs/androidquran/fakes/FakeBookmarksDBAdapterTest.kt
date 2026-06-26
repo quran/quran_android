@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.fakes
 
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.LegacyBookmarkIds
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import org.junit.Before
@@ -21,7 +22,7 @@ class FakeBookmarksDBAdapterTest {
 
   @Test
   fun `should store and retrieve tags`() {
-    val tags = listOf(Tag(1, "Important"), Tag(2, "Review"))
+    val tags = listOf(Tag(LegacyBookmarkIds.tagId(1L), "Important"), Tag(LegacyBookmarkIds.tagId(2L), "Review"))
     fake.setTags(tags)
 
     val result = fake.getTags()
@@ -33,7 +34,7 @@ class FakeBookmarksDBAdapterTest {
 
   @Test
   fun `should update tag successfully`() {
-    fake.setTags(listOf(Tag(1, "Old Name")))
+    fake.setTags(listOf(Tag(LegacyBookmarkIds.tagId(1L), "Old Name")))
 
     val result = fake.updateTag(1, "New Name")
 
@@ -44,7 +45,7 @@ class FakeBookmarksDBAdapterTest {
 
   @Test
   fun `should fail to update tag when name already exists`() {
-    fake.setTags(listOf(Tag(1, "First"), Tag(2, "Second")))
+    fake.setTags(listOf(Tag(LegacyBookmarkIds.tagId(1L), "First"), Tag(LegacyBookmarkIds.tagId(2L), "Second")))
 
     val result = fake.updateTag(1, "Second")
 
@@ -54,7 +55,7 @@ class FakeBookmarksDBAdapterTest {
 
   @Test
   fun `should track update tag calls`() {
-    fake.setTags(listOf(Tag(1, "Name")))
+    fake.setTags(listOf(Tag(LegacyBookmarkIds.tagId(1L), "Name")))
 
     fake.updateTag(1, "Updated")
     fake.updateTag(1, "Updated Again")
@@ -107,22 +108,26 @@ class FakeBookmarksDBAdapterTest {
   fun `should sort bookmarks by date`() {
     val now = System.currentTimeMillis()
     fake.setBookmarks(listOf(
-      Bookmark(1, 2, 4, 10, now - 1000),
-      Bookmark(2, 3, 5, 20, now),
-      Bookmark(3, 4, 6, 30, now - 2000)
+      Bookmark(LegacyBookmarkIds.bookmarkId(1L), 2, 4, 10, now - 1000),
+      Bookmark(LegacyBookmarkIds.bookmarkId(2L), 3, 5, 20, now),
+      Bookmark(LegacyBookmarkIds.bookmarkId(3L), 4, 6, 30, now - 2000)
     ))
 
     val sorted = fake.getBookmarks(FakeBookmarksDBAdapter.SORT_DATE_ADDED)
 
-    assertThat(sorted.map { it.id }).containsExactly(2L, 1L, 3L).inOrder()
+    assertThat(sorted.map { it.id }).containsExactly(
+      LegacyBookmarkIds.bookmarkId(2L),
+      LegacyBookmarkIds.bookmarkId(1L),
+      LegacyBookmarkIds.bookmarkId(3L)
+    ).inOrder()
   }
 
   @Test
   fun `should sort bookmarks by location`() {
     fake.setBookmarks(listOf(
-      Bookmark(1, 2, 4, 30, System.currentTimeMillis()),
-      Bookmark(2, 3, 5, 10, System.currentTimeMillis()),
-      Bookmark(3, 4, 6, 20, System.currentTimeMillis())
+      Bookmark(LegacyBookmarkIds.bookmarkId(1L), 2, 4, 30, System.currentTimeMillis()),
+      Bookmark(LegacyBookmarkIds.bookmarkId(2L), 3, 5, 10, System.currentTimeMillis()),
+      Bookmark(LegacyBookmarkIds.bookmarkId(3L), 4, 6, 20, System.currentTimeMillis())
     ))
 
     val sorted = fake.getBookmarks(FakeBookmarksDBAdapter.SORT_LOCATION)
@@ -132,8 +137,8 @@ class FakeBookmarksDBAdapterTest {
 
   @Test
   fun `should reset state`() {
-    fake.setTags(listOf(Tag(1, "Test")))
-    fake.setBookmarks(listOf(Bookmark(1, 2, 4, 10, System.currentTimeMillis())))
+    fake.setTags(listOf(Tag(LegacyBookmarkIds.tagId(1L), "Test")))
+    fake.setBookmarks(listOf(Bookmark(LegacyBookmarkIds.bookmarkId(1L), 2, 4, 10, System.currentTimeMillis())))
     fake.updateTag(1, "Updated")
 
     fake.reset()
@@ -145,7 +150,7 @@ class FakeBookmarksDBAdapterTest {
 
   @Test
   fun `should configure updateTag to fail`() {
-    fake.setTags(listOf(Tag(1, "Test")))
+    fake.setTags(listOf(Tag(LegacyBookmarkIds.tagId(1L), "Test")))
     fake.setUpdateTagResult(false)
 
     val result = fake.updateTag(1, "Updated")

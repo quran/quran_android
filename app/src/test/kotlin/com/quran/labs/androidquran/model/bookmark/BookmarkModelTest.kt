@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.model.bookmark
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.google.common.truth.Truth.assertThat
+import com.quran.data.model.bookmark.LegacyBookmarkIds
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.awaitTerminalEvent
 import com.quran.labs.androidquran.BookmarksDatabase
@@ -53,7 +54,7 @@ class BookmarkModelTest {
   fun testUpdateTag() {
     // Setup: Create a tag first
     val tagId = bookmarksAdapter.addTag("Original Tag")
-    val tag = Tag(tagId, "Updated Tag")
+    val tag = Tag(LegacyBookmarkIds.tagId(tagId), "Updated Tag")
 
     // Execute: Update the tag
     val testObserver = model.updateTag(tag).test()
@@ -65,7 +66,7 @@ class BookmarkModelTest {
 
     // Verify: Tag was actually updated in database
     val allTags = bookmarksAdapter.getTags()
-    val updatedTag = requireNotNull(allTags.find { it.id == tagId })
+    val updatedTag = requireNotNull(allTags.find { it.id == LegacyBookmarkIds.tagId(tagId) })
     assertThat(updatedTag.name).isEqualTo("Updated Tag")
   }
 
