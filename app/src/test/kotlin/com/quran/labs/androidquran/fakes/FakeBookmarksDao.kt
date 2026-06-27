@@ -4,7 +4,6 @@ import com.quran.data.dao.BookmarkSortOrder
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
-import com.quran.data.model.bookmark.LegacyBookmarkIds
 import com.quran.data.model.bookmark.Tag
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -64,7 +63,7 @@ class FakeBookmarksDao : BookmarksDao {
   }
 
   override suspend fun addTag(name: String): String {
-    val id = LegacyBookmarkIds.tagId((tags.value.size + 1).toLong())
+    val id = "tag-${tags.value.size + 1}"
     addedTagNames += name
     tags.update { current -> current + Tag(id, name) }
     changesFlow.tryEmit(Unit)
@@ -129,7 +128,7 @@ class FakeBookmarksDao : BookmarksDao {
   ): Boolean {
     val existing = bookmarks.value.firstOrNull { it.sura == suraAyah.sura && it.ayah == suraAyah.ayah }
     if (existing == null && tagIds.isNotEmpty()) {
-      val id = LegacyBookmarkIds.bookmarkId((bookmarks.value.size + 1).toLong())
+      val id = "bookmark-${bookmarks.value.size + 1}"
       bookmarks.update { current ->
         current + Bookmark(id, suraAyah.sura, suraAyah.ayah, page, System.currentTimeMillis() / 1000, tagIds.toList())
       }
@@ -183,7 +182,7 @@ class FakeBookmarksDao : BookmarksDao {
       changesFlow.tryEmit(Unit)
       false
     } else {
-      val id = LegacyBookmarkIds.bookmarkId((bookmarks.value.size + 1).toLong())
+      val id = "bookmark-${bookmarks.value.size + 1}"
       bookmarks.update { current ->
         current + Bookmark(id, suraAyah.sura, suraAyah.ayah, page, System.currentTimeMillis() / 1000)
       }

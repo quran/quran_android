@@ -2,17 +2,6 @@ package com.quran.data.model.bookmark
 
 import com.squareup.moshi.JsonClass
 
-/**
- * Converts numeric IDs from the deprecated bookmarks database and old backups into runtime string
- * IDs. Bookmark IDs and tag IDs live in separate namespaces, so the stable string form can stay the
- * original decimal value.
- */
-object LegacyBookmarkIds {
-  fun bookmarkId(id: Long): String = id.toString()
-
-  fun tagId(id: Long): String = id.toString()
-}
-
 @JsonClass(generateAdapter = true)
 data class Bookmark @JvmOverloads constructor(
   val id: String,

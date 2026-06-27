@@ -10,21 +10,3 @@ CREATE UNIQUE INDEX IF NOT EXISTS
 
 getTagIdsForBookmark:
   SELECT tag_id FROM bookmark_tag WHERE bookmark_id = ? ORDER BY tag_id ASC;
-
-addBookmarkTag:
-  INSERT INTO bookmark_tag(bookmark_id, tag_id) VALUES(?, ?);
-
-replaceBookmarkTag:
-  REPLACE INTO bookmark_tag(bookmark_id, tag_id) VALUES(?, ?);
-
-deleteAll:
-  DELETE FROM bookmark_tag;
-
-deleteByBookmarkIds:
-  DELETE FROM bookmark_tag WHERE bookmark_id IN ?;
-
-deleteByTagIds:
-  DELETE FROM bookmark_tag WHERE tag_id IN ?;
-
-untag:
-  DELETE FROM bookmark_tag WHERE bookmark_id = ? AND tag_id = ?;
