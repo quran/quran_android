@@ -1060,20 +1060,6 @@ class AudioService : Service(), Player.Listener {
     }
   }
 
-  // Called when the player starts or stops playing
-  override fun onIsPlayingChanged(isPlaying: Boolean) {
-    // Ensure UI stays in sync with actual ExoPlayer state changes
-    // Only update state if it's a legitimate transition
-    if (isPlaying && state == State.Paused) {
-      state = State.Playing
-      updateAudioPlaybackStatus()
-    } else if (!isPlaying && state == State.Playing) {
-      // Handle automatic pause (audio focus loss, etc.)
-      state = State.Paused
-      updateAudioPlaybackStatus()
-    }
-  }
-
   private fun onSeekCompleted() {
     val player = player ?: return
     Timber.d("seek complete! position: %d", player.currentPosition)
