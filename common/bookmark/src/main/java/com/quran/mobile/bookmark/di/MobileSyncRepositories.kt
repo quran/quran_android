@@ -1,6 +1,9 @@
 package com.quran.mobile.bookmark.di
 
+import com.quran.data.di.AppCoroutineScope
 import com.quran.data.di.AppScope
+import com.quran.mobile.bookmark.model.BookmarkCollectionsState
+import com.quran.mobile.bookmark.model.RepositoryBookmarkCollectionsState
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepository
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepository
@@ -16,12 +19,15 @@ import dev.zacsweers.metro.SingleIn
 
 @SingleIn(AppScope::class)
 class MobileSyncRepositories @Inject constructor(
-  mobileSyncDatabase: MobileSyncDatabase
+  mobileSyncDatabase: MobileSyncDatabase,
+  appCoroutineScope: AppCoroutineScope
 ) {
   val bookmarksRepository: BookmarksRepository = BookmarksRepositoryImpl(mobileSyncDatabase.database)
   val collectionsRepository: CollectionsRepository = CollectionsRepositoryImpl(mobileSyncDatabase.database)
   val collectionBookmarksRepository: CollectionBookmarksRepository =
     CollectionBookmarksRepositoryImpl(mobileSyncDatabase.database)
+  val bookmarkCollectionsState: BookmarkCollectionsState =
+    RepositoryBookmarkCollectionsState(collectionsRepository, collectionBookmarksRepository, appCoroutineScope)
   val readingBookmarksRepository: ReadingBookmarksRepository =
     ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database)
   val readingSessionsRepository: ReadingSessionsRepository =

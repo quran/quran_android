@@ -14,6 +14,7 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImportReadingBookmark
 import com.quran.mobile.bookmark.importdata.MobileSyncImportReadingSession
 import com.quran.mobile.bookmark.importdata.MobileSyncImporterImpl
 import com.quran.mobile.bookmark.model.BookmarksDaoImpl
+import com.quran.mobile.bookmark.model.RepositoryBookmarkCollectionsState
 import com.quran.mobile.bookmark.sync.FakeLocalDataChangeNotifier
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
@@ -46,11 +47,18 @@ class MobileSyncImporterImplTest {
     mobileSyncDatabase = MobileSyncDatabase(context)
     appCoroutineScope = AppCoroutineScope()
     localDataChangeNotifier = FakeLocalDataChangeNotifier()
+    val collectionsRepository = CollectionsRepositoryImpl(mobileSyncDatabase.database)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(mobileSyncDatabase.database)
     bookmarksDao = BookmarksDaoImpl(
       quranInfoProvider = { QuranInfo(MadaniDataSource()) },
       bookmarksRepository = BookmarksRepositoryImpl(mobileSyncDatabase.database),
-      collectionsRepository = CollectionsRepositoryImpl(mobileSyncDatabase.database),
-      collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(mobileSyncDatabase.database),
+      collectionsRepository = collectionsRepository,
+      collectionBookmarksRepository = collectionBookmarksRepository,
+      bookmarkCollectionsState = RepositoryBookmarkCollectionsState(
+        collectionsRepository,
+        collectionBookmarksRepository,
+        appCoroutineScope
+      ),
       localDataChangeNotifier = localDataChangeNotifier,
       timestampProvider = FakeMobileSyncTimestampProvider(),
       appCoroutineScope = appCoroutineScope

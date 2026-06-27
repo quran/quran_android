@@ -9,6 +9,12 @@ import com.quran.shared.persistence.model.DEFAULT_COLLECTION_ID as SYNC_DEFAULT_
 val DEFAULT_BOOKMARK_COLLECTION_ID: String
   get() = SYNC_DEFAULT_COLLECTION_ID
 
+/**
+ * Returns true when this ID belongs to the virtual default bookmark collection.
+ *
+ * Prefer `Collection.isDefault` when a mobile-sync collection object is available. This helper is
+ * kept for legacy app UI rows that currently carry only a tag ID.
+ */
 fun String.isDefaultBookmarkCollectionId(): Boolean {
   return this == DEFAULT_BOOKMARK_COLLECTION_ID
 }

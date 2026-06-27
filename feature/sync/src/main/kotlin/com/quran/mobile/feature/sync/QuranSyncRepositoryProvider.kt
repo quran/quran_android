@@ -1,12 +1,15 @@
 package com.quran.mobile.feature.sync
 
+import com.quran.data.di.AppCoroutineScope
 import com.quran.data.di.AppScope
 import com.quran.mobile.bookmark.di.DefaultMobileSyncRepositoryProvider
 import com.quran.mobile.bookmark.di.MobileSyncRepositoryProvider
+import com.quran.mobile.bookmark.model.BookmarkCollectionsState
 import com.quran.shared.persistence.model.AyahBookmark
 import com.quran.shared.persistence.model.BookmarkCollectionsReplacementResult
 import com.quran.shared.persistence.model.Collection
 import com.quran.shared.persistence.model.CollectionAyahBookmark
+import com.quran.shared.persistence.model.CollectionWithAyahBookmarks
 import com.quran.shared.persistence.model.ReadingBookmark
 import com.quran.shared.persistence.model.ReadingSession
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepository
@@ -20,8 +23,13 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 @SingleIn(AppScope::class)
 @ContributesBinding(
@@ -29,7 +37,8 @@ import kotlinx.coroutines.flow.map
   replaces = [DefaultMobileSyncRepositoryProvider::class]
 )
 class QuranSyncRepositoryProvider @Inject constructor(
-  syncManager: QuranSyncManager
+  syncManager: QuranSyncManager,
+  appCoroutineScope: AppCoroutineScope
 ) : MobileSyncRepositoryProvider {
   private val quranDataService = syncManager.quranDataService
 
@@ -41,6 +50,9 @@ class QuranSyncRepositoryProvider @Inject constructor(
 
   override val collectionBookmarksRepository: CollectionBookmarksRepository =
     SyncCollectionBookmarksRepository(quranDataService)
+
+  override val bookmarkCollectionsState: BookmarkCollectionsState =
+    SyncBookmarkCollectionsState(quranDataService, appCoroutineScope)
 
   override val readingBookmarksRepository: ReadingBookmarksRepository =
     SyncReadingBookmarksRepository(quranDataService)
@@ -138,22 +150,15 @@ private class SyncBookmarksRepository(
       .firstOrNull { bookmark -> bookmark.sura == sura && bookmark.ayah == ayah }
       ?: return null
     val bookmarkLocalId = bookmark.localId
-    return buildSet {
-      if (defaultBookmarkIds().contains(bookmarkLocalId)) {
-        add(quranDataService.defaultCollectionId)
+    return quranDataService.collectionsWithBookmarks.first()
+      .mapNotNull { collectionWithBookmarks ->
+        collectionWithBookmarks.collection.localId
+          .takeIf {
+            collectionWithBookmarks.bookmarks.any { collectionBookmark ->
+              collectionBookmark.bookmarkLocalId == bookmarkLocalId
+            }
+          }
       }
-      quranDataService.collectionsWithBookmarks.first().forEach { collectionWithBookmarks ->
-        if (collectionWithBookmarks.bookmarks.any { it.bookmarkLocalId == bookmarkLocalId }) {
-          add(collectionWithBookmarks.collection.localId)
-        }
-      }
-    }
-  }
-
-  private suspend fun defaultBookmarkIds(): Set<String> {
-    return quranDataService.getBookmarksForCollectionFlow(quranDataService.defaultCollectionId)
-      .first()
-      .map { bookmark -> bookmark.bookmarkLocalId }
       .toSet()
   }
 
@@ -165,6 +170,29 @@ private class SyncBookmarksRepository(
       .orEmpty()
       .ifEmpty { listOf(quranDataService.defaultCollectionId) }
       .toSet()
+  }
+}
+
+/**
+ * Delegates shared collection membership state to mobile-sync's combined flow.
+ *
+ * That flow includes the virtual default collection, so callers do not need a second default
+ * membership query. The state is app-scoped so multiple app subscribers share one upstream
+ * mobile-sync collection.
+ */
+private class SyncBookmarkCollectionsState(
+  private val quranDataService: QuranDataService,
+  appCoroutineScope: AppCoroutineScope
+) : BookmarkCollectionsState {
+  override val collectionsWithBookmarks: StateFlow<List<CollectionWithAyahBookmarks>?> =
+    quranDataService.collectionsWithBookmarks
+      .distinctUntilChanged()
+      .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
+
+  override suspend fun currentCollectionsWithBookmarks(): List<CollectionWithAyahBookmarks> {
+    return collectionsWithBookmarks
+      .filterNotNull()
+      .first()
   }
 }
 
