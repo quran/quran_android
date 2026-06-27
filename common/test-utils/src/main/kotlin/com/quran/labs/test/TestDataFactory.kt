@@ -2,7 +2,6 @@ package com.quran.labs.test
 
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
-import com.quran.data.model.bookmark.LegacyBookmarkIds
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 
@@ -80,7 +79,7 @@ object TestDataFactory {
   // ==================== Bookmark Factory ====================
 
   /**
-   * Creates a [Bookmark] for a specific ayah from legacy numeric IDs.
+   * Creates a [Bookmark] for a specific ayah from numeric fixture IDs.
    */
   fun createBookmark(
     id: Long = 1L,
@@ -90,12 +89,12 @@ object TestDataFactory {
     timestamp: Long = System.currentTimeMillis(),
     tags: List<Long> = emptyList()
   ): Bookmark = Bookmark(
-    id = LegacyBookmarkIds.bookmarkId(id),
+    id = bookmarkId(id),
     sura = sura,
     ayah = ayah,
     page = page,
     timestamp = timestamp,
-    tags = tags.map(LegacyBookmarkIds::tagId)
+    tags = tags.map(::tagId)
   )
 
   /**
@@ -106,7 +105,7 @@ object TestDataFactory {
     page: Int = 1,
     timestamp: Long = System.currentTimeMillis()
   ): Bookmark = Bookmark(
-    id = LegacyBookmarkIds.bookmarkId(id),
+    id = bookmarkId(id),
     sura = null,
     ayah = null,
     page = page,
@@ -121,15 +120,19 @@ object TestDataFactory {
   fun createTag(
     id: Long = 1L,
     name: String = "Test Tag"
-  ): Tag = Tag(LegacyBookmarkIds.tagId(id), name)
+  ): Tag = Tag(tagId(id), name)
 
   /**
    * Creates multiple tags for testing.
    */
   fun createTags(count: Int): List<Tag> =
     (1..count).map { index ->
-      Tag(LegacyBookmarkIds.tagId(index.toLong()), "Tag $index")
+      Tag(tagId(index.toLong()), "Tag $index")
     }
+
+  private fun bookmarkId(id: Long): String = id.toString()
+
+  private fun tagId(id: Long): String = id.toString()
 
   // ==================== RecentPage Factory ====================
 

@@ -5,7 +5,6 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.bookmark.Bookmark
-import com.quran.data.model.bookmark.LegacyBookmarkIds
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
@@ -128,10 +127,12 @@ class LegacyBookmarksMigratorTest {
   private fun snapshotWithBookmark(): LegacyBookmarksSnapshot {
     return LegacyBookmarksSnapshot(
       tags = emptyList(),
-      bookmarks = listOf(Bookmark(LegacyBookmarkIds.bookmarkId(1L), 2, 255, page = 50, timestamp = 1000L)),
+      bookmarks = listOf(Bookmark(legacyBookmarkId(1L), 2, 255, page = 50, timestamp = 1000L)),
       recentPages = emptyList()
     )
   }
+
+  private fun legacyBookmarkId(id: Long): String = id.toString()
 
   private class FakeLegacyBookmarksDataSource : LegacyBookmarksDataSource {
     var snapshot: LegacyBookmarksSnapshot = LegacyBookmarksSnapshot(

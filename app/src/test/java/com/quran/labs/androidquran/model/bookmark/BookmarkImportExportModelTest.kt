@@ -10,7 +10,6 @@ import com.quran.data.dao.Settings
 import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
-import com.quran.data.model.bookmark.LegacyBookmarkIds
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
@@ -135,17 +134,17 @@ class BookmarkImportExportModelTest {
 
   @Test
   fun testExportBookmarksWithDataProducesUri() {
-    val ayahBookmark = Bookmark(LegacyBookmarkIds.bookmarkId(1L), 2, 255, 50, System.currentTimeMillis())
+    val ayahBookmark = Bookmark("1", 2, 255, 50, System.currentTimeMillis())
     bookmarksDao.setTags(
       listOf(
-        Tag(LegacyBookmarkIds.tagId(1L), "Export Tag"),
-        Tag(LegacyBookmarkIds.tagId(2L), "Another Tag")
+        Tag("1", "Export Tag"),
+        Tag("2", "Another Tag")
       )
     )
     bookmarksDao.setBookmarks(
       listOf(
         ayahBookmark,
-        Bookmark(LegacyBookmarkIds.bookmarkId(2L), null, null, 51, System.currentTimeMillis())
+        Bookmark("2", null, null, 51, System.currentTimeMillis())
       )
     )
     recentPagesDao.setRecentPages(listOf(RecentPage(50, 1000), RecentPage(51, 900)))
@@ -177,9 +176,9 @@ class BookmarkImportExportModelTest {
 
   @Test
   fun testExportBookmarksCsvWithDataProducesUri() {
-    bookmarksDao.setTags(listOf(Tag(LegacyBookmarkIds.tagId(1L), "CSV Tag")))
+    bookmarksDao.setTags(listOf(Tag("1", "CSV Tag")))
     bookmarksDao.setBookmarks(
-      listOf(Bookmark(LegacyBookmarkIds.bookmarkId(1L), 1, 1, 1, System.currentTimeMillis()))
+      listOf(Bookmark("1", 1, 1, 1, System.currentTimeMillis()))
     )
     recentPagesDao.setRecentPages(listOf(RecentPage(12, 1000)))
     readingBookmarksDao.setReadingBookmark(PageReadingBookmark(12, timestamp = 999))
@@ -200,15 +199,15 @@ class BookmarkImportExportModelTest {
   fun testImportDeduplicatesTagNames() {
     importData(
       BookmarkData(
-        tags = listOf(Tag(LegacyBookmarkIds.tagId(99L), "Existing"), Tag(LegacyBookmarkIds.tagId(100L), "Existing")),
+        tags = listOf(Tag("99", "Existing"), Tag("100", "Existing")),
         bookmarks = listOf(
           Bookmark(
-            LegacyBookmarkIds.bookmarkId(1L),
+            "1",
             2,
             255,
             50,
             1000,
-            tags = listOf(LegacyBookmarkIds.tagId(100L))
+            tags = listOf("100")
           )
         )
       )
@@ -224,15 +223,15 @@ class BookmarkImportExportModelTest {
   fun testImportCreatesMissingTagName() {
     importData(
       BookmarkData(
-        tags = listOf(Tag(LegacyBookmarkIds.tagId(99L), "Missing")),
+        tags = listOf(Tag("99", "Missing")),
         bookmarks = listOf(
           Bookmark(
-            LegacyBookmarkIds.bookmarkId(1L),
+            "1",
             2,
             255,
             50,
             1000,
-            tags = listOf(LegacyBookmarkIds.tagId(99L))
+            tags = listOf("99")
           )
         )
       )
@@ -257,15 +256,15 @@ class BookmarkImportExportModelTest {
 
     importData(
       BookmarkData(
-        tags = listOf(Tag(LegacyBookmarkIds.tagId(99L), "Imported Tag")),
+        tags = listOf(Tag("99", "Imported Tag")),
         bookmarks = listOf(
           Bookmark(
-            id = LegacyBookmarkIds.bookmarkId(1L),
+            id = "1",
             sura = null,
             ayah = null,
             page = page,
             timestamp = bookmarkTimestampMillis,
-            tags = listOf(LegacyBookmarkIds.tagId(99L))
+            tags = listOf("99")
           )
         ),
         recentPages = listOf(RecentPage(page, recentTimestampMillis)),
@@ -301,15 +300,15 @@ class BookmarkImportExportModelTest {
 
     importData(
       BookmarkData(
-        tags = listOf(Tag(LegacyBookmarkIds.tagId(99L), originalTagName)),
+        tags = listOf(Tag("99", originalTagName)),
         bookmarks = listOf(
           Bookmark(
-            LegacyBookmarkIds.bookmarkId(1L),
+            "1",
             null,
             null,
             page,
             1000,
-            tags = listOf(LegacyBookmarkIds.tagId(99L))
+            tags = listOf("99")
           )
         )
       )

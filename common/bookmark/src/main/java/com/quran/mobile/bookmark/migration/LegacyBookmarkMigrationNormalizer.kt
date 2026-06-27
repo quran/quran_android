@@ -4,7 +4,6 @@ import android.content.Context
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
-import com.quran.data.model.bookmark.LegacyBookmarkIds
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.mobile.bookmark.R
 import com.quran.mobile.bookmark.importdata.MobileSyncImportBookmark
@@ -12,6 +11,7 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImportCollection
 import com.quran.mobile.bookmark.importdata.MobileSyncImportCollectionBookmark
 import com.quran.mobile.bookmark.importdata.MobileSyncImportData
 import com.quran.mobile.bookmark.importdata.MobileSyncImportReadingSession
+import com.quran.mobile.bookmark.legacy.LegacyBookmarkIds
 import com.quran.mobile.bookmark.time.legacyTimestampMillis
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject

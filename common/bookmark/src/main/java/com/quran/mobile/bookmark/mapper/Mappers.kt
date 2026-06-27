@@ -1,15 +1,10 @@
 package com.quran.mobile.bookmark.mapper
 
 import com.quran.data.model.bookmark.Bookmark
-import com.quran.data.model.bookmark.LegacyBookmarkIds
 import com.quran.data.model.bookmark.RecentPage
-import com.quran.data.model.bookmark.Tag
+import com.quran.mobile.bookmark.legacy.LegacyBookmarkIds
 
 object Mappers {
-  val pageBookmarkMapper: ((id: Long, page: Int, addedDate: Long) -> Bookmark) = { id, page, addedDate ->
-    Bookmark(LegacyBookmarkIds.bookmarkId(id), null, null, page, addedDate)
-  }
-
   val bookmarkWithTagMapper: ((
     id: Long,
     sura: Int?,
@@ -24,7 +19,4 @@ object Mappers {
 
   val recentPageMapper: ((id: Long, page: Int, addedDate: Long) -> RecentPage) =
     { _, page, addedDate -> RecentPage(page, addedDate) }
-
-  val tagMapper: ((id: Long, name: String, addedDate: Long) -> Tag) =
-    { id, name, _ -> Tag(LegacyBookmarkIds.tagId(id), name) }
 }
