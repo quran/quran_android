@@ -1,6 +1,7 @@
 package com.quran.mobile.bookmark.di
 
 import com.quran.data.di.AppScope
+import com.quran.mobile.bookmark.model.BookmarkCollectionsState
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepository
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepository
 import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepository
@@ -14,6 +15,16 @@ interface MobileSyncRepositoryProvider {
   val bookmarksRepository: BookmarksRepository
   val collectionsRepository: CollectionsRepository
   val collectionBookmarksRepository: CollectionBookmarksRepository
+
+  /**
+   * Shared state for collections with bookmark membership.
+   *
+   * The default provider builds this state from persistence repositories, while the sync feature
+   * delegates to the sync service's combined collection flow. Bookmark write repositories stay
+   * separate.
+   */
+  val bookmarkCollectionsState: BookmarkCollectionsState
+
   val readingBookmarksRepository: ReadingBookmarksRepository
   val readingSessionsRepository: ReadingSessionsRepository
 }
@@ -31,6 +42,9 @@ class DefaultMobileSyncRepositoryProvider @Inject constructor(
 
   override val collectionBookmarksRepository: CollectionBookmarksRepository
     get() = repositories.collectionBookmarksRepository
+
+  override val bookmarkCollectionsState: BookmarkCollectionsState
+    get() = repositories.bookmarkCollectionsState
 
   override val readingBookmarksRepository: ReadingBookmarksRepository
     get() = repositories.readingBookmarksRepository

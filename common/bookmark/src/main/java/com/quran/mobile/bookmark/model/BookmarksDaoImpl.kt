@@ -14,7 +14,7 @@ import com.quran.mobile.bookmark.sync.LocalDataChangeNotifier
 import com.quran.mobile.bookmark.sync.notifyLocalDataChanged
 import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
 import com.quran.shared.persistence.model.AyahBookmark
-import com.quran.shared.persistence.model.CollectionAyahBookmark
+import com.quran.shared.persistence.model.CollectionWithAyahBookmarks
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepository
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepository
 import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepository
@@ -32,9 +32,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
@@ -46,6 +44,7 @@ class BookmarksDaoImpl @Inject constructor(
   private val bookmarksRepository: BookmarksRepository,
   private val collectionsRepository: CollectionsRepository,
   private val collectionBookmarksRepository: CollectionBookmarksRepository,
+  private val bookmarkCollectionsState: BookmarkCollectionsState,
   private val localDataChangeNotifier: LocalDataChangeNotifier,
   private val timestampProvider: MobileSyncTimestampProvider,
   appCoroutineScope: AppCoroutineScope
@@ -55,32 +54,28 @@ class BookmarksDaoImpl @Inject constructor(
       .distinctUntilChanged()
       .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
 
-  private val collectionsState: StateFlow<List<SyncCollection>?> =
-    collectionsRepository.getCollectionsFlow()
-      .distinctUntilChanged()
-      .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
-
-  private val bookmarkTagsState: StateFlow<Map<String, List<String>>?> =
-    bookmarkTagsByBookmarkIdFlow()
+  private val bookmarkCollectionDataState: StateFlow<BookmarkCollectionData?> =
+    bookmarkCollectionsState.collectionsWithBookmarks
+      .filterNotNull()
+      .map(::toBookmarkCollectionData)
       .distinctUntilChanged()
       .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
 
   override val changes: Flow<Unit> =
     combine(
       bookmarksState.filterNotNull(),
-      collectionsState.filterNotNull(),
-      bookmarkTagsState.filterNotNull()
-    ) { _, _, _ -> Unit }
+      bookmarkCollectionDataState.filterNotNull()
+    ) { _, _ -> Unit }
       .drop(1)
 
   override suspend fun bookmarks(sortOrder: Int): List<Bookmark> {
     return withContext(Dispatchers.IO) {
-      val tagsByBookmarkId = bookmarkTagsByBookmarkId()
+      val bookmarkCollectionData = bookmarkCollectionData()
       sortBookmarks(
         bookmarksRepository.getAllBookmarks().map { bookmark ->
           toBookmark(
             bookmark,
-            tagIdsForBookmark(bookmark.localId, tagsByBookmarkId)
+            bookmarkCollectionData.tagsByBookmarkId[bookmark.localId].orEmpty()
           )
         },
         sortOrder
@@ -91,13 +86,13 @@ class BookmarksDaoImpl @Inject constructor(
   override fun bookmarksFlow(sortOrder: Int): Flow<List<Bookmark>> {
     return combine(
       bookmarksState.filterNotNull(),
-      bookmarkTagsState.filterNotNull()
-    ) { bookmarks, tagsByBookmarkId ->
+      bookmarkCollectionDataState.filterNotNull()
+    ) { bookmarks, bookmarkCollectionData ->
       sortBookmarks(
         bookmarks.map { bookmark ->
           toBookmark(
             bookmark,
-            tagsByBookmarkId[bookmark.localId].orEmpty()
+            bookmarkCollectionData.tagsByBookmarkId[bookmark.localId].orEmpty()
           )
         },
         sortOrder
@@ -114,13 +109,13 @@ class BookmarksDaoImpl @Inject constructor(
 
   override suspend fun tags(): List<Tag> {
     return withContext(Dispatchers.IO) {
-      collectionsRepository.getAllCollections().mapNotNull(::toTag)
+      bookmarkCollectionData().tags
     }
   }
 
   override fun tagsFlow(): Flow<List<Tag>> {
-    return collectionsState.filterNotNull()
-      .map { collections -> collections.mapNotNull(::toTag) }
+    return bookmarkCollectionDataState.filterNotNull()
+      .map { bookmarkCollectionData -> bookmarkCollectionData.tags }
       .distinctUntilChanged()
   }
 
@@ -137,7 +132,7 @@ class BookmarksDaoImpl @Inject constructor(
     val timestamp = timestampProvider.now()
     val updated = withContext(Dispatchers.IO) {
       val localId = tag.id
-      val collectionsById = collectionsById()
+      val collectionsById = bookmarkCollectionData().collectionsById
       val existingCollection = collectionsById[localId]
         ?: return@withContext false
       if (existingCollection.name == tag.name ||
@@ -162,7 +157,7 @@ class BookmarksDaoImpl @Inject constructor(
 
   override suspend fun removeTags(tags: List<Tag>) {
     val removed = withContext(Dispatchers.IO) {
-      val collectionsById = collectionsById()
+      val collectionsById = bookmarkCollectionData().collectionsById
       val tagsToRemove = tags.filter { tag -> collectionsById.containsKey(tag.id) }
       tagsToRemove.forEach { tag -> collectionsRepository.deleteCollection(tag.id) }
       tagsToRemove.isNotEmpty()
@@ -174,7 +169,7 @@ class BookmarksDaoImpl @Inject constructor(
 
   override suspend fun getBookmarkTagIds(bookmarkId: String): List<String> {
     return withContext(Dispatchers.IO) {
-      bookmarkTagsByBookmarkId()[bookmarkId].orEmpty()
+      bookmarkCollectionData().tagsByBookmarkId[bookmarkId].orEmpty()
     }
   }
 
@@ -192,10 +187,9 @@ class BookmarksDaoImpl @Inject constructor(
   ): Boolean {
     val timestamp = timestampProvider.now()
     val updated = withContext(Dispatchers.IO) {
-      val collectionsById = collectionsById()
+      val bookmarkCollectionData = bookmarkCollectionData()
+      val collectionsById = bookmarkCollectionData.collectionsById
       val targetTagIds = validTagIds(tagIds, collectionsById)
-      val currentTagsByBookmarkId = bookmarkTagsByBookmarkId()
-      val defaultBookmarkIds = defaultBookmarkIds()
       val bookmarksById = bookmarksRepository.getAllBookmarks()
         .associateBy { bookmark -> bookmark.localId }
       var didWrite = false
@@ -207,12 +201,12 @@ class BookmarksDaoImpl @Inject constructor(
           val nextTagIds = if (deleteNonTagged) {
             targetTagIds
           } else {
-            currentTagsByBookmarkId[bookmarkId].orEmpty().toSet() + targetTagIds
+            bookmarkCollectionData.tagsByBookmarkId[bookmarkId].orEmpty().toSet() + targetTagIds
           }
           didWrite = replaceBookmarkMemberships(
             bookmark = bookmark,
             tagIds = nextTagIds,
-            isInDefaultCollection = bookmarkId in defaultBookmarkIds,
+            isInDefaultCollection = bookmarkId in bookmarkCollectionData.defaultBookmarkIds,
             collectionsById = collectionsById,
             timestamp = timestamp
           ) ||
@@ -234,7 +228,8 @@ class BookmarksDaoImpl @Inject constructor(
   ): Boolean {
     val timestamp = timestampProvider.now()
     val updated = withContext(Dispatchers.IO) {
-      val collectionsById = collectionsById()
+      val bookmarkCollectionData = bookmarkCollectionData()
+      val collectionsById = bookmarkCollectionData.collectionsById
       val targetTagIds = validTagIds(tagIds, collectionsById)
       val existingBookmark = bookmarkForSuraAyah(suraAyah)
       if (existingBookmark != null) {
@@ -242,12 +237,12 @@ class BookmarksDaoImpl @Inject constructor(
         val nextTagIds = if (deleteNonTagged) {
           targetTagIds
         } else {
-          bookmarkTagsByBookmarkId()[bookmarkId].orEmpty().toSet() + targetTagIds
+          bookmarkCollectionData.tagsByBookmarkId[bookmarkId].orEmpty().toSet() + targetTagIds
         }
         replaceBookmarkMemberships(
           bookmark = existingBookmark,
           tagIds = nextTagIds,
-          isInDefaultCollection = bookmarkId in defaultBookmarkIds(),
+          isInDefaultCollection = bookmarkId in bookmarkCollectionData.defaultBookmarkIds,
           collectionsById = collectionsById,
           timestamp = timestamp
         )
@@ -383,68 +378,43 @@ class BookmarksDaoImpl @Inject constructor(
   }
 
   private suspend fun tagIdsForBookmark(bookmarkLocalId: String): List<String> {
-    return tagIdsForBookmark(bookmarkLocalId, bookmarkTagsByBookmarkId())
+    return bookmarkCollectionData().tagsByBookmarkId[bookmarkLocalId].orEmpty()
   }
 
-  private fun tagIdsForBookmark(
-    bookmarkLocalId: String,
-    tagsByBookmarkId: Map<String, List<String>>
-  ): List<String> {
-    return tagsByBookmarkId[bookmarkLocalId].orEmpty()
+  private suspend fun bookmarkCollectionData(): BookmarkCollectionData {
+    return toBookmarkCollectionData(bookmarkCollectionsState.currentCollectionsWithBookmarks())
   }
 
-  private fun bookmarkTagsByBookmarkIdFlow(): Flow<Map<String, List<String>>> {
-    return collectionsState.filterNotNull()
-      .flatMapLatest { collections ->
-        if (collections.isEmpty()) {
-          flowOf(emptyMap())
-        } else {
-          combine(
-            collections.map { collection ->
-              collectionBookmarksRepository.getBookmarksForCollectionFlow(collection.localId)
-                .map { bookmarks ->
-                  collectionBookmarksToPairs(collection, bookmarks)
-                }
-            }
-          ) { bookmarkTags ->
-            bookmarkTags
-              .flatMap { it }
-              .groupBy({ it.first }, { it.second })
-          }
-        }
-      }
-      .distinctUntilChanged()
+  private fun toBookmarkCollectionData(
+    collectionsWithBookmarks: List<CollectionWithAyahBookmarks>
+  ): BookmarkCollectionData {
+    val customCollectionsWithBookmarks = collectionsWithBookmarks
+      .filterNot { collectionWithBookmarks -> collectionWithBookmarks.collection.isDefault }
+    return BookmarkCollectionData(
+      collectionsById = customCollectionsWithBookmarks
+        .map { collectionWithBookmarks -> collectionWithBookmarks.collection }
+        .associateBy { collection -> collection.localId },
+      tags = customCollectionsWithBookmarks.map { collectionWithBookmarks ->
+        Tag(collectionWithBookmarks.collection.localId, collectionWithBookmarks.collection.name)
+      },
+      tagsByBookmarkId = customCollectionsWithBookmarks
+        .flatMap(::collectionBookmarksToPairs)
+        .groupBy({ bookmarkTag -> bookmarkTag.first }, { bookmarkTag -> bookmarkTag.second }),
+      defaultBookmarkIds = collectionsWithBookmarks
+        .filter { collectionWithBookmarks -> collectionWithBookmarks.collection.isDefault }
+        .flatMap { collectionWithBookmarks -> collectionWithBookmarks.bookmarks }
+        .map { bookmark -> bookmark.bookmarkLocalId }
+        .toSet()
+    )
   }
 
   private fun collectionBookmarksToPairs(
-    collection: SyncCollection,
-    bookmarks: List<CollectionAyahBookmark>
+    collectionWithBookmarks: CollectionWithAyahBookmarks
   ): List<Pair<String, String>> {
-    if (collection.localId.isDefaultBookmarkCollectionId()) return emptyList()
-    return bookmarks.map { bookmark -> bookmark.bookmarkLocalId to collection.localId }
-  }
-
-  private suspend fun bookmarkTagsByBookmarkId(): Map<String, List<String>> {
-    return loadBookmarkTagsByBookmarkId(collectionsRepository.getAllCollections())
-  }
-
-  private suspend fun defaultBookmarkIds(): Set<String> {
-    return collectionBookmarksRepository.getBookmarksForCollection(DEFAULT_BOOKMARK_COLLECTION_ID)
-      .map { bookmark -> bookmark.bookmarkLocalId }
-      .toSet()
-  }
-
-  private suspend fun loadBookmarkTagsByBookmarkId(
-    collections: List<SyncCollection>
-  ): Map<String, List<String>> {
-    return collections
-      .flatMap { collection ->
-        collectionBookmarksToPairs(
-          collection,
-          collectionBookmarksRepository.getBookmarksForCollection(collection.localId)
-        )
-      }
-      .groupBy({ it.first }, { it.second })
+    val tagId = collectionWithBookmarks.collection.localId
+    return collectionWithBookmarks.bookmarks.map { bookmark ->
+      bookmark.bookmarkLocalId to tagId
+    }
   }
 
   private fun validTagIds(
@@ -462,9 +432,7 @@ class BookmarksDaoImpl @Inject constructor(
   }
 
   private suspend fun collectionsById(): Map<String, SyncCollection> {
-    return collectionsRepository.getAllCollections()
-      .filterNot { collection -> collection.localId.isDefaultBookmarkCollectionId() }
-      .associateBy { collection -> collection.localId }
+    return bookmarkCollectionData().collectionsById
   }
 
   private suspend fun bookmarkForSuraAyah(suraAyah: SuraAyah): AyahBookmark? {
@@ -516,12 +484,6 @@ class BookmarksDaoImpl @Inject constructor(
     )
   }
 
-  private fun toTag(collection: SyncCollection): Tag? {
-    return collection
-      .takeUnless { it.localId.isDefaultBookmarkCollectionId() }
-      ?.let { Tag(it.localId, it.name) }
-  }
-
   private fun sortBookmarks(bookmarks: List<Bookmark>, sortOrder: Int): List<Bookmark> {
     return when (sortOrder) {
       BookmarkSortOrder.SORT_LOCATION ->
@@ -533,6 +495,20 @@ class BookmarksDaoImpl @Inject constructor(
   private fun Long.toPlatformDateTime(): PlatformDateTime {
     return Instant.fromEpochSeconds(this).toPlatform()
   }
+
+  /**
+   * Snapshot-derived lookup data used by legacy bookmark/tag APIs.
+   *
+   * [tagsByBookmarkId] intentionally excludes the default collection because `Bookmark.tags`
+   * represents user-visible custom collections only. [defaultBookmarkIds] keeps the hidden default
+   * membership available for write paths that need to preserve or remove the bookmark itself.
+   */
+  private data class BookmarkCollectionData(
+    val collectionsById: Map<String, SyncCollection>,
+    val tags: List<Tag>,
+    val tagsByBookmarkId: Map<String, List<String>>,
+    val defaultBookmarkIds: Set<String>
+  )
 
   private companion object {
     private const val QURAN_SURA_COUNT = 114

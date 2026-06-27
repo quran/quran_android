@@ -45,11 +45,18 @@ class BookmarksDaoImplTest {
     appCoroutineScope = AppCoroutineScope()
     localDataChangeNotifier = FakeLocalDataChangeNotifier()
     timestampProvider = FakeMobileSyncTimestampProvider()
+    val collectionsRepository = CollectionsRepositoryImpl(database)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
     dao = BookmarksDaoImpl(
       quranInfoProvider = { quranInfo },
       bookmarksRepository = BookmarksRepositoryImpl(database),
-      collectionsRepository = CollectionsRepositoryImpl(database),
-      collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database),
+      collectionsRepository = collectionsRepository,
+      collectionBookmarksRepository = collectionBookmarksRepository,
+      bookmarkCollectionsState = RepositoryBookmarkCollectionsState(
+        collectionsRepository,
+        collectionBookmarksRepository,
+        appCoroutineScope
+      ),
       localDataChangeNotifier = localDataChangeNotifier,
       timestampProvider = timestampProvider,
       appCoroutineScope = appCoroutineScope
@@ -82,6 +89,7 @@ class BookmarksDaoImplTest {
     assertThat(bookmarks.single().ayah).isEqualTo(255)
     assertThat(bookmarks.single().page).isEqualTo(quranInfo.getPageFromSuraAyah(2, 255))
     assertThat(bookmarks.single().timestamp).isEqualTo(timestampProvider.timestampSeconds)
+    assertThat(bookmarks.single().tags).isEmpty()
     assertThat(bookmarks.single().isPageBookmark()).isFalse()
     assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
@@ -166,8 +174,10 @@ class BookmarksDaoImplTest {
       assertThat(awaitItem()).isEmpty()
 
       dao.toggleAyahBookmark(suraAyah, quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah))
-      assertThat(awaitItem().map { it.sura to it.ayah })
+      val addedBookmarks = awaitItem()
+      assertThat(addedBookmarks.map { it.sura to it.ayah })
         .containsExactly(suraAyah.sura to suraAyah.ayah)
+      assertThat(addedBookmarks.single().tags).isEmpty()
 
       dao.toggleAyahBookmark(suraAyah, quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah))
       assertThat(awaitItem()).isEmpty()
@@ -196,6 +206,22 @@ class BookmarksDaoImplTest {
       assertThat(awaitItem().map { it.sura to it.ayah }).containsExactly(2 to 255)
       cancelAndIgnoreRemainingEvents()
     }
+  }
+
+  @Test
+  fun `repository collections state includes default collection without custom collections`() = runTest {
+    val collectionsState = RepositoryBookmarkCollectionsState(
+      CollectionsRepositoryImpl(database),
+      CollectionBookmarksRepositoryImpl(database),
+      appCoroutineScope
+    )
+
+    val collectionsWithBookmarks = collectionsState.currentCollectionsWithBookmarks()
+
+    assertThat(collectionsWithBookmarks.map { collectionWithBookmarks -> collectionWithBookmarks.collection.localId })
+      .containsExactly(DEFAULT_BOOKMARK_COLLECTION_ID)
+    assertThat(collectionsWithBookmarks.single().collection.isDefault).isTrue()
+    assertThat(collectionsWithBookmarks.single().bookmarks).isEmpty()
   }
 
   @Test
@@ -236,13 +262,45 @@ class BookmarksDaoImplTest {
   }
 
   @Test
-  fun `update tag returns false for default collection`() = runTest {
+  fun `tags exclude default collection`() = runTest {
     val collectionsRepository = DefaultCollectionTestRepository(timestampProvider.now())
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
     val dao = BookmarksDaoImpl(
       quranInfoProvider = { quranInfo },
       bookmarksRepository = BookmarksRepositoryImpl(database),
       collectionsRepository = collectionsRepository,
-      collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database),
+      collectionBookmarksRepository = collectionBookmarksRepository,
+      bookmarkCollectionsState = RepositoryBookmarkCollectionsState(
+        collectionsRepository,
+        collectionBookmarksRepository,
+        appCoroutineScope
+      ),
+      localDataChangeNotifier = localDataChangeNotifier,
+      timestampProvider = timestampProvider,
+      appCoroutineScope = appCoroutineScope
+    )
+
+    assertThat(dao.tags()).isEmpty()
+    dao.tagsFlow().test {
+      assertThat(awaitItem()).isEmpty()
+      cancelAndIgnoreRemainingEvents()
+    }
+  }
+
+  @Test
+  fun `update tag returns false for default collection`() = runTest {
+    val collectionsRepository = DefaultCollectionTestRepository(timestampProvider.now())
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
+    val dao = BookmarksDaoImpl(
+      quranInfoProvider = { quranInfo },
+      bookmarksRepository = BookmarksRepositoryImpl(database),
+      collectionsRepository = collectionsRepository,
+      collectionBookmarksRepository = collectionBookmarksRepository,
+      bookmarkCollectionsState = RepositoryBookmarkCollectionsState(
+        collectionsRepository,
+        collectionBookmarksRepository,
+        appCoroutineScope
+      ),
       localDataChangeNotifier = localDataChangeNotifier,
       timestampProvider = timestampProvider,
       appCoroutineScope = appCoroutineScope

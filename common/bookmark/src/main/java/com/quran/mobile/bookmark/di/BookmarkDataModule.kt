@@ -10,6 +10,7 @@ import com.quran.data.di.AppScope
 import com.quran.labs.androidquran.BookmarksDatabase
 import com.quran.mobile.bookmark.Bookmarks
 import com.quran.mobile.bookmark.Last_pages
+import com.quran.mobile.bookmark.model.BookmarkCollectionsState
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepository
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepository
@@ -68,6 +69,14 @@ class BookmarkDataModule {
     repositories: MobileSyncRepositoryProvider
   ): CollectionBookmarksRepository {
     return repositories.collectionBookmarksRepository
+  }
+
+  @SingleIn(AppScope::class)
+  @Provides
+  fun provideBookmarkCollectionsState(
+    repositories: MobileSyncRepositoryProvider
+  ): BookmarkCollectionsState {
+    return repositories.bookmarkCollectionsState
   }
 
   @SingleIn(AppScope::class)
