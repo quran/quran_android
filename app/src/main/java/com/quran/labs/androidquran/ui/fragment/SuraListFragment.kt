@@ -6,9 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -62,21 +59,8 @@ class SuraListFragment : Fragment() {
       itemAnimator = DefaultItemAnimator()
       adapter = QuranListAdapter(requireActivity(), recyclerView, getSuraList(), false)
     }
-
-    ViewCompat.setOnApplyWindowInsetsListener(recyclerView) { view, windowInsets ->
-      val insets = windowInsets.getInsets(
-        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-      )
-      recyclerView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-        // top, left, right are handled by QuranActivity
-        view.setPadding(0, 0, 0, insets.bottom)
-      }
-
-      // if we return WindowInsetsCompat.CONSUMED, the SnackBar won't
-      // be properly positioned on Android 29 and below (will be under
-      // the navigation bar).
-      windowInsets
-    }
+    // top, left, right insets are handled by QuranActivity; the bottom inset is owned by the
+    // bottom navigation bar, so the list itself needs no inset padding.
     return view
   }
 

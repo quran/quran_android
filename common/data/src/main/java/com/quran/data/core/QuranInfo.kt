@@ -10,6 +10,7 @@ import com.quran.data.model.VerseRange
 import com.quran.data.source.QuranDataSource
 import dev.zacsweers.metro.Inject
 import kotlin.math.abs
+import kotlin.random.Random
 
 class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
   val suraPageStart = quranDataSource.pageForSuraArray
@@ -257,6 +258,27 @@ class QuranInfo @Inject constructor(quranDataSource: QuranDataSource) {
       ayahIdentifier -= suraNumAyahs[sura++]
     }
     return SuraAyah(sura + 1, ayahIdentifier)
+  }
+
+  /** Returns a uniformly random ayah across the entire Quran. */
+  fun getRandomAyah(): SuraAyah {
+    val randomAyahId = Random.nextInt(getNumberOfAyahsInQuran()) + 1
+    return getSuraAyahFromAyahId(randomAyahId)
+  }
+
+  /** Returns the first [SuraAyah] of the given juz' (1..30). */
+  fun getJuzStart(juz: Int): SuraAyah = quarters[(juz - 1) * 8]
+
+  /**
+   * Returns a uniformly random ayah within the inclusive range bounded by [start] and [end].
+   * The endpoints may be given in either order.
+   */
+  fun getRandomAyahInRange(start: SuraAyah, end: SuraAyah): SuraAyah {
+    val a = getAyahId(start.sura, start.ayah)
+    val b = getAyahId(end.sura, end.ayah)
+    val lo = minOf(a, b)
+    val hi = maxOf(a, b)
+    return getSuraAyahFromAyahId(lo + Random.nextInt(hi - lo + 1))
   }
 
   fun getQuarterByIndex(quarter: Int) = quarters[quarter]
