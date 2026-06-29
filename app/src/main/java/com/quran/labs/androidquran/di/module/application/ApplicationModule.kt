@@ -11,6 +11,8 @@ import com.quran.data.di.AppScope
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
+import com.quran.labs.androidquran.common.audio.cache.AudioCacheInvalidator
+import com.quran.labs.androidquran.common.audio.cache.AudioCacheInvalidatorInterface
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoManager
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoSource
 import com.quran.labs.androidquran.data.QuranDisplayData
@@ -97,6 +99,9 @@ object ApplicationModule {
   fun provideQariDownloadInfoSource(manager: QariDownloadInfoManager): QariDownloadInfoSource {
     return manager
   }
+
+  @Provides
+  fun provideAudioCacheInvalidatorInterface(impl: AudioCacheInvalidator): AudioCacheInvalidatorInterface = impl
 
   @Provides
   fun provideFileSystem(): FileSystem {

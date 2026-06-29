@@ -39,7 +39,7 @@ class QariDownloadInfoManager @Inject constructor(
     }
   }
 
-  fun downloadedQariInfo(): Flow<List<QariDownloadInfo>> {
+  override fun downloadedQariInfo(): Flow<List<QariDownloadInfo>> {
     return storageCache.flow()
   }
 
