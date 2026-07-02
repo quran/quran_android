@@ -4,7 +4,6 @@ import android.content.Context
 import android.text.TextUtils
 import androidx.annotation.StringRes
 import com.quran.data.core.QuranInfo
-import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.SuraAyahIterator
 import com.quran.labs.androidquran.R
@@ -95,7 +94,7 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
     }
   }
 
-  fun getSuraAyahString(context: Context, sura: Int, ayah: Int): String {
+  override fun getSuraAyahString(context: Context, sura: Int, ayah: Int): String {
     return getSuraAyahString(context, sura, ayah, R.string.sura_ayah_notification_str)
   }
 
