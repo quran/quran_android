@@ -10,6 +10,7 @@ import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.collection.ReadingCollectionBookmarks
 import com.quran.mobile.bookmark.sync.LocalDataChangeNotifier
 import com.quran.mobile.bookmark.sync.notifyLocalDataChanged
 import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
@@ -24,7 +25,6 @@ import com.quran.shared.persistence.util.toPlatform
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
-import kotlin.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
+import kotlin.time.Instant
 import com.quran.shared.persistence.model.Collection as SyncCollection
 
 @SingleIn(AppScope::class)
@@ -99,6 +100,12 @@ class BookmarksDaoImpl @Inject constructor(
       )
     }
       .distinctUntilChanged()
+  }
+
+  override fun collectionsWithBookmarksFlow(): Flow<List<ReadingCollectionBookmarks>> {
+    return bookmarkCollectionsState.collectionsWithBookmarks
+      .filterNotNull()
+      .map { collections -> collections.map { it.asReadingCollectionBookmarks() } }
   }
 
   override fun bookmarksForPage(page: Int): Flow<List<Bookmark>> {
