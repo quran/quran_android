@@ -3,17 +3,24 @@ package com.quran.labs.androidquran.fakes
 import com.quran.data.dao.BookmarkSortOrder
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.bookmark.AyahBookmark
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.collection.ReadingCollection
+import com.quran.data.model.collection.ReadingCollectionBookmarks
+import com.quran.mobile.bookmark.model.DEFAULT_BOOKMARK_COLLECTION_ID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlin.time.Instant
 
 class FakeBookmarksDao : BookmarksDao {
   private val bookmarks = MutableStateFlow<List<Bookmark>>(emptyList())
   private val tags = MutableStateFlow<List<Tag>>(emptyList())
+  private val defaultBookmarkIds = MutableStateFlow<Set<String>>(emptySet())
   private val changesFlow = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
   private val addedTagNames = mutableListOf<String>()
 
@@ -21,6 +28,10 @@ class FakeBookmarksDao : BookmarksDao {
 
   fun setBookmarks(newBookmarks: List<Bookmark>) {
     bookmarks.value = newBookmarks
+    defaultBookmarkIds.value = newBookmarks
+      .filter { bookmark -> bookmark.sura != null && bookmark.ayah != null }
+      .map { bookmark -> bookmark.id }
+      .toSet()
     changesFlow.tryEmit(Unit)
   }
 
@@ -54,6 +65,22 @@ class FakeBookmarksDao : BookmarksDao {
       .map { bookmarks -> bookmarks.filter { it.page == page } }
   }
 
+  override fun collectionsWithBookmarksFlow(): Flow<List<ReadingCollectionBookmarks>> {
+    return combine(tags, bookmarks, defaultBookmarkIds) { tags, bookmarks, defaultBookmarkIds ->
+      val ayahBookmarks = sortBookmarks(
+        bookmarks.filter { bookmark -> bookmark.sura != null && bookmark.ayah != null },
+        BookmarkSortOrder.SORT_LOCATION
+      )
+      listOf(defaultCollection(ayahBookmarks.filter { bookmark -> bookmark.id in defaultBookmarkIds })) +
+        tags.map { tag ->
+          tagCollection(
+            tag,
+            ayahBookmarks.filter { bookmark -> tag.id in bookmark.tags }
+          )
+        }
+    }
+  }
+
   override suspend fun tags(): List<Tag> {
     return tags.value
   }
@@ -80,7 +107,9 @@ class FakeBookmarksDao : BookmarksDao {
     val tagIds = tags.map { it.id }.toSet()
     this.tags.update { current -> current.filterNot { it.id in tagIds } }
     bookmarks.update { current ->
-      current.map { bookmark -> bookmark.copy(tags = bookmark.tags.filterNot { it in tagIds }) }
+      current.mapNotNull { bookmark ->
+        bookmark.withUpdatedTags(bookmark.tags.filterNot { it in tagIds })
+      }
     }
     changesFlow.tryEmit(Unit)
   }
@@ -103,14 +132,14 @@ class FakeBookmarksDao : BookmarksDao {
   ): Boolean {
     val bookmarkIdSet = bookmarkIds.toSet()
     bookmarks.update { current ->
-      current.map { bookmark ->
+      current.mapNotNull { bookmark ->
         if (bookmark.id in bookmarkIdSet) {
           val updatedTags = if (deleteNonTagged) {
             tagIds.toList()
           } else {
             (bookmark.tags + tagIds).distinct()
           }
-          bookmark.copy(tags = updatedTags)
+          bookmark.withUpdatedTags(updatedTags)
         } else {
           bookmark
         }
@@ -142,9 +171,9 @@ class FakeBookmarksDao : BookmarksDao {
 
   override suspend fun removeBookmarkFromTag(bookmark: Bookmark, tagId: String): Boolean {
     bookmarks.update { current ->
-      current.map {
+      current.mapNotNull {
         if (it.id == bookmark.id) {
-          it.copy(tags = it.tags.filterNot { id -> id == tagId })
+          it.withUpdatedTags(it.tags.filterNot { id -> id == tagId })
         } else {
           it
         }
@@ -157,16 +186,24 @@ class FakeBookmarksDao : BookmarksDao {
   override suspend fun removeBookmarks(bookmarks: List<Bookmark>) {
     val bookmarkIds = bookmarks.map { it.id }.toSet()
     this.bookmarks.update { current -> current.filterNot { it.id in bookmarkIds } }
+    defaultBookmarkIds.update { current -> current - bookmarkIds }
     changesFlow.tryEmit(Unit)
   }
 
   override suspend fun removeBookmarksForPage(page: Int) {
+    val bookmarkIds = bookmarks.value
+      .filter { bookmark -> bookmark.page == page }
+      .map { bookmark -> bookmark.id }
+      .toSet()
     bookmarks.update { current -> current.filterNot { it.page == page } }
+    defaultBookmarkIds.update { current -> current - bookmarkIds }
     changesFlow.tryEmit(Unit)
   }
 
   override suspend fun replaceAyahBookmarks(bookmarks: List<Bookmark>) {
-    this.bookmarks.value = bookmarks.filterNot { it.isPageBookmark() }
+    val ayahBookmarks = bookmarks.filter { bookmark -> bookmark.sura != null && bookmark.ayah != null }
+    this.bookmarks.value = ayahBookmarks
+    defaultBookmarkIds.value = ayahBookmarks.map { bookmark -> bookmark.id }.toSet()
     changesFlow.tryEmit(Unit)
   }
 
@@ -176,9 +213,14 @@ class FakeBookmarksDao : BookmarksDao {
 
   override suspend fun toggleAyahBookmark(suraAyah: SuraAyah, page: Int): Boolean {
     return if (isSuraAyahBookmarked(suraAyah)) {
+      val bookmarkIds = bookmarks.value
+        .filter { it.sura == suraAyah.sura && it.ayah == suraAyah.ayah }
+        .map { bookmark -> bookmark.id }
+        .toSet()
       bookmarks.update { current ->
         current.filterNot { it.sura == suraAyah.sura && it.ayah == suraAyah.ayah }
       }
+      defaultBookmarkIds.update { current -> current - bookmarkIds }
       changesFlow.tryEmit(Unit)
       false
     } else {
@@ -186,6 +228,7 @@ class FakeBookmarksDao : BookmarksDao {
       bookmarks.update { current ->
         current + Bookmark(id, suraAyah.sura, suraAyah.ayah, page, System.currentTimeMillis() / 1000)
       }
+      defaultBookmarkIds.update { current -> current + id }
       changesFlow.tryEmit(Unit)
       true
     }
@@ -200,5 +243,65 @@ class FakeBookmarksDao : BookmarksDao {
       )
       else -> bookmarks.sortedByDescending { it.timestamp }
     }
+  }
+
+  private fun Bookmark.withUpdatedTags(updatedTags: List<String>): Bookmark? {
+    return if (updatedTags.isEmpty() && id !in defaultBookmarkIds.value) {
+      null
+    } else {
+      copy(tags = updatedTags)
+    }
+  }
+
+  private fun defaultCollection(bookmarks: List<Bookmark>): ReadingCollectionBookmarks {
+    return ReadingCollectionBookmarks(
+      readingCollection = ReadingCollection(
+        id = DEFAULT_BOOKMARK_COLLECTION_ID,
+        name = DEFAULT_COLLECTION_NAME,
+        lastUpdated = bookmarks.lastUpdated(),
+        isSystem = true
+      ),
+      bookmarks = bookmarks.map { bookmark -> bookmark.toAyahBookmark() }
+    )
+  }
+
+  private fun tagCollection(tag: Tag, bookmarks: List<Bookmark>): ReadingCollectionBookmarks {
+    return ReadingCollectionBookmarks(
+      readingCollection = ReadingCollection(
+        id = tag.id,
+        name = tag.name,
+        lastUpdated = bookmarks.lastUpdated(),
+        isSystem = false
+      ),
+      bookmarks = bookmarks.map { bookmark -> bookmark.toAyahBookmark() }
+    )
+  }
+
+  private fun Bookmark.toAyahBookmark(): AyahBookmark {
+    val instant = timestamp.toInstant()
+    return AyahBookmark(
+      sura = checkNotNull(sura),
+      ayah = checkNotNull(ayah),
+      addedDate = instant,
+      lastUpdated = instant
+    )
+  }
+
+  private fun List<Bookmark>.lastUpdated(): Instant {
+    return maxOfOrNull { bookmark -> bookmark.timestamp.toInstant() } ?: EMPTY_COLLECTION_TIMESTAMP
+  }
+
+  private fun Long.toInstant(): Instant {
+    return if (this > EPOCH_SECONDS_UPPER_BOUND) {
+      Instant.fromEpochMilliseconds(this)
+    } else {
+      Instant.fromEpochSeconds(this)
+    }
+  }
+
+  private companion object {
+    private const val DEFAULT_COLLECTION_NAME = "Default"
+    private const val EPOCH_SECONDS_UPPER_BOUND = 10_000_000_000L
+    private val EMPTY_COLLECTION_TIMESTAMP = Instant.fromEpochMilliseconds(0)
   }
 }
