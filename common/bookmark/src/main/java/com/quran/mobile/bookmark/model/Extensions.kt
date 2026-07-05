@@ -14,7 +14,7 @@ internal fun CollectionWithAyahBookmarks.asReadingCollectionBookmarks(): Reading
   )
 }
 
-private fun Collection.asReadingCollection(): ReadingCollection {
+internal fun Collection.asReadingCollection(): ReadingCollection {
   return ReadingCollection(
     id = localId,
     name = name,
