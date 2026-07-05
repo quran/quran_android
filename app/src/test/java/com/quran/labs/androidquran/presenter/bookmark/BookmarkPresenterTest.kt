@@ -4,21 +4,21 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.dao.BookmarkSortOrder
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData
 import com.quran.labs.androidquran.fakes.FakeBookmarksDao
+import com.quran.labs.androidquran.fakes.FakeReadingBookmarksDao
 import com.quran.labs.androidquran.fakes.FakeRecentPagesDao
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.QuranSettings
-import com.quran.labs.awaitTerminalEvent
-import com.quran.labs.test.RxSchedulerRule
 import com.quran.mobile.bookmark.model.DEFAULT_BOOKMARK_COLLECTION_ID
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -28,12 +28,10 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 class BookmarkPresenterTest {
 
-  @get:Rule
-  val rxRule = RxSchedulerRule()
-
   private lateinit var quranSettings: QuranSettings
   private lateinit var fakeBookmarksDao: FakeBookmarksDao
   private lateinit var fakeRecentPagesDao: FakeRecentPagesDao
+  private lateinit var fakeReadingBookmarksDao: FakeReadingBookmarksDao
 
   @Before
   fun setupTest() {
@@ -41,6 +39,7 @@ class BookmarkPresenterTest {
     quranSettings = QuranSettings.getInstance(ApplicationProvider.getApplicationContext())
     fakeBookmarksDao = FakeBookmarksDao()
     fakeRecentPagesDao = FakeRecentPagesDao()
+    fakeReadingBookmarksDao = FakeReadingBookmarksDao()
   }
 
   @After
@@ -79,6 +78,24 @@ class BookmarkPresenterTest {
     val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
 
     assertThat(result.rows.take(3)).containsExactly(
+      BookmarkRowData.RecentPageHeader(RECENT_PAGES.size),
+      BookmarkRowData.RecentPage(RECENT_PAGES[0]),
+      BookmarkRowData.RecentPage(RECENT_PAGES[1])
+    ).inOrder()
+  }
+
+  @Test
+  fun `renders reading bookmark ahead of recent pages`() {
+    val readingBookmark = PageReadingBookmark(42, 300)
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+    fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
+    fakeReadingBookmarksDao.setReadingBookmark(readingBookmark)
+
+    val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
+
+    assertThat(result.rows.take(5)).containsExactly(
+      BookmarkRowData.ReadingBookmarkHeader,
+      BookmarkRowData.ReadingBookmarkItem(readingBookmark),
       BookmarkRowData.RecentPageHeader(RECENT_PAGES.size),
       BookmarkRowData.RecentPage(RECENT_PAGES[0]),
       BookmarkRowData.RecentPage(RECENT_PAGES[1])
@@ -165,6 +182,7 @@ class BookmarkPresenterTest {
     return object : BookmarkPresenter(
       fakeBookmarksDao,
       fakeRecentPagesDao,
+      fakeReadingBookmarksDao,
       quranSettings,
       { throw IllegalStateException("ArabicDatabaseUtils not wired up in test") },
     ) {
@@ -183,13 +201,9 @@ class BookmarkPresenterTest {
     sortOrder: Int,
     groupByTags: Boolean = false
   ): BookmarkRawResult {
-    val testObserver = presenter
-      .getBookmarksListObservable(sortOrder, groupByTags)
-      .test()
-    testObserver.awaitTerminalEvent()
-    testObserver.assertNoErrors()
-    testObserver.assertValueCount(1)
-    return testObserver.values()[0]
+    return runBlocking {
+      presenter.getBookmarksList(sortOrder, groupByTags)
+    }
   }
 
   private companion object {

@@ -13,6 +13,8 @@ public class QuranRow {
   public static final int PAGE_BOOKMARK = 2;
   public static final int AYAH_BOOKMARK = 3;
   public static final int BOOKMARK_HEADER = 4;
+  public static final int PAGE_READING_BOOKMARK = 5;
+  public static final int AYAH_READING_BOOKMARK = 6;
 
   public int sura;
   public int ayah;
@@ -75,6 +77,14 @@ public class QuranRow {
 
     public Builder withSura(int sura) {
       this.sura = sura;
+      return this;
+    }
+
+    /**
+     * Sets the ayah number for rows that navigate to a specific ayah without owning a Bookmark.
+     */
+    public Builder withAyah(int ayah) {
+      this.ayah = ayah;
       return this;
     }
 
@@ -152,7 +162,11 @@ public class QuranRow {
     return rowType == PAGE_BOOKMARK || rowType == AYAH_BOOKMARK;
   }
 
+  public boolean isReadingBookmark() {
+    return rowType == PAGE_READING_BOOKMARK || rowType == AYAH_READING_BOOKMARK;
+  }
+
   public boolean isAyahBookmark() {
-    return rowType == AYAH_BOOKMARK;
+    return rowType == AYAH_BOOKMARK || rowType == AYAH_READING_BOOKMARK;
   }
 }

@@ -10,11 +10,15 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.quran.data.core.QuranInfo
+import com.quran.data.dao.ReadingBookmarksDao
+import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.data.Constants
@@ -23,13 +27,16 @@ import com.quran.labs.androidquran.data.Constants.SURAS_COUNT
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.ui.QuranActivity
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter
+import com.quran.labs.androidquran.ui.helpers.QuranListAdapter.QuranTouchListener
 import com.quran.labs.androidquran.ui.helpers.QuranRow
+import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
-class SuraListFragment : Fragment() {
+class SuraListFragment : Fragment(), QuranTouchListener {
 
   @Inject
   lateinit var quranInfo: QuranInfo
@@ -40,9 +47,16 @@ class SuraListFragment : Fragment() {
   @Inject
   lateinit var quranSettings: QuranSettings
 
+  @Inject
+  lateinit var readingBookmarksDao: ReadingBookmarksDao
+
+  @Inject
+  lateinit var quranRowFactory: QuranRowFactory
+
   private lateinit var recyclerView: RecyclerView
   private var numberOfPages = 0
   private var showSuraTranslatedName = false
+  private var readingBookmark: ReadingBookmark? = null
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
@@ -57,10 +71,21 @@ class SuraListFragment : Fragment() {
   ): View {
     val view: View = inflater.inflate(R.layout.quran_list, container, false)
     recyclerView = view.findViewById(R.id.recycler_view)
+    showSuraTranslatedName = quranSettings.isShowSuraTranslatedName
+    val quranListAdapter = QuranListAdapter(requireActivity(), recyclerView, getSuraList(), false)
+    quranListAdapter.setQuranTouchListener(this)
     recyclerView.apply {
       layoutManager = LinearLayoutManager(context)
       itemAnimator = DefaultItemAnimator()
-      adapter = QuranListAdapter(requireActivity(), recyclerView, getSuraList(), false)
+      adapter = quranListAdapter
+    }
+
+    viewLifecycleOwner.lifecycleScope.launch {
+      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        readingBookmarksDao.readingBookmarkFlow()
+          .distinctUntilChanged()
+          .collect { updateReadingBookmark(it) }
+      }
     }
 
     ViewCompat.setOnApplyWindowInsetsListener(recyclerView) { view, windowInsets ->
@@ -90,11 +115,13 @@ class SuraListFragment : Fragment() {
         showSuraTranslatedName = newValueOfShowSuraTranslatedName
       }
       viewLifecycleOwner.lifecycleScope.launch {
+        val currentReadingBookmark = readingBookmarksDao.readingBookmark()
+        updateReadingBookmark(currentReadingBookmark)
         val recentPage = activity.latestPage()
         if (recentPage != Constants.NO_PAGE) {
           val sura = quranDisplayData.safelyGetSuraOnPage(recentPage)
           val juz = quranInfo.getJuzFromPage(recentPage)
-          val position = sura + juz - 1
+          val position = sura + juz - 1 + readingBookmarkOffset()
           recyclerView.scrollToPosition(position)
         }
       }
@@ -113,9 +140,17 @@ class SuraListFragment : Fragment() {
     var next: Int
     var pos = 0
     var sura = 1
-    val elements = arrayOfNulls<QuranRow>(SURAS_COUNT + JUZ2_COUNT)
+    val readingBookmark = readingBookmark
+    val elements = arrayOfNulls<QuranRow>(
+      SURAS_COUNT + JUZ2_COUNT + if (readingBookmark == null) 0 else READING_BOOKMARK_ROWS
+    )
 
     val activity: Activity = requireActivity()
+    if (readingBookmark != null) {
+      elements[pos++] = quranRowFactory.fromReadingBookmarkHeader(activity)
+      elements[pos++] = quranRowFactory.fromReadingBookmark(activity, readingBookmark)
+    }
+
     val wantPrefix = activity.resources.getBoolean(R.bool.show_surat_prefix)
     val wantTranslation = quranSettings.isShowSuraTranslatedName
     for (juz in 1..JUZ2_COUNT) {
@@ -146,12 +181,42 @@ class SuraListFragment : Fragment() {
   }
 
   private fun showHideSuraTranslatedName() {
-    val elements = getSuraList()
-    (recyclerView.adapter as QuranListAdapter).setElements(elements)
-    recyclerView.adapter?.notifyDataSetChanged()
+    updateSuraList()
+  }
+
+  private fun updateReadingBookmark(readingBookmark: ReadingBookmark?) {
+    if (this.readingBookmark != readingBookmark) {
+      this.readingBookmark = readingBookmark
+      updateSuraList()
+    }
+  }
+
+  private fun updateSuraList() {
+    (recyclerView.adapter as QuranListAdapter).setElements(getSuraList())
+  }
+
+  private fun readingBookmarkOffset(): Int {
+    return if (readingBookmark == null) 0 else READING_BOOKMARK_ROWS
+  }
+
+  override fun onClick(row: QuranRow, position: Int) {
+    val activity = activity as? QuranActivity
+    if (activity != null && row.page != 0) {
+      if (row.isAyahBookmark) {
+        activity.jumpToAndHighlight(row.page, row.sura, row.ayah)
+      } else {
+        activity.jumpTo(row.page)
+      }
+    }
+  }
+
+  override fun onLongClick(row: QuranRow, position: Int): Boolean {
+    return false
   }
 
   companion object {
+    private const val READING_BOOKMARK_ROWS = 2
+
     fun newInstance(): SuraListFragment = SuraListFragment()
   }
 }

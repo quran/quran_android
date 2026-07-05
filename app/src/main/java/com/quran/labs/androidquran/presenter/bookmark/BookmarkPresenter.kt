@@ -1,18 +1,21 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
-import android.annotation.SuppressLint
 import androidx.annotation.VisibleForTesting
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.quran.data.dao.BookmarksDao
+import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.dao.RecentPagesDao
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
+import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.BookmarkItem
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.NotTaggedHeader
+import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.ReadingBookmarkHeader
+import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.ReadingBookmarkItem
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.RecentPageHeader
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.TagHeader
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
@@ -27,16 +30,21 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 open class BookmarkPresenter @Inject internal constructor(
   private val bookmarksDao: BookmarksDao,
   private val recentPagesDao: RecentPagesDao,
+  private val readingBookmarksDao: ReadingBookmarksDao,
   private val quranSettings: QuranSettings,
   private val arabicDatabaseUtils: Provider<ArabicDatabaseUtils>,
 ) : Presenter<BookmarksFragment> {
@@ -79,6 +87,18 @@ open class BookmarkPresenter @Inject internal constructor(
           }
       } catch (throwable: Throwable) {
         Timber.e(throwable, "Error observing recent page changes")
+      }
+    }
+
+    presenterScope.launch {
+      try {
+        readingBookmarksDao.readingBookmarkFlow()
+          .drop(1)
+          .collect {
+            onObservedDataChanged()
+          }
+      } catch (throwable: Throwable) {
+        Timber.e(throwable, "Error observing reading bookmark changes")
       }
     }
   }
@@ -294,36 +314,11 @@ open class BookmarkPresenter @Inject internal constructor(
 
     return Single.fromCallable {
       runBlocking {
-        val tagsToDelete = mutableListOf<Tag>()
-        val bookmarksToDelete = mutableListOf<Bookmark>()
-        val bookmarksToUntag = mutableListOf<Pair<Bookmark, String>>()
-
-        items.forEach { row ->
-          val tagId = row.userTagId()
-          when {
-            row.isBookmarkHeader && tagId != null -> {
-              tagsToDelete += Tag(tagId, row.text)
-            }
-
-            row.isBookmark && row.bookmark != null -> {
-              if (tagId != null) {
-                bookmarksToUntag += row.bookmark to tagId
-              } else {
-                bookmarksToDelete += row.bookmark
-              }
-            }
-          }
-        }
-
-        bookmarksDao.removeTags(tagsToDelete)
-        bookmarksToUntag.forEach { (bookmark, tagId) ->
-          bookmarksDao.removeBookmarkFromTag(bookmark, tagId)
-        }
-        bookmarksDao.removeBookmarks(bookmarksToDelete)
+        removeItems(items)
+        getBookmarksList(sortOrder, isGroupedByTags)
       }
-    }.flatMap {
-      getBookmarksListObservable(sortOrder, isGroupedByTags)
     }
+      .subscribeOn(Schedulers.io())
   }
 
   fun cancelDeletion() {
@@ -332,57 +327,89 @@ open class BookmarkPresenter @Inject internal constructor(
     itemsToRemove = null
   }
 
-  private fun getBookmarkDataObservable(sortOrder: Int): Single<BookmarkData> {
-    return Single.fromCallable {
-      runBlocking {
-        BookmarkData(
-          tags = bookmarksDao.tags(),
-          bookmarks = bookmarksDao.bookmarks(sortOrder)
-        )
-      }
-    }.subscribeOn(Schedulers.io())
-  }
+  private suspend fun removeItems(items: List<QuranRow>) {
+    withContext(Dispatchers.IO) {
+      val tagsToDelete = mutableListOf<Tag>()
+      val bookmarksToDelete = mutableListOf<Bookmark>()
+      val bookmarksToUntag = mutableListOf<Pair<Bookmark, String>>()
 
-  private fun getBookmarksWithAyatObservable(sortOrder: Int): Single<BookmarkData> {
-    return Single.zip(
-      getBookmarkDataObservable(sortOrder),
-      getRecentPagesObservable()
-    ) { bookmarkData: BookmarkData, recentPages: List<RecentPage> ->
-      bookmarkData.copy(recentPages = recentPages)
-    }
-      .map { bookmarkData ->
-        try {
-          bookmarkData.copy(
-            bookmarks = arabicDatabaseUtils().hydrateAyahText(bookmarkData.bookmarks.toMutableList())
-          )
-        } catch (exception: Exception) {
-          bookmarkData
+      items.forEach { row ->
+        val tagId = row.userTagId()
+        when {
+          row.isBookmarkHeader && tagId != null -> {
+            tagsToDelete += Tag(tagId, row.text)
+          }
+
+          row.isBookmark && row.bookmark != null -> {
+            if (tagId != null) {
+              bookmarksToUntag += row.bookmark to tagId
+            } else {
+              bookmarksToDelete += row.bookmark
+            }
+          }
         }
       }
+
+      bookmarksDao.removeTags(tagsToDelete)
+      bookmarksToUntag.forEach { (bookmark, tagId) ->
+        bookmarksDao.removeBookmarkFromTag(bookmark, tagId)
+      }
+      bookmarksDao.removeBookmarks(bookmarksToDelete)
+    }
   }
 
-  private fun getRecentPagesObservable(): Single<List<RecentPage>> {
-    return Single.fromCallable {
-      runBlocking { recentPagesDao.recentPages() }
-    }.subscribeOn(Schedulers.io())
+  private suspend fun getBookmarkData(sortOrder: Int): BookmarkData {
+    return withContext(Dispatchers.IO) {
+      BookmarkData(
+        tags = bookmarksDao.tags(),
+        bookmarks = bookmarksDao.bookmarks(sortOrder)
+      )
+    }
+  }
+
+  private suspend fun getBookmarksWithAyat(sortOrder: Int): BookmarkData {
+    return coroutineScope {
+      val bookmarkData = async { getBookmarkData(sortOrder) }
+      val recentPages = async { getRecentPages() }
+
+      hydrateAyahText(
+        bookmarkData.await().copy(recentPages = recentPages.await())
+      )
+    }
+  }
+
+  private suspend fun hydrateAyahText(bookmarkData: BookmarkData): BookmarkData {
+    return withContext(Dispatchers.IO) {
+      try {
+        bookmarkData.copy(
+          bookmarks = arabicDatabaseUtils().hydrateAyahText(bookmarkData.bookmarks.toMutableList())
+        )
+      } catch (exception: Exception) {
+        bookmarkData
+      }
+    }
+  }
+
+  private suspend fun getRecentPages(): List<RecentPage> {
+    return withContext(Dispatchers.IO) { recentPagesDao.recentPages() }
   }
 
   @VisibleForTesting
-  fun getBookmarksListObservable(sortOrder: Int, groupByTags: Boolean): Single<BookmarkRawResult> {
-    return getBookmarksWithAyatObservable(sortOrder)
-      .map { bookmarkData ->
-        val rows = getBookmarkRowData(bookmarkData, groupByTags)
-        val tagMap = generateTagMap(bookmarkData.tags)
-        BookmarkRawResult(rows, tagMap)
-      }
-      .subscribeOn(Schedulers.io())
+  suspend fun getBookmarksList(sortOrder: Int, groupByTags: Boolean): BookmarkRawResult {
+    return coroutineScope {
+      val bookmarkData = async { getBookmarksWithAyat(sortOrder) }
+      val readingBookmark = async { readingBookmarksDao.readingBookmark() }
+      val data = bookmarkData.await()
+      val rows = getBookmarkRowData(data, groupByTags, readingBookmark.await())
+      val tagMap = generateTagMap(data.tags)
+      BookmarkRawResult(rows, tagMap)
+    }
   }
 
-  @SuppressLint("CheckResult")
   private fun getBookmarks(sortOrder: Int, groupByTags: Boolean) {
-    getBookmarksListObservable(sortOrder, groupByTags)
-      .observeOn(AndroidSchedulers.mainThread())
-      .subscribe({ result ->
+    presenterScope.launch {
+      try {
+        val result = getBookmarksList(sortOrder, groupByTags)
         cachedData = result
         val fragment = fragment
         if (fragment != null) {
@@ -394,14 +421,16 @@ open class BookmarkPresenter @Inject internal constructor(
             fragment.onNewRawData(result)
           }
         }
-      }, { throwable ->
+      } catch (throwable: Throwable) {
         Timber.e(throwable, "Unable to load bookmarks")
-      })
+      }
+    }
   }
 
   private fun getBookmarkRowData(
     data: BookmarkData,
-    groupByTags: Boolean
+    groupByTags: Boolean,
+    readingBookmark: ReadingBookmark?
   ): MutableList<BookmarkRowData> {
     val rows = if (groupByTags) {
       getRowDataSortedByTags(data.tags, data.bookmarks)
@@ -419,6 +448,10 @@ open class BookmarkPresenter @Inject internal constructor(
       for (i in 0 until size) {
         rows.add(i + 1, BookmarkRowData.RecentPage(recentPages[i]))
       }
+    }
+    if (readingBookmark != null) {
+      rows.add(0, ReadingBookmarkHeader)
+      rows.add(1, ReadingBookmarkItem(readingBookmark))
     }
     return rows
   }
