@@ -54,7 +54,7 @@ class ReadingBookmarkPresenterTest {
 
   @Test
   fun `page icon is not selected for ayah reading bookmark on current page`() = runTest {
-    val readingBookmarksDao = FakeReadingBookmarksDao(AyahReadingBookmark(2, 255, 42, 1))
+    val readingBookmarksDao = FakeReadingBookmarksDao(AyahReadingBookmark(2, 255, timestamp = 1))
     val screen = RecordingScreen()
     val presenter = ReadingBookmarkPresenter(readingBookmarksDao)
 

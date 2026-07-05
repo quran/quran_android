@@ -35,7 +35,6 @@ class FakeReadingBookmarksDao(
     readingBookmark.value = AyahReadingBookmark(
       sura = suraAyah.sura,
       ayah = suraAyah.ayah,
-      page = 1,
       timestamp = 1
     )
     return true

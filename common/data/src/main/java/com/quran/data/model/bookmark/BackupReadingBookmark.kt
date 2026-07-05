@@ -17,13 +17,16 @@ data class BackupReadingBookmark(
     const val TYPE_AYAH = "ayah"
     const val TYPE_PAGE = "page"
 
-    fun fromReadingBookmark(readingBookmark: ReadingBookmark): BackupReadingBookmark {
+    fun fromReadingBookmark(
+      readingBookmark: ReadingBookmark,
+      ayahPageResolver: (sura: Int, ayah: Int) -> Int
+    ): BackupReadingBookmark {
       return when (readingBookmark) {
         is AyahReadingBookmark -> BackupReadingBookmark(
           type = TYPE_AYAH,
           sura = readingBookmark.sura,
           ayah = readingBookmark.ayah,
-          page = readingBookmark.page,
+          page = ayahPageResolver(readingBookmark.sura, readingBookmark.ayah),
           timestamp = readingBookmark.timestamp
         )
         is PageReadingBookmark -> BackupReadingBookmark(
