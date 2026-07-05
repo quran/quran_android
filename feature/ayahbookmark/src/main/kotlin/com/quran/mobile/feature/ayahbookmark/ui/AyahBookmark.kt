@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.bookmark.AyahReadingBookmark
+import com.quran.data.model.bookmark.PageReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionCreationState
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionItem
@@ -50,6 +53,13 @@ private val previewSuraAyahNameResolver: (Context, SuraAyah) -> String = { _, su
   "An-Nisāʾ ${suraAyah.ayah}"
 }
 
+private val previewReadingBookmarkNameResolver: (Context, ReadingBookmark) -> String = { _, bookmark ->
+  when (bookmark) {
+    is AyahReadingBookmark -> "An-Nisāʾ ${bookmark.ayah}"
+    is PageReadingBookmark -> "An-Nisāʾ (Page ${bookmark.page})"
+  }
+}
+
 private val previewCollections = persistentListOf(
   AyahBookmarkCollectionItem(id = "family", name = "Family", countLabel = 12, isChecked = true),
   AyahBookmarkCollectionItem(id = "favorites", name = "Favorites", countLabel = 34, isChecked = false),
@@ -79,9 +89,10 @@ private fun AyahBookmarkDefaultPreview() {
     state = AyahBookmarkState(
       ayah = SuraAyah(4, 1),
       isReadingBookmarkEnabled = true,
-      currentReadingBookmark = SuraAyah(4, 34),
+      currentReadingBookmark = AyahReadingBookmark(sura = 4, ayah = 34, timestamp = 0),
       collections = previewCollections,
-      suraAyahNameResolver = previewSuraAyahNameResolver
+      suraAyahNameResolver = previewSuraAyahNameResolver,
+      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
     )
   )
 }
@@ -93,10 +104,11 @@ private fun AyahBookmarkWarningPreview() {
     state = AyahBookmarkState(
       ayah = SuraAyah(4, 1),
       isReadingBookmarkEnabled = false,
-      currentReadingBookmark = SuraAyah(4, 34),
+      currentReadingBookmark = PageReadingBookmark(page = 83, timestamp = 0),
       collections = previewCollections.replacingAt(0, previewCollections[0].copy(isChecked = false)),
       showLastPlaceWarning = true,
-      suraAyahNameResolver = previewSuraAyahNameResolver
+      suraAyahNameResolver = previewSuraAyahNameResolver,
+      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
     )
   )
 }
@@ -110,7 +122,8 @@ private fun AyahBookmarkCreatingCollectionPreview() {
       isReadingBookmarkEnabled = true,
       collections = previewCollections,
       collectionCreation = AyahBookmarkCollectionCreationState.Active(name = "Qiyam"),
-      suraAyahNameResolver = previewSuraAyahNameResolver
+      suraAyahNameResolver = previewSuraAyahNameResolver,
+      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
     )
   )
 }
@@ -124,7 +137,8 @@ private fun AyahBookmarkCreatingCollectionSubmittingPreview() {
       isReadingBookmarkEnabled = true,
       collections = previewCollections,
       collectionCreation = AyahBookmarkCollectionCreationState.Active(name = "Qiyam", isSubmitting = true),
-      suraAyahNameResolver = previewSuraAyahNameResolver
+      suraAyahNameResolver = previewSuraAyahNameResolver,
+      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
     )
   )
 }
@@ -138,7 +152,8 @@ private fun AyahBookmarkRemovedPreview() {
       isReadingBookmarkEnabled = false,
       collections = previewCollections,
       isBookmarkRemoved = true,
-      suraAyahNameResolver = previewSuraAyahNameResolver
+      suraAyahNameResolver = previewSuraAyahNameResolver,
+      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
     )
   )
 }
