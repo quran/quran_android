@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="bookmark_ayah">Đánh dấu Ayah này</string>
-  <string name="tag_ayah">Gắn thẻ Ayah này</string>
   <string name="share_ayah">Chia sẻ Link Ayah</string>
   <string name="share_ayah_text">Chia sẻ văn bản Ayah</string>
   <string name="translation_ayah">Bản dịch/Tafseer của Ayah</string>

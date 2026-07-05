@@ -1775,8 +1775,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       val itemId = item.itemId
       if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_bookmark_ayah) {
         showAyahBookmarkSheet(startSuraAyah)
-      } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_tag_ayah) {
-        sliderPage = slidingPagerAdapter.getPagePosition(SlidingPagerAdapter.TAG_PAGE)
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_translate_ayah) {
         sliderPage =
           slidingPagerAdapter.getPagePosition(SlidingPagerAdapter.TRANSLATION_PAGE)

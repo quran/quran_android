@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="bookmark_ayah">بۇ ئايەتنى خەتكۈچلە</string>
-  <string name="tag_ayah">بۇ ئايەتكە بەلگە قوش</string>
   <string name="share_ayah">ئايەت ئۇلانمىسىنى ھەمبەھىرلە</string>
   <string name="share_ayah_text">ئايەت تېكىستتىنى ھەمبەھىرلە</string>
   <string name="translation_ayah">ئايەت تەرجىمە/تەپسىر</string>

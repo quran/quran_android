@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="bookmark_ayah">نیشانەکردنی ئەم ئایەتە</string>
-  <string name="tag_ayah">بڕگەکردنی ئەم ئایەتە</string>
   <string name="share_ayah">ناردنی ئایەت</string>
   <string name="share_ayah_text">ناردنی دەقی ئایەت</string>
   <string name="translation_ayah">وەرگێڕانی ئایەت/تەفسیر</string>
