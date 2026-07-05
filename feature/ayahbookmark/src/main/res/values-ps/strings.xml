@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">بشپړ شو</string>
+  <string name="ayahbookmark_reading_bookmark_title">د لوستلو نښه</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">هغه ځای چې پریښود</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">اوس مهال په %1$s کې</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">به له %1$s څخه لېږدول شي</string>
+  <string name="ayahbookmark_collections_header">ټولګې</string>
+  <string name="ayahbookmark_new_collection">نوې ټولګه</string>
+  <string name="ayahbookmark_collection_name_hint">د ټولګې نوم</string>
+  <string name="ayahbookmark_cancel">لغوه کول</string>
+  <string name="ayahbookmark_create">جوړول</string>
+  <string name="ayahbookmark_remove_bookmark">نښه لرې کړئ</string>
+  <string name="ayahbookmark_last_place_warning">لږ تر لږه یې په یو ځای کې وساتئ - د حذف کولو لپاره، لاندې نښه لرې کړئ وکاروئ.</string>
+  <string name="ayahbookmark_bookmark_removed">نښه لرې شوه</string>
+  <string name="ayahbookmark_undo">ناکړل</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Atlikta</string>
+  <string name="ayahbookmark_reading_bookmark_title">Skaitymo žymė</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Kur sustojote</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Šiuo metu ties %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Bus perkelta iš %1$s</string>
+  <string name="ayahbookmark_collections_header">Rinkiniai</string>
+  <string name="ayahbookmark_new_collection">Naujas rinkinys</string>
+  <string name="ayahbookmark_collection_name_hint">Rinkinio pavadinimas</string>
+  <string name="ayahbookmark_cancel">Atšaukti</string>
+  <string name="ayahbookmark_create">Sukurti</string>
+  <string name="ayahbookmark_remove_bookmark">Pašalinti žymę</string>
+  <string name="ayahbookmark_last_place_warning">Palikite bent vienoje vietoje - norėdami ištrinti, naudokite Pašalinti žymę žemiau.</string>
+  <string name="ayahbookmark_bookmark_removed">Žymė pašalinta</string>
+  <string name="ayahbookmark_undo">Anuliuoti</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Τέλος</string>
+  <string name="ayahbookmark_reading_bookmark_title">Σελιδοδείκτης ανάγνωσης</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Εκεί που σταματήσατε</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Προς το παρόν στο %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Θα μετακινηθεί από %1$s</string>
+  <string name="ayahbookmark_collections_header">Συλλογές</string>
+  <string name="ayahbookmark_new_collection">Νέα συλλογή</string>
+  <string name="ayahbookmark_collection_name_hint">Όνομα συλλογής</string>
+  <string name="ayahbookmark_cancel">Ακύρωση</string>
+  <string name="ayahbookmark_create">Δημιουργία</string>
+  <string name="ayahbookmark_remove_bookmark">Αφαίρεση σελιδοδείκτη</string>
+  <string name="ayahbookmark_last_place_warning">Διατηρήστε το σε τουλάχιστον μία θέση - για διαγραφή, χρησιμοποιήστε την επιλογή Αφαίρεση σελιδοδείκτη παρακάτω.</string>
+  <string name="ayahbookmark_bookmark_removed">Ο σελιδοδείκτης αφαιρέθηκε</string>
+  <string name="ayahbookmark_undo">Αναίρεση</string>
+</resources>

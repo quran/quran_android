@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Kész</string>
+  <string name="ayahbookmark_reading_bookmark_title">Olvasási könyvjelző</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Ahol abbahagytad</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Jelenleg itt: %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Áthelyezésre kerül innen: %1$s</string>
+  <string name="ayahbookmark_collections_header">Gyűjtemények</string>
+  <string name="ayahbookmark_new_collection">Új gyűjtemény</string>
+  <string name="ayahbookmark_collection_name_hint">Gyűjtemény neve</string>
+  <string name="ayahbookmark_cancel">Mégse</string>
+  <string name="ayahbookmark_create">Létrehozás</string>
+  <string name="ayahbookmark_remove_bookmark">Könyvjelző eltávolítása</string>
+  <string name="ayahbookmark_last_place_warning">Tartsa meg legalább egy helyen - a törléshez használja az alábbi Könyvjelző eltávolítása lehetőséget.</string>
+  <string name="ayahbookmark_bookmark_removed">Könyvjelző eltávolítva</string>
+  <string name="ayahbookmark_undo">Visszavonás</string>
+</resources>

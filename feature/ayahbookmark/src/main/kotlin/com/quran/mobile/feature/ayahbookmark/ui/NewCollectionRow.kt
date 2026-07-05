@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,9 +28,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -82,9 +85,16 @@ internal fun NewCollectionInputRow(
     PlusGlyph(color = MaterialTheme.colorScheme.primary)
 
     Box(modifier = Modifier.weight(1f)) {
+      val textFieldValue = remember {
+        mutableStateOf(TextFieldValue(text = name, selection = TextRange(name.length)))
+      }
+
       BasicTextField(
-        value = name,
-        onValueChange = onNameChange,
+        value = textFieldValue.value,
+        onValueChange = { newValue ->
+          textFieldValue.value = newValue
+          onNameChange(newValue.text)
+        },
         enabled = !isSubmitting,
         singleLine = true,
         textStyle = TextStyle(
@@ -106,7 +116,7 @@ internal fun NewCollectionInputRow(
           }
           .padding(vertical = 5.dp)
       )
-      if (name.isEmpty()) {
+      if (textFieldValue.value.text.isEmpty()) {
         Text(
           text = stringResource(R.string.ayahbookmark_collection_name_hint),
           style = MaterialTheme.typography.bodyMedium,

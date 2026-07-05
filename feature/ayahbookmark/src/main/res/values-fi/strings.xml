@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Valmis</string>
+  <string name="ayahbookmark_reading_bookmark_title">Lukukirjanmerkki</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Mihin jäit</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Tällä hetkellä kohdassa %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Siirretään kohdasta %1$s</string>
+  <string name="ayahbookmark_collections_header">Kokoelmat</string>
+  <string name="ayahbookmark_new_collection">Uusi kokoelma</string>
+  <string name="ayahbookmark_collection_name_hint">Kokoelman nimi</string>
+  <string name="ayahbookmark_cancel">Peruuta</string>
+  <string name="ayahbookmark_create">Luo</string>
+  <string name="ayahbookmark_remove_bookmark">Poista kirjanmerkki</string>
+  <string name="ayahbookmark_last_place_warning">Säilytä ainakin yhdessä paikassa - poistaaksesi käytä alla olevaa Poista kirjanmerkki -toimintoa.</string>
+  <string name="ayahbookmark_bookmark_removed">Kirjanmerkki poistettu</string>
+  <string name="ayahbookmark_undo">Kumoa</string>
+</resources>

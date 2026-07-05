@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">ہو گیا</string>
+  <string name="ayahbookmark_reading_bookmark_title">مطالعہ بک مارک</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">جہاں آپ نے چھوڑا تھا</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">فی الحال %1$s پر</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">%1$s سے منتقل ہو جائے گا</string>
+  <string name="ayahbookmark_collections_header">مجموعے</string>
+  <string name="ayahbookmark_new_collection">نیا مجموعہ</string>
+  <string name="ayahbookmark_collection_name_hint">مجموعے کا نام</string>
+  <string name="ayahbookmark_cancel">منسوخ کریں</string>
+  <string name="ayahbookmark_create">بنائیں</string>
+  <string name="ayahbookmark_remove_bookmark">بک مارک ہٹائیں</string>
+  <string name="ayahbookmark_last_place_warning">اسے کم از کم ایک جگہ پر رکھیں - حذف کرنے کے لیے، نیچے دیے گئے بک مارک ہٹائیں کا استعمال کریں۔</string>
+  <string name="ayahbookmark_bookmark_removed">بک مارک ہٹا دیا گیا</string>
+  <string name="ayahbookmark_undo">واپس لیں</string>
+</resources>

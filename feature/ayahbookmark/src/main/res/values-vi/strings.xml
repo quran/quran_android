@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Xong</string>
+  <string name="ayahbookmark_reading_bookmark_title">Dấu trang đọc</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Nơi bạn đã dừng lại</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Hiện đang ở %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Sẽ được chuyển từ %1$s</string>
+  <string name="ayahbookmark_collections_header">Bộ sưu tập</string>
+  <string name="ayahbookmark_new_collection">Bộ sưu tập mới</string>
+  <string name="ayahbookmark_collection_name_hint">Tên bộ sưu tập</string>
+  <string name="ayahbookmark_cancel">Hủy</string>
+  <string name="ayahbookmark_create">Tạo</string>
+  <string name="ayahbookmark_remove_bookmark">Xóa dấu trang</string>
+  <string name="ayahbookmark_last_place_warning">Giữ ở ít nhất một nơi - để xóa, hãy dùng Xóa dấu trang bên dưới.</string>
+  <string name="ayahbookmark_bookmark_removed">Đã xóa dấu trang</string>
+  <string name="ayahbookmark_undo">Hoàn tác</string>
+</resources>

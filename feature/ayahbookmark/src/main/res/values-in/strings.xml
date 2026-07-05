@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Selesai</string>
+  <string name="ayahbookmark_reading_bookmark_title">Markah baca</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Tempat Anda berhenti</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Saat ini di %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Akan dipindahkan dari %1$s</string>
+  <string name="ayahbookmark_collections_header">Koleksi</string>
+  <string name="ayahbookmark_new_collection">Koleksi baru</string>
+  <string name="ayahbookmark_collection_name_hint">Nama koleksi</string>
+  <string name="ayahbookmark_cancel">Batal</string>
+  <string name="ayahbookmark_create">Buat</string>
+  <string name="ayahbookmark_remove_bookmark">Hapus markah</string>
+  <string name="ayahbookmark_last_place_warning">Simpan di setidaknya satu tempat - untuk menghapus, gunakan Hapus markah di bawah.</string>
+  <string name="ayahbookmark_bookmark_removed">Markah dihapus</string>
+  <string name="ayahbookmark_undo">Urungkan</string>
+</resources>
