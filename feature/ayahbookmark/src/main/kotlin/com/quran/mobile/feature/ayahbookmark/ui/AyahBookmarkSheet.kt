@@ -36,11 +36,11 @@ internal fun AyahBookmarkSheet(
   val eventSink = state.eventSink
 
   val context = LocalContext.current
-  val suraAyahName = remember(state.ayah) {
+  val suraAyahName = remember(context, state.ayah) {
     state.suraAyahNameResolver(context, state.ayah)
   }
-  val currentReadingBookmarkName = remember(state.currentReadingBookmark) {
-    state.currentReadingBookmark?.let { state.suraAyahNameResolver(context, it) }
+  val currentReadingBookmarkName = remember(context, state.currentReadingBookmark) {
+    state.currentReadingBookmark?.let { state.readingBookmarkNameResolver(context, it) }
   }
 
   Column(

@@ -98,6 +98,12 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
     return getSuraAyahString(context, sura, ayah, R.string.sura_ayah_notification_str)
   }
 
+  override fun getSuraPageString(context: Context, page: Int): String {
+    val suraName = getSuraNameFromPage(context, page, wantTitle = true)
+    val pageText = context.getString(R.string.quran_page) + ' ' + QuranUtils.getLocalizedNumber(page)
+    return if (suraName.isEmpty()) pageText else "$suraName ($pageText)"
+  }
+
   fun getSuraAyahString(context: Context, sura: Int, ayah: Int, @StringRes resource: Int): String {
     val suraName = getSuraName(context, sura, wantPrefix = false, wantTranslation = false)
     return context.getString(resource, suraName, ayah)
@@ -179,7 +185,7 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
   }
 
   // do not remove the nullable return type
-  fun getSuraNameString(context: Context, page: Int): String? {
+  fun getSuraNameString(context: Context, page: Int): String {
     return context.getString(R.string.quran_sura_title, getSuraNameFromPage(context, page))
   }
 

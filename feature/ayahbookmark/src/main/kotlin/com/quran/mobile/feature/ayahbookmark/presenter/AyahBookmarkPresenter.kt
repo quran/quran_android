@@ -1,5 +1,6 @@
 package com.quran.mobile.feature.ayahbookmark.presenter
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -11,6 +12,7 @@ import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.di.AppCoroutineScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
+import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionCreationState
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionItem
@@ -189,7 +191,7 @@ class AyahBookmarkPresenter(
     return AyahBookmarkState(
       ayah = currentAyah,
       isReadingBookmarkEnabled = isReadingBookmarkEnabledState.value,
-      currentReadingBookmark = readingBookmark.value.asSuraAyah(),
+      currentReadingBookmark = readingBookmark.value,
       collections = collections,
       collectionCreation = collectionCreationState.value,
       showLastPlaceWarning = showLastPlaceWarningState.value,
@@ -197,6 +199,7 @@ class AyahBookmarkPresenter(
       isDismissed = isDismissed.value,
       showRemoveBookmarkButton = hasPersistedBookmark,
       suraAyahNameResolver = { context, ayah -> quranNaming.getSuraAyahString(context, ayah.sura, ayah.ayah) },
+      readingBookmarkNameResolver = { context, bookmark -> quranNaming.getReadingBookmarkString(context, bookmark) },
       eventSink = eventSink
     )
   }
@@ -206,6 +209,13 @@ class AyahBookmarkPresenter(
       SuraAyah(this.sura, this.ayah)
     } else {
       null
+    }
+  }
+
+  private fun QuranNaming.getReadingBookmarkString(context: Context, bookmark: ReadingBookmark): String {
+    return when (bookmark) {
+      is AyahReadingBookmark -> getSuraAyahString(context, bookmark.sura, bookmark.ayah)
+      is PageReadingBookmark -> getSuraPageString(context, bookmark.page)
     }
   }
 
