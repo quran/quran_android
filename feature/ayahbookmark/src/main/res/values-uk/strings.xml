@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Готово</string>
+  <string name="ayahbookmark_reading_bookmark_title">Закладка читання</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Де ви зупинилися</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Зараз на %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Буде переміщено з %1$s</string>
+  <string name="ayahbookmark_collections_header">Колекції</string>
+  <string name="ayahbookmark_new_collection">Нова колекція</string>
+  <string name="ayahbookmark_collection_name_hint">Назва колекції</string>
+  <string name="ayahbookmark_cancel">Скасувати</string>
+  <string name="ayahbookmark_create">Створити</string>
+  <string name="ayahbookmark_remove_bookmark">Видалити закладку</string>
+  <string name="ayahbookmark_last_place_warning">Залиште принаймні в одному місці - щоб видалити, скористайтеся кнопкою Видалити закладку нижче.</string>
+  <string name="ayahbookmark_bookmark_removed">Закладку видалено</string>
+  <string name="ayahbookmark_undo">Скасувати дію</string>
+</resources>

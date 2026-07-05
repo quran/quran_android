@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">پایان</string>
+  <string name="ayahbookmark_reading_bookmark_title">نشانک خواندن</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">جایی که متوقف شدید</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">درحال حاضر در %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">از %1$s منتقل خواهد شد</string>
+  <string name="ayahbookmark_collections_header">مجموعه‌ها</string>
+  <string name="ayahbookmark_new_collection">مجموعه جدید</string>
+  <string name="ayahbookmark_collection_name_hint">نام مجموعه</string>
+  <string name="ayahbookmark_cancel">لغو</string>
+  <string name="ayahbookmark_create">ایجاد</string>
+  <string name="ayahbookmark_remove_bookmark">حذف نشانک</string>
+  <string name="ayahbookmark_last_place_warning">آن را حداقل در یک مکان نگه دارید - برای حذف، از حذف نشانک در پایین استفاده کنید.</string>
+  <string name="ayahbookmark_bookmark_removed">نشانک حذف شد</string>
+  <string name="ayahbookmark_undo">واگرد</string>
+</resources>

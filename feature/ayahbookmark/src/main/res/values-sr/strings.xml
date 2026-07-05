@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Готово</string>
+  <string name="ayahbookmark_reading_bookmark_title">Ознака за читање</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Где сте стали</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Тренутно на %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Биће премештено са %1$s</string>
+  <string name="ayahbookmark_collections_header">Колекције</string>
+  <string name="ayahbookmark_new_collection">Нова колекција</string>
+  <string name="ayahbookmark_collection_name_hint">Назив колекције</string>
+  <string name="ayahbookmark_cancel">Откажи</string>
+  <string name="ayahbookmark_create">Направи</string>
+  <string name="ayahbookmark_remove_bookmark">Уклони ознаку</string>
+  <string name="ayahbookmark_last_place_warning">Задржите на бар једном месту - за брисање користите Уклони ознаку испод.</string>
+  <string name="ayahbookmark_bookmark_removed">Ознака је уклоњена</string>
+  <string name="ayahbookmark_undo">Опозови</string>
+</resources>

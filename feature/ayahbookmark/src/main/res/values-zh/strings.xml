@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">完成</string>
+  <string name="ayahbookmark_reading_bookmark_title">阅读书签</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">您上次阅读的位置</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">当前在%1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">将从%1$s移动</string>
+  <string name="ayahbookmark_collections_header">收藏集</string>
+  <string name="ayahbookmark_new_collection">新建收藏集</string>
+  <string name="ayahbookmark_collection_name_hint">收藏集名称</string>
+  <string name="ayahbookmark_cancel">取消</string>
+  <string name="ayahbookmark_create">创建</string>
+  <string name="ayahbookmark_remove_bookmark">移除书签</string>
+  <string name="ayahbookmark_last_place_warning">请至少保留一个位置－如需删除，请使用下方的移除书签。</string>
+  <string name="ayahbookmark_bookmark_removed">书签已移除</string>
+  <string name="ayahbookmark_undo">撤销</string>
+</resources>

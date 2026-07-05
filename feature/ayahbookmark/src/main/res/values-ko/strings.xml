@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">완료</string>
+  <string name="ayahbookmark_reading_bookmark_title">읽기 책갈피</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">중단한 위치</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">현재 %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">%1$s에서 이동됩니다</string>
+  <string name="ayahbookmark_collections_header">컬렉션</string>
+  <string name="ayahbookmark_new_collection">새 컬렉션</string>
+  <string name="ayahbookmark_collection_name_hint">컬렉션 이름</string>
+  <string name="ayahbookmark_cancel">취소</string>
+  <string name="ayahbookmark_create">만들기</string>
+  <string name="ayahbookmark_remove_bookmark">책갈피 삭제</string>
+  <string name="ayahbookmark_last_place_warning">최소 한 곳에는 유지하세요. 삭제하려면 아래의 책갈피 삭제를 사용하세요.</string>
+  <string name="ayahbookmark_bookmark_removed">책갈피가 삭제되었습니다</string>
+  <string name="ayahbookmark_undo">실행 취소</string>
+</resources>

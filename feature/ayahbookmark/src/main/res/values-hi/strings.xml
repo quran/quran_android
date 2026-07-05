@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">हो गया</string>
+  <string name="ayahbookmark_reading_bookmark_title">पठन बुकमार्क</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">जहाँ आपने छोड़ा था</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">फ़िलहाल %1$s पर</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">%1$s से स्थानांतरित हो जाएगा</string>
+  <string name="ayahbookmark_collections_header">संग्रह</string>
+  <string name="ayahbookmark_new_collection">नया संग्रह</string>
+  <string name="ayahbookmark_collection_name_hint">संग्रह का नाम</string>
+  <string name="ayahbookmark_cancel">रद्द करें</string>
+  <string name="ayahbookmark_create">बनाएं</string>
+  <string name="ayahbookmark_remove_bookmark">बुकमार्क हटाएं</string>
+  <string name="ayahbookmark_last_place_warning">इसे कम से कम एक जगह रखें - हटाने के लिए, नीचे बुकमार्क हटाएं का उपयोग करें।</string>
+  <string name="ayahbookmark_bookmark_removed">बुकमार्क हटा दिया गया</string>
+  <string name="ayahbookmark_undo">पूर्ववत करें</string>
+</resources>

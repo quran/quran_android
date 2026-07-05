@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Hazır</string>
+  <string name="ayahbookmark_reading_bookmark_title">Oxuma əlfəcini</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Qaldığınız yer</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Hazırda %1$s-də</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">%1$s-dən köçürüləcək</string>
+  <string name="ayahbookmark_collections_header">Kolleksiyalar</string>
+  <string name="ayahbookmark_new_collection">Yeni kolleksiya</string>
+  <string name="ayahbookmark_collection_name_hint">Kolleksiya adı</string>
+  <string name="ayahbookmark_cancel">Ləğv et</string>
+  <string name="ayahbookmark_create">Yarat</string>
+  <string name="ayahbookmark_remove_bookmark">Əlfəcini sil</string>
+  <string name="ayahbookmark_last_place_warning">Ən azı bir yerdə saxlayın - silmək üçün aşağıdakı Əlfəcini sil seçimindən istifadə edin.</string>
+  <string name="ayahbookmark_bookmark_removed">Əlfəcin silindi</string>
+  <string name="ayahbookmark_undo">Geri al</string>
+</resources>

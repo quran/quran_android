@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Klar</string>
+  <string name="ayahbookmark_reading_bookmark_title">Läsbokmärke</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Där du slutade</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">För närvarande vid %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Kommer att flyttas från %1$s</string>
+  <string name="ayahbookmark_collections_header">Samlingar</string>
+  <string name="ayahbookmark_new_collection">Ny samling</string>
+  <string name="ayahbookmark_collection_name_hint">Samlingens namn</string>
+  <string name="ayahbookmark_cancel">Avbryt</string>
+  <string name="ayahbookmark_create">Skapa</string>
+  <string name="ayahbookmark_remove_bookmark">Ta bort bokmärke</string>
+  <string name="ayahbookmark_last_place_warning">Behåll på minst en plats - för att ta bort, använd Ta bort bokmärke nedan.</string>
+  <string name="ayahbookmark_bookmark_removed">Bokmärke borttaget</string>
+  <string name="ayahbookmark_undo">Ångra</string>
+</resources>

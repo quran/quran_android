@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Terminé</string>
+  <string name="ayahbookmark_reading_bookmark_title">Favori de lecture</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Là où vous vous étiez arrêté</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Actuellement à %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Sera déplacé depuis %1$s</string>
+  <string name="ayahbookmark_collections_header">Collections</string>
+  <string name="ayahbookmark_new_collection">Nouvelle collection</string>
+  <string name="ayahbookmark_collection_name_hint">Nom de la collection</string>
+  <string name="ayahbookmark_cancel">Annuler</string>
+  <string name="ayahbookmark_create">Créer</string>
+  <string name="ayahbookmark_remove_bookmark">Supprimer le favori</string>
+  <string name="ayahbookmark_last_place_warning">Conservez-le dans au moins un endroit - pour le supprimer, utilisez Supprimer le favori ci-dessous.</string>
+  <string name="ayahbookmark_bookmark_removed">Favori supprimé</string>
+  <string name="ayahbookmark_undo">Annuler</string>
+</resources>

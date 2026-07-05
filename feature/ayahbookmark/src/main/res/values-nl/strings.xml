@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Klaar</string>
+  <string name="ayahbookmark_reading_bookmark_title">Leesbladwijzer</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Waar je gebleven was</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Momenteel bij %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Wordt verplaatst vanaf %1$s</string>
+  <string name="ayahbookmark_collections_header">Collecties</string>
+  <string name="ayahbookmark_new_collection">Nieuwe collectie</string>
+  <string name="ayahbookmark_collection_name_hint">Naam van collectie</string>
+  <string name="ayahbookmark_cancel">Annuleren</string>
+  <string name="ayahbookmark_create">Maken</string>
+  <string name="ayahbookmark_remove_bookmark">Bladwijzer verwijderen</string>
+  <string name="ayahbookmark_last_place_warning">Bewaar op ten minste één plek - gebruik hieronder Bladwijzer verwijderen om te verwijderen.</string>
+  <string name="ayahbookmark_bookmark_removed">Bladwijzer verwijderd</string>
+  <string name="ayahbookmark_undo">Ongedaan maken</string>
+</resources>

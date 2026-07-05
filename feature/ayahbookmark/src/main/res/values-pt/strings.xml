@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Concluído</string>
+  <string name="ayahbookmark_reading_bookmark_title">Marcador de leitura</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Onde você parou</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Atualmente em %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Será movido de %1$s</string>
+  <string name="ayahbookmark_collections_header">Coleções</string>
+  <string name="ayahbookmark_new_collection">Nova coleção</string>
+  <string name="ayahbookmark_collection_name_hint">Nome da coleção</string>
+  <string name="ayahbookmark_cancel">Cancelar</string>
+  <string name="ayahbookmark_create">Criar</string>
+  <string name="ayahbookmark_remove_bookmark">Remover marcador</string>
+  <string name="ayahbookmark_last_place_warning">Mantenha em pelo menos um lugar - para excluir, use Remover marcador abaixo.</string>
+  <string name="ayahbookmark_bookmark_removed">Marcador removido</string>
+  <string name="ayahbookmark_undo">Desfazer</string>
+</resources>

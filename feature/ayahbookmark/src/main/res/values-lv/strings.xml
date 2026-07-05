@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Gatavs</string>
+  <string name="ayahbookmark_reading_bookmark_title">Lasīšanas grāmatzīme</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Kur pārtraucāt</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Pašlaik pie %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Tiks pārvietots no %1$s</string>
+  <string name="ayahbookmark_collections_header">Kolekcijas</string>
+  <string name="ayahbookmark_new_collection">Jauna kolekcija</string>
+  <string name="ayahbookmark_collection_name_hint">Kolekcijas nosaukums</string>
+  <string name="ayahbookmark_cancel">Atcelt</string>
+  <string name="ayahbookmark_create">Izveidot</string>
+  <string name="ayahbookmark_remove_bookmark">Noņemt grāmatzīmi</string>
+  <string name="ayahbookmark_last_place_warning">Saglabājiet vismaz vienā vietā - lai dzēstu, izmantojiet zemāk esošo Noņemt grāmatzīmi.</string>
+  <string name="ayahbookmark_bookmark_removed">Grāmatzīme noņemta</string>
+  <string name="ayahbookmark_undo">Atsaukt</string>
+</resources>

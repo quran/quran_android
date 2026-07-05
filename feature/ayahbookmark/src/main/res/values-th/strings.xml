@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">เสร็จสิ้น</string>
+  <string name="ayahbookmark_reading_bookmark_title">ที่คั่นการอ่าน</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">จุดที่คุณค้างไว้</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">ขณะนี้อยู่ที่ %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">จะย้ายจาก %1$s</string>
+  <string name="ayahbookmark_collections_header">คอลเลกชัน</string>
+  <string name="ayahbookmark_new_collection">คอลเลกชันใหม่</string>
+  <string name="ayahbookmark_collection_name_hint">ชื่อคอลเลกชัน</string>
+  <string name="ayahbookmark_cancel">ยกเลิก</string>
+  <string name="ayahbookmark_create">สร้าง</string>
+  <string name="ayahbookmark_remove_bookmark">ลบที่คั่นหน้า</string>
+  <string name="ayahbookmark_last_place_warning">เก็บไว้อย่างน้อยหนึ่งที่ - หากต้องการลบ ให้ใช้ตัวเลือกลบที่คั่นหน้าด้านล่าง</string>
+  <string name="ayahbookmark_bookmark_removed">ลบที่คั่นหน้าแล้ว</string>
+  <string name="ayahbookmark_undo">เลิกทำ</string>
+</resources>

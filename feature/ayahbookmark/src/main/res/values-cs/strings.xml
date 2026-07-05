@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Hotovo</string>
+  <string name="ayahbookmark_reading_bookmark_title">Záložka čtení</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Kde jste přestali</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Aktuálně na %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Přesune se z %1$s</string>
+  <string name="ayahbookmark_collections_header">Kolekce</string>
+  <string name="ayahbookmark_new_collection">Nová kolekce</string>
+  <string name="ayahbookmark_collection_name_hint">Název kolekce</string>
+  <string name="ayahbookmark_cancel">Zrušit</string>
+  <string name="ayahbookmark_create">Vytvořit</string>
+  <string name="ayahbookmark_remove_bookmark">Odebrat záložku</string>
+  <string name="ayahbookmark_last_place_warning">Ponechte alespoň na jednom místě - k odstranění použijte níže uvedenou možnost Odebrat záložku.</string>
+  <string name="ayahbookmark_bookmark_removed">Záložka odebrána</string>
+  <string name="ayahbookmark_undo">Zpět</string>
+</resources>
