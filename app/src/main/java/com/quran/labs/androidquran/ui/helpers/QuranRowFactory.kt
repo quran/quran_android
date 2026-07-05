@@ -2,7 +2,10 @@ package com.quran.labs.androidquran.ui.helpers
 
 import android.content.Context
 import com.quran.data.core.QuranInfo
+import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.PageReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.data.QuranDisplayData
@@ -33,6 +36,13 @@ class QuranRowFactory @Inject constructor(
       .withType(QuranRow.HEADER).build()
   }
 
+  fun fromReadingBookmarkHeader(context: Context): QuranRow {
+    return QuranRow.Builder()
+      .withText(context.getString(R.string.reading_bookmark))
+      .withType(QuranRow.HEADER)
+      .build()
+  }
+
   fun fromCurrentPage(context: Context, page: Int, timeStamp: Long): QuranRow {
     return QuranRow.Builder()
       .withText(quranDisplayData.getSuraNameString(context, page))
@@ -43,6 +53,54 @@ class QuranRowFactory @Inject constructor(
       .withImageResource(R.drawable.bookmark_currentpage)
       .withImageOverlayColorResource(R.color.icon_tint)
       .build()
+  }
+
+  fun fromReadingBookmark(context: Context, readingBookmark: ReadingBookmark): QuranRow {
+    return when (readingBookmark) {
+      is PageReadingBookmark -> {
+        val page = readingBookmark.page.takeIf(quranInfo::isValidPage) ?: 1
+        QuranRow.Builder()
+          .withText(quranDisplayData.getSuraNameString(context, page))
+          .withMetadata(quranDisplayData.getPageSubtitle(context, page))
+          .withType(QuranRow.PAGE_READING_BOOKMARK)
+          .withSura(quranDisplayData.safelyGetSuraOnPage(page))
+          .withPage(page)
+          .withDate(readingBookmark.timestamp)
+          .withImageResource(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite)
+          .withImageOverlayColorResource(R.color.icon_tint)
+          .build()
+      }
+
+      is AyahReadingBookmark -> {
+        val page = quranInfo.getPageFromSuraAyah(readingBookmark.sura, readingBookmark.ayah)
+          .takeIf(quranInfo::isValidPage)
+          ?: 1
+        QuranRow.Builder()
+          .withText(
+            quranDisplayData.getAyahString(
+              readingBookmark.sura,
+              readingBookmark.ayah,
+              context
+            )
+          )
+          .withMetadata(
+            quranDisplayData.getAyahMetadata(
+              readingBookmark.sura,
+              readingBookmark.ayah,
+              page,
+              context
+            )
+          )
+          .withType(QuranRow.AYAH_READING_BOOKMARK)
+          .withSura(readingBookmark.sura)
+          .withAyah(readingBookmark.ayah)
+          .withPage(page)
+          .withDate(readingBookmark.timestamp)
+          .withImageResource(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite)
+          .withImageOverlayColorResource(R.color.ayah_bookmark_color)
+          .build()
+      }
+    }
   }
 
   @JvmOverloads

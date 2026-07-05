@@ -180,6 +180,9 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     val bookmarksAdapter = bookmarksAdapter
     val bookmarkPresenter = bookmarkPresenter
     if (bookmarksAdapter != null && items != null) {
+      if (bookmarksContextualModePresenter.isInActionMode()) {
+        bookmarksContextualModePresenter.finishActionMode()
+      }
       bookmarksAdapter.setShowTags(bookmarkPresenter.shouldShowInlineTags())
       bookmarksAdapter.setShowDate(bookmarkPresenter.isDateShowing)
       bookmarksAdapter.setElements(
