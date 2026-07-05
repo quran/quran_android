@@ -23,4 +23,7 @@ dependencies {
 
   // immutable collections
   implementation(libs.kotlinx.collections.immutable)
+
+  // molecule
+  implementation(libs.molecule)
 }

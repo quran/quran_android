@@ -97,6 +97,9 @@ class AyahBookmarkPresenter(
       }
     }
 
+    // this is true if we already had this bookmarked
+    val hasPersistedBookmark = hasExistingCollections.value || readingBookmark.value.asSuraAyah() == currentAyah
+
     val scope = rememberCoroutineScope()
     val eventSink: (AyahBookmarkEvent) -> Unit = { event ->
       when (event) {
@@ -153,7 +156,7 @@ class AyahBookmarkPresenter(
         is AyahBookmarkEvent.ToggleCollection -> {
           val collectionIds = checkedCollectionIds.value
           checkedCollectionIds.value = if (event.id in collectionIds) {
-            if (collectionIds.size > 1 || isReadingBookmarkEnabledState.value) {
+            if (!hasPersistedBookmark || collectionIds.size > 1 || isReadingBookmarkEnabledState.value) {
               collectionIds - event.id
             } else {
               showLastPlaceWarningState.value = true
@@ -166,7 +169,7 @@ class AyahBookmarkPresenter(
         AyahBookmarkEvent.ToggleReadingBookmark -> {
           val isEnabled = isReadingBookmarkEnabledState.value
           if (isEnabled) {
-            if (checkedCollectionIds.value.isNotEmpty()) {
+            if (!hasPersistedBookmark || checkedCollectionIds.value.isNotEmpty()) {
               isReadingBookmarkEnabledState.value = false
             } else {
               showLastPlaceWarningState.value = true
@@ -191,7 +194,8 @@ class AyahBookmarkPresenter(
       collectionCreation = collectionCreationState.value,
       showLastPlaceWarning = showLastPlaceWarningState.value,
       isBookmarkRemoved = isBookmarkRemovedState.value,
-      showRemoveBookmarkButton = hasExistingCollections.value || readingBookmark.value.asSuraAyah() == currentAyah,
+      isDismissed = isDismissed.value,
+      showRemoveBookmarkButton = hasPersistedBookmark,
       suraAyahNameResolver = { context, ayah -> quranNaming.getSuraAyahString(context, ayah.sura, ayah.ayah) },
       eventSink = eventSink
     )
