@@ -128,11 +128,13 @@ internal fun AyahBookmarkSheet(
           isSubmitting = creation.isSubmitting,
           onNameChange = { eventSink(AyahBookmarkEvent.CollectionNameChanged(it)) },
           onCancel = { eventSink(AyahBookmarkEvent.CancelCreatingCollection) },
-          onCreate = { eventSink(AyahBookmarkEvent.CreateCollection) }
+          onCreate = { eventSink(AyahBookmarkEvent.CreateCollection(creation.name)) }
         )
       }
 
-      RemoveBookmarkRow(onClick = { eventSink(AyahBookmarkEvent.RemoveBookmark) })
+      if (state.showRemoveBookmarkButton) {
+        RemoveBookmarkRow(onClick = { eventSink(AyahBookmarkEvent.RemoveBookmark) })
+      }
     }
   }
 }

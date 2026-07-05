@@ -14,7 +14,9 @@ data class AyahBookmarkState(
   val collections: ImmutableList<AyahBookmarkCollectionItem> = persistentListOf(),
   val collectionCreation: AyahBookmarkCollectionCreationState = AyahBookmarkCollectionCreationState.Inactive,
   val showLastPlaceWarning: Boolean = false,
+  val showRemoveBookmarkButton: Boolean = true,
   val isBookmarkRemoved: Boolean = false,
+  val isDismissed: Boolean = false,
   val suraAyahNameResolver: (Context, SuraAyah) -> String,
   val eventSink: (AyahBookmarkEvent) -> Unit = {}
 )
@@ -39,7 +41,7 @@ sealed interface AyahBookmarkEvent {
   data object StartCreatingCollection : AyahBookmarkEvent
   data object CancelCreatingCollection : AyahBookmarkEvent
   data class CollectionNameChanged(val name: String) : AyahBookmarkEvent
-  data object CreateCollection : AyahBookmarkEvent
+  data class CreateCollection(val name: String) : AyahBookmarkEvent
   data object RemoveBookmark : AyahBookmarkEvent
   data object UndoRemoveBookmark : AyahBookmarkEvent
   data object Done : AyahBookmarkEvent
