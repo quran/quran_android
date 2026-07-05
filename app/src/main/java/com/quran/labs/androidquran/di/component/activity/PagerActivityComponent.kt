@@ -6,7 +6,6 @@ import com.quran.labs.androidquran.di.component.fragment.QuranPageComponent
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.fragment.AyahPlaybackFragment
 import com.quran.labs.androidquran.ui.fragment.AyahTranslationFragment
-import com.quran.labs.androidquran.ui.fragment.TagBookmarkFragment
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener
 import com.quran.mobile.di.QuranReadingActivityComponent
 import com.quran.mobile.feature.audiobar.AudioBarWrapper
@@ -25,7 +24,6 @@ interface PagerActivityComponent : QuranReadingActivityComponent {
   fun inject(pagerActivity: PagerActivity)
   fun inject(ayahToolBar: AyahToolBar)
 
-  fun inject(tagBookmarkFragment: TagBookmarkFragment)
   fun inject(ayahPlaybackFragment: AyahPlaybackFragment)
   fun inject(ayahTranslationFragment: AyahTranslationFragment)
 

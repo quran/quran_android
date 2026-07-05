@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
   <string name="bookmark_ayah">Bu âyeti işaretle</string>
-  <string name="tag_ayah">Bu âyeti işaretle</string>
   <string name="share_ayah">Âyet kısayolu paylaş</string>
   <string name="share_ayah_text">Âyet meâlini paylaş</string>
   <string name="translation_ayah">Âyet meâli</string>
