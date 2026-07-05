@@ -234,6 +234,7 @@ dependencies {
 
   implementation(project(":feature:audio"))
   implementation(project(":feature:audiobar"))
+  implementation(project(":feature:ayahbookmark"))
   implementation(project(":feature:downloadmanager"))
   implementation(project(":feature:qarilist"))
   implementation(project(":feature:sync"))

@@ -10,6 +10,7 @@ import com.quran.labs.androidquran.ui.fragment.TagBookmarkFragment
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener
 import com.quran.mobile.di.QuranReadingActivityComponent
 import com.quran.mobile.feature.audiobar.AudioBarWrapper
+import com.quran.mobile.feature.ayahbookmark.AyahBookmarkWrapper
 import com.quran.mobile.feature.qarilist.QariListWrapper
 import com.quran.page.common.toolbar.AyahToolBar
 import dev.zacsweers.metro.GraphExtension
@@ -30,6 +31,7 @@ interface PagerActivityComponent : QuranReadingActivityComponent {
 
   fun inject(qariListWrapper: QariListWrapper)
   fun inject(audioBarWrapper: AudioBarWrapper)
+  fun inject(ayahBookmarkWrapper: AyahBookmarkWrapper)
 
   @GraphExtension.Factory
   interface Factory {

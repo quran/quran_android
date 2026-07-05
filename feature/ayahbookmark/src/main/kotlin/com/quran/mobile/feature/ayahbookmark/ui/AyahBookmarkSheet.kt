@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,7 +22,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.quran.mobile.feature.ayahbookmark.R
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionCreationState
@@ -70,15 +70,15 @@ internal fun AyahBookmarkSheet(
           style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
           color = MaterialTheme.colorScheme.onSurface
         )
+        Spacer(modifier = Modifier.weight(1f))
         Text(
           text = stringResource(R.string.ayahbookmark_done),
           style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
           color = MaterialTheme.colorScheme.primary,
-          textAlign = TextAlign.End,
           modifier = Modifier
-            .weight(1f)
+            .clip(RoundedCornerShape(percent = 100))
             .clickable { eventSink(AyahBookmarkEvent.Done) }
-            .padding(4.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
         )
       }
 
