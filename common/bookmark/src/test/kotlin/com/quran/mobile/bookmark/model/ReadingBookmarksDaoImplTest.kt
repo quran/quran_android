@@ -84,7 +84,7 @@ class ReadingBookmarksDaoImplTest {
   }
 
   @Test
-  fun `set ayah reading bookmark maps page from quran info`() = runTest {
+  fun `set ayah reading bookmark stores ayah reading bookmark`() = runTest {
     val suraAyah = SuraAyah(2, 255)
 
     dao.setAyahReadingBookmark(suraAyah)
@@ -92,7 +92,7 @@ class ReadingBookmarksDaoImplTest {
     val bookmark = dao.readingBookmark() as AyahReadingBookmark
     assertThat(bookmark.sura).isEqualTo(suraAyah.sura)
     assertThat(bookmark.ayah).isEqualTo(suraAyah.ayah)
-    assertThat(bookmark.page).isEqualTo(quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah))
+    assertThat(bookmark.timestamp).isEqualTo(timestampProvider.timestampSeconds)
   }
 
   @Test

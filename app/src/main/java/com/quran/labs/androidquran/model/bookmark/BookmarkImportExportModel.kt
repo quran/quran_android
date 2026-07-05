@@ -13,6 +13,7 @@ import com.quran.data.model.bookmark.BookmarkData
 import com.quran.labs.androidquran.R
 import com.quran.mobile.bookmark.importdata.BookmarkBackupImportNormalizer
 import com.quran.mobile.bookmark.importdata.MobileSyncImporter
+import com.quran.mobile.bookmark.model.ReadingBookmarkPageMapper
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.core.Observable
@@ -32,6 +33,7 @@ class BookmarkImportExportModel @Inject internal constructor(
   private val recentPagesDao: RecentPagesDao,
   private val readingBookmarksDao: ReadingBookmarksDao,
   private val settings: Settings,
+  private val pageMapper: ReadingBookmarkPageMapper,
   private val backupImportNormalizer: BookmarkBackupImportNormalizer,
   private val mobileSyncImporter: MobileSyncImporter
 ) {
@@ -97,14 +99,19 @@ class BookmarkImportExportModel @Inject internal constructor(
   private fun bookmarkDataWithRecentsObservable(): Single<BookmarkData> {
     return Single.fromCallable {
       runBlocking {
+        val pageType = pageMapper.currentPageType()
         BookmarkData(
           tags = bookmarksDao.tags(),
           bookmarks = bookmarksDao.bookmarks(BookmarkSortOrder.SORT_DATE_ADDED)
             .filterNot { bookmark -> bookmark.isPageBookmark() },
           recentPages = recentPagesDao.recentPages(),
           readingBookmark = readingBookmarksDao.readingBookmark()
-            ?.let(BackupReadingBookmark::fromReadingBookmark),
-          pageType = settings.pageType()
+            ?.let { bookmark ->
+              BackupReadingBookmark.fromReadingBookmark(bookmark) { sura, ayah ->
+                pageMapper.suraAyahToPage(sura, ayah, pageType)
+              }
+            },
+          pageType = pageType
         )
       }
     }.subscribeOn(Schedulers.io())

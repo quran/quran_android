@@ -56,6 +56,7 @@ class QuranImportPresenterTest {
       FakeRecentPagesDao(),
       FakeReadingBookmarksDao(),
       settings,
+      pageMapper,
       BookmarkBackupImportNormalizer(
         context,
         pageMapper,

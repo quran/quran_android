@@ -128,11 +128,9 @@ class ReadingBookmarksDaoImpl @Inject constructor(
   private fun toReadingBookmark(bookmark: SyncReadingBookmark?, pageType: String): ReadingBookmark? {
     return when (bookmark) {
       is SyncAyahReadingBookmark -> {
-        val page = pageMapper.suraAyahToPage(bookmark.sura, bookmark.ayah, pageType)
         AyahReadingBookmark(
           sura = bookmark.sura,
           ayah = bookmark.ayah,
-          page = page,
           timestamp = bookmark.lastUpdated.fromPlatform().toEpochMilliseconds() / 1000
         )
       }

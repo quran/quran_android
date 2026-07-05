@@ -7,6 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.Settings
+import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
@@ -76,6 +77,7 @@ class BookmarkImportExportModelTest {
       recentPagesDao,
       readingBookmarksDao,
       settings,
+      pageMapper,
       BookmarkBackupImportNormalizer(
         context,
         pageMapper,
@@ -175,6 +177,33 @@ class BookmarkImportExportModelTest {
   }
 
   @Test
+  fun testExportBookmarksWithAyahReadingBookmarkIncludesResolvedPage() {
+    val sura = 2
+    val ayah = 255
+    val page = quranInfo.getPageFromSuraAyah(sura, ayah)
+    readingBookmarksDao.setReadingBookmark(AyahReadingBookmark(sura, ayah, timestamp = 1234))
+
+    val testObserver = TestObserver<Uri>()
+    bookmarkImportExportModel.exportBookmarksObservable()
+      .subscribe(testObserver)
+    BaseTestExtension.awaitTerminalEvent(testObserver)
+
+    testObserver.assertNoErrors()
+    testObserver.assertValueCount(1)
+
+    val exportedData = BookmarkJsonModel().fromJson(backupFile().source().buffer())
+    assertThat(exportedData.readingBookmark).isEqualTo(
+      BackupReadingBookmark(
+        type = BackupReadingBookmark.TYPE_AYAH,
+        sura = sura,
+        ayah = ayah,
+        page = page,
+        timestamp = 1234
+      )
+    )
+  }
+
+  @Test
   fun testExportBookmarksCsvWithDataProducesUri() {
     bookmarksDao.setTags(listOf(Tag("1", "CSV Tag")))
     bookmarksDao.setBookmarks(
@@ -193,6 +222,23 @@ class BookmarkImportExportModelTest {
     assertThat(testObserver.values()[0]).isNotNull()
     assertThat(csvBackupFile().readText()).contains("recent,,, 12, 1000")
     assertThat(csvBackupFile().readText()).contains("reading_bookmark, null, null, 12, 999")
+  }
+
+  @Test
+  fun testExportBookmarksCsvWithAyahReadingBookmarkIncludesResolvedPage() {
+    val sura = 2
+    val ayah = 255
+    val page = quranInfo.getPageFromSuraAyah(sura, ayah)
+    readingBookmarksDao.setReadingBookmark(AyahReadingBookmark(sura, ayah, timestamp = 999))
+
+    val testObserver = TestObserver<Uri>()
+    bookmarkImportExportModel.exportBookmarksCSVObservable()
+      .subscribe(testObserver)
+    BaseTestExtension.awaitTerminalEvent(testObserver)
+
+    testObserver.assertNoErrors()
+    testObserver.assertValueCount(1)
+    assertThat(csvBackupFile().readText()).contains("reading_bookmark, 2, 255, $page, 999")
   }
 
   @Test
