@@ -17,7 +17,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlin.time.Instant
 
-class FakeBookmarksDao : BookmarksDao {
+class FakeBookmarksDao(
+  private val pageForSuraAyah: (SuraAyah) -> Int = { 0 }
+) : BookmarksDao {
   private val bookmarks = MutableStateFlow<List<Bookmark>>(emptyList())
   private val tags = MutableStateFlow<List<Tag>>(emptyList())
   private val defaultBookmarkIds = MutableStateFlow<Set<String>>(emptySet())
@@ -79,6 +81,16 @@ class FakeBookmarksDao : BookmarksDao {
           )
         }
     }
+  }
+
+  override suspend fun addCollection(name: String): ReadingCollection {
+    val id = addTag(name)
+    return ReadingCollection(
+      id = id,
+      name = name,
+      lastUpdated = currentTimestampSeconds().toInstant(),
+      isSystem = false
+    )
   }
 
   override suspend fun tags(): List<Tag> {
@@ -200,11 +212,88 @@ class FakeBookmarksDao : BookmarksDao {
     changesFlow.tryEmit(Unit)
   }
 
+  override suspend fun deleteAyahBookmark(suraAyah: SuraAyah): Boolean {
+    val bookmarkIds = bookmarks.value
+      .filter { bookmark -> bookmark.sura == suraAyah.sura && bookmark.ayah == suraAyah.ayah }
+      .map { bookmark -> bookmark.id }
+      .toSet()
+    if (bookmarkIds.isEmpty()) {
+      return false
+    }
+
+    bookmarks.update { current -> current.filterNot { bookmark -> bookmark.id in bookmarkIds } }
+    defaultBookmarkIds.update { current -> current - bookmarkIds }
+    changesFlow.tryEmit(Unit)
+    return true
+  }
+
   override suspend fun replaceAyahBookmarks(bookmarks: List<Bookmark>) {
     val ayahBookmarks = bookmarks.filter { bookmark -> bookmark.sura != null && bookmark.ayah != null }
     this.bookmarks.value = ayahBookmarks
     defaultBookmarkIds.value = ayahBookmarks.map { bookmark -> bookmark.id }.toSet()
     changesFlow.tryEmit(Unit)
+  }
+
+  override suspend fun replaceAyahBookmarkCollections(
+    suraAyah: SuraAyah,
+    collectionIds: Set<String>
+  ): Boolean {
+    val targetCollectionIds = normalizedCollectionIds(collectionIds)
+    val customCollectionIds = targetCollectionIds.filterNot { collectionId ->
+      collectionId == DEFAULT_BOOKMARK_COLLECTION_ID
+    }.toSet()
+    val isDefaultBookmark = DEFAULT_BOOKMARK_COLLECTION_ID in targetCollectionIds
+    val existingBookmark = bookmarks.value.firstOrNull { bookmark ->
+      bookmark.sura == suraAyah.sura && bookmark.ayah == suraAyah.ayah
+    }
+
+    if (existingBookmark == null) {
+      val id = "bookmark-${bookmarks.value.size + 1}"
+      bookmarks.update { current ->
+        current + Bookmark(
+          id = id,
+          sura = suraAyah.sura,
+          ayah = suraAyah.ayah,
+          page = pageForSuraAyah(suraAyah),
+          timestamp = currentTimestampSeconds(),
+          tags = customCollectionIds.toList()
+        )
+      }
+      if (isDefaultBookmark) {
+        defaultBookmarkIds.update { current -> current + id }
+      }
+      changesFlow.tryEmit(Unit)
+      return true
+    }
+
+    val customCollectionsChanged = existingBookmark.tags.toSet() != customCollectionIds
+    val defaultCollectionChanged = (existingBookmark.id in defaultBookmarkIds.value) != isDefaultBookmark
+    if (!customCollectionsChanged && !defaultCollectionChanged) {
+      return false
+    }
+
+    if (customCollectionsChanged) {
+      bookmarks.update { current ->
+        current.map { bookmark ->
+          if (bookmark.id == existingBookmark.id) {
+            bookmark.copy(tags = customCollectionIds.toList())
+          } else {
+            bookmark
+          }
+        }
+      }
+    }
+    if (defaultCollectionChanged) {
+      defaultBookmarkIds.update { current ->
+        if (isDefaultBookmark) {
+          current + existingBookmark.id
+        } else {
+          current - existingBookmark.id
+        }
+      }
+    }
+    changesFlow.tryEmit(Unit)
+    return true
   }
 
   override suspend fun isSuraAyahBookmarked(suraAyah: SuraAyah): Boolean {
@@ -297,6 +386,19 @@ class FakeBookmarksDao : BookmarksDao {
     } else {
       Instant.fromEpochSeconds(this)
     }
+  }
+
+  private fun normalizedCollectionIds(collectionIds: Set<String>): Set<String> {
+    return collectionIds
+      .map { collectionId -> collectionId.trim() }
+      .filter { collectionId -> collectionId.isNotEmpty() }
+      .distinct()
+      .ifEmpty { listOf(DEFAULT_BOOKMARK_COLLECTION_ID) }
+      .toSet()
+  }
+
+  private fun currentTimestampSeconds(): Long {
+    return System.currentTimeMillis() / 1000
   }
 
   private companion object {

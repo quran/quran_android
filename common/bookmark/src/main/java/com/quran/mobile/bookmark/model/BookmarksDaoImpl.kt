@@ -10,6 +10,7 @@ import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.collection.ReadingCollection
 import com.quran.data.model.collection.ReadingCollectionBookmarks
 import com.quran.mobile.bookmark.sync.LocalDataChangeNotifier
 import com.quran.mobile.bookmark.sync.notifyLocalDataChanged
@@ -106,6 +107,13 @@ class BookmarksDaoImpl @Inject constructor(
     return bookmarkCollectionsState.collectionsWithBookmarks
       .filterNotNull()
       .map { collections -> collections.map { it.asReadingCollectionBookmarks() } }
+  }
+
+  override suspend fun addCollection(name: String): ReadingCollection {
+    return withContext(Dispatchers.IO) {
+      collectionsRepository.addCollection(name)
+        .asReadingCollection()
+    }
   }
 
   override fun bookmarksForPage(page: Int): Flow<List<Bookmark>> {
@@ -316,6 +324,12 @@ class BookmarksDaoImpl @Inject constructor(
     }
   }
 
+  override suspend fun deleteAyahBookmark(suraAyah: SuraAyah): Boolean {
+    return withContext(Dispatchers.IO) {
+      bookmarksRepository.deleteBookmark(suraAyah.sura, suraAyah.ayah)
+    }
+  }
+
   override suspend fun replaceAyahBookmarks(bookmarks: List<Bookmark>) {
     val replaced = withContext(Dispatchers.IO) {
       val quranInfo = quranInfoProvider()
@@ -339,6 +353,19 @@ class BookmarksDaoImpl @Inject constructor(
     }
     if (replaced) {
       localDataChangeNotifier.notifyLocalDataChanged()
+    }
+  }
+
+  override suspend fun replaceAyahBookmarkCollections(
+    suraAyah: SuraAyah,
+    collectionIds: Set<String>
+  ): Boolean {
+    return withContext(Dispatchers.IO) {
+      bookmarksRepository.replaceAyahBookmarkCollections(
+        suraAyah.sura,
+        suraAyah.ayah,
+        collectionIds.toList()
+      ).changed
     }
   }
 
