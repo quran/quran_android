@@ -12,9 +12,13 @@ import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
@@ -28,9 +32,12 @@ import com.quran.labs.androidquran.ui.helpers.QuranListAdapter
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter.QuranTouchListener
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.mobile.bookmark.model.isDefaultBookmarkCollectionId
+import com.quran.mobile.feature.sync.QuranSyncManager
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.launch
 
 class BookmarksFragment : Fragment(), QuranTouchListener {
+  private var bookmarksSwipeRefresh: SwipeRefreshLayout? = null
   private var recyclerView: RecyclerView? = null
   private var bookmarksAdapter: QuranListAdapter? = null
 
@@ -43,6 +50,9 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   @Inject
   lateinit var bookmarkUIConverter: BookmarkUIConverter
 
+  @Inject
+  lateinit var syncManager: QuranSyncManager
+
   override fun onAttach(context: Context) {
     super.onAttach(context)
     (context.applicationContext as QuranApplication).applicationComponent.inject(this)
@@ -53,9 +63,13 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     inflater: LayoutInflater, container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    val view = inflater.inflate(R.layout.quran_list, container, false)
+    val view = inflater.inflate(R.layout.quran_bookmarks_list, container, false)
 
     val context = requireContext()
+    val bookmarksSwipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.bookmarks_swipe_refresh)
+    this.bookmarksSwipeRefresh = bookmarksSwipeRefresh
+    bookmarksSwipeRefresh.setOnRefreshListener { onRefreshBookmarks() }
+    updatePullToRefreshEnabled(syncManager.canTriggerSync)
 
     val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
     recyclerView.setLayoutManager(LinearLayoutManager(context))
@@ -84,6 +98,13 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
       )
       insets
     }
+    viewLifecycleOwner.lifecycleScope.launch {
+      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        syncManager.canTriggerSyncFlow.collect { canTriggerSync ->
+          updatePullToRefreshEnabled(canTriggerSync)
+        }
+      }
+    }
     return view
   }
 
@@ -100,9 +121,25 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   }
 
   override fun onDestroyView() {
+    bookmarksSwipeRefresh?.isRefreshing = false
+    bookmarksSwipeRefresh = null
     recyclerView = null
     bookmarksAdapter = null
     super.onDestroyView()
+  }
+
+  private fun onRefreshBookmarks() {
+    if (syncManager.canTriggerSync) {
+      syncManager.triggerSync()
+    }
+    bookmarksSwipeRefresh?.isRefreshing = false
+  }
+
+  private fun updatePullToRefreshEnabled(isEnabled: Boolean) {
+    bookmarksSwipeRefresh?.isEnabled = isEnabled
+    if (!isEnabled) {
+      bookmarksSwipeRefresh?.isRefreshing = false
+    }
   }
 
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

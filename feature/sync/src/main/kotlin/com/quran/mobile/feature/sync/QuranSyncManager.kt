@@ -18,7 +18,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -67,6 +70,27 @@ class QuranSyncManager @Inject constructor(
 
   val authState: StateFlow<AuthState>
     get() = graph.authService.authState
+
+  /**
+   * Emits whether UI can offer a manual sync action.
+   *
+   * The value is `true` only when this build has usable sync configuration and the current auth
+   * session is signed in. Callers outside the sync feature can use this without depending on
+   * mobile-sync's auth model classes.
+   */
+  val canTriggerSyncFlow: Flow<Boolean>
+    get() = authState
+      .map { authState -> isConfigured && authState is AuthState.Success }
+      .distinctUntilChanged()
+
+  /**
+   * Returns whether a manual sync trigger is currently valid.
+   *
+   * This is a snapshot of [canTriggerSyncFlow] for event handlers that need to re-check state at
+   * the time of a user action.
+   */
+  val canTriggerSync: Boolean
+    get() = isConfigured && authState.value is AuthState.Success
 
   /**
    * Registers the activity-backed OIDC flow factory required for Android login and pending redirect handling.
@@ -141,6 +165,12 @@ class QuranSyncManager @Inject constructor(
     }
   }
 
+  /**
+   * Requests a sync through the shared data service.
+   *
+   * The call schedules sync work and returns immediately; progress and completion are owned by the
+   * underlying sync engine.
+   */
   fun triggerSync() {
     graph.quranDataService.triggerSync()
   }
