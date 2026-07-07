@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<data-extraction-rules>
+<data-extraction-rules xmlns:tools="http://schemas.android.com/tools">
   <cloud-backup>
     <exclude domain="sharedpref" path="com.quran.labs.androidquran.per_installation.xml" />
     <exclude domain="file" path="datastore/quran_mobile_sync_settings.preferences_pb" />
     <exclude domain="file" path="datastore/org.publicvalue.multiplatform.oidc.tokenstore.preferences_pb" />
+    <!-- Current OIDC releases write the double-dot session file; fixed releases write the single-dot file. -->
+    <exclude domain="file" path="datastore/org.publicvalue.multiplatform.oidc.oidcsession..preferences_pb" tools:ignore="FullBackupContent" />
     <exclude domain="file" path="datastore/org.publicvalue.multiplatform.oidc.oidcsession.preferences_pb" />
   </cloud-backup>
   <device-transfer>
     <exclude domain="sharedpref" path="com.quran.labs.androidquran.per_installation.xml" />
     <exclude domain="file" path="datastore/quran_mobile_sync_settings.preferences_pb" />
     <exclude domain="file" path="datastore/org.publicvalue.multiplatform.oidc.tokenstore.preferences_pb" />
+    <!-- Current OIDC releases write the double-dot session file; fixed releases write the single-dot file. -->
+    <exclude domain="file" path="datastore/org.publicvalue.multiplatform.oidc.oidcsession..preferences_pb" tools:ignore="FullBackupContent" />
     <exclude domain="file" path="datastore/org.publicvalue.multiplatform.oidc.oidcsession.preferences_pb" />
   </device-transfer>
 </data-extraction-rules>
