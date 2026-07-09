@@ -1,6 +1,5 @@
 package com.quran.mobile.feature.sync
 
-import android.content.Intent
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceGroup
@@ -27,26 +26,20 @@ class QuranSyncSettingsPreferenceProvider @Inject constructor(
       key = CATEGORY_KEY
       title = context.getString(R.string.quran_sync_settings_category)
       isIconSpaceReserved = false
+      // The XML-defined categories are auto-ordered starting at 0 in document order; an explicit
+      // negative order sorts Account above all of them, regardless of insertion order.
+      order = -1
     }
-    val preference = Preference(context).apply {
+    val preference = AccountPreference(context, syncManager).apply {
       key = PREFERENCE_KEY
-      title = context.getString(R.string.quran_sync_title)
-      summary = context.getString(R.string.quran_sync_settings_summary)
-      isIconSpaceReserved = false
     }
     root.addPreference(category)
     category.addPreference(preference)
   }
 
-  override fun onPreferenceClick(preference: Preference): Boolean {
-    if (preference.key != PREFERENCE_KEY || !syncManager.isConfigured) {
-      return false
-    }
-    val intent = Intent(preference.context, QuranSyncActivity::class.java)
-      .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-    preference.context.startActivity(intent)
-    return true
-  }
+  // The account row handles its own clicks (open sync details, sign out) via Compose since it
+  // is not selectable at the Preference level.
+  override fun onPreferenceClick(preference: Preference): Boolean = false
 
   companion object {
     private const val CATEGORY_KEY = "quran_sync_settings_category"

@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -191,6 +192,16 @@ class QuranSyncManager @Inject constructor(
       } finally {
         clearLogoutPending()
       }
+    }
+  }
+
+  /**
+   * Signs out without waiting for completion, for UI entry points that can't suspend directly
+   * (e.g. a Preference click listener).
+   */
+  fun signOut() {
+    authActionScope.launch {
+      runCatching { logout() }
     }
   }
 

@@ -2,6 +2,7 @@ package com.quran.mobile.feature.sync
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -37,8 +39,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
@@ -146,22 +150,93 @@ private fun SignedOutContent(
   actionError: String?,
   onLogin: () -> Unit
 ) {
-  Text(
-    text = stringResource(R.string.quran_sync_not_signed_in),
-    style = MaterialTheme.typography.headlineSmall,
-    color = MaterialTheme.colorScheme.onSurface
-  )
-  Button(
-    onClick = onLogin,
-    enabled = !isLoading,
+  Column(
+    horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier.fillMaxWidth()
   ) {
-    ButtonContent(
-      isLoading = isLoading,
-      text = stringResource(R.string.quran_sync_login)
+    Box(
+      modifier = Modifier
+        .size(64.dp)
+        .clip(CircleShape)
+        .background(MaterialTheme.colorScheme.primaryContainer),
+      contentAlignment = Alignment.Center
+    ) {
+      Icon(
+        imageVector = QuranIcons.Sync,
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.size(30.dp)
+      )
+    }
+    Text(
+      text = stringResource(R.string.quran_sync_headline),
+      style = MaterialTheme.typography.headlineSmall,
+      fontWeight = FontWeight.Bold,
+      color = MaterialTheme.colorScheme.onSurface,
+      textAlign = TextAlign.Center,
+      modifier = Modifier.padding(top = 20.dp)
+    )
+    Text(
+      text = stringResource(R.string.quran_sync_subtitle),
+      style = MaterialTheme.typography.bodyMedium,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
+      textAlign = TextAlign.Center,
+      modifier = Modifier.padding(top = 8.dp)
+    )
+    Column(
+      verticalArrangement = Arrangement.spacedBy(14.dp),
+      modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 24.dp, bottom = 28.dp)
+    ) {
+      SyncBenefitRow(stringResource(R.string.quran_sync_benefit_bookmarks))
+      SyncBenefitRow(stringResource(R.string.quran_sync_benefit_collections))
+      SyncBenefitRow(stringResource(R.string.quran_sync_benefit_notes))
+    }
+    Button(
+      onClick = onLogin,
+      enabled = !isLoading,
+      modifier = Modifier.fillMaxWidth()
+    ) {
+      ButtonContent(
+        isLoading = isLoading,
+        text = stringResource(R.string.quran_sync_login)
+      )
+    }
+    Text(
+      text = stringResource(R.string.quran_sync_continue_caption),
+      style = MaterialTheme.typography.bodySmall,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
+      modifier = Modifier.padding(top = 10.dp)
+    )
+    ErrorText(actionError)
+  }
+}
+
+@Composable
+private fun SyncBenefitRow(text: String) {
+  Row(verticalAlignment = Alignment.CenterVertically) {
+    Box(
+      modifier = Modifier
+        .size(20.dp)
+        .clip(CircleShape)
+        .background(MaterialTheme.colorScheme.primary),
+      contentAlignment = Alignment.Center
+    ) {
+      Icon(
+        imageVector = QuranIcons.Check,
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.onPrimary,
+        modifier = Modifier.size(11.dp)
+      )
+    }
+    Text(
+      text = text,
+      style = MaterialTheme.typography.bodyMedium,
+      color = MaterialTheme.colorScheme.onSurface,
+      modifier = Modifier.padding(start = 12.dp)
     )
   }
-  ErrorText(actionError)
 }
 
 @Composable
