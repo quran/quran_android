@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com sünkroonimine</string>
+  <string name="quran_sync_settings_category">Konto</string>
+  <string name="quran_sync_settings_summary">Järjehoidjad, kogud ja lugemisajalugu</string>
+  <string name="quran_sync_not_signed_in">Pole sisse logitud</string>
+  <string name="quran_sync_signed_in">Sisse logitud</string>
+  <string name="quran_sync_loading">Sisselogimine</string>
+  <string name="quran_sync_login">Logi sisse</string>
+  <string name="quran_sync_logout">Logi välja</string>
+  <string name="quran_sync_name">Nimi</string>
+  <string name="quran_sync_email">E-post</string>
+  <string name="quran_sync_account_id">Konto ID</string>
+  <string name="quran_sync_action_error">Sünkroonimist ei saa praegu värskendada.</string>
+  <string name="quran_sync_bookmarks_cta_title">Sünkroonige oma järjehoidjad kõikjal</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Pääsete neile ligi mistahes seadmest, igal ajal</string>
+  <string name="quran_sync_bookmarks_cta_button">Logi sisse Quran.com kaudu</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Loobu</string>
+</resources>

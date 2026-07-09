@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com সিঙ্ক</string>
+  <string name="quran_sync_settings_category">অ্যাকাউন্ট</string>
+  <string name="quran_sync_settings_summary">বুকমার্ক, সংগ্রহ এবং পড়ার ইতিহাস</string>
+  <string name="quran_sync_not_signed_in">সাইন ইন করা হয়নি</string>
+  <string name="quran_sync_signed_in">সাইন ইন করা হয়েছে</string>
+  <string name="quran_sync_loading">সাইন ইন হচ্ছে</string>
+  <string name="quran_sync_login">লগ ইন</string>
+  <string name="quran_sync_logout">লগ আউট</string>
+  <string name="quran_sync_name">নাম</string>
+  <string name="quran_sync_email">ইমেইল</string>
+  <string name="quran_sync_account_id">অ্যাকাউন্ট আইডি</string>
+  <string name="quran_sync_action_error">এই মুহূর্তে সিঙ্ক আপডেট করা যাচ্ছে না।</string>
+  <string name="quran_sync_bookmarks_cta_title">আপনার বুকমার্কগুলো সব জায়গায় সিঙ্ক করুন</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">যেকোনো ডিভাইস থেকে, যেকোনো সময় অ্যাক্সেস করুন</string>
+  <string name="quran_sync_bookmarks_cta_button">Quran.com দিয়ে সাইন ইন করুন</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">বাতিল</string>
+</resources>

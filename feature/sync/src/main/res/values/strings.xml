@@ -12,6 +12,10 @@
   <string name="quran_sync_email">Email</string>
   <string name="quran_sync_account_id">Account ID</string>
   <string name="quran_sync_action_error">Unable to update sync right now.</string>
+  <string name="quran_sync_bookmarks_cta_title">Sync your bookmarks everywhere</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Access them on any device, any time</string>
+  <string name="quran_sync_bookmarks_cta_button">Sign in with Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Dismiss</string>
   <string name="quran_sync_oauth_client_id" translatable="false"></string>
   <string name="quran_sync_oauth_issuer_url" translatable="false"></string>
   <string name="quran_sync_oauth_redirect_scheme" translatable="false"></string>

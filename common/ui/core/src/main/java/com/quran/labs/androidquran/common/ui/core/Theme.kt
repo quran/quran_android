@@ -86,6 +86,7 @@ object QuranIcons {
   val MenuBook: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.MenuBook
   val Mic: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Mic
   val Pause: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Pause
+  val Person: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Person
   val PlayArrow: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.PlayArrow
   val Repeat: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Repeat
   val Search: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Search

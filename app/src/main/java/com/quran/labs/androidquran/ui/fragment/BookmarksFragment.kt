@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.ui.fragment
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -9,6 +10,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -23,6 +25,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.data.dao.BookmarkSortOrder
+import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter
 import com.quran.labs.androidquran.presenter.bookmark.BookmarksContextualModePresenter
@@ -32,6 +35,8 @@ import com.quran.labs.androidquran.ui.helpers.QuranListAdapter
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter.QuranTouchListener
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.mobile.bookmark.model.isDefaultBookmarkCollectionId
+import com.quran.mobile.feature.sync.BookmarksSignInCard
+import com.quran.mobile.feature.sync.QuranSyncActivity
 import com.quran.mobile.feature.sync.QuranSyncManager
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.launch
@@ -66,6 +71,15 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     val view = inflater.inflate(R.layout.quran_bookmarks_list, container, false)
 
     val context = requireContext()
+    view.findViewById<ComposeView>(R.id.sync_sign_in_card).setContent {
+      QuranTheme {
+        BookmarksSignInCard(
+          syncManager = syncManager,
+          onSignIn = { startActivity(Intent(context, QuranSyncActivity::class.java)) }
+        )
+      }
+    }
+
     val bookmarksSwipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.bookmarks_swipe_refresh)
     this.bookmarksSwipeRefresh = bookmarksSwipeRefresh
     bookmarksSwipeRefresh.setOnRefreshListener { onRefreshBookmarks() }

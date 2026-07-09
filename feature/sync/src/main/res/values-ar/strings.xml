@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">مزامنة Quran.com</string>
+  <string name="quran_sync_settings_category">الحساب</string>
+  <string name="quran_sync_settings_summary">الإشارات المرجعية والمجموعات وسجل القراءة</string>
+  <string name="quran_sync_not_signed_in">لم يتم تسجيل الدخول</string>
+  <string name="quran_sync_signed_in">تم تسجيل الدخول</string>
+  <string name="quran_sync_loading">جارٍ تسجيل الدخول</string>
+  <string name="quran_sync_login">تسجيل الدخول</string>
+  <string name="quran_sync_logout">تسجيل الخروج</string>
+  <string name="quran_sync_name">الاسم</string>
+  <string name="quran_sync_email">البريد الإلكتروني</string>
+  <string name="quran_sync_account_id">معرف الحساب</string>
+  <string name="quran_sync_action_error">تعذر تحديث المزامنة الآن.</string>
+  <string name="quran_sync_bookmarks_cta_title">زامن إشاراتك المرجعية في كل مكان</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">الوصول إليها من أي جهاز وفي أي وقت</string>
+  <string name="quran_sync_bookmarks_cta_button">تسجيل الدخول باستخدام Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">إغلاق</string>
+</resources>
