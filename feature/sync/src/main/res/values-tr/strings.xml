@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com Senkronizasyonu</string>
+  <string name="quran_sync_settings_category">Hesap</string>
+  <string name="quran_sync_settings_summary">Yer imleri, koleksiyonlar ve okuma geçmişi</string>
+  <string name="quran_sync_not_signed_in">Oturum açılmadı</string>
+  <string name="quran_sync_signed_in">Oturum açıldı</string>
+  <string name="quran_sync_loading">Oturum açılıyor</string>
+  <string name="quran_sync_login">Oturum aç</string>
+  <string name="quran_sync_logout">Oturumu kapat</string>
+  <string name="quran_sync_name">Ad</string>
+  <string name="quran_sync_email">E-posta</string>
+  <string name="quran_sync_account_id">Hesap Kimliği</string>
+  <string name="quran_sync_action_error">Senkronizasyon şu anda güncellenemiyor.</string>
+  <string name="quran_sync_bookmarks_cta_title">Yer imlerinizi her yerde senkronize edin</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Herhangi bir cihazdan, her zaman erişin</string>
+  <string name="quran_sync_bookmarks_cta_button">Quran.com ile oturum açın</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Kapat</string>
+</resources>

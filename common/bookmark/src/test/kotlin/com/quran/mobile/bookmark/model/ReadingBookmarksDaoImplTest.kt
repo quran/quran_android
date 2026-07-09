@@ -22,6 +22,7 @@ import com.quran.shared.persistence.model.PageReadingBookmark as SyncPageReading
 import com.quran.shared.persistence.repository.readingbookmark.repository.ReadingBookmarksRepositoryImpl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -172,6 +173,7 @@ class ReadingBookmarksDaoImplTest {
       val madaniBookmark = awaitItem() as PageReadingBookmark
       assertThat(madaniBookmark.page).isEqualTo(madaniPage)
 
+      settings.awaitPreferencesSubscriber()
       settings.setPageType("warsh")
 
       val warshBookmark = awaitItem() as PageReadingBookmark
@@ -216,6 +218,10 @@ class ReadingBookmarksDaoImplTest {
     override suspend fun setPageType(pageType: String) {
       this.pageType = pageType
       preferences.emit("pageType")
+    }
+
+    suspend fun awaitPreferencesSubscriber() {
+      preferences.subscriptionCount.first { count -> count > 0 }
     }
 
     override suspend fun showSidelines(): Boolean = false

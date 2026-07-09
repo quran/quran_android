@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com Sinxronizasiyası</string>
+  <string name="quran_sync_settings_category">Hesab</string>
+  <string name="quran_sync_settings_summary">Əlfəcinlər, kolleksiyalar və oxu tarixçəsi</string>
+  <string name="quran_sync_not_signed_in">Daxil olunmayıb</string>
+  <string name="quran_sync_signed_in">Daxil olunub</string>
+  <string name="quran_sync_loading">Daxil olunur</string>
+  <string name="quran_sync_login">Daxil ol</string>
+  <string name="quran_sync_logout">Çıxış et</string>
+  <string name="quran_sync_name">Ad</string>
+  <string name="quran_sync_email">E-poçt</string>
+  <string name="quran_sync_account_id">Hesab ID</string>
+  <string name="quran_sync_action_error">Hazırda sinxronizasiyanı yeniləmək mümkün deyil.</string>
+  <string name="quran_sync_bookmarks_cta_title">Əlfəcinlərinizi hər yerdə sinxronlaşdırın</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">İstənilən cihazdan, istənilən vaxt əldə edin</string>
+  <string name="quran_sync_bookmarks_cta_button">Quran.com ilə daxil olun</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Bağla</string>
+</resources>

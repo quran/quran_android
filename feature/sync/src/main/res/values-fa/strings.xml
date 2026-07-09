@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">همگام‌سازی Quran.com</string>
+  <string name="quran_sync_settings_category">حساب کاربری</string>
+  <string name="quran_sync_settings_summary">نشانک‌ها، مجموعه‌ها و تاریخچه مطالعه</string>
+  <string name="quran_sync_not_signed_in">وارد نشده‌اید</string>
+  <string name="quran_sync_signed_in">وارد شده‌اید</string>
+  <string name="quran_sync_loading">در حال ورود</string>
+  <string name="quran_sync_login">ورود</string>
+  <string name="quran_sync_logout">خروج</string>
+  <string name="quran_sync_name">نام</string>
+  <string name="quran_sync_email">ایمیل</string>
+  <string name="quran_sync_account_id">شناسه حساب</string>
+  <string name="quran_sync_action_error">در حال حاضر امکان به‌روزرسانی همگام‌سازی وجود ندارد.</string>
+  <string name="quran_sync_bookmarks_cta_title">نشانک‌های خود را در همه جا همگام‌سازی کنید</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">از هر دستگاهی، در هر زمانی به آن‌ها دسترسی داشته باشید</string>
+  <string name="quran_sync_bookmarks_cta_button">ورود با Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">نادیده گرفتن</string>
+</resources>

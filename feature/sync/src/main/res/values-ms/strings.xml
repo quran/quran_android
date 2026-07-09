@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Penyegerakan Quran.com</string>
+  <string name="quran_sync_settings_category">Akaun</string>
+  <string name="quran_sync_settings_summary">Penanda buku, koleksi dan sejarah bacaan</string>
+  <string name="quran_sync_not_signed_in">Belum log masuk</string>
+  <string name="quran_sync_signed_in">Log masuk</string>
+  <string name="quran_sync_loading">Sedang log masuk</string>
+  <string name="quran_sync_login">Log masuk</string>
+  <string name="quran_sync_logout">Log keluar</string>
+  <string name="quran_sync_name">Nama</string>
+  <string name="quran_sync_email">E-mel</string>
+  <string name="quran_sync_account_id">ID Akaun</string>
+  <string name="quran_sync_action_error">Tidak dapat mengemas kini penyegerakan buat masa ini.</string>
+  <string name="quran_sync_bookmarks_cta_title">Segerakkan penanda buku anda di mana-mana</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Akses daripada mana-mana peranti, pada bila-bila masa</string>
+  <string name="quran_sync_bookmarks_cta_button">Log masuk dengan Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Ketepikan</string>
+</resources>

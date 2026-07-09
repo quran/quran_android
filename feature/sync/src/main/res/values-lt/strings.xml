@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">„Quran.com“ sinchronizavimas</string>
+  <string name="quran_sync_settings_category">Paskyra</string>
+  <string name="quran_sync_settings_summary">Žymės, rinkiniai ir skaitymo istorija</string>
+  <string name="quran_sync_not_signed_in">Neprisijungta</string>
+  <string name="quran_sync_signed_in">Prisijungta</string>
+  <string name="quran_sync_loading">Jungiamasi</string>
+  <string name="quran_sync_login">Prisijungti</string>
+  <string name="quran_sync_logout">Atsijungti</string>
+  <string name="quran_sync_name">Vardas</string>
+  <string name="quran_sync_email">El. paštas</string>
+  <string name="quran_sync_account_id">Paskyros ID</string>
+  <string name="quran_sync_action_error">Šiuo metu nepavyksta atnaujinti sinchronizavimo.</string>
+  <string name="quran_sync_bookmarks_cta_title">Sinchronizuokite žymes visur</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Pasiekite jas iš bet kurio įrenginio, bet kuriuo metu</string>
+  <string name="quran_sync_bookmarks_cta_button">Prisijungti su „Quran.com“</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Atmesti</string>
+</resources>

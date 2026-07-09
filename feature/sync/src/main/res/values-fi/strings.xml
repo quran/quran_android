@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com-synkronointi</string>
+  <string name="quran_sync_settings_category">Tili</string>
+  <string name="quran_sync_settings_summary">Kirjanmerkit, kokoelmat ja lukuhistoria</string>
+  <string name="quran_sync_not_signed_in">Ei kirjautunut sisään</string>
+  <string name="quran_sync_signed_in">Kirjautunut sisään</string>
+  <string name="quran_sync_loading">Kirjaudutaan sisään</string>
+  <string name="quran_sync_login">Kirjaudu sisään</string>
+  <string name="quran_sync_logout">Kirjaudu ulos</string>
+  <string name="quran_sync_name">Nimi</string>
+  <string name="quran_sync_email">Sähköposti</string>
+  <string name="quran_sync_account_id">Tilitunnus</string>
+  <string name="quran_sync_action_error">Synkronointia ei voi päivittää juuri nyt.</string>
+  <string name="quran_sync_bookmarks_cta_title">Synkronoi kirjanmerkkisi kaikkialle</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Käytä niitä miltä tahansa laitteelta, milloin tahansa</string>
+  <string name="quran_sync_bookmarks_cta_button">Kirjaudu sisään Quran.com-tunnuksilla</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Hylkää</string>
+</resources>

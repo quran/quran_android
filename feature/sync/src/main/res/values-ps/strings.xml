@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">د Quran.com همغږي</string>
+  <string name="quran_sync_settings_category">حساب</string>
+  <string name="quran_sync_settings_summary">نښکرښې، ټولګې او د لوستلو تاریخچه</string>
+  <string name="quran_sync_not_signed_in">ننوتی نه دی</string>
+  <string name="quran_sync_signed_in">ننوتی دی</string>
+  <string name="quran_sync_loading">ننوتل روان دي</string>
+  <string name="quran_sync_login">ننوتل</string>
+  <string name="quran_sync_logout">وتل</string>
+  <string name="quran_sync_name">نوم</string>
+  <string name="quran_sync_email">بریښنالیک</string>
+  <string name="quran_sync_account_id">د حساب پیژندنه</string>
+  <string name="quran_sync_action_error">اوس مهال همغږي نشي اپډیټ کیدی.</string>
+  <string name="quran_sync_bookmarks_cta_title">خپلې نښکرښې هرچیرته همغږي کړئ</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">له هرې وسیلې څخه، هر وخت ورته لاسرسی ومومئ</string>
+  <string name="quran_sync_bookmarks_cta_button">د Quran.com سره ننوځئ</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">رد کول</string>
+</resources>

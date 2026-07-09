@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com szinkronizálás</string>
+  <string name="quran_sync_settings_category">Fiók</string>
+  <string name="quran_sync_settings_summary">Könyvjelzők, gyűjtemények és olvasási előzmények</string>
+  <string name="quran_sync_not_signed_in">Nincs bejelentkezve</string>
+  <string name="quran_sync_signed_in">Bejelentkezve</string>
+  <string name="quran_sync_loading">Bejelentkezés</string>
+  <string name="quran_sync_login">Bejelentkezés</string>
+  <string name="quran_sync_logout">Kijelentkezés</string>
+  <string name="quran_sync_name">Név</string>
+  <string name="quran_sync_email">E-mail</string>
+  <string name="quran_sync_account_id">Fiókazonosító</string>
+  <string name="quran_sync_action_error">A szinkronizálás jelenleg nem frissíthető.</string>
+  <string name="quran_sync_bookmarks_cta_title">Szinkronizáld a könyvjelzőidet mindenhol</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Érd el őket bármely eszközről, bármikor</string>
+  <string name="quran_sync_bookmarks_cta_button">Bejelentkezés Quran.com fiókkal</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Elvetés</string>
+</resources>
