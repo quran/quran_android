@@ -2,7 +2,9 @@
 <resources>
   <string name="quran_sync_title">Quran.com Sync</string>
   <string name="quran_sync_settings_category">Account</string>
-  <string name="quran_sync_settings_summary">Bookmarks, collections, and reading history</string>
+  <string name="quran_sync_settings_summary">Bookmarks, collections &amp; notes</string>
+  <string name="quran_sync_sign_in_prompt_title">Sign in to sync</string>
+  <string name="quran_sync_settings_signed_in_subtitle">Synced</string>
   <string name="quran_sync_not_signed_in">Not signed in</string>
   <string name="quran_sync_signed_in">Signed in</string>
   <string name="quran_sync_loading">Signing in</string>
@@ -16,6 +18,12 @@
   <string name="quran_sync_bookmarks_cta_subtitle">Access them on any device, any time</string>
   <string name="quran_sync_bookmarks_cta_button">Sign in with Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Dismiss</string>
+  <string name="quran_sync_headline">Sync your Quran everywhere</string>
+  <string name="quran_sync_subtitle">Sign in to keep your progress backed up and available on every device.</string>
+  <string name="quran_sync_benefit_bookmarks">Sync bookmarks across devices</string>
+  <string name="quran_sync_benefit_collections">Keep custom collections in sync</string>
+  <string name="quran_sync_benefit_notes">Keep verse notes in sync</string>
+  <string name="quran_sync_continue_caption">You\'ll continue with Quran.com</string>
   <string name="quran_sync_oauth_client_id" translatable="false"></string>
   <string name="quran_sync_oauth_issuer_url" translatable="false"></string>
   <string name="quran_sync_oauth_redirect_scheme" translatable="false"></string>
