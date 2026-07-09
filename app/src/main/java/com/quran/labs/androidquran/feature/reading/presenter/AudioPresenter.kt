@@ -40,7 +40,8 @@ constructor(
     rangeRepeat: Int,
     enforceRange: Boolean,
     playbackSpeed: Float,
-    shouldStream: Boolean
+    shouldStream: Boolean,
+    pauseBetweenAyahs: Int = 0
   ) {
     val audioPathInfo = getLocalAudioPathInfo(qari)
     if (audioPathInfo != null) {
@@ -84,7 +85,8 @@ constructor(
         enforceRange,
         playbackSpeed,
         stream,
-        audioPath
+        audioPath,
+        pauseBetweenAyahs = pauseBetweenAyahs
       )
       play(audioRequest)
     }
