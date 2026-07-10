@@ -15,7 +15,6 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImportReadingSession
 import com.quran.mobile.bookmark.importdata.MobileSyncImporterImpl
 import com.quran.mobile.bookmark.model.BookmarksDaoImpl
 import com.quran.mobile.bookmark.model.RepositoryBookmarkCollectionsState
-import com.quran.mobile.bookmark.sync.FakeLocalDataChangeNotifier
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepositoryImpl
@@ -38,7 +37,6 @@ class MobileSyncImporterImplTest {
   private lateinit var importer: MobileSyncImporterImpl
   private lateinit var bookmarksDao: BookmarksDaoImpl
   private lateinit var appCoroutineScope: AppCoroutineScope
-  private lateinit var localDataChangeNotifier: FakeLocalDataChangeNotifier
 
   @Before
   fun setUp() {
@@ -46,7 +44,6 @@ class MobileSyncImporterImplTest {
     context.deleteDatabase("quran.db")
     mobileSyncDatabase = MobileSyncDatabase(context)
     appCoroutineScope = AppCoroutineScope()
-    localDataChangeNotifier = FakeLocalDataChangeNotifier()
     val collectionsRepository = CollectionsRepositoryImpl(mobileSyncDatabase.database)
     val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(mobileSyncDatabase.database)
     bookmarksDao = BookmarksDaoImpl(
@@ -59,11 +56,10 @@ class MobileSyncImporterImplTest {
         collectionBookmarksRepository,
         appCoroutineScope
       ),
-      localDataChangeNotifier = localDataChangeNotifier,
       timestampProvider = FakeMobileSyncTimestampProvider(),
       appCoroutineScope = appCoroutineScope
     )
-    importer = MobileSyncImporterImpl(mobileSyncDatabase, localDataChangeNotifier)
+    importer = MobileSyncImporterImpl(mobileSyncDatabase)
   }
 
   @After
@@ -124,7 +120,6 @@ class MobileSyncImporterImplTest {
     assertThat(bookmarksDao.getBookmarkTagIds(bookmarks.single().id)).containsExactly(tags.single().id)
     assertThat(readingSessions.map { session -> session.sura to session.ayah }).containsExactly(18 to 1)
     assertThat(readingBookmark).isNotNull()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
 
   @Test
@@ -158,6 +153,5 @@ class MobileSyncImporterImplTest {
 
     assertThat(bookmarksDao.bookmarks().map { bookmark -> bookmark.sura to bookmark.ayah })
       .containsExactly(3 to 2)
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(2)
   }
 }
