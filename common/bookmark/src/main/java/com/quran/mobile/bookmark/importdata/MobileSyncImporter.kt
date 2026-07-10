@@ -4,8 +4,6 @@ package com.quran.mobile.bookmark.importdata
 
 import com.quran.data.di.AppScope
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
-import com.quran.mobile.bookmark.sync.LocalDataChangeNotifier
-import com.quran.mobile.bookmark.sync.notifyLocalDataChanged
 import com.quran.shared.persistence.input.ImportAyahBookmark
 import com.quran.shared.persistence.input.ImportCollection
 import com.quran.shared.persistence.input.ImportCollectionAyahBookmark
@@ -30,8 +28,7 @@ interface MobileSyncImporter {
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class MobileSyncImporterImpl @Inject constructor(
-  mobileSyncDatabase: MobileSyncDatabase,
-  private val localDataChangeNotifier: LocalDataChangeNotifier
+  mobileSyncDatabase: MobileSyncDatabase
 ) : MobileSyncImporter {
 
   private val importRepository = PersistenceImportRepositoryImpl(mobileSyncDatabase.database)
@@ -40,13 +37,9 @@ class MobileSyncImporterImpl @Inject constructor(
     data: MobileSyncImportData,
     deleteExisting: Boolean
   ): MobileSyncImportResult {
-    val result = importRepository
+    return importRepository
       .importData(data.toPersistenceImportData(), deleteExisting = deleteExisting)
       .toMobileSyncImportResult()
-    if (!data.isEmpty() || deleteExisting) {
-      localDataChangeNotifier.notifyLocalDataChanged()
-    }
-    return result
   }
 }
 

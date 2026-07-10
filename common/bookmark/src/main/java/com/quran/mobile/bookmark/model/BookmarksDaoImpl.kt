@@ -12,8 +12,6 @@ import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.collection.ReadingCollection
 import com.quran.data.model.collection.ReadingCollectionBookmarks
-import com.quran.mobile.bookmark.sync.LocalDataChangeNotifier
-import com.quran.mobile.bookmark.sync.notifyLocalDataChanged
 import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
 import com.quran.shared.persistence.model.AyahBookmark
 import com.quran.shared.persistence.model.CollectionWithAyahBookmarks
@@ -47,7 +45,6 @@ class BookmarksDaoImpl @Inject constructor(
   private val collectionsRepository: CollectionsRepository,
   private val collectionBookmarksRepository: CollectionBookmarksRepository,
   private val bookmarkCollectionsState: BookmarkCollectionsState,
-  private val localDataChangeNotifier: LocalDataChangeNotifier,
   private val timestampProvider: MobileSyncTimestampProvider,
   appCoroutineScope: AppCoroutineScope
 ) : BookmarksDao {
@@ -139,7 +136,6 @@ class BookmarksDaoImpl @Inject constructor(
     val tagId = withContext(Dispatchers.IO) {
       collectionsRepository.addCollection(name, timestamp).id
     }
-    localDataChangeNotifier.notifyLocalDataChanged()
     return tagId
   }
 
@@ -164,21 +160,14 @@ class BookmarksDaoImpl @Inject constructor(
         false
       }
     }
-    if (updated) {
-      localDataChangeNotifier.notifyLocalDataChanged()
-    }
     return updated
   }
 
   override suspend fun removeTags(tags: List<Tag>) {
-    val removed = withContext(Dispatchers.IO) {
+    withContext(Dispatchers.IO) {
       val collectionsById = bookmarkCollectionData().collectionsById
       val tagsToRemove = tags.filter { tag -> collectionsById.containsKey(tag.id) }
       tagsToRemove.forEach { tag -> collectionsRepository.deleteCollection(tag.id) }
-      tagsToRemove.isNotEmpty()
-    }
-    if (removed) {
-      localDataChangeNotifier.notifyLocalDataChanged()
     }
   }
 
@@ -201,13 +190,12 @@ class BookmarksDaoImpl @Inject constructor(
     deleteNonTagged: Boolean
   ): Boolean {
     val timestamp = timestampProvider.now()
-    val updated = withContext(Dispatchers.IO) {
+    withContext(Dispatchers.IO) {
       val bookmarkCollectionData = bookmarkCollectionData()
       val collectionsById = bookmarkCollectionData.collectionsById
       val targetTagIds = validTagIds(tagIds, collectionsById)
       val bookmarksById = bookmarksRepository.getAllBookmarks()
         .associateBy { bookmark -> bookmark.id }
-      var didWrite = false
       bookmarkIds
         .filter { bookmarkId -> bookmarkId.isNotBlank() }
         .distinct()
@@ -218,19 +206,14 @@ class BookmarksDaoImpl @Inject constructor(
           } else {
             bookmarkCollectionData.tagsByBookmarkId[bookmarkId].orEmpty().toSet() + targetTagIds
           }
-          didWrite = replaceBookmarkMemberships(
+          replaceBookmarkMemberships(
             bookmark = bookmark,
             tagIds = nextTagIds,
             isInDefaultCollection = bookmarkId in bookmarkCollectionData.defaultBookmarkIds,
             collectionsById = collectionsById,
             timestamp = timestamp
-          ) ||
-            didWrite
+          )
         }
-      didWrite
-    }
-    if (updated) {
-      localDataChangeNotifier.notifyLocalDataChanged()
     }
     return true
   }
@@ -242,7 +225,7 @@ class BookmarksDaoImpl @Inject constructor(
     deleteNonTagged: Boolean
   ): Boolean {
     val timestamp = timestampProvider.now()
-    val updated = withContext(Dispatchers.IO) {
+    withContext(Dispatchers.IO) {
       val bookmarkCollectionData = bookmarkCollectionData()
       val collectionsById = bookmarkCollectionData.collectionsById
       val targetTagIds = validTagIds(tagIds, collectionsById)
@@ -272,43 +255,30 @@ class BookmarksDaoImpl @Inject constructor(
         false
       }
     }
-    if (updated) {
-      localDataChangeNotifier.notifyLocalDataChanged()
-    }
     return true
   }
 
   override suspend fun removeBookmarkFromTag(bookmark: Bookmark, tagId: String): Boolean {
-    val removed = withContext(Dispatchers.IO) {
+    return withContext(Dispatchers.IO) {
       val ayahBookmark = findAyahBookmark(bookmark) ?: return@withContext false
       val collection = collectionsById()[tagId] ?: return@withContext false
       collectionBookmarksRepository.removeBookmarkFromCollection(collection.id, ayahBookmark)
     }
-    if (removed) {
-      localDataChangeNotifier.notifyLocalDataChanged()
-    }
-    return removed
   }
 
   override suspend fun removeBookmarks(bookmarks: List<Bookmark>) {
-    val removed = withContext(Dispatchers.IO) {
-      var didWrite = false
+    withContext(Dispatchers.IO) {
       bookmarks
         .filterNot { it.isPageBookmark() }
         .forEach { bookmark ->
           val ayahBookmark = findAyahBookmark(bookmark) ?: return@forEach
           bookmarksRepository.deleteBookmark(ayahBookmark.id)
-          didWrite = true
         }
-      didWrite
-    }
-    if (removed) {
-      localDataChangeNotifier.notifyLocalDataChanged()
     }
   }
 
   override suspend fun removeBookmarksForPage(page: Int) {
-    val removed = withContext(Dispatchers.IO) {
+    withContext(Dispatchers.IO) {
       val quranInfo = quranInfoProvider()
       val bookmarksToRemove = bookmarksRepository.getAllBookmarks()
         .filter { bookmark ->
@@ -317,10 +287,6 @@ class BookmarksDaoImpl @Inject constructor(
       bookmarksToRemove.forEach { bookmark ->
         bookmarksRepository.deleteBookmark(bookmark.id)
       }
-      bookmarksToRemove.isNotEmpty()
-    }
-    if (removed) {
-      localDataChangeNotifier.notifyLocalDataChanged()
     }
   }
 
@@ -331,7 +297,7 @@ class BookmarksDaoImpl @Inject constructor(
   }
 
   override suspend fun replaceAyahBookmarks(bookmarks: List<Bookmark>) {
-    val replaced = withContext(Dispatchers.IO) {
+    withContext(Dispatchers.IO) {
       val quranInfo = quranInfoProvider()
       val ayahBookmarks = bookmarks.normalizedAyahBookmarks(quranInfo)
       bookmarksRepository.getAllBookmarks().forEach { bookmark ->
@@ -349,10 +315,6 @@ class BookmarksDaoImpl @Inject constructor(
           }
         }
       }
-      true
-    }
-    if (replaced) {
-      localDataChangeNotifier.notifyLocalDataChanged()
     }
   }
 
@@ -387,7 +349,6 @@ class BookmarksDaoImpl @Inject constructor(
         true
       }
     }
-    localDataChangeNotifier.notifyLocalDataChanged()
     return bookmarked
   }
 

@@ -16,7 +16,6 @@ import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.pages.data.warsh.WarshDataSource
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
-import com.quran.mobile.bookmark.sync.FakeLocalDataChangeNotifier
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.model.PageReadingBookmark as SyncPageReadingBookmark
 import com.quran.shared.persistence.repository.readingbookmark.repository.ReadingBookmarksRepositoryImpl
@@ -38,7 +37,6 @@ class ReadingBookmarksDaoImplTest {
   private lateinit var dao: ReadingBookmarksDaoImpl
   private lateinit var pageMapper: ReadingBookmarkPageMapper
   private lateinit var settings: FakeSettings
-  private lateinit var localDataChangeNotifier: FakeLocalDataChangeNotifier
   private lateinit var timestampProvider: FakeMobileSyncTimestampProvider
 
   @Before
@@ -49,7 +47,6 @@ class ReadingBookmarksDaoImplTest {
     repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database)
     quranInfo = QuranInfo(MadaniDataSource())
     settings = FakeSettings()
-    localDataChangeNotifier = FakeLocalDataChangeNotifier()
     timestampProvider = FakeMobileSyncTimestampProvider()
     pageMapper = ReadingBookmarkPageMapper(
       settings = settings,
@@ -62,7 +59,6 @@ class ReadingBookmarksDaoImplTest {
     dao = ReadingBookmarksDaoImpl(
       pageMapper = pageMapper,
       readingBookmarksRepository = repository,
-      localDataChangeNotifier = localDataChangeNotifier,
       timestampProvider = timestampProvider
     )
   }
@@ -70,7 +66,6 @@ class ReadingBookmarksDaoImplTest {
   @Test
   fun `reading bookmark is null when no mobile sync reading bookmark exists`() = runTest {
     assertThat(dao.readingBookmark()).isNull()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(0)
   }
 
   @Test
@@ -81,7 +76,6 @@ class ReadingBookmarksDaoImplTest {
     assertThat(bookmark.page).isEqualTo(42)
     assertThat(bookmark.timestamp).isEqualTo(timestampProvider.timestampSeconds)
     assertThat(dao.isPageReadingBookmark(42)).isTrue()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
 
   @Test
@@ -114,7 +108,6 @@ class ReadingBookmarksDaoImplTest {
 
     assertThat(isBookmarked).isFalse()
     assertThat(dao.readingBookmark()).isNull()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(2)
   }
 
   @Test
@@ -122,7 +115,6 @@ class ReadingBookmarksDaoImplTest {
     val deleted = dao.deleteReadingBookmark()
 
     assertThat(deleted).isFalse()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(0)
   }
 
   @Test

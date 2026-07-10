@@ -9,7 +9,6 @@ import com.quran.data.di.AppCoroutineScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
-import com.quran.mobile.bookmark.sync.FakeLocalDataChangeNotifier
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.QuranDatabase
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
@@ -33,7 +32,6 @@ class BookmarksDaoImplTest {
   private lateinit var quranInfo: QuranInfo
   private lateinit var dao: BookmarksDaoImpl
   private lateinit var appCoroutineScope: AppCoroutineScope
-  private lateinit var localDataChangeNotifier: FakeLocalDataChangeNotifier
   private lateinit var timestampProvider: FakeMobileSyncTimestampProvider
 
   @Before
@@ -43,7 +41,6 @@ class BookmarksDaoImplTest {
     database = QuranDatabase(driver)
     quranInfo = QuranInfo(MadaniDataSource())
     appCoroutineScope = AppCoroutineScope()
-    localDataChangeNotifier = FakeLocalDataChangeNotifier()
     timestampProvider = FakeMobileSyncTimestampProvider()
     val collectionsRepository = CollectionsRepositoryImpl(database)
     val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
@@ -57,7 +54,6 @@ class BookmarksDaoImplTest {
         collectionBookmarksRepository,
         appCoroutineScope
       ),
-      localDataChangeNotifier = localDataChangeNotifier,
       timestampProvider = timestampProvider,
       appCoroutineScope = appCoroutineScope
     )
@@ -73,7 +69,6 @@ class BookmarksDaoImplTest {
   @Test
   fun `bookmarks are empty when no mobile sync bookmarks exist`() = runTest {
     assertThat(dao.bookmarks()).isEmpty()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(0)
   }
 
   @Test
@@ -91,7 +86,6 @@ class BookmarksDaoImplTest {
     assertThat(bookmarks.single().timestamp).isEqualTo(timestampProvider.timestampSeconds)
     assertThat(bookmarks.single().tags).isEmpty()
     assertThat(bookmarks.single().isPageBookmark()).isFalse()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
 
   @Test
@@ -103,18 +97,6 @@ class BookmarksDaoImplTest {
 
     assertThat(removed).isFalse()
     assertThat(dao.bookmarks()).isEmpty()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(2)
-  }
-
-  @Test
-  fun `notifier failures do not fail bookmark writes`() = runTest {
-    localDataChangeNotifier.throwOnUpdate = true
-
-    val added = dao.toggleAyahBookmark(SuraAyah(2, 255), quranInfo.getPageFromSuraAyah(2, 255))
-
-    assertThat(added).isTrue()
-    assertThat(dao.bookmarks().map { it.sura to it.ayah }).containsExactly(2 to 255)
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
 
   @Test
@@ -239,7 +221,6 @@ class BookmarksDaoImplTest {
   fun `update tag returns false when name already exists`() = runTest {
     val firstId = dao.addTag("First")
     val secondId = dao.addTag("Second")
-    localDataChangeNotifier.reset()
 
     val updated = dao.updateTag(com.quran.data.model.bookmark.Tag(firstId, "Second"))
 
@@ -248,17 +229,14 @@ class BookmarksDaoImplTest {
       com.quran.data.model.bookmark.Tag(firstId, "First"),
       com.quran.data.model.bookmark.Tag(secondId, "Second")
     )
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(0)
   }
 
   @Test
   fun `update tag returns false when tag no longer exists`() = runTest {
-    localDataChangeNotifier.reset()
 
     val updated = dao.updateTag(com.quran.data.model.bookmark.Tag("missing", "Missing"))
 
     assertThat(updated).isFalse()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(0)
   }
 
   @Test
@@ -275,7 +253,6 @@ class BookmarksDaoImplTest {
         collectionBookmarksRepository,
         appCoroutineScope
       ),
-      localDataChangeNotifier = localDataChangeNotifier,
       timestampProvider = timestampProvider,
       appCoroutineScope = appCoroutineScope
     )
@@ -301,7 +278,6 @@ class BookmarksDaoImplTest {
         collectionBookmarksRepository,
         appCoroutineScope
       ),
-      localDataChangeNotifier = localDataChangeNotifier,
       timestampProvider = timestampProvider,
       appCoroutineScope = appCoroutineScope
     )
@@ -312,7 +288,6 @@ class BookmarksDaoImplTest {
 
     assertThat(updated).isFalse()
     assertThat(collectionsRepository.updateCount).isEqualTo(0)
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(0)
   }
 
   @Test
@@ -336,11 +311,9 @@ class BookmarksDaoImplTest {
     val suraAyah = SuraAyah(2, 255)
     dao.toggleAyahBookmark(suraAyah, quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah))
     val bookmark = dao.bookmarks().single()
-    localDataChangeNotifier.reset()
 
     dao.updateBookmarkTags(arrayOf(bookmark.id), setOf(tagId), deleteNonTagged = true)
 
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
 
   @Test
@@ -521,11 +494,9 @@ class BookmarksDaoImplTest {
     dao.toggleAyahBookmark(suraAyah, quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah))
     val bookmark = dao.bookmarks().single()
     dao.updateBookmarkTags(arrayOf(bookmark.id), setOf(tagId), deleteNonTagged = true)
-    localDataChangeNotifier.reset()
 
     dao.removeBookmarks(listOf(bookmark))
 
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
 
   private class DefaultCollectionTestRepository(
