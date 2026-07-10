@@ -73,7 +73,7 @@ class RepositoryBookmarkCollectionsState(
       customCollections.map { collection ->
         CollectionWithAyahBookmarks(
           collection = collection,
-          bookmarks = collectionBookmarksRepository.getBookmarksForCollection(collection.localId)
+          bookmarks = collectionBookmarksRepository.getBookmarksForCollection(collection.id)
         )
       }
   }
@@ -86,7 +86,7 @@ class RepositoryBookmarkCollectionsState(
           .getBookmarksForCollectionFlow(DEFAULT_BOOKMARK_COLLECTION_ID)
           .map(::defaultCollection)
         val customCollectionFlows = customCollections.map { collection ->
-          collectionBookmarksRepository.getBookmarksForCollectionFlow(collection.localId)
+          collectionBookmarksRepository.getBookmarksForCollectionFlow(collection.id)
             .map { bookmarks ->
               CollectionWithAyahBookmarks(collection, bookmarks)
             }
@@ -106,8 +106,8 @@ class RepositoryBookmarkCollectionsState(
     return CollectionWithAyahBookmarks(
       collection = Collection(
         name = DEFAULT_COLLECTION_NAME,
-        lastUpdated = bookmarks.firstOrNull()?.lastUpdated ?: EMPTY_DEFAULT_COLLECTION_TIMESTAMP,
-        localId = DEFAULT_BOOKMARK_COLLECTION_ID
+        lastUpdated = bookmarks.firstOrNull()?.bookmarkLastUpdated ?: EMPTY_DEFAULT_COLLECTION_TIMESTAMP,
+        id = DEFAULT_BOOKMARK_COLLECTION_ID
       ),
       bookmarks = bookmarks
     )

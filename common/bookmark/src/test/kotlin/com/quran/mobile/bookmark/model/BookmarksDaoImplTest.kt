@@ -218,7 +218,7 @@ class BookmarksDaoImplTest {
 
     val collectionsWithBookmarks = collectionsState.currentCollectionsWithBookmarks()
 
-    assertThat(collectionsWithBookmarks.map { collectionWithBookmarks -> collectionWithBookmarks.collection.localId })
+    assertThat(collectionsWithBookmarks.map { collectionWithBookmarks -> collectionWithBookmarks.collection.id })
       .containsExactly(DEFAULT_BOOKMARK_COLLECTION_ID)
     assertThat(collectionsWithBookmarks.single().collection.isDefault).isTrue()
     assertThat(collectionsWithBookmarks.single().bookmarks).isEmpty()
@@ -534,7 +534,7 @@ class BookmarksDaoImplTest {
     private val defaultCollection = SyncCollection(
       name = "Default",
       lastUpdated = timestamp,
-      localId = DEFAULT_BOOKMARK_COLLECTION_ID
+      id = DEFAULT_BOOKMARK_COLLECTION_ID
     )
 
     var updateCount = 0
@@ -552,13 +552,13 @@ class BookmarksDaoImplTest {
       throw UnsupportedOperationException()
     }
 
-    override suspend fun updateCollection(localId: String, name: String): SyncCollection {
+    override suspend fun updateCollection(id: String, name: String): SyncCollection {
       updateCount++
       return defaultCollection.copy(name = name)
     }
 
     override suspend fun updateCollection(
-      localId: String,
+      id: String,
       name: String,
       timestamp: PlatformDateTime
     ): SyncCollection {
@@ -566,7 +566,7 @@ class BookmarksDaoImplTest {
       return defaultCollection.copy(name = name, lastUpdated = timestamp)
     }
 
-    override suspend fun deleteCollection(localId: String): Boolean {
+    override suspend fun deleteCollection(id: String): Boolean {
       throw UnsupportedOperationException()
     }
 
