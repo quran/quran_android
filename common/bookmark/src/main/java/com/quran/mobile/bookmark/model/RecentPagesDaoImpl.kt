@@ -181,7 +181,7 @@ class RecentPagesDaoImpl @Inject constructor(
     return readingSessionsRepository.getReadingSessions()
       .sortedWith(
         compareByDescending<ReadingSession> { it.lastUpdated.toEpochMilliseconds() }
-          .thenByDescending { it.localId.toLongOrNull() ?: Long.MIN_VALUE }
+          .thenByDescending { it.id.toLongOrNull() ?: Long.MIN_VALUE }
       )
   }
 
@@ -191,7 +191,7 @@ class RecentPagesDaoImpl @Inject constructor(
     return sessions
       .sortedWith(
         compareByDescending<ReadingSession> { it.lastUpdated.toEpochMilliseconds() }
-          .thenByDescending { it.localId.toLongOrNull() ?: Long.MIN_VALUE }
+          .thenByDescending { it.id.toLongOrNull() ?: Long.MIN_VALUE }
       )
       .mapNotNull { session ->
         val page = pageForSession(session, quranInfo)

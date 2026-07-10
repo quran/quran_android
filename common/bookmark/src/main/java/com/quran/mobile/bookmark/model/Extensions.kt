@@ -16,7 +16,7 @@ internal fun CollectionWithAyahBookmarks.asReadingCollectionBookmarks(): Reading
 
 internal fun Collection.asReadingCollection(): ReadingCollection {
   return ReadingCollection(
-    id = localId,
+    id = id,
     name = name,
     lastUpdated = lastUpdated,
     isSystem = isDefault
@@ -27,7 +27,7 @@ private fun CollectionAyahBookmark.asAyahBookmark(): AyahBookmark {
   return AyahBookmark(
     sura = sura,
     ayah = ayah,
-    addedDate = lastUpdated,
-    lastUpdated = lastUpdated
+    addedDate = bookmarkAddedDate,
+    lastUpdated = bookmarkLastUpdated
   )
 }
