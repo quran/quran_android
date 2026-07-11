@@ -392,6 +392,12 @@
     <item quantity="other">%d items verwijderd</item>
   </plurals>
   <string name="undo">Ongedaan maken</string>
+  <string name="reading_bookmark_movable_education_title">Dit is een verplaatsbare leesbladwijzer</string>
+  <string name="reading_bookmark_movable_education_body">Het opslaan van een leesbladwijzer vervangt de oude. Houd een Ayah ingedrukt en voeg deze toe aan een collectie om meerdere Ayahs op te slaan.</string>
+  <string name="reading_bookmark_moved_from">Verplaatst van %1$s</string>
+  <string name="reading_bookmark_moved_from_title">Bladwijzer verplaatst van %1$s</string>
+  <string name="reading_bookmark_added">Bladwijzer toegevoegd</string>
+  <string name="reading_bookmark_dismiss_education">Sluiten</string>
 
   <string name="recent_pages">Recente pagina\'s</string>
   <string name="old_page_bookmarks">Oude paginabladwijzers</string>

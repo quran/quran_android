@@ -272,6 +272,12 @@
   <string name="playback_prompt_title">دەست بکە بە پەخشکردنەوە لە:</string>
   <string name="starting_page_label">سەرەتای لاپەڕە</string>
   <string name="undo">پاشگەزبەوە</string>
+  <string name="reading_bookmark_movable_education_title">ئەمە نیشانەیەکی خوێندنەوەی گواستراوەیە</string>
+  <string name="reading_bookmark_movable_education_body">هەڵگرتنی نیشانەی خوێندنەوە جێی کۆنەکە دەگرێتەوە. بۆ هەڵگرتنی چەند ئایەتێک، دەست بگرە سەر ئایەتێک و زیادی بکە بۆ کۆکراوەیەک.</string>
+  <string name="reading_bookmark_moved_from">گوازراوەتەوە لە %1$s</string>
+  <string name="reading_bookmark_moved_from_title">نیشانە گوازراوەتەوە لە %1$s</string>
+  <string name="reading_bookmark_added">نیشانە زیادکرا</string>
+  <string name="reading_bookmark_dismiss_education">داخستن</string>
   <string name="recent_pages">پەڕەکانی ئەم دواییە</string>
   <string name="old_page_bookmarks">نیشانەکانی پەڕەی کۆن</string>
   <string name="tag_blank_tag_error">ناتوانرێت ناوی تاگ بەتاڵ بێت!</string>

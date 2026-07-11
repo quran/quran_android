@@ -369,6 +369,14 @@
   </plurals>
   <string name="undo">Undo</string>
 
+  <!-- reading bookmark moved / education toast -->
+  <string name="reading_bookmark_movable_education_title">This is a movable reading bookmark</string>
+  <string name="reading_bookmark_movable_education_body">Saving a reading bookmark replaces your old one. To save multiple ayahs, long press an ayah and add it to a collection.</string>
+  <string name="reading_bookmark_moved_from">Moved from %1$s</string>
+  <string name="reading_bookmark_moved_from_title">Bookmark moved from %1$s</string>
+  <string name="reading_bookmark_added">Bookmark added</string>
+  <string name="reading_bookmark_dismiss_education">Dismiss</string>
+
   <string name="recent_pages">Recent pages</string>
   <string name="old_page_bookmarks">Old Page Bookmarks</string>
   <plurals name="plural_recent_pages" translatable="false">

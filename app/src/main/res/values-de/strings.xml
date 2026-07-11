@@ -371,6 +371,12 @@
   <string name="playback_prompt_title">Starten Sie die Wiedergabe von:</string>
   <string name="starting_page_label">Anfang der Seite</string>
   <string name="undo">Rückgängig machen</string>
+  <string name="reading_bookmark_movable_education_title">Dies ist ein verschiebbares Lesezeichen</string>
+  <string name="reading_bookmark_movable_education_body">Das Speichern eines Lesezeichens ersetzt das alte. Um mehrere Verse zu speichern, halte einen Vers gedrückt und füge ihn einer Sammlung hinzu.</string>
+  <string name="reading_bookmark_moved_from">Verschoben von %1$s</string>
+  <string name="reading_bookmark_moved_from_title">Lesezeichen von %1$s verschoben</string>
+  <string name="reading_bookmark_added">Lesezeichen hinzugefügt</string>
+  <string name="reading_bookmark_dismiss_education">Schließen</string>
   <string name="recent_pages">Neueste Seiten</string>
   <string name="old_page_bookmarks">Alte Seitenlesezeichen</string>
   <string name="tag_blank_tag_error">Tag-Namen dürfen nicht leer sein!</string>

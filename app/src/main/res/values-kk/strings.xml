@@ -284,6 +284,12 @@
     <item quantity="other">%d элемент өшірілді</item>
   </plurals>
   <string name="undo">@string/cancel</string>
+  <string name="reading_bookmark_movable_education_title">Бұл жылжымалы оқу бетбелгісі</string>
+  <string name="reading_bookmark_movable_education_body">Оқу бетбелгісін сақтау ескісін алмастырады. Бірнеше аятты сақтау үшін аятты басып тұрып, оны жинаққа қосыңыз.</string>
+  <string name="reading_bookmark_moved_from">%1$s дегеннен жылжытылды</string>
+  <string name="reading_bookmark_moved_from_title">Бетбелгі %1$s дегеннен жылжытылды</string>
+  <string name="reading_bookmark_added">Бетбелгі қосылды</string>
+  <string name="reading_bookmark_dismiss_education">Жабу</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Белгі</string>

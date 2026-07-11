@@ -290,6 +290,12 @@
     <item quantity="many">Видалено %d елементів</item>
   </plurals>
   <string name="undo">Скасувати</string>
+  <string name="reading_bookmark_movable_education_title">Це рухома закладка читання</string>
+  <string name="reading_bookmark_movable_education_body">Збереження закладки читання замінює стару. Щоб зберегти декілька аятів, натисніть і утримуйте аят, а потім додайте його до колекції.</string>
+  <string name="reading_bookmark_moved_from">Переміщено з %1$s</string>
+  <string name="reading_bookmark_moved_from_title">Закладку переміщено з %1$s</string>
+  <string name="reading_bookmark_added">Закладку додано</string>
+  <string name="reading_bookmark_dismiss_education">Закрити</string>
 
   <string name="recent_pages">Останні сторінки</string>
   <string name="old_page_bookmarks">Старі закладки сторінок</string>

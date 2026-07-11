@@ -337,6 +337,12 @@
     <item quantity="other">Удалено %d элементов</item>
   </plurals>
   <string name="undo">@string/cancel</string>
+  <string name="reading_bookmark_movable_education_title">Это перемещаемая закладка чтения</string>
+  <string name="reading_bookmark_movable_education_body">Сохранение закладки чтения заменяет старую. Чтобы сохранить несколько аятов, удерживайте аят и добавьте его в коллекцию.</string>
+  <string name="reading_bookmark_moved_from">Перемещено с %1$s</string>
+  <string name="reading_bookmark_moved_from_title">Закладка перемещена с %1$s</string>
+  <string name="reading_bookmark_added">Закладка добавлена</string>
+  <string name="reading_bookmark_dismiss_education">Закрыть</string>
 
   <string name="recent_pages">Недавние страницы</string>
   <string name="old_page_bookmarks">Старые закладки страниц</string>

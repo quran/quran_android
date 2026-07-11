@@ -279,6 +279,12 @@
     <item quantity="other">%d etiket silindi</item>
   </plurals>
   <string name="undo">Geri alma</string>
+  <string name="reading_bookmark_movable_education_title">Bu, taşınabilir bir okuma işaretidir</string>
+  <string name="reading_bookmark_movable_education_body">Okuma işaretini kaydetmek eskisinin yerini alır. Birden çok âyeti kaydetmek için bir âyete uzun basıp koleksiyona ekleyin.</string>
+  <string name="reading_bookmark_moved_from">%1$s\'den taşındı</string>
+  <string name="reading_bookmark_moved_from_title">İşaret %1$s\'den taşındı</string>
+  <string name="reading_bookmark_added">İşaret eklendi</string>
+  <string name="reading_bookmark_dismiss_education">Kapat</string>
 
   <string name="recent_pages">Son sayfalar</string>
   <string name="old_page_bookmarks">Eski sayfa işaretleri</string>

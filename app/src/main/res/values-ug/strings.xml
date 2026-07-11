@@ -241,6 +241,12 @@
     <item quantity="other">%d تۈر ئۆچۈرۈلدى</item>
   </plurals>
   <string name="undo">يېنىۋال</string>
+  <string name="reading_bookmark_movable_education_title">بۇ يۆتكىلىشچان ئوقۇش خەتكۈچى</string>
+  <string name="reading_bookmark_movable_education_body">ئوقۇش خەتكۈچىنى ساقلاش كونىسىنىڭ ئورنىنى ئالىدۇ. بىر قانچە ئايەتنى ساقلاش ئۈچۈن، ئايەتنى بېسىپ تۇرۇپ يىغقۇچقا قوشۇڭ.</string>
+  <string name="reading_bookmark_moved_from">%1$s دىن يۆتكەلدى</string>
+  <string name="reading_bookmark_moved_from_title">خەتكۈچ %1$s دىن يۆتكەلدى</string>
+  <string name="reading_bookmark_added">خەتكۈچ قوشۇلدى</string>
+  <string name="reading_bookmark_dismiss_education">تاقاش</string>
 
   <string name="recent_pages">يېقىنقى بەتلەر</string>
   <string name="old_page_bookmarks">كونا بەت خەتكۈچلىرى</string>
