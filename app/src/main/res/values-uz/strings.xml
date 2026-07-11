@@ -320,6 +320,12 @@
     <item quantity="other">%d ta element oʻchirildi</item>
   </plurals>
   <string name="undo">@string/cancel</string>
+  <string name="reading_bookmark_movable_education_title">Bu koʻchiriladigan oʻqish xatchoʻpi</string>
+  <string name="reading_bookmark_movable_education_body">Oʻqish xatchoʻpini saqlash eskisining oʻrnini bosadi. Bir nechta oyatni saqlash uchun oyatni bosib turing va toʻplamga qoʻshing.</string>
+  <string name="reading_bookmark_moved_from">%1$s dan koʻchirildi</string>
+  <string name="reading_bookmark_moved_from_title">Xatchoʻp %1$s dan koʻchirildi</string>
+  <string name="reading_bookmark_added">Xatchoʻp qoʻshildi</string>
+  <string name="reading_bookmark_dismiss_education">Yopish</string>
 
   <string name="recent_pages">Soʻnggi sahifalar</string>
   <string name="old_page_bookmarks">Eski sahifa xatchoʻplari</string>

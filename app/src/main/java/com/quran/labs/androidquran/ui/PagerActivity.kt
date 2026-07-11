@@ -14,6 +14,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.preference.PreferenceManager
+import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
 import android.view.Menu
@@ -50,6 +51,7 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.model.QuranText
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.AyahSelection.AyahRange
 import com.quran.data.model.selection.SelectionIndicator
@@ -102,6 +104,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranPage
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.labs.androidquran.ui.listener.AudioBarListener
+import com.quran.labs.androidquran.ui.readingbookmark.createReadingBookmarkToastView
 import com.quran.labs.androidquran.ui.util.ToastCompat.makeText
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
 import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenterScreen
@@ -130,6 +133,7 @@ import com.quran.mobile.feature.ayahbookmark.di.AyahBookmarkWrapperInjector
 import com.quran.mobile.feature.qarilist.QariListWrapper
 import com.quran.mobile.feature.qarilist.di.QariListWrapperInjector
 import com.quran.mobile.translation.model.LocalTranslation
+import com.quran.page.common.data.QuranNaming
 import com.quran.page.common.factory.PageViewFactoryProvider
 import com.quran.page.common.toolbar.AyahToolBar
 import com.quran.page.common.toolbar.di.AyahToolBarInjector
@@ -159,6 +163,7 @@ import java.lang.ref.WeakReference
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
+import androidx.core.view.isVisible
 
 /**
  * Activity that displays the Quran (in Arabic or translation mode).
@@ -187,6 +192,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private var bookmarksMenuItem: MenuItem? = null
   private var isCurrentPageReadingBookmarked = false
+  private var readingBookmarkToastView: View? = null
 
   private var translationNames: Array<String> = emptyArray()
   private var translations: List<LocalTranslation>? = null
@@ -219,6 +225,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   @Inject lateinit var recentPagePresenter: RecentPagePresenter
   @Inject lateinit var readingBookmarkPresenter: ReadingBookmarkPresenter
   @Inject lateinit var quranSettings: QuranSettings
+  @Inject lateinit var quranNaming: QuranNaming
   @Inject lateinit var quranScreenInfo: QuranScreenInfo
   @Inject lateinit var arabicDatabaseUtils: ArabicDatabaseUtils
   @Inject lateinit var quranAppUtils: QuranAppUtils
@@ -1449,6 +1456,62 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   override fun setPageReadingBookmarkSelected(isBookmarked: Boolean) {
     isCurrentPageReadingBookmarked = isBookmarked
     refreshBookmarksMenu(isBookmarked)
+  }
+
+  override fun showReadingBookmarkMovedToast(
+    previousBookmark: ReadingBookmark?,
+    isEducation: Boolean,
+    onUndo: () -> Unit,
+    onConfirm: () -> Unit
+  ) {
+    val rootView = findViewById<ViewGroup>(android.R.id.content)
+    readingBookmarkToastView?.let { rootView.removeView(it) }
+
+    val toastView = createReadingBookmarkToastView(
+      this,
+      previousBookmark,
+      isEducation,
+      quranNaming,
+      onUndo = onUndo,
+      onConfirm = onConfirm
+    )
+    readingBookmarkToastView = toastView
+    rootView.addView(
+      toastView,
+      FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.MATCH_PARENT,
+        FrameLayout.LayoutParams.WRAP_CONTENT,
+        Gravity.BOTTOM
+      )
+    )
+    // the sliding panel that hosts the rest of the reading UI claims every touch within its
+    // collapsed (audio bar) region for its own drag/tap handling, regardless of what's drawn on
+    // top of it there - so rather than fight that, sit the toast just above the audio bar (when
+    // one is visible, its own height already accounts for the navigation bar inset) or above the
+    // navigation bar directly (when it isn't, e.g. three-button navigation in edge-to-edge mode).
+    // side padding covers landscape three-button navigation and display cutouts.
+    ViewCompat.setOnApplyWindowInsetsListener(toastView) { view, windowInsets ->
+      val insets = windowInsets.getInsets(
+        WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.displayCutout()
+      )
+      view.updatePadding(left = insets.left, right = insets.right)
+      val params = view.layoutParams as FrameLayout.LayoutParams
+      params.bottomMargin = if (audioStatusBar.isVisible) {
+        audioStatusBar.height
+      } else {
+        insets.bottom
+      }
+      view.layoutParams = params
+      windowInsets
+    }
+    ViewCompat.requestApplyInsets(toastView)
+  }
+
+  override fun dismissReadingBookmarkMovedToast() {
+    readingBookmarkToastView?.let {
+      findViewById<ViewGroup>(android.R.id.content).removeView(it)
+    }
+    readingBookmarkToastView = null
   }
 
   // region Audio playback

@@ -273,6 +273,12 @@
     <item quantity="many">تم حذف %d عنصر</item>
   </plurals>
   <string name="undo">تراجع</string>
+  <string name="reading_bookmark_movable_education_title">هذه علامة قراءة قابلة للنقل</string>
+  <string name="reading_bookmark_movable_education_body">حفظ علامة القراءة يستبدل القديمة. لحفظ عدة آيات، اضغط مطولاً على آية وأضفها إلى مجموعة.</string>
+  <string name="reading_bookmark_moved_from">نُقلت من %1$s</string>
+  <string name="reading_bookmark_moved_from_title">نُقلت العلامة من %1$s</string>
+  <string name="reading_bookmark_added">تمت إضافة العلامة</string>
+  <string name="reading_bookmark_dismiss_education">إغلاق</string>
   <string name="notification_channel_download">تحميل ملفات القرآن</string>
   <string name="notification_channel_audio">تلاوة القرآن</string>
   <string name="next">التالي</string>

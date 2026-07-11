@@ -268,6 +268,12 @@
   <string name="playback_prompt_title">开始播放从。</string>
   <string name="starting_page_label">页首</string>
   <string name="undo">撤销</string>
+  <string name="reading_bookmark_movable_education_title">这是一个可移动的阅读书签</string>
+  <string name="reading_bookmark_movable_education_body">保存阅读书签会替换旧的书签。要保存多节经文，请长按经文并将其添加到收藏集。</string>
+  <string name="reading_bookmark_moved_from">已从%1$s移动</string>
+  <string name="reading_bookmark_moved_from_title">书签已从%1$s移动</string>
+  <string name="reading_bookmark_added">已添加书签</string>
+  <string name="reading_bookmark_dismiss_education">关闭</string>
   <string name="recent_pages">最近的页面</string>
   <string name="old_page_bookmarks">旧页面书签</string>
   <string name="tag_blank_tag_error">标签名称不能是空白的!</string>

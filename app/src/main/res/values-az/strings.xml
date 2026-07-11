@@ -279,6 +279,12 @@
     <item quantity="other">%d etiket silindi</item>
   </plurals>
   <string name="undo">Geri alma</string>
+  <string name="reading_bookmark_movable_education_title">Bu, daşına bilən oxu əlfəcinidir</string>
+  <string name="reading_bookmark_movable_education_body">Oxu əlfəcinini yadda saxlamaq köhnəsini əvəz edir. Bir neçə ayəni saxlamaq üçün ayəyə uzun basıb kolleksiyaya əlavə edin.</string>
+  <string name="reading_bookmark_moved_from">%1$s-dən köçürüldü</string>
+  <string name="reading_bookmark_moved_from_title">Əlfəcin %1$s-dən köçürüldü</string>
+  <string name="reading_bookmark_added">Əlfəcin əlavə edildi</string>
+  <string name="reading_bookmark_dismiss_education">Bağla</string>
 
   <string name="recent_pages">Son sayfalar</string>
   <string name="old_page_bookmarks">Köhnə səhifə işarələri</string>
