@@ -284,6 +284,10 @@
     <item quantity="other">%d элемент өшірілді</item>
   </plurals>
   <string name="undo">@string/cancel</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Әлі бетбелгілер жоқ</string>
+  <string name="bookmarks_empty_subtitle">Бетті сақтау үшін бетбелгі белгішесін түртіңіз немесе аятты бетбелгіге қосу үшін оны басып тұрыңыз.</string>
   <string name="reading_bookmark_movable_education_title">Бұл жылжымалы оқу бетбелгісі</string>
   <string name="reading_bookmark_movable_education_body">Оқу бетбелгісін сақтау ескісін алмастырады. Бірнеше аятты сақтау үшін аятты басып тұрып, оны жинаққа қосыңыз.</string>
   <string name="reading_bookmark_moved_from">%1$s дегеннен жылжытылды</string>

@@ -295,6 +295,10 @@
   <string name="playback_prompt_title">Indítsa el a lejátszást:</string>
   <string name="starting_page_label">Az oldal eleje</string>
   <string name="undo">Undo</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Még nincs könyvjelző</string>
+  <string name="bookmarks_empty_subtitle">Koppints a könyvjelző ikonra egy oldal mentéséhez, vagy tartsd lenyomva az áját a könyvjelzőzéshez.</string>
   <string name="reading_bookmark_movable_education_title">Ez egy mozgatható olvasási könyvjelző</string>
   <string name="reading_bookmark_movable_education_body">Az olvasási könyvjelző mentése felülírja a régit. Több ája mentéséhez tartsd lenyomva az áját, és add hozzá egy gyűjteményhez.</string>
   <string name="reading_bookmark_moved_from">Áthelyezve innen: %1$s</string>

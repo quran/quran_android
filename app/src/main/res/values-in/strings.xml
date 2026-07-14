@@ -308,6 +308,10 @@
     <item quantity="other">Menghapus %d item</item>
   </plurals>
   <string name="undo">Batal</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Belum ada penanda</string>
+  <string name="bookmarks_empty_subtitle">Ketuk ikon penanda untuk menyimpan halaman, atau tekan lama sebuah ayat untuk menandainya.</string>
   <string name="reading_bookmark_movable_education_title">Ini adalah penanda baca yang dapat dipindahkan</string>
   <string name="reading_bookmark_movable_education_body">Menyimpan penanda baca akan menggantikan yang lama. Untuk menyimpan beberapa ayat, tekan lama sebuah ayat dan tambahkan ke koleksi.</string>
   <string name="reading_bookmark_moved_from">Dipindahkan dari %1$s</string>

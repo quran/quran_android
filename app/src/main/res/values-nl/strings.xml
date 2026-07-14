@@ -392,6 +392,10 @@
     <item quantity="other">%d items verwijderd</item>
   </plurals>
   <string name="undo">Ongedaan maken</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Nog geen bladwijzers</string>
+  <string name="bookmarks_empty_subtitle">Tik op het bladwijzerpictogram om een pagina op te slaan, of houd een ayah ingedrukt om deze als bladwijzer te markeren.</string>
   <string name="reading_bookmark_movable_education_title">Dit is een verplaatsbare leesbladwijzer</string>
   <string name="reading_bookmark_movable_education_body">Het opslaan van een leesbladwijzer vervangt de oude. Houd een Ayah ingedrukt en voeg deze toe aan een collectie om meerdere Ayahs op te slaan.</string>
   <string name="reading_bookmark_moved_from">Verplaatst van %1$s</string>

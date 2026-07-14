@@ -279,6 +279,10 @@
     <item quantity="other">%d etiket silindi</item>
   </plurals>
   <string name="undo">Geri alma</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Henüz işaret yok</string>
+  <string name="bookmarks_empty_subtitle">Bir sayfayı kaydetmek için işaret simgesine dokunun, ya da bir âyete uzun basarak işaretleyin.</string>
   <string name="reading_bookmark_movable_education_title">Bu, taşınabilir bir okuma işaretidir</string>
   <string name="reading_bookmark_movable_education_body">Okuma işaretini kaydetmek eskisinin yerini alır. Birden çok âyeti kaydetmek için bir âyete uzun basıp koleksiyona ekleyin.</string>
   <string name="reading_bookmark_moved_from">%1$s\'den taşındı</string>

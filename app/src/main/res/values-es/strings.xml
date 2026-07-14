@@ -236,6 +236,10 @@
   <string name="playback_prompt_title">Inicie la reproducción desde:</string>
   <string name="starting_page_label">Inicio de página</string>
   <string name="undo">Deshacer</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Aún no hay favoritos</string>
+  <string name="bookmarks_empty_subtitle">Toca el icono de marcador para guardar una página, o mantén pulsado un versículo para añadirlo a favoritos.</string>
   <string name="reading_bookmark_movable_education_title">Este es un marcador de lectura movible</string>
   <string name="reading_bookmark_movable_education_body">Guardar un marcador de lectura reemplaza el anterior. Para guardar varios versículos, mantén pulsado un versículo y añádelo a una colección.</string>
   <string name="reading_bookmark_moved_from">Movido desde %1$s</string>

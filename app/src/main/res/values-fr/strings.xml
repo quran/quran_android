@@ -268,6 +268,10 @@
     <item quantity="other">%2$d résultats pour \"%1$s\": </item>
   </plurals>
   <string name="undo">Annuler</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Aucun favori pour le moment</string>
+  <string name="bookmarks_empty_subtitle">Appuyez sur l\'icône de signet pour enregistrer une page, ou appuyez longuement sur une aya pour l\'ajouter aux favoris.</string>
   <string name="reading_bookmark_movable_education_title">Ceci est un signet de lecture déplaçable</string>
   <string name="reading_bookmark_movable_education_body">Enregistrer un signet de lecture remplace l\'ancien. Pour enregistrer plusieurs ayas, appuyez longuement sur une aya et ajoutez-la à une collection.</string>
   <string name="reading_bookmark_moved_from">Déplacé depuis %1$s</string>

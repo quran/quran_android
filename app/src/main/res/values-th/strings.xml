@@ -278,6 +278,10 @@
     <item quantity="other">รายการที่ถูกลบ %d</item>
   </plurals>
   <string name="undo">แก้</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">ยังไม่มีที่คั่นหน้า</string>
+  <string name="bookmarks_empty_subtitle">แตะไอคอนที่คั่นหน้าเพื่อบันทึกหน้า หรือกดค้างที่อายะห์เพื่อคั่นไว้</string>
   <string name="reading_bookmark_movable_education_title">นี่คือที่คั่นหน้าการอ่านที่สามารถย้ายได้</string>
   <string name="reading_bookmark_movable_education_body">การบันทึกที่คั่นหน้าการอ่านจะแทนที่อันเก่า หากต้องการบันทึกหลายอายะห์ ให้กดค้างที่อายะห์แล้วเพิ่มลงในคอลเลกชัน</string>
   <string name="reading_bookmark_moved_from">ย้ายจาก %1$s</string>

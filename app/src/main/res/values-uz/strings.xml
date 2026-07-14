@@ -320,6 +320,10 @@
     <item quantity="other">%d ta element oʻchirildi</item>
   </plurals>
   <string name="undo">@string/cancel</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Hozircha xatchoʻplar yoʻq</string>
+  <string name="bookmarks_empty_subtitle">Sahifani saqlash uchun xatchoʻp belgisiga bosing yoki oyatni xatchoʻp qilish uchun uni bosib turing.</string>
   <string name="reading_bookmark_movable_education_title">Bu koʻchiriladigan oʻqish xatchoʻpi</string>
   <string name="reading_bookmark_movable_education_body">Oʻqish xatchoʻpini saqlash eskisining oʻrnini bosadi. Bir nechta oyatni saqlash uchun oyatni bosib turing va toʻplamga qoʻshing.</string>
   <string name="reading_bookmark_moved_from">%1$s dan koʻchirildi</string>

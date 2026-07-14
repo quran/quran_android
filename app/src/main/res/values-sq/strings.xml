@@ -287,6 +287,10 @@
     <item quantity="other">Eleminuar elementët %d</item>
   </plurals>
   <string name="undo">Zhbëje</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Ende nuk ka libërshënues</string>
+  <string name="bookmarks_empty_subtitle">Prek ikonën e libërshënuesit për të ruajtur një faqe, ose shtyp gjatë mbi një ajet për ta shënuar.</string>
   <string name="reading_bookmark_movable_education_title">Ky është një libërshënues leximi i lëvizshëm</string>
   <string name="reading_bookmark_movable_education_body">Ruajtja e një libërshënuesi leximi zëvendëson të vjetrin. Për të ruajtur disa ajete, shtyp gjatë mbi një ajet dhe shtoje në një koleksion.</string>
   <string name="reading_bookmark_moved_from">Zhvendosur nga %1$s</string>

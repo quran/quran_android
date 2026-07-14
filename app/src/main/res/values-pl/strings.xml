@@ -295,6 +295,10 @@
     <item quantity="many">Usunięto %d tagów</item>
   </plurals>
   <string name="undo">Cofnij</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Brak zakładek</string>
+  <string name="bookmarks_empty_subtitle">Dotknij ikony zakładki, aby zapisać stronę, lub przytrzymaj ajat, aby dodać go do zakładek.</string>
   <string name="reading_bookmark_movable_education_title">To jest przenośna zakładka czytania</string>
   <string name="reading_bookmark_movable_education_body">Zapisanie zakładki czytania zastępuje poprzednią. Aby zapisać kilka ajatów, przytrzymaj ajat i dodaj go do kolekcji.</string>
   <string name="reading_bookmark_moved_from">Przeniesiono z %1$s</string>

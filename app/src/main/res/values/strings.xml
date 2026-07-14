@@ -369,6 +369,10 @@
   </plurals>
   <string name="undo">Undo</string>
 
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">No bookmarks yet</string>
+  <string name="bookmarks_empty_subtitle">Tap the bookmark icon to save a page, or long press an ayah to bookmark it.</string>
+
   <!-- reading bookmark moved / education toast -->
   <string name="reading_bookmark_movable_education_title">This is a movable reading bookmark</string>
   <string name="reading_bookmark_movable_education_body">Saving a reading bookmark replaces your old one. To save multiple ayahs, long press an ayah and add it to a collection.</string>

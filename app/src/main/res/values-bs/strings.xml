@@ -298,6 +298,10 @@
     <item quantity="other">Izbrisano %d stavki</item>
   </plurals>
   <string name="undo">Poništi</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Još nema bilješki</string>
+  <string name="bookmarks_empty_subtitle">Dodirnite ikonu bilješke da sačuvate stranicu, ili dugo pritisnite ajet da ga zabilježite.</string>
   <string name="reading_bookmark_movable_education_title">Ovo je pomjerljiva čitalačka oznaka</string>
   <string name="reading_bookmark_movable_education_body">Spremanje čitalačke oznake zamjenjuje staru. Da sačuvate više ajeta, dugo pritisnite ajet i dodajte ga u kolekciju.</string>
   <string name="reading_bookmark_moved_from">Pomjereno sa %1$s</string>

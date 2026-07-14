@@ -314,6 +314,10 @@
     <item quantity="other">Đã xóa %d mục</item>
   </plurals>
   <string name="undo">Hoàn tác</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Chưa có dấu trang nào</string>
+  <string name="bookmarks_empty_subtitle">Nhấn vào biểu tượng dấu trang để lưu một trang, hoặc nhấn giữ một Ayah để đánh dấu.</string>
   <string name="reading_bookmark_movable_education_title">Đây là dấu trang đọc có thể di chuyển</string>
   <string name="reading_bookmark_movable_education_body">Lưu dấu trang đọc sẽ thay thế dấu cũ. Để lưu nhiều Ayah, nhấn giữ một Ayah và thêm vào bộ sưu tập.</string>
   <string name="reading_bookmark_moved_from">Đã di chuyển từ %1$s</string>

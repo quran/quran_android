@@ -283,6 +283,10 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="playback_prompt_title">Iniciar a reprodução a partir de:</string>
   <string name="starting_page_label">Início da página</string>
   <string name="undo">Desfazer</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Ainda não há marcadores</string>
+  <string name="bookmarks_empty_subtitle">Toque no ícone de marcador para guardar uma página, ou mantenha pressionado um Ayah para marcá-lo.</string>
   <string name="reading_bookmark_movable_education_title">Este é um marcador de leitura móvel</string>
   <string name="reading_bookmark_movable_education_body">Guardar um marcador de leitura substitui o anterior. Para guardar vários Ayahs, mantenha pressionado um Ayah e adicione-o a uma coleção.</string>
   <string name="reading_bookmark_moved_from">Movido de %1$s</string>
