@@ -268,6 +268,10 @@
   <string name="playback_prompt_title">开始播放从。</string>
   <string name="starting_page_label">页首</string>
   <string name="undo">撤销</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">暂无收藏</string>
+  <string name="bookmarks_empty_subtitle">点击书签图标可保存页面，或长按经文将其加入收藏。</string>
   <string name="reading_bookmark_movable_education_title">这是一个可移动的阅读书签</string>
   <string name="reading_bookmark_movable_education_body">保存阅读书签会替换旧的书签。要保存多节经文，请长按经文并将其添加到收藏集。</string>
   <string name="reading_bookmark_moved_from">已从%1$s移动</string>

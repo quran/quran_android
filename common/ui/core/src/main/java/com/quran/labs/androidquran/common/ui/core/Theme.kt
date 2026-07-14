@@ -77,6 +77,7 @@ private val forceLtr = listOf("huawei", "lenovo", "tecno")
 
 object QuranIcons {
   val ArrowBack: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ArrowBack
+  val BookmarkBorder: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.BookmarkBorder
   val Chat: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Chat
   val Check: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Check
   val ChevronRight: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ChevronRight

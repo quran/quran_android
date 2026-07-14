@@ -287,6 +287,10 @@
     <item quantity="other">Borttagna %d poster</item>
   </plurals>
   <string name="undo">Ångra</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Inga bokmärken än</string>
+  <string name="bookmarks_empty_subtitle">Tryck på bokmärkesikonen för att spara en sida, eller tryck länge på en ayah för att bokmärka den.</string>
   <string name="reading_bookmark_movable_education_title">Detta är ett flyttbart läsbokmärke</string>
   <string name="reading_bookmark_movable_education_body">Att spara ett läsbokmärke ersätter det gamla. För att spara flera ayahs, tryck länge på en ayah och lägg till den i en samling.</string>
   <string name="reading_bookmark_moved_from">Flyttat från %1$s</string>

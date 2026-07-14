@@ -34,6 +34,10 @@
   <string name="playback_speed">Velocità di riproduzione:</string>
   <string name="next">Prossimo</string>
   <string name="undo">Undo</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Nessun segnalibro ancora</string>
+  <string name="bookmarks_empty_subtitle">Tocca l\'icona del segnalibro per salvare una pagina, oppure tieni premuto un ayah per aggiungerlo ai segnalibri.</string>
   <string name="reading_bookmark_movable_education_title">Questo è un segnalibro di lettura spostabile</string>
   <string name="reading_bookmark_movable_education_body">Salvare un segnalibro di lettura sostituisce quello precedente. Per salvare più ayah, tieni premuto un ayah e aggiungilo a una raccolta.</string>
   <string name="reading_bookmark_moved_from">Spostato da %1$s</string>

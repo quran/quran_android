@@ -279,6 +279,10 @@
     <item quantity="other">%d etiket silindi</item>
   </plurals>
   <string name="undo">Geri alma</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Hələ əlfəcin yoxdur</string>
+  <string name="bookmarks_empty_subtitle">Səhifəni yadda saxlamaq üçün əlfəcin nişanına toxunun, və ya ayəyə uzun basaraq onu əlfəcinləyin.</string>
   <string name="reading_bookmark_movable_education_title">Bu, daşına bilən oxu əlfəcinidir</string>
   <string name="reading_bookmark_movable_education_body">Oxu əlfəcinini yadda saxlamaq köhnəsini əvəz edir. Bir neçə ayəni saxlamaq üçün ayəyə uzun basıb kolleksiyaya əlavə edin.</string>
   <string name="reading_bookmark_moved_from">%1$s-dən köçürüldü</string>

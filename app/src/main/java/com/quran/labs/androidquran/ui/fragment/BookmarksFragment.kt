@@ -45,6 +45,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   private var bookmarksSwipeRefresh: SwipeRefreshLayout? = null
   private var recyclerView: RecyclerView? = null
   private var bookmarksAdapter: QuranListAdapter? = null
+  private var emptyStateView: ComposeView? = null
 
   @Inject
   lateinit var bookmarkPresenter: BookmarkPresenter
@@ -96,6 +97,14 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     this.bookmarksAdapter = bookmarksAdapter
     recyclerView.setAdapter(bookmarksAdapter)
 
+    val emptyStateView = view.findViewById<ComposeView>(R.id.bookmarks_empty_state)
+    emptyStateView.setContent {
+      QuranTheme {
+        BookmarksEmptyState()
+      }
+    }
+    this.emptyStateView = emptyStateView
+
     ViewCompat.setOnApplyWindowInsetsListener(
       recyclerView
     ) { v: View, insets: WindowInsetsCompat ->
@@ -139,6 +148,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     bookmarksSwipeRefresh = null
     recyclerView = null
     bookmarksAdapter = null
+    emptyStateView = null
     super.onDestroyView()
   }
 
@@ -240,6 +250,8 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
         items.rows.toTypedArray<QuranRow>(), items.tagMap
       )
       bookmarksAdapter.notifyDataSetChanged()
+
+      emptyStateView?.visibility = if (items.rows.isEmpty()) View.VISIBLE else View.GONE
     }
   }
 

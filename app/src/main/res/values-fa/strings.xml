@@ -246,6 +246,10 @@
   <string name="quran_ayah_details">%1$s - آیه %2$s، جزء %3$s</string>
   <string name="sdcard_error">کارت حافظه یافت نشد. آن را دوباره در دستگاه قرار داده و بار دیگر امتحان نمایید.</string>
   <string name="undo">واگرد</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">هنوز نشانکی وجود ندارد</string>
+  <string name="bookmarks_empty_subtitle">برای ذخیره صفحه روی نماد نشانک ضربه بزنید، یا برای نشانک‌گذاری یک آیه، روی آن فشار طولانی دهید.</string>
   <string name="reading_bookmark_movable_education_title">این یک نشانک مطالعه قابل‌جابجایی است</string>
   <string name="reading_bookmark_movable_education_body">ذخیره نشانک مطالعه، نشانک قبلی را جایگزین می‌کند. برای ذخیره چند آیه، روی یک آیه فشار طولانی دهید و آن را به یک مجموعه اضافه کنید.</string>
   <string name="reading_bookmark_moved_from">جابجا شده از %1$s</string>

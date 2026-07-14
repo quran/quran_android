@@ -273,6 +273,10 @@
     <item quantity="many">تم حذف %d عنصر</item>
   </plurals>
   <string name="undo">تراجع</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">لا توجد مرجعيات بعد</string>
+  <string name="bookmarks_empty_subtitle">اضغط على أيقونة المرجعية لحفظ صفحة، أو اضغط مطولاً على آية لحفظها كمرجعية.</string>
   <string name="reading_bookmark_movable_education_title">هذه علامة قراءة قابلة للنقل</string>
   <string name="reading_bookmark_movable_education_body">حفظ علامة القراءة يستبدل القديمة. لحفظ عدة آيات، اضغط مطولاً على آية وأضفها إلى مجموعة.</string>
   <string name="reading_bookmark_moved_from">نُقلت من %1$s</string>
