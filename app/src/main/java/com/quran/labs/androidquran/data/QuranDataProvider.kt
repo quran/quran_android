@@ -171,7 +171,7 @@ class QuranDataProvider : ContentProvider() {
     Timber.d("query: %s", query)
     val queryIsArabic = QuranUtils.doesStringContainArabic(query)
     val haveArabic = queryIsArabic &&
-        quranFileUtils.hasTranslation(QURAN_ARABIC_DATABASE)
+        quranFileUtils.hasArabicSearchDatabase()
     if (translations.isEmpty() && queryIsArabic && !haveArabic) {
       return null
     }
