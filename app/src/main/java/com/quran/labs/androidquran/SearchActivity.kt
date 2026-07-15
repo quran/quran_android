@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran
 
-import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
@@ -27,6 +26,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.lifecycleScope
 import androidx.loader.app.LoaderManager
 import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
@@ -46,6 +46,10 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Activity for searching the Quran
@@ -53,10 +57,16 @@ import dev.zacsweers.metro.Inject
 class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
   LoaderManager.LoaderCallbacks<Cursor?> {
   private var downloadArabicSearchDb = false
-  private var isArabicSearch = false
   private var query: String = ""
   private var adapter: ResultAdapter? = null
   private var downloadReceiver: DefaultDownloadReceiver? = null
+
+  /**
+   * Routes at most one search suggestion at a time.
+   *
+   * Replacing this job prevents an older [onNewIntent] call from opening after a newer intent.
+   */
+  private var viewIntentJob: Job? = null
 
   private lateinit var messageView: TextView
   private lateinit var warningView: TextView
@@ -174,6 +184,11 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
     super.onPause()
   }
 
+  override fun onStop() {
+    cancelPendingViewIntentNavigation()
+    super.onStop()
+  }
+
   private fun downloadArabicSearchDb() {
     if (downloadReceiver == null) {
       val receiver = DefaultDownloadReceiver(
@@ -227,15 +242,12 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
 
   override fun onLoadFinished(loader: Loader<Cursor?>, cursor: Cursor?) {
     val containsArabic = QuranUtils.doesStringContainArabic(query)
-    isArabicSearch = containsArabic
-    @SuppressLint("WrongThread") val showArabicWarning = (isArabicSearch &&
-        !quranFileUtils.hasArabicSearchDatabase())
+    val showArabicWarning = containsArabic &&
+        !quranFileUtils.hasTranslation(QuranDataProvider.QURAN_ARABIC_DATABASE)
+    val jumpToTranslation = !containsArabic || showArabicWarning
 
     if (showArabicWarning) {
-      // overridden because if we search Arabic tafaseer, this tells us to go
-      // to the tafseer page instead of the Arabic page when we open the result.
-      isArabicSearch = false
-
+      // Without the Arabic database, Arabic tafseer matches should open in translation view.
       warningView.text = getString(R.string.no_arabic_search_available)
       warningView.visibility = View.VISIBLE
       buttonGetTranslations.text = getString(R.string.get_arabic_search_db)
@@ -269,15 +281,20 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
       if (adapter == null) {
         adapter = ResultAdapter(this, cursor, quranDisplayData, quranInfo)
         listView.adapter = adapter
-        listView.onItemClickListener =
-          OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
-            val p = parent as ListView
-            val currentCursor = p.adapter.getItem(position) as Cursor
-            jumpToResult(currentCursor.getInt(1), currentCursor.getInt(2))
-          }
       } else {
         adapter?.swapCursor(cursor)
       }
+      listView.onItemClickListener =
+        OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+          cancelPendingViewIntentNavigation()
+          val p = parent as ListView
+          val currentCursor = p.adapter.getItem(position) as Cursor
+          jumpToResult(
+            currentCursor.getInt(1),
+            currentCursor.getInt(2),
+            jumpToTranslation = jumpToTranslation
+          )
+        }
     }
   }
 
@@ -289,6 +306,9 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
     if (intent == null) {
       return
     }
+
+    cancelPendingViewIntentNavigation()
+
     if (Intent.ACTION_SEARCH == intent.action) {
       val query = intent.getStringExtra(SearchManager.QUERY)
       showResults(query)
@@ -307,63 +327,48 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
         }
       }
 
-      if (QuranUtils.doesStringContainArabic(query)) {
-        isArabicSearch = true
+      val id = intentData?.lastPathSegment?.toIntOrNull() ?: return
+      if (id == -1) {
+        showResults(query)
+        return
       }
+      if (id !in 1..quranInfo.getNumberOfAyahsInQuran()) return
 
-      if (isArabicSearch) {
-        // if we come from muyassar and don't have arabic db, we set
-        // arabic search to false so we jump to the translation.
-        if (!quranFileUtils.hasArabicSearchDatabase()) {
-          isArabicSearch = false
-        }
-      }
+      val (sura, ayah) = quranInfo.getSuraAyahFromAyahId(id)
 
-      var id: Int? = null
-      try {
-        if (intentData != null) {
-          id = if (intentData.lastPathSegment != null) intentData.lastPathSegment?.toInt() else null
-        }
-      } catch (e: NumberFormatException) {
-        // no op
-      }
-
-      if (id != null) {
-        if (id == -1) {
-          showResults(query)
-          return
-        }
-        var sura = 1
-        var total = id
-        for (j in 1..114) {
-          val cnt = quranInfo.getNumberOfAyahs(j)
-          total -= cnt
-          if (total >= 0) sura++
-          else {
-            total += cnt
-            break
-          }
+      val isArabicQuery = QuranUtils.doesStringContainArabic(query)
+      viewIntentJob = lifecycleScope.launch {
+        // This check can copy the database. Await it off main before deciding where to open.
+        val openAsArabic = isArabicQuery && withContext(Dispatchers.IO) {
+          quranFileUtils.hasArabicSearchDatabase()
         }
 
-        if (total == 0) {
-          sura--
-          total = quranInfo.getNumberOfAyahs(sura)
-        }
-
-        jumpToResult(sura, total)
+        jumpToResult(sura, ayah, jumpToTranslation = !openAsArabic)
         finish()
       }
     }
   }
 
-  private fun jumpToResult(sura: Int, ayah: Int) {
+  private fun cancelPendingViewIntentNavigation() {
+    viewIntentJob?.cancel()
+    viewIntentJob = null
+  }
+
+  /**
+   * Opens an ayah in the reader.
+   *
+   * @param sura the one-based sura number to open.
+   * @param ayah the one-based ayah number to highlight.
+   * @param jumpToTranslation whether the reader should open its translation view.
+   */
+  private fun jumpToResult(sura: Int, ayah: Int, jumpToTranslation: Boolean) {
     val page = quranInfo.getPageFromSuraAyah(sura, ayah)
     val intent = if (canOpenReaderDirectly()) {
       Intent(this, PagerActivity::class.java).apply {
         putExtra("page", page)
         putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura)
         putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah)
-        if (!isArabicSearch) {
+        if (jumpToTranslation) {
           putExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, true)
         }
       }
@@ -373,7 +378,7 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
         page = page,
         sura = sura,
         ayah = ayah,
-        jumpToTranslation = !isArabicSearch
+        jumpToTranslation = jumpToTranslation
       )
     }
     startActivity(intent)
