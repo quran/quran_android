@@ -209,6 +209,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private lateinit var translationsSpinner: QuranSpinner
   private lateinit var overlay: FrameLayout
   private lateinit var toolBarArea: View
+  private lateinit var bottomBarArea: View
+  private var audioBarVisibleBeforeSearch = false
 
   private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
@@ -445,16 +447,24 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     audioStatusBar = findViewById(R.id.audio_area)
 
     toolBarArea = findViewById(R.id.toolbar_area)
+    bottomBarArea = findViewById(R.id.bottom_bar_area)
     translationsSpinner = findViewById(R.id.spinner)
     overlay = findViewById(R.id.overlay)
 
+    // The menu toolbar is bottom-most and has a solid background, so apply the
+    // navigation-bar / cutout inset and IME lift here (not on the container).
     ViewCompat.setOnApplyWindowInsetsListener(toolBarArea) { view, windowInsets ->
-      val insets = windowInsets.getInsets(
-        WindowInsetsCompat.Type.statusBars() or
-            WindowInsetsCompat.Type.displayCutout() or
-            WindowInsetsCompat.Type.navigationBars()
+      val systemBars = windowInsets.getInsets(
+        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
       )
-      view.updatePadding(insets.left, insets.top, insets.right, 0)
+      val ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
+      val keyboardOverlap = (ime.bottom - systemBars.bottom).coerceAtLeast(0)
+      view.updatePadding(
+        systemBars.left,
+        0,
+        systemBars.right,
+        systemBars.bottom + keyboardOverlap,
+      )
       windowInsets
     }
 
@@ -852,15 +862,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private fun animateToolBar(visible: Boolean) {
     isActionBarHidden = !visible
 
-    // animate toolbar
-    toolBarArea.animate()
-      .translationY((if (visible) 0 else -toolBarArea.height).toFloat())
-      .setDuration(250)
-      .start()
-
-    // and audio bar
-    audioStatusBar.animate()
-      .translationY((if (visible) 0 else audioStatusBar.height).toFloat())
+    // The menu toolbar and audio bar both live in a bottom container now, so they
+    // hide by sliding down off the bottom of the screen together.
+    bottomBarArea.animate()
+      .translationY((if (visible) 0 else bottomBarArea.height).toFloat())
       .setDuration(250)
       .start()
   }
@@ -1141,6 +1146,20 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     val inflater = menuInflater
     inflater.inflate(R.menu.quran_menu, menu)
     val item = menu.findItem(R.id.search)
+    item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+      override fun onMenuItemActionExpand(menuItem: MenuItem): Boolean {
+        audioBarVisibleBeforeSearch = audioStatusBar.visibility == View.VISIBLE
+        audioStatusBar.visibility = View.GONE
+        return true
+      }
+
+      override fun onMenuItemActionCollapse(menuItem: MenuItem): Boolean {
+        if (audioBarVisibleBeforeSearch) {
+          audioStatusBar.visibility = View.VISIBLE
+        }
+        return true
+      }
+    })
     val searchView = item.actionView as SearchView
     val searchManager = getSystemService(SEARCH_SERVICE) as SearchManager
     searchView.queryHint = getString(R.string.search_hint)
