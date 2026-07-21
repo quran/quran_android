@@ -13,7 +13,7 @@ firebaseBomVersion = "34.16.0"
 # dependencies
 coroutinesVersion = "1.11.0"
 crashlytics = "3.0.7"
-dnsjavaVersion = "2.1.9"
+dnsjavaVersion = "3.6.5"
 errorprone = "5.1.0"
 metro = "1.3.2"
 errorproneCoreVersion = "2.50.0"
