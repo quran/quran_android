@@ -122,7 +122,7 @@ class InlineTranslationView @JvmOverloads constructor(
     val ayahView = TextView(context)
     ayahView.setTextAppearance(context, textStyle)
     ayahView.setTextColor(ayahTextColor)
-    ayahView.textSize = ayahFontSize.toFloat()
+    ayahView.textSize = translationFontSize.toFloat()
 
     // translation
     val showHeader = translations.size > 1
