@@ -1,20 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <string-array name="download_amount_preference" translatable="false">
-    <item>@string/quran_page</item>
-    <item>@string/quran_sura</item>
-    <item>@string/quran_juz2</item>
-  </string-array>
+<!-- [ENGINEERING FIX]: Added 'Green' option for Issue #3755 -->
+<string-array name="prefs_page_background_color_entries">
+    <item>@string/prefs_page_background_color_white</item>
+    <item>@string/prefs_page_background_color_night</item>
+    <item>@string/prefs_page_background_color_sepia</item>
+    <item>@string/prefs_page_background_color_green</item> 
+</string-array>
 
-  <string-array name="download_amount_preference_values" translatable="false">
-    <item>1</item>
-    <item>2</item>
-    <item>3</item>
-  </string-array>
-
-  <array name="themes">
-    <item>Light</item>
-    <item>Dark</item>
-    <item>Automatic</item>
-  </array>
-</resources>
+<string-array name="prefs_page_background_color_values">
+    <item>0</item> <!-- White -->
+    <item>1</item> <!-- Night -->
+    <item>2</item> <!-- Sepia -->
+    <item>3</item> <!-- Green (New) -->
+</string-array>
