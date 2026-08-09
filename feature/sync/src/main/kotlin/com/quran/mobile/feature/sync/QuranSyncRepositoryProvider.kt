@@ -6,6 +6,8 @@ import com.quran.mobile.bookmark.di.DefaultMobileSyncRepositoryProvider
 import com.quran.mobile.bookmark.di.MobileSyncRepositoryProvider
 import com.quran.mobile.bookmark.model.BookmarkCollectionsState
 import com.quran.shared.persistence.model.AyahBookmark
+import com.quran.shared.persistence.model.AyahHighlight
+import com.quran.shared.persistence.model.AyahHighlightColor
 import com.quran.shared.persistence.model.BookmarkCollectionsReplacementResult
 import com.quran.shared.persistence.model.Collection
 import com.quran.shared.persistence.model.CollectionAyahBookmark
@@ -36,7 +38,8 @@ import kotlinx.coroutines.flow.stateIn
   AppScope::class,
   replaces = [DefaultMobileSyncRepositoryProvider::class]
 )
-class QuranSyncRepositoryProvider @Inject constructor(
+@Inject
+class QuranSyncRepositoryProvider(
   syncManager: QuranSyncManager,
   appCoroutineScope: AppCoroutineScope
 ) : MobileSyncRepositoryProvider {
@@ -300,6 +303,27 @@ private class SyncCollectionBookmarksRepository(
     return getBookmarksForCollection(collectionId)
       .firstOrNull { collectionBookmark -> collectionBookmark.bookmarkId == bookmark.id }
       ?: error("Expected bookmark ${bookmark.id} in collection $collectionId after sync-service write.")
+  }
+
+  override fun getHighlightsFlow(): Flow<List<AyahHighlight>> {
+    return quranDataService.highlights
+  }
+
+  override suspend fun setHighlight(
+    sura: Int,
+    ayah: Int,
+    color: AyahHighlightColor,
+    timestamp: PlatformDateTime
+  ): AyahHighlight {
+    return quranDataService.setHighlight(sura, ayah, color)
+  }
+
+  override suspend fun removeHighlight(
+    sura: Int,
+    ayah: Int,
+    timestamp: PlatformDateTime
+  ): Boolean {
+    return quranDataService.removeHighlight(sura, ayah)
   }
 }
 

@@ -46,7 +46,8 @@ import java.util.UUID
  */
 @OptIn(org.publicvalue.multiplatform.oidc.ExperimentalOpenIdConnect::class)
 @SingleIn(AppScope::class)
-class QuranSyncManager @Inject constructor(
+@Inject
+class QuranSyncManager(
   @param:ApplicationContext private val context: Context
 ) {
   private val config = QuranSyncConfig(context)
