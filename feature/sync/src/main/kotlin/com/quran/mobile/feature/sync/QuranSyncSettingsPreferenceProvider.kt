@@ -11,7 +11,8 @@ import dev.zacsweers.metro.SingleIn
 
 @SingleIn(AppScope::class)
 @ContributesIntoSet(AppScope::class)
-class QuranSyncSettingsPreferenceProvider @Inject constructor(
+@Inject
+class QuranSyncSettingsPreferenceProvider(
   private val syncManager: QuranSyncManager
 ) : ExtraPreferencesProvider {
   override val order: Int = 0

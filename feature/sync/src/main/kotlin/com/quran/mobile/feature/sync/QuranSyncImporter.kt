@@ -16,7 +16,8 @@ import dev.zacsweers.metro.SingleIn
   AppScope::class,
   replaces = [MobileSyncImporterImpl::class]
 )
-class QuranSyncImporter @Inject constructor(
+@Inject
+class QuranSyncImporter(
   private val syncManager: QuranSyncManager
 ) : MobileSyncImporter {
 
