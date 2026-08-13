@@ -134,13 +134,6 @@
           android:resource="@xml/file_paths"/>
     </provider>
 
-    <receiver android:name="androidx.media.session.MediaButtonReceiver"
-        android:exported="true">
-      <intent-filter>
-        <action android:name="android.intent.action.MEDIA_BUTTON"/>
-      </intent-filter>
-    </receiver>
-
     <activity android:name=".QuranImportActivity"
         android:exported="true">
       <intent-filter>
@@ -177,9 +170,6 @@
         android:exported="false"
         android:name=".service.AudioService"
         android:foregroundServiceType="mediaPlayback">
-      <intent-filter>
-        <action android:name="android.intent.action.MEDIA_BUTTON"/>
-      </intent-filter>
     </service>
 
     <service
