@@ -343,6 +343,7 @@
   <string name="stop">Stop</string>
   <string name="next">Next</string>
   <string name="playback_speed">Playback Speed:</string>
+  <string name="pause_between_verses">Pause between verses:</string>
 
   <string-array name="repeatValues">
     <item>1 time</item>
