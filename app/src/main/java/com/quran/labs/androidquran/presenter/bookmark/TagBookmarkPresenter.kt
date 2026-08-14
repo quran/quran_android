@@ -2,7 +2,6 @@ package com.quran.labs.androidquran.presenter.bookmark
 
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.di.AppScope
-import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
@@ -28,9 +27,7 @@ open class TagBookmarkPresenter @Inject internal constructor(
   private var tags: List<Tag>? = null
   private var bookmarkIds: Array<String>? = null
   private var madeChanges = false
-  private var saveImmediate = false
   private var shouldRefreshTags = false
-  private var potentialAyahBookmark: PotentialAyahBookmark? = null
   private val presenterScope = MainScope()
 
   init {
@@ -52,17 +49,7 @@ open class TagBookmarkPresenter @Inject internal constructor(
   }
 
   fun setBookmarksMode(bookmarkIds: Array<String>?) {
-    setMode(bookmarkIds, null)
-  }
-
-  fun setAyahBookmarkMode(sura: Int, ayah: Int, page: Int) {
-    setMode(null, PotentialAyahBookmark(SuraAyah(sura, ayah), page))
-  }
-
-  private fun setMode(bookmarkIds: Array<String>?, potentialAyahBookmark: PotentialAyahBookmark?) {
     this.bookmarkIds = bookmarkIds
-    this.potentialAyahBookmark = potentialAyahBookmark
-    saveImmediate = this.potentialAyahBookmark != null
     checkedTags.clear()
     refresh()
   }
@@ -109,22 +96,12 @@ open class TagBookmarkPresenter @Inject internal constructor(
     if (madeChanges) {
       Single.fromCallable {
         runBlocking {
-          val ayahBookmark = potentialAyahBookmark
-          if (ayahBookmark != null) {
-            bookmarksDao.updateAyahBookmarkTags(
-              suraAyah = ayahBookmark.suraAyah,
-              page = ayahBookmark.page,
-              tagIds = checkedTags,
-              deleteNonTagged = true
-            )
-          } else {
-            val bookmarkIds = bookmarkIds ?: emptyArray()
-            bookmarksDao.updateBookmarkTags(
-              bookmarkIds = bookmarkIds,
-              tagIds = checkedTags,
-              deleteNonTagged = bookmarkIds.size == 1
-            )
-          }
+          val bookmarkIds = bookmarkIds ?: emptyArray()
+          bookmarksDao.updateBookmarkTags(
+            bookmarkIds = bookmarkIds,
+            tagIds = checkedTags,
+            deleteNonTagged = bookmarkIds.size == 1
+          )
         }
       }
         .subscribeOn(Schedulers.io())
@@ -158,29 +135,19 @@ open class TagBookmarkPresenter @Inject internal constructor(
     dialog?.showAddTagDialog()
   }
 
-  fun setMadeChanges() {
+  private fun setMadeChanges() {
     madeChanges = true
-    if (saveImmediate) {
-      saveChanges()
-    }
   }
 
   private val bookmarkTagIdsObservable: Single<List<String>>
     get() {
       return Single.fromCallable {
         runBlocking {
-          val ayahBookmark = potentialAyahBookmark
-          if (ayahBookmark != null) {
-            bookmarksDao.getAyahBookmarkTagIds(
-              ayahBookmark.suraAyah
-            )
+          val ids = bookmarkIds
+          if (ids != null && ids.size == 1) {
+            bookmarksDao.getBookmarkTagIds(ids[0])
           } else {
-            val ids = bookmarkIds
-            if (ids != null && ids.size == 1) {
-              bookmarksDao.getBookmarkTagIds(ids[0])
-            } else {
-              emptyList()
-            }
+            emptyList()
           }
         }
       }
@@ -199,6 +166,4 @@ open class TagBookmarkPresenter @Inject internal constructor(
       this.dialog = null
     }
   }
-
-  private data class PotentialAyahBookmark(val suraAyah: SuraAyah, val page: Int)
 }

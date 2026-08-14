@@ -34,7 +34,6 @@ import com.quran.labs.androidquran.ui.helpers.BookmarkUIConverter
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter.QuranTouchListener
 import com.quran.labs.androidquran.ui.helpers.QuranRow
-import com.quran.mobile.bookmark.model.isDefaultBookmarkCollectionId
 import com.quran.mobile.feature.sync.BookmarksSignInCard
 import com.quran.mobile.feature.sync.QuranSyncActivity
 import com.quran.mobile.feature.sync.QuranSyncManager
@@ -290,7 +289,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   }
 
   private fun isValidSelection(selected: QuranRow): Boolean {
-    return selected.isBookmark || (selected.isBookmarkHeader && selected.userTagId() != null)
+    return selected.isBookmark || (selected.isBookmarkHeader && selected.tagId != null)
   }
 
   private val mOnUndoClickListener: View.OnClickListener = View.OnClickListener {
@@ -373,17 +372,13 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   private fun handleTagEdit(activity: QuranActivity, selected: List<QuranRow>) {
     if (selected.size == 1) {
       val row = selected[0]
-      row.userTagId()?.let { tagId -> activity.editTag(tagId, row.text) }
+      row.tagId?.let { tagId -> activity.editTag(tagId, row.text) }
     }
   }
 
   private fun handleTagBookmarks(activity: QuranActivity, selected: List<QuranRow>) {
     val ids = selected.mapNotNull { row -> row.bookmarkId }.toTypedArray()
     activity.tagBookmarks(ids)
-  }
-
-  private fun QuranRow.userTagId(): String? {
-    return tagId?.takeUnless { tagId -> tagId.isDefaultBookmarkCollectionId() }
   }
 
   companion object {

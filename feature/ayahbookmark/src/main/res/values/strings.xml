@@ -8,6 +8,7 @@
   <string name="ayahbookmark_collections_header">Collections</string>
   <string name="ayahbookmark_new_collection">New collection</string>
   <string name="ayahbookmark_collection_name_hint">Collection name</string>
+  <string name="ayahbookmark_collection_name_error">That collection name is unavailable.</string>
   <string name="ayahbookmark_cancel">Cancel</string>
   <string name="ayahbookmark_create">Create</string>
   <string name="ayahbookmark_remove_bookmark">Remove bookmark</string>

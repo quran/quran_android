@@ -45,11 +45,10 @@ class AddTagDialog : DialogFragment() {
             val success = addTagDialogPresenter.validate(name, id)
             if (success) {
               if (id != null) {
-                addTagDialogPresenter.updateTag(Tag(id, name))
+                addTagDialogPresenter.updateTag(Tag(id, name), ::dismissAfterPersistence)
               } else {
-                addTagDialogPresenter.addTag(name)
+                addTagDialogPresenter.addTag(name, ::dismissAfterPersistence)
               }
-              dismiss()
             }
           }
     }
@@ -91,6 +90,12 @@ class AddTagDialog : DialogFragment() {
 
   fun onDuplicateTagName() {
     textInputEditText?.error = activity?.getString(R.string.tag_duplicate_tag_error)
+  }
+
+  private fun dismissAfterPersistence() {
+    if (isResumed && !parentFragmentManager.isStateSaved) {
+      dismiss()
+    }
   }
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {

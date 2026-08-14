@@ -8,7 +8,6 @@ import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.collection.ReadingCollection
 import com.quran.data.model.collection.ReadingCollectionBookmarks
-import com.quran.mobile.bookmark.model.DEFAULT_BOOKMARK_COLLECTION_ID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +22,13 @@ class FakeBookmarksDao(
   private val bookmarks = MutableStateFlow<List<Bookmark>>(emptyList())
   private val tags = MutableStateFlow<List<Tag>>(emptyList())
   private val defaultBookmarkIds = MutableStateFlow<Set<String>>(emptySet())
+  private val defaultCollectionMetadata = ReadingCollection(
+    id = "fake-default",
+    name = "Favorites",
+    lastUpdated = Instant.fromEpochMilliseconds(0),
+    isSystem = true,
+    isDefault = true
+  )
   private val changesFlow = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
   private val addedTagNames = mutableListOf<String>()
 
@@ -130,13 +136,6 @@ class FakeBookmarksDao(
     return bookmarks.value.firstOrNull { it.id == bookmarkId }?.tags.orEmpty()
   }
 
-  override suspend fun getAyahBookmarkTagIds(suraAyah: SuraAyah): List<String> {
-    return bookmarks.value
-      .firstOrNull { it.sura == suraAyah.sura && it.ayah == suraAyah.ayah }
-      ?.tags
-      .orEmpty()
-  }
-
   override suspend fun updateBookmarkTags(
     bookmarkIds: Array<String>,
     tagIds: Set<String>,
@@ -156,26 +155,6 @@ class FakeBookmarksDao(
           bookmark
         }
       }
-    }
-    changesFlow.tryEmit(Unit)
-    return true
-  }
-
-  override suspend fun updateAyahBookmarkTags(
-    suraAyah: SuraAyah,
-    page: Int,
-    tagIds: Set<String>,
-    deleteNonTagged: Boolean
-  ): Boolean {
-    val existing = bookmarks.value.firstOrNull { it.sura == suraAyah.sura && it.ayah == suraAyah.ayah }
-    if (existing == null && tagIds.isNotEmpty()) {
-      val id = "bookmark-${bookmarks.value.size + 1}"
-      bookmarks.update { current ->
-        current + Bookmark(id, suraAyah.sura, suraAyah.ayah, page, System.currentTimeMillis() / 1000, tagIds.toList())
-      }
-    } else if (existing != null) {
-      updateBookmarkTags(arrayOf(existing.id), tagIds, deleteNonTagged)
-      return true
     }
     changesFlow.tryEmit(Unit)
     return true
@@ -202,16 +181,6 @@ class FakeBookmarksDao(
     changesFlow.tryEmit(Unit)
   }
 
-  override suspend fun removeBookmarksForPage(page: Int) {
-    val bookmarkIds = bookmarks.value
-      .filter { bookmark -> bookmark.page == page }
-      .map { bookmark -> bookmark.id }
-      .toSet()
-    bookmarks.update { current -> current.filterNot { it.page == page } }
-    defaultBookmarkIds.update { current -> current - bookmarkIds }
-    changesFlow.tryEmit(Unit)
-  }
-
   override suspend fun deleteAyahBookmark(suraAyah: SuraAyah): Boolean {
     val bookmarkIds = bookmarks.value
       .filter { bookmark -> bookmark.sura == suraAyah.sura && bookmark.ayah == suraAyah.ayah }
@@ -227,24 +196,27 @@ class FakeBookmarksDao(
     return true
   }
 
-  override suspend fun replaceAyahBookmarks(bookmarks: List<Bookmark>) {
-    val ayahBookmarks = bookmarks.filter { bookmark -> bookmark.sura != null && bookmark.ayah != null }
-    this.bookmarks.value = ayahBookmarks
-    defaultBookmarkIds.value = ayahBookmarks.map { bookmark -> bookmark.id }.toSet()
-    changesFlow.tryEmit(Unit)
-  }
-
   override suspend fun replaceAyahBookmarkCollections(
     suraAyah: SuraAyah,
     collectionIds: Set<String>
   ): Boolean {
     val targetCollectionIds = normalizedCollectionIds(collectionIds)
     val customCollectionIds = targetCollectionIds.filterNot { collectionId ->
-      collectionId == DEFAULT_BOOKMARK_COLLECTION_ID
+      collectionId == defaultCollectionMetadata.id
     }.toSet()
-    val isDefaultBookmark = DEFAULT_BOOKMARK_COLLECTION_ID in targetCollectionIds
+    val isDefaultBookmark = defaultCollectionMetadata.id in targetCollectionIds
     val existingBookmark = bookmarks.value.firstOrNull { bookmark ->
       bookmark.sura == suraAyah.sura && bookmark.ayah == suraAyah.ayah
+    }
+
+    if (targetCollectionIds.isEmpty()) {
+      if (existingBookmark == null) {
+        return false
+      }
+      bookmarks.update { current -> current - existingBookmark }
+      defaultBookmarkIds.update { current -> current - existingBookmark.id }
+      changesFlow.tryEmit(Unit)
+      return true
     }
 
     if (existingBookmark == null) {
@@ -300,29 +272,6 @@ class FakeBookmarksDao(
     return bookmarks.value.any { it.sura == suraAyah.sura && it.ayah == suraAyah.ayah }
   }
 
-  override suspend fun toggleAyahBookmark(suraAyah: SuraAyah, page: Int): Boolean {
-    return if (isSuraAyahBookmarked(suraAyah)) {
-      val bookmarkIds = bookmarks.value
-        .filter { it.sura == suraAyah.sura && it.ayah == suraAyah.ayah }
-        .map { bookmark -> bookmark.id }
-        .toSet()
-      bookmarks.update { current ->
-        current.filterNot { it.sura == suraAyah.sura && it.ayah == suraAyah.ayah }
-      }
-      defaultBookmarkIds.update { current -> current - bookmarkIds }
-      changesFlow.tryEmit(Unit)
-      false
-    } else {
-      val id = "bookmark-${bookmarks.value.size + 1}"
-      bookmarks.update { current ->
-        current + Bookmark(id, suraAyah.sura, suraAyah.ayah, page, System.currentTimeMillis() / 1000)
-      }
-      defaultBookmarkIds.update { current -> current + id }
-      changesFlow.tryEmit(Unit)
-      true
-    }
-  }
-
   private fun sortBookmarks(bookmarks: List<Bookmark>, sortOrder: Int): List<Bookmark> {
     return when (sortOrder) {
       BookmarkSortOrder.SORT_LOCATION -> bookmarks.sortedWith(
@@ -344,12 +293,7 @@ class FakeBookmarksDao(
 
   private fun defaultCollection(bookmarks: List<Bookmark>): ReadingCollectionBookmarks {
     return ReadingCollectionBookmarks(
-      readingCollection = ReadingCollection(
-        id = DEFAULT_BOOKMARK_COLLECTION_ID,
-        name = DEFAULT_COLLECTION_NAME,
-        lastUpdated = bookmarks.lastUpdated(),
-        isSystem = true
-      ),
+      readingCollection = defaultCollectionMetadata.copy(lastUpdated = bookmarks.lastUpdated()),
       bookmarks = bookmarks.map { bookmark -> bookmark.toAyahBookmark() }
     )
   }
@@ -393,7 +337,6 @@ class FakeBookmarksDao(
       .map { collectionId -> collectionId.trim() }
       .filter { collectionId -> collectionId.isNotEmpty() }
       .distinct()
-      .ifEmpty { listOf(DEFAULT_BOOKMARK_COLLECTION_ID) }
       .toSet()
   }
 
@@ -402,7 +345,6 @@ class FakeBookmarksDao(
   }
 
   private companion object {
-    private const val DEFAULT_COLLECTION_NAME = "Default"
     private const val EPOCH_SECONDS_UPPER_BOUND = 10_000_000_000L
     private val EMPTY_COLLECTION_TIMESTAMP = Instant.fromEpochMilliseconds(0)
   }

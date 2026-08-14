@@ -3,6 +3,7 @@ package com.quran.mobile.feature.ayahbookmark.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -64,6 +65,7 @@ internal fun NewCollectionTriggerRow(
 internal fun NewCollectionInputRow(
   name: String,
   isSubmitting: Boolean,
+  hasNameError: Boolean,
   onNameChange: (String) -> Unit,
   onCancel: () -> Unit,
   onCreate: () -> Unit,
@@ -72,7 +74,11 @@ internal fun NewCollectionInputRow(
   val focusRequester = remember { FocusRequester() }
   LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
-  val underlineColor = MaterialTheme.colorScheme.primary
+  val underlineColor = if (hasNameError) {
+    MaterialTheme.colorScheme.error
+  } else {
+    MaterialTheme.colorScheme.primary
+  }
   val strokeWidth = with(LocalDensity.current) { 2.dp.toPx() }
 
   Row(
@@ -84,44 +90,54 @@ internal fun NewCollectionInputRow(
   ) {
     PlusGlyph(color = MaterialTheme.colorScheme.primary)
 
-    Box(modifier = Modifier.weight(1f)) {
-      val textFieldValue = remember {
-        mutableStateOf(TextFieldValue(text = name, selection = TextRange(name.length)))
-      }
+    Column(modifier = Modifier.weight(1f)) {
+      Box {
+        val textFieldValue = remember {
+          mutableStateOf(TextFieldValue(text = name, selection = TextRange(name.length)))
+        }
 
-      BasicTextField(
-        value = textFieldValue.value,
-        onValueChange = { newValue ->
-          textFieldValue.value = newValue
-          onNameChange(newValue.text)
-        },
-        enabled = !isSubmitting,
-        singleLine = true,
-        textStyle = TextStyle(
-          fontSize = 14.5.sp,
-          color = MaterialTheme.colorScheme.onSurface
-        ),
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        keyboardActions = KeyboardActions(onDone = { onCreate() }),
-        modifier = Modifier
-          .fillMaxWidth()
-          .focusRequester(focusRequester)
-          .drawBehind {
-            drawLine(
-              color = underlineColor,
-              start = Offset(0f, size.height),
-              end = Offset(size.width, size.height),
-              strokeWidth = strokeWidth
-            )
-          }
-          .padding(vertical = 5.dp)
-      )
-      if (textFieldValue.value.text.isEmpty()) {
+        BasicTextField(
+          value = textFieldValue.value,
+          onValueChange = { newValue ->
+            textFieldValue.value = newValue
+            onNameChange(newValue.text)
+          },
+          enabled = !isSubmitting,
+          singleLine = true,
+          textStyle = TextStyle(
+            fontSize = 14.5.sp,
+            color = MaterialTheme.colorScheme.onSurface
+          ),
+          keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+          keyboardActions = KeyboardActions(onDone = { onCreate() }),
+          modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester)
+            .drawBehind {
+              drawLine(
+                color = underlineColor,
+                start = Offset(0f, size.height),
+                end = Offset(size.width, size.height),
+                strokeWidth = strokeWidth
+              )
+            }
+            .padding(vertical = 5.dp)
+        )
+        if (textFieldValue.value.text.isEmpty()) {
+          Text(
+            text = stringResource(R.string.ayahbookmark_collection_name_hint),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(vertical = 5.dp)
+          )
+        }
+      }
+      if (hasNameError) {
         Text(
-          text = stringResource(R.string.ayahbookmark_collection_name_hint),
-          style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-          modifier = Modifier.padding(vertical = 5.dp)
+          text = stringResource(R.string.ayahbookmark_collection_name_error),
+          style = MaterialTheme.typography.labelSmall,
+          color = MaterialTheme.colorScheme.error,
+          modifier = Modifier.padding(top = 3.dp)
         )
       }
     }

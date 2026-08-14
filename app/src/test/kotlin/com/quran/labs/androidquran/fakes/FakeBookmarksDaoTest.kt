@@ -16,12 +16,7 @@ class FakeBookmarksDaoTest {
     val tag = Tag("tag-1", "Review")
     bookmarksDao.setTags(listOf(tag))
 
-    bookmarksDao.updateAyahBookmarkTags(
-      suraAyah = SuraAyah(6, 76),
-      page = 137,
-      tagIds = setOf(tag.id),
-      deleteNonTagged = true
-    )
+    bookmarksDao.replaceAyahBookmarkCollections(SuraAyah(6, 76), setOf(tag.id))
 
     val collections = bookmarksDao.collectionsWithBookmarksFlow().first()
 
@@ -50,12 +45,7 @@ class FakeBookmarksDaoTest {
     val bookmarksDao = FakeBookmarksDao()
     val tag = Tag("tag-1", "Review")
     bookmarksDao.setTags(listOf(tag))
-    bookmarksDao.updateAyahBookmarkTags(
-      suraAyah = SuraAyah(6, 76),
-      page = 137,
-      tagIds = setOf(tag.id),
-      deleteNonTagged = true
-    )
+    bookmarksDao.replaceAyahBookmarkCollections(SuraAyah(6, 76), setOf(tag.id))
 
     bookmarksDao.removeTags(listOf(tag))
 
@@ -67,12 +57,7 @@ class FakeBookmarksDaoTest {
     val bookmarksDao = FakeBookmarksDao()
     val tag = Tag("tag-1", "Review")
     bookmarksDao.setTags(listOf(tag))
-    bookmarksDao.updateAyahBookmarkTags(
-      suraAyah = SuraAyah(6, 76),
-      page = 137,
-      tagIds = setOf(tag.id),
-      deleteNonTagged = true
-    )
+    bookmarksDao.replaceAyahBookmarkCollections(SuraAyah(6, 76), setOf(tag.id))
 
     bookmarksDao.removeBookmarkFromTag(bookmarksDao.currentBookmarks().single(), tag.id)
 
@@ -90,5 +75,27 @@ class FakeBookmarksDaoTest {
 
     assertThat(bookmarksDao.currentBookmarks().single().tags).isEmpty()
     assertThat(bookmarksDao.isSuraAyahBookmarked(SuraAyah(6, 76))).isTrue()
+  }
+
+  @Test
+  fun `empty collection replacement removes an existing collection bookmark`() = runTest {
+    val bookmarksDao = FakeBookmarksDao()
+    val suraAyah = SuraAyah(6, 76)
+    bookmarksDao.setBookmarks(listOf(Bookmark("bookmark-1", 6, 76, 137)))
+
+    val changed = bookmarksDao.replaceAyahBookmarkCollections(suraAyah, emptySet())
+
+    assertThat(changed).isTrue()
+    assertThat(bookmarksDao.currentBookmarks()).isEmpty()
+  }
+
+  @Test
+  fun `empty collection replacement does not create a bookmark`() = runTest {
+    val bookmarksDao = FakeBookmarksDao()
+
+    val changed = bookmarksDao.replaceAyahBookmarkCollections(SuraAyah(6, 76), emptySet())
+
+    assertThat(changed).isFalse()
+    assertThat(bookmarksDao.currentBookmarks()).isEmpty()
   }
 }

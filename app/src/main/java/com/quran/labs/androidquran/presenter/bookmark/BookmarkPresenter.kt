@@ -23,7 +23,6 @@ import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.QuranSettings
-import com.quran.mobile.bookmark.model.isDefaultBookmarkCollectionId
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Provider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -140,7 +139,7 @@ open class BookmarkPresenter @Inject internal constructor(
   fun shouldShowInlineTags(): Boolean = !isGroupedByTags
 
   fun getContextualOperationsForItems(rows: List<QuranRow>): BooleanArray {
-    val headers = rows.count { row -> row.isBookmarkHeader && row.userTagId() != null }
+    val headers = rows.count { row -> row.isBookmarkHeader && row.tagId != null }
     val bookmarks = rows.count { row -> row.isBookmark }
     return booleanArrayOf(
       headers == 1 && bookmarks == 0,
@@ -211,7 +210,7 @@ open class BookmarkPresenter @Inject internal constructor(
 
     for (row in remove) {
       val bookmarkId = row.bookmarkId
-      val tagId = row.userTagId()
+      val tagId = row.tagId
       when {
         row.isBookmark && bookmarkId != null -> {
           if (isGroupedByTags && tagId != null) {
@@ -236,7 +235,7 @@ open class BookmarkPresenter @Inject internal constructor(
       when (rowData) {
         is BookmarkItem -> {
           val bookmarkId = rowData.bookmark.id
-          val currentTagId = rowData.tagId?.takeUnless { tagId -> tagId.isDefaultBookmarkCollectionId() }
+          val currentTagId = rowData.tagId
           var shouldKeep = true
 
           if (bookmarkIdsToRemove.contains(bookmarkId)) {
@@ -334,7 +333,7 @@ open class BookmarkPresenter @Inject internal constructor(
       val bookmarksToUntag = mutableListOf<Pair<Bookmark, String>>()
 
       items.forEach { row ->
-        val tagId = row.userTagId()
+        val tagId = row.tagId
         when {
           row.isBookmarkHeader && tagId != null -> {
             tagsToDelete += Tag(tagId, row.text)
@@ -384,7 +383,7 @@ open class BookmarkPresenter @Inject internal constructor(
         bookmarkData.copy(
           bookmarks = arabicDatabaseUtils().hydrateAyahText(bookmarkData.bookmarks.toMutableList())
         )
-      } catch (exception: Exception) {
+      } catch (_: Exception) {
         bookmarkData
       }
     }
@@ -526,10 +525,6 @@ open class BookmarkPresenter @Inject internal constructor(
     return tags.associateByTo(mutableMapOf()) { it.id }
   }
 
-  private fun QuranRow.userTagId(): String? {
-    return tagId?.takeUnless { tagId -> tagId.isDefaultBookmarkCollectionId() }
-  }
-
   override fun bind(fragment: BookmarksFragment) {
     this.fragment = fragment
     requestData(true)
@@ -549,7 +544,7 @@ open class BookmarkPresenter @Inject internal constructor(
   private data class TagsMapping(
     val byTagId: Map<String, List<Bookmark>>,
     /**
-     * The default collection is not exposed as a user tag, so this is the visible "no user tags"
+     * The default collection is not exposed as a user tag, so this is the UI's "no user tags"
      * section rather than a persisted collection ID.
      */
     val bookmarksWithoutUserTags: List<Bookmark>

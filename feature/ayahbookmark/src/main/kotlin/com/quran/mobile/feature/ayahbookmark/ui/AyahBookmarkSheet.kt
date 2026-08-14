@@ -126,6 +126,7 @@ internal fun AyahBookmarkSheet(
         is AyahBookmarkCollectionCreationState.Active -> NewCollectionInputRow(
           name = creation.name,
           isSubmitting = creation.isSubmitting,
+          hasNameError = creation.hasNameError,
           onNameChange = { eventSink(AyahBookmarkEvent.CollectionNameChanged(it)) },
           onCancel = { eventSink(AyahBookmarkEvent.CancelCreatingCollection) },
           onCreate = { eventSink(AyahBookmarkEvent.CreateCollection(creation.name)) }

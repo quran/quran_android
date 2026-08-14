@@ -6,5 +6,6 @@ data class ReadingCollection(
   val id: String,
   val name: String,
   val lastUpdated: Instant,
-  val isSystem: Boolean
+  val isSystem: Boolean,
+  val isDefault: Boolean = false
 )
