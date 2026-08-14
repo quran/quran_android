@@ -2,7 +2,6 @@ package com.quran.mobile.feature.sync
 
 import com.quran.data.di.AppCoroutineScope
 import com.quran.data.di.AppScope
-import com.quran.mobile.bookmark.di.DefaultMobileSyncRepositoryProvider
 import com.quran.mobile.bookmark.di.MobileSyncRepositoryProvider
 import com.quran.mobile.bookmark.model.BookmarkCollectionsState
 import com.quran.shared.persistence.model.AyahBookmark
@@ -34,10 +33,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 @SingleIn(AppScope::class)
-@ContributesBinding(
-  AppScope::class,
-  replaces = [DefaultMobileSyncRepositoryProvider::class]
-)
+@ContributesBinding(AppScope::class)
 @Inject
 class QuranSyncRepositoryProvider(
   syncManager: QuranSyncManager,
@@ -48,14 +44,14 @@ class QuranSyncRepositoryProvider(
   override val bookmarksRepository: BookmarksRepository =
     SyncBookmarksRepository(quranDataService)
 
+  override val bookmarkCollectionsState: BookmarkCollectionsState =
+    SyncBookmarkCollectionsState(quranDataService, appCoroutineScope)
+
   override val collectionsRepository: CollectionsRepository =
-    SyncCollectionsRepository(quranDataService)
+    SyncCollectionsRepository(quranDataService, bookmarkCollectionsState)
 
   override val collectionBookmarksRepository: CollectionBookmarksRepository =
     SyncCollectionBookmarksRepository(quranDataService)
-
-  override val bookmarkCollectionsState: BookmarkCollectionsState =
-    SyncBookmarkCollectionsState(quranDataService, appCoroutineScope)
 
   override val readingBookmarksRepository: ReadingBookmarksRepository =
     SyncReadingBookmarksRepository(quranDataService)
@@ -116,7 +112,7 @@ private class SyncBookmarksRepository(
     ayah: Int,
     collectionIds: List<String>
   ): BookmarkCollectionsReplacementResult {
-    val changed = ayahBookmarkMemberships(sura, ayah) != normalizedCollectionIds(collectionIds)
+    val changed = membershipsChanged(sura, ayah, collectionIds)
     return BookmarkCollectionsReplacementResult(
       bookmark = quranDataService.replaceAyahBookmarkCollections(sura, ayah, collectionIds),
       changed = changed
@@ -129,7 +125,7 @@ private class SyncBookmarksRepository(
     collectionIds: List<String>,
     timestamp: PlatformDateTime
   ): BookmarkCollectionsReplacementResult {
-    val changed = ayahBookmarkMemberships(sura, ayah) != normalizedCollectionIds(collectionIds)
+    val changed = membershipsChanged(sura, ayah, collectionIds)
     return BookmarkCollectionsReplacementResult(
       bookmark = quranDataService.replaceAyahBookmarkCollections(sura, ayah, collectionIds, timestamp),
       changed = changed
@@ -148,61 +144,65 @@ private class SyncBookmarksRepository(
     return quranDataService.deleteBookmark(id)
   }
 
-  private suspend fun ayahBookmarkMemberships(sura: Int, ayah: Int): Set<String>? {
-    val bookmark = getAllBookmarks()
-      .firstOrNull { bookmark -> bookmark.sura == sura && bookmark.ayah == ayah }
-      ?: return null
-    val bookmarkId = bookmark.id
-    return quranDataService.collectionsWithBookmarks.first()
-      .mapNotNull { collectionWithBookmarks ->
-        collectionWithBookmarks.collection.id
-          .takeIf {
-            collectionWithBookmarks.bookmarks.any { collectionBookmark ->
-              collectionBookmark.bookmarkId == bookmarkId
-            }
-          }
+  private suspend fun membershipsChanged(sura: Int, ayah: Int, collectionIds: List<String>): Boolean {
+    val collectionsWithBookmarks = quranDataService.collectionsWithBookmarks.first()
+    return ayahBookmarkMemberships(sura, ayah, collectionsWithBookmarks) !=
+      normalizedCollectionIds(collectionIds, collectionsWithBookmarks)
+  }
+
+  private fun ayahBookmarkMemberships(
+    sura: Int,
+    ayah: Int,
+    collectionsWithBookmarks: List<CollectionWithAyahBookmarks>
+  ): Set<String> {
+    return collectionsWithBookmarks
+      .filter { collectionWithBookmarks ->
+        collectionWithBookmarks.bookmarks.any { bookmark ->
+          bookmark.sura == sura && bookmark.ayah == ayah
+        }
       }
+      .map { collectionWithBookmarks -> collectionWithBookmarks.collection.id }
       .toSet()
   }
 
-  private fun normalizedCollectionIds(collectionIds: List<String>): Set<String> {
-    return collectionIds
+  private fun normalizedCollectionIds(
+    collectionIds: List<String>,
+    collectionsWithBookmarks: List<CollectionWithAyahBookmarks>
+  ): Set<String> {
+    val normalizedIds = collectionIds
       .map { collectionId -> collectionId.trim() }
       .filter { collectionId -> collectionId.isNotEmpty() }
-      .distinct()
-      .ifEmpty { listOf(quranDataService.defaultCollectionId) }
       .toSet()
+    if (normalizedIds.isNotEmpty()) {
+      return normalizedIds
+    }
+
+    val defaultCollectionId = checkNotNull(
+      collectionsWithBookmarks
+        .firstOrNull { collectionWithBookmarks -> collectionWithBookmarks.collection.isDefault }
+        ?.collection
+        ?.id
+    ) { "Default bookmark collection is missing from mobile-sync state." }
+    return setOf(defaultCollectionId)
   }
 }
 
-/**
- * Delegates shared collection membership state to mobile-sync's combined flow.
- *
- * That flow includes the virtual default collection, so callers do not need a second default
- * membership query. The state is app-scoped so multiple app subscribers share one upstream
- * mobile-sync collection.
- */
 private class SyncBookmarkCollectionsState(
-  private val quranDataService: QuranDataService,
+  quranDataService: QuranDataService,
   appCoroutineScope: AppCoroutineScope
 ) : BookmarkCollectionsState {
   override val collectionsWithBookmarks: StateFlow<List<CollectionWithAyahBookmarks>?> =
     quranDataService.collectionsWithBookmarks
       .distinctUntilChanged()
       .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
-
-  override suspend fun currentCollectionsWithBookmarks(): List<CollectionWithAyahBookmarks> {
-    return collectionsWithBookmarks
-      .filterNotNull()
-      .first()
-  }
 }
 
 private class SyncCollectionsRepository(
-  private val quranDataService: QuranDataService
+  private val quranDataService: QuranDataService,
+  private val bookmarkCollectionsState: BookmarkCollectionsState
 ) : CollectionsRepository {
   override suspend fun getAllCollections(): List<Collection> {
-    return quranDataService.collectionsWithBookmarks.first().map { it.collection }
+    return bookmarkCollectionsState.currentCollectionsWithBookmarks().map { it.collection }
   }
 
   override suspend fun addCollection(name: String): Collection {
@@ -230,7 +230,7 @@ private class SyncCollectionsRepository(
   }
 
   override fun getCollectionsFlow(): Flow<List<Collection>> {
-    return quranDataService.collectionsWithBookmarks.map { collections ->
+    return bookmarkCollectionsState.collectionsWithBookmarks.filterNotNull().map { collections ->
       collections.map { it.collection }
     }
   }

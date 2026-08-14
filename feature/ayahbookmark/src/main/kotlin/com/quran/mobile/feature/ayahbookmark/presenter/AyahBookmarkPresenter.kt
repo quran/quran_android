@@ -23,6 +23,7 @@ import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -110,27 +111,31 @@ class AyahBookmarkPresenter(
         is AyahBookmarkEvent.CollectionNameChanged -> {
           val current = collectionCreationState.value
           if (current is AyahBookmarkCollectionCreationState.Active) {
-            collectionCreationState.value = current.copy(name = event.name)
+            collectionCreationState.value = current.copy(name = event.name, hasNameError = false)
           }
         }
         is AyahBookmarkEvent.CreateCollection -> {
           collectionCreationState.value =
             AyahBookmarkCollectionCreationState.Active(event.name, true)
           scope.launch {
-            val collection = bookmarksDao.addCollection(event.name)
-            checkedCollectionIds.value += collection.id
-            collectionCreationState.value = AyahBookmarkCollectionCreationState.Inactive
+            try {
+              val collection = bookmarksDao.addCollection(event.name)
+              checkedCollectionIds.value += collection.id
+              collectionCreationState.value = AyahBookmarkCollectionCreationState.Inactive
+            } catch (exception: CancellationException) {
+              throw exception
+            } catch (exception: IllegalArgumentException) {
+              collectionCreationState.value = AyahBookmarkCollectionCreationState.Active(
+                name = event.name,
+                hasNameError = true
+              )
+            }
           }
         }
         AyahBookmarkEvent.Done ->
           appCoroutineScope.launch {
             isDismissed.value = true
-            val collections = checkedCollectionIds.value
-            if (collections.isNotEmpty()) {
-              bookmarksDao.replaceAyahBookmarkCollections(currentAyah, collections)
-            } else {
-              bookmarksDao.deleteAyahBookmark(currentAyah)
-            }
+            bookmarksDao.replaceAyahBookmarkCollections(currentAyah, checkedCollectionIds.value)
 
             val wasReadingBookmark = readingBookmark.value.asSuraAyah() == currentAyah
             if (wasReadingBookmark != isReadingBookmarkEnabledState.value) {

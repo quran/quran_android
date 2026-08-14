@@ -15,7 +15,6 @@ import com.quran.labs.androidquran.fakes.FakeReadingBookmarksDao
 import com.quran.labs.androidquran.fakes.FakeRecentPagesDao
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.QuranSettings
-import com.quran.mobile.bookmark.model.DEFAULT_BOOKMARK_COLLECTION_ID
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -148,13 +147,12 @@ class BookmarkPresenterTest {
   }
 
   @Test
-  fun `contextual actions ignore default collection header`() {
+  fun `contextual actions ignore non-tag collection header`() {
     val presenter = makeBookmarkPresenter()
     val result = presenter.getContextualOperationsForItems(
       listOf(
         QuranRow.Builder()
           .withType(QuranRow.BOOKMARK_HEADER)
-          .withTagId(DEFAULT_BOOKMARK_COLLECTION_ID)
           .build()
       )
     )

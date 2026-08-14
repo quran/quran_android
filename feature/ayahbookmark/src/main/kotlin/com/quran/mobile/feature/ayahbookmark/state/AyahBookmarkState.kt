@@ -34,7 +34,13 @@ data class AyahBookmarkCollectionItem(
 @Immutable
 sealed interface AyahBookmarkCollectionCreationState {
   data object Inactive : AyahBookmarkCollectionCreationState
-  data class Active(val name: String, val isSubmitting: Boolean = false) : AyahBookmarkCollectionCreationState
+
+  /** State for the inline collection editor, including persistence-level name rejection. */
+  data class Active(
+    val name: String,
+    val isSubmitting: Boolean = false,
+    val hasNameError: Boolean = false
+  ) : AyahBookmarkCollectionCreationState
 }
 
 sealed interface AyahBookmarkEvent {

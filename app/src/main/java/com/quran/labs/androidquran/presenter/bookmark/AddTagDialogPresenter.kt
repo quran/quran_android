@@ -6,6 +6,7 @@ import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog
 
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -37,15 +38,34 @@ internal constructor(private val bookmarksDao: BookmarksDao) : Presenter<AddTagD
     return true
   }
 
-  fun addTag(tagName: String) {
+  fun addTag(tagName: String, onAdded: () -> Unit) {
+    val requestDialog = dialog ?: return
     presenterScope.launch {
-      bookmarksDao.addTag(tagName)
+      try {
+        bookmarksDao.addTag(tagName)
+        if (dialog === requestDialog) {
+          onAdded()
+        }
+      } catch (exception: CancellationException) {
+        throw exception
+      } catch (_: IllegalArgumentException) {
+        if (dialog === requestDialog) {
+          requestDialog.onDuplicateTagName()
+        }
+      }
     }
   }
 
-  fun updateTag(tag: Tag) {
+  fun updateTag(tag: Tag, onUpdated: () -> Unit) {
+    val requestDialog = dialog ?: return
     presenterScope.launch {
-      bookmarksDao.updateTag(tag)
+      if (bookmarksDao.updateTag(tag)) {
+        if (dialog === requestDialog) {
+          onUpdated()
+        }
+      } else if (dialog === requestDialog) {
+        requestDialog.onDuplicateTagName()
+      }
     }
   }
 

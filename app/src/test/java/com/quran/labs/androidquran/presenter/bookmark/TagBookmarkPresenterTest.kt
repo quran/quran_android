@@ -3,7 +3,6 @@ package com.quran.labs.androidquran.presenter.bookmark
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
-import com.quran.data.dao.BookmarkSortOrder
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.base.TestApplication
@@ -47,22 +46,6 @@ class TagBookmarkPresenterTest {
       presenter.saveChanges()
 
       assertThat(bookmarksDao.getBookmarkTagIds(BOOKMARK_ID)).containsExactly(TAG_ID)
-    }
-  }
-
-  @Test
-  fun `change saves immediately for ayah bookmark mode`() {
-    runBlocking {
-      val presenter = TagBookmarkPresenter(bookmarksDao)
-
-      presenter.setAyahBookmarkMode(6, 76, 137)
-      assertThat(presenter.toggleTag(TAG_ID)).isTrue()
-
-      val bookmarks = bookmarksDao.bookmarks(BookmarkSortOrder.SORT_DATE_ADDED)
-      assertThat(bookmarks).hasSize(1)
-      assertThat(bookmarks.single().sura).isEqualTo(6)
-      assertThat(bookmarks.single().ayah).isEqualTo(76)
-      assertThat(bookmarks.single().tags).containsExactly(TAG_ID)
     }
   }
 

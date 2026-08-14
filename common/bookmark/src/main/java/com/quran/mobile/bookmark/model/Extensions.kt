@@ -19,7 +19,8 @@ internal fun Collection.asReadingCollection(): ReadingCollection {
     id = id,
     name = name,
     lastUpdated = lastUpdated,
-    isSystem = isDefault
+    isSystem = isSystem,
+    isDefault = isDefault
   )
 }
 

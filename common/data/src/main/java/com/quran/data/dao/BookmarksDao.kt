@@ -29,28 +29,17 @@ interface BookmarksDao {
   suspend fun removeTags(tags: List<Tag>)
 
   suspend fun getBookmarkTagIds(bookmarkId: String): List<String>
-  suspend fun getAyahBookmarkTagIds(suraAyah: SuraAyah): List<String>
   suspend fun updateBookmarkTags(
     bookmarkIds: Array<String>,
     tagIds: Set<String>,
     deleteNonTagged: Boolean
   ): Boolean
-  suspend fun updateAyahBookmarkTags(
-    suraAyah: SuraAyah,
-    page: Int,
-    tagIds: Set<String>,
-    deleteNonTagged: Boolean
-  ): Boolean
   suspend fun removeBookmarkFromTag(bookmark: Bookmark, tagId: String): Boolean
-
   suspend fun removeBookmarks(bookmarks: List<Bookmark>)
-  suspend fun removeBookmarksForPage(page: Int)
   suspend fun deleteAyahBookmark(suraAyah: SuraAyah): Boolean
-  suspend fun replaceAyahBookmarks(bookmarks: List<Bookmark>)
   suspend fun isSuraAyahBookmarked(suraAyah: SuraAyah): Boolean
   suspend fun replaceAyahBookmarkCollections(
     suraAyah: SuraAyah,
     collectionIds: Set<String>
   ): Boolean
-  suspend fun toggleAyahBookmark(suraAyah: SuraAyah, page: Int): Boolean
 }

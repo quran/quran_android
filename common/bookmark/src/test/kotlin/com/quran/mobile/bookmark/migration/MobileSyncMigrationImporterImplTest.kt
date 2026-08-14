@@ -14,7 +14,7 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImportReadingBookmark
 import com.quran.mobile.bookmark.importdata.MobileSyncImportReadingSession
 import com.quran.mobile.bookmark.importdata.MobileSyncImporterImpl
 import com.quran.mobile.bookmark.model.BookmarksDaoImpl
-import com.quran.mobile.bookmark.model.RepositoryBookmarkCollectionsState
+import com.quran.mobile.bookmark.model.RepositoryBackedTestBookmarkCollectionsState
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepositoryImpl
@@ -51,7 +51,7 @@ class MobileSyncImporterImplTest {
       bookmarksRepository = BookmarksRepositoryImpl(mobileSyncDatabase.database),
       collectionsRepository = collectionsRepository,
       collectionBookmarksRepository = collectionBookmarksRepository,
-      bookmarkCollectionsState = RepositoryBookmarkCollectionsState(
+      bookmarkCollectionsState = RepositoryBackedTestBookmarkCollectionsState(
         collectionsRepository,
         collectionBookmarksRepository,
         appCoroutineScope
