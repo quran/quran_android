@@ -10,8 +10,4 @@
   <string name="ayahbookmark_collection_name_hint">يىغقۇ ئىسمى</string>
   <string name="ayahbookmark_cancel">ۋاز كەچ</string>
   <string name="ayahbookmark_create">قۇر</string>
-  <string name="ayahbookmark_remove_bookmark">خەتكۈچنى ئۆچۈر</string>
-  <string name="ayahbookmark_last_place_warning">ئۇنى كەم دېگەندە بىر جايدا ساقلاڭ - ئۆچۈرۈش ئۈچۈن تۆۋەندىكى خەتكۈچنى ئۆچۈر نى ئىشلىتىڭ.</string>
-  <string name="ayahbookmark_bookmark_removed">خەتكۈچ ئۆچۈرۈلدى</string>
-  <string name="ayahbookmark_undo">يېنىۋال</string>
 </resources>
