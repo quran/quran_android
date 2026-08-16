@@ -183,7 +183,6 @@ class BookmarksDaoImpl @Inject constructor(
           }
           replaceBookmarkCollectionIds(
             bookmark = bookmark,
-            currentCollectionIds = currentCollectionIds,
             targetCollectionIds = targetCollectionIds,
             timestamp = timestamp
           )
@@ -195,18 +194,13 @@ class BookmarksDaoImpl @Inject constructor(
   override suspend fun removeBookmarkFromTag(bookmark: Bookmark, tagId: String): Boolean {
     return withContext(Dispatchers.IO) {
       val bookmarkCollectionData = bookmarkCollectionData()
-      val ayahBookmark = bookmarkCollectionData.ayahBookmark(bookmark)
-      val currentCollectionIds = ayahBookmark
-        ?.let { bookmarkCollectionData.collectionIdsByBookmarkId[it.id] }
-        .orEmpty()
-      if (
-        ayahBookmark == null ||
-        !bookmarkCollectionData.collectionsById.containsKey(tagId) ||
-        tagId !in currentCollectionIds
-      ) {
+      val membership = bookmarkCollectionData
+        .tagMembershipsByBookmarkId[bookmark.id]
+        ?.get(tagId)
+      if (membership == null) {
         false
       } else {
-        collectionBookmarksRepository.removeBookmarkFromCollection(tagId, ayahBookmark)
+        collectionBookmarksRepository.removeAyahBookmarkFromCollection(membership)
       }
     }
   }
@@ -214,19 +208,19 @@ class BookmarksDaoImpl @Inject constructor(
   override suspend fun removeBookmarks(bookmarks: List<Bookmark>) {
     val timestamp = timestampProvider.now()
     withContext(Dispatchers.IO) {
-      val bookmarkCollectionData = bookmarkCollectionData()
       bookmarks
         .filterNot { it.isPageBookmark() }
         .forEach { bookmark ->
-          val ayahBookmark = bookmarkCollectionData.ayahBookmark(bookmark) ?: return@forEach
-          replaceBookmarkCollectionIds(
-            bookmark = ayahBookmark,
-            currentCollectionIds = bookmarkCollectionData
-              .collectionIdsByBookmarkId[ayahBookmark.id]
-              .orEmpty(),
-            targetCollectionIds = emptySet(),
-            timestamp = timestamp
-          )
+          val sura = bookmark.sura
+          val ayah = bookmark.ayah
+          if (sura != null && ayah != null) {
+            replaceBookmarkCollections(
+              sura = sura,
+              ayah = ayah,
+              targetCollectionIds = emptySet(),
+              timestamp = timestamp
+            )
+          }
         }
     }
   }
@@ -234,20 +228,12 @@ class BookmarksDaoImpl @Inject constructor(
   override suspend fun deleteAyahBookmark(suraAyah: SuraAyah): Boolean {
     val timestamp = timestampProvider.now()
     return withContext(Dispatchers.IO) {
-      val bookmarkCollectionData = bookmarkCollectionData()
-      val bookmark = bookmarkCollectionData.ayahBookmark(suraAyah)
-      if (bookmark == null) {
-        false
-      } else {
-        replaceBookmarkCollectionIds(
-          bookmark = bookmark,
-          currentCollectionIds = bookmarkCollectionData
-            .collectionIdsByBookmarkId[bookmark.id]
-            .orEmpty(),
-          targetCollectionIds = emptySet(),
-          timestamp = timestamp
-        )
-      }
+      replaceBookmarkCollections(
+        sura = suraAyah.sura,
+        ayah = suraAyah.ayah,
+        targetCollectionIds = emptySet(),
+        timestamp = timestamp
+      )
     }
   }
 
@@ -257,34 +243,17 @@ class BookmarksDaoImpl @Inject constructor(
   ): Boolean {
     val timestamp = timestampProvider.now()
     return withContext(Dispatchers.IO) {
-      val bookmarkCollectionData = bookmarkCollectionData()
-      val bookmarkCollectionIds = bookmarkCollectionData.bookmarkCollectionIds()
-      if (!bookmarkCollectionIds.containsAll(collectionIds)) {
+      try {
+        replaceBookmarkCollections(
+          sura = suraAyah.sura,
+          ayah = suraAyah.ayah,
+          targetCollectionIds = collectionIds,
+          timestamp = timestamp
+        )
+      } catch (exception: CancellationException) {
+        throw exception
+      } catch (_: IllegalArgumentException) {
         false
-      } else {
-        val existingBookmark = bookmarkCollectionData.ayahBookmark(suraAyah)
-        if (existingBookmark == null) {
-          if (collectionIds.isEmpty()) {
-            false
-          } else {
-            bookmarksRepository.addBookmark(
-              sura = suraAyah.sura,
-              ayah = suraAyah.ayah,
-              collectionIds = collectionIds.toList(),
-              timestamp = timestamp
-            )
-            true
-          }
-        } else {
-          replaceBookmarkCollectionIds(
-            bookmark = existingBookmark,
-            currentCollectionIds = bookmarkCollectionData
-              .collectionIdsByBookmarkId[existingBookmark.id]
-              .orEmpty(),
-            targetCollectionIds = collectionIds,
-            timestamp = timestamp
-          )
-        }
       }
     }
   }
@@ -297,21 +266,29 @@ class BookmarksDaoImpl @Inject constructor(
 
   private suspend fun replaceBookmarkCollectionIds(
     bookmark: AyahBookmark,
-    currentCollectionIds: Set<String>,
     targetCollectionIds: Set<String>,
     timestamp: PlatformDateTime
   ): Boolean {
-    return if (currentCollectionIds == targetCollectionIds) {
-      false
-    } else {
-      (targetCollectionIds - currentCollectionIds).forEach { collectionId ->
-        collectionBookmarksRepository.addBookmarkToCollection(collectionId, bookmark, timestamp)
-      }
-      (currentCollectionIds - targetCollectionIds).forEach { collectionId ->
-        collectionBookmarksRepository.removeBookmarkFromCollection(collectionId, bookmark)
-      }
-      true
-    }
+    return replaceBookmarkCollections(
+      sura = bookmark.sura,
+      ayah = bookmark.ayah,
+      targetCollectionIds = targetCollectionIds,
+      timestamp = timestamp
+    )
+  }
+
+  private suspend fun replaceBookmarkCollections(
+    sura: Int,
+    ayah: Int,
+    targetCollectionIds: Set<String>,
+    timestamp: PlatformDateTime
+  ): Boolean {
+    return bookmarksRepository.replaceAyahBookmarkCollections(
+      sura = sura,
+      ayah = ayah,
+      collectionIds = targetCollectionIds.toList(),
+      timestamp = timestamp
+    ).changed
   }
 
   private suspend fun bookmarkCollectionData(): BookmarkCollectionData {
@@ -332,6 +309,11 @@ class BookmarksDaoImpl @Inject constructor(
     val collectionIdsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
       memberships.mapTo(mutableSetOf()) { membership -> membership.collectionId }
     }
+    val tagMembershipsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
+      memberships
+        .filterNot { membership -> membership.collectionId == defaultCollectionId }
+        .associateBy { membership -> membership.collectionId }
+    }
     val representativeMembershipsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
       memberships.maxBy { membership ->
         membership.bookmarkLastUpdated.fromPlatform().toEpochMilliseconds()
@@ -350,6 +332,7 @@ class BookmarksDaoImpl @Inject constructor(
       bookmarks = bookmarks,
       ayahBookmarksById = ayahBookmarksById,
       collectionIdsByBookmarkId = collectionIdsByBookmarkId,
+      tagMembershipsByBookmarkId = tagMembershipsByBookmarkId,
       collectionsById = editableCollectionsWithBookmarks
         .map { collectionWithBookmarks -> collectionWithBookmarks.collection }
         .associateBy { collection -> collection.id },
@@ -367,24 +350,10 @@ class BookmarksDaoImpl @Inject constructor(
     return tagIds.filter { tagId -> collectionsById.containsKey(tagId) }.toSet()
   }
 
-  private fun BookmarkCollectionData.bookmarkCollectionIds(): Set<String> {
-    return buildSet {
-      defaultCollectionId?.let(::add)
-      addAll(collectionsById.keys)
-    }
-  }
-
   private fun BookmarkCollectionData.ayahBookmark(suraAyah: SuraAyah): AyahBookmark? {
     return ayahBookmarksById.values.firstOrNull { bookmark ->
       bookmark.sura == suraAyah.sura && bookmark.ayah == suraAyah.ayah
     }
-  }
-
-  private fun BookmarkCollectionData.ayahBookmark(bookmark: Bookmark): AyahBookmark? {
-    return ayahBookmarksById[bookmark.id]
-      ?: ayahBookmarksById.values.firstOrNull { ayahBookmark ->
-        ayahBookmark.sura == bookmark.sura && ayahBookmark.ayah == bookmark.ayah
-      }
   }
 
   private fun BookmarkCollectionData.tagIds(bookmarkId: String): List<String> {
@@ -428,6 +397,7 @@ class BookmarksDaoImpl @Inject constructor(
     val bookmarks: List<Bookmark>,
     val ayahBookmarksById: Map<String, AyahBookmark>,
     val collectionIdsByBookmarkId: Map<String, Set<String>>,
+    val tagMembershipsByBookmarkId: Map<String, Map<String, CollectionAyahBookmark>>,
     val collectionsById: Map<String, SyncCollection>,
     val tags: List<Tag>,
     val defaultCollectionId: String?

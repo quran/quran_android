@@ -281,12 +281,8 @@ class QuranSyncManager(
     val pendingProcessId = syncPreferences.getString(KEY_LOGOUT_PENDING_PROCESS_ID, null) ?: return
     if (pendingProcessId == logoutRecoveryProcessId) return
 
-    // The previous process died while logout was in flight. Clear secure token material before the
-    // shared graph reloads tokens and reports the user as signed in again.
     runBlocking(Dispatchers.IO) {
-      tokenStore.removeAccessToken()
-      tokenStore.removeRefreshToken()
-      tokenStore.removeIdToken()
+      tokenStore.removeTokens()
     }
     clearLogoutPending()
   }
