@@ -4,7 +4,6 @@ import com.quran.data.di.AppCoroutineScope
 import com.quran.data.di.AppScope
 import com.quran.mobile.bookmark.di.MobileSyncRepositoryProvider
 import com.quran.mobile.bookmark.model.BookmarkCollectionsState
-import com.quran.shared.persistence.model.AyahBookmark
 import com.quran.shared.persistence.model.AyahHighlight
 import com.quran.shared.persistence.model.AyahHighlightColor
 import com.quran.shared.persistence.model.BookmarkCollectionsReplacementResult
@@ -51,7 +50,7 @@ class QuranSyncRepositoryProvider(
     SyncCollectionsRepository(quranDataService, bookmarkCollectionsState)
 
   override val collectionBookmarksRepository: CollectionBookmarksRepository =
-    SyncCollectionBookmarksRepository(quranDataService)
+    SyncCollectionBookmarksRepository(quranDataService, bookmarkCollectionsState)
 
   override val readingBookmarksRepository: ReadingBookmarksRepository =
     SyncReadingBookmarksRepository(quranDataService)
@@ -63,60 +62,12 @@ class QuranSyncRepositoryProvider(
 private class SyncBookmarksRepository(
   private val quranDataService: QuranDataService
 ) : BookmarksRepository {
-  override suspend fun getAllBookmarks(): List<AyahBookmark> {
-    return quranDataService.bookmarks.first()
-  }
-
-  override fun getBookmarksFlow(): Flow<List<AyahBookmark>> {
-    return quranDataService.bookmarks
-  }
-
-  override suspend fun addBookmark(sura: Int, ayah: Int): AyahBookmark {
-    return quranDataService.addBookmark(sura, ayah)
-  }
-
-  override suspend fun addBookmark(sura: Int, ayah: Int, timestamp: PlatformDateTime): AyahBookmark {
-    return quranDataService.addBookmark(sura, ayah, timestamp)
-  }
-
-  override suspend fun addBookmark(sura: Int, ayah: Int, collectionIds: List<String>): AyahBookmark {
-    return quranDataService.addBookmark(sura, ayah, collectionIds)
-  }
-
-  override suspend fun addBookmark(
-    sura: Int,
-    ayah: Int,
-    collectionIds: List<String>,
-    timestamp: PlatformDateTime
-  ): AyahBookmark {
-    return quranDataService.addBookmark(sura, ayah, collectionIds, timestamp)
-  }
-
-  override suspend fun replaceBookmarkCollections(
-    id: String,
-    collectionIds: List<String>
-  ): Boolean {
-    return quranDataService.replaceBookmarkCollections(id, collectionIds)
-  }
-
-  override suspend fun replaceBookmarkCollections(
-    id: String,
-    collectionIds: List<String>,
-    timestamp: PlatformDateTime
-  ): Boolean {
-    return quranDataService.replaceBookmarkCollections(id, collectionIds, timestamp)
-  }
-
   override suspend fun replaceAyahBookmarkCollections(
     sura: Int,
     ayah: Int,
     collectionIds: List<String>
   ): BookmarkCollectionsReplacementResult {
-    val changed = membershipsChanged(sura, ayah, collectionIds)
-    return BookmarkCollectionsReplacementResult(
-      bookmark = quranDataService.replaceAyahBookmarkCollections(sura, ayah, collectionIds),
-      changed = changed
-    )
+    return quranDataService.replaceAyahBookmarkCollections(sura, ayah, collectionIds)
   }
 
   override suspend fun replaceAyahBookmarkCollections(
@@ -125,65 +76,7 @@ private class SyncBookmarksRepository(
     collectionIds: List<String>,
     timestamp: PlatformDateTime
   ): BookmarkCollectionsReplacementResult {
-    val changed = membershipsChanged(sura, ayah, collectionIds)
-    return BookmarkCollectionsReplacementResult(
-      bookmark = quranDataService.replaceAyahBookmarkCollections(sura, ayah, collectionIds, timestamp),
-      changed = changed
-    )
-  }
-
-  override suspend fun deleteBookmark(sura: Int, ayah: Int): Boolean {
-    return quranDataService.deleteBookmark(sura, ayah)
-  }
-
-  override suspend fun deleteBookmark(bookmark: AyahBookmark): Boolean {
-    return quranDataService.deleteBookmark(bookmark)
-  }
-
-  override suspend fun deleteBookmark(id: String): Boolean {
-    return quranDataService.deleteBookmark(id)
-  }
-
-  private suspend fun membershipsChanged(sura: Int, ayah: Int, collectionIds: List<String>): Boolean {
-    val collectionsWithBookmarks = quranDataService.collectionsWithBookmarks.first()
-    return ayahBookmarkMemberships(sura, ayah, collectionsWithBookmarks) !=
-      normalizedCollectionIds(collectionIds, collectionsWithBookmarks)
-  }
-
-  private fun ayahBookmarkMemberships(
-    sura: Int,
-    ayah: Int,
-    collectionsWithBookmarks: List<CollectionWithAyahBookmarks>
-  ): Set<String> {
-    return collectionsWithBookmarks
-      .filter { collectionWithBookmarks ->
-        collectionWithBookmarks.bookmarks.any { bookmark ->
-          bookmark.sura == sura && bookmark.ayah == ayah
-        }
-      }
-      .map { collectionWithBookmarks -> collectionWithBookmarks.collection.id }
-      .toSet()
-  }
-
-  private fun normalizedCollectionIds(
-    collectionIds: List<String>,
-    collectionsWithBookmarks: List<CollectionWithAyahBookmarks>
-  ): Set<String> {
-    val normalizedIds = collectionIds
-      .map { collectionId -> collectionId.trim() }
-      .filter { collectionId -> collectionId.isNotEmpty() }
-      .toSet()
-    if (normalizedIds.isNotEmpty()) {
-      return normalizedIds
-    }
-
-    val defaultCollectionId = checkNotNull(
-      collectionsWithBookmarks
-        .firstOrNull { collectionWithBookmarks -> collectionWithBookmarks.collection.isDefault }
-        ?.collection
-        ?.id
-    ) { "Default bookmark collection is missing from mobile-sync state." }
-    return setOf(defaultCollectionId)
+    return quranDataService.replaceAyahBookmarkCollections(sura, ayah, collectionIds, timestamp)
   }
 }
 
@@ -237,27 +130,14 @@ private class SyncCollectionsRepository(
 }
 
 private class SyncCollectionBookmarksRepository(
-  private val quranDataService: QuranDataService
+  private val quranDataService: QuranDataService,
+  private val bookmarkCollectionsState: BookmarkCollectionsState
 ) : CollectionBookmarksRepository {
   override suspend fun getBookmarksForCollection(collectionId: String): List<CollectionAyahBookmark> {
-    return quranDataService.getBookmarksForCollectionFlow(collectionId).first()
-  }
-
-  override suspend fun addBookmarkToCollection(
-    collectionId: String,
-    bookmark: AyahBookmark
-  ): CollectionAyahBookmark {
-    quranDataService.addBookmarkToCollection(collectionId, bookmark)
-    return collectionBookmarkFor(collectionId, bookmark)
-  }
-
-  override suspend fun addBookmarkToCollection(
-    collectionId: String,
-    bookmark: AyahBookmark,
-    timestamp: PlatformDateTime
-  ): CollectionAyahBookmark {
-    quranDataService.addBookmarkToCollection(collectionId, bookmark, timestamp)
-    return collectionBookmarkFor(collectionId, bookmark)
+    return bookmarkCollectionsState.currentCollectionsWithBookmarks()
+      .firstOrNull { collection -> collection.collection.id == collectionId }
+      ?.bookmarks
+      .orEmpty()
   }
 
   override suspend fun addAyahBookmarkToCollection(
@@ -277,14 +157,6 @@ private class SyncCollectionBookmarksRepository(
     return quranDataService.addAyahBookmarkToCollection(collectionId, sura, ayah, timestamp)
   }
 
-  override suspend fun removeBookmarkFromCollection(
-    collectionId: String,
-    bookmark: AyahBookmark
-  ): Boolean {
-    quranDataService.removeBookmarkFromCollection(collectionId, bookmark)
-    return true
-  }
-
   override suspend fun removeAyahBookmarkFromCollection(
     collectionAyahBookmark: CollectionAyahBookmark
   ): Boolean {
@@ -293,16 +165,15 @@ private class SyncCollectionBookmarksRepository(
   }
 
   override fun getBookmarksForCollectionFlow(collectionId: String): Flow<List<CollectionAyahBookmark>> {
-    return quranDataService.getBookmarksForCollectionFlow(collectionId)
-  }
-
-  private suspend fun collectionBookmarkFor(
-    collectionId: String,
-    bookmark: AyahBookmark
-  ): CollectionAyahBookmark {
-    return getBookmarksForCollection(collectionId)
-      .firstOrNull { collectionBookmark -> collectionBookmark.bookmarkId == bookmark.id }
-      ?: error("Expected bookmark ${bookmark.id} in collection $collectionId after sync-service write.")
+    return bookmarkCollectionsState.collectionsWithBookmarks
+      .filterNotNull()
+      .map { collections ->
+        collections
+          .firstOrNull { collection -> collection.collection.id == collectionId }
+          ?.bookmarks
+          .orEmpty()
+      }
+      .distinctUntilChanged()
   }
 
   override fun getHighlightsFlow(): Flow<List<AyahHighlight>> {
@@ -316,6 +187,13 @@ private class SyncCollectionBookmarksRepository(
     timestamp: PlatformDateTime
   ): AyahHighlight {
     return quranDataService.setHighlight(sura, ayah, color, timestamp)
+  }
+
+  override suspend fun removeHighlight(
+    sura: Int,
+    ayah: Int
+  ): Boolean {
+    return quranDataService.removeHighlight(sura, ayah)
   }
 
   override suspend fun removeHighlight(
