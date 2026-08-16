@@ -10,8 +10,4 @@
   <string name="ayahbookmark_collection_name_hint">收藏集名称</string>
   <string name="ayahbookmark_cancel">取消</string>
   <string name="ayahbookmark_create">创建</string>
-  <string name="ayahbookmark_remove_bookmark">移除书签</string>
-  <string name="ayahbookmark_last_place_warning">请至少保留一个位置－如需删除，请使用下方的移除书签。</string>
-  <string name="ayahbookmark_bookmark_removed">书签已移除</string>
-  <string name="ayahbookmark_undo">撤销</string>
 </resources>

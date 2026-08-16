@@ -6,23 +6,32 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
 @Immutable
-internal data class AyahBookmarkWarningColors(
+internal data class AyahBookmarkHighlightColors(
   val background: Color,
   val border: Color,
-  val content: Color
+  val icon: Color,
+  val title: Color,
+  val subtitle: Color,
+  val swatchOutline: Color
 )
 
-private val LightWarningColors = AyahBookmarkWarningColors(
-  background = Color(0xFFFBF2DD),
-  border = Color(0xFFECD9A8),
-  content = Color(0xFF7A5A10)
+private val LightHighlightColors = AyahBookmarkHighlightColors(
+  background = Color(0xFFFCFAF4),
+  border = Color(0xFFE6E2D6),
+  icon = Color(0xFF8A7A4A),
+  title = Color(0xFF4A422C),
+  subtitle = Color(0xFF8A7F63),
+  swatchOutline = Color(0xFFC4BDA6)
 )
 
-private val DarkWarningColors = AyahBookmarkWarningColors(
-  background = Color(0xFF3A331E),
-  border = Color(0xFF5C4E28),
-  content = Color(0xFFE0C589)
+private val DarkHighlightColors = AyahBookmarkHighlightColors(
+  background = Color(0xFF26231C),
+  border = Color(0xFF46402F),
+  icon = Color(0xFFC6B98E),
+  title = Color(0xFFE7DFCB),
+  subtitle = Color(0xFFA79C82),
+  swatchOutline = Color(0xFF6E6752)
 )
 
-internal val ayahBookmarkWarningColors: AyahBookmarkWarningColors
-  @Composable get() = if (isSystemInDarkTheme()) DarkWarningColors else LightWarningColors
+internal val ayahBookmarkHighlightColors: AyahBookmarkHighlightColors
+  @Composable get() = if (isSystemInDarkTheme()) DarkHighlightColors else LightHighlightColors

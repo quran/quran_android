@@ -10,8 +10,4 @@
   <string name="ayahbookmark_collection_name_hint">コレクション名</string>
   <string name="ayahbookmark_cancel">キャンセル</string>
   <string name="ayahbookmark_create">作成</string>
-  <string name="ayahbookmark_remove_bookmark">ブックマークを削除</string>
-  <string name="ayahbookmark_last_place_warning">少なくとも1か所には残してください。削除するには、下の「ブックマークを削除」を使用してください。</string>
-  <string name="ayahbookmark_bookmark_removed">ブックマークを削除しました</string>
-  <string name="ayahbookmark_undo">元に戻す</string>
 </resources>

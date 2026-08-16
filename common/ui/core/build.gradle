@@ -5,6 +5,9 @@ plugins {
 android.namespace 'com.quran.mobile.common.ui.core'
 
 dependencies {
+  api project(':common:data')
+
+  implementation libs.androidx.annotation
   implementation libs.compose.foundation
   implementation libs.compose.material
   implementation libs.compose.material3

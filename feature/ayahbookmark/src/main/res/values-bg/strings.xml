@@ -10,8 +10,4 @@
   <string name="ayahbookmark_collection_name_hint">Име на колекцията</string>
   <string name="ayahbookmark_cancel">Отказ</string>
   <string name="ayahbookmark_create">Създаване</string>
-  <string name="ayahbookmark_remove_bookmark">Премахване на отметката</string>
-  <string name="ayahbookmark_last_place_warning">Запазете поне на едно място - за да изтриете, използвайте Премахване на отметката по-долу.</string>
-  <string name="ayahbookmark_bookmark_removed">Отметката е премахната</string>
-  <string name="ayahbookmark_undo">Отмяна</string>
 </resources>
