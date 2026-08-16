@@ -17,14 +17,14 @@ data class AyahBookmarkState(
   val collections: ImmutableList<AyahBookmarkCollectionItem> = persistentListOf(),
   val collectionCreation: AyahBookmarkCollectionCreationState = AyahBookmarkCollectionCreationState.Inactive,
   val highlight: Highlight?,
-  val showLastPlaceWarning: Boolean = false,
-  val showRemoveBookmarkButton: Boolean = true,
-  val isBookmarkRemoved: Boolean = false,
   val isDismissed: Boolean = false,
   val suraAyahNameResolver: (Context, SuraAyah) -> String,
   val readingBookmarkNameResolver: (Context, ReadingBookmark) -> String,
   val eventSink: (AyahBookmarkEvent) -> Unit = {}
-)
+) {
+  val isSaved: Boolean
+    get() = isReadingBookmarkEnabled || highlight != null || collections.any { it.isChecked }
+}
 
 @Immutable
 data class AyahBookmarkCollectionItem(
@@ -55,7 +55,5 @@ sealed interface AyahBookmarkEvent {
   data class CreateCollection(val name: String) : AyahBookmarkEvent
   data class SetHighlight(val color: HighlightColor) : AyahBookmarkEvent
   data object ClearHighlight : AyahBookmarkEvent
-  data object RemoveBookmark : AyahBookmarkEvent
-  data object UndoRemoveBookmark : AyahBookmarkEvent
   data object Done : AyahBookmarkEvent
 }

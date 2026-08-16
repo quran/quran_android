@@ -10,8 +10,4 @@
   <string name="ayahbookmark_collection_name_hint">Kolleksiya adı</string>
   <string name="ayahbookmark_cancel">Ləğv et</string>
   <string name="ayahbookmark_create">Yarat</string>
-  <string name="ayahbookmark_remove_bookmark">Əlfəcini sil</string>
-  <string name="ayahbookmark_last_place_warning">Ən azı bir yerdə saxlayın - silmək üçün aşağıdakı Əlfəcini sil seçimindən istifadə edin.</string>
-  <string name="ayahbookmark_bookmark_removed">Əlfəcin silindi</string>
-  <string name="ayahbookmark_undo">Geri al</string>
 </resources>

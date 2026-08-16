@@ -5,10 +5,8 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -16,36 +14,23 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
+import com.quran.data.model.highlight.Highlight
+import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionCreationState
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionItem
-import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkEvent
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkState
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
+import kotlin.time.Instant
 
-/**
- * The whole ayah save/edit surface, driven entirely by [state]. Renders either the
- * live-editing sheet or the "Bookmark removed" undo toast — never both. The caller
- * (typically a bottom sheet host) is responsible for the surrounding scrim/animation
- * and must give this a bounded height, since the collections list scrolls internally
- * while the header and footer stay pinned.
- */
 @Composable
 fun AyahBookmark(
   state: AyahBookmarkState,
   modifier: Modifier = Modifier
 ) {
   Box(modifier = modifier.fillMaxWidth()) {
-    if (state.isBookmarkRemoved) {
-      BookmarkRemovedToast(
-        onUndo = { state.eventSink(AyahBookmarkEvent.UndoRemoveBookmark) },
-        modifier = Modifier
-          .align(Alignment.BottomCenter)
-          .padding(14.dp)
-      )
-    } else {
-      AyahBookmarkSheet(state = state)
-    }
+    AyahBookmarkSheet(state = state)
   }
 }
 
@@ -69,6 +54,12 @@ private val previewCollections = persistentListOf(
   AyahBookmarkCollectionItem(id = "memorization", name = "Memorization", countLabel = 45, isChecked = false)
 )
 
+private val previewUncheckedCollections =
+  previewCollections.map { it.copy(isChecked = false) }.toImmutableList()
+
+private fun previewHighlight(color: HighlightColor) =
+  Highlight(SuraAyah(4, 1), color, Instant.fromEpochMilliseconds(0))
+
 @Composable
 private fun PreviewScaffold(state: AyahBookmarkState) {
   QuranTheme {
@@ -91,6 +82,23 @@ private fun AyahBookmarkDefaultPreview() {
       isReadingBookmarkEnabled = true,
       currentReadingBookmark = AyahReadingBookmark(sura = 4, ayah = 34, timestamp = 0),
       collections = previewCollections,
+      highlight = previewHighlight(HighlightColor.YELLOW),
+      suraAyahNameResolver = previewSuraAyahNameResolver,
+      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
+    )
+  )
+}
+
+@Preview("no highlight")
+@Preview("no highlight (dark theme)", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun AyahBookmarkNoHighlightPreview() {
+  PreviewScaffold(
+    state = AyahBookmarkState(
+      ayah = SuraAyah(4, 1),
+      isReadingBookmarkEnabled = true,
+      currentReadingBookmark = AyahReadingBookmark(sura = 4, ayah = 34, timestamp = 0),
+      collections = previewCollections,
       highlight = null,
       suraAyahNameResolver = previewSuraAyahNameResolver,
       readingBookmarkNameResolver = previewReadingBookmarkNameResolver
@@ -98,17 +106,33 @@ private fun AyahBookmarkDefaultPreview() {
   )
 }
 
-@Preview("with last-place warning")
+@Preview("highlight only")
 @Composable
-private fun AyahBookmarkWarningPreview() {
+private fun AyahBookmarkHighlightOnlyPreview() {
   PreviewScaffold(
     state = AyahBookmarkState(
       ayah = SuraAyah(4, 1),
       isReadingBookmarkEnabled = false,
       currentReadingBookmark = PageReadingBookmark(page = 83, timestamp = 0),
-      collections = previewCollections.replacingAt(0, previewCollections[0].copy(isChecked = false)),
+      collections = previewUncheckedCollections,
+      highlight = previewHighlight(HighlightColor.PURPLE),
+      suraAyahNameResolver = previewSuraAyahNameResolver,
+      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
+    )
+  )
+}
+
+@Preview("nothing saved")
+@Preview("nothing saved (dark theme)", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun AyahBookmarkNothingSavedPreview() {
+  PreviewScaffold(
+    state = AyahBookmarkState(
+      ayah = SuraAyah(4, 1),
+      isReadingBookmarkEnabled = false,
+      currentReadingBookmark = PageReadingBookmark(page = 83, timestamp = 0),
+      collections = previewUncheckedCollections,
       highlight = null,
-      showLastPlaceWarning = true,
       suraAyahNameResolver = previewSuraAyahNameResolver,
       readingBookmarkNameResolver = previewReadingBookmarkNameResolver
     )
@@ -124,7 +148,7 @@ private fun AyahBookmarkCreatingCollectionPreview() {
       isReadingBookmarkEnabled = true,
       collections = previewCollections,
       collectionCreation = AyahBookmarkCollectionCreationState.Active(name = "Qiyam"),
-      highlight = null,
+      highlight = previewHighlight(HighlightColor.GREEN),
       suraAyahNameResolver = previewSuraAyahNameResolver,
       readingBookmarkNameResolver = previewReadingBookmarkNameResolver
     )
@@ -140,23 +164,7 @@ private fun AyahBookmarkCreatingCollectionSubmittingPreview() {
       isReadingBookmarkEnabled = true,
       collections = previewCollections,
       collectionCreation = AyahBookmarkCollectionCreationState.Active(name = "Qiyam", isSubmitting = true),
-      highlight = null,
-      suraAyahNameResolver = previewSuraAyahNameResolver,
-      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
-    )
-  )
-}
-
-@Preview("bookmark removed / undo toast")
-@Composable
-private fun AyahBookmarkRemovedPreview() {
-  PreviewScaffold(
-    state = AyahBookmarkState(
-      ayah = SuraAyah(4, 1),
-      isReadingBookmarkEnabled = false,
-      collections = previewCollections,
-      highlight = null,
-      isBookmarkRemoved = true,
+      highlight = previewHighlight(HighlightColor.BLUE),
       suraAyahNameResolver = previewSuraAyahNameResolver,
       readingBookmarkNameResolver = previewReadingBookmarkNameResolver
     )

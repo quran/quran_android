@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -65,10 +66,25 @@ internal fun AyahBookmarkSheet(
           .fillMaxWidth()
           .padding(bottom = 14.dp)
       ) {
+        val isSaved = state.isSaved
+        Text(
+          text = if (isSaved) {
+            stringResource(R.string.ayahbookmark_saved)
+          } else {
+            stringResource(R.string.ayahbookmark_not_saved)
+          },
+          style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
+          color = if (isSaved) {
+            MaterialTheme.colorScheme.onSurface
+          } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+          }
+        )
         Text(
           text = suraAyahName,
-          style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
-          color = MaterialTheme.colorScheme.onSurface
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          modifier = Modifier.padding(start = 9.dp)
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
@@ -86,6 +102,13 @@ internal fun AyahBookmarkSheet(
         isEnabled = state.isReadingBookmarkEnabled,
         currentReadingBookmarkName = currentReadingBookmarkName,
         onToggle = { eventSink(AyahBookmarkEvent.ToggleReadingBookmark) }
+      )
+
+      HighlightRow(
+        highlight = state.highlight?.color,
+        onSelect = { color -> eventSink(AyahBookmarkEvent.SetHighlight(color)) },
+        onClear = { eventSink(AyahBookmarkEvent.ClearHighlight) },
+        modifier = Modifier.padding(top = 10.dp)
       )
 
       Text(
@@ -110,13 +133,9 @@ internal fun AyahBookmarkSheet(
       }
     }
 
-    // pinned footer: last-place warning, new collection, remove bookmark
+    // pinned footer
     Column {
-      if (state.showLastPlaceWarning) {
-        LastPlaceWarningBanner(
-          modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp)
-        )
-      }
+      HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
       when (val creation = state.collectionCreation) {
         is AyahBookmarkCollectionCreationState.Inactive -> NewCollectionTriggerRow(
@@ -131,10 +150,6 @@ internal fun AyahBookmarkSheet(
           onCancel = { eventSink(AyahBookmarkEvent.CancelCreatingCollection) },
           onCreate = { eventSink(AyahBookmarkEvent.CreateCollection(creation.name)) }
         )
-      }
-
-      if (state.showRemoveBookmarkButton) {
-        RemoveBookmarkRow(onClick = { eventSink(AyahBookmarkEvent.RemoveBookmark) })
       }
     }
   }

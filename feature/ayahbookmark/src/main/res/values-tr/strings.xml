@@ -10,8 +10,4 @@
   <string name="ayahbookmark_collection_name_hint">Koleksiyon adı</string>
   <string name="ayahbookmark_cancel">İptal</string>
   <string name="ayahbookmark_create">Oluştur</string>
-  <string name="ayahbookmark_remove_bookmark">Sayfa işaretini kaldır</string>
-  <string name="ayahbookmark_last_place_warning">En az bir yerde tutun - silmek için aşağıdaki Sayfa işaretini kaldır seçeneğini kullanın.</string>
-  <string name="ayahbookmark_bookmark_removed">Sayfa işareti kaldırıldı</string>
-  <string name="ayahbookmark_undo">Geri al</string>
 </resources>

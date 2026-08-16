@@ -89,7 +89,7 @@ class AyahBookmarkWrapper(
       hasOpened.value = true
     }
 
-    // presenter-driven dismiss (Done, or the remove-bookmark undo window expiring)
+    // presenter-driven dismiss
     LaunchedEffect(state.isDismissed) {
       if (state.isDismissed) {
         scaffoldState.bottomSheetState.hide()
@@ -104,7 +104,7 @@ class AyahBookmarkWrapper(
           // pending changes, same as tapping Done would
           state.eventSink(AyahBookmarkEvent.Done)
         }
-        onDismissed(state.isReadingBookmarkEnabled || state.collections.any { it.isChecked })
+        onDismissed(state.isSaved)
       }
     }
 

@@ -10,8 +10,4 @@
   <string name="ayahbookmark_collection_name_hint">ชื่อคอลเลกชัน</string>
   <string name="ayahbookmark_cancel">ยกเลิก</string>
   <string name="ayahbookmark_create">สร้าง</string>
-  <string name="ayahbookmark_remove_bookmark">ลบที่คั่นหน้า</string>
-  <string name="ayahbookmark_last_place_warning">เก็บไว้อย่างน้อยหนึ่งที่ - หากต้องการลบ ให้ใช้ตัวเลือกลบที่คั่นหน้าด้านล่าง</string>
-  <string name="ayahbookmark_bookmark_removed">ลบที่คั่นหน้าแล้ว</string>
-  <string name="ayahbookmark_undo">เลิกทำ</string>
 </resources>

@@ -26,12 +26,9 @@ import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
-import kotlin.time.Duration.Companion.seconds
 
 @AssistedInject
 class AyahBookmarkPresenter(
@@ -65,16 +62,11 @@ class AyahBookmarkPresenter(
     val collectionCreationState = remember {
       mutableStateOf<AyahBookmarkCollectionCreationState>(AyahBookmarkCollectionCreationState.Inactive)
     }
-    val showLastPlaceWarningState = remember { mutableStateOf(false) }
-    val isBookmarkRemovedState = remember { mutableStateOf(false) }
 
-    val hasExistingCollections = remember { mutableStateOf(false) }
     val didSeedCollectionIds = remember { mutableStateOf(false) }
     val checkedCollectionIds = remember { mutableStateOf<Set<String>>(emptySet()) }
 
     val isDismissed = remember { mutableStateOf(false) }
-
-    val removalJob = remember { mutableStateOf<Job?>(null) }
 
     val collections = remember(collectionState.value, checkedCollectionIds.value) {
       collectionState.value.orEmpty().map { collectionState ->
@@ -99,31 +91,22 @@ class AyahBookmarkPresenter(
             .toSet()
         checkedCollectionIds.value = enabledCollections
         didSeedCollectionIds.value = true
-        hasExistingCollections.value = enabledCollections.isNotEmpty()
       }
     }
-
-    LaunchedEffect(showLastPlaceWarningState.value) {
-      if (showLastPlaceWarningState.value) {
-        delay(remainingItemWarningTimeout)
-        showLastPlaceWarningState.value = false
-      }
-    }
-
-    // this is true if we already had this bookmarked
-    val hasPersistedBookmark = hasExistingCollections.value || readingBookmark.value.asSuraAyah() == currentAyah
 
     val scope = rememberCoroutineScope()
     val eventSink: (AyahBookmarkEvent) -> Unit = { event ->
       when (event) {
         AyahBookmarkEvent.CancelCreatingCollection ->
           collectionCreationState.value = AyahBookmarkCollectionCreationState.Inactive
+
         is AyahBookmarkEvent.CollectionNameChanged -> {
           val current = collectionCreationState.value
           if (current is AyahBookmarkCollectionCreationState.Active) {
             collectionCreationState.value = current.copy(name = event.name, hasNameError = false)
           }
         }
+
         is AyahBookmarkEvent.CreateCollection -> {
           collectionCreationState.value =
             AyahBookmarkCollectionCreationState.Active(event.name, true)
@@ -142,6 +125,7 @@ class AyahBookmarkPresenter(
             }
           }
         }
+
         AyahBookmarkEvent.Done ->
           appCoroutineScope.launch {
             isDismissed.value = true
@@ -157,7 +141,7 @@ class AyahBookmarkPresenter(
             }
 
             val currentHighlight = currentHighlight.value
-            if (currentHighlight != highlight.value) {
+            if (currentHighlight?.color != highlight.value?.color) {
               if (currentHighlight == null) {
                 highlightsDao.clearHighlight(currentAyah)
               } else {
@@ -165,50 +149,20 @@ class AyahBookmarkPresenter(
               }
             }
           }
-        AyahBookmarkEvent.RemoveBookmark -> {
-          isBookmarkRemovedState.value = true
-          removalJob.value?.cancel()
-          removalJob.value = appCoroutineScope.launch {
-            delay(undoDefaultTimeout)
-            isDismissed.value = true
-            bookmarksDao.deleteAyahBookmark(currentAyah)
-            if (currentAyah == readingBookmark.value.asSuraAyah()) {
-              readingBookmarksDao.deleteReadingBookmark()
-            }
-          }
-        }
+
         AyahBookmarkEvent.StartCreatingCollection ->
           collectionCreationState.value = AyahBookmarkCollectionCreationState.Active(name = "")
         is AyahBookmarkEvent.ToggleCollection -> {
           val collectionIds = checkedCollectionIds.value
           checkedCollectionIds.value = if (event.id in collectionIds) {
-            if (!hasPersistedBookmark || collectionIds.size > 1 || isReadingBookmarkEnabledState.value) {
-              collectionIds - event.id
-            } else {
-              showLastPlaceWarningState.value = true
-              collectionIds
-            }
+            collectionIds - event.id
           } else {
             collectionIds + event.id
           }
         }
-        AyahBookmarkEvent.ToggleReadingBookmark -> {
-          val isEnabled = isReadingBookmarkEnabledState.value
-          if (isEnabled) {
-            if (!hasPersistedBookmark || checkedCollectionIds.value.isNotEmpty()) {
-              isReadingBookmarkEnabledState.value = false
-            } else {
-              showLastPlaceWarningState.value = true
-            }
-          } else {
-            isReadingBookmarkEnabledState.value = true
-          }
-        }
 
-        AyahBookmarkEvent.UndoRemoveBookmark -> {
-          removalJob.value?.cancel()
-          isBookmarkRemovedState.value = false
-        }
+        AyahBookmarkEvent.ToggleReadingBookmark ->
+          isReadingBookmarkEnabledState.value = !isReadingBookmarkEnabledState.value
 
         is AyahBookmarkEvent.SetHighlight -> {
           currentHighlight.value = Highlight(currentAyah, event.color, Clock.System.now())
@@ -227,10 +181,7 @@ class AyahBookmarkPresenter(
       collections = collections,
       collectionCreation = collectionCreationState.value,
       highlight = currentHighlight.value,
-      showLastPlaceWarning = showLastPlaceWarningState.value,
-      isBookmarkRemoved = isBookmarkRemovedState.value,
       isDismissed = isDismissed.value,
-      showRemoveBookmarkButton = hasPersistedBookmark,
       suraAyahNameResolver = { context, ayah -> quranNaming.getSuraAyahString(context, ayah.sura, ayah.ayah) },
       readingBookmarkNameResolver = { context, bookmark -> quranNaming.getReadingBookmarkString(context, bookmark) },
       eventSink = eventSink
@@ -250,10 +201,5 @@ class AyahBookmarkPresenter(
       is AyahReadingBookmark -> getSuraAyahString(context, bookmark.sura, bookmark.ayah)
       is PageReadingBookmark -> getSuraPageString(context, bookmark.page)
     }
-  }
-
-  companion object {
-    val undoDefaultTimeout = 4.seconds
-    val remainingItemWarningTimeout = 3.seconds
   }
 }
