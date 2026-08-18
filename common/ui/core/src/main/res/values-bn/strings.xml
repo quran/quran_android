@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- names of the ayah highlight colors -->
+  <string name="highlight_color_yellow">হলুদ</string>
+  <string name="highlight_color_green">সবুজ</string>
+  <string name="highlight_color_blue">নীল</string>
+  <string name="highlight_color_red">লাল</string>
+  <string name="highlight_color_purple">বেগুনি</string>
+</resources>

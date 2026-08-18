@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- names of the ayah highlight colors -->
+  <string name="highlight_color_yellow">Keltainen</string>
+  <string name="highlight_color_green">Vihreä</string>
+  <string name="highlight_color_blue">Sininen</string>
+  <string name="highlight_color_red">Punainen</string>
+  <string name="highlight_color_purple">Violetti</string>
+</resources>

@@ -6,4 +6,10 @@
   <string name="to">Idáig</string>
   <string name="loading">Betöltés&#8230;</string>
   <string name="canceling">Megszakítás&#8230;</string>
+  <!-- names of the ayah highlight colors -->
+  <string name="highlight_color_yellow">Sárga</string>
+  <string name="highlight_color_green">Zöld</string>
+  <string name="highlight_color_blue">Kék</string>
+  <string name="highlight_color_red">Piros</string>
+  <string name="highlight_color_purple">Lila</string>
 </resources>

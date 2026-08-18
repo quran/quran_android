@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Name der Sammlung</string>
   <string name="ayahbookmark_cancel">Abbrechen</string>
   <string name="ayahbookmark_create">Erstellen</string>
+  <string name="ayahbookmark_saved">Gespeichert</string>
+  <string name="ayahbookmark_not_saved">Nicht gespeichert</string>
+  <string name="ayahbookmark_highlight_title">Hervorhebung</string>
+  <string name="ayahbookmark_highlight_subtitle">Färbt den Vers auf der Seite</string>
+  <string name="ayahbookmark_highlight_none">Keine</string>
 </resources>

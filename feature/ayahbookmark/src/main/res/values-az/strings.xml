@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Kolleksiya adı</string>
   <string name="ayahbookmark_cancel">Ləğv et</string>
   <string name="ayahbookmark_create">Yarat</string>
+  <string name="ayahbookmark_saved">Saxlanılıb</string>
+  <string name="ayahbookmark_not_saved">Saxlanılmayıb</string>
+  <string name="ayahbookmark_highlight_title">Vurğulama</string>
+  <string name="ayahbookmark_highlight_subtitle">Səhifədə ayəni rəngləyir</string>
+  <string name="ayahbookmark_highlight_none">Yoxdur</string>
 </resources>

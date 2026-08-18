@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">مجموعے کا نام</string>
   <string name="ayahbookmark_cancel">منسوخ کریں</string>
   <string name="ayahbookmark_create">بنائیں</string>
+  <string name="ayahbookmark_saved">محفوظ</string>
+  <string name="ayahbookmark_not_saved">محفوظ نہیں</string>
+  <string name="ayahbookmark_highlight_title">نمایاں</string>
+  <string name="ayahbookmark_highlight_subtitle">صفحے پر آیت کو رنگ دیتا ہے</string>
+  <string name="ayahbookmark_highlight_none">کوئی نہیں</string>
 </resources>

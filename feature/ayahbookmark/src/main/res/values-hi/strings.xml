@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">संग्रह का नाम</string>
   <string name="ayahbookmark_cancel">रद्द करें</string>
   <string name="ayahbookmark_create">बनाएं</string>
+  <string name="ayahbookmark_saved">सहेजा गया</string>
+  <string name="ayahbookmark_not_saved">सहेजा नहीं गया</string>
+  <string name="ayahbookmark_highlight_title">हाइलाइट</string>
+  <string name="ayahbookmark_highlight_subtitle">पृष्ठ पर आयत को रंगता है</string>
+  <string name="ayahbookmark_highlight_none">कोई नहीं</string>
 </resources>

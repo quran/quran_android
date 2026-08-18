@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">收藏集名称</string>
   <string name="ayahbookmark_cancel">取消</string>
   <string name="ayahbookmark_create">创建</string>
+  <string name="ayahbookmark_saved">已保存</string>
+  <string name="ayahbookmark_not_saved">未保存</string>
+  <string name="ayahbookmark_highlight_title">高亮</string>
+  <string name="ayahbookmark_highlight_subtitle">为页面上的经文着色</string>
+  <string name="ayahbookmark_highlight_none">无</string>
 </resources>

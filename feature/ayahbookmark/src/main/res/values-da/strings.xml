@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Samlingens navn</string>
   <string name="ayahbookmark_cancel">Annuller</string>
   <string name="ayahbookmark_create">Opret</string>
+  <string name="ayahbookmark_saved">Gemt</string>
+  <string name="ayahbookmark_not_saved">Ikke gemt</string>
+  <string name="ayahbookmark_highlight_title">Fremhævning</string>
+  <string name="ayahbookmark_highlight_subtitle">Farvelægger verset på siden</string>
+  <string name="ayahbookmark_highlight_none">Ingen</string>
 </resources>

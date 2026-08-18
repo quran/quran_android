@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Emri i koleksionit</string>
   <string name="ayahbookmark_cancel">Anulo</string>
   <string name="ayahbookmark_create">Krijo</string>
+  <string name="ayahbookmark_saved">Ruajtur</string>
+  <string name="ayahbookmark_not_saved">Pa ruajtur</string>
+  <string name="ayahbookmark_highlight_title">Theksim</string>
+  <string name="ayahbookmark_highlight_subtitle">Ngjyros ajetin në faqe</string>
+  <string name="ayahbookmark_highlight_none">Asnjë</string>
 </resources>

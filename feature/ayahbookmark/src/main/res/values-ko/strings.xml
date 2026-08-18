@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">컬렉션 이름</string>
   <string name="ayahbookmark_cancel">취소</string>
   <string name="ayahbookmark_create">만들기</string>
+  <string name="ayahbookmark_saved">저장됨</string>
+  <string name="ayahbookmark_not_saved">저장 안 됨</string>
+  <string name="ayahbookmark_highlight_title">강조 표시</string>
+  <string name="ayahbookmark_highlight_subtitle">페이지의 구절에 색을 입힙니다</string>
+  <string name="ayahbookmark_highlight_none">없음</string>
 </resources>

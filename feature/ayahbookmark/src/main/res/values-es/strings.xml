@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Nombre de la colección</string>
   <string name="ayahbookmark_cancel">Cancelar</string>
   <string name="ayahbookmark_create">Crear</string>
+  <string name="ayahbookmark_saved">Guardado</string>
+  <string name="ayahbookmark_not_saved">No guardado</string>
+  <string name="ayahbookmark_highlight_title">Resaltado</string>
+  <string name="ayahbookmark_highlight_subtitle">Colorea la aleya en la página</string>
+  <string name="ayahbookmark_highlight_none">Ninguno</string>
 </resources>

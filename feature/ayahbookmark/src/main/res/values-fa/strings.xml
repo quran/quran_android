@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">نام مجموعه</string>
   <string name="ayahbookmark_cancel">لغو</string>
   <string name="ayahbookmark_create">ایجاد</string>
+  <string name="ayahbookmark_saved">ذخیره‌شده</string>
+  <string name="ayahbookmark_not_saved">ذخیره‌نشده</string>
+  <string name="ayahbookmark_highlight_title">برجسته‌سازی</string>
+  <string name="ayahbookmark_highlight_subtitle">آیه را در صفحه رنگ می‌کند</string>
+  <string name="ayahbookmark_highlight_none">بدون</string>
 </resources>

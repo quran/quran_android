@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">コレクション名</string>
   <string name="ayahbookmark_cancel">キャンセル</string>
   <string name="ayahbookmark_create">作成</string>
+  <string name="ayahbookmark_saved">保存済み</string>
+  <string name="ayahbookmark_not_saved">未保存</string>
+  <string name="ayahbookmark_highlight_title">ハイライト</string>
+  <string name="ayahbookmark_highlight_subtitle">ページ上の節に色を付けます</string>
+  <string name="ayahbookmark_highlight_none">なし</string>
 </resources>

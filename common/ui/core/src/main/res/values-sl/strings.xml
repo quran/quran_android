@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- names of the ayah highlight colors -->
+  <string name="highlight_color_yellow">Rumena</string>
+  <string name="highlight_color_green">Zelena</string>
+  <string name="highlight_color_blue">Modra</string>
+  <string name="highlight_color_red">Rdeča</string>
+  <string name="highlight_color_purple">Vijolična</string>
+</resources>

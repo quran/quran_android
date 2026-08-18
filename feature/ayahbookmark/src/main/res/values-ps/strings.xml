@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">د ټولګې نوم</string>
   <string name="ayahbookmark_cancel">لغوه کول</string>
   <string name="ayahbookmark_create">جوړول</string>
+  <string name="ayahbookmark_saved">خوندي شوی</string>
+  <string name="ayahbookmark_not_saved">خوندي نه دی</string>
+  <string name="ayahbookmark_highlight_title">ځلول</string>
+  <string name="ayahbookmark_highlight_subtitle">په مخ کې آيت رنګوي</string>
+  <string name="ayahbookmark_highlight_none">هیڅ</string>
 </resources>

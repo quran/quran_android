@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">ชื่อคอลเลกชัน</string>
   <string name="ayahbookmark_cancel">ยกเลิก</string>
   <string name="ayahbookmark_create">สร้าง</string>
+  <string name="ayahbookmark_saved">บันทึกแล้ว</string>
+  <string name="ayahbookmark_not_saved">ยังไม่บันทึก</string>
+  <string name="ayahbookmark_highlight_title">ไฮไลต์</string>
+  <string name="ayahbookmark_highlight_subtitle">ระบายสีอายะฮ์บนหน้า</string>
+  <string name="ayahbookmark_highlight_none">ไม่มี</string>
 </resources>

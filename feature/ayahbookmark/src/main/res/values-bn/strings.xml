@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">সংগ্রহের নাম</string>
   <string name="ayahbookmark_cancel">বাতিল</string>
   <string name="ayahbookmark_create">তৈরি করুন</string>
+  <string name="ayahbookmark_saved">সংরক্ষিত</string>
+  <string name="ayahbookmark_not_saved">সংরক্ষিত নয়</string>
+  <string name="ayahbookmark_highlight_title">হাইলাইট</string>
+  <string name="ayahbookmark_highlight_subtitle">পৃষ্ঠায় আয়াতটি রঙিন করে</string>
+  <string name="ayahbookmark_highlight_none">কিছু না</string>
 </resources>

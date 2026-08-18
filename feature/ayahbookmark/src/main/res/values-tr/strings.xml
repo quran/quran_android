@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Koleksiyon adı</string>
   <string name="ayahbookmark_cancel">İptal</string>
   <string name="ayahbookmark_create">Oluştur</string>
+  <string name="ayahbookmark_saved">Kaydedildi</string>
+  <string name="ayahbookmark_not_saved">Kaydedilmedi</string>
+  <string name="ayahbookmark_highlight_title">Vurgulama</string>
+  <string name="ayahbookmark_highlight_subtitle">Sayfadaki ayeti renklendirir</string>
+  <string name="ayahbookmark_highlight_none">Yok</string>
 </resources>

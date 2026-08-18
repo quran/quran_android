@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Samlingens namn</string>
   <string name="ayahbookmark_cancel">Avbryt</string>
   <string name="ayahbookmark_create">Skapa</string>
+  <string name="ayahbookmark_saved">Sparad</string>
+  <string name="ayahbookmark_not_saved">Inte sparad</string>
+  <string name="ayahbookmark_highlight_title">Markering</string>
+  <string name="ayahbookmark_highlight_subtitle">Färgar versen på sidan</string>
+  <string name="ayahbookmark_highlight_none">Ingen</string>
 </resources>

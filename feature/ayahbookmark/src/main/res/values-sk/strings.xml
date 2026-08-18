@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Názov kolekcie</string>
   <string name="ayahbookmark_cancel">Zrušiť</string>
   <string name="ayahbookmark_create">Vytvoriť</string>
+  <string name="ayahbookmark_saved">Uložené</string>
+  <string name="ayahbookmark_not_saved">Neuložené</string>
+  <string name="ayahbookmark_highlight_title">Zvýraznenie</string>
+  <string name="ayahbookmark_highlight_subtitle">Zafarbí verš na stránke</string>
+  <string name="ayahbookmark_highlight_none">Žiadna</string>
 </resources>

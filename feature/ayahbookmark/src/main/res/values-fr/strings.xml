@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Nom de la collection</string>
   <string name="ayahbookmark_cancel">Annuler</string>
   <string name="ayahbookmark_create">Créer</string>
+  <string name="ayahbookmark_saved">Enregistré</string>
+  <string name="ayahbookmark_not_saved">Non enregistré</string>
+  <string name="ayahbookmark_highlight_title">Surlignage</string>
+  <string name="ayahbookmark_highlight_subtitle">Colore le verset sur la page</string>
+  <string name="ayahbookmark_highlight_none">Aucun</string>
 </resources>

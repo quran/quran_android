@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Όνομα συλλογής</string>
   <string name="ayahbookmark_cancel">Ακύρωση</string>
   <string name="ayahbookmark_create">Δημιουργία</string>
+  <string name="ayahbookmark_saved">Αποθηκεύτηκε</string>
+  <string name="ayahbookmark_not_saved">Δεν αποθηκεύτηκε</string>
+  <string name="ayahbookmark_highlight_title">Επισήμανση</string>
+  <string name="ayahbookmark_highlight_subtitle">Χρωματίζει το εδάφιο στη σελίδα</string>
+  <string name="ayahbookmark_highlight_none">Καμία</string>
 </resources>
