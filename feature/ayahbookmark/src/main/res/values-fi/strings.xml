@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Kokoelman nimi</string>
   <string name="ayahbookmark_cancel">Peruuta</string>
   <string name="ayahbookmark_create">Luo</string>
+  <string name="ayahbookmark_saved">Tallennettu</string>
+  <string name="ayahbookmark_not_saved">Ei tallennettu</string>
+  <string name="ayahbookmark_highlight_title">Korostus</string>
+  <string name="ayahbookmark_highlight_subtitle">Värittää jakeen sivulla</string>
+  <string name="ayahbookmark_highlight_none">Ei mitään</string>
 </resources>

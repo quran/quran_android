@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Жинақ атауы</string>
   <string name="ayahbookmark_cancel">Бас тарту</string>
   <string name="ayahbookmark_create">Жасау</string>
+  <string name="ayahbookmark_saved">Сақталды</string>
+  <string name="ayahbookmark_not_saved">Сақталмаған</string>
+  <string name="ayahbookmark_highlight_title">Бөлектеу</string>
+  <string name="ayahbookmark_highlight_subtitle">Беттегі аятты бояйды</string>
+  <string name="ayahbookmark_highlight_none">Жоқ</string>
 </resources>

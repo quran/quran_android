@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Numele colecției</string>
   <string name="ayahbookmark_cancel">Anulează</string>
   <string name="ayahbookmark_create">Creează</string>
+  <string name="ayahbookmark_saved">Salvat</string>
+  <string name="ayahbookmark_not_saved">Nesalvat</string>
+  <string name="ayahbookmark_highlight_title">Evidențiere</string>
+  <string name="ayahbookmark_highlight_subtitle">Colorează versetul pe pagină</string>
+  <string name="ayahbookmark_highlight_none">Niciuna</string>
 </resources>

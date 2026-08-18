@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Tên bộ sưu tập</string>
   <string name="ayahbookmark_cancel">Hủy</string>
   <string name="ayahbookmark_create">Tạo</string>
+  <string name="ayahbookmark_saved">Đã lưu</string>
+  <string name="ayahbookmark_not_saved">Chưa lưu</string>
+  <string name="ayahbookmark_highlight_title">Tô sáng</string>
+  <string name="ayahbookmark_highlight_subtitle">Tô màu câu kinh trên trang</string>
+  <string name="ayahbookmark_highlight_none">Không</string>
 </resources>

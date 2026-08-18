@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Naam van collectie</string>
   <string name="ayahbookmark_cancel">Annuleren</string>
   <string name="ayahbookmark_create">Maken</string>
+  <string name="ayahbookmark_saved">Opgeslagen</string>
+  <string name="ayahbookmark_not_saved">Niet opgeslagen</string>
+  <string name="ayahbookmark_highlight_title">Markering</string>
+  <string name="ayahbookmark_highlight_subtitle">Kleurt het vers op de pagina</string>
+  <string name="ayahbookmark_highlight_none">Geen</string>
 </resources>

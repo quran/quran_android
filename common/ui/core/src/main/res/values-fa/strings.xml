@@ -6,4 +6,10 @@
   <string name="to">تا</string>
   <string name="loading">بارگذاری…</string>
   <string name="canceling">در حال لغو</string>
+  <!-- names of the ayah highlight colors -->
+  <string name="highlight_color_yellow">زرد</string>
+  <string name="highlight_color_green">سبز</string>
+  <string name="highlight_color_blue">آبی</string>
+  <string name="highlight_color_red">قرمز</string>
+  <string name="highlight_color_purple">بنفش</string>
 </resources>

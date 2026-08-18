@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">يىغقۇ ئىسمى</string>
   <string name="ayahbookmark_cancel">ۋاز كەچ</string>
   <string name="ayahbookmark_create">قۇر</string>
+  <string name="ayahbookmark_saved">ساقلاندى</string>
+  <string name="ayahbookmark_not_saved">ساقلانمىدى</string>
+  <string name="ayahbookmark_highlight_title">گەۋدىلەندۈرۈش</string>
+  <string name="ayahbookmark_highlight_subtitle">بەتتىكى ئايەتنى رەڭلەيدۇ</string>
+  <string name="ayahbookmark_highlight_none">يوق</string>
 </resources>

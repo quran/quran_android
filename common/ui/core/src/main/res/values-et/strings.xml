@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- names of the ayah highlight colors -->
+  <string name="highlight_color_yellow">Kollane</string>
+  <string name="highlight_color_green">Roheline</string>
+  <string name="highlight_color_blue">Sinine</string>
+  <string name="highlight_color_red">Punane</string>
+  <string name="highlight_color_purple">Lilla</string>
+</resources>

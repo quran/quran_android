@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Toʻplam nomi</string>
   <string name="ayahbookmark_cancel">Bekor qilish</string>
   <string name="ayahbookmark_create">Yaratish</string>
+  <string name="ayahbookmark_saved">Saqlandi</string>
+  <string name="ayahbookmark_not_saved">Saqlanmadi</string>
+  <string name="ayahbookmark_highlight_title">Ajratib koʻrsatish</string>
+  <string name="ayahbookmark_highlight_subtitle">Sahifadagi oyatni ranglaydi</string>
+  <string name="ayahbookmark_highlight_none">Yoʻq</string>
 </resources>
