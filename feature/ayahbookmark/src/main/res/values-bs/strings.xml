@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Naziv kolekcije</string>
   <string name="ayahbookmark_cancel">Otkaži</string>
   <string name="ayahbookmark_create">Kreiraj</string>
+  <string name="ayahbookmark_saved">Sačuvano</string>
+  <string name="ayahbookmark_not_saved">Nije sačuvano</string>
+  <string name="ayahbookmark_highlight_title">Isticanje</string>
+  <string name="ayahbookmark_highlight_subtitle">Boji ajet na stranici</string>
+  <string name="ayahbookmark_highlight_none">Nema</string>
 </resources>

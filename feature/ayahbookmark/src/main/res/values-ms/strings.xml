@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Nama koleksi</string>
   <string name="ayahbookmark_cancel">Batal</string>
   <string name="ayahbookmark_create">Cipta</string>
+  <string name="ayahbookmark_saved">Disimpan</string>
+  <string name="ayahbookmark_not_saved">Tidak disimpan</string>
+  <string name="ayahbookmark_highlight_title">Sorotan</string>
+  <string name="ayahbookmark_highlight_subtitle">Mewarnakan ayat pada halaman</string>
+  <string name="ayahbookmark_highlight_none">Tiada</string>
 </resources>

@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Kolekcijas nosaukums</string>
   <string name="ayahbookmark_cancel">Atcelt</string>
   <string name="ayahbookmark_create">Izveidot</string>
+  <string name="ayahbookmark_saved">Saglabāts</string>
+  <string name="ayahbookmark_not_saved">Nav saglabāts</string>
+  <string name="ayahbookmark_highlight_title">Izcēlums</string>
+  <string name="ayahbookmark_highlight_subtitle">Iekrāso pantu lapā</string>
+  <string name="ayahbookmark_highlight_none">Nav</string>
 </resources>

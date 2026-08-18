@@ -10,4 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Назва колекції</string>
   <string name="ayahbookmark_cancel">Скасувати</string>
   <string name="ayahbookmark_create">Створити</string>
+  <string name="ayahbookmark_saved">Збережено</string>
+  <string name="ayahbookmark_not_saved">Не збережено</string>
+  <string name="ayahbookmark_highlight_title">Виділення</string>
+  <string name="ayahbookmark_highlight_subtitle">Забарвлює аят на сторінці</string>
+  <string name="ayahbookmark_highlight_none">Немає</string>
 </resources>
