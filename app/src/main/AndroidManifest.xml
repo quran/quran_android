@@ -93,6 +93,11 @@
         android:exported="false"/>
 
     <activity
+        android:name=".ui.BookmarkListActivity"
+        android:theme="@style/QuranToolBarDayNight"
+        android:exported="false"/>
+
+    <activity
         android:name=".SearchActivity"
         android:launchMode="singleTop"
         android:theme="@style/QuranToolBarDayNight"

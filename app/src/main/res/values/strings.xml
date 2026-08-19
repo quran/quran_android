@@ -381,6 +381,19 @@
   <string name="reading_bookmark_added">Bookmark added</string>
   <string name="reading_bookmark_dismiss_education">Dismiss</string>
 
+  <!-- highlights section in the bookmarks tab -->
+  <string name="highlights">Highlights</string>
+  <string name="highlights_empty">No highlighted ayahs in this color yet.</string>
+  <string name="collection_empty">No bookmarks in this collection yet.</string>
+  <string name="expand_collection">Expand</string>
+  <string name="collapse_collection">Collapse</string>
+  <string name="open_collection">Open</string>
+  <plurals name="removed_highlights">
+    <item quantity="one">Removed one highlight</item>
+    <item quantity="other">Removed %d highlights</item>
+  </plurals>
+  <string name="remove_highlight">Remove Highlight</string>
+
   <string name="recent_pages">Recent pages</string>
   <string name="old_page_bookmarks">Old Page Bookmarks</string>
   <plurals name="plural_recent_pages" translatable="false">

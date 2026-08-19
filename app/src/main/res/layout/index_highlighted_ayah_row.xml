@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="72dp"
+    android:paddingStart="0dp"
+    android:paddingEnd="16dp"
+    android:background="@drawable/quran_row_background"
+    android:orientation="horizontal">
+
+  <!-- the highlight color runs down the leading edge of the row, like ink in the margin -->
+  <View
+      android:id="@+id/colorRail"
+      android:layout_width="4dp"
+      android:layout_height="match_parent" />
+
+  <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:layout_gravity="center_vertical"
+      android:layout_marginStart="16dp"
+      android:layout_marginTop="8dp"
+      android:layout_marginBottom="8dp"
+      android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:gravity="start"
+        android:textAlignment="viewStart"
+        android:textAppearance="@style/TitleText"
+        tools:text="تِلْكَ ٱلرُّسُلُ فَضَّلْنَا..." />
+
+    <TextView
+        android:id="@+id/metadata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:textColor="@color/sura_details_color"
+        android:textSize="14sp"
+        tools:text="Ayah 253, Juz' 3" />
+  </LinearLayout>
+
+  <TextView
+      android:id="@+id/pageNumber"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:layout_marginStart="8dp"
+      android:textColor="@color/sura_details_color"
+      android:textSize="14sp"
+      tools:text="42" />
+</LinearLayout>

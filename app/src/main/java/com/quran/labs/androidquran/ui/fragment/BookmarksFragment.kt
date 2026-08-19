@@ -28,7 +28,9 @@ import com.quran.data.dao.BookmarkSortOrder
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter
+import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter.Companion.DEFAULT_COLLECTION_COLLAPSE_KEY
 import com.quran.labs.androidquran.presenter.bookmark.BookmarksContextualModePresenter
+import com.quran.labs.androidquran.ui.BookmarkListActivity
 import com.quran.labs.androidquran.ui.QuranActivity
 import com.quran.labs.androidquran.ui.helpers.BookmarkUIConverter
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter
@@ -269,6 +271,21 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     }
   }
 
+  /**
+   * The trailing chevron on a collection header, and a tap anywhere on a highlight color row,
+   * open that collection or color as its own screen.
+   */
+  override fun onOpenClicked(row: QuranRow, position: Int) {
+    if (bookmarksContextualModePresenter.isInActionMode()) {
+      // while selecting, the chevron is part of the row rather than a way out of the screen
+      onClick(row, position)
+      return
+    }
+
+    val tagId = row.tagId ?: return
+    startActivity(BookmarkListActivity.collectionIntent(requireContext(), tagId, row.text))
+  }
+
   override fun onLongClick(row: QuranRow, position: Int): Boolean {
     if (isValidSelection(row)) {
       val bookmarksAdapter = bookmarksAdapter
@@ -359,12 +376,26 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   }
 
   private fun handleRowClicked(activity: Activity?, row: QuranRow) {
-    if (!row.isHeader && activity is QuranActivity) {
-      val quranActivity = activity
-      if (row.isAyahBookmark) {
-        quranActivity.jumpToAndHighlight(row.page, row.sura, row.ayah)
-      } else {
-        quranActivity.jumpTo(row.page)
+    when {
+      // tapping a collection header collapses or expands its group in place; the header's
+      // trailing chevron is what opens the collection as a screen
+      row.isBookmarkHeader && row.isCollapsible -> {
+        bookmarkPresenter.toggleCollectionCollapsed(row.tagId ?: DEFAULT_COLLECTION_COLLAPSE_KEY)
+      }
+
+      row.isHighlightColor -> {
+        val color = row.highlightColor
+        if (color != null) {
+          startActivity(BookmarkListActivity.highlightsIntent(requireContext(), color))
+        }
+      }
+
+      !row.isHeader && activity is QuranActivity -> {
+        if (row.isAyahBookmark) {
+          activity.jumpToAndHighlight(row.page, row.sura, row.ayah)
+        } else {
+          activity.jumpTo(row.page)
+        }
       }
     }
   }
