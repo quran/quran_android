@@ -7,10 +7,14 @@ import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.SuraAyah
+import com.quran.data.model.highlight.Highlight
+import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData
 import com.quran.labs.androidquran.fakes.FakeBookmarksDao
+import com.quran.labs.androidquran.fakes.FakeHighlightsDao
 import com.quran.labs.androidquran.fakes.FakeReadingBookmarksDao
 import com.quran.labs.androidquran.fakes.FakeRecentPagesDao
 import com.quran.labs.androidquran.ui.helpers.QuranRow
@@ -22,6 +26,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.time.Instant
 
 @Config(application = TestApplication::class, sdk = [33])
 @RunWith(RobolectricTestRunner::class)
@@ -31,6 +36,7 @@ class BookmarkPresenterTest {
   private lateinit var fakeBookmarksDao: FakeBookmarksDao
   private lateinit var fakeRecentPagesDao: FakeRecentPagesDao
   private lateinit var fakeReadingBookmarksDao: FakeReadingBookmarksDao
+  private lateinit var fakeHighlightsDao: FakeHighlightsDao
 
   @Before
   fun setupTest() {
@@ -39,6 +45,7 @@ class BookmarkPresenterTest {
     fakeBookmarksDao = FakeBookmarksDao()
     fakeRecentPagesDao = FakeRecentPagesDao()
     fakeReadingBookmarksDao = FakeReadingBookmarksDao()
+    fakeHighlightsDao = FakeHighlightsDao()
   }
 
   @After
@@ -109,13 +116,94 @@ class BookmarkPresenterTest {
     val result = getBookmarkResultAndValidate(makeBookmarkPresenter(), BookmarkSortOrder.SORT_DATE_ADDED, true)
 
     assertThat(result.rows).containsAtLeast(
-      BookmarkRowData.TagHeader(TAGS[0]),
+      BookmarkRowData.TagHeader(TAGS[0], 1, false),
       BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], "tag-1"),
-      BookmarkRowData.TagHeader(TAGS[1]),
+      BookmarkRowData.TagHeader(TAGS[1], 1, false),
       BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], "tag-2"),
-      BookmarkRowData.NotTaggedHeader,
+      BookmarkRowData.NotTaggedHeader(1, false),
       BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[1], null),
     ).inOrder()
+  }
+
+  @Test
+  fun `collapsed collection hides its bookmarks but keeps its header and count`() {
+    fakeBookmarksDao.setTags(TAGS)
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+    val presenter = makeBookmarkPresenter()
+
+    presenter.toggleCollectionCollapsed("tag-1")
+    val result = getBookmarkResultAndValidate(
+      presenter, BookmarkSortOrder.SORT_DATE_ADDED, true
+    )
+
+    assertThat(result.rows).containsAtLeast(
+      BookmarkRowData.TagHeader(TAGS[0], 1, true),
+      BookmarkRowData.TagHeader(TAGS[1], 1, false),
+      BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], "tag-2"),
+    ).inOrder()
+    assertThat(result.rows).doesNotContain(
+      BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], "tag-1")
+    )
+    assertThat(quranSettings.collapsedCollections).containsExactly("tag-1")
+  }
+
+  @Test
+  fun `deleting a bookmark drops the collection count while the undo window is open`() {
+    fakeBookmarksDao.setTags(TAGS)
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+    quranSettings.bookmarksGroupedByTags = true
+    val presenter = makeBookmarkPresenter()
+    val current = getBookmarkResultAndValidate(
+      presenter, BookmarkSortOrder.SORT_DATE_ADDED, true
+    )
+
+    val preview = presenter.previewAfterDeletion(
+      current,
+      listOf(
+        QuranRow.Builder()
+          .withType(QuranRow.AYAH_BOOKMARK)
+          .withBookmark(AYAH_BOOKMARKS[0])
+          .withTagId("tag-1")
+          .build()
+      )
+    )
+
+    assertThat(preview.rows).contains(BookmarkRowData.TagHeader(TAGS[0], 0, false))
+    assertThat(preview.rows).contains(BookmarkRowData.TagHeader(TAGS[1], 1, false))
+    assertThat(preview.rows).doesNotContain(
+      BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], "tag-1")
+    )
+  }
+
+  @Test
+  fun `renders highlights after recent pages, with every color and its count`() {
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+    fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
+    fakeHighlightsDao.setHighlights(HIGHLIGHTS)
+
+    val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
+
+    assertThat(result.rows.take(9)).containsExactly(
+      BookmarkRowData.RecentPageHeader(RECENT_PAGES.size),
+      BookmarkRowData.RecentPage(RECENT_PAGES[0]),
+      BookmarkRowData.RecentPage(RECENT_PAGES[1]),
+      BookmarkRowData.HighlightsHeader,
+      BookmarkRowData.HighlightColorItem(HighlightColor.YELLOW, 0),
+      BookmarkRowData.HighlightColorItem(HighlightColor.GREEN, 1),
+      BookmarkRowData.HighlightColorItem(HighlightColor.BLUE, 2),
+      BookmarkRowData.HighlightColorItem(HighlightColor.RED, 0),
+      BookmarkRowData.HighlightColorItem(HighlightColor.PURPLE, 0)
+    ).inOrder()
+  }
+
+  @Test
+  fun `highlights section is hidden when there are no highlights`() {
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+
+    val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
+
+    assertThat(result.rows).doesNotContain(BookmarkRowData.HighlightsHeader)
+    assertThat(result.rows.filterIsInstance<BookmarkRowData.HighlightColorItem>()).isEmpty()
   }
 
   @Test
@@ -181,6 +269,7 @@ class BookmarkPresenterTest {
       fakeBookmarksDao,
       fakeRecentPagesDao,
       fakeReadingBookmarksDao,
+      fakeHighlightsDao,
       quranSettings,
       { throw IllegalStateException("ArabicDatabaseUtils not wired up in test") },
     ) {
@@ -217,6 +306,11 @@ class BookmarkPresenterTest {
     private val RECENT_PAGES = listOf(
       RecentPage(42, 200),
       RecentPage(43, 100)
+    )
+    private val HIGHLIGHTS = listOf(
+      Highlight(SuraAyah(2, 255), HighlightColor.BLUE, Instant.fromEpochSeconds(300)),
+      Highlight(SuraAyah(3, 93), HighlightColor.BLUE, Instant.fromEpochSeconds(200)),
+      Highlight(SuraAyah(50, 44), HighlightColor.GREEN, Instant.fromEpochSeconds(100))
     )
   }
 }
