@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.presenter.bookmark
 import androidx.annotation.VisibleForTesting
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.quran.data.dao.BookmarksDao
+import com.quran.data.dao.HighlightsDao
 import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.dao.RecentPagesDao
 import com.quran.data.model.bookmark.Bookmark
@@ -10,9 +11,13 @@ import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.highlight.Highlight
+import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.BookmarkItem
+import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.HighlightColorItem
+import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.HighlightsHeader
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.NotTaggedHeader
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.ReadingBookmarkHeader
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.ReadingBookmarkItem
@@ -21,6 +26,7 @@ import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.TagHeader
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment
+import com.quran.labs.androidquran.common.ui.core.HighlightColors
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.QuranSettings
 import dev.zacsweers.metro.Inject
@@ -34,6 +40,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -44,6 +51,7 @@ open class BookmarkPresenter @Inject internal constructor(
   private val bookmarksDao: BookmarksDao,
   private val recentPagesDao: RecentPagesDao,
   private val readingBookmarksDao: ReadingBookmarksDao,
+  private val highlightsDao: HighlightsDao,
   private val quranSettings: QuranSettings,
   private val arabicDatabaseUtils: Provider<ArabicDatabaseUtils>,
 ) : Presenter<BookmarksFragment> {
@@ -54,6 +62,8 @@ open class BookmarkPresenter @Inject internal constructor(
     private set
   var isDateShowing: Boolean = quranSettings.showDate
     private set
+
+  private var collapsedCollections: Set<String> = quranSettings.collapsedCollections
 
   private var cachedData: BookmarkRawResult? = null
   private var fragment: BookmarksFragment? = null
@@ -100,6 +110,18 @@ open class BookmarkPresenter @Inject internal constructor(
         Timber.e(throwable, "Error observing reading bookmark changes")
       }
     }
+
+    presenterScope.launch {
+      try {
+        highlightsDao.highlightsFlow()
+          .drop(1)
+          .collect {
+            onObservedDataChanged()
+          }
+      } catch (throwable: Throwable) {
+        Timber.e(throwable, "Error observing highlight changes")
+      }
+    }
   }
 
   private fun onObservedDataChanged() {
@@ -133,6 +155,16 @@ open class BookmarkPresenter @Inject internal constructor(
   fun toggleShowDate() {
     isDateShowing = !isDateShowing
     quranSettings.showDate = isDateShowing
+    requestData(false)
+  }
+
+  fun toggleCollectionCollapsed(collectionId: String) {
+    collapsedCollections = if (collectionId in collapsedCollections) {
+      collapsedCollections - collectionId
+    } else {
+      collapsedCollections + collectionId
+    }
+    quranSettings.collapsedCollections = collapsedCollections
     requestData(false)
   }
 
@@ -202,6 +234,14 @@ open class BookmarkPresenter @Inject internal constructor(
 
   private fun predictQuranListAfterDeletion(remove: List<QuranRow>): BookmarkRawResult? {
     val currentData = cachedData ?: return null
+    return previewAfterDeletion(currentData, remove)
+  }
+
+  @VisibleForTesting
+  fun previewAfterDeletion(
+    currentData: BookmarkRawResult,
+    remove: List<QuranRow>
+  ): BookmarkRawResult {
     val cachedRows = currentData.rows
 
     val bookmarkIdsToRemove = mutableSetOf<String>()
@@ -229,6 +269,7 @@ open class BookmarkPresenter @Inject internal constructor(
 
     val filteredRows = mutableListOf<BookmarkRowData>()
     val removedBookmarks = mutableSetOf<Bookmark>()
+    val removedCountByCollection = mutableMapOf<String?, Int>()
     var haveUntaggedSection = false
 
     for (rowData in cachedRows) {
@@ -255,6 +296,8 @@ open class BookmarkPresenter @Inject internal constructor(
             filteredRows += rowData
           } else {
             removedBookmarks += rowData.bookmark
+            removedCountByCollection[currentTagId] =
+              (removedCountByCollection[currentTagId] ?: 0) + 1
           }
         }
 
@@ -265,7 +308,7 @@ open class BookmarkPresenter @Inject internal constructor(
           }
         }
 
-        NotTaggedHeader -> {
+        is NotTaggedHeader -> {
           haveUntaggedSection = true
           filteredRows += rowData
         }
@@ -287,16 +330,30 @@ open class BookmarkPresenter @Inject internal constructor(
       }
     }
 
+    var untaggedAdded = 0
     if (newlyUntaggedBookmarks.isNotEmpty()) {
-      if (!haveUntaggedSection) {
-        filteredRows += NotTaggedHeader
-      }
       val cachedBookmarkItems = cachedRows.filterIsInstance<BookmarkItem>()
-      for (bookmark in newlyUntaggedBookmarks) {
-        val template = cachedBookmarkItems.firstOrNull { it.bookmark == bookmark }
-        if (template != null) {
-          filteredRows += BookmarkItem(template.bookmark, null)
+      val untaggedRows = newlyUntaggedBookmarks.mapNotNull { bookmark ->
+        cachedBookmarkItems.firstOrNull { it.bookmark == bookmark }
+          ?.let { template -> BookmarkItem(template.bookmark, null) }
+      }
+
+      if (untaggedRows.isNotEmpty()) {
+        if (!haveUntaggedSection) {
+          filteredRows += NotTaggedHeader(0, DEFAULT_COLLECTION_COLLAPSE_KEY in collapsedCollections)
         }
+        filteredRows += untaggedRows
+        untaggedAdded = untaggedRows.size
+      }
+    }
+
+    val previewRows = filteredRows.map { rowData ->
+      when (rowData) {
+        is TagHeader -> rowData.withCountDelta(-(removedCountByCollection[rowData.tag.id] ?: 0))
+        is NotTaggedHeader ->
+          rowData.withCountDelta(untaggedAdded - (removedCountByCollection[null] ?: 0))
+
+        else -> rowData
       }
     }
 
@@ -304,7 +361,7 @@ open class BookmarkPresenter @Inject internal constructor(
       tagIdsToUntag.forEach { remove(it) }
     }
 
-    return BookmarkRawResult(filteredRows, filteredTagMap)
+    return BookmarkRawResult(previewRows, filteredTagMap)
   }
 
   private fun removeItemsObservable(): Single<BookmarkRawResult> {
@@ -398,8 +455,11 @@ open class BookmarkPresenter @Inject internal constructor(
     return coroutineScope {
       val bookmarkData = async { getBookmarksWithAyat(sortOrder) }
       val readingBookmark = async { readingBookmarksDao.readingBookmark() }
+      val highlights = async { highlightsDao.highlightsFlow().first() }
       val data = bookmarkData.await()
-      val rows = getBookmarkRowData(data, groupByTags, readingBookmark.await())
+      val rows = getBookmarkRowData(
+        data, groupByTags, readingBookmark.await(), highlights.await()
+      )
       val tagMap = generateTagMap(data.tags)
       BookmarkRawResult(rows, tagMap)
     }
@@ -429,30 +489,50 @@ open class BookmarkPresenter @Inject internal constructor(
   private fun getBookmarkRowData(
     data: BookmarkData,
     groupByTags: Boolean,
-    readingBookmark: ReadingBookmark?
+    readingBookmark: ReadingBookmark?,
+    highlights: List<Highlight>
   ): MutableList<BookmarkRowData> {
-    val rows = if (groupByTags) {
-      getRowDataSortedByTags(data.tags, data.bookmarks)
-    } else {
-      getSortedRowData(data.bookmarks)
+    val rows = mutableListOf<BookmarkRowData>()
+
+    if (readingBookmark != null) {
+      rows.add(ReadingBookmarkHeader)
+      rows.add(ReadingBookmarkItem(readingBookmark))
     }
 
     val recentPages = data.recentPages
-    var size = recentPages.size
-    if (size > 0) {
-      if (!isShowingRecents) {
-        size = 1
-      }
-      rows.add(0, RecentPageHeader(size))
+    if (recentPages.isNotEmpty()) {
+      val size = if (isShowingRecents) recentPages.size else 1
+      rows.add(RecentPageHeader(size))
       for (i in 0 until size) {
-        rows.add(i + 1, BookmarkRowData.RecentPage(recentPages[i]))
+        rows.add(BookmarkRowData.RecentPage(recentPages[i]))
       }
     }
-    if (readingBookmark != null) {
-      rows.add(0, ReadingBookmarkHeader)
-      rows.add(1, ReadingBookmarkItem(readingBookmark))
-    }
+
+    rows.addAll(getHighlightRowData(highlights))
+
+    rows.addAll(
+      if (groupByTags) {
+        getRowDataSortedByTags(data.tags, data.bookmarks)
+      } else {
+        getSortedRowData(data.bookmarks)
+      }
+    )
     return rows
+  }
+
+  private fun getHighlightRowData(highlights: List<Highlight>): List<BookmarkRowData> {
+    return if (highlights.isEmpty()) {
+      emptyList()
+    } else {
+      val countsByColor: Map<HighlightColor, Int> =
+        highlights.groupingBy { highlight -> highlight.color }.eachCount()
+      buildList {
+        add(HighlightsHeader)
+        HighlightColors.sorted.forEach { spec ->
+          add(HighlightColorItem(spec.highlightColor, countsByColor[spec.highlightColor] ?: 0))
+        }
+      }
+    }
   }
 
   private fun getRowDataSortedByTags(
@@ -464,18 +544,24 @@ open class BookmarkPresenter @Inject internal constructor(
     val tagsMapping = generateTagsMapping(tags, ayahBookmarks)
 
     for (tag in tags) {
-      rows.add(TagHeader(tag))
       val tagBookmarks = tagsMapping.byTagId[tag.id].orEmpty()
-      for (bookmark in tagBookmarks) {
-        rows.add(BookmarkItem(bookmark, tag.id))
+      val isCollapsed = tag.id in collapsedCollections
+      rows.add(TagHeader(tag, tagBookmarks.size, isCollapsed))
+      if (!isCollapsed) {
+        for (bookmark in tagBookmarks) {
+          rows.add(BookmarkItem(bookmark, tag.id))
+        }
       }
     }
 
     val untagged = tagsMapping.bookmarksWithoutUserTags
     if (untagged.isNotEmpty()) {
-      rows.add(NotTaggedHeader)
-      for (bookmark in untagged) {
-        rows.add(BookmarkItem(bookmark, null))
+      val isCollapsed = DEFAULT_COLLECTION_COLLAPSE_KEY in collapsedCollections
+      rows.add(NotTaggedHeader(untagged.size, isCollapsed))
+      if (!isCollapsed) {
+        for (bookmark in untagged) {
+          rows.add(BookmarkItem(bookmark, null))
+        }
       }
     }
     return rows
@@ -539,6 +625,7 @@ open class BookmarkPresenter @Inject internal constructor(
   companion object {
     @BaseTransientBottomBar.Duration
     const val DELAY_DELETION_DURATION_IN_MS: Int = 4 * 1000 // 4 seconds
+    const val DEFAULT_COLLECTION_COLLAPSE_KEY: String = "quran:default-collection"
   }
 
   private data class TagsMapping(
