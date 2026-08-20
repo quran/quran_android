@@ -165,7 +165,6 @@
   <string name="delete_tag">حذف برچسب</string>
   <string name="edit_tag">تغییر برچسب</string>
   <string name="new_tag">برچسب جدید</string>
-  <string name="not_tagged">بدون برچسب</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">برچسب</string>

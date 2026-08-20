@@ -47,7 +47,7 @@ private val previewReadingBookmarkNameResolver: (Context, ReadingBookmark) -> St
 
 private val previewCollections = persistentListOf(
   AyahBookmarkCollectionItem(id = "family", name = "Family", countLabel = 12, isChecked = true),
-  AyahBookmarkCollectionItem(id = "favorites", name = "Favorites", countLabel = 34, isChecked = false),
+  AyahBookmarkCollectionItem(id = "favorites", name = "Favorites", isDefault = true, countLabel = 34, isChecked = false),
   AyahBookmarkCollectionItem(id = "friday-reminders", name = "Friday reminders", countLabel = 3, isChecked = false),
   AyahBookmarkCollectionItem(id = "tarawih-planning", name = "Tarawih planning", countLabel = 8, isChecked = true),
   AyahBookmarkCollectionItem(id = "ramadan-goals", name = "Ramadan goals", countLabel = 21, isChecked = false),

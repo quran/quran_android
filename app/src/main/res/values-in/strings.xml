@@ -302,7 +302,6 @@
   <string name="delete_tag">Hapus Label</string>
   <string name="edit_tag">Ubah Label</string>
   <string name="new_tag">Label Baru</string>
-  <string name="not_tagged">Tanpa Label</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Menghapus satu item</item>
     <item quantity="other">Menghapus %d item</item>

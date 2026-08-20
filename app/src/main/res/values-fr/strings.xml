@@ -252,7 +252,6 @@
   <string name="delete_tag">Supprimez l\'étiquette</string>
   <string name="edit_tag">Modifier l\'étiquette</string>
   <string name="new_tag">Nouvelle étiquette</string>
-  <string name="not_tagged">Aucune étiquette</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Étiquette</string>

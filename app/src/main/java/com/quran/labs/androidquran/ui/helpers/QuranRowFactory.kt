@@ -10,6 +10,7 @@ import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.ui.core.CollectionNames
 import com.quran.labs.androidquran.common.ui.core.HighlightColors
 import com.quran.labs.androidquran.data.QuranDisplayData
 import dev.zacsweers.metro.Inject
@@ -151,22 +152,14 @@ class QuranRowFactory @Inject constructor(
     return builder.build()
   }
 
-  fun fromTag(tag: Tag, count: Int, isCollapsed: Boolean): QuranRow {
+  fun fromTag(context: Context, tag: Tag, count: Int, isCollapsed: Boolean): QuranRow {
     return QuranRow.Builder()
       .withType(QuranRow.BOOKMARK_HEADER)
-      .withText(tag.name)
+      .withText(CollectionNames.displayName(context, tag))
       .withTagId(tag.id)
       .withItemCount(count)
       .withCollapsedState(isCollapsed)
-      .build()
-  }
-
-  fun fromNotTaggedHeader(context: Context, count: Int, isCollapsed: Boolean): QuranRow {
-    return QuranRow.Builder()
-      .withType(QuranRow.BOOKMARK_HEADER)
-      .withText(context.getString(R.string.not_tagged))
-      .withItemCount(count)
-      .withCollapsedState(isCollapsed)
+      .withSystemCollection(tag.isSystem)
       .build()
   }
 

@@ -14,6 +14,7 @@ import androidx.core.util.set
 import androidx.recyclerview.widget.RecyclerView
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.ui.core.CollectionNames
 import com.quran.labs.androidquran.common.ui.core.HighlightColors
 import com.quran.labs.androidquran.ui.QuranActivity
 import com.quran.labs.androidquran.util.QuranUtils
@@ -214,7 +215,7 @@ class QuranListAdapter(
             for (i in 0 until bookmark.tags.size) {
               val tagId = bookmark.tags[i]
               val tag = tagMap[tagId]
-              tag?.let { tagList.add(it) }
+              tag?.let { tagList.add(it.copy(name = CollectionNames.displayName(context, it))) }
             }
           }
 

@@ -281,7 +281,6 @@
   <string name="delete_tag">Elemino Tag</string>
   <string name="edit_tag">Ndrysho Tag</string>
   <string name="new_tag">Etiketë e re</string>
-  <string name="not_tagged">Nuk është etiketuar</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Eleminuar një element</item>
     <item quantity="other">Eleminuar elementët %d</item>
