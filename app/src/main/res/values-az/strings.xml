@@ -194,7 +194,6 @@
   <string name="timing_database">Gerekli dosyalar</string>
   <string name="page_description">sayfa  %1$s, cüz %2$s</string>
 
-  <string name="menu_bookmarks_ayah">Âyet işaretleri</string>
   <string name="menu_bookmarks_page">Sayfa işaretleri</string>
   <string name="menu_sort_date">Eklendiği tarih</string>
   <string name="menu_sort_location">"Kur'an'daki yeri"</string>

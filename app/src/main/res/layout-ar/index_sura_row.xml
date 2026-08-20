@@ -67,10 +67,9 @@
     <com.quran.labs.androidquran.view.TagsViewGroup
         android:id="@+id/tags"
         android:layout_width="match_parent"
-        android:layout_height="24dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:layout_marginTop="4dp"
-        android:gravity="start"
         />
   </LinearLayout>
 

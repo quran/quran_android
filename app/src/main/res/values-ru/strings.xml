@@ -24,7 +24,6 @@
   <string name="menu_jump_last_page">Последняя страница</string>
   <string name="menu_bookmarks">Закладки</string>
   <string name="menu_bookmarks_page">Закладки страниц</string>
-  <string name="menu_bookmarks_ayah">Закладки аятов</string>
   <string name="menu_sort">Сортировать</string>
   <string name="menu_sort_date">По дате добавления</string>
   <string name="menu_sort_location">По расположению в Коране</string>
