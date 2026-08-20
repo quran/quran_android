@@ -227,7 +227,6 @@
   <string name="delete_tag">حذف التصنيف</string>
   <string name="edit_tag">تعديل الصنف</string>
   <string name="new_tag">صنف جديد</string>
-  <string name="not_tagged">غير مصنف</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">صنف</string>

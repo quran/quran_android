@@ -61,11 +61,31 @@ class FakeBookmarksDao(
   }
 
   override suspend fun bookmarks(sortOrder: Int): List<Bookmark> {
-    return sortBookmarks(bookmarks.value, sortOrder)
+    return sortBookmarks(withDefaultMemberships(bookmarks.value), sortOrder)
   }
 
   override fun bookmarksFlow(sortOrder: Int): Flow<List<Bookmark>> {
-    return bookmarks.map { sortBookmarks(it, sortOrder) }
+    return combine(bookmarks, defaultBookmarkIds) { bookmarks, _ ->
+      sortBookmarks(withDefaultMemberships(bookmarks), sortOrder)
+    }
+  }
+
+  private fun defaultTag(): Tag = Tag(
+    defaultCollectionMetadata.id,
+    defaultCollectionMetadata.name,
+    isSystem = true,
+    isDefault = true
+  )
+
+  private fun withDefaultMemberships(bookmarks: List<Bookmark>): List<Bookmark> {
+    val defaultIds = defaultBookmarkIds.value
+    return bookmarks.map { bookmark ->
+      if (bookmark.id in defaultIds) {
+        bookmark.withTags(bookmark.tags + defaultCollectionMetadata.id)
+      } else {
+        bookmark
+      }
+    }
   }
 
   override fun bookmarksForPage(page: Int): Flow<List<Bookmark>> {
@@ -100,11 +120,11 @@ class FakeBookmarksDao(
   }
 
   override suspend fun tags(): List<Tag> {
-    return tags.value
+    return tags.value + defaultTag()
   }
 
   override fun tagsFlow(): Flow<List<Tag>> {
-    return tags
+    return tags.map { current -> current + defaultTag() }
   }
 
   override suspend fun addTag(name: String): String {

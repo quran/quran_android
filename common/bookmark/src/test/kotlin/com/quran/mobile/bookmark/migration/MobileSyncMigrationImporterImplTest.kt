@@ -110,14 +110,15 @@ class MobileSyncImporterImplTest {
     )
 
     val bookmarks = bookmarksDao.bookmarks()
-    val tags = bookmarksDao.tags()
+    // the default collection is always present, so this asserts on the imported ones
+    val tags = bookmarksDao.tags().filterNot { tag -> tag.isSystem }
     val readingSessions = ReadingSessionsRepositoryImpl(mobileSyncDatabase.database).getReadingSessions()
     val readingBookmark = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database).getReadingBookmark()
 
     assertThat(bookmarks.map { bookmark -> bookmark.sura to bookmark.ayah }).containsExactly(2 to 255)
     assertThat(bookmarks.single().timestamp).isEqualTo(1234L)
     assertThat(tags.map { tag -> tag.name }).containsExactly("Reading")
-    assertThat(bookmarksDao.getBookmarkTagIds(bookmarks.single().id)).containsExactly(tags.single().id)
+    assertThat(bookmarksDao.getBookmarkTagIds(bookmarks.single().id)).contains(tags.single().id)
     assertThat(readingSessions.map { session -> session.sura to session.ayah }).containsExactly(18 to 1)
     assertThat(readingBookmark).isNotNull()
   }

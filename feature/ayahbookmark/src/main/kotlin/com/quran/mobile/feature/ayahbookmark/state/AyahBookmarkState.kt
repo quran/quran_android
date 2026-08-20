@@ -30,6 +30,7 @@ data class AyahBookmarkState(
 data class AyahBookmarkCollectionItem(
   val id: String,
   val name: String,
+  val isDefault: Boolean = false,
   val countLabel: Int,
   val isChecked: Boolean
 )

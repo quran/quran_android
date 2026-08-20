@@ -299,7 +299,6 @@
   <string name="delete_tag">Schlagwort löschen</string>
   <string name="edit_tag">Schlagwort bearbeiten</string>
   <string name="new_tag">Neues Schlagwort</string>
-  <string name="not_tagged">Noch kein Schlagwort hinzugefügt</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Schlagwort</string>

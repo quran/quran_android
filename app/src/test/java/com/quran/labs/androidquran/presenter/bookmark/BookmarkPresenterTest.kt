@@ -60,7 +60,9 @@ class BookmarkPresenterTest {
 
     val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
 
-    assertThat(result.tagMap).containsExactly("tag-1", TAGS[0], "tag-2", TAGS[1])
+    // the default collection is a tag like any other now, so it is in the map too
+    assertThat(result.tagMap).containsAtLeast("tag-1", TAGS[0], "tag-2", TAGS[1])
+    assertThat(result.tagMap.values.single { it.isDefault }.name).isEqualTo("Favorites")
     assertThat(result.rows.first()).isInstanceOf(BookmarkRowData.AyahBookmarksHeader::class.java)
     assertThat(result.rows.filterIsInstance<BookmarkRowData.BookmarkItem>()).hasSize(2)
   }
@@ -73,7 +75,7 @@ class BookmarkPresenterTest {
 
     assertThat(result.rows.filterIsInstance<BookmarkRowData.PageBookmarksHeader>()).isEmpty()
     assertThat(result.rows.filterIsInstance<BookmarkRowData.BookmarkItem>())
-      .containsExactly(BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS.first(), null))
+      .containsExactly(BookmarkRowData.BookmarkItem(taggedBookmark(AYAH_BOOKMARKS.first()), null))
   }
 
   @Test
@@ -117,12 +119,46 @@ class BookmarkPresenterTest {
 
     assertThat(result.rows).containsAtLeast(
       BookmarkRowData.TagHeader(TAGS[0], 1, false),
-      BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], "tag-1"),
+      BookmarkRowData.BookmarkItem(taggedBookmark(AYAH_BOOKMARKS[0]), "tag-1"),
       BookmarkRowData.TagHeader(TAGS[1], 1, false),
-      BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], "tag-2"),
-      BookmarkRowData.NotTaggedHeader(1, false),
-      BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[1], null),
+      BookmarkRowData.BookmarkItem(taggedBookmark(AYAH_BOOKMARKS[0]), "tag-2"),
     ).inOrder()
+  }
+
+  @Test
+  fun `default collection is an ordinary header, listed above the named collections`() {
+    fakeBookmarksDao.setTags(TAGS)
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+
+    val result = getBookmarkResultAndValidate(
+      makeBookmarkPresenter(), BookmarkSortOrder.SORT_DATE_ADDED, true
+    )
+
+    val headers = result.rows.filterIsInstance<BookmarkRowData.TagHeader>()
+    assertThat(headers.map { it.tag.name })
+      .containsExactly("Favorites", "Review", "Important")
+      .inOrder()
+    assertThat(headers.first().tag.isDefault).isTrue()
+    assertThat(headers.first().tag.isSystem).isTrue()
+    // every ayah bookmark is in the default collection in the fake, so nothing is left over
+    assertThat(headers.first().count).isEqualTo(2)
+  }
+
+  @Test
+  fun `system collection headers offer no rename or delete`() {
+    val presenter = makeBookmarkPresenter()
+
+    val systemHeader = presenter.getContextualOperationsForItems(
+      listOf(
+        QuranRow.Builder()
+          .withType(QuranRow.BOOKMARK_HEADER)
+          .withTagId("fake-default")
+          .withSystemCollection(true)
+          .build()
+      )
+    )
+
+    assertThat(systemHeader.asList()).containsExactly(false, false, false).inOrder()
   }
 
   @Test
@@ -139,10 +175,10 @@ class BookmarkPresenterTest {
     assertThat(result.rows).containsAtLeast(
       BookmarkRowData.TagHeader(TAGS[0], 1, true),
       BookmarkRowData.TagHeader(TAGS[1], 1, false),
-      BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], "tag-2"),
+      BookmarkRowData.BookmarkItem(taggedBookmark(AYAH_BOOKMARKS[0]), "tag-2"),
     ).inOrder()
     assertThat(result.rows).doesNotContain(
-      BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], "tag-1")
+      BookmarkRowData.BookmarkItem(taggedBookmark(AYAH_BOOKMARKS[0]), "tag-1")
     )
     assertThat(quranSettings.collapsedCollections).containsExactly("tag-1")
   }
@@ -162,7 +198,7 @@ class BookmarkPresenterTest {
       listOf(
         QuranRow.Builder()
           .withType(QuranRow.AYAH_BOOKMARK)
-          .withBookmark(AYAH_BOOKMARKS[0])
+          .withBookmark(taggedBookmark(AYAH_BOOKMARKS[0]))
           .withTagId("tag-1")
           .build()
       )
@@ -171,7 +207,7 @@ class BookmarkPresenterTest {
     assertThat(preview.rows).contains(BookmarkRowData.TagHeader(TAGS[0], 0, false))
     assertThat(preview.rows).contains(BookmarkRowData.TagHeader(TAGS[1], 1, false))
     assertThat(preview.rows).doesNotContain(
-      BookmarkRowData.BookmarkItem(AYAH_BOOKMARKS[0], "tag-1")
+      BookmarkRowData.BookmarkItem(taggedBookmark(AYAH_BOOKMARKS[0]), "tag-1")
     )
   }
 
@@ -292,6 +328,10 @@ class BookmarkPresenterTest {
       presenter.getBookmarksList(sortOrder, groupByTags)
     }
   }
+
+  /** The fake puts every ayah bookmark in the default collection, the way the dao does. */
+  private fun taggedBookmark(bookmark: Bookmark): Bookmark =
+    bookmark.copy(tags = bookmark.tags + "fake-default")
 
   private companion object {
     private val TAGS = listOf(

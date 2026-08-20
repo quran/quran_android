@@ -222,7 +222,6 @@
     <string name="delete_tag">Címke törlése</string>
     <string name="edit_tag">Címke szerkesztése</string>
     <string name="new_tag">Új címke</string>
-    <string name="not_tagged">Nincs címkézve</string>
 
     <!-- tag dialog -->
     <string name="tag_dlg_title">Címke</string>

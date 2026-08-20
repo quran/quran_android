@@ -172,7 +172,6 @@
   <string name="delete_tag">删除标签</string>
   <string name="edit_tag">编辑标签</string>
   <string name="new_tag">新建标签</string>
-  <string name="not_tagged">未命名</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">标签</string>

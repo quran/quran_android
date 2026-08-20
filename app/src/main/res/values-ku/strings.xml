@@ -184,7 +184,6 @@
   <string name="delete_tag">سڕینەوەی بڕگە</string>
   <string name="edit_tag">دەستکاریکردنی بڕگە</string>
   <string name="new_tag">بڕگەی نوێ</string>
-  <string name="not_tagged">بڕگە نەکراوە</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">بڕگە</string>

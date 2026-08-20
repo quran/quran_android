@@ -73,6 +73,7 @@ class AyahBookmarkPresenter(
         AyahBookmarkCollectionItem(
           collectionState.readingCollection.id,
           collectionState.readingCollection.name,
+          collectionState.readingCollection.isDefault,
           collectionState.bookmarks.size,
           checkedCollectionIds.value.contains(collectionState.readingCollection.id)
         )

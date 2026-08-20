@@ -167,7 +167,6 @@
   <string name="delete_tag">Borrar Etiqueta</string>
   <string name="edit_tag">Editar Etiqueta</string>
   <string name="new_tag">Nueva Etiqueta</string>
-  <string name="not_tagged">Sin Etiquetar</string>
   <!--tag dialog-->
   <string name="tag_dlg_title">Etiqueta</string>
   <string name="tag_name">Nombre</string>

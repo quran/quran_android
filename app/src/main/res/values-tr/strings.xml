@@ -273,7 +273,6 @@
   <string name="delete_tag">Etiketi kaldır</string>
   <string name="edit_tag">Etiket güncelle</string>
   <string name="new_tag">Yeni etiket</string>
-  <string name="not_tagged">Etiketlenmedi</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Bir etiket silindi</item>
     <item quantity="other">%d etiket silindi</item>

@@ -100,10 +100,13 @@ class BookmarkImportExportModel @Inject internal constructor(
     return Single.fromCallable {
       runBlocking {
         val pageType = pageMapper.currentPageType()
+        val allTags = bookmarksDao.tags()
+        val systemTagIds = allTags.filter { tag -> tag.isSystem }.mapTo(mutableSetOf()) { it.id }
         BookmarkData(
-          tags = bookmarksDao.tags(),
+          tags = allTags.filterNot { tag -> tag.isSystem },
           bookmarks = bookmarksDao.bookmarks(BookmarkSortOrder.SORT_DATE_ADDED)
-            .filterNot { bookmark -> bookmark.isPageBookmark() },
+            .filterNot { bookmark -> bookmark.isPageBookmark() }
+            .map { bookmark -> bookmark.withTags(bookmark.tags - systemTagIds) },
           recentPages = recentPagesDao.recentPages(),
           readingBookmark = readingBookmarksDao.readingBookmark()
             ?.let { bookmark ->

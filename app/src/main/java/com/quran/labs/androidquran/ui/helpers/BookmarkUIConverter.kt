@@ -40,7 +40,7 @@ class BookmarkUIConverter @Inject constructor(
           quranRowFactory.fromHighlightColor(context, rowData.color, rowData.count)
 
         is BookmarkRowData.TagHeader ->
-          quranRowFactory.fromTag(rowData.tag, rowData.count, rowData.isCollapsed)
+          quranRowFactory.fromTag(context, rowData.tag, rowData.count, rowData.isCollapsed)
 
         is BookmarkRowData.BookmarkItem ->
           quranRowFactory.fromBookmark(context, rowData.bookmark, rowData.tagId)
@@ -51,8 +51,6 @@ class BookmarkUIConverter @Inject constructor(
         is BookmarkRowData.AyahBookmarksHeader ->
           quranRowFactory.fromAyahBookmarksHeader(context)
 
-        is BookmarkRowData.NotTaggedHeader ->
-          quranRowFactory.fromNotTaggedHeader(context, rowData.count, rowData.isCollapsed)
       }
     }
 
