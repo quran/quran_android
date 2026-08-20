@@ -114,8 +114,10 @@ class BookmarksDaoImpl @Inject constructor(
     val timestamp = timestampProvider.now()
     val updated = withContext(Dispatchers.IO) {
       val localId = tag.id
-      val collectionsById = bookmarkCollectionData().collectionsById
+      val bookmarkCollectionData = bookmarkCollectionData()
+      val collectionsById = bookmarkCollectionData.collectionsById
       val existingCollection = collectionsById[localId]
+        ?.takeIf { bookmarkCollectionData.isEditable(localId) }
         ?: return@withContext false
       if (existingCollection.name == tag.name) {
         return@withContext true
@@ -140,8 +142,8 @@ class BookmarksDaoImpl @Inject constructor(
 
   override suspend fun removeTags(tags: List<Tag>) {
     withContext(Dispatchers.IO) {
-      val collectionsById = bookmarkCollectionData().collectionsById
-      val tagsToRemove = tags.filter { tag -> collectionsById.containsKey(tag.id) }
+      val bookmarkCollectionData = bookmarkCollectionData()
+      val tagsToRemove = tags.filter { tag -> bookmarkCollectionData.isEditable(tag.id) }
       tagsToRemove.forEach { tag -> collectionsRepository.deleteCollection(tag.id) }
     }
   }
@@ -170,16 +172,10 @@ class BookmarksDaoImpl @Inject constructor(
           val currentCollectionIds = bookmarkCollectionData
             .collectionIdsByBookmarkId[bookmarkId]
             .orEmpty()
-          val nextTagIds = if (deleteNonTagged) {
+          val targetCollectionIds = if (deleteNonTagged) {
             targetTagIds
           } else {
-            bookmarkCollectionData.tagIds(bookmarkId).toSet() + targetTagIds
-          }
-          val targetCollectionIds = buildSet {
-            bookmarkCollectionData.defaultCollectionId
-              ?.takeIf(currentCollectionIds::contains)
-              ?.let(::add)
-            addAll(nextTagIds)
+            currentCollectionIds + targetTagIds
           }
           replaceBookmarkCollectionIds(
             bookmark = bookmark,
@@ -298,11 +294,10 @@ class BookmarksDaoImpl @Inject constructor(
   private fun toBookmarkCollectionData(
     collectionsWithBookmarks: List<CollectionWithAyahBookmarks>
   ): BookmarkCollectionData {
-    val editableCollectionsWithBookmarks = collectionsWithBookmarks
-      .filterNot { collectionWithBookmarks -> collectionWithBookmarks.collection.isDefault }
-    val defaultCollectionWithBookmarks = collectionsWithBookmarks
+    val defaultCollectionId = collectionsWithBookmarks
       .firstOrNull { collectionWithBookmarks -> collectionWithBookmarks.collection.isDefault }
-    val defaultCollectionId = defaultCollectionWithBookmarks?.collection?.id
+      ?.collection
+      ?.id
     val membershipsByBookmarkId = collectionsWithBookmarks
       .flatMap { collectionWithBookmarks -> collectionWithBookmarks.bookmarks }
       .groupBy { bookmark -> bookmark.bookmarkId }
@@ -310,9 +305,7 @@ class BookmarksDaoImpl @Inject constructor(
       memberships.mapTo(mutableSetOf()) { membership -> membership.collectionId }
     }
     val tagMembershipsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
-      memberships
-        .filterNot { membership -> membership.collectionId == defaultCollectionId }
-        .associateBy { membership -> membership.collectionId }
+      memberships.associateBy { membership -> membership.collectionId }
     }
     val representativeMembershipsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
       memberships.maxBy { membership ->
@@ -323,25 +316,27 @@ class BookmarksDaoImpl @Inject constructor(
       .mapValues { (_, membership) -> membership.asAyahBookmark() }
     val bookmarks = representativeMembershipsByBookmarkId
       .map { (bookmarkId, bookmark) ->
-        val tagIds = collectionIdsByBookmarkId[bookmarkId]
-          .orEmpty()
-          .filterNot { collectionId -> collectionId == defaultCollectionId }
-        toBookmark(bookmark, tagIds)
+        toBookmark(bookmark, collectionIdsByBookmarkId[bookmarkId].orEmpty().toList())
       }
     return BookmarkCollectionData(
       bookmarks = bookmarks,
       ayahBookmarksById = ayahBookmarksById,
       collectionIdsByBookmarkId = collectionIdsByBookmarkId,
       tagMembershipsByBookmarkId = tagMembershipsByBookmarkId,
-      collectionsById = editableCollectionsWithBookmarks
+      collectionsById = collectionsWithBookmarks
         .map { collectionWithBookmarks -> collectionWithBookmarks.collection }
         .associateBy { collection -> collection.id },
-      tags = editableCollectionsWithBookmarks.map { collectionWithBookmarks ->
-        Tag(collectionWithBookmarks.collection.id, collectionWithBookmarks.collection.name)
+      tags = collectionsWithBookmarks.map { collectionWithBookmarks ->
+        collectionWithBookmarks.collection.asTag()
       },
       defaultCollectionId = defaultCollectionId
     )
   }
+
+  private fun SyncCollection.asTag(): Tag = Tag(id, name, isSystem = isSystem, isDefault = isDefault)
+
+  private fun BookmarkCollectionData.isEditable(collectionId: String): Boolean =
+    collectionsById[collectionId]?.isSystem == false
 
   private fun validTagIds(
     tagIds: Set<String>,
@@ -357,9 +352,7 @@ class BookmarksDaoImpl @Inject constructor(
   }
 
   private fun BookmarkCollectionData.tagIds(bookmarkId: String): List<String> {
-    return collectionIdsByBookmarkId[bookmarkId]
-      .orEmpty()
-      .filterNot { collectionId -> collectionId == defaultCollectionId }
+    return collectionIdsByBookmarkId[bookmarkId].orEmpty().toList()
   }
 
   private fun CollectionAyahBookmark.asAyahBookmark(): AyahBookmark {

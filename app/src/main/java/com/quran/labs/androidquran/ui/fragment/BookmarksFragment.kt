@@ -28,7 +28,6 @@ import com.quran.data.dao.BookmarkSortOrder
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter
-import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter.Companion.DEFAULT_COLLECTION_COLLAPSE_KEY
 import com.quran.labs.androidquran.presenter.bookmark.BookmarksContextualModePresenter
 import com.quran.labs.androidquran.ui.BookmarkListActivity
 import com.quran.labs.androidquran.ui.QuranActivity
@@ -306,7 +305,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   }
 
   private fun isValidSelection(selected: QuranRow): Boolean {
-    return selected.isBookmark || (selected.isBookmarkHeader && selected.tagId != null)
+    return selected.isBookmark || selected.isEditableCollectionHeader
   }
 
   private val mOnUndoClickListener: View.OnClickListener = View.OnClickListener {
@@ -380,7 +379,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
       // tapping a collection header collapses or expands its group in place; the header's
       // trailing chevron is what opens the collection as a screen
       row.isBookmarkHeader && row.isCollapsible -> {
-        bookmarkPresenter.toggleCollectionCollapsed(row.tagId ?: DEFAULT_COLLECTION_COLLAPSE_KEY)
+        bookmarkPresenter.toggleCollectionCollapsed(row.tagId ?: return)
       }
 
       row.isHighlightColor -> {

@@ -39,6 +39,8 @@ public class QuranRow {
   public Integer itemCount;
   public boolean isCollapsible;
   public boolean isCollapsed;
+  // a collection the app owns (the default collection); it cannot be renamed or deleted
+  public boolean isSystemCollection;
 
   public HighlightColor highlightColor;
 
@@ -60,6 +62,7 @@ public class QuranRow {
     private Integer itemCount;
     private boolean isCollapsible;
     private boolean isCollapsed;
+    private boolean isSystemCollection;
     private HighlightColor highlightColor;
 
     public Builder withType(int type) {
@@ -147,6 +150,11 @@ public class QuranRow {
       return this;
     }
 
+    public Builder withSystemCollection(boolean isSystemCollection) {
+      this.isSystemCollection = isSystemCollection;
+      return this;
+    }
+
     public Builder withHighlightColor(HighlightColor highlightColor) {
       this.highlightColor = highlightColor;
       return this;
@@ -156,7 +164,7 @@ public class QuranRow {
       return new QuranRow(text, metadata, rowType, sura,
           ayah, page, imageResource, imageFilterColorResource, juzType,
           juzOverlayText, bookmarkId, tagId, bookmark, dateAddedInMillis, itemCount,
-          isCollapsible, isCollapsed, highlightColor);
+          isCollapsible, isCollapsed, isSystemCollection, highlightColor);
     }
   }
 
@@ -164,7 +172,8 @@ public class QuranRow {
       int sura, int ayah, int page, Integer imageResource, Integer filterColorResource,
       Integer juzType, String juzOverlayText, String bookmarkId, String tagId, Bookmark bookmark,
                    long dateAddedInMillis, Integer itemCount, boolean isCollapsible,
-                   boolean isCollapsed, HighlightColor highlightColor) {
+                   boolean isCollapsed, boolean isSystemCollection,
+                   HighlightColor highlightColor) {
     this.text = text;
     this.rowType = rowType;
     this.sura = sura;
@@ -182,6 +191,7 @@ public class QuranRow {
     this.itemCount = itemCount;
     this.isCollapsible = isCollapsible;
     this.isCollapsed = isCollapsed;
+    this.isSystemCollection = isSystemCollection;
     this.highlightColor = highlightColor;
   }
 
@@ -191,6 +201,10 @@ public class QuranRow {
 
   public boolean isBookmarkHeader() {
     return rowType == BOOKMARK_HEADER;
+  }
+
+  public boolean isEditableCollectionHeader() {
+    return isBookmarkHeader() && tagId != null && !isSystemCollection;
   }
 
   public boolean isBookmark() {

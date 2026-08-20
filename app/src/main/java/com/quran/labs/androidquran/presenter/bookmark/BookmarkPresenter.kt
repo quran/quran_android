@@ -18,7 +18,6 @@ import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.BookmarkItem
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.HighlightColorItem
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.HighlightsHeader
-import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.NotTaggedHeader
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.ReadingBookmarkHeader
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.ReadingBookmarkItem
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.RecentPageHeader
@@ -171,7 +170,7 @@ open class BookmarkPresenter @Inject internal constructor(
   fun shouldShowInlineTags(): Boolean = !isGroupedByTags
 
   fun getContextualOperationsForItems(rows: List<QuranRow>): BooleanArray {
-    val headers = rows.count { row -> row.isBookmarkHeader && row.tagId != null }
+    val headers = rows.count { row -> row.isEditableCollectionHeader }
     val bookmarks = rows.count { row -> row.isBookmark }
     return booleanArrayOf(
       headers == 1 && bookmarks == 0,
@@ -268,9 +267,7 @@ open class BookmarkPresenter @Inject internal constructor(
     }
 
     val filteredRows = mutableListOf<BookmarkRowData>()
-    val removedBookmarks = mutableSetOf<Bookmark>()
     val removedCountByCollection = mutableMapOf<String?, Int>()
-    var haveUntaggedSection = false
 
     for (rowData in cachedRows) {
       when (rowData) {
@@ -295,7 +292,6 @@ open class BookmarkPresenter @Inject internal constructor(
           if (shouldKeep) {
             filteredRows += rowData
           } else {
-            removedBookmarks += rowData.bookmark
             removedCountByCollection[currentTagId] =
               (removedCountByCollection[currentTagId] ?: 0) + 1
           }
@@ -308,50 +304,13 @@ open class BookmarkPresenter @Inject internal constructor(
           }
         }
 
-        is NotTaggedHeader -> {
-          haveUntaggedSection = true
-          filteredRows += rowData
-        }
-
         else -> filteredRows += rowData
-      }
-    }
-
-    val newlyUntaggedBookmarks = mutableSetOf<Bookmark>()
-    for (removedBookmark in removedBookmarks) {
-      val tags = removedBookmark.tags.toSet()
-      if (tags.isNotEmpty()) {
-        val tagsExplicitlyRemoved = bookmarkTagContext[removedBookmark.id].orEmpty()
-        val tagsDeletedViaHeader = tagIdsToUntag.filterTo(mutableSetOf()) { it in tags }
-        val tagsDeletedFromBookmark = tagsExplicitlyRemoved + tagsDeletedViaHeader
-        if (tagsDeletedFromBookmark.containsAll(tags)) {
-          newlyUntaggedBookmarks += removedBookmark
-        }
-      }
-    }
-
-    var untaggedAdded = 0
-    if (newlyUntaggedBookmarks.isNotEmpty()) {
-      val cachedBookmarkItems = cachedRows.filterIsInstance<BookmarkItem>()
-      val untaggedRows = newlyUntaggedBookmarks.mapNotNull { bookmark ->
-        cachedBookmarkItems.firstOrNull { it.bookmark == bookmark }
-          ?.let { template -> BookmarkItem(template.bookmark, null) }
-      }
-
-      if (untaggedRows.isNotEmpty()) {
-        if (!haveUntaggedSection) {
-          filteredRows += NotTaggedHeader(0, DEFAULT_COLLECTION_COLLAPSE_KEY in collapsedCollections)
-        }
-        filteredRows += untaggedRows
-        untaggedAdded = untaggedRows.size
       }
     }
 
     val previewRows = filteredRows.map { rowData ->
       when (rowData) {
         is TagHeader -> rowData.withCountDelta(-(removedCountByCollection[rowData.tag.id] ?: 0))
-        is NotTaggedHeader ->
-          rowData.withCountDelta(untaggedAdded - (removedCountByCollection[null] ?: 0))
 
         else -> rowData
       }
@@ -541,26 +500,16 @@ open class BookmarkPresenter @Inject internal constructor(
   ): MutableList<BookmarkRowData> {
     val rows = mutableListOf<BookmarkRowData>()
     val ayahBookmarks = bookmarks.filterNot { bookmark -> bookmark.isPageBookmark() }
-    val tagsMapping = generateTagsMapping(tags, ayahBookmarks)
+    val bookmarksByTagId = bookmarksByCollection(tags, ayahBookmarks)
 
-    for (tag in tags) {
-      val tagBookmarks = tagsMapping.byTagId[tag.id].orEmpty()
+    val (systemCollections, userCollections) = tags.partition { tag -> tag.isSystem }
+    for (tag in systemCollections + userCollections) {
+      val tagBookmarks = bookmarksByTagId[tag.id].orEmpty()
       val isCollapsed = tag.id in collapsedCollections
       rows.add(TagHeader(tag, tagBookmarks.size, isCollapsed))
       if (!isCollapsed) {
         for (bookmark in tagBookmarks) {
           rows.add(BookmarkItem(bookmark, tag.id))
-        }
-      }
-    }
-
-    val untagged = tagsMapping.bookmarksWithoutUserTags
-    if (untagged.isNotEmpty()) {
-      val isCollapsed = DEFAULT_COLLECTION_COLLAPSE_KEY in collapsedCollections
-      rows.add(NotTaggedHeader(untagged.size, isCollapsed))
-      if (!isCollapsed) {
-        for (bookmark in untagged) {
-          rows.add(BookmarkItem(bookmark, null))
         }
       }
     }
@@ -579,32 +528,13 @@ open class BookmarkPresenter @Inject internal constructor(
     return rows
   }
 
-  private fun generateTagsMapping(
+  private fun bookmarksByCollection(
     tags: List<Tag>,
     bookmarks: List<Bookmark>
-  ): TagsMapping {
-    val seenBookmarks = mutableSetOf<String>()
-    val tagMappings = mutableMapOf<String, MutableList<Bookmark>>()
-
-    for (tag in tags) {
-      val matchingBookmarks = mutableListOf<Bookmark>()
-      for (bookmark in bookmarks) {
-        if (bookmark.tags.contains(tag.id)) {
-          matchingBookmarks.add(bookmark)
-          seenBookmarks.add(bookmark.id)
-        }
-      }
-      tagMappings[tag.id] = matchingBookmarks
+  ): Map<String, List<Bookmark>> {
+    return tags.associate { tag ->
+      tag.id to bookmarks.filter { bookmark -> bookmark.tags.contains(tag.id) }
     }
-
-    val untaggedBookmarks = mutableListOf<Bookmark>()
-    for (bookmark in bookmarks) {
-      if (!seenBookmarks.contains(bookmark.id)) {
-        untaggedBookmarks.add(bookmark)
-      }
-    }
-
-    return TagsMapping(tagMappings, untaggedBookmarks)
   }
 
   private fun generateTagMap(tags: List<Tag>): Map<String, Tag> {
@@ -625,15 +555,6 @@ open class BookmarkPresenter @Inject internal constructor(
   companion object {
     @BaseTransientBottomBar.Duration
     const val DELAY_DELETION_DURATION_IN_MS: Int = 4 * 1000 // 4 seconds
-    const val DEFAULT_COLLECTION_COLLAPSE_KEY: String = "quran:default-collection"
   }
 
-  private data class TagsMapping(
-    val byTagId: Map<String, List<Bookmark>>,
-    /**
-     * The default collection is not exposed as a user tag, so this is the UI's "no user tags"
-     * section rather than a persisted collection ID.
-     */
-    val bookmarksWithoutUserTags: List<Bookmark>
-  )
 }

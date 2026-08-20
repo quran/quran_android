@@ -27,11 +27,4 @@ sealed class BookmarkRowData {
   data class BookmarkItem(val bookmark: Bookmark, val tagId: String? = null) : BookmarkRowData()
   object PageBookmarksHeader : BookmarkRowData()
   object AyahBookmarksHeader : BookmarkRowData()
-  data class NotTaggedHeader(
-    val count: Int = 0,
-    val isCollapsed: Boolean = false
-  ) : BookmarkRowData() {
-    fun withCountDelta(delta: Int): NotTaggedHeader =
-      if (delta == 0) this else copy(count = (count + delta).coerceAtLeast(0))
-  }
 }

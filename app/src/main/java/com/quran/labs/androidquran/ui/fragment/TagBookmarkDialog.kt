@@ -20,6 +20,7 @@ import androidx.fragment.app.DialogFragment
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.ui.core.CollectionNames
 import com.quran.labs.androidquran.presenter.bookmark.TagBookmarkPresenter
 import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
@@ -126,7 +127,7 @@ open class TagBookmarkDialog : DialogFragment() {
   }
 
   class TagsAdapter internal constructor(
-    context: Context, presenter: TagBookmarkPresenter
+    private val context: Context, presenter: TagBookmarkPresenter
   ) : BaseAdapter() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -171,7 +172,9 @@ open class TagBookmarkDialog : DialogFragment() {
           tagName.text = newTagString
         }
       } else {
-        val (id, name) = requireNotNull(getItem(position))
+        val tag = requireNotNull(getItem(position))
+        val id = tag.id
+        val name = CollectionNames.displayName(context, tag)
         holder.apply {
           addImage.visibility = View.GONE
           checkBox.visibility = View.VISIBLE

@@ -202,7 +202,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="delete_tag">Deletar Tag</string>
   <string name="edit_tag">Editar Tag</string>
   <string name="new_tag">Sem Tag</string>
-  <string name="not_tagged">Não Tageado</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Tag</string>
