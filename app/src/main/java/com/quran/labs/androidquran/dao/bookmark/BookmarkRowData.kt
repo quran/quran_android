@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.dao.bookmark
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
 
 sealed class BookmarkRowData {
@@ -24,7 +25,14 @@ sealed class BookmarkRowData {
       if (delta == 0) this else copy(count = (count + delta).coerceAtLeast(0))
   }
 
-  data class BookmarkItem(val bookmark: Bookmark, val tagId: String? = null) : BookmarkRowData()
+  data class BookmarkItem(
+    val bookmark: Bookmark,
+    val tagId: String? = null,
+    val mark: AyahMark = AyahMark.Bookmark
+  ) : BookmarkRowData()
+
+  data class HighlightedAyahItem(val highlight: Highlight) : BookmarkRowData()
+
   object PageBookmarksHeader : BookmarkRowData()
   object AyahBookmarksHeader : BookmarkRowData()
 }

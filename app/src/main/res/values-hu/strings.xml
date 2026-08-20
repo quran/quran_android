@@ -20,7 +20,6 @@
     <string name="menu_jump_last_page">Legutóbbi lap</string>
     <string name="menu_bookmarks">Könyvjelzők</string>
     <string name="menu_bookmarks_page">Oldal könyvjelzők</string>
-    <string name="menu_bookmarks_ayah">Ája könyvjelzők</string>
     <string name="menu_sort">Rendezés</string>
     <string name="menu_sort_date">Hozzáadása ideje szerint</string>
     <string name="menu_sort_location">Koránban való hely szerint</string>

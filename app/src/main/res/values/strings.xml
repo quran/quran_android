@@ -24,7 +24,6 @@
   <string name="menu_bookmarks">Bookmarks</string>
   <string name="reading_bookmark">Reading Bookmark</string>
   <string name="menu_bookmarks_page">Page Bookmarks</string>
-  <string name="menu_bookmarks_ayah">Ayah Bookmarks</string>
   <string name="menu_sort">Sort</string>
   <string name="menu_sort_date">Date Added</string>
   <string name="menu_sort_location">Location in Quran</string>
@@ -382,6 +381,8 @@
 
   <!-- highlights section in the bookmarks tab -->
   <string name="highlights">Highlights</string>
+  <!-- header over the flat list of ayat, which mixes bookmarked and highlighted ayat -->
+  <string name="ayahs">Ayahs</string>
   <string name="highlights_empty">No highlighted ayahs in this color yet.</string>
   <string name="collection_empty">No bookmarks in this collection yet.</string>
   <string name="expand_collection">Expand</string>

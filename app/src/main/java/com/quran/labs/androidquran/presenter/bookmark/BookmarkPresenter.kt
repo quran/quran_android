@@ -2,10 +2,12 @@ package com.quran.labs.androidquran.presenter.bookmark
 
 import androidx.annotation.VisibleForTesting
 import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.quran.data.dao.BookmarkSortOrder
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.dao.HighlightsDao
 import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.dao.RecentPagesDao
+import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.ReadingBookmark
@@ -13,23 +15,23 @@ import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
+import com.quran.labs.androidquran.common.ui.core.HighlightColors
+import com.quran.labs.androidquran.dao.bookmark.AyahMark
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.BookmarkItem
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.HighlightColorItem
+import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.HighlightedAyahItem
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.HighlightsHeader
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.ReadingBookmarkHeader
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.ReadingBookmarkItem
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.RecentPageHeader
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.TagHeader
-import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment
-import com.quran.labs.androidquran.common.ui.core.HighlightColors
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.QuranSettings
 import dev.zacsweers.metro.Inject
-import dev.zacsweers.metro.Provider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
@@ -52,7 +54,6 @@ open class BookmarkPresenter @Inject internal constructor(
   private val readingBookmarksDao: ReadingBookmarksDao,
   private val highlightsDao: HighlightsDao,
   private val quranSettings: QuranSettings,
-  private val arabicDatabaseUtils: Provider<ArabicDatabaseUtils>,
 ) : Presenter<BookmarksFragment> {
   private var sortOrder: Int = quranSettings.bookmarksSortOrder
   var isGroupedByTags: Boolean = quranSettings.bookmarksGroupedByTags
@@ -382,26 +383,12 @@ open class BookmarkPresenter @Inject internal constructor(
     }
   }
 
-  private suspend fun getBookmarksWithAyat(sortOrder: Int): BookmarkData {
+  private suspend fun getBookmarksWithRecentPages(sortOrder: Int): BookmarkData {
     return coroutineScope {
       val bookmarkData = async { getBookmarkData(sortOrder) }
       val recentPages = async { getRecentPages() }
 
-      hydrateAyahText(
-        bookmarkData.await().copy(recentPages = recentPages.await())
-      )
-    }
-  }
-
-  private suspend fun hydrateAyahText(bookmarkData: BookmarkData): BookmarkData {
-    return withContext(Dispatchers.IO) {
-      try {
-        bookmarkData.copy(
-          bookmarks = arabicDatabaseUtils().hydrateAyahText(bookmarkData.bookmarks.toMutableList())
-        )
-      } catch (_: Exception) {
-        bookmarkData
-      }
+      bookmarkData.await().copy(recentPages = recentPages.await())
     }
   }
 
@@ -412,12 +399,12 @@ open class BookmarkPresenter @Inject internal constructor(
   @VisibleForTesting
   suspend fun getBookmarksList(sortOrder: Int, groupByTags: Boolean): BookmarkRawResult {
     return coroutineScope {
-      val bookmarkData = async { getBookmarksWithAyat(sortOrder) }
+      val bookmarkData = async { getBookmarksWithRecentPages(sortOrder) }
       val readingBookmark = async { readingBookmarksDao.readingBookmark() }
       val highlights = async { highlightsDao.highlightsFlow().first() }
       val data = bookmarkData.await()
       val rows = getBookmarkRowData(
-        data, groupByTags, readingBookmark.await(), highlights.await()
+        data, sortOrder, groupByTags, readingBookmark.await(), highlights.await()
       )
       val tagMap = generateTagMap(data.tags)
       BookmarkRawResult(rows, tagMap)
@@ -447,6 +434,7 @@ open class BookmarkPresenter @Inject internal constructor(
 
   private fun getBookmarkRowData(
     data: BookmarkData,
+    sortOrder: Int,
     groupByTags: Boolean,
     readingBookmark: ReadingBookmark?,
     highlights: List<Highlight>
@@ -473,7 +461,7 @@ open class BookmarkPresenter @Inject internal constructor(
       if (groupByTags) {
         getRowDataSortedByTags(data.tags, data.bookmarks)
       } else {
-        getSortedRowData(data.bookmarks)
+        getSortedRowData(data.bookmarks, highlights, sortOrder)
       }
     )
     return rows
@@ -516,17 +504,58 @@ open class BookmarkPresenter @Inject internal constructor(
     return rows
   }
 
-  private fun getSortedRowData(bookmarks: List<Bookmark>): MutableList<BookmarkRowData> {
+  private fun getSortedRowData(
+    bookmarks: List<Bookmark>,
+    highlights: List<Highlight>,
+    sortOrder: Int
+  ): MutableList<BookmarkRowData> {
+    val highlightsByAyah = highlights.associateBy { highlight -> highlight.suraAyah }
     val ayahBookmarks = bookmarks.filterNot { bookmark -> bookmark.isPageBookmark() }
-    val rows = mutableListOf<BookmarkRowData>()
-    if (ayahBookmarks.isNotEmpty()) {
-      rows.add(BookmarkRowData.AyahBookmarksHeader)
-      for (bookmark in ayahBookmarks) {
-        rows.add(BookmarkItem(bookmark, null))
+    val bookmarkedAyat = ayahBookmarks.mapTo(mutableSetOf()) { bookmark -> bookmark.suraAyah() }
+    val unbookmarkedHighlights = highlightsByAyah.values
+      .filterNot { highlight -> highlight.suraAyah in bookmarkedAyat }
+
+    return if (ayahBookmarks.isEmpty() && unbookmarkedHighlights.isEmpty()) {
+      mutableListOf()
+    } else {
+      val entries = ayahBookmarks.map { bookmark ->
+        AyahEntry(
+          row = BookmarkItem(bookmark, null, highlightsByAyah.markFor(bookmark)),
+          suraAyah = bookmark.suraAyah(),
+          timestamp = bookmark.timestamp
+        )
+      } + unbookmarkedHighlights.map { highlight ->
+        AyahEntry(
+          row = HighlightedAyahItem(highlight),
+          suraAyah = highlight.suraAyah,
+          timestamp = highlight.timestamp.epochSeconds
+        )
       }
+
+      val sorted = if (sortOrder == BookmarkSortOrder.SORT_LOCATION) {
+        entries.sortedBy { entry -> entry.suraAyah }
+      } else {
+        entries.sortedByDescending { entry -> entry.timestamp }
+      }
+
+      val rows = mutableListOf<BookmarkRowData>(BookmarkRowData.AyahBookmarksHeader)
+      sorted.mapTo(rows) { entry -> entry.row }
+      rows
     }
-    return rows
   }
+
+  private fun Bookmark.suraAyah(): SuraAyah = SuraAyah(sura!!, ayah!!)
+
+  private fun Map<SuraAyah, Highlight>.markFor(bookmark: Bookmark): AyahMark {
+    val highlight = this[bookmark.suraAyah()]
+    return if (highlight == null) AyahMark.Unhighlighted else AyahMark.Highlighted(highlight.color)
+  }
+
+  private class AyahEntry(
+    val row: BookmarkRowData,
+    val suraAyah: SuraAyah,
+    val timestamp: Long
+  )
 
   private fun bookmarksByCollection(
     tags: List<Tag>,

@@ -15,7 +15,6 @@
   <string name="menu_jump_last_page">หน้าสุดท้าย</string>
   <string name="menu_bookmarks">คั่น หน้า</string>
   <string name="menu_bookmarks_page">ที่คั่นหน้า</string>
-  <string name="menu_bookmarks_ayah">ที่คั่นหน้า Ayah</string>
   <string name="menu_sort">ประเภท</string>
   <string name="menu_sort_date">วันที่เพิ่ม</string>
   <string name="menu_sort_location">สถานที่ตั้งในอัลกุรอาน</string>

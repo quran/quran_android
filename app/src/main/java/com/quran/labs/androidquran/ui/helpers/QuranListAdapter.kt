@@ -8,14 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.util.set
 import androidx.recyclerview.widget.RecyclerView
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.ui.core.CollectionNames
-import com.quran.labs.androidquran.common.ui.core.HighlightColors
 import com.quran.labs.androidquran.ui.QuranActivity
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.JuzView
@@ -35,6 +34,8 @@ class QuranListAdapter(
   private val inflater = LayoutInflater.from(context)
   private val checkedState = SparseBooleanArray()
   private val locale = QuranUtils.getCurrentLocale()
+  private val emptyColorAlpha =
+    ResourcesCompat.getFloat(context.resources, R.dimen.empty_highlight_alpha)
   private var tagMap: Map<String, Tag> = emptyMap()
   private var showTags = false
   private var showDate = false
@@ -56,11 +57,6 @@ class QuranListAdapter(
           inflater.inflate(R.layout.index_highlight_color_row, parent, false)
         )
 
-      VIEW_TYPE_HIGHLIGHTED_AYAH ->
-        HighlightedAyahHolder(
-          inflater.inflate(R.layout.index_highlighted_ayah_row, parent, false)
-        )
-
       else -> ViewHolder(inflater.inflate(R.layout.index_sura_row, parent, false))
     }
   }
@@ -70,7 +66,6 @@ class QuranListAdapter(
       VIEW_TYPE_HEADER -> bindHeader(holder, position)
       VIEW_TYPE_COLLECTION_HEADER -> bindCollectionHeader(holder as CollectionHeaderHolder, position)
       VIEW_TYPE_HIGHLIGHT_COLOR -> bindHighlightColor(holder as HighlightColorHolder, position)
-      VIEW_TYPE_HIGHLIGHTED_AYAH -> bindHighlightedAyah(holder as HighlightedAyahHolder, position)
       else -> bindRow(holder, position)
     }
   }
@@ -85,7 +80,6 @@ class QuranListAdapter(
       element.isBookmarkHeader -> VIEW_TYPE_COLLECTION_HEADER
       element.isHeader -> VIEW_TYPE_HEADER
       element.isHighlightColor -> VIEW_TYPE_HIGHLIGHT_COLOR
-      element.isHighlightedAyah -> VIEW_TYPE_HIGHLIGHTED_AYAH
       else -> VIEW_TYPE_ROW
     }
   }
@@ -275,38 +269,23 @@ class QuranListAdapter(
 
   private fun bindHighlightColor(holder: HighlightColorHolder, pos: Int) {
     val item = elements[pos]
-    val color = item.highlightColor
     holder.title.text = item.text
 
     val count = item.itemCount ?: 0
     holder.pageNumber.visibility = View.VISIBLE
     holder.pageNumber.text = QuranUtils.getLocalizedNumber(count)
 
-    if (color != null) {
-      holder.swatch.setColorFilter(HighlightColors[color].color.toArgb(), PorterDuff.Mode.SRC_ATOP)
+    item.imageFilterColorResource?.let { colorResource ->
+      holder.swatch.setColorFilter(
+        ContextCompat.getColor(context, colorResource), PorterDuff.Mode.SRC_ATOP
+      )
     }
 
     // a color with nothing in it stays in the list, but dims rather than shouting
-    val alpha = if (count == 0) EMPTY_COLOR_ALPHA else 1f
+    val alpha = if (count == 0) emptyColorAlpha else 1f
     holder.swatch.alpha = alpha
     holder.title.alpha = alpha
     holder.pageNumber.alpha = alpha
-
-    holder.setChecked(isItemChecked(pos))
-    holder.setEnabled(isEnabled(pos))
-  }
-
-  private fun bindHighlightedAyah(holder: HighlightedAyahHolder, pos: Int) {
-    val item = elements[pos]
-    holder.title.text = item.text
-    holder.metadata.text = item.metadata
-    holder.pageNumber.visibility = View.VISIBLE
-    holder.pageNumber.text = QuranUtils.getLocalizedNumber(item.page)
-
-    val color = item.highlightColor
-    if (color != null) {
-      holder.colorRail.setBackgroundColor(HighlightColors[color].color.toArgb())
-    }
 
     holder.setChecked(isItemChecked(pos))
     holder.setEnabled(isEnabled(pos))
@@ -367,11 +346,6 @@ class QuranListAdapter(
     val swatch: ImageView = itemView.findViewById(R.id.rowIcon)
   }
 
-  private inner class HighlightedAyahHolder(itemView: View) : HeaderHolder(itemView) {
-    val metadata: TextView = itemView.findViewById(R.id.metadata)
-    val colorRail: View = itemView.findViewById(R.id.colorRail)
-  }
-
   interface QuranTouchListener {
     fun onClick(row: QuranRow, position: Int)
     fun onLongClick(row: QuranRow, position: Int): Boolean
@@ -383,7 +357,5 @@ class QuranListAdapter(
     private const val VIEW_TYPE_ROW = 1
     private const val VIEW_TYPE_COLLECTION_HEADER = 2
     private const val VIEW_TYPE_HIGHLIGHT_COLOR = 3
-    private const val VIEW_TYPE_HIGHLIGHTED_AYAH = 4
-    private const val EMPTY_COLOR_ALPHA = 0.5f
   }
 }

@@ -67,7 +67,6 @@
   <string name="menu_other_apps">Altre applicazioni</string>
   <string name="menu_jump_last_page">Ultima pagina</string>
   <string name="menu_bookmarks_page">Segnalibri della pagina</string>
-  <string name="menu_bookmarks_ayah">Segnalibri Ayah</string>
   <string name="menu_sort_date">Data di aggiunta</string>
   <string name="menu_sort_group_by_tags">Raggruppa per tag</string>
   <string name="downloadPrompt_title">Scaricare i file necessari?</string>
