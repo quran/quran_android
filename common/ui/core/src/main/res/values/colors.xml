@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!--
+    the pale colors a highlighted ayah is painted with on the page. these are the same values as
+    the Color literals in HighlightColors, which pairs each one with the resource below - keep the
+    two in sync. lists use the darker highlight_list_* ramp instead, since these are too weak to
+    read against a light row.
+  -->
+  <color name="highlight_page_yellow">#FFFDEC63</color>
+  <color name="highlight_page_green">#FFC1EC71</color>
+  <color name="highlight_page_blue">#FFADD7FE</color>
+  <color name="highlight_page_red">#FFFEB0CA</color>
+  <color name="highlight_page_purple">#FFD8B1FE</color>
+</resources>
