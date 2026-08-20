@@ -9,20 +9,21 @@ import com.quran.labs.androidquran.common.ui.core.HighlightColors
 
 object HighlightTypes {
 
-  // ids order the highlights against each other - lower ids are drawn first
+  @JvmField
+  val SELECTION = HighlightType(1,  R.color.selection_highlight, HIGHLIGHT, isSingle = true)
+  @JvmField
+  val AUDIO =     HighlightType(2,  R.color.audio_highlight,     HIGHLIGHT, isSingle = true, isTransitionAnimated = true)
+  val NOTE =      HighlightType(3,  R.color.note_highlight,      HIGHLIGHT)
+  @JvmField
+  val BOOKMARK =  HighlightType(4,  R.color.bookmark_highlight,  HIGHLIGHT)
+
+  private const val FIRST_HIGHLIGHT_ID = 5L
+
   private val HIGHLIGHTS: Map<HighlightColor, HighlightType> =
     HighlightColors.sorted.mapIndexed { index, spec ->
       spec.highlightColor to
-          HighlightType(index.toLong(), spec.colorResourceId, UNDERLAY)
+          HighlightType(FIRST_HIGHLIGHT_ID + index, spec.colorResourceId, UNDERLAY)
     }.toMap()
-
-  @JvmField
-  val SELECTION = HighlightType(10, R.color.selection_highlight, HIGHLIGHT, isSingle = true)
-  @JvmField
-  val AUDIO =     HighlightType(11, R.color.audio_highlight,     HIGHLIGHT, isSingle = true, isTransitionAnimated = true)
-  val NOTE =      HighlightType(12, R.color.note_highlight,      HIGHLIGHT)
-  @JvmField
-  val BOOKMARK =  HighlightType(13, R.color.bookmark_highlight,  HIGHLIGHT)
 
   val highlights: Collection<HighlightType> = HIGHLIGHTS.values
 
