@@ -11,6 +11,7 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.base.TestApplication
+import com.quran.labs.androidquran.dao.bookmark.AyahMark
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData
 import com.quran.labs.androidquran.fakes.FakeBookmarksDao
@@ -75,7 +76,11 @@ class BookmarkPresenterTest {
 
     assertThat(result.rows.filterIsInstance<BookmarkRowData.PageBookmarksHeader>()).isEmpty()
     assertThat(result.rows.filterIsInstance<BookmarkRowData.BookmarkItem>())
-      .containsExactly(BookmarkRowData.BookmarkItem(taggedBookmark(AYAH_BOOKMARKS.first()), null))
+      .containsExactly(
+        BookmarkRowData.BookmarkItem(
+          taggedBookmark(AYAH_BOOKMARKS.first()), null, AyahMark.Unhighlighted
+        )
+      )
   }
 
   @Test
@@ -233,6 +238,66 @@ class BookmarkPresenterTest {
   }
 
   @Test
+  fun `ungrouped list has one row per ayah, highlighted or bookmarked`() {
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+    fakeHighlightsDao.setHighlights(HIGHLIGHTS)
+
+    val result = getBookmarkResultAndValidate(
+      makeBookmarkPresenter(), BookmarkSortOrder.SORT_LOCATION
+    )
+
+    val ayahRows = result.rows.dropWhile { row -> row !is BookmarkRowData.AyahBookmarksHeader }
+    assertThat(ayahRows.first()).isInstanceOf(BookmarkRowData.AyahBookmarksHeader::class.java)
+    assertThat(ayahRows.drop(1)).containsExactly(
+      // 2:4 is bookmarked, the other four ayat are highlighted, and none is both
+      BookmarkRowData.BookmarkItem(taggedBookmark(AYAH_BOOKMARKS[1]), null, AyahMark.Unhighlighted),
+      BookmarkRowData.HighlightedAyahItem(HIGHLIGHTS[0]),
+      BookmarkRowData.HighlightedAyahItem(HIGHLIGHTS[1]),
+      BookmarkRowData.BookmarkItem(taggedBookmark(AYAH_BOOKMARKS[0]), null, AyahMark.Unhighlighted),
+      BookmarkRowData.HighlightedAyahItem(HIGHLIGHTS[2])
+    ).inOrder()
+  }
+
+  @Test
+  fun `a bookmarked ayah that is also highlighted is one row carrying the mark`() {
+    val bookmark = Bookmark("bookmark-99", 2, 255, 42, 500)
+    fakeBookmarksDao.setBookmarks(listOf(bookmark))
+    fakeHighlightsDao.setHighlights(listOf(HIGHLIGHTS[0]))
+
+    val result = getBookmarkResultAndValidate(
+      makeBookmarkPresenter(), BookmarkSortOrder.SORT_LOCATION
+    )
+
+    assertThat(result.rows.filterIsInstance<BookmarkRowData.HighlightedAyahItem>()).isEmpty()
+    assertThat(result.rows.filterIsInstance<BookmarkRowData.BookmarkItem>()).containsExactly(
+      BookmarkRowData.BookmarkItem(
+        taggedBookmark(bookmark), null, AyahMark.Highlighted(HighlightColor.BLUE)
+      )
+    )
+  }
+
+  @Test
+  fun `grouped rows say nothing about highlights, since collections are the axis there`() {
+    val bookmark = Bookmark("bookmark-99", 2, 255, 42, 500, listOf("tag-1"))
+    fakeBookmarksDao.setTags(TAGS)
+    fakeBookmarksDao.setBookmarks(listOf(bookmark))
+    fakeHighlightsDao.setHighlights(listOf(HIGHLIGHTS[0]))
+    quranSettings.bookmarksGroupedByTags = true
+    val presenter = makeBookmarkPresenter()
+
+    val result = getBookmarkResultAndValidate(
+      presenter, BookmarkSortOrder.SORT_DATE_ADDED, true
+    )
+
+    assertThat(result.rows).contains(
+      BookmarkRowData.BookmarkItem(taggedBookmark(bookmark), "tag-1", AyahMark.Bookmark)
+    )
+    // and the collection names are already in the headers, so the rows do not repeat them
+    assertThat(presenter.isGroupedByTags).isTrue()
+    assertThat(presenter.shouldShowInlineTags()).isFalse()
+  }
+
+  @Test
   fun `highlights section is hidden when there are no highlights`() {
     fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
 
@@ -250,7 +315,6 @@ class BookmarkPresenterTest {
     presenter.toggleGroupByTags()
 
     assertThat(presenter.isGroupedByTags).isFalse()
-    assertThat(presenter.shouldShowInlineTags()).isTrue()
     assertThat(quranSettings.bookmarksGroupedByTags).isFalse()
   }
 
@@ -307,7 +371,6 @@ class BookmarkPresenterTest {
       fakeReadingBookmarksDao,
       fakeHighlightsDao,
       quranSettings,
-      { throw IllegalStateException("ArabicDatabaseUtils not wired up in test") },
     ) {
       override fun subscribeToChanges() {
         // nothing
