@@ -4,6 +4,7 @@ import static com.quran.data.model.highlight.HighlightType.Mode.BACKGROUND;
 import static com.quran.data.model.highlight.HighlightType.Mode.COLOR;
 import static com.quran.data.model.highlight.HighlightType.Mode.HIDE;
 import static com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT;
+import static com.quran.data.model.highlight.HighlightType.Mode.UNDERLAY;
 import static com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE;
 
 import android.animation.Animator;
@@ -49,6 +50,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import dev.chrisbanes.insetter.Insetter;
+import kotlin.Unit;
 
 public class HighlightingImageView extends AppCompatImageView {
   // for debugging / visualizing glyph bounds:
@@ -86,12 +88,22 @@ public class HighlightingImageView extends AppCompatImageView {
   private int horizontalSafeOffset = 0;
   private int verticalOffsetForScrolling = 0;
 
+  private final ImageDrawHelper underlayHighlightsDrawer = new HighlightsDrawer(
+      () -> ayahCoordinates,
+      () -> highlightCoordinates,
+      () -> currentHighlights,
+      c -> { super.onDraw(c); return Unit.INSTANCE; },
+      () -> isNightMode,
+      UNDERLAY
+  );
+
   // Draws highlights that need to run before the page image is drawn (to apply clippings)
   private final ImageDrawHelper clippingHighlightsDrawer = new HighlightsDrawer(
       () -> ayahCoordinates,
       () -> highlightCoordinates,
       () -> currentHighlights,
-      c -> { super.onDraw(c); return null; },
+      c -> { super.onDraw(c); return Unit.INSTANCE; },
+      () -> isNightMode,
       COLOR, HIDE
   );
 
@@ -101,6 +113,7 @@ public class HighlightingImageView extends AppCompatImageView {
       () -> highlightCoordinates,
       () -> currentHighlights,
       c -> { super.onDraw(c); return null; },
+      () -> isNightMode,
       HIGHLIGHT, BACKGROUND, UNDERLINE
   );
 
@@ -502,6 +515,11 @@ public class HighlightingImageView extends AppCompatImageView {
     if (d == null) {
       // no image, forget it.
       return;
+    }
+
+    // draw the highlights that go under the page image first
+    if (pageCoordinates != null) {
+      underlayHighlightsDrawer.draw(pageCoordinates, canvas, this);
     }
 
     // Save the canvas before applying any clippings

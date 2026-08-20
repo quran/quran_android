@@ -12,11 +12,13 @@ import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.highlight.HighlightType.Mode.BACKGROUND
 import com.quran.data.model.highlight.HighlightType.Mode.COLOR
 import com.quran.data.model.highlight.HighlightType.Mode.HIDE
 import com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT
+import com.quran.data.model.highlight.HighlightType.Mode.UNDERLAY
 import com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.TransitionAyahHighlight
@@ -31,6 +33,7 @@ class HighlightsDrawer(
   private val highlightCoordinates: () -> Map<AyahHighlight, List<AyahBounds>>?,
   private val currentHighlights: () -> SortedMap<HighlightType, Set<AyahHighlight>>?,
   private val superOnDraw: (Canvas) -> Unit,
+  private val isNightMode: () -> Boolean = { false },
   private vararg val highlightTypesFilter: HighlightType.Mode = HighlightType.Mode.entries.toTypedArray(),
 ) : ImageDrawHelper {
 
@@ -40,14 +43,24 @@ class HighlightsDrawer(
 
   // Singleton object so we can share the cache across all pages
   private object PaintCache {
-    private val cache = mutableMapOf<Pair<HighlightType.Mode, /* @ColorInt */ Int>, Paint>()
+    private val cache =
+      mutableMapOf<Triple<HighlightType.Mode, /* @ColorRes */ Int, Boolean>, Paint>()
 
-    fun getPaintForHighlightType(context: Context, type: HighlightType): Paint =
-      cache.getOrPut(Pair(type.mode, type.colorResId)) {
+    fun getPaintForHighlightType(
+      context: Context,
+      type: HighlightType,
+      isNightMode: Boolean
+    ): Paint =
+      cache.getOrPut(Triple(type.mode, type.colorResId, isNightMode)) {
         Paint().apply {
           val color = ContextCompat.getColor(context, type.colorResId)
           when (type.mode) {
             COLOR -> this.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
+            UNDERLAY -> this.color = if (isNightMode) {
+              ColorUtils.setAlphaComponent(color, NIGHT_UNDERLAY_ALPHA)
+            } else {
+              color
+            }
             else -> this.color = color
           }
         }
@@ -81,7 +94,7 @@ class HighlightsDrawer(
     val filteredHighlights = currentHighlights.filterKeys { it.mode in highlightTypesFilter }
 
     for ((highlightType, highlights) in filteredHighlights) {
-      val paint = PaintCache.getPaintForHighlightType(image.context, highlightType)
+      val paint = PaintCache.getPaintForHighlightType(image.context, highlightType, isNightMode())
 
       for (highlight in highlights) {
         if (alreadyHighlightedContains(highlightType, highlight)) continue
@@ -123,7 +136,7 @@ class HighlightsDrawer(
                 clipOutRect(canvas, scaledRect)
               }
 
-              HIGHLIGHT, BACKGROUND, UNDERLINE -> {
+              UNDERLAY, HIGHLIGHT, BACKGROUND, UNDERLINE -> {
                 // Draw a rectangle with the specified paint
                 canvas.drawRect(scaledRect, paint)
               }
@@ -146,5 +159,6 @@ class HighlightsDrawer(
 
   companion object {
     private const val UNDERLINE_THICKNESS_DIPS = 3f // dp
+    private const val NIGHT_UNDERLAY_ALPHA = 0x66
   }
 }
