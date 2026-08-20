@@ -14,6 +14,7 @@ dependencies {
   implementation(project(":common:analytics"))
   implementation(project(":common:drawing"))
   implementation(project(":common:linebyline:ui"))
+  implementation(project(":common:ui:core"))
   // have to be api, otherwise can't add classes to the correct components
   api(project(":common:mapper:imlaei"))
   api(project(":common:linebyline:data"))

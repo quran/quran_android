@@ -14,7 +14,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import com.quran.data.source.PageContentType
-import com.quran.labs.androidquran.extra.feature.linebyline.model.HighlightType
 import com.quran.labs.androidquran.extra.feature.linebyline.model.LineModel
 import com.quran.labs.androidquran.extra.feature.linebyline.model.PageInfo
 import com.quran.labs.androidquran.extra.feature.linebyline.ui.modifier.pageGradient
@@ -82,6 +81,14 @@ fun QuranPage(
       sidelines = sidelinesComposable
     ) {
       Box {
+        // highlights that act as a background are painted before the lines are drawn
+        pageInfo.ayahHighlights
+          .filter { it.highlightType.isUnderText }
+          .forEach { highlightAyah ->
+            val color = highlightAyah.highlightType.paintColor(isNightMode)
+            highlightAyah.ayahHighlights.forEach { highlightComposable(it, color) }
+          }
+
         QuranLineLayout(
           lineHeightWidthRatio = ratio,
           allowLinesToOverlap = allowLinesToOverlap,
@@ -126,16 +133,11 @@ fun QuranPage(
 
           // Highlights
           val highlights = pageInfo.ayahHighlights.filter { highlightAyah ->
-            highlightAyah.ayahHighlights.any { it.lineId == lineId }
+            !highlightAyah.highlightType.isUnderText &&
+                highlightAyah.ayahHighlights.any { it.lineId == lineId }
           }
           highlights.forEach { highlightAyah ->
-            val color = when (highlightAyah.highlightType) {
-              HighlightType.SELECTION -> Color(0x46, 0x94, 0xa6, 0x40)
-              HighlightType.AUDIO -> Color(0x46, 0xa6, 0x46, 0x40)
-              HighlightType.AUDIO_WORD -> Color(0xff, 0xb3, 0x3d, 0x60)
-              HighlightType.BOOKMARK -> Color(0xa4, 0xa4, 0xa4, 0x40)
-            }
-
+            val color = highlightAyah.highlightType.paintColor(isNightMode)
             highlightAyah.ayahHighlights
               .filter { it.lineId == lineId }
               .forEach {
