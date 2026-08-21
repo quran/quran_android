@@ -91,7 +91,6 @@ private fun AyahBookmarkDefaultPreview() {
       isReadingBookmarkEnabled = true,
       currentReadingBookmark = AyahReadingBookmark(sura = 4, ayah = 34, timestamp = 0),
       collections = previewCollections,
-      highlight = null,
       suraAyahNameResolver = previewSuraAyahNameResolver,
       readingBookmarkNameResolver = previewReadingBookmarkNameResolver
     )
@@ -107,7 +106,6 @@ private fun AyahBookmarkWarningPreview() {
       isReadingBookmarkEnabled = false,
       currentReadingBookmark = PageReadingBookmark(page = 83, timestamp = 0),
       collections = previewCollections.replacingAt(0, previewCollections[0].copy(isChecked = false)),
-      highlight = null,
       showLastPlaceWarning = true,
       suraAyahNameResolver = previewSuraAyahNameResolver,
       readingBookmarkNameResolver = previewReadingBookmarkNameResolver
@@ -124,7 +122,6 @@ private fun AyahBookmarkCreatingCollectionPreview() {
       isReadingBookmarkEnabled = true,
       collections = previewCollections,
       collectionCreation = AyahBookmarkCollectionCreationState.Active(name = "Qiyam"),
-      highlight = null,
       suraAyahNameResolver = previewSuraAyahNameResolver,
       readingBookmarkNameResolver = previewReadingBookmarkNameResolver
     )
@@ -140,7 +137,6 @@ private fun AyahBookmarkCreatingCollectionSubmittingPreview() {
       isReadingBookmarkEnabled = true,
       collections = previewCollections,
       collectionCreation = AyahBookmarkCollectionCreationState.Active(name = "Qiyam", isSubmitting = true),
-      highlight = null,
       suraAyahNameResolver = previewSuraAyahNameResolver,
       readingBookmarkNameResolver = previewReadingBookmarkNameResolver
     )
@@ -155,7 +151,6 @@ private fun AyahBookmarkRemovedPreview() {
       ayah = SuraAyah(4, 1),
       isReadingBookmarkEnabled = false,
       collections = previewCollections,
-      highlight = null,
       isBookmarkRemoved = true,
       suraAyahNameResolver = previewSuraAyahNameResolver,
       readingBookmarkNameResolver = previewReadingBookmarkNameResolver

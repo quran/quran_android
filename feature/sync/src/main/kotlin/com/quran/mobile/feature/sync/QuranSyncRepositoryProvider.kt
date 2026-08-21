@@ -186,7 +186,7 @@ private class SyncCollectionBookmarksRepository(
     color: AyahHighlightColor,
     timestamp: PlatformDateTime
   ): AyahHighlight {
-    return quranDataService.setHighlight(sura, ayah, color, timestamp)
+    return quranDataService.setHighlight(sura, ayah, color)
   }
 
   override suspend fun removeHighlight(

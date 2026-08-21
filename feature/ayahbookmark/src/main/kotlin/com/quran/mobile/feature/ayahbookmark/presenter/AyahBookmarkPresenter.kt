@@ -8,14 +8,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.quran.data.dao.BookmarksDao
-import com.quran.data.dao.HighlightsDao
 import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.di.AppCoroutineScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
-import com.quran.data.model.highlight.Highlight
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionCreationState
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionItem
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkEvent
@@ -28,16 +26,13 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 
 @AssistedInject
 class AyahBookmarkPresenter(
   @Assisted private val currentAyah: SuraAyah,
   private val bookmarksDao: BookmarksDao,
-  private val highlightsDao: HighlightsDao,
   private val readingBookmarksDao: ReadingBookmarksDao,
   private val quranNaming: QuranNaming,
   private val appCoroutineScope: AppCoroutineScope
@@ -52,15 +47,10 @@ class AyahBookmarkPresenter(
   fun present(): AyahBookmarkState {
     val collectionState = bookmarksDao.collectionsWithBookmarksFlow().collectAsState(null)
     val readingBookmark = readingBookmarksDao.readingBookmarkFlow().collectAsState(null)
-    val highlight = highlightsDao.highlightsFlow()
-      .map { highlights -> highlights.firstOrNull { it.suraAyah == currentAyah } }
-      .collectAsState(null)
 
     val isReadingBookmarkEnabledState = remember(readingBookmark.value) {
       mutableStateOf(readingBookmark.value.asSuraAyah() == currentAyah)
     }
-
-    val currentHighlight = remember(highlight.value) { mutableStateOf(highlight.value) }
 
     val collectionCreationState = remember {
       mutableStateOf<AyahBookmarkCollectionCreationState>(AyahBookmarkCollectionCreationState.Inactive)
@@ -134,7 +124,7 @@ class AyahBookmarkPresenter(
               collectionCreationState.value = AyahBookmarkCollectionCreationState.Inactive
             } catch (exception: CancellationException) {
               throw exception
-            } catch (_: IllegalArgumentException) {
+            } catch (exception: IllegalArgumentException) {
               collectionCreationState.value = AyahBookmarkCollectionCreationState.Active(
                 name = event.name,
                 hasNameError = true
@@ -153,15 +143,6 @@ class AyahBookmarkPresenter(
                 readingBookmarksDao.setAyahReadingBookmark(currentAyah)
               } else {
                 readingBookmarksDao.deleteReadingBookmark()
-              }
-            }
-
-            val currentHighlight = currentHighlight.value
-            if (currentHighlight != highlight.value) {
-              if (currentHighlight == null) {
-                highlightsDao.clearHighlight(currentAyah)
-              } else {
-                highlightsDao.setHighlight(currentAyah, currentHighlight.color)
               }
             }
           }
@@ -209,14 +190,6 @@ class AyahBookmarkPresenter(
           removalJob.value?.cancel()
           isBookmarkRemovedState.value = false
         }
-
-        is AyahBookmarkEvent.SetHighlight -> {
-          currentHighlight.value = Highlight(currentAyah, event.color, Clock.System.now())
-        }
-
-        AyahBookmarkEvent.ClearHighlight -> {
-          currentHighlight.value = null
-        }
       }
     }
 
@@ -226,7 +199,6 @@ class AyahBookmarkPresenter(
       currentReadingBookmark = readingBookmark.value,
       collections = collections,
       collectionCreation = collectionCreationState.value,
-      highlight = currentHighlight.value,
       showLastPlaceWarning = showLastPlaceWarningState.value,
       isBookmarkRemoved = isBookmarkRemovedState.value,
       isDismissed = isDismissed.value,
