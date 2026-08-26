@@ -1,70 +1,63 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <color name="toolbar">@color/surface</color>
-  <color name="toolbar_text">#ff44464e</color>
-  <color name="toolbar_icon_tint">#ff44464e</color>
-  <color name="toolbar_secondary_text">#ff44464e</color>
+#fffaf8f7
+#ff00838f
+@color/color_control_normal
+#FFF4CB
 
-  <color name="surface">#fffaf8f7</color>
-  <color name="accent_color">#ff00838f</color>
-  <color name="accent_color_dark">@color/color_control_normal</color>
-  <color name="page_background">#FFF4CB</color>
-  <color name="secondary_dark_background">#ffffffff</color>
-  <color name="header_background">#dee2e6</color>
-  <color name="header_text_color">@color/sura_number_color</color>
-  <color name="ripple_dark">#1f000000</color>
-  <color name="title_color">#212529</color>
-  <color name="sura_number_color">#ff212529</color>
-  <color name="sura_details_color">#ff6c757d</color>
-  <color name="nav_status_bar_colors">#ff424242</color>
-  <color name="transparent_actionbar_color">#AA000000</color>
-  <color name="panel_background_color">@color/toolbar</color>
-  <color name="translation_hdr_color">#ff777777</color>
-  <color name="translation_sura_header">#fff1ecd8</color>
-  <color name="translation_sura_header_night">#ff424242</color>
-  <color name="translation_verse_text_color">#ff858383</color>
-  <color name="translation_verse_background_color">#fff2f2f2</color>
-  <color name="translation_verse_background_night_color">#ff333333</color>
-  <color name="translation_inline_ayah_highlight_color">#ff00838F</color>
-  <color name="translation_inline_ayah_highlight_night_color">#ff34d399</color>
-  <color name="translation_translator_color">#ff00838F</color>
-  <color name="translation_text_color">#ff444444</color>
-  <color name="translation_footnote_color">#ff999999</color>
-  <color name="translation_divider_color">#ffe8e8e8</color>
+#E6F2EA
+#ffffffff
+#dee2e6
+@color/sura_number_color
+#1f000000
+#212529
+#ff212529
+#ff6c757d
+#ff424242
+#AA000000
+@color/toolbar
+#ff777777
+#fff1ecd8
+#ff424242
+#ff858383
+#fff2f2f2
+#ff333333
+#ff00838F
+#ff34d399
+#ff00838F
+#ff444444
+#ff999999
+#ffe8e8e8
 
-  <color name="translation_ayah_selected_color">#ffe0f2f1</color>
-  <color name="translation_ayah_selected_color_night">#ff2d2d2d</color>
-  <color name="overlay_text_color">#ff505050</color>
-  <color name="inactive">#9e9e9e</color>
-  <color name="selection_highlight">#404694A6</color>
-  <color name="audio_highlight">#4046A646</color>
-  <color name="note_highlight">#40EBEB21</color>
-  <color name="bookmark_highlight">#40A4A4A4</color>
-  <color name="translation_highlight">#ff33b5e5</color>
-  <color name="panel_label">@color/accent_color</color>
-  <color name="notification_color">#ff112e44</color>
-  <color name="audio_notification_color">@color/download_button_background</color>
-  <color name="audio_notification_background_color">#ffd8d8d8</color>
-  <color name="ayah_bookmark_color">#ff81c784</color>
-  <color name="download_button_background">#ffe8f4f8</color>
+#ffe0f2f1
+#ff2d2d2d
+#ff505050
+#9e9e9e
+#404694A6
+#4046A646
+#40EBEB21
+#40A4A4A4
+#ff33b5e5
+@color/accent_color
+#ff112e44
+@color/download_button_background
+#ffd8d8d8
+#ff81c784
+#ffe8f4f8
 
-  <color name="icon_tint">#ff212529</color>
-  <color name="indicator_color">@color/accent_color</color>
-  <color name="color_control_activated">@color/accent_color</color>
-  <color name="color_control_normal">#4d00838f</color>
-  
-  
-  <color name="snackbar_background_color">@color/download_button_background</color>
-  <color name="overlay_panel">#dd000000</color>
-  <color name="navbar_night_color">#ff000000</color>
-  <color name="toast_background_color">#e6eeeeee</color>
-  <color name="toast_text_color">#ff000000</color>
-  <color name="toast_background_color_night">#ff2d2d2d</color>
-  <color name="toast_text_color_night">#ffffffff</color>
+#ff212529
+@color/accent_color
+@color/accent_color
+#4d00838f
 
-  <color name="default_text">#ff000000</color>
+@color/download_button_background
+#dd000000
+#ff000000
+#e6eeeeee
+#ff000000
+#ff2d2d2d
+#ffffffff
 
-  <color name="text_primary">#ff212121</color>
-  <color name="disabled_color">#ffbdbdbd</color>
-  <color name="text_hint_color">#ff9e9e9e</color>
-</resources>
+#ff000000
+
+#ff212121
+#ffbdbdbd
+#ff9e9e9e
