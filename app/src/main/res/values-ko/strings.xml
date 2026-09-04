@@ -2,8 +2,12 @@
 <resources>
   <string name="app_name">꾸르안</string>
   <string name="downloadPrompt_title">필수 파일을 내려받을까요?</string>
+  <string name="downloadPrompt">꾸르안 Android가 제대로 작동하려면 몇 가지 파일을 내려받아야 합니다. 지금 내려받지 않으면 앱이 불안정하게 작동할 수 있으며 읽기 위해 인터넷 연결이 필요합니다. 지금 필수 파일을 내려받으시겠습니까?</string>
+  <string name="downloadTabletPrompt">최근 태블릿을 위한 개선된 이미지를 추가했습니다. 지금 이 이미지들을 내려받으시겠습니까?</string>
+  <string name="downloadImportantPrompt">기기에 있는 꾸르안 이미지에 대한 작지만 중요한 업데이트가 있습니다. 지금 이 패치를 내려받으시겠습니까?</string>
   <string name="downloadPrompt_ok">예</string>
   <string name="downloadPrompt_no">아니오</string>
+  <string name="downloading_message">파일을 내려받는 동안 기다려 주세요 (이어받기 지원).</string>
   <string name="extracting_title">처리 중&#8230;</string>
   <string name="menu_about">소개</string>
   <string name="menu_other_apps">다른 앱</string>
@@ -17,48 +21,195 @@
   <string name="menu_sort_date">추가된 날짜</string>
   <string name="menu_sort_location">꾸르안의 위치</string>
   <string name="menu_sort_group_by_tags">태그별로 그룹화</string>
+  <string name="menu_show_recents" translatable="false">@string/recent_pages</string>
   <string name="menu_show_date">날짜 보이기</string>
   <string name="menu_translation">번역 보이기</string>
   <string name="menu_back_to_page">꾸르안 보이기</string>
   <string name="menu_help">도움말</string>
   <string name="menu_search">검색</string>
   <string name="menu_get_translations">번역 받기</string>
+  <string name="menu_jump" translatable="false">@string/gotoPage</string>
   <string name="gotoPage">페이지로 이동</string>
   <string name="sura_and_ayah">수라 및 아야</string>
   <string name="please_wait">기다려주세요…</string>
+
+  <!-- about -->
+  <string name="about_description">Android용 꾸르안은 무료 꾸르안 애플리케이션입니다. 기도하실 때 기여자들을 잊지 말아 주세요.</string>
   <string name="about_data_sources">데이터 출처</string>
   <string name="about_images">이미지</string>
+  <string name="about_madani_images">꾸르안 이미지는 파하드 국왕 꾸르안 인쇄 공사(King Fahd Quran Printing Complex)의 폰트를 기반으로 합니다</string>
+  <string name="about_madani_images_url" translatable="false">https://github.com/quran/quran.com-images</string>
+  <string name="about_naskh_images">나스크(Naskh) 앱의 꾸르안 이미지는 SHL Info Systems의 허가를 받아 사용합니다</string>
+  <string name="about_naskh_images_url" translatable="false">http://www.shlinfosystems.com</string>
+  <string name="about_qaloon_images">칼룬(Qaloon) 이미지는 Nous Memes Editions Et Diffusion(튀니지)의 허가를 받아 사용합니다</string>
+  <string name="about_quranicaudio" translatable="false">QuranicAudio</string>
+  <string name="about_quranicaudio_summary">끊김 없는 mp3 꾸르안 낭송</string>
+  <string name="about_quranicaudio_url" translatable="false">https://quranicaudio.com</string>
+  <string name="about_quran_ksu">전자 무스하프 프로젝트</string>
+  <string name="about_quran_ksu_summary">킹 사우드 대학교 전자 무스하프 프로젝트(King Saud University Electronic Moshaf Project)는 이 앱의 아랍어 타프시르 및 여러 언어 번역의 출처입니다. 또한 아이만 수와이드 박사(Dr. Ayman Suwaid)의 낭송 출처이기도 합니다.</string>
+  <string name="about_quran_ksu_url" translatable="false">https://quran.ksu.edu.sa</string>
+  <string name="about_furqan" translatable="false">Al-Bāḥith al-Qur’ānī (tafsir.app)</string>
+  <string name="about_furqan_summary">우스만 텍스트 및 아랍어 타프시르</string>
+  <string name="about_furqan_url" translatable="false">https://tafsir.app</string>
+  <string name="about_quran_enc" translatable="false">Noble Quran Encyclopedia (QuranEnc)</string>
+  <string name="about_quran_enc_summary">여러 언어를 위한 번역</string>
+  <string name="about_quran_enc_url" translatable="false">https://quranenc.com</string>
+  <string name="about_tanzil" translatable="false">Tanzil</string>
+  <string name="about_tanzil_summary">적은 언어를 위한 번역</string>
+  <string name="about_tanzil_url" translatable="false">http://tanzil.net</string>
+  <string name="about_noorhidayat" translatable="false">Noorhidayat</string>
+  <string name="about_noorhidayat_summary">누레히라(Noorehira) 폰트 및 무프티 타키(Mufti Taqi) 번역</string>
+  <string name="about_noorhidayat_url" translatable="false">http://www.noorehidayat.org</string>
+  <string name="about_open_source">오픈 소스 프로젝트</string>
+  <string name="about_androidx" translatable="false">AndroidX</string>
+  <string name="about_androidx_url" translatable="false">https://developer.android.com/jetpack/androidx</string>
+  <string name="about_dagger2" translatable="false">Dagger 2</string>
+  <string name="about_dagger2_url" translatable="false">https://google.github.io/dagger</string>
+  <string name="about_dnsjava" translatable="false">dnsjava</string>
+  <string name="about_dnsjava_url" translatable="false">http://dnsjava.org</string>
+  <string name="about_material_components" translatable="false">Material Components for Android</string>
+  <string name="about_material_components_url" translatable="false">https://github.com/material-components/material-components-android</string>
+  <string name="about_timber" translatable="false">Timber</string>
+  <string name="about_timber_url" translatable="false">https://github.com/JakeWharton/timber</string>
+  <string name="about_kotlin" translatable="false">Kotlin</string>
+  <string name="about_kotlin_url" translatable="false">https://kotlinlang.org</string>
+  <string name="about_numberPicker" translatable="false">Number Picker</string>
+  <string name="about_numberPicker_url" translatable="false">https://github.com/ShawnLin013/NumberPicker</string>
+  <string name="about_okhttp" translatable="false">OkHttp</string>
+  <string name="about_okhttp_url" translatable="false">https://github.com/square/okhttp</string>
+  <string name="about_rxjava" translatable="false">RxJava</string>
+  <string name="about_rxjava_url" translatable="false">https://github.com/ReactiveX/RxJava</string>
+  <string name="about_rxandroid" translatable="false">RxAndroid</string>
+  <string name="about_rxandroid_url" translatable="false">https://github.com/ReactiveX/RxAndroid</string>
+  <string name="about_moshi" translatable="false">Moshi</string>
+  <string name="about_moshi_url" translatable="false">https://github.com/square/moshi</string>
+  <string name="about_sliding_panel" translatable="false">AndroidSlidingUpPanel</string>
+  <string name="about_sliding_panel_url" translatable="false">https://github.com/umano/AndroidSlidingUpPanel</string>
+  <string name="about_others">기타</string>
   <string name="about_contributors">기여자</string>
+  <string name="about_contributors_summary">Android용 꾸르안의 개발에 기여한 사람들의 목록</string>
+  <string name="about_contributors_url" translatable="false">https://github.com/quran/quran_android/blob/main/CONTRIBUTORS.md</string>
+
+  <!-- help -->
   <string name="help_title">자주 묻는 질문</string>
+  <string name="help">
+        &lt;b>오디오는 어떻게 재생하나요?&lt;/b>
+        &lt;br/>꾸르안 페이지를 엽니다. 화면을 한 번 탭하세요. 하단에
+        재생 버튼과 낭독자(qari) 이름이 있는 텍스트가 보입니다. 낭독자 이름을 클릭하면
+        다른 낭독자를 선택할 수 있습니다. 재생을 클릭하면 현재 페이지나 수라를 내려받아 재생합니다.
+        &lt;br/>
+        &lt;br/>&lt;b>번역은 어떻게 보나요?&lt;/b>
+        &lt;br/>꾸르안 페이지를 엽니다. 화면을 한 번 탭하세요. 상단에 지구본
+        아이콘이 보입니다 (보이지 않으면 점 세 개가 있는 아이콘을 클릭하세요) - 이 아이콘을 클릭한 뒤
+        번역을 선택하면 번역을 볼 수 있습니다.
+        &lt;br/>
+        내려받은 번역이 없다면 번역을 내려받을 수 있는
+        화면으로 이동합니다. 번역을 선택하여 내려받은 뒤
+        다시 돌아와 지구본 아이콘을 다시 탭하면 번역을 볼 수 있습니다.
+        &lt;br/>
+        &lt;br/>&lt;b>페이지는 어떻게 책갈피하나요?&lt;/b>
+        &lt;br/>꾸르안 페이지를 엽니다. 화면을 한 번 탭하세요. 오른쪽 상단에
+        책갈피 아이콘이 보입니다. 책갈피 아이콘을 탭하면 페이지가 책갈피됩니다 (색이 흰색으로 채워집니다). 책갈피 아이콘을
+        다시 탭하면 책갈피가 제거됩니다.
+        &lt;br/>
+        &lt;br/>&lt;b>글자는 어떻게 크게 하나요?&lt;/b>
+        &lt;br/>아랍어 페이지는 휴대폰을 가로 방향으로 놓으면 글자가 커집니다.
+        번역 글자 크기는 설정에서 조정할 수 있습니다.
+        &lt;br/>
+        &lt;br/>&lt;b>아야는 어떻게 공유하나요?&lt;/b>
+        &lt;br/>아랍어 페이지에서 아야를 길게 누르면 책갈피, 공유, 클립보드에 복사, 번역 보기,
+        또는 낭송 듣기를 선택할 수 있는 메뉴가 나타납니다.&lt;br/>
+        &lt;br/>&lt;b>말라얄람/타밀/벵골어/우르두어 폰트가 작동하지 않아요!&lt;/b>
+        &lt;br/>아쉽게도 Android 4.0 이전 버전은 이 폰트들을 지원하지 않으며, 저희가 도와드릴 방법이 많지 않습니다.
+    </string>
   <string name="search_hint">꾸르안 검색</string>
   <string name="quranSearchType">꾸르안의 구절</string>
   <string name="search_full_results">전체 결과</string>
+  <string name="search_entire_mushaf">무스하프 전체 검색</string>
+
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="one">&quot;%1$s&quot;에 대한 결과 1\u00A0개: </item>
+    <item quantity="other">&quot;%1$s&quot;에 대한 결과 %2$d\u00A0개: </item>
+  </plurals>
+
+  <!-- m permissions stuff -->
+  <string name="storage_permission_rationale">꾸르안 앱이 외부 저장소에 데이터를 저장할 수 있도록
+        권한을 요청합니다. 이 권한이 없어도 앱은 작동하지만, 데이터를 지우거나
+        앱을 제거하면 내려받은 모든 페이지, 오디오, 데이터가 삭제됩니다. 꾸르안에
+        권한을 허용하시겠습니까?</string>
+  <string name="storage_permission_please_restart">적용하려면 앱을 다시 시작해 주세요.</string>
+
+  <!-- Search messages -->
+  <string name="found_in_sura">수라 (%1$d) %2$s: %3$d에서 찾음 (페이지 %4$d)</string>
+  <string name="no_results">&quot;%s&quot;에 대한 결과가 없습니다</string>
+  <string name="no_arabic_search_available">아랍어 검색 팩을 내려받지 않으셨습니다. 내려받은 뒤 다시 검색해 주세요.</string>
+  <string name="get_arabic_search_db">아랍어 검색 데이터베이스 받기</string>
+
+  <!-- Quran Preference Activity -->
   <string name="appearance">외관</string>
+  <string name="prefs_volume_key_navigation_title">음량 키 탐색</string>
+  <string name="prefs_volume_key_navigation_summary">음량 키로 페이지 이동하기</string>
+  <string name="prefs_category_reading">읽기 설정</string>
+  <string name="prefs_category_translation">번역 설정</string>
+  <string name="prefs_category_display_settings">표시 설정</string>
+  <string name="prefs_use_arabic_title">아랍어 모드 (الوضع العربي)</string>
+  <string name="prefs_use_arabic_summary_on">앱 인터페이스에 아랍어 사용</string>
   <string name="prefs_new_background_title">새 배경</string>
+  <string name="prefs_lock_orientation_title">화면 방향 잠그기</string>
+  <string name="prefs_lock_orientation_summary_on">고정된 화면 방향 모드 사용</string>
+  <string name="prefs_lock_orientation_summary_off">현재 화면 방향에 맞게 조정</string>
+  <string name="prefs_landscape_orientation_title">가로 방향</string>
+  <string name="prefs_landscape_orientation_summary_on">항상 가로 모드 사용</string>
+  <string name="prefs_landscape_orientation_summary_off">항상 세로 모드 사용</string>
   <string name="prefs_night_mode_title">밤 모드</string>
+  <string name="prefs_night_mode_summary">어두운 배경과 밝은 글자 사용</string>
   <string name="prefs_night_mode_text_brightness_title">글자 밝기</string>
+  <string name="prefs_night_mode_text_brightness_summary">밤 모드가 활성화되었을 때 글자의 밝기</string>
   <string name="prefs_night_mode_background_brightness_title">배경 밝기</string>
+  <string name="prefs_night_mode_background_brightness_summary">밤 모드가 활성화되었을 때 페이지의 밝기</string>
   <string name="prefs_overlay_page_info_title">페이지 정보 보이기</string>
+  <string name="prefs_overlay_page_info_summary">읽는 동안 페이지 번호, 수라 이름, 주즈 번호를 오버레이로 표시</string>
+  <string name="prefs_display_marker_title">마커 팝업 표시</string>
+  <string name="prefs_display_marker_summary">주즈, 히즈브 등에 도달하면 팝업 표시</string>
   <string name="prefs_highlight_bookmarks_title">책갈피 강조하기</string>
   <string name="prefs_highlight_bookmarks_summary">책갈피된 아야 강조하기</string>
   <string name="prefs_ayah_text_title">아야 글자 크기</string>
   <string name="prefs_translation_text_title">번역 글자 크기</string>
   <string name="prefs_translations">번역</string>
+  <string name="prefs_translations_summary">번역 내려받기 및 관리</string>
   <string name="prefs_ayah_before_translation_title">번역 전의 아야</string>
+  <string name="prefs_ayah_before_translation_summary">번역 위에 아랍어 아야 표시</string>
+  <string name="prefs_use_dyslexic_font_title">난독증 친화 폰트</string>
+  <string name="prefs_use_dyslexic_font_summary">번역을 난독증 친화 폰트로 표시</string>
   <string name="prefs_category_download">내려받기 옵션</string>
   <string name="prefs_streaming_title">스트리밍</string>
+  <string name="prefs_streaming_summary">내려받는 대신 오디오를 스트리밍하기</string>
+  <string name="prefs_download_amount_title">다운로드 용량</string>
+  <string name="prefs_download_amount_summary">끊김 있는 오디오의 선호 다운로드 용량</string>
+  <string name="prefs_audio_manager" translatable="false">@string/audio_manager</string>
+  <string name="prefs_audio_manager_summary">꾸르안 오디오 관리 및 내려받기</string>
   <string name="downloaded_translations">내려받음</string>
   <string name="available_translations">내려받기 가능</string>
   <string name="dialog_ok">예</string>
+  <string name="prefs_app_location_title">꾸르안 데이터 디렉토리</string>
+  <string name="prefs_app_location_summary">꾸르안 파일을 저장할 위치 선택</string>
   <string name="prefs_send_logs_title">로그 전송</string>
   <string name="prefs_send_logs_summary">개발자에게 디버그 로그를 보냅니다</string>
   <string name="prefs_sdcard_internal">내부 저장소</string>
+  <string name="prefs_sdcard_external">외부 저장소 %1$d</string>
   <string name="prefs_app_size">현재 데이터 크기는</string>
   <string name="prefs_calculating_app_size">앱 크기 계산 중</string>
   <string name="prefs_copying_app_files">앱 파일 복사 중</string>
-  <string name="prefs_megabytes_int">%1$d MB</string>
+  <string name="prefs_err_moving_app_files">앱 파일을 이동하는 데에 실패했습니다</string>
+  <string name="prefs_no_enough_space_to_move_files">앱 파일을 이동할 공간이 부족합니다</string>
+  <string name="prefs_megabytes_int">%1$d\u00A0MB</string>
+  <string name="prefs_megabytes_str" translatable="false">@string/download_amount_in_megabytes</string>
   <string name="prefs_dual_page_mode_title">듀얼 페이지 모드</string>
+  <string name="prefs_dual_page_mode_enabled">가로 모드에서 두 페이지가 나란히 표시됩니다.</string>
+  <string name="prefs_dual_page_mode_disabled">가로 모드에서 한 페이지만 표시됩니다.</string>
   <string name="prefs_category_advanced">고급 옵션</string>
+  <string name="prefs_category_advanced_summary">책갈피 가져오기/내보내기, 꾸르안 데이터 디렉토리 설정 등</string>
   <string name="prefs_import_title">가져오기</string>
   <string name="prefs_import_summary">책갈피와 태그를 가져옵니다</string>
   <string name="prefs_export_title">내보내기</string>
@@ -66,32 +217,189 @@
   <string name="prefs_export_csv_title">CSV로 내보내기</string>
   <string name="prefs_export_csv_summary">책갈피와 태그의 복사본을 CSV로 내보냅니다</string>
   <string name="prefs_page_type_title">페이지 종류 (실험적)</string>
+  <string name="prefs_page_type_summary">읽기 페이지의 종류 선택</string>
   <string name="prefs_sura_translated_name_summary">수라 이름의 번역을 보입니다</string>
   <string name="prefs_sura_translated_name_title">수라의 번역된 이름</string>
   <string name="prefs_preview">미리 보기</string>
+
+  <string name="translations" translatable="false">@string/prefs_translations</string>
   <string name="more_translations">더 많은 번역</string>
+  <string name="import_data_permissions_error">권한 오류로 인해 백업 파일을 읽을 수 없습니다.</string>
+  <string name="import_data_error">잘못된 백업 파일입니다 (또는 백업 파일을 읽을 수 없습니다).</string>
   <string name="import_data">데이터 가져오기</string>
+  <string name="import_data_and_merge">이 파일을 가져오면 현재 데이터에 책갈피 %1$d\u00A0개와 태그 %2$d\u00A0개가 추가됩니다. 가져오시겠습니까?</string>
   <string name="import_successful">가져오기 성공</string>
+  <string name="export_data_error">데이터 내보내기 오류</string>
+  <string name="exported_data">%1$s(으)로 데이터가 내보내졌습니다</string>
+
   <string name="move_up">위로 이동</string>
   <string name="move_down">아래로 이동</string>
   <string name="delete_translation">번역 제거</string>
+
+  <string name="logs_email" translatable="false">quranandroid+logs@gmail.com</string>
   <string name="warning">경고</string>
+  <string name="kitkat_external_message">Android의 제한으로 인해, 꾸르안
+        데이터를 외부 SD 카드에 저장한 뒤 나중에 꾸르안 Android를 제거하거나 데이터를 지우면, 모든 꾸르안
+        Android 페이지와 오디오가 삭제되어 다시 내려받아야 합니다. 외부
+        SD 카드를 사용하시겠습니까?</string>
+  <string name="scoped_storage_message">사용자 개인정보 보호를 강화하는 Android의 변경 사항으로 인해, 앱
+    디렉토리 외부로 파일을 복사하면 이후 버전의 Android에서 꾸르안이 데이터에 접근하지 못할 수 있습니다. 이 경로를
+    사용하시겠습니까?</string>
+  <string name="please_grant_permissions">애플리케이션 설정에서 권한을 허용해주세요</string>
+  <!-- Preferences End -->
+
+  <!-- tafaseer -->
+  <string name="more_arabic" translatable="false">المزيد…</string>
+  <string name="see_tafseer_of_verse">이 아야의 타프시르는 아야 %d의 타프시르에 포함되어 있습니다 (클릭하여 펼치기).</string>
+
+  <!-- translation updates -->
   <string name="update_available">판올림 사용 가능</string>
+  <string name="translation_updates_available">일부 번역에 대한 업데이트가 있습니다. 지금 번역 화면으로 이동하시겠습니까?</string>
   <string name="translation_dialog_yes">예</string>
   <string name="translation_dialog_later">나중에</string>
+
+  <!-- End Number picker Strings -->
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
   <string name="quran_hizb">히즈브</string>
-  <string name="quran_juz2">주우즈</string>
+  <string name="quran_juz2">주즈\'</string>
   <string name="quran_page">페이지</string>
   <string name="quran_sura">수라</string>
+  <string name="quran_ayah">아야 %1$d</string>
+  <string name="quran_ayah_details">%1$s - 아야 %2$s, 주즈 %3$s</string>
+  <string name="quran_sura_title">수라 %1$s</string>
+  <string name="sura_ayah_notification_str">수라 %1$s, 아야 %2$d</string>
+  <string name="sura_ayah_sharing_str">수라 %1$s: %2$d</string>
+
+  <string name="juz2_description">주즈 %1$s</string>
+  <string name="manzil_description">만질 %1$s</string>
+  <string name="comma" translatable="false">,</string>
+  <string name="page_description">페이지 %1$s, 주즈 %2$s</string>
   <string name="highlighting_database">필수 파일</string>
   <string name="timing_database">필수 파일</string>
+  <!-- download statuses and errors -->
+  <string name="sdcard_error">SD 카드를 찾을 수 없습니다. 카드를 마운트하고 다시 시도해주세요.</string>
   <string name="download_successful">내려받기 성공</string>
+  <string name="download_processing">내려받기 처리 중&#8230;</string>
   <string name="download_error_general">내려받기 실패</string>
+  <string name="download_error_disk">내려받기에 디스크 공간이 충분하지 않습니다</string>
+  <string name="download_error_network">네트워크 오류로 인해 내려받을 수 없습니다</string>
+  <string name="download_error_perms">권한 오류로 인해 내려받을 수 없습니다</string>
+  <string name="download_error_invalid_download">내려받은 파일이 손상되었습니다</string>
+  <string name="download_error_invalid_download_retry">파일 손상됨, 다시 내려받는 중</string>
+  <string name="download_error_network_retry">네트워크 오류, 이어받기를 시도하는 중&#8230;</string>
+  <string name="notification_download_canceled">내려받기 취소됨</string>
+  <!-- downloading dialogs -->
+  <string name="process_progress">%1$d / %2$d 번째 파일 처리 중</string>
   <string name="download_retry">다시 시도</string>
   <string name="download_cancel">취소</string>
-  <string name="notification_download_canceled">내려받기 취소됨</string>
+  <string name="download_extra_data">공유와 번역을 지원하기 위해 한두 개의 작은 파일을 내려받아야 합니다. 지금 내려받으시겠습니까?</string>
+
+  <!-- post notification dialog -->
+  <string name="post_notification_permission">꾸르안 Android의 알림 권한을 허용하시겠습니까? 이 권한은 내려받기 상태를 알려드리거나, 오디오 파일이 자동으로 판올림될 때 안내해 드리기 위해서만 사용됩니다.</string>
+
+  <!-- translation database stuff -->
   <string name="remove_dlg_title">번역을 제거할까요?</string>
+  <string name="remove_dlg_msg">%1$s을(를) 정말로 제거하시겠습니까?</string>
+  <string name="error_getting_translation_list">번역 목록을 내려받을 수 없습니다. 나중에 다시 시도해 주세요.</string>
   <string name="search_data">데이터 검색</string>
+  <string name="need_translation">내려받은 번역이나 타프시르가 없습니다.</string>
   <string name="get_translations">번역 받기</string>
+
+  <!-- help -->
+  <string name="email_us">위 답변으로 궁금증이 해결되지 않으셨다면 quranandroid@gmail.com으로 이메일을 보내주시면 도와드리겠습니다.
+        많은 이메일을 받고 있어 모두 답변드리지 못할 수도 있는 점 양해 부탁드립니다.</string>
+
+  <!-- sura metainfo -->
   <string name="makki">마카</string>
+  <string name="madani">마다니</string>
+  <plurals name="verses">
+    <item quantity="one">구절 1\u00A0개</item>
+    <item quantity="other">구절 %s\u00A0개</item>
+  </plurals>
+
+  <!-- ayah action panel -->
+  <string name="play_from" translatable="false">@string/from</string>
+  <string name="play_to" translatable="false">@string/to</string>
+  <string name="play_restrict_range">위 구절만 재생하기</string>
+  <string name="play_verses_range">구절 묶음 재생:</string>
+  <string name="play_each_verse">각 구절 재생:</string>
+  <string name="play_apply">적용</string>
+  <string name="play_apply_and_play">적용하고 재생</string>
+  <string name="previous">이전</string>
+  <string name="play">재생</string>
+  <string name="pause">중지</string>
+  <string name="stop">정지</string>
+  <string name="next">다음</string>
+  <string name="playback_speed">재생 속도:</string>
+
+  <string-array name="repeatValues">
+    <item>1회</item>
+    <item>2회</item>
+    <item>3회</item>
+    <item>반복</item>
+  </string-array>
+
+  <string name="playback_prompt_title">다음에서 재생 시작하기:</string>
+  <string name="starting_page_label">페이지의 시작</string>
+
+  <!-- long press -->
+  <string name="ayah_copied_popup">아야 복사됨</string>
+
+  <!-- bookmarks & tags contextual action bar -->
+  <string name="tag_bookmark">태그 책갈피</string>
+  <string name="delete_tag">태그 삭제</string>
+  <string name="edit_tag">태그 수정</string>
+  <string name="new_tag">태그 추가</string>
+  <string name="not_tagged">태그 없음</string>
+  <plurals name="bookmark_tag_deleted">
+    <item quantity="one">항목 1\u00A0개 삭제됨</item>
+    <item quantity="other">항목 %d\u00A0개 삭제됨</item>
+  </plurals>
+  <string name="undo">취소</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">아직 책갈피가 없습니다</string>
+  <string name="bookmarks_empty_subtitle">책갈피 아이콘을 탭해 페이지를 저장하거나, 아야를 길게 눌러 책갈피하세요.</string>
+
+  <!-- reading bookmark moved / education toast -->
+  <string name="reading_bookmark_movable_education_title">이동 가능한 읽기 책갈피입니다</string>
+  <string name="reading_bookmark_movable_education_body">읽기 책갈피를 저장하면 이전 책갈피가 대체됩니다. 여러 아야를 저장하려면 아야를 길게 눌러 컬렉션에 추가하세요.</string>
+  <string name="reading_bookmark_moved_from">%1$s에서 이동됨</string>
+  <string name="reading_bookmark_moved_from_title">%1$s에서 책갈피 이동됨</string>
+  <string name="reading_bookmark_added">책갈피 추가됨</string>
+  <string name="reading_bookmark_dismiss_education">무시</string>
+
+  <string name="recent_pages">최근 페이지</string>
+  <string name="old_page_bookmarks">이전 페이지 책갈피</string>
+  <plurals name="plural_recent_pages" translatable="false">
+    <item quantity="one">@string/menu_jump_last_page</item>
+    <item quantity="other">@string/recent_pages</item>
+  </plurals>
+
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">태그</string>
+  <string name="tag_name">이름</string>
+  <string name="tag_blank_tag_error">태그 이름은 공백이 될 수 없어요!</string>
+  <string name="tag_duplicate_tag_error">태그 이름이 이미 존재해요!</string>
+
+  <!-- widgets -->
+  <string name="bookmarks_list_empty">책갈피 없음</string>
+
+  <!-- audio updates -->
+  <string name="audio_updated_title">꾸르안 오디오 파일 판올림</string>
+  <string name="audio_updated_text">여러 꾸르안 오디오 파일이 업데이트되었습니다. 다음 재생 시 최신 버전을 내려받을 수 있도록 기존 파일 사본이 삭제되었습니다.</string>
+
+  <!-- format strings -->
+  <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
+
+  <!-- dual screen prefs -->
+  <string name="prefs_category_dual_screen">듀얼 페이지 설정</string>
+  <string name="prefs_split_page_and_translation_title">꾸르안과 번역을 듀얼 모드로</string>
+  <string name="prefs_split_page_and_translation_summary">번역이 있는 듀얼 페이지 모드에서 꾸르안 페이지와 번역이 함께 표시됩니다</string>
+
+  <!-- notification channel names [CHAR LIMIT=40] -->
+  <string name="notification_channel_download">꾸르안 내려받기</string>
+  <string name="notification_channel_audio">꾸르안 낭송</string>
 </resources>
