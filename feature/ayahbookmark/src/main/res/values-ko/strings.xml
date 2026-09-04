@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="ayahbookmark_done">완료</string>
-  <string name="ayahbookmark_reading_bookmark_title">읽기 책갈피</string>
+  <string name="ayahbookmark_reading_bookmark_title">책갈피 읽는 중</string>
   <string name="ayahbookmark_reading_bookmark_subtitle">중단한 위치</string>
   <string name="ayahbookmark_reading_bookmark_currently_at">현재 %1$s</string>
   <string name="ayahbookmark_reading_bookmark_will_move_from">%1$s에서 이동됩니다</string>

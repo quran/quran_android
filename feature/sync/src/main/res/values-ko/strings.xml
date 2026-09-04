@@ -2,8 +2,10 @@
 <resources>
   <string name="quran_sync_title">Quran.com 동기화</string>
   <string name="quran_sync_settings_category">계정</string>
-  <string name="quran_sync_settings_summary">북마크, 컬렉션 및 읽기 기록</string>
-  <string name="quran_sync_not_signed_in">로그인하지 않음</string>
+  <string name="quran_sync_settings_summary">책갈피, 모음집 및 메모</string>
+  <string name="quran_sync_sign_in_prompt_title">동기화하려면 로그인하세요</string>
+  <string name="quran_sync_settings_signed_in_subtitle">동기화됨</string>
+  <string name="quran_sync_not_signed_in">로그인되지 않음</string>
   <string name="quran_sync_signed_in">로그인됨</string>
   <string name="quran_sync_loading">로그인 중</string>
   <string name="quran_sync_login">로그인</string>
@@ -11,9 +13,15 @@
   <string name="quran_sync_name">이름</string>
   <string name="quran_sync_email">이메일</string>
   <string name="quran_sync_account_id">계정 ID</string>
-  <string name="quran_sync_action_error">지금은 동기화를 업데이트할 수 없습니다.</string>
-  <string name="quran_sync_bookmarks_cta_title">북마크를 어디서나 동기화하세요</string>
-  <string name="quran_sync_bookmarks_cta_subtitle">어떤 기기에서든, 언제든지 액세스하세요</string>
+  <string name="quran_sync_action_error">지금 동기화를 업데이트할 수 없습니다.</string>
+  <string name="quran_sync_bookmarks_cta_title">어디서나 책갈피 동기화</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">언제 어디서나 어떤 기기에서든 접근하세요</string>
   <string name="quran_sync_bookmarks_cta_button">Quran.com으로 로그인</string>
   <string name="quran_sync_bookmarks_cta_dismiss">닫기</string>
+  <string name="quran_sync_headline">어디서나 쿠란 동기화</string>
+  <string name="quran_sync_subtitle">로그인하여 진도를 백업하고 모든 기기에서 이용하세요.</string>
+  <string name="quran_sync_benefit_bookmarks">기기 간 책갈피 동기화</string>
+  <string name="quran_sync_benefit_collections">사용자 지정 모음집 동기화 유지</string>
+  <string name="quran_sync_benefit_notes">구절 메모 동기화 유지</string>
+  <string name="quran_sync_continue_caption">Quran.com 계정으로 계속 진행됩니다</string>
 </resources>
