@@ -312,7 +312,7 @@
         많은 이메일을 받고 있어 모두 답변드리지 못할 수도 있는 점 양해 부탁드립니다.</string>
 
   <!-- sura metainfo -->
-  <string name="makki">마카</string>
+  <string name="makki">마키</string>
   <string name="madani">마다니</string>
   <plurals name="verses">
     <item quantity="one">구절 1\u00A0개</item>
