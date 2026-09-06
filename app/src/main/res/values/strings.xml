@@ -2,13 +2,8 @@
 <resources>
   <string name="app_name">Quran</string>
   <string name="downloadPrompt_title">Download Required Files?</string>
-  <string name="downloadPrompt">In order for Quran Android to work properly,
-        we need to download some files. If you do not do this now, the app
-        may not work reliably and will require an Internet connection for reading.
-        Would you like to download the required files now?
-    </string>
-  <string name="downloadTabletPrompt">We recently added improved images for
-        tablets. Would you like to download these images now?</string>
+  <string name="downloadPrompt">"In order for Quran Android to work properly, we need to download some files. If you do not do this now, the app may not work reliably and will require an Internet connection for reading.         Would you like to download the required files now?     "</string>
+  <string name="downloadTabletPrompt">We recently added improved images for tablets. Would you like to download these images now?</string>
   <string name="downloadImportantPrompt">There is a small yet important update
         for the Quran images you have on your device. Would you like to download this
         patch now?
@@ -36,7 +31,7 @@
   <string name="menu_help">Help</string>
   <string name="menu_search">Search</string>
   <string name="menu_get_translations">Get Translations</string>
-  <string name="menu_jump">@string/gotoPage</string>
+  <string name="menu_jump" translatable="false">@string/gotoPage</string>
   <string name="gotoPage">Go to page</string>
   <string name="sura_and_ayah">Sura and Ayah</string>
   <string name="please_wait">Please wait…</string>
@@ -399,9 +394,7 @@
 
   <!-- audio updates -->
   <string name="audio_updated_title">Quran Audio files Update</string>
-  <string name="audio_updated_text">Several Quran audio files have been updated. Quran has removed
-  your copy of these files so that the newest versions can be downloaded the next time you play them
-  back.</string>
+  <string name="audio_updated_text">Several Quran audio files have been updated. Quran has removed your copy of these files so that the newest versions can be downloaded the next time you play them back.</string>
 
   <!-- format strings -->
   <string name="sura_ayah" translatable="false">%1$d:%2$d</string>
