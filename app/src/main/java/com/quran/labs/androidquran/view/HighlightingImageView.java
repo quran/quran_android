@@ -69,6 +69,7 @@ public class HighlightingImageView extends AppCompatImageView {
   private boolean isNightMode;
   private boolean isColorFilterOn;
   private int nightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
+  private int topBottom;
 
   // Params for drawing text
   private int fontSize;
@@ -143,13 +144,9 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   public void setIsScrollable(boolean scrollable, boolean landscape) {
-    int topBottom = scrollable ? scrollableHeaderFooterSize :
-        landscape ? dualPageHeaderFooterSize : headerFooterSize;
+    topBottom = scrollable ? scrollableHeaderFooterSize :
+        landscape ?  dualPageHeaderFooterSize : headerFooterSize;
     verticalOffsetForScrolling = topBottom;
-    setPadding(horizontalSafeOffset,
-        topBottom + topSafeOffset,
-        horizontalSafeOffset,
-        topBottom + bottomSafeOffset);
     fontSize = scrollable ? scrollableHeaderFooterFontSize :
         landscape ? dualPageHeaderFooterFontSize : headerFooterFontSize;
   }
@@ -529,6 +526,15 @@ public class HighlightingImageView extends AppCompatImageView {
     didDraw = false;
     if (overlayParams != null) {
       overlayText(canvas, getImageMatrix());
+    }
+
+    if(!didDraw){
+      setPadding(horizontalSafeOffset, topSafeOffset, horizontalSafeOffset, bottomSafeOffset);
+    } else {
+      setPadding(horizontalSafeOffset,
+          topBottom + topSafeOffset,
+          horizontalSafeOffset,
+          topBottom + bottomSafeOffset);
     }
 
     // run additional image draw helpers if any
