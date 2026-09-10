@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Tayyor</string>
+  <string name="ayahbookmark_reading_bookmark_title">Oʻqish xatchoʻpi</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Toʻxtagan joyingiz</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Hozirda %1$s da</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">%1$s dan koʻchiriladi</string>
+  <string name="ayahbookmark_collections_header">Toʻplamlar</string>
+  <string name="ayahbookmark_new_collection">Yangi toʻplam</string>
+  <string name="ayahbookmark_collection_name_hint">Toʻplam nomi</string>
+  <string name="ayahbookmark_cancel">Bekor qilish</string>
+  <string name="ayahbookmark_create">Yaratish</string>
+  <string name="ayahbookmark_saved">Saqlandi</string>
+  <string name="ayahbookmark_not_saved">Saqlanmadi</string>
+  <string name="ayahbookmark_highlight_title">Ajratib koʻrsatish</string>
+  <string name="ayahbookmark_highlight_subtitle">Sahifadagi oyatni ranglaydi</string>
+  <string name="ayahbookmark_highlight_none">Yoʻq</string>
+</resources>

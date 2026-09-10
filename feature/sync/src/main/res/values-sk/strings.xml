@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Synchronizácia Quran.com</string>
+  <string name="quran_sync_settings_category">Účet</string>
+  <string name="quran_sync_settings_summary">Záložky, kolekcie a história čítania</string>
+  <string name="quran_sync_not_signed_in">Neprihlásený</string>
+  <string name="quran_sync_signed_in">Prihlásený</string>
+  <string name="quran_sync_loading">Prihlasovanie</string>
+  <string name="quran_sync_login">Prihlásiť sa</string>
+  <string name="quran_sync_logout">Odhlásiť sa</string>
+  <string name="quran_sync_name">Meno</string>
+  <string name="quran_sync_email">E-mail</string>
+  <string name="quran_sync_account_id">ID účtu</string>
+  <string name="quran_sync_action_error">Synchronizáciu momentálne nemožno aktualizovať.</string>
+  <string name="quran_sync_bookmarks_cta_title">Synchronizujte svoje záložky všade</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Pristupujte k nim z akéhokoľvek zariadenia, kedykoľvek</string>
+  <string name="quran_sync_bookmarks_cta_button">Prihlásiť sa cez Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Zavrieť</string>
+</resources>

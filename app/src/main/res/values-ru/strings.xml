@@ -24,7 +24,6 @@
   <string name="menu_jump_last_page">Последняя страница</string>
   <string name="menu_bookmarks">Закладки</string>
   <string name="menu_bookmarks_page">Закладки страниц</string>
-  <string name="menu_bookmarks_ayah">Закладки аятов</string>
   <string name="menu_sort">Сортировать</string>
   <string name="menu_sort_date">По дате добавления</string>
   <string name="menu_sort_location">По расположению в Коране</string>
@@ -329,7 +328,6 @@
   <string name="delete_tag">Удалить тег</string>
   <string name="edit_tag">Редактировать тег</string>
   <string name="new_tag">Новый тег</string>
-  <string name="not_tagged">Без тега</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Удалено %d элемент</item>
     <item quantity="few">Удалено %d элемента</item>
@@ -337,6 +335,16 @@
     <item quantity="other">Удалено %d элементов</item>
   </plurals>
   <string name="undo">@string/cancel</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Пока нет закладок</string>
+  <string name="bookmarks_empty_subtitle">Нажмите на значок закладки, чтобы сохранить страницу, или удерживайте аят, чтобы добавить его в закладки.</string>
+  <string name="reading_bookmark_movable_education_title">Это перемещаемая закладка чтения</string>
+  <string name="reading_bookmark_movable_education_body">Сохранение закладки чтения заменяет старую. Чтобы сохранить несколько аятов, удерживайте аят и добавьте его в коллекцию.</string>
+  <string name="reading_bookmark_moved_from">Перемещено с %1$s</string>
+  <string name="reading_bookmark_moved_from_title">Закладка перемещена с %1$s</string>
+  <string name="reading_bookmark_added">Закладка добавлена</string>
+  <string name="reading_bookmark_dismiss_education">Закрыть</string>
 
   <string name="recent_pages">Недавние страницы</string>
   <string name="old_page_bookmarks">Старые закладки страниц</string>

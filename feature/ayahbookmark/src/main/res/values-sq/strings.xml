@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">U krye</string>
+  <string name="ayahbookmark_reading_bookmark_title">Libërshënues leximi</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Ku e latë</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Aktualisht te %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Do të zhvendoset nga %1$s</string>
+  <string name="ayahbookmark_collections_header">Koleksionet</string>
+  <string name="ayahbookmark_new_collection">Koleksion i ri</string>
+  <string name="ayahbookmark_collection_name_hint">Emri i koleksionit</string>
+  <string name="ayahbookmark_cancel">Anulo</string>
+  <string name="ayahbookmark_create">Krijo</string>
+  <string name="ayahbookmark_saved">Ruajtur</string>
+  <string name="ayahbookmark_not_saved">Pa ruajtur</string>
+  <string name="ayahbookmark_highlight_title">Theksim</string>
+  <string name="ayahbookmark_highlight_subtitle">Ngjyros ajetin në faqe</string>
+  <string name="ayahbookmark_highlight_none">Asnjë</string>
+</resources>

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
-    <exclude domain="sharedpref" path="com.quran.labs.androidquran.per_installation.xml"/>
+  <exclude domain="sharedpref" path="com.quran.labs.androidquran.per_installation.xml" />
+  <exclude domain="file" path="datastore/quran_mobile_sync_settings.preferences_pb" />
+  <exclude domain="file" path="datastore/org.publicvalue.multiplatform.oidc.tokenstore.preferences_pb" />
+  <exclude domain="file" path="datastore/org.publicvalue.multiplatform.oidc.oidcsession.preferences_pb" />
 </full-backup-content>

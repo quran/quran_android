@@ -8,8 +8,10 @@ import com.quran.data.core.QuranFileManager
 import com.quran.data.core.QuranInfo
 import com.quran.data.core.QuranPageInfo
 import com.quran.data.dao.BookmarksDao
+import com.quran.data.dao.HighlightsDao
 import com.quran.data.dao.Settings
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.data.model.selection.SelectionRectangle
@@ -53,6 +55,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -61,6 +65,7 @@ class QuranLineByLinePresenter @Inject constructor(
   private val pageModel: PageModel,
   private val pageProvider: PageProvider,
   private val bookmarksDao: BookmarksDao,
+  private val highlightsDao: HighlightsDao,
   private val readingEventPresenter: ReadingEventPresenter,
   private val audioStatusRepository: AudioStatusRepository,
   private val selectionHelper: SelectionHelper,
@@ -294,14 +299,23 @@ class QuranLineByLinePresenter @Inject constructor(
   private fun pageSelection(): Flow<ImmutableList<HighlightAyah>> {
     return combine(
       bookmarksDao.bookmarksForPage(page),
+      highlightsForPage(),
       readingEventPresenter.ayahSelectionFlow,
       audioStatusRepository.audioPlaybackFlow,
-    ) { bookmarks, selectedAyah, audioPlaybackStatus ->
+    ) { bookmarks, highlights, selectedAyah, audioPlaybackStatus ->
       val pageDetails = pageDetailsFetcher.await()
       val ayahHighlights = pageDetails.ayahBounds
       val currentBookmarkHighlights = bookmarks.map {
           bookmark -> ayahHighlights.filter { it.sura == bookmark.sura && it.ayah == bookmark.ayah }
-      }.map { HighlightAyah(HighlightType.BOOKMARK, it) }
+      }.map { HighlightAyah(HighlightType.Bookmark, it) }
+
+      val colorHighlights = highlights.map { highlight ->
+        val suraAyah = highlight.suraAyah
+        HighlightAyah(
+          HighlightType.Highlight(highlight.color),
+          ayahHighlights.filter { it.sura == suraAyah.sura && it.ayah == suraAyah.ayah }
+        )
+      }
 
       val bookmarkHighlights =
         if (currentBookmarkHighlights.isEmpty() || settings.shouldShowBookmarks()) {
@@ -326,7 +340,7 @@ class QuranLineByLinePresenter @Inject constructor(
         }
       val shouldScroll = selectedAyah is AyahSelection.Ayah &&
           selectedAyah.selectionIndicator is SelectionIndicator.ScrollOnly
-      val selectedHighlights = HighlightAyah(HighlightType.SELECTION, selectedAyahHighlights, shouldScroll)
+      val selectedHighlights = HighlightAyah(HighlightType.Selection, selectedAyahHighlights, shouldScroll)
 
       val audioPlaybackAyah = audioPlaybackStatus.currentPlaybackAyah()
       val audioHighlight = if (audioPlaybackAyah == null) {
@@ -354,13 +368,22 @@ class QuranLineByLinePresenter @Inject constructor(
           .map { it.asAyahHighlight() }
       }
 
-      val audioAyahHighlights = HighlightAyah(HighlightType.AUDIO, audioHighlight, wordHighlights.isEmpty())
-      val audioWordHighlights = HighlightAyah(HighlightType.AUDIO_WORD, wordHighlights, true)
+      val audioAyahHighlights = HighlightAyah(HighlightType.Audio, audioHighlight, wordHighlights.isEmpty())
+      val audioWordHighlights = HighlightAyah(HighlightType.AudioWord, wordHighlights, true)
 
-      (bookmarkHighlights + selectedHighlights + audioAyahHighlights + audioWordHighlights)
+      (colorHighlights + bookmarkHighlights + selectedHighlights + audioAyahHighlights + audioWordHighlights)
         .filter { it.ayahHighlights.isNotEmpty() }
         .toImmutableList()
     }
+  }
+
+  private fun highlightsForPage(): Flow<List<Highlight>> {
+    val range = quranInfo.getVerseRangeForPage(page)
+    val startAyah = SuraAyah(range.startSura, range.startAyah)
+    val endAyah = SuraAyah(range.endingSura, range.endingAyah)
+    return highlightsDao.highlightsFlow()
+      .map { highlights -> highlights.filter { it.suraAyah in startAyah..endAyah } }
+      .distinctUntilChanged()
   }
 
   private fun isAyahWithin(sura: Int, ayah: Int, start: SuraAyah, end: SuraAyah): Boolean {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com 同期</string>
+  <string name="quran_sync_settings_category">アカウント</string>
+  <string name="quran_sync_settings_summary">ブックマーク、コレクション、閲覧履歴</string>
+  <string name="quran_sync_not_signed_in">サインインしていません</string>
+  <string name="quran_sync_signed_in">サインイン済み</string>
+  <string name="quran_sync_loading">サインイン中</string>
+  <string name="quran_sync_login">ログイン</string>
+  <string name="quran_sync_logout">ログアウト</string>
+  <string name="quran_sync_name">名前</string>
+  <string name="quran_sync_email">メールアドレス</string>
+  <string name="quran_sync_account_id">アカウントID</string>
+  <string name="quran_sync_action_error">現在、同期を更新できません。</string>
+  <string name="quran_sync_bookmarks_cta_title">ブックマークをどこでも同期</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">いつでもどのデバイスからでもアクセスできます</string>
+  <string name="quran_sync_bookmarks_cta_button">Quran.comでサインイン</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">閉じる</string>
+</resources>

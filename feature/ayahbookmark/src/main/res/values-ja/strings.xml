@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">完了</string>
+  <string name="ayahbookmark_reading_bookmark_title">読書のブックマーク</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">前回の続きの位置</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">現在は%1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">%1$sから移動します</string>
+  <string name="ayahbookmark_collections_header">コレクション</string>
+  <string name="ayahbookmark_new_collection">新しいコレクション</string>
+  <string name="ayahbookmark_collection_name_hint">コレクション名</string>
+  <string name="ayahbookmark_cancel">キャンセル</string>
+  <string name="ayahbookmark_create">作成</string>
+  <string name="ayahbookmark_saved">保存済み</string>
+  <string name="ayahbookmark_not_saved">未保存</string>
+  <string name="ayahbookmark_highlight_title">ハイライト</string>
+  <string name="ayahbookmark_highlight_subtitle">ページ上の節に色を付けます</string>
+  <string name="ayahbookmark_highlight_none">なし</string>
+</resources>

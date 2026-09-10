@@ -15,7 +15,6 @@
   <string name="menu_jump_last_page">หน้าสุดท้าย</string>
   <string name="menu_bookmarks">คั่น หน้า</string>
   <string name="menu_bookmarks_page">ที่คั่นหน้า</string>
-  <string name="menu_bookmarks_ayah">ที่คั่นหน้า Ayah</string>
   <string name="menu_sort">ประเภท</string>
   <string name="menu_sort_date">วันที่เพิ่ม</string>
   <string name="menu_sort_location">สถานที่ตั้งในอัลกุรอาน</string>
@@ -62,7 +61,7 @@
         สําหรับการแปล ให้ไปที่การตั้งค่าและตั้งค่าขนาดข้อความการแปล
         &lt;br/>
         &lt;br/>&lt;b>ฉันจะแบ่งปัน ayah ได้อย่างไร?&lt;/b>
-        &lt;br/>ในขณะที่อยู่ในหน้าภาษาอาหรับใด ๆ ให้กด ayah ใด ๆ ค้างไว้เพื่อรับเมนูที่คุณสามารถเลือกบุ๊กมาร์กแท็กแบ่งปันหรือคัดลอก ayah นั้นไปยังคลิปบอร์ดดูการแปลหรือฟังการท่องจํา&lt;br/>
+        &lt;br/>ในขณะที่อยู่ในหน้าภาษาอาหรับใด ๆ ให้กด ayah ใด ๆ ค้างไว้เพื่อรับเมนูที่คุณสามารถเลือกบุ๊กมาร์ก แบ่งปัน หรือคัดลอก ayah นั้นไปยังคลิปบอร์ดดูการแปลหรือฟังการท่องจํา&lt;br/>
         &lt;br/>&lt;b>แบบอักษรมาลายาลัม/ทมิฬ/เบงกาลี/อูรดูไม่ทํางาน!&lt;/b>
         &lt;br/>น่าเสียดายที่ Android เวอร์ชันก่อน 4.0 ไม่รองรับแบบอักษรเหล่านี้และมีน้อยที่เราสามารถทําได้เพื่อช่วยในเรื่องนี้
     </string>
@@ -272,12 +271,21 @@
   <string name="delete_tag">ลบแท็ก</string>
   <string name="edit_tag">แก้ไขแท็ก</string>
   <string name="new_tag">สร้างแท็ก</string>
-  <string name="not_tagged">ไม่ได้ติดแท็ก</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">ลบไปหนึ่งรายการ</item>
     <item quantity="other">รายการที่ถูกลบ %d</item>
   </plurals>
   <string name="undo">แก้</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">ยังไม่มีที่คั่นหน้า</string>
+  <string name="bookmarks_empty_subtitle">แตะไอคอนที่คั่นหน้าเพื่อบันทึกหน้า หรือกดค้างที่อายะห์เพื่อคั่นไว้</string>
+  <string name="reading_bookmark_movable_education_title">นี่คือที่คั่นหน้าการอ่านที่สามารถย้ายได้</string>
+  <string name="reading_bookmark_movable_education_body">การบันทึกที่คั่นหน้าการอ่านจะแทนที่อันเก่า หากต้องการบันทึกหลายอายะห์ ให้กดค้างที่อายะห์แล้วเพิ่มลงในคอลเลกชัน</string>
+  <string name="reading_bookmark_moved_from">ย้ายจาก %1$s</string>
+  <string name="reading_bookmark_moved_from_title">ย้ายที่คั่นหน้าจาก %1$s</string>
+  <string name="reading_bookmark_added">เพิ่มที่คั่นหน้าแล้ว</string>
+  <string name="reading_bookmark_dismiss_education">ปิด</string>
 
   <string name="recent_pages">หน้าล่าสุด</string>
   <string name="old_page_bookmarks">บุ๊กมาร์กหน้าเก่า</string>

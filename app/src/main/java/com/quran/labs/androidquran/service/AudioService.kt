@@ -1112,8 +1112,13 @@ class AudioService : Service(), Player.Listener {
         if (localAudioRequest.isGapless() && beforeSura == localAudioQueue.getCurrentSura()
         ) {
           // we're actually repeating, but we reached the end of the file before we could
-          // seek to the proper place. so let's seek anyway.
-          player?.seekTo(gaplessSuraData.ayahTimings[localAudioQueue.getCurrentAyah()])
+          // seek to the proper place. so let's seek anyway. route through getSeekPosition
+          // so that when we loop back to ayah 1 of a surah, the basmallah (ayahTimings[0])
+          // is played instead of skipping straight to ayah 1 (ayahTimings[1]).
+          val seekPosition = getSeekPosition(false)
+          if (seekPosition > -1) {
+            player?.seekTo(seekPosition)
+          }
         } else {
           // we actually switched to a different ayah - so if the
           // sura changed, then play the basmala if the ayah is

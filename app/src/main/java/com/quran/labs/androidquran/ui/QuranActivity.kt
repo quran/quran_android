@@ -486,7 +486,7 @@ class QuranActivity : AppCompatActivity(),
     }
   }
 
-  fun editTag(id: Long, name: String?) {
+  fun editTag(id: String, name: String?) {
     if (!isPaused) {
       val fm = supportFragmentManager
       val addTagDialog = newInstance(id, name!!)
@@ -494,7 +494,7 @@ class QuranActivity : AppCompatActivity(),
     }
   }
 
-  fun tagBookmarks(ids: LongArray?) {
+  fun tagBookmarks(ids: Array<String>?) {
     if (ids != null && ids.size == 1) {
       tagBookmark(ids[0])
       return
@@ -507,7 +507,7 @@ class QuranActivity : AppCompatActivity(),
     }
   }
 
-  private fun tagBookmark(id: Long) {
+  private fun tagBookmark(id: String) {
     if (!isPaused) {
       val fm = supportFragmentManager
       val tagBookmarkDialog = TagBookmarkDialog.newInstance(id)

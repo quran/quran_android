@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com синхронизација</string>
+  <string name="quran_sync_settings_category">Налог</string>
+  <string name="quran_sync_settings_summary">Обележивачи, колекције и историја читања</string>
+  <string name="quran_sync_not_signed_in">Нисте пријављени</string>
+  <string name="quran_sync_signed_in">Пријављени сте</string>
+  <string name="quran_sync_loading">Пријављивање</string>
+  <string name="quran_sync_login">Пријави се</string>
+  <string name="quran_sync_logout">Одјави се</string>
+  <string name="quran_sync_name">Име</string>
+  <string name="quran_sync_email">Е-пошта</string>
+  <string name="quran_sync_account_id">ID налога</string>
+  <string name="quran_sync_action_error">Тренутно није могуће ажурирати синхронизацију.</string>
+  <string name="quran_sync_bookmarks_cta_title">Синхронизујте своје обележиваче свуда</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Приступите им са било ког уређаја, у било које време</string>
+  <string name="quran_sync_bookmarks_cta_button">Пријавите се преко Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Одбаци</string>
+</resources>

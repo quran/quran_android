@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Gotowe</string>
+  <string name="ayahbookmark_reading_bookmark_title">Zakładka czytania</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Miejsce, w którym skończyłeś</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Obecnie na %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Zostanie przeniesione z %1$s</string>
+  <string name="ayahbookmark_collections_header">Kolekcje</string>
+  <string name="ayahbookmark_new_collection">Nowa kolekcja</string>
+  <string name="ayahbookmark_collection_name_hint">Nazwa kolekcji</string>
+  <string name="ayahbookmark_cancel">Anuluj</string>
+  <string name="ayahbookmark_create">Utwórz</string>
+  <string name="ayahbookmark_saved">Zapisano</string>
+  <string name="ayahbookmark_not_saved">Niezapisano</string>
+  <string name="ayahbookmark_highlight_title">Podświetlenie</string>
+  <string name="ayahbookmark_highlight_subtitle">Koloruje werset na stronie</string>
+  <string name="ayahbookmark_highlight_none">Brak</string>
+</resources>

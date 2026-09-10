@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">بشپړ شو</string>
+  <string name="ayahbookmark_reading_bookmark_title">د لوستلو نښه</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">هغه ځای چې پریښود</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">اوس مهال په %1$s کې</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">به له %1$s څخه لېږدول شي</string>
+  <string name="ayahbookmark_collections_header">ټولګې</string>
+  <string name="ayahbookmark_new_collection">نوې ټولګه</string>
+  <string name="ayahbookmark_collection_name_hint">د ټولګې نوم</string>
+  <string name="ayahbookmark_cancel">لغوه کول</string>
+  <string name="ayahbookmark_create">جوړول</string>
+  <string name="ayahbookmark_saved">خوندي شوی</string>
+  <string name="ayahbookmark_not_saved">خوندي نه دی</string>
+  <string name="ayahbookmark_highlight_title">ځلول</string>
+  <string name="ayahbookmark_highlight_subtitle">په مخ کې آيت رنګوي</string>
+  <string name="ayahbookmark_highlight_none">هیڅ</string>
+</resources>

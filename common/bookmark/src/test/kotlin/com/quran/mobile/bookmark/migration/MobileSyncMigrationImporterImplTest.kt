@@ -14,7 +14,7 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImportReadingBookmark
 import com.quran.mobile.bookmark.importdata.MobileSyncImportReadingSession
 import com.quran.mobile.bookmark.importdata.MobileSyncImporterImpl
 import com.quran.mobile.bookmark.model.BookmarksDaoImpl
-import com.quran.mobile.bookmark.sync.FakeLocalDataChangeNotifier
+import com.quran.mobile.bookmark.model.RepositoryBackedTestBookmarkCollectionsState
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepositoryImpl
@@ -37,7 +37,6 @@ class MobileSyncImporterImplTest {
   private lateinit var importer: MobileSyncImporterImpl
   private lateinit var bookmarksDao: BookmarksDaoImpl
   private lateinit var appCoroutineScope: AppCoroutineScope
-  private lateinit var localDataChangeNotifier: FakeLocalDataChangeNotifier
 
   @Before
   fun setUp() {
@@ -45,17 +44,22 @@ class MobileSyncImporterImplTest {
     context.deleteDatabase("quran.db")
     mobileSyncDatabase = MobileSyncDatabase(context)
     appCoroutineScope = AppCoroutineScope()
-    localDataChangeNotifier = FakeLocalDataChangeNotifier()
+    val collectionsRepository = CollectionsRepositoryImpl(mobileSyncDatabase.database)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(mobileSyncDatabase.database)
     bookmarksDao = BookmarksDaoImpl(
       quranInfoProvider = { QuranInfo(MadaniDataSource()) },
       bookmarksRepository = BookmarksRepositoryImpl(mobileSyncDatabase.database),
-      collectionsRepository = CollectionsRepositoryImpl(mobileSyncDatabase.database),
-      collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(mobileSyncDatabase.database),
-      localDataChangeNotifier = localDataChangeNotifier,
+      collectionsRepository = collectionsRepository,
+      collectionBookmarksRepository = collectionBookmarksRepository,
+      bookmarkCollectionsState = RepositoryBackedTestBookmarkCollectionsState(
+        collectionsRepository,
+        collectionBookmarksRepository,
+        appCoroutineScope
+      ),
       timestampProvider = FakeMobileSyncTimestampProvider(),
       appCoroutineScope = appCoroutineScope
     )
-    importer = MobileSyncImporterImpl(mobileSyncDatabase, localDataChangeNotifier)
+    importer = MobileSyncImporterImpl(mobileSyncDatabase)
   }
 
   @After
@@ -106,17 +110,17 @@ class MobileSyncImporterImplTest {
     )
 
     val bookmarks = bookmarksDao.bookmarks()
-    val tags = bookmarksDao.tags()
+    // the default collection is always present, so this asserts on the imported ones
+    val tags = bookmarksDao.tags().filterNot { tag -> tag.isSystem }
     val readingSessions = ReadingSessionsRepositoryImpl(mobileSyncDatabase.database).getReadingSessions()
     val readingBookmark = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database).getReadingBookmark()
 
     assertThat(bookmarks.map { bookmark -> bookmark.sura to bookmark.ayah }).containsExactly(2 to 255)
     assertThat(bookmarks.single().timestamp).isEqualTo(1234L)
     assertThat(tags.map { tag -> tag.name }).containsExactly("Reading")
-    assertThat(bookmarksDao.getBookmarkTagIds(bookmarks.single().id)).containsExactly(tags.single().id)
+    assertThat(bookmarksDao.getBookmarkTagIds(bookmarks.single().id)).contains(tags.single().id)
     assertThat(readingSessions.map { session -> session.sura to session.ayah }).containsExactly(18 to 1)
     assertThat(readingBookmark).isNotNull()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
 
   @Test
@@ -150,6 +154,5 @@ class MobileSyncImporterImplTest {
 
     assertThat(bookmarksDao.bookmarks().map { bookmark -> bookmark.sura to bookmark.ayah })
       .containsExactly(3 to 2)
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(2)
   }
 }

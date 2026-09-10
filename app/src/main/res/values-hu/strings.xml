@@ -20,7 +20,6 @@
     <string name="menu_jump_last_page">Legutóbbi lap</string>
     <string name="menu_bookmarks">Könyvjelzők</string>
     <string name="menu_bookmarks_page">Oldal könyvjelzők</string>
-    <string name="menu_bookmarks_ayah">Ája könyvjelzők</string>
     <string name="menu_sort">Rendezés</string>
     <string name="menu_sort_date">Hozzáadása ideje szerint</string>
     <string name="menu_sort_location">Koránban való hely szerint</string>
@@ -58,7 +57,7 @@
         &lt;br/>
         &lt;br/>&lt;b>Hogyan oszthatok meg egy áját?&lt;/b>
         &lt;br/>Bármelyik arab oldalon érintsen meg hosszan egy áját a menü megnyitásához, ahol
-        kiválaszthatja a könyvjelzőzést, a címkézést, az ája megosztását vagy vágólapra másolását, a fordítás megtekintését,
+        kiválaszthatja a könyvjelzőzést, az ája megosztását vagy vágólapra másolását, a fordítás megtekintését,
         vagy a recitálás meghallhatását.&lt;br/>
         &lt;br/>&lt;b>A malayalm/tamil/bangla/urdu betűtípusok nem működnek!&lt;/b>
         &lt;br/>Sajnos az Android 4.0 előtti verziók nem támogatják ezeket a betűtípusokat, és csak
@@ -222,7 +221,6 @@
     <string name="delete_tag">Címke törlése</string>
     <string name="edit_tag">Címke szerkesztése</string>
     <string name="new_tag">Új címke</string>
-    <string name="not_tagged">Nincs címkézve</string>
 
     <!-- tag dialog -->
     <string name="tag_dlg_title">Címke</string>
@@ -295,6 +293,16 @@
   <string name="playback_prompt_title">Indítsa el a lejátszást:</string>
   <string name="starting_page_label">Az oldal eleje</string>
   <string name="undo">Undo</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Még nincs könyvjelző</string>
+  <string name="bookmarks_empty_subtitle">Koppints a könyvjelző ikonra egy oldal mentéséhez, vagy tartsd lenyomva az áját a könyvjelzőzéshez.</string>
+  <string name="reading_bookmark_movable_education_title">Ez egy mozgatható olvasási könyvjelző</string>
+  <string name="reading_bookmark_movable_education_body">Az olvasási könyvjelző mentése felülírja a régit. Több ája mentéséhez tartsd lenyomva az áját, és add hozzá egy gyűjteményhez.</string>
+  <string name="reading_bookmark_moved_from">Áthelyezve innen: %1$s</string>
+  <string name="reading_bookmark_moved_from_title">A könyvjelző áthelyezve innen: %1$s</string>
+  <string name="reading_bookmark_added">Könyvjelző hozzáadva</string>
+  <string name="reading_bookmark_dismiss_education">Elvetés</string>
   <string name="recent_pages">Legutóbbi oldalak</string>
   <string name="old_page_bookmarks">Régi oldal-könyvjelzők</string>
   <string name="tag_blank_tag_error">A címkék neve nem lehet üres!</string>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Valmis</string>
+  <string name="ayahbookmark_reading_bookmark_title">Lugemisjärjehoidja</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Kust pooleli jäid</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Praegu kohas %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Liigutatakse asukohast %1$s</string>
+  <string name="ayahbookmark_collections_header">Kogud</string>
+  <string name="ayahbookmark_new_collection">Uus kogu</string>
+  <string name="ayahbookmark_collection_name_hint">Kogu nimi</string>
+  <string name="ayahbookmark_cancel">Tühista</string>
+  <string name="ayahbookmark_create">Loo</string>
+  <string name="ayahbookmark_saved">Salvestatud</string>
+  <string name="ayahbookmark_not_saved">Salvestamata</string>
+  <string name="ayahbookmark_highlight_title">Esiletõstmine</string>
+  <string name="ayahbookmark_highlight_subtitle">Värvib salmi lehel</string>
+  <string name="ayahbookmark_highlight_none">Puudub</string>
+</resources>

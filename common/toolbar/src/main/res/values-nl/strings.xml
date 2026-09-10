@@ -5,7 +5,6 @@ Yasser Baghouli (zaterdag@outlook.com)
 -->
 <resources>
   <string name="bookmark_ayah">Bladwijzer deze Ayah</string>
-  <string name="tag_ayah">Label deze Ayah</string>
   <string name="share_ayah">Deel Ayah Link</string>
   <string name="share_ayah_text">Deel Ayah Tekst</string>
   <string name="translation_ayah">Ayah Vertaling/Tafseer</string>

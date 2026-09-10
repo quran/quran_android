@@ -16,7 +16,6 @@
   <string name="menu_jump_last_page">Dernière page</string>
   <string name="menu_bookmarks">Favoris</string>
   <string name="menu_bookmarks_page">Pages en favoris</string>
-  <string name="menu_bookmarks_ayah">Ayāts en favoris</string>
   <string name="menu_sort">Trier</string>
   <string name="menu_sort_date">Par date d\'ajout</string>
   <string name="menu_sort_location">Selon l\'ordre dans le coran</string>
@@ -252,7 +251,6 @@
   <string name="delete_tag">Supprimez l\'étiquette</string>
   <string name="edit_tag">Modifier l\'étiquette</string>
   <string name="new_tag">Nouvelle étiquette</string>
-  <string name="not_tagged">Aucune étiquette</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Étiquette</string>
@@ -268,6 +266,16 @@
     <item quantity="other">%2$d résultats pour \"%1$s\": </item>
   </plurals>
   <string name="undo">Annuler</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Aucun favori pour le moment</string>
+  <string name="bookmarks_empty_subtitle">Appuyez sur l\'icône de signet pour enregistrer une page, ou appuyez longuement sur une aya pour l\'ajouter aux favoris.</string>
+  <string name="reading_bookmark_movable_education_title">Ceci est un signet de lecture déplaçable</string>
+  <string name="reading_bookmark_movable_education_body">Enregistrer un signet de lecture remplace l\'ancien. Pour enregistrer plusieurs ayas, appuyez longuement sur une aya et ajoutez-la à une collection.</string>
+  <string name="reading_bookmark_moved_from">Déplacé depuis %1$s</string>
+  <string name="reading_bookmark_moved_from_title">Signet déplacé depuis %1$s</string>
+  <string name="reading_bookmark_added">Signet ajouté</string>
+  <string name="reading_bookmark_dismiss_education">Ignorer</string>
 
   <!-- m permissions stuff -->
   <string name="storage_permission_rationale">L\'application demande la permission de stocker ses données sur un support externe. Elle continuera de fonctionner sans cette permission, mais si vous effacez les données, ou désintallez l\'application, toutes les pages téléchargées, les audios, et les données seront supprimés. Accorder la permission à l\'application Coran ?</string>

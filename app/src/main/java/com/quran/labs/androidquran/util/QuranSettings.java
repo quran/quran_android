@@ -209,6 +209,16 @@ public class QuranSettings {
     prefs.edit().putBoolean(Constants.PREF_SHOW_DATE, isDateShown).apply();
   }
 
+  public Set<String> getCollapsedCollections() {
+    return prefs.getStringSet(Constants.PREF_COLLAPSED_COLLECTIONS, Collections.emptySet());
+  }
+
+  public void setCollapsedCollections(Set<String> collapsedCollections) {
+    prefs.edit()
+        .putStringSet(Constants.PREF_COLLAPSED_COLLECTIONS, new HashSet<>(collapsedCollections))
+        .apply();
+  }
+
   public boolean isQuranSplitWithTranslation() {
     return prefs.getBoolean(Constants.PREF_SPLIT_PAGE_AND_TRANSLATION, false);
   }
@@ -288,6 +298,17 @@ public class QuranSettings {
   public void setSdcardPermissionsDialogPresented() {
     perInstallationPrefs.edit()
         .putBoolean(Constants.PREF_DID_PRESENT_PERMISSIONS_DIALOG, true).apply();
+  }
+
+  /** Marks the education as seen and returns whether this is its first presentation. */
+  public boolean markMovableBookmarkEducationSeen() {
+    final boolean isFirstPresentation = !perInstallationPrefs.getBoolean(
+        Constants.PREF_HAS_SEEN_MOVABLE_BOOKMARK_EDUCATION, false);
+    if (isFirstPresentation) {
+      perInstallationPrefs.edit()
+          .putBoolean(Constants.PREF_HAS_SEEN_MOVABLE_BOOKMARK_EDUCATION, true).apply();
+    }
+    return isFirstPresentation;
   }
 
   public String getAppCustomLocation() {

@@ -3,6 +3,8 @@ package com.quran.data.dao
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.collection.ReadingCollection
+import com.quran.data.model.collection.ReadingCollectionBookmarks
 import kotlinx.coroutines.flow.Flow
 
 object BookmarkSortOrder {
@@ -17,30 +19,27 @@ interface BookmarksDao {
   fun bookmarksFlow(sortOrder: Int = BookmarkSortOrder.SORT_DATE_ADDED): Flow<List<Bookmark>>
   fun bookmarksForPage(page: Int): Flow<List<Bookmark>>
 
+  fun collectionsWithBookmarksFlow(): Flow<List<ReadingCollectionBookmarks>>
+  suspend fun addCollection(name: String): ReadingCollection
+
   suspend fun tags(): List<Tag>
   fun tagsFlow(): Flow<List<Tag>>
-  suspend fun addTag(name: String): Long
+  suspend fun addTag(name: String): String
   suspend fun updateTag(tag: Tag): Boolean
   suspend fun removeTags(tags: List<Tag>)
 
-  suspend fun getBookmarkTagIds(bookmarkId: Long): List<Long>
-  suspend fun getAyahBookmarkTagIds(suraAyah: SuraAyah): List<Long>
+  suspend fun getBookmarkTagIds(bookmarkId: String): List<String>
   suspend fun updateBookmarkTags(
-    bookmarkIds: LongArray,
-    tagIds: Set<Long>,
+    bookmarkIds: Array<String>,
+    tagIds: Set<String>,
     deleteNonTagged: Boolean
   ): Boolean
-  suspend fun updateAyahBookmarkTags(
-    suraAyah: SuraAyah,
-    page: Int,
-    tagIds: Set<Long>,
-    deleteNonTagged: Boolean
-  ): Boolean
-  suspend fun removeBookmarkFromTag(bookmark: Bookmark, tagId: Long): Boolean
-
+  suspend fun removeBookmarkFromTag(bookmark: Bookmark, tagId: String): Boolean
   suspend fun removeBookmarks(bookmarks: List<Bookmark>)
-  suspend fun removeBookmarksForPage(page: Int)
-  suspend fun replaceAyahBookmarks(bookmarks: List<Bookmark>)
+  suspend fun deleteAyahBookmark(suraAyah: SuraAyah): Boolean
   suspend fun isSuraAyahBookmarked(suraAyah: SuraAyah): Boolean
-  suspend fun toggleAyahBookmark(suraAyah: SuraAyah, page: Int): Boolean
+  suspend fun replaceAyahBookmarkCollections(
+    suraAyah: SuraAyah,
+    collectionIds: Set<String>
+  ): Boolean
 }

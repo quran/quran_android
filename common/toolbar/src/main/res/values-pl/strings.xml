@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="bookmark_ayah">Dodaj ten Ajat do zakładek</string>
-  <string name="tag_ayah">Otaguj ten Ajat</string>
   <string name="share_ayah">Udostępnij link do Ajatu</string>
   <string name="share_ayah_text">Udostępnij tekst Ajatu</string>
   <string name="translation_ayah">Tłumaczenie/Tafsir Ajatu</string>

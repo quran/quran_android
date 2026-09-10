@@ -45,7 +45,7 @@
   <color name="notification_color">#ff112e44</color>
   <color name="audio_notification_color">@color/download_button_background</color>
   <color name="audio_notification_background_color">#ffd8d8d8</color>
-  <color name="ayah_bookmark_color">#ff81c784</color>
+  <color name="ayah_bookmark_color">#ff2e7d32</color>
   <color name="download_button_background">#ffe8f4f8</color>
 
   <color name="icon_tint">#ff212529</color>
@@ -61,6 +61,20 @@
   <color name="toast_text_color">#ff000000</color>
   <color name="toast_background_color_night">#ff2d2d2d</color>
   <color name="toast_text_color_night">#ffffffff</color>
+
+  <!--
+    highlights as they appear in a list. the page itself uses the pale HighlightColors, which
+    are too weak to read as a colour against a light row, so lists use a darker ramp instead.
+  -->
+  <color name="highlight_list_yellow">#fff9a825</color>
+  <color name="highlight_list_green">#ff2e7d32</color>
+  <color name="highlight_list_blue">#ff1565c0</color>
+  <color name="highlight_list_red">#ffc62828</color>
+  <color name="highlight_list_purple">#ff6a1b9a</color>
+  <!-- the outline of a collection name chip - the accent colour, held back so it reads as a label -->
+  <color name="tag_chip_border">#7300838f</color>
+  <!-- an ayah bookmark with no highlight on it - deliberately not one of the five above -->
+  <color name="unhighlighted_bookmark_color">#ff546e7a</color>
 
   <color name="default_text">#ff000000</color>
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com-synkronisering</string>
+  <string name="quran_sync_settings_category">Konto</string>
+  <string name="quran_sync_settings_summary">Bokmärken, samlingar och läshistorik</string>
+  <string name="quran_sync_not_signed_in">Inte inloggad</string>
+  <string name="quran_sync_signed_in">Inloggad</string>
+  <string name="quran_sync_loading">Loggar in</string>
+  <string name="quran_sync_login">Logga in</string>
+  <string name="quran_sync_logout">Logga ut</string>
+  <string name="quran_sync_name">Namn</string>
+  <string name="quran_sync_email">E-post</string>
+  <string name="quran_sync_account_id">Konto-ID</string>
+  <string name="quran_sync_action_error">Det går inte att uppdatera synkroniseringen just nu.</string>
+  <string name="quran_sync_bookmarks_cta_title">Synkronisera dina bokmärken överallt</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Kom åt dem från vilken enhet som helst, när som helst</string>
+  <string name="quran_sync_bookmarks_cta_button">Logga in med Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Avvisa</string>
+</resources>

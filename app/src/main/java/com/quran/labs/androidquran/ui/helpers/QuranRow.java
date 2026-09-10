@@ -4,6 +4,7 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 
 import com.quran.data.model.bookmark.Bookmark;
+import com.quran.data.model.highlight.HighlightColor;
 
 public class QuranRow {
 
@@ -13,6 +14,10 @@ public class QuranRow {
   public static final int PAGE_BOOKMARK = 2;
   public static final int AYAH_BOOKMARK = 3;
   public static final int BOOKMARK_HEADER = 4;
+  public static final int PAGE_READING_BOOKMARK = 5;
+  public static final int AYAH_READING_BOOKMARK = 6;
+  public static final int HIGHLIGHT_COLOR = 7;
+  public static final int HIGHLIGHTED_AYAH = 8;
 
   public int sura;
   public int ayah;
@@ -27,9 +32,17 @@ public class QuranRow {
   public long dateAddedInMillis;
 
   // For Bookmarks
-  public long tagId;
-  public long bookmarkId;
+  public String tagId;
+  public String bookmarkId;
   public Bookmark bookmark;
+
+  public Integer itemCount;
+  public boolean isCollapsible;
+  public boolean isCollapsed;
+  // a collection the app owns (the default collection); it cannot be renamed or deleted
+  public boolean isSystemCollection;
+
+  public HighlightColor highlightColor;
 
   public static class Builder {
     private String text;
@@ -40,12 +53,17 @@ public class QuranRow {
     private int rowType = NONE;
     private Integer imageResource;
     private Integer juzType;
-    private long tagId = -1;
-    private long bookmarkId = -1;
+    private String tagId;
+    private String bookmarkId;
     private String juzOverlayText;
     private long dateAddedInMillis;
     private Integer imageFilterColorResource;
     private Bookmark bookmark;
+    private Integer itemCount;
+    private boolean isCollapsible;
+    private boolean isCollapsed;
+    private boolean isSystemCollection;
+    private HighlightColor highlightColor;
 
     public Builder withType(int type) {
       rowType = type;
@@ -78,6 +96,14 @@ public class QuranRow {
       return this;
     }
 
+    /**
+     * Sets the ayah number for rows that navigate to a specific ayah without owning a Bookmark.
+     */
+    public Builder withAyah(int ayah) {
+      this.ayah = ayah;
+      return this;
+    }
+
     public Builder withPage(int page) {
       this.page = page;
       return this;
@@ -103,7 +129,7 @@ public class QuranRow {
       return this;
     }
 
-    public Builder withTagId(long id) {
+    public Builder withTagId(String id) {
       tagId = id;
       return this;
     }
@@ -113,17 +139,41 @@ public class QuranRow {
       return this;
     }
 
+    public Builder withItemCount(int itemCount) {
+      this.itemCount = itemCount;
+      return this;
+    }
+
+    public Builder withCollapsedState(boolean isCollapsed) {
+      this.isCollapsible = true;
+      this.isCollapsed = isCollapsed;
+      return this;
+    }
+
+    public Builder withSystemCollection(boolean isSystemCollection) {
+      this.isSystemCollection = isSystemCollection;
+      return this;
+    }
+
+    public Builder withHighlightColor(HighlightColor highlightColor) {
+      this.highlightColor = highlightColor;
+      return this;
+    }
+
     public QuranRow build() {
       return new QuranRow(text, metadata, rowType, sura,
           ayah, page, imageResource, imageFilterColorResource, juzType,
-          juzOverlayText, bookmarkId, tagId, bookmark, dateAddedInMillis);
+          juzOverlayText, bookmarkId, tagId, bookmark, dateAddedInMillis, itemCount,
+          isCollapsible, isCollapsed, isSystemCollection, highlightColor);
     }
   }
 
   private QuranRow(String text, String metadata, int rowType,
       int sura, int ayah, int page, Integer imageResource, Integer filterColorResource,
-      Integer juzType, String juzOverlayText, long bookmarkId, long tagId, Bookmark bookmark,
-                   long dateAddedInMillis) {
+      Integer juzType, String juzOverlayText, String bookmarkId, String tagId, Bookmark bookmark,
+                   long dateAddedInMillis, Integer itemCount, boolean isCollapsible,
+                   boolean isCollapsed, boolean isSystemCollection,
+                   HighlightColor highlightColor) {
     this.text = text;
     this.rowType = rowType;
     this.sura = sura;
@@ -138,6 +188,11 @@ public class QuranRow {
     this.bookmarkId = bookmarkId;
     this.bookmark = bookmark;
     this.dateAddedInMillis = dateAddedInMillis;
+    this.itemCount = itemCount;
+    this.isCollapsible = isCollapsible;
+    this.isCollapsed = isCollapsed;
+    this.isSystemCollection = isSystemCollection;
+    this.highlightColor = highlightColor;
   }
 
   public boolean isHeader() {
@@ -148,11 +203,27 @@ public class QuranRow {
     return rowType == BOOKMARK_HEADER;
   }
 
+  public boolean isEditableCollectionHeader() {
+    return isBookmarkHeader() && tagId != null && !isSystemCollection;
+  }
+
   public boolean isBookmark() {
     return rowType == PAGE_BOOKMARK || rowType == AYAH_BOOKMARK;
   }
 
+  public boolean isReadingBookmark() {
+    return rowType == PAGE_READING_BOOKMARK || rowType == AYAH_READING_BOOKMARK;
+  }
+
   public boolean isAyahBookmark() {
-    return rowType == AYAH_BOOKMARK;
+    return rowType == AYAH_BOOKMARK || rowType == AYAH_READING_BOOKMARK;
+  }
+
+  public boolean isHighlightColor() {
+    return rowType == HIGHLIGHT_COLOR;
+  }
+
+  public boolean isHighlightedAyah() {
+    return rowType == HIGHLIGHTED_AYAH;
   }
 }

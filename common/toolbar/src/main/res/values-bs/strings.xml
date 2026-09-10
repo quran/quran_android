@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="bookmark_ayah">Zabilježi ovaj ajet</string>
-  <string name="tag_ayah">Označi ovaj ajet</string>
   <string name="share_ayah">Podijeli link ajeta</string>
   <string name="share_ayah_text">Podijeli tekst ajeta</string>
   <string name="translation_ayah">Prijevod/tefsir ajeta</string>

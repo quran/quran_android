@@ -46,7 +46,14 @@ class LegacyBookmarkMigrationNormalizerTest {
           LegacyBookmarkTag(12L, oldPageBookmarksName, 300L)
         ),
         bookmarks = listOf(
-          Bookmark(1L, null, null, page, 1000L, tags = listOf(10L, 12L))
+          Bookmark(
+            legacyBookmarkId(1L),
+            null,
+            null,
+            page,
+            1000L,
+            tags = listOf(legacyTagId(10L), legacyTagId(12L))
+          )
         ),
         recentPages = emptyList()
       )
@@ -59,8 +66,19 @@ class LegacyBookmarkMigrationNormalizerTest {
     assertThat(data.collections.map { collection -> collection.name })
       .containsExactly("Reading", oldPageBookmarksName)
       .inOrder()
+    val collectionsByName = data.collections.associateBy { collection -> collection.name }
+    val collectionImportIds = data.collections.map { collection -> collection.importId }
+    assertThat(collectionImportIds).doesNotContain(legacyTagId(10L))
+    assertThat(collectionImportIds).doesNotContain(legacyTagId(11L))
+    assertThat(collectionImportIds).doesNotContain(legacyTagId(12L))
+    assertThat(collectionImportIds).doesNotContain("tag-10")
+    assertThat(collectionImportIds).doesNotContain("tag-11")
+    assertThat(collectionImportIds).doesNotContain("tag-12")
     assertThat(data.collectionBookmarks.map { link -> link.collectionImportId })
-      .containsExactly("tag-10", "tag-11")
+      .containsExactly(
+        collectionsByName.getValue("Reading").importId,
+        collectionsByName.getValue(oldPageBookmarksName).importId
+      )
   }
 
   @Test
@@ -72,8 +90,8 @@ class LegacyBookmarkMigrationNormalizerTest {
       LegacyBookmarksSnapshot(
         tags = emptyList(),
         bookmarks = listOf(
-          Bookmark(1L, null, null, page, 2000L),
-          Bookmark(2L, pageBounds[0], pageBounds[1], page, 1000L)
+          Bookmark(legacyBookmarkId(1L), null, null, page, 2000L),
+          Bookmark(legacyBookmarkId(2L), pageBounds[0], pageBounds[1], page, 1000L)
         ),
         recentPages = emptyList()
       )
@@ -121,7 +139,14 @@ class LegacyBookmarkMigrationNormalizerTest {
       LegacyBookmarksSnapshot(
         tags = listOf(LegacyBookmarkTag(10L, "Reading", timestampMillis)),
         bookmarks = listOf(
-          Bookmark(1L, 2, 255, page, timestampMillis, tags = listOf(10L))
+          Bookmark(
+            legacyBookmarkId(1L),
+            2,
+            255,
+            page,
+            timestampMillis,
+            tags = listOf(legacyTagId(10L))
+          )
         ),
         recentPages = listOf(RecentPage(page, timestampMillis))
       )
@@ -132,4 +157,8 @@ class LegacyBookmarkMigrationNormalizerTest {
     assertThat(data.collectionBookmarks.single().timestampMillis).isEqualTo(timestampMillis)
     assertThat(data.readingSessions.single().timestampMillis).isEqualTo(timestampMillis)
   }
+
+  private fun legacyBookmarkId(id: Long): String = id.toString()
+
+  private fun legacyTagId(id: Long): String = id.toString()
 }
