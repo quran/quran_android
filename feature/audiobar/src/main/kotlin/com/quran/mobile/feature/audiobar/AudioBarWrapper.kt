@@ -64,8 +64,10 @@ class AudioBarWrapper @JvmOverloads constructor(
           eventListeners,
           modifier = Modifier
             .padding(
+              // The menu toolbar sits below the audio bar and handles the bottom
+              // navigation-bar inset, so the audio bar only needs horizontal insets.
               WindowInsets.navigationBars.add(WindowInsets.displayCutout)
-                  .only(WindowInsetsSides.Horizontal.plus(WindowInsetsSides.Bottom))
+                  .only(WindowInsetsSides.Horizontal)
                 .asPaddingValues()
             )
             .padding(top = 8.dp)
