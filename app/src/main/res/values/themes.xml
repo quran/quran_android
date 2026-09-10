@@ -42,4 +42,20 @@
   </style>
 
     <style name="QuranDialog" parent="Theme.AppCompat.DayNight.Dialog" />
+
+  <!--
+    The app uses an AppCompat (non-Material) theme, but BottomNavigationView requires a
+    Material Components theme to inflate. The Bridge theme provides the Material attributes on
+    top of AppCompat; it is applied on the bottom navigation view and home action toolbar (via
+    android:theme) so the rest of the AppCompat styling is left untouched.
+  -->
+  <style name="BottomNavTheme" parent="Theme.MaterialComponents.DayNight.Bridge">
+    <item name="colorPrimary">@color/accent_color</item>
+    <item name="colorSurface">@color/toolbar</item>
+    <item name="colorOnSurface">@color/color_control_normal</item>
+    <item name="colorControlNormal">@color/color_control_normal</item>
+    <item name="android:textColorPrimary">@color/color_control_normal</item>
+    <item name="iconTint">@color/color_control_normal</item>
+    <item name="elevationOverlayEnabled">false</item>
+  </style>
 </resources>
