@@ -10,10 +10,10 @@ jobs:
     if: github.event_name != 'pull_request'
     steps:
       - name: Checkout the Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup JDK
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           distribution: zulu
           java-version-file: .github/workflows/.java-version

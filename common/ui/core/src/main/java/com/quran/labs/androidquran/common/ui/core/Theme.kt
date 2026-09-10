@@ -77,21 +77,26 @@ private val forceLtr = listOf("huawei", "lenovo", "tecno")
 
 object QuranIcons {
   val ArrowBack: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ArrowBack
+  val BookmarkBorder: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.BookmarkBorder
   val Chat: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Chat
   val Check: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Check
+  val ChevronRight: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ChevronRight
   val Close: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Close
   val ExpandMore: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ExpandMore
   val FastForward: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.FastForward
   val FastRewind: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.FastRewind
+  val Logout: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Logout
   val MenuBook: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.MenuBook
   val Mic: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Mic
   val Pause: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Pause
+  val Person: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Person
   val PlayArrow: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.PlayArrow
   val Repeat: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Repeat
   val Search: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Search
   val Settings: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Settings
   val Speed: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Speed
   val Stop: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Stop
+  val Sync: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Sync
 }
 
 @Composable

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">تامام</string>
+  <string name="ayahbookmark_reading_bookmark_title">ئوقۇش خەتكۈچى</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">توختىغان جايىڭىز</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">ھازىر %1$s دە</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">%1$s دىن يۆتكىلىدۇ</string>
+  <string name="ayahbookmark_collections_header">يىغقۇچلار</string>
+  <string name="ayahbookmark_new_collection">يېڭى يىغقۇ</string>
+  <string name="ayahbookmark_collection_name_hint">يىغقۇ ئىسمى</string>
+  <string name="ayahbookmark_cancel">ۋاز كەچ</string>
+  <string name="ayahbookmark_create">قۇر</string>
+  <string name="ayahbookmark_saved">ساقلاندى</string>
+  <string name="ayahbookmark_not_saved">ساقلانمىدى</string>
+  <string name="ayahbookmark_highlight_title">گەۋدىلەندۈرۈش</string>
+  <string name="ayahbookmark_highlight_subtitle">بەتتىكى ئايەتنى رەڭلەيدۇ</string>
+  <string name="ayahbookmark_highlight_none">يوق</string>
+</resources>

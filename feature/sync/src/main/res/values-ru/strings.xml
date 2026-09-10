@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Синхронизация Quran.com</string>
+  <string name="quran_sync_settings_category">Аккаунт</string>
+  <string name="quran_sync_settings_summary">Закладки, коллекции и история чтения</string>
+  <string name="quran_sync_not_signed_in">Вход не выполнен</string>
+  <string name="quran_sync_signed_in">Вход выполнен</string>
+  <string name="quran_sync_loading">Выполняется вход</string>
+  <string name="quran_sync_login">Войти</string>
+  <string name="quran_sync_logout">Выйти</string>
+  <string name="quran_sync_name">Имя</string>
+  <string name="quran_sync_email">Эл. почта</string>
+  <string name="quran_sync_account_id">ID аккаунта</string>
+  <string name="quran_sync_action_error">Сейчас невозможно обновить синхронизацию.</string>
+  <string name="quran_sync_bookmarks_cta_title">Синхронизируйте закладки везде</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Получайте к ним доступ с любого устройства в любое время</string>
+  <string name="quran_sync_bookmarks_cta_button">Войти через Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Закрыть</string>
+</resources>

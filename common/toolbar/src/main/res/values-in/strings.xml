@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="bookmark_ayah">Tandai ayat ini</string>
-  <string name="tag_ayah">Label ayat ini</string>
   <string name="share_ayah">Bagikan tautan ayat ini</string>
   <string name="share_ayah_text">Bagikan teks ayat</string>
   <string name="translation_ayah">Terjemahan/Tafsir ayat</string>

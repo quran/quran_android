@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com ہم آہنگی</string>
+  <string name="quran_sync_settings_category">اکاؤنٹ</string>
+  <string name="quran_sync_settings_summary">بک مارکس، مجموعے اور مطالعے کی تاریخ</string>
+  <string name="quran_sync_not_signed_in">سائن ان نہیں ہیں</string>
+  <string name="quran_sync_signed_in">سائن ان ہیں</string>
+  <string name="quran_sync_loading">سائن ان ہو رہا ہے</string>
+  <string name="quran_sync_login">لاگ ان کریں</string>
+  <string name="quran_sync_logout">لاگ آؤٹ کریں</string>
+  <string name="quran_sync_name">نام</string>
+  <string name="quran_sync_email">ای میل</string>
+  <string name="quran_sync_account_id">اکاؤنٹ آئی ڈی</string>
+  <string name="quran_sync_action_error">اس وقت ہم آہنگی کو اپ ڈیٹ نہیں کیا جا سکتا۔</string>
+  <string name="quran_sync_bookmarks_cta_title">اپنے بک مارکس ہر جگہ ہم آہنگ کریں</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">کسی بھی ڈیوائس سے، کسی بھی وقت رسائی حاصل کریں</string>
+  <string name="quran_sync_bookmarks_cta_button">Quran.com کے ساتھ سائن ان کریں</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">مسترد کریں</string>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">완료</string>
+  <string name="ayahbookmark_reading_bookmark_title">읽기 책갈피</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">중단한 위치</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">현재 %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">%1$s에서 이동됩니다</string>
+  <string name="ayahbookmark_collections_header">컬렉션</string>
+  <string name="ayahbookmark_new_collection">새 컬렉션</string>
+  <string name="ayahbookmark_collection_name_hint">컬렉션 이름</string>
+  <string name="ayahbookmark_cancel">취소</string>
+  <string name="ayahbookmark_create">만들기</string>
+  <string name="ayahbookmark_saved">저장됨</string>
+  <string name="ayahbookmark_not_saved">저장 안 됨</string>
+  <string name="ayahbookmark_highlight_title">강조 표시</string>
+  <string name="ayahbookmark_highlight_subtitle">페이지의 구절에 색을 입힙니다</string>
+  <string name="ayahbookmark_highlight_none">없음</string>
+</resources>

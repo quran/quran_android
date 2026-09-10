@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Готово</string>
+  <string name="ayahbookmark_reading_bookmark_title">Закладка чтения</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Где вы остановились</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Сейчас на %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Будет перемещено из %1$s</string>
+  <string name="ayahbookmark_collections_header">Коллекции</string>
+  <string name="ayahbookmark_new_collection">Новая коллекция</string>
+  <string name="ayahbookmark_collection_name_hint">Название коллекции</string>
+  <string name="ayahbookmark_cancel">Отмена</string>
+  <string name="ayahbookmark_create">Создать</string>
+  <string name="ayahbookmark_saved">Сохранено</string>
+  <string name="ayahbookmark_not_saved">Не сохранено</string>
+  <string name="ayahbookmark_highlight_title">Выделение</string>
+  <string name="ayahbookmark_highlight_subtitle">Окрашивает аят на странице</string>
+  <string name="ayahbookmark_highlight_none">Нет</string>
+</resources>

@@ -194,7 +194,6 @@
   <string name="timing_database">Gerekli dosyalar</string>
   <string name="page_description">sayfa  %1$s, cüz %2$s</string>
 
-  <string name="menu_bookmarks_ayah">Âyet işaretleri</string>
   <string name="menu_bookmarks_page">Sayfa işaretleri</string>
   <string name="menu_sort_date">Eklendiği tarih</string>
   <string name="menu_sort_location">"Kur'an'daki yeri"</string>
@@ -273,12 +272,21 @@
   <string name="delete_tag">Etiketi kaldır</string>
   <string name="edit_tag">Etiket güncelle</string>
   <string name="new_tag">Yeni etiket</string>
-  <string name="not_tagged">Etiketlenmedi</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Bir etiket silindi</item>
     <item quantity="other">%d etiket silindi</item>
   </plurals>
   <string name="undo">Geri alma</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Henüz işaret yok</string>
+  <string name="bookmarks_empty_subtitle">Bir sayfayı kaydetmek için işaret simgesine dokunun, ya da bir âyete uzun basarak işaretleyin.</string>
+  <string name="reading_bookmark_movable_education_title">Bu, taşınabilir bir okuma işaretidir</string>
+  <string name="reading_bookmark_movable_education_body">Okuma işaretini kaydetmek eskisinin yerini alır. Birden çok âyeti kaydetmek için bir âyete uzun basıp koleksiyona ekleyin.</string>
+  <string name="reading_bookmark_moved_from">%1$s\'den taşındı</string>
+  <string name="reading_bookmark_moved_from_title">İşaret %1$s\'den taşındı</string>
+  <string name="reading_bookmark_added">İşaret eklendi</string>
+  <string name="reading_bookmark_dismiss_education">Kapat</string>
 
   <string name="recent_pages">Son sayfalar</string>
   <string name="old_page_bookmarks">Eski sayfa işaretleri</string>

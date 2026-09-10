@@ -16,12 +16,12 @@ import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.pages.data.warsh.WarshDataSource
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
-import com.quran.mobile.bookmark.sync.FakeLocalDataChangeNotifier
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.model.PageReadingBookmark as SyncPageReadingBookmark
 import com.quran.shared.persistence.repository.readingbookmark.repository.ReadingBookmarksRepositoryImpl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -37,7 +37,6 @@ class ReadingBookmarksDaoImplTest {
   private lateinit var dao: ReadingBookmarksDaoImpl
   private lateinit var pageMapper: ReadingBookmarkPageMapper
   private lateinit var settings: FakeSettings
-  private lateinit var localDataChangeNotifier: FakeLocalDataChangeNotifier
   private lateinit var timestampProvider: FakeMobileSyncTimestampProvider
 
   @Before
@@ -48,7 +47,6 @@ class ReadingBookmarksDaoImplTest {
     repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database)
     quranInfo = QuranInfo(MadaniDataSource())
     settings = FakeSettings()
-    localDataChangeNotifier = FakeLocalDataChangeNotifier()
     timestampProvider = FakeMobileSyncTimestampProvider()
     pageMapper = ReadingBookmarkPageMapper(
       settings = settings,
@@ -61,7 +59,6 @@ class ReadingBookmarksDaoImplTest {
     dao = ReadingBookmarksDaoImpl(
       pageMapper = pageMapper,
       readingBookmarksRepository = repository,
-      localDataChangeNotifier = localDataChangeNotifier,
       timestampProvider = timestampProvider
     )
   }
@@ -69,7 +66,6 @@ class ReadingBookmarksDaoImplTest {
   @Test
   fun `reading bookmark is null when no mobile sync reading bookmark exists`() = runTest {
     assertThat(dao.readingBookmark()).isNull()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(0)
   }
 
   @Test
@@ -80,11 +76,10 @@ class ReadingBookmarksDaoImplTest {
     assertThat(bookmark.page).isEqualTo(42)
     assertThat(bookmark.timestamp).isEqualTo(timestampProvider.timestampSeconds)
     assertThat(dao.isPageReadingBookmark(42)).isTrue()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(1)
   }
 
   @Test
-  fun `set ayah reading bookmark maps page from quran info`() = runTest {
+  fun `set ayah reading bookmark stores ayah reading bookmark`() = runTest {
     val suraAyah = SuraAyah(2, 255)
 
     dao.setAyahReadingBookmark(suraAyah)
@@ -92,7 +87,7 @@ class ReadingBookmarksDaoImplTest {
     val bookmark = dao.readingBookmark() as AyahReadingBookmark
     assertThat(bookmark.sura).isEqualTo(suraAyah.sura)
     assertThat(bookmark.ayah).isEqualTo(suraAyah.ayah)
-    assertThat(bookmark.page).isEqualTo(quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah))
+    assertThat(bookmark.timestamp).isEqualTo(timestampProvider.timestampSeconds)
   }
 
   @Test
@@ -113,7 +108,6 @@ class ReadingBookmarksDaoImplTest {
 
     assertThat(isBookmarked).isFalse()
     assertThat(dao.readingBookmark()).isNull()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(2)
   }
 
   @Test
@@ -121,7 +115,6 @@ class ReadingBookmarksDaoImplTest {
     val deleted = dao.deleteReadingBookmark()
 
     assertThat(deleted).isFalse()
-    assertThat(localDataChangeNotifier.updateCount).isEqualTo(0)
   }
 
   @Test
@@ -172,6 +165,7 @@ class ReadingBookmarksDaoImplTest {
       val madaniBookmark = awaitItem() as PageReadingBookmark
       assertThat(madaniBookmark.page).isEqualTo(madaniPage)
 
+      settings.awaitPreferencesSubscriber()
       settings.setPageType("warsh")
 
       val warshBookmark = awaitItem() as PageReadingBookmark
@@ -216,6 +210,10 @@ class ReadingBookmarksDaoImplTest {
     override suspend fun setPageType(pageType: String) {
       this.pageType = pageType
       preferences.emit("pageType")
+    }
+
+    suspend fun awaitPreferencesSubscriber() {
+      preferences.subscriptionCount.first { count -> count > 0 }
     }
 
     override suspend fun showSidelines(): Boolean = false

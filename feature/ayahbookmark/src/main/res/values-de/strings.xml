@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Fertig</string>
+  <string name="ayahbookmark_reading_bookmark_title">Lesezeichen</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Wo du aufgehört hast</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Derzeit bei %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Wird von %1$s verschoben</string>
+  <string name="ayahbookmark_collections_header">Sammlungen</string>
+  <string name="ayahbookmark_new_collection">Neue Sammlung</string>
+  <string name="ayahbookmark_collection_name_hint">Name der Sammlung</string>
+  <string name="ayahbookmark_cancel">Abbrechen</string>
+  <string name="ayahbookmark_create">Erstellen</string>
+  <string name="ayahbookmark_saved">Gespeichert</string>
+  <string name="ayahbookmark_not_saved">Nicht gespeichert</string>
+  <string name="ayahbookmark_highlight_title">Hervorhebung</string>
+  <string name="ayahbookmark_highlight_subtitle">Färbt den Vers auf der Seite</string>
+  <string name="ayahbookmark_highlight_none">Keine</string>
+</resources>

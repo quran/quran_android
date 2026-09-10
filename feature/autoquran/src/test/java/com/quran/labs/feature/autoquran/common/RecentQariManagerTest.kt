@@ -10,7 +10,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [36])
+@Config(sdk = [33])
 class RecentQariManagerTest {
 
   private lateinit var manager: RecentQariManager

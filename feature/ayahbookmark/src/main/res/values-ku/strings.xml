@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">تەواو</string>
+  <string name="ayahbookmark_reading_bookmark_title">نیشانەی خوێندنەوە</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">ئەو شوێنەی لێی وەستابوویت</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">ئێستا لە %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">لە %1$s دەگوازرێتەوە</string>
+  <string name="ayahbookmark_collections_header">کۆکراوەکان</string>
+  <string name="ayahbookmark_new_collection">کۆکراوەی نوێ</string>
+  <string name="ayahbookmark_collection_name_hint">ناوی کۆکراوە</string>
+  <string name="ayahbookmark_cancel">هەڵوەشاندنەوە</string>
+  <string name="ayahbookmark_create">دروستکردن</string>
+  <string name="ayahbookmark_saved">پاشەکەوتکراوە</string>
+  <string name="ayahbookmark_not_saved">پاشەکەوت نەکراوە</string>
+  <string name="ayahbookmark_highlight_title">هایلایت</string>
+  <string name="ayahbookmark_highlight_subtitle">ئایەتەکە لە پەڕەدا ڕەنگ دەکات</string>
+  <string name="ayahbookmark_highlight_none">هیچ</string>
+</resources>

@@ -17,7 +17,6 @@
   <string name="menu_jump_last_page">Остання сторінка</string>
   <string name="menu_bookmarks">Закладки</string>
   <string name="menu_bookmarks_page">Закладки сторінок</string>
-  <string name="menu_bookmarks_ayah">Закладки Ая</string>
   <string name="menu_sort">Сортувати</string>
   <string name="menu_sort_date">Дата додавання</string>
   <string name="menu_sort_location">Розташування в Корані</string>
@@ -70,7 +69,7 @@
         Для перекладів перейдіть до налаштувань і встановіть розмір тексту перекладу.
         &lt;br/>
         &lt;br/>&lt;b>Як поділитися ая?&lt;/b>
-        &lt;br/>Перебуваючи на будь-якій арабській сторінці, натисніть і утримуйте будь-який ayah, щоб отримати меню, де ви можете вибрати закладку, тег, поділитися або скопіювати цю ая в буфер обміну, побачити переклад або прослухати його декламацію.&lt;br/>
+        &lt;br/>Перебуваючи на будь-якій арабській сторінці, натисніть і утримуйте будь-який ayah, щоб отримати меню, де ви можете вибрати закладку, поділитися або скопіювати цю ая в буфер обміну, побачити переклад або прослухати його декламацію.&lt;br/>
         &lt;br/>&lt;b>Шрифти Malayalam/Tamil/Bengali/Urdu не працюють!&lt;/b>
         &lt;br/>На жаль, версії Android до 4.0 не підтримують ці шрифти, і ми мало що можемо зробити, щоб допомогти в цьому.
     </string>
@@ -283,13 +282,22 @@
   <string name="delete_tag">Видалити тег</string>
   <string name="edit_tag">Змінити тег</string>
   <string name="new_tag">Створити тег</string>
-  <string name="not_tagged">Не позначено тегами</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Видалено %d елемент</item>
     <item quantity="few">Видалено %d елементи</item>
     <item quantity="many">Видалено %d елементів</item>
   </plurals>
   <string name="undo">Скасувати</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Поки немає закладок</string>
+  <string name="bookmarks_empty_subtitle">Торкніться значка закладки, щоб зберегти сторінку, або натисніть і утримуйте аят, щоб додати закладку.</string>
+  <string name="reading_bookmark_movable_education_title">Це рухома закладка читання</string>
+  <string name="reading_bookmark_movable_education_body">Збереження закладки читання замінює стару. Щоб зберегти декілька аятів, натисніть і утримуйте аят, а потім додайте його до колекції.</string>
+  <string name="reading_bookmark_moved_from">Переміщено з %1$s</string>
+  <string name="reading_bookmark_moved_from_title">Закладку переміщено з %1$s</string>
+  <string name="reading_bookmark_added">Закладку додано</string>
+  <string name="reading_bookmark_dismiss_education">Закрити</string>
 
   <string name="recent_pages">Останні сторінки</string>
   <string name="old_page_bookmarks">Старі закладки сторінок</string>

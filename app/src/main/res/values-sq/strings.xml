@@ -17,7 +17,6 @@
   <string name="menu_jump_last_page">Faqja e fundit</string>
   <string name="menu_bookmarks">Libërshënues</string>
   <string name="menu_bookmarks_page">Libërshënues faqesh</string>
-  <string name="menu_bookmarks_ayah">Ayah Bookmarks</string>
   <string name="menu_sort">Renditja</string>
   <string name="menu_sort_date">Data e shtuar</string>
   <string name="menu_sort_location">Vendndodhja në Kuran</string>
@@ -71,7 +70,7 @@
         Për përkthimet, shko tek rregullimet dhe vendos madhësinë e tekstit të përkthimit.
         &lt;br/>
         &lt;br/>&lt;b>Si ta ndaj një ajah?&lt;/b>
-        &lt;br/>Kur jeni në ndonjë faqe arabe, shtypni dhe mbani çdo ayah për të marrë një menu ku mund të zgjidhni të shënoni libërshënues, etiketë, të ndani ose të kopjoni atë ajah në dërrasë, të shihni përkthimin ose të dëgjoni recitimin e tij.&lt;br/>
+        &lt;br/>Kur jeni në ndonjë faqe arabe, shtypni dhe mbani çdo ayah për të marrë një menu ku mund të zgjidhni të shënoni libërshënues, të ndani ose të kopjoni atë ajah në dërrasë, të shihni përkthimin ose të dëgjoni recitimin e tij.&lt;br/>
         &lt;br/>&lt;b>Fontet Malayalam/Tamil/Bengali/Urdu nuk punojnë!&lt;/b>
         &lt;br/>Për fat të keq, versionet Android para 4.0 nuk i mbështesin këto fonte, dhe ka pak që mund të bëjmë për të ndihmuar me këtë.
     </string>
@@ -281,12 +280,21 @@
   <string name="delete_tag">Elemino Tag</string>
   <string name="edit_tag">Ndrysho Tag</string>
   <string name="new_tag">Etiketë e re</string>
-  <string name="not_tagged">Nuk është etiketuar</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Eleminuar një element</item>
     <item quantity="other">Eleminuar elementët %d</item>
   </plurals>
   <string name="undo">Zhbëje</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Ende nuk ka libërshënues</string>
+  <string name="bookmarks_empty_subtitle">Prek ikonën e libërshënuesit për të ruajtur një faqe, ose shtyp gjatë mbi një ajet për ta shënuar.</string>
+  <string name="reading_bookmark_movable_education_title">Ky është një libërshënues leximi i lëvizshëm</string>
+  <string name="reading_bookmark_movable_education_body">Ruajtja e një libërshënuesi leximi zëvendëson të vjetrin. Për të ruajtur disa ajete, shtyp gjatë mbi një ajet dhe shtoje në një koleksion.</string>
+  <string name="reading_bookmark_moved_from">Zhvendosur nga %1$s</string>
+  <string name="reading_bookmark_moved_from_title">Libërshënuesi u zhvendos nga %1$s</string>
+  <string name="reading_bookmark_added">Libërshënuesi u shtua</string>
+  <string name="reading_bookmark_dismiss_education">Hiqe</string>
 
   <string name="recent_pages">Faqet e fundit</string>
   <string name="old_page_bookmarks">Libërshënues të vjetër faqesh</string>

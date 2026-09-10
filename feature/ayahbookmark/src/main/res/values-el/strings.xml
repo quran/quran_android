@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Τέλος</string>
+  <string name="ayahbookmark_reading_bookmark_title">Σελιδοδείκτης ανάγνωσης</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Εκεί που σταματήσατε</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Προς το παρόν στο %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Θα μετακινηθεί από %1$s</string>
+  <string name="ayahbookmark_collections_header">Συλλογές</string>
+  <string name="ayahbookmark_new_collection">Νέα συλλογή</string>
+  <string name="ayahbookmark_collection_name_hint">Όνομα συλλογής</string>
+  <string name="ayahbookmark_cancel">Ακύρωση</string>
+  <string name="ayahbookmark_create">Δημιουργία</string>
+  <string name="ayahbookmark_saved">Αποθηκεύτηκε</string>
+  <string name="ayahbookmark_not_saved">Δεν αποθηκεύτηκε</string>
+  <string name="ayahbookmark_highlight_title">Επισήμανση</string>
+  <string name="ayahbookmark_highlight_subtitle">Χρωματίζει το εδάφιο στη σελίδα</string>
+  <string name="ayahbookmark_highlight_none">Καμία</string>
+</resources>

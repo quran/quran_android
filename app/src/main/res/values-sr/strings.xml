@@ -23,7 +23,6 @@
   <string name="menu_jump_last_page">Poslednja stranica</string>
   <string name="menu_bookmarks">Beleške</string>
   <string name="menu_bookmarks_page">Zabeležene stranice</string>
-  <string name="menu_bookmarks_ayah">Zabeleženi ajeti</string>
   <string name="menu_sort">Sortiraj</string>
   <string name="menu_sort_date">Datum dodavanja</string>
   <string name="menu_sort_location">Lokacija u Kur\'anu</string>
@@ -82,7 +81,7 @@
         &lt;br/>
         &lt;br/>&lt;b>Kako da podelim ajet?&lt;/b>
         &lt;br/>Ako ste na stranici sa arapskim tekstom onda držite bilo koji ajet da biste dobili meni gde možete
-        da zabeležite, označite, podelite ili da kopirate taj ajet u međuspremnik, da vidite prevod,
+        da zabeležite, podelite ili da kopirate taj ajet u međuspremnik, da vidite prevod,
         ili da poslušate njegovo učenje.&lt;br/>
         &lt;br/>&lt;b>Malayalam/Tamil/Bengali/Urdu fontovi ne rade!&lt;/b>
         &lt;br/>Nažalost, verzije androida pre verzije 4.0 ne podržavaju ove fontove, i to je sve
@@ -291,13 +290,22 @@
   <string name="delete_tag">Izbriši oznaku</string>
   <string name="edit_tag">Uredi oznaku</string>
   <string name="new_tag">Nova oznaka</string>
-  <string name="not_tagged">Neoznačene</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Izbrisana %d stavka</item>
     <item quantity="few">Izbrisano %d stavke</item>
     <item quantity="other">Izbrisano %d stavki</item>
   </plurals>
   <string name="undo">Poništi</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Još nema oznaka</string>
+  <string name="bookmarks_empty_subtitle">Dodirnite ikonicu oznake da sačuvate stranicu, ili dugo pritisnite ajet da ga označite.</string>
+  <string name="reading_bookmark_movable_education_title">Ovo je pomerljiva čitalačka oznaka</string>
+  <string name="reading_bookmark_movable_education_body">Čuvanje čitalačke oznake zamenjuje staru. Da sačuvate više ajeta, dugo pritisnite ajet i dodajte ga u kolekciju.</string>
+  <string name="reading_bookmark_moved_from">Pomereno sa %1$s</string>
+  <string name="reading_bookmark_moved_from_title">Oznaka pomerena sa %1$s</string>
+  <string name="reading_bookmark_added">Oznaka dodata</string>
+  <string name="reading_bookmark_dismiss_education">Odbaci</string>
 
   <string name="recent_pages">Nedavno otvarane stranice</string>
   <string name="old_page_bookmarks">Stare beleške stranica</string>

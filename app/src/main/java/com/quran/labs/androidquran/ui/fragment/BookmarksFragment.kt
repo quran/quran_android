@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.ui.fragment
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -9,27 +10,40 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.data.dao.BookmarkSortOrder
+import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter
 import com.quran.labs.androidquran.presenter.bookmark.BookmarksContextualModePresenter
+import com.quran.labs.androidquran.ui.BookmarkListActivity
 import com.quran.labs.androidquran.ui.QuranActivity
 import com.quran.labs.androidquran.ui.helpers.BookmarkUIConverter
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter.QuranTouchListener
 import com.quran.labs.androidquran.ui.helpers.QuranRow
+import com.quran.mobile.feature.sync.BookmarksSignInCard
+import com.quran.mobile.feature.sync.QuranSyncActivity
+import com.quran.mobile.feature.sync.QuranSyncManager
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.launch
 
 class BookmarksFragment : Fragment(), QuranTouchListener {
+  private var bookmarksSwipeRefresh: SwipeRefreshLayout? = null
   private var recyclerView: RecyclerView? = null
   private var bookmarksAdapter: QuranListAdapter? = null
+  private var emptyStateView: ComposeView? = null
 
   @Inject
   lateinit var bookmarkPresenter: BookmarkPresenter
@@ -39,6 +53,9 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
 
   @Inject
   lateinit var bookmarkUIConverter: BookmarkUIConverter
+
+  @Inject
+  lateinit var syncManager: QuranSyncManager
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
@@ -50,9 +67,22 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     inflater: LayoutInflater, container: ViewGroup?,
     savedInstanceState: Bundle?
   ): View? {
-    val view = inflater.inflate(R.layout.quran_list, container, false)
+    val view = inflater.inflate(R.layout.quran_bookmarks_list, container, false)
 
     val context = requireContext()
+    view.findViewById<ComposeView>(R.id.sync_sign_in_card).setContent {
+      QuranTheme {
+        BookmarksSignInCard(
+          syncManager = syncManager,
+          onSignIn = { startActivity(Intent(context, QuranSyncActivity::class.java)) }
+        )
+      }
+    }
+
+    val bookmarksSwipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.bookmarks_swipe_refresh)
+    this.bookmarksSwipeRefresh = bookmarksSwipeRefresh
+    bookmarksSwipeRefresh.setOnRefreshListener { onRefreshBookmarks() }
+    updatePullToRefreshEnabled(syncManager.canTriggerSync)
 
     val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
     recyclerView.setLayoutManager(LinearLayoutManager(context))
@@ -64,6 +94,22 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     bookmarksAdapter.setQuranTouchListener(this)
     this.bookmarksAdapter = bookmarksAdapter
     recyclerView.setAdapter(bookmarksAdapter)
+
+    val emptyStateView = view.findViewById<ComposeView>(R.id.bookmarks_empty_state)
+    emptyStateView.setContent {
+      QuranTheme {
+        BookmarksEmptyState()
+      }
+    }
+    this.emptyStateView = emptyStateView
+
+    viewLifecycleOwner.lifecycleScope.launch {
+      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        syncManager.canTriggerSyncFlow.collect { canTriggerSync ->
+          updatePullToRefreshEnabled(canTriggerSync)
+        }
+      }
+    }
     // top, left, right insets are handled by QuranActivity; the bottom inset is owned by the
     // bottom navigation bar, so the list itself needs no inset padding.
     return view
@@ -82,9 +128,26 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   }
 
   override fun onDestroyView() {
+    bookmarksSwipeRefresh?.isRefreshing = false
+    bookmarksSwipeRefresh = null
     recyclerView = null
     bookmarksAdapter = null
+    emptyStateView = null
     super.onDestroyView()
+  }
+
+  private fun onRefreshBookmarks() {
+    if (syncManager.canTriggerSync) {
+      syncManager.triggerSync()
+    }
+    bookmarksSwipeRefresh?.isRefreshing = false
+  }
+
+  private fun updatePullToRefreshEnabled(isEnabled: Boolean) {
+    bookmarksSwipeRefresh?.isEnabled = isEnabled
+    if (!isEnabled) {
+      bookmarksSwipeRefresh?.isRefreshing = false
+    }
   }
 
   override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -162,12 +225,17 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     val bookmarksAdapter = bookmarksAdapter
     val bookmarkPresenter = bookmarkPresenter
     if (bookmarksAdapter != null && items != null) {
+      if (bookmarksContextualModePresenter.isInActionMode()) {
+        bookmarksContextualModePresenter.finishActionMode()
+      }
       bookmarksAdapter.setShowTags(bookmarkPresenter.shouldShowInlineTags())
       bookmarksAdapter.setShowDate(bookmarkPresenter.isDateShowing)
       bookmarksAdapter.setElements(
         items.rows.toTypedArray<QuranRow>(), items.tagMap
       )
       bookmarksAdapter.notifyDataSetChanged()
+
+      emptyStateView?.visibility = if (items.rows.isEmpty()) View.VISIBLE else View.GONE
     }
   }
 
@@ -184,6 +252,21 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
         handleRowClicked(activity, row)
       }
     }
+  }
+
+  /**
+   * The trailing chevron on a collection header, and a tap anywhere on a highlight color row,
+   * open that collection or color as its own screen.
+   */
+  override fun onOpenClicked(row: QuranRow, position: Int) {
+    if (bookmarksContextualModePresenter.isInActionMode()) {
+      // while selecting, the chevron is part of the row rather than a way out of the screen
+      onClick(row, position)
+      return
+    }
+
+    val tagId = row.tagId ?: return
+    startActivity(BookmarkListActivity.collectionIntent(requireContext(), tagId, row.text))
   }
 
   override fun onLongClick(row: QuranRow, position: Int): Boolean {
@@ -206,7 +289,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   }
 
   private fun isValidSelection(selected: QuranRow): Boolean {
-    return selected.isBookmark || (selected.isBookmarkHeader && selected.tagId >= 0)
+    return selected.isBookmark || selected.isEditableCollectionHeader
   }
 
   private val mOnUndoClickListener: View.OnClickListener = View.OnClickListener {
@@ -276,12 +359,26 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   }
 
   private fun handleRowClicked(activity: Activity?, row: QuranRow) {
-    if (!row.isHeader && activity is QuranActivity) {
-      val quranActivity = activity
-      if (row.isAyahBookmark) {
-        quranActivity.jumpToAndHighlight(row.page, row.sura, row.ayah)
-      } else {
-        quranActivity.jumpTo(row.page)
+    when {
+      // tapping a collection header collapses or expands its group in place; the header's
+      // trailing chevron is what opens the collection as a screen
+      row.isBookmarkHeader && row.isCollapsible -> {
+        bookmarkPresenter.toggleCollectionCollapsed(row.tagId ?: return)
+      }
+
+      row.isHighlightColor -> {
+        val color = row.highlightColor
+        if (color != null) {
+          startActivity(BookmarkListActivity.highlightsIntent(requireContext(), color))
+        }
+      }
+
+      !row.isHeader && activity is QuranActivity -> {
+        if (row.isAyahBookmark || row.isHighlightedAyah) {
+          activity.jumpToAndHighlight(row.page, row.sura, row.ayah)
+        } else {
+          activity.jumpTo(row.page)
+        }
       }
     }
   }
@@ -289,18 +386,12 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   private fun handleTagEdit(activity: QuranActivity, selected: List<QuranRow>) {
     if (selected.size == 1) {
       val row = selected[0]
-      activity.editTag(row.tagId, row.text)
+      row.tagId?.let { tagId -> activity.editTag(tagId, row.text) }
     }
   }
 
   private fun handleTagBookmarks(activity: QuranActivity, selected: List<QuranRow>) {
-    val ids = LongArray(selected.size)
-    var i = 0
-    val selectedItems = selected.size
-    while (i < selectedItems) {
-      ids[i] = selected[i].bookmarkId
-      i++
-    }
+    val ids = selected.mapNotNull { row -> row.bookmarkId }.toTypedArray()
     activity.tagBookmarks(ids)
   }
 

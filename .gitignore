@@ -6,6 +6,7 @@ gen
 out
 .DS_Store
 local.properties
+oauth.properties
 target
 gen-external-apklibs
 *.iml

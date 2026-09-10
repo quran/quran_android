@@ -17,7 +17,6 @@
   <string name="menu_jump_last_page">Sista sidan</string>
   <string name="menu_bookmarks">Bokmärken</string>
   <string name="menu_bookmarks_page">Bokmärken på sidan</string>
-  <string name="menu_bookmarks_ayah">Ayah-bokmärken</string>
   <string name="menu_sort">Sortera</string>
   <string name="menu_sort_date">Datum som lagts till</string>
   <string name="menu_sort_location">Plats i Koranen</string>
@@ -70,7 +69,7 @@
         För översättningar går du till inställningar och ställer in storleken på översättningstexten.
         &lt;br/>
         &lt;br/>&lt;b>Hur delar jag en ayah?&lt;/b>
-        &lt;br/>När du är på en arabisk sida kan du trycka och hålla ned på en ayah för att få upp en meny där du kan välja att bokmärka, tagga, dela eller kopiera ayahen till klippbordet, se översättningen eller lyssna på dess recitation.&lt;br/>
+        &lt;br/>När du är på en arabisk sida kan du trycka och hålla ned på en ayah för att få upp en meny där du kan välja att bokmärka, dela eller kopiera ayahen till klippbordet, se översättningen eller lyssna på dess recitation.&lt;br/>
         &lt;br/>&lt;b>Typsnitten Malayalam/Tamil/Bengali/Urdu fungerar inte!&lt;/b>
         &lt;br/>Tyvärr har Android-versioner före 4.0 inte stöd för dessa teckensnitt, och det finns inte mycket vi kan göra för att hjälpa till med detta.
     </string>
@@ -281,12 +280,21 @@
   <string name="delete_tag">Ta bort tagg</string>
   <string name="edit_tag">Redigera tagg</string>
   <string name="new_tag">Ny tagg</string>
-  <string name="not_tagged">Inte taggad</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">En punkt har strukits.</item>
     <item quantity="other">Borttagna %d poster</item>
   </plurals>
   <string name="undo">Ångra</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Inga bokmärken än</string>
+  <string name="bookmarks_empty_subtitle">Tryck på bokmärkesikonen för att spara en sida, eller tryck länge på en ayah för att bokmärka den.</string>
+  <string name="reading_bookmark_movable_education_title">Detta är ett flyttbart läsbokmärke</string>
+  <string name="reading_bookmark_movable_education_body">Att spara ett läsbokmärke ersätter det gamla. För att spara flera ayahs, tryck länge på en ayah och lägg till den i en samling.</string>
+  <string name="reading_bookmark_moved_from">Flyttat från %1$s</string>
+  <string name="reading_bookmark_moved_from_title">Bokmärke flyttat från %1$s</string>
+  <string name="reading_bookmark_added">Bokmärke tillagt</string>
+  <string name="reading_bookmark_dismiss_education">Avvisa</string>
 
   <string name="recent_pages">Senaste sidorna</string>
   <string name="old_page_bookmarks">Gamla sidbokmärken</string>

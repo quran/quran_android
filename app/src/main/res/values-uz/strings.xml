@@ -18,7 +18,6 @@
   <string name="menu_jump_last_page">Soʻnggi oʻqilgan sahifa</string>
   <string name="menu_bookmarks">Xatchoʻplar</string>
   <string name="menu_bookmarks_page">Sahifa xatchoʻplari</string>
-  <string name="menu_bookmarks_ayah">Oyat xatchoʻplari</string>
   <string name="menu_sort">Tartib</string>
   <string name="menu_sort_date">Sana</string>
   <string name="menu_sort_location">Qurʼondagi yeri</string>
@@ -81,7 +80,7 @@
         &lt;br/>
         &lt;br/>&lt;b>Oyatni boshqalar bilan qanday boʻlishish mumkin?&lt;/b>
         &lt;br/>Qurʼonning istalgan sahifasini oching va biror oyat ustiga biroz bosib turing.
-        Yangi ochilgan menyu orqali oyatni xatchoʻplarga qoʻshishingiz, teglashingiz, boʻlishingiz,
+        Yangi ochilgan menyu orqali oyatni xatchoʻplarga qoʻshishingiz, boʻlishingiz,
         tarjimasini koʻrishingiz hamda qiroatini tinglashingiz mumkin.
         &lt;br/>
         &lt;br/>&lt;b>Malayalam/Tamil/Bengali/Urdu shriflari ishlamayabdi!&lt;/b>
@@ -314,12 +313,21 @@
   <string name="delete_tag">Tegni oʻchirish</string>
   <string name="edit_tag">Tegni tahrir qilish</string>
   <string name="new_tag">Yangi teg</string>
-  <string name="not_tagged">Teglanmagan</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Bitta element oʻchirildi</item>
     <item quantity="other">%d ta element oʻchirildi</item>
   </plurals>
   <string name="undo">@string/cancel</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Hozircha xatchoʻplar yoʻq</string>
+  <string name="bookmarks_empty_subtitle">Sahifani saqlash uchun xatchoʻp belgisiga bosing yoki oyatni xatchoʻp qilish uchun uni bosib turing.</string>
+  <string name="reading_bookmark_movable_education_title">Bu koʻchiriladigan oʻqish xatchoʻpi</string>
+  <string name="reading_bookmark_movable_education_body">Oʻqish xatchoʻpini saqlash eskisining oʻrnini bosadi. Bir nechta oyatni saqlash uchun oyatni bosib turing va toʻplamga qoʻshing.</string>
+  <string name="reading_bookmark_moved_from">%1$s dan koʻchirildi</string>
+  <string name="reading_bookmark_moved_from_title">Xatchoʻp %1$s dan koʻchirildi</string>
+  <string name="reading_bookmark_added">Xatchoʻp qoʻshildi</string>
+  <string name="reading_bookmark_dismiss_education">Yopish</string>
 
   <string name="recent_pages">Soʻnggi sahifalar</string>
   <string name="old_page_bookmarks">Eski sahifa xatchoʻplari</string>

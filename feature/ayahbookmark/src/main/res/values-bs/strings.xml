@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Gotovo</string>
+  <string name="ayahbookmark_reading_bookmark_title">Oznaka za čitanje</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Gdje ste stali</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Trenutno na %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Bit će premješteno sa %1$s</string>
+  <string name="ayahbookmark_collections_header">Kolekcije</string>
+  <string name="ayahbookmark_new_collection">Nova kolekcija</string>
+  <string name="ayahbookmark_collection_name_hint">Naziv kolekcije</string>
+  <string name="ayahbookmark_cancel">Otkaži</string>
+  <string name="ayahbookmark_create">Kreiraj</string>
+  <string name="ayahbookmark_saved">Sačuvano</string>
+  <string name="ayahbookmark_not_saved">Nije sačuvano</string>
+  <string name="ayahbookmark_highlight_title">Isticanje</string>
+  <string name="ayahbookmark_highlight_subtitle">Boji ajet na stranici</string>
+  <string name="ayahbookmark_highlight_none">Nema</string>
+</resources>

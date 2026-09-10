@@ -15,7 +15,7 @@ fun List<Bookmark>.convergeCommonlyTagged(): List<Bookmark> {
         firstBookmark
       } else {
         val tagIds =
-          it.value.fold(mutableListOf<Long>()) { acc, bookmark ->
+          it.value.fold(mutableListOf<String>()) { acc, bookmark ->
             acc.apply { addAll(bookmark.tags) }
           }
         firstBookmark.withTags(tagIds)

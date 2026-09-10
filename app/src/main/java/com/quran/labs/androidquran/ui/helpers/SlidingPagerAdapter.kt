@@ -4,7 +4,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.quran.labs.androidquran.ui.fragment.AyahPlaybackFragment
 import com.quran.labs.androidquran.ui.fragment.AyahTranslationFragment
-import com.quran.labs.androidquran.ui.fragment.TagBookmarkFragment
 import com.quran.labs.androidquran.view.IconPageIndicator
 import com.quran.mobile.di.AyahActionFragmentProvider
 
@@ -12,13 +11,12 @@ class SlidingPagerAdapter(
   fm: FragmentManager,
   private val isRtl: Boolean,
   additionalPanels: Set<AyahActionFragmentProvider>,
-) : FragmentStatePagerAdapter(fm, "sliding"), IconPageIndicator.IconPagerAdapter {
+) : FragmentStatePagerAdapter(fm, "sliding_without_tag"), IconPageIndicator.IconPagerAdapter {
 
   private val pages: ArrayList<AyahActionFragmentProvider> = arrayListOf()
 
   init {
     // Add the core ayah action panels
-    pages.add(TagBookmarkFragment.Provider)
     pages.add(AyahTranslationFragment.Provider)
     pages.add(AyahPlaybackFragment.Provider)
 
@@ -46,9 +44,8 @@ class SlidingPagerAdapter(
   }
 
   companion object {
-    const val TAG_PAGE = 0
-    const val TRANSLATION_PAGE = 1
-    const val AUDIO_PAGE = 2
-    const val TRANSCRIPT_PAGE = 3
+    const val TRANSLATION_PAGE = 0
+    const val AUDIO_PAGE = 1
+    const val TRANSCRIPT_PAGE = 2
   }
 }

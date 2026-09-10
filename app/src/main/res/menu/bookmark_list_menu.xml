@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+  <item
+      android:id="@+id/rename_collection"
+      android:icon="@drawable/ic_edit"
+      android:title="@string/edit_tag"
+      android:visible="false"
+      app:showAsAction="ifRoom" />
+  <item
+      android:id="@+id/sort"
+      android:icon="@drawable/ic_sort"
+      android:title="@string/menu_sort"
+      app:showAsAction="ifRoom">
+    <menu>
+      <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/sort_date"
+            android:title="@string/menu_sort_date"
+            app:showAsAction="withText" />
+        <item
+            android:id="@+id/sort_location"
+            android:title="@string/menu_sort_location"
+            app:showAsAction="withText" />
+      </group>
+    </menu>
+  </item>
+</menu>

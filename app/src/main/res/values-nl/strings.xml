@@ -23,7 +23,6 @@
   <string name="menu_jump_last_page">Laatste Pagina</string>
   <string name="menu_bookmarks">Bladwijzers</string>
   <string name="menu_bookmarks_page">Pagina Bladwijzers</string>
-  <string name="menu_bookmarks_ayah">Ayah Bladwijzers</string>
   <string name="menu_sort">Sorteer</string>
   <string name="menu_sort_date">Datum Toegevoegd</string>
   <string name="menu_sort_location">Locatie in de Koran</string>
@@ -136,7 +135,7 @@
     &lt;br/>
     &lt;br/>&lt;b>Hoe deel ik een ayah?&lt;/b>
     &lt;br/>Terwijl je op een willekeurige Arabische pagina bent, druk en houd je op een ayah om een
-    menu te krijgen waar je kunt kiezen om de ayah als bladwijzer te markeren, taggen, delen of
+    menu te krijgen waar je kunt kiezen om de ayah als bladwijzer te markeren, delen of
     kopiëren naar het klembord, de vertaling te bekijken, of naar de recitatie te luisteren.
     &lt;br/>
     &lt;br/>&lt;b>Malayalam/Tamil/Bengali/Urdu-lettertypen werken niet!&lt;/b>
@@ -386,12 +385,21 @@
   <string name="delete_tag">Verwijder Tag</string>
   <string name="edit_tag">Bewerk Tag</string>
   <string name="new_tag">Nieuwe Tag</string>
-  <string name="not_tagged">Niet Getaged</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Eén item verwijderd</item>
     <item quantity="other">%d items verwijderd</item>
   </plurals>
   <string name="undo">Ongedaan maken</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Nog geen bladwijzers</string>
+  <string name="bookmarks_empty_subtitle">Tik op het bladwijzerpictogram om een pagina op te slaan, of houd een ayah ingedrukt om deze als bladwijzer te markeren.</string>
+  <string name="reading_bookmark_movable_education_title">Dit is een verplaatsbare leesbladwijzer</string>
+  <string name="reading_bookmark_movable_education_body">Het opslaan van een leesbladwijzer vervangt de oude. Houd een Ayah ingedrukt en voeg deze toe aan een collectie om meerdere Ayahs op te slaan.</string>
+  <string name="reading_bookmark_moved_from">Verplaatst van %1$s</string>
+  <string name="reading_bookmark_moved_from_title">Bladwijzer verplaatst van %1$s</string>
+  <string name="reading_bookmark_added">Bladwijzer toegevoegd</string>
+  <string name="reading_bookmark_dismiss_education">Sluiten</string>
 
   <string name="recent_pages">Recente pagina\'s</string>
   <string name="old_page_bookmarks">Oude paginabladwijzers</string>

@@ -16,6 +16,5 @@ data class PageReadingBookmark(
 data class AyahReadingBookmark(
   val sura: Int,
   val ayah: Int,
-  val page: Int,
   override val timestamp: Long
 ) : ReadingBookmark

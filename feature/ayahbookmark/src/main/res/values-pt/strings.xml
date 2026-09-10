@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Concluído</string>
+  <string name="ayahbookmark_reading_bookmark_title">Marcador de leitura</string>
+  <string name="ayahbookmark_reading_bookmark_subtitle">Onde você parou</string>
+  <string name="ayahbookmark_reading_bookmark_currently_at">Atualmente em %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_will_move_from">Será movido de %1$s</string>
+  <string name="ayahbookmark_collections_header">Coleções</string>
+  <string name="ayahbookmark_new_collection">Nova coleção</string>
+  <string name="ayahbookmark_collection_name_hint">Nome da coleção</string>
+  <string name="ayahbookmark_cancel">Cancelar</string>
+  <string name="ayahbookmark_create">Criar</string>
+  <string name="ayahbookmark_saved">Salvo</string>
+  <string name="ayahbookmark_not_saved">Não salvo</string>
+  <string name="ayahbookmark_highlight_title">Destaque</string>
+  <string name="ayahbookmark_highlight_subtitle">Colore o versículo na página</string>
+  <string name="ayahbookmark_highlight_none">Nenhum</string>
+</resources>

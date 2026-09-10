@@ -48,9 +48,9 @@ class ArabicDatabaseUtilsTest {
     val arabicDatabaseUtils = getArabicDatabaseUtils()
 
     val bookmarks = mutableListOf(
-      Bookmark(1, 1, 1, 1),
-      Bookmark(2, null, null, 3),
-      Bookmark(3, 114, 6, 604),
+      Bookmark("bookmark-1", 1, 1, 1),
+      Bookmark("bookmark-2", null, null, 3),
+      Bookmark("bookmark-3", 114, 6, 604),
     )
 
     val result = arabicDatabaseUtils.hydrateAyahText(bookmarks)
@@ -67,7 +67,7 @@ class ArabicDatabaseUtilsTest {
   fun testHydrateAyahTextEmpty() {
     val arabicDatabaseUtils = getArabicDatabaseUtils()
 
-    val bookmarks = mutableListOf(Bookmark(1, null, null, 3))
+    val bookmarks = mutableListOf(Bookmark("bookmark-1", null, null, 3))
 
     val result = arabicDatabaseUtils.hydrateAyahText(bookmarks)
     assertThat(result).hasSize(1)

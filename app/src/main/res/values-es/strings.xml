@@ -14,7 +14,6 @@
   <string name="menu_jump_last_page">Última página</string>
   <string name="menu_bookmarks">Favoritos</string>
   <string name="menu_bookmarks_page">Página de favoritos</string>
-  <string name="menu_bookmarks_ayah">Versículos favoritos</string>
   <string name="menu_sort">Ordenar</string>
   <string name="menu_sort_date">Fecha agregada</string>
   <string name="menu_sort_location">Ubicación en el Corán</string>
@@ -167,7 +166,6 @@
   <string name="delete_tag">Borrar Etiqueta</string>
   <string name="edit_tag">Editar Etiqueta</string>
   <string name="new_tag">Nueva Etiqueta</string>
-  <string name="not_tagged">Sin Etiquetar</string>
   <!--tag dialog-->
   <string name="tag_dlg_title">Etiqueta</string>
   <string name="tag_name">Nombre</string>
@@ -236,6 +234,16 @@
   <string name="playback_prompt_title">Inicie la reproducción desde:</string>
   <string name="starting_page_label">Inicio de página</string>
   <string name="undo">Deshacer</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Aún no hay favoritos</string>
+  <string name="bookmarks_empty_subtitle">Toca el icono de marcador para guardar una página, o mantén pulsado un versículo para añadirlo a favoritos.</string>
+  <string name="reading_bookmark_movable_education_title">Este es un marcador de lectura movible</string>
+  <string name="reading_bookmark_movable_education_body">Guardar un marcador de lectura reemplaza el anterior. Para guardar varios versículos, mantén pulsado un versículo y añádelo a una colección.</string>
+  <string name="reading_bookmark_moved_from">Movido desde %1$s</string>
+  <string name="reading_bookmark_moved_from_title">Marcador movido desde %1$s</string>
+  <string name="reading_bookmark_added">Marcador añadido</string>
+  <string name="reading_bookmark_dismiss_education">Descartar</string>
   <string name="recent_pages">Páginas recientes</string>
   <string name="old_page_bookmarks">Marcadores de páginas antiguos</string>
   <string name="tag_blank_tag_error">Los nombres de las etiquetas no pueden estar en blanco.</string>
