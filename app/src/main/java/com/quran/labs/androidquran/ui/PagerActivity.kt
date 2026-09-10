@@ -93,6 +93,7 @@ import com.quran.labs.androidquran.service.util.PermissionUtil.havePostNotificat
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper.getDownloadIntent
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog
 import com.quran.labs.androidquran.ui.fragment.JumpFragment
+import com.quran.labs.androidquran.ui.fragment.RandomAyahRangeDialogFragment
 import com.quran.labs.androidquran.ui.fragment.TabletFragment
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog.OnBookmarkTagsUpdateListener
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment
@@ -1088,6 +1089,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     onNewIntent(i)
   }
 
+  private fun showRandomAyahRangeDialog(mode: RandomAyahRangeDialogFragment.Mode) {
+    RandomAyahRangeDialogFragment.newInstance(mode)
+      .show(supportFragmentManager, RandomAyahRangeDialogFragment.TAG)
+  }
+
   public override fun onPause() {
     foregroundDisposable.clear()
     promptDialog?.dismiss()
@@ -1227,6 +1233,20 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       val fm = supportFragmentManager
       val jumpDialog = JumpFragment()
       jumpDialog.show(fm, JumpFragment.TAG)
+      return true
+    } else if (itemId == R.id.random_ayah_whole) {
+      val randomAyah = quranInfo.getRandomAyah()
+      val page = quranInfo.getPageFromSuraAyah(randomAyah.sura, randomAyah.ayah)
+      jumpToAndHighlight(page, randomAyah.sura, randomAyah.ayah)
+      return true
+    } else if (itemId == R.id.random_ayah_sura_range) {
+      showRandomAyahRangeDialog(RandomAyahRangeDialogFragment.Mode.SURA)
+      return true
+    } else if (itemId == R.id.random_ayah_ayah_range) {
+      showRandomAyahRangeDialog(RandomAyahRangeDialogFragment.Mode.AYAH)
+      return true
+    } else if (itemId == R.id.random_ayah_juz_range) {
+      showRandomAyahRangeDialog(RandomAyahRangeDialogFragment.Mode.JUZ)
       return true
     }
     return super.onOptionsItemSelected(item)
