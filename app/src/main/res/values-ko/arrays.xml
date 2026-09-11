@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <array name="themes">
+    <item>라이트</item>
+    <item>다크</item>
+    <item>자동</item>
+  </array>
+</resources>

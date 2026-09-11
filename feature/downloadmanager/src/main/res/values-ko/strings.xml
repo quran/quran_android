@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <plurals name="audio_manager_files_downloaded">
+    <item quantity="one">수라 1\u00A0개를 내려받았습니다</item>
+    <item quantity="other">수라 %1$d\u00A0개를 내려받았습니다</item>
+  </plurals>
+
+  <!-- audio manager -->
+  <string name="audio_manager">오디오 관리자</string>
+  <string name="audio_manager_remove_audio_title">수라를 삭제하시겠습니까?</string>
+  <string name="audio_manager_remove_audio_msg">%1$s을(를) 삭제하시겠습니까?</string>
+  <string name="audio_manager_remove_multiple_audio_msg">정말 삭제하시겠습니까?</string>
+  <plurals name="audio_manager_delete_surah_success">
+    <item quantity="one">수라 1\u00A0개를 성공적으로 삭제했습니다</item>
+    <item quantity="other">수라 %1$d\u00A0개를 성공적으로 삭제했습니다</item>
+  </plurals>
+  <plurals name="audio_manager_delete_surah_error">
+    <item quantity="one">수라를 삭제하는 동안 오류가 발생했습니다</item>
+    <item quantity="other">수라 %1$d\u00A0개를 삭제하는 동안 오류가 발생했습니다</item>
+  </plurals>
+  <string name="audio_manager_surah_download">수라 내려받기</string>
+  <string name="audio_manager_surah_delete">수라 삭제</string>
+  <string name="audio_manager_database">오디오 데이터베이스</string>
+  <string name="audio_manager_database_download">데이터베이스 내려받기</string>
+  <string name="audio_manager_database_delete">데이터베이스 삭제</string>
+  <string name="audio_manager_download_all">모두 내려받기</string>
+  <string name="audio_manager_download_selection">선택 항목 내려받기</string>
+  <string name="audio_manager_delete_selection">선택 항목 삭제</string>
+  <string name="audio_manager_post_notifications_permission_title">알림을 허용하시겠습니까?</string>
+  <string name="audio_manager_post_notifications_permission_description">내려받기 상태를 최신화하거나 오디오 파일이 자동으로 판올림될 때 경고하는 용도로만 사용됩니다.</string>
+
+  <string name="download_amount_in_megabytes">%s\u00A0MB</string>
+  <string name="download_progress">%1$s / %2$s 내려받음</string>
+  <string name="download_sura_progress">수라 %3$d의 %1$s / %2$s 내려받음</string>
+  <string name="download_sura_ayah_progress" tools:ignore="PluralsCandidate">수라 %1$d 아야 %2$d 내려받는 중</string>
+</resources>
