@@ -453,4 +453,12 @@ public class QuranSettings {
     perInstallationPrefs.edit()
         .putStringSet(Constants.PREF_CHECKED_PARTIAL_IMAGES, setToSave).apply();
   }
+
+  public boolean shouldEnforceAudioBounds() {
+    return prefs.getBoolean(Constants.PREF_RESTRICT_TO_RANGE, false);
+  }
+
+  public void setShouldEnforceAudioBounds(boolean shouldEnforce) {
+    prefs.edit().putBoolean(Constants.PREF_RESTRICT_TO_RANGE, shouldEnforce).apply();
+  }
 }
