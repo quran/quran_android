@@ -3,10 +3,12 @@ package com.quran.labs.androidquran.ui.fragment
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.annotation.StringRes
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
@@ -16,6 +18,7 @@ import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.selectionIndicator
 import com.quran.data.model.selection.withSelectionIndicator
 import com.quran.data.model.selection.withYScroll
+import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.presenter.quran.QuranPagePresenter
 import com.quran.labs.androidquran.presenter.quran.QuranPageScreen
@@ -73,6 +76,8 @@ class QuranPageFragment : Fragment(), PageController, QuranPage, QuranPageScreen
   private var imageView: HighlightingImageView? = null
   private var quranPageLayout: QuranImagePageLayout? = null
   private var ayahCoordinatesError = false
+  private var hifzToggle: View? = null
+  private var hifzRevealButtons: List<View> = emptyList()
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -82,6 +87,7 @@ class QuranPageFragment : Fragment(), PageController, QuranPage, QuranPageScreen
   override fun onResume() {
     super.onResume()
     updateView()
+    updateHifzControls()
   }
 
   override fun onCreateView(
@@ -94,7 +100,57 @@ class QuranPageFragment : Fragment(), PageController, QuranPage, QuranPageScreen
     quranPageLayout.setPageController(this, pageNumber, quranInfo.skip)
     this.quranPageLayout = quranPageLayout
     imageView = quranPageLayout.getImageView()
-    return quranPageLayout
+
+    val root = FrameLayout(context)
+    root.addView(
+      quranPageLayout,
+      FrameLayout.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.MATCH_PARENT
+      )
+    )
+    val hifzControls = inflater.inflate(R.layout.quran_page_hifz_controls, root, false)
+    root.addView(
+      hifzControls,
+      FrameLayout.LayoutParams(
+        ViewGroup.LayoutParams.WRAP_CONTENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT,
+        Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+      )
+    )
+    hifzToggle = hifzControls.findViewById(R.id.hifz_toggle)
+    hifzRevealButtons = listOf(
+      hifzControls.findViewById(R.id.hifz_rehide_verse),
+      hifzControls.findViewById(R.id.hifz_rehide_word),
+      hifzControls.findViewById(R.id.hifz_reveal_word),
+      hifzControls.findViewById(R.id.hifz_reveal_verse)
+    )
+    hifzControls.findViewById<View>(R.id.hifz_toggle).setOnClickListener {
+      val enabled = !ayahTrackerPresenter.isHifzModeEnabled(pageNumber)
+      ayahTrackerPresenter.setHifzModeEnabled(pageNumber, enabled)
+      updateHifzControls()
+    }
+    hifzControls.findViewById<View>(R.id.hifz_reveal_word).setOnClickListener {
+      ayahTrackerPresenter.hifzRevealNextWord(pageNumber)
+    }
+    hifzControls.findViewById<View>(R.id.hifz_reveal_verse).setOnClickListener {
+      ayahTrackerPresenter.hifzRevealNextVerse(pageNumber)
+    }
+    hifzControls.findViewById<View>(R.id.hifz_rehide_word).setOnClickListener {
+      ayahTrackerPresenter.hifzRehideLastWord(pageNumber)
+    }
+    hifzControls.findViewById<View>(R.id.hifz_rehide_verse).setOnClickListener {
+      ayahTrackerPresenter.hifzRehideLastVerse(pageNumber)
+    }
+    updateHifzControls()
+    return root
+  }
+
+  private fun updateHifzControls() {
+    val enabled = isAdded && ayahTrackerPresenter.isHifzModeEnabled(pageNumber)
+    hifzToggle?.isSelected = enabled
+    hifzToggle?.alpha = if (enabled) 1f else 0.6f
+    hifzRevealButtons.forEach { it.visibility = if (enabled) View.VISIBLE else View.GONE }
   }
 
   override fun updateView() {
