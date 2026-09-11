@@ -21,9 +21,9 @@ class BookmarkUIConverter @Inject constructor(
         is BookmarkRowData.ReadingBookmarkItem ->
           quranRowFactory.fromReadingBookmark(context, rowData.readingBookmark)
 
-        is BookmarkRowData.RecentPageHeader -> 
+        is BookmarkRowData.RecentPageHeader ->
           quranRowFactory.fromRecentPageHeader(context, rowData.count)
-          
+
         is BookmarkRowData.RecentPage -> {
           val page = if (quranInfo.isValidPage(rowData.recentPage.page)) {
             rowData.recentPage.page
@@ -32,24 +32,31 @@ class BookmarkUIConverter @Inject constructor(
           }
           quranRowFactory.fromCurrentPage(context, page, rowData.recentPage.timestamp)
         }
-        
-        is BookmarkRowData.TagHeader -> 
-          quranRowFactory.fromTag(rowData.tag)
-          
-        is BookmarkRowData.BookmarkItem -> 
-          quranRowFactory.fromBookmark(context, rowData.bookmark, rowData.tagId)
-          
-        is BookmarkRowData.PageBookmarksHeader -> 
+
+        BookmarkRowData.HighlightsHeader ->
+          quranRowFactory.fromHighlightsHeader(context)
+
+        is BookmarkRowData.HighlightColorItem ->
+          quranRowFactory.fromHighlightColor(context, rowData.color, rowData.count)
+
+        is BookmarkRowData.TagHeader ->
+          quranRowFactory.fromTag(context, rowData.tag, rowData.count, rowData.isCollapsed)
+
+        is BookmarkRowData.BookmarkItem ->
+          quranRowFactory.fromBookmark(context, rowData.bookmark, rowData.tagId, rowData.mark)
+
+        is BookmarkRowData.HighlightedAyahItem ->
+          quranRowFactory.fromHighlight(context, rowData.highlight)
+
+        is BookmarkRowData.PageBookmarksHeader ->
           quranRowFactory.fromPageBookmarksHeader(context)
-          
-        is BookmarkRowData.AyahBookmarksHeader -> 
+
+        is BookmarkRowData.AyahBookmarksHeader ->
           quranRowFactory.fromAyahBookmarksHeader(context)
-          
-        is BookmarkRowData.NotTaggedHeader ->
-          quranRowFactory.fromNotTaggedHeader(context)
+
       }
     }
-    
+
     return BookmarkResult(uiRows, rawResult.tagMap)
   }
 }

@@ -10,8 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Emri i koleksionit</string>
   <string name="ayahbookmark_cancel">Anulo</string>
   <string name="ayahbookmark_create">Krijo</string>
-  <string name="ayahbookmark_remove_bookmark">Hiq libërshënuesin</string>
-  <string name="ayahbookmark_last_place_warning">Mbajeni në të paktën një vend - për ta fshirë, përdorni Hiq libërshënuesin më poshtë.</string>
-  <string name="ayahbookmark_bookmark_removed">Libërshënuesi u hoq</string>
-  <string name="ayahbookmark_undo">Zhbëj</string>
+  <string name="ayahbookmark_saved">Ruajtur</string>
+  <string name="ayahbookmark_not_saved">Pa ruajtur</string>
+  <string name="ayahbookmark_highlight_title">Theksim</string>
+  <string name="ayahbookmark_highlight_subtitle">Ngjyros ajetin në faqe</string>
+  <string name="ayahbookmark_highlight_none">Asnjë</string>
 </resources>

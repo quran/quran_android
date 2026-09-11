@@ -6,4 +6,10 @@
   <string name="to">Në</string>
   <string name="loading">Ngarkimi&#8230;</string>
   <string name="canceling">Anullimi&#8230;</string>
+  <!-- names of the ayah highlight colors -->
+  <string name="highlight_color_yellow">E verdhë</string>
+  <string name="highlight_color_green">E gjelbër</string>
+  <string name="highlight_color_blue">Blu</string>
+  <string name="highlight_color_red">E kuqe</string>
+  <string name="highlight_color_purple">Vjollcë</string>
 </resources>

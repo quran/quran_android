@@ -14,7 +14,6 @@
   <string name="menu_jump_last_page">الصفحة الأخيرة</string>
   <string name="menu_bookmarks">المرجعيات</string>
   <string name="menu_bookmarks_page">مرجعيات الصفحات</string>
-  <string name="menu_bookmarks_ayah">مرجعيات الآيات</string>
   <string name="menu_sort">تغيير الترتيب</string>
   <string name="menu_sort_date">تاريخ الإضافة</string>
   <string name="menu_sort_location">موقعها في القرآن</string>
@@ -227,7 +226,6 @@
   <string name="delete_tag">حذف التصنيف</string>
   <string name="edit_tag">تعديل الصنف</string>
   <string name="new_tag">صنف جديد</string>
-  <string name="not_tagged">غير مصنف</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">صنف</string>

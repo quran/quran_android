@@ -23,7 +23,6 @@
   <string name="menu_jump_last_page">Laatste Pagina</string>
   <string name="menu_bookmarks">Bladwijzers</string>
   <string name="menu_bookmarks_page">Pagina Bladwijzers</string>
-  <string name="menu_bookmarks_ayah">Ayah Bladwijzers</string>
   <string name="menu_sort">Sorteer</string>
   <string name="menu_sort_date">Datum Toegevoegd</string>
   <string name="menu_sort_location">Locatie in de Koran</string>
@@ -386,7 +385,6 @@
   <string name="delete_tag">Verwijder Tag</string>
   <string name="edit_tag">Bewerk Tag</string>
   <string name="new_tag">Nieuwe Tag</string>
-  <string name="not_tagged">Niet Getaged</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Eén item verwijderd</item>
     <item quantity="other">%d items verwijderd</item>

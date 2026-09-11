@@ -6,6 +6,7 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarkSortOrder
 import com.quran.data.di.AppCoroutineScope
+import com.quran.data.dao.BookmarksDao
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
@@ -134,7 +135,7 @@ class BookmarksDaoImplTest {
       val addedBookmarks = awaitItem()
       assertThat(addedBookmarks.map { it.sura to it.ayah })
         .containsExactly(suraAyah.sura to suraAyah.ayah)
-      assertThat(addedBookmarks.single().tags).isEmpty()
+      assertThat(addedBookmarks.single().tags).hasSize(1)
 
       dao.deleteAyahBookmark(suraAyah)
       assertThat(awaitItem()).isEmpty()
@@ -166,11 +167,11 @@ class BookmarksDaoImplTest {
   fun `tags map to mobile sync collections`() = runTest {
     val id = dao.addTag("Review")
 
-    assertThat(dao.tags()).containsExactly(com.quran.data.model.bookmark.Tag(id, "Review"))
+    assertThat(dao.userTags()).containsExactly(com.quran.data.model.bookmark.Tag(id, "Review"))
 
     dao.updateTag(com.quran.data.model.bookmark.Tag(id, "Important"))
 
-    assertThat(dao.tags()).containsExactly(com.quran.data.model.bookmark.Tag(id, "Important"))
+    assertThat(dao.userTags()).containsExactly(com.quran.data.model.bookmark.Tag(id, "Important"))
   }
 
   @Test
@@ -181,7 +182,7 @@ class BookmarksDaoImplTest {
     val updated = dao.updateTag(com.quran.data.model.bookmark.Tag(firstId, "Second"))
 
     assertThat(updated).isFalse()
-    assertThat(dao.tags()).containsExactly(
+    assertThat(dao.userTags()).containsExactly(
       com.quran.data.model.bookmark.Tag(firstId, "First"),
       com.quran.data.model.bookmark.Tag(secondId, "Second")
     )
@@ -194,7 +195,7 @@ class BookmarksDaoImplTest {
     val updated = dao.updateTag(com.quran.data.model.bookmark.Tag(tagId, "Review"))
 
     assertThat(updated).isTrue()
-    assertThat(dao.tags()).containsExactly(com.quran.data.model.bookmark.Tag(tagId, "Review"))
+    assertThat(dao.userTags()).containsExactly(com.quran.data.model.bookmark.Tag(tagId, "Review"))
   }
 
   @Test
@@ -206,7 +207,7 @@ class BookmarksDaoImplTest {
   }
 
   @Test
-  fun `tags exclude default collection`() = runTest {
+  fun `tags include the default collection, marked as a system collection`() = runTest {
     val collectionsRepository = DefaultCollectionTestRepository(timestampProvider.now())
     val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
     val dao = BookmarksDaoImpl(
@@ -223,9 +224,11 @@ class BookmarksDaoImplTest {
       appCoroutineScope = appCoroutineScope
     )
 
-    assertThat(dao.tags()).isEmpty()
+    val defaultTag = dao.tags().single()
+    assertThat(defaultTag.isDefault).isTrue()
+    assertThat(defaultTag.isSystem).isTrue()
     dao.tagsFlow().test {
-      assertThat(awaitItem()).isEmpty()
+      assertThat(awaitItem().single().isDefault).isTrue()
       cancelAndIgnoreRemainingEvents()
     }
   }
@@ -327,7 +330,7 @@ class BookmarksDaoImplTest {
   }
 
   @Test
-  fun `clearing tags from default bookmark preserves bookmark`() = runTest {
+  fun `clearing every collection removes the bookmark`() = runTest {
     val defaultCollectionId = CollectionsRepositoryImpl(database)
       .getAllCollections()
       .single { collection -> collection.isDefault }
@@ -340,12 +343,9 @@ class BookmarksDaoImplTest {
 
     dao.updateBookmarkTags(arrayOf(bookmark.id), emptySet(), deleteNonTagged = true)
 
-    val remainingBookmark = dao.bookmarks().single()
-    assertThat(remainingBookmark.sura).isEqualTo(suraAyah.sura)
-    assertThat(remainingBookmark.ayah).isEqualTo(suraAyah.ayah)
-    assertThat(remainingBookmark.tags).isEmpty()
+    assertThat(dao.bookmarks()).isEmpty()
     assertThat(CollectionBookmarksRepositoryImpl(database).getBookmarksForCollection(defaultCollectionId))
-      .hasSize(1)
+      .isEmpty()
   }
 
   @Test
@@ -383,6 +383,22 @@ class BookmarksDaoImplTest {
 
     assertThat(changed).isFalse()
     assertThat(dao.bookmarks().single().tags).containsExactly(tagId)
+  }
+
+  @Test
+  fun `replacing collections with only the default collection creates the bookmark`() = runTest {
+    val defaultCollectionId = CollectionsRepositoryImpl(database)
+      .getAllCollections()
+      .single { collection -> collection.isDefault }
+      .id
+    val suraAyah = SuraAyah(6, 76)
+
+    val changed = dao.replaceAyahBookmarkCollections(suraAyah, setOf(defaultCollectionId))
+
+    assertThat(changed).isTrue()
+    val bookmark = dao.bookmarks().single()
+    assertThat(bookmark.sura to bookmark.ayah).isEqualTo(suraAyah.sura to suraAyah.ayah)
+    assertThat(bookmark.tags).containsExactly(defaultCollectionId)
   }
 
   @Test
@@ -677,4 +693,7 @@ class BookmarksDaoImplTest {
       return flowOf(listOf(managedSystemCollection, defaultCollection))
     }
   }
+  /** The default collection is always present; these assertions are about user collections. */
+  private suspend fun BookmarksDao.userTags() = tags().filterNot { tag -> tag.isSystem }
+
 }

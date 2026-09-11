@@ -10,8 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Název kolekce</string>
   <string name="ayahbookmark_cancel">Zrušit</string>
   <string name="ayahbookmark_create">Vytvořit</string>
-  <string name="ayahbookmark_remove_bookmark">Odebrat záložku</string>
-  <string name="ayahbookmark_last_place_warning">Ponechte alespoň na jednom místě - k odstranění použijte níže uvedenou možnost Odebrat záložku.</string>
-  <string name="ayahbookmark_bookmark_removed">Záložka odebrána</string>
-  <string name="ayahbookmark_undo">Zpět</string>
+  <string name="ayahbookmark_saved">Uloženo</string>
+  <string name="ayahbookmark_not_saved">Neuloženo</string>
+  <string name="ayahbookmark_highlight_title">Zvýraznění</string>
+  <string name="ayahbookmark_highlight_subtitle">Obarví verš na stránce</string>
+  <string name="ayahbookmark_highlight_none">Žádná</string>
 </resources>

@@ -10,8 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">ناوی کۆکراوە</string>
   <string name="ayahbookmark_cancel">هەڵوەشاندنەوە</string>
   <string name="ayahbookmark_create">دروستکردن</string>
-  <string name="ayahbookmark_remove_bookmark">سڕینەوەی نیشانە</string>
-  <string name="ayahbookmark_last_place_warning">بەلایەنی کەم لە یەک شوێن هەڵیبگرە - بۆ سڕینەوە، سڕینەوەی نیشانە لە خوارەوە بەکاربهێنە.</string>
-  <string name="ayahbookmark_bookmark_removed">نیشانە سڕایەوە</string>
-  <string name="ayahbookmark_undo">گەڕاندنەوە</string>
+  <string name="ayahbookmark_saved">پاشەکەوتکراوە</string>
+  <string name="ayahbookmark_not_saved">پاشەکەوت نەکراوە</string>
+  <string name="ayahbookmark_highlight_title">هایلایت</string>
+  <string name="ayahbookmark_highlight_subtitle">ئایەتەکە لە پەڕەدا ڕەنگ دەکات</string>
+  <string name="ayahbookmark_highlight_none">هیچ</string>
 </resources>

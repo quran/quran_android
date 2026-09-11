@@ -19,7 +19,6 @@
   <string name="menu_bookmarks">Bookmarks</string>
   <string name="reading_bookmark">Reading Bookmark</string>
   <string name="menu_bookmarks_page">Page Bookmarks</string>
-  <string name="menu_bookmarks_ayah">Ayah Bookmarks</string>
   <string name="menu_sort">Sort</string>
   <string name="menu_sort_date">Date Added</string>
   <string name="menu_sort_location">Location in Quran</string>
@@ -357,7 +356,6 @@
   <string name="delete_tag">Delete Tag</string>
   <string name="edit_tag">Edit Tag</string>
   <string name="new_tag">New Tag</string>
-  <string name="not_tagged">Not Tagged</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Deleted one item</item>
     <item quantity="other">Deleted %d items</item>
@@ -375,6 +373,21 @@
   <string name="reading_bookmark_moved_from_title">Bookmark moved from %1$s</string>
   <string name="reading_bookmark_added">Bookmark added</string>
   <string name="reading_bookmark_dismiss_education">Dismiss</string>
+
+  <!-- highlights section in the bookmarks tab -->
+  <string name="highlights">Highlights</string>
+  <!-- header over the flat list of ayat, which mixes bookmarked and highlighted ayat -->
+  <string name="ayahs">Ayahs</string>
+  <string name="highlights_empty">No highlighted ayahs in this color yet.</string>
+  <string name="collection_empty">No bookmarks in this collection yet.</string>
+  <string name="expand_collection">Expand</string>
+  <string name="collapse_collection">Collapse</string>
+  <string name="open_collection">Open</string>
+  <plurals name="removed_highlights">
+    <item quantity="one">Removed one highlight</item>
+    <item quantity="other">Removed %d highlights</item>
+  </plurals>
+  <string name="remove_highlight">Remove Highlight</string>
 
   <string name="recent_pages">Recent pages</string>
   <string name="old_page_bookmarks">Old Page Bookmarks</string>

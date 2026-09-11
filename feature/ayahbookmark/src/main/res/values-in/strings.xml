@@ -10,8 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Nama koleksi</string>
   <string name="ayahbookmark_cancel">Batal</string>
   <string name="ayahbookmark_create">Buat</string>
-  <string name="ayahbookmark_remove_bookmark">Hapus markah</string>
-  <string name="ayahbookmark_last_place_warning">Simpan di setidaknya satu tempat - untuk menghapus, gunakan Hapus markah di bawah.</string>
-  <string name="ayahbookmark_bookmark_removed">Markah dihapus</string>
-  <string name="ayahbookmark_undo">Urungkan</string>
+  <string name="ayahbookmark_saved">Tersimpan</string>
+  <string name="ayahbookmark_not_saved">Belum tersimpan</string>
+  <string name="ayahbookmark_highlight_title">Sorotan</string>
+  <string name="ayahbookmark_highlight_subtitle">Mewarnai ayat di halaman</string>
+  <string name="ayahbookmark_highlight_none">Tidak ada</string>
 </resources>

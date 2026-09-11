@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.compose.runtime.Immutable
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.ReadingBookmark
+import com.quran.data.model.highlight.Highlight
+import com.quran.data.model.highlight.HighlightColor
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -14,19 +16,21 @@ data class AyahBookmarkState(
   val currentReadingBookmark: ReadingBookmark? = null,
   val collections: ImmutableList<AyahBookmarkCollectionItem> = persistentListOf(),
   val collectionCreation: AyahBookmarkCollectionCreationState = AyahBookmarkCollectionCreationState.Inactive,
-  val showLastPlaceWarning: Boolean = false,
-  val showRemoveBookmarkButton: Boolean = true,
-  val isBookmarkRemoved: Boolean = false,
+  val highlight: Highlight?,
   val isDismissed: Boolean = false,
   val suraAyahNameResolver: (Context, SuraAyah) -> String,
   val readingBookmarkNameResolver: (Context, ReadingBookmark) -> String,
   val eventSink: (AyahBookmarkEvent) -> Unit = {}
-)
+) {
+  val isSaved: Boolean
+    get() = isReadingBookmarkEnabled || highlight != null || collections.any { it.isChecked }
+}
 
 @Immutable
 data class AyahBookmarkCollectionItem(
   val id: String,
   val name: String,
+  val isDefault: Boolean = false,
   val countLabel: Int,
   val isChecked: Boolean
 )
@@ -50,7 +54,7 @@ sealed interface AyahBookmarkEvent {
   data object CancelCreatingCollection : AyahBookmarkEvent
   data class CollectionNameChanged(val name: String) : AyahBookmarkEvent
   data class CreateCollection(val name: String) : AyahBookmarkEvent
-  data object RemoveBookmark : AyahBookmarkEvent
-  data object UndoRemoveBookmark : AyahBookmarkEvent
+  data class SetHighlight(val color: HighlightColor) : AyahBookmarkEvent
+  data object ClearHighlight : AyahBookmarkEvent
   data object Done : AyahBookmarkEvent
 }

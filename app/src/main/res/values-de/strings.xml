@@ -25,7 +25,6 @@
   <string name="menu_jump_last_page">Letzte Seite</string>
   <string name="menu_bookmarks">Lesezeichen</string>
   <string name="menu_bookmarks_page">Seiten-Lesezeichen</string>
-  <string name="menu_bookmarks_ayah">Vers-Lesezeichen</string>
   <string name="menu_sort">Sortieren</string>
   <string name="menu_sort_date">Hinzufügedatum</string>
   <string name="menu_sort_location">Position im Quran</string>
@@ -299,7 +298,6 @@
   <string name="delete_tag">Schlagwort löschen</string>
   <string name="edit_tag">Schlagwort bearbeiten</string>
   <string name="new_tag">Neues Schlagwort</string>
-  <string name="not_tagged">Noch kein Schlagwort hinzugefügt</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Schlagwort</string>

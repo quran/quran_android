@@ -10,8 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Nazwa kolekcji</string>
   <string name="ayahbookmark_cancel">Anuluj</string>
   <string name="ayahbookmark_create">Utwórz</string>
-  <string name="ayahbookmark_remove_bookmark">Usuń zakładkę</string>
-  <string name="ayahbookmark_last_place_warning">Zachowaj przynajmniej w jednym miejscu - aby usunąć, użyj opcji Usuń zakładkę poniżej.</string>
-  <string name="ayahbookmark_bookmark_removed">Zakładka usunięta</string>
-  <string name="ayahbookmark_undo">Cofnij</string>
+  <string name="ayahbookmark_saved">Zapisano</string>
+  <string name="ayahbookmark_not_saved">Niezapisano</string>
+  <string name="ayahbookmark_highlight_title">Podświetlenie</string>
+  <string name="ayahbookmark_highlight_subtitle">Koloruje werset na stronie</string>
+  <string name="ayahbookmark_highlight_none">Brak</string>
 </resources>

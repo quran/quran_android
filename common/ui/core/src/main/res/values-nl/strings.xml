@@ -6,4 +6,10 @@
   <string name="to">Naar</string>
   <string name="loading">Laden&#8230;</string>
   <string name="canceling">Annuleren&#8230;</string>
+  <!-- names of the ayah highlight colors -->
+  <string name="highlight_color_yellow">Geel</string>
+  <string name="highlight_color_green">Groen</string>
+  <string name="highlight_color_blue">Blauw</string>
+  <string name="highlight_color_red">Rood</string>
+  <string name="highlight_color_purple">Paars</string>
 </resources>

@@ -11,6 +11,7 @@ data class HighlightType(
 ) : Comparable<HighlightType> {
 
   enum class Mode {
+    UNDERLAY,   // Fills the bounds of the ayah with a color behind the page image, so the text reads on top of it
     HIGHLIGHT,  // Highlights the text of the ayah (rectangular overlay on the text)
     BACKGROUND, // Applies a background color to the entire line (full height/width, even ayahs that are centered like first 2 pages)
     UNDERLINE,  // Draw an underline below the text of the ayah

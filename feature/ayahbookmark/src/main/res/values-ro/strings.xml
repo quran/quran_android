@@ -10,8 +10,9 @@
   <string name="ayahbookmark_collection_name_hint">Numele colecției</string>
   <string name="ayahbookmark_cancel">Anulează</string>
   <string name="ayahbookmark_create">Creează</string>
-  <string name="ayahbookmark_remove_bookmark">Elimină semnul de carte</string>
-  <string name="ayahbookmark_last_place_warning">Păstrează-l în cel puțin un loc - pentru a-l șterge, folosește Elimină semnul de carte de mai jos.</string>
-  <string name="ayahbookmark_bookmark_removed">Semn de carte eliminat</string>
-  <string name="ayahbookmark_undo">Anulează acțiunea</string>
+  <string name="ayahbookmark_saved">Salvat</string>
+  <string name="ayahbookmark_not_saved">Nesalvat</string>
+  <string name="ayahbookmark_highlight_title">Evidențiere</string>
+  <string name="ayahbookmark_highlight_subtitle">Colorează versetul pe pagină</string>
+  <string name="ayahbookmark_highlight_none">Niciuna</string>
 </resources>

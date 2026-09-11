@@ -18,7 +18,6 @@
   <string name="menu_jump_last_page">Soʻnggi oʻqilgan sahifa</string>
   <string name="menu_bookmarks">Xatchoʻplar</string>
   <string name="menu_bookmarks_page">Sahifa xatchoʻplari</string>
-  <string name="menu_bookmarks_ayah">Oyat xatchoʻplari</string>
   <string name="menu_sort">Tartib</string>
   <string name="menu_sort_date">Sana</string>
   <string name="menu_sort_location">Qurʼondagi yeri</string>
@@ -314,7 +313,6 @@
   <string name="delete_tag">Tegni oʻchirish</string>
   <string name="edit_tag">Tegni tahrir qilish</string>
   <string name="new_tag">Yangi teg</string>
-  <string name="not_tagged">Teglanmagan</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Bitta element oʻchirildi</item>
     <item quantity="other">%d ta element oʻchirildi</item>
