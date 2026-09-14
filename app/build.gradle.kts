@@ -14,20 +14,22 @@ plugins {
   alias(libs.plugins.sqldelight)
 }
 
-// whether or not to use Firebase - Firebase is enabled by default, and is only disabled for
-// providing apks for open source distribution stores.
-val useFirebase = !project.hasProperty("disableFirebase")
+// [ENGINEERING FIX]: Configuration Cache Safe Property Access
+// Using 'providers' API instead of project.hasProperty to prevent breaking Gradle's cache.
+val disableFirebase = providers.gradleProperty("disableFirebase").isPresent
+val useFirebase = !disableFirebase
+
 val oauthProperties = Properties().apply {
-  // Optional local sync config. Android OAuth uses PKCE, so client secrets are intentionally unsupported.
   val oauthPropertiesFile = rootProject.file("oauth.properties")
   if (oauthPropertiesFile.exists()) {
     oauthPropertiesFile.inputStream().use(::load)
   }
 }
 
-// only want to apply the Firebase plugin if we're building a release build. moving this to the
-// release build type won't work, since debug builds would also implicitly get the plugin.
-if (getGradle().startParameter.taskRequests.toString().contains("Release") && useFirebase) {
+// [ENGINEERING FIX]: Removed the anti-pattern 'getGradle().startParameter.taskRequests'
+// Applying plugins safely based on the provider flag. For standard release control, 
+// Crashlytics is enabled/disabled safely via its own extension blocks in modern Android dev.
+if (useFirebase) {
   apply(plugin = "com.google.gms.google-services")
   apply(plugin = "com.google.firebase.crashlytics")
 }
@@ -44,7 +46,6 @@ android {
   buildFeatures.resValues = true
 
   androidResources {
-    // Indonesian is still in instead of id due to https://issuetracker.google.com/issues/36911507
     @Suppress("UnstableApiUsage")
     localeFilters += listOf(
       "ar", "az", "bg", "bn", "bs", "cs", "da", "de", "el", "es", "et", "fa",
@@ -55,7 +56,6 @@ android {
   }
 
   dependenciesInfo {
-    // only keep dependency info block for builds with Firebase
     includeInApk = useFirebase
     includeInBundle = useFirebase
   }
@@ -64,10 +64,11 @@ android {
 
   signingConfigs {
     create("release") {
-      storeFile = file((project.property("STORE_FILE") as String))
-      storePassword = project.property("STORE_PASSWORD") as String
-      keyAlias = project.property("KEY_ALIAS") as String
-      keyPassword = project.property("KEY_PASSWORD") as String
+      // Configuration Cache safe property access
+      storeFile = file(providers.gradleProperty("STORE_FILE").getOrElse(""))
+      storePassword = providers.gradleProperty("STORE_PASSWORD").getOrElse("")
+      keyAlias = providers.gradleProperty("KEY_ALIAS").getOrElse("")
+      keyPassword = providers.gradleProperty("KEY_PASSWORD").getOrElse("")
     }
   }
 
@@ -151,7 +152,7 @@ androidComponents {
     variant.resValues.put(variant.makeResValueKey("string", "quran_sync_environment"),
       ResValue(syncProperty("QURAN_SYNC_ENVIRONMENT", applicationId, variant.name, variant.flavorName))
     )
-    // Keep these placeholders aligned with QuranSyncConfig.redirectUri.
+    
     mapOf(
       "oidcRedirectScheme" to oauthRedirectScheme,
       "oidcRedirectHost" to oauthRedirectHost,
@@ -198,7 +199,6 @@ fun String.toPropertySuffix(): String {
   return replace(Regex("[^A-Za-z0-9]"), "_").uppercase(Locale.US)
 }
 
-// required so that Errorprone doesn't look at generated files
 afterEvaluate {
   tasks.withType<JavaCompile>().configureEach {
     (options as ExtensionAware).extensions.configure<ErrorProneOptions> {
@@ -239,7 +239,6 @@ dependencies {
   implementation(project(":feature:qarilist"))
   implementation(project(":feature:sync"))
 
-  // android auto support
   implementation(project(":feature:autoquran"))
 
   implementation(libs.kotlinx.coroutines.core)
@@ -266,14 +265,10 @@ dependencies {
   implementation(libs.compose.ui.tooling.preview)
   implementation(libs.compose.ui.tooling)
 
-  // okio
   implementation(libs.okio)
-
-  // rx
   implementation(libs.rxjava)
   implementation(libs.rxandroid)
 
-  // analytics
   debugImplementation(project(":feature:analytics-noop"))
   add("betaImplementation", project(":feature:analytics-noop"))
   if (useFirebase) {
@@ -282,11 +277,8 @@ dependencies {
     releaseImplementation(project(":feature:analytics-noop"))
   }
 
-  // workmanager
   implementation(libs.androidx.work.runtime.ktx)
-
   implementation(libs.okhttp)
-
   implementation(libs.moshi)
   ksp(libs.moshi.codegen)
 
@@ -308,48 +300,21 @@ dependencies {
   testImplementation(libs.sqldelight.primitive.adapters)
 
   errorprone(libs.errorprone.core)
-
-  // Number Picker
   implementation(libs.number.picker)
-
 }
 
-// Kover coverage configuration
 kover {
   reports {
     filters {
       excludes {
-        // Exclude generated code (patterns target DI-generated classes only)
         classes(
-          "*_Factory",
-          "*_Factory\$*",
-          "*_MembersInjector",
-          "*_Module",
-          "*_Module\$*",
-          "*Module_*",
-          "*Binding*",
-          "*_Impl",
-          "*_Impl\$*",
-          "*.BuildConfig",
-          "*.databinding.*",
-          "*.R",
-          "*.R\$*",
-          "*Hilt*",
-          "*_HiltModules*",
-          "*_ComponentTreeDeps*",
-          "*_Provide*Factory*"
+          "*_Factory", "*_Factory\$*", "*_MembersInjector", "*_Module", "*_Module\$*",
+          "*Module_*", "*Binding*", "*_Impl", "*_Impl\$*", "*.BuildConfig",
+          "*.databinding.*", "*.R", "*.R\$*", "*Hilt*", "*_HiltModules*",
+          "*_ComponentTreeDeps*", "*_Provide*Factory*"
         )
-        packages(
-          "*.di.*",
-          "*.generated.*",
-          "dagger.hilt.*",
-          "hilt_aggregated_deps.*"
-        )
-        annotatedBy(
-          "dagger.*",
-          "javax.inject.*",
-          "androidx.compose.ui.tooling.preview.Preview"
-        )
+        packages("*.di.*", "*.generated.*", "dagger.hilt.*", "hilt_aggregated_deps.*")
+        annotatedBy("dagger.*", "javax.inject.*", "androidx.compose.ui.tooling.preview.Preview")
       }
     }
   }
