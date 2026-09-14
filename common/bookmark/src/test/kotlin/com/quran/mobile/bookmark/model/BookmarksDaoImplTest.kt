@@ -105,6 +105,8 @@ class BookmarksDaoImplTest {
     addDefaultBookmark(first)
     addDefaultBookmark(second)
 
+    dao.bookmarksFlow().first { it.size == 2 }
+
     val bookmarks = dao.bookmarksForPage(quranInfo.getPageFromSuraAyah(first.sura, first.ayah)).first()
 
     assertThat(bookmarks.map { it.sura to it.ayah }).containsExactly(first.sura to first.ayah)
