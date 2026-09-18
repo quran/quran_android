@@ -26,7 +26,7 @@ quranMobileSyncVersion = "0.1.18"
 retrofitVersion = "3.0.0"
 rxandroidVersion = "3.0.2"
 rxjavaVersion = "3.1.12"
-sqldelight = "2.3.2"
+sqldelight = "2.4.0"
 timberVersion = "5.0.1"
 
 # androidx library versions
