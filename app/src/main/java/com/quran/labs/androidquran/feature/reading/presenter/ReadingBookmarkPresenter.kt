@@ -5,6 +5,7 @@ import com.quran.data.di.ActivityScope
 import com.quran.data.di.AppCoroutineScope
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.labs.androidquran.util.QuranSettings
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
@@ -37,15 +38,17 @@ class ReadingBookmarkPresenter @Inject constructor(
     this.screen = screen
     currentJob = combine(
       pageFlow,
-      readingBookmarksDao.readingBookmarkFlow()
+      readingBookmarksDao.readingBookmarksFlow()
     ) { page, bookmark -> page to bookmark }
       .onEach { (page, bookmark) ->
         currentPage = page
-        persistedBookmark = bookmark
+        // TODO: fix this when we support multiple reading bookmarks
+        persistedBookmark = bookmark.firstOrNull()
         // a pending (not yet durably written) move already reflects the intended state visually -
         // don't let this now-stale flow emission flicker the icon back to unbookmarked
         if (pendingMove?.page != page) {
-          screen.setPageReadingBookmarkSelected(bookmark.isPageReadingBookmark(page))
+          // TODO: fix this when we support multiple reading bookmarks
+          screen.setPageReadingBookmarkSelected(bookmark.firstOrNull()?.isPageReadingBookmark(page) == true)
         }
       }
       .launchIn(scope)
@@ -74,7 +77,8 @@ class ReadingBookmarkPresenter @Inject constructor(
       // un-bookmarking an already-persisted page - immediate, no undo affordance
       pending?.let { cancelPendingMove(it.page) }
       scope.launch {
-        val isBookmarked = readingBookmarksDao.togglePageReadingBookmark(page)
+        // TODO: fix this when we support multiple reading bookmarks
+        val isBookmarked = readingBookmarksDao.togglePageReadingBookmark(ReadingBookmarkType.TEAL, page)
         if (currentPage == page) {
           screen?.setPageReadingBookmarkSelected(isBookmarked)
         }
@@ -110,7 +114,8 @@ class ReadingBookmarkPresenter @Inject constructor(
 
   private fun confirmPendingMove(movedToPage: Int) {
     takePendingMove(movedToPage) ?: return
-    appCoroutineScope.launch { readingBookmarksDao.setPageReadingBookmark(movedToPage) }
+    // TODO: fix this when we support multiple reading bookmarks
+    appCoroutineScope.launch { readingBookmarksDao.setPageReadingBookmark(ReadingBookmarkType.TEAL,movedToPage) }
     screen?.dismissReadingBookmarkMovedToast()
   }
 

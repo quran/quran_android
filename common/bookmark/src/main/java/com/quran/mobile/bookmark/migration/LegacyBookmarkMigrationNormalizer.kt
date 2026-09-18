@@ -112,11 +112,11 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
       val bounds = quranInfo.getPageBounds(recentPage.page)
       val suraAyah = SuraAyah(bounds[0], bounds[1])
       sessions.getOrPut(suraAyah) {
-        val timestamp = recentPage.timestamp.legacyTimestampMillis()
+        val timestamp = recentPage.timestamp
         MobileSyncImportReadingSession(
           sura = suraAyah.sura,
           ayah = suraAyah.ayah,
-          timestampMillis = timestamp
+          timestampMillis = timestamp.toEpochMilliseconds()
         )
       }
     }

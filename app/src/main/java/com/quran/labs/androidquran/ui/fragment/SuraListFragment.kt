@@ -82,9 +82,10 @@ class SuraListFragment : Fragment(), QuranTouchListener {
 
     viewLifecycleOwner.lifecycleScope.launch {
       viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        readingBookmarksDao.readingBookmarkFlow()
+        readingBookmarksDao.readingBookmarksFlow()
           .distinctUntilChanged()
-          .collect { updateReadingBookmark(it) }
+          // TODO: fix this when we support multiple reading bookmarks
+          .collect { updateReadingBookmark(it.firstOrNull()) }
       }
     }
 
@@ -115,7 +116,8 @@ class SuraListFragment : Fragment(), QuranTouchListener {
         showSuraTranslatedName = newValueOfShowSuraTranslatedName
       }
       viewLifecycleOwner.lifecycleScope.launch {
-        val currentReadingBookmark = readingBookmarksDao.readingBookmark()
+        // TODO: fix this when we support multiple reading bookmarks
+        val currentReadingBookmark = readingBookmarksDao.readingBookmarks().firstOrNull()
         updateReadingBookmark(currentReadingBookmark)
         val recentPage = activity.latestPage()
         if (recentPage != Constants.NO_PAGE) {

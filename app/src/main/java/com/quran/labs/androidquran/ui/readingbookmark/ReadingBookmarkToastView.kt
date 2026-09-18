@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.quran.data.model.bookmark.AyahReadingBookmark
+import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.labs.androidquran.R
@@ -76,5 +77,7 @@ private fun QuranNaming.readingBookmarkLabel(context: Context, bookmark: Reading
   return when (bookmark) {
     is AyahReadingBookmark -> getSuraAyahString(context, bookmark.sura, bookmark.ayah)
     is PageReadingBookmark -> getSuraPageString(context, bookmark.page)
+    // shouldn't happen since in this case, previous bookmark should be null
+    is EmptyReadingBookmark -> ""
   }
 }

@@ -7,21 +7,22 @@ data class BookmarkData @JvmOverloads constructor(
   val tags: List<Tag> = emptyList(),
   val bookmarks: List<Bookmark> = emptyList(),
   val recentPages: List<RecentPage> = emptyList(),
-  val readingBookmark: BackupReadingBookmark? = null,
+  val readingBookmarks: List<BackupReadingBookmark> = emptyList(),
   val pageType: String? = null
 ) {
 
   fun getRecentPagesByLine() =
-      recentPages
-          .map { "${it.getCommaSeparatedValues()} \n" }
-          .reduceOrNull { acc, recent -> "$acc$recent" }
+    recentPages
+      .map { "${it.getCommaSeparatedValues()} \n" }
+      .reduceOrNull { acc, recent -> "$acc$recent" }
 
   fun getBookmarksByLine() =
-      bookmarks
-          .map { "${it.getCommaSeparatedValues(tags)} \n" }
-          .reduceOrNull { acc, bookmark -> "$acc$bookmark" }
+    bookmarks
+      .map { "${it.getCommaSeparatedValues(tags)} \n" }
+      .reduceOrNull { acc, bookmark -> "$acc$bookmark" }
 
-  fun getReadingBookmarkByLine() =
-      readingBookmark?.let { "${it.getCommaSeparatedValues()} \n" }
-
+  fun getReadingBookmarksByLine() =
+    readingBookmarks
+      .map { "${it.getCommaSeparatedValues()} \n" }
+      .reduceOrNull { acc, readingBookmark -> "$acc$readingBookmark" }
 }

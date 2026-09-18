@@ -4,6 +4,7 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
+import kotlin.time.Instant
 
 /**
  * Factory for creating test data using REAL domain models.
@@ -137,12 +138,12 @@ object TestDataFactory {
   // ==================== RecentPage Factory ====================
 
   /**
-   * Creates a [RecentPage] with default values.
+   * Creates a [RecentPage] with a timestamp in epoch milliseconds.
    */
   fun createRecentPage(
     page: Int = 1,
     timestamp: Long = System.currentTimeMillis()
-  ): RecentPage = RecentPage(page, timestamp)
+  ): RecentPage = RecentPage(page, Instant.fromEpochMilliseconds(timestamp))
 
   /**
    * Creates multiple recent pages for testing.
@@ -151,7 +152,7 @@ object TestDataFactory {
     (1..count).map { index ->
       RecentPage(
         page = (index % QuranConstants.TOTAL_PAGES_MADANI) + 1,
-        timestamp = System.currentTimeMillis() - (index * 1000L)
+        timestamp = Instant.fromEpochMilliseconds(System.currentTimeMillis() - (index * 1000L))
       )
     }
 

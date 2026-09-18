@@ -6,15 +6,16 @@ import androidx.annotation.DrawableRes
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.dao.bookmark.AyahMark
 import com.quran.labs.androidquran.common.ui.core.CollectionNames
 import com.quran.labs.androidquran.common.ui.core.HighlightColors
+import com.quran.labs.androidquran.dao.bookmark.AyahMark
 import com.quran.labs.androidquran.data.QuranDisplayData
 import dev.zacsweers.metro.Inject
 
@@ -72,7 +73,7 @@ class QuranRowFactory @Inject constructor(
           .withType(QuranRow.PAGE_READING_BOOKMARK)
           .withSura(quranDisplayData.safelyGetSuraOnPage(page))
           .withPage(page)
-          .withDate(readingBookmark.timestamp)
+          .withDate(readingBookmark.timestamp.epochSeconds)
           .withImageResource(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite)
           .withImageOverlayColorResource(R.color.icon_tint)
           .build()
@@ -102,9 +103,20 @@ class QuranRowFactory @Inject constructor(
           .withSura(readingBookmark.sura)
           .withAyah(readingBookmark.ayah)
           .withPage(page)
-          .withDate(readingBookmark.timestamp)
+          .withDate(readingBookmark.timestamp.epochSeconds)
           .withImageResource(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite)
           .withImageOverlayColorResource(R.color.ayah_bookmark_color)
+          .build()
+      }
+
+      is EmptyReadingBookmark -> {
+        // TODO: fix this when we support multiple reading bookmarks
+        QuranRow.Builder()
+          .withText(readingBookmark.slot.name)
+          .withMetadata(readingBookmark.slot.name)
+          .withType(QuranRow.PAGE_READING_BOOKMARK)
+          .withImageResource(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite)
+          .withImageOverlayColorResource(R.color.icon_tint)
           .build()
       }
     }

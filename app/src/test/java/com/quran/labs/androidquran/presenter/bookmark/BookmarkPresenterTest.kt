@@ -5,6 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.data.dao.BookmarkSortOrder
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.SuraAyah
@@ -99,7 +100,7 @@ class BookmarkPresenterTest {
 
   @Test
   fun `renders reading bookmark ahead of recent pages`() {
-    val readingBookmark = PageReadingBookmark(42, 300)
+    val readingBookmark = PageReadingBookmark(ReadingBookmarkType.TEAL, 42, Instant.fromEpochSeconds(300))
     fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
     fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
     fakeReadingBookmarksDao.setReadingBookmark(readingBookmark)
@@ -407,8 +408,8 @@ class BookmarkPresenterTest {
     )
     private val PAGE_BOOKMARK = Bookmark("bookmark-23", null, null, 400, 300)
     private val RECENT_PAGES = listOf(
-      RecentPage(42, 200),
-      RecentPage(43, 100)
+      RecentPage(42, Instant.fromEpochSeconds(200)),
+      RecentPage(43, Instant.fromEpochSeconds(100))
     )
     private val HIGHLIGHTS = listOf(
       Highlight(SuraAyah(2, 255), HighlightColor.BLUE, Instant.fromEpochSeconds(300)),

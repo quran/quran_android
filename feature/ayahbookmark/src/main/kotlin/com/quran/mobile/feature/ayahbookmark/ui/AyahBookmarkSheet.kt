@@ -24,6 +24,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.quran.data.model.bookmark.AyahReadingBookmark
+import com.quran.data.model.bookmark.EmptyReadingBookmark
+import com.quran.data.model.bookmark.PageReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.mobile.feature.ayahbookmark.R
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionCreationState
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkEvent
@@ -41,7 +45,13 @@ internal fun AyahBookmarkSheet(
     state.suraAyahNameResolver(context, state.ayah)
   }
   val currentReadingBookmarkName = remember(context, state.currentReadingBookmark) {
-    state.currentReadingBookmark?.let { state.readingBookmarkNameResolver(context, it) }
+    state.currentReadingBookmark?.let { readingBookmark ->
+      when (readingBookmark) {
+        is AyahReadingBookmark -> state.suraAyahNameResolver(context, readingBookmark.asSuraAyah())
+        is EmptyReadingBookmark -> ""
+        is PageReadingBookmark -> state.suraPageNameResolver(context, readingBookmark.page)
+      }
+    }
   }
 
   Column(
@@ -101,7 +111,8 @@ internal fun AyahBookmarkSheet(
       ReadingBookmarkRow(
         isEnabled = state.isReadingBookmarkEnabled,
         currentReadingBookmarkName = currentReadingBookmarkName,
-        onToggle = { eventSink(AyahBookmarkEvent.ToggleReadingBookmark) }
+        // TODO: fix when we fix the ui
+        onToggle = { eventSink(AyahBookmarkEvent.ToggleReadingBookmark(ReadingBookmarkType.TEAL)) }
       )
 
       HighlightRow(

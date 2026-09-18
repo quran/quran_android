@@ -7,6 +7,7 @@ import com.quran.data.dao.Settings
 import com.quran.data.model.audio.Qari
 import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.BookmarkData
+import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
@@ -24,6 +25,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.RobolectricTestRunner
+import kotlin.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
 class BookmarkBackupImportNormalizerTest {
@@ -58,11 +60,14 @@ class BookmarkBackupImportNormalizerTest {
 
     val importData = normalizer.normalize(
       BookmarkData(
-        recentPages = listOf(RecentPage(warshPage, 900)),
-        readingBookmark = BackupReadingBookmark(
-          type = BackupReadingBookmark.TYPE_PAGE,
-          page = warshPage,
-          timestamp = 800
+        recentPages = listOf(RecentPage(warshPage, Instant.fromEpochSeconds(900))),
+        readingBookmarks = listOf(
+          BackupReadingBookmark(
+            slot = ReadingBookmarkType.TEAL,
+            type = BackupReadingBookmark.TYPE_PAGE,
+            page = warshPage,
+            timestamp = Instant.fromEpochSeconds(800)
+          )
         ),
         pageType = "warsh"
       )
@@ -71,7 +76,7 @@ class BookmarkBackupImportNormalizerTest {
     assertThat(importData.bookmarks).isEmpty()
     assertThat(importData.readingSessions.single().sura).isEqualTo(warshBounds[0])
     assertThat(importData.readingSessions.single().ayah).isEqualTo(warshBounds[1])
-    assertThat((importData.readingBookmark as MobileSyncImportReadingBookmark.Page).page)
+    assertThat((importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page).page)
       .isEqualTo(madaniPage)
   }
 
@@ -82,15 +87,18 @@ class BookmarkBackupImportNormalizerTest {
 
     val importData = normalizer.normalize(
       BookmarkData(
-        readingBookmark = BackupReadingBookmark(
-          type = BackupReadingBookmark.TYPE_PAGE,
-          page = warshPage,
-          timestamp = 800
+        readingBookmarks = listOf(
+          BackupReadingBookmark(
+            slot = ReadingBookmarkType.TEAL,
+            type = BackupReadingBookmark.TYPE_PAGE,
+            page = warshPage,
+            timestamp = Instant.fromEpochSeconds(800)
+          )
         )
       )
     )
 
-    assertThat((importData.readingBookmark as MobileSyncImportReadingBookmark.Page).page)
+    assertThat((importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page).page)
       .isEqualTo(madaniPage)
   }
 
@@ -100,16 +108,19 @@ class BookmarkBackupImportNormalizerTest {
 
     val importData = normalizer.normalize(
       BookmarkData(
-        readingBookmark = BackupReadingBookmark(
-          type = BackupReadingBookmark.TYPE_PAGE,
-          page = 999,
-          timestamp = 800
+        readingBookmarks = listOf(
+          BackupReadingBookmark(
+            slot = ReadingBookmarkType.TEAL,
+            type = BackupReadingBookmark.TYPE_PAGE,
+            page = 999,
+            timestamp = Instant.fromEpochSeconds(800)
+          )
         ),
         pageType = "naskh"
       )
     )
 
-    assertThat((importData.readingBookmark as MobileSyncImportReadingBookmark.Page).page)
+    assertThat((importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page).page)
       .isEqualTo(madaniInfo.numberOfPages)
   }
 
