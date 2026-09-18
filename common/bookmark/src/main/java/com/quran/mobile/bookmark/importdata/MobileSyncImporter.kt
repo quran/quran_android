@@ -1,5 +1,3 @@
-@file:OptIn(kotlin.time.ExperimentalTime::class)
-
 package com.quran.mobile.bookmark.importdata
 
 import com.quran.data.di.AppScope
@@ -7,7 +5,6 @@ import com.quran.mobile.bookmark.di.MobileSyncDatabase
 import com.quran.shared.persistence.input.ImportAyahBookmark
 import com.quran.shared.persistence.input.ImportCollection
 import com.quran.shared.persistence.input.ImportCollectionAyahBookmark
-import com.quran.shared.persistence.input.ImportReadingBookmark
 import com.quran.shared.persistence.input.ImportReadingSession
 import com.quran.shared.persistence.input.PersistenceImportData
 import com.quran.shared.persistence.input.PersistenceImportResult
@@ -74,23 +71,28 @@ fun MobileSyncImportData.toPersistenceImportData(): PersistenceImportData {
         lastUpdated = readingSession.timestampMillis.toPlatformDateTime()
       )
     },
-    readingBookmark = readingBookmark?.toImportReadingBookmark()
+    // TODO: needs 0.1.21
+    // readingBookmarks = readingBookmarks.map { it.toImportReadingBookmark() }
   )
 }
 
+/* TODO: needs 0.1.21
 private fun MobileSyncImportReadingBookmark.toImportReadingBookmark(): ImportReadingBookmark {
   return when (this) {
     is MobileSyncImportReadingBookmark.Ayah -> ImportReadingBookmark.Ayah(
+      slot = slot,
       sura = sura,
       ayah = ayah,
       lastUpdated = timestampMillis.toPlatformDateTime()
     )
     is MobileSyncImportReadingBookmark.Page -> ImportReadingBookmark.Page(
+      slot = slot,
       page = page,
       lastUpdated = timestampMillis.toPlatformDateTime()
     )
   }
 }
+ */
 
 fun PersistenceImportResult.toMobileSyncImportResult(): MobileSyncImportResult {
   return MobileSyncImportResult(
@@ -98,7 +100,7 @@ fun PersistenceImportResult.toMobileSyncImportResult(): MobileSyncImportResult {
     collectionsImported = collectionsImported,
     collectionBookmarksImported = collectionBookmarksImported,
     readingSessionsImported = readingSessionsImported,
-    readingBookmarkImported = readingBookmarkImported
+    readingBookmarkImported = 0 // TODO - needs 0.1.21: readingBookmarksImported
   )
 }
 

@@ -6,6 +6,7 @@ import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlin.time.Clock
 
@@ -17,6 +18,9 @@ class FakeHighlightsDao : HighlightsDao {
   }
 
   override fun highlightsFlow(): Flow<List<Highlight>> = highlights
+
+  override fun highlightsFlow(currentAyah: SuraAyah): Flow<Highlight?> =
+    highlights.map { entries -> entries.firstOrNull { it.suraAyah == currentAyah } }
 
   override suspend fun setHighlight(ayah: SuraAyah, color: HighlightColor) {
     highlights.update { existing ->

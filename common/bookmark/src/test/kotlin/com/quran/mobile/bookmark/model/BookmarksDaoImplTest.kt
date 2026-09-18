@@ -432,7 +432,7 @@ class BookmarksDaoImplTest {
 
     dao.replaceAyahBookmarkCollections(suraAyah, setOf(tagId))
     assertThat(dao.bookmarks().single().id).isEqualTo(managedBookmarkId)
-    assertThat(dao.bookmarks().single().timestamp).isEqualTo(1_000)
+    assertThat(dao.bookmarks().single().timestamp).isEqualTo(2_000)
     val bookmark = dao.bookmarks().single()
     dao.updateBookmarkTags(arrayOf(bookmark.id), emptySet(), deleteNonTagged = true)
 
@@ -469,7 +469,7 @@ class BookmarksDaoImplTest {
   }
 
   @Test
-  fun `collection replacement reuses managed row without rewriting bookmark timestamp`() = runTest {
+  fun `first saved collection stamps bookmark time and preserves highlight creation time`() = runTest {
     val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
     val suraAyah = SuraAyah(2, 255)
     val tagId = dao.addTag("Review")
@@ -490,7 +490,11 @@ class BookmarksDaoImplTest {
 
     val bookmark = dao.bookmarks().single()
     assertThat(bookmark.id).isEqualTo(managedBookmarkId)
-    assertThat(bookmark.timestamp).isEqualTo(1_000)
+    assertThat(bookmark.timestamp).isEqualTo(2_000)
+    val storedBookmark = database.bookmarksQueries
+      .getBookmarkForAyah(suraAyah.sura.toLong(), suraAyah.ayah.toLong())
+      .executeAsOne()
+    assertThat(storedBookmark.created_at).isEqualTo(1_000_000L)
     assertThat(bookmark.tags).containsExactly(tagId)
     assertThat(collectionBookmarksRepository.getHighlightsFlow().first().single().color)
       .isEqualTo(AyahHighlightColor.RED)

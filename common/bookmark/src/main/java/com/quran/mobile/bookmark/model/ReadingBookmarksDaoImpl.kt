@@ -1,16 +1,16 @@
-@file:OptIn(kotlin.time.ExperimentalTime::class)
-
 package com.quran.mobile.bookmark.model
 
 import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
+import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
+import com.quran.shared.persistence.model.ReadingBookmarkSlot
 import com.quran.shared.persistence.repository.readingbookmark.repository.ReadingBookmarksRepository
-import com.quran.shared.persistence.util.fromPlatform
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import com.quran.shared.persistence.model.AyahReadingBookmark as SyncAyahReadingBookmark
+import com.quran.shared.persistence.model.EmptyReadingBookmark as SyncEmptyReadingBookmark
 import com.quran.shared.persistence.model.PageReadingBookmark as SyncPageReadingBookmark
 import com.quran.shared.persistence.model.ReadingBookmark as SyncReadingBookmark
 
@@ -39,90 +40,161 @@ class ReadingBookmarksDaoImpl @Inject constructor(
   private val readingBookmarksRepository: ReadingBookmarksRepository,
   private val timestampProvider: MobileSyncTimestampProvider
 ) : ReadingBookmarksDao {
-  override fun readingBookmarkFlow(): Flow<ReadingBookmark?> {
+  override fun readingBookmarksFlow(): Flow<List<ReadingBookmark>> {
     // Keep this flow cold so new collectors start from the repository's current value instead of a
     // previously cached null. The IO dispatcher preserves the old off-main mapping behavior.
     return combine(
-      readingBookmarksRepository.getReadingBookmarkFlow(),
+      readingBookmarksRepository.getReadingBookmarksFlow(),
       pageMapper.pageTypeFlow()
-    ) { bookmark, pageType ->
-      toReadingBookmark(bookmark, pageType)
+    ) { bookmarks, pageType ->
+      bookmarks.mapNotNull { toReadingBookmark(it, pageType) }
     }
       .distinctUntilChanged()
       .flowOn(Dispatchers.IO)
   }
 
-  override suspend fun readingBookmark(): ReadingBookmark? {
+  override suspend fun readingBookmarks(): List<ReadingBookmark> {
     return withContext(Dispatchers.IO) {
-      toReadingBookmark(
-        readingBookmarksRepository.getReadingBookmark(),
-        pageMapper.currentPageType()
-      )
+      readingBookmarksRepository.getReadingBookmarks()
+        .mapNotNull { toReadingBookmark(it, pageMapper.currentPageType()) }
     }
   }
 
-  override suspend fun setPageReadingBookmark(page: Int): Boolean {
+  override suspend fun setPageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean {
     val timestamp = timestampProvider.now()
     val set = withContext(Dispatchers.IO) {
-      readingBookmarksRepository.addPageReadingBookmark(pageMapper.currentPageToStoragePage(page), timestamp)
+      readingBookmarksRepository.setPageReadingBookmark(slot.toSyncSlot(), pageMapper.currentPageToStoragePage(page), timestamp)
       true
     }
     return set
   }
 
-  override suspend fun setAyahReadingBookmark(suraAyah: SuraAyah): Boolean {
+  override suspend fun setAyahReadingBookmark(slot: ReadingBookmarkType, suraAyah: SuraAyah): Boolean {
     val timestamp = timestampProvider.now()
     val set = withContext(Dispatchers.IO) {
-      readingBookmarksRepository.addAyahReadingBookmark(suraAyah.sura, suraAyah.ayah, timestamp)
+      readingBookmarksRepository.setAyahReadingBookmark(slot.toSyncSlot(), suraAyah.sura, suraAyah.ayah, timestamp)
       true
     }
     return set
   }
 
-  override suspend fun deleteReadingBookmark(): Boolean {
-    val deleted = withContext(Dispatchers.IO) {
-      readingBookmarksRepository.deleteReadingBookmark()
+  override suspend fun clearReadingBookmark(slot: ReadingBookmarkType): ReadingBookmark {
+    val cleared = withContext(Dispatchers.IO) {
+      readingBookmarksRepository.clearReadingBookmark(slot.toSyncSlot())
     }
-    return deleted
+    return when (cleared) {
+        is SyncEmptyReadingBookmark -> {
+          EmptyReadingBookmark(
+            slot = slot,
+            timestamp = cleared.lastUpdated
+          )
+        }
+
+      is SyncAyahReadingBookmark -> {
+        AyahReadingBookmark(
+          slot = slot,
+          sura = cleared.sura,
+          ayah = cleared.ayah,
+          timestamp = cleared.lastUpdated
+        )
+      }
+
+      is SyncPageReadingBookmark -> {
+        PageReadingBookmark(
+          slot = slot,
+          page = cleared.page,
+          timestamp = cleared.lastUpdated
+        )
+      }
+    }
   }
 
-  override suspend fun isPageReadingBookmark(page: Int): Boolean {
+  override suspend fun isPageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean {
     return withContext(Dispatchers.IO) {
       val storagePage = pageMapper.currentPageToStoragePage(page)
-      val bookmark = readingBookmarksRepository.getReadingBookmark()
-      bookmark is SyncPageReadingBookmark && bookmark.page == storagePage
+
+      val syncSlot = slot.toSyncSlot()
+      readingBookmarksRepository.getReadingBookmarks()
+        .any { it.slot == syncSlot && it is SyncPageReadingBookmark && it.page == storagePage }
     }
   }
 
-  override suspend fun togglePageReadingBookmark(page: Int): Boolean {
+  override suspend fun togglePageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean {
     val timestamp = timestampProvider.now()
     val (isBookmarked, _) = withContext(Dispatchers.IO) {
       val storagePage = pageMapper.currentPageToStoragePage(page)
-      val bookmark = readingBookmarksRepository.getReadingBookmark()
-      if (bookmark is SyncPageReadingBookmark && bookmark.page == storagePage) {
-        false to readingBookmarksRepository.deleteReadingBookmark()
+      if (isPageReadingBookmark(slot, page)) {
+        false to readingBookmarksRepository.clearReadingBookmark(slot.toSyncSlot())
       } else {
-        readingBookmarksRepository.addPageReadingBookmark(storagePage, timestamp)
+        readingBookmarksRepository.setPageReadingBookmark(slot.toSyncSlot(), storagePage, timestamp)
         true to true
       }
     }
     return isBookmarked
   }
 
-  private fun toReadingBookmark(bookmark: SyncReadingBookmark?, pageType: String): ReadingBookmark? {
+  private fun toReadingBookmark(bookmark: SyncReadingBookmark, pageType: String): ReadingBookmark? {
     return when (bookmark) {
       is SyncAyahReadingBookmark -> {
         AyahReadingBookmark(
+          slot = bookmark.slot.asBookmarkType(),
           sura = bookmark.sura,
           ayah = bookmark.ayah,
-          timestamp = bookmark.lastUpdated.fromPlatform().toEpochMilliseconds() / 1000
+          timestamp = bookmark.lastUpdated
         )
       }
       is SyncPageReadingBookmark -> PageReadingBookmark(
+        slot = bookmark.slot.asBookmarkType(),
         page = pageMapper.storagePageToPage(bookmark.page, pageType),
-        timestamp = bookmark.lastUpdated.fromPlatform().toEpochMilliseconds() / 1000
+        timestamp = bookmark.lastUpdated
       )
-      null -> null
+      is SyncEmptyReadingBookmark -> null
     }
   }
+
+  override suspend fun updateReadingBookmarks(
+    ayah: SuraAyah,
+    added: List<ReadingBookmark>,
+    removed: List<ReadingBookmark>
+  ): Boolean {
+    return withContext(Dispatchers.IO) {
+      added.forEach { readingBookmark ->
+        when (readingBookmark) {
+          is AyahReadingBookmark ->
+            readingBookmarksRepository.setAyahReadingBookmark(
+              readingBookmark.slot.toSyncSlot(),
+              readingBookmark.sura,
+              readingBookmark.ayah
+            )
+
+          is PageReadingBookmark -> readingBookmarksRepository.setPageReadingBookmark(
+            readingBookmark.slot.toSyncSlot(),
+            readingBookmark.page
+          )
+
+          is EmptyReadingBookmark -> {}
+        }
+      }
+
+      removed.forEach { readingBookmark ->
+        readingBookmarksRepository.clearReadingBookmark(readingBookmark.slot.toSyncSlot())
+      }
+      true
+    }
+  }
+
+  private fun ReadingBookmarkSlot.asBookmarkType(): ReadingBookmarkType {
+    return when (this) {
+      ReadingBookmarkSlot.CORAL -> ReadingBookmarkType.CORAL
+      ReadingBookmarkSlot.TEAL -> ReadingBookmarkType.TEAL
+      ReadingBookmarkSlot.INDIGO -> ReadingBookmarkType.INDIGO
+    }
+  }
+
+  internal fun ReadingBookmarkType.toSyncSlot(): ReadingBookmarkSlot =
+    when (this) {
+      ReadingBookmarkType.CORAL -> ReadingBookmarkSlot.CORAL
+      ReadingBookmarkType.TEAL -> ReadingBookmarkSlot.TEAL
+      ReadingBookmarkType.INDIGO -> ReadingBookmarkSlot.INDIGO
+    }
 }

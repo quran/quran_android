@@ -30,7 +30,7 @@ class BookmarkUIConverter @Inject constructor(
           } else {
             1
           }
-          quranRowFactory.fromCurrentPage(context, page, rowData.recentPage.timestamp)
+          quranRowFactory.fromCurrentPage(context, page, rowData.recentPage.timestamp.epochSeconds)
         }
 
         BookmarkRowData.HighlightsHeader ->

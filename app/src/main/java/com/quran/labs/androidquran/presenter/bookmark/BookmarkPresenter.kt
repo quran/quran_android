@@ -101,7 +101,7 @@ open class BookmarkPresenter @Inject internal constructor(
 
     presenterScope.launch {
       try {
-        readingBookmarksDao.readingBookmarkFlow()
+        readingBookmarksDao.readingBookmarksFlow()
           .drop(1)
           .collect {
             onObservedDataChanged()
@@ -400,11 +400,12 @@ open class BookmarkPresenter @Inject internal constructor(
   suspend fun getBookmarksList(sortOrder: Int, groupByTags: Boolean): BookmarkRawResult {
     return coroutineScope {
       val bookmarkData = async { getBookmarksWithRecentPages(sortOrder) }
-      val readingBookmark = async { readingBookmarksDao.readingBookmark() }
+      val readingBookmarks = async { readingBookmarksDao.readingBookmarks() }
       val highlights = async { highlightsDao.highlightsFlow().first() }
       val data = bookmarkData.await()
       val rows = getBookmarkRowData(
-        data, sortOrder, groupByTags, readingBookmark.await(), highlights.await()
+        // TODO: fix this when we support multiple reading bookmarks
+        data, sortOrder, groupByTags, readingBookmarks.await().firstOrNull(), highlights.await()
       )
       val tagMap = generateTagMap(data.tags)
       BookmarkRawResult(rows, tagMap)

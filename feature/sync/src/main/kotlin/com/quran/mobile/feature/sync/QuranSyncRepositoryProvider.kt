@@ -11,6 +11,7 @@ import com.quran.shared.persistence.model.Collection
 import com.quran.shared.persistence.model.CollectionAyahBookmark
 import com.quran.shared.persistence.model.CollectionWithAyahBookmarks
 import com.quran.shared.persistence.model.ReadingBookmark
+import com.quran.shared.persistence.model.ReadingBookmarkSlot
 import com.quran.shared.persistence.model.ReadingSession
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepository
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepository
@@ -208,28 +209,57 @@ private class SyncCollectionBookmarksRepository(
 private class SyncReadingBookmarksRepository(
   private val quranDataService: QuranDataService
 ) : ReadingBookmarksRepository {
-  override suspend fun getReadingBookmark(): ReadingBookmark? {
-    return quranDataService.readingBookmark.first()
+  override suspend fun getReadingBookmarks(): List<ReadingBookmark> {
+    return quranDataService.readingBookmarks.first()
   }
 
-  override fun getReadingBookmarkFlow(): Flow<ReadingBookmark?> {
-    return quranDataService.readingBookmark
+  override fun getReadingBookmarksFlow(): Flow<List<ReadingBookmark>> {
+    return quranDataService.readingBookmarks
   }
 
-  override suspend fun addAyahReadingBookmark(sura: Int, ayah: Int) =
-    quranDataService.addAyahReadingBookmark(sura, ayah)
+  override suspend fun setAyahReadingBookmark(slot: ReadingBookmarkSlot, sura: Int, ayah: Int) =
+    quranDataService.setAyahReadingBookmark(slot, sura, ayah)
 
-  override suspend fun addAyahReadingBookmark(sura: Int, ayah: Int, timestamp: PlatformDateTime) =
-    quranDataService.addAyahReadingBookmark(sura, ayah, timestamp)
+  override suspend fun setAyahReadingBookmark(
+    slot: ReadingBookmarkSlot,
+    sura: Int,
+    ayah: Int,
+    timestamp: PlatformDateTime
+  ) = quranDataService.setAyahReadingBookmark(slot, sura, ayah, timestamp)
 
-  override suspend fun addPageReadingBookmark(page: Int) =
-    quranDataService.addPageReadingBookmark(page)
+  override suspend fun setPageReadingBookmark(slot: ReadingBookmarkSlot, page: Int) =
+    quranDataService.setPageReadingBookmark(slot, page)
 
-  override suspend fun addPageReadingBookmark(page: Int, timestamp: PlatformDateTime) =
-    quranDataService.addPageReadingBookmark(page, timestamp)
+  override suspend fun setPageReadingBookmark(
+    slot: ReadingBookmarkSlot,
+    page: Int,
+    timestamp: PlatformDateTime
+  ) = quranDataService.setPageReadingBookmark(slot, page, timestamp)
 
-  override suspend fun deleteReadingBookmark(): Boolean {
-    return quranDataService.deleteReadingBookmark()
+  override suspend fun clearReadingBookmark(slot: ReadingBookmarkSlot): ReadingBookmark {
+    return quranDataService.clearReadingBookmark(slot)
+  }
+
+  override suspend fun clearReadingBookmark(
+    slot: ReadingBookmarkSlot,
+    timestamp: PlatformDateTime
+  ): ReadingBookmark {
+    return quranDataService.clearReadingBookmark(slot, timestamp)
+  }
+
+  override suspend fun renameReadingBookmark(
+    slot: ReadingBookmarkSlot,
+    name: String?
+  ): ReadingBookmark {
+    return quranDataService.renameReadingBookmark(slot, name)
+  }
+
+  override suspend fun renameReadingBookmark(
+    slot: ReadingBookmarkSlot,
+    name: String?,
+    timestamp: PlatformDateTime
+  ): ReadingBookmark {
+    return quranDataService.renameReadingBookmark(slot, name, timestamp)
   }
 }
 

@@ -12,8 +12,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
+import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
-import com.quran.data.model.bookmark.ReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
@@ -22,6 +23,7 @@ import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionItem
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkState
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlin.time.Clock
 import kotlin.time.Instant
 
 @Composable
@@ -38,20 +40,42 @@ private val previewSuraAyahNameResolver: (Context, SuraAyah) -> String = { _, su
   "An-Nisāʾ ${suraAyah.ayah}"
 }
 
-private val previewReadingBookmarkNameResolver: (Context, ReadingBookmark) -> String = { _, bookmark ->
-  when (bookmark) {
-    is AyahReadingBookmark -> "An-Nisāʾ ${bookmark.ayah}"
-    is PageReadingBookmark -> "An-Nisāʾ (Page ${bookmark.page})"
-  }
-}
+private val previewSuraPageNameResolver: (Context, Int) -> String =
+  { _, page -> "An-Nisāʾ (Page $page)" }
 
 private val previewCollections = persistentListOf(
   AyahBookmarkCollectionItem(id = "family", name = "Family", countLabel = 12, isChecked = true),
-  AyahBookmarkCollectionItem(id = "favorites", name = "Favorites", isDefault = true, countLabel = 34, isChecked = false),
-  AyahBookmarkCollectionItem(id = "friday-reminders", name = "Friday reminders", countLabel = 3, isChecked = false),
-  AyahBookmarkCollectionItem(id = "tarawih-planning", name = "Tarawih planning", countLabel = 8, isChecked = true),
-  AyahBookmarkCollectionItem(id = "ramadan-goals", name = "Ramadan goals", countLabel = 21, isChecked = false),
-  AyahBookmarkCollectionItem(id = "memorization", name = "Memorization", countLabel = 45, isChecked = false)
+  AyahBookmarkCollectionItem(
+    id = "favorites",
+    name = "Favorites",
+    isDefault = true,
+    countLabel = 34,
+    isChecked = false
+  ),
+  AyahBookmarkCollectionItem(
+    id = "friday-reminders",
+    name = "Friday reminders",
+    countLabel = 3,
+    isChecked = false
+  ),
+  AyahBookmarkCollectionItem(
+    id = "tarawih-planning",
+    name = "Tarawih planning",
+    countLabel = 8,
+    isChecked = true
+  ),
+  AyahBookmarkCollectionItem(
+    id = "ramadan-goals",
+    name = "Ramadan goals",
+    countLabel = 21,
+    isChecked = false
+  ),
+  AyahBookmarkCollectionItem(
+    id = "memorization",
+    name = "Memorization",
+    countLabel = 45,
+    isChecked = false
+  )
 )
 
 private val previewUncheckedCollections =
@@ -76,15 +100,25 @@ private fun PreviewScaffold(state: AyahBookmarkState) {
 @Preview("arabic", locale = "ar")
 @Composable
 private fun AyahBookmarkDefaultPreview() {
+  val readingBookmark = AyahReadingBookmark(
+    slot = ReadingBookmarkType.TEAL,
+    sura = 4,
+    ayah = 34,
+    timestamp = Clock.System.now()
+  )
+
   PreviewScaffold(
     state = AyahBookmarkState(
       ayah = SuraAyah(4, 1),
       isReadingBookmarkEnabled = true,
-      currentReadingBookmark = AyahReadingBookmark(sura = 4, ayah = 34, timestamp = 0),
+      suggestedReadingBookmark = EmptyReadingBookmark(ReadingBookmarkType.INDIGO, Clock.System.now()),
+      isSuggestedReadingBookmarkEnabled = false,
+      currentReadingBookmark = readingBookmark,
+      currentAyahReadingBookmarks = listOf(readingBookmark),
       collections = previewCollections,
       highlight = previewHighlight(HighlightColor.YELLOW),
       suraAyahNameResolver = previewSuraAyahNameResolver,
-      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
+      suraPageNameResolver = previewSuraPageNameResolver
     )
   )
 }
@@ -93,15 +127,25 @@ private fun AyahBookmarkDefaultPreview() {
 @Preview("no highlight (dark theme)", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun AyahBookmarkNoHighlightPreview() {
+  val readingBookmark = AyahReadingBookmark(
+    slot = ReadingBookmarkType.TEAL,
+    sura = 4,
+    ayah = 34,
+    timestamp = Clock.System.now()
+  )
+
   PreviewScaffold(
     state = AyahBookmarkState(
       ayah = SuraAyah(4, 1),
       isReadingBookmarkEnabled = true,
-      currentReadingBookmark = AyahReadingBookmark(sura = 4, ayah = 34, timestamp = 0),
+      suggestedReadingBookmark = EmptyReadingBookmark(ReadingBookmarkType.INDIGO, Clock.System.now()),
+      isSuggestedReadingBookmarkEnabled = false,
+      currentReadingBookmark = readingBookmark,
+      currentAyahReadingBookmarks = listOf(readingBookmark),
       collections = previewCollections,
       highlight = null,
       suraAyahNameResolver = previewSuraAyahNameResolver,
-      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
+      suraPageNameResolver = previewSuraPageNameResolver
     )
   )
 }
@@ -113,11 +157,18 @@ private fun AyahBookmarkHighlightOnlyPreview() {
     state = AyahBookmarkState(
       ayah = SuraAyah(4, 1),
       isReadingBookmarkEnabled = false,
-      currentReadingBookmark = PageReadingBookmark(page = 83, timestamp = 0),
+      suggestedReadingBookmark = EmptyReadingBookmark(ReadingBookmarkType.INDIGO, Clock.System.now()),
+      isSuggestedReadingBookmarkEnabled = false,
+      currentAyahReadingBookmarks = emptyList(),
+      currentReadingBookmark = PageReadingBookmark(
+        slot = ReadingBookmarkType.CORAL,
+        page = 83,
+        timestamp = Clock.System.now()
+      ),
       collections = previewUncheckedCollections,
       highlight = previewHighlight(HighlightColor.PURPLE),
       suraAyahNameResolver = previewSuraAyahNameResolver,
-      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
+      suraPageNameResolver = previewSuraPageNameResolver
     )
   )
 }
@@ -126,15 +177,24 @@ private fun AyahBookmarkHighlightOnlyPreview() {
 @Preview("nothing saved (dark theme)", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun AyahBookmarkNothingSavedPreview() {
+  val pageReadingBookmark = PageReadingBookmark(
+    slot = ReadingBookmarkType.INDIGO,
+    page = 83,
+    timestamp = Clock.System.now()
+  )
+
   PreviewScaffold(
     state = AyahBookmarkState(
       ayah = SuraAyah(4, 1),
       isReadingBookmarkEnabled = false,
-      currentReadingBookmark = PageReadingBookmark(page = 83, timestamp = 0),
+      suggestedReadingBookmark = pageReadingBookmark,
+      currentAyahReadingBookmarks = listOf(),
+      isSuggestedReadingBookmarkEnabled = false,
+      currentReadingBookmark = pageReadingBookmark,
       collections = previewUncheckedCollections,
       highlight = null,
       suraAyahNameResolver = previewSuraAyahNameResolver,
-      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
+      suraPageNameResolver = previewSuraPageNameResolver
     )
   )
 }
@@ -145,12 +205,15 @@ private fun AyahBookmarkCreatingCollectionPreview() {
   PreviewScaffold(
     state = AyahBookmarkState(
       ayah = SuraAyah(4, 1),
-      isReadingBookmarkEnabled = true,
+      isReadingBookmarkEnabled = false,
+      currentAyahReadingBookmarks = emptyList(),
+      suggestedReadingBookmark = EmptyReadingBookmark(ReadingBookmarkType.INDIGO, Clock.System.now()),
+      isSuggestedReadingBookmarkEnabled = false,
       collections = previewCollections,
       collectionCreation = AyahBookmarkCollectionCreationState.Active(name = "Qiyam"),
       highlight = previewHighlight(HighlightColor.GREEN),
       suraAyahNameResolver = previewSuraAyahNameResolver,
-      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
+      suraPageNameResolver = previewSuraPageNameResolver
     )
   )
 }
@@ -161,12 +224,18 @@ private fun AyahBookmarkCreatingCollectionSubmittingPreview() {
   PreviewScaffold(
     state = AyahBookmarkState(
       ayah = SuraAyah(4, 1),
-      isReadingBookmarkEnabled = true,
+      isReadingBookmarkEnabled = false,
+      currentAyahReadingBookmarks = emptyList(),
+      suggestedReadingBookmark = EmptyReadingBookmark(ReadingBookmarkType.INDIGO, Clock.System.now()),
+      isSuggestedReadingBookmarkEnabled = false,
       collections = previewCollections,
-      collectionCreation = AyahBookmarkCollectionCreationState.Active(name = "Qiyam", isSubmitting = true),
+      collectionCreation = AyahBookmarkCollectionCreationState.Active(
+        name = "Qiyam",
+        isSubmitting = true
+      ),
       highlight = previewHighlight(HighlightColor.BLUE),
       suraAyahNameResolver = previewSuraAyahNameResolver,
-      readingBookmarkNameResolver = previewReadingBookmarkNameResolver
+      suraPageNameResolver = previewSuraPageNameResolver
     )
   )
 }

@@ -55,7 +55,6 @@ class QuranImportPresenterTest {
       FakeBookmarksDao(),
       FakeRecentPagesDao(),
       FakeReadingBookmarksDao(),
-      settings,
       pageMapper,
       BookmarkBackupImportNormalizer(
         context,
@@ -150,7 +149,7 @@ class QuranImportPresenterTest {
         collectionsImported = data.collections.size,
         collectionBookmarksImported = data.collectionBookmarks.size,
         readingSessionsImported = data.readingSessions.size,
-        readingBookmarkImported = data.readingBookmark != null
+        readingBookmarkImported = data.readingBookmarks.size
       )
     }
   }
