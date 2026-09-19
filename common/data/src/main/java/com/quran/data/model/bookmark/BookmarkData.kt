@@ -11,6 +11,9 @@ data class BookmarkData @JvmOverloads constructor(
   val pageType: String? = null
 ) {
 
+  fun getCommaSeparatedNames() =
+    "type, sura, ayah, page, timestamp, tags, slot"
+
   fun getRecentPagesByLine() =
     recentPages
       .map { "${it.getCommaSeparatedValues()} \n" }

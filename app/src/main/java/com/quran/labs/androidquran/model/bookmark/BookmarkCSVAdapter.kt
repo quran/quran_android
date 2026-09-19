@@ -6,7 +6,7 @@ import java.io.IOException
 
 @Throws(IOException::class)
 fun toCSV(sink: BufferedSink, bookmarks: BookmarkData) {
-  val bookmarksName = "${bookmarks.bookmarks.firstOrNull()?.getCommaSeparatedNames()} \n"
+  val bookmarksName = "${bookmarks.getCommaSeparatedNames()} \n"
   val bookmark = bookmarks.getBookmarksByLine() ?: ""
   val recentPages = bookmarks.getRecentPagesByLine() ?: ""
   val readingBookmarks = bookmarks.getReadingBookmarksByLine() ?: ""

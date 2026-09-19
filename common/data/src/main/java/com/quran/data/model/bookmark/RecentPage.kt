@@ -7,5 +7,5 @@ import kotlin.time.Instant
 data class RecentPage(val page: Int, val timestamp: Instant) {
 
   fun getCommaSeparatedValues() =
-      "recent,,, $page, $timestamp"
+      "recent,,, $page, ${timestamp.epochSeconds},,"
 }
