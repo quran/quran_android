@@ -28,11 +28,13 @@ import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.ReadingBookmarkH
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.ReadingBookmarkItem
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.RecentPageHeader
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData.TagHeader
+import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.BookmarksFragment
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.QuranSettings
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
@@ -55,6 +57,7 @@ open class BookmarkPresenter @Inject internal constructor(
   private val readingBookmarksDao: ReadingBookmarksDao,
   private val highlightsDao: HighlightsDao,
   private val quranSettings: QuranSettings,
+  private val arabicDatabaseUtils: Provider<ArabicDatabaseUtils>,
 ) : Presenter<BookmarksFragment> {
   private var sortOrder: Int = quranSettings.bookmarksSortOrder
   var isGroupedByTags: Boolean = quranSettings.bookmarksGroupedByTags
@@ -384,12 +387,51 @@ open class BookmarkPresenter @Inject internal constructor(
     }
   }
 
-  private suspend fun getBookmarksWithRecentPages(sortOrder: Int): BookmarkData {
+  private suspend fun getBookmarksWithAyat(sortOrder: Int): BookmarkData {
     return coroutineScope {
       val bookmarkData = async { getBookmarkData(sortOrder) }
       val recentPages = async { getRecentPages() }
 
-      bookmarkData.await().copy(recentPages = recentPages.await())
+      hydrateAyahText(
+        bookmarkData.await().copy(recentPages = recentPages.await())
+      )
+    }
+  }
+
+  private suspend fun hydrateHighlightText(rows: List<BookmarkRowData>): List<BookmarkRowData> {
+    val highlightedAyat = rows.filterIsInstance<HighlightedAyahItem>()
+    return if (highlightedAyat.isEmpty()) {
+      rows
+    } else {
+      val ayahText = withContext(Dispatchers.IO) {
+        try {
+          arabicDatabaseUtils().getAyahTextForSuraAyahs(
+            highlightedAyat.map { row -> row.highlight.suraAyah }
+          )
+        } catch (throwable: Throwable) {
+          // fall back if the arabic database isn't available
+          Timber.d(throwable, "Unable to hydrate highlight ayah text")
+          emptyMap()
+        }
+      }
+
+      rows.map { row ->
+        if (row is HighlightedAyahItem) row.copy(ayahText = ayahText[row.highlight.suraAyah]) else row
+      }
+    }
+  }
+
+  private suspend fun hydrateAyahText(bookmarkData: BookmarkData): BookmarkData {
+    return withContext(Dispatchers.IO) {
+      try {
+        bookmarkData.copy(
+          bookmarks = arabicDatabaseUtils().hydrateAyahText(bookmarkData.bookmarks.toMutableList())
+        )
+      } catch (throwable: Throwable) {
+        // fall back to showing sura and ayah names if the arabic database isn't available
+        Timber.d(throwable, "Unable to hydrate bookmark ayah text")
+        bookmarkData
+      }
     }
   }
 
@@ -400,12 +442,14 @@ open class BookmarkPresenter @Inject internal constructor(
   @VisibleForTesting
   suspend fun getBookmarksList(sortOrder: Int, groupByTags: Boolean): BookmarkRawResult {
     return coroutineScope {
-      val bookmarkData = async { getBookmarksWithRecentPages(sortOrder) }
+      val bookmarkData = async { getBookmarksWithAyat(sortOrder) }
       val readingBookmarks = async { readingBookmarksDao.readingBookmarks() }
       val highlights = async { highlightsDao.highlightsFlow().first() }
       val data = bookmarkData.await()
-      val rows = getBookmarkRowData(
-        data, sortOrder, groupByTags, readingBookmarks.await(), highlights.await()
+      val rows = hydrateHighlightText(
+        getBookmarkRowData(
+          data, sortOrder, groupByTags, readingBookmarks.await(), highlights.await()
+        )
       )
       val tagMap = generateTagMap(data.tags)
       BookmarkRawResult(rows, tagMap)

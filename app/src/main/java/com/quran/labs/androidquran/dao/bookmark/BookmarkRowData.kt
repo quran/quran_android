@@ -31,7 +31,10 @@ sealed class BookmarkRowData {
     val mark: AyahMark = AyahMark.Bookmark
   ) : BookmarkRowData()
 
-  data class HighlightedAyahItem(val highlight: Highlight) : BookmarkRowData()
+  data class HighlightedAyahItem(
+    val highlight: Highlight,
+    val ayahText: String? = null
+  ) : BookmarkRowData()
 
   object PageBookmarksHeader : BookmarkRowData()
   object AyahBookmarksHeader : BookmarkRowData()

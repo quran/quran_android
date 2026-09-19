@@ -1,8 +1,13 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
+import android.content.Context
+import android.hardware.display.DisplayManager
+import android.view.Display
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarkSortOrder
+import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.EmptyReadingBookmark
@@ -10,18 +15,24 @@ import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
-import com.quran.data.model.SuraAyah
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
+import com.quran.data.source.DisplaySize
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.dao.bookmark.AyahMark
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData
+import com.quran.labs.androidquran.database.DatabaseHandler
 import com.quran.labs.androidquran.fakes.FakeBookmarksDao
 import com.quran.labs.androidquran.fakes.FakeHighlightsDao
+import com.quran.labs.androidquran.fakes.FakePageProvider
 import com.quran.labs.androidquran.fakes.FakeReadingBookmarksDao
 import com.quran.labs.androidquran.fakes.FakeRecentPagesDao
+import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
+import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.ui.helpers.QuranRow
+import com.quran.labs.androidquran.util.QuranFileUtils
+import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -150,6 +161,35 @@ class BookmarkPresenterTest {
     val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
 
     assertThat(result.rows.first()).isEqualTo(BookmarkRowData.RecentPageHeader(RECENT_PAGES.size))
+  }
+
+  @Test
+  fun `ayah bookmarks carry their ayah text`() {
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS + PAGE_BOOKMARK)
+
+    val presenter = makeBookmarkPresenter(fakeArabicDatabaseUtils())
+    val result = getBookmarkResultByDateAndValidate(presenter)
+
+    val quranInfo = QuranInfo(MadaniDataSource())
+    assertThat(
+      result.rows.filterIsInstance<BookmarkRowData.BookmarkItem>()
+        .associate { it.bookmark.id to it.bookmark.ayahText }
+    ).containsExactly(
+      "bookmark-42", "verse ${quranInfo.getAyahId(46, 1)}",
+      "bookmark-2", "verse ${quranInfo.getAyahId(2, 4)}"
+    )
+  }
+
+  @Test
+  fun `ayah bookmarks fall back to sura and ayah without the arabic database`() {
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+
+    // the default presenter's arabic database throws, as a missing one would
+    val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
+
+    assertThat(
+      result.rows.filterIsInstance<BookmarkRowData.BookmarkItem>().map { it.bookmark.ayahText }
+    ).containsExactly(null, null)
   }
 
   @Test
@@ -296,6 +336,25 @@ class BookmarkPresenterTest {
   }
 
   @Test
+  fun `highlighted ayat in the ungrouped list carry their ayah text, like the bookmarks`() {
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+    fakeHighlightsDao.setHighlights(HIGHLIGHTS)
+
+    val presenter = makeBookmarkPresenter(fakeArabicDatabaseUtils())
+    val result = getBookmarkResultAndValidate(presenter, BookmarkSortOrder.SORT_LOCATION)
+
+    val quranInfo = QuranInfo(MadaniDataSource())
+    assertThat(
+      result.rows.filterIsInstance<BookmarkRowData.HighlightedAyahItem>()
+        .associate { it.highlight.suraAyah to it.ayahText }
+    ).containsExactly(
+      SuraAyah(2, 255), "verse ${quranInfo.getAyahId(2, 255)}",
+      SuraAyah(3, 93), "verse ${quranInfo.getAyahId(3, 93)}",
+      SuraAyah(50, 44), "verse ${quranInfo.getAyahId(50, 44)}"
+    )
+  }
+
+  @Test
   fun `a bookmarked ayah that is also highlighted is one row carrying the mark`() {
     val bookmark = Bookmark("bookmark-99", 2, 255, 42, 500)
     fakeBookmarksDao.setBookmarks(listOf(bookmark))
@@ -401,17 +460,42 @@ class BookmarkPresenterTest {
       .inOrder()
   }
 
-  private fun makeBookmarkPresenter(): BookmarkPresenter {
+  private fun makeBookmarkPresenter(
+    arabicDatabaseUtils: ArabicDatabaseUtils? = null
+  ): BookmarkPresenter {
     return object : BookmarkPresenter(
       fakeBookmarksDao,
       fakeRecentPagesDao,
       fakeReadingBookmarksDao,
       fakeHighlightsDao,
       quranSettings,
+      {
+        arabicDatabaseUtils ?: throw IllegalStateException("ArabicDatabaseUtils not wired up in test")
+      },
     ) {
       override fun subscribeToChanges() {
         // nothing
       }
+    }
+  }
+
+  private fun fakeArabicDatabaseUtils(): ArabicDatabaseUtils {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val pageProvider = FakePageProvider()
+    val display = context.getSystemService(DisplayManager::class.java)
+      .getDisplay(Display.DEFAULT_DISPLAY)!!
+    val quranScreenInfo = QuranScreenInfo(
+      context, display, pageProvider.getPageSizeCalculator(DisplaySize(0, 0))
+    )
+    return object : ArabicDatabaseUtils(
+      context,
+      QuranInfo(MadaniDataSource()),
+      QuranFileUtils(context, pageProvider, quranScreenInfo)
+    ) {
+      override fun getArabicDatabaseHandler(): DatabaseHandler? = null
+
+      override fun getAyahTextForAyat(ayat: List<Int>): Map<Int, String> =
+        ayat.associateWith { ayahId -> "verse $ayahId" }
     }
   }
 

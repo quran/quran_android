@@ -46,7 +46,7 @@ class BookmarkUIConverter @Inject constructor(
           quranRowFactory.fromBookmark(context, rowData.bookmark, rowData.tagId, rowData.mark)
 
         is BookmarkRowData.HighlightedAyahItem ->
-          quranRowFactory.fromHighlight(context, rowData.highlight)
+          quranRowFactory.fromHighlight(context, rowData.highlight, rowData.ayahText)
 
         is BookmarkRowData.PageBookmarksHeader ->
           quranRowFactory.fromPageBookmarksHeader(context)
