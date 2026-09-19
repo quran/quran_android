@@ -237,9 +237,9 @@ class BookmarkImportExportModelTest {
     testObserver.assertNoErrors()
     testObserver.assertValueCount(1)
     assertThat(testObserver.values()[0]).isNotNull()
-    assertThat(csvBackupFile().readText()).contains("recent,,, 12, ${Instant.fromEpochSeconds(1000)}")
+    assertThat(csvBackupFile().readText()).contains("recent,,, 12, 1970-01-01T00:16:40Z")
     assertThat(csvBackupFile().readText())
-      .contains("reading_bookmark, TEAL, null, null, 12, ${Instant.fromEpochSeconds(999)}")
+      .contains("reading_bookmark, TEAL, null, null, 12, 1970-01-01T00:16:39Z")
   }
 
   @Test
@@ -259,7 +259,7 @@ class BookmarkImportExportModelTest {
     testObserver.assertNoErrors()
     testObserver.assertValueCount(1)
     assertThat(csvBackupFile().readText())
-      .contains("reading_bookmark, TEAL, 2, 255, $page, ${Instant.fromEpochSeconds(999)}")
+      .contains("reading_bookmark, TEAL, 2, 255, $page, 1970-01-01T00:16:39Z")
   }
 
   @Test
@@ -550,7 +550,7 @@ class BookmarkImportExportModelTest {
         collectionsImported = data.collections.size,
         collectionBookmarksImported = data.collectionBookmarks.size,
         readingSessionsImported = data.readingSessions.size,
-        readingBookmarkImported = data.readingBookmarks.size
+        readingBookmarkImported = 0
       )
     }
   }

@@ -149,7 +149,7 @@ class QuranImportPresenterTest {
         collectionsImported = data.collections.size,
         collectionBookmarksImported = data.collectionBookmarks.size,
         readingSessionsImported = data.readingSessions.size,
-        readingBookmarkImported = data.readingBookmarks.size
+        readingBookmarkImported = 0
       )
     }
   }

@@ -20,7 +20,7 @@ class FakeHighlightsDao : HighlightsDao {
   override fun highlightsFlow(): Flow<List<Highlight>> = highlights
 
   override fun highlightsFlow(currentAyah: SuraAyah): Flow<Highlight?> =
-    highlights.map { entries -> entries.firstOrNull { it.suraAyah == currentAyah } }
+    highlights.map { values -> values.firstOrNull { it.suraAyah == currentAyah } }
 
   override suspend fun setHighlight(ayah: SuraAyah, color: HighlightColor) {
     highlights.update { existing ->

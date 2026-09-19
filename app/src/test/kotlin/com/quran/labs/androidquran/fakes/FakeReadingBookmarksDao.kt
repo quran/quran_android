@@ -13,52 +13,41 @@ import kotlinx.coroutines.flow.update
 import kotlin.time.Instant
 
 class FakeReadingBookmarksDao(
-  initialBookmark: ReadingBookmark? = null
+  vararg initialBookmarks: ReadingBookmark
 ) : ReadingBookmarksDao {
-  private val readingBookmarks = MutableStateFlow(listOfNotNull(initialBookmark))
+  private val bookmarks = MutableStateFlow(initialBookmarks.toList())
+  private val timestamp = Instant.fromEpochSeconds(1)
   val toggledPages = mutableListOf<Int>()
 
   fun setReadingBookmark(bookmark: ReadingBookmark) {
-    readingBookmarks.update { bookmarks ->
-      (bookmarks.filterNot { it.slot == bookmark.slot } + bookmark)
+    bookmarks.update { current ->
+      (current.filterNot { it.slot == bookmark.slot } + bookmark)
         .filterNot { it is EmptyReadingBookmark }
-        .sortedBy { it.slot.ordinal }
+        .sortedBy { it.slot }
     }
   }
 
-  override fun readingBookmarksFlow(): Flow<List<ReadingBookmark>> {
-    return readingBookmarks
-  }
+  override fun readingBookmarksFlow(): Flow<List<ReadingBookmark>> = bookmarks
 
-  override suspend fun readingBookmarks(): List<ReadingBookmark> {
-    return readingBookmarks.value
-  }
+  override suspend fun readingBookmarks(): List<ReadingBookmark> = bookmarks.value
 
   override suspend fun setPageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean {
-    setReadingBookmark(PageReadingBookmark(slot, page, timestamp = Instant.fromEpochSeconds(1)))
+    setReadingBookmark(PageReadingBookmark(slot, page, timestamp))
     return true
   }
 
   override suspend fun setAyahReadingBookmark(slot: ReadingBookmarkType, suraAyah: SuraAyah): Boolean {
-    setReadingBookmark(
-      AyahReadingBookmark(
-        slot = slot,
-        sura = suraAyah.sura,
-        ayah = suraAyah.ayah,
-        timestamp = Instant.fromEpochSeconds(1)
-      )
-    )
+    setReadingBookmark(AyahReadingBookmark(slot, suraAyah.sura, suraAyah.ayah, timestamp))
     return true
   }
 
   override suspend fun clearReadingBookmark(slot: ReadingBookmarkType): ReadingBookmark {
-    val previous = readingBookmarks.value.firstOrNull { it.slot == slot }
-    readingBookmarks.update { bookmarks -> bookmarks.filterNot { it.slot == slot } }
-    return previous ?: EmptyReadingBookmark(slot, Instant.fromEpochSeconds(1))
+    bookmarks.update { current -> current.filterNot { it.slot == slot } }
+    return EmptyReadingBookmark(slot, timestamp)
   }
 
   override suspend fun isPageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean {
-    return readingBookmarks.value.any {
+    return bookmarks.value.any {
       it.slot == slot && it is PageReadingBookmark && it.page == page
     }
   }
@@ -70,6 +59,7 @@ class FakeReadingBookmarksDao(
       false
     } else {
       setPageReadingBookmark(slot, page)
+      true
     }
   }
 
@@ -78,13 +68,7 @@ class FakeReadingBookmarksDao(
     added: List<ReadingBookmark>,
     removed: List<ReadingBookmark>
   ): Boolean {
-    added.forEach { bookmark ->
-      when (bookmark) {
-        is AyahReadingBookmark -> setAyahReadingBookmark(bookmark.slot, bookmark.asSuraAyah())
-        is PageReadingBookmark -> setPageReadingBookmark(bookmark.slot, bookmark.page)
-        is EmptyReadingBookmark -> Unit
-      }
-    }
+    added.filterNot { it is EmptyReadingBookmark }.forEach(::setReadingBookmark)
     removed.forEach { clearReadingBookmark(it.slot) }
     return true
   }
