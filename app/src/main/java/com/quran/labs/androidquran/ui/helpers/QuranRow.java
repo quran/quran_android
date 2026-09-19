@@ -27,6 +27,7 @@ public class QuranRow {
   public int rowType;
   public Integer imageResource;
   public Integer imageFilterColorResource;
+  public String imageContentDescription;
   public Integer juzType;
   public String juzOverlayText;
   public long dateAddedInMillis;
@@ -58,6 +59,7 @@ public class QuranRow {
     private String juzOverlayText;
     private long dateAddedInMillis;
     private Integer imageFilterColorResource;
+    private String imageContentDescription;
     private Bookmark bookmark;
     private Integer itemCount;
     private boolean isCollapsible;
@@ -119,6 +121,11 @@ public class QuranRow {
       return this;
     }
 
+    public Builder withImageContentDescription(String contentDescription) {
+      imageContentDescription = contentDescription;
+      return this;
+    }
+
     public Builder withJuzType(int juzType) {
       this.juzType = juzType;
       return this;
@@ -162,7 +169,7 @@ public class QuranRow {
 
     public QuranRow build() {
       return new QuranRow(text, metadata, rowType, sura,
-          ayah, page, imageResource, imageFilterColorResource, juzType,
+          ayah, page, imageResource, imageFilterColorResource, imageContentDescription, juzType,
           juzOverlayText, bookmarkId, tagId, bookmark, dateAddedInMillis, itemCount,
           isCollapsible, isCollapsed, isSystemCollection, highlightColor);
     }
@@ -170,7 +177,8 @@ public class QuranRow {
 
   private QuranRow(String text, String metadata, int rowType,
       int sura, int ayah, int page, Integer imageResource, Integer filterColorResource,
-      Integer juzType, String juzOverlayText, String bookmarkId, String tagId, Bookmark bookmark,
+      String imageContentDescription, Integer juzType, String juzOverlayText, String bookmarkId,
+      String tagId, Bookmark bookmark,
                    long dateAddedInMillis, Integer itemCount, boolean isCollapsible,
                    boolean isCollapsed, boolean isSystemCollection,
                    HighlightColor highlightColor) {
@@ -182,6 +190,7 @@ public class QuranRow {
     this.metadata = metadata;
     this.imageResource = imageResource;
     this.imageFilterColorResource = filterColorResource;
+    this.imageContentDescription = imageContentDescription;
     this.juzType = juzType;
     this.juzOverlayText = juzOverlayText;
     this.tagId = tagId;

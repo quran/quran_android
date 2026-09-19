@@ -379,6 +379,17 @@
   <string name="reading_bookmark_added">Bookmark added</string>
   <string name="reading_bookmark_dismiss_education">Dismiss</string>
 
+  <string name="reading_bookmarks">Reading Bookmarks</string>
+  <plurals name="plural_reading_bookmarks" translatable="false">
+    <item quantity="one">@string/reading_bookmark</item>
+    <item quantity="other">@string/reading_bookmarks</item>
+  </plurals>
+  <string name="reading_bookmark_coral">Coral</string>
+  <string name="reading_bookmark_teal">Teal</string>
+  <string name="reading_bookmark_indigo">Indigo</string>
+  <!-- the juz' a pin is in, then how long ago it was placed, ex "Juz' 4 · 4 minutes ago" -->
+  <string name="reading_bookmark_details" translatable="false">%1$s · %2$s</string>
+
   <!-- highlights section in the bookmarks tab -->
   <string name="highlights">Highlights</string>
   <!-- header over the flat list of ayat, which mixes bookmarked and highlighted ayat -->

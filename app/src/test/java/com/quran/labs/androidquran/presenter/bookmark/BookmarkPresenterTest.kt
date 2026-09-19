@@ -3,7 +3,9 @@ package com.quran.labs.androidquran.presenter.bookmark
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.dao.BookmarkSortOrder
+import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
@@ -108,12 +110,46 @@ class BookmarkPresenterTest {
     val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
 
     assertThat(result.rows.take(5)).containsExactly(
-      BookmarkRowData.ReadingBookmarkHeader,
+      BookmarkRowData.ReadingBookmarkHeader(1),
       BookmarkRowData.ReadingBookmarkItem(readingBookmark),
       BookmarkRowData.RecentPageHeader(RECENT_PAGES.size),
       BookmarkRowData.RecentPage(RECENT_PAGES[0]),
       BookmarkRowData.RecentPage(RECENT_PAGES[1])
     ).inOrder()
+  }
+
+  @Test
+  fun `renders every placed reading bookmark in pin order and leaves unplaced ones out`() {
+    val indigo =
+      AyahReadingBookmark(ReadingBookmarkType.INDIGO, 2, 255, Instant.fromEpochSeconds(400))
+    val coral = PageReadingBookmark(ReadingBookmarkType.CORAL, 77, Instant.fromEpochSeconds(300))
+    fakeReadingBookmarksDao = FakeReadingBookmarksDao(
+      indigo,
+      EmptyReadingBookmark(ReadingBookmarkType.TEAL, Instant.fromEpochSeconds(500)),
+      coral
+    )
+    fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
+
+    val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
+
+    assertThat(result.rows.take(4)).containsExactly(
+      BookmarkRowData.ReadingBookmarkHeader(2),
+      BookmarkRowData.ReadingBookmarkItem(coral),
+      BookmarkRowData.ReadingBookmarkItem(indigo),
+      BookmarkRowData.RecentPageHeader(RECENT_PAGES.size)
+    ).inOrder()
+  }
+
+  @Test
+  fun `omits the reading bookmarks section when no pin is placed`() {
+    fakeReadingBookmarksDao = FakeReadingBookmarksDao(
+      EmptyReadingBookmark(ReadingBookmarkType.CORAL, Instant.fromEpochSeconds(500))
+    )
+    fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
+
+    val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
+
+    assertThat(result.rows.first()).isEqualTo(BookmarkRowData.RecentPageHeader(RECENT_PAGES.size))
   }
 
   @Test

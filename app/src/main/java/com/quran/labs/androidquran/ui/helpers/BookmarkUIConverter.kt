@@ -15,8 +15,8 @@ class BookmarkUIConverter @Inject constructor(
   fun convertToUIResult(context: Context, rawResult: BookmarkRawResult): BookmarkResult {
     val uiRows = rawResult.rows.map { rowData ->
       when (rowData) {
-        BookmarkRowData.ReadingBookmarkHeader ->
-          quranRowFactory.fromReadingBookmarkHeader(context)
+        is BookmarkRowData.ReadingBookmarkHeader ->
+          quranRowFactory.fromReadingBookmarkHeader(context, rowData.count)
 
         is BookmarkRowData.ReadingBookmarkItem ->
           quranRowFactory.fromReadingBookmark(context, rowData.readingBookmark)

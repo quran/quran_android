@@ -166,6 +166,7 @@ class QuranListAdapter(
       metadata.visibility = View.VISIBLE
       metadata.text = item.metadata
       tags.visibility = View.GONE
+      image.contentDescription = item.imageContentDescription
 
 
       when {
@@ -190,7 +191,7 @@ class QuranListAdapter(
             )
           }
 
-          if (showDate) {
+          if (showDate && !item.isReadingBookmark) {
             val date = SimpleDateFormat("MMM dd, HH:mm", locale)
               .format(Date(item.dateAddedInMillis))
             holder.metadata.text = buildString {
@@ -206,7 +207,7 @@ class QuranListAdapter(
           val tagList = ArrayList<Tag>()
           val bookmark = item.bookmark
           if (bookmark != null && bookmark.tags.isNotEmpty() && showTags) {
-            for (i in 0 until bookmark.tags.size) {
+            for (i in bookmark.tags.indices) {
               val tagId = bookmark.tags[i]
               val tag = tagMap[tagId]
               tag?.let { tagList.add(it.copy(name = CollectionNames.displayName(context, it))) }
