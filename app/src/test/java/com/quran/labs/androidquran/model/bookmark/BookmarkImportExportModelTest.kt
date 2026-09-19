@@ -222,11 +222,11 @@ class BookmarkImportExportModelTest {
   fun testExportBookmarksCsvWithDataProducesUri() {
     bookmarksDao.setTags(listOf(Tag("1", "CSV Tag")))
     bookmarksDao.setBookmarks(
-      listOf(Bookmark("1", 1, 1, 1, System.currentTimeMillis()))
+      listOf(Bookmark("1", 1, 1, 1, 1_700_000_000L, tags = listOf("1")))
     )
-    recentPagesDao.setRecentPages(listOf(RecentPage(12, Instant.fromEpochSeconds(1000))))
+    recentPagesDao.setRecentPages(listOf(RecentPage(12, Instant.fromEpochMilliseconds(1_700_000_000_123L))))
     readingBookmarksDao.setReadingBookmark(
-      PageReadingBookmark(ReadingBookmarkType.TEAL, 12, Instant.fromEpochSeconds(999))
+      PageReadingBookmark(ReadingBookmarkType.TEAL, 12, Instant.fromEpochMilliseconds(1_699_999_999_456L))
     )
 
     val testObserver = TestObserver<Uri>()
@@ -237,9 +237,12 @@ class BookmarkImportExportModelTest {
     testObserver.assertNoErrors()
     testObserver.assertValueCount(1)
     assertThat(testObserver.values()[0]).isNotNull()
-    assertThat(csvBackupFile().readText()).contains("recent,,, 12, 1970-01-01T00:16:40Z")
-    assertThat(csvBackupFile().readText())
-      .contains("reading_bookmark, TEAL, null, null, 12, 1970-01-01T00:16:39Z")
+    assertThat(csvBackupFile().readText()).isEqualTo(
+      "type, sura, ayah, page, timestamp, tags, slot \n" +
+        "bookmark, 1, 1, 1, 1700000000, CSV Tag, \n" +
+        "recent,,, 12, 1700000000,, \n" +
+        "reading_bookmark, null, null, 12, 1699999999,, TEAL \n"
+    )
   }
 
   @Test
@@ -258,8 +261,25 @@ class BookmarkImportExportModelTest {
 
     testObserver.assertNoErrors()
     testObserver.assertValueCount(1)
-    assertThat(csvBackupFile().readText())
-      .contains("reading_bookmark, TEAL, 2, 255, $page, 1970-01-01T00:16:39Z")
+    assertThat(csvBackupFile().readText()).isEqualTo(
+      "type, sura, ayah, page, timestamp, tags, slot \n" +
+        "reading_bookmark, 2, 255, $page, 999,, TEAL \n"
+    )
+  }
+
+  @Test
+  fun testExportBookmarksCsvWithOnlyRecentPagesKeepsHeader() {
+    val sink = Buffer()
+
+    BookmarkJsonModel().toCSV(
+      sink,
+      BookmarkData(recentPages = listOf(RecentPage(12, Instant.fromEpochSeconds(1000))))
+    )
+
+    assertThat(sink.readUtf8()).isEqualTo(
+      "type, sura, ayah, page, timestamp, tags, slot \n" +
+        "recent,,, 12, 1000,, \n"
+    )
   }
 
   @Test

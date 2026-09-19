@@ -13,7 +13,7 @@ data class BackupReadingBookmark(
   val timestamp: Instant
 ) {
   fun getCommaSeparatedValues() =
-    "reading_bookmark, $slot, $sura, $ayah, $page, $timestamp"
+    "reading_bookmark, $sura, $ayah, $page, ${timestamp.epochSeconds},, $slot"
 
   companion object {
     const val TYPE_AYAH = "ayah"
