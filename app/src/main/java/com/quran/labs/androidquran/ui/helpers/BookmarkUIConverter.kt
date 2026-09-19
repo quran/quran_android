@@ -33,8 +33,8 @@ class BookmarkUIConverter @Inject constructor(
           quranRowFactory.fromCurrentPage(context, page, rowData.recentPage.timestamp.epochSeconds)
         }
 
-        BookmarkRowData.HighlightsHeader ->
-          quranRowFactory.fromHighlightsHeader(context)
+        is BookmarkRowData.HighlightsHeader ->
+          quranRowFactory.fromHighlightsHeader(context, rowData.isCollapsed)
 
         is BookmarkRowData.HighlightColorItem ->
           quranRowFactory.fromHighlightColor(context, rowData.color, rowData.count)

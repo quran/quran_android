@@ -382,6 +382,10 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
         bookmarkPresenter.toggleCollectionCollapsed(row.tagId ?: return)
       }
 
+      row.isHighlightsHeader -> {
+        bookmarkPresenter.toggleHighlightsCollapsed()
+      }
+
       row.isHighlightColor -> {
         val color = row.highlightColor
         if (color != null) {

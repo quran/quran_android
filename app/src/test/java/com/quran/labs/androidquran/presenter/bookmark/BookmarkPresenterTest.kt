@@ -78,7 +78,7 @@ class BookmarkPresenterTest {
     // the default collection is a tag like any other now, so it is in the map too
     assertThat(result.tagMap).containsAtLeast("tag-1", TAGS[0], "tag-2", TAGS[1])
     assertThat(result.tagMap.values.single { it.isDefault }.name).isEqualTo("Favorites")
-    assertThat(result.rows.first()).isInstanceOf(BookmarkRowData.AyahBookmarksHeader::class.java)
+    assertThat(result.rows.filterIsInstance<BookmarkRowData.AyahBookmarksHeader>()).hasSize(1)
     assertThat(result.rows.filterIsInstance<BookmarkRowData.BookmarkItem>()).hasSize(2)
   }
 
@@ -305,7 +305,7 @@ class BookmarkPresenterTest {
       BookmarkRowData.RecentPageHeader(RECENT_PAGES.size),
       BookmarkRowData.RecentPage(RECENT_PAGES[0]),
       BookmarkRowData.RecentPage(RECENT_PAGES[1]),
-      BookmarkRowData.HighlightsHeader,
+      BookmarkRowData.HighlightsHeader(isCollapsed = false),
       BookmarkRowData.HighlightColorItem(HighlightColor.YELLOW, 0),
       BookmarkRowData.HighlightColorItem(HighlightColor.GREEN, 1),
       BookmarkRowData.HighlightColorItem(HighlightColor.BLUE, 2),
@@ -394,13 +394,49 @@ class BookmarkPresenterTest {
   }
 
   @Test
-  fun `highlights section is hidden when there are no highlights`() {
+  fun `highlights section is there but collapsed when there are no highlights`() {
     fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
 
     val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
 
-    assertThat(result.rows).doesNotContain(BookmarkRowData.HighlightsHeader)
+    assertThat(result.rows.first())
+      .isEqualTo(BookmarkRowData.HighlightsHeader(isCollapsed = true))
     assertThat(result.rows.filterIsInstance<BookmarkRowData.HighlightColorItem>()).isEmpty()
+  }
+
+  @Test
+  fun `an expanded highlights section stays expanded with no highlights left`() {
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+    val presenter = makeBookmarkPresenter()
+    getBookmarkResultByDateAndValidate(presenter)
+
+    presenter.toggleHighlightsCollapsed()
+    val result = getBookmarkResultByDateAndValidate(presenter)
+
+    assertThat(result.rows.first())
+      .isEqualTo(BookmarkRowData.HighlightsHeader(isCollapsed = false))
+    assertThat(result.rows.filterIsInstance<BookmarkRowData.HighlightColorItem>()).hasSize(5)
+  }
+
+  @Test
+  fun `a collapsed highlights section keeps its count and hides its colors`() {
+    fakeHighlightsDao.setHighlights(HIGHLIGHTS)
+    val presenter = makeBookmarkPresenter()
+    getBookmarkResultByDateAndValidate(presenter)
+
+    presenter.toggleHighlightsCollapsed()
+    val result = getBookmarkResultByDateAndValidate(presenter)
+
+    assertThat(result.rows.first())
+      .isEqualTo(BookmarkRowData.HighlightsHeader(isCollapsed = true))
+    assertThat(result.rows.filterIsInstance<BookmarkRowData.HighlightColorItem>()).isEmpty()
+  }
+
+  @Test
+  fun `an empty tab has no rows at all, so its empty state can show`() {
+    val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
+
+    assertThat(result.rows).isEmpty()
   }
 
   @Test

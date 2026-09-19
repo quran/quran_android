@@ -13,7 +13,7 @@ sealed class BookmarkRowData {
   data class RecentPageHeader(val count: Int) : BookmarkRowData()
   data class RecentPage(val recentPage: com.quran.data.model.bookmark.RecentPage) : BookmarkRowData()
 
-  data object HighlightsHeader : BookmarkRowData()
+  data class HighlightsHeader(val isCollapsed: Boolean) : BookmarkRowData()
   data class HighlightColorItem(val color: HighlightColor, val count: Int) : BookmarkRowData()
 
   data class TagHeader(
