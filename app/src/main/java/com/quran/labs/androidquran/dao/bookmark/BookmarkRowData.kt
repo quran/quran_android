@@ -7,7 +7,7 @@ import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
 
 sealed class BookmarkRowData {
-  data object ReadingBookmarkHeader : BookmarkRowData()
+  data class ReadingBookmarkHeader(val count: Int) : BookmarkRowData()
   data class ReadingBookmarkItem(val readingBookmark: ReadingBookmark) : BookmarkRowData()
 
   data class RecentPageHeader(val count: Int) : BookmarkRowData()

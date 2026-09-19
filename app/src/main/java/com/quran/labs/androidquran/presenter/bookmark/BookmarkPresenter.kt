@@ -10,6 +10,7 @@ import com.quran.data.dao.RecentPagesDao
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
+import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
@@ -404,8 +405,7 @@ open class BookmarkPresenter @Inject internal constructor(
       val highlights = async { highlightsDao.highlightsFlow().first() }
       val data = bookmarkData.await()
       val rows = getBookmarkRowData(
-        // TODO: fix this when we support multiple reading bookmarks
-        data, sortOrder, groupByTags, readingBookmarks.await().firstOrNull(), highlights.await()
+        data, sortOrder, groupByTags, readingBookmarks.await(), highlights.await()
       )
       val tagMap = generateTagMap(data.tags)
       BookmarkRawResult(rows, tagMap)
@@ -437,14 +437,19 @@ open class BookmarkPresenter @Inject internal constructor(
     data: BookmarkData,
     sortOrder: Int,
     groupByTags: Boolean,
-    readingBookmark: ReadingBookmark?,
+    readingBookmarks: List<ReadingBookmark>,
     highlights: List<Highlight>
   ): MutableList<BookmarkRowData> {
     val rows = mutableListOf<BookmarkRowData>()
 
-    if (readingBookmark != null) {
-      rows.add(ReadingBookmarkHeader)
-      rows.add(ReadingBookmarkItem(readingBookmark))
+    val placedReadingBookmarks = readingBookmarks
+      .filterNot { readingBookmark -> readingBookmark is EmptyReadingBookmark }
+      .sortedBy { readingBookmark -> readingBookmark.slot }
+    if (placedReadingBookmarks.isNotEmpty()) {
+      rows.add(ReadingBookmarkHeader(placedReadingBookmarks.size))
+      placedReadingBookmarks.forEach { readingBookmark ->
+        rows.add(ReadingBookmarkItem(readingBookmark))
+      }
     }
 
     val recentPages = data.recentPages
