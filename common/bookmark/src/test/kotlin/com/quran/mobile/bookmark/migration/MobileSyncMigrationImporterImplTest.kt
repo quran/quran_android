@@ -60,7 +60,7 @@ class MobileSyncImporterImplTest {
       timestampProvider = FakeMobileSyncTimestampProvider(),
       appCoroutineScope = appCoroutineScope
     )
-    importer = MobileSyncImporterImpl(mobileSyncDatabase)
+    importer = MobileSyncImporterImpl(mobileSyncDatabase, context)
   }
 
   @After

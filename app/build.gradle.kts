@@ -306,6 +306,7 @@ dependencies {
   testImplementation(libs.kotlinx.coroutines.test)
   testImplementation(libs.sqldelight.sqlite.driver)
   testImplementation(libs.sqldelight.primitive.adapters)
+  testImplementation(libs.quran.mobile.sync)
 
   errorprone(libs.errorprone.core)
 
