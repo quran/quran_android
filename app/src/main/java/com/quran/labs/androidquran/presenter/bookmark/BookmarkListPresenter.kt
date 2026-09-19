@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
-import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarkSortOrder
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.dao.HighlightsDao
@@ -30,7 +29,6 @@ import kotlin.time.Duration.Companion.milliseconds
 class BookmarkListPresenter @Inject constructor(
   private val bookmarksDao: BookmarksDao,
   private val highlightsDao: HighlightsDao,
-  private val quranInfo: QuranInfo,
   private val arabicDatabaseUtils: Provider<ArabicDatabaseUtils>,
   private val appCoroutineScope: AppCoroutineScope
 ) {
@@ -123,12 +121,9 @@ class BookmarkListPresenter @Inject constructor(
 
     return withContext(Dispatchers.IO) {
       try {
-        val ayahIds = highlights.associateBy { highlight ->
-          quranInfo.getAyahId(highlight.suraAyah.sura, highlight.suraAyah.ayah)
-        }
-        arabicDatabaseUtils().getAyahTextForAyat(ayahIds.keys.toList())
-          .mapNotNull { (ayahId, text) -> ayahIds[ayahId]?.suraAyah?.let { it to text } }
-          .toMap()
+        arabicDatabaseUtils().getAyahTextForSuraAyahs(
+          highlights.map { highlight -> highlight.suraAyah }
+        )
       } catch (throwable: Throwable) {
         // the arabic database is optional - fall back to showing sura and ayah names
         Timber.d(throwable, "Unable to hydrate highlight ayah text")

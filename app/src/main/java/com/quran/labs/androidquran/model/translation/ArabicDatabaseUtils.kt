@@ -95,6 +95,21 @@ open class ArabicDatabaseUtils @Inject internal constructor(
     )
   }
 
+  fun getAyahTextForSuraAyahs(suraAyahs: Collection<SuraAyah>): Map<SuraAyah, String> {
+    val suraAyahsById = suraAyahs.associateBy { suraAyah ->
+      quranInfo.getAyahId(suraAyah.sura, suraAyah.ayah)
+    }
+    return if (suraAyahsById.isEmpty()) {
+      emptyMap()
+    } else {
+      getAyahTextForAyat(suraAyahsById.keys.toList())
+        .mapNotNull { (ayahId, text) ->
+          suraAyahsById[ayahId]?.let { suraAyah -> suraAyah to text }
+        }
+        .toMap()
+    }
+  }
+
   open fun getAyahTextForAyat(ayat: List<Int>): Map<Int, String> {
     val result: MutableMap<Int, String> = HashMap(ayat.size)
     val arabicDatabaseHandler = getArabicDatabaseHandler()

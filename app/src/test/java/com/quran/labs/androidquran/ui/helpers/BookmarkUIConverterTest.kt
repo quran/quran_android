@@ -118,6 +118,32 @@ class BookmarkUIConverterTest {
   }
 
   @Test
+  fun `highlighted ayah rows read by their text when there is one`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val quranInfo = QuranInfo(MadaniDataSource())
+    val converter = BookmarkUIConverter(
+      QuranRowFactory(quranInfo, QuranDisplayData(quranInfo)),
+      quranInfo
+    )
+    val highlight =
+      Highlight(SuraAyah(2, 255), HighlightColor.BLUE, Instant.parse("2023-11-14T22:13:20Z"))
+    val data = BookmarkRawResult(
+      rows = listOf(
+        BookmarkRowData.HighlightedAyahItem(highlight, "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ"),
+        BookmarkRowData.HighlightedAyahItem(highlight)
+      ),
+      tagMap = emptyMap()
+    )
+
+    val (withText, withoutText) = converter.convertToUIResult(context, data).rows
+
+    assertThat(withText.text).isEqualTo("ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ...")
+    assertThat(withText.metadata).isEqualTo("Surah Al-Baqarah - Ayah 255, Juz' 3")
+    assertThat(withoutText.text).isEqualTo("Surah Al-Baqarah - Ayah 255")
+    assertThat(withoutText.metadata).isEqualTo("Page 42, Juz' 3")
+  }
+
+  @Test
   @Config(qualifiers = "ar")
   fun `reading bookmarks header and pin names are translated to arabic`() {
     val context = ApplicationProvider.getApplicationContext<Context>()
