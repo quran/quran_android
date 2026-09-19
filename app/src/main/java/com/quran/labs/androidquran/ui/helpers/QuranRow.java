@@ -18,6 +18,7 @@ public class QuranRow {
   public static final int AYAH_READING_BOOKMARK = 6;
   public static final int HIGHLIGHT_COLOR = 7;
   public static final int HIGHLIGHTED_AYAH = 8;
+  public static final int HIGHLIGHTS_HEADER = 9;
 
   public int sura;
   public int ayah;
@@ -205,7 +206,11 @@ public class QuranRow {
   }
 
   public boolean isHeader() {
-    return rowType == HEADER || rowType == BOOKMARK_HEADER;
+    return rowType == HEADER || rowType == BOOKMARK_HEADER || rowType == HIGHLIGHTS_HEADER;
+  }
+
+  public boolean isHighlightsHeader() {
+    return rowType == HIGHLIGHTS_HEADER;
   }
 
   public boolean isBookmarkHeader() {

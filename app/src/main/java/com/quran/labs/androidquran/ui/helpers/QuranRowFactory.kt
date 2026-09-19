@@ -195,10 +195,12 @@ class QuranRowFactory @Inject constructor(
       .build()
   }
 
-  fun fromHighlightsHeader(context: Context): QuranRow {
+  fun fromHighlightsHeader(context: Context, isCollapsed: Boolean): QuranRow {
+    // no count on this one: each color carries its own, and the five colors never change
     return QuranRow.Builder()
       .withText(context.getString(R.string.highlights))
-      .withType(QuranRow.HEADER)
+      .withType(QuranRow.HIGHLIGHTS_HEADER)
+      .withCollapsedState(isCollapsed)
       .build()
   }
 

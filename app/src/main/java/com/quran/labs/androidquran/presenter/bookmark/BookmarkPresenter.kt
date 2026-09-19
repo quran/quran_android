@@ -69,6 +69,8 @@ open class BookmarkPresenter @Inject internal constructor(
 
   private var collapsedCollections: Set<String> = quranSettings.collapsedCollections
 
+  private var isHighlightsCollapsed: Boolean = quranSettings.isHighlightsCollapsed(true)
+
   private var cachedData: BookmarkRawResult? = null
   private var fragment: BookmarksFragment? = null
 
@@ -169,6 +171,12 @@ open class BookmarkPresenter @Inject internal constructor(
       collapsedCollections + collectionId
     }
     quranSettings.collapsedCollections = collapsedCollections
+    requestData(false)
+  }
+
+  fun toggleHighlightsCollapsed() {
+    isHighlightsCollapsed = !isHighlightsCollapsed
+    quranSettings.setHighlightsCollapsed(isHighlightsCollapsed)
     requestData(false)
   }
 
@@ -505,26 +513,29 @@ open class BookmarkPresenter @Inject internal constructor(
       }
     }
 
-    rows.addAll(getHighlightRowData(highlights))
+    val bookmarkRows = if (groupByTags) {
+      getRowDataSortedByTags(data.tags, data.bookmarks)
+    } else {
+      getSortedRowData(data.bookmarks, highlights, sortOrder)
+    }
 
-    rows.addAll(
-      if (groupByTags) {
-        getRowDataSortedByTags(data.tags, data.bookmarks)
-      } else {
-        getSortedRowData(data.bookmarks, highlights, sortOrder)
-      }
-    )
-    return rows
+    return if (rows.isEmpty() && bookmarkRows.isEmpty() && highlights.isEmpty()) {
+      mutableListOf()
+    } else {
+      rows.addAll(getHighlightRowData(highlights))
+      rows.addAll(bookmarkRows)
+      rows
+    }
   }
 
   private fun getHighlightRowData(highlights: List<Highlight>): List<BookmarkRowData> {
-    return if (highlights.isEmpty()) {
-      emptyList()
-    } else {
-      val countsByColor: Map<HighlightColor, Int> =
-        highlights.groupingBy { highlight -> highlight.color }.eachCount()
-      buildList {
-        add(HighlightsHeader)
+    val isCollapsed = quranSettings.isHighlightsCollapsed(highlights.isEmpty())
+    isHighlightsCollapsed = isCollapsed
+    return buildList {
+      add(HighlightsHeader(isCollapsed))
+      if (!isCollapsed) {
+        val countsByColor: Map<HighlightColor, Int> =
+          highlights.groupingBy { highlight -> highlight.color }.eachCount()
         HighlightColors.sorted.forEach { spec ->
           add(HighlightColorItem(spec.highlightColor, countsByColor[spec.highlightColor] ?: 0))
         }
