@@ -375,8 +375,11 @@
   <string name="reading_bookmark_movable_education_title">This is a movable reading bookmark</string>
   <string name="reading_bookmark_movable_education_body">Saving a reading bookmark replaces your old one. To save multiple ayahs, long press an ayah and add it to a collection.</string>
   <string name="reading_bookmark_moved_from">Moved from %1$s</string>
-  <string name="reading_bookmark_moved_from_title">Bookmark moved from %1$s</string>
-  <string name="reading_bookmark_added">Bookmark added</string>
+  <!-- the toast that confirms a reading bookmark pin moved, and offers to undo it -->
+  <string name="reading_bookmark_moved_to_title">Moved %1$s to %2$s</string>
+  <string name="reading_bookmark_placed_title">Placed %1$s at %2$s</string>
+  <string name="reading_bookmark_cleared_title">Cleared %1$s</string>
+  <string name="reading_bookmark_was_at">Was at %1$s</string>
   <string name="reading_bookmark_dismiss_education">Dismiss</string>
 
   <string name="reading_bookmarks">Reading Bookmarks</string>
@@ -384,9 +387,6 @@
     <item quantity="one">@string/reading_bookmark</item>
     <item quantity="other">@string/reading_bookmarks</item>
   </plurals>
-  <string name="reading_bookmark_coral">Coral</string>
-  <string name="reading_bookmark_teal">Teal</string>
-  <string name="reading_bookmark_indigo">Indigo</string>
   <!-- the juz' a pin is in, then how long ago it was placed, ex "Juz' 4 · 4 minutes ago" -->
   <string name="reading_bookmark_details" translatable="false">%1$s · %2$s</string>
 

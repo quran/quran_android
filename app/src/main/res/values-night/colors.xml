@@ -29,9 +29,6 @@
   <color name="highlight_list_red">#ffe57373</color>
   <color name="highlight_list_purple">#ffba68c8</color>
   <color name="unhighlighted_bookmark_color">#ff90a4ae</color>
-  <color name="reading_bookmark_coral">#fff4502a</color>
-  <color name="reading_bookmark_teal">#ff17c8d8</color>
-  <color name="reading_bookmark_indigo">#ff4b51e5</color>
   <color name="tag_chip_border">#73b2dfdb</color>
 
   <color name="default_text">#ffffffff</color>

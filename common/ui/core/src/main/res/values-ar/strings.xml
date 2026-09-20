@@ -12,4 +12,8 @@
   <string name="highlight_color_blue">أزرق</string>
   <string name="highlight_color_red">أحمر</string>
   <string name="highlight_color_purple">بنفسجي</string>
+  <!-- names of the three reading bookmark slots -->
+  <string name="reading_bookmark_coral">مرجاني</string>
+  <string name="reading_bookmark_teal">فيروزي</string>
+  <string name="reading_bookmark_indigo">نيلي</string>
 </resources>

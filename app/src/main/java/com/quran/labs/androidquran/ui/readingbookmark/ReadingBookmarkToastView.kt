@@ -12,28 +12,30 @@ import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkTarget
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
+import com.quran.labs.androidquran.common.ui.core.ReadingBookmarkSlots
+import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkChange
 import com.quran.page.common.data.QuranNaming
 
-/** Creates the non-modal Compose view driven by `ReadingBookmarkPresenter`. */
 internal fun createReadingBookmarkToastView(
   context: Context,
-  previousBookmark: ReadingBookmark?,
+  change: ReadingBookmarkChange,
   isEducation: Boolean,
   quranNaming: QuranNaming,
   onUndo: () -> Unit,
-  onConfirm: () -> Unit
+  onDismiss: () -> Unit
 ): ComposeView {
   return ComposeView(context).apply {
     setContent {
       QuranTheme {
         ReadingBookmarkToastContent(
+          change = change,
           isEducation = isEducation,
-          previousBookmark = previousBookmark,
           quranNaming = quranNaming,
           onUndo = onUndo,
-          onConfirm = onConfirm
+          onDismiss = onDismiss
         )
       }
     }
@@ -42,33 +44,43 @@ internal fun createReadingBookmarkToastView(
 
 @Composable
 private fun ReadingBookmarkToastContent(
+  change: ReadingBookmarkChange,
   isEducation: Boolean,
-  previousBookmark: ReadingBookmark?,
   quranNaming: QuranNaming,
   onUndo: () -> Unit,
-  onConfirm: () -> Unit
+  onDismiss: () -> Unit
 ) {
   val context = LocalContext.current
-  val movedFromLocation = previousBookmark?.let { quranNaming.readingBookmarkLabel(context, it) }
+  val slotName = stringResource(ReadingBookmarkSlots[change.slot].nameResourceId)
+  val previousLocation = change.previous?.let { quranNaming.readingBookmarkLabel(context, it) }
 
   val title = when {
     isEducation -> stringResource(R.string.reading_bookmark_movable_education_title)
-    movedFromLocation != null -> stringResource(R.string.reading_bookmark_moved_from_title, movedFromLocation)
-    else -> stringResource(R.string.reading_bookmark_added)
+    change is ReadingBookmarkChange.Placed -> {
+      val location = quranNaming.targetLabel(context, change.target)
+      if (previousLocation != null) {
+        stringResource(R.string.reading_bookmark_moved_to_title, slotName, location)
+      } else {
+        stringResource(R.string.reading_bookmark_placed_title, slotName, location)
+      }
+    }
+    else -> stringResource(R.string.reading_bookmark_cleared_title, slotName)
   }
-  val movedFromText = if (isEducation && movedFromLocation != null) {
-    stringResource(R.string.reading_bookmark_moved_from, movedFromLocation)
-  } else {
-    null
+
+  val subtitle = when {
+    previousLocation == null -> null
+    change is ReadingBookmarkChange.Cleared ->
+      stringResource(R.string.reading_bookmark_was_at, previousLocation)
+    else -> stringResource(R.string.reading_bookmark_moved_from, previousLocation)
   }
   val body = if (isEducation) stringResource(R.string.reading_bookmark_movable_education_body) else null
 
   ReadingBookmarkMovedToast(
     title = title,
-    movedFromText = movedFromText,
+    movedFromText = subtitle,
     body = body,
-    onUndo = onUndo.takeIf { movedFromLocation != null },
-    onDismiss = onConfirm.takeIf { isEducation },
+    onUndo = onUndo,
+    onDismiss = onDismiss.takeIf { isEducation },
     modifier = Modifier.padding(14.dp)
   )
 }
@@ -79,5 +91,13 @@ private fun QuranNaming.readingBookmarkLabel(context: Context, bookmark: Reading
     is PageReadingBookmark -> getSuraPageString(context, bookmark.page)
     // shouldn't happen since in this case, previous bookmark should be null
     is EmptyReadingBookmark -> ""
+  }
+}
+
+private fun QuranNaming.targetLabel(context: Context, target: ReadingBookmarkTarget): String {
+  return when (target) {
+    is ReadingBookmarkTarget.Page -> getSuraPageString(context, target.page)
+    is ReadingBookmarkTarget.Ayah ->
+      getSuraAyahString(context, target.suraAyah.sura, target.suraAyah.ayah)
   }
 }

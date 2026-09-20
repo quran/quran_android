@@ -16,4 +16,17 @@
   <string name="ayahbookmark_collection_name_error">That collection name is unavailable.</string>
   <string name="ayahbookmark_cancel">Cancel</string>
   <string name="ayahbookmark_create">Create</string>
+
+  <string name="readingbookmark_title">Reading bookmarks</string>
+  <string name="readingbookmark_subtitle">Each pin marks one place — move it as you go</string>
+  <string name="readingbookmark_placing_on">Placing on %1$s</string>
+  <string name="readingbookmark_at_location">at %1$s</string>
+  <string name="readingbookmark_ayah_location">%1$s · Page %2$d</string>
+  <string name="readingbookmark_not_placed">Not placed yet</string>
+  <string name="readingbookmark_on_this_page">On this page</string>
+  <string name="readingbookmark_on_this_ayah">On this ayah</string>
+  <string name="readingbookmark_move_here">Move here</string>
+  <string name="readingbookmark_set_here">Set here</string>
+  <string name="readingbookmark_clear">Clear</string>
+  <string name="readingbookmark_back">Back</string>
 </resources>

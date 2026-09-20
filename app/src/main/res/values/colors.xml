@@ -76,9 +76,6 @@
   <!-- an ayah bookmark with no highlight on it - deliberately not one of the five above -->
   <color name="unhighlighted_bookmark_color">#ff546e7a</color>
   <!-- reading bookmarks -->
-  <color name="reading_bookmark_coral">#ffd93a15</color>
-  <color name="reading_bookmark_teal">#ff0e8a96</color>
-  <color name="reading_bookmark_indigo">#ff3a3fcc</color>
 
   <color name="default_text">#ff000000</color>
 
