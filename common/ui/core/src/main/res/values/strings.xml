@@ -16,4 +16,8 @@
   <string name="highlight_color_blue">Blue</string>
   <string name="highlight_color_red">Red</string>
   <string name="highlight_color_purple">Purple</string>
+  <!-- names of the three reading bookmark slots -->
+  <string name="reading_bookmark_coral">Coral</string>
+  <string name="reading_bookmark_teal">Teal</string>
+  <string name="reading_bookmark_indigo">Indigo</string>
 </resources>

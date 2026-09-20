@@ -25,12 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
+import com.quran.mobile.common.ui.core.R as CoreR
 
-/**
- * The "movable reading bookmark" toast (design option B: a dark, bottom-anchored snackbar).
- * Shown once with the full education copy the first time a user ever saves a reading bookmark,
- * and as a shorter "moved" notice on every save after that.
- */
 @Composable
 internal fun ReadingBookmarkMovedToast(
   title: String,
@@ -137,7 +133,11 @@ private fun ReadingBookmarkMovedToastShortPreview() {
   QuranTheme {
     Surface {
       ReadingBookmarkMovedToast(
-        title = stringResource(R.string.reading_bookmark_moved_from_title, "Sura An-Nisā' Ayah 1"),
+        title = stringResource(
+          R.string.reading_bookmark_moved_to_title,
+          stringResource(CoreR.string.reading_bookmark_coral),
+          "Sura An-Nisā' Ayah 1"
+        ),
         movedFromText = null,
         body = null,
         onDismiss = null,
@@ -154,7 +154,11 @@ private fun ReadingBookmarkMovedToastShortAddedPreview() {
   QuranTheme {
     Surface {
       ReadingBookmarkMovedToast(
-        title = stringResource(R.string.reading_bookmark_added),
+        title = stringResource(
+          R.string.reading_bookmark_placed_title,
+          stringResource(CoreR.string.reading_bookmark_indigo),
+          "An-Nisāʾ (Page 77)"
+        ),
         movedFromText = null,
         body = null,
         onUndo = null,

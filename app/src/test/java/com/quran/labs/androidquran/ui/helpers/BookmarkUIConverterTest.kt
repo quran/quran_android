@@ -14,6 +14,7 @@ import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.R
+import com.quran.mobile.common.ui.core.R as CoreR
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData
 import com.quran.labs.androidquran.data.QuranDisplayData
@@ -103,14 +104,14 @@ class BookmarkUIConverterTest {
     assertThat(coral.metadata).isEqualTo("Juz' 4 · 4 minutes ago")
     assertThat(coral.page).isEqualTo(77)
     assertThat(coral.imageResource).isEqualTo(R.drawable.ic_bookmark_filled_24)
-    assertThat(coral.imageFilterColorResource).isEqualTo(R.color.reading_bookmark_coral)
+    assertThat(coral.imageFilterColorResource).isEqualTo(CoreR.color.reading_bookmark_coral)
     // the colour is what tells pins apart on screen, so the name is what a screen reader says
     assertThat(coral.imageContentDescription).isEqualTo("Coral")
 
     assertThat(indigo.text).isEqualTo("Surah Al-Kahf")
     assertThat(indigo.metadata).isEqualTo("Juz' 15 · 4 minutes ago")
     assertThat(indigo.page).isEqualTo(293)
-    assertThat(indigo.imageFilterColorResource).isEqualTo(R.color.reading_bookmark_indigo)
+    assertThat(indigo.imageFilterColorResource).isEqualTo(CoreR.color.reading_bookmark_indigo)
     assertThat(indigo.imageContentDescription).isEqualTo("Indigo")
 
     // rather than "0 minutes ago"

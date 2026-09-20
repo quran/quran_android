@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- brighter reading bookmark pins, for the dark page background -->
+  <color name="reading_bookmark_coral">#fff4502a</color>
+  <color name="reading_bookmark_teal">#ff17c8d8</color>
+  <color name="reading_bookmark_indigo">#ff4b51e5</color>
+</resources>

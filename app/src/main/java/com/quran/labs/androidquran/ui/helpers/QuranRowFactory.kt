@@ -4,20 +4,19 @@ import android.content.Context
 import android.text.format.DateUtils
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
-import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.ui.core.CollectionNames
 import com.quran.labs.androidquran.common.ui.core.HighlightColors
+import com.quran.labs.androidquran.common.ui.core.ReadingBookmarkSlots
 import com.quran.labs.androidquran.dao.bookmark.AyahMark
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.util.QuranUtils
@@ -70,7 +69,7 @@ class QuranRowFactory @Inject constructor(
   }
 
   fun fromReadingBookmark(context: Context, readingBookmark: ReadingBookmark): QuranRow {
-    val name = context.getString(readingBookmarkNameFor(readingBookmark.slot))
+    val name = context.getString(ReadingBookmarkSlots[readingBookmark.slot].nameResourceId)
     val juz: Int
     val builder = when (readingBookmark) {
       is PageReadingBookmark -> {
@@ -111,7 +110,7 @@ class QuranRowFactory @Inject constructor(
           .withText(name)
           .withType(QuranRow.PAGE_READING_BOOKMARK)
           .withImageResource(R.drawable.ic_bookmark_outline_24)
-          .withImageOverlayColorResource(readingBookmarkColorFor(readingBookmark.slot))
+          .withImageOverlayColorResource(ReadingBookmarkSlots[readingBookmark.slot].colorResourceId)
           .withImageContentDescription(name)
           .build()
       }
@@ -129,7 +128,7 @@ class QuranRowFactory @Inject constructor(
       .withMetadata(context.getString(R.string.reading_bookmark_details, juzDescription, placed))
       .withDate(readingBookmark.timestamp.epochSeconds)
       .withImageResource(R.drawable.ic_bookmark_filled_24)
-      .withImageOverlayColorResource(readingBookmarkColorFor(readingBookmark.slot))
+      .withImageOverlayColorResource(ReadingBookmarkSlots[readingBookmark.slot].colorResourceId)
       .withImageContentDescription(name)
       .build()
   }
@@ -273,24 +272,6 @@ class QuranRowFactory @Inject constructor(
       AyahMark.Bookmark -> R.color.ayah_bookmark_color
       AyahMark.Unhighlighted -> R.color.unhighlighted_bookmark_color
       is AyahMark.Highlighted -> listColorFor(mark.color)
-    }
-  }
-
-  @StringRes
-  private fun readingBookmarkNameFor(slot: ReadingBookmarkType): Int {
-    return when (slot) {
-      ReadingBookmarkType.CORAL -> R.string.reading_bookmark_coral
-      ReadingBookmarkType.TEAL -> R.string.reading_bookmark_teal
-      ReadingBookmarkType.INDIGO -> R.string.reading_bookmark_indigo
-    }
-  }
-
-  @ColorRes
-  private fun readingBookmarkColorFor(slot: ReadingBookmarkType): Int {
-    return when (slot) {
-      ReadingBookmarkType.CORAL -> R.color.reading_bookmark_coral
-      ReadingBookmarkType.TEAL -> R.color.reading_bookmark_teal
-      ReadingBookmarkType.INDIGO -> R.color.reading_bookmark_indigo
     }
   }
 

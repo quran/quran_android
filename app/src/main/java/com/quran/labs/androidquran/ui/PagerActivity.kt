@@ -51,7 +51,7 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.model.QuranText
 import com.quran.data.model.SuraAyah
-import com.quran.data.model.bookmark.ReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkTarget
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.AyahSelection.AyahRange
 import com.quran.data.model.selection.SelectionIndicator
@@ -80,6 +80,7 @@ import com.quran.labs.androidquran.feature.reading.bridge.DownloadBridge
 import com.quran.labs.androidquran.feature.reading.bridge.ReadingEventPresenterBridge
 import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenter
 import com.quran.labs.androidquran.feature.reading.presenter.RecentPagePresenter
+import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkChange
 import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkPresenter
 import com.quran.labs.androidquran.feature.reading.presenter.recitation.PagerActivityRecitationPresenter
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
@@ -130,6 +131,8 @@ import com.quran.mobile.feature.audiobar.AudioBarWrapper
 import com.quran.mobile.feature.audiobar.presenter.AudioBarEventRepository
 import com.quran.mobile.feature.ayahbookmark.AyahBookmarkWrapper
 import com.quran.mobile.feature.ayahbookmark.di.AyahBookmarkWrapperInjector
+import com.quran.mobile.feature.ayahbookmark.readingbookmark.ReadingBookmarkSheetWrapper
+import com.quran.mobile.feature.ayahbookmark.readingbookmark.di.ReadingBookmarkSheetWrapperInjector
 import com.quran.mobile.feature.qarilist.QariListWrapper
 import com.quran.mobile.feature.qarilist.di.QariListWrapperInjector
 import com.quran.mobile.translation.model.LocalTranslation
@@ -176,7 +179,7 @@ import androidx.core.view.isVisible
 class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdateListener,
   AyahSelectedListener, JumpDestination, QuranReadingActivityComponentProvider,
   QuranReadingPageComponentProvider, AyahToolBarInjector, QariListWrapperInjector,
-  AudioBarInjector, AyahBookmarkWrapperInjector,
+  AudioBarInjector, AyahBookmarkWrapperInjector, ReadingBookmarkSheetWrapperInjector,
   ActivityCompat.OnRequestPermissionsResultCallback, AudioPresenterScreen,
   ReadingBookmarkPresenter.Screen {
   private var lastPopupTime: Long = 0
@@ -926,6 +929,12 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     pagerActivityComponent.inject(ayahBookmarkWrapper)
   }
 
+  override fun injectReadingBookmarkSheetWrapper(
+    readingBookmarkSheetWrapper: ReadingBookmarkSheetWrapper
+  ) {
+    pagerActivityComponent.inject(readingBookmarkSheetWrapper)
+  }
+
   override fun provideQuranReadingActivityComponent(): QuranReadingActivityComponent {
     return pagerActivityComponent
   }
@@ -1190,7 +1199,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     val itemId = item.itemId
     if (itemId == R.id.favorite_item) {
-      readingBookmarkPresenter.togglePageReadingBookmark(currentPage)
+      showReadingBookmarkSheet(ReadingBookmarkTarget.Page(currentPage))
       return true
     } else if (itemId == R.id.goto_quran) {
       switchToQuran()
@@ -1458,22 +1467,22 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     refreshBookmarksMenu(isBookmarked)
   }
 
-  override fun showReadingBookmarkMovedToast(
-    previousBookmark: ReadingBookmark?,
+  override fun showReadingBookmarkChangedToast(
+    change: ReadingBookmarkChange,
     isEducation: Boolean,
     onUndo: () -> Unit,
-    onConfirm: () -> Unit
+    onDismiss: () -> Unit
   ) {
     val rootView = findViewById<ViewGroup>(android.R.id.content)
     readingBookmarkToastView?.let { rootView.removeView(it) }
 
     val toastView = createReadingBookmarkToastView(
       this,
-      previousBookmark,
+      change,
       isEducation,
       quranNaming,
       onUndo = onUndo,
-      onConfirm = onConfirm
+      onDismiss = onDismiss
     )
     readingBookmarkToastView = toastView
     rootView.addView(
@@ -1507,7 +1516,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     ViewCompat.requestApplyInsets(toastView)
   }
 
-  override fun dismissReadingBookmarkMovedToast() {
+  override fun dismissReadingBookmarkChangedToast() {
     readingBookmarkToastView?.let {
       findViewById<ViewGroup>(android.R.id.content).removeView(it)
     }
@@ -1702,6 +1711,26 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     overlay.removeAllViews()
     overlay.addView(
       qariListWrapper,
+      ViewGroup.LayoutParams.MATCH_PARENT,
+      ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    overlay.visibility = View.VISIBLE
+    toggleActionBarVisibility(false)
+  }
+
+  private fun showReadingBookmarkSheet(target: ReadingBookmarkTarget) {
+    val readingBookmarkSheetWrapper = ReadingBookmarkSheetWrapper(
+      context = this,
+      target = target,
+      onDismissed = {
+        overlay.removeAllViews()
+        overlay.visibility = View.GONE
+        toggleActionBarVisibility(true)
+      }
+    )
+    overlay.removeAllViews()
+    overlay.addView(
+      readingBookmarkSheetWrapper,
       ViewGroup.LayoutParams.MATCH_PARENT,
       ViewGroup.LayoutParams.MATCH_PARENT
     )
