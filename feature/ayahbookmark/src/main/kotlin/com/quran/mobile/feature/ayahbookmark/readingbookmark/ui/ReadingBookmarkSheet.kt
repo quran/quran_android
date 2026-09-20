@@ -5,9 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -46,6 +45,7 @@ internal fun ReadingBookmarkSheet(
       .fillMaxWidth()
       .clip(RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp))
       .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+      .navigationBarsPadding()
       .padding(bottom = 8.dp)
   ) {
     Box(
@@ -81,15 +81,37 @@ internal fun ReadingBookmarkSheet(
           fontWeight = FontWeight.ExtraBold,
           letterSpacing = 0.15.sp
         ),
-        color = MaterialTheme.colorScheme.onSurface
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.weight(1f)
+      )
+      Text(
+        text = if (state.isEditing) {
+          stringResource(R.string.readingbookmark_done_editing)
+        } else {
+          stringResource(R.string.readingbookmark_edit)
+        },
+        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
+          .clip(RoundedCornerShape(percent = 100))
+          .clickable {
+            eventSink(
+              if (state.isEditing) {
+                ReadingBookmarkSheetEvent.StopEditing
+              } else {
+                ReadingBookmarkSheetEvent.StartEditing
+              }
+            )
+          }
+          .padding(horizontal = 8.dp, vertical = 4.dp)
       )
     }
 
     Text(
-      text = if (state.isNested) {
-        stringResource(R.string.readingbookmark_placing_on, targetName)
-      } else {
-        stringResource(R.string.readingbookmark_subtitle)
+      text = when {
+        state.isEditing -> stringResource(R.string.readingbookmark_editing_subtitle)
+        state.isNested -> stringResource(R.string.readingbookmark_placing_on, targetName)
+        else -> stringResource(R.string.readingbookmark_subtitle)
       },
       style = MaterialTheme.typography.bodySmall,
       color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -111,12 +133,12 @@ internal fun ReadingBookmarkSheet(
       ReadingBookmarkSlotRow(
         item = item,
         target = state.target,
+        isEditing = state.isEditing,
         locationNameResolver = state.locationNameResolver,
         onPlace = { eventSink(ReadingBookmarkSheetEvent.PlaceSlot(item.slot)) },
-        onClear = { eventSink(ReadingBookmarkSheetEvent.ClearSlot(item.slot)) }
+        onClear = { eventSink(ReadingBookmarkSheetEvent.ClearSlot(item.slot)) },
+        onNameChange = { eventSink(ReadingBookmarkSheetEvent.NameChanged(item.slot, it)) }
       )
     }
-
-    Spacer(modifier = Modifier.height(8.dp))
   }
 }

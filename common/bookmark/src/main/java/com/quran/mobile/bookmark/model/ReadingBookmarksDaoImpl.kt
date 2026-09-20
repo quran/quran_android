@@ -47,7 +47,7 @@ class ReadingBookmarksDaoImpl @Inject constructor(
       readingBookmarksRepository.getReadingBookmarksFlow(),
       pageMapper.pageTypeFlow()
     ) { bookmarks, pageType ->
-      bookmarks.mapNotNull { toReadingBookmark(it, pageType) }
+      bookmarks.map { toReadingBookmark(it, pageType) }
     }
       .distinctUntilChanged()
       .flowOn(Dispatchers.IO)
@@ -56,7 +56,7 @@ class ReadingBookmarksDaoImpl @Inject constructor(
   override suspend fun readingBookmarks(): List<ReadingBookmark> {
     return withContext(Dispatchers.IO) {
       readingBookmarksRepository.getReadingBookmarks()
-        .mapNotNull { toReadingBookmark(it, pageMapper.currentPageType()) }
+        .map { toReadingBookmark(it, pageMapper.currentPageType()) }
     }
   }
 
@@ -86,7 +86,8 @@ class ReadingBookmarksDaoImpl @Inject constructor(
         is SyncEmptyReadingBookmark -> {
           EmptyReadingBookmark(
             slot = slot,
-            timestamp = cleared.lastUpdated
+            timestamp = cleared.lastUpdated,
+            name = cleared.name
           )
         }
 
@@ -95,7 +96,8 @@ class ReadingBookmarksDaoImpl @Inject constructor(
           slot = slot,
           sura = cleared.sura,
           ayah = cleared.ayah,
-          timestamp = cleared.lastUpdated
+          timestamp = cleared.lastUpdated,
+          name = cleared.name
         )
       }
 
@@ -103,9 +105,16 @@ class ReadingBookmarksDaoImpl @Inject constructor(
         PageReadingBookmark(
           slot = slot,
           page = cleared.page,
-          timestamp = cleared.lastUpdated
+          timestamp = cleared.lastUpdated,
+          name = cleared.name
         )
       }
+    }
+  }
+
+  override suspend fun renameReadingBookmark(slot: ReadingBookmarkType, name: String?) {
+    withContext(Dispatchers.IO) {
+      readingBookmarksRepository.renameReadingBookmark(slot.toSyncSlot(), name)
     }
   }
 
@@ -133,22 +142,28 @@ class ReadingBookmarksDaoImpl @Inject constructor(
     return isBookmarked
   }
 
-  private fun toReadingBookmark(bookmark: SyncReadingBookmark, pageType: String): ReadingBookmark? {
+  private fun toReadingBookmark(bookmark: SyncReadingBookmark, pageType: String): ReadingBookmark {
     return when (bookmark) {
       is SyncAyahReadingBookmark -> {
         AyahReadingBookmark(
           slot = bookmark.slot.asBookmarkType(),
           sura = bookmark.sura,
           ayah = bookmark.ayah,
-          timestamp = bookmark.lastUpdated
+          timestamp = bookmark.lastUpdated,
+          name = bookmark.name
         )
       }
       is SyncPageReadingBookmark -> PageReadingBookmark(
         slot = bookmark.slot.asBookmarkType(),
         page = pageMapper.storagePageToPage(bookmark.page, pageType),
-        timestamp = bookmark.lastUpdated
+        timestamp = bookmark.lastUpdated,
+        name = bookmark.name
       )
-      is SyncEmptyReadingBookmark -> null
+      is SyncEmptyReadingBookmark -> EmptyReadingBookmark(
+        slot = bookmark.slot.asBookmarkType(),
+        timestamp = bookmark.lastUpdated,
+        name = bookmark.name
+      )
     }
   }
 

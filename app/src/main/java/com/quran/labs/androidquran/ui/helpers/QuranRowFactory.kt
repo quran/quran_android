@@ -29,7 +29,7 @@ class QuranRowFactory @Inject constructor(
   fun fromRecentPageHeader(context: Context, count: Int): QuranRow {
     return QuranRow.Builder()
       .withText(
-        context.getResources().getQuantityString(R.plurals.plural_recent_pages, count)
+        context.resources.getQuantityString(R.plurals.plural_recent_pages, count)
       )
       .withType(QuranRow.HEADER)
       .build()
@@ -69,7 +69,7 @@ class QuranRowFactory @Inject constructor(
   }
 
   fun fromReadingBookmark(context: Context, readingBookmark: ReadingBookmark): QuranRow {
-    val name = context.getString(ReadingBookmarkSlots[readingBookmark.slot].nameResourceId)
+    val name = ReadingBookmarkSlots.displayName(context, readingBookmark)
     val juz: Int
     val builder = when (readingBookmark) {
       is PageReadingBookmark -> {

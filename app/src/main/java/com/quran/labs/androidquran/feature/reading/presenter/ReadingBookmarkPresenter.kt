@@ -14,6 +14,7 @@ import com.quran.data.model.bookmark.isAt
 import com.quran.labs.androidquran.util.QuranSettings
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
@@ -26,6 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.seconds
 
+@SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class ReadingBookmarkPresenter @Inject constructor(
   private val readingBookmarksDao: ReadingBookmarksDao,
@@ -69,6 +71,9 @@ class ReadingBookmarkPresenter @Inject constructor(
   fun readingBookmarkFor(slot: ReadingBookmarkType): ReadingBookmark? =
     readingBookmarks.firstOrNull { it.slot == slot && it !is EmptyReadingBookmark }
 
+  private fun nameFor(slot: ReadingBookmarkType): String? =
+    readingBookmarks.firstOrNull { it.slot == slot }?.name
+
   override fun placeReadingBookmark(slot: ReadingBookmarkType, target: ReadingBookmarkTarget) {
     val previous = readingBookmarkFor(slot)
     if (previous?.isAt(target) != true) {
@@ -85,17 +90,22 @@ class ReadingBookmarkPresenter @Inject constructor(
       }
 
       showToast(
-        change = ReadingBookmarkChange.Placed(slot, target, previous),
+        change = ReadingBookmarkChange.Placed(slot, nameFor(slot), target, previous),
         isEducation = quranSettings.markMovableBookmarkEducationSeen()
       )
     }
   }
 
   override fun clearReadingBookmark(slot: ReadingBookmarkType) {
-    val previous = readingBookmarkFor(slot) ?: return
+    val previous = readingBookmarkFor(slot)
 
-    appCoroutineScope.launch { readingBookmarksDao.clearReadingBookmark(slot) }
-    showToast(change = ReadingBookmarkChange.Cleared(slot, previous), isEducation = false)
+    if (previous != null) {
+      appCoroutineScope.launch { readingBookmarksDao.clearReadingBookmark(slot) }
+      showToast(
+        change = ReadingBookmarkChange.Cleared(slot, nameFor(slot), previous),
+        isEducation = false
+      )
+    }
   }
 
   private fun showToast(change: ReadingBookmarkChange, isEducation: Boolean) {
@@ -163,16 +173,19 @@ class ReadingBookmarkPresenter @Inject constructor(
 
 sealed interface ReadingBookmarkChange {
   val slot: ReadingBookmarkType
+  val name: String?
   val previous: ReadingBookmark?
 
   data class Placed(
     override val slot: ReadingBookmarkType,
+    override val name: String?,
     val target: ReadingBookmarkTarget,
     override val previous: ReadingBookmark?
   ) : ReadingBookmarkChange
 
   data class Cleared(
     override val slot: ReadingBookmarkType,
+    override val name: String?,
     override val previous: ReadingBookmark
   ) : ReadingBookmarkChange
 }

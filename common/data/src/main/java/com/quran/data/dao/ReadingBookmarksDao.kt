@@ -11,6 +11,7 @@ interface ReadingBookmarksDao {
   suspend fun setPageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean
   suspend fun setAyahReadingBookmark(slot: ReadingBookmarkType, suraAyah: SuraAyah): Boolean
   suspend fun clearReadingBookmark(slot: ReadingBookmarkType): ReadingBookmark
+  suspend fun renameReadingBookmark(slot: ReadingBookmarkType, name: String?)
   suspend fun isPageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean
   suspend fun togglePageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean
   suspend fun updateReadingBookmarks(

@@ -9,6 +9,7 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
@@ -120,10 +121,14 @@ class ReadingBookmarksDaoImplTest {
 
     dao.clearReadingBookmark(ReadingBookmarkType.CORAL)
 
-    assertThat(dao.readingBookmarks()).containsExactly(
+    assertThat(dao.readingBookmarks().placed()).containsExactly(
       PageReadingBookmark(ReadingBookmarkType.TEAL, 50, timestampProvider.now()),
       PageReadingBookmark(ReadingBookmarkType.INDIGO, 43, timestampProvider.now())
     )
+    // the cleared slot keeps its row rather than disappearing - that row is where a renamed
+    // pin's name lives, whether or not it is pointing anywhere
+    assertThat(dao.readingBookmarks().single { it.slot == ReadingBookmarkType.CORAL })
+      .isInstanceOf(EmptyReadingBookmark::class.java)
   }
 
   @Test
@@ -133,7 +138,38 @@ class ReadingBookmarksDaoImplTest {
     val isBookmarked = dao.togglePageReadingBookmark(ReadingBookmarkType.TEAL, 42)
 
     assertThat(isBookmarked).isFalse()
-    assertThat(dao.readingBookmarks()).isEmpty()
+    assertThat(dao.readingBookmarks().placed()).isEmpty()
+  }
+
+  @Test
+  fun `a pin keeps its name when it is cleared, and when it was never placed`() = runTest {
+    dao.setPageReadingBookmark(ReadingBookmarkType.CORAL, 42)
+    dao.renameReadingBookmark(ReadingBookmarkType.CORAL, "Tafsir study")
+    // naming a slot that has never been placed has to work too - Indigo starts out that way
+    dao.renameReadingBookmark(ReadingBookmarkType.INDIGO, "Memorizing")
+
+    assertThat(dao.readingBookmarks().single { it.slot == ReadingBookmarkType.CORAL }.name)
+      .isEqualTo("Tafsir study")
+    val indigo = dao.readingBookmarks().single { it.slot == ReadingBookmarkType.INDIGO }
+    assertThat(indigo).isInstanceOf(EmptyReadingBookmark::class.java)
+    assertThat(indigo.name).isEqualTo("Memorizing")
+
+    dao.clearReadingBookmark(ReadingBookmarkType.CORAL)
+
+    // the placement goes, the name stays
+    val coral = dao.readingBookmarks().single { it.slot == ReadingBookmarkType.CORAL }
+    assertThat(coral).isInstanceOf(EmptyReadingBookmark::class.java)
+    assertThat(coral.name).isEqualTo("Tafsir study")
+  }
+
+  @Test
+  fun `renaming with null restores the default name`() = runTest {
+    dao.setPageReadingBookmark(ReadingBookmarkType.TEAL, 42)
+    dao.renameReadingBookmark(ReadingBookmarkType.TEAL, "Nightly")
+
+    dao.renameReadingBookmark(ReadingBookmarkType.TEAL, null)
+
+    assertThat(dao.readingBookmarks().single { it.slot == ReadingBookmarkType.TEAL }.name).isNull()
   }
 
   @Test
@@ -142,7 +178,7 @@ class ReadingBookmarksDaoImplTest {
 
     assertThat(cleared).isInstanceOf(EmptyReadingBookmark::class.java)
     assertThat(cleared.slot).isEqualTo(ReadingBookmarkType.TEAL)
-    assertThat(dao.readingBookmarks()).isEmpty()
+    assertThat(dao.readingBookmarks().placed()).isEmpty()
   }
 
   @Test
@@ -170,7 +206,7 @@ class ReadingBookmarksDaoImplTest {
 
       repository.clearReadingBookmark(ReadingBookmarkSlot.TEAL)
 
-      assertThat(awaitItem()).isEmpty()
+      assertThat(awaitItem().placed()).isEmpty()
       cancelAndIgnoreRemainingEvents()
     }
   }
@@ -302,4 +338,12 @@ class ReadingBookmarksDaoImplTest {
 
     override fun getDefaultQariId(): Int = 0
   }
+
+  /**
+   * The pins that are actually pointing somewhere. Every slot that has ever been touched keeps a
+   * row, so the dao's list is not empty just because nothing is placed.
+   */
+  private fun List<ReadingBookmark>.placed(): List<ReadingBookmark> =
+    filterNot { it is EmptyReadingBookmark }
+
 }

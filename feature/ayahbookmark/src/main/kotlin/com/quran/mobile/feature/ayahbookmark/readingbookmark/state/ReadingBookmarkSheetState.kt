@@ -12,6 +12,7 @@ data class ReadingBookmarkSheetState(
   val target: ReadingBookmarkTarget,
   val slots: ImmutableList<ReadingBookmarkSlotItem>,
   val isNested: Boolean = false,
+  val isEditing: Boolean = false,
   val isDismissed: Boolean = false,
   val targetNameResolver: (Context, ReadingBookmarkTarget) -> String,
   val locationNameResolver: (Context, ReadingBookmark) -> String,
@@ -21,6 +22,8 @@ data class ReadingBookmarkSheetState(
 @Immutable
 data class ReadingBookmarkSlotItem(
   val slot: ReadingBookmarkType,
+  val name: String?,
+  val draftName: String = "",
   val bookmark: ReadingBookmark?,
   val isAtTarget: Boolean
 )
@@ -28,5 +31,14 @@ data class ReadingBookmarkSlotItem(
 sealed interface ReadingBookmarkSheetEvent {
   data class PlaceSlot(val slot: ReadingBookmarkType) : ReadingBookmarkSheetEvent
   data class ClearSlot(val slot: ReadingBookmarkType) : ReadingBookmarkSheetEvent
+
+  data object StartEditing : ReadingBookmarkSheetEvent
+  data object StopEditing : ReadingBookmarkSheetEvent
+
+  data class NameChanged(
+    val slot: ReadingBookmarkType,
+    val name: String
+  ) : ReadingBookmarkSheetEvent
+
   data object Dismiss : ReadingBookmarkSheetEvent
 }

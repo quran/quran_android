@@ -41,14 +41,19 @@ private val previewLocationNameResolver: (Context, ReadingBookmark) -> String =
 private fun previewState(
   target: ReadingBookmarkTarget,
   bookmarks: Map<ReadingBookmarkType, ReadingBookmark?>,
-  isNested: Boolean = false
+  isNested: Boolean = false,
+  isEditing: Boolean = false,
+  names: Map<ReadingBookmarkType, String> = emptyMap()
 ) = ReadingBookmarkSheetState(
   target = target,
   isNested = isNested,
+  isEditing = isEditing,
   slots = ReadingBookmarkType.entries.map { slot ->
     val bookmark = bookmarks[slot]
     ReadingBookmarkSlotItem(
       slot = slot,
+      name = names[slot],
+      draftName = names[slot].orEmpty(),
       bookmark = bookmark,
       isAtTarget = bookmark?.isAt(target) == true
     )
@@ -109,6 +114,28 @@ private fun ReadingBookmarkSheetAyahPreview() {
     previewState(
       target = ReadingBookmarkTarget.Ayah(SuraAyah(4, 6)),
       isNested = true,
+      bookmarks = mapOf(
+        ReadingBookmarkType.CORAL to PageReadingBookmark(
+          ReadingBookmarkType.CORAL, 77, Clock.System.now()
+        ),
+        ReadingBookmarkType.TEAL to AyahReadingBookmark(
+          ReadingBookmarkType.TEAL, 4, 6, Clock.System.now()
+        ),
+        ReadingBookmarkType.INDIGO to null
+      )
+    )
+  )
+}
+
+@Preview("editing, with a renamed pin")
+@Preview("editing (dark theme)", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun ReadingBookmarkSheetEditingPreview() {
+  PreviewScaffold(
+    previewState(
+      target = ReadingBookmarkTarget.Page(77),
+      isEditing = true,
+      names = mapOf(ReadingBookmarkType.CORAL to "Tafsir study"),
       bookmarks = mapOf(
         ReadingBookmarkType.CORAL to PageReadingBookmark(
           ReadingBookmarkType.CORAL, 77, Clock.System.now()
