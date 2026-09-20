@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.ReadingBookmarksDao
+import com.quran.data.di.AppCoroutineScope
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
@@ -22,11 +23,13 @@ import com.quran.mobile.feature.ayahbookmark.readingbookmark.state.ReadingBookma
 import com.quran.page.common.data.QuranNaming
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 
 class ReadingBookmarkSheetPresenter @Inject constructor(
   private val readingBookmarksDao: ReadingBookmarksDao,
   private val quranNaming: QuranNaming,
-  private val quranInfo: QuranInfo
+  private val quranInfo: QuranInfo,
+  private val appCoroutineScope: AppCoroutineScope
 ) {
 
   @Composable
@@ -36,33 +39,65 @@ class ReadingBookmarkSheetPresenter @Inject constructor(
     onAction: (ReadingBookmarkAction) -> Unit
   ): ReadingBookmarkSheetState {
     val readingBookmarks = readingBookmarksDao.readingBookmarksFlow().collectAsState(null)
-    val slots = remember(readingBookmarks.value, target) {
-      val placed = readingBookmarks.value
-        .orEmpty()
-        .filterNot { it is EmptyReadingBookmark }
-        .associateBy { it.slot }
+    val stored = remember(readingBookmarks.value) {
+      readingBookmarks.value.orEmpty().associateBy { it.slot }
+    }
+
+    val isEditing = remember { mutableStateOf(false) }
+    val isDismissed = remember { mutableStateOf(false) }
+    val draftNames = remember { mutableStateOf<Map<ReadingBookmarkType, String>>(emptyMap()) }
+
+    val slots = remember(stored, draftNames.value, target) {
       ReadingBookmarkType.entries.map { slot ->
-        val bookmark = placed[slot]
+        val row = stored[slot]
         ReadingBookmarkSlotItem(
           slot = slot,
-          bookmark = bookmark,
-          isAtTarget = bookmark?.isAt(target) == true
+          name = row?.name,
+          draftName = draftNames.value[slot] ?: row?.name.orEmpty(),
+          bookmark = row?.takeIf { it !is EmptyReadingBookmark },
+          isAtTarget = row?.isAt(target) == true
         )
       }.toImmutableList()
     }
 
-    val isDismissed = remember { mutableStateOf(false) }
+    fun commitNames() {
+      val drafts = draftNames.value
+      draftNames.value = emptyMap()
+      drafts.forEach { (slot, draft) ->
+        val name = draft.trim().ifBlank { null }
+        if (name != stored[slot]?.name) {
+          appCoroutineScope.launch { readingBookmarksDao.renameReadingBookmark(slot, name) }
+        }
+      }
+    }
 
     val eventSink: (ReadingBookmarkSheetEvent) -> Unit = { event ->
-      isDismissed.value = true
       when (event) {
-        is ReadingBookmarkSheetEvent.PlaceSlot ->
+        ReadingBookmarkSheetEvent.StartEditing -> isEditing.value = true
+
+        ReadingBookmarkSheetEvent.StopEditing -> {
+          commitNames()
+          isEditing.value = false
+        }
+
+        is ReadingBookmarkSheetEvent.NameChanged -> {
+          draftNames.value += event.slot to event.name
+        }
+
+        is ReadingBookmarkSheetEvent.PlaceSlot -> {
+          isDismissed.value = true
           onAction(ReadingBookmarkAction.Place(event.slot, target))
+        }
 
-        is ReadingBookmarkSheetEvent.ClearSlot ->
+        is ReadingBookmarkSheetEvent.ClearSlot -> {
+          isDismissed.value = true
           onAction(ReadingBookmarkAction.Clear(event.slot))
+        }
 
-        ReadingBookmarkSheetEvent.Dismiss -> {}
+        ReadingBookmarkSheetEvent.Dismiss -> {
+          commitNames()
+          isDismissed.value = true
+        }
       }
     }
 
@@ -70,6 +105,7 @@ class ReadingBookmarkSheetPresenter @Inject constructor(
       target = target,
       slots = slots,
       isNested = isNested,
+      isEditing = isEditing.value,
       isDismissed = isDismissed.value,
       targetNameResolver = { context, bookmarkTarget ->
         when (bookmarkTarget) {

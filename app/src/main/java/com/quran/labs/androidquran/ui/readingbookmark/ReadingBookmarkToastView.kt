@@ -51,7 +51,7 @@ private fun ReadingBookmarkToastContent(
   onDismiss: () -> Unit
 ) {
   val context = LocalContext.current
-  val slotName = stringResource(ReadingBookmarkSlots[change.slot].nameResourceId)
+  val slotName = ReadingBookmarkSlots.displayName(change.slot, change.name)
   val previousLocation = change.previous?.let { quranNaming.readingBookmarkLabel(context, it) }
 
   val title = when {

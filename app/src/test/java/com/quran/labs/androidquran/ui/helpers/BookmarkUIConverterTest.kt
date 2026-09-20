@@ -67,6 +67,27 @@ class BookmarkUIConverterTest {
   }
 
   @Test
+  fun `a renamed pin is announced by its own name, not its slot colour`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val quranInfo = QuranInfo(MadaniDataSource())
+    val factory = QuranRowFactory(quranInfo, QuranDisplayData(quranInfo))
+    val timestamp = Instant.fromEpochMilliseconds(System.currentTimeMillis())
+
+    val renamed = factory.fromReadingBookmark(
+      context,
+      PageReadingBookmark(ReadingBookmarkType.CORAL, 42, timestamp, name = "Tafsir study")
+    )
+    assertThat(renamed.imageContentDescription).isEqualTo("Tafsir study")
+
+    // a name that is only whitespace is no name at all, so the default still wins
+    val blank = factory.fromReadingBookmark(
+      context,
+      PageReadingBookmark(ReadingBookmarkType.CORAL, 42, timestamp, name = "   ")
+    )
+    assertThat(blank.imageContentDescription).isEqualTo("Coral")
+  }
+
+  @Test
   fun `reading bookmark rows carry their pin's colour, juz' and when it was placed`() {
     val context = ApplicationProvider.getApplicationContext<Context>()
     val quranInfo = QuranInfo(MadaniDataSource())

@@ -29,4 +29,7 @@
   <string name="readingbookmark_set_here">Set here</string>
   <string name="readingbookmark_clear">Clear</string>
   <string name="readingbookmark_back">Back</string>
+  <string name="readingbookmark_edit">Edit</string>
+  <string name="readingbookmark_done_editing">Done editing</string>
+  <string name="readingbookmark_editing_subtitle">Give each pin a name you’ll recognize</string>
 </resources>

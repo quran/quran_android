@@ -41,6 +41,22 @@ class FakeReadingBookmarksDao(
     return true
   }
 
+  override suspend fun renameReadingBookmark(slot: ReadingBookmarkType, name: String?) {
+    bookmarks.update { current ->
+      current.map { bookmark ->
+        if (bookmark.slot != slot) {
+          bookmark
+        } else {
+          when (bookmark) {
+            is PageReadingBookmark -> bookmark.copy(name = name)
+            is AyahReadingBookmark -> bookmark.copy(name = name)
+            is EmptyReadingBookmark -> bookmark.copy(name = name)
+          }
+        }
+      }
+    }
+  }
+
   override suspend fun clearReadingBookmark(slot: ReadingBookmarkType): ReadingBookmark {
     bookmarks.update { current -> current.filterNot { it.slot == slot } }
     return EmptyReadingBookmark(slot, timestamp)

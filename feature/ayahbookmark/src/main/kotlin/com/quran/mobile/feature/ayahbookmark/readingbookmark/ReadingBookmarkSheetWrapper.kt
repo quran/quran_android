@@ -2,7 +2,7 @@ package com.quran.mobile.feature.ayahbookmark.readingbookmark
 
 import android.content.Context
 import android.widget.FrameLayout
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -23,6 +23,7 @@ import com.quran.data.model.bookmark.ReadingBookmarkTarget
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.di.ReadingBookmarkSheetWrapperInjector
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.presenter.ReadingBookmarkSheetPresenter
+import com.quran.mobile.feature.ayahbookmark.readingbookmark.state.ReadingBookmarkSheetEvent
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.ui.ReadingBookmarkSheet
 import dev.zacsweers.metro.Inject
 
@@ -76,17 +77,15 @@ class ReadingBookmarkSheetWrapper(
     }
 
     ModalBottomSheet(
-      onDismissRequest = { finish() },
+      onDismissRequest = { state.eventSink(ReadingBookmarkSheetEvent.Dismiss) },
       sheetState = sheetState,
       dragHandle = null,
       shape = RectangleShape,
       containerColor = Color.Transparent,
+      contentWindowInsets = { WindowInsets(0, 0, 0, 0) },
       contentColor = MaterialTheme.colorScheme.onSurface
     ) {
-      ReadingBookmarkSheet(
-        state = state,
-        modifier = Modifier.navigationBarsPadding()
-      )
+      ReadingBookmarkSheet(state = state)
     }
   }
 

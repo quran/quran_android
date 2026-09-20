@@ -5,6 +5,7 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.data.di.AppCoroutineScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
+import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmarkTarget
 import com.quran.data.model.bookmark.ReadingBookmarkType
@@ -215,8 +216,9 @@ class ReadingBookmarkPresenterTest {
     assertThat(screen.changes.single())
       .isEqualTo(
         ReadingBookmarkChange.Cleared(
-          ReadingBookmarkType.TEAL,
-          pageBookmark(42, ReadingBookmarkType.TEAL)
+          slot = ReadingBookmarkType.TEAL,
+          name = null,
+          previous = pageBookmark(42, ReadingBookmarkType.TEAL)
         )
       )
   }
@@ -329,6 +331,39 @@ class ReadingBookmarkPresenterTest {
       pageBookmark(42, ReadingBookmarkType.CORAL),
       pageBookmark(43, ReadingBookmarkType.INDIGO)
     )
+  }
+
+  @Test
+  fun `the toast carries the pin's custom name when it has one`() = runTest {
+    val readingBookmarksDao = FakeReadingBookmarksDao(
+      pageBookmark(10, ReadingBookmarkType.CORAL).copy(name = "Tafsir study")
+    )
+    val screen = RecordingScreen()
+    val presenter = presenter(readingBookmarksDao)
+
+    presenter.bind(flowOf(42), screen)
+    testDispatcher.scheduler.advanceUntilIdle()
+    presenter.placeReadingBookmark(ReadingBookmarkType.CORAL, ReadingBookmarkTarget.Page(42))
+
+    assertThat(screen.changes.single().name).isEqualTo("Tafsir study")
+  }
+
+  @Test
+  fun `a pin named while unplaced still reports its name when first placed`() = runTest {
+    val readingBookmarksDao = FakeReadingBookmarksDao(
+      EmptyReadingBookmark(ReadingBookmarkType.INDIGO, Instant.fromEpochSeconds(1), "Memorizing")
+    )
+    val screen = RecordingScreen()
+    val presenter = presenter(readingBookmarksDao)
+
+    presenter.bind(flowOf(42), screen)
+    testDispatcher.scheduler.advanceUntilIdle()
+    presenter.placeReadingBookmark(ReadingBookmarkType.INDIGO, ReadingBookmarkTarget.Page(42))
+
+    val change = screen.changes.single()
+    assertThat(change.name).isEqualTo("Memorizing")
+    // the pin had nowhere to move from, so the toast has no "moved from" line to show
+    assertThat(change.previous).isNull()
   }
 
   private class RecordingScreen : ReadingBookmarkPresenter.Screen {

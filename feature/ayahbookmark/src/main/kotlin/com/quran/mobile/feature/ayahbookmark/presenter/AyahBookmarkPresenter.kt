@@ -65,8 +65,10 @@ class AyahBookmarkPresenter(
         // TODO: we need to have a data source for this - the priority should be:
         // sessionLaunchedReadingBookmark ?: readingBookmarksBeforeThisAyah.takeFurthestWithin25PagesOfCurrent()
         //    ?: readingBookmarksBeforeThisAyah.takeFirst() ?: takeLastUpdated
-        readingBookmarks.value.orEmpty().maxByOrNull { it.timestamp } ?:
-          EmptyReadingBookmark(ReadingBookmarkType.TEAL, Clock.System.now())
+        readingBookmarks.value.orEmpty()
+          .filterNot { it is EmptyReadingBookmark }
+          .maxByOrNull { it.timestamp }
+          ?: EmptyReadingBookmark(ReadingBookmarkType.TEAL, Clock.System.now())
       } else {
         current.first()
       }
