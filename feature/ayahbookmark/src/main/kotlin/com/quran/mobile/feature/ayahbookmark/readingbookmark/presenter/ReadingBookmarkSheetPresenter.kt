@@ -21,23 +21,34 @@ import com.quran.mobile.feature.ayahbookmark.readingbookmark.state.ReadingBookma
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.state.ReadingBookmarkSheetState
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.state.ReadingBookmarkSlotItem
 import com.quran.page.common.data.QuranNaming
-import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
-class ReadingBookmarkSheetPresenter @Inject constructor(
+@AssistedInject
+class ReadingBookmarkSheetPresenter(
+  @Assisted private val target: ReadingBookmarkTarget,
+  @Assisted private val isNested: Boolean,
+  @Assisted private val onAction: (ReadingBookmarkAction) -> Unit,
   private val readingBookmarksDao: ReadingBookmarksDao,
   private val quranNaming: QuranNaming,
   private val quranInfo: QuranInfo,
   private val appCoroutineScope: AppCoroutineScope
 ) {
 
+  @AssistedFactory
+  fun interface Factory {
+    fun create(
+      target: ReadingBookmarkTarget,
+      isNested: Boolean,
+      onAction: (ReadingBookmarkAction) -> Unit
+    ): ReadingBookmarkSheetPresenter
+  }
+
   @Composable
-  internal fun present(
-    target: ReadingBookmarkTarget,
-    isNested: Boolean,
-    onAction: (ReadingBookmarkAction) -> Unit
-  ): ReadingBookmarkSheetState {
+  fun present(): ReadingBookmarkSheetState {
     val readingBookmarks = readingBookmarksDao.readingBookmarksFlow().collectAsState(null)
     val stored = remember(readingBookmarks.value) {
       readingBookmarks.value.orEmpty().associateBy { it.slot }

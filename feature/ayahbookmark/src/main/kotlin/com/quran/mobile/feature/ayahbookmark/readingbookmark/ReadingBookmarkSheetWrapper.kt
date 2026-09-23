@@ -35,7 +35,7 @@ class ReadingBookmarkSheetWrapper(
 ) : FrameLayout(context) {
 
   @Inject
-  lateinit var readingBookmarkSheetPresenter: ReadingBookmarkSheetPresenter
+  lateinit var readingBookmarkSheetPresenterFactory: ReadingBookmarkSheetPresenter.Factory
 
   @Inject
   lateinit var readingBookmarkUpdater: ReadingBookmarkUpdater
@@ -59,10 +59,13 @@ class ReadingBookmarkSheetWrapper(
 
   @Composable
   private fun ReadingBookmarkBottomSheet() {
+    val presenter = remember {
+      readingBookmarkSheetPresenterFactory.create(target, isNested, actionSink)
+    }
     val moleculeScope = rememberCoroutineScope()
     val stateFlow = remember {
       moleculeScope.launchMolecule(mode = RecompositionMode.ContextClock) {
-        readingBookmarkSheetPresenter.present(target, isNested, actionSink)
+        presenter.present()
       }
     }
     val state by stateFlow.collectAsState()
