@@ -46,7 +46,7 @@ class AyahBookmarkPresenter(
   private val readingBookmarksDao: ReadingBookmarksDao,
   private val quranNaming: QuranNaming,
   private val quranInfo: QuranInfo,
-  private val readingBookmarkSheetPresenter: ReadingBookmarkSheetPresenter,
+  private val readingBookmarkSheetPresenterFactory: ReadingBookmarkSheetPresenter.Factory,
   private val appCoroutineScope: AppCoroutineScope
 ) {
 
@@ -154,14 +154,19 @@ class AyahBookmarkPresenter(
     }
 
     val readingBookmarkSelection = if (isSelectingReadingBookmark.value) {
-      readingBookmarkSheetPresenter.present(
-        target = ReadingBookmarkTarget.Ayah(currentAyah),
-        isNested = true,
-        onAction = { action ->
-          onReadingBookmarkAction(action)
-          commit()
-        }
-      )
+      // remembered inside the branch, so leaving the list discards the presenter along with the
+      // draft names it was holding
+      val nestedPresenter = remember {
+        readingBookmarkSheetPresenterFactory.create(
+          target = ReadingBookmarkTarget.Ayah(currentAyah),
+          isNested = true,
+          onAction = { action ->
+            onReadingBookmarkAction(action)
+            commit()
+          }
+        )
+      }
+      nestedPresenter.present()
     } else {
       null
     }
