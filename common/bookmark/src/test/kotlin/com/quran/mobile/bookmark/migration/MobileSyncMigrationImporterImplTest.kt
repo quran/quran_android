@@ -16,6 +16,8 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImporterImpl
 import com.quran.mobile.bookmark.model.BookmarksDaoImpl
 import com.quran.mobile.bookmark.model.RepositoryBackedTestBookmarkCollectionsState
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
+import com.quran.shared.persistence.model.AyahReadingBookmark
+import com.quran.shared.persistence.model.PageReadingBookmark
 import com.quran.shared.persistence.model.ReadingBookmarkSlot
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepositoryImpl
@@ -114,30 +116,50 @@ class MobileSyncImporterImplTest {
     assertThat(bookmarks.map { bookmark -> bookmark.sura to bookmark.ayah }).containsExactly(2 to 255)
     assertThat(bookmarks.single().timestamp).isEqualTo(1234L)
     assertThat(tags.map { tag -> tag.name }).containsExactly("Reading")
-    assertThat(bookmarksDao.getBookmarkTagIds(bookmarks.single().id)).contains(tags.single().id)
+    val favorites = bookmarksDao.tags().single { it.isSystem }
+    assertThat(bookmarksDao.getBookmarkTagIds(bookmarks.single().id))
+      .containsExactly(favorites.id, tags.single().id)
     assertThat(readingSessions.map { session -> session.sura to session.ayah }).containsExactly(18 to 1)
   }
 
   @Test
-  fun `unsupported reading bookmark import preserves existing slots`() = runTest {
+  fun `reading bookmark import replaces supplied slots and preserves omitted slots`() = runTest {
     val repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database)
-    val existing = repository.setPageReadingBookmark(ReadingBookmarkSlot.TEAL, 12)
+    val existing = repository.setPageReadingBookmark(ReadingBookmarkSlot.GREEN, 12)
+    val omitted = repository.setPageReadingBookmark(ReadingBookmarkSlot.BLUE, 50)
+    repository.renameReadingBookmark(ReadingBookmarkSlot.GREEN, "Old name")
 
     val result = importer.importData(
       MobileSyncImportData(
         readingBookmarks = listOf(
           MobileSyncImportReadingBookmark.Page(
-            slot = ReadingBookmarkSlot.TEAL,
+            slot = ReadingBookmarkSlot.GREEN,
             page = 42,
             timestampMillis = 1_700_000_000_000L
+          ),
+          MobileSyncImportReadingBookmark.Ayah(
+            slot = ReadingBookmarkSlot.PURPLE,
+            sura = 2,
+            ayah = 255,
+            timestampMillis = 1_700_000_001_000L,
+            name = "Nightly reading"
           )
         )
       )
     )
 
-    // Reading-bookmark persistence import is deferred until the artifact supports it.
-    assertThat(result.readingBookmarkImported).isEqualTo(0)
-    assertThat(repository.getReadingBookmarks()).containsExactly(existing)
+    assertThat(result.readingBookmarkImported).isEqualTo(2)
+    val bookmarks = repository.getReadingBookmarks()
+    val page = bookmarks.single { it.slot == ReadingBookmarkSlot.GREEN } as PageReadingBookmark
+    assertThat(page.id).isEqualTo(existing.id)
+    assertThat(page.page).isEqualTo(42)
+    assertThat(page.name).isNull()
+    assertThat(page.lastUpdated.toEpochMilliseconds()).isEqualTo(1_700_000_000_000L)
+    val ayah = bookmarks.single { it.slot == ReadingBookmarkSlot.PURPLE } as AyahReadingBookmark
+    assertThat(ayah.sura to ayah.ayah).isEqualTo(2 to 255)
+    assertThat(ayah.name).isEqualTo("Nightly reading")
+    assertThat(ayah.lastUpdated.toEpochMilliseconds()).isEqualTo(1_700_000_001_000L)
+    assertThat(bookmarks.single { it.slot == ReadingBookmarkSlot.BLUE }).isEqualTo(omitted)
   }
 
   @Test

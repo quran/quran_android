@@ -139,7 +139,8 @@ class BookmarkBackupImportNormalizer @Inject constructor(
               slot = readingBookmark.slot.asBookmarkSlot(),
               sura = sura,
               ayah = ayah,
-              timestampMillis = readingBookmark.timestamp.toEpochMilliseconds()
+              timestampMillis = readingBookmark.timestamp.toEpochMilliseconds(),
+              name = readingBookmark.name
             )
           }
         }
@@ -152,7 +153,8 @@ class BookmarkBackupImportNormalizer @Inject constructor(
             MobileSyncImportReadingBookmark.Page(
               slot = readingBookmark.slot.asBookmarkSlot(),
               page = pageMapper.sourcePageToStoragePage(page, pageType),
-              timestampMillis = readingBookmark.timestamp.toEpochMilliseconds()
+              timestampMillis = readingBookmark.timestamp.toEpochMilliseconds(),
+              name = readingBookmark.name
             )
           }
         }
@@ -164,9 +166,9 @@ class BookmarkBackupImportNormalizer @Inject constructor(
 
   private fun ReadingBookmarkType.asBookmarkSlot(): ReadingBookmarkSlot {
     return when (this) {
-      ReadingBookmarkType.CORAL -> ReadingBookmarkSlot.CORAL
-      ReadingBookmarkType.TEAL -> ReadingBookmarkSlot.TEAL
-      ReadingBookmarkType.INDIGO -> ReadingBookmarkSlot.INDIGO
+      ReadingBookmarkType.GREEN -> ReadingBookmarkSlot.GREEN
+      ReadingBookmarkType.PURPLE -> ReadingBookmarkSlot.PURPLE
+      ReadingBookmarkType.BLUE -> ReadingBookmarkSlot.BLUE
     }
   }
 

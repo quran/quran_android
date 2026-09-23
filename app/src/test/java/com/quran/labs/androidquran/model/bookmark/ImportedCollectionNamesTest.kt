@@ -47,15 +47,15 @@ class ImportedCollectionNamesTest {
   }
 
   @Test
-  fun `reserved favorites tag retains its original membership`() = runTest {
+  fun `reserved favorites tag retains its original membership when its import id collides`() = runTest {
     importData(
       MobileSyncImportData(
         bookmarks = (1..15).map { ayah ->
           MobileSyncImportBookmark("bookmark-$ayah", 2, ayah, 1_234_000L)
         },
-        collections = listOf(MobileSyncImportCollection("favorites", "Favorites", 1_234_000L)),
+        collections = listOf(MobileSyncImportCollection("import-favorites", "Favorites", 1_234_000L)),
         collectionBookmarks = (1..5).map { ayah ->
-          MobileSyncImportCollectionBookmark("favorites", "bookmark-$ayah", 1_234_000L)
+          MobileSyncImportCollectionBookmark("import-favorites", "bookmark-$ayah", 1_234_000L)
         }
       )
     )
@@ -87,7 +87,7 @@ class ImportedCollectionNamesTest {
     val mergedCollection = converted.collections.single { it.name == "Favorites (Imported)" }
     assertThat(mergedCollection.lastUpdated.toEpochMilliseconds()).isEqualTo(2_468_000L)
     val sharedMembership = converted.collectionBookmarks.single {
-      it.collectionImportId == mergedCollection.importId && it.bookmarkImportId == "bookmark-0"
+      it.collectionImportId == mergedCollection.importId && it.sura == 2 && it.ayah == 1
     }
     assertThat(sharedMembership.lastUpdated.toEpochMilliseconds()).isEqualTo(4_567_000L)
 

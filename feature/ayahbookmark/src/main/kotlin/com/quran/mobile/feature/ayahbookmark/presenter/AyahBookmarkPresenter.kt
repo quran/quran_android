@@ -79,7 +79,7 @@ class AyahBookmarkPresenter(
         readingBookmarks.value.orEmpty()
           .filterNot { it is EmptyReadingBookmark }
           .maxByOrNull { it.timestamp }
-          ?: EmptyReadingBookmark(ReadingBookmarkType.TEAL, Clock.System.now())
+          ?: EmptyReadingBookmark(ReadingBookmarkType.PURPLE, Clock.System.now())
       } else {
         ayahReadingBookmarks.first()
       }
