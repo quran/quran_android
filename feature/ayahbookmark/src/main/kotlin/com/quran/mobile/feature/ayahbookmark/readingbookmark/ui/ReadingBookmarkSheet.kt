@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +33,8 @@ import com.quran.mobile.feature.ayahbookmark.readingbookmark.state.ReadingBookma
 @Composable
 internal fun ReadingBookmarkSheet(
   state: ReadingBookmarkSheetState,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHighest
 ) {
   val eventSink = state.eventSink
   val context = LocalContext.current
@@ -44,7 +46,7 @@ internal fun ReadingBookmarkSheet(
     modifier = modifier
       .fillMaxWidth()
       .clip(RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp))
-      .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+      .background(containerColor)
       .navigationBarsPadding()
       .padding(bottom = 8.dp)
   ) {

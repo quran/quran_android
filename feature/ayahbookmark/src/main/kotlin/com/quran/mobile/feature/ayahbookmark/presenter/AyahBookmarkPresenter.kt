@@ -1,11 +1,13 @@
 package com.quran.mobile.feature.ayahbookmark.presenter
 
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.dao.HighlightsDao
 import com.quran.data.dao.ReadingBookmarksDao
@@ -13,9 +15,14 @@ import com.quran.data.di.AppCoroutineScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.EmptyReadingBookmark
+import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkTarget
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.highlight.Highlight
+import com.quran.mobile.feature.ayahbookmark.R
+import com.quran.mobile.feature.ayahbookmark.readingbookmark.ReadingBookmarkAction
+import com.quran.mobile.feature.ayahbookmark.readingbookmark.presenter.ReadingBookmarkSheetPresenter
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionCreationState
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionItem
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkEvent
@@ -28,20 +35,27 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 @AssistedInject
 class AyahBookmarkPresenter(
   @Assisted private val currentAyah: SuraAyah,
+  @Assisted private val onReadingBookmarkAction: (ReadingBookmarkAction) -> Unit,
   private val bookmarksDao: BookmarksDao,
   private val highlightsDao: HighlightsDao,
   private val readingBookmarksDao: ReadingBookmarksDao,
   private val quranNaming: QuranNaming,
+  private val quranInfo: QuranInfo,
+  private val readingBookmarkSheetPresenter: ReadingBookmarkSheetPresenter,
   private val appCoroutineScope: AppCoroutineScope
 ) {
 
   @AssistedFactory
   fun interface Factory {
-    fun create(currentAyah: SuraAyah): AyahBookmarkPresenter
+    fun create(
+      currentAyah: SuraAyah,
+      onReadingBookmarkAction: (ReadingBookmarkAction) -> Unit
+    ): AyahBookmarkPresenter
   }
 
   @Composable
@@ -51,17 +65,14 @@ class AyahBookmarkPresenter(
     val highlight = highlightsDao.highlightsFlow(currentAyah)
       .collectAsState(null)
 
-    val enabledReadingBookmarksState = remember(readingBookmarks.value) {
-      mutableStateOf(
-        readingBookmarks.value
-          .orEmpty()
-          .filter { it.asSuraAyah() == currentAyah }
-      )
+    val ayahReadingBookmarks = remember(readingBookmarks.value) {
+      readingBookmarks.value
+        .orEmpty()
+        .filter { it.asSuraAyah() == currentAyah }
     }
 
-    val suggestedReadingBookmark = remember(enabledReadingBookmarksState.value) {
-      val current = enabledReadingBookmarksState.value
-      if (current.isEmpty()) {
+    val suggestedReadingBookmark = remember(ayahReadingBookmarks, readingBookmarks.value) {
+      if (ayahReadingBookmarks.isEmpty()) {
         // TODO: we need to have a data source for this - the priority should be:
         // sessionLaunchedReadingBookmark ?: readingBookmarksBeforeThisAyah.takeFurthestWithin25PagesOfCurrent()
         //    ?: readingBookmarksBeforeThisAyah.takeFirst() ?: takeLastUpdated
@@ -70,8 +81,19 @@ class AyahBookmarkPresenter(
           .maxByOrNull { it.timestamp }
           ?: EmptyReadingBookmark(ReadingBookmarkType.TEAL, Clock.System.now())
       } else {
-        current.first()
+        ayahReadingBookmarks.first()
       }
+    }
+
+    val otherReadingBookmarks = remember(readingBookmarks.value, suggestedReadingBookmark.slot) {
+      val placed = readingBookmarks.value
+        .orEmpty()
+        .filterNot { it is EmptyReadingBookmark }
+        .associateBy { it.slot }
+      ReadingBookmarkType.entries
+        .filterNot { it == suggestedReadingBookmark.slot }
+        .map { slot -> placed[slot] ?: EmptyReadingBookmark(slot, Instant.DISTANT_PAST) }
+        .toImmutableList()
     }
 
     val currentHighlight = remember(highlight.value) { mutableStateOf(highlight.value) }
@@ -84,6 +106,7 @@ class AyahBookmarkPresenter(
     val checkedCollectionIds = remember { mutableStateOf<Set<String>>(emptySet()) }
 
     val isDismissed = remember { mutableStateOf(false) }
+    val isSelectingReadingBookmark = remember { mutableStateOf(false) }
 
     val collections = remember(collectionState.value, checkedCollectionIds.value) {
       collectionState.value.orEmpty().map { collectionState ->
@@ -113,6 +136,42 @@ class AyahBookmarkPresenter(
     }
 
     val scope = rememberCoroutineScope()
+
+    val commit: () -> Unit = {
+      isDismissed.value = true
+      appCoroutineScope.launch {
+        bookmarksDao.replaceAyahBookmarkCollections(currentAyah, checkedCollectionIds.value)
+
+        val pendingHighlight = currentHighlight.value
+        if (pendingHighlight?.color != highlight.value?.color) {
+          if (pendingHighlight == null) {
+            highlightsDao.clearHighlight(currentAyah)
+          } else {
+            highlightsDao.setHighlight(currentAyah, pendingHighlight.color)
+          }
+        }
+      }
+    }
+
+    val readingBookmarkSelection = if (isSelectingReadingBookmark.value) {
+      readingBookmarkSheetPresenter.present(
+        target = ReadingBookmarkTarget.Ayah(currentAyah),
+        isNested = true,
+        onAction = { action ->
+          onReadingBookmarkAction(action)
+          commit()
+        }
+      )
+    } else {
+      null
+    }
+
+    LaunchedEffect(readingBookmarkSelection?.isDismissed) {
+      if (readingBookmarkSelection?.isDismissed == true && !isDismissed.value) {
+        isSelectingReadingBookmark.value = false
+      }
+    }
+
     val eventSink: (AyahBookmarkEvent) -> Unit = { event ->
       when (event) {
         AyahBookmarkEvent.CancelCreatingCollection ->
@@ -144,30 +203,7 @@ class AyahBookmarkPresenter(
           }
         }
 
-        AyahBookmarkEvent.Done ->
-          appCoroutineScope.launch {
-            isDismissed.value = true
-            bookmarksDao.replaceAyahBookmarkCollections(currentAyah, checkedCollectionIds.value)
-
-            val previousReadingBookmarks = readingBookmarks.value.orEmpty()
-              .filter { it.asSuraAyah() == currentAyah }
-
-            // TODO: remove after new ui for multiple bookmarks since those will just apply immediately
-            if (previousReadingBookmarks != enabledReadingBookmarksState.value) {
-              val removed = previousReadingBookmarks - enabledReadingBookmarksState.value.toSet()
-              val added = enabledReadingBookmarksState.value - previousReadingBookmarks.toSet()
-              readingBookmarksDao.updateReadingBookmarks(ayah = currentAyah, added = added, removed = removed)
-            }
-
-            val currentHighlight = currentHighlight.value
-            if (currentHighlight?.color != highlight.value?.color) {
-              if (currentHighlight == null) {
-                highlightsDao.clearHighlight(currentAyah)
-              } else {
-                highlightsDao.setHighlight(currentAyah, currentHighlight.color)
-              }
-            }
-          }
+        AyahBookmarkEvent.Done -> commit()
 
         AyahBookmarkEvent.StartCreatingCollection ->
           collectionCreationState.value = AyahBookmarkCollectionCreationState.Active(name = "")
@@ -180,20 +216,22 @@ class AyahBookmarkPresenter(
           }
         }
 
-        is AyahBookmarkEvent.ToggleReadingBookmark -> {
-          val current = enabledReadingBookmarksState.value
-          val matching = current.firstOrNull { it.slot == event.type }
-          enabledReadingBookmarksState.value = if (matching == null) {
-            current + AyahReadingBookmark(
-              event.type,
-              currentAyah.sura,
-              currentAyah.ayah,
-              Clock.System.now()
+        AyahBookmarkEvent.PlaceSuggestedReadingBookmark -> {
+          onReadingBookmarkAction(
+            ReadingBookmarkAction.Place(
+              slot = suggestedReadingBookmark.slot,
+              target = ReadingBookmarkTarget.Ayah(currentAyah)
             )
-          } else {
-            current - matching
-          }
+          )
+          commit()
         }
+
+        AyahBookmarkEvent.ClearSuggestedReadingBookmark -> {
+          onReadingBookmarkAction(ReadingBookmarkAction.Clear(suggestedReadingBookmark.slot))
+          commit()
+        }
+
+        AyahBookmarkEvent.ShowReadingBookmarks -> isSelectingReadingBookmark.value = true
 
         is AyahBookmarkEvent.SetHighlight -> {
           currentHighlight.value = Highlight(currentAyah, event.color, Clock.System.now())
@@ -207,19 +245,31 @@ class AyahBookmarkPresenter(
 
     return AyahBookmarkState(
       ayah = currentAyah,
-      isReadingBookmarkEnabled = enabledReadingBookmarksState.value.firstOrNull().asSuraAyah() == currentAyah,
-      currentReadingBookmark = enabledReadingBookmarksState.value.firstOrNull(),
       suggestedReadingBookmark = suggestedReadingBookmark,
       isSuggestedReadingBookmarkEnabled = suggestedReadingBookmark.asSuraAyah() == currentAyah,
-      currentAyahReadingBookmarks = enabledReadingBookmarksState.value,
+      otherReadingBookmarks = otherReadingBookmarks,
+      currentAyahReadingBookmarks = ayahReadingBookmarks,
+      readingBookmarkSelection = readingBookmarkSelection,
       collections = collections,
       collectionCreation = collectionCreationState.value,
       highlight = currentHighlight.value,
       isDismissed = isDismissed.value,
       suraAyahNameResolver = { context, ayah -> quranNaming.getSuraAyahString(context, ayah.sura, ayah.ayah) },
-      suraPageNameResolver = { context, page -> quranNaming.getSuraPageString(context, page) },
+      readingBookmarkLocationResolver = { context, bookmark -> locationName(context, bookmark) },
       eventSink = eventSink
     )
+  }
+
+  private fun locationName(context: Context, bookmark: ReadingBookmark): String {
+    return when (bookmark) {
+      is PageReadingBookmark -> quranNaming.getSuraPageString(context, bookmark.page)
+      is AyahReadingBookmark -> context.getString(
+        R.string.readingbookmark_ayah_location,
+        quranNaming.getSuraAyahString(context, bookmark.sura, bookmark.ayah),
+        quranInfo.getPageFromSuraAyah(bookmark.sura, bookmark.ayah)
+      )
+      is EmptyReadingBookmark -> ""
+    }
   }
 
   private fun ReadingBookmark?.asSuraAyah(): SuraAyah? {

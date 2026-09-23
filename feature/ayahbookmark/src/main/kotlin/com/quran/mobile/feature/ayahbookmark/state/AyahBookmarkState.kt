@@ -4,28 +4,26 @@ import android.content.Context
 import androidx.compose.runtime.Immutable
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.ReadingBookmark
-import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
+import com.quran.mobile.feature.ayahbookmark.readingbookmark.state.ReadingBookmarkSheetState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class AyahBookmarkState(
   val ayah: SuraAyah,
-  // TODO: remove when applying multiple reading bookmarks
-  val isReadingBookmarkEnabled: Boolean,
-  // TODO: remove when applying multiple reading bookmarks
-  val currentReadingBookmark: ReadingBookmark? = null,
-  val isSuggestedReadingBookmarkEnabled: Boolean,
   val suggestedReadingBookmark: ReadingBookmark,
+  val isSuggestedReadingBookmarkEnabled: Boolean,
+  val otherReadingBookmarks: ImmutableList<ReadingBookmark> = persistentListOf(),
   val currentAyahReadingBookmarks: List<ReadingBookmark>,
+  val readingBookmarkSelection: ReadingBookmarkSheetState? = null,
   val collections: ImmutableList<AyahBookmarkCollectionItem> = persistentListOf(),
   val collectionCreation: AyahBookmarkCollectionCreationState = AyahBookmarkCollectionCreationState.Inactive,
   val highlight: Highlight?,
   val isDismissed: Boolean = false,
   val suraAyahNameResolver: (Context, SuraAyah) -> String,
-  val suraPageNameResolver: (Context, Int) -> String,
+  val readingBookmarkLocationResolver: (Context, ReadingBookmark) -> String,
   val eventSink: (AyahBookmarkEvent) -> Unit = {}
 ) {
   val isSaved: Boolean
@@ -45,7 +43,6 @@ data class AyahBookmarkCollectionItem(
 sealed interface AyahBookmarkCollectionCreationState {
   data object Inactive : AyahBookmarkCollectionCreationState
 
-  /** State for the inline collection editor, including persistence-level name rejection. */
   data class Active(
     val name: String,
     val isSubmitting: Boolean = false,
@@ -54,7 +51,9 @@ sealed interface AyahBookmarkCollectionCreationState {
 }
 
 sealed interface AyahBookmarkEvent {
-  data class ToggleReadingBookmark(val type: ReadingBookmarkType) : AyahBookmarkEvent
+  data object PlaceSuggestedReadingBookmark : AyahBookmarkEvent
+  data object ClearSuggestedReadingBookmark : AyahBookmarkEvent
+  data object ShowReadingBookmarks : AyahBookmarkEvent
   data class ToggleCollection(val id: String) : AyahBookmarkEvent
   data object StartCreatingCollection : AyahBookmarkEvent
   data object CancelCreatingCollection : AyahBookmarkEvent

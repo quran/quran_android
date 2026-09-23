@@ -3,7 +3,7 @@ package com.quran.mobile.feature.ayahbookmark.readingbookmark
 import com.quran.data.model.bookmark.ReadingBookmarkTarget
 import com.quran.data.model.bookmark.ReadingBookmarkType
 
-internal sealed interface ReadingBookmarkAction {
+sealed interface ReadingBookmarkAction {
   data class Place(
     val slot: ReadingBookmarkType,
     val target: ReadingBookmarkTarget
