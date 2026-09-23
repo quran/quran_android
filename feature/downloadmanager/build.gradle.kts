@@ -3,7 +3,10 @@ plugins {
   alias(libs.plugins.metro)
 }
 
-android.namespace = "com.quran.mobile.feature.downloadmanager"
+android {
+  namespace = "com.quran.mobile.feature.downloadmanager"
+  testBuildType = "release"
+}
 
 dependencies {
   implementation(project(":common:audio"))
@@ -34,4 +37,10 @@ dependencies {
   // coroutines
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.kotlinx.coroutines.android)
+
+  // test
+  testImplementation(libs.junit)
+  testImplementation(libs.truth)
+  testImplementation(libs.kotlinx.coroutines.test)
+  testImplementation(libs.turbine)
 }
