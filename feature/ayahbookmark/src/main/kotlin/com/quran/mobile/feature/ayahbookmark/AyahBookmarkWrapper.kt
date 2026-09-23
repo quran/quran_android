@@ -29,11 +29,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
+import com.quran.data.core.ReadingBookmarkUpdater
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.ayahbookmark.di.AyahBookmarkWrapperInjector
 import com.quran.mobile.feature.ayahbookmark.presenter.AyahBookmarkPresenter
+import com.quran.mobile.feature.ayahbookmark.readingbookmark.ReadingBookmarkAction
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkEvent
+import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkState
 import com.quran.mobile.feature.ayahbookmark.ui.AyahBookmark
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.delay
@@ -48,6 +51,13 @@ class AyahBookmarkWrapper(
   @Inject
   lateinit var ayahBookmarkPresenterFactory: AyahBookmarkPresenter.Factory
 
+  @Inject
+  lateinit var readingBookmarkUpdater: ReadingBookmarkUpdater
+
+  private var pendingReadingBookmarkAction: ReadingBookmarkAction? = null
+
+  private val actionSink: (ReadingBookmarkAction) -> Unit = { pendingReadingBookmarkAction = it }
+
   init {
     (context as? AyahBookmarkWrapperInjector)?.injectAyahBookmarkWrapper(this)
 
@@ -61,9 +71,24 @@ class AyahBookmarkWrapper(
     addView(composeView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
   }
 
+  private fun notifyDismissed(state: AyahBookmarkState) {
+    onDismissed(state.isSaved)
+
+    when (val action = pendingReadingBookmarkAction) {
+      is ReadingBookmarkAction.Place ->
+        readingBookmarkUpdater.placeReadingBookmark(action.slot, action.target)
+
+      is ReadingBookmarkAction.Clear -> readingBookmarkUpdater.clearReadingBookmark(action.slot)
+      null -> Unit
+    }
+    pendingReadingBookmarkAction = null
+  }
+
   @Composable
   private fun AyahBookmarkBottomSheet() {
-    val presenter = remember(currentAyah) { ayahBookmarkPresenterFactory.create(currentAyah) }
+    val presenter = remember(currentAyah) {
+      ayahBookmarkPresenterFactory.create(currentAyah, actionSink)
+    }
     val moleculeScope = rememberCoroutineScope()
     val stateFlow = remember {
       moleculeScope.launchMolecule(mode = RecompositionMode.ContextClock) {
@@ -104,7 +129,7 @@ class AyahBookmarkWrapper(
           // pending changes, same as tapping Done would
           state.eventSink(AyahBookmarkEvent.Done)
         }
-        onDismissed(state.isSaved)
+        notifyDismissed(state)
       }
     }
 

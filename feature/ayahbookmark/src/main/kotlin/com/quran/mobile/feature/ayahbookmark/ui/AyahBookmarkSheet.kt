@@ -24,10 +24,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.quran.data.model.bookmark.AyahReadingBookmark
-import com.quran.data.model.bookmark.EmptyReadingBookmark
-import com.quran.data.model.bookmark.PageReadingBookmark
-import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.mobile.feature.ayahbookmark.R
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionCreationState
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkEvent
@@ -44,22 +40,13 @@ internal fun AyahBookmarkSheet(
   val suraAyahName = remember(context, state.ayah) {
     state.suraAyahNameResolver(context, state.ayah)
   }
-  val currentReadingBookmarkName = remember(context, state.currentReadingBookmark) {
-    state.currentReadingBookmark?.let { readingBookmark ->
-      when (readingBookmark) {
-        is AyahReadingBookmark -> state.suraAyahNameResolver(context, readingBookmark.asSuraAyah())
-        is EmptyReadingBookmark -> ""
-        is PageReadingBookmark -> state.suraPageNameResolver(context, readingBookmark.page)
-      }
-    }
-  }
 
   Column(
     modifier = modifier
       .clip(RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp))
       .background(MaterialTheme.colorScheme.surface)
   ) {
-    // fixed head: drag handle, title row, reading bookmark toggle, collections label
+    // fixed head: drag handle, title row, reading bookmarks, highlight, collections label
     Column(modifier = Modifier.padding(top = 18.dp, start = 18.dp, end = 18.dp)) {
       Box(
         modifier = Modifier
@@ -108,19 +95,27 @@ internal fun AyahBookmarkSheet(
         )
       }
 
-      ReadingBookmarkRow(
-        isEnabled = state.isReadingBookmarkEnabled,
-        currentReadingBookmarkName = currentReadingBookmarkName,
-        // TODO: fix when we fix the ui
-        onToggle = { eventSink(AyahBookmarkEvent.ToggleReadingBookmark(ReadingBookmarkType.TEAL)) }
+      ReadingBookmarkCard(
+        suggested = state.suggestedReadingBookmark,
+        isAtCurrentAyah = state.isSuggestedReadingBookmarkEnabled,
+        others = state.otherReadingBookmarks,
+        locationResolver = state.readingBookmarkLocationResolver,
+        onPlace = { eventSink(AyahBookmarkEvent.PlaceSuggestedReadingBookmark) },
+        onClear = { eventSink(AyahBookmarkEvent.ClearSuggestedReadingBookmark) },
+        onShowOthers = { eventSink(AyahBookmarkEvent.ShowReadingBookmarks) }
       )
+
+      // hairline dividers do the grouping the tinted cards used to do
+      HorizontalDivider(modifier = Modifier.padding(top = 18.dp))
 
       HighlightRow(
         highlight = state.highlight?.color,
         onSelect = { color -> eventSink(AyahBookmarkEvent.SetHighlight(color)) },
         onClear = { eventSink(AyahBookmarkEvent.ClearHighlight) },
-        modifier = Modifier.padding(top = 10.dp)
+        modifier = Modifier.padding(top = 14.dp)
       )
+
+      HorizontalDivider(modifier = Modifier.padding(top = 14.dp))
 
       Text(
         text = stringResource(R.string.ayahbookmark_collections_header).uppercase(),
