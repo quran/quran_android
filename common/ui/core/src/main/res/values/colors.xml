@@ -15,7 +15,7 @@
     the color each reading bookmark slot's pin is drawn in. paired with the slot names below by
     ReadingBookmarkSlots; the night variant lives in values-night/colors.xml.
   -->
-  <color name="reading_bookmark_coral">#ffd93a15</color>
-  <color name="reading_bookmark_teal">#ff0e8a96</color>
-  <color name="reading_bookmark_indigo">#ff3a3fcc</color>
+  <color name="reading_bookmark_green">#ff05956f</color>
+  <color name="reading_bookmark_purple">#ffb315fc</color>
+  <color name="reading_bookmark_blue">#ff007ff0</color>
 </resources>

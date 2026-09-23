@@ -157,7 +157,7 @@ class BookmarkImportExportModelTest {
       )
     )
     readingBookmarksDao.setReadingBookmark(
-      PageReadingBookmark(ReadingBookmarkType.TEAL, 42, Instant.fromEpochSeconds(1234))
+      PageReadingBookmark(ReadingBookmarkType.PURPLE, 42, Instant.fromEpochSeconds(1234))
     )
 
     val testObserver = TestObserver<Uri>()
@@ -180,7 +180,7 @@ class BookmarkImportExportModelTest {
     assertThat(exportedData.pageType).isEqualTo("madani")
     assertThat(exportedData.readingBookmarks).containsExactly(
       BackupReadingBookmark(
-        slot = ReadingBookmarkType.TEAL,
+        slot = ReadingBookmarkType.PURPLE,
         type = BackupReadingBookmark.TYPE_PAGE,
         page = 42,
         timestamp = Instant.fromEpochSeconds(1234)
@@ -194,7 +194,7 @@ class BookmarkImportExportModelTest {
     val ayah = 255
     val page = quranInfo.getPageFromSuraAyah(sura, ayah)
     readingBookmarksDao.setReadingBookmark(
-      AyahReadingBookmark(ReadingBookmarkType.TEAL, sura, ayah, Instant.fromEpochSeconds(1234))
+      AyahReadingBookmark(ReadingBookmarkType.PURPLE, sura, ayah, Instant.fromEpochSeconds(1234))
     )
 
     val testObserver = TestObserver<Uri>()
@@ -208,7 +208,7 @@ class BookmarkImportExportModelTest {
     val exportedData = BookmarkJsonModel().fromJson(backupFile().source().buffer())
     assertThat(exportedData.readingBookmarks).containsExactly(
       BackupReadingBookmark(
-        slot = ReadingBookmarkType.TEAL,
+        slot = ReadingBookmarkType.PURPLE,
         type = BackupReadingBookmark.TYPE_AYAH,
         sura = sura,
         ayah = ayah,
@@ -226,7 +226,7 @@ class BookmarkImportExportModelTest {
     )
     recentPagesDao.setRecentPages(listOf(RecentPage(12, Instant.fromEpochMilliseconds(1_700_000_000_123L))))
     readingBookmarksDao.setReadingBookmark(
-      PageReadingBookmark(ReadingBookmarkType.TEAL, 12, Instant.fromEpochMilliseconds(1_699_999_999_456L))
+      PageReadingBookmark(ReadingBookmarkType.PURPLE, 12, Instant.fromEpochMilliseconds(1_699_999_999_456L))
     )
 
     val testObserver = TestObserver<Uri>()
@@ -241,7 +241,7 @@ class BookmarkImportExportModelTest {
       "type, sura, ayah, page, timestamp, tags, slot \n" +
         "bookmark, 1, 1, 1, 1700000000, CSV Tag, \n" +
         "recent,,, 12, 1700000000,, \n" +
-        "reading_bookmark, null, null, 12, 1699999999,, TEAL \n"
+        "reading_bookmark, null, null, 12, 1699999999,, PURPLE \n"
     )
   }
 
@@ -251,7 +251,7 @@ class BookmarkImportExportModelTest {
     val ayah = 255
     val page = quranInfo.getPageFromSuraAyah(sura, ayah)
     readingBookmarksDao.setReadingBookmark(
-      AyahReadingBookmark(ReadingBookmarkType.TEAL, sura, ayah, Instant.fromEpochSeconds(999))
+      AyahReadingBookmark(ReadingBookmarkType.PURPLE, sura, ayah, Instant.fromEpochSeconds(999))
     )
 
     val testObserver = TestObserver<Uri>()
@@ -263,7 +263,7 @@ class BookmarkImportExportModelTest {
     testObserver.assertValueCount(1)
     assertThat(csvBackupFile().readText()).isEqualTo(
       "type, sura, ayah, page, timestamp, tags, slot \n" +
-        "reading_bookmark, 2, 255, $page, 999,, TEAL \n"
+        "reading_bookmark, 2, 255, $page, 999,, PURPLE \n"
     )
   }
 
@@ -357,7 +357,7 @@ class BookmarkImportExportModelTest {
         recentPages = listOf(RecentPage(page, Instant.fromEpochMilliseconds(recentTimestampMillis))),
         readingBookmarks = listOf(
           BackupReadingBookmark(
-            slot = ReadingBookmarkType.TEAL,
+            slot = ReadingBookmarkType.PURPLE,
             type = BackupReadingBookmark.TYPE_PAGE,
             page = page,
             timestamp = Instant.fromEpochMilliseconds(readingBookmarkTimestampMillis)
@@ -517,7 +517,7 @@ class BookmarkImportExportModelTest {
       BookmarkData(
         readingBookmarks = listOf(
           BackupReadingBookmark(
-            slot = ReadingBookmarkType.TEAL,
+            slot = ReadingBookmarkType.PURPLE,
             type = BackupReadingBookmark.TYPE_AYAH,
             sura = 2,
             ayah = 255,

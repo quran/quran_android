@@ -63,10 +63,11 @@ class BookmarkBackupImportNormalizerTest {
         recentPages = listOf(RecentPage(warshPage, Instant.fromEpochSeconds(900))),
         readingBookmarks = listOf(
           BackupReadingBookmark(
-            slot = ReadingBookmarkType.TEAL,
+            slot = ReadingBookmarkType.PURPLE,
             type = BackupReadingBookmark.TYPE_PAGE,
             page = warshPage,
-            timestamp = Instant.fromEpochSeconds(800)
+            timestamp = Instant.fromEpochSeconds(800),
+            name = "Nightly reading"
           )
         ),
         pageType = "warsh"
@@ -78,6 +79,8 @@ class BookmarkBackupImportNormalizerTest {
     assertThat(importData.readingSessions.single().ayah).isEqualTo(warshBounds[1])
     assertThat((importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page).page)
       .isEqualTo(madaniPage)
+    assertThat((importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page).name)
+      .isEqualTo("Nightly reading")
   }
 
   @Test
@@ -89,7 +92,7 @@ class BookmarkBackupImportNormalizerTest {
       BookmarkData(
         readingBookmarks = listOf(
           BackupReadingBookmark(
-            slot = ReadingBookmarkType.TEAL,
+            slot = ReadingBookmarkType.PURPLE,
             type = BackupReadingBookmark.TYPE_PAGE,
             page = warshPage,
             timestamp = Instant.fromEpochSeconds(800)
@@ -110,7 +113,7 @@ class BookmarkBackupImportNormalizerTest {
       BookmarkData(
         readingBookmarks = listOf(
           BackupReadingBookmark(
-            slot = ReadingBookmarkType.TEAL,
+            slot = ReadingBookmarkType.PURPLE,
             type = BackupReadingBookmark.TYPE_PAGE,
             page = 999,
             timestamp = Instant.fromEpochSeconds(800)

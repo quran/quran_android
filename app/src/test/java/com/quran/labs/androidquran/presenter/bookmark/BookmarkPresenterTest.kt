@@ -113,7 +113,7 @@ class BookmarkPresenterTest {
 
   @Test
   fun `renders reading bookmark ahead of recent pages`() {
-    val readingBookmark = PageReadingBookmark(ReadingBookmarkType.TEAL, 42, Instant.fromEpochSeconds(300))
+    val readingBookmark = PageReadingBookmark(ReadingBookmarkType.PURPLE, 42, Instant.fromEpochSeconds(300))
     fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
     fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
     fakeReadingBookmarksDao.setReadingBookmark(readingBookmark)
@@ -131,13 +131,13 @@ class BookmarkPresenterTest {
 
   @Test
   fun `renders every placed reading bookmark in pin order and leaves unplaced ones out`() {
-    val indigo =
-      AyahReadingBookmark(ReadingBookmarkType.INDIGO, 2, 255, Instant.fromEpochSeconds(400))
-    val coral = PageReadingBookmark(ReadingBookmarkType.CORAL, 77, Instant.fromEpochSeconds(300))
+    val blue =
+      AyahReadingBookmark(ReadingBookmarkType.BLUE, 2, 255, Instant.fromEpochSeconds(400))
+    val green = PageReadingBookmark(ReadingBookmarkType.GREEN, 77, Instant.fromEpochSeconds(300))
     fakeReadingBookmarksDao = FakeReadingBookmarksDao(
-      indigo,
-      EmptyReadingBookmark(ReadingBookmarkType.TEAL, Instant.fromEpochSeconds(500)),
-      coral
+      blue,
+      EmptyReadingBookmark(ReadingBookmarkType.PURPLE, Instant.fromEpochSeconds(500)),
+      green
     )
     fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
 
@@ -145,8 +145,8 @@ class BookmarkPresenterTest {
 
     assertThat(result.rows.take(4)).containsExactly(
       BookmarkRowData.ReadingBookmarkHeader(2),
-      BookmarkRowData.ReadingBookmarkItem(coral),
-      BookmarkRowData.ReadingBookmarkItem(indigo),
+      BookmarkRowData.ReadingBookmarkItem(green),
+      BookmarkRowData.ReadingBookmarkItem(blue),
       BookmarkRowData.RecentPageHeader(RECENT_PAGES.size)
     ).inOrder()
   }
@@ -154,7 +154,7 @@ class BookmarkPresenterTest {
   @Test
   fun `omits the reading bookmarks section when no pin is placed`() {
     fakeReadingBookmarksDao = FakeReadingBookmarksDao(
-      EmptyReadingBookmark(ReadingBookmarkType.CORAL, Instant.fromEpochSeconds(500))
+      EmptyReadingBookmark(ReadingBookmarkType.GREEN, Instant.fromEpochSeconds(500))
     )
     fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
 

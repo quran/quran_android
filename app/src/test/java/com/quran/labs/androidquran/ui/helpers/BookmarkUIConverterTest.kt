@@ -41,10 +41,10 @@ class BookmarkUIConverterTest {
       rows = listOf(
         BookmarkRowData.RecentPage(RecentPage(42, timestamp)),
         BookmarkRowData.ReadingBookmarkItem(
-          PageReadingBookmark(ReadingBookmarkType.TEAL, 42, timestamp)
+          PageReadingBookmark(ReadingBookmarkType.PURPLE, 42, timestamp)
         ),
         BookmarkRowData.ReadingBookmarkItem(
-          AyahReadingBookmark(ReadingBookmarkType.CORAL, 2, 255, timestamp)
+          AyahReadingBookmark(ReadingBookmarkType.GREEN, 2, 255, timestamp)
         ),
         BookmarkRowData.BookmarkItem(Bookmark("1", 2, 255, 42, timestamp.epochSeconds)),
         BookmarkRowData.HighlightedAyahItem(
@@ -75,16 +75,16 @@ class BookmarkUIConverterTest {
 
     val renamed = factory.fromReadingBookmark(
       context,
-      PageReadingBookmark(ReadingBookmarkType.CORAL, 42, timestamp, name = "Tafsir study")
+      PageReadingBookmark(ReadingBookmarkType.GREEN, 42, timestamp, name = "Tafsir study")
     )
     assertThat(renamed.imageContentDescription).isEqualTo("Tafsir study")
 
     // a name that is only whitespace is no name at all, so the default still wins
     val blank = factory.fromReadingBookmark(
       context,
-      PageReadingBookmark(ReadingBookmarkType.CORAL, 42, timestamp, name = "   ")
+      PageReadingBookmark(ReadingBookmarkType.GREEN, 42, timestamp, name = "   ")
     )
-    assertThat(blank.imageContentDescription).isEqualTo("Coral")
+    assertThat(blank.imageContentDescription).isEqualTo("Green")
   }
 
   @Test
@@ -100,40 +100,40 @@ class BookmarkUIConverterTest {
       rows = listOf(
         BookmarkRowData.ReadingBookmarkHeader(2),
         BookmarkRowData.ReadingBookmarkItem(
-          AyahReadingBookmark(ReadingBookmarkType.CORAL, 4, 6, fourMinutesAgo)
+          AyahReadingBookmark(ReadingBookmarkType.GREEN, 4, 6, fourMinutesAgo)
         ),
         BookmarkRowData.ReadingBookmarkItem(
-          PageReadingBookmark(ReadingBookmarkType.INDIGO, 293, fourMinutesAgo)
+          PageReadingBookmark(ReadingBookmarkType.BLUE, 293, fourMinutesAgo)
         ),
         BookmarkRowData.ReadingBookmarkHeader(1),
         BookmarkRowData.ReadingBookmarkItem(
           PageReadingBookmark(
-            ReadingBookmarkType.TEAL, 50, Instant.fromEpochMilliseconds(System.currentTimeMillis())
+            ReadingBookmarkType.PURPLE, 50, Instant.fromEpochMilliseconds(System.currentTimeMillis())
           )
         )
       ),
       tagMap = emptyMap()
     )
 
-    val (header, coral, indigo, singleHeader, justPlaced) =
+    val (header, green, blue, singleHeader, justPlaced) =
       converter.convertToUIResult(context, data).rows
 
     assertThat(header.text).isEqualTo("Reading Bookmarks")
     assertThat(singleHeader.text).isEqualTo("Reading Bookmark")
 
-    assertThat(coral.text).isEqualTo("Surah An-Nisāʾ - Ayah 6")
-    assertThat(coral.metadata).isEqualTo("Juz' 4 · 4 minutes ago")
-    assertThat(coral.page).isEqualTo(77)
-    assertThat(coral.imageResource).isEqualTo(R.drawable.ic_bookmark_filled_24)
-    assertThat(coral.imageFilterColorResource).isEqualTo(CoreR.color.reading_bookmark_coral)
+    assertThat(green.text).isEqualTo("Surah An-Nisāʾ - Ayah 6")
+    assertThat(green.metadata).isEqualTo("Juz' 4 · 4 minutes ago")
+    assertThat(green.page).isEqualTo(77)
+    assertThat(green.imageResource).isEqualTo(R.drawable.ic_bookmark_filled_24)
+    assertThat(green.imageFilterColorResource).isEqualTo(CoreR.color.reading_bookmark_green)
     // the colour is what tells pins apart on screen, so the name is what a screen reader says
-    assertThat(coral.imageContentDescription).isEqualTo("Coral")
+    assertThat(green.imageContentDescription).isEqualTo("Green")
 
-    assertThat(indigo.text).isEqualTo("Surah Al-Kahf")
-    assertThat(indigo.metadata).isEqualTo("Juz' 15 · 4 minutes ago")
-    assertThat(indigo.page).isEqualTo(293)
-    assertThat(indigo.imageFilterColorResource).isEqualTo(CoreR.color.reading_bookmark_indigo)
-    assertThat(indigo.imageContentDescription).isEqualTo("Indigo")
+    assertThat(blue.text).isEqualTo("Surah Al-Kahf")
+    assertThat(blue.metadata).isEqualTo("Juz' 15 · 4 minutes ago")
+    assertThat(blue.page).isEqualTo(293)
+    assertThat(blue.imageFilterColorResource).isEqualTo(CoreR.color.reading_bookmark_blue)
+    assertThat(blue.imageContentDescription).isEqualTo("Blue")
 
     // rather than "0 minutes ago"
     assertThat(justPlaced.metadata).isEqualTo("Juz' 3 · 1 minute ago")
@@ -184,6 +184,6 @@ class BookmarkUIConverterTest {
         factory.fromReadingBookmark(context, PageReadingBookmark(slot, 42, timestamp))
           .imageContentDescription
       }
-    ).containsExactly("مرجاني", "فيروزي", "نيلي").inOrder()
+    ).containsExactly("أخضر", "بنفسجي", "أزرق").inOrder()
   }
 }

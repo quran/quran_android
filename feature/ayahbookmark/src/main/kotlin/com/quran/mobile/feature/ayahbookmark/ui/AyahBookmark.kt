@@ -178,7 +178,7 @@ private fun AyahBookmarkPinOnThisAyahPreview() {
   PreviewScaffold(
     state = previewState(
       suggested = AyahReadingBookmark(
-        slot = ReadingBookmarkType.CORAL,
+        slot = ReadingBookmarkType.GREEN,
         sura = previewAyah.sura,
         ayah = previewAyah.ayah,
         timestamp = Clock.System.now()
@@ -194,7 +194,7 @@ private fun AyahBookmarkPinElsewherePreview() {
   PreviewScaffold(
     state = previewState(
       suggested = PageReadingBookmark(
-        slot = ReadingBookmarkType.CORAL,
+        slot = ReadingBookmarkType.GREEN,
         page = 75,
         timestamp = Clock.System.now()
       ),
@@ -209,7 +209,7 @@ private fun AyahBookmarkPinElsewherePreview() {
 private fun AyahBookmarkNothingSavedPreview() {
   PreviewScaffold(
     state = previewState(
-      suggested = EmptyReadingBookmark(ReadingBookmarkType.TEAL, Clock.System.now()),
+      suggested = EmptyReadingBookmark(ReadingBookmarkType.PURPLE, Clock.System.now()),
       collections = previewUncheckedCollections,
       highlight = null
     )
@@ -222,7 +222,7 @@ private fun AyahBookmarkHighlightOnlyPreview() {
   PreviewScaffold(
     state = previewState(
       suggested = PageReadingBookmark(
-        slot = ReadingBookmarkType.INDIGO,
+        slot = ReadingBookmarkType.BLUE,
         page = 83,
         timestamp = Clock.System.now()
       ),
@@ -237,7 +237,7 @@ private fun AyahBookmarkHighlightOnlyPreview() {
 private fun AyahBookmarkCreatingCollectionPreview() {
   PreviewScaffold(
     state = previewState(
-      suggested = EmptyReadingBookmark(ReadingBookmarkType.INDIGO, Clock.System.now()),
+      suggested = EmptyReadingBookmark(ReadingBookmarkType.BLUE, Clock.System.now()),
       collectionCreation = AyahBookmarkCollectionCreationState.Active(name = "Qiyam"),
       highlight = previewHighlight(HighlightColor.GREEN)
     )
@@ -249,7 +249,7 @@ private fun AyahBookmarkCreatingCollectionPreview() {
 private fun AyahBookmarkCreatingCollectionSubmittingPreview() {
   PreviewScaffold(
     state = previewState(
-      suggested = EmptyReadingBookmark(ReadingBookmarkType.INDIGO, Clock.System.now()),
+      suggested = EmptyReadingBookmark(ReadingBookmarkType.BLUE, Clock.System.now()),
       collectionCreation = AyahBookmarkCollectionCreationState.Active(
         name = "Qiyam",
         isSubmitting = true

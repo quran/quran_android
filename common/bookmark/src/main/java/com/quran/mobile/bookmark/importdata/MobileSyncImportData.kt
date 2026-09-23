@@ -50,13 +50,15 @@ sealed interface MobileSyncImportReadingBookmark {
     val slot: ReadingBookmarkSlot,
     val sura: Int,
     val ayah: Int,
-    override val timestampMillis: Long
+    override val timestampMillis: Long,
+    val name: String? = null
   ) : MobileSyncImportReadingBookmark
 
   data class Page(
     val slot: ReadingBookmarkSlot,
     val page: Int,
-    override val timestampMillis: Long
+    override val timestampMillis: Long,
+    val name: String? = null
   ) : MobileSyncImportReadingBookmark
 }
 

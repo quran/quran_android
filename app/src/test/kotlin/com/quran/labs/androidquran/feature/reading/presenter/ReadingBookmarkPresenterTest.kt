@@ -53,13 +53,13 @@ class ReadingBookmarkPresenterTest {
   private fun presenter(readingBookmarksDao: FakeReadingBookmarksDao) =
     ReadingBookmarkPresenter(readingBookmarksDao, quranSettings, appCoroutineScope)
 
-  private fun pageBookmark(page: Int, slot: ReadingBookmarkType = ReadingBookmarkType.TEAL) =
+  private fun pageBookmark(page: Int, slot: ReadingBookmarkType = ReadingBookmarkType.PURPLE) =
     PageReadingBookmark(slot, page, Instant.fromEpochSeconds(1))
 
   private fun ayahBookmark(
     sura: Int,
     ayah: Int,
-    slot: ReadingBookmarkType = ReadingBookmarkType.TEAL
+    slot: ReadingBookmarkType = ReadingBookmarkType.PURPLE
   ) = AyahReadingBookmark(slot, sura, ayah, Instant.fromEpochSeconds(1))
 
   // writes run on appCoroutineScope, which is backed by the real Dispatchers.IO rather than the
@@ -106,8 +106,8 @@ class ReadingBookmarkPresenterTest {
   @Test
   fun `page icon is selected when any of the three pins is on this page`() = runTest {
     val readingBookmarksDao = FakeReadingBookmarksDao(
-      pageBookmark(10, ReadingBookmarkType.TEAL),
-      pageBookmark(42, ReadingBookmarkType.INDIGO)
+      pageBookmark(10, ReadingBookmarkType.PURPLE),
+      pageBookmark(42, ReadingBookmarkType.BLUE)
     )
     val screen = RecordingScreen()
     val presenter = presenter(readingBookmarksDao)
@@ -120,17 +120,17 @@ class ReadingBookmarkPresenterTest {
 
   @Test
   fun `placing a pin on a page writes it immediately`() = runTest {
-    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(10, ReadingBookmarkType.CORAL))
+    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(10, ReadingBookmarkType.GREEN))
     val screen = RecordingScreen()
     val presenter = presenter(readingBookmarksDao)
 
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.placeReadingBookmark(ReadingBookmarkType.CORAL, ReadingBookmarkTarget.Page(42))
+    presenter.placeReadingBookmark(ReadingBookmarkType.GREEN, ReadingBookmarkTarget.Page(42))
     waitForRealDispatch()
 
     assertThat(readingBookmarksDao.readingBookmarks())
-      .containsExactly(pageBookmark(42, ReadingBookmarkType.CORAL))
+      .containsExactly(pageBookmark(42, ReadingBookmarkType.GREEN))
   }
 
   @Test
@@ -142,45 +142,45 @@ class ReadingBookmarkPresenterTest {
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
     presenter.placeReadingBookmark(
-      ReadingBookmarkType.INDIGO,
+      ReadingBookmarkType.BLUE,
       ReadingBookmarkTarget.Ayah(SuraAyah(4, 6))
     )
     waitForRealDispatch()
 
     assertThat(readingBookmarksDao.readingBookmarks())
-      .containsExactly(ayahBookmark(4, 6, ReadingBookmarkType.INDIGO))
+      .containsExactly(ayahBookmark(4, 6, ReadingBookmarkType.BLUE))
   }
 
   @Test
   fun `placing a pin where it already sits changes nothing and says nothing`() = runTest {
-    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(42, ReadingBookmarkType.TEAL))
+    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(42, ReadingBookmarkType.PURPLE))
     val screen = RecordingScreen()
     val presenter = presenter(readingBookmarksDao)
 
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.placeReadingBookmark(ReadingBookmarkType.TEAL, ReadingBookmarkTarget.Page(42))
+    presenter.placeReadingBookmark(ReadingBookmarkType.PURPLE, ReadingBookmarkTarget.Page(42))
     waitForRealDispatch()
 
     assertThat(screen.changes).isEmpty()
     assertThat(readingBookmarksDao.readingBookmarks())
-      .containsExactly(pageBookmark(42, ReadingBookmarkType.TEAL))
+      .containsExactly(pageBookmark(42, ReadingBookmarkType.PURPLE))
   }
 
   @Test
   fun `the toast names the pin and where it moved from`() = runTest {
-    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(10, ReadingBookmarkType.CORAL))
+    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(10, ReadingBookmarkType.GREEN))
     val screen = RecordingScreen()
     val presenter = presenter(readingBookmarksDao)
 
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.placeReadingBookmark(ReadingBookmarkType.CORAL, ReadingBookmarkTarget.Page(42))
+    presenter.placeReadingBookmark(ReadingBookmarkType.GREEN, ReadingBookmarkTarget.Page(42))
 
     val change = screen.changes.single()
     assertThat(change).isInstanceOf(ReadingBookmarkChange.Placed::class.java)
-    assertThat(change.slot).isEqualTo(ReadingBookmarkType.CORAL)
-    assertThat(change.previous).isEqualTo(pageBookmark(10, ReadingBookmarkType.CORAL))
+    assertThat(change.slot).isEqualTo(ReadingBookmarkType.GREEN)
+    assertThat(change.previous).isEqualTo(pageBookmark(10, ReadingBookmarkType.GREEN))
     assertThat((change as ReadingBookmarkChange.Placed).target)
       .isEqualTo(ReadingBookmarkTarget.Page(42))
   }
@@ -193,32 +193,32 @@ class ReadingBookmarkPresenterTest {
 
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.placeReadingBookmark(ReadingBookmarkType.TEAL, ReadingBookmarkTarget.Page(42))
+    presenter.placeReadingBookmark(ReadingBookmarkType.PURPLE, ReadingBookmarkTarget.Page(42))
     waitForRealDispatch()
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.placeReadingBookmark(ReadingBookmarkType.TEAL, ReadingBookmarkTarget.Page(43))
+    presenter.placeReadingBookmark(ReadingBookmarkType.PURPLE, ReadingBookmarkTarget.Page(43))
 
     assertThat(screen.isEducation).containsExactly(true, false).inOrder()
   }
 
   @Test
   fun `clearing a pin removes it and offers to put it back`() = runTest {
-    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(42, ReadingBookmarkType.TEAL))
+    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(42, ReadingBookmarkType.PURPLE))
     val screen = RecordingScreen()
     val presenter = presenter(readingBookmarksDao)
 
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.clearReadingBookmark(ReadingBookmarkType.TEAL)
+    presenter.clearReadingBookmark(ReadingBookmarkType.PURPLE)
     waitForRealDispatch()
 
     assertThat(readingBookmarksDao.readingBookmarks()).isEmpty()
     assertThat(screen.changes.single())
       .isEqualTo(
         ReadingBookmarkChange.Cleared(
-          slot = ReadingBookmarkType.TEAL,
+          slot = ReadingBookmarkType.PURPLE,
           name = null,
-          previous = pageBookmark(42, ReadingBookmarkType.TEAL)
+          previous = pageBookmark(42, ReadingBookmarkType.PURPLE)
         )
       )
   }
@@ -231,7 +231,7 @@ class ReadingBookmarkPresenterTest {
 
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.clearReadingBookmark(ReadingBookmarkType.TEAL)
+    presenter.clearReadingBookmark(ReadingBookmarkType.PURPLE)
     waitForRealDispatch()
 
     assertThat(screen.changes).isEmpty()
@@ -239,20 +239,20 @@ class ReadingBookmarkPresenterTest {
 
   @Test
   fun `undo puts the pin back where it was`() = runTest {
-    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(10, ReadingBookmarkType.CORAL))
+    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(10, ReadingBookmarkType.GREEN))
     val screen = RecordingScreen()
     val presenter = presenter(readingBookmarksDao)
 
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.placeReadingBookmark(ReadingBookmarkType.CORAL, ReadingBookmarkTarget.Page(42))
+    presenter.placeReadingBookmark(ReadingBookmarkType.GREEN, ReadingBookmarkTarget.Page(42))
     waitForRealDispatch()
 
     screen.undoActions.last().invoke()
     waitForRealDispatch()
 
     assertThat(readingBookmarksDao.readingBookmarks())
-      .containsExactly(pageBookmark(10, ReadingBookmarkType.CORAL))
+      .containsExactly(pageBookmark(10, ReadingBookmarkType.GREEN))
     assertThat(screen.dismissCount).isEqualTo(1)
   }
 
@@ -264,7 +264,7 @@ class ReadingBookmarkPresenterTest {
 
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.placeReadingBookmark(ReadingBookmarkType.TEAL, ReadingBookmarkTarget.Page(42))
+    presenter.placeReadingBookmark(ReadingBookmarkType.PURPLE, ReadingBookmarkTarget.Page(42))
     waitForRealDispatch()
 
     screen.undoActions.last().invoke()
@@ -275,36 +275,36 @@ class ReadingBookmarkPresenterTest {
 
   @Test
   fun `undo of a clear puts the pin back`() = runTest {
-    val readingBookmarksDao = FakeReadingBookmarksDao(ayahBookmark(4, 6, ReadingBookmarkType.TEAL))
+    val readingBookmarksDao = FakeReadingBookmarksDao(ayahBookmark(4, 6, ReadingBookmarkType.PURPLE))
     val screen = RecordingScreen()
     val presenter = presenter(readingBookmarksDao)
 
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.clearReadingBookmark(ReadingBookmarkType.TEAL)
+    presenter.clearReadingBookmark(ReadingBookmarkType.PURPLE)
     waitForRealDispatch()
 
     screen.undoActions.last().invoke()
     waitForRealDispatch()
 
     assertThat(readingBookmarksDao.readingBookmarks())
-      .containsExactly(ayahBookmark(4, 6, ReadingBookmarkType.TEAL))
+      .containsExactly(ayahBookmark(4, 6, ReadingBookmarkType.PURPLE))
   }
 
   @Test
   fun `undo refuses to clobber a change that landed after ours`() = runTest {
-    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(10, ReadingBookmarkType.TEAL))
+    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(10, ReadingBookmarkType.PURPLE))
     val screen = RecordingScreen()
     val presenter = presenter(readingBookmarksDao)
 
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.placeReadingBookmark(ReadingBookmarkType.TEAL, ReadingBookmarkTarget.Page(42))
+    presenter.placeReadingBookmark(ReadingBookmarkType.PURPLE, ReadingBookmarkTarget.Page(42))
     waitForRealDispatch()
 
     // something else (the ayah sheet, a synced change from another device) moves the same pin
     // while the toast is still up
-    val newerBookmark = ayahBookmark(2, 255, ReadingBookmarkType.TEAL)
+    val newerBookmark = ayahBookmark(2, 255, ReadingBookmarkType.PURPLE)
     readingBookmarksDao.setReadingBookmark(newerBookmark)
 
     screen.undoActions.last().invoke()
@@ -321,29 +321,29 @@ class ReadingBookmarkPresenterTest {
 
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.placeReadingBookmark(ReadingBookmarkType.CORAL, ReadingBookmarkTarget.Page(42))
+    presenter.placeReadingBookmark(ReadingBookmarkType.GREEN, ReadingBookmarkTarget.Page(42))
     waitForRealDispatch()
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.placeReadingBookmark(ReadingBookmarkType.INDIGO, ReadingBookmarkTarget.Page(43))
+    presenter.placeReadingBookmark(ReadingBookmarkType.BLUE, ReadingBookmarkTarget.Page(43))
     waitForRealDispatch()
 
     assertThat(readingBookmarksDao.readingBookmarks()).containsExactly(
-      pageBookmark(42, ReadingBookmarkType.CORAL),
-      pageBookmark(43, ReadingBookmarkType.INDIGO)
+      pageBookmark(42, ReadingBookmarkType.GREEN),
+      pageBookmark(43, ReadingBookmarkType.BLUE)
     )
   }
 
   @Test
   fun `the toast carries the pin's custom name when it has one`() = runTest {
     val readingBookmarksDao = FakeReadingBookmarksDao(
-      pageBookmark(10, ReadingBookmarkType.CORAL).copy(name = "Tafsir study")
+      pageBookmark(10, ReadingBookmarkType.GREEN).copy(name = "Tafsir study")
     )
     val screen = RecordingScreen()
     val presenter = presenter(readingBookmarksDao)
 
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.placeReadingBookmark(ReadingBookmarkType.CORAL, ReadingBookmarkTarget.Page(42))
+    presenter.placeReadingBookmark(ReadingBookmarkType.GREEN, ReadingBookmarkTarget.Page(42))
 
     assertThat(screen.changes.single().name).isEqualTo("Tafsir study")
   }
@@ -351,14 +351,14 @@ class ReadingBookmarkPresenterTest {
   @Test
   fun `a pin named while unplaced still reports its name when first placed`() = runTest {
     val readingBookmarksDao = FakeReadingBookmarksDao(
-      EmptyReadingBookmark(ReadingBookmarkType.INDIGO, Instant.fromEpochSeconds(1), "Memorizing")
+      EmptyReadingBookmark(ReadingBookmarkType.BLUE, Instant.fromEpochSeconds(1), "Memorizing")
     )
     val screen = RecordingScreen()
     val presenter = presenter(readingBookmarksDao)
 
     presenter.bind(flowOf(42), screen)
     testDispatcher.scheduler.advanceUntilIdle()
-    presenter.placeReadingBookmark(ReadingBookmarkType.INDIGO, ReadingBookmarkTarget.Page(42))
+    presenter.placeReadingBookmark(ReadingBookmarkType.BLUE, ReadingBookmarkTarget.Page(42))
 
     val change = screen.changes.single()
     assertThat(change.name).isEqualTo("Memorizing")
