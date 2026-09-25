@@ -119,27 +119,27 @@
 
   <!-- If sura name has no translation, please add empty double quotes to the
        respective item body to keep Android Studio happy -->
-  <string-array name="sura_names_translation">
+ <string-array name="sura_names_translation">
     <item>Pembukaan</item>
-    <item>Sapi</item>
+    <item>Sapi Betina</item>
     <item>Keluarga Imran</item>
-    <item>Wanita</item>
+    <item>Perempuan</item>
     <item>Hidangan</item>
     <item>Binatang Ternak</item>
-    <item>Tempat Tertinggi</item>
+    <item>Tempat yang Tinggi</item>
     <item>Rampasan Perang</item>
-    <item>Pengampunan</item>
+    <item>Pertobatan</item>
     <item>Yunus</item>
     <item>Hud</item>
     <item>Yusuf</item>
     <item>Guruh</item>
     <item>Ibrahim</item>
-    <item>Hijr</item>
+    <item>Negeri Al-Hijr</item>
     <item>Lebah</item>
-    <item>Memperjalankan di Malam Hari</item>
+    <item>Perjalanan Malam</item>
     <item>Gua</item>
     <item>Maryam</item>
-    <item>TaHa</item>
+    <item>Ta Ha</item>
     <item>Para Nabi</item>
     <item>Haji</item>
     <item>Orang-orang Mukmin</item>
@@ -149,90 +149,90 @@
     <item>Semut</item>
     <item>Kisah-kisah</item>
     <item>Laba-laba</item>
-    <item>Romawi</item>
+    <item>Bangsa Romawi</item>
     <item>Luqman</item>
-    <item>Sajdah</item>
+    <item>Sujud</item>
     <item>Golongan yang Bersekutu</item>
-    <item>Saba\'</item>
-    <item>Pencipta</item>
-    <item>Ya-Sin</item>
+    <item>Kaum Saba'</item>
+    <item>Sang Pencipta</item>
+    <item>Ya Sin</item>
     <item>Barisan-barisan</item>
     <item>Shad</item>
     <item>Rombongan</item>
-    <item>Maha Pengampun</item>
-    <item>Yang Dijelaskan</item>
+    <item>Yang Maha Pengampun</item>
+    <item>Yang Dijelaskan Secara Terperinci</item>
     <item>Musyawarah</item>
-    <item>Perhiasan</item>
+    <item>Perhiasan Emas</item>
     <item>Kabut</item>
-    <item>BerLutut</item>
-    <item>Bukit Pasir</item>
+    <item>Yang Berlutut</item>
+    <item>Bukit-bukit Pasir</item>
     <item>Muhammad</item>
     <item>Kemenangan</item>
     <item>Kamar-kamar</item>
     <item>Qaf</item>
-    <item>Angin yang Menerbangkan</item>
-    <item>Bukit</item>
+    <item>Angin yang Menerbangkan Debu</item>
+    <item>Bukit Thursina</item>
     <item>Bintang</item>
     <item>Bulan</item>
     <item>Yang Maha Pengasih</item>
     <item>Hari Kiamat yang Pasti Terjadi</item>
     <item>Besi</item>
-    <item>Gugatan</item>
+    <item>Perempuan yang Mengajukan Gugatan</item>
     <item>Pengusiran</item>
-    <item>Wanita yang Diuji</item>
+    <item>Perempuan yang Diuji</item>
     <item>Barisan</item>
-    <item>Jum\'at</item>
+    <item>Jumat</item>
     <item>Orang-orang Munafik</item>
-    <item>Pengungkapan Kesalahan</item>
+    <item>Hari Penyesalan</item>
     <item>Talak</item>
     <item>Pengharaman</item>
     <item>Kerajaan</item>
     <item>Pena</item>
-    <item>Hari Kiamat yang Pasti Datang</item>
-    <item>Tempat-tempat Naik</item>
+    <item>Hari Kiamat yang Pasti Terjadi</item>
+    <item>Tempat-tempat Kenaikan</item>
     <item>Nuh</item>
     <item>Jin</item>
     <item>Orang yang Berselimut</item>
-    <item>Orang yang Berkemul</item>
-    <item>Hari Berbangkit</item>
+    <item>Orang yang Berselimut</item>
+    <item>Hari Kiamat</item>
     <item>Manusia</item>
-    <item>Malaikat yang Diutus</item>
+    <item>Malaikat-malaikat yang Diutus</item>
     <item>Berita Besar</item>
-    <item>Yang Mencabut dengan Keras</item>
+    <item>Malaikat-malaikat yang Mencabut</item>
     <item>Bermuka Masam</item>
     <item>Penggulungan</item>
-    <item>Terbelah</item>
+    <item>Terbelahnya Langit</item>
     <item>Orang-orang Curang</item>
-    <item>Terbelah</item>
-    <item>Gugusan Bintang</item>
-    <item>Yang Datang Pada Malam Hari</item>
+    <item>Terpecah</item>
+    <item>Gugusan-gugusan Bintang</item>
+    <item>Yang Datang pada Malam Hari</item>
     <item>Yang Maha Tinggi</item>
-    <item>Hari Kiamat yang Menghilangkan Kesadaran</item>
+    <item>Peristiwa yang Meliputi</item>
     <item>Fajar</item>
     <item>Negeri</item>
     <item>Matahari</item>
     <item>Malam</item>
-    <item>Waktu Dhuha</item>
-    <item>Pelapangan</item>
+    <item>Waktu Duha</item>
+    <item>Kelapangan</item>
     <item>Buah Tin</item>
-    <item>Segumpal Darah</item>
+    <item>Segumpal Darah yang Melekat</item>
     <item>Kemuliaan</item>
     <item>Bukti Nyata</item>
     <item>Guncangan</item>
     <item>Kuda Perang yang Berlari Kencang</item>
-    <item>Hari Kiamat yang Menggetarkan</item>
+    <item>Hari Kiamat yang Mengguncangkan</item>
     <item>Bermegah-megahan</item>
     <item>Masa</item>
     <item>Pengumpat</item>
-    <item>Gajah</item>
+    <item>Pasukan Gajah</item>
     <item>Orang Quraisy</item>
-    <item>Barang yang Berguna</item>
-    <item>Nikmat yang Banyak</item>
+    <item>Barang-barang yang Berguna</item>
+    <item>Nikmat yang Berlimpah</item>
     <item>Orang-orang Kafir</item>
     <item>Pertolongan</item>
-    <item>Gejolak Api (Sabut)</item>
-    <item>Ikhlash</item>
-    <item>Fajar</item>
-    <item>Manusia</item>
-  </string-array>
+    <item>Sabut</item>
+    <item>Keikhlasan</item>
+    <item>Fajar Menyingsing</item>
+    <item>Umat Manusia</item>
+ </string-array>
 </resources>
