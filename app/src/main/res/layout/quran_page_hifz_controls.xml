@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Floating Hifz (memorization) controls overlaid at the bottom of a mushaf page. -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/hifz_controls"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:background="@color/panel_background_color"
+    android:elevation="4dp"
+    android:orientation="horizontal"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp">
+
+  <Button
+      android:id="@+id/hifz_rehide_verse"
+      style="?android:attr/borderlessButtonStyle"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:text="@string/hifz_rehide_verse_label"
+      android:textColor="@color/sura_number_color"
+      android:contentDescription="@string/hifz_rehide_verse_description" />
+
+  <Button
+      android:id="@+id/hifz_rehide_word"
+      style="?android:attr/borderlessButtonStyle"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:text="@string/hifz_rehide_word_label"
+      android:textColor="@color/sura_number_color"
+      android:contentDescription="@string/hifz_rehide_word_description" />
+
+  <ImageButton
+      android:id="@+id/hifz_toggle"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:background="?android:attr/selectableItemBackgroundBorderless"
+      android:src="@drawable/ic_visibility"
+      android:contentDescription="@string/hifz_toggle_description" />
+
+  <Button
+      android:id="@+id/hifz_reveal_word"
+      style="?android:attr/borderlessButtonStyle"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:text="@string/hifz_reveal_word_label"
+      android:textColor="@color/sura_number_color"
+      android:contentDescription="@string/hifz_reveal_word_description" />
+
+  <Button
+      android:id="@+id/hifz_reveal_verse"
+      style="?android:attr/borderlessButtonStyle"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:text="@string/hifz_reveal_verse_label"
+      android:textColor="@color/sura_number_color"
+      android:contentDescription="@string/hifz_reveal_verse_description" />
+
+</LinearLayout>

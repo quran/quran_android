@@ -26,6 +26,9 @@ import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.data.SuraAyahIterator
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter.AyahInteractionHandler
+import com.quran.labs.androidquran.presenter.quran.hifz.HifzDiff
+import com.quran.labs.androidquran.presenter.quran.hifz.HifzModeState
+import com.quran.labs.androidquran.presenter.quran.hifz.HifzVerse
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.DOUBLE_TAP
@@ -77,6 +80,7 @@ class AyahTrackerPresenter @Inject constructor(
   private var pendingHighlightInfo: HighlightInfo? = null
   private var lastHighlightedAyah: SuraAyah? = null
   private var lastHighlightedAudioAyah: SuraAyah? = null
+  private val hifzStates = mutableMapOf<Int, HifzModeState>()
 
   private val isRecitationEnabled = recitationPresenter.isRecitationEnabled()
 
@@ -121,6 +125,15 @@ class AyahTrackerPresenter @Inject constructor(
 
     if (isRecitationEnabled) {
       recitationHighlightsPresenter.refresh()
+    }
+
+    // Hifz mode may have been enabled before the page glyph data arrived
+    // (nothing was collected then); pick up the verses now without touching
+    // pages that already have progress.
+    hifzStates.forEach { (page, state) ->
+      if (state.isEnabled && !state.hasVerses()) {
+        applyHifzDiffs(state.enable(collectHifzVerses(page)))
+      }
     }
   }
 
@@ -473,6 +486,66 @@ class AyahTrackerPresenter @Inject constructor(
     items.asSequence()
       .filter { page == null || page == it.page }
       .forEach { it.onUnHighlightAyahType(type) }
+  }
+
+  fun isHifzModeEnabled(page: Int): Boolean = hifzStates[page]?.isEnabled == true
+
+  /**
+   * Enables Hifz (memorization) mode on [page]: every verse is hidden (ayah
+   * number markers are drawn by a separate layer and stay visible). Returns
+   * whether any content was hidden.
+   */
+  fun setHifzModeEnabled(page: Int, enabled: Boolean): Boolean {
+    val state = hifzStates.getOrPut(page) { HifzModeState() }
+    return if (enabled) {
+      applyHifzDiffs(state.enable(collectHifzVerses(page)))
+    } else {
+      state.disable()
+      unHighlightAyahs(HighlightTypes.HIFZ, page)
+      false
+    }
+  }
+
+  fun hifzRevealNextWord(page: Int): Boolean =
+    applyHifzDiffs(hifzStates[page]?.revealNextWord().orEmpty())
+
+  fun hifzRevealNextVerse(page: Int): Boolean =
+    applyHifzDiffs(hifzStates[page]?.revealNextVerse().orEmpty())
+
+  fun hifzRehideLastWord(page: Int): Boolean =
+    applyHifzDiffs(hifzStates[page]?.rehideLastWord().orEmpty())
+
+  fun hifzRehideLastVerse(page: Int): Boolean =
+    applyHifzDiffs(hifzStates[page]?.rehideLastVerse().orEmpty())
+
+  private fun applyHifzDiffs(diffs: List<HifzDiff>): Boolean {
+    for (diff in diffs) {
+      when (diff) {
+        is HifzDiff.HideAyah -> highlightAyah(diff.ayah.sura, diff.ayah.ayah, -1, HighlightTypes.HIFZ, false)
+        is HifzDiff.RevealAyah -> unhighlight(HighlightInfo(diff.ayah.sura, diff.ayah.ayah, -1, HighlightTypes.HIFZ, false))
+        is HifzDiff.HideWord -> highlightAyah(diff.ayah.sura, diff.ayah.ayah, diff.word, HighlightTypes.HIFZ, false)
+        is HifzDiff.RevealWord -> unhighlight(HighlightInfo(diff.ayah.sura, diff.ayah.ayah, diff.word, HighlightTypes.HIFZ, false))
+      }
+    }
+    return diffs.isNotEmpty()
+  }
+
+  private fun collectHifzVerses(page: Int): List<HifzVerse> {
+    val verses = mutableListOf<HifzVerse>()
+    items.asSequence()
+      .filter { it.page == page }
+      .forEach { item ->
+        val glyphsByAyah = (item as? AyahImageTrackerItem)?.pageGlyphsCoords?.glyphsByAyah
+          ?: return@forEach
+        for ((suraAyah, glyphs) in glyphsByAyah) {
+          val words = glyphs
+            .mapNotNull { (it.glyph as? WordGlyph)?.wordPosition }
+            .distinct()
+            .sorted()
+          verses.add(HifzVerse(suraAyah, words))
+        }
+      }
+    return verses.distinctBy { it.ayah }.sortedBy { it.ayah }
   }
 
 }
