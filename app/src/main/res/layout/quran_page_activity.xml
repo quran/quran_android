@@ -20,37 +20,45 @@
       android:visibility="gone"
       />
 
-  <FrameLayout
-      android:id="@+id/toolbar_area"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="@color/toolbar"
-      >
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="@style/ToolbarStyle"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
-        app:titleTextAppearance="@style/ToolbarTitleText"
-        app:subtitleTextAppearance="@style/ToolbarSubtitleText"
-        android:elevation="4dp"
-        >
-      <com.quran.labs.androidquran.view.QuranSpinner
-          android:id="@+id/spinner"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:visibility="gone"
-          />
-    </androidx.appcompat.widget.Toolbar>
-  </FrameLayout>
-
-  <com.quran.mobile.feature.audiobar.AudioBarWrapper
-      android:id="@+id/audio_area"
+  <LinearLayout
+      android:id="@+id/bottom_bar_area"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="bottom"
-      android:visibility="gone"
-      />
+      android:orientation="vertical"
+      >
+
+    <com.quran.mobile.feature.audiobar.AudioBarWrapper
+        android:id="@+id/audio_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        />
+
+    <FrameLayout
+        android:id="@+id/toolbar_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/toolbar"
+        >
+      <androidx.appcompat.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:minHeight="?attr/actionBarSize"
+          android:theme="@style/ToolbarStyle"
+          app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
+          app:titleTextAppearance="@style/ToolbarTitleText"
+          app:subtitleTextAppearance="@style/ToolbarSubtitleText"
+          android:elevation="4dp"
+          >
+        <com.quran.labs.androidquran.view.QuranSpinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            />
+      </androidx.appcompat.widget.Toolbar>
+    </FrameLayout>
+  </LinearLayout>
 </FrameLayout>
