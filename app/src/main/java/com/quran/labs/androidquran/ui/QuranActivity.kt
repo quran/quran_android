@@ -25,6 +25,7 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -55,7 +56,7 @@ import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
-import com.quran.labs.androidquran.view.SlidingTabLayout
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.quran.mobile.di.ExtraScreenProvider
 import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -92,6 +93,7 @@ class QuranActivity : AppCompatActivity(),
   private var isRtl = false
   private var isPaused = false
   private var searchItem: MenuItem? = null
+  private lateinit var bottomNav: BottomNavigationView
   private var supportActionMode: ActionMode? = null
   private val compositeDisposable = CompositeDisposable()
   private val latestPageFlow: Flow<Int> by lazy {
@@ -157,11 +159,25 @@ class QuranActivity : AppCompatActivity(),
         topMargin = insets.top
         leftMargin = insets.left
         rightMargin = insets.right
+        // the toolbar and bottom navigation live at the bottom of the screen,
+        // so reserve space for the navigation/gesture bar as well.
+        bottomMargin = insets.bottom
       }
 
       // if we return WindowInsetsCompat.CONSUMED, the SnackBar won't
       // be properly positioned on Android 29 and below (will be under
       // the navigation bar).
+      windowInsets
+    }
+
+    val toolbarArea = findViewById<View>(R.id.toolbar_area)
+    // lift only the search toolbar above the keyboard; the bottom nav stays hidden
+    // while search is expanded (see onCreateOptionsMenu).
+    ViewCompat.setOnApplyWindowInsetsListener(toolbarArea) { view, windowInsets ->
+      val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+      val ime = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
+      val keyboardOverlap = (ime.bottom - systemBars.bottom).coerceAtLeast(0)
+      view.updatePadding(0, 0, 0, keyboardOverlap)
       windowInsets
     }
 
@@ -174,8 +190,36 @@ class QuranActivity : AppCompatActivity(),
     pager.offscreenPageLimit = 3
     val pagerAdapter = PagerAdapter(supportFragmentManager)
     pager.adapter = pagerAdapter
-    val indicator = findViewById<SlidingTabLayout>(R.id.indicator)
-    indicator.setViewPager(pager)
+
+    bottomNav = findViewById(R.id.bottom_nav)
+    // Material BottomNavigationView applies a default elevation that casts a shadow onto
+    // the action toolbar below; force a flat surface for both bottom chrome bars.
+    listOf(
+      findViewById<View>(R.id.bottom_chrome),
+      bottomNav,
+      findViewById(R.id.toolbar_area),
+      findViewById<View>(R.id.toolbar),
+    ).forEach { view ->
+      ViewCompat.setElevation(view, 0f)
+      ViewCompat.setTranslationZ(view, 0f)
+    }
+    // guards against the page-change -> nav-select -> page-change feedback loop
+    var syncingNavSelection = false
+    bottomNav.setOnItemSelectedListener { item ->
+      if (!syncingNavSelection) {
+        pager.currentItem = pagerPositionForMenuItem(item.itemId)
+      }
+      true
+    }
+    pager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+      override fun onPageSelected(position: Int) {
+        syncingNavSelection = true
+        bottomNav.selectedItemId = menuItemForPagerPosition(position)
+        syncingNavSelection = false
+      }
+    })
+    bottomNav.selectedItemId = menuItemForPagerPosition(pager.currentItem)
+
     jumpToPageOnResume = if (isRtl) {
       TITLES.size - 1
     } else {
@@ -204,6 +248,28 @@ class QuranActivity : AppCompatActivity(),
     }
     updateTranslationsListAsNeeded()
     quranIndexEventLogger.logAnalytics()
+  }
+
+  /** Maps a bottom navigation menu item to its ViewPager position (RTL reverses the order). */
+  private fun pagerPositionForMenuItem(itemId: Int): Int {
+    val logical = when (itemId) {
+      R.id.nav_surahs -> SURA_LIST
+      R.id.nav_juz -> JUZ2_LIST
+      R.id.nav_bookmarks -> BOOKMARKS_LIST
+      else -> SURA_LIST
+    }
+    return if (isRtl) abs(logical - 2) else logical
+  }
+
+  /** Maps a ViewPager position to its bottom navigation menu item (RTL reverses the order). */
+  private fun menuItemForPagerPosition(position: Int): Int {
+    val logical = if (isRtl) abs(position - 2) else position
+    return when (logical) {
+      SURA_LIST -> R.id.nav_surahs
+      JUZ2_LIST -> R.id.nav_juz
+      BOOKMARKS_LIST -> R.id.nav_bookmarks
+      else -> R.id.nav_surahs
+    }
   }
 
   public override fun onResume() {
@@ -310,11 +376,13 @@ class QuranActivity : AppCompatActivity(),
     searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
       override fun onMenuItemActionExpand(item: MenuItem): Boolean {
         searchItemCollapserCallback.isEnabled = true
+        bottomNav.visibility = View.GONE
         return true
       }
 
       override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
         searchItemCollapserCallback.isEnabled = false
+        bottomNav.visibility = View.VISIBLE
         return true
       }
     })
