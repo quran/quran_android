@@ -1560,7 +1560,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     val end = selectionEnd
     // handle the case of multiple ayat being selected and play them as a range if so
     val ending = if ((end == null || start == end || start.after(end))) null else end
-    playFromAyah(start, ending, page, 0, 0, ending != null, 1.0f)
+    playFromAyah(start, ending, page, 0, 0, ending != null, 1.0f, 0)
   }
 
   fun playFromAyah(
@@ -1570,7 +1570,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     verseRepeat: Int,
     rangeRepeat: Int,
     enforceRange: Boolean,
-    playbackSpeed: Float
+    playbackSpeed: Float,
+    pauseBetweenAyahs: Int = 0
   ) {
     val ending = end
       ?: audioUtils.getLastAyahToPlay(
@@ -1594,7 +1595,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         rangeRepeat,
         enforceRange,
         playbackSpeed,
-        shouldStream
+        shouldStream,
+        pauseBetweenAyahs
       )
     }
   }
@@ -1759,7 +1761,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     rangeRepeat: Int,
     verseRepeat: Int,
     enforceRange: Boolean,
-    playbackSpeed: Float
+    playbackSpeed: Float,
+    pauseBetweenAyahs: Int = 0
   ): Boolean {
     val lastAudioRequest = audioStatusRepositoryBridge.audioRequest()
     if (lastAudioRequest != null) {
@@ -1767,7 +1770,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         repeatInfo = verseRepeat,
         rangeRepeatInfo = rangeRepeat,
         enforceBounds = enforceRange,
-        playbackSpeed = playbackSpeed
+        playbackSpeed = playbackSpeed,
+        pauseBetweenAyahs = pauseBetweenAyahs
       )
       val i = Intent(this, AudioService::class.java)
       i.setAction(AudioService.ACTION_UPDATE_SETTINGS)
