@@ -196,7 +196,10 @@ class BookmarksDaoImpl @Inject constructor(
       if (membership == null) {
         false
       } else {
-        collectionBookmarksRepository.removeAyahBookmarkFromCollection(membership)
+        collectionBookmarksRepository.removeAyahBookmarkFromCollection(
+          collectionId = membership.collectionId,
+          bookmarkId = membership.bookmarkId
+        )
       }
     }
   }

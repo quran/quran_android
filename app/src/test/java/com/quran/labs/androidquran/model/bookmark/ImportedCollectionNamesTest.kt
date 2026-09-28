@@ -47,15 +47,15 @@ class ImportedCollectionNamesTest {
   }
 
   @Test
-  fun `reserved favorites tag retains its original membership when its import id collides`() = runTest {
+  fun `reserved favorites tag retains its original membership when its name matches the default`() = runTest {
     importData(
       MobileSyncImportData(
         bookmarks = (1..15).map { ayah ->
-          MobileSyncImportBookmark("bookmark-$ayah", 2, ayah, 1_234_000L)
+          MobileSyncImportBookmark(2, ayah, 1_234_000L)
         },
-        collections = listOf(MobileSyncImportCollection("import-favorites", "Favorites", 1_234_000L)),
+        collections = listOf(MobileSyncImportCollection("Favorites", 1_234_000L)),
         collectionBookmarks = (1..5).map { ayah ->
-          MobileSyncImportCollectionBookmark("import-favorites", "bookmark-$ayah", 1_234_000L)
+          MobileSyncImportCollectionBookmark("Favorites", 2, ayah, 1_234_000L)
         }
       )
     )
@@ -80,14 +80,14 @@ class ImportedCollectionNamesTest {
         collection.copy(timestampMillis = (index + 1) * 1_234_000L)
       },
       collectionBookmarks = original.collectionBookmarks +
-        MobileSyncImportCollectionBookmark("tag-1", "bookmark-0", 4_567_000L)
+        MobileSyncImportCollectionBookmark("Favorites (Imported)", 2, 1, 4_567_000L)
     )
 
     val converted = data.toPersistenceImportData(context)
     val mergedCollection = converted.collections.single { it.name == "Favorites (Imported)" }
     assertThat(mergedCollection.lastUpdated.toEpochMilliseconds()).isEqualTo(2_468_000L)
     val sharedMembership = converted.collectionBookmarks.single {
-      it.collectionImportId == mergedCollection.importId && it.sura == 2 && it.ayah == 1
+      it.collectionName == mergedCollection.name && it.sura == 2 && it.ayah == 1
     }
     assertThat(sharedMembership.lastUpdated.toEpochMilliseconds()).isEqualTo(4_567_000L)
 
@@ -133,13 +133,13 @@ class ImportedCollectionNamesTest {
   private fun dataWithTaggedBookmarks(names: List<String>): MobileSyncImportData {
     return MobileSyncImportData(
       bookmarks = names.mapIndexed { index, _ ->
-        MobileSyncImportBookmark("bookmark-$index", 2, index + 1, 1_234_000L)
+        MobileSyncImportBookmark(2, index + 1, 1_234_000L)
       },
-      collections = names.mapIndexed { index, name ->
-        MobileSyncImportCollection("tag-$index", name, 1_234_000L)
+      collections = names.map { name ->
+        MobileSyncImportCollection(name, 1_234_000L)
       },
-      collectionBookmarks = names.mapIndexed { index, _ ->
-        MobileSyncImportCollectionBookmark("tag-$index", "bookmark-$index", 1_234_000L)
+      collectionBookmarks = names.mapIndexed { index, name ->
+        MobileSyncImportCollectionBookmark(name, 2, index + 1, 1_234_000L)
       }
     )
   }
