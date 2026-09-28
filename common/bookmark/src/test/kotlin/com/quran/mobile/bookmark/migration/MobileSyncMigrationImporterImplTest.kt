@@ -78,7 +78,6 @@ class MobileSyncImporterImplTest {
       MobileSyncImportData(
         bookmarks = listOf(
           MobileSyncImportBookmark(
-            importId = "bookmark-2-255",
             sura = 2,
             ayah = 255,
             timestampMillis = 1_234_000L
@@ -86,15 +85,15 @@ class MobileSyncImporterImplTest {
         ),
         collections = listOf(
           MobileSyncImportCollection(
-            importId = "tag-1",
             name = "Reading",
             timestampMillis = 1_200_000L
           )
         ),
         collectionBookmarks = listOf(
           MobileSyncImportCollectionBookmark(
-            collectionImportId = "tag-1",
-            bookmarkImportId = "bookmark-2-255",
+            collectionName = "Reading",
+            sura = 2,
+            ayah = 255,
             timestampMillis = 1_234_000L
           )
         ),
@@ -168,7 +167,6 @@ class MobileSyncImporterImplTest {
       MobileSyncImportData(
         bookmarks = listOf(
           MobileSyncImportBookmark(
-            importId = "bookmark-2-255",
             sura = 2,
             ayah = 255,
             timestampMillis = 1_234_000L
@@ -181,7 +179,6 @@ class MobileSyncImporterImplTest {
       data = MobileSyncImportData(
         bookmarks = listOf(
           MobileSyncImportBookmark(
-            importId = "bookmark-3-2",
             sura = 3,
             ayah = 2,
             timestampMillis = 1_300_000L

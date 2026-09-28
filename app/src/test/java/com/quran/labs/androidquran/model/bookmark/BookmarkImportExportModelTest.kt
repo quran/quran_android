@@ -302,8 +302,7 @@ class BookmarkImportExportModelTest {
 
     val importedData = importedData()
     assertThat(importedData.collections.map { collection -> collection.name }).containsExactly("Existing")
-    assertThat(importedData.collectionBookmarks.single().collectionImportId)
-      .isEqualTo(importedData.collections.single().importId)
+    assertThat(importedData.collectionBookmarks.single().collectionName).isEqualTo("Existing")
   }
 
   @Test
@@ -407,17 +406,14 @@ class BookmarkImportExportModelTest {
     val pageBounds = quranInfo.getPageBounds(page)
     val importedData = importedData()
     val importedBookmark = importedData.bookmarks.single()
-    val collectionsByName = importedData.collections.associateBy { collection -> collection.name }
 
     assertThat(importedBookmark.sura).isEqualTo(pageBounds[0])
     assertThat(importedBookmark.ayah).isEqualTo(pageBounds[1])
     assertThat(importedData.collections.map { collection -> collection.name })
       .containsExactly(originalTagName, oldPageBookmarksTagName)
       .inOrder()
-    assertThat(importedData.collectionBookmarks.map { link -> link.collectionImportId }).containsExactly(
-      collectionsByName.getValue(originalTagName).importId,
-      collectionsByName.getValue(oldPageBookmarksTagName).importId
-    )
+    assertThat(importedData.collectionBookmarks.map { link -> link.collectionName })
+      .containsExactly(originalTagName, oldPageBookmarksTagName)
     assertThat(mobileSyncImporter.deleteExisting).isFalse()
   }
 
@@ -445,50 +441,11 @@ class BookmarkImportExportModelTest {
     )
 
     val importedData = importedData()
-    val collectionsByName = importedData.collections.associateBy { collection -> collection.name }
-    val originalTagCollection = collectionsByName.getValue(originalTagName)
-    val oldPageBookmarksCollection = collectionsByName.getValue(oldPageBookmarksTagName)
 
-    val collectionImportIds = importedData.collections.map { collection -> collection.importId }
-    assertThat(collectionImportIds).containsNoDuplicates()
-    assertThat(collectionImportIds).doesNotContain(backupTagId)
-    assertThat(originalTagCollection.importId).isNotEqualTo(backupTagId)
-    assertThat(importedData.collectionBookmarks.map { link -> link.collectionImportId }).containsExactly(
-      originalTagCollection.importId,
-      oldPageBookmarksCollection.importId
-    )
-  }
-
-  @Test
-  fun testImportGeneratedCollectionIdsDoNotReuseBackupTagIds() {
-    val backupTagIds = listOf("backup-collection-0", "backup-collection-1", "backup-collection-2")
-
-    importData(
-      BookmarkData(
-        tags = listOf(
-          Tag(backupTagIds[0], "First Imported Tag"),
-          Tag(backupTagIds[1], "Second Imported Tag"),
-          Tag(backupTagIds[2], "Third Imported Tag")
-        ),
-        bookmarks = listOf(
-          Bookmark(
-            id = "1",
-            sura = null,
-            ayah = null,
-            page = 50,
-            timestamp = 1000,
-            tags = backupTagIds
-          )
-        )
-      )
-    )
-
-    val collectionImportIds = importedData().collections.map { collection -> collection.importId }
-
-    assertThat(collectionImportIds).containsNoDuplicates()
-    backupTagIds.forEach { backupTagId ->
-      assertThat(collectionImportIds).doesNotContain(backupTagId)
-    }
+    assertThat(importedData.collections.map { collection -> collection.name })
+      .containsExactly(originalTagName, oldPageBookmarksTagName)
+    assertThat(importedData.collectionBookmarks.map { link -> link.collectionName })
+      .containsExactly(originalTagName, oldPageBookmarksTagName)
   }
 
   @Test
