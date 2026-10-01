@@ -16,7 +16,6 @@ import com.quran.shared.persistence.util.toPlatform
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
-import kotlin.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,6 +27,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
+import kotlin.time.Instant
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
@@ -99,7 +99,7 @@ class RecentPagesDaoImpl @Inject constructor(
           addRecentPageInternal(
             page = recentPage.page,
             quranInfo = quranInfo,
-            timestamp = recentPage.timestamp.toPlatformDateTime()
+            timestamp = recentPage.timestamp
           )
         }
       pruneRecentSessions(quranInfo)
@@ -175,7 +175,7 @@ class RecentPagesDaoImpl @Inject constructor(
       .mapNotNull { session ->
         val page = pageForSession(session, quranInfo)
         if (page != null && seenPages.add(page)) {
-          RecentPage(page, session.lastUpdated.toEpochMilliseconds() / 1000)
+          RecentPage(page, session.lastUpdated)
         } else {
           null
         }

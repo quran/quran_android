@@ -16,6 +16,9 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImporterImpl
 import com.quran.mobile.bookmark.model.BookmarksDaoImpl
 import com.quran.mobile.bookmark.model.RepositoryBackedTestBookmarkCollectionsState
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
+import com.quran.shared.persistence.model.AyahReadingBookmark
+import com.quran.shared.persistence.model.PageReadingBookmark
+import com.quran.shared.persistence.model.ReadingBookmarkSlot
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepositoryImpl
 import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepositoryImpl
@@ -59,7 +62,7 @@ class MobileSyncImporterImplTest {
       timestampProvider = FakeMobileSyncTimestampProvider(),
       appCoroutineScope = appCoroutineScope
     )
-    importer = MobileSyncImporterImpl(mobileSyncDatabase)
+    importer = MobileSyncImporterImpl(mobileSyncDatabase, context)
   }
 
   @After
@@ -101,10 +104,6 @@ class MobileSyncImporterImplTest {
             ayah = 1,
             timestampMillis = 1_100_000L
           )
-        ),
-        readingBookmark = MobileSyncImportReadingBookmark.Page(
-          page = 42,
-          timestampMillis = 1_300_000L
         )
       )
     )
@@ -113,14 +112,54 @@ class MobileSyncImporterImplTest {
     // the default collection is always present, so this asserts on the imported ones
     val tags = bookmarksDao.tags().filterNot { tag -> tag.isSystem }
     val readingSessions = ReadingSessionsRepositoryImpl(mobileSyncDatabase.database).getReadingSessions()
-    val readingBookmark = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database).getReadingBookmark()
 
     assertThat(bookmarks.map { bookmark -> bookmark.sura to bookmark.ayah }).containsExactly(2 to 255)
     assertThat(bookmarks.single().timestamp).isEqualTo(1234L)
     assertThat(tags.map { tag -> tag.name }).containsExactly("Reading")
-    assertThat(bookmarksDao.getBookmarkTagIds(bookmarks.single().id)).contains(tags.single().id)
+    val favorites = bookmarksDao.tags().single { it.isSystem }
+    assertThat(bookmarksDao.getBookmarkTagIds(bookmarks.single().id))
+      .containsExactly(favorites.id, tags.single().id)
     assertThat(readingSessions.map { session -> session.sura to session.ayah }).containsExactly(18 to 1)
-    assertThat(readingBookmark).isNotNull()
+  }
+
+  @Test
+  fun `reading bookmark import replaces supplied slots and preserves omitted slots`() = runTest {
+    val repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database)
+    val existing = repository.setPageReadingBookmark(ReadingBookmarkSlot.GREEN, 12)
+    val omitted = repository.setPageReadingBookmark(ReadingBookmarkSlot.BLUE, 50)
+    repository.renameReadingBookmark(ReadingBookmarkSlot.GREEN, "Old name")
+
+    val result = importer.importData(
+      MobileSyncImportData(
+        readingBookmarks = listOf(
+          MobileSyncImportReadingBookmark.Page(
+            slot = ReadingBookmarkSlot.GREEN,
+            page = 42,
+            timestampMillis = 1_700_000_000_000L
+          ),
+          MobileSyncImportReadingBookmark.Ayah(
+            slot = ReadingBookmarkSlot.PURPLE,
+            sura = 2,
+            ayah = 255,
+            timestampMillis = 1_700_000_001_000L,
+            name = "Nightly reading"
+          )
+        )
+      )
+    )
+
+    assertThat(result.readingBookmarkImported).isEqualTo(2)
+    val bookmarks = repository.getReadingBookmarks()
+    val page = bookmarks.single { it.slot == ReadingBookmarkSlot.GREEN } as PageReadingBookmark
+    assertThat(page.id).isEqualTo(existing.id)
+    assertThat(page.page).isEqualTo(42)
+    assertThat(page.name).isNull()
+    assertThat(page.lastUpdated.toEpochMilliseconds()).isEqualTo(1_700_000_000_000L)
+    val ayah = bookmarks.single { it.slot == ReadingBookmarkSlot.PURPLE } as AyahReadingBookmark
+    assertThat(ayah.sura to ayah.ayah).isEqualTo(2 to 255)
+    assertThat(ayah.name).isEqualTo("Nightly reading")
+    assertThat(ayah.lastUpdated.toEpochMilliseconds()).isEqualTo(1_700_000_001_000L)
+    assertThat(bookmarks.single { it.slot == ReadingBookmarkSlot.BLUE }).isEqualTo(omitted)
   }
 
   @Test

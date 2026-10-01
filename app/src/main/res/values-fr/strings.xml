@@ -273,8 +273,6 @@
   <string name="reading_bookmark_movable_education_title">Ceci est un signet de lecture déplaçable</string>
   <string name="reading_bookmark_movable_education_body">Enregistrer un signet de lecture remplace l\'ancien. Pour enregistrer plusieurs ayas, appuyez longuement sur une aya et ajoutez-la à une collection.</string>
   <string name="reading_bookmark_moved_from">Déplacé depuis %1$s</string>
-  <string name="reading_bookmark_moved_from_title">Signet déplacé depuis %1$s</string>
-  <string name="reading_bookmark_added">Signet ajouté</string>
   <string name="reading_bookmark_dismiss_education">Ignorer</string>
 
   <!-- m permissions stuff -->

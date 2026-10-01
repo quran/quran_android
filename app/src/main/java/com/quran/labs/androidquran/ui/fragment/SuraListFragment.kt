@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.ReadingBookmarksDao
+import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
@@ -56,7 +57,7 @@ class SuraListFragment : Fragment(), QuranTouchListener {
   private lateinit var recyclerView: RecyclerView
   private var numberOfPages = 0
   private var showSuraTranslatedName = false
-  private var readingBookmark: ReadingBookmark? = null
+  private var readingBookmarks: List<ReadingBookmark> = emptyList()
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
@@ -82,9 +83,9 @@ class SuraListFragment : Fragment(), QuranTouchListener {
 
     viewLifecycleOwner.lifecycleScope.launch {
       viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        readingBookmarksDao.readingBookmarkFlow()
+        readingBookmarksDao.readingBookmarksFlow()
           .distinctUntilChanged()
-          .collect { updateReadingBookmark(it) }
+          .collect { updateReadingBookmarks(it) }
       }
     }
 
@@ -115,8 +116,8 @@ class SuraListFragment : Fragment(), QuranTouchListener {
         showSuraTranslatedName = newValueOfShowSuraTranslatedName
       }
       viewLifecycleOwner.lifecycleScope.launch {
-        val currentReadingBookmark = readingBookmarksDao.readingBookmark()
-        updateReadingBookmark(currentReadingBookmark)
+        readingBookmarks = placedReadingBookmarks(readingBookmarksDao.readingBookmarks())
+        updateSuraList()
         val recentPage = activity.latestPage()
         if (recentPage != Constants.NO_PAGE) {
           val sura = quranDisplayData.safelyGetSuraOnPage(recentPage)
@@ -140,15 +141,15 @@ class SuraListFragment : Fragment(), QuranTouchListener {
     var next: Int
     var pos = 0
     var sura = 1
-    val readingBookmark = readingBookmark
-    val elements = arrayOfNulls<QuranRow>(
-      SURAS_COUNT + JUZ2_COUNT + if (readingBookmark == null) 0 else READING_BOOKMARK_ROWS
-    )
+    val readingBookmarks = readingBookmarks
+    val elements = arrayOfNulls<QuranRow>(SURAS_COUNT + JUZ2_COUNT + readingBookmarkOffset())
 
     val activity: Activity = requireActivity()
-    if (readingBookmark != null) {
-      elements[pos++] = quranRowFactory.fromReadingBookmarkHeader(activity)
-      elements[pos++] = quranRowFactory.fromReadingBookmark(activity, readingBookmark)
+    if (readingBookmarks.isNotEmpty()) {
+      elements[pos++] = quranRowFactory.fromReadingBookmarkHeader(activity, readingBookmarks.size)
+      for (readingBookmark in readingBookmarks) {
+        elements[pos++] = quranRowFactory.fromReadingBookmark(activity, readingBookmark)
+      }
     }
 
     val wantPrefix = activity.resources.getBoolean(R.bool.show_surat_prefix)
@@ -184,11 +185,20 @@ class SuraListFragment : Fragment(), QuranTouchListener {
     updateSuraList()
   }
 
-  private fun updateReadingBookmark(readingBookmark: ReadingBookmark?) {
-    if (this.readingBookmark != readingBookmark) {
-      this.readingBookmark = readingBookmark
+  private fun updateReadingBookmarks(readingBookmarks: List<ReadingBookmark>) {
+    val placed = placedReadingBookmarks(readingBookmarks)
+    if (this.readingBookmarks != placed) {
+      this.readingBookmarks = placed
       updateSuraList()
     }
+  }
+
+  private fun placedReadingBookmarks(
+    readingBookmarks: List<ReadingBookmark>
+  ): List<ReadingBookmark> {
+    return readingBookmarks
+      .filterNot { readingBookmark -> readingBookmark is EmptyReadingBookmark }
+      .sortedBy { readingBookmark -> readingBookmark.slot }
   }
 
   private fun updateSuraList() {
@@ -196,7 +206,7 @@ class SuraListFragment : Fragment(), QuranTouchListener {
   }
 
   private fun readingBookmarkOffset(): Int {
-    return if (readingBookmark == null) 0 else READING_BOOKMARK_ROWS
+    return if (readingBookmarks.isEmpty()) 0 else readingBookmarks.size + 1
   }
 
   override fun onClick(row: QuranRow, position: Int) {
@@ -215,8 +225,6 @@ class SuraListFragment : Fragment(), QuranTouchListener {
   }
 
   companion object {
-    private const val READING_BOOKMARK_ROWS = 2
-
     fun newInstance(): SuraListFragment = SuraListFragment()
   }
 }

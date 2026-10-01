@@ -17,6 +17,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import kotlin.time.Instant
 
 class RecentPagePresenterTest {
 
@@ -50,9 +51,9 @@ class RecentPagePresenterTest {
     val recentPagesDao = FakeRecentPagesDao()
     recentPagesDao.replaceRecentPages(
       listOf(
-        RecentPage(10, 1),
-        RecentPage(50, 1),
-        RecentPage(12, 1)
+        RecentPage(10, Instant.fromEpochSeconds(1)),
+        RecentPage(50, Instant.fromEpochSeconds(1)),
+        RecentPage(12, Instant.fromEpochSeconds(1))
       )
     )
     val presenter = RecentPagePresenter(recentPagesDao, LatestPageTracker(), "madani")

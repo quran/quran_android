@@ -27,7 +27,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS
 
 -- migrate ayah bookmarks
 CREATE TABLE IF NOT EXISTS ayah_bookmarks(
-  _ID INTEGER PRIMARY KEY,
+  _id INTEGER PRIMARY KEY,
   page INTEGER NOT NULL,
   sura INTEGER NOT NULL,
   ayah INTEGER NOT NULL,
@@ -36,11 +36,11 @@ CREATE TABLE IF NOT EXISTS ayah_bookmarks(
 );
 
 INSERT INTO bookmarks(_ID, sura, ayah, page)
-SELECT _ID, sura, ayah, page FROM ayah_bookmarks WHERE bookmarked = 1;
+SELECT _id, sura, ayah, page FROM ayah_bookmarks WHERE bookmarked = 1;
 
 -- migrate page bookmarks
-CREATE TABLE IF NOT EXISTS page_bookmarks (_ID INTEGER PRIMARY KEY, bookmarked INTEGER NOT NULL);
-INSERT INTO bookmarks(page) SELECT _ID FROM page_bookmarks WHERE bookmarked = 1;
+CREATE TABLE IF NOT EXISTS page_bookmarks (_id INTEGER PRIMARY KEY, bookmarked INTEGER NOT NULL);
+INSERT INTO bookmarks(page) SELECT _id FROM page_bookmarks WHERE bookmarked = 1;
 
 -- drop old tables
 DROP TABLE IF EXISTS page_bookmarks;

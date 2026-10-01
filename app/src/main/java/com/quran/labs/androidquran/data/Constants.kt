@@ -72,6 +72,7 @@ object Constants {
   const val PREF_SHOW_RECENTS = "showRecents"
   const val PREF_SHOW_DATE = "showDate"
   const val PREF_COLLAPSED_COLLECTIONS = "collapsedCollections"
+  const val PREF_HIGHLIGHTS_COLLAPSED = "highlightsCollapsed"
   const val PREF_DUAL_PAGE_ENABLED = "useDualPageMode"
   const val PREF_VERSION = "version"
   const val PREF_DEFAULT_IMAGES_DIR = "defaultImagesDir"

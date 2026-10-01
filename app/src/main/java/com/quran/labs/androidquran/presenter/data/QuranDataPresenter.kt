@@ -105,6 +105,10 @@ class QuranDataPresenter @Inject internal constructor(
           .map { checkPatchStatus(it) }
           .flatMap { Single.fromCallable { localDataUpgrade.processPatch(it) } }
           .doOnSuccess {
+            // we call this to make sure the database is copied to the proper directory if it is
+            // only in the downloaded directory.
+            quranFileUtils.hasArabicSearchDatabase()
+
             try {
               val quranHiddenDirectoryMarkerFile = ".q4a"
               File(appContext.noBackupFilesDir, quranHiddenDirectoryMarkerFile).delete()

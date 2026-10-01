@@ -75,6 +75,7 @@
   <color name="tag_chip_border">#7300838f</color>
   <!-- an ayah bookmark with no highlight on it - deliberately not one of the five above -->
   <color name="unhighlighted_bookmark_color">#ff546e7a</color>
+  <!-- reading bookmarks -->
 
   <color name="default_text">#ff000000</color>
 

@@ -1,24 +1,38 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
+import android.content.Context
+import android.hardware.display.DisplayManager
+import android.view.Display
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarkSortOrder
+import com.quran.data.model.SuraAyah
+import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
-import com.quran.data.model.SuraAyah
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
+import com.quran.data.source.DisplaySize
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.dao.bookmark.AyahMark
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRawResult
 import com.quran.labs.androidquran.dao.bookmark.BookmarkRowData
+import com.quran.labs.androidquran.database.DatabaseHandler
 import com.quran.labs.androidquran.fakes.FakeBookmarksDao
 import com.quran.labs.androidquran.fakes.FakeHighlightsDao
+import com.quran.labs.androidquran.fakes.FakePageProvider
 import com.quran.labs.androidquran.fakes.FakeReadingBookmarksDao
 import com.quran.labs.androidquran.fakes.FakeRecentPagesDao
+import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
+import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.ui.helpers.QuranRow
+import com.quran.labs.androidquran.util.QuranFileUtils
+import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -64,7 +78,7 @@ class BookmarkPresenterTest {
     // the default collection is a tag like any other now, so it is in the map too
     assertThat(result.tagMap).containsAtLeast("tag-1", TAGS[0], "tag-2", TAGS[1])
     assertThat(result.tagMap.values.single { it.isDefault }.name).isEqualTo("Favorites")
-    assertThat(result.rows.first()).isInstanceOf(BookmarkRowData.AyahBookmarksHeader::class.java)
+    assertThat(result.rows.filterIsInstance<BookmarkRowData.AyahBookmarksHeader>()).hasSize(1)
     assertThat(result.rows.filterIsInstance<BookmarkRowData.BookmarkItem>()).hasSize(2)
   }
 
@@ -99,7 +113,7 @@ class BookmarkPresenterTest {
 
   @Test
   fun `renders reading bookmark ahead of recent pages`() {
-    val readingBookmark = PageReadingBookmark(42, 300)
+    val readingBookmark = PageReadingBookmark(ReadingBookmarkType.PURPLE, 42, Instant.fromEpochSeconds(300))
     fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
     fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
     fakeReadingBookmarksDao.setReadingBookmark(readingBookmark)
@@ -107,12 +121,75 @@ class BookmarkPresenterTest {
     val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
 
     assertThat(result.rows.take(5)).containsExactly(
-      BookmarkRowData.ReadingBookmarkHeader,
+      BookmarkRowData.ReadingBookmarkHeader(1),
       BookmarkRowData.ReadingBookmarkItem(readingBookmark),
       BookmarkRowData.RecentPageHeader(RECENT_PAGES.size),
       BookmarkRowData.RecentPage(RECENT_PAGES[0]),
       BookmarkRowData.RecentPage(RECENT_PAGES[1])
     ).inOrder()
+  }
+
+  @Test
+  fun `renders every placed reading bookmark in pin order and leaves unplaced ones out`() {
+    val blue =
+      AyahReadingBookmark(ReadingBookmarkType.BLUE, 2, 255, Instant.fromEpochSeconds(400))
+    val green = PageReadingBookmark(ReadingBookmarkType.GREEN, 77, Instant.fromEpochSeconds(300))
+    fakeReadingBookmarksDao = FakeReadingBookmarksDao(
+      blue,
+      EmptyReadingBookmark(ReadingBookmarkType.PURPLE, Instant.fromEpochSeconds(500)),
+      green
+    )
+    fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
+
+    val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
+
+    assertThat(result.rows.take(4)).containsExactly(
+      BookmarkRowData.ReadingBookmarkHeader(2),
+      BookmarkRowData.ReadingBookmarkItem(green),
+      BookmarkRowData.ReadingBookmarkItem(blue),
+      BookmarkRowData.RecentPageHeader(RECENT_PAGES.size)
+    ).inOrder()
+  }
+
+  @Test
+  fun `omits the reading bookmarks section when no pin is placed`() {
+    fakeReadingBookmarksDao = FakeReadingBookmarksDao(
+      EmptyReadingBookmark(ReadingBookmarkType.GREEN, Instant.fromEpochSeconds(500))
+    )
+    fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
+
+    val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
+
+    assertThat(result.rows.first()).isEqualTo(BookmarkRowData.RecentPageHeader(RECENT_PAGES.size))
+  }
+
+  @Test
+  fun `ayah bookmarks carry their ayah text`() {
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS + PAGE_BOOKMARK)
+
+    val presenter = makeBookmarkPresenter(fakeArabicDatabaseUtils())
+    val result = getBookmarkResultByDateAndValidate(presenter)
+
+    val quranInfo = QuranInfo(MadaniDataSource())
+    assertThat(
+      result.rows.filterIsInstance<BookmarkRowData.BookmarkItem>()
+        .associate { it.bookmark.id to it.bookmark.ayahText }
+    ).containsExactly(
+      "bookmark-42", "verse ${quranInfo.getAyahId(46, 1)}",
+      "bookmark-2", "verse ${quranInfo.getAyahId(2, 4)}"
+    )
+  }
+
+  @Test
+  fun `ayah bookmarks fall back to sura and ayah without the arabic database`() {
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+
+    // the default presenter's arabic database throws, as a missing one would
+    val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
+
+    assertThat(
+      result.rows.filterIsInstance<BookmarkRowData.BookmarkItem>().map { it.bookmark.ayahText }
+    ).containsExactly(null, null)
   }
 
   @Test
@@ -228,7 +305,7 @@ class BookmarkPresenterTest {
       BookmarkRowData.RecentPageHeader(RECENT_PAGES.size),
       BookmarkRowData.RecentPage(RECENT_PAGES[0]),
       BookmarkRowData.RecentPage(RECENT_PAGES[1]),
-      BookmarkRowData.HighlightsHeader,
+      BookmarkRowData.HighlightsHeader(isCollapsed = false),
       BookmarkRowData.HighlightColorItem(HighlightColor.YELLOW, 0),
       BookmarkRowData.HighlightColorItem(HighlightColor.GREEN, 1),
       BookmarkRowData.HighlightColorItem(HighlightColor.BLUE, 2),
@@ -256,6 +333,25 @@ class BookmarkPresenterTest {
       BookmarkRowData.BookmarkItem(taggedBookmark(AYAH_BOOKMARKS[0]), null, AyahMark.Unhighlighted),
       BookmarkRowData.HighlightedAyahItem(HIGHLIGHTS[2])
     ).inOrder()
+  }
+
+  @Test
+  fun `highlighted ayat in the ungrouped list carry their ayah text, like the bookmarks`() {
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+    fakeHighlightsDao.setHighlights(HIGHLIGHTS)
+
+    val presenter = makeBookmarkPresenter(fakeArabicDatabaseUtils())
+    val result = getBookmarkResultAndValidate(presenter, BookmarkSortOrder.SORT_LOCATION)
+
+    val quranInfo = QuranInfo(MadaniDataSource())
+    assertThat(
+      result.rows.filterIsInstance<BookmarkRowData.HighlightedAyahItem>()
+        .associate { it.highlight.suraAyah to it.ayahText }
+    ).containsExactly(
+      SuraAyah(2, 255), "verse ${quranInfo.getAyahId(2, 255)}",
+      SuraAyah(3, 93), "verse ${quranInfo.getAyahId(3, 93)}",
+      SuraAyah(50, 44), "verse ${quranInfo.getAyahId(50, 44)}"
+    )
   }
 
   @Test
@@ -298,13 +394,49 @@ class BookmarkPresenterTest {
   }
 
   @Test
-  fun `highlights section is hidden when there are no highlights`() {
+  fun `highlights section is there but collapsed when there are no highlights`() {
     fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
 
     val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
 
-    assertThat(result.rows).doesNotContain(BookmarkRowData.HighlightsHeader)
+    assertThat(result.rows.first())
+      .isEqualTo(BookmarkRowData.HighlightsHeader(isCollapsed = true))
     assertThat(result.rows.filterIsInstance<BookmarkRowData.HighlightColorItem>()).isEmpty()
+  }
+
+  @Test
+  fun `an expanded highlights section stays expanded with no highlights left`() {
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+    val presenter = makeBookmarkPresenter()
+    getBookmarkResultByDateAndValidate(presenter)
+
+    presenter.toggleHighlightsCollapsed()
+    val result = getBookmarkResultByDateAndValidate(presenter)
+
+    assertThat(result.rows.first())
+      .isEqualTo(BookmarkRowData.HighlightsHeader(isCollapsed = false))
+    assertThat(result.rows.filterIsInstance<BookmarkRowData.HighlightColorItem>()).hasSize(5)
+  }
+
+  @Test
+  fun `a collapsed highlights section keeps its count and hides its colors`() {
+    fakeHighlightsDao.setHighlights(HIGHLIGHTS)
+    val presenter = makeBookmarkPresenter()
+    getBookmarkResultByDateAndValidate(presenter)
+
+    presenter.toggleHighlightsCollapsed()
+    val result = getBookmarkResultByDateAndValidate(presenter)
+
+    assertThat(result.rows.first())
+      .isEqualTo(BookmarkRowData.HighlightsHeader(isCollapsed = true))
+    assertThat(result.rows.filterIsInstance<BookmarkRowData.HighlightColorItem>()).isEmpty()
+  }
+
+  @Test
+  fun `an empty tab has no rows at all, so its empty state can show`() {
+    val result = getBookmarkResultByDateAndValidate(makeBookmarkPresenter())
+
+    assertThat(result.rows).isEmpty()
   }
 
   @Test
@@ -364,17 +496,42 @@ class BookmarkPresenterTest {
       .inOrder()
   }
 
-  private fun makeBookmarkPresenter(): BookmarkPresenter {
+  private fun makeBookmarkPresenter(
+    arabicDatabaseUtils: ArabicDatabaseUtils? = null
+  ): BookmarkPresenter {
     return object : BookmarkPresenter(
       fakeBookmarksDao,
       fakeRecentPagesDao,
       fakeReadingBookmarksDao,
       fakeHighlightsDao,
       quranSettings,
+      {
+        arabicDatabaseUtils ?: throw IllegalStateException("ArabicDatabaseUtils not wired up in test")
+      },
     ) {
       override fun subscribeToChanges() {
         // nothing
       }
+    }
+  }
+
+  private fun fakeArabicDatabaseUtils(): ArabicDatabaseUtils {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val pageProvider = FakePageProvider()
+    val display = context.getSystemService(DisplayManager::class.java)
+      .getDisplay(Display.DEFAULT_DISPLAY)!!
+    val quranScreenInfo = QuranScreenInfo(
+      context, display, pageProvider.getPageSizeCalculator(DisplaySize(0, 0))
+    )
+    return object : ArabicDatabaseUtils(
+      context,
+      QuranInfo(MadaniDataSource()),
+      QuranFileUtils(context, pageProvider, quranScreenInfo)
+    ) {
+      override fun getArabicDatabaseHandler(): DatabaseHandler? = null
+
+      override fun getAyahTextForAyat(ayat: List<Int>): Map<Int, String> =
+        ayat.associateWith { ayahId -> "verse $ayahId" }
     }
   }
 
@@ -407,8 +564,8 @@ class BookmarkPresenterTest {
     )
     private val PAGE_BOOKMARK = Bookmark("bookmark-23", null, null, 400, 300)
     private val RECENT_PAGES = listOf(
-      RecentPage(42, 200),
-      RecentPage(43, 100)
+      RecentPage(42, Instant.fromEpochSeconds(200)),
+      RecentPage(43, Instant.fromEpochSeconds(100))
     )
     private val HIGHLIGHTS = listOf(
       Highlight(SuraAyah(2, 255), HighlightColor.BLUE, Instant.fromEpochSeconds(300)),

@@ -1,21 +1,25 @@
 package com.quran.labs.androidquran.ui.helpers
 
 import android.content.Context
+import android.text.format.DateUtils
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.dao.bookmark.AyahMark
 import com.quran.labs.androidquran.common.ui.core.CollectionNames
 import com.quran.labs.androidquran.common.ui.core.HighlightColors
+import com.quran.labs.androidquran.common.ui.core.ReadingBookmarkSlots
+import com.quran.labs.androidquran.dao.bookmark.AyahMark
 import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.util.QuranUtils
 import dev.zacsweers.metro.Inject
 
 class QuranRowFactory @Inject constructor(
@@ -25,7 +29,7 @@ class QuranRowFactory @Inject constructor(
   fun fromRecentPageHeader(context: Context, count: Int): QuranRow {
     return QuranRow.Builder()
       .withText(
-        context.getResources().getQuantityString(R.plurals.plural_recent_pages, count)
+        context.resources.getQuantityString(R.plurals.plural_recent_pages, count)
       )
       .withType(QuranRow.HEADER)
       .build()
@@ -43,9 +47,11 @@ class QuranRowFactory @Inject constructor(
       .withType(QuranRow.HEADER).build()
   }
 
-  fun fromReadingBookmarkHeader(context: Context): QuranRow {
+  fun fromReadingBookmarkHeader(context: Context, count: Int): QuranRow {
     return QuranRow.Builder()
-      .withText(context.getString(R.string.reading_bookmark))
+      .withText(
+        context.resources.getQuantityString(R.plurals.plural_reading_bookmarks, count)
+      )
       .withType(QuranRow.HEADER)
       .build()
   }
@@ -63,25 +69,28 @@ class QuranRowFactory @Inject constructor(
   }
 
   fun fromReadingBookmark(context: Context, readingBookmark: ReadingBookmark): QuranRow {
-    return when (readingBookmark) {
+    val name = ReadingBookmarkSlots.displayName(context, readingBookmark)
+    val juz: Int
+    val builder = when (readingBookmark) {
       is PageReadingBookmark -> {
         val page = readingBookmark.page.takeIf(quranInfo::isValidPage) ?: 1
+        juz = quranInfo.getJuzForDisplayFromPage(page)
         QuranRow.Builder()
           .withText(quranDisplayData.getSuraNameString(context, page))
-          .withMetadata(quranDisplayData.getPageSubtitle(context, page))
           .withType(QuranRow.PAGE_READING_BOOKMARK)
           .withSura(quranDisplayData.safelyGetSuraOnPage(page))
           .withPage(page)
-          .withDate(readingBookmark.timestamp)
-          .withImageResource(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite)
-          .withImageOverlayColorResource(R.color.icon_tint)
-          .build()
       }
 
       is AyahReadingBookmark -> {
         val page = quranInfo.getPageFromSuraAyah(readingBookmark.sura, readingBookmark.ayah)
           .takeIf(quranInfo::isValidPage)
           ?: 1
+        juz = quranInfo.getJuzFromSuraAyah(
+          readingBookmark.sura,
+          readingBookmark.ayah,
+          quranInfo.getJuzForDisplayFromPage(page)
+        )
         QuranRow.Builder()
           .withText(
             quranDisplayData.getAyahString(
@@ -90,24 +99,38 @@ class QuranRowFactory @Inject constructor(
               context
             )
           )
-          .withMetadata(
-            quranDisplayData.getAyahMetadata(
-              readingBookmark.sura,
-              readingBookmark.ayah,
-              page,
-              context
-            )
-          )
           .withType(QuranRow.AYAH_READING_BOOKMARK)
           .withSura(readingBookmark.sura)
           .withAyah(readingBookmark.ayah)
           .withPage(page)
-          .withDate(readingBookmark.timestamp)
-          .withImageResource(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite)
-          .withImageOverlayColorResource(R.color.ayah_bookmark_color)
+      }
+
+      is EmptyReadingBookmark -> {
+        return QuranRow.Builder()
+          .withText(name)
+          .withType(QuranRow.PAGE_READING_BOOKMARK)
+          .withImageResource(R.drawable.ic_bookmark_outline_24)
+          .withImageOverlayColorResource(ReadingBookmarkSlots[readingBookmark.slot].colorResourceId)
+          .withImageContentDescription(name)
           .build()
       }
     }
+
+    val placedAt = readingBookmark.timestamp.toEpochMilliseconds()
+    val placed = DateUtils.getRelativeTimeSpanString(
+      placedAt,
+      maxOf(System.currentTimeMillis(), placedAt + DateUtils.MINUTE_IN_MILLIS),
+      DateUtils.MINUTE_IN_MILLIS
+    )
+    val juzDescription =
+      context.getString(R.string.juz2_description, QuranUtils.getLocalizedNumber(juz))
+    return builder
+      .withMetadata(context.getString(R.string.reading_bookmark_details, juzDescription, placed))
+      .withDate(readingBookmark.timestamp.epochSeconds)
+      .withImageResource(R.drawable.ic_bookmark_filled_24)
+      .withImageOverlayColorResource(ReadingBookmarkSlots[readingBookmark.slot].colorResourceId)
+      .withImageContentDescription(name)
+      .build()
   }
 
   @JvmOverloads
@@ -171,10 +194,12 @@ class QuranRowFactory @Inject constructor(
       .build()
   }
 
-  fun fromHighlightsHeader(context: Context): QuranRow {
+  fun fromHighlightsHeader(context: Context, isCollapsed: Boolean): QuranRow {
+    // no count on this one: each color carries its own, and the five colors never change
     return QuranRow.Builder()
       .withText(context.getString(R.string.highlights))
-      .withType(QuranRow.HEADER)
+      .withType(QuranRow.HIGHLIGHTS_HEADER)
+      .withCollapsedState(isCollapsed)
       .build()
   }
 

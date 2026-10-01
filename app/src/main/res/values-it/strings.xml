@@ -41,8 +41,6 @@
   <string name="reading_bookmark_movable_education_title">Questo è un segnalibro di lettura spostabile</string>
   <string name="reading_bookmark_movable_education_body">Salvare un segnalibro di lettura sostituisce quello precedente. Per salvare più ayah, tieni premuto un ayah e aggiungilo a una raccolta.</string>
   <string name="reading_bookmark_moved_from">Spostato da %1$s</string>
-  <string name="reading_bookmark_moved_from_title">Segnalibro spostato da %1$s</string>
-  <string name="reading_bookmark_added">Segnalibro aggiunto</string>
   <string name="reading_bookmark_dismiss_education">Ignora</string>
   <string name="tag_dlg_title">Tag</string>
   <string name="tag_name">Nome</string>

@@ -11,4 +11,11 @@
   <color name="highlight_page_blue">#FFADD7FE</color>
   <color name="highlight_page_red">#FFFEB0CA</color>
   <color name="highlight_page_purple">#FFD8B1FE</color>
+  <!--
+    the color each reading bookmark slot's pin is drawn in. paired with the slot names below by
+    ReadingBookmarkSlots; the night variant lives in values-night/colors.xml.
+  -->
+  <color name="reading_bookmark_green">#ff05956f</color>
+  <color name="reading_bookmark_purple">#ffb315fc</color>
+  <color name="reading_bookmark_blue">#ff007ff0</color>
 </resources>

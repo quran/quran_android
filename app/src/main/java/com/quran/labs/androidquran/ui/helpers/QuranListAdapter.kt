@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.util.set
+import androidx.core.util.size
 import androidx.recyclerview.widget.RecyclerView
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.R
@@ -21,7 +22,6 @@ import com.quran.labs.androidquran.view.JuzView
 import com.quran.labs.androidquran.view.TagsViewGroup
 import java.text.SimpleDateFormat
 import java.util.Date
-import androidx.core.util.size
 
 class QuranListAdapter(
   private val context: Context,
@@ -77,7 +77,7 @@ class QuranListAdapter(
   override fun getItemViewType(position: Int): Int {
     val element = elements[position]
     return when {
-      element.isBookmarkHeader -> VIEW_TYPE_COLLECTION_HEADER
+      element.isBookmarkHeader || element.isHighlightsHeader -> VIEW_TYPE_COLLECTION_HEADER
       element.isHeader -> VIEW_TYPE_HEADER
       element.isHighlightColor -> VIEW_TYPE_HIGHLIGHT_COLOR
       else -> VIEW_TYPE_ROW
@@ -166,6 +166,7 @@ class QuranListAdapter(
       metadata.visibility = View.VISIBLE
       metadata.text = item.metadata
       tags.visibility = View.GONE
+      image.contentDescription = item.imageContentDescription
 
 
       when {
@@ -190,7 +191,7 @@ class QuranListAdapter(
             )
           }
 
-          if (showDate) {
+          if (showDate && !item.isReadingBookmark) {
             val date = SimpleDateFormat("MMM dd, HH:mm", locale)
               .format(Date(item.dateAddedInMillis))
             holder.metadata.text = buildString {
@@ -206,7 +207,7 @@ class QuranListAdapter(
           val tagList = ArrayList<Tag>()
           val bookmark = item.bookmark
           if (bookmark != null && bookmark.tags.isNotEmpty() && showTags) {
-            for (i in 0 until bookmark.tags.size) {
+            for (i in bookmark.tags.indices) {
               val tagId = bookmark.tags[i]
               val tag = tagMap[tagId]
               tag?.let { tagList.add(it.copy(name = CollectionNames.displayName(context, it))) }
@@ -262,7 +263,7 @@ class QuranListAdapter(
       holder.expandIcon.visibility = View.INVISIBLE
     }
 
-    holder.openIcon.visibility = if (item.tagId == null) View.GONE else View.VISIBLE
+    holder.openIcon.visibility = if (item.tagId == null) View.INVISIBLE else View.VISIBLE
     holder.setChecked(isItemChecked(pos))
     holder.setEnabled(isEnabled(pos))
   }
@@ -297,6 +298,7 @@ class QuranListAdapter(
         selected.isBookmark ||                // actual bookmarks
         selected.isReadingBookmark ||         // the non-editable reading bookmark shortcut
         selected.rowType == QuranRow.NONE ||  // the actual "current page"
+        selected.isHighlightsHeader ||        // the collapsible highlights header
         selected.isHighlightColor ||          // the five highlight colors
         selected.isHighlightedAyah ||         // a highlighted ayah inside a color's screen
         selected.isBookmarkHeader             // tags

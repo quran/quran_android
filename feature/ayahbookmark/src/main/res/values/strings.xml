@@ -3,12 +3,14 @@
   <string name="ayahbookmark_done">Done</string>
   <string name="ayahbookmark_saved">Saved</string>
   <string name="ayahbookmark_not_saved">Not saved</string>
-  <string name="ayahbookmark_reading_bookmark_title">Reading bookmark</string>
-  <string name="ayahbookmark_reading_bookmark_subtitle">Where you left off</string>
-  <string name="ayahbookmark_reading_bookmark_currently_at">Currently at %1$s</string>
-  <string name="ayahbookmark_reading_bookmark_will_move_from">Will move from %1$s</string>
+  <string name="ayahbookmark_reading_bookmark_is_here">%1$s is on this ayah</string>
+  <string name="ayahbookmark_reading_bookmark_move_here">Move %1$s here</string>
+  <string name="ayahbookmark_reading_bookmark_set_here">Set %1$s here</string>
+  <string name="ayahbookmark_reading_bookmark_move">Move</string>
+  <string name="ayahbookmark_reading_bookmark_set">Set</string>
+  <string name="ayahbookmark_other_reading_bookmark">Other reading bookmark</string>
   <string name="ayahbookmark_highlight_title">Highlight</string>
-  <string name="ayahbookmark_highlight_subtitle">Colors the ayah on the page</string>
+  <string name="ayahbookmark_highlight_saved_on_close">Saved when you close this sheet</string>
   <string name="ayahbookmark_highlight_none">None</string>
   <string name="ayahbookmark_collections_header">Collections</string>
   <string name="ayahbookmark_new_collection">New collection</string>
@@ -16,4 +18,20 @@
   <string name="ayahbookmark_collection_name_error">That collection name is unavailable.</string>
   <string name="ayahbookmark_cancel">Cancel</string>
   <string name="ayahbookmark_create">Create</string>
+
+  <string name="readingbookmark_title">Reading bookmarks</string>
+  <string name="readingbookmark_subtitle">Each pin marks one place — move it as you go</string>
+  <string name="readingbookmark_placing_on">Placing on %1$s</string>
+  <string name="readingbookmark_at_location">at %1$s</string>
+  <string name="readingbookmark_ayah_location">%1$s · Page %2$d</string>
+  <string name="readingbookmark_not_placed">Not placed yet</string>
+  <string name="readingbookmark_on_this_page">On this page</string>
+  <string name="readingbookmark_on_this_ayah">On this ayah</string>
+  <string name="readingbookmark_move_here">Move here</string>
+  <string name="readingbookmark_set_here">Set here</string>
+  <string name="readingbookmark_clear">Clear</string>
+  <string name="readingbookmark_back">Back</string>
+  <string name="readingbookmark_edit">Edit</string>
+  <string name="readingbookmark_done_editing">Done editing</string>
+  <string name="readingbookmark_editing_subtitle">Give each pin a name you’ll recognize</string>
 </resources>
