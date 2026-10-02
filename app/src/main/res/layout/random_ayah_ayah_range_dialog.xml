@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp">
+
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/random_ayah_from"
+      android:textColor="@color/default_text" />
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+    <com.quran.labs.androidquran.view.ForceCompleteTextView
+        android:id="@+id/from_sura_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:inputType="text|textAutoComplete"
+        android:imeOptions="flagNoExtractUi"
+        android:selectAllOnFocus="true"
+        android:textColor="@color/edit_text_input_text_color"
+        android:backgroundTint="@color/edit_text_line_color"
+        android:textColorHint="@color/edit_text_hint_color" />
+
+    <EditText
+        android:id="@+id/from_ayah"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minWidth="64dp"
+        android:inputType="number"
+        android:imeOptions="flagNoExtractUi"
+        android:selectAllOnFocus="true"
+        android:textColor="@color/edit_text_input_text_color"
+        android:backgroundTint="@color/edit_text_line_color"
+        android:textColorHint="@color/edit_text_hint_color" />
+  </LinearLayout>
+
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingTop="8dp"
+      android:text="@string/random_ayah_to"
+      android:textColor="@color/default_text" />
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+    <com.quran.labs.androidquran.view.ForceCompleteTextView
+        android:id="@+id/to_sura_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:inputType="text|textAutoComplete"
+        android:imeOptions="flagNoExtractUi"
+        android:selectAllOnFocus="true"
+        android:textColor="@color/edit_text_input_text_color"
+        android:backgroundTint="@color/edit_text_line_color"
+        android:textColorHint="@color/edit_text_hint_color" />
+
+    <EditText
+        android:id="@+id/to_ayah"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minWidth="64dp"
+        android:inputType="number"
+        android:imeOptions="flagNoExtractUi"
+        android:selectAllOnFocus="true"
+        android:textColor="@color/edit_text_input_text_color"
+        android:backgroundTint="@color/edit_text_line_color"
+        android:textColorHint="@color/edit_text_hint_color" />
+  </LinearLayout>
+</LinearLayout>
