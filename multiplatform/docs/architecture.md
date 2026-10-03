@@ -9,15 +9,18 @@ flowchart TD
  App --> Reader[feature:reader]
  App --> Study[feature:memorization]
  App --> Qibla[feature:qibla]
- App --> Learn[feature:tutor]
+App --> Learn[feature:tutor]
+ App --> Translations[feature:translations]
  App --> Data[core:data: offline assets and platform adapters]
- Reader & Study & Qibla & Learn --> Design[core:designsystem]
- Reader & Study & Qibla & Learn --> Domain[core:domain]
+Reader & Study & Qibla & Learn --> Design[core:designsystem]
+Translations --> Design
+Reader & Study & Qibla & Learn --> Domain[core:domain]
+Translations --> Domain
  Data --> Domain
  Domain --> Model[core:model]
 ```
 
-`VerseId` checks Hafs/Madani chapter and verse bounds. The canonical 114 chapter counts total 6,236 and match the bundled Tanzil metadata. Source Arabic must remain unchanged. Interface localization and Quran translations are separate capabilities; an English interface must not imply an available English translation.
+`VerseId` checks Hafs/Madani chapter and verse bounds. The canonical 114 chapter counts total 6,236 and match the bundled Tanzil metadata. Source Arabic must remain unchanged. Interface localization and Quran translations are separate capabilities. `feature:translations` presents an independently selected edition; `core:data` isolates QuranEnc base URL and endpoint construction, parses publisher metadata and verse text, then validates responses before caching by edition version and surah. A failed refresh may use a previously validated cached response. Translation text is never used as canonical Arabic.
 
 `RepeatSession` counts completed recitations. N means N total playbacks. Until-memorized mode holds the current verse until the learner explicitly confirms memorization. An audio completion advances the state; a play click does not. The feature presentation controller invalidates pending callbacks with a generation token when paused, reset or disposed. It stops playback when memorization is confirmed and rejects manual double-counting while playing. Fixed-count completion still permits a separate memorization assessment. Memorized progress is an explicit learner assertion, not an automatic consequence of listening.
 

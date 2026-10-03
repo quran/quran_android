@@ -4,3 +4,4 @@ expect fun platformSettingsStore(): SettingsStore
 expect fun platformAudioPlayer(): AudioPlayer
 
 expect fun platformCompassProvider(): CompassProvider
+internal expect fun platformTranslationHttpClient(): io.ktor.client.HttpClient

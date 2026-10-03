@@ -54,17 +54,17 @@ fun MemorizationScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         ScreenTitle(
-            label(language, "One verse at a time", "آية بعد آية"),
+            appString(QuranStrings.memorizeOneAyah),
             label(language, "Self recitation · ${verse.id.surah}:${verse.id.ayah}", "تسميع ذاتي · ${verse.id.surah}:${verse.id.ayah}"),
         )
         PaperCard {
             if (hidden) {
-                Text(label(language, "Recite from memory, then reveal to check.", "اقرأ من الذاكرة ثم أظهر الآية للمراجعة."))
+                Text(appString(QuranStrings.reciteFromMemory))
             } else {
                 ArabicVerse(verse.arabic, true)
             }
             Action(
-                label(language, if (hidden) "Reveal verse" else "Hide verse", if (hidden) "إظهار الآية" else "إخفاء الآية"),
+                appString(if (hidden) QuranStrings.revealAyah else QuranStrings.hideAyah),
                 { hidden = !hidden },
             )
         }
@@ -77,7 +77,7 @@ fun MemorizationScreen(
             }
             Row {
                 Switch(until, { pause(); until = it })
-                Text(label(language, "Repeat until memorized", "التكرار حتى الحفظ"))
+                Text(appString(QuranStrings.repeatUntilMemorized))
             }
             Action(
                 label(language, "I repeated this verse", "كررت هذه الآية"),
@@ -85,15 +85,15 @@ fun MemorizationScreen(
                 !state.complete && !playing,
             )
             Action(
-                label(language, "I have memorized it", "حفظت الآية"),
+                appString(QuranStrings.iMemorizedThis),
                 { controller.markMemorized(); onMemorized(verse.id) },
                 verse.id !in progress.memorized,
             )
             if (state.complete) {
-                Text(label(language, "Session complete. Memorization is self assessed.", "اكتملت الجلسة. تقييم الحفظ ذاتي."))
+                Text(appString(QuranStrings.sessionComplete))
             }
             TextButton({ controller.reset(); hidden = false }) {
-                Text(label(language, "Start again", "ابدأ مجدداً"))
+                Text(appString(QuranStrings.startAgain))
             }
         }
         PaperCard {

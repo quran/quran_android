@@ -9,7 +9,7 @@ class BundledQuranRepositoryTest {
         val chapters = repo.chapters()
         assertEquals((1..114).toList(), chapters.map { it.number })
         val all = chapters.flatMap { chapter ->
-            val verses = repo.verses(chapter.number, AppLanguage.ENGLISH)
+            val verses = repo.verses(chapter.number)
             assertEquals(chapter.verseCount, verses.size)
             assertEquals((1..chapter.verseCount).toList(), verses.map { it.id.ayah })
             assertTrue(verses.all { it.id.surah == chapter.number && it.arabic.isNotBlank() && it.source.isNotBlank() })
@@ -19,16 +19,14 @@ class BundledQuranRepositoryTest {
         assertEquals(6236, all.map { it.id }.toSet().size)
     }
 
-    @Test fun changingAppLanguageDoesNotChangeSacredArabicText() {
+    @Test fun canonicalArabicTextIsIndependentFromInterfaceLanguage() {
         val repo = BundledQuranRepository()
-        for (chapter in repo.chapters()) {
-            assertEquals(repo.verses(chapter.number, AppLanguage.ENGLISH).map { it.arabic }, repo.verses(chapter.number, AppLanguage.ARABIC).map { it.arabic })
-        }
+        assertEquals("Tanzil Uthmani 1.1 · https://tanzil.net", repo.verses(1).first().source)
     }
 
     @Test fun invalidChapterCannotSilentlyReturnUnrelatedVerses() {
         val repo = BundledQuranRepository()
-        assertFailsWith<IllegalArgumentException> { repo.verses(0, AppLanguage.ENGLISH) }
-        assertFailsWith<IllegalArgumentException> { repo.verses(115, AppLanguage.ENGLISH) }
+        assertFailsWith<IllegalArgumentException> { repo.verses(0) }
+        assertFailsWith<IllegalArgumentException> { repo.verses(115) }
     }
 }

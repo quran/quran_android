@@ -8,6 +8,7 @@ implementation(project(":core:domain"))
 implementation(project(":core:data"))
 implementation(project(":core:designsystem"))
 implementation(project(":feature:reader"))
+implementation(project(":feature:translations"))
 implementation(project(":feature:memorization"))
 implementation(project(":feature:qibla"))
 implementation(project(":feature:tutor"))
@@ -17,6 +18,7 @@ implementation(compose.runtime)
 implementation(compose.foundation)
 implementation(compose.material3)
 implementation(compose.ui) }
+commonMain.dependencies { implementation(compose.components.resources) }
  commonTest.dependencies { implementation(kotlin("test")) }
  }
 }
