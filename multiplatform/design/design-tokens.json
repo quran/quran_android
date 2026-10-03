@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "status": "Implementation contract; HTML component preview is not rendered-app validation",
+  "source": [
+    "Google Stitch project 260892313540630519",
+    "core/designsystem/src/commonMain/kotlin/org/quran/app/designsystem/QuranColors.kt",
+    "core/designsystem/src/commonMain/kotlin/org/quran/app/designsystem/QuranTypography.kt",
+    "core/designsystem/src/commonMain/kotlin/org/quran/app/designsystem/QuranSpacing.kt"
+  ],
+  "units": {
+    "dimensions": "dp",
+    "typography": "sp"
+  },
+  "colors": {
+    "light": {
+      "primary": "#173E2F",
+      "onPrimary": "#FFFFFF",
+      "primaryContainer": "#D5EBDD",
+      "onPrimaryContainer": "#102C1F",
+      "secondary": "#73561D",
+      "onSecondary": "#FFFFFF",
+      "secondaryContainer": "#F5E4BB",
+      "onSecondaryContainer": "#362706",
+      "tertiary": "#46584D",
+      "onTertiary": "#FFFFFF",
+      "tertiaryContainer": "#D5EBDD",
+      "onTertiaryContainer": "#102C1F",
+      "background": "#F6F2E9",
+      "onBackground": "#173E2F",
+      "surface": "#FFFFFF",
+      "onSurface": "#173E2F",
+      "surfaceVariant": "#ECE8DF",
+      "onSurfaceVariant": "#46584D",
+      "outline": "#748276",
+      "outlineVariant": "#CDD3CA",
+      "surfaceTint": "#173E2F",
+      "scrim": "#000000",
+      "surfaceDim": "#DDD9D0",
+      "surfaceBright": "#FFFFFF",
+      "surfaceContainerLowest": "#FFFFFF",
+      "surfaceContainerLow": "#FAF7F0",
+      "surfaceContainer": "#F6F2E9",
+      "surfaceContainerHigh": "#ECE8DF",
+      "surfaceContainerHighest": "#E6E2D9",
+      "error": "#BA1A1A",
+      "onError": "#FFFFFF",
+      "errorContainer": "#FFDAD6",
+      "onErrorContainer": "#410002",
+      "inverseSurface": "#25372B",
+      "inverseOnSurface": "#E7EEE9",
+      "inversePrimary": "#A9D5BC"
+    },
+    "dark": {
+      "primary": "#A9D5BC",
+      "onPrimary": "#0D3522",
+      "primaryContainer": "#254D36",
+      "onPrimaryContainer": "#D5EBDD",
+      "secondary": "#E5C177",
+      "onSecondary": "#3A2B0F",
+      "secondaryContainer": "#57421B",
+      "onSecondaryContainer": "#F5E4BB",
+      "tertiary": "#C3D1C6",
+      "onTertiary": "#23372B",
+      "tertiaryContainer": "#425849",
+      "onTertiaryContainer": "#E7EEE9",
+      "background": "#0E1914",
+      "onBackground": "#E7EEE9",
+      "surface": "#16261D",
+      "onSurface": "#E7EEE9",
+      "surfaceVariant": "#23372B",
+      "onSurfaceVariant": "#C3D1C6",
+      "outline": "#718779",
+      "outlineVariant": "#425849",
+      "surfaceTint": "#A9D5BC",
+      "scrim": "#000000",
+      "surfaceDim": "#0E1914",
+      "surfaceBright": "#33443A",
+      "surfaceContainerLowest": "#09120D",
+      "surfaceContainerLow": "#122219",
+      "surfaceContainer": "#16261D",
+      "surfaceContainerHigh": "#203027",
+      "surfaceContainerHighest": "#2B3B31",
+      "error": "#FFB4AB",
+      "onError": "#690005",
+      "errorContainer": "#93000A",
+      "onErrorContainer": "#FFDAD6",
+      "inverseSurface": "#E7EEE9",
+      "inverseOnSurface": "#173E2F",
+      "inversePrimary": "#173E2F"
+    },
+    "decorative": {
+      "brass": "#C39B4B"
+    }
+  },
+  "spacing": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    24,
+    32,
+    48
+  ],
+  "radii": [
+    4,
+    8,
+    12,
+    20,
+    28
+  ],
+  "minimumTouchTarget": 48,
+  "typography": {
+    "display": {
+      "size": 40,
+      "lineHeight": 48,
+      "family": "serif"
+    },
+    "headlineLarge": {
+      "size": 30,
+      "lineHeight": 40,
+      "family": "serif"
+    },
+    "headlineMedium": {
+      "size": 26,
+      "lineHeight": 36,
+      "family": "serif"
+    },
+    "titleLarge": {
+      "size": 22,
+      "lineHeight": 30,
+      "weight": 600
+    },
+    "titleMedium": {
+      "size": 18,
+      "lineHeight": 26,
+      "weight": 600
+    },
+    "bodyLarge": {
+      "size": 16,
+      "lineHeight": 24
+    },
+    "bodyMedium": {
+      "size": 14,
+      "lineHeight": 22
+    },
+    "label": {
+      "size": 14,
+      "lineHeight": 20,
+      "weight": 500
+    },
+    "caption": {
+      "size": 12,
+      "lineHeight": 18
+    },
+    "arabic": {
+      "size": 28,
+      "lineHeight": 48,
+      "direction": "rtl",
+      "family": "serif"
+    },
+    "arabicLarge": {
+      "size": 34,
+      "lineHeight": 56,
+      "direction": "rtl",
+      "family": "serif"
+    }
+  },
+  "layout": {
+    "mobilePreviewWidth": 390,
+    "previewWideBreakpoint": 760,
+    "safeAreas": "Native window insets; content receives Scaffold PaddingValues",
+    "contentPadding": 16
+  },
+  "motion": {
+    "principle": "Native interaction feedback; no decorative scroll animation",
+    "reducedMotion": true
+  },
+  "content": {
+    "scripture": "Verified bundled source only; preview uses explicit non-scripture placeholders",
+    "translations": "Preserve source edition, text, footnotes and attribution",
+    "language": "Shared EN and AR strings.xml; UI direction and source direction independent"
+  }
+}

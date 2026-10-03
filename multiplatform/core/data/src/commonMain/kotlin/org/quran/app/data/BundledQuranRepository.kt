@@ -118,7 +118,7 @@ Chapter(111,"المسد","Al-Masad · The Palm Fibre",5),
 Chapter(112,"الإخلاص","Al-Ikhlaas · Sincerity",4),
 Chapter(113,"الفلق","Al-Falaq · The Dawn",5),
 Chapter(114,"الناس","An-Naas · Mankind",6))
- override fun verses(surah: Int, language: AppLanguage): List<Verse> {
+ override fun verses(surah: Int): List<Verse> {
  val text = when(surah) {
 1 -> chapter1Text()
 2 -> chapter2Text()
@@ -236,6 +236,6 @@ Chapter(114,"الناس","An-Naas · Mankind",6))
 114 -> chapter114Text()
  else -> throw IllegalArgumentException("Surah must be 1..114")
  }
- return text.mapIndexed { index, arabic -> Verse(VerseId(surah,index+1), arabic, "", "Tanzil Uthmani 1.1 · https://tanzil.net") }
+ return text.mapIndexed { index, arabic -> Verse(VerseId(surah,index+1), arabic, "Tanzil Uthmani 1.1 · https://tanzil.net") }
  }
 }

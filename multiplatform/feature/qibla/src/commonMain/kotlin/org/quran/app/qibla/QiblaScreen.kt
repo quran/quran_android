@@ -21,7 +21,7 @@ fun QiblaScreen(language: AppLanguage, compass: CompassProvider) {
     var latitude by remember { mutableStateOf("") }
     var longitude by remember { mutableStateOf("") }
     var bearing by remember { mutableStateOf<Double?>(null) }
-    var result by remember { mutableStateOf<String?>(null) }
+    var resultError by remember { mutableStateOf<org.jetbrains.compose.resources.StringResource?>(null) }
     var heading by remember { mutableStateOf<Double?>(null) }
     var live by remember { mutableStateOf(false) }
     var unavailable by remember { mutableStateOf(false) }
@@ -49,29 +49,35 @@ fun QiblaScreen(language: AppLanguage, compass: CompassProvider) {
         Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(18.dp),
     ) {
-        ScreenTitle(label(language, "Face the Qibla", "اتجاه القبلة"), label(language, "Bearing from true north", "زاوية من الشمال الحقيقي"))
+        ScreenTitle(appString(QuranStrings.faceQibla), appString(QuranStrings.trueNorthBearing))
         PaperCard {
-            Text(label(language, "Enter your current coordinates. Manual direction works without location permission.", "أدخل إحداثيات موقعك الحالي. حساب الاتجاه يدوياً لا يحتاج إذن الموقع."))
-            OutlinedTextField(latitude, { stopCompass(); bearing = null; result = null; latitude = it }, label = { Text(label(language, "Latitude (−90 to 90)", "خط العرض (−٩٠ إلى ٩٠)")) })
-            OutlinedTextField(longitude, { stopCompass(); bearing = null; result = null; longitude = it }, label = { Text(label(language, "Longitude (−180 to 180)", "خط الطول (−١٨٠ إلى ١٨٠)")) })
-            Action(label(language, "Calculate direction", "حساب الاتجاه"), {
+            Text(appString(QuranStrings.manualCoordinatesHelp))
+            OutlinedTextField(latitude, { stopCompass(); bearing = null; resultError = null; latitude = it }, label = { Text(appString(QuranStrings.latitude)) })
+            OutlinedTextField(longitude, { stopCompass(); bearing = null; resultError = null; longitude = it }, label = { Text(appString(QuranStrings.longitude)) })
+            Action(appString(QuranStrings.calculateDirection), {
                 stopCompass()
-                result = runCatching {
+                resultError = null
+                runCatching {
                     bearing = QiblaCalculator.bearing(latitude.toDouble(), longitude.toDouble())
-                    if (bearing == null) label(language, "Direction is undefined at this location.", "الاتجاه غير محدد في هذا الموقع.")
-                    else "${(bearing!! * 10).toInt() / 10.0}° " + label(language, "clockwise from true north", "مع عقارب الساعة من الشمال الحقيقي")
-                }.getOrElse {
+                    if (bearing == null) resultError = QuranStrings.undefinedDirection
+                }.onFailure {
                     bearing = null
-                    label(language, "Enter valid decimal coordinates.", "أدخل إحداثيات عشرية صحيحة.")
+                    resultError = QuranStrings.invalidCoordinates
                 }
             })
-            result?.let { Text(it, style = MaterialTheme.typography.headlineSmall) }
+            resultError?.let { Text(appString(it), style = MaterialTheme.typography.headlineSmall) }
+            bearing?.let { value ->
+                Text(
+                    appString(QuranStrings.bearingResult, (value * 10).toInt() / 10.0),
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+            }
         }
         if (bearing != null) {
             PaperCard {
-                Text(label(language, "Live compass", "البوصلة الحية"), style = MaterialTheme.typography.titleLarge)
-                Text(label(language, "Keep your phone flat in portrait, away from metal. Move it in a figure eight to calibrate. On iOS, true north requires optional location access.", "أبق الهاتف مسطحاً بالطول وبعيداً عن المعادن. حركه على شكل ثمانية للمعايرة. يحتاج الشمال الحقيقي على iOS إذن موقع اختياري."))
-                Action(label(language, if (live) "Stop compass" else "Start compass", if (live) "إيقاف البوصلة" else "تشغيل البوصلة"), {
+                Text(appString(QuranStrings.liveCompass), style = MaterialTheme.typography.titleLarge)
+                Text(appString(QuranStrings.compassCalibrationHelp))
+                Action(appString(if (live) QuranStrings.stopCompass else QuranStrings.startCompass), {
                     if (live) stopCompass() else {
                         live = true
                         unavailable = false
@@ -85,12 +91,12 @@ fun QiblaScreen(language: AppLanguage, compass: CompassProvider) {
                 if (live && currentHeading != null) {
                     val turn = ((bearing!! - currentHeading + 540.0) % 360.0) - 180.0
                     Text("↑", Modifier.rotate(turn.toFloat()).padding(24.dp), style = MaterialTheme.typography.displayLarge)
-                    Text(label(language, "Turn ${kotlin.math.abs(turn).toInt()}° ${if (turn < 0) "left" else "right"}", "اتجه ${kotlin.math.abs(turn).toInt()}° ${if (turn < 0) "يساراً" else "يميناً"}"))
+                    Text(appString(if (turn < 0) QuranStrings.turnLeft else QuranStrings.turnRight, kotlin.math.abs(turn).toInt()))
                 } else if (live) {
-                    Text(label(language, if (unavailable) "Heading unavailable or uncalibrated. Use the manual bearing above." else "Waiting for a reliable true north reading…", if (unavailable) "الاتجاه غير متاح أو البوصلة تحتاج معايرة. استخدم الزاوية اليدوية أعلاه." else "بانتظار قراءة موثوقة للشمال الحقيقي…"))
+                    Text(appString(if (unavailable) QuranStrings.headingUnavailable else QuranStrings.headingWaiting))
                 }
             }
         }
-        Text(label(language, "Confirm direction with a map or calibrated compass when readings fluctuate.", "تحقق من الاتجاه بخريطة أو بوصلة معايرة عندما تتذبذب القراءات."))
+        Text(appString(QuranStrings.confirmDirectionHelp))
     }
 }

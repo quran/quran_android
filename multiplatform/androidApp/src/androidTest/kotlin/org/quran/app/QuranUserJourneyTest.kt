@@ -1,6 +1,8 @@
 package org.quran.app
 
 import android.content.Context
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.test.core.app.ActivityScenario
@@ -34,58 +36,108 @@ class QuranUserJourneyTest {
 
     @After fun closeActivity() { scenario.close() }
 
+    private fun navigateTo(label: String) {
+        compose.onNode(hasText(label) and hasClickAction()).performClick()
+    }
+
+    private fun openVerseActions(surah: Int = 1, ayah: Int = 1) {
+        val actions = "verse_actions_${surah}_${ayah}"
+        compose.onNodeWithTag("reader_list").performScrollToNode(hasTestTag(actions))
+        compose.onNodeWithTag(actions).performClick()
+    }
+
     @Test fun libraryReaderPracticeAndBackRetainSavedVerse() {
-        compose.onNodeWithText("Open verse").performClick()
-        compose.onAllNodesWithText("Save")[0].performClick()
-        compose.onAllNodesWithText("Saved")[0].assertIsDisplayed()
-        compose.onAllNodesWithText("Practice")[0].performClick()
-        compose.onNodeWithText("One verse at a time").assertIsDisplayed()
-        compose.onNodeWithText("Hide verse").performClick()
-        compose.onNodeWithText("Recite from memory, then reveal to check.").assertIsDisplayed()
-        compose.onNodeWithText("Reveal verse").performClick()
-        compose.onNodeWithText("Hide verse").assertIsDisplayed()
-        compose.onNodeWithText("I have memorized it").performScrollTo().performClick()
-        compose.onNodeWithText("I have memorized it").assertIsNotEnabled()
+        compose.onNodeWithText("Open last read").performClick()
+        openVerseActions()
+        compose.onNodeWithText("Bookmark").performClick()
+        openVerseActions()
+        compose.onNodeWithText("Remove bookmark").assertIsDisplayed()
+        compose.onNodeWithText("Memorize").performClick()
+        compose.onNodeWithText("One ayah at a time").assertIsDisplayed()
+        compose.onNodeWithText("Hide ayah").performClick()
+        compose.onNodeWithText("Recite from memory, then reveal the ayah to check.").assertIsDisplayed()
+        compose.onNodeWithText("Reveal ayah").performClick()
+        compose.onNodeWithText("Hide ayah").assertIsDisplayed()
+        compose.onNodeWithText("I have memorized this").performScrollTo().performClick()
+        compose.onNodeWithText("I have memorized this").assertIsNotEnabled()
         compose.onNodeWithText("‹ Back").performClick()
-        compose.onAllNodesWithText("Saved")[0].assertIsDisplayed()
+        openVerseActions()
+        compose.onNodeWithText("Remove bookmark").assertIsDisplayed()
+        compose.onNodeWithText("Back").performClick()
         compose.onNodeWithText("‹ Back").performClick()
-        compose.onNodeWithText("Your daily companion").assertIsDisplayed()
-        compose.onNodeWithText("You").performClick()
-        compose.onNodeWithText("1 verses marked memorized").assertIsDisplayed()
-        compose.onNodeWithText("Saved verses").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Continue reading").assertIsDisplayed()
+        compose.onNodeWithText("Bookmarks").performClick()
+        compose.onNodeWithText("Read").performClick()
+        openVerseActions()
+        compose.onNodeWithText("Remove bookmark").assertIsDisplayed()
+        compose.onNodeWithText("Back").performClick()
+        navigateTo("Settings")
+        compose.onNodeWithText("1 ayat marked memorized").assertIsDisplayed()
     }
 
     @Test fun arabicDirectionAndLocaleSurviveActivityRecreation() {
-        compose.onNodeWithText("You").performClick()
-        val englishYou = compose.onNodeWithText("You").fetchSemanticsNode().boundsInRoot.center.x
+        navigateTo("Settings")
+        val englishSettings = compose.onNode(hasText("Settings") and hasClickAction()).fetchSemanticsNode().boundsInRoot.center.x
         val englishQibla = compose.onNodeWithText("Qibla").fetchSemanticsNode().boundsInRoot.center.x
-        assertTrue("English navigation should read left to right", englishYou > englishQibla)
-        compose.onNodeWithText("العربية").performClick()
-        compose.onNodeWithText("مساحتك للقراءة").assertIsDisplayed()
-        val arabicYou = compose.onNodeWithText("حسابك").fetchSemanticsNode().boundsInRoot.center.x
+        assertTrue("English navigation should read left to right", englishSettings > englishQibla)
+        compose.onNodeWithText("Arabic").performClick()
+        compose.onNodeWithText("تفضيلات القراءة والآيات المحفوظة").assertIsDisplayed()
+        val arabicSettings = compose.onNode(hasText("الإعدادات") and hasClickAction()).fetchSemanticsNode().boundsInRoot.center.x
         val arabicQibla = compose.onNodeWithText("القبلة").fetchSemanticsNode().boundsInRoot.center.x
-        assertTrue("Arabic navigation should mirror right to left", arabicYou < arabicQibla)
+        assertTrue("Arabic navigation should mirror right to left", arabicSettings < arabicQibla)
         scenario.recreate()
-        compose.onNodeWithText("حسابك").assertIsDisplayed()
-        compose.onNodeWithText("حسابك").performClick()
-        compose.onNodeWithText("مساحتك للقراءة").assertIsDisplayed()
-        compose.onNodeWithText("English").performClick()
-        compose.onNodeWithText("Your reading space").assertIsDisplayed()
+        navigateTo("الإعدادات")
+        compose.onNodeWithText("تفضيلات القراءة والآيات المحفوظة").assertIsDisplayed()
+        compose.onNodeWithText("الإنجليزية").performClick()
+        compose.onNodeWithText("Reading preferences and saved verses").assertIsDisplayed()
     }
 
     @Test fun childrenModePersistsAndStartsGuidedPracticeWithThreeRepetitions() {
-        compose.onNodeWithText("You").performClick()
+        navigateTo("Settings")
         compose.onNode(isToggleable()).performClick().assertIsOn()
         scenario.recreate()
-        compose.onNodeWithText("You").performClick()
+        navigateTo("Settings")
         compose.onNode(isToggleable()).assertIsOn()
-        compose.onNodeWithText("Read").performClick()
-        compose.onNodeWithText("Open verse").performClick()
-        compose.onAllNodesWithText("Practice")[0].performClick()
+        navigateTo("Library")
+        compose.onNodeWithText("Open last read").performClick()
+        openVerseActions()
+        compose.onNodeWithText("Memorize").performClick()
         compose.onNodeWithText("3").assertIsDisplayed()
         compose.onNodeWithText("I repeated this verse").performScrollTo().performClick()
         compose.onNodeWithText("Repetitions: 1").assertIsDisplayed()
-        compose.onNodeWithText("I have memorized it").assertIsEnabled()
+        compose.onNodeWithText("I have memorized this").assertIsEnabled()
+    }
+
+    @Test fun lastReadAyahResumesAtItsTopAfterRelaunch() {
+        compose.onNodeWithText("Search surah").performScrollTo().performTextInput("2")
+        compose.onNodeWithText("Read").performScrollTo().performClick()
+        openVerseActions(surah = 2, ayah = 5)
+        compose.onNodeWithText("Mark as read").performClick()
+        compose.onNodeWithText("‹ Back").performClick()
+        compose.onNodeWithText("2:5").assertIsDisplayed()
+        scenario.close()
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        compose.onNodeWithText("2:5").assertIsDisplayed()
+        compose.onNodeWithText("Open last read").performClick()
+        // Do not scroll before asserting: the persisted ayah must be the initial visible item.
+        compose.onNodeWithTag("reader_verse_2_5").assertIsDisplayed()
+        compose.onNodeWithTag("reader_verse_2_4").assertIsNotDisplayed()
+        val readerTop = compose.onNodeWithTag("reader_list").fetchSemanticsNode().boundsInRoot.top
+        val ayahTop = compose.onNodeWithTag("reader_verse_2_5").fetchSemanticsNode().boundsInRoot.top
+        assertEquals("Resume must start at ayah 5, accounting for the chapter header", readerTop, ayahTop, 1f)
+    }
+
+    @Test fun verseActionsRemainReachableInLandscape() {
+        scenario.onActivity { it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        compose.waitUntil(10_000) {
+            context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        }
+        compose.onNodeWithText("Open last read").performScrollTo().performClick()
+        openVerseActions()
+        compose.onNodeWithText("Study").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Back").performScrollTo().performClick()
+        compose.onNodeWithTag("reader_list").assertIsDisplayed()
     }
 
     @Test fun nativeMediaServiceCompletesExactlyTwoRealPlaybacks() {
