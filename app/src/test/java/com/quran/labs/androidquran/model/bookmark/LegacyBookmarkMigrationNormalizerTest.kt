@@ -67,19 +67,10 @@ class LegacyBookmarkMigrationNormalizerTest {
     assertThat(data.collections.map { collection -> collection.name })
       .containsExactly("Reading", oldPageBookmarksName)
       .inOrder()
-    val collectionsByName = data.collections.associateBy { collection -> collection.name }
-    val collectionImportIds = data.collections.map { collection -> collection.importId }
-    assertThat(collectionImportIds).doesNotContain(legacyTagId(10L))
-    assertThat(collectionImportIds).doesNotContain(legacyTagId(11L))
-    assertThat(collectionImportIds).doesNotContain(legacyTagId(12L))
-    assertThat(collectionImportIds).doesNotContain("tag-10")
-    assertThat(collectionImportIds).doesNotContain("tag-11")
-    assertThat(collectionImportIds).doesNotContain("tag-12")
-    assertThat(data.collectionBookmarks.map { link -> link.collectionImportId })
-      .containsExactly(
-        collectionsByName.getValue("Reading").importId,
-        collectionsByName.getValue(oldPageBookmarksName).importId
-      )
+    assertThat(data.collectionBookmarks.map { link -> link.collectionName })
+      .containsExactly("Reading", oldPageBookmarksName)
+    assertThat(data.collectionBookmarks.map { link -> link.sura to link.ayah })
+      .containsExactly(pageBounds[0] to pageBounds[1], pageBounds[0] to pageBounds[1])
   }
 
   @Test

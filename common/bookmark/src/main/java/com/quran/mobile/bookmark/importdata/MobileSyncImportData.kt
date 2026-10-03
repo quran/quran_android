@@ -19,21 +19,20 @@ data class MobileSyncImportData(
 }
 
 data class MobileSyncImportBookmark(
-  val importId: String,
   val sura: Int,
   val ayah: Int,
   val timestampMillis: Long
 )
 
 data class MobileSyncImportCollection(
-  val importId: String,
   val name: String,
   val timestampMillis: Long
 )
 
 data class MobileSyncImportCollectionBookmark(
-  val collectionImportId: String,
-  val bookmarkImportId: String,
+  val collectionName: String,
+  val sura: Int,
+  val ayah: Int,
   val timestampMillis: Long
 )
 

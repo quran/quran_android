@@ -159,10 +159,10 @@ private class SyncCollectionBookmarksRepository(
   }
 
   override suspend fun removeAyahBookmarkFromCollection(
-    collectionAyahBookmark: CollectionAyahBookmark
+    collectionId: String,
+    bookmarkId: String
   ): Boolean {
-    quranDataService.removeAyahBookmarkFromCollection(collectionAyahBookmark)
-    return true
+    return quranDataService.removeAyahBookmarkFromCollection(collectionId, bookmarkId)
   }
 
   override fun getBookmarksForCollectionFlow(collectionId: String): Flow<List<CollectionAyahBookmark>> {
@@ -190,19 +190,19 @@ private class SyncCollectionBookmarksRepository(
     return quranDataService.setHighlight(sura, ayah, color, timestamp)
   }
 
-  override suspend fun removeHighlight(
+  override suspend fun deleteHighlight(
     sura: Int,
     ayah: Int
   ): Boolean {
-    return quranDataService.removeHighlight(sura, ayah)
+    return quranDataService.deleteHighlight(sura, ayah)
   }
 
-  override suspend fun removeHighlight(
+  override suspend fun deleteHighlight(
     sura: Int,
     ayah: Int,
     timestamp: PlatformDateTime
   ): Boolean {
-    return quranDataService.removeHighlight(sura, ayah)
+    return quranDataService.deleteHighlight(sura, ayah)
   }
 }
 
