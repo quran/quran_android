@@ -52,8 +52,8 @@ fun QiblaScreen(language: AppLanguage, compass: CompassProvider) {
         ScreenTitle(appString(QuranStrings.faceQibla), appString(QuranStrings.trueNorthBearing))
         PaperCard {
             Text(appString(QuranStrings.manualCoordinatesHelp))
-            OutlinedTextField(latitude, { stopCompass(); bearing = null; resultError = null; latitude = it }, label = { Text(appString(QuranStrings.latitude)) })
-            OutlinedTextField(longitude, { stopCompass(); bearing = null; resultError = null; longitude = it }, label = { Text(appString(QuranStrings.longitude)) })
+            QuranTextField(latitude, { stopCompass(); bearing = null; resultError = null; latitude = it }, label = appString(QuranStrings.latitude))
+            QuranTextField(longitude, { stopCompass(); bearing = null; resultError = null; longitude = it }, label = appString(QuranStrings.longitude))
             Action(appString(QuranStrings.calculateDirection), {
                 stopCompass()
                 resultError = null

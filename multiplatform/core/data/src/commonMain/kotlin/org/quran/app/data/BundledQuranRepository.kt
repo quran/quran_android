@@ -3,6 +3,7 @@ import org.quran.app.model.*
 import org.quran.app.domain.QuranRepository
 import org.quran.app.data.corpus.*
 class BundledQuranRepository : QuranRepository {
+ override fun juzs(): List<Juz> = CanonicalJuzMetadata.load()
  override fun chapters(): List<Chapter> = listOf(
 Chapter(1,"الفاتحة","Al-Faatiha · The Opening",7),
 Chapter(2,"البقرة","Al-Baqara · The Cow",286),

@@ -49,3 +49,9 @@ The source-only review checks palette consistency, typography hierarchy, spacing
 
 The preview contains explicit placeholders and no Quran quotations or invented translations. Existing verified source content, attributions and deferred AI status are preserved.
 
+
+## Form and selection components
+
+`QuranChoiceChip` represents a single labelled selected choice with Material selected semantics and a 48dp minimum hit area. `QuranSettingSwitch` combines its title, description and switch into one labelled toggle action; the whole row is touchable and announces the checked state. Settings uses these for interface language and children mode.
+
+`QuranTextField` shares labelled, single-line input, keyboard options, error and supporting-text behavior across search and manual Qibla coordinates. `QuranDialog` shares title and action slots for the translation picker. Each component lives in a separate file. Scalable text, wrapping selection rows, and standard platform focus semantics take precedence over fixed-height layouts.

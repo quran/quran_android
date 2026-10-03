@@ -32,7 +32,6 @@
     <string name="settings">الإعدادات</string>
     <string name="no_bookmarks">لا توجد علامات محفوظة</string>
     <string name="bookmark_help">احفظ آية أثناء القراءة وستظهر هنا.</string>
-    <string name="juz_browse_coming">تصفح الأجزاء سيصل في تحديث القارئ القادم.</string>
     <string name="settings_title">الإعدادات</string>
     <string name="settings_subtitle">تفضيلات القراءة والآيات المحفوظة</string>
     <string name="language">اللغة</string>
@@ -115,4 +114,7 @@
     <string name="translation_edition_title">ترجمة المعاني · %1$s</string>
     <string name="translation_edition_metadata">%1$s · %2$s · الإصدار %3$s</string>
     <string name="translation_source_metadata">%1$s · الإصدار %2$s · %3$s</string>
+    <string name="juz_title">الجزء %1$s</string>
+    <string name="juz_starts_at">يبدأ من %1$s:%2$s</string>
+    <string name="read_juz">قراءة الجزء</string>
 </resources>
