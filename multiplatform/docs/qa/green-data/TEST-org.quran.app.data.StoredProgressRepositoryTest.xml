@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.quran.app.data.StoredProgressRepositoryTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-03T11:08:25.815Z" hostname="salehs-mbp.home" time="0.045">
+  <properties/>
+  <testcase name="savingNewProgressReplacesRemovedBookmarks[jvm]" classname="org.quran.app.data.StoredProgressRepositoryTest" time="0.026"/>
+  <testcase name="learningStatesAndLanguageSurviveRepositoryRecreation[jvm]" classname="org.quran.app.data.StoredProgressRepositoryTest" time="0.016"/>
+  <testcase name="emptyStorageReturnsSafeDefaults[jvm]" classname="org.quran.app.data.StoredProgressRepositoryTest" time="0.0"/>
+  <testcase name="corruptAndFutureStorageCannotCreateInvalidProgress[jvm]" classname="org.quran.app.data.StoredProgressRepositoryTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

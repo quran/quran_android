@@ -1,0 +1,8 @@
+.gradle/
+.kotlin/
+**/build/
+local.properties
+.idea/
+.DS_Store
+
+/design/stitch-rendered/

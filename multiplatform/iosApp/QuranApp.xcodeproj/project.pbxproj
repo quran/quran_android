@@ -1,0 +1,25 @@
+// !$*UTF8*$!
+{
+ archiveVersion = 1; classes = {}; objectVersion = 56;
+ objects = {
+ A001 = {isa = PBXProject; attributes = { LastUpgradeCheck = 1600; }; buildConfigurationList = A002; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; knownRegions = (en, ar, Base); mainGroup = A003; productRefGroup = A004; projectDirPath = ""; projectRoot = ""; targets = (A005); };
+ A002 = {isa = XCConfigurationList; buildConfigurations = (A010,A011); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+ A003 = {isa = PBXGroup; children = (A006,A004); sourceTree = "<group>"; };
+ A004 = {isa = PBXGroup; children = (A007); name = Products; sourceTree = "<group>"; };
+ A005 = {isa = PBXNativeTarget; buildConfigurationList = A008; buildPhases = (A012,A013,A014); buildRules = (); dependencies = (); name = QuranApp; productName = QuranApp; productReference = A007; productType = "com.apple.product-type.application"; };
+ A006 = {isa = PBXGroup; children = (A015,A016); path = QuranApp; sourceTree = "<group>"; };
+ A007 = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QuranApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+ A008 = {isa = XCConfigurationList; buildConfigurations = (A017,A018); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+ A010 = {isa = XCBuildConfiguration; buildSettings = { SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 15.0; }; name = Debug; };
+ A011 = {isa = XCBuildConfiguration; buildSettings = { SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 15.0; }; name = Release; };
+ A012 = {isa = PBXShellScriptBuildPhase; buildActionMask = 2147483647; files = (); inputPaths = (); outputPaths = (); name = "Build shared Kotlin framework"; runOnlyForDeploymentPostprocessing = 0; shellPath = /bin/sh; shellScript = "cd \"$SRCROOT/..\"\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode\n"; };
+ A013 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A019); runOnlyForDeploymentPostprocessing = 0; };
+ A014 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+ A015 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuranApp.swift; sourceTree = "<group>"; };
+ A016 = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+ A019 = {isa = PBXBuildFile; fileRef = A015; };
+ A017 = {isa = XCBuildConfiguration; buildSettings = { PRODUCT_BUNDLE_IDENTIFIER = org.quran.app.redesign; PRODUCT_NAME = "$(TARGET_NAME)"; INFOPLIST_FILE = QuranApp/Info.plist; SWIFT_VERSION = 5.0; "EXCLUDED_ARCHS[sdk=iphonesimulator*]" = x86_64; CURRENT_PROJECT_VERSION = 1; MARKETING_VERSION = 0.1; GENERATE_INFOPLIST_FILE = YES; FRAMEWORK_SEARCH_PATHS = ("$(inherited)","$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"); OTHER_LDFLAGS = ("$(inherited)","-framework","QuranShared"); LD_RUNPATH_SEARCH_PATHS = ("$(inherited)","@executable_path/Frameworks"); ENABLE_USER_SCRIPT_SANDBOXING = NO; }; name = Debug; };
+ A018 = {isa = XCBuildConfiguration; buildSettings = { PRODUCT_BUNDLE_IDENTIFIER = org.quran.app.redesign; PRODUCT_NAME = "$(TARGET_NAME)"; INFOPLIST_FILE = QuranApp/Info.plist; SWIFT_VERSION = 5.0; "EXCLUDED_ARCHS[sdk=iphonesimulator*]" = x86_64; CURRENT_PROJECT_VERSION = 1; MARKETING_VERSION = 0.1; GENERATE_INFOPLIST_FILE = YES; FRAMEWORK_SEARCH_PATHS = ("$(inherited)","$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)"); OTHER_LDFLAGS = ("$(inherited)","-framework","QuranShared"); LD_RUNPATH_SEARCH_PATHS = ("$(inherited)","@executable_path/Frameworks"); ENABLE_USER_SCRIPT_SANDBOXING = NO; }; name = Release; };
+ };
+ rootObject = A001;
+}

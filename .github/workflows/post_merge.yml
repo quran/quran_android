@@ -12,6 +12,7 @@ concurrency:
 jobs:
   apkdeps:
     name: Build
+    if: github.repository == 'quran/quran_android'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the Code

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.quran.app.domain.ModelContractTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-03T11:12:07.265Z" hostname="salehs-mbp.home" time="0.019">
+  <properties/>
+  <testcase name="verseIdentifiersRespectChapterBoundaries[jvm]" classname="org.quran.app.domain.ModelContractTest" time="0.018"/>
+  <testcase name="languagesDeclareReadingDirection[jvm]" classname="org.quran.app.domain.ModelContractTest" time="0.001"/>
+  <testcase name="progressDefaultsAndCopyPreserveIndependentLearningStates[jvm]" classname="org.quran.app.domain.ModelContractTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

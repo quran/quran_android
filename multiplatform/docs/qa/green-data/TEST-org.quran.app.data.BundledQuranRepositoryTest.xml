@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.quran.app.data.BundledQuranRepositoryTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-10-03T11:08:25.863Z" hostname="salehs-mbp.home" time="0.067">
+  <properties/>
+  <testcase name="corpusHasCanonicalChaptersAndEveryVerseExactlyOnce[jvm]" classname="org.quran.app.data.BundledQuranRepositoryTest" time="0.059"/>
+  <testcase name="invalidChapterCannotSilentlyReturnUnrelatedVerses[jvm]" classname="org.quran.app.data.BundledQuranRepositoryTest" time="0.003"/>
+  <testcase name="changingAppLanguageDoesNotChangeSacredArabicText[jvm]" classname="org.quran.app.data.BundledQuranRepositoryTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

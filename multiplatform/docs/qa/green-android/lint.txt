@@ -1,0 +1,77 @@
+/Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/androidApp/build.gradle.kts:7: Warning: A newer version of androidx.activity:activity-compose than 1.11.0 is available: 1.13.0 [GradleDependency]
+dependencies { implementation(project(":composeApp"));implementation(project(":core:data"));implementation(project(":core:domain"));implementation("androidx.activity:activity-compose:1.11.0")
+                                                                                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/androidApp/build.gradle.kts:8: Warning: A newer version of androidx.compose.ui:ui-test-junit4 than 1.11.1 is available: 1.12.1 [GradleDependency]
+ androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.11.1")
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/androidApp/build.gradle.kts:9: Warning: A newer version of androidx.test:runner than 1.6.2 is available: 1.7.0 [GradleDependency]
+ androidTestImplementation("androidx.test:runner:1.6.2")
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/androidApp/build.gradle.kts:10: Warning: A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0 [GradleDependency]
+ androidTestImplementation("androidx.test.ext:junit:1.2.1")
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/androidApp/build.gradle.kts:11: Warning: A newer version of androidx.test:core-ktx than 1.6.1 is available: 1.7.0 [GradleDependency]
+ androidTestImplementation("androidx.test:core-ktx:1.6.1")
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+/Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/androidApp/src/main/AndroidManifest.xml:1: Warning: The attribute android:allowBackup is deprecated from Android 12 and higher and may be removed in future versions. Consider adding the attribute android:dataExtractionRules specifying an @xml resource which configures cloud backups and device transfers on Android 12 and higher. [DataExtractionRules]
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.FOREGROUND_SERVICE"/><uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/><application android:theme="@android:style/Theme.Material.Light.NoActionBar" android:label="Quran" android:allowBackup="false" android:supportsRtl="true"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><service android:name="org.quran.app.data.QuranPlaybackService" android:exported="false" android:foregroundServiceType="mediaPlayback"><intent-filter><action android:name="androidx.media3.session.MediaSessionService"/></intent-filter></service></application></manifest>
+                                                                                                                                                                                                                                                                                                                                                          ~~~~~
+
+   Explanation for issues of type "DataExtractionRules":
+   Before Android 12, the attributes android:allowBackup and
+   android:fullBackupContent were used to configure all forms of backup,
+   including cloud backups, device-to-device transfers and adb backup.
+
+   In Android 12 and higher, these attributes have been deprecated and will
+   only apply to cloud backups. You should instead use the attribute
+   android:dataExtractionRules, specifying an @xml resource that configures
+   which files to back up, for cloud backups and for device-to-device
+   transfers, separately. If your minSdkVersion supports older versions,
+   you'll still want to specify an android:fullBackupContent resource if the
+   default behavior is not right for your app.
+
+   https://developer.android.com/about/versions/12/backup-restore#xml-changes
+   https://goo.gle/DataExtractionRules
+
+/Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/androidApp/src/main/AndroidManifest.xml:1: Warning: Should explicitly set android:icon, there is no default [MissingApplicationIcon]
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"><uses-permission android:name="android.permission.FOREGROUND_SERVICE"/><uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/><application android:theme="@android:style/Theme.Material.Light.NoActionBar" android:label="Quran" android:allowBackup="false" android:supportsRtl="true"><activity android:name=".MainActivity" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter></activity><service android:name="org.quran.app.data.QuranPlaybackService" android:exported="false" android:foregroundServiceType="mediaPlayback"><intent-filter><action android:name="androidx.media3.session.MediaSessionService"/></intent-filter></service></application></manifest>
+                                                                                                                                                                                                                                   ~~~~~~~~~~~
+
+   Explanation for issues of type "MissingApplicationIcon":
+   You should set an icon for the application as whole because there is no
+   default. This attribute must be set as a reference to a drawable resource
+   containing the image (for example @drawable/icon).
+
+   https://developer.android.com/studio/publish/preparing#publishing-configure
+
+/Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/androidApp/build.gradle.kts:7: Warning: Use version catalog instead [UseTomlInstead]
+dependencies { implementation(project(":composeApp"));implementation(project(":core:data"));implementation(project(":core:domain"));implementation("androidx.activity:activity-compose:1.11.0")
+                                                                                                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/androidApp/build.gradle.kts:8: Warning: Use version catalog instead [UseTomlInstead]
+ androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.11.1")
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/androidApp/build.gradle.kts:9: Warning: Use version catalog instead [UseTomlInstead]
+ androidTestImplementation("androidx.test:runner:1.6.2")
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/androidApp/build.gradle.kts:10: Warning: Use version catalog instead [UseTomlInstead]
+ androidTestImplementation("androidx.test.ext:junit:1.2.1")
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/androidApp/build.gradle.kts:11: Warning: Use version catalog instead [UseTomlInstead]
+ androidTestImplementation("androidx.test:core-ktx:1.6.1")
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UseTomlInstead":
+   If your project is using a libs.versions.toml file, you should place all
+   Gradle dependencies in the TOML file. This lint check looks for version
+   declarations outside of the TOML file and suggests moving them (and in the
+   IDE, provides a quickfix to performing the operation automatically).
+
+0 errors, 12 warnings

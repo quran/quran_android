@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.quran.app.domain.RepeatSessionTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-03T11:12:07.289Z" hostname="salehs-mbp.home" time="0.001">
+  <properties/>
+  <testcase name="loopsUntilLearnerExplicitlyMarksMemorized[jvm]" classname="org.quran.app.domain.RepeatSessionTest" time="0.001"/>
+  <testcase name="resetRestoresInitialState[jvm]" classname="org.quran.app.domain.RepeatSessionTest" time="0.0"/>
+  <testcase name="advancesOnlyAfterConfiguredRepetitions[jvm]" classname="org.quran.app.domain.RepeatSessionTest" time="0.0"/>
+  <testcase name="rejectsUnusableSessions[jvm]" classname="org.quran.app.domain.RepeatSessionTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

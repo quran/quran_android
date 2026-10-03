@@ -13,7 +13,7 @@ jobs:
   build:
     name: Validate PR
     runs-on: ubuntu-latest
-    if: github.event_name != 'merge_group'
+    if: github.repository == 'quran/quran_android' && github.event_name != 'merge_group'
     steps:
       - name: Checkout the Code
         uses: actions/checkout@v7

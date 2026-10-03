@@ -1,0 +1,7 @@
+> Task :feature:tutor:compileKotlinIosSimulatorArm64
+> Task :feature:tutor:exportCrossCompilationMetadataForIosSimulatorArm64ApiElements
+> Task :composeApp:compileKotlinIosSimulatorArm64
+> Task :composeApp:linkDebugFrameworkIosSimulatorArm64
+
+BUILD SUCCESSFUL in 3m 20s
+42 actionable tasks: 34 executed, 8 up-to-date

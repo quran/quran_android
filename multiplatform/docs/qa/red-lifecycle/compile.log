@@ -1,0 +1,92 @@
+> Task :core:designsystem:checkJvmMainComposeLibrariesCompatibility
+> Task :core:designsystem:kmpPartiallyResolvedDependenciesChecker
+> Task :core:designsystem:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:designsystem:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :core:designsystem:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :core:designsystem:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :core:designsystem:generateResourceAccessorsForCommonMain SKIPPED
+> Task :core:designsystem:convertXmlValueResourcesForJvmMain NO-SOURCE
+> Task :core:designsystem:copyNonXmlValueResourcesForJvmMain NO-SOURCE
+> Task :core:designsystem:prepareComposeResourcesTaskForJvmMain NO-SOURCE
+> Task :core:designsystem:generateResourceAccessorsForJvmMain SKIPPED
+> Task :core:designsystem:generateActualResourceCollectorsForJvmMain SKIPPED
+> Task :core:designsystem:generateComposeResClass SKIPPED
+> Task :core:designsystem:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :core:model:kmpPartiallyResolvedDependenciesChecker
+> Task :core:model:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:model:compileKotlinJvm UP-TO-DATE
+> Task :core:model:compileJvmMainJava NO-SOURCE
+> Task :core:model:jvmProcessResources NO-SOURCE
+> Task :core:model:processJvmMainResources SKIPPED
+> Task :core:model:jvmMainClasses UP-TO-DATE
+> Task :core:model:jvmJar UP-TO-DATE
+> Task :core:designsystem:assembleJvmMainResources
+> Task :core:designsystem:jvmProcessResources
+> Task :core:designsystem:processJvmMainResources SKIPPED
+> Task :core:domain:kmpPartiallyResolvedDependenciesChecker
+> Task :core:domain:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:domain:jvmProcessResources NO-SOURCE
+> Task :core:domain:processJvmMainResources SKIPPED
+> Task :feature:memorization:checkJvmMainComposeLibrariesCompatibility
+> Task :feature:memorization:kmpPartiallyResolvedDependenciesChecker
+> Task :feature:memorization:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :feature:memorization:convertXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:memorization:copyNonXmlValueResourcesForCommonMain NO-SOURCE
+> Task :feature:memorization:prepareComposeResourcesTaskForCommonMain NO-SOURCE
+> Task :feature:memorization:generateResourceAccessorsForCommonMain SKIPPED
+> Task :feature:memorization:convertXmlValueResourcesForJvmMain NO-SOURCE
+> Task :feature:memorization:copyNonXmlValueResourcesForJvmMain NO-SOURCE
+> Task :feature:memorization:prepareComposeResourcesTaskForJvmMain NO-SOURCE
+> Task :feature:memorization:generateResourceAccessorsForJvmMain SKIPPED
+> Task :feature:memorization:generateActualResourceCollectorsForJvmMain SKIPPED
+> Task :feature:memorization:generateComposeResClass SKIPPED
+> Task :feature:memorization:generateExpectResourceCollectorsForCommonMain SKIPPED
+> Task :feature:memorization:checkJvmTestComposeLibrariesCompatibility
+> Task :feature:memorization:convertXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:memorization:copyNonXmlValueResourcesForCommonTest NO-SOURCE
+> Task :feature:memorization:prepareComposeResourcesTaskForCommonTest NO-SOURCE
+> Task :feature:memorization:generateResourceAccessorsForCommonTest SKIPPED
+> Task :feature:memorization:convertXmlValueResourcesForJvmTest NO-SOURCE
+> Task :feature:memorization:copyNonXmlValueResourcesForJvmTest NO-SOURCE
+> Task :feature:memorization:prepareComposeResourcesTaskForJvmTest NO-SOURCE
+> Task :feature:memorization:generateResourceAccessorsForJvmTest SKIPPED
+> Task :feature:memorization:assembleJvmMainResources
+> Task :feature:memorization:jvmProcessResources
+> Task :feature:memorization:processJvmMainResources SKIPPED
+> Task :feature:memorization:assembleJvmTestResources
+> Task :feature:memorization:jvmTestProcessResources
+> Task :feature:memorization:processJvmTestResources SKIPPED
+> Task :core:domain:compileKotlinJvm
+> Task :core:domain:compileJvmMainJava NO-SOURCE
+> Task :core:domain:jvmMainClasses
+> Task :core:domain:jvmJar
+> Task :core:designsystem:compileKotlinJvm
+> Task :core:designsystem:compileJvmMainJava NO-SOURCE
+> Task :core:designsystem:jvmMainClasses
+> Task :core:designsystem:jvmJar
+> Task :feature:memorization:compileKotlinJvm
+> Task :feature:memorization:compileJvmMainJava NO-SOURCE
+> Task :feature:memorization:jvmMainClasses
+> Task :feature:memorization:jvmJar
+
+> Task :feature:memorization:compileTestKotlinJvm FAILED
+e: file:///Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/feature/memorization/src/commonTest/kotlin/org/quran/app/memorization/RepeatPlaybackControllerTest.kt:22:26 Unresolved reference 'RepeatPlaybackController'.
+e: file:///Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/feature/memorization/src/commonTest/kotlin/org/quran/app/memorization/RepeatPlaybackControllerTest.kt:37:26 Unresolved reference 'RepeatPlaybackController'.
+e: file:///Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/feature/memorization/src/commonTest/kotlin/org/quran/app/memorization/RepeatPlaybackControllerTest.kt:51:26 Unresolved reference 'RepeatPlaybackController'.
+e: file:///Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/kmp/feature/memorization/src/commonTest/kotlin/org/quran/app/memorization/RepeatPlaybackControllerTest.kt:68:26 Unresolved reference 'RepeatPlaybackController'.
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':feature:memorization:compileTestKotlinJvm'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.btapi.BuildToolsApiCompilationWork
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 10s
+22 actionable tasks: 20 executed, 2 up-to-date

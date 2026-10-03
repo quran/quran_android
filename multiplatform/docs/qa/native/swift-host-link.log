@@ -1,0 +1,9 @@
+ld: warning: object file (/Users/saleh/Documents/Codex/2026-10-03/i-want-to-build-an-quran/work/xcode-qa/Build/Products/Debug-iphonesimulator/QuranShared.framework/QuranShared[1799](libicu.icudtl_dat.o)) was built for newer 'iOS-simulator' version (18.5) than being linked (15.0)
+ld: warning: Could not find or use auto-linked framework 'UIUtilities': framework 'UIUtilities' not found
+ld: warning: Could not find or use auto-linked framework '_LocationEssentials': framework '_LocationEssentials' not found
+Undefined symbols for architecture arm64:
+  "_OBJC_CLASS_$_UIViewLayoutRegion", referenced from:
+       in QuranShared[31](CMPLayoutRegion.o)
+ld: symbol(s) not found for architecture arm64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+** BUILD FAILED **

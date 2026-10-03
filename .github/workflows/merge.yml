@@ -7,7 +7,7 @@ jobs:
   build:
     name: Merge
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
+    if: github.repository == 'quran/quran_android' && github.event_name != 'pull_request'
     steps:
       - name: Checkout the Code
         uses: actions/checkout@v7

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuite name="org.quran.app.QuranUserJourneyTest" tests="4" failures="0" errors="0" skipped="0" time="10.108" timestamp="2026-10-03T11:30:19" hostname="localhost">
+  <properties>
+    <property name="device" value="Pixel_8_Pro_API_33(AVD) - 13" />
+    <property name="flavor" value="" />
+    <property name="project" value=":androidApp" />
+  </properties>
+  <testcase name="libraryReaderPracticeAndBackRetainSavedVerse" classname="org.quran.app.QuranUserJourneyTest" time="2.951" />
+  <testcase name="arabicDirectionAndLocaleSurviveActivityRecreation" classname="org.quran.app.QuranUserJourneyTest" time="1.949" />
+  <testcase name="nativeMediaServiceCompletesExactlyTwoRealPlaybacks" classname="org.quran.app.QuranUserJourneyTest" time="2.507" />
+  <testcase name="childrenModePersistsAndStartsGuidedPracticeWithThreeRepetitions" classname="org.quran.app.QuranUserJourneyTest" time="2.115" />
+</testsuite>

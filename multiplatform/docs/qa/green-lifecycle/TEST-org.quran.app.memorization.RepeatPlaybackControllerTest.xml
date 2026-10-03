@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.quran.app.memorization.RepeatPlaybackControllerTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-10-03T11:18:52.611Z" hostname="salehs-mbp.home" time="0.014">
+  <properties/>
+  <testcase name="resetAndDisposeRejectQueuedCompletions[jvm]" classname="org.quran.app.memorization.RepeatPlaybackControllerTest" time="0.013"/>
+  <testcase name="memorizedStopsPlaybackAndRejectsPendingCompletion[jvm]" classname="org.quran.app.memorization.RepeatPlaybackControllerTest" time="0.001"/>
+  <testcase name="staleCompletionAfterPauseAndResumeCannotAdvanceTheSession[jvm]" classname="org.quran.app.memorization.RepeatPlaybackControllerTest" time="0.0"/>
+  <testcase name="manualRepetitionCannotDoubleCountPlaybackAndFixedCountStops[jvm]" classname="org.quran.app.memorization.RepeatPlaybackControllerTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
