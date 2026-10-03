@@ -125,6 +125,7 @@ class QuranRowFactory @Inject constructor(
     val juzDescription =
       context.getString(R.string.juz2_description, QuranUtils.getLocalizedNumber(juz))
     return builder
+      .withReadingBookmarkType(readingBookmark.slot)
       .withMetadata(context.getString(R.string.reading_bookmark_details, juzDescription, placed))
       .withDate(readingBookmark.timestamp.epochSeconds)
       .withImageResource(R.drawable.ic_bookmark_filled_24)

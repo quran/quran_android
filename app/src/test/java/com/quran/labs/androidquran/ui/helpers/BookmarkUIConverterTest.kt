@@ -56,6 +56,9 @@ class BookmarkUIConverterTest {
 
     val result = converter.convertToUIResult(context, data)
 
+    assertThat(result.rows.filter { it.isReadingBookmark }.map { it.readingBookmarkType })
+      .containsExactly(ReadingBookmarkType.PURPLE, ReadingBookmarkType.GREEN)
+
     assertThat(result.rows.map { it.dateAddedInMillis })
       .containsExactly(
         1_700_000_000_000L,

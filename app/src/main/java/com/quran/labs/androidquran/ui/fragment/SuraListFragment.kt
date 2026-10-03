@@ -212,11 +212,7 @@ class SuraListFragment : Fragment(), QuranTouchListener {
   override fun onClick(row: QuranRow, position: Int) {
     val activity = activity as? QuranActivity
     if (activity != null && row.page != 0) {
-      if (row.isAyahBookmark) {
-        activity.jumpToAndHighlight(row.page, row.sura, row.ayah)
-      } else {
-        activity.jumpTo(row.page)
-      }
+      activity.jumpTo(row)
     }
   }
 

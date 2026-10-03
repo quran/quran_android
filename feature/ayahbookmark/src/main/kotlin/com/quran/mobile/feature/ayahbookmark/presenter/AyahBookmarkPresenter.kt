@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.quran.data.core.QuranInfo
+import com.quran.data.core.SuggestedReadingBookmark
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.dao.HighlightsDao
 import com.quran.data.dao.ReadingBookmarksDao
@@ -44,6 +45,7 @@ class AyahBookmarkPresenter(
   private val bookmarksDao: BookmarksDao,
   private val highlightsDao: HighlightsDao,
   private val readingBookmarksDao: ReadingBookmarksDao,
+  private val suggestedReadingBookmark: SuggestedReadingBookmark,
   private val quranNaming: QuranNaming,
   private val quranInfo: QuranInfo,
   private val readingBookmarkSheetPresenterFactory: ReadingBookmarkSheetPresenter.Factory,
@@ -71,18 +73,10 @@ class AyahBookmarkPresenter(
         .filter { it.asSuraAyah() == currentAyah }
     }
 
-    val suggestedReadingBookmark = remember(ayahReadingBookmarks, readingBookmarks.value) {
-      if (ayahReadingBookmarks.isEmpty()) {
-        // TODO: we need to have a data source for this - the priority should be:
-        // sessionLaunchedReadingBookmark ?: readingBookmarksBeforeThisAyah.takeFurthestWithin25PagesOfCurrent()
-        //    ?: readingBookmarksBeforeThisAyah.takeFirst() ?: takeLastUpdated
-        readingBookmarks.value.orEmpty()
-          .filterNot { it is EmptyReadingBookmark }
-          .maxByOrNull { it.timestamp }
-          ?: EmptyReadingBookmark(ReadingBookmarkType.PURPLE, Clock.System.now())
-      } else {
-        ayahReadingBookmarks.first()
-      }
+    val suggestedType = suggestedReadingBookmark.bookmarkType.collectAsState()
+    val suggestedReadingBookmark = remember(suggestedType.value, readingBookmarks.value) {
+      readingBookmarks.value.orEmpty().firstOrNull { it.slot == suggestedType.value }
+        ?: EmptyReadingBookmark(suggestedType.value, Instant.DISTANT_PAST)
     }
 
     val otherReadingBookmarks = remember(readingBookmarks.value, suggestedReadingBookmark.slot) {

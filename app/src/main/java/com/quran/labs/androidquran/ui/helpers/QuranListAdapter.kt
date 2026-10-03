@@ -89,7 +89,7 @@ class QuranListAdapter(
     if (position != RecyclerView.NO_POSITION) {
       val element = elements[position]
       if (touchListener == null) {
-        (context as QuranActivity).jumpTo(element.page)
+        (context as QuranActivity).jumpTo(element)
       } else {
         touchListener?.onClick(element, position)
       }

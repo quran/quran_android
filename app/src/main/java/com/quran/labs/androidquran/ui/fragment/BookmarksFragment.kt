@@ -394,11 +394,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
       }
 
       !row.isHeader && activity is QuranActivity -> {
-        if (row.isAyahBookmark || row.isHighlightedAyah) {
-          activity.jumpToAndHighlight(row.page, row.sura, row.ayah)
-        } else {
-          activity.jumpTo(row.page)
-        }
+        activity.jumpTo(row)
       }
     }
   }
