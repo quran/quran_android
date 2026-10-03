@@ -59,6 +59,59 @@ class AudioQueueTest {
     assertThat(queue.getUrl()).isEqualTo("https://example.com/audio/1/1.opus")
   }
 
+  @Test
+  fun testWithUpdatedAudioRequestPreservesCurrentPlaybackAyah() {
+    val format = "https://example.com/audio/%d/%d.opus"
+    val initialRequest = audioRequest(format, listOf("opus", "mp3")).copy(
+      start = SuraAyah(1, 1),
+      end = SuraAyah(1, 7),
+      enforceBounds = false
+    )
+    val queue = AudioQueue(quranInfo, initialRequest)
+
+    // Advance to ayah 2
+    assertThat(queue.playNextAyah()).isTrue()
+    assertThat(queue.getCurrentPlaybackAyah()).isEqualTo(SuraAyah(1, 2))
+
+    // Update with a new range and enforceBounds = true
+    val updatedRequest = initialRequest.copy(
+      end = SuraAyah(1, 5),
+      enforceBounds = true
+    )
+    val updatedQueue = queue.withUpdatedAudioRequest(updatedRequest)
+
+    // Verify current playback ayah is preserved at 1:2
+    assertThat(updatedQueue.getCurrentPlaybackAyah()).isEqualTo(SuraAyah(1, 2))
+  }
+
+  @Test
+  fun testWithUpdatedAudioRequestEnforcesNewBounds() {
+    val format = "https://example.com/audio/%d/%d.opus"
+    val initialRequest = audioRequest(format, listOf("opus", "mp3")).copy(
+      start = SuraAyah(1, 1),
+      end = SuraAyah(1, 7),
+      enforceBounds = false
+    )
+    val queue = AudioQueue(quranInfo, initialRequest)
+
+    // Advance to ayah 3
+    assertThat(queue.playNextAyah()).isTrue()
+    assertThat(queue.playNextAyah()).isTrue()
+    assertThat(queue.getCurrentPlaybackAyah()).isEqualTo(SuraAyah(1, 3))
+
+    // Update with bounds restricted to 1:3
+    val updatedRequest = initialRequest.copy(
+      end = SuraAyah(1, 3),
+      enforceBounds = true,
+      rangeRepeatInfo = 0
+    )
+    val updatedQueue = queue.withUpdatedAudioRequest(updatedRequest)
+
+    // Attempting to advance beyond end bound with rangeRepeat=0 should return false
+    assertThat(updatedQueue.playNextAyah()).isFalse()
+    assertThat(updatedQueue.getCurrentPlaybackAyah()).isEqualTo(SuraAyah(1, 3))
+  }
+
   private fun audioRequest(urlFormat: String, allowedExtensions: List<String>): AudioRequest {
     val qariItem = QariItem(
       id = 1,

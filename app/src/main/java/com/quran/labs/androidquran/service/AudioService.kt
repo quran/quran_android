@@ -375,19 +375,46 @@ class AudioService : Service(), Player.Listener {
     } else if (ACTION_PLAYBACK == action) {
       val updatedAudioRequest = intent.getParcelableExtra<AudioRequest>(EXTRA_PLAY_INFO)
       if (updatedAudioRequest != null) {
-        audioRequest = updatedAudioRequest
-        val start = updatedAudioRequest.start
-        val basmallah = !updatedAudioRequest.isGapless() && start.requiresBasmallah()
-        audioQueue = AudioQueue(
-          quranInfo, updatedAudioRequest,
-          AudioPlaybackInfo(start, 1, 1, basmallah)
-        )
-        Timber.d("audio request has changed...")
-        player?.stop()
-        state = State.Stopped
-        Timber.d("stop if playing...")
+        val currentRequest = audioRequest
+        val currentQueue = audioQueue
+        val currentAyah = currentQueue?.getCurrentPlaybackAyah()
+        val canContinuePlayback = state != State.Stopped &&
+            currentRequest != null &&
+            currentQueue != null &&
+            currentAyah != null &&
+            currentRequest.qari == updatedAudioRequest.qari &&
+            currentRequest.audioPathInfo == updatedAudioRequest.audioPathInfo &&
+            currentRequest.start == updatedAudioRequest.start &&
+            currentAyah in updatedAudioRequest.start..updatedAudioRequest.end
+
+        if (canContinuePlayback) {
+          audioQueue = currentQueue.withUpdatedAudioRequest(updatedAudioRequest)
+          if (updatedAudioRequest.playbackSpeed != currentRequest.playbackSpeed) {
+            processUpdatePlaybackSpeed(updatedAudioRequest.playbackSpeed)
+            serviceHandler.sendEmptyMessageDelayed(MSG_UPDATE_AUDIO_POS, 200)
+          }
+          audioRequest = updatedAudioRequest
+          updateAudioPlaybackStatus()
+          if (state == State.Paused) {
+            processPlayRequest()
+          }
+        } else {
+          audioRequest = updatedAudioRequest
+          val start = updatedAudioRequest.start
+          val basmallah = !updatedAudioRequest.isGapless() && start.requiresBasmallah()
+          audioQueue = AudioQueue(
+            quranInfo, updatedAudioRequest,
+            AudioPlaybackInfo(start, 1, 1, basmallah)
+          )
+          Timber.d("audio request has changed...")
+          player?.stop()
+          state = State.Stopped
+          Timber.d("stop if playing...")
+          processPlayRequest()
+        }
+      } else {
+        processTogglePlaybackRequest()
       }
-      processTogglePlaybackRequest()
     } else if (ACTION_PLAY == action) {
       processPlayRequest()
     } else if (ACTION_PAUSE == action) {
