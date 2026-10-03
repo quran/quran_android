@@ -1,16 +1,12 @@
 package org.quran.app
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import org.quran.app.designsystem.QuranText
+import org.quran.app.designsystem.QuranTextVariant
+import org.quran.app.designsystem.QuranTextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
@@ -20,7 +16,6 @@ import org.quran.app.designsystem.PaperCard
 import org.quran.app.designsystem.QuranStrings
 import org.quran.app.designsystem.ScreenTitle
 import org.quran.app.designsystem.appString
-import org.quran.app.model.AppLanguage
 import org.quran.app.model.StudyProgress
 import org.quran.app.model.TranslationEdition
 import org.quran.app.model.VerseId
@@ -48,22 +43,7 @@ internal fun SettingsScreen(
                 appString(QuranStrings.settingsSubtitle),
             )
         }
-        item {
-            PaperCard {
-                Text(appString(QuranStrings.language), style = MaterialTheme.typography.titleLarge)
-                Row {
-                    TextButton({ onProgressChange(progress.copy(language = AppLanguage.ENGLISH)) }) { Text(appString(QuranStrings.english)) }
-                    TextButton({ onProgressChange(progress.copy(language = AppLanguage.ARABIC)) }) { Text(appString(QuranStrings.arabic)) }
-                }
-                Text(appString(QuranStrings.childrenMode), style = MaterialTheme.typography.titleMedium)
-                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                    Switch(progress.childMode, { onProgressChange(progress.copy(childMode = it)) })
-                    Text(appString(QuranStrings.childrenModeDetail))
-                }
-                Text(appString(QuranStrings.localProgress))
-                Text(appString(QuranStrings.memorizedCount, progress.memorized.size))
-            }
-        }
+        item { SettingsPreferencesCard(progress, onProgressChange) }
         item {
             TranslationSettingsSection(
                 language = language,
@@ -75,40 +55,34 @@ internal fun SettingsScreen(
                 onSelect = onTranslationSelected,
             )
         }
-        item { Text(appString(QuranStrings.savedVerses), style = MaterialTheme.typography.titleLarge) }
+        item { QuranText(appString(QuranStrings.savedVerses), variant = QuranTextVariant.Title) }
         if (progress.bookmarks.isEmpty()) {
-            item { Text(appString(QuranStrings.savedVersesHelp)) }
+            item { QuranText(appString(QuranStrings.savedVersesHelp)) }
         }
         items(progress.bookmarks.sortedWith(compareBy({ it.surah }, { it.ayah }))) { verseId ->
             PaperCard {
-                Text("${verseId.surah}:${verseId.ayah}")
+                QuranText("${verseId.surah}:${verseId.ayah}")
                 Action(appString(QuranStrings.openVerse), { onOpenVerse(verseId) })
-                TextButton({ onProgressChange(progress.copy(bookmarks = progress.bookmarks - verseId)) }) {
-                    Text(appString(QuranStrings.removeBookmark))
-                }
+                QuranTextButton(appString(QuranStrings.removeBookmark), onClick = { onProgressChange(progress.copy(bookmarks = progress.bookmarks - verseId)) })
             }
         }
-        item { Text(appString(QuranStrings.memorizedVerses), style = MaterialTheme.typography.titleLarge) }
+        item { QuranText(appString(QuranStrings.memorizedVerses), variant = QuranTextVariant.Title) }
         if (progress.memorized.isEmpty()) {
-            item { Text(appString(QuranStrings.memorizedHelp)) }
+            item { QuranText(appString(QuranStrings.memorizedHelp)) }
         }
         items(progress.memorized.sortedWith(compareBy({ it.surah }, { it.ayah })), key = { "memorized-${it.surah}-${it.ayah}" }) { verseId ->
             PaperCard {
-                Text("${verseId.surah}:${verseId.ayah}")
+                QuranText("${verseId.surah}:${verseId.ayah}")
                 Action(appString(QuranStrings.reviewVerse), { onOpenVerse(verseId) })
-                TextButton({ onProgressChange(progress.copy(memorized = progress.memorized - verseId)) }) {
-                    Text(appString(QuranStrings.needsPractice))
-                }
+                QuranTextButton(appString(QuranStrings.needsPractice), onClick = { onProgressChange(progress.copy(memorized = progress.memorized - verseId)) })
             }
         }
         item {
             PaperCard {
-                Text(appString(QuranStrings.textSource), style = MaterialTheme.typography.titleLarge)
-                Text("Tanzil Quran Text (Uthmani 1.1) © 2007–2026 Tanzil Project. CC BY 3.0. Verbatim text; modification prohibited.")
-                TextButton({ uriHandler.openUri("https://tanzil.net") }) {
-                    Text(appString(QuranStrings.tanzilUpdates))
-                }
-                Text(appString(QuranStrings.futureAi))
+                QuranText(appString(QuranStrings.textSource), variant = QuranTextVariant.Title)
+                QuranText("Tanzil Quran Text (Uthmani 1.1) © 2007–2026 Tanzil Project. CC BY 3.0. Verbatim text; modification prohibited.")
+                QuranTextButton(appString(QuranStrings.tanzilUpdates), onClick = { uriHandler.openUri("https://tanzil.net") })
+                QuranText(appString(QuranStrings.futureAi))
             }
         }
     }

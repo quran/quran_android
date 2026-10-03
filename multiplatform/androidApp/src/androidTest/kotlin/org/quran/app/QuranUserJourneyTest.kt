@@ -140,6 +140,24 @@ class QuranUserJourneyTest {
         compose.onNodeWithTag("reader_list").assertIsDisplayed()
     }
 
+    @Test fun juzSelectionOpensItsCanonicalMidSurahStart() {
+        compose.onNodeWithText("Juz").performClick()
+        compose.onNodeWithTag("library_list").performScrollToNode(hasTestTag("juz_open_16"))
+        compose.onNodeWithTag("juz_open_16").performClick()
+        // Observe initial position without a scroll: Juz 16 starts inside Al-Kahf, not surah 1.
+        compose.onNodeWithTag("reader_verse_18_75").assertIsDisplayed()
+        compose.onNodeWithTag("reader_verse_18_74").assertIsNotDisplayed()
+        val readerTop = compose.onNodeWithTag("reader_list").fetchSemanticsNode().boundsInRoot.top
+        val ayahTop = compose.onNodeWithTag("reader_verse_18_75").fetchSemanticsNode().boundsInRoot.top
+        assertEquals(readerTop, ayahTop, 1f)
+        navigateTo("Library")
+        compose.onNodeWithTag("library_list").performScrollToIndex(0)
+        compose.onNodeWithText("Juz").performClick()
+        compose.onNodeWithTag("library_list").performScrollToNode(hasTestTag("juz_open_30"))
+        compose.onNodeWithTag("juz_open_30").performClick()
+        compose.onNodeWithTag("reader_verse_78_1").assertIsDisplayed()
+    }
+
     @Test fun nativeMediaServiceCompletesExactlyTwoRealPlaybacks() {
         // Synthetic silent PCM is a player test fixture; it is never Quran recitation.
         val context = InstrumentationRegistry.getInstrumentation().targetContext

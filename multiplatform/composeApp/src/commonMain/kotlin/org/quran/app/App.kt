@@ -107,7 +107,7 @@ fun QuranApp(
                         onBack = { if (navigationStack.size > 1) navigationStack.removeAt(navigationStack.lastIndex) },
                         entryProvider = entryProvider {
                             entry<Library> {
-                                LibraryScreen(quran.chapters(), progress) { surah, ayah ->
+                                LibraryScreen(chapters = quran.chapters(), progress = progress, juzs = quran.juzs()) { surah, ayah ->
                                     navigationStack.add(Reader(surah, ayah))
                                 }
                             }

@@ -8,8 +8,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 
-enum class QuranTextVariant { Display, Heading, Subheading, Title, Body, Supporting, Label, Caption }
-
 @Composable
 fun QuranText(
     text: String,

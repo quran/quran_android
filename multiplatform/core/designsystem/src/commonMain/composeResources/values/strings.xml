@@ -32,7 +32,6 @@
     <string name="settings">Settings</string>
     <string name="no_bookmarks">No bookmarks yet</string>
     <string name="bookmark_help">Save an ayah while reading and it will appear here.</string>
-    <string name="juz_browse_coming">Juz browsing will be available in the next reader update.</string>
     <string name="settings_title">Settings</string>
     <string name="settings_subtitle">Reading preferences and saved verses</string>
     <string name="language">Language</string>
@@ -115,4 +114,7 @@
     <string name="translation_edition_title">Translation of the meanings · %1$s</string>
     <string name="translation_edition_metadata">%1$s · %2$s · version %3$s</string>
     <string name="translation_source_metadata">%1$s · version %2$s · %3$s</string>
+    <string name="juz_title">Juz %1$s</string>
+    <string name="juz_starts_at">Starts at %1$s:%2$s</string>
+    <string name="read_juz">Read juz</string>
 </resources>

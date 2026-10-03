@@ -30,6 +30,9 @@ object QuranStrings {
     val searchSurah get() = Res.string.search_surah
     val surahTab get() = Res.string.surah_tab
     val juzTab get() = Res.string.juz_tab
+    val juzTitle get() = Res.string.juz_title
+    val juzStartsAt get() = Res.string.juz_starts_at
+    val readJuz get() = Res.string.read_juz
     val bookmarksTab get() = Res.string.bookmarks_tab
     val read get() = Res.string.read
     val verseCount get() = Res.string.verse_count
@@ -49,7 +52,6 @@ object QuranStrings {
     val settings get() = Res.string.settings
     val noBookmarks get() = Res.string.no_bookmarks
     val bookmarkHelp get() = Res.string.bookmark_help
-    val juzBrowseComing get() = Res.string.juz_browse_coming
     val settingsTitle get() = Res.string.settings_title
     val settingsSubtitle get() = Res.string.settings_subtitle
     val language get() = Res.string.language
