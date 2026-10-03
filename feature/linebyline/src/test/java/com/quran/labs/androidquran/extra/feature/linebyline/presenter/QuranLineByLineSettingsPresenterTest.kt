@@ -10,8 +10,8 @@ import org.junit.Test
  * Tests for QuranLineByLineSettingsPresenter.
  *
  * The presenter accepts an injectable CoroutineScope, allowing tests to pass
- * a TestScope for deterministic execution. Tests use runTest with specific
- * predicate conditions to wait for the right settings emission.
+ * runTest's backgroundScope for the presenter's long-lived StateFlow collection.
+ * Tests use specific predicate conditions to wait for the right settings emission.
  * All tests configure at least one non-default value so the loaded settings
  * differ from EmptySettings, ensuring StateFlow emits a new value.
  */
@@ -22,7 +22,7 @@ class QuranLineByLineSettingsPresenterTest {
     // Arrange
     val fakeSettings = FakeSettings()
     fakeSettings.setNightMode(true)
-    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, this)
+    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
 
     // Act - wait for night mode enabled emission
     val emitted = presenter.displaySettingsFlow.first { it.isNightMode }
@@ -37,7 +37,7 @@ class QuranLineByLineSettingsPresenterTest {
     val expectedBrightness = 128
     val fakeSettings = FakeSettings()
     fakeSettings.setTextBrightness(expectedBrightness)
-    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, this)
+    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
 
     // Act - wait for the specific brightness value
     val emitted = presenter.displaySettingsFlow.first { it.textBrightness == expectedBrightness }
@@ -52,7 +52,7 @@ class QuranLineByLineSettingsPresenterTest {
     val expectedBrightness = 50
     val fakeSettings = FakeSettings()
     fakeSettings.setBackgroundBrightness(expectedBrightness)
-    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, this)
+    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
 
     // Act - wait for the specific background brightness
     val emitted = presenter.displaySettingsFlow.first {
@@ -68,7 +68,7 @@ class QuranLineByLineSettingsPresenterTest {
     // Arrange
     val fakeSettings = FakeSettings()
     fakeSettings.setHeaderFooter(true)
-    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, this)
+    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
 
     // Act - wait for header footer enabled
     val emitted = presenter.displaySettingsFlow.first { it.showHeaderFooter }
@@ -82,7 +82,7 @@ class QuranLineByLineSettingsPresenterTest {
     // Arrange
     val fakeSettings = FakeSettings()
     fakeSettings.setSidelinesEnabled(true)
-    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, this)
+    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
 
     // Act - wait for sidelines enabled
     val emitted = presenter.displaySettingsFlow.first { it.showSidelines }
@@ -96,7 +96,7 @@ class QuranLineByLineSettingsPresenterTest {
     // Arrange
     val fakeSettings = FakeSettings()
     fakeSettings.setLineDividersEnabled(true)
-    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, this)
+    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
 
     // Act - wait for line dividers enabled
     val emitted = presenter.displaySettingsFlow.first { it.showLineDividers }
@@ -112,7 +112,7 @@ class QuranLineByLineSettingsPresenterTest {
     fakeSettings.setNightMode(true)
     fakeSettings.setTextBrightness(200)
     fakeSettings.setHeaderFooter(true)
-    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, this)
+    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
 
     // Act - wait for an emission with night mode and header footer enabled
     val emitted = presenter.displaySettingsFlow.first { it.isNightMode && it.showHeaderFooter }
@@ -129,7 +129,7 @@ class QuranLineByLineSettingsPresenterTest {
     val fakeSettings = FakeSettings()
     fakeSettings.setNightMode(false)
     fakeSettings.setTextBrightness(100) // non-default so initial load differs from EmptySettings
-    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, this)
+    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
 
     // Wait for initial load (brightness=100 is non-default)
     val initial = presenter.displaySettingsFlow.first { it.textBrightness == 100 }
@@ -147,10 +147,7 @@ class QuranLineByLineSettingsPresenterTest {
   @Test
   fun `latestDisplaySettings returns EmptySettings before any preference loads`() = runTest {
     val fakeSettings = FakeSettings()
-    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, this)
-    // With TestScope (UnconfinedTestDispatcher), stateIn(Eagerly) runs the
-    // initial load synchronously. After construction, value should reflect
-    // the default FakeSettings (isNightMode=false, brightness=255, etc.)
+    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
     val settings = presenter.latestDisplaySettings()
     assertThat(settings.isNightMode).isFalse()
     assertThat(settings.textBrightness).isEqualTo(255)
@@ -163,7 +160,7 @@ class QuranLineByLineSettingsPresenterTest {
     val fakeSettings = FakeSettings()
     fakeSettings.setNightMode(false)
     fakeSettings.setTextBrightness(150) // non-default to trigger emission
-    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, this)
+    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
 
     // Act - wait for emission with custom brightness
     val emitted = presenter.displaySettingsFlow.first { it.textBrightness == 150 }
