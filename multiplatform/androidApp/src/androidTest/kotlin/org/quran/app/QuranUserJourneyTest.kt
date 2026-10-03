@@ -1,6 +1,8 @@
 package org.quran.app
 
 import android.content.Context
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.test.core.app.ActivityScenario
@@ -122,6 +124,19 @@ class QuranUserJourneyTest {
         val readerTop = compose.onNodeWithTag("reader_list").fetchSemanticsNode().boundsInRoot.top
         val ayahTop = compose.onNodeWithTag("reader_verse_1_5").fetchSemanticsNode().boundsInRoot.top
         assertEquals("Resume must start at ayah 5, accounting for the chapter header", readerTop, ayahTop, 1f)
+    }
+
+    @Test fun verseActionsRemainReachableInLandscape() {
+        scenario.onActivity { it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        compose.waitUntil(10_000) {
+            context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        }
+        compose.onNodeWithText("Open last read").performScrollTo().performClick()
+        openVerseActions()
+        compose.onNodeWithText("Study").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Back").performScrollTo().performClick()
+        compose.onNodeWithTag("reader_list").assertIsDisplayed()
     }
 
     @Test fun nativeMediaServiceCompletesExactlyTwoRealPlaybacks() {

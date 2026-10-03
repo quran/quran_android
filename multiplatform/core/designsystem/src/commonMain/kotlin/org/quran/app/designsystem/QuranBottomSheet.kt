@@ -1,5 +1,7 @@
 package org.quran.app.designsystem
 
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -26,7 +28,7 @@ fun QuranBottomSheet(title: String, onDismiss: () -> Unit, content: @Composable 
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
     ) {
-        Column(Modifier.fillMaxWidth().padding(horizontal = QuranSpacing.ExtraLarge).padding(bottom = QuranSpacing.ExtraLarge), verticalArrangement = Arrangement.spacedBy(QuranSpacing.Small)) {
+        Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = QuranSpacing.ExtraLarge).padding(bottom = QuranSpacing.ExtraLarge), verticalArrangement = Arrangement.spacedBy(QuranSpacing.Small)) {
             QuranText(title, Modifier.semantics { heading() }, QuranTextVariant.Title)
             content()
         }
