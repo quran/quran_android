@@ -3,7 +3,7 @@ import com.quran.labs.androidquran.buildutil.applyAndroidCommon
 import com.quran.labs.androidquran.buildutil.applyBoms
 import com.quran.labs.androidquran.buildutil.applyJavaCommon
 import com.quran.labs.androidquran.buildutil.applyKotlinCommon
-import com.quran.labs.androidquran.buildutil.disableDebugVariant
+import com.quran.labs.androidquran.buildutil.configureAndroidLibraryVariants
 import com.quran.labs.androidquran.buildutil.withLibraries
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -21,7 +21,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
       extensions.configure<LibraryExtension> {
         applyAndroidCommon(target)
-        disableDebugVariant()
+        configureAndroidLibraryVariants()
       }
 
       applyJavaCommon()
