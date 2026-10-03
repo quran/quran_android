@@ -26,7 +26,7 @@ internal fun androidx.compose.foundation.lazy.LazyListScope.bookmarkItems(
         }
         return
     }
-    items(bookmarks.sortedWith(compareBy(VerseId::surah, VerseId::ayah)), key = { it }) { verse ->
+    items(bookmarks.sortedWith(compareBy(VerseId::surah, VerseId::ayah)), key = { "bookmark-${it.surah}-${it.ayah}" }) { verse ->
         Column(Modifier.fillMaxWidth()) {
             Text("${verse.surah}:${verse.ayah}", style = MaterialTheme.typography.titleMedium)
             TextButton(onClick = { onOpen(verse.surah, verse.ayah) }) { Text(appString(QuranStrings.read)) }

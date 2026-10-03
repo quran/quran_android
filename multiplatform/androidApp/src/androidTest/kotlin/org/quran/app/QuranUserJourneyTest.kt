@@ -109,20 +109,21 @@ class QuranUserJourneyTest {
     }
 
     @Test fun lastReadAyahResumesAtItsTopAfterRelaunch() {
-        compose.onNodeWithText("Open last read").performClick()
-        openVerseActions(ayah = 5)
+        compose.onNodeWithText("Search surah").performScrollTo().performTextInput("2")
+        compose.onNodeWithText("Read").performScrollTo().performClick()
+        openVerseActions(surah = 2, ayah = 5)
         compose.onNodeWithText("Mark as read").performClick()
         compose.onNodeWithText("‹ Back").performClick()
-        compose.onNodeWithText("1:5").assertIsDisplayed()
+        compose.onNodeWithText("2:5").assertIsDisplayed()
         scenario.close()
         scenario = ActivityScenario.launch(MainActivity::class.java)
-        compose.onNodeWithText("1:5").assertIsDisplayed()
+        compose.onNodeWithText("2:5").assertIsDisplayed()
         compose.onNodeWithText("Open last read").performClick()
         // Do not scroll before asserting: the persisted ayah must be the initial visible item.
-        compose.onNodeWithTag("reader_verse_1_5").assertIsDisplayed()
-        compose.onNodeWithTag("reader_verse_1_4").assertIsNotDisplayed()
+        compose.onNodeWithTag("reader_verse_2_5").assertIsDisplayed()
+        compose.onNodeWithTag("reader_verse_2_4").assertIsNotDisplayed()
         val readerTop = compose.onNodeWithTag("reader_list").fetchSemanticsNode().boundsInRoot.top
-        val ayahTop = compose.onNodeWithTag("reader_verse_1_5").fetchSemanticsNode().boundsInRoot.top
+        val ayahTop = compose.onNodeWithTag("reader_verse_2_5").fetchSemanticsNode().boundsInRoot.top
         assertEquals("Resume must start at ayah 5, accounting for the chapter header", readerTop, ayahTop, 1f)
     }
 
