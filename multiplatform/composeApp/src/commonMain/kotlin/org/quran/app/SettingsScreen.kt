@@ -20,7 +20,6 @@ import org.quran.app.designsystem.PaperCard
 import org.quran.app.designsystem.QuranStrings
 import org.quran.app.designsystem.ScreenTitle
 import org.quran.app.designsystem.appString
-import org.quran.app.designsystem.label
 import org.quran.app.model.AppLanguage
 import org.quran.app.model.StudyProgress
 import org.quran.app.model.TranslationEdition
@@ -78,7 +77,7 @@ internal fun SettingsScreen(
         }
         item { Text(appString(QuranStrings.savedVerses), style = MaterialTheme.typography.titleLarge) }
         if (progress.bookmarks.isEmpty()) {
-            item { Text(label(language, "Save a verse while reading to find it here.", "احفظ آية أثناء القراءة لتجدها هنا.")) }
+            item { Text(appString(QuranStrings.savedVersesHelp)) }
         }
         items(progress.bookmarks.sortedWith(compareBy({ it.surah }, { it.ayah }))) { verseId ->
             PaperCard {
@@ -91,7 +90,7 @@ internal fun SettingsScreen(
         }
         item { Text(appString(QuranStrings.memorizedVerses), style = MaterialTheme.typography.titleLarge) }
         if (progress.memorized.isEmpty()) {
-            item { Text(label(language, "Mark a verse memorized after checking your recitation.", "حدد الآية محفوظة بعد مراجعة تلاوتك.")) }
+            item { Text(appString(QuranStrings.memorizedHelp)) }
         }
         items(progress.memorized.sortedWith(compareBy({ it.surah }, { it.ayah })), key = { "memorized-${it.surah}-${it.ayah}" }) { verseId ->
             PaperCard {

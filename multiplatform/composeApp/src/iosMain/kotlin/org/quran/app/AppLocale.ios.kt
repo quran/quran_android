@@ -5,6 +5,7 @@ import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import platform.Foundation.NSUserDefaults
 import platform.Foundation.NSLocale
+import platform.Foundation.preferredLanguages
 import org.quran.app.model.AppLanguage
 
 actual object AppLocale {

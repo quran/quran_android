@@ -17,7 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.LayoutDirection
-import org.quran.app.designsystem.label
+import org.quran.app.designsystem.QuranStrings
+import org.quran.app.designsystem.appString
 import org.quran.app.model.AppLanguage
 import org.quran.app.model.TextDirection
 import org.quran.app.model.TranslationEdition
@@ -36,21 +37,21 @@ fun TranslationEditionHeader(
             val uriHandler = LocalUriHandler.current
             Column {
                 Text(
-                    "Translation of the meanings · ${edition.title}",
+                    appString(QuranStrings.translationEditionTitle, edition.title),
                     style = MaterialTheme.typography.titleMedium,
                 )
-                Text("${edition.translator} · v${edition.version} · ${edition.publisher}")
+                Text(appString(QuranStrings.translationSourceMetadata, edition.translator, edition.version, edition.publisher))
                 TextButton(onClick = { uriHandler.openUri(edition.sourceUrl) }) {
-                    Text(label(language, "Source and license", "المصدر والترخيص"))
+                    Text(appString(QuranStrings.sourceAndLicense))
                 }
             }
         }
-        isLoading -> Text(label(language, "Loading selected translation…", "جارٍ تحميل الترجمة المختارة…"))
+        isLoading -> Text(appString(QuranStrings.translationLoading))
         errorMessage != null -> Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(errorMessage, Modifier.weight(1f), color = MaterialTheme.colorScheme.error)
-            TextButton(onClick = onRetry) { Text(label(language, "Retry", "إعادة المحاولة")) }
+            TextButton(onClick = onRetry) { Text(appString(QuranStrings.retry)) }
         }
-        else -> Text(label(language, "Choose a translation of the meanings in Settings.", "اختر ترجمة للمعاني من الإعدادات."))
+        else -> Text(appString(QuranStrings.chooseTranslationHelp))
     }
 }
 
@@ -68,7 +69,7 @@ fun TranslationVerseText(
             Text(translation.text, style = MaterialTheme.typography.bodyLarge)
             if (translation.footnotes.isNotEmpty()) {
                 TextButton(onClick = { showFootnotes = !showFootnotes }) {
-                    Text(label(language, if (showFootnotes) "Hide notes" else "Show notes", if (showFootnotes) "إخفاء الحواشي" else "عرض الحواشي"))
+                    Text(appString(if (showFootnotes) QuranStrings.hideNotes else QuranStrings.showNotes))
                 }
                 if (showFootnotes) Text(translation.footnotes, style = MaterialTheme.typography.bodySmall)
             }

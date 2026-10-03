@@ -3,7 +3,8 @@ package org.quran.app.data
 import org.quran.app.domain.SettingsStore
 import org.quran.app.domain.TranslationRepository
 import org.quran.app.model.TranslationEdition
-import org.quran.app.model.VerseTranslation
+import org.quran.app.model.TranslationChapter
+import org.quran.app.model.QuranCanon
 import kotlinx.coroutines.CancellationException
 
 /** QuranEnc content remains verbatim. Validated responses are cached for offline reading. */
@@ -13,19 +14,38 @@ class QuranEncTranslationRepository(
     private val endpoints: QuranEncEndpoints = QuranEncEndpoints(),
 ) : TranslationRepository {
     private val parser = QuranEncTranslationParser()
+    private val chapters = TranslationChapterCache(cache, parser)
     override suspend fun editions(languageCode: String?): List<TranslationEdition> {
         val key = "translation.catalog.v1.${languageCode ?: "all"}"
         val response = freshOrCached(endpoints.translations(languageCode), key, parser::editions)
         return parser.editions(response)
     }
 
-    override suspend fun verses(edition: TranslationEdition, surah: Int): List<VerseTranslation> {
-        val safeVersion = edition.version.replace(Regex("[^a-zA-Z0-9._-]"), "_")
-        val cacheKey = "translation.cache.v1.${edition.id}.$safeVersion.$surah"
-        val response = freshOrCached(endpoints.surahTranslation(edition.id, surah), cacheKey) { body ->
-            parser.surah(body, edition, surah)
+    override suspend fun chapter(edition: TranslationEdition, surah: Int): TranslationChapter {
+        QuranCanon.verseCount(surah)
+        val url = endpoints.surahTranslation(edition.id, surah)
+        val previous = chapters.read(edition.id, surah)
+        val response = try {
+            http.get(url)
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (_: Exception) {
+            null
         }
-        return parser.surah(response, edition, surah)
+        val verses = response?.let { runCatching { parser.surah(it, edition, surah) }.getOrNull() }
+        if (response != null && verses != null) {
+            chapters.save(edition, surah, response)
+            return TranslationChapter(edition, verses)
+        }
+        if (previous != null) {
+            return previous.copy(
+                isOlder = previous.edition.lastUpdatedEpochSeconds < edition.lastUpdatedEpochSeconds ||
+                    (previous.edition.lastUpdatedEpochSeconds == edition.lastUpdatedEpochSeconds &&
+                        previous.edition.version != edition.version),
+            )
+        }
+        if (response != null) parser.surah(response, edition, surah)
+        error("Translation content is unavailable. Check your connection and try again.")
     }
 
     private suspend fun <T> freshOrCached(url: String, cacheKey: String, validate: (String) -> T): String {

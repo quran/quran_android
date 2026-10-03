@@ -7,7 +7,7 @@ implementation(compose.runtime)
 implementation(compose.foundation)
 implementation(compose.material3)
 implementation(compose.ui) }
-commonMain.dependencies { implementation(compose.components.resources) }
+commonMain.dependencies { api(compose.components.resources) }
  commonTest.dependencies { implementation(kotlin("test")) }
  }
 }
