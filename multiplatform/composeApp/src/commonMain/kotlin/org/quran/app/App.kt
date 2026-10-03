@@ -26,6 +26,8 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CancellationException
+import org.quran.app.data.RecitationDataModule
+import org.quran.app.data.StoredReciterSelectionStore
 import org.quran.app.data.BundledQuranRepository
 import org.quran.app.data.StoredProgressRepository
 import org.quran.app.data.StoredTranslationSelectionStore
@@ -47,6 +49,10 @@ fun QuranApp(
     audioPlayer: AudioPlayer,
     importAudio: ((String) -> Unit) -> Unit,
 ) {
+    val recitationModule = remember { RecitationDataModule() }
+    val reciterSelection = remember(settings) { StoredReciterSelectionStore(settings) }
+    var selectedReciterId by remember(settings) { mutableStateOf(reciterSelection.selectedReciterId()) }
+    DisposableEffect(recitationModule) { onDispose { recitationModule.close() } }
     val quran = remember { BundledQuranRepository() }
     val progressRepository = remember(settings) { StoredProgressRepository(settings) }
     val translationSelection = remember(settings) { StoredTranslationSelectionStore(settings) }
@@ -139,6 +145,9 @@ fun QuranApp(
                                     onMemorized = { saveProgress(progress.copy(memorized = progress.memorized + it)) },
                                     audioPlayer = audioPlayer,
                                     onImport = importAudio,
+                                    recitationRepository = recitationModule.repository,
+                                    selectedReciterId = selectedReciterId,
+                                    onReciterSelected = { id -> reciterSelection.select(id); selectedReciterId = id },
                                 )
                             }
                             entry<Study> { route ->

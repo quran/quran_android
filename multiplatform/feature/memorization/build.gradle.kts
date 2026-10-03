@@ -10,7 +10,7 @@ implementation(compose.foundation)
 implementation(compose.material3)
 implementation(compose.ui) }
 commonMain.dependencies { implementation(compose.components.resources) }
- commonTest.dependencies { implementation(kotlin("test")) }
+ commonTest.dependencies { implementation(kotlin("test")); implementation(libs.kotlinx.coroutines.test) }
  }
 }
 android { namespace = "org.quran.app.feature.memorization"; compileSdk = 36; compileOptions { sourceCompatibility=JavaVersion.VERSION_17; targetCompatibility=JavaVersion.VERSION_17 }; defaultConfig { minSdk = 26 } }
