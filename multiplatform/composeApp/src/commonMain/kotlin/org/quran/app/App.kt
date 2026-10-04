@@ -174,6 +174,7 @@ fun QuranApp(
                                     readingPreferences = readingPreferences,
                                     onReadingPreferencesChanged = { updated -> readingPreferencesStore.save(updated); readingPreferences = updated },
                                     onOpenVerse = { navigationStack.add(Reader(it.surah, it.ayah)) },
+                                    onPracticeVerse = { navigationStack.add(Practice(it.surah, it.ayah)) },
                                     translationEditions = translationEditions,
                                     selectedTranslationId = selectedTranslationId,
                                     isTranslationCatalogLoading = isTranslationCatalogLoading,
