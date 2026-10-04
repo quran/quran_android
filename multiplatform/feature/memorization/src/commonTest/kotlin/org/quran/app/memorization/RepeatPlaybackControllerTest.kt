@@ -111,4 +111,24 @@ class RepeatPlaybackControllerTest {
         assertTrue(controller.state.complete)
         assertEquals(1, player.completions.size)
     }
+
+    @Test fun manualAdvanceInvalidatesTheInterruptedVerseCompletion() {
+        val player = FakePlayer()
+        val controller = RepeatPlaybackController(
+            RepeatSession(listOf(VerseId(1, 1), VerseId(1, 2)), 1),
+            player,
+        )
+        controller.play()
+        val firstCompletion = player.completions.single()
+        player.playbackChanges.single()(false)
+        controller.repeatManually()
+
+        assertEquals(VerseId(1, 2), controller.state.currentVerse)
+        firstCompletion()
+        assertEquals(VerseId(1, 2), controller.state.currentVerse)
+        assertEquals(0, controller.state.completedRepetitions)
+
+        player.playbackChanges.last()(true)
+        assertFalse(controller.playing)
+    }
 }

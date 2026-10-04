@@ -44,13 +44,14 @@ def main():
     try:
         time.sleep(5)
         simctl("io", udid, "screenshot", str(args.output / "launch.png"), timeout=30)
-        for _ in range(3):
+        for probe in range(4):
             process = subprocess.run(
                 ["xcrun", "simctl", "spawn", udid, "launchctl", "print", f"pid/{pid}"],
                 capture_output=True, text=True, timeout=30,
             )
             if process.returncode == 0:
-                time.sleep(5)
+                if probe < 3:
+                    time.sleep(5)
                 continue
             raise RuntimeError(f"The app exited after launch; see launch.log ({process.stderr.strip()})")
         print(f"PASS: {bundle_id} stayed running for 20 seconds on {device['name']}")
