@@ -7,8 +7,22 @@ import subprocess
 from pathlib import Path
 
 
+SIMULATOR_READY_TIMEOUT = 300
+INSTALL_TIMEOUT = 300
+LAUNCH_TIMEOUT = 120
+
+
 def simctl(*args, **kwargs):
     return subprocess.run(["xcrun", "simctl", *args], check=True, **kwargs)
+
+
+def simctl_with_readiness_retry(udid, timeout, *args, **kwargs):
+    """Retry one timed-out operation after giving CoreSimulator time to settle."""
+    try:
+        return simctl(*args, timeout=timeout, **kwargs)
+    except subprocess.TimeoutExpired:
+        simctl("bootstatus", udid, "-b", timeout=SIMULATOR_READY_TIMEOUT)
+        return simctl(*args, timeout=timeout, **kwargs)
 
 
 def main():
@@ -29,12 +43,12 @@ def main():
     udid = device["udid"]
     if device["state"] != "Booted":
         simctl("boot", udid, timeout=120)
-    simctl("bootstatus", udid, "-b", timeout=180)
-    simctl("install", udid, str(args.app.resolve()), timeout=60)
+    simctl("bootstatus", udid, "-b", timeout=SIMULATOR_READY_TIMEOUT)
+    simctl_with_readiness_retry(udid, INSTALL_TIMEOUT, "install", udid, str(args.app.resolve()))
     args.output.mkdir(parents=True, exist_ok=True)
-    launch = simctl(
-        "launch", "--terminate-running-process", udid, bundle_id,
-        capture_output=True, text=True, timeout=60,
+    launch = simctl_with_readiness_retry(
+        udid, LAUNCH_TIMEOUT, "launch", "--terminate-running-process", udid, bundle_id,
+        capture_output=True, text=True,
     )
     (args.output / "launch.log").write_text(launch.stdout + launch.stderr)
     prefix, separator, pid_text = launch.stdout.strip().partition(":")

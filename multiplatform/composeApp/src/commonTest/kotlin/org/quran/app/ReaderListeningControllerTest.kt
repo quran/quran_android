@@ -72,6 +72,25 @@ class ReaderListeningControllerTest {
         } finally { controller.close() }
     }
 
+    @Test fun audioInterruptionPausesReaderStateAndSystemResumeRestoresIt() = runTest {
+        val player = ReaderListeningPlayerFake(mutableListOf())
+        val controller = ReaderListeningController(
+            ReaderListeningRepositoryFake(), ReaderListeningStorageFake(mutableListOf()), player, this,
+        )
+        try {
+            controller.listen("husary", first); runCurrent()
+            val interruptionCallback = player.playbackChanges.single()
+
+            interruptionCallback(false)
+            assertFalse(controller.state.value.isPlaying)
+            assertEquals(first, controller.state.value.verseId)
+
+            interruptionCallback(true)
+            assertTrue(controller.state.value.isPlaying)
+            assertEquals(first, controller.state.value.verseId)
+        } finally { controller.close() }
+    }
+
     @Test fun sourceChangeSuppressesNonCooperativeOldDownloadAndCompletion() = runTest {
         val events = mutableListOf<String>()
         val gate = CompletableDeferred<String>()
