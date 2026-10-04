@@ -191,6 +191,44 @@ class QuranUserJourneyTest {
         assertTrue("Larger Arabic preference must affect the native reader", enlargedHeight > originalHeight)
     }
 
+    @Test fun memorizedAyahReviewsDirectlyAndOnlyExplicitRemovalChangesProgress() {
+        compose.onNodeWithText("Open last read").performClick()
+        openVerseActions()
+        compose.onNodeWithText("Memorize").performClick()
+        compose.onNodeWithText("I have memorized this").performScrollTo().performClick()
+        scenario.close()
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        navigateTo("Settings")
+
+        val reviewTag = "memorized_review_1_1"
+        compose.onNodeWithTag("settings_list").performScrollToNode(hasTestTag(reviewTag))
+        compose.onNodeWithTag(reviewTag).performClick()
+        // Direct Navigation 3 entry: review opens practice without a reader intermediate.
+        compose.onNodeWithTag("practice_verse_1_1").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithTag("reader_list").assertDoesNotExist()
+        compose.onNodeWithText("I have memorized this").performScrollTo().performClick()
+        compose.onNodeWithText("Session complete. Memorization is self-assessed.").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("‹ Back").performClick()
+        compose.onNodeWithTag("settings_list").performScrollToNode(hasText("1 ayat marked memorized"))
+        compose.onNodeWithText("1 ayat marked memorized").assertIsDisplayed()
+
+        val readTag = "memorized_read_1_1"
+        compose.onNodeWithTag("settings_list").performScrollToNode(hasTestTag(readTag))
+        compose.onNodeWithTag(readTag).performClick()
+        compose.onNodeWithTag("reader_verse_1_1").assertIsDisplayed()
+        compose.onNodeWithText("‹ Back").performClick()
+        val removeTag = "memorized_remove_1_1"
+        compose.onNodeWithTag("settings_list").performScrollToNode(hasTestTag(removeTag))
+        compose.onNodeWithTag(removeTag).performClick()
+        scenario.close()
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        navigateTo("Settings")
+        compose.onNodeWithTag("settings_list").performScrollToNode(hasText("0 ayat marked memorized"))
+        compose.onNodeWithText("0 ayat marked memorized").assertIsDisplayed()
+        compose.onNodeWithTag("settings_list").performScrollToNode(hasText("Memorized verses"))
+        compose.onNodeWithTag(reviewTag).assertDoesNotExist()
+    }
+
     @Test fun nativeMediaServiceCompletesExactlyTwoRealPlaybacks() {
         // Synthetic silent PCM is a player test fixture; it is never Quran recitation.
         val context = InstrumentationRegistry.getInstrumentation().targetContext

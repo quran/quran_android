@@ -27,7 +27,7 @@ This list tracks the requested app, beyond individual pull requests. AI integrat
 
 ## Next unblocked batch
 
-Download management PR #8 merged as `f3017c42ff6f475937c455fd9b64cfbb129e5cfc`. Its reviewed head `478a05cca` passed all three CI gates, 13 native tests and independent inspection of the new downloads capture. The next slice, explicit one-ayah reader listening, is implemented and independently reviewed: 109 JVM tests and Android app/test compilation passed. Its native presentation tests and iOS/runtime CI acceptance remain pending. Continue the task list while checks run.
+Download management PR #8 merged as `f3017c42ff6f475937c455fd9b64cfbb129e5cfc`. Its reviewed head `478a05cca` passed all three CI gates, 13 native tests and independent inspection of the new downloads capture. The next slice, explicit one-ayah reader listening, is implemented and independently reviewed: 109 JVM tests and Android app/test compilation passed. Published as PR #9 at `83dbbea289c0dcf65c55c61d03c9d6e4146df59e`; its Android/test CI passed, with native runtime and iOS acceptance still running. The next direct memorized-ayah review slice is implemented, with a real navigation/persistence journey authored and combined build passed (109 JVM tests and Android app/test APKs). Continue the task list while checks run.
 
 ## Remaining product work
 
@@ -35,7 +35,8 @@ Download management PR #8 merged as `f3017c42ff6f475937c455fd9b64cfbb129e5cfc`. 
 - [x] Merge reading typography preferences; further display modes remain subject to canonical-content review.
 - [x] Download management: storage totals/removal and aggregate cache policy (PR #8).
 - [ ] Reader listening controls and background media notification/interruption acceptance.
-- [ ] Memorization review journey with explicit per-ayah progress; assess session restoration needs.
+- [ ] Direct memorized-ayah review journey: implemented; native persistence/navigation acceptance pending.
+- [ ] Practice session restoration: current sessions start fresh without autoplay; interrupted range/repetition restoration remains unimplemented.
 - [ ] Children learning flow refinement and accessibility checks with larger fonts.
 - [ ] Qibla orientation/calibration verification on physical devices.
 - [ ] iOS app runtime, native audio and permission verification; CI builds are not device acceptance.

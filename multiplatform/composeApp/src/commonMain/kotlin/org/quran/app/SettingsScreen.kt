@@ -28,6 +28,7 @@ internal fun SettingsScreen(
     progress: StudyProgress,
     onProgressChange: (StudyProgress) -> Unit,
     onOpenVerse: (VerseId) -> Unit,
+    onPracticeVerse: (VerseId) -> Unit,
     translationEditions: List<TranslationEdition>,
     selectedTranslationId: String?,
     isTranslationCatalogLoading: Boolean,
@@ -78,11 +79,14 @@ internal fun SettingsScreen(
             item { QuranText(appString(QuranStrings.memorizedHelp)) }
         }
         items(progress.memorized.sortedWith(compareBy({ it.surah }, { it.ayah })), key = { "memorized-${it.surah}-${it.ayah}" }) { verseId ->
-            PaperCard {
-                QuranText("${verseId.surah}:${verseId.ayah}")
-                Action(appString(QuranStrings.reviewVerse), { onOpenVerse(verseId) })
-                QuranTextButton(appString(QuranStrings.needsPractice), onClick = { onProgressChange(progress.copy(memorized = progress.memorized - verseId)) })
-            }
+            SettingsMemorizedVerseCard(
+                verseId = verseId,
+                onRead = onOpenVerse,
+                onReview = onPracticeVerse,
+                onNeedsPractice = { reviewedVerse ->
+                    onProgressChange(progress.copy(memorized = progress.memorized - reviewedVerse))
+                },
+            )
         }
         item {
             PaperCard {
