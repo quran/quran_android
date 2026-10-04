@@ -125,4 +125,17 @@
     <string name="audio_cache_help">نزّل آية واحدة للاستماع والتكرار دون اتصال.</string>
     <string name="practice_ayah">السورة %1$d · الآية %2$d</string>
     <string name="audio_source_credit">التلاوات من EveryAyah</string>
+    <string name="practice_range">نطاق المراجعة</string>
+    <string name="practice_range_help">ابدأ بهذه الآية واختر حتى %1$d آيات.</string>
+    <string name="practice_range_address">السورة %1$d · الآيات %2$d–%3$d</string>
+    <string name="decrease_range">حذف الآية الأخيرة من النطاق</string>
+    <string name="increase_range">إضافة الآية التالية إلى النطاق</string>
+    <string name="practice_range_title">راجع آيةً آيةً</string>
+    <string name="download_range">تنزيل الآيات المحددة</string>
+    <string name="use_cached_range">استخدام الآيات المحفوظة</string>
+    <string name="audio_download_progress">تجهيز %1$d من %2$d آيات</string>
+    <string name="range_audio_help">جهّز هذا النطاق للاستماع دون اتصال. تتكرر كل آية قبل الانتقال إلى التالية.</string>
+    <string name="repeat_until_help">انتقل إلى الآية التالية فقط عندما تؤكد حفظ هذه الآية.</string>
+    <string name="import_single_ayah_help">اختر آية واحدة للمراجعة باستخدام تسجيلك.</string>
+    <string name="practice_current_position">الآية %1$d من %2$d في هذا النطاق</string>
 </resources>

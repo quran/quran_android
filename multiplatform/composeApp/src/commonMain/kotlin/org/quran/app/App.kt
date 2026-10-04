@@ -141,6 +141,7 @@ fun QuranApp(
                             entry<Practice> { route ->
                                 MemorizationScreen(
                                     verse = quran.verses(route.surah)[route.ayah - 1],
+                                    chapterVerses = quran.verses(route.surah),
                                     progress = progress,
                                     onMemorized = { saveProgress(progress.copy(memorized = progress.memorized + it)) },
                                     audioPlayer = audioPlayer,
