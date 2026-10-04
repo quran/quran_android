@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import org.quran.app.designsystem.ArabicVerse
 import org.quran.app.designsystem.QuranStrings
 import org.quran.app.designsystem.appString
+import org.quran.app.model.ReadingPreferences
 import org.quran.app.model.StudyProgress
 import org.quran.app.model.Verse
 import org.quran.app.model.VerseId
@@ -34,6 +35,7 @@ internal fun VerseReaderItem(
     onBookmark: (VerseId) -> Unit,
     onPractice: (VerseId) -> Unit,
     onStudy: (VerseId) -> Unit,
+    readingPreferences: ReadingPreferences = ReadingPreferences(),
 ) {
     var actionsVisible by remember { mutableStateOf(false) }
 
@@ -42,7 +44,7 @@ internal fun VerseReaderItem(
             Text("${verse.id.surah}:${verse.id.ayah}", style = MaterialTheme.typography.labelLarge)
             if (verse.id == progress.lastRead) Text(appString(QuranStrings.currentReadingPosition))
         }
-        ArabicVerse(verse.arabic, progress.childMode)
+        ArabicVerse(verse.arabic, progress.childMode, textSize = readingPreferences.arabicTextSize)
         translationForVerse(verse.id)
         TextButton(modifier = Modifier.testTag("verse_actions_${verse.id.surah}_${verse.id.ayah}"), onClick = { actionsVisible = true }) { Text(appString(QuranStrings.moreActions)) }
     }

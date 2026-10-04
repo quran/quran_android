@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import org.quran.app.designsystem.QuranStrings
 import org.quran.app.designsystem.ScreenTitle
 import org.quran.app.designsystem.appString
+import org.quran.app.model.ReadingPreferences
 import org.quran.app.model.Chapter
 import org.quran.app.model.StudyProgress
 import org.quran.app.model.Verse
@@ -32,6 +33,7 @@ fun ReaderScreen(
     onBookmark: (VerseId) -> Unit,
     onPractice: (VerseId) -> Unit,
     onStudy: (VerseId) -> Unit,
+    readingPreferences: ReadingPreferences = ReadingPreferences(),
 ) {
     // The chapter header occupies index zero; retain it when opening from the start.
     val initialIndex = if (initialAyah <= 1) 0 else initialAyah.coerceAtMost(verses.size)
@@ -57,6 +59,7 @@ fun ReaderScreen(
                 onBookmark = onBookmark,
                 onPractice = onPractice,
                 onStudy = onStudy,
+                readingPreferences = readingPreferences,
             )
         }
     }

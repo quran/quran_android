@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import kotlinx.coroutines.CancellationException
 import org.quran.app.domain.QuranRepository
 import org.quran.app.domain.TranslationRepository
+import org.quran.app.model.ReadingPreferences
 import org.quran.app.model.StudyProgress
 import org.quran.app.model.TranslationEdition
 import org.quran.app.model.VerseId
@@ -34,6 +35,7 @@ internal fun ReaderEntry(
     onBookmark: (VerseId) -> Unit,
     onPractice: (VerseId) -> Unit,
     onStudy: (VerseId) -> Unit,
+    readingPreferences: ReadingPreferences,
 ) {
     var reloadToken by remember(route, selectedTranslationId) { mutableIntStateOf(0) }
     var translatedContent by remember(route, selectedTranslationId) {
@@ -72,6 +74,7 @@ internal fun ReaderEntry(
         verses = quran.verses(route.surah),
         initialAyah = route.ayah,
         progress = progress,
+        readingPreferences = readingPreferences,
         translationSummary = {
             TranslationEditionHeader(
                 language = progress.language,
@@ -89,6 +92,7 @@ internal fun ReaderEntry(
                 language = progress.language,
                 edition = translatedContent.edition,
                 translation = translatedContent.verses[verseId],
+                textSize = readingPreferences.translationTextSize,
             )
         },
         onRead = onRead,

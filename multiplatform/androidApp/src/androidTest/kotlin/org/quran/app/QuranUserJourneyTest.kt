@@ -72,7 +72,7 @@ class QuranUserJourneyTest {
         compose.onNodeWithText("Remove bookmark").assertIsDisplayed()
         compose.onNodeWithText("Back").performClick()
         navigateTo("Settings")
-        compose.onNodeWithText("1 ayat marked memorized").assertIsDisplayed()
+        compose.onNodeWithText("1 ayat marked memorized").performScrollTo().assertIsDisplayed()
     }
 
     @Test fun arabicDirectionAndLocaleSurviveActivityRecreation() {
@@ -172,6 +172,22 @@ class QuranUserJourneyTest {
         scenario = ActivityScenario.launch(MainActivity::class.java)
         navigateTo("Settings")
         compose.onNodeWithText("2 ayat marked memorized").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test fun readingSizesPersistAndEnlargeCanonicalReaderText() {
+        compose.onNodeWithText("Open last read").performClick()
+        val originalHeight = compose.onNodeWithTag("reader_verse_1_1").fetchSemanticsNode().boundsInRoot.height
+        navigateTo("Settings")
+        compose.onNodeWithTag("reading_arabic_large").performScrollTo().performClick().assertIsSelected()
+        compose.onNodeWithTag("reading_translation_large").performScrollTo().performClick().assertIsSelected()
+        scenario.recreate()
+        navigateTo("Settings")
+        compose.onNodeWithTag("reading_arabic_large").performScrollTo().assertIsSelected()
+        compose.onNodeWithTag("reading_translation_large").performScrollTo().assertIsSelected()
+        navigateTo("Library")
+        compose.onNodeWithText("Open last read").performClick()
+        val enlargedHeight = compose.onNodeWithTag("reader_verse_1_1").fetchSemanticsNode().boundsInRoot.height
+        assertTrue("Larger Arabic preference must affect the native reader", enlargedHeight > originalHeight)
     }
 
     @Test fun nativeMediaServiceCompletesExactlyTwoRealPlaybacks() {

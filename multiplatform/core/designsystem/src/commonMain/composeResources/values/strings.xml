@@ -138,4 +138,11 @@
     <string name="repeat_until_help">Move to the next ayah only when you mark this one memorized.</string>
     <string name="import_single_ayah_help">Choose one ayah to practice with your own recording.</string>
     <string name="practice_current_position">Ayah %1$d of %2$d in this range</string>
+    <string name="reading_preferences">Reading display</string>
+    <string name="reading_preferences_help">Choose comfortable text sizes. Your saved reading progress stays the same.</string>
+    <string name="arabic_text_size">Arabic text size</string>
+    <string name="translation_text_size">Translation text size</string>
+    <string name="text_size_default">Default</string>
+    <string name="text_size_large">Large</string>
+    <string name="children_large_text">Children mode keeps Arabic text large.</string>
 </resources>

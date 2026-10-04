@@ -138,4 +138,11 @@
     <string name="repeat_until_help">انتقل إلى الآية التالية فقط عندما تؤكد حفظ هذه الآية.</string>
     <string name="import_single_ayah_help">اختر آية واحدة للمراجعة باستخدام تسجيلك.</string>
     <string name="practice_current_position">الآية %1$d من %2$d في هذا النطاق</string>
+    <string name="reading_preferences">عرض القراءة</string>
+    <string name="reading_preferences_help">اختر أحجام نص مريحة. تبقى مواضع القراءة المحفوظة كما هي.</string>
+    <string name="arabic_text_size">حجم النص العربي</string>
+    <string name="translation_text_size">حجم نص الترجمة</string>
+    <string name="text_size_default">افتراضي</string>
+    <string name="text_size_large">كبير</string>
+    <string name="children_large_text">يبقى النص العربي كبيرًا في وضع الأطفال.</string>
 </resources>
