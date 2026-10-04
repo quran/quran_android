@@ -22,15 +22,16 @@ This list tracks the requested app, beyond individual pull requests. AI integrat
 - [x] Shared navigation vectors, compact single library heading and full-row chapter actions; independent source review clear.
 - [x] Combined shared tests/UI compilation and Android app/test APK build passed.
 - [x] Native 11-journey regression/visual suite, 24 English/Arabic light/dark/150%-font captures; final spacing visual rerun passed.
-- [ ] Publish design refinement and require all three current-head CI gates before merge.
+- [x] Publish design refinement as PR #7.
+- [x] PR #7 merged as `54c97a4891e65b2ef2b91a1d1fdbcf2bbf7f0555` after independent review and all three current-head CI gates passed (run `37180877098`).
 
 ## Next unblocked batch
 
-Download management: discover native cache adapters, add storage inventory/totals and explicit removal with an aggregate cache policy. Preserve active playback and verified file integrity. Continue implementation while design CI runs.
+Download management is being integrated: native inventory/totals, explicit removal, completed-file capacity policy, shared storage/playback leases, a separate downloads feature with English/Arabic resources, and Navigation 3 settings entry. Common behavior tests and a native removal/relaunch journey are authored; combined build and runtime verification remain pending. Continue implementation while design CI runs.
 
 ## Remaining product work
 
-- [ ] Native visual review and redesign refinement against Stitch direction; verify real screen behavior in English/Arabic and light/dark.
+- [x] Native visual review and redesign refinement against Stitch direction; exercised English/Arabic light/dark/150%-font screens passed, further product refinement continues.
 - [x] Merge reading typography preferences; further display modes remain subject to canonical-content review.
 - [ ] Download management: storage totals/removal and aggregate cache policy.
 - [ ] Reader listening controls and background media notification/interruption acceptance.

@@ -1,4 +1,26 @@
 <resources>
+    <string name="downloads_title">Audio downloads</string>
+    <string name="downloads_subtitle">Manage recitations saved on this device</string>
+    <string name="downloads_settings_help">Review storage use and remove saved recitations.</string>
+    <string name="manage_downloads">Manage downloads</string>
+    <string name="storage_usage">Storage used</string>
+    <string name="storage_usage_value">%1$d KiB of %2$d KiB</string>
+    <string name="no_downloads">No recitations are saved on this device.</string>
+    <string name="refresh_downloads">Refresh</string>
+    <string name="remove_download">Remove</string>
+    <string name="removing_download">Removing…</string>
+    <string name="download_verse_address">Verse %1$d:%2$d</string>
+    <string name="download_item_size">%1$d KiB</string>
+    <string name="download_removed">Download removed.</string>
+    <string name="download_already_gone">This download was already removed.</string>
+    <string name="download_in_use">This recitation is in use and cannot be removed yet.</string>
+    <string name="download_management_failed">Downloads could not be loaded. Try refreshing.</string>
+    <string name="reciter_alafasy">Mishary Rashid Alafasy</string>
+    <string name="reciter_alafasy_arabic">مشاري راشد العفاسي</string>
+    <string name="reciter_husary">Mahmoud Khalil Al-Husary</string>
+    <string name="reciter_husary_arabic">محمود خليل الحصري</string>
+    <string name="reciter_sudais">Abdurrahman As-Sudais</string>
+    <string name="reciter_sudais_arabic">عبد الرحمن السديس</string>
     <string name="translation_cached">Reading the saved translation offline.</string>
     <string name="translation_older_cached">Reading an older saved translation offline. Reconnect to update this edition.</string>
     <string name="decrease_repetitions">Decrease repetitions</string>
@@ -145,4 +167,6 @@
     <string name="text_size_default">Default</string>
     <string name="text_size_large">Large</string>
     <string name="children_large_text">Children mode keeps Arabic text large.</string>
+    <string name="download_removal_failed">Could not finish updating this download. Refresh to check its current status.</string>
+    <string name="remove_download_description">Remove %1$s recording for Surah %2$d, Ayah %3$d</string>
 </resources>

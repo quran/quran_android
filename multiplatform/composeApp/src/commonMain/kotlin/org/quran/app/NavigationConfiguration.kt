@@ -15,6 +15,7 @@ internal val navigationConfig = SavedStateConfiguration {
             subclass(Study::class, Study.serializer())
             subclass(Qibla::class, Qibla.serializer())
             subclass(Settings::class, Settings.serializer())
+            subclass(Downloads::class, Downloads.serializer())
         }
     }
 }

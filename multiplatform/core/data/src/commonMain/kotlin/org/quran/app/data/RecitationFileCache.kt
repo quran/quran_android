@@ -2,6 +2,7 @@ package org.quran.app.data
 
 /** App-private durable files; writeAtomic must never expose a partial final file. */
 interface RecitationFileCache {
+    fun entries(): List<RecitationCacheEntry>
     fun read(key: String): ByteArray?
     fun localUri(key: String): String?
     suspend fun writeAtomic(key: String, content: ByteArray): String

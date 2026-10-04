@@ -91,6 +91,7 @@ class RepeatQueuePlaybackTest {
         override fun play(onCompleted: () -> Unit, onError: (String) -> Unit) { played += loaded.last(); callbacks += onCompleted }
         fun complete() = callbacks.last().invoke()
         override fun pause() = Unit
-        override fun release() = Unit
+        override fun clearLocal() = Unit
+    override fun release() = Unit
     }
 }

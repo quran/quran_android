@@ -7,9 +7,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 import org.quran.app.designsystem.*
 import org.quran.app.domain.AudioPlayer
 import org.quran.app.domain.RecitationRepository
+import org.quran.app.domain.RecitationStorageRepository
 import org.quran.app.domain.RepeatSession
 import org.quran.app.model.StudyProgress
 import org.quran.app.model.Verse
@@ -26,6 +29,7 @@ fun MemorizationScreen(
     selectedReciterId: String,
     onReciterSelected: (String) -> Unit,
     chapterVerses: List<Verse> = listOf(verse),
+    recitationStorage: RecitationStorageRepository? = null,
 ) {
     val maxSize = if (progress.childMode) 5 else 20
     val maxEnd = minOf(chapterVerses.last().id.ayah, verse.id.ayah + maxSize - 1)
@@ -40,7 +44,6 @@ fun MemorizationScreen(
     var state by remember(session) { mutableStateOf(session.state()) }
     val currentVerse = selectedVerses.first { it.id == state.currentVerse }
     var hidden by remember(state.currentVerse) { mutableStateOf(false) }
-    var downloadingAudio by remember(selectedIds) { mutableStateOf(false) }
     var audioUris by remember(selectedIds, selectedReciterId) { mutableStateOf(emptyMap<VerseId, String>()) }
     var importedUri by remember(selectedIds, selectedReciterId) { mutableStateOf<String?>(null) }
     var playing by remember(session) { mutableStateOf(false) }
@@ -57,12 +60,42 @@ fun MemorizationScreen(
             audioForVerse = if (importedUri == null) ({ id -> audioUris[id] }) else null,
         )
     }
-    fun clearAudio() {
+    val latestPlaybackController = rememberUpdatedState(controller)
+    val clearQueueAudioCallback: () -> Unit = {
         lifetime.importGeneration++
-        controller.pause()
+        latestPlaybackController.value.pause()
+        audioPlayer.clearLocal()
         audioUris = emptyMap()
         importedUri = null
         message = ""
+    }
+    val clearQueueAudio = rememberUpdatedState(clearQueueAudioCallback)
+    val onQueueAudioReadyCallback: (Map<VerseId, String>) -> Unit = { uris ->
+        latestPlaybackController.value.pause()
+        audioUris = uris
+        importedUri = null
+        message = ""
+    }
+    val onQueueAudioReady = rememberUpdatedState(onQueueAudioReadyCallback)
+    val queueScope = rememberCoroutineScope()
+    val queueController = remember(recitationRepository, recitationStorage) {
+        RecitationQueueController(
+            recitationRepository,
+            queueScope,
+            onAudioReady = { onQueueAudioReady.value(it) },
+            onAudioCleared = { clearQueueAudio.value() },
+            storage = recitationStorage,
+        )
+    }
+    val queueState by queueController.state.collectAsState()
+    LaunchedEffect(queueController, selectedReciterId, selectedIds) {
+        queueController.select(selectedReciterId, selectedIds)
+    }
+    DisposableEffect(queueController) { onDispose { queueController.close() } }
+
+    fun clearAudio() {
+        clearQueueAudio.value()
+        queueController.releasePublishedAudioAfterSourceReplacement()
     }
     DisposableEffect(lifetime) { onDispose { lifetime.active = false } }
     DisposableEffect(controller) { onDispose { controller.dispose() } }
@@ -95,21 +128,33 @@ fun MemorizationScreen(
         )
         RecitationQueueCard(
             selectedIds, recitationRepository, selectedReciterId, progress.language.isRtl,
-            onReciterSelected = onReciterSelected,
-            onDownloadStateChanged = { downloadingAudio = it },
-            onAudioCleared = ::clearAudio,
-            onAudioReady = { uris -> controller.pause(); audioUris = uris; importedUri = null; message = "" },
+            state = queueState,
+            onReciterSelected = { id -> clearAudio(); onReciterSelected(id) },
+            onPrepareAudio = queueController::prepareAudio,
         )
-        ImportedRecordingCard(selectedIds.size == 1, !downloadingAudio, message) {
+        ImportedRecordingCard(selectedIds.size == 1, !queueState.isDownloading, message) {
             controller.pause()
             val importGeneration = ++lifetime.importGeneration
             onImport { uri ->
                 if (lifetime.active && lifetime.importGeneration == importGeneration) {
-                    audioUris = emptyMap()
-                    importedUri = null
-                    runCatching { audioPlayer.loadLocal(uri) }
-                        .onSuccess { importedUri = uri; message = "" }
-                        .onFailure { message = importError.value }
+                    queueScope.launch {
+                        try {
+                            if (!lifetime.active || lifetime.importGeneration != importGeneration) return@launch
+                            latestPlaybackController.value.pause()
+                            audioPlayer.clearLocal()
+                            audioUris = emptyMap()
+                            importedUri = null
+                            queueController.releasePublishedAudioAfterSourceReplacementAndWait()
+                            if (!lifetime.active || lifetime.importGeneration != importGeneration) return@launch
+                            audioPlayer.loadLocal(uri)
+                            importedUri = uri
+                            message = ""
+                        } catch (cancelled: CancellationException) {
+                            throw cancelled
+                        } catch (_: Exception) {
+                            if (lifetime.active && lifetime.importGeneration == importGeneration) message = importError.value
+                        }
+                    }
                 }
             }
         }

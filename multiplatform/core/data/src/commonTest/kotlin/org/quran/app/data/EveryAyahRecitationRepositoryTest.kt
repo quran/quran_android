@@ -63,7 +63,7 @@ class EveryAyahRecitationRepositoryTest {
         assertEquals(0, cache.writes)
     }
 
-    @Test fun damagedExistingFileIsRemovedBeforeRetryingDownload() = runTest {
+    @Test fun damagedExistingFileIsRepairedBeforeReturningDownload() = runTest {
         val cache = FakeRecitationCache()
         cache.bytes[EveryAyahEndpoints.cacheKey("alafasy", verse)] = "broken".encodeToByteArray()
         val repository = EveryAyahRecitationRepository(RecitationHttpClient { validResponse() }, cache)
@@ -96,6 +96,7 @@ internal fun validResponse() = RecitationResponse(200, "audio/mpeg", syntheticMp
 internal class FakeRecitationCache : RecitationFileCache {
     val bytes = mutableMapOf<String, ByteArray>()
     var writes = 0
+    override fun entries(): List<RecitationCacheEntry> = bytes.map { (key, value) -> RecitationCacheEntry(key, value.size.toLong()) }
     override fun read(key: String) = bytes[key]
     override fun localUri(key: String): String? = bytes[key]?.let { "file:///test/$key" }
     override suspend fun writeAtomic(key: String, content: ByteArray): String {

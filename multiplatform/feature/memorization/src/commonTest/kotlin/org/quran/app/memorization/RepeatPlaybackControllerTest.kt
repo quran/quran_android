@@ -12,6 +12,7 @@ class RepeatPlaybackControllerTest {
         override fun loadLocal(uri: String) = Unit
         override fun play(onCompleted: () -> Unit, onError: (String) -> Unit) { completions += onCompleted }
         override fun pause() { pauseCount++ }
+        override fun clearLocal() = Unit
         override fun release() = Unit
     }
 

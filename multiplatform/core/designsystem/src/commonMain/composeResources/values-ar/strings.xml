@@ -1,4 +1,26 @@
 <resources>
+    <string name="downloads_title">تنزيلات التلاوة</string>
+    <string name="downloads_subtitle">إدارة التلاوات المحفوظة على هذا الجهاز</string>
+    <string name="downloads_settings_help">راجع مساحة التخزين واحذف التلاوات المحفوظة.</string>
+    <string name="manage_downloads">إدارة التنزيلات</string>
+    <string name="storage_usage">المساحة المستخدمة</string>
+    <string name="storage_usage_value">%1$d ك.ب من %2$d ك.ب</string>
+    <string name="no_downloads">لا توجد تلاوات محفوظة على هذا الجهاز.</string>
+    <string name="refresh_downloads">تحديث</string>
+    <string name="remove_download">حذف</string>
+    <string name="removing_download">جارٍ الحذف…</string>
+    <string name="download_verse_address">الآية %1$d:%2$d</string>
+    <string name="download_item_size">%1$d ك.ب</string>
+    <string name="download_removed">تم حذف التنزيل.</string>
+    <string name="download_already_gone">تم حذف هذا التنزيل مسبقاً.</string>
+    <string name="download_in_use">التلاوة قيد الاستخدام ولا يمكن حذفها الآن.</string>
+    <string name="download_management_failed">تعذر تحميل التنزيلات. حاول التحديث.</string>
+    <string name="reciter_alafasy">Mishary Rashid Alafasy</string>
+    <string name="reciter_alafasy_arabic">مشاري راشد العفاسي</string>
+    <string name="reciter_husary">Mahmoud Khalil Al-Husary</string>
+    <string name="reciter_husary_arabic">محمود خليل الحصري</string>
+    <string name="reciter_sudais">Abdurrahman As-Sudais</string>
+    <string name="reciter_sudais_arabic">عبد الرحمن السديس</string>
     <string name="translation_cached">تقرأ الترجمة المحفوظة دون اتصال.</string>
     <string name="translation_older_cached">تقرأ إصداراً أقدم من الترجمة المحفوظة دون اتصال. اتصل بالإنترنت لتحديثه.</string>
     <string name="decrease_repetitions">تقليل التكرارات</string>
@@ -145,4 +167,6 @@
     <string name="text_size_default">افتراضي</string>
     <string name="text_size_large">كبير</string>
     <string name="children_large_text">يبقى النص العربي كبيرًا في وضع الأطفال.</string>
+    <string name="download_removal_failed">تعذر إكمال تحديث التنزيل. حدّث القائمة للتحقق من حالته الحالية.</string>
+    <string name="remove_download_description">حذف تسجيل %1$s للسورة %2$d، الآية %3$d</string>
 </resources>
