@@ -23,6 +23,7 @@ import org.quran.app.model.ReadingPreferences
 import org.quran.app.model.StudyProgress
 import org.quran.app.model.TranslationEdition
 import org.quran.app.model.VerseId
+import org.quran.app.model.forChildrenMode
 import org.quran.app.reader.ReaderScreen
 import org.quran.app.translations.TranslationEditionHeader
 import org.quran.app.translations.TranslationVerseText
@@ -54,6 +55,7 @@ internal fun ReaderEntry(
     LaunchedEffect(selectedReciterId, listening) { listening.stop() }
     val reciter = recitationRepository.reciters().firstOrNull { it.id == selectedReciterId }
     val reciterName = reciter?.let { if (progress.language.isRtl) it.nameArabic else it.nameEnglish }.orEmpty()
+    val effectiveReadingPreferences = readingPreferences.forChildrenMode(progress.childMode)
 
     var reloadToken by remember(route, selectedTranslationId) { mutableIntStateOf(0) }
     var translatedContent by remember(route, selectedTranslationId) {
@@ -92,7 +94,7 @@ internal fun ReaderEntry(
         verses = quran.verses(route.surah),
         initialAyah = route.ayah,
         progress = progress,
-        readingPreferences = readingPreferences,
+        readingPreferences = effectiveReadingPreferences,
         listeningState = listeningState,
         reciterName = reciterName,
         onListen = { listening.listen(selectedReciterId, it) },
@@ -116,7 +118,7 @@ internal fun ReaderEntry(
                 language = progress.language,
                 edition = translatedContent.edition,
                 translation = translatedContent.verses[verseId],
-                textSize = readingPreferences.translationTextSize,
+                textSize = effectiveReadingPreferences.translationTextSize,
             )
         },
         onRead = onRead,

@@ -27,6 +27,7 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CancellationException
 import org.quran.app.data.StoredReadingPreferencesStore
+import org.quran.app.data.StoredPracticeSessionStore
 import org.quran.app.data.RecitationDataModule
 import org.quran.app.data.StoredReciterSelectionStore
 import org.quran.app.data.BundledQuranRepository
@@ -55,6 +56,7 @@ fun QuranApp(
     var selectedReciterId by remember(settings) { mutableStateOf(reciterSelection.selectedReciterId()) }
     DisposableEffect(recitationModule) { onDispose { recitationModule.close() } }
     val readingPreferencesStore = remember(settings) { StoredReadingPreferencesStore(settings) }
+    val practiceSessionStore = remember(settings) { StoredPracticeSessionStore(settings) }
     var readingPreferences by remember(settings) { mutableStateOf(readingPreferencesStore.read()) }
     val quran = remember { BundledQuranRepository() }
     val progressRepository = remember(settings) { StoredProgressRepository(settings) }
@@ -156,6 +158,7 @@ fun QuranApp(
                                     onImport = importAudio,
                                     recitationRepository = recitationModule.repository,
                                     recitationStorage = recitationModule.storage,
+                                    practiceSessionStore = practiceSessionStore,
                                     selectedReciterId = selectedReciterId,
                                     onReciterSelected = { id -> reciterSelection.select(id); selectedReciterId = id },
                                 )

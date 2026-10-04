@@ -39,6 +39,17 @@ class RepeatSession(
         return state()
     }
 
+    /** Restores a paused session without constructing any platform playback resources. */
+    fun restore(currentVerse: VerseId, completedRepetitions: Int, complete: Boolean): RepeatState {
+        require(completedRepetitions >= 0)
+        val restoredIndex = verses.indexOf(currentVerse)
+        require(restoredIndex >= 0)
+        index = restoredIndex
+        repetitions = completedRepetitions
+        this.complete = complete
+        return state()
+    }
+
     private fun advance() {
         if (index == verses.lastIndex) {
             complete = true
