@@ -117,4 +117,12 @@
     <string name="juz_title">Juz %1$s</string>
     <string name="juz_starts_at">Starts at %1$s:%2$s</string>
     <string name="read_juz">Read juz</string>
+    <string name="reciter_audio">Reciter audio</string>
+    <string name="download_ayah">Download this ayah</string>
+    <string name="use_cached_recitation">Use downloaded recitation</string>
+    <string name="audio_downloading">Downloading recitation…</string>
+    <string name="audio_download_failed">Unable to download. Check your connection and retry.</string>
+    <string name="audio_cache_help">Download one ayah for offline listening and repetition.</string>
+    <string name="practice_ayah">Surah %1$d · Ayah %2$d</string>
+    <string name="audio_source_credit">Recitations provided by EveryAyah</string>
 </resources>

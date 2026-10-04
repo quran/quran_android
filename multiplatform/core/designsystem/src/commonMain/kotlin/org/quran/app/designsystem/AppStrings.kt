@@ -16,6 +16,15 @@ fun appString(resource: StringResource): String = stringResource(resource)
 fun appString(resource: StringResource, vararg arguments: Any): String = stringResource(resource, *arguments)
 
 object QuranStrings {
+    val reciterAudio get() = Res.string.reciter_audio
+    val downloadAyah get() = Res.string.download_ayah
+    val useCachedRecitation get() = Res.string.use_cached_recitation
+    val audioDownloading get() = Res.string.audio_downloading
+    val audioDownloadFailed get() = Res.string.audio_download_failed
+    val audioCacheHelp get() = Res.string.audio_cache_help
+    val practiceAyah get() = Res.string.practice_ayah
+    val audioSourceCredit get() = Res.string.audio_source_credit
+
     val translationCached get() = Res.string.translation_cached
     val translationOlderCached get() = Res.string.translation_older_cached
     val decreaseRepetitions get() = Res.string.decrease_repetitions

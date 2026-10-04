@@ -13,9 +13,6 @@ import org.quran.app.designsystem.*
 import org.quran.app.domain.*
 import org.quran.app.model.*
 
-/** Invalidates asynchronous imports/completions when the learner leaves or changes a session. */
-private class PlaybackLifetime(var active: Boolean = true)
-
 @Composable
 fun MemorizationScreen(
     verse: Verse,
@@ -23,12 +20,16 @@ fun MemorizationScreen(
     onMemorized: (VerseId) -> Unit,
     audioPlayer: AudioPlayer,
     onImport: ((String) -> Unit) -> Unit,
+    recitationRepository: RecitationRepository,
+    selectedReciterId: String,
+    onReciterSelected: (String) -> Unit,
 ) {
     var count by remember(verse.id, progress.childMode) { mutableStateOf(if (progress.childMode) 3 else 5) }
     var until by remember(verse.id) { mutableStateOf(true) }
     val session = remember(verse.id, count, until) { RepeatSession(listOf(verse.id), count, until) }
     var state by remember(session) { mutableStateOf(session.state()) }
     var hidden by remember(verse.id) { mutableStateOf(false) }
+    var downloadingAudio by remember(verse.id) { mutableStateOf(false) }
     var hasAudio by remember(verse.id) { mutableStateOf(false) }
     var playing by remember(session) { mutableStateOf(false) }
     var message by remember(verse.id) { mutableStateOf("") }
@@ -60,7 +61,7 @@ fun MemorizationScreen(
     ) {
         ScreenTitle(
             appString(QuranStrings.memorizeOneAyah),
-            appString(QuranStrings.selfRecitation, verse.id.surah, verse.id.ayah),
+            appString(QuranStrings.practiceAyah, verse.id.surah, verse.id.ayah),
         )
         PaperCard {
             if (hidden) {
@@ -101,13 +102,30 @@ fun MemorizationScreen(
                 Text(appString(QuranStrings.startAgain))
             }
         }
+        ReciterAudioCard(
+            verseId = verse.id,
+            repository = recitationRepository,
+            selectedReciterId = selectedReciterId,
+            isArabic = progress.language.isRtl,
+            onReciterSelected = onReciterSelected,
+            onDownloadStateChanged = { downloadingAudio = it },
+            onAudioCleared = { lifetime.importGeneration++; pause(); hasAudio = false; message = "" },
+            onAudioReady = { uri ->
+                pause()
+                hasAudio = false
+                audioPlayer.loadLocal(uri)
+                hasAudio = true
+                message = ""
+            },
+        )
         PaperCard {
             Text(appString(QuranStrings.ownRecitation), style = MaterialTheme.typography.titleLarge)
             Text(appString(QuranStrings.importRecordingHelp))
             Action(appString(QuranStrings.importRecording), {
                 pause()
+                val importGeneration = ++lifetime.importGeneration
                 onImport { uri ->
-                    if (lifetime.active) {
+                    if (lifetime.active && lifetime.importGeneration == importGeneration) {
                         hasAudio = false
                         runCatching { audioPlayer.loadLocal(uri) }
                             .onSuccess { hasAudio = true; message = "" }
@@ -116,7 +134,11 @@ fun MemorizationScreen(
                             }
                     }
                 }
-            })
+            }, !downloadingAudio)
+            if (message.isNotEmpty()) Text(message)
+        }
+        if (hasAudio) {
+            PaperCard {
             if (hasAudio) {
                 Action(
                     appString(if (playing) QuranStrings.pause else QuranStrings.playAndRepeat),
@@ -124,7 +146,7 @@ fun MemorizationScreen(
                     !state.complete,
                 )
             }
-            if (message.isNotEmpty()) Text(message)
+            }
         }
     }
 }

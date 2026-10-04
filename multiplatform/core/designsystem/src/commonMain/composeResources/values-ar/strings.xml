@@ -117,4 +117,12 @@
     <string name="juz_title">الجزء %1$s</string>
     <string name="juz_starts_at">يبدأ من %1$s:%2$s</string>
     <string name="read_juz">قراءة الجزء</string>
+    <string name="reciter_audio">تلاوة القارئ</string>
+    <string name="download_ayah">تنزيل هذه الآية</string>
+    <string name="use_cached_recitation">استخدام التلاوة المحفوظة</string>
+    <string name="audio_downloading">جارٍ تنزيل التلاوة…</string>
+    <string name="audio_download_failed">تعذّر التنزيل. تحقق من اتصالك وحاول مجددًا.</string>
+    <string name="audio_cache_help">نزّل آية واحدة للاستماع والتكرار دون اتصال.</string>
+    <string name="practice_ayah">السورة %1$d · الآية %2$d</string>
+    <string name="audio_source_credit">التلاوات من EveryAyah</string>
 </resources>
