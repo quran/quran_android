@@ -46,7 +46,7 @@ def main():
         simctl("io", udid, "screenshot", str(args.output / "launch.png"), timeout=30)
         for _ in range(3):
             process = subprocess.run(
-                ["xcrun", "simctl", "spawn", udid, "launchctl", "print", f"system/{pid}"],
+                ["xcrun", "simctl", "spawn", udid, "launchctl", "print", f"pid/{pid}"],
                 capture_output=True, text=True, timeout=30,
             )
             if process.returncode == 0:
