@@ -3,6 +3,7 @@ package org.quran.app.memorization
 import org.quran.app.domain.AudioPlayer
 import org.quran.app.domain.RepeatSession
 import org.quran.app.domain.RepeatState
+import org.quran.app.model.VerseId
 
 /** Presentation coordinator. A callback belongs to one play attempt, never to a later session. */
 class RepeatPlaybackController(
@@ -10,6 +11,7 @@ class RepeatPlaybackController(
     private val player: AudioPlayer,
     private val onChanged: (RepeatState, Boolean) -> Unit = { _, _ -> },
     private val onError: () -> Unit = {},
+    private val audioForVerse: ((VerseId) -> String?)? = null,
 ) {
     var state = session.state()
         private set
@@ -17,6 +19,7 @@ class RepeatPlaybackController(
         private set
     private var generation = 0L
     private var active = true
+    private var loadedVerse: VerseId? = null
 
     fun play() {
         if (!active || state.complete || playing) return
@@ -27,6 +30,17 @@ class RepeatPlaybackController(
 
     private fun playAttempt() {
         val attempt = ++generation
+        if (audioForVerse != null && loadedVerse != state.currentVerse) {
+            try {
+                val uri = audioForVerse.invoke(state.currentVerse)
+                if (uri == null) { failAttempt(attempt); return }
+                player.loadLocal(uri)
+                loadedVerse = state.currentVerse
+            } catch (_: Exception) {
+                failAttempt(attempt)
+                return
+            }
+        }
         player.play(
             onCompleted = {
                 if (active && playing && attempt == generation) {
@@ -35,12 +49,16 @@ class RepeatPlaybackController(
                 }
             },
             onError = {
-                if (active && attempt == generation) {
-                    pause()
-                    onError()
-                }
+                failAttempt(attempt)
             },
         )
+    }
+
+    private fun failAttempt(attempt: Long) {
+        if (active && attempt == generation) {
+            pause()
+            onError()
+        }
     }
 
     fun pause() {

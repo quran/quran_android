@@ -54,7 +54,7 @@ class QuranUserJourneyTest {
         compose.onNodeWithText("Remove bookmark").assertIsDisplayed()
         compose.onNodeWithText("Memorize").performClick()
         compose.onNodeWithText("One ayah at a time").assertIsDisplayed()
-        compose.onNodeWithText("Hide ayah").performClick()
+        compose.onNodeWithText("Hide ayah").performScrollTo().performClick()
         compose.onNodeWithText("Recite from memory, then reveal the ayah to check.").assertIsDisplayed()
         compose.onNodeWithText("Reveal ayah").performClick()
         compose.onNodeWithText("Hide ayah").assertIsDisplayed()
@@ -104,8 +104,8 @@ class QuranUserJourneyTest {
         compose.onNodeWithText("Memorize").performClick()
         compose.onNodeWithText("3").assertIsDisplayed()
         compose.onNodeWithText("I repeated this verse").performScrollTo().performClick()
-        compose.onNodeWithText("Repetitions: 1").assertIsDisplayed()
-        compose.onNodeWithText("I have memorized this").assertIsEnabled()
+        compose.onNodeWithText("Repetitions: 1").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("I have memorized this").performScrollTo().assertIsEnabled()
     }
 
     @Test fun lastReadAyahResumesAtItsTopAfterRelaunch() {
@@ -156,6 +156,22 @@ class QuranUserJourneyTest {
         compose.onNodeWithTag("library_list").performScrollToNode(hasTestTag("juz_open_30"))
         compose.onNodeWithTag("juz_open_30").performClick()
         compose.onNodeWithTag("reader_verse_78_1").assertIsDisplayed()
+    }
+
+    @Test fun practiceRangeMarksEachAyahAndRetainsProgressAfterRelaunch() {
+        compose.onNodeWithText("Open last read").performClick()
+        openVerseActions()
+        compose.onNodeWithText("Memorize").performClick()
+        compose.onNodeWithContentDescription("Add the next ayah to the range").performScrollTo().performClick()
+        compose.onNodeWithTag("practice_verse_1_1").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("I have memorized this").performScrollTo().performClick()
+        compose.onNodeWithTag("practice_verse_1_2").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("I have memorized this").performScrollTo().performClick()
+        compose.onNodeWithText("Session complete. Memorization is self-assessed.").performScrollTo().assertIsDisplayed()
+        scenario.close()
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        navigateTo("Settings")
+        compose.onNodeWithText("2 ayat marked memorized").performScrollTo().assertIsDisplayed()
     }
 
     @Test fun nativeMediaServiceCompletesExactlyTwoRealPlaybacks() {

@@ -7,15 +7,15 @@ import org.quran.app.designsystem.*
 import org.quran.app.domain.RecitationRepository
 import org.quran.app.model.VerseId
 
-/** Downloads only after an explicit action; stale requests cannot replace another selection. */
+/** Explicitly prepares the complete range before enabling playback. */
 @Composable
-fun ReciterAudioCard(
-    verseId: VerseId,
+fun RecitationQueueCard(
+    verses: List<VerseId>,
     repository: RecitationRepository,
     selectedReciterId: String,
     isArabic: Boolean,
     onReciterSelected: (String) -> Unit,
-    onAudioReady: (String) -> Unit,
+    onAudioReady: (Map<VerseId, String>) -> Unit,
     onAudioCleared: () -> Unit,
     onDownloadStateChanged: (Boolean) -> Unit,
 ) {
@@ -23,34 +23,35 @@ fun ReciterAudioCard(
     val ready = rememberUpdatedState(onAudioReady)
     val cleared = rememberUpdatedState(onAudioCleared)
     val controller = remember(repository) {
-        RecitationAudioController(repository, scope, { ready.value(it) }, { cleared.value() })
+        RecitationQueueController(repository, scope, { ready.value(it) }, { cleared.value() })
     }
     val state by controller.state.collectAsState()
     LaunchedEffect(state.isDownloading) { onDownloadStateChanged(state.isDownloading) }
-    LaunchedEffect(selectedReciterId, verseId) { controller.select(selectedReciterId, verseId) }
+    LaunchedEffect(selectedReciterId, verses) { controller.select(selectedReciterId, verses) }
     DisposableEffect(controller) { onDispose { controller.close() } }
     PaperCard {
-        QuranText(appString(QuranStrings.reciterAudio))
-        QuranText(appString(QuranStrings.audioCacheHelp))
+        QuranText(appString(QuranStrings.reciterAudio), variant = QuranTextVariant.Title)
+        QuranText(appString(QuranStrings.rangeAudioHelp))
         Column(verticalArrangement = Arrangement.spacedBy(QuranSpacing.Small)) {
             repository.reciters().forEach { reciter ->
                 QuranChoiceChip(
                     text = if (isArabic) reciter.nameArabic else reciter.nameEnglish,
                     selected = reciter.id == selectedReciterId,
-                    onClick = { onReciterSelected(reciter.id) },
+                    onClick = { cleared.value(); onReciterSelected(reciter.id) },
                 )
             }
         }
         Action(
             appString(when {
                 state.isDownloading -> QuranStrings.audioDownloading
-                state.cachedUri != null -> QuranStrings.useCachedRecitation
-                else -> QuranStrings.downloadAyah
+                state.cachedCount == verses.size -> QuranStrings.useCachedRange
+                else -> QuranStrings.downloadRange
             }),
-            { cleared.value(); controller.prepareAudio() },
-            !state.isDownloading && state.reciterId == selectedReciterId,
+            { cleared.value(); onDownloadStateChanged(true); controller.prepareAudio() },
+            !state.isDownloading && state.reciterId == selectedReciterId && state.verses == verses,
         )
+        if (state.isDownloading) QuranText(appString(QuranStrings.audioDownloadProgress, state.completedDownloads, verses.size))
         if (state.failed) QuranText(appString(QuranStrings.audioDownloadFailed))
-        QuranText(appString(QuranStrings.audioSourceCredit))
+        QuranText(appString(QuranStrings.audioSourceCredit), variant = QuranTextVariant.Caption)
     }
 }

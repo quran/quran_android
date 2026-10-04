@@ -16,6 +16,20 @@ fun appString(resource: StringResource): String = stringResource(resource)
 fun appString(resource: StringResource, vararg arguments: Any): String = stringResource(resource, *arguments)
 
 object QuranStrings {
+    val practiceRange get() = Res.string.practice_range
+    val practiceRangeHelp get() = Res.string.practice_range_help
+    val practiceRangeAddress get() = Res.string.practice_range_address
+    val decreaseRange get() = Res.string.decrease_range
+    val increaseRange get() = Res.string.increase_range
+    val practiceRangeTitle get() = Res.string.practice_range_title
+    val downloadRange get() = Res.string.download_range
+    val useCachedRange get() = Res.string.use_cached_range
+    val audioDownloadProgress get() = Res.string.audio_download_progress
+    val rangeAudioHelp get() = Res.string.range_audio_help
+    val repeatUntilHelp get() = Res.string.repeat_until_help
+    val importSingleAyahHelp get() = Res.string.import_single_ayah_help
+    val practiceCurrentPosition get() = Res.string.practice_current_position
+
     val reciterAudio get() = Res.string.reciter_audio
     val downloadAyah get() = Res.string.download_ayah
     val useCachedRecitation get() = Res.string.use_cached_recitation

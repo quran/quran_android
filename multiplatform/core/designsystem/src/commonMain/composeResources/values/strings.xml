@@ -125,4 +125,17 @@
     <string name="audio_cache_help">Download one ayah for offline listening and repetition.</string>
     <string name="practice_ayah">Surah %1$d · Ayah %2$d</string>
     <string name="audio_source_credit">Recitations provided by EveryAyah</string>
+    <string name="practice_range">Practice range</string>
+    <string name="practice_range_help">Start at this ayah and choose up to %1$d ayahs.</string>
+    <string name="practice_range_address">Surah %1$d · Ayahs %2$d–%3$d</string>
+    <string name="decrease_range">Remove the last ayah from the range</string>
+    <string name="increase_range">Add the next ayah to the range</string>
+    <string name="practice_range_title">Practice ayah by ayah</string>
+    <string name="download_range">Download selected ayahs</string>
+    <string name="use_cached_range">Use downloaded ayahs</string>
+    <string name="audio_download_progress">Preparing %1$d of %2$d ayahs</string>
+    <string name="range_audio_help">Prepare this range for offline listening. Each ayah repeats before the next one plays.</string>
+    <string name="repeat_until_help">Move to the next ayah only when you mark this one memorized.</string>
+    <string name="import_single_ayah_help">Choose one ayah to practice with your own recording.</string>
+    <string name="practice_current_position">Ayah %1$d of %2$d in this range</string>
 </resources>
