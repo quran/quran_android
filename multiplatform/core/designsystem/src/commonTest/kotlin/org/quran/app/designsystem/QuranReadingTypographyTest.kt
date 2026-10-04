@@ -1,6 +1,7 @@
 package org.quran.app.designsystem
 
 import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.test.*
 import org.quran.app.model.ReadingTextSize
@@ -25,5 +26,16 @@ class QuranReadingTypographyTest {
         assertEquals(24.sp, normal.lineHeight)
         assertEquals(20.sp, large.fontSize)
         assertEquals(30.sp, large.lineHeight)
+    }
+
+    @Test fun childrenModeKeepsArabicTextLargeForEitherSavedPreference() {
+        val large = quranArabicReadingStyle(ReadingTextSize.LARGE)
+        assertEquals(large, quranArabicReadingStyle(ReadingTextSize.DEFAULT, forceLarge = true))
+        assertEquals(large, quranArabicReadingStyle(ReadingTextSize.LARGE, forceLarge = true))
+        assertEquals(TextDirection.Rtl, quranArabicReadingStyle(ReadingTextSize.DEFAULT, forceLarge = true).textDirection)
+    }
+
+    @Test fun sharedInteractiveControlsKeepFortyEightDpMinimumTarget() {
+        assertTrue(QuranSpacing.TouchTarget >= 48.dp)
     }
 }
