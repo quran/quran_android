@@ -46,6 +46,7 @@
     <string name="continue_reading">متابعة القراءة</string>
     <string name="open_last_read">فتح آخر موضع</string>
     <string name="search_surah">ابحث عن سورة</string>
+    <string name="clear_search">مسح البحث</string>
     <string name="surah_tab">السور</string>
     <string name="juz_tab">الأجزاء</string>
     <string name="bookmarks_tab">العلامات</string>
