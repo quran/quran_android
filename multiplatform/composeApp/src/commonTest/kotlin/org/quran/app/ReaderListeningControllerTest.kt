@@ -49,6 +49,29 @@ class ReaderListeningControllerTest {
         } finally { controller.close() }
     }
 
+    @Test fun systemMediaPauseAndResumeStayInSyncWithReaderControls() = runTest {
+        val repository = ReaderListeningRepositoryFake()
+        val player = ReaderListeningPlayerFake(mutableListOf())
+        val controller = ReaderListeningController(repository, ReaderListeningStorageFake(mutableListOf()), player, this)
+        try {
+            controller.listen("husary", first); runCurrent()
+            assertTrue(controller.state.value.isPlaying)
+
+            player.playbackChanges.single()(false)
+            assertFalse(controller.state.value.isPlaying)
+            player.playbackChanges.single()(true)
+            assertTrue(controller.state.value.isPlaying)
+
+            player.completions.single()()
+            runCurrent()
+            assertFalse(controller.state.value.isPlaying)
+            assertTrue(controller.state.value.isReady)
+            controller.togglePlayback()
+            assertTrue(controller.state.value.isPlaying)
+            assertEquals(1, repository.requests.size)
+        } finally { controller.close() }
+    }
+
     @Test fun sourceChangeSuppressesNonCooperativeOldDownloadAndCompletion() = runTest {
         val events = mutableListOf<String>()
         val gate = CompletableDeferred<String>()

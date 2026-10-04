@@ -2,7 +2,6 @@
 import argparse
 import json
 import plistlib
-import re
 import time
 import subprocess
 from pathlib import Path
@@ -33,32 +32,30 @@ def main():
     simctl("bootstatus", udid, "-b", timeout=180)
     simctl("install", udid, str(args.app.resolve()), timeout=60)
     args.output.mkdir(parents=True, exist_ok=True)
-    with (args.output / "launch.log").open("w") as log:
-        app = subprocess.Popen(["xcrun", "simctl", "launch", "--console", "--terminate-running-process", udid, bundle_id], stdout=log, stderr=subprocess.STDOUT)
-        try:
-            launch_pattern = re.compile(rf"(?m)^{re.escape(bundle_id)}: ([1-9][0-9]*)$")
-            deadline = time.monotonic() + 30
-            while not launch_pattern.search((args.output / "launch.log").read_text()):
-                if app.poll() is not None or time.monotonic() >= deadline:
-                    raise RuntimeError("No bundle/PID launch confirmation; see launch.log")
-                time.sleep(0.25)
-            try:
-                app.wait(timeout=20)
-            except subprocess.TimeoutExpired:
-                # --console blocks for the application lifetime; early exit is a failure.
-                simctl("io", udid, "screenshot", str(args.output / "launch.png"), timeout=30)
-                if app.poll() is not None:
-                    raise RuntimeError("Application exited while capturing its first screen")
-                print(f"PASS: {bundle_id} stayed running for 20 seconds on {device['name']}")
-            else:
-                raise RuntimeError(f"Application exited during launch (status {app.returncode}); see launch.log")
-        finally:
-            subprocess.run(["xcrun", "simctl", "terminate", udid, bundle_id], check=False, capture_output=True, timeout=30)
-            try:
-                app.wait(timeout=10)
-            except subprocess.TimeoutExpired:
-                app.kill()
-                app.wait()
+    launch = simctl(
+        "launch", "--terminate-running-process", udid, bundle_id,
+        capture_output=True, text=True, timeout=60,
+    )
+    (args.output / "launch.log").write_text(launch.stdout + launch.stderr)
+    prefix, separator, pid_text = launch.stdout.strip().partition(":")
+    if not separator or prefix != bundle_id or not pid_text.strip().isdigit():
+        raise RuntimeError("simctl did not return a bundle/PID launch confirmation; see launch.log")
+    pid = pid_text.strip()
+    try:
+        time.sleep(5)
+        simctl("io", udid, "screenshot", str(args.output / "launch.png"), timeout=30)
+        for _ in range(3):
+            process = subprocess.run(
+                ["xcrun", "simctl", "spawn", udid, "launchctl", "print", f"system/{pid}"],
+                capture_output=True, text=True, timeout=30,
+            )
+            if process.returncode == 0:
+                time.sleep(5)
+                continue
+            raise RuntimeError(f"The app exited after launch; see launch.log ({process.stderr.strip()})")
+        print(f"PASS: {bundle_id} stayed running for 20 seconds on {device['name']}")
+    finally:
+        subprocess.run(["xcrun", "simctl", "terminate", udid, bundle_id], check=False, capture_output=True, timeout=30)
 
 
 if __name__ == "__main__":

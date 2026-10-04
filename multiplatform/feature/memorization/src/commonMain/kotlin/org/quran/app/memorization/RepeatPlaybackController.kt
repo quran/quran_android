@@ -51,6 +51,12 @@ class RepeatPlaybackController(
             onError = {
                 failAttempt(attempt)
             },
+            onPlaybackChanged = { isPlaying ->
+                if (active && attempt == generation) {
+                    playing = isPlaying
+                    notifyChanged()
+                }
+            },
         )
     }
 

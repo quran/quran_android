@@ -8,9 +8,13 @@ import kotlin.test.*
 class RepeatPlaybackControllerTest {
     private class FakePlayer : AudioPlayer {
         val completions = mutableListOf<() -> Unit>()
+        val playbackChanges = mutableListOf<(Boolean) -> Unit>()
         var pauseCount = 0
         override fun loadLocal(uri: String) = Unit
-        override fun play(onCompleted: () -> Unit, onError: (String) -> Unit) { completions += onCompleted }
+        override fun play(onCompleted: () -> Unit, onError: (String) -> Unit, onPlaybackChanged: (Boolean) -> Unit) {
+            completions += onCompleted
+            playbackChanges += onPlaybackChanged
+        }
         override fun pause() { pauseCount++ }
         override fun clearLocal() = Unit
         override fun release() = Unit
@@ -31,6 +35,36 @@ class RepeatPlaybackControllerTest {
         player.completions.last()()
         assertEquals(1, controller.state.completedRepetitions)
         assertEquals(3, player.completions.size)
+    }
+
+    @Test fun externalPauseAndResumeUpdateReaderPlaybackWithoutInvalidatingCompletion() {
+        val player = FakePlayer()
+        val controller = RepeatPlaybackController(RepeatSession(listOf(verse), 1), player)
+        controller.play()
+
+        player.playbackChanges.single()(false)
+        assertFalse(controller.playing)
+        assertEquals(0, controller.state.completedRepetitions)
+
+        player.playbackChanges.single()(true)
+        assertTrue(controller.playing)
+        player.completions.single()()
+
+        assertTrue(controller.state.complete)
+        assertFalse(controller.playing)
+    }
+
+    @Test fun queuedExternalResumeAfterUserPauseCannotRestartControllerState() {
+        val player = FakePlayer()
+        val controller = RepeatPlaybackController(RepeatSession(listOf(verse), 2), player)
+        controller.play()
+        val queuedPlaybackChange = player.playbackChanges.single()
+
+        controller.pause()
+        queuedPlaybackChange(true)
+
+        assertFalse(controller.playing)
+        assertEquals(0, controller.state.completedRepetitions)
     }
 
     @Test fun memorizedStopsPlaybackAndRejectsPendingCompletion() {
