@@ -88,7 +88,7 @@ class RepeatQueuePlaybackTest {
         val callbacks = mutableListOf<() -> Unit>()
         var failLoad = false
         override fun loadLocal(uri: String) { if (failLoad) error("decoder failure"); loaded += uri }
-        override fun play(onCompleted: () -> Unit, onError: (String) -> Unit) { played += loaded.last(); callbacks += onCompleted }
+        override fun play(onCompleted: () -> Unit, onError: (String) -> Unit, onPlaybackChanged: (Boolean) -> Unit) { played += loaded.last(); callbacks += onCompleted }
         fun complete() = callbacks.last().invoke()
         override fun pause() = Unit
         override fun clearLocal() = Unit

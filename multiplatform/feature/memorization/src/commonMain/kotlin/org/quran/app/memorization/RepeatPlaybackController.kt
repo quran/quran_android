@@ -51,6 +51,12 @@ class RepeatPlaybackController(
             onError = {
                 failAttempt(attempt)
             },
+            onPlaybackChanged = { isPlaying ->
+                if (active && attempt == generation) {
+                    playing = isPlaying
+                    notifyChanged()
+                }
+            },
         )
     }
 
@@ -70,6 +76,9 @@ class RepeatPlaybackController(
 
     fun repeatManually() {
         if (!active || playing || state.complete) return
+        // Manual advancement supersedes the current media attempt. A platform
+        // player may deliver its completion callback after an interruption.
+        pause()
         state = session.onRecitationCompleted()
         notifyChanged()
     }

@@ -118,6 +118,10 @@ class QuranUserJourneyTest {
         compose.onNodeWithText("2:5").assertIsDisplayed()
         scenario.close()
         scenario = ActivityScenario.launch(MainActivity::class.java)
+        compose.waitUntil(10_000) {
+            compose.onAllNodesWithText("2:5").fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithTag("library_list").performScrollToNode(hasText("2:5"))
         compose.onNodeWithText("2:5").assertIsDisplayed()
         compose.onNodeWithText("Open last read").performClick()
         // Do not scroll before asserting: the persisted ayah must be the initial visible item.

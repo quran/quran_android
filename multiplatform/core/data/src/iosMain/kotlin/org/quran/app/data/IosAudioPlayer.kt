@@ -32,7 +32,7 @@ internal class IosAudioPlayer : AudioPlayer {
         player?.prepareToPlay()
     }
 
-    override fun play(onCompleted: () -> Unit, onError: (String) -> Unit) {
+    override fun play(onCompleted: () -> Unit, onError: (String) -> Unit, onPlaybackChanged: (Boolean) -> Unit) {
         completed = onCompleted
         failed = onError
         val audio = player

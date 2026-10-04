@@ -29,6 +29,10 @@ This list tracks the requested app, beyond individual pull requests. AI integrat
 
 Download management PR #8 merged as `f3017c42ff6f475937c455fd9b64cfbb129e5cfc`. Its reviewed head `478a05cca` passed all three CI gates, 13 native tests and independent inspection of the new downloads capture. The next slice, explicit one-ayah reader listening, is implemented and independently reviewed: 109 JVM tests and Android app/test compilation passed. Published as PR #9 at `83dbbea289c0dcf65c55c61d03c9d6e4146df59e`; its Android/test CI passed, with native runtime and iOS acceptance still running. The next direct memorized-ayah review slice is implemented, with a real navigation/persistence journey authored and combined build passed (109 JVM tests and Android app/test APKs). Continue the task list while checks run.
 
+## iOS launch crash priority
+
+The mandatory Compose plist setting is repaired and CI now includes a simulator launch smoke check. Shared JVM tests and Android APK build passed. Local Xcode 15.4 linking and simulator boot prevent runtime confirmation; see `docs/qa/ios-launch-crash-2026-10-04.md`. PRs #11/#12 were closed without merging at the user's request; the new PR contains only the crash fix and launch check.
+
 ## Remaining product work
 
 - [x] Native visual review and redesign refinement against Stitch direction; exercised English/Arabic light/dark/150%-font screens passed, further product refinement continues.

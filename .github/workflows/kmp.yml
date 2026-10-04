@@ -68,7 +68,17 @@ jobs:
       - name: Compile shared iOS UI
         run: ./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64 --stacktrace
       - name: Build iOS simulator app
-        run: xcodebuild -project iosApp/QuranApp.xcodeproj -scheme QuranApp -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' ARCHS=arm64 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO build
+        run: xcodebuild -project iosApp/QuranApp.xcodeproj -scheme QuranApp -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build/ios-simulator ARCHS=arm64 ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO build
+
+      - name: Launch iOS app and detect startup crashes
+        run: python3 ../.github/scripts/run-quran-ios-launch.py build/ios-simulator/Build/Products/Debug-iphonesimulator/QuranApp.app --output build/ios-launch
+      - name: Preserve iOS launch evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-launch-evidence
+          path: multiplatform/build/ios-launch/
+          if-no-files-found: warn
 
   android-runtime:
     name: KMP Android runtime
