@@ -46,6 +46,7 @@
     <string name="continue_reading">Continue reading</string>
     <string name="open_last_read">Open last read</string>
     <string name="search_surah">Search surah</string>
+    <string name="clear_search">Clear search</string>
     <string name="surah_tab">Surah</string>
     <string name="juz_tab">Juz</string>
     <string name="bookmarks_tab">Bookmarks</string>
