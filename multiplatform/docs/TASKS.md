@@ -28,7 +28,7 @@ Every ticket must include:
 Current board:
 
 - **Done:** children-mode reading accessibility and practice restoration wiring — PR #15, merged as `b13d64cdbd0e6d78bdc9dc959098123ba7ef6ef5`.
-- **In Progress:** native library flow — search normalization, clear action, accessible tabs and chapter browsing (Antigravity/Luna worker).
+- **Review:** native library flow — PR #16; search normalization, clear action, accessible tabs and chapter browsing. Focused JVM tests and metadata compilation passed; current-head CI and independent review remain required.
 - **Todo:** Mushaf reader parity, children-flow refinement, physical-device validation, upstream/content audit and final QA.
 
 ### Phase 1 — Native Quran reading experience
