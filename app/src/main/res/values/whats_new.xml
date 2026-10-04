@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Copy and upcoming icon artwork adapted from quran-ios commit 3f23974a (WhatsNewFeature). -->
+  <string name="whats_new_title">What\'s new</string>
+  <string name="whats_new_continue">Continue</string>
+  <string name="icon_announcement_title">A new icon</string>
+  <string name="icon_announcement_body">In our next update, the Quran app icon on your Home Screen will change. This new icon is now the shared mark of a family of tools built around Allah\'s word. More details soon.</string>
+  <string name="icon_announcement_now">NOW</string>
+  <string name="icon_announcement_coming_soon">COMING SOON</string>
+  <string name="icon_announcement_same_app_title">Same app, new icon</string>
+  <string name="icon_announcement_same_app_body">All your bookmarks, progress, and settings stay exactly where they are.</string>
+  <string name="icon_announcement_release_title">Rolling out next release</string>
+  <string name="icon_announcement_release_body">The new icon will arrive in the next update.</string>
+  <string name="icon_announcement_current_icon">Current Quran app icon</string>
+  <string name="icon_announcement_upcoming_icon">Upcoming Quran app icon</string>
+  <color name="icon_announcement_accent">#8A6A30</color>
+  <color name="icon_announcement_on_accent">#FFFFFF</color>
+  <color name="icon_announcement_surface">#F0EEEA</color>
+</resources>

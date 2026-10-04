@@ -288,6 +288,17 @@ public class QuranSettings {
     }
   }
 
+  public boolean shouldShowAnnouncement(int announcementId) {
+    return perInstallationPrefs.getInt(Constants.PREF_LAST_SEEN_ANNOUNCEMENT, 0) < announcementId;
+  }
+
+  public void markAnnouncementSeen(int announcementId) {
+    if (shouldShowAnnouncement(announcementId)) {
+      perInstallationPrefs.edit()
+          .putInt(Constants.PREF_LAST_SEEN_ANNOUNCEMENT, announcementId).apply();
+    }
+  }
+
   public String getDefaultLocation() {
     return appContext.getFilesDir().getAbsolutePath();
   }

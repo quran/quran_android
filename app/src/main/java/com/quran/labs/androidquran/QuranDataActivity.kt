@@ -25,6 +25,7 @@ import com.quran.labs.androidquran.service.util.PermissionUtil
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
 import com.quran.labs.androidquran.ui.QuranActivity
+import com.quran.labs.androidquran.ui.whatsnew.AnnouncementActivity
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
@@ -48,6 +49,7 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
  *  * Check that we have permission to write to external storage (if we need this permission)
  * and if not, ask the user for permission
  *  * Verify that we have the necessary Quran data downloaded on the device
+ *  * Show any unseen announcement on a normal launch, after data setup finishes
  *
  * The logic is split between [QuranDataActivity] and [QuranDataPresenter],
  * and [QuranDownloadService] is (mostly) used to perform the actual downloading of
@@ -477,12 +479,19 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
   }
 
   private fun runListView() {
-    val i = Intent(this, QuranActivity::class.java)
-    i.putExtra(
+    if (!isFinishing && !isDestroyed) {
+      val isNormalLaunch = intent?.action == null || intent?.action == Intent.ACTION_MAIN
+      val destination = Intent(this, QuranActivity::class.java).putExtra(
         QuranActivity.EXTRA_SHOW_TRANSLATION_UPGRADE, quranSettings.haveUpdatedTranslations()
-    )
-    startActivity(i)
-    finish()
+      )
+      val nextIntent = if (isNormalLaunch && AnnouncementActivity.shouldShow(quranSettings)) {
+        AnnouncementActivity.createIntent(this, destination)
+      } else {
+        destination
+      }
+      startActivity(nextIntent)
+      finish()
+    }
   }
 
   companion object {
