@@ -2,6 +2,14 @@
 
 This list tracks the requested app, beyond individual pull requests. AI integration is deferred by the user. A PR merge finishes its slice; it does not finish the app.
 
+## Product goal
+
+Build a production-quality Quran app in `/Users/saleh/AndroidStudioProjects/Quran` by evolving the fork of `quran/quran_android` into a modular Kotlin Multiplatform app for Android and iOS. The original native Quran Android app is the product and UX authority; Stitch is reference material only and does not define the final visual direction.
+
+The app must preserve canonical Quran content and provide the native reading, Mushaf, search, bookmarks, history, downloads, reciters, translations, tafsir entry points, Qibla, memorization, children learning and persisted-progress experiences across English and Arabic with RTL and accessibility support. Navigation 3, clean architecture, separate model/component files, real localized resources, native media lifecycle and platform boundaries are required. AI learning remains deferred.
+
+Every change uses TDD where behavior is involved, passes focused tests before the combined build, moves through the Todo → In Progress → Review → Done board workflow, receives independent review and merges only after current-head required checks pass. Implementation work stays with a small Luna worker team under Sol 6.1 technical leadership and review. Hardware-dependent behavior is tracked with explicit device evidence and release limits.
+
 ## Completion plan
 
 Each phase is complete only when implementation, focused behavior tests, current-head CI evidence and independent review are recorded. Device-only items remain open until physical-hardware validation.
@@ -89,7 +97,7 @@ The mandatory Compose plist setting is repaired and CI now includes a simulator 
 - [x] Download management: storage totals/removal and aggregate cache policy (PR #8).
 - [ ] Reader listening controls and background media notification/interruption acceptance (platform implementation landed; lock-screen, notification and interruption behavior still require physical-device acceptance).
 - [ ] Direct memorized-ayah review journey: implemented; native persistence/navigation acceptance pending.
-- [ ] Practice session restoration: current sessions start fresh without autoplay; interrupted range/repetition restoration remains unimplemented.
+- [~] Practice session restoration: durable snapshot/store and paused domain restore primitive are implemented and covered by common tests; wiring the snapshot into `MemorizationScreen`/Navigation 3 resume remains.
 - [ ] Children learning flow refinement and accessibility checks with larger fonts.
 - [ ] Qibla orientation/calibration verification on physical devices.
 - [ ] iOS app runtime, native audio and permission verification; CI builds are not device acceptance.
