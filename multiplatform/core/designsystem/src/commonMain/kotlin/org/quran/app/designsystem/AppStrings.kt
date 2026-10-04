@@ -59,6 +59,7 @@ object QuranStrings {
     val continueReading get() = Res.string.continue_reading
     val openLastRead get() = Res.string.open_last_read
     val searchSurah get() = Res.string.search_surah
+    val clearSearch get() = Res.string.clear_search
     val surahTab get() = Res.string.surah_tab
     val juzTab get() = Res.string.juz_tab
     val juzTitle get() = Res.string.juz_title
