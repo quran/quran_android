@@ -51,18 +51,25 @@ fun MemorizationScreen(
     var count by remember(verse.id, progress.childMode) { mutableStateOf(restored?.repetitionsPerVerse ?: if (progress.childMode) 3 else 5) }
     var until by remember(verse.id) { mutableStateOf(restored?.repeatUntilMemorized ?: true) }
     var autoplayRequested by remember(verse.id, progress.childMode) { mutableStateOf(restored?.autoplayRequested ?: false) }
-    val restoreForSession = restored?.takeIf {
-        it.endAyah == endAyah && it.repetitionsPerVerse == count && it.repeatUntilMemorized == until &&
-            VerseId(it.surah, it.currentAyah) in selectedIds
+    var restoreConsumed by remember(verse.id, progress.childMode, chapterVerses, practiceSessionStore) {
+        mutableStateOf(false)
     }
-    val session = remember(selectedIds, count, until, restoreForSession) {
-        RepeatSession(selectedIds, count, until).also { repeatSession ->
-            restoreForSession?.let {
-                repeatSession.restore(VerseId(it.surah, it.currentAyah), it.completedRepetitions, it.complete)
-            }
-        }
+    val session = remember(selectedIds, count, until) {
+        RepeatSession(selectedIds, count, until)
     }
     var state by remember(session) { mutableStateOf(session.state()) }
+    LaunchedEffect(session) {
+        if (!restoreConsumed) {
+            restored?.takeIf {
+                it.endAyah == endAyah && it.repetitionsPerVerse == count && it.repeatUntilMemorized == until &&
+                    VerseId(it.surah, it.currentAyah) in selectedIds
+            }?.let {
+                session.restore(VerseId(it.surah, it.currentAyah), it.completedRepetitions, it.complete)
+                state = session.state()
+            }
+            restoreConsumed = true
+        }
+    }
     val currentVerse = selectedVerses.first { it.id == state.currentVerse }
     var hidden by remember(state.currentVerse) { mutableStateOf(false) }
     var audioUris by remember(selectedIds, selectedReciterId) { mutableStateOf(emptyMap<VerseId, String>()) }
