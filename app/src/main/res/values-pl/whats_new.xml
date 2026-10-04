@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Co nowego</string>
+  <string name="whats_new_continue">Kontynuuj</string>
+  <string name="icon_announcement_title">Nowa ikona</string>
+  <string name="icon_announcement_body">W naszej następnej aktualizacji ikona aplikacji Quran na ekranie głównym ulegnie zmianie. Ta nowa ikona jest teraz wspólnym znakiem rodziny narzędzi stworzonych wokół słowa Allaha. Więcej szczegółów wkrótce.</string>
+  <string name="icon_announcement_now">TERAZ</string>
+  <string name="icon_announcement_coming_soon">WKRÓTCE</string>
+  <string name="icon_announcement_same_app_title">Ta sama aplikacja, nowa ikona</string>
+  <string name="icon_announcement_same_app_body">Wszystkie Twoje zakładki, postępy i ustawienia pozostaną dokładnie tam, gdzie są.</string>
+  <string name="icon_announcement_release_title">Pojawi się w następnej wersji</string>
+  <string name="icon_announcement_release_body">Nowa ikona pojawi się w następnej aktualizacji.</string>
+  <string name="icon_announcement_current_icon">Obecna ikona aplikacji Quran</string>
+  <string name="icon_announcement_upcoming_icon">Nowa ikona aplikacji Quran</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">تازه‌ها</string>
+  <string name="whats_new_continue">ادامه</string>
+  <string name="icon_announcement_title">آیکون جدید</string>
+  <string name="icon_announcement_body">در به‌روزرسانی بعدی ما، آیکون برنامه قرآن در صفحه اصلی شما تغییر می‌کند. این آیکون جدید اکنون نشان مشترک خانواده‌ای از ابزارهایی است که پیرامون کلام خدا ساخته شده‌اند. جزئیات بیشتر به‌زودی.</string>
+  <string name="icon_announcement_now">اکنون</string>
+  <string name="icon_announcement_coming_soon">به‌زودی</string>
+  <string name="icon_announcement_same_app_title">همان برنامه، با آیکون جدید</string>
+  <string name="icon_announcement_same_app_body">همه نشانک‌ها، پیشرفت و تنظیمات شما دقیقاً همان‌جا که هستند باقی می‌مانند.</string>
+  <string name="icon_announcement_release_title">در نسخه بعدی عرضه می‌شود</string>
+  <string name="icon_announcement_release_body">آیکون جدید در به‌روزرسانی بعدی می‌رسد.</string>
+  <string name="icon_announcement_current_icon">آیکون فعلی برنامه قرآن</string>
+  <string name="icon_announcement_upcoming_icon">آیکون آینده برنامه قرآن</string>
+</resources>

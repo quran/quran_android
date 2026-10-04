@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Wat is er nieuw</string>
+  <string name="whats_new_continue">Doorgaan</string>
+  <string name="icon_announcement_title">Een nieuw icoon</string>
+  <string name="icon_announcement_body">In onze volgende update verandert het icoon van de Quran-app op je beginscherm. Dit nieuwe icoon is nu het gedeelde merkteken van een familie van hulpmiddelen rond het woord van Allah. Binnenkort meer details.</string>
+  <string name="icon_announcement_now">NU</string>
+  <string name="icon_announcement_coming_soon">BINNENKORT</string>
+  <string name="icon_announcement_same_app_title">Dezelfde app, nieuw icoon</string>
+  <string name="icon_announcement_same_app_body">Al je bladwijzers, voortgang en instellingen blijven precies waar ze zijn.</string>
+  <string name="icon_announcement_release_title">Komt in de volgende versie</string>
+  <string name="icon_announcement_release_body">Het nieuwe icoon verschijnt in de volgende update.</string>
+  <string name="icon_announcement_current_icon">Huidig icoon van de Quran-app</string>
+  <string name="icon_announcement_upcoming_icon">Nieuw icoon van de Quran-app</string>
+</resources>

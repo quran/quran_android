@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Yeniliklər</string>
+  <string name="whats_new_continue">Davam et</string>
+  <string name="icon_announcement_title">Yeni ikon</string>
+  <string name="icon_announcement_body">Növbəti yeniləməmizdə ana ekranınızdakı Quran tətbiqinin ikonu dəyişəcək. Bu yeni ikon artıq Allahın kəlamı ətrafında qurulmuş alətlər ailəsinin ortaq nişanıdır. Ətraflı məlumat tezliklə.</string>
+  <string name="icon_announcement_now">İNDİ</string>
+  <string name="icon_announcement_coming_soon">TEZLİKLƏ</string>
+  <string name="icon_announcement_same_app_title">Eyni tətbiq, yeni ikon</string>
+  <string name="icon_announcement_same_app_body">Bütün əlfəcinləriniz, irəliləyişiniz və parametrləriniz olduğu kimi yerində qalacaq.</string>
+  <string name="icon_announcement_release_title">Növbəti buraxılışda</string>
+  <string name="icon_announcement_release_body">Yeni ikon növbəti yeniləmədə gələcək.</string>
+  <string name="icon_announcement_current_icon">Quran tətbiqinin hazırkı ikonu</string>
+  <string name="icon_announcement_upcoming_icon">Quran tətbiqinin yeni ikonu</string>
+</resources>
