@@ -94,11 +94,13 @@ jobs:
           arch: x86_64
           profile: pixel_6
           working-directory: multiplatform
-          script: ./gradlew :androidApp:connectedDebugAndroidTest --stacktrace
+          script: bash ../.github/scripts/run-quran-runtime.sh
       - name: Preserve runtime reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: android-runtime-reports
-          path: multiplatform/androidApp/build/reports/androidTests/
+          path: |
+            multiplatform/androidApp/build/reports/androidTests/
+            multiplatform/androidApp/build/outputs/visual-acceptance/
           if-no-files-found: warn

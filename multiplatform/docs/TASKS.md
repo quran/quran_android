@@ -13,22 +13,25 @@ This list tracks the requested app, beyond individual pull requests. AI integrat
 - [x] Qibla calculation and opt-in native compass adapters.
 - [x] Native media service/adapters and one-ayah reciter downloads/repetition (PR #4).
 - [x] Bounded same-surah practice ranges, verse-aware queue playback and explicit per-ayah memorization (PR #5).
+- [x] Separate persisted Arabic/translation reading sizes (PR #6, all three CI checks passed).
 - [x] Current-head CI review/acceptance policy for Android tests/runtime and iOS framework/app.
 
 ## Active batch
 
-- [x] Independent Arabic/translation sizes, additive persisted settings, shared typography rendering.
-- [x] Focused settings controls, source review, 76 JVM tests and all 9 local emulator journeys passed.
-- [ ] Current-head CI and merge of the reading-preferences PR. Implementation is complete; do not duplicate it while checks run.
+- [x] Stitch refinement request and generated Library/Reader design direction inspected.
+- [x] Shared navigation vectors, compact single library heading and full-row chapter actions; independent source review clear.
+- [x] Combined shared tests/UI compilation and Android app/test APK build passed.
+- [x] Native 11-journey regression/visual suite, 24 English/Arabic light/dark/150%-font captures; final spacing visual rerun passed.
+- [ ] Publish design refinement and require all three current-head CI gates before merge.
 
 ## Next unblocked batch
 
-Native visual review and design refinement: inspect the actual reader, library, settings and practice in English/Arabic and light/dark, refine hierarchy/navigation icons/reading density against the existing Stitch design direction, and verify accessibility with larger text. CI waiting does not block this work.
+Download management: discover native cache adapters, add storage inventory/totals and explicit removal with an aggregate cache policy. Preserve active playback and verified file integrity. Continue implementation while design CI runs.
 
 ## Remaining product work
 
 - [ ] Native visual review and redesign refinement against Stitch direction; verify real screen behavior in English/Arabic and light/dark.
-- [ ] Merge reading typography preferences; assess further readable display modes using canonical content.
+- [x] Merge reading typography preferences; further display modes remain subject to canonical-content review.
 - [ ] Download management: storage totals/removal and aggregate cache policy.
 - [ ] Reader listening controls and background media notification/interruption acceptance.
 - [ ] Memorization review journey with explicit per-ayah progress; assess session restoration needs.
