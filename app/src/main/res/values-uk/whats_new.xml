@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Що нового</string>
+  <string name="whats_new_continue">Продовжити</string>
+  <string name="icon_announcement_title">Новий значок</string>
+  <string name="icon_announcement_body">У нашому наступному оновленні значок застосунку Quran на вашому головному екрані зміниться. Цей новий значок тепер є спільним знаком родини інструментів, створених навколо слова Аллаха. Подробиці незабаром.</string>
+  <string name="icon_announcement_now">ЗАРАЗ</string>
+  <string name="icon_announcement_coming_soon">НЕЗАБАРОМ</string>
+  <string name="icon_announcement_same_app_title">Той самий застосунок, новий значок</string>
+  <string name="icon_announcement_same_app_body">Усі ваші закладки, прогрес і налаштування залишаться саме там, де вони є.</string>
+  <string name="icon_announcement_release_title">З’явиться в наступній версії</string>
+  <string name="icon_announcement_release_body">Новий значок з’явиться в наступному оновленні.</string>
+  <string name="icon_announcement_current_icon">Поточний значок застосунку Quran</string>
+  <string name="icon_announcement_upcoming_icon">Новий значок застосунку Quran</string>
+</resources>

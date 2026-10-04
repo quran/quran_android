@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Не жаңалық</string>
+  <string name="whats_new_continue">Жалғастыру</string>
+  <string name="icon_announcement_title">Жаңа белгіше</string>
+  <string name="icon_announcement_body">Келесі жаңартуымызда басты экраныңыздағы Quran қолданбасының белгішесі өзгереді. Бұл жаңа белгіше енді Алланың сөзі төңірегінде жасалған құралдар отбасының ортақ белгісі болып табылады. Толығырақ жақында.</string>
+  <string name="icon_announcement_now">ҚАЗІР</string>
+  <string name="icon_announcement_coming_soon">ЖАҚЫНДА</string>
+  <string name="icon_announcement_same_app_title">Сол қолданба, жаңа белгіше</string>
+  <string name="icon_announcement_same_app_body">Барлық бетбелгілеріңіз, үлгеріміңіз бен баптауларыңыз дәл орнында қалады.</string>
+  <string name="icon_announcement_release_title">Келесі шығарылымда</string>
+  <string name="icon_announcement_release_body">Жаңа белгіше келесі жаңартумен келеді.</string>
+  <string name="icon_announcement_current_icon">Quran қолданбасының қазіргі белгішесі</string>
+  <string name="icon_announcement_upcoming_icon">Quran қолданбасының жаңа белгішесі</string>
+</resources>
