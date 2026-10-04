@@ -28,6 +28,7 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIn
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.QuranActivity
+import com.quran.labs.androidquran.ui.whatsnew.AnnouncementActivity
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
@@ -52,6 +53,7 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
  *  * Check that we have permission to write to external storage (if we need this permission)
  * and if not, ask the user for permission
  *  * Verify that we have the necessary Quran data downloaded on the device
+ *  * Show any unseen announcement on a normal launch, after data setup finishes
  *
  * The logic is split between [QuranDataActivity] and [QuranDataPresenter],
  * and [QuranDownloadService] is (mostly) used to perform the actual downloading of
@@ -481,8 +483,17 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
   }
 
   private fun runListView() {
-    startActivity(targetIntent())
-    finish()
+    if (!isFinishing && !isDestroyed) {
+      val isNormalLaunch = intent?.action == null || intent?.action == Intent.ACTION_MAIN
+      val destination = targetIntent()
+      val nextIntent = if (isNormalLaunch && AnnouncementActivity.shouldShow(quranSettings)) {
+        AnnouncementActivity.createIntent(this, destination)
+      } else {
+        destination
+      }
+      startActivity(nextIntent)
+      finish()
+    }
   }
 
   private fun targetIntent(): Intent {
