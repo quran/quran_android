@@ -193,7 +193,10 @@ dependencies {
   implementation(libs.androidx.window)
 
   // compose
+  implementation(libs.compose.foundation)
+  implementation(libs.compose.material3)
   implementation(libs.compose.ui)
+  implementation(libs.compose.ui.tooling.preview)
 
   // okio
   implementation(libs.okio)

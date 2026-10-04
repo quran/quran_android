@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.google.common.truth.Truth.assertThat
+import com.quran.data.model.QuranDataStatus
+import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.ui.QuranActivity
 import com.quran.labs.androidquran.util.QuranSettings
@@ -74,5 +76,49 @@ class AnnouncementActivityTest {
 
     QuranSettings.setInstance(null)
     assertThat(AnnouncementActivity.shouldShow(QuranSettings.getInstance(context))).isTrue()
+  }
+
+  @Test
+  fun normalStartupShowsAnnouncementOnceAndPreservesTranslationUpgrade() {
+    settings.setHaveUpdatedTranslations(true)
+    val announcement = launchAfterDataReady(Intent.ACTION_MAIN)
+    assertThat(announcement.component?.className).isEqualTo(AnnouncementActivity::class.java.name)
+
+    Robolectric.buildActivity(AnnouncementActivity::class.java, announcement).use { controller ->
+      val activity = controller.setup().get()
+      activity.onBackPressedDispatcher.onBackPressed()
+
+      val destination = shadowOf(activity).nextStartedActivity
+      assertThat(destination.component?.className).isEqualTo(QuranActivity::class.java.name)
+      assertThat(destination.getBooleanExtra(QuranActivity.EXTRA_SHOW_TRANSLATION_UPGRADE, false))
+        .isTrue()
+    }
+
+    val nextLaunch = launchAfterDataReady(Intent.ACTION_MAIN)
+    assertThat(nextLaunch.component?.className).isEqualTo(QuranActivity::class.java.name)
+    assertThat(nextLaunch.getBooleanExtra(QuranActivity.EXTRA_SHOW_TRANSLATION_UPGRADE, false))
+      .isTrue()
+  }
+
+  @Test
+  fun nonNormalStartupBypassesAnnouncementWithoutAcknowledgingIt() {
+    val destination = launchAfterDataReady(Intent.ACTION_VIEW)
+
+    assertThat(destination.component?.className).isEqualTo(QuranActivity::class.java.name)
+    assertThat(AnnouncementActivity.shouldShow(settings)).isTrue()
+  }
+
+  private fun launchAfterDataReady(action: String): Intent {
+    val intent = Intent(context, QuranDataActivity::class.java).setAction(action)
+    return Robolectric.buildActivity(QuranDataActivity::class.java, intent).use { controller ->
+      val activity = controller.create().get()
+      assertThat(shadowOf(activity).nextStartedActivity).isNull()
+      activity.onPagesChecked(
+        QuranDataStatus("480", "1024", havePortrait = true, haveLandscape = true,
+          patchParam = null, totalPages = 604)
+      )
+      assertThat(activity.isFinishing).isTrue()
+      shadowOf(activity).nextStartedActivity
+    }
   }
 }
