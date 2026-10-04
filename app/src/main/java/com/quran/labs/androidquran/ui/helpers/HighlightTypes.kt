@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.ui.helpers
 
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.data.model.highlight.HighlightType
+import com.quran.data.model.highlight.HighlightType.Mode.HIDE
 import com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT
 import com.quran.data.model.highlight.HighlightType.Mode.UNDERLAY
 import com.quran.labs.androidquran.R
@@ -15,7 +16,16 @@ object HighlightTypes {
   val AUDIO =     HighlightType(2,  R.color.audio_highlight,     HIGHLIGHT, isSingle = true, isTransitionAnimated = true)
   val NOTE =      HighlightType(3,  R.color.note_highlight,      HIGHLIGHT)
   @JvmField
-  val BOOKMARK =  HighlightType(4,  R.color.bookmark_highlight,  HIGHLIGHT)
+  val BOOKMARK = HighlightType(4, R.color.bookmark_highlight, HIGHLIGHT)
+
+  /**
+   * Hifz (memorization) mode: hides ayahs/words via canvas clipping. The id
+   * stays clear of the user highlight palette (which starts at
+   * FIRST_HIGHLIGHT_ID) and the color is never painted — clipping needs a
+   * valid color resource only because the shared paint cache resolves one.
+   */
+  @JvmField
+  val HIFZ = HighlightType(100, android.R.color.transparent, HIDE)
 
   private const val FIRST_HIGHLIGHT_ID = 5L
 
