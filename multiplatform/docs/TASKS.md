@@ -2,6 +2,55 @@
 
 This list tracks the requested app, beyond individual pull requests. AI integration is deferred by the user. A PR merge finishes its slice; it does not finish the app.
 
+## Completion plan
+
+Each phase is complete only when implementation, focused behavior tests, current-head CI evidence and independent review are recorded. Device-only items remain open until physical-hardware validation.
+
+### Work-board workflow
+
+Track every feature, bug fix, platform task, design-system change and QA item through these columns: **Todo → In Progress → Review → Done**. A task enters Review only after implementation, focused tests and a PR exist; it enters Done only after current-head CI, independent review and required acceptance pass and the PR is merged. GitHub Issues are disabled for this fork, so the canonical board is this checklist plus the attached PR artifacts until a project-board connector is enabled.
+
+Every ticket must include:
+
+- **Todo:** user outcome, scope, dependencies and acceptance criteria.
+- **In Progress:** owner, implementation branch and files in scope.
+- **Review:** PR link, test/build evidence, screenshots or device evidence where required, and independent review.
+- **Done:** merged commit, exact CI checks, known limitations and follow-up tickets.
+
+Current board:
+
+- **Review:** children-mode reading accessibility — PR #15.
+- **Todo:** native library flow, Mushaf reader parity, practice restoration, children-flow refinement, physical-device validation, upstream/content audit and final QA.
+
+### Phase 1 — Native Quran reading experience
+
+- [ ] Match the original native library flow: search, filters, bookmarks, history, downloads, reciters and reading resume.
+- [ ] Match the original reader/Mushaf behavior: page and ayah navigation, translations, tafsir entry points, audio controls, font/display settings and RTL behavior.
+- [ ] Keep Navigation 3 routes serializable and restore the exact reader destination after process recreation.
+- [ ] Verify canonical Quran text, image Mushaf requirements, attribution and licensing before adding content.
+
+### Phase 2 — Study, memorization and children
+
+- [ ] Persist active practice ranges, current ayah, repetition count and autoplay intent; restore after relaunch without starting audio unexpectedly.
+- [ ] Complete the memorized-ayah review journey with native persistence and direct-navigation acceptance.
+- [ ] Refine children mode with guided practice, larger fonts, clear semantics, touch targets and reduced cognitive load.
+- [ ] Add English/Arabic behavior coverage for progress, review and children-mode accessibility.
+
+### Phase 3 — Native platform behavior
+
+- [ ] Validate Android lock-screen notification, audio focus, headset disconnect, task removal and notification actions on physical hardware.
+- [ ] Validate iOS launch, background audio, interruptions, native audio permissions and document picker on a physical device.
+- [ ] Validate Qibla calibration, sensor orientation, permission denial and unreliable sensor states on physical hardware.
+- [ ] Record device model, OS version, result and evidence in `docs/qa/`.
+
+### Phase 4 — Quality and release readiness
+
+- [ ] Run the full English/Arabic RTL, dark/light, large-font and accessibility journey matrix.
+- [ ] Audit upstream parity, content integrity, image Mushaf assets, offline behavior and licensing attribution.
+- [ ] Run final Android and iOS builds plus required KMP checks from the exact reviewed commit.
+- [ ] Perform an independent security and architecture review with no unresolved findings.
+- [ ] Publish release limits and known external requirements; AI remains deferred until separately specified.
+
 ## Delivered slices
 
 - [x] Fork-based modular KMP Android/iOS foundation, domain/data/features separated.
