@@ -7,6 +7,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import org.quran.app.designsystem.QuranSpacing
 import org.quran.app.designsystem.QuranStrings
 import org.quran.app.designsystem.QuranChoiceChip
@@ -28,6 +33,12 @@ internal fun LibraryTabs(section: LibrarySection, onSelect: (LibrarySection) -> 
                 text = title,
                 selected = section == item,
                 onClick = { onSelect(item) },
+                modifier = Modifier
+                    .testTag("library_tab_${item.name.lowercase()}")
+                    .semantics {
+                        role = Role.Tab
+                        selected = section == item
+                    },
             )
         }
     }
