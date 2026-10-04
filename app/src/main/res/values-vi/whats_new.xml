@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Có gì mới</string>
+  <string name="whats_new_continue">Tiếp tục</string>
+  <string name="icon_announcement_title">Biểu tượng mới</string>
+  <string name="icon_announcement_body">Trong bản cập nhật tới, biểu tượng ứng dụng Quran trên Màn hình chính của bạn sẽ thay đổi. Biểu tượng mới này giờ đây là dấu hiệu chung của một nhóm công cụ được xây dựng xoay quanh lời của Allah. Thông tin chi tiết sẽ sớm có.</string>
+  <string name="icon_announcement_now">HIỆN TẠI</string>
+  <string name="icon_announcement_coming_soon">SẮP RA MẮT</string>
+  <string name="icon_announcement_same_app_title">Vẫn ứng dụng cũ, biểu tượng mới</string>
+  <string name="icon_announcement_same_app_body">Tất cả dấu trang, tiến độ và cài đặt của bạn vẫn giữ nguyên.</string>
+  <string name="icon_announcement_release_title">Ra mắt trong phiên bản tới</string>
+  <string name="icon_announcement_release_body">Biểu tượng mới sẽ xuất hiện trong bản cập nhật tới.</string>
+  <string name="icon_announcement_current_icon">Biểu tượng ứng dụng Quran hiện tại</string>
+  <string name="icon_announcement_upcoming_icon">Biểu tượng ứng dụng Quran sắp tới</string>
+</resources>

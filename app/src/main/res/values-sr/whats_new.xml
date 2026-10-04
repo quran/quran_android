@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Šta je novo</string>
+  <string name="whats_new_continue">Nastavi</string>
+  <string name="icon_announcement_title">Nova ikonica</string>
+  <string name="icon_announcement_body">U našem sledećem ažuriranju, ikonica aplikacije Quran na vašem početnom ekranu će se promeniti. Ova nova ikonica je sada zajednički znak porodice alata izgrađenih oko Allahove reči. Više detalja uskoro.</string>
+  <string name="icon_announcement_now">SADA</string>
+  <string name="icon_announcement_coming_soon">USKORO</string>
+  <string name="icon_announcement_same_app_title">Ista aplikacija, nova ikonica</string>
+  <string name="icon_announcement_same_app_body">Svi vaši obeleživači, napredak i podešavanja ostaju tačno tamo gde jesu.</string>
+  <string name="icon_announcement_release_title">Stiže u sledećem izdanju</string>
+  <string name="icon_announcement_release_body">Nova ikonica stiže u sledećem ažuriranju.</string>
+  <string name="icon_announcement_current_icon">Trenutna ikonica aplikacije Quran</string>
+  <string name="icon_announcement_upcoming_icon">Nadolazeća ikonica aplikacije Quran</string>
+</resources>
