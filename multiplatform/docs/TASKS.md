@@ -27,8 +27,9 @@ Every ticket must include:
 
 Current board:
 
-- **Review:** children-mode reading accessibility — PR #15.
-- **Todo:** native library flow, Mushaf reader parity, practice restoration, children-flow refinement, physical-device validation, upstream/content audit and final QA.
+- **Done:** children-mode reading accessibility and practice restoration wiring — PR #15, merged as `b13d64cdbd0e6d78bdc9dc959098123ba7ef6ef5`.
+- **In Progress:** native library flow — search normalization, clear action, accessible tabs and chapter browsing (Antigravity/Luna worker).
+- **Todo:** Mushaf reader parity, children-flow refinement, physical-device validation, upstream/content audit and final QA.
 
 ### Phase 1 — Native Quran reading experience
 
@@ -97,7 +98,7 @@ The mandatory Compose plist setting is repaired and CI now includes a simulator 
 - [x] Download management: storage totals/removal and aggregate cache policy (PR #8).
 - [ ] Reader listening controls and background media notification/interruption acceptance (platform implementation landed; lock-screen, notification and interruption behavior still require physical-device acceptance).
 - [ ] Direct memorized-ayah review journey: implemented; native persistence/navigation acceptance pending.
-- [~] Practice session restoration: durable snapshot/store and paused domain restore primitive are implemented and covered by common tests; wiring the snapshot into `MemorizationScreen`/Navigation 3 resume remains.
+- [x] Practice session restoration: durable snapshot/store, paused domain restore, Navigation 3 wiring and one-time checkpoint consumption are implemented and covered by common tests; physical-device resume evidence remains tracked separately.
 - [ ] Children learning flow refinement and accessibility checks with larger fonts.
 - [ ] Qibla orientation/calibration verification on physical devices.
 - [ ] iOS app runtime, native audio and permission verification; CI builds are not device acceptance.
