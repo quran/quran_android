@@ -16,6 +16,7 @@ import org.quran.app.designsystem.PaperCard
 import org.quran.app.designsystem.QuranStrings
 import org.quran.app.designsystem.ScreenTitle
 import org.quran.app.designsystem.appString
+import org.quran.app.model.ReadingPreferences
 import org.quran.app.model.StudyProgress
 import org.quran.app.model.TranslationEdition
 import org.quran.app.model.VerseId
@@ -32,6 +33,8 @@ internal fun SettingsScreen(
     translationCatalogError: String?,
     onRefreshTranslationCatalog: () -> Unit,
     onTranslationSelected: (String?) -> Unit,
+    readingPreferences: ReadingPreferences,
+    onReadingPreferencesChanged: (ReadingPreferences) -> Unit,
 ) {
     val language = progress.language
     val uriHandler = LocalUriHandler.current
@@ -44,6 +47,7 @@ internal fun SettingsScreen(
             )
         }
         item { SettingsPreferencesCard(progress, onProgressChange) }
+        item { ReadingPreferencesCard(readingPreferences, progress.childMode, onReadingPreferencesChanged) }
         item {
             TranslationSettingsSection(
                 language = language,

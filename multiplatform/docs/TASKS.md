@@ -12,18 +12,23 @@ This list tracks the requested app, beyond individual pull requests. AI integrat
 - [x] Offline Quran text and on-demand translations with source attribution.
 - [x] Qibla calculation and opt-in native compass adapters.
 - [x] Native media service/adapters and one-ayah reciter downloads/repetition (PR #4).
+- [x] Bounded same-surah practice ranges, verse-aware queue playback and explicit per-ayah memorization (PR #5).
 - [x] Current-head CI review/acceptance policy for Android tests/runtime and iOS framework/app.
 
 ## Active batch
 
-- [ ] Bounded same-surah practice ranges, correct audio URI per ayah, completion-driven advance.
-- [ ] Focused memorization components using shared controls.
-- [ ] Behavioral regressions, combined build, independent review and CI before merge.
+- [x] Independent Arabic/translation sizes, additive persisted settings, shared typography rendering.
+- [x] Focused settings controls, source review, 76 JVM tests and all 9 local emulator journeys passed.
+- [ ] Current-head CI and merge of the reading-preferences PR. Implementation is complete; do not duplicate it while checks run.
+
+## Next unblocked batch
+
+Native visual review and design refinement: inspect the actual reader, library, settings and practice in English/Arabic and light/dark, refine hierarchy/navigation icons/reading density against the existing Stitch design direction, and verify accessibility with larger text. CI waiting does not block this work.
 
 ## Remaining product work
 
 - [ ] Native visual review and redesign refinement against Stitch direction; verify real screen behavior in English/Arabic and light/dark.
-- [ ] Reading typography preferences, text sizing and readable display modes using canonical content.
+- [ ] Merge reading typography preferences; assess further readable display modes using canonical content.
 - [ ] Download management: storage totals/removal and aggregate cache policy.
 - [ ] Reader listening controls and background media notification/interruption acceptance.
 - [ ] Memorization review journey with explicit per-ayah progress; assess session restoration needs.

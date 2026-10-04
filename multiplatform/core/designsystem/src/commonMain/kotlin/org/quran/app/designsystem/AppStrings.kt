@@ -16,6 +16,14 @@ fun appString(resource: StringResource): String = stringResource(resource)
 fun appString(resource: StringResource, vararg arguments: Any): String = stringResource(resource, *arguments)
 
 object QuranStrings {
+    val readingPreferences get() = Res.string.reading_preferences
+    val readingPreferencesHelp get() = Res.string.reading_preferences_help
+    val arabicTextSize get() = Res.string.arabic_text_size
+    val translationTextSize get() = Res.string.translation_text_size
+    val textSizeDefault get() = Res.string.text_size_default
+    val textSizeLarge get() = Res.string.text_size_large
+    val childrenLargeText get() = Res.string.children_large_text
+
     val practiceRange get() = Res.string.practice_range
     val practiceRangeHelp get() = Res.string.practice_range_help
     val practiceRangeAddress get() = Res.string.practice_range_address

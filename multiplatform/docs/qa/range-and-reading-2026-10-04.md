@@ -1,0 +1,9 @@
+# Range practice and reading display verification
+
+PR #5 range practice merged after independent source review and all three exact-head CI gates passed. Source head dc9e30150df2ba81a3cef18d37c69d234ac427e4; merge 39a6f4af341b60c3168a8b663ec75b0e81a9f184. Local combined build passed with 70 JVM tests; the Pixel 8 Pro API 33 emulator passed all eight journeys in 201 seconds, including a two-ayah memorization/relaunch case and synthetic native media completion.
+
+The subsequent reading-preferences batch uses a separate persisted key and preserves progress.v1. Independent review found no actionable issues. Combined JVM UI, Android app and instrumentation APK build passed; 76 JVM tests passed (2 model, 11 domain, 46 data, 2 design system, 15 memorization). The translation module currently has no JVM test cases; its compilation passed.
+
+All nine local emulator journeys passed in 197 seconds, including reader/practice/back and bookmarks, landscape actions, Arabic/RTL recreation, range memorization persistence, native media completion, children mode, saved reading position, canonical Juz starts and reading-size persistence with a measured native Arabic reader height increase. New preferences tests verify store recreation, independent invalid-field fallback and retention of existing serialized study progress. Tests were authored before implementation; no separate observed RED run is claimed for these deferred-build batches.
+
+The reading-preferences PR still requires all three current-head CI gates before merge. Simulator compilation is not iOS runtime acceptance. Native screenshots from the emulator are local inspection artifacts; visual design review, physical compass calibration, media interruption/notification behavior and larger-font accessibility acceptance remain outstanding. Quran source strings were not edited by these batches.

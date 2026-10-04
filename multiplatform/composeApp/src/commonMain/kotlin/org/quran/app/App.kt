@@ -26,6 +26,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CancellationException
+import org.quran.app.data.StoredReadingPreferencesStore
 import org.quran.app.data.RecitationDataModule
 import org.quran.app.data.StoredReciterSelectionStore
 import org.quran.app.data.BundledQuranRepository
@@ -53,6 +54,8 @@ fun QuranApp(
     val reciterSelection = remember(settings) { StoredReciterSelectionStore(settings) }
     var selectedReciterId by remember(settings) { mutableStateOf(reciterSelection.selectedReciterId()) }
     DisposableEffect(recitationModule) { onDispose { recitationModule.close() } }
+    val readingPreferencesStore = remember(settings) { StoredReadingPreferencesStore(settings) }
+    var readingPreferences by remember(settings) { mutableStateOf(readingPreferencesStore.read()) }
     val quran = remember { BundledQuranRepository() }
     val progressRepository = remember(settings) { StoredProgressRepository(settings) }
     val translationSelection = remember(settings) { StoredTranslationSelectionStore(settings) }
@@ -120,6 +123,7 @@ fun QuranApp(
                             entry<Reader> { route ->
                                 ReaderEntry(
                                     route = route,
+                                    readingPreferences = readingPreferences,
                                     quran = quran,
                                     progress = progress,
                                     selectedTranslationId = selectedTranslationId,
@@ -159,6 +163,8 @@ fun QuranApp(
                                 SettingsScreen(
                                     progress = progress,
                                     onProgressChange = ::saveProgress,
+                                    readingPreferences = readingPreferences,
+                                    onReadingPreferencesChanged = { updated -> readingPreferencesStore.save(updated); readingPreferences = updated },
                                     onOpenVerse = { navigationStack.add(Reader(it.surah, it.ayah)) },
                                     translationEditions = translationEditions,
                                     selectedTranslationId = selectedTranslationId,

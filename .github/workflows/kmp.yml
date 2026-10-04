@@ -32,7 +32,7 @@ jobs:
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
       - name: Test shared behavior and build Android
-        run: ./gradlew :core:model:jvmTest :core:domain:jvmTest :core:data:jvmTest :feature:memorization:jvmTest :feature:translations:jvmTest :androidApp:assembleDebug :androidApp:lintDebug --stacktrace
+        run: ./gradlew :core:model:jvmTest :core:domain:jvmTest :core:data:jvmTest :core:designsystem:jvmTest :feature:memorization:jvmTest :feature:translations:jvmTest :androidApp:assembleDebug :androidApp:lintDebug --stacktrace
       - name: Preserve test reports
         if: always()
         uses: actions/upload-artifact@v4
