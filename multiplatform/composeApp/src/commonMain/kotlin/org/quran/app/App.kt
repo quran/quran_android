@@ -128,7 +128,6 @@ fun QuranApp(
                                     audioPlayer = audioPlayer,
                                     recitationRepository = recitationModule.repository,
                                     recitationStorage = recitationModule.storage,
-                                    practiceSessionStore = practiceSessionStore,
                                     selectedReciterId = selectedReciterId,
                                     readingPreferences = readingPreferences,
                                     quran = quran,
@@ -159,6 +158,7 @@ fun QuranApp(
                                     onImport = importAudio,
                                     recitationRepository = recitationModule.repository,
                                     recitationStorage = recitationModule.storage,
+                                    practiceSessionStore = practiceSessionStore,
                                     selectedReciterId = selectedReciterId,
                                     onReciterSelected = { id -> reciterSelection.select(id); selectedReciterId = id },
                                 )
