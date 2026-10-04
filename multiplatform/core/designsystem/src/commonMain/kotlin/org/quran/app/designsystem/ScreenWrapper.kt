@@ -3,6 +3,7 @@ package org.quran.app.designsystem
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +32,7 @@ fun ScreenWrapper(
 ) {
     val backLabel = appString(QuranStrings.back)
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val titleModifier = if (onBack != null) Modifier.padding(start = QuranSpacing.Small) else Modifier
     Scaffold(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.background,
@@ -38,7 +40,7 @@ fun ScreenWrapper(
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             TopAppBar(
-                title = { QuranText(title, Modifier.semantics { heading() }, QuranTextVariant.Title) },
+                title = { QuranText(title, titleModifier.semantics { heading() }, QuranTextVariant.Title) },
                 navigationIcon = {
                     if (onBack != null) QuranTextButton(if (isRtl) "$backLabel ›" else "‹ $backLabel", onBack)
                 },

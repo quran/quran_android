@@ -94,11 +94,21 @@ jobs:
           arch: x86_64
           profile: pixel_6
           working-directory: multiplatform
-          script: ./gradlew :androidApp:connectedDebugAndroidTest --stacktrace
+          script: |
+            runtime_test_status=0
+            ./gradlew :androidApp:connectedDebugAndroidTest --stacktrace || runtime_test_status=$?
+            visual_capture_status=0
+            adb pull /sdcard/Android/data/org.quran.app.redesign/files/visual-acceptance androidApp/build/outputs/visual-acceptance || visual_capture_status=$?
+            if [ "$runtime_test_status" -ne 0 ]; then
+              exit "$runtime_test_status"
+            fi
+            exit "$visual_capture_status"
       - name: Preserve runtime reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: android-runtime-reports
-          path: multiplatform/androidApp/build/reports/androidTests/
+          path: |
+            multiplatform/androidApp/build/reports/androidTests/
+            multiplatform/androidApp/build/outputs/visual-acceptance/
           if-no-files-found: warn

@@ -11,7 +11,6 @@ import org.quran.app.designsystem.QuranBottomSheet
 import org.quran.app.designsystem.QuranTextButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +45,7 @@ internal fun VerseReaderItem(
         }
         ArabicVerse(verse.arabic, progress.childMode, textSize = readingPreferences.arabicTextSize)
         translationForVerse(verse.id)
-        TextButton(modifier = Modifier.testTag("verse_actions_${verse.id.surah}_${verse.id.ayah}"), onClick = { actionsVisible = true }) { Text(appString(QuranStrings.moreActions)) }
+        QuranTextButton(appString(QuranStrings.moreActions), modifier = Modifier.testTag("verse_actions_${verse.id.surah}_${verse.id.ayah}"), onClick = { actionsVisible = true })
     }
 
     if (actionsVisible) {

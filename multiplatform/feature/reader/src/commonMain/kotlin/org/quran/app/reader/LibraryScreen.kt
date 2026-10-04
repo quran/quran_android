@@ -17,7 +17,8 @@ import androidx.compose.ui.platform.testTag
 import org.quran.app.designsystem.QuranSpacing
 import org.quran.app.designsystem.QuranTextField
 import org.quran.app.designsystem.QuranStrings
-import org.quran.app.designsystem.ScreenTitle
+import org.quran.app.designsystem.QuranText
+import org.quran.app.designsystem.QuranTextVariant
 import org.quran.app.designsystem.appString
 import org.quran.app.model.Juz
 import org.quran.app.model.Chapter
@@ -45,7 +46,7 @@ fun LibraryScreen(
         verticalArrangement = Arrangement.spacedBy(QuranSpacing.Medium),
         contentPadding = PaddingValues(bottom = QuranSpacing.ExtraLarge),
     ) {
-        item { ScreenTitle(appString(QuranStrings.libraryTitle), appString(QuranStrings.librarySubtitle)) }
+        item { QuranText(appString(QuranStrings.librarySubtitle), variant = QuranTextVariant.Supporting) }
         item { ContinueReadingCard(progress.lastRead, onOpen) }
         item { LibraryTabs(section, onSelect = { section = it }) }
         if (section == LibrarySection.SURAHS) {

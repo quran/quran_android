@@ -1,11 +1,15 @@
 package org.quran.app
 
+import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavKey
 import androidx.compose.material3.MaterialTheme
+import org.quran.app.designsystem.QuranBookIcon
+import org.quran.app.designsystem.QuranCompassIcon
+import org.quran.app.designsystem.QuranSettingsIcon
 import org.quran.app.designsystem.QuranStrings
 import org.quran.app.designsystem.appString
 
@@ -24,7 +28,16 @@ internal fun AppBottomBar(
                 selected = currentDestination == destination ||
                     (destination == Library && (currentDestination is Reader || currentDestination is Practice || currentDestination is Study)),
                 onClick = { onNavigate(destination) },
-                icon = { Text(if (destination == Library) "۞" else if (destination == Qibla) "↗" else "◉") },
+                icon = {
+                    Icon(
+                        imageVector = when (destination) {
+                            Library -> QuranBookIcon
+                            Qibla -> QuranCompassIcon
+                            else -> QuranSettingsIcon
+                        },
+                        contentDescription = null,
+                    )
+                },
                 label = { Text(title) },
             )
         }
