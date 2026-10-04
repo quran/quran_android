@@ -10,6 +10,7 @@ from pathlib import Path
 SIMULATOR_READY_TIMEOUT = 300
 INSTALL_TIMEOUT = 300
 LAUNCH_TIMEOUT = 120
+SCREENSHOT_TIMEOUT = 120
 
 
 def simctl(*args, **kwargs):
@@ -57,7 +58,13 @@ def main():
     pid = pid_text.strip()
     try:
         time.sleep(5)
-        simctl("io", udid, "screenshot", str(args.output / "launch.png"), timeout=30)
+        # CoreSimulator can take longer to service screenshot requests immediately
+        # after launch, especially on a cold hosted runner. Reuse the readiness
+        # retry so a transient simulator stall does not turn a healthy launch into
+        # a false negative.
+        simctl_with_readiness_retry(
+            udid, SCREENSHOT_TIMEOUT, "io", udid, "screenshot", str(args.output / "launch.png")
+        )
         for probe in range(4):
             process = subprocess.run(
                 ["xcrun", "simctl", "spawn", udid, "launchctl", "print", f"pid/{pid}"],
