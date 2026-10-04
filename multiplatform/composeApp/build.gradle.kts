@@ -7,6 +7,7 @@ listOf(iosArm64(),iosSimulatorArm64()).forEach { it.binaries.framework { baseNam
 implementation(project(":core:domain"))
 implementation(project(":core:data"))
 implementation(project(":core:designsystem"))
+implementation(project(":feature:downloads"))
 implementation(project(":feature:reader"))
 implementation(project(":feature:translations"))
 implementation(project(":feature:memorization"))

@@ -4,6 +4,10 @@ import kotlin.test.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.*
 import org.quran.app.domain.RecitationRepository
+import org.quran.app.domain.RecitationLease
+import org.quran.app.domain.RecitationStorageRepository
+import org.quran.app.model.RecitationRemovalResult
+import org.quran.app.model.RecitationStorageSnapshot
 import org.quran.app.model.Reciter
 import org.quran.app.model.VerseId
 
@@ -63,7 +67,9 @@ class RecitationQueueControllerTest {
         controller.select("alafasy", verses)
         controller.prepareAudio()
         runCurrent()
+        assertEquals(2, clears) // Selection clears once; preparing clears again before replacing the source.
         controller.select("husary", listOf(second))
+        assertEquals(3, clears)
         response.complete("file:///stale.mp3")
         runCurrent()
         assertTrue(ready.isEmpty())
@@ -74,13 +80,14 @@ class RecitationQueueControllerTest {
         repository.fetch = { _, _ -> withContext(NonCancellable) { late.await() } }
         controller.prepareAudio()
         runCurrent()
+        assertEquals(4, clears)
         controller.close()
         controller.close()
         late.complete("file:///disposed.mp3")
         runCurrent()
         assertTrue(ready.isEmpty())
         assertFalse(controller.state.value.isDownloading)
-        assertEquals(3, clears)
+        assertEquals(5, clears)
         assertEquals(2, repository.requests.size)
     }
 
@@ -150,6 +157,147 @@ class RecitationQueueControllerTest {
         assertFailsWith<IllegalArgumentException> { controller.select("alafasy", (1..21).map { VerseId(2, it) }) }
     }
 
+    @Test fun successfulPreparationHoldsQueueLeaseUntilCloseAfterAudioCleared() = runTest {
+        val events = mutableListOf<String>()
+        val storage = QueueStorage(events)
+        val ready = mutableListOf<Map<VerseId, String>>()
+        val controller = RecitationQueueController(QueueRepository(), this, ready::add, { events += "cleared" }, storage)
+        controller.select("alafasy", verses)
+        controller.prepareAudio()
+        runCurrent()
+        assertEquals(1, storage.protectCalls)
+        assertEquals(0, storage.releaseCalls)
+        assertEquals(1, ready.size)
+        assertTrue(events.indexOf("protect") < events.indexOfFirst { it.startsWith("download") })
+        controller.close()
+        runCurrent()
+        assertEquals(1, storage.releaseCalls)
+        assertTrue(events.indexOfLast { it == "cleared" } < events.indexOfLast { it == "release" })
+    }
+
+    @Test fun selectionReleasesPublishedLeaseOnlyAfterClearingOldAudio() = runTest {
+        val events = mutableListOf<String>()
+        val storage = QueueStorage(events)
+        val controller = RecitationQueueController(QueueRepository(), this, {}, { events += "cleared" }, storage)
+        controller.select("alafasy", verses)
+        controller.prepareAudio()
+        runCurrent()
+        events.clear()
+        controller.select("husary", listOf(second))
+        runCurrent()
+        assertEquals(listOf("cleared", "release"), events)
+        assertEquals(1, storage.releaseCalls)
+    }
+
+    @Test fun failedAttemptReleasesLeaseBeforeRetryAndSuccessfulRetryKeepsItsLease() = runTest {
+        val events = mutableListOf<String>()
+        val storage = QueueStorage(events)
+        val repository = QueueRepository()
+        var fail = true
+        repository.fetch = { id, verse -> if (fail && verse == second) error("offline") else uri(id, verse) }
+        val controller = RecitationQueueController(repository, this, {}, storage = storage)
+        controller.select("alafasy", verses)
+        controller.prepareAudio()
+        runCurrent()
+        assertEquals(1, storage.releaseCalls)
+        fail = false
+        controller.prepareAudio()
+        runCurrent()
+        assertEquals(2, storage.protectCalls)
+        assertEquals(1, storage.releaseCalls)
+        controller.close()
+        runCurrent()
+        assertEquals(2, storage.releaseCalls)
+    }
+
+    @Test fun cancelledPreparationReleasesLeaseEvenWhenParentScopeIsCancelled() = runTest {
+        val events = mutableListOf<String>()
+        val storage = QueueStorage(events)
+        val child = Job(coroutineContext[Job])
+        val scope = CoroutineScope(coroutineContext + child)
+        val repository = QueueRepository().apply { fetch = { _, _ -> awaitCancellation() } }
+        val controller = RecitationQueueController(repository, scope, {}, storage = storage)
+        controller.select("alafasy", verses)
+        controller.prepareAudio()
+        runCurrent()
+        assertEquals(0, storage.releaseCalls)
+        child.cancel()
+        runCurrent()
+        assertEquals(1, storage.releaseCalls)
+        assertFalse(controller.state.value.isDownloading)
+        controller.close()
+    }
+
+    @Test fun cancellationWhileProtectingStillReleasesLateAcquiredLease() = runTest {
+        val events = mutableListOf<String>()
+        val storage = QueueStorage(events)
+        val acquisition = CompletableDeferred<RecitationLease>()
+        storage.acquire = { withContext(NonCancellable) { acquisition.await() } }
+        val controller = RecitationQueueController(QueueRepository(), this, {}, storage = storage)
+        controller.select("alafasy", verses)
+        controller.prepareAudio()
+        runCurrent()
+        controller.select("husary", listOf(second))
+        acquisition.complete(storage.lease())
+        runCurrent()
+        assertEquals(1, storage.releaseCalls)
+        assertTrue(storage.events.none { it.startsWith("download") })
+    }
+
+    @Test fun closingAfterParentScopeCancellationStillReleasesPublishedLease() = runTest {
+        val events = mutableListOf<String>()
+        val storage = QueueStorage(events)
+        val child = Job(coroutineContext[Job])
+        val scope = CoroutineScope(coroutineContext + child)
+        val controller = RecitationQueueController(QueueRepository(), scope, {}, storage = storage)
+        controller.select("alafasy", verses)
+        controller.prepareAudio()
+        runCurrent()
+        assertEquals(0, storage.releaseCalls)
+        child.cancel()
+        runCurrent()
+        controller.close()
+        runCurrent()
+        assertEquals(1, storage.releaseCalls)
+    }
+
+    @Test fun replacingNativeSourceReleasesQueueLeaseAfterCallerClearsOldSource() = runTest {
+        val events = mutableListOf<String>()
+        val storage = QueueStorage(events)
+        val controller = RecitationQueueController(QueueRepository(), this, {}, { events += "audio-cleared" }, storage)
+        controller.select("alafasy", verses)
+        controller.prepareAudio()
+        runCurrent()
+        events.clear()
+        events += "native-source-cleared"
+        controller.releasePublishedAudioAfterSourceReplacementAndWait()
+        runCurrent()
+        assertEquals(listOf("native-source-cleared", "release"), events)
+        assertEquals(1, storage.releaseCalls)
+    }
+
+    @Test fun failedAudioClearKeepsLeaseUntilClearCanBeRetried() = runTest {
+        val events = mutableListOf<String>()
+        val storage = QueueStorage(events)
+        var failClear = false
+        val controller = RecitationQueueController(
+            QueueRepository(), this, {}, {
+                events += "clear"
+                if (failClear) { failClear = false; error("native source still attached") }
+            }, storage,
+        )
+        controller.select("alafasy", verses)
+        controller.prepareAudio()
+        runCurrent()
+        failClear = true
+        assertFailsWith<IllegalStateException> { controller.select("husary", listOf(second)) }
+        assertEquals(0, storage.releaseCalls)
+        controller.select("husary", listOf(second))
+        runCurrent()
+        assertEquals(1, storage.releaseCalls)
+        assertTrue(events.indexOfLast { it == "clear" } < events.indexOfLast { it == "release" })
+    }
+
     private fun uri(id: String, verse: VerseId) = "file:///$id-${verse.surah}-${verse.ayah}.mp3"
     private inner class QueueRepository : RecitationRepository {
         val cache = mutableMapOf<Pair<String, VerseId>, String>()
@@ -161,9 +309,36 @@ class RecitationQueueControllerTest {
         override fun remove(reciterId: String, verse: VerseId) { cache.remove(reciterId to verse) }
         override suspend fun download(reciterId: String, verse: VerseId): String {
             requests += reciterId to verse
+            storageEvents?.add("download:${verse.ayah}")
             cache[reciterId to verse]?.let { return it }
             networkRequests++
             return fetch(reciterId, verse).also { cache[reciterId to verse] = it }
+        }
+    }
+
+    private var storageEvents: MutableList<String>? = null
+
+    private inner class QueueStorage(val events: MutableList<String>) : RecitationStorageRepository {
+        var protectCalls = 0
+        var releaseCalls = 0
+        var acquire: suspend () -> RecitationLease = { lease() }
+        init { storageEvents = events }
+        override suspend fun inventory() = RecitationStorageSnapshot(emptyList(), 0, 0)
+        override suspend fun removeDownload(reciterId: String, verseId: VerseId) = RecitationRemovalResult.NOT_FOUND
+        override suspend fun protect(reciterId: String, verses: List<VerseId>): RecitationLease {
+            protectCalls++
+            events += "protect"
+            return acquire()
+        }
+        fun lease() = object : RecitationLease {
+            private var released = false
+            override suspend fun release() {
+                if (!released) {
+                    released = true
+                    releaseCalls++
+                    events += "release"
+                }
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 # Delivery workflow
 
-Use a small team: a lead who integrates and verifies, plus one implementation agent for a bounded task. Bring in an independent reviewer at PR checkpoints; end that review assignment once its findings are delivered. Do not keep separate permanent architecture, QA, security, and design agents or duplicate investigations across agents.
+Use a small team: GPT-6.1 Sol for technical leadership and review, plus one GPT-6 Luna implementation agent for a bounded task. The coordinating lead integrates and verifies. Bring in an independent reviewer at PR checkpoints; end that review assignment once its findings are delivered. Do not keep separate permanent architecture, QA, security, and design agents or duplicate investigations across agents.
 
 Use ECC Android clean architecture, Compose Multiplatform, Kotlin testing, and design-system skills where relevant. Navigation 3 remains required. Domain contracts remain framework independent; platform adapters and networking belong in data. Keep models and reusable components in focused files.
 

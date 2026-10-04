@@ -35,6 +35,7 @@ internal fun SettingsScreen(
     onTranslationSelected: (String?) -> Unit,
     readingPreferences: ReadingPreferences,
     onReadingPreferencesChanged: (ReadingPreferences) -> Unit,
+    onManageDownloads: () -> Unit,
 ) {
     val language = progress.language
     val uriHandler = LocalUriHandler.current
@@ -48,6 +49,7 @@ internal fun SettingsScreen(
         }
         item { SettingsPreferencesCard(progress, onProgressChange) }
         item { ReadingPreferencesCard(readingPreferences, progress.childMode, onReadingPreferencesChanged) }
+        item { SettingsDownloadsCard(onManageDownloads) }
         item {
             TranslationSettingsSection(
                 language = language,

@@ -26,6 +26,7 @@ internal fun AppBottomBar(
         ).forEach { (destination, title) ->
             NavigationBarItem(
                 selected = currentDestination == destination ||
+                    (destination == Settings && currentDestination is Downloads) ||
                     (destination == Library && (currentDestination is Reader || currentDestination is Practice || currentDestination is Study)),
                 onClick = { onNavigate(destination) },
                 icon = {

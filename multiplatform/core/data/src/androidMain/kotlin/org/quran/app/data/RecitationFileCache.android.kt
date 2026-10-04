@@ -10,10 +10,16 @@ import kotlinx.coroutines.withContext
 
 internal class AndroidRecitationFileCache(private val directory: File) : RecitationFileCache {
     private fun file(key: String): File { requireRecitationCacheKey(key); return File(directory, key) }
+    private fun regular(file: File): Boolean = file.isFile && !Files.isSymbolicLink(file.toPath())
+    override fun entries(): List<RecitationCacheEntry> = directory.listFiles().orEmpty()
+        .filter(::regular)
+        .map { RecitationCacheEntry(it.name, it.length()) }
+        .filter { RecitationCacheMetadata.parse(it) != null }
+        .sortedBy { it.key }
     override fun read(key: String): ByteArray? {
         val file = file(key)
-        if (!file.isFile) return null
-        if (file.length() !in 1..MAX_RECITATION_BYTES.toLong()) { file.delete(); return null }
+        if (!regular(file)) return null
+        if (file.length() !in 1..MAX_RECITATION_BYTES.toLong()) return null
         return file.inputStream().use { input ->
             val bytes = ByteArray(file.length().toInt())
             var total = 0
@@ -22,10 +28,10 @@ internal class AndroidRecitationFileCache(private val directory: File) : Recitat
                 if (count < 0) break
                 total += count
             }
-            if (total != bytes.size || input.read() != -1) { file.delete(); null } else bytes
+            if (total != bytes.size || input.read() != -1) null else bytes
         }
     }
-    override fun localUri(key: String): String? = file(key).takeIf { it.isFile && it.length() in 1..MAX_RECITATION_BYTES.toLong() }?.let {
+    override fun localUri(key: String): String? = file(key).takeIf { regular(it) && it.length() in 1..MAX_RECITATION_BYTES.toLong() }?.let {
         // Java emits file:/; native players require the explicit file:// URI form.
         "file://" + it.toURI().rawPath
     }

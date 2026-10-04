@@ -17,3 +17,10 @@ The visual checks exposed a real undersized reader action. `VerseReaderItem` now
 Independent inspection of four large-font screenshots found no visible text or diacritic clipping. It noted tight Back/title spacing, which was refined with 8dp logical-start title padding only when a back action exists. The final combined 76-test JVM/shared UI/Android app+test APK build passed in 6 seconds. The two affected visual journeys were rerun after this small spacing change and passed in 155.958 seconds, producing the full 24-screen capture set again. The nine behavioral journeys were green before this spacing-only delta; CI runs all eleven again on the published head.
 
 Source review found no remaining actionable findings. English/Arabic resources retain 146 matching keys. This evidence covers the exercised emulator screens and actions; it does not establish exhaustive TalkBack traversal, every chapter/translation/font, physical compass performance, iOS runtime or media interruption/lock-screen acceptance.
+
+
+## CI acceptance and merge
+
+The first CI run passed all eleven instrumentation tests but failed after them: emulator-runner ran separate script lines in independent shells, and AGP removed installed APKs and their app-owned screenshots. A single committed Bash script now retains status across commands, attempts capture even after test failure, preserves the original failing test code, and passes AGP's supported `android.injected.androidTest.leaveApksInstalledAfterRun=true` property only on the ephemeral CI emulator.
+
+Independent review cleared this repair. Run `37180877098` passed KMP Android and tests, KMP Android runtime including screenshot collection, and KMP iOS framework/simulator application for head `5dc59656e68145de38c3a1ac679fff367189d523`. Reviews/threads/statuses and mergeability were refreshed before authored acceptance COMMENT `5404536785` and expected-SHA merge. PR #7 merged as `54c97a4891e65b2ef2b91a1d1fdbcf2bbf7f0555`. The comment is not a formal GitHub approval.

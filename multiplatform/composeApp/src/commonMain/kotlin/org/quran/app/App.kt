@@ -151,12 +151,16 @@ fun QuranApp(
                                     audioPlayer = audioPlayer,
                                     onImport = importAudio,
                                     recitationRepository = recitationModule.repository,
+                                    recitationStorage = recitationModule.storage,
                                     selectedReciterId = selectedReciterId,
                                     onReciterSelected = { id -> reciterSelection.select(id); selectedReciterId = id },
                                 )
                             }
                             entry<Study> { route ->
                                 TutorScreen(quran.verses(route.surah)[route.ayah - 1], progress)
+                            }
+                            entry<Downloads> {
+                                DownloadsEntry(recitationModule.storage, progress.language)
                             }
                             entry<Qibla> { QiblaScreen(progress.language, compass) }
                             entry<Settings> {
@@ -170,6 +174,7 @@ fun QuranApp(
                                     selectedTranslationId = selectedTranslationId,
                                     isTranslationCatalogLoading = isTranslationCatalogLoading,
                                     translationCatalogError = if (translationCatalogFailed) appString(QuranStrings.translationCatalogUnavailable) else null,
+                                    onManageDownloads = { navigationStack.add(Downloads) },
                                     onRefreshTranslationCatalog = ::refreshTranslationCatalog,
                                     onTranslationSelected = { editionId ->
                                         translationSelection.selectEdition(editionId)
