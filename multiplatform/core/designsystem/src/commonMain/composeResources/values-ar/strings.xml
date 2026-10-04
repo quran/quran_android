@@ -1,4 +1,17 @@
 <resources>
+    <string name="reader_audio_title">استمع إلى التلاوة</string>
+    <string name="reader_audio_choose_verse">اختر آية من المصحف للاستماع إليها</string>
+    <string name="reader_audio_verse">الآية %1$d:%2$d</string>
+    <string name="reader_audio_reciter">القارئ: %1$s</string>
+    <string name="reader_audio_preparing">جارٍ تجهيز التلاوة…</string>
+    <string name="reader_audio_playing">قيد التشغيل</string>
+    <string name="reader_audio_ready">جاهز للتشغيل</string>
+    <string name="reader_audio_failed">تعذر تجهيز التلاوة. أعد المحاولة أو اختر آية أخرى.</string>
+    <string name="reader_audio_listen">استمع</string>
+    <string name="reader_audio_retry">إعادة المحاولة</string>
+    <string name="reader_audio_play">تشغيل</string>
+    <string name="reader_audio_pause">إيقاف مؤقت</string>
+    <string name="reader_audio_stop">إيقاف</string>
     <string name="downloads_title">تنزيلات التلاوة</string>
     <string name="downloads_subtitle">إدارة التلاوات المحفوظة على هذا الجهاز</string>
     <string name="downloads_settings_help">راجع مساحة التخزين واحذف التلاوات المحفوظة.</string>

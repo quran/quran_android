@@ -1,4 +1,17 @@
 <resources>
+    <string name="reader_audio_title">Listen to recitation</string>
+    <string name="reader_audio_choose_verse">Choose an ayah in the reader to listen</string>
+    <string name="reader_audio_verse">Ayah %1$d:%2$d</string>
+    <string name="reader_audio_reciter">Reciter: %1$s</string>
+    <string name="reader_audio_preparing">Preparing audio…</string>
+    <string name="reader_audio_playing">Playing</string>
+    <string name="reader_audio_ready">Ready to play</string>
+    <string name="reader_audio_failed">Audio could not be prepared. Retry or choose another ayah.</string>
+    <string name="reader_audio_listen">Listen</string>
+    <string name="reader_audio_retry">Retry</string>
+    <string name="reader_audio_play">Play</string>
+    <string name="reader_audio_pause">Pause</string>
+    <string name="reader_audio_stop">Stop</string>
     <string name="downloads_title">Audio downloads</string>
     <string name="downloads_subtitle">Manage recitations saved on this device</string>
     <string name="downloads_settings_help">Review storage use and remove saved recitations.</string>

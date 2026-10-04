@@ -27,13 +27,13 @@ This list tracks the requested app, beyond individual pull requests. AI integrat
 
 ## Next unblocked batch
 
-Download management is being integrated: native inventory/totals, explicit removal, completed-file capacity policy, shared storage/playback leases, a separate downloads feature with English/Arabic resources, and Navigation 3 settings entry. Common behavior tests and a native removal/relaunch journey are authored; combined build and runtime verification remain pending. Continue implementation while design CI runs.
+Download management PR #8 merged as `f3017c42ff6f475937c455fd9b64cfbb129e5cfc`. Its reviewed head `478a05cca` passed all three CI gates, 13 native tests and independent inspection of the new downloads capture. The next slice, explicit one-ayah reader listening, is implemented and independently reviewed: 109 JVM tests and Android app/test compilation passed. Its native presentation tests and iOS/runtime CI acceptance remain pending. Continue the task list while checks run.
 
 ## Remaining product work
 
 - [x] Native visual review and redesign refinement against Stitch direction; exercised English/Arabic light/dark/150%-font screens passed, further product refinement continues.
 - [x] Merge reading typography preferences; further display modes remain subject to canonical-content review.
-- [ ] Download management: storage totals/removal and aggregate cache policy.
+- [x] Download management: storage totals/removal and aggregate cache policy (PR #8).
 - [ ] Reader listening controls and background media notification/interruption acceptance.
 - [ ] Memorization review journey with explicit per-ayah progress; assess session restoration needs.
 - [ ] Children learning flow refinement and accessibility checks with larger fonts.

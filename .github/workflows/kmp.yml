@@ -32,7 +32,7 @@ jobs:
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
       - name: Test shared behavior and build Android
-        run: ./gradlew :core:model:jvmTest :core:domain:jvmTest :core:data:jvmTest :core:designsystem:jvmTest :feature:memorization:jvmTest :feature:translations:jvmTest :feature:downloads:jvmTest :androidApp:assembleDebug :androidApp:lintDebug --stacktrace
+        run: ./gradlew :core:model:jvmTest :core:domain:jvmTest :core:data:jvmTest :core:designsystem:jvmTest :feature:memorization:jvmTest :feature:translations:jvmTest :feature:downloads:jvmTest :composeApp:jvmTest :androidApp:assembleDebug :androidApp:lintDebug --stacktrace
       - name: Preserve test reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -41,6 +41,7 @@ jobs:
           path: |
             multiplatform/core/**/build/reports/tests/
             multiplatform/feature/**/build/reports/tests/
+            multiplatform/composeApp/build/reports/tests/
           if-no-files-found: warn
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
