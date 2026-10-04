@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="icon_announcement_accent">#FFF1D1</color>
+  <color name="icon_announcement_accent">#E2AF56</color>
   <color name="icon_announcement_on_accent">#191C1C</color>
   <color name="icon_announcement_surface">#2B2B2D</color>
 </resources>

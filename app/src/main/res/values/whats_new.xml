@@ -13,7 +13,7 @@
   <string name="icon_announcement_release_body">The new icon will arrive in the next update.</string>
   <string name="icon_announcement_current_icon">Current Quran app icon</string>
   <string name="icon_announcement_upcoming_icon">Upcoming Quran app icon</string>
-  <color name="icon_announcement_accent">#8A6A30</color>
+  <color name="icon_announcement_accent">#000066</color>
   <color name="icon_announcement_on_accent">#FFFFFF</color>
   <color name="icon_announcement_surface">#F0EEEA</color>
 </resources>
