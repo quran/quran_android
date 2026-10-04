@@ -14,9 +14,11 @@ import org.quran.app.domain.AudioPlayer
 import org.quran.app.domain.RecitationRepository
 import org.quran.app.domain.RecitationStorageRepository
 import org.quran.app.domain.RepeatSession
+import org.quran.app.domain.PracticeSessionStore
 import org.quran.app.model.StudyProgress
 import org.quran.app.model.Verse
 import org.quran.app.model.VerseId
+import org.quran.app.model.PracticeSessionSnapshot
 
 @Composable
 fun MemorizationScreen(
@@ -30,17 +32,36 @@ fun MemorizationScreen(
     onReciterSelected: (String) -> Unit,
     chapterVerses: List<Verse> = listOf(verse),
     recitationStorage: RecitationStorageRepository? = null,
+    practiceSessionStore: PracticeSessionStore? = null,
 ) {
     val maxSize = if (progress.childMode) 5 else 20
     val maxEnd = minOf(chapterVerses.last().id.ayah, verse.id.ayah + maxSize - 1)
-    var endAyah by remember(verse.id, progress.childMode) { mutableStateOf(verse.id.ayah) }
+    val restored = remember(verse.id, progress.childMode, chapterVerses, practiceSessionStore) {
+        practiceSessionStore?.read()?.takeIf {
+            it.surah == verse.id.surah && it.startAyah == verse.id.ayah &&
+                it.endAyah in verse.id.ayah..maxEnd && it.currentAyah in it.startAyah..it.endAyah &&
+                it.repetitionsPerVerse > 0 && it.completedRepetitions >= 0
+        }
+    }
+    var endAyah by remember(verse.id, progress.childMode) { mutableStateOf(restored?.endAyah ?: verse.id.ayah) }
     val selectedVerses = remember(chapterVerses, verse.id, endAyah) {
         chapterVerses.filter { it.id.ayah in verse.id.ayah..endAyah }
     }
     val selectedIds = remember(selectedVerses) { selectedVerses.map { it.id } }
-    var count by remember(verse.id, progress.childMode) { mutableStateOf(if (progress.childMode) 3 else 5) }
-    var until by remember(verse.id) { mutableStateOf(true) }
-    val session = remember(selectedIds, count, until) { RepeatSession(selectedIds, count, until) }
+    var count by remember(verse.id, progress.childMode) { mutableStateOf(restored?.repetitionsPerVerse ?: if (progress.childMode) 3 else 5) }
+    var until by remember(verse.id) { mutableStateOf(restored?.repeatUntilMemorized ?: true) }
+    var autoplayRequested by remember(verse.id, progress.childMode) { mutableStateOf(restored?.autoplayRequested ?: false) }
+    val restoreForSession = restored?.takeIf {
+        it.endAyah == endAyah && it.repetitionsPerVerse == count && it.repeatUntilMemorized == until &&
+            VerseId(it.surah, it.currentAyah) in selectedIds
+    }
+    val session = remember(selectedIds, count, until, restoreForSession) {
+        RepeatSession(selectedIds, count, until).also { repeatSession ->
+            restoreForSession?.let {
+                repeatSession.restore(VerseId(it.surah, it.currentAyah), it.completedRepetitions, it.complete)
+            }
+        }
+    }
     var state by remember(session) { mutableStateOf(session.state()) }
     val currentVerse = selectedVerses.first { it.id == state.currentVerse }
     var hidden by remember(state.currentVerse) { mutableStateOf(false) }
@@ -99,6 +120,21 @@ fun MemorizationScreen(
     }
     DisposableEffect(lifetime) { onDispose { lifetime.active = false } }
     DisposableEffect(controller) { onDispose { controller.dispose() } }
+    SideEffect {
+        practiceSessionStore?.save(
+            PracticeSessionSnapshot(
+                surah = verse.id.surah,
+                startAyah = verse.id.ayah,
+                endAyah = endAyah,
+                currentAyah = state.currentVerse.ayah,
+                repetitionsPerVerse = count,
+                completedRepetitions = state.completedRepetitions,
+                repeatUntilMemorized = until,
+                complete = state.complete,
+                autoplayRequested = autoplayRequested,
+            ),
+        )
+    }
     Column(
         Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(QuranSpacing.Large),
@@ -116,15 +152,15 @@ fun MemorizationScreen(
         PracticeRepeatCard(
             state, count, until, playing,
             canMarkMemorized = !state.complete || currentVerse.id !in progress.memorized,
-            onCountChanged = { controller.pause(); count = it },
-            onUntilChanged = { controller.pause(); until = it },
+            onCountChanged = { autoplayRequested = false; controller.pause(); count = it },
+            onUntilChanged = { autoplayRequested = false; controller.pause(); until = it },
             onManualRepeat = { controller.repeatManually() },
             onMemorized = {
                 val memorized = state.currentVerse
                 controller.markMemorized()
                 onMemorized(memorized)
             },
-            onReset = { controller.reset(); hidden = false },
+            onReset = { autoplayRequested = false; controller.reset(); hidden = false },
         )
         RecitationQueueCard(
             selectedIds, recitationRepository, selectedReciterId, progress.language.isRtl,
@@ -160,7 +196,7 @@ fun MemorizationScreen(
         }
         if (hasAudio) PaperCard {
             Action(appString(if (playing) QuranStrings.pause else QuranStrings.playAndRepeat),
-                { if (playing) controller.pause() else controller.play() }, !state.complete)
+                { if (playing) { autoplayRequested = false; controller.pause() } else { autoplayRequested = true; controller.play() } }, !state.complete)
         }
     }
 }
