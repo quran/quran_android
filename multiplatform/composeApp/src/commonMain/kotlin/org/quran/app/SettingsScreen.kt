@@ -7,8 +7,9 @@ import androidx.compose.foundation.lazy.items
 import org.quran.app.designsystem.QuranText
 import org.quran.app.designsystem.QuranTextVariant
 import org.quran.app.designsystem.QuranTextButton
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import org.quran.app.designsystem.Action
@@ -40,7 +41,7 @@ internal fun SettingsScreen(
     val language = progress.language
     val uriHandler = LocalUriHandler.current
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp), contentPadding = PaddingValues(bottom = 24.dp)) {
+    LazyColumn(modifier = Modifier.testTag("settings_list"), verticalArrangement = Arrangement.spacedBy(16.dp), contentPadding = PaddingValues(bottom = 24.dp)) {
         item {
             ScreenTitle(
                 appString(QuranStrings.settingsTitle),

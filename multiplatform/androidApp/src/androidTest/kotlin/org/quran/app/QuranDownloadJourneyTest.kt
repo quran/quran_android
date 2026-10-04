@@ -42,7 +42,8 @@ class QuranDownloadJourneyTest {
             compose.onNodeWithTag("verse_actions_1_2").performClick()
             compose.onNodeWithText("Mark as read").performClick()
             compose.onNode(hasText("Settings") and hasClickAction()).performClick()
-            compose.onNodeWithText("Manage downloads").performScrollTo().performClick()
+            compose.onNodeWithTag("settings_list").performScrollToNode(hasText("Manage downloads"))
+            compose.onNodeWithText("Manage downloads").performClick()
             val remove = "remove_download_alafasy_1_1"
             compose.waitUntil(10_000) { compose.onAllNodesWithTag(remove).fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithTag("downloads_list").performScrollToNode(hasTestTag(remove))
@@ -65,7 +66,8 @@ class QuranDownloadJourneyTest {
             scenario = ActivityScenario.launch(MainActivity::class.java)
             compose.onNodeWithText("1:2").assertIsDisplayed()
             compose.onNode(hasText("Settings") and hasClickAction()).performClick()
-            compose.onNodeWithText("Manage downloads").performScrollTo().performClick()
+            compose.onNodeWithTag("settings_list").performScrollToNode(hasText("Manage downloads"))
+            compose.onNodeWithText("Manage downloads").performClick()
             compose.waitUntil(10_000) { compose.onAllNodesWithTag("remove_download_alafasy_1_2").fetchSemanticsNodes().isNotEmpty() }
             compose.onNodeWithTag(remove).assertDoesNotExist()
             assertFalse(first.exists())
