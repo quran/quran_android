@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">المضاف حديثاً</string>
+  <string name="whats_new_continue">استمر</string>
+  <string name="icon_announcement_title">أيقونة جديدة</string>
+  <string name="icon_announcement_body">في تحديثنا القادم، ستتغير أيقونة تطبيق القرآن على شاشتك الرئيسية. أصبحت هذه الأيقونة الجديدة العلامة المشتركة لعائلة من الأدوات المبنية حول كلام الله. المزيد من التفاصيل قريبًا.</string>
+  <string name="icon_announcement_now">الآن</string>
+  <string name="icon_announcement_coming_soon">قريبًا</string>
+  <string name="icon_announcement_same_app_title">التطبيق نفسه، بأيقونة جديدة</string>
+  <string name="icon_announcement_same_app_body">ستبقى جميع علاماتك المرجعية وتقدّمك وإعداداتك في مكانها تمامًا.</string>
+  <string name="icon_announcement_release_title">ستُطرح في الإصدار القادم</string>
+  <string name="icon_announcement_release_body">ستظهر الأيقونة الجديدة في التحديث القادم.</string>
+  <string name="icon_announcement_current_icon">أيقونة تطبيق القرآن الحالية</string>
+  <string name="icon_announcement_upcoming_icon">أيقونة تطبيق القرآن القادمة</string>
+</resources>
