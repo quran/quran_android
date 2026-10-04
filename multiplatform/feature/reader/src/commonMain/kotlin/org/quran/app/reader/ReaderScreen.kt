@@ -1,8 +1,14 @@
 package org.quran.app.reader
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -34,33 +40,53 @@ fun ReaderScreen(
     onPractice: (VerseId) -> Unit,
     onStudy: (VerseId) -> Unit,
     readingPreferences: ReadingPreferences = ReadingPreferences(),
+    listeningState: ReaderListeningState = ReaderListeningState(),
+    reciterName: String = "",
+    onListen: (VerseId) -> Unit = {},
+    onTogglePlayback: () -> Unit = {},
+    onStop: () -> Unit = {},
+    onRetry: () -> Unit = {},
 ) {
     // The chapter header occupies index zero; retain it when opening from the start.
     val initialIndex = if (initialAyah <= 1) 0 else initialAyah.coerceAtMost(verses.size)
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialIndex)
 
-    LazyColumn(
-        state = listState,
-        modifier = Modifier.fillMaxSize().testTag("reader_list"),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-        contentPadding = PaddingValues(bottom = 32.dp),
-    ) {
-        item {
-            ScreenTitle(chapter.arabicName, chapter.englishName)
-            Text(appString(QuranStrings.readerOfflineText), style = MaterialTheme.typography.bodySmall)
-            translationSummary()
-        }
-        items(verses, key = { it.id.ayah }) { verse ->
-            VerseReaderItem(
-                verse = verse,
-                progress = progress,
-                translationForVerse = translationForVerse,
-                onRead = onRead,
-                onBookmark = onBookmark,
-                onPractice = onPractice,
-                onStudy = onStudy,
-                readingPreferences = readingPreferences,
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val audioHeight = maxHeight * 0.45f
+        Column(Modifier.fillMaxSize()) {
+            if (listeningState.verseId != null) ReaderAudioCard(
+                state = listeningState,
+                modifier = Modifier.heightIn(max = audioHeight).verticalScroll(rememberScrollState()),
+                reciterName = reciterName,
+                onTogglePlayback = onTogglePlayback,
+                onStop = onStop,
+                onRetry = onRetry,
             )
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.weight(1f).fillMaxWidth().testTag("reader_list"),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                contentPadding = PaddingValues(bottom = 32.dp),
+            ) {
+                item {
+                    ScreenTitle(chapter.arabicName, chapter.englishName)
+                    Text(appString(QuranStrings.readerOfflineText), style = MaterialTheme.typography.bodySmall)
+                    translationSummary()
+                }
+                items(verses, key = { it.id.ayah }) { verse ->
+                    VerseReaderItem(
+                        verse = verse,
+                        progress = progress,
+                        translationForVerse = translationForVerse,
+                        onRead = onRead,
+                        onBookmark = onBookmark,
+                        onPractice = onPractice,
+                        onStudy = onStudy,
+                        readingPreferences = readingPreferences,
+                        onListen = onListen,
+                    )
+                }
+            }
         }
     }
 }

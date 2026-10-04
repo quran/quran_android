@@ -123,6 +123,10 @@ fun QuranApp(
                             entry<Reader> { route ->
                                 ReaderEntry(
                                     route = route,
+                                    audioPlayer = audioPlayer,
+                                    recitationRepository = recitationModule.repository,
+                                    recitationStorage = recitationModule.storage,
+                                    selectedReciterId = selectedReciterId,
                                     readingPreferences = readingPreferences,
                                     quran = quran,
                                     progress = progress,

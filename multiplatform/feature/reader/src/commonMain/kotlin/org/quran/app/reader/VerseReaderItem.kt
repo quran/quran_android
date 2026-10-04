@@ -35,6 +35,7 @@ internal fun VerseReaderItem(
     onPractice: (VerseId) -> Unit,
     onStudy: (VerseId) -> Unit,
     readingPreferences: ReadingPreferences = ReadingPreferences(),
+    onListen: (VerseId) -> Unit = {},
 ) {
     var actionsVisible by remember { mutableStateOf(false) }
 
@@ -59,6 +60,7 @@ internal fun VerseReaderItem(
                 onClick = { onBookmark(verse.id); actionsVisible = false },
             )
             QuranTextButton(appString(QuranStrings.practice), onClick = { onPractice(verse.id); actionsVisible = false })
+            QuranTextButton(appString(QuranStrings.readerAudioListen), onClick = { onListen(verse.id); actionsVisible = false })
             QuranTextButton(appString(QuranStrings.study), onClick = { onStudy(verse.id); actionsVisible = false })
             QuranTextButton(appString(QuranStrings.back), onClick = { actionsVisible = false })
         }

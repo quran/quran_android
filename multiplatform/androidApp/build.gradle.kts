@@ -4,7 +4,11 @@ android { namespace="org.quran.app"; compileSdk=36; compileOptions { sourceCompa
  buildFeatures { compose=true }
 }
 kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) } }
-dependencies { implementation(project(":composeApp"));implementation(project(":core:data"));implementation(project(":core:domain"));implementation("androidx.activity:activity-compose:1.11.0")
+dependencies {
+    androidTestImplementation(project(":core:designsystem"))
+    androidTestImplementation(project(":feature:reader"))
+    androidTestImplementation("androidx.compose.foundation:foundation")
+ implementation(project(":composeApp"));implementation(project(":core:data"));implementation(project(":core:domain"));implementation("androidx.activity:activity-compose:1.11.0")
  androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.11.1")
  androidTestImplementation("androidx.test:runner:1.6.2")
  androidTestImplementation("androidx.test.ext:junit:1.2.1")

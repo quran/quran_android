@@ -1,19 +1,23 @@
 package org.quran.app
 
-import androidx.compose.runtime.setValue
-
-import androidx.compose.runtime.getValue
-
-import org.quran.app.designsystem.QuranStrings
-import org.quran.app.designsystem.appString
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CancellationException
+import org.quran.app.designsystem.QuranStrings
+import org.quran.app.designsystem.appString
+import org.quran.app.domain.AudioPlayer
 import org.quran.app.domain.QuranRepository
+import org.quran.app.domain.RecitationRepository
+import org.quran.app.domain.RecitationStorageRepository
 import org.quran.app.domain.TranslationRepository
 import org.quran.app.model.ReadingPreferences
 import org.quran.app.model.StudyProgress
@@ -36,7 +40,21 @@ internal fun ReaderEntry(
     onPractice: (VerseId) -> Unit,
     onStudy: (VerseId) -> Unit,
     readingPreferences: ReadingPreferences,
+    audioPlayer: AudioPlayer,
+    recitationRepository: RecitationRepository,
+    recitationStorage: RecitationStorageRepository,
+    selectedReciterId: String,
 ) {
+    val listeningScope = rememberCoroutineScope()
+    val listening = remember(audioPlayer, recitationRepository, recitationStorage) {
+        ReaderListeningController(recitationRepository, recitationStorage, audioPlayer, listeningScope)
+    }
+    val listeningState by listening.state.collectAsState()
+    DisposableEffect(listening) { onDispose { listening.close() } }
+    LaunchedEffect(selectedReciterId, listening) { listening.stop() }
+    val reciter = recitationRepository.reciters().firstOrNull { it.id == selectedReciterId }
+    val reciterName = reciter?.let { if (progress.language.isRtl) it.nameArabic else it.nameEnglish }.orEmpty()
+
     var reloadToken by remember(route, selectedTranslationId) { mutableIntStateOf(0) }
     var translatedContent by remember(route, selectedTranslationId) {
         mutableStateOf(ReaderTranslationState())
@@ -75,6 +93,12 @@ internal fun ReaderEntry(
         initialAyah = route.ayah,
         progress = progress,
         readingPreferences = readingPreferences,
+        listeningState = listeningState,
+        reciterName = reciterName,
+        onListen = { listening.listen(selectedReciterId, it) },
+        onTogglePlayback = listening::togglePlayback,
+        onStop = listening::stop,
+        onRetry = listening::retry,
         translationSummary = {
             TranslationEditionHeader(
                 language = progress.language,

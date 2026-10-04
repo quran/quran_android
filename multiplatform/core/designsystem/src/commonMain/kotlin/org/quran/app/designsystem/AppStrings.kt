@@ -189,4 +189,17 @@ object QuranStrings {
     val reciterHusaryArabic get() = Res.string.reciter_husary_arabic
     val reciterSudais get() = Res.string.reciter_sudais
     val reciterSudaisArabic get() = Res.string.reciter_sudais_arabic
+    val readerAudioTitle get() = Res.string.reader_audio_title
+    val readerAudioChooseVerse get() = Res.string.reader_audio_choose_verse
+    val readerAudioVerse get() = Res.string.reader_audio_verse
+    val readerAudioReciter get() = Res.string.reader_audio_reciter
+    val readerAudioPreparing get() = Res.string.reader_audio_preparing
+    val readerAudioPlaying get() = Res.string.reader_audio_playing
+    val readerAudioReady get() = Res.string.reader_audio_ready
+    val readerAudioFailed get() = Res.string.reader_audio_failed
+    val readerAudioListen get() = Res.string.reader_audio_listen
+    val readerAudioRetry get() = Res.string.reader_audio_retry
+    val readerAudioPlay get() = Res.string.reader_audio_play
+    val readerAudioPause get() = Res.string.reader_audio_pause
+    val readerAudioStop get() = Res.string.reader_audio_stop
 }
