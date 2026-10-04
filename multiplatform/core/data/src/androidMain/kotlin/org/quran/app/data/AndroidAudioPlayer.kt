@@ -2,6 +2,7 @@ package org.quran.app.data
 
 import android.content.Context
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import org.quran.app.domain.AudioPlayer
 
@@ -29,7 +30,7 @@ internal class AndroidAudioPlayer(context: Context) : AudioPlayer {
       }
       override fun onPlayerError(error: androidx.media3.common.PlaybackException) { shouldPlay = false; failed?.invoke("Recording could not be played") }
      })
-     uri?.let { ready.setMediaItem(MediaItem.fromUri(it)); ready.prepare() }
+     uri?.let { ready.setMediaItem(mediaItem(it)); ready.prepare() }
      if (shouldPlay) ready.play()
     }.onFailure { connectionFailed = true; shouldPlay = false; failed?.invoke("Playback service could not be connected") }
    }
@@ -39,7 +40,7 @@ internal class AndroidAudioPlayer(context: Context) : AudioPlayer {
   require(uri.startsWith("content://") || uri.startsWith("file://")) { "Only a local recording can be imported" }
   shouldPlay = false
   this.uri = uri
-  controller?.run { stop(); setMediaItem(MediaItem.fromUri(uri)); prepare() }
+  controller?.run { stop(); setMediaItem(mediaItem(uri)); prepare() }
  }
  override fun play(onCompleted: () -> Unit, onError: (String) -> Unit, onPlaybackChanged: (Boolean) -> Unit) {
   completed = onCompleted
@@ -68,4 +69,9 @@ internal class AndroidAudioPlayer(context: Context) : AudioPlayer {
   androidx.media3.session.MediaController.releaseFuture(future)
   controller = null
  }
+
+ private fun mediaItem(uri: String): MediaItem = MediaItem.Builder()
+  .setUri(uri)
+  .setMediaMetadata(MediaMetadata.Builder().setTitle("Quran recitation").build())
+  .build()
 }

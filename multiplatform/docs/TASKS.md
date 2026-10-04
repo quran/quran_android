@@ -38,7 +38,7 @@ The mandatory Compose plist setting is repaired and CI now includes a simulator 
 - [x] Native visual review and redesign refinement against Stitch direction; exercised English/Arabic light/dark/150%-font screens passed, further product refinement continues.
 - [x] Merge reading typography preferences; further display modes remain subject to canonical-content review.
 - [x] Download management: storage totals/removal and aggregate cache policy (PR #8).
-- [ ] Reader listening controls and background media notification/interruption acceptance.
+- [ ] Reader listening controls and background media notification/interruption acceptance (platform implementation landed; lock-screen, notification and interruption behavior still require physical-device acceptance).
 - [ ] Direct memorized-ayah review journey: implemented; native persistence/navigation acceptance pending.
 - [ ] Practice session restoration: current sessions start fresh without autoplay; interrupted range/repetition restoration remains unimplemented.
 - [ ] Children learning flow refinement and accessibility checks with larger fonts.

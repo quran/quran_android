@@ -1,6 +1,5 @@
 package org.quran.app.data
 
-import android.content.Intent
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.exoplayer.ExoPlayer
@@ -24,11 +23,6 @@ class QuranPlaybackService : MediaSessionService() {
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? = session
-
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        session?.player?.pause()
-        stopSelf()
-    }
 
     override fun onDestroy() {
         session?.run { player.release(); release() }
