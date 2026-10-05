@@ -49,6 +49,7 @@ fun LibraryScreen(
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(QuranSpacing.Small),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     QuranTextField(

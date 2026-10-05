@@ -6,14 +6,17 @@ internal fun filterChapters(chapters: List<Chapter>, query: String): List<Chapte
     val normalizedQuery = normalizeLibrarySearch(query)
     if (normalizedQuery.isEmpty()) return chapters
 
+    val queryAsNumber = normalizedQuery.toIntOrNull()
+
     return chapters.filter { chapter ->
         normalizedQuery == chapter.number.toString() ||
+            queryAsNumber == chapter.number ||
             normalizeLibrarySearch(chapter.englishName).contains(normalizedQuery) ||
             normalizeLibrarySearch(chapter.arabicName).contains(normalizedQuery)
     }
 }
 
-private fun normalizeLibrarySearch(value: String): String = buildString {
+internal fun normalizeLibrarySearch(value: String): String = buildString {
     for (character in value.lowercase()) {
         when {
             character in '\u064B'..'\u065F' || character == '\u0670' ||
