@@ -38,6 +38,7 @@ import org.quran.app.data.TranslationDataModule
 import org.quran.app.designsystem.QuranTheme
 import org.quran.app.domain.AudioPlayer
 import org.quran.app.domain.SettingsStore
+import org.quran.app.di.appModule
 import org.quran.app.memorization.MemorizationScreen
 import org.quran.app.model.StudyProgress
 import org.quran.app.model.TranslationEdition
@@ -58,8 +59,13 @@ fun QuranApp(
     val readingPreferencesStore = remember(settings) { StoredReadingPreferencesStore(settings) }
     val practiceSessionStore = remember(settings) { StoredPracticeSessionStore(settings) }
     var readingPreferences by remember(settings) { mutableStateOf(readingPreferencesStore.read()) }
-    val quran = remember { BundledQuranRepository() }
-    val progressRepository = remember(settings) { StoredProgressRepository(settings) }
+    val koinApplication = remember(settings) {
+        org.koin.dsl.koinApplication { modules(appModule(settings)) }
+    }
+    val koin = koinApplication.koin
+    DisposableEffect(koinApplication) { onDispose { koinApplication.close() } }
+    val quran = remember(koin) { koin.get<BundledQuranRepository>() }
+    val progressRepository = remember(koin) { koin.get<StoredProgressRepository>() }
     val translationSelection = remember(settings) { StoredTranslationSelectionStore(settings) }
     val translationModule = remember(settings) { TranslationDataModule(settings) }
     val translationRepository = translationModule.repository
