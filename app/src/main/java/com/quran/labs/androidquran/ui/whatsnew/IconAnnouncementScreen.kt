@@ -149,7 +149,7 @@ private fun IconComparison(accent: Color) {
       )
       Box(
         modifier = Modifier
-          .padding(top = (iconSize - 40.dp) / 2)
+          .padding(top = ((iconSize - 40.dp) / 2).coerceAtLeast(0.dp))
           .size(40.dp)
           .background(colorResource(R.color.icon_announcement_surface), CircleShape),
         contentAlignment = Alignment.Center
