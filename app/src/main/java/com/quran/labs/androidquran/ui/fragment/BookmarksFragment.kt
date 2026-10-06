@@ -305,7 +305,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   }
 
   private fun isValidSelection(selected: QuranRow): Boolean {
-    return selected.isBookmark || selected.isEditableCollectionHeader
+    return selected.isBookmark || selected.isEditableCollectionHeader || selected.isPlacedReadingBookmark
   }
 
   private val mOnUndoClickListener: View.OnClickListener = View.OnClickListener {
