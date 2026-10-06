@@ -164,6 +164,7 @@
   <!--bookmarks & tags contextual action bar-->
   <string name="tag_bookmark">Etiquetar Favorito</string>
   <string name="delete_tag">Borrar Etiqueta</string>
+  <string name="delete">Eliminar</string>
   <string name="edit_tag">Editar Etiqueta</string>
   <string name="new_tag">Nueva Etiqueta</string>
   <!--tag dialog-->

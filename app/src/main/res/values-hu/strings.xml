@@ -219,6 +219,7 @@
     <!-- bookmarks & tags contextual action bar -->
     <string name="tag_bookmark">Könyvelző címkézése</string>
     <string name="delete_tag">Címke törlése</string>
+    <string name="delete">Törlés</string>
     <string name="edit_tag">Címke szerkesztése</string>
     <string name="new_tag">Új címke</string>
 

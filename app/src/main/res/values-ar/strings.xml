@@ -224,6 +224,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">تصنيف المرجعية</string>
   <string name="delete_tag">حذف التصنيف</string>
+  <string name="delete">حذف</string>
   <string name="edit_tag">تعديل الصنف</string>
   <string name="new_tag">صنف جديد</string>
 
