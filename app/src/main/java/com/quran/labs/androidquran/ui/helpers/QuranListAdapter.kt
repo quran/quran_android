@@ -296,7 +296,7 @@ class QuranListAdapter(
     val selected = elements[position]
     return !isEditable ||                     // anything in surahs or juzs
         selected.isBookmark ||                // actual bookmarks
-        selected.isReadingBookmark ||         // the non-editable reading bookmark shortcut
+        selected.isReadingBookmark ||         // reading bookmarks
         selected.rowType == QuranRow.NONE ||  // the actual "current page"
         selected.isHighlightsHeader ||        // the collapsible highlights header
         selected.isHighlightColor ||          // the five highlight colors

@@ -238,6 +238,10 @@ public class QuranRow {
     return rowType == PAGE_READING_BOOKMARK || rowType == AYAH_READING_BOOKMARK;
   }
 
+  public boolean isPlacedReadingBookmark() {
+    return isReadingBookmark() && readingBookmarkType != null;
+  }
+
   public boolean isAyahBookmark() {
     return rowType == AYAH_BOOKMARK || rowType == AYAH_READING_BOOKMARK;
   }
