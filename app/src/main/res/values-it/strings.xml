@@ -126,6 +126,7 @@
   <string name="ayah_copied_popup">Ayah Copiato</string>
   <string name="tag_bookmark">Segnalibro</string>
   <string name="delete_tag">Cancellare il tag</string>
+  <string name="delete">Elimina</string>
   <string name="edit_tag">Modifica tag</string>
   <string name="new_tag">Nuovo Tag</string>
   <plurals name="bookmark_tag_deleted">

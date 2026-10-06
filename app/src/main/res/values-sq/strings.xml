@@ -278,6 +278,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Tag Libërshënues</string>
   <string name="delete_tag">Elemino Tag</string>
+  <string name="delete">Fshi</string>
   <string name="edit_tag">Ndrysho Tag</string>
   <string name="new_tag">Etiketë e re</string>
   <plurals name="bookmark_tag_deleted">

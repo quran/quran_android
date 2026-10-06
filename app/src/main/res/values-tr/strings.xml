@@ -270,6 +270,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Sayfa işareti etiketi</string>
   <string name="delete_tag">Etiketi kaldır</string>
+  <string name="delete">Sil</string>
   <string name="edit_tag">Etiket güncelle</string>
   <string name="new_tag">Yeni etiket</string>
   <plurals name="bookmark_tag_deleted">
