@@ -54,7 +54,7 @@ class HighlightsDaoImpl @Inject constructor(
 
   override suspend fun clearHighlight(ayah: SuraAyah) {
     withContext(Dispatchers.IO) {
-      collectionBookmarksRepository.removeHighlight(ayah.sura, ayah.ayah, timestampProvider.now())
+      collectionBookmarksRepository.deleteHighlight(ayah.sura, ayah.ayah, timestampProvider.now())
     }
   }
 }
