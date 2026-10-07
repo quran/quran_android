@@ -34,6 +34,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -380,6 +381,69 @@ class BookmarkPresenterTest {
   }
 
   @Test
+  fun `a selected highlighted ayah can only be deleted, alone or alongside other rows`() {
+    val presenter = makeBookmarkPresenter()
+    val highlight = highlightRow(HIGHLIGHTS[0])
+
+    val alone = presenter.getContextualOperationsForItems(listOf(highlight))
+    val withBookmark = presenter.getContextualOperationsForItems(
+      listOf(highlight, QuranRow.Builder().withType(QuranRow.AYAH_BOOKMARK).build())
+    )
+
+    assertThat(alone.asList()).containsExactly(false, true, false).inOrder()
+    assertThat(withBookmark.asList()).containsExactly(false, true, false).inOrder()
+  }
+
+  @Test
+  fun `deleting a highlighted ayah drops it and its color count while the undo window is open`() {
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+    fakeHighlightsDao.setHighlights(HIGHLIGHTS)
+    val presenter = makeBookmarkPresenter()
+    val current = getBookmarkResultAndValidate(presenter, BookmarkSortOrder.SORT_LOCATION)
+
+    val preview = presenter.previewAfterDeletion(current, listOf(highlightRow(HIGHLIGHTS[0])))
+
+    assertThat(preview.rows).containsAtLeast(
+      BookmarkRowData.HighlightColorItem(HighlightColor.GREEN, 1),
+      BookmarkRowData.HighlightColorItem(HighlightColor.BLUE, 1)
+    ).inOrder()
+    assertThat(preview.rows.filterIsInstance<BookmarkRowData.HighlightedAyahItem>())
+      .containsExactly(
+        BookmarkRowData.HighlightedAyahItem(HIGHLIGHTS[1]),
+        BookmarkRowData.HighlightedAyahItem(HIGHLIGHTS[2])
+      ).inOrder()
+    assertThat(preview.rows.filterIsInstance<BookmarkRowData.BookmarkItem>()).hasSize(2)
+  }
+
+  @Test
+  fun `deleting the last ayah row takes the ayahs header with it`() {
+    fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
+    fakeHighlightsDao.setHighlights(listOf(HIGHLIGHTS[2]))
+    val presenter = makeBookmarkPresenter()
+    val current = getBookmarkResultByDateAndValidate(presenter)
+    assertThat(current.rows).contains(BookmarkRowData.AyahBookmarksHeader)
+
+    val preview = presenter.previewAfterDeletion(current, listOf(highlightRow(HIGHLIGHTS[2])))
+
+    assertThat(preview.rows).doesNotContain(BookmarkRowData.AyahBookmarksHeader)
+    assertThat(preview.rows).contains(BookmarkRowData.HighlightColorItem(HighlightColor.GREEN, 0))
+  }
+
+  @Test
+  fun `removing a highlighted ayah clears only its highlight`() {
+    fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
+    fakeHighlightsDao.setHighlights(HIGHLIGHTS)
+    val presenter = makeBookmarkPresenter()
+
+    runBlocking { presenter.removeItems(listOf(highlightRow(HIGHLIGHTS[0]))) }
+
+    assertThat(runBlocking { fakeHighlightsDao.highlightsFlow().first() })
+      .containsExactly(HIGHLIGHTS[1], HIGHLIGHTS[2])
+    assertThat(fakeBookmarksDao.currentBookmarks().map { it.id })
+      .containsExactly("bookmark-42", "bookmark-2")
+  }
+
+  @Test
   fun `renders highlights after recent pages, with every color and its count`() {
     fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
     fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
@@ -641,6 +705,14 @@ class BookmarkPresenterTest {
       .withType(QuranRow.PAGE_READING_BOOKMARK)
       .withPage(77)
       .withReadingBookmarkType(slot)
+      .build()
+
+  private fun highlightRow(highlight: Highlight): QuranRow =
+    QuranRow.Builder()
+      .withType(QuranRow.HIGHLIGHTED_AYAH)
+      .withSura(highlight.suraAyah.sura)
+      .withAyah(highlight.suraAyah.ayah)
+      .withHighlightColor(highlight.color)
       .build()
 
   /** The fake puts every ayah bookmark in the default collection, the way the dao does. */
