@@ -237,6 +237,8 @@
 
   <string name="prefs_use_arabic_summary_on">سيتم تحويل التطبيق إلى اللغة العربية</string>
   <string name="prefs_use_arabic_title">الوضع العربي</string>
+  <string name="prefs_use_western_digits_title">الأرقام الغربية (0123456789)</string>
+  <string name="prefs_use_western_digits_summary">استخدام 0123456789 بدلاً من ٠١٢٣٤٥٦٧٨٩ في الوضع العربي</string>
   <string name="play">تشغيل</string>
   <string name="stop">إيقاف</string>
   <string name="playback_speed">سرعة التشغيل:</string>
