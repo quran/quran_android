@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.extra.feature.linebyline.ui
 
 import androidx.compose.ui.graphics.Color
+import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.labs.androidquran.common.ui.core.HighlightColors
 import com.quran.labs.androidquran.extra.feature.linebyline.model.HighlightType
 
@@ -19,5 +20,13 @@ fun HighlightType.paintColor(isNightMode: Boolean): Color {
       val paletteColor = HighlightColors[color].color
       if (isNightMode) paletteColor.copy(alpha = NightHighlightAlpha) else paletteColor
     }
+  }
+}
+
+fun ReadingBookmarkType.paintColor(isNightMode: Boolean): Color {
+  return when (this) {
+    ReadingBookmarkType.GREEN -> if (isNightMode) Color(0xFF34D3A4) else Color(0xFF05956F)
+    ReadingBookmarkType.PURPLE -> if (isNightMode) Color(0xFFD477FF) else Color(0xFFB315FC)
+    ReadingBookmarkType.BLUE -> if (isNightMode) Color(0xFF62AEFF) else Color(0xFF007FF0)
   }
 }
