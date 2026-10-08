@@ -18,4 +18,14 @@
   <color name="reading_bookmark_green">#ff05956f</color>
   <color name="reading_bookmark_purple">#ffb315fc</color>
   <color name="reading_bookmark_blue">#ff007ff0</color>
+  <!--
+    the same slot colors for underlines on image pages, which follow the page's night mode rather
+    than the app theme, so neither set is overridden in values-night.
+  -->
+  <color name="reading_bookmark_page_green">#ff05956f</color>
+  <color name="reading_bookmark_page_purple">#ffb315fc</color>
+  <color name="reading_bookmark_page_blue">#ff007ff0</color>
+  <color name="reading_bookmark_page_green_night">#ff34d3a4</color>
+  <color name="reading_bookmark_page_purple_night">#ffd477ff</color>
+  <color name="reading_bookmark_page_blue_night">#ff62aeff</color>
 </resources>

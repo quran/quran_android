@@ -50,10 +50,11 @@ class HighlightsDrawer(
       context: Context,
       type: HighlightType,
       isNightMode: Boolean
-    ): Paint =
-      cache.getOrPut(Triple(type.mode, type.colorResId, isNightMode)) {
+    ): Paint {
+      val colorResId = if (isNightMode) type.nightColorResId else type.colorResId
+      return cache.getOrPut(Triple(type.mode, colorResId, isNightMode)) {
         Paint().apply {
-          val color = ContextCompat.getColor(context, type.colorResId)
+          val color = ContextCompat.getColor(context, colorResId)
           when (type.mode) {
             COLOR -> this.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
             UNDERLAY -> this.color = if (isNightMode) {
@@ -65,6 +66,7 @@ class HighlightsDrawer(
           }
         }
       }
+    }
   }
 
   private fun alreadyHighlightedContains(
@@ -87,6 +89,7 @@ class HighlightsDrawer(
   override fun draw(pageCoordinates: PageCoordinates, canvas: Canvas, image: ImageView) {
     val highlightCoordinates = highlightCoordinates() ?: return
     val glyphsCoords = ayahCoordinates()?.glyphCoordinates
+    val ayahLineCoords = ayahCoordinates()?.ayahLineCoordinates
     val currentHighlights = currentHighlights() ?: return
 
     alreadyHighlighted.clear()
@@ -99,8 +102,10 @@ class HighlightsDrawer(
       for (highlight in highlights) {
         if (alreadyHighlightedContains(highlightType, highlight)) continue
 
+        val isUnderline = highlightType.mode == UNDERLINE
         val rangesToDraw = glyphsCoords?.takeIf { !highlightType.isTransitionAnimated }
-          ?.getBounds(highlight.key, true, highlightType.mode == BACKGROUND)
+          ?.getBounds(highlight.key, !isUnderline, highlightType.mode == BACKGROUND)
+          ?: ayahLineCoords?.get(highlight.key)?.takeIf { isUnderline }?.map { it.bounds }
           ?: highlightCoordinates[highlight]?.map { it.bounds }
 
         if (rangesToDraw != null && rangesToDraw.isNotEmpty()) {

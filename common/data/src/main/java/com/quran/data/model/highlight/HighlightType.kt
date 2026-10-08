@@ -8,6 +8,7 @@ data class HighlightType(
   val mode: Mode,
   val isSingle: Boolean = false,
   val isTransitionAnimated: Boolean = false,
+  @ColorRes val nightColorResId: Int = colorResId,
 ) : Comparable<HighlightType> {
 
   enum class Mode {
