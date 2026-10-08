@@ -305,7 +305,8 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   }
 
   private fun isValidSelection(selected: QuranRow): Boolean {
-    return selected.isBookmark || selected.isEditableCollectionHeader
+    return selected.isBookmark || selected.isEditableCollectionHeader ||
+        selected.isPlacedReadingBookmark || selected.isHighlightedAyah
   }
 
   private val mOnUndoClickListener: View.OnClickListener = View.OnClickListener {
@@ -394,11 +395,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
       }
 
       !row.isHeader && activity is QuranActivity -> {
-        if (row.isAyahBookmark || row.isHighlightedAyah) {
-          activity.jumpToAndHighlight(row.page, row.sura, row.ayah)
-        } else {
-          activity.jumpTo(row.page)
-        }
+        activity.jumpTo(row)
       }
     }
   }

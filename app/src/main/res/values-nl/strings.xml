@@ -383,6 +383,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Tag Bladwijzer</string>
   <string name="delete_tag">Verwijder Tag</string>
+  <string name="delete">Verwijderen</string>
   <string name="edit_tag">Bewerk Tag</string>
   <string name="new_tag">Nieuwe Tag</string>
   <plurals name="bookmark_tag_deleted">

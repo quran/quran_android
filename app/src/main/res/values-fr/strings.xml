@@ -249,6 +249,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Étiqueter le favori</string>
   <string name="delete_tag">Supprimez l\'étiquette</string>
+  <string name="delete">Supprimer</string>
   <string name="edit_tag">Modifier l\'étiquette</string>
   <string name="new_tag">Nouvelle étiquette</string>
 

@@ -181,6 +181,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">بڕگە نیشانەکرا</string>
   <string name="delete_tag">سڕینەوەی بڕگە</string>
+  <string name="delete">سڕینەوە</string>
   <string name="edit_tag">دەستکاریکردنی بڕگە</string>
   <string name="new_tag">بڕگەی نوێ</string>
 

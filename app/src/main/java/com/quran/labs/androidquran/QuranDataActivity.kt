@@ -17,7 +17,9 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
 import com.quran.common.upgrade.PreferencesUpgrade
+import com.quran.data.model.Page
 import com.quran.data.model.QuranDataStatus
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.presenter.data.QuranDataPresenter
 import com.quran.labs.androidquran.service.QuranDownloadService
@@ -28,6 +30,8 @@ import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIn
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.QuranActivity
+import com.quran.labs.androidquran.ui.helpers.QuranNavigator
+import com.quran.labs.androidquran.ui.whatsnew.AnnouncementActivity
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
@@ -52,12 +56,16 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
  *  * Check that we have permission to write to external storage (if we need this permission)
  * and if not, ask the user for permission
  *  * Verify that we have the necessary Quran data downloaded on the device
+ *  * Show any unseen announcement on a normal launch, after data setup finishes
  *
  * The logic is split between [QuranDataActivity] and [QuranDataPresenter],
  * and [QuranDownloadService] is (mostly) used to perform the actual downloading of
  * any Quran data.
  */
 class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequestPermissionsResultCallback {
+
+  @Inject lateinit var quranNavigatorFactory: QuranNavigator.Factory
+  private val quranNavigator by lazy { quranNavigatorFactory.create(this) }
 
   @Inject
   lateinit var quranFileUtils: QuranFileUtils
@@ -481,8 +489,41 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
   }
 
   private fun runListView() {
-    startActivity(targetIntent())
-    finish()
+    if (!isFinishing && !isDestroyed) {
+      if (intent?.action == ACTION_OPEN_PAGE) {
+        jumpToRequestedPage(intent)
+      } else {
+        val isNormalLaunch = intent?.action == null || intent?.action == Intent.ACTION_MAIN
+        val destination = targetIntent()
+        val nextIntent = if (isNormalLaunch && AnnouncementActivity.shouldShow(quranSettings)) {
+          AnnouncementActivity.createIntent(this, destination)
+        } else {
+          destination
+        }
+        startActivity(nextIntent)
+      }
+      finish()
+    }
+  }
+
+  private fun jumpToRequestedPage(sourceIntent: Intent) {
+    val sura = sourceIntent.getIntExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, -1)
+    val ayah = sourceIntent.getIntExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, -1)
+    val location = if (sura > 0 && ayah > 0) {
+      SuraAyah(sura, ayah)
+    } else {
+      Page(sourceIntent.getIntExtra("page", Constants.PAGES_FIRST))
+    }
+    val showTranslation = if (sourceIntent.hasExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION)) {
+      sourceIntent.getBooleanExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, false)
+    } else {
+      null
+    }
+    quranNavigator.jumpTo(
+      location,
+      showTranslation = showTranslation,
+      intentFlags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+    )
   }
 
   private fun targetIntent(): Intent {
@@ -499,36 +540,6 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
       }
       ShortcutsActivity.ACTION_JUMP_TO -> {
         Intent(this, ShowJumpFragmentActivity::class.java)
-      }
-      ACTION_OPEN_PAGE -> {
-        Intent(this, PagerActivity::class.java).apply {
-          addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-          val extras = sourceIntent.extras
-          putExtra(
-            "page",
-            extras?.getInt("page", Constants.PAGES_FIRST) ?: Constants.PAGES_FIRST
-          )
-          if (extras != null) {
-            if (extras.containsKey(PagerActivity.EXTRA_HIGHLIGHT_SURA)) {
-              putExtra(
-                PagerActivity.EXTRA_HIGHLIGHT_SURA,
-                extras.getInt(PagerActivity.EXTRA_HIGHLIGHT_SURA)
-              )
-            }
-            if (extras.containsKey(PagerActivity.EXTRA_HIGHLIGHT_AYAH)) {
-              putExtra(
-                PagerActivity.EXTRA_HIGHLIGHT_AYAH,
-                extras.getInt(PagerActivity.EXTRA_HIGHLIGHT_AYAH)
-              )
-            }
-            if (extras.containsKey(PagerActivity.EXTRA_JUMP_TO_TRANSLATION)) {
-              putExtra(
-                PagerActivity.EXTRA_JUMP_TO_TRANSLATION,
-                extras.getBoolean(PagerActivity.EXTRA_JUMP_TO_TRANSLATION)
-              )
-            }
-          }
-        }
       }
       else -> {
         Intent(this, QuranActivity::class.java).apply {

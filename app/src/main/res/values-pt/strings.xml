@@ -199,6 +199,7 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Tagear Marcador</string>
   <string name="delete_tag">Deletar Tag</string>
+  <string name="delete">Excluir</string>
   <string name="edit_tag">Editar Tag</string>
   <string name="new_tag">Sem Tag</string>
 

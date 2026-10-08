@@ -49,6 +49,7 @@ import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarksDao
+import com.quran.data.model.Page
 import com.quran.data.model.QuranText
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.ReadingBookmarkTarget
@@ -101,6 +102,7 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener
 import com.quran.labs.androidquran.ui.helpers.AyahTracker
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
+import com.quran.labs.androidquran.ui.helpers.QuranNavigator
 import com.quran.labs.androidquran.ui.helpers.QuranPage
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
@@ -223,6 +225,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private var lastSelectedTranslationAyah: QuranAyahInfo? = null
   private var lastActivatedLocalTranslations: Array<LocalTranslation> = emptyArray()
+
+  @Inject lateinit var quranNavigator: QuranNavigator
 
   @Inject lateinit var bookmarksDao: BookmarksDao
   @Inject lateinit var recentPagePresenter: RecentPagePresenter
@@ -1084,17 +1088,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   override fun jumpTo(page: Int) {
-    val i = Intent(this, PagerActivity::class.java)
-    i.putExtra("page", page)
-    onNewIntent(i)
+    quranNavigator.jumpTo(Page(page))
   }
 
   override fun jumpToAndHighlight(page: Int, sura: Int, ayah: Int) {
-    val i = Intent(this, PagerActivity::class.java)
-    i.putExtra("page", page)
-    i.putExtra(EXTRA_HIGHLIGHT_SURA, sura)
-    i.putExtra(EXTRA_HIGHLIGHT_AYAH, ayah)
-    onNewIntent(i)
+    quranNavigator.jumpTo(SuraAyah(sura, ayah))
   }
 
   public override fun onPause() {

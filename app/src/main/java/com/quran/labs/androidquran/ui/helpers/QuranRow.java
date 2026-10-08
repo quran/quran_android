@@ -4,6 +4,7 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 
 import com.quran.data.model.bookmark.Bookmark;
+import com.quran.data.model.bookmark.ReadingBookmarkType;
 import com.quran.data.model.highlight.HighlightColor;
 
 public class QuranRow {
@@ -45,6 +46,7 @@ public class QuranRow {
   public boolean isSystemCollection;
 
   public HighlightColor highlightColor;
+  public ReadingBookmarkType readingBookmarkType;
 
   public static class Builder {
     private String text;
@@ -67,6 +69,7 @@ public class QuranRow {
     private boolean isCollapsed;
     private boolean isSystemCollection;
     private HighlightColor highlightColor;
+    private ReadingBookmarkType readingBookmarkType;
 
     public Builder withType(int type) {
       rowType = type;
@@ -168,11 +171,16 @@ public class QuranRow {
       return this;
     }
 
+    public Builder withReadingBookmarkType(ReadingBookmarkType readingBookmarkType) {
+      this.readingBookmarkType = readingBookmarkType;
+      return this;
+    }
+
     public QuranRow build() {
       return new QuranRow(text, metadata, rowType, sura,
           ayah, page, imageResource, imageFilterColorResource, imageContentDescription, juzType,
           juzOverlayText, bookmarkId, tagId, bookmark, dateAddedInMillis, itemCount,
-          isCollapsible, isCollapsed, isSystemCollection, highlightColor);
+          isCollapsible, isCollapsed, isSystemCollection, highlightColor, readingBookmarkType);
     }
   }
 
@@ -182,7 +190,7 @@ public class QuranRow {
       String tagId, Bookmark bookmark,
                    long dateAddedInMillis, Integer itemCount, boolean isCollapsible,
                    boolean isCollapsed, boolean isSystemCollection,
-                   HighlightColor highlightColor) {
+                   HighlightColor highlightColor, ReadingBookmarkType readingBookmarkType) {
     this.text = text;
     this.rowType = rowType;
     this.sura = sura;
@@ -203,6 +211,7 @@ public class QuranRow {
     this.isCollapsed = isCollapsed;
     this.isSystemCollection = isSystemCollection;
     this.highlightColor = highlightColor;
+    this.readingBookmarkType = readingBookmarkType;
   }
 
   public boolean isHeader() {
@@ -227,6 +236,10 @@ public class QuranRow {
 
   public boolean isReadingBookmark() {
     return rowType == PAGE_READING_BOOKMARK || rowType == AYAH_READING_BOOKMARK;
+  }
+
+  public boolean isPlacedReadingBookmark() {
+    return isReadingBookmark() && readingBookmarkType != null;
   }
 
   public boolean isAyahBookmark() {

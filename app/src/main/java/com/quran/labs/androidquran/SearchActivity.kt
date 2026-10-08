@@ -32,6 +32,7 @@ import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.quran.data.core.QuranInfo
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.presenter.data.ReaderReadinessTracker
@@ -40,8 +41,8 @@ import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper.getDownloadIntent
-import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
+import com.quran.labs.androidquran.ui.helpers.QuranNavigator
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
@@ -71,6 +72,9 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
   private lateinit var messageView: TextView
   private lateinit var warningView: TextView
   private lateinit var buttonGetTranslations: Button
+
+  @Inject lateinit var quranNavigatorFactory: QuranNavigator.Factory
+  private val quranNavigator by lazy { quranNavigatorFactory.create(this) }
 
   @Inject
   lateinit var quranInfo: QuranInfo
@@ -362,26 +366,12 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
    * @param jumpToTranslation whether the reader should open its translation view.
    */
   private fun jumpToResult(sura: Int, ayah: Int, jumpToTranslation: Boolean) {
-    val page = quranInfo.getPageFromSuraAyah(sura, ayah)
-    val intent = if (canOpenReaderDirectly()) {
-      Intent(this, PagerActivity::class.java).apply {
-        putExtra("page", page)
-        putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura)
-        putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah)
-        if (jumpToTranslation) {
-          putExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, true)
-        }
-      }
+    if (canOpenReaderDirectly()) {
+      quranNavigator.jumpTo(SuraAyah(sura, ayah), showTranslation = jumpToTranslation)
     } else {
-      QuranDataActivity.openPageIntent(
-        context = this,
-        page = page,
-        sura = sura,
-        ayah = ayah,
-        jumpToTranslation = jumpToTranslation
-      )
+      startActivity(Intent(this, QuranDataActivity::class.java))
+      finish()
     }
-    startActivity(intent)
   }
 
   private fun canOpenReaderDirectly(): Boolean {

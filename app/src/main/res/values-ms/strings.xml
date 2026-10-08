@@ -247,6 +247,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Beri Label pada Penanda</string>
   <string name="delete_tag">Hapus Label</string>
+  <string name="delete">Padam</string>
   <string name="edit_tag">Sunting Label</string>
   <string name="new_tag">Label Baru</string>
   <plurals name="bookmark_tag_deleted">

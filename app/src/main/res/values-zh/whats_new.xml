@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">新功能</string>
+  <string name="whats_new_continue">继续</string>
+  <string name="icon_announcement_title">全新图标</string>
+  <string name="icon_announcement_body">在下一次更新中，您主屏幕上的古兰经应用图标将会改变。这个新图标现已成为围绕安拉之言打造的一系列工具的共同标志。更多详情即将公布。</string>
+  <string name="icon_announcement_now">现在</string>
+  <string name="icon_announcement_coming_soon">即将推出</string>
+  <string name="icon_announcement_same_app_title">同一款应用，全新图标</string>
+  <string name="icon_announcement_same_app_body">您的所有书签、进度和设置都将完全保留。</string>
+  <string name="icon_announcement_release_title">将在下一版本中推出</string>
+  <string name="icon_announcement_release_body">新图标将在下一次更新中推出。</string>
+  <string name="icon_announcement_current_icon">当前古兰经应用图标</string>
+  <string name="icon_announcement_upcoming_icon">即将推出的古兰经应用图标</string>
+</resources>

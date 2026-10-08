@@ -26,7 +26,7 @@ quranMobileSyncVersion = "0.1.21"
 retrofitVersion = "3.0.0"
 rxandroidVersion = "3.0.2"
 rxjavaVersion = "3.1.12"
-sqldelight = "2.4.0"
+sqldelight = "2.4.1"
 timberVersion = "5.0.1"
 
 # androidx library versions
@@ -45,7 +45,7 @@ androidxRecyclerViewVersion = "1.4.0"
 androidxSwipeRefreshVersion = "1.2.0"
 androidxPagingVersion = "3.5.1"
 androidxPagingComposeVersion = "3.5.1"
-androidxWorkManagerVersion = "2.11.2"
+androidxWorkManagerVersion = "2.12.0"
 androidxWindowManager = "1.5.1"
 
 # ui libraries
@@ -60,8 +60,8 @@ molecule = "2.2.0"
 
 # recitations
 grpcOkhttpVersion = "1.84.0"
-googleAuthVersion = "1.53.0"
-googleCloudSpeechVersion = "4.92.0"
+googleAuthVersion = "1.54.0"
+googleCloudSpeechVersion = "4.94.0"
 
 # testing
 junitVersion = "4.13.2"
@@ -69,7 +69,7 @@ espressoVersion = "3.7.0"
 truthVersion = "1.4.5"
 robolectricVersion = "4.17"
 turbineVersion = "1.2.1"
-koverVersion = "0.9.9"
+koverVersion = "0.9.11"
 
 [libraries]
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junit" }

@@ -280,6 +280,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Закладка тега</string>
   <string name="delete_tag">Видалити тег</string>
+  <string name="delete">Видалити</string>
   <string name="edit_tag">Змінити тег</string>
   <string name="new_tag">Створити тег</string>
   <plurals name="bookmark_tag_deleted">
