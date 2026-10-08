@@ -7,12 +7,15 @@ import android.widget.ImageView
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.dao.HighlightsDao
+import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.di.QuranPageScope
 import com.quran.data.model.AyahGlyph.AyahEndGlyph
 import com.quran.data.model.AyahGlyph.WordGlyph
 import com.quran.data.model.AyahWord
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightInfo
 import com.quran.data.model.highlight.HighlightType
@@ -62,6 +65,7 @@ class AyahTrackerPresenter @Inject constructor(
   private val readingEventPresenter: ReadingEventPresenter,
   private val bookmarksDao: BookmarksDao,
   private val highlightsDao: HighlightsDao,
+  private val readingBookmarksDao: ReadingBookmarksDao,
   private val audioStatusRepository: AudioStatusRepository,
   recitationPresenter: RecitationPresenter,
   private val recitationEventPresenter: RecitationEventPresenter,
@@ -97,6 +101,10 @@ class AyahTrackerPresenter @Inject constructor(
 
     highlightsDao.highlightsFlow()
       .onEach { highlights -> onHighlightsChanged(highlights) }
+      .launchIn(scope)
+
+    readingBookmarksDao.readingBookmarksFlow()
+      .onEach { readingBookmarks -> onReadingBookmarksChanged(readingBookmarks) }
       .launchIn(scope)
   }
 
@@ -216,6 +224,19 @@ class AyahTrackerPresenter @Inject constructor(
           tracker.onHighlightAyat(tracker.page, elements, HighlightTypes[color])
         }
       }
+    }
+  }
+
+  private fun onReadingBookmarksChanged(readingBookmarks: List<ReadingBookmark>) {
+    HighlightTypes.readingBookmarks.forEach { unHighlightAyahs(it) }
+
+    val ayahReadingBookmarks = readingBookmarks.filterIsInstance<AyahReadingBookmark>()
+    items.forEach { tracker ->
+      ayahReadingBookmarks
+        .filter { quranInfo.getPageFromSuraAyah(it.sura, it.ayah) == tracker.page }
+        .forEach {
+          tracker.onHighlightAyat(tracker.page, setOf("${it.sura}:${it.ayah}"), HighlightTypes[it.slot])
+        }
     }
   }
 
