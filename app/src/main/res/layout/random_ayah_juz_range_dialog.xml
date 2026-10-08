@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp">
+
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="@string/random_ayah_juz_label"
+      android:textColor="@color/default_text" />
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingEnd="8dp"
+        android:paddingRight="8dp"
+        android:text="@string/random_ayah_from"
+        android:textColor="@color/default_text" />
+
+    <EditText
+        android:id="@+id/from_juz"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:inputType="number"
+        android:maxLength="2"
+        android:imeOptions="flagNoExtractUi"
+        android:selectAllOnFocus="true"
+        android:textColor="@color/edit_text_input_text_color"
+        android:backgroundTint="@color/edit_text_line_color"
+        android:textColorHint="@color/edit_text_hint_color" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingLeft="16dp"
+        android:paddingEnd="8dp"
+        android:paddingRight="8dp"
+        android:text="@string/random_ayah_to"
+        android:textColor="@color/default_text" />
+
+    <EditText
+        android:id="@+id/to_juz"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:inputType="number"
+        android:maxLength="2"
+        android:imeOptions="flagNoExtractUi"
+        android:selectAllOnFocus="true"
+        android:textColor="@color/edit_text_input_text_color"
+        android:backgroundTint="@color/edit_text_line_color"
+        android:textColorHint="@color/edit_text_hint_color" />
+  </LinearLayout>
+</LinearLayout>
