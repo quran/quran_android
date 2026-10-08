@@ -90,6 +90,7 @@ class HighlightsDrawer(
     val highlightCoordinates = highlightCoordinates() ?: return
     val glyphsCoords = ayahCoordinates()?.glyphCoordinates
     val ayahLineCoords = ayahCoordinates()?.ayahLineCoordinates
+    val underlineRaiseRatio = ayahCoordinates()?.underlineRaiseRatio ?: 0f
     val currentHighlights = currentHighlights() ?: return
 
     alreadyHighlighted.clear()
@@ -113,8 +114,8 @@ class HighlightsDrawer(
             if (highlightType.mode == UNDERLINE) {
               val underlineThickness = TypedValue.applyDimension(
                 COMPLEX_UNIT_DIP, UNDERLINE_THICKNESS_DIPS, image.resources.displayMetrics)
-              bounds.top = bounds.bottom
-              bounds.bottom += underlineThickness
+              bounds.top = bounds.bottom - bounds.height() * underlineRaiseRatio
+              bounds.bottom = bounds.top + underlineThickness
             }
 
             image.imageMatrix.mapRect(scaledRect, bounds)

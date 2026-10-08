@@ -7,5 +7,6 @@ data class AyahCoordinates @JvmOverloads constructor(
   val ayahCoordinates: Map<String, List<AyahBounds>>,
   val glyphCoordinates: PageGlyphsCoords?,
   // one bounds per line of each ayah, aligned with the line
-  val ayahLineCoordinates: Map<String, List<AyahBounds>> = emptyMap()
+  val ayahLineCoordinates: Map<String, List<AyahBounds>> = emptyMap(),
+  val underlineRaiseRatio: Float = 0f
 )

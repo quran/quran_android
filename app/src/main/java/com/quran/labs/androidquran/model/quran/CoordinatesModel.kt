@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.model.quran
 import android.graphics.RectF
 import androidx.core.graphics.plus
 import com.quran.data.di.ActivityScope
+import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider
 import com.quran.page.common.data.AyahBounds
 import com.quran.page.common.data.AyahCoordinates
@@ -15,7 +16,10 @@ import kotlin.math.max
 import kotlin.math.min
 
 @ActivityScope
-class CoordinatesModel @Inject internal constructor(private val ayahInfoDatabaseProvider: AyahInfoDatabaseProvider) : CoordinatesModelInterface {
+class CoordinatesModel @Inject internal constructor(
+  private val ayahInfoDatabaseProvider: AyahInfoDatabaseProvider,
+  private val pageProvider: PageProvider
+) : CoordinatesModelInterface {
   override fun getPageCoordinates(wantPageBounds: Boolean, vararg pages: Int): Observable<PageCoordinates> {
     val database = ayahInfoDatabaseProvider.getAyahInfoHandler()
       ?: return Observable.error(NoSuchElementException("No AyahInfoDatabaseHandler found!"))
@@ -63,7 +67,8 @@ class CoordinatesModel @Inject internal constructor(private val ayahInfoDatabase
       ayahCoordinates.page,
       normalizedMap,
       ayahCoordinates.glyphCoordinates,
-      ayahLineCoordinates
+      ayahLineCoordinates,
+      pageProvider.ayahUnderlineRaiseRatio()
     )
   }
 
