@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.model.quran
 
 import android.graphics.RectF
+import androidx.core.graphics.plus
 import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider
 import com.quran.page.common.data.AyahBounds
@@ -48,6 +49,8 @@ class CoordinatesModel @Inject internal constructor(private val ayahInfoDatabase
 
   private fun normalizePageAyahs(ayahCoordinates: AyahCoordinates): AyahCoordinates {
     val original = ayahCoordinates.ayahCoordinates
+    // computed first, since normalizing modifies the original bounds
+    val ayahLineCoordinates = alignWithLines(original)
     val normalizedMap: MutableMap<String, List<AyahBounds>> = HashMap()
     val keys = original.keys
     for (key in keys) {
@@ -56,7 +59,27 @@ class CoordinatesModel @Inject internal constructor(private val ayahInfoDatabase
         normalizedMap[key] = normalizeAyahBounds(normalBounds)
       }
     }
-    return AyahCoordinates(ayahCoordinates.page, normalizedMap, ayahCoordinates.glyphCoordinates)
+    return AyahCoordinates(
+      ayahCoordinates.page,
+      normalizedMap,
+      ayahCoordinates.glyphCoordinates,
+      ayahLineCoordinates
+    )
+  }
+
+  private fun alignWithLines(ayahCoordinates: Map<String, List<AyahBounds>>): Map<String, List<AyahBounds>> {
+    val lineBounds = ayahCoordinates.values
+      .flatten()
+      .groupBy { it.line }
+      .mapValues { (_, bounds) -> bounds.fold(RectF()) { line, bound -> line + bound.bounds } }
+
+    return ayahCoordinates.mapValues { (_, bounds) ->
+      bounds.map { bound ->
+        val line = lineBounds.getValue(bound.line)
+        val ayahBounds = bound.bounds
+        bound.withBounds(RectF(ayahBounds.left, line.top, ayahBounds.right, line.bottom))
+      }
+    }
   }
 
   private fun normalizeAyahBounds(ayahBounds: List<AyahBounds>): List<AyahBounds> {
