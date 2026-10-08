@@ -8,7 +8,7 @@ ksp = "2.3.12"
 composeBomVersion = "2026.09.00"
 media3ExoplayerVersion = "1.11.1"
 okhttpBomVersion = "5.5.0"
-firebaseBomVersion = "34.19.0"
+firebaseBomVersion = "35.0.0"
 
 # dependencies
 coroutinesVersion = "1.11.0"
