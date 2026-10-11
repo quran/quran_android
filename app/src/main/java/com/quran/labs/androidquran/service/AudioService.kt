@@ -128,6 +128,10 @@ class AudioService : Service(), Player.Listener {
   // should we stop (after preparing is done) or not
   private var shouldStop = false
 
+  // true while waiting out a deliberate pause-between-ayahs gap, so that the
+  // ExoPlayer pause/end callbacks don't flip our state to Paused during it
+  private var isPausingBetweenAyahs = false
+
   // The ID we use for the notification (the onscreen alert that appears
   // at the notification area at the top of the screen as an icon -- and
   // as text as well if the user expands the notification area).
@@ -175,11 +179,24 @@ class AudioService : Service(), Player.Listener {
 
   private inner class ServiceHandler(looper: Looper) : Handler(looper) {
     override fun handleMessage(msg: Message) {
-      if (msg.what == MSG_INCOMING && msg.obj != null) {
-        val intent = msg.obj as Intent
-        handleIntent(intent)
-      } else if (msg.what == MSG_UPDATE_AUDIO_POS) {
-        updateAudioPlayPosition()
+      when (msg.what) {
+        MSG_INCOMING -> {
+          if (msg.obj != null) {
+            handleIntent(msg.obj as Intent)
+          }
+        }
+        MSG_UPDATE_AUDIO_POS -> updateAudioPlayPosition()
+        MSG_PLAY_NEXT_AYAH -> {
+          isPausingBetweenAyahs = false
+          val playRepeatSep = msg.arg1 == 1
+          playAudio(playRepeatSep)
+        }
+        MSG_RESUME_AFTER_PAUSE -> {
+          isPausingBetweenAyahs = false
+          if (player != null) {
+            configAndStartExoPlayer()
+          }
+        }
       }
     }
   }
@@ -516,6 +533,17 @@ class AudioService : Service(), Player.Listener {
 
         // moved on to next ayah
         updateNotification()
+
+        // pause between ayahs for gapless playback
+        val pauseBetweenAyahs = audioRequest?.pauseBetweenAyahs ?: 0
+        if (pauseBetweenAyahs > 0) {
+          serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS)
+          notifyAyahChanged()
+          isPausingBetweenAyahs = true
+          localPlayer.pause()
+          serviceHandler.sendEmptyMessageDelayed(MSG_RESUME_AFTER_PAUSE, pauseBetweenAyahs * 1000L)
+          return
+        }
       } else {
         // if we have end of sura info and we bypassed end of sura
         // line, switch the sura.
@@ -607,7 +635,20 @@ class AudioService : Service(), Player.Listener {
     }
   }
 
+  // cancel any pending pause-between-ayahs gap (used when the user manually
+  // plays/pauses/skips/rewinds so the gap doesn't fire afterwards)
+  private fun cancelPauseBetweenAyahs() {
+    isPausingBetweenAyahs = false
+    serviceHandler.removeMessages(MSG_PLAY_NEXT_AYAH)
+    serviceHandler.removeMessages(MSG_RESUME_AFTER_PAUSE)
+  }
+
   private fun processPlayRequest() {
+    // remove any pending pause-between-ayahs messages when user manually plays.
+    // during a gap, state is still Playing, so treat it like a paused resume.
+    val wasPausingBetweenAyahs = isPausingBetweenAyahs
+    cancelPauseBetweenAyahs()
+
     val localAudioRequest = audioRequest
     val localAudioQueue = audioQueue
     if (localAudioRequest == null || localAudioQueue == null) {
@@ -619,19 +660,26 @@ class AudioService : Service(), Player.Listener {
     if (State.Stopped == state) {
       // If we're stopped, just go ahead to the next file and start playing
       playAudio(localAudioQueue.getCurrentSura() == 9 && localAudioQueue.getCurrentAyah() == 1)
-    } else if (State.Paused == state) {
+    } else if (State.Paused == state || wasPausingBetweenAyahs) {
       // If we're paused, just continue playback and restore the
       // 'foreground service' state.
       state = State.Playing
       if (!isSetupAsForeground) {
         setUpAsForeground()
       }
-      configAndStartExoPlayer()
+      // handle pause-between-ayahs: player may be in STATE_ENDED (gapped)
+      // in which case we need to load the next file instead of resuming current
+      if (player?.playbackState == Player.STATE_ENDED) {
+        playAudio(localAudioQueue.getCurrentSura() == 9 && localAudioQueue.getCurrentAyah() == 1)
+      } else {
+        configAndStartExoPlayer()
+      }
       updateAudioPlaybackStatus()
     }
   }
 
   private fun processPauseRequest() {
+    cancelPauseBetweenAyahs()
     if (State.Playing == state) {
       // Pause exo player and cancel the 'foreground service' state.
       state = State.Paused
@@ -653,6 +701,7 @@ class AudioService : Service(), Player.Listener {
   }
 
   private fun processRewindRequest() {
+    cancelPauseBetweenAyahs()
     if (State.Playing == state || State.Paused == state) {
       setState(PlaybackStateCompat.STATE_REWINDING)
       val localPlayer = player ?: return
@@ -666,7 +715,7 @@ class AudioService : Service(), Player.Listener {
         pos -= seekTo
       }
 
-      if (pos > 1500 && !playerOverride) {
+      if (pos > 1500 && !playerOverride && localPlayer.playbackState != Player.STATE_ENDED) {
         localPlayer.seekTo(seekTo)
         state = State.Playing // in case we were paused
       } else {
@@ -697,6 +746,7 @@ class AudioService : Service(), Player.Listener {
     if (audioRequest == null) {
       return
     }
+    cancelPauseBetweenAyahs()
     if (State.Playing == state || State.Paused == state) {
       setState(PlaybackStateCompat.STATE_SKIPPING_TO_NEXT)
       if (playerOverride) {
@@ -724,6 +774,7 @@ class AudioService : Service(), Player.Listener {
 
   private fun processStopRequest(force: Boolean = false) {
     setState(PlaybackStateCompat.STATE_STOPPED)
+    isPausingBetweenAyahs = false
     serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS)
     currentWord = null
     if (State.Preparing == state) {
@@ -1062,6 +1113,10 @@ class AudioService : Service(), Player.Listener {
 
   // Called when the player starts or stops playing
   override fun onIsPlayingChanged(isPlaying: Boolean) {
+    // Ignore the pause/resume that bracket a deliberate pause-between-ayahs gap
+    if (isPausingBetweenAyahs) {
+      return
+    }
     // Ensure UI stays in sync with actual ExoPlayer state changes
     // Only update state if it's a legitimate transition
     if (isPlaying && state == State.Paused) {
@@ -1124,7 +1179,16 @@ class AudioService : Service(), Player.Listener {
           // sura changed, then play the basmala if the ayah is
           // not the first one (or if we're in sura tawba).
           val flag = beforeSura != localAudioQueue.getCurrentSura()
-          playAudio(flag)
+          val pauseDuration = localAudioRequest.pauseBetweenAyahs
+          if (pauseDuration > 0) {
+            // delay playback for pause between ayahs
+            isPausingBetweenAyahs = true
+            val msg = serviceHandler.obtainMessage(MSG_PLAY_NEXT_AYAH)
+            msg.arg1 = if (flag) 1 else 0
+            serviceHandler.sendMessageDelayed(msg, pauseDuration * 1000L)
+          } else {
+            playAudio(flag)
+          }
         }
       } else {
         processStopRequest(true)
@@ -1374,6 +1438,8 @@ class AudioService : Service(), Player.Listener {
     private const val NOTIFICATION_CHANNEL_ID = Constants.AUDIO_CHANNEL
     private const val MSG_INCOMING = 1
     private const val MSG_UPDATE_AUDIO_POS = 2
+    private const val MSG_PLAY_NEXT_AYAH = 3
+    private const val MSG_RESUME_AFTER_PAUSE = 4
     private const val DEBUG_TIMINGS = false
 
     // 5 minutes

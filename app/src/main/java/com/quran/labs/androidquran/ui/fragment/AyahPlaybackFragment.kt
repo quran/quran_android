@@ -37,6 +37,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
   private var rangeRepeatCount = 0
   private var verseRepeatCount = 0
   private var currentSpeed = 1.0f
+  private var currentPause = 0
 
   private lateinit var applyButton: Button
   private lateinit var startSuraSpinner: QuranSpinner
@@ -46,6 +47,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
   private lateinit var repeatVersePicker: NumberPicker
   private lateinit var repeatRangePicker: NumberPicker
   private lateinit var playbackSpeedPicker: NumberPicker
+  private lateinit var pauseBetweenAyahsPicker: NumberPicker
   private lateinit var restrictToRange: CheckBox
 
   private lateinit var startAyahAdapter: ArrayAdapter<CharSequence>
@@ -80,6 +82,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
     repeatVersePicker = view.findViewById(R.id.repeat_verse_picker)
     repeatRangePicker = view.findViewById(R.id.repeat_range_picker)
     playbackSpeedPicker = view.findViewById(R.id.playback_speed_picker)
+    pauseBetweenAyahsPicker = view.findViewById(R.id.pause_between_verses_picker)
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
       val speedArea = view.findViewById<View>(R.id.playback_speed_area)
@@ -96,7 +99,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
     values[MAX_REPEATS] = getString(UiCoreR.string.infinity)
     val isArabicNames = locale.language == "ar"
     if (isArabicNames) {
-      listOf(repeatVersePicker, repeatRangePicker, playbackSpeedPicker).forEach {
+      listOf(repeatVersePicker, repeatRangePicker, playbackSpeedPicker, pauseBetweenAyahsPicker).forEach {
         it.formatter = NumberPicker.Formatter { value: Int -> arFormat(value) }
         val typeface = TypefaceManager.getHeaderFooterTypeface(context)
         it.typeface = typeface
@@ -118,6 +121,11 @@ class AyahPlaybackFragment : AyahActionFragment() {
     playbackSpeedPicker.maxValue = SPEEDS.size
     playbackSpeedPicker.displayedValues = SPEEDS.map { numberFormat.format(it) }.toTypedArray()
     playbackSpeedPicker.value = DEFAULT_SPEED_INDEX + 1
+    val pauseValues = Array(MAX_PAUSE + 1) { i -> numberFormat.format(i.toLong()) }
+    pauseBetweenAyahsPicker.minValue = 1
+    pauseBetweenAyahsPicker.maxValue = MAX_PAUSE + 1
+    pauseBetweenAyahsPicker.displayedValues = pauseValues
+    pauseBetweenAyahsPicker.value = 1
     repeatRangePicker.setOnValueChangedListener { _: NumberPicker?, _: Int, newVal: Int ->
       if (newVal > 1) {
         // whenever we want to repeat the range, we have to enable restrictToRange
@@ -196,20 +204,21 @@ class AyahPlaybackFragment : AyahActionFragment() {
       var updatedRange = false
 
       val speed = SPEEDS[playbackSpeedPicker.value - 1]
+      val pauseBetweenAyahs = pauseBetweenAyahsPicker.value - 1
       if (currentStart != decidedStart || currentEnding != decidedEnd) {
         // different range or not playing, so make a new request
         updatedRange = true
         context.playFromAyah(
           currentStart, currentEnding, page, verseRepeat,
-          rangeRepeat, enforceRange, speed
+          rangeRepeat, enforceRange, speed, pauseBetweenAyahs
         )
-      } else if (shouldEnforce != enforceRange || rangeRepeatCount != rangeRepeat || verseRepeatCount != verseRepeat || currentSpeed != speed) {
+      } else if (shouldEnforce != enforceRange || rangeRepeatCount != rangeRepeat || verseRepeatCount != verseRepeat || currentSpeed != speed || pauseBetweenAyahs != currentPause) {
         // can just update repeat settings
-        if (!context.updatePlayOptions(rangeRepeat, verseRepeat, enforceRange, speed)
+        if (!context.updatePlayOptions(rangeRepeat, verseRepeat, enforceRange, speed, pauseBetweenAyahs)
         ) {
           // audio stopped in the process, let's start it
           context.playFromAyah(
-            currentStart, currentEnding, page, verseRepeat, rangeRepeat, enforceRange, speed
+            currentStart, currentEnding, page, verseRepeat, rangeRepeat, enforceRange, speed, pauseBetweenAyahs
           )
         }
       }
@@ -310,6 +319,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
           verseRepeatCount = lastRequest.repeatInfo
           rangeRepeatCount = lastRequest.rangeRepeatInfo
           currentSpeed = lastRequest.playbackSpeed
+          currentPause = lastRequest.pauseBetweenAyahs
           shouldEnforce = lastRequest.enforceBounds
         } else {
           shouldReset = false
@@ -332,6 +342,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
         rangeRepeatCount = 0
         verseRepeatCount = 0
         currentSpeed = 1.0f
+        currentPause = 0
         decidedStart = null
         decidedEnd = null
         applyButton.setText(R.string.play_apply_and_play)
@@ -356,6 +367,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
         repeatRangePicker.value = rangeRepeatCount + 1
         repeatVersePicker.value = verseRepeatCount + 1
         playbackSpeedPicker.value = SPEEDS.indexOf(currentSpeed) + 1
+        pauseBetweenAyahsPicker.value = currentPause + 1
       }
     }
   }
@@ -364,6 +376,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
     private val ITEM_LAYOUT = R.layout.sherlock_spinner_item
     private val ITEM_DROPDOWN_LAYOUT = R.layout.sherlock_spinner_dropdown_item
     private const val MAX_REPEATS = 25
+    private const val MAX_PAUSE = 25
     private val SPEEDS = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f)
     private const val DEFAULT_SPEED_INDEX = 2
   }
