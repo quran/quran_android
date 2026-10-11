@@ -132,7 +132,7 @@ class BookmarkUIConverterTest {
     // the colour is what tells pins apart on screen, so the name is what a screen reader says
     assertThat(green.imageContentDescription).isEqualTo("Green")
 
-    assertThat(blue.text).isEqualTo("Surah Al-Kahf")
+    assertThat(blue.text).isEqualTo("Surah Al-Isrāʾ, Al-Kahf")
     assertThat(blue.metadata).isEqualTo("Juz' 15 · 4 minutes ago")
     assertThat(blue.page).isEqualTo(293)
     assertThat(blue.imageFilterColorResource).isEqualTo(CoreR.color.reading_bookmark_blue)
@@ -140,6 +140,35 @@ class BookmarkUIConverterTest {
 
     // rather than "0 minutes ago"
     assertThat(justPlaced.metadata).isEqualTo("Juz' 3 · 1 minute ago")
+  }
+
+  @Test
+  fun `page bookmarks and recent pages name all suras while ayah bookmarks stay specific`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val quranInfo = QuranInfo(MadaniDataSource())
+    val converter = BookmarkUIConverter(
+      QuranRowFactory(quranInfo, QuranDisplayData(quranInfo)),
+      quranInfo
+    )
+    val timestamp = Instant.parse("2023-11-14T22:13:20Z")
+    val data = BookmarkRawResult(
+      rows = listOf(
+        BookmarkRowData.BookmarkItem(Bookmark("page", null, null, 293, timestamp.epochSeconds)),
+        BookmarkRowData.RecentPage(RecentPage(293, timestamp)),
+        BookmarkRowData.BookmarkItem(Bookmark("ayah", 18, 1, 293, timestamp.epochSeconds))
+      ),
+      tagMap = emptyMap()
+    )
+
+    val (pageBookmark, recentPage, ayahBookmark) = converter.convertToUIResult(context, data).rows
+
+    assertThat(pageBookmark.text).isEqualTo("Surah Al-Isrāʾ, Al-Kahf")
+    assertThat(recentPage.text).isEqualTo(pageBookmark.text)
+    assertThat(pageBookmark.metadata).isEqualTo("Page 293, Juz' 15")
+    assertThat(pageBookmark.page).isEqualTo(293)
+    assertThat(ayahBookmark.text).isEqualTo("Surah Al-Kahf - Ayah 1")
+    assertThat(ayahBookmark.sura).isEqualTo(18)
+    assertThat(ayahBookmark.ayah).isEqualTo(1)
   }
 
   @Test
