@@ -550,13 +550,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
         if (quranSettings.shouldDisplayMarkerPopup()) {
           lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
-            this@PagerActivity, quranInfo, page, lastPopupTime
+            this@PagerActivity, quranInfo, page, isDualPageVisible, lastPopupTime
           )
-          if (isDualPages) {
-            lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
-              this@PagerActivity, quranInfo, page - 1, lastPopupTime
-            )
-          }
         }
 
         if (!showingTranslation) {
