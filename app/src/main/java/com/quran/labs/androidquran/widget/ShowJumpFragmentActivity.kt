@@ -1,15 +1,16 @@
 package com.quran.labs.androidquran.widget
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.quran.data.model.Page
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.QuranApplication
-import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.fragment.JumpFragment
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
+import com.quran.labs.androidquran.ui.helpers.QuranNavigator
 import com.quran.labs.androidquran.util.QuranSettings
 import dev.zacsweers.metro.Inject
 
@@ -18,6 +19,9 @@ import dev.zacsweers.metro.Inject
  * finishes the activity.
  */
 class ShowJumpFragmentActivity : AppCompatActivity(), JumpDestination {
+
+  @Inject lateinit var quranNavigatorFactory: QuranNavigator.Factory
+  private val quranNavigator by lazy { quranNavigatorFactory.create(this) }
 
   @Inject
   lateinit var settings: QuranSettings
@@ -39,17 +43,10 @@ class ShowJumpFragmentActivity : AppCompatActivity(), JumpDestination {
   }
 
   override fun jumpTo(page: Int) {
-    val i = Intent(this, PagerActivity::class.java)
-    i.putExtra("page", page)
-    i.putExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, settings.wasShowingTranslation)
-    startActivity(i)
+    quranNavigator.jumpTo(Page(page), showTranslation = settings.wasShowingTranslation)
   }
 
   override fun jumpToAndHighlight(page: Int, sura: Int, ayah: Int) {
-    val i = Intent(this, PagerActivity::class.java)
-    i.putExtra("page", page)
-    i.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura)
-    i.putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah)
-    startActivity(i)
+    quranNavigator.jumpTo(SuraAyah(sura, ayah))
   }
 }

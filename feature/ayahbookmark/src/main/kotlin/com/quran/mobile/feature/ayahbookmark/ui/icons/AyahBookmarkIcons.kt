@@ -29,6 +29,30 @@ internal val BookmarkIcon: ImageVector by lazy {
   }.build()
 }
 
+internal val BookmarkOutlineIcon: ImageVector by lazy {
+  ImageVector.Builder(
+    name = "AyahBookmarkGlyphOutline",
+    defaultWidth = IconDimension.dp,
+    defaultHeight = IconDimension.dp,
+    viewportWidth = IconDimension,
+    viewportHeight = IconDimension
+  ).apply {
+    path(
+      fill = null,
+      stroke = SolidColor(Color.Black),
+      strokeLineWidth = 2f,
+      strokeLineJoin = StrokeJoin.Miter
+    ) {
+      moveTo(6f, 2f)
+      lineTo(18f, 2f)
+      lineTo(18f, 22f)
+      lineTo(12f, 18f)
+      lineTo(6f, 22f)
+      close()
+    }
+  }.build()
+}
+
 // a highlighter/pencil nib, used for the "Highlight" card
 internal val HighlightIcon: ImageVector by lazy {
   ImageVector.Builder(
@@ -57,7 +81,6 @@ internal val HighlightIcon: ImageVector by lazy {
   }.build()
 }
 
-// a single diagonal stroke, shown in the "None" swatch while some color is picked
 internal val NoHighlightIcon: ImageVector by lazy {
   ImageVector.Builder(
     name = "AyahBookmarkNoHighlight",

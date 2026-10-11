@@ -275,6 +275,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Бетбелгіні белгілеу</string>
   <string name="delete_tag">Белгіні жою</string>
+  <string name="delete">Жою</string>
   <string name="edit_tag">Белгіні өзгерту</string>
   <string name="new_tag">Жаңа белгі</string>
   <plurals name="bookmark_tag_deleted">
@@ -289,8 +290,6 @@
   <string name="reading_bookmark_movable_education_title">Бұл жылжымалы оқу бетбелгісі</string>
   <string name="reading_bookmark_movable_education_body">Оқу бетбелгісін сақтау ескісін алмастырады. Бірнеше аятты сақтау үшін аятты басып тұрып, оны жинаққа қосыңыз.</string>
   <string name="reading_bookmark_moved_from">%1$s дегеннен жылжытылды</string>
-  <string name="reading_bookmark_moved_from_title">Бетбелгі %1$s дегеннен жылжытылды</string>
-  <string name="reading_bookmark_added">Бетбелгі қосылды</string>
   <string name="reading_bookmark_dismiss_education">Жабу</string>
 
   <!-- tag dialog -->

@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.quran.data.dao.BookmarkSortOrder
+import com.quran.data.model.Page
+import com.quran.data.model.SuraAyah
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
@@ -35,6 +37,7 @@ import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog.OnBookmarkTagsUpdateListener
 import com.quran.labs.androidquran.common.ui.core.HighlightColors
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter
+import com.quran.labs.androidquran.ui.helpers.QuranNavigator
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
 import com.quran.labs.androidquran.util.QuranSettings
@@ -57,6 +60,9 @@ class BookmarkListActivity : AppCompatActivity(),
   private var collectionName: String? = null
   private var isPaused = false
   private val sortOrder = MutableStateFlow(BookmarkSortOrder.SORT_DATE_ADDED)
+
+  @Inject lateinit var quranNavigatorFactory: QuranNavigator.Factory
+  private val quranNavigator by lazy { quranNavigatorFactory.create(this) }
 
   @Inject
   lateinit var bookmarkListPresenter: BookmarkListPresenter
@@ -293,12 +299,8 @@ class BookmarkListActivity : AppCompatActivity(),
     row.isBookmark || row.isHighlightedAyah
 
   private fun jumpToAndHighlight(page: Int, sura: Int, ayah: Int) {
-    val intent = Intent(this, PagerActivity::class.java)
-    intent.putExtra("page", page)
-    intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura)
-    intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah)
-    intent.putExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, quranSettings.wasShowingTranslation)
-    startActivity(intent)
+    val location = if (sura > 0 && ayah > 0) SuraAyah(sura, ayah) else Page(page)
+    quranNavigator.jumpTo(location, showTranslation = quranSettings.wasShowingTranslation)
   }
 
   private fun finishActionMode() {

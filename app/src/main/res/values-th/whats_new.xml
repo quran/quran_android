@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">มีอะไรใหม่</string>
+  <string name="whats_new_continue">ดำเนินการต่อ</string>
+  <string name="icon_announcement_title">ไอคอนใหม่</string>
+  <string name="icon_announcement_body">ในการอัปเดตครั้งถัดไป ไอคอนแอป Quran บนหน้าจอหลักของคุณจะเปลี่ยนไป ไอคอนใหม่นี้เป็นสัญลักษณ์ร่วมของกลุ่มเครื่องมือที่สร้างขึ้นโดยมีพระดำรัสของอัลลอฮ์เป็นศูนย์กลาง รายละเอียดเพิ่มเติมเร็วๆ นี้</string>
+  <string name="icon_announcement_now">ตอนนี้</string>
+  <string name="icon_announcement_coming_soon">เร็วๆ นี้</string>
+  <string name="icon_announcement_same_app_title">แอปเดิม ไอคอนใหม่</string>
+  <string name="icon_announcement_same_app_body">บุ๊กมาร์ก ความคืบหน้า และการตั้งค่าทั้งหมดของคุณจะยังคงอยู่ที่เดิม</string>
+  <string name="icon_announcement_release_title">มาพร้อมเวอร์ชันถัดไป</string>
+  <string name="icon_announcement_release_body">ไอคอนใหม่จะมาพร้อมการอัปเดตครั้งถัดไป</string>
+  <string name="icon_announcement_current_icon">ไอคอนแอป Quran ปัจจุบัน</string>
+  <string name="icon_announcement_upcoming_icon">ไอคอนแอป Quran ใหม่ที่กำลังจะมา</string>
+</resources>

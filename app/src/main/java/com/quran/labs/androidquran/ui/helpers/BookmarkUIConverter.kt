@@ -15,8 +15,8 @@ class BookmarkUIConverter @Inject constructor(
   fun convertToUIResult(context: Context, rawResult: BookmarkRawResult): BookmarkResult {
     val uiRows = rawResult.rows.map { rowData ->
       when (rowData) {
-        BookmarkRowData.ReadingBookmarkHeader ->
-          quranRowFactory.fromReadingBookmarkHeader(context)
+        is BookmarkRowData.ReadingBookmarkHeader ->
+          quranRowFactory.fromReadingBookmarkHeader(context, rowData.count)
 
         is BookmarkRowData.ReadingBookmarkItem ->
           quranRowFactory.fromReadingBookmark(context, rowData.readingBookmark)
@@ -30,11 +30,11 @@ class BookmarkUIConverter @Inject constructor(
           } else {
             1
           }
-          quranRowFactory.fromCurrentPage(context, page, rowData.recentPage.timestamp)
+          quranRowFactory.fromCurrentPage(context, page, rowData.recentPage.timestamp.epochSeconds)
         }
 
-        BookmarkRowData.HighlightsHeader ->
-          quranRowFactory.fromHighlightsHeader(context)
+        is BookmarkRowData.HighlightsHeader ->
+          quranRowFactory.fromHighlightsHeader(context, rowData.isCollapsed)
 
         is BookmarkRowData.HighlightColorItem ->
           quranRowFactory.fromHighlightColor(context, rowData.color, rowData.count)
@@ -46,7 +46,7 @@ class BookmarkUIConverter @Inject constructor(
           quranRowFactory.fromBookmark(context, rowData.bookmark, rowData.tagId, rowData.mark)
 
         is BookmarkRowData.HighlightedAyahItem ->
-          quranRowFactory.fromHighlight(context, rowData.highlight)
+          quranRowFactory.fromHighlight(context, rowData.highlight, rowData.ayahText)
 
         is BookmarkRowData.PageBookmarksHeader ->
           quranRowFactory.fromPageBookmarksHeader(context)

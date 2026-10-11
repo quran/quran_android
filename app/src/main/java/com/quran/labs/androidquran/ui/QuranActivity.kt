@@ -31,6 +31,8 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.quran.data.dao.RecentPagesDao
+import com.quran.data.model.Page
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.AboutUsActivity
 import com.quran.labs.androidquran.HelpActivity
 import com.quran.labs.androidquran.QuranApplication
@@ -52,6 +54,8 @@ import com.quran.labs.androidquran.ui.fragment.SuraListFragment
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog.OnBookmarkTagsUpdateListener
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
+import com.quran.labs.androidquran.ui.helpers.QuranNavigator
+import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
@@ -115,6 +119,8 @@ class QuranActivity : AppCompatActivity(),
   private var backStackListener: FragmentManager.OnBackStackChangedListener? = null
   private lateinit var searchItemCollapserCallback: OnBackPressedCallback
   private lateinit var supportActionModeClearingCallback: OnBackPressedCallback
+
+  @Inject lateinit var quranNavigator: QuranNavigator
 
   @Inject
   lateinit var settings: QuranSettings
@@ -455,19 +461,20 @@ class QuranActivity : AppCompatActivity(),
   }
 
   override fun jumpTo(page: Int) {
-    val i = Intent(this, PagerActivity::class.java)
-    i.putExtra("page", page)
-    i.putExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, settings.wasShowingTranslation)
-    startActivity(i)
+    quranNavigator.jumpTo(Page(page), showTranslation = settings.wasShowingTranslation)
   }
 
   override fun jumpToAndHighlight(page: Int, sura: Int, ayah: Int) {
-    val i = Intent(this, PagerActivity::class.java)
-    i.putExtra("page", page)
-    i.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura)
-    i.putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah)
-    i.putExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, settings.wasShowingTranslation)
-    startActivity(i)
+    quranNavigator.jumpTo(SuraAyah(sura, ayah), showTranslation = settings.wasShowingTranslation)
+  }
+
+  fun jumpTo(row: QuranRow) {
+    val location = if (row.isAyahBookmark || row.isHighlightedAyah) {
+      SuraAyah(row.sura, row.ayah)
+    } else {
+      Page(row.page)
+    }
+    quranNavigator.jumpTo(location, row.readingBookmarkType, settings.wasShowingTranslation)
   }
 
   private fun gotoPageDialog() {
