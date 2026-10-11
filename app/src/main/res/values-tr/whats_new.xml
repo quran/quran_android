@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Yenilikler</string>
+  <string name="whats_new_continue">Devam</string>
+  <string name="icon_announcement_title">Yeni bir simge</string>
+  <string name="icon_announcement_body">Bir sonraki güncellememizde, ana ekranınızdaki Quran uygulamasının simgesi değişecek. Bu yeni simge artık Allah\'ın kelamı etrafında inşa edilmiş bir araç ailesinin ortak işaretidir. Daha fazla ayrıntı yakında.</string>
+  <string name="icon_announcement_now">ŞİMDİ</string>
+  <string name="icon_announcement_coming_soon">YAKINDA</string>
+  <string name="icon_announcement_same_app_title">Aynı uygulama, yeni simge</string>
+  <string name="icon_announcement_same_app_body">Tüm yer imleriniz, ilerlemeniz ve ayarlarınız tam olarak oldukları yerde kalacak.</string>
+  <string name="icon_announcement_release_title">Bir sonraki sürümde geliyor</string>
+  <string name="icon_announcement_release_body">Yeni simge bir sonraki güncellemeyle gelecek.</string>
+  <string name="icon_announcement_current_icon">Mevcut Quran uygulaması simgesi</string>
+  <string name="icon_announcement_upcoming_icon">Yeni Quran uygulaması simgesi</string>
+</resources>

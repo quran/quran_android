@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.model.bookmark
 
 import com.quran.data.model.bookmark.BookmarkData
+import com.quran.mobile.bookmark.time.legacyTimestampMillis
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.JsonReader
@@ -10,6 +11,7 @@ import dev.zacsweers.metro.Inject
 import okio.BufferedSink
 import okio.BufferedSource
 import java.io.IOException
+import kotlin.time.Instant
 
 internal class BookmarkJsonModel @Inject constructor() {
   private val jsonAdapter: JsonAdapter<BookmarkData>
@@ -17,6 +19,7 @@ internal class BookmarkJsonModel @Inject constructor() {
   init {
     val moshi = Moshi.Builder()
       .add(String::class.java, LegacyBackupStringAdapter)
+      .add(Instant::class.java, LegacyBackupInstantAdapter)
       .build()
     jsonAdapter = moshi.adapter(BookmarkData::class.java)
   }
@@ -34,6 +37,25 @@ internal class BookmarkJsonModel @Inject constructor() {
   @Throws(IOException::class)
   fun fromJson(jsonSource: BufferedSource): BookmarkData {
     return jsonAdapter.fromJson(jsonSource)!!
+  }
+
+  private object LegacyBackupInstantAdapter : JsonAdapter<Instant>() {
+    override fun fromJson(reader: JsonReader): Instant? {
+      return when (reader.peek()) {
+        JsonReader.Token.NULL -> reader.nextNull()
+        JsonReader.Token.NUMBER ->
+          Instant.fromEpochMilliseconds(reader.nextLong().legacyTimestampMillis())
+        else -> throw JsonDataException("Expected epoch seconds or milliseconds at ${reader.path}")
+      }
+    }
+
+    override fun toJson(writer: JsonWriter, value: Instant?) {
+      if (value == null) {
+        writer.nullValue()
+      } else {
+        writer.value(value.epochSeconds)
+      }
+    }
   }
 
   /**

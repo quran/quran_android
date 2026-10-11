@@ -94,7 +94,7 @@ public class HighlightingImageView extends AppCompatImageView {
       () -> currentHighlights,
       c -> { super.onDraw(c); return Unit.INSTANCE; },
       () -> isNightMode,
-      UNDERLAY
+      UNDERLAY, UNDERLINE
   );
 
   // Draws highlights that need to run before the page image is drawn (to apply clippings)
@@ -114,7 +114,7 @@ public class HighlightingImageView extends AppCompatImageView {
       () -> currentHighlights,
       c -> { super.onDraw(c); return null; },
       () -> isNightMode,
-      HIGHLIGHT, BACKGROUND, UNDERLINE
+      HIGHLIGHT, BACKGROUND
   );
 
   private final ImageDrawHelper glyphBoundsDebuggingDrawer = DEBUG_BOUNDS ?

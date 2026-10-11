@@ -1,7 +1,9 @@
 package com.quran.labs.androidquran.model.quran
 
 import android.graphics.RectF
+import androidx.core.graphics.plus
 import com.quran.data.di.ActivityScope
+import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider
 import com.quran.page.common.data.AyahBounds
 import com.quran.page.common.data.AyahCoordinates
@@ -14,7 +16,10 @@ import kotlin.math.max
 import kotlin.math.min
 
 @ActivityScope
-class CoordinatesModel @Inject internal constructor(private val ayahInfoDatabaseProvider: AyahInfoDatabaseProvider) : CoordinatesModelInterface {
+class CoordinatesModel @Inject internal constructor(
+  private val ayahInfoDatabaseProvider: AyahInfoDatabaseProvider,
+  private val pageProvider: PageProvider
+) : CoordinatesModelInterface {
   override fun getPageCoordinates(wantPageBounds: Boolean, vararg pages: Int): Observable<PageCoordinates> {
     val database = ayahInfoDatabaseProvider.getAyahInfoHandler()
       ?: return Observable.error(NoSuchElementException("No AyahInfoDatabaseHandler found!"))
@@ -48,6 +53,8 @@ class CoordinatesModel @Inject internal constructor(private val ayahInfoDatabase
 
   private fun normalizePageAyahs(ayahCoordinates: AyahCoordinates): AyahCoordinates {
     val original = ayahCoordinates.ayahCoordinates
+    // computed first, since normalizing modifies the original bounds
+    val ayahLineCoordinates = alignWithLines(original)
     val normalizedMap: MutableMap<String, List<AyahBounds>> = HashMap()
     val keys = original.keys
     for (key in keys) {
@@ -56,7 +63,28 @@ class CoordinatesModel @Inject internal constructor(private val ayahInfoDatabase
         normalizedMap[key] = normalizeAyahBounds(normalBounds)
       }
     }
-    return AyahCoordinates(ayahCoordinates.page, normalizedMap, ayahCoordinates.glyphCoordinates)
+    return AyahCoordinates(
+      ayahCoordinates.page,
+      normalizedMap,
+      ayahCoordinates.glyphCoordinates,
+      ayahLineCoordinates,
+      pageProvider.ayahUnderlineRaiseRatio()
+    )
+  }
+
+  private fun alignWithLines(ayahCoordinates: Map<String, List<AyahBounds>>): Map<String, List<AyahBounds>> {
+    val lineBounds = ayahCoordinates.values
+      .flatten()
+      .groupBy { it.line }
+      .mapValues { (_, bounds) -> bounds.fold(RectF()) { line, bound -> line + bound.bounds } }
+
+    return ayahCoordinates.mapValues { (_, bounds) ->
+      bounds.map { bound ->
+        val line = lineBounds.getValue(bound.line)
+        val ayahBounds = bound.bounds
+        bound.withBounds(RectF(ayahBounds.left, line.top, ayahBounds.right, line.bottom))
+      }
+    }
   }
 
   private fun normalizeAyahBounds(ayahBounds: List<AyahBounds>): List<AyahBounds> {

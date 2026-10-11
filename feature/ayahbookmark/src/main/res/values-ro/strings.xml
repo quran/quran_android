@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="ayahbookmark_done">Terminat</string>
-  <string name="ayahbookmark_reading_bookmark_title">Semn de carte pentru citire</string>
-  <string name="ayahbookmark_reading_bookmark_subtitle">Unde ai rămas</string>
-  <string name="ayahbookmark_reading_bookmark_currently_at">În prezent la %1$s</string>
-  <string name="ayahbookmark_reading_bookmark_will_move_from">Se va muta din %1$s</string>
   <string name="ayahbookmark_collections_header">Colecții</string>
   <string name="ayahbookmark_new_collection">Colecție nouă</string>
   <string name="ayahbookmark_collection_name_hint">Numele colecției</string>
@@ -13,6 +9,5 @@
   <string name="ayahbookmark_saved">Salvat</string>
   <string name="ayahbookmark_not_saved">Nesalvat</string>
   <string name="ayahbookmark_highlight_title">Evidențiere</string>
-  <string name="ayahbookmark_highlight_subtitle">Colorează versetul pe pagină</string>
   <string name="ayahbookmark_highlight_none">Niciuna</string>
 </resources>

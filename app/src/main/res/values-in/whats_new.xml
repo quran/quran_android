@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Yang baru</string>
+  <string name="whats_new_continue">Lanjutkan</string>
+  <string name="icon_announcement_title">Ikon baru</string>
+  <string name="icon_announcement_body">Pada pembaruan berikutnya, ikon aplikasi Quran di Layar Utama Anda akan berubah. Ikon baru ini kini menjadi tanda bersama dari keluarga alat yang dibangun seputar firman Allah. Detail lebih lanjut segera hadir.</string>
+  <string name="icon_announcement_now">SEKARANG</string>
+  <string name="icon_announcement_coming_soon">SEGERA HADIR</string>
+  <string name="icon_announcement_same_app_title">Aplikasi yang sama, ikon baru</string>
+  <string name="icon_announcement_same_app_body">Semua penanda, kemajuan, dan pengaturan Anda tetap berada di tempatnya.</string>
+  <string name="icon_announcement_release_title">Hadir di rilis berikutnya</string>
+  <string name="icon_announcement_release_body">Ikon baru akan hadir pada pembaruan berikutnya.</string>
+  <string name="icon_announcement_current_icon">Ikon aplikasi Quran saat ini</string>
+  <string name="icon_announcement_upcoming_icon">Ikon aplikasi Quran yang akan datang</string>
+</resources>

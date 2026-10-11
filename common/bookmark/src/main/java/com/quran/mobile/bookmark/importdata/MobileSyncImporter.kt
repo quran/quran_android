@@ -1,10 +1,10 @@
-@file:OptIn(kotlin.time.ExperimentalTime::class)
-
 package com.quran.mobile.bookmark.importdata
 
+import android.content.Context
 import com.quran.data.di.AppScope
+import com.quran.mobile.bookmark.R
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
-import com.quran.shared.persistence.input.ImportAyahBookmark
+import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.shared.persistence.input.ImportCollection
 import com.quran.shared.persistence.input.ImportCollectionAyahBookmark
 import com.quran.shared.persistence.input.ImportReadingBookmark
@@ -28,7 +28,8 @@ interface MobileSyncImporter {
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 class MobileSyncImporterImpl @Inject constructor(
-  mobileSyncDatabase: MobileSyncDatabase
+  mobileSyncDatabase: MobileSyncDatabase,
+  @param:ApplicationContext private val appContext: Context
 ) : MobileSyncImporter {
 
   private val importRepository = PersistenceImportRepositoryImpl(mobileSyncDatabase.database)
@@ -38,35 +39,64 @@ class MobileSyncImporterImpl @Inject constructor(
     deleteExisting: Boolean
   ): MobileSyncImportResult {
     return importRepository
-      .importData(data.toPersistenceImportData(), deleteExisting = deleteExisting)
+      .importData(data.toPersistenceImportData(appContext), deleteExisting = deleteExisting)
       .toMobileSyncImportResult()
   }
 }
 
-fun MobileSyncImportData.toPersistenceImportData(): PersistenceImportData {
+fun MobileSyncImportData.toPersistenceImportData(appContext: Context): PersistenceImportData {
+  val bookmarksByImportId = bookmarks.associateBy { it.importId }
+  val collectionsByName = collections.groupBy { collection ->
+    if (collection.name.trim().lowercase() in RESERVED_COLLECTION_NAMES) {
+      appContext.getString(R.string.imported_collection_name, collection.name)
+    } else {
+      collection.name
+    }
+  }
+  val mergedCollectionIds = collectionsByName.values
+    .flatMap { group -> group.map { it.importId to group.first().importId } }
+    .toMap()
+
+  val favoritesImportId = generateSequence("import-favorites") { "$it-" }
+    .first { it !in mergedCollectionIds }
   return PersistenceImportData(
-    bookmarks = bookmarks.map { bookmark ->
-      ImportAyahBookmark(
-        importId = bookmark.importId,
+    collections = buildList {
+      if (bookmarks.isNotEmpty()) {
+        add(ImportCollection(
+          importId = favoritesImportId,
+          name = "Favorites",
+          lastUpdated = bookmarks.maxOf { it.timestampMillis }.toPlatformDateTime()
+        ))
+      }
+      collectionsByName.forEach { (name, group) ->
+        add(ImportCollection(
+          importId = group.first().importId,
+          name = name,
+          lastUpdated = group.maxOf { it.timestampMillis }.toPlatformDateTime()
+        ))
+      }
+    },
+    collectionBookmarks = bookmarks.map { bookmark ->
+      ImportCollectionAyahBookmark(
+        collectionImportId = favoritesImportId,
         sura = bookmark.sura,
         ayah = bookmark.ayah,
         lastUpdated = bookmark.timestampMillis.toPlatformDateTime()
       )
-    },
-    collections = collections.map { collection ->
-      ImportCollection(
-        importId = collection.importId,
-        name = collection.name,
-        lastUpdated = collection.timestampMillis.toPlatformDateTime()
-      )
-    },
-    collectionBookmarks = collectionBookmarks.map { collectionBookmark ->
-      ImportCollectionAyahBookmark(
-        collectionImportId = collectionBookmark.collectionImportId,
-        bookmarkImportId = collectionBookmark.bookmarkImportId,
-        lastUpdated = collectionBookmark.timestampMillis.toPlatformDateTime()
-      )
-    },
+    } + collectionBookmarks
+      .groupBy { membership ->
+        val collectionId = mergedCollectionIds[membership.collectionImportId] ?: membership.collectionImportId
+        collectionId to membership.bookmarkImportId
+      }
+      .map { (ids, memberships) ->
+        val bookmark = bookmarksByImportId.getValue(ids.second)
+        ImportCollectionAyahBookmark(
+          collectionImportId = ids.first,
+          sura = bookmark.sura,
+          ayah = bookmark.ayah,
+          lastUpdated = memberships.maxOf { it.timestampMillis }.toPlatformDateTime()
+        )
+      },
     readingSessions = readingSessions.map { readingSession ->
       ImportReadingSession(
         sura = readingSession.sura,
@@ -74,20 +104,33 @@ fun MobileSyncImportData.toPersistenceImportData(): PersistenceImportData {
         lastUpdated = readingSession.timestampMillis.toPlatformDateTime()
       )
     },
-    readingBookmark = readingBookmark?.toImportReadingBookmark()
+    readingBookmarks = readingBookmarks.map { it.toImportReadingBookmark() }
   )
 }
+
+private val RESERVED_COLLECTION_NAMES = setOf(
+  "favorites",
+  "system:highlights:blue",
+  "system:highlights:red",
+  "system:highlights:green",
+  "system:highlights:yellow",
+  "system:highlights:purple"
+)
 
 private fun MobileSyncImportReadingBookmark.toImportReadingBookmark(): ImportReadingBookmark {
   return when (this) {
     is MobileSyncImportReadingBookmark.Ayah -> ImportReadingBookmark.Ayah(
+      slot = slot,
       sura = sura,
       ayah = ayah,
-      lastUpdated = timestampMillis.toPlatformDateTime()
+      lastUpdated = timestampMillis.toPlatformDateTime(),
+      name = name
     )
     is MobileSyncImportReadingBookmark.Page -> ImportReadingBookmark.Page(
+      slot = slot,
       page = page,
-      lastUpdated = timestampMillis.toPlatformDateTime()
+      lastUpdated = timestampMillis.toPlatformDateTime(),
+      name = name
     )
   }
 }
@@ -98,7 +141,7 @@ fun PersistenceImportResult.toMobileSyncImportResult(): MobileSyncImportResult {
     collectionsImported = collectionsImported,
     collectionBookmarksImported = collectionBookmarksImported,
     readingSessionsImported = readingSessionsImported,
-    readingBookmarkImported = readingBookmarkImported
+    readingBookmarkImported = readingBookmarksImported
   )
 }
 

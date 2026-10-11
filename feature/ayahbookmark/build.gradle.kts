@@ -6,6 +6,8 @@ plugins {
 android.namespace = "com.quran.mobile.feature.ayahbookmark"
 
 dependencies {
+  implementation(libs.androidx.activity.compose)
+
   implementation(project(":common:data"))
   implementation(project(":common:pages"))
   implementation(project(":common:ui:core"))

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Újdonságok</string>
+  <string name="whats_new_continue">Tovább</string>
+  <string name="icon_announcement_title">Új ikon</string>
+  <string name="icon_announcement_body">A következő frissítésünkkel megváltozik a Quran alkalmazás ikonja a kezdőképernyőn. Ez az új ikon mostantól Allah szava köré épülő eszközcsalád közös jelképe. További részletek hamarosan.</string>
+  <string name="icon_announcement_now">MOST</string>
+  <string name="icon_announcement_coming_soon">HAMAROSAN</string>
+  <string name="icon_announcement_same_app_title">Ugyanaz az alkalmazás, új ikon</string>
+  <string name="icon_announcement_same_app_body">Minden könyvjelződ, előrehaladásod és beállításod pontosan ott marad, ahol van.</string>
+  <string name="icon_announcement_release_title">A következő kiadásban érkezik</string>
+  <string name="icon_announcement_release_body">Az új ikon a következő frissítéssel érkezik.</string>
+  <string name="icon_announcement_current_icon">A Quran alkalmazás jelenlegi ikonja</string>
+  <string name="icon_announcement_upcoming_icon">A Quran alkalmazás új ikonja</string>
+</resources>
