@@ -35,6 +35,15 @@
   <string name="menu_help">Help</string>
   <string name="menu_search">Search</string>
   <string name="menu_get_translations">Get Translations</string>
+  <string name="hifz_toggle_description">Toggle memorization mode</string>
+  <string name="hifz_reveal_word_label">&gt;</string>
+  <string name="hifz_reveal_word_description">Reveal next word</string>
+  <string name="hifz_reveal_verse_label">&gt;&gt;</string>
+  <string name="hifz_reveal_verse_description">Reveal next verse</string>
+  <string name="hifz_rehide_word_label">&lt;</string>
+  <string name="hifz_rehide_word_description">Re-hide last revealed word</string>
+  <string name="hifz_rehide_verse_label">&lt;&lt;</string>
+  <string name="hifz_rehide_verse_description">Re-hide last revealed verse</string>
   <string name="menu_jump">@string/gotoPage</string>
   <string name="gotoPage">Go to page</string>
   <string name="sura_and_ayah">Sura and Ayah</string>
