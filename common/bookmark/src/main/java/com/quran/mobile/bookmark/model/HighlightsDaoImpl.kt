@@ -6,8 +6,8 @@ import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
-import com.quran.mobile.bookmark.mapper.toPlatform
 import com.quran.mobile.bookmark.mapper.fromPlatform
+import com.quran.mobile.bookmark.mapper.toPlatform
 import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
 import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepository
 import dev.zacsweers.metro.ContributesBinding
@@ -17,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
@@ -30,13 +29,18 @@ class HighlightsDaoImpl @Inject constructor(
   appCoroutineScope: AppCoroutineScope
 ) : HighlightsDao {
 
-  private val highlightsDataState: StateFlow<List<Highlight>?> =
+  private val highlightsDataState: StateFlow<List<Highlight>> =
     collectionBookmarksRepository.getHighlightsFlow()
       .map { it.map { highlight -> highlight.fromPlatform() } }
-      .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
+      .stateIn(appCoroutineScope, SharingStarted.Eagerly, emptyList())
 
   override fun highlightsFlow(): Flow<List<Highlight>> {
-    return highlightsDataState.filterNotNull()
+    return highlightsDataState
+  }
+
+  override fun highlightsFlow(currentAyah: SuraAyah): Flow<Highlight?> {
+    return highlightsDataState
+      .map { highlights -> highlights.firstOrNull { it.suraAyah == currentAyah } }
   }
 
   override suspend fun setHighlight(ayah: SuraAyah, color: HighlightColor) {

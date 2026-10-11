@@ -22,6 +22,8 @@ import com.quran.mobile.linebyline.data.dao.AyahMarkerInfo
 import com.quran.mobile.linebyline.data.dao.SuraHeader
 import com.quran.mobile.linebyline.ui.renderer.composable.QuranLineLayout
 import com.quran.mobile.linebyline.ui.renderer.composable.QuranPageLayout
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
 @Composable
@@ -35,6 +37,7 @@ fun QuranPage(
   suraHeaderComposable: @Composable (SuraHeader) -> Unit,
   ayahMarkerInfoComposable: @Composable (AyahMarkerInfo) -> Unit,
   highlightComposable: @Composable (AyahHighlight, Color) -> Unit,
+  readingBookmarkComposable: @Composable (AyahHighlight, ImmutableList<Color>) -> Unit,
   sidelinesComposable: @Composable () -> Unit,
   onPagePositioned: (Float, Float, Int, Int) -> Unit,
   onSelectionStart: (Float, Float) -> Unit,
@@ -88,6 +91,11 @@ fun QuranPage(
             val color = highlightAyah.highlightType.paintColor(isNightMode)
             highlightAyah.ayahHighlights.forEach { highlightComposable(it, color) }
           }
+
+        pageInfo.readingBookmarks.forEach { readingBookmark ->
+          val colors = readingBookmark.slots.map { it.paintColor(isNightMode) }.toImmutableList()
+          readingBookmark.ayahHighlights.forEach { readingBookmarkComposable(it, colors) }
+        }
 
         QuranLineLayout(
           lineHeightWidthRatio = ratio,

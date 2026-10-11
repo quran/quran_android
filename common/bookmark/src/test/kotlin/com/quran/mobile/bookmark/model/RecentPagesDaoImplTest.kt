@@ -22,6 +22,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.RobolectricTestRunner
+import kotlin.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
 class RecentPagesDaoImplTest {
@@ -77,7 +78,7 @@ class RecentPagesDaoImplTest {
     assertThat(sessions).hasSize(1)
     assertThat(sessions.single().sura).isEqualTo(pageBounds[0])
     assertThat(sessions.single().ayah).isEqualTo(pageBounds[1])
-    assertThat(recentPages.single().timestamp).isEqualTo(timestampProvider.timestampSeconds)
+    assertThat(recentPages.single().timestamp).isEqualTo(timestampProvider.now())
   }
 
   @Test
@@ -133,10 +134,10 @@ class RecentPagesDaoImplTest {
   fun `replace recent pages preserves provided newest first order`() = runTest {
     dao.replaceRecentPages(
       listOf(
-        RecentPage(10, 1),
-        RecentPage(20, 1),
-        RecentPage(30, 1),
-        RecentPage(40, 1)
+        RecentPage(10, Instant.fromEpochSeconds(1)),
+        RecentPage(20, Instant.fromEpochSeconds(1)),
+        RecentPage(30, Instant.fromEpochSeconds(1)),
+        RecentPage(40, Instant.fromEpochSeconds(1))
       )
     )
 
@@ -152,9 +153,9 @@ class RecentPagesDaoImplTest {
 
     dao.replaceRecentPages(
       listOf(
-        RecentPage(10, 1),
-        RecentPage(20, 1),
-        RecentPage(30, 1)
+        RecentPage(10, Instant.fromEpochSeconds(1)),
+        RecentPage(20, Instant.fromEpochSeconds(1)),
+        RecentPage(30, Instant.fromEpochSeconds(1))
       )
     )
 

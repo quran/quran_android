@@ -1,11 +1,14 @@
 package com.quran.labs.androidquran.ui.helpers
 
+import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT
 import com.quran.data.model.highlight.HighlightType.Mode.UNDERLAY
+import com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.ui.core.HighlightColors
+import com.quran.mobile.common.ui.core.R as UiCoreR
 
 object HighlightTypes {
 
@@ -28,6 +31,33 @@ object HighlightTypes {
   val highlights: Collection<HighlightType> = HIGHLIGHTS.values
 
   operator fun get(highlightColor: HighlightColor): HighlightType = HIGHLIGHTS.getValue(highlightColor)
+
+  private val FIRST_READING_BOOKMARK_ID = FIRST_HIGHLIGHT_ID + HIGHLIGHTS.size
+
+  private val READING_BOOKMARKS: Map<ReadingBookmarkType, HighlightType> = mapOf(
+    ReadingBookmarkType.GREEN to HighlightType(
+      FIRST_READING_BOOKMARK_ID,
+      UiCoreR.color.reading_bookmark_page_green,
+      UNDERLINE,
+      nightColorResId = UiCoreR.color.reading_bookmark_page_green_night
+    ),
+    ReadingBookmarkType.PURPLE to HighlightType(
+      FIRST_READING_BOOKMARK_ID + 1,
+      UiCoreR.color.reading_bookmark_page_purple,
+      UNDERLINE,
+      nightColorResId = UiCoreR.color.reading_bookmark_page_purple_night
+    ),
+    ReadingBookmarkType.BLUE to HighlightType(
+      FIRST_READING_BOOKMARK_ID + 2,
+      UiCoreR.color.reading_bookmark_page_blue,
+      UNDERLINE,
+      nightColorResId = UiCoreR.color.reading_bookmark_page_blue_night
+    )
+  )
+
+  val readingBookmarks: Collection<HighlightType> = READING_BOOKMARKS.values
+
+  operator fun get(slot: ReadingBookmarkType): HighlightType = READING_BOOKMARKS.getValue(slot)
 
   fun getAnimationConfig(type: HighlightType): HighlightAnimationConfig = when(type) {
     AUDIO -> HighlightAnimationConfig.Audio

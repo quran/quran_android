@@ -162,6 +162,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">تعیین برچسب برای نشانک</string>
   <string name="delete_tag">حذف برچسب</string>
+  <string name="delete">حذف</string>
   <string name="edit_tag">تغییر برچسب</string>
   <string name="new_tag">برچسب جدید</string>
 
@@ -251,8 +252,6 @@
   <string name="reading_bookmark_movable_education_title">این یک نشانک مطالعه قابل‌جابجایی است</string>
   <string name="reading_bookmark_movable_education_body">ذخیره نشانک مطالعه، نشانک قبلی را جایگزین می‌کند. برای ذخیره چند آیه، روی یک آیه فشار طولانی دهید و آن را به یک مجموعه اضافه کنید.</string>
   <string name="reading_bookmark_moved_from">جابجا شده از %1$s</string>
-  <string name="reading_bookmark_moved_from_title">نشانک از %1$s جابجا شد</string>
-  <string name="reading_bookmark_added">نشانک اضافه شد</string>
   <string name="reading_bookmark_dismiss_education">رد کردن</string>
   <string name="warning">هشدار</string>
 

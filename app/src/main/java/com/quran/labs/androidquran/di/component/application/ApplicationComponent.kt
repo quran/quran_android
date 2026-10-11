@@ -31,6 +31,7 @@ import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment
 import com.quran.labs.androidquran.ui.fragment.RandomAyahRangeDialogFragment
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
+import com.quran.labs.androidquran.ui.helpers.QuranNavigator
 import com.quran.labs.androidquran.widget.BookmarksWidget
 import com.quran.labs.androidquran.widget.BookmarksWidgetListProvider
 import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
@@ -57,6 +58,7 @@ import dev.zacsweers.metro.SingleIn
 interface ApplicationComponent : QuranApplicationComponent {
   // subcomponents
   fun activityComponentFactory(): ActivityComponent.Factory
+  fun quranNavigatorFactory(): QuranNavigator.Factory
 
   // application
   fun inject(quranApplication: QuranApplication)

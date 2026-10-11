@@ -311,6 +311,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Xatchoʻpni teglash</string>
   <string name="delete_tag">Tegni oʻchirish</string>
+  <string name="delete">Oʻchirish</string>
   <string name="edit_tag">Tegni tahrir qilish</string>
   <string name="new_tag">Yangi teg</string>
   <plurals name="bookmark_tag_deleted">
@@ -325,8 +326,6 @@
   <string name="reading_bookmark_movable_education_title">Bu koʻchiriladigan oʻqish xatchoʻpi</string>
   <string name="reading_bookmark_movable_education_body">Oʻqish xatchoʻpini saqlash eskisining oʻrnini bosadi. Bir nechta oyatni saqlash uchun oyatni bosib turing va toʻplamga qoʻshing.</string>
   <string name="reading_bookmark_moved_from">%1$s dan koʻchirildi</string>
-  <string name="reading_bookmark_moved_from_title">Xatchoʻp %1$s dan koʻchirildi</string>
-  <string name="reading_bookmark_added">Xatchoʻp qoʻshildi</string>
   <string name="reading_bookmark_dismiss_education">Yopish</string>
 
   <string name="recent_pages">Soʻnggi sahifalar</string>

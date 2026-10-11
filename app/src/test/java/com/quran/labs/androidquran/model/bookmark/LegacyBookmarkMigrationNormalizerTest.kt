@@ -17,6 +17,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.time.Instant
 
 @Config(application = TestApplication::class, sdk = [33])
 @RunWith(RobolectricTestRunner::class)
@@ -115,7 +116,10 @@ class LegacyBookmarkMigrationNormalizerTest {
       LegacyBookmarksSnapshot(
         tags = emptyList(),
         bookmarks = emptyList(),
-        recentPages = listOf(RecentPage(50, 1000L), RecentPage(51, 900L))
+        recentPages = listOf(
+          RecentPage(50, Instant.fromEpochSeconds(1000L)),
+          RecentPage(51, Instant.fromEpochSeconds(900L))
+        )
       )
     )
 
@@ -148,7 +152,7 @@ class LegacyBookmarkMigrationNormalizerTest {
             tags = listOf(legacyTagId(10L))
           )
         ),
-        recentPages = listOf(RecentPage(page, timestampMillis))
+        recentPages = listOf(RecentPage(page, Instant.fromEpochMilliseconds(timestampMillis)))
       )
     )
 
