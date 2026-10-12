@@ -82,13 +82,13 @@ private fun ReadingBookmarkSheetPagePreview() {
     previewState(
       target = ReadingBookmarkTarget.Page(77),
       bookmarks = mapOf(
-        ReadingBookmarkType.GREEN to PageReadingBookmark(
-          ReadingBookmarkType.GREEN, 77, Clock.System.now()
+        ReadingBookmarkType.TEAL to PageReadingBookmark(
+          ReadingBookmarkType.TEAL, 77, Clock.System.now()
         ),
-        ReadingBookmarkType.PURPLE to AyahReadingBookmark(
-          ReadingBookmarkType.PURPLE, 4, 6, Clock.System.now()
+        ReadingBookmarkType.ORANGE to AyahReadingBookmark(
+          ReadingBookmarkType.ORANGE, 4, 6, Clock.System.now()
         ),
-        ReadingBookmarkType.BLUE to null
+        ReadingBookmarkType.RED to null
       )
     )
   )
@@ -115,13 +115,13 @@ private fun ReadingBookmarkSheetAyahPreview() {
       target = ReadingBookmarkTarget.Ayah(SuraAyah(4, 6)),
       isNested = true,
       bookmarks = mapOf(
-        ReadingBookmarkType.GREEN to PageReadingBookmark(
-          ReadingBookmarkType.GREEN, 77, Clock.System.now()
+        ReadingBookmarkType.TEAL to PageReadingBookmark(
+          ReadingBookmarkType.TEAL, 77, Clock.System.now()
         ),
-        ReadingBookmarkType.PURPLE to AyahReadingBookmark(
-          ReadingBookmarkType.PURPLE, 4, 6, Clock.System.now()
+        ReadingBookmarkType.ORANGE to AyahReadingBookmark(
+          ReadingBookmarkType.ORANGE, 4, 6, Clock.System.now()
         ),
-        ReadingBookmarkType.BLUE to null
+        ReadingBookmarkType.RED to null
       )
     )
   )
@@ -135,15 +135,15 @@ private fun ReadingBookmarkSheetEditingPreview() {
     previewState(
       target = ReadingBookmarkTarget.Page(77),
       isEditing = true,
-      names = mapOf(ReadingBookmarkType.GREEN to "Tafsir study"),
+      names = mapOf(ReadingBookmarkType.TEAL to "Tafsir study"),
       bookmarks = mapOf(
-        ReadingBookmarkType.GREEN to PageReadingBookmark(
-          ReadingBookmarkType.GREEN, 77, Clock.System.now()
+        ReadingBookmarkType.TEAL to PageReadingBookmark(
+          ReadingBookmarkType.TEAL, 77, Clock.System.now()
         ),
-        ReadingBookmarkType.PURPLE to AyahReadingBookmark(
-          ReadingBookmarkType.PURPLE, 4, 6, Clock.System.now()
+        ReadingBookmarkType.ORANGE to AyahReadingBookmark(
+          ReadingBookmarkType.ORANGE, 4, 6, Clock.System.now()
         ),
-        ReadingBookmarkType.BLUE to null
+        ReadingBookmarkType.RED to null
       )
     )
   )

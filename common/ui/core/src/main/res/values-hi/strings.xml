@@ -4,6 +4,6 @@
   <string name="highlight_color_yellow">पीला</string>
   <string name="highlight_color_green">हरा</string>
   <string name="highlight_color_blue">नीला</string>
-  <string name="highlight_color_red">लाल</string>
   <string name="highlight_color_purple">बैंगनी</string>
+  <string name="reading_bookmark_red">लाल</string>
 </resources>

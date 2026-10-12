@@ -150,9 +150,9 @@ class BookmarkBackupImportNormalizer @Inject constructor(
 
   private fun ReadingBookmarkType.asBookmarkSlot(): ReadingBookmarkSlot {
     return when (this) {
-      ReadingBookmarkType.GREEN -> ReadingBookmarkSlot.GREEN
-      ReadingBookmarkType.PURPLE -> ReadingBookmarkSlot.PURPLE
-      ReadingBookmarkType.BLUE -> ReadingBookmarkSlot.BLUE
+      ReadingBookmarkType.TEAL -> ReadingBookmarkSlot.TEAL
+      ReadingBookmarkType.ORANGE -> ReadingBookmarkSlot.ORANGE
+      ReadingBookmarkType.RED -> ReadingBookmarkSlot.RED
     }
   }
 

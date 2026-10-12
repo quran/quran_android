@@ -114,7 +114,7 @@ class BookmarkPresenterTest {
 
   @Test
   fun `renders reading bookmark ahead of recent pages`() {
-    val readingBookmark = PageReadingBookmark(ReadingBookmarkType.PURPLE, 42, Instant.fromEpochSeconds(300))
+    val readingBookmark = PageReadingBookmark(ReadingBookmarkType.ORANGE, 42, Instant.fromEpochSeconds(300))
     fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
     fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
     fakeReadingBookmarksDao.setReadingBookmark(readingBookmark)
@@ -132,13 +132,13 @@ class BookmarkPresenterTest {
 
   @Test
   fun `renders every placed reading bookmark in pin order and leaves unplaced ones out`() {
-    val blue =
-      AyahReadingBookmark(ReadingBookmarkType.BLUE, 2, 255, Instant.fromEpochSeconds(400))
-    val green = PageReadingBookmark(ReadingBookmarkType.GREEN, 77, Instant.fromEpochSeconds(300))
+    val red =
+      AyahReadingBookmark(ReadingBookmarkType.RED, 2, 255, Instant.fromEpochSeconds(400))
+    val teal = PageReadingBookmark(ReadingBookmarkType.TEAL, 77, Instant.fromEpochSeconds(300))
     fakeReadingBookmarksDao = FakeReadingBookmarksDao(
-      blue,
-      EmptyReadingBookmark(ReadingBookmarkType.PURPLE, Instant.fromEpochSeconds(500)),
-      green
+      red,
+      EmptyReadingBookmark(ReadingBookmarkType.ORANGE, Instant.fromEpochSeconds(500)),
+      teal
     )
     fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
 
@@ -146,8 +146,8 @@ class BookmarkPresenterTest {
 
     assertThat(result.rows.take(4)).containsExactly(
       BookmarkRowData.ReadingBookmarkHeader(2),
-      BookmarkRowData.ReadingBookmarkItem(green),
-      BookmarkRowData.ReadingBookmarkItem(blue),
+      BookmarkRowData.ReadingBookmarkItem(teal),
+      BookmarkRowData.ReadingBookmarkItem(red),
       BookmarkRowData.RecentPageHeader(RECENT_PAGES.size)
     ).inOrder()
   }
@@ -155,7 +155,7 @@ class BookmarkPresenterTest {
   @Test
   fun `omits the reading bookmarks section when no pin is placed`() {
     fakeReadingBookmarksDao = FakeReadingBookmarksDao(
-      EmptyReadingBookmark(ReadingBookmarkType.GREEN, Instant.fromEpochSeconds(500))
+      EmptyReadingBookmark(ReadingBookmarkType.TEAL, Instant.fromEpochSeconds(500))
     )
     fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
 
@@ -297,7 +297,7 @@ class BookmarkPresenterTest {
   @Test
   fun `a selected reading bookmark can only be deleted, alone or alongside other rows`() {
     val presenter = makeBookmarkPresenter()
-    val readingBookmark = readingBookmarkRow(ReadingBookmarkType.GREEN)
+    val readingBookmark = readingBookmarkRow(ReadingBookmarkType.TEAL)
 
     val alone = presenter.getContextualOperationsForItems(listOf(readingBookmark))
     val withBookmark = presenter.getContextualOperationsForItems(
@@ -328,34 +328,34 @@ class BookmarkPresenterTest {
 
   @Test
   fun `deleting a reading bookmark drops it and the section count while the undo window is open`() {
-    val green = PageReadingBookmark(ReadingBookmarkType.GREEN, 77, Instant.fromEpochSeconds(300))
-    val blue = AyahReadingBookmark(ReadingBookmarkType.BLUE, 2, 255, Instant.fromEpochSeconds(400))
-    fakeReadingBookmarksDao = FakeReadingBookmarksDao(green, blue)
+    val teal = PageReadingBookmark(ReadingBookmarkType.TEAL, 77, Instant.fromEpochSeconds(300))
+    val red = AyahReadingBookmark(ReadingBookmarkType.RED, 2, 255, Instant.fromEpochSeconds(400))
+    fakeReadingBookmarksDao = FakeReadingBookmarksDao(teal, red)
     fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
     val presenter = makeBookmarkPresenter()
     val current = getBookmarkResultByDateAndValidate(presenter)
 
     val preview = presenter.previewAfterDeletion(
-      current, listOf(readingBookmarkRow(ReadingBookmarkType.GREEN))
+      current, listOf(readingBookmarkRow(ReadingBookmarkType.TEAL))
     )
 
     assertThat(preview.rows.take(3)).containsExactly(
       BookmarkRowData.ReadingBookmarkHeader(1),
-      BookmarkRowData.ReadingBookmarkItem(blue),
+      BookmarkRowData.ReadingBookmarkItem(red),
       BookmarkRowData.RecentPageHeader(RECENT_PAGES.size)
     ).inOrder()
   }
 
   @Test
   fun `deleting the last reading bookmark takes its section header with it`() {
-    val green = PageReadingBookmark(ReadingBookmarkType.GREEN, 77, Instant.fromEpochSeconds(300))
-    fakeReadingBookmarksDao = FakeReadingBookmarksDao(green)
+    val teal = PageReadingBookmark(ReadingBookmarkType.TEAL, 77, Instant.fromEpochSeconds(300))
+    fakeReadingBookmarksDao = FakeReadingBookmarksDao(teal)
     fakeRecentPagesDao.setRecentPages(RECENT_PAGES)
     val presenter = makeBookmarkPresenter()
     val current = getBookmarkResultByDateAndValidate(presenter)
 
     val preview = presenter.previewAfterDeletion(
-      current, listOf(readingBookmarkRow(ReadingBookmarkType.GREEN))
+      current, listOf(readingBookmarkRow(ReadingBookmarkType.TEAL))
     )
 
     assertThat(preview.rows.filterIsInstance<BookmarkRowData.ReadingBookmarkHeader>()).isEmpty()
@@ -365,17 +365,17 @@ class BookmarkPresenterTest {
 
   @Test
   fun `removing a reading bookmark clears only its slot`() {
-    val green = PageReadingBookmark(ReadingBookmarkType.GREEN, 77, Instant.fromEpochSeconds(300))
-    val blue = AyahReadingBookmark(ReadingBookmarkType.BLUE, 2, 255, Instant.fromEpochSeconds(400))
-    fakeReadingBookmarksDao = FakeReadingBookmarksDao(green, blue)
+    val teal = PageReadingBookmark(ReadingBookmarkType.TEAL, 77, Instant.fromEpochSeconds(300))
+    val red = AyahReadingBookmark(ReadingBookmarkType.RED, 2, 255, Instant.fromEpochSeconds(400))
+    fakeReadingBookmarksDao = FakeReadingBookmarksDao(teal, red)
     fakeBookmarksDao.setBookmarks(AYAH_BOOKMARKS)
     val presenter = makeBookmarkPresenter()
 
     runBlocking {
-      presenter.removeItems(listOf(readingBookmarkRow(ReadingBookmarkType.GREEN)))
+      presenter.removeItems(listOf(readingBookmarkRow(ReadingBookmarkType.TEAL)))
     }
 
-    assertThat(runBlocking { fakeReadingBookmarksDao.readingBookmarks() }).containsExactly(blue)
+    assertThat(runBlocking { fakeReadingBookmarksDao.readingBookmarks() }).containsExactly(red)
     assertThat(fakeBookmarksDao.currentBookmarks().map { it.id })
       .containsExactly("bookmark-42", "bookmark-2")
   }
@@ -459,7 +459,7 @@ class BookmarkPresenterTest {
       BookmarkRowData.HighlightColorItem(HighlightColor.YELLOW, 0),
       BookmarkRowData.HighlightColorItem(HighlightColor.GREEN, 1),
       BookmarkRowData.HighlightColorItem(HighlightColor.BLUE, 2),
-      BookmarkRowData.HighlightColorItem(HighlightColor.RED, 0),
+      BookmarkRowData.HighlightColorItem(HighlightColor.PINK, 0),
       BookmarkRowData.HighlightColorItem(HighlightColor.PURPLE, 0)
     ).inOrder()
   }

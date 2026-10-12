@@ -69,7 +69,7 @@
   <color name="highlight_list_yellow">#fff9a825</color>
   <color name="highlight_list_green">#ff2e7d32</color>
   <color name="highlight_list_blue">#ff1565c0</color>
-  <color name="highlight_list_red">#ffc62828</color>
+  <color name="highlight_list_pink">#ffad1457</color>
   <color name="highlight_list_purple">#ff6a1b9a</color>
   <!-- the outline of a collection name chip - the accent colour, held back so it reads as a label -->
   <color name="tag_chip_border">#7300838f</color>

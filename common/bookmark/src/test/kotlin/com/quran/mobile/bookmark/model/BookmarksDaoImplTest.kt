@@ -476,7 +476,7 @@ class BookmarksDaoImplTest {
     collectionBookmarksRepository.setHighlight(
       sura = suraAyah.sura,
       ayah = suraAyah.ayah,
-      color = AyahHighlightColor.RED,
+      color = AyahHighlightColor.PINK,
       timestamp = timestampProvider.now()
     )
     val managedBookmarkId = database.bookmarksQueries
@@ -497,7 +497,7 @@ class BookmarksDaoImplTest {
     assertThat(storedBookmark.created_at).isEqualTo(1_000_000L)
     assertThat(bookmark.tags).containsExactly(tagId)
     assertThat(collectionBookmarksRepository.getHighlightsFlow().first().single().color)
-      .isEqualTo(AyahHighlightColor.RED)
+      .isEqualTo(AyahHighlightColor.PINK)
   }
 
   @Test

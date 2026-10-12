@@ -105,7 +105,7 @@ private const val FAVORITES_COLLECTION_NAME = "Favorites"
 private val RESERVED_COLLECTION_NAMES = setOf(
   "favorites",
   "system:highlights:blue",
-  "system:highlights:red",
+  "system:highlights:pink",
   "system:highlights:green",
   "system:highlights:yellow",
   "system:highlights:purple"

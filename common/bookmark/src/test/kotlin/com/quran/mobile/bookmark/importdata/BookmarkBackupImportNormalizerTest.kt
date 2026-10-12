@@ -17,6 +17,7 @@ import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.pages.data.warsh.WarshDataSource
 import com.quran.mobile.bookmark.model.ReadingBookmarkPageMapper
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
+import com.quran.shared.persistence.model.ReadingBookmarkSlot
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.runTest
@@ -54,6 +55,34 @@ class BookmarkBackupImportNormalizerTest {
   }
 
   @Test
+  fun `backup reading bookmark colors match their mobile sync slots`() = runTest {
+    val importData = normalizer.normalize(
+      BookmarkData(
+        readingBookmarks = listOf(
+          ReadingBookmarkType.TEAL,
+          ReadingBookmarkType.ORANGE,
+          ReadingBookmarkType.RED
+        ).mapIndexed { index, slot ->
+          BackupReadingBookmark(
+            slot = slot,
+            type = BackupReadingBookmark.TYPE_AYAH,
+            sura = 2,
+            ayah = index + 1,
+            timestamp = Instant.fromEpochSeconds(800)
+          )
+        }
+      )
+    )
+
+    assertThat(importData.readingBookmarks.map { it as MobileSyncImportReadingBookmark.Ayah }
+      .associate { it.slot to it.ayah }).containsExactly(
+      ReadingBookmarkSlot.TEAL, 1,
+      ReadingBookmarkSlot.ORANGE, 2,
+      ReadingBookmarkSlot.RED, 3
+    )
+  }
+
+  @Test
   fun `normalizes page-based backup data from declared page type`() = runTest {
     val (warshPage, madaniPage) = firstWarshPageWithDifferentMadaniStorage()
     val warshBounds = QuranInfo(WarshDataSource()).getPageBounds(warshPage)
@@ -63,7 +92,7 @@ class BookmarkBackupImportNormalizerTest {
         recentPages = listOf(RecentPage(warshPage, Instant.fromEpochSeconds(900))),
         readingBookmarks = listOf(
           BackupReadingBookmark(
-            slot = ReadingBookmarkType.PURPLE,
+            slot = ReadingBookmarkType.ORANGE,
             type = BackupReadingBookmark.TYPE_PAGE,
             page = warshPage,
             timestamp = Instant.fromEpochSeconds(800),
@@ -92,7 +121,7 @@ class BookmarkBackupImportNormalizerTest {
       BookmarkData(
         readingBookmarks = listOf(
           BackupReadingBookmark(
-            slot = ReadingBookmarkType.PURPLE,
+            slot = ReadingBookmarkType.ORANGE,
             type = BackupReadingBookmark.TYPE_PAGE,
             page = warshPage,
             timestamp = Instant.fromEpochSeconds(800)
@@ -113,7 +142,7 @@ class BookmarkBackupImportNormalizerTest {
       BookmarkData(
         readingBookmarks = listOf(
           BackupReadingBookmark(
-            slot = ReadingBookmarkType.PURPLE,
+            slot = ReadingBookmarkType.ORANGE,
             type = BackupReadingBookmark.TYPE_PAGE,
             page = 999,
             timestamp = Instant.fromEpochSeconds(800)

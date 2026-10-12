@@ -35,23 +35,23 @@ object HighlightTypes {
   private val FIRST_READING_BOOKMARK_ID = FIRST_HIGHLIGHT_ID + HIGHLIGHTS.size
 
   private val READING_BOOKMARKS: Map<ReadingBookmarkType, HighlightType> = mapOf(
-    ReadingBookmarkType.GREEN to HighlightType(
+    ReadingBookmarkType.TEAL to HighlightType(
       FIRST_READING_BOOKMARK_ID,
-      UiCoreR.color.reading_bookmark_page_green,
+      UiCoreR.color.reading_bookmark_page_teal,
       UNDERLINE,
-      nightColorResId = UiCoreR.color.reading_bookmark_page_green_night
+      nightColorResId = UiCoreR.color.reading_bookmark_page_teal_night
     ),
-    ReadingBookmarkType.PURPLE to HighlightType(
+    ReadingBookmarkType.ORANGE to HighlightType(
       FIRST_READING_BOOKMARK_ID + 1,
-      UiCoreR.color.reading_bookmark_page_purple,
+      UiCoreR.color.reading_bookmark_page_orange,
       UNDERLINE,
-      nightColorResId = UiCoreR.color.reading_bookmark_page_purple_night
+      nightColorResId = UiCoreR.color.reading_bookmark_page_orange_night
     ),
-    ReadingBookmarkType.BLUE to HighlightType(
+    ReadingBookmarkType.RED to HighlightType(
       FIRST_READING_BOOKMARK_ID + 2,
-      UiCoreR.color.reading_bookmark_page_blue,
+      UiCoreR.color.reading_bookmark_page_red,
       UNDERLINE,
-      nightColorResId = UiCoreR.color.reading_bookmark_page_blue_night
+      nightColorResId = UiCoreR.color.reading_bookmark_page_red_night
     )
   )
 

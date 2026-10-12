@@ -25,8 +25,8 @@ fun HighlightType.paintColor(isNightMode: Boolean): Color {
 
 fun ReadingBookmarkType.paintColor(isNightMode: Boolean): Color {
   return when (this) {
-    ReadingBookmarkType.GREEN -> if (isNightMode) Color(0xFF34D3A4) else Color(0xFF05956F)
-    ReadingBookmarkType.PURPLE -> if (isNightMode) Color(0xFFD477FF) else Color(0xFFB315FC)
-    ReadingBookmarkType.BLUE -> if (isNightMode) Color(0xFF62AEFF) else Color(0xFF007FF0)
+    ReadingBookmarkType.TEAL -> if (isNightMode) Color(0xFF4DB6AC) else Color(0xFF00897B)
+    ReadingBookmarkType.ORANGE -> if (isNightMode) Color(0xFFFFB74D) else Color(0xFFEF6C00)
+    ReadingBookmarkType.RED -> if (isNightMode) Color(0xFFE57373) else Color(0xFFC62828)
   }
 }
