@@ -282,7 +282,7 @@ class QuranRowFactory @Inject constructor(
       HighlightColor.YELLOW -> R.color.highlight_list_yellow
       HighlightColor.GREEN -> R.color.highlight_list_green
       HighlightColor.BLUE -> R.color.highlight_list_blue
-      HighlightColor.RED -> R.color.highlight_list_red
+      HighlightColor.PINK -> R.color.highlight_list_pink
       HighlightColor.PURPLE -> R.color.highlight_list_purple
     }
   }

@@ -26,7 +26,7 @@
   <color name="highlight_list_yellow">#ffffd54f</color>
   <color name="highlight_list_green">#ff81c784</color>
   <color name="highlight_list_blue">#ff64b5f6</color>
-  <color name="highlight_list_red">#ffe57373</color>
+  <color name="highlight_list_pink">#fff06292</color>
   <color name="highlight_list_purple">#ffba68c8</color>
   <color name="unhighlighted_bookmark_color">#ff90a4ae</color>
   <color name="tag_chip_border">#73b2dfdb</color>

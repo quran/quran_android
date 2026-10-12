@@ -10,6 +10,6 @@
   <string name="highlight_color_yellow">Gul</string>
   <string name="highlight_color_green">Grön</string>
   <string name="highlight_color_blue">Blå</string>
-  <string name="highlight_color_red">Röd</string>
   <string name="highlight_color_purple">Lila</string>
+  <string name="reading_bookmark_red">Röd</string>
 </resources>

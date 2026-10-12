@@ -200,16 +200,16 @@ class ReadingBookmarksDaoImpl @Inject constructor(
 
   private fun ReadingBookmarkSlot.asBookmarkType(): ReadingBookmarkType {
     return when (this) {
-      ReadingBookmarkSlot.GREEN -> ReadingBookmarkType.GREEN
-      ReadingBookmarkSlot.PURPLE -> ReadingBookmarkType.PURPLE
-      ReadingBookmarkSlot.BLUE -> ReadingBookmarkType.BLUE
+      ReadingBookmarkSlot.TEAL -> ReadingBookmarkType.TEAL
+      ReadingBookmarkSlot.ORANGE -> ReadingBookmarkType.ORANGE
+      ReadingBookmarkSlot.RED -> ReadingBookmarkType.RED
     }
   }
 
   internal fun ReadingBookmarkType.toSyncSlot(): ReadingBookmarkSlot =
     when (this) {
-      ReadingBookmarkType.GREEN -> ReadingBookmarkSlot.GREEN
-      ReadingBookmarkType.PURPLE -> ReadingBookmarkSlot.PURPLE
-      ReadingBookmarkType.BLUE -> ReadingBookmarkSlot.BLUE
+      ReadingBookmarkType.TEAL -> ReadingBookmarkSlot.TEAL
+      ReadingBookmarkType.ORANGE -> ReadingBookmarkSlot.ORANGE
+      ReadingBookmarkType.RED -> ReadingBookmarkSlot.RED
     }
 }

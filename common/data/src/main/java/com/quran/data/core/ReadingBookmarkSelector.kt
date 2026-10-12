@@ -51,7 +51,7 @@ class ReadingBookmarkSelector @Inject constructor(private val quranInfo: QuranIn
 
     return placed.firstOrNull { it.slot == previousType }?.slot
       ?: placed.maxByOrNull { it.timestamp }?.slot
-      ?: ReadingBookmarkType.PURPLE
+      ?: ReadingBookmarkType.ORANGE
   }
 
   private fun pageOf(bookmark: ReadingBookmark): Int = when (bookmark) {

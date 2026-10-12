@@ -77,9 +77,9 @@ public class BookmarkJsonModelTest {
   @Test
   public void roundTripPreservesReadingBookmarkSlotsAndNormalizesTimestampUnits() throws IOException {
     String json = "{\"readingBookmarks\":["
-        + "{\"type\":\"page\",\"slot\":\"GREEN\",\"page\":42,\"timestamp\":1700000000},"
-        + "{\"type\":\"ayah\",\"slot\":\"BLUE\",\"sura\":2,\"ayah\":255,\"timestamp\":1700000000000},"
-        + "{\"type\":\"page\",\"slot\":\"PURPLE\",\"page\":43,\"timestamp\":1700000000}]}";
+        + "{\"type\":\"page\",\"slot\":\"TEAL\",\"page\":42,\"timestamp\":1700000000},"
+        + "{\"type\":\"ayah\",\"slot\":\"RED\",\"sura\":2,\"ayah\":255,\"timestamp\":1700000000000},"
+        + "{\"type\":\"page\",\"slot\":\"ORANGE\",\"page\":43,\"timestamp\":1700000000}]}";
     BookmarkData data = jsonModel.fromJson(new Buffer().writeUtf8(json));
     Buffer output = new Buffer();
 
@@ -87,9 +87,9 @@ public class BookmarkJsonModelTest {
     BookmarkData restored = jsonModel.fromJson(output);
 
     assertThat(restored.getReadingBookmarks()).isEqualTo(data.getReadingBookmarks());
-    assertThat(restored.getReadingBookmarks().get(0).getSlot()).isEqualTo(ReadingBookmarkType.GREEN);
-    assertThat(restored.getReadingBookmarks().get(1).getSlot()).isEqualTo(ReadingBookmarkType.BLUE);
-    assertThat(restored.getReadingBookmarks().get(2).getSlot()).isEqualTo(ReadingBookmarkType.PURPLE);
+    assertThat(restored.getReadingBookmarks().get(0).getSlot()).isEqualTo(ReadingBookmarkType.TEAL);
+    assertThat(restored.getReadingBookmarks().get(1).getSlot()).isEqualTo(ReadingBookmarkType.RED);
+    assertThat(restored.getReadingBookmarks().get(2).getSlot()).isEqualTo(ReadingBookmarkType.ORANGE);
     assertThat(restored.getReadingBookmarks().get(0).getTimestamp().toEpochMilliseconds())
         .isEqualTo(1_700_000_000_000L);
     assertThat(restored.getReadingBookmarks().get(1).getTimestamp().toEpochMilliseconds())

@@ -124,20 +124,20 @@ class MobileSyncImporterImplTest {
   @Test
   fun `reading bookmark import replaces supplied slots and preserves omitted slots`() = runTest {
     val repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database)
-    val existing = repository.setPageReadingBookmark(ReadingBookmarkSlot.GREEN, 12)
-    val omitted = repository.setPageReadingBookmark(ReadingBookmarkSlot.BLUE, 50)
-    repository.renameReadingBookmark(ReadingBookmarkSlot.GREEN, "Old name")
+    val existing = repository.setPageReadingBookmark(ReadingBookmarkSlot.TEAL, 12)
+    val omitted = repository.setPageReadingBookmark(ReadingBookmarkSlot.RED, 50)
+    repository.renameReadingBookmark(ReadingBookmarkSlot.TEAL, "Old name")
 
     val result = importer.importData(
       MobileSyncImportData(
         readingBookmarks = listOf(
           MobileSyncImportReadingBookmark.Page(
-            slot = ReadingBookmarkSlot.GREEN,
+            slot = ReadingBookmarkSlot.TEAL,
             page = 42,
             timestampMillis = 1_700_000_000_000L
           ),
           MobileSyncImportReadingBookmark.Ayah(
-            slot = ReadingBookmarkSlot.PURPLE,
+            slot = ReadingBookmarkSlot.ORANGE,
             sura = 2,
             ayah = 255,
             timestampMillis = 1_700_000_001_000L,
@@ -149,16 +149,16 @@ class MobileSyncImporterImplTest {
 
     assertThat(result.readingBookmarkImported).isEqualTo(2)
     val bookmarks = repository.getReadingBookmarks()
-    val page = bookmarks.single { it.slot == ReadingBookmarkSlot.GREEN } as PageReadingBookmark
+    val page = bookmarks.single { it.slot == ReadingBookmarkSlot.TEAL } as PageReadingBookmark
     assertThat(page.id).isEqualTo(existing.id)
     assertThat(page.page).isEqualTo(42)
     assertThat(page.name).isNull()
     assertThat(page.lastUpdated.toEpochMilliseconds()).isEqualTo(1_700_000_000_000L)
-    val ayah = bookmarks.single { it.slot == ReadingBookmarkSlot.PURPLE } as AyahReadingBookmark
+    val ayah = bookmarks.single { it.slot == ReadingBookmarkSlot.ORANGE } as AyahReadingBookmark
     assertThat(ayah.sura to ayah.ayah).isEqualTo(2 to 255)
     assertThat(ayah.name).isEqualTo("Nightly reading")
     assertThat(ayah.lastUpdated.toEpochMilliseconds()).isEqualTo(1_700_000_001_000L)
-    assertThat(bookmarks.single { it.slot == ReadingBookmarkSlot.BLUE }).isEqualTo(omitted)
+    assertThat(bookmarks.single { it.slot == ReadingBookmarkSlot.RED }).isEqualTo(omitted)
   }
 
   @Test

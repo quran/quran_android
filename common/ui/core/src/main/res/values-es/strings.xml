@@ -10,6 +10,6 @@
   <string name="highlight_color_yellow">Amarillo</string>
   <string name="highlight_color_green">Verde</string>
   <string name="highlight_color_blue">Azul</string>
-  <string name="highlight_color_red">Rojo</string>
   <string name="highlight_color_purple">Morado</string>
+  <string name="reading_bookmark_red">Rojo</string>
 </resources>

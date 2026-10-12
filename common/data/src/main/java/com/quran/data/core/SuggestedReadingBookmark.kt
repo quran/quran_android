@@ -26,8 +26,8 @@ class SuggestedReadingBookmark @Inject constructor(
     .runningFold(null as ReadingBookmarkType?) { previous, (jump, bookmarks) ->
       selector.select(jump?.location, bookmarks, jump?.bookmarkType, previous)
     }
-    .map { it ?: ReadingBookmarkType.PURPLE }
-    .stateIn(appCoroutineScope, SharingStarted.Eagerly, ReadingBookmarkType.PURPLE)
+    .map { it ?: ReadingBookmarkType.ORANGE }
+    .stateIn(appCoroutineScope, SharingStarted.Eagerly, ReadingBookmarkType.ORANGE)
 
   fun onJump(location: JumpLocation, bookmarkType: ReadingBookmarkType? = null) {
     lastJumpLocation.update(location, bookmarkType)

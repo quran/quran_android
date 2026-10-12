@@ -109,7 +109,8 @@ class ImportedCollectionNamesTest {
     val names = listOf(
       " fAvOrItEs ",
       "system:highlights:blue",
-      "system:highlights:red",
+      "system:highlights:pink",
+      " SyStEm:HiGhLiGhTs:PiNk ",
       "system:highlights:green",
       "system:highlights:yellow",
       "system:highlights:purple"
