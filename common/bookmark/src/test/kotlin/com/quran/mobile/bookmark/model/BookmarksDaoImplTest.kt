@@ -12,6 +12,7 @@ import com.quran.data.model.bookmark.Bookmark
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.QuranDatabase
+import com.quran.shared.persistence.createQuranDatabase
 import com.quran.shared.persistence.model.AyahHighlightColor
 import com.quran.shared.persistence.model.CollectionWithAyahBookmarks
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
@@ -42,7 +43,7 @@ class BookmarksDaoImplTest {
   fun setup() {
     val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
     QuranDatabase.Schema.create(driver)
-    database = QuranDatabase(driver)
+    database = createQuranDatabase(driver)
     quranInfo = QuranInfo(MadaniDataSource())
     appCoroutineScope = AppCoroutineScope()
     timestampProvider = FakeMobileSyncTimestampProvider()
