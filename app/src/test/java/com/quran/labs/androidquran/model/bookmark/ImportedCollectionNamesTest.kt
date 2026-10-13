@@ -11,6 +11,7 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImportCollectionBookmark
 import com.quran.mobile.bookmark.importdata.MobileSyncImportData
 import com.quran.mobile.bookmark.importdata.toPersistenceImportData
 import com.quran.shared.persistence.QuranDatabase
+import com.quran.shared.persistence.createQuranDatabase
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepositoryImpl
 import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepositoryImpl
 import com.quran.shared.persistence.repository.importdata.PersistenceImportRepositoryImpl
@@ -35,7 +36,7 @@ class ImportedCollectionNamesTest {
   fun setUp() {
     driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
     QuranDatabase.Schema.create(driver)
-    val database = QuranDatabase(driver)
+    val database = createQuranDatabase(driver)
     importer = PersistenceImportRepositoryImpl(database)
     collections = CollectionsRepositoryImpl(database)
     collectionBookmarks = CollectionBookmarksRepositoryImpl(database)
@@ -118,10 +119,12 @@ class ImportedCollectionNamesTest {
 
     importData(dataWithTaggedBookmarks(names))
 
+    // mobile-sync trims collection names like the server; case is preserved.
+    val importedNames = names.map { "$it (Imported)".trim() }
     val tags = collections.getAllCollections().filterNot { it.isSystem }
-    assertThat(tags.map { it.name }).containsExactlyElementsIn(names.map { "$it (Imported)" })
-    names.forEachIndexed { index, name ->
-      val tag = tags.single { it.name == "$name (Imported)" }
+    assertThat(tags.map { it.name }).containsExactlyElementsIn(importedNames)
+    importedNames.forEachIndexed { index, importedName ->
+      val tag = tags.single { it.name == importedName }
       assertThat(collectionBookmarks.getBookmarksForCollection(tag.id).map { it.ayah })
         .containsExactly(index + 1)
     }
