@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/surface"
     android:clipToPadding="false"
     android:fillViewport="true">
 
@@ -11,7 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
+
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            style="@style/Widget.Material3.BottomSheet.DragHandle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            app:tint="@color/text_hint_color" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,40 +28,64 @@
             android:gravity="center_vertical">
 
             <TextView
+                android:id="@+id/theme_sheet_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:accessibilityHeading="true"
+                android:fontFamily="sans-serif-medium"
                 android:text="@string/page_theme_title"
                 android:textColor="@color/text_primary"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="20sp" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/close_theme_sheet"
-                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/page_theme_close"
+                android:padding="12dp"
+                app:srcCompat="@drawable/ic_close_24"
+                app:tint="@color/text_primary" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/theme_section_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp">
+
+            <TextView
+                android:id="@+id/page_theme_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/prefs_page_theme_title"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/app_theme_menu"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
-                android:text="@string/page_theme_done" />
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:textAllCaps="false"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                app:backgroundTint="@android:color/transparent"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_expand_more_24"
+                app:iconGravity="textEnd"
+                app:iconPadding="4dp"
+                app:iconTint="@color/text_primary"
+                app:strokeColor="@color/text_hint_color" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/app_theme_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:labelFor="@id/app_theme_spinner"
-            android:paddingTop="8dp"
-            android:text="@string/page_theme_app_theme_label"
-            android:textColor="@color/text_primary"
-            android:textSize="16sp" />
-
-        <Spinner
-            android:id="@+id/app_theme_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:spinnerMode="dropdown" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/themes_recycler_view"

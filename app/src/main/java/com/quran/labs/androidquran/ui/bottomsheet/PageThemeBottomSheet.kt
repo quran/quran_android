@@ -6,13 +6,14 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
+import androidx.appcompat.widget.TooltipCompat
 import androidx.cardview.widget.CardView
 import androidx.core.view.AccessibilityDelegateCompat
 import androidx.core.view.ViewCompat
@@ -27,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.button.MaterialButton
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.util.QuranSettings
@@ -35,7 +37,8 @@ import com.quran.labs.androidquran.util.ThemeUtil
 class PageThemeBottomSheet : BottomSheetDialogFragment() {
   private val themes = PageTheme.getAllThemes()
   private var recyclerView: RecyclerView? = null
-  private var spinner: Spinner? = null
+  private var appearanceMenu: MaterialButton? = null
+  private var sectionHeader: LinearLayout? = null
   private val settings get() = QuranSettings.getInstance(requireContext())
   private val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
     if (key == Constants.PREF_PAGE_THEME || key == Constants.PREF_APP_THEME) {
@@ -78,6 +81,9 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
     ViewCompat.setAccessibilityPaneTitle(view, getString(R.string.page_theme_title))
+    listOf(R.id.theme_sheet_title, R.id.page_theme_label).forEach { id ->
+      ViewCompat.setAccessibilityHeading(view.findViewById<View>(id), true)
+    }
     view.findViewById<View>(R.id.close_theme_sheet).setOnClickListener { dismiss() }
     val content = view.findViewById<View>(R.id.theme_sheet_content)
     val initialBottom = content.paddingBottom
@@ -94,21 +100,29 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
     }
     ViewCompat.requestApplyInsets(view)
 
-    spinner = view.findViewById<Spinner>(R.id.app_theme_spinner).apply {
-      val labels = listOf(R.string.theme_light, R.string.theme_dark, R.string.theme_system)
-        .map { getString(it) }
-      adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, labels).apply {
-        setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-      }
-      onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(parent: AdapterView<*>, v: View?, position: Int, id: Long) {
-          val appearance = appearances[position]
+    appearanceMenu = view.findViewById<MaterialButton>(R.id.app_theme_menu).apply {
+      TooltipCompat.setTooltipText(this, getString(R.string.appearance))
+      setOnClickListener { anchor ->
+        val popup = PopupMenu(anchor.context, anchor, Gravity.END)
+        appearances.forEachIndexed { index, appearance ->
+          popup.menu.add(1, index + 1, index, appearanceLabels[index]).isChecked =
+            appearance == settings.currentTheme()
+        }
+        popup.menu.setGroupCheckable(1, true, true)
+        popup.setOnMenuItemClickListener { item ->
+          val appearance = appearances[item.itemId - 1]
           if (appearance != settings.currentTheme()) {
             settings.setAppTheme(appearance)
             ThemeUtil.setTheme(appearance, settings.pageTheme)
           }
+          true
         }
-        override fun onNothingSelected(parent: AdapterView<*>) = Unit
+        popup.show()
+      }
+    }
+    sectionHeader = view.findViewById<LinearLayout>(R.id.theme_section_header).apply {
+      addOnLayoutChangeListener { header, _, _, _, _, _, _, _, _ ->
+        header.post { updateSectionHeader() }
       }
     }
     updateAppearanceSelection()
@@ -153,13 +167,41 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
   override fun onDestroyView() {
     recyclerView?.adapter = null
     recyclerView = null
-    spinner = null
+    appearanceMenu = null
+    sectionHeader = null
     super.onDestroyView()
   }
 
   private fun updateAppearanceSelection() {
     val index = appearances.indexOf(settings.currentTheme()).takeIf { it >= 0 } ?: 2
-    spinner?.setSelection(index, false)
+    appearanceMenu?.apply {
+      text = getString(appearanceLabels[index])
+      contentDescription = "${getString(R.string.appearance)}: $text"
+      post { updateSectionHeader() }
+    }
+  }
+
+  private fun updateSectionHeader() {
+    val header = sectionHeader ?: return
+    val button = appearanceMenu ?: return
+    if (header.width == 0) return
+    val label = header.findViewById<TextView>(R.id.page_theme_label)
+    button.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+    val spacing = (16 * resources.displayMetrics.density).toInt()
+    val labelWidth = label.paint.measureText(label.text.toString()) + label.paddingLeft + label.paddingRight
+    val availableWidth = header.width - header.paddingLeft - header.paddingRight
+    val stacked = labelWidth + button.measuredWidth + spacing > availableWidth
+    val orientation = if (stacked) LinearLayout.VERTICAL else LinearLayout.HORIZONTAL
+    if (header.orientation == orientation) return
+    header.orientation = orientation
+    header.gravity = if (stacked) Gravity.START else Gravity.CENTER_VERTICAL
+    label.layoutParams = (label.layoutParams as LinearLayout.LayoutParams).apply {
+      width = if (stacked) ViewGroup.LayoutParams.MATCH_PARENT else 0
+      weight = if (stacked) 0f else 1f
+    }
+    button.layoutParams = (button.layoutParams as LinearLayout.LayoutParams).apply {
+      marginStart = if (stacked) 0 else spacing
+    }
   }
 
   private inner class ThemeCardAdapter : RecyclerView.Adapter<ThemeCardViewHolder>() {
@@ -213,5 +255,6 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
   companion object {
     const val TAG = "PageThemeBottomSheet"
     private val appearances = listOf(Constants.THEME_LIGHT, Constants.THEME_DARK, Constants.THEME_DEFAULT)
+    private val appearanceLabels = listOf(R.string.theme_light, R.string.theme_dark, R.string.theme_system)
   }
 }

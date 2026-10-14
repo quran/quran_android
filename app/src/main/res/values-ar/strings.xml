@@ -341,4 +341,5 @@
   <string name="theme_dark">داكن</string>
   <string name="theme_system">إعداد النظام</string>
   <string name="page_theme_done">تم</string>
+  <string name="page_theme_close">إغلاق</string>
 </resources>
