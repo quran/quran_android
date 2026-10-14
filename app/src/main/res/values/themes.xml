@@ -49,11 +49,14 @@
     <item name="colorAccent">?attr/quranAccent</item>
   </style>
 
-    <style name="Quran.BottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+    <style name="Quran.BottomSheetDialog" parent="Theme.MaterialComponents.DayNight.BottomSheetDialog">
+        <item name="enableEdgeToEdge">true</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="bottomSheetStyle">@style/Quran.BottomSheet</item>
     </style>
 
-    <style name="Quran.BottomSheet" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@color/surface</item>
+    <style name="Quran.BottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="backgroundTint">@color/surface</item>
+        <item name="paddingBottomSystemWindowInsets">false</item>
     </style>
 </resources>

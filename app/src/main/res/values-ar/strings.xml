@@ -334,10 +334,11 @@
   <string name="page_theme_original">أصلي</string>
   <string name="page_theme_calm">هادئ</string>
   <string name="page_theme_focus">تركيز</string>
-  <string name="page_theme_quiet">سكين</string>
+  <string name="page_theme_quiet">ساكن</string>
 
   <!-- App theme options -->
   <string name="theme_light">فاتح</string>
   <string name="theme_dark">داكن</string>
   <string name="theme_system">إعداد النظام</string>
+  <string name="page_theme_done">تم</string>
 </resources>

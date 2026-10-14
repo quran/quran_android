@@ -452,4 +452,5 @@
   <string name="theme_light">Light</string>
   <string name="theme_dark">Dark</string>
   <string name="theme_system">System default</string>
+  <string name="page_theme_done">Done</string>
 </resources>

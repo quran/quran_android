@@ -67,7 +67,7 @@ class InlineTranslationView @JvmOverloads constructor(
     translationFontSize = settings.translationTextSize
     textStyle = R.style.TranslationText
     inlineAyahColor = ContextCompat.getColor(context, R.color.accent_color)
-    ayahTextColor = ContextCompat.getColor(context, R.color.text_primary)
+    ayahTextColor = settings.pageThemeTextColor
   }
 
   fun refresh() {

@@ -201,10 +201,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
   public void updateView(@NonNull QuranSettings quranSettings) {
     super.updateView(quranSettings);
     boolean nightMode = quranSettings.isNightMode();
-    int lineColor = Color.BLACK;
-    if (nightMode) {
-      lineColor = Color.argb(255, 255, 255, 255);
-    }
+    int lineColor = quranSettings.getPageThemeTextColor();
 
     if ((pageNumber + skippedPages) % 2 == 0) {
       leftBorder = nightMode ? BorderMode.DARK : BorderMode.LIGHT;
