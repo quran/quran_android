@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.util;
 
 import android.content.Context;
+import android.content.ComponentCallbacks;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
@@ -17,6 +18,8 @@ import com.quran.labs.androidquran.ui.bottomsheet.PageTheme;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -28,6 +31,8 @@ public class QuranSettings {
   private final Context appContext;
   private final SharedPreferences prefs;
   private final SharedPreferences perInstallationPrefs;
+  private final Map<SharedPreferences.OnSharedPreferenceChangeListener, ComponentCallbacks>
+      configurationListeners = new HashMap<>();
 
   public static synchronized QuranSettings getInstance(@NonNull Context context) {
     if (instance == null) {
@@ -45,14 +50,28 @@ public class QuranSettings {
     this.appContext = appContext;
     prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
     perInstallationPrefs = appContext.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
+    PageThemePreferences.migrate(prefs);
   }
 
-  public void registerPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+  public synchronized void registerPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
     prefs.registerOnSharedPreferenceChangeListener(listener);
+    if (!configurationListeners.containsKey(listener)) {
+      ComponentCallbacks callback = new ComponentCallbacks() {
+        @Override public void onConfigurationChanged(@NonNull Configuration configuration) {
+          // System appearance can change even while Quiet keeps the activity dark.
+          listener.onSharedPreferenceChanged(prefs, Constants.PREF_APP_THEME);
+        }
+        @Override public void onLowMemory() { }
+      };
+      configurationListeners.put(listener, callback);
+      appContext.registerComponentCallbacks(callback);
+    }
   }
 
-  public void unregisterPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+  public synchronized void unregisterPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
     prefs.unregisterOnSharedPreferenceChangeListener(listener);
+    ComponentCallbacks callback = configurationListeners.remove(listener);
+    if (callback != null) appContext.unregisterComponentCallbacks(callback);
   }
 
   public boolean isLockOrientation() {
@@ -78,16 +97,9 @@ public class QuranSettings {
     }
 
     String appTheme = currentTheme();
-    if (Constants.THEME_DARK.equals(appTheme)) {
-      return true;
-    }
-
-    if (Constants.THEME_DEFAULT.equals(appTheme)) {
-      return (appContext.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK)
-          == Configuration.UI_MODE_NIGHT_YES;
-    }
-
-    return false;
+    return ThemeUtil.isDarkAppearance(appTheme,
+        (android.content.res.Resources.getSystem().getConfiguration().uiMode
+            & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
   }
 
   public boolean highlightBookmarks() {
@@ -260,7 +272,8 @@ public class QuranSettings {
   }
 
   public String getPageTheme() {
-    return prefs.getString(Constants.PREF_PAGE_THEME, Constants.PAGE_THEME_ORIGINAL);
+    return PageTheme.fromKey(prefs.getString(Constants.PREF_PAGE_THEME,
+        Constants.PAGE_THEME_PAPER)).getStorageKey();
   }
 
   public void setPageTheme(String pageTheme) {
@@ -276,30 +289,9 @@ public class QuranSettings {
   }
 
   private int getThemeColor(String theme, boolean isBackground) {
-    int colorResId;
-    if (isBackground) {
-      colorResId = switch (theme) {
-        case Constants.PAGE_THEME_PAPER -> R.color.theme_paper_bg;
-        case Constants.PAGE_THEME_CALM -> R.color.theme_calm_bg;
-        case Constants.PAGE_THEME_FOCUS -> R.color.theme_focus_bg;
-        case Constants.PAGE_THEME_QUIET -> R.color.theme_quiet_bg;
-        default -> R.color.theme_original_bg;
-      };
-    } else {
-      colorResId = switch (theme) {
-        case Constants.PAGE_THEME_PAPER -> R.color.theme_paper_text;
-        case Constants.PAGE_THEME_CALM -> R.color.theme_calm_text;
-        case Constants.PAGE_THEME_FOCUS -> R.color.theme_focus_text;
-        case Constants.PAGE_THEME_QUIET -> R.color.theme_quiet_text;
-        default -> R.color.theme_original_text;
-      };
-    }
-
-    Configuration config = new Configuration(appContext.getResources().getConfiguration());
-    boolean nightMode = isNightMode();
-    config.uiMode = (config.uiMode & ~Configuration.UI_MODE_NIGHT_MASK) |
-        (nightMode ? Configuration.UI_MODE_NIGHT_YES : Configuration.UI_MODE_NIGHT_NO);
-    return appContext.createConfigurationContext(config).getColor(colorResId);
+    PageTheme pageTheme = PageTheme.fromKey(theme);
+    int colorResId = isBackground ? pageTheme.getBackgroundColorRes() : pageTheme.getTextColorRes();
+    return ThemeUtil.paletteContext(appContext, currentTheme()).getColor(colorResId);
   }
 
   public boolean isPageThemeDark() {
