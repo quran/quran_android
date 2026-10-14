@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran
 
 import android.Manifest.permission
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
@@ -16,7 +17,10 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
 import com.quran.common.upgrade.PreferencesUpgrade
+import com.quran.data.model.Page
 import com.quran.data.model.QuranDataStatus
+import com.quran.data.model.SuraAyah
+import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.presenter.data.QuranDataPresenter
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
@@ -24,10 +28,14 @@ import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDo
 import com.quran.labs.androidquran.service.util.PermissionUtil
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
+import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.QuranActivity
+import com.quran.labs.androidquran.ui.helpers.QuranNavigator
+import com.quran.labs.androidquran.ui.whatsnew.AnnouncementActivity
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
 import com.quran.labs.androidquran.worker.WorkerConstants
 import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -48,12 +56,16 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
  *  * Check that we have permission to write to external storage (if we need this permission)
  * and if not, ask the user for permission
  *  * Verify that we have the necessary Quran data downloaded on the device
+ *  * Show any unseen announcement on a normal launch, after data setup finishes
  *
  * The logic is split between [QuranDataActivity] and [QuranDataPresenter],
  * and [QuranDownloadService] is (mostly) used to perform the actual downloading of
  * any Quran data.
  */
 class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequestPermissionsResultCallback {
+
+  @Inject lateinit var quranNavigatorFactory: QuranNavigator.Factory
+  private val quranNavigator by lazy { quranNavigatorFactory.create(this) }
 
   @Inject
   lateinit var quranFileUtils: QuranFileUtils
@@ -477,16 +489,94 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
   }
 
   private fun runListView() {
-    val i = Intent(this, QuranActivity::class.java)
-    i.putExtra(
-        QuranActivity.EXTRA_SHOW_TRANSLATION_UPGRADE, quranSettings.haveUpdatedTranslations()
+    if (!isFinishing && !isDestroyed) {
+      if (intent?.action == ACTION_OPEN_PAGE) {
+        jumpToRequestedPage(intent)
+      } else {
+        val isNormalLaunch = intent?.action == null || intent?.action == Intent.ACTION_MAIN
+        val destination = targetIntent()
+        val nextIntent = if (isNormalLaunch && AnnouncementActivity.shouldShow(quranSettings)) {
+          AnnouncementActivity.createIntent(this, destination)
+        } else {
+          destination
+        }
+        startActivity(nextIntent)
+      }
+      finish()
+    }
+  }
+
+  private fun jumpToRequestedPage(sourceIntent: Intent) {
+    val sura = sourceIntent.getIntExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, -1)
+    val ayah = sourceIntent.getIntExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, -1)
+    val location = if (sura > 0 && ayah > 0) {
+      SuraAyah(sura, ayah)
+    } else {
+      Page(sourceIntent.getIntExtra("page", Constants.PAGES_FIRST))
+    }
+    val showTranslation = if (sourceIntent.hasExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION)) {
+      sourceIntent.getBooleanExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, false)
+    } else {
+      null
+    }
+    quranNavigator.jumpTo(
+      location,
+      showTranslation = showTranslation,
+      intentFlags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
     )
-    startActivity(i)
-    finish()
+  }
+
+  private fun targetIntent(): Intent {
+    val sourceIntent = intent
+    return when (sourceIntent?.action) {
+      ShortcutsActivity.ACTION_JUMP_TO_LATEST -> {
+        Intent(this, QuranActivity::class.java).apply {
+          action = ShortcutsActivity.ACTION_JUMP_TO_LATEST
+          putExtra(
+            QuranActivity.EXTRA_SHOW_TRANSLATION_UPGRADE,
+            quranSettings.haveUpdatedTranslations()
+          )
+        }
+      }
+      ShortcutsActivity.ACTION_JUMP_TO -> {
+        Intent(this, ShowJumpFragmentActivity::class.java)
+      }
+      else -> {
+        Intent(this, QuranActivity::class.java).apply {
+          putExtra(
+            QuranActivity.EXTRA_SHOW_TRANSLATION_UPGRADE,
+            quranSettings.haveUpdatedTranslations()
+          )
+        }
+      }
+    }
   }
 
   companion object {
+    const val ACTION_OPEN_PAGE = "com.quran.labs.androidquran.open_page"
     const val PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY"
     private const val REQUEST_POST_NOTIFICATION_PERMISSIONS = 1
+
+    fun openPageIntent(
+      context: Context,
+      page: Int,
+      sura: Int? = null,
+      ayah: Int? = null,
+      jumpToTranslation: Boolean = false
+    ): Intent {
+      return Intent(context, QuranDataActivity::class.java).apply {
+        action = ACTION_OPEN_PAGE
+        putExtra("page", page)
+        if (sura != null) {
+          putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura)
+        }
+        if (ayah != null) {
+          putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah)
+        }
+        if (jumpToTranslation) {
+          putExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, true)
+        }
+      }
+    }
   }
 }

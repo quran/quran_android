@@ -4,6 +4,9 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 /**
  * Factory for creating test data using REAL domain models.
@@ -79,7 +82,7 @@ object TestDataFactory {
   // ==================== Bookmark Factory ====================
 
   /**
-   * Creates a [Bookmark] for a specific ayah with default values.
+   * Creates a [Bookmark] for a specific ayah from numeric fixture IDs.
    */
   fun createBookmark(
     id: Long = 1L,
@@ -89,12 +92,12 @@ object TestDataFactory {
     timestamp: Long = System.currentTimeMillis(),
     tags: List<Long> = emptyList()
   ): Bookmark = Bookmark(
-    id = id,
+    id = bookmarkId(id),
     sura = sura,
     ayah = ayah,
     page = page,
     timestamp = timestamp,
-    tags = tags
+    tags = tags.map(::tagId)
   )
 
   /**
@@ -105,7 +108,7 @@ object TestDataFactory {
     page: Int = 1,
     timestamp: Long = System.currentTimeMillis()
   ): Bookmark = Bookmark(
-    id = id,
+    id = bookmarkId(id),
     sura = null,
     ayah = null,
     page = page,
@@ -120,24 +123,28 @@ object TestDataFactory {
   fun createTag(
     id: Long = 1L,
     name: String = "Test Tag"
-  ): Tag = Tag(id, name)
+  ): Tag = Tag(tagId(id), name)
 
   /**
    * Creates multiple tags for testing.
    */
   fun createTags(count: Int): List<Tag> =
     (1..count).map { index ->
-      Tag(index.toLong(), "Tag $index")
+      Tag(tagId(index.toLong()), "Tag $index")
     }
+
+  private fun bookmarkId(id: Long): String = id.toString()
+
+  private fun tagId(id: Long): String = id.toString()
 
   // ==================== RecentPage Factory ====================
 
   /**
-   * Creates a [RecentPage] with default values.
+   * Creates a [RecentPage] with a timestamp in epoch milliseconds.
    */
   fun createRecentPage(
     page: Int = 1,
-    timestamp: Long = System.currentTimeMillis()
+    timestamp: Instant = Clock.System.now()
   ): RecentPage = RecentPage(page, timestamp)
 
   /**
@@ -147,7 +154,7 @@ object TestDataFactory {
     (1..count).map { index ->
       RecentPage(
         page = (index % QuranConstants.TOTAL_PAGES_MADANI) + 1,
-        timestamp = System.currentTimeMillis() - (index * 1000L)
+        timestamp = Clock.System.now() - index.seconds
       )
     }
 

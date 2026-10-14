@@ -2,24 +2,44 @@ package com.quran.data.dao
 
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
-import com.quran.data.model.bookmark.RecentPage
+import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.collection.ReadingCollection
+import com.quran.data.model.collection.ReadingCollectionBookmarks
 import kotlinx.coroutines.flow.Flow
+
+object BookmarkSortOrder {
+  const val SORT_DATE_ADDED = 0
+  const val SORT_LOCATION = 1
+}
 
 interface BookmarksDao {
   val changes: Flow<Unit>
 
-  suspend fun bookmarks(): List<Bookmark>
+  suspend fun bookmarks(sortOrder: Int = BookmarkSortOrder.SORT_DATE_ADDED): List<Bookmark>
+  fun bookmarksFlow(sortOrder: Int = BookmarkSortOrder.SORT_DATE_ADDED): Flow<List<Bookmark>>
   fun bookmarksForPage(page: Int): Flow<List<Bookmark>>
-  fun pageBookmarksWithoutTags(): Flow<List<Bookmark>>
-  suspend fun replaceBookmarks(bookmarks: List<Bookmark>)
-  suspend fun removeBookmarksForPage(page: Int)
-  suspend fun isSuraAyahBookmarked(suraAyah: SuraAyah): Boolean
-  suspend fun togglePageBookmark(page: Int): Boolean
-  suspend fun toggleAyahBookmark(suraAyah: SuraAyah, page: Int): Boolean
 
-  // recent pages
-  suspend fun recentPages(): List<RecentPage>
-  suspend fun removeRecentPages()
-  suspend fun replaceRecentPages(pages: List<RecentPage>)
-  suspend fun removeRecentsForPage(page: Int)
+  fun collectionsWithBookmarksFlow(): Flow<List<ReadingCollectionBookmarks>>
+  suspend fun addCollection(name: String): ReadingCollection
+
+  suspend fun tags(): List<Tag>
+  fun tagsFlow(): Flow<List<Tag>>
+  suspend fun addTag(name: String): String
+  suspend fun updateTag(tag: Tag): Boolean
+  suspend fun removeTags(tags: List<Tag>)
+
+  suspend fun getBookmarkTagIds(bookmarkId: String): List<String>
+  suspend fun updateBookmarkTags(
+    bookmarkIds: Array<String>,
+    tagIds: Set<String>,
+    deleteNonTagged: Boolean
+  ): Boolean
+  suspend fun removeBookmarkFromTag(bookmark: Bookmark, tagId: String): Boolean
+  suspend fun removeBookmarks(bookmarks: List<Bookmark>)
+  suspend fun deleteAyahBookmark(suraAyah: SuraAyah): Boolean
+  suspend fun isSuraAyahBookmarked(suraAyah: SuraAyah): Boolean
+  suspend fun replaceAyahBookmarkCollections(
+    suraAyah: SuraAyah,
+    collectionIds: Set<String>
+  ): Boolean
 }

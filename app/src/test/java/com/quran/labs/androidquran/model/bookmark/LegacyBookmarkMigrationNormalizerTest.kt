@@ -1,0 +1,159 @@
+package com.quran.labs.androidquran.model.bookmark
+
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
+import com.google.common.truth.Truth.assertThat
+import com.quran.data.core.QuranInfo
+import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.RecentPage
+import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.base.TestApplication
+import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
+import com.quran.mobile.bookmark.migration.LegacyBookmarkMigrationNormalizer
+import com.quran.mobile.bookmark.migration.LegacyBookmarkTag
+import com.quran.mobile.bookmark.migration.LegacyBookmarksSnapshot
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import kotlin.time.Instant
+
+@Config(application = TestApplication::class, sdk = [33])
+@RunWith(RobolectricTestRunner::class)
+class LegacyBookmarkMigrationNormalizerTest {
+
+  private val context = ApplicationProvider.getApplicationContext<Context>()
+  private lateinit var quranInfo: QuranInfo
+  private lateinit var normalizer: LegacyBookmarkMigrationNormalizer
+
+  @Before
+  fun setUp() {
+    quranInfo = QuranInfo(MadaniDataSource())
+    normalizer = LegacyBookmarkMigrationNormalizer(context, quranInfo)
+  }
+
+  @Test
+  fun `page bookmarks become ayah bookmarks in old page bookmarks collection`() {
+    val page = 50
+    val pageBounds = quranInfo.getPageBounds(page)
+    val oldPageBookmarksName = context.getString(R.string.old_page_bookmarks)
+
+    val data = normalizer.normalize(
+      LegacyBookmarksSnapshot(
+        tags = listOf(
+          LegacyBookmarkTag(10L, "Reading", 100L),
+          LegacyBookmarkTag(11L, oldPageBookmarksName, 200L),
+          LegacyBookmarkTag(12L, oldPageBookmarksName, 300L)
+        ),
+        bookmarks = listOf(
+          Bookmark(
+            legacyBookmarkId(1L),
+            null,
+            null,
+            page,
+            1000L,
+            tags = listOf(legacyTagId(10L), legacyTagId(12L))
+          )
+        ),
+        recentPages = emptyList()
+      )
+    )
+
+    assertThat(data.bookmarks).hasSize(1)
+    assertThat(data.bookmarks.single().sura).isEqualTo(pageBounds[0])
+    assertThat(data.bookmarks.single().ayah).isEqualTo(pageBounds[1])
+    assertThat(data.bookmarks.single().timestampMillis).isEqualTo(1_000_000L)
+    assertThat(data.collections.map { collection -> collection.name })
+      .containsExactly("Reading", oldPageBookmarksName)
+      .inOrder()
+    assertThat(data.collectionBookmarks.map { link -> link.collectionName })
+      .containsExactly("Reading", oldPageBookmarksName)
+    assertThat(data.collectionBookmarks.map { link -> link.sura to link.ayah })
+      .containsExactly(pageBounds[0] to pageBounds[1], pageBounds[0] to pageBounds[1])
+  }
+
+  @Test
+  fun `direct ayah bookmark wins over converted page bookmark for the same ayah`() {
+    val page = 50
+    val pageBounds = quranInfo.getPageBounds(page)
+
+    val data = normalizer.normalize(
+      LegacyBookmarksSnapshot(
+        tags = emptyList(),
+        bookmarks = listOf(
+          Bookmark(legacyBookmarkId(1L), null, null, page, 2000L),
+          Bookmark(legacyBookmarkId(2L), pageBounds[0], pageBounds[1], page, 1000L)
+        ),
+        recentPages = emptyList()
+      )
+    )
+
+    assertThat(data.bookmarks).hasSize(1)
+    assertThat(data.bookmarks.single().sura).isEqualTo(pageBounds[0])
+    assertThat(data.bookmarks.single().ayah).isEqualTo(pageBounds[1])
+    assertThat(data.bookmarks.single().timestampMillis).isEqualTo(1_000_000L)
+    assertThat(data.collections.map { collection -> collection.name })
+      .containsExactly(context.getString(R.string.old_page_bookmarks))
+    assertThat(data.collectionBookmarks.single().timestampMillis).isEqualTo(2_000_000L)
+  }
+
+  @Test
+  fun `recent pages become reading sessions at first ayah of page`() {
+    val firstPageBounds = quranInfo.getPageBounds(50)
+    val secondPageBounds = quranInfo.getPageBounds(51)
+
+    val data = normalizer.normalize(
+      LegacyBookmarksSnapshot(
+        tags = emptyList(),
+        bookmarks = emptyList(),
+        recentPages = listOf(
+          RecentPage(50, Instant.fromEpochSeconds(1000L)),
+          RecentPage(51, Instant.fromEpochSeconds(900L))
+        )
+      )
+    )
+
+    assertThat(data.readingSessions.map { session -> session.sura to session.ayah })
+      .containsExactly(
+        firstPageBounds[0] to firstPageBounds[1],
+        secondPageBounds[0] to secondPageBounds[1]
+      )
+      .inOrder()
+    assertThat(data.readingSessions.map { session -> session.timestampMillis })
+      .containsExactly(1_000_000L, 900_000L)
+      .inOrder()
+  }
+
+  @Test
+  fun `legacy millisecond timestamps remain milliseconds`() {
+    val timestampMillis = 1_700_000_001_234L
+    val page = 50
+
+    val data = normalizer.normalize(
+      LegacyBookmarksSnapshot(
+        tags = listOf(LegacyBookmarkTag(10L, "Reading", timestampMillis)),
+        bookmarks = listOf(
+          Bookmark(
+            legacyBookmarkId(1L),
+            2,
+            255,
+            page,
+            timestampMillis,
+            tags = listOf(legacyTagId(10L))
+          )
+        ),
+        recentPages = listOf(RecentPage(page, Instant.fromEpochMilliseconds(timestampMillis)))
+      )
+    )
+
+    assertThat(data.collections.single().timestampMillis).isEqualTo(timestampMillis)
+    assertThat(data.bookmarks.single().timestampMillis).isEqualTo(timestampMillis)
+    assertThat(data.collectionBookmarks.single().timestampMillis).isEqualTo(timestampMillis)
+    assertThat(data.readingSessions.single().timestampMillis).isEqualTo(timestampMillis)
+  }
+
+  private fun legacyBookmarkId(id: Long): String = id.toString()
+
+  private fun legacyTagId(id: Long): String = id.toString()
+}

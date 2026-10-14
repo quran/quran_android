@@ -8,7 +8,7 @@ import java.io.Serializable
 data class SuraAyah(
   @JvmField val sura: Int,
   @JvmField val ayah: Int
-) : Comparable<SuraAyah>, Serializable, QuranId {
+) : Comparable<SuraAyah>, Serializable, QuranId, JumpLocation {
 
   override fun compareTo(other: SuraAyah): Int {
     return when {

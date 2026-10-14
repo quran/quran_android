@@ -16,9 +16,6 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
 import com.quran.labs.androidquran.util.QuranSettings
 import dev.zacsweers.metro.Inject
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 
 class PageSelectActivity : AppCompatActivity() {
   @Inject lateinit var presenter : PageSelectPresenter
@@ -27,7 +24,6 @@ class PageSelectActivity : AppCompatActivity() {
   private lateinit var adapter : PageSelectAdapter
   private lateinit var viewPager: ViewPager
 
-  private val scope = MainScope()
   private var isProcessing = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +78,6 @@ class PageSelectActivity : AppCompatActivity() {
 
   override fun onDestroy() {
     adapter.cleanUp()
-    scope.cancel()
     super.onDestroy()
   }
 
@@ -94,20 +89,15 @@ class PageSelectActivity : AppCompatActivity() {
     val pageType = quranSettings.pageType
     if (pageType != type) {
       isProcessing = true
-      scope.launch {
-        // migrate the bookmarks
-        presenter.migrateBookmarksData(pageType, type)
+      // Bookmarks are backed by mobile-sync ayah records, so no page-number migration is needed.
+      quranSettings.pageType = type
 
-        // and we can set up our new page type
-        quranSettings.pageType = type
-
-        // go back to Quran Data Activity
-        val intent = Intent(this@PageSelectActivity, QuranDataActivity::class.java).apply {
-          addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        startActivity(intent)
-        finish()
+      // go back to Quran Data Activity
+      val intent = Intent(this@PageSelectActivity, QuranDataActivity::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
       }
+      startActivity(intent)
+      finish()
     } else {
       finish()
     }

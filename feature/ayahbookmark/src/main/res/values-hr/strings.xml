@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Gotovo</string>
+  <string name="ayahbookmark_collections_header">Zbirke</string>
+  <string name="ayahbookmark_new_collection">Nova zbirka</string>
+  <string name="ayahbookmark_collection_name_hint">Naziv zbirke</string>
+  <string name="ayahbookmark_cancel">Odustani</string>
+  <string name="ayahbookmark_create">Izradi</string>
+  <string name="ayahbookmark_saved">Spremljeno</string>
+  <string name="ayahbookmark_not_saved">Nije spremljeno</string>
+  <string name="ayahbookmark_highlight_title">Isticanje</string>
+  <string name="ayahbookmark_highlight_none">Nema</string>
+</resources>

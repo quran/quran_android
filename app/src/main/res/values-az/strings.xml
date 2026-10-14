@@ -153,7 +153,7 @@
   <string name="import_data_permissions_error">İzinler hatası nedeniyle yedekleme dosyası okunamıyor</string>
   <string name="import_data_error">Geçersiz yedekleme dosyası (veya yedekleme dosyası okunamıyor)</string>
   <string name="import_data">Verileri içe aktar</string>
-  <string name="import_data_and_override">Bu dosyayı içe aktarırsanız, tüm işaretlerinizi %1$d işaret ve %2$d etiketle değiştirilir. Devam etmek istiyor musunuz?</string>
+  <string name="import_data_and_merge">Bu faylı içə aktarsanız, cari məlumatlarınıza %1$d işarə və %2$d etiket əlavə ediləcək. İdxal edilsin?</string>
   <string name="import_successful">İçe aktarma başarıyla tamamlandı</string>
   <string name="export_data_error">Veriler dışa aktarılırken hata oluştu</string>
   <string name="exported_data">"Veriler %1$s'e aktarıldı"</string>
@@ -188,7 +188,6 @@
   <string name="timing_database">Gerekli dosyalar</string>
   <string name="page_description">sayfa  %1$s, cüz %2$s</string>
 
-  <string name="menu_bookmarks_ayah">Âyet işaretleri</string>
   <string name="menu_bookmarks_page">Sayfa işaretleri</string>
   <string name="menu_sort_date">Eklendiği tarih</string>
   <string name="menu_sort_location">"Kur'an'daki yeri"</string>
@@ -265,16 +264,25 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Sayfa işareti etiketi</string>
   <string name="delete_tag">Etiketi kaldır</string>
+  <string name="delete">Sil</string>
   <string name="edit_tag">Etiket güncelle</string>
   <string name="new_tag">Yeni etiket</string>
-  <string name="not_tagged">Etiketlenmedi</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Bir etiket silindi</item>
     <item quantity="other">%d etiket silindi</item>
   </plurals>
   <string name="undo">Geri alma</string>
 
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Hələ əlfəcin yoxdur</string>
+  <string name="bookmarks_empty_subtitle">Səhifəni yadda saxlamaq üçün əlfəcin nişanına toxunun, və ya ayəyə uzun basaraq onu əlfəcinləyin.</string>
+  <string name="reading_bookmark_movable_education_title">Bu, daşına bilən oxu əlfəcinidir</string>
+  <string name="reading_bookmark_movable_education_body">Oxu əlfəcinini yadda saxlamaq köhnəsini əvəz edir. Bir neçə ayəni saxlamaq üçün ayəyə uzun basıb kolleksiyaya əlavə edin.</string>
+  <string name="reading_bookmark_moved_from">%1$s-dən köçürüldü</string>
+  <string name="reading_bookmark_dismiss_education">Bağla</string>
+
   <string name="recent_pages">Son sayfalar</string>
+  <string name="old_page_bookmarks">Köhnə səhifə işarələri</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Etiket</string>

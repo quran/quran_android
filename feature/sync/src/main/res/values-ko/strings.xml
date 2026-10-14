@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com 동기화</string>
+  <string name="quran_sync_settings_category">계정</string>
+  <string name="quran_sync_settings_summary">북마크, 컬렉션 및 읽기 기록</string>
+  <string name="quran_sync_not_signed_in">로그인하지 않음</string>
+  <string name="quran_sync_signed_in">로그인됨</string>
+  <string name="quran_sync_loading">로그인 중</string>
+  <string name="quran_sync_login">로그인</string>
+  <string name="quran_sync_logout">로그아웃</string>
+  <string name="quran_sync_name">이름</string>
+  <string name="quran_sync_email">이메일</string>
+  <string name="quran_sync_account_id">계정 ID</string>
+  <string name="quran_sync_action_error">지금은 동기화를 업데이트할 수 없습니다.</string>
+  <string name="quran_sync_bookmarks_cta_title">북마크를 어디서나 동기화하세요</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">어떤 기기에서든, 언제든지 액세스하세요</string>
+  <string name="quran_sync_bookmarks_cta_button">Quran.com으로 로그인</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">닫기</string>
+</resources>

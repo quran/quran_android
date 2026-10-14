@@ -8,15 +8,6 @@ CREATE TABLE IF NOT EXISTS bookmarks(
   added_date INTEGER DEFAULT (strftime('%s', 'now')) NOT NULL
 );
 
-addBookmark:
-  INSERT INTO bookmarks(sura, ayah, page) VALUES(?, ?, ?);
-
-restoreBookmark:
-  INSERT INTO bookmarks(_ID, sura, ayah, page, added_date) VALUES(?, ?, ?, ?, ?);
-
-update:
-  UPDATE bookmarks SET sura = ?, ayah = ?, page = ? WHERE _ID = ?;
-
 getBookmarksByDateAdded:
   SELECT
     bookmarks._ID,
@@ -69,9 +60,3 @@ getBookmarkIdForSuraAyah:
   SELECT bookmarks._ID FROM bookmarks
     WHERE bookmarks.sura = ?
     AND bookmarks.ayah = ?;
-
-deleteAll:
-  DELETE FROM bookmarks;
-
-deleteByIds:
-  DELETE FROM bookmarks WHERE _ID IN ?;

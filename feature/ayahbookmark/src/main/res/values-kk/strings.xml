@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Дайын</string>
+  <string name="ayahbookmark_collections_header">Жинақтар</string>
+  <string name="ayahbookmark_new_collection">Жаңа жинақ</string>
+  <string name="ayahbookmark_collection_name_hint">Жинақ атауы</string>
+  <string name="ayahbookmark_cancel">Бас тарту</string>
+  <string name="ayahbookmark_create">Жасау</string>
+  <string name="ayahbookmark_saved">Сақталды</string>
+  <string name="ayahbookmark_not_saved">Сақталмаған</string>
+  <string name="ayahbookmark_highlight_title">Бөлектеу</string>
+  <string name="ayahbookmark_highlight_none">Жоқ</string>
+</resources>

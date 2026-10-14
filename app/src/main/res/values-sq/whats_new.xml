@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Çfarë ka të re</string>
+  <string name="whats_new_continue">Vazhdo</string>
+  <string name="icon_announcement_title">Një ikonë e re</string>
+  <string name="icon_announcement_body">Në përditësimin tonë të ardhshëm, ikona e aplikacionit Quran në ekranin tuaj kryesor do të ndryshojë. Kjo ikonë e re tani është shenja e përbashkët e një familjeje mjetesh të ndërtuara rreth fjalës së Allahut. Më shumë detaje së shpejti.</string>
+  <string name="icon_announcement_now">TANI</string>
+  <string name="icon_announcement_coming_soon">SË SHPEJTI</string>
+  <string name="icon_announcement_same_app_title">I njëjti aplikacion, ikonë e re</string>
+  <string name="icon_announcement_same_app_body">Të gjithë faqeshënuesit, përparimi dhe cilësimet tuaja mbeten saktësisht ku janë.</string>
+  <string name="icon_announcement_release_title">Vjen në versionin e ardhshëm</string>
+  <string name="icon_announcement_release_body">Ikona e re do të vijë me përditësimin e ardhshëm.</string>
+  <string name="icon_announcement_current_icon">Ikona aktuale e aplikacionit Quran</string>
+  <string name="icon_announcement_upcoming_icon">Ikona e ardhshme e aplikacionit Quran</string>
+</resources>

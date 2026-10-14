@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <item name="empty_highlight_alpha" format="float" type="dimen">0.5</item>
+</resources>

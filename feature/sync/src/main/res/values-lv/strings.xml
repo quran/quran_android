@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com sinhronizācija</string>
+  <string name="quran_sync_settings_category">Konts</string>
+  <string name="quran_sync_settings_summary">Grāmatzīmes, kolekcijas un lasīšanas vēsture</string>
+  <string name="quran_sync_not_signed_in">Nav pierakstījies</string>
+  <string name="quran_sync_signed_in">Pierakstījies</string>
+  <string name="quran_sync_loading">Notiek pierakstīšanās</string>
+  <string name="quran_sync_login">Pierakstīties</string>
+  <string name="quran_sync_logout">Izrakstīties</string>
+  <string name="quran_sync_name">Vārds</string>
+  <string name="quran_sync_email">E-pasts</string>
+  <string name="quran_sync_account_id">Konta ID</string>
+  <string name="quran_sync_action_error">Pašlaik nevar atjaunināt sinhronizāciju.</string>
+  <string name="quran_sync_bookmarks_cta_title">Sinhronizējiet savas grāmatzīmes visur</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Piekļūstiet tām no jebkuras ierīces, jebkurā laikā</string>
+  <string name="quran_sync_bookmarks_cta_button">Pierakstīties ar Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Nerādīt</string>
+</resources>

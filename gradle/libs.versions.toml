@@ -1,75 +1,75 @@
 [versions]
-agp = "9.1.0"
+agp = "9.4.1"
 junit = "1.3.0"
-kotlin = "2.3.20"
-ksp = "2.3.6"
+kotlin = "2.4.21"
+ksp = "2.3.12"
 
 # required within the Gradle convention plugins - not unused
-composeBomVersion = "2026.03.01"
-media3ExoplayerVersion = "1.10.0"
-okhttpBomVersion = "5.3.2"
-firebaseBomVersion = "34.11.0"
+composeBomVersion = "2026.09.00"
+media3ExoplayerVersion = "1.11.1"
+okhttpBomVersion = "5.5.0"
+firebaseBomVersion = "35.0.0"
 
 # dependencies
-coroutinesVersion = "1.10.2"
-crashlytics = "3.0.6"
+coroutinesVersion = "1.11.0"
+crashlytics = "3.0.8"
 dnsjavaVersion = "2.1.9"
-errorprone = "5.1.0"
-metro = "0.12.1"
-errorproneCoreVersion = "2.48.0"
-googleServices = "4.4.4"
-immutableCollectionsVersion = "0.4.0"
+errorprone = "5.1.1"
+metro = "1.4.5"
+errorproneCoreVersion = "2.50.0"
+googleServices = "4.5.0"
+immutableCollectionsVersion = "0.5.2"
 leakcanaryAndroidVersion = "2.14"
 moshiVersion = "1.15.2"
-okioVersion = "3.17.0"
+okioVersion = "3.18.2"
+quranMobileSyncVersion = "0.1.30"
 retrofitVersion = "3.0.0"
 rxandroidVersion = "3.0.2"
 rxjavaVersion = "3.1.12"
-sqldelight = "2.3.2"
+sqldelight = "2.4.1"
 timberVersion = "5.0.1"
 
 # androidx library versions
-androidxAppcompatVersion = "1.7.1"
+androidxAppcompatVersion = "1.8.0"
 androidxActivityComposeVersion = "1.13.0"
-androidxAnnotationVersion = "1.9.1"
-androidxCoreVersion = "1.18.0"
-androidxNavigationVersion = "2.9.7"
+androidxAnnotationVersion = "1.11.0"
+androidxCoreVersion = "1.19.1"
+androidxNavigationVersion = "2.10.2"
 androidxDynamicAnimationVersion = "1.1.0"
-androidxFragmentVersion = "1.8.9"
+androidxFragmentVersion = "1.9.1"
 androidxJunitExtVersion = "1.3.0"
 androidxLocalBroadcastVersion = "1.1.0"
-androidxMediaVersion = "1.7.1"
+androidxMediaVersion = "1.8.0"
 androidxPreferencesVersion = "1.2.1"
 androidxRecyclerViewVersion = "1.4.0"
 androidxSwipeRefreshVersion = "1.2.0"
-androidxPagingVersion = "3.4.2"
-androidxPagingComposeVersion = "3.4.2"
-androidxWorkManagerVersion = "2.11.2"
+androidxPagingVersion = "3.5.2"
+androidxPagingComposeVersion = "3.5.2"
+androidxWorkManagerVersion = "2.12.0"
 androidxWindowManager = "1.5.1"
 
 # ui libraries
 accompanistVersion = "0.36.0"
-balloonVersion = "1.7.5"
+balloonVersion = "1.7.6"
 tooltipComposeVersion = "0.2.0"
 insetterVersion = "0.6.1"
-materialComponentsVersion = "1.13.0"
+materialComponentsVersion = "1.14.0"
 numberPickerVersion = "2.4.13"
 reorderableComposeVersion = "0.9.6"
 molecule = "2.2.0"
 
 # recitations
-grpcOkhttpVersion = "1.80.0"
-googleAuthVersion = "1.43.0"
-googleCloudSpeechVersion = "4.83.0"
+grpcOkhttpVersion = "1.84.2"
+googleAuthVersion = "1.54.0"
+googleCloudSpeechVersion = "4.94.0"
 
 # testing
 junitVersion = "4.13.2"
 espressoVersion = "3.7.0"
 truthVersion = "1.4.5"
-mockitoVersion = "5.23.0"
-robolectricVersion = "4.16.1"
+robolectricVersion = "4.17"
 turbineVersion = "1.2.1"
-koverVersion = "0.9.8"
+koverVersion = "0.9.11"
 
 [libraries]
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junit" }
@@ -144,6 +144,7 @@ sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", ver
 sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions-jvm", version.ref = "sqldelight" }
 sqldelight-paging3-extensions = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
 sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
+quran-mobile-sync = { module = "com.quran:mobile-sync", version.ref = "quranMobileSyncVersion" }
 
 # recitation
 grpc-okhttp = { module = "io.grpc:grpc-okhttp", version.ref = "grpcOkhttpVersion" }
@@ -173,7 +174,6 @@ espresso-intents = { module = "androidx.test.espresso:espresso-intents", version
 espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoVersion" }
 junit = { module = "junit:junit", version.ref = "junitVersion" }
 junit-ktx = { module = "androidx.test.ext:junit-ktx", version.ref = "androidxJunitExtVersion" }
-mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoVersion" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectricVersion" }
 truth = { module = "com.google.truth:truth", version.ref = "truthVersion" }
 turbine = { module = "app.cash.turbine:turbine-jvm", version.ref = "turbineVersion" }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">تەواو</string>
+  <string name="ayahbookmark_collections_header">کۆکراوەکان</string>
+  <string name="ayahbookmark_new_collection">کۆکراوەی نوێ</string>
+  <string name="ayahbookmark_collection_name_hint">ناوی کۆکراوە</string>
+  <string name="ayahbookmark_cancel">هەڵوەشاندنەوە</string>
+  <string name="ayahbookmark_create">دروستکردن</string>
+  <string name="ayahbookmark_saved">پاشەکەوتکراوە</string>
+  <string name="ayahbookmark_not_saved">پاشەکەوت نەکراوە</string>
+  <string name="ayahbookmark_highlight_title">هایلایت</string>
+  <string name="ayahbookmark_highlight_none">هیچ</string>
+</resources>

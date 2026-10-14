@@ -3,13 +3,22 @@ package com.quran.labs.androidquran.model.bookmark
 import android.content.Context
 import android.net.Uri
 import androidx.core.content.FileProvider
+import com.quran.data.dao.BookmarkSortOrder
+import com.quran.data.dao.BookmarksDao
+import com.quran.data.dao.ReadingBookmarksDao
+import com.quran.data.dao.RecentPagesDao
+import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.database.BookmarksDBAdapter
+import com.quran.mobile.bookmark.importdata.BookmarkBackupImportNormalizer
+import com.quran.mobile.bookmark.importdata.MobileSyncImporter
+import com.quran.mobile.bookmark.model.ReadingBookmarkPageMapper
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.runBlocking
 import okio.BufferedSource
 import okio.buffer
 import okio.sink
@@ -19,7 +28,12 @@ import java.io.IOException
 class BookmarkImportExportModel @Inject internal constructor(
   @param:ApplicationContext private val appContext: Context,
   private val jsonModel: BookmarkJsonModel,
-  private val bookmarkModel: BookmarkModel
+  private val bookmarksDao: BookmarksDao,
+  private val recentPagesDao: RecentPagesDao,
+  private val readingBookmarksDao: ReadingBookmarksDao,
+  private val pageMapper: ReadingBookmarkPageMapper,
+  private val backupImportNormalizer: BookmarkBackupImportNormalizer,
+  private val mobileSyncImporter: MobileSyncImporter
 ) {
   fun readBookmarks(source: BufferedSource): Single<BookmarkData> {
     return Single.defer {
@@ -29,7 +43,7 @@ class BookmarkImportExportModel @Inject internal constructor(
   }
 
   fun exportBookmarksObservable(): Single<Uri> {
-    return bookmarkModel.getBookmarkDataObservable(BookmarksDBAdapter.SORT_DATE_ADDED)
+    return bookmarkDataWithRecentsObservable()
       .flatMap { bookmarkData: BookmarkData ->
         Single.just(
           exportBookmarks(bookmarkData)
@@ -55,7 +69,7 @@ class BookmarkImportExportModel @Inject internal constructor(
   }
 
   fun exportBookmarksCSVObservable(): Single<Uri> {
-    return bookmarkModel.getBookmarkDataObservable(BookmarksDBAdapter.SORT_DATE_ADDED)
+    return bookmarkDataWithRecentsObservable()
       .flatMap { bookmarkData: BookmarkData ->
         Single.just(
           exportBookmarksCSV(bookmarkData)
@@ -78,6 +92,46 @@ class BookmarkImportExportModel @Inject internal constructor(
       )
     }
     throw IOException("Unable to write to external files directory.")
+  }
+
+  private fun bookmarkDataWithRecentsObservable(): Single<BookmarkData> {
+    return Single.fromCallable {
+      runBlocking {
+        val pageType = pageMapper.currentPageType()
+        val allTags = bookmarksDao.tags()
+        val systemTagIds = allTags.filter { tag -> tag.isSystem }.mapTo(mutableSetOf()) { it.id }
+        BookmarkData(
+          tags = allTags.filterNot { tag -> tag.isSystem },
+          bookmarks = bookmarksDao.bookmarks(BookmarkSortOrder.SORT_DATE_ADDED)
+            .filterNot { bookmark -> bookmark.isPageBookmark() }
+            .map { bookmark -> bookmark.withTags(bookmark.tags - systemTagIds) },
+          recentPages = recentPagesDao.recentPages(),
+          readingBookmarks = readingBookmarksDao.readingBookmarks()
+            .mapNotNull { bookmark ->
+              BackupReadingBookmark.fromReadingBookmark(bookmark) { sura, ayah ->
+                pageMapper.suraAyahToPage(sura, ayah, pageType)
+              }
+            },
+          pageType = pageType
+        )
+      }
+    }.subscribeOn(Schedulers.io())
+  }
+
+  fun importBookmarksObservable(data: BookmarkData): Observable<Boolean> {
+    return Observable.fromCallable {
+      runBlocking {
+        importBookmarks(data)
+      }
+      true
+    }.subscribeOn(Schedulers.io()).cache()
+  }
+
+  private suspend fun importBookmarks(data: BookmarkData) {
+    val importData = backupImportNormalizer.normalize(data)
+    if (!importData.isEmpty()) {
+      mobileSyncImporter.importData(importData, deleteExisting = false)
+    }
   }
 
   companion object {

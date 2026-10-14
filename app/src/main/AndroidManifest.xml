@@ -41,6 +41,7 @@
       android:requestLegacyExternalStorage="true"
       android:enableOnBackInvokedCallback="true"
       android:localeConfig="@xml/locales_config"
+      tools:replace="android:fullBackupContent,android:dataExtractionRules"
       tools:targetApi="tiramisu">
 
     <activity
@@ -59,6 +60,10 @@
 
     <activity android:name=".ShortcutsActivity"
               android:exported="true" />
+    <activity
+        android:name=".ui.whatsnew.AnnouncementActivity"
+        android:theme="@style/QuranToolBarDayNight"
+        android:exported="false"/>
     <activity
         android:name=".ui.QuranActivity"
         android:theme="@style/QuranToolBarDayNight"
@@ -89,6 +94,11 @@
         android:name=".QuranAdvancedPreferenceActivity"
         android:theme="@style/QuranToolBarDayNight"
         android:configChanges="keyboardHidden|orientation|screenSize"
+        android:exported="false"/>
+
+    <activity
+        android:name=".ui.BookmarkListActivity"
+        android:theme="@style/QuranToolBarDayNight"
         android:exported="false"/>
 
     <activity

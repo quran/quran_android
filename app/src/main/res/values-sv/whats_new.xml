@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Nyheter</string>
+  <string name="whats_new_continue">Fortsätt</string>
+  <string name="icon_announcement_title">En ny ikon</string>
+  <string name="icon_announcement_body">I vår nästa uppdatering kommer Quran-appens ikon på din hemskärm att ändras. Den nya ikonen är nu det gemensamma kännetecknet för en familj av verktyg byggda kring Allahs ord. Mer information kommer snart.</string>
+  <string name="icon_announcement_now">NU</string>
+  <string name="icon_announcement_coming_soon">KOMMER SNART</string>
+  <string name="icon_announcement_same_app_title">Samma app, ny ikon</string>
+  <string name="icon_announcement_same_app_body">Alla dina bokmärken, framsteg och inställningar finns kvar precis där de är.</string>
+  <string name="icon_announcement_release_title">Kommer i nästa version</string>
+  <string name="icon_announcement_release_body">Den nya ikonen kommer i nästa uppdatering.</string>
+  <string name="icon_announcement_current_icon">Quran-appens nuvarande ikon</string>
+  <string name="icon_announcement_upcoming_icon">Quran-appens kommande ikon</string>
+</resources>

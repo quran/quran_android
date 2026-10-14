@@ -18,7 +18,7 @@ class AudioUtils @Inject constructor(
   private val quranInfo: QuranInfo,
   private val quranFileUtils: QuranFileUtils,
   private val qariUtil: QariUtil
-) {
+) : AudioUtilsInterface {
 
   private val totalPages = quranInfo.numberOfPages
 
@@ -69,7 +69,7 @@ class AudioUtils @Inject constructor(
     }
   }
 
-  fun getQariUrl(item: QariItem, extension: String): String {
+  override fun getQariUrl(item: QariItem, extension: String): String {
     return item.url(extension) + if (item.isGapless) {
       "%03d.$extension"
     } else {
@@ -77,12 +77,12 @@ class AudioUtils @Inject constructor(
     }
   }
 
-  fun getLocalQariUrl(item: QariItem): String? {
+  override fun getLocalQariUrl(item: QariItem): String? {
     val rootDirectory = quranFileUtils.audioFileDirectory()
     return if (rootDirectory == null) null else rootDirectory + item.path
   }
 
-  fun getQariDatabasePathIfGapless(item: QariItem): String? {
+  override fun getQariDatabasePathIfGapless(item: QariItem): String? {
     var databaseName = item.databaseName
     if (databaseName != null) {
       val path = getLocalQariUrl(item)
@@ -170,7 +170,7 @@ class AudioUtils @Inject constructor(
     }
   }
 
-  fun shouldDownloadBasmallah(
+  override fun shouldDownloadBasmallah(
     baseDirectory: String,
     start: SuraAyah,
     end: SuraAyah,
@@ -217,7 +217,7 @@ class AudioUtils @Inject constructor(
     return false
   }
 
-  fun haveAllFiles(
+  override fun haveAllFiles(
     baseUrl: String,
     path: String,
     start: SuraAyah,

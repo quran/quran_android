@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Atlikta</string>
+  <string name="ayahbookmark_collections_header">Rinkiniai</string>
+  <string name="ayahbookmark_new_collection">Naujas rinkinys</string>
+  <string name="ayahbookmark_collection_name_hint">Rinkinio pavadinimas</string>
+  <string name="ayahbookmark_cancel">Atšaukti</string>
+  <string name="ayahbookmark_create">Sukurti</string>
+  <string name="ayahbookmark_saved">Įrašyta</string>
+  <string name="ayahbookmark_not_saved">Neįrašyta</string>
+  <string name="ayahbookmark_highlight_title">Paryškinimas</string>
+  <string name="ayahbookmark_highlight_none">Nėra</string>
+</resources>

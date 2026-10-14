@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Τέλος</string>
+  <string name="ayahbookmark_collections_header">Συλλογές</string>
+  <string name="ayahbookmark_new_collection">Νέα συλλογή</string>
+  <string name="ayahbookmark_collection_name_hint">Όνομα συλλογής</string>
+  <string name="ayahbookmark_cancel">Ακύρωση</string>
+  <string name="ayahbookmark_create">Δημιουργία</string>
+  <string name="ayahbookmark_saved">Αποθηκεύτηκε</string>
+  <string name="ayahbookmark_not_saved">Δεν αποθηκεύτηκε</string>
+  <string name="ayahbookmark_highlight_title">Επισήμανση</string>
+  <string name="ayahbookmark_highlight_none">Καμία</string>
+</resources>

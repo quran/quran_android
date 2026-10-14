@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.di.module.application
 
 import com.quran.data.dao.BookmarksDao
+import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.dao.TranslationsDao
 import com.quran.data.di.AppScope
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
@@ -9,6 +10,7 @@ import com.quran.labs.androidquran.database.TranslationsDaoImpl
 import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenterImpl
 import com.quran.mobile.bookmark.model.BookmarksDaoImpl
+import com.quran.mobile.bookmark.model.ReadingBookmarksDaoImpl
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.Provides
 import dev.zacsweers.metro.SingleIn
@@ -19,6 +21,12 @@ object DatabaseModule {
   @Provides
   @SingleIn(AppScope::class)
   fun provideBookmarksDao(daoImpl: BookmarksDaoImpl): BookmarksDao {
+    return daoImpl
+  }
+
+  @Provides
+  @SingleIn(AppScope::class)
+  fun provideReadingBookmarksDao(daoImpl: ReadingBookmarksDaoImpl): ReadingBookmarksDao {
     return daoImpl
   }
 

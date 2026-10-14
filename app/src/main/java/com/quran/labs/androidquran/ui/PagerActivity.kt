@@ -14,6 +14,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import android.preference.PreferenceManager
+import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
 import android.view.Menu
@@ -48,9 +49,10 @@ import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarksDao
+import com.quran.data.model.Page
 import com.quran.data.model.QuranText
 import com.quran.data.model.SuraAyah
-import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.ReadingBookmarkTarget
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.AyahSelection.AyahRange
 import com.quran.data.model.selection.SelectionIndicator
@@ -79,6 +81,8 @@ import com.quran.labs.androidquran.feature.reading.bridge.DownloadBridge
 import com.quran.labs.androidquran.feature.reading.bridge.ReadingEventPresenterBridge
 import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenter
 import com.quran.labs.androidquran.feature.reading.presenter.RecentPagePresenter
+import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkChange
+import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkPresenter
 import com.quran.labs.androidquran.feature.reading.presenter.recitation.PagerActivityRecitationPresenter
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.presenter.data.QuranEventLogger
@@ -98,12 +102,15 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener
 import com.quran.labs.androidquran.ui.helpers.AyahTracker
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
+import com.quran.labs.androidquran.ui.helpers.QuranNavigator
 import com.quran.labs.androidquran.ui.helpers.QuranPage
 import com.quran.labs.androidquran.ui.helpers.QuranPageAdapter
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.labs.androidquran.ui.listener.AudioBarListener
+import com.quran.labs.androidquran.ui.readingbookmark.createReadingBookmarkToastView
 import com.quran.labs.androidquran.ui.util.ToastCompat.makeText
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
+import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenterScreen
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.OrientationLockUtils
 import com.quran.labs.androidquran.util.QuranAppUtils
@@ -125,9 +132,14 @@ import com.quran.mobile.di.QuranReadingPageComponentProvider
 import com.quran.mobile.feature.audiobar.AudioBarInjector
 import com.quran.mobile.feature.audiobar.AudioBarWrapper
 import com.quran.mobile.feature.audiobar.presenter.AudioBarEventRepository
+import com.quran.mobile.feature.ayahbookmark.AyahBookmarkWrapper
+import com.quran.mobile.feature.ayahbookmark.di.AyahBookmarkWrapperInjector
+import com.quran.mobile.feature.ayahbookmark.readingbookmark.ReadingBookmarkSheetWrapper
+import com.quran.mobile.feature.ayahbookmark.readingbookmark.di.ReadingBookmarkSheetWrapperInjector
 import com.quran.mobile.feature.qarilist.QariListWrapper
 import com.quran.mobile.feature.qarilist.di.QariListWrapperInjector
 import com.quran.mobile.translation.model.LocalTranslation
+import com.quran.page.common.data.QuranNaming
 import com.quran.page.common.factory.PageViewFactoryProvider
 import com.quran.page.common.toolbar.AyahToolBar
 import com.quran.page.common.toolbar.di.AyahToolBarInjector
@@ -147,8 +159,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -159,6 +169,7 @@ import java.lang.ref.WeakReference
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
+import androidx.core.view.isVisible
 
 /**
  * Activity that displays the Quran (in Arabic or translation mode).
@@ -171,7 +182,9 @@ import kotlin.math.abs
 class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdateListener,
   AyahSelectedListener, JumpDestination, QuranReadingActivityComponentProvider,
   QuranReadingPageComponentProvider, AyahToolBarInjector, QariListWrapperInjector,
-  AudioBarInjector, ActivityCompat.OnRequestPermissionsResultCallback {
+  AudioBarInjector, AyahBookmarkWrapperInjector, ReadingBookmarkSheetWrapperInjector,
+  ActivityCompat.OnRequestPermissionsResultCallback, AudioPresenterScreen,
+  ReadingBookmarkPresenter.Screen {
   private var lastPopupTime: Long = 0
   private var isActionBarHidden = true
   private var shouldReconnect = false
@@ -184,6 +197,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private var isFoldableDeviceOpenAndVertical = false
 
   private var bookmarksMenuItem: MenuItem? = null
+  private var isCurrentPageReadingBookmarked = false
+  private var readingBookmarkToastView: View? = null
 
   private var translationNames: Array<String> = emptyArray()
   private var translations: List<LocalTranslation>? = null
@@ -212,9 +227,13 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private var lastSelectedTranslationAyah: QuranAyahInfo? = null
   private var lastActivatedLocalTranslations: Array<LocalTranslation> = emptyArray()
 
+  @Inject lateinit var quranNavigator: QuranNavigator
+
   @Inject lateinit var bookmarksDao: BookmarksDao
   @Inject lateinit var recentPagePresenter: RecentPagePresenter
+  @Inject lateinit var readingBookmarkPresenter: ReadingBookmarkPresenter
   @Inject lateinit var quranSettings: QuranSettings
+  @Inject lateinit var quranNaming: QuranNaming
   @Inject lateinit var quranScreenInfo: QuranScreenInfo
   @Inject lateinit var arabicDatabaseUtils: ArabicDatabaseUtils
   @Inject lateinit var quranAppUtils: QuranAppUtils
@@ -241,7 +260,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private lateinit var windowInsetsController: WindowInsetsControllerCompat
 
   private var translationJob: Job? = null
-  private var currentBookmarks: List<Bookmark> = listOf()
   private lateinit var compositeDisposable: CompositeDisposable
   private val foregroundDisposable = CompositeDisposable()
   private val scope = MainScope()
@@ -333,18 +351,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       onDownloadSuccess()
     }
 
-    bookmarksDao.pageBookmarksWithoutTags().combine(currentPageFlow) { bookmarks, currentPage ->
-      bookmarks to currentPage
-    }.onEach { (bookmarks, page) ->
-      currentBookmarks = bookmarks
-
-      val isBookmarked = if (isDualPages) {
-        bookmarks.any { it.page == page || it.page == page - 1 }
-      } else {
-        bookmarks.any { it.page == page }
-      }
-      refreshBookmarksMenu(isBookmarked)
-    }.launchIn(scope)
   }
 
   private fun updateDualPageMode() {
@@ -550,13 +556,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
         if (quranSettings.shouldDisplayMarkerPopup()) {
           lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
-            this@PagerActivity, quranInfo, page, lastPopupTime
+            this@PagerActivity, quranInfo, page, isDualPageVisible, lastPopupTime
           )
-          if (isDualPages) {
-            lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
-              this@PagerActivity, quranInfo, page - 1, lastPopupTime
-            )
-          }
         }
 
         if (!showingTranslation) {
@@ -894,6 +895,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
+    readingBookmarkPresenter.bind(currentPageFlow, this)
 
     if (shouldReconnect) {
       foregroundDisposable.add(
@@ -921,6 +923,16 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   override fun injectQariListWrapper(qariListWrapper: QariListWrapper) {
     pagerActivityComponent.inject(qariListWrapper)
+  }
+
+  override fun injectAyahBookmarkWrapper(ayahBookmarkWrapper: AyahBookmarkWrapper) {
+    pagerActivityComponent.inject(ayahBookmarkWrapper)
+  }
+
+  override fun injectReadingBookmarkSheetWrapper(
+    readingBookmarkSheetWrapper: ReadingBookmarkSheetWrapper
+  ) {
+    pagerActivityComponent.inject(readingBookmarkSheetWrapper)
   }
 
   override fun provideQuranReadingActivityComponent(): QuranReadingActivityComponent {
@@ -1072,17 +1084,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   override fun jumpTo(page: Int) {
-    val i = Intent(this, PagerActivity::class.java)
-    i.putExtra("page", page)
-    onNewIntent(i)
+    quranNavigator.jumpTo(Page(page))
   }
 
   override fun jumpToAndHighlight(page: Int, sura: Int, ayah: Int) {
-    val i = Intent(this, PagerActivity::class.java)
-    i.putExtra("page", page)
-    i.putExtra(EXTRA_HIGHLIGHT_SURA, sura)
-    i.putExtra(EXTRA_HIGHLIGHT_AYAH, ayah)
-    onNewIntent(i)
+    quranNavigator.jumpTo(SuraAyah(sura, ayah))
   }
 
   public override fun onPause() {
@@ -1090,6 +1096,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     promptDialog?.dismiss()
     promptDialog = null
     recentPagePresenter.unbind()
+    readingBookmarkPresenter.unbind(this)
     quranSettings.wasShowingTranslation = pagerAdapter.isShowingTranslation
 
     super.onPause()
@@ -1185,7 +1192,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     val itemId = item.itemId
     if (itemId == R.id.favorite_item) {
-      togglePageBookmark(currentPage)
+      showReadingBookmarkSheet(ReadingBookmarkTarget.Page(currentPage))
       return true
     } else if (itemId == R.id.goto_quran) {
       switchToQuran()
@@ -1441,32 +1448,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
   }
 
-  private fun togglePageBookmark(page: Int) {
-    scope.launch {
-      bookmarksDao.togglePageBookmark(page)
-    }
-  }
-
-  private fun toggleAyahBookmark(suraAyah: SuraAyah, page: Int) {
-    scope.launch {
-      val isBookmarked = bookmarksDao.toggleAyahBookmark(suraAyah, page)
-      updateAyahBookmark(suraAyah, isBookmarked)
-    }
-  }
-
   private fun refreshBookmarksMenu() {
-    val currentPage = currentPage
-    val isBookmarked = if (isDualPages) {
-      currentBookmarks.any { it.page == currentPage || it.page == currentPage - 1 }
-    } else {
-      currentBookmarks.any { it.page == currentPage }
-    }
-
-    if (isBookmarked) {
-      refreshBookmarksMenu(true)
-    }
-    // don't refresh if it's not bookmarked since it'll cause a loop (since this method is called
-    // from onPrepareOptionsMenu).
+    refreshBookmarksMenu(isCurrentPageReadingBookmarked)
   }
 
   private fun refreshBookmarksMenu(isBookmarked: Boolean) {
@@ -1476,6 +1459,67 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     } else {
       supportInvalidateOptionsMenu()
     }
+  }
+
+  override fun setPageReadingBookmarkSelected(isBookmarked: Boolean) {
+    isCurrentPageReadingBookmarked = isBookmarked
+    refreshBookmarksMenu(isBookmarked)
+  }
+
+  override fun showReadingBookmarkChangedToast(
+    change: ReadingBookmarkChange,
+    isEducation: Boolean,
+    onUndo: () -> Unit,
+    onDismiss: () -> Unit
+  ) {
+    val rootView = findViewById<ViewGroup>(android.R.id.content)
+    readingBookmarkToastView?.let { rootView.removeView(it) }
+
+    val toastView = createReadingBookmarkToastView(
+      this,
+      change,
+      isEducation,
+      quranNaming,
+      onUndo = onUndo,
+      onDismiss = onDismiss
+    )
+    readingBookmarkToastView = toastView
+    rootView.addView(
+      toastView,
+      FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.MATCH_PARENT,
+        FrameLayout.LayoutParams.WRAP_CONTENT,
+        Gravity.BOTTOM
+      )
+    )
+    // the sliding panel that hosts the rest of the reading UI claims every touch within its
+    // collapsed (audio bar) region for its own drag/tap handling, regardless of what's drawn on
+    // top of it there - so rather than fight that, sit the toast just above the audio bar (when
+    // one is visible, its own height already accounts for the navigation bar inset) or above the
+    // navigation bar directly (when it isn't, e.g. three-button navigation in edge-to-edge mode).
+    // side padding covers landscape three-button navigation and display cutouts.
+    ViewCompat.setOnApplyWindowInsetsListener(toastView) { view, windowInsets ->
+      val insets = windowInsets.getInsets(
+        WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.displayCutout()
+      )
+      view.updatePadding(left = insets.left, right = insets.right)
+      val params = view.layoutParams as FrameLayout.LayoutParams
+      params.bottomMargin = if (audioStatusBar.isVisible) {
+        audioStatusBar.height
+      } else {
+        insets.bottom
+      }
+      view.layoutParams = params
+      windowInsets
+    }
+    ViewCompat.requestApplyInsets(toastView)
+  }
+
+  override fun dismissReadingBookmarkChangedToast() {
+    readingBookmarkToastView?.let {
+      findViewById<ViewGroup>(android.R.id.content).removeView(it)
+    }
+    readingBookmarkToastView = null
   }
 
   // region Audio playback
@@ -1554,7 +1598,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
   }
 
-  fun handleRequiredDownload(downloadIntent: Intent?) {
+  override fun handleRequiredDownload(downloadIntent: Intent?) {
     var needsPermission = needsPermissionToDownloadOver3g
     if (needsPermission) {
       if (QuranUtils.isOnWifiNetwork(this)) {
@@ -1585,7 +1629,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
   }
 
-  fun proceedWithDownload(downloadIntent: Intent?) {
+  override fun proceedWithDownload(downloadIntent: Intent?) {
     if (isActionBarHidden) {
       toggleActionBar()
     }
@@ -1594,7 +1638,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     startService(downloadIntent)
   }
 
-  fun handlePlayback(request: AudioRequest?) {
+  override fun handlePlayback(request: AudioRequest?) {
     needsPermissionToDownloadOver3g = true
     val intent = Intent(this, AudioService::class.java)
     intent.setAction(AudioService.ACTION_PLAYBACK)
@@ -1666,6 +1710,43 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     overlay.removeAllViews()
     overlay.addView(
       qariListWrapper,
+      ViewGroup.LayoutParams.MATCH_PARENT,
+      ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    overlay.visibility = View.VISIBLE
+    toggleActionBarVisibility(false)
+  }
+
+  private fun showReadingBookmarkSheet(target: ReadingBookmarkTarget) {
+    val readingBookmarkSheetWrapper = ReadingBookmarkSheetWrapper(
+      context = this,
+      target = target,
+      onDismissed = {
+        overlay.removeAllViews()
+        overlay.visibility = View.GONE
+        toggleActionBarVisibility(true)
+      }
+    )
+    overlay.removeAllViews()
+    overlay.addView(
+      readingBookmarkSheetWrapper,
+      ViewGroup.LayoutParams.MATCH_PARENT,
+      ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    overlay.visibility = View.VISIBLE
+    toggleActionBarVisibility(false)
+  }
+
+  private fun showAyahBookmarkSheet(suraAyah: SuraAyah) {
+    val ayahBookmarkWrapper = AyahBookmarkWrapper(this, suraAyah) { isBookmarked ->
+      overlay.removeAllViews()
+      overlay.visibility = View.GONE
+      toggleActionBarVisibility(true)
+      updateAyahBookmark(suraAyah, isBookmarked)
+    }
+    overlay.removeAllViews()
+    overlay.addView(
+      ayahBookmarkWrapper,
       ViewGroup.LayoutParams.MATCH_PARENT,
       ViewGroup.LayoutParams.MATCH_PARENT
     )
@@ -1784,11 +1865,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
       val itemId = item.itemId
       if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_bookmark_ayah) {
-        val startPage =
-          quranInfo.getPageFromSuraAyah(startSuraAyah.sura, startSuraAyah.ayah)
-        toggleAyahBookmark(startSuraAyah, startPage)
-      } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_tag_ayah) {
-        sliderPage = slidingPagerAdapter.getPagePosition(SlidingPagerAdapter.TAG_PAGE)
+        showAyahBookmarkSheet(startSuraAyah)
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_translate_ayah) {
         sliderPage =
           slidingPagerAdapter.getPagePosition(SlidingPagerAdapter.TRANSLATION_PAGE)

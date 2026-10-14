@@ -2,6 +2,7 @@ import com.android.build.api.variant.HasUnitTest
 import com.android.build.api.variant.ResValue
 import net.ltgt.gradle.errorprone.ErrorProneOptions
 import java.util.Locale
+import java.util.Properties
 
 plugins {
   id("quran.android.application")
@@ -16,6 +17,13 @@ plugins {
 // whether or not to use Firebase - Firebase is enabled by default, and is only disabled for
 // providing apks for open source distribution stores.
 val useFirebase = !project.hasProperty("disableFirebase")
+val oauthProperties = Properties().apply {
+  // Optional local sync config. Android OAuth uses PKCE, so client secrets are intentionally unsupported.
+  val oauthPropertiesFile = rootProject.file("oauth.properties")
+  if (oauthPropertiesFile.exists()) {
+    oauthPropertiesFile.inputStream().use(::load)
+  }
+}
 
 // only want to apply the Firebase plugin if we're building a release build. moving this to the
 // release build type won't work, since debug builds would also implicitly get the plugin.
@@ -28,8 +36,8 @@ android {
   namespace = "com.quran.labs.androidquran"
 
   defaultConfig {
-    versionCode = 3630
-    versionName = "3.6.3"
+    versionCode = 3642
+    versionName = "3.6.4"
     testInstrumentationRunner = "com.quran.labs.androidquran.core.QuranTestRunner"
   }
 
@@ -115,22 +123,79 @@ android {
 
 androidComponents {
   onVariants { variant ->
+    val applicationId = variant.applicationId.get()
+    val unitTestManifestPlaceholders = (variant as? HasUnitTest)?.unitTest?.manifestPlaceholders
+    val oauthRedirectScheme = syncProperty(
+      name = "QURAN_OAUTH_REDIRECT_SCHEME",
+      applicationId = applicationId,
+      variantName = variant.name,
+      flavorName = variant.flavorName
+    ).ifBlank { applicationId }
+    val oauthRedirectHost = "callback"
+
     variant.resValues.put(variant.makeResValueKey("string", "authority"),
-      ResValue("${variant.applicationId.get()}.data.QuranDataProvider")
+      ResValue("$applicationId.data.QuranDataProvider")
     )
     variant.resValues.put(variant.makeResValueKey("string", "file_authority"),
-      ResValue("${variant.applicationId.get()}.fileprovider")
+      ResValue("$applicationId.fileprovider")
     )
+    variant.resValues.put(variant.makeResValueKey("string", "quran_sync_oauth_redirect_scheme"),
+      ResValue(oauthRedirectScheme)
+    )
+    variant.resValues.put(variant.makeResValueKey("string", "quran_sync_oauth_client_id"),
+      ResValue(syncProperty("QURAN_OAUTH_CLIENT_ID", applicationId, variant.name, variant.flavorName))
+    )
+    variant.resValues.put(variant.makeResValueKey("string", "quran_sync_oauth_issuer_url"),
+      ResValue(syncProperty("QURAN_OAUTH_ISSUER_URL", applicationId, variant.name, variant.flavorName))
+    )
+    variant.resValues.put(variant.makeResValueKey("string", "quran_sync_environment"),
+      ResValue(syncProperty("QURAN_SYNC_ENVIRONMENT", applicationId, variant.name, variant.flavorName))
+    )
+    // Keep these placeholders aligned with QuranSyncConfig.redirectUri.
+    mapOf(
+      "oidcRedirectScheme" to oauthRedirectScheme,
+      "oidcRedirectHost" to oauthRedirectHost,
+      "oidcPostLogoutRedirectScheme" to oauthRedirectScheme,
+      "oidcPostLogoutRedirectHost" to oauthRedirectHost
+    ).forEach { (name, value) ->
+      variant.manifestPlaceholders.put(name, value)
+      unitTestManifestPlaceholders?.put(name, value)
+    }
 
-    if (variant.applicationId.get().endsWith("debug")) {
+    if (applicationId.endsWith("debug")) {
       val name = variant.flavorName ?: variant.name
       variant.manifestPlaceholders.put("app_debug_label",
         "Quran ${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}")
-      (variant as? HasUnitTest)?.unitTest?.manifestPlaceholders?.put("app_debug_label",
-          "Quran ${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
+      unitTestManifestPlaceholders?.put(
+        "app_debug_label",
+        "Quran ${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}"
       )
     }
   }
+}
+
+fun syncProperty(
+  name: String,
+  applicationId: String,
+  variantName: String,
+  flavorName: String?
+): String {
+  val suffixes = buildList {
+    add(applicationId.toPropertySuffix())
+    add(variantName.toPropertySuffix())
+    flavorName?.let { add(it.toPropertySuffix()) }
+  }
+
+  return suffixes
+    .asSequence()
+    .mapNotNull { suffix -> oauthProperties.getProperty("${name}_$suffix")?.trim() }
+    .firstOrNull()
+    ?: oauthProperties.getProperty(name)?.trim()
+    ?: ""
+}
+
+fun String.toPropertySuffix(): String {
+  return replace(Regex("[^A-Za-z0-9]"), "_").uppercase(Locale.US)
 }
 
 // required so that Errorprone doesn't look at generated files
@@ -169,8 +234,10 @@ dependencies {
 
   implementation(project(":feature:audio"))
   implementation(project(":feature:audiobar"))
+  implementation(project(":feature:ayahbookmark"))
   implementation(project(":feature:downloadmanager"))
   implementation(project(":feature:qarilist"))
+  implementation(project(":feature:sync"))
 
   // android auto support
   implementation(project(":feature:autoquran"))
@@ -193,7 +260,11 @@ dependencies {
   implementation(libs.androidx.window)
 
   // compose
+  implementation(libs.compose.foundation)
+  implementation(libs.compose.material3)
   implementation(libs.compose.ui)
+  implementation(libs.compose.ui.tooling.preview)
+  implementation(libs.compose.ui.tooling)
 
   // okio
   implementation(libs.okio)
@@ -226,7 +297,6 @@ dependencies {
   testImplementation(project(":common:test-utils"))
   testImplementation(libs.junit)
   testImplementation(libs.truth)
-  testImplementation(libs.mockito.core)
   testImplementation(libs.okhttp.mockserver)
   testImplementation(libs.junit.ktx)
   testImplementation(libs.robolectric)
@@ -236,6 +306,7 @@ dependencies {
   testImplementation(libs.kotlinx.coroutines.test)
   testImplementation(libs.sqldelight.sqlite.driver)
   testImplementation(libs.sqldelight.primitive.adapters)
+  testImplementation(libs.quran.mobile.sync)
 
   errorprone(libs.errorprone.core)
 

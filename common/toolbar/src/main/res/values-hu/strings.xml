@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="bookmark_ayah">Ája könyvjelzőzése</string>
-  <string name="tag_ayah">Ája címkézése</string>
   <string name="share_ayah">Ája hivatkozás megosztása</string>
   <string name="share_ayah_text">Ája szöveg megosztása</string>
   <string name="translation_ayah">Ája fordítás/tafszír</string>

@@ -4,19 +4,16 @@ import android.content.Context
 import android.text.TextUtils
 import androidx.annotation.StringRes
 import com.quran.data.core.QuranInfo
-import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.SuraAyahIterator
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.page.common.data.QuranNaming
-import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import timber.log.Timber
 import com.quran.mobile.common.ui.core.R as UiCoreR
 
-@ContributesBinding(AppScope::class)
-class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): QuranNaming {
+class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): QuranNaming, QuranDisplayInterface {
 
   /**
    * Get localized sura name from resources
@@ -97,8 +94,14 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
     }
   }
 
-  fun getSuraAyahString(context: Context, sura: Int, ayah: Int): String {
+  override fun getSuraAyahString(context: Context, sura: Int, ayah: Int): String {
     return getSuraAyahString(context, sura, ayah, R.string.sura_ayah_notification_str)
+  }
+
+  override fun getSuraPageString(context: Context, page: Int): String {
+    val suraName = getAllSuraNamesForPageString(context, page)
+    val pageText = context.getString(R.string.quran_page) + ' ' + QuranUtils.getLocalizedNumber(page)
+    return if (suraName.isEmpty()) pageText else "$suraName ($pageText)"
   }
 
   fun getSuraAyahString(context: Context, sura: Int, ayah: Int, @StringRes resource: Int): String {
@@ -106,7 +109,7 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
     return context.getString(resource, suraName, ayah)
   }
 
-  fun getNotificationTitle(
+  override fun getNotificationTitle(
     context: Context, minVerse: SuraAyah, maxVerse: SuraAyah, isGapless: Boolean
   ): String {
     val minSura = minVerse.sura
@@ -164,11 +167,6 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
     }
   }
 
-  private fun getSuraNameFromPage(context: Context, page: Int): String {
-    val suraNumber = quranInfo.getSuraNumberFromPage(page)
-    return getSuraName(context, suraNumber, wantPrefix = false, wantTranslation = false)
-  }
-
   fun getAyahString(sura: Int, ayah: Int, context: Context): String {
     return getSuraName(context, sura, true) + " - " + context.getString(R.string.quran_ayah, ayah)
   }
@@ -181,9 +179,16 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
       QuranUtils.getLocalizedNumber(quranInfo.getJuzFromSuraAyah(sura, ayah, juz)))
   }
 
-  // do not remove the nullable return type
-  fun getSuraNameString(context: Context, page: Int): String? {
-    return context.getString(R.string.quran_sura_title, getSuraNameFromPage(context, page))
+  fun getAllSuraNamesForPageString(context: Context, page: Int): String {
+    return if (!quranInfo.isValidPage(page)) {
+      ""
+    } else {
+      val bounds = quranInfo.getPageBounds(page)
+      val suraNames = (bounds[0]..bounds[2]).joinToString(context.getString(R.string.comma) + ' ') {
+        getSuraName(context, it, wantPrefix = false)
+      }
+      context.getString(R.string.quran_sura_title, suraNames)
+    }
   }
 
   fun getAyahKeysOnPage(page: Int): Set<String> {

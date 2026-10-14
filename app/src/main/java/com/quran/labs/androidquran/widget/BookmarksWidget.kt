@@ -12,8 +12,6 @@ import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.SearchActivity
 import com.quran.labs.androidquran.ShortcutsActivity
-import com.quran.labs.androidquran.ui.PagerActivity
-import com.quran.labs.androidquran.ui.QuranActivity
 import dev.zacsweers.metro.Inject
 
 /**
@@ -47,19 +45,22 @@ class BookmarksWidget : AppWidgetProvider() {
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.widget_btn_search, pendingIntent)
 
-      intent = Intent(context, QuranActivity::class.java)
+      intent = Intent(context, QuranDataActivity::class.java)
       intent.action = ShortcutsActivity.ACTION_JUMP_TO_LATEST
       pendingIntent =
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.widget_btn_go_to_quran, pendingIntent)
 
-      intent = Intent(context, ShowJumpFragmentActivity::class.java)
+      intent = Intent(context, QuranDataActivity::class.java)
+      intent.action = ShortcutsActivity.ACTION_JUMP_TO
       pendingIntent =
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.search_widget_btn_jump, pendingIntent)
 
       widget.setRemoteAdapter(R.id.list_view_widget, serviceIntent)
-      val clickIntent = Intent(context, PagerActivity::class.java)
+      val clickIntent = Intent(context, QuranDataActivity::class.java).apply {
+        action = QuranDataActivity.ACTION_OPEN_PAGE
+      }
       val clickPendingIntent = PendingIntent
         .getActivity(
           context, 0,

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Συγχρονισμός Quran.com</string>
+  <string name="quran_sync_settings_category">Λογαριασμός</string>
+  <string name="quran_sync_settings_summary">Σελιδοδείκτες, συλλογές και ιστορικό ανάγνωσης</string>
+  <string name="quran_sync_not_signed_in">Δεν έχετε συνδεθεί</string>
+  <string name="quran_sync_signed_in">Έχετε συνδεθεί</string>
+  <string name="quran_sync_loading">Σύνδεση σε εξέλιξη</string>
+  <string name="quran_sync_login">Σύνδεση</string>
+  <string name="quran_sync_logout">Αποσύνδεση</string>
+  <string name="quran_sync_name">Όνομα</string>
+  <string name="quran_sync_email">Email</string>
+  <string name="quran_sync_account_id">Αναγνωριστικό λογαριασμού</string>
+  <string name="quran_sync_action_error">Δεν είναι δυνατή η ενημέρωση του συγχρονισμού αυτήν τη στιγμή.</string>
+  <string name="quran_sync_bookmarks_cta_title">Συγχρονίστε τους σελιδοδείκτες σας παντού</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Αποκτήστε πρόσβαση από οποιαδήποτε συσκευή, ανά πάσα στιγμή</string>
+  <string name="quran_sync_bookmarks_cta_button">Σύνδεση με Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Απόρριψη</string>
+</resources>

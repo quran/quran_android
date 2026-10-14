@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Синхронизация с Quran.com</string>
+  <string name="quran_sync_settings_category">Акаунт</string>
+  <string name="quran_sync_settings_summary">Отметки, колекции и история на четенето</string>
+  <string name="quran_sync_not_signed_in">Не сте влезли</string>
+  <string name="quran_sync_signed_in">Влезли сте</string>
+  <string name="quran_sync_loading">Влизане</string>
+  <string name="quran_sync_login">Вход</string>
+  <string name="quran_sync_logout">Изход</string>
+  <string name="quran_sync_name">Име</string>
+  <string name="quran_sync_email">Имейл</string>
+  <string name="quran_sync_account_id">ID на акаунта</string>
+  <string name="quran_sync_action_error">В момента синхронизацията не може да бъде актуализирана.</string>
+  <string name="quran_sync_bookmarks_cta_title">Синхронизирайте отметките си навсякъде</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Достъп до тях от всяко устройство, по всяко време</string>
+  <string name="quran_sync_bookmarks_cta_button">Вход с Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Отхвърли</string>
+</resources>

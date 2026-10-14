@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">يېڭىلىقلار</string>
+  <string name="whats_new_continue">داۋاملاشتۇرۇش</string>
+  <string name="icon_announcement_title">يېڭى سىنبەلگە</string>
+  <string name="icon_announcement_body">كېيىنكى يېڭىلىشىمىزدا، باش ئېكرانىڭىزدىكى قۇرئان ئەپىنىڭ سىنبەلگىسى ئۆزگىرىدۇ. بۇ يېڭى سىنبەلگە ھازىر ئاللاھنىڭ كالامى ئەتراپىدا قۇرۇلغان قوراللار ئائىلىسىنىڭ ئورتاق بەلگىسىگە ئايلاندى. تېخىمۇ كۆپ تەپسىلاتلار پات ئارىدا.</string>
+  <string name="icon_announcement_now">ھازىر</string>
+  <string name="icon_announcement_coming_soon">پات ئارىدا</string>
+  <string name="icon_announcement_same_app_title">ئوخشاش ئەپ، يېڭى سىنبەلگە</string>
+  <string name="icon_announcement_same_app_body">بارلىق خەتكۈچلىرىڭىز، ئىلگىرىلىشىڭىز ۋە تەڭشەكلىرىڭىز ئەينەن ئورنىدا قالىدۇ.</string>
+  <string name="icon_announcement_release_title">كېيىنكى نەشرىدە كېلىدۇ</string>
+  <string name="icon_announcement_release_body">يېڭى سىنبەلگە كېيىنكى يېڭىلاشتا كېلىدۇ.</string>
+  <string name="icon_announcement_current_icon">قۇرئان ئەپىنىڭ ھازىرقى سىنبەلگىسى</string>
+  <string name="icon_announcement_upcoming_icon">قۇرئان ئەپىنىڭ يېڭى سىنبەلگىسى</string>
+</resources>

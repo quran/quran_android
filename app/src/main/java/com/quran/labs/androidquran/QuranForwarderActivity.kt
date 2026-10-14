@@ -1,10 +1,8 @@
 package com.quran.labs.androidquran
 
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import com.quran.data.core.QuranInfo
-import com.quran.labs.androidquran.ui.PagerActivity
 import dev.zacsweers.metro.Inject
 
 class QuranForwarderActivity : Activity() {
@@ -41,13 +39,12 @@ class QuranForwarderActivity : Activity() {
 
         if (sura != null) {
           val page = quranInfo.getPageFromSuraAyah(sura, ayah)
-          val showSuraIntent = Intent(
-            this,
-            PagerActivity::class.java
+          val showSuraIntent = QuranDataActivity.openPageIntent(
+            context = this,
+            page = page,
+            sura = sura,
+            ayah = ayah
           )
-          showSuraIntent.putExtra("page", page)
-          showSuraIntent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura)
-          showSuraIntent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah)
           startActivity(showSuraIntent)
         }
       }

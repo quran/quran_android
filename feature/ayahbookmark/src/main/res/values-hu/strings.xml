@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Kész</string>
+  <string name="ayahbookmark_collections_header">Gyűjtemények</string>
+  <string name="ayahbookmark_new_collection">Új gyűjtemény</string>
+  <string name="ayahbookmark_collection_name_hint">Gyűjtemény neve</string>
+  <string name="ayahbookmark_cancel">Mégse</string>
+  <string name="ayahbookmark_create">Létrehozás</string>
+  <string name="ayahbookmark_saved">Mentve</string>
+  <string name="ayahbookmark_not_saved">Nincs mentve</string>
+  <string name="ayahbookmark_highlight_title">Kiemelés</string>
+  <string name="ayahbookmark_highlight_none">Nincs</string>
+</resources>

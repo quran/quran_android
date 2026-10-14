@@ -15,7 +15,6 @@
   <string name="menu_jump_last_page">Halaman terakhir</string>
   <string name="menu_bookmarks">Penanda</string>
   <string name="menu_bookmarks_page">Penanda Halaman</string>
-  <string name="menu_bookmarks_ayah">Penanda Ayat</string>
   <string name="menu_sort">Susunan</string>
   <string name="menu_sort_date">Tarikh Dibuat</string>
   <string name="menu_sort_location">Lokasi dalam Quran</string>
@@ -242,16 +241,25 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Beri Label pada Penanda</string>
   <string name="delete_tag">Hapus Label</string>
+  <string name="delete">Padam</string>
   <string name="edit_tag">Sunting Label</string>
   <string name="new_tag">Label Baru</string>
-  <string name="not_tagged">Penanda tanpa Label</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Penanda dipadamkan</item>
     <item quantity="other">%d penanda telah dipadam</item>
   </plurals>
   <string name="undo">Batalkan</string>
 
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Belum ada penanda</string>
+  <string name="bookmarks_empty_subtitle">Ketik ikon penanda untuk menyimpan halaman, atau tekan lama pada ayat untuk menandakannya.</string>
+  <string name="reading_bookmark_movable_education_title">Ini ialah penanda bacaan yang boleh dipindahkan</string>
+  <string name="reading_bookmark_movable_education_body">Menyimpan penanda bacaan menggantikan yang lama. Untuk menyimpan beberapa ayat, tekan lama pada ayat dan tambahkannya ke koleksi.</string>
+  <string name="reading_bookmark_moved_from">Dipindahkan daripada %1$s</string>
+  <string name="reading_bookmark_dismiss_education">Tutup</string>
+
   <string name="recent_pages">Muka surat terkini</string>
+  <string name="old_page_bookmarks">Penanda halaman lama</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Label</string>
@@ -277,8 +285,7 @@
   <string name="import_data_permissions_error">Tidak bisa membaca berkas cadangan karena masalah otentikasi.</string>
   <string name="import_data_error">Berkas cadangan tidak sah (atau tak bisa membaca berkas cadangan).</string>
   <string name="import_data">Impor Data</string>
-  <string name="import_data_and_override">Jika anda mengimpor berkas ini, ia akan menggantikan semua \
-        penanda anda dengan %1$d penanda dan %2$d label. Impor?</string>
+  <string name="import_data_and_merge">Jika anda mengimport fail ini, ia akan menambah %1$d penanda halaman dan %2$d tag pada data semasa anda. Import?</string>
   <string name="import_successful">Impor Berhasil</string>
   <string name="export_data_error">Kesalahan dalam mengekspor data.</string>
   <string name="exported_data">Data diekspor ke %1$s.</string>

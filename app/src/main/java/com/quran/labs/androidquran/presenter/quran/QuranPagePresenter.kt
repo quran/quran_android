@@ -4,9 +4,9 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.di.QuranPageScope
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.Response
-import com.quran.labs.androidquran.model.quran.CoordinatesModel
+import com.quran.labs.androidquran.model.quran.CoordinatesModelInterface
 import com.quran.labs.androidquran.presenter.Presenter
-import com.quran.labs.androidquran.ui.helpers.QuranPageLoader
+import com.quran.labs.androidquran.ui.helpers.QuranPageLoaderInterface
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
@@ -20,9 +20,9 @@ import java.util.concurrent.TimeUnit
 
 @QuranPageScope
 class QuranPagePresenter @Inject constructor(
-  private val coordinatesModel: CoordinatesModel,
+  private val coordinatesModel: CoordinatesModelInterface,
   private val quranSettings: QuranSettings,
-  private val quranPageLoader: QuranPageLoader,
+  private val quranPageLoader: QuranPageLoaderInterface,
   private val quranInfo: QuranInfo,
   private val pages: IntArray,
 ) : Presenter<QuranPageScreen> {

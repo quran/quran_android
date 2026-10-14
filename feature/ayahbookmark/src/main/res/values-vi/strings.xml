@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Xong</string>
+  <string name="ayahbookmark_collections_header">Bộ sưu tập</string>
+  <string name="ayahbookmark_new_collection">Bộ sưu tập mới</string>
+  <string name="ayahbookmark_collection_name_hint">Tên bộ sưu tập</string>
+  <string name="ayahbookmark_cancel">Hủy</string>
+  <string name="ayahbookmark_create">Tạo</string>
+  <string name="ayahbookmark_saved">Đã lưu</string>
+  <string name="ayahbookmark_not_saved">Chưa lưu</string>
+  <string name="ayahbookmark_highlight_title">Tô sáng</string>
+  <string name="ayahbookmark_highlight_none">Không</string>
+</resources>

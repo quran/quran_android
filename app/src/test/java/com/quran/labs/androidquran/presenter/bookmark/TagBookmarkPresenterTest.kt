@@ -1,27 +1,22 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
-import com.quran.labs.androidquran.database.BookmarksDBAdapter
-import com.quran.labs.androidquran.fakes.FakeRecentPageModel
-import com.quran.labs.androidquran.helpers.inMemoryBookmarksAdapter
-import com.quran.labs.androidquran.model.bookmark.BookmarkModel
+import com.quran.labs.androidquran.base.TestApplication
+import com.quran.labs.androidquran.fakes.FakeBookmarksDao
+import com.quran.labs.androidquran.fakes.FakeTagBookmarkDialog
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import com.quran.labs.test.RxSchedulerRule
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import com.quran.labs.androidquran.base.TestApplication
-import java.util.concurrent.CountDownLatch
 
 @Config(application = TestApplication::class, sdk = [33])
 @RunWith(RobolectricTestRunner::class)
@@ -30,252 +25,99 @@ class TagBookmarkPresenterTest {
   @get:Rule
   val rxRule = RxSchedulerRule()
 
-  private lateinit var bookmarkModel: BookmarkModel
+  private lateinit var bookmarksDao: FakeBookmarksDao
 
   @Before
   fun setupTest() {
-    bookmarkModel = object : BookmarkModel(
-      inMemoryBookmarksAdapter(),
-      FakeRecentPageModel()
-    ), TagsObservableReporter {
-      var tagsObservableCalled: Int = 0
+    bookmarksDao = FakeBookmarksDao()
+    bookmarksDao.setTags(listOf(Tag(TAG_ID, "Test")))
+  }
 
-      override val tagsObservable: Single<List<Tag>>
-        get() = tagsObservableInternal()
+  @Test
+  fun `change only saves explicitly for bookmark ids`() {
+    runBlocking {
+      bookmarksDao.setBookmarks(listOf(Bookmark(BOOKMARK_ID, 6, 76, 137)))
+      val presenter = TagBookmarkPresenter(bookmarksDao)
 
-      override fun tagsObservableCalled(): Int = tagsObservableCalled
+      presenter.setBookmarksMode(arrayOf(BOOKMARK_ID))
+      assertThat(presenter.toggleTag(TAG_ID)).isTrue()
+      assertThat(bookmarksDao.getBookmarkTagIds(BOOKMARK_ID)).isEmpty()
 
-      private fun tagsObservableInternal(): Single<List<Tag>> {
-        tagsObservableCalled++
-        return Single.just(listOf(Tag(1, "Test")))
-      }
+      presenter.saveChanges()
 
-      override fun tagsObservable(): Observable<Boolean> {
-        return Observable.empty()
-      }
-
-      override fun getBookmarkTagIds(bookmarkIdSingle: Single<Long>): Maybe<List<Long>> {
-        return Maybe.empty()
-      }
+      assertThat(bookmarksDao.getBookmarkTagIds(BOOKMARK_ID)).containsExactly(TAG_ID)
     }
   }
 
   @Test
-  @Throws(InterruptedException::class)
-  fun testTagRefresh() {
-    val latch = CountDownLatch(1)
-    val secondLatch = CountDownLatch(2)
+  fun `single bookmark mode replaces existing tags`() {
+    runBlocking {
+      bookmarksDao.setTags(listOf(Tag(TAG_ID, "First"), Tag(SECOND_TAG_ID, "Second")))
+      bookmarksDao.setBookmarks(listOf(Bookmark(BOOKMARK_ID, 6, 76, 137, tags = listOf(TAG_ID))))
+      val presenter = TagBookmarkPresenter(bookmarksDao)
 
-    val tagPresenter: TagBookmarkPresenter = object : TagBookmarkPresenter(bookmarkModel) {
-      override fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
-        super.onRefreshedData(data)
-        latch.countDown()
-        secondLatch.countDown()
-      }
+      presenter.setBookmarksMode(arrayOf(BOOKMARK_ID))
+      assertThat(presenter.toggleTag(TAG_ID)).isFalse()
+      assertThat(presenter.toggleTag(SECOND_TAG_ID)).isTrue()
+      presenter.saveChanges()
+
+      assertThat(bookmarksDao.getBookmarkTagIds(BOOKMARK_ID)).containsExactly(SECOND_TAG_ID)
     }
-
-    val presenter = object : TagBookmarkPresenter(bookmarkModel), RefreshReporter {
-      var refreshesCalled: Int = 0
-
-      override fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
-        tagPresenter.onRefreshedData(data)
-      }
-
-      override fun refreshesCalled(): Int = refreshesCalled
-
-      override fun refresh() {
-        refreshesCalled++
-        return tagPresenter.refresh()
-      }
-    }
-
-    presenter.setBookmarksMode(longArrayOf(1))
-    latch.await()
-
-    presenter.setAyahBookmarkMode(6, 76, 137)
-    secondLatch.await()
-
-    // make sure we called refresh twice
-    assertThat(presenter.refreshesCalled()).isEqualTo(2)
-
-    // but make sure we only queried tags from the database once
-    val tagsReporter = bookmarkModel as TagsObservableReporter
-    assertThat(tagsReporter.tagsObservableCalled()).isEqualTo(1)
   }
 
   @Test
-  @Throws(InterruptedException::class)
-  fun testChangeShouldOnlySaveExplicitlyForBookmarkIds() {
-    val bookmarkModel = object : BookmarkModel(
-      inMemoryBookmarksAdapter(),
-      FakeRecentPageModel()
-    ) {
-      override fun updateBookmarkTags(
-        bookmarkIds: LongArray,
-        tagIds: Set<Long>,
-        deleteNonTagged: Boolean
-      ): Observable<Boolean> {
-        return Observable.just(true)
-      }
+  fun `new tag row opens add dialog`() {
+    val bookmarkDialog = FakeTagBookmarkDialog()
+    val presenter = TagBookmarkPresenter(bookmarksDao)
 
-      override val tagsObservable: Single<List<Tag>>
-        get() = Single.just(listOf(Tag(1, "Test")))
-
-      override fun tagsObservable(): Observable<Boolean> {
-        return Observable.empty()
-      }
-
-      override fun getBookmarkTagIds(bookmarkIdSingle: Single<Long>): Maybe<List<Long>> {
-        return Maybe.empty()
-      }
-    }
-
-    val saveLatch = CountDownLatch(1)
-    val refreshLatch = CountDownLatch(1)
-
-    val presenter: TagBookmarkPresenter = object : TagBookmarkPresenter(bookmarkModel), SavesCalledReporter {
-      var savesCalled: Int = 0
-
-      override fun savesCalled(): Int = savesCalled
-
-      override fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
-        super.onRefreshedData(data)
-        refreshLatch.countDown()
-      }
-
-      override fun saveChanges() {
-        savesCalled++
-        // override because we aren't testing the save process here, just that save is called
-        saveLatch.countDown()
-      }
-    }
-
-    presenter.setBookmarksMode(longArrayOf(1))
-    refreshLatch.await()
-
-    // try to modify a tag - save shouldn't be called
-    assertThat(presenter.toggleTag(1)).isTrue()
-
-    val savingPresenter = presenter as SavesCalledReporter
-    assertThat(savingPresenter.savesCalled()).isEqualTo(0)
-
-    // explicitly call save
-    presenter.saveChanges()
-    saveLatch.countDown()
-    assertThat(savingPresenter.savesCalled()).isEqualTo(1)
-  }
-
-  @Test
-  @Throws(InterruptedException::class)
-  fun testChangeShouldSaveImmediatelyForAyahBookmarks() {
-    val bookmarkModel = object : BookmarkModel(
-      inMemoryBookmarksAdapter(),
-      FakeRecentPageModel()
-    ), UpdatedBookmarkTagsReporter {
-      var updateBookmarkTagsCalled: Int = 0
-
-      override fun updateBookmarkTags(
-        bookmarkIds: LongArray,
-        tagIds: Set<Long>,
-        deleteNonTagged: Boolean
-      ): Observable<Boolean> {
-        updateBookmarkTagsCalled++
-        return Observable.just(true)
-      }
-
-      override val tagsObservable: Single<List<Tag>>
-        get() = Single.just(listOf(Tag(1, "Test")))
-
-      override fun tagsObservable(): Observable<Boolean> {
-        return Observable.empty()
-      }
-
-      override fun getBookmarkTagIds(bookmarkIdSingle: Single<Long>): Maybe<List<Long>> {
-        return Maybe.empty()
-      }
-
-      override fun safeAddBookmark(sura: Int?, ayah: Int?, page: Int): Observable<Long> {
-        return Observable.just(2L)
-      }
-
-      override fun updatedBookmarkTagsCalled(): Int = updateBookmarkTagsCalled
-    }
-
-    // when refresh is done
-    val refreshLatch = CountDownLatch(1)
-
-    // save latches
-    val latch = CountDownLatch(1)
-    val secondLatch = CountDownLatch(2)
-
-    val presenter: TagBookmarkPresenter = object : TagBookmarkPresenter(bookmarkModel), SavesCalledReporter {
-      var savesCalled: Int = 0
-
-      override fun onRefreshedData(data: Pair<List<Tag>, List<Long>>) {
-        super.onRefreshedData(data)
-        refreshLatch.countDown()
-      }
-
-      override fun onSaveChangesDone() {
-        savesCalled++
-        super.onSaveChangesDone()
-        latch.countDown()
-        secondLatch.countDown()
-      }
-
-      override fun savesCalled(): Int = savesCalled
-    }
-
-    presenter.setAyahBookmarkMode(6, 76, 137)
-    // make sure refresh is done first
-    refreshLatch.await()
-
-    // switch tag and wait for the save
-    assertThat(presenter.toggleTag(1)).isTrue()
-    latch.await()
-
-    val savesPresenter = presenter as SavesCalledReporter
-    assertThat(savesPresenter.savesCalled()).isEqualTo(1)
-
-    // try to save again (should do nothing)
-    presenter.saveChanges()
-    secondLatch.await()
-
-    val updateReportingBookmarkModel = bookmarkModel as UpdatedBookmarkTagsReporter
-    assertThat(updateReportingBookmarkModel.updatedBookmarkTagsCalled()).isEqualTo(1)
-  }
-
-  @Test
-  fun testAddDialogCall() {
-    val bookmarkDialog = mock(TagBookmarkDialog::class.java)
-
-    val presenter = TagBookmarkPresenter(bookmarkModel)
     presenter.bind(bookmarkDialog)
-    assertThat(presenter.toggleTag(-1)).isFalse()
-    verify(bookmarkDialog, times(1)).showAddTagDialog()
+
+    presenter.addTag()
+
+    assertThat(bookmarkDialog.showAddTagDialogCallCount).isEqualTo(1)
+
     presenter.unbind(bookmarkDialog)
   }
 
   @Test
-  fun testAddDialogCallUnbound() {
-    val presenter = TagBookmarkPresenter(bookmarkModel)
-    assertThat(presenter.toggleTag(-1)).isFalse()
-    // When unbound, toggleTag should return false and no exceptions thrown
+  fun `tag id matching add row marker remains selectable`() {
+    runBlocking {
+      bookmarksDao.setTags(listOf(Tag(ADD_TAG_MARKER_COLLISION_ID, "Synced Tag")))
+      bookmarksDao.setBookmarks(listOf(Bookmark(BOOKMARK_ID, 6, 76, 137)))
+      val bookmarkDialog = FakeTagBookmarkDialog()
+      val presenter = TagBookmarkPresenter(bookmarksDao)
+
+      presenter.bind(bookmarkDialog)
+      presenter.setBookmarksMode(arrayOf(BOOKMARK_ID))
+
+      assertThat(presenter.toggleTag(ADD_TAG_MARKER_COLLISION_ID)).isTrue()
+      presenter.saveChanges()
+
+      assertThat(bookmarkDialog.showAddTagDialogCallCount).isEqualTo(0)
+      assertThat(bookmarksDao.getBookmarkTagIds(BOOKMARK_ID)).containsExactly(ADD_TAG_MARKER_COLLISION_ID)
+
+      presenter.unbind(bookmarkDialog)
+    }
   }
 
-  private interface TagsObservableReporter {
-    fun tagsObservableCalled(): Int
+  @Test
+  fun `add tag row is position based and not a tag id`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val adapter = TagBookmarkDialog.TagsAdapter(context, TagBookmarkPresenter(bookmarksDao))
+
+    adapter.setData(listOf(Tag(ADD_TAG_MARKER_COLLISION_ID, "Synced Tag")), hashSetOf())
+
+    assertThat(adapter.count).isEqualTo(2)
+    assertThat(adapter.isAddTagPosition(0)).isFalse()
+    assertThat(adapter.getItem(0)?.id).isEqualTo(ADD_TAG_MARKER_COLLISION_ID)
+    assertThat(adapter.isAddTagPosition(1)).isTrue()
+    assertThat(adapter.getItem(1)).isNull()
   }
 
-  private interface SavesCalledReporter {
-    fun savesCalled(): Int
-  }
-
-  private interface UpdatedBookmarkTagsReporter {
-    fun updatedBookmarkTagsCalled(): Int
-  }
-
-  private interface RefreshReporter {
-    fun refreshesCalled(): Int
+  private companion object {
+    private const val BOOKMARK_ID = "bookmark-1"
+    private const val TAG_ID = "tag-1"
+    private const val SECOND_TAG_ID = "tag-2"
+    private const val ADD_TAG_MARKER_COLLISION_ID = "__quran_add_tag__"
   }
 }

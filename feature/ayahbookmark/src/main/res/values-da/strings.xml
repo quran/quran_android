@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Udført</string>
+  <string name="ayahbookmark_collections_header">Samlinger</string>
+  <string name="ayahbookmark_new_collection">Ny samling</string>
+  <string name="ayahbookmark_collection_name_hint">Samlingens navn</string>
+  <string name="ayahbookmark_cancel">Annuller</string>
+  <string name="ayahbookmark_create">Opret</string>
+  <string name="ayahbookmark_saved">Gemt</string>
+  <string name="ayahbookmark_not_saved">Ikke gemt</string>
+  <string name="ayahbookmark_highlight_title">Fremhævning</string>
+  <string name="ayahbookmark_highlight_none">Ingen</string>
+</resources>

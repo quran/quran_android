@@ -19,7 +19,6 @@
   <string name="menu_jump_last_page">Соңғы бет</string>
   <string name="menu_bookmarks">Бетбелгілер</string>
   <string name="menu_bookmarks_page">Бет белгілері</string>
-  <string name="menu_bookmarks_ayah">Аят белгілері</string>
   <string name="menu_sort">Сұрыптау</string>
   <string name="menu_sort_date">Қосылған күні бойынша</string>
   <string name="menu_sort_location">Құрандағы реті бойынша</string>
@@ -169,8 +168,7 @@
   <string name="import_data_permissions_error">Рұқсат қателіктеріне байланысты резервтік файлдарды оқу мүмкін емес.</string>
   <string name="import_data_error">Жарамсыз резервтік файл (немесе резервтік файл оқылмайды).</string>
   <string name="import_data">Импорт</string>
-  <string name="import_data_and_override">Бұл импорт барлық бетбелгілерді %1$d бетбелгі(лер) және %2$d белгі(лер)ге алмастырады.
-        Импорттау керек пе?</string>
+  <string name="import_data_and_merge">Бұл файлды импорттасаңыз, ағымдағы деректеріңізге %1$d бетбелгі және %2$d белгі қосылады. Импорттау керек пе?</string>
   <string name="import_successful">Деректер импортталды</string>
   <string name="export_data_error">Экспорт қателігі</string>
   <string name="exported_data">Деректер %1$s жеріне экспортталды</string>
@@ -271,14 +269,22 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Бетбелгіні белгілеу</string>
   <string name="delete_tag">Белгіні жою</string>
+  <string name="delete">Жою</string>
   <string name="edit_tag">Белгіні өзгерту</string>
   <string name="new_tag">Жаңа белгі</string>
-  <string name="not_tagged">Белгілеусіз</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">1 элемент өшірілді</item>
     <item quantity="other">%d элемент өшірілді</item>
   </plurals>
   <string name="undo">@string/cancel</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Әлі бетбелгілер жоқ</string>
+  <string name="bookmarks_empty_subtitle">Бетті сақтау үшін бетбелгі белгішесін түртіңіз немесе аятты бетбелгіге қосу үшін оны басып тұрыңыз.</string>
+  <string name="reading_bookmark_movable_education_title">Бұл жылжымалы оқу бетбелгісі</string>
+  <string name="reading_bookmark_movable_education_body">Оқу бетбелгісін сақтау ескісін алмастырады. Бірнеше аятты сақтау үшін аятты басып тұрып, оны жинаққа қосыңыз.</string>
+  <string name="reading_bookmark_moved_from">%1$s дегеннен жылжытылды</string>
+  <string name="reading_bookmark_dismiss_education">Жабу</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Белгі</string>
@@ -312,6 +318,7 @@
   <string name="playback_prompt_title">Ойнатуды мынадан бастаңыз:</string>
   <string name="starting_page_label">Беттің басы</string>
   <string name="recent_pages">Соңғы беттер</string>
+  <string name="old_page_bookmarks">Ескі бет бетбелгілері</string>
   <string name="tag_blank_tag_error">Тег атаулары бос бола алмайды!</string>
   <string name="tag_duplicate_tag_error">Тег атауы бұрыннан бар!</string>
   <string name="audio_updated_title">Құран дыбыс файлдарын жаңарту</string>

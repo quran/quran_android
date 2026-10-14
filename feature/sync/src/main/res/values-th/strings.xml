@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">การซิงค์ Quran.com</string>
+  <string name="quran_sync_settings_category">บัญชี</string>
+  <string name="quran_sync_settings_summary">บุ๊กมาร์ก คอลเลกชัน และประวัติการอ่าน</string>
+  <string name="quran_sync_not_signed_in">ยังไม่ได้ลงชื่อเข้าใช้</string>
+  <string name="quran_sync_signed_in">ลงชื่อเข้าใช้แล้ว</string>
+  <string name="quran_sync_loading">กำลังลงชื่อเข้าใช้</string>
+  <string name="quran_sync_login">ลงชื่อเข้าใช้</string>
+  <string name="quran_sync_logout">ออกจากระบบ</string>
+  <string name="quran_sync_name">ชื่อ</string>
+  <string name="quran_sync_email">อีเมล</string>
+  <string name="quran_sync_account_id">รหัสบัญชี</string>
+  <string name="quran_sync_action_error">ไม่สามารถอัปเดตการซิงค์ได้ในขณะนี้</string>
+  <string name="quran_sync_bookmarks_cta_title">ซิงค์บุ๊กมาร์กของคุณได้ทุกที่</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">เข้าถึงได้จากอุปกรณ์ใดก็ได้ ทุกเวลา</string>
+  <string name="quran_sync_bookmarks_cta_button">ลงชื่อเข้าใช้ด้วย Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">ปิด</string>
+</resources>

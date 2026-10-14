@@ -10,7 +10,6 @@ import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.SearchActivity
 import com.quran.labs.androidquran.ShortcutsActivity
-import com.quran.labs.androidquran.ui.QuranActivity
 
 /**
  * Widget that displays buttons for:
@@ -36,13 +35,14 @@ class SearchWidget : AppWidgetProvider() {
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.search_widget_btn_search, pendingIntent)
 
-      intent = Intent(context, QuranActivity::class.java)
+      intent = Intent(context, QuranDataActivity::class.java)
       intent.action = ShortcutsActivity.ACTION_JUMP_TO_LATEST
       pendingIntent =
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.search_widget_btn_go_to_quran, pendingIntent)
 
-      intent = Intent(context, ShowJumpFragmentActivity::class.java)
+      intent = Intent(context, QuranDataActivity::class.java)
+      intent.action = ShortcutsActivity.ACTION_JUMP_TO
       pendingIntent =
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.search_widget_btn_jump, pendingIntent)

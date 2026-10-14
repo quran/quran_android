@@ -39,7 +39,7 @@ class QuranFileUtils @Inject constructor(
   @ApplicationContext context: Context,
   pageProvider: PageProvider,
   private val quranScreenInfo: QuranScreenInfo
-): QuranFileManager {
+): QuranFileManager, AudioFileUtils {
   // server urls
   private val imageBaseUrl: String = pageProvider.getImagesBaseUrl()
   private val imageZipBaseUrl: String = pageProvider.getImagesZipBaseUrl()
@@ -56,7 +56,7 @@ class QuranFileUtils @Inject constructor(
   val ayahInfoDbHasGlyphData = pageProvider.ayahInfoDbHasGlyphData()
 
   private val appContext: Context = context.applicationContext
-  val gaplessDatabaseRootUrl: String = pageProvider.getAudioDatabasesBaseUrl()
+  override val gaplessDatabaseRootUrl: String = pageProvider.getAudioDatabasesBaseUrl()
   private val recitationPath = "recitation"
 
   // check if the images with the given width param have a version
@@ -436,7 +436,7 @@ class QuranFileUtils @Inject constructor(
     return File(base, databaseDirectory)
   }
 
-  val quranAyahDatabaseDirectory: File
+  override val quranAyahDatabaseDirectory: File
     get() = File(quranInternalBaseDirectory, ayahInfoDirectory)
 
   override fun audioFileDirectory(): String? = getQuranAudioDirectory(appContext)
@@ -514,14 +514,14 @@ class QuranFileUtils @Inject constructor(
     return "ayahinfo$widthParam.db"
   }
 
-  val ayaPositionFileUrl: String
+  override val ayaPositionFileUrl: String
     get() = getAyaPositionFileUrl(quranScreenInfo.widthParam)
 
   fun getAyaPositionFileUrl(widthParam: String): String {
     return ayahInfoBaseUrl + "ayahinfo" + widthParam + ".zip"
   }
 
-  fun haveAyaPositionFile(): Boolean {
+  override fun haveAyaPositionFile(): Boolean {
     val base = quranAyahDatabaseDirectory
     val filename = ayaPositionFileName
     return File(base, filename).exists()
@@ -549,7 +549,7 @@ class QuranFileUtils @Inject constructor(
       if (ayahInfoFile.exists()) {
         val translationsFile =
           File(base, QuranDataProvider.QURAN_ARABIC_DATABASE)
-        if (base.exists() || base.mkdirs() == true) {
+        if (base.exists() || base.mkdirs()) {
           try {
             copyFile(ayahInfoFile, translationsFile)
             return true

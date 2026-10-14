@@ -9,25 +9,27 @@ import com.quran.labs.androidquran.common.audio.model.download.AudioDownloadMeta
 import com.quran.labs.androidquran.common.audio.model.playback.AudioPathInfo
 import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
 import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
-import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.data.QuranDisplayInterface
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
-import com.quran.labs.androidquran.ui.PagerActivity
+import com.quran.labs.androidquran.util.AudioFileUtils
 import com.quran.labs.androidquran.util.AudioUtils
-import com.quran.labs.androidquran.util.QuranFileUtils
+import com.quran.labs.androidquran.util.AudioUtilsInterface
+import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject
 import timber.log.Timber
 import java.io.File
 
 class AudioPresenter @Inject
 constructor(
-  private val quranDisplayData: QuranDisplayData,
-  private val audioUtil: AudioUtils,
+  @ApplicationContext private val appContext: Context,
+  private val quranDisplayData: QuranDisplayInterface,
+  private val audioUtil: AudioUtilsInterface,
   private val audioExtensionDecider: AudioExtensionDecider,
-  private val quranFileUtils: QuranFileUtils
-) : Presenter<PagerActivity> {
-  private var pagerActivity: PagerActivity? = null
+  private val quranFileUtils: AudioFileUtils
+) : Presenter<AudioPresenterScreen> {
+  private var pagerActivity: AudioPresenterScreen? = null
   private var lastAudioRequest: AudioRequest? = null
 
   fun play(
@@ -94,17 +96,17 @@ constructor(
   }
 
   private fun proceedWithAudioRequest(audioRequest: AudioRequest, bypassChecks: Boolean = false) {
-    pagerActivity?.let {
-      val downloadIntent = getDownloadIntent(it, audioRequest)
+    pagerActivity?.let { screen ->
+      val downloadIntent = getDownloadIntent(screen, audioRequest)
       if (downloadIntent != null) {
         if (bypassChecks) {
-          it.proceedWithDownload(downloadIntent)
+          screen.proceedWithDownload(downloadIntent)
         } else {
-          it.handleRequiredDownload(downloadIntent)
+          screen.handleRequiredDownload(downloadIntent)
         }
       } else {
         // play the audio
-        it.handlePlayback(audioRequest)
+        screen.handlePlayback(audioRequest)
       }
     }
   }
@@ -123,25 +125,23 @@ constructor(
     lastAudioRequest?.let { play(it) }
   }
 
-  private fun getDownloadIntent(context: Context, request: AudioRequest): Intent? {
+  private fun getDownloadIntent(screen: AudioPresenterScreen, request: AudioRequest): Intent? {
     val qari = request.qari
     val audioPathInfo = request.audioPathInfo
     val path = audioPathInfo.localDirectory
     val gaplessDb = audioPathInfo.gaplessDatabase
 
     return if (!quranFileUtils.haveAyaPositionFile()) {
-      getDownloadIntent(
-        context,
+      buildDownloadIntent(
         quranFileUtils.ayaPositionFileUrl,
         quranFileUtils.quranAyahDatabaseDirectory.absolutePath,
-        context.getString(R.string.highlighting_database)
+        screen.getString(R.string.highlighting_database)
       )
     } else if (gaplessDb != null && !File(gaplessDb).exists()) {
-      getDownloadIntent(
-        context,
+      buildDownloadIntent(
         getGaplessDatabaseUrl(qari)!!,
         path,
-        context.getString(R.string.timing_database)
+        screen.getString(R.string.timing_database)
       )
     } else if (!request.shouldStream &&
       audioUtil.shouldDownloadBasmallah(
@@ -153,10 +153,9 @@ constructor(
       )
     ) {
       val title = quranDisplayData.getNotificationTitle(
-        context, request.start, request.start, qari.isGapless
+        appContext, request.start, request.start, qari.isGapless
       )
-      getDownloadIntent(
-        context,
+      buildDownloadIntent(
         audioUtil.getQariUrl(qari, audioExtensionDecider.audioExtensionForQari(qari)),
         path,
         title
@@ -166,10 +165,9 @@ constructor(
       }
     } else if (!request.shouldStream && !haveAllFiles(audioPathInfo, request.start, request.end)) {
       val title = quranDisplayData.getNotificationTitle(
-        context, request.start, request.end, qari.isGapless
+        appContext, request.start, request.end, qari.isGapless
       )
-      getDownloadIntent(
-        context,
+      buildDownloadIntent(
         audioUtil.getQariUrl(qari, audioExtensionDecider.audioExtensionForQari(qari)),
         path,
         title
@@ -184,13 +182,12 @@ constructor(
     }
   }
 
-  private fun getDownloadIntent(
-    context: Context,
+  private fun buildDownloadIntent(
     url: String,
     destination: String,
     title: String
   ): Intent {
-    return ServiceIntentHelper.getAudioDownloadIntent(context, url, destination, title)
+    return ServiceIntentHelper.getAudioDownloadIntent(appContext, url, destination, title)
   }
 
   private fun getLocalAudioPathInfo(qari: QariItem): AudioPathInfo? {
@@ -230,11 +227,11 @@ constructor(
     return quranFileUtils.gaplessDatabaseRootUrl + "/" + dbName
   }
 
-  override fun bind(what: PagerActivity) {
+  override fun bind(what: AudioPresenterScreen) {
     pagerActivity = what
   }
 
-  override fun unbind(what: PagerActivity) {
+  override fun unbind(what: AudioPresenterScreen) {
     if (pagerActivity == what) {
       pagerActivity = null
     }

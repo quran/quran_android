@@ -6,12 +6,17 @@ import android.view.MotionEvent
 import android.widget.ImageView
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarksDao
+import com.quran.data.dao.HighlightsDao
+import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.di.QuranPageScope
 import com.quran.data.model.AyahGlyph.AyahEndGlyph
 import com.quran.data.model.AyahGlyph.WordGlyph
 import com.quran.data.model.AyahWord
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.ReadingBookmark
+import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightInfo
 import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.selection.AyahSelection
@@ -59,6 +64,8 @@ class AyahTrackerPresenter @Inject constructor(
   private val quranSettings: QuranSettings,
   private val readingEventPresenter: ReadingEventPresenter,
   private val bookmarksDao: BookmarksDao,
+  private val highlightsDao: HighlightsDao,
+  private val readingBookmarksDao: ReadingBookmarksDao,
   private val audioStatusRepository: AudioStatusRepository,
   recitationPresenter: RecitationPresenter,
   private val recitationEventPresenter: RecitationEventPresenter,
@@ -91,6 +98,14 @@ class AyahTrackerPresenter @Inject constructor(
         .onEach { bookmarks -> onBookmarksChanged(bookmarks) }
         .launchIn(scope)
     }
+
+    highlightsDao.highlightsFlow()
+      .onEach { highlights -> onHighlightsChanged(highlights) }
+      .launchIn(scope)
+
+    readingBookmarksDao.readingBookmarksFlow()
+      .onEach { readingBookmarks -> onReadingBookmarksChanged(readingBookmarks) }
+      .launchIn(scope)
   }
 
   fun setPageBounds(pageCoordinates: PageCoordinates) {
@@ -191,6 +206,37 @@ class AyahTrackerPresenter @Inject constructor(
           tracker.onHighlightAyat(tracker.page, elements, HighlightTypes.BOOKMARK)
         }
       }
+    }
+  }
+
+  private fun onHighlightsChanged(highlights: List<Highlight>) {
+    HighlightTypes.highlights.forEach { unHighlightAyahs(it) }
+
+    val highlightsByColor = highlights.groupBy { it.color }
+    items.forEach { tracker ->
+      highlightsByColor.forEach { (color, colorHighlights) ->
+        val elements = colorHighlights
+          .map { it.suraAyah }
+          .filter { quranInfo.getPageFromSuraAyah(it.sura, it.ayah) == tracker.page }
+          .map { "${it.sura}:${it.ayah}" }
+          .toSet()
+        if (elements.isNotEmpty()) {
+          tracker.onHighlightAyat(tracker.page, elements, HighlightTypes[color])
+        }
+      }
+    }
+  }
+
+  private fun onReadingBookmarksChanged(readingBookmarks: List<ReadingBookmark>) {
+    HighlightTypes.readingBookmarks.forEach { unHighlightAyahs(it) }
+
+    val ayahReadingBookmarks = readingBookmarks.filterIsInstance<AyahReadingBookmark>()
+    items.forEach { tracker ->
+      ayahReadingBookmarks
+        .filter { quranInfo.getPageFromSuraAyah(it.sura, it.ayah) == tracker.page }
+        .forEach {
+          tracker.onHighlightAyat(tracker.page, setOf("${it.sura}:${it.ayah}"), HighlightTypes[it.slot])
+        }
     }
   }
 

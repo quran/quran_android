@@ -17,7 +17,6 @@
   <string name="menu_jump_last_page">Faqja e fundit</string>
   <string name="menu_bookmarks">Libërshënues</string>
   <string name="menu_bookmarks_page">Libërshënues faqesh</string>
-  <string name="menu_bookmarks_ayah">Ayah Bookmarks</string>
   <string name="menu_sort">Renditja</string>
   <string name="menu_sort_date">Data e shtuar</string>
   <string name="menu_sort_location">Vendndodhja në Kuran</string>
@@ -71,7 +70,7 @@
         Për përkthimet, shko tek rregullimet dhe vendos madhësinë e tekstit të përkthimit.
         &lt;br/>
         &lt;br/>&lt;b>Si ta ndaj një ajah?&lt;/b>
-        &lt;br/>Kur jeni në ndonjë faqe arabe, shtypni dhe mbani çdo ayah për të marrë një menu ku mund të zgjidhni të shënoni libërshënues, etiketë, të ndani ose të kopjoni atë ajah në dërrasë, të shihni përkthimin ose të dëgjoni recitimin e tij.&lt;br/>
+        &lt;br/>Kur jeni në ndonjë faqe arabe, shtypni dhe mbani çdo ayah për të marrë një menu ku mund të zgjidhni të shënoni libërshënues, të ndani ose të kopjoni atë ajah në dërrasë, të shihni përkthimin ose të dëgjoni recitimin e tij.&lt;br/>
         &lt;br/>&lt;b>Fontet Malayalam/Tamil/Bengali/Urdu nuk punojnë!&lt;/b>
         &lt;br/>Për fat të keq, versionet Android para 4.0 nuk i mbështesin këto fonte, dhe ka pak që mund të bëjmë për të ndihmuar me këtë.
     </string>
@@ -164,7 +163,7 @@
   <string name="import_data_permissions_error">E pamundur leximi i file backup për shkak të gabimit të të drejtave.</string>
   <string name="import_data_error">File backup i pavlefshëm (ose i pamundur leximi i file backup).</string>
   <string name="import_data">Importo të dhënat</string>
-  <string name="import_data_and_override">Nëse importoni këtë file, ai do të zëvendësojë të gjitha libërshënuesit tuaj me %1$d libërshënues dhe tags %2$d. Importo?</string>
+  <string name="import_data_and_merge">Nëse importoni këtë skedar, ai do të shtojë %1$d libërshënues dhe %2$d etiketa te të dhënat tuaja aktuale. Të importohet?</string>
   <string name="import_successful">Importo i suksesshëm</string>
   <string name="export_data_error">Gabim gjatë eksportimit të të dhënave</string>
   <string name="exported_data">Të dhënat e eksportuara në %1$s</string>
@@ -273,16 +272,25 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Tag Libërshënues</string>
   <string name="delete_tag">Elemino Tag</string>
+  <string name="delete">Fshi</string>
   <string name="edit_tag">Ndrysho Tag</string>
   <string name="new_tag">Etiketë e re</string>
-  <string name="not_tagged">Nuk është etiketuar</string>
   <plurals name="bookmark_tag_deleted">
     <item quantity="one">Eleminuar një element</item>
     <item quantity="other">Eleminuar elementët %d</item>
   </plurals>
   <string name="undo">Zhbëje</string>
 
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">Ende nuk ka libërshënues</string>
+  <string name="bookmarks_empty_subtitle">Prek ikonën e libërshënuesit për të ruajtur një faqe, ose shtyp gjatë mbi një ajet për ta shënuar.</string>
+  <string name="reading_bookmark_movable_education_title">Ky është një libërshënues leximi i lëvizshëm</string>
+  <string name="reading_bookmark_movable_education_body">Ruajtja e një libërshënuesi leximi zëvendëson të vjetrin. Për të ruajtur disa ajete, shtyp gjatë mbi një ajet dhe shtoje në një koleksion.</string>
+  <string name="reading_bookmark_moved_from">Zhvendosur nga %1$s</string>
+  <string name="reading_bookmark_dismiss_education">Hiqe</string>
+
   <string name="recent_pages">Faqet e fundit</string>
+  <string name="old_page_bookmarks">Libërshënues të vjetër faqesh</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">Etiketë</string>

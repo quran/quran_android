@@ -15,35 +15,48 @@ class BookmarkUIConverter @Inject constructor(
   fun convertToUIResult(context: Context, rawResult: BookmarkRawResult): BookmarkResult {
     val uiRows = rawResult.rows.map { rowData ->
       when (rowData) {
-        is BookmarkRowData.RecentPageHeader -> 
+        is BookmarkRowData.ReadingBookmarkHeader ->
+          quranRowFactory.fromReadingBookmarkHeader(context, rowData.count)
+
+        is BookmarkRowData.ReadingBookmarkItem ->
+          quranRowFactory.fromReadingBookmark(context, rowData.readingBookmark)
+
+        is BookmarkRowData.RecentPageHeader ->
           quranRowFactory.fromRecentPageHeader(context, rowData.count)
-          
+
         is BookmarkRowData.RecentPage -> {
           val page = if (quranInfo.isValidPage(rowData.recentPage.page)) {
             rowData.recentPage.page
           } else {
             1
           }
-          quranRowFactory.fromCurrentPage(context, page, rowData.recentPage.timestamp)
+          quranRowFactory.fromCurrentPage(context, page, rowData.recentPage.timestamp.epochSeconds)
         }
-        
-        is BookmarkRowData.TagHeader -> 
-          quranRowFactory.fromTag(rowData.tag)
-          
-        is BookmarkRowData.BookmarkItem -> 
-          quranRowFactory.fromBookmark(context, rowData.bookmark, rowData.tagId)
-          
-        is BookmarkRowData.PageBookmarksHeader -> 
+
+        is BookmarkRowData.HighlightsHeader ->
+          quranRowFactory.fromHighlightsHeader(context, rowData.isCollapsed)
+
+        is BookmarkRowData.HighlightColorItem ->
+          quranRowFactory.fromHighlightColor(context, rowData.color, rowData.count)
+
+        is BookmarkRowData.TagHeader ->
+          quranRowFactory.fromTag(context, rowData.tag, rowData.count, rowData.isCollapsed)
+
+        is BookmarkRowData.BookmarkItem ->
+          quranRowFactory.fromBookmark(context, rowData.bookmark, rowData.tagId, rowData.mark)
+
+        is BookmarkRowData.HighlightedAyahItem ->
+          quranRowFactory.fromHighlight(context, rowData.highlight, rowData.ayahText)
+
+        is BookmarkRowData.PageBookmarksHeader ->
           quranRowFactory.fromPageBookmarksHeader(context)
-          
-        is BookmarkRowData.AyahBookmarksHeader -> 
+
+        is BookmarkRowData.AyahBookmarksHeader ->
           quranRowFactory.fromAyahBookmarksHeader(context)
-          
-        is BookmarkRowData.NotTaggedHeader ->
-          quranRowFactory.fromNotTaggedHeader(context)
+
       }
     }
-    
+
     return BookmarkResult(uiRows, rawResult.tagMap)
   }
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Synchronizacja Quran.com</string>
+  <string name="quran_sync_settings_category">Konto</string>
+  <string name="quran_sync_settings_summary">Zakładki, kolekcje i historia czytania</string>
+  <string name="quran_sync_not_signed_in">Niezalogowano</string>
+  <string name="quran_sync_signed_in">Zalogowano</string>
+  <string name="quran_sync_loading">Logowanie</string>
+  <string name="quran_sync_login">Zaloguj się</string>
+  <string name="quran_sync_logout">Wyloguj się</string>
+  <string name="quran_sync_name">Imię</string>
+  <string name="quran_sync_email">E-mail</string>
+  <string name="quran_sync_account_id">ID konta</string>
+  <string name="quran_sync_action_error">Nie można teraz zaktualizować synchronizacji.</string>
+  <string name="quran_sync_bookmarks_cta_title">Synchronizuj zakładki wszędzie</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Uzyskaj do nich dostęp z dowolnego urządzenia, o dowolnej porze</string>
+  <string name="quran_sync_bookmarks_cta_button">Zaloguj się przez Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Odrzuć</string>
+</resources>

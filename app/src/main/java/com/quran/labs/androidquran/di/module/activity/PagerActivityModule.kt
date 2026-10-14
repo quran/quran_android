@@ -6,8 +6,12 @@ import com.quran.data.core.QuranPageInfo
 import com.quran.data.di.ActivityLevelScope
 import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.model.quran.CoordinatesModel
+import com.quran.labs.androidquran.model.quran.CoordinatesModelInterface
 import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.model.translation.TranslationModelImpl
+import com.quran.labs.androidquran.ui.helpers.QuranPageLoader
+import com.quran.labs.androidquran.ui.helpers.QuranPageLoaderInterface
 import com.quran.labs.androidquran.util.QuranPageInfoImpl
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranUtils
@@ -59,4 +63,12 @@ object PagerActivityModule {
   fun provideTranslationModel(impl: TranslationModelImpl): TranslationModel {
     return impl
   }
+
+  @Provides
+  @ActivityScope
+  fun provideCoordinatesModelInterface(impl: CoordinatesModel): CoordinatesModelInterface = impl
+
+  @Provides
+  @ActivityScope
+  fun provideQuranPageLoaderInterface(impl: QuranPageLoader): QuranPageLoaderInterface = impl
 }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Sinkronizimi i Quran.com</string>
+  <string name="quran_sync_settings_category">Llogaria</string>
+  <string name="quran_sync_settings_summary">Faqerojtësit, koleksionet dhe historiku i leximit</string>
+  <string name="quran_sync_not_signed_in">Nuk je i identifikuar</string>
+  <string name="quran_sync_signed_in">Je i identifikuar</string>
+  <string name="quran_sync_loading">Duke u identifikuar</string>
+  <string name="quran_sync_login">Identifikohu</string>
+  <string name="quran_sync_logout">Dilni</string>
+  <string name="quran_sync_name">Emri</string>
+  <string name="quran_sync_email">Email</string>
+  <string name="quran_sync_account_id">ID e llogarisë</string>
+  <string name="quran_sync_action_error">Sinkronizimi nuk mund të përditësohet tani.</string>
+  <string name="quran_sync_bookmarks_cta_title">Sinkronizoni faqerojtësit tuaj kudo</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Qasuni në to nga çdo pajisje, në çdo kohë</string>
+  <string name="quran_sync_bookmarks_cta_button">Identifikohu me Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Hiq</string>
+</resources>

@@ -65,6 +65,8 @@ object Constants {
   const val PREF_GROUP_BOOKMARKS_BY_TAG = "groupBookmarksByTag"
   const val PREF_SHOW_RECENTS = "showRecents"
   const val PREF_SHOW_DATE = "showDate"
+  const val PREF_COLLAPSED_COLLECTIONS = "collapsedCollections"
+  const val PREF_HIGHLIGHTS_COLLAPSED = "highlightsCollapsed"
   const val PREF_DUAL_PAGE_ENABLED = "useDualPageMode"
   const val PREF_VERSION = "version"
   const val PREF_DEFAULT_IMAGES_DIR = "defaultImagesDir"
@@ -86,6 +88,9 @@ object Constants {
   const val PREF_SHOW_LINE_DIVIDERS = "showLineDividers"
   const val PREF_APP_THEME = "appTheme"
   const val PREF_PAGE_THEME = "pageTheme"
+  const val PREF_MOBILE_SYNC_LEGACY_BOOKMARKS_MIGRATED = "mobileSyncLegacyBookmarksMigrated"
+  const val PREF_HAS_SEEN_MOVABLE_BOOKMARK_EDUCATION = "hasSeenMovableBookmarkEducation"
+  const val PREF_LAST_SEEN_ANNOUNCEMENT = "lastSeenAnnouncement"
 
   // Themes
   const val THEME_LIGHT = "light"

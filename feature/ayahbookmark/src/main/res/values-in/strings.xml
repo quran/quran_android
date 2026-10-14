@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">Selesai</string>
+  <string name="ayahbookmark_collections_header">Koleksi</string>
+  <string name="ayahbookmark_new_collection">Koleksi baru</string>
+  <string name="ayahbookmark_collection_name_hint">Nama koleksi</string>
+  <string name="ayahbookmark_cancel">Batal</string>
+  <string name="ayahbookmark_create">Buat</string>
+  <string name="ayahbookmark_saved">Tersimpan</string>
+  <string name="ayahbookmark_not_saved">Belum tersimpan</string>
+  <string name="ayahbookmark_highlight_title">Sorotan</string>
+  <string name="ayahbookmark_highlight_none">Tidak ada</string>
+</resources>

@@ -14,7 +14,6 @@
   <string name="menu_jump_last_page">الصفحة الأخيرة</string>
   <string name="menu_bookmarks">المرجعيات</string>
   <string name="menu_bookmarks_page">مرجعيات الصفحات</string>
-  <string name="menu_bookmarks_ayah">مرجعيات الآيات</string>
   <string name="menu_sort">تغيير الترتيب</string>
   <string name="menu_sort_date">تاريخ الإضافة</string>
   <string name="menu_sort_location">موقعها في القرآن</string>
@@ -220,9 +219,9 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">تصنيف المرجعية</string>
   <string name="delete_tag">حذف التصنيف</string>
+  <string name="delete">حذف</string>
   <string name="edit_tag">تعديل الصنف</string>
   <string name="new_tag">صنف جديد</string>
-  <string name="not_tagged">غير مصنف</string>
 
   <!-- tag dialog -->
   <string name="tag_dlg_title">صنف</string>
@@ -252,12 +251,13 @@
   <string name="prefs_page_type_summary">اختر نوع الصفحات</string>
 
   <string name="import_data">استيراد البيانات</string>
-  <string name="import_data_and_override">"اذا قمت باستيراد هذا الملف، سيتم استبدال المرجعيات ب  %1$d مرجعيات و %2$d تصنيفات. استيراد؟"</string>
+  <string name="import_data_and_merge">إذا قمت باستيراد هذا الملف، فسيضيف %1$d مرجعيات و %2$d تصنيفات إلى بياناتك الحالية. استيراد؟</string>
   <string name="import_successful">تم الاستيراد بنجاح</string>
   <string name="export_data_error">خطأ في استيراد البيانات.</string>
   <string name="warning">تحذير</string>
 
   <string name="recent_pages">آخر المتصفحات</string>
+  <string name="old_page_bookmarks">مرجعيات الصفحات القديمة</string>
 
   <plurals name="bookmark_tag_deleted">
     <item quantity="zero">لم يتم حذف عناصر</item>
@@ -267,6 +267,16 @@
     <item quantity="many">تم حذف %d عنصر</item>
   </plurals>
   <string name="undo">تراجع</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">لا توجد مرجعيات بعد</string>
+  <string name="bookmarks_empty_subtitle">اضغط على أيقونة المرجعية لحفظ صفحة، أو اضغط مطولاً على آية لحفظها كمرجعية.</string>
+  <string name="reading_bookmark">علامة موضع القراءة</string>
+  <string name="reading_bookmarks">علامات موضع القراءة</string>
+  <string name="reading_bookmark_movable_education_title">هذه علامة قراءة قابلة للنقل</string>
+  <string name="reading_bookmark_movable_education_body">حفظ علامة القراءة يستبدل القديمة. لحفظ عدة آيات، اضغط مطولاً على آية وأضفها إلى مجموعة.</string>
+  <string name="reading_bookmark_moved_from">نُقلت من %1$s</string>
+  <string name="reading_bookmark_dismiss_education">إغلاق</string>
   <string name="notification_channel_download">تحميل ملفات القرآن</string>
   <string name="notification_channel_audio">تلاوة القرآن</string>
   <string name="next">التالي</string>

@@ -1,8 +1,14 @@
 package com.quran.labs.androidquran.ui.helpers
 
+import com.quran.data.model.bookmark.ReadingBookmarkType
+import com.quran.data.model.highlight.HighlightColor
 import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT
+import com.quran.data.model.highlight.HighlightType.Mode.UNDERLAY
+import com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.ui.core.HighlightColors
+import com.quran.mobile.common.ui.core.R as UiCoreR
 
 object HighlightTypes {
 
@@ -13,6 +19,45 @@ object HighlightTypes {
   val NOTE =      HighlightType(3,  R.color.note_highlight,      HIGHLIGHT)
   @JvmField
   val BOOKMARK =  HighlightType(4,  R.color.bookmark_highlight,  HIGHLIGHT)
+
+  private const val FIRST_HIGHLIGHT_ID = 5L
+
+  private val HIGHLIGHTS: Map<HighlightColor, HighlightType> =
+    HighlightColors.sorted.mapIndexed { index, spec ->
+      spec.highlightColor to
+          HighlightType(FIRST_HIGHLIGHT_ID + index, spec.colorResourceId, UNDERLAY)
+    }.toMap()
+
+  val highlights: Collection<HighlightType> = HIGHLIGHTS.values
+
+  operator fun get(highlightColor: HighlightColor): HighlightType = HIGHLIGHTS.getValue(highlightColor)
+
+  private val FIRST_READING_BOOKMARK_ID = FIRST_HIGHLIGHT_ID + HIGHLIGHTS.size
+
+  private val READING_BOOKMARKS: Map<ReadingBookmarkType, HighlightType> = mapOf(
+    ReadingBookmarkType.TEAL to HighlightType(
+      FIRST_READING_BOOKMARK_ID,
+      UiCoreR.color.reading_bookmark_page_teal,
+      UNDERLINE,
+      nightColorResId = UiCoreR.color.reading_bookmark_page_teal_night
+    ),
+    ReadingBookmarkType.ORANGE to HighlightType(
+      FIRST_READING_BOOKMARK_ID + 1,
+      UiCoreR.color.reading_bookmark_page_orange,
+      UNDERLINE,
+      nightColorResId = UiCoreR.color.reading_bookmark_page_orange_night
+    ),
+    ReadingBookmarkType.RED to HighlightType(
+      FIRST_READING_BOOKMARK_ID + 2,
+      UiCoreR.color.reading_bookmark_page_red,
+      UNDERLINE,
+      nightColorResId = UiCoreR.color.reading_bookmark_page_red_night
+    )
+  )
+
+  val readingBookmarks: Collection<HighlightType> = READING_BOOKMARKS.values
+
+  operator fun get(slot: ReadingBookmarkType): HighlightType = READING_BOOKMARKS.getValue(slot)
 
   fun getAnimationConfig(type: HighlightType): HighlightAnimationConfig = when(type) {
     AUDIO -> HighlightAnimationConfig.Audio

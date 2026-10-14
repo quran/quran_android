@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Синхронізація Quran.com</string>
+  <string name="quran_sync_settings_category">Обліковий запис</string>
+  <string name="quran_sync_settings_summary">Закладки, колекції та історія читання</string>
+  <string name="quran_sync_not_signed_in">Не виконано вхід</string>
+  <string name="quran_sync_signed_in">Виконано вхід</string>
+  <string name="quran_sync_loading">Виконується вхід</string>
+  <string name="quran_sync_login">Увійти</string>
+  <string name="quran_sync_logout">Вийти</string>
+  <string name="quran_sync_name">Ім\'я</string>
+  <string name="quran_sync_email">Ел. пошта</string>
+  <string name="quran_sync_account_id">ID облікового запису</string>
+  <string name="quran_sync_action_error">Наразі неможливо оновити синхронізацію.</string>
+  <string name="quran_sync_bookmarks_cta_title">Синхронізуйте закладки всюди</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Отримуйте доступ до них з будь-якого пристрою, у будь-який час</string>
+  <string name="quran_sync_bookmarks_cta_button">Увійти через Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Закрити</string>
+</resources>

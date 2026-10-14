@@ -14,7 +14,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import com.quran.data.source.PageContentType
-import com.quran.labs.androidquran.extra.feature.linebyline.model.HighlightType
 import com.quran.labs.androidquran.extra.feature.linebyline.model.LineModel
 import com.quran.labs.androidquran.extra.feature.linebyline.model.PageInfo
 import com.quran.labs.androidquran.extra.feature.linebyline.ui.modifier.pageGradient
@@ -23,6 +22,8 @@ import com.quran.mobile.linebyline.data.dao.AyahMarkerInfo
 import com.quran.mobile.linebyline.data.dao.SuraHeader
 import com.quran.mobile.linebyline.ui.renderer.composable.QuranLineLayout
 import com.quran.mobile.linebyline.ui.renderer.composable.QuranPageLayout
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
 @Composable
@@ -36,6 +37,7 @@ fun QuranPage(
   suraHeaderComposable: @Composable (SuraHeader) -> Unit,
   ayahMarkerInfoComposable: @Composable (AyahMarkerInfo) -> Unit,
   highlightComposable: @Composable (AyahHighlight, Color) -> Unit,
+  readingBookmarkComposable: @Composable (AyahHighlight, ImmutableList<Color>) -> Unit,
   sidelinesComposable: @Composable () -> Unit,
   onPagePositioned: (Float, Float, Int, Int) -> Unit,
   onSelectionStart: (Float, Float) -> Unit,
@@ -71,6 +73,19 @@ fun QuranPage(
       sidelines = sidelinesComposable
     ) {
       Box {
+        // highlights that act as a background are painted before the lines are drawn
+        pageInfo.ayahHighlights
+          .filter { it.highlightType.isUnderText }
+          .forEach { highlightAyah ->
+            val color = highlightAyah.highlightType.paintColor(isNightMode)
+            highlightAyah.ayahHighlights.forEach { highlightComposable(it, color) }
+          }
+
+        pageInfo.readingBookmarks.forEach { readingBookmark ->
+          val colors = readingBookmark.slots.map { it.paintColor(isNightMode) }.toImmutableList()
+          readingBookmark.ayahHighlights.forEach { readingBookmarkComposable(it, colors) }
+        }
+
         QuranLineLayout(
           lineHeightWidthRatio = ratio,
           allowLinesToOverlap = allowLinesToOverlap,
@@ -115,16 +130,11 @@ fun QuranPage(
 
           // Highlights
           val highlights = pageInfo.ayahHighlights.filter { highlightAyah ->
-            highlightAyah.ayahHighlights.any { it.lineId == lineId }
+            !highlightAyah.highlightType.isUnderText &&
+                highlightAyah.ayahHighlights.any { it.lineId == lineId }
           }
           highlights.forEach { highlightAyah ->
-            val color = when (highlightAyah.highlightType) {
-              HighlightType.SELECTION -> Color(0x46, 0x94, 0xa6, 0x40)
-              HighlightType.AUDIO -> Color(0x46, 0xa6, 0x46, 0x40)
-              HighlightType.AUDIO_WORD -> Color(0xff, 0xb3, 0x3d, 0x60)
-              HighlightType.BOOKMARK -> Color(0xa4, 0xa4, 0xa4, 0x40)
-            }
-
+            val color = highlightAyah.highlightType.paintColor(isNightMode)
             highlightAyah.ayahHighlights
               .filter { it.lineId == lineId }
               .forEach {

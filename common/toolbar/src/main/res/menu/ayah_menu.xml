@@ -3,9 +3,6 @@
     <item android:id="@+id/cab_bookmark_ayah"
           android:icon="@drawable/ic_not_favorite"
           android:title="@string/bookmark_ayah" />
-    <item android:id="@+id/cab_tag_ayah"
-          android:icon="@drawable/ic_tag"
-          android:title="@string/tag_ayah" />
     <item android:id="@+id/cab_share_ayah"
           android:icon="@drawable/ic_share"
           android:title="@string/share_ayah_text">

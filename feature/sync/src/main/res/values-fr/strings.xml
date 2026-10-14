@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Synchronisation Quran.com</string>
+  <string name="quran_sync_settings_category">Compte</string>
+  <string name="quran_sync_settings_summary">Signets, collections et historique de lecture</string>
+  <string name="quran_sync_not_signed_in">Non connecté</string>
+  <string name="quran_sync_signed_in">Connecté</string>
+  <string name="quran_sync_loading">Connexion en cours</string>
+  <string name="quran_sync_login">Se connecter</string>
+  <string name="quran_sync_logout">Se déconnecter</string>
+  <string name="quran_sync_name">Nom</string>
+  <string name="quran_sync_email">E-mail</string>
+  <string name="quran_sync_account_id">ID de compte</string>
+  <string name="quran_sync_action_error">Impossible de mettre à jour la synchronisation pour le moment.</string>
+  <string name="quran_sync_bookmarks_cta_title">Synchronisez vos signets partout</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Accédez-y depuis n\'importe quel appareil, à tout moment</string>
+  <string name="quran_sync_bookmarks_cta_button">Se connecter avec Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Ignorer</string>
+</resources>

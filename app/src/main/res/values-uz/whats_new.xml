@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Yangiliklar</string>
+  <string name="whats_new_continue">Davom etish</string>
+  <string name="icon_announcement_title">Yangi belgi</string>
+  <string name="icon_announcement_body">Keyingi yangilanishimizda bosh ekraningizdagi Quran ilovasining belgisi o‘zgaradi. Bu yangi belgi endi Allohning kalomi atrofida yaratilgan vositalar oilasining umumiy belgisidir. Batafsil ma’lumot tez orada.</string>
+  <string name="icon_announcement_now">HOZIR</string>
+  <string name="icon_announcement_coming_soon">TEZ ORADA</string>
+  <string name="icon_announcement_same_app_title">O‘sha ilova, yangi belgi</string>
+  <string name="icon_announcement_same_app_body">Barcha xatcho‘plaringiz, yutuqlaringiz va sozlamalaringiz aynan o‘z joyida qoladi.</string>
+  <string name="icon_announcement_release_title">Keyingi versiyada keladi</string>
+  <string name="icon_announcement_release_body">Yangi belgi keyingi yangilanishda keladi.</string>
+  <string name="icon_announcement_current_icon">Quran ilovasining joriy belgisi</string>
+  <string name="icon_announcement_upcoming_icon">Quran ilovasining yangi belgisi</string>
+</resources>

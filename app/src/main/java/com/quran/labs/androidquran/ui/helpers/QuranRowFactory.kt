@@ -1,11 +1,25 @@
 package com.quran.labs.androidquran.ui.helpers
 
 import android.content.Context
+import android.text.format.DateUtils
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import com.quran.data.core.QuranInfo
+import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.EmptyReadingBookmark
+import com.quran.data.model.bookmark.PageReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.highlight.Highlight
+import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.ui.core.CollectionNames
+import com.quran.labs.androidquran.common.ui.core.HighlightColors
+import com.quran.labs.androidquran.common.ui.core.ReadingBookmarkSlots
+import com.quran.labs.androidquran.dao.bookmark.AyahMark
 import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.util.QuranUtils
 import dev.zacsweers.metro.Inject
 
 class QuranRowFactory @Inject constructor(
@@ -15,7 +29,7 @@ class QuranRowFactory @Inject constructor(
   fun fromRecentPageHeader(context: Context, count: Int): QuranRow {
     return QuranRow.Builder()
       .withText(
-        context.getResources().getQuantityString(R.plurals.plural_recent_pages, count)
+        context.resources.getQuantityString(R.plurals.plural_recent_pages, count)
       )
       .withType(QuranRow.HEADER)
       .build()
@@ -29,13 +43,22 @@ class QuranRowFactory @Inject constructor(
 
   fun fromAyahBookmarksHeader(context: Context): QuranRow {
     return QuranRow.Builder()
-      .withText(context.getString(R.string.menu_bookmarks_ayah))
+      .withText(context.getString(R.string.ayahs))
       .withType(QuranRow.HEADER).build()
+  }
+
+  fun fromReadingBookmarkHeader(context: Context, count: Int): QuranRow {
+    return QuranRow.Builder()
+      .withText(
+        context.resources.getQuantityString(R.plurals.plural_reading_bookmarks, count)
+      )
+      .withType(QuranRow.HEADER)
+      .build()
   }
 
   fun fromCurrentPage(context: Context, page: Int, timeStamp: Long): QuranRow {
     return QuranRow.Builder()
-      .withText(quranDisplayData.getSuraNameString(context, page))
+      .withText(quranDisplayData.getAllSuraNamesForPageString(context, page))
       .withMetadata(quranDisplayData.getPageSubtitle(context, page))
       .withSura(quranDisplayData.safelyGetSuraOnPage(page))
       .withPage(page)
@@ -45,13 +68,84 @@ class QuranRowFactory @Inject constructor(
       .build()
   }
 
+  fun fromReadingBookmark(context: Context, readingBookmark: ReadingBookmark): QuranRow {
+    val name = ReadingBookmarkSlots.displayName(context, readingBookmark)
+    val juz: Int
+    val builder = when (readingBookmark) {
+      is PageReadingBookmark -> {
+        val page = readingBookmark.page.takeIf(quranInfo::isValidPage) ?: 1
+        juz = quranInfo.getJuzForDisplayFromPage(page)
+        QuranRow.Builder()
+          .withText(quranDisplayData.getAllSuraNamesForPageString(context, page))
+          .withType(QuranRow.PAGE_READING_BOOKMARK)
+          .withSura(quranDisplayData.safelyGetSuraOnPage(page))
+          .withPage(page)
+      }
+
+      is AyahReadingBookmark -> {
+        val page = quranInfo.getPageFromSuraAyah(readingBookmark.sura, readingBookmark.ayah)
+          .takeIf(quranInfo::isValidPage)
+          ?: 1
+        juz = quranInfo.getJuzFromSuraAyah(
+          readingBookmark.sura,
+          readingBookmark.ayah,
+          quranInfo.getJuzForDisplayFromPage(page)
+        )
+        QuranRow.Builder()
+          .withText(
+            quranDisplayData.getAyahString(
+              readingBookmark.sura,
+              readingBookmark.ayah,
+              context
+            )
+          )
+          .withType(QuranRow.AYAH_READING_BOOKMARK)
+          .withSura(readingBookmark.sura)
+          .withAyah(readingBookmark.ayah)
+          .withPage(page)
+      }
+
+      is EmptyReadingBookmark -> {
+        return QuranRow.Builder()
+          .withText(name)
+          .withType(QuranRow.PAGE_READING_BOOKMARK)
+          .withImageResource(R.drawable.ic_bookmark_outline_24)
+          .withImageOverlayColorResource(ReadingBookmarkSlots[readingBookmark.slot].colorResourceId)
+          .withImageContentDescription(name)
+          .build()
+      }
+    }
+
+    val placedAt = readingBookmark.timestamp.toEpochMilliseconds()
+    val placed = DateUtils.getRelativeTimeSpanString(
+      placedAt,
+      maxOf(System.currentTimeMillis(), placedAt + DateUtils.MINUTE_IN_MILLIS),
+      DateUtils.MINUTE_IN_MILLIS
+    )
+    val juzDescription =
+      context.getString(R.string.juz2_description, QuranUtils.getLocalizedNumber(juz))
+    return builder
+      .withReadingBookmarkType(readingBookmark.slot)
+      .withMetadata(context.getString(R.string.reading_bookmark_details, juzDescription, placed))
+      .withDate(readingBookmark.timestamp.epochSeconds)
+      .withImageResource(R.drawable.ic_bookmark_filled_24)
+      .withImageOverlayColorResource(ReadingBookmarkSlots[readingBookmark.slot].colorResourceId)
+      .withImageContentDescription(name)
+      .build()
+  }
+
   @JvmOverloads
-  fun fromBookmark(context: Context, bookmark: Bookmark, tagId: Long? = null): QuranRow {
+  fun fromBookmark(
+    context: Context,
+    bookmark: Bookmark,
+    tagId: String? = null,
+    mark: AyahMark = AyahMark.Bookmark
+  ): QuranRow {
     val builder = QuranRow.Builder()
 
     if (bookmark.isPageBookmark()) {
       val sura = quranInfo.getSuraNumberFromPage(bookmark.page)
-      builder.withText(quranDisplayData.getSuraNameString(context, bookmark.page))
+      builder.withText(quranDisplayData.getAllSuraNamesForPageString(context, bookmark.page))
         .withMetadata(quranDisplayData.getPageSubtitle(context, bookmark.page))
         .withType(QuranRow.PAGE_BOOKMARK)
         .withBookmark(bookmark)
@@ -80,8 +174,8 @@ class QuranRowFactory @Inject constructor(
         .withType(QuranRow.AYAH_BOOKMARK)
         .withBookmark(bookmark)
         .withDate(bookmark.timestamp)
-        .withImageResource(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_favorite)
-        .withImageOverlayColorResource(R.color.ayah_bookmark_color)
+        .withImageResource(ribbonFor(mark))
+        .withImageOverlayColorResource(ribbonColorFor(mark))
     }
 
     if (tagId != null) {
@@ -90,18 +184,106 @@ class QuranRowFactory @Inject constructor(
     return builder.build()
   }
 
-  fun fromTag(tag: Tag): QuranRow {
+  fun fromTag(context: Context, tag: Tag, count: Int, isCollapsed: Boolean): QuranRow {
     return QuranRow.Builder()
       .withType(QuranRow.BOOKMARK_HEADER)
-      .withText(tag.name)
+      .withText(CollectionNames.displayName(context, tag))
       .withTagId(tag.id)
+      .withItemCount(count)
+      .withCollapsedState(isCollapsed)
+      .withSystemCollection(tag.isSystem)
       .build()
   }
 
-  fun fromNotTaggedHeader(context: Context): QuranRow {
+  fun fromHighlightsHeader(context: Context, isCollapsed: Boolean): QuranRow {
+    // no count on this one: each color carries its own, and the five colors never change
     return QuranRow.Builder()
-      .withType(QuranRow.BOOKMARK_HEADER)
-      .withText(context.getString(R.string.not_tagged))
+      .withText(context.getString(R.string.highlights))
+      .withType(QuranRow.HIGHLIGHTS_HEADER)
+      .withCollapsedState(isCollapsed)
       .build()
+  }
+
+  fun fromHighlightColor(context: Context, color: HighlightColor, count: Int): QuranRow {
+    return QuranRow.Builder()
+      .withType(QuranRow.HIGHLIGHT_COLOR)
+      .withText(context.getString(HighlightColors[color].nameResourceId))
+      .withHighlightColor(color)
+      .withImageOverlayColorResource(listColorFor(color))
+      .withItemCount(count)
+      .build()
+  }
+
+  fun fromSuraHeader(context: Context, sura: Int): QuranRow {
+    return QuranRow.Builder()
+      .withType(QuranRow.HEADER)
+      .withText(quranDisplayData.getSuraName(context, sura, true))
+      .withSura(sura)
+      .withItemCount(sura)
+      .build()
+  }
+
+  @JvmOverloads
+  fun fromHighlight(
+    context: Context,
+    highlight: Highlight,
+    ayahText: String? = null
+  ): QuranRow {
+    val sura = highlight.suraAyah.sura
+    val ayah = highlight.suraAyah.ayah
+    val page = quranInfo.getPageFromSuraAyah(sura, ayah).takeIf(quranInfo::isValidPage) ?: 1
+
+    // without the arabic database there is no ayah text to show, so the row falls back to naming
+    // the ayah in its title and to the page subtitle underneath, the way bookmark rows do
+    val title: String
+    val metadata: String
+    if (ayahText == null) {
+      title = quranDisplayData.getAyahString(sura, ayah, context)
+      metadata = quranDisplayData.getPageSubtitle(context, page)
+    } else {
+      title = "$ayahText..."
+      metadata = quranDisplayData.getAyahMetadata(sura, ayah, page, context)
+    }
+
+    return QuranRow.Builder()
+      .withType(QuranRow.HIGHLIGHTED_AYAH)
+      .withText(title)
+      .withMetadata(metadata)
+      .withSura(sura)
+      .withAyah(ayah)
+      .withPage(page)
+      .withDate(highlight.timestamp.epochSeconds)
+      .withHighlightColor(highlight.color)
+      .withImageResource(ribbonFor(AyahMark.Highlighted(highlight.color)))
+      .withImageOverlayColorResource(ribbonColorFor(AyahMark.Highlighted(highlight.color)))
+      .build()
+  }
+
+  @DrawableRes
+  private fun ribbonFor(mark: AyahMark): Int {
+    return when (mark) {
+      AyahMark.Unhighlighted -> R.drawable.ic_bookmark_outline_24
+      else -> R.drawable.ic_bookmark_filled_24
+    }
+  }
+
+  @ColorRes
+  private fun ribbonColorFor(mark: AyahMark): Int {
+    return when (mark) {
+      AyahMark.Bookmark -> R.color.ayah_bookmark_color
+      AyahMark.Unhighlighted -> R.color.unhighlighted_bookmark_color
+      is AyahMark.Highlighted -> listColorFor(mark.color)
+    }
+  }
+
+  @ColorRes
+  private fun listColorFor(highlightColor: HighlightColor): Int {
+    return when (highlightColor) {
+      HighlightColor.YELLOW -> R.color.highlight_list_yellow
+      HighlightColor.GREEN -> R.color.highlight_list_green
+      HighlightColor.BLUE -> R.color.highlight_list_blue
+      HighlightColor.PINK -> R.color.highlight_list_pink
+      HighlightColor.PURPLE -> R.color.highlight_list_purple
+    }
   }
 }

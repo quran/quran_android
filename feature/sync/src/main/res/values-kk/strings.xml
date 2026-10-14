@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com синхрондау</string>
+  <string name="quran_sync_settings_category">Тіркелгі</string>
+  <string name="quran_sync_settings_summary">Бетбелгілер, жинақтар және оқу тарихы</string>
+  <string name="quran_sync_not_signed_in">Кірмегенсіз</string>
+  <string name="quran_sync_signed_in">Кіргенсіз</string>
+  <string name="quran_sync_loading">Кіру</string>
+  <string name="quran_sync_login">Кіру</string>
+  <string name="quran_sync_logout">Шығу</string>
+  <string name="quran_sync_name">Аты</string>
+  <string name="quran_sync_email">Электрондық пошта</string>
+  <string name="quran_sync_account_id">Тіркелгі идентификаторы</string>
+  <string name="quran_sync_action_error">Қазір синхрондауды жаңарту мүмкін емес.</string>
+  <string name="quran_sync_bookmarks_cta_title">Бетбелгілеріңізді барлық жерде синхрондаңыз</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Оларға кез келген құрылғыдан, кез келген уақытта қатынасыңыз</string>
+  <string name="quran_sync_bookmarks_cta_button">Quran.com арқылы кіру</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Жабу</string>
+</resources>

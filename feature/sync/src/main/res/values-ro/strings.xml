@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Sincronizare Quran.com</string>
+  <string name="quran_sync_settings_category">Cont</string>
+  <string name="quran_sync_settings_summary">Semne de carte, colecții și istoricul lecturii</string>
+  <string name="quran_sync_not_signed_in">Neautentificat</string>
+  <string name="quran_sync_signed_in">Autentificat</string>
+  <string name="quran_sync_loading">Se autentifică</string>
+  <string name="quran_sync_login">Conectare</string>
+  <string name="quran_sync_logout">Deconectare</string>
+  <string name="quran_sync_name">Nume</string>
+  <string name="quran_sync_email">E-mail</string>
+  <string name="quran_sync_account_id">ID cont</string>
+  <string name="quran_sync_action_error">Sincronizarea nu poate fi actualizată acum.</string>
+  <string name="quran_sync_bookmarks_cta_title">Sincronizează-ți semnele de carte peste tot</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">Accesează-le de pe orice dispozitiv, oricând</string>
+  <string name="quran_sync_bookmarks_cta_button">Conectează-te cu Quran.com</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">Renunță</string>
+</resources>

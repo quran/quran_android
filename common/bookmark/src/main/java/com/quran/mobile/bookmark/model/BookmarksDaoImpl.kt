@@ -1,171 +1,401 @@
+@file:OptIn(kotlin.time.ExperimentalTime::class, kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+
 package com.quran.mobile.bookmark.model
 
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
+import com.quran.data.core.QuranInfo
+import com.quran.data.dao.BookmarkSortOrder
 import com.quran.data.dao.BookmarksDao
+import com.quran.data.di.AppCoroutineScope
 import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
-import com.quran.data.model.bookmark.RecentPage
-import com.quran.labs.androidquran.BookmarksDatabase
-import com.quran.mobile.bookmark.mapper.Mappers
-import com.quran.mobile.bookmark.mapper.convergeCommonlyTagged
+import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.collection.ReadingCollection
+import com.quran.data.model.collection.ReadingCollectionBookmarks
+import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
+import com.quran.shared.persistence.model.AyahBookmark
+import com.quran.shared.persistence.model.CollectionAyahBookmark
+import com.quran.shared.persistence.model.CollectionWithAyahBookmarks
+import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepository
+import com.quran.shared.persistence.repository.collection.repository.CollectionsRepository
+import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepository
+import com.quran.shared.persistence.util.PlatformDateTime
+import com.quran.shared.persistence.util.fromPlatform
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
+import com.quran.shared.persistence.model.Collection as SyncCollection
 
 @SingleIn(AppScope::class)
 class BookmarksDaoImpl @Inject constructor(
-  bookmarksDatabase: BookmarksDatabase
+  private val quranInfoProvider: () -> QuranInfo,
+  private val bookmarksRepository: BookmarksRepository,
+  private val collectionsRepository: CollectionsRepository,
+  private val collectionBookmarksRepository: CollectionBookmarksRepository,
+  private val bookmarkCollectionsState: BookmarkCollectionsState,
+  private val timestampProvider: MobileSyncTimestampProvider,
+  appCoroutineScope: AppCoroutineScope
 ) : BookmarksDao {
-  private val bookmarkQueries = bookmarksDatabase.bookmarkQueries
-  private val lastPageQueries = bookmarksDatabase.lastPageQueries
-  private val bookmarkTagQueries = bookmarksDatabase.bookmarkTagQueries
+  private val bookmarkCollectionDataState: StateFlow<BookmarkCollectionData?> =
+    bookmarkCollectionsState.collectionsWithBookmarks
+      .filterNotNull()
+      .map(::toBookmarkCollectionData)
+      .distinctUntilChanged()
+      .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
 
-  private val internalChanges = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
-  override val changes: Flow<Unit> = internalChanges
+  override val changes: Flow<Unit> = bookmarkCollectionDataState
+    .filterNotNull()
+    .map { }
+    .drop(1)
 
-  override suspend fun bookmarks(): List<Bookmark> {
+  override suspend fun bookmarks(sortOrder: Int): List<Bookmark> {
     return withContext(Dispatchers.IO) {
-      bookmarkQueries.getBookmarksByDateAdded(Mappers.bookmarkWithTagMapper)
-        .executeAsList()
-        .convergeCommonlyTagged()
+      sortBookmarks(bookmarkCollectionData().bookmarks, sortOrder)
+    }
+  }
+
+  override fun bookmarksFlow(sortOrder: Int): Flow<List<Bookmark>> {
+    return bookmarkCollectionDataState
+      .filterNotNull()
+      .map { bookmarkCollectionData -> sortBookmarks(bookmarkCollectionData.bookmarks, sortOrder) }
+      .distinctUntilChanged()
+  }
+
+  override fun collectionsWithBookmarksFlow(): Flow<List<ReadingCollectionBookmarks>> {
+    return bookmarkCollectionsState.collectionsWithBookmarks
+      .filterNotNull()
+      .map { collections -> collections.map { it.asReadingCollectionBookmarks() } }
+  }
+
+  override suspend fun addCollection(name: String): ReadingCollection {
+    return withContext(Dispatchers.IO) {
+      collectionsRepository.addCollection(name)
+        .asReadingCollection()
     }
   }
 
   override fun bookmarksForPage(page: Int): Flow<List<Bookmark>> {
-    return bookmarkQueries.getBookmarksByPage(page, Mappers.bookmarkWithTagMapper)
-      .asFlow()
-      .mapToList(Dispatchers.IO)
+    return bookmarksFlow(BookmarkSortOrder.SORT_LOCATION)
+      .map { bookmarks -> bookmarks.filter { it.page == page } }
+      .distinctUntilChanged()
   }
 
-  override fun pageBookmarksWithoutTags(): Flow<List<Bookmark>> {
-    return bookmarkQueries.getPageBookmarksWithoutTags(Mappers.pageBookmarkMapper)
-      .asFlow()
-      .mapToList(Dispatchers.IO)
-  }
-
-  override suspend fun replaceBookmarks(bookmarks: List<Bookmark>) {
-    withContext(Dispatchers.IO) {
-      bookmarkQueries.transaction {
-        bookmarks.forEach {
-          bookmarkQueries.update(it.sura, it.ayah, it.page, it.id)
-        }
-      }
-      internalChanges.emit(Unit)
+  override suspend fun tags(): List<Tag> {
+    return withContext(Dispatchers.IO) {
+      bookmarkCollectionData().tags
     }
   }
 
-  override suspend fun removeBookmarksForPage(page: Int) {
+  override fun tagsFlow(): Flow<List<Tag>> {
+    return bookmarkCollectionDataState.filterNotNull()
+      .map { bookmarkCollectionData -> bookmarkCollectionData.tags }
+      .distinctUntilChanged()
+  }
+
+  override suspend fun addTag(name: String): String {
+    val timestamp = timestampProvider.now()
+    val tagId = withContext(Dispatchers.IO) {
+      collectionsRepository.addCollection(name, timestamp).id
+    }
+    return tagId
+  }
+
+  override suspend fun updateTag(tag: Tag): Boolean {
+    val timestamp = timestampProvider.now()
+    val updated = withContext(Dispatchers.IO) {
+      val localId = tag.id
+      val bookmarkCollectionData = bookmarkCollectionData()
+      val collectionsById = bookmarkCollectionData.collectionsById
+      val existingCollection = collectionsById[localId]
+        ?.takeIf { bookmarkCollectionData.isEditable(localId) }
+        ?: return@withContext false
+      if (existingCollection.name == tag.name) {
+        return@withContext true
+      }
+      if (collectionsById.any { (collectionId, collection) ->
+          collectionId != localId && collection.name == tag.name
+        }
+      ) {
+        return@withContext false
+      }
+      try {
+        collectionsRepository.updateCollection(localId, tag.name, timestamp)
+        true
+      } catch (exception: CancellationException) {
+        throw exception
+      } catch (_: Exception) {
+        false
+      }
+    }
+    return updated
+  }
+
+  override suspend fun removeTags(tags: List<Tag>) {
     withContext(Dispatchers.IO) {
-      val bookmarkId = bookmarkQueries.getBookmarkIdForPage(page).executeAsOneOrNull()
-      if (bookmarkId != null) {
-        bookmarkTagQueries.deleteByBookmarkIds(listOf(bookmarkId))
-        bookmarkQueries.deleteByIds(listOf(bookmarkId))
-        internalChanges.emit(Unit)
+      val bookmarkCollectionData = bookmarkCollectionData()
+      val tagsToRemove = tags.filter { tag -> bookmarkCollectionData.isEditable(tag.id) }
+      tagsToRemove.forEach { tag -> collectionsRepository.deleteCollection(tag.id) }
+    }
+  }
+
+  override suspend fun getBookmarkTagIds(bookmarkId: String): List<String> {
+    return withContext(Dispatchers.IO) {
+      bookmarkCollectionData().tagIds(bookmarkId)
+    }
+  }
+
+  override suspend fun updateBookmarkTags(
+    bookmarkIds: Array<String>,
+    tagIds: Set<String>,
+    deleteNonTagged: Boolean
+  ): Boolean {
+    val timestamp = timestampProvider.now()
+    withContext(Dispatchers.IO) {
+      val bookmarkCollectionData = bookmarkCollectionData()
+      val collectionsById = bookmarkCollectionData.collectionsById
+      val targetTagIds = validTagIds(tagIds, collectionsById)
+      bookmarkIds
+        .filter { bookmarkId -> bookmarkId.isNotBlank() }
+        .distinct()
+        .forEach { bookmarkId ->
+          val bookmark = bookmarkCollectionData.ayahBookmarksById[bookmarkId] ?: return@forEach
+          val currentCollectionIds = bookmarkCollectionData
+            .collectionIdsByBookmarkId[bookmarkId]
+            .orEmpty()
+          val targetCollectionIds = if (deleteNonTagged) {
+            targetTagIds
+          } else {
+            currentCollectionIds + targetTagIds
+          }
+          replaceBookmarkCollectionIds(
+            bookmark = bookmark,
+            targetCollectionIds = targetCollectionIds,
+            timestamp = timestamp
+          )
+        }
+    }
+    return true
+  }
+
+  override suspend fun removeBookmarkFromTag(bookmark: Bookmark, tagId: String): Boolean {
+    return withContext(Dispatchers.IO) {
+      val bookmarkCollectionData = bookmarkCollectionData()
+      val membership = bookmarkCollectionData
+        .tagMembershipsByBookmarkId[bookmark.id]
+        ?.get(tagId)
+      if (membership == null) {
+        false
+      } else {
+        collectionBookmarksRepository.removeAyahBookmarkFromCollection(
+          collectionId = membership.collectionId,
+          bookmarkId = membership.bookmarkId
+        )
+      }
+    }
+  }
+
+  override suspend fun removeBookmarks(bookmarks: List<Bookmark>) {
+    val timestamp = timestampProvider.now()
+    withContext(Dispatchers.IO) {
+      bookmarks
+        .filterNot { it.isPageBookmark() }
+        .forEach { bookmark ->
+          val sura = bookmark.sura
+          val ayah = bookmark.ayah
+          if (sura != null && ayah != null) {
+            replaceBookmarkCollections(
+              sura = sura,
+              ayah = ayah,
+              targetCollectionIds = emptySet(),
+              timestamp = timestamp
+            )
+          }
+        }
+    }
+  }
+
+  override suspend fun deleteAyahBookmark(suraAyah: SuraAyah): Boolean {
+    val timestamp = timestampProvider.now()
+    return withContext(Dispatchers.IO) {
+      replaceBookmarkCollections(
+        sura = suraAyah.sura,
+        ayah = suraAyah.ayah,
+        targetCollectionIds = emptySet(),
+        timestamp = timestamp
+      )
+    }
+  }
+
+  override suspend fun replaceAyahBookmarkCollections(
+    suraAyah: SuraAyah,
+    collectionIds: Set<String>
+  ): Boolean {
+    val timestamp = timestampProvider.now()
+    return withContext(Dispatchers.IO) {
+      try {
+        replaceBookmarkCollections(
+          sura = suraAyah.sura,
+          ayah = suraAyah.ayah,
+          targetCollectionIds = collectionIds,
+          timestamp = timestamp
+        )
+      } catch (exception: CancellationException) {
+        throw exception
+      } catch (_: IllegalArgumentException) {
+        false
       }
     }
   }
 
   override suspend fun isSuraAyahBookmarked(suraAyah: SuraAyah): Boolean {
-    val bookmarkIds = bookmarkQueries.getBookmarkIdForSuraAyah(suraAyah.sura, suraAyah.ayah)
-      .asFlow()
-      // was .mapToOneOrNull, but some people have multiple bookmarks for the same ayah
-      // should try to figure out why at some point or otherwise de-duplicate them
-      .mapToList(Dispatchers.IO)
-      .first()
-    return bookmarkIds.isNotEmpty()
-  }
-
-  override suspend fun togglePageBookmark(page: Int): Boolean {
     return withContext(Dispatchers.IO) {
-      val bookmarkIds = bookmarkQueries.getBookmarkIdForPage(page).executeAsList()
-      if (bookmarkIds.size > 1) {
-        bookmarkIds.drop(1).forEach { deleteBookmarkById(it) }
-      }
-
-      val bookmarkId = bookmarkIds.firstOrNull()
-      if (bookmarkId != null) {
-        deleteBookmarkById(bookmarkId)
-        internalChanges.emit(Unit)
-        false
-      } else {
-        bookmarkQueries.addBookmark(null, null, page)
-        internalChanges.emit(Unit)
-        true
-      }
+      bookmarkCollectionData().ayahBookmark(suraAyah) != null
     }
   }
 
-  override suspend fun toggleAyahBookmark(suraAyah: SuraAyah, page: Int): Boolean {
-    return withContext(Dispatchers.IO) {
-      val bookmarkId = bookmarkQueries.getBookmarkIdForSuraAyah(suraAyah.sura, suraAyah.ayah)
-        .executeAsOneOrNull()
-      if (bookmarkId != null) {
-        deleteBookmarkById(bookmarkId)
-        internalChanges.emit(Unit)
-        false
-      } else {
-        bookmarkQueries.addBookmark(suraAyah.sura, suraAyah.ayah, page)
-        internalChanges.emit(Unit)
-        true
-      }
-    }
+  private suspend fun replaceBookmarkCollectionIds(
+    bookmark: AyahBookmark,
+    targetCollectionIds: Set<String>,
+    timestamp: PlatformDateTime
+  ): Boolean {
+    return replaceBookmarkCollections(
+      sura = bookmark.sura,
+      ayah = bookmark.ayah,
+      targetCollectionIds = targetCollectionIds,
+      timestamp = timestamp
+    )
   }
 
-  private suspend fun deleteBookmarkById(bookmarkId: Long) {
-    withContext(Dispatchers.IO) {
-      bookmarkTagQueries.transaction {
-        bookmarkTagQueries.deleteByBookmarkIds(listOf(bookmarkId))
-        bookmarkQueries.deleteByIds(listOf(bookmarkId))
-      }
-    }
+  private suspend fun replaceBookmarkCollections(
+    sura: Int,
+    ayah: Int,
+    targetCollectionIds: Set<String>,
+    timestamp: PlatformDateTime
+  ): Boolean {
+    return bookmarksRepository.replaceAyahBookmarkCollections(
+      sura = sura,
+      ayah = ayah,
+      collectionIds = targetCollectionIds.toList(),
+      timestamp = timestamp
+    ).changed
   }
 
-  override suspend fun recentPages(): List<RecentPage> {
-    return withContext(Dispatchers.IO) {
-      lastPageQueries.getLastPages(Mappers.recentPageMapper)
-        .executeAsList()
-    }
+  private suspend fun bookmarkCollectionData(): BookmarkCollectionData {
+    return toBookmarkCollectionData(bookmarkCollectionsState.currentCollectionsWithBookmarks())
   }
 
-  override suspend fun replaceRecentPages(pages: List<RecentPage>) {
-    withContext(Dispatchers.IO) {
-      lastPageQueries.transaction {
-        pages.forEach { addRecentPage(it.page) }
-      }
+  private fun toBookmarkCollectionData(
+    collectionsWithBookmarks: List<CollectionWithAyahBookmarks>
+  ): BookmarkCollectionData {
+    val defaultCollectionId = collectionsWithBookmarks
+      .firstOrNull { collectionWithBookmarks -> collectionWithBookmarks.collection.isDefault }
+      ?.collection
+      ?.id
+    val membershipsByBookmarkId = collectionsWithBookmarks
+      .flatMap { collectionWithBookmarks -> collectionWithBookmarks.bookmarks }
+      .groupBy { bookmark -> bookmark.bookmarkId }
+    val collectionIdsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
+      memberships.mapTo(mutableSetOf()) { membership -> membership.collectionId }
     }
-  }
-
-  override suspend fun removeRecentPages() {
-    withContext(Dispatchers.IO) {
-      lastPageQueries.removeLastPages()
+    val tagMembershipsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
+      memberships.associateBy { membership -> membership.collectionId }
     }
-  }
-
-  override suspend fun removeRecentsForPage(page: Int) {
-    withContext(Dispatchers.IO) {
-      lastPageQueries.transaction {
-        val lastPages = lastPageQueries.getLastPages().executeAsList()
-        val lastPagesWithoutPage = lastPages.filter { it.page != page }
-        if (lastPages.size != lastPagesWithoutPage.size) {
-          lastPageQueries.removeLastPages()
-          lastPagesWithoutPage.forEach { addRecentPage(it.page) }
-        }
+    val representativeMembershipsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
+      memberships.maxBy { membership ->
+        membership.bookmarkLastUpdated.fromPlatform().toEpochMilliseconds()
       }
     }
+    val ayahBookmarksById = representativeMembershipsByBookmarkId
+      .mapValues { (_, membership) -> membership.asAyahBookmark() }
+    val bookmarks = representativeMembershipsByBookmarkId
+      .map { (bookmarkId, bookmark) ->
+        toBookmark(bookmark, collectionIdsByBookmarkId[bookmarkId].orEmpty().toList())
+      }
+    return BookmarkCollectionData(
+      bookmarks = bookmarks,
+      ayahBookmarksById = ayahBookmarksById,
+      collectionIdsByBookmarkId = collectionIdsByBookmarkId,
+      tagMembershipsByBookmarkId = tagMembershipsByBookmarkId,
+      collectionsById = collectionsWithBookmarks
+        .map { collectionWithBookmarks -> collectionWithBookmarks.collection }
+        .associateBy { collection -> collection.id },
+      tags = collectionsWithBookmarks.map { collectionWithBookmarks ->
+        collectionWithBookmarks.collection.asTag()
+      },
+      defaultCollectionId = defaultCollectionId
+    )
   }
 
-  private fun addRecentPage(page: Int) {
-    val maxPages = MAX_RECENT_PAGES.toLong()
-    lastPageQueries.addLastPage(page, maxPages)
+  private fun SyncCollection.asTag(): Tag = Tag(id, name, isSystem = isSystem, isDefault = isDefault)
+
+  private fun BookmarkCollectionData.isEditable(collectionId: String): Boolean =
+    collectionsById[collectionId]?.isSystem == false
+
+  private fun validTagIds(
+    tagIds: Set<String>,
+    collectionsById: Map<String, SyncCollection>
+  ): Set<String> {
+    return tagIds.filter { tagId -> collectionsById.containsKey(tagId) }.toSet()
   }
 
-  companion object {
-    private const val MAX_RECENT_PAGES = 3
+  private fun BookmarkCollectionData.ayahBookmark(suraAyah: SuraAyah): AyahBookmark? {
+    return ayahBookmarksById.values.firstOrNull { bookmark ->
+      bookmark.sura == suraAyah.sura && bookmark.ayah == suraAyah.ayah
+    }
   }
+
+  private fun BookmarkCollectionData.tagIds(bookmarkId: String): List<String> {
+    return collectionIdsByBookmarkId[bookmarkId].orEmpty().toList()
+  }
+
+  private fun CollectionAyahBookmark.asAyahBookmark(): AyahBookmark {
+    return AyahBookmark(
+      sura = sura,
+      ayah = ayah,
+      id = bookmarkId,
+      lastUpdated = bookmarkLastUpdated,
+      addedDate = bookmarkAddedDate
+    )
+  }
+
+  private fun toBookmark(bookmark: CollectionAyahBookmark, tagIds: List<String>): Bookmark {
+    val timestampSeconds = bookmark.bookmarkLastUpdated.fromPlatform().toEpochMilliseconds() / 1000
+    val page = quranInfoProvider().getPageFromSuraAyah(bookmark.sura, bookmark.ayah)
+    return Bookmark(
+      id = bookmark.bookmarkId,
+      sura = bookmark.sura,
+      ayah = bookmark.ayah,
+      page = page,
+      timestamp = timestampSeconds,
+      tags = tagIds
+    )
+  }
+
+  private fun sortBookmarks(bookmarks: List<Bookmark>, sortOrder: Int): List<Bookmark> {
+    return when (sortOrder) {
+      BookmarkSortOrder.SORT_LOCATION ->
+        bookmarks.sortedWith(compareBy<Bookmark> { it.page }.thenBy { it.sura }.thenBy { it.ayah })
+      else -> bookmarks.sortedByDescending { it.timestamp }
+    }
+  }
+
+  private data class BookmarkCollectionData(
+    val bookmarks: List<Bookmark>,
+    val ayahBookmarksById: Map<String, AyahBookmark>,
+    val collectionIdsByBookmarkId: Map<String, Set<String>>,
+    val tagMembershipsByBookmarkId: Map<String, Map<String, CollectionAyahBookmark>>,
+    val collectionsById: Map<String, SyncCollection>,
+    val tags: List<Tag>,
+    val defaultCollectionId: String?
+  )
 }

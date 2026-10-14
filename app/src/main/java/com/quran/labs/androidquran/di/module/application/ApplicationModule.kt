@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.di.module.application
 
 import android.content.Context
 import android.graphics.Point
+import android.net.Uri
 import android.view.Display
 import android.view.WindowManager
 import com.quran.data.constant.DependencyInjectionConstants
@@ -13,12 +14,19 @@ import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoManager
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoSource
+import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.data.QuranDisplayInterface
+import com.quran.labs.androidquran.presenter.ContentResolverOps
+import com.quran.labs.androidquran.util.AudioFileUtils
+import com.quran.labs.androidquran.util.AudioUtils
+import com.quran.labs.androidquran.util.AudioUtilsInterface
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.SettingsImpl
 import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.di.ExtraScreenProvider
 import com.quran.mobile.di.qualifier.ApplicationContext
+import com.quran.page.common.data.QuranNaming
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ElementsIntoSet
 import dev.zacsweers.metro.Named
@@ -116,4 +124,24 @@ object ApplicationModule {
   fun provideExtraScreens(): Set<ExtraScreenProvider> {
     return emptySet()
   }
+
+  @Provides
+  fun provideAudioUtilsInterface(impl: AudioUtils): AudioUtilsInterface = impl
+
+  @Provides
+  fun provideAudioFileUtils(impl: QuranFileUtils): AudioFileUtils = impl
+
+  @Provides
+  fun provideQuranNaming(impl: QuranDisplayData): QuranNaming = impl
+
+  @Provides
+  fun provideQuranDisplayInterface(impl: QuranDisplayData): QuranDisplayInterface = impl
+
+  @Provides
+  fun provideContentResolverOps(@ApplicationContext context: Context): ContentResolverOps =
+    object : ContentResolverOps {
+      override fun openInputStream(uri: Uri) = context.contentResolver.openInputStream(uri)
+      override fun openFileDescriptor(uri: Uri, mode: String) =
+        context.contentResolver.openFileDescriptor(uri, mode)
+    }
 }

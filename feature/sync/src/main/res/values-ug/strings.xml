@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com قەدەمداشلىقى</string>
+  <string name="quran_sync_settings_category">ھېسابات</string>
+  <string name="quran_sync_settings_summary">خەتكۈچلەر، توپلاملار ۋە ئوقۇش تارىخى</string>
+  <string name="quran_sync_not_signed_in">تىزىملانمىدى</string>
+  <string name="quran_sync_signed_in">تىزىملاندى</string>
+  <string name="quran_sync_loading">تىزىملىنىۋاتىدۇ</string>
+  <string name="quran_sync_login">تىزىملىنىش</string>
+  <string name="quran_sync_logout">چېكىنىش</string>
+  <string name="quran_sync_name">ئىسمى</string>
+  <string name="quran_sync_email">ئېلېكترونلۇق خەت</string>
+  <string name="quran_sync_account_id">ھېسابات كىملىكى</string>
+  <string name="quran_sync_action_error">ھازىر قەدەمداشلىقنى يېڭىلىغىلى بولمايدۇ.</string>
+  <string name="quran_sync_bookmarks_cta_title">خەتكۈچلىرىڭىزنى ھەممە يەردە قەدەمداشلاڭ</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">خالىغان ئۈسكۈنىدىن، خالىغان ۋاقىتتا زىيارەت قىلىڭ</string>
+  <string name="quran_sync_bookmarks_cta_button">Quran.com بىلەن تىزىملىنىڭ</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">تاقاش</string>
+</resources>

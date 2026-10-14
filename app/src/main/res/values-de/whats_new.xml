@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">Neuigkeiten</string>
+  <string name="whats_new_continue">Weiter</string>
+  <string name="icon_announcement_title">Ein neues Symbol</string>
+  <string name="icon_announcement_body">Mit unserem nächsten Update ändert sich das Symbol der Quran-App auf deinem Startbildschirm. Dieses neue Symbol ist jetzt das gemeinsame Zeichen einer Familie von Werkzeugen rund um Allahs Wort. Weitere Details folgen in Kürze.</string>
+  <string name="icon_announcement_now">JETZT</string>
+  <string name="icon_announcement_coming_soon">DEMNÄCHST</string>
+  <string name="icon_announcement_same_app_title">Gleiche App, neues Symbol</string>
+  <string name="icon_announcement_same_app_body">Alle deine Lesezeichen, dein Fortschritt und deine Einstellungen bleiben genau so, wie sie sind.</string>
+  <string name="icon_announcement_release_title">Kommt mit der nächsten Version</string>
+  <string name="icon_announcement_release_body">Das neue Symbol erscheint mit dem nächsten Update.</string>
+  <string name="icon_announcement_current_icon">Aktuelles Symbol der Quran-App</string>
+  <string name="icon_announcement_upcoming_icon">Kommendes Symbol der Quran-App</string>
+</resources>

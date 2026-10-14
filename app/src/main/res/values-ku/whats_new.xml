@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="whats_new_title">چی نوێیە</string>
+  <string name="whats_new_continue">بەردەوامبە</string>
+  <string name="icon_announcement_title">ئایکۆنێکی نوێ</string>
+  <string name="icon_announcement_body">لە نوێکردنەوەی داهاتوودا، ئایکۆنی بەرنامەی قورئان لەسەر شاشەی سەرەکیت دەگۆڕێت. ئەم ئایکۆنە نوێیە ئێستا نیشانەی هاوبەشی خێزانێک لە ئامرازەکانە کە لە دەوری فەرمایشتی خودا دروستکراون. وردەکاری زیاتر بەم زووانە.</string>
+  <string name="icon_announcement_now">ئێستا</string>
+  <string name="icon_announcement_coming_soon">بەم زووانە</string>
+  <string name="icon_announcement_same_app_title">هەمان بەرنامە، ئایکۆنی نوێ</string>
+  <string name="icon_announcement_same_app_body">هەموو نیشانەکان، پێشکەوتن و ڕێکخستنەکانت وەک خۆیان لە شوێنی خۆیاندا دەمێننەوە.</string>
+  <string name="icon_announcement_release_title">لە وەشانی داهاتوودا دێت</string>
+  <string name="icon_announcement_release_body">ئایکۆنە نوێیەکە لە نوێکردنەوەی داهاتوودا دێت.</string>
+  <string name="icon_announcement_current_icon">ئایکۆنی ئێستای بەرنامەی قورئان</string>
+  <string name="icon_announcement_upcoming_icon">ئایکۆنی داهاتووی بەرنامەی قورئان</string>
+</resources>
