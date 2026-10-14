@@ -21,7 +21,6 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import androidx.core.view.doOnLayout
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -35,7 +34,7 @@ import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.ThemeUtil
 
 class PageThemeBottomSheet : BottomSheetDialogFragment() {
-  private val themes = PageTheme.getAllThemes()
+  private val themes = PageTheme.entries
   private var recyclerView: RecyclerView? = null
   private var appearanceMenu: MaterialButton? = null
   private var sectionHeader: LinearLayout? = null
@@ -136,7 +135,6 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
         view.post { updateGridColumns() }
       }
     }
-    view.doOnLayout { recyclerView?.post { updateGridColumns() } }
   }
 
   private fun updateGridColumns() {

@@ -24,12 +24,10 @@ import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.DisplayCutoutCompat;
 
 import com.quran.data.model.highlight.HighlightType;
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.SingleAyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.TransitionAyahHighlight;
@@ -57,19 +55,17 @@ public class HighlightingImageView extends AppCompatImageView {
   // when enabled, will draw bounds around each glyph to visualize the glyph bounds
   private static final boolean DEBUG_BOUNDS = false;
 
-  private static int overlayTextColor = -1;
-  private static int headerFooterSize;
-  private static int headerFooterFontSize;
-  private static int scrollableHeaderFooterSize;
-  private static int scrollableHeaderFooterFontSize;
-  private static int dualPageHeaderFooterSize;
-  private static int dualPageHeaderFooterFontSize;
+  private final int headerFooterSize;
+  private final int headerFooterFontSize;
+  private final int scrollableHeaderFooterSize;
+  private final int scrollableHeaderFooterFontSize;
+  private final int dualPageHeaderFooterSize;
+  private final int dualPageHeaderFooterFontSize;
 
   // Sorted map so we use highest priority highlighting when iterating
   private final SortedMap<HighlightType, Set<AyahHighlight>> currentHighlights = new TreeMap<>();
 
   private boolean isNightMode;
-  private boolean isPageThemeDark;
   private int themeBackgroundColor = Color.WHITE;
   private int themeTextColor = Color.BLACK;
 
@@ -128,7 +124,6 @@ public class HighlightingImageView extends AppCompatImageView {
   public HighlightingImageView(Context context, AttributeSet attrs) {
     super(context, attrs);
     final Resources res = context.getResources();
-    overlayTextColor = ContextCompat.getColor(context, R.color.overlay_text_color);
     headerFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size);
     scrollableHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_scrollable);
     dualPageHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_dualPage);
@@ -215,15 +210,13 @@ public class HighlightingImageView extends AppCompatImageView {
     }
   }
 
-  public void setNightMode(boolean isNightMode, boolean isPageThemeDark,
-                           int themeBackgroundColor, int themeTextColor) {
+  public void setPageTheme(boolean isNightMode, int themeBackgroundColor, int themeTextColor) {
     this.isNightMode = isNightMode;
-    this.isPageThemeDark = isPageThemeDark;
     this.themeBackgroundColor = themeBackgroundColor;
     this.themeTextColor = themeTextColor;
     // Re-init overlay params color based on the new night mode setting
     initOverlayParamsColor();
-    adjustNightMode();
+    applyPageTheme();
   }
 
   class AnimationUpdateListener implements ValueAnimator.AnimatorUpdateListener, Animator.AnimatorListener {
@@ -380,13 +373,12 @@ public class HighlightingImageView extends AppCompatImageView {
 
     super.setImageDrawable(bitmap);
     if (bitmap != null) {
-      adjustNightMode();
+      applyPageTheme();
     }
   }
 
-  public void adjustNightMode() {
-    boolean isOriginalInLightMode = !isNightMode && !isPageThemeDark &&
-        themeBackgroundColor == Color.WHITE && themeTextColor == Color.BLACK;
+  private void applyPageTheme() {
+    boolean isOriginalInLightMode = themeBackgroundColor == Color.WHITE && themeTextColor == Color.BLACK;
 
     if (!isOriginalInLightMode) {
       float tr = Color.red(themeTextColor);
@@ -494,13 +486,7 @@ public class HighlightingImageView extends AppCompatImageView {
     if (overlayParams == null) {
       return;
     }
-    int overlayColor;
-    if (isNightMode || isPageThemeDark) {
-      overlayColor = themeTextColor;
-    } else {
-      overlayColor = overlayTextColor;
-    }
-    overlayParams.paint.setColor(overlayColor);
+    overlayParams.paint.setColor(themeTextColor);
   }
 
   private void overlayText(Canvas canvas, Matrix matrix) {

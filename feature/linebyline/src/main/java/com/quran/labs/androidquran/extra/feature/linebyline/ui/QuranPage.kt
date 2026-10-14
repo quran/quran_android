@@ -16,7 +16,6 @@ import androidx.compose.ui.layout.positionInWindow
 import com.quran.data.source.PageContentType
 import com.quran.labs.androidquran.extra.feature.linebyline.model.LineModel
 import com.quran.labs.androidquran.extra.feature.linebyline.model.PageInfo
-import com.quran.labs.androidquran.extra.feature.linebyline.ui.modifier.pageGradient
 import com.quran.mobile.linebyline.data.dao.AyahHighlight
 import com.quran.mobile.linebyline.data.dao.AyahMarkerInfo
 import com.quran.mobile.linebyline.data.dao.SuraHeader
