@@ -294,10 +294,6 @@ public class QuranSettings {
     return ThemeUtil.paletteContext(appContext, currentTheme()).getColor(colorResId);
   }
 
-  public boolean isPageThemeDark() {
-    return PageTheme.isDarkTheme(getPageTheme());
-  }
-
   // probably should eventually move this to Application.onCreate..
   public void upgradePreferences(PreferencesUpgrade preferencesUpgrade) {
     int version = getVersion();

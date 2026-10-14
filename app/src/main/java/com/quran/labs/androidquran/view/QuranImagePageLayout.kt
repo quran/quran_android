@@ -32,9 +32,8 @@ open class QuranImagePageLayout(context: Context) : QuranPageLayout(context) {
 
   override fun updateView(quranSettings: QuranSettings) {
     super.updateView(quranSettings)
-    imageView.setNightMode(
+    imageView.setPageTheme(
       quranSettings.isNightMode,
-      quranSettings.isPageThemeDark,
       quranSettings.pageThemeBackgroundColor,
       quranSettings.pageThemeTextColor
     )

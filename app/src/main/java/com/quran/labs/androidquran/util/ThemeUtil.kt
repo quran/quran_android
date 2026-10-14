@@ -14,10 +14,10 @@ object ThemeUtil {
   }
 
   fun appNightMode(appTheme: String, pageTheme: String): Int = when {
-      pageTheme == Constants.PAGE_THEME_QUIET -> AppCompatDelegate.MODE_NIGHT_YES
-      appTheme == Constants.THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
-      appTheme == Constants.THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
-      else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+    pageTheme == Constants.PAGE_THEME_QUIET -> AppCompatDelegate.MODE_NIGHT_YES
+    appTheme == Constants.THEME_LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+    appTheme == Constants.THEME_DARK -> AppCompatDelegate.MODE_NIGHT_YES
+    else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
   }
 
   // Quiet forces dark app chrome, but its gray/black page palette follows the saved appearance.
