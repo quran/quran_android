@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -19,7 +18,6 @@ import androidx.annotation.Px;
 import androidx.core.view.ViewCompat;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -89,8 +87,6 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     } else {
       addView(innerView, lp);
     }
-
-
     if (lineDrawable == null) {
       lineDrawable = new ShapeDrawable(new RectShape());
       lineDrawable.setIntrinsicWidth(1);
@@ -195,8 +191,6 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     this.pageController = controller;
     this.skippedPages = skippedPages;
   }
-
-
   @Override
   public void updateView(@NonNull QuranSettings quranSettings) {
     super.updateView(quranSettings);

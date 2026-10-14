@@ -38,9 +38,8 @@ fun QuranPageWrapper(
 
   val isNightMode = displaySettings.isNightMode
   val themeTextColor = Color(displaySettings.textColor)
-  val themeBackgroundColor = Color(displaySettings.backgroundColor)
 
-  val overlayColor = themeTextColor.copy(alpha = 0.7f)
+  val overlayColor = themeTextColor
 
   val (headerColor, ringColor, innerColor, textColor) =
     if (pageInfo.pageType.contains("1439")) {
@@ -95,11 +94,7 @@ fun QuranPageWrapper(
 
   val ratio = (pageContentType as PageContentType.Line).ratio
   val lineHeight = pageContentType.lineHeight
-  val lineColor = if (displaySettings.isNightMode) {
-    Color.White
-  } else {
-    Color.Black
-  }
+  val lineColor = themeTextColor
   val colorFilter = ColorFilter.tint(lineColor)
 
   QuranPage(

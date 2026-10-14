@@ -21,12 +21,7 @@ enum class PageTheme(
   fun getDisplayName(context: Context): String = context.getString(nameRes)
 
   companion object {
-    fun getAllThemes(): List<PageTheme> = entries
-
     @JvmStatic
     fun fromKey(key: String): PageTheme = entries.firstOrNull { it.storageKey == key } ?: Paper
-
-    @JvmStatic
-    fun isDarkTheme(themeKey: String): Boolean = fromKey(themeKey) == Quiet
   }
 }
