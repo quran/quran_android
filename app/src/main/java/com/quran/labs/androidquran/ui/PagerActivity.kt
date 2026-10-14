@@ -5,6 +5,7 @@ import android.app.SearchManager
 import android.content.ComponentName
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Build
@@ -72,6 +73,7 @@ import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
 import com.quran.labs.androidquran.common.audio.repository.AudioStatusRepository
 import com.quran.labs.androidquran.common.audio.repository.CurrentQariManager
 import com.quran.labs.androidquran.data.Constants
+import com.quran.labs.androidquran.ui.bottomsheet.PageThemeBottomSheet
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent
@@ -203,6 +205,12 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private lateinit var audioStatusBar: AudioBarWrapper
   private lateinit var viewPager: ViewPager
+  private val themePreferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+    if (key == Constants.PREF_PAGE_THEME || key == Constants.PREF_APP_THEME) {
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+    }
+  }
   private lateinit var pagerAdapter: QuranPageAdapter
   private lateinit var ayahToolBar: AyahToolBar
   private lateinit var slidingPanel: SlidingUpPanelLayout
@@ -887,6 +895,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   public override fun onResume() {
     super.onResume()
+    quranSettings.registerPreferencesListener(themePreferencesListener)
+    refreshQuranPages()
 
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
@@ -1087,6 +1097,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   public override fun onPause() {
+    quranSettings.unregisterPreferencesListener(themePreferencesListener)
     foregroundDisposable.clear()
     promptDialog?.dismiss()
     promptDialog = null
@@ -1211,7 +1222,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
       quranSettings.setAppTheme(newAppTheme)
       ThemeUtil.setTheme(newAppTheme, quranSettings.pageTheme)
-      recreate()
+      return true
+    } else if (itemId == R.id.page_theme) {
+      if (supportFragmentManager.findFragmentByTag(PageThemeBottomSheet.TAG) == null) {
+        PageThemeBottomSheet().show(supportFragmentManager, PageThemeBottomSheet.TAG)
+      }
       return true
     } else if (itemId == R.id.settings) {
       val i = Intent(this, QuranPreferenceActivity::class.java)

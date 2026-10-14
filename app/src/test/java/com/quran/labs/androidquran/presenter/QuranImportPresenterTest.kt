@@ -166,9 +166,9 @@ class QuranImportPresenterTest {
 
     override suspend fun isNightMode(): Boolean = false
 
-    override suspend fun nightModeTextBrightness(): Int = 0
+    override suspend fun pageThemeTextColor(): Int = 0
 
-    override suspend fun nightModeBackgroundBrightness(): Int = 0
+    override suspend fun pageThemeBackgroundColor(): Int = 0
 
     override suspend fun shouldShowHeaderFooter(): Boolean = false
 

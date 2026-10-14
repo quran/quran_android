@@ -10,11 +10,11 @@
   <color name="secondary_dark_background">#ffffffff</color>
 
   <!-- Page theme colors -->
-  <color name="theme_paper_bg">#EEECEB</color>
+  <color name="theme_paper_bg">#EEEDED</color>
   <color name="theme_paper_text">#1D1A1A</color>
   <color name="theme_original_bg">#FFFFFF</color>
   <color name="theme_original_text">#000000</color>
-  <color name="theme_calm_bg">#EDE2CC</color>
+  <color name="theme_calm_bg">#EEE2CC</color>
   <color name="theme_calm_text">#32281E</color>
   <color name="theme_focus_bg">#FEFCF5</color>
   <color name="theme_focus_text">#141202</color>

@@ -40,11 +40,7 @@ fun QuranPageWrapper(
   val themeTextColor = Color(displaySettings.textColor)
   val themeBackgroundColor = Color(displaySettings.backgroundColor)
 
-  val overlayColor = if (isNightMode) {
-    Color(0x84, 0x8A, 0x91)
-  } else {
-    Color(0x68, 0x6E, 0x7D)
-  }
+  val overlayColor = themeTextColor.copy(alpha = 0.7f)
 
   val (headerColor, ringColor, innerColor, textColor) =
     if (pageInfo.pageType.contains("1439")) {
