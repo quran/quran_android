@@ -31,7 +31,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/page_theme_preview_text"
                 android:textSize="28sp"
-                android:textStyle="bold"
                 android:textDirection="rtl" />
 
             <TextView
@@ -39,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textColor="?android:attr/textColorSecondary" />
 
         </LinearLayout>
@@ -57,18 +56,17 @@
         android:focusable="false"
         android:visibility="gone" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/selection_check"
-        android:elevation="4dp"
+        android:elevation="3dp"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_gravity="top|end"
         android:layout_margin="8dp"
         android:background="@drawable/theme_selection_check"
-        android:gravity="center"
         android:importantForAccessibility="no"
-        android:text="\u2713"
-        android:textColor="@color/surface"
-        android:textStyle="bold"
+        android:padding="4dp"
+        app:srcCompat="@drawable/ic_check_24"
+        app:tint="@color/surface"
         android:visibility="gone" />
 </FrameLayout>
