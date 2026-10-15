@@ -11,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -56,6 +57,7 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   private var originalSortedDownloads: List<TranslationItem> = emptyList()
   private var translationPositions: SparseIntArray = SparseIntArray()
   private var downloadingItem: TranslationItem? = null
+  private var searchQuery: String = ""
   private var databaseDirectory: File? = null
   private var downloadReceiver: DefaultDownloadReceiver? = null
   private var actionMode: ActionMode? = null
@@ -170,6 +172,28 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     super.onDestroy()
   }
 
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    menuInflater.inflate(R.menu.search_menu, menu)
+    val searchItem = menu.findItem(R.id.search)
+    val searchView = searchItem.actionView as? SearchView
+    searchView?.queryHint = getString(R.string.search_translations_hint)
+    searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+      override fun onQueryTextSubmit(query: String?): Boolean {
+        return false
+      }
+
+      override fun onQueryTextChange(newText: String?): Boolean {
+        val newQuery = newText?.trim().orEmpty()
+        if (newQuery != searchQuery) {
+          searchQuery = newQuery
+          generateListItems()
+        }
+        return true
+      }
+    })
+    return true
+  }
+
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return if (item.itemId == android.R.id.home) {
       finish()
@@ -265,6 +289,12 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   }
 
   private fun updateDownloadedItems() {
+    if (searchQuery.isNotEmpty()) {
+      // reordering splices the downloaded items into the adapter's list by
+      // position, which assumes the full, unfiltered list is being shown
+      generateListItems()
+      return
+    }
     val translations = adapter.getTranslations().toMutableList()
     val downloadedItemCount = currentSortedDownloads.size
     if (downloadedItemCount + 1 <= translations.size) {
@@ -309,13 +339,18 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     // sort by display order
     val sortedDownloads = downloaded.sortedBy { it.displayOrder }
 
+    val filteredDownloads = sortedDownloads.filter { it.matchesQuery(searchQuery) }
+    val filteredNotDownloaded = notDownloaded.filter { it.matchesQuery(searchQuery) }
+
     val resultList = buildList {
-      if (downloaded.isNotEmpty()) {
+      if (filteredDownloads.isNotEmpty()) {
         add(TranslationHeader(getString(R.string.downloaded_translations)))
-        addAll(sortedDownloads)
+        addAll(filteredDownloads)
       }
-      add(TranslationHeader(getString(R.string.available_translations)))
-      addAll(notDownloaded)
+      if (filteredNotDownloaded.isNotEmpty() || searchQuery.isEmpty()) {
+        add(TranslationHeader(getString(R.string.available_translations)))
+        addAll(filteredNotDownloaded)
+      }
     }
 
     val needsUpgrade = sortedDownloads.any { it.needsUpgrade() }
