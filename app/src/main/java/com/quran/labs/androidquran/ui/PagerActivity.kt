@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.ui
 
 import android.Manifest
-import android.app.ProgressDialog
 import android.app.SearchManager
 import android.content.ComponentName
 import android.content.DialogInterface
@@ -107,7 +106,6 @@ import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
 import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenterScreen
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.OrientationLockUtils
-import com.quran.labs.androidquran.util.QuranAppUtils
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
@@ -136,7 +134,6 @@ import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -180,7 +177,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private var promptDialog: AlertDialog? = null
   private var isDualPages = false
   private var promptedForExtraDownload = false
-  private var progressDialog: ProgressDialog? = null
   private var isFoldableDeviceOpenAndVertical = false
 
   private var bookmarksMenuItem: MenuItem? = null
@@ -217,7 +213,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   @Inject lateinit var quranSettings: QuranSettings
   @Inject lateinit var quranScreenInfo: QuranScreenInfo
   @Inject lateinit var arabicDatabaseUtils: ArabicDatabaseUtils
-  @Inject lateinit var quranAppUtils: QuranAppUtils
   @Inject lateinit var shareUtil: ShareUtil
   @Inject lateinit var audioUtils: AudioUtils
   @Inject lateinit var quranDisplayData: QuranDisplayData
@@ -1108,7 +1103,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     downloadBridge.unsubscribe()
     handler.removeCallbacksAndMessages(null)
     scope.cancel()
-    dismissProgressDialog()
     super.onDestroy()
   }
 
@@ -1858,42 +1852,19 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   fun shareAyahLink(start: SuraAyah, end: SuraAyah) {
-    showProgressDialog()
-    compositeDisposable.add(
-      quranAppUtils.getQuranAppUrlObservable(getString(R.string.quranapp_key), start, end)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeWith(object : DisposableSingleObserver<String>() {
-          override fun onSuccess(url: String) {
-            shareUtil.shareViaIntent(
-              this@PagerActivity,
-              url,
-              com.quran.labs.androidquran.common.toolbar.R.string.share_ayah
-            )
-            dismissProgressDialog()
-          }
-
-          override fun onError(e: Throwable) {
-            dismissProgressDialog()
-          }
-        })
-    )
-  }
-
-  private fun showProgressDialog() {
-    if (progressDialog == null) {
-      progressDialog = ProgressDialog(this).apply {
-        isIndeterminate = true
-        setMessage(getString(com.quran.mobile.common.ui.core.R.string.loading))
-        show()
+    // limit sharing to within a single sura
+    val endAyah = if (end.sura == start.sura) end.ayah else quranInfo.getNumberOfAyahs(start.sura)
+    val url = buildString {
+      append("https://quran.com/${start.sura}/${start.ayah}")
+      if (endAyah != start.ayah) {
+        append("-$endAyah")
       }
     }
-  }
-
-  private fun dismissProgressDialog() {
-    if (progressDialog?.isShowing == true) {
-      progressDialog?.dismiss()
-    }
-    progressDialog = null
+    shareUtil.shareViaIntent(
+      this,
+      url,
+      com.quran.labs.androidquran.common.toolbar.R.string.share_ayah
+    )
   }
 
   private fun showSlider(sliderPage: Int) {
