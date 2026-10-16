@@ -82,34 +82,7 @@ class ReadingBookmarksDaoImpl @Inject constructor(
     val cleared = withContext(Dispatchers.IO) {
       readingBookmarksRepository.clearReadingBookmark(slot.toSyncSlot())
     }
-    return when (cleared) {
-        is SyncEmptyReadingBookmark -> {
-          EmptyReadingBookmark(
-            slot = slot,
-            timestamp = cleared.lastUpdated,
-            name = cleared.name
-          )
-        }
-
-      is SyncAyahReadingBookmark -> {
-        AyahReadingBookmark(
-          slot = slot,
-          sura = cleared.sura,
-          ayah = cleared.ayah,
-          timestamp = cleared.lastUpdated,
-          name = cleared.name
-        )
-      }
-
-      is SyncPageReadingBookmark -> {
-        PageReadingBookmark(
-          slot = slot,
-          page = cleared.page,
-          timestamp = cleared.lastUpdated,
-          name = cleared.name
-        )
-      }
-    }
+    return toReadingBookmark(cleared, pageMapper.currentPageType())
   }
 
   override suspend fun renameReadingBookmark(slot: ReadingBookmarkType, name: String?) {
@@ -124,7 +97,9 @@ class ReadingBookmarksDaoImpl @Inject constructor(
 
       val syncSlot = slot.toSyncSlot()
       readingBookmarksRepository.getReadingBookmarks()
-        .any { it.slot == syncSlot && it is SyncPageReadingBookmark && it.page == storagePage }
+        .any {
+          it.slot == syncSlot && it is SyncPageReadingBookmark && it.isMadani() && it.page == storagePage
+        }
     }
   }
 
@@ -153,12 +128,22 @@ class ReadingBookmarksDaoImpl @Inject constructor(
           name = bookmark.name
         )
       }
-      is SyncPageReadingBookmark -> PageReadingBookmark(
-        slot = bookmark.slot.asBookmarkType(),
-        page = pageMapper.storagePageToPage(bookmark.page, pageType),
-        timestamp = bookmark.lastUpdated,
-        name = bookmark.name
-      )
+      is SyncPageReadingBookmark -> if (bookmark.isMadani()) {
+        PageReadingBookmark(
+          slot = bookmark.slot.asBookmarkType(),
+          page = pageMapper.storagePageToPage(bookmark.page, pageType),
+          timestamp = bookmark.lastUpdated,
+          name = bookmark.name
+        )
+      } else {
+        // the web numbers IndoPak pages in its own mushafs, which have no page mapping here, so
+        // such a bookmark shows as empty, like a sura or juz bookmark set on the web
+        EmptyReadingBookmark(
+          slot = bookmark.slot.asBookmarkType(),
+          timestamp = bookmark.lastUpdated,
+          name = bookmark.name
+        )
+      }
       is SyncEmptyReadingBookmark -> EmptyReadingBookmark(
         slot = bookmark.slot.asBookmarkType(),
         timestamp = bookmark.lastUpdated,
@@ -197,6 +182,10 @@ class ReadingBookmarksDaoImpl @Inject constructor(
       true
     }
   }
+
+  /** Whether the page is in the 604-page Madani mushaf, the one storage pages are numbered in. */
+  private fun SyncPageReadingBookmark.isMadani(): Boolean =
+    mushafId == SyncPageReadingBookmark.MADANI_MUSHAF_ID
 
   private fun ReadingBookmarkSlot.asBookmarkType(): ReadingBookmarkType {
     return when (this) {

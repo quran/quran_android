@@ -37,6 +37,7 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class ReadingBookmarksDaoImplTest {
 
+  private lateinit var mobileSyncDatabase: MobileSyncDatabase
   private lateinit var repository: ReadingBookmarksRepositoryImpl
   private lateinit var quranInfo: QuranInfo
   private lateinit var dao: ReadingBookmarksDaoImpl
@@ -48,7 +49,7 @@ class ReadingBookmarksDaoImplTest {
   fun setup() {
     val context = RuntimeEnvironment.getApplication().applicationContext as Context
     context.deleteDatabase("quran.db")
-    val mobileSyncDatabase = MobileSyncDatabase(context)
+    mobileSyncDatabase = MobileSyncDatabase(context)
     repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database.synced)
     quranInfo = QuranInfo(MadaniDataSource())
     settings = FakeSettings()
@@ -169,6 +170,35 @@ class ReadingBookmarksDaoImplTest {
     val teal = dao.readingBookmarks().single { it.slot == ReadingBookmarkType.TEAL }
     assertThat(teal).isInstanceOf(EmptyReadingBookmark::class.java)
     assertThat(teal.name).isEqualTo("Tafsir study")
+  }
+
+  @Test
+  fun `an IndoPak page set on the web shows as an empty slot that keeps its name`() = runTest {
+    dao.setPageReadingBookmark(ReadingBookmarkType.TEAL, 42)
+    dao.renameReadingBookmark(ReadingBookmarkType.TEAL, "Tarawih")
+    // what sync writes for a page the web set in the 610-page IndoPak mushaf
+    mobileSyncDatabase.database.driver.execute(null, "UPDATE reading_bookmark SET mushaf_id = 6", 0)
+
+    val teal = dao.readingBookmarks().single { it.slot == ReadingBookmarkType.TEAL }
+    assertThat(teal).isInstanceOf(EmptyReadingBookmark::class.java)
+    assertThat(teal.name).isEqualTo("Tarawih")
+    assertThat(dao.readingBookmarksFlow().first().single { it.slot == ReadingBookmarkType.TEAL })
+      .isEqualTo(teal)
+    assertThat(dao.isPageReadingBookmark(ReadingBookmarkType.TEAL, 42)).isFalse()
+  }
+
+  @Test
+  fun `toggling a page over an IndoPak page bookmark places the Madani page`() = runTest {
+    dao.setPageReadingBookmark(ReadingBookmarkType.TEAL, 42)
+    mobileSyncDatabase.database.driver.execute(null, "UPDATE reading_bookmark SET mushaf_id = 7", 0)
+
+    val isBookmarked = dao.togglePageReadingBookmark(ReadingBookmarkType.TEAL, 42)
+
+    assertThat(isBookmarked).isTrue()
+    val teal = repository.getReadingBookmarks().single { it.slot == ReadingBookmarkSlot.TEAL }
+    assertThat((teal as SyncPageReadingBookmark).mushafId)
+      .isEqualTo(SyncPageReadingBookmark.MADANI_MUSHAF_ID)
+    assertThat(dao.isPageReadingBookmark(ReadingBookmarkType.TEAL, 42)).isTrue()
   }
 
   @Test
