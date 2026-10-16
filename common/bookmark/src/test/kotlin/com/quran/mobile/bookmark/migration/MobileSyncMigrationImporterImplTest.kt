@@ -44,7 +44,7 @@ class MobileSyncImporterImplTest {
   @Before
   fun setUp() {
     val context = RuntimeEnvironment.getApplication().applicationContext as Context
-    context.deleteDatabase("quran.db")
+    context.deleteDatabase("user_data.db")
     mobileSyncDatabase = MobileSyncDatabase(context)
     appCoroutineScope = AppCoroutineScope()
     val collectionsRepository = CollectionsRepositoryImpl(mobileSyncDatabase.database.synced)
