@@ -46,8 +46,20 @@ sealed interface AyahBookmarkCollectionCreationState {
   data class Active(
     val name: String,
     val isSubmitting: Boolean = false,
-    val hasNameError: Boolean = false
+    val nameError: AyahBookmarkCollectionNameError? = null
   ) : AyahBookmarkCollectionCreationState
+}
+
+/** Why a new collection's name was refused. */
+@Immutable
+sealed interface AyahBookmarkCollectionNameError {
+  data class Duplicate(val existingName: String) : AyahBookmarkCollectionNameError
+  data class Reserved(val name: String) : AyahBookmarkCollectionNameError
+  data object Empty : AyahBookmarkCollectionNameError
+  data object TooLong : AyahBookmarkCollectionNameError
+
+  /** Refused for a reason without its own message. */
+  data object Unavailable : AyahBookmarkCollectionNameError
 }
 
 sealed interface AyahBookmarkEvent {
