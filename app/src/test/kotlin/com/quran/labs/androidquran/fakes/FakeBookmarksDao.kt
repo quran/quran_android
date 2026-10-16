@@ -136,6 +136,8 @@ class FakeBookmarksDao(
   }
 
   override suspend fun updateTag(tag: Tag): Boolean {
+    // like the real DAO, a tag that no longer exists or is read-only can't be renamed
+    if (tags.value.none { it.id == tag.id && !it.isReadOnly }) return false
     tags.update { current -> current.map { if (it.id == tag.id) tag else it } }
     changesFlow.tryEmit(Unit)
     return true

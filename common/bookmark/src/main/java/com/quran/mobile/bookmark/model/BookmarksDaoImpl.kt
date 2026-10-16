@@ -336,10 +336,11 @@ class BookmarksDaoImpl @Inject constructor(
     )
   }
 
-  private fun SyncCollection.asTag(): Tag = Tag(id, name, isSystem = isSystem, isDefault = isDefault)
+  private fun SyncCollection.asTag(): Tag =
+    Tag(id, name, isSystem = isSystem, isDefault = isDefault, isReadOnly = isReadOnly)
 
   private fun BookmarkCollectionData.isEditable(collectionId: String): Boolean =
-    collectionsById[collectionId]?.isSystem == false
+    collectionsById[collectionId]?.isReadOnly == false
 
   private fun validTagIds(
     tagIds: Set<String>,
