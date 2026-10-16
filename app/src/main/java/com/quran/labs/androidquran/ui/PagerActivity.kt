@@ -1852,19 +1852,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   fun shareAyahLink(start: SuraAyah, end: SuraAyah) {
-    // limit sharing to within a single sura
-    val endAyah = if (end.sura == start.sura) end.ayah else quranInfo.getNumberOfAyahs(start.sura)
-    val url = buildString {
-      append("https://quran.com/${start.sura}/${start.ayah}")
-      if (endAyah != start.ayah) {
-        append("-$endAyah")
-      }
-    }
-    shareUtil.shareViaIntent(
-      this,
-      url,
-      com.quran.labs.androidquran.common.toolbar.R.string.share_ayah
-    )
+    shareUtil.shareAyahLink(this, start, end)
   }
 
   private fun showSlider(sliderPage: Int) {
