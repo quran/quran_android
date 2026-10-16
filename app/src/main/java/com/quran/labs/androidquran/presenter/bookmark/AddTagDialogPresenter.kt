@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.presenter.bookmark
 
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.collection.CollectionNameException
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog
 
@@ -30,7 +31,9 @@ internal constructor(private val bookmarksDao: BookmarksDao) : Presenter<AddTagD
       dialog?.onBlankTagName()
       return false
     } else {
-      if (tags.any { it.name == tagName && it.id != tagId }) {
+      // system collections like Favorites reserve their names; mobile-sync refuses those as
+      // reserved, which says more than calling the name taken
+      if (tags.any { !it.isSystem && it.name == tagName && it.id != tagId }) {
         dialog?.onDuplicateTagName()
         return false
       }
@@ -48,6 +51,10 @@ internal constructor(private val bookmarksDao: BookmarksDao) : Presenter<AddTagD
         }
       } catch (exception: CancellationException) {
         throw exception
+      } catch (exception: CollectionNameException) {
+        if (dialog === requestDialog) {
+          requestDialog.onInvalidTagName(exception)
+        }
       } catch (_: IllegalArgumentException) {
         if (dialog === requestDialog) {
           requestDialog.onDuplicateTagName()
@@ -59,12 +66,18 @@ internal constructor(private val bookmarksDao: BookmarksDao) : Presenter<AddTagD
   fun updateTag(tag: Tag, onUpdated: () -> Unit) {
     val requestDialog = dialog ?: return
     presenterScope.launch {
-      if (bookmarksDao.updateTag(tag)) {
+      try {
+        // false means the tag is gone or read-only now, so there's nothing left to rename
+        bookmarksDao.updateTag(tag)
         if (dialog === requestDialog) {
           onUpdated()
         }
-      } else if (dialog === requestDialog) {
-        requestDialog.onDuplicateTagName()
+      } catch (exception: CancellationException) {
+        throw exception
+      } catch (exception: CollectionNameException) {
+        if (dialog === requestDialog) {
+          requestDialog.onInvalidTagName(exception)
+        }
       }
     }
   }
