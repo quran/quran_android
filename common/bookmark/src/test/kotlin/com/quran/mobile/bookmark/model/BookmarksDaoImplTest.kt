@@ -8,6 +8,7 @@ import com.quran.data.di.AppCoroutineScope
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.collection.CollectionNameException
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.mobile.bookmark.db.inMemoryMobileSyncDatabase
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
@@ -176,13 +177,17 @@ class BookmarksDaoImplTest {
   }
 
   @Test
-  fun `update tag returns false when name already exists`() = runTest {
+  fun `update tag throws duplicate when another tag has the name`() = runTest {
     val firstId = dao.addTag("First")
     val secondId = dao.addTag("Second")
 
-    val updated = dao.updateTag(com.quran.data.model.bookmark.Tag(firstId, "Second"))
+    // names compare trimmed and case-insensitively, as the server compares them
+    val error = runCatching {
+      dao.updateTag(com.quran.data.model.bookmark.Tag(firstId, " second "))
+    }.exceptionOrNull()
 
-    assertThat(updated).isFalse()
+    assertThat(error).isInstanceOf(CollectionNameException.Duplicate::class.java)
+    assertThat((error as CollectionNameException.Duplicate).existingName).isEqualTo("Second")
     assertThat(dao.userTags()).containsExactly(
       com.quran.data.model.bookmark.Tag(firstId, "First"),
       com.quran.data.model.bookmark.Tag(secondId, "Second")

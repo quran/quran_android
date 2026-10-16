@@ -418,6 +418,8 @@
   <string name="tag_name">Name</string>
   <string name="tag_blank_tag_error">Tag names cannot be blank!</string>
   <string name="tag_duplicate_tag_error">Tag name already exists!</string>
+  <string name="tag_reserved_tag_error">This tag name is reserved!</string>
+  <string name="tag_too_long_tag_error">Tag name is too long!</string>
 
   <!-- widgets -->
   <string name="bookmarks_list_empty">No Bookmarks</string>

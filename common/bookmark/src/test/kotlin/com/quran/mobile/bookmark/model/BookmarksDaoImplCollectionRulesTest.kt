@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.di.AppCoroutineScope
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.collection.CollectionNameException
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.mobile.bookmark.db.inMemoryMobileSyncDatabase
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
@@ -52,6 +53,77 @@ class BookmarksDaoImplCollectionRulesTest {
   }
 
   @Test
+  fun `adding a tag named Favorites in any case or spacing is reserved`() = runTest {
+    val error = errorOf { dao.addTag(" fAVORITES ") }
+
+    assertThat(error).isInstanceOf(CollectionNameException.Reserved::class.java)
+    assertThat((error as CollectionNameException.Reserved).name).isEqualTo(" fAVORITES ")
+    assertThat(dao.userTags()).isEmpty()
+  }
+
+  @Test
+  fun `adding a tag starting with the server's system prefix is reserved`() = runTest {
+    val error = errorOf { dao.addTag("System: Ramadan") }
+
+    assertThat(error).isInstanceOf(CollectionNameException.Reserved::class.java)
+    assertThat(dao.userTags()).isEmpty()
+  }
+
+  @Test
+  fun `adding a collection with a reserved name is reserved`() = runTest {
+    val error = errorOf { dao.addCollection("system:highlights:blue") }
+
+    assertThat(error).isInstanceOf(CollectionNameException.Reserved::class.java)
+  }
+
+  @Test
+  fun `adding a blank tag is too short`() = runTest {
+    val error = errorOf { dao.addTag("   ") }
+
+    assertThat(error).isInstanceOf(CollectionNameException.TooShort::class.java)
+    assertThat((error as CollectionNameException.TooShort).minLength).isEqualTo(1)
+  }
+
+  @Test
+  fun `adding a tag longer than the server allows is too long`() = runTest {
+    val error = errorOf { dao.addTag("a".repeat(256)) }
+
+    assertThat(error).isInstanceOf(CollectionNameException.TooLong::class.java)
+    assertThat((error as CollectionNameException.TooLong).maxLength).isEqualTo(255)
+    assertThat(dao.userTags()).isEmpty()
+  }
+
+  @Test
+  fun `adding a tag whose name is taken returns the existing tag`() = runTest {
+    val reviewId = dao.addTag("Review")
+
+    val addedId = dao.addTag(" review ")
+
+    assertThat(addedId).isEqualTo(reviewId)
+    assertThat(dao.userTags()).containsExactly(Tag(reviewId, "Review"))
+  }
+
+  @Test
+  fun `renaming a tag to a reserved name is refused and keeps its name`() = runTest {
+    val reviewId = dao.addTag("Review")
+
+    val error = errorOf { dao.updateTag(Tag(reviewId, "Favorites")) }
+
+    assertThat(error).isInstanceOf(CollectionNameException.Reserved::class.java)
+    assertThat(dao.userTags()).containsExactly(Tag(reviewId, "Review"))
+  }
+
+  @Test
+  fun `renaming a tag beyond the length limit is too long`() = runTest {
+    val reviewId = dao.addTag("Review")
+
+    val error = errorOf { dao.updateTag(Tag(reviewId, "a".repeat(256))) }
+
+    assertThat(error).isInstanceOf(CollectionNameException.TooLong::class.java)
+    assertThat(dao.userTags()).containsExactly(Tag(reviewId, "Review"))
+  }
+
+  @Test
   fun `a new database has Favorites as its read-only default collection`() = runTest {
     val favorites = dao.tags().single()
 
@@ -91,6 +163,10 @@ class BookmarksDaoImplCollectionRulesTest {
     dao.removeTags(listOf(green))
 
     assertThat(dao.userTags()).containsExactly(green)
+  }
+
+  private suspend fun errorOf(block: suspend () -> Any): Throwable? {
+    return runCatching { block() }.exceptionOrNull()
   }
 
   private suspend fun BookmarksDaoImpl.userTags() = tags().filterNot { tag -> tag.isSystem }
