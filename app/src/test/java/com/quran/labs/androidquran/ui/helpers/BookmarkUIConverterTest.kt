@@ -11,6 +11,7 @@ import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
+import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.R
@@ -67,6 +68,30 @@ class BookmarkUIConverterTest {
         1_700_000_000_000L,
         1_700_000_000_000L
       )
+  }
+
+  @Test
+  fun `only collections users can change offer rename and delete`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val quranInfo = QuranInfo(MadaniDataSource())
+    val converter = BookmarkUIConverter(
+      QuranRowFactory(quranInfo, QuranDisplayData(quranInfo)),
+      quranInfo
+    )
+    val favorites = Tag("1", "Favorites", isSystem = true, isDefault = true)
+    // a color collection an older Quran.com app created: not a system collection, but protected
+    val green = Tag("2", "Green", isReadOnly = true)
+    val review = Tag("3", "Review")
+    val data = BookmarkRawResult(
+      rows = listOf(favorites, green, review).map { tag -> BookmarkRowData.TagHeader(tag) },
+      tagMap = emptyMap()
+    )
+
+    val result = converter.convertToUIResult(context, data)
+
+    assertThat(result.rows.map { row -> row.tagId to row.isEditableCollectionHeader })
+      .containsExactly("1" to false, "2" to false, "3" to true)
+      .inOrder()
   }
 
   @Test

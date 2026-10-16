@@ -191,7 +191,7 @@ class QuranRowFactory @Inject constructor(
       .withTagId(tag.id)
       .withItemCount(count)
       .withCollapsedState(isCollapsed)
-      .withSystemCollection(tag.isSystem)
+      .withReadOnlyCollection(tag.isReadOnly)
       .build()
   }
 

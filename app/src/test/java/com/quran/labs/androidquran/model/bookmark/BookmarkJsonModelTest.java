@@ -46,6 +46,21 @@ public class BookmarkJsonModelTest {
   }
 
   @Test
+  public void backupsLeaveOutWhetherATagIsReadOnly() throws IOException {
+    Tag readOnlyTag = new Tag("tag-1", "Green", false, false, true);
+    BookmarkData inputData = new BookmarkData(
+        Arrays.asList(readOnlyTag), new ArrayList<>(), new ArrayList<>());
+    Buffer output = new Buffer();
+
+    jsonModel.toJson(output, inputData);
+
+    String json = output.readUtf8();
+    assertThat(json).doesNotContain("isReadOnly");
+    BookmarkData restored = jsonModel.fromJson(new Buffer().writeUtf8(json));
+    assertThat(restored.getTags()).containsExactly(new Tag("tag-1", "Green"));
+  }
+
+  @Test
   public void readsRecentPageTimestampsInSecondsAndMilliseconds() throws IOException {
     String json = "{\"recentPages\":["
         + "{\"page\":42,\"timestamp\":1700000000},"
