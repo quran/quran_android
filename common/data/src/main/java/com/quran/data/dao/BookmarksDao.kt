@@ -20,29 +20,11 @@ interface BookmarksDao {
   fun bookmarksForPage(page: Int): Flow<List<Bookmark>>
 
   fun collectionsWithBookmarksFlow(): Flow<List<ReadingCollectionBookmarks>>
-
-  /**
-   * Adds a collection, or returns the one that already has [name].
-   *
-   * @throws com.quran.data.model.collection.CollectionNameException when [name] is refused.
-   */
   suspend fun addCollection(name: String): ReadingCollection
 
   suspend fun tags(): List<Tag>
   fun tagsFlow(): Flow<List<Tag>>
-
-  /**
-   * Adds a tag, or returns the id of the one that already has [name].
-   *
-   * @throws com.quran.data.model.collection.CollectionNameException when [name] is refused.
-   */
   suspend fun addTag(name: String): String
-
-  /**
-   * Renames [tag]; returns false when it no longer exists or users can't rename it.
-   *
-   * @throws com.quran.data.model.collection.CollectionNameException when the new name is refused.
-   */
   suspend fun updateTag(tag: Tag): Boolean
   suspend fun removeTags(tags: List<Tag>)
 
