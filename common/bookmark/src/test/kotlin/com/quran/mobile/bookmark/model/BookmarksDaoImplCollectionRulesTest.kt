@@ -123,6 +123,48 @@ class BookmarksDaoImplCollectionRulesTest {
     assertThat(dao.userTags()).containsExactly(Tag(reviewId, "Review"))
   }
 
+  @Test
+  fun `a new database has Favorites as its read-only default collection`() = runTest {
+    val favorites = dao.tags().single()
+
+    assertThat(favorites.name).isEqualTo("Favorites")
+    assertThat(favorites.isDefault).isTrue()
+    assertThat(favorites.isSystem).isTrue()
+    assertThat(favorites.isReadOnly).isTrue()
+  }
+
+  @Test
+  fun `Favorites can't be renamed or deleted`() = runTest {
+    val favorites = dao.tags().single()
+
+    assertThat(dao.updateTag(favorites.copy(name = "Loved"))).isFalse()
+    dao.removeTags(listOf(favorites))
+
+    assertThat(dao.tags()).containsExactly(favorites)
+  }
+
+  @Test
+  fun `a protected color collection lists as a tag that can't be renamed or deleted`() = runTest {
+    // what sync writes for a color collection an older Quran.com app created, which the server protects
+    database.synced.collectionsQueries.collectionInsert(
+      name = "Green",
+      name_key = "green",
+      is_default = 0,
+      is_system = 0,
+      is_read_only = 1,
+      created_at = 1_000,
+      updated_at = 1_000
+    )
+    val green = dao.userTags().single()
+    assertThat(green.name).isEqualTo("Green")
+    assertThat(green.isReadOnly).isTrue()
+
+    assertThat(dao.updateTag(green.copy(name = "Olive"))).isFalse()
+    dao.removeTags(listOf(green))
+
+    assertThat(dao.userTags()).containsExactly(green)
+  }
+
   private suspend fun errorOf(block: suspend () -> Any): Throwable? {
     return runCatching { block() }.exceptionOrNull()
   }
