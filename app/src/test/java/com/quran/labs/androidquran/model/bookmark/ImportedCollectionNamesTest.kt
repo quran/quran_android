@@ -10,8 +10,8 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImportCollection
 import com.quran.mobile.bookmark.importdata.MobileSyncImportCollectionBookmark
 import com.quran.mobile.bookmark.importdata.MobileSyncImportData
 import com.quran.mobile.bookmark.importdata.toPersistenceImportData
-import com.quran.shared.persistence.QuranDatabase
-import com.quran.shared.persistence.createQuranDatabase
+import com.quran.shared.persistence.MobileSyncDatabase
+import com.quran.shared.persistence.MobileSyncSchema
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepositoryImpl
 import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepositoryImpl
 import com.quran.shared.persistence.repository.importdata.PersistenceImportRepositoryImpl
@@ -22,6 +22,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.util.Properties
 
 @Config(application = Application::class, sdk = [33], qualifiers = "en")
 @RunWith(RobolectricTestRunner::class)
@@ -34,12 +35,15 @@ class ImportedCollectionNamesTest {
 
   @Before
   fun setUp() {
-    driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
-    QuranDatabase.Schema.create(driver)
-    val database = createQuranDatabase(driver)
-    importer = PersistenceImportRepositoryImpl(database)
-    collections = CollectionsRepositoryImpl(database)
-    collectionBookmarks = CollectionBookmarksRepositoryImpl(database)
+    driver = JdbcSqliteDriver(
+      JdbcSqliteDriver.IN_MEMORY,
+      Properties().apply { put("foreign_keys", "true") },
+      MobileSyncSchema
+    )
+    val database = MobileSyncDatabase(driver)
+    importer = PersistenceImportRepositoryImpl(database.quran, database.synced)
+    collections = CollectionsRepositoryImpl(database.synced)
+    collectionBookmarks = CollectionBookmarksRepositoryImpl(database.synced)
   }
 
   @After
@@ -107,20 +111,24 @@ class ImportedCollectionNamesTest {
 
   @Test
   fun `reserved names preserve spelling and import as user collections`() = runTest {
-    val names = listOf(
-      " fAvOrItEs ",
+    val favoritesNames = listOf(" fAvOrItEs ")
+    // the server reserves every name starting with "system:", not only the highlight collections
+    val systemNames = listOf(
       "system:highlights:blue",
       "system:highlights:pink",
       " SyStEm:HiGhLiGhTs:PiNk ",
       "system:highlights:green",
       "system:highlights:yellow",
-      "system:highlights:purple"
+      "system:highlights:purple",
+      "System: Ramadan"
     )
+    val names = favoritesNames + systemNames
 
     importData(dataWithTaggedBookmarks(names))
 
     // mobile-sync trims collection names like the server; case is preserved.
-    val importedNames = names.map { "$it (Imported)".trim() }
+    val importedNames = favoritesNames.map { "$it (Imported)".trim() } +
+      systemNames.map { "Imported $it".trim() }
     val tags = collections.getAllCollections().filterNot { it.isSystem }
     assertThat(tags.map { it.name }).containsExactlyElementsIn(importedNames)
     importedNames.forEachIndexed { index, importedName ->

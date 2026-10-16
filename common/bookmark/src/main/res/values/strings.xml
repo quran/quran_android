@@ -1,4 +1,6 @@
 <resources>
   <string name="old_page_bookmarks">Old Page Bookmarks</string>
   <string name="imported_collection_name">%1$s (Imported)</string>
+  <!-- %1$s starts with "system:", which can't start a collection name, so keep text before it -->
+  <string name="imported_system_collection_name">Imported %1$s</string>
 </resources>
