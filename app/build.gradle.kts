@@ -307,6 +307,7 @@ dependencies {
   testImplementation(libs.sqldelight.sqlite.driver)
   testImplementation(libs.sqldelight.primitive.adapters)
   testImplementation(libs.quran.mobile.sync)
+  testImplementation(libs.quran.mobile.sync.v2)
 
   errorprone(libs.errorprone.core)
 
