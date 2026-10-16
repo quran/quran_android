@@ -20,12 +20,14 @@ import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmarkTarget
 import com.quran.data.model.bookmark.ReadingBookmarkType
+import com.quran.data.model.collection.CollectionNameException
 import com.quran.data.model.highlight.Highlight
 import com.quran.mobile.feature.ayahbookmark.R
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.ReadingBookmarkAction
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.presenter.ReadingBookmarkSheetPresenter
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionCreationState
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionItem
+import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionNameError
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkEvent
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkState
 import com.quran.page.common.data.QuranNaming
@@ -179,7 +181,7 @@ class AyahBookmarkPresenter(
         is AyahBookmarkEvent.CollectionNameChanged -> {
           val current = collectionCreationState.value
           if (current is AyahBookmarkCollectionCreationState.Active) {
-            collectionCreationState.value = current.copy(name = event.name, hasNameError = false)
+            collectionCreationState.value = current.copy(name = event.name, nameError = null)
           }
         }
 
@@ -193,10 +195,15 @@ class AyahBookmarkPresenter(
               collectionCreationState.value = AyahBookmarkCollectionCreationState.Inactive
             } catch (exception: CancellationException) {
               throw exception
+            } catch (exception: CollectionNameException) {
+              collectionCreationState.value = AyahBookmarkCollectionCreationState.Active(
+                name = event.name,
+                nameError = exception.asNameError()
+              )
             } catch (_: IllegalArgumentException) {
               collectionCreationState.value = AyahBookmarkCollectionCreationState.Active(
                 name = event.name,
-                hasNameError = true
+                nameError = AyahBookmarkCollectionNameError.Unavailable
               )
             }
           }
@@ -268,6 +275,16 @@ class AyahBookmarkPresenter(
         quranInfo.getPageFromSuraAyah(bookmark.sura, bookmark.ayah)
       )
       is EmptyReadingBookmark -> ""
+    }
+  }
+
+  private fun CollectionNameException.asNameError(): AyahBookmarkCollectionNameError {
+    return when (this) {
+      is CollectionNameException.Duplicate ->
+        AyahBookmarkCollectionNameError.Duplicate(existingName)
+      is CollectionNameException.Reserved -> AyahBookmarkCollectionNameError.Reserved(name.trim())
+      is CollectionNameException.TooShort -> AyahBookmarkCollectionNameError.Empty
+      is CollectionNameException.TooLong -> AyahBookmarkCollectionNameError.TooLong
     }
   }
 

@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quran.mobile.feature.ayahbookmark.R
+import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionNameError
 
 @Composable
 internal fun NewCollectionTriggerRow(
@@ -65,7 +66,7 @@ internal fun NewCollectionTriggerRow(
 internal fun NewCollectionInputRow(
   name: String,
   isSubmitting: Boolean,
-  hasNameError: Boolean,
+  nameError: AyahBookmarkCollectionNameError?,
   onNameChange: (String) -> Unit,
   onCancel: () -> Unit,
   onCreate: () -> Unit,
@@ -74,7 +75,7 @@ internal fun NewCollectionInputRow(
   val focusRequester = remember { FocusRequester() }
   LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
-  val underlineColor = if (hasNameError) {
+  val underlineColor = if (nameError != null) {
     MaterialTheme.colorScheme.error
   } else {
     MaterialTheme.colorScheme.primary
@@ -132,9 +133,9 @@ internal fun NewCollectionInputRow(
           )
         }
       }
-      if (hasNameError) {
+      if (nameError != null) {
         Text(
-          text = stringResource(R.string.ayahbookmark_collection_name_error),
+          text = nameErrorMessage(nameError),
           style = MaterialTheme.typography.labelSmall,
           color = MaterialTheme.colorScheme.error,
           modifier = Modifier.padding(top = 3.dp)
@@ -166,6 +167,22 @@ internal fun NewCollectionInputRow(
         Text(stringResource(R.string.ayahbookmark_create))
       }
     }
+  }
+}
+
+@Composable
+private fun nameErrorMessage(nameError: AyahBookmarkCollectionNameError): String {
+  return when (nameError) {
+    is AyahBookmarkCollectionNameError.Duplicate ->
+      stringResource(R.string.ayahbookmark_collection_name_duplicate, nameError.existingName)
+    is AyahBookmarkCollectionNameError.Reserved ->
+      stringResource(R.string.ayahbookmark_collection_name_reserved, nameError.name)
+    AyahBookmarkCollectionNameError.Empty ->
+      stringResource(R.string.ayahbookmark_collection_name_empty)
+    AyahBookmarkCollectionNameError.TooLong ->
+      stringResource(R.string.ayahbookmark_collection_name_too_long)
+    AyahBookmarkCollectionNameError.Unavailable ->
+      stringResource(R.string.ayahbookmark_collection_name_error)
   }
 }
 
