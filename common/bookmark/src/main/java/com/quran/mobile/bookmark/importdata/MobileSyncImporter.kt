@@ -5,6 +5,7 @@ import com.quran.data.di.AppScope
 import com.quran.mobile.bookmark.R
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
 import com.quran.mobile.di.qualifier.ApplicationContext
+import com.quran.shared.mutations.collectionNameKey
 import com.quran.shared.persistence.input.ImportCollection
 import com.quran.shared.persistence.input.ImportCollectionAyahBookmark
 import com.quran.shared.persistence.input.ImportReadingBookmark
@@ -32,7 +33,10 @@ class MobileSyncImporterImpl @Inject constructor(
   @param:ApplicationContext private val appContext: Context
 ) : MobileSyncImporter {
 
-  private val importRepository = PersistenceImportRepositoryImpl(mobileSyncDatabase.database)
+  private val importRepository = PersistenceImportRepositoryImpl(
+    mobileSyncDatabase.database.quran,
+    mobileSyncDatabase.database.synced
+  )
 
   override suspend fun importData(
     data: MobileSyncImportData,
@@ -46,10 +50,14 @@ class MobileSyncImporterImpl @Inject constructor(
 
 fun MobileSyncImportData.toPersistenceImportData(appContext: Context): PersistenceImportData {
   fun destinationName(name: String): String {
-    return if (name.trim().lowercase() in RESERVED_COLLECTION_NAMES) {
-      appContext.getString(R.string.imported_collection_name, name)
-    } else {
-      name
+    val key = collectionNameKey(name)
+    return when {
+      key == FAVORITES_COLLECTION_NAME.lowercase() ->
+        appContext.getString(R.string.imported_collection_name, name)
+      // a suffix wouldn't help: mobile-sync refuses every name that starts with the prefix
+      key.startsWith(SYSTEM_COLLECTION_NAME_PREFIX) ->
+        appContext.getString(R.string.imported_system_collection_name, name)
+      else -> name
     }
   }
   val collectionsByName = collections.groupBy { collection -> destinationName(collection.name) }
@@ -102,14 +110,11 @@ fun MobileSyncImportData.toPersistenceImportData(appContext: Context): Persisten
 
 private const val FAVORITES_COLLECTION_NAME = "Favorites"
 
-private val RESERVED_COLLECTION_NAMES = setOf(
-  "favorites",
-  "system:highlights:blue",
-  "system:highlights:pink",
-  "system:highlights:green",
-  "system:highlights:yellow",
-  "system:highlights:purple"
-)
+/**
+ * mobile-sync refuses a user collection named Favorites or starting with this prefix, which the server
+ * reserves (the highlight collections among them). Names compare trimmed and case-insensitive.
+ */
+private const val SYSTEM_COLLECTION_NAME_PREFIX = "system:"
 
 private fun MobileSyncImportReadingBookmark.toImportReadingBookmark(): ImportReadingBookmark {
   return when (this) {

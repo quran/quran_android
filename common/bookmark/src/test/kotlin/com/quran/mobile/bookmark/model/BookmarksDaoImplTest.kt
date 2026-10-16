@@ -1,6 +1,5 @@
 package com.quran.mobile.bookmark.model
 
-import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
@@ -10,9 +9,9 @@ import com.quran.data.dao.BookmarksDao
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
+import com.quran.mobile.bookmark.db.inMemoryMobileSyncDatabase
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
-import com.quran.shared.persistence.QuranDatabase
-import com.quran.shared.persistence.createQuranDatabase
+import com.quran.shared.persistence.MobileSyncDatabase
 import com.quran.shared.persistence.model.AyahHighlightColor
 import com.quran.shared.persistence.model.CollectionWithAyahBookmarks
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
@@ -20,6 +19,7 @@ import com.quran.shared.persistence.repository.collection.repository.Collections
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepositoryImpl
 import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepositoryImpl
 import com.quran.shared.persistence.util.PlatformDateTime
+import com.quran.shared.persistence.util.fromPlatform
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,7 +33,7 @@ import com.quran.shared.persistence.model.Collection as SyncCollection
 
 class BookmarksDaoImplTest {
 
-  private lateinit var database: QuranDatabase
+  private lateinit var database: MobileSyncDatabase
   private lateinit var quranInfo: QuranInfo
   private lateinit var dao: BookmarksDaoImpl
   private lateinit var appCoroutineScope: AppCoroutineScope
@@ -41,17 +41,15 @@ class BookmarksDaoImplTest {
 
   @Before
   fun setup() {
-    val driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
-    QuranDatabase.Schema.create(driver)
-    database = createQuranDatabase(driver)
+    database = inMemoryMobileSyncDatabase()
     quranInfo = QuranInfo(MadaniDataSource())
     appCoroutineScope = AppCoroutineScope()
     timestampProvider = FakeMobileSyncTimestampProvider()
-    val collectionsRepository = CollectionsRepositoryImpl(database)
-    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
+    val collectionsRepository = CollectionsRepositoryImpl(database.synced)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database.synced)
     dao = BookmarksDaoImpl(
       quranInfoProvider = { quranInfo },
-      bookmarksRepository = BookmarksRepositoryImpl(database),
+      bookmarksRepository = BookmarksRepositoryImpl(database.synced),
       collectionsRepository = collectionsRepository,
       collectionBookmarksRepository = collectionBookmarksRepository,
       bookmarkCollectionsState = RepositoryBackedTestBookmarkCollectionsState(
@@ -212,10 +210,10 @@ class BookmarksDaoImplTest {
   @Test
   fun `tags include the default collection, marked as a system collection`() = runTest {
     val collectionsRepository = DefaultCollectionTestRepository(timestampProvider.now())
-    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database.synced)
     val dao = BookmarksDaoImpl(
       quranInfoProvider = { quranInfo },
-      bookmarksRepository = BookmarksRepositoryImpl(database),
+      bookmarksRepository = BookmarksRepositoryImpl(database.synced),
       collectionsRepository = collectionsRepository,
       collectionBookmarksRepository = collectionBookmarksRepository,
       bookmarkCollectionsState = RepositoryBackedTestBookmarkCollectionsState(
@@ -239,10 +237,10 @@ class BookmarksDaoImplTest {
   @Test
   fun `update tag returns false for default collection`() = runTest {
     val collectionsRepository = DefaultCollectionTestRepository(timestampProvider.now())
-    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database.synced)
     val dao = BookmarksDaoImpl(
       quranInfoProvider = { quranInfo },
-      bookmarksRepository = BookmarksRepositoryImpl(database),
+      bookmarksRepository = BookmarksRepositoryImpl(database.synced),
       collectionsRepository = collectionsRepository,
       collectionBookmarksRepository = collectionBookmarksRepository,
       bookmarkCollectionsState = RepositoryBackedTestBookmarkCollectionsState(
@@ -265,10 +263,10 @@ class BookmarksDaoImplTest {
   @Test
   fun `update tag returns false for non-default system collection`() = runTest {
     val collectionsRepository = DefaultCollectionTestRepository(timestampProvider.now())
-    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database.synced)
     val dao = BookmarksDaoImpl(
       quranInfoProvider = { quranInfo },
-      bookmarksRepository = BookmarksRepositoryImpl(database),
+      bookmarksRepository = BookmarksRepositoryImpl(database.synced),
       collectionsRepository = collectionsRepository,
       collectionBookmarksRepository = collectionBookmarksRepository,
       bookmarkCollectionsState = RepositoryBackedTestBookmarkCollectionsState(
@@ -334,7 +332,7 @@ class BookmarksDaoImplTest {
 
   @Test
   fun `clearing every collection removes the bookmark`() = runTest {
-    val defaultCollectionId = CollectionsRepositoryImpl(database)
+    val defaultCollectionId = CollectionsRepositoryImpl(database.synced)
       .getAllCollections()
       .single { collection -> collection.isDefault }
       .id
@@ -347,8 +345,9 @@ class BookmarksDaoImplTest {
     dao.updateBookmarkTags(arrayOf(bookmark.id), emptySet(), deleteNonTagged = true)
 
     assertThat(dao.bookmarks()).isEmpty()
-    assertThat(CollectionBookmarksRepositoryImpl(database).getBookmarksForCollection(defaultCollectionId))
-      .isEmpty()
+    assertThat(
+      CollectionBookmarksRepositoryImpl(database.synced).getBookmarksForCollection(defaultCollectionId)
+    ).isEmpty()
   }
 
   @Test
@@ -390,7 +389,7 @@ class BookmarksDaoImplTest {
 
   @Test
   fun `replacing collections with only the default collection creates the bookmark`() = runTest {
-    val defaultCollectionId = CollectionsRepositoryImpl(database)
+    val defaultCollectionId = CollectionsRepositoryImpl(database.synced)
       .getAllCollections()
       .single { collection -> collection.isDefault }
       .id
@@ -414,7 +413,7 @@ class BookmarksDaoImplTest {
 
   @Test
   fun `bookmark tag removal preserves highlight membership`() = runTest {
-    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database.synced)
     val suraAyah = SuraAyah(6, 76)
     val tagId = dao.addTag("Review")
     val highlightTimestamp = timestampProvider.now()
@@ -424,11 +423,8 @@ class BookmarksDaoImplTest {
       color = AyahHighlightColor.BLUE,
       timestamp = highlightTimestamp
     )
-    val managedBookmarkId = database.bookmarksQueries
-      .getBookmarkForAyah(suraAyah.sura.toLong(), suraAyah.ayah.toLong())
-      .executeAsOne()
-      .local_id
-      .toString()
+    // mobile-sync identifies an ayah bookmark by its verse
+    val managedBookmarkId = "${suraAyah.sura}:${suraAyah.ayah}"
     timestampProvider.timestampSeconds = 2_000
 
     dao.replaceAyahBookmarkCollections(suraAyah, setOf(tagId))
@@ -450,9 +446,9 @@ class BookmarksDaoImplTest {
 
   @Test
   fun `collection replacement preserves highlight membership`() = runTest {
-    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database.synced)
     val suraAyah = SuraAyah(2, 255)
-    val defaultCollectionId = CollectionsRepositoryImpl(database)
+    val defaultCollectionId = CollectionsRepositoryImpl(database.synced)
       .getAllCollections()
       .single { collection -> collection.isDefault }
       .id
@@ -471,7 +467,7 @@ class BookmarksDaoImplTest {
 
   @Test
   fun `first saved collection stamps bookmark time and preserves highlight creation time`() = runTest {
-    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database.synced)
     val suraAyah = SuraAyah(2, 255)
     val tagId = dao.addTag("Review")
     collectionBookmarksRepository.setHighlight(
@@ -480,11 +476,8 @@ class BookmarksDaoImplTest {
       color = AyahHighlightColor.PINK,
       timestamp = timestampProvider.now()
     )
-    val managedBookmarkId = database.bookmarksQueries
-      .getBookmarkForAyah(suraAyah.sura.toLong(), suraAyah.ayah.toLong())
-      .executeAsOne()
-      .local_id
-      .toString()
+    // mobile-sync identifies an ayah bookmark by its verse
+    val managedBookmarkId = "${suraAyah.sura}:${suraAyah.ayah}"
     timestampProvider.timestampSeconds = 2_000
 
     dao.replaceAyahBookmarkCollections(suraAyah, setOf(tagId))
@@ -492,10 +485,10 @@ class BookmarksDaoImplTest {
     val bookmark = dao.bookmarks().single()
     assertThat(bookmark.id).isEqualTo(managedBookmarkId)
     assertThat(bookmark.timestamp).isEqualTo(2_000)
-    val storedBookmark = database.bookmarksQueries
-      .getBookmarkForAyah(suraAyah.sura.toLong(), suraAyah.ayah.toLong())
-      .executeAsOne()
-    assertThat(storedBookmark.created_at).isEqualTo(1_000_000L)
+    // the added date is the earliest membership, the highlight
+    val storedBookmark = collectionBookmarksRepository.getBookmarksForCollection(tagId).single()
+    assertThat(storedBookmark.bookmarkAddedDate.fromPlatform().toEpochMilliseconds())
+      .isEqualTo(1_000_000L)
     assertThat(bookmark.tags).containsExactly(tagId)
     assertThat(collectionBookmarksRepository.getHighlightsFlow().first().single().color)
       .isEqualTo(AyahHighlightColor.PINK)
@@ -503,7 +496,7 @@ class BookmarksDaoImplTest {
 
   @Test
   fun `highlight-only persistence row is not exposed as a bookmark`() = runTest {
-    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database.synced)
     val suraAyah = SuraAyah(2, 255)
     collectionBookmarksRepository.setHighlight(
       sura = suraAyah.sura,
@@ -533,8 +526,8 @@ class BookmarksDaoImplTest {
 
   @Test
   fun `removing bookmark from tag ignores stale unrelated memberships`() = runTest {
-    val collectionsRepository = CollectionsRepositoryImpl(database)
-    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
+    val collectionsRepository = CollectionsRepositoryImpl(database.synced)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database.synced)
     val firstTagId = dao.addTag("First")
     val secondTagId = dao.addTag("Second")
     val defaultCollectionId = collectionsRepository.getAllCollections()
@@ -557,7 +550,7 @@ class BookmarksDaoImplTest {
     }
     val staleDao = BookmarksDaoImpl(
       quranInfoProvider = { quranInfo },
-      bookmarksRepository = BookmarksRepositoryImpl(database),
+      bookmarksRepository = BookmarksRepositoryImpl(database.synced),
       collectionsRepository = collectionsRepository,
       collectionBookmarksRepository = collectionBookmarksRepository,
       bookmarkCollectionsState = staleState,
@@ -591,7 +584,7 @@ class BookmarksDaoImplTest {
 
   @Test
   fun `removing a bookmark preserves its highlight`() = runTest {
-    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database.synced)
     val suraAyah = SuraAyah(2, 255)
     addDefaultBookmark(suraAyah)
     val bookmark = dao.bookmarks().single()
@@ -611,7 +604,7 @@ class BookmarksDaoImplTest {
 
   @Test
   fun `deleting an ayah bookmark preserves its highlight`() = runTest {
-    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database.synced)
     val suraAyah = SuraAyah(2, 255)
     addDefaultBookmark(suraAyah)
     collectionBookmarksRepository.setHighlight(
@@ -631,11 +624,11 @@ class BookmarksDaoImplTest {
 
   /** Seeds a default-collection bookmark for tests exercising another DAO behavior. */
   private suspend fun addDefaultBookmark(suraAyah: SuraAyah) {
-    val defaultCollectionId = CollectionsRepositoryImpl(database)
+    val defaultCollectionId = CollectionsRepositoryImpl(database.synced)
       .getAllCollections()
       .single { collection -> collection.isDefault }
       .id
-    BookmarksRepositoryImpl(database).replaceAyahBookmarkCollections(
+    BookmarksRepositoryImpl(database.synced).replaceAyahBookmarkCollections(
       sura = suraAyah.sura,
       ayah = suraAyah.ayah,
       collectionIds = listOf(defaultCollectionId),

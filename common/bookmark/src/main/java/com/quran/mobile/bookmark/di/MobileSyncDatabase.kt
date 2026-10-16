@@ -4,12 +4,12 @@ import android.content.Context
 import com.quran.data.di.AppScope
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.shared.persistence.DriverFactory
-import com.quran.shared.persistence.QuranDatabase
-import com.quran.shared.persistence.createQuranDatabase
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import com.quran.shared.persistence.MobileSyncDatabase as SharedMobileSyncDatabase
 
 @SingleIn(AppScope::class)
 class MobileSyncDatabase @Inject constructor(@ApplicationContext context: Context) {
-  internal val database: QuranDatabase = createQuranDatabase(DriverFactory(context).makeDriver())
+  internal val database: SharedMobileSyncDatabase =
+    SharedMobileSyncDatabase(DriverFactory(context).makeDriver())
 }
