@@ -189,6 +189,34 @@ class BookmarkImportExportModelTest {
   }
 
   @Test
+  fun testExportBookmarksNumbersBookmarkIdsForOlderVersions() {
+    // mobile-sync ids are "sura:ayah"; older app versions restore backup ids as numbers
+    bookmarksDao.setTags(listOf(Tag("7", "Export Tag")))
+    bookmarksDao.setBookmarks(
+      listOf(
+        Bookmark("2:255", 2, 255, 42, 2_000L, listOf("7")),
+        Bookmark("1:1", 1, 1, 1, 1_000L)
+      )
+    )
+
+    val testObserver = TestObserver<Uri>()
+    bookmarkImportExportModel.exportBookmarksObservable()
+      .subscribe(testObserver)
+    BaseTestExtension.awaitTerminalEvent(testObserver)
+    testObserver.assertNoErrors()
+
+    val json = backupFile().readText()
+    assertThat(json).doesNotContain("2:255")
+    val exportedData = BookmarkJsonModel().fromJson(Buffer().writeUtf8(json))
+    assertThat(exportedData.bookmarks.map { bookmark -> bookmark.id.toLongOrNull() })
+      .containsNoneOf(null, 0L)
+    assertThat(exportedData.bookmarks.map { bookmark -> bookmark.id }.toSet()).hasSize(2)
+    assertThat(
+      exportedData.bookmarks.map { bookmark -> Triple(bookmark.sura, bookmark.ayah, bookmark.tags) }
+    ).containsExactly(Triple(2, 255, listOf("7")), Triple(1, 1, emptyList<String>()))
+  }
+
+  @Test
   fun testExportBookmarksWithAyahReadingBookmarkIncludesResolvedPage() {
     val sura = 2
     val ayah = 255
