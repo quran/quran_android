@@ -37,7 +37,7 @@ class RecentPagesDaoImplTest {
   @Before
   fun setup() {
     val context = RuntimeEnvironment.getApplication().applicationContext as Context
-    context.deleteDatabase("quran.db")
+    context.deleteDatabase("user_data.db")
     val mobileSyncDatabase = MobileSyncDatabase(context)
     repository = ReadingSessionsRepositoryImpl(mobileSyncDatabase.database.synced)
     quranInfo = QuranInfo(MadaniDataSource())

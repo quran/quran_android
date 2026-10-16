@@ -6,7 +6,7 @@ import com.quran.shared.persistence.MobileSyncSchema
 import java.util.Properties
 
 /**
- * A fresh in-memory mobile-sync database, opened the way the Android driver opens `quran.db`:
+ * A fresh in-memory mobile-sync database, opened the way the Android driver opens `user_data.db`:
  * [MobileSyncSchema] (which seeds Favorites) with foreign keys on.
  */
 internal fun inMemoryMobileSyncDatabase(): MobileSyncDatabase {
