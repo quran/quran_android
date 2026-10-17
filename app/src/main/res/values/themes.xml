@@ -42,4 +42,31 @@
   </style>
 
     <style name="QuranDialog" parent="Theme.AppCompat.DayNight.Dialog" />
+
+    <style name="Quran.BottomSheetDialog" parent="Theme.MaterialComponents.DayNight.BottomSheetDialog">
+        <item name="colorPrimary">@color/accent_color</item>
+        <item name="colorSecondary">@color/accent_color</item>
+        <item name="colorAccent">@color/accent_color</item>
+        <item name="colorControlActivated">@color/accent_color</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="enableEdgeToEdge">true</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="bottomSheetStyle">@style/Quran.BottomSheet</item>
+    </style>
+
+    <style name="Quran.BottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="backgroundTint">@color/surface</item>
+        <item name="paddingBottomSystemWindowInsets">false</item>
+        <item name="shapeAppearanceOverlay">@style/Quran.BottomSheet.Shape</item>
+        <item name="shouldRemoveExpandedCorners">false</item>
+    </style>
+
+    <style name="Quran.BottomSheet.Shape" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">28dp</item>
+        <item name="cornerSizeTopRight">28dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
 </resources>

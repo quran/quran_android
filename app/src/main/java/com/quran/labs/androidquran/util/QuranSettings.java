@@ -1,7 +1,9 @@
 package com.quran.labs.androidquran.util;
 
 import android.content.Context;
+import android.content.ComponentCallbacks;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
@@ -12,9 +14,12 @@ import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
+import com.quran.labs.androidquran.ui.bottomsheet.PageTheme;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -26,6 +31,8 @@ public class QuranSettings {
   private final Context appContext;
   private final SharedPreferences prefs;
   private final SharedPreferences perInstallationPrefs;
+  private final Map<SharedPreferences.OnSharedPreferenceChangeListener, ComponentCallbacks>
+      configurationListeners = new HashMap<>();
 
   public static synchronized QuranSettings getInstance(@NonNull Context context) {
     if (instance == null) {
@@ -43,14 +50,28 @@ public class QuranSettings {
     this.appContext = appContext;
     prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
     perInstallationPrefs = appContext.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
+    PageThemePreferences.migrate(prefs);
   }
 
-  public void registerPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+  public synchronized void registerPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
     prefs.registerOnSharedPreferenceChangeListener(listener);
+    if (!configurationListeners.containsKey(listener)) {
+      ComponentCallbacks callback = new ComponentCallbacks() {
+        @Override public void onConfigurationChanged(@NonNull Configuration configuration) {
+          // System appearance can change even while Quiet keeps the activity dark.
+          listener.onSharedPreferenceChanged(prefs, Constants.PREF_APP_THEME);
+        }
+        @Override public void onLowMemory() { }
+      };
+      configurationListeners.put(listener, callback);
+      appContext.registerComponentCallbacks(callback);
+    }
   }
 
-  public void unregisterPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+  public synchronized void unregisterPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
     prefs.unregisterOnSharedPreferenceChangeListener(listener);
+    ComponentCallbacks callback = configurationListeners.remove(listener);
+    if (callback != null) appContext.unregisterComponentCallbacks(callback);
   }
 
   public boolean isLockOrientation() {
@@ -70,25 +91,19 @@ public class QuranSettings {
   }
 
   public boolean isNightMode() {
-    return prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
-  }
+    String pageTheme = getPageTheme();
+    if (Constants.PAGE_THEME_QUIET.equals(pageTheme)) {
+      return true;
+    }
 
-  public boolean useNewBackground() {
-    return prefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true);
+    String appTheme = currentTheme();
+    return ThemeUtil.isDarkAppearance(appTheme,
+        (android.content.res.Resources.getSystem().getConfiguration().uiMode
+            & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
   }
 
   public boolean highlightBookmarks() {
     return prefs.getBoolean(Constants.PREF_HIGHLIGHT_BOOKMARKS, true);
-  }
-
-  public int getNightModeTextBrightness() {
-    return prefs.getInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
-        Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS);
-  }
-
-  public int getNightModeBackgroundBrightness() {
-    return prefs.getInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS,
-        Constants.DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS);
   }
 
   public boolean shouldOverlayPageInfo() {
@@ -250,6 +265,33 @@ public class QuranSettings {
       return defaultTheme;
     }
     return theme;
+  }
+
+  public void setAppTheme(String appTheme) {
+    prefs.edit().putString(Constants.PREF_APP_THEME, appTheme).apply();
+  }
+
+  public String getPageTheme() {
+    return PageTheme.fromKey(prefs.getString(Constants.PREF_PAGE_THEME,
+        Constants.PAGE_THEME_PAPER)).getStorageKey();
+  }
+
+  public void setPageTheme(String pageTheme) {
+    prefs.edit().putString(Constants.PREF_PAGE_THEME, pageTheme).apply();
+  }
+
+  public int getPageThemeBackgroundColor() {
+    return getThemeColor(getPageTheme(), true);
+  }
+
+  public int getPageThemeTextColor() {
+    return getThemeColor(getPageTheme(), false);
+  }
+
+  private int getThemeColor(String theme, boolean isBackground) {
+    PageTheme pageTheme = PageTheme.fromKey(theme);
+    int colorResId = isBackground ? pageTheme.getBackgroundColorRes() : pageTheme.getTextColorRes();
+    return ThemeUtil.paletteContext(appContext, currentTheme()).getColor(colorResId);
   }
 
   // probably should eventually move this to Application.onCreate..

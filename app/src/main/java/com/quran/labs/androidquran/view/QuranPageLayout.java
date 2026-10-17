@@ -5,26 +5,19 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.PaintDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Px;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 
 import com.quran.labs.androidquran.R;
-import com.quran.labs.androidquran.data.Constants;
-import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper;
 import com.quran.labs.androidquran.ui.util.PageController;
 import com.quran.labs.androidquran.util.QuranSettings;
 
@@ -48,10 +41,6 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     int LINE = 3;
   }
 
-  private static PaintDrawable leftGradient;
-  private static PaintDrawable rightGradient;
-  private static int gradientForNumberOfPages;
-  private static boolean areGradientsLandscape;
   private static BitmapDrawable leftPageBorder;
   private static BitmapDrawable rightPageBorder;
   private static BitmapDrawable leftPageBorderNight;
@@ -98,13 +87,6 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     } else {
       addView(innerView, lp);
     }
-
-    if (areGradientsLandscape != isLandscape) {
-      leftGradient = null;
-      rightGradient = null;
-      areGradientsLandscape = isLandscape;
-    }
-
     if (lineDrawable == null) {
       lineDrawable = new ShapeDrawable(new RectShape());
       lineDrawable.setIntrinsicWidth(1);
@@ -121,7 +103,6 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
           BitmapFactory.decodeResource(resources, R.drawable.night_right_border));
     }
 
-    updateGradients();
     setWillNotDraw(false);
   }
 
@@ -210,35 +191,11 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     this.pageController = controller;
     this.skippedPages = skippedPages;
   }
-
-  protected int getPagesVisible() {
-    return 1;
-  }
-
-  private void updateGradients() {
-    int pagesVisible = getPagesVisible();
-    if (rightGradient == null || gradientForNumberOfPages != pagesVisible) {
-      final WindowManager mgr =
-          (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-      Display display = mgr.getDefaultDisplay();
-      int width = QuranDisplayHelper.getWidthKitKat(display);
-      width = width / pagesVisible;
-      leftGradient = QuranDisplayHelper.getPaintDrawable(width, 0);
-      rightGradient = QuranDisplayHelper.getPaintDrawable(0, width);
-      gradientForNumberOfPages = pagesVisible;
-    }
-  }
-
   @Override
   public void updateView(@NonNull QuranSettings quranSettings) {
     super.updateView(quranSettings);
     boolean nightMode = quranSettings.isNightMode();
-    int lineColor = Color.BLACK;
-    final int nightModeTextBrightness = nightMode ?
-        quranSettings.getNightModeTextBrightness() : Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
-    if (nightMode) {
-      lineColor = Color.argb(nightModeTextBrightness, 255, 255, 255);
-    }
+    int lineColor = quranSettings.getPageThemeTextColor();
 
     if ((pageNumber + skippedPages) % 2 == 0) {
       leftBorder = nightMode ? BorderMode.DARK : BorderMode.LIGHT;
@@ -252,18 +209,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
       leftBorder = BorderMode.LINE;
     }
 
-    updateBackground(nightMode, quranSettings);
-  }
-
-  protected void updateBackground(boolean nightMode, QuranSettings quranSettings) {
-    if (nightMode) {
-      int bgColor = quranSettings.getNightModeBackgroundBrightness();
-      setBackgroundColor(Color.rgb(bgColor,bgColor,bgColor));
-    } else if (quranSettings.useNewBackground()) {
-      setBackgroundDrawable((pageNumber % 2 == 0 ? leftGradient : rightGradient));
-    } else {
-      setBackgroundColor(ContextCompat.getColor(context, R.color.page_background));
-    }
+    setBackgroundColor(quranSettings.getPageThemeBackgroundColor());
   }
 
   @Override

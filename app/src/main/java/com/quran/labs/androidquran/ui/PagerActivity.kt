@@ -5,6 +5,7 @@ import android.app.SearchManager
 import android.content.ComponentName
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Build
@@ -72,6 +73,7 @@ import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
 import com.quran.labs.androidquran.common.audio.repository.AudioStatusRepository
 import com.quran.labs.androidquran.common.audio.repository.CurrentQariManager
 import com.quran.labs.androidquran.data.Constants
+import com.quran.labs.androidquran.ui.bottomsheet.PageThemeBottomSheet
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent
@@ -116,6 +118,7 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
+import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.labs.androidquran.util.ShareUtil
 import com.quran.labs.androidquran.view.IconPageIndicator
 import com.quran.labs.androidquran.view.QuranSpinner
@@ -202,6 +205,12 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private lateinit var audioStatusBar: AudioBarWrapper
   private lateinit var viewPager: ViewPager
+  private val themePreferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+    if (key == Constants.PREF_PAGE_THEME || key == Constants.PREF_APP_THEME) {
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+    }
+  }
   private lateinit var pagerAdapter: QuranPageAdapter
   private lateinit var ayahToolBar: AyahToolBar
   private lateinit var slidingPanel: SlidingUpPanelLayout
@@ -886,6 +895,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   public override fun onResume() {
     super.onResume()
+    quranSettings.registerPreferencesListener(themePreferencesListener)
+    refreshQuranPages()
 
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
@@ -1086,6 +1097,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   public override fun onPause() {
+    quranSettings.unregisterPreferencesListener(themePreferencesListener)
     foregroundDisposable.clear()
     promptDialog?.dismiss()
     promptDialog = null
@@ -1175,8 +1187,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     val nightMode = menu.findItem(R.id.night_mode)
     if (nightMode != null) {
-      val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-      val isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)
+      val isNightMode = quranSettings.isNightMode
       nightMode.isChecked = isNightMode
       nightMode.setIcon(if (isNightMode) R.drawable.ic_night_mode else R.drawable.ic_day_mode)
     }
@@ -1198,14 +1209,24 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
       return true
     } else if (itemId == R.id.night_mode) {
-      val prefs = PreferenceManager
-        .getDefaultSharedPreferences(this)
-      val prefsEditor = prefs.edit()
-      val isNightMode = !item.isChecked
-      prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, isNightMode).apply()
-      item.setIcon(if (isNightMode) R.drawable.ic_night_mode else R.drawable.ic_day_mode)
-      item.isChecked = isNightMode
-      refreshQuranPages()
+      val isNightMode = quranSettings.isNightMode
+      val newAppTheme: String
+      if (isNightMode) {
+        newAppTheme = Constants.THEME_LIGHT
+        if (quranSettings.pageTheme == Constants.PAGE_THEME_QUIET) {
+          quranSettings.pageTheme = Constants.PAGE_THEME_ORIGINAL
+        }
+      } else {
+        newAppTheme = Constants.THEME_DARK
+      }
+
+      quranSettings.setAppTheme(newAppTheme)
+      ThemeUtil.setTheme(newAppTheme, quranSettings.pageTheme)
+      return true
+    } else if (itemId == R.id.page_theme) {
+      if (supportFragmentManager.findFragmentByTag(PageThemeBottomSheet.TAG) == null) {
+        PageThemeBottomSheet().show(supportFragmentManager, PageThemeBottomSheet.TAG)
+      }
       return true
     } else if (itemId == R.id.settings) {
       val i = Intent(this, QuranPreferenceActivity::class.java)

@@ -15,8 +15,6 @@ import com.quran.data.source.PageContentType
 import com.quran.labs.androidquran.extra.feature.linebyline.model.PageInfo
 import com.quran.labs.androidquran.extra.feature.linebyline.model.SidelinesPosition
 import java.text.NumberFormat
-import kotlin.math.ln1p
-import kotlin.math.min
 
 @Composable
 fun QuranPageWrapper(
@@ -32,13 +30,6 @@ fun QuranPageWrapper(
   onSelectionEnd: () -> Unit
 ) {
   val displaySettings = pageInfo.displaySettings
-
-  val originalTextBrightness = displaySettings.textBrightness.toFloat()
-  val backgroundBrightness = displaySettings.nightModeBackgroundBrightness
-  // avoid damaging the looks of the Quran page
-  val adjustedBrightness = (50 * ln1p(backgroundBrightness.toDouble()) + originalTextBrightness).toInt()
-  val textBrightness = min(adjustedBrightness.toFloat(), 255f)
-
   val displayInfo = pageInfo.displayText
   val showHeaderFooter = displaySettings.showHeaderFooter
 
@@ -46,11 +37,9 @@ fun QuranPageWrapper(
   val isScrollable = (!dualScreenMode && orientation == Configuration.ORIENTATION_LANDSCAPE)
 
   val isNightMode = displaySettings.isNightMode
-  val overlayColor = if (isNightMode) {
-    Color(0x84, 0x8A, 0x91)
-  } else {
-    Color(0x68, 0x6E, 0x7D)
-  }
+  val themeTextColor = Color(displaySettings.textColor)
+
+  val overlayColor = themeTextColor
 
   val (headerColor, ringColor, innerColor, textColor) =
     if (pageInfo.pageType.contains("1439")) {
@@ -105,11 +94,7 @@ fun QuranPageWrapper(
 
   val ratio = (pageContentType as PageContentType.Line).ratio
   val lineHeight = pageContentType.lineHeight
-  val lineColor = if (displaySettings.isNightMode) {
-    Color.White.copy(alpha = textBrightness / 255f)
-  } else {
-    Color.Black
-  }
+  val lineColor = themeTextColor
   val colorFilter = ColorFilter.tint(lineColor)
 
   QuranPage(
@@ -217,7 +202,7 @@ fun QuranPageWrapper(
       onClick()
     },
     isNightMode,
-    nightModeBackgroundBrightness = backgroundBrightness
+    backgroundColor = displaySettings.backgroundColor
   )
 }
 
