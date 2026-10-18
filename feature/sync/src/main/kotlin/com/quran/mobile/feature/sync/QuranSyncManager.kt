@@ -207,13 +207,13 @@ class QuranSyncManager(
   }
 
   /**
-   * Requests a sync through the shared data service.
+   * Requests a sync right away through the shared data service, for a user's explicit "sync now".
    *
    * The call schedules sync work and returns immediately; progress and completion are owned by the
-   * underlying sync engine.
+   * underlying sync engine. A request while a sync runs runs right after it.
    */
   fun triggerSync() {
-    graph.quranDataService.triggerSync()
+    graph.quranDataService.triggerSync(immediately = true)
   }
 
   private suspend fun runAuthAction(action: suspend () -> Unit) {

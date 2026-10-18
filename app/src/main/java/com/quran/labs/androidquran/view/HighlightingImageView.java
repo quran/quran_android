@@ -305,26 +305,38 @@ public class HighlightingImageView extends AppCompatImageView {
     animator.start();
   }
 
-  private boolean shouldFloatHighlight(Set<AyahHighlight> highlights, HighlightType type, int surah, int ayah) {
+  private boolean shouldFloatHighlight(Set<AyahHighlight> highlights, HighlightType type, AyahHighlight destinationHighlight) {
     // only animating AUDIO highlights, for now
     if (!type.isTransitionAnimated()) {
       return false;
     }
 
     // can only animate from one ayah to another, for now
-    if (highlights.size() != 1) {
+    if (highlights.size() != 1 || highlightCoordinates == null) {
       return false;
     }
 
-    AyahHighlight currentAyahHighlight = new SingleAyahHighlight(surah, ayah);
     AyahHighlight previousAyahHighlight = highlights.iterator().next();
 
-    if (currentAyahHighlight.equals(previousAyahHighlight)) {
+    if (destinationHighlight.equals(previousAyahHighlight)) {
       // can't animate to the same location
       return false;
     }
-    // can't setup animation, if coordinates are not known beforehand
-    return highlightCoordinates != null;
+
+    List<AyahBounds> startingBounds;
+    if (previousAyahHighlight.isTransition()) {
+      if (animator == null) {
+        return false;
+      }
+      startingBounds = (List<AyahBounds>) animator.getAnimatedValue();
+    } else {
+      startingBounds = highlightCoordinates.get(previousAyahHighlight);
+    }
+
+    List<AyahBounds> destinationBounds = highlightCoordinates.get(destinationHighlight);
+    // normalization needs rectangles on both sides, including when retargeting a transition.
+    return startingBounds != null && !startingBounds.isEmpty()
+        && destinationBounds != null && !destinationBounds.isEmpty();
   }
 
   public void highlightAyah(int surah, int ayah, int word, HighlightType type) {
@@ -338,9 +350,13 @@ public class HighlightingImageView extends AppCompatImageView {
       // If multiple highlighting not allowed (e.g. audio)
       // clear all others of this type first
       // only if highlight type is floatable
-      if (shouldFloatHighlight(highlights, type, surah, ayah)) {
+      if (shouldFloatHighlight(highlights, type, singleAyahHighlight)) {
         highlightFloatableAyah(highlights, singleAyahHighlight, HighlightTypes.INSTANCE.getAnimationConfig(type));
       } else {
+        // cancel before replacing highlights, since its callbacks modify this set.
+        if (type.isTransitionAnimated() && animator != null) {
+          animator.cancel();
+        }
         highlights.clear();
         highlights.add(singleAyahHighlight);
       }

@@ -47,9 +47,9 @@ class ReadingBookmarksDaoImplTest {
   @Before
   fun setup() {
     val context = RuntimeEnvironment.getApplication().applicationContext as Context
-    context.deleteDatabase("quran.db")
+    context.deleteDatabase("user_data.db")
     val mobileSyncDatabase = MobileSyncDatabase(context)
-    repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database)
+    repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database.synced)
     quranInfo = QuranInfo(MadaniDataSource())
     settings = FakeSettings()
     timestampProvider = FakeMobileSyncTimestampProvider()

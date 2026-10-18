@@ -236,7 +236,7 @@ class BookmarkPresenterTest {
         QuranRow.Builder()
           .withType(QuranRow.BOOKMARK_HEADER)
           .withTagId("fake-default")
-          .withSystemCollection(true)
+          .withReadOnlyCollection(true)
           .build()
       )
     )

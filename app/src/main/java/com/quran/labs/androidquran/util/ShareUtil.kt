@@ -9,7 +9,9 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.widget.Toast
 import androidx.annotation.StringRes
+import com.quran.data.core.QuranInfo
 import com.quran.data.model.QuranText
+import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.data.QuranDisplayData
@@ -19,7 +21,10 @@ import com.quran.mobile.translation.model.LocalTranslation
 import dev.zacsweers.metro.Inject
 import java.text.NumberFormat
 
-class ShareUtil @Inject internal constructor(private val quranDisplayData: QuranDisplayData) {
+class ShareUtil @Inject internal constructor(
+  private val quranDisplayData: QuranDisplayData,
+  private val quranInfo: QuranInfo
+) {
 
   fun copyVerses(activity: Activity, verses: List<QuranText>) {
     val text = getShareText(activity, verses)
@@ -41,10 +46,43 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
     shareViaIntent(activity, text, com.quran.labs.androidquran.common.toolbar.R.string.share_ayah_text)
   }
 
-  fun shareViaIntent(activity: Activity, text: String?, @StringRes titleResId: Int) {
+  fun shareAyahLink(activity: Activity, start: SuraAyah, end: SuraAyah) {
+    // keep the preview range aligned with the URL, which is limited to a single sura.
+    val endAyah = if (end.sura == start.sura) end.ayah else quranInfo.getNumberOfAyahs(start.sura)
+    val url = buildString {
+      append("https://quran.com/${start.sura}/${start.ayah}")
+      if (endAyah != start.ayah) {
+        append("-$endAyah")
+      }
+    }
+
+    val numberFormat = NumberFormat.getIntegerInstance(activity.resources.configuration.locales[0])
+    val previewTitle = buildString {
+      append(quranDisplayData.getSuraName(activity, start.sura, true))
+      append(": ")
+      append(numberFormat.format(start.ayah))
+      if (endAyah != start.ayah) {
+        append("-")
+        append(numberFormat.format(endAyah))
+      }
+    }
+
+    shareViaIntent(
+      activity, url, com.quran.labs.androidquran.common.toolbar.R.string.share_ayah,
+      previewTitle
+    )
+  }
+
+  fun shareViaIntent(
+    activity: Activity,
+    text: String?,
+    @StringRes titleResId: Int,
+    previewTitle: String? = null
+  ) {
     val intent = Intent(Intent.ACTION_SEND).apply {
       type = "text/plain"
       putExtra(Intent.EXTRA_TEXT, text)
+      previewTitle?.let { putExtra(Intent.EXTRA_TITLE, it) }
     }
     activity.startActivity(Intent.createChooser(intent, activity.getString(titleResId)))
   }
@@ -96,7 +134,7 @@ class ShareUtil @Inject internal constructor(private val quranDisplayData: Quran
   private fun getShareText(activity: Activity, verses: List<QuranText>): String {
     val size = verses.size
     val wantInlineAyahNumbers = size > 1
-    val locale = QuranUtils.getCurrentLocale();
+    val locale = QuranUtils.getCurrentLocale()
     val numberFormat = NumberFormat.getNumberInstance(locale)
     return buildString {
       append("{ ")

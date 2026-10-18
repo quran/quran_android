@@ -44,14 +44,15 @@ class MobileSyncImporterImplTest {
   @Before
   fun setUp() {
     val context = RuntimeEnvironment.getApplication().applicationContext as Context
-    context.deleteDatabase("quran.db")
+    context.deleteDatabase("user_data.db")
     mobileSyncDatabase = MobileSyncDatabase(context)
     appCoroutineScope = AppCoroutineScope()
-    val collectionsRepository = CollectionsRepositoryImpl(mobileSyncDatabase.database)
-    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(mobileSyncDatabase.database)
+    val collectionsRepository = CollectionsRepositoryImpl(mobileSyncDatabase.database.synced)
+    val collectionBookmarksRepository =
+      CollectionBookmarksRepositoryImpl(mobileSyncDatabase.database.synced)
     bookmarksDao = BookmarksDaoImpl(
       quranInfoProvider = { QuranInfo(MadaniDataSource()) },
-      bookmarksRepository = BookmarksRepositoryImpl(mobileSyncDatabase.database),
+      bookmarksRepository = BookmarksRepositoryImpl(mobileSyncDatabase.database.synced),
       collectionsRepository = collectionsRepository,
       collectionBookmarksRepository = collectionBookmarksRepository,
       bookmarkCollectionsState = RepositoryBackedTestBookmarkCollectionsState(
@@ -110,7 +111,8 @@ class MobileSyncImporterImplTest {
     val bookmarks = bookmarksDao.bookmarks()
     // the default collection is always present, so this asserts on the imported ones
     val tags = bookmarksDao.tags().filterNot { tag -> tag.isSystem }
-    val readingSessions = ReadingSessionsRepositoryImpl(mobileSyncDatabase.database).getReadingSessions()
+    val readingSessions =
+      ReadingSessionsRepositoryImpl(mobileSyncDatabase.database.synced).getReadingSessions()
 
     assertThat(bookmarks.map { bookmark -> bookmark.sura to bookmark.ayah }).containsExactly(2 to 255)
     assertThat(bookmarks.single().timestamp).isEqualTo(1234L)
@@ -123,7 +125,7 @@ class MobileSyncImporterImplTest {
 
   @Test
   fun `reading bookmark import replaces supplied slots and preserves omitted slots`() = runTest {
-    val repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database)
+    val repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database.synced)
     val existing = repository.setPageReadingBookmark(ReadingBookmarkSlot.TEAL, 12)
     val omitted = repository.setPageReadingBookmark(ReadingBookmarkSlot.RED, 50)
     repository.renameReadingBookmark(ReadingBookmarkSlot.TEAL, "Old name")

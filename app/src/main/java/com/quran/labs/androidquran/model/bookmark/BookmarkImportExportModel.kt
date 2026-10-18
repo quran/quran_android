@@ -104,7 +104,11 @@ class BookmarkImportExportModel @Inject internal constructor(
           tags = allTags.filterNot { tag -> tag.isSystem },
           bookmarks = bookmarksDao.bookmarks(BookmarkSortOrder.SORT_DATE_ADDED)
             .filterNot { bookmark -> bookmark.isPageBookmark() }
-            .map { bookmark -> bookmark.withTags(bookmark.tags - systemTagIds) },
+            // mobile-sync ids are "sura:ayah", but older app versions restore a backup's bookmark
+            // ids as numeric keys (this version ignores them), so the backup numbers its bookmarks
+            .mapIndexed { index, bookmark ->
+              bookmark.copy(id = (index + 1).toString()).withTags(bookmark.tags - systemTagIds)
+            },
           recentPages = recentPagesDao.recentPages(),
           readingBookmarks = readingBookmarksDao.readingBookmarks()
             .mapNotNull { bookmark ->

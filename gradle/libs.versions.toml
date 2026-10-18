@@ -8,7 +8,7 @@ ksp = "2.3.12"
 composeBomVersion = "2026.09.00"
 media3ExoplayerVersion = "1.11.1"
 okhttpBomVersion = "5.5.0"
-firebaseBomVersion = "35.0.0"
+firebaseBomVersion = "35.0.2"
 
 # dependencies
 coroutinesVersion = "1.11.0"
@@ -22,7 +22,7 @@ immutableCollectionsVersion = "0.5.2"
 leakcanaryAndroidVersion = "2.14"
 moshiVersion = "1.15.2"
 okioVersion = "3.18.2"
-quranMobileSyncVersion = "0.1.30"
+quranMobileSyncVersion = "0.1.36"
 retrofitVersion = "3.0.0"
 rxandroidVersion = "3.0.2"
 rxjavaVersion = "3.1.12"
@@ -43,8 +43,8 @@ androidxMediaVersion = "1.8.0"
 androidxPreferencesVersion = "1.2.1"
 androidxRecyclerViewVersion = "1.4.0"
 androidxSwipeRefreshVersion = "1.2.0"
-androidxPagingVersion = "3.5.2"
-androidxPagingComposeVersion = "3.5.2"
+androidxPagingVersion = "3.5.3"
+androidxPagingComposeVersion = "3.5.3"
 androidxWorkManagerVersion = "2.12.0"
 androidxWindowManager = "1.5.1"
 
@@ -59,7 +59,7 @@ reorderableComposeVersion = "0.9.6"
 molecule = "2.2.0"
 
 # recitations
-grpcOkhttpVersion = "1.84.2"
+grpcOkhttpVersion = "1.85.0"
 googleAuthVersion = "1.54.0"
 googleCloudSpeechVersion = "4.94.0"
 
@@ -145,6 +145,7 @@ sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-ex
 sqldelight-paging3-extensions = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqldelight" }
 sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
 quran-mobile-sync = { module = "com.quran:mobile-sync", version.ref = "quranMobileSyncVersion" }
+quran-mobile-sync-v2 = { module = "com.quran:sync-v2", version.ref = "quranMobileSyncVersion" }
 
 # recitation
 grpc-okhttp = { module = "io.grpc:grpc-okhttp", version.ref = "grpcOkhttpVersion" }

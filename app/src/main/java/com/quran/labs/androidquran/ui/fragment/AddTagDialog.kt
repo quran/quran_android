@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.collection.CollectionNameException
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.presenter.bookmark.AddTagDialogPresenter
@@ -90,6 +91,16 @@ class AddTagDialog : DialogFragment() {
 
   fun onDuplicateTagName() {
     textInputEditText?.error = activity?.getString(R.string.tag_duplicate_tag_error)
+  }
+
+  fun onInvalidTagName(exception: CollectionNameException) {
+    val activity = activity ?: return
+    textInputEditText?.error = when (exception) {
+      is CollectionNameException.Duplicate -> activity.getString(R.string.tag_duplicate_tag_error)
+      is CollectionNameException.Reserved -> activity.getString(R.string.tag_reserved_tag_error)
+      is CollectionNameException.TooShort -> activity.getString(R.string.tag_blank_tag_error)
+      is CollectionNameException.TooLong -> activity.getString(R.string.tag_too_long_tag_error)
+    }
   }
 
   private fun dismissAfterPersistence() {
