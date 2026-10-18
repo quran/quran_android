@@ -16,6 +16,7 @@ import androidx.compose.ui.layout.positionInWindow
 import com.quran.data.source.PageContentType
 import com.quran.labs.androidquran.extra.feature.linebyline.model.LineModel
 import com.quran.labs.androidquran.extra.feature.linebyline.model.PageInfo
+import com.quran.labs.androidquran.extra.feature.linebyline.ui.modifier.pageGradient
 import com.quran.mobile.linebyline.data.dao.AyahHighlight
 import com.quran.mobile.linebyline.data.dao.AyahMarkerInfo
 import com.quran.mobile.linebyline.data.dao.SuraHeader
@@ -44,9 +45,15 @@ fun QuranPage(
   onSelectionEnd: () -> Unit,
   modifier: Modifier = Modifier,
   isNightMode: Boolean = false,
-  backgroundColor: Int = 0
+  backgroundColor: Int? = null
 ) {
-  val mod = modifier.background(Color(backgroundColor))
+  val mod = if (backgroundColor != null) {
+    modifier.background(Color(backgroundColor))
+  } else {
+    val skip = pageInfo.skippedPageCount
+    val target = skip % 2
+    modifier.pageGradient(pageInfo.page % 2 == target)
+  }
 
   val scrollState = rememberScrollState()
   val coroutineScope = rememberCoroutineScope()

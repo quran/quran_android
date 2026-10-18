@@ -32,24 +32,24 @@ class QuranLineByLineSettingsPresenterTest {
   }
 
   @Test
-  fun `displaySettingsFlow emits non-default text color when configured`() = runTest {
-    // Arrange - use a color that differs from EmptySettings' black text
-    val expectedColor = 0xff32281e.toInt()
+  fun `displaySettingsFlow emits non-default text brightness when configured`() = runTest {
+    // Arrange - use a brightness that differs from EmptySettings' default (255)
+    val expectedBrightness = 128
     val fakeSettings = FakeSettings()
-    fakeSettings.setTextColor(expectedColor)
+    fakeSettings.setTextBrightness(expectedBrightness)
     val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
 
-    // Act - wait for the specific color value
-    val emitted = presenter.displaySettingsFlow.first { it.textColor == expectedColor }
+    // Act - wait for the specific brightness value
+    val emitted = presenter.displaySettingsFlow.first { it.textBrightness == expectedBrightness }
 
     // Assert
-    assertThat(emitted.textColor).isEqualTo(expectedColor)
+    assertThat(emitted.textBrightness).isEqualTo(expectedBrightness)
   }
 
   @Test
   fun `displaySettingsFlow emits non-default background color when configured`() = runTest {
-    // Arrange - use a color that differs from EmptySettings' white background
-    val expectedColor = 0xffede2cc.toInt()
+    // Arrange - a theme color differs from EmptySettings' default (the shaded background)
+    val expectedColor = 0xff413b31.toInt()
     val fakeSettings = FakeSettings()
     fakeSettings.setBackgroundColor(expectedColor)
     val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
@@ -110,7 +110,7 @@ class QuranLineByLineSettingsPresenterTest {
     // Arrange - configure a combination of settings
     val fakeSettings = FakeSettings()
     fakeSettings.setNightMode(true)
-    fakeSettings.setTextColor(200)
+    fakeSettings.setTextBrightness(200)
     fakeSettings.setHeaderFooter(true)
     val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
 
@@ -119,7 +119,7 @@ class QuranLineByLineSettingsPresenterTest {
 
     // Assert
     assertThat(emitted.isNightMode).isTrue()
-    assertThat(emitted.textColor).isEqualTo(200)
+    assertThat(emitted.textBrightness).isEqualTo(200)
     assertThat(emitted.showHeaderFooter).isTrue()
   }
 
@@ -128,11 +128,11 @@ class QuranLineByLineSettingsPresenterTest {
     // Arrange - start with night mode off
     val fakeSettings = FakeSettings()
     fakeSettings.setNightMode(false)
-    fakeSettings.setTextColor(100) // non-default so initial load differs from EmptySettings
+    fakeSettings.setTextBrightness(100) // non-default so initial load differs from EmptySettings
     val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
 
     // Wait for initial load (brightness=100 is non-default)
-    val initial = presenter.displaySettingsFlow.first { it.textColor == 100 }
+    val initial = presenter.displaySettingsFlow.first { it.textBrightness == 100 }
     assertThat(initial.isNightMode).isFalse()
 
     // Act - update night mode and emit change
@@ -150,7 +150,7 @@ class QuranLineByLineSettingsPresenterTest {
     val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
     val settings = presenter.latestDisplaySettings()
     assertThat(settings.isNightMode).isFalse()
-    assertThat(settings.textColor).isEqualTo(-0x1000000)
+    assertThat(settings.textBrightness).isEqualTo(255)
     assertThat(settings.showHeaderFooter).isFalse()
   }
 
@@ -159,14 +159,14 @@ class QuranLineByLineSettingsPresenterTest {
     // Arrange
     val fakeSettings = FakeSettings()
     fakeSettings.setNightMode(false)
-    fakeSettings.setTextColor(150) // non-default to trigger emission
+    fakeSettings.setTextBrightness(150) // non-default to trigger emission
     val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
 
     // Act - wait for emission with custom brightness
-    val emitted = presenter.displaySettingsFlow.first { it.textColor == 150 }
+    val emitted = presenter.displaySettingsFlow.first { it.textBrightness == 150 }
 
     // Assert
     assertThat(emitted.isNightMode).isFalse()
-    assertThat(emitted.textColor).isEqualTo(150)
+    assertThat(emitted.textBrightness).isEqualTo(150)
   }
 }

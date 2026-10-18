@@ -11,6 +11,7 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.common.upgrade.PreferencesUpgrade
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.data.Constants
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -118,6 +119,20 @@ class ReaderThemeTest {
     settings.pageTheme = Constants.PAGE_THEME_CALM
     settings.pageAppearance = Constants.PAGE_APPEARANCE_DARK
     assertThat(settings.pageTextBrightness).isEqualTo(234)
+  }
+
+  @Test fun `line by line pages are shaded only for Original by day`() = runTest {
+    val settings = QuranSettings.getInstance(context)
+    val lineByLineSettings = SettingsImpl(settings)
+    settings.pageAppearance = Constants.PAGE_APPEARANCE_LIGHT
+    assertThat(lineByLineSettings.pageBackgroundColor()).isNull()
+    preferences.edit().putInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS, 10).commit()
+    settings.pageAppearance = Constants.PAGE_APPEARANCE_DARK
+    assertThat(lineByLineSettings.pageBackgroundColor()).isEqualTo(Color.rgb(10, 10, 10))
+    settings.pageTheme = Constants.PAGE_THEME_CALM
+    assertThat(lineByLineSettings.pageBackgroundColor()).isEqualTo(0xff413b31.toInt())
+    settings.pageAppearance = Constants.PAGE_APPEARANCE_LIGHT
+    assertThat(lineByLineSettings.pageBackgroundColor()).isEqualTo(0xffeee2cc.toInt())
   }
 
   @Test fun `only legacy background users draw the old background`() {
