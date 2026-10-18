@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
@@ -84,6 +85,32 @@ public class QuranSettings {
       return ThemeUtil.isDarkAppearance(currentTheme(), systemNight);
     }
     return Constants.PAGE_APPEARANCE_DARK.equals(appearance);
+  }
+
+  public boolean useOldBackground() {
+    return prefs.getBoolean(Constants.PREF_USE_OLD_BACKGROUND, false);
+  }
+
+  public int getNightModeTextBrightness() {
+    return Math.max(Constants.MIN_NIGHT_MODE_TEXT_BRIGHTNESS,
+        prefs.getInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
+            Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS));
+  }
+
+  public int getNightModeBackgroundBrightness() {
+    return prefs.getInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS,
+        Constants.DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS);
+  }
+
+  public int getPageTextBrightness() {
+    if (Constants.PAGE_THEME_ORIGINAL.equals(getPageTheme())) {
+      // avoid damaging the looks of the Quran page
+      int brightness = (int) (50 * Math.log1p(getNightModeBackgroundBrightness()) +
+          getNightModeTextBrightness());
+      return Math.min(brightness, 255);
+    }
+    int color = getThemeColor(getPageTheme(), false);
+    return (Color.red(color) + Color.green(color) + Color.blue(color)) / 3;
   }
 
   public boolean highlightBookmarks() {
@@ -274,11 +301,23 @@ public class QuranSettings {
   }
 
   public int getPageThemeBackgroundColor() {
+    if (isOriginalNightPage()) {
+      int brightness = getNightModeBackgroundBrightness();
+      return Color.rgb(brightness, brightness, brightness);
+    }
     return getThemeColor(getPageTheme(), true);
   }
 
   public int getPageThemeTextColor() {
+    if (isOriginalNightPage()) {
+      int brightness = getPageTextBrightness();
+      return Color.rgb(brightness, brightness, brightness);
+    }
     return getThemeColor(getPageTheme(), false);
+  }
+
+  private boolean isOriginalNightPage() {
+    return isNightMode() && Constants.PAGE_THEME_ORIGINAL.equals(getPageTheme());
   }
 
   private int getThemeColor(String theme, boolean isBackground) {

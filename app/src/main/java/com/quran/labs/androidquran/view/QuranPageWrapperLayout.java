@@ -23,7 +23,7 @@ public abstract class QuranPageWrapperLayout extends ViewGroup {
 
   private View errorLayout;
   private TextView errorText;
-  private int textColor = Color.BLACK;
+  private boolean isNightMode;
 
   public QuranPageWrapperLayout(Context context) {
     super(context);
@@ -52,7 +52,7 @@ public abstract class QuranPageWrapperLayout extends ViewGroup {
   }
 
   public void updateView(@NonNull QuranSettings quranSettings) {
-    textColor = quranSettings.getPageThemeTextColor();
+    isNightMode = quranSettings.isNightMode();
     if (errorText != null) {
       updateErrorTextColor();
     }
@@ -89,6 +89,6 @@ public abstract class QuranPageWrapperLayout extends ViewGroup {
   abstract void handleRetryClicked();
 
   private void updateErrorTextColor() {
-    errorText.setTextColor(textColor);
+    errorText.setTextColor(isNightMode ? Color.WHITE : Color.BLACK);
   }
 }
