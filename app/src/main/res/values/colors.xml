@@ -7,6 +7,7 @@
 
   <color name="surface">#fffaf8f7</color>
   <color name="accent_navy_gold">#ff1f6fb2</color>
+  <color name="page_background">#FFF4CB</color>
   <color name="secondary_dark_background">#ffffffff</color>
 
   <!-- Page theme colors -->
@@ -42,6 +43,7 @@
 
   <color name="translation_ayah_selected_color">#ffe0f2f1</color>
   <color name="translation_ayah_selected_color_night">#ff2d2d2d</color>
+  <color name="overlay_text_color">#ff505050</color>
   <color name="inactive">#9e9e9e</color>
   <color name="selection_highlight">#404694A6</color>
   <color name="audio_highlight">#4046A646</color>

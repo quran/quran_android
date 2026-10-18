@@ -37,6 +37,11 @@ public class QuranTranslationPageLayout extends QuranPageLayout {
   }
 
   @Override
+  protected void updateBackground(boolean nightMode, QuranSettings quranSettings) {
+    setBackgroundColor(quranSettings.getPageThemeBackgroundColor());
+  }
+
+  @Override
   protected boolean shouldWrapWithScrollView() {
     return false;
   }

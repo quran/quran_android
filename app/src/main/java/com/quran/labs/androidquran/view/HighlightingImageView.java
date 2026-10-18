@@ -24,10 +24,12 @@ import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.DisplayCutoutCompat;
 
 import com.quran.data.model.highlight.HighlightType;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.SingleAyahHighlight;
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.TransitionAyahHighlight;
@@ -55,19 +57,20 @@ public class HighlightingImageView extends AppCompatImageView {
   // when enabled, will draw bounds around each glyph to visualize the glyph bounds
   private static final boolean DEBUG_BOUNDS = false;
 
-  private final int headerFooterSize;
-  private final int headerFooterFontSize;
-  private final int scrollableHeaderFooterSize;
-  private final int scrollableHeaderFooterFontSize;
-  private final int dualPageHeaderFooterSize;
-  private final int dualPageHeaderFooterFontSize;
+  private static int overlayTextColor = -1;
+  private static int headerFooterSize;
+  private static int headerFooterFontSize;
+  private static int scrollableHeaderFooterSize;
+  private static int scrollableHeaderFooterFontSize;
+  private static int dualPageHeaderFooterSize;
+  private static int dualPageHeaderFooterFontSize;
 
   // Sorted map so we use highest priority highlighting when iterating
   private final SortedMap<HighlightType, Set<AyahHighlight>> currentHighlights = new TreeMap<>();
 
   private boolean isNightMode;
-  private int themeBackgroundColor = Color.WHITE;
-  private int themeTextColor = Color.BLACK;
+  private boolean isColorFilterOn;
+  private int nightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
 
   // Params for drawing text
   private int fontSize;
@@ -123,15 +126,18 @@ public class HighlightingImageView extends AppCompatImageView {
 
   public HighlightingImageView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    final Resources res = context.getResources();
-    headerFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size);
-    scrollableHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_scrollable);
-    dualPageHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_dualPage);
-    headerFooterFontSize = res.getDimensionPixelSize(R.dimen.page_overlay_font_size);
-    scrollableHeaderFooterFontSize =
-        res.getDimensionPixelSize(R.dimen.page_overlay_font_size_scrollable);
-    dualPageHeaderFooterFontSize =
-        res.getDimensionPixelSize(R.dimen.page_overlay_font_size_dualPage);
+    if (overlayTextColor == -1) {
+      final Resources res = context.getResources();
+      overlayTextColor = ContextCompat.getColor(context, R.color.overlay_text_color);
+      headerFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size);
+      scrollableHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_scrollable);
+      dualPageHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_dualPage);
+      headerFooterFontSize = res.getDimensionPixelSize(R.dimen.page_overlay_font_size);
+      scrollableHeaderFooterFontSize =
+          res.getDimensionPixelSize(R.dimen.page_overlay_font_size_scrollable);
+      dualPageHeaderFooterFontSize =
+          res.getDimensionPixelSize(R.dimen.page_overlay_font_size_dualPage);
+    }
 
     Insetter.builder()
         .setOnApplyInsetsListener((view, insets, initialState) -> {
@@ -210,13 +216,16 @@ public class HighlightingImageView extends AppCompatImageView {
     }
   }
 
-  public void setPageTheme(boolean isNightMode, int themeBackgroundColor, int themeTextColor) {
+  public void setNightMode(boolean isNightMode, int textBrightness) {
     this.isNightMode = isNightMode;
-    this.themeBackgroundColor = themeBackgroundColor;
-    this.themeTextColor = themeTextColor;
+    if (isNightMode) {
+      nightModeTextBrightness = textBrightness;
+      // we need a new color filter now
+      isColorFilterOn = false;
+    }
     // Re-init overlay params color based on the new night mode setting
     initOverlayParamsColor();
-    applyPageTheme();
+    adjustNightMode();
   }
 
   class AnimationUpdateListener implements ValueAnimator.AnimatorUpdateListener, Animator.AnimatorListener {
@@ -370,40 +379,28 @@ public class HighlightingImageView extends AppCompatImageView {
   public void setImageDrawable(Drawable bitmap) {
     // clear the color filter before setting the image
     clearColorFilter();
+    // this allows the filter to be enabled again if needed
+    isColorFilterOn = false;
 
     super.setImageDrawable(bitmap);
     if (bitmap != null) {
-      applyPageTheme();
+      adjustNightMode();
     }
   }
 
-  private void applyPageTheme() {
-    boolean isOriginalInLightMode = themeBackgroundColor == Color.WHITE && themeTextColor == Color.BLACK;
-
-    if (!isOriginalInLightMode) {
-      float tr = Color.red(themeTextColor);
-      float tg = Color.green(themeTextColor);
-      float tb = Color.blue(themeTextColor);
-
-      float br = Color.red(themeBackgroundColor);
-      float bg = Color.green(themeBackgroundColor);
-      float bb = Color.blue(themeBackgroundColor);
-
-      // Calculate scale factor for each channel: (Background - Text) / 255
-      float sr = (br - tr) / 255f;
-      float sg = (bg - tg) / 255f;
-      float sb = (bb - tb) / 255f;
-
+  public void adjustNightMode() {
+    if (isNightMode && !isColorFilterOn) {
       float[] matrix = {
-          sr, 0, 0, 0, tr,
-          0, sg, 0, 0, tg,
-          0, 0, sb, 0, tb,
+          -1, 0, 0, 0, nightModeTextBrightness,
+          0, -1, 0, 0, nightModeTextBrightness,
+          0, 0, -1, 0, nightModeTextBrightness,
           0, 0, 0, 1, 0
       };
-
       setColorFilter(new ColorMatrixColorFilter(matrix));
-    } else {
+      isColorFilterOn = true;
+    } else if (!isNightMode) {
       clearColorFilter();
+      isColorFilterOn = false;
     }
 
     invalidate();
@@ -486,7 +483,12 @@ public class HighlightingImageView extends AppCompatImageView {
     if (overlayParams == null) {
       return;
     }
-    overlayParams.paint.setColor(themeTextColor);
+    int overlayColor = overlayTextColor;
+    if (isNightMode) {
+      overlayColor = Color.rgb(nightModeTextBrightness,
+          nightModeTextBrightness, nightModeTextBrightness);
+    }
+    overlayParams.paint.setColor(overlayColor);
   }
 
   private void overlayText(Canvas canvas, Matrix matrix) {
