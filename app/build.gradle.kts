@@ -262,6 +262,8 @@ dependencies {
   // compose
   implementation(libs.compose.foundation)
   implementation(libs.compose.material3)
+  implementation(libs.molecule)
+  implementation(libs.kotlinx.collections.immutable)
   implementation(libs.compose.ui)
   implementation(libs.compose.ui.tooling.preview)
   implementation(libs.compose.ui.tooling)

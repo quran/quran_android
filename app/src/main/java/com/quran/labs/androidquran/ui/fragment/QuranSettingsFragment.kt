@@ -21,7 +21,7 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.pageselect.PageSelectActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
-import com.quran.labs.androidquran.ui.bottomsheet.PageThemeBottomSheet
+import com.quran.labs.androidquran.ui.bottomsheet.PageThemeSheetWrapper
 import com.quran.labs.androidquran.util.OrientationLockUtils
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.ThemeUtil
@@ -135,8 +135,14 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
       startActivity(intent)
       return true
     } else if (Constants.PREF_PAGE_THEME == key) {
-      val bottomSheet = PageThemeBottomSheet()
-      bottomSheet.show(childFragmentManager, PageThemeBottomSheet.TAG)
+      val content = requireActivity().findViewById<ViewGroup>(android.R.id.content)
+      lateinit var pageThemeSheet: PageThemeSheetWrapper
+      pageThemeSheet = PageThemeSheetWrapper(requireContext()) { content.removeView(pageThemeSheet) }
+      content.addView(
+        pageThemeSheet,
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.MATCH_PARENT
+      )
       return true
     }
 

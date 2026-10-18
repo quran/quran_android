@@ -87,8 +87,16 @@ public class QuranSettings {
     return Constants.PAGE_APPEARANCE_DARK.equals(appearance);
   }
 
+  public boolean hasOldBackgroundOption() {
+    return prefs.contains(Constants.PREF_USE_OLD_BACKGROUND);
+  }
+
   public boolean useOldBackground() {
     return prefs.getBoolean(Constants.PREF_USE_OLD_BACKGROUND, false);
+  }
+
+  public void setUseOldBackground(boolean useOldBackground) {
+    prefs.edit().putBoolean(Constants.PREF_USE_OLD_BACKGROUND, useOldBackground).apply();
   }
 
   public int getNightModeTextBrightness() {
@@ -97,20 +105,32 @@ public class QuranSettings {
             Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS));
   }
 
+  public void setNightModeTextBrightness(int brightness) {
+    prefs.edit().putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS, brightness).apply();
+  }
+
   public int getNightModeBackgroundBrightness() {
     return prefs.getInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS,
         Constants.DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS);
   }
 
+  public void setNightModeBackgroundBrightness(int brightness) {
+    prefs.edit().putInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS, brightness).apply();
+  }
+
   public int getPageTextBrightness() {
     if (Constants.PAGE_THEME_ORIGINAL.equals(getPageTheme())) {
-      // avoid damaging the looks of the Quran page
-      int brightness = (int) (50 * Math.log1p(getNightModeBackgroundBrightness()) +
-          getNightModeTextBrightness());
-      return Math.min(brightness, 255);
+      return getOriginalNightTextBrightness();
     }
     int color = getThemeColor(getPageTheme(), false);
     return (Color.red(color) + Color.green(color) + Color.blue(color)) / 3;
+  }
+
+  public int getOriginalNightTextBrightness() {
+    // avoid damaging the looks of the Quran page
+    int brightness = (int) (50 * Math.log1p(getNightModeBackgroundBrightness()) +
+        getNightModeTextBrightness());
+    return Math.min(brightness, 255);
   }
 
   public boolean highlightBookmarks() {
