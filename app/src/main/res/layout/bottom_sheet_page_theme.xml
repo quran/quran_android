@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
-                android:text="@string/page_theme_title"
+                android:text="@string/prefs_page_theme_title"
                 android:textColor="@color/text_primary"
                 android:textSize="20sp" />
 

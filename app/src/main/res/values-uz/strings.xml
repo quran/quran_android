@@ -128,7 +128,8 @@
   <string name="prefs_landscape_orientation_title">Landshaft rejim</string>
   <string name="prefs_landscape_orientation_summary_on">Yotiq oriyentatsiyadan foydalaniladi</string>
   <string name="prefs_landscape_orientation_summary_off">Tik oriyentatsiyadan foydalaniladi</string>
-  <string name="prefs_night_mode_title">Tungi rejim</string>
+  <string name="prefs_night_mode_text_brightness_title">Matn porloqliligi</string>
+  <string name="prefs_night_mode_background_brightness_title">Fon yorqinligi</string>
   <string name="prefs_overlay_page_info_title">Sahifa maʼlumotlari</string>
   <string name="prefs_overlay_page_info_summary">Sura nomi, sahifa va juz raqamlarini koʻrsatish</string>
   <string name="prefs_display_marker_title">Boʻlim maʼlumotlari</string>
