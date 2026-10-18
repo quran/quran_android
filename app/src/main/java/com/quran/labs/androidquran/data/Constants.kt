@@ -22,7 +22,6 @@ object Constants {
   const val SURAS_COUNT = QuranConstants.NUMBER_OF_SURAS
   const val JUZ2_COUNT = QuranConstants.JUZ2_COUNT
   const val NO_PAGE = -1
-  const val MAX_RECENT_PAGES = 3
 
   // Notification Ids
   const val NOTIFICATION_ID_DOWNLOADING = 1

@@ -81,16 +81,16 @@ class RecentPagesDaoImplTest {
   }
 
   @Test
-  fun `recent pages are newest first and limited to three`() = runTest {
-    dao.addRecentPage(1)
-    dao.addRecentPage(2)
-    dao.addRecentPage(3)
-    dao.addRecentPage(4)
-    dao.addRecentPage(5)
+  fun `recent pages are newest first and limited to ten`() = runTest {
+    for (page in 1..12) {
+      dao.addRecentPage(page)
+    }
 
     val recentPages = dao.recentPages()
 
-    assertThat(recentPages.map { it.page }).containsExactly(5, 4, 3).inOrder()
+    assertThat(recentPages.map { it.page })
+      .containsExactly(12, 11, 10, 9, 8, 7, 6, 5, 4, 3)
+      .inOrder()
   }
 
   @Test
@@ -142,7 +142,20 @@ class RecentPagesDaoImplTest {
 
     val recentPages = dao.recentPages()
 
-    assertThat(recentPages.map { it.page }).containsExactly(10, 20, 30).inOrder()
+    assertThat(recentPages.map { it.page }).containsExactly(10, 20, 30, 40).inOrder()
+  }
+
+  @Test
+  fun `replace recent pages are limited to ten`() = runTest {
+    dao.replaceRecentPages(
+      (1..12).map { page -> RecentPage(page, Instant.fromEpochSeconds(1)) }
+    )
+
+    val recentPages = dao.recentPages()
+
+    assertThat(recentPages.map { it.page })
+      .containsExactly(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+      .inOrder()
   }
 
   @Test
