@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.ui.bottomsheet
+package com.quran.mobile.feature.pagetheme.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -45,15 +45,19 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
-import com.quran.labs.androidquran.data.Constants
+import com.quran.mobile.feature.pagetheme.PageThemeConstants
+import com.quran.mobile.feature.pagetheme.R
+import com.quran.mobile.feature.pagetheme.state.PageThemeCard
+import com.quran.mobile.feature.pagetheme.state.PageThemeCardBackground
+import com.quran.mobile.feature.pagetheme.state.PageThemeSheetEvent
+import com.quran.mobile.feature.pagetheme.state.PageThemeSheetState
 import kotlin.math.roundToInt
 
 private val appearances = listOf(
-  Constants.PAGE_APPEARANCE_LIGHT to R.string.theme_light,
-  Constants.PAGE_APPEARANCE_DARK to R.string.theme_dark,
-  Constants.PAGE_APPEARANCE_AUTOMATIC to R.string.theme_automatic
+  PageThemeConstants.PAGE_APPEARANCE_LIGHT to R.string.theme_light,
+  PageThemeConstants.PAGE_APPEARANCE_DARK to R.string.theme_dark,
+  PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC to R.string.theme_automatic
 )
 
 private val originalGradient = Brush.horizontalGradient(
@@ -210,7 +214,7 @@ private fun BrightnessSliders(state: PageThemeSheetState) {
       onValueChange = {
         state.eventSink(PageThemeSheetEvent.TextBrightnessChanged(it.roundToInt()))
       },
-      valueRange = Constants.MIN_NIGHT_MODE_TEXT_BRIGHTNESS.toFloat()..255f,
+      valueRange = PageThemeConstants.MIN_NIGHT_MODE_TEXT_BRIGHTNESS.toFloat()..255f,
       enabled = visible,
       modifier = Modifier.semantics { contentDescription = textTitle }
     )
@@ -221,7 +225,7 @@ private fun BrightnessSliders(state: PageThemeSheetState) {
       onValueChange = {
         state.eventSink(PageThemeSheetEvent.BackgroundBrightnessChanged(it.roundToInt()))
       },
-      valueRange = 0f..Constants.MAX_NIGHT_MODE_BACKGROUND_BRIGHTNESS.toFloat(),
+      valueRange = 0f..PageThemeConstants.MAX_NIGHT_MODE_BACKGROUND_BRIGHTNESS.toFloat(),
       enabled = visible,
       modifier = Modifier.semantics { contentDescription = backgroundTitle }
     )

@@ -109,8 +109,6 @@
   <string name="prefs_landscape_orientation_title">Orientimi i peizazhit</string>
   <string name="prefs_landscape_orientation_summary_on">Përdor gjithmonë mënyrën e peizazhit</string>
   <string name="prefs_landscape_orientation_summary_off">Përdor gjithmonë modalitetin e portretit</string>
-  <string name="prefs_night_mode_text_brightness_title">Shkëlqimi i tekstit</string>
-  <string name="prefs_night_mode_background_brightness_title">Shkëlqimi i sfondit</string>
   <string name="prefs_overlay_page_info_title">Shfaq informacionet e faqes</string>
   <string name="prefs_overlay_page_info_summary">Numri i faqes mbishfaqëse, emri i sures dhe numri juz\' gjatë leximit</string>
   <string name="prefs_display_marker_title">Shfaq popups shënues</string>

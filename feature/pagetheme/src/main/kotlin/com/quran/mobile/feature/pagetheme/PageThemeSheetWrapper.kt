@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.ui.bottomsheet
+package com.quran.mobile.feature.pagetheme
 
 import android.content.Context
 import android.widget.FrameLayout
@@ -13,15 +13,17 @@ import androidx.compose.ui.platform.ComposeView
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.mobile.feature.pagetheme.presenter.PageThemeSheetPresenter
+import com.quran.mobile.feature.pagetheme.ui.PageThemeSheet
 import kotlinx.coroutines.launch
 
 class PageThemeSheetWrapper(
   context: Context,
+  settings: PageThemeSettings,
   private val onDismissed: () -> Unit
 ) : FrameLayout(context) {
 
-  private val presenter = PageThemeSheetPresenter(context, QuranSettings.getInstance(context))
+  private val presenter = PageThemeSheetPresenter(context, settings)
 
   init {
     val composeView = ComposeView(context).apply {

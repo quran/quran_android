@@ -259,7 +259,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     if (!quranSettings.isOriginalDayPage()) {
       setBackgroundColor(quranSettings.getPageThemeBackgroundColor());
     } else if (quranSettings.useOldBackground()) {
-      setBackgroundColor(ContextCompat.getColor(context, R.color.page_background));
+      setBackgroundColor(ContextCompat.getColor(context, com.quran.mobile.feature.pagetheme.R.color.page_background));
     } else {
       setBackgroundDrawable((pageNumber % 2 == 0 ? leftGradient : rightGradient));
     }

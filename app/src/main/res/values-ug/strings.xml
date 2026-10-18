@@ -80,8 +80,6 @@
   <string name="prefs_landscape_orientation_title">توغرىسىغا يۆنىلىش</string>
   <string name="prefs_landscape_orientation_summary_on">ھەمىشە توغرىسىغا يۆنىلىش ھالىتىنى ئىشلىتىدۇ</string>
   <string name="prefs_landscape_orientation_summary_off">ھەمىشە بويىغا يۆنىلىش ھالىتىنى ئىشلىتىدۇ</string>
-  <string name="prefs_night_mode_text_brightness_title">تېكىست يورۇقلۇقى</string>
-  <string name="prefs_night_mode_background_brightness_title">تەگلىك يورۇقلۇقى</string>
   <string name="prefs_overlay_page_info_title">بەت ئۇچۇرىنى كۆرسەت</string>
   <string name="prefs_overlay_page_info_summary">قىرائەت قىلىۋاتقاندا بەت سانى، سۈرە ئىسمى ۋە پارە سانىنى كۆرسىتىدۇ</string>
   <string name="prefs_display_marker_title">بەلگە قاڭقىش كۆزنىكىنى كۆرسەت</string>
@@ -259,7 +257,6 @@
   <!-- audio updates -->
   <string name="audio_updated_title">قۇرئان ئاۋاز ھۆججىتى يېڭىلاش</string>
   <string name="audio_updated_text">بىر قانچە قۇرئان ئاۋاز ھۆججىتى يېڭىلاندى. قۇرئان بۇ ھۆججەتلەرنىڭ كۆپەيتىلگەن نۇسخىسىنى چىقىرىۋەتتى، بۇنداق بولغاندا ئەڭ يېڭى نەشرىنى كېلەر قېتىم قايتا قويسىڭىز چۈشۈرگىلى بولىدۇ.</string>
-
 
   <!-- dual screen prefs -->
   <string name="about_quran_enc" translatable="false">قۇرئان كەرىم ئىنىسكىلوپىدىيىسى</string>

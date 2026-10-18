@@ -15,8 +15,6 @@
   <string name="about_images">Immagini</string>
   <string name="about_others">Altri</string>
   <string name="prefs_use_arabic_title">Modo arabo (الوضع العربي)</string>
-  <string name="prefs_night_mode_text_brightness_title">Luminosità del testo</string>
-  <string name="prefs_night_mode_background_brightness_title">Luminosità dello sfondo</string>
   <string name="prefs_translations">Traduzioni</string>
   <string name="dialog_ok">OK</string>
   <string name="prefs_import_title">Importazione</string>

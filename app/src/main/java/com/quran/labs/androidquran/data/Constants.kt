@@ -10,8 +10,6 @@ object Constants {
   // Numerics
   const val DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS = 255
   const val DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS = 0
-  const val MIN_NIGHT_MODE_TEXT_BRIGHTNESS = 120
-  const val MAX_NIGHT_MODE_BACKGROUND_BRIGHTNESS = 64
   const val DEFAULT_TEXT_SIZE = 15
 
   // 1 hour in ms
@@ -102,16 +100,4 @@ object Constants {
   const val THEME_LIGHT = "light"
   const val THEME_DARK = "dark"
   const val THEME_DEFAULT = "default"
-
-  // Page Themes
-  const val PAGE_THEME_PAPER = "paper"
-  const val PAGE_THEME_ORIGINAL = "original"
-  const val PAGE_THEME_CALM = "calm"
-  const val PAGE_THEME_FOCUS = "focus"
-  const val PAGE_THEME_QUIET = "quiet"
-
-  // Page Appearances
-  const val PAGE_APPEARANCE_LIGHT = "light"
-  const val PAGE_APPEARANCE_DARK = "dark"
-  const val PAGE_APPEARANCE_AUTOMATIC = "automatic"
 }
