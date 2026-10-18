@@ -9,8 +9,8 @@ class FakeSettings : Settings {
   val preferencesSharedFlow = MutableSharedFlow<String>()
 
   fun setNightMode(value: Boolean) { data["isNightMode"] = value }
-  fun setTextColor(value: Int) { data["pageThemeTextColor"] = value }
-  fun setBackgroundColor(value: Int) { data["backgroundColor"] = value }
+  fun setTextBrightness(value: Int) { data["pageTextBrightness"] = value }
+  fun setBackgroundColor(value: Int) { data["pageBackgroundColor"] = value }
   fun setHeaderFooter(value: Boolean) { data["shouldShowHeaderFooter"] = value }
   fun setSidelinesEnabled(value: Boolean) { data["showSidelines"] = value }
   fun setLineDividersEnabled(value: Boolean) { data["showLineDividers"] = value }
@@ -23,8 +23,8 @@ class FakeSettings : Settings {
   override suspend fun setShouldOverlayPageInfo(shouldOverlay: Boolean) {}
   override suspend fun lastPage(): Int = 1
   override suspend fun isNightMode(): Boolean = data["isNightMode"] as? Boolean ?: false
-  override suspend fun pageThemeTextColor(): Int = data["pageThemeTextColor"] as? Int ?: -0x1000000
-  override suspend fun pageThemeBackgroundColor(): Int = data["backgroundColor"] as? Int ?: -1
+  override suspend fun pageTextBrightness(): Int = data["pageTextBrightness"] as? Int ?: 255
+  override suspend fun pageBackgroundColor(): Int? = data["pageBackgroundColor"] as? Int
   override suspend fun shouldShowHeaderFooter(): Boolean = data["shouldShowHeaderFooter"] as? Boolean ?: false
   override suspend fun shouldShowBookmarks(): Boolean = false
   override suspend fun setPageType(pageType: String) {}
