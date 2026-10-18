@@ -23,7 +23,6 @@ import com.quran.labs.androidquran.pageselect.PageSelectActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import com.quran.labs.androidquran.ui.bottomsheet.PageThemeBottomSheet
 import com.quran.labs.androidquran.util.OrientationLockUtils
-import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.mobile.di.ExtraPreferencesProvider
@@ -73,8 +72,7 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
     // handle theme preference
     val themePref: Preference? = findPreference(Constants.PREF_APP_THEME)
     themePref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
-      val quranSettings = QuranSettings.getInstance(requireContext())
-      ThemeUtil.setTheme(newValue as String, quranSettings.pageTheme)
+      ThemeUtil.setTheme(newValue as String)
       true
     }
 

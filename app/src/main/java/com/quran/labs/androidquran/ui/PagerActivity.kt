@@ -118,7 +118,6 @@ import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
-import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.labs.androidquran.util.ShareUtil
 import com.quran.labs.androidquran.view.IconPageIndicator
 import com.quran.labs.androidquran.view.QuranSpinner
@@ -206,7 +205,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private lateinit var audioStatusBar: AudioBarWrapper
   private lateinit var viewPager: ViewPager
   private val themePreferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-    if (key == Constants.PREF_PAGE_THEME || key == Constants.PREF_APP_THEME) {
+    if (key == Constants.PREF_PAGE_THEME || key == Constants.PREF_PAGE_APPEARANCE ||
+      key == Constants.PREF_APP_THEME) {
       refreshQuranPages()
       supportInvalidateOptionsMenu()
     }
@@ -1209,19 +1209,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
       return true
     } else if (itemId == R.id.night_mode) {
-      val isNightMode = quranSettings.isNightMode
-      val newAppTheme: String
-      if (isNightMode) {
-        newAppTheme = Constants.THEME_LIGHT
-        if (quranSettings.pageTheme == Constants.PAGE_THEME_QUIET) {
-          quranSettings.pageTheme = Constants.PAGE_THEME_ORIGINAL
-        }
+      quranSettings.pageAppearance = if (quranSettings.isNightMode) {
+        Constants.PAGE_APPEARANCE_LIGHT
       } else {
-        newAppTheme = Constants.THEME_DARK
+        Constants.PAGE_APPEARANCE_DARK
       }
-
-      quranSettings.setAppTheme(newAppTheme)
-      ThemeUtil.setTheme(newAppTheme, quranSettings.pageTheme)
       return true
     } else if (itemId == R.id.page_theme) {
       if (supportFragmentManager.findFragmentByTag(PageThemeBottomSheet.TAG) == null) {
