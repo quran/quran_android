@@ -208,7 +208,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     if (key == Constants.PREF_PAGE_THEME || key == Constants.PREF_PAGE_APPEARANCE ||
       key == Constants.PREF_APP_THEME) {
       refreshQuranPages()
-      supportInvalidateOptionsMenu()
     }
   }
   private lateinit var pagerAdapter: QuranPageAdapter
@@ -1184,13 +1183,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         translation.isVisible = false
       }
     }
-
-    val nightMode = menu.findItem(R.id.night_mode)
-    if (nightMode != null) {
-      val isNightMode = quranSettings.isPageAppearanceDark
-      nightMode.isChecked = isNightMode
-      nightMode.setIcon(if (isNightMode) R.drawable.ic_night_mode else R.drawable.ic_day_mode)
-    }
     return true
   }
 
@@ -1206,13 +1198,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       if (translations != null) {
         quranEventLogger.switchToTranslationMode(translations!!.size)
         switchToTranslation()
-      }
-      return true
-    } else if (itemId == R.id.night_mode) {
-      quranSettings.pageAppearance = if (quranSettings.isPageAppearanceDark) {
-        Constants.PAGE_APPEARANCE_LIGHT
-      } else {
-        Constants.PAGE_APPEARANCE_DARK
       }
       return true
     } else if (itemId == R.id.page_theme) {
