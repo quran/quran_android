@@ -229,7 +229,7 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
     }
 
     fun bind(theme: PageTheme) {
-      val palette = ThemeUtil.paletteContext(itemView.context, settings.isNightMode)
+      val palette = ThemeUtil.paletteContext(itemView.context, settings.isPageAppearanceDark)
       val textColor = palette.getColor(theme.textColorRes)
       card.setCardBackgroundColor(palette.getColor(theme.backgroundColorRes))
       preview.setTextColor(textColor)
