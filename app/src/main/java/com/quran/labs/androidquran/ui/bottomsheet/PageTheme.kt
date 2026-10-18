@@ -22,6 +22,6 @@ enum class PageTheme(
 
   companion object {
     @JvmStatic
-    fun fromKey(key: String): PageTheme = entries.firstOrNull { it.storageKey == key } ?: Paper
+    fun fromKey(key: String): PageTheme = entries.firstOrNull { it.storageKey == key } ?: Original
   }
 }

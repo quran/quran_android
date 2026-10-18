@@ -46,7 +46,6 @@ public class QuranSettings {
     this.appContext = appContext;
     prefs = PreferenceManager.getDefaultSharedPreferences(appContext);
     perInstallationPrefs = appContext.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
-    PageThemePreferences.migrate(prefs);
   }
 
   public void registerPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
@@ -74,6 +73,10 @@ public class QuranSettings {
   }
 
   public boolean isNightMode() {
+    return isPageAppearanceDark() || Constants.PAGE_THEME_QUIET.equals(getPageTheme());
+  }
+
+  public boolean isPageAppearanceDark() {
     String appearance = getPageAppearance();
     if (Constants.PAGE_APPEARANCE_AUTOMATIC.equals(appearance)) {
       boolean systemNight = (Resources.getSystem().getConfiguration().uiMode
@@ -263,7 +266,7 @@ public class QuranSettings {
 
   public String getPageTheme() {
     return PageTheme.fromKey(prefs.getString(Constants.PREF_PAGE_THEME,
-        Constants.PAGE_THEME_PAPER)).getStorageKey();
+        Constants.PAGE_THEME_ORIGINAL)).getStorageKey();
   }
 
   public void setPageTheme(String pageTheme) {
@@ -281,7 +284,7 @@ public class QuranSettings {
   private int getThemeColor(String theme, boolean isBackground) {
     PageTheme pageTheme = PageTheme.fromKey(theme);
     int colorResId = isBackground ? pageTheme.getBackgroundColorRes() : pageTheme.getTextColorRes();
-    return ThemeUtil.paletteContext(appContext, isNightMode()).getColor(colorResId);
+    return ThemeUtil.paletteContext(appContext, isPageAppearanceDark()).getColor(colorResId);
   }
 
   // probably should eventually move this to Application.onCreate..
@@ -292,6 +295,8 @@ public class QuranSettings {
         // try fetching from prefs instead of from per installation prefs
         version = prefs.getInt(Constants.PREF_VERSION, 0);
       }
+
+      PageThemePreferences.migrate(prefs, version != 0);
 
       // allow specific flavors of the app to handle their own upgrade logic.
       // this is important because different flavors have different version codes, so

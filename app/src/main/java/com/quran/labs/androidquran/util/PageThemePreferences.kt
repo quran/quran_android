@@ -1,20 +1,33 @@
 package com.quran.labs.androidquran.util
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.quran.labs.androidquran.data.Constants
 
 object PageThemePreferences {
-  // Preserve saved appearance and old values: custom brightness has no exact preset equivalent.
-  @JvmStatic
-  fun migrate(preferences: SharedPreferences) {
-    if (preferences.contains(Constants.PREF_PAGE_THEME)) return
-    if (!preferences.contains("nightMode") && !preferences.contains("useNewBackground")) return
 
-    val theme = when {
-      preferences.getBoolean("nightMode", false) -> Constants.PAGE_THEME_QUIET
-      preferences.getBoolean("useNewBackground", true) -> Constants.PAGE_THEME_PAPER
-      else -> Constants.PAGE_THEME_ORIGINAL
+  @JvmStatic
+  fun migrate(preferences: SharedPreferences, hasPreviousVersion: Boolean) {
+    if (preferences.contains(Constants.PREF_PAGE_APPEARANCE)) return
+
+    val isUpgrade = hasPreviousVersion ||
+        preferences.contains(Constants.PREF_LAST_PAGE) ||
+        preferences.contains(Constants.PREF_NIGHT_MODE) ||
+        preferences.contains(Constants.PREF_USE_NEW_BACKGROUND)
+
+    preferences.edit {
+      if (isUpgrade) {
+        val nightMode = preferences.getBoolean(Constants.PREF_NIGHT_MODE, false)
+        putString(
+          Constants.PREF_PAGE_APPEARANCE,
+          if (nightMode) Constants.PAGE_APPEARANCE_DARK else Constants.PAGE_APPEARANCE_LIGHT
+        )
+        if (!preferences.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true)) {
+          putBoolean(Constants.PREF_USE_OLD_BACKGROUND, true)
+        }
+      } else {
+        putString(Constants.PREF_PAGE_APPEARANCE, Constants.PAGE_APPEARANCE_AUTOMATIC)
+      }
     }
-    preferences.edit().putString(Constants.PREF_PAGE_THEME, theme).apply()
   }
 }
