@@ -45,6 +45,7 @@ object Constants {
   const val PREF_TRANSLATION_TEXT_SIZE = "translationTextSize"
   const val PREF_ACTIVE_TRANSLATION = "activeTranslation"
   const val PREF_ACTIVE_TRANSLATIONS = "activeTranslations"
+  const val PREF_NIGHT_MODE = "nightMode"
   const val PREF_SHOULD_FETCH_PAGES = "shouldFetchPages"
   const val PREF_OVERLAY_PAGE_INFO = "overlayPageInfo"
   const val PREF_DISPLAY_MARKER_POPUP = "displayMarkerPopup"
@@ -83,10 +84,11 @@ object Constants {
   const val PREF_SHOW_SIDELINES = "showSidelines"
   const val PREF_SHOW_LINE_DIVIDERS = "showLineDividers"
   const val PREF_APP_THEME = "appTheme"
+  const val PREF_PAGE_THEME = "pageTheme"
+  const val PREF_PAGE_APPEARANCE = "pageAppearance"
   const val PREF_MOBILE_SYNC_LEGACY_BOOKMARKS_MIGRATED = "mobileSyncLegacyBookmarksMigrated"
   const val PREF_HAS_SEEN_MOVABLE_BOOKMARK_EDUCATION = "hasSeenMovableBookmarkEducation"
   const val PREF_LAST_SEEN_ANNOUNCEMENT = "lastSeenAnnouncement"
-  const val PREF_PAGE_THEME = "pageTheme"
 
   // Themes
   const val THEME_LIGHT = "light"
@@ -99,4 +101,9 @@ object Constants {
   const val PAGE_THEME_CALM = "calm"
   const val PAGE_THEME_FOCUS = "focus"
   const val PAGE_THEME_QUIET = "quiet"
+
+  // Page Appearances
+  const val PAGE_APPEARANCE_LIGHT = "light"
+  const val PAGE_APPEARANCE_DARK = "dark"
+  const val PAGE_APPEARANCE_AUTOMATIC = "automatic"
 }

@@ -449,6 +449,6 @@
   <!-- App theme options -->
   <string name="theme_light">Light</string>
   <string name="theme_dark">Dark</string>
-  <string name="theme_system">System default</string>
+  <string name="theme_automatic">Automatic</string>
   <string name="page_theme_close">Close</string>
 </resources>
