@@ -1,9 +1,9 @@
 package com.quran.labs.androidquran.util;
 
 import android.content.Context;
-import android.content.ComponentCallbacks;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
@@ -18,8 +18,6 @@ import com.quran.labs.androidquran.ui.bottomsheet.PageTheme;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 
@@ -31,8 +29,6 @@ public class QuranSettings {
   private final Context appContext;
   private final SharedPreferences prefs;
   private final SharedPreferences perInstallationPrefs;
-  private final Map<SharedPreferences.OnSharedPreferenceChangeListener, ComponentCallbacks>
-      configurationListeners = new HashMap<>();
 
   public static synchronized QuranSettings getInstance(@NonNull Context context) {
     if (instance == null) {
@@ -53,25 +49,12 @@ public class QuranSettings {
     PageThemePreferences.migrate(prefs);
   }
 
-  public synchronized void registerPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+  public void registerPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
     prefs.registerOnSharedPreferenceChangeListener(listener);
-    if (!configurationListeners.containsKey(listener)) {
-      ComponentCallbacks callback = new ComponentCallbacks() {
-        @Override public void onConfigurationChanged(@NonNull Configuration configuration) {
-          // System appearance can change even while Quiet keeps the activity dark.
-          listener.onSharedPreferenceChanged(prefs, Constants.PREF_APP_THEME);
-        }
-        @Override public void onLowMemory() { }
-      };
-      configurationListeners.put(listener, callback);
-      appContext.registerComponentCallbacks(callback);
-    }
   }
 
-  public synchronized void unregisterPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+  public void unregisterPreferencesListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
     prefs.unregisterOnSharedPreferenceChangeListener(listener);
-    ComponentCallbacks callback = configurationListeners.remove(listener);
-    if (callback != null) appContext.unregisterComponentCallbacks(callback);
   }
 
   public boolean isLockOrientation() {
@@ -91,15 +74,13 @@ public class QuranSettings {
   }
 
   public boolean isNightMode() {
-    String pageTheme = getPageTheme();
-    if (Constants.PAGE_THEME_QUIET.equals(pageTheme)) {
-      return true;
+    String appearance = getPageAppearance();
+    if (Constants.PAGE_APPEARANCE_AUTOMATIC.equals(appearance)) {
+      boolean systemNight = (Resources.getSystem().getConfiguration().uiMode
+          & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+      return ThemeUtil.isDarkAppearance(currentTheme(), systemNight);
     }
-
-    String appTheme = currentTheme();
-    return ThemeUtil.isDarkAppearance(appTheme,
-        (android.content.res.Resources.getSystem().getConfiguration().uiMode
-            & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES);
+    return Constants.PAGE_APPEARANCE_DARK.equals(appearance);
   }
 
   public boolean highlightBookmarks() {
@@ -267,8 +248,17 @@ public class QuranSettings {
     return theme;
   }
 
-  public void setAppTheme(String appTheme) {
-    prefs.edit().putString(Constants.PREF_APP_THEME, appTheme).apply();
+  public String getPageAppearance() {
+    String appearance = prefs.getString(Constants.PREF_PAGE_APPEARANCE, null);
+    if (appearance == null) {
+      return prefs.getBoolean(Constants.PREF_NIGHT_MODE, false) ?
+          Constants.PAGE_APPEARANCE_DARK : Constants.PAGE_APPEARANCE_LIGHT;
+    }
+    return appearance;
+  }
+
+  public void setPageAppearance(String appearance) {
+    prefs.edit().putString(Constants.PREF_PAGE_APPEARANCE, appearance).apply();
   }
 
   public String getPageTheme() {
@@ -291,7 +281,7 @@ public class QuranSettings {
   private int getThemeColor(String theme, boolean isBackground) {
     PageTheme pageTheme = PageTheme.fromKey(theme);
     int colorResId = isBackground ? pageTheme.getBackgroundColorRes() : pageTheme.getTextColorRes();
-    return ThemeUtil.paletteContext(appContext, currentTheme()).getColor(colorResId);
+    return ThemeUtil.paletteContext(appContext, isNightMode()).getColor(colorResId);
   }
 
   // probably should eventually move this to Application.onCreate..

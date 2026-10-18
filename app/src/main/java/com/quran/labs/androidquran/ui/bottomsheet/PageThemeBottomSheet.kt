@@ -40,7 +40,8 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
   private var sectionHeader: LinearLayout? = null
   private val settings get() = QuranSettings.getInstance(requireContext())
   private val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-    if (key == Constants.PREF_PAGE_THEME || key == Constants.PREF_APP_THEME) {
+    if (key == Constants.PREF_PAGE_THEME || key == Constants.PREF_PAGE_APPEARANCE ||
+      key == Constants.PREF_APP_THEME) {
       recyclerView?.adapter?.notifyDataSetChanged()
       updateGridColumns()
       updateAppearanceSelection()
@@ -105,14 +106,13 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
         val popup = PopupMenu(anchor.context, anchor, Gravity.END)
         appearances.forEachIndexed { index, appearance ->
           popup.menu.add(1, index + 1, index, appearanceLabels[index]).isChecked =
-            appearance == settings.currentTheme()
+            appearance == settings.pageAppearance
         }
         popup.menu.setGroupCheckable(1, true, true)
         popup.setOnMenuItemClickListener { item ->
           val appearance = appearances[item.itemId - 1]
-          if (appearance != settings.currentTheme()) {
-            settings.setAppTheme(appearance)
-            ThemeUtil.setTheme(appearance, settings.pageTheme)
+          if (appearance != settings.pageAppearance) {
+            settings.pageAppearance = appearance
           }
           true
         }
@@ -171,7 +171,7 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
   }
 
   private fun updateAppearanceSelection() {
-    val index = appearances.indexOf(settings.currentTheme()).takeIf { it >= 0 } ?: 2
+    val index = appearances.indexOf(settings.pageAppearance).takeIf { it >= 0 } ?: 0
     appearanceMenu?.apply {
       text = getString(appearanceLabels[index])
       contentDescription = "${getString(R.string.appearance)}: $text"
@@ -229,7 +229,7 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
     }
 
     fun bind(theme: PageTheme) {
-      val palette = ThemeUtil.paletteContext(itemView.context, settings.currentTheme())
+      val palette = ThemeUtil.paletteContext(itemView.context, settings.isNightMode)
       val textColor = palette.getColor(theme.textColorRes)
       card.setCardBackgroundColor(palette.getColor(theme.backgroundColorRes))
       preview.setTextColor(textColor)
@@ -242,9 +242,6 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
       card.setOnClickListener {
         if (theme.storageKey != settings.pageTheme) {
           settings.pageTheme = theme.storageKey
-          // AppCompat restores this DialogFragment when a change in app appearance recreates
-          // the host. Palette-only changes update the reader through its preference listener.
-          ThemeUtil.setTheme(settings.currentTheme(), theme.storageKey)
         }
       }
     }
@@ -252,7 +249,11 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
 
   companion object {
     const val TAG = "PageThemeBottomSheet"
-    private val appearances = listOf(Constants.THEME_LIGHT, Constants.THEME_DARK, Constants.THEME_DEFAULT)
-    private val appearanceLabels = listOf(R.string.theme_light, R.string.theme_dark, R.string.theme_system)
+    private val appearances = listOf(
+      Constants.PAGE_APPEARANCE_LIGHT,
+      Constants.PAGE_APPEARANCE_DARK,
+      Constants.PAGE_APPEARANCE_AUTOMATIC
+    )
+    private val appearanceLabels = listOf(R.string.theme_light, R.string.theme_dark, R.string.theme_automatic)
   }
 }
