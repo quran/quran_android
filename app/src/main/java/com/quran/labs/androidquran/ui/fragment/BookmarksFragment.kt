@@ -11,8 +11,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -105,22 +103,6 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     }
     this.emptyStateView = emptyStateView
 
-    ViewCompat.setOnApplyWindowInsetsListener(
-      recyclerView
-    ) { v: View, insets: WindowInsetsCompat ->
-      val innerPadding = insets.getInsets(
-        WindowInsetsCompat.Type.systemBars() or
-            WindowInsetsCompat.Type.displayCutout()
-      )
-      // top, left, right are handled by QuranActivity
-      v.setPadding(
-        0,
-        0,
-        0,
-        innerPadding.bottom
-      )
-      insets
-    }
     viewLifecycleOwner.lifecycleScope.launch {
       viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
         syncManager.canTriggerSyncFlow.collect { canTriggerSync ->
@@ -128,6 +110,8 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
         }
       }
     }
+    // top, left, right insets are handled by QuranActivity; the bottom inset is owned by the
+    // bottom navigation bar, so the list itself needs no inset padding.
     return view
   }
 

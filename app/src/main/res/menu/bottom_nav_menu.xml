@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+      android:id="@+id/nav_surahs"
+      android:icon="@drawable/ic_nav_surahs"
+      android:title="@string/quran_sura" />
+  <item
+      android:id="@+id/nav_juz"
+      android:icon="@drawable/ic_nav_juz"
+      android:title="@string/quran_juz2" />
+  <item
+      android:id="@+id/nav_bookmarks"
+      android:icon="@drawable/ic_nav_bookmarks"
+      android:title="@string/menu_bookmarks" />
+</menu>
