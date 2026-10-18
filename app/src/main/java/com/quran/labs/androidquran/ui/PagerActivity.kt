@@ -1187,7 +1187,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     val nightMode = menu.findItem(R.id.night_mode)
     if (nightMode != null) {
-      val isNightMode = quranSettings.isNightMode
+      val isNightMode = quranSettings.isPageAppearanceDark
       nightMode.isChecked = isNightMode
       nightMode.setIcon(if (isNightMode) R.drawable.ic_night_mode else R.drawable.ic_day_mode)
     }
@@ -1209,7 +1209,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
       return true
     } else if (itemId == R.id.night_mode) {
-      quranSettings.pageAppearance = if (quranSettings.isNightMode) {
+      quranSettings.pageAppearance = if (quranSettings.isPageAppearanceDark) {
         Constants.PAGE_APPEARANCE_LIGHT
       } else {
         Constants.PAGE_APPEARANCE_DARK
