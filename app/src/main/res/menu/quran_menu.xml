@@ -20,7 +20,7 @@
           app:showAsAction="ifRoom|collapseActionView" />
     <item android:id="@+id/page_theme"
           android:icon="@drawable/ic_page_theme"
-          android:title="@string/page_theme_title"
+          android:title="@string/prefs_page_theme_title"
           app:showAsAction="ifRoom" />
     <item android:id="@+id/jump"
           android:title="@string/menu_jump"

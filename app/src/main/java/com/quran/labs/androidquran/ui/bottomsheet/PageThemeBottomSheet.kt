@@ -80,7 +80,7 @@ class PageThemeBottomSheet : BottomSheetDialogFragment() {
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    ViewCompat.setAccessibilityPaneTitle(view, getString(R.string.page_theme_title))
+    ViewCompat.setAccessibilityPaneTitle(view, getString(R.string.prefs_page_theme_title))
     listOf(R.id.theme_sheet_title, R.id.page_theme_label).forEach { id ->
       ViewCompat.setAccessibilityHeading(view.findViewById<View>(id), true)
     }
