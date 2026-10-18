@@ -8,8 +8,8 @@ import app.cash.molecule.moleculeFlow
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.quran.mobile.feature.pagetheme.PageTheme
+import com.quran.mobile.feature.pagetheme.FakePageThemeSettings
 import com.quran.mobile.feature.pagetheme.PageThemeConstants
-import com.quran.mobile.feature.pagetheme.PageThemeSettings
 import com.quran.mobile.feature.pagetheme.R
 import com.quran.mobile.feature.pagetheme.state.PageThemeCard
 import com.quran.mobile.feature.pagetheme.state.PageThemeCardBackground
@@ -20,8 +20,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import kotlin.math.ln1p
-import kotlin.math.min
 
 @Config(sdk = [33])
 @RunWith(RobolectricTestRunner::class)
@@ -109,23 +107,4 @@ class PageThemeSheetPresenterTest {
   }
 
   private fun List<PageThemeCard>.original() = first { it.theme == PageTheme.Original }
-
-  private class FakePageThemeSettings : PageThemeSettings {
-    override var pageTheme: String = PageThemeConstants.PAGE_THEME_ORIGINAL
-    override var pageAppearance: String = PageThemeConstants.PAGE_APPEARANCE_LIGHT
-    override val isPageAppearanceDark: Boolean
-      get() = pageAppearance == PageThemeConstants.PAGE_APPEARANCE_DARK
-    override var nightModeTextBrightness: Int = 255
-    override var nightModeBackgroundBrightness: Int = 0
-    override val originalNightTextBrightness: Int
-      get() = min(255, (50 * ln1p(nightModeBackgroundBrightness.toDouble()) + nightModeTextBrightness).toInt())
-
-    var oldBackground: Boolean? = null
-
-    override fun hasOldBackgroundOption(): Boolean = oldBackground != null
-    override fun useOldBackground(): Boolean = oldBackground == true
-    override fun setUseOldBackground(useOldBackground: Boolean) {
-      oldBackground = useOldBackground
-    }
-  }
 }

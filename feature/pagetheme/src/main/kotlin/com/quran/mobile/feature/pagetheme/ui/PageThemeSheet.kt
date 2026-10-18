@@ -48,17 +48,12 @@ import androidx.compose.ui.unit.sp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.mobile.feature.pagetheme.PageThemeConstants
 import com.quran.mobile.feature.pagetheme.R
+import com.quran.mobile.feature.pagetheme.pageAppearanceLabels
 import com.quran.mobile.feature.pagetheme.state.PageThemeCard
 import com.quran.mobile.feature.pagetheme.state.PageThemeCardBackground
 import com.quran.mobile.feature.pagetheme.state.PageThemeSheetEvent
 import com.quran.mobile.feature.pagetheme.state.PageThemeSheetState
 import kotlin.math.roundToInt
-
-private val appearances = listOf(
-  PageThemeConstants.PAGE_APPEARANCE_LIGHT to R.string.theme_light,
-  PageThemeConstants.PAGE_APPEARANCE_DARK to R.string.theme_dark,
-  PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC to R.string.theme_automatic
-)
 
 private val originalGradient = Brush.horizontalGradient(
   0f to Color(0xFFDCDAD5),
@@ -89,11 +84,11 @@ fun PageThemeSheet(state: PageThemeSheetState, onClose: () -> Unit) {
 
     Spacer(Modifier.size(8.dp))
     SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-      appearances.forEachIndexed { index, (appearance, label) ->
+      pageAppearanceLabels.forEachIndexed { index, (appearance, label) ->
         SegmentedButton(
           selected = state.pageAppearance == appearance,
           onClick = { state.eventSink(PageThemeSheetEvent.SelectAppearance(appearance)) },
-          shape = SegmentedButtonDefaults.itemShape(index, appearances.size)
+          shape = SegmentedButtonDefaults.itemShape(index, pageAppearanceLabels.size)
         ) {
           Text(stringResource(label))
         }

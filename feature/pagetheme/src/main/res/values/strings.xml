@@ -14,4 +14,5 @@
   <string name="theme_dark">Dark</string>
   <string name="theme_automatic">Automatic</string>
   <string name="page_theme_close">Close</string>
+  <string name="page_theme_summary" translatable="false">%1$s · %2$s</string>
 </resources>
