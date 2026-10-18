@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.ui.bottomsheet
+package com.quran.mobile.feature.pagetheme.presenter
 
 import android.content.Context
 import android.graphics.Color
@@ -8,17 +8,20 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.core.content.ContextCompat
-import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.data.Constants
-import com.quran.labs.androidquran.util.QuranSettings
-import com.quran.labs.androidquran.util.ThemeUtil
+import com.quran.mobile.feature.pagetheme.PageTheme
+import com.quran.mobile.feature.pagetheme.PageThemeConstants
+import com.quran.mobile.feature.pagetheme.PageThemeSettings
+import com.quran.mobile.feature.pagetheme.R
+import com.quran.mobile.feature.pagetheme.state.PageThemeCard
+import com.quran.mobile.feature.pagetheme.state.PageThemeCardBackground
+import com.quran.mobile.feature.pagetheme.state.PageThemeSheetEvent
+import com.quran.mobile.feature.pagetheme.state.PageThemeSheetState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
 class PageThemeSheetPresenter(
   private val context: Context,
-  private val settings: QuranSettings
+  private val settings: PageThemeSettings
 ) {
 
   @Composable
@@ -28,7 +31,7 @@ class PageThemeSheetPresenter(
     var textBrightness by remember { mutableIntStateOf(settings.nightModeTextBrightness) }
     var backgroundBrightness by remember {
       mutableIntStateOf(
-        settings.nightModeBackgroundBrightness.coerceIn(0, Constants.MAX_NIGHT_MODE_BACKGROUND_BRIGHTNESS)
+        settings.nightModeBackgroundBrightness.coerceIn(0, PageThemeConstants.MAX_NIGHT_MODE_BACKGROUND_BRIGHTNESS)
       )
     }
     var useOldBackground by remember { mutableStateOf(settings.useOldBackground()) }
@@ -38,7 +41,7 @@ class PageThemeSheetPresenter(
     val cards = remember(pageTheme, isAppearanceDark, textBrightness, backgroundBrightness, useOldBackground) {
       themeCards(pageTheme, isAppearanceDark, useOldBackground)
     }
-    val isOriginal = pageTheme == Constants.PAGE_THEME_ORIGINAL
+    val isOriginal = pageTheme == PageThemeConstants.PAGE_THEME_ORIGINAL
 
     val eventSink: (PageThemeSheetEvent) -> Unit = { event ->
       when (event) {
@@ -86,7 +89,6 @@ class PageThemeSheetPresenter(
     isAppearanceDark: Boolean,
     useOldBackground: Boolean
   ): ImmutableList<PageThemeCard> {
-    val palette = ThemeUtil.paletteContext(context, isAppearanceDark)
     return PageTheme.entries.map { theme ->
       val isSelected = theme.storageKey == selectedTheme
       if (theme == PageTheme.Original) {
@@ -95,8 +97,8 @@ class PageThemeSheetPresenter(
         PageThemeCard(
           theme = theme,
           isSelected = isSelected,
-          background = PageThemeCardBackground.Solid(palette.getColor(theme.backgroundColorRes)),
-          textColor = palette.getColor(theme.textColorRes)
+          background = PageThemeCardBackground.Solid(theme.backgroundColor(context, isAppearanceDark)),
+          textColor = theme.textColor(context, isAppearanceDark)
         )
       }
     }.toImmutableList()
@@ -118,7 +120,7 @@ class PageThemeSheetPresenter(
       )
     } else {
       val background = if (useOldBackground) {
-        PageThemeCardBackground.Solid(ContextCompat.getColor(context, R.color.page_background))
+        PageThemeCardBackground.Solid(context.getColor(R.color.page_background))
       } else {
         PageThemeCardBackground.Shaded
       }

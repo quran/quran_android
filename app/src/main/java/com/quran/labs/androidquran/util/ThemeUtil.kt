@@ -1,7 +1,5 @@
 package com.quran.labs.androidquran.util
 
-import android.content.Context
-import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import com.quran.labs.androidquran.data.Constants
 
@@ -22,13 +20,5 @@ object ThemeUtil {
     Constants.THEME_LIGHT -> false
     Constants.THEME_DARK -> true
     else -> systemNight
-  }
-
-  @JvmStatic
-  fun paletteContext(context: Context, dark: Boolean): Context {
-    val config = Configuration(context.resources.configuration)
-    config.uiMode = (config.uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or
-        if (dark) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO
-    return context.createConfigurationContext(config)
   }
 }

@@ -123,8 +123,6 @@
   <string name="prefs_landscape_orientation_title">Querformat</string>
   <string name="prefs_landscape_orientation_summary_on">Querformat wird genutzt.</string>
   <string name="prefs_landscape_orientation_summary_off">Hochformat wird genutzt.</string>
-  <string name="prefs_night_mode_text_brightness_title">Helligkeit des Textes</string>
-  <string name="prefs_night_mode_background_brightness_title">Helligkeit des Hintergrunds</string>
     benutzt.
   <string name="prefs_overlay_page_info_title">Seiteninfo anzeigen</string>
   <string name="prefs_overlay_page_info_summary">Blendet die Seitennummer, den Namen der Sure und

@@ -73,7 +73,6 @@ import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
 import com.quran.labs.androidquran.common.audio.repository.AudioStatusRepository
 import com.quran.labs.androidquran.common.audio.repository.CurrentQariManager
 import com.quran.labs.androidquran.data.Constants
-import com.quran.labs.androidquran.ui.bottomsheet.PageThemeSheetWrapper
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent
@@ -135,6 +134,7 @@ import com.quran.mobile.feature.ayahbookmark.AyahBookmarkWrapper
 import com.quran.mobile.feature.ayahbookmark.di.AyahBookmarkWrapperInjector
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.ReadingBookmarkSheetWrapper
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.di.ReadingBookmarkSheetWrapperInjector
+import com.quran.mobile.feature.pagetheme.PageThemeSheetWrapper
 import com.quran.mobile.feature.qarilist.QariListWrapper
 import com.quran.mobile.feature.qarilist.di.QariListWrapperInjector
 import com.quran.mobile.translation.model.LocalTranslation
@@ -1721,7 +1721,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   private fun showPageThemeSheet() {
-    val pageThemeSheetWrapper = PageThemeSheetWrapper(this) {
+    val pageThemeSheetWrapper = PageThemeSheetWrapper(this, quranSettings) {
       overlay.removeAllViews()
       overlay.visibility = View.GONE
       toggleActionBarVisibility(true)

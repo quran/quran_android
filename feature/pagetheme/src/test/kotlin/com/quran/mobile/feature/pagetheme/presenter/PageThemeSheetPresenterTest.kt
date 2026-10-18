@@ -1,45 +1,37 @@
-package com.quran.labs.androidquran.ui.bottomsheet
+package com.quran.mobile.feature.pagetheme.presenter
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Color
-import android.preference.PreferenceManager
-import androidx.core.content.ContextCompat
 import androidx.test.core.app.ApplicationProvider
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.moleculeFlow
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.quran.labs.androidquran.R
-import com.quran.labs.androidquran.base.TestApplication
-import com.quran.labs.androidquran.data.Constants
-import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.mobile.feature.pagetheme.PageTheme
+import com.quran.mobile.feature.pagetheme.PageThemeConstants
+import com.quran.mobile.feature.pagetheme.PageThemeSettings
+import com.quran.mobile.feature.pagetheme.R
+import com.quran.mobile.feature.pagetheme.state.PageThemeCard
+import com.quran.mobile.feature.pagetheme.state.PageThemeCardBackground
+import com.quran.mobile.feature.pagetheme.state.PageThemeSheetEvent
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.math.ln1p
+import kotlin.math.min
 
-@Config(application = TestApplication::class, sdk = [33])
+@Config(sdk = [33])
 @RunWith(RobolectricTestRunner::class)
 class PageThemeSheetPresenterTest {
   private lateinit var context: Context
-  private lateinit var preferences: SharedPreferences
-  private lateinit var settings: QuranSettings
+  private lateinit var settings: FakePageThemeSettings
 
   @Before fun setup() {
     context = ApplicationProvider.getApplicationContext()
-    preferences = PreferenceManager.getDefaultSharedPreferences(context)
-    preferences.edit().clear().commit()
-    QuranSettings.setInstance(null)
-    settings = QuranSettings.getInstance(context)
-  }
-
-  @After fun tearDown() {
-    preferences.edit().clear().commit()
-    QuranSettings.setInstance(null)
+    settings = FakePageThemeSettings()
   }
 
   private fun states() = moleculeFlow(RecompositionMode.Immediate) {
@@ -47,11 +39,11 @@ class PageThemeSheetPresenterTest {
   }
 
   @Test fun `starts from the saved settings`() = runTest {
-    settings.pageTheme = Constants.PAGE_THEME_QUIET
-    settings.pageAppearance = Constants.PAGE_APPEARANCE_DARK
+    settings.pageTheme = PageThemeConstants.PAGE_THEME_QUIET
+    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_DARK
     states().test {
       val state = awaitItem()
-      assertThat(state.pageAppearance).isEqualTo(Constants.PAGE_APPEARANCE_DARK)
+      assertThat(state.pageAppearance).isEqualTo(PageThemeConstants.PAGE_APPEARANCE_DARK)
       assertThat(state.cards.single { it.isSelected }.theme).isEqualTo(PageTheme.Quiet)
       assertThat(state.showBrightness).isFalse()
       assertThat(state.showOldBackground).isFalse()
@@ -60,28 +52,27 @@ class PageThemeSheetPresenterTest {
   }
 
   @Test fun `brightness sliders show only for Original on a dark page`() = runTest {
-    settings.pageAppearance = Constants.PAGE_APPEARANCE_LIGHT
     states().test {
       val light = awaitItem()
       assertThat(light.showBrightness).isFalse()
       assertThat(light.cards.original().background).isEqualTo(PageThemeCardBackground.Shaded)
 
-      light.eventSink(PageThemeSheetEvent.SelectAppearance(Constants.PAGE_APPEARANCE_DARK))
+      light.eventSink(PageThemeSheetEvent.SelectAppearance(PageThemeConstants.PAGE_APPEARANCE_DARK))
       val dark = awaitItem()
       assertThat(dark.showBrightness).isTrue()
-      assertThat(settings.pageAppearance).isEqualTo(Constants.PAGE_APPEARANCE_DARK)
+      assertThat(settings.pageAppearance).isEqualTo(PageThemeConstants.PAGE_APPEARANCE_DARK)
 
-      dark.eventSink(PageThemeSheetEvent.SelectTheme(Constants.PAGE_THEME_PAPER))
+      dark.eventSink(PageThemeSheetEvent.SelectTheme(PageThemeConstants.PAGE_THEME_PAPER))
       val paper = awaitItem()
       assertThat(paper.showBrightness).isFalse()
       assertThat(paper.cards.single { it.isSelected }.theme).isEqualTo(PageTheme.Paper)
-      assertThat(settings.pageTheme).isEqualTo(Constants.PAGE_THEME_PAPER)
+      assertThat(settings.pageTheme).isEqualTo(PageThemeConstants.PAGE_THEME_PAPER)
       cancelAndIgnoreRemainingEvents()
     }
   }
 
   @Test fun `brightness changes are saved and shown on the Original card`() = runTest {
-    settings.pageAppearance = Constants.PAGE_APPEARANCE_DARK
+    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_DARK
     states().test {
       awaitItem().eventSink(PageThemeSheetEvent.BackgroundBrightnessChanged(4))
       awaitItem().eventSink(PageThemeSheetEvent.TextBrightnessChanged(150))
@@ -98,13 +89,12 @@ class PageThemeSheetPresenterTest {
   }
 
   @Test fun `only legacy background users see the old background option`() = runTest {
-    settings.pageAppearance = Constants.PAGE_APPEARANCE_LIGHT
     states().test {
       assertThat(awaitItem().showOldBackground).isFalse()
       cancelAndIgnoreRemainingEvents()
     }
 
-    preferences.edit().putBoolean(Constants.PREF_USE_OLD_BACKGROUND, false).commit()
+    settings.oldBackground = false
     states().test {
       val state = awaitItem()
       assertThat(state.showOldBackground).isTrue()
@@ -112,11 +102,30 @@ class PageThemeSheetPresenterTest {
       val updated = awaitItem()
       assertThat(settings.useOldBackground()).isTrue()
       assertThat(updated.cards.original().background).isEqualTo(
-        PageThemeCardBackground.Solid(ContextCompat.getColor(context, R.color.page_background))
+        PageThemeCardBackground.Solid(context.getColor(R.color.page_background))
       )
       cancelAndIgnoreRemainingEvents()
     }
   }
 
   private fun List<PageThemeCard>.original() = first { it.theme == PageTheme.Original }
+
+  private class FakePageThemeSettings : PageThemeSettings {
+    override var pageTheme: String = PageThemeConstants.PAGE_THEME_ORIGINAL
+    override var pageAppearance: String = PageThemeConstants.PAGE_APPEARANCE_LIGHT
+    override val isPageAppearanceDark: Boolean
+      get() = pageAppearance == PageThemeConstants.PAGE_APPEARANCE_DARK
+    override var nightModeTextBrightness: Int = 255
+    override var nightModeBackgroundBrightness: Int = 0
+    override val originalNightTextBrightness: Int
+      get() = min(255, (50 * ln1p(nightModeBackgroundBrightness.toDouble()) + nightModeTextBrightness).toInt())
+
+    var oldBackground: Boolean? = null
+
+    override fun hasOldBackgroundOption(): Boolean = oldBackground != null
+    override fun useOldBackground(): Boolean = oldBackground == true
+    override fun setUseOldBackground(useOldBackground: Boolean) {
+      oldBackground = useOldBackground
+    }
+  }
 }
