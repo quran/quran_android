@@ -235,6 +235,7 @@ dependencies {
   implementation(project(":feature:audio"))
   implementation(project(":feature:audiobar"))
   implementation(project(":feature:ayahbookmark"))
+  implementation(project(":feature:pagetheme"))
   implementation(project(":feature:downloadmanager"))
   implementation(project(":feature:qarilist"))
   implementation(project(":feature:sync"))
@@ -262,8 +263,6 @@ dependencies {
   // compose
   implementation(libs.compose.foundation)
   implementation(libs.compose.material3)
-  implementation(libs.molecule)
-  implementation(libs.kotlinx.collections.immutable)
   implementation(libs.compose.ui)
   implementation(libs.compose.ui.tooling.preview)
   implementation(libs.compose.ui.tooling)

@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.util
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.quran.labs.androidquran.data.Constants
+import com.quran.mobile.feature.pagetheme.PageThemeConstants
 
 object PageThemePreferences {
 
@@ -20,13 +21,13 @@ object PageThemePreferences {
         val nightMode = preferences.getBoolean(Constants.PREF_NIGHT_MODE, false)
         putString(
           Constants.PREF_PAGE_APPEARANCE,
-          if (nightMode) Constants.PAGE_APPEARANCE_DARK else Constants.PAGE_APPEARANCE_LIGHT
+          if (nightMode) PageThemeConstants.PAGE_APPEARANCE_DARK else PageThemeConstants.PAGE_APPEARANCE_LIGHT
         )
         if (!preferences.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true)) {
           putBoolean(Constants.PREF_USE_OLD_BACKGROUND, true)
         }
       } else {
-        putString(Constants.PREF_PAGE_APPEARANCE, Constants.PAGE_APPEARANCE_AUTOMATIC)
+        putString(Constants.PREF_PAGE_APPEARANCE, PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC)
       }
     }
   }

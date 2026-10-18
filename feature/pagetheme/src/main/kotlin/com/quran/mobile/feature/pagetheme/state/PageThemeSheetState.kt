@@ -1,6 +1,7 @@
-package com.quran.labs.androidquran.ui.bottomsheet
+package com.quran.mobile.feature.pagetheme.state
 
 import androidx.compose.runtime.Immutable
+import com.quran.mobile.feature.pagetheme.PageTheme
 import kotlinx.collections.immutable.ImmutableList
 
 @Immutable

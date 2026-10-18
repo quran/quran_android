@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="prefs_page_theme_title">Page theme</string>
+  <string name="prefs_old_background_title">Old background</string>
+  <string name="prefs_night_mode_text_brightness_title">Text brightness</string>
+  <string name="prefs_night_mode_background_brightness_title">Background brightness</string>
+  <string name="page_theme_preview_text" translatable="false">نور</string>
+  <string name="page_theme_paper">Paper</string>
+  <string name="page_theme_original">Original</string>
+  <string name="page_theme_calm">Calm</string>
+  <string name="page_theme_focus">Focus</string>
+  <string name="page_theme_quiet">Quiet</string>
+  <string name="theme_light">Light</string>
+  <string name="theme_dark">Dark</string>
+  <string name="theme_automatic">Automatic</string>
+  <string name="page_theme_close">Close</string>
+</resources>

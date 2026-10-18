@@ -92,8 +92,6 @@
     <string name="prefs_landscape_orientation_title">Fekvő tájolás</string>
     <string name="prefs_landscape_orientation_summary_on">Fekvő tájolás lesz használva</string>
     <string name="prefs_landscape_orientation_summary_off">Álló tájolás lesz használva</string>
-    <string name="prefs_night_mode_text_brightness_title">Szöveg fényerőssége</string>
-  <string name="prefs_night_mode_background_brightness_title">Háttér fényerő</string>
     <string name="prefs_overlay_page_info_title">Oldalinfó megjelenítése</string>
     <string name="prefs_overlay_page_info_summary">Oldalszám, szúranév és dzsuzszám megjelenítése olvasás közben</string>
     <string name="prefs_display_marker_title">Felugró jelzés megjelenítése</string>

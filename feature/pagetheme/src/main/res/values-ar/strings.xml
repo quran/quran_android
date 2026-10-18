@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="prefs_page_theme_title">سمة الصفحة</string>
+  <string name="prefs_old_background_title">الخلفية القديمة</string>
+  <string name="prefs_night_mode_text_brightness_title">إضاءة الخط</string>
+  <string name="prefs_night_mode_background_brightness_title">إضاءة الخلفية</string>
+  <string name="page_theme_paper">ورقي</string>
+  <string name="page_theme_original">أصلي</string>
+  <string name="page_theme_calm">هادئ</string>
+  <string name="page_theme_focus">تركيز</string>
+  <string name="page_theme_quiet">ساكن</string>
+  <string name="theme_light">فاتح</string>
+  <string name="theme_dark">داكن</string>
+  <string name="theme_automatic">تلقائي</string>
+  <string name="page_theme_close">إغلاق</string>
+</resources>
