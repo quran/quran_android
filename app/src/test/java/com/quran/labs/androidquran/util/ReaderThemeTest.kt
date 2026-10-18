@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Color
 import android.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
@@ -76,6 +77,54 @@ class ReaderThemeTest {
     assertThat(settings.pageThemeBackgroundColor).isEqualTo(0xff4a4a4d.toInt())
     settings.pageTheme = Constants.PAGE_THEME_PAPER
     assertThat(settings.isNightMode).isFalse()
+  }
+
+  @Test fun `Original night pages use the brightness sliders`() {
+    val settings = QuranSettings.getInstance(context)
+    settings.pageTheme = Constants.PAGE_THEME_ORIGINAL
+    settings.pageAppearance = Constants.PAGE_APPEARANCE_DARK
+    preferences.edit()
+      .putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS, 150)
+      .putInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS, 4)
+      .commit()
+    assertThat(settings.pageTextBrightness).isEqualTo(230)
+    assertThat(settings.pageThemeTextColor).isEqualTo(Color.rgb(230, 230, 230))
+    assertThat(settings.pageThemeBackgroundColor).isEqualTo(Color.rgb(4, 4, 4))
+  }
+
+  @Test fun `night text brightness never goes below the readable minimum`() {
+    preferences.edit()
+      .putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS, 40)
+      .putInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS, 0)
+      .commit()
+    val settings = QuranSettings.getInstance(context)
+    settings.pageAppearance = Constants.PAGE_APPEARANCE_DARK
+    assertThat(settings.nightModeTextBrightness).isEqualTo(Constants.MIN_NIGHT_MODE_TEXT_BRIGHTNESS)
+    assertThat(settings.pageTextBrightness).isEqualTo(Constants.MIN_NIGHT_MODE_TEXT_BRIGHTNESS)
+  }
+
+  @Test fun `other themes keep their own text brightness on dark pages`() {
+    preferences.edit()
+      .putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS, 130)
+      .putInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS, 30)
+      .commit()
+    val settings = QuranSettings.getInstance(context)
+    settings.pageTheme = Constants.PAGE_THEME_QUIET
+    settings.pageAppearance = Constants.PAGE_APPEARANCE_DARK
+    assertThat(settings.pageTextBrightness).isEqualTo(142)
+    assertThat(settings.pageThemeBackgroundColor).isEqualTo(0xff000000.toInt())
+    settings.pageAppearance = Constants.PAGE_APPEARANCE_LIGHT
+    assertThat(settings.pageTextBrightness).isEqualTo(238)
+    settings.pageTheme = Constants.PAGE_THEME_CALM
+    settings.pageAppearance = Constants.PAGE_APPEARANCE_DARK
+    assertThat(settings.pageTextBrightness).isEqualTo(234)
+  }
+
+  @Test fun `only legacy background users draw the old background`() {
+    val settings = QuranSettings.getInstance(context)
+    assertThat(settings.useOldBackground()).isFalse()
+    preferences.edit().putBoolean(Constants.PREF_USE_OLD_BACKGROUND, true).commit()
+    assertThat(settings.useOldBackground()).isTrue()
   }
 
   @Test fun `light and dark page appearances ignore the app theme`() {
