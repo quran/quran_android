@@ -66,6 +66,92 @@ class TagBookmarkPresenterTest {
   }
 
   @Test
+  fun `multiple bookmarks start with only their common tags checked`() {
+    runBlocking {
+      bookmarksDao.setTags(listOf(Tag(TAG_ID, "First"), Tag(SECOND_TAG_ID, "Second")))
+      bookmarksDao.setBookmarks(
+        listOf(
+          Bookmark(BOOKMARK_ID, 6, 76, 137, tags = listOf(TAG_ID, SECOND_TAG_ID)),
+          Bookmark(SECOND_BOOKMARK_ID, 6, 77, 137, tags = listOf(TAG_ID))
+        )
+      )
+      val presenter = TagBookmarkPresenter(bookmarksDao)
+
+      presenter.setBookmarksMode(arrayOf(BOOKMARK_ID, SECOND_BOOKMARK_ID))
+
+      // the shared tag starts out checked, so toggling it unchecks it, while
+      // the tag that only one bookmark has starts out unchecked
+      assertThat(presenter.toggleTag(TAG_ID)).isFalse()
+      assertThat(presenter.toggleTag(SECOND_TAG_ID)).isTrue()
+    }
+  }
+
+  @Test
+  fun `unchecking a common tag removes it from all bookmarks`() {
+    runBlocking {
+      bookmarksDao.setTags(listOf(Tag(TAG_ID, "First")))
+      bookmarksDao.setBookmarks(
+        listOf(
+          Bookmark(BOOKMARK_ID, 6, 76, 137, tags = listOf(TAG_ID)),
+          Bookmark(SECOND_BOOKMARK_ID, 6, 77, 137, tags = listOf(TAG_ID))
+        )
+      )
+      val presenter = TagBookmarkPresenter(bookmarksDao)
+
+      presenter.setBookmarksMode(arrayOf(BOOKMARK_ID, SECOND_BOOKMARK_ID))
+      assertThat(presenter.toggleTag(TAG_ID)).isFalse()
+      presenter.saveChanges()
+
+      assertThat(bookmarksDao.getBookmarkTagIds(BOOKMARK_ID)).isEmpty()
+      assertThat(bookmarksDao.getBookmarkTagIds(SECOND_BOOKMARK_ID)).isEmpty()
+    }
+  }
+
+  @Test
+  fun `unchecking a common tag keeps tags that only one bookmark has`() {
+    runBlocking {
+      bookmarksDao.setTags(listOf(Tag(TAG_ID, "First"), Tag(SECOND_TAG_ID, "Second")))
+      bookmarksDao.setBookmarks(
+        listOf(
+          Bookmark(BOOKMARK_ID, 6, 76, 137, tags = listOf(TAG_ID, SECOND_TAG_ID)),
+          Bookmark(SECOND_BOOKMARK_ID, 6, 77, 137, tags = listOf(TAG_ID))
+        )
+      )
+      val presenter = TagBookmarkPresenter(bookmarksDao)
+
+      presenter.setBookmarksMode(arrayOf(BOOKMARK_ID, SECOND_BOOKMARK_ID))
+      assertThat(presenter.toggleTag(TAG_ID)).isFalse()
+      presenter.saveChanges()
+
+      assertThat(bookmarksDao.getBookmarkTagIds(BOOKMARK_ID)).containsExactly(SECOND_TAG_ID)
+      assertThat(bookmarksDao.getBookmarkTagIds(SECOND_BOOKMARK_ID)).isEmpty()
+    }
+  }
+
+  @Test
+  fun `checking a tag for multiple bookmarks adds it without removing existing tags`() {
+    runBlocking {
+      bookmarksDao.setTags(listOf(Tag(TAG_ID, "First"), Tag(SECOND_TAG_ID, "Second")))
+      bookmarksDao.setBookmarks(
+        listOf(
+          Bookmark(BOOKMARK_ID, 6, 76, 137, tags = listOf(TAG_ID)),
+          Bookmark(SECOND_BOOKMARK_ID, 6, 77, 137)
+        )
+      )
+      val presenter = TagBookmarkPresenter(bookmarksDao)
+
+      presenter.setBookmarksMode(arrayOf(BOOKMARK_ID, SECOND_BOOKMARK_ID))
+      assertThat(presenter.toggleTag(SECOND_TAG_ID)).isTrue()
+      presenter.saveChanges()
+
+      assertThat(bookmarksDao.getBookmarkTagIds(BOOKMARK_ID))
+        .containsExactly(TAG_ID, SECOND_TAG_ID)
+      assertThat(bookmarksDao.getBookmarkTagIds(SECOND_BOOKMARK_ID))
+        .containsExactly(SECOND_TAG_ID)
+    }
+  }
+
+  @Test
   fun `new tag row opens add dialog`() {
     val bookmarkDialog = FakeTagBookmarkDialog()
     val presenter = TagBookmarkPresenter(bookmarksDao)
@@ -116,6 +202,7 @@ class TagBookmarkPresenterTest {
 
   private companion object {
     private const val BOOKMARK_ID = "bookmark-1"
+    private const val SECOND_BOOKMARK_ID = "bookmark-2"
     private const val TAG_ID = "tag-1"
     private const val SECOND_TAG_ID = "tag-2"
     private const val ADD_TAG_MARKER_COLLISION_ID = "__quran_add_tag__"

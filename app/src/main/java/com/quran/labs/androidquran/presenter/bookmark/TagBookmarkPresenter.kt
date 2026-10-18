@@ -26,6 +26,11 @@ open class TagBookmarkPresenter @Inject internal constructor(
 
   private var tags: List<Tag>? = null
   private var bookmarkIds: Array<String>? = null
+  // for multiple bookmarks, the tags that all of the bookmarks share. these are
+  // the tags shown as checked, and unchecking one is what removes it from all
+  // of the bookmarks (see #2208). tags that only some bookmarks have are not
+  // in this set, so saving never removes them.
+  private var commonTagIds: Set<String> = emptySet()
   private var madeChanges = false
   private var shouldRefreshTags = false
   private val presenterScope = MainScope()
@@ -75,6 +80,7 @@ open class TagBookmarkPresenter @Inject internal constructor(
     val updatedCheckedTags = data.first.filter { tag: Tag -> bookmarkTags.contains(tag.id) }
     checkedTags.clear()
     checkedTags.addAll(updatedCheckedTags.map { it.id })
+    commonTagIds = if ((bookmarkIds?.size ?: 0) > 1) checkedTags.toSet() else emptySet()
 
     madeChanges = false
     this@TagBookmarkPresenter.tags = data.first
@@ -95,13 +101,17 @@ open class TagBookmarkPresenter @Inject internal constructor(
   open fun saveChanges() {
     if (madeChanges) {
       Single.fromCallable {
-        runBlocking {
-          val bookmarkIds = bookmarkIds ?: emptyArray()
-          bookmarksDao.updateBookmarkTags(
-            bookmarkIds = bookmarkIds,
-            tagIds = checkedTags,
-            deleteNonTagged = bookmarkIds.size == 1
-          )
+        val bookmarkIds = bookmarkIds ?: emptyArray()
+        if (bookmarkIds.size > 1) {
+          saveChangesForMultipleBookmarks(bookmarkIds)
+        } else {
+          runBlocking {
+            bookmarksDao.updateBookmarkTags(
+              bookmarkIds = bookmarkIds,
+              tagIds = checkedTags,
+              deleteNonTagged = bookmarkIds.size == 1
+            )
+          }
         }
       }
         .subscribeOn(Schedulers.io())
@@ -111,6 +121,31 @@ open class TagBookmarkPresenter @Inject internal constructor(
         })
     } else {
       onSaveChangesDone()
+    }
+  }
+
+  // updateBookmarkTags with deleteNonTagged = false only ever adds tags, which
+  // is why tags could not be removed from multiple bookmarks (#2208). remove
+  // the common tags that were unchecked from every bookmark first, then add
+  // the checked tags to all of them as before. tags that only some of the
+  // bookmarks have are in neither set, so they are left alone.
+  private fun saveChangesForMultipleBookmarks(bookmarkIds: Array<String>) {
+    runBlocking {
+      val removedTagIds = commonTagIds - checkedTags
+      if (removedTagIds.isNotEmpty()) {
+        val bookmarksById = bookmarksDao.bookmarks().associateBy { it.id }
+        for (bookmarkId in bookmarkIds) {
+          val bookmark = bookmarksById[bookmarkId] ?: continue
+          for (tagId in removedTagIds) {
+            bookmarksDao.removeBookmarkFromTag(bookmark, tagId)
+          }
+        }
+      }
+      bookmarksDao.updateBookmarkTags(
+        bookmarkIds = bookmarkIds,
+        tagIds = checkedTags,
+        deleteNonTagged = false
+      )
     }
   }
 
@@ -146,6 +181,14 @@ open class TagBookmarkPresenter @Inject internal constructor(
           val ids = bookmarkIds
           if (ids != null && ids.size == 1) {
             bookmarksDao.getBookmarkTagIds(ids[0])
+          } else if (ids != null && ids.size > 1) {
+            // only the tags that every selected bookmark shares start out
+            // checked - showing all of them would make unchecking a tag look
+            // like it removes it from bookmarks that never had it, and showing
+            // none (the previous behaviour) made removal impossible (#2208).
+            ids.map { bookmarksDao.getBookmarkTagIds(it).toSet() }
+              .reduce { common, tagIds -> common.intersect(tagIds) }
+              .toList()
           } else {
             emptyList()
           }
