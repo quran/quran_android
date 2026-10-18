@@ -316,6 +316,10 @@ public class QuranSettings {
     return getThemeColor(getPageTheme(), false);
   }
 
+  public boolean isOriginalDayPage() {
+    return !isNightMode() && Constants.PAGE_THEME_ORIGINAL.equals(getPageTheme());
+  }
+
   private boolean isOriginalNightPage() {
     return isNightMode() && Constants.PAGE_THEME_ORIGINAL.equals(getPageTheme());
   }

@@ -34,8 +34,8 @@ class QuranLineByLineSettingsPresenter private constructor(
     .map {
       DisplaySettings(
         settings.isNightMode(),
-        settings.pageThemeTextColor(),
-        settings.pageThemeBackgroundColor(),
+        settings.pageTextBrightness(),
+        settings.pageBackgroundColor(),
         settings.shouldShowHeaderFooter(),
         settings.showSidelines(),
         settings.showLineDividers()
