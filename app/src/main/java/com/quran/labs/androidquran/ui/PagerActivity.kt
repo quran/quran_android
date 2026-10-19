@@ -637,7 +637,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     onShowingTranslationBackCallback = object : OnBackPressedCallback(showingTranslation) {
       override fun handleOnBackPressed() {
-        switchToQuran()
+        // pressing back while in translation mode should behave like pressing
+        // up - it should end the session and return to the index screen
+        // instead of switching back to the quran view (see #2290).
+        onSessionEnd()
+        finish()
       }
     }
     onBackPressedDispatcher.addCallback(this, onShowingTranslationBackCallback)
