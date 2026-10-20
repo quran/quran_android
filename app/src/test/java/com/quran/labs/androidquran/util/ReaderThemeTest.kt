@@ -9,6 +9,7 @@ import android.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.common.upgrade.PreferencesUpgrade
+import com.quran.data.model.PageAppearance
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.data.Constants
 import com.quran.mobile.feature.pagetheme.PageThemeConstants
@@ -86,13 +87,28 @@ class ReaderThemeTest {
   @Test fun `line by line pages are shaded only for Light by day`() = runTest {
     val settings = QuranSettings.getInstance(context)
     val lineByLineSettings = SettingsImpl(settings)
-    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_LIGHT
-    assertThat(lineByLineSettings.pageBackgroundColor()).isNull()
+    assertThat(lineByLineSettings.dayPageBackgroundColor()).isNull()
     settings.pageTheme = PageThemeConstants.PAGE_THEME_SEPIA
-    assertThat(lineByLineSettings.pageBackgroundColor()).isEqualTo(0xfff8ebd5.toInt())
+    assertThat(lineByLineSettings.dayPageBackgroundColor()).isEqualTo(0xfff8ebd5.toInt())
     preferences.edit().putInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS, 10).commit()
-    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_DARK
-    assertThat(lineByLineSettings.pageBackgroundColor()).isEqualTo(Color.rgb(10, 10, 10))
+    assertThat(lineByLineSettings.nightModeBackgroundBrightness()).isEqualTo(10)
+  }
+
+  @Test fun `line by line pages resolve automatic from the app theme`() = runTest {
+    val lineByLineSettings = SettingsImpl(QuranSettings.getInstance(context))
+    val appearances = mapOf(
+      PageThemeConstants.PAGE_APPEARANCE_LIGHT to PageAppearance.Light,
+      PageThemeConstants.PAGE_APPEARANCE_DARK to PageAppearance.Dark,
+      PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC to PageAppearance.Automatic
+    )
+    appearances.forEach { (key, appearance) ->
+      QuranSettings.getInstance(context).pageAppearance = key
+      assertThat(lineByLineSettings.pageAppearance()).isEqualTo(appearance)
+    }
+    assertThat(PageAppearance.Light.isNightMode(isAppDark = true)).isFalse()
+    assertThat(PageAppearance.Dark.isNightMode(isAppDark = false)).isTrue()
+    assertThat(PageAppearance.Automatic.isNightMode(isAppDark = false)).isFalse()
+    assertThat(PageAppearance.Automatic.isNightMode(isAppDark = true)).isTrue()
   }
 
   @Test fun `only legacy background users draw the old background`() {

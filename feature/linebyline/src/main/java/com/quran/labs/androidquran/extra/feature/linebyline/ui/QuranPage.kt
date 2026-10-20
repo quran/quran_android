@@ -45,10 +45,10 @@ fun QuranPage(
   onSelectionEnd: () -> Unit,
   modifier: Modifier = Modifier,
   isNightMode: Boolean = false,
-  backgroundColor: Int? = null
+  backgroundColor: Color? = null
 ) {
   val mod = if (backgroundColor != null) {
-    modifier.background(Color(backgroundColor))
+    modifier.background(backgroundColor)
   } else {
     val skip = pageInfo.skippedPageCount
     val target = skip % 2
