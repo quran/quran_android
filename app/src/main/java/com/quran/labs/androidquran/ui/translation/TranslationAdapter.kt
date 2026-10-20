@@ -34,6 +34,7 @@ import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.AyahNumberView
 import com.quran.labs.androidquran.view.DividerView
+import com.quran.mobile.feature.pagetheme.PageThemeConstants
 
 internal class TranslationAdapter(
   private val context: Context,
@@ -215,7 +216,14 @@ internal class TranslationAdapter(
       this.footnoteColor = ContextCompat.getColor(context, R.color.translation_footnote_color)
       this.dividerColor = ContextCompat.getColor(context, R.color.translation_divider_color)
       this.arabicTextColor = Color.BLACK
-      this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header)
+      this.suraHeaderColor = ContextCompat.getColor(
+        context,
+        if (quranSettings.pageTheme == PageThemeConstants.PAGE_THEME_SEPIA) {
+          R.color.translation_sura_header_sepia
+        } else {
+          R.color.translation_sura_header
+        }
+      )
       this.ayahSelectionColor = ContextCompat.getColor(context, R.color.translation_ayah_selected_color)
       this.inlineAyahColor = QuranAccent.current.light.toArgb()
     }
