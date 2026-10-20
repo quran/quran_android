@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.extra.feature.linebyline.fakes
 
 import com.quran.data.dao.Settings
+import com.quran.data.model.PageAppearance
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
@@ -8,9 +9,10 @@ class FakeSettings : Settings {
   private val data = mutableMapOf<String, Any>()
   val preferencesSharedFlow = MutableSharedFlow<String>()
 
-  fun setNightMode(value: Boolean) { data["isNightMode"] = value }
+  fun setPageAppearance(value: PageAppearance) { data["pageAppearance"] = value }
   fun setTextBrightness(value: Int) { data["pageTextBrightness"] = value }
-  fun setBackgroundColor(value: Int) { data["pageBackgroundColor"] = value }
+  fun setNightBackgroundBrightness(value: Int) { data["nightModeBackgroundBrightness"] = value }
+  fun setDayBackgroundColor(value: Int) { data["dayPageBackgroundColor"] = value }
   fun setHeaderFooter(value: Boolean) { data["shouldShowHeaderFooter"] = value }
   fun setSidelinesEnabled(value: Boolean) { data["showSidelines"] = value }
   fun setLineDividersEnabled(value: Boolean) { data["showLineDividers"] = value }
@@ -22,9 +24,11 @@ class FakeSettings : Settings {
   override suspend fun setVersion(version: Int) {}
   override suspend fun setShouldOverlayPageInfo(shouldOverlay: Boolean) {}
   override suspend fun lastPage(): Int = 1
-  override suspend fun isNightMode(): Boolean = data["isNightMode"] as? Boolean ?: false
+  override suspend fun pageAppearance(): PageAppearance =
+    data["pageAppearance"] as? PageAppearance ?: PageAppearance.Light
   override suspend fun pageTextBrightness(): Int = data["pageTextBrightness"] as? Int ?: 255
-  override suspend fun pageBackgroundColor(): Int? = data["pageBackgroundColor"] as? Int
+  override suspend fun nightModeBackgroundBrightness(): Int = data["nightModeBackgroundBrightness"] as? Int ?: 0
+  override suspend fun dayPageBackgroundColor(): Int? = data["dayPageBackgroundColor"] as? Int
   override suspend fun shouldShowHeaderFooter(): Boolean = data["shouldShowHeaderFooter"] as? Boolean ?: false
   override suspend fun shouldShowBookmarks(): Boolean = false
   override suspend fun setPageType(pageType: String) {}

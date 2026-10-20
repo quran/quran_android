@@ -328,6 +328,10 @@ public class QuranSettings implements PageThemeSettings {
       int brightness = getNightModeBackgroundBrightness();
       return Color.rgb(brightness, brightness, brightness);
     }
+    return getDayPageBackgroundColor();
+  }
+
+  public int getDayPageBackgroundColor() {
     return PageTheme.fromKey(getPageTheme()).backgroundColor(appContext);
   }
 
