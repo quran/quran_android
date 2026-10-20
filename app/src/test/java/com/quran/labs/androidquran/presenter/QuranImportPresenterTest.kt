@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.dao.Settings
+import com.quran.data.model.PageAppearance
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.fakes.FakeBookmarksDao
 import com.quran.labs.androidquran.fakes.FakeContentResolverOps
@@ -164,11 +165,13 @@ class QuranImportPresenterTest {
 
     override suspend fun lastPage(): Int = 1
 
-    override suspend fun isNightMode(): Boolean = false
+    override suspend fun pageAppearance(): PageAppearance = PageAppearance.Light
 
     override suspend fun pageTextBrightness(): Int = 0
 
-    override suspend fun pageBackgroundColor(): Int? = null
+    override suspend fun nightModeBackgroundBrightness(): Int = 0
+
+    override suspend fun dayPageBackgroundColor(): Int? = null
 
     override suspend fun shouldShowHeaderFooter(): Boolean = false
 

@@ -5,6 +5,7 @@ import android.content.Context
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.Settings
+import com.quran.data.model.PageAppearance
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.EmptyReadingBookmark
@@ -272,11 +273,13 @@ class ReadingBookmarksDaoImplTest {
 
     override suspend fun lastPage(): Int = 1
 
-    override suspend fun isNightMode(): Boolean = false
+    override suspend fun pageAppearance(): PageAppearance = PageAppearance.Light
 
     override suspend fun pageTextBrightness(): Int = 0
 
-    override suspend fun pageBackgroundColor(): Int? = null
+    override suspend fun nightModeBackgroundBrightness(): Int = 0
+
+    override suspend fun dayPageBackgroundColor(): Int? = null
 
     override suspend fun shouldShowHeaderFooter(): Boolean = false
 
