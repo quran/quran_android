@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <color name="page_background">#FFF4CB</color>
-  <color name="theme_paper_bg">#EEEDED</color>
-  <color name="theme_paper_text">#1D1A1A</color>
-  <color name="theme_original_bg">#FFFFFF</color>
-  <color name="theme_original_text">#000000</color>
-  <color name="theme_calm_bg">#EEE2CC</color>
-  <color name="theme_calm_text">#32281E</color>
-  <color name="theme_focus_bg">#FEFCF5</color>
-  <color name="theme_focus_text">#141202</color>
-  <color name="theme_quiet_bg">#4A4A4D</color>
-  <color name="theme_quiet_text">#EBEBF4</color>
+  <color name="page_theme_light_bg">#FFFFFF</color>
+  <color name="page_theme_sepia_bg">#F8EBD5</color>
 </resources>

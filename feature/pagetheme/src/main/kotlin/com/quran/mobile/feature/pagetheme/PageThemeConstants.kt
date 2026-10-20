@@ -1,11 +1,8 @@
 package com.quran.mobile.feature.pagetheme
 
 object PageThemeConstants {
-  const val PAGE_THEME_PAPER = "paper"
-  const val PAGE_THEME_ORIGINAL = "original"
-  const val PAGE_THEME_CALM = "calm"
-  const val PAGE_THEME_FOCUS = "focus"
-  const val PAGE_THEME_QUIET = "quiet"
+  const val PAGE_THEME_LIGHT = "light"
+  const val PAGE_THEME_SEPIA = "sepia"
 
   const val PAGE_APPEARANCE_LIGHT = "light"
   const val PAGE_APPEARANCE_DARK = "dark"
