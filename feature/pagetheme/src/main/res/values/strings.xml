@@ -8,7 +8,8 @@
   <string name="page_theme_sepia">Sepia</string>
   <string name="theme_light">Light</string>
   <string name="theme_dark">Dark</string>
-  <string name="theme_automatic">Automatic</string>
+  <string name="page_theme_match_app">Match app theme</string>
+  <string name="page_theme_match_app_summary">Dark when the app is dark</string>
   <string name="page_theme_close">Close</string>
   <string name="page_theme_summary" translatable="false">%1$s · %2$s</string>
 </resources>

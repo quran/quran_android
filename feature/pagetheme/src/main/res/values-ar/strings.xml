@@ -7,6 +7,7 @@
   <string name="page_theme_sepia">بني داكن</string>
   <string name="theme_light">فاتح</string>
   <string name="theme_dark">داكن</string>
-  <string name="theme_automatic">تلقائي</string>
+  <string name="page_theme_match_app">مطابقة سمة التطبيق</string>
+  <string name="page_theme_match_app_summary">داكن عندما يكون التطبيق داكنًا</string>
   <string name="page_theme_close">إغلاق</string>
 </resources>

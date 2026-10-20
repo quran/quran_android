@@ -1,5 +1,6 @@
 package com.quran.mobile.feature.pagetheme.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -21,11 +22,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,7 +35,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -48,7 +47,7 @@ import androidx.compose.ui.unit.sp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.mobile.feature.pagetheme.PageThemeConstants
 import com.quran.mobile.feature.pagetheme.R
-import com.quran.mobile.feature.pagetheme.pageAppearanceLabels
+import com.quran.mobile.feature.pagetheme.state.PageColor
 import com.quran.mobile.feature.pagetheme.state.PageThemeCard
 import com.quran.mobile.feature.pagetheme.state.PageThemeCardBackground
 import com.quran.mobile.feature.pagetheme.state.PageThemeSheetEvent
@@ -83,22 +82,16 @@ fun PageThemeSheet(state: PageThemeSheetState, onClose: () -> Unit) {
     }
 
     Spacer(Modifier.size(8.dp))
-    SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-      pageAppearanceLabels.forEachIndexed { index, (appearance, label) ->
-        SegmentedButton(
-          selected = state.pageAppearance == appearance,
-          onClick = { state.eventSink(PageThemeSheetEvent.SelectAppearance(appearance)) },
-          shape = SegmentedButtonDefaults.itemShape(index, pageAppearanceLabels.size)
-        ) {
-          Text(stringResource(label))
-        }
-      }
-    }
-
-    Spacer(Modifier.size(16.dp))
     ThemeGrid(state)
 
-    Spacer(Modifier.size(16.dp))
+    Spacer(Modifier.size(8.dp))
+    MatchAppThemeRow(state)
+
+    HorizontalDivider(
+      modifier = Modifier
+        .padding(vertical = 8.dp)
+        .alpha(if (state.showBrightness || state.showOldBackground) 1f else 0f)
+    )
     Box(modifier = Modifier.fillMaxWidth()) {
       BrightnessSliders(state)
       if (state.showOldBackground) {
@@ -110,7 +103,6 @@ fun PageThemeSheet(state: PageThemeSheetState, onClose: () -> Unit) {
 
 @Composable
 private fun ThemeGrid(state: PageThemeSheetState) {
-  val context = LocalContext.current
   val fontScale = LocalDensity.current.fontScale.coerceIn(1f, 1.5f)
   BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
     val columns = (maxWidth / (104.dp * fontScale)).toInt().coerceIn(1, 3)
@@ -122,9 +114,9 @@ private fun ThemeGrid(state: PageThemeSheetState) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
           row.forEach { card ->
             ThemeCard(
-              name = card.theme.getDisplayName(context),
+              name = stringResource(card.color.nameRes()),
               card = card,
-              onClick = { state.eventSink(PageThemeSheetEvent.SelectTheme(card.theme.storageKey)) },
+              onClick = { state.eventSink(PageThemeSheetEvent.SelectColor(card.color)) },
               modifier = Modifier.weight(1f)
             )
           }
@@ -189,6 +181,39 @@ private fun ThemeCard(
           .padding(3.dp)
       )
     }
+  }
+}
+
+@StringRes
+private fun PageColor.nameRes(): Int = when (this) {
+  PageColor.Light -> R.string.theme_light
+  PageColor.Sepia -> R.string.page_theme_sepia
+  PageColor.Dark -> R.string.theme_dark
+}
+
+@Composable
+private fun MatchAppThemeRow(state: PageThemeSheetState) {
+  Row(
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = Modifier
+      .fillMaxWidth()
+      .heightIn(min = 56.dp)
+      .toggleable(
+        value = state.matchAppTheme,
+        role = Role.Switch,
+        onValueChange = { state.eventSink(PageThemeSheetEvent.MatchAppThemeChanged(it)) }
+      )
+  ) {
+    Column(modifier = Modifier.weight(1f)) {
+      Text(text = stringResource(R.string.page_theme_match_app), style = MaterialTheme.typography.bodyLarge)
+      Text(
+        text = stringResource(R.string.page_theme_match_app_summary),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+      )
+    }
+    Spacer(Modifier.width(16.dp))
+    Switch(checked = state.matchAppTheme, onCheckedChange = null)
   }
 }
 
