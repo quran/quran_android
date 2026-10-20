@@ -12,12 +12,13 @@ import com.quran.mobile.feature.pagetheme.PageTheme
 import com.quran.mobile.feature.pagetheme.PageThemeConstants
 import com.quran.mobile.feature.pagetheme.PageThemeSettings
 import com.quran.mobile.feature.pagetheme.R
+import com.quran.mobile.feature.pagetheme.state.PageColor
 import com.quran.mobile.feature.pagetheme.state.PageThemeCard
 import com.quran.mobile.feature.pagetheme.state.PageThemeCardBackground
 import com.quran.mobile.feature.pagetheme.state.PageThemeSheetEvent
 import com.quran.mobile.feature.pagetheme.state.PageThemeSheetState
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 class PageThemeSheetPresenter(
   private val context: Context,
@@ -26,7 +27,7 @@ class PageThemeSheetPresenter(
 
   @Composable
   fun present(): PageThemeSheetState {
-    var pageTheme by remember { mutableStateOf(settings.pageTheme) }
+    var pageTheme by remember { mutableStateOf(PageTheme.fromKey(settings.pageTheme)) }
     var pageAppearance by remember { mutableStateOf(settings.pageAppearance) }
     var textBrightness by remember { mutableIntStateOf(settings.nightModeTextBrightness) }
     var backgroundBrightness by remember {
@@ -36,23 +37,46 @@ class PageThemeSheetPresenter(
     }
     var useOldBackground by remember { mutableStateOf(settings.useOldBackground()) }
     val hasOldBackgroundOption = remember { settings.hasOldBackgroundOption() }
-    val isNightMode = remember(pageAppearance) { settings.isNightMode }
+    val isNightPage = remember(pageAppearance) { settings.isNightMode }
+    val nightTextBrightness = remember(textBrightness, backgroundBrightness) { settings.pageTextBrightness }
+    val matchAppTheme = pageAppearance == PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
 
-    val cards = remember(pageTheme, useOldBackground) {
-      themeCards(pageTheme, useOldBackground)
+    val cards = remember(pageTheme, isNightPage, useOldBackground, backgroundBrightness, nightTextBrightness) {
+      pageCards(pageTheme, isNightPage, useOldBackground, backgroundBrightness, nightTextBrightness)
     }
-    val isLight = pageTheme == PageThemeConstants.PAGE_THEME_LIGHT
+
+    val setAppearance: (String) -> Unit = { appearance ->
+      settings.pageAppearance = appearance
+      pageAppearance = appearance
+    }
 
     val eventSink: (PageThemeSheetEvent) -> Unit = { event ->
       when (event) {
-        is PageThemeSheetEvent.SelectTheme -> {
-          settings.pageTheme = event.theme
-          pageTheme = event.theme
+        is PageThemeSheetEvent.SelectColor -> {
+          if (event.color == PageColor.Dark) {
+            setAppearance(
+              if (matchAppTheme && isNightPage) PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
+              else PageThemeConstants.PAGE_APPEARANCE_DARK
+            )
+          } else {
+            val theme = if (event.color == PageColor.Sepia) PageTheme.Sepia else PageTheme.Light
+            settings.pageTheme = theme.storageKey
+            pageTheme = theme
+            setAppearance(
+              if (matchAppTheme && !isNightPage) PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
+              else PageThemeConstants.PAGE_APPEARANCE_LIGHT
+            )
+          }
         }
 
-        is PageThemeSheetEvent.SelectAppearance -> {
-          settings.pageAppearance = event.appearance
-          pageAppearance = event.appearance
+        is PageThemeSheetEvent.MatchAppThemeChanged -> {
+          setAppearance(
+            when {
+              event.matchAppTheme -> PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
+              isNightPage -> PageThemeConstants.PAGE_APPEARANCE_DARK
+              else -> PageThemeConstants.PAGE_APPEARANCE_LIGHT
+            }
+          )
         }
 
         is PageThemeSheetEvent.TextBrightnessChanged -> {
@@ -73,33 +97,51 @@ class PageThemeSheetPresenter(
     }
 
     return PageThemeSheetState(
-      pageAppearance = pageAppearance,
       cards = cards,
+      isNightPage = isNightPage,
+      matchAppTheme = matchAppTheme,
       textBrightness = textBrightness,
       backgroundBrightness = backgroundBrightness,
-      showBrightness = isNightMode,
-      showOldBackground = isLight && !isNightMode && hasOldBackgroundOption,
+      showBrightness = isNightPage,
+      showOldBackground = !isNightPage && pageTheme == PageTheme.Light && hasOldBackgroundOption,
       useOldBackground = useOldBackground,
       eventSink = eventSink
     )
   }
 
-  private fun themeCards(
-    selectedTheme: String,
-    useOldBackground: Boolean
+  private fun pageCards(
+    pageTheme: PageTheme,
+    isNightPage: Boolean,
+    useOldBackground: Boolean,
+    backgroundBrightness: Int,
+    nightTextBrightness: Int
   ): ImmutableList<PageThemeCard> {
-    return PageTheme.entries.map { theme ->
-      val background = when {
-        theme != PageTheme.Light -> PageThemeCardBackground.Solid(theme.backgroundColor(context))
-        useOldBackground -> PageThemeCardBackground.Solid(context.getColor(R.color.page_background))
-        else -> PageThemeCardBackground.Shaded
-      }
+    val lightBackground = if (useOldBackground) {
+      PageThemeCardBackground.Solid(context.getColor(R.color.page_background))
+    } else {
+      PageThemeCardBackground.Shaded
+    }
+    return persistentListOf(
       PageThemeCard(
-        theme = theme,
-        isSelected = theme.storageKey == selectedTheme,
-        background = background,
+        color = PageColor.Light,
+        isSelected = !isNightPage && pageTheme == PageTheme.Light,
+        background = lightBackground,
         textColor = Color.BLACK
+      ),
+      PageThemeCard(
+        color = PageColor.Sepia,
+        isSelected = !isNightPage && pageTheme == PageTheme.Sepia,
+        background = PageThemeCardBackground.Solid(PageTheme.Sepia.backgroundColor(context)),
+        textColor = Color.BLACK
+      ),
+      PageThemeCard(
+        color = PageColor.Dark,
+        isSelected = isNightPage,
+        background = PageThemeCardBackground.Solid(
+          Color.rgb(backgroundBrightness, backgroundBrightness, backgroundBrightness)
+        ),
+        textColor = Color.rgb(nightTextBrightness, nightTextBrightness, nightTextBrightness)
       )
-    }.toImmutableList()
+    )
   }
 }

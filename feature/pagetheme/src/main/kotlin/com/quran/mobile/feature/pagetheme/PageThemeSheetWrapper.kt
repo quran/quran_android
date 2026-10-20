@@ -2,6 +2,7 @@ package com.quran.mobile.feature.pagetheme
 
 import android.content.Context
 import android.widget.FrameLayout
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -28,9 +29,7 @@ class PageThemeSheetWrapper(
   init {
     val composeView = ComposeView(context).apply {
       setContent {
-        QuranTheme {
-          PageThemeModalSheet()
-        }
+        PageThemeModalSheet()
       }
     }
     addView(composeView, LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -48,16 +47,18 @@ class PageThemeSheetWrapper(
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
-    ModalBottomSheet(
-      onDismissRequest = onDismissed,
-      sheetState = sheetState
-    ) {
-      PageThemeSheet(
-        state = state,
-        onClose = {
-          scope.launch { sheetState.hide() }.invokeOnCompletion { onDismissed() }
-        }
-      )
+    QuranTheme(useDarkTheme = isSystemInDarkTheme() || state.isNightPage) {
+      ModalBottomSheet(
+        onDismissRequest = onDismissed,
+        sheetState = sheetState
+      ) {
+        PageThemeSheet(
+          state = state,
+          onClose = {
+            scope.launch { sheetState.hide() }.invokeOnCompletion { onDismissed() }
+          }
+        )
+      }
     }
   }
 }
