@@ -3,10 +3,10 @@ package com.quran.mobile.feature.pagetheme
 interface PageThemeSettings {
   var pageTheme: String
   var pageAppearance: String
-  val isPageAppearanceDark: Boolean
+  val isNightMode: Boolean
   var nightModeTextBrightness: Int
   var nightModeBackgroundBrightness: Int
-  val originalNightTextBrightness: Int
+  val pageTextBrightness: Int
 
   fun hasOldBackgroundOption(): Boolean
   fun useOldBackground(): Boolean

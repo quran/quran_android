@@ -15,10 +15,10 @@ class PageThemeSummaryTest {
   @Test fun `summary names the theme and the page appearance`() {
     val context = ApplicationProvider.getApplicationContext<Context>()
     val settings = FakePageThemeSettings()
-    assertThat(pageThemeSummary(context, settings)).isEqualTo("Original · Light")
+    assertThat(pageThemeSummary(context, settings)).isEqualTo("Light · Light")
 
-    settings.pageTheme = PageThemeConstants.PAGE_THEME_QUIET
+    settings.pageTheme = PageThemeConstants.PAGE_THEME_SEPIA
     settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
-    assertThat(pageThemeSummary(context, settings)).isEqualTo("Quiet · Automatic")
+    assertThat(pageThemeSummary(context, settings)).isEqualTo("Sepia · Automatic")
   }
 }

@@ -36,12 +36,12 @@ class PageThemeSheetPresenter(
     }
     var useOldBackground by remember { mutableStateOf(settings.useOldBackground()) }
     val hasOldBackgroundOption = remember { settings.hasOldBackgroundOption() }
-    val isAppearanceDark = remember(pageAppearance) { settings.isPageAppearanceDark }
+    val isNightMode = remember(pageAppearance) { settings.isNightMode }
 
-    val cards = remember(pageTheme, isAppearanceDark, textBrightness, backgroundBrightness, useOldBackground) {
-      themeCards(pageTheme, isAppearanceDark, useOldBackground)
+    val cards = remember(pageTheme, useOldBackground) {
+      themeCards(pageTheme, useOldBackground)
     }
-    val isOriginal = pageTheme == PageThemeConstants.PAGE_THEME_ORIGINAL
+    val isLight = pageTheme == PageThemeConstants.PAGE_THEME_LIGHT
 
     val eventSink: (PageThemeSheetEvent) -> Unit = { event ->
       when (event) {
@@ -77,8 +77,8 @@ class PageThemeSheetPresenter(
       cards = cards,
       textBrightness = textBrightness,
       backgroundBrightness = backgroundBrightness,
-      showBrightness = isOriginal && isAppearanceDark,
-      showOldBackground = isOriginal && !isAppearanceDark && hasOldBackgroundOption,
+      showBrightness = isNightMode,
+      showOldBackground = isLight && !isNightMode && hasOldBackgroundOption,
       useOldBackground = useOldBackground,
       eventSink = eventSink
     )
@@ -86,50 +86,20 @@ class PageThemeSheetPresenter(
 
   private fun themeCards(
     selectedTheme: String,
-    isAppearanceDark: Boolean,
     useOldBackground: Boolean
   ): ImmutableList<PageThemeCard> {
     return PageTheme.entries.map { theme ->
-      val isSelected = theme.storageKey == selectedTheme
-      if (theme == PageTheme.Original) {
-        originalCard(isSelected, isAppearanceDark, useOldBackground)
-      } else {
-        PageThemeCard(
-          theme = theme,
-          isSelected = isSelected,
-          background = PageThemeCardBackground.Solid(theme.backgroundColor(context, isAppearanceDark)),
-          textColor = theme.textColor(context, isAppearanceDark)
-        )
-      }
-    }.toImmutableList()
-  }
-
-  private fun originalCard(
-    isSelected: Boolean,
-    isAppearanceDark: Boolean,
-    useOldBackground: Boolean
-  ): PageThemeCard {
-    return if (isAppearanceDark) {
-      val background = settings.nightModeBackgroundBrightness
-      val text = settings.originalNightTextBrightness
-      PageThemeCard(
-        theme = PageTheme.Original,
-        isSelected = isSelected,
-        background = PageThemeCardBackground.Solid(Color.rgb(background, background, background)),
-        textColor = Color.rgb(text, text, text)
-      )
-    } else {
-      val background = if (useOldBackground) {
-        PageThemeCardBackground.Solid(context.getColor(R.color.page_background))
-      } else {
-        PageThemeCardBackground.Shaded
+      val background = when {
+        theme != PageTheme.Light -> PageThemeCardBackground.Solid(theme.backgroundColor(context))
+        useOldBackground -> PageThemeCardBackground.Solid(context.getColor(R.color.page_background))
+        else -> PageThemeCardBackground.Shaded
       }
       PageThemeCard(
-        theme = PageTheme.Original,
-        isSelected = isSelected,
+        theme = theme,
+        isSelected = theme.storageKey == selectedTheme,
         background = background,
         textColor = Color.BLACK
       )
-    }
+    }.toImmutableList()
   }
 }

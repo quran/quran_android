@@ -256,7 +256,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
   }
 
   protected void updateBackground(boolean nightMode, QuranSettings quranSettings) {
-    if (!quranSettings.isOriginalDayPage()) {
+    if (!quranSettings.isLightPage()) {
       setBackgroundColor(quranSettings.getPageThemeBackgroundColor());
     } else if (quranSettings.useOldBackground()) {
       setBackgroundColor(ContextCompat.getColor(context, com.quran.mobile.feature.pagetheme.R.color.page_background));

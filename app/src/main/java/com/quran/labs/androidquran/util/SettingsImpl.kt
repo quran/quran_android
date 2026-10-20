@@ -62,7 +62,7 @@ class SettingsImpl @Inject constructor(private val quranSettings: QuranSettings)
   }
 
   override suspend fun pageBackgroundColor(): Int? {
-    return if (quranSettings.isOriginalDayPage) null else quranSettings.pageThemeBackgroundColor
+    return if (quranSettings.isLightPage) null else quranSettings.pageThemeBackgroundColor
   }
 
   override suspend fun shouldShowHeaderFooter(): Boolean {
