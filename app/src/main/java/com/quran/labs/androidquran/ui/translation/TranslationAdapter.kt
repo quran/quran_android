@@ -202,7 +202,8 @@ internal class TranslationAdapter(
     this.translationFontSize = quranSettings.translationTextSize
     isNightMode = quranSettings.isNightMode
     if (isNightMode) {
-      this.textColor = quranSettings.pageThemeTextColor
+      val textBrightness = quranSettings.pageTextBrightness
+      this.textColor = Color.rgb(textBrightness, textBrightness, textBrightness)
       this.footnoteColor = ContextCompat.getColor(context, R.color.translation_footnote_color)
       this.arabicTextColor = textColor
       this.dividerColor = textColor
@@ -210,15 +211,10 @@ internal class TranslationAdapter(
       this.ayahSelectionColor = ContextCompat.getColor(context, R.color.translation_ayah_selected_color_night)
       this.inlineAyahColor = QuranAccent.current.dark.toArgb()
     } else {
-      if (quranSettings.isOriginalDayPage) {
-        this.textColor = ContextCompat.getColor(context, R.color.translation_text_color)
-        this.arabicTextColor = Color.BLACK
-      } else {
-        this.textColor = quranSettings.pageThemeTextColor
-        this.arabicTextColor = textColor
-      }
+      this.textColor = ContextCompat.getColor(context, R.color.translation_text_color)
       this.footnoteColor = ContextCompat.getColor(context, R.color.translation_footnote_color)
       this.dividerColor = ContextCompat.getColor(context, R.color.translation_divider_color)
+      this.arabicTextColor = Color.BLACK
       this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header)
       this.ayahSelectionColor = ContextCompat.getColor(context, R.color.translation_ayah_selected_color)
       this.inlineAyahColor = QuranAccent.current.light.toArgb()

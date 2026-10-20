@@ -47,51 +47,29 @@ class ReaderThemeTest {
     Resources.getSystem().updateConfiguration(originalSystemConfiguration, Resources.getSystem().displayMetrics)
   }
 
-  @Test fun `all five reader palettes follow the page appearance`() {
+  @Test fun `light pages use their own background and dark pages use the night sliders`() {
     val settings = QuranSettings.getInstance(context)
-    val palettes = listOf(
-      Palette("paper", 0xffeeeded, 0xff1d1a1a, 0xff1c1c1e, 0xfff2f2f0),
-      Palette("original", 0xffffffff, 0xff000000, 0xff000000, 0xffffffff),
-      Palette("quiet", 0xff4a4a4d, 0xffebebf4, 0xff000000, 0xff8d8d92),
-      Palette("calm", 0xffeee2cc, 0xff32281e, 0xff413b31, 0xfff7ecdd),
-      Palette("focus", 0xfffefcf5, 0xff141202, 0xff18160d, 0xfffef9ec)
-    )
-    for (palette in palettes) {
-      settings.pageTheme = palette.key
-      settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_LIGHT
-      assertThat(settings.pageThemeBackgroundColor).isEqualTo(palette.lightBackground.toInt())
-      assertThat(settings.pageThemeTextColor).isEqualTo(palette.lightText.toInt())
-      assertThat(settings.isPageAppearanceDark).isFalse()
-      settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_DARK
-      assertThat(settings.pageThemeBackgroundColor).isEqualTo(palette.darkBackground.toInt())
-      assertThat(settings.pageThemeTextColor).isEqualTo(palette.darkText.toInt())
-      assertThat(settings.isPageAppearanceDark).isTrue()
-      assertThat(settings.isNightMode).isTrue()
-    }
-  }
-
-  @Test fun `Quiet pages are dark in both appearances`() {
-    val settings = QuranSettings.getInstance(context)
-    settings.pageTheme = PageThemeConstants.PAGE_THEME_QUIET
     settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_LIGHT
-    assertThat(settings.isNightMode).isTrue()
-    assertThat(settings.isPageAppearanceDark).isFalse()
-    assertThat(settings.pageThemeBackgroundColor).isEqualTo(0xff4a4a4d.toInt())
-    settings.pageTheme = PageThemeConstants.PAGE_THEME_PAPER
+    settings.pageTheme = PageThemeConstants.PAGE_THEME_LIGHT
     assertThat(settings.isNightMode).isFalse()
-  }
+    assertThat(settings.isLightPage).isTrue()
+    assertThat(settings.pageThemeBackgroundColor).isEqualTo(0xffffffff.toInt())
+    settings.pageTheme = PageThemeConstants.PAGE_THEME_SEPIA
+    assertThat(settings.isLightPage).isFalse()
+    assertThat(settings.pageThemeBackgroundColor).isEqualTo(0xfff8ebd5.toInt())
 
-  @Test fun `Original night pages use the brightness sliders`() {
-    val settings = QuranSettings.getInstance(context)
-    settings.pageTheme = PageThemeConstants.PAGE_THEME_ORIGINAL
-    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_DARK
     preferences.edit()
       .putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS, 150)
       .putInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS, 4)
       .commit()
-    assertThat(settings.pageTextBrightness).isEqualTo(230)
-    assertThat(settings.pageThemeTextColor).isEqualTo(Color.rgb(230, 230, 230))
-    assertThat(settings.pageThemeBackgroundColor).isEqualTo(Color.rgb(4, 4, 4))
+    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_DARK
+    for (theme in listOf(PageThemeConstants.PAGE_THEME_LIGHT, PageThemeConstants.PAGE_THEME_SEPIA)) {
+      settings.pageTheme = theme
+      assertThat(settings.isNightMode).isTrue()
+      assertThat(settings.isLightPage).isFalse()
+      assertThat(settings.pageTextBrightness).isEqualTo(230)
+      assertThat(settings.pageThemeBackgroundColor).isEqualTo(Color.rgb(4, 4, 4))
+    }
   }
 
   @Test fun `night text brightness never goes below the readable minimum`() {
@@ -105,35 +83,16 @@ class ReaderThemeTest {
     assertThat(settings.pageTextBrightness).isEqualTo(PageThemeConstants.MIN_NIGHT_MODE_TEXT_BRIGHTNESS)
   }
 
-  @Test fun `other themes keep their own text brightness on dark pages`() {
-    preferences.edit()
-      .putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS, 130)
-      .putInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS, 30)
-      .commit()
-    val settings = QuranSettings.getInstance(context)
-    settings.pageTheme = PageThemeConstants.PAGE_THEME_QUIET
-    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_DARK
-    assertThat(settings.pageTextBrightness).isEqualTo(142)
-    assertThat(settings.pageThemeBackgroundColor).isEqualTo(0xff000000.toInt())
-    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_LIGHT
-    assertThat(settings.pageTextBrightness).isEqualTo(238)
-    settings.pageTheme = PageThemeConstants.PAGE_THEME_CALM
-    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_DARK
-    assertThat(settings.pageTextBrightness).isEqualTo(234)
-  }
-
-  @Test fun `line by line pages are shaded only for Original by day`() = runTest {
+  @Test fun `line by line pages are shaded only for Light by day`() = runTest {
     val settings = QuranSettings.getInstance(context)
     val lineByLineSettings = SettingsImpl(settings)
     settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_LIGHT
     assertThat(lineByLineSettings.pageBackgroundColor()).isNull()
+    settings.pageTheme = PageThemeConstants.PAGE_THEME_SEPIA
+    assertThat(lineByLineSettings.pageBackgroundColor()).isEqualTo(0xfff8ebd5.toInt())
     preferences.edit().putInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS, 10).commit()
     settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_DARK
     assertThat(lineByLineSettings.pageBackgroundColor()).isEqualTo(Color.rgb(10, 10, 10))
-    settings.pageTheme = PageThemeConstants.PAGE_THEME_CALM
-    assertThat(lineByLineSettings.pageBackgroundColor()).isEqualTo(0xff413b31.toInt())
-    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_LIGHT
-    assertThat(lineByLineSettings.pageBackgroundColor()).isEqualTo(0xffeee2cc.toInt())
   }
 
   @Test fun `only legacy background users draw the old background`() {
@@ -169,12 +128,12 @@ class ReaderThemeTest {
     assertThat(settings.isNightMode).isFalse()
   }
 
-  @Test fun `fresh installs get an Original page that follows the app theme`() {
+  @Test fun `fresh installs get a Light page that follows the app theme`() {
     val settings = QuranSettings.getInstance(context)
     settings.currentTheme()
     settings.upgradePreferences(noFlavorUpgrade)
     assertThat(settings.pageAppearance).isEqualTo(PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC)
-    assertThat(settings.pageTheme).isEqualTo(PageThemeConstants.PAGE_THEME_ORIGINAL)
+    assertThat(settings.pageTheme).isEqualTo(PageThemeConstants.PAGE_THEME_LIGHT)
     assertThat(preferences.contains(Constants.PREF_USE_OLD_BACKGROUND)).isFalse()
   }
 
@@ -245,20 +204,20 @@ class ReaderThemeTest {
   @Test fun `migration runs once and keeps later choices`() {
     preferences.edit()
       .putString(Constants.PREF_PAGE_APPEARANCE, PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC)
-      .putString(Constants.PREF_PAGE_THEME, PageThemeConstants.PAGE_THEME_FOCUS)
+      .putString(Constants.PREF_PAGE_THEME, PageThemeConstants.PAGE_THEME_SEPIA)
       .putBoolean(Constants.PREF_NIGHT_MODE, true)
       .putBoolean(Constants.PREF_USE_NEW_BACKGROUND, false)
       .commit()
     PageThemePreferences.migrate(preferences, true)
     assertThat(preferences.getString(Constants.PREF_PAGE_APPEARANCE, null))
       .isEqualTo(PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC)
-    assertThat(preferences.getString(Constants.PREF_PAGE_THEME, null)).isEqualTo(PageThemeConstants.PAGE_THEME_FOCUS)
+    assertThat(preferences.getString(Constants.PREF_PAGE_THEME, null)).isEqualTo(PageThemeConstants.PAGE_THEME_SEPIA)
     assertThat(preferences.contains(Constants.PREF_USE_OLD_BACKGROUND)).isFalse()
   }
 
-  @Test fun `unknown theme keys fall back to Original`() {
+  @Test fun `unknown theme keys fall back to Light`() {
     preferences.edit().putString(Constants.PREF_PAGE_THEME, "unsupported").commit()
-    assertThat(QuranSettings.getInstance(context).pageTheme).isEqualTo(PageThemeConstants.PAGE_THEME_ORIGINAL)
+    assertThat(QuranSettings.getInstance(context).pageTheme).isEqualTo(PageThemeConstants.PAGE_THEME_LIGHT)
   }
 
   private val noFlavorUpgrade = PreferencesUpgrade { _, _, _ -> true }
@@ -274,9 +233,4 @@ class ReaderThemeTest {
         if (night) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO
     system.updateConfiguration(configuration, system.displayMetrics)
   }
-
-  private data class Palette(
-    val key: String, val lightBackground: Long, val lightText: Long,
-    val darkBackground: Long, val darkText: Long
-  )
 }

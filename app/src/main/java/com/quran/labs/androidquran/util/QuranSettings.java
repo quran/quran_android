@@ -75,12 +75,8 @@ public class QuranSettings implements PageThemeSettings {
     return prefs.getBoolean(Constants.PREF_PREFER_STREAMING, false);
   }
 
-  public boolean isNightMode() {
-    return isPageAppearanceDark() || PageThemeConstants.PAGE_THEME_QUIET.equals(getPageTheme());
-  }
-
   @Override
-  public boolean isPageAppearanceDark() {
+  public boolean isNightMode() {
     String appearance = getPageAppearance();
     if (PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC.equals(appearance)) {
       boolean systemNight = (Resources.getSystem().getConfiguration().uiMode
@@ -128,16 +124,8 @@ public class QuranSettings implements PageThemeSettings {
     prefs.edit().putInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS, brightness).apply();
   }
 
-  public int getPageTextBrightness() {
-    if (PageThemeConstants.PAGE_THEME_ORIGINAL.equals(getPageTheme())) {
-      return getOriginalNightTextBrightness();
-    }
-    int color = getThemeColor(getPageTheme(), false);
-    return (Color.red(color) + Color.green(color) + Color.blue(color)) / 3;
-  }
-
   @Override
-  public int getOriginalNightTextBrightness() {
+  public int getPageTextBrightness() {
     // avoid damaging the looks of the Quran page
     int brightness = (int) (50 * Math.log1p(getNightModeBackgroundBrightness()) +
         getNightModeTextBrightness());
@@ -327,7 +315,7 @@ public class QuranSettings implements PageThemeSettings {
   @Override
   public String getPageTheme() {
     return PageTheme.fromKey(prefs.getString(Constants.PREF_PAGE_THEME,
-        PageThemeConstants.PAGE_THEME_ORIGINAL)).getStorageKey();
+        PageThemeConstants.PAGE_THEME_LIGHT)).getStorageKey();
   }
 
   @Override
@@ -336,34 +324,15 @@ public class QuranSettings implements PageThemeSettings {
   }
 
   public int getPageThemeBackgroundColor() {
-    if (isOriginalNightPage()) {
+    if (isNightMode()) {
       int brightness = getNightModeBackgroundBrightness();
       return Color.rgb(brightness, brightness, brightness);
     }
-    return getThemeColor(getPageTheme(), true);
+    return PageTheme.fromKey(getPageTheme()).backgroundColor(appContext);
   }
 
-  public int getPageThemeTextColor() {
-    if (isOriginalNightPage()) {
-      int brightness = getPageTextBrightness();
-      return Color.rgb(brightness, brightness, brightness);
-    }
-    return getThemeColor(getPageTheme(), false);
-  }
-
-  public boolean isOriginalDayPage() {
-    return !isNightMode() && PageThemeConstants.PAGE_THEME_ORIGINAL.equals(getPageTheme());
-  }
-
-  private boolean isOriginalNightPage() {
-    return isNightMode() && PageThemeConstants.PAGE_THEME_ORIGINAL.equals(getPageTheme());
-  }
-
-  private int getThemeColor(String theme, boolean isBackground) {
-    PageTheme pageTheme = PageTheme.fromKey(theme);
-    boolean dark = isPageAppearanceDark();
-    return isBackground ?
-        pageTheme.backgroundColor(appContext, dark) : pageTheme.textColor(appContext, dark);
+  public boolean isLightPage() {
+    return !isNightMode() && PageThemeConstants.PAGE_THEME_LIGHT.equals(getPageTheme());
   }
 
   // probably should eventually move this to Application.onCreate..
