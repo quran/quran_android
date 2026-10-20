@@ -10,6 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
@@ -50,7 +51,8 @@ class PageThemeSheetWrapper(
     QuranTheme(useDarkTheme = isSystemInDarkTheme() || state.isNightPage) {
       ModalBottomSheet(
         onDismissRequest = onDismissed,
-        sheetState = sheetState
+        sheetState = sheetState,
+        scrimColor = Color.Transparent
       ) {
         PageThemeSheet(
           state = state,
