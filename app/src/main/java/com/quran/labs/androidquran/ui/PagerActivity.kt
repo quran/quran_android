@@ -622,7 +622,14 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         { currentPage },
         { ayahToolBar },
         { ayah: SuraAyah -> ensurePage(ayah.sura, ayah.ayah) },
-        { sliderPage: Int -> showSlider(slidingPagerAdapter.getPagePosition(sliderPage)) }
+        { sliderPage: Int -> showSlider(slidingPagerAdapter.getPagePosition(sliderPage)) },
+        onSessionActiveChanged = { isActive ->
+          onEndSessionBackCallback.isEnabled = isActive
+          invalidateOptionsMenu()
+        },
+        stopAudio = { if (audioStatusRepositoryBridge.audioRequest() != null) onStopPressed() },
+        isShowingTranslation = { showingTranslation },
+        switchToQuran = { switchToQuran() },
       ))
   }
 
@@ -1173,6 +1180,13 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
     }
 
+    menu.findItem(R.id.memorize)?.let { memorize ->
+      memorize.isVisible = !showingTranslation && pagerActivityRecitationPresenter.isRecitationEnabled()
+      memorize.setTitle(
+        if (pagerActivityRecitationPresenter.hasSession()) R.string.menu_memorize_stop else R.string.menu_memorize
+      )
+    }
+
     val nightMode = menu.findItem(R.id.night_mode)
     if (nightMode != null) {
       val prefs = PreferenceManager.getDefaultSharedPreferences(this)
@@ -1187,6 +1201,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     val itemId = item.itemId
     if (itemId == R.id.favorite_item) {
       showReadingBookmarkSheet(ReadingBookmarkTarget.Page(currentPage))
+      return true
+    } else if (itemId == R.id.memorize) {
+      pagerActivityRecitationPresenter.onMemorizeMenuPressed()
       return true
     } else if (itemId == R.id.goto_quran) {
       switchToQuran()

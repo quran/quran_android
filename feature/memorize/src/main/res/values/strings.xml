@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="memorize_title">Memorize</string>
+  <string name="memorize_disclaimer">Recite from memory: the words are hidden and appear as you recite them correctly. If you make a mistake or stop, the next word is given to you.\n\nEverything happens on this device. Your voice is never recorded, saved or sent anywhere.\n\nAutomatic feedback can be wrong and does not replace a qualified teacher.</string>
+  <string name="memorize_disclaimer_accept">I understand</string>
+  <string name="memorize_model_title">Download the recitation model</string>
+  <string name="memorize_model_message">Following your recitation needs a speech model (%1$d MB), downloaded once. After that, memorization works fully offline.\n\nModel: %2$s, %3$s.</string>
+  <string name="memorize_model_download">Download</string>
+  <string name="memorize_model_downloading">Downloading the recitation model…</string>
+  <string name="memorize_model_failed">The model could not be downloaded: %1$s</string>
+  <string name="memorize_microphone_denied">Memorize needs the microphone to follow your recitation.</string>
+  <string name="memorize_listening">Listening to your recitation</string>
+  <string name="memorize_paused">Memorization paused</string>
+  <string name="memorize_pause">Pause</string>
+  <string name="memorize_resume">Resume</string>
+  <string name="memorize_stop">Stop</string>
+  <string name="memorize_settings_category">Memorize</string>
+  <string name="memorize_corrector_title">Prayer corrector</string>
+  <string name="memorize_corrector_summary">When you make a mistake or stop, the next word is given to you in the reciter\'s voice, one word at a time until you continue</string>
+  <string name="memorize_delay_title">Wait before helping</string>
+  <plurals name="memorize_seconds">
+    <item quantity="one">%1$d second</item>
+    <item quantity="other">%1$d seconds</item>
+  </plurals>
+  <plurals name="memorize_words">
+    <item quantity="one">%1$d word at a time</item>
+    <item quantity="other">%1$d words at a time</item>
+  </plurals>
+  <string name="memorize_words_title">Words given each time</string>
+  <string name="memorize_on_mistakes_title">Help after a mistake</string>
+  <string name="memorize_on_mistakes_summary">A wrong word is marked (not shown); if you don\'t correct it, the right word is given</string>
+  <string name="memorize_on_pauses_title">Help when I stop</string>
+  <string name="memorize_on_pauses_summary">Give the next word when you stay silent</string>
+  <string name="memorize_voice_title">Voice of the hints</string>
+  <string name="memorize_strict_title">Check tashkeel</string>
+  <string name="memorize_strict_summary">Also treat wrong short vowels as mistakes (more false alarms)</string>
+  <string name="memorize_background_title">Listening with the screen off</string>
+  <string name="memorize_background_summary">For using the prayer corrector during salah: let the app keep listening in the background</string>
+  <string name="memorize_background_status_ok">Background listening is allowed.</string>
+  <string name="memorize_background_status_restricted">The phone may stop listening to save battery.</string>
+  <string name="memorize_background_battery">Allow unrestricted battery use</string>
+  <string name="memorize_background_autostart">Allow autostart (Xiaomi)</string>
+  <string name="memorize_background_no_restrictions">Battery saver: No restrictions (Xiaomi)</string>
+  <string name="memorize_background_app_settings">Open app settings</string>
+  <string name="memorize_model_setting_title">Recitation model</string>
+  <string name="memorize_model_installed">Installed: %1$s</string>
+  <string name="memorize_model_not_installed">Not downloaded yet; it is downloaded the first time you memorize</string>
+  <string name="memorize_model_delete_message">%1$s, %2$s.\n\nDelete it to free space? It will be downloaded again the next time you memorize.</string>
+  <string name="memorize_model_delete">Delete</string>
+  <string name="memorize_model_missing_message">The recitation model (%1$d MB) is downloaded the first time you memorize. To set it up without internet, copy %2$s and %3$s to this phone and import them.</string>
+  <string name="memorize_model_import">Import files</string>
+  <string name="memorize_model_imported">The recitation model is installed</string>
+  <string name="memorize_model_import_failed">These files are not the recitation model</string>
+  <string name="memorize_privacy_title">Privacy</string>
+  <string name="memorize_privacy_summary">Your recitation is processed only on this device. Nothing is recorded, saved or sent.</string>
+  <string name="memorize_choose_mode">Recite from memory</string>
+  <string name="memorize_mode_memorize">Memorize: the words appear as I recite</string>
+  <string name="memorize_mode_salah">Salah: listen while I pray and remind me if I get stuck</string>
+  <string name="memorize_voice_download_title">Hints in the reciter\'s voice</string>
+  <string name="memorize_voice_download_message">To speak the hints offline, %1$s\'s recitation of this sura is needed. Download it now? Without it, hints are only shown.</string>
+  <string name="memorize_voice_download_skip">Continue without voice</string>
+  <string name="memorize_salah_placement">Place the phone close in front of you, at the edge of your prayer mat. It hears you best within about one meter.</string>
+  <string name="memorize_start_failed">Memorization could not start. If this keeps happening, delete the recitation model in Settings and download it again.</string>
+</resources>

@@ -1,0 +1,280 @@
+package com.quran.mobile.feature.memorize.presenter
+
+import android.Manifest
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.pm.PackageManager
+import android.os.Build
+import android.widget.ProgressBar
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.quran.data.di.QuranScope
+import com.quran.data.model.SuraAyah
+import com.quran.data.model.audio.Qari
+import com.quran.data.source.PageProvider
+import com.quran.mobile.common.download.Downloader
+import com.quran.mobile.feature.memorize.R
+import com.quran.mobile.feature.memorize.model.SpeechModelStore
+import com.quran.mobile.feature.memorize.prompt.PromptPlayer
+import com.quran.mobile.feature.memorize.service.MemorizeService
+import com.quran.mobile.feature.memorize.session.MemorizeSessionController
+import com.quran.mobile.feature.memorize.session.MemorizeState
+import com.quran.mobile.feature.memorize.settings.MemorizePreferences
+import com.quran.recitation.presenter.RecitationPresenter
+import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.lang.ref.WeakReference
+
+/**
+ * Starts and controls memorization sessions from the reading screen ("Memorize" / "Recite from
+ * here" / the audio bar's microphone).
+ */
+@QuranScope
+class MemorizeRecitationPresenter @Inject constructor(
+  private val controller: MemorizeSessionController,
+  private val models: SpeechModelStore,
+  private val preferences: MemorizePreferences,
+  private val promptPlayer: PromptPlayer,
+  private val downloader: Downloader,
+  private val pageProvider: PageProvider,
+) : RecitationPresenter {
+
+  private val enabled = MutableStateFlow(true)
+  private var activityRef = WeakReference<Activity>(null)
+  private var scope: CoroutineScope? = null
+  private var pendingStart: (() -> SuraAyah)? = null
+  private var pendingMode = MemorizeState.Mode.MEMORIZE
+  private var voiceChecked = false
+  private var serviceSessionId: String? = null
+  private var downloadDialog: AlertDialog? = null
+
+  override fun bind(what: Activity) {
+    activityRef = WeakReference(what)
+    val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    this.scope = scope
+    controller.state
+      .onEach { state ->
+        // keeps listening with the screen off; started once the session exists, while it's visible
+        if (state != null && state.isActive && state.id != serviceSessionId) {
+          serviceSessionId = state.id
+          activityRef.get()?.let { MemorizeService.start(it) }
+        }
+      }
+      .launchIn(scope)
+    controller.failures
+      .onEach { activityRef.get()?.let { Toast.makeText(it, R.string.memorize_start_failed, Toast.LENGTH_LONG).show() } }
+      .launchIn(scope)
+  }
+
+  override fun unbind(what: Activity) {
+    if (activityRef.get() === what) activityRef.clear()
+    // a model download carries on; the dialog shows it again on the next start
+    downloadDialog?.dismiss()
+    downloadDialog = null
+    scope?.cancel()
+    scope = null
+    // the session itself keeps running (e.g. with the screen off during salah)
+  }
+
+  override fun isRecitationEnabled(): Boolean = true
+
+  override fun isRecitationEnabledFlow(): StateFlow<Boolean> = enabled
+
+  // memorization keeps nothing: no transcript, no recording to play back
+  override fun supportsTranscript(): Boolean = false
+
+  override fun supportsPlayback(): Boolean = false
+
+  override fun supportsHints(): Boolean = true
+
+  override fun onHintRequested() = controller.requestHint()
+
+  override fun startOrStopRecitation(startAyah: () -> SuraAyah, showModeSelection: Boolean) {
+    val state = controller.state.value
+    if (state != null && state.isActive) {
+      controller.pauseOrResume()
+      return
+    }
+    if (state?.status == MemorizeState.Status.FINISHED) {
+      endSession()
+    }
+    pendingStart = startAyah
+    voiceChecked = false
+    if (showModeSelection) chooseMode() else {
+      pendingMode = MemorizeState.Mode.MEMORIZE
+      proceed()
+    }
+  }
+
+  /** Long press: memorize on screen, or follow the recitation during salah. */
+  private fun chooseMode() {
+    val activity = activityRef.get() ?: return
+    val modes = arrayOf(MemorizeState.Mode.MEMORIZE, MemorizeState.Mode.SALAH)
+    AlertDialog.Builder(activity)
+      .setTitle(R.string.memorize_choose_mode)
+      .setItems(arrayOf(activity.getString(R.string.memorize_mode_memorize), activity.getString(R.string.memorize_mode_salah))) { _, which ->
+        pendingMode = modes[which]
+        proceed()
+      }
+      .setNegativeButton(android.R.string.cancel) { _, _ -> pendingStart = null }
+      .show()
+  }
+
+  override fun endSession() {
+    controller.stop()
+    activityRef.get()?.let { MemorizeService.stop(it) }
+  }
+
+  override fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {
+    if (requestCode != REQUEST_PERMISSIONS) return
+    if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+      proceed()
+    } else {
+      activityRef.get()?.let {
+        Toast.makeText(it, R.string.memorize_microphone_denied, Toast.LENGTH_LONG).show()
+      }
+      pendingStart = null
+    }
+  }
+
+  /** Walks through the one-time steps (disclaimer, model, permission) and then starts. */
+  private fun proceed() {
+    val activity = activityRef.get() ?: return
+    val start = pendingStart ?: return
+    when {
+      !preferences.disclaimerAccepted -> showDisclaimer(activity)
+      !models.isInstalled() -> if (models.isDownloading) showDownload(activity) else offerModelDownload(activity)
+      !hasMicrophonePermission(activity) -> requestPermissions(activity)
+      !voiceChecked -> {
+        voiceChecked = true
+        checkHintVoice(activity, start())
+      }
+      else -> {
+        pendingStart = null
+        controller.start(start(), pendingMode)
+        if (pendingMode == MemorizeState.Mode.SALAH) {
+          // recognition degrades with distance and room echo: keep the phone close
+          Toast.makeText(activity, R.string.memorize_salah_placement, Toast.LENGTH_LONG).show()
+        }
+      }
+    }
+  }
+
+  /** Offers to download the sura in the hint voice so hints can be spoken offline. */
+  private fun checkHintVoice(activity: Activity, start: SuraAyah) {
+    val qari = pageProvider.getQaris().firstOrNull { it.id == preferences.promptQariId }
+    if (!preferences.correctorEnabled || qari == null) {
+      proceed()
+      return
+    }
+    val scope = scope ?: return
+    scope.launch {
+      // reads the reciter's timings and files
+      val status = withContext(Dispatchers.IO) { promptPlayer.voiceStatus(qari.id, start.sura) }
+      if (activityRef.get() !== activity) return@launch
+      if (status == PromptPlayer.VoiceStatus.AUDIO_MISSING) offerVoiceDownload(activity, qari, start) else proceed()
+    }
+  }
+
+  private fun offerVoiceDownload(activity: Activity, qari: Qari, start: SuraAyah) {
+    AlertDialog.Builder(activity)
+      .setTitle(R.string.memorize_voice_download_title)
+      .setMessage(activity.getString(R.string.memorize_voice_download_message, activity.getString(qari.nameResource)))
+      .setPositiveButton(R.string.memorize_model_download) { _, _ ->
+        downloader.downloadCompleteSuras(qari, listOf(start.sura), downloadDatabase = true)
+        proceed()
+      }
+      .setNegativeButton(R.string.memorize_voice_download_skip) { _, _ -> proceed() }
+      .setOnCancelListener { pendingStart = null }
+      .show()
+  }
+
+  private fun showDisclaimer(activity: Activity) {
+    AlertDialog.Builder(activity)
+      .setTitle(R.string.memorize_title)
+      .setMessage(R.string.memorize_disclaimer)
+      .setPositiveButton(R.string.memorize_disclaimer_accept) { _, _ ->
+        preferences.disclaimerAccepted = true
+        proceed()
+      }
+      .setNegativeButton(android.R.string.cancel) { _, _ -> pendingStart = null }
+      .show()
+  }
+
+  private fun offerModelDownload(activity: Activity) {
+    val sizeMb = models.spec.files.sumOf { it.size } / 1_000_000
+    AlertDialog.Builder(activity)
+      .setTitle(R.string.memorize_model_title)
+      .setMessage(activity.getString(R.string.memorize_model_message, sizeMb, models.spec.attribution, models.spec.license))
+      .setPositiveButton(R.string.memorize_model_download) { _, _ ->
+        models.startDownload()
+        showDownload(activity)
+      }
+      .setNegativeButton(android.R.string.cancel) { _, _ -> pendingStart = null }
+      .show()
+  }
+
+  /** Shows the model download's progress, and goes on with the start once it is installed. */
+  private fun showDownload(activity: Activity) {
+    val scope = scope ?: return
+    val progress = ProgressBar(activity, null, android.R.attr.progressBarStyleHorizontal).apply {
+      max = 1000
+      setPadding(48, 24, 48, 0)
+    }
+    val dialog = AlertDialog.Builder(activity)
+      .setTitle(R.string.memorize_model_downloading)
+      .setView(progress)
+      .setCancelable(false)
+      .setNegativeButton(android.R.string.cancel) { _, _ ->
+        models.cancelDownload()
+        pendingStart = null
+      }
+      .show()
+    downloadDialog = dialog
+    scope.launch {
+      val result = models.state
+        .onEach { state ->
+          if (state is SpeechModelStore.State.Downloading && state.totalBytes > 0) {
+            progress.progress = (1000 * state.downloadedBytes / state.totalBytes).toInt()
+          }
+        }
+        .first { it !is SpeechModelStore.State.Downloading }
+      dialog.dismiss()
+      if (downloadDialog === dialog) downloadDialog = null
+      when (result) {
+        is SpeechModelStore.State.Installed -> proceed()
+        is SpeechModelStore.State.Failed -> {
+          Toast.makeText(activity, activity.getString(R.string.memorize_model_failed, result.reason), Toast.LENGTH_LONG).show()
+          pendingStart = null
+        }
+        else -> pendingStart = null
+      }
+    }
+  }
+
+  private fun hasMicrophonePermission(activity: Activity) =
+    ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+
+  private fun requestPermissions(activity: Activity) {
+    val permissions = buildList {
+      add(Manifest.permission.RECORD_AUDIO)
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) add(Manifest.permission.POST_NOTIFICATIONS)
+    }
+    ActivityCompat.requestPermissions(activity, permissions.toTypedArray(), REQUEST_PERMISSIONS)
+  }
+
+  private companion object {
+    const val REQUEST_PERMISSIONS = 4242
+  }
+}

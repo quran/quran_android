@@ -27,6 +27,7 @@ import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.di.ExtraScreenProvider
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.page.common.data.QuranNaming
+import com.quran.page.common.data.coordinates.GlyphTypeResolver
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ElementsIntoSet
 import dev.zacsweers.metro.Named
@@ -122,6 +123,12 @@ object ApplicationModule {
   @Provides
   @ElementsIntoSet
   fun provideExtraScreens(): Set<ExtraScreenProvider> {
+    return emptySet()
+  }
+
+  @Provides
+  @ElementsIntoSet
+  fun provideGlyphTypeResolvers(): Set<GlyphTypeResolver> {
     return emptySet()
   }
 

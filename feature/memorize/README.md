@@ -1,0 +1,109 @@
+# Memorize (احفظ) and the prayer corrector (مصحح الصلاة)
+
+Recite from memory with the mushaf page open: the words of the passage are hidden and appear as
+they are recited correctly. A wrong word is marked (not shown); if the reciter is stuck, the next
+word is given, one word at a time, in a reciter's voice. The same corrector works hands-free during
+salah, with the screen off.
+
+**Everything runs on the device.** Audio is processed in memory and dropped; nothing is recorded,
+saved, logged or sent. The only network use is the one-time download of the speech model (and, if
+the user agrees, the hint reciter's sura audio through the app's normal audio downloads).
+
+## How it works
+
+```
+microphone (16 kHz, VOICE_RECOGNITION) ─► speech engine (sherpa-onnx, streaming zipformer2-CTC,
+phoneme output) ─► RecitationTracker (aligns the phonemes with the expected words) ─► HintScheduler
+(when to give a word) ─► MemorizeState ─► page masks + spoken hints (PromptPlayer)
+```
+
+* `:feature:memorize:tracker` — pure Kotlin, no Android: `PhonemeNormalizer`, `RecitationTracker`
+  (weighted semi-global alignment; repetition, re-sync after misheard words, recovery when the user
+  skips ahead, phrases that aren't part of the passage such as isti'adha/basmala/takbir),
+  `SalahFlow` (Al-Fatiha and prayer phrases are ignored; hints only while the passage is recited;
+  the passage continues in the next rak'ah), `HintScheduler` (mark → wait → one word → wait → ...).
+  The tracker is a port of the reference implementation used to benchmark the models; the golden
+  tests in `src/test/resources/golden` keep the two identical.
+* `:feature:memorize:engine-sherpa` — the only module with native code (sherpa-onnx AAR, fetched by
+  `tools/memorize/fetch_sherpa_onnx.sh`, SHA-256 pinned).
+* `:feature:memorize` — plugs into the app's recitation slot (`common:recitation`) instead of
+  `:feature:recitation`'s stubs: session controller, microphone foreground service, page masks,
+  hint audio, settings, model download/import.
+
+When a word is given (`HintScheduler`, delay T from the settings, 4 s by default):
+
+| | on screen | in salah (spoken hints) |
+|---|---|---|
+| wrong word | marked at once; a word T later | a word T later, once the reciter pauses (not over them) |
+| stuck mid-ayah | after T without progress and 2 s of silence | same |
+| stuck between ayat (before an ayah, or on its last word) | after T | after 2 × T (a pause there is often ruku; the takbir disarms hints) |
+| no answer after 10 words | stops until the reciter recites a word | same |
+
+In salah any phrase of ruku/sujud (takbir, tasmi', tahmid, tasbeeh, tasleem) ends the passage of the
+rak'ah; hints resume when the passage continues after the next Al-Fatiha. A pause is 0.8 s of
+silence or 1.5 s without anything new recognized (loud mosques are never silent). The speech
+stream is restarted only in real silence: never in a held madd.
+
+The pages are images, so words are hidden by clipping their glyphs out (`HighlightType.Mode.HIDE`).
+The madani ayahinfo databases have no glyph types; `MadaniGlyphTypeResolver` supplies them from
+`assets/memorize/glyph_types_madani_v1.txt` and the app derives word-level glyphs
+(`AyahCoordinates.wordGlyphCoordinates`) that are only used for word keys and hiding, so existing
+highlights are unchanged.
+
+## Bundled data (regenerate with `tools/memorize/`)
+
+| asset | script | notes |
+|---|---|---|
+| `memorize/glyph_types_madani_v1.txt` | `build_glyph_types.py` | glyph type per position for all 6,236 ayat; identical for every ayahinfo width |
+| `memorize/lexicon_v1.db` | `build_lexicon.py --compact` | pronunciation of all 77,433 words (in context and alone) + prayer phrases, from [quran-transcript](https://github.com/obadx/quran-transcript) (MIT) |
+| `memorize/timings/husary_murattal_wbw_v1.db` | `align_timing_pack.py` | word timings of the app's Husary sura files, by forced alignment |
+| `memorize/timings/husary_mujawwad_wbw_v1.db` | `align_timing_pack.py` + `merge_timing_packs.py` | same for Husary Mujawwad |
+| `memorize/timings/husary_muallim_wbw_v1.db` | `align_timing_pack.py` + `merge_timing_packs.py --truncated 4:33` | same for Husary Muallim; the upstream 004.mp3 stops in 4:34, so hints after 4:33 are shown without audio |
+
+Word numbering everywhere is the page's glyph word numbering (`WordGlyph.wordPosition`).
+
+## Speech model
+
+Streaming Zipformer2-CTC phoneme recognizer by Quran-Lab (`zipformer_p-arabic-v3.1`, int8, 69 MB;
+fetched from an ungated mirror that is byte-identical to Quran-Lab's gated release),
+downloaded once from a pinned, checksummed URL (`SpeechModelSpec`), or imported for a setup
+without internet (Settings → Recitation model → Import files: pick `quran-stt-int8.onnx` and
+`tokens.txt`; files are recognized by size and verified by SHA-256). Its
+license (Quran-Lab No-Profit License) allows free use and redistribution, forbids charging for it
+or for features it powers, and requires telling users that automatic feedback can be wrong and does
+not replace a qualified teacher (shown before the first session). The engine interface is
+model-agnostic; a permissively licensed model can be swapped in.
+
+## Tests
+
+* `./gradlew :feature:memorize:tracker:test` — tracker golden parity, salah flow, hint scheduler.
+* `./gradlew :feature:memorize:testReleaseUnitTest` — page masks, word timings, and the session
+  controller with a scripted engine (hints, salah disarming, start/stop races, start failures).
+* `./gradlew :app:testMadaniDebugUnitTest --tests '*WordGlyphs*'` — derived word glyphs.
+* `tools/memorize/run_device_benchmark.sh testlab|adb [engine|session] [MODEL,VERSION ...]` — on real
+  phones (Firebase Test Lab or USB): `engine` = speed and memory of the recognizer at 1/2/4 threads,
+  `session` = a whole memorization session fed Husary (Al-Mulk 1–5) in real time, measuring how much
+  is revealed and how soon after each word is said. The model is bundled into the test APKs.
+
+  Results (Test Lab, 2026-10-22):
+
+  | phone | engine, 2 threads | model load | session: revealed / hints / mistakes | reveal latency p50 / p90 / max |
+  |---|---|---|---|---|
+  | Galaxy A10 (2019 low end, Android 10) | 0.42 × real time | 7.3 s | 60 / 0 / 0 of 60 words | 0.34 / 0.63 / 2.6 s |
+  | Galaxy S21 (Snapdragon 888, as the Mi 11) | 0.07 × real time | 2.1 s | 60 / 0 / 0 | 0.16 / 0.46 / 2.5 s |
+  | virtual Arm phone, Android 14 and 16 KB-page Android 16 | 0.05–0.07 | 1.1–2.0 s | 60 / 0 / 0 | 0.13–0.15 / 0.44–0.46 / 2.5 s |
+
+  Native memory ~105–150 MB. The microphone starts before the model has loaded, so nothing said
+  during those seconds is lost: on the A10 listening starts after 0.2 s and the words said while the
+  model loads appear once it's ready (latency p50 / p90 / max 0.43 / 2.65 / 6.3 s, still 60/60).
+  A Robo crawl of the app found no crash.
+
+## Known limitations
+
+* Hafs, madani pages only. Recognition degrades on heavily reverberant/noisy audio. On real prayer
+  recordings from mosques (evaluation T6, 3 hours) passages are followed with 97.6 % recall; false
+  spoken hints per 10 minutes: 0 (Masjid an-Nabawi, qiyam), 1–2 (Masjid al-Haram, UK mosques),
+  3 (Indonesian/Pakistani imams), 5 (local mosques with loudspeakers). Where loudspeakers garble the
+  ruku/sujud phrases (Al-Aqsa) hints can come between rak'ahs; at most 10 in a row.
+* Salah mode follows the passage the user picked; reciting a different sura is treated as mistakes.
+* Hints need the hint reciter's sura audio to be downloaded; otherwise they are only shown.

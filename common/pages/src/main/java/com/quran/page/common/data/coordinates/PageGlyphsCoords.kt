@@ -3,6 +3,7 @@ package com.quran.page.common.data.coordinates
 import android.graphics.RectF
 import androidx.core.graphics.plus
 import com.quran.data.model.AyahGlyph
+import com.quran.data.model.AyahGlyph.PauseGlyph
 import com.quran.data.model.AyahGlyph.WordGlyph
 import com.quran.data.model.AyahWord
 import com.quran.data.model.SuraAyah
@@ -194,6 +195,48 @@ class PageGlyphsCoords(val page: Int, glyphCoords: List<GlyphCoords>) {
         if (it.value.right == lineBound.right) it.value.right = pageMaxX
       }
     }
+  }
+
+  // MASK BOUNDS (HIDING)
+
+  private val expandedBoundsByGlyph: Map<AyahGlyph, RectF> by lazy {
+    expandedGlyphs.associate { it.glyph to it.bounds }
+  }
+
+  /**
+   * Gets bounds that fully cover the ink of a word, or of all the words of an ayah, so that it can
+   * be hidden. A word is covered together with the waqf marks that follow it; each glyph is
+   * expanded to the midpoints between it and its neighbours so that no part of it shows. Ayah end,
+   * hizb and sajdah markers are never covered, so the reader can still see where ayat are.
+   *
+   * @param key an ayah key "[sura]:[ayah]" or word key "[sura]:[ayah]:[word]".
+   * @return one rectangle per line, or null if the ayah or word isn't on this page.
+   */
+  fun getMaskBounds(key: String): List<RectF>? {
+    val split = key.split(":")
+    val ayah = SuraAyah(split[0].toInt(), split[1].toInt())
+    val glyphs = glyphsByAyah[ayah] ?: return null
+    val masked = when (split.size) {
+      2 -> glyphs.filter { it.glyph is WordGlyph || it.glyph is PauseGlyph }
+      3 -> wordWithTrailingPauses(glyphs, split[2].toInt())
+      else -> throw IllegalArgumentException("invalid key: $key, expecting _:_ or _:_:_")
+    }
+    if (masked.isEmpty()) return null
+    return masked
+      .groupBy { it.line }
+      .values
+      .map { lineGlyphs ->
+        lineGlyphs.fold(RectF()) { bounds, glyph ->
+          bounds + (expandedBoundsByGlyph[glyph.glyph] ?: glyph.bounds)
+        }
+      }
+  }
+
+  private fun wordWithTrailingPauses(glyphs: List<GlyphCoords>, wordPosition: Int): List<GlyphCoords> {
+    val index = glyphs.indexOfFirst { it.glyph is WordGlyph && it.glyph.wordPosition == wordPosition }
+    if (index < 0) return emptyList()
+    val pauses = glyphs.drop(index + 1).takeWhile { it.glyph is PauseGlyph }
+    return listOf(glyphs[index]) + pauses
   }
 
   // GLYPH BOUNDS (CLICKS)

@@ -331,4 +331,6 @@
   </string>
   <string name="comma">"،"</string>
 
+  <string name="menu_memorize">احفظ</string>
+  <string name="menu_memorize_stop">إنهاء الحفظ</string>
 </resources>

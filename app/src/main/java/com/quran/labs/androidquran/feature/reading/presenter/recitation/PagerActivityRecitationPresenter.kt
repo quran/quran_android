@@ -25,7 +25,9 @@ import com.quran.recitation.presenter.RecitationSettings
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 
@@ -47,9 +49,15 @@ class PagerActivityRecitationPresenter @Inject constructor(
     val ayahToolBar: () -> AyahToolBar?,
     val ensurePage: (ayah: SuraAyah) -> Unit,
     val showSlider: (sliderPage: Int) -> Unit,
+    /** Called when a recitation session starts or ends (e.g. to handle back presses). */
+    val onSessionActiveChanged: (isActive: Boolean) -> Unit = {},
+    /** Stops any Quran audio that is playing, so it doesn't compete with the user's recitation. */
+    val stopAudio: () -> Unit = {},
+    val isShowingTranslation: () -> Boolean = { false },
+    val switchToQuran: () -> Unit = {},
   )
 
-  private fun isRecitationEnabled(): Boolean {
+  fun isRecitationEnabled(): Boolean {
     return recitationPresenter.isRecitationEnabled()
   }
 
@@ -91,6 +99,13 @@ class PagerActivityRecitationPresenter @Inject constructor(
     // Handle Changes to Recitation Enabled
     recitationPresenter.isRecitationEnabledFlow()
       .onEach { onRecitationEnabledStateChanged(it) }
+      .launchIn(scope)
+
+    // Session start / end
+    recitationEventPresenter.recitationSessionFlow
+      .map { it != null }
+      .distinctUntilChanged()
+      .onEach { bridge.onSessionActiveChanged(it) }
       .launchIn(scope)
 
     // Recitation Events
@@ -142,9 +157,31 @@ class PagerActivityRecitationPresenter @Inject constructor(
     playback.ayah()?.let { bridge.ensurePage(it) }
   }
 
+  fun hasSession(): Boolean = isRecitationEnabled() && recitationEventPresenter.hasRecitationSession()
+
+  /**
+   * The toolbar's "Memorize" action: starts from the selected ayah (or the first ayah on the page)
+   * or ends the current session.
+   */
+  fun onMemorizeMenuPressed() {
+    if (!isRecitationEnabled()) return
+    if (recitationEventPresenter.hasRecitationSession()) {
+      recitationPresenter.endSession()
+    } else {
+      prepareForNewSession()
+      recitationPresenter.startOrStopRecitation({ firstAyahToMemorize() })
+    }
+  }
+
+  private fun prepareForNewSession() {
+    bridge.stopAudio()
+    if (bridge.isShowingTranslation()) bridge.switchToQuran()
+  }
+
   // AudioBarRecitationListener
 
   override fun onRecitationPressed() {
+    if (!recitationEventPresenter.hasRecitationSession()) prepareForNewSession()
     recitationPresenter.startOrStopRecitation({ ayahToStartFrom() })
   }
 
@@ -153,11 +190,16 @@ class PagerActivityRecitationPresenter @Inject constructor(
   }
 
   override fun onRecitationTranscriptPressed() {
+    if (!recitationPresenter.supportsTranscript()) return
     if (recitationEventPresenter.hasRecitationSession()) {
       bridge.showSlider(SlidingPagerAdapter.TRANSCRIPT_PAGE)
     } else {
       Timber.e("Transcript pressed but we don't have a session; this should never happen")
     }
+  }
+
+  override fun onRecitationHintPressed() {
+    recitationPresenter.onHintRequested()
   }
 
   override fun onHideVersesPressed() {
@@ -174,6 +216,12 @@ class PagerActivityRecitationPresenter @Inject constructor(
 
   override fun onPauseRecitationPressed() {
     recitationPlaybackPresenter.pauseIfPlaying()
+  }
+
+  private fun firstAyahToMemorize(): SuraAyah {
+    val page = if (bridge.isDualPageVisible()) bridge.currentPage() - 1 else bridge.currentPage()
+    return readingEventPresenter.currentAyahSelection().startSuraAyah()
+      ?: SuraAyah(quranInfo.getSuraOnPage(page), quranInfo.getFirstAyahOnPage(page))
   }
 
   private fun ayahToStartFrom(): SuraAyah {

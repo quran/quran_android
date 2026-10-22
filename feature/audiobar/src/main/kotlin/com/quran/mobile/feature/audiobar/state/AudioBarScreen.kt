@@ -39,11 +39,17 @@ internal sealed class AudioBarState {
     val messageResource: Int
   ) : AudioBarState()
 
-  data object RecitationListening : AudioBarState()
+  data class RecitationListening(
+    val showTranscript: Boolean = true,
+    val showHint: Boolean = false,
+  ) : AudioBarState()
 
-  data object RecitationPlaying : AudioBarState()
+  data class RecitationPlaying(val showTranscript: Boolean = true) : AudioBarState()
 
-  data object RecitationStopped : AudioBarState()
+  data class RecitationStopped(
+    val showTranscript: Boolean = true,
+    val showPlayback: Boolean = true,
+  ) : AudioBarState()
 }
 
 internal class AudioBarUiEvents(
@@ -110,6 +116,7 @@ internal sealed class AudioBarUiEvent(val audioBarEvent: AudioBarEvent) {
 
   sealed class RecitationListeningEvent(event: AudioBarEvent) : AudioBarUiEvent(event) {
     data object HideVerses : RecitationListeningEvent(AudioBarEvent.HideVerses)
+    data object Hint : RecitationListeningEvent(AudioBarEvent.RecitationHint)
   }
 
   sealed class RecitationPlayingEvent(event: AudioBarEvent) : AudioBarUiEvent(event) {

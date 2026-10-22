@@ -71,18 +71,23 @@ internal fun AudioBar(
     )
 
     is AudioBarState.RecitationListening -> RecitationListeningAudioBar(
+      showTranscript = audioBarState.showTranscript,
+      showHint = audioBarState.showHint,
       eventSink = eventListeners.commonRecordingEventSink,
       listeningEventSink = eventListeners.recitationListeningEventSink,
       modifier = updatedModifier
     )
 
     is AudioBarState.RecitationPlaying -> RecitationPlayingAudioBar(
+      showTranscript = audioBarState.showTranscript,
       eventSink = eventListeners.commonRecordingEventSink,
       playingEventSink = eventListeners.recitationPlayingEventSink,
       modifier = updatedModifier
     )
 
     is AudioBarState.RecitationStopped -> RecitationStoppedAudioBar(
+      showTranscript = audioBarState.showTranscript,
+      showPlayback = audioBarState.showPlayback,
       eventSink = eventListeners.commonRecordingEventSink,
       stoppedEventSink = eventListeners.recitationStoppedEventSink,
       modifier = updatedModifier
