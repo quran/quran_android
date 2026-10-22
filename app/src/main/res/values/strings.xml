@@ -159,6 +159,9 @@
   <string name="appearance">Appearance</string>
   <string name="prefs_volume_key_navigation_title">Volume key navigation</string>
   <string name="prefs_volume_key_navigation_summary">Navigate between pages using volume keys</string>
+  <string name="prefs_swap_volume_keys_title">Swap volume keys</string>
+  <string name="prefs_swap_volume_keys_summary_on">Volume up goes to the next page</string>
+  <string name="prefs_swap_volume_keys_summary_off">Volume up goes to the previous page</string>
   <string name="prefs_category_reading">Reading Preferences</string>
   <string name="prefs_category_translation">Translation Preferences</string>
   <string name="prefs_category_display_settings">Display Settings</string>

@@ -109,6 +109,7 @@ import com.quran.labs.androidquran.ui.listener.AudioBarListener
 import com.quran.labs.androidquran.ui.readingbookmark.createReadingBookmarkToastView
 import com.quran.labs.androidquran.ui.util.ToastCompat.makeText
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
+import com.quran.labs.androidquran.ui.util.VolumeKeyNavigation
 import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenterScreen
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.OrientationLockUtils
@@ -872,12 +873,12 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
     val navigate = (audioStatusRepositoryBridge.audioRequest() == null
         && quranSettings.navigateWithVolumeKeys())
-    if (navigate && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-      viewPager.currentItem -= 1
-      return true
-    } else if (navigate && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-      viewPager.currentItem += 1
-      return true
+    if (navigate) {
+      val offset = VolumeKeyNavigation.pagerOffset(keyCode, quranSettings.shouldSwapVolumeKeys())
+      if (offset != 0) {
+        viewPager.currentItem += offset
+        return true
+      }
     }
     return super.onKeyDown(keyCode, event)
   }
