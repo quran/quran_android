@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.mobile.feature.memorize.tracker.WordId
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,6 +34,11 @@ class WordTimingsTest {
       db.execSQL("INSERT INTO audio_files VALUES (112, 123456, '')")
     }
     timings = WordTimings.fromFile(file)
+  }
+
+  @After
+  fun tearDown() {
+    timings.close()
   }
 
   @Test

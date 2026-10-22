@@ -64,15 +64,20 @@ Word numbering everywhere is the page's glyph word numbering (`WordGlyph.wordPos
 
 ## Speech model
 
-Streaming Zipformer2-CTC phoneme recognizer by Quran-Lab (`zipformer_p-arabic-v3.1`, int8, 69 MB;
-fetched from an ungated mirror that is byte-identical to Quran-Lab's gated release),
-downloaded once from a pinned, checksummed URL (`SpeechModelSpec`), or imported for a setup
-without internet (Settings → Recitation model → Import files: pick `quran-stt-int8.onnx` and
-`tokens.txt`; files are recognized by size and verified by SHA-256). Its
-license (Quran-Lab No-Profit License) allows free use and redistribution, forbids charging for it
-or for features it powers, and requires telling users that automatic feedback can be wrong and does
-not replace a qualified teacher (shown before the first session). The engine interface is
-model-agnostic; a permissively licensed model can be swapped in.
+One model: Quran-Lab's streaming Zipformer2-CTC phoneme recognizer **zipformer_p-arabic-v3.1**, int8
+(69 MB) — <https://huggingface.co/Quran-Lab/zipformer_p-arabic-v3>
+(`zipformer_p_arabic_v3.1.int8.onnx` and `tokens.txt` at commit `3da514fc`; the repository is
+gated). The app downloads the byte-identical files once from an ungated mirror,
+<https://huggingface.co/Saboorhsn/quran-stt-onnx> (`quran-stt-int8.onnx`, pinned to commit
+`51ec9bcd` and checked by SHA-256 in `SpeechModelSpec`), or imports them for a setup without
+internet (Settings → Recitation model → Import files: pick `quran-stt-int8.onnx` and `tokens.txt`;
+files are recognized by size and verified).
+
+License: Quran-Lab No-Profit License 1.2, included verbatim in [MODEL_LICENSE](MODEL_LICENSE)
+(Copyright (c) 2026 Muno459 / Quran-Lab). It allows free use, adaptation and redistribution, forbids
+charging for the model or for any feature it powers, and its access terms ask applications to state
+that automatic feedback can be wrong and does not replace a qualified teacher (shown before the
+first session). The engine interface is model-agnostic; another model can be swapped in.
 
 ## Tests
 
@@ -82,8 +87,12 @@ model-agnostic; a permissively licensed model can be swapped in.
 * `./gradlew :app:testMadaniDebugUnitTest --tests '*WordGlyphs*'` — derived word glyphs.
 * `tools/memorize/run_device_benchmark.sh testlab|adb [engine|session] [MODEL,VERSION ...]` — on real
   phones (Firebase Test Lab or USB): `engine` = speed and memory of the recognizer at 1/2/4 threads,
-  `session` = a whole memorization session fed Husary (Al-Mulk 1–5) in real time, measuring how much
-  is revealed and how soon after each word is said. The model is bundled into the test APKs.
+  `session` = whole memorization sessions fed in real time with 26 clips — Husary and 8 other
+  professional reciters and styles (QUD, CC-BY-4.0), non-professional readers incl. real wording
+  mistakes (sobolev210, MIT) and non-native readers of 8 countries (RetaSy) — measuring per clip and
+  per group how much is revealed, mistakes, hints and how soon after each word is said it appears.
+  The model and the audio are staged into the test APKs by `tools/memorize/stage_test_clips.py`
+  (`build/memorize-testlab`, never committed).
 
   Results (Test Lab, 2026-10-22):
 

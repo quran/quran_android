@@ -27,6 +27,7 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -59,9 +60,8 @@ fun interface RecitationEngineFactory {
  * All recognition and tracking happens on one serialized worker so audio, timer ticks and hints
  * never race. Nothing is recorded or logged: audio frames are dropped as soon as they are decoded.
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 @SingleIn(AppScope::class)
-class MemorizeSessionController @Inject constructor(
+class MemorizeSessionController private constructor(
   private val lexicon: LexiconRepository,
   private val models: SpeechModelStore,
   private val preferences: MemorizePreferences,
@@ -70,9 +70,27 @@ class MemorizeSessionController @Inject constructor(
   private val promptPlayer: HintVoice,
   private val audioSources: AudioSourceFactory,
   private val callState: CallState,
+  private val scope: CoroutineScope,
+  /** Runs all recognition and tracking, one task at a time. */
+  private val worker: CoroutineDispatcher,
+  private val clock: () -> Long,
 ) {
-  private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-  private val worker = Dispatchers.Default.limitedParallelism(1)
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @Inject constructor(
+    lexicon: LexiconRepository,
+    models: SpeechModelStore,
+    preferences: MemorizePreferences,
+    recitationEventPresenter: RecitationEventPresenter,
+    engineFactory: RecitationEngineFactory,
+    promptPlayer: HintVoice,
+    audioSources: AudioSourceFactory,
+    callState: CallState,
+  ) : this(
+    lexicon, models, preferences, recitationEventPresenter, engineFactory, promptPlayer, audioSources, callState,
+    scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
+    worker = Dispatchers.Default.limitedParallelism(1),
+    clock = SystemClock::elapsedRealtime,
+  )
 
   private val _state = MutableStateFlow<MemorizeState?>(null)
   val state: StateFlow<MemorizeState?> = _state.asStateFlow()
@@ -476,7 +494,7 @@ class MemorizeSessionController @Inject constructor(
     recitationEventPresenter.onRecitationSessionChange(Session())
   }
 
-  private fun now(): Long = SystemClock.elapsedRealtime()
+  private fun now(): Long = clock()
 
   /** Exposes the session to the rest of the app (audio bar, page following). */
   private inner class Session : RecitationSession {
@@ -490,16 +508,34 @@ class MemorizeSessionController @Inject constructor(
     }
   }
 
-  private companion object {
-    const val TICK_MS = 100L
-    const val PROMPT_TAIL_MS = 300L
+  companion object {
+    /** A controller on the test's scope, dispatcher and virtual clock. */
+    internal fun forTest(
+      lexicon: LexiconRepository,
+      models: SpeechModelStore,
+      preferences: MemorizePreferences,
+      recitationEventPresenter: RecitationEventPresenter,
+      engineFactory: RecitationEngineFactory,
+      promptPlayer: HintVoice,
+      audioSources: AudioSourceFactory,
+      callState: CallState,
+      scope: CoroutineScope,
+      worker: CoroutineDispatcher,
+      clock: () -> Long,
+    ) = MemorizeSessionController(
+      lexicon, models, preferences, recitationEventPresenter, engineFactory, promptPlayer, audioSources, callState,
+      scope, worker, clock,
+    )
+
+    private const val TICK_MS = 100L
+    private const val PROMPT_TAIL_MS = 300L
     /** Silence after which the user is considered to have paused (completes a phrase like takbir). */
-    const val PAUSE_MS = 800L
+    private const val PAUSE_MS = 800L
     /** Time without anything new recognized after which the user is considered to have paused. */
-    const val RECOGNITION_GAP_MS = 1_500L
+    private const val RECOGNITION_GAP_MS = 1_500L
     /** How often (in ticks) to check for a phone call. */
-    const val CALL_CHECK_TICKS = 5
+    private const val CALL_CHECK_TICKS = 5
     // 30 seconds of audio: if inference ever falls this far behind, drop the oldest frames
-    const val MAX_QUEUED_FRAMES = 300
+    private const val MAX_QUEUED_FRAMES = 300
   }
 }

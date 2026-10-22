@@ -8,6 +8,7 @@ import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.mobile.feature.memorize.tracker.WordId
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -20,14 +21,16 @@ import kotlinx.coroutines.withContext
  * Reading it throws if the bundled database can't be copied out or opened (e.g. no storage left).
  */
 @SingleIn(AppScope::class)
-class LexiconRepository @Inject constructor(
-  @param:ApplicationContext private val context: Context
+class LexiconRepository private constructor(
+  private val context: Context,
+  private val io: CoroutineDispatcher,
 ) {
+  @Inject constructor(@ApplicationContext context: Context) : this(context, Dispatchers.IO)
   private val mutex = Mutex()
   private var database: SQLiteDatabase? = null
 
   /** The words from [start] to the end of its sura. */
-  suspend fun passage(start: SuraAyah): Passage = withContext(Dispatchers.IO) {
+  suspend fun passage(start: SuraAyah): Passage = withContext(io) {
     val db = database()
     val words = ArrayList<PassageWord>()
     db.rawQuery(
@@ -46,7 +49,7 @@ class LexiconRepository @Inject constructor(
   }
 
   /** Phrases said around a recitation that aren't part of it, e.g. "isti'adha" or "takbir". */
-  suspend fun phrases(kinds: Set<String>): List<Pair<String, String>> = withContext(Dispatchers.IO) {
+  suspend fun phrases(kinds: Set<String>): List<Pair<String, String>> = withContext(io) {
     val result = ArrayList<Pair<String, String>>()
     database().rawQuery("SELECT kind, phonemes FROM phrases", null).use { cursor ->
       while (cursor.moveToNext()) {
@@ -66,7 +69,10 @@ class LexiconRepository @Inject constructor(
     return SQLiteDatabase.openDatabase(file.path, null, SQLiteDatabase.OPEN_READONLY)
   }
 
-  private companion object {
-    const val DATABASE = "lexicon_v1.db"
+  companion object {
+    /** A repository reading on the test's dispatcher. */
+    internal fun forTest(context: Context, io: CoroutineDispatcher) = LexiconRepository(context, io)
+
+    private const val DATABASE = "lexicon_v1.db"
   }
 }

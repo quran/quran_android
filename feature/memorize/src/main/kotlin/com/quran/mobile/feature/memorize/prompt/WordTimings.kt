@@ -12,7 +12,7 @@ import java.io.IOException
  * Word timings of one reciter's gapless sura files (tools/memorize/align_timing_pack.py): where
  * each word starts and ends, and which exact files (by size) they were measured on.
  */
-class WordTimings private constructor(private val database: SQLiteDatabase) {
+class WordTimings private constructor(private val database: SQLiteDatabase) : AutoCloseable {
 
   data class Span(val startMs: Long, val endMs: Long)
 
@@ -45,6 +45,8 @@ class WordTimings private constructor(private val database: SQLiteDatabase) {
     }
     return null
   }
+
+  override fun close() = database.close()
 
   companion object {
     fun fromFile(file: File): WordTimings =

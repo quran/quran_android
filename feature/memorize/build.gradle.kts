@@ -14,12 +14,12 @@ android {
   testBuildType = "release"
 }
 
-// the speech model for on-device tests, put there by tools/memorize/run_device_benchmark.sh (not in
-// git); without it the tests download it
+// the speech model and test audio for on-device tests, staged by
+// tools/memorize/run_device_benchmark.sh (not in git); without the model the tests download it
 androidComponents {
   onVariants { variant ->
     (variant as? com.android.build.api.variant.HasDeviceTests)?.deviceTests?.values?.forEach {
-      it.sources.assets?.addStaticSourceDirectory(rootProject.file("build/memorize-testlab-model").path)
+      it.sources.assets?.addStaticSourceDirectory(rootProject.file("build/memorize-testlab").path)
     }
   }
 }
@@ -47,6 +47,7 @@ dependencies {
   testImplementation(libs.robolectric)
   testImplementation(libs.androidx.junit)
   testImplementation(libs.kotlinx.coroutines.test)
+  testImplementation(libs.turbine)
 
   androidTestImplementation(libs.androidx.test.runner)
   androidTestImplementation(libs.androidx.junit)

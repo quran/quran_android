@@ -7,11 +7,14 @@
 #
 #   engine   SherpaEngineBenchmarkTest: real-time factor, load time, worst chunk, native memory at
 #            1, 2 and 4 threads ("threads=N rtf=… …", logcat tag MemorizeBenchmark)
-#   session  MemorizeSessionOnDeviceTest: a whole memorization session fed Husary in real time
-#            ("words=… revealed=… latency_p50=… …", logcat tag MemorizeSession)
+#   session  MemorizeSessionOnDeviceTest: whole memorization sessions fed different reciters,
+#            non-professional and non-native readers in real time ("clip=… revealed=… …" and
+#            "group=… …", logcat tag MemorizeSession)
 #
-# The speech model is bundled into the test APKs (build/memorize-testlab-model, not in git) so the
-# phones don't have to download it.
+# The speech model and the test audio are bundled into the test APKs (build/memorize-testlab, not in
+# git) so the phones don't have to download anything. The audio is staged by stage_test_clips.py from
+# the datasets in $MEMORIZE_TEST_DATA (default ~/quran-asr-lab/data), with $MEMORIZE_TEST_PYTHON (an
+# environment with numpy, soundfile and pyarrow; default ~/quran-asr-lab/.venv/bin/python).
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 
@@ -28,7 +31,7 @@ if [ "${1:-}" = "engine" ] || [ "${1:-}" = "session" ]; then SUITE="$1"; shift; 
 # the same pinned files as SpeechModelSpec.DEFAULT
 MODEL_BASE="https://huggingface.co/Saboorhsn/quran-stt-onnx/resolve/51ec9bcddeaf1c480bbe39064a2a3b88bc2ff224"
 stage_model() {
-  local dir=build/memorize-testlab-model
+  local dir=build/memorize-testlab
   mkdir -p "$dir"
   while read -r name sha; do
     if [ ! -f "$dir/$name" ] || ! echo "$sha  $dir/$name" | sha256sum -c --quiet - 2>/dev/null; then
@@ -42,8 +45,17 @@ tokens.txt 252c10687e442aa9291973065fae19fa39bcd681c4f5612ec496a647e20b43a1
 EOF
 }
 
+stage_clips() {
+  [ -f build/memorize-testlab/clips/manifest.json ] && return
+  local data="${MEMORIZE_TEST_DATA:-$HOME/quran-asr-lab/data}"
+  "${MEMORIZE_TEST_PYTHON:-$HOME/quran-asr-lab/.venv/bin/python}" tools/memorize/stage_test_clips.py \
+    --data "$data" --husary-audio "${MEMORIZE_HUSARY_AUDIO:-$data/../audio/husary_murattal}" \
+    --text-lexicon "${MEMORIZE_TEXT_LEXICON:-$data/../cache/lexicon_v1.db}"
+}
+
 tools/memorize/fetch_sherpa_onnx.sh
 stage_model
+stage_clips
 if [ "$SUITE" = "engine" ]; then
   ./gradlew :feature:memorize:engine-sherpa:assembleReleaseAndroidTest
   APK=feature/memorize/engine-sherpa/build/outputs/apk/androidTest/release/engine-sherpa-release-androidTest.apk
