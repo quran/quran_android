@@ -41,8 +41,10 @@ class RecordingStoreTest {
   @Test
   fun `a session over two suras gives a recording per sura`() = runTest {
     val session = store.start(SuraAyah(112, 1), MemorizeState.Mode.MEMORIZE)
-    // the end of Al-Ikhlas, reported a moment after it was said; then the basmala and Al-Falaq
+    // Al-Ikhlas from its start, its end reported a moment after it was said; then the basmala and
+    // Al-Falaq
     audio(session, 3_000)
+    session.word(WordId(112, 1, 1), 100, 400, Recording.WordStatus.RECITED, "qul", endsSura = false)
     session.word(WordId(112, 4, 5), 2_000, 2_400, Recording.WordStatus.RECITED, "ahad", endsSura = true)
     audio(session, 4_000)
     session.word(WordId(113, 1, 1), 6_200, 6_500, Recording.WordStatus.RECITED, "qul", endsSura = false)
@@ -67,6 +69,7 @@ class RecordingStoreTest {
     preferences.recordingSplit = RecordingSplit.BY_SESSION
     val session = store.start(SuraAyah(112, 1), MemorizeState.Mode.MEMORIZE)
     audio(session, 3_000)
+    session.word(WordId(112, 1, 1), 100, 400, Recording.WordStatus.RECITED, "qul", endsSura = false)
     session.word(WordId(112, 4, 5), 2_000, 2_400, Recording.WordStatus.RECITED, "ahad", endsSura = true)
     session.word(WordId(113, 1, 1), 2_600, 2_900, Recording.WordStatus.RECITED, "qul", endsSura = false)
     session.finish()
