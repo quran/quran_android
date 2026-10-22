@@ -23,6 +23,11 @@ import com.quran.mobile.feature.memorize.tracker.TrackerEvent.WordRecited
  *  - the end of the expected side is free (the user is in the middle of the passage).
  * When nothing near the cursor matches after a mistake, a wider search finds where the user is.
  *
+ * With a [startWindow] the user may start anywhere in the first [startWindow] words (e.g. the pages
+ * around the one on screen): the tracker first finds where they started, and reports a
+ * [Mistake.Kind.ELSEWHERE] on the word they were expected to start at (startIndex: e.g. the first
+ * word on screen) if what they recite isn't there.
+ *
  * This is a port of the reference implementation used to benchmark the speech models; keep the
  * two in sync (see the golden tests).
  */
@@ -32,12 +37,18 @@ class RecitationTracker(
   startIndex: Int = 0,
   /** Phrases said around the passage that aren't mistakes: (kind, normalized phonemes). */
   phrases: List<Pair<String, String>> = emptyList(),
+  /** How many of the first words the user may start at; 0 or 1: the first word. */
+  private val startWindow: Int = 0,
 ) {
 
   private val words = ArrayList(words)
   private val phrases = ArrayList(phrases)
 
   var cursor: Int = startIndex
+    private set
+
+  /** Whether it is known where the user started (always, without a [startWindow]). */
+  var anchored: Boolean = startWindow <= 1
     private set
 
   /** Whether every word loaded so far has been recited (see [extend]). */
@@ -116,6 +127,8 @@ class RecitationTracker(
 
   /** The app revealed/played the next [count] words: they count as recited. */
   fun markHinted(count: Int) {
+    // a hint before the user found the start: they start at the beginning
+    anchored = true
     cursor = minOf(words.size, cursor + count)
     pending.clear()
     mistakeAt = null
@@ -247,6 +260,7 @@ class RecitationTracker(
   }
 
   private fun update(): List<TrackerEvent> {
+    if (!anchored) return findStart()
     val events = ArrayList<TrackerEvent>()
     val first = maxOf(0, cursor - config.backWords)
     val last = minOf(words.size, cursor + config.aheadWords)
@@ -395,6 +409,101 @@ class RecitationTracker(
     return events
   }
 
+  /**
+   * Before it is known where the user started: the start is where what they recite matches a run of
+   * words in the start window. A known phrase (isti'adha, basmala...) is waited out; anything else
+   * long enough that matches nowhere in the window is recited elsewhere.
+   */
+  private fun findStart(): List<TrackerEvent> {
+    val heard = CharArray(pending.size) { pending[it].symbol }
+    val windowEnd = minOf(startWindow, words.size)
+    // align as if the user could be repeating any word of the window
+    val saved = cursor
+    cursor = windowEnd - 1
+    val win = window(0, minOf(words.size, windowEnd + config.aheadWords))
+    val path = align(heard, win)
+    cursor = saved
+    val firstWords = LinkedHashMap<Int, WordStats>()
+    for (step in path) {
+      if (step.op == 'g') continue
+      val col = maxOf(step.column, 0)
+      val w = win.word[col]
+      val pos = win.pos[col]
+      val s = firstWords.getOrPut(w) { WordStats() }
+      s.cost += when (step.op) {
+        'm' -> 0.0
+        's' -> sub(heard[step.pendingIndex], words[w][pos])
+        'i' -> indel(heard[step.pendingIndex], pos, words[w].length)
+        else -> indel(words[w][pos], pos, words[w].length)
+      }
+      if (step.op == 'm' || step.op == 's' || step.op == 'd') s.covered.add(col)
+      if (step.op == 'm' || step.op == 'i' || step.op == 's') s.lastPending = step.pendingIndex
+      if (step.op == 'm') s.matched++
+    }
+    val columnStart = HashMap<Int, Int>()
+    win.word.forEachIndexed { col, w -> columnStart.putIfAbsent(w, col) }
+    fun confident(w: Int): Boolean {
+      val s = firstWords[w] ?: return false
+      val start = columnStart[w] ?: return false
+      val complete = (start until start + words[w].length).all { it in s.covered }
+      return complete && s.lastPending >= 0 && s.cost <= config.allowance(words[w].length) &&
+        s.matched >= 0.6 * words[w].length
+    }
+    val start = firstWords.keys.filter { it < windowEnd }
+      .firstOrNull { j -> (j until j + config.resyncRun).all { it < words.size && confident(it) } }
+    if (start != null) {
+      anchored = true
+      cursor = start
+      mistakeAt = null
+      return update()
+    }
+
+    val phrase = matchPhrase(heard)
+    val completedAt = phrase?.second
+    if (phrase != null && completedAt != null) {
+      val event = NonTarget(cursor, timeOf(completedAt), phrase.first)
+      consumePending(completedAt)
+      // then whatever followed it
+      return listOf(event) + if (pending.isEmpty()) emptyList() else findStart()
+    }
+    // the beginning of a phrase (what is heard is cleared after each one, so it starts with it)
+    if (phrases.any { (_, phrase) -> prefixCost(heard, phrase) <= 0.5 + 0.2 * heard.size }) return emptyList()
+    // long enough to be several words, and nowhere in the window
+    if (heard.size >= ELSEWHERE_PHONEMES && mistakeAt != cursor) {
+      mistakeAt = cursor
+      val event = Mistake(cursor, pending.last().timeMs, Mistake.Kind.ELSEWHERE)
+      // what was recited elsewhere can't help finding the start
+      pending.clear()
+      return listOf(event)
+    }
+    // only recent speech can be the start
+    if (pending.size > 2 * ELSEWHERE_PHONEMES) pending.subList(0, pending.size - 2 * ELSEWHERE_PHONEMES).clear()
+    return emptyList()
+  }
+
+  private fun timeOf(pendingIndex: Int): Long = pending[minOf(pendingIndex, pending.size - 1)].timeMs
+
+  /** Cost of [heard] being the beginning of [phrase] (from its first sound). */
+  private fun prefixCost(heard: CharArray, phrase: String): Double {
+    val n = heard.size
+    val m = phrase.length
+    val width = m + 1
+    val cost = DoubleArray((n + 1) * width)
+    for (j in 1..m) cost[j] = j * config.indelCost
+    for (i in 1..n) {
+      cost[i * width] = i * config.indelCost
+      for (j in 1..m) {
+        cost[i * width + j] = minOf(
+          cost[(i - 1) * width + j - 1] + sub(heard[i - 1], phrase[j - 1]),
+          cost[(i - 1) * width + j] + config.indelCost,
+          cost[i * width + j - 1] + config.indelCost,
+        )
+      }
+    }
+    // the rest of the phrase may still be coming
+    return (1..m).minOf { cost[n * width + it] }
+  }
+
   private fun consumePending(throughIndex: Int) {
     pending.subList(0, minOf(pending.size, throughIndex + 1)).clear()
   }
@@ -519,6 +628,9 @@ class RecitationTracker(
   }
 
   private companion object {
+    /** Phonemes heard (about three words) before a start that matches nowhere is a mistake. */
+    const val ELSEWHERE_PHONEMES = 15
+
     val CONFUSABLE: List<Set<Char>> = listOf(
       setOf('س', 'ص'), setOf('ت', 'ط'), setOf('د', 'ض'), setOf('ذ', 'ز', 'ظ'), setOf('ح', 'ه'),
       setOf('ء', 'ع'), setOf('ق', 'ك'), setOf('ث', 'س'), setOf('ا', 'ء'),

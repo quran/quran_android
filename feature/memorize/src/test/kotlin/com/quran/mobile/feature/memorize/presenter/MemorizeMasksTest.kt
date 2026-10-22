@@ -18,11 +18,17 @@ class MemorizeMasksTest {
   )
   private val page = VerseRange(109, 1, 114, 6, 0)
 
-  private fun state(cursor: Int = 0, mistake: Int? = null, hinted: Set<Int> = emptySet(), missed: Set<Int> = emptySet(), peeking: Boolean = false) =
-    MemorizeState(
-      id = "test", passage = passage, startedAt = 0, status = MemorizeState.Status.LISTENING,
-      cursor = cursor, mistake = mistake, hinted = hinted, missed = missed, peeking = peeking,
-    )
+  private fun state(
+    cursor: Int = 0,
+    mistake: Int? = null,
+    hinted: Set<Int> = emptySet(),
+    missed: Set<Int> = emptySet(),
+    peeking: Boolean = false,
+    started: Boolean = true,
+  ) = MemorizeState(
+    id = "test", passage = passage, startedAt = 0, status = MemorizeState.Status.LISTENING,
+    cursor = cursor, mistake = mistake, hinted = hinted, missed = missed, peeking = peeking, started = started,
+  )
 
   @Test
   fun `untouched ayat are hidden as a whole`() {
@@ -93,5 +99,28 @@ class MemorizeMasksTest {
 
     assertThat(first).contains(Mark(112, 2, -1, MemorizeHighlightTypes.HIDDEN))
     assertThat(second).contains(Mark(112, 2, -1, MemorizeHighlightTypes.HIDDEN))
+  }
+
+  @Test
+  fun `nothing is hidden before the user starts, and starting elsewhere marks the first word`() {
+    assertThat(MemorizeMasks.marks(state(started = false), listOf(page))).isEmpty()
+
+    assertThat(MemorizeMasks.marks(state(started = false, mistake = 0), listOf(page)))
+      .containsExactly(Mark(112, 1, 1, MemorizeHighlightTypes.MISTAKE))
+  }
+
+  @Test
+  fun `a page far into a long passage is found`() {
+    val long = Passage(
+      (1..114).flatMap { sura -> (1..3).flatMap { ayah -> (1..4).map { word -> PassageWord(WordId(sura, ayah, word), "", "") } } }
+    )
+    val state = MemorizeState(id = "test", passage = long, startedAt = 0, status = MemorizeState.Status.LISTENING, cursor = 0)
+
+    val marks = MemorizeMasks.marks(state, listOf(VerseRange(110, 2, 110, 3, 0)))
+
+    assertThat(marks).containsExactly(
+      Mark(110, 2, -1, MemorizeHighlightTypes.HIDDEN),
+      Mark(110, 3, -1, MemorizeHighlightTypes.HIDDEN),
+    )
   }
 }

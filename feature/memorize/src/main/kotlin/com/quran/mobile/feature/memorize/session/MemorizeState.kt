@@ -22,6 +22,13 @@ data class MemorizeState(
   val peeking: Boolean = false,
   /** The recording of this session, if the user chose to record it. */
   val recordingId: String? = null,
+  /**
+   * Whether it is known where the user started: until then (they may start anywhere on the pages
+   * on screen) nothing is hidden.
+   */
+  val started: Boolean = true,
+  /** The word the user started at, once [started] (it may be anywhere on the pages on screen). */
+  val firstWord: Int = 0,
 ) {
   enum class Status { PREPARING, LISTENING, PAUSED, FINISHED }
 
@@ -34,7 +41,10 @@ data class MemorizeState(
 
   val isActive: Boolean get() = status == Status.PREPARING || status == Status.LISTENING || status == Status.PAUSED
 
-  fun isHidden(index: Int): Boolean = !peeking && index >= cursor
+  // a block body: lint's Kotlin analysis (AGP 9.4) crashes on this as an expression body
+  fun isHidden(index: Int): Boolean {
+    return started && !peeking && index >= cursor
+  }
 
   val currentAyah: SuraAyah
     get() = passage.ayahOf(cursor.coerceAtMost(passage.words.size - 1))

@@ -55,4 +55,57 @@ class RecitationTrackerTest {
     assertThat(events.filterIsInstance<TrackerEvent.Mistake>()).isEmpty()
     assertThat(recited(events)).containsExactly(5, 6, 7).inOrder()
   }
+
+  // two "pages" on screen: Al-Ikhlas then Al-Falaq
+  private val screen = ikhlas + falaq
+
+  @Test
+  fun `the user can start anywhere on the pages on screen`() {
+    val tracker = RecitationTracker(screen + listOf("qulauzu", "birabbi", "nnasi"), startWindow = screen.size)
+    assertThat(tracker.anchored).isFalse()
+
+    val events = tracker.say("qulauzubirabbilfalaqi")
+
+    assertThat(tracker.anchored).isTrue()
+    assertThat(recited(events)).containsExactly(5, 6, 7).inOrder()
+    // the words before the start weren't skipped: the user started there
+    assertThat(events.filterIsInstance<TrackerEvent.WordMissed>()).isEmpty()
+    assertThat(events.filterIsInstance<TrackerEvent.Mistake>()).isEmpty()
+  }
+
+  @Test
+  fun `the basmala before the start is fine`() {
+    val tracker = RecitationTracker(screen, phrases = listOf(basmala), startWindow = screen.size)
+
+    val events = tracker.say("bismillahirrahmanirrahimllahussamadu")
+
+    assertThat(events.filterIsInstance<TrackerEvent.Mistake>()).isEmpty()
+    assertThat(recited(events)).containsExactly(3, 4).inOrder()
+  }
+
+  @Test
+  fun `reciting something that isn't on screen marks the first word`() {
+    val tracker = RecitationTracker(screen, startWindow = screen.size)
+
+    val events = tracker.say("waddhuhawallayliidhasaja")
+
+    assertThat(events).containsExactly(TrackerEvent.Mistake(0, events.single().timeMs, TrackerEvent.Mistake.Kind.ELSEWHERE))
+    assertThat(tracker.anchored).isFalse()
+
+    // once the user recites something on screen, that is where they start
+    val start = tracker.say("qulhuwallahuahadun")
+    assertThat(tracker.anchored).isTrue()
+    assertThat(recited(start)).containsExactly(0, 1, 2).inOrder()
+  }
+
+  @Test
+  fun `a hint before the start starts at the first word`() {
+    val tracker = RecitationTracker(screen, startWindow = screen.size)
+
+    tracker.markHinted(1)
+
+    assertThat(tracker.anchored).isTrue()
+    assertThat(tracker.cursor).isEqualTo(1)
+    assertThat(recited(tracker.say("llahuahadun"))).containsExactly(1, 2).inOrder()
+  }
 }

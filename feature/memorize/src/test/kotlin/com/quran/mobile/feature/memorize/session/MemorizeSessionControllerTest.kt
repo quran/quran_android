@@ -447,6 +447,112 @@ class MemorizeSessionControllerTest {
     assertThat(loadedSuras).containsExactly(112..112, 113..113).inOrder()
   }
 
+  @Test
+  fun `the user can start anywhere on screen, and nothing is hidden until they do`() = runTest {
+    val controller = controller()
+    // Al-Ikhlas on screen, up to its last ayah
+    controller.start(SuraAyah(112, 1), startAnywhereUntil = SuraAyah(112, 4))
+    runCurrent()
+    assertThat(controller.state.value!!.started).isFalse()
+    assertThat(controller.state.value!!.isHidden(0)).isFalse()
+
+    // starting at ayah 2 (اللَّهُ الصَّمَدُ, words 4 and 5)
+    recite(*pronunciations(SuraAyah(112, 2), 2))
+
+    val state = controller.state.value!!
+    assertThat(state.started).isTrue()
+    assertThat(state.firstWord).isEqualTo(4)
+    assertThat(state.cursor).isEqualTo(6)
+    // the words before the start stay shown, without counting as skipped
+    assertThat(state.isHidden(0)).isFalse()
+    assertThat(state.missed).isEmpty()
+    assertThat(state.isHidden(6)).isTrue()
+  }
+
+  @Test
+  fun `reciting what isn't on screen marks the first word, which is then given`() = runTest {
+    preferences.hintDelaySeconds = 2
+    val controller = controller()
+    controller.start(SuraAyah(112, 1), startAnywhereUntil = SuraAyah(112, 4))
+    runCurrent()
+
+    // Al-Falaq instead
+    recite(*pronunciations(SuraAyah(113, 1), 6))
+    assertThat(controller.state.value!!.mistake).isEqualTo(0)
+    assertThat(controller.state.value!!.started).isFalse()
+
+    microphone.silence(3)
+    advanceTimeBy(5_000)
+    assertThat(voice.played.first()).containsExactly(WordId(112, 1, 1))
+    assertThat(controller.state.value!!.started).isTrue()
+  }
+
+  @Test
+  fun `no hint before the user starts, however long they wait`() = runTest {
+    preferences.hintDelaySeconds = 2
+    val controller = controller()
+    controller.start(SuraAyah(112, 1), startAnywhereUntil = SuraAyah(112, 4))
+    runCurrent()
+
+    microphone.silence(3)
+    advanceTimeBy(30_000)
+
+    assertThat(voice.played).isEmpty()
+    assertThat(controller.state.value!!.started).isFalse()
+  }
+
+  @Test
+  fun `in salah a passage that isn't on screen is shown, not spoken`() = runTest {
+    preferences.hintDelaySeconds = 2
+    val controller = controller()
+    controller.start(SuraAyah(112, 1), MemorizeState.Mode.SALAH, startAnywhereUntil = SuraAyah(112, 4))
+    runCurrent()
+    // Al-Fatiha, then Al-Falaq instead of the page's sura
+    recite(*pronunciations(SuraAyah(1, 2), 29))
+    recite(*pronunciations(SuraAyah(113, 1), 6))
+
+    assertThat(controller.state.value!!.mistake).isEqualTo(0)
+    microphone.silence(3)
+    advanceTimeBy(10_000)
+    assertThat(voice.played).isEmpty()
+  }
+
+  @Test
+  fun `the user can start a few pages before or after the one on screen`() = runTest {
+    val controller = controller()
+    // the page on screen starts with Al-Ikhlas; Al-Masad before it and Al-Falaq after it are in reach
+    controller.start(SuraAyah(111, 1), startAnywhereUntil = SuraAyah(113, 5), home = SuraAyah(112, 1))
+    runCurrent()
+    val home = controller.state.value!!.passage.words.indexOfFirst { it.id == WordId(112, 1, 1) }
+    // until the user starts, the session is where the user is
+    assertThat(controller.state.value!!.currentAyah).isEqualTo(SuraAyah(112, 1))
+
+    recite(basmala())
+    recite(*pronunciations(SuraAyah(113, 1), 4))
+
+    val state = controller.state.value!!
+    assertThat(state.started).isTrue()
+    assertThat(state.firstWord).isEqualTo(home + 15)
+    assertThat(state.currentAyah).isEqualTo(SuraAyah(113, 2))
+  }
+
+  @Test
+  fun `starting outside the pages around marks the first word on screen`() = runTest {
+    preferences.hintDelaySeconds = 2
+    val controller = controller()
+    controller.start(SuraAyah(111, 1), startAnywhereUntil = SuraAyah(113, 5), home = SuraAyah(112, 1))
+    runCurrent()
+    val home = controller.state.value!!.passage.words.indexOfFirst { it.id == WordId(112, 1, 1) }
+
+    // Al-Fatiha is nowhere near
+    recite(*pronunciations(SuraAyah(1, 2), 8))
+    assertThat(controller.state.value!!.mistake).isEqualTo(home)
+
+    microphone.silence(3)
+    advanceTimeBy(5_000)
+    assertThat(voice.played.first()).containsExactly(WordId(112, 1, 1))
+  }
+
   // ------------------------------------------------------------------------------------ helpers
 
   /** Each word comes out of the engine for one microphone frame. */

@@ -122,4 +122,5 @@
   <string name="memorize_mic_end">إنهاء الحفظ</string>
   <string name="memorize_mic_replay">استمع إلى تلاوتي</string>
   <string name="memorize_mic_replay_pause">إيقاف تلاوتي مؤقتًا</string>
+  <string name="memorize_mic_start">ابدأ الحفظ</string>
 </resources>

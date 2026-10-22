@@ -29,7 +29,12 @@ sealed interface TrackerEvent {
 
   /** The user said something other than the word at [index]. */
   data class Mistake(override val index: Int, override val timeMs: Long, val kind: Kind) : TrackerEvent {
-    enum class Kind { SUBSTITUTION, SKIP }
+    enum class Kind {
+      SUBSTITUTION,
+      SKIP,
+      /** What the user recites isn't anywhere the session may start (e.g. the pages on screen). */
+      ELSEWHERE,
+    }
   }
 
   /** A phrase that isn't part of the passage (isti'adha, basmala, takbir...) was said. */

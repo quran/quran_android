@@ -31,12 +31,13 @@ class LexiconRepository private constructor(
 
   /**
    * The words from [start] to the end of its sura, followed by whole suras until there are at least
-   * [minWords] (or the Quran ends): the session loads more as the user goes on (see [nextSuras]).
+   * [minWords] and [throughSura] is in (or the Quran ends): the session loads more as the user goes
+   * on (see [nextSuras]).
    */
-  suspend fun passage(start: SuraAyah, minWords: Int = 0): Passage = withContext(io) {
+  suspend fun passage(start: SuraAyah, minWords: Int = 0, throughSura: Int = start.sura): Passage = withContext(io) {
     val words = suraWords(start.sura, fromAyah = start.ayah)
     var sura = start.sura
-    while (words.size < minWords && sura < LAST_SURA) {
+    while ((words.size < minWords || sura < throughSura) && sura < LAST_SURA) {
       sura++
       words += suraWords(sura, fromAyah = 1)
     }

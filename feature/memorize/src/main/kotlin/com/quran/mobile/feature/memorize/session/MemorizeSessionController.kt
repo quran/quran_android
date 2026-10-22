@@ -161,13 +161,25 @@ class MemorizeSessionController private constructor(
 
   val isActive: Boolean get() = _state.value?.isActive == true
 
-  /** Starts a session at [startAyah]; with [record], the user's recitation is recorded too. */
-  fun start(startAyah: SuraAyah, mode: MemorizeState.Mode = MemorizeState.Mode.MEMORIZE, record: Boolean = false) {
+  /**
+   * Starts a session at [startAyah]; with [record], the user's recitation is recorded too.
+   *
+   * With [startAnywhereUntil] the user may start anywhere from [startAyah] up to that ayah (e.g. the
+   * pages around the one on screen), and is expected at [home] (e.g. the first ayah on screen, where
+   * starting elsewhere is marked): the words are hidden once it is known where they started.
+   */
+  fun start(
+    startAyah: SuraAyah,
+    mode: MemorizeState.Mode = MemorizeState.Mode.MEMORIZE,
+    record: Boolean = false,
+    startAnywhereUntil: SuraAyah? = null,
+    home: SuraAyah = startAyah,
+  ) {
     if (isActive || startJob?.isActive == true) return
     val sessionId = UUID.randomUUID().toString()
     startJob = scope.launch {
       try {
-        prepare(sessionId, startAyah, mode, record)
+        prepare(sessionId, startAyah, mode, record, startAnywhereUntil, home)
       } catch (e: CancellationException) {
         throw e
       } catch (_: Throwable) {
@@ -179,13 +191,28 @@ class MemorizeSessionController private constructor(
   }
 
   /** Loads what the session needs; false if the session was stopped in the meantime. */
-  private suspend fun prepare(sessionId: String, startAyah: SuraAyah, mode: MemorizeState.Mode, record: Boolean): Boolean {
-    val passage = lexicon.passage(startAyah, minWords = lookaheadWords)
+  private suspend fun prepare(
+    sessionId: String,
+    startAyah: SuraAyah,
+    mode: MemorizeState.Mode,
+    record: Boolean,
+    startAnywhereUntil: SuraAyah?,
+    home: SuraAyah,
+  ): Boolean {
+    val passage = lexicon.passage(startAyah, minWords = lookaheadWords, throughSura = startAnywhereUntil?.sura ?: startAyah.sura)
     require(passage.words.isNotEmpty()) { "nothing to recite from $startAyah" }
+    // the words the user may start at, and where they are expected to
+    val startWindow = startAnywhereUntil?.let { end ->
+      passage.words.indexOfLast { it.id.sura < end.sura || (it.id.sura == end.sura && it.id.ayah <= end.ayah) } + 1
+    } ?: 0
+    val homeIndex = passage.words.indexOfFirst { it.id.sura == home.sura && it.id.ayah == home.ayah }.coerceAtLeast(0)
     val recorder = if (record) recorders.start(startAyah, mode) else null
     this.recorder = recorder
     _state.value = MemorizeState(
       sessionId, passage, System.currentTimeMillis(), MemorizeState.Status.PREPARING, mode, recordingId = recorder?.session,
+      cursor = homeIndex,
+      started = startWindow <= 1,
+      firstWord = homeIndex,
     )
     publishSession()
     // Listen right away: loading the model takes seconds on slow phones, and what the user says
@@ -198,7 +225,7 @@ class MemorizeSessionController private constructor(
     val allPhrases = lexicon.phrases(kinds)
     // Al-Fatiha starts with the basmala itself, and At-Tawba has none: there it isn't said before
     // the passage, only before the suras that follow
-    val basmalaFirst = salah || (startAyah.sura != 1 && startAyah.sura != 9)
+    val basmalaFirst = salah || (home.sura != 1 && home.sura != 9)
     val phraseList = allPhrases.filter { (kind, _) -> kind != BASMALA || basmalaFirst }
     val fatihaWords = if (salah) lexicon.passage(SuraAyah(1, 2)).words else emptyList()
     val pageLines = lines.forSuras(startAyah.sura..passage.words.last().id.sura)
@@ -222,9 +249,9 @@ class MemorizeSessionController private constructor(
       val engine = engine ?: engineFactory.create(models).also { engine = it }
       stream = engine.newStream()
       follower = if (salah) {
-        SalahFollower(SalahFlow(words, fatiha, phrases))
+        SalahFollower(SalahFlow(words, fatiha, phrases, startWindow = startWindow, startIndex = homeIndex))
       } else {
-        MemorizeFollower(RecitationTracker(words, phrases = phrases))
+        MemorizeFollower(RecitationTracker(words, startIndex = homeIndex, phrases = phrases, startWindow = startWindow))
       }
       scheduler = HintScheduler(preferences.hintConfig(salah = salah))
       silentSinceMs = -1L
@@ -310,7 +337,10 @@ class MemorizeSessionController private constructor(
         while (isActive) {
           delay(TICK_MS)
           if (ticks++ % CALL_CHECK_TICKS == 0) checkCall()
-          scheduler?.onTick(now())?.let { applyEffects(it) }
+          // before the user started, only starting elsewhere gets a hint (the first word)
+          if (follower?.started != false || _state.value?.mistake != null) {
+            scheduler?.onTick(now())?.let { applyEffects(it) }
+          }
         }
       },
     )
@@ -426,7 +456,12 @@ class MemorizeSessionController private constructor(
           recordWord(passage, event.index, null, null, Recording.WordStatus.MISSED)
         }
         is TrackerEvent.Repetition -> scheduler.onRepetition(now())
-        is TrackerEvent.Mistake -> effects += scheduler.onMistake(now(), passage.words[event.index].id)
+        is TrackerEvent.Mistake -> if (scheduler.isArmed) {
+          effects += scheduler.onMistake(now(), passage.words[event.index].id)
+        } else if (event.kind == TrackerEvent.Mistake.Kind.ELSEWHERE) {
+          // e.g. in salah, before the passage: shown, not spoken
+          update { it.copy(mistake = event.index) }
+        }
         is TrackerEvent.NonTarget -> Unit
       }
     }
@@ -435,7 +470,19 @@ class MemorizeSessionController private constructor(
       effects += scheduler.onWordRecited(now(), atAyahBoundary = passage.atAyahBoundary(follower.cursor))
     }
     val cursor = follower.cursor
-    update { it.copy(cursor = cursor, missed = it.missed + missed) }
+    val started = follower.started
+    val firstRecited = events.filterIsInstance<TrackerEvent.WordRecited>().minOfOrNull { it.index }
+    update { state ->
+      val justStarted = started && !state.started
+      state.copy(
+        cursor = cursor,
+        missed = state.missed + missed,
+        started = started,
+        firstWord = if (justStarted) firstRecited ?: cursor else state.firstWord,
+        // the start found: a mark for starting elsewhere has served its purpose
+        mistake = if (justStarted) null else state.mistake,
+      )
+    }
     applyEffects(effects)
     disarmIfNotAllowed()
     onPassageProgress()
@@ -524,7 +571,7 @@ class MemorizeSessionController private constructor(
     if (hinted.isEmpty()) return
     hinted.forEach { recordWord(passage, it, heardMs, null, Recording.WordStatus.HINTED) }
     scheduler.onHintStarted()
-    update { it.copy(cursor = follower.cursor, hinted = it.hinted + hinted, mistake = null) }
+    update { it.copy(cursor = follower.cursor, hinted = it.hinted + hinted, mistake = null, started = follower.started) }
     val words = hinted.map { passage.words[it].id }.filter { it.sura == passage.words[first].id.sura }
     val generation = hintGeneration.incrementAndGet()
     // finding the audio reads files: here on the worker, not on the main thread

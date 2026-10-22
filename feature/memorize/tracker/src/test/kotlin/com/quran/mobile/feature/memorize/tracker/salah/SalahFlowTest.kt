@@ -98,4 +98,25 @@ class SalahFlowTest {
     assertThat(next.filterIsInstance<TrackerEvent.Mistake>()).isEmpty()
     assertThat(flow.isReadingPassage).isTrue()
   }
+
+  @Test
+  fun `a passage recited after Al-Fatiha that isn't on screen is marked, prayer speech isn't`() {
+    val flow = SalahFlow(passage, fatiha, phrases, startWindow = passage.size)
+    val all = mutableListOf<TrackerEvent>()
+    all += flow.say("allahuakbar")
+    all += flow.say("alhamdulillahirabbilalamin")
+    all += flow.say("arrahmanirrahimi")
+    all += flow.say("amin")
+    assertThat(all.filterIsInstance<TrackerEvent.Mistake>()).isEmpty()
+
+    val elsewhere = flow.say("waddhuhawallayliidhasaja")
+    assertThat(elsewhere.filterIsInstance<TrackerEvent.Mistake>().map { it.kind })
+      .containsExactly(TrackerEvent.Mistake.Kind.ELSEWHERE)
+    assertThat(flow.isReadingPassage).isFalse()
+
+    // the passage on screen, started in its middle
+    val started = flow.say("llahussamadulamyalid")
+    assertThat(recitedIndexes(started)).containsExactly(3, 4, 5).inOrder()
+    assertThat(flow.isReadingPassage).isTrue()
+  }
 }

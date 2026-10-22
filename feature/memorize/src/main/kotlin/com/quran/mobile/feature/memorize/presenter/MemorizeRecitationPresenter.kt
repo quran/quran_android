@@ -10,6 +10,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.quran.data.core.QuranInfo
 import com.quran.data.di.QuranScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.audio.Qari
@@ -53,6 +54,7 @@ class MemorizeRecitationPresenter @Inject constructor(
   private val voiceDownloads: HintVoiceDownloads,
   private val recordingPlayer: RecordingPlayer,
   private val sessionPlayback: SessionPlayback,
+  private val quranInfo: QuranInfo,
 ) : RecitationPresenter {
 
   private val enabled = MutableStateFlow(true)
@@ -66,6 +68,9 @@ class MemorizeRecitationPresenter @Inject constructor(
   private var serviceSessionId: String? = null
   private var downloadDialog: AlertDialog? = null
   private var micButton: FloatingMicButton? = null
+  // from the reading screen: the pages on screen and how to start a session there
+  private var pagesOnScreen: () -> List<Int> = { emptyList() }
+  private var startOnScreen: (Boolean) -> Unit = {}
 
   override fun bind(what: Activity) {
     activityRef = WeakReference(what)
@@ -88,14 +93,19 @@ class MemorizeRecitationPresenter @Inject constructor(
     val micButton = FloatingMicButton(
       activity = what,
       preferences = preferences,
-      onToggle = controller::pauseOrResume,
+      onToggle = { if (controller.state.value == null) startOnScreen(false) else controller.pauseOrResume() },
+      onChooseMode = { startOnScreen(true) },
       onEnd = ::endSession,
       onReplay = { if (sessionPlayback.isPlaying) sessionPlayback.pause() else sessionPlayback.play() },
     ).also { it.attach() }
     this.micButton = micButton
     combine(controller.state, recordingPlayer.playback) { state, playback ->
-      state?.let {
+      // before a session too: it is how a session starts
+      if (state == null) {
+        MicButtonState(idle = true, listening = false, preparing = false, recording = false, canReplay = false, replaying = false)
+      } else state.let {
         MicButtonState(
+          idle = false,
           listening = it.status == MemorizeState.Status.LISTENING || it.status == MemorizeState.Status.PREPARING,
           preparing = it.status == MemorizeState.Status.PREPARING,
           recording = it.recordingId != null,
@@ -133,6 +143,24 @@ class MemorizeRecitationPresenter @Inject constructor(
   override fun supportsHints(): Boolean = true
 
   override fun onHintRequested() = controller.requestHint()
+
+  override fun setReadingScreen(pagesOnScreen: () -> List<Int>, start: (showModeSelection: Boolean) -> Unit) {
+    this.pagesOnScreen = pagesOnScreen
+    startOnScreen = start
+  }
+
+  /**
+   * Where the user may start: anywhere from [PAGES_AROUND] pages before the page(s) on screen to as
+   * many after (null without a reading screen).
+   */
+  private fun startPages(): IntRange? {
+    val pages = pagesOnScreen().takeIf { it.isNotEmpty() } ?: return null
+    return maxOf(1, pages.min() - PAGES_AROUND)..minOf(quranInfo.numberOfPages, pages.max() + PAGES_AROUND)
+  }
+
+  private fun firstAyah(page: Int) = quranInfo.getVerseRangeForPage(page).let { SuraAyah(it.startSura, it.startAyah) }
+
+  private fun lastAyah(page: Int) = quranInfo.getVerseRangeForPage(page).let { SuraAyah(it.endingSura, it.endingAyah) }
 
   override fun startOrStopRecitation(startAyah: () -> SuraAyah, showModeSelection: Boolean) {
     val state = controller.state.value
@@ -216,7 +244,17 @@ class MemorizeRecitationPresenter @Inject constructor(
       }
       else -> {
         pendingStart = null
-        controller.start(start(), pendingMode, record = pendingRecord == true)
+        // the user is expected where they asked to start (the page on screen, or an ayah they chose)
+        val home = start()
+        val pages = startPages()
+        if (pages == null) {
+          controller.start(home, pendingMode, record = pendingRecord == true)
+        } else {
+          val first = firstAyah(pages.first).takeIf { it <= home } ?: home
+          controller.start(
+            first, pendingMode, record = pendingRecord == true, startAnywhereUntil = lastAyah(pages.last), home = home,
+          )
+        }
         if (pendingMode == MemorizeState.Mode.SALAH) {
           // recognition degrades with distance and room echo: keep the phone close
           Toast.makeText(activity, R.string.memorize_salah_placement, Toast.LENGTH_LONG).show()
@@ -362,5 +400,7 @@ class MemorizeRecitationPresenter @Inject constructor(
 
   private companion object {
     const val REQUEST_PERMISSIONS = 4242
+    /** Pages before and after the one on screen where the user may start. */
+    const val PAGES_AROUND = 3
   }
 }

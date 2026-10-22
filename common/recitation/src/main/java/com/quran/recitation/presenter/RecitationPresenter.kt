@@ -28,4 +28,10 @@ interface RecitationPresenter : Presenter<Activity> {
   /** The user asked for the next word. */
   fun onHintRequested() {}
 
+  /**
+   * Called by the reading screen: the pages on screen (one, or two side by side) and how to start a
+   * session there, for sessions started from the presenter's own controls.
+   */
+  fun setReadingScreen(pagesOnScreen: () -> List<Int>, start: (showModeSelection: Boolean) -> Unit) {}
+
 }

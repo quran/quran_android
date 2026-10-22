@@ -114,4 +114,5 @@
   <string name="memorize_mic_end">Stop memorizing</string>
   <string name="memorize_mic_replay">Listen to my recitation</string>
   <string name="memorize_mic_replay_pause">Pause my recitation</string>
+  <string name="memorize_mic_start">Start memorizing</string>
 </resources>

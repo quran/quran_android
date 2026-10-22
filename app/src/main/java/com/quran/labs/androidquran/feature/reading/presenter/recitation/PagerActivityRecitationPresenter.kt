@@ -64,6 +64,10 @@ class PagerActivityRecitationPresenter @Inject constructor(
   fun bind(activity: PagerActivity, bridge: Bridge) {
     if (!isRecitationEnabled()) return
     this.bridge = bridge
+    recitationPresenter.setReadingScreen(::pagesOnScreen) { showModeSelection ->
+      if (!recitationEventPresenter.hasRecitationSession()) prepareForNewSession()
+      recitationPresenter.startOrStopRecitation({ firstAyahToMemorize() }, showModeSelection)
+    }
     activity.lifecycle.addObserver(this)
   }
 
@@ -182,11 +186,11 @@ class PagerActivityRecitationPresenter @Inject constructor(
 
   override fun onRecitationPressed() {
     if (!recitationEventPresenter.hasRecitationSession()) prepareForNewSession()
-    recitationPresenter.startOrStopRecitation({ ayahToStartFrom() })
+    recitationPresenter.startOrStopRecitation({ firstAyahToMemorize() })
   }
 
   override fun onRecitationLongPressed() {
-    recitationPresenter.startOrStopRecitation({ ayahToStartFrom() }, true)
+    recitationPresenter.startOrStopRecitation({ firstAyahToMemorize() }, true)
   }
 
   override fun onRecitationTranscriptPressed() {
@@ -219,25 +223,14 @@ class PagerActivityRecitationPresenter @Inject constructor(
   }
 
   private fun firstAyahToMemorize(): SuraAyah {
-    val page = if (bridge.isDualPageVisible()) bridge.currentPage() - 1 else bridge.currentPage()
+    val page = pagesOnScreen().first()
     return readingEventPresenter.currentAyahSelection().startSuraAyah()
       ?: SuraAyah(quranInfo.getSuraOnPage(page), quranInfo.getFirstAyahOnPage(page))
   }
 
-  private fun ayahToStartFrom(): SuraAyah {
-    val page = if (bridge.isDualPageVisible()) {
-      // subtracting 1 because in dual mode currentPage gives 2, 4, 6.. instead of 1, 3, 5..
-      // but we want to start from the first ayah of the first visible page
-      bridge.currentPage() - 1
-    } else {
-      bridge.currentPage()
-    }
-
-    // If we're in ayah mode, start from selected ayah
-    return readingEventPresenter.currentAyahSelection().startSuraAyah()
-      // If a sura starts on this page, assume the user meant to start there
-      ?: quranInfo.getListOfSurahWithStartingOnPage(page).firstNotNullOfOrNull { SuraAyah(it, 1) }
-      // Otherwise, start from the beginning of the page
-      ?: SuraAyah(quranInfo.getSuraOnPage(page), quranInfo.getFirstAyahOnPage(page))
+  /** The pages on screen: in dual page mode currentPage gives 2, 4, 6... for the pair it ends. */
+  private fun pagesOnScreen(): List<Int> {
+    val page = bridge.currentPage()
+    return if (bridge.isDualPageVisible()) listOf(page - 1, page) else listOf(page)
   }
 }

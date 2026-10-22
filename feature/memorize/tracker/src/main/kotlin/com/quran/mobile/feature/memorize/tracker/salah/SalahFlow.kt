@@ -20,6 +20,10 @@ class SalahFlow(
   private val fatihaWords: List<String>,
   phrases: List<Pair<String, String>>,
   private val config: TrackerConfig = TrackerConfig(),
+  /** Where the passage may start (see [RecitationTracker]): e.g. the pages around the one on screen. */
+  startWindow: Int = 0,
+  /** Where the user is expected to start (e.g. the page on screen), within [startWindow]. */
+  startIndex: Int = 0,
 ) {
   enum class Phase {
     /** Before the passage starts in this rak'ah (opening takbir, istiftah, Al-Fatiha...). */
@@ -32,8 +36,10 @@ class SalahFlow(
     BETWEEN_RAKAHS,
   }
 
-  val passage = RecitationTracker(passageWords, config, phrases = phrases)
+  val passage = RecitationTracker(passageWords, config, startIndex, phrases, startWindow)
   private var fatiha = newFatihaTracker()
+  // this rak'ah's Al-Fatiha is over: what follows should be the passage
+  private var afterFatiha = false
 
   var phase: Phase = Phase.AWAITING
     private set
@@ -53,21 +59,27 @@ class SalahFlow(
         // ready for the next rak'ah; the passage continues where it stopped
         fatiha = newFatihaTracker()
         phase = Phase.AWAITING
+        afterFatiha = true
       }
       return emptyList()
     }
 
     if (passageProgress) {
       phase = Phase.PASSAGE
+      afterFatiha = false
       // the user moved on to the passage: Al-Fatiha starts from its beginning next time
       if (fatiha.cursor > 0) fatiha = newFatihaTracker()
     } else if (phase == Phase.PASSAGE && passageEvents.any { it.endsPassage() }) {
       phase = Phase.BETWEEN_RAKAHS
     }
+    if (passageEvents.any { it.endsPassage() }) afterFatiha = false
 
     if (phase != Phase.PASSAGE) {
-      // outside the passage nothing is a mistake
-      return passageEvents.filter { it !is TrackerEvent.Mistake }
+      // outside the passage nothing is a mistake, except a passage recited after Al-Fatiha that
+      // isn't where the user said it would be
+      return passageEvents.filter {
+        it !is TrackerEvent.Mistake || (afterFatiha && it.kind == TrackerEvent.Mistake.Kind.ELSEWHERE)
+      }
     }
     return passageEvents
   }
@@ -81,6 +93,7 @@ class SalahFlow(
     if (phase == Phase.PASSAGE && events.any { it.endsPassage() }) {
       phase = Phase.BETWEEN_RAKAHS
     }
+    if (events.any { it.endsPassage() }) afterFatiha = false
     return events
   }
 

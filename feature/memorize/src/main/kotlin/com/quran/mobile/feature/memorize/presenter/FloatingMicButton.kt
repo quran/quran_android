@@ -28,6 +28,7 @@ internal class FloatingMicButton(
   private val activity: Activity,
   private val preferences: MemorizePreferences,
   onToggle: () -> Unit,
+  onChooseMode: () -> Unit,
   onEnd: () -> Unit,
   onReplay: () -> Unit,
 ) {
@@ -41,7 +42,7 @@ internal class FloatingMicButton(
     addView(ComposeView(activity).apply {
       setContent {
         val current = state.value ?: return@setContent
-        QuranTheme { MemorizeMicButton(current, onToggle, onEnd, onReplay) }
+        QuranTheme { MemorizeMicButton(current, onToggle, onChooseMode, onEnd, onReplay) }
       }
     })
   }

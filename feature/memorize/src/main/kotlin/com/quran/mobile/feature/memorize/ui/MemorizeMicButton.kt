@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -38,6 +39,8 @@ import com.quran.mobile.feature.memorize.R
 
 /** What the floating mic button shows. */
 internal data class MicButtonState(
+  /** No session yet: the button starts one. */
+  val idle: Boolean,
   val listening: Boolean,
   val preparing: Boolean,
   val recording: Boolean,
@@ -46,7 +49,8 @@ internal data class MicButtonState(
 )
 
 /**
- * The floating mic of a memorization session: blue and pulsing while it listens (with a red dot
+ * The floating mic of the reading screen: green before a session (tap to start on the pages on
+ * screen, long press to choose memorize or salah), blue and pulsing while it listens (with a red dot
  * when the session is recorded), grey while paused, with buttons to end the session and to listen
  * to the recording.
  */
@@ -54,11 +58,12 @@ internal data class MicButtonState(
 internal fun MemorizeMicButton(
   state: MicButtonState,
   onToggle: () -> Unit,
+  onChooseMode: () -> Unit,
   onEnd: () -> Unit,
   onReplay: () -> Unit,
 ) {
   Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-    if (!state.listening) {
+    if (!state.listening && !state.idle) {
       SmallButton(QuranIcons.Close, stringResource(R.string.memorize_mic_end), onEnd)
       if (state.canReplay) {
         SmallButton(
@@ -70,20 +75,38 @@ internal fun MemorizeMicButton(
     }
     Box(contentAlignment = Alignment.Center, modifier = Modifier.size(80.dp)) {
       if (state.listening) Pulse()
-      val description = stringResource(if (state.listening) R.string.memorize_mic_pause else R.string.memorize_mic_resume)
+      val description = stringResource(
+        when {
+          state.idle -> R.string.memorize_mic_start
+          state.listening -> R.string.memorize_mic_pause
+          else -> R.string.memorize_mic_resume
+        }
+      )
+      val chooseMode = stringResource(R.string.memorize_choose_mode)
       Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
           .size(60.dp)
           .clip(CircleShape)
-          .background(if (state.listening) LISTENING else MaterialTheme.colorScheme.surfaceVariant)
+          .background(
+            when {
+              state.idle -> READY
+              state.listening -> LISTENING
+              else -> MaterialTheme.colorScheme.surfaceVariant
+            }
+          )
           .semantics { contentDescription = description }
-          .clickable(role = Role.Button, onClick = onToggle),
+          .combinedClickable(
+            role = Role.Button,
+            onClick = onToggle,
+            onLongClickLabel = chooseMode,
+            onLongClick = if (state.idle) onChooseMode else null,
+          ),
       ) {
         Icon(
-          imageVector = if (state.listening) QuranIcons.Mic else MemorizeIcons.MicOff,
+          imageVector = if (state.listening || state.idle) QuranIcons.Mic else MemorizeIcons.MicOff,
           contentDescription = null,
-          tint = if (state.listening) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
+          tint = if (state.listening || state.idle) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
           modifier = Modifier.size(30.dp),
         )
         if (state.preparing) {
@@ -143,5 +166,6 @@ private fun SmallButton(icon: ImageVector, description: String, onClick: () -> U
   }
 }
 
+private val READY = Color(0xFF43A047)
 private val LISTENING = Color(0xFF1E88E5)
 private val RECORDING = Color(0xFFE53935)

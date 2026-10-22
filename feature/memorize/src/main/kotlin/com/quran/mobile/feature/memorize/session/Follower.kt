@@ -10,6 +10,9 @@ internal interface Follower {
   val cursor: Int
   val isDone: Boolean
 
+  /** Whether it is known where the user started (see [RecitationTracker.anchored]). */
+  val started: Boolean
+
   /** Whether hints may be given now (in salah: only while the passage itself is being recited). */
   val canHint: Boolean
 
@@ -26,6 +29,7 @@ internal interface Follower {
 
 internal class MemorizeFollower(private val tracker: RecitationTracker) : Follower {
   override val cursor: Int get() = tracker.cursor
+  override val started: Boolean get() = tracker.anchored
   override val isDone: Boolean get() = tracker.isDone
   override val canHint: Boolean get() = true
   override fun feed(phonemes: List<TimedPhoneme>) = tracker.feed(phonemes)
@@ -37,6 +41,7 @@ internal class MemorizeFollower(private val tracker: RecitationTracker) : Follow
 
 internal class SalahFollower(private val flow: SalahFlow) : Follower {
   override val cursor: Int get() = flow.passage.cursor
+  override val started: Boolean get() = flow.passage.anchored
   override val isDone: Boolean get() = flow.passage.isDone
   override val canHint: Boolean get() = flow.isReadingPassage
   override fun feed(phonemes: List<TimedPhoneme>) = flow.feed(phonemes)
