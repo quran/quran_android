@@ -22,5 +22,8 @@
         android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode"
         android:exported="false"
         android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+    <activity
+        android:name=".recording.RecordingsActivity"
+        android:exported="false" />
   </application>
 </manifest>

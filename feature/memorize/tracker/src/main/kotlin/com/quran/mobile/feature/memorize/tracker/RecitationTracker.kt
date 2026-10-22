@@ -27,17 +27,31 @@ import com.quran.mobile.feature.memorize.tracker.TrackerEvent.WordRecited
  * two in sync (see the golden tests).
  */
 class RecitationTracker(
-  private val words: List<String>,
+  words: List<String>,
   private val config: TrackerConfig = TrackerConfig(),
   startIndex: Int = 0,
   /** Phrases said around the passage that aren't mistakes: (kind, normalized phonemes). */
-  private val phrases: List<Pair<String, String>> = emptyList(),
+  phrases: List<Pair<String, String>> = emptyList(),
 ) {
+
+  private val words = ArrayList(words)
+  private val phrases = ArrayList(phrases)
 
   var cursor: Int = startIndex
     private set
 
+  /** Whether every word loaded so far has been recited (see [extend]). */
   val isDone: Boolean get() = cursor >= words.size
+
+  /** More of the passage, e.g. the next sura once the user nears the end of this one. */
+  fun extend(more: List<String>) {
+    words.addAll(more)
+  }
+
+  /** Phrases that become possible later, e.g. the basmala once the passage leaves Al-Fatiha. */
+  fun addPhrases(more: List<Pair<String, String>>) {
+    phrases.addAll(more.filter { it !in phrases })
+  }
 
   private val pending = ArrayList<TimedPhoneme>()
   private var mistakeAt: Int? = null
@@ -226,6 +240,7 @@ class RecitationTracker(
   private class WordStats {
     var cost = 0.0
     val covered = HashSet<Int>()
+    var firstPending = -1
     var lastPending = -1
     var matched = 0
     var heard = 0
@@ -254,7 +269,10 @@ class RecitationTracker(
         else -> indel(word[pos], pos, word.length)
       }
       if (step.op == 'm' || step.op == 's' || step.op == 'd') s.covered.add(col)
-      if (step.op == 'm' || step.op == 's' || step.op == 'i') s.lastPending = step.pendingIndex
+      if (step.op == 'm' || step.op == 's' || step.op == 'i') {
+        if (s.firstPending < 0) s.firstPending = step.pendingIndex
+        s.lastPending = step.pendingIndex
+      }
       if (step.op == 'm') s.matched++
       if (step.op == 'm' || step.op == 's') s.heard++
     }
@@ -277,11 +295,16 @@ class RecitationTracker(
 
     val repeated = stats.keys.filter { it < cursor && stats.getValue(it).lastPending >= 0 }.sorted()
 
+    fun recited(w: Int): WordRecited {
+      val s = stats.getValue(w)
+      return WordRecited(w, timeOf(s.lastPending), s.cost, startMs = timeOf(s.firstPending))
+    }
+
     var w = cursor
     var lastPending = -1
     while (w < words.size && complete(w) && good(w)) {
       lastPending = stats.getValue(w).lastPending
-      events += WordRecited(w, timeOf(lastPending), stats.getValue(w).cost)
+      events += recited(w)
       w++
     }
 
@@ -312,7 +335,8 @@ class RecitationTracker(
           val length = words[x].length
           if (s != null && s.heard >= config.contextMinHeard * length && s.cost <= config.contextCost * length) {
             val time = if (s.lastPending >= 0) timeOf(s.lastPending) else lastTime
-            events += WordRecited(x, time, s.cost, fromContext = true)
+            val start = if (s.firstPending >= 0) timeOf(s.firstPending) else null
+            events += WordRecited(x, time, s.cost, fromContext = true, startMs = start)
           } else {
             events += WordMissed(x, lastTime)
           }
@@ -320,7 +344,7 @@ class RecitationTracker(
         w = anchor
         while (w < words.size && complete(w) && good(w)) {
           lastPending = stats.getValue(w).lastPending
-          events += WordRecited(w, timeOf(lastPending), stats.getValue(w).cost)
+          events += recited(w)
           w++
         }
       }

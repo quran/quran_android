@@ -16,6 +16,12 @@ internal interface Follower {
   fun feed(phonemes: List<TimedPhoneme>): List<TrackerEvent>
   fun onPause(): List<TrackerEvent>
   fun markHinted(count: Int)
+
+  /** More of the passage (the next suras): the session goes on past the end of a sura. */
+  fun extend(words: List<String>)
+
+  /** Phrases that become possible later, e.g. the basmala before the next sura. */
+  fun addPhrases(phrases: List<Pair<String, String>>)
 }
 
 internal class MemorizeFollower(private val tracker: RecitationTracker) : Follower {
@@ -25,6 +31,8 @@ internal class MemorizeFollower(private val tracker: RecitationTracker) : Follow
   override fun feed(phonemes: List<TimedPhoneme>) = tracker.feed(phonemes)
   override fun onPause() = tracker.onPause()
   override fun markHinted(count: Int) = tracker.markHinted(count)
+  override fun extend(words: List<String>) = tracker.extend(words)
+  override fun addPhrases(phrases: List<Pair<String, String>>) = tracker.addPhrases(phrases)
 }
 
 internal class SalahFollower(private val flow: SalahFlow) : Follower {
@@ -34,4 +42,6 @@ internal class SalahFollower(private val flow: SalahFlow) : Follower {
   override fun feed(phonemes: List<TimedPhoneme>) = flow.feed(phonemes)
   override fun onPause() = flow.onPause()
   override fun markHinted(count: Int) = flow.passage.markHinted(count)
+  override fun extend(words: List<String>) = flow.extendPassage(words)
+  override fun addPhrases(phrases: List<Pair<String, String>>) = flow.passage.addPhrases(phrases)
 }

@@ -7,9 +7,12 @@ import com.quran.mobile.feature.memorize.tracker.WordId
  *
  * The behaviour is the one requested for memorization: a wrong word is only *marked* (never
  * revealed); if the user doesn't recover within [HintConfig.delayMs], one hint is given (the
- * caller reveals and plays the next [HintConfig.wordsPerHint] words). If the user still doesn't
- * continue on their own, another hint follows after the same delay, and so on. A pause without a
- * mistake (the user is stuck) is treated the same way once the user has been silent long enough.
+ * caller reveals and plays the next [HintConfig.wordsPerHint] words). A user who tries the word
+ * again and gets it wrong again is given it at their next pause, without waiting for the delay. If
+ * the user still doesn't continue on their own, another hint follows after the same delay, and so
+ * on; after [HintConfig.wordHintsBeforeLonger] of them each hint gives the rest of the ayah or of
+ * the line ([Extent.AYAH_OR_LINE]). A pause without a mistake (the user is stuck) is treated the
+ * same way once the user has been silent long enough.
  *
  * The scheduler is a pure state machine: every input carries the current time and every output is
  * returned as a list of [Effect]s, so it can be driven by a real clock on the device and by a fake
@@ -24,11 +27,18 @@ class HintScheduler(private val config: HintConfig) {
     /** Remove a mistake mark (the user recovered, or a hint revealed the word). */
     data class ClearMistake(val word: WordId) : Effect
 
-    /** Reveal and play the next [count] words from the current position. */
-    data class GiveHint(val count: Int) : Effect
+    /** Reveal and play the next [count] words (or more, see [extent]) from the current position. */
+    data class GiveHint(val count: Int, val extent: Extent = Extent.WORDS) : Effect
 
     /** Too many hints in a row without the user continuing: stop hinting until re-anchored. */
     data object GiveUp : Effect
+  }
+
+  enum class Extent {
+    /** The configured number of words. */
+    WORDS,
+    /** The rest of the ayah if it is short, else the rest of the line on the page. */
+    AYAH_OR_LINE,
   }
 
   private var armed = false
@@ -39,6 +49,8 @@ class HintScheduler(private val config: HintConfig) {
   private var speechEndedMs = 0L
   private var mistake: WordId? = null
   private var mistakeSinceMs = 0L
+  // how many times the user has tried the word of the pending mistake and stopped
+  private var attempts = 0
   private var consecutiveHints = 0
 
   val isArmed: Boolean get() = armed
@@ -89,12 +101,17 @@ class HintScheduler(private val config: HintConfig) {
     val effects = clearMistake().toMutableList()
     mistake = expected
     mistakeSinceMs = nowMs
+    // recognized only after the user stopped: that attempt is over already
+    attempts = if (speechActive) 0 else 1
     effects += Effect.MarkMistake(expected)
     return effects
   }
 
   fun onSpeechActivity(nowMs: Long, active: Boolean) {
-    if (speechActive && !active) speechEndedMs = nowMs
+    if (speechActive && !active) {
+      speechEndedMs = nowMs
+      if (mistake != null) attempts++
+    }
     speechActive = active
   }
 
@@ -119,9 +136,18 @@ class HintScheduler(private val config: HintConfig) {
     if (!armed || prompting) return null
     if (mistake != null) {
       val due = mistakeSinceMs + config.delayMs
-      if (!config.mistakesWaitForPause) return due
-      if (speechActive) return null
-      return maxOf(due, speechEndedMs + minSilenceMs())
+      val afterDelay = when {
+        !config.mistakesWaitForPause -> due
+        speechActive -> null
+        else -> maxOf(due, speechEndedMs + minSilenceMs())
+      }
+      // wrong again: give the word at this pause, once the recognizer has had time to catch up
+      val repeated = if (attempts >= config.mistakeAttemptsBeforeHint && !speechActive) {
+        speechEndedMs + minSilenceMs()
+      } else {
+        null
+      }
+      return listOfNotNull(afterDelay, repeated).minOrNull()
     }
     if (!config.onPauses || speechActive) return null
     val delay = if (atAyahBoundary) config.ayahBoundaryDelayMs ?: return null else config.delayMs
@@ -138,7 +164,8 @@ class HintScheduler(private val config: HintConfig) {
     }
     consecutiveHints++
     prompting = true
-    return clearMistake() + Effect.GiveHint(config.wordsPerHint)
+    val extent = if (consecutiveHints > config.wordHintsBeforeLonger) Extent.AYAH_OR_LINE else Extent.WORDS
+    return clearMistake() + Effect.GiveHint(config.wordsPerHint, extent)
   }
 
   // Long madd (up to 6 counts) is silence-free but produces no new words, and the recognizer only
@@ -149,6 +176,7 @@ class HintScheduler(private val config: HintConfig) {
   private fun clearMistake(): List<Effect> {
     val pending = mistake ?: return emptyList()
     mistake = null
+    attempts = 0
     return listOf(Effect.ClearMistake(pending))
   }
 }
@@ -171,4 +199,8 @@ data class HintConfig(
    */
   val mistakesWaitForPause: Boolean = false,
   val maxConsecutiveHints: Int = 10,
+  /** Wrong attempts at the same word after which it is given at the user's next pause. */
+  val mistakeAttemptsBeforeHint: Int = 2,
+  /** Hints of [wordsPerHint] words in a row after which hints give the rest of the ayah or line. */
+  val wordHintsBeforeLonger: Int = 3,
 )

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Build
+import android.text.format.Formatter
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -12,15 +13,17 @@ import androidx.core.content.ContextCompat
 import com.quran.data.di.QuranScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.audio.Qari
-import com.quran.data.source.PageProvider
-import com.quran.mobile.common.download.Downloader
 import com.quran.mobile.feature.memorize.R
 import com.quran.mobile.feature.memorize.model.SpeechModelStore
+import com.quran.mobile.feature.memorize.prompt.HintVoiceDownloads
 import com.quran.mobile.feature.memorize.prompt.PromptPlayer
+import com.quran.mobile.feature.memorize.recording.RecordingPlayer
+import com.quran.mobile.feature.memorize.recording.SessionPlayback
 import com.quran.mobile.feature.memorize.service.MemorizeService
 import com.quran.mobile.feature.memorize.session.MemorizeSessionController
 import com.quran.mobile.feature.memorize.session.MemorizeState
 import com.quran.mobile.feature.memorize.settings.MemorizePreferences
+import com.quran.mobile.feature.memorize.ui.MicButtonState
 import com.quran.recitation.presenter.RecitationPresenter
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
@@ -29,6 +32,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -46,8 +50,9 @@ class MemorizeRecitationPresenter @Inject constructor(
   private val models: SpeechModelStore,
   private val preferences: MemorizePreferences,
   private val promptPlayer: PromptPlayer,
-  private val downloader: Downloader,
-  private val pageProvider: PageProvider,
+  private val voiceDownloads: HintVoiceDownloads,
+  private val recordingPlayer: RecordingPlayer,
+  private val sessionPlayback: SessionPlayback,
 ) : RecitationPresenter {
 
   private val enabled = MutableStateFlow(true)
@@ -56,8 +61,11 @@ class MemorizeRecitationPresenter @Inject constructor(
   private var pendingStart: (() -> SuraAyah)? = null
   private var pendingMode = MemorizeState.Mode.MEMORIZE
   private var voiceChecked = false
+  // whether to record the session about to start (null: not decided yet)
+  private var pendingRecord: Boolean? = null
   private var serviceSessionId: String? = null
   private var downloadDialog: AlertDialog? = null
+  private var micButton: FloatingMicButton? = null
 
   override fun bind(what: Activity) {
     activityRef = WeakReference(what)
@@ -75,10 +83,35 @@ class MemorizeRecitationPresenter @Inject constructor(
     controller.failures
       .onEach { activityRef.get()?.let { Toast.makeText(it, R.string.memorize_start_failed, Toast.LENGTH_LONG).show() } }
       .launchIn(scope)
+
+    // a clear way to pause, resume and end the session, wherever the user is on the page
+    val micButton = FloatingMicButton(
+      activity = what,
+      preferences = preferences,
+      onToggle = controller::pauseOrResume,
+      onEnd = ::endSession,
+      onReplay = { if (sessionPlayback.isPlaying) sessionPlayback.pause() else sessionPlayback.play() },
+    ).also { it.attach() }
+    this.micButton = micButton
+    combine(controller.state, recordingPlayer.playback) { state, playback ->
+      state?.let {
+        MicButtonState(
+          listening = it.status == MemorizeState.Status.LISTENING || it.status == MemorizeState.Status.PREPARING,
+          preparing = it.status == MemorizeState.Status.PREPARING,
+          recording = it.recordingId != null,
+          canReplay = it.recordingId != null,
+          replaying = playback?.isPlaying == true && playback.recording.id == it.recordingId,
+        )
+      }
+    }
+      .onEach { micButton.show(it) }
+      .launchIn(scope)
   }
 
   override fun unbind(what: Activity) {
     if (activityRef.get() === what) activityRef.clear()
+    micButton?.detach()
+    micButton = null
     // a model download carries on; the dialog shows it again on the next start
     downloadDialog?.dismiss()
     downloadDialog = null
@@ -91,10 +124,11 @@ class MemorizeRecitationPresenter @Inject constructor(
 
   override fun isRecitationEnabledFlow(): StateFlow<Boolean> = enabled
 
-  // memorization keeps nothing: no transcript, no recording to play back
+  // memorization keeps no transcript
   override fun supportsTranscript(): Boolean = false
 
-  override fun supportsPlayback(): Boolean = false
+  // the user's own recording, when they chose to record the session
+  override fun supportsPlayback(): Boolean = controller.state.value?.recordingId != null
 
   override fun supportsHints(): Boolean = true
 
@@ -111,6 +145,7 @@ class MemorizeRecitationPresenter @Inject constructor(
     }
     pendingStart = startAyah
     voiceChecked = false
+    pendingRecord = null
     if (showModeSelection) chooseMode() else {
       pendingMode = MemorizeState.Mode.MEMORIZE
       proceed()
@@ -154,15 +189,34 @@ class MemorizeRecitationPresenter @Inject constructor(
     val start = pendingStart ?: return
     when {
       !preferences.disclaimerAccepted -> showDisclaimer(activity)
-      !models.isInstalled() -> if (models.isDownloading) showDownload(activity) else offerModelDownload(activity)
+      !models.isInstalled() -> when {
+        models.isDownloading -> showDownload(activity)
+        preferences.autoDownload -> {
+          models.startDownload()
+          showDownload(activity)
+        }
+        else -> offerModelDownload(activity)
+      }
       !hasMicrophonePermission(activity) -> requestPermissions(activity)
       !voiceChecked -> {
         voiceChecked = true
-        checkHintVoice(activity, start())
+        // with automatic downloads, the session downloads the suras it reaches on its own
+        if (preferences.autoDownload) proceed() else checkHintVoice(activity, start())
+      }
+      pendingRecord == null -> when (preferences.recordingMode) {
+        MemorizePreferences.RecordingMode.OFF -> {
+          pendingRecord = false
+          proceed()
+        }
+        MemorizePreferences.RecordingMode.ALWAYS -> {
+          pendingRecord = true
+          proceed()
+        }
+        MemorizePreferences.RecordingMode.ASK -> askToRecord(activity)
       }
       else -> {
         pendingStart = null
-        controller.start(start(), pendingMode)
+        controller.start(start(), pendingMode, record = pendingRecord == true)
         if (pendingMode == MemorizeState.Mode.SALAH) {
           // recognition degrades with distance and room echo: keep the phone close
           Toast.makeText(activity, R.string.memorize_salah_placement, Toast.LENGTH_LONG).show()
@@ -171,9 +225,9 @@ class MemorizeRecitationPresenter @Inject constructor(
     }
   }
 
-  /** Offers to download the sura in the hint voice so hints can be spoken offline. */
+  /** Offers to download the sura (or the whole Quran) in the hint voice so hints can be spoken offline. */
   private fun checkHintVoice(activity: Activity, start: SuraAyah) {
-    val qari = pageProvider.getQaris().firstOrNull { it.id == preferences.promptQariId }
+    val qari = voiceDownloads.voice()
     if (!preferences.correctorEnabled || qari == null) {
       proceed()
       return
@@ -181,21 +235,53 @@ class MemorizeRecitationPresenter @Inject constructor(
     val scope = scope ?: return
     scope.launch {
       // reads the reciter's timings and files
-      val status = withContext(Dispatchers.IO) { promptPlayer.voiceStatus(qari.id, start.sura) }
+      val (status, missing) = withContext(Dispatchers.IO) {
+        promptPlayer.voiceStatus(qari.id, start.sura) to voiceDownloads.missing()
+      }
       if (activityRef.get() !== activity) return@launch
-      if (status == PromptPlayer.VoiceStatus.AUDIO_MISSING) offerVoiceDownload(activity, qari, start) else proceed()
+      if (status == PromptPlayer.VoiceStatus.AUDIO_MISSING) {
+        val size = withContext(Dispatchers.IO) { voiceDownloads.size(missing) }
+        offerVoiceDownload(activity, qari, start, missing, size)
+      } else {
+        proceed()
+      }
     }
   }
 
-  private fun offerVoiceDownload(activity: Activity, qari: Qari, start: SuraAyah) {
+  private fun offerVoiceDownload(activity: Activity, qari: Qari, start: SuraAyah, missing: List<Int>, size: Long?) {
+    val whole = if (size != null) {
+      activity.getString(R.string.memorize_voice_download_all_size, Formatter.formatShortFileSize(activity, size))
+    } else {
+      activity.getString(R.string.memorize_voice_download_all)
+    }
     AlertDialog.Builder(activity)
       .setTitle(R.string.memorize_voice_download_title)
       .setMessage(activity.getString(R.string.memorize_voice_download_message, activity.getString(qari.nameResource)))
-      .setPositiveButton(R.string.memorize_model_download) { _, _ ->
-        downloader.downloadCompleteSuras(qari, listOf(start.sura), downloadDatabase = true)
+      .setPositiveButton(R.string.memorize_voice_download_sura) { _, _ ->
+        voiceDownloads.download(listOf(start.sura))
+        proceed()
+      }
+      .setNeutralButton(whole) { _, _ ->
+        voiceDownloads.download(missing)
         proceed()
       }
       .setNegativeButton(R.string.memorize_voice_download_skip) { _, _ -> proceed() }
+      .setOnCancelListener { pendingStart = null }
+      .show()
+  }
+
+  private fun askToRecord(activity: Activity) {
+    AlertDialog.Builder(activity)
+      .setTitle(R.string.memorize_record_ask_title)
+      .setMessage(R.string.memorize_record_ask_message)
+      .setPositiveButton(R.string.memorize_record_ask_yes) { _, _ ->
+        pendingRecord = true
+        proceed()
+      }
+      .setNegativeButton(R.string.memorize_record_ask_no) { _, _ ->
+        pendingRecord = false
+        proceed()
+      }
       .setOnCancelListener { pendingStart = null }
       .show()
   }

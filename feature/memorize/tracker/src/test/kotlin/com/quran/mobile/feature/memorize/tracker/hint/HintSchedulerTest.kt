@@ -182,6 +182,70 @@ class HintSchedulerTest {
     assertThat(scheduler.onTick(100_000)).isEmpty()
   }
 
+  @Test
+  fun `a word gotten wrong twice is given at the next pause without waiting for the delay`() {
+    val scheduler = HintScheduler(HintConfig(delayMs = 10_000))
+    scheduler.arm(0, atAyahBoundary = false)
+    scheduler.onSpeechActivity(500, active = true)
+    scheduler.onMistake(1_000, word)
+    // first attempt over; the user tries again and gets it wrong again
+    scheduler.onSpeechActivity(1_500, active = false)
+    scheduler.onSpeechActivity(2_500, active = true)
+    assertThat(scheduler.onTick(3_000)).isEmpty()
+    scheduler.onSpeechActivity(4_000, active = false)
+
+    // given once the recognizer has had time to catch up, long before the 10 s delay
+    assertThat(scheduler.nextDeadlineMs()).isEqualTo(6_000)
+    assertThat(scheduler.onTick(6_000)).containsExactly(Effect.ClearMistake(word), Effect.GiveHint(1))
+  }
+
+  @Test
+  fun `a mistake recognized after the user stopped counts that attempt`() {
+    val scheduler = HintScheduler(HintConfig(delayMs = 10_000))
+    scheduler.arm(0, atAyahBoundary = false)
+    scheduler.onSpeechActivity(500, active = true)
+    scheduler.onSpeechActivity(1_000, active = false)
+    scheduler.onMistake(1_400, word)
+    assertThat(scheduler.nextDeadlineMs()).isEqualTo(11_400)
+
+    scheduler.onSpeechActivity(2_000, active = true)
+    scheduler.onSpeechActivity(3_000, active = false)
+    assertThat(scheduler.nextDeadlineMs()).isEqualTo(5_000)
+  }
+
+  @Test
+  fun `a second attempt that turns out right gives no hint`() {
+    val scheduler = HintScheduler(HintConfig(delayMs = 10_000))
+    scheduler.arm(0, atAyahBoundary = false)
+    scheduler.onSpeechActivity(500, active = true)
+    scheduler.onMistake(1_000, word)
+    scheduler.onSpeechActivity(1_500, active = false)
+    scheduler.onSpeechActivity(2_500, active = true)
+    scheduler.onSpeechActivity(4_000, active = false)
+
+    // the word arrives from the recognizer before the pause is long enough
+    assertThat(scheduler.onWordRecited(5_000, atAyahBoundary = false)).containsExactly(Effect.ClearMistake(word))
+    assertThat(scheduler.onTick(6_000)).isEmpty()
+  }
+
+  @Test
+  fun `after three single word hints in a row the rest of the ayah or line is given`() {
+    val scheduler = armed()
+    var now = 0L
+    repeat(3) {
+      now += 4_000
+      assertThat(scheduler.onTick(now)).containsExactly(Effect.GiveHint(1, HintScheduler.Extent.WORDS))
+      scheduler.onHintFinished(now)
+    }
+    now += 4_000
+    assertThat(scheduler.onTick(now)).containsExactly(Effect.GiveHint(1, HintScheduler.Extent.AYAH_OR_LINE))
+    scheduler.onHintFinished(now)
+
+    // reciting on their own starts over with single words
+    scheduler.onWordRecited(now + 1_000, atAyahBoundary = false)
+    assertThat(scheduler.onTick(now + 5_000)).containsExactly(Effect.GiveHint(1, HintScheduler.Extent.WORDS))
+  }
+
   private fun armed(): HintScheduler {
     val scheduler = HintScheduler(HintConfig(delayMs = 4_000))
     scheduler.arm(0, atAyahBoundary = false)

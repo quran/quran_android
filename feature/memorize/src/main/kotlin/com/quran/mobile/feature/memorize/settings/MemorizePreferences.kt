@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.core.content.edit
 import com.quran.data.di.AppScope
 import com.quran.mobile.di.qualifier.ApplicationContext
+import com.quran.mobile.feature.memorize.recording.RecordingSplit
 import com.quran.mobile.feature.memorize.tracker.hint.HintConfig
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
@@ -44,6 +45,49 @@ class MemorizePreferences @Inject constructor(@param:ApplicationContext context:
     get() = prefs.getInt(KEY_PROMPT_QARI, 1)
     set(value) = prefs.edit { putInt(KEY_PROMPT_QARI, value) }
 
+  /** Download the speech model and the hint voice as needed, without asking during a session. */
+  var autoDownload: Boolean
+    get() = prefs.getBoolean(KEY_AUTO_DOWNLOAD, false)
+    set(value) = prefs.edit { putBoolean(KEY_AUTO_DOWNLOAD, value) }
+
+  enum class RecordingMode { OFF, ALWAYS, ASK }
+
+  /** Whether sessions are recorded so the user can listen to themselves. Off by default. */
+  var recordingMode: RecordingMode
+    get() = prefs.getString(KEY_RECORDING, null)?.let { runCatching { RecordingMode.valueOf(it) }.getOrNull() }
+      ?: RecordingMode.OFF
+    set(value) = prefs.edit { putString(KEY_RECORDING, value.name) }
+
+  enum class KeepRecordings {
+    /** Until the user deletes them. */
+    ALL,
+    /** A new recording replaces the older ones that start at the same place. */
+    REPLACE_SAME_PLACE,
+  }
+
+  var keepRecordings: KeepRecordings
+    get() = prefs.getString(KEY_KEEP_RECORDINGS, null)?.let { runCatching { KeepRecordings.valueOf(it) }.getOrNull() }
+      ?: KeepRecordings.ALL
+    set(value) = prefs.edit { putString(KEY_KEEP_RECORDINGS, value.name) }
+
+  var recordingSplit: RecordingSplit
+    get() = prefs.getString(KEY_RECORDING_SPLIT, null)?.let { runCatching { RecordingSplit.valueOf(it) }.getOrNull() }
+      ?: RecordingSplit.BY_SURA
+    set(value) = prefs.edit { putString(KEY_RECORDING_SPLIT, value.name) }
+
+  /** Where the user dragged the floating mic (its offset from the bottom corner), if they did. */
+  var micButtonOffset: Pair<Float, Float>?
+    get() = if (prefs.contains(KEY_MIC_X)) prefs.getFloat(KEY_MIC_X, 0f) to prefs.getFloat(KEY_MIC_Y, 0f) else null
+    set(value) = prefs.edit {
+      if (value == null) {
+        remove(KEY_MIC_X)
+        remove(KEY_MIC_Y)
+      } else {
+        putFloat(KEY_MIC_X, value.first)
+        putFloat(KEY_MIC_Y, value.second)
+      }
+    }
+
   var disclaimerAccepted: Boolean
     get() = prefs.getBoolean(KEY_DISCLAIMER, false)
     set(value) = prefs.edit { putBoolean(KEY_DISCLAIMER, value) }
@@ -71,5 +115,11 @@ class MemorizePreferences @Inject constructor(@param:ApplicationContext context:
     const val KEY_STRICT = "strict_tashkeel"
     const val KEY_DISCLAIMER = "disclaimer_accepted"
     const val KEY_PROMPT_QARI = "prompt_qari"
+    const val KEY_AUTO_DOWNLOAD = "auto_download"
+    const val KEY_RECORDING = "recording_mode"
+    const val KEY_KEEP_RECORDINGS = "keep_recordings"
+    const val KEY_RECORDING_SPLIT = "recording_split"
+    const val KEY_MIC_X = "mic_button_x"
+    const val KEY_MIC_Y = "mic_button_y"
   }
 }

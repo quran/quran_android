@@ -20,6 +20,8 @@ data class MemorizeState(
   /** A hidden word the user got wrong; it is marked but not revealed. */
   val mistake: Int? = null,
   val peeking: Boolean = false,
+  /** The recording of this session, if the user chose to record it. */
+  val recordingId: String? = null,
 ) {
   enum class Status { PREPARING, LISTENING, PAUSED, FINISHED }
 

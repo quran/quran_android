@@ -3,11 +3,14 @@
 Recite from memory with the mushaf page open: the words of the passage are hidden and appear as
 they are recited correctly. A wrong word is marked (not shown); if the reciter is stuck, the next
 word is given, one word at a time, in a reciter's voice. The same corrector works hands-free during
-salah, with the screen off.
+salah, with the screen off. A session goes on into the next suras (as in taraweeh) until the user
+ends it; a floating mic shows when it listens and pauses, resumes or ends it.
 
-**Everything runs on the device.** Audio is processed in memory and dropped; nothing is recorded,
-saved, logged or sent. The only network use is the one-time download of the speech model (and, if
-the user agrees, the hint reciter's sura audio through the app's normal audio downloads).
+**Everything runs on the device.** Audio is processed in memory and dropped; nothing is logged or
+sent, and nothing is recorded unless the user turns on "Record my recitation" (off by default).
+Recordings stay in the app's no-backup storage and only leave the phone if the user exports them.
+The only network use is the one-time download of the speech model and, if the user agrees (or turns
+on automatic downloads), the hint reciter's sura audio through the app's normal audio downloads.
 
 ## How it works
 
@@ -37,7 +40,21 @@ When a word is given (`HintScheduler`, delay T from the settings, 4 s by default
 | wrong word | marked at once; a word T later | a word T later, once the reciter pauses (not over them) |
 | stuck mid-ayah | after T without progress and 2 s of silence | same |
 | stuck between ayat (before an ayah, or on its last word) | after T | after 2 × T (a pause there is often ruku; the takbir disarms hints) |
-| no answer after 10 words | stops until the reciter recites a word | same |
+| the same word wrong again | at the reciter's next pause, without waiting for T | same |
+| still stuck after 3 single words | the rest of the ayah if no longer than the line, else the rest of the line | same |
+| no answer after 10 hints | stops until the reciter recites a word | same |
+
+Pages: every page type is the same text in its own font, so which glyphs are words is worked out
+for the page type in use from its own glyph boxes (`GlyphTypes`: the text gives the words and the
+hizb/sajdah markers, the font's shortest glyphs are its waqf marks — this reproduces the madani
+pages' types exactly for all 6,236 ayat at every width). Marks are backgrounds under the words
+(red: mistake, teal: hinted, amber: skipped) so colored (tajweed) mushafs keep their colors.
+
+Recordings (opt-in): a recording per sura or per session, named by where it starts and ends, played
+back from the audio bar or the floating mic (the page follows), and exported from Settings → My
+recordings as a .zip: the audio (16 kHz AAC), `alignment.json` (every word with its time from the
+recognizer, whether it was recited, hinted or missed, and its phonemes) and a NeMo `manifest.jsonl`
+of the ayat recited entirely (see `RecordingFormat`).
 
 In salah any phrase of ruku/sujud (takbir, tasmi', tahmid, tasbeeh, tasleem) ends the passage of the
 rak'ah; hints resume when the passage continues after the next Al-Fatiha. A pause is 0.8 s of
@@ -70,8 +87,10 @@ One model: Quran-Lab's streaming Zipformer2-CTC phoneme recognizer **zipformer_p
 gated). The app downloads the byte-identical files once from an ungated mirror,
 <https://huggingface.co/Saboorhsn/quran-stt-onnx> (`quran-stt-int8.onnx`, pinned to commit
 `51ec9bcd` and checked by SHA-256 in `SpeechModelSpec`), or imports them for a setup without
-internet (Settings → Recitation model → Import files: pick `quran-stt-int8.onnx` and `tokens.txt`;
-files are recognized by size and verified).
+internet (Settings → Recitation model → Import files: pick `quran-stt-int8.onnx` and `tokens.txt`
+one at a time, or the .zip they came in; files are recognized by their SHA-256, whatever their
+name). Settings → Download for offline use gets the model and the hint voice for the whole Quran at
+once.
 
 License: Quran-Lab No-Profit License 1.2, included verbatim in [MODEL_LICENSE](MODEL_LICENSE)
 (Copyright (c) 2026 Muno459 / Quran-Lab). It allows free use, adaptation and redistribution, forbids

@@ -161,10 +161,25 @@ def husary_clips(husary_audio, lex):
     write("mulk_1_5_husary.wav", decode(path=os.path.join(husary_audio, "067.mp3"), start=begin, duration=end - begin))
     # the speech engine benchmark: the first 30 s of Al-Fatiha (isti'adha, basmala, 1:2...)
     write("fatiha_husary_30s.wav", decode(path=os.path.join(husary_audio, "001.mp3"), duration=30.0))
+    # continuous recitation into the next suras (as in taraweeh): Al-Ikhlas, Al-Falaq and An-Nas
+    # one after the other, each sura file with its basmala
+    pcm, ends_all, words = [], [], 0
+    for sura in (112, 113, 114):
+        offset = sum(len(p) for p in pcm) * 1000 // SR
+        audio = decode(path=os.path.join(husary_audio, f"{sura:03d}.mp3"))
+        for (words_text,) in timings.execute("select words from timings where sura=? order by ayah", (sura,)):
+            ends_all += [int(w.split(":")[2]) + offset for w in words_text.split(",")]
+        words += sum(n for (s, _), n in lex.count.items() if s == sura)
+        pcm.append(audio)
+    write("ikhlas_to_nas_husary.wav", np.concatenate(pcm))
     return [{
         "file": "mulk_1_5_husary.wav", "group": "professional", "label": "Mahmoud Khalil Al-Husary, murattal",
         "source": "Husary murattal sura files (the app's own audio)", "sura": 67, "ayah": 1,
         "words": sum(lex.count[(67, a)] for a in range(1, 6)), "word_ends_ms": ends, "expect": "complete",
+    }, {
+        "file": "ikhlas_to_nas_husary.wav", "group": "continuous", "label": "Al-Husary, Al-Ikhlas to An-Nas in a row",
+        "source": "Husary murattal sura files (the app's own audio)", "sura": 112, "ayah": 1,
+        "words": words, "word_ends_ms": ends_all, "expect": "complete",
     }]
 
 

@@ -78,4 +78,24 @@ class SalahFlowTest {
 
     assertThat(events.filterIsInstance<TrackerEvent.Mistake>().map { it.index }).containsExactly(2)
   }
+
+  @Test
+  fun `the passage continues into the next sura in the following rak'ah`() {
+    val flow = SalahFlow(passage, fatiha, phrases + ("basmala" to "bismillahirrahmanirrahim"))
+    flow.say("qulhuwallahuahadun")
+    flow.say("llahussamadulamyalidwalamyulad")
+    assertThat(flow.passage.isDone).isTrue()
+
+    // the session loads the next sura before the user gets there
+    flow.extendPassage(listOf("qulauzu", "birabbi", "lfalaqi"))
+    flow.say("allahuakbar")
+    flow.onPause()
+    flow.say("alhamdulillahirabbilalamin")
+    flow.say("arrahmanirrahimi")
+    val next = flow.say("bismillahirrahmanirrahimqulauzubirabbilfalaqi")
+
+    assertThat(recitedIndexes(next)).containsExactly(7, 8, 9).inOrder()
+    assertThat(next.filterIsInstance<TrackerEvent.Mistake>()).isEmpty()
+    assertThat(flow.isReadingPassage).isTrue()
+  }
 }

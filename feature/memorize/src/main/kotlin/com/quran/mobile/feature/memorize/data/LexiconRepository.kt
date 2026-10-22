@@ -29,23 +29,46 @@ class LexiconRepository private constructor(
   private val mutex = Mutex()
   private var database: SQLiteDatabase? = null
 
-  /** The words from [start] to the end of its sura. */
-  suspend fun passage(start: SuraAyah): Passage = withContext(io) {
-    val db = database()
+  /**
+   * The words from [start] to the end of its sura, followed by whole suras until there are at least
+   * [minWords] (or the Quran ends): the session loads more as the user goes on (see [nextSuras]).
+   */
+  suspend fun passage(start: SuraAyah, minWords: Int = 0): Passage = withContext(io) {
+    val words = suraWords(start.sura, fromAyah = start.ayah)
+    var sura = start.sura
+    while (words.size < minWords && sura < LAST_SURA) {
+      sura++
+      words += suraWords(sura, fromAyah = 1)
+    }
+    Passage(words)
+  }
+
+  /** Whole suras after [afterSura] with at least [minWords] words between them (fewer at the end). */
+  suspend fun nextSuras(afterSura: Int, minWords: Int): Passage = withContext(io) {
     val words = ArrayList<PassageWord>()
-    db.rawQuery(
+    var sura = afterSura
+    while (sura < LAST_SURA && (words.isEmpty() || words.size < minWords)) {
+      sura++
+      words += suraWords(sura, fromAyah = 1)
+    }
+    Passage(words)
+  }
+
+  private suspend fun suraWords(sura: Int, fromAyah: Int): ArrayList<PassageWord> {
+    val words = ArrayList<PassageWord>()
+    database().rawQuery(
       "SELECT ayah, word, wasl, iso FROM words WHERE sura = ? AND ayah >= ? ORDER BY ayah, word",
-      arrayOf(start.sura.toString(), start.ayah.toString())
+      arrayOf(sura.toString(), fromAyah.toString())
     ).use { cursor ->
       while (cursor.moveToNext()) {
         words += PassageWord(
-          id = WordId(start.sura, cursor.getInt(0), cursor.getInt(1)),
+          id = WordId(sura, cursor.getInt(0), cursor.getInt(1)),
           wasl = cursor.getString(2),
           isolated = cursor.getString(3),
         )
       }
     }
-    Passage(words)
+    return words
   }
 
   /** Phrases said around a recitation that aren't part of it, e.g. "isti'adha" or "takbir". */
@@ -74,5 +97,6 @@ class LexiconRepository private constructor(
     internal fun forTest(context: Context, io: CoroutineDispatcher) = LexiconRepository(context, io)
 
     private const val DATABASE = "lexicon_v1.db"
+    const val LAST_SURA = 114
   }
 }

@@ -118,7 +118,9 @@ class MemorizeService : Service() {
   private fun notification(state: MemorizeState?): Notification {
     createChannel()
     val listening = state?.status == MemorizeState.Status.LISTENING
-    val position = state?.currentAyah?.let { "${it.sura}:${it.ayah}" }.orEmpty()
+    val ayah = state?.currentAyah?.let { "${it.sura}:${it.ayah}" }.orEmpty()
+    // the user always knows when they are being recorded
+    val position = if (state?.recordingId != null) getString(R.string.memorize_recording_notification, ayah) else ayah
     val openApp = packageManager.getLaunchIntentForPackage(packageName)?.let {
       PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
     }

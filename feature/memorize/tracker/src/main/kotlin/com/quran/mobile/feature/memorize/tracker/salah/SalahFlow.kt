@@ -72,6 +72,9 @@ class SalahFlow(
     return passageEvents
   }
 
+  /** More of the passage (the next sura); the session doesn't end with the current one. */
+  fun extendPassage(more: List<String>) = passage.extend(more)
+
   /** The user stopped making sound (e.g. after the takbir, for ruku). */
   fun onPause(): List<TrackerEvent> {
     val events = passage.onPause()

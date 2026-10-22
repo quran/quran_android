@@ -2,6 +2,8 @@ package com.quran.mobile.feature.memorize.di
 
 import com.quran.data.di.AppScope
 import com.quran.mobile.feature.memorize.model.SpeechModelStore
+import com.quran.mobile.feature.memorize.recording.RecordingPlayer
+import com.quran.mobile.feature.memorize.recording.RecordingStore
 import com.quran.mobile.feature.memorize.session.MemorizeSessionController
 import dev.zacsweers.metro.ContributesTo
 
@@ -10,4 +12,6 @@ import dev.zacsweers.metro.ContributesTo
 interface MemorizeComponentInterface {
   fun memorizeSessionController(): MemorizeSessionController
   fun speechModelStore(): SpeechModelStore
+  fun recordingStore(): RecordingStore
+  fun recordingPlayer(): RecordingPlayer
 }

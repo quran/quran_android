@@ -67,6 +67,12 @@ class PromptPlayer @Inject constructor(
     return if (file.extension == "mp3" && file.length() != expectedSize) VoiceStatus.AUDIO_MISMATCH else VoiceStatus.READY
   }
 
+  /** The size of [suras]' audio in this voice, from its word timings, or null if unknown. Reads files. */
+  fun audioSize(qariId: Int, suras: List<Int>): Long? {
+    val timings = timingsFor(qariId) ?: return null
+    return suras.sumOf { timings.expectedFileSize(it) ?: return null }
+  }
+
   override fun prepare(qariId: Int, words: List<WordId>): HintVoice.Clip? = clip(qariId, words)
 
   override fun play(clip: HintVoice.Clip, onStarted: () -> Unit, onFinished: () -> Unit) {

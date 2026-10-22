@@ -9,6 +9,8 @@ import com.quran.mobile.feature.memorize.audio.AudioModeCallState
 import com.quran.mobile.feature.memorize.audio.AudioSourceFactory
 import com.quran.mobile.feature.memorize.audio.CallState
 import com.quran.mobile.feature.memorize.audio.MicAudioSource
+import com.quran.mobile.feature.memorize.data.LineSource
+import com.quran.mobile.feature.memorize.data.PageLines
 import com.quran.mobile.feature.memorize.engine.sherpa.SherpaRecitationEngine
 import com.quran.mobile.feature.memorize.presenter.MemorizeHighlightsPresenter
 import com.quran.mobile.feature.memorize.presenter.MemorizePlaybackPresenter
@@ -16,7 +18,11 @@ import com.quran.mobile.feature.memorize.presenter.MemorizePopupPresenter
 import com.quran.mobile.feature.memorize.presenter.MemorizeRecitationPresenter
 import com.quran.mobile.feature.memorize.presenter.MemorizeRecitationSettings
 import com.quran.mobile.feature.memorize.prompt.HintVoice
+import com.quran.mobile.feature.memorize.prompt.HintVoiceDownloads
 import com.quran.mobile.feature.memorize.prompt.PromptPlayer
+import com.quran.mobile.feature.memorize.prompt.UpcomingSuras
+import com.quran.mobile.feature.memorize.recording.Recorders
+import com.quran.mobile.feature.memorize.recording.RecordingStore
 import com.quran.mobile.feature.memorize.session.RecitationEngineFactory
 import com.quran.recitation.presenter.RecitationHighlightsPresenter
 import com.quran.recitation.presenter.RecitationPlaybackPresenter
@@ -48,6 +54,9 @@ interface MemorizePageBindings {
 interface MemorizeAppBindings {
   @Binds val MemorizeRecitationSettings.bind: RecitationSettings
   @Binds val PromptPlayer.bind: HintVoice
+  @Binds val PageLines.bind: LineSource
+  @Binds val HintVoiceDownloads.bind: UpcomingSuras
+  @Binds val RecordingStore.bind: Recorders
 }
 
 @BindingContainer

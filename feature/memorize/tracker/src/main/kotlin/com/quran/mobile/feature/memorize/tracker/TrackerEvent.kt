@@ -8,7 +8,7 @@ sealed interface TrackerEvent {
   val index: Int
   val timeMs: Long
 
-  /** The word was recited (reveal it). */
+  /** The word was recited (reveal it); [timeMs] is when its last sound was heard. */
   data class WordRecited(
     override val index: Int,
     override val timeMs: Long,
@@ -17,6 +17,8 @@ sealed interface TrackerEvent {
     val fromContext: Boolean = false,
     /** Found again after the user was lost. */
     val recovered: Boolean = false,
+    /** When its first sound was heard, if known. */
+    val startMs: Long? = null,
   ) : TrackerEvent
 
   /** The user moved on without saying this word. */

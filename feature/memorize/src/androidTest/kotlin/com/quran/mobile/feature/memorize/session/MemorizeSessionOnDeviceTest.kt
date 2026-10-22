@@ -82,6 +82,9 @@ class MemorizeSessionOnDeviceTest {
       promptPlayer = RecordingVoice(),
       audioSources = source,
       callState = { false },
+      lines = { emptyMap() },
+      upcoming = {},
+      recorders = { _, _ -> null },
     )
 
     val outcomes = clips().map { clip -> session(controller, source, clip) }

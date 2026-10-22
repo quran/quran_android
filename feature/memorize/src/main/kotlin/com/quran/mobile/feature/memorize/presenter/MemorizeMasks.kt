@@ -18,14 +18,11 @@ internal object MemorizeMasks {
     val marks = HashSet<Mark>()
     val words = state.passage.words
     for (range in ranges) {
-      var index = 0
+      // the passage is in order and can span many suras: start at the page's first word
+      var index = firstAtOrAfter(state, range.startSura, range.startAyah)
       while (index < words.size) {
         val id = words[index].id
         if (compare(id.sura, id.ayah, range.endingSura, range.endingAyah) > 0) break
-        if (compare(id.sura, id.ayah, range.startSura, range.startAyah) < 0) {
-          index++
-          continue
-        }
         // all the passage words of this ayah
         var end = index
         while (end < words.size && words[end].id.sura == id.sura && words[end].id.ayah == id.ayah) end++
@@ -49,6 +46,19 @@ internal object MemorizeMasks {
       }
     }
     return marks
+  }
+
+  /** The index of the first passage word in or after sura:ayah (the passage size if none). */
+  private fun firstAtOrAfter(state: MemorizeState, sura: Int, ayah: Int): Int {
+    val words = state.passage.words
+    var low = 0
+    var high = words.size
+    while (low < high) {
+      val mid = (low + high) ushr 1
+      val id = words[mid].id
+      if (compare(id.sura, id.ayah, sura, ayah) < 0) low = mid + 1 else high = mid
+    }
+    return low
   }
 
   private fun compare(sura: Int, ayah: Int, otherSura: Int, otherAyah: Int): Int =

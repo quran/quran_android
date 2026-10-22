@@ -35,6 +35,10 @@ dependencies {
   implementation(project(":feature:memorize:engine-sherpa"))
 
   implementation(libs.androidx.activity.compose)
+  implementation(libs.compose.animation)
+  implementation(libs.compose.foundation)
+  implementation(libs.compose.material3)
+  implementation(libs.compose.ui)
   implementation(libs.androidx.annotation)
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.media3.exoplayer)

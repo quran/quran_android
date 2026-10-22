@@ -15,6 +15,7 @@ import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.AyahMarkerLocation;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.data.SuraHeaderLocation;
+import com.quran.page.common.data.coordinates.GlyphSize;
 import com.quran.page.common.data.coordinates.GlyphTypeResolver;
 import com.quran.page.common.data.coordinates.PageGlyphsCoords;
 
@@ -210,10 +211,10 @@ public class AyahInfoDatabaseHandler {
   }
 
   /**
-   * Glyph types for the ayat on this page from the {@link GlyphTypeResolver}, keyed by "sura:ayah".
-   * An ayah is left out (so it keeps ayah level behavior) unless its number of glyphs in this
-   * database matches the resolved types exactly, which protects against a resolver built for a
-   * different page layout.
+   * Glyph types for the ayat on this page from the {@link GlyphTypeResolver}, keyed by "sura:ayah",
+   * worked out from the sizes of each ayah's glyphs in this database (every page type has its own
+   * font). An ayah is left out (so it keeps ayah level behavior) if its glyphs can't be told apart
+   * or its positions aren't numbered 1..n.
    */
   @Nullable
   private Map<String, String> derivedGlyphTypesForPage(int page) {
@@ -223,28 +224,46 @@ public class AyahInfoDatabaseHandler {
       // all glyphs of every ayah that is (even partly) on this page; a join rather than a row value
       // comparison (SQLite 3.15+, API 26+) so that both lookups use an index
       cursor = database.rawQuery(
-          "SELECT g." + COL_SURA + ", g." + COL_AYAH + ", MAX(g." + COL_POSITION + "), COUNT(*) " +
-              "FROM (SELECT DISTINCT " + COL_SURA + ", " + COL_AYAH + " FROM " + GLYPHS_TABLE +
+          "SELECT g." + COL_SURA + ", g." + COL_AYAH + ", g." + COL_POSITION + ", g." + MAX_X +
+              " - g." + MIN_X + ", g." + MAX_Y + " - g." + MIN_Y +
+              " FROM (SELECT DISTINCT " + COL_SURA + ", " + COL_AYAH + " FROM " + GLYPHS_TABLE +
               " WHERE " + COL_PAGE + " = ?) AS p JOIN " + GLYPHS_TABLE + " AS g ON g." + COL_SURA +
               " = p." + COL_SURA + " AND g." + COL_AYAH + " = p." + COL_AYAH +
-              " GROUP BY g." + COL_SURA + ", g." + COL_AYAH,
+              " ORDER BY g." + COL_SURA + ", g." + COL_AYAH + ", g." + COL_POSITION,
           new String[] { String.valueOf(page) });
+      int sura = -1;
+      int ayah = -1;
+      List<GlyphSize> glyphs = new ArrayList<>();
+      boolean numbered = true;
       while (cursor.moveToNext()) {
-        int sura = cursor.getInt(0);
-        int ayah = cursor.getInt(1);
-        int maxPosition = cursor.getInt(2);
-        int count = cursor.getInt(3);
-        String types = glyphTypeResolver.glyphTypes(sura, ayah);
-        if (types != null && types.length() == maxPosition && types.length() == count) {
-          result.put(sura + ":" + ayah, types);
+        int rowSura = cursor.getInt(0);
+        int rowAyah = cursor.getInt(1);
+        if (rowSura != sura || rowAyah != ayah) {
+          addDerivedTypes(result, sura, ayah, glyphs, numbered);
+          sura = rowSura;
+          ayah = rowAyah;
+          glyphs = new ArrayList<>();
+          numbered = true;
         }
+        numbered &= cursor.getInt(2) == glyphs.size() + 1;
+        glyphs.add(new GlyphSize(cursor.getInt(3), cursor.getInt(4)));
       }
+      addDerivedTypes(result, sura, ayah, glyphs, numbered);
     } catch (SQLException e) {
       return null;
     } finally {
       DatabaseUtils.closeCursor(cursor);
     }
     return result;
+  }
+
+  private void addDerivedTypes(
+      Map<String, String> result, int sura, int ayah, List<GlyphSize> glyphs, boolean numbered) {
+    if (glyphs.isEmpty() || !numbered || glyphTypeResolver == null) return;
+    String types = glyphTypeResolver.glyphTypes(sura, ayah, glyphs);
+    if (types != null && types.length() == glyphs.size()) {
+      result.put(sura + ":" + ayah, types);
+    }
   }
 
   /** The word number of each glyph of an ayah, counting only the glyphs that are words. */

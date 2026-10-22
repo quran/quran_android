@@ -9,6 +9,7 @@ import com.quran.data.model.AyahGlyph.WordGlyph
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.fakes.FakeQuranFileUtils
+import com.quran.page.common.data.coordinates.GlyphSize
 import com.quran.page.common.data.coordinates.GlyphTypeResolver
 import org.junit.Before
 import org.junit.Test
@@ -28,7 +29,7 @@ class AyahInfoDatabaseHandlerWordGlyphsTest {
   private val types = mapOf(SuraAyah(1, 1) to "hwwpwe", SuraAyah(1, 2) to "wwwe")
 
   private val resolver = object : GlyphTypeResolver {
-    override fun glyphTypes(sura: Int, ayah: Int): String? = types[SuraAyah(sura, ayah)]
+    override fun glyphTypes(sura: Int, ayah: Int, glyphs: List<GlyphSize>): String? = types[SuraAyah(sura, ayah)]
   }
 
   @Before
@@ -113,7 +114,7 @@ class AyahInfoDatabaseHandlerWordGlyphsTest {
   @Test
   fun `ignores ayat whose glyph count doesn't match the resolved types`() {
     val wrongLayout = object : GlyphTypeResolver {
-      override fun glyphTypes(sura: Int, ayah: Int): String? =
+      override fun glyphTypes(sura: Int, ayah: Int, glyphs: List<GlyphSize>): String? =
         if (ayah == 1) "wwe" else types[SuraAyah(sura, ayah)]
     }
 
@@ -122,6 +123,25 @@ class AyahInfoDatabaseHandlerWordGlyphsTest {
 
     assertThat(glyphs.glyphsByAyah[SuraAyah(1, 1)]).isNull()
     assertThat(glyphs.glyphsByAyah[SuraAyah(1, 2)]).isNotNull()
+  }
+
+  @Test
+  fun `gives the resolver the sizes of each ayah's glyphs in this layout`() {
+    val seen = mutableMapOf<SuraAyah, List<GlyphSize>>()
+    val recording = object : GlyphTypeResolver {
+      override fun glyphTypes(sura: Int, ayah: Int, glyphs: List<GlyphSize>): String? {
+        seen[SuraAyah(sura, ayah)] = glyphs
+        return types[SuraAyah(sura, ayah)]
+      }
+    }
+
+    handler(recording, name = "ayahinfo_sizes.db").getVersesBoundsForPage(1)
+
+    assertThat(seen[SuraAyah(1, 1)]).containsExactly(
+      GlyphSize(50, 50), GlyphSize(80, 50), GlyphSize(130, 50), GlyphSize(5, 50), GlyphSize(130, 50), GlyphSize(60, 50),
+    ).inOrder()
+    // all of 1:2, including its glyphs on the next page
+    assertThat(seen[SuraAyah(1, 2)]).hasSize(4)
   }
 
   private fun handler(resolver: GlyphTypeResolver, name: String = DATABASE): AyahInfoDatabaseHandler {
