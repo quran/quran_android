@@ -23,8 +23,8 @@ data class MemorizeState(
   /** The recording of this session, if the user chose to record it. */
   val recordingId: String? = null,
   /**
-   * Whether it is known where the user started: until then (they may start anywhere on the pages
-   * on screen) nothing is hidden.
+   * Whether it is known where the user started (they may start anywhere around the page on screen):
+   * until then every word is hidden; from then on the words before the start are shown.
    */
   val started: Boolean = true,
   /** The word the user started at, once [started] (it may be anywhere on the pages on screen). */
@@ -43,7 +43,7 @@ data class MemorizeState(
 
   // a block body: lint's Kotlin analysis (AGP 9.4) crashes on this as an expression body
   fun isHidden(index: Int): Boolean {
-    return started && !peeking && index >= cursor
+    return !peeking && (!started || index >= cursor)
   }
 
   val currentAyah: SuraAyah

@@ -39,8 +39,7 @@ internal object MemorizeMasks {
             }
           }
         }
-        // before the start is known nothing is hidden: the mark is under the (shown) first word
-        state.mistake?.takeIf { it in ayahWords && (state.isHidden(it) || !state.started) }?.let {
+        state.mistake?.takeIf { it in ayahWords && state.isHidden(it) }?.let {
           marks += Mark(id.sura, id.ayah, words[it].id.word, MemorizeHighlightTypes.MISTAKE)
         }
         index = end

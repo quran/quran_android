@@ -448,13 +448,14 @@ class MemorizeSessionControllerTest {
   }
 
   @Test
-  fun `the user can start anywhere on screen, and nothing is hidden until they do`() = runTest {
+  fun `the user can start anywhere on screen, which is hidden from the start`() = runTest {
     val controller = controller()
     // Al-Ikhlas on screen, up to its last ayah
     controller.start(SuraAyah(112, 1), startAnywhereUntil = SuraAyah(112, 4))
     runCurrent()
     assertThat(controller.state.value!!.started).isFalse()
-    assertThat(controller.state.value!!.isHidden(0)).isFalse()
+    assertThat(controller.state.value!!.isHidden(0)).isTrue()
+    assertThat(controller.state.value!!.isHidden(14)).isTrue()
 
     // starting at ayah 2 (اللَّهُ الصَّمَدُ, words 4 and 5)
     recite(*pronunciations(SuraAyah(112, 2), 2))

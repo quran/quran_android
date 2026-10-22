@@ -102,11 +102,12 @@ class MemorizeMasksTest {
   }
 
   @Test
-  fun `nothing is hidden before the user starts, and starting elsewhere marks the first word`() {
-    assertThat(MemorizeMasks.marks(state(started = false), listOf(page))).isEmpty()
+  fun `everything is hidden until the user starts, and starting elsewhere marks the first word`() {
+    val hidden = (1..4).map { Mark(112, it, -1, MemorizeHighlightTypes.HIDDEN) }
+    assertThat(MemorizeMasks.marks(state(cursor = 4, started = false), listOf(page))).containsExactlyElementsIn(hidden)
 
-    assertThat(MemorizeMasks.marks(state(started = false, mistake = 0), listOf(page)))
-      .containsExactly(Mark(112, 1, 1, MemorizeHighlightTypes.MISTAKE))
+    assertThat(MemorizeMasks.marks(state(cursor = 4, started = false, mistake = 0), listOf(page)))
+      .containsExactlyElementsIn(hidden + Mark(112, 1, 1, MemorizeHighlightTypes.MISTAKE))
   }
 
   @Test

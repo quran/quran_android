@@ -4,7 +4,13 @@ Recite from memory with the mushaf page open: the words of the passage are hidde
 they are recited correctly. A wrong word is marked (not shown); if the reciter is stuck, the next
 word is given, one word at a time, in a reciter's voice. The same corrector works hands-free during
 salah, with the screen off. A session goes on into the next suras (as in taraweeh) until the user
-ends it; a floating mic shows when it listens and pauses, resumes or ends it.
+ends it.
+
+A floating mic on the reading screen starts it (green; long press for salah), shows when it listens
+(blue) and pauses, resumes or ends it. The words are hidden as soon as it starts, and the user may
+begin anywhere from three pages before the page on screen to three after it: once the start is
+found the words before it are shown again. Reciting something that isn't there marks the first word
+on screen (and, while memorizing, gives it after the delay).
 
 **Everything runs on the device.** Audio is processed in memory and dropped; nothing is logged or
 sent, and nothing is recorded unless the user turns on "Record my recitation" (off by default).
