@@ -10,6 +10,6 @@
   <string name="highlight_color_yellow">Сары</string>
   <string name="highlight_color_green">Жасыл</string>
   <string name="highlight_color_blue">Көк</string>
-  <string name="highlight_color_red">Қызыл</string>
   <string name="highlight_color_purple">Күлгін</string>
+  <string name="reading_bookmark_red">Қызыл</string>
 </resources>

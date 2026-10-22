@@ -11,6 +11,7 @@ import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
+import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.R
@@ -41,10 +42,10 @@ class BookmarkUIConverterTest {
       rows = listOf(
         BookmarkRowData.RecentPage(RecentPage(42, timestamp)),
         BookmarkRowData.ReadingBookmarkItem(
-          PageReadingBookmark(ReadingBookmarkType.PURPLE, 42, timestamp)
+          PageReadingBookmark(ReadingBookmarkType.ORANGE, 42, timestamp)
         ),
         BookmarkRowData.ReadingBookmarkItem(
-          AyahReadingBookmark(ReadingBookmarkType.GREEN, 2, 255, timestamp)
+          AyahReadingBookmark(ReadingBookmarkType.TEAL, 2, 255, timestamp)
         ),
         BookmarkRowData.BookmarkItem(Bookmark("1", 2, 255, 42, timestamp.epochSeconds)),
         BookmarkRowData.HighlightedAyahItem(
@@ -57,7 +58,7 @@ class BookmarkUIConverterTest {
     val result = converter.convertToUIResult(context, data)
 
     assertThat(result.rows.filter { it.isReadingBookmark }.map { it.readingBookmarkType })
-      .containsExactly(ReadingBookmarkType.PURPLE, ReadingBookmarkType.GREEN)
+      .containsExactly(ReadingBookmarkType.ORANGE, ReadingBookmarkType.TEAL)
 
     assertThat(result.rows.map { it.dateAddedInMillis })
       .containsExactly(
@@ -70,6 +71,30 @@ class BookmarkUIConverterTest {
   }
 
   @Test
+  fun `only collections users can change offer rename and delete`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val quranInfo = QuranInfo(MadaniDataSource())
+    val converter = BookmarkUIConverter(
+      QuranRowFactory(quranInfo, QuranDisplayData(quranInfo)),
+      quranInfo
+    )
+    val favorites = Tag("1", "Favorites", isSystem = true, isDefault = true)
+    // a color collection an older Quran.com app created: not a system collection, but protected
+    val green = Tag("2", "Green", isReadOnly = true)
+    val review = Tag("3", "Review")
+    val data = BookmarkRawResult(
+      rows = listOf(favorites, green, review).map { tag -> BookmarkRowData.TagHeader(tag) },
+      tagMap = emptyMap()
+    )
+
+    val result = converter.convertToUIResult(context, data)
+
+    assertThat(result.rows.map { row -> row.tagId to row.isEditableCollectionHeader })
+      .containsExactly("1" to false, "2" to false, "3" to true)
+      .inOrder()
+  }
+
+  @Test
   fun `a renamed pin is announced by its own name, not its slot colour`() {
     val context = ApplicationProvider.getApplicationContext<Context>()
     val quranInfo = QuranInfo(MadaniDataSource())
@@ -78,16 +103,16 @@ class BookmarkUIConverterTest {
 
     val renamed = factory.fromReadingBookmark(
       context,
-      PageReadingBookmark(ReadingBookmarkType.GREEN, 42, timestamp, name = "Tafsir study")
+      PageReadingBookmark(ReadingBookmarkType.TEAL, 42, timestamp, name = "Tafsir study")
     )
     assertThat(renamed.imageContentDescription).isEqualTo("Tafsir study")
 
     // a name that is only whitespace is no name at all, so the default still wins
     val blank = factory.fromReadingBookmark(
       context,
-      PageReadingBookmark(ReadingBookmarkType.GREEN, 42, timestamp, name = "   ")
+      PageReadingBookmark(ReadingBookmarkType.TEAL, 42, timestamp, name = "   ")
     )
-    assertThat(blank.imageContentDescription).isEqualTo("Green")
+    assertThat(blank.imageContentDescription).isEqualTo("Teal")
   }
 
   @Test
@@ -103,43 +128,72 @@ class BookmarkUIConverterTest {
       rows = listOf(
         BookmarkRowData.ReadingBookmarkHeader(2),
         BookmarkRowData.ReadingBookmarkItem(
-          AyahReadingBookmark(ReadingBookmarkType.GREEN, 4, 6, fourMinutesAgo)
+          AyahReadingBookmark(ReadingBookmarkType.TEAL, 4, 6, fourMinutesAgo)
         ),
         BookmarkRowData.ReadingBookmarkItem(
-          PageReadingBookmark(ReadingBookmarkType.BLUE, 293, fourMinutesAgo)
+          PageReadingBookmark(ReadingBookmarkType.RED, 293, fourMinutesAgo)
         ),
         BookmarkRowData.ReadingBookmarkHeader(1),
         BookmarkRowData.ReadingBookmarkItem(
           PageReadingBookmark(
-            ReadingBookmarkType.PURPLE, 50, Instant.fromEpochMilliseconds(System.currentTimeMillis())
+            ReadingBookmarkType.ORANGE, 50, Instant.fromEpochMilliseconds(System.currentTimeMillis())
           )
         )
       ),
       tagMap = emptyMap()
     )
 
-    val (header, green, blue, singleHeader, justPlaced) =
+    val (header, teal, red, singleHeader, justPlaced) =
       converter.convertToUIResult(context, data).rows
 
     assertThat(header.text).isEqualTo("Reading Bookmarks")
     assertThat(singleHeader.text).isEqualTo("Reading Bookmark")
 
-    assertThat(green.text).isEqualTo("Surah An-Nisāʾ - Ayah 6")
-    assertThat(green.metadata).isEqualTo("Juz' 4 · 4 minutes ago")
-    assertThat(green.page).isEqualTo(77)
-    assertThat(green.imageResource).isEqualTo(R.drawable.ic_bookmark_filled_24)
-    assertThat(green.imageFilterColorResource).isEqualTo(CoreR.color.reading_bookmark_green)
+    assertThat(teal.text).isEqualTo("Surah An-Nisāʾ - Ayah 6")
+    assertThat(teal.metadata).isEqualTo("Juz' 4 · 4 minutes ago")
+    assertThat(teal.page).isEqualTo(77)
+    assertThat(teal.imageResource).isEqualTo(R.drawable.ic_bookmark_filled_24)
+    assertThat(teal.imageFilterColorResource).isEqualTo(CoreR.color.reading_bookmark_teal)
     // the colour is what tells pins apart on screen, so the name is what a screen reader says
-    assertThat(green.imageContentDescription).isEqualTo("Green")
+    assertThat(teal.imageContentDescription).isEqualTo("Teal")
 
-    assertThat(blue.text).isEqualTo("Surah Al-Kahf")
-    assertThat(blue.metadata).isEqualTo("Juz' 15 · 4 minutes ago")
-    assertThat(blue.page).isEqualTo(293)
-    assertThat(blue.imageFilterColorResource).isEqualTo(CoreR.color.reading_bookmark_blue)
-    assertThat(blue.imageContentDescription).isEqualTo("Blue")
+    assertThat(red.text).isEqualTo("Surah Al-Isrāʾ, Al-Kahf")
+    assertThat(red.metadata).isEqualTo("Juz' 15 · 4 minutes ago")
+    assertThat(red.page).isEqualTo(293)
+    assertThat(red.imageFilterColorResource).isEqualTo(CoreR.color.reading_bookmark_red)
+    assertThat(red.imageContentDescription).isEqualTo("Red")
 
     // rather than "0 minutes ago"
     assertThat(justPlaced.metadata).isEqualTo("Juz' 3 · 1 minute ago")
+  }
+
+  @Test
+  fun `page bookmarks and recent pages name all suras while ayah bookmarks stay specific`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val quranInfo = QuranInfo(MadaniDataSource())
+    val converter = BookmarkUIConverter(
+      QuranRowFactory(quranInfo, QuranDisplayData(quranInfo)),
+      quranInfo
+    )
+    val timestamp = Instant.parse("2023-11-14T22:13:20Z")
+    val data = BookmarkRawResult(
+      rows = listOf(
+        BookmarkRowData.BookmarkItem(Bookmark("page", null, null, 293, timestamp.epochSeconds)),
+        BookmarkRowData.RecentPage(RecentPage(293, timestamp)),
+        BookmarkRowData.BookmarkItem(Bookmark("ayah", 18, 1, 293, timestamp.epochSeconds))
+      ),
+      tagMap = emptyMap()
+    )
+
+    val (pageBookmark, recentPage, ayahBookmark) = converter.convertToUIResult(context, data).rows
+
+    assertThat(pageBookmark.text).isEqualTo("Surah Al-Isrāʾ, Al-Kahf")
+    assertThat(recentPage.text).isEqualTo(pageBookmark.text)
+    assertThat(pageBookmark.metadata).isEqualTo("Page 293, Juz' 15")
+    assertThat(pageBookmark.page).isEqualTo(293)
+    assertThat(ayahBookmark.text).isEqualTo("Surah Al-Kahf - Ayah 1")
+    assertThat(ayahBookmark.sura).isEqualTo(18)
+    assertThat(ayahBookmark.ayah).isEqualTo(1)
   }
 
   @Test
@@ -151,17 +205,21 @@ class BookmarkUIConverterTest {
       quranInfo
     )
     val highlight =
-      Highlight(SuraAyah(2, 255), HighlightColor.BLUE, Instant.parse("2023-11-14T22:13:20Z"))
+      Highlight(SuraAyah(2, 255), HighlightColor.PINK, Instant.parse("2023-11-14T22:13:20Z"))
     val data = BookmarkRawResult(
       rows = listOf(
+        BookmarkRowData.HighlightColorItem(HighlightColor.PINK, 2),
         BookmarkRowData.HighlightedAyahItem(highlight, "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ"),
         BookmarkRowData.HighlightedAyahItem(highlight)
       ),
       tagMap = emptyMap()
     )
 
-    val (withText, withoutText) = converter.convertToUIResult(context, data).rows
+    val (colorRow, withText, withoutText) = converter.convertToUIResult(context, data).rows
 
+    assertThat(colorRow.text).isEqualTo("Pink")
+    assertThat(colorRow.imageFilterColorResource).isEqualTo(R.color.highlight_list_pink)
+    assertThat(withText.imageFilterColorResource).isEqualTo(R.color.highlight_list_pink)
     assertThat(withText.text).isEqualTo("ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ...")
     assertThat(withText.metadata).isEqualTo("Surah Al-Baqarah - Ayah 255, Juz' 3")
     assertThat(withoutText.text).isEqualTo("Surah Al-Baqarah - Ayah 255")
@@ -187,6 +245,6 @@ class BookmarkUIConverterTest {
         factory.fromReadingBookmark(context, PageReadingBookmark(slot, 42, timestamp))
           .imageContentDescription
       }
-    ).containsExactly("أخضر", "بنفسجي", "أزرق").inOrder()
+    ).containsExactly("أزرق مخضر", "برتقالي", "أحمر").inOrder()
   }
 }

@@ -58,7 +58,7 @@ class QuranRowFactory @Inject constructor(
 
   fun fromCurrentPage(context: Context, page: Int, timeStamp: Long): QuranRow {
     return QuranRow.Builder()
-      .withText(quranDisplayData.getSuraNameString(context, page))
+      .withText(quranDisplayData.getAllSuraNamesForPageString(context, page))
       .withMetadata(quranDisplayData.getPageSubtitle(context, page))
       .withSura(quranDisplayData.safelyGetSuraOnPage(page))
       .withPage(page)
@@ -76,7 +76,7 @@ class QuranRowFactory @Inject constructor(
         val page = readingBookmark.page.takeIf(quranInfo::isValidPage) ?: 1
         juz = quranInfo.getJuzForDisplayFromPage(page)
         QuranRow.Builder()
-          .withText(quranDisplayData.getSuraNameString(context, page))
+          .withText(quranDisplayData.getAllSuraNamesForPageString(context, page))
           .withType(QuranRow.PAGE_READING_BOOKMARK)
           .withSura(quranDisplayData.safelyGetSuraOnPage(page))
           .withPage(page)
@@ -145,7 +145,7 @@ class QuranRowFactory @Inject constructor(
 
     if (bookmark.isPageBookmark()) {
       val sura = quranInfo.getSuraNumberFromPage(bookmark.page)
-      builder.withText(quranDisplayData.getSuraNameString(context, bookmark.page))
+      builder.withText(quranDisplayData.getAllSuraNamesForPageString(context, bookmark.page))
         .withMetadata(quranDisplayData.getPageSubtitle(context, bookmark.page))
         .withType(QuranRow.PAGE_BOOKMARK)
         .withBookmark(bookmark)
@@ -191,7 +191,7 @@ class QuranRowFactory @Inject constructor(
       .withTagId(tag.id)
       .withItemCount(count)
       .withCollapsedState(isCollapsed)
-      .withSystemCollection(tag.isSystem)
+      .withReadOnlyCollection(tag.isReadOnly)
       .build()
   }
 
@@ -282,7 +282,7 @@ class QuranRowFactory @Inject constructor(
       HighlightColor.YELLOW -> R.color.highlight_list_yellow
       HighlightColor.GREEN -> R.color.highlight_list_green
       HighlightColor.BLUE -> R.color.highlight_list_blue
-      HighlightColor.RED -> R.color.highlight_list_red
+      HighlightColor.PINK -> R.color.highlight_list_pink
       HighlightColor.PURPLE -> R.color.highlight_list_purple
     }
   }

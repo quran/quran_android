@@ -10,8 +10,10 @@ import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.collection.CollectionNameException
 import com.quran.data.model.collection.ReadingCollection
 import com.quran.data.model.collection.ReadingCollectionBookmarks
+import com.quran.mobile.bookmark.mapper.mapCollectionNameErrors
 import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
 import com.quran.shared.persistence.model.AyahBookmark
 import com.quran.shared.persistence.model.CollectionAyahBookmark
@@ -79,7 +81,7 @@ class BookmarksDaoImpl @Inject constructor(
 
   override suspend fun addCollection(name: String): ReadingCollection {
     return withContext(Dispatchers.IO) {
-      collectionsRepository.addCollection(name)
+      mapCollectionNameErrors { collectionsRepository.addCollection(name) }
         .asReadingCollection()
     }
   }
@@ -105,7 +107,7 @@ class BookmarksDaoImpl @Inject constructor(
   override suspend fun addTag(name: String): String {
     val timestamp = timestampProvider.now()
     val tagId = withContext(Dispatchers.IO) {
-      collectionsRepository.addCollection(name, timestamp).id
+      mapCollectionNameErrors { collectionsRepository.addCollection(name, timestamp) }.id
     }
     return tagId
   }
@@ -122,16 +124,14 @@ class BookmarksDaoImpl @Inject constructor(
       if (existingCollection.name == tag.name) {
         return@withContext true
       }
-      if (collectionsById.any { (collectionId, collection) ->
-          collectionId != localId && collection.name == tag.name
-        }
-      ) {
-        return@withContext false
-      }
       try {
-        collectionsRepository.updateCollection(localId, tag.name, timestamp)
+        mapCollectionNameErrors {
+          collectionsRepository.updateCollection(localId, tag.name, timestamp)
+        }
         true
       } catch (exception: CancellationException) {
+        throw exception
+      } catch (exception: CollectionNameException) {
         throw exception
       } catch (_: Exception) {
         false
@@ -196,7 +196,10 @@ class BookmarksDaoImpl @Inject constructor(
       if (membership == null) {
         false
       } else {
-        collectionBookmarksRepository.removeAyahBookmarkFromCollection(membership)
+        collectionBookmarksRepository.removeAyahBookmarkFromCollection(
+          collectionId = membership.collectionId,
+          bookmarkId = membership.bookmarkId
+        )
       }
     }
   }
@@ -333,10 +336,11 @@ class BookmarksDaoImpl @Inject constructor(
     )
   }
 
-  private fun SyncCollection.asTag(): Tag = Tag(id, name, isSystem = isSystem, isDefault = isDefault)
+  private fun SyncCollection.asTag(): Tag =
+    Tag(id, name, isSystem = isSystem, isDefault = isDefault, isReadOnly = isReadOnly)
 
   private fun BookmarkCollectionData.isEditable(collectionId: String): Boolean =
-    collectionsById[collectionId]?.isSystem == false
+    collectionsById[collectionId]?.isReadOnly == false
 
   private fun validTagIds(
     tagIds: Set<String>,

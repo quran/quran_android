@@ -6,6 +6,7 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahBookmark
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.collection.CollectionNameException
 import com.quran.data.model.collection.ReadingCollection
 import com.quran.data.model.collection.ReadingCollectionBookmarks
 import kotlinx.coroutines.flow.Flow
@@ -128,6 +129,7 @@ class FakeBookmarksDao(
   }
 
   override suspend fun addTag(name: String): String {
+    requireUnreservedName(name)
     val id = "tag-${tags.value.size + 1}"
     addedTagNames += name
     tags.update { current -> current + Tag(id, name) }
@@ -136,9 +138,19 @@ class FakeBookmarksDao(
   }
 
   override suspend fun updateTag(tag: Tag): Boolean {
+    // like the real DAO, a tag that no longer exists or is read-only can't be renamed
+    if (tags.value.none { it.id == tag.id && !it.isReadOnly }) return false
+    requireUnreservedName(tag.name)
     tags.update { current -> current.map { if (it.id == tag.id) tag else it } }
     changesFlow.tryEmit(Unit)
     return true
+  }
+
+  // like mobile-sync, Favorites is reserved for the default collection
+  private fun requireUnreservedName(name: String) {
+    if (name.trim().equals(defaultCollectionMetadata.name, ignoreCase = true)) {
+      throw CollectionNameException.Reserved(name)
+    }
   }
 
   override suspend fun removeTags(tags: List<Tag>) {

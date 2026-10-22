@@ -10,6 +10,6 @@
   <string name="highlight_color_yellow">Kuning</string>
   <string name="highlight_color_green">Hijau</string>
   <string name="highlight_color_blue">Biru</string>
-  <string name="highlight_color_red">Merah</string>
   <string name="highlight_color_purple">Ungu</string>
+  <string name="reading_bookmark_red">Merah</string>
 </resources>

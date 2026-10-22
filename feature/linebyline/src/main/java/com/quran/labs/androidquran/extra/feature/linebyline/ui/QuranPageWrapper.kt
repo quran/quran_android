@@ -189,6 +189,15 @@ fun QuranPageWrapper(
         lineRatio = ratio
       )
     },
+    readingBookmarkComposable = { highlight, colors ->
+      ReadingBookmarkUnderline(
+        lineId = highlight.lineId,
+        left = highlight.left,
+        right = highlight.right,
+        lineRatio = ratio,
+        colors = colors
+      )
+    },
     sidelinesComposable = {
       Sidelines(
         pageInfo.sidelines,

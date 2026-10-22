@@ -4,6 +4,6 @@
   <string name="highlight_color_yellow">Gul</string>
   <string name="highlight_color_green">Grøn</string>
   <string name="highlight_color_blue">Blå</string>
-  <string name="highlight_color_red">Rød</string>
   <string name="highlight_color_purple">Lilla</string>
+  <string name="reading_bookmark_red">Rød</string>
 </resources>

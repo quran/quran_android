@@ -37,10 +37,9 @@ class RecentPagesDaoImplTest {
   @Before
   fun setup() {
     val context = RuntimeEnvironment.getApplication().applicationContext as Context
-    context.deleteDatabase("quran.db")
+    context.deleteDatabase("user_data.db")
     val mobileSyncDatabase = MobileSyncDatabase(context)
-    mobileSyncDatabase.database.reading_sessionsQueries.deleteAll()
-    repository = ReadingSessionsRepositoryImpl(mobileSyncDatabase.database)
+    repository = ReadingSessionsRepositoryImpl(mobileSyncDatabase.database.synced)
     quranInfo = QuranInfo(MadaniDataSource())
     settings = FakeSettings()
     appCoroutineScope = AppCoroutineScope()

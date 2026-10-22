@@ -10,6 +10,6 @@
   <string name="highlight_color_yellow">Jaune</string>
   <string name="highlight_color_green">Vert</string>
   <string name="highlight_color_blue">Bleu</string>
-  <string name="highlight_color_red">Rouge</string>
   <string name="highlight_color_purple">Violet</string>
+  <string name="reading_bookmark_red">Rouge</string>
 </resources>

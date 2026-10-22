@@ -44,14 +44,15 @@ class MobileSyncImporterImplTest {
   @Before
   fun setUp() {
     val context = RuntimeEnvironment.getApplication().applicationContext as Context
-    context.deleteDatabase("quran.db")
+    context.deleteDatabase("user_data.db")
     mobileSyncDatabase = MobileSyncDatabase(context)
     appCoroutineScope = AppCoroutineScope()
-    val collectionsRepository = CollectionsRepositoryImpl(mobileSyncDatabase.database)
-    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(mobileSyncDatabase.database)
+    val collectionsRepository = CollectionsRepositoryImpl(mobileSyncDatabase.database.synced)
+    val collectionBookmarksRepository =
+      CollectionBookmarksRepositoryImpl(mobileSyncDatabase.database.synced)
     bookmarksDao = BookmarksDaoImpl(
       quranInfoProvider = { QuranInfo(MadaniDataSource()) },
-      bookmarksRepository = BookmarksRepositoryImpl(mobileSyncDatabase.database),
+      bookmarksRepository = BookmarksRepositoryImpl(mobileSyncDatabase.database.synced),
       collectionsRepository = collectionsRepository,
       collectionBookmarksRepository = collectionBookmarksRepository,
       bookmarkCollectionsState = RepositoryBackedTestBookmarkCollectionsState(
@@ -78,7 +79,6 @@ class MobileSyncImporterImplTest {
       MobileSyncImportData(
         bookmarks = listOf(
           MobileSyncImportBookmark(
-            importId = "bookmark-2-255",
             sura = 2,
             ayah = 255,
             timestampMillis = 1_234_000L
@@ -86,15 +86,15 @@ class MobileSyncImporterImplTest {
         ),
         collections = listOf(
           MobileSyncImportCollection(
-            importId = "tag-1",
             name = "Reading",
             timestampMillis = 1_200_000L
           )
         ),
         collectionBookmarks = listOf(
           MobileSyncImportCollectionBookmark(
-            collectionImportId = "tag-1",
-            bookmarkImportId = "bookmark-2-255",
+            collectionName = "Reading",
+            sura = 2,
+            ayah = 255,
             timestampMillis = 1_234_000L
           )
         ),
@@ -111,7 +111,8 @@ class MobileSyncImporterImplTest {
     val bookmarks = bookmarksDao.bookmarks()
     // the default collection is always present, so this asserts on the imported ones
     val tags = bookmarksDao.tags().filterNot { tag -> tag.isSystem }
-    val readingSessions = ReadingSessionsRepositoryImpl(mobileSyncDatabase.database).getReadingSessions()
+    val readingSessions =
+      ReadingSessionsRepositoryImpl(mobileSyncDatabase.database.synced).getReadingSessions()
 
     assertThat(bookmarks.map { bookmark -> bookmark.sura to bookmark.ayah }).containsExactly(2 to 255)
     assertThat(bookmarks.single().timestamp).isEqualTo(1234L)
@@ -124,21 +125,21 @@ class MobileSyncImporterImplTest {
 
   @Test
   fun `reading bookmark import replaces supplied slots and preserves omitted slots`() = runTest {
-    val repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database)
-    val existing = repository.setPageReadingBookmark(ReadingBookmarkSlot.GREEN, 12)
-    val omitted = repository.setPageReadingBookmark(ReadingBookmarkSlot.BLUE, 50)
-    repository.renameReadingBookmark(ReadingBookmarkSlot.GREEN, "Old name")
+    val repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database.synced)
+    val existing = repository.setPageReadingBookmark(ReadingBookmarkSlot.TEAL, 12)
+    val omitted = repository.setPageReadingBookmark(ReadingBookmarkSlot.RED, 50)
+    repository.renameReadingBookmark(ReadingBookmarkSlot.TEAL, "Old name")
 
     val result = importer.importData(
       MobileSyncImportData(
         readingBookmarks = listOf(
           MobileSyncImportReadingBookmark.Page(
-            slot = ReadingBookmarkSlot.GREEN,
+            slot = ReadingBookmarkSlot.TEAL,
             page = 42,
             timestampMillis = 1_700_000_000_000L
           ),
           MobileSyncImportReadingBookmark.Ayah(
-            slot = ReadingBookmarkSlot.PURPLE,
+            slot = ReadingBookmarkSlot.ORANGE,
             sura = 2,
             ayah = 255,
             timestampMillis = 1_700_000_001_000L,
@@ -150,16 +151,16 @@ class MobileSyncImporterImplTest {
 
     assertThat(result.readingBookmarkImported).isEqualTo(2)
     val bookmarks = repository.getReadingBookmarks()
-    val page = bookmarks.single { it.slot == ReadingBookmarkSlot.GREEN } as PageReadingBookmark
+    val page = bookmarks.single { it.slot == ReadingBookmarkSlot.TEAL } as PageReadingBookmark
     assertThat(page.id).isEqualTo(existing.id)
     assertThat(page.page).isEqualTo(42)
     assertThat(page.name).isNull()
     assertThat(page.lastUpdated.toEpochMilliseconds()).isEqualTo(1_700_000_000_000L)
-    val ayah = bookmarks.single { it.slot == ReadingBookmarkSlot.PURPLE } as AyahReadingBookmark
+    val ayah = bookmarks.single { it.slot == ReadingBookmarkSlot.ORANGE } as AyahReadingBookmark
     assertThat(ayah.sura to ayah.ayah).isEqualTo(2 to 255)
     assertThat(ayah.name).isEqualTo("Nightly reading")
     assertThat(ayah.lastUpdated.toEpochMilliseconds()).isEqualTo(1_700_000_001_000L)
-    assertThat(bookmarks.single { it.slot == ReadingBookmarkSlot.BLUE }).isEqualTo(omitted)
+    assertThat(bookmarks.single { it.slot == ReadingBookmarkSlot.RED }).isEqualTo(omitted)
   }
 
   @Test
@@ -168,7 +169,6 @@ class MobileSyncImporterImplTest {
       MobileSyncImportData(
         bookmarks = listOf(
           MobileSyncImportBookmark(
-            importId = "bookmark-2-255",
             sura = 2,
             ayah = 255,
             timestampMillis = 1_234_000L
@@ -181,7 +181,6 @@ class MobileSyncImporterImplTest {
       data = MobileSyncImportData(
         bookmarks = listOf(
           MobileSyncImportBookmark(
-            importId = "bookmark-3-2",
             sura = 3,
             ayah = 2,
             timestampMillis = 1_300_000L

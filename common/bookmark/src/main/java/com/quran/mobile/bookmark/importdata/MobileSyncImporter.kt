@@ -5,6 +5,7 @@ import com.quran.data.di.AppScope
 import com.quran.mobile.bookmark.R
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
 import com.quran.mobile.di.qualifier.ApplicationContext
+import com.quran.shared.mutations.collectionNameKey
 import com.quran.shared.persistence.input.ImportCollection
 import com.quran.shared.persistence.input.ImportCollectionAyahBookmark
 import com.quran.shared.persistence.input.ImportReadingBookmark
@@ -32,7 +33,10 @@ class MobileSyncImporterImpl @Inject constructor(
   @param:ApplicationContext private val appContext: Context
 ) : MobileSyncImporter {
 
-  private val importRepository = PersistenceImportRepositoryImpl(mobileSyncDatabase.database)
+  private val importRepository = PersistenceImportRepositoryImpl(
+    mobileSyncDatabase.database.quran,
+    mobileSyncDatabase.database.synced
+  )
 
   override suspend fun importData(
     data: MobileSyncImportData,
@@ -45,32 +49,29 @@ class MobileSyncImporterImpl @Inject constructor(
 }
 
 fun MobileSyncImportData.toPersistenceImportData(appContext: Context): PersistenceImportData {
-  val bookmarksByImportId = bookmarks.associateBy { it.importId }
-  val collectionsByName = collections.groupBy { collection ->
-    if (collection.name.trim().lowercase() in RESERVED_COLLECTION_NAMES) {
-      appContext.getString(R.string.imported_collection_name, collection.name)
-    } else {
-      collection.name
+  fun destinationName(name: String): String {
+    val key = collectionNameKey(name)
+    return when {
+      key == FAVORITES_COLLECTION_NAME.lowercase() ->
+        appContext.getString(R.string.imported_collection_name, name)
+      // a suffix wouldn't help: mobile-sync refuses every name that starts with the prefix
+      key.startsWith(SYSTEM_COLLECTION_NAME_PREFIX) ->
+        appContext.getString(R.string.imported_system_collection_name, name)
+      else -> name
     }
   }
-  val mergedCollectionIds = collectionsByName.values
-    .flatMap { group -> group.map { it.importId to group.first().importId } }
-    .toMap()
+  val collectionsByName = collections.groupBy { collection -> destinationName(collection.name) }
 
-  val favoritesImportId = generateSequence("import-favorites") { "$it-" }
-    .first { it !in mergedCollectionIds }
   return PersistenceImportData(
     collections = buildList {
       if (bookmarks.isNotEmpty()) {
         add(ImportCollection(
-          importId = favoritesImportId,
-          name = "Favorites",
+          name = FAVORITES_COLLECTION_NAME,
           lastUpdated = bookmarks.maxOf { it.timestampMillis }.toPlatformDateTime()
         ))
       }
       collectionsByName.forEach { (name, group) ->
         add(ImportCollection(
-          importId = group.first().importId,
           name = name,
           lastUpdated = group.maxOf { it.timestampMillis }.toPlatformDateTime()
         ))
@@ -78,22 +79,21 @@ fun MobileSyncImportData.toPersistenceImportData(appContext: Context): Persisten
     },
     collectionBookmarks = bookmarks.map { bookmark ->
       ImportCollectionAyahBookmark(
-        collectionImportId = favoritesImportId,
+        collectionName = FAVORITES_COLLECTION_NAME,
         sura = bookmark.sura,
         ayah = bookmark.ayah,
         lastUpdated = bookmark.timestampMillis.toPlatformDateTime()
       )
     } + collectionBookmarks
       .groupBy { membership ->
-        val collectionId = mergedCollectionIds[membership.collectionImportId] ?: membership.collectionImportId
-        collectionId to membership.bookmarkImportId
+        Triple(destinationName(membership.collectionName), membership.sura, membership.ayah)
       }
-      .map { (ids, memberships) ->
-        val bookmark = bookmarksByImportId.getValue(ids.second)
+      .map { (key, memberships) ->
+        val (collectionName, sura, ayah) = key
         ImportCollectionAyahBookmark(
-          collectionImportId = ids.first,
-          sura = bookmark.sura,
-          ayah = bookmark.ayah,
+          collectionName = collectionName,
+          sura = sura,
+          ayah = ayah,
           lastUpdated = memberships.maxOf { it.timestampMillis }.toPlatformDateTime()
         )
       },
@@ -108,14 +108,13 @@ fun MobileSyncImportData.toPersistenceImportData(appContext: Context): Persisten
   )
 }
 
-private val RESERVED_COLLECTION_NAMES = setOf(
-  "favorites",
-  "system:highlights:blue",
-  "system:highlights:red",
-  "system:highlights:green",
-  "system:highlights:yellow",
-  "system:highlights:purple"
-)
+private const val FAVORITES_COLLECTION_NAME = "Favorites"
+
+/**
+ * mobile-sync refuses a user collection named Favorites or starting with this prefix, which the server
+ * reserves (the highlight collections among them). Names compare trimmed and case-insensitive.
+ */
+private const val SYSTEM_COLLECTION_NAME_PREFIX = "system:"
 
 private fun MobileSyncImportReadingBookmark.toImportReadingBookmark(): ImportReadingBookmark {
   return when (this) {
