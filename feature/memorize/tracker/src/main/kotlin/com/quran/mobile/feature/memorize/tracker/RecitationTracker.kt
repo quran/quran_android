@@ -5,6 +5,7 @@ import com.quran.mobile.feature.memorize.tracker.TrackerEvent.NonTarget
 import com.quran.mobile.feature.memorize.tracker.TrackerEvent.Repetition
 import com.quran.mobile.feature.memorize.tracker.TrackerEvent.WordMissed
 import com.quran.mobile.feature.memorize.tracker.TrackerEvent.WordRecited
+import kotlin.math.abs
 
 /**
  * Follows a user reciting a known passage from memory.
@@ -50,6 +51,11 @@ class RecitationTracker(
   /** Whether it is known where the user started (always, without a [startWindow]). */
   var anchored: Boolean = startWindow <= 1
     private set
+
+  // where the user was expected to start, and how many words they recited from the start found:
+  // until a few have been, a mistake means the start was wrong and is looked for again
+  private val home = startIndex
+  private var sinceStart = if (startWindow <= 1) CONFIRMED_START_WORDS else 0
 
   /** Whether every word loaded so far has been recited (see [extend]). */
   val isDone: Boolean get() = cursor >= words.size
@@ -127,8 +133,10 @@ class RecitationTracker(
 
   /** The app revealed/played the next [count] words: they count as recited. */
   fun markHinted(count: Int) {
-    // a hint before the user found the start: they start at the beginning
+    // a hint before the user found the start: they start where they were expected to
+    if (!anchored) cursor = home
     anchored = true
+    sinceStart = CONFIRMED_START_WORDS
     cursor = minOf(words.size, cursor + count)
     pending.clear()
     mistakeAt = null
@@ -172,8 +180,11 @@ class RecitationTracker(
     return Window(first, symbols.toString().toCharArray(), word.toIntArray(), pos.toIntArray())
   }
 
-  /** Semi-global alignment of [heard] with the window; returns the path (garbage step first). */
-  private fun align(heard: CharArray, win: Window): List<Step> {
+  /**
+   * Semi-global alignment of [heard] with the window; returns the path (garbage step first). Of
+   * equally good ends, the furthest one, or with [nearest] the one closest to that word.
+   */
+  private fun align(heard: CharArray, win: Window, nearest: Int? = null): List<Step> {
     val n = heard.size
     val m = win.symbols.size
     val width = m + 1
@@ -228,6 +239,32 @@ class RecitationTracker(
     var jBest = 0
     for (j in 1..m) {
       if (cost[n * width + j] <= cost[n * width + jBest]) jBest = j
+    }
+    if (nearest != null) {
+      // as good (within half a phoneme), and starting closer to where the user is expected: e.g. a
+      // phrase that the Quran repeats on several pages
+      fun startWord(end: Int): Int {
+        var i = n
+        var j = end
+        while ((i > 0 || j > 0) && back[i * width + j] != '\u0000' && back[i * width + j] != 'g') {
+          when (back[i * width + j]) {
+            'm', 's' -> { i--; j-- }
+            'i' -> i--
+            else -> j--
+          }
+        }
+        return win.word[minOf(j, m - 1)]
+      }
+      val best = cost[n * width + jBest]
+      var bestDistance = abs(startWord(jBest) - nearest)
+      for (j in 1..m) {
+        if (cost[n * width + j] > best + 0.5) continue
+        val distance = abs(startWord(j) - nearest)
+        if (distance < bestDistance) {
+          jBest = j
+          bestDistance = distance
+        }
+      }
     }
 
     val path = ArrayList<Step>()
@@ -365,6 +402,7 @@ class RecitationTracker(
     }
 
     if (lastPending >= 0) {
+      sinceStart += w - cursor
       if (repeated.isNotEmpty()) {
         events.add(0, Repetition(repeated.first(), repeated.last(), timeOf(stats.getValue(repeated.last()).lastPending)))
       }
@@ -400,7 +438,13 @@ class RecitationTracker(
       return events
     }
 
-    // Mistake?
+    // Mistake? Right after the start was found, rather a wrong start: look for it again.
+    if (heard.size >= words[cursor].length + config.mistakeMargin && sinceStart < CONFIRMED_START_WORDS) {
+      anchored = false
+      cursor = home
+      mistakeAt = null
+      return findStart()
+    }
     if (heard.size >= words[cursor].length + config.mistakeMargin && mistakeAt != cursor) {
       val skipped = cursor + 1 < words.size && good(cursor + 1) && (stats[cursor]?.matched ?: 0) == 0
       mistakeAt = cursor
@@ -421,7 +465,7 @@ class RecitationTracker(
     val saved = cursor
     cursor = windowEnd - 1
     val win = window(0, minOf(words.size, windowEnd + config.aheadWords))
-    val path = align(heard, win)
+    val path = align(heard, win, nearest = home)
     cursor = saved
     val firstWords = LinkedHashMap<Int, WordStats>()
     for (step in path) {
@@ -449,10 +493,20 @@ class RecitationTracker(
       return complete && s.lastPending >= 0 && s.cost <= config.allowance(words[w].length) &&
         s.matched >= 0.6 * words[w].length
     }
-    val start = firstWords.keys.filter { it < windowEnd }
-      .firstOrNull { j -> (j until j + config.resyncRun).all { it < words.size && confident(it) } }
+    // enough to tell the place: a few words in a row, and more of them if they are short ones (the
+    // window is large)
+    val start = firstWords.keys.filter { it < windowEnd }.firstOrNull { j ->
+      var count = 0
+      var phonemes = 0
+      while (j + count < words.size && confident(j + count) && (count < START_WORDS || phonemes < START_PHONEMES)) {
+        phonemes += words[j + count].length
+        count++
+      }
+      count >= START_WORDS && phonemes >= START_PHONEMES
+    }
     if (start != null) {
       anchored = true
+      sinceStart = 0
       cursor = start
       mistakeAt = null
       return update()
@@ -628,8 +682,13 @@ class RecitationTracker(
   }
 
   private companion object {
-    /** Phonemes heard (about three words) before a start that matches nowhere is a mistake. */
-    const val ELSEWHERE_PHONEMES = 15
+    /** Phonemes heard (about six words) before a start that matches nowhere is a mistake. */
+    const val ELSEWHERE_PHONEMES = 30
+    /** Words, and phonemes in them, that must be heard confidently to know where the user started. */
+    const val START_WORDS = 3
+    const val START_PHONEMES = 10
+    /** Words recited from the start found after which it is no longer doubted. */
+    const val CONFIRMED_START_WORDS = 6
 
     val CONFUSABLE: List<Set<Char>> = listOf(
       setOf('س', 'ص'), setOf('ت', 'ط'), setOf('د', 'ض'), setOf('ذ', 'ز', 'ظ'), setOf('ح', 'ه'),

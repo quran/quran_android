@@ -40,6 +40,9 @@ class SalahFlow(
   private var fatiha = newFatihaTracker()
   // this rak'ah's Al-Fatiha is over: what follows should be the passage
   private var afterFatiha = false
+  // phonemes heard since the last word of Al-Fatiha: while it is recited, the passage's start isn't
+  // looked for (in a few pages of Quran, some of its words match nearly anything)
+  private var sinceFatiha = Int.MAX_VALUE
 
   var phase: Phase = Phase.AWAITING
     private set
@@ -47,9 +50,20 @@ class SalahFlow(
   /** Feeds the phonemes to both trackers; returns the passage's events that matter. */
   fun feed(phonemes: List<TimedPhoneme>): List<TrackerEvent> {
     val fatihaEvents = fatiha.feed(phonemes)
+    val inFatiha = fatihaEvents.any { it is TrackerEvent.WordRecited }
+    sinceFatiha = if (inFatiha) 0 else (sinceFatiha + phonemes.size).coerceAtMost(Int.MAX_VALUE / 2)
+    if (!passage.anchored && sinceFatiha < FATIHA_QUIET_PHONEMES) {
+      phase = Phase.FATIHA
+      passage.discardPending()
+      if (fatiha.isDone) {
+        fatiha = newFatihaTracker()
+        phase = Phase.AWAITING
+        afterFatiha = true
+      }
+      return emptyList()
+    }
     val passageEvents = passage.feed(phonemes)
 
-    val inFatiha = fatihaEvents.any { it is TrackerEvent.WordRecited }
     val passageProgress = passageEvents.any { it is TrackerEvent.WordRecited }
 
     if (inFatiha && !passageProgress) {
@@ -108,6 +122,8 @@ class SalahFlow(
 
   companion object {
     const val TAKBIR = "takbir"
+    /** Phonemes after Al-Fatiha's last recognized word before the passage's start is looked for. */
+    private const val FATIHA_QUIET_PHONEMES = 12
 
     /** Phrases said only once the passage of a rak'ah is over. */
     val ENDS_PASSAGE = setOf(TAKBIR, "tasmi", "tahmid", "ruku", "sujud", "tasleem")

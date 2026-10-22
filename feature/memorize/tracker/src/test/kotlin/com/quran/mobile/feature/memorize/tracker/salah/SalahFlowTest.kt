@@ -109,7 +109,7 @@ class SalahFlowTest {
     all += flow.say("amin")
     assertThat(all.filterIsInstance<TrackerEvent.Mistake>()).isEmpty()
 
-    val elsewhere = flow.say("waddhuhawallayliidhasaja")
+    val elsewhere = flow.say("waddhuhawallayliidhasajamawaddaakarabbukawamaqala")
     assertThat(elsewhere.filterIsInstance<TrackerEvent.Mistake>().map { it.kind })
       .containsExactly(TrackerEvent.Mistake.Kind.ELSEWHERE)
     assertThat(flow.isReadingPassage).isFalse()
@@ -118,5 +118,21 @@ class SalahFlowTest {
     val started = flow.say("llahussamadulamyalid")
     assertThat(recitedIndexes(started)).containsExactly(3, 4, 5).inOrder()
     assertThat(flow.isReadingPassage).isTrue()
+  }
+
+  @Test
+  fun `the passage's start isn't looked for while Al-Fatiha is recited`() {
+    // a passage whose words also occur in Al-Fatiha
+    val passageLikeFatiha = listOf("rabbi", "lalamin", "qulhuwa", "llahu", "ahadun")
+    val flow = SalahFlow(passageLikeFatiha, fatiha, phrases, startWindow = passageLikeFatiha.size)
+
+    flow.say("alhamdulillahi")
+    flow.say("rabbilalamin")
+    assertThat(flow.passage.anchored).isFalse()
+
+    flow.say("arrahmanirrahimi")
+    flow.say("amin")
+    val passage = flow.say("qulhuwallahuahadun")
+    assertThat(recitedIndexes(passage)).containsExactly(2, 3, 4).inOrder()
   }
 }

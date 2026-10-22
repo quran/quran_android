@@ -103,6 +103,10 @@ class MemorizePreferences @Inject constructor(@param:ApplicationContext context:
       ayahBoundaryDelayMs = if (salah) 2 * delayMs else delayMs,
       // spoken hints shouldn't talk over the reciter (see HintConfig)
       mistakesWaitForPause = salah,
+      // in salah a silence that lasts is more often ruku or sujud than being stuck: a word at a time,
+      // and quiet after a few
+      wordHintsBeforeLonger = if (salah) Int.MAX_VALUE else 3,
+      maxConsecutiveHints = if (salah) 3 else 10,
     )
   }
 

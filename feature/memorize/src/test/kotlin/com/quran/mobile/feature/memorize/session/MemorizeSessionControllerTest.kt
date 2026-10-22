@@ -457,17 +457,17 @@ class MemorizeSessionControllerTest {
     assertThat(controller.state.value!!.isHidden(0)).isTrue()
     assertThat(controller.state.value!!.isHidden(14)).isTrue()
 
-    // starting at ayah 2 (اللَّهُ الصَّمَدُ, words 4 and 5)
-    recite(*pronunciations(SuraAyah(112, 2), 2))
+    // starting at ayah 2 (اللَّهُ الصَّمَدُ, words 4 and 5) and on into ayah 3
+    recite(*pronunciations(SuraAyah(112, 2), 4))
 
     val state = controller.state.value!!
     assertThat(state.started).isTrue()
     assertThat(state.firstWord).isEqualTo(4)
-    assertThat(state.cursor).isEqualTo(6)
-    // the words before the start stay shown, without counting as skipped
+    assertThat(state.cursor).isEqualTo(8)
+    // the words before the start are shown again, without counting as skipped
     assertThat(state.isHidden(0)).isFalse()
     assertThat(state.missed).isEmpty()
-    assertThat(state.isHidden(6)).isTrue()
+    assertThat(state.isHidden(8)).isTrue()
   }
 
   @Test
@@ -478,7 +478,7 @@ class MemorizeSessionControllerTest {
     runCurrent()
 
     // Al-Falaq instead
-    recite(*pronunciations(SuraAyah(113, 1), 6))
+    recite(*pronunciations(SuraAyah(113, 1), 12))
     assertThat(controller.state.value!!.mistake).isEqualTo(0)
     assertThat(controller.state.value!!.started).isFalse()
 
@@ -510,7 +510,7 @@ class MemorizeSessionControllerTest {
     runCurrent()
     // Al-Fatiha, then Al-Falaq instead of the page's sura
     recite(*pronunciations(SuraAyah(1, 2), 29))
-    recite(*pronunciations(SuraAyah(113, 1), 6))
+    recite(*pronunciations(SuraAyah(113, 1), 20))
 
     assertThat(controller.state.value!!.mistake).isEqualTo(0)
     microphone.silence(3)
