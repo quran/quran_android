@@ -132,6 +132,22 @@ first session). The engine interface is model-agnostic; another model can be swa
   model loads appear once it's ready (latency p50 / p90 / max 0.43 / 2.65 / 6.3 s, still 60/60).
   A Robo crawl of the app found no crash.
 
+### Diagnostics
+
+When a session doesn't follow, it can say why. `adb shell setprop log.tag.MemorizeTrace DEBUG`
+turns on its trace from the next session start, and `adb logcat -s MemorizeTrace` shows it. The
+trace includes:
+
+* what the recognizer heard, and when the user is speaking or silent;
+* every start search: the confident words and the best run found;
+* salah phases (Al-Fatiha, passage, between rak'ahs);
+* recognized words, mistakes and phrases;
+* the hint scheduler's decisions;
+* a status line every 10 s.
+
+It is off by default and logs nothing otherwise. A session trace contains what was recited, as
+text, so it is only for development.
+
 ## Known limitations
 
 * Hafs, madani pages only. Recognition degrades on heavily reverberant/noisy audio. On real prayer

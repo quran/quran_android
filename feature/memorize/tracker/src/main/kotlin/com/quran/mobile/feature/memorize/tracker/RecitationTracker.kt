@@ -45,6 +45,9 @@ class RecitationTracker(
   private val words = ArrayList(words)
   private val phrases = ArrayList(phrases)
 
+  /** Diagnostics: why the tracker decided what it did (e.g. why no start was found yet). */
+  var trace: ((String) -> Unit)? = null
+
   var cursor: Int = startIndex
     private set
 
@@ -440,6 +443,7 @@ class RecitationTracker(
 
     // Mistake? Right after the start was found, rather a wrong start: look for it again.
     if (heard.size >= words[cursor].length + config.mistakeMargin && sinceStart < CONFIRMED_START_WORDS) {
+      trace?.invoke("start at $cursor not confirmed after $sinceStart words: searching again")
       anchored = false
       cursor = home
       mistakeAt = null
@@ -503,6 +507,18 @@ class RecitationTracker(
         count++
       }
       count >= START_WORDS && phonemes >= START_PHONEMES
+    }
+    trace?.let { trace ->
+      val runs = firstWords.keys.filter { it < windowEnd }.map { j ->
+        var count = 0
+        while (j + count < words.size && confident(j + count)) count++
+        j to count
+      }
+      val best = runs.maxByOrNull { it.second }
+      trace(
+        "search heard=${String(heard)} confident=${firstWords.keys.filter { confident(it) }.take(12)} " +
+          "best=${best?.let { "${it.first}x${it.second}" }} start=$start window=$windowEnd home=$home",
+      )
     }
     if (start != null) {
       anchored = true

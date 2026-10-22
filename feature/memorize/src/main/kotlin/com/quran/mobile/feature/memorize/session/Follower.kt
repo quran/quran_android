@@ -25,6 +25,9 @@ internal interface Follower {
 
   /** Phrases that become possible later, e.g. the basmala before the next sura. */
   fun addPhrases(phrases: List<Pair<String, String>>)
+
+  /** Diagnostics: what the tracker decides and why. */
+  fun trace(trace: (String) -> Unit)
 }
 
 internal class MemorizeFollower(private val tracker: RecitationTracker) : Follower {
@@ -37,6 +40,9 @@ internal class MemorizeFollower(private val tracker: RecitationTracker) : Follow
   override fun markHinted(count: Int) = tracker.markHinted(count)
   override fun extend(words: List<String>) = tracker.extend(words)
   override fun addPhrases(phrases: List<Pair<String, String>>) = tracker.addPhrases(phrases)
+  override fun trace(trace: (String) -> Unit) {
+    tracker.trace = trace
+  }
 }
 
 internal class SalahFollower(private val flow: SalahFlow) : Follower {
@@ -49,4 +55,7 @@ internal class SalahFollower(private val flow: SalahFlow) : Follower {
   override fun markHinted(count: Int) = flow.passage.markHinted(count)
   override fun extend(words: List<String>) = flow.extendPassage(words)
   override fun addPhrases(phrases: List<Pair<String, String>>) = flow.passage.addPhrases(phrases)
+  override fun trace(trace: (String) -> Unit) {
+    flow.trace = trace
+  }
 }

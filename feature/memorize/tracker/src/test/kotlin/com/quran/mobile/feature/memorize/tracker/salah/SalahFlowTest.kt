@@ -135,4 +135,15 @@ class SalahFlowTest {
     val passage = flow.say("qulhuwallahuahadun")
     assertThat(recitedIndexes(passage)).containsExactly(2, 3, 4).inOrder()
   }
+
+  @Test
+  fun `the passage is found when listening starts after Al-Fatiha`() {
+    // e.g. the user pressed the mic once the imam had finished Al-Fatiha
+    val flow = SalahFlow(passage, fatiha, phrases, startWindow = passage.size)
+
+    val events = flow.say("llahussamadulamyalid")
+
+    assertThat(recitedIndexes(events)).containsExactly(3, 4, 5).inOrder()
+    assertThat(flow.isReadingPassage).isTrue()
+  }
 }

@@ -42,16 +42,27 @@ class SalahFlow(
   private var afterFatiha = false
   // phonemes heard since the last word of Al-Fatiha: while it is recited, the passage's start isn't
   // looked for (in a few pages of Quran, some of its words match nearly anything)
-  private var sinceFatiha = Int.MAX_VALUE
+  private var sinceFatiha = FATIHA_QUIET_PHONEMES
 
   var phase: Phase = Phase.AWAITING
-    private set
+    private set(value) {
+      if (value != field) trace?.invoke("phase $field -> $value")
+      field = value
+    }
+
+  /** Diagnostics (see [RecitationTracker.trace]). */
+  var trace: ((String) -> Unit)? = null
+    set(value) {
+      field = value
+      passage.trace = value
+    }
 
   /** Feeds the phonemes to both trackers; returns the passage's events that matter. */
   fun feed(phonemes: List<TimedPhoneme>): List<TrackerEvent> {
     val fatihaEvents = fatiha.feed(phonemes)
     val inFatiha = fatihaEvents.any { it is TrackerEvent.WordRecited }
-    sinceFatiha = if (inFatiha) 0 else (sinceFatiha + phonemes.size).coerceAtMost(Int.MAX_VALUE / 2)
+    if (inFatiha) trace?.invoke("al-fatiha word ${fatiha.cursor}/${fatihaWords.size}")
+    sinceFatiha = if (inFatiha) 0 else minOf(sinceFatiha + phonemes.size, FATIHA_QUIET_PHONEMES)
     if (!passage.anchored && sinceFatiha < FATIHA_QUIET_PHONEMES) {
       phase = Phase.FATIHA
       passage.discardPending()

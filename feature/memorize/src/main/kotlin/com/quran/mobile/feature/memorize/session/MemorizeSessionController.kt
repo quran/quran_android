@@ -1,6 +1,7 @@
 package com.quran.mobile.feature.memorize.session
 
 import android.os.SystemClock
+import android.util.Log
 import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.mobile.feature.memorize.audio.AudioSource
@@ -52,6 +53,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -69,6 +71,8 @@ fun interface RecitationEngineFactory {
  *
  * All recognition and tracking happens on one serialized worker so audio, timer ticks and hints
  * never race. Nothing is recorded or logged: audio frames are dropped as soon as they are decoded.
+ * (Diagnostics, for developers: `adb shell setprop log.tag.MemorizeTrace DEBUG` logs what each
+ * session hears and decides, from its next start; off by default.)
  */
 @SingleIn(AppScope::class)
 class MemorizeSessionController private constructor(
@@ -89,6 +93,8 @@ class MemorizeSessionController private constructor(
   private val clock: () -> Long,
   /** How many words to keep loaded ahead of the user. */
   private val lookaheadWords: Int,
+  /** Where a session's diagnostics go, if anywhere (checked at each start). */
+  private val traceSink: () -> ((String) -> Unit)?,
 ) {
   @OptIn(ExperimentalCoroutinesApi::class)
   @Inject constructor(
@@ -110,6 +116,7 @@ class MemorizeSessionController private constructor(
     worker = Dispatchers.Default.limitedParallelism(1),
     clock = SystemClock::elapsedRealtime,
     lookaheadWords = LOOKAHEAD_WORDS,
+    traceSink = { if (Log.isLoggable(TRACE_TAG, Log.DEBUG)) { message -> Log.d(TRACE_TAG, message) } else null },
   )
 
   private val _state = MutableStateFlow<MemorizeState?>(null)
@@ -135,6 +142,10 @@ class MemorizeSessionController private constructor(
   private var inCall = false
   // how much audio the session has heard (the speech engine's clock)
   private var heardMs = 0L
+  // diagnostics (see the class comment)
+  private var traceTo: ((String) -> Unit)? = null
+  private var tracedSpeech = false
+  private var tracedStatusAt = 0L
   // where each loaded word is on the pages (see PageLines), for hints of the rest of a line
   private val wordLines = HashMap<Int, IntArray>()
   // the session whose next suras are being loaded, if any
@@ -252,6 +263,14 @@ class MemorizeSessionController private constructor(
         SalahFollower(SalahFlow(words, fatiha, phrases, startWindow = startWindow, startIndex = homeIndex))
       } else {
         MemorizeFollower(RecitationTracker(words, startIndex = homeIndex, phrases = phrases, startWindow = startWindow))
+      }
+      traceTo = traceSink()
+      tracedSpeech = false
+      tracedStatusAt = 0L
+      follower?.trace { message -> trace { message } }
+      trace {
+        "start $mode ${passage.words.first().id}..${passage.words.last().id} (${passage.words.size} words) " +
+          "window=$startWindow home=$homeIndex ${passage.words[homeIndex].id} record=$record"
       }
       scheduler = HintScheduler(preferences.hintConfig(salah = salah))
       silentSinceMs = -1L
@@ -377,6 +396,20 @@ class MemorizeSessionController private constructor(
     val now = now()
     scheduler.onSpeechActivity(now, frame.speech)
     val tokens = stream.accept(frame.samples, speech = frame.speech)
+    if (traceTo != null) {
+      if (frame.speech != tracedSpeech) {
+        tracedSpeech = frame.speech
+        trace { if (frame.speech) "speech" else "silence" }
+      }
+      if (tokens.isNotEmpty()) trace { "heard ${tokens.joinToString("") { it.text }}" }
+      if (heardMs - tracedStatusAt >= TRACE_STATUS_MS) {
+        tracedStatusAt = heardMs
+        trace {
+          "status cursor=${follower.cursor} started=${follower.started} canHint=${follower.canHint} " +
+            "armed=${scheduler.isArmed} gaveUp=$gaveUp mistake=${_state.value?.mistake}"
+        }
+      }
+    }
     if (tokens.isNotEmpty()) {
       val events = follower.feed(tokens.toPhonemes())
       if (events.isNotEmpty()) onTrackerEvents(events)
@@ -412,6 +445,7 @@ class MemorizeSessionController private constructor(
   }
 
   private fun onPause() {
+    trace { "pause" }
     val events = follower?.onPause().orEmpty()
     if (events.isNotEmpty()) onTrackerEvents(events)
   }
@@ -449,6 +483,14 @@ class MemorizeSessionController private constructor(
     if (events.any { it is TrackerEvent.WordRecited }) gaveUp = false
     armIfAllowed()
     for (event in events) {
+      trace {
+        val word = passage.words.getOrNull(event.index)?.id
+        when (event) {
+          is TrackerEvent.Mistake -> "mistake ${event.kind} at ${event.index} $word"
+          is TrackerEvent.NonTarget -> "phrase ${event.kind}"
+          else -> "${event.javaClass.simpleName} ${event.index} $word"
+        }
+      }
       when (event) {
         is TrackerEvent.WordRecited -> recordWord(passage, event.index, event.startMs ?: event.timeMs, event.timeMs, Recording.WordStatus.RECITED)
         is TrackerEvent.WordMissed -> {
@@ -515,6 +557,7 @@ class MemorizeSessionController private constructor(
         // the session may have ended (or another started) while the suras were read
         if (_state.value?.id != session || this@MemorizeSessionController.follower !== follower) return@launch
         follower.extend(more.words.map { PhonemeNormalizer.normalize(it.wasl, keepShortVowels) })
+        trace { "passage extended to ${more.words.last().id}" }
         wordLines.putAll(moreLines)
         update { if (it.id == session) it.copy(passage = it.passage + more) else it }
         upcoming.loaded(more.words.first().id.sura..more.words.last().id.sura)
@@ -550,6 +593,7 @@ class MemorizeSessionController private constructor(
 
   private fun applyEffects(effects: List<HintScheduler.Effect>) {
     for (effect in effects) {
+      trace { "hint scheduler: $effect" }
       when (effect) {
         is HintScheduler.Effect.MarkMistake -> update { state ->
           state.copy(mistake = state.passage.words.indexOfFirst { it.id == effect.word }.takeIf { it >= 0 })
@@ -684,6 +728,11 @@ class MemorizeSessionController private constructor(
 
   private fun now(): Long = clock()
 
+  /** Diagnostics, built only when they're on; worker only. */
+  private inline fun trace(message: () -> String) {
+    traceTo?.let { it("t=%.1fs %s".format(Locale.ROOT, heardMs / 1000.0, message())) }
+  }
+
   /** Exposes the session to the rest of the app (audio bar, page following). */
   private inner class Session : RecitationSession {
     private val snapshot = _state.value
@@ -714,11 +763,14 @@ class MemorizeSessionController private constructor(
       upcoming: UpcomingSuras = UpcomingSuras {},
       recorders: Recorders = Recorders { _, _ -> null },
       lookaheadWords: Int = LOOKAHEAD_WORDS,
+      trace: ((String) -> Unit)? = null,
     ) = MemorizeSessionController(
       lexicon, models, preferences, recitationEventPresenter, engineFactory, promptPlayer, audioSources, callState,
-      lines, upcoming, recorders, scope, worker, clock, lookaheadWords,
+      lines, upcoming, recorders, scope, worker, clock, lookaheadWords, { trace },
     )
 
+    private const val TRACE_TAG = "MemorizeTrace"
+    private const val TRACE_STATUS_MS = 10_000L
     private const val BASMALA = "basmala"
     private const val SAMPLE_RATE = 16_000
     /** Words kept loaded ahead of the user: several pages, so the next sura is always there. */
