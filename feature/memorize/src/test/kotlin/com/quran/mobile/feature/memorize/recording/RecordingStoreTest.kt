@@ -151,6 +151,20 @@ class RecordingStoreTest {
     assertThat(entries.keys).contains("README.txt")
   }
 
+  @Test
+  fun `a recording starts where the user started, not where the session looked from`() = runTest {
+    // the session may start anywhere from a few pages before the one on screen
+    val session = store.start(SuraAyah(65, 6), MemorizeState.Mode.MEMORIZE)
+    audio(session, 2_000)
+    session.word(WordId(67, 1, 1), 500, 900, Recording.WordStatus.RECITED, "tabaraka", endsSura = false)
+    session.word(WordId(67, 1, 2), 950, 1_200, Recording.WordStatus.RECITED, "lladhi", endsSura = false)
+    session.finish()
+
+    val recording = store.list().single()
+    assertThat(recording.start to recording.end).isEqualTo(SuraAyah(67, 1) to SuraAyah(67, 1))
+    assertThat(recording.words).hasSize(2)
+  }
+
   private fun audio(session: SessionRecorder, ms: Int) = repeat(ms / 100) { session.write(FloatArray(1_600) { 0.1f }) }
 
   private fun unzip(recording: Recording): Map<String, ByteArray> {

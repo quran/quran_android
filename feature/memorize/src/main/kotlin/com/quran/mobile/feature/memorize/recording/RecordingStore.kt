@@ -152,6 +152,8 @@ class RecordingStore private constructor(
           endRecording(open, startMs ?: endMs ?: (receivedSamples / SAMPLES_PER_MS), SuraAyah(word.sura, word.ayah))
         }
         val target = current ?: open(held.firstOrNull()?.startSample ?: receivedSamples)
+        // a recording starts where the user did (they may start anywhere around the page on screen)
+        if (target.words.isEmpty()) target.start = SuraAyah(word.sura, word.ayah)
         val offset = target.startSample / SAMPLES_PER_MS
         target.words += Recording.Word(word, startMs?.minus(offset), endMs?.minus(offset), status, phonemes)
         target.end = SuraAyah(word.sura, word.ayah)
@@ -220,7 +222,7 @@ class RecordingStore private constructor(
     }
 
     /** A recording being written; its times count from [startSample] of the session's audio. */
-    private inner class Open(val id: String, val startedAt: Long, val start: SuraAyah, val startSample: Long) {
+    private inner class Open(val id: String, val startedAt: Long, var start: SuraAyah, val startSample: Long) {
       val sura: Int get() = start.sura
       var end = start
       val parts = ArrayList<Recording.Part>()
