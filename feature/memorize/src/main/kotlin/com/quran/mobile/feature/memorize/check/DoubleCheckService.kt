@@ -11,6 +11,8 @@ import android.os.Messenger
 import android.os.RemoteException
 import com.quran.mobile.feature.memorize.engine.sherpa.SherpaPieceRecognizer
 import java.io.File
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 /**
  * Runs the double-check's model in a process of its own (":doublecheck").
@@ -41,9 +43,12 @@ class DoubleCheckService : Service() {
         reply.arg1 = if (recognizer != null) 1 else 0
       }
       PIECES -> {
-        val samples = message.data.getShortArray(AUDIO) ?: ShortArray(0)
-        val audio = FloatArray(samples.size) { samples[it] / 32_768f }
-        val pieces = recognizer?.let { runCatching { it.pieces(audio) }.getOrNull() }
+        // 16-bit little-endian samples, in a file of the app's (too big for a binder message)
+        val audio = runCatching {
+          val samples = ByteBuffer.wrap(File(message.data.getString(AUDIO)!!).readBytes()).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer()
+          FloatArray(samples.remaining()) { samples.get(it) / 32_768f }
+        }.getOrNull()
+        val pieces = audio?.let { a -> recognizer?.let { runCatching { it.pieces(a) }.getOrNull() } }
         reply.arg1 = if (pieces != null) 1 else 0
         reply.data = Bundle().apply { putIntArray(RESULT, pieces ?: IntArray(0)) }
       }

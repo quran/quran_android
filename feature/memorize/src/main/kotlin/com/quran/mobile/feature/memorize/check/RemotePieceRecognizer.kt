@@ -12,6 +12,9 @@ import android.os.Message
 import android.os.Messenger
 import android.os.RemoteException
 import java.io.File
+import java.io.IOException
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit
@@ -38,8 +41,16 @@ internal class RemotePieceRecognizer(private val context: Context, model: File, 
     }
   }
 
+  // what the check hears goes through a file: 8 s of audio is too big for a binder message (Android
+  // 16 refused them, and they had to be one-way)
+  private val audioFile = File(context.cacheDir, "doublecheck/audio.pcm").apply { parentFile?.mkdirs() }
+
   init {
-    val bound = context.bindService(Intent(context, DoubleCheckService::class.java), connection, Context.BIND_AUTO_CREATE)
+    // important: the check's process runs at the app's priority (not cached, so never frozen) while
+    // a session uses it
+    val bound = context.bindService(
+      Intent(context, DoubleCheckService::class.java), connection, Context.BIND_AUTO_CREATE or Context.BIND_IMPORTANT,
+    )
     val opened = bound && connected.await(CONNECT_SECONDS, TimeUnit.SECONDS) &&
       call(
         DoubleCheckService.OPEN,
@@ -55,10 +66,17 @@ internal class RemotePieceRecognizer(private val context: Context, model: File, 
     }
   }
 
+  @Synchronized
   override fun pieces(audio: FloatArray): IntArray {
-    // 16-bit, as speech models hear it, and half the size to send
-    val samples = ShortArray(audio.size) { (audio[it] * 32_768f).toInt().coerceIn(-32_768, 32_767).toShort() }
-    val reply = call(DoubleCheckService.PIECES, Bundle().apply { putShortArray(DoubleCheckService.AUDIO, samples) }, CHECK_SECONDS)
+    // 16-bit, as speech models hear it
+    val bytes = ByteBuffer.allocate(audio.size * 2).order(ByteOrder.LITTLE_ENDIAN)
+    for (x in audio) bytes.putShort((x * 32_768f).toInt().coerceIn(-32_768, 32_767).toShort())
+    try {
+      audioFile.writeBytes(bytes.array())
+    } catch (_: IOException) {
+      return IntArray(0)
+    }
+    val reply = call(DoubleCheckService.PIECES, Bundle().apply { putString(DoubleCheckService.AUDIO, audioFile.path) }, CHECK_SECONDS)
     return reply?.takeIf { it.arg1 == 1 }?.data?.getIntArray(DoubleCheckService.RESULT) ?: IntArray(0)
   }
 
@@ -84,6 +102,7 @@ internal class RemotePieceRecognizer(private val context: Context, model: File, 
   }
 
   override fun close() {
+    audioFile.delete()
     runCatching { context.unbindService(connection) }
     service = null
     thread.quitSafely()
