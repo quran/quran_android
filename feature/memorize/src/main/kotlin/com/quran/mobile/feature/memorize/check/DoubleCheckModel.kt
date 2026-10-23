@@ -126,8 +126,8 @@ class DoubleCheckModel private constructor(
       ),
       // the Quran in plain letters (Tanzil Project, CC BY 3.0), only to compare what the model writes
       extras = listOf(QURAN),
-      license = "CC-BY-4.0",
-      attribution = "muhdur, Tilawi FastConformer (tilawi-fastconformer-quran); Quran text: Tanzil Project",
+      license = "CC-BY-4.0 (the Quran text: Tanzil Project, CC BY 3.0)",
+      attribution = "muhdur, Tilawi FastConformer (tilawi-fastconformer-quran)",
     )
 
     internal fun forTest(store: SpeechModelStore, recognizers: PieceRecognizerFactory) = DoubleCheckModel(store, recognizers)

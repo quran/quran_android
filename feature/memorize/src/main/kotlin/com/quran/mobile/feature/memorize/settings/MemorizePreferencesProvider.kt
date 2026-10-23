@@ -295,6 +295,7 @@ class MemorizePreferencesProvider(
     val status = when {
       state is SpeechModelStore.State.Downloading && state.totalBytes > 0 ->
         context.getString(R.string.memorize_double_check_downloading, (100 * state.downloadedBytes / state.totalBytes).toInt())
+      state is SpeechModelStore.State.Failed -> context.getString(R.string.memorize_model_failed, state.reason)
       preferences.doubleCheck && state !is SpeechModelStore.State.Installed ->
         context.getString(R.string.memorize_double_check_not_downloaded)
       else -> null
