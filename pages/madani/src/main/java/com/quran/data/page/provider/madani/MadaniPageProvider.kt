@@ -69,12 +69,32 @@ class MadaniPageProvider : PageProvider {
         path = "2",
         hasGaplessAlternative = false,
         db = null
+      ),
+      // also the voices of the memorize feature's hints (feature:memorize PromptPlayer)
+      Qari(
+        HUSARY_MUALLIM,
+        audioR.string.qari_husary_muallim_gapless,
+        url = "https://download.quranicaudio.com/quran/husary_muallim/",
+        path = "husary_muallim",
+        hasGaplessAlternative = false,
+        db = "husary_muallim"
+      ),
+      Qari(
+        HUSARY_MUJAWWAD,
+        audioR.string.qari_husary_mujawwad_gapless,
+        url = "https://download.quranicaudio.com/quran/generated/husary_mujawwad/",
+        path = "husary_mujawwad",
+        hasGaplessAlternative = false,
+        db = "husary_mujawwad"
       )
     )
   }
 
   companion object {
     private const val baseUrl = "https://android.quran.com/data"
+    // ids well above the upstream reciter list so they can never collide with it
+    const val HUSARY_MUALLIM = 1001
+    const val HUSARY_MUJAWWAD = 1002
     private val dataSource by lazy { MadaniDataSource() }
   }
 }

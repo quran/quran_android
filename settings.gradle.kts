@@ -16,6 +16,10 @@ dependencyResolutionManagement {
     maven("https://quran.github.io/mobile-sync/maven") {
       content { includeGroup("com.quran") }
     }
+    // sherpa-onnx (speech engine of the memorize feature); fetched by tools/memorize/fetch_sherpa_onnx.sh
+    maven(file("third_party/maven")) {
+      content { includeGroup("com.k2fsa.sherpa.onnx") }
+    }
   }
 }
 
@@ -50,6 +54,9 @@ include(":feature:audiobar")
 include(":feature:ayahbookmark")
 include(":feature:downloadmanager")
 include(":feature:linebyline")
+include(":feature:memorize")
+include(":feature:memorize:engine-sherpa")
+include(":feature:memorize:tracker")
 include(":feature:qarilist")
 include(":feature:recitation")
 include(":feature:sync")

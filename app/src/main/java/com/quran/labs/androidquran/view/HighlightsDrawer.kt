@@ -25,6 +25,7 @@ import com.quran.labs.androidquran.ui.helpers.AyahHighlight.TransitionAyahHighli
 import com.quran.page.common.data.AyahBounds
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
+import com.quran.page.common.data.coordinates.PageGlyphsCoords
 import com.quran.page.common.draw.ImageDrawHelper
 import java.util.SortedMap
 
@@ -89,6 +90,7 @@ class HighlightsDrawer(
   override fun draw(pageCoordinates: PageCoordinates, canvas: Canvas, image: ImageView) {
     val highlightCoordinates = highlightCoordinates() ?: return
     val glyphsCoords = ayahCoordinates()?.glyphCoordinates
+    val wordGlyphsCoords = ayahCoordinates()?.wordGlyphCoordinates
     val ayahLineCoords = ayahCoordinates()?.ayahLineCoordinates
     val underlineRaiseRatio = ayahCoordinates()?.underlineRaiseRatio ?: 0f
     val currentHighlights = currentHighlights() ?: return
@@ -103,11 +105,9 @@ class HighlightsDrawer(
       for (highlight in highlights) {
         if (alreadyHighlightedContains(highlightType, highlight)) continue
 
-        val isUnderline = highlightType.mode == UNDERLINE
-        val rangesToDraw = glyphsCoords?.takeIf { !highlightType.isTransitionAnimated }
-          ?.getBounds(highlight.key, !isUnderline, highlightType.mode == BACKGROUND)
-          ?: ayahLineCoords?.get(highlight.key)?.takeIf { isUnderline }?.map { it.bounds }
-          ?: highlightCoordinates[highlight]?.map { it.bounds }
+        val rangesToDraw = resolveBounds(
+          highlightType, highlight, glyphsCoords, wordGlyphsCoords, ayahLineCoords, highlightCoordinates
+        )
 
         if (rangesToDraw != null && rangesToDraw.isNotEmpty()) {
           for (bounds in rangesToDraw) {
@@ -153,6 +153,32 @@ class HighlightsDrawer(
         }
       }
     }
+  }
+
+  private fun resolveBounds(
+    highlightType: HighlightType,
+    highlight: AyahHighlight,
+    glyphsCoords: PageGlyphsCoords?,
+    wordGlyphsCoords: PageGlyphsCoords?,
+    ayahLineCoords: Map<String, List<AyahBounds>>?,
+    highlightCoordinates: Map<AyahHighlight, List<AyahBounds>>
+  ): List<RectF>? {
+    // Hiding and word highlights can use the word glyphs derived for databases without glyph
+    // types. Everything else, and every database with glyph types, keeps the bounds it always had.
+    if (glyphsCoords == null && wordGlyphsCoords != null) {
+      if (highlightType.mode == HIDE) {
+        wordGlyphsCoords.getMaskBounds(highlight.key)?.let { return it }
+      }
+      if (highlight.key.count { it == ':' } == 2) {
+        return wordGlyphsCoords.getBounds(highlight.key, true, false)
+      }
+    }
+
+    val isUnderline = highlightType.mode == UNDERLINE
+    return glyphsCoords?.takeIf { !highlightType.isTransitionAnimated }
+      ?.getBounds(highlight.key, !isUnderline, highlightType.mode == BACKGROUND)
+      ?: ayahLineCoords?.get(highlight.key)?.takeIf { isUnderline }?.map { it.bounds }
+      ?: highlightCoordinates[highlight]?.map { it.bounds }
   }
 
   private fun clipOutRect(canvas: Canvas, rect: RectF) {

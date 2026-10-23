@@ -34,11 +34,18 @@ import com.quran.mobile.feature.audiobar.state.AudioBarUiEvent
 internal fun RecitationListeningAudioBar(
   eventSink: (AudioBarUiEvent.CommonRecordingEvent) -> Unit,
   listeningEventSink: (AudioBarUiEvent.RecitationListeningEvent) -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  showTranscript: Boolean = true,
+  showHint: Boolean = false,
 ) {
-  RecitationAudioBar(eventSink, true, modifier = modifier) {
+  RecitationAudioBar(eventSink, true, modifier = modifier, showTranscript = showTranscript) {
     IconButton(onClick = { listeningEventSink(AudioBarUiEvent.RecitationListeningEvent.HideVerses) }) {
       Icon(QuranIcons.MenuBook, contentDescription = "")
+    }
+    if (showHint) {
+      IconButton(onClick = { listeningEventSink(AudioBarUiEvent.RecitationListeningEvent.Hint) }) {
+        Icon(QuranIcons.Lightbulb, contentDescription = "")
+      }
     }
   }
 }
@@ -47,9 +54,10 @@ internal fun RecitationListeningAudioBar(
 internal fun RecitationPlayingAudioBar(
   eventSink: (AudioBarUiEvent.CommonRecordingEvent) -> Unit,
   playingEventSink: (AudioBarUiEvent.RecitationPlayingEvent) -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  showTranscript: Boolean = true,
 ) {
-  RecitationAudioBar(eventSink, false, modifier = modifier) {
+  RecitationAudioBar(eventSink, false, modifier = modifier, showTranscript = showTranscript) {
     IconButton(onClick = { playingEventSink(AudioBarUiEvent.RecitationPlayingEvent.EndSession) }) {
       Icon(QuranIcons.Close, contentDescription = "")
     }
@@ -64,15 +72,19 @@ internal fun RecitationPlayingAudioBar(
 internal fun RecitationStoppedAudioBar(
   eventSink: (AudioBarUiEvent.CommonRecordingEvent) -> Unit,
   stoppedEventSink: (AudioBarUiEvent.RecitationStoppedEvent) -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  showTranscript: Boolean = true,
+  showPlayback: Boolean = true,
 ) {
-  RecitationAudioBar(eventSink, false, modifier = modifier) {
+  RecitationAudioBar(eventSink, false, modifier = modifier, showTranscript = showTranscript) {
     IconButton(onClick = { stoppedEventSink(AudioBarUiEvent.RecitationStoppedEvent.EndSession) }) {
       Icon(QuranIcons.Close, contentDescription = "")
     }
 
-    IconButton(onClick = { stoppedEventSink(AudioBarUiEvent.RecitationStoppedEvent.PlayRecitation) }) {
-      Icon(QuranIcons.PlayArrow, contentDescription = "")
+    if (showPlayback) {
+      IconButton(onClick = { stoppedEventSink(AudioBarUiEvent.RecitationStoppedEvent.PlayRecitation) }) {
+        Icon(QuranIcons.PlayArrow, contentDescription = "")
+      }
     }
   }
 }
@@ -82,6 +94,7 @@ internal fun RecitationAudioBar(
   eventSink: (AudioBarUiEvent.CommonRecordingEvent) -> Unit,
   isRecitationActive: Boolean,
   modifier: Modifier = Modifier,
+  showTranscript: Boolean = true,
   actions: @Composable () -> Unit
 ) {
   Row(
@@ -104,15 +117,17 @@ internal fun RecitationAudioBar(
         .width(Dp.Hairline)
     )
 
-    IconButton(onClick = { eventSink(AudioBarUiEvent.CommonRecordingEvent.Transcript) }) {
-      Icon(QuranIcons.Chat, contentDescription = "")
-    }
+    if (showTranscript) {
+      IconButton(onClick = { eventSink(AudioBarUiEvent.CommonRecordingEvent.Transcript) }) {
+        Icon(QuranIcons.Chat, contentDescription = "")
+      }
 
-    Divider(
-      modifier = Modifier
-        .fillMaxHeight()
-        .width(Dp.Hairline)
-    )
+      Divider(
+        modifier = Modifier
+          .fillMaxHeight()
+          .width(Dp.Hairline)
+      )
+    }
 
     Box(
       modifier = Modifier

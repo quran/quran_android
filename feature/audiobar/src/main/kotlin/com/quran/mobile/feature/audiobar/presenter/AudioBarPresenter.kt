@@ -153,11 +153,17 @@ class AudioBarPresenter @Inject constructor(
     return if (recitationSession == null) {
       null
     } else if (isListening) {
-      AudioBarState.RecitationListening
+      AudioBarState.RecitationListening(
+        showTranscript = recitationPresenter.supportsTranscript(),
+        showHint = recitationPresenter.supportsHints(),
+      )
     } else if (isPlaying) {
-      AudioBarState.RecitationPlaying
+      AudioBarState.RecitationPlaying(showTranscript = recitationPresenter.supportsTranscript())
     } else {
-      AudioBarState.RecitationStopped
+      AudioBarState.RecitationStopped(
+        showTranscript = recitationPresenter.supportsTranscript(),
+        showPlayback = recitationPresenter.supportsPlayback(),
+      )
     }
   }
 

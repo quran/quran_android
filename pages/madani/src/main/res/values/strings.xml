@@ -2,4 +2,6 @@
 <resources>
   <string name="madani_title">Classic Madani Mushaf</string>
   <string name="madani_description">The classic Madani script.</string>
+  <string name="tajweed_title">Madani Mushaf with Tajweed Colors</string>
+  <string name="tajweed_description">The Madani script with its tajweed rules in color.</string>
 </resources>

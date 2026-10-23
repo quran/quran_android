@@ -50,6 +50,7 @@ class AudioStatusRepositoryBridge(
           AudioBarEvent.Stop -> audioBarListener.onStopPressed()
           AudioBarEvent.EndSession -> audioBarRecitationListener.onEndRecitationSessionPressed()
           AudioBarEvent.HideVerses -> audioBarRecitationListener.onHideVersesPressed()
+          AudioBarEvent.RecitationHint -> audioBarRecitationListener.onRecitationHintPressed()
           AudioBarEvent.PauseRecitation -> audioBarRecitationListener.onPauseRecitationPressed()
           AudioBarEvent.PlayRecitation -> audioBarRecitationListener.onPlayRecitationPressed()
           AudioBarEvent.Recitation, AudioBarEvent.Record -> audioBarRecitationListener.onRecitationPressed()

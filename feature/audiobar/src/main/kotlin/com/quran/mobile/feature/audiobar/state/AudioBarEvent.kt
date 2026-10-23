@@ -23,6 +23,7 @@ sealed class AudioBarEvent {
   data object RecitationLongPress : AudioBarEvent()
   data object Transcript : AudioBarEvent()
   data object HideVerses : AudioBarEvent()
+  data object RecitationHint : AudioBarEvent()
   data object EndSession : AudioBarEvent()
   data object PlayRecitation : AudioBarEvent()
   data object PauseRecitation : AudioBarEvent()
