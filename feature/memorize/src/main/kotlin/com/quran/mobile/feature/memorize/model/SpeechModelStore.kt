@@ -102,6 +102,9 @@ class SpeechModelStore private constructor(
       throw e
     } catch (e: IOException) {
       _state.value = State.Failed(e.message ?: e.javaClass.simpleName)
+    } catch (e: SecurityException) {
+      // e.g. no network permission (a test APK); never a crash of the app's download scope
+      _state.value = State.Failed(e.message ?: e.javaClass.simpleName)
     }
   }
 
