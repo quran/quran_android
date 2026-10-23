@@ -278,6 +278,8 @@ class MemorizeSessionController private constructor(
       } else {
         MemorizeFollower(RecitationTracker(words, startIndex = homeIndex, phrases = phrases, startWindow = startWindow))
       }
+      // the session's clock starts now (the trace's times too)
+      heardMs = 0L
       traceTo = traceSink()
       tracedSpeech = false
       tracedStatusAt = 0L
@@ -293,7 +295,6 @@ class MemorizeSessionController private constructor(
       gapHandled = true
       gaveUp = false
       inCall = false
-      heardMs = 0L
       armIfAllowed()
       ready.complete(Unit)
       true
@@ -507,7 +508,10 @@ class MemorizeSessionController private constructor(
         when (event) {
           is TrackerEvent.Mistake -> "mistake ${event.kind} at ${event.index} $word"
           is TrackerEvent.NonTarget -> "phrase ${event.kind}"
-          else -> "${event.javaClass.simpleName} ${event.index} $word"
+          // names spelled out: class names don't survive R8 in release builds
+          is TrackerEvent.WordRecited -> "WordRecited ${event.index} $word"
+          is TrackerEvent.WordMissed -> "WordMissed ${event.index} $word"
+          is TrackerEvent.Repetition -> "Repetition ${event.index} $word"
         }
       }
       when (event) {
