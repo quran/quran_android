@@ -11,10 +11,11 @@ import dev.zacsweers.metro.Inject
  * Whether the double-check suits this phone, and why: it is recommended with the setting, and
  * offered with the recitation model only where it suits.
  *
- * Its model needs about 300 MB more memory while the user recites. It is measured at ~280 MB on a
- * Snapdragon 888 (Mi 11), which takes ~0.5 s per check. Phones with less than ~6 GB of memory, or
- * a 32-bit processor, are not advised to use it. Once it has run on the phone, the measured time
- * decides: hints that come more than 1.5 s late are not worth the fewer wrong ones.
+ * Its model needs about 300 MB more memory while the user recites. On a Mi 11 (Snapdragon 888,
+ * 8 GB), its process peaked at 210–330 MB and a check took ~0.7 s; the app's own memory didn't
+ * change. Phones with less than ~6 GB of memory, or a 32-bit processor, are not advised to use it.
+ * Once it has run on the phone, the measured time decides: hints that come more than 1.5 s late
+ * are not worth the fewer wrong ones.
  */
 class DoubleCheckAdvice @Inject constructor(
   @param:ApplicationContext private val context: Context,

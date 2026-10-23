@@ -16,6 +16,11 @@
         android:name=".service.MemorizeService"
         android:exported="false"
         android:foregroundServiceType="microphone" />
+    <!-- the optional double-check's model, kept apart from the speech engine (see the class) -->
+    <service
+        android:name=".check.DoubleCheckService"
+        android:exported="false"
+        android:process=":doublecheck" />
     <!-- only shows the system file picker -->
     <activity
         android:name=".model.ModelImportActivity"

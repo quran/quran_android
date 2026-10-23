@@ -121,6 +121,9 @@ its letters, right after the word before it. A dropped hint counts the word as r
   (CC-BY-4.0), pinned to commit `e9448a0e` and checked by SHA-256 (`DoubleCheckModel.SPEC`).
   * The app downloads `fastconformer_full_mixed.onnx`, `vocab.json` and `quran.json`.
   * It runs on the sherpa-onnx already in the app, so the APK grows by nothing.
+  * It runs in a process of its own (`DoubleCheckService`). With sherpa-onnx 1.13.8, a second model
+    in the speech engine's process corrupts the engine's state. On a Mi 11 the session went deaf
+    for 20–45 s after a check.
   * `CheckGraph` adapts the graph once, on the phone: it adds three nodes for the input sherpa
     gives, and the weights are untouched. The result is byte-identical to the lab's conversion with
     onnx (`bench/tilawi_rename.py`) and is checked by its SHA-256.

@@ -11,11 +11,10 @@ import com.quran.mobile.feature.memorize.audio.CallState
 import com.quran.mobile.feature.memorize.audio.MicAudioSource
 import com.quran.mobile.feature.memorize.check.DoubleCheckModel
 import com.quran.mobile.feature.memorize.check.DoubleCheckSource
-import com.quran.mobile.feature.memorize.check.PieceRecognizer
 import com.quran.mobile.feature.memorize.check.PieceRecognizerFactory
+import com.quran.mobile.feature.memorize.check.RemotePieceRecognizer
 import com.quran.mobile.feature.memorize.data.LineSource
 import com.quran.mobile.feature.memorize.data.PageLines
-import com.quran.mobile.feature.memorize.engine.sherpa.SherpaPieceRecognizer
 import com.quran.mobile.feature.memorize.engine.sherpa.SherpaRecitationEngine
 import com.quran.mobile.feature.memorize.presenter.MemorizeHighlightsPresenter
 import com.quran.mobile.feature.memorize.presenter.MemorizePlaybackPresenter
@@ -73,14 +72,10 @@ class MemorizeEngineModule {
     SherpaRecitationEngine(models.modelFile, models.tokensFile)
   }
 
+  /** The double-check's model runs in a process of its own (see DoubleCheckService). */
   @Provides
-  fun providePieceRecognizerFactory(): PieceRecognizerFactory = PieceRecognizerFactory { model, tokens ->
-    val recognizer = SherpaPieceRecognizer(model, tokens)
-    object : PieceRecognizer {
-      override fun pieces(audio: FloatArray) = recognizer.pieces(audio)
-      override fun close() = recognizer.close()
-    }
-  }
+  fun providePieceRecognizerFactory(@ApplicationContext context: Context): PieceRecognizerFactory =
+    PieceRecognizerFactory { model, tokens -> RemotePieceRecognizer(context, model, tokens) }
 
   @Provides
   fun provideAudioSources(): AudioSourceFactory = AudioSourceFactory { onFrame, onError ->
