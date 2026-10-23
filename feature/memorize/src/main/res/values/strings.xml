@@ -115,4 +115,19 @@
   <string name="memorize_mic_replay">Listen to my recitation</string>
   <string name="memorize_mic_replay_pause">Pause my recitation</string>
   <string name="memorize_mic_start">Start memorizing</string>
+  <string name="memorize_double_check_title">Double-check before correcting</string>
+  <string name="memorize_double_check_summary">A larger model listens again before a hint or a mistake mark, so fewer are wrong (%1$s download).</string>
+  <string name="memorize_double_check_recommended">Recommended for this phone.</string>
+  <string name="memorize_double_check_recommended_fast">Recommended for this phone: a check takes about %1$s s here.</string>
+  <string name="memorize_double_check_low_memory">Not recommended for this phone: it has %1$s of memory, and the check needs about 300 MB more while you recite.</string>
+  <string name="memorize_double_check_old_processor">Not recommended for this phone: its processor is too old for it.</string>
+  <string name="memorize_double_check_slow">Not recommended for this phone: a check takes about %1$s s here, so hints would come late.</string>
+  <string name="memorize_double_check_not_downloaded">Not downloaded yet.</string>
+  <string name="memorize_double_check_downloading">Downloading… %1$d%%</string>
+  <string name="memorize_double_check_download_message">%1$s\n\nIts model (%2$s) is downloaded once and works offline: %3$s, %4$s.</string>
+  <string name="memorize_double_check_delete_message">Delete the double-check model (%1$s) too? It can be downloaded again.</string>
+  <string name="memorize_double_check_keep">Keep</string>
+  <string name="memorize_double_check_offer">Also download the double-check (%1$s), recommended for this phone: fewer wrong hints and mistake marks</string>
+  <string name="memorize_offline_check">Double-check model, recommended for this phone: %1$s</string>
+  <string name="memorize_offline_check_done">Double-check model: downloaded ✓</string>
 </resources>

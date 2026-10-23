@@ -123,4 +123,19 @@
   <string name="memorize_mic_replay">استمع إلى تلاوتي</string>
   <string name="memorize_mic_replay_pause">إيقاف تلاوتي مؤقتًا</string>
   <string name="memorize_mic_start">ابدأ الحفظ</string>
+  <string name="memorize_double_check_title">تحقق مزدوج قبل التصحيح</string>
+  <string name="memorize_double_check_summary">يستمع نموذج أكبر مرة أخرى قبل التذكير أو تمييز الخطأ، فيقل التصحيح الخاطئ (تنزيل %1$s).</string>
+  <string name="memorize_double_check_recommended">يُنصح به لهذا الهاتف.</string>
+  <string name="memorize_double_check_recommended_fast">يُنصح به لهذا الهاتف: يستغرق التحقق نحو %1$s ث هنا.</string>
+  <string name="memorize_double_check_low_memory">لا يُنصح به لهذا الهاتف: ذاكرته %1$s، والتحقق يحتاج إلى نحو 300 ميجابايت إضافية أثناء التلاوة.</string>
+  <string name="memorize_double_check_old_processor">لا يُنصح به لهذا الهاتف: معالجه أقدم من أن يشغّله.</string>
+  <string name="memorize_double_check_slow">لا يُنصح به لهذا الهاتف: يستغرق التحقق نحو %1$s ث هنا، فيتأخر التذكير.</string>
+  <string name="memorize_double_check_not_downloaded">لم يُنزَّل بعد.</string>
+  <string name="memorize_double_check_downloading">جارٍ التنزيل… %1$d%%</string>
+  <string name="memorize_double_check_download_message">%1$s\n\nيُنزَّل نموذجه (%2$s) مرة واحدة ويعمل دون إنترنت: %3$s، %4$s.</string>
+  <string name="memorize_double_check_delete_message">هل تريد حذف نموذج التحقق المزدوج (%1$s) أيضًا؟ يمكن تنزيله مرة أخرى.</string>
+  <string name="memorize_double_check_keep">إبقاء</string>
+  <string name="memorize_double_check_offer">نزّل معه التحقق المزدوج (%1$s)، وهو يُنصح به لهذا الهاتف: تذكير وتمييز أخطاء خاطئ أقل</string>
+  <string name="memorize_offline_check">نموذج التحقق المزدوج، يُنصح به لهذا الهاتف: %1$s</string>
+  <string name="memorize_offline_check_done">نموذج التحقق المزدوج: تم التنزيل ✓</string>
 </resources>

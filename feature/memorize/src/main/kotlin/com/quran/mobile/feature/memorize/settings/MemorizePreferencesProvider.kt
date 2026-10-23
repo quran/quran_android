@@ -13,6 +13,8 @@ import androidx.preference.SwitchPreferenceCompat
 import com.quran.data.di.AppScope
 import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.feature.memorize.R
+import com.quran.mobile.feature.memorize.check.DoubleCheckAdvice
+import com.quran.mobile.feature.memorize.check.DoubleCheckModel
 import com.quran.mobile.feature.memorize.model.ModelImportActivity
 import com.quran.mobile.feature.memorize.model.SpeechModelStore
 import com.quran.mobile.feature.memorize.prompt.HintVoiceDownloads
@@ -24,6 +26,7 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,11 +41,15 @@ class MemorizePreferencesProvider(
   private val backgroundListening: BackgroundListening,
   private val promptPlayer: PromptPlayer,
   private val voiceDownloads: HintVoiceDownloads,
+  private val doubleCheck: DoubleCheckModel,
+  private val doubleCheckAdvice: DoubleCheckAdvice,
 ) : ExtraPreferencesProvider {
 
   override val order: Int = 10
 
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+  // keeps the double-check's summary up to date (its download), for the settings screen shown last
+  private var doubleCheckSummaryJob: Job? = null
 
   private val store = object : PreferenceDataStore() {
     override fun getBoolean(key: String, defValue: Boolean): Boolean = when (key) {
@@ -51,6 +58,7 @@ class MemorizePreferencesProvider(
       KEY_ON_PAUSES -> preferences.hintOnPauses
       KEY_STRICT -> preferences.strictTashkeel
       KEY_AUTO_DOWNLOAD -> preferences.autoDownload
+      KEY_DOUBLE_CHECK -> preferences.doubleCheck
       else -> defValue
     }
 
@@ -61,6 +69,7 @@ class MemorizePreferencesProvider(
         KEY_ON_PAUSES -> preferences.hintOnPauses = value
         KEY_STRICT -> preferences.strictTashkeel = value
         KEY_AUTO_DOWNLOAD -> preferences.autoDownload = value
+        KEY_DOUBLE_CHECK -> preferences.doubleCheck = value
       }
     }
 
@@ -173,6 +182,18 @@ class MemorizePreferencesProvider(
       setup(KEY_RECORDINGS, R.string.memorize_recordings_title, R.string.memorize_recordings_summary)
     })
     category.addPreference(SwitchPreferenceCompat(context).apply {
+      setup(KEY_DOUBLE_CHECK, R.string.memorize_double_check_title, null)
+      setOnPreferenceChangeListener { preference, value ->
+        onDoubleCheckChange(preference as SwitchPreferenceCompat, value as Boolean)
+        // set once the user has answered
+        false
+      }
+      doubleCheckSummaryJob?.cancel()
+      doubleCheckSummaryJob = scope.launch {
+        doubleCheck.store.state.collect { summary = doubleCheckSummary(context, it) }
+      }
+    })
+    category.addPreference(SwitchPreferenceCompat(context).apply {
       setup(KEY_AUTO_DOWNLOAD, R.string.memorize_auto_download_title, R.string.memorize_auto_download_summary)
     })
     category.addPreference(Preference(context).apply {
@@ -208,7 +229,7 @@ class MemorizePreferencesProvider(
             .setMessage(
               context.getString(
                 R.string.memorize_model_missing_message,
-                models.spec.files.sumOf { it.size } / 1_000_000, models.spec.model.name, models.spec.tokens.name
+                models.spec.downloadSize / 1_000_000, models.spec.model.name, models.spec.tokens.name
               )
             )
             .setPositiveButton(R.string.memorize_model_import) { _, _ ->
@@ -235,6 +256,68 @@ class MemorizePreferencesProvider(
     }
   }
 
+  private fun onDoubleCheckChange(preference: SwitchPreferenceCompat, on: Boolean) {
+    val context = preference.context
+    val size = Formatter.formatShortFileSize(context, DoubleCheckModel.SPEC.downloadSize)
+    when {
+      on && doubleCheck.isInstalled -> preference.isChecked = true
+      on -> AlertDialog.Builder(context)
+        .setTitle(R.string.memorize_double_check_title)
+        .setMessage(
+          context.getString(
+            R.string.memorize_double_check_download_message,
+            adviceText(context), size, DoubleCheckModel.SPEC.attribution, DoubleCheckModel.SPEC.license,
+          )
+        )
+        .setPositiveButton(R.string.memorize_model_download) { _, _ ->
+          preference.isChecked = true
+          doubleCheck.store.startDownload()
+        }
+        .setNegativeButton(android.R.string.cancel, null)
+        .show()
+      else -> {
+        preference.isChecked = false
+        doubleCheck.store.cancelDownload()
+        if (doubleCheck.isInstalled) {
+          AlertDialog.Builder(context)
+            .setTitle(R.string.memorize_double_check_title)
+            .setMessage(context.getString(R.string.memorize_double_check_delete_message, size))
+            .setPositiveButton(R.string.memorize_model_delete) { _, _ -> doubleCheck.delete() }
+            .setNegativeButton(R.string.memorize_double_check_keep, null)
+            .show()
+        }
+      }
+    }
+  }
+
+  private fun doubleCheckSummary(context: Context, state: SpeechModelStore.State): String {
+    val size = Formatter.formatShortFileSize(context, DoubleCheckModel.SPEC.downloadSize)
+    val status = when {
+      state is SpeechModelStore.State.Downloading && state.totalBytes > 0 ->
+        context.getString(R.string.memorize_double_check_downloading, (100 * state.downloadedBytes / state.totalBytes).toInt())
+      preferences.doubleCheck && state !is SpeechModelStore.State.Installed ->
+        context.getString(R.string.memorize_double_check_not_downloaded)
+      else -> null
+    }
+    return listOfNotNull(context.getString(R.string.memorize_double_check_summary, size), adviceText(context), status)
+      .joinToString(" ")
+  }
+
+  /** Whether the double-check suits this phone, and why. */
+  private fun adviceText(context: Context): String {
+    val advice = doubleCheckAdvice.advice()
+    val seconds = String.format(java.util.Locale.getDefault(), "%.1f", advice.checkMs / 1000.0)
+    return when (advice.reason) {
+      DoubleCheckAdvice.Reason.SUITS -> context.getString(R.string.memorize_double_check_recommended)
+      DoubleCheckAdvice.Reason.FAST -> context.getString(R.string.memorize_double_check_recommended_fast, seconds)
+      DoubleCheckAdvice.Reason.LOW_MEMORY -> context.getString(
+        R.string.memorize_double_check_low_memory, Formatter.formatShortFileSize(context, advice.memoryBytes),
+      )
+      DoubleCheckAdvice.Reason.OLD_PROCESSOR -> context.getString(R.string.memorize_double_check_old_processor)
+      DoubleCheckAdvice.Reason.SLOW -> context.getString(R.string.memorize_double_check_slow, seconds)
+    }
+  }
+
   /** The speech model and the hint voice for the whole Quran, in one go. */
   private fun offerOfflineDownload(context: Context) {
     scope.launch {
@@ -243,15 +326,22 @@ class MemorizePreferencesProvider(
       val missing = withContext(Dispatchers.IO) { voiceDownloads.missing() }
       val voiceSize = withContext(Dispatchers.IO) { voiceDownloads.size(missing) }
       val modelMissing = !models.isInstalled()
+      // the double-check where it is on, or where it suits the phone
+      val offerCheck = !doubleCheck.isInstalled && (preferences.doubleCheck || doubleCheckAdvice.advice().recommended)
       val size = { bytes: Long -> Formatter.formatShortFileSize(context, bytes) }
       val lines = buildList {
         add(
           if (modelMissing) {
-            context.getString(R.string.memorize_offline_model, size(models.spec.files.sumOf { it.size }))
+            context.getString(R.string.memorize_offline_model, size(models.spec.downloadSize))
           } else {
             context.getString(R.string.memorize_offline_model_done)
           }
         )
+        if (offerCheck) {
+          add(context.getString(R.string.memorize_offline_check, size(DoubleCheckModel.SPEC.downloadSize)))
+        } else if (preferences.doubleCheck) {
+          add(context.getString(R.string.memorize_offline_check_done))
+        }
         if (voice != null) {
           val name = context.getString(voice.nameResource)
           add(
@@ -263,7 +353,7 @@ class MemorizePreferencesProvider(
           )
         }
       }
-      val nothingToDo = !modelMissing && missing.isEmpty()
+      val nothingToDo = !modelMissing && missing.isEmpty() && !offerCheck
       AlertDialog.Builder(context)
         .setTitle(R.string.memorize_offline_title)
         .setMessage(
@@ -276,6 +366,10 @@ class MemorizePreferencesProvider(
             setPositiveButton(R.string.memorize_model_download) { _, _ ->
               if (modelMissing) models.startDownload()
               voiceDownloads.download(missing)
+              if (offerCheck) {
+                preferences.doubleCheck = true
+                doubleCheck.store.startDownload()
+              }
             }
             setNegativeButton(android.R.string.cancel, null)
           }
@@ -312,6 +406,7 @@ class MemorizePreferencesProvider(
     const val KEY_BACKGROUND = "memorize_background"
     const val KEY_MODEL = "memorize_model"
     const val KEY_AUTO_DOWNLOAD = "memorize_auto_download"
+    const val KEY_DOUBLE_CHECK = "memorize_double_check"
     const val KEY_OFFLINE = "memorize_offline"
     const val KEY_RECORDING = "memorize_recording"
     const val KEY_RECORDING_SPLIT = "memorize_recording_split"

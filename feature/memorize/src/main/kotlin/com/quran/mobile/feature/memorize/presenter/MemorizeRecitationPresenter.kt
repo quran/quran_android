@@ -6,6 +6,8 @@ import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Build
 import android.text.format.Formatter
+import android.widget.CheckBox
+import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -15,6 +17,8 @@ import com.quran.data.di.QuranScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.audio.Qari
 import com.quran.mobile.feature.memorize.R
+import com.quran.mobile.feature.memorize.check.DoubleCheckAdvice
+import com.quran.mobile.feature.memorize.check.DoubleCheckModel
 import com.quran.mobile.feature.memorize.model.SpeechModelStore
 import com.quran.mobile.feature.memorize.prompt.HintVoiceDownloads
 import com.quran.mobile.feature.memorize.prompt.PromptPlayer
@@ -55,6 +59,8 @@ class MemorizeRecitationPresenter @Inject constructor(
   private val recordingPlayer: RecordingPlayer,
   private val sessionPlayback: SessionPlayback,
   private val quranInfo: QuranInfo,
+  private val doubleCheck: DoubleCheckModel,
+  private val doubleCheckAdvice: DoubleCheckAdvice,
 ) : RecitationPresenter {
 
   private val enabled = MutableStateFlow(true)
@@ -227,6 +233,11 @@ class MemorizeRecitationPresenter @Inject constructor(
       }
       !hasMicrophonePermission(activity) -> requestPermissions(activity)
       !voiceChecked -> {
+        // the double-check is turned on but not downloaded: with automatic downloads, now (the
+        // session doesn't wait for it)
+        if (preferences.autoDownload && preferences.doubleCheck && !doubleCheck.isInstalled) {
+          doubleCheck.store.startDownload()
+        }
         voiceChecked = true
         // with automatic downloads, the session downloads the suras it reaches on its own
         if (preferences.autoDownload) proceed() else checkHintVoice(activity, start())
@@ -337,12 +348,30 @@ class MemorizeRecitationPresenter @Inject constructor(
   }
 
   private fun offerModelDownload(activity: Activity) {
-    val sizeMb = models.spec.files.sumOf { it.size } / 1_000_000
+    val sizeMb = models.spec.downloadSize / 1_000_000
+    // where it suits the phone, the double-check is offered with it (off by default: a download)
+    val offerCheck = !doubleCheck.isInstalled && doubleCheckAdvice.advice().recommended
+    val withCheck = CheckBox(activity).apply {
+      text = activity.getString(
+        R.string.memorize_double_check_offer,
+        Formatter.formatShortFileSize(activity, DoubleCheckModel.SPEC.downloadSize),
+      )
+      isChecked = preferences.doubleCheck
+    }
     AlertDialog.Builder(activity)
       .setTitle(R.string.memorize_model_title)
       .setMessage(activity.getString(R.string.memorize_model_message, sizeMb, models.spec.attribution, models.spec.license))
+      .apply {
+        if (offerCheck) {
+          setView(FrameLayout(activity).apply { setPadding(48, 8, 48, 0); addView(withCheck) })
+        }
+      }
       .setPositiveButton(R.string.memorize_model_download) { _, _ ->
         models.startDownload()
+        if (offerCheck && withCheck.isChecked) {
+          preferences.doubleCheck = true
+          doubleCheck.store.startDownload()
+        }
         showDownload(activity)
       }
       .setNegativeButton(android.R.string.cancel) { _, _ -> pendingStart = null }

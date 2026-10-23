@@ -7,9 +7,11 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.data.model.SuraAyah
 import com.quran.mobile.feature.memorize.audio.AudioSource
 import com.quran.mobile.feature.memorize.audio.AudioSourceFactory
+import com.quran.mobile.feature.memorize.check.DoubleCheck
 import com.quran.mobile.feature.memorize.data.LexiconRepository
 import com.quran.mobile.feature.memorize.data.LineSource
 import com.quran.mobile.feature.memorize.data.PageLines
+import com.quran.mobile.feature.memorize.data.Passage
 import com.quran.mobile.feature.memorize.model.SpeechModelStore
 import com.quran.mobile.feature.memorize.prompt.HintVoice
 import com.quran.mobile.feature.memorize.recording.Recorders
@@ -66,6 +68,8 @@ class MemorizeSessionControllerTest {
   private val recorders = FakeRecorders()
   private val loadedSuras = mutableListOf<IntRange>()
 
+  private val doubleCheck = FakeDoubleCheck()
+
   private fun TestScope.controller(
     lookaheadWords: Int = 300,
     lines: LineSource = LineSource { emptyMap() },
@@ -90,6 +94,7 @@ class MemorizeSessionControllerTest {
     upcoming = { loadedSuras += it },
     recorders = recorders,
     lookaheadWords = lookaheadWords,
+    doubleChecks = { doubleCheck.also { it.opened++ } },
   )
 
   @Test
@@ -554,6 +559,122 @@ class MemorizeSessionControllerTest {
     assertThat(voice.played.first()).containsExactly(WordId(112, 1, 1))
   }
 
+  @Test
+  fun `with the double-check on, a hint for a word the user did say is dropped`() = runTest {
+    preferences.doubleCheck = true
+    preferences.hintDelaySeconds = 4
+    val controller = controller()
+    controller.start(SuraAyah(112, 1))
+    runCurrent()
+    recite("قُل", "هُوَ")
+    // the user said the next word, but the speech model missed it
+    doubleCheck.saidWords += 2
+
+    microphone.silence(3)
+    advanceTimeBy(5_000)
+
+    val state = controller.state.value!!
+    assertThat(doubleCheck.asked).contains(2)
+    assertThat(voice.played).isEmpty()
+    // counted as recited: not hinted
+    assertThat(state.cursor).isEqualTo(3)
+    assertThat(state.hinted).isEmpty()
+  }
+
+  @Test
+  fun `with the double-check on, a hint for a word the user didn't say is given`() = runTest {
+    preferences.doubleCheck = true
+    preferences.hintDelaySeconds = 4
+    val controller = controller()
+    controller.start(SuraAyah(112, 1))
+    runCurrent()
+    recite("قُل", "هُوَ")
+
+    microphone.silence(3)
+    advanceTimeBy(5_000)
+
+    assertThat(doubleCheck.asked).contains(2)
+    assertThat(voice.played).contains(listOf(WordId(112, 1, 3)))
+    assertThat(controller.state.value!!.hinted).contains(2)
+  }
+
+  @Test
+  fun `with the double-check on, a mistake is only shown if the word wasn't said`() = runTest {
+    preferences.doubleCheck = true
+    val controller = controller()
+    controller.start(SuraAyah(112, 1))
+    runCurrent()
+
+    recite("قُل", "هُوَ", "سَمِعَ", "مُوسَاا", "كَتَبَ")
+    // not before the check has listened again
+    assertThat(controller.state.value!!.mistake).isNull()
+    advanceTimeBy(1_500)
+    runCurrent()
+
+    assertThat(doubleCheck.asked).contains(2)
+    assertThat(controller.state.value!!.mistake).isEqualTo(2)
+  }
+
+  @Test
+  fun `with the double-check on, a mistake on a word that was said isn't shown`() = runTest {
+    preferences.doubleCheck = true
+    val controller = controller()
+    controller.start(SuraAyah(112, 1))
+    runCurrent()
+    doubleCheck.saidWords += 2
+
+    recite("قُل", "هُوَ", "سَمِعَ", "مُوسَاا", "كَتَبَ")
+    advanceTimeBy(1_500)
+    runCurrent()
+
+    assertThat(doubleCheck.asked).contains(2)
+    assertThat(controller.state.value!!.mistake).isNull()
+  }
+
+  @Test
+  fun `the double-check never hears the hints`() = runTest {
+    preferences.doubleCheck = true
+    preferences.hintDelaySeconds = 4
+    voice.hold = true
+    val controller = controller()
+    controller.start(SuraAyah(112, 1))
+    runCurrent()
+    recite("قُل")
+    microphone.silence(3)
+    advanceTimeBy(5_000)
+    assertThat(voice.played).hasSize(1)
+
+    // the microphone hears the hint being played
+    microphone.loud(10)
+    runCurrent()
+    voice.finish()
+    advanceTimeBy(1_000)
+    // the next hint's check gets what the user said only
+    microphone.silence(3)
+    advanceTimeBy(5_000)
+
+    assertThat(doubleCheck.asked).hasSize(2)
+    assertThat(doubleCheck.heardHint).isFalse()
+  }
+
+  @Test
+  fun `the double-check is off unless turned on, and released with the session`() = runTest {
+    val controller = controller()
+    controller.start(SuraAyah(112, 1))
+    runCurrent()
+    assertThat(doubleCheck.opened).isEqualTo(0)
+    controller.stop()
+    runCurrent()
+
+    preferences.doubleCheck = true
+    controller.start(SuraAyah(112, 1))
+    runCurrent()
+    assertThat(doubleCheck.opened).isEqualTo(1)
+    controller.stop()
+    runCurrent()
+    assertThat(doubleCheck.closed).isEqualTo(1)
+  }
+
   // ------------------------------------------------------------------------------------ helpers
 
   /** Each word comes out of the engine for one microphone frame. */
@@ -611,6 +732,9 @@ class MemorizeSessionControllerTest {
 
     fun silence(frames: Int) = repeat(frames) { send(FloatArray(1_600), speech = false) }
 
+    /** What the microphone hears while a hint plays. */
+    fun loud(frames: Int) = repeat(frames) { send(FloatArray(1_600) { LOUD }, speech = true) }
+
     fun fail() {
       running = false
       onError?.invoke(IllegalStateException("microphone taken"))
@@ -650,8 +774,41 @@ class MemorizeSessionControllerTest {
     }
   }
 
+  private companion object {
+    const val LOUD = 0.5f
+  }
+
+  private class FakeDoubleCheck : DoubleCheck {
+    var opened = 0
+    var closed = 0
+    val saidWords = mutableSetOf<Int>()
+    val asked = mutableListOf<Int>()
+    // whether it was given what the microphone heard while a hint played (FakeMicrophone.loud)
+    var heardHint = false
+
+    override val lastMs: Long = 600
+
+    override fun said(audio: FloatArray, passage: Passage, k: Int): Boolean {
+      asked += k
+      if (audio.any { it == LOUD }) heardHint = true
+      return k in saidWords
+    }
+
+    override fun close() {
+      closed++
+    }
+  }
+
   private class FakeVoice : HintVoice {
     val played = mutableListOf<List<WordId>>()
+    // keep playing until finish()
+    var hold = false
+    private var playing: (() -> Unit)? = null
+
+    fun finish() {
+      playing?.invoke()
+      playing = null
+    }
 
     private class Words(val words: List<WordId>) : HintVoice.Clip
 
@@ -660,7 +817,7 @@ class MemorizeSessionControllerTest {
     override fun play(clip: HintVoice.Clip, onStarted: () -> Unit, onFinished: () -> Unit) {
       played += (clip as Words).words
       onStarted()
-      onFinished()
+      if (hold) playing = onFinished else onFinished()
     }
 
     override fun stop() {}

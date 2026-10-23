@@ -104,6 +104,37 @@ charging for the model or for any feature it powers, and its access terms ask ap
 that automatic feedback can be wrong and does not replace a qualified teacher (shown before the
 first session). The engine interface is model-agnostic; another model can be swapped in.
 
+### Optional: the double-check
+
+The setting is Settings → Double-check before correcting. It is off by default and needs a 92 MB
+download. Before a hint is spoken, a second, larger model listens again to the last 8 seconds the
+user said. It does the same a second after a mistake, before the mark is shown. If the word was said
+after all, nothing is corrected. The word must be in that model's transcript, within a quarter of
+its letters, right after the word before it. A dropped hint counts the word as recited.
+
+* **What it changes.** In the lab (`REPORT.md` §15):
+  * false hints in mosque prayers: −28 %, and −43 % while the passage is being recited;
+  * clips from users' phones (tlog) with false mistake marks: −57 %;
+  * reveal recall is unchanged;
+  * in 400 real stalls, the hint was never wrongly dropped.
+* **The model.** muhdur's Tilawi FastConformer, <https://huggingface.co/muhdur/tilawi-fastconformer-quran>
+  (CC-BY-4.0), pinned to commit `e9448a0e` and checked by SHA-256 (`DoubleCheckModel.SPEC`).
+  * The app downloads `fastconformer_full_mixed.onnx`, `vocab.json` and `quran.json`.
+  * It runs on the sherpa-onnx already in the app, so the APK grows by nothing.
+  * `CheckGraph` adapts the graph once, on the phone: it adds three nodes for the input sherpa
+    gives, and the weights are untouched. The result is byte-identical to the lab's conversion with
+    onnx (`bench/tilawi_rename.py`) and is checked by its SHA-256.
+* **The Quran text.** `quran.json` holds the Tanzil Quran text (CC BY 3.0, verbatim). Its
+  plain-letter form is only used to compare with what the model writes, and is never shown. The
+  comparison rules (`CheckText`) reproduce the lab's tables for all 1,025 pieces and 77,433 words.
+* **Which phones.** The model needs about 300 MB more memory while the user recites.
+  * The setting recommends itself on phones with about 6 GB of memory or more and a 64-bit
+    processor.
+  * Once it has run, the time a check takes on the phone decides: it is not recommended above
+    1.5 s, because hints would come late.
+  * Where it is recommended, it is also offered with the recitation model's first download and in
+    Download for offline use.
+
 ## Tests
 
 * `./gradlew :feature:memorize:tracker:test` — tracker golden parity, salah flow, hint scheduler.

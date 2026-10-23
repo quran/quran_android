@@ -88,6 +88,23 @@ class MemorizePreferences @Inject constructor(@param:ApplicationContext context:
       }
     }
 
+  /**
+   * The double-check: a larger model listens again before a hint or a mistake mark (optional, a
+   * download; see DoubleCheckAdvice for whether it suits the phone).
+   */
+  var doubleCheck: Boolean
+    get() = prefs.getBoolean(KEY_DOUBLE_CHECK, false)
+    set(value) = prefs.edit { putBoolean(KEY_DOUBLE_CHECK, value) }
+
+  /** How long a double-check takes on this phone, in milliseconds (a running estimate; 0: unknown). */
+  val doubleCheckMs: Long get() = prefs.getLong(KEY_DOUBLE_CHECK_MS, 0L)
+
+  fun recordDoubleCheckMs(ms: Long) {
+    if (ms <= 0) return
+    val previous = doubleCheckMs
+    prefs.edit { putLong(KEY_DOUBLE_CHECK_MS, if (previous == 0L) ms else (3 * previous + ms) / 4) }
+  }
+
   var disclaimerAccepted: Boolean
     get() = prefs.getBoolean(KEY_DISCLAIMER, false)
     set(value) = prefs.edit { putBoolean(KEY_DISCLAIMER, value) }
@@ -125,5 +142,7 @@ class MemorizePreferences @Inject constructor(@param:ApplicationContext context:
     const val KEY_RECORDING_SPLIT = "recording_split"
     const val KEY_MIC_X = "mic_button_x"
     const val KEY_MIC_Y = "mic_button_y"
+    const val KEY_DOUBLE_CHECK = "double_check"
+    const val KEY_DOUBLE_CHECK_MS = "double_check_ms"
   }
 }

@@ -9,8 +9,13 @@ import com.quran.mobile.feature.memorize.audio.AudioModeCallState
 import com.quran.mobile.feature.memorize.audio.AudioSourceFactory
 import com.quran.mobile.feature.memorize.audio.CallState
 import com.quran.mobile.feature.memorize.audio.MicAudioSource
+import com.quran.mobile.feature.memorize.check.DoubleCheckModel
+import com.quran.mobile.feature.memorize.check.DoubleCheckSource
+import com.quran.mobile.feature.memorize.check.PieceRecognizer
+import com.quran.mobile.feature.memorize.check.PieceRecognizerFactory
 import com.quran.mobile.feature.memorize.data.LineSource
 import com.quran.mobile.feature.memorize.data.PageLines
+import com.quran.mobile.feature.memorize.engine.sherpa.SherpaPieceRecognizer
 import com.quran.mobile.feature.memorize.engine.sherpa.SherpaRecitationEngine
 import com.quran.mobile.feature.memorize.presenter.MemorizeHighlightsPresenter
 import com.quran.mobile.feature.memorize.presenter.MemorizePlaybackPresenter
@@ -57,6 +62,7 @@ interface MemorizeAppBindings {
   @Binds val PageLines.bind: LineSource
   @Binds val HintVoiceDownloads.bind: UpcomingSuras
   @Binds val RecordingStore.bind: Recorders
+  @Binds val DoubleCheckModel.bind: DoubleCheckSource
 }
 
 @BindingContainer
@@ -65,6 +71,15 @@ class MemorizeEngineModule {
   @Provides
   fun provideEngineFactory(): RecitationEngineFactory = RecitationEngineFactory { models ->
     SherpaRecitationEngine(models.modelFile, models.tokensFile)
+  }
+
+  @Provides
+  fun providePieceRecognizerFactory(): PieceRecognizerFactory = PieceRecognizerFactory { model, tokens ->
+    val recognizer = SherpaPieceRecognizer(model, tokens)
+    object : PieceRecognizer {
+      override fun pieces(audio: FloatArray) = recognizer.pieces(audio)
+      override fun close() = recognizer.close()
+    }
   }
 
   @Provides

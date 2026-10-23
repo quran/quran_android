@@ -63,7 +63,7 @@ class SpeechModelStore private constructor(
   /** Downloads any missing file in the background, verifying each; progress is in [state]. */
   fun startDownload() {
     if (isDownloading) return
-    _state.value = State.Downloading(0, spec.files.sumOf { it.size })
+    _state.value = State.Downloading(0, spec.downloadSize)
     downloadJob = scope.launch { download() }
   }
 
@@ -74,8 +74,8 @@ class SpeechModelStore private constructor(
   private suspend fun download() {
     try {
       directory.mkdirs()
-      val total = spec.files.sumOf { it.size }
-      var done = spec.files.filter { File(directory, it.name).length() == it.size }.sumOf { it.size }
+      val total = spec.downloadSize
+      var done = spec.files.filter { File(directory, it.name).length() == it.size }.sumOf { it.downloadSize }
       for (file in spec.files) {
         val target = File(directory, file.name)
         if (target.length() == file.size) continue
@@ -91,7 +91,7 @@ class SpeechModelStore private constructor(
           install(connection.inputStream, file, target) { written ->
             _state.value = State.Downloading(base + written, total)
           }
-          done += file.size
+          done += file.downloadSize
         } finally {
           connection.disconnect()
         }
@@ -164,19 +164,31 @@ class SpeechModelStore private constructor(
             out.write(buffer, 0, read)
             size += read
             // larger than any model file: not one of them
-            if (size > spec.files.maxOf { it.size }) return null
+            if (size > spec.files.maxOf { maxOf(it.size, it.source?.size ?: 0) }) return null
           }
         }
       }
       val sha = digest.digest().joinToString("") { "%02x".format(it) }
-      val file = spec.files.firstOrNull { it.sha256 == sha && it.size == size } ?: return null
-      return if (partial.renameTo(File(directory, file.name))) file else null
+      spec.files.firstOrNull { it.sha256 == sha && it.size == size }?.let { file ->
+        return if (partial.renameTo(File(directory, file.name))) file else null
+      }
+      // a file as published, which the app converts
+      val file = spec.files.firstOrNull { it.source?.sha256 == sha && it.source.size == size } ?: return null
+      return try {
+        convert(partial, file, File(directory, file.name))
+        file
+      } catch (_: IOException) {
+        null
+      }
     } finally {
       partial.delete()
     }
   }
 
   companion object {
+    /** A store for another model (in its own directory), e.g. the double-check's. */
+    internal fun of(context: Context, spec: SpeechModelSpec) = SpeechModelStore(context, spec)
+
     /** A store for a model of the test's own files. */
     internal fun forTest(context: Context, spec: SpeechModelSpec) = SpeechModelStore(context, spec)
   }
@@ -194,6 +206,7 @@ class SpeechModelStore private constructor(
 
   private suspend fun install(input: InputStream, file: ModelFile, target: File, progress: (Long) -> Unit) {
     val partial = File(target.path + ".part")
+    val expected = file.source
     try {
       val digest = MessageDigest.getInstance("SHA-256")
       var written = 0L
@@ -212,15 +225,61 @@ class SpeechModelStore private constructor(
         }
       }
       val sha = digest.digest().joinToString("") { "%02x".format(it) }
-      if (sha != file.sha256 || written != file.size) throw IOException("${file.name} failed verification")
-      if (!partial.renameTo(target)) throw IOException("can't install ${file.name}")
+      if (sha != (expected?.sha256 ?: file.sha256) || written != (expected?.size ?: file.size)) {
+        throw IOException("${file.name} failed verification")
+      }
+      if (expected != null) {
+        convert(partial, file, target)
+      } else if (!partial.renameTo(target)) {
+        throw IOException("can't install ${file.name}")
+      }
     } finally {
       partial.delete()
     }
   }
+
+  /** Converts the verified [source] of [file] into [target], and verifies the result. */
+  private fun convert(source: File, file: ModelFile, target: File) {
+    val converted = File(target.path + ".converted")
+    try {
+      file.source!!.converter.convert(source, converted)
+      if (converted.length() != file.size || sha256(converted) != file.sha256) {
+        throw IOException("${file.name} failed verification after conversion")
+      }
+      if (!converted.renameTo(target)) throw IOException("can't install ${file.name}")
+    } finally {
+      converted.delete()
+    }
+  }
+
+  private fun sha256(file: File): String {
+    val digest = MessageDigest.getInstance("SHA-256")
+    file.inputStream().use { input ->
+      val buffer = ByteArray(1 shl 16)
+      while (true) {
+        val read = input.read(buffer)
+        if (read < 0) break
+        digest.update(buffer, 0, read)
+      }
+    }
+    return digest.digest().joinToString("") { "%02x".format(it) }
+  }
 }
 
-data class ModelFile(val name: String, val url: String, val sha256: String, val size: Long)
+/**
+ * One file of a model, as installed. With a [source], what is downloaded (or imported) is the file
+ * as published, which the app converts into this one.
+ */
+data class ModelFile(val name: String, val url: String, val sha256: String, val size: Long, val source: Source? = null) {
+  data class Source(val sha256: String, val size: Long, val converter: ModelConverter)
+
+  val downloadSize: Long get() = source?.size ?: size
+}
+
+/** Turns a downloaded file into the one the app uses (deterministically: the result is checked). */
+fun interface ModelConverter {
+  fun convert(source: File, target: File)
+}
 
 /** A downloadable speech model and the terms it comes with. */
 data class SpeechModelSpec(
@@ -229,8 +288,13 @@ data class SpeechModelSpec(
   val tokens: ModelFile,
   val license: String,
   val attribution: String,
+  /** Any other files the model needs. */
+  val extras: List<ModelFile> = emptyList(),
 ) {
-  val files: List<ModelFile> get() = listOf(model, tokens)
+  val files: List<ModelFile> get() = listOf(model, tokens) + extras
+
+  /** What downloading every file takes. */
+  val downloadSize: Long get() = files.sumOf { it.downloadSize }
 
   companion object {
     // Streaming Zipformer2-CTC phoneme recognizer by Quran-Lab (zipformer_p-arabic-v3.1), int8, as

@@ -7,6 +7,8 @@ import com.quran.data.model.SuraAyah
 import com.quran.mobile.feature.memorize.audio.AudioSource
 import com.quran.mobile.feature.memorize.audio.AudioSourceFactory
 import com.quran.mobile.feature.memorize.audio.CallState
+import com.quran.mobile.feature.memorize.check.DoubleCheck
+import com.quran.mobile.feature.memorize.check.DoubleCheckSource
 import com.quran.mobile.feature.memorize.data.LexiconRepository
 import com.quran.mobile.feature.memorize.data.LineSource
 import com.quran.mobile.feature.memorize.data.PageLines
@@ -22,6 +24,7 @@ import com.quran.mobile.feature.memorize.tracker.PhonemeNormalizer
 import com.quran.mobile.feature.memorize.tracker.RecitationTracker
 import com.quran.mobile.feature.memorize.tracker.TimedPhoneme
 import com.quran.mobile.feature.memorize.tracker.TrackerEvent
+import com.quran.mobile.feature.memorize.tracker.WordId
 import com.quran.mobile.feature.memorize.tracker.engine.RecitationEngine
 import com.quran.mobile.feature.memorize.tracker.engine.RecitationStream
 import com.quran.mobile.feature.memorize.tracker.engine.RecognizedToken
@@ -70,7 +73,8 @@ fun interface RecitationEngineFactory {
  * next suras are loaded (and hidden) before the user gets to them, up to the end of the Quran.
  *
  * All recognition and tracking happens on one serialized worker so audio, timer ticks and hints
- * never race. Nothing is recorded or logged: audio frames are dropped as soon as they are decoded.
+ * never race. Nothing is recorded or logged: audio frames are dropped as soon as they are decoded
+ * (with the optional double-check, the last 8 seconds stay in memory for it to listen to again).
  * (Diagnostics, for developers: `adb shell setprop log.tag.MemorizeTrace DEBUG` logs what each
  * session hears and decides, from its next start; off by default.)
  */
@@ -87,9 +91,12 @@ class MemorizeSessionController private constructor(
   private val lines: LineSource,
   private val upcoming: UpcomingSuras,
   private val recorders: Recorders,
+  private val doubleChecks: DoubleCheckSource,
   private val scope: CoroutineScope,
   /** Runs all recognition and tracking, one task at a time. */
   private val worker: CoroutineDispatcher,
+  /** Runs the double-check (seconds at a time), one at a time, so it never holds up the worker. */
+  private val checker: CoroutineDispatcher,
   private val clock: () -> Long,
   /** How many words to keep loaded ahead of the user. */
   private val lookaheadWords: Int,
@@ -109,11 +116,13 @@ class MemorizeSessionController private constructor(
     lines: LineSource,
     upcoming: UpcomingSuras,
     recorders: Recorders,
+    doubleChecks: DoubleCheckSource,
   ) : this(
     lexicon, models, preferences, recitationEventPresenter, engineFactory, promptPlayer, audioSources, callState,
-    lines, upcoming, recorders,
+    lines, upcoming, recorders, doubleChecks,
     scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
     worker = Dispatchers.Default.limitedParallelism(1),
+    checker = Dispatchers.Default.limitedParallelism(1),
     clock = SystemClock::elapsedRealtime,
     lookaheadWords = LOOKAHEAD_WORDS,
     traceSink = { if (Log.isLoggable(TRACE_TAG, Log.DEBUG)) { message -> Log.d(TRACE_TAG, message) } else null },
@@ -142,6 +151,11 @@ class MemorizeSessionController private constructor(
   private var inCall = false
   // how much audio the session has heard (the speech engine's clock)
   private var heardMs = 0L
+  // the double-check, if on and loaded, and the last seconds the user said for it to hear (the
+  // check itself only ever runs on the checker)
+  private var check: DoubleCheck? = null
+  private var heard: FloatArray? = null
+  private var heardEnd = 0L
   // diagnostics (see the class comment)
   private var traceTo: ((String) -> Unit)? = null
   private var tracedSpeech = false
@@ -267,6 +281,7 @@ class MemorizeSessionController private constructor(
       traceTo = traceSink()
       tracedSpeech = false
       tracedStatusAt = 0L
+      loadDoubleCheck(sessionId)
       follower?.trace { message -> trace { message } }
       trace {
         "start $mode ${passage.words.first().id}..${passage.words.last().id} (${passage.words.size} words) " +
@@ -388,6 +403,10 @@ class MemorizeSessionController private constructor(
     // everything the microphone heard, hints included
     recorder?.write(frame.samples)
     heardMs += frame.samples.size * 1000L / SAMPLE_RATE
+    heard?.let { buffer ->
+      // silence while a hint plays: the check must not hear Husary say the word
+      for (x in frame.samples) buffer[(heardEnd++ % buffer.size).toInt()] = if (prompting) 0f else x
+    }
     if (prompting) {
       // keep the stream's timeline continuous, but don't let the hint be recognized as the user
       stream.accept(FloatArray(frame.samples.size), speech = false)
@@ -595,11 +614,11 @@ class MemorizeSessionController private constructor(
     for (effect in effects) {
       trace { "hint scheduler: $effect" }
       when (effect) {
-        is HintScheduler.Effect.MarkMistake -> update { state ->
+        is HintScheduler.Effect.MarkMistake -> if (!checkMistake(effect.word)) update { state ->
           state.copy(mistake = state.passage.words.indexOfFirst { it.id == effect.word }.takeIf { it >= 0 })
         }
         is HintScheduler.Effect.ClearMistake -> update { it.copy(mistake = null) }
-        is HintScheduler.Effect.GiveHint -> giveHint(effect.count, effect.extent)
+        is HintScheduler.Effect.GiveHint -> if (!checkHint(effect.count, effect.extent)) giveHint(effect.count, effect.extent)
         HintScheduler.Effect.GiveUp -> gaveUp = true
       }
     }
@@ -690,6 +709,123 @@ class MemorizeSessionController private constructor(
     runCatching { engine?.close() }
     engine = null
     stream = null
+    releaseDoubleCheck()
+  }
+
+  // ----------------------------------------------------------------------------- double-check
+
+  /** Worker only. Loads the double-check if it is on (seconds: the session doesn't wait for it). */
+  private fun loadDoubleCheck(sessionId: String) {
+    releaseDoubleCheck()
+    if (!preferences.doubleCheck) return
+    scope.launch(checker) {
+      val loaded = runCatching { doubleChecks.open() }.getOrNull() ?: return@launch
+      withContext(worker) {
+        if (_state.value?.id != sessionId || follower == null) {
+          withContext(checker) { loaded.close() }
+          return@withContext
+        }
+        check = loaded
+        heard = FloatArray(CHECK_SECONDS * SAMPLE_RATE)
+        heardEnd = 0L
+        trace { "double-check loaded" }
+      }
+    }
+  }
+
+  /** Worker only. */
+  private fun releaseDoubleCheck() {
+    val loaded = check ?: return
+    check = null
+    heard = null
+    // after any check still running
+    scope.launch(checker) { loaded.close() }
+  }
+
+  /** The last seconds the user said, oldest first. */
+  private fun heardAudio(): FloatArray {
+    val buffer = heard ?: return FloatArray(0)
+    val n = minOf(heardEnd, buffer.size.toLong()).toInt()
+    return FloatArray(n) { buffer[((heardEnd - n + it) % buffer.size).toInt()] }
+  }
+
+  /** Runs [check] on what the user said, then [then] on the worker with whether [index] was said. */
+  private fun doubleCheck(check: DoubleCheck, passage: Passage, index: Int, then: (Boolean) -> Unit) {
+    val audio = heardAudio()
+    scope.launch(checker) {
+      val said = runCatching { check.said(audio, passage, index) }.getOrDefault(false)
+      val ms = check.lastMs
+      preferences.recordDoubleCheckMs(ms)
+      withContext(worker) {
+        trace { "double-check ${passage.words[index].id}: ${if (said) "said" else "not said"} ($ms ms)" }
+        then(said)
+      }
+    }
+  }
+
+  /**
+   * Worker only. Before a mistake is shown: a second later (the user may be in the middle of the
+   * word), the double-check listens again; the mark is only shown if the word wasn't said after
+   * all. True if the check took the mark over.
+   */
+  private fun checkMistake(word: WordId): Boolean {
+    val check = check ?: return false
+    val follower = follower ?: return false
+    val passage = _state.value?.passage ?: return false
+    val index = passage.words.indexOfFirst { it.id == word }.takeIf { it >= 0 } ?: return false
+    scope.launch(worker) {
+      delay(CHECK_MISTAKE_AFTER_MS)
+      if (this@MemorizeSessionController.follower !== follower || follower.cursor != index) return@launch
+      doubleCheck(check, passage, index) { said ->
+        // still the same mistake, still not recited, and the session still listening
+        if (this@MemorizeSessionController.follower === follower && follower.cursor == index && !said &&
+          scheduler?.isArmed == true
+        ) {
+          update { it.copy(mistake = index) }
+        }
+      }
+    }
+    return true
+  }
+
+  /**
+   * Worker only. Before a hint is spoken, the double-check listens again: if the user did say the
+   * word, it counts as recited (as the hint would have) and nothing is said. True if the check took
+   * the hint over.
+   */
+  private fun checkHint(count: Int, extent: HintScheduler.Extent): Boolean {
+    val check = check ?: return false
+    val follower = follower ?: return false
+    val scheduler = scheduler ?: return false
+    val passage = _state.value?.passage ?: return false
+    val first = follower.cursor
+    if (first >= passage.words.size) return false
+    // no other hint while this one is being checked
+    scheduler.onHintStarted()
+    doubleCheck(check, passage, first) { said ->
+      if (this@MemorizeSessionController.follower !== follower || this@MemorizeSessionController.scheduler !== scheduler) {
+        return@doubleCheck
+      }
+      when {
+        // the user went on meanwhile (no hint needed), or paused, or a call came
+        follower.cursor != first || !scheduler.isArmed || inCall ||
+          _state.value?.status != MemorizeState.Status.LISTENING -> scheduler.onHintFinished(now())
+        said -> {
+          follower.markHinted(1)
+          recordWord(passage, first, null, null, Recording.WordStatus.RECITED)
+          update { it.copy(cursor = follower.cursor, mistake = null, started = follower.started) }
+          scheduler.onHintFinished(now())
+          applyEffects(scheduler.onWordRecited(now(), atAyahBoundary = passage.atAyahBoundary(follower.cursor)))
+          onPassageProgress()
+        }
+        else -> {
+          // giveHint() starts the hint over
+          scheduler.onHintFinished(now())
+          giveHint(count, extent)
+        }
+      }
+    }
+    return true
   }
 
   private fun finishRecording() {
@@ -764,12 +900,16 @@ class MemorizeSessionController private constructor(
       recorders: Recorders = Recorders { _, _ -> null },
       lookaheadWords: Int = LOOKAHEAD_WORDS,
       trace: ((String) -> Unit)? = null,
+      doubleChecks: DoubleCheckSource = DoubleCheckSource { null },
     ) = MemorizeSessionController(
       lexicon, models, preferences, recitationEventPresenter, engineFactory, promptPlayer, audioSources, callState,
-      lines, upcoming, recorders, scope, worker, clock, lookaheadWords, { trace },
+      lines, upcoming, recorders, doubleChecks, scope, worker, worker, clock, lookaheadWords, { trace },
     )
 
     private const val TRACE_TAG = "MemorizeTrace"
+    /** What the double-check listens to: the last seconds, and a second more after a mistake. */
+    private const val CHECK_SECONDS = 8
+    private const val CHECK_MISTAKE_AFTER_MS = 1_000L
     private const val TRACE_STATUS_MS = 10_000L
     private const val BASMALA = "basmala"
     private const val SAMPLE_RATE = 16_000

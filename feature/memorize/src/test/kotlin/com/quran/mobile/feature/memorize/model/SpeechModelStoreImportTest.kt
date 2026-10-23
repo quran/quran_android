@@ -64,6 +64,38 @@ class SpeechModelStoreImportTest {
     assertThat(store.missingFiles()).containsExactly(spec.model, spec.tokens)
   }
 
+  @Test
+  fun `a file as published is converted on import and checked`() = runTest {
+    // e.g. the double-check's model: published as one file, used as another
+    val published = "published model".toByteArray()
+    val converted = "PUBLISHED MODEL".toByteArray()
+    val upper = ModelConverter { source, target -> target.writeText(source.readText().uppercase()) }
+    val convertedSpec = spec.copy(
+      id = "test-${UUID.randomUUID()}",
+      model = ModelFile(
+        "model.onnx", "https://example.invalid/published.onnx", sha(converted), converted.size.toLong(),
+        source = ModelFile.Source(sha(published), published.size.toLong(), upper),
+      ),
+    )
+    val store = SpeechModelStore.forTest(context, convertedSpec)
+
+    assertThat(store.importFile(file("published.onnx", published))).containsExactly(convertedSpec.model)
+    assertThat(store.missingFiles()).containsExactly(convertedSpec.tokens)
+    assertThat(store.modelFile.readBytes()).isEqualTo(converted)
+    assertThat(convertedSpec.downloadSize).isEqualTo(published.size.toLong() + tokensBytes.size)
+
+    // a conversion that doesn't give the expected file installs nothing
+    val broken = SpeechModelStore.forTest(
+      context,
+      convertedSpec.copy(
+        id = "test-${UUID.randomUUID()}",
+        model = convertedSpec.model.copy(source = convertedSpec.model.source!!.copy(converter = { _, target -> target.writeText("?") })),
+      ),
+    )
+    assertThat(broken.importFile(file("published.onnx", published))).isEmpty()
+    assertThat(broken.modelFile.exists()).isFalse()
+  }
+
   private fun file(name: String, bytes: ByteArray): Uri {
     val file = File(context.cacheDir, "${UUID.randomUUID()}-$name")
     file.writeBytes(bytes)
