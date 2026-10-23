@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.extra.feature.linebyline.model
 
+import com.quran.data.model.PageAppearance
 import com.quran.mobile.linebyline.data.dao.AyahMarkerInfo
 import com.quran.mobile.linebyline.data.dao.SuraHeader
 import kotlinx.collections.immutable.ImmutableList
@@ -23,9 +24,10 @@ data class PageInfo(
 
 val EmptySettings =
   DisplaySettings(
-    false,
+    PageAppearance.Light,
     255,
     0,
+    null,
     showHeaderFooter = false,
     showSidelines = false,
     showLineDividers = false

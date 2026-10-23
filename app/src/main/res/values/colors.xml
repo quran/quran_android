@@ -8,7 +8,6 @@
   <color name="surface">#fffaf8f7</color>
   <color name="accent_color">#ff00838f</color>
   <color name="accent_color_dark">@color/color_control_normal</color>
-  <color name="page_background">#FFF4CB</color>
   <color name="secondary_dark_background">#ffffffff</color>
   <color name="header_background">#dee2e6</color>
   <color name="header_text_color">@color/sura_number_color</color>
@@ -21,16 +20,17 @@
   <color name="panel_background_color">@color/toolbar</color>
   <color name="translation_hdr_color">#ff777777</color>
   <color name="translation_sura_header">#fff1ecd8</color>
+  <color name="translation_sura_header_sepia">#ffefddbe</color>
   <color name="translation_sura_header_night">#ff424242</color>
   <color name="translation_verse_text_color">#ff858383</color>
-  <color name="translation_verse_background_color">#fff2f2f2</color>
+  <color name="translation_verse_background_color">#0d000000</color>
   <color name="translation_verse_background_night_color">#ff333333</color>
   <color name="translation_inline_ayah_highlight_color">#ff00838F</color>
   <color name="translation_inline_ayah_highlight_night_color">#ff34d399</color>
   <color name="translation_translator_color">#ff00838F</color>
   <color name="translation_text_color">#ff444444</color>
   <color name="translation_footnote_color">#ff999999</color>
-  <color name="translation_divider_color">#ffe8e8e8</color>
+  <color name="translation_divider_color">#17000000</color>
 
   <color name="translation_ayah_selected_color">#ffe0f2f1</color>
   <color name="translation_ayah_selected_color_night">#ff2d2d2d</color>

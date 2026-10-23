@@ -3,6 +3,8 @@ package com.quran.labs.androidquran.util
 import android.content.SharedPreferences
 import com.quran.data.dao.Settings
 import com.quran.data.di.AppScope
+import com.quran.data.model.PageAppearance
+import com.quran.mobile.feature.pagetheme.PageThemeConstants
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.MainScope
@@ -53,16 +55,28 @@ class SettingsImpl @Inject constructor(private val quranSettings: QuranSettings)
     return quranSettings.lastPage
   }
 
-  override suspend fun isNightMode(): Boolean {
-    return quranSettings.isNightMode
+  override suspend fun pageAppearance(): PageAppearance {
+    return when (quranSettings.pageAppearance) {
+      PageThemeConstants.PAGE_APPEARANCE_DARK -> PageAppearance.Dark
+      PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC -> PageAppearance.Automatic
+      else -> PageAppearance.Light
+    }
   }
 
-  override suspend fun nightModeTextBrightness(): Int {
-    return quranSettings.nightModeTextBrightness
+  override suspend fun pageTextBrightness(): Int {
+    return quranSettings.pageTextBrightness
   }
 
   override suspend fun nightModeBackgroundBrightness(): Int {
     return quranSettings.nightModeBackgroundBrightness
+  }
+
+  override suspend fun dayPageBackgroundColor(): Int? {
+    return if (quranSettings.pageTheme == PageThemeConstants.PAGE_THEME_LIGHT) {
+      null
+    } else {
+      quranSettings.dayPageBackgroundColor
+    }
   }
 
   override suspend fun shouldShowHeaderFooter(): Boolean {
