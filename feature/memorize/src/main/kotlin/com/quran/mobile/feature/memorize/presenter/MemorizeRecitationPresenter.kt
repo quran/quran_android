@@ -133,6 +133,12 @@ class MemorizeRecitationPresenter @Inject constructor(
     downloadDialog = null
     scope?.cancel()
     scope = null
+    // Nothing of the reading screen may outlive it. This presenter can: the audio bar's collectors
+    // keep it (they are never cancelled), and through these the whole screen with its pages
+    // (31 MB a screen, found with LeakCanary).
+    pagesOnScreen = { emptyList() }
+    startOnScreen = {}
+    pendingStart = null
     // the session itself keeps running (e.g. with the screen off during salah)
   }
 
