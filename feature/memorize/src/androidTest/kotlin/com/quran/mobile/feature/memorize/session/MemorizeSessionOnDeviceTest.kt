@@ -85,6 +85,7 @@ class MemorizeSessionOnDeviceTest {
       lines = { emptyMap() },
       upcoming = {},
       recorders = { _, _ -> null },
+      doubleChecks = { null },
     )
 
     val outcomes = clips().map { clip -> session(controller, source, clip) }
