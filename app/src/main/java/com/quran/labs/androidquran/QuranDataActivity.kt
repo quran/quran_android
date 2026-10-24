@@ -98,6 +98,9 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
     val quranApp = application as QuranApplication
     quranApp.applicationComponent.inject(this)
     quranSettings = QuranSettings.getInstance(this)
+    if (quranSettings.isFreshInstall) {
+      AnnouncementActivity.markSeen(quranSettings)
+    }
     quranSettings.upgradePreferences(preferencesUpgrade)
   }
 
