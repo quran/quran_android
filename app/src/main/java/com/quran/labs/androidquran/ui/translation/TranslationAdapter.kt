@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +23,7 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.highlight.HighlightType
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
+import com.quran.labs.androidquran.common.ui.core.QuranAccent
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.helpers.ExpandFootnoteSpan
 import com.quran.labs.androidquran.ui.helpers.ExpandTafseerSpan
@@ -214,7 +216,7 @@ internal class TranslationAdapter(
       this.dividerColor = textColor
       this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header_night)
       this.ayahSelectionColor = ContextCompat.getColor(context, R.color.translation_ayah_selected_color_night)
-      this.inlineAyahColor = ContextCompat.getColor(context, R.color.translation_inline_ayah_highlight_night_color)
+      this.inlineAyahColor = QuranAccent.current.dark.toArgb()
     } else {
       this.textColor = ContextCompat.getColor(context, R.color.translation_text_color)
       this.footnoteColor = ContextCompat.getColor(context, R.color.translation_footnote_color)
@@ -222,7 +224,7 @@ internal class TranslationAdapter(
       this.arabicTextColor = Color.BLACK
       this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header)
       this.ayahSelectionColor = ContextCompat.getColor(context, R.color.translation_ayah_selected_color)
-      this.inlineAyahColor = ContextCompat.getColor(context, R.color.translation_inline_ayah_highlight_color)
+      this.inlineAyahColor = QuranAccent.current.light.toArgb()
     }
 
     if (this.data.isNotEmpty()) {
