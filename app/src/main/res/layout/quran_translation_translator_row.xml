@@ -8,5 +8,5 @@
     android:textAllCaps="true"
     android:textSize="12sp"
     android:textStyle="bold"
-    android:textColor="@color/translation_translator_color"
+    android:textColor="@color/accent_color"
     />
