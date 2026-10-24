@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <application>
+    <activity-alias
+        android:name=".AppIconTealWhite"
+        android:enabled="false"
+        android:exported="true"
+        android:icon="@mipmap/ic_launcher_teal_white"
+        android:roundIcon="@mipmap/ic_launcher_teal_white"
+        android:targetActivity=".QuranDataCheckActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+      <meta-data android:name="android.app.shortcuts"
+                 android:resource="@xml/shortcuts" />
+    </activity-alias>
+
+    <activity-alias
+        android:name=".AppIconBlackGold"
+        android:enabled="false"
+        android:exported="true"
+        android:icon="@mipmap/ic_launcher_black_gold"
+        android:roundIcon="@mipmap/ic_launcher_black_gold"
+        android:targetActivity=".QuranDataCheckActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+      <meta-data android:name="android.app.shortcuts"
+                 android:resource="@xml/shortcuts" />
+    </activity-alias>
+
+    <activity-alias
+        android:name=".AppIconBlue"
+        android:enabled="false"
+        android:exported="true"
+        android:icon="@mipmap/ic_launcher_blue"
+        android:roundIcon="@mipmap/ic_launcher_blue"
+        android:targetActivity=".QuranDataCheckActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+      <meta-data android:name="android.app.shortcuts"
+                 android:resource="@xml/shortcuts" />
+    </activity-alias>
+
+    <activity-alias
+        android:name=".AppIconPurple"
+        android:enabled="false"
+        android:exported="true"
+        android:icon="@mipmap/ic_launcher_purple"
+        android:roundIcon="@mipmap/ic_launcher_purple"
+        android:targetActivity=".QuranDataCheckActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+      <meta-data android:name="android.app.shortcuts"
+                 android:resource="@xml/shortcuts" />
+    </activity-alias>
+
+    <activity-alias
+        android:name=".AppIconRed"
+        android:enabled="false"
+        android:exported="true"
+        android:icon="@mipmap/ic_launcher_red"
+        android:roundIcon="@mipmap/ic_launcher_red"
+        android:targetActivity=".QuranDataCheckActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+      <meta-data android:name="android.app.shortcuts"
+                 android:resource="@xml/shortcuts" />
+    </activity-alias>
+
+    <activity-alias
+        android:name=".AppIconOrange"
+        android:enabled="false"
+        android:exported="true"
+        android:icon="@mipmap/ic_launcher_orange"
+        android:roundIcon="@mipmap/ic_launcher_orange"
+        android:targetActivity=".QuranDataCheckActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+      <meta-data android:name="android.app.shortcuts"
+                 android:resource="@xml/shortcuts" />
+    </activity-alias>
+
+    <activity-alias
+        android:name=".AppIconGreen"
+        android:enabled="false"
+        android:exported="true"
+        android:icon="@mipmap/ic_launcher_green"
+        android:roundIcon="@mipmap/ic_launcher_green"
+        android:targetActivity=".QuranDataCheckActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+      <meta-data android:name="android.app.shortcuts"
+                 android:resource="@xml/shortcuts" />
+    </activity-alias>
+  </application>
+</manifest>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">أيقونة التطبيق</string>
+  <string name="app_icon_default">الافتراضية</string>
+  <string name="app_icon_section_signature">المميزة</string>
+  <string name="app_icon_section_colors">الألوان</string>
+  <string name="app_icon_name_navy_gold">كُحلي وذهبي</string>
+  <string name="app_icon_name_teal_white">أزرق مخضر وأبيض</string>
+  <string name="app_icon_name_black_gold">أسود وذهبي</string>
+  <string name="app_icon_name_blue">أزرق</string>
+  <string name="app_icon_name_purple">بنفسجي</string>
+  <string name="app_icon_name_red">أحمر</string>
+  <string name="app_icon_name_orange">برتقالي</string>
+  <string name="app_icon_name_green">أخضر</string>
+</resources>

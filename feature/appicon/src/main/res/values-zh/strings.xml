@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">应用图标</string>
+  <string name="app_icon_default">默认</string>
+  <string name="app_icon_section_signature">经典</string>
+  <string name="app_icon_section_colors">颜色</string>
+  <string name="app_icon_name_navy_gold">藏青与金色</string>
+  <string name="app_icon_name_teal_white">蓝绿与白色</string>
+  <string name="app_icon_name_black_gold">黑色与金色</string>
+  <string name="app_icon_name_blue">蓝色</string>
+  <string name="app_icon_name_purple">紫色</string>
+  <string name="app_icon_name_red">红色</string>
+  <string name="app_icon_name_orange">橙色</string>
+  <string name="app_icon_name_green">绿色</string>
+</resources>

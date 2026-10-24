@@ -25,6 +25,8 @@ import com.quran.labs.androidquran.util.OrientationLockUtils
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.mobile.di.ExtraPreferencesProvider
+import com.quran.mobile.feature.appicon.AppIconActivity
+import com.quran.mobile.feature.appicon.AppIconManager
 import com.quran.mobile.feature.downloadmanager.AudioManagerActivity
 import dev.zacsweers.metro.Inject
 
@@ -35,6 +37,9 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
 
   @Inject
   lateinit var extraPreferences: Set<@JvmSuppressWildcards ExtraPreferencesProvider>
+
+  @Inject
+  lateinit var appIconManager: AppIconManager
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.quran_preferences)
@@ -73,6 +78,18 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
     themePref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
       ThemeUtil.setTheme(newValue as String)
       true
+    }
+
+    // handle app icon click
+    val appIconPref: Preference? = findPreference(Constants.PREF_APP_ICON)
+    if (appIconManager.isAvailable) {
+      appIconPref?.setOnPreferenceClickListener {
+        startActivity(Intent(activity, AppIconActivity::class.java))
+        true
+      }
+    } else if (appIconPref != null) {
+      val displayPrefs: PreferenceGroup? = findPreference(getString(R.string.prefs_display_category_key))
+      displayPrefs?.removePreference(appIconPref)
     }
 
     // handle translation manager click
@@ -121,6 +138,12 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
       windowInsets
     }
     return view
+  }
+
+  override fun onResume() {
+    super.onResume()
+    findPreference<Preference>(Constants.PREF_APP_ICON)?.summary =
+      getString(appIconManager.currentOption.value.name)
   }
 
   override fun onPreferenceTreeClick(preference: Preference): Boolean {

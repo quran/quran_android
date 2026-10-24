@@ -16,7 +16,7 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.model.QuranDataStatus
 import com.quran.data.source.PageContentType
 import com.quran.data.source.PageProvider
-import com.quran.labs.androidquran.QuranDataActivity
+import com.quran.labs.androidquran.QuranDataCheckActivity
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.model.bookmark.LegacyBookmarksMigrator
 import com.quran.labs.androidquran.presenter.Presenter
@@ -49,9 +49,9 @@ class QuranDataPresenter @Inject internal constructor(
   private val localDataUpgrade: LocalDataUpgrade,
   private val legacyBookmarksMigrator: LegacyBookmarksMigrator,
   private val readerReadinessTracker: ReaderReadinessTracker
-) : Presenter<QuranDataActivity> {
+) : Presenter<QuranDataCheckActivity> {
 
-  private var activity: QuranDataActivity? = null
+  private var activity: QuranDataCheckActivity? = null
   private var checkPagesDisposable: Disposable? = null
   private var cachedPageType: String? = null
   private var lastCachedResult: QuranDataStatus? = null
@@ -263,11 +263,11 @@ class QuranDataPresenter @Inject internal constructor(
     return quranDataStatus
   }
 
-  override fun bind(activity: QuranDataActivity) {
+  override fun bind(activity: QuranDataCheckActivity) {
     this.activity = activity
   }
 
-  override fun unbind(activity: QuranDataActivity) {
+  override fun unbind(activity: QuranDataCheckActivity) {
     if (this.activity === activity) {
       this.activity = null
     }

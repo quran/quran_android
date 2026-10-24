@@ -20,12 +20,12 @@ class ShortcutsActivity : AppCompatActivity() {
     val shortcutSelected: String
     when (action) {
         ACTION_JUMP_TO_LATEST -> {
-          intentToLaunch = Intent(this, QuranDataActivity::class.java)
+          intentToLaunch = Intent(this, QuranDataCheckActivity::class.java)
           intentToLaunch.action = action
           shortcutSelected = JUMP_TO_LATEST_SHORTCUT_NAME
         }
         ACTION_JUMP_TO -> {
-          intentToLaunch = Intent(this, QuranDataActivity::class.java)
+          intentToLaunch = Intent(this, QuranDataCheckActivity::class.java)
           intentToLaunch.action = action
           shortcutSelected = JUMP_TO_SHORTCUT_NAME
         }

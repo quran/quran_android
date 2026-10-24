@@ -232,6 +232,7 @@ dependencies {
   implementation(project(":common:upgrade"))
   implementation(project(":common:ui:core"))
 
+  implementation(project(":feature:appicon"))
   implementation(project(":feature:audio"))
   implementation(project(":feature:audiobar"))
   implementation(project(":feature:ayahbookmark"))

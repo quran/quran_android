@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">Қолданба белгішесі</string>
+  <string name="app_icon_default">Әдепкі</string>
+  <string name="app_icon_section_signature">Фирмалық</string>
+  <string name="app_icon_section_colors">Түстер</string>
+  <string name="app_icon_name_navy_gold">Қою көк және алтын</string>
+  <string name="app_icon_name_teal_white">Көкшіл жасыл және ақ</string>
+  <string name="app_icon_name_black_gold">Қара және алтын</string>
+  <string name="app_icon_name_blue">Көк</string>
+  <string name="app_icon_name_purple">Күлгін</string>
+  <string name="app_icon_name_red">Қызыл</string>
+  <string name="app_icon_name_orange">Қызғылт сары</string>
+  <string name="app_icon_name_green">Жасыл</string>
+</resources>

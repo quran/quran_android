@@ -85,7 +85,7 @@ import kotlin.math.abs
  * are available, and if so, show a dialog asking the user if they want to download them.
  *
  * This activity is called from several places:
- *  * [com.quran.labs.androidquran.QuranDataActivity]
+ *  * [com.quran.labs.androidquran.QuranDataCheckActivity]
  *  * [ShortcutsActivity]
  */
 class QuranActivity : AppCompatActivity(),

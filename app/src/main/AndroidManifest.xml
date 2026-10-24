@@ -45,9 +45,14 @@
       tools:targetApi="tiramisu">
 
     <activity
-        android:name=".QuranDataActivity"
+        android:name=".QuranDataCheckActivity"
         android:configChanges="keyboardHidden|orientation|screenSize"
         android:theme="@style/QuranToolBarDayNight"
+        android:exported="false" />
+
+    <activity-alias
+        android:name=".QuranDataActivity"
+        android:targetActivity=".QuranDataCheckActivity"
         android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -56,7 +61,7 @@
       </intent-filter>
       <meta-data android:name="android.app.shortcuts"
                  android:resource="@xml/shortcuts" />
-    </activity>
+    </activity-alias>
 
     <activity android:name=".ShortcutsActivity"
               android:exported="true" />

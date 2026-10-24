@@ -74,6 +74,7 @@ object Constants {
   const val PREF_DEFAULT_IMAGES_DIR = "defaultImagesDir"
   const val PREF_TRANSLATION_MANAGER = "translationManagerKey"
   const val PREF_AUDIO_MANAGER = "audioManagerKey"
+  const val PREF_APP_ICON = "appIconKey"
   const val PREF_PAGE_TYPE = "pageTypeKey"
   const val PREF_IMPORT = "importKey"
   const val PREF_EXPORT = "exportKey"
