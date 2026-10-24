@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!-- Memorize: listens to the user's recitation. Audio is processed on the device only. -->
+  <uses-permission android:name="android.permission.RECORD_AUDIO" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <!-- keeps listening with the screen off -->
+  <uses-permission android:name="android.permission.WAKE_LOCK" />
+  <!-- lets the user exempt the app from battery optimization for listening during salah -->
+  <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+  <application>
+    <service
+        android:name=".service.MemorizeService"
+        android:exported="false"
+        android:foregroundServiceType="microphone" />
+    <!-- the optional double-check's model, kept apart from the speech engine (see the class) -->
+    <service
+        android:name=".check.DoubleCheckService"
+        android:exported="false"
+        android:process=":doublecheck" />
+    <!-- only shows the system file picker -->
+    <activity
+        android:name=".model.ModelImportActivity"
+        android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|uiMode"
+        android:exported="false"
+        android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+    <activity
+        android:name=".recording.RecordingsActivity"
+        android:exported="false" />
+  </application>
+</manifest>

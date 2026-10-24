@@ -16,4 +16,22 @@ interface RecitationPresenter : Presenter<Activity> {
   fun startOrStopRecitation(startAyah: () -> SuraAyah, showModeSelection: Boolean = false)
   fun endSession()
 
+  /** Whether sessions produce a transcript the user can open. */
+  fun supportsTranscript(): Boolean = true
+
+  /** Whether sessions are recorded and can be played back. */
+  fun supportsPlayback(): Boolean = true
+
+  /** Whether the user can ask for a hint (the next word) during a session. */
+  fun supportsHints(): Boolean = false
+
+  /** The user asked for the next word. */
+  fun onHintRequested() {}
+
+  /**
+   * Called by the reading screen: the pages on screen (one, or two side by side) and how to start a
+   * session there, for sessions started from the presenter's own controls.
+   */
+  fun setReadingScreen(pagesOnScreen: () -> List<Int>, start: (showModeSelection: Boolean) -> Unit) {}
+
 }

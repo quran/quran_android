@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- unused: hidden words are not drawn -->
+  <color name="memorize_hidden">#00000000</color>
+  <color name="memorize_mistake">#73E53935</color>
+  <color name="memorize_mistake_night">#FFEF5350</color>
+  <color name="memorize_hinted">#5900897B</color>
+  <color name="memorize_hinted_night">#FF4DB6AC</color>
+  <color name="memorize_missed">#40FB8C00</color>
+  <color name="memorize_missed_night">#FFFFB74D</color>
+</resources>

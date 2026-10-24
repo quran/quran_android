@@ -68,7 +68,8 @@ class CoordinatesModel @Inject internal constructor(
       normalizedMap,
       ayahCoordinates.glyphCoordinates,
       ayahLineCoordinates,
-      pageProvider.ayahUnderlineRaiseRatio()
+      pageProvider.ayahUnderlineRaiseRatio(),
+      ayahCoordinates.wordGlyphCoordinates
     )
   }
 
