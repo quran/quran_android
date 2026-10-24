@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.model.QuranDataStatus
+import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.ui.QuranActivity
@@ -67,6 +68,22 @@ class AnnouncementActivityTest {
   }
 
   @Test
+  fun freshInstallSkipsTheAnnouncement() {
+    assertThat(settings.isFreshInstall).isTrue()
+    val destination = launchAfterDataReady(Intent.ACTION_MAIN)
+
+    assertThat(destination.component?.className).isEqualTo(QuranActivity::class.java.name)
+    assertThat(AnnouncementActivity.shouldShow(settings)).isFalse()
+    assertThat(settings.isFreshInstall).isFalse()
+  }
+
+  @Test
+  fun seeingTheIconTeaserStillShowsTheReveal() {
+    settings.markAnnouncementSeen(1)
+    assertThat(AnnouncementActivity.shouldShow(settings)).isTrue()
+  }
+
+  @Test
   fun interruptedPresentationRemainsPending() {
     val destination = Intent(context, QuranActivity::class.java)
     val intent = AnnouncementActivity.createIntent(context, destination)
@@ -80,6 +97,8 @@ class AnnouncementActivityTest {
 
   @Test
   fun normalStartupShowsAnnouncementOnceAndPreservesTranslationUpgrade() {
+    settings.version = BuildConfig.VERSION_CODE - 1
+    settings.markAnnouncementSeen(1)
     settings.setHaveUpdatedTranslations(true)
     val announcement = launchAfterDataReady(Intent.ACTION_MAIN)
     assertThat(announcement.component?.className).isEqualTo(AnnouncementActivity::class.java.name)
@@ -102,6 +121,7 @@ class AnnouncementActivityTest {
 
   @Test
   fun nonNormalStartupBypassesAnnouncementWithoutAcknowledgingIt() {
+    settings.version = BuildConfig.VERSION_CODE - 1
     val destination = launchAfterDataReady(Intent.ACTION_VIEW)
 
     assertThat(destination.component?.className).isEqualTo(QuranActivity::class.java.name)

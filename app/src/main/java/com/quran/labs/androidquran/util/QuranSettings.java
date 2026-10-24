@@ -330,6 +330,10 @@ public class QuranSettings {
     }
   }
 
+  public boolean isFreshInstall() {
+    return getVersion() == 0 && prefs.getInt(Constants.PREF_VERSION, 0) == 0;
+  }
+
   public int getVersion() {
     return perInstallationPrefs.getInt(Constants.PREF_VERSION, 0);
   }

@@ -2,7 +2,9 @@ package com.quran.labs.androidquran.ui.whatsnew
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import androidx.activity.SystemBarStyle
 import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -32,7 +34,17 @@ class AnnouncementActivity : AppCompatActivity() {
       setContentView(ComposeView(this).apply {
         setContent {
           QuranTheme {
-            IconAnnouncementScreen(onContinue = ::dismissAnnouncement)
+            IconRevealScreen(
+              onContinue = ::dismissAnnouncement,
+              onNightChange = { isNight ->
+                if (isNight) {
+                  val night = SystemBarStyle.dark(Color.TRANSPARENT)
+                  enableEdgeToEdge(statusBarStyle = night, navigationBarStyle = night)
+                } else {
+                  enableEdgeToEdge()
+                }
+              }
+            )
           }
         }
       })
@@ -42,7 +54,7 @@ class AnnouncementActivity : AppCompatActivity() {
 
   private fun dismissAnnouncement() {
     if (!isFinishing) {
-      quranSettings.markAnnouncementSeen(CURRENT_ANNOUNCEMENT_ID)
+      markSeen(quranSettings)
       launchDestination()
     }
   }
@@ -53,12 +65,17 @@ class AnnouncementActivity : AppCompatActivity() {
   }
 
   companion object {
-    private const val CURRENT_ANNOUNCEMENT_ID = 1
+    private const val CURRENT_ANNOUNCEMENT_ID = 2
     private const val EXTRA_DESTINATION = "announcementDestination"
 
     fun shouldShow(quranSettings: QuranSettings): Boolean {
+      @Suppress("SimplifyBooleanWithConstants", "KotlinConstantConditions")
       return BuildConfig.FLAVOR == "madani" &&
           quranSettings.shouldShowAnnouncement(CURRENT_ANNOUNCEMENT_ID)
+    }
+
+    fun markSeen(quranSettings: QuranSettings) {
+      quranSettings.markAnnouncementSeen(CURRENT_ANNOUNCEMENT_ID)
     }
 
     fun createIntent(context: Context, destination: Intent): Intent {
