@@ -22,6 +22,9 @@
 
   <attr name="spinnerItemStyle" format="reference"/>
 
+  <!-- the accent the app icon lends the interface -->
+  <attr name="quranAccent" format="color"/>
+
   <declare-styleable name="AyahNumberView">
     <attr name="android:textColor" />
     <attr name="android:textSize" />

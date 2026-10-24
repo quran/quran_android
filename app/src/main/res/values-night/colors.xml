@@ -3,7 +3,7 @@
   <color name="toolbar">@color/surface</color>
   <color name="toolbar_text">#ffffffff</color>
   <color name="toolbar_icon_tint">#ffffffff</color>
-  <color name="accent_color">#ffb2dfdb</color>
+  <color name="accent_navy_gold">#ffe2af56</color>
   <color name="header_background">#ff424242</color>
   <color name="header_text_color">@color/sura_number_color</color>
   <color name="sura_number_color">#7fffffff</color>
@@ -14,11 +14,7 @@
   <color name="sura_details_color">#b2ffffff</color>
   <color name="toolbar_secondary_text">#ffffffff</color>
   <color name="panel_background_color">#ff212121</color>
-  <color name="translation_translator_color">#ffa7ffeb</color>
   <color name="icon_tint">#ffffffff</color>
-  <color name="indicator_color">@color/accent_color</color>
-  <color name="color_control_activated">@color/accent_color</color>
-  <color name="color_control_normal">#89b2dfdb</color>
   <color name="download_button_background">#ff556f79</color>
 
   <color name="default_text">#ffffffff</color>

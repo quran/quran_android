@@ -66,7 +66,7 @@ class InlineTranslationView @JvmOverloads constructor(
     ayahFontSize = settings.ayahTextSize
     translationFontSize = settings.translationTextSize
     textStyle = R.style.TranslationText
-    inlineAyahColor = ContextCompat.getColor(context, R.color.translation_translator_color)
+    inlineAyahColor = ContextCompat.getColor(context, R.color.accent_color)
     ayahTextColor = ContextCompat.getColor(context, R.color.text_primary)
   }
 
