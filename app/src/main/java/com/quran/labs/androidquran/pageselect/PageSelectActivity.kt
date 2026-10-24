@@ -11,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.viewpager.widget.ViewPager
 import com.quran.labs.androidquran.QuranApplication
-import com.quran.labs.androidquran.QuranDataActivity
+import com.quran.labs.androidquran.QuranDataCheckActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
 import com.quran.labs.androidquran.util.QuranSettings
@@ -93,7 +93,7 @@ class PageSelectActivity : AppCompatActivity() {
       quranSettings.pageType = type
 
       // go back to Quran Data Activity
-      val intent = Intent(this@PageSelectActivity, QuranDataActivity::class.java).apply {
+      val intent = Intent(this@PageSelectActivity, QuranDataCheckActivity::class.java).apply {
         addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
       }
       startActivity(intent)

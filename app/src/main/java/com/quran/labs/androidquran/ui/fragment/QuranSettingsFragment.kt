@@ -10,6 +10,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -25,8 +26,11 @@ import com.quran.labs.androidquran.util.OrientationLockUtils
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.mobile.di.ExtraPreferencesProvider
+import com.quran.mobile.feature.appicon.AppIconActivity
+import com.quran.mobile.feature.appicon.AppIconManager
 import com.quran.mobile.feature.downloadmanager.AudioManagerActivity
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.launch
 
 class QuranSettingsFragment : PreferenceFragmentCompat() {
 
@@ -35,6 +39,9 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
 
   @Inject
   lateinit var extraPreferences: Set<@JvmSuppressWildcards ExtraPreferencesProvider>
+
+  @Inject
+  lateinit var appIconManager: AppIconManager
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.quran_preferences)
@@ -73,6 +80,21 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
     themePref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
       ThemeUtil.setTheme(newValue as String)
       true
+    }
+
+    // handle app icon click
+    val appIconPref: Preference? = findPreference(Constants.PREF_APP_ICON)
+    if (appIconPref != null) {
+      appIconPref.isVisible = appIconManager.lastKnownAvailability == true
+      appIconPref.setOnPreferenceClickListener {
+        startActivity(Intent(activity, AppIconActivity::class.java))
+        true
+      }
+      lifecycleScope.launch {
+        launch { appIconManager.currentOption.collect { appIconPref.summary = getString(it.name) } }
+        appIconPref.isVisible = appIconManager.isAvailable()
+        appIconManager.refresh()
+      }
     }
 
     // handle translation manager click

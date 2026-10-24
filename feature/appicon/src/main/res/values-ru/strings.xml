@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">Иконка приложения</string>
+  <string name="app_icon_default">По умолчанию</string>
+  <string name="app_icon_section_signature">Фирменные</string>
+  <string name="app_icon_section_colors">Цвета</string>
+  <string name="app_icon_name_navy_gold">Тёмно-синий и золотой</string>
+  <string name="app_icon_name_teal_white">Бирюзовый и белый</string>
+  <string name="app_icon_name_black_gold">Чёрный и золотой</string>
+  <string name="app_icon_name_blue">Синий</string>
+  <string name="app_icon_name_purple">Фиолетовый</string>
+  <string name="app_icon_name_red">Красный</string>
+  <string name="app_icon_name_orange">Оранжевый</string>
+  <string name="app_icon_name_green">Зелёный</string>
+</resources>

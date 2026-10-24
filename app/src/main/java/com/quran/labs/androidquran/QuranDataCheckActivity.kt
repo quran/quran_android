@@ -58,11 +58,11 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
  *  * Verify that we have the necessary Quran data downloaded on the device
  *  * Show any unseen announcement on a normal launch, after data setup finishes
  *
- * The logic is split between [QuranDataActivity] and [QuranDataPresenter],
+ * The logic is split between [QuranDataCheckActivity] and [QuranDataPresenter],
  * and [QuranDownloadService] is (mostly) used to perform the actual downloading of
  * any Quran data.
  */
-class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequestPermissionsResultCallback {
+class QuranDataCheckActivity : AppCompatActivity(), SimpleDownloadListener, OnRequestPermissionsResultCallback {
 
   @Inject lateinit var quranNavigatorFactory: QuranNavigator.Factory
   private val quranNavigator by lazy { quranNavigatorFactory.create(this) }
@@ -127,7 +127,7 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
           // try to reconnect to the service - delayed since some devices consider
           // onResume as part of the app being in the background for starting-service
           // purposes.
-          val reconnectIntent = Intent(this@QuranDataActivity, QuranDownloadService::class.java)
+          val reconnectIntent = Intent(this@QuranDataCheckActivity, QuranDownloadService::class.java)
           reconnectIntent.action = QuranDownloadService.ACTION_RECONNECT
           reconnectIntent.putExtra(
               QuranDownloadService.EXTRA_DOWNLOAD_TYPE,
@@ -567,7 +567,7 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
       ayah: Int? = null,
       jumpToTranslation: Boolean = false
     ): Intent {
-      return Intent(context, QuranDataActivity::class.java).apply {
+      return Intent(context, QuranDataCheckActivity::class.java).apply {
         action = ACTION_OPEN_PAGE
         putExtra("page", page)
         if (sura != null) {
