@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.google.common.truth.Truth.assertThat
+import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.ui.QuranActivity
 import com.quran.labs.androidquran.util.QuranSettings
@@ -62,6 +63,22 @@ class AnnouncementActivityTest {
       assertThat(shadowOf(activity).nextStartedActivity.component).isEqualTo(destination.component)
       assertThat(activity.isFinishing).isTrue()
     }
+  }
+
+  @Test
+  fun freshInstallSkipsTheAnnouncement() {
+    assertThat(settings.isFreshInstall).isTrue()
+    AnnouncementActivity.markSeen(settings)
+    assertThat(AnnouncementActivity.shouldShow(settings)).isFalse()
+
+    settings.version = BuildConfig.VERSION_CODE
+    assertThat(settings.isFreshInstall).isFalse()
+  }
+
+  @Test
+  fun seeingTheIconTeaserStillShowsTheReveal() {
+    settings.markAnnouncementSeen(1)
+    assertThat(AnnouncementActivity.shouldShow(settings)).isTrue()
   }
 
   @Test
