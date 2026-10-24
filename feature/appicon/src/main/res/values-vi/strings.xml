@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">Biểu tượng ứng dụng</string>
+  <string name="app_icon_default">Mặc định</string>
+  <string name="app_icon_section_signature">Đặc trưng</string>
+  <string name="app_icon_section_colors">Màu sắc</string>
+  <string name="app_icon_name_navy_gold">Xanh hải quân &amp; vàng kim</string>
+  <string name="app_icon_name_teal_white">Xanh mòng két &amp; trắng</string>
+  <string name="app_icon_name_black_gold">Đen &amp; vàng kim</string>
+  <string name="app_icon_name_blue">Xanh dương</string>
+  <string name="app_icon_name_purple">Tím</string>
+  <string name="app_icon_name_red">Đỏ</string>
+  <string name="app_icon_name_orange">Cam</string>
+  <string name="app_icon_name_green">Xanh lá</string>
+</resources>

@@ -39,7 +39,7 @@ class QuranForwarderActivity : Activity() {
 
         if (sura != null) {
           val page = quranInfo.getPageFromSuraAyah(sura, ayah)
-          val showSuraIntent = QuranDataActivity.openPageIntent(
+          val showSuraIntent = QuranDataCheckActivity.openPageIntent(
             context = this,
             page = page,
             sura = sura,

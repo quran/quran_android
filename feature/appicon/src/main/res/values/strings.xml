@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">App Icon</string>
+  <string name="app_icon_default">Default</string>
+  <string name="app_icon_section_signature">Signature</string>
+  <string name="app_icon_section_colors">Colors</string>
+  <string name="app_icon_name_navy_gold">Navy &amp; Gold</string>
+  <string name="app_icon_name_teal_white">Teal &amp; White</string>
+  <string name="app_icon_name_black_gold">Black &amp; Gold</string>
+  <string name="app_icon_name_blue">Blue</string>
+  <string name="app_icon_name_purple">Purple</string>
+  <string name="app_icon_name_red">Red</string>
+  <string name="app_icon_name_orange">Orange</string>
+  <string name="app_icon_name_green">Green</string>
+  <string name="app_icon_change_title">Change App Icon?</string>
+  <string name="app_icon_change_message">The app will close to apply the new icon.</string>
+  <string name="app_icon_change">Change</string>
+</resources>

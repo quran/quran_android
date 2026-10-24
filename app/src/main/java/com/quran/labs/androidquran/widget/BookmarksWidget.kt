@@ -8,7 +8,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.RemoteViews
 import com.quran.labs.androidquran.QuranApplication
-import com.quran.labs.androidquran.QuranDataActivity
+import com.quran.labs.androidquran.QuranDataCheckActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.SearchActivity
 import com.quran.labs.androidquran.ShortcutsActivity
@@ -35,7 +35,7 @@ class BookmarksWidget : AppWidgetProvider() {
 
       val widget = RemoteViews(context.packageName, R.layout.bookmarks_widget)
 
-      var intent = Intent(context, QuranDataActivity::class.java)
+      var intent = Intent(context, QuranDataCheckActivity::class.java)
       var pendingIntent =
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.widget_icon_button, pendingIntent)
@@ -45,21 +45,21 @@ class BookmarksWidget : AppWidgetProvider() {
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.widget_btn_search, pendingIntent)
 
-      intent = Intent(context, QuranDataActivity::class.java)
+      intent = Intent(context, QuranDataCheckActivity::class.java)
       intent.action = ShortcutsActivity.ACTION_JUMP_TO_LATEST
       pendingIntent =
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.widget_btn_go_to_quran, pendingIntent)
 
-      intent = Intent(context, QuranDataActivity::class.java)
+      intent = Intent(context, QuranDataCheckActivity::class.java)
       intent.action = ShortcutsActivity.ACTION_JUMP_TO
       pendingIntent =
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
       widget.setOnClickPendingIntent(R.id.search_widget_btn_jump, pendingIntent)
 
       widget.setRemoteAdapter(R.id.list_view_widget, serviceIntent)
-      val clickIntent = Intent(context, QuranDataActivity::class.java).apply {
-        action = QuranDataActivity.ACTION_OPEN_PAGE
+      val clickIntent = Intent(context, QuranDataCheckActivity::class.java).apply {
+        action = QuranDataCheckActivity.ACTION_OPEN_PAGE
       }
       val clickPendingIntent = PendingIntent
         .getActivity(

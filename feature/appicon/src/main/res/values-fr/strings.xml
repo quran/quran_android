@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">Icône de l’app</string>
+  <string name="app_icon_default">Par défaut</string>
+  <string name="app_icon_section_signature">Signature</string>
+  <string name="app_icon_section_colors">Couleurs</string>
+  <string name="app_icon_name_navy_gold">Bleu marine et or</string>
+  <string name="app_icon_name_teal_white">Bleu sarcelle et blanc</string>
+  <string name="app_icon_name_black_gold">Noir et or</string>
+  <string name="app_icon_name_blue">Bleu</string>
+  <string name="app_icon_name_purple">Violet</string>
+  <string name="app_icon_name_red">Rouge</string>
+  <string name="app_icon_name_orange">Orange</string>
+  <string name="app_icon_name_green">Vert</string>
+</resources>

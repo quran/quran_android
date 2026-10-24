@@ -27,6 +27,12 @@
         android:title="@string/appearance"
         app:iconSpaceReserved="false" />
 
+    <Preference
+        android:key="@string/prefs_app_icon_key"
+        android:persistent="false"
+        android:title="@string/app_icon_title"
+        app:iconSpaceReserved="false" />
+
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/prefs_new_background"

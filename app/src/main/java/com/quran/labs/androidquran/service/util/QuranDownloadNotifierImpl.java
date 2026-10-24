@@ -11,7 +11,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.quran.labs.androidquran.QuranDataActivity;
+import com.quran.labs.androidquran.QuranDataCheckActivity;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.util.NotificationChannelUtil;
@@ -312,7 +312,7 @@ public class QuranDownloadNotifierImpl implements QuranDownloadNotifier {
       builder.setProgress(maximum, progress, isIndeterminate);
     }
 
-    Intent notificationIntent = new Intent(appContext, QuranDataActivity.class);
+    Intent notificationIntent = new Intent(appContext, QuranDataCheckActivity.class);
     PendingIntent contentIntent =
         PendingIntent.getActivity(appContext, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
     builder.setContentIntent(contentIntent);

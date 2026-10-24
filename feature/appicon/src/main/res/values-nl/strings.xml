@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">App-icoon</string>
+  <string name="app_icon_default">Standaard</string>
+  <string name="app_icon_section_signature">Signatuur</string>
+  <string name="app_icon_section_colors">Kleuren</string>
+  <string name="app_icon_name_navy_gold">Marineblauw en goud</string>
+  <string name="app_icon_name_teal_white">Blauwgroen en wit</string>
+  <string name="app_icon_name_black_gold">Zwart en goud</string>
+  <string name="app_icon_name_blue">Blauw</string>
+  <string name="app_icon_name_purple">Paars</string>
+  <string name="app_icon_name_red">Rood</string>
+  <string name="app_icon_name_orange">Oranje</string>
+  <string name="app_icon_name_green">Groen</string>
+</resources>

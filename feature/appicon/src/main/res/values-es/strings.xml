@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">Icono de la app</string>
+  <string name="app_icon_default">Predeterminado</string>
+  <string name="app_icon_section_signature">Emblemáticos</string>
+  <string name="app_icon_section_colors">Colores</string>
+  <string name="app_icon_name_navy_gold">Azul marino y dorado</string>
+  <string name="app_icon_name_teal_white">Verde azulado y blanco</string>
+  <string name="app_icon_name_black_gold">Negro y dorado</string>
+  <string name="app_icon_name_blue">Azul</string>
+  <string name="app_icon_name_purple">Morado</string>
+  <string name="app_icon_name_red">Rojo</string>
+  <string name="app_icon_name_orange">Naranja</string>
+  <string name="app_icon_name_green">Verde</string>
+</resources>
