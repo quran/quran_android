@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran
 
 import android.app.Application
+import androidx.core.os.UserManagerCompat
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.quran.labs.androidquran.core.worker.QuranWorkerFactory
@@ -17,7 +18,7 @@ import dev.zacsweers.metro.createGraphFactory
 import timber.log.Timber
 
 @HasMemberInjections
-open class QuranApplication : Application(), QuranApplicationComponentProvider {
+open class QuranApplication : Application(), QuranApplicationComponentProvider, Configuration.Provider {
   lateinit var applicationComponent: ApplicationComponent
 
   @Inject lateinit var quranWorkerFactory: QuranWorkerFactory
@@ -50,12 +51,14 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider {
       .generate(this)
   }
 
+  override val workManagerConfiguration: Configuration
+    get() = Configuration.Builder()
+      .setWorkerFactory(quranWorkerFactory)
+      .build()
+
   open fun initializeWorkManager() {
-    WorkManager.initialize(
-      this,
-      Configuration.Builder()
-        .setWorkerFactory(quranWorkerFactory)
-        .build()
-    )
+    if (UserManagerCompat.isUserUnlocked(this)) {
+      WorkManager.initialize(this, workManagerConfiguration)
+    }
   }
 }
