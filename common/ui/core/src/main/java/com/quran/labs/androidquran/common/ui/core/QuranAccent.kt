@@ -11,25 +11,21 @@ import androidx.compose.ui.graphics.Color
  *
  * @param onLight text and glyphs drawn on a filled [light] background
  * @param onDark text and glyphs drawn on a filled [dark] background
- * @param lightReading words picked out of reading text on a light page, where [light] can be
- *   too dark to tell apart from the text around it
  */
 @Immutable
 data class QuranAccent(
   val light: Color,
   val dark: Color,
   val onLight: Color = Color.White,
-  val onDark: Color,
-  val lightReading: Color = light
+  val onDark: Color
 ) {
 
   companion object {
     // keep in sync with accent_navy_gold, which xml views take through ?attr/quranAccent
     val NavyGold = QuranAccent(
-      light = Color(0xFF000066),
+      light = Color(0xFF1F6FB2),
       dark = Color(0xFFE2AF56),
-      onDark = Color(0xFF000A3D),
-      lightReading = Color(0xFF1F6FB2)
+      onDark = Color(0xFF000A3D)
     )
 
     /** The accent [QuranTheme] uses. */
