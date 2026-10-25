@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.view
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Typeface
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -15,10 +16,12 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.annotation.StyleRes
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.common.TranslationMetadata
+import com.quran.labs.androidquran.common.ui.core.QuranAccent
 import com.quran.labs.androidquran.ui.helpers.TypefaceWrappingSpan
 import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranSettings
@@ -66,7 +69,10 @@ class InlineTranslationView @JvmOverloads constructor(
     ayahFontSize = settings.ayahTextSize
     translationFontSize = settings.translationTextSize
     textStyle = R.style.TranslationText
-    inlineAyahColor = ContextCompat.getColor(context, R.color.accent_color)
+    val isNightMode = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+        Configuration.UI_MODE_NIGHT_YES
+    val accent = QuranAccent.current
+    inlineAyahColor = (if (isNightMode) accent.dark else accent.lightReading).toArgb()
     ayahTextColor = ContextCompat.getColor(context, R.color.text_primary)
   }
 
