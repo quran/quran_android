@@ -46,6 +46,7 @@ import timber.log.Timber;
  * Modifications List (for ease of merging with upstream later on):
  * - added getFragmentIfExists() to return a fragment without recreating it
  * - keep track of a mode, and remove all fragments when said mode changes
+ * - allow adapters to omit historical fragment states from saved instance state
  */
 public abstract class FragmentStatePagerAdapter extends PagerAdapter {
   private static final boolean DEBUG = false;
@@ -177,10 +178,14 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
     return ((Fragment) object).getView() == view;
   }
 
+  protected boolean shouldSaveFragmentHistory() {
+    return true;
+  }
+
   @Override
   public Parcelable saveState() {
     Bundle state = new Bundle();
-    if (mSavedState.size() > 0) {
+    if (shouldSaveFragmentHistory() && mSavedState.size() > 0) {
       Fragment.SavedState[] fss = new Fragment.SavedState[mSavedState.size()];
       mSavedState.toArray(fss);
       state.putParcelableArray("states", fss);
