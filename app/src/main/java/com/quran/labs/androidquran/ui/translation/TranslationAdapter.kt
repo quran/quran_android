@@ -224,7 +224,7 @@ internal class TranslationAdapter(
       this.arabicTextColor = Color.BLACK
       this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header)
       this.ayahSelectionColor = ContextCompat.getColor(context, R.color.translation_ayah_selected_color)
-      this.inlineAyahColor = QuranAccent.current.lightReading.toArgb()
+      this.inlineAyahColor = QuranAccent.current.light.toArgb()
     }
 
     if (this.data.isNotEmpty()) {
