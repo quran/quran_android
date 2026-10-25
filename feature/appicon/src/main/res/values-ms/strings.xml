@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">Ikon aplikasi</string>
+  <string name="app_icon_default">Lalai</string>
+  <string name="app_icon_section_signature">Istimewa</string>
+  <string name="app_icon_section_colors">Warna</string>
+  <string name="app_icon_name_navy_gold">Biru laut &amp; emas</string>
+  <string name="app_icon_name_teal_white">Hijau kebiruan &amp; putih</string>
+  <string name="app_icon_name_black_gold">Hitam &amp; emas</string>
+  <string name="app_icon_name_blue">Biru</string>
+  <string name="app_icon_name_purple">Ungu</string>
+  <string name="app_icon_name_red">Merah</string>
+  <string name="app_icon_name_orange">Oren</string>
+  <string name="app_icon_name_green">Hijau</string>
+</resources>

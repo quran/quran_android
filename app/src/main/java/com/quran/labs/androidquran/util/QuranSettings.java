@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import com.quran.common.upgrade.PreferencesUpgrade;
@@ -286,6 +287,42 @@ public class QuranSettings {
   public void setCurrentAudioRevision(int version) {
     perInstallationPrefs.edit()
         .putInt(Constants.PREF_CURRENT_AUDIO_REVISION, version).apply();
+  }
+
+  @Nullable
+  public String getSavedAppIcon() {
+    return perInstallationPrefs.getString(Constants.PREF_SAVED_APP_ICON, null);
+  }
+
+  public void setSavedAppIcon(@Nullable String iconId) {
+    perInstallationPrefs.edit()
+        .putString(Constants.PREF_SAVED_APP_ICON, iconId).apply();
+  }
+
+  @Nullable
+  public Boolean getAppIconsAvailable() {
+    if (!perInstallationPrefs.contains(Constants.PREF_APP_ICONS_AVAILABLE)) {
+      return null;
+    }
+    return perInstallationPrefs.getBoolean(Constants.PREF_APP_ICONS_AVAILABLE, false);
+  }
+
+  public void setAppIconsAvailable(@Nullable Boolean available) {
+    if (available == null) {
+      perInstallationPrefs.edit().remove(Constants.PREF_APP_ICONS_AVAILABLE).apply();
+    } else {
+      perInstallationPrefs.edit()
+          .putBoolean(Constants.PREF_APP_ICONS_AVAILABLE, available).apply();
+    }
+  }
+
+  public boolean isAppIconPending() {
+    return perInstallationPrefs.getBoolean(Constants.PREF_APP_ICON_PENDING, false);
+  }
+
+  public void setAppIconPending(boolean pending) {
+    perInstallationPrefs.edit()
+        .putBoolean(Constants.PREF_APP_ICON_PENDING, pending).apply();
   }
 
   public boolean haveMigratedLegacyBookmarksToMobileSync() {

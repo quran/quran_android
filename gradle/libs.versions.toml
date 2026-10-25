@@ -37,6 +37,7 @@ androidxCoreVersion = "1.19.1"
 androidxNavigationVersion = "2.10.2"
 androidxDynamicAnimationVersion = "1.1.0"
 androidxFragmentVersion = "1.9.1"
+androidxLifecycleVersion = "2.11.0"
 androidxJunitExtVersion = "1.3.0"
 androidxLocalBroadcastVersion = "1.1.0"
 androidxMediaVersion = "1.8.0"
@@ -91,6 +92,7 @@ androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityComposeVersion" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotationVersion" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragmentVersion" }
+androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "androidxLifecycleVersion" }
 androidx-localbroadcastmanager = { module = "androidx.localbroadcastmanager:localbroadcastmanager", version.ref = "androidxLocalBroadcastVersion" }
 androidx-dynamicanimation = { module = "androidx.dynamicanimation:dynamicanimation", version.ref = "androidxDynamicAnimationVersion" }
 androidx-media = { module = "androidx.media:media", version.ref = "androidxMediaVersion" }

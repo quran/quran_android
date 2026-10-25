@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">نماد برنامه</string>
+  <string name="app_icon_default">پیش‌فرض</string>
+  <string name="app_icon_section_signature">ویژه</string>
+  <string name="app_icon_section_colors">رنگ‌ها</string>
+  <string name="app_icon_name_navy_gold">سرمه‌ای و طلایی</string>
+  <string name="app_icon_name_teal_white">سبزآبی و سفید</string>
+  <string name="app_icon_name_black_gold">مشکی و طلایی</string>
+  <string name="app_icon_name_blue">آبی</string>
+  <string name="app_icon_name_purple">بنفش</string>
+  <string name="app_icon_name_red">قرمز</string>
+  <string name="app_icon_name_orange">نارنجی</string>
+  <string name="app_icon_name_green">سبز</string>
+</resources>

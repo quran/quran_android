@@ -6,7 +6,7 @@ import com.quran.common.networking.NetworkModule
 import com.quran.data.di.AppScope
 import com.quran.data.page.provider.QuranDataModule
 import com.quran.labs.androidquran.QuranApplication
-import com.quran.labs.androidquran.QuranDataActivity
+import com.quran.labs.androidquran.QuranDataCheckActivity
 import com.quran.labs.androidquran.QuranForwarderActivity
 import com.quran.labs.androidquran.QuranImportActivity
 import com.quran.labs.androidquran.SearchActivity
@@ -70,7 +70,7 @@ interface ApplicationComponent : QuranApplicationComponent {
   fun inject(quranDownloadService: QuranDownloadService)
 
   // activities
-  fun inject(quranDataActivity: QuranDataActivity)
+  fun inject(quranDataCheckActivity: QuranDataCheckActivity)
   fun inject(quranImportActivity: QuranImportActivity)
   fun inject(quranForwarderActivity: QuranForwarderActivity)
   fun inject(searchActivity: SearchActivity)

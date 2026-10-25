@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">Ilova belgisi</string>
+  <string name="app_icon_default">Standart</string>
+  <string name="app_icon_section_signature">Maxsus</string>
+  <string name="app_icon_section_colors">Ranglar</string>
+  <string name="app_icon_name_navy_gold">To‘q ko‘k va oltin</string>
+  <string name="app_icon_name_teal_white">Moviy-yashil va oq</string>
+  <string name="app_icon_name_black_gold">Qora va oltin</string>
+  <string name="app_icon_name_blue">Ko‘k</string>
+  <string name="app_icon_name_purple">Binafsha</string>
+  <string name="app_icon_name_red">Qizil</string>
+  <string name="app_icon_name_orange">To‘q sariq</string>
+  <string name="app_icon_name_green">Yashil</string>
+</resources>

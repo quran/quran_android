@@ -12,6 +12,7 @@ import com.quran.data.di.AppScope
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
+import com.quran.labs.androidquran.appicon.QuranAppIconCatalog
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoManager
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoSource
 import com.quran.labs.androidquran.data.QuranDisplayData
@@ -26,6 +27,7 @@ import com.quran.labs.androidquran.util.SettingsImpl
 import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.di.ExtraScreenProvider
 import com.quran.mobile.di.qualifier.ApplicationContext
+import com.quran.mobile.feature.appicon.model.AppIconCatalog
 import com.quran.page.common.data.QuranNaming
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ElementsIntoSet
@@ -60,6 +62,9 @@ object ApplicationModule {
   ): PageSizeCalculator {
     return pageProvider.getPageSizeCalculator(displaySize)
   }
+
+  @Provides
+  fun provideAppIconCatalog(): AppIconCatalog = QuranAppIconCatalog.catalog
 
   @Provides
   @SingleIn(AppScope::class)

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">ئەپ سىنبەلگىسى</string>
+  <string name="app_icon_default">كۆڭۈلدىكى</string>
+  <string name="app_icon_section_signature">ئالاھىدە</string>
+  <string name="app_icon_section_colors">رەڭلەر</string>
+  <string name="app_icon_name_navy_gold">قېنىق كۆك ۋە ئالتۇن رەڭ</string>
+  <string name="app_icon_name_teal_white">كۆكۈش يېشىل ۋە ئاق</string>
+  <string name="app_icon_name_black_gold">قارا ۋە ئالتۇن رەڭ</string>
+  <string name="app_icon_name_blue">كۆك</string>
+  <string name="app_icon_name_purple">بىنەپشە</string>
+  <string name="app_icon_name_red">قىزىل</string>
+  <string name="app_icon_name_orange">قىزغۇچ سېرىق</string>
+  <string name="app_icon_name_green">يېشىل</string>
+</resources>

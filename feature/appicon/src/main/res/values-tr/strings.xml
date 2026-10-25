@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_icon_title">Uygulama simgesi</string>
+  <string name="app_icon_default">Varsayılan</string>
+  <string name="app_icon_section_signature">İmza</string>
+  <string name="app_icon_section_colors">Renkler</string>
+  <string name="app_icon_name_navy_gold">Lacivert ve altın</string>
+  <string name="app_icon_name_teal_white">Petrol mavisi ve beyaz</string>
+  <string name="app_icon_name_black_gold">Siyah ve altın</string>
+  <string name="app_icon_name_blue">Mavi</string>
+  <string name="app_icon_name_purple">Mor</string>
+  <string name="app_icon_name_red">Kırmızı</string>
+  <string name="app_icon_name_orange">Turuncu</string>
+  <string name="app_icon_name_green">Yeşil</string>
+</resources>

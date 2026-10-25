@@ -25,7 +25,7 @@ class SearchActivityTest {
       shadowOf(Looper.getMainLooper()).idle()
       assertThat(activity.quranSettings.haveMigratedLegacyBookmarksToMobileSync()).isFalse()
       val launched = shadowOf(activity).nextStartedActivity
-      assertThat(launched.component?.className).isEqualTo(QuranDataActivity::class.java.name)
+      assertThat(launched.component?.className).isEqualTo(QuranDataCheckActivity::class.java.name)
       assertThat(launched.action).isNull()
       assertThat(launched.extras).isNull()
       assertThat(activity.isFinishing).isTrue()

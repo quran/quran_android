@@ -369,7 +369,7 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
     if (canOpenReaderDirectly()) {
       quranNavigator.jumpTo(SuraAyah(sura, ayah), showTranslation = jumpToTranslation)
     } else {
-      startActivity(Intent(this, QuranDataActivity::class.java))
+      startActivity(Intent(this, QuranDataCheckActivity::class.java))
       finish()
     }
   }
