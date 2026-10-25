@@ -105,6 +105,14 @@ public class QuranDisplayHelper {
     if (rub3 == -1) {
       return "";
     }
+    // The hizb is shown next to the juz' printed for the page (getJuzForDisplayFromPage).
+    // On pages where a new juz' starts mid-page, the printed juz' is the previous juz',
+    // while the quarter starting on the page already belongs to the new juz' - so pairing
+    // them is misleading (ex page 201 prints Juz' 10, but Hizb 21 is in Juz' 11). Hide the
+    // hizb whenever it doesn't belong to the printed juz' (see #1939).
+    if ((rub3 / 8) + 1 != quranInfo.getJuzForDisplayFromPage(page)) {
+      return "";
+    }
     int hizb = (rub3 / 4) + 1;
     StringBuilder sb = new StringBuilder();
     sb.append(context.getString(R.string.comma));
