@@ -48,7 +48,7 @@ internal fun CollectionRow(
       } else {
         collection.name
       },
-      style = MaterialTheme.typography.titleSmall,
+      style = MaterialTheme.typography.bodyLarge,
       color = MaterialTheme.colorScheme.onSurface,
       maxLines = 1,
       overflow = TextOverflow.Ellipsis,
@@ -58,7 +58,7 @@ internal fun CollectionRow(
     )
     Text(
       text = collection.countLabel.toString(),
-      style = MaterialTheme.typography.bodySmall,
+      style = MaterialTheme.typography.bodyMedium,
       color = MaterialTheme.colorScheme.onSurfaceVariant
     )
   }
