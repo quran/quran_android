@@ -30,7 +30,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.quran.data.model.bookmark.EmptyReadingBookmark
@@ -110,7 +109,7 @@ private fun SuggestedReadingBookmarkRow(
           isPlaced -> stringResource(R.string.ayahbookmark_reading_bookmark_move_here, slotName)
           else -> stringResource(R.string.ayahbookmark_reading_bookmark_set_here, slotName)
         },
-        style = MaterialTheme.typography.titleSmall,
+        style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.onSurface
       )
 
@@ -126,7 +125,7 @@ private fun SuggestedReadingBookmarkRow(
           } else {
             stringResource(R.string.readingbookmark_not_placed)
           },
-          style = MaterialTheme.typography.bodySmall,
+          style = MaterialTheme.typography.bodyMedium,
           color = MaterialTheme.colorScheme.onSurfaceVariant
         )
       }
@@ -206,7 +205,7 @@ private fun OtherReadingBookmarksRow(
 
     Text(
       text = stringResource(R.string.ayahbookmark_other_reading_bookmark),
-      style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Medium),
+      style = MaterialTheme.typography.titleMedium,
       color = MaterialTheme.colorScheme.primary,
       modifier = Modifier
         .weight(1f)
