@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- the outline of a collection name chip - the accent colour, held back so it reads as a label -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:alpha="0.45" android:color="?attr/colorAccent" />
+</selector>

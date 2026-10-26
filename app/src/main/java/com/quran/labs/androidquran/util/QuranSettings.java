@@ -2,6 +2,9 @@ package com.quran.labs.androidquran.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
@@ -12,13 +15,16 @@ import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
+import com.quran.mobile.feature.pagetheme.PageTheme;
+import com.quran.mobile.feature.pagetheme.PageThemeConstants;
+import com.quran.mobile.feature.pagetheme.PageThemeSettings;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 
-public class QuranSettings {
+public class QuranSettings implements PageThemeSettings {
   private static final String PREFS_FILE = "com.quran.labs.androidquran.per_installation";
 
   private static QuranSettings instance;
@@ -69,26 +75,65 @@ public class QuranSettings {
     return prefs.getBoolean(Constants.PREF_PREFER_STREAMING, false);
   }
 
+  @Override
   public boolean isNightMode() {
-    return prefs.getBoolean(Constants.PREF_NIGHT_MODE, false);
+    String appearance = getPageAppearance();
+    if (PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC.equals(appearance)) {
+      boolean systemNight = (Resources.getSystem().getConfiguration().uiMode
+          & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+      return ThemeUtil.isDarkAppearance(currentTheme(), systemNight);
+    }
+    return PageThemeConstants.PAGE_APPEARANCE_DARK.equals(appearance);
   }
 
-  public boolean useNewBackground() {
-    return prefs.getBoolean(Constants.PREF_USE_NEW_BACKGROUND, true);
+  @Override
+  public boolean hasOldBackgroundOption() {
+    return prefs.contains(Constants.PREF_USE_OLD_BACKGROUND);
+  }
+
+  @Override
+  public boolean useOldBackground() {
+    return prefs.getBoolean(Constants.PREF_USE_OLD_BACKGROUND, false);
+  }
+
+  @Override
+  public void setUseOldBackground(boolean useOldBackground) {
+    prefs.edit().putBoolean(Constants.PREF_USE_OLD_BACKGROUND, useOldBackground).apply();
+  }
+
+  @Override
+  public int getNightModeTextBrightness() {
+    return Math.max(PageThemeConstants.MIN_NIGHT_MODE_TEXT_BRIGHTNESS,
+        prefs.getInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
+            Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS));
+  }
+
+  @Override
+  public void setNightModeTextBrightness(int brightness) {
+    prefs.edit().putInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS, brightness).apply();
+  }
+
+  @Override
+  public int getNightModeBackgroundBrightness() {
+    return prefs.getInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS,
+        Constants.DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS);
+  }
+
+  @Override
+  public void setNightModeBackgroundBrightness(int brightness) {
+    prefs.edit().putInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS, brightness).apply();
+  }
+
+  @Override
+  public int getPageTextBrightness() {
+    // avoid damaging the looks of the Quran page
+    int brightness = (int) (50 * Math.log1p(getNightModeBackgroundBrightness()) +
+        getNightModeTextBrightness());
+    return Math.min(brightness, 255);
   }
 
   public boolean highlightBookmarks() {
     return prefs.getBoolean(Constants.PREF_HIGHLIGHT_BOOKMARKS, true);
-  }
-
-  public int getNightModeTextBrightness() {
-    return prefs.getInt(Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
-        Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS);
-  }
-
-  public int getNightModeBackgroundBrightness() {
-    return prefs.getInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS,
-        Constants.DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS);
   }
 
   public boolean shouldOverlayPageInfo() {
@@ -252,6 +297,48 @@ public class QuranSettings {
     return theme;
   }
 
+  @Override
+  public String getPageAppearance() {
+    String appearance = prefs.getString(Constants.PREF_PAGE_APPEARANCE, null);
+    if (appearance == null) {
+      return prefs.getBoolean(Constants.PREF_NIGHT_MODE, false) ?
+          PageThemeConstants.PAGE_APPEARANCE_DARK : PageThemeConstants.PAGE_APPEARANCE_LIGHT;
+    }
+    return appearance;
+  }
+
+  @Override
+  public void setPageAppearance(String appearance) {
+    prefs.edit().putString(Constants.PREF_PAGE_APPEARANCE, appearance).apply();
+  }
+
+  @Override
+  public String getPageTheme() {
+    return PageTheme.fromKey(prefs.getString(Constants.PREF_PAGE_THEME,
+        PageThemeConstants.PAGE_THEME_LIGHT)).getStorageKey();
+  }
+
+  @Override
+  public void setPageTheme(String pageTheme) {
+    prefs.edit().putString(Constants.PREF_PAGE_THEME, pageTheme).apply();
+  }
+
+  public int getPageThemeBackgroundColor() {
+    if (isNightMode()) {
+      int brightness = getNightModeBackgroundBrightness();
+      return Color.rgb(brightness, brightness, brightness);
+    }
+    return getDayPageBackgroundColor();
+  }
+
+  public int getDayPageBackgroundColor() {
+    return PageTheme.fromKey(getPageTheme()).backgroundColor(appContext);
+  }
+
+  public boolean isLightPage() {
+    return !isNightMode() && PageThemeConstants.PAGE_THEME_LIGHT.equals(getPageTheme());
+  }
+
   // probably should eventually move this to Application.onCreate..
   public void upgradePreferences(PreferencesUpgrade preferencesUpgrade) {
     int version = getVersion();
@@ -260,6 +347,8 @@ public class QuranSettings {
         // try fetching from prefs instead of from per installation prefs
         version = prefs.getInt(Constants.PREF_VERSION, 0);
       }
+
+      PageThemePreferences.migrate(prefs, version != 0);
 
       // allow specific flavors of the app to handle their own upgrade logic.
       // this is important because different flavors have different version codes, so
@@ -368,6 +457,10 @@ public class QuranSettings {
       return perInstallationPrefs.getStringSet(
           Constants.PREF_ACTIVE_TRANSLATIONS, Collections.emptySet());
     }
+  }
+
+  public boolean isFreshInstall() {
+    return getVersion() == 0 && prefs.getInt(Constants.PREF_VERSION, 0) == 0;
   }
 
   public int getVersion() {

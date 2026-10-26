@@ -65,7 +65,7 @@ private fun SignInPromptRow(modifier: Modifier = Modifier) {
   Surface(
     onClick = { context.startActivity(quranSyncIntent(context)) },
     shape = RoundedCornerShape(16.dp),
-    color = MaterialTheme.colorScheme.primaryContainer,
+    color = MaterialTheme.colorScheme.secondaryContainer,
     modifier = modifier.fillMaxWidth()
   ) {
     Row(
@@ -94,12 +94,12 @@ private fun SignInPromptRow(modifier: Modifier = Modifier) {
           text = stringResource(R.string.quran_sync_sign_in_prompt_title),
           style = MaterialTheme.typography.titleMedium,
           fontWeight = FontWeight.Bold,
-          color = MaterialTheme.colorScheme.onPrimaryContainer
+          color = MaterialTheme.colorScheme.onSecondaryContainer
         )
         Text(
           text = stringResource(R.string.quran_sync_settings_summary),
           style = MaterialTheme.typography.bodySmall,
-          color = MaterialTheme.colorScheme.onPrimaryContainer,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
           maxLines = 1,
           overflow = TextOverflow.Ellipsis
         )
@@ -107,7 +107,7 @@ private fun SignInPromptRow(modifier: Modifier = Modifier) {
       Icon(
         imageVector = QuranIcons.ChevronRight,
         contentDescription = null,
-        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.autoMirror()
       )
     }

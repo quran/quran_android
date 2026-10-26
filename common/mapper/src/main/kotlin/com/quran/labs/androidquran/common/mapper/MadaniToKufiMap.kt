@@ -189,8 +189,14 @@ object MadaniToKufiMap {
           RangeOffsetOperator(sura = 17, startAyah = 108, endAyah = 110, offset = 1)
       ),
       18 to listOf(
-          // 18:1-18:34 no difference
-          RangeOffsetOperator(sura = 18, startAyah = 1, endAyah = 34, offset = 0),
+          // 18:1-18:21 no difference
+          RangeOffsetOperator(sura = 18, startAyah = 1, endAyah = 21, offset = 0),
+          // 18:22-18:23 in madani map to 18:22 in kufi
+          JoinOperator(sura = 18, startAyah = 22, endAyah = 23, targetAyah = 22),
+          // 18:24 madani is 18:23-18:24 kufi
+          SplitOperator(sura = 18, ayah = 24, firstAyah = 23, secondAyah = 24),
+          // 18:25-18:34 no difference
+          RangeOffsetOperator(sura = 18, startAyah = 25, endAyah = 34, offset = 0),
           // 18:35 madani is 18:35-18:36 kufi
           SplitOperator(sura = 18, ayah = 35, firstAyah = 35, secondAyah = 36),
           // 18:36-18:83 in madani map to 18:37-18:84 in kufi
@@ -229,8 +235,44 @@ object MadaniToKufiMap {
       20 to listOf(
           // 20:1 madani is 20:1-20:2 kufi
           SplitOperator(sura = 20, ayah = 1, firstAyah = 1, secondAyah = 2),
-          // 20:2-20:134 in madani map to 20:3-20:135 in kufi
-          RangeOffsetOperator(sura = 20, startAyah = 2, endAyah = 134, offset = 1)
+          // 20:2-20:37 in madani map to 20:3-20:38 in kufi
+          RangeOffsetOperator(sura = 20, startAyah = 2, endAyah = 37, offset = 1),
+          // 20:38-20:39 in madani map to 20:39 in kufi
+          JoinOperator(sura = 20, startAyah = 38, endAyah = 39, targetAyah = 39),
+          // 20:40 no difference
+          RangeOffsetOperator(sura = 20, startAyah = 40, endAyah = 40, offset = 0),
+          // 20:41 madani is 20:41-20:42 kufi
+          SplitOperator(sura = 20, ayah = 41, firstAyah = 41, secondAyah = 42),
+          // 20:42-20:76 in madani map to 20:43-20:77 in kufi
+          RangeOffsetOperator(sura = 20, startAyah = 42, endAyah = 76, offset = 1),
+          // 20:77 madani is 20:78-20:79 kufi
+          SplitOperator(sura = 20, ayah = 77, firstAyah = 78, secondAyah = 79),
+          // 20:78-20:83 in madani map to 20:80-20:85 in kufi
+          RangeOffsetOperator(sura = 20, startAyah = 78, endAyah = 83, offset = 2),
+          // 20:84-20:85 in madani map to 20:86 in kufi
+          JoinOperator(sura = 20, startAyah = 84, endAyah = 85, targetAyah = 86),
+          // 20:86 madani is 20:87-20:88 kufi
+          SplitOperator(sura = 20, ayah = 86, firstAyah = 87, secondAyah = 88),
+          // 20:87-20:88 in madani map to 20:89 in kufi
+          JoinOperator(sura = 20, startAyah = 87, endAyah = 88, targetAyah = 89),
+          // 20:89-20:90 in madani map to 20:90-20:91 in kufi
+          RangeOffsetOperator(sura = 20, startAyah = 89, endAyah = 90, offset = 1),
+          // 20:91 madani is 20:92-20:93 kufi
+          SplitOperator(sura = 20, ayah = 91, firstAyah = 92, secondAyah = 93),
+          // 20:92-20:103 in madani map to 20:94-20:105 in kufi
+          RangeOffsetOperator(sura = 20, startAyah = 92, endAyah = 103, offset = 2),
+          // 20:104 madani is 20:106-20:107 kufi
+          SplitOperator(sura = 20, ayah = 104, firstAyah = 106, secondAyah = 107),
+          // 20:105-20:119 in madani map to 20:108-20:122 in kufi
+          RangeOffsetOperator(sura = 20, startAyah = 105, endAyah = 119, offset = 3),
+          // 20:120-20:121 in madani map to 20:123 in kufi
+          JoinOperator(sura = 20, startAyah = 120, endAyah = 121, targetAyah = 123),
+          // 20:122-20:128 in madani map to 20:124-20:130 in kufi
+          RangeOffsetOperator(sura = 20, startAyah = 122, endAyah = 128, offset = 2),
+          // 20:129-20:130 in madani map to 20:131 in kufi
+          JoinOperator(sura = 20, startAyah = 129, endAyah = 130, targetAyah = 131),
+          // 20:131-20:134 in madani map to 20:132-20:135 in kufi
+          RangeOffsetOperator(sura = 20, startAyah = 131, endAyah = 134, offset = 1)
       ),
       21 to listOf(
           // 21:1-21:65 no difference
@@ -313,8 +355,8 @@ object MadaniToKufiMap {
           SplitOperator(sura = 29, ayah = 1, firstAyah = 1, secondAyah = 2),
           // 29:2-29:27 in madani map to 29:3-29:28 in kufi
           RangeOffsetOperator(sura = 29, startAyah = 2, endAyah = 27, offset = 1),
-          // 29:28-29:29 in madani map to 29:28 in kufi
-          JoinOperator(sura = 29, startAyah = 28, endAyah = 29, targetAyah = 28),
+          // 29:28-29:29 in madani map to 29:29 in kufi
+          JoinOperator(sura = 29, startAyah = 28, endAyah = 29, targetAyah = 29),
           // 29:30-29:69 no difference
           RangeOffsetOperator(sura = 29, startAyah = 30, endAyah = 69, offset = 0)
       ),
@@ -735,8 +777,14 @@ object MadaniToKufiMap {
           JoinOperator(sura = 89, startAyah = 15, endAyah = 16, targetAyah = 15),
           // 89:17-89:18 in madani map to 89:16 in kufi
           JoinOperator(sura = 89, startAyah = 17, endAyah = 18, targetAyah = 16),
-          // 89:19-89:32 in madani map to 89:17-89:30 in kufi
-          RangeOffsetOperator(sura = 89, startAyah = 19, endAyah = 32, offset = -2)
+          // 89:19-89:24 in madani map to 89:17-89:22 in kufi
+          RangeOffsetOperator(sura = 89, startAyah = 19, endAyah = 24, offset = -2),
+          // 89:25-89:26 in madani map to 89:23 in kufi
+          JoinOperator(sura = 89, startAyah = 25, endAyah = 26, targetAyah = 23),
+          // 89:27-89:31 in madani map to 89:24-89:28 in kufi
+          RangeOffsetOperator(sura = 89, startAyah = 27, endAyah = 31, offset = -3),
+          // 89:32 madani is 89:29-89:30 kufi
+          SplitOperator(sura = 89, ayah = 32, firstAyah = 29, secondAyah = 30)
       ),
       90 to listOf(
           // 90:1-90:20 no difference
@@ -801,8 +849,10 @@ object MadaniToKufiMap {
           RangeOffsetOperator(sura = 102, startAyah = 1, endAyah = 8, offset = 0)
       ),
       103 to listOf(
-          // 103:1-103:3 no difference
-          RangeOffsetOperator(sura = 103, startAyah = 1, endAyah = 3, offset = 0)
+          // 103:1 madani is 103:1-103:2 kufi
+          SplitOperator(sura = 103, ayah = 1, firstAyah = 1, secondAyah = 2),
+          // 103:2-103:3 in madani map to 103:3 in kufi
+          JoinOperator(sura = 103, startAyah = 2, endAyah = 3, targetAyah = 3)
       ),
       104 to listOf(
           // 104:1-104:9 no difference

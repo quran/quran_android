@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.common.mapper
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
+import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.pages.data.warsh.WarshDataSource
 import org.junit.Test
 
@@ -140,6 +141,144 @@ class MadaniToKufiMapperTest {
     // ayahs 6 and 7 kufi are ayah 6 madani
     assertThat(mapper.reverseMapAyah(SuraAyah(107, 6))).containsExactly(SuraAyah(107, 6))
     assertThat(mapper.reverseMapAyah(SuraAyah(107, 7))).containsExactly(SuraAyah(107, 6))
+  }
+
+  @Test
+  fun testSuraKahfMapping() {
+    val kahf = generateSuraAyah(18, 0, 25)
+    // ayahs 22-23 madani are ayah 22 kufi
+    assertThat(mapper.mapAyah(kahf[22])).containsExactly(kahf[22])
+    assertThat(mapper.mapAyah(kahf[23])).containsExactly(kahf[22])
+    // ayah 24 madani is ayat 23-24 in kufi
+    assertThat(mapper.mapAyah(kahf[24])).containsExactly(kahf[23], kahf[24])
+    assertThat(mapper.mapAyah(kahf[25])).containsExactly(kahf[25])
+  }
+
+  @Test
+  fun testSuraKahfReverseMapping() {
+    val kahf = generateSuraAyah(18, 0, 24)
+    // ayah 22 kufi is ayahs 22-23 madani
+    assertThat(mapper.reverseMapAyah(kahf[22])).containsExactly(kahf[22], kahf[23])
+    // ayahs 23-24 kufi are ayah 24 madani
+    assertThat(mapper.reverseMapAyah(kahf[23])).containsExactly(kahf[24])
+    assertThat(mapper.reverseMapAyah(kahf[24])).containsExactly(kahf[24])
+  }
+
+  @Test
+  fun testSuraTahaMapping() {
+    val taha = generateSuraAyah(20, 0, 135)
+    // ayahs 38-39 madani are ayah 39 kufi
+    assertThat(mapper.mapAyah(taha[37])).containsExactly(taha[38])
+    assertThat(mapper.mapAyah(taha[38])).containsExactly(taha[39])
+    assertThat(mapper.mapAyah(taha[39])).containsExactly(taha[39])
+    assertThat(mapper.mapAyah(taha[40])).containsExactly(taha[40])
+    // ayah 41 madani is ayat 41-42 in kufi
+    assertThat(mapper.mapAyah(taha[41])).containsExactly(taha[41], taha[42])
+    // ayah 77 madani is ayat 78-79 in kufi
+    assertThat(mapper.mapAyah(taha[77])).containsExactly(taha[78], taha[79])
+    // ayahs 120-121 madani are ayah 123 kufi
+    assertThat(mapper.mapAyah(taha[120])).containsExactly(taha[123])
+    assertThat(mapper.mapAyah(taha[121])).containsExactly(taha[123])
+    // ayahs 129-130 madani are ayah 131 kufi
+    assertThat(mapper.mapAyah(taha[129])).containsExactly(taha[131])
+    assertThat(mapper.mapAyah(taha[130])).containsExactly(taha[131])
+    assertThat(mapper.mapAyah(taha[134])).containsExactly(taha[135])
+  }
+
+  @Test
+  fun testSuraTahaReverseMapping() {
+    val taha = generateSuraAyah(20, 0, 135)
+    // ayah 39 kufi is ayahs 38-39 madani
+    assertThat(mapper.reverseMapAyah(taha[39])).containsExactly(taha[38], taha[39])
+    // ayahs 41-42 kufi are ayah 41 madani
+    assertThat(mapper.reverseMapAyah(taha[41])).containsExactly(taha[41])
+    assertThat(mapper.reverseMapAyah(taha[42])).containsExactly(taha[41])
+    assertThat(mapper.reverseMapAyah(taha[131])).containsExactly(taha[129], taha[130])
+    assertThat(mapper.reverseMapAyah(taha[135])).containsExactly(taha[134])
+  }
+
+  @Test
+  fun testSuraAnkabutMapping() {
+    val ankabut = generateSuraAyah(29, 0, 30)
+    assertThat(mapper.mapAyah(ankabut[27])).containsExactly(ankabut[28])
+    // ayahs 28-29 madani are ayah 29 kufi
+    assertThat(mapper.mapAyah(ankabut[28])).containsExactly(ankabut[29])
+    assertThat(mapper.mapAyah(ankabut[29])).containsExactly(ankabut[29])
+    assertThat(mapper.mapAyah(ankabut[30])).containsExactly(ankabut[30])
+  }
+
+  @Test
+  fun testSuraAnkabutReverseMapping() {
+    val ankabut = generateSuraAyah(29, 0, 30)
+    assertThat(mapper.reverseMapAyah(ankabut[28])).containsExactly(ankabut[27])
+    // ayah 29 kufi is ayahs 28-29 madani
+    assertThat(mapper.reverseMapAyah(ankabut[29])).containsExactly(ankabut[28], ankabut[29])
+    assertThat(mapper.reverseMapAyah(ankabut[30])).containsExactly(ankabut[30])
+  }
+
+  @Test
+  fun testSuraFajrMapping() {
+    val fajr = generateSuraAyah(89, 0, 32)
+    assertThat(mapper.mapAyah(fajr[24])).containsExactly(SuraAyah(89, 22))
+    // ayahs 25-26 madani are ayah 23 kufi
+    assertThat(mapper.mapAyah(fajr[25])).containsExactly(SuraAyah(89, 23))
+    assertThat(mapper.mapAyah(fajr[26])).containsExactly(SuraAyah(89, 23))
+    // ayahs 27-31 madani are ayat 24-28 in kufi
+    (27..31).forEach {
+      assertThat(mapper.mapAyah(fajr[it])).containsExactly(SuraAyah(89, it - 3))
+    }
+    // ayah 32 madani is ayat 29-30 in kufi
+    assertThat(mapper.mapAyah(fajr[32])).containsExactly(SuraAyah(89, 29), SuraAyah(89, 30))
+  }
+
+  @Test
+  fun testSuraFajrReverseMapping() {
+    // ayah 23 kufi is ayahs 25-26 madani
+    assertThat(mapper.reverseMapAyah(SuraAyah(89, 23)))
+      .containsExactly(SuraAyah(89, 25), SuraAyah(89, 26))
+    assertThat(mapper.reverseMapAyah(SuraAyah(89, 24))).containsExactly(SuraAyah(89, 27))
+    // ayahs 29-30 kufi are ayah 32 madani
+    assertThat(mapper.reverseMapAyah(SuraAyah(89, 29))).containsExactly(SuraAyah(89, 32))
+    assertThat(mapper.reverseMapAyah(SuraAyah(89, 30))).containsExactly(SuraAyah(89, 32))
+  }
+
+  @Test
+  fun testSuraAsrMapping() {
+    val asr = generateSuraAyah(103, 0, 3)
+    // ayah 1 madani is ayat 1-2 in kufi
+    assertThat(mapper.mapAyah(asr[1])).containsExactly(asr[1], asr[2])
+    // ayahs 2-3 madani are ayah 3 kufi
+    assertThat(mapper.mapAyah(asr[2])).containsExactly(asr[3])
+    assertThat(mapper.mapAyah(asr[3])).containsExactly(asr[3])
+  }
+
+  @Test
+  fun testSuraAsrReverseMapping() {
+    val asr = generateSuraAyah(103, 0, 3)
+    // ayahs 1-2 kufi are ayah 1 madani
+    assertThat(mapper.reverseMapAyah(asr[1])).containsExactly(asr[1])
+    assertThat(mapper.reverseMapAyah(asr[2])).containsExactly(asr[1])
+    // ayah 3 kufi is ayahs 2-3 madani
+    assertThat(mapper.reverseMapAyah(asr[3])).containsExactly(asr[2], asr[3])
+  }
+
+  @Test
+  fun testEveryAyahMapsToAnAyahInTheOtherCounting() {
+    val madaniAyahCounts = WarshDataSource().numberOfAyahsForSuraArray
+    val kufiAyahCounts = MadaniDataSource().numberOfAyahsForSuraArray
+    (1..114).forEach { sura ->
+      // mapping throws if more than one operation applies to an ayah
+      (1..madaniAyahCounts[sura - 1]).forEach { ayah ->
+        mapper.mapAyah(SuraAyah(sura, ayah)).forEach {
+          assertThat(it.ayah).isIn(1..kufiAyahCounts[sura - 1])
+        }
+      }
+      (1..kufiAyahCounts[sura - 1]).forEach { ayah ->
+        mapper.reverseMapAyah(SuraAyah(sura, ayah)).forEach {
+          assertThat(it.ayah).isIn(1..madaniAyahCounts[sura - 1])
+        }
+      }
+    }
   }
 
   private fun generateSuraAyah(sura: Int, startAyah: Int, endAyah: Int): List<SuraAyah> {

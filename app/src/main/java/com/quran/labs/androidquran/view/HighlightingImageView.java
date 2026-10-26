@@ -216,12 +216,10 @@ public class HighlightingImageView extends AppCompatImageView {
     }
   }
 
-  public void setNightMode(boolean isNightMode, int textBrightness, int backgroundBrightness) {
+  public void setNightMode(boolean isNightMode, int textBrightness) {
     this.isNightMode = isNightMode;
     if (isNightMode) {
-      // avoid damaging the looks of the Quran page
-      nightModeTextBrightness = (int) (50 * Math.log1p(backgroundBrightness) + textBrightness);
-      if (nightModeTextBrightness > 255) { nightModeTextBrightness = 255; }
+      nightModeTextBrightness = textBrightness;
       // we need a new color filter now
       isColorFilterOn = false;
     }

@@ -5,6 +5,7 @@ import android.app.SearchManager
 import android.content.ComponentName
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Build
@@ -133,6 +134,7 @@ import com.quran.mobile.feature.ayahbookmark.AyahBookmarkWrapper
 import com.quran.mobile.feature.ayahbookmark.di.AyahBookmarkWrapperInjector
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.ReadingBookmarkSheetWrapper
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.di.ReadingBookmarkSheetWrapperInjector
+import com.quran.mobile.feature.pagetheme.PageThemeSheetWrapper
 import com.quran.mobile.feature.qarilist.QariListWrapper
 import com.quran.mobile.feature.qarilist.di.QariListWrapperInjector
 import com.quran.mobile.translation.model.LocalTranslation
@@ -202,6 +204,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private lateinit var audioStatusBar: AudioBarWrapper
   private lateinit var viewPager: ViewPager
+  private val themePreferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+    if (key in PAGE_COLOR_PREFERENCES) {
+      refreshQuranPages()
+    }
+  }
   private lateinit var pagerAdapter: QuranPageAdapter
   private lateinit var ayahToolBar: AyahToolBar
   private lateinit var slidingPanel: SlidingUpPanelLayout
@@ -886,6 +893,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   public override fun onResume() {
     super.onResume()
+    quranSettings.registerPreferencesListener(themePreferencesListener)
+    refreshQuranPages()
 
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
@@ -1086,6 +1095,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   public override fun onPause() {
+    quranSettings.unregisterPreferencesListener(themePreferencesListener)
     foregroundDisposable.clear()
     promptDialog?.dismiss()
     promptDialog = null
@@ -1172,14 +1182,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         translation.isVisible = false
       }
     }
-
-    val nightMode = menu.findItem(R.id.night_mode)
-    if (nightMode != null) {
-      val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-      val isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)
-      nightMode.isChecked = isNightMode
-      nightMode.setIcon(if (isNightMode) R.drawable.ic_night_mode else R.drawable.ic_day_mode)
-    }
     return true
   }
 
@@ -1197,15 +1199,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         switchToTranslation()
       }
       return true
-    } else if (itemId == R.id.night_mode) {
-      val prefs = PreferenceManager
-        .getDefaultSharedPreferences(this)
-      val prefsEditor = prefs.edit()
-      val isNightMode = !item.isChecked
-      prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, isNightMode).apply()
-      item.setIcon(if (isNightMode) R.drawable.ic_night_mode else R.drawable.ic_day_mode)
-      item.isChecked = isNightMode
-      refreshQuranPages()
+    } else if (itemId == R.id.page_theme) {
+      showPageThemeSheet()
       return true
     } else if (itemId == R.id.settings) {
       val i = Intent(this, QuranPreferenceActivity::class.java)
@@ -1725,6 +1720,22 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     toggleActionBarVisibility(false)
   }
 
+  private fun showPageThemeSheet() {
+    val pageThemeSheetWrapper = PageThemeSheetWrapper(this, quranSettings) {
+      overlay.removeAllViews()
+      overlay.visibility = View.GONE
+      toggleActionBarVisibility(true)
+    }
+    overlay.removeAllViews()
+    overlay.addView(
+      pageThemeSheetWrapper,
+      ViewGroup.LayoutParams.MATCH_PARENT,
+      ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    overlay.visibility = View.VISIBLE
+    toggleActionBarVisibility(false)
+  }
+
   private fun showAyahBookmarkSheet(suraAyah: SuraAyah) {
     val ayahBookmarkWrapper = AyahBookmarkWrapper(this, suraAyah) { isBookmarked ->
       overlay.removeAllViews()
@@ -2007,6 +2018,14 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   companion object {
+    private val PAGE_COLOR_PREFERENCES = setOf(
+      Constants.PREF_PAGE_THEME,
+      Constants.PREF_PAGE_APPEARANCE,
+      Constants.PREF_APP_THEME,
+      Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
+      Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS,
+      Constants.PREF_USE_OLD_BACKGROUND
+    )
     private const val AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY"
     private const val LAST_READ_PAGE = "LAST_READ_PAGE"
     private const val LAST_READING_MODE_IS_TRANSLATION = "LAST_READING_MODE_IS_TRANSLATION"
