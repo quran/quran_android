@@ -38,10 +38,8 @@ class BookmarkBackupImportNormalizerTest {
 
   @Before
   fun setup() {
-    val context = RuntimeEnvironment.getApplication().applicationContext as Context
     settings = FakeSettings()
-    val pageMapper = ReadingBookmarkPageMapper(
-      settings = settings,
+    normalizer = normalizer(
       // Shemerly's data source lives in quran-android-extras. Warsh's, a layout that differs from
       // madani's, stands in for it, so recent pages show which layout they are read in.
       pageProviders = mapOf(
@@ -49,11 +47,6 @@ class BookmarkBackupImportNormalizerTest {
         "shemerly" to TestPageProvider(WarshDataSource())
       ),
       fallbackPageType = "madani"
-    )
-    normalizer = BookmarkBackupImportNormalizer(
-      appContext = context,
-      pageMapper = pageMapper,
-      timestampProvider = FakeMobileSyncTimestampProvider()
     )
   }
 
@@ -156,23 +149,62 @@ class BookmarkBackupImportNormalizerTest {
   }
 
   @Test
-  fun `unknown source page type is read as madani pages`() = runTest {
-    val importData = normalizer.normalize(
-      BookmarkData(
-        readingBookmarks = listOf(
-          BackupReadingBookmark(
-            slot = ReadingBookmarkType.ORANGE,
-            type = BackupReadingBookmark.TYPE_PAGE,
-            page = 42,
-            timestamp = Instant.fromEpochSeconds(800)
-          )
-        ),
-        pageType = "unknown"
-      )
+  fun `an unknown source page type is read in the reference page type`() = runTest {
+    val importData = normalizer.normalize(unknownPageTypeBackup())
+
+    val madaniBounds = QuranInfo(MadaniDataSource()).getPageBounds(UNKNOWN_PAGE_TYPE_PAGE)
+    assertThat(importData.readingSessions.single().sura to importData.readingSessions.single().ayah)
+      .isEqualTo(madaniBounds[0] to madaniBounds[1])
+    val page = importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page
+    assertThat(page.page to page.mushaf).isEqualTo(UNKNOWN_PAGE_TYPE_PAGE to Mushaf.MADANI_1405)
+  }
+
+  @Test
+  fun `an unknown source page type is read in a riwayah build's own page type`() = runTest {
+    // a Warsh build registers only warsh, so it is the reference page type
+    val warshNormalizer = normalizer(
+      pageProviders = mapOf("warsh" to TestPageProvider(WarshDataSource())),
+      fallbackPageType = "warsh"
     )
 
+    val importData = warshNormalizer.normalize(unknownPageTypeBackup())
+
+    val warshBounds = QuranInfo(WarshDataSource()).getPageBounds(UNKNOWN_PAGE_TYPE_PAGE)
+    assertThat(importData.readingSessions.single().sura to importData.readingSessions.single().ayah)
+      .isEqualTo(warshBounds[0] to warshBounds[1])
     val page = importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page
-    assertThat(page.page to page.mushaf).isEqualTo(42 to Mushaf.MADANI_1405)
+    assertThat(page.page to page.mushaf).isEqualTo(UNKNOWN_PAGE_TYPE_PAGE to Mushaf.WARSH)
+  }
+
+  /** A backup of a page type no build has, with a recent page and a page reading bookmark on it. */
+  private fun unknownPageTypeBackup(): BookmarkData {
+    return BookmarkData(
+      recentPages = listOf(RecentPage(UNKNOWN_PAGE_TYPE_PAGE, Instant.fromEpochSeconds(900))),
+      readingBookmarks = listOf(
+        BackupReadingBookmark(
+          slot = ReadingBookmarkType.ORANGE,
+          type = BackupReadingBookmark.TYPE_PAGE,
+          page = UNKNOWN_PAGE_TYPE_PAGE,
+          timestamp = Instant.fromEpochSeconds(800)
+        )
+      ),
+      pageType = "unknown"
+    )
+  }
+
+  private fun normalizer(
+    pageProviders: Map<String, PageProvider>,
+    fallbackPageType: String
+  ): BookmarkBackupImportNormalizer {
+    return BookmarkBackupImportNormalizer(
+      appContext = RuntimeEnvironment.getApplication().applicationContext as Context,
+      pageMapper = ReadingBookmarkPageMapper(
+        settings = settings,
+        pageProviders = pageProviders,
+        fallbackPageType = fallbackPageType
+      ),
+      timestampProvider = FakeMobileSyncTimestampProvider()
+    )
   }
 
   private class FakeSettings : Settings {
@@ -261,5 +293,6 @@ class BookmarkBackupImportNormalizerTest {
 
   private companion object {
     const val SHEMERLY_PAGE = 300
+    const val UNKNOWN_PAGE_TYPE_PAGE = 42
   }
 }

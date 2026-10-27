@@ -60,11 +60,10 @@ class ReadingBookmarksDaoImplTest {
     timestampProvider = FakeMobileSyncTimestampProvider()
     val pageMapper = ReadingBookmarkPageMapper(
       settings = settings,
-      // mobile-sync maps every page type's pages, so only madani's layout (the reference for ayah
-      // checks) may be read: reading another's would mean Android converted its pages.
+      // Android passes every page type's pages to mobile-sync unchanged (it maps the Hafs ones and
+      // never maps Warsh's), so only madani's layout, the reference for ayah checks, may be read.
       pageProviders = mapOf(
         "madani" to TestPageProvider(MadaniDataSource()),
-        "new_madani" to TestPageProvider(dataSource = null),
         "shemerly" to TestPageProvider(dataSource = null),
         "warsh" to TestPageProvider(dataSource = null),
         "naskh" to TestPageProvider(dataSource = null),
@@ -335,6 +334,28 @@ class ReadingBookmarksDaoImplTest {
     assertThat(syncBookmark.page to syncBookmark.mushaf).isEqualTo(42 to Mushaf.WARSH)
     assertThat((dao.readingBookmarks().single() as PageReadingBookmark).page).isEqualTo(42)
     assertThat(dao.isPageReadingBookmark(ReadingBookmarkType.ORANGE, 42)).isTrue()
+  }
+
+  @Test
+  fun `a shemerly page past its last page is not set`() = runTest {
+    settings.setPageType("shemerly")
+
+    // the Shemerly mushaf has pages 1..521
+    assertThat(dao.setPageReadingBookmark(ReadingBookmarkType.ORANGE, 522)).isFalse()
+    assertThat(dao.togglePageReadingBookmark(ReadingBookmarkType.ORANGE, 522)).isFalse()
+
+    assertThat(dao.readingBookmarks().placed()).isEmpty()
+  }
+
+  @Test
+  fun `a warsh page past its last page is not set`() = runTest {
+    settings.setPageType("warsh")
+
+    // the Warsh mushaf has pages 1..604
+    assertThat(dao.setPageReadingBookmark(ReadingBookmarkType.ORANGE, 605)).isFalse()
+    assertThat(dao.togglePageReadingBookmark(ReadingBookmarkType.ORANGE, 605)).isFalse()
+
+    assertThat(dao.readingBookmarks().placed()).isEmpty()
   }
 
   @Test
