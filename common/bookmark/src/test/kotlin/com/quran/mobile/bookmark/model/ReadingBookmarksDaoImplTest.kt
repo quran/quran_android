@@ -18,7 +18,6 @@ import com.quran.data.source.PageSizeCalculator
 import com.quran.data.source.QuranDataSource
 import com.quran.data.model.audio.Qari
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
-import com.quran.labs.androidquran.pages.data.warsh.WarshDataSource
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.model.AyahReadingBookmark as SyncAyahReadingBookmark
@@ -46,7 +45,6 @@ class ReadingBookmarksDaoImplTest {
   private lateinit var renameSpy: RenameMushafSpy
   private lateinit var quranInfo: QuranInfo
   private lateinit var dao: ReadingBookmarksDaoImpl
-  private lateinit var pageMapper: ReadingBookmarkPageMapper
   private lateinit var settings: FakeSettings
   private lateinit var timestampProvider: FakeMobileSyncTimestampProvider
 
@@ -60,15 +58,15 @@ class ReadingBookmarksDaoImplTest {
     quranInfo = QuranInfo(MadaniDataSource())
     settings = FakeSettings()
     timestampProvider = FakeMobileSyncTimestampProvider()
-    pageMapper = ReadingBookmarkPageMapper(
+    val pageMapper = ReadingBookmarkPageMapper(
       settings = settings,
-      // Shemerly's and new_madani's data sources live in quran-android-extras. Any two layouts that
-      // differ exercise Android's own mapping, so Warsh's stands in for Shemerly's and Madani's for
-      // new_madani's. mobile-sync maps naskh and tajweed pages, so their layouts must never be read.
+      // mobile-sync maps every page type's pages, so only madani's layout (the reference for ayah
+      // checks) may be read: reading another's would mean Android converted its pages.
       pageProviders = mapOf(
         "madani" to TestPageProvider(MadaniDataSource()),
-        "new_madani" to TestPageProvider(MadaniDataSource()),
-        "shemerly" to TestPageProvider(WarshDataSource()),
+        "new_madani" to TestPageProvider(dataSource = null),
+        "shemerly" to TestPageProvider(dataSource = null),
+        "warsh" to TestPageProvider(dataSource = null),
         "naskh" to TestPageProvider(dataSource = null),
         "tajweed" to TestPageProvider(dataSource = null)
       ),
@@ -287,37 +285,34 @@ class ReadingBookmarksDaoImplTest {
   }
 
   @Test
-  fun `shemerly pages are stored as their new_madani page in the 1440 mushaf`() = runTest {
-    val (shemerlyPage, newMadaniPage) = firstShemerlyPageStoredOnAnotherPage()
+  fun `a shemerly page passes through unchanged in the Shemerly mushaf`() = runTest {
     settings.setPageType("shemerly")
 
-    dao.setPageReadingBookmark(ReadingBookmarkType.ORANGE, shemerlyPage)
+    dao.setPageReadingBookmark(ReadingBookmarkType.ORANGE, SHEMERLY_PAGE)
 
-    val syncBookmark = repository.getReadingBookmarks(Mushaf.MADANI_1440).single() as SyncPageReadingBookmark
-    assertThat(syncBookmark.page to syncBookmark.mushaf).isEqualTo(newMadaniPage to Mushaf.MADANI_1440)
-    assertThat((dao.readingBookmarks().single() as PageReadingBookmark).page).isEqualTo(shemerlyPage)
-    assertThat(dao.isPageReadingBookmark(ReadingBookmarkType.ORANGE, shemerlyPage)).isTrue()
+    val syncBookmark = repository.getReadingBookmarks(Mushaf.SHEMERLY).single() as SyncPageReadingBookmark
+    assertThat(syncBookmark.page to syncBookmark.mushaf).isEqualTo(SHEMERLY_PAGE to Mushaf.SHEMERLY)
+    assertThat((dao.readingBookmarks().single() as PageReadingBookmark).page).isEqualTo(SHEMERLY_PAGE)
+    assertThat(dao.isPageReadingBookmark(ReadingBookmarkType.ORANGE, SHEMERLY_PAGE)).isTrue()
   }
 
   @Test
-  fun `shemerly reads pages set in another mushaf through the 1440 mushaf`() = runTest {
-    // a page whose Shemerly page has another number, so a skipped Android mapping would show
-    val (_, madaniPage) = firstShemerlyPageStoredOnAnotherPage()
-    repository.setPageReadingBookmark(ReadingBookmarkSlot.ORANGE, madaniPage, Mushaf.MADANI_1405)
+  fun `shemerly reads pages set in another mushaf as mobile-sync maps them`() = runTest {
+    repository.setPageReadingBookmark(ReadingBookmarkSlot.ORANGE, MADANI_PAGE, Mushaf.MADANI_1405)
     settings.setPageType("shemerly")
 
-    // mobile-sync maps the 1405 page into the 1440 mushaf, then Android maps that to Shemerly
-    val newMadaniPage = (repository.getReadingBookmarks(Mushaf.MADANI_1440).single() as SyncPageReadingBookmark).page
-    val shemerlyPage = pageMapper.mushafPageToPage(newMadaniPage, "shemerly")
-    assertThat(shemerlyPage).isNotEqualTo(newMadaniPage)
-    assertThat((dao.readingBookmarks().single() as PageReadingBookmark).page).isEqualTo(shemerlyPage)
+    val bookmark = dao.readingBookmarks().single() as PageReadingBookmark
+
+    val shemerlyPage = (repository.getReadingBookmarks(Mushaf.SHEMERLY).single() as SyncPageReadingBookmark).page
+    // pages differ between the two, so equal pages would mean nothing was mapped
+    assertThat(shemerlyPage).isNotEqualTo(MADANI_PAGE)
+    assertThat(bookmark.page).isEqualTo(shemerlyPage)
   }
 
   @Test
   fun `the shemerly page check matches the page the flow shows`() = runTest {
-    // a page Android's mapping doesn't bring back to itself, like Shemerly page 9 (new_madani page 10,
-    // shown as Shemerly page 10)
-    val setPage = firstShemerlyPageShownOnAnotherPage()
+    // mobile-sync stores Shemerly page 9 on a 1440 page that reads back as another Shemerly page
+    val setPage = 9
     settings.setPageType("shemerly")
 
     dao.setPageReadingBookmark(ReadingBookmarkType.ORANGE, setPage)
@@ -328,6 +323,18 @@ class ReadingBookmarksDaoImplTest {
     assertThat(dao.isPageReadingBookmark(ReadingBookmarkType.ORANGE, setPage)).isFalse()
     assertThat(dao.togglePageReadingBookmark(ReadingBookmarkType.ORANGE, shownPage)).isFalse()
     assertThat(dao.readingBookmarks().placed()).isEmpty()
+  }
+
+  @Test
+  fun `a warsh page passes through unchanged in the Warsh mushaf`() = runTest {
+    settings.setPageType("warsh")
+
+    dao.setPageReadingBookmark(ReadingBookmarkType.ORANGE, 42)
+
+    val syncBookmark = repository.getReadingBookmarks(Mushaf.WARSH).single() as SyncPageReadingBookmark
+    assertThat(syncBookmark.page to syncBookmark.mushaf).isEqualTo(42 to Mushaf.WARSH)
+    assertThat((dao.readingBookmarks().single() as PageReadingBookmark).page).isEqualTo(42)
+    assertThat(dao.isPageReadingBookmark(ReadingBookmarkType.ORANGE, 42)).isTrue()
   }
 
   @Test
@@ -370,27 +377,6 @@ class ReadingBookmarksDaoImplTest {
     // pages differ between the two, so equal pages would mean nothing was mapped
     assertThat(indoPakPage).isNotEqualTo(MADANI_PAGE)
     return indoPakPage
-  }
-
-  /** A Shemerly page that Android's mapping shows as another Shemerly page once stored. */
-  private fun firstShemerlyPageShownOnAnotherPage(): Int {
-    val shemerlyInfo = QuranInfo(WarshDataSource())
-    return (1..shemerlyInfo.numberOfPages).first { page ->
-      shemerlyInfo.isValidPage(page) &&
-        pageMapper.mushafPageToPage(pageMapper.pageToMushafPage(page, "shemerly").page, "shemerly") != page
-    }
-  }
-
-  /** A Shemerly page whose new_madani page has a different number, and that new_madani page. */
-  private fun firstShemerlyPageStoredOnAnotherPage(): Pair<Int, Int> {
-    val shemerlyInfo = QuranInfo(WarshDataSource())
-    val shemerlyPage = (1..shemerlyInfo.numberOfPages)
-      .first { page ->
-        if (!shemerlyInfo.isValidPage(page)) return@first false
-        val storedPage = pageMapper.pageToMushafPage(page, "shemerly").page
-        storedPage != page && pageMapper.mushafPageToPage(storedPage, "shemerly") == page
-      }
-    return shemerlyPage to pageMapper.pageToMushafPage(shemerlyPage, "shemerly").page
   }
 
   /** Records the mushaf each rename reads its slot in, which nothing else observes. */
@@ -517,6 +503,7 @@ class ReadingBookmarksDaoImplTest {
 
   private companion object {
     const val MADANI_PAGE = 300
+    const val SHEMERLY_PAGE = 300
   }
 
 }

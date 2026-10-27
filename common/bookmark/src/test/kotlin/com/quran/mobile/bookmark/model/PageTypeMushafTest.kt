@@ -4,7 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.shared.persistence.model.Mushaf
 import org.junit.Test
 
-class MushafPageTest {
+class PageTypeMushafTest {
 
   @Test
   fun `madani data source page types use the 1405 mushaf`() {
@@ -25,8 +25,19 @@ class MushafPageTest {
   }
 
   @Test
-  fun `page types mobile-sync has no mushaf for have none`() {
-    assertThat(listOf("shemerly", "warsh", "qaloon").map(::mushafForPageType))
-      .containsExactly(null, null, null)
+  fun `shemerly uses the Shemerly mushaf`() {
+    assertThat(mushafForPageType("shemerly")).isEqualTo(Mushaf.SHEMERLY)
+  }
+
+  @Test
+  fun `warsh and qaloon use their riwayah mushafs`() {
+    assertThat(listOf("warsh", "qaloon").map(::mushafForPageType))
+      .containsExactly(Mushaf.WARSH, Mushaf.QALOUN)
+      .inOrder()
+  }
+
+  @Test
+  fun `an unknown page type is taken as madani pages`() {
+    assertThat(mushafForPageType("unknown")).isEqualTo(Mushaf.MADANI_1405)
   }
 }
