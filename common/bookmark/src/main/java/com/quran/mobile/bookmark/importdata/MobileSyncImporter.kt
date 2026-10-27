@@ -128,6 +128,7 @@ private fun MobileSyncImportReadingBookmark.toImportReadingBookmark(): ImportRea
     is MobileSyncImportReadingBookmark.Page -> ImportReadingBookmark.Page(
       slot = slot,
       page = page,
+      mushaf = mushaf,
       lastUpdated = timestampMillis.toPlatformDateTime(),
       name = name
     )

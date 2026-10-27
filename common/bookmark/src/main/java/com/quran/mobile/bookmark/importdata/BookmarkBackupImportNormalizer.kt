@@ -134,9 +134,11 @@ class BookmarkBackupImportNormalizer @Inject constructor(
           if (page == null) {
             null
           } else {
+            val mushafPage = pageMapper.sourcePageToMushafPage(page, pageType)
             MobileSyncImportReadingBookmark.Page(
               slot = readingBookmark.slot.asBookmarkSlot(),
-              page = pageMapper.sourcePageToStoragePage(page, pageType),
+              page = mushafPage.page,
+              mushaf = mushafPage.mushaf,
               timestampMillis = readingBookmark.timestamp.toEpochMilliseconds(),
               name = readingBookmark.name
             )

@@ -10,6 +10,7 @@ import com.quran.shared.persistence.model.BookmarkCollectionsReplacementResult
 import com.quran.shared.persistence.model.Collection
 import com.quran.shared.persistence.model.CollectionAyahBookmark
 import com.quran.shared.persistence.model.CollectionWithAyahBookmarks
+import com.quran.shared.persistence.model.Mushaf
 import com.quran.shared.persistence.model.ReadingBookmark
 import com.quran.shared.persistence.model.ReadingBookmarkSlot
 import com.quran.shared.persistence.model.ReadingSession
@@ -209,12 +210,12 @@ private class SyncCollectionBookmarksRepository(
 private class SyncReadingBookmarksRepository(
   private val quranDataService: QuranDataService
 ) : ReadingBookmarksRepository {
-  override suspend fun getReadingBookmarks(): List<ReadingBookmark> {
-    return quranDataService.readingBookmarks.first()
+  override suspend fun getReadingBookmarks(mushaf: Mushaf): List<ReadingBookmark> {
+    return quranDataService.readingBookmarks(mushaf).first()
   }
 
-  override fun getReadingBookmarksFlow(): Flow<List<ReadingBookmark>> {
-    return quranDataService.readingBookmarks
+  override fun getReadingBookmarksFlow(mushaf: Mushaf): Flow<List<ReadingBookmark>> {
+    return quranDataService.readingBookmarks(mushaf)
   }
 
   override suspend fun setAyahReadingBookmark(slot: ReadingBookmarkSlot, sura: Int, ayah: Int) =
@@ -227,14 +228,15 @@ private class SyncReadingBookmarksRepository(
     timestamp: PlatformDateTime
   ) = quranDataService.setAyahReadingBookmark(slot, sura, ayah, timestamp)
 
-  override suspend fun setPageReadingBookmark(slot: ReadingBookmarkSlot, page: Int) =
-    quranDataService.setPageReadingBookmark(slot, page)
+  override suspend fun setPageReadingBookmark(slot: ReadingBookmarkSlot, page: Int, mushaf: Mushaf) =
+    quranDataService.setPageReadingBookmark(slot, page, mushaf)
 
   override suspend fun setPageReadingBookmark(
     slot: ReadingBookmarkSlot,
     page: Int,
+    mushaf: Mushaf,
     timestamp: PlatformDateTime
-  ) = quranDataService.setPageReadingBookmark(slot, page, timestamp)
+  ) = quranDataService.setPageReadingBookmark(slot, page, mushaf, timestamp)
 
   override suspend fun clearReadingBookmark(slot: ReadingBookmarkSlot): ReadingBookmark {
     return quranDataService.clearReadingBookmark(slot)
@@ -249,17 +251,19 @@ private class SyncReadingBookmarksRepository(
 
   override suspend fun renameReadingBookmark(
     slot: ReadingBookmarkSlot,
-    name: String?
+    name: String?,
+    mushaf: Mushaf
   ): ReadingBookmark {
-    return quranDataService.renameReadingBookmark(slot, name)
+    return quranDataService.renameReadingBookmark(slot, name, mushaf)
   }
 
   override suspend fun renameReadingBookmark(
     slot: ReadingBookmarkSlot,
     name: String?,
+    mushaf: Mushaf,
     timestamp: PlatformDateTime
   ): ReadingBookmark {
-    return quranDataService.renameReadingBookmark(slot, name, timestamp)
+    return quranDataService.renameReadingBookmark(slot, name, mushaf, timestamp)
   }
 }
 
