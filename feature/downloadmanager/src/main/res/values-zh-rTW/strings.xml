@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="audio_manager">音訊經理</string>
+  <string name="audio_manager_remove_audio_title">刪除蘇拉？</string>
+  <string name="audio_manager_remove_audio_msg">您確定要刪除%1$s嗎？</string>
+  <string name="audio_manager_remove_multiple_audio_msg">您確定要刪除嗎？</string>
+  <string name="audio_manager_surah_download">下載SURAH</string>
+  <string name="audio_manager_surah_delete">刪除音訊檔案</string>
+  <string name="audio_manager_download_all">下載所有</string>
+  <string name="audio_manager_download_selection">下載選擇</string>
+  <string name="audio_manager_delete_selection">刪除選擇</string>
+
+  <string name="download_progress">已下載 %1$s / %2$s</string>
+</resources>
