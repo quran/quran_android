@@ -6,6 +6,7 @@ import com.quran.data.dao.Settings
 import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.source.PageProvider
+import com.quran.shared.persistence.model.Mushaf
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Named
 import dev.zacsweers.metro.SingleIn
@@ -30,36 +31,35 @@ class ReadingBookmarkPageMapper @Inject constructor(
       .distinctUntilChanged()
   }
 
-  suspend fun currentPageToStoragePage(page: Int): Int {
-    return pageToStoragePage(page, settings.pageType())
+  /** The mushaf mobile-sync stores and reads [pageType]'s page reading bookmarks in. */
+  fun mushafFor(pageType: String): Mushaf {
+    return mushafForPageType(resolveCurrentPageType(pageType)) ?: FALLBACK_MUSHAF
   }
 
-  suspend fun storagePageToCurrentPage(page: Int): Int {
-    return storagePageToPage(page, settings.pageType())
+  /**
+   * [page] of [pageType] as mobile-sync takes it: the page itself for a page type with a [Mushaf],
+   * and otherwise the [FALLBACK_STORAGE_PAGE_TYPE] page this mapper places it on.
+   */
+  fun pageToMushafPage(page: Int, pageType: String): MushafPage {
+    return resolveCurrentPageType(pageType).toMushafPage(page)
   }
 
-  fun pageToStoragePage(page: Int, pageType: String): Int {
+  /** A page mobile-sync returned in [mushafFor] ([pageType]) as a page of [pageType]. */
+  fun mushafPageToPage(page: Int, pageType: String): Int {
+    val resolvedPageType = resolveCurrentPageType(pageType)
+    if (mushafForPageType(resolvedPageType) != null) return page
     return mapPage(
       page = page,
-      sourceInfo = quranInfoFor(resolveCurrentPageType(pageType)),
-      targetInfo = storageQuranInfo()
+      sourceInfo = quranInfoFor(resolveFallbackStoragePageType()),
+      targetInfo = quranInfoFor(resolvedPageType)
     )
   }
 
-  fun storagePageToPage(page: Int, pageType: String): Int {
-    return mapPage(
-      page = page,
-      sourceInfo = storageQuranInfo(),
-      targetInfo = quranInfoFor(resolveCurrentPageType(pageType))
-    )
-  }
-
-  fun sourcePageToStoragePage(page: Int, sourcePageType: String?): Int {
-    return mapPage(
-      page = page,
-      sourceInfo = quranInfoFor(resolveSourcePageType(sourcePageType)),
-      targetInfo = storageQuranInfo()
-    )
+  /** [page] of a backup's [sourcePageType] as mobile-sync takes it, like [pageToMushafPage]. */
+  fun sourcePageToMushafPage(page: Int, sourcePageType: String?): MushafPage {
+    val mushaf = sourcePageType?.let(::mushafForPageType)
+    if (mushaf != null) return MushafPage(page, mushaf)
+    return resolveSourcePageType(sourcePageType).toMushafPage(page)
   }
 
   fun sourcePageToSuraAyah(page: Int, sourcePageType: String?): SuraAyah {
@@ -72,7 +72,7 @@ class ReadingBookmarkPageMapper @Inject constructor(
   }
 
   fun isValidSuraAyah(sura: Int, ayah: Int): Boolean {
-    val quranInfo = storageQuranInfo()
+    val quranInfo = quranInfoFor(resolveReferencePageType())
     val ayahCount = quranInfo.getNumberOfAyahs(sura)
     if (ayah !in 1..ayahCount) return false
     val page = quranInfo.getPageFromSuraAyah(sura, ayah)
@@ -120,8 +120,16 @@ class ReadingBookmarkPageMapper @Inject constructor(
     return quranInfo.getSuraAyahFromAyahId((firstAyahId + lastAyahId) / 2)
   }
 
-  private fun storageQuranInfo(): QuranInfo {
-    return quranInfoFor(resolveStoragePageType())
+  /** This resolved page type's [page] as mobile-sync takes it. */
+  private fun String.toMushafPage(page: Int): MushafPage {
+    val mushaf = mushafForPageType(this)
+    if (mushaf != null) return MushafPage(page, mushaf)
+    val storagePage = mapPage(
+      page = page,
+      sourceInfo = quranInfoFor(this),
+      targetInfo = quranInfoFor(resolveFallbackStoragePageType())
+    )
+    return MushafPage(storagePage, FALLBACK_MUSHAF)
   }
 
   private fun quranInfoFor(pageType: String): QuranInfo {
@@ -136,22 +144,32 @@ class ReadingBookmarkPageMapper @Inject constructor(
     return when {
       pageProviders.containsKey(pageType) -> pageType
       pageProviders.containsKey(fallbackPageType) -> fallbackPageType
-      else -> resolveStoragePageType()
+      else -> resolveReferencePageType()
     }
   }
 
   private fun resolveSourcePageType(pageType: String?): String {
     return when {
       !pageType.isNullOrBlank() && pageProviders.containsKey(pageType) -> pageType
-      pageProviders.containsKey(CANONICAL_PAGE_TYPE) -> CANONICAL_PAGE_TYPE
+      else -> resolveReferencePageType()
+    }
+  }
+
+  private fun resolveReferencePageType(): String {
+    return when {
+      pageProviders.containsKey(REFERENCE_PAGE_TYPE) -> REFERENCE_PAGE_TYPE
       pageProviders.containsKey(fallbackPageType) -> fallbackPageType
       else -> pageProviders.firstPageType()
     }
   }
 
-  private fun resolveStoragePageType(): String {
+  /**
+   * The page type a page type with no [Mushaf] is stored in. Flavors without it (Warsh, Qaloon)
+   * store their own pages unmapped.
+   */
+  private fun resolveFallbackStoragePageType(): String {
     return when {
-      pageProviders.containsKey(CANONICAL_PAGE_TYPE) -> CANONICAL_PAGE_TYPE
+      pageProviders.containsKey(FALLBACK_STORAGE_PAGE_TYPE) -> FALLBACK_STORAGE_PAGE_TYPE
       pageProviders.containsKey(fallbackPageType) -> fallbackPageType
       else -> pageProviders.firstPageType()
     }
@@ -173,6 +191,17 @@ class ReadingBookmarkPageMapper @Inject constructor(
   }
 
   companion object {
-    private const val CANONICAL_PAGE_TYPE = "madani"
+    /**
+     * The page type a backup with an unknown page type is read in, and the one ayahs are validated
+     * against.
+     */
+    private const val REFERENCE_PAGE_TYPE = "madani"
+
+    /**
+     * Page types with no [Mushaf] (Shemerly, quran/mobile-sync#355) store their page reading
+     * bookmarks as the new_madani page this mapper places them on, in [FALLBACK_MUSHAF].
+     */
+    private const val FALLBACK_STORAGE_PAGE_TYPE = "new_madani"
+    private val FALLBACK_MUSHAF = Mushaf.MADANI_1440
   }
 }
