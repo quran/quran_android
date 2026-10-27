@@ -37,7 +37,7 @@ class PageTypeMushafTest {
   }
 
   @Test
-  fun `an unknown page type is taken as madani pages`() {
-    assertThat(mushafForPageType("unknown")).isEqualTo(Mushaf.MADANI_1405)
+  fun `an unknown page type has no mushaf`() {
+    assertThat(mushafForPageType("unknown")).isNull()
   }
 }

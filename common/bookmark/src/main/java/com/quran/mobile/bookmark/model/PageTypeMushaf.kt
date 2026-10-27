@@ -3,14 +3,11 @@ package com.quran.mobile.bookmark.model
 import com.quran.shared.persistence.model.Mushaf
 
 /**
- * The mobile-sync [Mushaf] that numbers its pages like [pageType]. Pages pass to and from
- * mobile-sync unchanged; it maps them between mushafs.
- *
- * Builds register only the page types listed here, and the current page type always resolves to a
- * registered one. Any other page type (a backup's, or one added without updating this table) is
- * taken as madani pages, the reference page type backups of an unknown page type are read in.
+ * The mobile-sync [Mushaf] that numbers its pages like [pageType], or null for a page type this
+ * table doesn't know. Pages pass to and from mobile-sync unchanged; it maps them between mushafs.
+ * [ReadingBookmarkPageMapper] resolves a page type before looking it up here.
  */
-internal fun mushafForPageType(pageType: String): Mushaf {
+internal fun mushafForPageType(pageType: String): Mushaf? {
   return when (pageType) {
     // MadaniDataSource
     "madani", "tajweed" -> Mushaf.MADANI_1405
@@ -23,6 +20,6 @@ internal fun mushafForPageType(pageType: String): Mushaf {
     // the Warsh and Qaloon riwayat: pages 1..604, which mobile-sync never maps to another mushaf
     "warsh" -> Mushaf.WARSH
     "qaloon" -> Mushaf.QALOUN
-    else -> Mushaf.MADANI_1405
+    else -> null
   }
 }
