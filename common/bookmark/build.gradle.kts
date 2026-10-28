@@ -29,8 +29,6 @@ dependencies {
   implementation(libs.sqldelight.coroutines.extensions)
   implementation(libs.sqldelight.primitive.adapters)
 
-  implementation(libs.timber)
-
   //mobile-sync
   implementation(libs.quran.mobile.sync)
   // persistence's MobileSyncDatabase exposes sync-v2's SyncV2Database, which mobile-sync only

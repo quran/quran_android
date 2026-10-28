@@ -12,11 +12,7 @@ import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmarkType
-import com.quran.data.source.DisplaySize
-import com.quran.data.source.PageProvider
-import com.quran.data.source.PageSizeCalculator
-import com.quran.data.source.QuranDataSource
-import com.quran.data.model.audio.Qari
+import com.quran.data.source.MushafType
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
@@ -63,11 +59,11 @@ class ReadingBookmarksDaoImplTest {
       // Android passes every page type's pages to mobile-sync unchanged (it maps the Hafs ones and
       // never maps Warsh's), so only madani's layout, the reference for ayah checks, may be read.
       pageProviders = mapOf(
-        "madani" to TestPageProvider(MadaniDataSource()),
-        "shemerly" to TestPageProvider(dataSource = null),
-        "warsh" to TestPageProvider(dataSource = null),
-        "naskh" to TestPageProvider(dataSource = null),
-        "tajweed" to TestPageProvider(dataSource = null)
+        "madani" to TestPageProvider(MushafType.MADANI_1405, MadaniDataSource()),
+        "shemerly_layout" to TestPageProvider(MushafType.SHEMERLY),
+        "warsh" to TestPageProvider(MushafType.WARSH),
+        "indopak" to TestPageProvider(MushafType.INDOPAK_15_LINES),
+        "other" to TestPageProvider(MushafType.MADANI_1405)
       ),
       fallbackPageType = "madani"
     )
@@ -233,8 +229,8 @@ class ReadingBookmarksDaoImplTest {
   }
 
   @Test
-  fun `setting a naskh page passes the same page in the 15-line IndoPak mushaf`() = runTest {
-    settings.setPageType("naskh")
+  fun `setting an IndoPak page passes the same page in the 15-line IndoPak mushaf`() = runTest {
+    settings.setPageType("indopak")
 
     val isSet = dao.setPageReadingBookmark(ReadingBookmarkType.ORANGE, 611)
 
@@ -247,7 +243,7 @@ class ReadingBookmarksDaoImplTest {
 
   @Test
   fun `a page the mushaf does not have is not set`() = runTest {
-    settings.setPageType("naskh")
+    settings.setPageType("indopak")
 
     // page 1 of the 15-line IndoPak mushaf is its cover
     assertThat(dao.setPageReadingBookmark(ReadingBookmarkType.ORANGE, 1)).isFalse()
@@ -259,7 +255,7 @@ class ReadingBookmarksDaoImplTest {
   @Test
   fun `reading returns pages of the current page type's mushaf`() = runTest {
     repository.setPageReadingBookmark(ReadingBookmarkSlot.ORANGE, MADANI_PAGE, Mushaf.MADANI_1405)
-    settings.setPageType("naskh")
+    settings.setPageType("indopak")
 
     val bookmark = dao.readingBookmarks().single() as PageReadingBookmark
 
@@ -275,7 +271,7 @@ class ReadingBookmarksDaoImplTest {
       assertThat(madaniBookmark.page).isEqualTo(MADANI_PAGE)
 
       settings.awaitPreferencesSubscriber()
-      settings.setPageType("naskh")
+      settings.setPageType("indopak")
 
       val indoPakBookmark = awaitItem().single() as PageReadingBookmark
       assertThat(indoPakBookmark.page).isEqualTo(indoPakPageForMadaniPage())
@@ -285,7 +281,7 @@ class ReadingBookmarksDaoImplTest {
 
   @Test
   fun `a shemerly page passes through unchanged in the Shemerly mushaf`() = runTest {
-    settings.setPageType("shemerly")
+    settings.setPageType("shemerly_layout")
 
     dao.setPageReadingBookmark(ReadingBookmarkType.ORANGE, SHEMERLY_PAGE)
 
@@ -298,7 +294,7 @@ class ReadingBookmarksDaoImplTest {
   @Test
   fun `shemerly reads pages set in another mushaf as mobile-sync maps them`() = runTest {
     repository.setPageReadingBookmark(ReadingBookmarkSlot.ORANGE, MADANI_PAGE, Mushaf.MADANI_1405)
-    settings.setPageType("shemerly")
+    settings.setPageType("shemerly_layout")
 
     val bookmark = dao.readingBookmarks().single() as PageReadingBookmark
 
@@ -312,7 +308,7 @@ class ReadingBookmarksDaoImplTest {
   fun `the shemerly page check matches the page the flow shows`() = runTest {
     // mobile-sync stores Shemerly page 9 on a 1440 page that reads back as another Shemerly page
     val setPage = 9
-    settings.setPageType("shemerly")
+    settings.setPageType("shemerly_layout")
 
     dao.setPageReadingBookmark(ReadingBookmarkType.ORANGE, setPage)
 
@@ -338,7 +334,7 @@ class ReadingBookmarksDaoImplTest {
 
   @Test
   fun `a shemerly page past its last page is not set`() = runTest {
-    settings.setPageType("shemerly")
+    settings.setPageType("shemerly_layout")
 
     // the Shemerly mushaf has pages 1..521
     assertThat(dao.setPageReadingBookmark(ReadingBookmarkType.ORANGE, 522)).isFalse()
@@ -359,8 +355,8 @@ class ReadingBookmarksDaoImplTest {
   }
 
   @Test
-  fun `a tajweed page passes through unchanged in the 1405 mushaf`() = runTest {
-    settings.setPageType("tajweed")
+  fun `another 1405 page type's page passes through unchanged in the 1405 mushaf`() = runTest {
+    settings.setPageType("other")
 
     dao.setPageReadingBookmark(ReadingBookmarkType.ORANGE, 42)
 
@@ -371,7 +367,7 @@ class ReadingBookmarksDaoImplTest {
 
   @Test
   fun `rename passes the current page type's mushaf`() = runTest {
-    settings.setPageType("naskh")
+    settings.setPageType("indopak")
 
     dao.renameReadingBookmark(ReadingBookmarkType.ORANGE, "Nightly")
 
@@ -380,7 +376,7 @@ class ReadingBookmarksDaoImplTest {
 
   @Test
   fun `updating reading bookmarks reports a page the mushaf does not have`() = runTest {
-    settings.setPageType("naskh")
+    settings.setPageType("indopak")
 
     val isUpdated = dao.updateReadingBookmarks(
       ayah = SuraAyah(1, 1),
@@ -472,47 +468,6 @@ class ReadingBookmarksDaoImplTest {
     override suspend fun translationTextSize(): Int = 0
 
     override fun preferencesFlow(): Flow<String> = preferences
-  }
-
-  private class TestPageProvider(
-    private val dataSource: QuranDataSource?
-  ) : PageProvider {
-    override fun getDataSource(): QuranDataSource =
-      dataSource ?: throw UnsupportedOperationException("mobile-sync maps this page type's pages")
-
-    override fun getPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator {
-      throw UnsupportedOperationException()
-    }
-
-    override fun getImageVersion(): Int = 0
-
-    override fun getImagesBaseUrl(): String = ""
-
-    override fun getImagesZipBaseUrl(): String = ""
-
-    override fun getPatchBaseUrl(): String = ""
-
-    override fun getAyahInfoBaseUrl(): String = ""
-
-    override fun getDatabasesBaseUrl(): String = ""
-
-    override fun getAudioDatabasesBaseUrl(): String = ""
-
-    override fun getAudioDirectoryName(): String = ""
-
-    override fun getDatabaseDirectoryName(): String = ""
-
-    override fun getAyahInfoDirectoryName(): String = ""
-
-    override fun getImagesDirectoryName(): String = ""
-
-    override fun getPreviewTitle(): Int = 0
-
-    override fun getPreviewDescription(): Int = 0
-
-    override fun getQaris(): List<Qari> = emptyList()
-
-    override fun getDefaultQariId(): Int = 0
   }
 
   /**
