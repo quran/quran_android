@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import timber.log.Timber
 
 @SingleIn(AppScope::class)
 class ReadingBookmarkPageMapper @Inject constructor(
@@ -31,18 +30,21 @@ class ReadingBookmarkPageMapper @Inject constructor(
       .distinctUntilChanged()
   }
 
-  /** The mushaf mobile-sync stores and reads [pageType]'s page reading bookmarks in. */
+  /**
+   * The mushaf mobile-sync stores and reads [pageType]'s page reading bookmarks in: that of the
+   * page type its pages are read in.
+   */
   fun mushafFor(pageType: String): Mushaf {
     return mushafOf(resolveCurrentPageType(pageType))
   }
 
   /**
-   * The mushaf a backup's page of [sourcePageType] is imported in, page unchanged. A page type
-   * this build lacks keeps its own mushaf; one with no mushaf (unknown or blank) gets the mushaf of
-   * the page type its recent pages are read in ([sourcePageToSuraAyah]), so both agree.
+   * The mushaf a backup's page of [sourcePageType] is imported in, page unchanged: that of the page
+   * type its recent pages are read in ([sourcePageToSuraAyah]), so both agree. A page type this
+   * build lacks, or none, is read in the reference page type.
    */
   fun sourceMushafFor(sourcePageType: String?): Mushaf {
-    return sourcePageType?.let(::mushafForPageType) ?: mushafOf(resolveSourcePageType(sourcePageType))
+    return mushafOf(resolveSourcePageType(sourcePageType))
   }
 
   fun sourcePageToSuraAyah(page: Int, sourcePageType: String?): SuraAyah {
@@ -66,15 +68,8 @@ class ReadingBookmarkPageMapper @Inject constructor(
     return resolveCurrentPageType(settings.pageType())
   }
 
-  /**
-   * [pageType]'s mushaf. Every registered page type has one, so a miss means a page type was added
-   * without a [mushafForPageType] entry: it is logged, and its pages are taken as
-   * [UNKNOWN_PAGE_TYPE_MUSHAF] pages, unconverted, rather than crashing.
-   */
   private fun mushafOf(pageType: String): Mushaf {
-    return mushafForPageType(pageType) ?: UNKNOWN_PAGE_TYPE_MUSHAF.also {
-      Timber.w("No mobile-sync mushaf for page type %s, using %s", pageType, it)
-    }
+    return pageProviders.requireProvider(pageType).mushafType().toMushaf()
   }
 
   private fun firstAyahOnPage(page: Int, quranInfo: QuranInfo): SuraAyah {
@@ -134,11 +129,5 @@ class ReadingBookmarkPageMapper @Inject constructor(
      * against.
      */
     private const val REFERENCE_PAGE_TYPE = "madani"
-
-    /**
-     * The last resort for a registered page type missing from [mushafForPageType]: the 1405 Madani
-     * print, [REFERENCE_PAGE_TYPE]'s mushaf.
-     */
-    private val UNKNOWN_PAGE_TYPE_MUSHAF = Mushaf.MADANI_1405
   }
 }

@@ -5,18 +5,16 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.Settings
 import com.quran.data.model.PageAppearance
-import com.quran.data.model.audio.Qari
 import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
-import com.quran.data.source.DisplaySize
+import com.quran.data.source.MushafType
 import com.quran.data.source.PageProvider
-import com.quran.data.source.PageSizeCalculator
-import com.quran.data.source.QuranDataSource
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.pages.data.warsh.WarshDataSource
 import com.quran.mobile.bookmark.model.ReadingBookmarkPageMapper
+import com.quran.mobile.bookmark.model.TestPageProvider
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.model.Mushaf
 import com.quran.shared.persistence.model.ReadingBookmarkSlot
@@ -43,8 +41,8 @@ class BookmarkBackupImportNormalizerTest {
       // Shemerly's data source lives in quran-android-extras. Warsh's, a layout that differs from
       // madani's, stands in for it, so recent pages show which layout they are read in.
       pageProviders = mapOf(
-        "madani" to TestPageProvider(MadaniDataSource()),
-        "shemerly" to TestPageProvider(WarshDataSource())
+        "madani" to TestPageProvider(MushafType.MADANI_1405, MadaniDataSource()),
+        "shemerly_layout" to TestPageProvider(MushafType.SHEMERLY, WarshDataSource())
       ),
       fallbackPageType = "madani"
     )
@@ -94,7 +92,7 @@ class BookmarkBackupImportNormalizerTest {
             name = "Nightly reading"
           )
         ),
-        pageType = "shemerly"
+        pageType = "shemerly_layout"
       )
     )
 
@@ -108,7 +106,7 @@ class BookmarkBackupImportNormalizerTest {
 
   @Test
   fun `normalizes legacy backup data from current page type when page type is missing`() = runTest {
-    settings.setPageType("shemerly")
+    settings.setPageType("shemerly_layout")
 
     val importData = normalizer.normalize(
       BookmarkData(
@@ -128,27 +126,6 @@ class BookmarkBackupImportNormalizerTest {
   }
 
   @Test
-  fun `backup pages of a page type with a mushaf keep their page in that mushaf`() = runTest {
-    // naskh has no provider in this build: mobile-sync maps its pages, not this app
-    val importData = normalizer.normalize(
-      BookmarkData(
-        readingBookmarks = listOf(
-          BackupReadingBookmark(
-            slot = ReadingBookmarkType.ORANGE,
-            type = BackupReadingBookmark.TYPE_PAGE,
-            page = 611,
-            timestamp = Instant.fromEpochSeconds(800)
-          )
-        ),
-        pageType = "naskh"
-      )
-    )
-
-    val page = importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page
-    assertThat(page.page to page.mushaf).isEqualTo(611 to Mushaf.INDOPAK_15_LINES)
-  }
-
-  @Test
   fun `an unknown source page type is read in the reference page type`() = runTest {
     val importData = normalizer.normalize(unknownPageTypeBackup())
 
@@ -163,7 +140,7 @@ class BookmarkBackupImportNormalizerTest {
   fun `an unknown source page type is read in a riwayah build's own page type`() = runTest {
     // a Warsh build registers only warsh, so it is the reference page type
     val warshNormalizer = normalizer(
-      pageProviders = mapOf("warsh" to TestPageProvider(WarshDataSource())),
+      pageProviders = mapOf("warsh" to TestPageProvider(MushafType.WARSH, WarshDataSource())),
       fallbackPageType = "warsh"
     )
 
@@ -249,46 +226,6 @@ class BookmarkBackupImportNormalizerTest {
     override suspend fun translationTextSize(): Int = 0
 
     override fun preferencesFlow(): Flow<String> = preferences
-  }
-
-  private class TestPageProvider(
-    private val dataSource: QuranDataSource
-  ) : PageProvider {
-    override fun getDataSource(): QuranDataSource = dataSource
-
-    override fun getPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator {
-      throw UnsupportedOperationException()
-    }
-
-    override fun getImageVersion(): Int = 0
-
-    override fun getImagesBaseUrl(): String = ""
-
-    override fun getImagesZipBaseUrl(): String = ""
-
-    override fun getPatchBaseUrl(): String = ""
-
-    override fun getAyahInfoBaseUrl(): String = ""
-
-    override fun getDatabasesBaseUrl(): String = ""
-
-    override fun getAudioDatabasesBaseUrl(): String = ""
-
-    override fun getAudioDirectoryName(): String = ""
-
-    override fun getDatabaseDirectoryName(): String = ""
-
-    override fun getAyahInfoDirectoryName(): String = ""
-
-    override fun getImagesDirectoryName(): String = ""
-
-    override fun getPreviewTitle(): Int = 0
-
-    override fun getPreviewDescription(): Int = 0
-
-    override fun getQaris(): List<Qari> = emptyList()
-
-    override fun getDefaultQariId(): Int = 0
   }
 
   private companion object {
