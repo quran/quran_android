@@ -159,8 +159,8 @@ class QuranSyncManager(
   /**
    * Starts the OAuth login flow and triggers an initial sync after a successful token exchange.
    *
-   * The sync settings screen is an explicit account action, so force provider-side
-   * reauthentication to avoid silently reusing a previous Quran.com browser session after logout.
+   * mobile-sync's login always forces provider-side reauthentication (`prompt=login`), so signing in
+   * after a logout never silently reuses a previous Quran.com browser session.
    *
    * The browser redirect continuation is owned by this app-scoped manager rather than the calling
    * UI coroutine, so Activity recreation while the browser is open does not strand the pending login.
@@ -168,7 +168,7 @@ class QuranSyncManager(
   suspend fun login() {
     runAuthAction {
       if (!isConfigured || codeAuthFlowFactory == null) return@runAuthAction
-      graph.authService.loginWithReauthentication()
+      graph.authService.login()
       graph.quranDataService.triggerSync()
     }
   }
