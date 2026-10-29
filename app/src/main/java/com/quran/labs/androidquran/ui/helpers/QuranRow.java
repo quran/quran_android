@@ -45,6 +45,8 @@ public class QuranRow {
   // a collection users can't rename or delete: the system collections (Favorites) and the color
   // collections older Quran.com apps created
   public boolean isReadOnlyCollection;
+  // a collection's name as stored, which renaming starts from; text holds the name shown
+  public String collectionName;
 
   public HighlightColor highlightColor;
   public ReadingBookmarkType readingBookmarkType;
@@ -69,6 +71,7 @@ public class QuranRow {
     private boolean isCollapsible;
     private boolean isCollapsed;
     private boolean isReadOnlyCollection;
+    private String collectionName;
     private HighlightColor highlightColor;
     private ReadingBookmarkType readingBookmarkType;
 
@@ -167,6 +170,11 @@ public class QuranRow {
       return this;
     }
 
+    public Builder withCollectionName(String collectionName) {
+      this.collectionName = collectionName;
+      return this;
+    }
+
     public Builder withHighlightColor(HighlightColor highlightColor) {
       this.highlightColor = highlightColor;
       return this;
@@ -181,7 +189,8 @@ public class QuranRow {
       return new QuranRow(text, metadata, rowType, sura,
           ayah, page, imageResource, imageFilterColorResource, imageContentDescription, juzType,
           juzOverlayText, bookmarkId, tagId, bookmark, dateAddedInMillis, itemCount,
-          isCollapsible, isCollapsed, isReadOnlyCollection, highlightColor, readingBookmarkType);
+          isCollapsible, isCollapsed, isReadOnlyCollection, collectionName, highlightColor,
+          readingBookmarkType);
     }
   }
 
@@ -190,7 +199,7 @@ public class QuranRow {
       String imageContentDescription, Integer juzType, String juzOverlayText, String bookmarkId,
       String tagId, Bookmark bookmark,
                    long dateAddedInMillis, Integer itemCount, boolean isCollapsible,
-                   boolean isCollapsed, boolean isReadOnlyCollection,
+                   boolean isCollapsed, boolean isReadOnlyCollection, String collectionName,
                    HighlightColor highlightColor, ReadingBookmarkType readingBookmarkType) {
     this.text = text;
     this.rowType = rowType;
@@ -211,6 +220,7 @@ public class QuranRow {
     this.isCollapsible = isCollapsible;
     this.isCollapsed = isCollapsed;
     this.isReadOnlyCollection = isReadOnlyCollection;
+    this.collectionName = collectionName;
     this.highlightColor = highlightColor;
     this.readingBookmarkType = readingBookmarkType;
   }

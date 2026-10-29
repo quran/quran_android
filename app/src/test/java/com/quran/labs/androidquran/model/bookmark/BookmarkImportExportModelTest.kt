@@ -16,8 +16,8 @@ import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.collection.OldPageBookmarksCollection
 import com.quran.labs.BaseTestExtension
-import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.fakes.FakeBookmarksDao
 import com.quran.labs.androidquran.fakes.FakePageProvider
@@ -81,7 +81,6 @@ class BookmarkImportExportModelTest {
       readingBookmarksDao,
       pageMapper,
       BookmarkBackupImportNormalizer(
-        context,
         pageMapper,
         DefaultMobileSyncTimestampProvider()
       ),
@@ -367,7 +366,7 @@ class BookmarkImportExportModelTest {
     val recentTimestampMillis = 1_700_000_002_000L
     val readingBookmarkTimestampMillis = 1_700_000_003_000L
     val page = 50
-    val oldPageBookmarksTagName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksTagName = OldPageBookmarksCollection.NAME
 
     importData(
       BookmarkData(
@@ -414,7 +413,7 @@ class BookmarkImportExportModelTest {
   fun testImportConvertsPageBookmarkToAyahBookmarkWithOldPageBookmarkTag() {
     val page = 50
     val originalTagName = "Imported Tag"
-    val oldPageBookmarksTagName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksTagName = OldPageBookmarksCollection.NAME
 
     importData(
       BookmarkData(
@@ -451,7 +450,7 @@ class BookmarkImportExportModelTest {
     val page = 50
     val backupTagId = "old-page-bookmarks"
     val originalTagName = "Imported Tag"
-    val oldPageBookmarksTagName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksTagName = OldPageBookmarksCollection.NAME
 
     importData(
       BookmarkData(

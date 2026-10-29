@@ -1,6 +1,5 @@
 package com.quran.mobile.bookmark.importdata
 
-import android.content.Context
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.Settings
@@ -24,7 +23,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.RuntimeEnvironment
 import org.robolectric.RobolectricTestRunner
 import kotlin.time.Instant
 
@@ -174,7 +172,6 @@ class BookmarkBackupImportNormalizerTest {
     fallbackPageType: String
   ): BookmarkBackupImportNormalizer {
     return BookmarkBackupImportNormalizer(
-      appContext = RuntimeEnvironment.getApplication().applicationContext as Context,
       pageMapper = ReadingBookmarkPageMapper(
         settings = settings,
         pageProviders = pageProviders,

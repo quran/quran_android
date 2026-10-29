@@ -12,6 +12,7 @@ import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
+import com.quran.data.model.collection.OldPageBookmarksCollection
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.R
@@ -91,6 +92,44 @@ class BookmarkUIConverterTest {
 
     assertThat(result.rows.map { row -> row.tagId to row.isEditableCollectionHeader })
       .containsExactly("1" to false, "2" to false, "3" to true)
+      .inOrder()
+  }
+
+  @Test
+  @Config(qualifiers = "ar")
+  fun `collection headers show a translated name but rename from the stored one`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val quranInfo = QuranInfo(MadaniDataSource())
+    val converter = BookmarkUIConverter(
+      QuranRowFactory(quranInfo, QuranDisplayData(quranInfo)),
+      quranInfo
+    )
+    val arabicOldPageBookmarks = "مرجعيات الصفحات القديمة"
+    val data = BookmarkRawResult(
+      rows = listOf(
+        Tag("1", OldPageBookmarksCollection.NAME),
+        // recognized trimmed and in any case, like the other apps
+        Tag("2", " old page BOOKMARKS "),
+        // a user's own name shows as typed, even when it matches a translation
+        Tag("3", arabicOldPageBookmarks),
+        Tag("4", "Review"),
+        Tag("5", "favorites", isSystem = true, isDefault = true)
+      ).map { tag -> BookmarkRowData.TagHeader(tag) },
+      tagMap = emptyMap()
+    )
+
+    val result = converter.convertToUIResult(context, data)
+
+    // app's translation overrides common:ui:core's English string. Renaming starts from
+    // collectionName, so saving it unchanged can't store the translation.
+    assertThat(result.rows.map { row -> row.text to row.collectionName })
+      .containsExactly(
+        arabicOldPageBookmarks to OldPageBookmarksCollection.NAME,
+        arabicOldPageBookmarks to " old page BOOKMARKS ",
+        arabicOldPageBookmarks to arabicOldPageBookmarks,
+        "Review" to "Review",
+        context.getString(CoreR.string.default_collection) to "favorites"
+      )
       .inOrder()
   }
 

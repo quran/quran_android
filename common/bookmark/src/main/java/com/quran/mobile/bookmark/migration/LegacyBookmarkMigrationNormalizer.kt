@@ -1,11 +1,10 @@
 package com.quran.mobile.bookmark.migration
 
-import android.content.Context
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.RecentPage
-import com.quran.mobile.bookmark.R
+import com.quran.data.model.collection.OldPageBookmarksCollection
 import com.quran.mobile.bookmark.importdata.MobileSyncImportBookmark
 import com.quran.mobile.bookmark.importdata.MobileSyncImportCollection
 import com.quran.mobile.bookmark.importdata.MobileSyncImportCollectionBookmark
@@ -13,17 +12,14 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImportData
 import com.quran.mobile.bookmark.importdata.MobileSyncImportReadingSession
 import com.quran.mobile.bookmark.legacy.LegacyBookmarkIds
 import com.quran.mobile.bookmark.time.legacyTimestampMillis
-import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject
 
 class LegacyBookmarkMigrationNormalizer @Inject constructor(
-  @param:ApplicationContext private val appContext: Context,
   private val quranInfo: QuranInfo
 ) {
   fun normalize(snapshot: LegacyBookmarksSnapshot): MobileSyncImportData {
     val collectionState = CollectionState.from(snapshot.tags)
     val bookmarkState = linkedMapOf<SuraAyah, BookmarkState>()
-    val oldPageBookmarksName by lazy { appContext.getString(R.string.old_page_bookmarks) }
 
     snapshot.bookmarks.forEach { bookmark ->
       val normalizedBookmark = normalizeBookmark(bookmark) ?: return@forEach
@@ -31,8 +27,8 @@ class LegacyBookmarkMigrationNormalizer @Inject constructor(
         collectionState.nameForLegacyTagId[tagId]
       }
       val collectionNames = if (normalizedBookmark.fromPageBookmark) {
-        collectionState.addIfAbsent(oldPageBookmarksName, normalizedBookmark.timestamp)
-        tagNames + oldPageBookmarksName
+        collectionState.addIfAbsent(OldPageBookmarksCollection.NAME, normalizedBookmark.timestamp)
+        tagNames + OldPageBookmarksCollection.NAME
       } else {
         tagNames
       }

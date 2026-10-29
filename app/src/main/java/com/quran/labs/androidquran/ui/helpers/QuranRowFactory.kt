@@ -188,6 +188,7 @@ class QuranRowFactory @Inject constructor(
     return QuranRow.Builder()
       .withType(QuranRow.BOOKMARK_HEADER)
       .withText(CollectionNames.displayName(context, tag))
+      .withCollectionName(tag.name)
       .withTagId(tag.id)
       .withItemCount(count)
       .withCollapsedState(isCollapsed)

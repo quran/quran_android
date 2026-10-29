@@ -6,12 +6,13 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.RecentPage
-import com.quran.labs.androidquran.R
+import com.quran.data.model.collection.OldPageBookmarksCollection
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.mobile.bookmark.migration.LegacyBookmarkMigrationNormalizer
 import com.quran.mobile.bookmark.migration.LegacyBookmarkTag
 import com.quran.mobile.bookmark.migration.LegacyBookmarksSnapshot
+import com.quran.mobile.common.ui.core.R as UiCoreR
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,14 +31,14 @@ class LegacyBookmarkMigrationNormalizerTest {
   @Before
   fun setUp() {
     quranInfo = QuranInfo(MadaniDataSource())
-    normalizer = LegacyBookmarkMigrationNormalizer(context, quranInfo)
+    normalizer = LegacyBookmarkMigrationNormalizer(quranInfo)
   }
 
   @Test
   fun `page bookmarks become ayah bookmarks in old page bookmarks collection`() {
     val page = 50
     val pageBounds = quranInfo.getPageBounds(page)
-    val oldPageBookmarksName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksName = OldPageBookmarksCollection.NAME
 
     val data = normalizer.normalize(
       LegacyBookmarksSnapshot(
@@ -74,6 +75,27 @@ class LegacyBookmarkMigrationNormalizerTest {
   }
 
   @Test
+  @Config(qualifiers = "ar")
+  fun `old page bookmarks collection keeps its English name on a non-English device`() {
+    // the name is stored and synced, so other apps can recognize it; only the UI translates it
+    assertThat(context.getString(UiCoreR.string.old_page_bookmarks))
+      .isNotEqualTo(OldPageBookmarksCollection.NAME)
+
+    val data = normalizer.normalize(
+      LegacyBookmarksSnapshot(
+        tags = emptyList(),
+        bookmarks = listOf(Bookmark(legacyBookmarkId(1L), null, null, 50, 1000L)),
+        recentPages = emptyList()
+      )
+    )
+
+    assertThat(data.collections.map { collection -> collection.name })
+      .containsExactly("Old Page Bookmarks")
+    assertThat(data.collectionBookmarks.map { link -> link.collectionName })
+      .containsExactly("Old Page Bookmarks")
+  }
+
+  @Test
   fun `direct ayah bookmark wins over converted page bookmark for the same ayah`() {
     val page = 50
     val pageBounds = quranInfo.getPageBounds(page)
@@ -94,7 +116,7 @@ class LegacyBookmarkMigrationNormalizerTest {
     assertThat(data.bookmarks.single().ayah).isEqualTo(pageBounds[1])
     assertThat(data.bookmarks.single().timestampMillis).isEqualTo(1_000_000L)
     assertThat(data.collections.map { collection -> collection.name })
-      .containsExactly(context.getString(R.string.old_page_bookmarks))
+      .containsExactly(OldPageBookmarksCollection.NAME)
     assertThat(data.collectionBookmarks.single().timestampMillis).isEqualTo(2_000_000L)
   }
 

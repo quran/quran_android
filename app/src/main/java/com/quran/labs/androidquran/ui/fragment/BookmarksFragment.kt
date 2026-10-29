@@ -403,7 +403,8 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   private fun handleTagEdit(activity: QuranActivity, selected: List<QuranRow>) {
     if (selected.size == 1) {
       val row = selected[0]
-      row.tagId?.let { tagId -> activity.editTag(tagId, row.text) }
+      // rename from the stored name: text can be a translation of it
+      row.tagId?.let { tagId -> activity.editTag(tagId, row.collectionName) }
     }
   }
 
