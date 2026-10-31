@@ -14,6 +14,7 @@ dependencies {
   implementation(project(":common:ui:core"))
 
   implementation(libs.androidx.activity.compose)
+  implementation(libs.androidx.lifecycle.process)
   implementation(libs.androidx.preference.ktx)
 
   implementation(libs.compose.foundation)
@@ -26,4 +27,6 @@ dependencies {
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.quran.mobile.sync)
+
+  testImplementation(libs.junit)
 }
