@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">Aangemeld</string>
   <string name="quran_sync_loading">Bezig met aanmelden</string>
   <string name="quran_sync_login">Aanmelden</string>
-  <string name="quran_sync_logout">Afmelden</string>
-  <string name="quran_sync_name">Naam</string>
-  <string name="quran_sync_email">E-mail</string>
-  <string name="quran_sync_account_id">Account-ID</string>
   <string name="quran_sync_action_error">Synchronisatie kan momenteel niet worden bijgewerkt.</string>
   <string name="quran_sync_bookmarks_cta_title">Synchroniseer je bladwijzers overal</string>
   <string name="quran_sync_bookmarks_cta_subtitle">Krijg er toegang toe vanaf elk apparaat, op elk moment</string>

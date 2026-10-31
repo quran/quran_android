@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">已登录</string>
   <string name="quran_sync_loading">正在登录</string>
   <string name="quran_sync_login">登录</string>
-  <string name="quran_sync_logout">退出登录</string>
-  <string name="quran_sync_name">姓名</string>
-  <string name="quran_sync_email">电子邮件</string>
-  <string name="quran_sync_account_id">账户 ID</string>
   <string name="quran_sync_action_error">暂时无法更新同步。</string>
   <string name="quran_sync_bookmarks_cta_title">随时随地同步您的书签</string>
   <string name="quran_sync_bookmarks_cta_subtitle">从任何设备、任何时间访问它们</string>

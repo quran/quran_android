@@ -9,6 +9,7 @@ import com.quran.shared.auth.di.AuthFlowFactoryProvider
 import com.quran.shared.auth.model.AuthConfig
 import com.quran.shared.auth.model.AuthState
 import com.quran.shared.persistence.DriverFactory
+import com.quran.shared.pipeline.AppEnvironment
 import com.quran.shared.pipeline.di.AppGraph
 import com.quran.shared.pipeline.di.SharedDependencyGraph
 import com.quran.shared.pipeline.storage.createMobileSyncStorage
@@ -78,6 +79,9 @@ class QuranSyncManager(
 
   val authState: StateFlow<AuthState>
     get() = graph.authService.authState
+
+  internal val profileUrl: String
+    get() = if (config.appEnvironment == AppEnvironment.PRELIVE) PRELIVE_PROFILE_URL else PROFILE_URL
 
   /**
    * Emits whether UI can offer a manual sync action.
@@ -299,6 +303,8 @@ class QuranSyncManager(
     const val SYNC_PREFERENCES_NAME = "quran_sync"
     const val KEY_LOGOUT_PENDING_PROCESS_ID = "logout_pending_process_id"
     const val KEY_DISMISSED_BOOKMARKS_SIGN_IN_CARD = "dismissed_bookmarks_sign_in_card"
+    const val PROFILE_URL = "https://quran.com/profile"
+    const val PRELIVE_PROFILE_URL = "https://prelive.quran.com/profile"
   }
 
   class AuthActivityRegistration internal constructor(

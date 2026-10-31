@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">Đã đăng nhập</string>
   <string name="quran_sync_loading">Đang đăng nhập</string>
   <string name="quran_sync_login">Đăng nhập</string>
-  <string name="quran_sync_logout">Đăng xuất</string>
-  <string name="quran_sync_name">Tên</string>
-  <string name="quran_sync_email">Email</string>
-  <string name="quran_sync_account_id">ID tài khoản</string>
   <string name="quran_sync_action_error">Hiện không thể cập nhật đồng bộ hóa.</string>
   <string name="quran_sync_bookmarks_cta_title">Đồng bộ hóa dấu trang của bạn ở mọi nơi</string>
   <string name="quran_sync_bookmarks_cta_subtitle">Truy cập chúng từ bất kỳ thiết bị nào, bất kỳ lúc nào</string>

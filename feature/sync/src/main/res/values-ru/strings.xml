@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">Вход выполнен</string>
   <string name="quran_sync_loading">Выполняется вход</string>
   <string name="quran_sync_login">Войти</string>
-  <string name="quran_sync_logout">Выйти</string>
-  <string name="quran_sync_name">Имя</string>
-  <string name="quran_sync_email">Эл. почта</string>
-  <string name="quran_sync_account_id">ID аккаунта</string>
   <string name="quran_sync_action_error">Сейчас невозможно обновить синхронизацию.</string>
   <string name="quran_sync_bookmarks_cta_title">Синхронизируйте закладки везде</string>
   <string name="quran_sync_bookmarks_cta_subtitle">Получайте к ним доступ с любого устройства в любое время</string>

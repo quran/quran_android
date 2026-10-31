@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">Tizimga kirilgan</string>
   <string name="quran_sync_loading">Tizimga kirilmoqda</string>
   <string name="quran_sync_login">Kirish</string>
-  <string name="quran_sync_logout">Chiqish</string>
-  <string name="quran_sync_name">Ism</string>
-  <string name="quran_sync_email">Email</string>
-  <string name="quran_sync_account_id">Hisob identifikatori</string>
   <string name="quran_sync_action_error">Hozircha sinxronlashni yangilab boʻlmaydi.</string>
   <string name="quran_sync_bookmarks_cta_title">Xatchoʻplaringizni hamma joyda sinxronlang</string>
   <string name="quran_sync_bookmarks_cta_subtitle">Ularga istalgan qurilmadan, istalgan vaqtda kiring</string>
