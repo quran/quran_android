@@ -5,6 +5,7 @@ plugins {
 
 android {
   namespace = "com.quran.mobile.feature.sync"
+  testOptions.unitTests.isReturnDefaultValues = true
 }
 
 dependencies {
@@ -26,7 +27,11 @@ dependencies {
 
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.coroutines.core)
+  implementation(libs.kotlinx.collections.immutable)
   implementation(libs.quran.mobile.sync)
 
   testImplementation(libs.junit)
+  testImplementation(libs.molecule)
+  testImplementation(libs.turbine)
+  testImplementation(libs.kotlinx.coroutines.test)
 }
