@@ -59,7 +59,6 @@ class BundledTranslationsTest {
 
   @Test
   fun `bundle ids cannot collide with the ids the server assigns today`() {
-    // the live server currently assigns ids below 200; bundled ids stay far above
     Truth.assertThat(BundledTranslations.cebuano.id).isGreaterThan(1000)
   }
 }

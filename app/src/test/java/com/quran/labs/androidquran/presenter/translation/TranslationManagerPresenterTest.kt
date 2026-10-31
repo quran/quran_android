@@ -208,7 +208,7 @@ class TranslationManagerPresenterTest {
     // Act
     val items = translationManager().getTranslations(false).toList().single()
 
-    // Assert: the bundled cebuano translation shows up even without server support
+    // Assert
     Truth.assertThat(items.map { it.translation.id })
       .contains(BundledTranslations.cebuano.id)
     Truth.assertThat(quranSettings.bundledTranslationsInstalled()).isTrue()
