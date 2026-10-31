@@ -12,6 +12,7 @@ import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.labs.androidquran.widget.BookmarksWidgetSubscriber
 import com.quran.mobile.di.QuranApplicationComponent
 import com.quran.mobile.di.QuranApplicationComponentProvider
+import com.quran.mobile.feature.sync.QuranSyncManager
 import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.createGraphFactory
@@ -24,6 +25,7 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
   @Inject lateinit var quranWorkerFactory: QuranWorkerFactory
   @Inject lateinit var bookmarksWidgetSubscriber: BookmarksWidgetSubscriber
   @Inject lateinit var quranSettings: QuranSettings
+  @Inject lateinit var quranSyncManager: QuranSyncManager
 
   override fun provideQuranApplicationComponent(): QuranApplicationComponent {
     return applicationComponent
@@ -34,6 +36,7 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
     setupTimber()
     applicationComponent = initializeInjector()
     applicationComponent.inject(this)
+    quranSyncManager.startForegroundSync()
     initializeWorkManager()
     bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
 
