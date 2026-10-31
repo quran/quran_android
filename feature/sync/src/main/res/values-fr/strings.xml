@@ -16,4 +16,30 @@
   <string name="quran_sync_bookmarks_cta_subtitle">Accédez-y depuis n\'importe quel appareil, à tout moment</string>
   <string name="quran_sync_bookmarks_cta_button">Se connecter avec Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Ignorer</string>
+  <string name="quran_sync_account_title">Compte et synchronisation</string>
+  <string name="quran_sync_status_synced">Synchronisé</string>
+  <string name="quran_sync_status_just_now">à l’instant</string>
+  <string name="quran_sync_status_everything_else_synced">Tout le reste synchronisé %s</string>
+  <string name="quran_sync_status_never_synced">Pas encore synchronisé</string>
+  <string name="quran_sync_status_all_items">Signets, collections, notes et progression de lecture</string>
+  <string name="quran_sync_status_synced_card">Signets, notes et plus encore · %s</string>
+  <string name="quran_sync_status_items_short">Signets, notes et plus encore</string>
+  <string name="quran_sync_status_syncing">Synchronisation…</string>
+  <string name="quran_sync_status_failed">Échec de la synchronisation</string>
+  <string name="quran_sync_status_failed_kept">Les signets et les notes restent sur cet appareil · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">Les signets et les notes restent sur cet appareil</string>
+  <string name="quran_sync_error_network">Pas de connexion</string>
+  <string name="quran_sync_error_authentication">Quran.com n’a pas accepté votre connexion</string>
+  <string name="quran_sync_error_server">Quran.com n’est pas disponible</string>
+  <string name="quran_sync_error_rejected">Quran.com n’a pas accepté les modifications</string>
+  <string name="quran_sync_error_unknown">Une erreur s’est produite</string>
+  <string name="quran_sync_action_sync_now">Synchroniser maintenant</string>
+  <string name="quran_sync_action_syncing">Synchronisation</string>
+  <string name="quran_sync_action_try_again">Réessayer</string>
+  <string name="quran_sync_held_review">Voir ce qui n’est pas synchronisé</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="one">%d élément n’est pas synchronisé</item>
+    <item quantity="many">%d éléments ne sont pas synchronisés</item>
+    <item quantity="other">%d éléments ne sont pas synchronisés</item>
+  </plurals>
 </resources>

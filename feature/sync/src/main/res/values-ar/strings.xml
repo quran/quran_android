@@ -16,4 +16,33 @@
   <string name="quran_sync_bookmarks_cta_subtitle">الوصول إليها من أي جهاز وفي أي وقت</string>
   <string name="quran_sync_bookmarks_cta_button">تسجيل الدخول باستخدام Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">إغلاق</string>
+  <string name="quran_sync_account_title">الحساب والمزامنة</string>
+  <string name="quran_sync_status_synced">تمت المزامنة</string>
+  <string name="quran_sync_status_just_now">قبل لحظات</string>
+  <string name="quran_sync_status_everything_else_synced">تمت مزامنة كل ما عداها %s</string>
+  <string name="quran_sync_status_never_synced">لم تتم المزامنة بعد</string>
+  <string name="quran_sync_status_all_items">العلامات المرجعية والمجموعات والملاحظات وتقدّم القراءة</string>
+  <string name="quran_sync_status_synced_card">العلامات المرجعية والملاحظات والمزيد · %s</string>
+  <string name="quran_sync_status_items_short">العلامات المرجعية والملاحظات والمزيد</string>
+  <string name="quran_sync_status_syncing">جارٍ المزامنة…</string>
+  <string name="quran_sync_status_failed">تعذّرت المزامنة</string>
+  <string name="quran_sync_status_failed_kept">تبقى العلامات المرجعية والملاحظات على هذا الجهاز · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">تبقى العلامات المرجعية والملاحظات على هذا الجهاز</string>
+  <string name="quran_sync_error_network">لا يوجد اتصال</string>
+  <string name="quran_sync_error_authentication">لم يقبل Quran.com تسجيل دخولك</string>
+  <string name="quran_sync_error_server">Quran.com غير متاح</string>
+  <string name="quran_sync_error_rejected">لم يقبل Quran.com التغييرات</string>
+  <string name="quran_sync_error_unknown">حدث خطأ ما</string>
+  <string name="quran_sync_action_sync_now">زامن الآن</string>
+  <string name="quran_sync_action_syncing">جارٍ المزامنة</string>
+  <string name="quran_sync_action_try_again">أعد المحاولة</string>
+  <string name="quran_sync_held_review">راجع ما لا تتم مزامنته</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="zero">لا توجد عناصر لا تتم مزامنتها</item>
+    <item quantity="one">عنصر واحد لا تتم مزامنته</item>
+    <item quantity="two">عنصران لا تتم مزامنتهما</item>
+    <item quantity="few">%d عناصر لا تتم مزامنتها</item>
+    <item quantity="many">%d عنصرًا لا تتم مزامنته</item>
+    <item quantity="other">%d عنصر لا تتم مزامنته</item>
+  </plurals>
 </resources>

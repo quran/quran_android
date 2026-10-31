@@ -16,4 +16,28 @@
   <string name="quran_sync_bookmarks_cta_subtitle">Akses daripada mana-mana peranti, pada bila-bila masa</string>
   <string name="quran_sync_bookmarks_cta_button">Log masuk dengan Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Ketepikan</string>
+  <string name="quran_sync_account_title">Akaun &amp; Penyegerakan</string>
+  <string name="quran_sync_status_synced">Disegerakkan</string>
+  <string name="quran_sync_status_just_now">sebentar tadi</string>
+  <string name="quran_sync_status_everything_else_synced">Yang lain disegerakkan %s</string>
+  <string name="quran_sync_status_never_synced">Belum disegerakkan</string>
+  <string name="quran_sync_status_all_items">Penanda halaman, koleksi, nota dan kemajuan bacaan</string>
+  <string name="quran_sync_status_synced_card">Penanda halaman, nota dan lain-lain · %s</string>
+  <string name="quran_sync_status_items_short">Penanda halaman, nota dan lain-lain</string>
+  <string name="quran_sync_status_syncing">Menyegerak…</string>
+  <string name="quran_sync_status_failed">Tidak dapat menyegerak</string>
+  <string name="quran_sync_status_failed_kept">Penanda halaman dan nota kekal pada peranti ini · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">Penanda halaman dan nota kekal pada peranti ini</string>
+  <string name="quran_sync_error_network">Tiada sambungan</string>
+  <string name="quran_sync_error_authentication">Quran.com tidak menerima log masuk anda</string>
+  <string name="quran_sync_error_server">Quran.com tidak tersedia</string>
+  <string name="quran_sync_error_rejected">Quran.com tidak menerima perubahan itu</string>
+  <string name="quran_sync_error_unknown">Ada yang tidak kena</string>
+  <string name="quran_sync_action_sync_now">Segerakkan sekarang</string>
+  <string name="quran_sync_action_syncing">Menyegerak</string>
+  <string name="quran_sync_action_try_again">Cuba lagi</string>
+  <string name="quran_sync_held_review">Semak yang tidak disegerakkan</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="other">%d item tidak disegerakkan</item>
+  </plurals>
 </resources>

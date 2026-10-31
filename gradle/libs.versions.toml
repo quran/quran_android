@@ -52,6 +52,7 @@ androidxWindowManager = "1.5.1"
 # ui libraries
 accompanistVersion = "0.36.0"
 balloonVersion = "1.7.6"
+coilVersion = "3.6.3"
 tooltipComposeVersion = "0.2.0"
 insetterVersion = "0.6.1"
 materialComponentsVersion = "1.14.0"
@@ -93,6 +94,7 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotationVersion" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragmentVersion" }
 androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "androidxLifecycleVersion" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycleVersion" }
 androidx-localbroadcastmanager = { module = "androidx.localbroadcastmanager:localbroadcastmanager", version.ref = "androidxLocalBroadcastVersion" }
 androidx-dynamicanimation = { module = "androidx.dynamicanimation:dynamicanimation", version.ref = "androidxDynamicAnimationVersion" }
 androidx-media = { module = "androidx.media:media", version.ref = "androidxMediaVersion" }
@@ -156,6 +158,8 @@ google-auth = { module = "com.google.auth:google-auth-library-oauth2-http", vers
 
 # ui libraries
 balloon = { module = "com.github.skydoves:balloon", version.ref = "balloonVersion" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilVersion" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilVersion" }
 number-picker = { module = "io.github.ShawnLin013:number-picker", version.ref = "numberPickerVersion" }
 insetter = { module = "dev.chrisbanes.insetter:insetter", version.ref = "insetterVersion" }
 accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanistVersion" }

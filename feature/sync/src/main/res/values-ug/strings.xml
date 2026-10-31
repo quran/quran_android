@@ -16,4 +16,29 @@
   <string name="quran_sync_bookmarks_cta_subtitle">خالىغان ئۈسكۈنىدىن، خالىغان ۋاقىتتا زىيارەت قىلىڭ</string>
   <string name="quran_sync_bookmarks_cta_button">Quran.com بىلەن تىزىملىنىڭ</string>
   <string name="quran_sync_bookmarks_cta_dismiss">تاقاش</string>
+  <string name="quran_sync_account_title">ھېسابات ۋە ماسقەدەملەش</string>
+  <string name="quran_sync_status_synced">ماسقەدەملەندى</string>
+  <string name="quran_sync_status_just_now">ھېلىلا</string>
+  <string name="quran_sync_status_everything_else_synced">باشقا ھەممىسى %s ماسقەدەملەندى</string>
+  <string name="quran_sync_status_never_synced">تېخى ماسقەدەملەنمىدى</string>
+  <string name="quran_sync_status_all_items">خەتكۈچ، توپلام، خاتىرە ۋە ئوقۇش ئىلگىرىلىشى</string>
+  <string name="quran_sync_status_synced_card">خەتكۈچ، خاتىرە ۋە باشقىلار · %s</string>
+  <string name="quran_sync_status_items_short">خەتكۈچ، خاتىرە ۋە باشقىلار</string>
+  <string name="quran_sync_status_syncing">ماسقەدەملىنىۋاتىدۇ…</string>
+  <string name="quran_sync_status_failed">ماسقەدەملىگىلى بولمىدى</string>
+  <string name="quran_sync_status_failed_kept">خەتكۈچ ۋە خاتىرىلەر بۇ ئۈسكۈنىدە قالىدۇ · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">خەتكۈچ ۋە خاتىرىلەر بۇ ئۈسكۈنىدە قالىدۇ</string>
+  <string name="quran_sync_error_network">تور ئۇلانمىدى</string>
+  <string name="quran_sync_error_authentication">Quran.com كىرىشىڭىزنى قوبۇل قىلمىدى</string>
+  <string name="quran_sync_error_server">Quran.com نى ئىشلەتكىلى بولمايدۇ</string>
+  <string name="quran_sync_error_rejected">Quran.com ئۆزگەرتىشلەرنى قوبۇل قىلمىدى</string>
+  <string name="quran_sync_error_unknown">بىر خاتالىق كۆرۈلدى</string>
+  <string name="quran_sync_action_sync_now">ھازىر ماسقەدەملەش</string>
+  <string name="quran_sync_action_syncing">ماسقەدەملىنىۋاتىدۇ</string>
+  <string name="quran_sync_action_try_again">قايتا سىناش</string>
+  <string name="quran_sync_held_review">ماسقەدەملەنمىگەنلەرنى كۆرۈش</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="one">%d تۈر ماسقەدەملەنمەيدۇ</item>
+    <item quantity="other">%d تۈر ماسقەدەملەنمەيدۇ</item>
+  </plurals>
 </resources>

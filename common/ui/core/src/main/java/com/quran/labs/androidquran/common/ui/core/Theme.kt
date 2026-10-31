@@ -84,8 +84,10 @@ object QuranIcons {
   val BookmarkBorder: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.BookmarkBorder
   val Chat: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Chat
   val Check: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Check
+  val CheckCircle: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.CheckCircle
   val ChevronRight: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ChevronRight
   val Close: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Close
+  val ErrorOutline: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ErrorOutline
   val ExpandMore: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ExpandMore
   val FastForward: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.FastForward
   val FastRewind: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.FastRewind
@@ -101,6 +103,7 @@ object QuranIcons {
   val Speed: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Speed
   val Stop: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Stop
   val Sync: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Sync
+  val Warning: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Warning
 }
 
 @Composable

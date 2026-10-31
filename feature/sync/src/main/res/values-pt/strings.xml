@@ -16,4 +16,30 @@
   <string name="quran_sync_bookmarks_cta_subtitle">Aceda a eles a partir de qualquer dispositivo, a qualquer momento</string>
   <string name="quran_sync_bookmarks_cta_button">Iniciar sessão com Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Dispensar</string>
+  <string name="quran_sync_account_title">Conta e sincronização</string>
+  <string name="quran_sync_status_synced">Sincronizado</string>
+  <string name="quran_sync_status_just_now">agora mesmo</string>
+  <string name="quran_sync_status_everything_else_synced">Todo o resto sincronizado %s</string>
+  <string name="quran_sync_status_never_synced">Ainda não sincronizado</string>
+  <string name="quran_sync_status_all_items">Marcadores, coleções, notas e progresso de leitura</string>
+  <string name="quran_sync_status_synced_card">Marcadores, notas e mais · %s</string>
+  <string name="quran_sync_status_items_short">Marcadores, notas e mais</string>
+  <string name="quran_sync_status_syncing">Sincronizando…</string>
+  <string name="quran_sync_status_failed">Não foi possível sincronizar</string>
+  <string name="quran_sync_status_failed_kept">Marcadores e notas ficam neste dispositivo · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">Marcadores e notas ficam neste dispositivo</string>
+  <string name="quran_sync_error_network">Sem conexão</string>
+  <string name="quran_sync_error_authentication">O Quran.com não aceitou seu login</string>
+  <string name="quran_sync_error_server">O Quran.com não está disponível</string>
+  <string name="quran_sync_error_rejected">O Quran.com não aceitou as alterações</string>
+  <string name="quran_sync_error_unknown">Algo deu errado</string>
+  <string name="quran_sync_action_sync_now">Sincronizar agora</string>
+  <string name="quran_sync_action_syncing">Sincronizando</string>
+  <string name="quran_sync_action_try_again">Tentar novamente</string>
+  <string name="quran_sync_held_review">Revisar o que não está sincronizando</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="one">%d item não está sincronizando</item>
+    <item quantity="many">%d itens não estão sincronizando</item>
+    <item quantity="other">%d itens não estão sincronizando</item>
+  </plurals>
 </resources>

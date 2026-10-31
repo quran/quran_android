@@ -16,4 +16,29 @@
   <string name="quran_sync_bookmarks_cta_subtitle">Ularga istalgan qurilmadan, istalgan vaqtda kiring</string>
   <string name="quran_sync_bookmarks_cta_button">Quran.com bilan kiring</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Yopish</string>
+  <string name="quran_sync_account_title">Hisob va sinxronlash</string>
+  <string name="quran_sync_status_synced">Sinxronlandi</string>
+  <string name="quran_sync_status_just_now">hozirgina</string>
+  <string name="quran_sync_status_everything_else_synced">Qolgan hammasi %s sinxronlandi</string>
+  <string name="quran_sync_status_never_synced">Hali sinxronlanmagan</string>
+  <string name="quran_sync_status_all_items">Xatcho‘plar, to‘plamlar, eslatmalar va o‘qish jarayoni</string>
+  <string name="quran_sync_status_synced_card">Xatcho‘plar, eslatmalar va boshqalar · %s</string>
+  <string name="quran_sync_status_items_short">Xatcho‘plar, eslatmalar va boshqalar</string>
+  <string name="quran_sync_status_syncing">Sinxronlanmoqda…</string>
+  <string name="quran_sync_status_failed">Sinxronlab bo‘lmadi</string>
+  <string name="quran_sync_status_failed_kept">Xatcho‘plar va eslatmalar shu qurilmada qoladi · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">Xatcho‘plar va eslatmalar shu qurilmada qoladi</string>
+  <string name="quran_sync_error_network">Aloqa yo‘q</string>
+  <string name="quran_sync_error_authentication">Quran.com kirishingizni qabul qilmadi</string>
+  <string name="quran_sync_error_server">Quran.com mavjud emas</string>
+  <string name="quran_sync_error_rejected">Quran.com o‘zgarishlarni qabul qilmadi</string>
+  <string name="quran_sync_error_unknown">Nimadir xato ketdi</string>
+  <string name="quran_sync_action_sync_now">Hozir sinxronlash</string>
+  <string name="quran_sync_action_syncing">Sinxronlanmoqda</string>
+  <string name="quran_sync_action_try_again">Qayta urinish</string>
+  <string name="quran_sync_held_review">Sinxronlanmayotganlarni ko‘rish</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="one">%d ta element sinxronlanmayapti</item>
+    <item quantity="other">%d ta element sinxronlanmayapti</item>
+  </plurals>
 </resources>

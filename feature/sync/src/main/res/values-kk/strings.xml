@@ -16,4 +16,29 @@
   <string name="quran_sync_bookmarks_cta_subtitle">Оларға кез келген құрылғыдан, кез келген уақытта қатынасыңыз</string>
   <string name="quran_sync_bookmarks_cta_button">Quran.com арқылы кіру</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Жабу</string>
+  <string name="quran_sync_account_title">Есептік жазба және синхрондау</string>
+  <string name="quran_sync_status_synced">Синхрондалды</string>
+  <string name="quran_sync_status_just_now">жаңа ғана</string>
+  <string name="quran_sync_status_everything_else_synced">Қалғанының бәрі %s синхрондалды</string>
+  <string name="quran_sync_status_never_synced">Әлі синхрондалмаған</string>
+  <string name="quran_sync_status_all_items">Бетбелгілер, жинақтар, жазбалар және оқу барысы</string>
+  <string name="quran_sync_status_synced_card">Бетбелгілер, жазбалар және басқалары · %s</string>
+  <string name="quran_sync_status_items_short">Бетбелгілер, жазбалар және басқалары</string>
+  <string name="quran_sync_status_syncing">Синхрондалуда…</string>
+  <string name="quran_sync_status_failed">Синхрондау мүмкін болмады</string>
+  <string name="quran_sync_status_failed_kept">Бетбелгілер мен жазбалар осы құрылғыда қалады · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">Бетбелгілер мен жазбалар осы құрылғыда қалады</string>
+  <string name="quran_sync_error_network">Байланыс жоқ</string>
+  <string name="quran_sync_error_authentication">Quran.com кіруіңізді қабылдамады</string>
+  <string name="quran_sync_error_server">Quran.com қолжетімсіз</string>
+  <string name="quran_sync_error_rejected">Quran.com өзгерістерді қабылдамады</string>
+  <string name="quran_sync_error_unknown">Бірдеңе дұрыс болмады</string>
+  <string name="quran_sync_action_sync_now">Қазір синхрондау</string>
+  <string name="quran_sync_action_syncing">Синхрондалуда</string>
+  <string name="quran_sync_action_try_again">Қайталау</string>
+  <string name="quran_sync_held_review">Синхрондалмайтындарды қарау</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="one">%d элемент синхрондалмайды</item>
+    <item quantity="other">%d элемент синхрондалмайды</item>
+  </plurals>
 </resources>
