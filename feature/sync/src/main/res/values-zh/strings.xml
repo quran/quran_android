@@ -16,4 +16,28 @@
   <string name="quran_sync_bookmarks_cta_subtitle">从任何设备、任何时间访问它们</string>
   <string name="quran_sync_bookmarks_cta_button">使用 Quran.com 登录</string>
   <string name="quran_sync_bookmarks_cta_dismiss">关闭</string>
+  <string name="quran_sync_account_title">账户与同步</string>
+  <string name="quran_sync_status_synced">已同步</string>
+  <string name="quran_sync_status_just_now">刚刚</string>
+  <string name="quran_sync_status_everything_else_synced">其他内容%s已同步</string>
+  <string name="quran_sync_status_never_synced">尚未同步</string>
+  <string name="quran_sync_status_all_items">书签、收藏集、笔记和阅读进度</string>
+  <string name="quran_sync_status_synced_card">书签、笔记等 · %s</string>
+  <string name="quran_sync_status_items_short">书签、笔记等</string>
+  <string name="quran_sync_status_syncing">正在同步…</string>
+  <string name="quran_sync_status_failed">无法同步</string>
+  <string name="quran_sync_status_failed_kept">书签和笔记仍保留在此设备上 · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">书签和笔记仍保留在此设备上</string>
+  <string name="quran_sync_error_network">无网络连接</string>
+  <string name="quran_sync_error_authentication">Quran.com 未接受你的登录</string>
+  <string name="quran_sync_error_server">Quran.com 暂不可用</string>
+  <string name="quran_sync_error_rejected">Quran.com 未接受这些更改</string>
+  <string name="quran_sync_error_unknown">出了点问题</string>
+  <string name="quran_sync_action_sync_now">立即同步</string>
+  <string name="quran_sync_action_syncing">正在同步</string>
+  <string name="quran_sync_action_try_again">重试</string>
+  <string name="quran_sync_held_review">查看未同步的内容</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="other">%d 项未同步</item>
+  </plurals>
 </resources>

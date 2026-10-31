@@ -4,7 +4,6 @@
   <string name="quran_sync_settings_category">Account</string>
   <string name="quran_sync_settings_summary">Bookmarks, collections &amp; notes</string>
   <string name="quran_sync_sign_in_prompt_title">Sign in to sync</string>
-  <string name="quran_sync_settings_signed_in_subtitle">Synced</string>
   <string name="quran_sync_not_signed_in">Not signed in</string>
   <string name="quran_sync_signed_in">Signed in</string>
   <string name="quran_sync_loading">Signing in</string>
@@ -24,6 +23,31 @@
   <string name="quran_sync_benefit_collections">Keep custom collections in sync</string>
   <string name="quran_sync_benefit_notes">Keep verse notes in sync</string>
   <string name="quran_sync_continue_caption">You\'ll continue with Quran.com</string>
+  <string name="quran_sync_account_title">Account &amp; Sync</string>
+  <string name="quran_sync_status_synced">Synced</string>
+  <string name="quran_sync_status_just_now">just now</string>
+  <string name="quran_sync_status_everything_else_synced">Everything else synced %s</string>
+  <string name="quran_sync_status_never_synced">Not synced yet</string>
+  <string name="quran_sync_status_all_items">Bookmarks, collections, notes and reading progress</string>
+  <string name="quran_sync_status_synced_card">Bookmarks, notes and more · %s</string>
+  <string name="quran_sync_status_items_short">Bookmarks, notes and more</string>
+  <string name="quran_sync_status_syncing">Syncing…</string>
+  <string name="quran_sync_status_failed">Couldn\'t sync</string>
+  <string name="quran_sync_status_failed_kept">Bookmarks and notes stay on this device · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">Bookmarks and notes stay on this device</string>
+  <string name="quran_sync_error_network">No connection</string>
+  <string name="quran_sync_error_authentication">Quran.com didn\'t accept your sign-in</string>
+  <string name="quran_sync_error_server">Quran.com isn\'t available</string>
+  <string name="quran_sync_error_rejected">Quran.com didn\'t accept the changes</string>
+  <string name="quran_sync_error_unknown">Something went wrong</string>
+  <string name="quran_sync_action_sync_now">Sync now</string>
+  <string name="quran_sync_action_syncing">Syncing</string>
+  <string name="quran_sync_action_try_again">Try again</string>
+  <string name="quran_sync_held_review">Review what isn\'t syncing</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="one">%d item isn\'t syncing</item>
+    <item quantity="other">%d items aren\'t syncing</item>
+  </plurals>
   <string name="quran_sync_oauth_client_id" translatable="false"></string>
   <string name="quran_sync_oauth_issuer_url" translatable="false"></string>
   <string name="quran_sync_oauth_redirect_scheme" translatable="false"></string>

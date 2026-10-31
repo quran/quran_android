@@ -16,4 +16,29 @@
   <string name="quran_sync_bookmarks_cta_subtitle">Herhangi bir cihazdan, her zaman erişin</string>
   <string name="quran_sync_bookmarks_cta_button">Quran.com ile oturum açın</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Kapat</string>
+  <string name="quran_sync_account_title">Hesap ve Eşitleme</string>
+  <string name="quran_sync_status_synced">Eşitlendi</string>
+  <string name="quran_sync_status_just_now">az önce</string>
+  <string name="quran_sync_status_everything_else_synced">Diğer her şey %s eşitlendi</string>
+  <string name="quran_sync_status_never_synced">Henüz eşitlenmedi</string>
+  <string name="quran_sync_status_all_items">Yer imleri, koleksiyonlar, notlar ve okuma ilerlemesi</string>
+  <string name="quran_sync_status_synced_card">Yer imleri, notlar ve daha fazlası · %s</string>
+  <string name="quran_sync_status_items_short">Yer imleri, notlar ve daha fazlası</string>
+  <string name="quran_sync_status_syncing">Eşitleniyor…</string>
+  <string name="quran_sync_status_failed">Eşitlenemedi</string>
+  <string name="quran_sync_status_failed_kept">Yer imleri ve notlar bu cihazda kalır · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">Yer imleri ve notlar bu cihazda kalır</string>
+  <string name="quran_sync_error_network">Bağlantı yok</string>
+  <string name="quran_sync_error_authentication">Quran.com oturum açmanızı kabul etmedi</string>
+  <string name="quran_sync_error_server">Quran.com kullanılamıyor</string>
+  <string name="quran_sync_error_rejected">Quran.com değişiklikleri kabul etmedi</string>
+  <string name="quran_sync_error_unknown">Bir sorun oluştu</string>
+  <string name="quran_sync_action_sync_now">Şimdi eşitle</string>
+  <string name="quran_sync_action_syncing">Eşitleniyor</string>
+  <string name="quran_sync_action_try_again">Tekrar dene</string>
+  <string name="quran_sync_held_review">Eşitlenmeyenleri gözden geçir</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="one">%d öğe eşitlenmiyor</item>
+    <item quantity="other">%d öğe eşitlenmiyor</item>
+  </plurals>
 </resources>

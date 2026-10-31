@@ -1,22 +1,33 @@
 package com.quran.mobile.feature.sync
 
 import android.content.Context
+import android.content.Intent
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
+import app.cash.molecule.RecompositionMode
+import app.cash.molecule.launchMolecule
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
+import com.quran.mobile.feature.sync.presenter.AccountSettingsPresenter
+import kotlinx.coroutines.flow.map
 
 /**
  * Preference row that renders [AccountSettingsRow] via Compose.
  *
- * Compose lets the row react to [QuranSyncManager.authState] directly, so the signed-in/signed-out
- * presentation (and each state's own click targets) stay current without a manual Preference
- * rebuild on fragment resume.
+ * The row's state comes from [presenter], so the signed-in/signed-out presentation and the sync
+ * status stay current without a manual Preference rebuild on fragment resume.
  */
 internal class AccountPreference(
   context: Context,
-  private val syncManager: QuranSyncManager
+  private val presenter: AccountSettingsPresenter
 ) : Preference(context) {
 
   init {
@@ -33,8 +44,32 @@ internal class AccountPreference(
     composeView.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
     composeView.setContent {
       QuranTheme {
-        AccountSettingsRow(syncManager = syncManager)
+        AccountSettings()
       }
     }
+  }
+
+  @Composable
+  private fun AccountSettings() {
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val moleculeScope = rememberCoroutineScope()
+    val stateFlow = remember {
+      // compose pauses frames while stopped, so the lifecycle is read as a flow
+      val isStarted = lifecycle.currentStateFlow.map { it.isAtLeast(Lifecycle.State.STARTED) }
+      moleculeScope.launchMolecule(mode = RecompositionMode.ContextClock) {
+        presenter.present(observing = isStarted)
+      }
+    }
+    val state by stateFlow.collectAsState()
+
+    AccountSettingsRow(
+      state = state,
+      onOpenAccount = {
+        context.startActivity(
+          Intent(context, QuranSyncActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        )
+      }
+    )
   }
 }

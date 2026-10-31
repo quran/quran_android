@@ -16,4 +16,29 @@
   <string name="quran_sync_bookmarks_cta_subtitle">Greife jederzeit von jedem Gerät darauf zu</string>
   <string name="quran_sync_bookmarks_cta_button">Mit Quran.com anmelden</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Schließen</string>
+  <string name="quran_sync_account_title">Konto &amp; Synchronisierung</string>
+  <string name="quran_sync_status_synced">Synchronisiert</string>
+  <string name="quran_sync_status_just_now">gerade eben</string>
+  <string name="quran_sync_status_everything_else_synced">Alles andere synchronisiert %s</string>
+  <string name="quran_sync_status_never_synced">Noch nicht synchronisiert</string>
+  <string name="quran_sync_status_all_items">Lesezeichen, Sammlungen, Notizen und Lesefortschritt</string>
+  <string name="quran_sync_status_synced_card">Lesezeichen, Notizen und mehr · %s</string>
+  <string name="quran_sync_status_items_short">Lesezeichen, Notizen und mehr</string>
+  <string name="quran_sync_status_syncing">Wird synchronisiert …</string>
+  <string name="quran_sync_status_failed">Synchronisierung fehlgeschlagen</string>
+  <string name="quran_sync_status_failed_kept">Lesezeichen und Notizen bleiben auf diesem Gerät · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">Lesezeichen und Notizen bleiben auf diesem Gerät</string>
+  <string name="quran_sync_error_network">Keine Verbindung</string>
+  <string name="quran_sync_error_authentication">Quran.com hat deine Anmeldung nicht akzeptiert</string>
+  <string name="quran_sync_error_server">Quran.com ist nicht erreichbar</string>
+  <string name="quran_sync_error_rejected">Quran.com hat die Änderungen nicht akzeptiert</string>
+  <string name="quran_sync_error_unknown">Etwas ist schiefgelaufen</string>
+  <string name="quran_sync_action_sync_now">Jetzt synchronisieren</string>
+  <string name="quran_sync_action_syncing">Wird synchronisiert</string>
+  <string name="quran_sync_action_try_again">Erneut versuchen</string>
+  <string name="quran_sync_held_review">Nicht Synchronisiertes ansehen</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="one">%d Element wird nicht synchronisiert</item>
+    <item quantity="other">%d Elemente werden nicht synchronisiert</item>
+  </plurals>
 </resources>

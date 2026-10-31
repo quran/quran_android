@@ -16,4 +16,29 @@
   <string name="quran_sync_bookmarks_cta_subtitle">از هر دستگاهی، در هر زمانی به آن‌ها دسترسی داشته باشید</string>
   <string name="quran_sync_bookmarks_cta_button">ورود با Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">نادیده گرفتن</string>
+  <string name="quran_sync_account_title">حساب و همگام‌سازی</string>
+  <string name="quran_sync_status_synced">همگام‌سازی شد</string>
+  <string name="quran_sync_status_just_now">همین حالا</string>
+  <string name="quran_sync_status_everything_else_synced">بقیهٔ موارد %s همگام‌سازی شدند</string>
+  <string name="quran_sync_status_never_synced">هنوز همگام‌سازی نشده</string>
+  <string name="quran_sync_status_all_items">نشانک‌ها، مجموعه‌ها، یادداشت‌ها و پیشرفت مطالعه</string>
+  <string name="quran_sync_status_synced_card">نشانک‌ها، یادداشت‌ها و موارد دیگر · %s</string>
+  <string name="quran_sync_status_items_short">نشانک‌ها، یادداشت‌ها و موارد دیگر</string>
+  <string name="quran_sync_status_syncing">در حال همگام‌سازی…</string>
+  <string name="quran_sync_status_failed">همگام‌سازی انجام نشد</string>
+  <string name="quran_sync_status_failed_kept">نشانک‌ها و یادداشت‌ها روی این دستگاه می‌مانند · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">نشانک‌ها و یادداشت‌ها روی این دستگاه می‌مانند</string>
+  <string name="quran_sync_error_network">اتصال برقرار نیست</string>
+  <string name="quran_sync_error_authentication">Quran.com ورود شما را نپذیرفت</string>
+  <string name="quran_sync_error_server">Quran.com در دسترس نیست</string>
+  <string name="quran_sync_error_rejected">Quran.com تغییرات را نپذیرفت</string>
+  <string name="quran_sync_error_unknown">مشکلی پیش آمد</string>
+  <string name="quran_sync_action_sync_now">همگام‌سازی اکنون</string>
+  <string name="quran_sync_action_syncing">در حال همگام‌سازی</string>
+  <string name="quran_sync_action_try_again">تلاش دوباره</string>
+  <string name="quran_sync_held_review">بررسی مواردی که همگام‌سازی نمی‌شوند</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="one">%d مورد همگام‌سازی نمی‌شود</item>
+    <item quantity="other">%d مورد همگام‌سازی نمی‌شوند</item>
+  </plurals>
 </resources>

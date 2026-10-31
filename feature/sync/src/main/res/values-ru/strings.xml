@@ -16,4 +16,31 @@
   <string name="quran_sync_bookmarks_cta_subtitle">Получайте к ним доступ с любого устройства в любое время</string>
   <string name="quran_sync_bookmarks_cta_button">Войти через Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Закрыть</string>
+  <string name="quran_sync_account_title">Аккаунт и синхронизация</string>
+  <string name="quran_sync_status_synced">Синхронизировано</string>
+  <string name="quran_sync_status_just_now">только что</string>
+  <string name="quran_sync_status_everything_else_synced">Всё остальное синхронизировано %s</string>
+  <string name="quran_sync_status_never_synced">Ещё не синхронизировано</string>
+  <string name="quran_sync_status_all_items">Закладки, коллекции, заметки и прогресс чтения</string>
+  <string name="quran_sync_status_synced_card">Закладки, заметки и не только · %s</string>
+  <string name="quran_sync_status_items_short">Закладки, заметки и не только</string>
+  <string name="quran_sync_status_syncing">Синхронизация…</string>
+  <string name="quran_sync_status_failed">Не удалось синхронизировать</string>
+  <string name="quran_sync_status_failed_kept">Закладки и заметки остаются на этом устройстве · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">Закладки и заметки остаются на этом устройстве</string>
+  <string name="quran_sync_error_network">Нет подключения</string>
+  <string name="quran_sync_error_authentication">Quran.com не принял ваш вход</string>
+  <string name="quran_sync_error_server">Quran.com недоступен</string>
+  <string name="quran_sync_error_rejected">Quran.com не принял изменения</string>
+  <string name="quran_sync_error_unknown">Что-то пошло не так</string>
+  <string name="quran_sync_action_sync_now">Синхронизировать</string>
+  <string name="quran_sync_action_syncing">Синхронизация</string>
+  <string name="quran_sync_action_try_again">Повторить</string>
+  <string name="quran_sync_held_review">Посмотреть, что не синхронизируется</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="one">%d элемент не синхронизируется</item>
+    <item quantity="few">%d элемента не синхронизируются</item>
+    <item quantity="many">%d элементов не синхронизируются</item>
+    <item quantity="other">%d элемента не синхронизируются</item>
+  </plurals>
 </resources>

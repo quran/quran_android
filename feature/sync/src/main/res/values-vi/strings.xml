@@ -16,4 +16,28 @@
   <string name="quran_sync_bookmarks_cta_subtitle">Truy cập chúng từ bất kỳ thiết bị nào, bất kỳ lúc nào</string>
   <string name="quran_sync_bookmarks_cta_button">Đăng nhập bằng Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Bỏ qua</string>
+  <string name="quran_sync_account_title">Tài khoản và đồng bộ</string>
+  <string name="quran_sync_status_synced">Đã đồng bộ</string>
+  <string name="quran_sync_status_just_now">vừa xong</string>
+  <string name="quran_sync_status_everything_else_synced">Mọi thứ khác đã đồng bộ %s</string>
+  <string name="quran_sync_status_never_synced">Chưa đồng bộ</string>
+  <string name="quran_sync_status_all_items">Dấu trang, bộ sưu tập, ghi chú và tiến độ đọc</string>
+  <string name="quran_sync_status_synced_card">Dấu trang, ghi chú và nhiều mục khác · %s</string>
+  <string name="quran_sync_status_items_short">Dấu trang, ghi chú và nhiều mục khác</string>
+  <string name="quran_sync_status_syncing">Đang đồng bộ…</string>
+  <string name="quran_sync_status_failed">Không thể đồng bộ</string>
+  <string name="quran_sync_status_failed_kept">Dấu trang và ghi chú ở lại trên thiết bị này · %s</string>
+  <string name="quran_sync_status_failed_kept_paused">Dấu trang và ghi chú ở lại trên thiết bị này</string>
+  <string name="quran_sync_error_network">Không có kết nối</string>
+  <string name="quran_sync_error_authentication">Quran.com không chấp nhận đăng nhập của bạn</string>
+  <string name="quran_sync_error_server">Quran.com không khả dụng</string>
+  <string name="quran_sync_error_rejected">Quran.com không chấp nhận các thay đổi</string>
+  <string name="quran_sync_error_unknown">Đã xảy ra lỗi</string>
+  <string name="quran_sync_action_sync_now">Đồng bộ ngay</string>
+  <string name="quran_sync_action_syncing">Đang đồng bộ</string>
+  <string name="quran_sync_action_try_again">Thử lại</string>
+  <string name="quran_sync_held_review">Xem lại các mục không đồng bộ</string>
+  <plurals name="quran_sync_held_count">
+    <item quantity="other">%d mục không đồng bộ</item>
+  </plurals>
 </resources>
