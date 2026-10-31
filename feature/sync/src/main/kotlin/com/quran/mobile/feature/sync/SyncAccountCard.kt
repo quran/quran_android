@@ -285,7 +285,7 @@ private val previewHeldItem = HeldSyncItem(
 private fun previewActivity(status: Status, held: Boolean = false) = SyncActivityState(
   status = status,
   lastSynced = (status as? Status.Synced)?.at,
-  blockingItems = if (held) persistentListOf(previewHeldItem) else persistentListOf()
+  heldItems = if (held) persistentListOf(previewHeldItem) else persistentListOf()
 )
 
 @Composable
