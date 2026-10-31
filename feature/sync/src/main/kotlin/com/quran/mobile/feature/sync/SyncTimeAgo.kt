@@ -6,17 +6,42 @@ import android.icu.text.RelativeDateTimeFormatter.Direction
 import android.icu.text.RelativeDateTimeFormatter.RelativeUnit
 import android.icu.util.ULocale
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.delay
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
+
+@Composable
+internal fun rememberNow(lastSynced: Instant?): Instant {
+  var now by remember { mutableStateOf(Clock.System.now()) }
+  val lifecycle = LocalLifecycleOwner.current.lifecycle
+  // restarting on a new sync puts "1 minute ago" a minute after it
+  LaunchedEffect(lifecycle, lastSynced) {
+    lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+      while (true) {
+        now = Clock.System.now()
+        delay(1.minutes)
+      }
+    }
+  }
+  return now
+}
 
 @Composable
 internal fun syncedTimeAgo(at: Instant, now: Instant): String {

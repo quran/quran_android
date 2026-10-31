@@ -126,7 +126,7 @@ private fun ProfileRow(profile: AccountProfile, onClick: () -> Unit) {
 }
 
 @Composable
-private fun AccountAvatar(profile: AccountProfile, size: Dp) {
+internal fun AccountAvatar(profile: AccountProfile, size: Dp) {
   val accent = MaterialTheme.colorScheme.primary
   Box(
     contentAlignment = Alignment.Center,
@@ -198,7 +198,7 @@ private fun StatusRow(summary: SyncStatusSummary, onSyncNow: () -> Unit) {
 }
 
 @Composable
-private fun SyncStatusIcon(icon: SyncStatusSummary.Icon, modifier: Modifier = Modifier) {
+internal fun SyncStatusIcon(icon: SyncStatusSummary.Icon, modifier: Modifier = Modifier) {
   Box(contentAlignment = Alignment.Center, modifier = modifier.clearAndSetSemantics {}) {
     when (icon) {
       SyncStatusSummary.Icon.SYNCED -> StatusIcon(QuranIcons.CheckCircle, LocalQuranColors.current.success)

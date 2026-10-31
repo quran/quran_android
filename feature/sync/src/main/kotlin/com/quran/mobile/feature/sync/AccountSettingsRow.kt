@@ -15,11 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -27,18 +22,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.repeatOnLifecycle
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.labs.androidquran.common.ui.core.modifier.autoMirror
 import com.quran.mobile.feature.sync.state.AccountSettingsEvent
 import com.quran.mobile.feature.sync.state.AccountSettingsState
-import kotlinx.coroutines.delay
-import kotlin.time.Clock
-import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 
 /**
  * Renders the Account row in Settings for [state].
@@ -66,22 +54,6 @@ internal fun AccountSettingsRow(
       modifier = modifier
     )
   }
-}
-
-@Composable
-private fun rememberNow(lastSynced: Instant?): Instant {
-  var now by remember { mutableStateOf(Clock.System.now()) }
-  val lifecycle = LocalLifecycleOwner.current.lifecycle
-  // restarting on a new sync puts "1 minute ago" a minute after it
-  LaunchedEffect(lifecycle, lastSynced) {
-    lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-      while (true) {
-        now = Clock.System.now()
-        delay(1.minutes)
-      }
-    }
-  }
-  return now
 }
 
 @Composable
