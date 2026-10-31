@@ -101,6 +101,7 @@ internal fun syncActivityState(
   return SyncActivityState(
     status = resolvedStatus,
     lastSynced = lastSynced,
-    blockingItems = heldItems.filter { it.waitingOn == null }.toImmutableList()
+    heldItems = heldItems.toImmutableList(),
+    runs = runs.toImmutableList()
   )
 }
