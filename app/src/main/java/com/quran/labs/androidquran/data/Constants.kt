@@ -61,6 +61,7 @@ object Constants {
   const val PREF_DOWNLOAD_AMOUNT = "preferredDownloadAmount"
   const val PREF_LAST_UPDATED_TRANSLATIONS = "lastTranslationsUpdate"
   const val PREF_HAVE_UPDATED_TRANSLATIONS = "haveUpdatedTranslations"
+  const val PREF_BUNDLED_TRANSLATIONS_INSTALLED = "bundledTranslationsInstalled"
   const val PREF_USE_NEW_BACKGROUND = "useNewBackground"
   const val PREF_USE_VOLUME_KEY_NAV = "volumeKeyNavigation"
   const val PREF_SORT_BOOKMARKS = "sortBookmarks"
