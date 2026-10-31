@@ -2,7 +2,7 @@
 agp = "9.4.1"
 junit = "1.3.0"
 kotlin = "2.4.21"
-ksp = "2.3.12"
+ksp = "2.3.13"
 
 # required within the Gradle convention plugins - not unused
 composeBomVersion = "2026.09.00"
@@ -14,15 +14,15 @@ firebaseBomVersion = "35.1.0"
 coroutinesVersion = "1.11.0"
 crashlytics = "3.0.8"
 dnsjavaVersion = "2.1.9"
-errorprone = "5.1.1"
-metro = "1.5.0"
+errorprone = "5.2.0"
+metro = "1.5.1"
 errorproneCoreVersion = "2.51.0"
 googleServices = "4.5.0"
 immutableCollectionsVersion = "0.5.2"
 leakcanaryAndroidVersion = "2.14"
 moshiVersion = "1.15.2"
 okioVersion = "3.18.2"
-quranMobileSyncVersion = "0.1.45"
+quranMobileSyncVersion = "0.1.46"
 retrofitVersion = "3.0.0"
 rxandroidVersion = "3.0.2"
 rxjavaVersion = "3.1.12"
@@ -38,6 +38,7 @@ androidxNavigationVersion = "2.10.2"
 androidxDynamicAnimationVersion = "1.1.0"
 androidxFragmentVersion = "1.9.1"
 androidxJunitExtVersion = "1.3.0"
+androidxLifecycleVersion = "2.11.0"
 androidxLocalBroadcastVersion = "1.1.0"
 androidxMediaVersion = "1.8.0"
 androidxPreferencesVersion = "1.2.1"
@@ -60,8 +61,8 @@ molecule = "2.2.0"
 
 # recitations
 grpcOkhttpVersion = "1.85.1"
-googleAuthVersion = "1.54.0"
-googleCloudSpeechVersion = "4.94.0"
+googleAuthVersion = "1.55.0"
+googleCloudSpeechVersion = "4.95.0"
 
 # testing
 junitVersion = "4.13.2"
@@ -91,6 +92,7 @@ androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityComposeVersion" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotationVersion" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragmentVersion" }
+androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "androidxLifecycleVersion" }
 androidx-localbroadcastmanager = { module = "androidx.localbroadcastmanager:localbroadcastmanager", version.ref = "androidxLocalBroadcastVersion" }
 androidx-dynamicanimation = { module = "androidx.dynamicanimation:dynamicanimation", version.ref = "androidxDynamicAnimationVersion" }
 androidx-media = { module = "androidx.media:media", version.ref = "androidxMediaVersion" }
