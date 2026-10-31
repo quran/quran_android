@@ -5,8 +5,8 @@
   "dependencies": {
     "@expo-google-fonts/amiri-quran": "^0.4.1",
     "@expo/metro-runtime": "~58.0.16",
-    "@expo/vector-icons": "^15.1.1",
-    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@expo/vector-icons": "^15.0.2",
+    "@react-native-async-storage/async-storage": "2.2.0",
     "expo": "~58.0.22",
     "expo-clipboard": "~58.0.4",
     "expo-constants": "~58.0.14",
@@ -14,18 +14,18 @@
     "expo-haptics": "~58.0.7",
     "expo-linking": "~58.0.15",
     "expo-router": "~58.0.29",
+    "expo-splash-screen": "~58.0.12",
     "expo-status-bar": "~58.0.4",
     "expo-system-ui": "~58.0.7",
     "react": "19.3.0",
-    "react-dom": "^19.3.0",
+    "react-dom": "19.3.0",
     "react-native": "0.88.1",
     "react-native-safe-area-context": "~5.10.1",
     "react-native-screens": "~4.30.1",
-    "react-native-web": "^0.21.4"
+    "react-native-web": "~0.21.4"
   },
   "devDependencies": {
     "@types/react": "~19.3.0",
-    "quran-json": "^3.1.2",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -34,7 +34,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "build-data": "node scripts/build-data.mjs"
+    "build-data": "npm install --no-save quran-json@3.1.2 && node scripts/build-data.mjs",
+    "build:apk": "npx eas-cli@latest build -p android --profile preview"
   },
   "private": true
 }

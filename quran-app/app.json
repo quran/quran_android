@@ -5,30 +5,56 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "scheme": "quranapp",
     "userInterfaceStyle": "automatic",
     "ios": {
+      "bundleIdentifier": "com.personal.quranapp",
       "supportsTablet": true,
-      "bundleIdentifier": "com.personal.quranapp"
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "package": "com.personal.quranapp",
       "adaptiveIcon": {
         "backgroundColor": "#1F6F5C",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false,
-      "package": "com.personal.quranapp"
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "output": "single",
       "bundler": "metro"
     },
-    "scheme": "quranapp",
     "plugins": [
       "expo-router",
-      "expo-font"
-    ]
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./node_modules/@expo-google-fonts/amiri-quran/400Regular/AmiriQuran_400Regular.ttf"
+          ]
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 140,
+          "resizeMode": "contain",
+          "backgroundColor": "#F7F5F0",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#0F1412"
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
   }
 }
