@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">Prisijungta</string>
   <string name="quran_sync_loading">Jungiamasi</string>
   <string name="quran_sync_login">Prisijungti</string>
-  <string name="quran_sync_logout">Atsijungti</string>
-  <string name="quran_sync_name">Vardas</string>
-  <string name="quran_sync_email">El. paštas</string>
-  <string name="quran_sync_account_id">Paskyros ID</string>
   <string name="quran_sync_action_error">Šiuo metu nepavyksta atnaujinti sinchronizavimo.</string>
   <string name="quran_sync_bookmarks_cta_title">Sinchronizuokite žymes visur</string>
   <string name="quran_sync_bookmarks_cta_subtitle">Pasiekite jas iš bet kurio įrenginio, bet kuriuo metu</string>

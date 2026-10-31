@@ -33,6 +33,7 @@ timberVersion = "5.0.1"
 androidxAppcompatVersion = "1.8.0"
 androidxActivityComposeVersion = "1.13.0"
 androidxAnnotationVersion = "1.11.0"
+androidxBrowserVersion = "1.9.0"
 androidxCoreVersion = "1.19.1"
 androidxNavigationVersion = "2.10.2"
 androidxDynamicAnimationVersion = "1.1.0"
@@ -92,6 +93,7 @@ androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "a
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidxCoreVersion" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidxActivityComposeVersion" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotationVersion" }
+androidx-browser = { module = "androidx.browser:browser", version.ref = "androidxBrowserVersion" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragmentVersion" }
 androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "androidxLifecycleVersion" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycleVersion" }

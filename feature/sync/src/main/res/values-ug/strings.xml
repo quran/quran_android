@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">تىزىملاندى</string>
   <string name="quran_sync_loading">تىزىملىنىۋاتىدۇ</string>
   <string name="quran_sync_login">تىزىملىنىش</string>
-  <string name="quran_sync_logout">چېكىنىش</string>
-  <string name="quran_sync_name">ئىسمى</string>
-  <string name="quran_sync_email">ئېلېكترونلۇق خەت</string>
-  <string name="quran_sync_account_id">ھېسابات كىملىكى</string>
   <string name="quran_sync_action_error">ھازىر قەدەمداشلىقنى يېڭىلىغىلى بولمايدۇ.</string>
   <string name="quran_sync_bookmarks_cta_title">خەتكۈچلىرىڭىزنى ھەممە يەردە قەدەمداشلاڭ</string>
   <string name="quran_sync_bookmarks_cta_subtitle">خالىغان ئۈسكۈنىدىن، خالىغان ۋاقىتتا زىيارەت قىلىڭ</string>

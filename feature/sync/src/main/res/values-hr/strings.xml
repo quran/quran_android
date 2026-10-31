@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">Prijavljeni ste</string>
   <string name="quran_sync_loading">Prijava u tijeku</string>
   <string name="quran_sync_login">Prijava</string>
-  <string name="quran_sync_logout">Odjava</string>
-  <string name="quran_sync_name">Ime</string>
-  <string name="quran_sync_email">E-pošta</string>
-  <string name="quran_sync_account_id">ID računa</string>
   <string name="quran_sync_action_error">Trenutačno nije moguće ažurirati sinkronizaciju.</string>
   <string name="quran_sync_bookmarks_cta_title">Sinkronizirajte svoje oznake posvuda</string>
   <string name="quran_sync_bookmarks_cta_subtitle">Pristupite im s bilo kojeg uređaja, u bilo koje vrijeme</string>

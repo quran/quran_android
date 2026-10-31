@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">Daxil olunub</string>
   <string name="quran_sync_loading">Daxil olunur</string>
   <string name="quran_sync_login">Daxil ol</string>
-  <string name="quran_sync_logout">Çıxış et</string>
-  <string name="quran_sync_name">Ad</string>
-  <string name="quran_sync_email">E-poçt</string>
-  <string name="quran_sync_account_id">Hesab ID</string>
   <string name="quran_sync_action_error">Hazırda sinxronizasiyanı yeniləmək mümkün deyil.</string>
   <string name="quran_sync_bookmarks_cta_title">Əlfəcinlərinizi hər yerdə sinxronlaşdırın</string>
   <string name="quran_sync_bookmarks_cta_subtitle">İstənilən cihazdan, istənilən vaxt əldə edin</string>
