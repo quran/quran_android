@@ -42,4 +42,64 @@
     <item quantity="many">%d itens não estão sincronizando</item>
     <item quantity="other">%d itens não estão sincronizando</item>
   </plurals>
+  <string name="quran_sync_status_synced_ago">Sincronizado %s</string>
+  <string name="quran_sync_status_retrying">%s · Nova tentativa em breve</string>
+  <string name="quran_sync_held_header">Não sincronizados · %s</string>
+  <string name="quran_sync_held_footer">Eles ficam neste dispositivo até você corrigi-los. Todo o resto continua sincronizando.</string>
+  <string name="quran_sync_held_note">Nota em %s</string>
+  <string name="quran_sync_held_collection">Coleção “%s”</string>
+  <string name="quran_sync_held_bookmark">Marcador em %s</string>
+  <string name="quran_sync_held_reading_bookmark">Marcador de leitura “%s”</string>
+  <string name="quran_sync_held_reading_progress">Progresso de leitura</string>
+  <string name="quran_sync_held_deleted_note">Nota excluída</string>
+  <string name="quran_sync_held_deleted_collection">Coleção excluída</string>
+  <string name="quran_sync_held_deleted_bookmark">Marcador excluído</string>
+  <string name="quran_sync_held_reason_too_short">Curto demais para o Quran.com.</string>
+  <string name="quran_sync_held_reason_too_long">Longo demais para o Quran.com.</string>
+  <string name="quran_sync_held_reason_invalid_verses">O Quran.com não reconhece estas ayahs.</string>
+  <string name="quran_sync_held_reason_invalid_location">O Quran.com não reconhece este local.</string>
+  <string name="quran_sync_held_reason_reserved_name">O Quran.com reserva este nome para a própria lista.</string>
+  <string name="quran_sync_held_reason_read_only">O Quran.com não permite alterações nesta coleção.</string>
+  <string name="quran_sync_held_reason_not_accepted">O Quran.com não aceitou esta alteração.</string>
+  <string name="quran_sync_held_reason_not_accepted_note">O Quran.com não aceitou esta nota.</string>
+  <string name="quran_sync_held_reason_not_accepted_collection">O Quran.com não aceitou esta coleção.</string>
+  <string name="quran_sync_held_reason_not_accepted_bookmark">O Quran.com não aceitou este marcador.</string>
+  <string name="quran_sync_held_reason_waiting_on_collection">Aguardando a sincronização da coleção.</string>
+  <string name="quran_sync_held_reason_waiting_on_other">Aguardando a sincronização de outro item.</string>
+  <string name="quran_sync_held_reason_not_linked">Aguardando a primeira sincronização com o Quran.com.</string>
+  <plurals name="quran_sync_held_waiting_verses">
+    <item quantity="one">%d ayah aguardando</item>
+    <item quantity="many">%d ayahs aguardando</item>
+    <item quantity="other">%d ayahs aguardando</item>
+  </plurals>
+  <plurals name="quran_sync_held_waiting_items">
+    <item quantity="one">%d item aguardando</item>
+    <item quantity="many">%d itens aguardando</item>
+    <item quantity="other">%d itens aguardando</item>
+  </plurals>
+  <string name="quran_sync_verse_range">%1$s - %2$s</string>
+  <string name="quran_sync_runs_header">Sincronizações recentes</string>
+  <string name="quran_sync_runs_empty_title">Nenhuma sincronização ainda</string>
+  <string name="quran_sync_runs_empty_body">Cada sincronização com o Quran.com aparece aqui.</string>
+  <string name="quran_sync_run_title">%1$s · %2$s</string>
+  <string name="quran_sync_run_trigger_manual">Sincronizar agora</string>
+  <string name="quran_sync_run_trigger_local_change">Alteração neste dispositivo</string>
+  <string name="quran_sync_run_trigger_foreground">Retorno ao app</string>
+  <string name="quran_sync_run_trigger_periodic">A cada %s minutos</string>
+  <string name="quran_sync_run_trigger_app_start">Início do app</string>
+  <string name="quran_sync_run_trigger_sign_in">Login</string>
+  <string name="quran_sync_run_sent">%s enviados</string>
+  <string name="quran_sync_run_received">%s recebidos</string>
+  <string name="quran_sync_run_held">%s retidos</string>
+  <string name="quran_sync_run_sending_paused">Envio pausado</string>
+  <string name="quran_sync_run_stopped">Interrompida</string>
+  <string name="quran_sync_run_up_to_date">Tudo atualizado</string>
+  <plurals name="quran_sync_run_attempts">
+    <item quantity="one">%d tentativa</item>
+    <item quantity="many">%d tentativas</item>
+    <item quantity="other">%d tentativas</item>
+  </plurals>
+  <string name="quran_sync_manage_account">Gerenciar conta</string>
+  <string name="quran_sync_sign_out">Sair</string>
+  <string name="quran_sync_sign_out_confirmation_title">Sair do Quran.com?</string>
 </resources>
