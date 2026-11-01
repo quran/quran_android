@@ -35,6 +35,12 @@ object ArabicCharacterHelper {
       // match: ﻯي
       "\u0649" to "\u0649\u064a",
 
+      // given: ي
+      // match: يﻯ
+      // the reverse of the alef maqsura entry above - most keyboards type
+      // ي, while the quranic text often spells the same words with ﻯ
+      "\u064A" to "\u064A\u0649",
+
       // given: ئ
       // match: ئﻯي
       // this is especially helpful for rewayat Warsh
