@@ -94,4 +94,21 @@
   <string name="quran_sync_manage_account">Quản lý tài khoản</string>
   <string name="quran_sync_sign_out">Đăng xuất</string>
   <string name="quran_sync_sign_out_confirmation_title">Đăng xuất khỏi Quran.com?</string>
+  <string name="quran_sync_sign_out_synced">Mọi thứ đã được đồng bộ với Quran.com. Dấu trang, bộ sưu tập và ghi chú của bạn sẽ bị xóa khỏi thiết bị này và được khôi phục khi bạn đăng nhập lại.</string>
+  <string name="quran_sync_sign_out_unknown">Những thay đổi chưa được đồng bộ với Quran.com sẽ bị mất nếu bạn đăng xuất.</string>
+  <string name="quran_sync_sign_out_lost">Nếu bạn đăng xuất, mọi thứ chưa được đồng bộ sẽ bị mất.</string>
+  <string name="quran_sync_sign_out_review">Xem lại</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s, và %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="other">%1$s thay đổi vẫn đang chờ đồng bộ với Quran.com.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="other">%1$s mục không thể đồng bộ cho đến khi bạn sửa.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="other">%1$s mục không thể đồng bộ cho đến khi bạn sửa</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="other">%1$s mục khác phải chờ đến lúc đó.</item>
+  </plurals>
 </resources>

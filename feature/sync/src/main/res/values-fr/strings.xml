@@ -102,4 +102,25 @@
   <string name="quran_sync_manage_account">Gérer le compte</string>
   <string name="quran_sync_sign_out">Se déconnecter</string>
   <string name="quran_sync_sign_out_confirmation_title">Se déconnecter de Quran.com ?</string>
+  <string name="quran_sync_sign_out_synced">Tout est synchronisé avec Quran.com. Vos signets, collections et notes seront supprimés de cet appareil et restaurés lors de votre prochaine connexion.</string>
+  <string name="quran_sync_sign_out_unknown">Les modifications pas encore synchronisées avec Quran.com seront perdues si vous vous déconnectez.</string>
+  <string name="quran_sync_sign_out_lost">Si vous vous déconnectez, tout ce qui n’a pas été synchronisé sera perdu.</string>
+  <string name="quran_sync_sign_out_review">Vérifier</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s, et %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="one">%1$s modification attend encore d’être synchronisée avec Quran.com.</item>
+    <item quantity="other">%1$s modifications attendent encore d’être synchronisées avec Quran.com.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="one">%1$s élément ne peut pas être synchronisé tant que vous ne l’avez pas corrigé.</item>
+    <item quantity="other">%1$s éléments ne peuvent pas être synchronisés tant que vous ne les avez pas corrigés.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="one">%1$s élément ne peut pas être synchronisé tant que vous ne l’avez pas corrigé</item>
+    <item quantity="other">%1$s éléments ne peuvent pas être synchronisés tant que vous ne les avez pas corrigés</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="one">%1$s autre attendra jusque-là.</item>
+    <item quantity="other">%1$s autres attendront jusque-là.</item>
+  </plurals>
 </resources>

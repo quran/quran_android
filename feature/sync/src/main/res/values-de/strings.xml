@@ -98,4 +98,25 @@
   <string name="quran_sync_manage_account">Konto verwalten</string>
   <string name="quran_sync_sign_out">Abmelden</string>
   <string name="quran_sync_sign_out_confirmation_title">Von Quran.com abmelden?</string>
+  <string name="quran_sync_sign_out_synced">Alles ist mit Quran.com synchronisiert. Deine Lesezeichen, Sammlungen und Notizen werden von diesem Gerät entfernt und bei der nächsten Anmeldung wiederhergestellt.</string>
+  <string name="quran_sync_sign_out_unknown">Änderungen, die noch nicht mit Quran.com synchronisiert sind, gehen beim Abmelden verloren.</string>
+  <string name="quran_sync_sign_out_lost">Wenn du dich abmeldest, geht alles verloren, was noch nicht synchronisiert ist.</string>
+  <string name="quran_sync_sign_out_review">Überprüfen</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s, und %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="one">%1$s Änderung wartet noch auf die Synchronisierung mit Quran.com.</item>
+    <item quantity="other">%1$s Änderungen warten noch auf die Synchronisierung mit Quran.com.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="one">%1$s Element wird erst synchronisiert, wenn du es korrigierst.</item>
+    <item quantity="other">%1$s Elemente werden erst synchronisiert, wenn du sie korrigierst.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="one">%1$s Element wird erst synchronisiert, wenn du es korrigierst</item>
+    <item quantity="other">%1$s Elemente werden erst synchronisiert, wenn du sie korrigierst</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="one">%1$s weiteres wartet so lange.</item>
+    <item quantity="other">%1$s weitere warten so lange.</item>
+  </plurals>
 </resources>

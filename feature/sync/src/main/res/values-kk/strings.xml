@@ -98,4 +98,25 @@
   <string name="quran_sync_manage_account">Есептік жазбаны басқару</string>
   <string name="quran_sync_sign_out">Шығу</string>
   <string name="quran_sync_sign_out_confirmation_title">Quran.com сайтынан шығасыз ба?</string>
+  <string name="quran_sync_sign_out_synced">Барлығы Quran.com-мен синхрондалды. Бетбелгілеріңіз, жинақтарыңыз бен жазбаларыңыз осы құрылғыдан жойылады және қайта кіргенде қалпына келтіріледі.</string>
+  <string name="quran_sync_sign_out_unknown">Quran.com-мен әлі синхрондалмаған өзгерістер шықсаңыз жоғалады.</string>
+  <string name="quran_sync_sign_out_lost">Шықсаңыз, синхрондалмағанның бәрі жоғалады.</string>
+  <string name="quran_sync_sign_out_review">Қарап шығу</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s, тағы %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="one">%1$s өзгеріс Quran.com-мен синхрондауды әлі күтуде.</item>
+    <item quantity="other">%1$s өзгеріс Quran.com-мен синхрондауды әлі күтуде.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="one">%1$s элементті түзетпейінше синхрондау мүмкін емес.</item>
+    <item quantity="other">%1$s элементті түзетпейінше синхрондау мүмкін емес.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="one">%1$s элементті түзетпейінше синхрондау мүмкін емес</item>
+    <item quantity="other">%1$s элементті түзетпейінше синхрондау мүмкін емес</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="one">%1$s элемент сол уақытқа дейін күтеді.</item>
+    <item quantity="other">%1$s элемент сол уақытқа дейін күтеді.</item>
+  </plurals>
 </resources>

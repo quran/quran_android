@@ -94,4 +94,21 @@
   <string name="quran_sync_manage_account">Urus akaun</string>
   <string name="quran_sync_sign_out">Log keluar</string>
   <string name="quran_sync_sign_out_confirmation_title">Log keluar daripada Quran.com?</string>
+  <string name="quran_sync_sign_out_synced">Semuanya telah disegerakkan dengan Quran.com. Penanda halaman, koleksi dan nota anda akan dialih keluar daripada peranti ini dan dipulihkan apabila anda log masuk semula.</string>
+  <string name="quran_sync_sign_out_unknown">Perubahan yang belum disegerakkan dengan Quran.com akan hilang jika anda log keluar.</string>
+  <string name="quran_sync_sign_out_lost">Jika anda log keluar, semua yang belum disegerakkan akan hilang.</string>
+  <string name="quran_sync_sign_out_review">Semak</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s, dan %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="other">%1$s perubahan masih menunggu untuk disegerakkan dengan Quran.com.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="other">%1$s item tidak dapat disegerakkan sehingga anda membetulkannya.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="other">%1$s item tidak dapat disegerakkan sehingga anda membetulkannya</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="other">%1$s lagi perlu menunggu sehingga itu.</item>
+  </plurals>
 </resources>

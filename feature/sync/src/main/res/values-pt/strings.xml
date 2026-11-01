@@ -102,4 +102,25 @@
   <string name="quran_sync_manage_account">Gerenciar conta</string>
   <string name="quran_sync_sign_out">Sair</string>
   <string name="quran_sync_sign_out_confirmation_title">Sair do Quran.com?</string>
+  <string name="quran_sync_sign_out_synced">Tudo está sincronizado com o Quran.com. Seus marcadores, coleções e notas serão removidos deste dispositivo e restaurados quando você entrar novamente.</string>
+  <string name="quran_sync_sign_out_unknown">As alterações que ainda não foram sincronizadas com o Quran.com serão perdidas se você sair.</string>
+  <string name="quran_sync_sign_out_lost">Se você sair, tudo o que não foi sincronizado será perdido.</string>
+  <string name="quran_sync_sign_out_review">Revisar</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s, e mais %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="one">%1$s alteração ainda está aguardando sincronização com o Quran.com.</item>
+    <item quantity="other">%1$s alterações ainda estão aguardando sincronização com o Quran.com.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="one">%1$s item não pode ser sincronizado até você corrigi-lo.</item>
+    <item quantity="other">%1$s itens não podem ser sincronizados até você corrigi-los.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="one">%1$s item não pode ser sincronizado até você corrigi-lo</item>
+    <item quantity="other">%1$s itens não podem ser sincronizados até você corrigi-los</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="one">%1$s terá que esperar até lá.</item>
+    <item quantity="other">%1$s terão que esperar até lá.</item>
+  </plurals>
 </resources>

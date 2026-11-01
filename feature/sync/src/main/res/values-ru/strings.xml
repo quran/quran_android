@@ -106,4 +106,33 @@
   <string name="quran_sync_manage_account">Управление аккаунтом</string>
   <string name="quran_sync_sign_out">Выйти</string>
   <string name="quran_sync_sign_out_confirmation_title">Выйти из Quran.com?</string>
+  <string name="quran_sync_sign_out_synced">Всё синхронизировано с Quran.com. Ваши закладки, коллекции и заметки будут удалены с этого устройства и восстановятся при следующем входе.</string>
+  <string name="quran_sync_sign_out_unknown">Изменения, которые ещё не синхронизированы с Quran.com, будут потеряны, если вы выйдете.</string>
+  <string name="quran_sync_sign_out_lost">Если вы выйдете, всё несинхронизированное будет потеряно.</string>
+  <string name="quran_sync_sign_out_review">Просмотреть</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s, и ещё %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="one">%1$s изменение ещё ждёт синхронизации с Quran.com.</item>
+    <item quantity="few">%1$s изменения ещё ждут синхронизации с Quran.com.</item>
+    <item quantity="many">%1$s изменений ещё ждут синхронизации с Quran.com.</item>
+    <item quantity="other">%1$s изменения ещё ждут синхронизации с Quran.com.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="one">%1$s элемент не синхронизируется, пока вы его не исправите.</item>
+    <item quantity="few">%1$s элемента не синхронизируются, пока вы их не исправите.</item>
+    <item quantity="many">%1$s элементов не синхронизируются, пока вы их не исправите.</item>
+    <item quantity="other">%1$s элемента не синхронизируются, пока вы их не исправите.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="one">%1$s элемент не синхронизируется, пока вы его не исправите</item>
+    <item quantity="few">%1$s элемента не синхронизируются, пока вы их не исправите</item>
+    <item quantity="many">%1$s элементов не синхронизируются, пока вы их не исправите</item>
+    <item quantity="other">%1$s элемента не синхронизируются, пока вы их не исправите</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="one">%1$s подождёт до тех пор.</item>
+    <item quantity="few">%1$s подождут до тех пор.</item>
+    <item quantity="many">%1$s подождут до тех пор.</item>
+    <item quantity="other">%1$s подождут до тех пор.</item>
+  </plurals>
 </resources>

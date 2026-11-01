@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -29,10 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -74,13 +72,13 @@ import com.quran.shared.pipeline.SyncRun
 import com.quran.shared.pipeline.SyncRunResult
 import com.quran.shared.pipeline.SyncRunTrigger
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import androidx.appcompat.R as AppCompatR
-import com.quran.mobile.common.ui.core.R as UiCoreR
 
 @Composable
 internal fun AccountSyncScreen(
@@ -90,7 +88,8 @@ internal fun AccountSyncScreen(
   onManageAccount: () -> Unit,
   onSyncActivity: () -> Unit
 ) {
-  var isConfirmingSignOut by rememberSaveable { mutableStateOf(false) }
+  val listState = rememberLazyListState()
+  val scope = rememberCoroutineScope()
 
   Scaffold(
     topBar = {
@@ -116,6 +115,7 @@ internal fun AccountSyncScreen(
   ) { paddingValues ->
     val layoutDirection = LocalLayoutDirection.current
     LazyColumn(
+      state = listState,
       verticalArrangement = Arrangement.spacedBy(24.dp),
       contentPadding = PaddingValues(
         start = paddingValues.calculateStartPadding(layoutDirection) + 16.dp,
@@ -154,19 +154,23 @@ internal fun AccountSyncScreen(
         AccountActions(
           isSigningOut = state.isSigningOut,
           onManageAccount = onManageAccount,
-          onSignOut = { isConfirmingSignOut = true }
+          onSignOut = { state.eventSink(AccountSyncEvent.RequestSignOut) }
         )
       }
     }
   }
 
-  if (isConfirmingSignOut) {
+  if (state.signOutWarning != null) {
     SignOutConfirmationDialog(
-      onConfirm = {
-        isConfirmingSignOut = false
-        state.eventSink(AccountSyncEvent.ConfirmSignOut)
-      },
-      onDismiss = { isConfirmingSignOut = false }
+      warning = state.signOutWarning,
+      onConfirm = { state.eventSink(AccountSyncEvent.ConfirmSignOut) },
+      onDismiss = { state.eventSink(AccountSyncEvent.DismissSignOutConfirmation) },
+      onReview = {
+        state.eventSink(AccountSyncEvent.DismissSignOutConfirmation)
+        if (state.blockingItemCount > 0) {
+          scope.launch { listState.animateScrollToItem(2) }
+        }
+      }
     )
   }
 
@@ -453,27 +457,6 @@ private fun RowDivider(color: Color = MaterialTheme.colorScheme.outlineVariant) 
   HorizontalDivider(color = color, modifier = Modifier.padding(start = SyncRowTextStart))
 }
 
-@Composable
-private fun SignOutConfirmationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
-  AlertDialog(
-    onDismissRequest = onDismiss,
-    title = { Text(stringResource(R.string.quran_sync_sign_out_confirmation_title)) },
-    confirmButton = {
-      TextButton(
-        onClick = onConfirm,
-        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
-      ) {
-        Text(stringResource(R.string.quran_sync_sign_out))
-      }
-    },
-    dismissButton = {
-      TextButton(onClick = onDismiss) {
-        Text(stringResource(UiCoreR.string.cancel))
-      }
-    }
-  )
-}
-
 private val previewNow = Clock.System.now()
 
 private val previewVerses = QuranVerses(List(114) { 286 })
@@ -530,6 +513,7 @@ private fun previewState(
     heldRows = heldItemRows(held, HeldItemLookup(listOf(note), listOf(collection))),
     blockingItemCount = activity.blockingItems.size,
     recentRuns = runs.take(3).toImmutableList(),
+    signOutWarning = null,
     isSigningOut = false,
     signOutError = null,
     eventSink = {}
