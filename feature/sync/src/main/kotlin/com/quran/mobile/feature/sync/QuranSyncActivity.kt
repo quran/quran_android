@@ -61,6 +61,8 @@ class QuranSyncActivity : FragmentActivity() {
   private var readingBookmarkToRename by mutableStateOf<Edit.ReadingBookmark?>(null)
   private var editError by mutableStateOf(false)
   private var editJob: Job? = null
+  private var refreshProfileOnResume = false
+  private var profileRefreshJob: Job? = null
   private var authActivityRegistration: QuranSyncManager.AuthActivityRegistration? = null
   private val accountSyncState = MutableStateFlow<AccountSyncState.SignedIn?>(null)
 
@@ -76,6 +78,7 @@ class QuranSyncActivity : FragmentActivity() {
       return
     }
 
+    refreshProfileOnResume = savedInstanceState?.getBoolean("refreshProfileOnResume") ?: false
     savedInstanceState?.getString("renameBookmarkId")?.let { id ->
       readingBookmarkToRename = Edit.ReadingBookmark(
         id,
@@ -191,12 +194,27 @@ class QuranSyncActivity : FragmentActivity() {
     .readingBookmarks(pageMapper.mushafFor(pageMapper.currentPageType())).first()
 
   override fun onSaveInstanceState(outState: Bundle) {
+    outState.putBoolean("refreshProfileOnResume", refreshProfileOnResume)
     readingBookmarkToRename?.let { bookmark ->
       outState.putString("renameBookmarkId", bookmark.id)
       outState.putString("renameBookmarkSlot", bookmark.slot.name)
       outState.putString("renameBookmarkName", bookmark.name)
     }
     super.onSaveInstanceState(outState)
+  }
+
+  override fun onResume() {
+    super.onResume()
+    // Custom Tabs have no close callback; refresh once when this screen resumes.
+    if (refreshProfileOnResume) {
+      profileRefreshJob?.cancel()
+      profileRefreshJob = lifecycleScope.launch {
+        // Activity restoration can finish before the stored sign-in session is restored.
+        syncManager.authState.first { it is AuthState.Success }
+        syncManager.refreshProfile()
+        refreshProfileOnResume = false
+      }
+    }
   }
 
   override fun onDestroy() {
@@ -211,6 +229,7 @@ class QuranSyncActivity : FragmentActivity() {
         .setShowTitle(true)
         .build()
         .launchUrl(this, Uri.parse(syncManager.profileUrl))
+      refreshProfileOnResume = true
     } catch (e: ActivityNotFoundException) {
       // no browser to open the profile in
     }
