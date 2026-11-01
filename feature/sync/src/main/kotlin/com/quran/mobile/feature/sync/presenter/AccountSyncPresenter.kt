@@ -86,7 +86,7 @@ internal class AccountSyncPresenter(
     return AccountSyncState.SignedIn(
       profile = account.profile,
       activity = account.activity,
-      heldRows = heldItemRows(account.activity.heldItems, lookup).take(PREVIEW_COUNT).toImmutableList(),
+      heldRows = heldItemRows(account.activity.heldItems, lookup),
       blockingItemCount = account.activity.blockingItems.size,
       recentRuns = account.activity.runs.take(PREVIEW_COUNT).toImmutableList(),
       isSigningOut = isSigningOut,

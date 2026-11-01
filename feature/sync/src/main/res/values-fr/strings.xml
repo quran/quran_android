@@ -13,6 +13,10 @@
   <string name="quran_sync_bookmarks_cta_button">Se connecter avec Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Ignorer</string>
   <string name="quran_sync_account_title">Compte et synchronisation</string>
+  <string name="quran_sync_activity_title">Activité de synchronisation</string>
+  <string name="quran_sync_activity_footer">Les %s dernières synchronisations sur cet appareil.</string>
+  <string name="quran_sync_held_show_all">Tout afficher (%s)</string>
+  <string name="quran_sync_runs_see_all">Voir toute l’activité</string>
   <string name="quran_sync_status_synced">Synchronisé</string>
   <string name="quran_sync_status_just_now">à l’instant</string>
   <string name="quran_sync_status_everything_else_synced">Tout le reste synchronisé %s</string>

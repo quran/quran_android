@@ -13,6 +13,10 @@
   <string name="quran_sync_bookmarks_cta_button">Quran.com ile oturum açın</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Kapat</string>
   <string name="quran_sync_account_title">Hesap ve Eşitleme</string>
+  <string name="quran_sync_activity_title">Eşitleme etkinliği</string>
+  <string name="quran_sync_activity_footer">Bu cihazdaki son %s eşitleme.</string>
+  <string name="quran_sync_held_show_all">Tümünü göster (%s)</string>
+  <string name="quran_sync_runs_see_all">Tüm etkinliği gör</string>
   <string name="quran_sync_status_synced">Eşitlendi</string>
   <string name="quran_sync_status_just_now">az önce</string>
   <string name="quran_sync_status_everything_else_synced">Diğer her şey %s eşitlendi</string>

@@ -13,6 +13,10 @@
   <string name="quran_sync_bookmarks_cta_button">ورود با Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">نادیده گرفتن</string>
   <string name="quran_sync_account_title">حساب و همگام‌سازی</string>
+  <string name="quran_sync_activity_title">فعالیت همگام‌سازی</string>
+  <string name="quran_sync_activity_footer">%s همگام‌سازی اخیر در این دستگاه.</string>
+  <string name="quran_sync_held_show_all">نمایش همهٔ %s مورد</string>
+  <string name="quran_sync_runs_see_all">دیدن همهٔ فعالیت‌ها</string>
   <string name="quran_sync_status_synced">همگام‌سازی شد</string>
   <string name="quran_sync_status_just_now">همین حالا</string>
   <string name="quran_sync_status_everything_else_synced">بقیهٔ موارد %s همگام‌سازی شدند</string>

@@ -13,6 +13,10 @@
   <string name="quran_sync_bookmarks_cta_button">使用 Quran.com 登录</string>
   <string name="quran_sync_bookmarks_cta_dismiss">关闭</string>
   <string name="quran_sync_account_title">账户与同步</string>
+  <string name="quran_sync_activity_title">同步记录</string>
+  <string name="quran_sync_activity_footer">此设备上最近 %s 次同步。</string>
+  <string name="quran_sync_held_show_all">显示全部 %s 项</string>
+  <string name="quran_sync_runs_see_all">查看全部记录</string>
   <string name="quran_sync_status_synced">已同步</string>
   <string name="quran_sync_status_just_now">刚刚</string>
   <string name="quran_sync_status_everything_else_synced">其他内容%s已同步</string>

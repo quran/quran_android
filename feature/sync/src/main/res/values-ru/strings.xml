@@ -13,6 +13,10 @@
   <string name="quran_sync_bookmarks_cta_button">Войти через Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Закрыть</string>
   <string name="quran_sync_account_title">Аккаунт и синхронизация</string>
+  <string name="quran_sync_activity_title">История синхронизации</string>
+  <string name="quran_sync_activity_footer">Последние %s синхронизаций на этом устройстве.</string>
+  <string name="quran_sync_held_show_all">Показать все (%s)</string>
+  <string name="quran_sync_runs_see_all">Вся история</string>
   <string name="quran_sync_status_synced">Синхронизировано</string>
   <string name="quran_sync_status_just_now">только что</string>
   <string name="quran_sync_status_everything_else_synced">Всё остальное синхронизировано %s</string>

@@ -73,13 +73,13 @@ import com.quran.shared.pipeline.SyncResourceType
 import com.quran.shared.pipeline.SyncRun
 import com.quran.shared.pipeline.SyncRunResult
 import com.quran.shared.pipeline.SyncRunTrigger
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import androidx.appcompat.R as AppCompatR
 import com.quran.mobile.common.ui.core.R as UiCoreR
 
 @Composable
@@ -87,7 +87,8 @@ internal fun AccountSyncScreen(
   state: AccountSyncState.SignedIn,
   verses: QuranVerses,
   onBackPressed: () -> Unit,
-  onManageAccount: () -> Unit
+  onManageAccount: () -> Unit,
+  onSyncActivity: () -> Unit
 ) {
   var isConfirmingSignOut by rememberSaveable { mutableStateOf(false) }
 
@@ -105,7 +106,7 @@ internal fun AccountSyncScreen(
           IconButton(onClick = onBackPressed) {
             Icon(
               imageVector = QuranIcons.ArrowBack,
-              contentDescription = "",
+              contentDescription = stringResource(AppCompatR.string.abc_action_bar_up_description),
               modifier = Modifier.autoMirror()
             )
           }
@@ -139,14 +140,15 @@ internal fun AccountSyncScreen(
       if (state.heldRows.isNotEmpty()) {
         item(key = "held") {
           HeldItemsSection(
-            rows = state.heldRows,
+            rows = state.heldRows.take(3),
             count = state.blockingItemCount,
-            verses = verses
+            verses = verses,
+            onShowAll = onSyncActivity
           )
         }
       }
       item(key = "runs") {
-        RecentSyncsSection(state.recentRuns)
+        RecentSyncsSection(state.recentRuns, onSeeAll = onSyncActivity)
       }
       item(key = "actions") {
         AccountActions(
@@ -215,7 +217,7 @@ private fun AccountHeader(profile: AccountProfile) {
 }
 
 @Composable
-private fun SyncStatusCard(summary: SyncStatusSummary, onSyncNow: () -> Unit) {
+internal fun SyncStatusCard(summary: SyncStatusSummary, onSyncNow: () -> Unit) {
   SyncCard {
     Column(
       verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -266,10 +268,11 @@ private fun SyncStatusCard(summary: SyncStatusSummary, onSyncNow: () -> Unit) {
 }
 
 @Composable
-private fun HeldItemsSection(
-  rows: ImmutableList<HeldItemRowState>,
+internal fun HeldItemsSection(
+  rows: List<HeldItemRowState>,
   count: Int,
-  verses: QuranVerses
+  verses: QuranVerses,
+  onShowAll: (() -> Unit)? = null
 ) {
   val quranColors = LocalQuranColors.current
   SyncSection(
@@ -283,12 +286,23 @@ private fun HeldItemsSection(
       }
       HeldItemRow(row = row, verses = verses)
     }
+    if (onShowAll != null && count > rows.size) {
+      RowDivider(color = quranColors.cautionSeparator)
+      SyncLinkRow(
+        title = stringResource(R.string.quran_sync_held_show_all, rememberNumberFormat().format(count)),
+        onClick = onShowAll
+      )
+    }
   }
 }
 
 @Composable
-private fun RecentSyncsSection(runs: ImmutableList<SyncRun>) {
-  SyncSection(title = stringResource(R.string.quran_sync_runs_header)) {
+internal fun RecentSyncsSection(
+  runs: List<SyncRun>,
+  footer: String? = null,
+  onSeeAll: (() -> Unit)? = null
+) {
+  SyncSection(title = stringResource(R.string.quran_sync_runs_header), footer = footer) {
     if (runs.isEmpty()) {
       NoSyncRunsRow()
     } else {
@@ -298,8 +312,26 @@ private fun RecentSyncsSection(runs: ImmutableList<SyncRun>) {
         }
         SyncRunRow(run)
       }
+      if (onSeeAll != null) {
+        RowDivider()
+        SyncLinkRow(title = stringResource(R.string.quran_sync_runs_see_all), onClick = onSeeAll)
+      }
     }
   }
+}
+
+@Composable
+private fun SyncLinkRow(title: String, onClick: () -> Unit) {
+  Text(
+    text = title,
+    style = MaterialTheme.typography.bodyLarge,
+    fontWeight = FontWeight.SemiBold,
+    color = MaterialTheme.colorScheme.primary,
+    modifier = Modifier
+      .fillMaxWidth()
+      .clickable(role = Role.Button, onClick = onClick)
+      .padding(horizontal = 16.dp, vertical = 14.dp)
+  )
 }
 
 @Composable
@@ -495,7 +527,7 @@ private fun previewState(
   return AccountSyncState.SignedIn(
     profile = accountProfile(user),
     activity = activity,
-    heldRows = heldItemRows(held, HeldItemLookup(listOf(note), listOf(collection))).take(3).toImmutableList(),
+    heldRows = heldItemRows(held, HeldItemLookup(listOf(note), listOf(collection))),
     blockingItemCount = activity.blockingItems.size,
     recentRuns = runs.take(3).toImmutableList(),
     isSigningOut = false,
@@ -507,7 +539,7 @@ private fun previewState(
 @Composable
 private fun PreviewScreen(state: AccountSyncState.SignedIn) {
   QuranTheme {
-    AccountSyncScreen(state = state, verses = previewVerses, onBackPressed = {}, onManageAccount = {})
+    AccountSyncScreen(state = state, verses = previewVerses, onBackPressed = {}, onManageAccount = {}, onSyncActivity = {})
   }
 }
 
@@ -561,4 +593,29 @@ private fun AccountSyncScreenRetryingPreview() {
       )
     )
   )
+}
+
+@Preview(heightDp = 1400)
+@Preview("dark theme", heightDp = 1400, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview("Arabic", heightDp = 1400, locale = "ar")
+@Composable
+private fun SyncActivityScreenPreview() {
+  val state = previewState(
+    status = SyncActivityState.Status.Retrying(SyncErrorKind.NETWORK),
+    held = listOf(
+      previewHeld(SyncResourceType.NOTE, "note", HeldReason.TOO_SHORT),
+      previewHeld(SyncResourceType.COLLECTION, "collection", HeldReason.REJECTED_BY_SERVER),
+      previewHeld(SyncResourceType.NOTE, "deleted", HeldReason.TOO_LONG),
+      previewHeld(SyncResourceType.READING_SESSION, "session", HeldReason.NOT_YET_LINKED)
+    ),
+    runs = listOf(
+      previewRun(1.minutes, SyncRunTrigger.MANUAL, SyncRunResult.FAILED, attempts = 5, error = SyncErrorKind.NETWORK),
+      previewRun(30.minutes, SyncRunTrigger.PERIODIC, SyncRunResult.PULLED_ONLY, pulled = 4),
+      previewRun(1.hours, SyncRunTrigger.FOREGROUND, SyncRunResult.CANCELLED),
+      previewRun(2.hours, SyncRunTrigger.APP_START)
+    )
+  )
+  QuranTheme {
+    SyncActivityScreen(state.activity, state.heldRows, previewVerses, onBackPressed = {}, onSyncNow = {})
+  }
 }

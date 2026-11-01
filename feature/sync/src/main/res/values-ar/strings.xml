@@ -13,6 +13,10 @@
   <string name="quran_sync_bookmarks_cta_button">تسجيل الدخول باستخدام Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">إغلاق</string>
   <string name="quran_sync_account_title">الحساب والمزامنة</string>
+  <string name="quran_sync_activity_title">نشاط المزامنة</string>
+  <string name="quran_sync_activity_footer">آخر %s عملية مزامنة على هذا الجهاز.</string>
+  <string name="quran_sync_held_show_all">عرض الكل (%s)</string>
+  <string name="quran_sync_runs_see_all">عرض كل النشاط</string>
   <string name="quran_sync_status_synced">تمت المزامنة</string>
   <string name="quran_sync_status_just_now">قبل لحظات</string>
   <string name="quran_sync_status_everything_else_synced">تمت مزامنة كل ما عداها %s</string>
