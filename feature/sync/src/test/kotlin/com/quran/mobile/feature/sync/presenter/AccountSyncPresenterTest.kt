@@ -57,7 +57,7 @@ class AccountSyncPresenterTest {
     signOut
   )
 
-  @Test fun `previews keep total counts and full activity while following lookup changes`() = runTest {
+  @Test fun `held rows and full activity follow live changes while recent runs stay a preview`() = runTest {
     val range = NoteRange(2, 300, 3, 1)
     val note = Note("note", listOf(range), time(100).toPlatform(), "note")
     val collection = Collection("system:test", time(100).toPlatform(), "collection")
@@ -86,11 +86,12 @@ class AccountSyncPresenterTest {
 
     var state = states.value as AccountSyncState.SignedIn
     assertEquals(4, state.blockingItemCount)
-    assertEquals(listOf(heldNote, heldCollection, heldBookmark), state.heldRows.map { it.item })
+    assertEquals(listOf(heldNote, heldCollection, heldBookmark, heldProgress), state.heldRows.map { it.item })
     assertEquals(Title.Note(range), state.heldRows[0].title)
     assertEquals(Title.Collection("system:test", false), state.heldRows[1].title)
     assertEquals(Waiting(2, true), state.heldRows[1].waiting)
     assertEquals(Title.ReadingBookmark("My bookmark", ReadingBookmarkSlot.ORANGE), state.heldRows[2].title)
+    assertEquals(Title.ReadingProgress, state.heldRows[3].title)
     assertEquals(history.value.take(3), state.recentRuns)
     assertEquals(history.value, state.activity.runs)
     assertEquals(held.value, state.activity.heldItems)
@@ -101,6 +102,12 @@ class AccountSyncPresenterTest {
     state = states.value as AccountSyncState.SignedIn
     assertEquals(Title.DeletedNote, state.heldRows[0].title)
     assertEquals(Title.Collection("Renamed", false), state.heldRows[1].title)
+
+    history.value = listOf(run(500, SyncRunResult.SUCCEEDED)) + history.value
+    runCurrent()
+    state = states.value as AccountSyncState.SignedIn
+    assertEquals(history.value, state.activity.runs)
+    assertEquals(history.value.take(3), state.recentRuns)
 
     held.value = listOf(waiting)
     runCurrent()

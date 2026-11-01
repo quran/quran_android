@@ -13,6 +13,10 @@
   <string name="quran_sync_bookmarks_cta_button">Quran.com арқылы кіру</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Жабу</string>
   <string name="quran_sync_account_title">Есептік жазба және синхрондау</string>
+  <string name="quran_sync_activity_title">Синхрондау әрекеттері</string>
+  <string name="quran_sync_activity_footer">Осы құрылғыдағы соңғы %s синхрондау.</string>
+  <string name="quran_sync_held_show_all">Барлығын көрсету (%s)</string>
+  <string name="quran_sync_runs_see_all">Барлық әрекеттерді көру</string>
   <string name="quran_sync_status_synced">Синхрондалды</string>
   <string name="quran_sync_status_just_now">жаңа ғана</string>
   <string name="quran_sync_status_everything_else_synced">Қалғанының бәрі %s синхрондалды</string>

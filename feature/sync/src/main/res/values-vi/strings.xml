@@ -13,6 +13,10 @@
   <string name="quran_sync_bookmarks_cta_button">Đăng nhập bằng Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Bỏ qua</string>
   <string name="quran_sync_account_title">Tài khoản và đồng bộ</string>
+  <string name="quran_sync_activity_title">Hoạt động đồng bộ</string>
+  <string name="quran_sync_activity_footer">%s lần đồng bộ gần nhất trên thiết bị này.</string>
+  <string name="quran_sync_held_show_all">Hiện tất cả %s</string>
+  <string name="quran_sync_runs_see_all">Xem tất cả hoạt động</string>
   <string name="quran_sync_status_synced">Đã đồng bộ</string>
   <string name="quran_sync_status_just_now">vừa xong</string>
   <string name="quran_sync_status_everything_else_synced">Mọi thứ khác đã đồng bộ %s</string>

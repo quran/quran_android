@@ -13,6 +13,10 @@
   <string name="quran_sync_bookmarks_cta_button">Quran.com بىلەن تىزىملىنىڭ</string>
   <string name="quran_sync_bookmarks_cta_dismiss">تاقاش</string>
   <string name="quran_sync_account_title">ھېسابات ۋە ماسقەدەملەش</string>
+  <string name="quran_sync_activity_title">ماسقەدەملەش پائالىيىتى</string>
+  <string name="quran_sync_activity_footer">بۇ ئۈسكۈنىدىكى ئاخىرقى %s قېتىملىق ماسقەدەملەش.</string>
+  <string name="quran_sync_held_show_all">ھەممىسىنى كۆرسىتىش (%s)</string>
+  <string name="quran_sync_runs_see_all">بارلىق پائالىيەتنى كۆرۈش</string>
   <string name="quran_sync_status_synced">ماسقەدەملەندى</string>
   <string name="quran_sync_status_just_now">ھېلىلا</string>
   <string name="quran_sync_status_everything_else_synced">باشقا ھەممىسى %s ماسقەدەملەندى</string>

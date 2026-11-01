@@ -13,6 +13,10 @@
   <string name="quran_sync_bookmarks_cta_button">Quran.com bilan kiring</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Yopish</string>
   <string name="quran_sync_account_title">Hisob va sinxronlash</string>
+  <string name="quran_sync_activity_title">Sinxronlash faoliyati</string>
+  <string name="quran_sync_activity_footer">Shu qurilmadagi so‘nggi %s ta sinxronlash.</string>
+  <string name="quran_sync_held_show_all">Hammasini ko‘rsatish (%s)</string>
+  <string name="quran_sync_runs_see_all">Barcha faoliyatni ko‘rish</string>
   <string name="quran_sync_status_synced">Sinxronlandi</string>
   <string name="quran_sync_status_just_now">hozirgina</string>
   <string name="quran_sync_status_everything_else_synced">Qolgan hammasi %s sinxronlandi</string>

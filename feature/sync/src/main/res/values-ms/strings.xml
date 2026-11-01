@@ -13,6 +13,10 @@
   <string name="quran_sync_bookmarks_cta_button">Log masuk dengan Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Ketepikan</string>
   <string name="quran_sync_account_title">Akaun &amp; Penyegerakan</string>
+  <string name="quran_sync_activity_title">Aktiviti penyegerakan</string>
+  <string name="quran_sync_activity_footer">%s penyegerakan terakhir pada peranti ini.</string>
+  <string name="quran_sync_held_show_all">Tunjukkan semua %s</string>
+  <string name="quran_sync_runs_see_all">Lihat semua aktiviti</string>
   <string name="quran_sync_status_synced">Disegerakkan</string>
   <string name="quran_sync_status_just_now">sebentar tadi</string>
   <string name="quran_sync_status_everything_else_synced">Yang lain disegerakkan %s</string>

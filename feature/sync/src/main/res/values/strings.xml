@@ -20,6 +20,10 @@
   <string name="quran_sync_benefit_notes">Keep verse notes in sync</string>
   <string name="quran_sync_continue_caption">You\'ll continue with Quran.com</string>
   <string name="quran_sync_account_title">Account &amp; Sync</string>
+  <string name="quran_sync_activity_title">Sync activity</string>
+  <string name="quran_sync_activity_footer">The last %s syncs on this device.</string>
+  <string name="quran_sync_held_show_all">Show all %s</string>
+  <string name="quran_sync_runs_see_all">See all activity</string>
   <string name="quran_sync_status_synced">Synced</string>
   <string name="quran_sync_status_just_now">just now</string>
   <string name="quran_sync_status_everything_else_synced">Everything else synced %s</string>

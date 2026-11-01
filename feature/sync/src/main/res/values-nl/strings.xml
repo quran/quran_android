@@ -13,6 +13,10 @@
   <string name="quran_sync_bookmarks_cta_button">Aanmelden met Quran.com</string>
   <string name="quran_sync_bookmarks_cta_dismiss">Negeren</string>
   <string name="quran_sync_account_title">Account en synchronisatie</string>
+  <string name="quran_sync_activity_title">Synchronisatieactiviteit</string>
+  <string name="quran_sync_activity_footer">De laatste %s synchronisaties op dit apparaat.</string>
+  <string name="quran_sync_held_show_all">Alle %s tonen</string>
+  <string name="quran_sync_runs_see_all">Alle activiteit bekijken</string>
   <string name="quran_sync_status_synced">Gesynchroniseerd</string>
   <string name="quran_sync_status_just_now">zojuist</string>
   <string name="quran_sync_status_everything_else_synced">Al het andere gesynchroniseerd %s</string>
