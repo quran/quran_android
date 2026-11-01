@@ -24,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.common.ui.core.HighlightColorSpec
@@ -58,19 +57,19 @@ internal fun HighlightRow(
       ) {
         Text(
           text = stringResource(R.string.ayahbookmark_highlight_title),
-          style = MaterialTheme.typography.titleSmall,
+          style = MaterialTheme.typography.titleMedium,
           color = MaterialTheme.colorScheme.onSurface
         )
         Text(
           // unlike the reading bookmark above, this one is staged until the sheet closes
           text = stringResource(R.string.ayahbookmark_highlight_saved_on_close),
-          style = MaterialTheme.typography.bodySmall,
+          style = MaterialTheme.typography.bodyMedium,
           color = MaterialTheme.colorScheme.onSurfaceVariant
         )
       }
       Text(
         text = highlight.currentLabel(),
-        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
+        style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.onSurfaceVariant
       )
     }
@@ -184,7 +183,7 @@ private fun NoneSwatch(
     }
     Text(
       text = stringResource(R.string.ayahbookmark_highlight_none),
-      style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+      style = MaterialTheme.typography.labelMedium,
       color = labelColor,
       modifier = Modifier.padding(top = 4.dp)
     )

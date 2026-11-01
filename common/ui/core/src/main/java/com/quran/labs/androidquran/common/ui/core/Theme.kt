@@ -80,18 +80,25 @@ private fun accentedColors(accent: QuranAccent, useDarkTheme: Boolean): ColorSch
 private val forceLtr = listOf("huawei", "lenovo", "tecno")
 
 object QuranIcons {
+  val AccountCircle: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.AccountCircle
   val ArrowBack: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ArrowBack
+  val ArrowCircleDown: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ArrowCircleDown
   val BookmarkBorder: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.BookmarkBorder
   val Chat: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Chat
   val Check: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Check
+  val CheckCircle: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.CheckCircle
   val ChevronRight: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ChevronRight
   val Close: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Close
+  val ErrorOutline: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ErrorOutline
   val ExpandMore: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.ExpandMore
   val FastForward: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.FastForward
   val FastRewind: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.FastRewind
+  val HighlightOff: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.HighlightOff
   val Logout: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Logout
   val MenuBook: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.MenuBook
   val Mic: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Mic
+  val Notes: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Notes
+  val OpenInNew: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.OpenInNew
   val Pause: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Pause
   val Person: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Person
   val PlayArrow: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.PlayArrow
@@ -99,8 +106,10 @@ object QuranIcons {
   val Search: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Search
   val Settings: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Settings
   val Speed: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Speed
+  val Star: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Star
   val Stop: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Stop
   val Sync: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Sync
+  val Warning: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Warning
 }
 
 @Composable

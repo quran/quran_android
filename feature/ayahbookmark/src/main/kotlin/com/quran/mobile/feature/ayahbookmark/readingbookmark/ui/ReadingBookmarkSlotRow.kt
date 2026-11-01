@@ -34,7 +34,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -87,7 +86,7 @@ internal fun ReadingBookmarkSlotRow(
       } else {
         Text(
           text = ReadingBookmarkSlots.displayName(item.slot, item.name),
-          style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+          style = MaterialTheme.typography.titleMedium,
           color = MaterialTheme.colorScheme.onSurface
         )
       }
@@ -103,7 +102,7 @@ internal fun ReadingBookmarkSlotRow(
           else -> stringResource(R.string.readingbookmark_not_placed)
         },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodySmall,
+        style = MaterialTheme.typography.bodyMedium,
         modifier = Modifier.padding(top = if (isEditing) 4.dp else 0.dp)
       )
     }

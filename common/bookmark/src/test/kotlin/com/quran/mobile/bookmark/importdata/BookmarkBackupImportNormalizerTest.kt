@@ -5,19 +5,18 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.Settings
 import com.quran.data.model.PageAppearance
-import com.quran.data.model.audio.Qari
 import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
-import com.quran.data.source.DisplaySize
+import com.quran.data.source.MushafType
 import com.quran.data.source.PageProvider
-import com.quran.data.source.PageSizeCalculator
-import com.quran.data.source.QuranDataSource
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.pages.data.warsh.WarshDataSource
 import com.quran.mobile.bookmark.model.ReadingBookmarkPageMapper
+import com.quran.mobile.bookmark.model.TestPageProvider
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
+import com.quran.shared.persistence.model.Mushaf
 import com.quran.shared.persistence.model.ReadingBookmarkSlot
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,25 +32,19 @@ import kotlin.time.Instant
 class BookmarkBackupImportNormalizerTest {
 
   private lateinit var normalizer: BookmarkBackupImportNormalizer
-  private lateinit var pageMapper: ReadingBookmarkPageMapper
   private lateinit var settings: FakeSettings
 
   @Before
   fun setup() {
-    val context = RuntimeEnvironment.getApplication().applicationContext as Context
     settings = FakeSettings()
-    pageMapper = ReadingBookmarkPageMapper(
-      settings = settings,
+    normalizer = normalizer(
+      // Shemerly's data source lives in quran-android-extras. Warsh's, a layout that differs from
+      // madani's, stands in for it, so recent pages show which layout they are read in.
       pageProviders = mapOf(
-        "madani" to TestPageProvider(MadaniDataSource()),
-        "warsh" to TestPageProvider(WarshDataSource())
+        "madani" to TestPageProvider(MushafType.MADANI_1405, MadaniDataSource()),
+        "shemerly_layout" to TestPageProvider(MushafType.SHEMERLY, WarshDataSource())
       ),
       fallbackPageType = "madani"
-    )
-    normalizer = BookmarkBackupImportNormalizer(
-      appContext = context,
-      pageMapper = pageMapper,
-      timestampProvider = FakeMobileSyncTimestampProvider()
     )
   }
 
@@ -85,38 +78,35 @@ class BookmarkBackupImportNormalizerTest {
 
   @Test
   fun `normalizes page-based backup data from declared page type`() = runTest {
-    val (warshPage, madaniPage) = firstWarshPageWithDifferentMadaniStorage()
-    val warshBounds = QuranInfo(WarshDataSource()).getPageBounds(warshPage)
+    val shemerlyBounds = QuranInfo(WarshDataSource()).getPageBounds(SHEMERLY_PAGE)
 
     val importData = normalizer.normalize(
       BookmarkData(
-        recentPages = listOf(RecentPage(warshPage, Instant.fromEpochSeconds(900))),
+        recentPages = listOf(RecentPage(SHEMERLY_PAGE, Instant.fromEpochSeconds(900))),
         readingBookmarks = listOf(
           BackupReadingBookmark(
             slot = ReadingBookmarkType.ORANGE,
             type = BackupReadingBookmark.TYPE_PAGE,
-            page = warshPage,
+            page = SHEMERLY_PAGE,
             timestamp = Instant.fromEpochSeconds(800),
             name = "Nightly reading"
           )
         ),
-        pageType = "warsh"
+        pageType = "shemerly_layout"
       )
     )
 
     assertThat(importData.bookmarks).isEmpty()
-    assertThat(importData.readingSessions.single().sura).isEqualTo(warshBounds[0])
-    assertThat(importData.readingSessions.single().ayah).isEqualTo(warshBounds[1])
-    assertThat((importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page).page)
-      .isEqualTo(madaniPage)
-    assertThat((importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page).name)
-      .isEqualTo("Nightly reading")
+    assertThat(importData.readingSessions.single().sura).isEqualTo(shemerlyBounds[0])
+    assertThat(importData.readingSessions.single().ayah).isEqualTo(shemerlyBounds[1])
+    val page = importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page
+    assertThat(page.page to page.mushaf).isEqualTo(SHEMERLY_PAGE to Mushaf.SHEMERLY)
+    assertThat(page.name).isEqualTo("Nightly reading")
   }
 
   @Test
   fun `normalizes legacy backup data from current page type when page type is missing`() = runTest {
-    val (warshPage, madaniPage) = firstWarshPageWithDifferentMadaniStorage()
-    settings.setPageType("warsh")
+    settings.setPageType("shemerly_layout")
 
     val importData = normalizer.normalize(
       BookmarkData(
@@ -124,48 +114,74 @@ class BookmarkBackupImportNormalizerTest {
           BackupReadingBookmark(
             slot = ReadingBookmarkType.ORANGE,
             type = BackupReadingBookmark.TYPE_PAGE,
-            page = warshPage,
+            page = SHEMERLY_PAGE,
             timestamp = Instant.fromEpochSeconds(800)
           )
         )
       )
     )
 
-    assertThat((importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page).page)
-      .isEqualTo(madaniPage)
+    val page = importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page
+    assertThat(page.page to page.mushaf).isEqualTo(SHEMERLY_PAGE to Mushaf.SHEMERLY)
   }
 
   @Test
-  fun `unknown source page type falls back to canonical page provider and clamps page`() = runTest {
-    val madaniInfo = QuranInfo(MadaniDataSource())
+  fun `an unknown source page type is read in the reference page type`() = runTest {
+    val importData = normalizer.normalize(unknownPageTypeBackup())
 
-    val importData = normalizer.normalize(
-      BookmarkData(
-        readingBookmarks = listOf(
-          BackupReadingBookmark(
-            slot = ReadingBookmarkType.ORANGE,
-            type = BackupReadingBookmark.TYPE_PAGE,
-            page = 999,
-            timestamp = Instant.fromEpochSeconds(800)
-          )
-        ),
-        pageType = "naskh"
-      )
-    )
-
-    assertThat((importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page).page)
-      .isEqualTo(madaniInfo.numberOfPages)
+    val madaniBounds = QuranInfo(MadaniDataSource()).getPageBounds(UNKNOWN_PAGE_TYPE_PAGE)
+    assertThat(importData.readingSessions.single().sura to importData.readingSessions.single().ayah)
+      .isEqualTo(madaniBounds[0] to madaniBounds[1])
+    val page = importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page
+    assertThat(page.page to page.mushaf).isEqualTo(UNKNOWN_PAGE_TYPE_PAGE to Mushaf.MADANI_1405)
   }
 
-  private fun firstWarshPageWithDifferentMadaniStorage(): Pair<Int, Int> {
-    val warshInfo = QuranInfo(WarshDataSource())
-    val warshPage = (1..warshInfo.numberOfPages)
-      .first { page ->
-        if (!warshInfo.isValidPage(page)) return@first false
-        val storagePage = pageMapper.pageToStoragePage(page, "warsh")
-        storagePage != page && pageMapper.storagePageToPage(storagePage, "warsh") == page
-      }
-    return warshPage to pageMapper.pageToStoragePage(warshPage, "warsh")
+  @Test
+  fun `an unknown source page type is read in a riwayah build's own page type`() = runTest {
+    // a Warsh build registers only warsh, so it is the reference page type
+    val warshNormalizer = normalizer(
+      pageProviders = mapOf("warsh" to TestPageProvider(MushafType.WARSH, WarshDataSource())),
+      fallbackPageType = "warsh"
+    )
+
+    val importData = warshNormalizer.normalize(unknownPageTypeBackup())
+
+    val warshBounds = QuranInfo(WarshDataSource()).getPageBounds(UNKNOWN_PAGE_TYPE_PAGE)
+    assertThat(importData.readingSessions.single().sura to importData.readingSessions.single().ayah)
+      .isEqualTo(warshBounds[0] to warshBounds[1])
+    val page = importData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page
+    assertThat(page.page to page.mushaf).isEqualTo(UNKNOWN_PAGE_TYPE_PAGE to Mushaf.WARSH)
+  }
+
+  /** A backup of a page type no build has, with a recent page and a page reading bookmark on it. */
+  private fun unknownPageTypeBackup(): BookmarkData {
+    return BookmarkData(
+      recentPages = listOf(RecentPage(UNKNOWN_PAGE_TYPE_PAGE, Instant.fromEpochSeconds(900))),
+      readingBookmarks = listOf(
+        BackupReadingBookmark(
+          slot = ReadingBookmarkType.ORANGE,
+          type = BackupReadingBookmark.TYPE_PAGE,
+          page = UNKNOWN_PAGE_TYPE_PAGE,
+          timestamp = Instant.fromEpochSeconds(800)
+        )
+      ),
+      pageType = "unknown"
+    )
+  }
+
+  private fun normalizer(
+    pageProviders: Map<String, PageProvider>,
+    fallbackPageType: String
+  ): BookmarkBackupImportNormalizer {
+    return BookmarkBackupImportNormalizer(
+      appContext = RuntimeEnvironment.getApplication().applicationContext as Context,
+      pageMapper = ReadingBookmarkPageMapper(
+        settings = settings,
+        pageProviders = pageProviders,
+        fallbackPageType = fallbackPageType
+      ),
+      timestampProvider = FakeMobileSyncTimestampProvider()
+    )
   }
 
   private class FakeSettings : Settings {
@@ -212,43 +228,8 @@ class BookmarkBackupImportNormalizerTest {
     override fun preferencesFlow(): Flow<String> = preferences
   }
 
-  private class TestPageProvider(
-    private val dataSource: QuranDataSource
-  ) : PageProvider {
-    override fun getDataSource(): QuranDataSource = dataSource
-
-    override fun getPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator {
-      throw UnsupportedOperationException()
-    }
-
-    override fun getImageVersion(): Int = 0
-
-    override fun getImagesBaseUrl(): String = ""
-
-    override fun getImagesZipBaseUrl(): String = ""
-
-    override fun getPatchBaseUrl(): String = ""
-
-    override fun getAyahInfoBaseUrl(): String = ""
-
-    override fun getDatabasesBaseUrl(): String = ""
-
-    override fun getAudioDatabasesBaseUrl(): String = ""
-
-    override fun getAudioDirectoryName(): String = ""
-
-    override fun getDatabaseDirectoryName(): String = ""
-
-    override fun getAyahInfoDirectoryName(): String = ""
-
-    override fun getImagesDirectoryName(): String = ""
-
-    override fun getPreviewTitle(): Int = 0
-
-    override fun getPreviewDescription(): Int = 0
-
-    override fun getQaris(): List<Qari> = emptyList()
-
-    override fun getDefaultQariId(): Int = 0
+  private companion object {
+    const val SHEMERLY_PAGE = 300
+    const val UNKNOWN_PAGE_TYPE_PAGE = 42
   }
 }

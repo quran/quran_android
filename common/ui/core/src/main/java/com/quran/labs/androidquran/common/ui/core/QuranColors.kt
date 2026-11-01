@@ -6,15 +6,27 @@ import androidx.compose.ui.graphics.Color
 
 @Immutable
 class QuranColors(
-  val defaultTextColor: Color
+  val defaultTextColor: Color,
+  val success: Color,
+  val caution: Color,
+  val cautionBackground: Color,
+  val cautionSeparator: Color
 )
 
 val lightQuranColors = QuranColors(
-  defaultTextColor = Color.Black
+  defaultTextColor = Color.Black,
+  success = Color(0xFF34C759),
+  caution = Color(0xFFA04B00),
+  cautionBackground = Color(0xFFFFF4E5),
+  cautionSeparator = Color(0xFFF3DDBF)
 )
 
 val darkQuranColors = QuranColors(
-  defaultTextColor = Color.White
+  defaultTextColor = Color.White,
+  success = Color(0xFF30D158),
+  caution = Color(0xFFFFB35C),
+  cautionBackground = Color(0xFF2E2210),
+  cautionSeparator = Color(0xFF4A3A20)
 )
 
 val LocalQuranColors = staticCompositionLocalOf<QuranColors> {

@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.fakes
 
 import com.quran.data.model.audio.Qari
 import com.quran.data.source.DisplaySize
+import com.quran.data.source.MushafType
 import com.quran.data.source.PageSizeCalculator
 import com.quran.data.source.PageProvider
 import com.quran.data.source.QuranDataSource
@@ -28,6 +29,7 @@ class FakePageProvider : PageProvider {
   }
 
   override fun getImageVersion(): Int = 0
+  override fun mushafType(): MushafType = MushafType.MADANI_1405
 
   override fun getImagesBaseUrl(): String = ""
   override fun getImagesZipBaseUrl(): String = ""

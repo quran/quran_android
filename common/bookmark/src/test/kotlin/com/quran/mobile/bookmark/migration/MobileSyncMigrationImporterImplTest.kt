@@ -17,6 +17,7 @@ import com.quran.mobile.bookmark.model.BookmarksDaoImpl
 import com.quran.mobile.bookmark.model.RepositoryBackedTestBookmarkCollectionsState
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.model.AyahReadingBookmark
+import com.quran.shared.persistence.model.Mushaf
 import com.quran.shared.persistence.model.PageReadingBookmark
 import com.quran.shared.persistence.model.ReadingBookmarkSlot
 import com.quran.shared.persistence.repository.bookmark.repository.BookmarksRepositoryImpl
@@ -126,9 +127,9 @@ class MobileSyncImporterImplTest {
   @Test
   fun `reading bookmark import replaces supplied slots and preserves omitted slots`() = runTest {
     val repository = ReadingBookmarksRepositoryImpl(mobileSyncDatabase.database.synced)
-    val existing = repository.setPageReadingBookmark(ReadingBookmarkSlot.TEAL, 12)
-    val omitted = repository.setPageReadingBookmark(ReadingBookmarkSlot.RED, 50)
-    repository.renameReadingBookmark(ReadingBookmarkSlot.TEAL, "Old name")
+    val existing = repository.setPageReadingBookmark(ReadingBookmarkSlot.TEAL, 12, Mushaf.MADANI_1405)
+    val omitted = repository.setPageReadingBookmark(ReadingBookmarkSlot.RED, 50, Mushaf.MADANI_1405)
+    repository.renameReadingBookmark(ReadingBookmarkSlot.TEAL, "Old name", Mushaf.MADANI_1405)
 
     val result = importer.importData(
       MobileSyncImportData(
@@ -136,6 +137,7 @@ class MobileSyncImporterImplTest {
           MobileSyncImportReadingBookmark.Page(
             slot = ReadingBookmarkSlot.TEAL,
             page = 42,
+            mushaf = Mushaf.INDOPAK_15_LINES,
             timestampMillis = 1_700_000_000_000L
           ),
           MobileSyncImportReadingBookmark.Ayah(
@@ -150,10 +152,13 @@ class MobileSyncImporterImplTest {
     )
 
     assertThat(result.readingBookmarkImported).isEqualTo(2)
-    val bookmarks = repository.getReadingBookmarks()
-    val page = bookmarks.single { it.slot == ReadingBookmarkSlot.TEAL } as PageReadingBookmark
+    val bookmarks = repository.getReadingBookmarks(Mushaf.MADANI_1405)
+    // the page keeps the mushaf it was imported in
+    val page = repository.getReadingBookmarks(Mushaf.INDOPAK_15_LINES)
+      .single { it.slot == ReadingBookmarkSlot.TEAL } as PageReadingBookmark
     assertThat(page.id).isEqualTo(existing.id)
     assertThat(page.page).isEqualTo(42)
+    assertThat(page.mushaf).isEqualTo(Mushaf.INDOPAK_15_LINES)
     assertThat(page.name).isNull()
     assertThat(page.lastUpdated.toEpochMilliseconds()).isEqualTo(1_700_000_000_000L)
     val ayah = bookmarks.single { it.slot == ReadingBookmarkSlot.ORANGE } as AyahReadingBookmark

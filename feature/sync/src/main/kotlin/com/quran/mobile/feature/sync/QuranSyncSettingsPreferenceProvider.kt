@@ -5,6 +5,7 @@ import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceGroup
 import com.quran.data.di.AppScope
 import com.quran.mobile.di.ExtraPreferencesProvider
+import com.quran.mobile.feature.sync.presenter.AccountSettingsPresenter
 import dev.zacsweers.metro.ContributesIntoSet
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
@@ -31,14 +32,14 @@ class QuranSyncSettingsPreferenceProvider(
       // negative order sorts Account above all of them, regardless of insertion order.
       order = -1
     }
-    val preference = AccountPreference(context, syncManager).apply {
+    val preference = AccountPreference(context, AccountSettingsPresenter(syncManager)).apply {
       key = PREFERENCE_KEY
     }
     root.addPreference(category)
     category.addPreference(preference)
   }
 
-  // The account row handles its own clicks (open sync details, sign out) via Compose since it
+  // The account row handles its own clicks (open the account, sync now) via Compose since it
   // is not selectable at the Preference level.
   override fun onPreferenceClick(preference: Preference): Boolean = false
 

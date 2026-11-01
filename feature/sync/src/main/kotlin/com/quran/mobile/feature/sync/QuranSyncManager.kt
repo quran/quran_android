@@ -2,12 +2,14 @@ package com.quran.mobile.feature.sync
 
 import android.content.Context
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.quran.data.di.AppScope
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.shared.auth.di.AuthFlowFactoryProvider
 import com.quran.shared.auth.model.AuthConfig
 import com.quran.shared.auth.model.AuthState
 import com.quran.shared.persistence.DriverFactory
+import com.quran.shared.pipeline.AppEnvironment
 import com.quran.shared.pipeline.di.AppGraph
 import com.quran.shared.pipeline.di.SharedDependencyGraph
 import com.quran.shared.pipeline.storage.createMobileSyncStorage
@@ -77,6 +79,9 @@ class QuranSyncManager(
 
   val authState: StateFlow<AuthState>
     get() = graph.authService.authState
+
+  internal val profileUrl: String
+    get() = if (config.appEnvironment == AppEnvironment.PRELIVE) PRELIVE_PROFILE_URL else PROFILE_URL
 
   /**
    * Emits whether UI can offer a manual sync action.
@@ -157,10 +162,10 @@ class QuranSyncManager(
   }
 
   /**
-   * Starts the OAuth login flow and triggers an initial sync after a successful token exchange.
+   * Starts the OAuth login flow. mobile-sync handles the initial sync after sign-in.
    *
-   * The sync settings screen is an explicit account action, so force provider-side
-   * reauthentication to avoid silently reusing a previous Quran.com browser session after logout.
+   * mobile-sync's login always forces provider-side reauthentication (`prompt=login`), so signing in
+   * after a logout never silently reuses a previous Quran.com browser session.
    *
    * The browser redirect continuation is owned by this app-scoped manager rather than the calling
    * UI coroutine, so Activity recreation while the browser is open does not strand the pending login.
@@ -168,8 +173,7 @@ class QuranSyncManager(
   suspend fun login() {
     runAuthAction {
       if (!isConfigured || codeAuthFlowFactory == null) return@runAuthAction
-      graph.authService.loginWithReauthentication()
-      graph.quranDataService.triggerSync()
+      graph.authService.login()
     }
   }
 
@@ -214,6 +218,14 @@ class QuranSyncManager(
    */
   fun triggerSync() {
     graph.quranDataService.triggerSync(immediately = true)
+  }
+
+  fun startForegroundSync() {
+    if (isConfigured) {
+      ProcessLifecycleOwner.get().lifecycle.addObserver(
+        ForegroundSync(graph.quranDataService::syncOnForeground)
+      )
+    }
   }
 
   private suspend fun runAuthAction(action: suspend () -> Unit) {
@@ -291,6 +303,8 @@ class QuranSyncManager(
     const val SYNC_PREFERENCES_NAME = "quran_sync"
     const val KEY_LOGOUT_PENDING_PROCESS_ID = "logout_pending_process_id"
     const val KEY_DISMISSED_BOOKMARKS_SIGN_IN_CARD = "dismissed_bookmarks_sign_in_card"
+    const val PROFILE_URL = "https://quran.com/profile"
+    const val PRELIVE_PROFILE_URL = "https://prelive.quran.com/profile"
   }
 
   class AuthActivityRegistration internal constructor(

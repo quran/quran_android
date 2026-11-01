@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">Kirjautunut sisään</string>
   <string name="quran_sync_loading">Kirjaudutaan sisään</string>
   <string name="quran_sync_login">Kirjaudu sisään</string>
-  <string name="quran_sync_logout">Kirjaudu ulos</string>
-  <string name="quran_sync_name">Nimi</string>
-  <string name="quran_sync_email">Sähköposti</string>
-  <string name="quran_sync_account_id">Tilitunnus</string>
   <string name="quran_sync_action_error">Synkronointia ei voi päivittää juuri nyt.</string>
   <string name="quran_sync_bookmarks_cta_title">Synkronoi kirjanmerkkisi kaikkialle</string>
   <string name="quran_sync_bookmarks_cta_subtitle">Käytä niitä miltä tahansa laitteelta, milloin tahansa</string>
