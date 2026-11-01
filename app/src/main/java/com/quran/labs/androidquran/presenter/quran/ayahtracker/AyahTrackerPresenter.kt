@@ -51,10 +51,13 @@ import com.quran.recitation.presenter.RecitationPopupPresenter.PopupContainer
 import com.quran.recitation.presenter.RecitationPresenter
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @QuranPageScope
 class AyahTrackerPresenter @Inject constructor(
@@ -409,11 +412,15 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   private fun checkCoordinateData(activity: Activity) {
-    if (activity is PagerActivity &&
-      (!quranFileUtils.haveAyaPositionFile() ||
-          !quranFileUtils.hasArabicSearchDatabase())
-    ) {
-      activity.showGetRequiredFilesDialog()
+    if (activity is PagerActivity) {
+      scope.launch {
+        val missingData = withContext(Dispatchers.IO) {
+          !quranFileUtils.haveAyaPositionFile() || !quranFileUtils.hasArabicSearchDatabase()
+        }
+        if (missingData) {
+          activity.showGetRequiredFilesDialog()
+        }
+      }
     }
   }
 
