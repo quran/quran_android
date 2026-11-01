@@ -119,4 +119,8 @@
     <item quantity="one">%1$s öğe daha o zamana kadar bekleyecek.</item>
     <item quantity="other">%1$s öğe daha o zamana kadar bekleyecek.</item>
   </plurals>
+  <string name="quran_sync_held_edit">Düzenle</string>
+  <string name="quran_sync_held_edit_accessibility">Düzenle, %1$s</string>
+  <string name="quran_sync_rename">Yeniden adlandır</string>
+  <string name="quran_sync_bookmark_name">%1$s yer iminin adı</string>
 </resources>

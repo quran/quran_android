@@ -111,4 +111,8 @@
   <plurals name="quran_sync_sign_out_waiting">
     <item quantity="other">%1$s mục khác phải chờ đến lúc đó.</item>
   </plurals>
+  <string name="quran_sync_held_edit">Sửa</string>
+  <string name="quran_sync_held_edit_accessibility">Sửa, %1$s</string>
+  <string name="quran_sync_rename">Đổi tên</string>
+  <string name="quran_sync_bookmark_name">Tên dấu trang %1$s</string>
 </resources>

@@ -67,16 +67,19 @@ internal constructor(private val bookmarksDao: BookmarksDao) : Presenter<AddTagD
     val requestDialog = dialog ?: return
     presenterScope.launch {
       try {
-        // false means the tag is gone or read-only now, so there's nothing left to rename
-        bookmarksDao.updateTag(tag)
+        val updated = bookmarksDao.updateTag(tag)
         if (dialog === requestDialog) {
-          onUpdated()
+          if (updated) onUpdated() else requestDialog.onSaveError()
         }
       } catch (exception: CancellationException) {
         throw exception
       } catch (exception: CollectionNameException) {
         if (dialog === requestDialog) {
           requestDialog.onInvalidTagName(exception)
+        }
+      } catch (_: Exception) {
+        if (dialog === requestDialog) {
+          requestDialog.onSaveError()
         }
       }
     }

@@ -119,4 +119,8 @@
     <item quantity="one">%1$s ander wacht zolang.</item>
     <item quantity="other">%1$s andere wachten zolang.</item>
   </plurals>
+  <string name="quran_sync_held_edit">Bewerken</string>
+  <string name="quran_sync_held_edit_accessibility">Bewerken, %1$s</string>
+  <string name="quran_sync_rename">Naam wijzigen</string>
+  <string name="quran_sync_bookmark_name">Naam van bladwijzer %1$s</string>
 </resources>

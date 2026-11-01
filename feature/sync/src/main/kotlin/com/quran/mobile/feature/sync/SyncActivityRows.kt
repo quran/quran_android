@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,7 +23,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.labs.androidquran.common.ui.core.LocalQuranColors
@@ -46,15 +50,36 @@ internal val SyncRowIconSize = 24.dp
 internal val SyncRowTextStart = 16.dp + SyncRowIconSize + 12.dp
 
 @Composable
-internal fun HeldItemRow(row: HeldItemRowState, verses: QuranVerses, modifier: Modifier = Modifier) {
+internal fun HeldItemRow(
+  row: HeldItemRowState,
+  verses: QuranVerses,
+  modifier: Modifier = Modifier,
+  onEdit: (HeldItemRowState.Edit) -> Unit = {}
+) {
+  val title = heldItemTitle(row.title, verses)
   SyncRow(
     icon = row.item.type.icon,
     iconTint = LocalQuranColors.current.caution,
     alignment = Alignment.Top,
-    modifier = modifier
+    modifier = modifier,
+    trailing = {
+      if (row.edit != null) {
+        val label = stringResource(R.string.quran_sync_held_edit_accessibility, title)
+        TextButton(
+          onClick = { onEdit(row.edit) },
+          modifier = Modifier.semantics { contentDescription = label }
+        ) {
+          Text(
+            text = stringResource(R.string.quran_sync_held_edit),
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.clearAndSetSemantics {}
+          )
+        }
+      }
+    }
   ) {
     Text(
-      text = heldItemTitle(row.title, verses),
+      text = title,
       style = MaterialTheme.typography.bodyLarge,
       color = MaterialTheme.colorScheme.onSurface
     )
@@ -124,6 +149,7 @@ private fun SyncRow(
   iconTint: Color,
   modifier: Modifier = Modifier,
   alignment: Alignment.Vertical = Alignment.CenterVertically,
+  trailing: @Composable () -> Unit = {},
   content: @Composable () -> Unit
 ) {
   Row(
@@ -145,6 +171,7 @@ private fun SyncRow(
     Column(verticalArrangement = Arrangement.spacedBy(2.dp), modifier = Modifier.weight(1f)) {
       content()
     }
+    trailing()
   }
 }
 
@@ -175,7 +202,7 @@ private val SyncResourceType.icon: ImageVector
     SyncResourceType.READING_SESSION -> QuranIcons.BookmarkBorder
   }
 
-private val ReadingBookmarkSlot.type: ReadingBookmarkType
+internal val ReadingBookmarkSlot.type: ReadingBookmarkType
   get() = when (this) {
     ReadingBookmarkSlot.TEAL -> ReadingBookmarkType.TEAL
     ReadingBookmarkSlot.ORANGE -> ReadingBookmarkType.ORANGE

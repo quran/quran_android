@@ -119,4 +119,8 @@
     <item quantity="one">%1$s элемент сол уақытқа дейін күтеді.</item>
     <item quantity="other">%1$s элемент сол уақытқа дейін күтеді.</item>
   </plurals>
+  <string name="quran_sync_held_edit">Өңдеу</string>
+  <string name="quran_sync_held_edit_accessibility">Өңдеу, %1$s</string>
+  <string name="quran_sync_rename">Атын өзгерту</string>
+  <string name="quran_sync_bookmark_name">%1$s бетбелгісінің атауы</string>
 </resources>

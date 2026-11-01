@@ -111,4 +111,8 @@
   <plurals name="quran_sync_sign_out_waiting">
     <item quantity="other">%1$s lagi perlu menunggu sehingga itu.</item>
   </plurals>
+  <string name="quran_sync_held_edit">Edit</string>
+  <string name="quran_sync_held_edit_accessibility">Edit, %1$s</string>
+  <string name="quran_sync_rename">Namakan semula</string>
+  <string name="quran_sync_bookmark_name">Nama penanda %1$s</string>
 </resources>

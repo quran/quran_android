@@ -135,4 +135,8 @@
     <item quantity="many">%1$s подождут до тех пор.</item>
     <item quantity="other">%1$s подождут до тех пор.</item>
   </plurals>
+  <string name="quran_sync_held_edit">Изменить</string>
+  <string name="quran_sync_held_edit_accessibility">Изменить, %1$s</string>
+  <string name="quran_sync_rename">Переименовать</string>
+  <string name="quran_sync_bookmark_name">Название закладки %1$s</string>
 </resources>

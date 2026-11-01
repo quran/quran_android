@@ -86,7 +86,8 @@ internal fun AccountSyncScreen(
   verses: QuranVerses,
   onBackPressed: () -> Unit,
   onManageAccount: () -> Unit,
-  onSyncActivity: () -> Unit
+  onSyncActivity: () -> Unit,
+  onEdit: (HeldItemRowState.Edit) -> Unit = {}
 ) {
   val listState = rememberLazyListState()
   val scope = rememberCoroutineScope()
@@ -143,7 +144,8 @@ internal fun AccountSyncScreen(
             rows = state.heldRows.take(3),
             count = state.blockingItemCount,
             verses = verses,
-            onShowAll = onSyncActivity
+            onShowAll = onSyncActivity,
+            onEdit = onEdit
           )
         }
       }
@@ -276,7 +278,8 @@ internal fun HeldItemsSection(
   rows: List<HeldItemRowState>,
   count: Int,
   verses: QuranVerses,
-  onShowAll: (() -> Unit)? = null
+  onShowAll: (() -> Unit)? = null,
+  onEdit: (HeldItemRowState.Edit) -> Unit = {}
 ) {
   val quranColors = LocalQuranColors.current
   SyncSection(
@@ -288,7 +291,7 @@ internal fun HeldItemsSection(
       if (index > 0) {
         RowDivider(color = quranColors.cautionSeparator)
       }
-      HeldItemRow(row = row, verses = verses)
+      HeldItemRow(row = row, verses = verses, onEdit = onEdit)
     }
     if (onShowAll != null && count > rows.size) {
       RowDivider(color = quranColors.cautionSeparator)

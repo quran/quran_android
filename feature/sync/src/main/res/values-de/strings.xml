@@ -119,4 +119,8 @@
     <item quantity="one">%1$s weiteres wartet so lange.</item>
     <item quantity="other">%1$s weitere warten so lange.</item>
   </plurals>
+  <string name="quran_sync_held_edit">Bearbeiten</string>
+  <string name="quran_sync_held_edit_accessibility">Bearbeiten, %1$s</string>
+  <string name="quran_sync_rename">Umbenennen</string>
+  <string name="quran_sync_bookmark_name">Name des Lesezeichens %1$s</string>
 </resources>

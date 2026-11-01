@@ -16,6 +16,7 @@ dependencies {
 
   implementation(libs.androidx.activity.compose)
   implementation(libs.androidx.browser)
+  implementation(libs.androidx.fragment.ktx)
   implementation(libs.androidx.lifecycle.process)
   implementation(libs.androidx.lifecycle.runtime.compose)
   implementation(libs.androidx.preference.ktx)

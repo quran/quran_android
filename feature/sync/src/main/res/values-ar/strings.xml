@@ -151,4 +151,8 @@
     <item quantity="many">%1$s عنصرًا آخر لا يمكن مزامنته حتى ذلك الحين.</item>
     <item quantity="other">%1$s عنصر آخر لا يمكن مزامنته حتى ذلك الحين.</item>
   </plurals>
+  <string name="quran_sync_held_edit">تعديل</string>
+  <string name="quran_sync_held_edit_accessibility">تعديل، %1$s</string>
+  <string name="quran_sync_rename">إعادة التسمية</string>
+  <string name="quran_sync_bookmark_name">اسم العلامة %1$s</string>
 </resources>

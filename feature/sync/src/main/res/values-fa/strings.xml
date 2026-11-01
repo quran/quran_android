@@ -119,4 +119,8 @@
     <item quantity="one">%1$s مورد دیگر هم تا آن وقت همگام‌سازی نمی‌شود.</item>
     <item quantity="other">%1$s مورد دیگر هم تا آن وقت همگام‌سازی نمی‌شوند.</item>
   </plurals>
+  <string name="quran_sync_held_edit">ویرایش</string>
+  <string name="quran_sync_held_edit_accessibility">ویرایش، %1$s</string>
+  <string name="quran_sync_rename">تغییر نام</string>
+  <string name="quran_sync_bookmark_name">نام نشانک %1$s</string>
 </resources>
