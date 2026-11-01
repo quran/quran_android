@@ -16,13 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.quran.labs.androidquran.common.ui.core.CollectionNames
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionItem
-import com.quran.mobile.common.ui.core.R as UiCoreR
 
 @Composable
 internal fun CollectionRow(
@@ -43,11 +42,7 @@ internal fun CollectionRow(
   ) {
     CollectionCheckbox(isChecked = collection.isChecked)
     Text(
-      text = if (collection.isDefault) {
-        stringResource(UiCoreR.string.default_collection)
-      } else {
-        collection.name
-      },
+      text = CollectionNames.displayName(collection.name, collection.isDefault),
       style = MaterialTheme.typography.bodyLarge,
       color = MaterialTheme.colorScheme.onSurface,
       maxLines = 1,
