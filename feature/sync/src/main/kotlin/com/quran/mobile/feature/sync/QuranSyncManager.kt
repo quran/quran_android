@@ -16,6 +16,7 @@ import com.quran.shared.pipeline.storage.createMobileSyncStorage
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import io.ktor.http.URLBuilder
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -37,6 +38,7 @@ import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlow
 import org.publicvalue.multiplatform.oidc.flows.CodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 import org.publicvalue.multiplatform.oidc.tokenstore.AndroidSettingsTokenStore
+import timber.log.Timber
 import java.util.UUID
 
 /**
@@ -207,6 +209,18 @@ class QuranSyncManager(
   fun signOut() {
     authActionScope.launch {
       runCatching { logout() }
+    }
+  }
+
+  internal fun refreshProfile() {
+    authActionScope.launch {
+      try {
+        quranDataService.refreshProfile()
+      } catch (exception: CancellationException) {
+        throw exception
+      } catch (exception: Exception) {
+        Timber.w("Unable to refresh profile after Manage account (%s)", exception.javaClass.simpleName)
+      }
     }
   }
 

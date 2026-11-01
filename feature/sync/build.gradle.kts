@@ -38,6 +38,7 @@ dependencies {
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.kotlinx.collections.immutable)
   implementation(libs.quran.mobile.sync)
+  implementation(libs.timber)
 
   testImplementation(libs.junit)
   testImplementation(libs.turbine)
