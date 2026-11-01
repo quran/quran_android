@@ -98,4 +98,25 @@
   <string name="quran_sync_manage_account">Hisobni boshqarish</string>
   <string name="quran_sync_sign_out">Chiqish</string>
   <string name="quran_sync_sign_out_confirmation_title">Quran.comʼdan chiqasizmi?</string>
+  <string name="quran_sync_sign_out_synced">Hammasi Quran.com bilan sinxronlandi. Xatcho‘plaringiz, to‘plamlaringiz va eslatmalaringiz bu qurilmadan o‘chiriladi va qayta kirganingizda tiklanadi.</string>
+  <string name="quran_sync_sign_out_unknown">Quran.com bilan hali sinxronlanmagan o‘zgarishlar chiqsangiz yo‘qoladi.</string>
+  <string name="quran_sync_sign_out_lost">Chiqsangiz, sinxronlanmagan hamma narsa yo‘qoladi.</string>
+  <string name="quran_sync_sign_out_review">Ko‘rib chiqish</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s, yana %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="one">%1$s ta o‘zgarish hali Quran.com bilan sinxronlanishini kutmoqda.</item>
+    <item quantity="other">%1$s ta o‘zgarish hali Quran.com bilan sinxronlanishini kutmoqda.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="one">%1$s ta element siz tuzatmaguningizcha sinxronlanmaydi.</item>
+    <item quantity="other">%1$s ta element siz tuzatmaguningizcha sinxronlanmaydi.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="one">%1$s ta element siz tuzatmaguningizcha sinxronlanmaydi</item>
+    <item quantity="other">%1$s ta element siz tuzatmaguningizcha sinxronlanmaydi</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="one">%1$s tasi shungacha kutadi.</item>
+    <item quantity="other">%1$s tasi shungacha kutadi.</item>
+  </plurals>
 </resources>

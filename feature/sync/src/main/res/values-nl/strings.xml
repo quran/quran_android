@@ -98,4 +98,25 @@
   <string name="quran_sync_manage_account">Account beheren</string>
   <string name="quran_sync_sign_out">Uitloggen</string>
   <string name="quran_sync_sign_out_confirmation_title">Uitloggen bij Quran.com?</string>
+  <string name="quran_sync_sign_out_synced">Alles is gesynchroniseerd met Quran.com. Je bladwijzers, verzamelingen en notities worden van dit apparaat verwijderd en teruggezet wanneer je opnieuw inlogt.</string>
+  <string name="quran_sync_sign_out_unknown">Wijzigingen die nog niet met Quran.com zijn gesynchroniseerd, gaan verloren als je uitlogt.</string>
+  <string name="quran_sync_sign_out_lost">Als je uitlogt, gaat alles verloren wat nog niet is gesynchroniseerd.</string>
+  <string name="quran_sync_sign_out_review">Bekijken</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s, en %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="one">%1$s wijziging wacht nog op synchronisatie met Quran.com.</item>
+    <item quantity="other">%1$s wijzigingen wachten nog op synchronisatie met Quran.com.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="one">%1$s item kan pas synchroniseren als je het oplost.</item>
+    <item quantity="other">%1$s items kunnen pas synchroniseren als je ze oplost.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="one">%1$s item kan pas synchroniseren als je het oplost</item>
+    <item quantity="other">%1$s items kunnen pas synchroniseren als je ze oplost</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="one">%1$s ander wacht zolang.</item>
+    <item quantity="other">%1$s andere wachten zolang.</item>
+  </plurals>
 </resources>

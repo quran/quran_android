@@ -98,4 +98,25 @@
   <string name="quran_sync_manage_account">Hesabı yönet</string>
   <string name="quran_sync_sign_out">Çıkış yap</string>
   <string name="quran_sync_sign_out_confirmation_title">Quran.com oturumu kapatılsın mı?</string>
+  <string name="quran_sync_sign_out_synced">Her şey Quran.com ile eşitlendi. Yer imleriniz, koleksiyonlarınız ve notlarınız bu cihazdan kaldırılır ve tekrar oturum açtığınızda geri yüklenir.</string>
+  <string name="quran_sync_sign_out_unknown">Quran.com ile henüz eşitlenmemiş değişiklikler, çıkış yaparsanız kaybolur.</string>
+  <string name="quran_sync_sign_out_lost">Çıkış yaparsanız eşitlenmemiş her şey kaybolur.</string>
+  <string name="quran_sync_sign_out_review">İncele</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s, %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="one">%1$s değişiklik hâlâ Quran.com ile eşitlenmeyi bekliyor.</item>
+    <item quantity="other">%1$s değişiklik hâlâ Quran.com ile eşitlenmeyi bekliyor.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="one">%1$s öğe siz düzeltene kadar eşitlenemez.</item>
+    <item quantity="other">%1$s öğe siz düzeltene kadar eşitlenemez.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="one">%1$s öğe siz düzeltene kadar eşitlenemez</item>
+    <item quantity="other">%1$s öğe siz düzeltene kadar eşitlenemez</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="one">%1$s öğe daha o zamana kadar bekleyecek.</item>
+    <item quantity="other">%1$s öğe daha o zamana kadar bekleyecek.</item>
+  </plurals>
 </resources>

@@ -94,4 +94,21 @@
   <string name="quran_sync_manage_account">管理账户</string>
   <string name="quran_sync_sign_out">退出登录</string>
   <string name="quran_sync_sign_out_confirmation_title">要退出 Quran.com 账户吗？</string>
+  <string name="quran_sync_sign_out_synced">所有内容均已同步到 Quran.com。你的书签、收藏集和笔记将从此设备上移除，重新登录后即可恢复。</string>
+  <string name="quran_sync_sign_out_unknown">尚未同步到 Quran.com 的更改会在退出登录后丢失。</string>
+  <string name="quran_sync_sign_out_lost">如果退出登录，所有尚未同步的内容都将丢失。</string>
+  <string name="quran_sync_sign_out_review">查看</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s，另有 %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="other">%1$s 项更改仍在等待同步到 Quran.com。</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="other">%1$s 项内容需要你修复后才能同步。</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="other">%1$s 项内容需要你修复后才能同步</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="other">%1$s 项需等到那时才能同步。</item>
+  </plurals>
 </resources>

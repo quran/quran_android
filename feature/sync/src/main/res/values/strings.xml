@@ -105,6 +105,27 @@
   <string name="quran_sync_manage_account">Manage account</string>
   <string name="quran_sync_sign_out">Sign out</string>
   <string name="quran_sync_sign_out_confirmation_title">Sign out of Quran.com?</string>
+  <string name="quran_sync_sign_out_synced">Everything has synced to Quran.com. Your bookmarks, collections and notes will be removed from this device and come back when you sign in again.</string>
+  <string name="quran_sync_sign_out_unknown">Changes that haven\'t synced to Quran.com yet will be lost if you sign out.</string>
+  <string name="quran_sync_sign_out_lost">If you sign out, anything that hasn\'t synced will be lost.</string>
+  <string name="quran_sync_sign_out_review">Review</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s, and %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="one">%1$s change is still waiting to sync to Quran.com.</item>
+    <item quantity="other">%1$s changes are still waiting to sync to Quran.com.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="one">%1$s item can\'t sync until you fix it.</item>
+    <item quantity="other">%1$s items can\'t sync until you fix them.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="one">%1$s item can\'t sync until you fix it</item>
+    <item quantity="other">%1$s items can\'t sync until you fix them</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="one">%1$s more can\'t sync until then.</item>
+    <item quantity="other">%1$s more can\'t sync until then.</item>
+  </plurals>
   <string name="quran_sync_separator" translatable="false">" · "</string>
   <string name="quran_sync_oauth_client_id" translatable="false"></string>
   <string name="quran_sync_oauth_issuer_url" translatable="false"></string>

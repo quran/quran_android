@@ -114,4 +114,41 @@
   <string name="quran_sync_manage_account">إدارة الحساب</string>
   <string name="quran_sync_sign_out">تسجيل الخروج</string>
   <string name="quran_sync_sign_out_confirmation_title">تسجيل الخروج من Quran.com؟</string>
+  <string name="quran_sync_sign_out_synced">تمت مزامنة كل شيء مع Quran.com. ستُزال علاماتك المرجعية ومجموعاتك وملاحظاتك من هذا الجهاز، وتعود عند تسجيل الدخول مرة أخرى.</string>
+  <string name="quran_sync_sign_out_unknown">ستُفقد التغييرات التي لم تتم مزامنتها مع Quran.com بعد إذا سجّلت الخروج.</string>
+  <string name="quran_sync_sign_out_lost">إذا سجّلت الخروج، فسيُفقد كل ما لم تتم مزامنته.</string>
+  <string name="quran_sync_sign_out_review">مراجعة</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s، و%2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="zero">%1$s تغيير ما زال بانتظار المزامنة مع Quran.com.</item>
+    <item quantity="one">تغيير واحد ما زال بانتظار المزامنة مع Quran.com.</item>
+    <item quantity="two">تغييران ما زالا بانتظار المزامنة مع Quran.com.</item>
+    <item quantity="few">%1$s تغييرات ما زالت بانتظار المزامنة مع Quran.com.</item>
+    <item quantity="many">%1$s تغييرًا ما زال بانتظار المزامنة مع Quran.com.</item>
+    <item quantity="other">%1$s تغيير ما زال بانتظار المزامنة مع Quran.com.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="zero">%1$s عنصر لا يمكن مزامنته حتى تصلحه.</item>
+    <item quantity="one">عنصر واحد لا يمكن مزامنته حتى تصلحه.</item>
+    <item quantity="two">عنصران لا يمكن مزامنتهما حتى تصلحهما.</item>
+    <item quantity="few">%1$s عناصر لا يمكن مزامنتها حتى تصلحها.</item>
+    <item quantity="many">%1$s عنصرًا لا يمكن مزامنته حتى تصلحه.</item>
+    <item quantity="other">%1$s عنصر لا يمكن مزامنته حتى تصلحه.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="zero">%1$s عنصر لا يمكن مزامنته حتى تصلحه</item>
+    <item quantity="one">عنصر واحد لا يمكن مزامنته حتى تصلحه</item>
+    <item quantity="two">عنصران لا يمكن مزامنتهما حتى تصلحهما</item>
+    <item quantity="few">%1$s عناصر لا يمكن مزامنتها حتى تصلحها</item>
+    <item quantity="many">%1$s عنصرًا لا يمكن مزامنته حتى تصلحه</item>
+    <item quantity="other">%1$s عنصر لا يمكن مزامنته حتى تصلحه</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="zero">%1$s عنصر آخر لا يمكن مزامنته حتى ذلك الحين.</item>
+    <item quantity="one">عنصر آخر لا يمكن مزامنته حتى ذلك الحين.</item>
+    <item quantity="two">عنصران آخران لا يمكن مزامنتهما حتى ذلك الحين.</item>
+    <item quantity="few">%1$s عناصر أخرى لا يمكن مزامنتها حتى ذلك الحين.</item>
+    <item quantity="many">%1$s عنصرًا آخر لا يمكن مزامنته حتى ذلك الحين.</item>
+    <item quantity="other">%1$s عنصر آخر لا يمكن مزامنته حتى ذلك الحين.</item>
+  </plurals>
 </resources>

@@ -98,4 +98,25 @@
   <string name="quran_sync_manage_account">مدیریت حساب</string>
   <string name="quran_sync_sign_out">خروج</string>
   <string name="quran_sync_sign_out_confirmation_title">از Quran.com خارج می‌شوید؟</string>
+  <string name="quran_sync_sign_out_synced">همه‌چیز با Quran.com همگام‌سازی شده است. نشانک‌ها، مجموعه‌ها و یادداشت‌های شما از این دستگاه حذف می‌شوند و با ورود دوباره بازگردانده می‌شوند.</string>
+  <string name="quran_sync_sign_out_unknown">تغییراتی که هنوز با Quran.com همگام‌سازی نشده‌اند، با خروج از دست می‌روند.</string>
+  <string name="quran_sync_sign_out_lost">اگر خارج شوید، هر چیزی که همگام‌سازی نشده از دست می‌رود.</string>
+  <string name="quran_sync_sign_out_review">بررسی</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s و %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="one">%1$s تغییر هنوز در انتظار همگام‌سازی با Quran.com است.</item>
+    <item quantity="other">%1$s تغییر هنوز در انتظار همگام‌سازی با Quran.com است.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="one">%1$s مورد تا وقتی اصلاحش نکنید همگام‌سازی نمی‌شود.</item>
+    <item quantity="other">%1$s مورد تا وقتی اصلاحشان نکنید همگام‌سازی نمی‌شوند.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="one">%1$s مورد تا وقتی اصلاحش نکنید همگام‌سازی نمی‌شود</item>
+    <item quantity="other">%1$s مورد تا وقتی اصلاحشان نکنید همگام‌سازی نمی‌شوند</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="one">%1$s مورد دیگر هم تا آن وقت همگام‌سازی نمی‌شود.</item>
+    <item quantity="other">%1$s مورد دیگر هم تا آن وقت همگام‌سازی نمی‌شوند.</item>
+  </plurals>
 </resources>

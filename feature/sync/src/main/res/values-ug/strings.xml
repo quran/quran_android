@@ -98,4 +98,25 @@
   <string name="quran_sync_manage_account">ھېساباتنى باشقۇرۇش</string>
   <string name="quran_sync_sign_out">چىقىش</string>
   <string name="quran_sync_sign_out_confirmation_title">Quran.com دىن چىقامسىز؟</string>
+  <string name="quran_sync_sign_out_synced">ھەممىسى Quran.com بىلەن ماسقەدەملەندى. خەتكۈچ، توپلام ۋە خاتىرىلىرىڭىز بۇ ئۈسكۈنىدىن ئۆچۈرۈلىدۇ، قايتا كىرگەندە ئەسلىگە كېلىدۇ.</string>
+  <string name="quran_sync_sign_out_unknown">Quran.com بىلەن تېخى ماسقەدەملەنمىگەن ئۆزگەرتىشلەر چىقسىڭىز يوقىلىدۇ.</string>
+  <string name="quran_sync_sign_out_lost">چىقسىڭىز، ماسقەدەملەنمىگەن ھەممە نەرسە يوقىلىدۇ.</string>
+  <string name="quran_sync_sign_out_review">تەكشۈرۈش</string>
+  <string name="quran_sync_sign_out_held_waiting">%1$s، يەنە %2$s</string>
+  <plurals name="quran_sync_sign_out_pending">
+    <item quantity="one">%1$s ئۆزگەرتىش Quran.com بىلەن ماسقەدەملىنىشنى تېخى ساقلاۋاتىدۇ.</item>
+    <item quantity="other">%1$s ئۆزگەرتىش Quran.com بىلەن ماسقەدەملىنىشنى تېخى ساقلاۋاتىدۇ.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held">
+    <item quantity="one">%1$s تۈر سىز تۈزەتكۈچە ماسقەدەملەنمەيدۇ.</item>
+    <item quantity="other">%1$s تۈر سىز تۈزەتكۈچە ماسقەدەملەنمەيدۇ.</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_held_parent">
+    <item quantity="one">%1$s تۈر سىز تۈزەتكۈچە ماسقەدەملەنمەيدۇ</item>
+    <item quantity="other">%1$s تۈر سىز تۈزەتكۈچە ماسقەدەملەنمەيدۇ</item>
+  </plurals>
+  <plurals name="quran_sync_sign_out_waiting">
+    <item quantity="one">%1$s تۈر شۇ چاغقىچە ساقلايدۇ.</item>
+    <item quantity="other">%1$s تۈر شۇ چاغقىچە ساقلايدۇ.</item>
+  </plurals>
 </resources>

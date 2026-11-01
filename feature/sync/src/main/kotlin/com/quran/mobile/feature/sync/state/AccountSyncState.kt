@@ -12,6 +12,7 @@ internal sealed interface AccountSyncState {
     val heldRows: ImmutableList<HeldItemRowState>,
     val blockingItemCount: Int,
     val recentRuns: ImmutableList<SyncRun>,
+    val signOutWarning: SignOutWarning?,
     val isSigningOut: Boolean,
     val signOutError: String?,
     val eventSink: (AccountSyncEvent) -> Unit
@@ -20,6 +21,10 @@ internal sealed interface AccountSyncState {
 
 internal sealed interface AccountSyncEvent {
   data object SyncNow : AccountSyncEvent
+
+  data object RequestSignOut : AccountSyncEvent
+
+  data object DismissSignOutConfirmation : AccountSyncEvent
 
   data object ConfirmSignOut : AccountSyncEvent
 

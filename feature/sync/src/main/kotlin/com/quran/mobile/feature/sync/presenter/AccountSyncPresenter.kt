@@ -17,11 +17,13 @@ import com.quran.mobile.feature.sync.state.AccountSyncEvent
 import com.quran.mobile.feature.sync.state.AccountSyncState
 import com.quran.mobile.feature.sync.state.HeldItemLookup
 import com.quran.mobile.feature.sync.state.heldItemRows
+import com.quran.mobile.feature.sync.state.signOutWarning
 import com.quran.shared.auth.model.AuthState
 import com.quran.shared.persistence.model.CollectionWithAyahBookmarks
 import com.quran.shared.persistence.model.Mushaf
 import com.quran.shared.persistence.model.Note
 import com.quran.shared.persistence.model.ReadingBookmark
+import com.quran.shared.pipeline.UnsyncedItemCounts
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
@@ -32,8 +34,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.time.Duration.Companion.seconds
 
 internal class AccountSyncPresenter(
   private val authState: StateFlow<AuthState>,
@@ -41,6 +46,7 @@ internal class AccountSyncPresenter(
   private val notes: Flow<List<Note>>,
   private val collections: Flow<List<CollectionWithAyahBookmarks>>,
   private val readingBookmarks: Flow<List<ReadingBookmark>>,
+  private val unsyncedItems: Flow<UnsyncedItemCounts>,
   private val signOut: suspend () -> Unit
 ) {
   @Inject
@@ -50,6 +56,7 @@ internal class AccountSyncPresenter(
     syncManager.quranDataService.notes,
     syncManager.quranDataService.collectionsWithBookmarks,
     syncManager.quranDataService.readingBookmarks(Mushaf.MADANI_1405),
+    syncManager.quranDataService.unsyncedItems,
     syncManager::logout
   )
 
@@ -62,6 +69,9 @@ internal class AccountSyncPresenter(
     var sessionEnded by remember { mutableStateOf(authState.value !is AuthState.Success) }
     var isSigningOut by remember { mutableStateOf(false) }
     var signOutError by remember { mutableStateOf<String?>(null) }
+    var isReadingSignOutCounts by remember { mutableStateOf(false) }
+    var isConfirmingSignOut by remember { mutableStateOf(false) }
+    var signOutCounts by remember { mutableStateOf<UnsyncedItemCounts?>(null) }
     val scope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
       authState.collect { if (it !is AuthState.Success) sessionEnded = true }
@@ -70,6 +80,22 @@ internal class AccountSyncPresenter(
 
     val account = accountPresenter.present(observing)
     if (account !is AccountSettingsState.SignedIn) return AccountSyncState.SessionEnded
+
+    LaunchedEffect(isReadingSignOutCounts) {
+      if (isReadingSignOutCounts) {
+        try {
+          // the sdk skips failed snapshots, so the first value may never arrive.
+          signOutCounts = withTimeoutOrNull(5.seconds) { unsyncedItems.first() }
+        } catch (e: CancellationException) {
+          throw e
+        } catch (e: Exception) {
+          signOutCounts = null
+        } finally {
+          isReadingSignOutCounts = false
+        }
+        isConfirmingSignOut = true
+      }
+    }
 
     val lookup by remember {
       observing.distinctUntilChanged().flatMapLatest { isObserving ->
@@ -89,6 +115,11 @@ internal class AccountSyncPresenter(
       heldRows = heldItemRows(account.activity.heldItems, lookup),
       blockingItemCount = account.activity.blockingItems.size,
       recentRuns = account.activity.runs.take(PREVIEW_COUNT).toImmutableList(),
+      signOutWarning = if (isConfirmingSignOut) {
+        signOutWarning(signOutCounts, account.activity.blockingItems.size)
+      } else {
+        null
+      },
       isSigningOut = isSigningOut,
       signOutError = signOutError,
       eventSink = { event ->
@@ -98,8 +129,18 @@ internal class AccountSyncPresenter(
               account.eventSink(AccountSettingsEvent.SyncNow)
             }
           }
+          AccountSyncEvent.RequestSignOut -> {
+            if (
+              !sessionEnded && !isSigningOut && !isReadingSignOutCounts && !isConfirmingSignOut &&
+              authState.value is AuthState.Success
+            ) {
+              isReadingSignOutCounts = true
+            }
+          }
+          AccountSyncEvent.DismissSignOutConfirmation -> isConfirmingSignOut = false
           AccountSyncEvent.ConfirmSignOut -> {
-            if (!sessionEnded && !isSigningOut && authState.value is AuthState.Success) {
+            if (!sessionEnded && !isSigningOut && isConfirmingSignOut && authState.value is AuthState.Success) {
+              isConfirmingSignOut = false
               isSigningOut = true
               signOutError = null
               scope.launch {
