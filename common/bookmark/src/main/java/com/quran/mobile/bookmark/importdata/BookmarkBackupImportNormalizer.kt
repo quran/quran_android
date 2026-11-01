@@ -1,6 +1,5 @@
 package com.quran.mobile.bookmark.importdata
 
-import android.content.Context
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
@@ -8,16 +7,14 @@ import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
-import com.quran.mobile.bookmark.R
+import com.quran.data.model.collection.OldPageBookmarksCollection
 import com.quran.mobile.bookmark.model.ReadingBookmarkPageMapper
 import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
 import com.quran.mobile.bookmark.time.legacyTimestampMillis
-import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.shared.persistence.model.ReadingBookmarkSlot
 import dev.zacsweers.metro.Inject
 
 class BookmarkBackupImportNormalizer @Inject constructor(
-  @param:ApplicationContext private val appContext: Context,
   private val pageMapper: ReadingBookmarkPageMapper,
   private val timestampProvider: MobileSyncTimestampProvider
 ) {
@@ -26,7 +23,6 @@ class BookmarkBackupImportNormalizer @Inject constructor(
     val importTimestampMillis = timestampProvider.nowEpochMillis()
     val collectionState = CollectionState.from(data.tags, importTimestampMillis)
     val bookmarkState = linkedMapOf<SuraAyah, BookmarkState>()
-    val oldPageBookmarksName by lazy { appContext.getString(R.string.old_page_bookmarks) }
 
     data.bookmarks.forEach { bookmark ->
       val normalizedBookmark = normalizeBookmark(bookmark, sourcePageType) ?: return@forEach
@@ -34,8 +30,8 @@ class BookmarkBackupImportNormalizer @Inject constructor(
         collectionState.nameForBackupTagId[tagId]
       }
       val collectionNames = if (normalizedBookmark.fromPageBookmark) {
-        collectionState.addIfAbsent(oldPageBookmarksName, normalizedBookmark.timestamp)
-        tagNames + oldPageBookmarksName
+        collectionState.addIfAbsent(OldPageBookmarksCollection.NAME, normalizedBookmark.timestamp)
+        tagNames + OldPageBookmarksCollection.NAME
       } else {
         tagNames
       }

@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.ui.helpers
 
 import android.app.Application
 import android.content.Context
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
@@ -92,6 +93,33 @@ class BookmarkUIConverterTest {
     assertThat(result.rows.map { row -> row.tagId to row.isEditableCollectionHeader })
       .containsExactly("1" to false, "2" to false, "3" to true)
       .inOrder()
+  }
+
+  @Test
+  @Config(qualifiers = "ar")
+  fun `collection names are localized for display but kept unchanged for rename`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val quranInfo = QuranInfo(MadaniDataSource())
+    val converter = BookmarkUIConverter(
+      QuranRowFactory(quranInfo, QuranDisplayData(quranInfo)),
+      quranInfo
+    )
+    val arabicName = "مرجعيات الصفحات القديمة"
+    val names = listOf("Old Page Bookmarks", " old page BOOKMARKS ", arabicName, "Review")
+    val tags = names.mapIndexed { index, name -> Tag(index.toString(), name) }
+    val data = BookmarkRawResult(
+      rows = tags.map { BookmarkRowData.TagHeader(it) },
+      tagMap = tags.associateBy { it.id }
+    )
+    val result = converter.convertToUIResult(context, data)
+    val adapter = QuranListAdapter(context, RecyclerView(context), emptyArray(), true).apply {
+      setElements(result.rows.toTypedArray(), result.tagMap)
+    }
+
+    assertThat(result.rows.map { it.text })
+      .containsExactly(arabicName, arabicName, arabicName, "Review").inOrder()
+    assertThat(result.rows.map { adapter.getTag(it.tagId)?.name })
+      .containsExactlyElementsIn(names).inOrder()
   }
 
   @Test
