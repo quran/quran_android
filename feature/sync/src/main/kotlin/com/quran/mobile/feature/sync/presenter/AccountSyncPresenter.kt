@@ -10,6 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
+import com.quran.mobile.bookmark.model.ReadingBookmarkPageMapper
 import com.quran.mobile.feature.sync.QuranSyncManager
 import com.quran.mobile.feature.sync.state.AccountSettingsEvent
 import com.quran.mobile.feature.sync.state.AccountSettingsState
@@ -20,11 +21,11 @@ import com.quran.mobile.feature.sync.state.heldItemRows
 import com.quran.mobile.feature.sync.state.signOutWarning
 import com.quran.shared.auth.model.AuthState
 import com.quran.shared.persistence.model.CollectionWithAyahBookmarks
-import com.quran.shared.persistence.model.Mushaf
 import com.quran.shared.persistence.model.Note
 import com.quran.shared.persistence.model.ReadingBookmark
 import com.quran.shared.pipeline.UnsyncedItemCounts
 import dev.zacsweers.metro.Inject
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +39,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
-import kotlin.time.Duration.Companion.seconds
 
 internal class AccountSyncPresenter(
   private val authState: StateFlow<AuthState>,
@@ -50,12 +50,15 @@ internal class AccountSyncPresenter(
   private val signOut: suspend () -> Unit
 ) {
   @Inject
-  constructor(syncManager: QuranSyncManager) : this(
+  @OptIn(ExperimentalCoroutinesApi::class)
+  constructor(syncManager: QuranSyncManager, pageMapper: ReadingBookmarkPageMapper) : this(
     syncManager.authState,
     AccountSettingsPresenter(syncManager),
     syncManager.quranDataService.notes,
     syncManager.quranDataService.collectionsWithBookmarks,
-    syncManager.quranDataService.readingBookmarks(Mushaf.MADANI_1405),
+    pageMapper.pageTypeFlow().flatMapLatest { pageType ->
+      syncManager.quranDataService.readingBookmarks(pageMapper.mushafFor(pageType))
+    },
     syncManager.quranDataService.unsyncedItems,
     syncManager::logout
   )

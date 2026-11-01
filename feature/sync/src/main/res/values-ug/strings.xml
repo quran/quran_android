@@ -119,4 +119,8 @@
     <item quantity="one">%1$s تۈر شۇ چاغقىچە ساقلايدۇ.</item>
     <item quantity="other">%1$s تۈر شۇ چاغقىچە ساقلايدۇ.</item>
   </plurals>
+  <string name="quran_sync_held_edit">تەھرىرلەش</string>
+  <string name="quran_sync_held_edit_accessibility">تەھرىرلەش، %1$s</string>
+  <string name="quran_sync_rename">نامىنى ئۆزگەرتىش</string>
+  <string name="quran_sync_bookmark_name">%1$s خەتكۈچنىڭ نامى</string>
 </resources>

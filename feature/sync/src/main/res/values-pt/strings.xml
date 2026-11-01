@@ -123,4 +123,8 @@
     <item quantity="one">%1$s terá que esperar até lá.</item>
     <item quantity="other">%1$s terão que esperar até lá.</item>
   </plurals>
+  <string name="quran_sync_held_edit">Editar</string>
+  <string name="quran_sync_held_edit_accessibility">Editar, %1$s</string>
+  <string name="quran_sync_rename">Renomear</string>
+  <string name="quran_sync_bookmark_name">Nome do marcador %1$s</string>
 </resources>

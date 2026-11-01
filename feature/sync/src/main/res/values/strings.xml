@@ -131,4 +131,8 @@
   <string name="quran_sync_oauth_issuer_url" translatable="false"></string>
   <string name="quran_sync_oauth_redirect_scheme" translatable="false"></string>
   <string name="quran_sync_environment" translatable="false"></string>
+  <string name="quran_sync_held_edit">Edit</string>
+  <string name="quran_sync_held_edit_accessibility">Edit, %1$s</string>
+  <string name="quran_sync_rename">Rename</string>
+  <string name="quran_sync_bookmark_name">%1$s bookmark name</string>
 </resources>

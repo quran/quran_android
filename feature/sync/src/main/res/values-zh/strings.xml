@@ -111,4 +111,8 @@
   <plurals name="quran_sync_sign_out_waiting">
     <item quantity="other">%1$s 项需等到那时才能同步。</item>
   </plurals>
+  <string name="quran_sync_held_edit">编辑</string>
+  <string name="quran_sync_held_edit_accessibility">编辑，%1$s</string>
+  <string name="quran_sync_rename">重命名</string>
+  <string name="quran_sync_bookmark_name">%1$s书签名称</string>
 </resources>

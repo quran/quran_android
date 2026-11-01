@@ -119,4 +119,8 @@
     <item quantity="one">%1$s tasi shungacha kutadi.</item>
     <item quantity="other">%1$s tasi shungacha kutadi.</item>
   </plurals>
+  <string name="quran_sync_held_edit">Tahrirlash</string>
+  <string name="quran_sync_held_edit_accessibility">Tahrirlash, %1$s</string>
+  <string name="quran_sync_rename">Nomini o‘zgartirish</string>
+  <string name="quran_sync_bookmark_name">%1$s xatcho‘pi nomi</string>
 </resources>
