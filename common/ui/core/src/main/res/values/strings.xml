@@ -14,6 +14,8 @@
     <item quantity="one">%d collection</item>
     <item quantity="other">%d collections</item>
   </plurals>
+  <!-- legacy page bookmarks' collection; translations live in app, which overrides this -->
+  <string name="old_page_bookmarks">Old Page Bookmarks</string>
 
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">Yellow</string>

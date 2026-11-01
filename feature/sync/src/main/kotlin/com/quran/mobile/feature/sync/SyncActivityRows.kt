@@ -29,6 +29,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.quran.data.model.bookmark.ReadingBookmarkType
+import com.quran.labs.androidquran.common.ui.core.CollectionNames
 import com.quran.labs.androidquran.common.ui.core.LocalQuranColors
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.ReadingBookmarkSlots
@@ -44,7 +45,6 @@ import com.quran.shared.pipeline.SyncRunResult
 import com.quran.shared.pipeline.SyncRunTrigger
 import java.util.Date
 import kotlin.time.Instant
-import com.quran.mobile.common.ui.core.R as UiCoreR
 
 internal val SyncRowIconSize = 24.dp
 internal val SyncRowTextStart = 16.dp + SyncRowIconSize + 12.dp
@@ -180,7 +180,7 @@ private fun heldItemTitle(title: Title, verses: QuranVerses): String = when (tit
   is Title.Note -> stringResource(R.string.quran_sync_held_note, verseRangeName(title.range, verses))
   is Title.Collection -> stringResource(
     R.string.quran_sync_held_collection,
-    if (title.isDefault) stringResource(UiCoreR.string.default_collection) else title.name
+    CollectionNames.displayName(title.name, title.isDefault)
   )
   is Title.Bookmark -> stringResource(R.string.quran_sync_held_bookmark, verseName(title.verse, verses))
   is Title.ReadingBookmark -> stringResource(
