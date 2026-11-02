@@ -135,6 +135,24 @@ class AudioFileCheckerImplTest {
   }
 
   @Test
+  fun `localFileForQari resolves gapped file to sura and ayah path`() {
+    // Act
+    val file = checker.localFileForQari(gappedQari, "002255.opus")
+
+    // Assert
+    assertThat(file).isEqualTo(File(tempFolder.root, "gapped_sheikh/2/255.opus"))
+  }
+
+  @Test
+  fun `localFileForQari resolves gapless file inside qari directory`() {
+    // Act
+    val file = checker.localFileForQari(gaplessQari, "002.mp3")
+
+    // Assert
+    assertThat(file).isEqualTo(File(tempFolder.root, "gapless_sheikh/002.mp3"))
+  }
+
+  @Test
   fun `doesHashMatchForQariFile returns true when hash matches`() {
     // Arrange
     val qariDir = tempFolder.newFolder("gapless_sheikh")
