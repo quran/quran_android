@@ -84,7 +84,9 @@ object Constants {
   const val PREF_ADVANCED_QURAN_SETTINGS = "quranAdvancedSettings"
   const val PREF_READING_CATEGORY = "readingCategoryKey"
   const val PREF_CHECKED_PARTIAL_IMAGES = "didCheckPartialImages"
-  const val PREF_CURRENT_AUDIO_REVISION = "currentAudioRevision"
+  // was "currentAudioRevision" - renamed so every install checks all audio updates once
+  // more, since updates for gapped qaris were never applied before
+  const val PREF_CURRENT_AUDIO_REVISION = "currentAudioRevisionV2"
   const val PREF_SURA_TRANSLATED_NAME = "suraTranslatedName"
   const val PREF_SHOW_SIDELINES = "showSidelines"
   const val PREF_SHOW_LINE_DIVIDERS = "showLineDividers"
