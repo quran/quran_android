@@ -90,16 +90,32 @@ class AudioFileCheckerImplTest {
   }
 
   @Test
-  fun `doesFileExistForQari returns true for gapped qari when file is in sura subdirectory`() {
-    // Arrange — gapped qari stores files under <path>/<sura>/<file>
-    // file name "001001.mp3" -> sura directory "1"
+  fun `doesFileExistForQari returns true for gapped qari when file is stored as sura and ayah`() {
+    // Arrange — gapped qari stores files under <path>/<sura>/<ayah>.<extension>
+    // file name "002255.mp3" -> "2/255.mp3"
     val qariDir = tempFolder.newFolder("gapped_sheikh")
-    val suraDir = File(qariDir, "1")
+    val suraDir = File(qariDir, "2")
     suraDir.mkdirs()
-    File(suraDir, "001001.mp3").createNewFile()
+    File(suraDir, "255.mp3").createNewFile()
 
     // Act
-    val result = checker.doesFileExistForQari(gappedQari, "001001.mp3")
+    val result = checker.doesFileExistForQari(gappedQari, "002255.mp3")
+
+    // Assert
+    assertThat(result).isTrue()
+  }
+
+  @Test
+  fun `doesHashMatchForQariFile hashes the gapped file stored as sura and ayah`() {
+    // Arrange
+    val suraDir = File(tempFolder.newFolder("gapped_sheikh"), "2")
+    suraDir.mkdirs()
+    val audioFile = File(suraDir, "255.mp3")
+    audioFile.createNewFile()
+    fakeHashCalculator.setHash(audioFile.absolutePath, "abc123")
+
+    // Act
+    val result = checker.doesHashMatchForQariFile(gappedQari, "002255.mp3", "abc123")
 
     // Assert
     assertThat(result).isTrue()
