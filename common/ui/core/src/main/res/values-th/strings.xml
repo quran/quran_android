@@ -6,6 +6,7 @@
   <string name="to">ถึง</string>
   <string name="loading">การโหลด&#8230;</string>
   <string name="canceling">ยก เลิก&#8230;</string>
+  <string name="default_collection">รายการโปรด</string>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">เหลือง</string>
   <string name="highlight_color_green">เขียว</string>

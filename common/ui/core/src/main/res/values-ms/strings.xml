@@ -6,6 +6,7 @@
   <string name="to">Sehingga</string>
   <string name="loading">Memuat…</string>
   <string name="canceling">Membatalkan&#8230;</string>
+  <string name="default_collection">Kegemaran</string>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">Kuning</string>
   <string name="highlight_color_green">Hijau</string>
