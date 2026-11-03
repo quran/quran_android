@@ -306,4 +306,20 @@
   <string name="prefs_split_page_and_translation_summary">Kettős oldalas módban a fordításokkal, a Korán oldal és a fordítás jelenik meg.</string>
   <string name="notification_channel_download">Korán letöltések</string>
   <string name="notification_channel_audio">Korán szavalás</string>
+
+    <string name="audio_widget_name">Korán hanglejátszó</string>
+    <string name="audio_widget_description">A kiválasztott áják lejátszása kedvenc recitálójával, az olvasási pozíció megváltoztatása nélkül.</string>
+    <string name="audio_widget_configure_title">Hangwidget beállításai</string>
+    <string name="audio_widget_title_label">Widget címe</string>
+    <string name="audio_widget_title_hint">Nem kötelező, pl. Reggeli adhkar</string>
+    <string name="audio_widget_qari_label">Recitáló</string>
+    <string name="audio_widget_not_configured">Koppintson a beállításhoz</string>
+    <string name="audio_widget_loading">Betöltés: %1$s</string>
+    <string name="audio_widget_playing">Lejátszás: %1$s</string>
+    <string name="audio_widget_paused">Szüneteltetve: %1$s</string>
+    <string name="audio_widget_downloading_files">Szükséges fájlok letöltése…</string>
+    <string name="audio_widget_unavailable">A lejátszás nem lehetséges, koppintson a beállítások módosításához</string>
+    <string name="audio_widget_preview_qari">Az Ön recitálója, az Ön ájái</string>
+    <string name="audio_widget_preview_status">Lejátszás: Al-Fatiha szúra, 1. ája</string>
+    <string name="audio_widget_open_app">Korán megnyitása</string>
 </resources>

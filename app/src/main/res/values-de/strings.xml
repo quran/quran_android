@@ -381,4 +381,20 @@
   <string name="notification_channel_download">Koran Downloads</string>
   <string name="notification_channel_audio">Koran-Rezitation</string>
   <string name="quran_ayah_details">%1$s - Ayah %2$s, Ğuzʾ %3$s</string>
+
+  <string name="audio_widget_name">Quran-Audioplayer</string>
+  <string name="audio_widget_description">Ausgewählte Verse mit einem Rezitator Ihrer Wahl abspielen, ohne die Leseposition zu ändern.</string>
+  <string name="audio_widget_configure_title">Audio-Widget-Einstellungen</string>
+  <string name="audio_widget_title_label">Widget-Titel</string>
+  <string name="audio_widget_title_hint">Optional, z. B. Morgen-Adhkar</string>
+  <string name="audio_widget_qari_label">Rezitator</string>
+  <string name="audio_widget_not_configured">Zum Einrichten tippen</string>
+  <string name="audio_widget_loading">Wird geladen: %1$s</string>
+  <string name="audio_widget_playing">Wiedergabe: %1$s</string>
+  <string name="audio_widget_paused">Pausiert: %1$s</string>
+  <string name="audio_widget_downloading_files">Benötigte Dateien werden heruntergeladen…</string>
+  <string name="audio_widget_unavailable">Wiedergabe nicht möglich, zum Ändern der Einstellungen tippen</string>
+  <string name="audio_widget_preview_qari">Ihr Rezitator, Ihre Verse</string>
+  <string name="audio_widget_preview_status">Wiedergabe: Sure Al-Fātiḥah, Vers 1</string>
+  <string name="audio_widget_open_app">Quran öffnen</string>
 </resources>

@@ -230,4 +230,20 @@
   <string name="kitkat_external_message">A causa delle limitazioni di Android, se scegli di mettere i dati del Corano sulla tua scheda SD esterna e successivamente disinstalli o cancelli i dati di Corano Android, tutte le pagine e l\'audio di Corano Android saranno cancellati e dovrai scaricarli di nuovo. Sei sicuro di voler utilizzare la scheda SD esterna?</string>
   <string name="scoped_storage_message">A causa dei cambiamenti di Android per aumentare la privacy dell\'utente, copiare i file al di fuori delle directory dell\'app potrebbe impedire a Quran for Android di accedere ai suoi dati nelle future versioni di Android. Sei sicuro di voler utilizzare questo percorso?</string>
   <string name="sdcard_error">Impossibile trovare la scheda SD. Si prega di montarla e riprovare.</string>
+
+  <string name="audio_widget_name">Lettore audio del Corano</string>
+  <string name="audio_widget_description">Ascolta i versetti scelti con il tuo recitatore preferito, senza cambiare la posizione di lettura.</string>
+  <string name="audio_widget_configure_title">Impostazioni widget audio</string>
+  <string name="audio_widget_title_label">Titolo del widget</string>
+  <string name="audio_widget_title_hint">Facoltativo, es. Adhkar del mattino</string>
+  <string name="audio_widget_qari_label">Recitatore</string>
+  <string name="audio_widget_not_configured">Tocca per configurare</string>
+  <string name="audio_widget_loading">Caricamento: %1$s</string>
+  <string name="audio_widget_playing">In riproduzione: %1$s</string>
+  <string name="audio_widget_paused">In pausa: %1$s</string>
+  <string name="audio_widget_downloading_files">Download dei file richiesti…</string>
+  <string name="audio_widget_unavailable">Impossibile riprodurre, tocca per modificare le impostazioni</string>
+  <string name="audio_widget_preview_qari">Il tuo recitatore, i tuoi versetti</string>
+  <string name="audio_widget_preview_status">In riproduzione: Sura Al-Fātihah, Ayah 1</string>
+  <string name="audio_widget_open_app">Apri il Corano</string>
 </resources>

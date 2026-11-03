@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- also used as the widget picker preview, so the defaults here are the preview's content -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/audio_widget_background"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="8dp"
+    android:paddingTop="6dp"
+    android:paddingEnd="4dp"
+    android:paddingBottom="6dp">
+
+  <ImageView
+      android:id="@+id/audio_widget_open_app"
+      android:layout_width="40dp"
+      android:layout_height="40dp"
+      android:contentDescription="@string/audio_widget_open_app"
+      android:padding="2dp"
+      android:src="@mipmap/ic_launcher_round" />
+
+  <LinearLayout
+      android:id="@+id/audio_widget_info"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:orientation="vertical"
+      android:paddingStart="8dp"
+      android:paddingEnd="4dp">
+
+    <TextView
+        android:id="@+id/audio_widget_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/audio_widget_name"
+        android:textColor="@color/audio_widget_text_primary"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/audio_widget_qari"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/audio_widget_preview_qari"
+        android:textColor="@color/audio_widget_text_secondary"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/audio_widget_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/audio_widget_preview_status"
+        android:textColor="@color/audio_widget_accent"
+        android:textSize="12sp" />
+  </LinearLayout>
+
+  <LinearLayout
+      android:id="@+id/audio_widget_controls"
+      android:layout_width="wrap_content"
+      android:layout_height="40dp"
+      android:gravity="center"
+      android:layoutDirection="ltr"
+      android:orientation="horizontal"
+      tools:ignore="UseAppTint">
+    <!-- media controls are not mirrored in rtl, and app:tint is not supported in widgets -->
+
+    <ImageButton
+        android:id="@+id/audio_widget_previous"
+        android:layout_width="36dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/previous"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_previous"
+        android:tint="@color/audio_widget_icon" />
+
+    <ImageButton
+        android:id="@+id/audio_widget_play_pause"
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/audio_widget_play_background"
+        android:contentDescription="@string/play"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_play"
+        android:tint="@color/audio_widget_play_icon" />
+
+    <ImageButton
+        android:id="@+id/audio_widget_next"
+        android:layout_width="36dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/next"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_next"
+        android:tint="@color/audio_widget_icon" />
+  </LinearLayout>
+</LinearLayout>

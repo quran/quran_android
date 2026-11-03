@@ -303,4 +303,20 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">ดาวน์โหลดอัลกุรอาน</string>
   <string name="notification_channel_audio">การบรรยายคัมภีร์กุรอาน</string>
+
+  <string name="audio_widget_name">เครื่องเล่นเสียงอัลกุรอาน</string>
+  <string name="audio_widget_description">เล่นอายะห์ที่เลือกด้วยเสียงผู้อ่านที่คุณชื่นชอบ โดยไม่เปลี่ยนตำแหน่งการอ่านของคุณ</string>
+  <string name="audio_widget_configure_title">การตั้งค่าวิดเจ็ตเสียง</string>
+  <string name="audio_widget_title_label">ชื่อวิดเจ็ต</string>
+  <string name="audio_widget_title_hint">ไม่บังคับ เช่น อัซการ์ยามเช้า</string>
+  <string name="audio_widget_qari_label">ผู้อ่าน</string>
+  <string name="audio_widget_not_configured">แตะเพื่อตั้งค่า</string>
+  <string name="audio_widget_loading">กำลังโหลด: %1$s</string>
+  <string name="audio_widget_playing">กำลังเล่น: %1$s</string>
+  <string name="audio_widget_paused">หยุดชั่วคราว: %1$s</string>
+  <string name="audio_widget_downloading_files">กำลังดาวน์โหลดแฟ้มที่ต้องการ…</string>
+  <string name="audio_widget_unavailable">ไม่สามารถเล่นได้ แตะเพื่อเปลี่ยนการตั้งค่า</string>
+  <string name="audio_widget_preview_qari">ผู้อ่านของคุณ อายะห์ของคุณ</string>
+  <string name="audio_widget_preview_status">กำลังเล่น: ซูเราะฮฺอัลฟาติหะฮ์, อายะห์ 1</string>
+  <string name="audio_widget_open_app">เปิดอัลกุรอาน</string>
 </resources>

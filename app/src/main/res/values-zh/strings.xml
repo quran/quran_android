@@ -279,4 +279,20 @@
   <string name="prefs_split_page_and_translation_summary">在带翻译的双页模式下，显示古兰经页面和翻译。</string>
   <string name="notification_channel_download">古兰经下载</string>
   <string name="notification_channel_audio">古兰经诵读</string>
+
+  <string name="audio_widget_name">古兰经音频播放器</string>
+  <string name="audio_widget_description">用您喜爱的诵读者播放所选经文，不会改变您的阅读位置。</string>
+  <string name="audio_widget_configure_title">音频小部件设置</string>
+  <string name="audio_widget_title_label">小部件标题</string>
+  <string name="audio_widget_title_hint">可选，例如：晨间记念</string>
+  <string name="audio_widget_qari_label">诵读者</string>
+  <string name="audio_widget_not_configured">点按进行设置</string>
+  <string name="audio_widget_loading">正在加载：%1$s</string>
+  <string name="audio_widget_playing">正在播放：%1$s</string>
+  <string name="audio_widget_paused">已暂停：%1$s</string>
+  <string name="audio_widget_downloading_files">正在下载所需文件…</string>
+  <string name="audio_widget_unavailable">无法播放，点按以更改设置</string>
+  <string name="audio_widget_preview_qari">您的诵读者，您的经文</string>
+  <string name="audio_widget_preview_status">正在播放：开端章，第1节</string>
+  <string name="audio_widget_open_app">打开古兰经</string>
 </resources>

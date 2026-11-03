@@ -286,4 +286,20 @@
   <string name="play_restrict_range">پەقەت يۇقىرىدىكى ئايەتلەرنىلا ئاڭلاڭ</string>
   <string name="play_verses_range">بىر يۈرۈش ئايەتلەرنى ئاڭلاڭ:</string>
   <string name="play_each_verse">ھەر بىر ئايەتنى ئاڭلاڭ:</string>
+
+  <string name="audio_widget_name">قۇرئان ئاۋاز قويغۇچ</string>
+  <string name="audio_widget_description">تاللانغان ئايەتلەرنى ياقتۇرىدىغان قارىيىڭىزنىڭ ئاۋازىدا قويۇڭ، ئوقۇش ئورنىڭىز ئۆزگەرمەيدۇ.</string>
+  <string name="audio_widget_configure_title">ئاۋاز ۋىجېت تەڭشىكى</string>
+  <string name="audio_widget_title_label">ۋىجېت ماۋزۇسى</string>
+  <string name="audio_widget_title_hint">ئىختىيارى، مەسىلەن: ئەتىگەنلىك زىكىرلەر</string>
+  <string name="audio_widget_qari_label">قارى</string>
+  <string name="audio_widget_not_configured">تەڭشەش ئۈچۈن چېكىڭ</string>
+  <string name="audio_widget_loading">يۈكلىنىۋاتىدۇ: %1$s</string>
+  <string name="audio_widget_playing">قويۇلۇۋاتىدۇ: %1$s</string>
+  <string name="audio_widget_paused">ۋاقىتلىق توختىتىلدى: %1$s</string>
+  <string name="audio_widget_downloading_files">زۆرۈر ھۆججەتلەر چۈشۈرۈلۈۋاتىدۇ…</string>
+  <string name="audio_widget_unavailable">قويغىلى بولمىدى، تەڭشەكنى ئۆزگەرتىش ئۈچۈن چېكىڭ</string>
+  <string name="audio_widget_preview_qari">قارىيىڭىز، ئايەتلىرىڭىز</string>
+  <string name="audio_widget_preview_status">قويۇلۇۋاتىدۇ: سۈرە فاتىھە، 1-ئايەت</string>
+  <string name="audio_widget_open_app">قۇرئاننى ئېچىش</string>
 </resources>
