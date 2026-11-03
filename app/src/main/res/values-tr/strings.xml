@@ -316,4 +316,20 @@
   <string name="prefs_category_dual_screen">Çift Sayfa Tercihleri</string>
   <string name="prefs_split_page_and_translation_summary">Çevirilerle çift sayfa modunda, Kuran sayfası ve çevirisi gösterilir</string>
   <string name="prefs_split_page_and_translation_title">Kur\'an\'dan bir sayfayı ve çeviriden başka bir sayfa görüntüleme</string>
+
+  <string name="audio_widget_name">Kur\'an Ses Oynatıcı</string>
+  <string name="audio_widget_description">Seçtiğiniz ayetleri sevdiğiniz kârinin sesiyle dinleyin, okuma konumunuz değişmeden.</string>
+  <string name="audio_widget_configure_title">Ses widget ayarları</string>
+  <string name="audio_widget_title_label">Widget başlığı</string>
+  <string name="audio_widget_title_hint">İsteğe bağlı, ör. Sabah zikirleri</string>
+  <string name="audio_widget_qari_label">Kâri</string>
+  <string name="audio_widget_not_configured">Ayarlamak için dokunun</string>
+  <string name="audio_widget_loading">Yükleniyor: %1$s</string>
+  <string name="audio_widget_playing">Oynatılıyor: %1$s</string>
+  <string name="audio_widget_paused">Duraklatıldı: %1$s</string>
+  <string name="audio_widget_downloading_files">Gerekli dosyalar indiriliyor…</string>
+  <string name="audio_widget_unavailable">Oynatılamıyor, ayarları değiştirmek için dokunun</string>
+  <string name="audio_widget_preview_qari">Sizin kâriniz, sizin ayetleriniz</string>
+  <string name="audio_widget_preview_status">Oynatılıyor: Sure Fâtiha, âyet 1</string>
+  <string name="audio_widget_open_app">Kur\'an\'ı aç</string>
 </resources>

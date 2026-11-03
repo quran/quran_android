@@ -343,4 +343,20 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Quran Tải xuống</string>
   <string name="notification_channel_audio">Quran Xướng đọc</string>
+
+  <string name="audio_widget_name">Trình phát âm thanh Kinh Quran</string>
+  <string name="audio_widget_description">Phát các câu kinh đã chọn với giọng đọc yêu thích của bạn mà không thay đổi vị trí đang đọc.</string>
+  <string name="audio_widget_configure_title">Cài đặt tiện ích âm thanh</string>
+  <string name="audio_widget_title_label">Tiêu đề tiện ích</string>
+  <string name="audio_widget_title_hint">Tùy chọn, ví dụ: Adhkar buổi sáng</string>
+  <string name="audio_widget_qari_label">Người đọc</string>
+  <string name="audio_widget_not_configured">Chạm để thiết lập</string>
+  <string name="audio_widget_loading">Đang tải: %1$s</string>
+  <string name="audio_widget_playing">Đang phát: %1$s</string>
+  <string name="audio_widget_paused">Đã tạm dừng: %1$s</string>
+  <string name="audio_widget_downloading_files">Đang tải các tệp cần thiết…</string>
+  <string name="audio_widget_unavailable">Không thể phát, chạm để thay đổi cài đặt</string>
+  <string name="audio_widget_preview_qari">Người đọc của bạn, câu kinh của bạn</string>
+  <string name="audio_widget_preview_status">Đang phát: Surah Al-Fātihah, Ayah 1</string>
+  <string name="audio_widget_open_app">Mở Kinh Quran</string>
 </resources>

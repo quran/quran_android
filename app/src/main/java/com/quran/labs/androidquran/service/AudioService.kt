@@ -4,6 +4,7 @@ import android.app.ForegroundServiceStartNotAllowedException
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -56,7 +57,9 @@ import androidx.media3.exoplayer.text.TextOutput
 import androidx.media3.exoplayer.video.VideoRendererEventListener
 import com.quran.data.core.QuranInfo
 import com.quran.labs.androidquran.QuranApplication
+import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.ShortcutsActivity
 import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
 import com.quran.labs.androidquran.common.audio.model.playback.AudioStatus
 import com.quran.labs.androidquran.common.audio.model.playback.PlaybackStatus
@@ -74,6 +77,9 @@ import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.NotificationChannelUtil.setupNotificationChannel
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.widget.AudioWidgetPreferences
+import com.quran.labs.androidquran.widget.AudioWidgetRequestFactory
+import com.quran.labs.androidquran.widget.AudioWidgetUpdater
 import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -107,6 +113,10 @@ class AudioService : Service(), Player.Listener {
 
   // the playback queue
   private var audioQueue: AudioQueue? = null
+
+  // the home screen widget that started the current playback, if any. widget
+  // playback is independent of the reader, so it is not published to the reader.
+  private var widgetPlaybackId: Int? = null
 
   // indicates the state our service:
   private enum class State {
@@ -173,6 +183,15 @@ class AudioService : Service(), Player.Listener {
 
   @Inject
   lateinit var quranSettings: QuranSettings
+
+  @Inject
+  lateinit var audioWidgetPreferences: AudioWidgetPreferences
+
+  @Inject
+  lateinit var audioWidgetRequestFactory: AudioWidgetRequestFactory
+
+  @Inject
+  lateinit var audioWidgetUpdater: AudioWidgetUpdater
 
   private inner class ServiceHandler(looper: Looper) : Handler(looper) {
     override fun handleMessage(msg: Message) {
@@ -355,7 +374,10 @@ class AudioService : Service(), Player.Listener {
       }
     } else {
       val action = intent.action
-      if (ACTION_PLAYBACK == action || Intent.ACTION_MEDIA_BUTTON == action) {
+      if (ACTION_PLAYBACK == action ||
+        ACTION_WIDGET_PLAYBACK == action ||
+        Intent.ACTION_MEDIA_BUTTON == action
+      ) {
         // go to the foreground as quickly as possible.
         if (!setUpAsForeground()) {
           return START_NOT_STICKY
@@ -378,19 +400,15 @@ class AudioService : Service(), Player.Listener {
     } else if (ACTION_PLAYBACK == action) {
       val updatedAudioRequest = intent.getParcelableExtra<AudioRequest>(EXTRA_PLAY_INFO)
       if (updatedAudioRequest != null) {
-        audioRequest = updatedAudioRequest
-        val start = updatedAudioRequest.start
-        val basmallah = !updatedAudioRequest.isGapless() && start.requiresBasmallah()
-        audioQueue = AudioQueue(
-          quranInfo, updatedAudioRequest,
-          AudioPlaybackInfo(start, 1, 1, basmallah)
-        )
-        Timber.d("audio request has changed...")
-        player?.stop()
-        state = State.Stopped
-        Timber.d("stop if playing...")
+        // a new request from the app takes over from any widget playback
+        widgetPlaybackId = null
+        updateAudioRequest(updatedAudioRequest)
       }
       processTogglePlaybackRequest()
+    } else if (ACTION_WIDGET_PLAYBACK == action) {
+      processWidgetPlaybackRequest(
+        intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+      )
     } else if (ACTION_PLAY == action) {
       processPlayRequest()
     } else if (ACTION_PAUSE == action) {
@@ -398,7 +416,10 @@ class AudioService : Service(), Player.Listener {
     } else if (ACTION_SKIP == action) {
       processSkipRequest()
     } else if (ACTION_STOP == action) {
-      processStopRequest()
+      // widget playback is independent of the app, so only an explicit stop ends it
+      if (widgetPlaybackId == null || !intent.getBooleanExtra(EXTRA_KEEP_WIDGET_PLAYBACK, false)) {
+        processStopRequest()
+      }
     } else if (ACTION_REWIND == action) {
       processRewindRequest()
     } else if (ACTION_UPDATE_SETTINGS == action) {
@@ -602,6 +623,62 @@ class AudioService : Service(), Player.Listener {
     }
   }
 
+  private fun updateAudioRequest(updatedAudioRequest: AudioRequest) {
+    audioRequest = updatedAudioRequest
+    val start = updatedAudioRequest.start
+    val basmallah = !updatedAudioRequest.isGapless() && start.requiresBasmallah()
+    audioQueue = AudioQueue(
+      quranInfo, updatedAudioRequest,
+      AudioPlaybackInfo(start, 1, 1, basmallah)
+    )
+    Timber.d("audio request has changed...")
+    player?.stop()
+    state = State.Stopped
+    Timber.d("stop if playing...")
+  }
+
+  private fun processWidgetPlaybackRequest(widgetId: Int) {
+    if (widgetId == widgetPlaybackId && State.Stopped != state) {
+      // resuming this widget's own playback
+      processPlayRequest()
+      return
+    }
+
+    val config = audioWidgetPreferences.config(widgetId)
+    val result = if (config == null) {
+      AudioWidgetRequestFactory.Result.Unavailable
+    } else {
+      audioWidgetRequestFactory.build(config)
+    }
+
+    when (result) {
+      is AudioWidgetRequestFactory.Result.Ready -> {
+        widgetPlaybackId = widgetId
+        updateAudioRequest(result.audioRequest)
+        processPlayRequest()
+      }
+      is AudioWidgetRequestFactory.Result.MissingTimingDatabase -> {
+        startService(result.downloadIntent)
+        audioWidgetUpdater.showMessage(widgetId, R.string.audio_widget_downloading_files)
+        stopIfIdle()
+      }
+      AudioWidgetRequestFactory.Result.Unavailable -> {
+        audioWidgetUpdater.showMessage(widgetId, R.string.audio_widget_unavailable)
+        stopIfIdle()
+      }
+    }
+  }
+
+  /**
+   * Leaves the foreground state entered for a request that could not be played,
+   * without interrupting any playback that is already in progress.
+   */
+  private fun stopIfIdle() {
+    if (State.Stopped == state) {
+      processStopRequest(true)
+    }
+  }
+
   private fun processTogglePlaybackRequest() {
     if (State.Paused == state || State.Stopped == state) {
       processPlayRequest()
@@ -784,7 +861,13 @@ class AudioService : Service(), Player.Listener {
         )
       }
     }
-    audioStatusRepository.updateAyahPlayback(audioStatus)
+
+    val widgetId = widgetPlaybackId
+    audioWidgetUpdater.onPlaybackStatus(widgetId, audioStatus)
+    // the reader ignores widget playback - no highlighting, page changes, or audio bar
+    audioStatusRepository.updateAyahPlayback(
+      if (widgetId == null) audioStatus else AudioStatus.Stopped
+    )
   }
 
   private fun State.asPlayingPlaybackStatus(): PlaybackStatus {
@@ -1155,6 +1238,7 @@ class AudioService : Service(), Player.Listener {
   /** Updates the notification.  */
   private fun updateNotification() {
     notificationBuilder?.setContentText(getTitle())
+    notificationBuilder?.setContentIntent(notificationPendingIntent)
     if (!didSetNotificationIconOnNotificationBuilder && notificationIcon != null) {
       notificationBuilder?.setLargeIcon(notificationIcon)
       didSetNotificationIconOnNotificationBuilder = true
@@ -1264,6 +1348,7 @@ class AudioService : Service(), Player.Listener {
 
     updatedBuilder.setTicker(audioTitle)
     updatedBuilder.setContentText(audioTitle)
+    updatedBuilder.setContentIntent(pi)
     return try {
       startForeground(NOTIFICATION_ID, updatedBuilder.build())
       isSetupAsForeground = true
@@ -1325,6 +1410,7 @@ class AudioService : Service(), Player.Listener {
     }
 
     pauseBuilder.setContentText(getTitle())
+    pauseBuilder.setContentIntent(pi)
     return pauseBuilder
   }
 
@@ -1333,8 +1419,15 @@ class AudioService : Service(), Player.Listener {
       val appContext = applicationContext
       val mutabilityFlag = PendingIntent.FLAG_IMMUTABLE
 
+      val intent = if (widgetPlaybackId == null) {
+        Intent(appContext, PagerActivity::class.java)
+      } else {
+        // widget playback isn't tied to a page, so open wherever the user last read
+        Intent(appContext, QuranDataActivity::class.java)
+          .setAction(ShortcutsActivity.ACTION_JUMP_TO_LATEST)
+      }
       return PendingIntent.getActivity(
-        appContext, REQUEST_CODE_MAIN, Intent(appContext, PagerActivity::class.java),
+        appContext, REQUEST_CODE_MAIN, intent,
         PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
       )
     }
@@ -1357,6 +1450,7 @@ class AudioService : Service(), Player.Listener {
     serviceHandler.removeCallbacksAndMessages(null)
     serviceLooper.quitSafely()
     state = State.Stopped
+    audioWidgetUpdater.onPlaybackStatus(null, AudioStatus.Stopped)
     relaxResources(true, true)
     mediaSession.release()
     timingRepository.clear()
@@ -1380,6 +1474,9 @@ class AudioService : Service(), Player.Listener {
     const val ACTION_CONNECT = "com.quran.labs.androidquran.action.CONNECT"
     const val ACTION_UPDATE_SETTINGS = "com.quran.labs.androidquran.action.UPDATE_SETTINGS"
 
+    // plays (or resumes) the verses configured for the widget in EXTRA_APPWIDGET_ID
+    const val ACTION_WIDGET_PLAYBACK = "com.quran.labs.androidquran.action.WIDGET_PLAYBACK"
+
     // pending notification request codes
     private const val REQUEST_CODE_MAIN = 0
     private const val REQUEST_CODE_PREVIOUS = 1
@@ -1391,6 +1488,9 @@ class AudioService : Service(), Player.Listener {
 
     // so user can pass in a serializable LegacyAudioRequest to the intent
     const val EXTRA_PLAY_INFO = "com.quran.labs.androidquran.PLAY_INFO"
+
+    // set on ACTION_STOP to only stop playback that wasn't started from a widget
+    const val EXTRA_KEEP_WIDGET_PLAYBACK = "com.quran.labs.androidquran.KEEP_WIDGET_PLAYBACK"
     private const val NOTIFICATION_CHANNEL_ID = Constants.AUDIO_CHANNEL
     private const val MSG_INCOMING = 1
     private const val MSG_UPDATE_AUDIO_POS = 2

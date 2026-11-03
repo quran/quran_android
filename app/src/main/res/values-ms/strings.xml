@@ -304,4 +304,20 @@
   <string name="prefs_category_dual_screen">Preferensi Halaman Ganda</string>
   <string name="prefs_split_page_and_translation_title">Al-Quran dan terjemahan dalam mode ganda</string>
   <string name="prefs_split_page_and_translation_summary">Dalam mode halaman ganda dengan terjemahan, halaman Quran dan terjemahan ditampilkan</string>
+
+  <string name="audio_widget_name">Pemain Audio Quran</string>
+  <string name="audio_widget_description">Mainkan ayat pilihan dengan qari kegemaran anda, tanpa mengubah kedudukan bacaan anda.</string>
+  <string name="audio_widget_configure_title">Tetapan Widget Audio</string>
+  <string name="audio_widget_title_label">Tajuk widget</string>
+  <string name="audio_widget_title_hint">Pilihan, cth. Zikir Pagi</string>
+  <string name="audio_widget_qari_label">Qari</string>
+  <string name="audio_widget_not_configured">Ketik untuk menyediakan</string>
+  <string name="audio_widget_loading">Memuatkan: %1$s</string>
+  <string name="audio_widget_playing">Memainkan: %1$s</string>
+  <string name="audio_widget_paused">Dijeda: %1$s</string>
+  <string name="audio_widget_downloading_files">Memuat turun fail yang diperlukan…</string>
+  <string name="audio_widget_unavailable">Tidak dapat dimainkan, ketik untuk menukar tetapan</string>
+  <string name="audio_widget_preview_qari">Qari anda, ayat anda</string>
+  <string name="audio_widget_preview_status">Memainkan: Surah Al-Fatihah, Ayat 1</string>
+  <string name="audio_widget_open_app">Buka Quran</string>
 </resources>

@@ -425,4 +425,20 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Koran Downloads</string>
   <string name="notification_channel_audio">Koran Recitaties</string>
+
+  <string name="audio_widget_name">Koran-audiospeler</string>
+  <string name="audio_widget_description">Speel gekozen verzen af met je favoriete recitator, zonder je leespositie te wijzigen.</string>
+  <string name="audio_widget_configure_title">Instellingen audiowidget</string>
+  <string name="audio_widget_title_label">Widgettitel</string>
+  <string name="audio_widget_title_hint">Optioneel, bijv. Ochtend-adhkar</string>
+  <string name="audio_widget_qari_label">Recitator</string>
+  <string name="audio_widget_not_configured">Tik om in te stellen</string>
+  <string name="audio_widget_loading">Laden: %1$s</string>
+  <string name="audio_widget_playing">Afspelen: %1$s</string>
+  <string name="audio_widget_paused">Gepauzeerd: %1$s</string>
+  <string name="audio_widget_downloading_files">Vereiste bestanden downloaden…</string>
+  <string name="audio_widget_unavailable">Afspelen niet mogelijk, tik om de instellingen te wijzigen</string>
+  <string name="audio_widget_preview_qari">Jouw recitator, jouw verzen</string>
+  <string name="audio_widget_preview_status">Afspelen: Soera Al-Fātihah, Ayah 1</string>
+  <string name="audio_widget_open_app">Koran openen</string>
 </resources>

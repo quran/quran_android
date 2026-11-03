@@ -301,4 +301,20 @@
   <string name="prefs_split_page_and_translation_summary">هنگامی که دو صفحه مجاور فعال می شوند، صفحه قرآن و ترجمه با هم نمایش داده می شوند</string>
   <string name="notification_channel_download">دانلود فایل های قرآن</string>
   <string name="notification_channel_audio">قرائت قرآن</string>
+
+  <string name="audio_widget_name">پخش‌کننده صوتی قرآن</string>
+  <string name="audio_widget_description">آیات دلخواه را با صدای قاری مورد علاقه‌تان پخش کنید، بدون تغییر محل مطالعه.</string>
+  <string name="audio_widget_configure_title">تنظیمات ابزارک صوتی</string>
+  <string name="audio_widget_title_label">عنوان ابزارک</string>
+  <string name="audio_widget_title_hint">اختیاری، مثلاً اذکار صبحگاهی</string>
+  <string name="audio_widget_qari_label">قاری</string>
+  <string name="audio_widget_not_configured">برای تنظیم ضربه بزنید</string>
+  <string name="audio_widget_loading">در حال بارگیری: %1$s</string>
+  <string name="audio_widget_playing">در حال پخش: %1$s</string>
+  <string name="audio_widget_paused">مکث شده: %1$s</string>
+  <string name="audio_widget_downloading_files">در حال دانلود فایل‌های موردنیاز…</string>
+  <string name="audio_widget_unavailable">پخش ممکن نیست، برای تغییر تنظیمات ضربه بزنید</string>
+  <string name="audio_widget_preview_qari">قاری شما، آیات شما</string>
+  <string name="audio_widget_preview_status">در حال پخش: سوره الفاتحة، آیه 1</string>
+  <string name="audio_widget_open_app">باز کردن قرآن</string>
 </resources>

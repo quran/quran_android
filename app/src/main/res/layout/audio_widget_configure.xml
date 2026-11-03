@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+  <androidx.appcompat.widget.Toolbar
+      android:id="@+id/toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="?attr/colorPrimary" />
+
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:fadeScrollbars="false">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingTop="12dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="12dp">
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="4dp"
+          android:text="@string/audio_widget_title_label"
+          android:textAppearance="@style/PanelLabel" />
+
+      <EditText
+          android:id="@+id/widget_title"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="12dp"
+          android:hint="@string/audio_widget_title_hint"
+          android:importantForAutofill="no"
+          android:inputType="textCapSentences"
+          android:maxLength="40"
+          android:maxLines="1" />
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="4dp"
+          android:text="@string/audio_widget_qari_label"
+          android:textAppearance="@style/PanelLabel" />
+
+      <com.quran.labs.androidquran.view.QuranSpinner
+          android:id="@+id/qari_spinner"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="12dp" />
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="4dp"
+          android:text="@string/play_from"
+          android:textAppearance="@style/PanelLabel" />
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="12dp"
+          android:orientation="horizontal">
+
+        <com.quran.labs.androidquran.view.QuranSpinner
+            android:id="@+id/start_sura_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.quran.labs.androidquran.view.QuranSpinner
+            android:id="@+id/start_ayah_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+      </LinearLayout>
+
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="4dp"
+          android:text="@string/play_to"
+          android:textAppearance="@style/PanelLabel" />
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="12dp"
+          android:orientation="horizontal">
+
+        <com.quran.labs.androidquran.view.QuranSpinner
+            android:id="@+id/end_sura_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.quran.labs.androidquran.view.QuranSpinner
+            android:id="@+id/end_ayah_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+      </LinearLayout>
+
+      <include layout="@layout/play_set_of_verses" />
+      <include layout="@layout/play_each_verse" />
+      <include layout="@layout/playback_speed" />
+
+      <CheckBox
+          android:id="@+id/restrict_to_range"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="12dp"
+          android:text="@string/play_restrict_range" />
+
+      <Button
+          android:id="@+id/apply"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="end"
+          android:text="@string/play_apply" />
+    </LinearLayout>
+  </ScrollView>
+</LinearLayout>

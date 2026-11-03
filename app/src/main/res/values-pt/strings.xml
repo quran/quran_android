@@ -294,4 +294,20 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="prefs_split_page_and_translation_summary">No modo página dupla com traduções, a página do Alcorão e a tradução é mostrada</string>
   <string name="notification_channel_download">Downloads do Alcorão</string>
   <string name="notification_channel_audio">Recitação do Alcorão</string>
+
+  <string name="audio_widget_name">Leitor de áudio do Alcorão</string>
+  <string name="audio_widget_description">Ouça os versículos escolhidos com o seu recitador favorito, sem alterar a sua posição de leitura.</string>
+  <string name="audio_widget_configure_title">Configurações do widget de áudio</string>
+  <string name="audio_widget_title_label">Título do widget</string>
+  <string name="audio_widget_title_hint">Opcional, ex.: Adhkar da manhã</string>
+  <string name="audio_widget_qari_label">Recitador</string>
+  <string name="audio_widget_not_configured">Toque para configurar</string>
+  <string name="audio_widget_loading">Carregando: %1$s</string>
+  <string name="audio_widget_playing">Reproduzindo: %1$s</string>
+  <string name="audio_widget_paused">Pausado: %1$s</string>
+  <string name="audio_widget_downloading_files">Baixando arquivos necessários…</string>
+  <string name="audio_widget_unavailable">Não foi possível reproduzir, toque para alterar as configurações</string>
+  <string name="audio_widget_preview_qari">Seu recitador, seus versículos</string>
+  <string name="audio_widget_preview_status">Reproduzindo: Sura Al-Fātihah, Ayah 1</string>
+  <string name="audio_widget_open_app">Abrir o Alcorão</string>
 </resources>

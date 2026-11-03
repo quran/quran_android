@@ -233,6 +233,7 @@ class QuranActivity : AppCompatActivity(),
                 try {
                   startService(
                     audioUtils.getAudioIntent(this@QuranActivity, AudioService.ACTION_STOP)
+                      .putExtra(AudioService.EXTRA_KEEP_WIDGET_PLAYBACK, true)
                   )
                 } catch (_: IllegalStateException) {
                   // do nothing, we might be in the background

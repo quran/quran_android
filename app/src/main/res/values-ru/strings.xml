@@ -364,4 +364,20 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_audio">Рецитация Корана</string>
   <string name="notification_channel_download">Загрузки Корана</string>
+
+  <string name="audio_widget_name">Аудиоплеер Корана</string>
+  <string name="audio_widget_description">Слушайте выбранные аяты в исполнении любимого чтеца, не меняя место чтения.</string>
+  <string name="audio_widget_configure_title">Настройки аудиовиджета</string>
+  <string name="audio_widget_title_label">Название виджета</string>
+  <string name="audio_widget_title_hint">Необязательно, например: Утренние азкары</string>
+  <string name="audio_widget_qari_label">Чтец</string>
+  <string name="audio_widget_not_configured">Нажмите, чтобы настроить</string>
+  <string name="audio_widget_loading">Загрузка: %1$s</string>
+  <string name="audio_widget_playing">Воспроизведение: %1$s</string>
+  <string name="audio_widget_paused">Пауза: %1$s</string>
+  <string name="audio_widget_downloading_files">Загрузка необходимых файлов…</string>
+  <string name="audio_widget_unavailable">Не удаётся воспроизвести, нажмите, чтобы изменить настройки</string>
+  <string name="audio_widget_preview_qari">Ваш чтец, ваши аяты</string>
+  <string name="audio_widget_preview_status">Воспроизведение: Сура Аль-Фатиха, аят 1</string>
+  <string name="audio_widget_open_app">Открыть Коран</string>
 </resources>

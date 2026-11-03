@@ -323,4 +323,20 @@
     القادمة، هل ترغب في نقل البيانات على أية حال؟
   </string>
   <string name="comma">"،"</string>
+
+  <string name="audio_widget_name">مشغل القرآن الصوتي</string>
+  <string name="audio_widget_description">شغّل مجموعة مختارة من الآيات بصوت قارئك المفضل، دون تغيير موضع قراءتك.</string>
+  <string name="audio_widget_configure_title">إعدادات أداة الصوت</string>
+  <string name="audio_widget_title_label">عنوان الأداة</string>
+  <string name="audio_widget_title_hint">اختياري، مثل: أذكار الصباح</string>
+  <string name="audio_widget_qari_label">القارئ</string>
+  <string name="audio_widget_not_configured">اضغط للإعداد</string>
+  <string name="audio_widget_loading">جاري التحميل: %1$s</string>
+  <string name="audio_widget_playing">جاري التشغيل: %1$s</string>
+  <string name="audio_widget_paused">متوقف مؤقتًا: %1$s</string>
+  <string name="audio_widget_downloading_files">جاري تحميل الملفات المطلوبة…</string>
+  <string name="audio_widget_unavailable">تعذّر التشغيل، اضغط لتغيير الإعدادات</string>
+  <string name="audio_widget_preview_qari">قارئك، آياتك</string>
+  <string name="audio_widget_preview_status">جاري التشغيل: سُورَةُ الفَاتِحَةِ، آية 1</string>
+  <string name="audio_widget_open_app">فتح القرآن</string>
 </resources>

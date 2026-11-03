@@ -30,4 +30,8 @@
 
   <color name="text_primary">#ffffffff</color>
   <color name="text_hint_color">#80ffffff</color>
+
+  <!-- audio widget -->
+  <color name="audio_widget_text_secondary">#b2ffffff</color>
+  <color name="audio_widget_play_icon">#ff212121</color>
 </resources>
