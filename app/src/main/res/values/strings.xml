@@ -393,11 +393,6 @@
   <string name="expand_collection">Expand</string>
   <string name="collapse_collection">Collapse</string>
   <string name="open_collection">Open</string>
-  <!-- shown next to an ayah number in translation mode when the ayah is in several collections -->
-  <plurals name="ayah_collections">
-    <item quantity="one">%d collection</item>
-    <item quantity="other">%d collections</item>
-  </plurals>
   <plurals name="removed_highlights">
     <item quantity="one">Removed one highlight</item>
     <item quantity="other">Removed %d highlights</item>

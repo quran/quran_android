@@ -7,6 +7,11 @@
   <string name="loading">Cargando…</string>
   <string name="canceling">Cancelando…</string>
   <string name="default_collection">Favoritos</string>
+  <plurals name="ayah_collections">
+    <item quantity="one">%d colección</item>
+    <item quantity="many">%d colecciones</item>
+    <item quantity="other">%d colecciones</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">Amarillo</string>
   <string name="highlight_color_green">Verde</string>

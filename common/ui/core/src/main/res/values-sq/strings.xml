@@ -7,6 +7,10 @@
   <string name="loading">Ngarkimi&#8230;</string>
   <string name="canceling">Anullimi&#8230;</string>
   <string name="default_collection">Të preferuarat</string>
+  <plurals name="ayah_collections">
+    <item quantity="one">%d koleksion</item>
+    <item quantity="other">%d koleksione</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">E verdhë</string>
   <string name="highlight_color_green">E gjelbër</string>

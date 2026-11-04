@@ -38,6 +38,7 @@ import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.AyahNumberView
 import com.quran.labs.androidquran.view.DividerView
+import com.quran.mobile.common.ui.core.R as UiCoreR
 import com.quran.mobile.feature.pagetheme.PageThemeConstants
 
 internal class TranslationAdapter(
@@ -465,7 +466,7 @@ internal class TranslationAdapter(
       0 -> null
       1 -> CollectionNames.displayName(context, collections.first())
       else -> context.resources.getQuantityString(
-        R.plurals.ayah_collections, collections.size, collections.size
+        UiCoreR.plurals.ayah_collections, collections.size, collections.size
       )
     }
     val collection = collectionLabel?.let {

@@ -7,6 +7,14 @@
   <string name="loading">جاري التحميل…</string>
   <string name="canceling">جاري إلغاء اﻷمر…</string>
   <string name="default_collection">المفضلة</string>
+  <plurals name="ayah_collections">
+    <item quantity="zero">لا مجموعات</item>
+    <item quantity="one">مجموعة واحدة</item>
+    <item quantity="two">مجموعتان</item>
+    <item quantity="few">%d مجموعات</item>
+    <item quantity="many">%d مجموعة</item>
+    <item quantity="other">%d مجموعة</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">أصفر</string>
   <string name="highlight_color_green">أخضر</string>

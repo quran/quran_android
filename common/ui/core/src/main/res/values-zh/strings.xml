@@ -7,6 +7,9 @@
   <string name="loading">正在载入…</string>
   <string name="canceling">正在取消&#8230;</string>
   <string name="default_collection">收藏</string>
+  <plurals name="ayah_collections">
+    <item quantity="other">%d 个收藏集</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">黄色</string>
   <string name="highlight_color_green">绿色</string>

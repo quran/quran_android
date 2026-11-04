@@ -7,6 +7,9 @@
   <string name="loading">การโหลด&#8230;</string>
   <string name="canceling">ยก เลิก&#8230;</string>
   <string name="default_collection">รายการโปรด</string>
+  <plurals name="ayah_collections">
+    <item quantity="other">%d คอลเลกชัน</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">เหลือง</string>
   <string name="highlight_color_green">เขียว</string>
