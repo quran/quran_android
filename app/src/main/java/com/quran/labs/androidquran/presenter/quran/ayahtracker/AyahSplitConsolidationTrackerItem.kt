@@ -5,6 +5,7 @@ import com.quran.data.model.AyahGlyph
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.selection.SelectionIndicator
+import com.quran.labs.androidquran.ui.translation.AyahIndicators
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
 
@@ -45,6 +46,10 @@ class AyahSplitConsolidationTrackerItem(
   override fun onUnHighlightAyahType(type: HighlightType) {
     imageTrackerItem.onUnHighlightAyahType(type)
     translationTrackerItem.onUnHighlightAyahType(type)
+  }
+
+  override fun onAyahIndicators(indicators: Map<SuraAyah, AyahIndicators>) {
+    translationTrackerItem.onAyahIndicators(indicators)
   }
 
   override fun getToolBarPosition(page: Int, sura: Int, ayah: Int): SelectionIndicator {

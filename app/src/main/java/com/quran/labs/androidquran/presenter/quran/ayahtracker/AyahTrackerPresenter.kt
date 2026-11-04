@@ -36,6 +36,7 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.LON
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.SINGLE_TAP
 import com.quran.labs.androidquran.ui.helpers.AyahTracker
 import com.quran.labs.androidquran.ui.helpers.HighlightTypes
+import com.quran.labs.androidquran.ui.translation.ayahIndicators
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.mobile.translation.model.LocalTranslation
@@ -54,6 +55,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -108,6 +110,16 @@ class AyahTrackerPresenter @Inject constructor(
 
     readingBookmarksDao.readingBookmarksFlow()
       .onEach { readingBookmarks -> onReadingBookmarksChanged(readingBookmarks) }
+      .launchIn(scope)
+
+    combine(
+      bookmarksDao.bookmarksFlow(),
+      bookmarksDao.tagsFlow(),
+      highlightsDao.highlightsFlow(),
+      readingBookmarksDao.readingBookmarksFlow(),
+      ::ayahIndicators
+    )
+      .onEach { indicators -> items.forEach { it.onAyahIndicators(indicators) } }
       .launchIn(scope)
   }
 
