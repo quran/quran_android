@@ -5,6 +5,7 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.labs.androidquran.common.QuranAyahInfo
+import com.quran.labs.androidquran.ui.translation.AyahIndicators
 import com.quran.labs.androidquran.ui.translation.TranslationView
 import com.quran.mobile.translation.model.LocalTranslation
 
@@ -33,6 +34,10 @@ class AyahTranslationTrackerItem(
 
   override fun onUnHighlightAyahType(type: HighlightType) {
     ayahView.unhighlightAyat(type)
+  }
+
+  override fun onAyahIndicators(indicators: Map<SuraAyah, AyahIndicators>) {
+    ayahView.setAyahIndicators(indicators)
   }
 
   override fun getToolBarPosition(page: Int, sura: Int, ayah: Int): SelectionIndicator {

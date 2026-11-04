@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import dev.chrisbanes.insetter.Insetter;
 
@@ -175,6 +176,10 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
 
   public void refresh(@NonNull QuranSettings quranSettings) {
     translationAdapter.refresh(quranSettings);
+  }
+
+  public void setAyahIndicators(@NonNull Map<SuraAyah, AyahIndicators> indicators) {
+    translationAdapter.setAyahIndicators(indicators);
   }
 
   public void setTranslationClickedListener(OnClickListener listener) {
