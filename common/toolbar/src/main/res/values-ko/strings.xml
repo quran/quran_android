@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="bookmark_ayah">이 아야 책갈피</string>
+  <string name="share_ayah">아야 링크 공유</string>
+  <string name="share_ayah_text">아야 텍스트 공유</string>
+  <string name="translation_ayah">아야 번역/타프시르</string>
+  <string name="play_from_here">여기부터 재생</string>
+  <string name="recite_from_here">여기부터 낭송</string>
+  <string name="search_key">구절을 찾으려면 검색 키를 누르세요</string>
+  <string name="copy_ayah">아야 복사</string>
+</resources>
