@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="ayahbookmark_done">完成</string>
+  <string name="ayahbookmark_collections_header">收藏集</string>
+  <string name="ayahbookmark_new_collection">新建收藏集</string>
+  <string name="ayahbookmark_collection_name_hint">收藏集名稱</string>
+  <string name="ayahbookmark_cancel">取消</string>
+  <string name="ayahbookmark_create">建立</string>
+  <string name="ayahbookmark_saved">已儲存</string>
+  <string name="ayahbookmark_not_saved">未儲存</string>
+  <string name="ayahbookmark_highlight_title">高亮</string>
+  <string name="ayahbookmark_highlight_none">無</string>
+</resources>
