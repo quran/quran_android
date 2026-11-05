@@ -30,7 +30,6 @@
     <attr name="android:textSize" />
     <attr name="backgroundColor" format="color" />
     <attr name="nightBackgroundColor" format="color" />
-    <attr name="verseBoxWidth" format="dimension" />
     <attr name="verseBoxHeight" format="dimension" />
   </declare-styleable>
 

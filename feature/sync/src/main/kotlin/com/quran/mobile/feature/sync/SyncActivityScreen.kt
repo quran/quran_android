@@ -34,7 +34,8 @@ internal fun SyncActivityScreen(
   heldRows: ImmutableList<HeldItemRowState>,
   verses: QuranVerses,
   onBackPressed: () -> Unit,
-  onSyncNow: () -> Unit
+  onSyncNow: () -> Unit,
+  onEdit: (HeldItemRowState.Edit) -> Unit = {}
 ) {
   Scaffold(
     topBar = {
@@ -77,7 +78,7 @@ internal fun SyncActivityScreen(
       }
       if (heldRows.isNotEmpty()) {
         item(key = "held") {
-          HeldItemsSection(rows = heldRows, count = heldRows.size, verses = verses)
+          HeldItemsSection(rows = heldRows, count = heldRows.size, verses = verses, onEdit = onEdit)
         }
       }
       item(key = "runs") {

@@ -103,6 +103,10 @@ class AddTagDialog : DialogFragment() {
     }
   }
 
+  fun onSaveError() {
+    textInputEditText?.error = activity?.getString(R.string.tag_save_error)
+  }
+
   private fun dismissAfterPersistence() {
     if (isResumed && !parentFragmentManager.isStateSaved) {
       dismiss()

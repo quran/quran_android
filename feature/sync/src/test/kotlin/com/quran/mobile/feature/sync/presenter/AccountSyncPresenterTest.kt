@@ -4,6 +4,7 @@ import com.quran.mobile.feature.sync.state.AccountSyncEvent
 import com.quran.mobile.feature.sync.state.AccountSyncState
 import com.quran.mobile.feature.sync.state.HeldItemRowState.Title
 import com.quran.mobile.feature.sync.state.HeldItemRowState.Waiting
+import com.quran.mobile.feature.sync.state.SignOutWarning
 import com.quran.mobile.feature.sync.state.SyncActivityState.Status
 import com.quran.shared.auth.model.AuthState
 import com.quran.shared.auth.model.UserInfo
@@ -22,10 +23,14 @@ import com.quran.shared.pipeline.SyncRun
 import com.quran.shared.pipeline.SyncRunResult
 import com.quran.shared.pipeline.SyncRunTrigger
 import com.quran.shared.pipeline.SyncStatus
+import com.quran.shared.pipeline.UnsyncedItemCounts
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -46,14 +51,19 @@ class AccountSyncPresenterTest {
   private val collections = MutableStateFlow<List<CollectionWithAyahBookmarks>>(emptyList())
   private val bookmarks = MutableStateFlow<List<ReadingBookmark>>(emptyList())
   private val observing = MutableStateFlow(true)
+  private val unsynced = MutableStateFlow(UnsyncedItemCounts(0, 0))
   private var syncCalls = 0
 
-  private fun presenter(signOut: suspend () -> Unit = {}) = AccountSyncPresenter(
+  private fun presenter(
+    counts: Flow<UnsyncedItemCounts> = unsynced,
+    signOut: suspend () -> Unit = {}
+  ) = AccountSyncPresenter(
     auth,
     AccountSettingsPresenter(auth, SyncActivityPresenter(syncStatus, history, held)) { syncCalls++ },
     notes,
     collections,
     bookmarks,
+    counts,
     signOut
   )
 
@@ -150,24 +160,31 @@ class AccountSyncPresenterTest {
 
   @Test fun `session end while covered stays terminal even if another sign-in follows`() = runTest {
     var signOutCalls = 0
-    val states = presenter { signOutCalls++ }.launchIn(backgroundScope, observing)
+    val counts = MutableSharedFlow<UnsyncedItemCounts>()
+    val states = presenter(counts) { signOutCalls++ }.launchIn(backgroundScope, observing)
     runCurrent()
     val oldState = states.value as AccountSyncState.SignedIn
+    oldState.eventSink(AccountSyncEvent.RequestSignOut)
+    runCurrent()
+    assertEquals(1, counts.subscriptionCount.value)
     observing.value = false
     runCurrent()
 
     auth.value = AuthState.Idle
     runCurrent()
     assertEquals(AccountSyncState.SessionEnded, states.value)
+    assertEquals(0, counts.subscriptionCount.value)
     auth.value = AuthState.Success(user)
     observing.value = true
     runCurrent()
     assertEquals(AccountSyncState.SessionEnded, states.value)
     oldState.eventSink(AccountSyncEvent.SyncNow)
+    oldState.eventSink(AccountSyncEvent.RequestSignOut)
     oldState.eventSink(AccountSyncEvent.ConfirmSignOut)
     runCurrent()
     assertEquals(0, syncCalls)
     assertEquals(0, signOutCalls)
+    assertEquals(0, counts.subscriptionCount.value)
     listOf(syncStatus, history, held, notes, collections, bookmarks).forEach {
       assertEquals(0, it.subscriptionCount.value)
     }
@@ -184,6 +201,12 @@ class AccountSyncPresenterTest {
     var state = states.value as AccountSyncState.SignedIn
     state.eventSink(AccountSyncEvent.SyncNow)
     assertEquals(1, syncCalls)
+    state.eventSink(AccountSyncEvent.ConfirmSignOut)
+    runCurrent()
+    assertEquals(0, signOutCalls)
+    state.eventSink(AccountSyncEvent.RequestSignOut)
+    runCurrent()
+    state = states.value as AccountSyncState.SignedIn
     state.eventSink(AccountSyncEvent.ConfirmSignOut)
     state.eventSink(AccountSyncEvent.ConfirmSignOut)
     state.eventSink(AccountSyncEvent.SyncNow)
@@ -202,6 +225,9 @@ class AccountSyncPresenterTest {
     assertNull((states.value as AccountSyncState.SignedIn).signOutError)
 
     result = CompletableDeferred()
+    state.eventSink(AccountSyncEvent.RequestSignOut)
+    runCurrent()
+    state = states.value as AccountSyncState.SignedIn
     state.eventSink(AccountSyncEvent.ConfirmSignOut)
     runCurrent()
     assertEquals(2, signOutCalls)
@@ -213,11 +239,67 @@ class AccountSyncPresenterTest {
   @Test fun `cancelling sign-out does not report a failure or end the session`() = runTest {
     val states = presenter { throw CancellationException() }.launchIn(backgroundScope, observing)
     runCurrent()
+    (states.value as AccountSyncState.SignedIn).eventSink(AccountSyncEvent.RequestSignOut)
+    runCurrent()
     (states.value as AccountSyncState.SignedIn).eventSink(AccountSyncEvent.ConfirmSignOut)
     runCurrent()
     val state = states.value as AccountSyncState.SignedIn
     assertFalse(state.isSigningOut)
     assertNull(state.signOutError)
+  }
+
+  @Test fun `duplicate requests share one read and dialog counts stay fixed until dismissed`() = runTest {
+    val counts = MutableSharedFlow<UnsyncedItemCounts>()
+    held.value = listOf(heldItem(SyncResourceType.COLLECTION, "collection"))
+    val states = presenter(counts).launchIn(backgroundScope, observing)
+    runCurrent()
+    var state = states.value as AccountSyncState.SignedIn
+    assertEquals(0, counts.subscriptionCount.value)
+    state.eventSink(AccountSyncEvent.RequestSignOut)
+    state.eventSink(AccountSyncEvent.RequestSignOut)
+    runCurrent()
+    assertNull((states.value as AccountSyncState.SignedIn).signOutWarning)
+    assertEquals(1, counts.subscriptionCount.value)
+
+    counts.emit(UnsyncedItemCounts(2, 3))
+    runCurrent()
+    state = states.value as AccountSyncState.SignedIn
+    assertEquals(SignOutWarning.Unsynced(2, 1, 2), state.signOutWarning)
+    assertEquals(0, counts.subscriptionCount.value)
+    state.eventSink(AccountSyncEvent.RequestSignOut)
+    counts.emit(UnsyncedItemCounts(0, 0))
+    runCurrent()
+    assertEquals(state.signOutWarning, (states.value as AccountSyncState.SignedIn).signOutWarning)
+    assertEquals(0, counts.subscriptionCount.value)
+
+    state.eventSink(AccountSyncEvent.DismissSignOutConfirmation)
+    runCurrent()
+    state = states.value as AccountSyncState.SignedIn
+    assertNull(state.signOutWarning)
+    state.eventSink(AccountSyncEvent.RequestSignOut)
+    runCurrent()
+    counts.emit(UnsyncedItemCounts(0, 0))
+    runCurrent()
+    assertEquals(SignOutWarning.Synced, (states.value as AccountSyncState.SignedIn).signOutWarning)
+    assertEquals(0, counts.subscriptionCount.value)
+  }
+
+  @Test fun `failed reads warn but cancelled reads leave no dialog and allow another request`() = runTest {
+    var reads = 0
+    val counts = flow<UnsyncedItemCounts> {
+      reads++
+      if (reads == 1) throw CancellationException()
+      error("Could not read counts")
+    }
+    val states = presenter(counts).launchIn(backgroundScope, observing)
+    runCurrent()
+    (states.value as AccountSyncState.SignedIn).eventSink(AccountSyncEvent.RequestSignOut)
+    runCurrent()
+    assertNull((states.value as AccountSyncState.SignedIn).signOutWarning)
+    (states.value as AccountSyncState.SignedIn).eventSink(AccountSyncEvent.RequestSignOut)
+    runCurrent()
+    assertEquals(2, reads)
+    assertEquals(SignOutWarning.Unknown, (states.value as AccountSyncState.SignedIn).signOutWarning)
   }
 
   private fun heldItem(type: SyncResourceType, id: String) = HeldSyncItem(

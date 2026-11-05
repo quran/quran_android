@@ -6,7 +6,10 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.audio.Qari
+import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.base.TestApplication
+import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.QariUtil
 import com.quran.labs.androidquran.fakes.FakePageProvider
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
@@ -15,6 +18,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.io.File
 
 @Config(application = TestApplication::class, sdk = [33])
 @RunWith(RobolectricTestRunner::class)
@@ -22,11 +26,9 @@ class AudioUtilsTest {
 
   // QuranFileUtils is constructed with a real Robolectric context and FakePageProvider.
   // QariUtil is constructed with FakePageProvider directly — no Android context needed.
-  // Neither QuranFileUtils nor QariUtil is invoked by getLastAyahToPlay or
-  // doesRequireBasmallah, so stubs for their collaborators are sufficient.
-  private fun audioUtils(): AudioUtils {
+  private fun audioUtils(qaris: List<Qari> = emptyList()): AudioUtils {
     val context = ApplicationProvider.getApplicationContext<Context>()
-    val fakePageProvider = FakePageProvider()
+    val fakePageProvider = FakePageProvider(qaris)
     val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     // QuranScreenInfo requires a Display object; Robolectric has no replacement shadow for
     // DisplayManager.getDisplay(), so the deprecated WindowManager.defaultDisplay is used.
@@ -95,5 +97,27 @@ class AudioUtilsTest {
       isDualPageVisible = false
     )
     assertThat(end).isEqualTo(SuraAyah(56, 76))
+  }
+
+  @Test
+  fun testGetQariListKeepsGappedQarisUnlessHiddenByAnEmptyGaplessAlternative() {
+    val gapless = Qari(1, R.string.app_name, "https://url1/", path = "gapless",
+      hasGaplessAlternative = false, db = "gapless")
+    val gappedOnly = Qari(2, R.string.app_name, "https://url2/", path = "gapped_only",
+      hasGaplessAlternative = false)
+    val gappedWithFiles = Qari(3, R.string.app_name, "https://url3/", path = "gapped_with_files",
+      hasGaplessAlternative = true)
+    val gappedWithoutFiles = Qari(4, R.string.app_name, "https://url4/",
+      path = "gapped_without_files", hasGaplessAlternative = true)
+    val audioUtils = audioUtils(listOf(gapless, gappedOnly, gappedWithFiles, gappedWithoutFiles))
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val gappedWithFilesPath =
+      audioUtils.getLocalQariUrl(QariItem.fromQari(context, gappedWithFiles))!!
+    File(gappedWithFilesPath, "1").mkdirs()
+    File(gappedWithFilesPath, "1/1.mp3").createNewFile()
+
+    val qaris = audioUtils.getQariList(context)
+
+    assertThat(qaris.map { it.id }).containsExactly(1, 2, 3)
   }
 }

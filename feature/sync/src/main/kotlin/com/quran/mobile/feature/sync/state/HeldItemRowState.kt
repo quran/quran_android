@@ -10,8 +10,15 @@ import kotlinx.collections.immutable.toImmutableList
 internal data class HeldItemRowState(
   val item: HeldSyncItem,
   val title: Title,
-  val waiting: Waiting?
+  val waiting: Waiting?,
+  val edit: Edit? = null
 ) {
+  sealed interface Edit {
+    data class Note(val id: String) : Edit
+    data class Collection(val id: String, val name: String) : Edit
+    data class ReadingBookmark(val id: String, val slot: ReadingBookmarkSlot, val name: String) : Edit
+  }
+
   sealed interface Title {
     data class Note(val range: NoteRange) : Title
     data class Collection(val name: String, val isDefault: Boolean) : Title
@@ -39,6 +46,7 @@ internal fun heldItemRows(
     HeldItemRowState(
       item = item,
       title = lookup.title(item),
+      edit = lookup.edit(item),
       waiting = if (waitingItems.isEmpty()) null else HeldItemRowState.Waiting(
         count = waitingItems.size,
         areVerses = waitingItems.all { it.type == SyncResourceType.COLLECTION_BOOKMARK }

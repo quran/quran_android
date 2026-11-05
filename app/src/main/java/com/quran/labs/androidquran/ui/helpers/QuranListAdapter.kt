@@ -146,6 +146,8 @@ class QuranListAdapter(
     this.tagMap = tagMap
   }
 
+  fun getTag(tagId: String): Tag? = tagMap[tagId]
+
   fun setShowTags(showTags: Boolean) {
     this.showTags = showTags
   }

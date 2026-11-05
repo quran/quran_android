@@ -12,11 +12,10 @@ import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
  * Fake implementation of PageProvider for testing.
  *
  * Used by AudioUtilsTest to construct QariUtil and QuranFileUtils
- * without requiring a real page configuration. All methods return
- * minimal stubs — none are invoked by getLastAyahToPlay or
- * doesRequireBasmallah code paths.
+ * without requiring a real page configuration. All methods except
+ * [getQaris] return minimal stubs.
  */
-class FakePageProvider : PageProvider {
+class FakePageProvider(private val qaris: List<Qari> = emptyList()) : PageProvider {
 
   override fun getDataSource(): QuranDataSource = MadaniDataSource()
 
@@ -46,6 +45,6 @@ class FakePageProvider : PageProvider {
   override fun getPreviewTitle(): Int = 0
   override fun getPreviewDescription(): Int = 0
 
-  override fun getQaris(): List<Qari> = emptyList()
+  override fun getQaris(): List<Qari> = qaris
   override fun getDefaultQariId(): Int = 0
 }

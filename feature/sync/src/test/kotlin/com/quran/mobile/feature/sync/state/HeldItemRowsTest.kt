@@ -1,5 +1,6 @@
 package com.quran.mobile.feature.sync.state
 
+import com.quran.mobile.feature.sync.state.HeldItemRowState.Edit
 import com.quran.mobile.feature.sync.state.HeldItemRowState.Title
 import com.quran.mobile.feature.sync.state.HeldItemRowState.Waiting
 import com.quran.shared.persistence.model.Collection
@@ -128,6 +129,55 @@ class HeldItemRowsTest {
       assertEquals(Title.Bookmark(verse), lookup.title(held(SyncResourceType.COLLECTION_BOOKMARK, verse)))
     }
     assertEquals(Title.ReadingProgress, lookup.title(held(SyncResourceType.READING_SESSION, "session")))
+  }
+
+  @Test fun `edit is offered only for reasons that renaming can fix`() {
+    val collection = Collection("system:test", updatedAt, "collection")
+    val bookmark = EmptyReadingBookmark(ReadingBookmarkSlot.TEAL, null, updatedAt, "bookmark")
+    val lookup = HeldItemLookup(collections = listOf(collection), readingBookmarks = listOf(bookmark))
+    val collectionReasons = setOf(
+      HeldReason.TOO_SHORT, HeldReason.TOO_LONG, HeldReason.RESERVED_NAME,
+      HeldReason.REJECTED_BY_SERVER, HeldReason.WAITING_ON_OTHER_ITEM
+    )
+    val bookmarkReasons = setOf(HeldReason.TOO_LONG, HeldReason.REJECTED_BY_SERVER)
+    for (reason in HeldReason.entries) {
+      val collectionRow = heldItemRows(
+        listOf(held(SyncResourceType.COLLECTION, collection.id).copy(reason = reason)), lookup
+      ).single()
+      val bookmarkRow = heldItemRows(
+        listOf(held(SyncResourceType.READING_BOOKMARK, bookmark.id).copy(reason = reason)), lookup
+      ).single()
+      assertEquals(
+        reason.name,
+        if (reason in collectionReasons) Edit.Collection(collection.id, collection.name) else null,
+        collectionRow.edit
+      )
+      assertEquals(
+        reason.name,
+        if (reason in bookmarkReasons) Edit.ReadingBookmark(bookmark.id, bookmark.slot, "") else null,
+        bookmarkRow.edit
+      )
+    }
+  }
+
+  @Test fun `protected collections and missing items cannot be edited`() {
+    val favorites = Collection("Favorites", updatedAt, "favorites", isDefault = true)
+    val readOnly = Collection("Shared", updatedAt, "shared", isReadOnly = true)
+    val lookup = HeldItemLookup(collections = listOf(favorites, readOnly))
+    for (id in listOf(favorites.id, readOnly.id, "deleted")) {
+      assertNull(lookup.edit(held(SyncResourceType.COLLECTION, id).copy(reason = HeldReason.TOO_LONG)))
+    }
+    assertNull(lookup.edit(held(SyncResourceType.READING_BOOKMARK, "deleted").copy(reason = HeldReason.TOO_LONG)))
+  }
+
+  @Test fun `notes verses and progress have no editor`() {
+    val note = Note("short", listOf(NoteRange(2, 255, 2, 255)), updatedAt, "note")
+    val lookup = HeldItemLookup(notes = listOf(note))
+    for (type in listOf(SyncResourceType.NOTE, SyncResourceType.COLLECTION_BOOKMARK, SyncResourceType.READING_SESSION)) {
+      for (reason in HeldReason.entries) {
+        assertNull(lookup.edit(held(type, note.id).copy(reason = reason)))
+      }
+    }
   }
 
   private fun held(

@@ -71,6 +71,7 @@ public class HighlightingImageView extends AppCompatImageView {
   private boolean isNightMode;
   private boolean isColorFilterOn;
   private int nightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
+  private int nightModeBackgroundBrightness = Constants.DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS;
 
   // Params for drawing text
   private int fontSize;
@@ -216,10 +217,11 @@ public class HighlightingImageView extends AppCompatImageView {
     }
   }
 
-  public void setNightMode(boolean isNightMode, int textBrightness) {
+  public void setNightMode(boolean isNightMode, int textBrightness, int backgroundBrightness) {
     this.isNightMode = isNightMode;
     if (isNightMode) {
       nightModeTextBrightness = textBrightness;
+      nightModeBackgroundBrightness = backgroundBrightness;
       // we need a new color filter now
       isColorFilterOn = false;
     }
@@ -390,12 +392,8 @@ public class HighlightingImageView extends AppCompatImageView {
 
   public void adjustNightMode() {
     if (isNightMode && !isColorFilterOn) {
-      float[] matrix = {
-          -1, 0, 0, 0, nightModeTextBrightness,
-          0, -1, 0, 0, nightModeTextBrightness,
-          0, 0, -1, 0, nightModeTextBrightness,
-          0, 0, 0, 1, 0
-      };
+      float[] matrix =
+          NightModeColorMatrix.create(nightModeTextBrightness, nightModeBackgroundBrightness);
       setColorFilter(new ColorMatrixColorFilter(matrix));
       isColorFilterOn = true;
     } else if (!isNightMode) {

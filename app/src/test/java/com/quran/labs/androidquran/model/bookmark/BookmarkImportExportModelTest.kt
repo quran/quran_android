@@ -81,7 +81,6 @@ class BookmarkImportExportModelTest {
       readingBookmarksDao,
       pageMapper,
       BookmarkBackupImportNormalizer(
-        context,
         pageMapper,
         DefaultMobileSyncTimestampProvider()
       ),
@@ -367,7 +366,7 @@ class BookmarkImportExportModelTest {
     val recentTimestampMillis = 1_700_000_002_000L
     val readingBookmarkTimestampMillis = 1_700_000_003_000L
     val page = 50
-    val oldPageBookmarksTagName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksTagName = "Old Page Bookmarks"
 
     importData(
       BookmarkData(
@@ -411,10 +410,12 @@ class BookmarkImportExportModelTest {
   }
 
   @Test
+  @Config(qualifiers = "ar")
   fun testImportConvertsPageBookmarkToAyahBookmarkWithOldPageBookmarkTag() {
     val page = 50
     val originalTagName = "Imported Tag"
-    val oldPageBookmarksTagName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksTagName = "Old Page Bookmarks"
+    assertThat(context.getString(R.string.old_page_bookmarks)).isNotEqualTo(oldPageBookmarksTagName)
 
     importData(
       BookmarkData(
@@ -451,7 +452,7 @@ class BookmarkImportExportModelTest {
     val page = 50
     val backupTagId = "old-page-bookmarks"
     val originalTagName = "Imported Tag"
-    val oldPageBookmarksTagName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksTagName = "Old Page Bookmarks"
 
     importData(
       BookmarkData(
