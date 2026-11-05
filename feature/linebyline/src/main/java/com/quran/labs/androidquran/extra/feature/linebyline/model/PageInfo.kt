@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.extra.feature.linebyline.model
 
+import com.quran.data.model.PageAppearance
 import com.quran.mobile.linebyline.data.dao.AyahMarkerInfo
 import com.quran.mobile.linebyline.data.dao.SuraHeader
 import kotlinx.collections.immutable.ImmutableList
@@ -14,6 +15,7 @@ data class PageInfo(
   val suraHeaders: ImmutableList<SuraHeader>,
   val ayahMarkers: ImmutableList<AyahMarkerInfo>,
   val ayahHighlights: ImmutableList<HighlightAyah>,
+  val readingBookmarks: ImmutableList<ReadingBookmarkAyah>,
   val sidelines: ImmutableList<SidelineModel>,
   val targetScrollPosition: Int,
   val showSidelines: Boolean,
@@ -22,9 +24,10 @@ data class PageInfo(
 
 val EmptySettings =
   DisplaySettings(
-    false,
+    PageAppearance.Light,
     255,
     0,
+    null,
     showHeaderFooter = false,
     showSidelines = false,
     showLineDividers = false
@@ -36,6 +39,7 @@ val EmptyPageInfo =
     "",
     DisplayText("", "", "", "", ""),
     EmptySettings,
+    persistentListOf(),
     persistentListOf(),
     persistentListOf(),
     persistentListOf(),

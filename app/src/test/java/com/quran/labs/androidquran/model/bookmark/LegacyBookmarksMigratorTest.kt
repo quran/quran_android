@@ -49,7 +49,7 @@ class LegacyBookmarksMigratorTest {
     migrator = LegacyBookmarksMigrator(
       quranSettings = quranSettings,
       legacyBookmarksDataSource = dataSource,
-      normalizer = LegacyBookmarkMigrationNormalizer(context, QuranInfo(MadaniDataSource())),
+      normalizer = LegacyBookmarkMigrationNormalizer(QuranInfo(MadaniDataSource())),
       mobileSyncImporter = importer
     )
   }

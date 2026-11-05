@@ -6,10 +6,15 @@
   <string name="to">Idáig</string>
   <string name="loading">Betöltés&#8230;</string>
   <string name="canceling">Megszakítás&#8230;</string>
+  <string name="default_collection">Kedvencek</string>
+  <plurals name="ayah_collections">
+    <item quantity="one">%d gyűjtemény</item>
+    <item quantity="other">%d gyűjtemény</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">Sárga</string>
   <string name="highlight_color_green">Zöld</string>
   <string name="highlight_color_blue">Kék</string>
-  <string name="highlight_color_red">Piros</string>
   <string name="highlight_color_purple">Lila</string>
+  <string name="reading_bookmark_red">Piros</string>
 </resources>

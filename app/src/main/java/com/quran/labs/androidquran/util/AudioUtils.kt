@@ -44,7 +44,7 @@ class AudioUtils @Inject constructor(
   fun getQariList(context: Context): List<QariItem> {
     return qariUtil.getQariList(context)
       .filter {
-        it.isGapless || (it.hasGaplessAlternative && !haveAnyFiles(it.path))
+        it.isGapless || !it.hasGaplessAlternative || haveAnyFiles(it.path)
       }
       .sortedWith { lhs, rhs ->
         if (lhs.isGapless != rhs.isGapless) {

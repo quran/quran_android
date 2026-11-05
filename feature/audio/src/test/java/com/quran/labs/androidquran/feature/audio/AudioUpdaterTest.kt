@@ -5,9 +5,17 @@ import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.feature.audio.api.AudioFileUpdate
 import com.quran.labs.androidquran.feature.audio.api.AudioSetUpdate
 import com.quran.labs.androidquran.feature.audio.util.AudioFileChecker
+import com.quran.labs.androidquran.feature.audio.util.AudioFileCheckerImpl
+import com.quran.labs.androidquran.feature.audio.util.fakes.FakeHashCalculator
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
+import java.io.File
 
 class AudioUpdaterTest {
+  @get:Rule
+  val tempFolder = TemporaryFolder()
+
   private val allFilesUpdatedFileChecker = object : AudioFileChecker {
     override fun isQariOnFilesystem(qari: QariItem) = true
     override fun doesFileExistForQari(qari: QariItem, file: String) = true
@@ -101,4 +109,53 @@ class AudioUpdaterTest {
         updates, qaris, allFilesUpdatedNoDatabaseFileChecker, versionOneDatabaseChecker)
     assertThat(localUpdates).isEmpty()
   }
+
+  @Test
+  fun testAudioUpdaterFindsChangedGappedFileOnDisk() {
+    val suraDir = File(tempFolder.root, "sheikh1/2").apply { mkdirs() }
+    val changedFile = File(suraDir, "255.mp3").apply { createNewFile() }
+    val unchangedFile = File(suraDir, "256.mp3").apply { createNewFile() }
+    val hashCalculator = FakeHashCalculator().apply {
+      setHash(changedFile.absolutePath, "oldSum")
+      setHash(unchangedFile.absolutePath, "currentSum")
+    }
+    val updates = listOf(
+        AudioSetUpdate("https://url1/", null,
+            listOf(AudioFileUpdate("002255.mp3", "newSum"),
+                AudioFileUpdate("002256.mp3", "currentSum"),
+                AudioFileUpdate("002257.mp3", "newSum")))
+    )
+
+    val localUpdates = AudioUpdater.computeUpdates(
+        updates, qaris, diskFileChecker(hashCalculator), versionOneDatabaseChecker)
+    assertThat(localUpdates).hasSize(1)
+    assertThat(localUpdates.first().qari).isEqualTo(qaris[0])
+    assertThat(localUpdates.first().files).containsExactly("002255.mp3")
+  }
+
+  @Test
+  fun testAudioUpdaterFindsChangedGaplessFileOnDisk() {
+    val qariDir = File(tempFolder.root, "sheikh2").apply { mkdirs() }
+    val changedFile = File(qariDir, "002.mp3").apply { createNewFile() }
+    val unchangedFile = File(qariDir, "003.mp3").apply { createNewFile() }
+    val hashCalculator = FakeHashCalculator().apply {
+      setHash(changedFile.absolutePath, "oldSum")
+      setHash(unchangedFile.absolutePath, "currentSum")
+    }
+    val updates = listOf(
+        AudioSetUpdate("https://url2/", null,
+            listOf(AudioFileUpdate("002.mp3", "newSum"),
+                AudioFileUpdate("003.mp3", "currentSum"),
+                AudioFileUpdate("004.mp3", "newSum")))
+    )
+
+    val localUpdates = AudioUpdater.computeUpdates(
+        updates, qaris, diskFileChecker(hashCalculator), versionOneDatabaseChecker)
+    assertThat(localUpdates).hasSize(1)
+    assertThat(localUpdates.first().qari).isEqualTo(qaris[1])
+    assertThat(localUpdates.first().files).containsExactly("002.mp3")
+  }
+
+  private fun diskFileChecker(hashCalculator: FakeHashCalculator) =
+    AudioFileCheckerImpl(hashCalculator, tempFolder.root.absolutePath + File.separator)
 }

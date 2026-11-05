@@ -5,13 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -22,11 +20,9 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -48,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.modifier.autoMirror
 import com.quran.shared.auth.model.AuthState
-import com.quran.shared.auth.model.UserInfo
 import kotlinx.coroutines.launch
 
 @Composable
@@ -111,21 +106,8 @@ internal fun QuranSyncScreen(
             }
           }
         )
-        AuthState.Loading -> LoadingContent()
-        is AuthState.Success -> SignedInContent(
-          userInfo = state.userInfo,
-          isLoading = isActionRunning,
-          actionError = actionError,
-          onLogout = {
-            scope.launch {
-              isActionRunning = true
-              actionError = null
-              runCatching { syncManager.logout() }
-                .onFailure { actionError = it.message ?: "" }
-              isActionRunning = false
-            }
-          }
-        )
+        // the account screen replaces this once signed in
+        AuthState.Loading, is AuthState.Success -> LoadingContent()
         is AuthState.Error -> SignedOutContent(
           isLoading = isActionRunning,
           actionError = state.message.ifBlank { actionError },
@@ -240,44 +222,6 @@ private fun SyncBenefitRow(text: String) {
 }
 
 @Composable
-private fun SignedInContent(
-  userInfo: UserInfo?,
-  isLoading: Boolean,
-  actionError: String?,
-  onLogout: () -> Unit
-) {
-  Text(
-    text = stringResource(R.string.quran_sync_signed_in),
-    style = MaterialTheme.typography.headlineSmall,
-    color = MaterialTheme.colorScheme.onSurface
-  )
-  AccountRow(
-    label = stringResource(R.string.quran_sync_name),
-    value = userInfo?.displayName
-  )
-  AccountRow(
-    label = stringResource(R.string.quran_sync_email),
-    value = userInfo?.email
-  )
-  AccountRow(
-    label = stringResource(R.string.quran_sync_account_id),
-    value = userInfo?.id
-  )
-  Spacer(modifier = Modifier.height(4.dp))
-  OutlinedButton(
-    onClick = onLogout,
-    enabled = !isLoading,
-    modifier = Modifier.fillMaxWidth()
-  ) {
-    ButtonContent(
-      isLoading = isLoading,
-      text = stringResource(R.string.quran_sync_logout)
-    )
-  }
-  ErrorText(actionError)
-}
-
-@Composable
 private fun LoadingContent() {
   Row(
     verticalAlignment = Alignment.CenterVertically,
@@ -289,27 +233,6 @@ private fun LoadingContent() {
       style = MaterialTheme.typography.bodyLarge
     )
   }
-}
-
-@Composable
-private fun AccountRow(label: String, value: String?) {
-  if (value.isNullOrBlank()) {
-    return
-  }
-  Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-    Text(
-      text = label,
-      style = MaterialTheme.typography.labelLarge,
-      color = MaterialTheme.colorScheme.onSurfaceVariant,
-      fontWeight = FontWeight.Medium
-    )
-    Text(
-      text = value,
-      style = MaterialTheme.typography.bodyLarge,
-      color = MaterialTheme.colorScheme.onSurface
-    )
-  }
-  HorizontalDivider()
 }
 
 @Composable

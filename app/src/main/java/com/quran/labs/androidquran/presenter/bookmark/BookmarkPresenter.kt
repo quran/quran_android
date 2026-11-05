@@ -12,6 +12,7 @@ import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.highlight.Highlight
@@ -185,10 +186,14 @@ open class BookmarkPresenter @Inject internal constructor(
   fun getContextualOperationsForItems(rows: List<QuranRow>): BooleanArray {
     val headers = rows.count { row -> row.isEditableCollectionHeader }
     val bookmarks = rows.count { row -> row.isBookmark }
+    val deleteOnly = rows.count { row -> row.isPlacedReadingBookmark || row.isHighlightedAyah }
     return booleanArrayOf(
-      headers == 1 && bookmarks == 0,
-      (headers + bookmarks) > 0,
-      headers == 0 && bookmarks > 0
+      // whether to show edit button
+      headers == 1 && bookmarks == 0 && deleteOnly == 0,
+      // whether to show delete button
+      (headers + bookmarks + deleteOnly) > 0,
+      // whether to show tag button
+      headers == 0 && bookmarks > 0 && deleteOnly == 0
     )
   }
 
@@ -259,11 +264,17 @@ open class BookmarkPresenter @Inject internal constructor(
     val bookmarkIdsToRemove = mutableSetOf<String>()
     val tagIdsToUntag = mutableSetOf<String>()
     val bookmarkTagContext = mutableMapOf<String, MutableSet<String>>()
+    val readingBookmarkSlotsToClear = mutableSetOf<ReadingBookmarkType>()
+    val highlightsToClear = mutableSetOf<SuraAyah>()
 
     for (row in remove) {
       val bookmarkId = row.bookmarkId
       val tagId = row.tagId
       when {
+        row.isPlacedReadingBookmark -> readingBookmarkSlotsToClear.add(row.readingBookmarkType)
+
+        row.isHighlightedAyah -> highlightsToClear.add(SuraAyah(row.sura, row.ayah))
+
         row.isBookmark && bookmarkId != null -> {
           if (isGroupedByTags && tagId != null) {
             val contextTags = bookmarkTagContext[bookmarkId] ?: mutableSetOf<String>().also {
@@ -281,9 +292,34 @@ open class BookmarkPresenter @Inject internal constructor(
 
     val filteredRows = mutableListOf<BookmarkRowData>()
     val removedCountByCollection = mutableMapOf<String?, Int>()
+    val removedCountByColor = mutableMapOf<HighlightColor, Int>()
+    val remainingReadingBookmarks = cachedRows.count { rowData ->
+      rowData is ReadingBookmarkItem && rowData.readingBookmark.slot !in readingBookmarkSlotsToClear
+    }
 
     for (rowData in cachedRows) {
       when (rowData) {
+        is ReadingBookmarkHeader -> {
+          if (remainingReadingBookmarks > 0) {
+            filteredRows += rowData.copy(count = remainingReadingBookmarks)
+          }
+        }
+
+        is ReadingBookmarkItem -> {
+          if (rowData.readingBookmark.slot !in readingBookmarkSlotsToClear) {
+            filteredRows += rowData
+          }
+        }
+
+        is HighlightedAyahItem -> {
+          val highlight = rowData.highlight
+          if (highlight.suraAyah in highlightsToClear) {
+            removedCountByColor[highlight.color] = (removedCountByColor[highlight.color] ?: 0) + 1
+          } else {
+            filteredRows += rowData
+          }
+        }
+
         is BookmarkItem -> {
           val bookmarkId = rowData.bookmark.id
           val currentTagId = rowData.tagId
@@ -321,9 +357,17 @@ open class BookmarkPresenter @Inject internal constructor(
       }
     }
 
-    val previewRows = filteredRows.map { rowData ->
+    val hasAyahRows = filteredRows.any { it is BookmarkItem || it is HighlightedAyahItem }
+    val previewRows = filteredRows.mapNotNull { rowData ->
       when (rowData) {
         is TagHeader -> rowData.withCountDelta(-(removedCountByCollection[rowData.tag.id] ?: 0))
+
+        BookmarkRowData.AyahBookmarksHeader -> rowData.takeIf { hasAyahRows }
+
+        is HighlightColorItem -> {
+          val removed = removedCountByColor[rowData.color] ?: 0
+          rowData.copy(count = (rowData.count - removed).coerceAtLeast(0))
+        }
 
         else -> rowData
       }
@@ -355,15 +399,22 @@ open class BookmarkPresenter @Inject internal constructor(
     itemsToRemove = null
   }
 
-  private suspend fun removeItems(items: List<QuranRow>) {
+  @VisibleForTesting
+  suspend fun removeItems(items: List<QuranRow>) {
     withContext(Dispatchers.IO) {
       val tagsToDelete = mutableListOf<Tag>()
       val bookmarksToDelete = mutableListOf<Bookmark>()
       val bookmarksToUntag = mutableListOf<Pair<Bookmark, String>>()
+      val readingBookmarksToClear = mutableSetOf<ReadingBookmarkType>()
+      val highlightsToClear = mutableSetOf<SuraAyah>()
 
       items.forEach { row ->
         val tagId = row.tagId
         when {
+          row.isPlacedReadingBookmark -> readingBookmarksToClear += row.readingBookmarkType
+
+          row.isHighlightedAyah -> highlightsToClear += SuraAyah(row.sura, row.ayah)
+
           row.isBookmarkHeader && tagId != null -> {
             tagsToDelete += Tag(tagId, row.text)
           }
@@ -383,6 +434,8 @@ open class BookmarkPresenter @Inject internal constructor(
         bookmarksDao.removeBookmarkFromTag(bookmark, tagId)
       }
       bookmarksDao.removeBookmarks(bookmarksToDelete)
+      readingBookmarksToClear.forEach { slot -> readingBookmarksDao.clearReadingBookmark(slot) }
+      highlightsToClear.forEach { suraAyah -> highlightsDao.clearHighlight(suraAyah) }
     }
   }
 

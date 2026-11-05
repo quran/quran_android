@@ -36,8 +36,8 @@ android {
   namespace = "com.quran.labs.androidquran"
 
   defaultConfig {
-    versionCode = 3640
-    versionName = "3.6.4"
+    versionCode = 3650
+    versionName = "3.6.5"
     testInstrumentationRunner = "com.quran.labs.androidquran.core.QuranTestRunner"
   }
 
@@ -235,6 +235,7 @@ dependencies {
   implementation(project(":feature:audio"))
   implementation(project(":feature:audiobar"))
   implementation(project(":feature:ayahbookmark"))
+  implementation(project(":feature:pagetheme"))
   implementation(project(":feature:downloadmanager"))
   implementation(project(":feature:qarilist"))
   implementation(project(":feature:sync"))
@@ -307,6 +308,7 @@ dependencies {
   testImplementation(libs.sqldelight.sqlite.driver)
   testImplementation(libs.sqldelight.primitive.adapters)
   testImplementation(libs.quran.mobile.sync)
+  testImplementation(libs.quran.mobile.sync.v2)
 
   errorprone(libs.errorprone.core)
 

@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="default_collection">Mėgstamiausi</string>
+  <plurals name="ayah_collections">
+    <item quantity="one">%d rinkinys</item>
+    <item quantity="few">%d rinkiniai</item>
+    <item quantity="many">%d rinkinio</item>
+    <item quantity="other">%d rinkinių</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">Geltona</string>
   <string name="highlight_color_green">Žalia</string>
   <string name="highlight_color_blue">Mėlyna</string>
-  <string name="highlight_color_red">Raudona</string>
   <string name="highlight_color_purple">Violetinė</string>
+  <string name="reading_bookmark_red">Raudona</string>
 </resources>

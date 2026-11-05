@@ -135,7 +135,7 @@ private fun ReadingBookmarkMovedToastShortPreview() {
       ReadingBookmarkMovedToast(
         title = stringResource(
           R.string.reading_bookmark_moved_to_title,
-          stringResource(CoreR.string.reading_bookmark_green),
+          stringResource(CoreR.string.reading_bookmark_teal),
           "Sura An-Nisā' Ayah 1"
         ),
         movedFromText = null,
@@ -156,7 +156,7 @@ private fun ReadingBookmarkMovedToastShortAddedPreview() {
       ReadingBookmarkMovedToast(
         title = stringResource(
           R.string.reading_bookmark_placed_title,
-          stringResource(CoreR.string.reading_bookmark_blue),
+          stringResource(CoreR.string.reading_bookmark_red),
           "An-Nisāʾ (Page 77)"
         ),
         movedFromText = null,

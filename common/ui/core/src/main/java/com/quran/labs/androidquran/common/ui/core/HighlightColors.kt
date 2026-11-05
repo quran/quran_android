@@ -37,11 +37,11 @@ object HighlightColors {
     nameResourceId = R.string.highlight_color_blue
   )
 
-  private val red = HighlightColorSpec(
-    highlightColor = HighlightColor.RED,
+  private val pink = HighlightColorSpec(
+    highlightColor = HighlightColor.PINK,
     color = Color(0xFFFEB0CA),
-    colorResourceId = R.color.highlight_page_red,
-    nameResourceId = R.string.highlight_color_red
+    colorResourceId = R.color.highlight_page_pink,
+    nameResourceId = R.string.highlight_color_pink
   )
 
   private val purple = HighlightColorSpec(
@@ -51,7 +51,7 @@ object HighlightColors {
     nameResourceId = R.string.highlight_color_purple
   )
 
-  val sorted: List<HighlightColorSpec> = listOf(yellow, green, blue, red, purple)
+  val sorted: List<HighlightColorSpec> = listOf(yellow, green, blue, pink, purple)
   val contentColor: Color = Color.Black.copy(alpha = 0.72f)
 
   operator fun get(highlightColor: HighlightColor): HighlightColorSpec {
@@ -59,7 +59,7 @@ object HighlightColors {
       HighlightColor.YELLOW -> yellow
       HighlightColor.GREEN -> green
       HighlightColor.BLUE -> blue
-      HighlightColor.RED -> red
+      HighlightColor.PINK -> pink
       HighlightColor.PURPLE -> purple
     }
   }

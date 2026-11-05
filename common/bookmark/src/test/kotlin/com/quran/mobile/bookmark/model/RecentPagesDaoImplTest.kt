@@ -6,6 +6,7 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.Settings
 import com.quran.data.di.AppCoroutineScope
+import com.quran.data.model.PageAppearance
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.pages.data.warsh.WarshDataSource
@@ -37,10 +38,9 @@ class RecentPagesDaoImplTest {
   @Before
   fun setup() {
     val context = RuntimeEnvironment.getApplication().applicationContext as Context
-    context.deleteDatabase("quran.db")
+    context.deleteDatabase("user_data.db")
     val mobileSyncDatabase = MobileSyncDatabase(context)
-    mobileSyncDatabase.database.reading_sessionsQueries.deleteAll()
-    repository = ReadingSessionsRepositoryImpl(mobileSyncDatabase.database)
+    repository = ReadingSessionsRepositoryImpl(mobileSyncDatabase.database.synced)
     quranInfo = QuranInfo(MadaniDataSource())
     settings = FakeSettings()
     appCoroutineScope = AppCoroutineScope()
@@ -202,11 +202,13 @@ class RecentPagesDaoImplTest {
 
     override suspend fun lastPage(): Int = 1
 
-    override suspend fun isNightMode(): Boolean = false
+    override suspend fun pageAppearance(): PageAppearance = PageAppearance.Light
 
-    override suspend fun nightModeTextBrightness(): Int = 0
+    override suspend fun pageTextBrightness(): Int = 0
 
     override suspend fun nightModeBackgroundBrightness(): Int = 0
+
+    override suspend fun dayPageBackgroundColor(): Int? = null
 
     override suspend fun shouldShowHeaderFooter(): Boolean = false
 

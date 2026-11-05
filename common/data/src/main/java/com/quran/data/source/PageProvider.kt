@@ -8,6 +8,7 @@ interface PageProvider {
   fun getPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator
 
   fun getImageVersion(): Int
+  fun mushafType(): MushafType
 
   fun getImagesBaseUrl(): String
   fun getImagesZipBaseUrl(): String
@@ -22,6 +23,8 @@ interface PageProvider {
   fun getImagesDirectoryName(): String
 
   fun ayahInfoDbHasGlyphData(): Boolean = false
+  // fraction of the line height to raise ayah underlines by
+  fun ayahUnderlineRaiseRatio(): Float = 0f
 
   @StringRes fun getPreviewTitle(): Int
   @StringRes fun getPreviewDescription(): Int

@@ -18,29 +18,29 @@ data class ReadingBookmarkSlotSpec(
 )
 
 object ReadingBookmarkSlots {
-  private val green = ReadingBookmarkSlotSpec(
-    slot = ReadingBookmarkType.GREEN,
-    colorResourceId = R.color.reading_bookmark_green,
-    nameResourceId = R.string.reading_bookmark_green
+  private val teal = ReadingBookmarkSlotSpec(
+    slot = ReadingBookmarkType.TEAL,
+    colorResourceId = R.color.reading_bookmark_teal,
+    nameResourceId = R.string.reading_bookmark_teal
   )
 
-  private val purple = ReadingBookmarkSlotSpec(
-    slot = ReadingBookmarkType.PURPLE,
-    colorResourceId = R.color.reading_bookmark_purple,
-    nameResourceId = R.string.reading_bookmark_purple
+  private val orange = ReadingBookmarkSlotSpec(
+    slot = ReadingBookmarkType.ORANGE,
+    colorResourceId = R.color.reading_bookmark_orange,
+    nameResourceId = R.string.reading_bookmark_orange
   )
 
-  private val blue = ReadingBookmarkSlotSpec(
-    slot = ReadingBookmarkType.BLUE,
-    colorResourceId = R.color.reading_bookmark_blue,
-    nameResourceId = R.string.reading_bookmark_blue
+  private val red = ReadingBookmarkSlotSpec(
+    slot = ReadingBookmarkType.RED,
+    colorResourceId = R.color.reading_bookmark_red,
+    nameResourceId = R.string.reading_bookmark_red
   )
 
   operator fun get(slot: ReadingBookmarkType): ReadingBookmarkSlotSpec {
     return when (slot) {
-      ReadingBookmarkType.GREEN -> green
-      ReadingBookmarkType.PURPLE -> purple
-      ReadingBookmarkType.BLUE -> blue
+      ReadingBookmarkType.TEAL -> teal
+      ReadingBookmarkType.ORANGE -> orange
+      ReadingBookmarkType.RED -> red
     }
   }
 

@@ -156,7 +156,7 @@
   <string name="get_arabic_search_db">Get Arabic Search Database</string>
 
   <!-- Quran Preference Activity -->
-  <string name="appearance">Appearance</string>
+  <string name="appearance">App theme</string>
   <string name="prefs_volume_key_navigation_title">Volume key navigation</string>
   <string name="prefs_volume_key_navigation_summary">Navigate between pages using volume keys</string>
   <string name="prefs_category_reading">Reading Preferences</string>
@@ -166,19 +166,12 @@
   <string name="prefs_use_arabic_summary_on">Use Arabic for application interface</string>
   <string name="prefs_use_western_digits_title">Western digits (0123456789)</string>
   <string name="prefs_use_western_digits_summary">Use 0123456789 instead of ٠١٢٣٤٥٦٧٨٩ in Arabic mode</string>
-  <string name="prefs_new_background_title">New background</string>
   <string name="prefs_lock_orientation_title">Lock screen orientation</string>
   <string name="prefs_lock_orientation_summary_on">Use fixed orientation mode</string>
   <string name="prefs_lock_orientation_summary_off">Adaptive to current orientation mode</string>
   <string name="prefs_landscape_orientation_title">Landscape orientation</string>
   <string name="prefs_landscape_orientation_summary_on">Always use landscape mode</string>
   <string name="prefs_landscape_orientation_summary_off">Always use portrait mode</string>
-  <string name="prefs_night_mode_title">Night mode</string>
-  <string name="prefs_night_mode_summary">Use dark background and light fonts</string>
-  <string name="prefs_night_mode_text_brightness_title">Text brightness</string>
-  <string name="prefs_night_mode_text_brightness_summary">Brightness of the text when night mode is active</string>
-  <string name="prefs_night_mode_background_brightness_title">Background brightness</string>
-  <string name="prefs_night_mode_background_brightness_summary">Brightness of the page when night mode is active</string>
   <string name="prefs_overlay_page_info_title">Show page info</string>
   <string name="prefs_overlay_page_info_summary">Overlay page number, surah name, and juz\' number while reading</string>
   <string name="prefs_display_marker_title">Display marker popups</string>
@@ -361,6 +354,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Tag Bookmark</string>
   <string name="delete_tag">Delete Tag</string>
+  <string name="delete">Delete</string>
   <string name="edit_tag">Edit Tag</string>
   <string name="new_tag">New Tag</string>
   <plurals name="bookmark_tag_deleted">
@@ -419,6 +413,8 @@
   <string name="tag_name">Name</string>
   <string name="tag_blank_tag_error">Tag names cannot be blank!</string>
   <string name="tag_duplicate_tag_error">Tag name already exists!</string>
+  <string name="tag_reserved_tag_error">This tag name is reserved!</string>
+  <string name="tag_too_long_tag_error">Tag name is too long!</string>
 
   <!-- widgets -->
   <string name="bookmarks_list_empty">No Bookmarks</string>
@@ -440,4 +436,5 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Quran Downloads</string>
   <string name="notification_channel_audio">Quran Recitation</string>
+  <string name="tag_save_error">Unable to rename this collection. It may no longer be available.</string>
 </resources>

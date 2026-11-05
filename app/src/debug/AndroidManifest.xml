@@ -4,8 +4,8 @@
   android:installLocation="auto">
 
   <application
-      android:icon="@drawable/debug_icon"
-      android:roundIcon="@drawable/debug_icon"
+      android:icon="@mipmap/ic_launcher_debug"
+      android:roundIcon="@mipmap/ic_launcher_debug"
       android:label="${app_debug_label}"
       android:name=".DebugApplication"
       tools:replace="android:icon,android:roundIcon,android:label,android:name">

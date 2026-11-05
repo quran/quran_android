@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="page_background">#FFF4CB</color>
+  <color name="page_theme_light_bg">#FFFFFF</color>
+  <color name="page_theme_sepia_bg">#F8EBD5</color>
+</resources>

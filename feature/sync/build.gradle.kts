@@ -5,6 +5,7 @@ plugins {
 
 android {
   namespace = "com.quran.mobile.feature.sync"
+  testOptions.unitTests.isReturnDefaultValues = true
 }
 
 dependencies {
@@ -14,6 +15,10 @@ dependencies {
   implementation(project(":common:ui:core"))
 
   implementation(libs.androidx.activity.compose)
+  implementation(libs.androidx.browser)
+  implementation(libs.androidx.fragment.ktx)
+  implementation(libs.androidx.lifecycle.process)
+  implementation(libs.androidx.lifecycle.runtime.compose)
   implementation(libs.androidx.preference.ktx)
 
   implementation(libs.compose.foundation)
@@ -23,7 +28,19 @@ dependencies {
   implementation(libs.compose.ui.tooling.preview)
   implementation(libs.compose.ui.tooling)
 
+  implementation(libs.coil.compose)
+  implementation(libs.coil.network.okhttp)
+
+  // molecule
+  implementation(libs.molecule)
+
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.coroutines.core)
+  implementation(libs.kotlinx.collections.immutable)
   implementation(libs.quran.mobile.sync)
+  implementation(libs.timber)
+
+  testImplementation(libs.junit)
+  testImplementation(libs.turbine)
+  testImplementation(libs.kotlinx.coroutines.test)
 }

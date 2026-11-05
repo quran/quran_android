@@ -30,14 +30,16 @@ class LegacyBookmarkMigrationNormalizerTest {
   @Before
   fun setUp() {
     quranInfo = QuranInfo(MadaniDataSource())
-    normalizer = LegacyBookmarkMigrationNormalizer(context, quranInfo)
+    normalizer = LegacyBookmarkMigrationNormalizer(quranInfo)
   }
 
   @Test
+  @Config(qualifiers = "ar")
   fun `page bookmarks become ayah bookmarks in old page bookmarks collection`() {
     val page = 50
     val pageBounds = quranInfo.getPageBounds(page)
-    val oldPageBookmarksName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksName = "Old Page Bookmarks"
+    assertThat(context.getString(R.string.old_page_bookmarks)).isNotEqualTo(oldPageBookmarksName)
 
     val data = normalizer.normalize(
       LegacyBookmarksSnapshot(
@@ -67,19 +69,10 @@ class LegacyBookmarkMigrationNormalizerTest {
     assertThat(data.collections.map { collection -> collection.name })
       .containsExactly("Reading", oldPageBookmarksName)
       .inOrder()
-    val collectionsByName = data.collections.associateBy { collection -> collection.name }
-    val collectionImportIds = data.collections.map { collection -> collection.importId }
-    assertThat(collectionImportIds).doesNotContain(legacyTagId(10L))
-    assertThat(collectionImportIds).doesNotContain(legacyTagId(11L))
-    assertThat(collectionImportIds).doesNotContain(legacyTagId(12L))
-    assertThat(collectionImportIds).doesNotContain("tag-10")
-    assertThat(collectionImportIds).doesNotContain("tag-11")
-    assertThat(collectionImportIds).doesNotContain("tag-12")
-    assertThat(data.collectionBookmarks.map { link -> link.collectionImportId })
-      .containsExactly(
-        collectionsByName.getValue("Reading").importId,
-        collectionsByName.getValue(oldPageBookmarksName).importId
-      )
+    assertThat(data.collectionBookmarks.map { link -> link.collectionName })
+      .containsExactly("Reading", oldPageBookmarksName)
+    assertThat(data.collectionBookmarks.map { link -> link.sura to link.ayah })
+      .containsExactly(pageBounds[0] to pageBounds[1], pageBounds[0] to pageBounds[1])
   }
 
   @Test
@@ -103,7 +96,7 @@ class LegacyBookmarkMigrationNormalizerTest {
     assertThat(data.bookmarks.single().ayah).isEqualTo(pageBounds[1])
     assertThat(data.bookmarks.single().timestampMillis).isEqualTo(1_000_000L)
     assertThat(data.collections.map { collection -> collection.name })
-      .containsExactly(context.getString(R.string.old_page_bookmarks))
+      .containsExactly("Old Page Bookmarks")
     assertThat(data.collectionBookmarks.single().timestampMillis).isEqualTo(2_000_000L)
   }
 

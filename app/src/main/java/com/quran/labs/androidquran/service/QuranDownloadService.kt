@@ -12,6 +12,7 @@ import android.os.Looper
 import android.os.Message
 import android.os.Parcelable
 import android.os.StatFs
+import androidx.core.content.IntentCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
@@ -53,6 +54,7 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
   // written from ui thread and read by download thread
   @Volatile
   private var isDownloadCanceled = false
+  private var fallbackByDefault = false
   private lateinit var broadcastManager: LocalBroadcastManager
   private lateinit var quranSettings: QuranSettings
   private lateinit var wifiLock: WifiLock
@@ -195,11 +197,18 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
     return START_NOT_STICKY
   }
 
+  override fun onTimeout(startId: Int, fgsType: Int) {
+    isDownloadCanceled = true
+    serviceHandler.removeCallbacksAndMessages(null)
+    // stop the service without waiting for the download thread
+    stopSelf()
+  }
+
   override fun onDestroy() {
-    if (wifiLock.isHeld) {
-      wifiLock.release()
-    }
+    isDownloadCanceled = true
+    // download thread releases the Wi-Fi lock
     serviceLooper.quit()
+    super.onDestroy()
   }
 
   override fun onBind(intent: Intent): IBinder? {
@@ -213,7 +222,9 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
       val type = intent.getIntExtra(EXTRA_DOWNLOAD_TYPE, 0)
       val notificationTitle =
         intent.getStringExtra(EXTRA_NOTIFICATION_NAME)
-      val metadata = intent.getParcelableExtra<Parcelable>(EXTRA_METADATA)
+
+      val metadata =
+        IntentCompat.getParcelableExtra<Parcelable?>(intent, EXTRA_METADATA, Parcelable::class.java)
 
       val details =
         NotificationDetails(notificationTitle, key, type, metadata)
@@ -238,8 +249,14 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
       notifier.resetNotifications()
 
       // get the start/end ayah info if it's a ranged download
-      val startAyah = intent.getSerializableExtra(EXTRA_START_VERSE) as SuraAyah?
-      val endAyah = intent.getSerializableExtra(EXTRA_END_VERSE) as SuraAyah?
+      val startAyah = IntentCompat.getSerializableExtra<SuraAyah?>(
+        intent,
+        EXTRA_START_VERSE,
+        SuraAyah::class.java
+      )
+
+      val endAyah =
+        IntentCompat.getSerializableExtra<SuraAyah?>(intent, EXTRA_END_VERSE, SuraAyah::class.java)
       val isGapless = intent.getBooleanExtra(EXTRA_IS_GAPLESS, false)
 
       var outputFile = intent.getStringExtra(EXTRA_OUTPUT_FILE_NAME)
@@ -360,11 +377,16 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
     details.setFileStatus(1, strategy.fileCount())
     lastSentIntent = notifier.notifyProgress(details, 0, 0)
 
-    if (strategy.downloadFiles()) {
-      lastSentIntent = notifier.notifyDownloadSuccessful(details)
-      return true
+    return if (strategy.downloadFiles()) {
+      if (isDownloadCanceled) {
+        notifyError(QuranDownloadNotifier.ERROR_CANCELLED, true, "", details)
+        false
+      } else {
+        lastSentIntent = notifier.notifyDownloadSuccessful(details)
+        true
+      }
     } else {
-      return false
+      false
     }
   }
 
@@ -385,25 +407,32 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
       // if we retry and it's not the first time, try the fallback url
       if (fallbackByDefault || i > 0) {
         url = urlUtil.fallbackUrl(url)
+      }
 
-        // want to wait before retrying again
+      if (i > 0) {
         try {
           Thread.sleep(WAIT_TIME.toLong())
-        } catch (exception: InterruptedException) {
+        } catch (_: InterruptedException) {
           // no op
         }
         notifier.resetNotifications()
       }
 
+      if (isDownloadCanceled) {
+        break
+      }
       wifiLock.acquire()
-      res = startDownload(url, destination, outputFile, details)
-      if (wifiLock.isHeld) {
+      try {
+        res = startDownload(url, destination, outputFile, details)
+      } finally {
         wifiLock.release()
       }
 
+      if (isDownloadCanceled) {
+        break
+      }
       if (res == DOWNLOAD_SUCCESS) {
-        // if it succeeds after the first time, always use the fallback url
-        fallbackByDefault = (i > 0)
+        if (url != urlString) fallbackByDefault = true
         return true
       } else if (res == QuranDownloadNotifier.ERROR_DISK_SPACE ||
         res == QuranDownloadNotifier.ERROR_PERMISSIONS
@@ -445,6 +474,7 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
     val result = downloadUrl(url, path, filename, notificationInfo)
     if (result == DOWNLOAD_SUCCESS) {
       if (filename.endsWith("zip")) {
+        // finish unzipping even if canceled
         val actualFile = File(path, filename)
         if (!ZipUtils.unzipFile(
             actualFile, File(path), notificationInfo,
@@ -489,10 +519,10 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
       call = okHttpClient.newCall(request)
       val response = call.execute()
       if (response.isSuccessful) {
-        Timber.d("successful response: " + response.code + " - " + downloadedAmount)
+        Timber.d("successful response: %d - %d", response.code, downloadedAmount)
         val sink = partialFile.appendingSink().buffer()
         val body = response.body
-        source = body!!.source()
+        source = body.source()
         val size = body.contentLength() + downloadedAmount
 
         if (!isSpaceAvailable(size + (if (isZip) downloadedAmount + size else 0))) {
@@ -641,8 +671,6 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
 
     // download method return values
     private const val DOWNLOAD_SUCCESS = 0
-
-    private var fallbackByDefault = false
 
     private fun getFilenameFromUrl(url: String): String {
       val slashIndex = url.lastIndexOf("/")

@@ -6,6 +6,7 @@ import com.quran.data.dao.HighlightsDao
 import com.quran.data.di.AppCoroutineScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.highlight.Highlight
 import com.quran.labs.androidquran.dao.bookmark.BookmarkListMode
 import com.quran.labs.androidquran.dao.bookmark.BookmarkListRowData
@@ -19,6 +20,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -43,9 +45,10 @@ class BookmarkListPresenter @Inject constructor(
     }
   }
 
-  fun collectionName(collectionId: String): Flow<String?> {
+  fun collection(collectionId: String): Flow<Tag?> {
     return bookmarksDao.tagsFlow()
-      .map { tags -> tags.firstOrNull { tag -> tag.id == collectionId }?.name }
+      .map { tags -> tags.firstOrNull { tag -> tag.id == collectionId } }
+      .distinctUntilChanged()
   }
 
   private fun collectionRows(

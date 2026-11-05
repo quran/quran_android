@@ -6,6 +6,7 @@ import com.quran.data.dao.Settings
 import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.source.PageProvider
+import com.quran.shared.persistence.model.Mushaf
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Named
 import dev.zacsweers.metro.SingleIn
@@ -13,7 +14,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
-import kotlin.math.abs
 
 @SingleIn(AppScope::class)
 class ReadingBookmarkPageMapper @Inject constructor(
@@ -30,36 +30,21 @@ class ReadingBookmarkPageMapper @Inject constructor(
       .distinctUntilChanged()
   }
 
-  suspend fun currentPageToStoragePage(page: Int): Int {
-    return pageToStoragePage(page, settings.pageType())
+  /**
+   * The mushaf mobile-sync stores and reads [pageType]'s page reading bookmarks in: that of the
+   * page type its pages are read in.
+   */
+  fun mushafFor(pageType: String): Mushaf {
+    return mushafOf(resolveCurrentPageType(pageType))
   }
 
-  suspend fun storagePageToCurrentPage(page: Int): Int {
-    return storagePageToPage(page, settings.pageType())
-  }
-
-  fun pageToStoragePage(page: Int, pageType: String): Int {
-    return mapPage(
-      page = page,
-      sourceInfo = quranInfoFor(resolveCurrentPageType(pageType)),
-      targetInfo = storageQuranInfo()
-    )
-  }
-
-  fun storagePageToPage(page: Int, pageType: String): Int {
-    return mapPage(
-      page = page,
-      sourceInfo = storageQuranInfo(),
-      targetInfo = quranInfoFor(resolveCurrentPageType(pageType))
-    )
-  }
-
-  fun sourcePageToStoragePage(page: Int, sourcePageType: String?): Int {
-    return mapPage(
-      page = page,
-      sourceInfo = quranInfoFor(resolveSourcePageType(sourcePageType)),
-      targetInfo = storageQuranInfo()
-    )
+  /**
+   * The mushaf a backup's page of [sourcePageType] is imported in, page unchanged: that of the page
+   * type its recent pages are read in ([sourcePageToSuraAyah]), so both agree. A page type this
+   * build lacks, or none, is read in the reference page type.
+   */
+  fun sourceMushafFor(sourcePageType: String?): Mushaf {
+    return mushafOf(resolveSourcePageType(sourcePageType))
   }
 
   fun sourcePageToSuraAyah(page: Int, sourcePageType: String?): SuraAyah {
@@ -72,7 +57,7 @@ class ReadingBookmarkPageMapper @Inject constructor(
   }
 
   fun isValidSuraAyah(sura: Int, ayah: Int): Boolean {
-    val quranInfo = storageQuranInfo()
+    val quranInfo = quranInfoFor(resolveReferencePageType())
     val ayahCount = quranInfo.getNumberOfAyahs(sura)
     if (ayah !in 1..ayahCount) return false
     val page = quranInfo.getPageFromSuraAyah(sura, ayah)
@@ -83,45 +68,13 @@ class ReadingBookmarkPageMapper @Inject constructor(
     return resolveCurrentPageType(settings.pageType())
   }
 
-  private fun mapPage(
-    page: Int,
-    sourceInfo: QuranInfo,
-    targetInfo: QuranInfo
-  ): Int {
-    val sourcePage = sourceInfo.clampPage(page)
-    val bounds = sourceInfo.getPageBounds(sourcePage)
-    val preferredPage = pageForSuraAyah(representativeAyahOnPage(sourcePage, sourceInfo), targetInfo)
-    val firstPage = pageForSuraAyah(SuraAyah(bounds[0], bounds[1]), targetInfo)
-    val lastPage = pageForSuraAyah(SuraAyah(bounds[2], bounds[3]), targetInfo)
-    val candidates = (minOf(firstPage, lastPage, preferredPage)..maxOf(firstPage, lastPage, preferredPage))
-      .filter { candidate -> targetInfo.isValidPage(candidate) }
-    return candidates
-      .filter { candidate ->
-        pageForSuraAyah(representativeAyahOnPage(candidate, targetInfo), sourceInfo) == sourcePage
-      }
-      .ifEmpty { candidates }
-      .minByOrNull { candidate -> abs(candidate - preferredPage) }
-      ?: preferredPage
-  }
-
-  private fun pageForSuraAyah(suraAyah: SuraAyah, quranInfo: QuranInfo): Int {
-    return quranInfo.clampPage(quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah))
+  private fun mushafOf(pageType: String): Mushaf {
+    return pageProviders.requireProvider(pageType).mushafType().toMushaf()
   }
 
   private fun firstAyahOnPage(page: Int, quranInfo: QuranInfo): SuraAyah {
     val bounds = quranInfo.getPageBounds(quranInfo.clampPage(page))
     return SuraAyah(bounds[0], bounds[1])
-  }
-
-  private fun representativeAyahOnPage(page: Int, quranInfo: QuranInfo): SuraAyah {
-    val bounds = quranInfo.getPageBounds(quranInfo.clampPage(page))
-    val firstAyahId = quranInfo.getAyahId(bounds[0], bounds[1])
-    val lastAyahId = quranInfo.getAyahId(bounds[2], bounds[3])
-    return quranInfo.getSuraAyahFromAyahId((firstAyahId + lastAyahId) / 2)
-  }
-
-  private fun storageQuranInfo(): QuranInfo {
-    return quranInfoFor(resolveStoragePageType())
   }
 
   private fun quranInfoFor(pageType: String): QuranInfo {
@@ -136,22 +89,20 @@ class ReadingBookmarkPageMapper @Inject constructor(
     return when {
       pageProviders.containsKey(pageType) -> pageType
       pageProviders.containsKey(fallbackPageType) -> fallbackPageType
-      else -> resolveStoragePageType()
+      else -> resolveReferencePageType()
     }
   }
 
   private fun resolveSourcePageType(pageType: String?): String {
     return when {
       !pageType.isNullOrBlank() && pageProviders.containsKey(pageType) -> pageType
-      pageProviders.containsKey(CANONICAL_PAGE_TYPE) -> CANONICAL_PAGE_TYPE
-      pageProviders.containsKey(fallbackPageType) -> fallbackPageType
-      else -> pageProviders.firstPageType()
+      else -> resolveReferencePageType()
     }
   }
 
-  private fun resolveStoragePageType(): String {
+  private fun resolveReferencePageType(): String {
     return when {
-      pageProviders.containsKey(CANONICAL_PAGE_TYPE) -> CANONICAL_PAGE_TYPE
+      pageProviders.containsKey(REFERENCE_PAGE_TYPE) -> REFERENCE_PAGE_TYPE
       pageProviders.containsKey(fallbackPageType) -> fallbackPageType
       else -> pageProviders.firstPageType()
     }
@@ -173,6 +124,10 @@ class ReadingBookmarkPageMapper @Inject constructor(
   }
 
   companion object {
-    private const val CANONICAL_PAGE_TYPE = "madani"
+    /**
+     * The page type a backup with an unknown page type is read in, and the one ayahs are validated
+     * against.
+     */
+    private const val REFERENCE_PAGE_TYPE = "madani"
   }
 }

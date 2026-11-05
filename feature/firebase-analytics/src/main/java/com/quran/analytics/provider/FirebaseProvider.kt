@@ -17,7 +17,8 @@ class FirebaseProvider @Inject constructor(): AnalyticsProvider {
       when (value) {
         is Float -> bundle.putFloat(key, value)
         is Int -> bundle.putInt(key, value)
-        is Long -> bundle.getLong(key, value)
+        is Long -> bundle.putLong(key, value)
+        is Boolean -> bundle.putString(key, value.toString())
         is String -> bundle.putString(key, value)
       }
     }

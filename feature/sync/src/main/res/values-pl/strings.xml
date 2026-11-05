@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">Zalogowano</string>
   <string name="quran_sync_loading">Logowanie</string>
   <string name="quran_sync_login">Zaloguj się</string>
-  <string name="quran_sync_logout">Wyloguj się</string>
-  <string name="quran_sync_name">Imię</string>
-  <string name="quran_sync_email">E-mail</string>
-  <string name="quran_sync_account_id">ID konta</string>
   <string name="quran_sync_action_error">Nie można teraz zaktualizować synchronizacji.</string>
   <string name="quran_sync_bookmarks_cta_title">Synchronizuj zakładki wszędzie</string>
   <string name="quran_sync_bookmarks_cta_subtitle">Uzyskaj do nich dostęp z dowolnego urządzenia, o dowolnej porze</string>

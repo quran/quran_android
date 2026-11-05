@@ -10,7 +10,8 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImportCollection
 import com.quran.mobile.bookmark.importdata.MobileSyncImportCollectionBookmark
 import com.quran.mobile.bookmark.importdata.MobileSyncImportData
 import com.quran.mobile.bookmark.importdata.toPersistenceImportData
-import com.quran.shared.persistence.QuranDatabase
+import com.quran.shared.persistence.MobileSyncDatabase
+import com.quran.shared.persistence.MobileSyncSchema
 import com.quran.shared.persistence.repository.collection.repository.CollectionsRepositoryImpl
 import com.quran.shared.persistence.repository.collectionbookmark.repository.CollectionBookmarksRepositoryImpl
 import com.quran.shared.persistence.repository.importdata.PersistenceImportRepositoryImpl
@@ -21,6 +22,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.util.Properties
 
 @Config(application = Application::class, sdk = [33], qualifiers = "en")
 @RunWith(RobolectricTestRunner::class)
@@ -33,12 +35,15 @@ class ImportedCollectionNamesTest {
 
   @Before
   fun setUp() {
-    driver = JdbcSqliteDriver(JdbcSqliteDriver.IN_MEMORY)
-    QuranDatabase.Schema.create(driver)
-    val database = QuranDatabase(driver)
-    importer = PersistenceImportRepositoryImpl(database)
-    collections = CollectionsRepositoryImpl(database)
-    collectionBookmarks = CollectionBookmarksRepositoryImpl(database)
+    driver = JdbcSqliteDriver(
+      JdbcSqliteDriver.IN_MEMORY,
+      Properties().apply { put("foreign_keys", "true") },
+      MobileSyncSchema
+    )
+    val database = MobileSyncDatabase(driver)
+    importer = PersistenceImportRepositoryImpl(database.quran, database.synced)
+    collections = CollectionsRepositoryImpl(database.synced)
+    collectionBookmarks = CollectionBookmarksRepositoryImpl(database.synced)
   }
 
   @After
@@ -47,15 +52,15 @@ class ImportedCollectionNamesTest {
   }
 
   @Test
-  fun `reserved favorites tag retains its original membership when its import id collides`() = runTest {
+  fun `reserved favorites tag retains its original membership when its name matches the default`() = runTest {
     importData(
       MobileSyncImportData(
         bookmarks = (1..15).map { ayah ->
-          MobileSyncImportBookmark("bookmark-$ayah", 2, ayah, 1_234_000L)
+          MobileSyncImportBookmark(2, ayah, 1_234_000L)
         },
-        collections = listOf(MobileSyncImportCollection("import-favorites", "Favorites", 1_234_000L)),
+        collections = listOf(MobileSyncImportCollection("Favorites", 1_234_000L)),
         collectionBookmarks = (1..5).map { ayah ->
-          MobileSyncImportCollectionBookmark("import-favorites", "bookmark-$ayah", 1_234_000L)
+          MobileSyncImportCollectionBookmark("Favorites", 2, ayah, 1_234_000L)
         }
       )
     )
@@ -80,14 +85,14 @@ class ImportedCollectionNamesTest {
         collection.copy(timestampMillis = (index + 1) * 1_234_000L)
       },
       collectionBookmarks = original.collectionBookmarks +
-        MobileSyncImportCollectionBookmark("tag-1", "bookmark-0", 4_567_000L)
+        MobileSyncImportCollectionBookmark("Favorites (Imported)", 2, 1, 4_567_000L)
     )
 
     val converted = data.toPersistenceImportData(context)
     val mergedCollection = converted.collections.single { it.name == "Favorites (Imported)" }
     assertThat(mergedCollection.lastUpdated.toEpochMilliseconds()).isEqualTo(2_468_000L)
     val sharedMembership = converted.collectionBookmarks.single {
-      it.collectionImportId == mergedCollection.importId && it.sura == 2 && it.ayah == 1
+      it.collectionName == mergedCollection.name && it.sura == 2 && it.ayah == 1
     }
     assertThat(sharedMembership.lastUpdated.toEpochMilliseconds()).isEqualTo(4_567_000L)
 
@@ -106,21 +111,28 @@ class ImportedCollectionNamesTest {
 
   @Test
   fun `reserved names preserve spelling and import as user collections`() = runTest {
-    val names = listOf(
-      " fAvOrItEs ",
+    val favoritesNames = listOf(" fAvOrItEs ")
+    // the server reserves every name starting with "system:", not only the highlight collections
+    val systemNames = listOf(
       "system:highlights:blue",
-      "system:highlights:red",
+      "system:highlights:pink",
+      " SyStEm:HiGhLiGhTs:PiNk ",
       "system:highlights:green",
       "system:highlights:yellow",
-      "system:highlights:purple"
+      "system:highlights:purple",
+      "System: Ramadan"
     )
+    val names = favoritesNames + systemNames
 
     importData(dataWithTaggedBookmarks(names))
 
+    // mobile-sync trims collection names like the server; case is preserved.
+    val importedNames = favoritesNames.map { "$it (Imported)".trim() } +
+      systemNames.map { "Imported $it".trim() }
     val tags = collections.getAllCollections().filterNot { it.isSystem }
-    assertThat(tags.map { it.name }).containsExactlyElementsIn(names.map { "$it (Imported)" })
-    names.forEachIndexed { index, name ->
-      val tag = tags.single { it.name == "$name (Imported)" }
+    assertThat(tags.map { it.name }).containsExactlyElementsIn(importedNames)
+    importedNames.forEachIndexed { index, importedName ->
+      val tag = tags.single { it.name == importedName }
       assertThat(collectionBookmarks.getBookmarksForCollection(tag.id).map { it.ayah })
         .containsExactly(index + 1)
     }
@@ -133,13 +145,13 @@ class ImportedCollectionNamesTest {
   private fun dataWithTaggedBookmarks(names: List<String>): MobileSyncImportData {
     return MobileSyncImportData(
       bookmarks = names.mapIndexed { index, _ ->
-        MobileSyncImportBookmark("bookmark-$index", 2, index + 1, 1_234_000L)
+        MobileSyncImportBookmark(2, index + 1, 1_234_000L)
       },
-      collections = names.mapIndexed { index, name ->
-        MobileSyncImportCollection("tag-$index", name, 1_234_000L)
+      collections = names.map { name ->
+        MobileSyncImportCollection(name, 1_234_000L)
       },
-      collectionBookmarks = names.mapIndexed { index, _ ->
-        MobileSyncImportCollectionBookmark("tag-$index", "bookmark-$index", 1_234_000L)
+      collectionBookmarks = names.mapIndexed { index, name ->
+        MobileSyncImportCollectionBookmark(name, 2, index + 1, 1_234_000L)
       }
     )
   }
