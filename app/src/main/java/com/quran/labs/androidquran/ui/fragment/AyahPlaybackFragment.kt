@@ -94,7 +94,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
       values[i - 1] = numberFormat.format(i.toLong())
     }
     values[MAX_REPEATS] = getString(UiCoreR.string.infinity)
-    val isArabicNames = locale.language == "ar"
+    val isArabicNames = locale.language == "ar" && !QuranUtils.isUsingWesternDigits(locale)
     if (isArabicNames) {
       listOf(repeatVersePicker, repeatRangePicker, playbackSpeedPicker).forEach {
         it.formatter = NumberPicker.Formatter { value: Int -> arFormat(value) }
