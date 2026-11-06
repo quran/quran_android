@@ -347,4 +347,6 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Qurʼon yuklamalari</string>
   <string name="notification_channel_audio">Qurʼon qiroati</string>
+  <string name="reading_history_back">Orqaga</string>
+  <string name="reading_history_forward">Oldinga</string>
 </resources>

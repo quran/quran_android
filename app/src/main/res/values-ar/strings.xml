@@ -323,4 +323,6 @@
     القادمة، هل ترغب في نقل البيانات على أية حال؟
   </string>
   <string name="comma">"،"</string>
+  <string name="reading_history_back">رجوع</string>
+  <string name="reading_history_forward">تقدم</string>
 </resources>
