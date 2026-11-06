@@ -46,11 +46,17 @@ class BookmarksWidgetListProvider(private val context: Context) : RemoteViewsFac
 
   private fun populateListItem() {
     val appContext = context.applicationContext
-    val bookmarksList = runBlocking {
+    val (bookmarksList, tags) = runBlocking {
       legacyBookmarksMigrator.migrateIfNeeded()
-      bookmarksDao.bookmarks(BookmarkSortOrder.SORT_LOCATION)
+      bookmarksDao.bookmarks(BookmarkSortOrder.SORT_LOCATION) to bookmarksDao.tags()
     }
-    quranRowList = bookmarksList.map { quranRowFactory.fromBookmark(appContext, it) }
+    val tagsById = tags.associateBy { it.id }
+    quranRowList = bookmarksList.map { bookmark ->
+      val row = quranRowFactory.fromBookmark(appContext, bookmark)
+      val tagNames = BookmarksWidgetTagHelper.tagNames(bookmark, tagsById)
+      row.metadata = BookmarksWidgetTagHelper.metadataWithTags(row.metadata, tagNames)
+      row
+    }
   }
 
   override fun onCreate() = Unit
