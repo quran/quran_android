@@ -186,6 +186,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   ReadingBookmarkPresenter.Screen {
   private var lastPopupTime: Long = 0
   private var isActionBarHidden = true
+  private var lastSystemBarsVisible: Boolean? = null
   private var shouldReconnect = false
   private var showingTranslation = false
   private var needsPermissionToDownloadOver3g = true
@@ -788,6 +789,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     } else {
       setUiVisibilityKitKat(isVisible)
     }
+    animateToolBar(isVisible)
   }
 
   private fun setUiVisibilityR(isVisible: Boolean) {
@@ -804,10 +806,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       windowInsetsController.systemBarsBehavior =
         WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode) {
-      animateToolBar(isVisible)
-    }
   }
 
   private fun setUiVisibilityKitKat(isVisible: Boolean) {
@@ -821,10 +819,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
           or View.SYSTEM_UI_FLAG_IMMERSIVE)
     }
     viewPager.systemUiVisibility = flags
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode) {
-      animateToolBar(isVisible)
-    }
   }
 
   private fun setUiVisibilityListener() {
@@ -839,13 +833,19 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         // visibility (instead of requiring both to agree).
         val isVisible = isStatusBarVisible || isNavigationBarVisible
 
-        animateToolBar(isVisible)
+        if (isVisible != lastSystemBarsVisible) {
+          lastSystemBarsVisible = isVisible
+          animateToolBar(isVisible)
+        }
         insets
       }
     } else {
       viewPager.setOnSystemUiVisibilityChangeListener { flags: Int ->
         val visible = (flags and View.SYSTEM_UI_FLAG_FULLSCREEN) == 0
-        animateToolBar(visible)
+        if (visible != lastSystemBarsVisible) {
+          lastSystemBarsVisible = visible
+          animateToolBar(visible)
+        }
       }
     }
   }
