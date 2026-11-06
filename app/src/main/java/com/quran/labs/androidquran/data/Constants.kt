@@ -81,6 +81,7 @@ object Constants {
   const val PREF_LOGS = "sendLogsKey"
   const val PREF_DID_PRESENT_PERMISSIONS_DIALOG = "didPresentStoragePermissionDialog"
   const val PREF_WAS_SHOWING_TRANSLATION = "wasShowingTranslation"
+  const val PREF_RESUME_READING_ON_LAUNCH = "resumeReadingOnLaunch"
   const val PREF_ADVANCED_QURAN_SETTINGS = "quranAdvancedSettings"
   const val PREF_READING_CATEGORY = "readingCategoryKey"
   const val PREF_CHECKED_PARTIAL_IMAGES = "didCheckPartialImages"

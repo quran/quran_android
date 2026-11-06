@@ -320,4 +320,8 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Pobrania Koranu</string>
   <string name="notification_channel_audio">Recytacja Koranu</string>
+
+  <string name="fatiha_prompt_read">Przeczytaj Al-Fatihę</string>
+  <string name="fatiha_prompt_return">Wróć do sury „%1$s”</string>
+  <string name="fatiha_prompt_dismiss">Zamknij</string>
 </resources>

@@ -323,4 +323,8 @@
     القادمة، هل ترغب في نقل البيانات على أية حال؟
   </string>
   <string name="comma">"،"</string>
+
+  <string name="fatiha_prompt_read">اقرأ سورة الفاتحة</string>
+  <string name="fatiha_prompt_return">ارجع إلى سورة «%1$s»</string>
+  <string name="fatiha_prompt_dismiss">إغلاق</string>
 </resources>

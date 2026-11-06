@@ -279,4 +279,8 @@
   <string name="prefs_split_page_and_translation_summary">在带翻译的双页模式下，显示古兰经页面和翻译。</string>
   <string name="notification_channel_download">古兰经下载</string>
   <string name="notification_channel_audio">古兰经诵读</string>
+
+  <string name="fatiha_prompt_read">阅读法蒂哈章</string>
+  <string name="fatiha_prompt_return">返回章节「%1$s」</string>
+  <string name="fatiha_prompt_dismiss">关闭</string>
 </resources>

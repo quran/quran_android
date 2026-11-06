@@ -306,4 +306,8 @@
   <string name="prefs_split_page_and_translation_summary">Kettős oldalas módban a fordításokkal, a Korán oldal és a fordítás jelenik meg.</string>
   <string name="notification_channel_download">Korán letöltések</string>
   <string name="notification_channel_audio">Korán szavalás</string>
+
+  <string name="fatiha_prompt_read">Al-Fatiha olvasása</string>
+  <string name="fatiha_prompt_return">Vissza a „%1$s” szúrához</string>
+  <string name="fatiha_prompt_dismiss">Bezárás</string>
 </resources>
