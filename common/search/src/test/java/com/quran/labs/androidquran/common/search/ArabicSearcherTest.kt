@@ -151,6 +151,19 @@ class ArabicSearcherTest {
   }
 
   @Test
+  fun `processSearchText converts ya to a LIKE wildcard underscore`() {
+    // Arrange: ي (\u064A) is in arabicRegexChars, so - like \u0649 - it should
+    // become '_' in the LIKE pre-filter, otherwise verses spelled with
+    // \u0649 are filtered out before the regex stage ever sees them.
+    // موسي = \u0645 \u0648 \u0633 \u064A, and \u0648 is also a wildcard char.
+    val query = "\u0645\u0648\u0633\u064A"
+    // Act
+    val result = realArabicSearcher.processSearchText(query, hasFTS = false)
+    // Assert
+    assertThat(result).isEqualTo("%\u0645_\u0633_%")
+  }
+
+  @Test
   fun `processSearchText on empty string produces double percent for LIKE`() {
     // Arrange
     // Act

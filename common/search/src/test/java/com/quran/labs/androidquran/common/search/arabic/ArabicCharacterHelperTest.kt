@@ -107,6 +107,42 @@ class ArabicCharacterHelperTest {
   }
 
   @Test
+  fun `ya generates character class including alef maqsura`() {
+    // Arrange: ي (\u064A) should map to ي\u0649 - the reverse of the
+    // alef maqsura entry, since most keyboards type ي while the quranic
+    // text often spells the same words with \u0649
+    val query = "\u064A"
+    // Act
+    val regex = ArabicCharacterHelper.generateRegex(query)
+    // Assert
+    assertThat(regex).contains("\u064A") // ي
+    assertThat(regex).contains("\u0649") // \u0649
+  }
+
+  @Test
+  fun `generated regex for ya matches alef maqsura`() {
+    // Arrange: querying ي should also match \u0649
+    val query = "\u064A"
+    // Act
+    val regex = ArabicCharacterHelper.generateRegex(query)
+    val pattern = Regex(regex)
+    // Assert
+    assertThat(pattern.containsMatchIn("\u0649")).isTrue()
+  }
+
+  @Test
+  fun `word typed with ya matches alef maqsura spelling`() {
+    // Arrange: موسي typed with ي (\u064A) should match موسى spelled
+    // with \u0649 in the quranic text, and still match itself
+    val query = "\u0645\u0648\u0633\u064A"
+    // Act
+    val pattern = Regex(ArabicCharacterHelper.generateRegex(query))
+    // Assert
+    assertThat(pattern.containsMatchIn("\u0645\u0648\u0633\u0649")).isTrue()
+    assertThat(pattern.containsMatchIn("\u0645\u0648\u0633\u064A")).isTrue()
+  }
+
+  @Test
   fun `ya with hamza generates class including alef maqsura and ya`() {
     // Arrange: ئ (\u0626) maps to ئىي
     val query = "\u0626"

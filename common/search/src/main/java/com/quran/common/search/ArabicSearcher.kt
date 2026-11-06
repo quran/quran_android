@@ -93,6 +93,6 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
   }
 
   companion object {
-    private const val arabicRegexChars =  "\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649\u0626"
+    private const val arabicRegexChars =  "\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649\u0626\u064A"
   }
 }
