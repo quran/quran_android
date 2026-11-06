@@ -132,6 +132,7 @@
         little we can do to help with this.
     </string>
   <string name="search_hint">Search the Quran</string>
+  <string name="search_translations_hint">Search translations</string>
   <string name="quranSearchType">Verses of the Quran</string>
   <string name="search_full_results">Full Results</string>
   <string name="search_entire_mushaf">Search the entire mushaf</string>
