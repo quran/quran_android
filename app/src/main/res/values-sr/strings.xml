@@ -331,4 +331,8 @@
   <string name="prefs_category_dual_screen">Željene postavke dvojne stranice</string>
   <string name="prefs_split_page_and_translation_title">Kuran i prevod u dual modu</string>
   <string name="prefs_split_page_and_translation_summary">U režimu dvojne stranice sa prevodima, prikazana je Stranica Kurana i prevod</string>
+
+  <string name="fatiha_prompt_read">Pročitaj El-Fatihu</string>
+  <string name="fatiha_prompt_return">Vrati se na suru „%1$s”</string>
+  <string name="fatiha_prompt_dismiss">Odbaci</string>
 </resources>

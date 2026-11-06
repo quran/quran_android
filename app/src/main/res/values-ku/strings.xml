@@ -283,4 +283,8 @@
   <string name="prefs_split_page_and_translation_summary">لە مۆدی لاپەڕەی دووانەیی لەگەڵ وەرگێڕاندا لاپەڕەی قورئان و وەرگێڕان پیشان دەدرێت</string>
   <string name="notification_channel_download">داگرتنەکانی قورئان</string>
   <string name="notification_channel_audio">قورئان خوێندنەوە</string>
+
+  <string name="fatiha_prompt_read">فاتحە بخوێنەوە</string>
+  <string name="fatiha_prompt_return">بگەڕێوە بۆ سوورەتی «%1$s»</string>
+  <string name="fatiha_prompt_dismiss">داخستن</string>
 </resources>

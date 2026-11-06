@@ -303,4 +303,8 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">ดาวน์โหลดอัลกุรอาน</string>
   <string name="notification_channel_audio">การบรรยายคัมภีร์กุรอาน</string>
+
+  <string name="fatiha_prompt_read">อ่านอัลฟาติฮะฮ์</string>
+  <string name="fatiha_prompt_return">กลับไปยังซูเราะฮฺ «%1$s»</string>
+  <string name="fatiha_prompt_dismiss">ปิด</string>
 </resources>
