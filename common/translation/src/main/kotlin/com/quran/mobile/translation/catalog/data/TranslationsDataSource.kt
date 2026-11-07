@@ -1,9 +1,9 @@
-package com.quran.mobile.translation.data
+package com.quran.mobile.translation.catalog.data
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.quran.data.di.AppScope
-import com.quran.mobile.translation.mapper.LocalTranslationMapper
+import com.quran.mobile.translation.catalog.mapper.LocalTranslationMapper
 import com.quran.mobile.translation.model.LocalTranslation
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
