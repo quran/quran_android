@@ -8,12 +8,12 @@ import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.common.TranslationMetadata
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
-import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.presenter.Presenter
 import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.translation.model.LocalTranslation
+import com.quran.mobile.translation.verse.TranslationModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob

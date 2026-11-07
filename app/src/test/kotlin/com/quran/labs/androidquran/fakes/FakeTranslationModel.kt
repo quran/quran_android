@@ -2,7 +2,7 @@ package com.quran.labs.androidquran.fakes
 
 import com.quran.data.model.QuranText
 import com.quran.data.model.VerseRange
-import com.quran.labs.androidquran.model.translation.TranslationModel
+import com.quran.mobile.translation.verse.TranslationModel
 
 /**
  * Fake implementation of TranslationModel for testing.

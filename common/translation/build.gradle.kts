@@ -18,7 +18,7 @@ sqldelight {
 
 dependencies {
   implementation(project(":common:di"))
-  implementation(project(":common:data"))
+  api(project(":common:data"))
 
   // coroutines
   implementation(libs.kotlinx.coroutines.core)
