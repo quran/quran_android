@@ -331,4 +331,6 @@
   <string name="prefs_category_dual_screen">Preference dvostruke stranice</string>
   <string name="prefs_split_page_and_translation_title">Kur\'an i prijevod u dvostrukom načinu rada</string>
   <string name="prefs_split_page_and_translation_summary">U načinu rada s dvije stranice s prijevodima prikazana je kuranska stranica i prijevod</string>
+  <string name="reading_history_back">Natrag</string>
+  <string name="reading_history_forward">Naprijed</string>
 </resources>
