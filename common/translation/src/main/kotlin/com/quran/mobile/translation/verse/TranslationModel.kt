@@ -1,4 +1,4 @@
-package com.quran.labs.androidquran.model.translation
+package com.quran.mobile.translation.verse
 
 import com.quran.data.model.QuranText
 import com.quran.data.model.VerseRange
