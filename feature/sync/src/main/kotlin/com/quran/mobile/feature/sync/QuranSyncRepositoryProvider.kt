@@ -166,6 +166,10 @@ private class SyncCollectionBookmarksRepository(
     return quranDataService.removeAyahBookmarkFromCollection(collectionId, bookmarkId)
   }
 
+  override suspend fun removeAllAyahBookmarksFromCollection(collectionId: String): Int {
+    return quranDataService.removeAllAyahBookmarksFromCollection(collectionId)
+  }
+
   override fun getBookmarksForCollectionFlow(collectionId: String): Flow<List<CollectionAyahBookmark>> {
     return bookmarkCollectionsState.collectionsWithBookmarks
       .filterNotNull()
@@ -204,6 +208,10 @@ private class SyncCollectionBookmarksRepository(
     timestamp: PlatformDateTime
   ): Boolean {
     return quranDataService.deleteHighlight(sura, ayah)
+  }
+
+  override suspend fun deleteHighlights(color: AyahHighlightColor): Int {
+    return quranDataService.deleteHighlights(color)
   }
 }
 
