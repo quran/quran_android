@@ -1,10 +1,10 @@
-package com.quran.mobile.translation.di
+package com.quran.mobile.translation.catalog.di
 
 import android.content.Context
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.quran.data.di.AppScope
 import com.quran.mobile.di.qualifier.ApplicationContext
-import com.quran.mobile.translation.data.TranslationsDatabase
+import com.quran.mobile.translation.catalog.data.TranslationsDatabase
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
