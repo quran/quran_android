@@ -63,7 +63,7 @@ molecule = "2.2.0"
 
 # recitations
 grpcOkhttpVersion = "1.85.1"
-googleAuthVersion = "1.55.0"
+googleAuthVersion = "1.57.0"
 googleCloudSpeechVersion = "4.97.0"
 
 # testing
