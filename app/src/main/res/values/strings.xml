@@ -36,6 +36,17 @@
   <string name="menu_search">Search</string>
   <string name="menu_get_translations">Get Translations</string>
   <string name="menu_jump">@string/gotoPage</string>
+  <string name="menu_random_ayah">Random ayah</string>
+  <string name="menu_random_ayah_whole">Whole Quran</string>
+  <string name="menu_random_ayah_sura_range">Sura range…</string>
+  <string name="menu_random_ayah_ayah_range">Ayah range…</string>
+  <string name="menu_random_ayah_juz_range">Juz range…</string>
+  <string name="random_ayah_sura_range_title">Random ayah in sura range</string>
+  <string name="random_ayah_ayah_range_title">Random ayah in ayah range</string>
+  <string name="random_ayah_juz_range_title">Random ayah in juz range</string>
+  <string name="random_ayah_from">From</string>
+  <string name="random_ayah_to">To</string>
+  <string name="random_ayah_juz_label">Juz\' (1-30)</string>
   <string name="gotoPage">Go to page</string>
   <string name="sura_and_ayah">Sura and Ayah</string>
   <string name="please_wait">Please wait…</string>
