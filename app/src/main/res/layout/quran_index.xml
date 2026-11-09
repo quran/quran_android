@@ -6,32 +6,56 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-  <LinearLayout
-      android:id="@+id/toolbar_area"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:background="@color/toolbar">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="@style/ToolBarArea"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:theme="@style/ToolbarStyle"
-        app:popupTheme="@style/ThemeOverlay.AppCompat"
-        app:subtitleTextAppearance="@style/ToolbarSubtitleText"
-        app:titleTextAppearance="@style/ToolbarTitleText" />
-
-    <com.quran.labs.androidquran.view.SlidingTabLayout
-        android:id="@+id/indicator"
-        style="@style/ToolBarArea"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-  </LinearLayout>
-
   <com.quran.labs.androidquran.view.QuranViewPager
       android:id="@+id/index_pager"
       android:layout_width="match_parent"
-      android:layout_height="match_parent" />
+      android:layout_height="0dp"
+      android:layout_weight="1" />
+
+  <LinearLayout
+      android:id="@+id/bottom_chrome"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:background="@drawable/bottom_chrome_background"
+      android:elevation="0dp">
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/toolbar"
+        android:elevation="0dp"
+        android:outlineProvider="none"
+        android:stateListAnimator="@null"
+        android:theme="@style/BottomNavTheme"
+        app:elevation="0dp"
+        app:itemIconTint="@color/bottom_nav_item_color"
+        app:itemTextColor="@color/bottom_nav_item_color"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_nav_menu" />
+
+    <LinearLayout
+        android:id="@+id/toolbar_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/toolbar"
+        android:elevation="0dp"
+        android:outlineProvider="none">
+
+      <androidx.appcompat.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="?attr/actionBarSize"
+          android:background="@color/toolbar"
+          android:elevation="0dp"
+          android:outlineProvider="none"
+          android:stateListAnimator="@null"
+          android:theme="@style/BottomNavTheme"
+          app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
+          app:subtitleTextAppearance="@style/ToolbarSubtitleText"
+          app:titleTextAppearance="@style/ToolbarTitleText" />
+    </LinearLayout>
+  </LinearLayout>
 </LinearLayout>
