@@ -63,13 +63,17 @@ public class ZipUtils {
             try ( InputStream is = zip.getInputStream(entry);  FileOutputStream ostream = new FileOutputStream(currentEntryFile)) {
               int size;
               byte[] buf = new byte[BUFFER_SIZE];
-              while (total + BUFFER_SIZE <= MAX_UNZIPPED_SIZE && (size = is.read(buf)) > 0) {
-                ostream.write(buf, 0, size);
+              while ((size = is.read(buf)) > 0) {
                 total += size;
+                // reject (rather than silently truncate) archives that exceed the size limit
+                if (total >= MAX_UNZIPPED_SIZE) {
+                  throw new IllegalStateException("Invalid zip file.");
+                }
+                ostream.write(buf, 0, size);
               }
             }
 
-            if (processedFiles >= MAX_FILES || total >= MAX_UNZIPPED_SIZE) {
+            if (processedFiles >= MAX_FILES) {
               throw new IllegalStateException("Invalid zip file.");
             }
 

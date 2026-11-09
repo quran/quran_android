@@ -5,6 +5,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import java.io.File
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 class ZipUtilsTest {
 
@@ -81,5 +83,34 @@ class ZipUtilsTest {
     }
 
     assertThat(e).isNotNull()
+  }
+
+  @Test
+  fun testEntryExceedingLimitIsRejectedNotTruncated() {
+    // use a limit that is not a multiple of the internal buffer so an oversized
+    // entry would stop mid-buffer rather than landing exactly on the limit
+    val original = ZipUtils.MAX_UNZIPPED_SIZE
+    ZipUtils.MAX_UNZIPPED_SIZE = 1000
+    val zipFile = File.createTempFile("oversized", ".zip", destinationDirectory)
+    try {
+      ZipOutputStream(zipFile.outputStream()).use { zos ->
+        zos.putNextEntry(ZipEntry("big.bin"))
+        zos.write(ByteArray(10_000))
+        zos.closeEntry()
+      }
+
+      var e: RuntimeException? = null
+      try {
+        ZipUtils.unzipFile(zipFile, destinationDirectory, null, listener)
+      } catch (ise: IllegalStateException) {
+        e = ise
+      }
+
+      // the entry (10kb) is larger than the 1kb limit, so it must be rejected
+      // rather than silently extracted in truncated form
+      assertThat(e).isNotNull()
+    } finally {
+      ZipUtils.MAX_UNZIPPED_SIZE = original
+    }
   }
 }
