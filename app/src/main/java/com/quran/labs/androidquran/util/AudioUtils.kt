@@ -119,13 +119,15 @@ class AudioUtils @Inject constructor(
       potentialPage
     }
 
-    var pageLastSura = 114
-    var pageLastAyah = 6
-
     // page < 0 - intentional, because nextPageAyah looks up the ayah on the next page
     if (page > totalPages || page < 0) {
       return null
     }
+
+    // the last sura/ayah on the page is needed by both page and juz' look-ahead
+    val range = quranInfo.getVerseRangeForPage(page)
+    val pageLastSura = range.endingSura
+    val pageLastAyah = range.endingAyah
 
     if (mode == LookAheadAmount.SURA) {
       val sura = startAyah.sura
@@ -150,10 +152,6 @@ class AudioUtils @Inject constructor(
 
         return SuraAyah(endJuz.sura, endJuz.ayah)
       }
-    } else {
-      val range = quranInfo.getVerseRangeForPage(page)
-      pageLastSura = range.endingSura
-      pageLastAyah = range.endingAyah
     }
 
     // page mode (fallback also from errors above)
