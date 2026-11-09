@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.common.mapper
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.pages.data.warsh.WarshDataSource
 import org.junit.Test
@@ -285,5 +286,27 @@ class MadaniToKufiMapperTest {
     return (startAyah..endAyah).map {
       SuraAyah(sura, it)
     }
+  }
+
+  @Test
+  fun testMapRangeSingleAyahHasInclusiveCountOfOne() {
+    // fatiha 3 madani maps to 4 kufi; a single ayah must report versesInRange == 1
+    val mapped = mapper.mapRange(VerseRange(1, 3, 1, 3, 1))
+    assertThat(mapped.startSura).isEqualTo(1)
+    assertThat(mapped.startAyah).isEqualTo(4)
+    assertThat(mapped.endingSura).isEqualTo(1)
+    assertThat(mapped.endingAyah).isEqualTo(4)
+    assertThat(mapped.versesInRange).isEqualTo(1)
+  }
+
+  @Test
+  fun testMapRangeMultiAyahCountIsInclusive() {
+    // fatiha 2-4 madani map to 3-5 kufi, which is 3 ayahs inclusive
+    val mapped = mapper.mapRange(VerseRange(1, 2, 1, 4, 3))
+    assertThat(mapped.startSura).isEqualTo(1)
+    assertThat(mapped.startAyah).isEqualTo(3)
+    assertThat(mapped.endingSura).isEqualTo(1)
+    assertThat(mapped.endingAyah).isEqualTo(5)
+    assertThat(mapped.versesInRange).isEqualTo(3)
   }
 }
