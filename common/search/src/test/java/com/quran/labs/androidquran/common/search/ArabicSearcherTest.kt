@@ -171,13 +171,26 @@ class ArabicSearcherTest {
 
   @Test
   fun `processSearchText converts all recognized arabic chars to underscores`() {
-    // Arrange: all arabicRegexChars = اأءتةهوىئ (\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649\u0626)
-    val allArabicRegexChars = "\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649\u0626"
+    // Arrange: all arabicRegexChars = اآإأءتةهوؤىئ
+    // (\u0627\u0622\u0625\u0623\u0621\u062a\u0629\u0647\u0648\u0624\u0649\u0626)
+    val allArabicRegexChars = "\u0627\u0622\u0625\u0623\u0621\u062a\u0629\u0647\u0648\u0624\u0649\u0626"
     // Act
     val result = realArabicSearcher.processSearchText(allArabicRegexChars, hasFTS = false)
     // Assert: inner content should be all underscores (one per input char), wrapped in %
     val innerContent = result.removeSurrounding("%")
     assertThat(innerContent).isEqualTo("_".repeat(allArabicRegexChars.length))
+  }
+
+  @Test
+  fun `processSearchText replaces hamza alef and waw variants with LIKE wildcards`() {
+    // Arrange: آ (\u0622), إ (\u0625) and ؤ (\u0624) must be treated as wildcard chars in the
+    // LIKE pre-filter, otherwise verses spelled with the base letter are excluded by SQL
+    // before the regex stage runs.
+    val input = "\u0622\u0625\u0624"
+    // Act
+    val result = realArabicSearcher.processSearchText(input, hasFTS = false)
+    // Assert
+    assertThat(result).isEqualTo("%___%")
   }
 
   @Test
