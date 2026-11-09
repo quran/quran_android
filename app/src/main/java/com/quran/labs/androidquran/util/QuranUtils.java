@@ -50,8 +50,8 @@ public class QuranUtils {
       if (current == 32) {
         continue;
       }
-      // non-reshaped arabic
-      if ((current >= 1570) && (current <= 1610)) {
+      // non-reshaped arabic (U+0621 HAMZA through U+064A YEH)
+      if ((current >= 1569) && (current <= 1610)) {
         return true;
       }
       // re-shaped arabic
