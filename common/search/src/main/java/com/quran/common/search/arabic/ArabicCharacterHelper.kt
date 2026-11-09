@@ -2,6 +2,10 @@ package com.quran.common.search.arabic
 
 object ArabicCharacterHelper {
   private const val bannedChars = "[()]"
+  // regex metacharacters (outside a character class) that must be escaped when they
+  // appear in the query, otherwise Pattern.compile throws and the search silently
+  // returns no results
+  private const val regexSpecialChars = "\\.*+?^\$|{}]"
   private val lookupTable = hashMapOf(
       // given: ا
       // match: آأإاﻯ
@@ -51,6 +55,9 @@ object ArabicCharacterHelper {
         regexBuilder.append(result)
         regexBuilder.append("]")
       } else if (it !in bannedChars){
+        if (it in regexSpecialChars) {
+          regexBuilder.append('\\')
+        }
         regexBuilder.append(it)
       }
     }

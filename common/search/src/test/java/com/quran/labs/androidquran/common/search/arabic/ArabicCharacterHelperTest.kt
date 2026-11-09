@@ -185,4 +185,41 @@ class ArabicCharacterHelperTest {
     // Assert
     assertThat(pattern.containsMatchIn("\u0623")).isTrue()
   }
+
+  // region generateRegex – regex metacharacters are escaped, not emitted raw
+
+  @Test
+  fun `regex metacharacters produce a compilable pattern`() {
+    // Arrange: a query containing regex metacharacters used to produce an invalid
+    // pattern, so Pattern.compile threw and the whole search silently returned null
+    val query = "*+?{}^\$|.\\]"
+    // Act
+    val regex = ArabicCharacterHelper.generateRegex(query)
+    // Assert: compiling it must not throw
+    Regex(regex)
+  }
+
+  @Test
+  fun `dangling star does not throw and matches literal star`() {
+    // Arrange: "*" alone is a dangling metacharacter and used to crash Pattern.compile
+    val query = "*"
+    // Act
+    val regex = ArabicCharacterHelper.generateRegex(query)
+    val pattern = Regex(regex)
+    // Assert: it compiles and matches a literal asterisk
+    assertThat(pattern.containsMatchIn("*")).isTrue()
+  }
+
+  @Test
+  fun `metacharacters are escaped alongside arabic lookup chars`() {
+    // Arrange: ا (lookup) followed by "." (metacharacter) and ب (literal)
+    val query = "\u0627.\u0628"
+    // Act
+    val regex = ArabicCharacterHelper.generateRegex(query)
+    val pattern = Regex(regex)
+    // Assert: the dot is treated literally, so it matches أ.ب but not أXب
+    assertThat(pattern.containsMatchIn("\u0623.\u0628")).isTrue()
+    assertThat(pattern.containsMatchIn("\u0623X\u0628")).isFalse()
+  }
 }
+
