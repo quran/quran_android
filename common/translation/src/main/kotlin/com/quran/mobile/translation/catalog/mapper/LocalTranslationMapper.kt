@@ -1,4 +1,4 @@
-package com.quran.mobile.translation.mapper
+package com.quran.mobile.translation.catalog.mapper
 
 import com.quran.mobile.translation.model.LocalTranslation
 

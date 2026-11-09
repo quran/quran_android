@@ -94,12 +94,13 @@ class BookmarksDaoImplCollectionRulesTest {
   }
 
   @Test
-  fun `adding a tag whose name is taken returns the existing tag`() = runTest {
+  fun `adding a tag whose name is taken is refused and keeps the existing tag`() = runTest {
     val reviewId = dao.addTag("Review")
 
-    val addedId = dao.addTag(" review ")
+    val error = errorOf { dao.addTag(" review ") }
 
-    assertThat(addedId).isEqualTo(reviewId)
+    assertThat(error).isInstanceOf(CollectionNameException.Duplicate::class.java)
+    assertThat((error as CollectionNameException.Duplicate).existingName).isEqualTo("Review")
     assertThat(dao.userTags()).containsExactly(Tag(reviewId, "Review"))
   }
 

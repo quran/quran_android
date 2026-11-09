@@ -4,11 +4,11 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.di.QuranPageScope
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
-import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.translation.model.LocalTranslation
+import com.quran.mobile.translation.verse.TranslationModel
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

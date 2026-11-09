@@ -9,7 +9,7 @@ android.namespace = "com.quran.mobile.translation"
 sqldelight {
    databases {
       create("TranslationsDatabase") {
-         packageName.set("com.quran.mobile.translation.data")
+         packageName.set("com.quran.mobile.translation.catalog.data")
          schemaOutputDirectory.set(file("src/main/sqldelight/databases"))
          verifyMigrations.set(true)
       }
@@ -18,7 +18,7 @@ sqldelight {
 
 dependencies {
   implementation(project(":common:di"))
-  implementation(project(":common:data"))
+  api(project(":common:data"))
 
   // coroutines
   implementation(libs.kotlinx.coroutines.core)

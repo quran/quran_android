@@ -107,7 +107,7 @@ internal fun QuranSyncScreen(
           }
         )
         // the account screen replaces this once signed in
-        AuthState.Loading, is AuthState.Success -> LoadingContent()
+        AuthState.Restoring, AuthState.Loading, is AuthState.Success -> LoadingContent()
         is AuthState.Error -> SignedOutContent(
           isLoading = isActionRunning,
           actionError = state.message.ifBlank { actionError },
