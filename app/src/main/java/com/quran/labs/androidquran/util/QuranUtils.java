@@ -100,6 +100,14 @@ public class QuranUtils {
     }
   }
 
+  /**
+   * Whether the given locale explicitly requests Western digits (0123456789) via the
+   * Unicode "nu-latn" extension, ex "ar-EG-u-nu-latn".
+   */
+  public static boolean isUsingWesternDigits(Locale locale) {
+    return "latn".equals(locale.getUnicodeLocaleType("nu"));
+  }
+
   public static String getLocalizedNumber(int number) {
     final Locale locale = getCurrentLocale();
     boolean change = numberFormat == null || !locale.equals(lastLocale);

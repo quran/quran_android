@@ -18,6 +18,14 @@
         android:title="@string/prefs_use_arabic_title"
         app:iconSpaceReserved="false"/>
 
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="@string/use_western_digits"
+        android:persistent="false"
+        android:summary="@string/prefs_use_western_digits_summary"
+        android:title="@string/prefs_use_western_digits_title"
+        app:iconSpaceReserved="false"/>
+
     <androidx.preference.ListPreference
         android:defaultValue="default"
         android:dialogTitle="@string/appearance"

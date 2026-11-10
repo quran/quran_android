@@ -30,6 +30,7 @@ import com.quran.mobile.feature.downloadmanager.AudioManagerActivity
 import com.quran.mobile.feature.pagetheme.PageThemeSheetWrapper
 import com.quran.mobile.feature.pagetheme.pageThemeSummary
 import dev.zacsweers.metro.Inject
+import java.util.Locale
 
 class QuranSettingsFragment : PreferenceFragmentCompat() {
 
@@ -68,6 +69,24 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
         LocaleListCompat.forLanguageTags("ar-EG")
       }
       AppCompatDelegate.setApplicationLocales(localeList)
+      true
+    }
+
+    // handle Western digits preference (only applicable in Arabic mode)
+    val westernDigitsPref: Preference? = findPreference(WESTERN_DIGITS_KEY)
+    westernDigitsPref?.isVisible = isCurrentlyArabic()
+    if (westernDigitsPref is CheckBoxPreference) {
+      westernDigitsPref.isChecked = QuranUtils.isUsingWesternDigits(QuranUtils.getCurrentLocale())
+    }
+
+    westernDigitsPref?.setOnPreferenceClickListener {
+      val current = QuranUtils.getCurrentLocale()
+      val numberingSystem = if (QuranUtils.isUsingWesternDigits(current)) null else "latn"
+      val updated = Locale.Builder()
+        .setLocale(current)
+        .setUnicodeLocaleKeyword("nu", numberingSystem)
+        .build()
+      AppCompatDelegate.setApplicationLocales(LocaleListCompat.create(updated))
       true
     }
 
@@ -189,5 +208,6 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
 
   companion object {
     private const val ARABIC_KEY = "useArabicNames"
+    private const val WESTERN_DIGITS_KEY = "useWesternDigits"
   }
 }
