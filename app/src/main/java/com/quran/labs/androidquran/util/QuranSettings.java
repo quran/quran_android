@@ -493,6 +493,15 @@ public class QuranSettings implements PageThemeSettings {
         haveUpdatedTranslations).apply();
   }
 
+  public boolean bundledTranslationsInstalled() {
+    return perInstallationPrefs.getBoolean(Constants.PREF_BUNDLED_TRANSLATIONS_INSTALLED, false);
+  }
+
+  public void setBundledTranslationsInstalled(boolean installed) {
+    perInstallationPrefs.edit().putBoolean(Constants.PREF_BUNDLED_TRANSLATIONS_INSTALLED, installed)
+        .apply();
+  }
+
   public long getLastUpdatedTranslationDate() {
     return perInstallationPrefs.getLong(Constants.PREF_LAST_UPDATED_TRANSLATIONS,
         System.currentTimeMillis());
