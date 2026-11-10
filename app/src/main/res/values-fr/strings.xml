@@ -308,4 +308,20 @@
   <string name="prefs_split_page_and_translation_title">Coran et traduction en mode dual</string>
   <string name="prefs_split_page_and_translation_summary">En mode double page avec traductions, la page du Coran et la traduction sont affichées.</string>
   <string name="about_quran_enc" translatable="false">Encyclopédie du Noble Coran (QuranEnc.com)</string>
+
+  <string name="audio_widget_name">Lecteur audio du Coran</string>
+  <string name="audio_widget_description">Écoutez les versets de votre choix avec votre récitateur préféré, sans changer votre position de lecture.</string>
+  <string name="audio_widget_configure_title">Paramètres du widget audio</string>
+  <string name="audio_widget_title_label">Titre du widget</string>
+  <string name="audio_widget_title_hint">Facultatif, ex. Adhkar du matin</string>
+  <string name="audio_widget_qari_label">Récitateur</string>
+  <string name="audio_widget_not_configured">Appuyez pour configurer</string>
+  <string name="audio_widget_loading">Chargement : %1$s</string>
+  <string name="audio_widget_playing">Lecture : %1$s</string>
+  <string name="audio_widget_paused">En pause : %1$s</string>
+  <string name="audio_widget_downloading_files">Téléchargement des fichiers requis…</string>
+  <string name="audio_widget_unavailable">Lecture impossible, appuyez pour modifier les paramètres</string>
+  <string name="audio_widget_preview_qari">Votre récitateur, vos versets</string>
+  <string name="audio_widget_preview_status">Lecture : Sourate Al-Fatiha, Aya 1</string>
+  <string name="audio_widget_open_app">Ouvrir le Coran</string>
 </resources>

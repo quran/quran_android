@@ -320,4 +320,20 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Pobrania Koranu</string>
   <string name="notification_channel_audio">Recytacja Koranu</string>
+
+  <string name="audio_widget_name">Odtwarzacz audio Koranu</string>
+  <string name="audio_widget_description">Odtwarzaj wybrane ajaty w wykonaniu ulubionego recytatora, bez zmiany miejsca czytania.</string>
+  <string name="audio_widget_configure_title">Ustawienia widżetu audio</string>
+  <string name="audio_widget_title_label">Tytuł widżetu</string>
+  <string name="audio_widget_title_hint">Opcjonalnie, np. Poranne azkar</string>
+  <string name="audio_widget_qari_label">Recytator</string>
+  <string name="audio_widget_not_configured">Dotknij, aby skonfigurować</string>
+  <string name="audio_widget_loading">Wczytywanie: %1$s</string>
+  <string name="audio_widget_playing">Odtwarzanie: %1$s</string>
+  <string name="audio_widget_paused">Wstrzymano: %1$s</string>
+  <string name="audio_widget_downloading_files">Pobieranie wymaganych plików…</string>
+  <string name="audio_widget_unavailable">Nie można odtworzyć, dotknij, aby zmienić ustawienia</string>
+  <string name="audio_widget_preview_qari">Twój recytator, twoje ajaty</string>
+  <string name="audio_widget_preview_status">Odtwarzanie: Sura Al-Fātihah, Ajat 1</string>
+  <string name="audio_widget_open_app">Otwórz Koran</string>
 </resources>

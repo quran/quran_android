@@ -316,4 +316,20 @@
   <string name="prefs_category_dual_screen">Çift Sayfa Tercihleri</string>
   <string name="prefs_split_page_and_translation_summary">Çevirilerle çift sayfa modunda, Kuran sayfası ve çevirisi gösterilir</string>
   <string name="prefs_split_page_and_translation_title">Kur\'an\'dan bir sayfayı ve çeviriden başka bir sayfa görüntüleme</string>
+
+  <string name="audio_widget_name">Quran audio pleyeri</string>
+  <string name="audio_widget_description">Seçdiyiniz ayələri sevimli qarinizin səsi ilə dinləyin, oxuma mövqeyiniz dəyişmədən.</string>
+  <string name="audio_widget_configure_title">Audio vidcet ayarları</string>
+  <string name="audio_widget_title_label">Vidcet başlığı</string>
+  <string name="audio_widget_title_hint">İstəyə bağlı, məs. Səhər zikrləri</string>
+  <string name="audio_widget_qari_label">Qari</string>
+  <string name="audio_widget_not_configured">Quraşdırmaq üçün toxunun</string>
+  <string name="audio_widget_loading">Yüklənir: %1$s</string>
+  <string name="audio_widget_playing">Oxunur: %1$s</string>
+  <string name="audio_widget_paused">Dayandırılıb: %1$s</string>
+  <string name="audio_widget_downloading_files">Lazımi fayllar endirilir…</string>
+  <string name="audio_widget_unavailable">Oxutmaq mümkün deyil, ayarları dəyişmək üçün toxunun</string>
+  <string name="audio_widget_preview_qari">Sizin qari, sizin ayələr</string>
+  <string name="audio_widget_preview_status">Oxunur: Sure Fâtiha, âyet 1</string>
+  <string name="audio_widget_open_app">Quranı aç</string>
 </resources>
