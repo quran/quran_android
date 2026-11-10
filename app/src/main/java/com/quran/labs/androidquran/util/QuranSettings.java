@@ -549,6 +549,16 @@ public class QuranSettings implements PageThemeSettings {
     return perInstallationPrefs.getBoolean(Constants.PREF_WAS_SHOWING_TRANSLATION, false);
   }
 
+  public void setResumeReadingOnLaunch(boolean resumeReadingOnLaunch) {
+    perInstallationPrefs.edit()
+        .putBoolean(Constants.PREF_RESUME_READING_ON_LAUNCH, resumeReadingOnLaunch)
+        .apply();
+  }
+
+  public boolean getResumeReadingOnLaunch() {
+    return perInstallationPrefs.getBoolean(Constants.PREF_RESUME_READING_ON_LAUNCH, true);
+  }
+
   public boolean didCheckPartialImages(String pageType) {
     final Set<String> checkedSets =
         perInstallationPrefs.getStringSet(Constants.PREF_CHECKED_PARTIAL_IMAGES,

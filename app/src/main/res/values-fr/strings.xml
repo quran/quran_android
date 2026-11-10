@@ -308,4 +308,8 @@
   <string name="prefs_split_page_and_translation_title">Coran et traduction en mode dual</string>
   <string name="prefs_split_page_and_translation_summary">En mode double page avec traductions, la page du Coran et la traduction sont affichées.</string>
   <string name="about_quran_enc" translatable="false">Encyclopédie du Noble Coran (QuranEnc.com)</string>
+
+  <string name="fatiha_prompt_read">Lire Al-Fatiha</string>
+  <string name="fatiha_prompt_return">Revenir à la sourate « %1$s »</string>
+  <string name="fatiha_prompt_dismiss">Fermer</string>
 </resources>

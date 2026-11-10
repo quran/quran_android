@@ -230,4 +230,8 @@
   <string name="kitkat_external_message">A causa delle limitazioni di Android, se scegli di mettere i dati del Corano sulla tua scheda SD esterna e successivamente disinstalli o cancelli i dati di Corano Android, tutte le pagine e l\'audio di Corano Android saranno cancellati e dovrai scaricarli di nuovo. Sei sicuro di voler utilizzare la scheda SD esterna?</string>
   <string name="scoped_storage_message">A causa dei cambiamenti di Android per aumentare la privacy dell\'utente, copiare i file al di fuori delle directory dell\'app potrebbe impedire a Quran for Android di accedere ai suoi dati nelle future versioni di Android. Sei sicuro di voler utilizzare questo percorso?</string>
   <string name="sdcard_error">Impossibile trovare la scheda SD. Si prega di montarla e riprovare.</string>
+
+  <string name="fatiha_prompt_read">Leggi Al-Fatiha</string>
+  <string name="fatiha_prompt_return">Torna alla sura «%1$s»</string>
+  <string name="fatiha_prompt_dismiss">Chiudi</string>
 </resources>

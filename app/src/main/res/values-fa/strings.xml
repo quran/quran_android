@@ -301,4 +301,8 @@
   <string name="prefs_split_page_and_translation_summary">هنگامی که دو صفحه مجاور فعال می شوند، صفحه قرآن و ترجمه با هم نمایش داده می شوند</string>
   <string name="notification_channel_download">دانلود فایل های قرآن</string>
   <string name="notification_channel_audio">قرائت قرآن</string>
+
+  <string name="fatiha_prompt_read">فاتحه را بخوانید</string>
+  <string name="fatiha_prompt_return">بازگشت به سوره «%1$s»</string>
+  <string name="fatiha_prompt_dismiss">بستن</string>
 </resources>

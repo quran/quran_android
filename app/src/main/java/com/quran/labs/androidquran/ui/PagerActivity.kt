@@ -102,6 +102,8 @@ import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog.OnBookmarkTagsU
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener
 import com.quran.labs.androidquran.ui.helpers.AyahTracker
+import com.quran.labs.androidquran.ui.helpers.FatihaPromptController
+import com.quran.labs.androidquran.ui.helpers.FatihaPromptSession
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
 import com.quran.labs.androidquran.ui.helpers.QuranNavigator
@@ -205,6 +207,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private lateinit var audioStatusBar: AudioBarWrapper
   private lateinit var viewPager: ViewPager
+  private lateinit var fatihaPrompt: FatihaPromptController
+  private var fatihaSystemBottomInset = 0
+  private var audioBarSlideTarget: Float? = null
   private val themePreferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
     if (key in PAGE_COLOR_PREFERENCES) {
       refreshQuranPages()
@@ -453,6 +458,23 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     compositeDisposable = CompositeDisposable()
 
     audioStatusBar = findViewById(R.id.audio_area)
+    fatihaPrompt = createFatihaPrompt()
+    ViewCompat.setOnApplyWindowInsetsListener(audioStatusBar) { _, windowInsets ->
+      rememberFatihaBottomInset(windowInsets)
+      if (isActionBarHidden) {
+        audioStatusBar.fatihaBottomPaddingPx = fatihaPromptBottomPadding()
+      }
+      windowInsets
+    }
+    audioStatusBar.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+      val height = bottom - top
+      val oldHeight = oldBottom - oldTop
+      if (height != oldHeight && isActionBarHidden) {
+        snapHiddenAudioBar()
+      } else if (height != oldHeight) {
+        updateReadingBottomInset()
+      }
+    }
 
     toolBarArea = findViewById(R.id.toolbar_area)
     translationsSpinner = findViewById(R.id.spinner)
@@ -567,6 +589,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         } else {
           refreshActionBarSpinner()
         }
+        fatihaPrompt.onVisiblePagesChanged()
 
         // If we're more than 1 page away from ayah selection end ayah mode
         val suraAyah: SuraAyah? = selectionStart
@@ -601,6 +624,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     if (page == 0) {
       onPageChangeListener.onPageSelected(0)
     }
+    savedInstanceState?.let { fatihaPrompt.restoreState(it) }
+    maybeOfferFatihaPrompt()
 
     // just got created, need to reconnect to service
     shouldReconnect = true
@@ -830,6 +855,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private fun setUiVisibilityListener() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
+        rememberFatihaBottomInset(insets)
         val isStatusBarVisible = insets.isVisible(WindowInsetsCompat.Type.statusBars())
         // on devices with "hide full screen indicator" or "hide the bottom bar,"
         // this always returns false, which causes the touches to not work.
@@ -856,6 +882,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private fun animateToolBar(visible: Boolean) {
     isActionBarHidden = !visible
+    audioStatusBar.fatihaBottomPaddingPx = if (visible) 0 else fatihaPromptBottomPadding()
 
     // animate toolbar
     toolBarArea.animate()
@@ -863,11 +890,64 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       .setDuration(250)
       .start()
 
-    // and audio bar
-    audioStatusBar.animate()
-      .translationY((if (visible) 0 else audioStatusBar.height).toFloat())
-      .setDuration(250)
-      .start()
+    // and audio bar, with the fatiha prompt attached to its top
+    moveAudioBar((if (visible) 0 else hiddenBottomBarTranslation()).toFloat())
+  }
+
+  private fun moveAudioBar(translation: Float) {
+    if (audioBarSlideTarget != translation) {
+      audioBarSlideTarget = translation
+      audioStatusBar.animate().translationY(translation).setDuration(250).start()
+    }
+    updateReadingBottomInset(translation)
+  }
+
+  private fun snapHiddenAudioBar() {
+    val target = hiddenBottomBarTranslation().toFloat()
+    audioBarSlideTarget = target
+    audioStatusBar.animate().cancel()
+    audioStatusBar.translationY = target
+    updateReadingBottomInset(target)
+  }
+
+  private fun updateReadingBottomInset(translationY: Float = audioStatusBar.translationY) {
+    if (!::viewPager.isInitialized) return
+    val inset = if (audioStatusBar.fatihaPrompt == null || audioStatusBar.height <= 0) {
+      0
+    } else {
+      (audioStatusBar.height - translationY).toInt().coerceIn(0, audioStatusBar.height)
+    }
+    if (viewPager.paddingBottom == inset) return
+    viewPager.setPadding(
+      viewPager.paddingLeft,
+      viewPager.paddingTop,
+      viewPager.paddingRight,
+      inset
+    )
+  }
+
+  private fun rememberFatihaBottomInset(insets: WindowInsetsCompat) {
+    val bottom = maxOf(
+      insets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.navigationBars()).bottom,
+      insets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.systemGestures()).bottom,
+      insets.getInsetsIgnoringVisibility(WindowInsetsCompat.Type.mandatorySystemGestures()).bottom,
+      insets.getInsets(WindowInsetsCompat.Type.displayCutout()).bottom
+    )
+    if (bottom > fatihaSystemBottomInset) {
+      fatihaSystemBottomInset = bottom
+    }
+  }
+
+  private fun fatihaPromptBottomPadding(): Int {
+    val gap = resources.displayMetrics.density.toInt().coerceAtLeast(1)
+    return fatihaSystemBottomInset + gap
+  }
+
+  private fun hiddenBottomBarTranslation(): Int {
+    val contentHeight = audioStatusBar.fatihaPromptHeight
+    if (contentHeight <= 0) return audioStatusBar.height
+    return (audioStatusBar.height - contentHeight - audioStatusBar.fatihaBottomPaddingPx)
+      .coerceAtLeast(0)
   }
 
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -1146,6 +1226,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   public override fun onSaveInstanceState(state: Bundle) {
     val lastPage = quranInfo.getPageFromPosition(viewPager.currentItem, isDualPageVisible)
     state.putInt(LAST_READ_PAGE, lastPage)
+    fatihaPrompt.saveState(state)
     state.putBoolean(LAST_READING_MODE_IS_TRANSLATION, showingTranslation)
     state.putBoolean(LAST_ACTIONBAR_STATE, isActionBarHidden)
     state.putBoolean(LAST_WAS_DUAL_PAGES, isDualPages)
@@ -1346,6 +1427,74 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private val currentPage: Int
     get() = quranInfo.getPageFromPosition(viewPager.currentItem, isDualPageVisible)
+
+  private fun createFatihaPrompt(): FatihaPromptController {
+    val prompt = FatihaPromptController(
+      scope = lifecycleScope,
+      readLabel = getString(R.string.fatiha_prompt_read),
+      returnLabel = { page ->
+        val sura = quranInfo.getPageBounds(page)[0]
+        getString(
+          R.string.fatiha_prompt_return,
+          quranDisplayData.getSuraName(this, sura, false)
+        )
+      },
+      host = object : FatihaPromptController.Host {
+        override fun currentPage(): Int = this@PagerActivity.currentPage
+
+        override fun visiblePagesContainFatiha(): Boolean = this@PagerActivity.visiblePagesContainFatiha()
+
+        override fun openFatiha() {
+          showQuranPage(quranInfo.getPageFromSuraAyah(FATIHA_SURA, FATIHA_FIRST_AYAH))
+        }
+
+        override fun returnToPage(page: Int) = showQuranPage(page)
+
+        override fun onPromptChanged(label: String?, showClose: Boolean) {
+          val dismissLabel = getString(R.string.fatiha_prompt_dismiss)
+          audioStatusBar.fatihaPrompt = label?.let {
+            AudioBarWrapper.FatihaPrompt(it, showClose, dismissLabel)
+          }
+          updateReadingBottomInset()
+        }
+      }
+    )
+    audioStatusBar.onFatihaPromptClick = { prompt.onClick() }
+    audioStatusBar.onFatihaPromptClose = { prompt.hide() }
+    audioStatusBar.onFatihaPromptHeightChanged = {
+      if (isActionBarHidden) snapHiddenAudioBar()
+    }
+    return prompt
+  }
+
+  private fun maybeOfferFatihaPrompt() {
+    if (!FatihaPromptSession.pendingDirectOpen) return
+    FatihaPromptSession.pendingDirectOpen = false
+    fatihaPrompt.showOffer()
+  }
+
+  private fun visiblePagesContainFatiha(): Boolean {
+    if (!::viewPager.isInitialized) return false
+    val page = currentPage
+    if (pageContainsSura(page, FATIHA_SURA)) return true
+    if (!isDualPageVisible) return false
+    val nextPage = page + 1
+    return quranInfo.isValidPage(nextPage) && pageContainsSura(nextPage, FATIHA_SURA)
+  }
+
+  private fun pageContainsSura(page: Int, sura: Int): Boolean {
+    if (!quranInfo.isValidPage(page)) return false
+    val bounds = quranInfo.getPageBounds(page)
+    return sura in bounds[0]..bounds[2]
+  }
+
+  private fun showQuranPage(page: Int) {
+    if (!quranInfo.isValidPage(page)) return
+    val position = quranInfo.getPositionFromPage(page, isDualPageVisible)
+    if (viewPager.currentItem != position) {
+      viewPager.setCurrentItem(position, false)
+    }
+  }
 
   private fun updateActionBarSpinner() {
     if (translationNames.isEmpty()) {
@@ -2060,6 +2209,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     private const val LAST_READING_MODE_IS_TRANSLATION = "LAST_READING_MODE_IS_TRANSLATION"
     private const val LAST_ACTIONBAR_STATE = "LAST_ACTIONBAR_STATE"
     private const val LAST_FOLDING_STATE = "LAST_FOLDING_STATE"
+
+    private const val FATIHA_SURA = 1
+    private const val FATIHA_FIRST_AYAH = 1
 
     const val EXTRA_JUMP_TO_TRANSLATION: String = "jumpToTranslation"
     const val EXTRA_HIGHLIGHT_SURA: String = "highlightSura"

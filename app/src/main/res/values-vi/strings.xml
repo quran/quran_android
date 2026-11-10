@@ -343,4 +343,8 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Quran Tải xuống</string>
   <string name="notification_channel_audio">Quran Xướng đọc</string>
+
+  <string name="fatiha_prompt_read">Đọc Al-Fatiha</string>
+  <string name="fatiha_prompt_return">Quay lại surah \"%1$s\"</string>
+  <string name="fatiha_prompt_dismiss">Đóng</string>
 </resources>
