@@ -6,8 +6,6 @@ import android.content.ComponentName
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -205,9 +203,12 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private lateinit var audioStatusBar: AudioBarWrapper
   private lateinit var viewPager: ViewPager
-  private val themePreferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+  private val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
     if (key in PAGE_COLOR_PREFERENCES) {
       refreshQuranPages()
+    }
+    if (key == Constants.PREF_LOCK_ORIENTATION || key == Constants.PREF_LANDSCAPE_ORIENTATION) {
+      applyOrientationLock()
     }
   }
   private lateinit var pagerAdapter: QuranPageAdapter
@@ -299,6 +300,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     // field injection
     pagerActivityComponent.inject(this)
 
+    // Apply the orientation before inflating the Quran reader UI to avoid showing
+    // a frame in the previous orientation.
+    applyOrientationLock()
+
     isFoldableDeviceOpenAndVertical =
       savedInstanceState?.getBoolean(LAST_FOLDING_STATE, isFoldableDeviceOpenAndVertical)
         ?: isFoldableDeviceOpenAndVertical
@@ -353,6 +358,17 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       onDownloadSuccess()
     }
 
+  }
+
+  private fun applyOrientationLock() {
+    val targetOrientation = OrientationLockUtils.getRequestedOrientation(
+      quranSettings.isLockOrientation,
+      quranSettings.isLandscapeOrientation,
+      OrientationLockUtils.isOrientationLockSupported(resources.configuration)
+    )
+    if (requestedOrientation != targetOrientation) {
+      requestedOrientation = targetOrientation
+    }
   }
 
   private fun updateDualPageMode() {
@@ -604,22 +620,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     // just got created, need to reconnect to service
     shouldReconnect = true
-
-    // enforce orientation lock
-    if (quranSettings.isLockOrientation &&
-      OrientationLockUtils.isOrientationLockSupported(resources.configuration)
-    ) {
-      val current = resources.configuration.orientation
-      if (quranSettings.isLandscapeOrientation) {
-        if (current == Configuration.ORIENTATION_PORTRAIT) {
-          requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-          return
-        }
-      } else if (current == Configuration.ORIENTATION_LANDSCAPE) {
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        return
-      }
-    }
 
     quranEventLogger.logAnalytics(isDualPages, showingTranslation, isSplitScreen)
 
@@ -894,7 +894,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   public override fun onResume() {
     super.onResume()
-    quranSettings.registerPreferencesListener(themePreferencesListener)
+    applyOrientationLock()
+    quranSettings.registerPreferencesListener(preferencesListener)
     refreshQuranPages()
 
     audioPresenter.bind(this)
@@ -1106,7 +1107,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   public override fun onPause() {
-    quranSettings.unregisterPreferencesListener(themePreferencesListener)
+    quranSettings.unregisterPreferencesListener(preferencesListener)
     foregroundDisposable.clear()
     promptDialog?.dismiss()
     promptDialog = null
