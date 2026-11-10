@@ -47,6 +47,10 @@ object ArabicCharacterHelper {
       // match: ﻯي
       "\u0649" to "\u0649\u064a",
 
+      // given: ي
+      // match: يﻯ
+      "\u064a" to "\u064a\u0649",
+
       // given: ئ
       // match: ئﻯي
       // this is especially helpful for rewayat Warsh
