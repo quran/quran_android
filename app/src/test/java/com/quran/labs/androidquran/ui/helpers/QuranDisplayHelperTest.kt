@@ -65,6 +65,25 @@ class QuranDisplayHelperTest {
     assertThat(ShadowToast.shownToastCount()).isEqualTo(0)
   }
 
+  @Test
+  fun `hizb is hidden on pages where a new juz starts mid-page`() {
+    // page 121 prints Juz' 6, but the quarter starting on it is Hizb 13, which is in Juz' 7
+    assertThat(QuranDisplayHelper.displayRub3(context, quranInfo, 121)).isEmpty()
+    // page 201 prints Juz' 10, but the quarter starting on it is Hizb 21, which is in Juz' 11
+    assertThat(QuranDisplayHelper.displayRub3(context, quranInfo, 201)).isEmpty()
+  }
+
+  @Test
+  fun `hizb is shown when it belongs to the printed juz`() {
+    assertThat(QuranDisplayHelper.displayRub3(context, quranInfo, 137)).isEqualTo(", ½ Hizb 14")
+    assertThat(QuranDisplayHelper.displayRub3(context, quranInfo, 144)).isEqualTo(", ¼ Hizb 15")
+  }
+
+  @Test
+  fun `pages without a quarter starting on them have no hizb text`() {
+    assertThat(QuranDisplayHelper.displayRub3(context, quranInfo, 141)).isEmpty()
+  }
+
   private fun assertPopup(page: Int, isDualPageVisible: Boolean, expected: String?) {
     ShadowToast.reset()
     val position = quranInfo.getPositionFromPage(page, isDualPageVisible)
