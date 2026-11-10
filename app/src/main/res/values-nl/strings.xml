@@ -425,4 +425,6 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Koran Downloads</string>
   <string name="notification_channel_audio">Koran Recitaties</string>
+  <string name="reading_history_back">Terug</string>
+  <string name="reading_history_forward">Vooruit</string>
 </resources>

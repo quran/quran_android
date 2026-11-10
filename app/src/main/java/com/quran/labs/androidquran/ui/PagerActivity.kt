@@ -84,6 +84,12 @@ import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenter
 import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenterScreen
 import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkChange
 import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkPresenter
+import com.quran.labs.androidquran.feature.reading.ReadingHistory
+import com.quran.labs.androidquran.feature.reading.ReadingHistoryDirection
+import com.quran.labs.androidquran.feature.reading.ReadingHistoryPlacement
+import com.quran.labs.androidquran.feature.reading.ReadingHistorySnapshot
+import com.quran.labs.androidquran.feature.reading.ReadingPageSettleTracker
+import com.quran.labs.androidquran.feature.reading.ReadingPlace
 import com.quran.labs.androidquran.feature.reading.presenter.RecentPagePresenter
 import com.quran.labs.androidquran.feature.reading.presenter.recitation.PagerActivityRecitationPresenter
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
@@ -121,6 +127,7 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.ShareUtil
 import com.quran.labs.androidquran.view.IconPageIndicator
 import com.quran.labs.androidquran.view.QuranSpinner
+import com.quran.labs.androidquran.view.ReadingHistoryControl
 import com.quran.labs.androidquran.view.SlidingUpPanelLayout
 import com.quran.mobile.common.download.DownloadInfoStreams
 import com.quran.mobile.di.AyahActionFragmentProvider
@@ -150,6 +157,7 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BufferOverflow
@@ -208,6 +216,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private val themePreferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
     if (key in PAGE_COLOR_PREFERENCES) {
       refreshQuranPages()
+      if (::readingHistoryControl.isInitialized) {
+        renderReadingHistory()
+      }
     }
   }
   private lateinit var pagerAdapter: QuranPageAdapter
@@ -218,6 +229,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private lateinit var translationsSpinner: QuranSpinner
   private lateinit var overlay: FrameLayout
   private lateinit var toolBarArea: View
+  private val readingHistory = ReadingHistory()
+  private val readingSettleTracker = ReadingPageSettleTracker()
+  private var readingSettleJob: Job? = null
+  private var programmaticPageChange = false
+  private lateinit var readingHistoryControl: ReadingHistoryControl
 
   private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
@@ -385,7 +401,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
 
       val pageIndex = quranInfo.getPositionFromPage(curPage, isDualPageVisible)
-      viewPager.setCurrentItem(pageIndex)
+      movePagerProgrammatically(pageIndex)
     }
   }
 
@@ -429,6 +445,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
       val lastWasDualPages = savedInstanceState.getBoolean(LAST_WAS_DUAL_PAGES, isDualPages)
       shouldAdjustPageNumber = (lastWasDualPages != isDualPages)
+      readingHistory.restore(readingHistorySnapshot(savedInstanceState))
     } else {
       val intent = intent
       val extras = intent.extras
@@ -453,6 +470,18 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     compositeDisposable = CompositeDisposable()
 
     audioStatusBar = findViewById(R.id.audio_area)
+    readingHistoryControl = findViewById(R.id.reading_history)
+    readingHistoryControl.onDirectionSelected = { direction -> moveReadingHistory(direction) }
+    audioStatusBar.addOnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+      if (bottom - top != oldBottom - oldTop) {
+        updateReadingHistoryPlacement(null)
+      }
+    }
+    ViewCompat.setOnApplyWindowInsetsListener(readingHistoryControl) { _, windowInsets ->
+      updateReadingHistoryPlacement(windowInsets)
+      windowInsets
+    }
+    updateReadingHistoryPlacement(null)
 
     toolBarArea = findViewById(R.id.toolbar_area)
     translationsSpinner = findViewById(R.id.spinner)
@@ -577,12 +606,14 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
             endAyahMode()
           }
         }
+        onReaderPageSelected(position, page)
       }
     }
     viewPager.addOnPageChangeListener(onPageChangeListener)
 
     setUiVisibilityListener()
     audioStatusBar.visibility = View.VISIBLE
+    ViewCompat.requestApplyInsets(readingHistoryControl)
     toggleActionBarVisibility(true)
 
     if (shouldAdjustPageNumber) {
@@ -597,7 +628,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
 
     val pageIndex = quranInfo.getPositionFromPage(page, isDualPageVisible)
-    viewPager.setCurrentItem(pageIndex)
+    movePagerProgrammatically(pageIndex)
     if (page == 0) {
       onPageChangeListener.onPageSelected(0)
     }
@@ -868,6 +899,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       .translationY((if (visible) 0 else audioStatusBar.height).toFloat())
       .setDuration(250)
       .start()
+
+    animateReadingHistory(visible)
   }
 
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -1067,6 +1100,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation)
       val highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1)
       val highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1)
+      recordSignificantJump(page, highlightedSura, highlightedAyah)
       if (highlightedSura > 0 && highlightedAyah > 0) {
         readingEventPresenterBridge.setSelection(highlightedSura, highlightedAyah, true)
       }
@@ -1090,7 +1124,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         ensurePage(highlightedSura, highlightedAyah)
       } else {
         val pagePosition = quranInfo.getPositionFromPage(page, isDualPageVisible)
-        viewPager.currentItem = pagePosition
+        movePagerProgrammatically(pagePosition)
       }
 
       setIntent(intent)
@@ -1103,6 +1137,189 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   override fun jumpToAndHighlight(page: Int, sura: Int, ayah: Int) {
     quranNavigator.jumpTo(SuraAyah(sura, ayah))
+  }
+
+  private fun recordSignificantJump(page: Int, sura: Int, ayah: Int) {
+    readingSettleJob?.cancel()
+    if (!::viewPager.isInitialized) {
+      return
+    }
+    val destination = if (sura > 0 && ayah > 0) {
+      val ayahPage = quranInfo.getPageFromSuraAyah(sura, ayah)
+      ReadingPlace(canonicalReadingPage(ayahPage), sura, ayah)
+    } else {
+      ReadingPlace(canonicalReadingPage(page))
+    }
+    readingHistory.recordJump(currentReadingPlace(), destination)
+    renderReadingHistory()
+  }
+
+  private fun currentReadingPlace(): ReadingPlace {
+    val page = currentPage
+    val selection = selectionStart ?: return ReadingPlace(page)
+    val selectionPage = quranInfo.getPageFromSuraAyah(selection.sura, selection.ayah)
+    val selectionPosition = quranInfo.getPositionFromPage(selectionPage, isDualPageVisible)
+    return if (selectionPosition == viewPager.currentItem) {
+      ReadingPlace(page, selection.sura, selection.ayah)
+    } else {
+      ReadingPlace(page)
+    }
+  }
+
+  private fun canonicalReadingPage(page: Int): Int {
+    return quranInfo.getPageFromPosition(
+      quranInfo.getPositionFromPage(page, isDualPageVisible),
+      isDualPageVisible
+    )
+  }
+
+  private fun moveReadingHistory(direction: ReadingHistoryDirection) {
+    val place = when (direction) {
+      ReadingHistoryDirection.BACK -> readingHistory.back()
+      ReadingHistoryDirection.FORWARD -> readingHistory.forward()
+    }
+    if (place == null) {
+      renderReadingHistory()
+      return
+    }
+    readingSettleJob?.cancel()
+    recentPagePresenter.onJump()
+    showReadingPlace(place)
+    holdReadingAnchor()
+    renderReadingHistory()
+  }
+
+  private fun showReadingPlace(place: ReadingPlace) {
+    if (place.hasHighlight) {
+      readingEventPresenterBridge.setSelection(place.sura, place.ayah, true)
+      ensurePage(place.sura, place.ayah)
+    } else {
+      if (selectionStart != null) {
+        endAyahMode()
+      }
+      val position = quranInfo.getPositionFromPage(place.page, isDualPageVisible)
+      movePagerProgrammatically(position)
+    }
+  }
+
+  private fun renderReadingHistory() {
+    if (!::readingHistoryControl.isInitialized) {
+      return
+    }
+    val hasHistory = readingHistory.chrome().isVisible
+    readingHistoryControl.render(
+      hasHistory = hasHistory,
+      canGoBack = readingHistory.canGoBack(),
+      canGoForward = readingHistory.canGoForward(),
+      nightPage = quranSettings.isNightMode
+    )
+    readingHistoryControl.setChromeVisible(visible = !isActionBarHidden, animate = false)
+  }
+
+  private fun onReaderPageSelected(position: Int, page: Int) {
+    if (programmaticPageChange) {
+      readingSettleTracker.anchor(page, position)
+      return
+    }
+    readingSettleJob?.cancel()
+    readingSettleJob = lifecycleScope.launch {
+      delay(READING_PAGE_SETTLE_MS)
+      val jump = readingSettleTracker.onSettled(page, position) ?: return@launch
+      readingHistory.recordJump(jump.leaving, jump.destination)
+      renderReadingHistory()
+    }
+  }
+
+  private fun holdReadingAnchor() {
+    readingSettleJob?.cancel()
+    if (!::viewPager.isInitialized) {
+      return
+    }
+    readingSettleTracker.anchor(currentPage, viewPager.currentItem)
+  }
+
+  private fun movePagerProgrammatically(position: Int) {
+    if (!::viewPager.isInitialized) {
+      return
+    }
+    if (viewPager.currentItem == position) {
+      holdReadingAnchor()
+      return
+    }
+    programmaticPageChange = true
+    viewPager.currentItem = position
+    programmaticPageChange = false
+    holdReadingAnchor()
+  }
+
+  private fun updateReadingHistoryPlacement(windowInsets: WindowInsetsCompat?) {
+    if (!::readingHistoryControl.isInitialized) {
+      return
+    }
+    val insets = windowInsets ?: ViewCompat.getRootWindowInsets(readingHistoryControl)
+    val bars = insets?.getInsets(
+      WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.displayCutout()
+    )
+    val params = readingHistoryControl.layoutParams as FrameLayout.LayoutParams
+    val audioVisible = audioStatusBar.isVisible
+    val fallbackAudioHeight = resources.getDimensionPixelSize(
+      R.dimen.reading_history_audio_fallback
+    )
+    val bottom = ReadingHistoryPlacement.bottomMargin(
+      audioBarHeight = if (audioVisible) audioStatusBar.height else 0,
+      navigationInset = bars?.bottom ?: 0,
+      fallbackAudioHeight = fallbackAudioHeight,
+      audioBarVisible = audioVisible
+    )
+    val end = bars?.right ?: 0
+    if (params.bottomMargin == bottom && params.marginEnd == end) {
+      return
+    }
+    params.bottomMargin = bottom
+    params.marginEnd = end
+    readingHistoryControl.layoutParams = params
+    if (isActionBarHidden) {
+      readingHistoryControl.setChromeVisible(visible = false, animate = false)
+    }
+  }
+
+  private fun animateReadingHistory(visible: Boolean) {
+    if (!::readingHistoryControl.isInitialized) {
+      return
+    }
+    readingHistoryControl.setChromeVisible(visible, animate = true)
+  }
+
+  private fun readingHistorySnapshot(state: Bundle): ReadingHistorySnapshot {
+    val pages = state.getIntArray(READING_HISTORY_PAGES) ?: IntArray(0)
+    val suras = state.getIntArray(READING_HISTORY_SURAS) ?: IntArray(0)
+    val ayahs = state.getIntArray(READING_HISTORY_AYAHS) ?: IntArray(0)
+    val count = minOf(pages.size, suras.size, ayahs.size)
+    val entries = List(count) { entry ->
+      ReadingPlace(pages[entry], suras[entry], ayahs[entry])
+    }
+    val primary = if (state.getBoolean(READING_HISTORY_PRIMARY_BACK, true)) {
+      ReadingHistoryDirection.BACK
+    } else {
+      ReadingHistoryDirection.FORWARD
+    }
+    return ReadingHistorySnapshot(
+      entries = entries,
+      index = state.getInt(READING_HISTORY_INDEX, -1),
+      primaryDirection = primary
+    )
+  }
+
+  private fun saveReadingHistory(state: Bundle) {
+    val history = readingHistory.snapshot()
+    state.putIntArray(READING_HISTORY_PAGES, history.entries.map { it.page }.toIntArray())
+    state.putIntArray(READING_HISTORY_SURAS, history.entries.map { it.sura }.toIntArray())
+    state.putIntArray(READING_HISTORY_AYAHS, history.entries.map { it.ayah }.toIntArray())
+    state.putInt(READING_HISTORY_INDEX, history.index)
+    state.putBoolean(
+      READING_HISTORY_PRIMARY_BACK,
+      history.primaryDirection == ReadingHistoryDirection.BACK
+    )
   }
 
   public override fun onPause() {
@@ -1128,6 +1345,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     Timber.d("onDestroy()")
     clearUiVisibilityListener()
 
+    readingSettleJob?.cancel()
     translationJob?.cancel(CancellationException())
     compositeDisposable.dispose()
     audioStatusRepositoryBridge.dispose()
@@ -1150,6 +1368,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     state.putBoolean(LAST_ACTIONBAR_STATE, isActionBarHidden)
     state.putBoolean(LAST_WAS_DUAL_PAGES, isDualPages)
     state.putBoolean(LAST_FOLDING_STATE, isFoldableDeviceOpenAndVertical)
+    saveReadingHistory(state)
     super.onSaveInstanceState(state)
   }
 
@@ -1256,7 +1475,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     onShowingTranslationBackCallback.isEnabled = false
     if (shouldUpdatePageNumber()) {
       val position = quranInfo.getPositionFromPage(page, true)
-      viewPager.currentItem = position
+      movePagerProgrammatically(position)
     }
 
     supportInvalidateOptionsMenu()
@@ -1277,7 +1496,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       onShowingTranslationBackCallback.isEnabled = true
       if (shouldUpdatePageNumber()) {
         val position = quranInfo.getPositionFromPage(page, false)
-        viewPager.currentItem = position
+        movePagerProgrammatically(position)
       }
       supportInvalidateOptionsMenu()
       updateActionBarSpinner()
@@ -1418,9 +1637,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     val page = quranInfo.getPageFromSuraAyah(sura, ayah)
     if (quranInfo.isValidPage(page)) {
       val position = quranInfo.getPositionFromPage(page, isDualPageVisible)
-      if (position != viewPager.currentItem) {
-        viewPager.currentItem = position
-      }
+      movePagerProgrammatically(position)
     }
   }
 
@@ -2065,6 +2282,12 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     const val EXTRA_HIGHLIGHT_SURA: String = "highlightSura"
     const val EXTRA_HIGHLIGHT_AYAH: String = "highlightAyah"
     const val LAST_WAS_DUAL_PAGES: String = "wasDualPages"
+    private const val READING_HISTORY_PAGES = "reading_history_pages"
+    private const val READING_HISTORY_SURAS = "reading_history_suras"
+    private const val READING_HISTORY_AYAHS = "reading_history_ayahs"
+    private const val READING_HISTORY_INDEX = "reading_history_index"
+    private const val READING_HISTORY_PRIMARY_BACK = "reading_history_primary_back"
+    private const val READING_PAGE_SETTLE_MS = 1500L
 
     private const val DEFAULT_HIDE_AFTER_TIME: Long = 2000
 

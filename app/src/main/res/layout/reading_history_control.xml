@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.quran.labs.androidquran.view.ReadingHistoryControl
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom|end"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:visibility="gone">
+
+  <androidx.appcompat.widget.AppCompatImageButton
+      android:id="@+id/reading_history_back"
+      android:layout_width="44dp"
+      android:layout_height="44dp"
+      android:background="@android:color/transparent"
+      android:contentDescription="@string/reading_history_back"
+      android:elevation="4dp"
+      android:padding="10dp"
+      android:scaleType="centerInside"
+      android:src="@drawable/ic_reading_history_up"
+      android:stateListAnimator="@null"/>
+
+  <androidx.appcompat.widget.AppCompatImageButton
+      android:id="@+id/reading_history_forward"
+      android:layout_width="44dp"
+      android:layout_height="44dp"
+      android:layout_marginTop="16dp"
+      android:background="@android:color/transparent"
+      android:contentDescription="@string/reading_history_forward"
+      android:elevation="4dp"
+      android:padding="10dp"
+      android:scaleType="centerInside"
+      android:src="@drawable/ic_reading_history_down"
+      android:stateListAnimator="@null"/>
+
+</com.quran.labs.androidquran.view.ReadingHistoryControl>

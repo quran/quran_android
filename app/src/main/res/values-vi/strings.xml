@@ -343,4 +343,6 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Quran Tải xuống</string>
   <string name="notification_channel_audio">Quran Xướng đọc</string>
+  <string name="reading_history_back">Quay lại</string>
+  <string name="reading_history_forward">Tiến tới</string>
 </resources>

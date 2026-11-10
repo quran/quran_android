@@ -316,4 +316,6 @@
   <string name="prefs_category_dual_screen">Çift Sayfa Tercihleri</string>
   <string name="prefs_split_page_and_translation_summary">Çevirilerle çift sayfa modunda, Kuran sayfası ve çevirisi gösterilir</string>
   <string name="prefs_split_page_and_translation_title">Kur\'an\'dan bir sayfayı ve çeviriden başka bir sayfa görüntüleme</string>
+  <string name="reading_history_back">Geri</string>
+  <string name="reading_history_forward">İleri</string>
 </resources>
