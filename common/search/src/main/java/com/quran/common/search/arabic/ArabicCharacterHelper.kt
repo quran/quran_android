@@ -7,9 +7,21 @@ object ArabicCharacterHelper {
       // match: آأإاﻯ
       "\u0627" to "\u0622\u0623\u0625\u0627\u0649",
 
+      // given: آ
+      // match: آأإاﻯ
+      "\u0622" to "\u0622\u0623\u0625\u0627\u0649",
+
+      // given: إ
+      // match: آأإاﻯ
+      "\u0625" to "\u0622\u0623\u0625\u0627\u0649",
+
       // given: و
       // match: وؤ
       "\u0648" to "\u0648\u0624",
+
+      // given: ؤ
+      // match: ؤو
+      "\u0624" to "\u0624\u0648",
 
       // given: ﺃ
       // match: ﺃﺀﺆﺋ
