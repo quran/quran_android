@@ -1,21 +1,20 @@
 package com.quran.mobile.bookmark.importdata
 
-import android.content.Context
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
+import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
-import com.quran.mobile.bookmark.R
+import com.quran.data.model.collection.OldPageBookmarksCollection
 import com.quran.mobile.bookmark.model.ReadingBookmarkPageMapper
 import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
 import com.quran.mobile.bookmark.time.legacyTimestampMillis
-import com.quran.mobile.di.qualifier.ApplicationContext
+import com.quran.shared.persistence.model.ReadingBookmarkSlot
 import dev.zacsweers.metro.Inject
 
 class BookmarkBackupImportNormalizer @Inject constructor(
-  @param:ApplicationContext private val appContext: Context,
   private val pageMapper: ReadingBookmarkPageMapper,
   private val timestampProvider: MobileSyncTimestampProvider
 ) {
@@ -24,60 +23,43 @@ class BookmarkBackupImportNormalizer @Inject constructor(
     val importTimestampMillis = timestampProvider.nowEpochMillis()
     val collectionState = CollectionState.from(data.tags, importTimestampMillis)
     val bookmarkState = linkedMapOf<SuraAyah, BookmarkState>()
-    var oldPageCollectionImportId: String? = null
 
     data.bookmarks.forEach { bookmark ->
       val normalizedBookmark = normalizeBookmark(bookmark, sourcePageType) ?: return@forEach
-      val tagImportIds = bookmark.tags.mapNotNull { tagId ->
-        collectionState.importIdForBackupTagId[tagId]
+      val tagNames = bookmark.tags.mapNotNull { tagId ->
+        collectionState.nameForBackupTagId[tagId]
       }
-      val importTagIds = if (normalizedBookmark.fromPageBookmark) {
-        val collectionImportId = oldPageCollectionImportId
-          ?: collectionState.oldPageBookmarkCollectionId(normalizedBookmark.timestamp)
-            .also { oldPageCollectionImportId = it }
-        tagImportIds + collectionImportId
+      val collectionNames = if (normalizedBookmark.fromPageBookmark) {
+        collectionState.addIfAbsent(OldPageBookmarksCollection.NAME, normalizedBookmark.timestamp)
+        tagNames + OldPageBookmarksCollection.NAME
       } else {
-        tagImportIds
+        tagNames
       }
-      bookmarkState.addOrMerge(normalizedBookmark, importTagIds)
+      bookmarkState.addOrMerge(normalizedBookmark, collectionNames)
     }
 
     return MobileSyncImportData(
       bookmarks = bookmarkState.values.map { bookmark ->
         MobileSyncImportBookmark(
-          importId = bookmark.importId,
           sura = bookmark.suraAyah.sura,
           ayah = bookmark.suraAyah.ayah,
           timestampMillis = bookmark.timestamp
         )
       },
-      collections = collectionState.collections,
+      collections = collectionState.collections.values.toList(),
       collectionBookmarks = bookmarkState.values.flatMap { bookmark ->
-        bookmark.collectionTimestamps.map { (collectionImportId, timestamp) ->
+        bookmark.collectionTimestamps.map { (collectionName, timestamp) ->
           MobileSyncImportCollectionBookmark(
-            collectionImportId = collectionImportId,
-            bookmarkImportId = bookmark.importId,
+            collectionName = collectionName,
+            sura = bookmark.suraAyah.sura,
+            ayah = bookmark.suraAyah.ayah,
             timestampMillis = timestamp
           )
         }
       },
       readingSessions = normalizeRecentPages(data.recentPages, sourcePageType),
-      readingBookmark = normalizeReadingBookmark(data.readingBookmark, sourcePageType)
+      readingBookmarks = normalizeReadingBookmarks(data.readingBookmarks, sourcePageType)
     )
-  }
-
-  private fun CollectionState.oldPageBookmarkCollectionId(timestamp: Long): String {
-    val oldPageBookmarksName = appContext.getString(R.string.old_page_bookmarks)
-    return importIdForName[oldPageBookmarksName]
-      ?: nextCollectionImportId().also { importId ->
-        add(
-          MobileSyncImportCollection(
-            importId = importId,
-            name = oldPageBookmarksName,
-            timestampMillis = timestamp
-          )
-        )
-      }
   }
 
   private fun normalizeBookmark(bookmark: Bookmark, pageType: String?): NormalizedBookmark? {
@@ -109,47 +91,71 @@ class BookmarkBackupImportNormalizer @Inject constructor(
     recentPages.forEach { recentPage ->
       val suraAyah = pageMapper.sourcePageToSuraAyah(recentPage.page, pageType)
       val existingSession = sessions[suraAyah]
-      val timestamp = recentPage.timestamp.legacyTimestampMillis()
-      if (existingSession == null || timestamp > existingSession.timestampMillis) {
+      val timestamp = recentPage.timestamp
+      if (existingSession == null) {
         sessions[suraAyah] = MobileSyncImportReadingSession(
           sura = suraAyah.sura,
           ayah = suraAyah.ayah,
-          timestampMillis = timestamp
+          timestampMillis = timestamp.toEpochMilliseconds()
         )
       }
     }
     return sessions.values.toList()
   }
 
-  private fun normalizeReadingBookmark(
-    readingBookmark: BackupReadingBookmark?,
+  private fun normalizeReadingBookmarks(
+    readingBookmarks: List<BackupReadingBookmark>,
     pageType: String?
-  ): MobileSyncImportReadingBookmark? {
-    return when (readingBookmark?.type) {
-      BackupReadingBookmark.TYPE_AYAH -> {
-        val sura = readingBookmark.sura ?: return null
-        val ayah = readingBookmark.ayah ?: return null
-        if (!isValidSuraAyah(sura, ayah)) return null
-        MobileSyncImportReadingBookmark.Ayah(
-          sura = sura,
-          ayah = ayah,
-          timestampMillis = readingBookmark.timestamp.legacyTimestampMillis()
-        )
+  ): List<MobileSyncImportReadingBookmark> {
+    return readingBookmarks.mapNotNull { readingBookmark ->
+      when (readingBookmark.type) {
+        BackupReadingBookmark.TYPE_AYAH -> {
+          val sura = readingBookmark.sura
+          val ayah = readingBookmark.ayah
+          if (sura == null || ayah == null || !isValidSuraAyah(sura, ayah)) {
+            null
+          } else {
+            MobileSyncImportReadingBookmark.Ayah(
+              slot = readingBookmark.slot.asBookmarkSlot(),
+              sura = sura,
+              ayah = ayah,
+              timestampMillis = readingBookmark.timestamp.toEpochMilliseconds(),
+              name = readingBookmark.name
+            )
+          }
+        }
+
+        BackupReadingBookmark.TYPE_PAGE -> {
+          val page = readingBookmark.page
+          if (page == null) {
+            null
+          } else {
+            MobileSyncImportReadingBookmark.Page(
+              slot = readingBookmark.slot.asBookmarkSlot(),
+              page = page,
+              mushaf = pageMapper.sourceMushafFor(pageType),
+              timestampMillis = readingBookmark.timestamp.toEpochMilliseconds(),
+              name = readingBookmark.name
+            )
+          }
+        }
+
+        else -> null
       }
-      BackupReadingBookmark.TYPE_PAGE -> {
-        val page = readingBookmark.page ?: return null
-        MobileSyncImportReadingBookmark.Page(
-          page = pageMapper.sourcePageToStoragePage(page, pageType),
-          timestampMillis = readingBookmark.timestamp.legacyTimestampMillis()
-        )
-      }
-      else -> null
+    }
+  }
+
+  private fun ReadingBookmarkType.asBookmarkSlot(): ReadingBookmarkSlot {
+    return when (this) {
+      ReadingBookmarkType.TEAL -> ReadingBookmarkSlot.TEAL
+      ReadingBookmarkType.ORANGE -> ReadingBookmarkSlot.ORANGE
+      ReadingBookmarkType.RED -> ReadingBookmarkSlot.RED
     }
   }
 
   private fun MutableMap<SuraAyah, BookmarkState>.addOrMerge(
     normalizedBookmark: NormalizedBookmark,
-    collectionImportIds: List<String>
+    collectionNames: List<String>
   ) {
     val bookmark = getOrPut(normalizedBookmark.suraAyah) {
       BookmarkState(
@@ -158,10 +164,10 @@ class BookmarkBackupImportNormalizer @Inject constructor(
         fromPageBookmark = normalizedBookmark.fromPageBookmark
       )
     }
-    collectionImportIds.forEach { collectionImportId ->
-      val timestamp = bookmark.collectionTimestamps[collectionImportId]
+    collectionNames.forEach { collectionName ->
+      val timestamp = bookmark.collectionTimestamps[collectionName]
       if (timestamp == null || normalizedBookmark.timestamp > timestamp) {
-        bookmark.collectionTimestamps[collectionImportId] = normalizedBookmark.timestamp
+        bookmark.collectionTimestamps[collectionName] = normalizedBookmark.timestamp
       }
     }
     bookmark.mergeTimestamp(normalizedBookmark)
@@ -181,8 +187,6 @@ class BookmarkBackupImportNormalizer @Inject constructor(
     var fromPageBookmark: Boolean,
     val collectionTimestamps: LinkedHashMap<String, Long> = linkedMapOf()
   ) {
-    val importId: String = "bookmark-${suraAyah.sura}-${suraAyah.ayah}"
-
     fun mergeTimestamp(bookmark: NormalizedBookmark) {
       if (fromPageBookmark && !bookmark.fromPageBookmark) {
         timestamp = bookmark.timestamp
@@ -194,23 +198,16 @@ class BookmarkBackupImportNormalizer @Inject constructor(
   }
 
   private data class CollectionState(
-    val importIdForBackupTagId: MutableMap<String, String> = mutableMapOf(),
-    val importIdForName: MutableMap<String, String> = mutableMapOf(),
-    val collections: MutableList<MobileSyncImportCollection> = mutableListOf(),
-    val reservedCollectionImportIds: MutableSet<String> = mutableSetOf()
+    val nameForBackupTagId: MutableMap<String, String> = mutableMapOf(),
+    val collections: LinkedHashMap<String, MobileSyncImportCollection> = linkedMapOf()
   ) {
-    private var nextCollectionImportIndex = 0
-
-    fun add(collection: MobileSyncImportCollection) {
-      importIdForName[collection.name] = collection.importId
-      reservedCollectionImportIds.add(collection.importId)
-      collections.add(collection)
+    fun addIfAbsent(name: String, timestampMillis: Long) {
+      collections.getOrPut(name) { MobileSyncImportCollection(name, timestampMillis) }
     }
 
     companion object {
       fun from(tags: List<Tag>, importTimestampMillis: Long): CollectionState {
         val state = CollectionState()
-        state.reservedCollectionImportIds.addAll(tags.map { tag -> tag.id })
         tags.sortedWith(
           compareBy<Tag> { tag -> legacyTagNumber(tag.id) ?: Long.MAX_VALUE }
             .thenBy { tag -> tag.id }
@@ -218,37 +215,14 @@ class BookmarkBackupImportNormalizer @Inject constructor(
           .forEach { tag ->
             val name = tag.name
             if (name.isBlank()) return@forEach
-            val existingImportId = state.importIdForName[name]
-            if (existingImportId != null) {
-              state.importIdForBackupTagId[tag.id] = existingImportId
-            } else {
-              val collection = MobileSyncImportCollection(
-                importId = state.nextCollectionImportId(),
-                name = name,
-                timestampMillis = importTimestampMillis
-              )
-              state.importIdForBackupTagId[tag.id] = collection.importId
-              state.add(collection)
-            }
+            state.nameForBackupTagId[tag.id] = name
+            state.addIfAbsent(name, importTimestampMillis)
           }
         return state
       }
 
       private fun legacyTagNumber(tagId: String): Long? {
         return tagId.toLongOrNull()
-      }
-    }
-
-    /**
-     * Import IDs only correlate this import payload's collections to its bookmark links. They are
-     * not mobile-sync local IDs, so do not reuse backup-provided tag IDs here.
-     */
-    fun nextCollectionImportId(): String {
-      while (true) {
-        val importId = "backup-collection-${nextCollectionImportIndex++}"
-        if (reservedCollectionImportIds.add(importId)) {
-          return importId
-        }
       }
     }
   }

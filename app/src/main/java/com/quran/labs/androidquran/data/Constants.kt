@@ -24,10 +24,6 @@ object Constants {
   const val NO_PAGE = -1
   const val MAX_RECENT_PAGES = 3
 
-  // quranapp
-  const val QURAN_APP_BASE = "http://quranapp.com/"
-  const val QURAN_APP_ENDPOINT = "http://quranapp.com/note"
-
   // Notification Ids
   const val NOTIFICATION_ID_DOWNLOADING = 1
   const val NOTIFICATION_ID_DOWNLOADING_COMPLETE = 2
@@ -72,6 +68,7 @@ object Constants {
   const val PREF_SHOW_RECENTS = "showRecents"
   const val PREF_SHOW_DATE = "showDate"
   const val PREF_COLLAPSED_COLLECTIONS = "collapsedCollections"
+  const val PREF_HIGHLIGHTS_COLLAPSED = "highlightsCollapsed"
   const val PREF_DUAL_PAGE_ENABLED = "useDualPageMode"
   const val PREF_VERSION = "version"
   const val PREF_DEFAULT_IMAGES_DIR = "defaultImagesDir"
@@ -87,14 +84,20 @@ object Constants {
   const val PREF_ADVANCED_QURAN_SETTINGS = "quranAdvancedSettings"
   const val PREF_READING_CATEGORY = "readingCategoryKey"
   const val PREF_CHECKED_PARTIAL_IMAGES = "didCheckPartialImages"
-  const val PREF_CURRENT_AUDIO_REVISION = "currentAudioRevision"
+  // was "currentAudioRevision" - renamed so every install checks all audio updates once
+  // more, since updates for gapped qaris were never applied before
+  const val PREF_CURRENT_AUDIO_REVISION = "currentAudioRevisionV2"
   const val PREF_SURA_TRANSLATED_NAME = "suraTranslatedName"
   const val PREF_SHOW_SIDELINES = "showSidelines"
   const val PREF_SHOW_LINE_DIVIDERS = "showLineDividers"
   const val PREF_APP_THEME = "appTheme"
+  const val PREF_PAGE_THEME = "pageTheme"
+  const val PREF_PAGE_APPEARANCE = "pageAppearance"
+  const val PREF_USE_OLD_BACKGROUND = "useOldBackground"
   const val PREF_MOBILE_SYNC_LEGACY_BOOKMARKS_MIGRATED = "mobileSyncLegacyBookmarksMigrated"
   const val PREF_HAS_SEEN_MOVABLE_BOOKMARK_EDUCATION = "hasSeenMovableBookmarkEducation"
   const val PREF_RESTRICT_TO_RANGE = "restrictToRange"
+  const val PREF_LAST_SEEN_ANNOUNCEMENT = "lastSeenAnnouncement"
 
   // Themes
   const val THEME_LIGHT = "light"

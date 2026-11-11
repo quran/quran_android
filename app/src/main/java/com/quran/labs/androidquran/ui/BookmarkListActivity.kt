@@ -23,6 +23,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.quran.data.dao.BookmarkSortOrder
+import com.quran.data.model.Page
+import com.quran.data.model.SuraAyah
+import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
@@ -33,8 +36,10 @@ import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog.OnBookmarkTagsUpdateListener
+import com.quran.labs.androidquran.common.ui.core.CollectionNames
 import com.quran.labs.androidquran.common.ui.core.HighlightColors
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter
+import com.quran.labs.androidquran.ui.helpers.QuranNavigator
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
 import com.quran.labs.androidquran.util.QuranSettings
@@ -54,9 +59,12 @@ class BookmarkListActivity : AppCompatActivity(),
   private var recyclerView: RecyclerView? = null
   private var actionMode: ActionMode? = null
   private var rowData: List<BookmarkListRowData> = emptyList()
-  private var collectionName: String? = null
+  private var collection: Tag? = null
   private var isPaused = false
   private val sortOrder = MutableStateFlow(BookmarkSortOrder.SORT_DATE_ADDED)
+
+  @Inject lateinit var quranNavigatorFactory: QuranNavigator.Factory
+  private val quranNavigator by lazy { quranNavigatorFactory.create(this) }
 
   @Inject
   lateinit var bookmarkListPresenter: BookmarkListPresenter
@@ -143,13 +151,17 @@ class BookmarkListActivity : AppCompatActivity(),
     if (mode is BookmarkListMode.Collection) {
       lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-          bookmarkListPresenter.collectionName(mode.collectionId).collect { name ->
+          bookmarkListPresenter.collection(mode.collectionId).collect { tag ->
             // the collection can be renamed from this screen, or deleted from elsewhere
-            if (name == null) {
+            if (tag == null) {
               finish()
             } else {
-              collectionName = name
+              val wasReadOnly = collection?.isReadOnly
+              collection = tag
               updateTitle()
+              if (wasReadOnly != tag.isReadOnly) {
+                invalidateOptionsMenu()
+              }
             }
           }
         }
@@ -160,7 +172,8 @@ class BookmarkListActivity : AppCompatActivity(),
   private fun updateTitle() {
     supportActionBar?.title = when (val mode = mode) {
       is BookmarkListMode.Collection ->
-        collectionName ?: intent.getStringExtra(EXTRA_COLLECTION_NAME).orEmpty()
+        collection?.let { tag -> CollectionNames.displayName(this, tag) }
+          ?: intent.getStringExtra(EXTRA_COLLECTION_NAME).orEmpty()
 
       is BookmarkListMode.Highlights -> getString(HighlightColors[mode.color].nameResourceId)
     }
@@ -201,7 +214,7 @@ class BookmarkListActivity : AppCompatActivity(),
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.bookmark_list_menu, menu)
-    menu.findItem(R.id.rename_collection).isVisible = mode is BookmarkListMode.Collection
+    menu.findItem(R.id.rename_collection).isVisible = canRenameCollection()
 
     if (sortOrder.value == BookmarkSortOrder.SORT_DATE_ADDED) {
       menu.findItem(R.id.sort_date).isChecked = true
@@ -232,14 +245,20 @@ class BookmarkListActivity : AppCompatActivity(),
 
       R.id.rename_collection -> {
         val mode = mode
-        if (mode is BookmarkListMode.Collection && !isPaused) {
-          AddTagDialog.newInstance(mode.collectionId, collectionName.orEmpty())
+        if (mode is BookmarkListMode.Collection && canRenameCollection() && !isPaused) {
+          AddTagDialog.newInstance(mode.collectionId, collection?.name.orEmpty())
             .show(supportFragmentManager, AddTagDialog.TAG)
         }
         return true
       }
     }
     return super.onOptionsItemSelected(item)
+  }
+
+  // read-only collections (Favorites, older Quran.com apps' color collections) can't be renamed,
+  // and until the collection loads we don't know yet whether this one is
+  private fun canRenameCollection(): Boolean {
+    return mode is BookmarkListMode.Collection && collection?.isReadOnly == false
   }
 
   private fun setSortOrder(order: Int) {
@@ -293,12 +312,8 @@ class BookmarkListActivity : AppCompatActivity(),
     row.isBookmark || row.isHighlightedAyah
 
   private fun jumpToAndHighlight(page: Int, sura: Int, ayah: Int) {
-    val intent = Intent(this, PagerActivity::class.java)
-    intent.putExtra("page", page)
-    intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, sura)
-    intent.putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, ayah)
-    intent.putExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, quranSettings.wasShowingTranslation)
-    startActivity(intent)
+    val location = if (sura > 0 && ayah > 0) SuraAyah(sura, ayah) else Page(page)
+    quranNavigator.jumpTo(location, showTranslation = quranSettings.wasShowingTranslation)
   }
 
   private fun finishActionMode() {

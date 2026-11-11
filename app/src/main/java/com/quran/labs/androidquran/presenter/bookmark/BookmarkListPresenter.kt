@@ -1,12 +1,12 @@
 package com.quran.labs.androidquran.presenter.bookmark
 
-import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarkSortOrder
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.dao.HighlightsDao
 import com.quran.data.di.AppCoroutineScope
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.Tag
 import com.quran.data.model.highlight.Highlight
 import com.quran.labs.androidquran.dao.bookmark.BookmarkListMode
 import com.quran.labs.androidquran.dao.bookmark.BookmarkListRowData
@@ -20,6 +20,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -30,7 +31,6 @@ import kotlin.time.Duration.Companion.milliseconds
 class BookmarkListPresenter @Inject constructor(
   private val bookmarksDao: BookmarksDao,
   private val highlightsDao: HighlightsDao,
-  private val quranInfo: QuranInfo,
   private val arabicDatabaseUtils: Provider<ArabicDatabaseUtils>,
   private val appCoroutineScope: AppCoroutineScope
 ) {
@@ -45,9 +45,10 @@ class BookmarkListPresenter @Inject constructor(
     }
   }
 
-  fun collectionName(collectionId: String): Flow<String?> {
+  fun collection(collectionId: String): Flow<Tag?> {
     return bookmarksDao.tagsFlow()
-      .map { tags -> tags.firstOrNull { tag -> tag.id == collectionId }?.name }
+      .map { tags -> tags.firstOrNull { tag -> tag.id == collectionId } }
+      .distinctUntilChanged()
   }
 
   private fun collectionRows(
@@ -123,12 +124,9 @@ class BookmarkListPresenter @Inject constructor(
 
     return withContext(Dispatchers.IO) {
       try {
-        val ayahIds = highlights.associateBy { highlight ->
-          quranInfo.getAyahId(highlight.suraAyah.sura, highlight.suraAyah.ayah)
-        }
-        arabicDatabaseUtils().getAyahTextForAyat(ayahIds.keys.toList())
-          .mapNotNull { (ayahId, text) -> ayahIds[ayahId]?.suraAyah?.let { it to text } }
-          .toMap()
+        arabicDatabaseUtils().getAyahTextForSuraAyahs(
+          highlights.map { highlight -> highlight.suraAyah }
+        )
       } catch (throwable: Throwable) {
         // the arabic database is optional - fall back to showing sura and ayah names
         Timber.d(throwable, "Unable to hydrate highlight ayah text")

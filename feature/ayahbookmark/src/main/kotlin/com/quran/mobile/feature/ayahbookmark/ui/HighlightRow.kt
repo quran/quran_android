@@ -1,7 +1,6 @@
 package com.quran.mobile.feature.ayahbookmark.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.labs.androidquran.common.ui.core.HighlightColorSpec
@@ -45,20 +42,12 @@ internal fun HighlightRow(
   onClear: () -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val colors = ayahBookmarkHighlightColors
-
-  Column(
-    modifier = modifier
-      .clip(RoundedCornerShape(14.dp))
-      .background(colors.background)
-      .border(1.5.dp, colors.border, RoundedCornerShape(14.dp))
-      .padding(horizontal = 14.dp, vertical = 12.dp)
-  ) {
+  Column(modifier = modifier) {
     Row(verticalAlignment = Alignment.CenterVertically) {
       Icon(
         imageVector = HighlightIcon,
         contentDescription = null,
-        tint = colors.icon,
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.size(18.dp)
       )
       Column(
@@ -68,19 +57,20 @@ internal fun HighlightRow(
       ) {
         Text(
           text = stringResource(R.string.ayahbookmark_highlight_title),
-          style = MaterialTheme.typography.titleSmall,
-          color = colors.title
+          style = MaterialTheme.typography.titleMedium,
+          color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-          text = stringResource(R.string.ayahbookmark_highlight_subtitle),
-          style = MaterialTheme.typography.bodySmall,
-          color = colors.subtitle
+          // unlike the reading bookmark above, this one is staged until the sheet closes
+          text = stringResource(R.string.ayahbookmark_highlight_saved_on_close),
+          style = MaterialTheme.typography.bodyMedium,
+          color = MaterialTheme.colorScheme.onSurfaceVariant
         )
       }
       Text(
         text = highlight.currentLabel(),
-        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold),
-        color = colors.subtitle
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
       )
     }
 
@@ -90,8 +80,8 @@ internal fun HighlightRow(
     ) {
       NoneSwatch(
         isSelected = highlight == null,
-        outlineColor = colors.swatchOutline,
-        labelColor = colors.subtitle,
+        outlineColor = MaterialTheme.colorScheme.outline,
+        labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
         onClick = onClear,
         modifier = Modifier.weight(1f)
       )
@@ -193,7 +183,7 @@ private fun NoneSwatch(
     }
     Text(
       text = stringResource(R.string.ayahbookmark_highlight_none),
-      style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+      style = MaterialTheme.typography.labelMedium,
       color = labelColor,
       modifier = Modifier.padding(top = 4.dp)
     )

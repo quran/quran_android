@@ -11,7 +11,7 @@
           app:showAsAction="ifRoom" />
     <item android:id="@+id/cab_delete"
           android:icon="@drawable/ic_cancel"
-          android:title="@string/delete_tag"
+          android:title="@string/delete"
           app:showAsAction="ifRoom" />
     <item android:id="@+id/cab_new_tag"
           android:icon="@drawable/ic_new"

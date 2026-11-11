@@ -10,7 +10,7 @@ import com.quran.shared.persistence.util.toPlatform
 internal fun AyahHighlightColor.fromPlatform(): HighlightColor {
   return when (this) {
     AyahHighlightColor.BLUE -> HighlightColor.BLUE
-    AyahHighlightColor.RED -> HighlightColor.RED
+    AyahHighlightColor.PINK -> HighlightColor.PINK
     AyahHighlightColor.GREEN -> HighlightColor.GREEN
     AyahHighlightColor.YELLOW -> HighlightColor.YELLOW
     AyahHighlightColor.PURPLE -> HighlightColor.PURPLE
@@ -20,7 +20,7 @@ internal fun AyahHighlightColor.fromPlatform(): HighlightColor {
 internal fun HighlightColor.toPlatform(): AyahHighlightColor {
   return when (this) {
     HighlightColor.BLUE -> AyahHighlightColor.BLUE
-    HighlightColor.RED -> AyahHighlightColor.RED
+    HighlightColor.PINK -> AyahHighlightColor.PINK
     HighlightColor.GREEN -> AyahHighlightColor.GREEN
     HighlightColor.YELLOW -> AyahHighlightColor.YELLOW
     HighlightColor.PURPLE -> AyahHighlightColor.PURPLE

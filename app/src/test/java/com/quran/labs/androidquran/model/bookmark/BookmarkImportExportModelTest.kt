@@ -7,11 +7,13 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.Settings
+import com.quran.data.model.PageAppearance
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.data.model.bookmark.PageReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.bookmark.RecentPage
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.BaseTestExtension
@@ -42,6 +44,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.File
 import java.io.IOException
+import kotlin.time.Instant
 
 @Config(application = TestApplication::class, sdk = [33])
 @RunWith(RobolectricTestRunner::class)
@@ -76,10 +79,8 @@ class BookmarkImportExportModelTest {
       bookmarksDao,
       recentPagesDao,
       readingBookmarksDao,
-      settings,
       pageMapper,
       BookmarkBackupImportNormalizer(
-        context,
         pageMapper,
         DefaultMobileSyncTimestampProvider()
       ),
@@ -115,7 +116,7 @@ class BookmarkImportExportModelTest {
     BaseTestExtension.awaitTerminalEvent(testObserver)
     testObserver.assertValueCount(1)
     testObserver.assertNoErrors()
-    assertThat(testObserver.values()[0].readingBookmark).isNull()
+    assertThat(testObserver.values()[0].readingBookmarks).isEmpty()
     assertThat(testObserver.values()[0].tags.map { tag -> tag.id })
       .containsExactly("1", "2", "3")
   }
@@ -149,8 +150,15 @@ class BookmarkImportExportModelTest {
         Bookmark("2", null, null, 51, System.currentTimeMillis())
       )
     )
-    recentPagesDao.setRecentPages(listOf(RecentPage(50, 1000), RecentPage(51, 900)))
-    readingBookmarksDao.setReadingBookmark(PageReadingBookmark(42, timestamp = 1234))
+    recentPagesDao.setRecentPages(
+      listOf(
+        RecentPage(50, Instant.fromEpochSeconds(1000)),
+        RecentPage(51, Instant.fromEpochSeconds(900))
+      )
+    )
+    readingBookmarksDao.setReadingBookmark(
+      PageReadingBookmark(ReadingBookmarkType.ORANGE, 42, Instant.fromEpochSeconds(1234))
+    )
 
     val testObserver = TestObserver<Uri>()
     bookmarkImportExportModel.exportBookmarksObservable()
@@ -164,16 +172,48 @@ class BookmarkImportExportModelTest {
     val exportedData = BookmarkJsonModel().fromJson(backupFile().source().buffer())
     assertThat(exportedData.bookmarks).containsExactly(ayahBookmark)
     assertThat(exportedData.recentPages)
-      .containsExactly(RecentPage(50, 1000), RecentPage(51, 900))
+      .containsExactly(
+        RecentPage(50, Instant.fromEpochSeconds(1000)),
+        RecentPage(51, Instant.fromEpochSeconds(900))
+      )
       .inOrder()
     assertThat(exportedData.pageType).isEqualTo("madani")
-    assertThat(exportedData.readingBookmark).isEqualTo(
+    assertThat(exportedData.readingBookmarks).containsExactly(
       BackupReadingBookmark(
+        slot = ReadingBookmarkType.ORANGE,
         type = BackupReadingBookmark.TYPE_PAGE,
         page = 42,
-        timestamp = 1234
+        timestamp = Instant.fromEpochSeconds(1234)
       )
     )
+  }
+
+  @Test
+  fun testExportBookmarksNumbersBookmarkIdsForOlderVersions() {
+    // mobile-sync ids are "sura:ayah"; older app versions restore backup ids as numbers
+    bookmarksDao.setTags(listOf(Tag("7", "Export Tag")))
+    bookmarksDao.setBookmarks(
+      listOf(
+        Bookmark("2:255", 2, 255, 42, 2_000L, listOf("7")),
+        Bookmark("1:1", 1, 1, 1, 1_000L)
+      )
+    )
+
+    val testObserver = TestObserver<Uri>()
+    bookmarkImportExportModel.exportBookmarksObservable()
+      .subscribe(testObserver)
+    BaseTestExtension.awaitTerminalEvent(testObserver)
+    testObserver.assertNoErrors()
+
+    val json = backupFile().readText()
+    assertThat(json).doesNotContain("2:255")
+    val exportedData = BookmarkJsonModel().fromJson(Buffer().writeUtf8(json))
+    assertThat(exportedData.bookmarks.map { bookmark -> bookmark.id.toLongOrNull() })
+      .containsNoneOf(null, 0L)
+    assertThat(exportedData.bookmarks.map { bookmark -> bookmark.id }.toSet()).hasSize(2)
+    assertThat(
+      exportedData.bookmarks.map { bookmark -> Triple(bookmark.sura, bookmark.ayah, bookmark.tags) }
+    ).containsExactly(Triple(2, 255, listOf("7")), Triple(1, 1, emptyList<String>()))
   }
 
   @Test
@@ -181,7 +221,9 @@ class BookmarkImportExportModelTest {
     val sura = 2
     val ayah = 255
     val page = quranInfo.getPageFromSuraAyah(sura, ayah)
-    readingBookmarksDao.setReadingBookmark(AyahReadingBookmark(sura, ayah, timestamp = 1234))
+    readingBookmarksDao.setReadingBookmark(
+      AyahReadingBookmark(ReadingBookmarkType.ORANGE, sura, ayah, Instant.fromEpochSeconds(1234))
+    )
 
     val testObserver = TestObserver<Uri>()
     bookmarkImportExportModel.exportBookmarksObservable()
@@ -192,13 +234,14 @@ class BookmarkImportExportModelTest {
     testObserver.assertValueCount(1)
 
     val exportedData = BookmarkJsonModel().fromJson(backupFile().source().buffer())
-    assertThat(exportedData.readingBookmark).isEqualTo(
+    assertThat(exportedData.readingBookmarks).containsExactly(
       BackupReadingBookmark(
+        slot = ReadingBookmarkType.ORANGE,
         type = BackupReadingBookmark.TYPE_AYAH,
         sura = sura,
         ayah = ayah,
         page = page,
-        timestamp = 1234
+        timestamp = Instant.fromEpochSeconds(1234)
       )
     )
   }
@@ -207,10 +250,12 @@ class BookmarkImportExportModelTest {
   fun testExportBookmarksCsvWithDataProducesUri() {
     bookmarksDao.setTags(listOf(Tag("1", "CSV Tag")))
     bookmarksDao.setBookmarks(
-      listOf(Bookmark("1", 1, 1, 1, System.currentTimeMillis()))
+      listOf(Bookmark("1", 1, 1, 1, 1_700_000_000L, tags = listOf("1")))
     )
-    recentPagesDao.setRecentPages(listOf(RecentPage(12, 1000)))
-    readingBookmarksDao.setReadingBookmark(PageReadingBookmark(12, timestamp = 999))
+    recentPagesDao.setRecentPages(listOf(RecentPage(12, Instant.fromEpochMilliseconds(1_700_000_000_123L))))
+    readingBookmarksDao.setReadingBookmark(
+      PageReadingBookmark(ReadingBookmarkType.ORANGE, 12, Instant.fromEpochMilliseconds(1_699_999_999_456L))
+    )
 
     val testObserver = TestObserver<Uri>()
     bookmarkImportExportModel.exportBookmarksCSVObservable()
@@ -220,8 +265,12 @@ class BookmarkImportExportModelTest {
     testObserver.assertNoErrors()
     testObserver.assertValueCount(1)
     assertThat(testObserver.values()[0]).isNotNull()
-    assertThat(csvBackupFile().readText()).contains("recent,,, 12, 1000")
-    assertThat(csvBackupFile().readText()).contains("reading_bookmark, null, null, 12, 999")
+    assertThat(csvBackupFile().readText()).isEqualTo(
+      "type, sura, ayah, page, timestamp, tags, slot \n" +
+        "bookmark, 1, 1, 1, 1700000000, CSV Tag, \n" +
+        "recent,,, 12, 1700000000,, \n" +
+        "reading_bookmark, null, null, 12, 1699999999,, ORANGE \n"
+    )
   }
 
   @Test
@@ -229,7 +278,9 @@ class BookmarkImportExportModelTest {
     val sura = 2
     val ayah = 255
     val page = quranInfo.getPageFromSuraAyah(sura, ayah)
-    readingBookmarksDao.setReadingBookmark(AyahReadingBookmark(sura, ayah, timestamp = 999))
+    readingBookmarksDao.setReadingBookmark(
+      AyahReadingBookmark(ReadingBookmarkType.ORANGE, sura, ayah, Instant.fromEpochSeconds(999))
+    )
 
     val testObserver = TestObserver<Uri>()
     bookmarkImportExportModel.exportBookmarksCSVObservable()
@@ -238,7 +289,25 @@ class BookmarkImportExportModelTest {
 
     testObserver.assertNoErrors()
     testObserver.assertValueCount(1)
-    assertThat(csvBackupFile().readText()).contains("reading_bookmark, 2, 255, $page, 999")
+    assertThat(csvBackupFile().readText()).isEqualTo(
+      "type, sura, ayah, page, timestamp, tags, slot \n" +
+        "reading_bookmark, 2, 255, $page, 999,, ORANGE \n"
+    )
+  }
+
+  @Test
+  fun testExportBookmarksCsvWithOnlyRecentPagesKeepsHeader() {
+    val sink = Buffer()
+
+    BookmarkJsonModel().toCSV(
+      sink,
+      BookmarkData(recentPages = listOf(RecentPage(12, Instant.fromEpochSeconds(1000))))
+    )
+
+    assertThat(sink.readUtf8()).isEqualTo(
+      "type, sura, ayah, page, timestamp, tags, slot \n" +
+        "recent,,, 12, 1000,, \n"
+    )
   }
 
   @Test
@@ -261,8 +330,7 @@ class BookmarkImportExportModelTest {
 
     val importedData = importedData()
     assertThat(importedData.collections.map { collection -> collection.name }).containsExactly("Existing")
-    assertThat(importedData.collectionBookmarks.single().collectionImportId)
-      .isEqualTo(importedData.collections.single().importId)
+    assertThat(importedData.collectionBookmarks.single().collectionName).isEqualTo("Existing")
   }
 
   @Test
@@ -298,7 +366,7 @@ class BookmarkImportExportModelTest {
     val recentTimestampMillis = 1_700_000_002_000L
     val readingBookmarkTimestampMillis = 1_700_000_003_000L
     val page = 50
-    val oldPageBookmarksTagName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksTagName = "Old Page Bookmarks"
 
     importData(
       BookmarkData(
@@ -313,11 +381,14 @@ class BookmarkImportExportModelTest {
             tags = listOf("99")
           )
         ),
-        recentPages = listOf(RecentPage(page, recentTimestampMillis)),
-        readingBookmark = BackupReadingBookmark(
-          type = BackupReadingBookmark.TYPE_PAGE,
-          page = page,
-          timestamp = readingBookmarkTimestampMillis
+        recentPages = listOf(RecentPage(page, Instant.fromEpochMilliseconds(recentTimestampMillis))),
+        readingBookmarks = listOf(
+          BackupReadingBookmark(
+            slot = ReadingBookmarkType.ORANGE,
+            type = BackupReadingBookmark.TYPE_PAGE,
+            page = page,
+            timestamp = Instant.fromEpochMilliseconds(readingBookmarkTimestampMillis)
+          )
         )
       )
     )
@@ -326,7 +397,7 @@ class BookmarkImportExportModelTest {
     val oldPageCollection = importedData.collections.single { collection ->
       collection.name == oldPageBookmarksTagName
     }
-    val readingBookmark = importedData.readingBookmark as MobileSyncImportReadingBookmark.Page
+    val readingBookmark = importedData.readingBookmarks.single() as MobileSyncImportReadingBookmark.Page
 
     assertThat(importedData.bookmarks.single().timestampMillis)
       .isEqualTo(bookmarkTimestampMillis)
@@ -339,10 +410,12 @@ class BookmarkImportExportModelTest {
   }
 
   @Test
+  @Config(qualifiers = "ar")
   fun testImportConvertsPageBookmarkToAyahBookmarkWithOldPageBookmarkTag() {
     val page = 50
     val originalTagName = "Imported Tag"
-    val oldPageBookmarksTagName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksTagName = "Old Page Bookmarks"
+    assertThat(context.getString(R.string.old_page_bookmarks)).isNotEqualTo(oldPageBookmarksTagName)
 
     importData(
       BookmarkData(
@@ -363,17 +436,14 @@ class BookmarkImportExportModelTest {
     val pageBounds = quranInfo.getPageBounds(page)
     val importedData = importedData()
     val importedBookmark = importedData.bookmarks.single()
-    val collectionsByName = importedData.collections.associateBy { collection -> collection.name }
 
     assertThat(importedBookmark.sura).isEqualTo(pageBounds[0])
     assertThat(importedBookmark.ayah).isEqualTo(pageBounds[1])
     assertThat(importedData.collections.map { collection -> collection.name })
       .containsExactly(originalTagName, oldPageBookmarksTagName)
       .inOrder()
-    assertThat(importedData.collectionBookmarks.map { link -> link.collectionImportId }).containsExactly(
-      collectionsByName.getValue(originalTagName).importId,
-      collectionsByName.getValue(oldPageBookmarksTagName).importId
-    )
+    assertThat(importedData.collectionBookmarks.map { link -> link.collectionName })
+      .containsExactly(originalTagName, oldPageBookmarksTagName)
     assertThat(mobileSyncImporter.deleteExisting).isFalse()
   }
 
@@ -382,7 +452,7 @@ class BookmarkImportExportModelTest {
     val page = 50
     val backupTagId = "old-page-bookmarks"
     val originalTagName = "Imported Tag"
-    val oldPageBookmarksTagName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksTagName = "Old Page Bookmarks"
 
     importData(
       BookmarkData(
@@ -401,57 +471,21 @@ class BookmarkImportExportModelTest {
     )
 
     val importedData = importedData()
-    val collectionsByName = importedData.collections.associateBy { collection -> collection.name }
-    val originalTagCollection = collectionsByName.getValue(originalTagName)
-    val oldPageBookmarksCollection = collectionsByName.getValue(oldPageBookmarksTagName)
 
-    val collectionImportIds = importedData.collections.map { collection -> collection.importId }
-    assertThat(collectionImportIds).containsNoDuplicates()
-    assertThat(collectionImportIds).doesNotContain(backupTagId)
-    assertThat(originalTagCollection.importId).isNotEqualTo(backupTagId)
-    assertThat(importedData.collectionBookmarks.map { link -> link.collectionImportId }).containsExactly(
-      originalTagCollection.importId,
-      oldPageBookmarksCollection.importId
-    )
-  }
-
-  @Test
-  fun testImportGeneratedCollectionIdsDoNotReuseBackupTagIds() {
-    val backupTagIds = listOf("backup-collection-0", "backup-collection-1", "backup-collection-2")
-
-    importData(
-      BookmarkData(
-        tags = listOf(
-          Tag(backupTagIds[0], "First Imported Tag"),
-          Tag(backupTagIds[1], "Second Imported Tag"),
-          Tag(backupTagIds[2], "Third Imported Tag")
-        ),
-        bookmarks = listOf(
-          Bookmark(
-            id = "1",
-            sura = null,
-            ayah = null,
-            page = 50,
-            timestamp = 1000,
-            tags = backupTagIds
-          )
-        )
-      )
-    )
-
-    val collectionImportIds = importedData().collections.map { collection -> collection.importId }
-
-    assertThat(collectionImportIds).containsNoDuplicates()
-    backupTagIds.forEach { backupTagId ->
-      assertThat(collectionImportIds).doesNotContain(backupTagId)
-    }
+    assertThat(importedData.collections.map { collection -> collection.name })
+      .containsExactly(originalTagName, oldPageBookmarksTagName)
+    assertThat(importedData.collectionBookmarks.map { link -> link.collectionName })
+      .containsExactly(originalTagName, oldPageBookmarksTagName)
   }
 
   @Test
   fun testImportRecentPagesKeepsBackupOrder() {
     importData(
       BookmarkData(
-        recentPages = listOf(RecentPage(50, 1000), RecentPage(51, 900))
+        recentPages = listOf(
+          RecentPage(50, Instant.fromEpochSeconds(1000)),
+          RecentPage(51, Instant.fromEpochSeconds(900))
+        )
       )
     )
 
@@ -468,17 +502,20 @@ class BookmarkImportExportModelTest {
   fun testImportReadingBookmark() {
     importData(
       BookmarkData(
-        readingBookmark = BackupReadingBookmark(
-          type = BackupReadingBookmark.TYPE_AYAH,
-          sura = 2,
-          ayah = 255,
-          page = 50,
-          timestamp = 1000
+        readingBookmarks = listOf(
+          BackupReadingBookmark(
+            slot = ReadingBookmarkType.ORANGE,
+            type = BackupReadingBookmark.TYPE_AYAH,
+            sura = 2,
+            ayah = 255,
+            page = 50,
+            timestamp = Instant.fromEpochSeconds(1000)
+          )
         )
       )
     )
 
-    val readingBookmark = importedData().readingBookmark as MobileSyncImportReadingBookmark.Ayah
+    val readingBookmark = importedData().readingBookmarks.single() as MobileSyncImportReadingBookmark.Ayah
     assertThat(readingBookmark.sura).isEqualTo(2)
     assertThat(readingBookmark.ayah).isEqualTo(255)
     assertThat(readingBookmark.timestampMillis).isEqualTo(1_000_000)
@@ -520,7 +557,7 @@ class BookmarkImportExportModelTest {
         collectionsImported = data.collections.size,
         collectionBookmarksImported = data.collectionBookmarks.size,
         readingSessionsImported = data.readingSessions.size,
-        readingBookmarkImported = data.readingBookmark != null
+        readingBookmarkImported = 0
       )
     }
   }
@@ -535,11 +572,13 @@ class BookmarkImportExportModelTest {
 
     override suspend fun lastPage(): Int = 1
 
-    override suspend fun isNightMode(): Boolean = false
+    override suspend fun pageAppearance(): PageAppearance = PageAppearance.Light
 
-    override suspend fun nightModeTextBrightness(): Int = 0
+    override suspend fun pageTextBrightness(): Int = 0
 
     override suspend fun nightModeBackgroundBrightness(): Int = 0
+
+    override suspend fun dayPageBackgroundColor(): Int? = null
 
     override suspend fun shouldShowHeaderFooter(): Boolean = false
 

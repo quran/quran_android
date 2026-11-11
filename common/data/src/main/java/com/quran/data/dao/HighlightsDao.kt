@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface HighlightsDao {
   fun highlightsFlow(): Flow<List<Highlight>>
+  fun highlightsFlow(currentAyah: SuraAyah): Flow<Highlight?>
   suspend fun setHighlight(ayah: SuraAyah, color: HighlightColor)
   suspend fun clearHighlight(ayah: SuraAyah)
 }

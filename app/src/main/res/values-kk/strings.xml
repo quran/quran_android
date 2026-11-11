@@ -119,19 +119,12 @@
   <string name="prefs_category_display_settings">Көрініс</string>
   <string name="prefs_use_arabic_title">Арабша режим (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Бағдарлама араб тілінде істейді </string>
-  <string name="prefs_new_background_title">Жаңа фон</string>
   <string name="prefs_lock_orientation_title">Экран бағытын құлыптау</string>
   <string name="prefs_lock_orientation_summary_on">Құран беттері экранның белгіленген бағытында ұсталады</string>
   <string name="prefs_lock_orientation_summary_off">Ағымдық бағытта пайдалану</string>
   <string name="prefs_landscape_orientation_title">Көлденең бағыт</string>
   <string name="prefs_landscape_orientation_summary_on">Көлденең бағытта пайдалану</string>
   <string name="prefs_landscape_orientation_summary_off">Тік бағытта пайдалану</string>
-  <string name="prefs_night_mode_title">Түнгі режим</string>
-  <string name="prefs_night_mode_summary">Қара фон мен ашық түсті шрифт қолданылады</string>
-  <string name="prefs_night_mode_text_brightness_title">Мәтін ашықтығы</string>
-  <string name="prefs_night_mode_text_brightness_summary">Түнгі режимдегі мәтін ашықтығы</string>
-  <string name="prefs_night_mode_background_brightness_title">Фондық жарықтық</string>
-  <string name="prefs_night_mode_background_brightness_summary">Түнгі режим белсенді болған кездегі беттің жарықтығы</string>
   <string name="prefs_overlay_page_info_title">Бет деректері</string>
   <string name="prefs_overlay_page_info_summary">Сүре аты, бет және пара ретін көрсету</string>
   <string name="prefs_display_marker_title">Бөлім деректері</string>
@@ -275,6 +268,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Бетбелгіні белгілеу</string>
   <string name="delete_tag">Белгіні жою</string>
+  <string name="delete">Жою</string>
   <string name="edit_tag">Белгіні өзгерту</string>
   <string name="new_tag">Жаңа белгі</string>
   <plurals name="bookmark_tag_deleted">
@@ -289,8 +283,6 @@
   <string name="reading_bookmark_movable_education_title">Бұл жылжымалы оқу бетбелгісі</string>
   <string name="reading_bookmark_movable_education_body">Оқу бетбелгісін сақтау ескісін алмастырады. Бірнеше аятты сақтау үшін аятты басып тұрып, оны жинаққа қосыңыз.</string>
   <string name="reading_bookmark_moved_from">%1$s дегеннен жылжытылды</string>
-  <string name="reading_bookmark_moved_from_title">Бетбелгі %1$s дегеннен жылжытылды</string>
-  <string name="reading_bookmark_added">Бетбелгі қосылды</string>
   <string name="reading_bookmark_dismiss_education">Жабу</string>
 
   <!-- tag dialog -->

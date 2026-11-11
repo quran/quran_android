@@ -9,11 +9,22 @@
   <string name="canceling">Canceling&#8230;</string>
 
   <string name="default_collection">Favorites</string>
+  <!-- shown next to an ayah number in translation mode when the ayah is in several collections -->
+  <plurals name="ayah_collections">
+    <item quantity="one">%d collection</item>
+    <item quantity="other">%d collections</item>
+  </plurals>
+  <!-- legacy page bookmarks' collection; translations live in app, which overrides this -->
+  <string name="old_page_bookmarks">Old Page Bookmarks</string>
 
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">Yellow</string>
   <string name="highlight_color_green">Green</string>
   <string name="highlight_color_blue">Blue</string>
-  <string name="highlight_color_red">Red</string>
+  <string name="highlight_color_pink">Pink</string>
   <string name="highlight_color_purple">Purple</string>
+  <!-- names of the three reading bookmark slots -->
+  <string name="reading_bookmark_teal">Teal</string>
+  <string name="reading_bookmark_orange">Orange</string>
+  <string name="reading_bookmark_red">Red</string>
 </resources>

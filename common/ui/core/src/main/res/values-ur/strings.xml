@@ -4,6 +4,6 @@
   <string name="highlight_color_yellow">پیلا</string>
   <string name="highlight_color_green">ہرا</string>
   <string name="highlight_color_blue">نیلا</string>
-  <string name="highlight_color_red">سرخ</string>
   <string name="highlight_color_purple">جامنی</string>
+  <string name="reading_bookmark_red">سرخ</string>
 </resources>

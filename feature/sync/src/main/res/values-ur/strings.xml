@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">سائن ان ہیں</string>
   <string name="quran_sync_loading">سائن ان ہو رہا ہے</string>
   <string name="quran_sync_login">لاگ ان کریں</string>
-  <string name="quran_sync_logout">لاگ آؤٹ کریں</string>
-  <string name="quran_sync_name">نام</string>
-  <string name="quran_sync_email">ای میل</string>
-  <string name="quran_sync_account_id">اکاؤنٹ آئی ڈی</string>
   <string name="quran_sync_action_error">اس وقت ہم آہنگی کو اپ ڈیٹ نہیں کیا جا سکتا۔</string>
   <string name="quran_sync_bookmarks_cta_title">اپنے بک مارکس ہر جگہ ہم آہنگ کریں</string>
   <string name="quran_sync_bookmarks_cta_subtitle">کسی بھی ڈیوائس سے، کسی بھی وقت رسائی حاصل کریں</string>

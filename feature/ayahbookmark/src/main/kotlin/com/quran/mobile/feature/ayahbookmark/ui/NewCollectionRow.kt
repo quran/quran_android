@@ -27,17 +27,17 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.quran.mobile.feature.ayahbookmark.R
+import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionNameError
 
 @Composable
 internal fun NewCollectionTriggerRow(
@@ -55,7 +55,7 @@ internal fun NewCollectionTriggerRow(
     PlusGlyph(color = MaterialTheme.colorScheme.primary)
     Text(
       text = stringResource(R.string.ayahbookmark_new_collection),
-      style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+      style = MaterialTheme.typography.titleMedium,
       color = MaterialTheme.colorScheme.primary
     )
   }
@@ -65,7 +65,7 @@ internal fun NewCollectionTriggerRow(
 internal fun NewCollectionInputRow(
   name: String,
   isSubmitting: Boolean,
-  hasNameError: Boolean,
+  nameError: AyahBookmarkCollectionNameError?,
   onNameChange: (String) -> Unit,
   onCancel: () -> Unit,
   onCreate: () -> Unit,
@@ -74,7 +74,7 @@ internal fun NewCollectionInputRow(
   val focusRequester = remember { FocusRequester() }
   LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
-  val underlineColor = if (hasNameError) {
+  val underlineColor = if (nameError != null) {
     MaterialTheme.colorScheme.error
   } else {
     MaterialTheme.colorScheme.primary
@@ -104,10 +104,10 @@ internal fun NewCollectionInputRow(
           },
           enabled = !isSubmitting,
           singleLine = true,
-          textStyle = TextStyle(
-            fontSize = 14.5.sp,
+          textStyle = MaterialTheme.typography.bodyLarge.copy(
             color = MaterialTheme.colorScheme.onSurface
           ),
+          cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
           keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
           keyboardActions = KeyboardActions(onDone = { onCreate() }),
           modifier = Modifier
@@ -126,16 +126,16 @@ internal fun NewCollectionInputRow(
         if (textFieldValue.value.text.isEmpty()) {
           Text(
             text = stringResource(R.string.ayahbookmark_collection_name_hint),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(vertical = 5.dp)
           )
         }
       }
-      if (hasNameError) {
+      if (nameError != null) {
         Text(
-          text = stringResource(R.string.ayahbookmark_collection_name_error),
-          style = MaterialTheme.typography.labelSmall,
+          text = nameErrorMessage(nameError),
+          style = MaterialTheme.typography.bodySmall,
           color = MaterialTheme.colorScheme.error,
           modifier = Modifier.padding(top = 3.dp)
         )
@@ -144,7 +144,7 @@ internal fun NewCollectionInputRow(
 
     Text(
       text = stringResource(R.string.ayahbookmark_cancel),
-      style = MaterialTheme.typography.bodySmall,
+      style = MaterialTheme.typography.labelLarge,
       color = if (isSubmitting) {
         MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
       } else {
@@ -166,6 +166,22 @@ internal fun NewCollectionInputRow(
         Text(stringResource(R.string.ayahbookmark_create))
       }
     }
+  }
+}
+
+@Composable
+private fun nameErrorMessage(nameError: AyahBookmarkCollectionNameError): String {
+  return when (nameError) {
+    is AyahBookmarkCollectionNameError.Duplicate ->
+      stringResource(R.string.ayahbookmark_collection_name_duplicate, nameError.existingName)
+    is AyahBookmarkCollectionNameError.Reserved ->
+      stringResource(R.string.ayahbookmark_collection_name_reserved, nameError.name)
+    AyahBookmarkCollectionNameError.Empty ->
+      stringResource(R.string.ayahbookmark_collection_name_empty)
+    AyahBookmarkCollectionNameError.TooLong ->
+      stringResource(R.string.ayahbookmark_collection_name_too_long)
+    AyahBookmarkCollectionNameError.Unavailable ->
+      stringResource(R.string.ayahbookmark_collection_name_error)
   }
 }
 

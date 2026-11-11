@@ -5,6 +5,7 @@ import com.quran.data.model.bookmark.RecentPage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlin.time.Clock
 
 class FakeRecentPagesDao : RecentPagesDao {
   private val recentPages = MutableStateFlow<List<RecentPage>>(emptyList())
@@ -23,7 +24,7 @@ class FakeRecentPagesDao : RecentPagesDao {
 
   override suspend fun addRecentPage(page: Int) {
     recentPages.update { pages ->
-      listOf(RecentPage(page, System.currentTimeMillis() / 1000)) +
+      listOf(RecentPage(page, Clock.System.now())) +
         pages.filterNot { it.page == page }
     }
     trimRecents()

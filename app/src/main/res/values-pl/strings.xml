@@ -102,19 +102,12 @@
   <string name="prefs_category_display_settings">Ustawienia wyświetlania</string>
   <string name="prefs_use_arabic_title">Tryb arabski (الوضع العربي)</string>
   <string name="prefs_use_arabic_summary_on">Użyj języka arabskiego jako interfejsu aplikacji</string>
-  <string name="prefs_new_background_title">Nowe tło (bielsze)</string>
   <string name="prefs_lock_orientation_title">Zablokuj orientację ekranu</string>
   <string name="prefs_lock_orientation_summary_on">Używana jest jedna, stała orientacja ekranu</string>
   <string name="prefs_lock_orientation_summary_off">Używana jest systemowa orientacja ekranu</string>
   <string name="prefs_landscape_orientation_title">Stała orientacja ekranu</string>
   <string name="prefs_landscape_orientation_summary_on">Zawsze używaj orientacji poziomej</string>
   <string name="prefs_landscape_orientation_summary_off">Zawsze używaj orientacji pionowej</string>
-  <string name="prefs_night_mode_title">Tryb nocny</string>
-  <string name="prefs_night_mode_summary">Użyj ciemnego tła i jasnych czcionek</string>
-  <string name="prefs_night_mode_text_brightness_title">Jasność tekstu</string>
-  <string name="prefs_night_mode_text_brightness_summary">Jasność tekstu w trybie nocnym</string>
-  <string name="prefs_night_mode_background_brightness_title">Jasność tła</string>
-  <string name="prefs_night_mode_background_brightness_summary">Jasność strony w trybie nocnym</string>
   <string name="prefs_overlay_page_info_title">Pokaż informacje na stronie</string>
   <string name="prefs_overlay_page_info_summary">Pokaż numer strony, nazwę sury i dżuzu podczas czytania</string>
   <string name="prefs_display_marker_title">Wyskakujące okienka kamieni milowych</string>
@@ -285,6 +278,7 @@
   <!-- bookmarks & tags contextual action bar -->
   <string name="tag_bookmark">Otaguj zakładkę</string>
   <string name="delete_tag">Usuń tag</string>
+  <string name="delete">Usuń</string>
   <string name="edit_tag">Edytuj tag</string>
   <string name="new_tag">Nowy tag</string>
   <plurals name="bookmark_tag_deleted">
@@ -300,8 +294,6 @@
   <string name="reading_bookmark_movable_education_title">To jest przenośna zakładka czytania</string>
   <string name="reading_bookmark_movable_education_body">Zapisanie zakładki czytania zastępuje poprzednią. Aby zapisać kilka ajatów, przytrzymaj ajat i dodaj go do kolekcji.</string>
   <string name="reading_bookmark_moved_from">Przeniesiono z %1$s</string>
-  <string name="reading_bookmark_moved_from_title">Zakładkę przeniesiono z %1$s</string>
-  <string name="reading_bookmark_added">Dodano zakładkę</string>
   <string name="reading_bookmark_dismiss_education">Odrzuć</string>
 
   <string name="recent_pages">Ostatnie strony</string>

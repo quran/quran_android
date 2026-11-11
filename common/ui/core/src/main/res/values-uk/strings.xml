@@ -6,10 +6,17 @@
   <string name="to">До</string>
   <string name="loading">Завантаження&#8230;</string>
   <string name="canceling">Скасування&#8230;</string>
+  <string name="default_collection">Вибране</string>
+  <plurals name="ayah_collections">
+    <item quantity="one">%d колекція</item>
+    <item quantity="few">%d колекції</item>
+    <item quantity="many">%d колекцій</item>
+    <item quantity="other">%d колекції</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">Жовтий</string>
   <string name="highlight_color_green">Зелений</string>
   <string name="highlight_color_blue">Синій</string>
-  <string name="highlight_color_red">Червоний</string>
   <string name="highlight_color_purple">Фіолетовий</string>
+  <string name="reading_bookmark_red">Червоний</string>
 </resources>

@@ -6,10 +6,14 @@
   <string name="to">Đến</string>
   <string name="loading">Đang tải&#8230;</string>
   <string name="canceling">Đang hủy&#8230;</string>
+  <string name="default_collection">Yêu thích</string>
+  <plurals name="ayah_collections">
+    <item quantity="other">%d bộ sưu tập</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">Vàng</string>
   <string name="highlight_color_green">Xanh lá</string>
   <string name="highlight_color_blue">Xanh dương</string>
-  <string name="highlight_color_red">Đỏ</string>
   <string name="highlight_color_purple">Tím</string>
+  <string name="reading_bookmark_red">Đỏ</string>
 </resources>

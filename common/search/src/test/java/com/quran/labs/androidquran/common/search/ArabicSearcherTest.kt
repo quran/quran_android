@@ -171,13 +171,24 @@ class ArabicSearcherTest {
 
   @Test
   fun `processSearchText converts all recognized arabic chars to underscores`() {
-    // Arrange: all arabicRegexChars = اأءتةهوىئ (\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649\u0626)
-    val allArabicRegexChars = "\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649\u0626"
+    // Arrange: all arabicRegexChars = اأءتةهوىيئ (\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649\u064a\u0626)
+    val allArabicRegexChars = "\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649\u064a\u0626"
     // Act
     val result = realArabicSearcher.processSearchText(allArabicRegexChars, hasFTS = false)
     // Assert: inner content should be all underscores (one per input char), wrapped in %
     val innerContent = result.removeSurrounding("%")
     assertThat(innerContent).isEqualTo("_".repeat(allArabicRegexChars.length))
+  }
+
+  @Test
+  fun `processSearchText replaces ya with LIKE wildcard so alef maqsura spellings are not pre-filtered out`() {
+    // Arrange: ي (\u064a) must be treated as a wildcard char in the LIKE pre-filter,
+    // otherwise verses spelled with ى are excluded by SQL before the regex stage runs.
+    val input = "\u064a"
+    // Act
+    val result = realArabicSearcher.processSearchText(input, hasFTS = false)
+    // Assert
+    assertThat(result).isEqualTo("%_%")
   }
 
   @Test

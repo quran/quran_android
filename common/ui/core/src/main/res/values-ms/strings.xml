@@ -6,10 +6,14 @@
   <string name="to">Sehingga</string>
   <string name="loading">Memuat…</string>
   <string name="canceling">Membatalkan&#8230;</string>
+  <string name="default_collection">Kegemaran</string>
+  <plurals name="ayah_collections">
+    <item quantity="other">%d koleksi</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">Kuning</string>
   <string name="highlight_color_green">Hijau</string>
   <string name="highlight_color_blue">Biru</string>
-  <string name="highlight_color_red">Merah</string>
   <string name="highlight_color_purple">Ungu</string>
+  <string name="reading_bookmark_red">Merah</string>
 </resources>

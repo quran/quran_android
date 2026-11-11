@@ -49,7 +49,7 @@ class LegacyBookmarksMigratorTest {
     migrator = LegacyBookmarksMigrator(
       quranSettings = quranSettings,
       legacyBookmarksDataSource = dataSource,
-      normalizer = LegacyBookmarkMigrationNormalizer(context, QuranInfo(MadaniDataSource())),
+      normalizer = LegacyBookmarkMigrationNormalizer(QuranInfo(MadaniDataSource())),
       mobileSyncImporter = importer
     )
   }
@@ -171,7 +171,7 @@ class LegacyBookmarksMigratorTest {
         collectionsImported = data.collections.size,
         collectionBookmarksImported = data.collectionBookmarks.size,
         readingSessionsImported = data.readingSessions.size,
-        readingBookmarkImported = data.readingBookmark != null
+        readingBookmarkImported = 0
       )
     }
   }

@@ -23,6 +23,8 @@ class QuranPageAdapter(
   private val totalPages: Int = quranInfo.numberOfPagesConsideringSkipped
   private val totalPagesDual: Int = totalPages / 2 + (totalPages % 2)
 
+  override fun shouldSaveFragmentHistory(): Boolean = false
+
   fun setTranslationMode() {
     if (!isShowingTranslation) {
       isShowingTranslation = true

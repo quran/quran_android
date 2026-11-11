@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">Têketî</string>
   <string name="quran_sync_loading">Têketin</string>
   <string name="quran_sync_login">Têkeve</string>
-  <string name="quran_sync_logout">Derkeve</string>
-  <string name="quran_sync_name">Nav</string>
-  <string name="quran_sync_email">E-name</string>
-  <string name="quran_sync_account_id">Nasnameya hesabê</string>
   <string name="quran_sync_action_error">Niha nikare senkronîzasyonê nûve bike.</string>
   <string name="quran_sync_bookmarks_cta_title">Bookmarkên xwe li her derê senkronîze bike</string>
   <string name="quran_sync_bookmarks_cta_subtitle">Ji her cîhazê, di her demê de bigihîje wan</string>

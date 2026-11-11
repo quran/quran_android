@@ -9,8 +9,10 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.core.QuranPageInfo
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.dao.HighlightsDao
+import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.dao.Settings
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.SelectionIndicator
@@ -31,6 +33,7 @@ import com.quran.labs.androidquran.extra.feature.linebyline.model.HighlightType
 import com.quran.labs.androidquran.extra.feature.linebyline.model.LineModel
 import com.quran.labs.androidquran.extra.feature.linebyline.model.MissingLineByLineImagesException
 import com.quran.labs.androidquran.extra.feature.linebyline.model.PageInfo
+import com.quran.labs.androidquran.extra.feature.linebyline.model.ReadingBookmarkAyah
 import com.quran.labs.androidquran.extra.feature.linebyline.model.SidelineDirection
 import com.quran.labs.androidquran.extra.feature.linebyline.model.SidelineModel
 import com.quran.labs.androidquran.extra.feature.linebyline.presenter.selection.SelectionHelper
@@ -66,6 +69,7 @@ class QuranLineByLinePresenter @Inject constructor(
   private val pageProvider: PageProvider,
   private val bookmarksDao: BookmarksDao,
   private val highlightsDao: HighlightsDao,
+  private val readingBookmarksDao: ReadingBookmarksDao,
   private val readingEventPresenter: ReadingEventPresenter,
   private val audioStatusRepository: AudioStatusRepository,
   private val selectionHelper: SelectionHelper,
@@ -116,8 +120,9 @@ class QuranLineByLinePresenter @Inject constructor(
   fun loadPage(): Flow<PageInfo> {
     return combine(
       pageSelection(),
+      readingBookmarksForPage(),
       lineByLineSettings.displaySettingsFlow
-    ) { highlights, displaySettings ->
+    ) { highlights, readingBookmarks, displaySettings ->
       val displayText = DisplayText(
         quranPageInfo.suraName(page),
         quranPageInfo.juz(page),
@@ -150,6 +155,7 @@ class QuranLineByLinePresenter @Inject constructor(
         pageDetails.suraHeaders,
         pageDetails.ayahMarkers,
         highlights,
+        readingBookmarks,
         sidelines,
         targetScrollPosition,
         showSidelines,
@@ -375,6 +381,25 @@ class QuranLineByLinePresenter @Inject constructor(
         .filter { it.ayahHighlights.isNotEmpty() }
         .toImmutableList()
     }
+  }
+
+  private fun readingBookmarksForPage(): Flow<ImmutableList<ReadingBookmarkAyah>> {
+    return readingBookmarksDao.readingBookmarksFlow()
+      .map { readingBookmarks ->
+        val ayahBounds = pageDetailsFetcher.await().ayahBounds
+        readingBookmarks
+          .filterIsInstance<AyahReadingBookmark>()
+          .groupBy({ it.asSuraAyah() }, { it.slot })
+          .map { (suraAyah, slots) ->
+            ReadingBookmarkAyah(
+              slots.sorted().toImmutableList(),
+              ayahBounds.filter { it.sura == suraAyah.sura && it.ayah == suraAyah.ayah }
+            )
+          }
+          .filter { it.ayahHighlights.isNotEmpty() }
+          .toImmutableList()
+      }
+      .distinctUntilChanged()
   }
 
   private fun highlightsForPage(): Flow<List<Highlight>> {

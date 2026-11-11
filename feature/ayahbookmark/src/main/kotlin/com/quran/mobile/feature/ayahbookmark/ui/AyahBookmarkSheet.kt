@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.quran.mobile.feature.ayahbookmark.R
 import com.quran.mobile.feature.ayahbookmark.state.AyahBookmarkCollectionCreationState
@@ -40,16 +39,13 @@ internal fun AyahBookmarkSheet(
   val suraAyahName = remember(context, state.ayah) {
     state.suraAyahNameResolver(context, state.ayah)
   }
-  val currentReadingBookmarkName = remember(context, state.currentReadingBookmark) {
-    state.currentReadingBookmark?.let { state.readingBookmarkNameResolver(context, it) }
-  }
 
   Column(
     modifier = modifier
       .clip(RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp))
       .background(MaterialTheme.colorScheme.surface)
   ) {
-    // fixed head: drag handle, title row, reading bookmark toggle, collections label
+    // fixed head: drag handle, title row, reading bookmarks, highlight, collections label
     Column(modifier = Modifier.padding(top = 18.dp, start = 18.dp, end = 18.dp)) {
       Box(
         modifier = Modifier
@@ -73,7 +69,7 @@ internal fun AyahBookmarkSheet(
           } else {
             stringResource(R.string.ayahbookmark_not_saved)
           },
-          style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
+          style = MaterialTheme.typography.titleLarge,
           color = if (isSaved) {
             MaterialTheme.colorScheme.onSurface
           } else {
@@ -82,14 +78,17 @@ internal fun AyahBookmarkSheet(
         )
         Text(
           text = suraAyahName,
-          style = MaterialTheme.typography.bodySmall,
+          style = MaterialTheme.typography.bodyMedium,
           color = MaterialTheme.colorScheme.onSurfaceVariant,
-          modifier = Modifier.padding(start = 9.dp)
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+          modifier = Modifier
+            .weight(1f)
+            .padding(start = 9.dp, end = 8.dp)
         )
-        Spacer(modifier = Modifier.weight(1f))
         Text(
           text = stringResource(R.string.ayahbookmark_done),
-          style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+          style = MaterialTheme.typography.labelLarge,
           color = MaterialTheme.colorScheme.primary,
           modifier = Modifier
             .clip(RoundedCornerShape(percent = 100))
@@ -98,22 +97,31 @@ internal fun AyahBookmarkSheet(
         )
       }
 
-      ReadingBookmarkRow(
-        isEnabled = state.isReadingBookmarkEnabled,
-        currentReadingBookmarkName = currentReadingBookmarkName,
-        onToggle = { eventSink(AyahBookmarkEvent.ToggleReadingBookmark) }
+      ReadingBookmarkCard(
+        suggested = state.suggestedReadingBookmark,
+        isAtCurrentAyah = state.isSuggestedReadingBookmarkEnabled,
+        others = state.otherReadingBookmarks,
+        locationResolver = state.readingBookmarkLocationResolver,
+        onPlace = { eventSink(AyahBookmarkEvent.PlaceSuggestedReadingBookmark) },
+        onClear = { eventSink(AyahBookmarkEvent.ClearSuggestedReadingBookmark) },
+        onShowOthers = { eventSink(AyahBookmarkEvent.ShowReadingBookmarks) }
       )
+
+      // hairline dividers do the grouping the tinted cards used to do
+      HorizontalDivider(modifier = Modifier.padding(top = 18.dp))
 
       HighlightRow(
         highlight = state.highlight?.color,
         onSelect = { color -> eventSink(AyahBookmarkEvent.SetHighlight(color)) },
         onClear = { eventSink(AyahBookmarkEvent.ClearHighlight) },
-        modifier = Modifier.padding(top = 10.dp)
+        modifier = Modifier.padding(top = 14.dp)
       )
+
+      HorizontalDivider(modifier = Modifier.padding(top = 14.dp))
 
       Text(
         text = stringResource(R.string.ayahbookmark_collections_header).uppercase(),
-        style = MaterialTheme.typography.labelMedium,
+        style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(top = 16.dp, bottom = 4.dp, start = 4.dp, end = 4.dp)
       )
@@ -145,7 +153,7 @@ internal fun AyahBookmarkSheet(
         is AyahBookmarkCollectionCreationState.Active -> NewCollectionInputRow(
           name = creation.name,
           isSubmitting = creation.isSubmitting,
-          hasNameError = creation.hasNameError,
+          nameError = creation.nameError,
           onNameChange = { eventSink(AyahBookmarkEvent.CollectionNameChanged(it)) },
           onCancel = { eventSink(AyahBookmarkEvent.CancelCreatingCollection) },
           onCreate = { eventSink(AyahBookmarkEvent.CreateCollection(creation.name)) }

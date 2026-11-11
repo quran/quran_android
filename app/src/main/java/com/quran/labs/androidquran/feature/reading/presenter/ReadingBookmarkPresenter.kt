@@ -1,12 +1,20 @@
 package com.quran.labs.androidquran.feature.reading.presenter
 
+import com.quran.data.core.ReadingBookmarkUpdater
 import com.quran.data.dao.ReadingBookmarksDao
-import com.quran.data.di.ActivityScope
 import com.quran.data.di.AppCoroutineScope
+import com.quran.data.di.AppScope
+import com.quran.data.model.bookmark.AyahReadingBookmark
+import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkTarget
+import com.quran.data.model.bookmark.ReadingBookmarkType
+import com.quran.data.model.bookmark.isAt
 import com.quran.labs.androidquran.util.QuranSettings
+import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
@@ -19,17 +27,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.seconds
 
-@ActivityScope
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
 class ReadingBookmarkPresenter @Inject constructor(
   private val readingBookmarksDao: ReadingBookmarksDao,
   private val quranSettings: QuranSettings,
   private val appCoroutineScope: AppCoroutineScope
-) {
+) : ReadingBookmarkUpdater {
   private val scope = MainScope()
   private var currentJob: Job? = null
-  private var currentPage: Int? = null
-  private var persistedBookmark: ReadingBookmark? = null
-  private var pendingMove: PendingMove? = null
+  private var readingBookmarks: List<ReadingBookmark> = emptyList()
+  private var toastTimeoutJob: Job? = null
   private var screen: Screen? = null
 
   fun bind(pageFlow: Flow<Int>, screen: Screen) {
@@ -37,122 +45,147 @@ class ReadingBookmarkPresenter @Inject constructor(
     this.screen = screen
     currentJob = combine(
       pageFlow,
-      readingBookmarksDao.readingBookmarkFlow()
-    ) { page, bookmark -> page to bookmark }
-      .onEach { (page, bookmark) ->
-        currentPage = page
-        persistedBookmark = bookmark
-        // a pending (not yet durably written) move already reflects the intended state visually -
-        // don't let this now-stale flow emission flicker the icon back to unbookmarked
-        if (pendingMove?.page != page) {
-          screen.setPageReadingBookmarkSelected(bookmark.isPageReadingBookmark(page))
-        }
+      readingBookmarksDao.readingBookmarksFlow()
+    ) { page, bookmarks -> page to bookmarks }
+      .onEach { (page, bookmarks) ->
+        readingBookmarks = bookmarks
+        // any of the three pins sitting on this page fills the action bar icon
+        screen.setPageReadingBookmarkSelected(
+          bookmarks.any { it.isAt(ReadingBookmarkTarget.Page(page)) }
+        )
       }
       .launchIn(scope)
   }
 
   fun unbind(screen: Screen) {
     if (this.screen === screen) {
-      // Finish a pending move before clearing the screen so leaving the activity neither drops the
-      // bookmark nor leaves its toast attached without a timeout.
-      pendingMove?.page?.let(::confirmPendingMove)
       this.screen = null
-      currentPage = null
-      persistedBookmark = null
+      readingBookmarks = emptyList()
+      toastTimeoutJob?.cancel()
+      toastTimeoutJob = null
       currentJob?.cancel()
       currentJob = null
     }
   }
 
-  fun togglePageReadingBookmark(page: Int) {
-    val pending = pendingMove
-    if (pending != null && pending.page == page) {
-      // re-tapping the page we just optimistically (but not yet durably) bookmarked - same as
-      // tapping Undo on its toast: cancel the pending write instead of touching the dao
-      cancelPendingMove(page)
-    } else if (persistedBookmark.isPageReadingBookmark(page)) {
-      // un-bookmarking an already-persisted page - immediate, no undo affordance
-      pending?.let { cancelPendingMove(it.page) }
-      scope.launch {
-        val isBookmarked = readingBookmarksDao.togglePageReadingBookmark(page)
-        if (currentPage == page) {
-          screen?.setPageReadingBookmarkSelected(isBookmarked)
+  fun readingBookmarkFor(slot: ReadingBookmarkType): ReadingBookmark? =
+    readingBookmarks.firstOrNull { it.slot == slot && it !is EmptyReadingBookmark }
+
+  private fun nameFor(slot: ReadingBookmarkType): String? =
+    readingBookmarks.firstOrNull { it.slot == slot }?.name
+
+  override fun placeReadingBookmark(slot: ReadingBookmarkType, target: ReadingBookmarkTarget) {
+    val previous = readingBookmarkFor(slot)
+    if (previous?.isAt(target) != true) {
+      appCoroutineScope.launch {
+        when (target) {
+          is ReadingBookmarkTarget.Page -> readingBookmarksDao.setPageReadingBookmark(
+            slot,
+            target.page
+          )
+
+          is ReadingBookmarkTarget.Ayah ->
+            readingBookmarksDao.setAyahReadingBookmark(slot, target.suraAyah)
         }
       }
-    } else {
-      // moving/making a bookmark
-      val previousBookmark = pending?.previousBookmark ?: persistedBookmark
-      pending?.timeoutJob?.cancel()
 
-      val isEducation = quranSettings.markMovableBookmarkEducationSeen()
-
-      if (currentPage == page) {
-        screen?.setPageReadingBookmarkSelected(true)
-      }
-
-      val timeoutJob = appCoroutineScope.launch {
-        delay(if (isEducation) educationTimeout else movedTimeout)
-        // dismissReadingBookmarkMovedToast touches ui hierarchy so needs to be on main
-        withContext(Dispatchers.Main) {
-          confirmPendingMove(page)
-        }
-      }
-      pendingMove = PendingMove(page, previousBookmark, timeoutJob)
-
-      screen?.showReadingBookmarkMovedToast(
-        previousBookmark = previousBookmark,
-        isEducation = isEducation,
-        onUndo = { cancelPendingMove(page) },
-        onConfirm = { confirmPendingMove(page) }
+      showToast(
+        change = ReadingBookmarkChange.Placed(slot, nameFor(slot), target, previous),
+        isEducation = quranSettings.markMovableBookmarkEducationSeen()
       )
     }
   }
 
-  private fun confirmPendingMove(movedToPage: Int) {
-    takePendingMove(movedToPage) ?: return
-    appCoroutineScope.launch { readingBookmarksDao.setPageReadingBookmark(movedToPage) }
-    screen?.dismissReadingBookmarkMovedToast()
-  }
+  override fun clearReadingBookmark(slot: ReadingBookmarkType) {
+    val previous = readingBookmarkFor(slot)
 
-  private fun cancelPendingMove(movedToPage: Int) {
-    takePendingMove(movedToPage) ?: return
-    val viewedPage = currentPage
-    if (viewedPage != null) {
-      screen?.setPageReadingBookmarkSelected(persistedBookmark.isPageReadingBookmark(viewedPage))
+    if (previous != null) {
+      appCoroutineScope.launch { readingBookmarksDao.clearReadingBookmark(slot) }
+      showToast(
+        change = ReadingBookmarkChange.Cleared(slot, nameFor(slot), previous),
+        isEducation = false
+      )
     }
-    screen?.dismissReadingBookmarkMovedToast()
   }
 
-  private fun takePendingMove(page: Int): PendingMove? {
-    val pending = pendingMove?.takeIf { it.page == page } ?: return null
-    pendingMove = null
-    pending.timeoutJob.cancel()
-    return pending
+  private fun showToast(change: ReadingBookmarkChange, isEducation: Boolean) {
+    toastTimeoutJob?.cancel()
+    toastTimeoutJob = appCoroutineScope.launch {
+      delay(if (isEducation) educationTimeout else changeTimeout)
+      withContext(Dispatchers.Main) { dismissToast() }
+    }
+
+    screen?.showReadingBookmarkChangedToast(
+      change = change,
+      isEducation = isEducation,
+      onUndo = { undo(change) },
+      onDismiss = { dismissToast() }
+    )
   }
 
-  private fun ReadingBookmark?.isPageReadingBookmark(page: Int): Boolean {
-    return this is PageReadingBookmark && this.page == page
+  private fun undo(change: ReadingBookmarkChange) {
+    dismissToast()
+    appCoroutineScope.launch {
+      val slot = change.slot
+      val current = readingBookmarksDao.readingBookmarks()
+        .firstOrNull { it.slot == slot && it !is EmptyReadingBookmark }
+
+      val isStillOurs = when (change) {
+        is ReadingBookmarkChange.Placed -> current?.isAt(change.target) == true
+        is ReadingBookmarkChange.Cleared -> current == null
+      }
+
+      if (isStillOurs) {
+        when (val previous = change.previous) {
+          null -> readingBookmarksDao.clearReadingBookmark(slot)
+          is PageReadingBookmark -> readingBookmarksDao.setPageReadingBookmark(slot, previous.page)
+          is AyahReadingBookmark ->
+            readingBookmarksDao.setAyahReadingBookmark(slot, previous.asSuraAyah())
+
+          is EmptyReadingBookmark -> readingBookmarksDao.clearReadingBookmark(slot)
+        }
+      }
+    }
   }
 
-  private data class PendingMove(
-    val page: Int,
-    val previousBookmark: ReadingBookmark?,
-    val timeoutJob: Job
-  )
+  private fun dismissToast() {
+    toastTimeoutJob?.cancel()
+    toastTimeoutJob = null
+    screen?.dismissReadingBookmarkChangedToast()
+  }
 
   interface Screen {
     fun setPageReadingBookmarkSelected(isBookmarked: Boolean)
-    fun showReadingBookmarkMovedToast(
-      previousBookmark: ReadingBookmark?,
+    fun showReadingBookmarkChangedToast(
+      change: ReadingBookmarkChange,
       isEducation: Boolean,
       onUndo: () -> Unit,
-      onConfirm: () -> Unit
+      onDismiss: () -> Unit
     )
-    fun dismissReadingBookmarkMovedToast()
+    fun dismissReadingBookmarkChangedToast()
   }
 
   companion object {
     val educationTimeout = 9.seconds
-    val movedTimeout = 5.seconds
+    val changeTimeout = 5.seconds
   }
+}
+
+sealed interface ReadingBookmarkChange {
+  val slot: ReadingBookmarkType
+  val name: String?
+  val previous: ReadingBookmark?
+
+  data class Placed(
+    override val slot: ReadingBookmarkType,
+    override val name: String?,
+    val target: ReadingBookmarkTarget,
+    override val previous: ReadingBookmark?
+  ) : ReadingBookmarkChange
+
+  data class Cleared(
+    override val slot: ReadingBookmarkType,
+    override val name: String?,
+    override val previous: ReadingBookmark
+  ) : ReadingBookmarkChange
 }

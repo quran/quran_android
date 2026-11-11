@@ -46,9 +46,10 @@ class AudioUpdateWorker(
         Timber.d("local version: %d - server version: %d",
           currentVersion, updates.currentRevision)
 
+        val audioFileChecker = AudioFileCheckerImpl(MD5Calculator, audioPathRoot)
         val localFilesToDelete = AudioUpdater.computeUpdates(
             updates.updates, audioUtils.getQariList(context),
-            AudioFileCheckerImpl(MD5Calculator, audioPathRoot),
+            audioFileChecker,
             AudioDatabaseVersionChecker()
         )
 
@@ -65,21 +66,11 @@ class AudioUpdateWorker(
               }
             }
 
-            val qari = localUpdate.qari
-            val path = audioUtils.getLocalQariUrl(qari)
             localUpdate.files.forEach {
               // delete the file
-              val filePath = if (qari.isGapless) {
-                path + File.separator + it
-              } else {
-                // this is a hack to drop the leading 0s in the file name
-                val sura = it.substring(0, 3).toInt().toString()
-                val ayah = it.substring(3, 6).toInt().toString()
-                val extension = it.substringAfterLast(".")
-                path + File.separator + sura + File.separator + ayah + ".$extension"
-              }
-              Timber.d("would remove %s", filePath)
-              File(filePath).delete()
+              val file = audioFileChecker.localFileForQari(localUpdate.qari, it)
+              Timber.d("would remove %s", file)
+              file.delete()
             }
           }
 

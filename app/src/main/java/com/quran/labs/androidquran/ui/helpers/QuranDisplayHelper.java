@@ -53,14 +53,25 @@ public class QuranDisplayHelper {
     return response;
   }
 
+  /**
+   * Shows the first marker on the visible pages, subject to the popup cooldown.
+   *
+   * @param page the first visible Quran page; the second page, when visible, is {@code page + 1}
+   * @param isDualPageVisible whether two consecutive Quran pages are visible (false for an
+   *                         Arabic/translation split showing the same page on both sides)
+   */
   public static long displayMarkerPopup(Context context,
                                         QuranInfo quranInfo,
                                         int page,
+                                        boolean isDualPageVisible,
                                         long lastPopupTime) {
     if (System.currentTimeMillis() - lastPopupTime < 3000) {
       return lastPopupTime;
     }
     int rub3 = quranInfo.getRub3FromPage(page);
+    if (rub3 == -1 && isDualPageVisible) {
+      rub3 = quranInfo.getRub3FromPage(page + 1);
+    }
     if (rub3 == -1) {
       return lastPopupTime;
     }

@@ -14,7 +14,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.quran.common.search.SearchTextUtil
@@ -22,6 +24,10 @@ import com.quran.data.model.SuraAyah
 import com.quran.data.model.highlight.HighlightType
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.QuranAyahInfo
+import com.quran.labs.androidquran.common.ui.core.CollectionNames
+import com.quran.labs.androidquran.common.ui.core.HighlightColors
+import com.quran.labs.androidquran.common.ui.core.QuranAccent
+import com.quran.labs.androidquran.common.ui.core.ReadingBookmarkSlots
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.ui.helpers.ExpandFootnoteSpan
 import com.quran.labs.androidquran.ui.helpers.ExpandTafseerSpan
@@ -32,8 +38,8 @@ import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.AyahNumberView
 import com.quran.labs.androidquran.view.DividerView
-import kotlin.math.ln1p
-import kotlin.math.min
+import com.quran.mobile.common.ui.core.R as UiCoreR
+import com.quran.mobile.feature.pagetheme.PageThemeConstants
 
 internal class TranslationAdapter(
   private val context: Context,
@@ -60,6 +66,8 @@ internal class TranslationAdapter(
   private var highlightedRowCount: Int = 0
   private var highlightedStartPosition: Int = 0
   private var highlightType: HighlightType? = null
+
+  private var ayahIndicators: Map<SuraAyah, AyahIndicators> = emptyMap()
 
   private val expandedTafseerAyahs = mutableSetOf<Pair<Int, Int>>()
   private val expandedHyperlinks = mutableSetOf<Pair<Int, Int>>()
@@ -118,6 +126,13 @@ internal class TranslationAdapter(
 
   fun setHighlightedAyah(ayahId: Int, highlightType: HighlightType) {
     highlightAyah(ayahId, true, highlightType)
+  }
+
+  fun setAyahIndicators(indicators: Map<SuraAyah, AyahIndicators>) {
+    if (indicators != ayahIndicators) {
+      ayahIndicators = indicators
+      notifyItemRangeChanged(0, data.size, INDICATORS_CHANGE)
+    }
   }
 
   fun highlightedAyahInfo(): QuranAyahInfo? {
@@ -202,27 +217,29 @@ internal class TranslationAdapter(
     this.translationFontSize = quranSettings.translationTextSize
     isNightMode = quranSettings.isNightMode
     if (isNightMode) {
-      val originalTextBrightness = quranSettings.nightModeTextBrightness
-      val backgroundBrightness = quranSettings.nightModeBackgroundBrightness
-      // avoid damaging the looks of the Quran page
-      val adjustedBrightness = (50 * ln1p(backgroundBrightness.toDouble()) + originalTextBrightness).toInt()
-      val textBrightness = min(adjustedBrightness.toFloat(), 255f).toInt()
-
+      val textBrightness = quranSettings.pageTextBrightness
       this.textColor = Color.rgb(textBrightness, textBrightness, textBrightness)
       this.footnoteColor = ContextCompat.getColor(context, R.color.translation_footnote_color)
       this.arabicTextColor = textColor
       this.dividerColor = textColor
       this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header_night)
       this.ayahSelectionColor = ContextCompat.getColor(context, R.color.translation_ayah_selected_color_night)
-      this.inlineAyahColor = ContextCompat.getColor(context, R.color.translation_inline_ayah_highlight_night_color)
+      this.inlineAyahColor = QuranAccent.current.dark.toArgb()
     } else {
       this.textColor = ContextCompat.getColor(context, R.color.translation_text_color)
       this.footnoteColor = ContextCompat.getColor(context, R.color.translation_footnote_color)
       this.dividerColor = ContextCompat.getColor(context, R.color.translation_divider_color)
       this.arabicTextColor = Color.BLACK
-      this.suraHeaderColor = ContextCompat.getColor(context, R.color.translation_sura_header)
+      this.suraHeaderColor = ContextCompat.getColor(
+        context,
+        if (quranSettings.pageTheme == PageThemeConstants.PAGE_THEME_SEPIA) {
+          R.color.translation_sura_header_sepia
+        } else {
+          R.color.translation_sura_header
+        }
+      )
       this.ayahSelectionColor = ContextCompat.getColor(context, R.color.translation_ayah_selected_color)
-      this.inlineAyahColor = ContextCompat.getColor(context, R.color.translation_inline_ayah_highlight_color)
+      this.inlineAyahColor = QuranAccent.current.light.toArgb()
     }
 
     if (this.data.isNotEmpty()) {
@@ -420,14 +437,47 @@ internal class TranslationAdapter(
         holder.divider.setDividerColor(dividerColor)
       }
       // ayah number row
-      holder.ayahNumber != null -> {
-        val text = context.getString(R.string.sura_ayah, row.ayahInfo.sura, row.ayahInfo.ayah)
-        holder.ayahNumber.setAyahString(text)
-        holder.ayahNumber.setTextColor(textColor)
-        holder.ayahNumber.setNightMode(isNightMode)
-      }
+      holder.ayahNumber != null -> bindAyahNumber(row, holder.ayahNumber)
     }
     updateHighlight(row, holder)
+  }
+
+  private fun bindAyahNumber(row: TranslationViewRow, ayahNumber: AyahNumberView) {
+    val text = context.getString(R.string.sura_ayah, row.ayahInfo.sura, row.ayahInfo.ayah)
+    ayahNumber.setTextColor(textColor)
+    ayahNumber.setNightMode(isNightMode)
+    ayahNumber.setAyah(text, indicators(row.ayahInfo))
+  }
+
+  private fun indicators(ayahInfo: QuranAyahInfo): List<AyahNumberView.Indicator> {
+    val indicators = ayahIndicators[ayahInfo.asSuraAyah()] ?: AyahIndicators()
+    val readingBookmarks = indicators.readingBookmarks.map { bookmark ->
+      val type = HighlightTypes[bookmark.slot]
+      AyahNumberView.Indicator(
+        R.drawable.ic_bookmark_filled_24,
+        ContextCompat.getColor(context, if (isNightMode) type.nightColorResId else type.colorResId),
+        ReadingBookmarkSlots.displayName(context, bookmark),
+        isReadingBookmark = true
+      )
+    }
+
+    val collections = indicators.collections
+    val collectionLabel = when (collections.size) {
+      0 -> null
+      1 -> CollectionNames.displayName(context, collections.first())
+      else -> context.resources.getQuantityString(
+        UiCoreR.plurals.ayah_collections, collections.size, collections.size
+      )
+    }
+    val collection = collectionLabel?.let {
+      AyahNumberView.Indicator(
+        R.drawable.ic_star_24,
+        ColorUtils.setAlphaComponent(textColor, 0xB3),
+        it,
+        isReadingBookmark = false
+      )
+    }
+    return readingBookmarks + listOfNotNull(collection)
   }
 
   private fun collapsedFootnoteSpan(number: Int): SpannableString {
@@ -498,8 +548,12 @@ internal class TranslationAdapter(
   }
 
   override fun onBindViewHolder(holder: RowViewHolder, position: Int, payloads: List<Any>) {
-    if (payloads.contains(HIGHLIGHT_CHANGE)) {
-      updateHighlight(data[position], holder)
+    if (payloads.contains(HIGHLIGHT_CHANGE) || payloads.contains(INDICATORS_CHANGE)) {
+      val row = data[position]
+      if (payloads.contains(INDICATORS_CHANGE) && holder.ayahNumber != null) {
+        bindAyahNumber(row, holder.ayahNumber)
+      }
+      updateHighlight(row, holder)
     } else {
       super.onBindViewHolder(holder, position, payloads)
     }
@@ -508,20 +562,25 @@ internal class TranslationAdapter(
   private fun updateHighlight(row: TranslationViewRow, holder: RowViewHolder) {
     // toggle highlighting of the ayah, but not for sura headers and basmallah
     val isHighlighted = row.ayahInfo.ayahId == highlightedAyah
+    val color = if (isHighlighted) ayahSelectionColor else savedHighlightColor(row.ayahInfo)
     if (row.type != TranslationViewRow.Type.SURA_HEADER &&
       row.type != TranslationViewRow.Type.BASMALLAH &&
       row.type != TranslationViewRow.Type.SPACER
     ) {
-      holder.wrapperView.setBackgroundColor(
-        if (isHighlighted) ayahSelectionColor else 0
-      )
+      holder.wrapperView.setBackgroundColor(color)
     } else if (holder.divider != null) { // SPACER type
-      if (isHighlighted) {
-        holder.divider.highlight(ayahSelectionColor)
+      if (color != 0) {
+        holder.divider.highlight(color)
       } else {
         holder.divider.unhighlight()
       }
     }
+  }
+
+  private fun savedHighlightColor(ayahInfo: QuranAyahInfo): Int {
+    val highlight = ayahIndicators[ayahInfo.asSuraAyah()]?.highlight ?: return 0
+    val color = ContextCompat.getColor(context, HighlightColors[highlight].colorResourceId)
+    return ColorUtils.setAlphaComponent(color, SAVED_HIGHLIGHT_ALPHA)
   }
 
   override fun getItemCount(): Int = data.size
@@ -549,5 +608,7 @@ internal class TranslationAdapter(
     const val ARABIC_MULTIPLIER = 1.4f
     private const val MAX_TAFSEER_LENGTH = 750
     private const val HIGHLIGHT_CHANGE = 1
+    private const val INDICATORS_CHANGE = 2
+    private const val SAVED_HIGHLIGHT_ALPHA = 0x4D
   }
 }

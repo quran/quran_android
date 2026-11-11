@@ -18,11 +18,10 @@
           android:title="@string/menu_search"
           app:actionViewClass="androidx.appcompat.widget.SearchView"
           app:showAsAction="ifRoom|collapseActionView" />
-    <item android:id="@+id/night_mode"
-        android:checkable="true"
-        android:icon="@drawable/ic_day_mode"
-        android:title="@string/prefs_night_mode_title"
-        app:showAsAction="ifRoom" />
+    <item android:id="@+id/page_theme"
+          android:icon="@drawable/ic_page_theme"
+          android:title="@string/prefs_page_theme_title"
+          app:showAsAction="ifRoom" />
     <item android:id="@+id/jump"
           android:title="@string/menu_jump"
           app:showAsAction="never" />

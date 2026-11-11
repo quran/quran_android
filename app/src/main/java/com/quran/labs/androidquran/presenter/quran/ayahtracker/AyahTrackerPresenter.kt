@@ -7,12 +7,15 @@ import android.widget.ImageView
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.dao.HighlightsDao
+import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.di.QuranPageScope
 import com.quran.data.model.AyahGlyph.AyahEndGlyph
 import com.quran.data.model.AyahGlyph.WordGlyph
 import com.quran.data.model.AyahWord
 import com.quran.data.model.SuraAyah
+import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
+import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.highlight.Highlight
 import com.quran.data.model.highlight.HighlightInfo
 import com.quran.data.model.highlight.HighlightType
@@ -33,6 +36,7 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.LON
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.SINGLE_TAP
 import com.quran.labs.androidquran.ui.helpers.AyahTracker
 import com.quran.labs.androidquran.ui.helpers.HighlightTypes
+import com.quran.labs.androidquran.ui.translation.ayahIndicators
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.mobile.translation.model.LocalTranslation
@@ -48,10 +52,14 @@ import com.quran.recitation.presenter.RecitationPopupPresenter.PopupContainer
 import com.quran.recitation.presenter.RecitationPresenter
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @QuranPageScope
 class AyahTrackerPresenter @Inject constructor(
@@ -62,6 +70,7 @@ class AyahTrackerPresenter @Inject constructor(
   private val readingEventPresenter: ReadingEventPresenter,
   private val bookmarksDao: BookmarksDao,
   private val highlightsDao: HighlightsDao,
+  private val readingBookmarksDao: ReadingBookmarksDao,
   private val audioStatusRepository: AudioStatusRepository,
   recitationPresenter: RecitationPresenter,
   private val recitationEventPresenter: RecitationEventPresenter,
@@ -97,6 +106,20 @@ class AyahTrackerPresenter @Inject constructor(
 
     highlightsDao.highlightsFlow()
       .onEach { highlights -> onHighlightsChanged(highlights) }
+      .launchIn(scope)
+
+    readingBookmarksDao.readingBookmarksFlow()
+      .onEach { readingBookmarks -> onReadingBookmarksChanged(readingBookmarks) }
+      .launchIn(scope)
+
+    combine(
+      bookmarksDao.bookmarksFlow(),
+      bookmarksDao.tagsFlow(),
+      highlightsDao.highlightsFlow(),
+      readingBookmarksDao.readingBookmarksFlow(),
+      ::ayahIndicators
+    )
+      .onEach { indicators -> items.forEach { it.onAyahIndicators(indicators) } }
       .launchIn(scope)
   }
 
@@ -216,6 +239,19 @@ class AyahTrackerPresenter @Inject constructor(
           tracker.onHighlightAyat(tracker.page, elements, HighlightTypes[color])
         }
       }
+    }
+  }
+
+  private fun onReadingBookmarksChanged(readingBookmarks: List<ReadingBookmark>) {
+    HighlightTypes.readingBookmarks.forEach { unHighlightAyahs(it) }
+
+    val ayahReadingBookmarks = readingBookmarks.filterIsInstance<AyahReadingBookmark>()
+    items.forEach { tracker ->
+      ayahReadingBookmarks
+        .filter { quranInfo.getPageFromSuraAyah(it.sura, it.ayah) == tracker.page }
+        .forEach {
+          tracker.onHighlightAyat(tracker.page, setOf("${it.sura}:${it.ayah}"), HighlightTypes[it.slot])
+        }
     }
   }
 
@@ -388,11 +424,15 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   private fun checkCoordinateData(activity: Activity) {
-    if (activity is PagerActivity &&
-      (!quranFileUtils.haveAyaPositionFile() ||
-          !quranFileUtils.hasArabicSearchDatabase())
-    ) {
-      activity.showGetRequiredFilesDialog()
+    if (activity is PagerActivity) {
+      scope.launch {
+        val missingData = withContext(Dispatchers.IO) {
+          !quranFileUtils.haveAyaPositionFile() || !quranFileUtils.hasArabicSearchDatabase()
+        }
+        if (missingData) {
+          activity.showGetRequiredFilesDialog()
+        }
+      }
     }
   }
 

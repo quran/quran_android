@@ -3,61 +3,89 @@ package com.quran.labs.androidquran.fakes
 import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
+import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
+import kotlin.time.Instant
 
 class FakeReadingBookmarksDao(
-  initialBookmark: ReadingBookmark? = null
+  vararg initialBookmarks: ReadingBookmark
 ) : ReadingBookmarksDao {
-  private val readingBookmark = MutableStateFlow(initialBookmark)
+  private val bookmarks = MutableStateFlow(initialBookmarks.toList())
+  private val timestamp = Instant.fromEpochSeconds(1)
   val toggledPages = mutableListOf<Int>()
 
-  fun setReadingBookmark(bookmark: ReadingBookmark?) {
-    readingBookmark.value = bookmark
+  fun setReadingBookmark(bookmark: ReadingBookmark) {
+    bookmarks.update { current ->
+      (current.filterNot { it.slot == bookmark.slot } + bookmark)
+        .filterNot { it is EmptyReadingBookmark }
+        .sortedBy { it.slot }
+    }
   }
 
-  override fun readingBookmarkFlow(): Flow<ReadingBookmark?> {
-    return readingBookmark
-  }
+  override fun readingBookmarksFlow(): Flow<List<ReadingBookmark>> = bookmarks
 
-  override suspend fun readingBookmark(): ReadingBookmark? {
-    return readingBookmark.value
-  }
+  override suspend fun readingBookmarks(): List<ReadingBookmark> = bookmarks.value
 
-  override suspend fun setPageReadingBookmark(page: Int): Boolean {
-    readingBookmark.value = PageReadingBookmark(page, timestamp = 1)
+  override suspend fun setPageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean {
+    setReadingBookmark(PageReadingBookmark(slot, page, timestamp))
     return true
   }
 
-  override suspend fun setAyahReadingBookmark(suraAyah: SuraAyah): Boolean {
-    readingBookmark.value = AyahReadingBookmark(
-      sura = suraAyah.sura,
-      ayah = suraAyah.ayah,
-      timestamp = 1
-    )
+  override suspend fun setAyahReadingBookmark(slot: ReadingBookmarkType, suraAyah: SuraAyah): Boolean {
+    setReadingBookmark(AyahReadingBookmark(slot, suraAyah.sura, suraAyah.ayah, timestamp))
     return true
   }
 
-  override suspend fun deleteReadingBookmark(): Boolean {
-    readingBookmark.value = null
-    return true
+  override suspend fun renameReadingBookmark(slot: ReadingBookmarkType, name: String?) {
+    bookmarks.update { current ->
+      current.map { bookmark ->
+        if (bookmark.slot != slot) {
+          bookmark
+        } else {
+          when (bookmark) {
+            is PageReadingBookmark -> bookmark.copy(name = name)
+            is AyahReadingBookmark -> bookmark.copy(name = name)
+            is EmptyReadingBookmark -> bookmark.copy(name = name)
+          }
+        }
+      }
+    }
   }
 
-  override suspend fun isPageReadingBookmark(page: Int): Boolean {
-    val bookmark = readingBookmark.value
-    return bookmark is PageReadingBookmark && bookmark.page == page
+  override suspend fun clearReadingBookmark(slot: ReadingBookmarkType): ReadingBookmark {
+    bookmarks.update { current -> current.filterNot { it.slot == slot } }
+    return EmptyReadingBookmark(slot, timestamp)
   }
 
-  override suspend fun togglePageReadingBookmark(page: Int): Boolean {
+  override suspend fun isPageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean {
+    return bookmarks.value.any {
+      it.slot == slot && it is PageReadingBookmark && it.page == page
+    }
+  }
+
+  override suspend fun togglePageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean {
     toggledPages += page
-    return if (isPageReadingBookmark(page)) {
-      readingBookmark.value = null
+    return if (isPageReadingBookmark(slot, page)) {
+      clearReadingBookmark(slot)
       false
     } else {
-      readingBookmark.value = PageReadingBookmark(page, timestamp = 1)
+      setPageReadingBookmark(slot, page)
       true
     }
+  }
+
+  override suspend fun updateReadingBookmarks(
+    ayah: SuraAyah,
+    added: List<ReadingBookmark>,
+    removed: List<ReadingBookmark>
+  ): Boolean {
+    added.filterNot { it is EmptyReadingBookmark }.forEach(::setReadingBookmark)
+    removed.forEach { clearReadingBookmark(it.slot) }
+    return true
   }
 }

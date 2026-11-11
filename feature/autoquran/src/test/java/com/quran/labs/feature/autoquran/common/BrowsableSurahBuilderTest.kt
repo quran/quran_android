@@ -3,6 +3,7 @@ package com.quran.labs.feature.autoquran.common
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.model.audio.Qari
 import com.quran.data.source.DisplaySize
+import com.quran.data.source.MushafType
 import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
 import com.quran.data.source.QuranDataSource
@@ -45,6 +46,7 @@ class BrowsableSurahBuilderTest {
         override fun getPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator =
           throw NotImplementedError()
         override fun getImageVersion(): Int = throw NotImplementedError()
+        override fun mushafType(): MushafType = throw NotImplementedError()
         override fun getImagesBaseUrl(): String = throw NotImplementedError()
         override fun getImagesZipBaseUrl(): String = throw NotImplementedError()
         override fun getPatchBaseUrl(): String = throw NotImplementedError()

@@ -549,7 +549,7 @@ class QuranFileUtils @Inject constructor(
       if (ayahInfoFile.exists()) {
         val translationsFile =
           File(base, QuranDataProvider.QURAN_ARABIC_DATABASE)
-        if (base.exists() || base.mkdirs() == true) {
+        if (base.exists() || base.mkdirs()) {
           try {
             copyFile(ayahInfoFile, translationsFile)
             return true

@@ -4,7 +4,7 @@ import android.util.SparseArray
 import com.quran.data.di.AppScope
 import com.quran.labs.androidquran.dao.translation.TranslationItem
 import com.quran.labs.androidquran.util.QuranFileUtils
-import com.quran.mobile.translation.data.TranslationsDataSource
+import com.quran.mobile.translation.catalog.data.TranslationsDataSource
 import com.quran.mobile.translation.model.LocalTranslation
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn

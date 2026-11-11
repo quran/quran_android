@@ -6,10 +6,15 @@
   <string name="to">Oxiri</string>
   <string name="loading">Yuklanmoqda&#8230;</string>
   <string name="canceling">Bekor qilinmoqda&#8230;</string>
+  <string name="default_collection">Sevimlilar</string>
+  <plurals name="ayah_collections">
+    <item quantity="one">%d toʻplam</item>
+    <item quantity="other">%d toʻplam</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">Sariq</string>
   <string name="highlight_color_green">Yashil</string>
   <string name="highlight_color_blue">Ko‘k</string>
-  <string name="highlight_color_red">Qizil</string>
   <string name="highlight_color_purple">Binafsha</string>
+  <string name="reading_bookmark_red">Qizil</string>
 </resources>

@@ -99,7 +99,7 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
   }
 
   override fun getSuraPageString(context: Context, page: Int): String {
-    val suraName = getSuraNameFromPage(context, page, wantTitle = true)
+    val suraName = getAllSuraNamesForPageString(context, page)
     val pageText = context.getString(R.string.quran_page) + ' ' + QuranUtils.getLocalizedNumber(page)
     return if (suraName.isEmpty()) pageText else "$suraName ($pageText)"
   }
@@ -134,17 +134,19 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
       maxAyah = quranInfo.getNumberOfAyahs(maxSura)
     }
 
+    val minAyahText = QuranUtils.getLocalizedNumber(minVerse.ayah)
+    val maxAyahText = QuranUtils.getLocalizedNumber(maxAyah)
     return notificationTitle.plus(
       if (minSura == maxSura) {
         if (minVerse.ayah == maxAyah) {
-          " ($maxAyah)"
+          " ($maxAyahText)"
         } else {
-          " (" + minVerse.ayah + "-" + maxAyah + ")"
+          " ($minAyahText-$maxAyahText)"
         }
       } else {
-        " (" + minVerse.ayah + ") - " +
+        " ($minAyahText) - " +
             getSuraName(context, maxSura, wantPrefix = true, wantTranslation = false) +
-            " (" + maxAyah + ")"
+            " ($maxAyahText)"
       }
     )
   }
@@ -167,11 +169,6 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
     }
   }
 
-  private fun getSuraNameFromPage(context: Context, page: Int): String {
-    val suraNumber = quranInfo.getSuraNumberFromPage(page)
-    return getSuraName(context, suraNumber, wantPrefix = false, wantTranslation = false)
-  }
-
   fun getAyahString(sura: Int, ayah: Int, context: Context): String {
     return getSuraName(context, sura, true) + " - " + context.getString(R.string.quran_ayah, ayah)
   }
@@ -184,9 +181,16 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
       QuranUtils.getLocalizedNumber(quranInfo.getJuzFromSuraAyah(sura, ayah, juz)))
   }
 
-  // do not remove the nullable return type
-  fun getSuraNameString(context: Context, page: Int): String {
-    return context.getString(R.string.quran_sura_title, getSuraNameFromPage(context, page))
+  fun getAllSuraNamesForPageString(context: Context, page: Int): String {
+    return if (!quranInfo.isValidPage(page)) {
+      ""
+    } else {
+      val bounds = quranInfo.getPageBounds(page)
+      val suraNames = (bounds[0]..bounds[2]).joinToString(context.getString(R.string.comma) + ' ') {
+        getSuraName(context, it, wantPrefix = false)
+      }
+      context.getString(R.string.quran_sura_title, suraNames)
+    }
   }
 
   fun getAyahKeysOnPage(page: Int): Set<String> {

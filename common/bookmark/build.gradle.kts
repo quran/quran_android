@@ -31,6 +31,9 @@ dependencies {
 
   //mobile-sync
   implementation(libs.quran.mobile.sync)
+  // persistence's MobileSyncDatabase exposes sync-v2's SyncV2Database, which mobile-sync only
+  // publishes as a runtime dependency
+  implementation(libs.quran.mobile.sync.v2)
 
   // testing
   testImplementation(project(":common:test-utils"))
