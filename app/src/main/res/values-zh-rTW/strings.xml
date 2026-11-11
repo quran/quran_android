@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">古蘭經</string>
+  <string name="downloadPrompt_title">下載所需的檔案嗎？</string>
+  <string name="downloadPrompt">為了更好的使用體驗，需要下載一些檔案。如果目前選擇不下載，每個頁面載入時會花較長的時間。確認開始下載這些檔案嗎？
+		</string>
+  <string name="downloadPrompt_ok">確認</string>
+  <string name="downloadPrompt_no">取消</string>
+  <string name="downloading_message">檔案下載中，請等待。（支援續傳）</string>
+  <string name="extracting_title">處理中&#8230;</string>
+  <string name="menu_about">關於</string>
+  <string name="menu_settings">設定</string>
+  <string name="menu_jump_last_page">上次的頁面</string>
+  <string name="menu_bookmarks">收藏</string>
+  <string name="menu_bookmarks_page">頁面收藏</string>
+  <string name="menu_sort">排序</string>
+  <string name="menu_sort_date">按新增日期</string>
+  <string name="menu_sort_location">按章節位置</string>
+  <string name="menu_translation">顯示譯文</string>
+  <string name="menu_back_to_page">顯示古蘭經</string>
+  <string name="menu_help">幫助</string>
+  <string name="menu_search">搜尋</string>
+  <string name="menu_get_translations">譯文下載</string>
+  <string name="menu_jump">跳轉</string>
+  <string name="gotoPage">跳轉到頁數</string>
+
+  <!-- help -->
+  <string name="help_title">常見問題</string>
+  <string name="help">
+        &lt;b>怎樣播放音訊？&lt;/b>
+        &lt;br/>開啟任意古蘭經頁面，輕觸螢幕，螢幕底部會出現播放按鈕和誦經家的名字.
+        點選誦經家的名字可以調出誦經家列表進行選擇，點選播放按鈕會下載當前頁面或當前章的音訊後開始播放。
+        &lt;br/>
+        &lt;br/>&lt;b>怎樣檢視譯文？&lt;/b>
+        &lt;br/>開啟任意古蘭經頁面，輕觸螢幕，螢幕頂部有一個地球儀圖示（或者是三個圓方點構成的圖示），點選它
+        後即可檢視譯文頁面。
+        &lt;br/>
+        如果你還未下載任何譯文版本，此時會進入譯文下載管理頁面，選擇並下載所需的譯文後返回，再次輕觸地球儀圖示進入譯文頁面。
+        &lt;br/>
+        &lt;br/>&lt;b>怎樣收藏某個頁面？&lt;/b>
+        &lt;br/>開啟任意古蘭經頁面，輕觸螢幕，螢幕頂部有一個五角星圖示，點選後即可收藏當前頁，同時圖示會變為實心五角星。
+        再次點選圖示可以取消收藏。
+        &lt;br/>
+        &lt;br/>&lt;b>怎樣增大字型？&lt;/b>
+        &lt;br/>在阿拉伯語原文頁面，使用橫向模式會使字型變大。
+        在譯文頁面，可以在設定中選擇字型大小。
+        &lt;br/>&lt;b>怎樣分享一個段落？&lt;/b>
+        &lt;br/>在阿拉伯語原文頁面，長按某個章節會彈出關聯選單，包括了收藏，分享，檢視譯文，複製到剪貼簿等功能。
+        &lt;br/>
+        &lt;br/>&lt;b>無法使用馬拉雅拉姆語、泰米爾語、孟加拉語、烏爾都語的字型!&lt;/b>
+        &lt;br/>很抱歉，安卓4.0以前的版本不支援這些字型，目前還沒有好的解決方案。
+    </string>
+  <string name="search_hint">搜尋古蘭經</string>
+  <string name="quranSearchType">Verses of the Quran</string>
+
+  <!-- Shown above search results when we receive a search request. -->
+  <plurals name="search_results">
+    <item quantity="other">%2$d 搜尋\"%1$s\"的結果: </item>
+  </plurals>
+
+  <!-- Search messages -->
+  <string name="found_in_sura">對應章節 (%1$d) %2$s 節 %3$d (頁 %4$d)</string>
+  <string name="no_results">未搜尋到\"%s\"</string>
+  <string name="no_arabic_search_available">還沒有下載搜尋包，請下載後再次進行搜尋.</string>
+  <string name="get_arabic_search_db">下載阿拉伯語搜尋包</string>
+
+  <!-- Quran Preference Activity -->
+  <string name="prefs_volume_key_navigation_title">音量鍵翻頁</string>
+  <string name="prefs_volume_key_navigation_summary">用音量鍵控制翻頁</string>
+  <string name="prefs_category_reading">朗讀設定</string>
+  <string name="prefs_category_translation">譯文設定</string>
+  <string name="prefs_category_display_settings">顯示設定</string>
+  <string name="prefs_use_arabic_title">阿拉伯語模式 (الوضع العربي)</string>
+  <string name="prefs_use_arabic_summary_on">應用程式將採用阿拉伯語介面</string>
+  <string name="prefs_lock_orientation_title">螢幕旋轉方向</string>
+  <string name="prefs_lock_orientation_summary_on">古蘭經頁面的螢幕旋轉方向</string>
+  <string name="prefs_lock_orientation_summary_off">跟隨系統</string>
+  <string name="prefs_landscape_orientation_title">鎖屏方向</string>
+  <string name="prefs_landscape_orientation_summary_on">鎖定橫向</string>
+  <string name="prefs_landscape_orientation_summary_off">鎖定直向</string>
+  <string name="prefs_overlay_page_info_title">顯示頁面資訊</string>
+  <string name="prefs_overlay_page_info_summary">閱讀時顯示頁數，章名和卷數</string>
+  <string name="prefs_display_marker_title">顯示卷章標記彈出視窗</string>
+  <string name="prefs_display_marker_summary">閱讀時彈出卷章標記視窗</string>
+  <string name="prefs_translation_text_title">譯文頁面字型大小</string>
+  <string name="prefs_translations">譯文</string>
+  <string name="prefs_translations_summary">下載與管理譯文</string>
+  <string name="prefs_ayah_before_translation_title">顯示原文</string>
+  <string name="prefs_ayah_before_translation_summary">在譯文前顯示阿拉伯語原文</string>
+  <string name="prefs_use_dyslexic_font_title">Dyslexia friendly font</string>
+  <string name="prefs_use_dyslexic_font_summary">Display translations in dyslexia friendly font</string>
+  <string name="prefs_category_download">下載選項</string>
+  <string name="prefs_streaming_title">串流音訊</string>
+  <string name="prefs_streaming_summary">優先使用串流音訊</string>
+  <string name="prefs_download_amount_title">下載方式</string>
+  <string name="prefs_download_amount_summary">non-gapless音訊的下載方式。</string>
+  <string name="downloaded_translations">已經下載</string>
+  <string name="available_translations">可供下載</string>
+  <string name="dialog_ok">確認</string>
+
+  <!-- translation updates -->
+  <string name="update_available">有可用更新</string>
+  <string name="translation_updates_available">譯文中有可用更新. 訪問譯文頁面嗎？</string>
+  <string name="translation_dialog_yes">好的</string>
+  <string name="translation_dialog_later">稍後再說</string>
+
+  <!-- End Number picker Strings -->
+  <string name="quran_rob3">¼</string>
+  <string name="quran_nos">½</string>
+  <string name="quran_talt_arb3">¾</string>
+  <string name="quran_hizb">段落</string>
+  <string name="quran_juz2">卷</string>
+  <string name="quran_page">頁</string>
+  <string name="quran_sura">章</string>
+  <string name="quran_ayah">節 %1$d</string>
+  <string name="sura_ayah_notification_str">第%1$s章，第%2$d節</string>
+  <string name="sura_ayah_sharing_str">第%1$s章: %2$d</string>
+
+  <string name="juz2_description">第%1$s卷</string>
+  <string name="page_description">第%2$s卷，第%1$s頁</string>
+  <string name="highlighting_database">所需檔案</string>
+  <string name="timing_database">所需檔案</string>
+
+  <!-- download statuses and errors -->
+  <string name="download_successful">下載成功</string>
+  <string name="download_processing">正在下載&#8230;</string>
+  <string name="download_error_general">下載失敗</string>
+  <string name="download_error_disk">磁碟可供下載空間不足</string>
+  <string name="download_error_network">網路錯誤，無法下載</string>
+  <string name="download_error_perms">權限錯誤，無法下載</string>
+  <string name="download_error_invalid_download">下載檔案損壞</string>
+  <string name="download_error_invalid_download_retry">檔案損壞，正在嘗試重新下載</string>
+  <string name="download_error_network_retry">網路錯誤，正在重新連線&#8230;</string>
+  <string name="notification_download_canceled">下載已取消</string>
+  <!-- downloading dialogs -->
+  <string name="process_progress">正在處理檔案 %1$d / %2$d</string>
+  <string name="download_retry">重試</string>
+  <string name="download_cancel">取消</string>
+  <string name="download_extra_data">共享功能和下載功能需要下載一兩個小檔案，現在下載嗎？</string>
+
+  <!-- translation database stuff -->
+  <string name="remove_dlg_title">移除譯文嗎？</string>
+  <string name="remove_dlg_msg">確定要移除譯文%1$s嗎？</string>
+  <string name="error_getting_translation_list">無法下載譯文列表。請稍後重試.</string>
+  <string name="search_data">搜尋資料</string>
+  <string name="need_translation">還沒有下載任何譯文。</string>
+  <string name="get_translations">下載譯文</string>
+
+  <!-- help -->
+  <string name="email_us">If your question is not answered above, you can email quranandroid@gmail.com for support. Please note that we get lots of email, so we may not be able to reply to all emails we receive.</string>
+
+  <!-- sura metainfo -->
+  <string name="makki">麥加章</string>
+  <string name="madani">麥地那章</string>
+  <plurals name="verses">
+    <item quantity="other">%s 節</item>
+  </plurals>
+
+  <!-- long press -->
+  <string name="ayah_copied_popup">複製成功</string>
+
+  <!-- bookmarks & tags contextual action bar -->
+  <string name="tag_bookmark">為收藏加標籤</string>
+  <string name="delete_tag">刪除標籤</string>
+  <string name="delete">刪除</string>
+  <string name="edit_tag">編輯標籤</string>
+  <string name="new_tag">新建標籤</string>
+
+  <!-- tag dialog -->
+  <string name="tag_dlg_title">標籤</string>
+  <string name="tag_name">標籤名</string>
+
+  <!-- bookmark & tag list -->
+  <string name="bookmarks_list_empty">沒有收藏</string>
+    <string name="about_quran_enc" translatable="false">《古蘭經》合輯</string>
+    <string name="downloadTabletPrompt">我們最近增加了改進的影像，用於 平板電腦。你想現在下載這些圖片嗎？</string>
+  <string name="downloadImportantPrompt">有一個小而重要的更新 對你裝置上的古蘭經影像進行了一個小而重要的更新。你想下載這個 補丁嗎？</string>
+  <string name="menu_other_apps">其他應用程式</string>
+  <string name="menu_sort_group_by_tags">按標籤分組</string>
+  <string name="menu_show_date">顯示日期</string>
+  <string name="please_wait">請等待...</string>
+  <string name="about_description">安卓版古蘭經是一款免費的古蘭經應用程式。請不要在你的祈禱中忘記貢獻者。</string>
+  <string name="about_data_sources">資料來源</string>
+  <string name="about_images">圖片</string>
+  <string name="about_madani_images">古蘭經影像是基於法赫德國王古蘭經印刷廠的字型。</string>
+  <string name="about_naskh_images">Naskh應用程式的古蘭經影像來自SHL資訊系統（經許可）。</string>
+  <string name="about_qaloon_images">Qaloon圖片經Nous Memes Editions Et Diffusion（突尼西亞）許可使用。</string>
+  <string name="about_quranicaudio_summary">無間隙的MP3古蘭經誦讀</string>
+  <string name="about_quran_ksu">電子莫沙夫專案</string>
+  <string name="about_quran_ksu_summary">沙特國王大學電子Moshaf專案是該應用程式的阿拉伯語Tafaseer和各種語言的翻譯來源。它也是艾曼-蘇韋德博士朗誦的來源。</string>
+  <string name="about_furqan_summary">烏斯馬尼文本和阿拉伯語Tafaseer</string>
+  <string name="about_quran_enc_summary">多種語言的翻譯</string>
+  <string name="about_tanzil_summary">幾種語言的翻譯</string>
+  <string name="about_noorhidayat_summary">Noorehira字型和Mufti Taqi翻譯</string>
+  <string name="about_open_source">開源專案</string>
+  <string name="about_others">其他</string>
+  <string name="about_contributors">撰稿人</string>
+  <string name="about_contributors_summary">為安卓版《古蘭經》的開發做出貢獻的人員名單</string>
+  <string name="search_full_results">全部結果</string>
+  <string name="search_entire_mushaf">搜尋整個mushaf</string>
+  <string name="storage_permission_rationale">安卓版 \"古蘭經 \"希望得到你的許可，將其資料儲存在外部儲存器上。Quran for Android在沒有這個許可的情況下也能工作，但如果你清除資料或解除安裝該應用，所有下載的頁面、音訊和資料都會被刪除。授予Quran for Android的權限？</string>
+  <string name="storage_permission_please_restart">請重新啟動應用程式以使其生效。</string>
+  <string name="prefs_highlight_bookmarks_title">突出顯示書籤</string>
+  <string name="prefs_highlight_bookmarks_summary">在閱讀時，突出顯示書籤上的阿亞。</string>
+  <string name="prefs_audio_manager_summary">管理和下載古蘭經音訊</string>
+  <string name="prefs_app_location_title">古蘭經資料目錄</string>
+  <string name="prefs_app_location_summary">選擇儲存古蘭經檔案的地方</string>
+  <string name="prefs_send_logs_title">傳送日誌</string>
+  <string name="prefs_send_logs_summary">傳送除錯日誌給開發人員</string>
+  <string name="prefs_sdcard_internal">內部儲存</string>
+  <string name="prefs_sdcard_external">外部儲存 %1$d</string>
+  <string name="prefs_app_size">目前的資料大小是</string>
+  <string name="prefs_calculating_app_size">計算應用程式的大小</string>
+  <string name="prefs_copying_app_files">複製應用程式檔案</string>
+  <string name="prefs_err_moving_app_files">移動應用程式檔案失敗</string>
+  <string name="prefs_no_enough_space_to_move_files">沒有足夠的空間來移動應用程式檔案</string>
+  <string name="prefs_dual_page_mode_title">雙頁模式</string>
+  <string name="prefs_dual_page_mode_enabled">在橫向情況下，兩個頁面將並排出現。</string>
+  <string name="prefs_dual_page_mode_disabled">在橫向狀態下，將只出現一頁。</string>
+  <string name="prefs_category_advanced">進階選項</string>
+  <string name="prefs_category_advanced_summary">匯入/匯出書籤，設定古蘭經資料目錄，等等。</string>
+  <string name="prefs_import_title">進口</string>
+  <string name="prefs_import_summary">匯入書籤和標籤</string>
+  <string name="prefs_export_title">出口</string>
+  <string name="prefs_export_summary">匯出書籤和標籤的副本</string>
+  <string name="prefs_page_type_title">頁面型別（實驗性）</string>
+  <string name="prefs_page_type_summary">選擇閱讀頁的型別</string>
+  <string name="prefs_sura_translated_name_summary">顯示Surah名稱的翻譯</string>
+  <string name="prefs_sura_translated_name_title">蘇拉譯名</string>
+  <string name="prefs_preview">預覽</string>
+  <string name="more_translations">更多翻譯</string>
+  <string name="import_data_permissions_error">由於權限錯誤，無法讀取備份檔案。</string>
+  <string name="import_data_error">無效的備份檔案（或無法讀取備份檔案）。</string>
+  <string name="import_data">進口資料</string>
+  <string name="import_data_and_merge">如果匯入此檔案，它會將 %1$d 個書籤和 %2$d 個標籤新增到你當前的資料中。匯入？</string>
+  <string name="import_successful">進口成功</string>
+  <string name="export_data_error">輸出資料時出錯</string>
+  <string name="exported_data">資料匯出到%1$s</string>
+  <string name="move_up">上升</string>
+  <string name="move_down">下移</string>
+  <string name="delete_translation">移除翻譯</string>
+  <string name="warning">警告</string>
+  <string name="kitkat_external_message">由於安卓系統的限制，如果你選擇將古蘭經資料放在外部SD卡上，後來解除安裝或清除古蘭經安卓系統的資料，所有古蘭經安卓系統的頁面和音訊將被刪除，你將不得不重新下載它們。你確定你要使用外部SD卡嗎？</string>
+  <string name="scoped_storage_message">由於安卓系統為增加使用者隱私而做出的改變，在未來的安卓系統版本中，將檔案複製到應用目錄之外可能會阻止Quran for Android訪問其資料。你確定你要使用這個路徑嗎？</string>
+  <string name="please_grant_permissions">請在應用程式設定中授予權限</string>
+  <string name="see_tafseer_of_verse">這段經文的塔夫賽爾與第%d段的塔夫賽爾包括在一起（點選展開）。</string>
+  <string name="quran_ayah_details">%1$s - Ayah %2$s, Juz\' %3$s</string>
+  <string name="sdcard_error">無法找到SD卡。請安裝它並重試。</string>
+  <string name="play_restrict_range">只播放上述阿亞特</string>
+  <string name="play_verses_range">聽聽這組阿亞特。</string>
+  <string name="play_each_verse">聽聽每一段經文。</string>
+  <string name="play_apply">申請</string>
+  <string name="play_apply_and_play">應用和傾聽</string>
+  <string name="previous">上一篇</string>
+  <string name="play">播放</string>
+  <string name="pause">暫停</string>
+  <string name="stop">停止</string>
+  <string name="playback_speed">播放速度：</string>
+  <string name="next">下一頁</string>
+  <string name="playback_prompt_title">開始播放從。</string>
+  <string name="starting_page_label">頁首</string>
+  <string name="undo">撤銷</string>
+
+  <!-- bookmarks empty state -->
+  <string name="bookmarks_empty_title">暫無收藏</string>
+  <string name="bookmarks_empty_subtitle">點選書籤圖示可儲存頁面，或長按經文將其加入收藏。</string>
+  <string name="reading_bookmark_movable_education_title">這是一個可移動的閱讀書籤</string>
+  <string name="reading_bookmark_movable_education_body">儲存閱讀書籤會替換舊的書籤。要儲存多節經文，請長按經文並將其新增到收藏集。</string>
+  <string name="reading_bookmark_moved_from">已從%1$s移動</string>
+  <string name="reading_bookmark_dismiss_education">關閉</string>
+  <string name="recent_pages">最近的頁面</string>
+  <string name="old_page_bookmarks">舊頁面書籤</string>
+  <string name="tag_blank_tag_error">標籤名稱不能是空白的!</string>
+  <string name="tag_duplicate_tag_error">標籤名稱已經存在!</string>
+  <string name="audio_updated_title">古蘭經音訊檔案更新</string>
+  <string name="audio_updated_text">幾個古蘭經音訊檔案已經更新。Quran for Android已經刪除了你對這些檔案的複製，以便在你下次回放時可以下載最新的版本。</string>
+  <string name="prefs_category_dual_screen">雙頁偏好</string>
+  <string name="prefs_split_page_and_translation_title">古蘭經和翻譯的雙重模式</string>
+  <string name="prefs_split_page_and_translation_summary">在帶翻譯的雙頁模式下，顯示古蘭經頁面和翻譯。</string>
+  <string name="notification_channel_download">古蘭經下載</string>
+  <string name="notification_channel_audio">古蘭經誦讀</string>
+</resources>
