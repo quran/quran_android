@@ -228,9 +228,20 @@ class PagerActivityRecitationPresenter @Inject constructor(
       ?: SuraAyah(quranInfo.getSuraOnPage(page), quranInfo.getFirstAyahOnPage(page))
   }
 
-  /** The pages on screen: in dual page mode currentPage gives 2, 4, 6... for the pair it ends. */
-  private fun pagesOnScreen(): List<Int> {
-    val page = bridge.currentPage()
-    return if (bridge.isDualPageVisible()) listOf(page - 1, page) else listOf(page)
+  private fun pagesOnScreen(): List<Int> =
+    pagesOnScreen(bridge.currentPage(), bridge.isDualPageVisible(), quranInfo.numberOfPages)
+
+  internal companion object {
+    /**
+     * The pages on screen. In dual page mode, currentPage is the first page of the pair (1, 3, 5...)
+     * and the pair shows it and the next one, which a mushaf with an odd number of pages lacks at
+     * its end.
+     */
+    fun pagesOnScreen(currentPage: Int, isDualPageVisible: Boolean, numberOfPages: Int): List<Int> =
+      if (isDualPageVisible) {
+        listOf(currentPage, currentPage + 1).filter { it <= numberOfPages }
+      } else {
+        listOf(currentPage)
+      }
   }
 }

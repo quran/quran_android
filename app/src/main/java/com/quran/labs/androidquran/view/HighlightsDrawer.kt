@@ -165,7 +165,8 @@ class HighlightsDrawer(
   ): List<RectF>? {
     // Hiding and word highlights can use the word glyphs derived for databases without glyph
     // types. Everything else, and every database with glyph types, keeps the bounds it always had.
-    if (glyphsCoords == null && wordGlyphsCoords != null) {
+    // A transition ("1:1->1:2", as the audio highlight moves) is never a word.
+    if (glyphsCoords == null && wordGlyphsCoords != null && !highlight.isTransition()) {
       if (highlightType.mode == HIDE) {
         wordGlyphsCoords.getMaskBounds(highlight.key)?.let { return it }
       }
