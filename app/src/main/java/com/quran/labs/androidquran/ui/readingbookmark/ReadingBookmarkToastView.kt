@@ -80,7 +80,7 @@ private fun ReadingBookmarkToastContent(
     movedFromText = subtitle,
     body = body,
     onUndo = onUndo,
-    onDismiss = onDismiss.takeIf { isEducation },
+    onDismiss = onDismiss,
     modifier = Modifier.padding(14.dp)
   )
 }
