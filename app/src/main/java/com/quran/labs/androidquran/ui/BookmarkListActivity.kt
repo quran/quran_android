@@ -36,6 +36,7 @@ import com.quran.labs.androidquran.presenter.bookmark.BookmarkPresenter
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog.OnBookmarkTagsUpdateListener
+import com.quran.labs.androidquran.common.ui.core.CollectionNames
 import com.quran.labs.androidquran.common.ui.core.HighlightColors
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter
 import com.quran.labs.androidquran.ui.helpers.QuranNavigator
@@ -171,7 +172,8 @@ class BookmarkListActivity : AppCompatActivity(),
   private fun updateTitle() {
     supportActionBar?.title = when (val mode = mode) {
       is BookmarkListMode.Collection ->
-        collection?.name ?: intent.getStringExtra(EXTRA_COLLECTION_NAME).orEmpty()
+        collection?.let { tag -> CollectionNames.displayName(this, tag) }
+          ?: intent.getStringExtra(EXTRA_COLLECTION_NAME).orEmpty()
 
       is BookmarkListMode.Highlights -> getString(HighlightColors[mode.color].nameResourceId)
     }

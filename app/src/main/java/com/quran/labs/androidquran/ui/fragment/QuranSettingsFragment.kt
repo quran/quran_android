@@ -22,10 +22,13 @@ import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.pageselect.PageSelectActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import com.quran.labs.androidquran.util.OrientationLockUtils
+import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.feature.downloadmanager.AudioManagerActivity
+import com.quran.mobile.feature.pagetheme.PageThemeSheetWrapper
+import com.quran.mobile.feature.pagetheme.pageThemeSummary
 import dev.zacsweers.metro.Inject
 
 class QuranSettingsFragment : PreferenceFragmentCompat() {
@@ -74,6 +77,7 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
       ThemeUtil.setTheme(newValue as String)
       true
     }
+    updatePageThemeSummary()
 
     // handle translation manager click
     val translationPref: Preference? = findPreference(Constants.PREF_TRANSLATION_MANAGER)
@@ -133,6 +137,22 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
       val intent = Intent(activity, PageSelectActivity::class.java)
       startActivity(intent)
       return true
+    } else if (Constants.PREF_PAGE_THEME == key) {
+      val content = requireActivity().findViewById<ViewGroup>(android.R.id.content)
+      lateinit var pageThemeSheet: PageThemeSheetWrapper
+      pageThemeSheet = PageThemeSheetWrapper(
+        requireContext(),
+        QuranSettings.getInstance(requireContext())
+      ) {
+        content.removeView(pageThemeSheet)
+        updatePageThemeSummary()
+      }
+      content.addView(
+        pageThemeSheet,
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.MATCH_PARENT
+      )
+      return true
     }
 
     for (extraPref in extraPreferences) {
@@ -142,6 +162,11 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
     }
 
     return super.onPreferenceTreeClick(preference)
+  }
+
+  private fun updatePageThemeSummary() {
+    findPreference<Preference>(Constants.PREF_PAGE_THEME)?.summary =
+      pageThemeSummary(requireContext(), QuranSettings.getInstance(requireContext()))
   }
 
   private fun isCurrentlyArabic(): Boolean {

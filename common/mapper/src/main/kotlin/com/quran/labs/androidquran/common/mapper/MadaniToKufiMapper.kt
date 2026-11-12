@@ -7,6 +7,7 @@ import com.quran.data.model.VerseRange
 import com.quran.data.pageinfo.mapper.AyahMapper
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import dev.zacsweers.metro.Inject
+import kotlin.math.abs
 
 /**
  * Madani to Kufi Mapper
@@ -48,7 +49,8 @@ class MadaniToKufiMapper @Inject constructor(private val quranInfo: QuranInfo): 
 
     val start = startAyah.minOrNull()!!
     val end = endAyah.maxOrNull()!!
-    val ayahsInRange = getAyahId(end) - getAyahId(start)
+    // versesInRange is inclusive of both endpoints, matching QuranInfo.getVerseRangeForPage
+    val ayahsInRange = 1 + abs(getAyahId(end) - getAyahId(start))
     return VerseRange(start.sura, start.ayah, end.sura, end.ayah, ayahsInRange)
   }
 

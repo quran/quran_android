@@ -14,4 +14,11 @@ object ThemeUtil {
     }
     AppCompatDelegate.setDefaultNightMode(mappedTheme)
   }
+
+  @JvmStatic
+  fun isDarkAppearance(appTheme: String, systemNight: Boolean): Boolean = when (appTheme) {
+    Constants.THEME_LIGHT -> false
+    Constants.THEME_DARK -> true
+    else -> systemNight
+  }
 }

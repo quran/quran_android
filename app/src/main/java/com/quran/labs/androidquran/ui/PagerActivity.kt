@@ -5,6 +5,7 @@ import android.app.SearchManager
 import android.content.ComponentName
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Build
@@ -36,6 +37,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -79,9 +81,10 @@ import com.quran.labs.androidquran.feature.reading.bridge.AudioStatusRepositoryB
 import com.quran.labs.androidquran.feature.reading.bridge.DownloadBridge
 import com.quran.labs.androidquran.feature.reading.bridge.ReadingEventPresenterBridge
 import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenter
-import com.quran.labs.androidquran.feature.reading.presenter.RecentPagePresenter
+import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenterScreen
 import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkChange
 import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkPresenter
+import com.quran.labs.androidquran.feature.reading.presenter.RecentPagePresenter
 import com.quran.labs.androidquran.feature.reading.presenter.recitation.PagerActivityRecitationPresenter
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.presenter.data.QuranEventLogger
@@ -110,7 +113,6 @@ import com.quran.labs.androidquran.ui.readingbookmark.createReadingBookmarkToast
 import com.quran.labs.androidquran.ui.util.ToastCompat.makeText
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
 import com.quran.labs.androidquran.ui.util.VolumeKeyNavigation
-import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenterScreen
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.OrientationLockUtils
 import com.quran.labs.androidquran.util.QuranFileUtils
@@ -134,6 +136,7 @@ import com.quran.mobile.feature.ayahbookmark.AyahBookmarkWrapper
 import com.quran.mobile.feature.ayahbookmark.di.AyahBookmarkWrapperInjector
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.ReadingBookmarkSheetWrapper
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.di.ReadingBookmarkSheetWrapperInjector
+import com.quran.mobile.feature.pagetheme.PageThemeSheetWrapper
 import com.quran.mobile.feature.qarilist.QariListWrapper
 import com.quran.mobile.feature.qarilist.di.QariListWrapperInjector
 import com.quran.mobile.translation.model.LocalTranslation
@@ -146,6 +149,7 @@ import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -157,16 +161,15 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
-import androidx.core.view.isVisible
 
 /**
  * Activity that displays the Quran (in Arabic or translation mode).
@@ -203,6 +206,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   private lateinit var audioStatusBar: AudioBarWrapper
   private lateinit var viewPager: ViewPager
+  private val themePreferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+    if (key in PAGE_COLOR_PREFERENCES) {
+      refreshQuranPages()
+    }
+  }
   private lateinit var pagerAdapter: QuranPageAdapter
   private lateinit var ayahToolBar: AyahToolBar
   private lateinit var slidingPanel: SlidingUpPanelLayout
@@ -894,6 +902,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   public override fun onResume() {
     super.onResume()
+    quranSettings.registerPreferencesListener(themePreferencesListener)
+    refreshQuranPages()
 
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
@@ -952,94 +962,104 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       .inject(ayahToolBar)
   }
 
-  fun showGetRequiredFilesDialog() {
-    if (promptDialog != null) {
-      return
-    }
-    val builder = AlertDialog.Builder(this)
-    builder.setMessage(R.string.download_extra_data)
-      .setPositiveButton(
-        R.string.downloadPrompt_ok
-      ) { dialog: DialogInterface, option: Int ->
-        downloadRequiredFiles()
-        dialog.dismiss()
-        promptDialog = null
-      }
-      .setNegativeButton(
-        R.string.downloadPrompt_no
-      ) { dialog: DialogInterface, option: Int ->
-        dialog.dismiss()
-        promptDialog = null
-      }
-    promptDialog = builder.create()
-    promptDialog!!.show()
+  private fun canShowUi(): Boolean {
+    return !isFinishing && lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
   }
 
-  private fun downloadRequiredFiles() {
-    var downloadType = QuranDownloadService.DOWNLOAD_TYPE_AUDIO
-    if (audioStatusRepositoryBridge.audioRequest() == null) {
-      // if we're not playing any audio, use audio download bar as our progress bar
-      if (isActionBarHidden) {
-        toggleActionBar()
-      }
-    } else {
-      // if audio is playing, let's not disrupt it - do this using a
-      // different type so the broadcast receiver ignores it.
-      downloadType = QuranDownloadService.DOWNLOAD_TYPE_ARABIC_SEARCH_DB
+  fun showGetRequiredFilesDialog() {
+    if (canShowUi() && promptDialog == null) {
+      val builder = AlertDialog.Builder(this)
+      builder.setMessage(R.string.download_extra_data)
+        .setPositiveButton(
+          R.string.downloadPrompt_ok
+        ) { dialog: DialogInterface, _: Int ->
+          scope.launch { downloadRequiredFiles() }
+          dialog.dismiss()
+          promptDialog = null
+        }
+        .setNegativeButton(
+          R.string.downloadPrompt_no
+        ) { dialog: DialogInterface, _: Int ->
+          dialog.dismiss()
+          promptDialog = null
+        }
+      val dialog = builder.create()
+      promptDialog = dialog
+      dialog.show()
+    }
+  }
+
+  private suspend fun downloadRequiredFiles() {
+    val hasArabicDatabase = withContext(Dispatchers.IO) {
+      quranFileUtils.hasArabicSearchDatabase()
     }
 
-    var haveDownload = false
-    if (!quranFileUtils.haveAyaPositionFile()) {
-      var url = quranFileUtils.ayaPositionFileUrl
-      if (isDualPages) {
-        url = quranFileUtils.getAyaPositionFileUrl(
-          quranScreenInfo.tabletWidthParam
+    if (canShowUi()) {
+      var downloadType = QuranDownloadService.DOWNLOAD_TYPE_AUDIO
+      if (audioStatusRepositoryBridge.audioRequest() == null) {
+        // if we're not playing any audio, use audio download bar as our progress bar
+        if (isActionBarHidden) {
+          toggleActionBar()
+        }
+      } else {
+        // if audio is playing, let's not disrupt it - do this using a
+        // different type so the broadcast receiver ignores it.
+        downloadType = QuranDownloadService.DOWNLOAD_TYPE_ARABIC_SEARCH_DB
+      }
+
+      var haveDownload = false
+      if (!quranFileUtils.haveAyaPositionFile()) {
+        var url = quranFileUtils.ayaPositionFileUrl
+        if (isDualPages) {
+          url = quranFileUtils.getAyaPositionFileUrl(
+            quranScreenInfo.tabletWidthParam
+          )
+        }
+        val destination = quranFileUtils.quranAyahDatabaseDirectory
+        // start the download
+        val notificationTitle = getString(R.string.highlighting_database)
+        val intent = getDownloadIntent(
+          this, url,
+          destination.absolutePath, notificationTitle, AUDIO_DOWNLOAD_KEY,
+          downloadType
         )
-      }
-      val destination = quranFileUtils.quranAyahDatabaseDirectory
-      // start the download
-      val notificationTitle = getString(R.string.highlighting_database)
-      val intent = getDownloadIntent(
-        this, url,
-        destination.absolutePath, notificationTitle, AUDIO_DOWNLOAD_KEY,
-        downloadType
-      )
-      Timber.d("starting service to download ayah position file")
-      startService(intent)
+        Timber.d("starting service to download ayah position file")
+        startService(intent)
 
-      haveDownload = true
-    }
-
-    if (!quranFileUtils.hasArabicSearchDatabase()) {
-      val url = quranFileUtils.arabicSearchDatabaseUrl
-
-      // show "downloading required files" unless we already showed that for
-      // highlighting database, in which case show "downloading search data"
-      var notificationTitle = getString(R.string.highlighting_database)
-      if (haveDownload) {
-        notificationTitle = getString(R.string.search_data)
+        haveDownload = true
       }
 
-      val extension = if (url.endsWith(".zip")) ".zip" else ""
-      val intent = getDownloadIntent(
-        this, url,
-        quranFileUtils.getQuranDatabaseDirectory().absolutePath, notificationTitle,
-        AUDIO_DOWNLOAD_KEY, downloadType
-      )
-      intent.putExtra(
-        QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
-        QuranDataProvider.QURAN_ARABIC_DATABASE + extension
-      )
-      Timber.d("starting service to download arabic database")
-      startService(intent)
-    }
+      if (!hasArabicDatabase) {
+        val url = quranFileUtils.arabicSearchDatabaseUrl
 
-    if (downloadType != QuranDownloadService.DOWNLOAD_TYPE_AUDIO) {
-      // if audio is playing, just show a status notification
-      makeText(
-        this, com.quran.mobile.common.download.R.string.downloading,
-        Toast.LENGTH_SHORT
-      ).show()
+        // show "downloading required files" unless we already showed that for
+        // highlighting database, in which case show "downloading search data"
+        var notificationTitle = getString(R.string.highlighting_database)
+        if (haveDownload) {
+          notificationTitle = getString(R.string.search_data)
+        }
+
+        val extension = if (url.endsWith(".zip")) ".zip" else ""
+        val intent = getDownloadIntent(
+          this, url,
+          quranFileUtils.getQuranDatabaseDirectory().absolutePath, notificationTitle,
+          AUDIO_DOWNLOAD_KEY, downloadType
+        )
+        intent.putExtra(
+          QuranDownloadService.EXTRA_OUTPUT_FILE_NAME,
+          QuranDataProvider.QURAN_ARABIC_DATABASE + extension
+        )
+        Timber.d("starting service to download arabic database")
+        startService(intent)
+      }
+
+      if (downloadType != QuranDownloadService.DOWNLOAD_TYPE_AUDIO) {
+        // if audio is playing, just show a status notification
+        makeText(
+          this, com.quran.mobile.common.download.R.string.downloading,
+          Toast.LENGTH_SHORT
+        ).show()
+      }
     }
   }
 
@@ -1094,6 +1114,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   public override fun onPause() {
+    quranSettings.unregisterPreferencesListener(themePreferencesListener)
     foregroundDisposable.clear()
     promptDialog?.dismiss()
     promptDialog = null
@@ -1188,13 +1209,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       )
     }
 
-    val nightMode = menu.findItem(R.id.night_mode)
-    if (nightMode != null) {
-      val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-      val isNightMode = prefs.getBoolean(Constants.PREF_NIGHT_MODE, false)
-      nightMode.isChecked = isNightMode
-      nightMode.setIcon(if (isNightMode) R.drawable.ic_night_mode else R.drawable.ic_day_mode)
-    }
     return true
   }
 
@@ -1215,15 +1229,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         switchToTranslation()
       }
       return true
-    } else if (itemId == R.id.night_mode) {
-      val prefs = PreferenceManager
-        .getDefaultSharedPreferences(this)
-      val prefsEditor = prefs.edit()
-      val isNightMode = !item.isChecked
-      prefsEditor.putBoolean(Constants.PREF_NIGHT_MODE, isNightMode).apply()
-      item.setIcon(if (isNightMode) R.drawable.ic_night_mode else R.drawable.ic_day_mode)
-      item.isChecked = isNightMode
-      refreshQuranPages()
+    } else if (itemId == R.id.page_theme) {
+      showPageThemeSheet()
       return true
     } else if (itemId == R.id.settings) {
       val i = Intent(this, QuranPreferenceActivity::class.java)
@@ -1295,9 +1302,17 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       updateActionBarSpinner()
     }
 
-    if (!quranFileUtils.hasArabicSearchDatabase() && !promptedForExtraDownload) {
-      promptedForExtraDownload = true
-      showGetRequiredFilesDialog()
+    scope.launch {
+      val hasArabicDatabase = withContext(Dispatchers.IO) {
+        quranFileUtils.hasArabicSearchDatabase()
+      }
+      if (!canShowUi()) {
+        return@launch
+      }
+      if (!hasArabicDatabase && !promptedForExtraDownload) {
+        promptedForExtraDownload = true
+        showGetRequiredFilesDialog()
+      }
     }
   }
 
@@ -1743,6 +1758,22 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     toggleActionBarVisibility(false)
   }
 
+  private fun showPageThemeSheet() {
+    val pageThemeSheetWrapper = PageThemeSheetWrapper(this, quranSettings) {
+      overlay.removeAllViews()
+      overlay.visibility = View.GONE
+      toggleActionBarVisibility(true)
+    }
+    overlay.removeAllViews()
+    overlay.addView(
+      pageThemeSheetWrapper,
+      ViewGroup.LayoutParams.MATCH_PARENT,
+      ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    overlay.visibility = View.VISIBLE
+    toggleActionBarVisibility(false)
+  }
+
   private fun showAyahBookmarkSheet(suraAyah: SuraAyah) {
     val ayahBookmarkWrapper = AyahBookmarkWrapper(this, suraAyah) { isBookmarked ->
       overlay.removeAllViews()
@@ -1904,50 +1935,60 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
   }
 
-  private fun shareAyah(start: SuraAyah?, end: SuraAyah?, isCopy: Boolean) {
-    if (start == null || end == null) {
-      return
-    } else if (!quranFileUtils.hasArabicSearchDatabase()) {
-      showGetRequiredFilesDialog()
-      return
-    }
-
+  private fun shareAyah(start: SuraAyah, end: SuraAyah, isCopy: Boolean) {
     val translationNames = lastActivatedLocalTranslations
-    if (showingTranslation && translationNames.isNotEmpty()) {
+    val shareTranslation = showingTranslation && translationNames.isNotEmpty()
+    val quranAyahInfo = if (shareTranslation) {
       // temporarily required so "lastSelectedTranslationAyah" isn't null
       // the real solution is to move this sharing logic out of PagerActivity
       // in the future and avoid this back and forth with the translation fragment.
 
       updateLocalTranslations(start)
-      val quranAyahInfo = lastSelectedTranslationAyah
-      if (quranAyahInfo != null) {
-        val shareText = shareUtil.getShareText(this, quranAyahInfo, translationNames)
-        if (isCopy) {
-          shareUtil.copyToClipboard(this, shareText)
-        } else {
-          shareUtil.shareViaIntent(
-            this,
-            shareText,
-            com.quran.labs.androidquran.common.toolbar.R.string.share_ayah_text
-          )
-        }
-      }
-
-      return
+      lastSelectedTranslationAyah
+    } else {
+      null
     }
 
-    compositeDisposable.add(
-      arabicDatabaseUtils
-        .getVerses(start, end)
-        .filter { quranAyahs: List<QuranText?> -> quranAyahs.isNotEmpty() }
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { quranAyahs: List<QuranText> ->
+    scope.launch {
+      val hasArabicDatabase = withContext(Dispatchers.IO) {
+        quranFileUtils.hasArabicSearchDatabase()
+      }
+
+      val canShowUi = canShowUi()
+      if (canShowUi && !hasArabicDatabase) {
+        showGetRequiredFilesDialog()
+      } else if (canShowUi && shareTranslation) {
+        if (quranAyahInfo != null) {
+          val shareText =
+            shareUtil.getShareText(this@PagerActivity, quranAyahInfo, translationNames)
           if (isCopy) {
-            shareUtil.copyVerses(this@PagerActivity, quranAyahs)
+            shareUtil.copyToClipboard(this@PagerActivity, shareText)
           } else {
-            shareUtil.shareVerses(this@PagerActivity, quranAyahs)
+            shareUtil.shareViaIntent(
+              this@PagerActivity,
+              shareText,
+              com.quran.labs.androidquran.common.toolbar.R.string.share_ayah_text
+            )
           }
-        })
+        }
+      } else if (canShowUi) {
+        compositeDisposable.add(
+          arabicDatabaseUtils
+            .getVerses(start, end)
+            .filter { quranAyahs: List<QuranText?> -> quranAyahs.isNotEmpty() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { quranAyahs: List<QuranText> ->
+              if (!canShowUi()) {
+                return@subscribe
+              }
+              if (isCopy) {
+                shareUtil.copyVerses(this@PagerActivity, quranAyahs)
+              } else {
+                shareUtil.shareVerses(this@PagerActivity, quranAyahs)
+              }
+            })
+      }
+    }
   }
 
   fun shareAyahLink(start: SuraAyah, end: SuraAyah) {
@@ -2025,6 +2066,14 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   companion object {
+    private val PAGE_COLOR_PREFERENCES = setOf(
+      Constants.PREF_PAGE_THEME,
+      Constants.PREF_PAGE_APPEARANCE,
+      Constants.PREF_APP_THEME,
+      Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
+      Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS,
+      Constants.PREF_USE_OLD_BACKGROUND
+    )
     private const val AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY"
     private const val LAST_READ_PAGE = "LAST_READ_PAGE"
     private const val LAST_READING_MODE_IS_TRANSLATION = "LAST_READING_MODE_IS_TRANSLATION"

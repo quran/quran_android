@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="default_collection">Priljubljene</string>
+  <plurals name="ayah_collections">
+    <item quantity="one">%d zbirka</item>
+    <item quantity="two">%d zbirki</item>
+    <item quantity="few">%d zbirke</item>
+    <item quantity="other">%d zbirk</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">Rumena</string>
   <string name="highlight_color_green">Zelena</string>

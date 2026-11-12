@@ -7,10 +7,6 @@
   <string name="quran_sync_signed_in">Sudah masuk</string>
   <string name="quran_sync_loading">Sedang masuk</string>
   <string name="quran_sync_login">Masuk</string>
-  <string name="quran_sync_logout">Keluar</string>
-  <string name="quran_sync_name">Nama</string>
-  <string name="quran_sync_email">Email</string>
-  <string name="quran_sync_account_id">ID Akun</string>
   <string name="quran_sync_action_error">Tidak dapat memperbarui sinkronisasi saat ini.</string>
   <string name="quran_sync_bookmarks_cta_title">Sinkronkan markah Anda di mana saja</string>
   <string name="quran_sync_bookmarks_cta_subtitle">Akses dari perangkat apa pun, kapan saja</string>

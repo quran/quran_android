@@ -22,9 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.mobile.feature.ayahbookmark.R
 import com.quran.mobile.feature.ayahbookmark.readingbookmark.state.ReadingBookmarkSheetEvent
@@ -79,10 +77,7 @@ internal fun ReadingBookmarkSheet(
       }
       Text(
         text = stringResource(R.string.readingbookmark_title),
-        style = MaterialTheme.typography.titleMedium.copy(
-          fontWeight = FontWeight.ExtraBold,
-          letterSpacing = 0.15.sp
-        ),
+        style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier.weight(1f)
       )
@@ -92,7 +87,7 @@ internal fun ReadingBookmarkSheet(
         } else {
           stringResource(R.string.readingbookmark_edit)
         },
-        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+        style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.primary,
         modifier = Modifier
           .clip(RoundedCornerShape(percent = 100))
@@ -115,7 +110,7 @@ internal fun ReadingBookmarkSheet(
         state.isNested -> stringResource(R.string.readingbookmark_placing_on, targetName)
         else -> stringResource(R.string.readingbookmark_subtitle)
       },
-      style = MaterialTheme.typography.bodySmall,
+      style = MaterialTheme.typography.bodyMedium,
       color = MaterialTheme.colorScheme.onSurfaceVariant,
       modifier = Modifier.padding(
         top = 6.dp,

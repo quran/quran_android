@@ -2,6 +2,7 @@ package com.quran.labs.androidquran
 
 import android.app.Application
 import android.os.Build
+import androidx.core.os.UserManagerCompat
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.quran.labs.androidquran.core.worker.QuranWorkerFactory
@@ -12,6 +13,7 @@ import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.labs.androidquran.widget.BookmarksWidgetSubscriber
 import com.quran.mobile.di.QuranApplicationComponent
 import com.quran.mobile.di.QuranApplicationComponentProvider
+import com.quran.mobile.feature.sync.QuranSyncManager
 import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.createGraphFactory
@@ -19,12 +21,13 @@ import timber.log.Timber
 import java.io.File
 
 @HasMemberInjections
-open class QuranApplication : Application(), QuranApplicationComponentProvider {
+open class QuranApplication : Application(), QuranApplicationComponentProvider, Configuration.Provider {
   lateinit var applicationComponent: ApplicationComponent
 
   @Inject lateinit var quranWorkerFactory: QuranWorkerFactory
   @Inject lateinit var bookmarksWidgetSubscriber: BookmarksWidgetSubscriber
   @Inject lateinit var quranSettings: QuranSettings
+  @Inject lateinit var quranSyncManager: QuranSyncManager
 
   override fun provideQuranApplicationComponent(): QuranApplicationComponent {
     return applicationComponent
@@ -38,6 +41,7 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider {
     setupTimber()
     applicationComponent = initializeInjector()
     applicationComponent.inject(this)
+    quranSyncManager.startForegroundSync()
     initializeWorkManager()
     bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
 
@@ -64,12 +68,14 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider {
       .generate(this)
   }
 
+  override val workManagerConfiguration: Configuration
+    get() = Configuration.Builder()
+      .setWorkerFactory(quranWorkerFactory)
+      .build()
+
   open fun initializeWorkManager() {
-    WorkManager.initialize(
-      this,
-      Configuration.Builder()
-        .setWorkerFactory(quranWorkerFactory)
-        .build()
-    )
+    if (UserManagerCompat.isUserUnlocked(this)) {
+      WorkManager.initialize(this, workManagerConfiguration)
+    }
   }
 }

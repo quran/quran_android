@@ -8,6 +8,7 @@ interface PageProvider {
   fun getPageSizeCalculator(displaySize: DisplaySize): PageSizeCalculator
 
   fun getImageVersion(): Int
+  fun mushafType(): MushafType
 
   fun getImagesBaseUrl(): String
   fun getImagesZipBaseUrl(): String

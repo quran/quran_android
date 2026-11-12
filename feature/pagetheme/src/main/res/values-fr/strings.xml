@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="prefs_night_mode_text_brightness_title">Luminosité du texte</string>
+  <string name="prefs_night_mode_background_brightness_title">Luminosité de fond</string>
+</resources>

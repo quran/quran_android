@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.service
 
+import android.app.ForegroundServiceStartNotAllowedException
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
@@ -25,6 +26,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.net.toUri
 import androidx.media.session.MediaButtonReceiver
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
@@ -47,9 +49,9 @@ import androidx.media3.exoplayer.RenderersFactory
 import androidx.media3.exoplayer.audio.AudioRendererEventListener
 import androidx.media3.exoplayer.audio.MediaCodecAudioRenderer
 import androidx.media3.exoplayer.mediacodec.MediaCodecSelector
-import androidx.media3.exoplayer.source.MediaSource
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.metadata.MetadataOutput
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.text.TextOutput
 import androidx.media3.exoplayer.video.VideoRendererEventListener
 import com.quran.data.core.QuranInfo
@@ -85,7 +87,6 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import kotlin.math.abs
-import androidx.core.net.toUri
 
 /**
  * Service that handles media playback. This is the Service through which we
@@ -356,7 +357,9 @@ class AudioService : Service(), Player.Listener {
       val action = intent.action
       if (ACTION_PLAYBACK == action || Intent.ACTION_MEDIA_BUTTON == action) {
         // go to the foreground as quickly as possible.
-        setUpAsForeground()
+        if (!setUpAsForeground()) {
+          return START_NOT_STICKY
+        }
       }
       val message = serviceHandler.obtainMessage(MSG_INCOMING, intent)
       serviceHandler.sendMessage(message)
@@ -622,12 +625,11 @@ class AudioService : Service(), Player.Listener {
     } else if (State.Paused == state) {
       // If we're paused, just continue playback and restore the
       // 'foreground service' state.
-      state = State.Playing
-      if (!isSetupAsForeground) {
-        setUpAsForeground()
+      if (isSetupAsForeground || setUpAsForeground()) {
+        state = State.Playing
+        configAndStartExoPlayer()
+        updateAudioPlaybackStatus()
       }
-      configAndStartExoPlayer()
-      updateAudioPlaybackStatus()
     }
   }
 
@@ -872,25 +874,24 @@ class AudioService : Service(), Player.Listener {
    * Starts playing the next file.
    */
   private fun playAudio(playRepeatSeparator: Boolean = false) {
-    if (!isSetupAsForeground) {
-      setUpAsForeground()
-    }
-    state = State.Stopped
-    relaxResources(releaseExoPlayer = false, stopForeground = false)
-    playerOverride = false
-    currentWord = null
+    if (isSetupAsForeground || setUpAsForeground()) {
+      state = State.Stopped
+      relaxResources(releaseExoPlayer = false, stopForeground = false)
+      playerOverride = false
+      currentWord = null
 
-    val localAudioQueue = audioQueue
-    val localAudioRequest = audioRequest
-    if (localAudioQueue != null && localAudioRequest != null) {
-      val dbPath = localAudioRequest.audioPathInfo.gaplessDatabase
-      if (localAudioRequest.isGapless() && dbPath != null) {
-        scope.launch {
-          val timings = updateGaplessData(dbPath, localAudioQueue.getCurrentSura())
-          playAudio(playRepeatSeparator, timings)
+      val localAudioQueue = audioQueue
+      val localAudioRequest = audioRequest
+      if (localAudioQueue != null && localAudioRequest != null) {
+        val dbPath = localAudioRequest.audioPathInfo.gaplessDatabase
+        if (localAudioRequest.isGapless() && dbPath != null) {
+          scope.launch {
+            val timings = updateGaplessData(dbPath, localAudioQueue.getCurrentSura())
+            playAudio(playRepeatSeparator, timings)
+          }
+        } else {
+          playAudio(playRepeatSeparator, null)
         }
-      } else {
-        playAudio(playRepeatSeparator, null)
       }
     }
   }
@@ -1208,8 +1209,11 @@ class AudioService : Service(), Player.Listener {
    * is a service that's doing something the user is actively aware of
    * (such as playing music), and must appear to the user as a notification.
    * That's why we create the notification here.
+   *
+   * Returns false and stops the service if Android denies foreground promotion.
+   * Callers must abandon playback in that case, including incoming media buttons.
    */
-  private fun setUpAsForeground() {
+  private fun setUpAsForeground(): Boolean {
     // clear the "downloading complete" notification (if it exists)
     notificationManager.cancel(QuranDownloadNotifier.DOWNLOADING_COMPLETE_NOTIFICATION)
     val appContext = applicationContext
@@ -1260,8 +1264,24 @@ class AudioService : Service(), Player.Listener {
 
     updatedBuilder.setTicker(audioTitle)
     updatedBuilder.setContentText(audioTitle)
-    startForeground(NOTIFICATION_ID, updatedBuilder.build())
-    isSetupAsForeground = true
+    return try {
+      startForeground(NOTIFICATION_ID, updatedBuilder.build())
+      isSetupAsForeground = true
+      true
+    } catch (exception: IllegalStateException) {
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+        exception !is ForegroundServiceStartNotAllowedException) {
+        throw exception
+      }
+      Timber.w(exception, "Audio foreground start was rejected")
+      serviceHandler.removeCallbacksAndMessages(null)
+      if (Looper.myLooper() == serviceLooper) {
+        processStopRequest(true)
+      } else {
+        serviceHandler.post { processStopRequest(true) }
+      }
+      false
+    }
   }
 
   private fun getPausedNotificationBuilder(): NotificationCompat.Builder {

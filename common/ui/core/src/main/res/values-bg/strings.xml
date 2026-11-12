@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="default_collection">Любими</string>
+  <plurals name="ayah_collections">
+    <item quantity="one">%d колекция</item>
+    <item quantity="other">%d колекции</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">Жълт</string>
   <string name="highlight_color_green">Зелен</string>

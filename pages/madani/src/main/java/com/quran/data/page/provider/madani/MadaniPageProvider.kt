@@ -2,6 +2,7 @@ package com.quran.data.page.provider.madani
 
 import com.quran.data.model.audio.Qari
 import com.quran.data.source.DisplaySize
+import com.quran.data.source.MushafType
 import com.quran.data.source.PageProvider
 import com.quran.data.source.PageSizeCalculator
 import com.quran.labs.androidquran.pages.common.madani.size.DefaultPageSizeCalculator
@@ -17,6 +18,8 @@ class MadaniPageProvider : PageProvider {
       DefaultPageSizeCalculator(displaySize)
 
   override fun getImageVersion() = 8
+
+  override fun mushafType() = MushafType.MADANI_1405
 
   override fun getImagesBaseUrl() = "$baseUrl/"
 

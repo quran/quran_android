@@ -8,7 +8,6 @@ import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.model.quran.CoordinatesModel
 import com.quran.labs.androidquran.model.quran.CoordinatesModelInterface
-import com.quran.labs.androidquran.model.translation.TranslationModel
 import com.quran.labs.androidquran.model.translation.TranslationModelImpl
 import com.quran.labs.androidquran.ui.helpers.QuranPageLoader
 import com.quran.labs.androidquran.ui.helpers.QuranPageLoaderInterface
@@ -18,6 +17,7 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.di.AyahActionFragmentProvider
 import com.quran.mobile.di.qualifier.ActivityContext
+import com.quran.mobile.translation.verse.TranslationModel
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.ElementsIntoSet

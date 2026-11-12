@@ -7,6 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.Settings
+import com.quran.data.model.PageAppearance
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.Bookmark
@@ -80,7 +81,6 @@ class BookmarkImportExportModelTest {
       readingBookmarksDao,
       pageMapper,
       BookmarkBackupImportNormalizer(
-        context,
         pageMapper,
         DefaultMobileSyncTimestampProvider()
       ),
@@ -366,7 +366,7 @@ class BookmarkImportExportModelTest {
     val recentTimestampMillis = 1_700_000_002_000L
     val readingBookmarkTimestampMillis = 1_700_000_003_000L
     val page = 50
-    val oldPageBookmarksTagName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksTagName = "Old Page Bookmarks"
 
     importData(
       BookmarkData(
@@ -410,10 +410,12 @@ class BookmarkImportExportModelTest {
   }
 
   @Test
+  @Config(qualifiers = "ar")
   fun testImportConvertsPageBookmarkToAyahBookmarkWithOldPageBookmarkTag() {
     val page = 50
     val originalTagName = "Imported Tag"
-    val oldPageBookmarksTagName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksTagName = "Old Page Bookmarks"
+    assertThat(context.getString(R.string.old_page_bookmarks)).isNotEqualTo(oldPageBookmarksTagName)
 
     importData(
       BookmarkData(
@@ -450,7 +452,7 @@ class BookmarkImportExportModelTest {
     val page = 50
     val backupTagId = "old-page-bookmarks"
     val originalTagName = "Imported Tag"
-    val oldPageBookmarksTagName = context.getString(R.string.old_page_bookmarks)
+    val oldPageBookmarksTagName = "Old Page Bookmarks"
 
     importData(
       BookmarkData(
@@ -570,11 +572,13 @@ class BookmarkImportExportModelTest {
 
     override suspend fun lastPage(): Int = 1
 
-    override suspend fun isNightMode(): Boolean = false
+    override suspend fun pageAppearance(): PageAppearance = PageAppearance.Light
 
-    override suspend fun nightModeTextBrightness(): Int = 0
+    override suspend fun pageTextBrightness(): Int = 0
 
     override suspend fun nightModeBackgroundBrightness(): Int = 0
+
+    override suspend fun dayPageBackgroundColor(): Int? = null
 
     override suspend fun shouldShowHeaderFooter(): Boolean = false
 

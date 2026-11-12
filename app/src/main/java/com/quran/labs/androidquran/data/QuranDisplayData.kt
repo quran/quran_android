@@ -134,17 +134,19 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
       maxAyah = quranInfo.getNumberOfAyahs(maxSura)
     }
 
+    val minAyahText = QuranUtils.getLocalizedNumber(minVerse.ayah)
+    val maxAyahText = QuranUtils.getLocalizedNumber(maxAyah)
     return notificationTitle.plus(
       if (minSura == maxSura) {
         if (minVerse.ayah == maxAyah) {
-          " ($maxAyah)"
+          " ($maxAyahText)"
         } else {
-          " (" + minVerse.ayah + "-" + maxAyah + ")"
+          " ($minAyahText-$maxAyahText)"
         }
       } else {
-        " (" + minVerse.ayah + ") - " +
+        " ($minAyahText) - " +
             getSuraName(context, maxSura, wantPrefix = true, wantTranslation = false) +
-            " (" + maxAyah + ")"
+            " ($maxAyahText)"
       }
     )
   }

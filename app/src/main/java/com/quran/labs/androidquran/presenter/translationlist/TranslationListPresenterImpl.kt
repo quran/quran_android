@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.presenter.translationlist
 
-import com.quran.mobile.translation.data.TranslationsDataSource
+import com.quran.mobile.translation.catalog.data.TranslationsDataSource
 import com.quran.mobile.translation.model.LocalTranslation
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Job

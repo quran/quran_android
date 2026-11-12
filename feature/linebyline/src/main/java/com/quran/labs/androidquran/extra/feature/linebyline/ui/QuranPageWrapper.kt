@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.extra.feature.linebyline.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -15,8 +16,6 @@ import com.quran.data.source.PageContentType
 import com.quran.labs.androidquran.extra.feature.linebyline.model.PageInfo
 import com.quran.labs.androidquran.extra.feature.linebyline.model.SidelinesPosition
 import java.text.NumberFormat
-import kotlin.math.ln1p
-import kotlin.math.min
 
 @Composable
 fun QuranPageWrapper(
@@ -33,11 +32,7 @@ fun QuranPageWrapper(
 ) {
   val displaySettings = pageInfo.displaySettings
 
-  val originalTextBrightness = displaySettings.textBrightness.toFloat()
-  val backgroundBrightness = displaySettings.nightModeBackgroundBrightness
-  // avoid damaging the looks of the Quran page
-  val adjustedBrightness = (50 * ln1p(backgroundBrightness.toDouble()) + originalTextBrightness).toInt()
-  val textBrightness = min(adjustedBrightness.toFloat(), 255f)
+  val textBrightness = displaySettings.textBrightness.toFloat()
 
   val displayInfo = pageInfo.displayText
   val showHeaderFooter = displaySettings.showHeaderFooter
@@ -45,7 +40,7 @@ fun QuranPageWrapper(
   val orientation = LocalConfiguration.current.orientation
   val isScrollable = (!dualScreenMode && orientation == Configuration.ORIENTATION_LANDSCAPE)
 
-  val isNightMode = displaySettings.isNightMode
+  val isNightMode = displaySettings.pageAppearance.isNightMode(isSystemInDarkTheme())
   val overlayColor = if (isNightMode) {
     Color(0x84, 0x8A, 0x91)
   } else {
@@ -105,7 +100,7 @@ fun QuranPageWrapper(
 
   val ratio = (pageContentType as PageContentType.Line).ratio
   val lineHeight = pageContentType.lineHeight
-  val lineColor = if (displaySettings.isNightMode) {
+  val lineColor = if (isNightMode) {
     Color.White.copy(alpha = textBrightness / 255f)
   } else {
     Color.Black
@@ -217,7 +212,12 @@ fun QuranPageWrapper(
       onClick()
     },
     isNightMode,
-    nightModeBackgroundBrightness = backgroundBrightness
+    backgroundColor = if (isNightMode) {
+      val brightness = displaySettings.nightModeBackgroundBrightness
+      Color(brightness, brightness, brightness)
+    } else {
+      displaySettings.dayBackgroundColor?.let { Color(it) }
+    }
   )
 }
 

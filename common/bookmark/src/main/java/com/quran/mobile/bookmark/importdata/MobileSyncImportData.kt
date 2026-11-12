@@ -1,5 +1,6 @@
 package com.quran.mobile.bookmark.importdata
 
+import com.quran.shared.persistence.model.Mushaf
 import com.quran.shared.persistence.model.ReadingBookmarkSlot
 
 data class MobileSyncImportData(
@@ -53,9 +54,11 @@ sealed interface MobileSyncImportReadingBookmark {
     val name: String? = null
   ) : MobileSyncImportReadingBookmark
 
+  /** [page] of [mushaf], numbered the way mobile-sync takes it (see [Mushaf]). */
   data class Page(
     val slot: ReadingBookmarkSlot,
     val page: Int,
+    val mushaf: Mushaf,
     override val timestampMillis: Long,
     val name: String? = null
   ) : MobileSyncImportReadingBookmark

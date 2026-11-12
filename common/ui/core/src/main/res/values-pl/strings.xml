@@ -6,6 +6,13 @@
   <string name="to">Do</string>
   <string name="loading">Ładowanie&#8230;</string>
   <string name="canceling">Anulowanie&#8230;</string>
+  <string name="default_collection">Ulubione</string>
+  <plurals name="ayah_collections">
+    <item quantity="one">%d kolekcja</item>
+    <item quantity="few">%d kolekcje</item>
+    <item quantity="many">%d kolekcji</item>
+    <item quantity="other">%d kolekcji</item>
+  </plurals>
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">Żółty</string>
   <string name="highlight_color_green">Zielony</string>
