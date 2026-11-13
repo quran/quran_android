@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.core.os.UserManagerCompat
 import androidx.work.Configuration
 import androidx.work.WorkManager
+import com.quran.data.di.AppCoroutineScope
+import com.quran.labs.androidquran.common.audio.util.AudioDecoderCapabilities
 import com.quran.labs.androidquran.core.worker.QuranWorkerFactory
 import com.quran.labs.androidquran.di.component.application.ApplicationComponent
 import com.quran.labs.androidquran.util.QuranSettings
@@ -16,6 +18,7 @@ import com.quran.mobile.feature.sync.QuranSyncManager
 import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.createGraphFactory
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @HasMemberInjections
@@ -26,6 +29,8 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
   @Inject lateinit var bookmarksWidgetSubscriber: BookmarksWidgetSubscriber
   @Inject lateinit var quranSettings: QuranSettings
   @Inject lateinit var quranSyncManager: QuranSyncManager
+  @Inject lateinit var appCoroutineScope: AppCoroutineScope
+  @Inject lateinit var audioDecoderCapabilities: AudioDecoderCapabilities
 
   override fun provideQuranApplicationComponent(): QuranApplicationComponent {
     return applicationComponent
@@ -39,6 +44,10 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
     quranSyncManager.startForegroundSync()
     initializeWorkManager()
     bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
+
+    // Warm up the (lazy, cached) decoder-capability probe off the main thread so the first
+    // playback doesn't pay the MediaCodecList query cost synchronously.
+    appCoroutineScope.launch { audioDecoderCapabilities.isOpusSupported() }
 
     // theme setup
     val theme = quranSettings.currentTheme()

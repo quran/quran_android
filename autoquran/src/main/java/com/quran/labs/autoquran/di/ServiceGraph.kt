@@ -1,11 +1,14 @@
 package com.quran.labs.autoquran.di
 
+import com.quran.data.di.AppScope
 import com.quran.data.page.provider.QuranDataModule
 import com.quran.labs.feature.autoquran.common.QariArtworkContentProvider
 import com.quran.labs.feature.autoquran.service.QuranBrowsableAudioPlaybackService
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Includes
+import dev.zacsweers.metro.SingleIn
 
+@SingleIn(AppScope::class)
 @DependencyGraph(bindingContainers = [QuranDataModule::class])
 interface ServiceGraph {
   fun inject(service: QuranBrowsableAudioPlaybackService)
