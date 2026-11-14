@@ -21,10 +21,12 @@ starts, and the user may begin anywhere from three pages before the page on scre
 it: once the start is found the words before it are shown again. Reciting something that isn't
 there marks the first word on screen (and, while memorizing, gives it after the delay).
 
-**Everything runs on the device.** Audio is processed in memory and dropped; nothing is logged or
-sent, and nothing is recorded unless the user turns on "Record my recitation" or "Record and
-contribute" (both off by default). Recordings stay in the app's no-backup storage and only leave the
-phone if the user exports them.
+**Everything runs on the device.** Audio is processed in memory and dropped; nothing is sent, and
+nothing is recorded unless the user turns on "Record my recitation" or "Record and contribute" (both
+off by default). Recordings stay in the app's no-backup storage and only leave the phone if the user
+exports them. When a session ends, Progress keeps what it came to: the passage, the mode, when and
+how long, and how many words of each ayah were recited, given, missed or marked (no audio and no
+words heard). It stays on the device; Settings > Progress turns it off and clears it.
 The only network use is the one-time download of the speech model and, if the user agrees (or turns
 on automatic downloads), the hint reciter's sura audio through the app's normal audio downloads.
 

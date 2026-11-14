@@ -11,10 +11,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import com.quran.data.model.SuraAyah
 import com.quran.mobile.feature.memorize.recording.Recording
@@ -23,6 +26,7 @@ import com.quran.mobile.feature.memorize.recording.SessionCounts
 import com.quran.mobile.feature.memorize.recording.SessionListScreen
 import com.quran.mobile.feature.memorize.recording.SessionRow
 import com.quran.mobile.feature.memorize.recording.SessionScreen
+import com.quran.mobile.feature.memorize.recording.SessionsSideBySide
 import com.quran.mobile.feature.memorize.tracker.WordId
 import com.quran.recitation.pages.PagePreview
 import com.quran.recitation.pages.PageRenderer
@@ -101,25 +105,55 @@ class MemorizeScreensRenderTest {
 
   @Test
   fun `a session played back on its pages`() {
+    eachLook("session_window") { arabic -> Session(arabic) }
+  }
+
+  @Test
+  fun `the recording sessions side by side on a tablet`() {
+    eachLook("sessions_side_by_side", phone = false) { arabic ->
+      SessionsSideBySide(
+        width = LocalConfiguration.current.screenWidthDp.dp,
+        list = {
+          SessionListScreen(
+            rows = sessionRows(arabic),
+            summary = if (arabic) "٤ جلسات · ٨٤ م.ب · «سجّل وساهم» مفعّل" else "4 sessions · 84 MB · Record and contribute is on",
+            snackbar = remember { SnackbarHostState() },
+            onOpen = {}, onDelete = {}, onExportAll = {}, onDeleteAll = {}, onBack = {},
+            selectedId = sessionRows(arabic).first().id,
+          )
+        },
+        session = { Session(arabic) },
+      )
+    }
+  }
+
+  /** Al-Mulk 1–15 at 1:04, with two words given, one skipped and one marked. */
+  @Composable
+  private fun Session(arabic: Boolean) {
     val recording = Recording(
       id = "s", session = "s", mode = MemorizeState.Mode.MEMORIZE, startedAt = 0,
       start = SuraAyah(67, 1), end = SuraAyah(67, 15),
       parts = listOf(Recording.Part(File("a"), 252_000)),
-      words = (1..30).map { Recording.Word(WordId(67, 1 + it / 6, 1 + it % 6), it * 1_000L, it * 1_000L + 600, Recording.WordStatus.RECITED, "") },
+      words = (1..120).map {
+        val status = when (it) {
+          23, 71 -> Recording.WordStatus.HINTED
+          96 -> Recording.WordStatus.MISSED
+          else -> Recording.WordStatus.RECITED
+        }
+        Recording.Word(WordId(67, 1 + it / 8, 1 + it % 8), it * 2_000L, it * 2_000L + 600, status, "", mistakes = if (it == 48) 1 else 0)
+      },
     )
-    eachLook("session_window") { arabic ->
-      SessionScreen(
-        title = if (arabic) "الملك ١–١٥" else "Al-Mulk 1–15",
-        subtitle = if (arabic) "الحفظ · ١٢ نوفمبر ٢٠٢٦، ٩:٤٠ م" else "Memorization · 12 Nov 2026, 21:40",
-        recording = recording,
-        counts = SessionCounts(recited = 52, hinted = 2, missed = 1, mistakes = 1),
-        pages = listOf(562, 563),
-        pageOf = { if (it.id.ayah < 13) 562 else 563 },
-        playback = RecordingPlayer.Playback(recording, 64_000, isPlaying = true),
-        renderer = FakePages(LocalContext.current),
-        onBack = {}, onExport = {}, onDelete = {}, onPlay = {}, onPause = {}, onSeek = {}, onSkip = {},
-      )
-    }
+    SessionScreen(
+      title = if (arabic) "الملك ١–١٥" else "Al-Mulk 1–15",
+      subtitle = if (arabic) "الحفظ · ١٢ نوفمبر ٢٠٢٦، ٩:٤٠ م" else "Memorization · 12 Nov 2026, 21:40",
+      recording = recording,
+      counts = SessionCounts(recited = 52, hinted = 2, missed = 1, mistakes = 1),
+      pages = listOf(562, 563),
+      pageOf = { if (it.id.ayah < 13) 562 else 563 },
+      playback = RecordingPlayer.Playback(recording, 64_000, isPlaying = true),
+      renderer = FakePages(LocalContext.current),
+      onBack = {}, onExport = {}, onDelete = {}, onPlay = {}, onPause = {}, onSeek = {}, onSkip = {},
+    )
   }
 
   private fun sessionRows(arabic: Boolean): List<SessionRow> {
@@ -166,16 +200,20 @@ class MemorizeScreensRenderTest {
   @Composable
   private fun ModeSheetOnScrim(state: ModeSheetState) {
     Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.32f)), contentAlignment = Alignment.BottomCenter) {
-      ModeSheetContent(state, onChoose = { _, _ -> })
+      // the sheet is at most 840dp wide (on a tablet)
+      ModeSheetContent(state, Modifier.widthIn(max = 840.dp), onChoose = { _, _ -> })
     }
   }
 
   /** Renders [content] light and dark, in English and Arabic, on a phone (and a tablet). */
-  private fun eachLook(name: String, tablet: Boolean = true, content: @Composable (arabic: Boolean) -> Unit) {
+  private fun eachLook(name: String, tablet: Boolean = true, phone: Boolean = true, content: @Composable (arabic: Boolean) -> Unit) {
     // size, density
     val devices = listOfNotNull(
-      Triple("phone", "w411dp-h891dp", "xxhdpi"),
+      Triple("phone", "w411dp-h891dp", "xxhdpi").takeIf { phone },
       Triple("tablet", "w840dp-h1280dp", "mdpi").takeIf { tablet },
+      // the Huawei MatePad 12 X, 2800×1840 at xhdpi
+      Triple("matepad_landscape", "w1400dp-h920dp", "xhdpi").takeIf { tablet },
+      Triple("matepad_portrait", "w920dp-h1400dp", "xhdpi").takeIf { tablet },
     )
     for ((device, size, density) in devices) {
       for (arabic in listOf(false, true)) {

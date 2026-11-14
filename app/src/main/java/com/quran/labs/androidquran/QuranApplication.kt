@@ -14,6 +14,7 @@ import com.quran.labs.androidquran.widget.BookmarksWidgetSubscriber
 import com.quran.mobile.di.QuranApplicationComponent
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.sync.QuranSyncManager
+import com.quran.mobile.feature.progress.ProgressStartup
 import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.createGraphFactory
@@ -28,6 +29,7 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
   @Inject lateinit var bookmarksWidgetSubscriber: BookmarksWidgetSubscriber
   @Inject lateinit var quranSettings: QuranSettings
   @Inject lateinit var quranSyncManager: QuranSyncManager
+  @Inject lateinit var progressStartup: ProgressStartup
 
   override fun provideQuranApplicationComponent(): QuranApplicationComponent {
     return applicationComponent
@@ -43,6 +45,7 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
     applicationComponent.inject(this)
     quranSyncManager.startForegroundSync()
     initializeWorkManager()
+    startProgress()
     bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
 
     // theme setup
@@ -72,6 +75,14 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
     get() = Configuration.Builder()
       .setWorkerFactory(quranWorkerFactory)
       .build()
+
+  /**
+   * Progress keeps each reading bookmark's moves and checks the daily reminder (its data is only
+   * readable once the user unlocked, as WorkManager is only initialized then).
+   */
+  open fun startProgress() {
+    if (UserManagerCompat.isUserUnlocked(this)) progressStartup.start()
+  }
 
   open fun initializeWorkManager() {
     if (UserManagerCompat.isUserUnlocked(this)) {

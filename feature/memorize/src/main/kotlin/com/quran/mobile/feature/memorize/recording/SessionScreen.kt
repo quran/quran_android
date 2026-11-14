@@ -63,7 +63,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.quran.data.model.highlight.HighlightInfo
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
-import com.quran.labs.androidquran.common.ui.core.modifier.autoMirror
 import com.quran.mobile.feature.memorize.R
 import com.quran.mobile.feature.memorize.presenter.Mark
 import com.quran.mobile.feature.memorize.ui.MemorizeIcons
@@ -115,7 +114,6 @@ internal fun SessionScreen(
             Icon(
               QuranIcons.ArrowBack,
               contentDescription = stringResource(AppCompatR.string.abc_action_bar_up_description),
-              modifier = Modifier.autoMirror(),
             )
           }
         },
@@ -139,9 +137,10 @@ internal fun SessionScreen(
       }
       HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
       Legend(counts)
-      // media playback reads left to right in every language (time and the controls)
+      // media playback reads left to right in every language (time, the timeline and the controls), as
+      // Material's bidirectionality guidance has it
       CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        Player(recording?.durationMs ?: 0L, playback, onPlay, onPause, onSeek, onSkip)
+        Player(recording, playback, onPlay, onPause, onSeek, onSkip)
       }
     }
   }
@@ -245,7 +244,7 @@ private fun Legend(counts: SessionCounts) {
       LegendItem(if (night) Color(0xFF4DB6AC) else Color(0xFF00897B), stringResource(R.string.memorize_legend_hinted), counts.hinted)
     }
     if (counts.missed > 0) {
-      LegendItem(if (night) Color(0xFFFFB74D) else Color(0xFFFB8C00), stringResource(R.string.memorize_legend_missed), counts.missed)
+      LegendItem(if (night) Color(0xFFCE93D8) else Color(0xFFFB8C00), stringResource(R.string.memorize_legend_missed), counts.missed)
     }
     if (counts.mistakes > 0) {
       LegendItem(if (night) Color(0xFFEF5350) else Color(0xFFE53935), stringResource(R.string.memorize_legend_mistakes), counts.mistakes)
@@ -271,19 +270,29 @@ private fun LegendItem(color: Color, label: String, count: Int) {
 /** Play, pause, 5 seconds back and on, and where it is. */
 @Composable
 private fun Player(
-  durationMs: Long,
+  recording: Recording?,
   playback: RecordingPlayer.Playback?,
   onPlay: () -> Unit,
   onPause: () -> Unit,
   onSeek: (Long) -> Unit,
   onSkip: (Long) -> Unit,
 ) {
+  val durationMs = recording?.durationMs ?: 0L
   val positionMs = playback?.positionMs ?: 0L
+  val timeline = remember(recording) { recording?.let(::timelineOf).orEmpty() }
   var dragging by remember { mutableStateOf(false) }
   var dragged by remember { mutableFloatStateOf(0f) }
   val fraction = if (durationMs > 0) (positionMs.toFloat() / durationMs).coerceIn(0f, 1f) else 0f
   val positionLabel = stringResource(R.string.memorize_sessions_position)
   Column(modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(start = 16.dp, end = 16.dp, bottom = 8.dp)) {
+    SessionTimeline(
+      words = timeline,
+      durationMs = durationMs,
+      positionMs = if (dragging) (dragged * durationMs).toLong() else positionMs,
+      description = stringResource(R.string.memorize_sessions_timeline),
+      onSeek = onSeek,
+      modifier = Modifier.padding(horizontal = 8.dp),
+    )
     Slider(
       value = if (dragging) dragged else fraction,
       onValueChange = {

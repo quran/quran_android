@@ -1,0 +1,17 @@
+-- reading bookmarks kept on this device only, and how each reading bookmark slot is set up
+CREATE TABLE IF NOT EXISTS local_reading_bookmark(
+  slot TEXT NOT NULL PRIMARY KEY,
+  name TEXT,
+  sura INTEGER,
+  ayah INTEGER,
+  page INTEGER,
+  page_type TEXT,
+  updated_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS reading_bookmark_setting(
+  slot TEXT NOT NULL PRIMARY KEY,
+  enabled INTEGER NOT NULL,
+  purpose TEXT NOT NULL,
+  target_days INTEGER NOT NULL
+);

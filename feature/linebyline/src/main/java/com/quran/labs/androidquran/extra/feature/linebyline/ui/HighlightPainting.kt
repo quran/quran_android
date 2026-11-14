@@ -45,5 +45,10 @@ fun ReadingBookmarkType.paintColor(isNightMode: Boolean): Color {
     ReadingBookmarkType.TEAL -> if (isNightMode) Color(0xFF4DB6AC) else Color(0xFF00897B)
     ReadingBookmarkType.ORANGE -> if (isNightMode) Color(0xFFFFB74D) else Color(0xFFEF6C00)
     ReadingBookmarkType.RED -> if (isNightMode) Color(0xFFE57373) else Color(0xFFC62828)
+    ReadingBookmarkType.GREEN -> if (isNightMode) Color(0xFF81C784) else Color(0xFF2E7D32)
+    ReadingBookmarkType.BLUE -> if (isNightMode) Color(0xFF64B5F6) else Color(0xFF1565C0)
+    ReadingBookmarkType.PURPLE -> if (isNightMode) Color(0xFFBA68C8) else Color(0xFF6A1B9A)
+    ReadingBookmarkType.BROWN -> if (isNightMode) Color(0xFFA1887F) else Color(0xFF6D4C41)
+    ReadingBookmarkType.GREY -> if (isNightMode) Color(0xFF90A4AE) else Color(0xFF546E7A)
   }
 }

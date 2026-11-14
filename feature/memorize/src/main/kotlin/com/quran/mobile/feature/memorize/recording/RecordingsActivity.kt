@@ -15,6 +15,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.runtime.key
+import com.quran.labs.androidquran.common.ui.core.WidthClass
+import com.quran.labs.androidquran.common.ui.core.widthClassOf
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -43,7 +47,7 @@ import java.util.Calendar
 /**
  * Recording sessions: the user's recorded sessions, by day. A session opens in a window that plays
  * it back on its own pages (without going to them in the reader); sessions can be exported (e.g.
- * for training) or deleted.
+ * for training) or deleted. [EXTRA_SESSION] opens on one session.
  */
 class RecordingsActivity : AppCompatActivity() {
 
@@ -72,7 +76,7 @@ class RecordingsActivity : AppCompatActivity() {
       val changes by store.changes.collectAsState()
       var sessions by remember { mutableStateOf<List<RecordingSession>?>(null) }
       LaunchedEffect(changes) { sessions = withContext(Dispatchers.IO) { store.sessions() } }
-      var openId by rememberSaveable { mutableStateOf<String?>(null) }
+      var openId by rememberSaveable { mutableStateOf(intent.getStringExtra(EXTRA_SESSION)) }
       val scope = rememberCoroutineScope()
       val shown = sessions?.filter { it.id !in pendingDeletes }
 
@@ -90,12 +94,52 @@ class RecordingsActivity : AppCompatActivity() {
         }
       }
 
-      BackHandler(enabled = openId != null) {
-        player.pause()
-        openId = null
-      }
-
       QuranTheme {
+        BoxWithConstraints {
+        val width = maxWidth
+        val wide = widthClassOf(width) == WidthClass.Expanded
+        // one pane at a time on a phone: Back closes the session; side by side on a wide screen
+        BackHandler(enabled = openId != null && !wide) {
+          player.pause()
+          openId = null
+        }
+        if (wide) {
+          val open = openId?.let { id -> shown?.firstOrNull { it.id == id } }
+          SessionsSideBySide(
+            width = width,
+            list = {
+              SessionListScreen(
+                rows = shown?.map { row(it) },
+                summary = shown?.takeIf { it.isNotEmpty() }?.let { summary(it) },
+                snackbar = snackbar,
+                onOpen = { id ->
+                  if (id != openId) player.pause()
+                  openId = id
+                },
+                onDelete = { id -> shown?.firstOrNull { it.id == id }?.let { delete(it) } },
+                onExportAll = { startExport(shown.orEmpty().flatMap { it.recordings }) },
+                onDeleteAll = {
+                  player.stop()
+                  pendingDeletes.clear()
+                  lifecycleScope.launch(Dispatchers.IO) { store.deleteAll() }
+                },
+                onBack = ::finish,
+                selectedId = open?.id,
+              )
+            },
+            session = open?.let { session ->
+              {
+                key(session.id) {
+                  SessionWindow(session, renderer, onBack = {
+                    player.pause()
+                    openId = null
+                  }, onDelete = { delete(session) })
+                }
+              }
+            },
+          )
+          return@BoxWithConstraints
+        }
         AnimatedContent(
           targetState = openId?.let { id -> shown?.firstOrNull { it.id == id } },
           transitionSpec = { fadeIn(tween(200)) togetherWith fadeOut(tween(150)) },
@@ -123,6 +167,7 @@ class RecordingsActivity : AppCompatActivity() {
               openId = null
             }, onDelete = { delete(session) })
           }
+        }
         }
       }
     }
@@ -265,9 +310,11 @@ class RecordingsActivity : AppCompatActivity() {
     }
   }
 
-  private companion object {
-    const val HOUR_MS = 60 * 60 * 1000L
+  companion object {
+    /** The id of the session to open. */
+    const val EXTRA_SESSION = "recording_session"
+    private const val HOUR_MS = 60 * 60 * 1000L
     // a day can be 23 or 25 hours long when the clocks change
-    const val DAY_MS = 24 * HOUR_MS
+    private const val DAY_MS = 24 * HOUR_MS
   }
 }

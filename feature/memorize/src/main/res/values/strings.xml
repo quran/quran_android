@@ -52,7 +52,7 @@
   <string name="memorize_model_imported">The recitation model is installed</string>
   <string name="memorize_model_import_failed">These files are not the recitation model</string>
   <string name="memorize_privacy_title">Privacy</string>
-  <string name="memorize_privacy_summary">Your recitation is processed only on this device. Nothing is recorded unless you turn on recording or Record and contribute, and recordings never leave the device unless you export them.</string>
+  <string name="memorize_privacy_summary">Your recitation is processed only on this device. Nothing is recorded unless you turn on recording or Record and contribute, and recordings never leave the device unless you export them. Progress keeps each session\'s counts on this device (Settings > Progress).</string>
   <string name="memorize_voice_download_title">Hints in the reciter\'s voice</string>
   <string name="memorize_voice_download_message">To speak the hints offline, %1$s\'s recitation is needed. Download this sura, or the whole Quran so that you are never stopped? Without it, hints are only shown. Automatic downloads can be turned on in Settings.</string>
   <string name="memorize_voice_download_skip">Continue without voice</string>
@@ -176,4 +176,6 @@
   <string name="memorize_missed_words_title">Words missed inside a verse</string>
   <string name="memorize_missed_words_loose">Let a word or two pass (marked as skipped)</string>
   <string name="memorize_missed_words_strict">Every word must be heard</string>
+  <string name="memorize_sessions_choose">Choose a session to play it back on its pages.</string>
+  <string name="memorize_sessions_timeline">The session over time: where words were given, skipped or marked. Tap to play from there.</string>
 </resources>

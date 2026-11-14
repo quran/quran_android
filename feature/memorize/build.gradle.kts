@@ -33,6 +33,7 @@ tasks.withType<Test>().configureEach {
 dependencies {
   implementation(project(":common:data"))
   implementation(project(":common:di"))
+  implementation(project(":common:progress"))
   implementation(project(":common:download"))
   implementation(project(":common:pages"))
   implementation(project(":common:recitation"))

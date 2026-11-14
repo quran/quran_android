@@ -23,6 +23,8 @@ import com.quran.mobile.feature.memorize.tracker.WordId
 import com.quran.mobile.feature.memorize.tracker.engine.RecitationEngine
 import com.quran.mobile.feature.memorize.tracker.engine.RecitationStream
 import com.quran.mobile.feature.memorize.tracker.engine.RecognizedToken
+import com.quran.mobile.progress.session.AyahResult
+import com.quran.mobile.progress.session.SessionRecord
 import com.quran.recitation.events.RecitationEventPresenter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -70,6 +72,7 @@ class MemorizeSessionControllerTest {
   private val loadedSuras = mutableListOf<IntRange>()
 
   private val doubleCheck = FakeDoubleCheck()
+  private val results = mutableListOf<SessionRecord>()
 
   private fun TestScope.controller(
     lookaheadWords: Int = 300,
@@ -96,6 +99,7 @@ class MemorizeSessionControllerTest {
     recorders = recorders,
     lookaheadWords = lookaheadWords,
     doubleChecks = { doubleCheck.also { it.opened++ } },
+    results = { results += it },
   )
 
   @Test
@@ -579,6 +583,68 @@ class MemorizeSessionControllerTest {
     assertThat(state.cursor).isEqualTo(fatiha + 3)
     assertThat(state.mistake).isNull()
     assertThat(state.passage.words[fatiha].id).isEqualTo(WordId(2, 1, 1))
+  }
+
+  @Test
+  fun `a stopped session's results are handed on once, with counts per ayah`() = runTest {
+    val controller = controller()
+    controller.start(SuraAyah(112, 1))
+    runCurrent()
+    recite("قُل", "هُوَ", "للَااهُ", "ءَحَدڇ")
+    controller.requestHint()
+    runCurrent()
+
+    controller.stop()
+    runCurrent()
+    controller.stop()
+    runCurrent()
+
+    val record = results.single()
+    assertThat(record.mode).isEqualTo("MEMORIZE")
+    assertThat(record.words).isEqualTo(5)
+    assertThat(record.hinted).isEqualTo(1)
+    assertThat(record.recited).isEqualTo(4)
+    assertThat(record.finished).isFalse()
+    assertThat(record.startSura to record.startAyah).isEqualTo(112 to 1)
+    assertThat(record.endSura to record.endAyah).isEqualTo(112 to 2)
+    assertThat(record.ayahs).containsExactly(
+      AyahResult(112, 1, ayahWords = 4, words = 4, hinted = 0, missed = 0, mistakes = 0),
+      AyahResult(112, 2, ayahWords = 2, words = 1, hinted = 1, missed = 0, mistakes = 0),
+    ).inOrder()
+  }
+
+  @Test
+  fun `a session stopped before anything was revealed has no results`() = runTest {
+    val controller = controller()
+    controller.start(SuraAyah(112, 1))
+    runCurrent()
+    controller.stop()
+    runCurrent()
+    assertThat(results).isEmpty()
+  }
+
+  @Test
+  fun `a session that can't start has no results`() = runTest {
+    val controller = controller()
+    engineFailure = OutOfMemoryError("model too large")
+    controller.start(SuraAyah(112, 1))
+    runCurrent()
+    assertThat(results).isEmpty()
+  }
+
+  @Test
+  fun `a finished session's results are handed on when it finishes, and not again when it's closed`() = runTest {
+    val controller = controller(lookaheadWords = 5)
+    controller.start(SuraAyah(114, 1))
+    runCurrent()
+    recite(*pronunciations(SuraAyah(114, 1), 20))
+    runCurrent()
+    assertThat(results.single().finished).isTrue()
+
+    controller.stop()
+    runCurrent()
+    assertThat(results).hasSize(1)
+    assertThat(results.single().ayahs.map { it.ayah }).containsExactly(1, 2, 3, 4, 5, 6).inOrder()
   }
 
   @Test

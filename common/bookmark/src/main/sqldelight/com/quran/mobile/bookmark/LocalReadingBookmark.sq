@@ -1,0 +1,41 @@
+-- The reading bookmarks kept on this device only: the slots past mobile-sync's three.
+CREATE TABLE IF NOT EXISTS local_reading_bookmark(
+  -- ReadingBookmarkType's name
+  slot TEXT NOT NULL PRIMARY KEY,
+  name TEXT,
+  -- an ayah bookmark has its sura and ayah; a page bookmark also has its page in page_type
+  sura INTEGER,
+  ayah INTEGER,
+  page INTEGER,
+  page_type TEXT,
+  updated_at INTEGER NOT NULL
+);
+
+-- How the user set up each reading bookmark slot, synced or not (a slot without a row has the
+-- defaults in ReadingBookmarkSlotSettingsImpl).
+CREATE TABLE IF NOT EXISTS reading_bookmark_setting(
+  slot TEXT NOT NULL PRIMARY KEY,
+  enabled INTEGER NOT NULL,
+  -- ReadingBookmarkPurpose's name
+  purpose TEXT NOT NULL,
+  -- days to read the Quran in; 0 for no deadline
+  target_days INTEGER NOT NULL
+);
+
+localReadingBookmarks:
+SELECT * FROM local_reading_bookmark;
+
+ensureLocalReadingBookmark:
+INSERT OR IGNORE INTO local_reading_bookmark(slot, updated_at) VALUES (?, ?);
+
+setLocalPosition:
+UPDATE local_reading_bookmark SET sura = ?, ayah = ?, page = ?, page_type = ?, updated_at = ? WHERE slot = ?;
+
+renameLocalReadingBookmark:
+UPDATE local_reading_bookmark SET name = ? WHERE slot = ?;
+
+slotSettings:
+SELECT * FROM reading_bookmark_setting;
+
+setSlotSetting:
+INSERT OR REPLACE INTO reading_bookmark_setting(slot, enabled, purpose, target_days) VALUES (?, ?, ?, ?);

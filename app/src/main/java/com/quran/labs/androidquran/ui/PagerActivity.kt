@@ -84,6 +84,7 @@ import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenter
 import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenterScreen
 import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkChange
 import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkPresenter
+import com.quran.labs.androidquran.feature.reading.presenter.ReadingTimePresenter
 import com.quran.labs.androidquran.feature.reading.presenter.RecentPagePresenter
 import com.quran.labs.androidquran.feature.reading.presenter.recitation.PagerActivityRecitationPresenter
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
@@ -236,6 +237,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   @Inject lateinit var bookmarksDao: BookmarksDao
   @Inject lateinit var recentPagePresenter: RecentPagePresenter
   @Inject lateinit var readingBookmarkPresenter: ReadingBookmarkPresenter
+  @Inject lateinit var readingTimePresenter: ReadingTimePresenter
   @Inject lateinit var quranSettings: QuranSettings
   @Inject lateinit var quranNaming: QuranNaming
   @Inject lateinit var quranScreenInfo: QuranScreenInfo
@@ -908,6 +910,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
     readingBookmarkPresenter.bind(currentPageFlow, this)
+    readingTimePresenter.bind(currentPageFlow) { page ->
+      if (isDualPageVisible) setOfNotNull(page, (page + 1).takeIf { quranInfo.isValidPage(it) }) else setOf(page)
+    }
 
     if (shouldReconnect) {
       foregroundDisposable.add(
@@ -1113,6 +1118,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     quranNavigator.jumpTo(SuraAyah(sura, ayah))
   }
 
+  override fun onUserInteraction() {
+    super.onUserInteraction()
+    readingTimePresenter.onInteraction()
+  }
+
   public override fun onPause() {
     quranSettings.unregisterPreferencesListener(themePreferencesListener)
     foregroundDisposable.clear()
@@ -1120,6 +1130,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     promptDialog = null
     recentPagePresenter.unbind()
     readingBookmarkPresenter.unbind(this)
+    readingTimePresenter.unbind()
     quranSettings.wasShowingTranslation = pagerAdapter.isShowingTranslation
 
     super.onPause()

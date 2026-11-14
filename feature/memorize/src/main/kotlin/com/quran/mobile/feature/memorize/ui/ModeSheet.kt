@@ -3,6 +3,13 @@ package com.quran.mobile.feature.memorize.ui
 import android.app.Activity
 import android.view.ViewGroup
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Surface
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -117,6 +124,8 @@ private fun ModeBottomSheet(
   ModalBottomSheet(
     onDismissRequest = onCancel,
     sheetState = sheetState,
+    // on a tablet the ways to recite sit side by side, so the sheet may be wider than a phone's
+    sheetMaxWidth = 840.dp,
     dragHandle = null,
     shape = RectangleShape,
     containerColor = Color.Transparent,
@@ -169,24 +178,43 @@ internal fun ModeSheetContent(
       color = MaterialTheme.colorScheme.onSurfaceVariant,
       modifier = Modifier.padding(top = 6.dp, bottom = 12.dp, start = 18.dp, end = 18.dp),
     )
-    state.modes.forEachIndexed { index, mode ->
-      if (index > 0) SheetDivider()
-      when (mode) {
-        MemorizeState.Mode.MEMORIZE -> ModeRow(
-          MemorizeIcons.VisibilityOff,
-          stringResource(R.string.memorize_mode_memorize_title),
-          stringResource(R.string.memorize_mode_memorize_description),
-        ) { onChoose(mode, record) }
-        MemorizeState.Mode.RECITE -> ModeRow(
-          QuranIcons.MenuBook,
-          stringResource(R.string.memorize_mode_recite_title),
-          stringResource(R.string.memorize_mode_recite_description),
-        ) { onChoose(mode, record) }
-        MemorizeState.Mode.SALAH -> ModeRow(
-          MemorizeIcons.Mosque,
-          stringResource(R.string.memorize_mode_salah_title),
-          stringResource(R.string.memorize_mode_salah_description),
-        ) { onChoose(mode, record) }
+    BoxWithConstraints {
+      // side by side where there's room for them (a tablet), else one under the other
+      val cards = maxWidth >= 600.dp
+      val choices: @Composable (Modifier) -> Unit = { item ->
+        state.modes.forEachIndexed { index, mode ->
+          if (index > 0 && !cards) SheetDivider()
+          val (icon, title, description) = when (mode) {
+            MemorizeState.Mode.MEMORIZE -> Triple(
+              MemorizeIcons.VisibilityOff,
+              stringResource(R.string.memorize_mode_memorize_title),
+              stringResource(R.string.memorize_mode_memorize_description),
+            )
+            MemorizeState.Mode.RECITE -> Triple(
+              QuranIcons.MenuBook,
+              stringResource(R.string.memorize_mode_recite_title),
+              stringResource(R.string.memorize_mode_recite_description),
+            )
+            MemorizeState.Mode.SALAH -> Triple(
+              MemorizeIcons.Mosque,
+              stringResource(R.string.memorize_mode_salah_title),
+              stringResource(R.string.memorize_mode_salah_description),
+            )
+          }
+          if (cards) {
+            ModeCard(icon, title, description, item) { onChoose(mode, record) }
+          } else {
+            ModeRow(icon, title, description) { onChoose(mode, record) }
+          }
+        }
+      }
+      if (cards) {
+        Row(
+          horizontalArrangement = Arrangement.spacedBy(12.dp),
+          modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min).padding(horizontal = 18.dp, vertical = 8.dp),
+        ) { choices(Modifier.weight(1f).fillMaxHeight()) }
+      } else {
+        Column { choices(Modifier) }
       }
     }
     when (state.record) {
@@ -245,6 +273,36 @@ private fun ModeRow(icon: ImageVector, title: String, description: String, onCli
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(top = 2.dp),
+      )
+    }
+  }
+}
+
+@Composable
+private fun ModeCard(icon: ImageVector, title: String, description: String, modifier: Modifier, onClick: () -> Unit) {
+  Surface(
+    shape = RoundedCornerShape(16.dp),
+    color = MaterialTheme.colorScheme.surface,
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+    modifier = modifier,
+  ) {
+    Column(
+      Modifier
+        .clickable(role = Role.Button, onClick = onClick)
+        .padding(horizontal = 18.dp, vertical = 16.dp)
+    ) {
+      Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(28.dp))
+      Text(
+        title,
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = Modifier.padding(top = 12.dp),
+      )
+      Text(
+        description,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(top = 4.dp),
       )
     }
   }

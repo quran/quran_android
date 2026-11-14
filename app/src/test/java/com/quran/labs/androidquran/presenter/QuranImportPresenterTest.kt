@@ -16,6 +16,7 @@ import com.quran.labs.androidquran.model.bookmark.BookmarkImportExportModel
 import com.quran.labs.androidquran.model.bookmark.BookmarkJsonModel
 import com.quran.labs.awaitTerminalEvent
 import com.quran.mobile.bookmark.importdata.BookmarkBackupImportNormalizer
+import com.quran.mobile.bookmark.importdata.LocalReadingBookmarkImporter
 import com.quran.mobile.bookmark.importdata.MobileSyncImportData
 import com.quran.mobile.bookmark.importdata.MobileSyncImportResult
 import com.quran.mobile.bookmark.importdata.MobileSyncImporter
@@ -61,7 +62,8 @@ class QuranImportPresenterTest {
         pageMapper,
         DefaultMobileSyncTimestampProvider()
       ),
-      FakeMobileSyncImporter()
+      FakeMobileSyncImporter(),
+      LocalReadingBookmarkImporter { _, _ -> }
     )
   }
 

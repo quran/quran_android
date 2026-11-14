@@ -47,7 +47,7 @@ class ReadingBookmarkPresenter @Inject constructor(
     ) { page, bookmarks -> page to bookmarks }
       .onEach { (page, bookmarks) ->
         readingBookmarks = bookmarks
-        // any of the three pins sitting on this page fills the action bar icon
+        // any pin sitting on this page fills the action bar icon
         screen.setPageReadingBookmarkSelected(
           bookmarks.any { it.isAt(ReadingBookmarkTarget.Page(page)) }
         )

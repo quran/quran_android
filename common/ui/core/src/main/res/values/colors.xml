@@ -12,12 +12,18 @@
   <color name="highlight_page_pink">#FFFEB0CA</color>
   <color name="highlight_page_purple">#FFD8B1FE</color>
   <!--
-    the color each reading bookmark slot's pin is drawn in. paired with the slot names below by
+    the color each reading bookmark slot's pin is drawn in (the first three sync; the others are kept on
+    the device). paired with the slot names below by
     ReadingBookmarkSlots; the night variant lives in values-night/colors.xml.
   -->
   <color name="reading_bookmark_teal">#ff00897b</color>
   <color name="reading_bookmark_orange">#ffef6c00</color>
   <color name="reading_bookmark_red">#ffc62828</color>
+  <color name="reading_bookmark_green">#ff2e7d32</color>
+  <color name="reading_bookmark_blue">#ff1565c0</color>
+  <color name="reading_bookmark_purple">#ff6a1b9a</color>
+  <color name="reading_bookmark_brown">#ff6d4c41</color>
+  <color name="reading_bookmark_grey">#ff546e7a</color>
   <!--
     the same slot colors for underlines on image pages, which follow the page's night mode rather
     than the app theme, so neither set is overridden in values-night.
@@ -25,7 +31,17 @@
   <color name="reading_bookmark_page_teal">#ff00897b</color>
   <color name="reading_bookmark_page_orange">#ffef6c00</color>
   <color name="reading_bookmark_page_red">#ffc62828</color>
+  <color name="reading_bookmark_page_green">#ff2e7d32</color>
+  <color name="reading_bookmark_page_blue">#ff1565c0</color>
+  <color name="reading_bookmark_page_purple">#ff6a1b9a</color>
+  <color name="reading_bookmark_page_brown">#ff6d4c41</color>
+  <color name="reading_bookmark_page_grey">#ff546e7a</color>
   <color name="reading_bookmark_page_teal_night">#ff4db6ac</color>
   <color name="reading_bookmark_page_orange_night">#ffffb74d</color>
   <color name="reading_bookmark_page_red_night">#ffe57373</color>
+  <color name="reading_bookmark_page_green_night">#ff81c784</color>
+  <color name="reading_bookmark_page_blue_night">#ff64b5f6</color>
+  <color name="reading_bookmark_page_purple_night">#ffba68c8</color>
+  <color name="reading_bookmark_page_brown_night">#ffa1887f</color>
+  <color name="reading_bookmark_page_grey_night">#ff90a4ae</color>
 </resources>

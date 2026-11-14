@@ -4,6 +4,8 @@ import android.os.SystemClock
 import android.util.Log
 import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
+import com.quran.mobile.progress.session.AyahResult
+import com.quran.mobile.progress.session.SessionRecord
 import com.quran.mobile.feature.memorize.audio.AudioSource
 import com.quran.mobile.feature.memorize.audio.AudioSourceFactory
 import com.quran.mobile.feature.memorize.audio.CallState
@@ -75,8 +77,11 @@ fun interface RecitationEngineFactory {
  * next suras are loaded (and hidden) before the user gets to them, up to the end of the Quran.
  *
  * All recognition and tracking happens on one serialized worker so audio, timer ticks and hints
- * never race. Nothing is recorded or logged: audio frames are dropped as soon as they are decoded
- * (with the optional double-check, the last 8 seconds stay in memory for it to listen to again).
+ * never race. Audio frames are dropped as soon as they are decoded (with the optional double-check,
+ * the last 8 seconds stay in memory for it to listen to again), unless the user records the session.
+ * When a session ends, its counts (words recited, given, missed and marked, per ayah) go to
+ * [SessionResults], which keeps them on the device for Progress if the user lets it; no audio and
+ * no heard words.
  * (Diagnostics, for developers: `adb shell setprop log.tag.MemorizeTrace DEBUG` logs what each
  * session hears and decides, from its next start; off by default.)
  */
@@ -94,6 +99,7 @@ class MemorizeSessionController private constructor(
   private val upcoming: UpcomingSuras,
   private val recorders: Recorders,
   private val doubleChecks: DoubleCheckSource,
+  private val results: SessionResults,
   private val scope: CoroutineScope,
   /** Runs all recognition and tracking, one task at a time. */
   private val worker: CoroutineDispatcher,
@@ -119,9 +125,10 @@ class MemorizeSessionController private constructor(
     upcoming: UpcomingSuras,
     recorders: Recorders,
     doubleChecks: DoubleCheckSource,
+    results: SessionResults,
   ) : this(
     lexicon, models, preferences, recitationEventPresenter, engineFactory, promptPlayer, audioSources, callState,
-    lines, upcoming, recorders, doubleChecks,
+    lines, upcoming, recorders, doubleChecks, results,
     scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
     worker = Dispatchers.Default.limitedParallelism(1),
     checker = Dispatchers.Default.limitedParallelism(1),
@@ -170,6 +177,8 @@ class MemorizeSessionController private constructor(
   private var basmala: List<Pair<String, String>> = emptyList()
   // how many times a mistake was marked on each word (passage index), for its recording
   private val mistakeCounts = HashMap<Int, Int>()
+  // the session whose results were last handed to SessionResults, so it goes there once
+  private var resultsFor: String? = null
   // what a recording made to contribute was last told (see report)
   private var reportedSpeech: Boolean? = null
   private var reportedPrompting = false
@@ -366,7 +375,9 @@ class MemorizeSessionController private constructor(
     prompting = false
     stopListening()
     finishRecording()
+    val ended = _state.value
     scope.launch(worker) {
+      ended?.let { recordResults(it, finished = false) }
       releaseEngine()
       follower = null
       scheduler = null
@@ -756,8 +767,75 @@ class MemorizeSessionController private constructor(
       update { it.copy(status = MemorizeState.Status.FINISHED, mistake = null) }
       recitationEventPresenter.onListeningStateChange(false)
       // the passage is done; the user may keep reading, but the model's memory isn't needed
-      withContext(worker) { releaseEngine() }
+      withContext(worker) {
+        _state.value?.let { recordResults(it, finished = true) }
+        releaseEngine()
+      }
     }
+  }
+
+  /**
+   * Worker only. Hands what [state]'s session came to to [results], once per session: from the word
+   * the user started at to where they got. A session that never got going (it didn't start, or
+   * nothing was revealed) has nothing to give.
+   */
+  private fun recordResults(state: MemorizeState, finished: Boolean) {
+    if (resultsFor == state.id) return
+    if (state.status == MemorizeState.Status.PREPARING || !state.started) return
+    val words = state.passage.words
+    val from = state.firstWord
+    val until = state.cursor.coerceAtMost(words.size)
+    if (until <= from) return
+    resultsFor = state.id
+    val ayahs = LinkedHashMap<SuraAyah, IntArray>()
+    var hinted = 0
+    var missed = 0
+    for (index in from until until) {
+      val counts = ayahs.getOrPut(state.passage.ayahOf(index)) { IntArray(4) }
+      counts[0]++
+      when (index) {
+        in state.hinted -> { counts[1]++; hinted++ }
+        in state.missed -> { counts[2]++; missed++ }
+      }
+    }
+    mistakeCounts.forEach { (index, count) ->
+      if (index < words.size) ayahs.getOrPut(state.passage.ayahOf(index)) { IntArray(4) }[3] += count
+    }
+    val ayahWords = words.groupingBy { SuraAyah(it.id.sura, it.id.ayah) }.eachCount()
+    val first = state.passage.ayahOf(from)
+    val last = state.passage.ayahOf(until - 1)
+    val count = until - from
+    results.record(
+      SessionRecord(
+        id = state.id,
+        mode = state.mode.name,
+        startedAtMs = state.startedAt,
+        endedAtMs = System.currentTimeMillis(),
+        listenedMs = heardMs,
+        startSura = first.sura,
+        startAyah = first.ayah,
+        endSura = last.sura,
+        endAyah = last.ayah,
+        words = count,
+        recited = count - hinted - missed,
+        hinted = hinted,
+        missed = missed,
+        mistakes = mistakeCounts.values.sum(),
+        finished = finished,
+        recordingId = state.recordingId,
+        ayahs = ayahs.map { (ayah, counts) ->
+          AyahResult(
+            sura = ayah.sura,
+            ayah = ayah.ayah,
+            ayahWords = ayahWords[ayah] ?: counts[0],
+            words = counts[0],
+            hinted = counts[1],
+            missed = counts[2],
+            mistakes = counts[3],
+          )
+        },
+      )
+    )
   }
 
   /** Worker only. The model takes a lot of memory; it is loaded again for the next session. */
@@ -1032,9 +1110,10 @@ class MemorizeSessionController private constructor(
       lookaheadWords: Int = LOOKAHEAD_WORDS,
       trace: ((String) -> Unit)? = null,
       doubleChecks: DoubleCheckSource = DoubleCheckSource { null },
+      results: SessionResults = SessionResults {},
     ) = MemorizeSessionController(
       lexicon, models, preferences, recitationEventPresenter, engineFactory, promptPlayer, audioSources, callState,
-      lines, upcoming, recorders, doubleChecks, scope, worker, worker, clock, lookaheadWords, { trace },
+      lines, upcoming, recorders, doubleChecks, results, scope, worker, worker, clock, lookaheadWords, { trace },
     )
 
     private const val TRACE_TAG = "MemorizeTrace"

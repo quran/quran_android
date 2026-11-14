@@ -1,7 +1,7 @@
 package com.quran.mobile.feature.memorize.recording
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,7 +53,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
-import com.quran.labs.androidquran.common.ui.core.modifier.autoMirror
 import com.quran.mobile.feature.memorize.R
 import com.quran.mobile.feature.memorize.session.MemorizeState
 import com.quran.mobile.feature.memorize.ui.MemorizeIcons
@@ -85,6 +84,8 @@ internal fun SessionListScreen(
   onExportAll: () -> Unit,
   onDeleteAll: () -> Unit,
   onBack: () -> Unit,
+  /** The session open beside the list, on a wide screen. */
+  selectedId: String? = null,
 ) {
   var menu by remember { mutableStateOf(false) }
   var confirmDeleteAll by remember { mutableStateOf(false) }
@@ -97,7 +98,6 @@ internal fun SessionListScreen(
             Icon(
               QuranIcons.ArrowBack,
               contentDescription = stringResource(AppCompatR.string.abc_action_bar_up_description),
-              modifier = Modifier.autoMirror(),
             )
           }
         },
@@ -160,7 +160,7 @@ internal fun SessionListScreen(
           }
           items(dayRows, key = { it.id }) { row ->
             SwipeToDelete(onDelete = { onDelete(row.id) }) {
-              SessionListRow(row, onClick = { onOpen(row.id) })
+              SessionListRow(row, selected = row.id == selectedId, onClick = { onOpen(row.id) })
             }
           }
         }
@@ -186,13 +186,13 @@ internal fun SessionListScreen(
 }
 
 @Composable
-private fun SessionListRow(row: SessionRow, onClick: () -> Unit) {
+private fun SessionListRow(row: SessionRow, selected: Boolean, onClick: () -> Unit) {
   Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier
       .fillMaxWidth()
-      .background(MaterialTheme.colorScheme.surface)
-      .clickable(role = Role.Button, onClick = onClick)
+      .background(if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface)
+      .selectable(selected = selected, role = Role.Tab, onClick = onClick)
       .heightIn(min = 72.dp)
       .padding(horizontal = 16.dp, vertical = 12.dp),
   ) {

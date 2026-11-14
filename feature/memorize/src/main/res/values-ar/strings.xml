@@ -60,7 +60,7 @@
   <string name="memorize_model_imported">تم تثبيت نموذج التلاوة</string>
   <string name="memorize_model_import_failed">هذه الملفات ليست نموذج التلاوة</string>
   <string name="memorize_privacy_title">الخصوصية</string>
-  <string name="memorize_privacy_summary">تُعالَج تلاوتك على هذا الجهاز فقط. لا يُسجَّل شيء إلا إذا شغّلت التسجيل أو «سجّل وساهم»، ولا تغادر التسجيلات الجهاز إلا إذا صدّرتها.</string>
+  <string name="memorize_privacy_summary">تُعالَج تلاوتك على هذا الجهاز فقط. لا يُسجَّل شيء إلا إذا شغّلت التسجيل أو «سجّل وساهم»، ولا تغادر التسجيلات الجهاز إلا إذا صدّرتها. ويحفظ «التقدم» أعداد كل جلسة على هذا الجهاز (الإعدادات > التقدم).</string>
   <string name="memorize_voice_download_title">التذكير بصوت القارئ</string>
   <string name="memorize_voice_download_message">لنطق التذكير دون إنترنت تحتاج إلى تلاوة %1$s. هل تنزّل هذه السورة، أم القرآن كله حتى لا تتوقف أبدًا؟ بدونها يظهر التذكير على الشاشة فقط. ويمكن تشغيل التنزيل التلقائي من الإعدادات.</string>
   <string name="memorize_voice_download_skip">المتابعة بدون صوت</string>
@@ -188,4 +188,6 @@
   <string name="memorize_missed_words_title">الكلمات المتروكة داخل الآية</string>
   <string name="memorize_missed_words_loose">تجاوز كلمة أو كلمتين (تُعلَّم متروكة)</string>
   <string name="memorize_missed_words_strict">يجب سماع كل كلمة</string>
+  <string name="memorize_sessions_choose">اختر جلسة لتشغيلها على صفحاتها.</string>
+  <string name="memorize_sessions_timeline">الجلسة عبر الوقت: أين لُقّنت كلمات أو تُركت أو عُلّمت. اضغط للتشغيل من هناك.</string>
 </resources>

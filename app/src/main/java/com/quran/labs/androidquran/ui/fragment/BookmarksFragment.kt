@@ -34,6 +34,7 @@ import com.quran.labs.androidquran.ui.QuranActivity
 import com.quran.labs.androidquran.ui.helpers.BookmarkUIConverter
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter.QuranTouchListener
+import com.quran.mobile.feature.progress.ProgressActivity
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.mobile.feature.sync.BookmarksSignInCard
 import com.quran.mobile.feature.sync.QuranSyncActivity
@@ -94,6 +95,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     val bookmarksAdapter =
       QuranListAdapter(context, recyclerView, emptyArray(), true)
     bookmarksAdapter.setQuranTouchListener(this)
+    bookmarksAdapter.setShowProgress(true)
     this.bookmarksAdapter = bookmarksAdapter
     recyclerView.setAdapter(bookmarksAdapter)
 
@@ -274,6 +276,11 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
    * The trailing chevron on a collection header, and a tap anywhere on a highlight color row,
    * open that collection or color as its own screen.
    */
+  override fun onProgressClicked(row: QuranRow, position: Int) {
+    val context = context ?: return
+    startActivity(ProgressActivity.intent(context, row.readingBookmarkType))
+  }
+
   override fun onOpenClicked(row: QuranRow, position: Int) {
     if (bookmarksContextualModePresenter.isInActionMode()) {
       // while selecting, the chevron is part of the row rather than a way out of the screen
