@@ -51,7 +51,7 @@ open class AyahImageTrackerItem @JvmOverloads constructor(
     if (this.page == ayahCoordinates.page) {
       val coordinates = ayahCoordinates.ayahCoordinates
       this.coordinates = coordinates
-      this.pageGlyphsCoords = ayahCoordinates.glyphCoordinates
+      this.pageGlyphsCoords = ayahCoordinates.glyphCoordinates ?: ayahCoordinates.wordGlyphCoordinates
       if (coordinates.isNotEmpty()) {
         ayahView.setAyahData(ayahCoordinates)
         ayahView.invalidate()

@@ -14,6 +14,8 @@ import com.quran.data.model.bookmark.ReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.source.MushafType
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
+import com.quran.labs.androidquran.BookmarksDatabase
+import com.quran.mobile.bookmark.db.inMemoryBookmarksDatabase
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
 import com.quran.shared.persistence.model.AyahReadingBookmark as SyncAyahReadingBookmark
@@ -43,6 +45,8 @@ class ReadingBookmarksDaoImplTest {
   private lateinit var dao: ReadingBookmarksDaoImpl
   private lateinit var settings: FakeSettings
   private lateinit var timestampProvider: FakeMobileSyncTimestampProvider
+  private lateinit var bookmarksDatabase: BookmarksDatabase
+  private lateinit var slotSettings: ReadingBookmarkSlotSettingsImpl
 
   @Before
   fun setup() {
@@ -67,16 +71,98 @@ class ReadingBookmarksDaoImplTest {
       ),
       fallbackPageType = "madani"
     )
+    bookmarksDatabase = inMemoryBookmarksDatabase(context)
+    slotSettings = ReadingBookmarkSlotSettingsImpl(bookmarksDatabase)
     dao = ReadingBookmarksDaoImpl(
       pageMapper = pageMapper,
       readingBookmarksRepository = renameSpy,
-      timestampProvider = timestampProvider
+      timestampProvider = timestampProvider,
+      localBookmarks = LocalReadingBookmarks(bookmarksDatabase, pageMapper),
+      slotSettings = slotSettings,
     )
   }
 
   @Test
   fun `reading bookmarks are empty when no mobile sync reading bookmark exists`() = runTest {
     assertThat(dao.readingBookmarks()).isEmpty()
+  }
+
+  @Test
+  fun `a slot kept on the device is listed only once it is turned on`() = runTest {
+    assertThat(dao.readingBookmarks()).isEmpty()
+
+    slotSettings.setEnabled(ReadingBookmarkType.GREEN, true)
+
+    val listed = dao.readingBookmarks().single()
+    assertThat(listed).isInstanceOf(EmptyReadingBookmark::class.java)
+    assertThat(listed.slot).isEqualTo(ReadingBookmarkType.GREEN)
+  }
+
+  @Test
+  fun `a page bookmark kept on the device is placed, renamed and cleared without mobile-sync`() = runTest {
+    slotSettings.setEnabled(ReadingBookmarkType.GREEN, true)
+
+    assertThat(dao.setPageReadingBookmark(ReadingBookmarkType.GREEN, 262)).isTrue()
+    dao.renameReadingBookmark(ReadingBookmarkType.GREEN, "Khatma")
+
+    val bookmark = dao.readingBookmarks().single() as PageReadingBookmark
+    assertThat(bookmark.slot).isEqualTo(ReadingBookmarkType.GREEN)
+    assertThat(bookmark.page).isEqualTo(262)
+    assertThat(bookmark.name).isEqualTo("Khatma")
+    assertThat(dao.isPageReadingBookmark(ReadingBookmarkType.GREEN, 262)).isTrue()
+    assertThat(repository.getReadingBookmarks(Mushaf.MADANI_1405)).isEmpty()
+
+    val cleared = dao.clearReadingBookmark(ReadingBookmarkType.GREEN)
+    assertThat(cleared).isInstanceOf(EmptyReadingBookmark::class.java)
+    assertThat(cleared.name).isEqualTo("Khatma")
+    assertThat(dao.readingBookmarks().single()).isInstanceOf(EmptyReadingBookmark::class.java)
+  }
+
+  @Test
+  fun `an ayah bookmark kept on the device is listed with the synced ones`() = runTest {
+    slotSettings.setEnabled(ReadingBookmarkType.BLUE, true)
+    dao.setPageReadingBookmark(ReadingBookmarkType.TEAL, 42)
+    dao.setAyahReadingBookmark(ReadingBookmarkType.BLUE, SuraAyah(18, 1))
+
+    dao.readingBookmarksFlow().test {
+      val bookmarks = awaitItem()
+      assertThat(bookmarks.map { it.slot }).containsExactly(ReadingBookmarkType.TEAL, ReadingBookmarkType.BLUE).inOrder()
+      assertThat((bookmarks[1] as AyahReadingBookmark).asSuraAyah()).isEqualTo(SuraAyah(18, 1))
+      cancelAndIgnoreRemainingEvents()
+    }
+  }
+
+  @Test
+  fun `a slot turned off is no longer listed but keeps its place`() = runTest {
+    slotSettings.setEnabled(ReadingBookmarkType.PURPLE, true)
+    dao.setPageReadingBookmark(ReadingBookmarkType.PURPLE, 100)
+
+    slotSettings.setEnabled(ReadingBookmarkType.PURPLE, false)
+    assertThat(dao.readingBookmarks()).isEmpty()
+
+    slotSettings.setEnabled(ReadingBookmarkType.PURPLE, true)
+    assertThat((dao.readingBookmarks().single() as PageReadingBookmark).page).isEqualTo(100)
+  }
+
+  @Test
+  fun `toggling a page bookmark kept on the device`() = runTest {
+    slotSettings.setEnabled(ReadingBookmarkType.GREY, true)
+    assertThat(dao.togglePageReadingBookmark(ReadingBookmarkType.GREY, 7)).isTrue()
+    assertThat(dao.togglePageReadingBookmark(ReadingBookmarkType.GREY, 7)).isFalse()
+    assertThat(dao.readingBookmarks().single()).isInstanceOf(EmptyReadingBookmark::class.java)
+  }
+
+  @Test
+  fun `the slot settings default to the synced slots on, for reading, teal in 30 days`() = runTest {
+    val settings = slotSettings.settings()
+    assertThat(settings.filter { it.enabled }.map { it.slot })
+      .containsExactly(ReadingBookmarkType.TEAL, ReadingBookmarkType.ORANGE, ReadingBookmarkType.RED).inOrder()
+    assertThat(settings.first().targetDays).isEqualTo(30)
+    assertThat(settings.drop(1).map { it.targetDays }.distinct()).containsExactly(0)
+
+    // the synced slots can't be turned off
+    slotSettings.setEnabled(ReadingBookmarkType.RED, false)
+    assertThat(slotSettings.settings().single { it.slot == ReadingBookmarkType.RED }.enabled).isTrue()
   }
 
   @Test

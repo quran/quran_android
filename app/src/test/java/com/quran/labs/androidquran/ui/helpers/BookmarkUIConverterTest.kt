@@ -273,6 +273,6 @@ class BookmarkUIConverterTest {
         factory.fromReadingBookmark(context, PageReadingBookmark(slot, 42, timestamp))
           .imageContentDescription
       }
-    ).containsExactly("أزرق مخضر", "برتقالي", "أحمر").inOrder()
+    ).containsExactly("أزرق مخضر", "برتقالي", "أحمر", "أخضر", "أزرق", "بنفسجي", "بني", "رمادي").inOrder()
   }
 }

@@ -82,11 +82,14 @@ class AyahBookmarkPresenter(
     }
 
     val otherReadingBookmarks = remember(readingBookmarks.value, suggestedReadingBookmark.slot) {
-      val placed = readingBookmarks.value
-        .orEmpty()
+      val listed = readingBookmarks.value.orEmpty()
+      val placed = listed
         .filterNot { it is EmptyReadingBookmark }
         .associateBy { it.slot }
+      // the synced slots, and those kept on the device that are turned on (the DAO lists only those)
+      val offered = listed.mapTo(HashSet()) { it.slot }
       ReadingBookmarkType.entries
+        .filter { it.synced || it in offered }
         .filterNot { it == suggestedReadingBookmark.slot }
         .map { slot -> placed[slot] ?: EmptyReadingBookmark(slot, Instant.DISTANT_PAST) }
         .toImmutableList()

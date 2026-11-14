@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="progress_title">التقدم</string>
+  <string name="progress_back">رجوع</string>
+
+  <string name="progress_section_bookmarks">العلامات</string>
+  <string name="progress_section_memorizing">الحفظ</string>
+  <string name="progress_section_salah">الصلاة</string>
+  <string name="progress_section_sessions">الجلسات</string>
+
+  <string name="progress_add_bookmark">إضافة علامة</string>
+  <string name="progress_purpose_reading">قراءة</string>
+  <string name="progress_purpose_memorization">حفظ</string>
+  <string name="progress_purpose_review">مراجعة</string>
+  <string name="progress_sample">بيانات مثال</string>
+  <string name="progress_not_placed">غير موضوعة</string>
+  <string name="progress_juz">الجزء %1$d</string>
+  <string name="progress_day_of">اليوم %1$d من %2$d</string>
+  <string name="progress_no_deadline">بلا موعد</string>
+  <string name="progress_separator">"&#160;· "</string>
+
+  <string name="progress_started">بدأت %1$s</string>
+  <string name="progress_finishes_by">تنتهي بحلول %1$s</string>
+  <string name="progress_overdue_since">كان موعدها %1$s</string>
+  <string name="progress_kept_since">متابعة منذ %1$s</string>
+  <string name="progress_at">صفحة %1$d، %2$s&#160;%3$d:%4$d</string>
+  <string name="progress_juz_title">الأجزاء</string>
+  <plurals name="progress_ahead">
+    <item quantity="zero">على وتيرة %2$d يومًا</item>
+    <item quantity="one">متقدمة صفحة واحدة عن وتيرة %2$d يومًا</item>
+    <item quantity="two">متقدمة صفحتين عن وتيرة %2$d يومًا</item>
+    <item quantity="few">متقدمة %1$d صفحات عن وتيرة %2$d يومًا</item>
+    <item quantity="many">متقدمة %1$d صفحة عن وتيرة %2$d يومًا</item>
+    <item quantity="other">متقدمة %1$d صفحة عن وتيرة %2$d يومًا</item>
+  </plurals>
+  <plurals name="progress_behind">
+    <item quantity="zero">على وتيرة %2$d يومًا</item>
+    <item quantity="one">متأخرة صفحة واحدة عن وتيرة %2$d يومًا</item>
+    <item quantity="two">متأخرة صفحتين عن وتيرة %2$d يومًا</item>
+    <item quantity="few">متأخرة %1$d صفحات عن وتيرة %2$d يومًا</item>
+    <item quantity="many">متأخرة %1$d صفحة عن وتيرة %2$d يومًا</item>
+    <item quantity="other">متأخرة %1$d صفحة عن وتيرة %2$d يومًا</item>
+  </plurals>
+  <string name="progress_on_pace">على وتيرة %1$d يومًا</string>
+  <string name="progress_legend_now">موضعها</string>
+  <string name="progress_legend_pace">موضع الوتيرة اليوم</string>
+  <string name="progress_legend_read">ما قُرئ في هذه الختمة</string>
+  <string name="progress_juz_detail">الجزء %1$d: الصفحات %2$d–%3$d، قُرئ %4$d من %5$d في هذه الختمة</string>
+  <string name="progress_days_title">الأيام</string>
+  <string name="progress_pages_per_day">صفحات كل يوم</string>
+  <string name="progress_goal">الهدف %1$d</string>
+  <string name="progress_minutes_per_day">دقائق القراءة كل يوم</string>
+  <string name="progress_average">%1$d في المتوسط</string>
+  <string name="progress_today_value">%1$d اليوم</string>
+  <string name="progress_day_semantics">اليوم %1$d: %2$s، %3$s</string>
+  <string name="progress_day_to_come">اليوم %1$d، لم يأت بعد</string>
+  <plurals name="progress_pages">
+    <item quantity="zero">لا صفحات</item>
+    <item quantity="one">صفحة واحدة</item>
+    <item quantity="two">صفحتان</item>
+    <item quantity="few">%d صفحات</item>
+    <item quantity="many">%d صفحة</item>
+    <item quantity="other">%d صفحة</item>
+  </plurals>
+  <plurals name="progress_minutes">
+    <item quantity="zero">لا دقائق</item>
+    <item quantity="one">دقيقة واحدة</item>
+    <item quantity="two">دقيقتان</item>
+    <item quantity="few">%d دقائق</item>
+    <item quantity="many">%d دقيقة</item>
+    <item quantity="other">%d دقيقة</item>
+  </plurals>
+  <plurals name="progress_days">
+    <item quantity="zero">لا أيام</item>
+    <item quantity="one">يوم واحد</item>
+    <item quantity="two">يومان</item>
+    <item quantity="few">%d أيام</item>
+    <item quantity="many">%d يومًا</item>
+    <item quantity="other">%d يوم</item>
+  </plurals>
+  <string name="progress_hours_minutes">%1$d س %2$d د</string>
+  <string name="progress_minutes_only">%1$d د</string>
+  <plurals name="progress_uncredited">
+    <item quantity="zero">لا دقائق قراءة اليوم تنتظر علامة</item>
+    <item quantity="one">دقيقة قراءة اليوم تُحسب لأول علامة تنقلها</item>
+    <item quantity="two">دقيقتا قراءة اليوم تُحسبان لأول علامة تنقلها</item>
+    <item quantity="few">%d دقائق قراءة اليوم تُحسب لأول علامة تنقلها</item>
+    <item quantity="many">%d دقيقة قراءة اليوم تُحسب لأول علامة تنقلها</item>
+    <item quantity="other">%d دقيقة قراءة اليوم تُحسب لأول علامة تنقلها</item>
+  </plurals>
+  <string name="progress_fact_reading">قراءة في هذه الختمة، %1$s</string>
+  <string name="progress_fact_last">آخر ختمة، %1$s</string>
+  <string name="progress_fact_none">لا شيء بعد</string>
+  <string name="progress_fact_last_label">آخر ختمة</string>
+  <string name="progress_fact_reminder">تذكير يومي ما دامت الختمة مفتوحة</string>
+  <string name="progress_fact_reminder_off">التذكير اليومي متوقف</string>
+  <string name="progress_reminder_needs_permission">اسمح بالإشعارات للتذكير اليومي</string>
+  <string name="progress_allow">سماح</string>
+  <string name="progress_no_history">تظهر هنا الصفحات والدقائق حين تقرأ وتنقل هذه العلامة. وحتى ذلك الحين تعرض الأعمدة أيامًا للمثال.</string>
+  <string name="progress_not_placed_detail">ضع هذه العلامة من قائمة الآية في القارئ، فتبدأ أيامها هنا.</string>
+  <string name="progress_start_cycle">ابدأ ختمة جديدة الآن</string>
+
+  <string name="progress_held_title">الآيات المحفوظة، حسب الجزء</string>
+  <string name="progress_held_explained">تُعد الآية محفوظة إذا قرأت كل كلماتها دون تلقين في آخر مرة حفظتها.</string>
+  <string name="progress_held_of">%1$d من %2$d آية</string>
+  <string name="progress_held_summary">الجزء %1$d: %2$d من %3$d آية محفوظة</string>
+  <string name="progress_juz_suras">الجزء %1$d، حسب السورة</string>
+  <string name="progress_accuracy_title">الكلمات المقروءة دون مساعدة</string>
+  <string name="progress_accuracy_per_day">النسبة كل يوم</string>
+  <string name="progress_hints_per_day">التلقين كل يوم</string>
+  <string name="progress_no_sessions">تمتلئ هذه الرسوم حين تحفظ بالميكروفون. وحتى ذلك الحين تعرض أيامًا للمثال.</string>
+
+  <string name="progress_salah_title">الصلوات المتابَعة</string>
+  <string name="progress_prayers_per_day">الصلوات كل يوم</string>
+  <string name="progress_salah_hints">التلقين كل يوم</string>
+
+  <string name="progress_sessions_empty">تظهر هنا حسب اليوم الجلسات التي تقرأ فيها بالميكروفون.</string>
+  <string name="progress_mode_memorize">الحفظ</string>
+  <string name="progress_mode_recite">التلاوة</string>
+  <string name="progress_mode_salah">الصلاة</string>
+  <string name="progress_session_counts">مقروءة %1$d، تلقين %2$d، متروكة %3$d</string>
+  <string name="progress_session_finished">حتى النهاية</string>
+  <string name="progress_play_recording">تشغيل التسجيل</string>
+  <string name="progress_session_ayah">%1$s %2$d:%3$d</string>
+  <string name="progress_session_ayat">الآيات</string>
+  <string name="progress_ayah_counts">%1$d من %2$d كلمة، تلقين %3$d، متروكة %4$d</string>
+  <string name="progress_choose_session">اختر جلسة لترى كل آية.</string>
+  <string name="progress_choose_bookmark">اختر علامة لترى أيامها.</string>
+
+  <string name="progress_reminder_channel">تذكير القراءة</string>
+  <string name="progress_reminder_channel_description">مرة كل يوم ما دامت الختمة مفتوحة، إن تأخرت أو لم تُقرأ ذلك اليوم</string>
+  <string name="progress_reminder_title">%1$s</string>
+  <string name="progress_reminder_not_read">%1$d صفحة كل يوم تتمها بحلول %2$s.</string>
+  <string name="progress_reminder_behind">متأخرة %1$d صفحة. %2$d صفحة كل يوم تتمها بحلول %3$s.</string>
+  <string name="progress_reminder_overdue">بقيت %1$d صفحة لإتمام هذه الختمة.</string>
+
+  <string name="progress_settings_category">التقدم</string>
+  <string name="progress_settings_bookmarks">علامات موضع القراءة</string>
+  <string name="progress_settings_bookmarks_summary">فعّل علامات أخرى، وسمّها، واختر الغرض من كل منها</string>
+  <string name="progress_settings_reminder">التذكير اليومي</string>
+  <string name="progress_settings_reminder_summary">ما دامت الختمة مفتوحة، إن تأخرت أو لم تُقرأ ذلك اليوم</string>
+  <string name="progress_settings_reminder_time">وقت التذكير</string>
+  <string name="progress_settings_session_log">حفظ نتائج الجلسات</string>
+  <string name="progress_settings_session_log_summary">لرسوم الحفظ والصلاة والجلسات: أعداد فقط، تبقى على هذا الجهاز</string>
+  <string name="progress_settings_clear">مسح سجل التقدم</string>
+  <string name="progress_settings_clear_summary">تنقلات العلامات ووقت القراءة ونتائج الجلسات</string>
+  <string name="progress_settings_clear_message">يمسح هذا ما حفظه التقدم على هذا الجهاز. تبقى علاماتك في أماكنها.</string>
+  <string name="progress_settings_clear_confirm">مسح</string>
+  <string name="progress_settings_debug_clock">تقديم الساعة يومًا (للتجربة)</string>
+  <string name="progress_settings_debug_clock_summary">متقدمة الآن %1$d يومًا. اضغط لزيادة يوم.</string>
+  <string name="progress_settings_debug_clock_reset">إرجاع الساعة إلى اليوم (للتجربة)</string>
+  <string name="progress_settings_debug_seed">ملء 12 يومًا من القراءة (للتجربة)</string>
+  <string name="progress_settings_debug_reminder">عرض تذكير اليوم الآن (للتجربة)</string>
+  <string name="progress_settings_debug_reminder_none">لا شيء مستحق: لا ختمة مفتوحة بموعد متأخرة أو لم تُقرأ اليوم، أو الإشعارات متوقفة</string>
+
+  <string name="progress_editor_title">علامات موضع القراءة</string>
+  <string name="progress_editor_synced">متزامنة</string>
+  <string name="progress_editor_device">على هذا الجهاز فقط</string>
+  <string name="progress_editor_name">الاسم</string>
+  <string name="progress_editor_for">الغرض</string>
+  <string name="progress_editor_days">أيام الإتمام</string>
+  <string name="progress_editor_explained">تتزامن الأزرق المخضر والبرتقالي والأحمر مع حسابك. أما الألوان الأخرى فتبقى على هذا الجهاز، وتظهر في قائمة العلامات في القارئ حين تُفعَّل.</string>
+</resources>

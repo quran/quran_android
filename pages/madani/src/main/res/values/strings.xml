@@ -2,4 +2,16 @@
 <resources>
   <string name="madani_title">Classic Madani Mushaf</string>
   <string name="madani_description">The classic Madani script.</string>
+  <string name="tajweed_title">Tajweed Mushaf</string>
+  <string name="tajweed_description">Mushaf with Tajweed coloring.</string>
+  <string name="madani_1421_title">Madani Mushaf (1421)</string>
+  <string name="madani_1421_description">The 1421 new Madani script from the King Fahd Quran Complex.</string>
+  <string name="madani_1440_title">Madani Mushaf (1440)</string>
+  <string name="madani_1440_description">The 1440 Madani script from the King Fahd Quran Complex.</string>
+  <string name="madani_1439_lines_title">Madani Mushaf (1439) - optimized for larger screens</string>
+  <string name="madani_1439_lines_description">The 1439 Madani script from the King Fahd Quran Complex.</string>
+  <string name="madani_1441_lines_title">Madani Mushaf (1441) - optimized for larger screens</string>
+  <string name="madani_1441_lines_description">The 1441 Madani script from the King Fahd Quran Complex.</string>
+  <string name="shemerly_title">Shemerly Mushaf</string>
+  <string name="shemerly_description">Mushaf, Shemerly Print, popular in Egypt and a few other countries.</string>
 </resources>

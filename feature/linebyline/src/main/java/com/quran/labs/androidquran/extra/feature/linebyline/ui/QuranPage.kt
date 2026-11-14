@@ -83,7 +83,7 @@ fun QuranPage(
         pageInfo.ayahHighlights
           .filter { it.highlightType.isUnderText }
           .forEach { highlightAyah ->
-            val color = highlightAyah.highlightType.paintColor(isNightMode)
+            val color = highlightAyah.highlightType.color(isNightMode)
             highlightAyah.ayahHighlights.forEach { highlightComposable(it, color) }
           }
 
@@ -140,7 +140,7 @@ fun QuranPage(
                 highlightAyah.ayahHighlights.any { it.lineId == lineId }
           }
           highlights.forEach { highlightAyah ->
-            val color = highlightAyah.highlightType.paintColor(isNightMode)
+            val color = highlightAyah.highlightType.color(isNightMode)
             highlightAyah.ayahHighlights
               .filter { it.lineId == lineId }
               .forEach {

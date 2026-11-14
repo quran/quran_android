@@ -1,0 +1,12 @@
+W	bismi
+W	allahi
+W	arrahmani
+W	arrahimi
+F	b,0;i,80;s,160;m,240;i,320
+E	0	word	0	320	
+F	a,400;r,480;r,560;a,640;h,720;m,800;a,880;n,960;i,1040
+E	1	mistake	1	1040	SUBSTITUTION
+F	a,1120;r,1200;r,1280;a,1360;h,1440;i,1520;m,1600;i,1680
+E	2	missed	1	1680	
+E	2	word	2	1040	
+E	2	word	3	1680	

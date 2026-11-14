@@ -1,5 +1,8 @@
 dependencies {
    implementation project(path: ':pages:madani')
    implementation project(path: ':pages:common:madani')
-   implementation project(path: ':feature:recitation')
+   implementation project(path: ':feature:memorize')
+   // page types drawn line by line
+   implementation project(path: ':feature:linebyline')
+   implementation project(path: ':pages:linebyline')
 }

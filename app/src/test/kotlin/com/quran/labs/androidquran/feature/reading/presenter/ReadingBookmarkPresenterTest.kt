@@ -366,6 +366,68 @@ class ReadingBookmarkPresenterTest {
     assertThat(change.previous).isNull()
   }
 
+  @Test
+  fun `the toast goes away by itself, after longer the first time`() = runTest {
+    val readingBookmarksDao = FakeReadingBookmarksDao()
+    val screen = RecordingScreen()
+    val presenter = presenter(readingBookmarksDao)
+
+    presenter.bind(flowOf(42), screen)
+    testDispatcher.scheduler.advanceUntilIdle()
+    // the first placement explains that pins move: 20 seconds
+    presenter.placeReadingBookmark(ReadingBookmarkType.ORANGE, ReadingBookmarkTarget.Page(42))
+    waitForRealDispatch()
+    testDispatcher.scheduler.advanceTimeBy(19_900)
+    testDispatcher.scheduler.runCurrent()
+    assertThat(screen.dismissCount).isEqualTo(0)
+    testDispatcher.scheduler.advanceTimeBy(200)
+    testDispatcher.scheduler.runCurrent()
+    assertThat(screen.dismissCount).isEqualTo(1)
+
+    // later ones: 10 seconds
+    presenter.placeReadingBookmark(ReadingBookmarkType.ORANGE, ReadingBookmarkTarget.Page(43))
+    testDispatcher.scheduler.advanceTimeBy(9_900)
+    testDispatcher.scheduler.runCurrent()
+    assertThat(screen.dismissCount).isEqualTo(1)
+    testDispatcher.scheduler.advanceTimeBy(200)
+    testDispatcher.scheduler.runCurrent()
+    assertThat(screen.dismissCount).isEqualTo(2)
+  }
+
+  @Test
+  fun `ok takes the toast down at once`() = runTest {
+    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(10, ReadingBookmarkType.TEAL))
+    val screen = RecordingScreen()
+    val presenter = presenter(readingBookmarksDao)
+
+    presenter.bind(flowOf(42), screen)
+    testDispatcher.scheduler.advanceUntilIdle()
+    presenter.placeReadingBookmark(ReadingBookmarkType.TEAL, ReadingBookmarkTarget.Page(42))
+    screen.dismissActions.last().invoke()
+    assertThat(screen.dismissCount).isEqualTo(1)
+
+    // and its timeout is gone with it
+    testDispatcher.scheduler.advanceTimeBy(60_000)
+    testDispatcher.scheduler.runCurrent()
+    assertThat(screen.dismissCount).isEqualTo(1)
+    waitForRealDispatch()
+    assertThat(readingBookmarksDao.readingBookmarks()).containsExactly(pageBookmark(42, ReadingBookmarkType.TEAL))
+  }
+
+  @Test
+  fun `leaving the screen takes the toast down`() = runTest {
+    val readingBookmarksDao = FakeReadingBookmarksDao(pageBookmark(10, ReadingBookmarkType.TEAL))
+    val screen = RecordingScreen()
+    val presenter = presenter(readingBookmarksDao)
+
+    presenter.bind(flowOf(42), screen)
+    testDispatcher.scheduler.advanceUntilIdle()
+    presenter.placeReadingBookmark(ReadingBookmarkType.TEAL, ReadingBookmarkTarget.Page(42))
+    // e.g. the screen turns off before the toast times out: when it comes back, no toast is stuck
+    presenter.unbind(screen)
+    assertThat(screen.dismissCount).isEqualTo(1)
+  }
+
   private class RecordingScreen : ReadingBookmarkPresenter.Screen {
     val pageBookmarkStates = mutableListOf<Boolean>()
     val changes = mutableListOf<ReadingBookmarkChange>()

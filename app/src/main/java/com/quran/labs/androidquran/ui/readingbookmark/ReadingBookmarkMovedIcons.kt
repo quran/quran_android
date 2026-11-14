@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 
 private const val IconDimension = 24f
 
-// an "x", used to dismiss the first-time reading bookmark education toast
+// an "x", used to dismiss the reading bookmark toast
 internal val DismissIcon: ImageVector by lazy {
   ImageVector.Builder(
     name = "ReadingBookmarkMovedDismiss",

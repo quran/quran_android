@@ -4,4 +4,9 @@
   <color name="reading_bookmark_teal">#ff4db6ac</color>
   <color name="reading_bookmark_orange">#ffffb74d</color>
   <color name="reading_bookmark_red">#ffe57373</color>
+  <color name="reading_bookmark_green">#ff81c784</color>
+  <color name="reading_bookmark_blue">#ff64b5f6</color>
+  <color name="reading_bookmark_purple">#ffba68c8</color>
+  <color name="reading_bookmark_brown">#ffa1887f</color>
+  <color name="reading_bookmark_grey">#ff90a4ae</color>
 </resources>

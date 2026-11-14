@@ -1,0 +1,39 @@
+-- Every change seen in a reading bookmark's position, in the order it was seen. Cycles and the pages
+-- read each day are worked out from these rows (see CycleDetector and DailyProgress).
+CREATE TABLE bookmark_move (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  -- ReadingBookmarkType's name
+  slot TEXT NOT NULL,
+  -- wall time (ProgressClock) and its local day (epoch day in the device's time zone)
+  at_ms INTEGER NOT NULL,
+  local_day INTEGER NOT NULL,
+  -- BASELINE: where it was first seen, or seen in another page type (not a move); MOVE; CLEAR;
+  -- CYCLE_MARK: the user started a new cycle by hand
+  kind TEXT NOT NULL,
+  -- the position (none for CLEAR and CYCLE_MARK): its page in page_type, and its first ayah
+  page INTEGER,
+  page_type TEXT,
+  sura INTEGER,
+  ayah INTEGER
+);
+
+CREATE INDEX bookmark_move_slot_at ON bookmark_move(slot, at_ms);
+
+insertMove:
+INSERT INTO bookmark_move(slot, at_ms, local_day, kind, page, page_type, sura, ayah)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+lastMove:
+SELECT * FROM bookmark_move WHERE slot = ? ORDER BY at_ms DESC, id DESC LIMIT 1;
+
+lastPosition:
+SELECT * FROM bookmark_move WHERE slot = ? AND kind IN ('BASELINE', 'MOVE') ORDER BY at_ms DESC, id DESC LIMIT 1;
+
+movesFor:
+SELECT * FROM bookmark_move WHERE slot = ? ORDER BY at_ms, id;
+
+allMoves:
+SELECT * FROM bookmark_move ORDER BY at_ms, id;
+
+deleteAllMoves:
+DELETE FROM bookmark_move;

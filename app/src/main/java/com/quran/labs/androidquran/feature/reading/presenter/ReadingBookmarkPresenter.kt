@@ -15,7 +15,6 @@ import com.quran.labs.androidquran.util.QuranSettings
 import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -24,7 +23,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.time.Duration.Companion.seconds
 
 @SingleIn(AppScope::class)
@@ -49,7 +47,7 @@ class ReadingBookmarkPresenter @Inject constructor(
     ) { page, bookmarks -> page to bookmarks }
       .onEach { (page, bookmarks) ->
         readingBookmarks = bookmarks
-        // any of the three pins sitting on this page fills the action bar icon
+        // any pin sitting on this page fills the action bar icon
         screen.setPageReadingBookmarkSelected(
           bookmarks.any { it.isAt(ReadingBookmarkTarget.Page(page)) }
         )
@@ -59,10 +57,10 @@ class ReadingBookmarkPresenter @Inject constructor(
 
   fun unbind(screen: Screen) {
     if (this.screen === screen) {
+      // the screen is going away (or just pausing): a toast left up would outlive its timeout
+      dismissToast()
       this.screen = null
       readingBookmarks = emptyList()
-      toastTimeoutJob?.cancel()
-      toastTimeoutJob = null
       currentJob?.cancel()
       currentJob = null
     }
@@ -110,9 +108,9 @@ class ReadingBookmarkPresenter @Inject constructor(
 
   private fun showToast(change: ReadingBookmarkChange, isEducation: Boolean) {
     toastTimeoutJob?.cancel()
-    toastTimeoutJob = appCoroutineScope.launch {
+    toastTimeoutJob = scope.launch {
       delay(if (isEducation) educationTimeout else changeTimeout)
-      withContext(Dispatchers.Main) { dismissToast() }
+      dismissToast()
     }
 
     screen?.showReadingBookmarkChangedToast(
@@ -166,8 +164,8 @@ class ReadingBookmarkPresenter @Inject constructor(
   }
 
   companion object {
-    val educationTimeout = 9.seconds
-    val changeTimeout = 5.seconds
+    val educationTimeout = 20.seconds
+    val changeTimeout = 10.seconds
   }
 }
 

@@ -140,7 +140,7 @@ private fun ReadingBookmarkMovedToastShortPreview() {
         ),
         movedFromText = null,
         body = null,
-        onDismiss = null,
+        onDismiss = {},
         onUndo = {},
         modifier = Modifier.padding(14.dp)
       )
@@ -162,7 +162,7 @@ private fun ReadingBookmarkMovedToastShortAddedPreview() {
         movedFromText = null,
         body = null,
         onUndo = null,
-        onDismiss = null,
+        onDismiss = {},
         modifier = Modifier.padding(14.dp)
       )
     }

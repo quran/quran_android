@@ -27,6 +27,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
 
+      - name: Fetch native dependencies
+        run: tools/memorize/fetch_sherpa_onnx.sh
+
       - name: Build debug APK
         run: ./gradlew assembleMadaniDebug
 
@@ -45,7 +48,7 @@ jobs:
         run: ./gradlew verifySqlDelightMigration
 
       - name: Run tests
-        run: ./gradlew testMadaniDebug testReleaseUnitTest -PdisableFirebase
+        run: ./gradlew testMadaniDebug testReleaseUnitTest :feature:memorize:tracker:test -PdisableFirebase
 
       - name: Upload test report
         uses: actions/upload-artifact@v7

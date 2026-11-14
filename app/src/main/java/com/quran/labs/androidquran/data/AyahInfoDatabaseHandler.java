@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.RectF;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.quran.labs.androidquran.database.DatabaseUtils;
 import com.quran.labs.androidquran.util.QuranFileUtils;
@@ -14,6 +15,8 @@ import com.quran.page.common.data.AyahCoordinates;
 import com.quran.page.common.data.AyahMarkerLocation;
 import com.quran.page.common.data.PageCoordinates;
 import com.quran.page.common.data.SuraHeaderLocation;
+import com.quran.page.common.data.coordinates.GlyphSize;
+import com.quran.page.common.data.coordinates.GlyphTypeResolver;
 import com.quran.page.common.data.coordinates.PageGlyphsCoords;
 
 import java.io.File;
@@ -42,9 +45,17 @@ public class AyahInfoDatabaseHandler {
 
   private final SQLiteDatabase database;
   private final boolean hasGlyphData;
+  @Nullable private final GlyphTypeResolver glyphTypeResolver;
 
   static AyahInfoDatabaseHandler getAyahInfoDatabaseHandler(
       String databaseName, QuranFileUtils quranFileUtils) {
+    return getAyahInfoDatabaseHandler(databaseName, quranFileUtils, null);
+  }
+
+  static AyahInfoDatabaseHandler getAyahInfoDatabaseHandler(
+      String databaseName,
+      QuranFileUtils quranFileUtils,
+      @Nullable GlyphTypeResolver glyphTypeResolver) {
     final File currentAyahDatabaseDirectory = quranFileUtils.getQuranAyahDatabaseDirectory();
     if (!currentAyahDatabaseDirectory.equals(quranDatabaseDirectory)) {
       quranDatabaseDirectory = currentAyahDatabaseDirectory;
@@ -54,7 +65,8 @@ public class AyahInfoDatabaseHandler {
     AyahInfoDatabaseHandler handler = ayahInfoCache.get(databaseName);
     if (handler == null) {
       try {
-        AyahInfoDatabaseHandler db = new AyahInfoDatabaseHandler(databaseName, quranFileUtils);
+        AyahInfoDatabaseHandler db =
+            new AyahInfoDatabaseHandler(databaseName, quranFileUtils, glyphTypeResolver);
         if (db.validDatabase()) {
           ayahInfoCache.put(databaseName, db);
           handler = db;
@@ -82,11 +94,13 @@ public class AyahInfoDatabaseHandler {
   }
 
   private AyahInfoDatabaseHandler(String databaseName,
-                                  QuranFileUtils quranFileUtils) throws SQLException {
+                                  QuranFileUtils quranFileUtils,
+                                  @Nullable GlyphTypeResolver glyphTypeResolver) throws SQLException {
     File base = quranFileUtils.getQuranAyahDatabaseDirectory();
     File path = new File(base, databaseName);
     database = SQLiteDatabase.openDatabase(path.getAbsolutePath(), null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
     hasGlyphData = quranFileUtils.getAyahInfoDbHasGlyphData();
+    this.glyphTypeResolver = glyphTypeResolver;
   }
 
   private boolean validDatabase() {
@@ -128,6 +142,10 @@ public class AyahInfoDatabaseHandler {
   public AyahCoordinates getVersesBoundsForPage(int page) {
     boolean includeGlyphData = hasGlyphData && haveGlyphData();
     GlyphsBuilder glyphsBuilder = new GlyphsBuilder();
+    Map<String, String> derivedTypes =
+        (!includeGlyphData && glyphTypeResolver != null) ? derivedGlyphTypesForPage(page) : null;
+    GlyphsBuilder wordGlyphsBuilder = derivedTypes != null ? new GlyphsBuilder() : null;
+    Map<String, int[]> wordNumbers = new HashMap<>();
     Map<String, List<AyahBounds>> ayahBounds = new HashMap<>();
     Cursor cursor = null;
     try {
@@ -142,13 +160,26 @@ public class AyahInfoDatabaseHandler {
         int maxX = cursor.getInt(7);
         int maxY = cursor.getInt(8);
 
+        String key = sura + ":" + ayah;
         if (includeGlyphData) {
           String glyphType = cursor.getString(9);
           RectF r = new RectF(minX, minY, maxX, maxY);
           glyphsBuilder.append(sura, ayah, position, line, glyphType, r);
+        } else if (wordGlyphsBuilder != null) {
+          String types = derivedTypes.get(key);
+          if (types != null) {
+            int[] words = wordNumbers.get(key);
+            if (words == null) {
+              words = wordNumbers(types);
+              wordNumbers.put(key, words);
+            }
+            char type = types.charAt(position - 1);
+            Integer wordPosition = type == GlyphTypeResolver.WORD ? words[position - 1] : null;
+            RectF r = new RectF(minX, minY, maxX, maxY);
+            wordGlyphsBuilder.append(sura, ayah, position, line, glyphTypeName(type), r, wordPosition);
+          }
         }
 
-        String key = sura + ":" + ayah;
         List<AyahBounds> bounds = ayahBounds.get(key);
         if (bounds == null) {
           bounds = new ArrayList<>();
@@ -173,8 +204,89 @@ public class AyahInfoDatabaseHandler {
 
     PageGlyphsCoords glyphCoords = includeGlyphData ?
         new PageGlyphsCoords(page, glyphsBuilder.build()) : null;
+    PageGlyphsCoords wordGlyphCoords = wordGlyphsBuilder != null ?
+        new PageGlyphsCoords(page, wordGlyphsBuilder.build()) : null;
 
-    return new AyahCoordinates(page, ayahBounds, glyphCoords);
+    return new AyahCoordinates(page, ayahBounds, glyphCoords, new HashMap<>(), 0f, wordGlyphCoords);
+  }
+
+  /**
+   * Glyph types for the ayat on this page from the {@link GlyphTypeResolver}, keyed by "sura:ayah",
+   * worked out from the sizes of each ayah's glyphs in this database (every page type has its own
+   * font). An ayah is left out (so it keeps ayah level behavior) if its glyphs can't be told apart
+   * or its positions aren't numbered 1..n.
+   */
+  @Nullable
+  private Map<String, String> derivedGlyphTypesForPage(int page) {
+    Map<String, String> result = new HashMap<>();
+    Cursor cursor = null;
+    try {
+      // all glyphs of every ayah that is (even partly) on this page; a join rather than a row value
+      // comparison (SQLite 3.15+, API 26+) so that both lookups use an index
+      cursor = database.rawQuery(
+          "SELECT g." + COL_SURA + ", g." + COL_AYAH + ", g." + COL_POSITION + ", g." + MAX_X +
+              " - g." + MIN_X + ", g." + MAX_Y + " - g." + MIN_Y +
+              " FROM (SELECT DISTINCT " + COL_SURA + ", " + COL_AYAH + " FROM " + GLYPHS_TABLE +
+              " WHERE " + COL_PAGE + " = ?) AS p JOIN " + GLYPHS_TABLE + " AS g ON g." + COL_SURA +
+              " = p." + COL_SURA + " AND g." + COL_AYAH + " = p." + COL_AYAH +
+              " ORDER BY g." + COL_SURA + ", g." + COL_AYAH + ", g." + COL_POSITION,
+          new String[] { String.valueOf(page) });
+      int sura = -1;
+      int ayah = -1;
+      List<GlyphSize> glyphs = new ArrayList<>();
+      boolean numbered = true;
+      while (cursor.moveToNext()) {
+        int rowSura = cursor.getInt(0);
+        int rowAyah = cursor.getInt(1);
+        if (rowSura != sura || rowAyah != ayah) {
+          addDerivedTypes(result, sura, ayah, glyphs, numbered);
+          sura = rowSura;
+          ayah = rowAyah;
+          glyphs = new ArrayList<>();
+          numbered = true;
+        }
+        numbered &= cursor.getInt(2) == glyphs.size() + 1;
+        glyphs.add(new GlyphSize(cursor.getInt(3), cursor.getInt(4)));
+      }
+      addDerivedTypes(result, sura, ayah, glyphs, numbered);
+    } catch (SQLException e) {
+      return null;
+    } finally {
+      DatabaseUtils.closeCursor(cursor);
+    }
+    return result;
+  }
+
+  private void addDerivedTypes(
+      Map<String, String> result, int sura, int ayah, List<GlyphSize> glyphs, boolean numbered) {
+    if (glyphs.isEmpty() || !numbered || glyphTypeResolver == null) return;
+    String types = glyphTypeResolver.glyphTypes(sura, ayah, glyphs);
+    if (types != null && types.length() == glyphs.size()) {
+      result.put(sura + ":" + ayah, types);
+    }
+  }
+
+  /** The word number of each glyph of an ayah, counting only the glyphs that are words. */
+  private static int[] wordNumbers(String types) {
+    int[] result = new int[types.length()];
+    int words = 0;
+    for (int i = 0; i < types.length(); i++) {
+      if (types.charAt(i) == GlyphTypeResolver.WORD) {
+        words++;
+      }
+      result[i] = words;
+    }
+    return result;
+  }
+
+  private static String glyphTypeName(char type) {
+    switch (type) {
+      case GlyphTypeResolver.WORD: return GlyphsBuilder.WORD;
+      case GlyphTypeResolver.PAUSE: return GlyphsBuilder.PAUSE;
+      case GlyphTypeResolver.SAJDAH: return GlyphsBuilder.SAJDAH;
+      case GlyphTypeResolver.HIZB: return GlyphsBuilder.HIZB;
+      default: return GlyphsBuilder.END;
+    }
   }
 
   private boolean haveVerseMarkerData() {

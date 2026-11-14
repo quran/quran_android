@@ -1,5 +1,6 @@
 package com.quran.mobile.bookmark.model
 
+import com.quran.data.dao.ReadingBookmarkSlotSettings
 import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
@@ -7,21 +8,23 @@ import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.bookmark.EmptyReadingBookmark
 import com.quran.data.model.bookmark.PageReadingBookmark
 import com.quran.data.model.bookmark.ReadingBookmark
+import com.quran.data.model.bookmark.ReadingBookmarkSlotSetting
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.mobile.bookmark.time.MobileSyncTimestampProvider
 import com.quran.shared.persistence.model.Mushaf
 import com.quran.shared.persistence.model.ReadingBookmarkSlot
 import com.quran.shared.persistence.repository.readingbookmark.repository.ReadingBookmarksRepository
 import com.quran.shared.persistence.util.PlatformDateTime
+import com.quran.shared.persistence.util.fromPlatform
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import com.quran.shared.persistence.model.AyahReadingBookmark as SyncAyahReadingBookmark
 import com.quran.shared.persistence.model.EmptyReadingBookmark as SyncEmptyReadingBookmark
@@ -29,7 +32,9 @@ import com.quran.shared.persistence.model.PageReadingBookmark as SyncPageReading
 import com.quran.shared.persistence.model.ReadingBookmark as SyncReadingBookmark
 
 /**
- * Reading bookmark DAO backed by mobile-sync persistence.
+ * Reading bookmark DAO backed by mobile-sync persistence for the synced slots, and by
+ * [LocalReadingBookmarks] for the slots kept on the device (offered once turned on, see
+ * [ReadingBookmarkSlotSettings]).
  *
  * Page bookmarks are set and read in the current page type's mobile-sync [Mushaf], which maps them
  * between mushafs, so their pages pass through unchanged.
@@ -37,12 +42,16 @@ import com.quran.shared.persistence.model.ReadingBookmark as SyncReadingBookmark
  * @param pageMapper resolves the current page type and its [Mushaf].
  * @param readingBookmarksRepository mobile-sync repository that owns persisted reading bookmark rows.
  * @param timestampProvider provides the timestamp assigned to locally written bookmarks.
+ * @param localBookmarks keeps the slots that don't sync.
+ * @param slotSettings which of those are on.
  */
 @SingleIn(AppScope::class)
 class ReadingBookmarksDaoImpl @Inject constructor(
   private val pageMapper: ReadingBookmarkPageMapper,
   private val readingBookmarksRepository: ReadingBookmarksRepository,
-  private val timestampProvider: MobileSyncTimestampProvider
+  private val timestampProvider: MobileSyncTimestampProvider,
+  private val localBookmarks: LocalReadingBookmarks,
+  private val slotSettings: ReadingBookmarkSlotSettings,
 ) : ReadingBookmarksDao {
   @OptIn(ExperimentalCoroutinesApi::class)
   override fun readingBookmarksFlow(): Flow<List<ReadingBookmark>> {
@@ -50,8 +59,14 @@ class ReadingBookmarksDaoImpl @Inject constructor(
     // previously cached null. The IO dispatcher preserves the old off-main mapping behavior.
     return pageMapper.pageTypeFlow()
       .flatMapLatest { pageType ->
-        readingBookmarksRepository.getReadingBookmarksFlow(pageMapper.mushafFor(pageType))
-          .map { bookmarks -> bookmarks.map { toReadingBookmark(it) } }
+        combine(
+          readingBookmarksRepository.getReadingBookmarksFlow(pageMapper.mushafFor(pageType)),
+          localBookmarks.rowsFlow(),
+          slotSettings.settingsFlow(),
+        ) { synced, local, settings ->
+          synced.map { toReadingBookmark(it) } +
+            localBookmarks.toReadingBookmarks(local, settings.enabledSlots(), pageType)
+        }
       }
       .distinctUntilChanged()
       .flowOn(Dispatchers.IO)
@@ -59,12 +74,18 @@ class ReadingBookmarksDaoImpl @Inject constructor(
 
   override suspend fun readingBookmarks(): List<ReadingBookmark> {
     return withContext(Dispatchers.IO) {
-      readingBookmarksRepository.getReadingBookmarks(currentMushaf())
-        .map { toReadingBookmark(it) }
+      val synced = readingBookmarksRepository.getReadingBookmarks(currentMushaf()).map { toReadingBookmark(it) }
+      synced + localBookmarks.toReadingBookmarks(
+        localBookmarks.rows(), slotSettings.settings().enabledSlots(), pageMapper.currentPageType()
+      )
     }
   }
 
   override suspend fun setPageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean {
+    if (!slot.synced) {
+      localBookmarks.setPage(slot, page, pageMapper.currentPageType(), timestampProvider.nowEpochMillis())
+      return true
+    }
     val timestamp = timestampProvider.now()
     return withContext(Dispatchers.IO) {
       setPageReadingBookmark(slot, page, currentMushaf(), timestamp)
@@ -91,6 +112,10 @@ class ReadingBookmarksDaoImpl @Inject constructor(
   }
 
   override suspend fun setAyahReadingBookmark(slot: ReadingBookmarkType, suraAyah: SuraAyah): Boolean {
+    if (!slot.synced) {
+      localBookmarks.setAyah(slot, suraAyah, timestampProvider.nowEpochMillis())
+      return true
+    }
     val timestamp = timestampProvider.now()
     val set = withContext(Dispatchers.IO) {
       readingBookmarksRepository.setAyahReadingBookmark(slot.toSyncSlot(), suraAyah.sura, suraAyah.ayah, timestamp)
@@ -100,6 +125,7 @@ class ReadingBookmarksDaoImpl @Inject constructor(
   }
 
   override suspend fun clearReadingBookmark(slot: ReadingBookmarkType): ReadingBookmark {
+    if (!slot.synced) return localBookmarks.clear(slot, timestampProvider.nowEpochMillis())
     val cleared = withContext(Dispatchers.IO) {
       readingBookmarksRepository.clearReadingBookmark(slot.toSyncSlot())
     }
@@ -107,12 +133,14 @@ class ReadingBookmarksDaoImpl @Inject constructor(
   }
 
   override suspend fun renameReadingBookmark(slot: ReadingBookmarkType, name: String?) {
+    if (!slot.synced) return localBookmarks.rename(slot, name, timestampProvider.nowEpochMillis())
     withContext(Dispatchers.IO) {
       readingBookmarksRepository.renameReadingBookmark(slot.toSyncSlot(), name, currentMushaf())
     }
   }
 
   override suspend fun isPageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean {
+    if (!slot.synced) return localBookmarks.isOnPage(slot, page, pageMapper.currentPageType())
     return withContext(Dispatchers.IO) {
       isPageReadingBookmark(slot, page, currentMushaf())
     }
@@ -126,6 +154,14 @@ class ReadingBookmarksDaoImpl @Inject constructor(
   }
 
   override suspend fun togglePageReadingBookmark(slot: ReadingBookmarkType, page: Int): Boolean {
+    if (!slot.synced) {
+      return if (isPageReadingBookmark(slot, page)) {
+        clearReadingBookmark(slot)
+        false
+      } else {
+        setPageReadingBookmark(slot, page)
+      }
+    }
     val timestamp = timestampProvider.now()
     return withContext(Dispatchers.IO) {
       val mushaf = currentMushaf()
@@ -173,6 +209,19 @@ class ReadingBookmarksDaoImpl @Inject constructor(
       val mushaf = currentMushaf()
       var allSet = true
       added.forEach { readingBookmark ->
+        if (!readingBookmark.slot.synced) {
+          when (readingBookmark) {
+            is AyahReadingBookmark -> localBookmarks.setAyah(
+              readingBookmark.slot, readingBookmark.asSuraAyah(), timestamp.fromPlatform().toEpochMilliseconds()
+            )
+            is PageReadingBookmark -> localBookmarks.setPage(
+              readingBookmark.slot, readingBookmark.page, pageMapper.currentPageType(),
+              timestamp.fromPlatform().toEpochMilliseconds()
+            )
+            is EmptyReadingBookmark -> {}
+          }
+          return@forEach
+        }
         when (readingBookmark) {
           is AyahReadingBookmark ->
             readingBookmarksRepository.setAyahReadingBookmark(
@@ -191,7 +240,11 @@ class ReadingBookmarksDaoImpl @Inject constructor(
       }
 
       removed.forEach { readingBookmark ->
-        readingBookmarksRepository.clearReadingBookmark(readingBookmark.slot.toSyncSlot())
+        if (readingBookmark.slot.synced) {
+          readingBookmarksRepository.clearReadingBookmark(readingBookmark.slot.toSyncSlot())
+        } else {
+          localBookmarks.clear(readingBookmark.slot, timestamp.fromPlatform().toEpochMilliseconds())
+        }
       }
       allSet
     }
@@ -210,5 +263,9 @@ class ReadingBookmarksDaoImpl @Inject constructor(
       ReadingBookmarkType.TEAL -> ReadingBookmarkSlot.TEAL
       ReadingBookmarkType.ORANGE -> ReadingBookmarkSlot.ORANGE
       ReadingBookmarkType.RED -> ReadingBookmarkSlot.RED
+      else -> error("$this is kept on the device, not by mobile-sync")
     }
+
+  private fun List<ReadingBookmarkSlotSetting>.enabledSlots(): Set<ReadingBookmarkType> =
+    filter { it.enabled }.mapTo(HashSet()) { it.slot }
 }

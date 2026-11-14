@@ -71,6 +71,9 @@
   <string name="appearance">سمة التطبيق</string>
   <string name="prefs_volume_key_navigation_title">تصفح بمفاتيح الصوت</string>
   <string name="prefs_volume_key_navigation_summary">استخدم مفاتيح الصوت للتصفح بين الصفحات</string>
+  <string name="prefs_swap_volume_keys_title">عكس اتجاه مفاتيح الصوت</string>
+  <string name="prefs_swap_volume_keys_summary_on">زر رفع الصوت ينتقل إلى الصفحة التالية</string>
+  <string name="prefs_swap_volume_keys_summary_off">زر رفع الصوت ينتقل إلى الصفحة السابقة</string>
   <string name="prefs_category_reading">إعدادات القراءة</string>
   <string name="prefs_category_translation">إعدادات التفسير والترجمة</string>
   <string name="prefs_category_display_settings">إعدادات العرض</string>
@@ -273,6 +276,7 @@
   <string name="reading_bookmarks">علامات موضع القراءة</string>
   <string name="reading_bookmark_movable_education_title">هذه علامة قراءة قابلة للنقل</string>
   <string name="reading_bookmark_movable_education_body">حفظ علامة القراءة يستبدل القديمة. لحفظ عدة آيات، اضغط مطولاً على آية وأضفها إلى مجموعة.</string>
+  <string name="reading_bookmark_progress">أيامها في التقدم</string>
   <string name="reading_bookmark_moved_from">نُقلت من %1$s</string>
   <string name="reading_bookmark_dismiss_education">إغلاق</string>
   <string name="notification_channel_download">تحميل ملفات القرآن</string>
@@ -323,4 +327,7 @@
     القادمة، هل ترغب في نقل البيانات على أية حال؟
   </string>
   <string name="comma">"،"</string>
+
+  <string name="menu_memorize">احفظ</string>
+  <string name="menu_memorize_stop">إنهاء الحفظ</string>
 </resources>

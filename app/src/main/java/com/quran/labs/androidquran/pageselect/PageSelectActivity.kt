@@ -25,6 +25,7 @@ class PageSelectActivity : AppCompatActivity() {
   private lateinit var viewPager: ViewPager
 
   private var isProcessing = false
+  private var showedCurrentPageType = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
@@ -83,6 +84,12 @@ class PageSelectActivity : AppCompatActivity() {
 
   fun onUpdatedData(data: List<PageTypeItem>) {
     adapter.replaceItems(data, viewPager)
+    if (!showedCurrentPageType && data.isNotEmpty()) {
+      // open on the page type in use
+      showedCurrentPageType = true
+      val current = data.indexOfFirst { it.pageType == quranSettings.pageType }
+      if (current > 0) viewPager.setCurrentItem(current, false)
+    }
   }
 
   private fun onPageTypeSelected(type: String) {

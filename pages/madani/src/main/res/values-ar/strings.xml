@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="madani_title">مصحف المدينة السالفة</string>
+  <string name="madani_description">مصحف المدينة الطبعة من عام ١٤٠٥ من مجمع الملك فهد لطباعة المصحف الشريف</string>
+  <string name="tajweed_title">مصحف التجويد</string>
+  <string name="tajweed_description">مصحف التجويد.</string>
+  <string name="madani_1421_title">مصحف المدينة (١٤٢١)</string>
+  <string name="madani_1421_description">مصحف المدينة الطبعة من عام ١٤٢١ من مجمع الملك فهد لطباعة المصحف الشريف</string>
+  <string name="madani_1440_title">مصحف المدينة (١٤٤٠)</string>
+  <string name="madani_1440_description">مصحف المدينة الطبعة من عام ١٤٤٠ من مجمع الملك فهد لطباعة المصحف الشريف</string>
+  <string name="madani_1439_lines_title">مصحف المدينة (١٤٣٩) - ملائم للشاشات الأطول</string>
+  <string name="madani_1439_lines_description">مصحف المدينة الطبعة من عام ١٤٣٩ من مجمع الملك فهد لطباعة المصحف الشريف</string>
+  <string name="madani_1441_lines_title">مصحف المدينة (١٤٤١) - ملائم للشاشات الأطول</string>
+  <string name="madani_1441_lines_description">مصحف المدينة الطبعة من عام ١٤٤١ من مجمع الملك فهد لطباعة المصحف الشريف</string>
+  <string name="shemerly_title">مصحف الشمرلي</string>
+  <string name="shemerly_description">المصحف الشريف طبعة الشمرلي المنتشرة بكثرة في مصر وبعض البلدان العربية.</string>
+</resources>

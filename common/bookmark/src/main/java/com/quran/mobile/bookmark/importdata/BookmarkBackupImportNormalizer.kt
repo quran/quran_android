@@ -107,7 +107,8 @@ class BookmarkBackupImportNormalizer @Inject constructor(
     readingBookmarks: List<BackupReadingBookmark>,
     pageType: String?
   ): List<MobileSyncImportReadingBookmark> {
-    return readingBookmarks.mapNotNull { readingBookmark ->
+    // only the synced slots go to mobile-sync (the others are in BookmarkData.localReadingBookmarks)
+    return readingBookmarks.filter { it.slot.synced }.mapNotNull { readingBookmark ->
       when (readingBookmark.type) {
         BackupReadingBookmark.TYPE_AYAH -> {
           val sura = readingBookmark.sura
@@ -150,6 +151,7 @@ class BookmarkBackupImportNormalizer @Inject constructor(
       ReadingBookmarkType.TEAL -> ReadingBookmarkSlot.TEAL
       ReadingBookmarkType.ORANGE -> ReadingBookmarkSlot.ORANGE
       ReadingBookmarkType.RED -> ReadingBookmarkSlot.RED
+      else -> error("$this is kept on the device, not by mobile-sync")
     }
   }
 

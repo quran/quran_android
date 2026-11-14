@@ -1,0 +1,12 @@
+W	bismi
+W	allahi
+W	arrahmani
+W	arrahimi
+F	b,0;i,80;s,160;m,240;i,320
+E	0	word	0	320	
+F	q,400;u,480;l,560;h,640;u,720
+F	a,800;l,880;l,960;a,1040;h,1120;i,1200
+E	2	repetition	0	720	0
+E	2	word	1	1200	
+F	a,1280;r,1360;r,1440;a,1520;h,1600;m,1680;a,1760;n,1840;i,1920
+E	3	word	2	1920	

@@ -159,6 +159,9 @@
   <string name="appearance">App theme</string>
   <string name="prefs_volume_key_navigation_title">Volume key navigation</string>
   <string name="prefs_volume_key_navigation_summary">Navigate between pages using volume keys</string>
+  <string name="prefs_swap_volume_keys_title">Swap volume keys</string>
+  <string name="prefs_swap_volume_keys_summary_on">Volume up goes to the next page</string>
+  <string name="prefs_swap_volume_keys_summary_off">Volume up goes to the previous page</string>
   <string name="prefs_category_reading">Reading Preferences</string>
   <string name="prefs_category_translation">Translation Preferences</string>
   <string name="prefs_category_display_settings">Display Settings</string>
@@ -368,6 +371,7 @@
   <!-- reading bookmark moved / education toast -->
   <string name="reading_bookmark_movable_education_title">This is a movable reading bookmark</string>
   <string name="reading_bookmark_movable_education_body">Saving a reading bookmark replaces your old one. To save multiple ayahs, long press an ayah and add it to a collection.</string>
+  <string name="reading_bookmark_progress">Its days in Progress</string>
   <string name="reading_bookmark_moved_from">Moved from %1$s</string>
   <!-- the toast that confirms a reading bookmark pin moved, and offers to undo it -->
   <string name="reading_bookmark_moved_to_title">Moved %1$s to %2$s</string>
@@ -435,4 +439,6 @@
   <string name="notification_channel_download">Quran Downloads</string>
   <string name="notification_channel_audio">Quran Recitation</string>
   <string name="tag_save_error">Unable to rename this collection. It may no longer be available.</string>
+  <string name="menu_memorize">Memorize</string>
+  <string name="menu_memorize_stop">Stop memorizing</string>
 </resources>

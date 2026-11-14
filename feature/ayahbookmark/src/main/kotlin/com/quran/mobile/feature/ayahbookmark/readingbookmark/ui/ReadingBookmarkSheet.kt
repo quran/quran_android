@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -120,22 +122,29 @@ internal fun ReadingBookmarkSheet(
       )
     )
 
-    state.slots.forEachIndexed { index, item ->
-      if (index > 0) {
-        HorizontalDivider(
-          color = MaterialTheme.colorScheme.outlineVariant,
-          modifier = Modifier.padding(horizontal = 18.dp)
+    // up to eight slots (the five kept on the device once turned on): they scroll on short screens
+    Column(
+      modifier = Modifier
+        .weight(1f, fill = false)
+        .verticalScroll(rememberScrollState())
+    ) {
+      state.slots.forEachIndexed { index, item ->
+        if (index > 0) {
+          HorizontalDivider(
+            color = MaterialTheme.colorScheme.outlineVariant,
+            modifier = Modifier.padding(horizontal = 18.dp)
+          )
+        }
+        ReadingBookmarkSlotRow(
+          item = item,
+          target = state.target,
+          isEditing = state.isEditing,
+          locationNameResolver = state.locationNameResolver,
+          onPlace = { eventSink(ReadingBookmarkSheetEvent.PlaceSlot(item.slot)) },
+          onClear = { eventSink(ReadingBookmarkSheetEvent.ClearSlot(item.slot)) },
+          onNameChange = { eventSink(ReadingBookmarkSheetEvent.NameChanged(item.slot, it)) }
         )
       }
-      ReadingBookmarkSlotRow(
-        item = item,
-        target = state.target,
-        isEditing = state.isEditing,
-        locationNameResolver = state.locationNameResolver,
-        onPlace = { eventSink(ReadingBookmarkSheetEvent.PlaceSlot(item.slot)) },
-        onClear = { eventSink(ReadingBookmarkSheetEvent.ClearSlot(item.slot)) },
-        onNameChange = { eventSink(ReadingBookmarkSheetEvent.NameChanged(item.slot, it)) }
-      )
     }
   }
 }

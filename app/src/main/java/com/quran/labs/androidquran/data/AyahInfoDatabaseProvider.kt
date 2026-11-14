@@ -4,13 +4,15 @@ import android.content.Context
 import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.mobile.di.qualifier.ApplicationContext
+import com.quran.page.common.data.coordinates.GlyphTypeResolver
 import dev.zacsweers.metro.Inject
 
 @ActivityScope
 class AyahInfoDatabaseProvider @Inject constructor(
   @ApplicationContext private val context: Context,
   private val widthParameter: String,
-  private val quranFileUtils: QuranFileUtils
+  private val quranFileUtils: QuranFileUtils,
+  private val glyphTypeResolvers: Set<GlyphTypeResolver>
 ) {
   private var databaseHandler: AyahInfoDatabaseHandler? = null
 
@@ -19,7 +21,8 @@ class AyahInfoDatabaseProvider @Inject constructor(
       val filename = quranFileUtils.getAyaPositionFileName(widthParameter)
       databaseHandler = AyahInfoDatabaseHandler.getAyahInfoDatabaseHandler(
         filename,
-        quranFileUtils
+        quranFileUtils,
+        glyphTypeResolvers.firstOrNull()
       )
     }
     return databaseHandler

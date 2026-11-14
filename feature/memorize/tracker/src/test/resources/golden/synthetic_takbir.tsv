@@ -1,0 +1,20 @@
+W	qulhuwa
+W	llahu
+W	ahadun
+W	llahu
+W	ssamadu
+P	takbir	allahuakbar
+P	ruku	subhanarabbiyalazim
+F	q,0;u,80;l,160;h,240;u,320;w,400;a,480
+E	0	word	0	480	
+F	l,560;l,640;a,720;h,800;u,880;a,960;h,1040;a,1120;d,1200;u,1280;n,1360
+E	1	word	1	880	
+E	1	word	2	1360	
+F	a,1440;l,1520;l,1600;a,1680
+F	h,1760;u,1840;a,1920;k,2000;b,2080;a,2160;r,2240
+F	s,2320;u,2400;b,2480;h,2560;a,2640;n,2720;a,2800;r,2880;a,2960;b,3040;b,3120;i,3200;y,3280;a,3360;l,3440;a,3520;z,3600;i,3680;m,3760
+E	4	nontarget	3	2240	takbir
+F	l,3840;l,3920;a,4000;h,4080;u,4160;s,4240;s,4320;a,4400;m,4480;a,4560;d,4640;u,4720
+E	5	repetition	2	3760	2
+E	5	word	3	4160	
+E	5	word	4	4720	
