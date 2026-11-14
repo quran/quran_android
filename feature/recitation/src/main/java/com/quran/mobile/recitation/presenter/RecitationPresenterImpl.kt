@@ -4,6 +4,7 @@ import android.app.Activity
 import com.quran.data.di.QuranScope
 import com.quran.data.model.SuraAyah
 import com.quran.recitation.presenter.RecitationPresenter
+import com.quran.recitation.presenter.RecitationStart
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,6 @@ class RecitationPresenterImpl @Inject constructor(): RecitationPresenter {
   override fun isRecitationEnabledFlow(): StateFlow<Boolean> = MutableStateFlow(false)
   override fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray) {}
 
-  override fun startOrStopRecitation(startAyah: () -> SuraAyah, showModeSelection: Boolean) {}
+  override fun startOrStopRecitation(startAyah: () -> SuraAyah, start: RecitationStart) {}
   override fun endSession() {}
 }

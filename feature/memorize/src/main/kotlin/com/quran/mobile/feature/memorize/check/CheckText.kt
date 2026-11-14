@@ -33,7 +33,7 @@ internal object CheckText {
    * one word in one and two in the other: then the words are aligned by their letters.
    */
   fun ayahSkeletons(sura: Int, ayah: Int, lexicon: List<String>, clean: String): List<String> {
-    var words = clean.replace("﻿", "").split(WHITESPACE).filter { it.isNotEmpty() }
+    var words = clean.replace("\uFEFF", "").split(WHITESPACE).filter { it.isNotEmpty() }
     // the clean text starts each sura's first ayah with the basmala, the lexicon doesn't
     if (ayah == 1 && sura != 1 && sura != 9 && words.take(4) == BASMALA) words = words.drop(4)
     val lex = lexicon.map { phonemeSkeleton(it) }
@@ -104,7 +104,7 @@ internal object CheckText {
     val out = StringBuilder()
     for (ch in text) {
       when (ch) {
-        'ۥ', 'ۦ', '﻿', 'ـ' -> Unit
+        'ۥ', 'ۦ', '\uFEFF', 'ـ' -> Unit
         'أ', 'إ', 'ٱ' -> out.append('ا')
         'ؤ', 'ئ' -> out.append('ء')
         'آ' -> out.append("ءا")

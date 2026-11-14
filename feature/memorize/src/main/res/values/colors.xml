@@ -8,4 +8,10 @@
   <color name="memorize_hinted_night">#FF4DB6AC</color>
   <color name="memorize_missed">#40FB8C00</color>
   <color name="memorize_missed_night">#FFFFB74D</color>
+  <!-- the reading trail (Recitation) and the word heard in a playback: the app's accent, blue by
+       day and gold at night; their night colours keep their own alpha -->
+  <color name="memorize_recited">#291F6FB2</color>
+  <color name="memorize_recited_night">#38E2AF56</color>
+  <color name="memorize_playing">#661F6FB2</color>
+  <color name="memorize_playing_night">#8CE2AF56</color>
 </resources>

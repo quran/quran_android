@@ -1,18 +1,21 @@
 package com.quran.mobile.feature.memorize.recording
 
 import android.content.Context
+import android.os.Build
 import com.quran.data.di.AppScope
 import com.quran.data.model.SuraAyah
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.mobile.feature.memorize.session.MemorizeState
 import com.quran.mobile.feature.memorize.settings.MemorizePreferences
 import com.quran.mobile.feature.memorize.tracker.WordId
+import com.quran.mobile.feature.memorize.tracker.engine.RecognizedToken
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
+import org.json.JSONObject
 import java.io.File
 import java.util.UUID
 import java.util.concurrent.Executor
@@ -20,16 +23,18 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.coroutines.resume
 
 /**
  * The user's recordings of their own recitation, only made when they turned recording on. They are
  * kept in the app's no-backup storage: never backed up, and only leave the phone if the user exports
- * them. Each recording is saved as its audio files and an alignment ([RecordingFormat]).
+ * them. Each recording is saved as its audio files and an alignment ([RecordingFormat]); one made to
+ * contribute also keeps what the recognizer heard and what the session did ([RecordingDetails]).
  */
 @SingleIn(AppScope::class)
 class RecordingStore private constructor(
-  context: Context,
+  private val context: Context,
   private val preferences: MemorizePreferences,
   private val writers: (File) -> AudioFileWriter,
   /** Where a session's audio is encoded: one thread per session. */
@@ -47,8 +52,10 @@ class RecordingStore private constructor(
   /** Changes whenever a recording is saved or deleted. */
   val changes: StateFlow<Int> = _changes.asStateFlow()
 
-  override fun start(start: SuraAyah, mode: MemorizeState.Mode): SessionRecorder {
-    val session = ActiveSession(UUID.randomUUID().toString(), start, mode, preferences.recordingSplit, executors())
+  override fun start(start: SuraAyah, mode: MemorizeState.Mode, contribute: Boolean, info: Map<String, Any>): SessionRecorder {
+    val id = UUID.randomUUID().toString()
+    val header = if (contribute) JSONObject(info).put("session", id).also { addDeviceInfo(it) } else null
+    val session = ActiveSession(id, start, mode, preferences.recordingSplit, executors(), header)
     synchronized(active) { active[session.session] = session }
     return session
   }
@@ -57,6 +64,12 @@ class RecordingStore private constructor(
   fun list(): List<Recording> =
     directory.listFiles { file -> file.name.endsWith(METADATA) }.orEmpty()
       .mapNotNull { read(it) }
+      .sortedByDescending { it.startedAt }
+
+  /** The saved recordings by session, the newest session first. Reads files. */
+  fun sessions(): List<RecordingSession> =
+    list().groupBy { it.session }.values
+      .map { RecordingSession(it.sortedBy { recording -> recording.startedAt }) }
       .sortedByDescending { it.startedAt }
 
   /**
@@ -71,8 +84,14 @@ class RecordingStore private constructor(
 
   fun delete(id: String) {
     read(File(directory, id + METADATA))?.parts?.forEach { it.file.delete() }
+    File(directory, id + DETAILS).delete()
     File(directory, id + METADATA).delete()
     _changes.value++
+  }
+
+  /** Deletes all the recordings of [session]. */
+  fun deleteSession(session: String) {
+    list().filter { it.session == session }.forEach { delete(it.id) }
   }
 
   fun deleteAll() {
@@ -92,10 +111,14 @@ class RecordingStore private constructor(
     _changes.value++
   }
 
-  /** With "replace the same place", a new recording replaces the older ones of the same start. */
+  /**
+   * With "replace the same place", a new recording replaces the older ones of the same start; one
+   * made to contribute is never deleted that way.
+   */
   private fun applyRetention(saved: Recording) {
     if (preferences.keepRecordings != MemorizePreferences.KeepRecordings.REPLACE_SAME_PLACE) return
-    list().filter { it.id != saved.id && it.start == saved.start && it.mode == saved.mode }.forEach { delete(it.id) }
+    list().filter { it.id != saved.id && it.start == saved.start && it.mode == saved.mode && !it.contribute }
+      .forEach { delete(it.id) }
   }
 
   private fun combine(session: String, recordings: List<Recording>): Recording? {
@@ -107,13 +130,34 @@ class RecordingStore private constructor(
       offset += recording.durationMs
     }
     val first = recordings.first()
-    return first.copy(id = session, end = recordings.last().end, parts = recordings.flatMap { it.parts }, words = words)
+    return first.copy(
+      id = session,
+      end = recordings.last().end,
+      parts = recordings.flatMap { it.parts },
+      words = words,
+      contribute = recordings.any { it.contribute },
+      details = null,
+    )
+  }
+
+  private fun addDeviceInfo(header: JSONObject) {
+    val version = runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull()
+    header.put("app_version", version ?: "")
+      .put("device", "${Build.MANUFACTURER} ${Build.MODEL}")
+      .put("android_sdk", Build.VERSION.SDK_INT)
   }
 
   /**
    * A session being recorded. The last [HOLD_MS] of audio are held back before being written, so
    * that a new sura's recording can start just after the previous sura's last word even though the
    * recognizer only reports it a moment later. Everything but [write]'s conversion runs on [executor].
+   *
+   * Times come in the session's audio time, counted as [write] is called; the recordings lack the
+   * frames dropped when the phone couldn't keep up, so they are converted with [AudioClock].
+   *
+   * With [header] the recordings are made to contribute and keep their details ([RecordingDetails]):
+   * each goes to the recording holding the audio it is about, and a recording's details are written
+   * once [HOLD_MS] more audio has come (the recognizer reports what it heard a moment later).
    */
   private inner class ActiveSession(
     override val session: String,
@@ -121,52 +165,98 @@ class RecordingStore private constructor(
     private val mode: MemorizeState.Mode,
     private val split: RecordingSplit,
     private val executor: Executor,
+    private val header: JSONObject?,
   ) : SessionRecorder {
     private val queued = AtomicInteger()
+    // the session's audio time, as written (frames dropped below included)
+    private val sessionSamples = AtomicLong()
+
+    override val keepsDetails: Boolean = header != null
 
     // on the executor
+    private val audioClock = AudioClock()
     private val held = ArrayDeque<Chunk>()
-    private var receivedSamples = 0L
     private var current: Open? = null
     private var nextStart = start
     private val done = ArrayList<Recording>()
+    // recordings closed less than HOLD_MS of audio ago, whose details may still come
+    private val closing = ArrayList<Open>()
+    // details that came between two recordings: they go to the next one
+    private val pending = ArrayList<RecordingDetails.Item>()
+    private var finished = false
 
     override fun write(samples: FloatArray) {
+      val at = sessionSamples.getAndAdd(samples.size.toLong())
       // a phone too busy to keep up loses some recording rather than slowing down the listening
       if (queued.get() >= MAX_QUEUED_FRAMES) return
       val pcm = ShortArray(samples.size) { (samples[it].coerceIn(-1f, 1f) * Short.MAX_VALUE).toInt().toShort() }
       queued.incrementAndGet()
       submit {
         queued.decrementAndGet()
-        held.addLast(Chunk(receivedSamples, pcm))
-        receivedSamples += pcm.size
-        while (held.isNotEmpty() && held.first().endSample <= receivedSamples - HOLD_SAMPLES) writeChunk(held.removeFirst())
+        audioClock.reach(at)
+        held.addLast(Chunk(audioClock.audioSamples, pcm))
+        audioClock.receive(pcm.size)
+        while (held.isNotEmpty() && held.first().endSample <= audioClock.audioSamples - HOLD_SAMPLES) writeChunk(held.removeFirst())
+        writeSettledDetails()
       }
     }
 
-    override fun word(word: WordId, startMs: Long?, endMs: Long?, status: Recording.WordStatus, phonemes: String, endsSura: Boolean) {
+    override fun word(
+      word: WordId,
+      startMs: Long?,
+      endMs: Long?,
+      status: Recording.WordStatus,
+      phonemes: String,
+      endsSura: Boolean,
+      mistakes: Int,
+    ) {
+      val now = sessionSamples.get()
       submit {
+        audioClock.reach(now)
+        val wordStart = startMs?.let(::audioMs)
+        val wordEnd = endMs?.let(::audioMs)
+        val received = audioClock.audioSamples / SAMPLES_PER_MS
         val open = current
         // a sura the session moved to without its end being heard (e.g. the user skipped ahead)
         if (split == RecordingSplit.BY_SURA && open != null && open.words.isNotEmpty() && open.sura != word.sura) {
-          endRecording(open, startMs ?: endMs ?: (receivedSamples / SAMPLES_PER_MS), SuraAyah(word.sura, word.ayah))
+          endRecording(open, wordStart ?: wordEnd ?: received, SuraAyah(word.sura, word.ayah))
         }
-        val target = current ?: open(held.firstOrNull()?.startSample ?: receivedSamples)
+        val target = current ?: open(held.firstOrNull()?.startSample ?: audioClock.audioSamples)
         // a recording starts where the user did (they may start anywhere around the page on screen)
         if (target.words.isEmpty()) target.start = SuraAyah(word.sura, word.ayah)
         val offset = target.startSample / SAMPLES_PER_MS
-        target.words += Recording.Word(word, startMs?.minus(offset), endMs?.minus(offset), status, phonemes)
+        target.words += Recording.Word(word, wordStart?.minus(offset), wordEnd?.minus(offset), status, phonemes, mistakes)
         target.end = SuraAyah(word.sura, word.ayah)
         // the sura's recording ends a little after its last word (the end of a long madd), before
         // whatever comes next (the basmala, the next sura, ruku...)
         if (split == RecordingSplit.BY_SURA && endsSura && word.sura < LAST_SURA) {
-          val at = (endMs ?: startMs ?: (receivedSamples / SAMPLES_PER_MS)) + SPLIT_AFTER_MS
+          val at = (wordEnd ?: wordStart ?: received) + SPLIT_AFTER_MS
           endRecording(target, at, SuraAyah(word.sura + 1, 1))
         }
       }
     }
 
-    /** Ends [open] at [atMs] of the session's audio (as far back as is held); [next] starts after it. */
+    override fun heard(tokens: List<RecognizedToken>) {
+      if (!keepsDetails || tokens.isEmpty()) return
+      val now = sessionSamples.get()
+      submit {
+        audioClock.reach(now)
+        for (token in tokens) {
+          addDetail(RecordingDetails.Token(audioSample(token.timeMs), token.text, token.probability))
+        }
+      }
+    }
+
+    override fun event(event: SessionEvent) {
+      if (!keepsDetails) return
+      val now = sessionSamples.get()
+      submit {
+        audioClock.reach(now)
+        addDetail(RecordingDetails.Event(audioSample(event.atMs), event.kind, event.word, event.detail))
+      }
+    }
+
+    /** Ends [open] at [atMs] of the recorded audio (as far back as is held); [next] starts after it. */
     private fun endRecording(open: Open, atMs: Long, next: SuraAyah) {
       while (held.isNotEmpty() && held.first().startSample < atMs * SAMPLES_PER_MS) writeChunk(held.removeFirst())
       close(open)
@@ -176,8 +266,12 @@ class RecordingStore private constructor(
     override fun pause() {
       submit {
         while (held.isNotEmpty()) writeChunk(held.removeFirst())
+        if (keepsDetails) addDetail(RecordingDetails.Event(audioClock.audioSamples, SessionEvent.Kind.PAUSED, null, null))
         val open = current ?: return@submit
-        if (open.closePart()) save(open.recording())
+        if (open.closePart()) {
+          save(open.recording())
+          writeDetails(open)
+        }
       }
     }
 
@@ -185,6 +279,9 @@ class RecordingStore private constructor(
       submit {
         while (held.isNotEmpty()) writeChunk(held.removeFirst())
         current?.let { close(it) }
+        closing.forEach { writeDetails(it) }
+        closing.clear()
+        finished = true
         synchronized(active) { active.remove(session) }
         (executor as? ExecutorService)?.shutdown()
       }
@@ -192,11 +289,52 @@ class RecordingStore private constructor(
 
     /** What has been recorded so far (after whatever was queued before), or null once it's over. */
     suspend fun snapshot(): List<Recording>? = suspendCancellableCoroutine { continuation ->
-      val queuedRun = submit {
-        val open = current?.takeIf { it.parts.isNotEmpty() }?.recording()
-        continuation.resume(done + listOfNotNull(open))
+      val queuedRun = submit(evenIfFinished = true) {
+        if (finished) {
+          continuation.resume(null)
+        } else {
+          val open = current?.takeIf { it.parts.isNotEmpty() }?.recording()
+          continuation.resume(done + listOfNotNull(open))
+        }
       }
       if (!queuedRun) continuation.resume(null)
+    }
+
+    private fun audioMs(sessionMs: Long): Long = audioSample(sessionMs) / SAMPLES_PER_MS
+
+    private fun audioSample(sessionMs: Long): Long = audioClock.toAudio(sessionMs * SAMPLES_PER_MS)
+
+    /** Gives [item] to the recording holding the audio it is about. */
+    private fun addDetail(item: RecordingDetails.Item) {
+      val open = current
+      val closed = closing.lastOrNull { item.sample >= it.startSample && item.sample < it.endSample }
+      when {
+        closed != null -> closed.details += item
+        open != null && item.sample >= open.startSample -> open.details += item
+        // audio of no recording (e.g. one without words, which isn't kept)
+        open != null || item.sample < (closing.lastOrNull()?.endSample ?: 0L) -> Unit
+        else -> pending += item
+      }
+    }
+
+    /** Writes the details of the recordings closed long enough ago that nothing more will come. */
+    private fun writeSettledDetails() {
+      if (closing.isEmpty()) return
+      val settled = closing.filter { audioClock.audioSamples >= it.endSample + HOLD_SAMPLES }
+      settled.forEach { writeDetails(it) }
+      closing.removeAll(settled)
+    }
+
+    private fun writeDetails(open: Open) {
+      val header = header ?: return
+      runCatching {
+        RecordingDetails.write(
+          File(directory, open.id + DETAILS),
+          JSONObject(header.toString()).put("recording", open.id),
+          open.details.toList(),
+          open.startSample,
+        )
+      }
     }
 
     private fun writeChunk(chunk: Chunk) {
@@ -204,8 +342,13 @@ class RecordingStore private constructor(
       open.append(chunk.pcm)
     }
 
-    private fun open(startSample: Long): Open =
-      Open(UUID.randomUUID().toString(), clock(), nextStart, startSample).also { current = it }
+    private fun open(startSample: Long): Open {
+      val open = Open(UUID.randomUUID().toString(), clock(), nextStart, startSample)
+      current = open
+      pending.filterTo(open.details) { it.sample >= startSample }
+      pending.clear()
+      return open
+    }
 
     private fun close(open: Open) {
       current = null
@@ -219,20 +362,27 @@ class RecordingStore private constructor(
       save(recording)
       applyRetention(recording)
       done += recording
+      if (keepsDetails) closing += open
     }
 
-    /** A recording being written; its times count from [startSample] of the session's audio. */
+    /** A recording being written; its times count from [startSample] of the recorded audio. */
     private inner class Open(val id: String, val startedAt: Long, var start: SuraAyah, val startSample: Long) {
       val sura: Int get() = start.sura
       var end = start
       val parts = ArrayList<Recording.Part>()
       val words = ArrayList<Recording.Word>()
+      val details = ArrayList<RecordingDetails.Item>()
       private var writer: AudioFileWriter? = null
       private var file: File? = null
       private var partSamples = 0L
+      private var writtenSamples = 0L
       private var failed = false
 
+      /** Where its audio ends in the recorded audio. */
+      val endSample: Long get() = startSample + writtenSamples
+
       fun append(pcm: ShortArray) {
+        writtenSamples += pcm.size
         if (failed) return
         val writer = writer ?: try {
           directory.mkdirs()
@@ -259,11 +409,19 @@ class RecordingStore private constructor(
         return saved
       }
 
-      fun recording() = Recording(id, session, mode, startedAt, start, end, parts.toList(), words.toList())
+      fun recording() = Recording(
+        id, session, mode, startedAt, start, end, parts.toList(), words.toList(),
+        contribute = keepsDetails,
+        details = if (keepsDetails) File(directory, id + DETAILS) else null,
+      )
     }
 
-    private fun submit(task: () -> Unit): Boolean = try {
-      executor.execute(task)
+    /**
+     * Runs [task] on the executor; once the session is over, only if [evenIfFinished] (e.g. a write
+     * that was on its way when it ended must not open a new recording). False if it can't run.
+     */
+    private fun submit(evenIfFinished: Boolean = false, task: () -> Unit): Boolean = try {
+      executor.execute { if (evenIfFinished || !finished) task() }
       true
     } catch (_: RejectedExecutionException) {
       false // already finished
@@ -285,6 +443,8 @@ class RecordingStore private constructor(
     ) = RecordingStore(context, preferences, writers, executors, clock)
 
     private const val METADATA = ".json"
+    /** A contributed recording's details ([RecordingDetails]); not ".json", which [list] reads. */
+    internal const val DETAILS = ".heard.jsonl"
     private const val SAMPLES_PER_MS = 16L
     // longer than the recognizer takes to report a word, even on a slow phone
     private const val HOLD_MS = 4_000L

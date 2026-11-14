@@ -37,10 +37,13 @@ internal fun RecitationListeningAudioBar(
   modifier: Modifier = Modifier,
   showTranscript: Boolean = true,
   showHint: Boolean = false,
+  showHideVerses: Boolean = true,
 ) {
   RecitationAudioBar(eventSink, true, modifier = modifier, showTranscript = showTranscript) {
-    IconButton(onClick = { listeningEventSink(AudioBarUiEvent.RecitationListeningEvent.HideVerses) }) {
-      Icon(QuranIcons.MenuBook, contentDescription = "")
+    if (showHideVerses) {
+      IconButton(onClick = { listeningEventSink(AudioBarUiEvent.RecitationListeningEvent.HideVerses) }) {
+        Icon(QuranIcons.MenuBook, contentDescription = "")
+      }
     }
     if (showHint) {
       IconButton(onClick = { listeningEventSink(AudioBarUiEvent.RecitationListeningEvent.Hint) }) {

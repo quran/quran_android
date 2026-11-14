@@ -42,6 +42,7 @@ internal sealed class AudioBarState {
   data class RecitationListening(
     val showTranscript: Boolean = true,
     val showHint: Boolean = false,
+    val showHideVerses: Boolean = true,
   ) : AudioBarState()
 
   data class RecitationPlaying(val showTranscript: Boolean = true) : AudioBarState()

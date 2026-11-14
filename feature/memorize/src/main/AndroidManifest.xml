@@ -29,6 +29,7 @@
         android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     <activity
         android:name=".recording.RecordingsActivity"
-        android:exported="false" />
+        android:exported="false"
+        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
   </application>
 </manifest>

@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.view
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -59,7 +60,8 @@ class HighlightsDrawer(
           val color = ContextCompat.getColor(context, colorResId)
           when (type.mode) {
             COLOR -> this.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_ATOP)
-            UNDERLAY -> this.color = if (isNightMode) {
+            // at night an opaque colour is toned down; one with its own alpha keeps it
+            UNDERLAY -> this.color = if (isNightMode && Color.alpha(color) == 0xFF) {
               ColorUtils.setAlphaComponent(color, NIGHT_UNDERLAY_ALPHA)
             } else {
               color

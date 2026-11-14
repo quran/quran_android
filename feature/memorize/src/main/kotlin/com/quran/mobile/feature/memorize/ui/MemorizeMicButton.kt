@@ -46,6 +46,8 @@ internal data class MicButtonState(
   val recording: Boolean,
   val canReplay: Boolean,
   val replaying: Boolean,
+  /** Reading with the text shown (Recitation), not memorizing. */
+  val reciting: Boolean = false,
 )
 
 /**
@@ -64,7 +66,11 @@ internal fun MemorizeMicButton(
 ) {
   Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
     if (!state.listening && !state.idle) {
-      SmallButton(QuranIcons.Close, stringResource(R.string.memorize_mic_end), onEnd)
+      SmallButton(
+        QuranIcons.Close,
+        stringResource(if (state.reciting) R.string.memorize_mic_end_recite else R.string.memorize_mic_end),
+        onEnd,
+      )
       if (state.canReplay) {
         SmallButton(
           if (state.replaying) QuranIcons.Pause else QuranIcons.PlayArrow,
@@ -82,7 +88,7 @@ internal fun MemorizeMicButton(
           else -> R.string.memorize_mic_resume
         }
       )
-      val chooseMode = stringResource(R.string.memorize_choose_mode)
+      val chooseMode = stringResource(R.string.memorize_mic_more_ways)
       Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier

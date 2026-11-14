@@ -13,7 +13,7 @@ interface RecitationPresenter : Presenter<Activity> {
   fun isRecitationEnabledFlow(): StateFlow<Boolean>
   fun onRequestPermissionsResult(requestCode: Int, grantResults: IntArray)
 
-  fun startOrStopRecitation(startAyah: () -> SuraAyah, showModeSelection: Boolean = false)
+  fun startOrStopRecitation(startAyah: () -> SuraAyah, start: RecitationStart = RecitationStart.DEFAULT)
   fun endSession()
 
   /** Whether sessions produce a transcript the user can open. */
@@ -21,6 +21,9 @@ interface RecitationPresenter : Presenter<Activity> {
 
   /** Whether sessions are recorded and can be played back. */
   fun supportsPlayback(): Boolean = true
+
+  /** Whether the session hides the ayat, so the user can show and hide them again. */
+  fun supportsAyahVisibility(): Boolean = true
 
   /** Whether the user can ask for a hint (the next word) during a session. */
   fun supportsHints(): Boolean = false
@@ -32,6 +35,6 @@ interface RecitationPresenter : Presenter<Activity> {
    * Called by the reading screen: the pages on screen (one, or two side by side) and how to start a
    * session there, for sessions started from the presenter's own controls.
    */
-  fun setReadingScreen(pagesOnScreen: () -> List<Int>, start: (showModeSelection: Boolean) -> Unit) {}
+  fun setReadingScreen(pagesOnScreen: () -> List<Int>, start: (RecitationStart) -> Unit) {}
 
 }

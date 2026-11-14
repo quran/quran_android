@@ -25,10 +25,74 @@ class MemorizeMasksTest {
     missed: Set<Int> = emptySet(),
     peeking: Boolean = false,
     started: Boolean = true,
+    mode: MemorizeState.Mode = MemorizeState.Mode.MEMORIZE,
+    firstWord: Int = 0,
+    showMistakes: Boolean = true,
   ) = MemorizeState(
-    id = "test", passage = passage, startedAt = 0, status = MemorizeState.Status.LISTENING,
+    id = "test", passage = passage, startedAt = 0, status = MemorizeState.Status.LISTENING, mode = mode,
     cursor = cursor, mistake = mistake, hinted = hinted, missed = missed, peeking = peeking, started = started,
+    firstWord = firstWord, showMistakes = showMistakes,
   )
+
+  private fun reading(
+    cursor: Int,
+    mistake: Int? = null,
+    hinted: Set<Int> = emptySet(),
+    missed: Set<Int> = emptySet(),
+    started: Boolean = true,
+    firstWord: Int = 0,
+    showMistakes: Boolean = true,
+  ) = state(cursor, mistake, hinted, missed, false, started, MemorizeState.Mode.RECITE, firstWord, showMistakes)
+
+  @Test
+  fun `reading hides nothing and leaves a trail on the words read`() {
+    val marks = MemorizeMasks.marks(reading(cursor = 5), listOf(page))
+
+    assertThat(marks).containsExactly(
+      Mark(112, 1, 1, MemorizeHighlightTypes.RECITED),
+      Mark(112, 1, 2, MemorizeHighlightTypes.RECITED),
+      Mark(112, 1, 3, MemorizeHighlightTypes.RECITED),
+      Mark(112, 1, 4, MemorizeHighlightTypes.RECITED),
+      Mark(112, 2, 1, MemorizeHighlightTypes.RECITED),
+    )
+  }
+
+  @Test
+  fun `the trail starts where the reader did, once that is known`() {
+    assertThat(MemorizeMasks.marks(reading(cursor = 6, started = false), listOf(page))).isEmpty()
+
+    val marks = MemorizeMasks.marks(reading(cursor = 6, firstWord = 4), listOf(page))
+    assertThat(marks).containsExactly(
+      Mark(112, 2, 1, MemorizeHighlightTypes.RECITED),
+      Mark(112, 2, 2, MemorizeHighlightTypes.RECITED),
+    )
+  }
+
+  @Test
+  fun `reading marks hints, skipped words and the mistake on the visible word`() {
+    val marks = MemorizeMasks.marks(reading(cursor = 3, mistake = 3, hinted = setOf(1), missed = setOf(2)), listOf(page))
+
+    assertThat(marks).containsExactly(
+      Mark(112, 1, 1, MemorizeHighlightTypes.RECITED),
+      Mark(112, 1, 2, MemorizeHighlightTypes.HINTED),
+      Mark(112, 1, 3, MemorizeHighlightTypes.MISSED),
+      Mark(112, 1, 4, MemorizeHighlightTypes.MISTAKE),
+    )
+  }
+
+  @Test
+  fun `without marking mistakes, reading only shows the trail and the hints`() {
+    val marks = MemorizeMasks.marks(
+      reading(cursor = 3, mistake = 3, hinted = setOf(1), missed = setOf(2), showMistakes = false),
+      listOf(page),
+    )
+
+    assertThat(marks).containsExactly(
+      Mark(112, 1, 1, MemorizeHighlightTypes.RECITED),
+      Mark(112, 1, 2, MemorizeHighlightTypes.HINTED),
+      Mark(112, 1, 3, MemorizeHighlightTypes.RECITED),
+    )
+  }
 
   @Test
   fun `untouched ayat are hidden as a whole`() {

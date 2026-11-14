@@ -6,15 +6,25 @@ word is given, one word at a time, in a reciter's voice. The same corrector work
 salah, with the screen off. A session goes on into the next suras (as in taraweeh) until the user
 ends it.
 
-A floating mic on the reading screen starts it (green; long press for salah), shows when it listens
-(blue) and pauses, resumes or ends it. The words are hidden as soon as it starts, and the user may
-begin anywhere from three pages before the page on screen to three after it: once the start is
-found the words before it are shown again. Reciting something that isn't there marks the first word
-on screen (and, while memorizing, gives it after the delay).
+**Recitation** (تلاوة) is the same session with the text shown: the user reads from the page and
+nothing is hidden. The words read get a light trail (the app's accent), so the reader sees where the
+session follows them; a wrong or skipped word is marked, and after the hint delay the correct word
+is said in the hint voice. There is no help when the reader stops: the next word is in front of
+them. "Recitation: mark mistakes" and "Recitation: say the correct word" turn either off; the trail
+is always there.
+
+A floating mic on the reading screen starts a session (green), shows when it listens (blue) and
+pauses, resumes or ends it. Tapping it (or the audio bar's mic, or "Recite from here") opens a
+window: Memorization or Recitation, and where the session starts; a long press adds salah. The
+toolbar's "Memorize" starts memorizing at once. The words are hidden as soon as a memorization
+starts, and the user may begin anywhere from three pages before the page on screen to three after
+it: once the start is found the words before it are shown again. Reciting something that isn't
+there marks the first word on screen (and, while memorizing, gives it after the delay).
 
 **Everything runs on the device.** Audio is processed in memory and dropped; nothing is logged or
-sent, and nothing is recorded unless the user turns on "Record my recitation" (off by default).
-Recordings stay in the app's no-backup storage and only leave the phone if the user exports them.
+sent, and nothing is recorded unless the user turns on "Record my recitation" or "Record and
+contribute" (both off by default). Recordings stay in the app's no-backup storage and only leave the
+phone if the user exports them.
 The only network use is the one-time download of the speech model and, if the user agrees (or turns
 on automatic downloads), the hint reciter's sura audio through the app's normal audio downloads.
 
@@ -61,10 +71,28 @@ ayah and line, so there each ayah is hidden until all of it has been recited, an
 whole ayah. Shemerly's ayat that run on to the next page are hidden on both pages.
 
 Recordings (opt-in): a recording per sura or per session, named by where it starts and ends, played
-back from the audio bar or the floating mic (the page follows), and exported from Settings → My
-recordings as a .zip: the audio (16 kHz AAC), `alignment.json` (every word with its time from the
-recognizer, whether it was recited, hinted or missed, and its phonemes) and a NeMo `manifest.jsonl`
-of the ayat recited entirely (see `RecordingFormat`).
+back from the audio bar or the floating mic (the page follows), and exported as a .zip: the audio
+(16 kHz AAC), `alignment.json` (every word with its time from the recognizer, whether it was
+recited, hinted or missed, how many times a mistake was marked on it, and its phonemes) and a NeMo
+`manifest.jsonl` of the ayat recited entirely, cut before any hint (see `RecordingFormat`, version
+2; version 1 files still read).
+
+**Record and contribute** records every session (whatever "Record my recitation" says) to help
+improve the speech models; turning it on explains what is kept, and nothing is sent. Its recordings
+also keep `<id>.heard.jsonl` (`heard.jsonl` in an export, see `RecordingDetails`): the session's
+settings, speech model, app version and phone, then one line per token the model heard (its time,
+text and confidence) and per thing the app decided (mistakes, marks shown and cleared, hints,
+repetitions, phrases, double-check verdicts, speech and silence, the hint voice playing, pauses,
+calls), in the recording's time. The model's input features (80-dim fbank) aren't kept: they come
+from the audio and would take more room than it. Each detail goes to the per-sura recording that
+holds the audio it is about, written once the recognizer can't report more for it.
+
+**Recording sessions** (Settings) lists the sessions by day, with their mode, range and length and
+whether they were contributed; a row swipes away (with Undo), and all can be exported or deleted. A
+session opens in a window that plays it back on its own mushaf pages, without going to them in the
+reader: the page turns with the word being heard, which is lit with a trail behind it, hints,
+skipped words and mistakes are marked, and tapping a word plays from it. The app draws those pages
+(`PagePreviews` in `common/recitation`, implemented in `:app`), as the reading screen does.
 
 In salah any phrase of ruku/sujud (takbir, tasmi', tahmid, tasbeeh, tasleem) ends the passage of the
 rak'ah; hints resume when the passage continues after the next Al-Fatiha. A pause is 0.8 s of
@@ -146,7 +174,10 @@ its letters, right after the word before it. A dropped hint counts the word as r
 
 * `./gradlew :feature:memorize:tracker:test` — tracker golden parity, salah flow, hint scheduler.
 * `./gradlew :feature:memorize:testReleaseUnitTest` — page masks, word timings, and the session
-  controller with a scripted engine (hints, salah disarming, start/stop races, start failures).
+  controller with a scripted engine (hints, salah disarming, start/stop races, start failures),
+  recordings (splits, pauses, details, dropped audio). With `-Pmemorize.render`,
+  `MemorizeScreensRenderTest` draws the mode window and the Recording sessions screens to
+  `build/outputs/memorize-renders` (light and dark, English and Arabic, phone and tablet).
 * `./gradlew :app:testMadaniDebugUnitTest --tests '*WordGlyphs*'` — derived word glyphs.
 * `tools/memorize/run_device_benchmark.sh testlab|adb [engine|session] [MODEL,VERSION ...]` — on real
   phones (Firebase Test Lab or USB): `engine` = speed and memory of the recognizer at 1/2/4 threads,

@@ -135,6 +135,8 @@ class HintScheduler(private val config: HintConfig) {
   fun nextDeadlineMs(): Long? {
     if (!armed || prompting) return null
     if (mistake != null) {
+      // the mistake stays marked until the user recovers, without a hint
+      if (!config.hintAfterMistake) return null
       val due = mistakeSinceMs + config.delayMs
       val afterDelay = when {
         !config.mistakesWaitForPause -> due
@@ -184,7 +186,10 @@ class HintScheduler(private val config: HintConfig) {
 data class HintConfig(
   val delayMs: Long = 4_000L,
   val wordsPerHint: Int = 1,
+  /** Whether mistakes are followed (marked, see [hintAfterMistake]). */
   val onMistakes: Boolean = true,
+  /** Whether a mistake is followed by a hint after [delayMs]; if not, it is only marked. */
+  val hintAfterMistake: Boolean = true,
   val onPauses: Boolean = true,
   /**
    * How long a pause between ayat (before an ayah's first word or on its last) must last to count

@@ -126,7 +126,15 @@ class MemorizeService : Service() {
     }
     return NotificationCompat.Builder(this, CHANNEL_ID)
       .setSmallIcon(R.drawable.ic_memorize_notification)
-      .setContentTitle(getString(if (listening) R.string.memorize_listening else R.string.memorize_paused))
+      .setContentTitle(
+        getString(
+          when {
+            listening -> R.string.memorize_listening
+            state?.mode == MemorizeState.Mode.RECITE -> R.string.memorize_recite_paused
+            else -> R.string.memorize_paused
+          }
+        )
+      )
       .setContentText(position)
       .setOngoing(true)
       .setOnlyAlertOnce(true)

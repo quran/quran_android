@@ -24,6 +24,12 @@ androidComponents {
   }
 }
 
+// -Pmemorize.render: MemorizeScreensRenderTest draws the feature's screens to
+// build/outputs/memorize-renders (light, dark, Arabic; phone and tablet) to look at them
+tasks.withType<Test>().configureEach {
+  if (providers.gradleProperty("memorize.render").isPresent) systemProperty("memorize.render", "true")
+}
+
 dependencies {
   implementation(project(":common:data"))
   implementation(project(":common:di"))
@@ -35,6 +41,7 @@ dependencies {
   implementation(project(":feature:memorize:engine-sherpa"))
 
   implementation(libs.androidx.activity.compose)
+  implementation(libs.androidx.appcompat)
   implementation(libs.compose.animation)
   implementation(libs.compose.foundation)
   implementation(libs.compose.material3)

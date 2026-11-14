@@ -84,7 +84,7 @@ class MemorizeSessionOnDeviceTest {
       callState = { false },
       lines = { emptyMap() },
       upcoming = {},
-      recorders = { _, _ -> null },
+      recorders = { _, _, _, _ -> null },
       doubleChecks = { null },
     )
 

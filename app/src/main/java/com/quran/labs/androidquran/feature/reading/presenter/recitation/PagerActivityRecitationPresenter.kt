@@ -21,6 +21,7 @@ import com.quran.recitation.events.RecitationEventPresenter
 import com.quran.recitation.events.RecitationSelection
 import com.quran.recitation.presenter.RecitationPlaybackPresenter
 import com.quran.recitation.presenter.RecitationPresenter
+import com.quran.recitation.presenter.RecitationStart
 import com.quran.recitation.presenter.RecitationSettings
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.MainScope
@@ -64,9 +65,9 @@ class PagerActivityRecitationPresenter @Inject constructor(
   fun bind(activity: PagerActivity, bridge: Bridge) {
     if (!isRecitationEnabled()) return
     this.bridge = bridge
-    recitationPresenter.setReadingScreen(::pagesOnScreen) { showModeSelection ->
+    recitationPresenter.setReadingScreen(::pagesOnScreen) { start ->
       if (!recitationEventPresenter.hasRecitationSession()) prepareForNewSession()
-      recitationPresenter.startOrStopRecitation({ firstAyahToMemorize() }, showModeSelection)
+      recitationPresenter.startOrStopRecitation({ firstAyahToMemorize() }, start)
     }
     activity.lifecycle.addObserver(this)
   }
@@ -184,13 +185,14 @@ class PagerActivityRecitationPresenter @Inject constructor(
 
   // AudioBarRecitationListener
 
+  // the audio bar's microphone (and "Recite from here"): the user chooses how to recite
   override fun onRecitationPressed() {
     if (!recitationEventPresenter.hasRecitationSession()) prepareForNewSession()
-    recitationPresenter.startOrStopRecitation({ firstAyahToMemorize() })
+    recitationPresenter.startOrStopRecitation({ firstAyahToMemorize() }, RecitationStart.CHOOSE)
   }
 
   override fun onRecitationLongPressed() {
-    recitationPresenter.startOrStopRecitation({ firstAyahToMemorize() }, true)
+    recitationPresenter.startOrStopRecitation({ firstAyahToMemorize() }, RecitationStart.CHOOSE_ALL)
   }
 
   override fun onRecitationTranscriptPressed() {

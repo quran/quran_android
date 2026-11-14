@@ -6,7 +6,8 @@ import com.quran.mobile.feature.memorize.data.Passage
 /**
  * What a memorization session looks like right now. Recitation is sequential, so every word before
  * [cursor] has been revealed (recited, given as a hint, or missed) and every word from it on is
- * still hidden, unless the user is [peeking].
+ * still hidden, unless the user is [peeking]. In [Mode.RECITE] nothing is hidden: the words before
+ * the cursor are the ones read.
  */
 data class MemorizeState(
   val id: String,
@@ -29,6 +30,8 @@ data class MemorizeState(
   val started: Boolean = true,
   /** The word the user started at, once [started] (it may be anywhere on the pages on screen). */
   val firstWord: Int = 0,
+  /** Whether mistakes and skipped words are marked (in [Mode.RECITE] the user may turn them off). */
+  val showMistakes: Boolean = true,
 ) {
   enum class Status { PREPARING, LISTENING, PAUSED, FINISHED }
 
@@ -37,13 +40,15 @@ data class MemorizeState(
     MEMORIZE,
     /** Reciting during salah (screen may be off): prayer speech is ignored, hints are spoken. */
     SALAH,
+    /** Reading with the mushaf page open: nothing is hidden, the words are marked as they are read. */
+    RECITE,
   }
 
   val isActive: Boolean get() = status == Status.PREPARING || status == Status.LISTENING || status == Status.PAUSED
 
   // a block body: lint's Kotlin analysis (AGP 9.4) crashes on this as an expression body
   fun isHidden(index: Int): Boolean {
-    return !peeking && (!started || index >= cursor)
+    return mode != Mode.RECITE && !peeking && (!started || index >= cursor)
   }
 
   val currentAyah: SuraAyah

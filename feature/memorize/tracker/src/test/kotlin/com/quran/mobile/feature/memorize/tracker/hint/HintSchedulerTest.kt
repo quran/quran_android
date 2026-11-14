@@ -246,6 +246,17 @@ class HintSchedulerTest {
     assertThat(scheduler.onTick(now + 5_000)).containsExactly(Effect.GiveHint(1, HintScheduler.Extent.WORDS))
   }
 
+  @Test
+  fun `a mistake can be only marked, with no hint after it`() {
+    val scheduler = HintScheduler(HintConfig(delayMs = 4_000, hintAfterMistake = false, onPauses = false))
+    scheduler.arm(0, atAyahBoundary = false)
+
+    assertThat(scheduler.onMistake(1_000, word)).containsExactly(Effect.MarkMistake(word))
+    assertThat(scheduler.onTick(60_000)).isEmpty()
+    // the mark goes once the user recovers
+    assertThat(scheduler.onWordRecited(61_000, atAyahBoundary = false)).containsExactly(Effect.ClearMistake(word))
+  }
+
   private fun armed(): HintScheduler {
     val scheduler = HintScheduler(HintConfig(delayMs = 4_000))
     scheduler.arm(0, atAyahBoundary = false)

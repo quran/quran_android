@@ -52,10 +52,7 @@
   <string name="memorize_model_imported">The recitation model is installed</string>
   <string name="memorize_model_import_failed">These files are not the recitation model</string>
   <string name="memorize_privacy_title">Privacy</string>
-  <string name="memorize_privacy_summary">Your recitation is processed only on this device. Nothing is recorded unless you turn on recording, and recordings never leave the device unless you export them.</string>
-  <string name="memorize_choose_mode">Recite from memory</string>
-  <string name="memorize_mode_memorize">Memorize: the words appear as I recite</string>
-  <string name="memorize_mode_salah">Salah: listen while I pray and remind me if I get stuck</string>
+  <string name="memorize_privacy_summary">Your recitation is processed only on this device. Nothing is recorded unless you turn on recording or Record and contribute, and recordings never leave the device unless you export them.</string>
   <string name="memorize_voice_download_title">Hints in the reciter\'s voice</string>
   <string name="memorize_voice_download_message">To speak the hints offline, %1$s\'s recitation is needed. Download this sura, or the whole Quran so that you are never stopped? Without it, hints are only shown. Automatic downloads can be turned on in Settings.</string>
   <string name="memorize_voice_download_skip">Continue without voice</string>
@@ -85,17 +82,10 @@
   <string name="memorize_keep_recordings_title">Keep recordings</string>
   <string name="memorize_keep_recordings_all">Until I delete them</string>
   <string name="memorize_keep_recordings_replace">Replace the older recording of the same place</string>
-  <string name="memorize_recordings_title">My recordings</string>
-  <string name="memorize_recordings_summary">Listen to, export or delete your recordings</string>
-  <string name="memorize_recordings_empty">No recordings yet. Turn on \"Record my recitation\" in Settings to record your sessions.</string>
   <string name="memorize_recordings_play">Play</string>
   <string name="memorize_recordings_pause">Pause</string>
-  <string name="memorize_recordings_export">Export</string>
   <string name="memorize_recordings_export_all">Export all</string>
-  <string name="memorize_recordings_delete">Delete</string>
   <string name="memorize_recordings_delete_all">Delete all</string>
-  <string name="memorize_recordings_delete_confirm">Delete the recording of %1$s?</string>
-  <string name="memorize_recordings_delete_all_confirm">Delete all your recordings?</string>
   <string name="memorize_recordings_exported">Exported, with its alignment (alignment.json) and a training manifest (manifest.jsonl)</string>
   <string name="memorize_recordings_export_failed">The recording could not be exported</string>
   <string name="memorize_recording_notification">%1$s · Recording</string>
@@ -114,7 +104,7 @@
   <string name="memorize_mic_end">Stop memorizing</string>
   <string name="memorize_mic_replay">Listen to my recitation</string>
   <string name="memorize_mic_replay_pause">Pause my recitation</string>
-  <string name="memorize_mic_start">Start memorizing</string>
+  <string name="memorize_mic_start">Memorize or recite</string>
   <string name="memorize_double_check_title">Double-check before correcting</string>
   <string name="memorize_double_check_summary">A larger model listens again before a hint or a mistake mark, so fewer are wrong (%1$s download).</string>
   <string name="memorize_double_check_recommended">Recommended for this phone.</string>
@@ -130,4 +120,56 @@
   <string name="memorize_double_check_offer">Also download the double-check (%1$s), recommended for this phone: fewer wrong hints and mistake marks</string>
   <string name="memorize_offline_check">Double-check model, recommended for this phone: %1$s</string>
   <string name="memorize_offline_check_done">Double-check model: downloaded ✓</string>
+  <!-- Recitation: reading with the text shown -->
+  <string name="memorize_recite_paused">Recitation paused</string>
+  <string name="memorize_mic_end_recite">Stop reciting</string>
+  <string name="memorize_recite_mark_title">Recitation: mark mistakes</string>
+  <string name="memorize_recite_mark_summary">When you read with the text shown, a wrong or skipped word is marked on the page</string>
+  <string name="memorize_recite_say_title">Recitation: say the correct word</string>
+  <string name="memorize_recite_say_summary">When you read with the text shown, the correct word is said in the hint voice after a mistake</string>
+  <!-- the window the microphone opens -->
+  <string name="memorize_sheet_title">How will you recite?</string>
+  <string name="memorize_sheet_start">Starts at %1$s</string>
+  <string name="memorize_sheet_position">%1$s, ayah %2$d</string>
+  <string name="memorize_mode_memorize_title">Memorization</string>
+  <string name="memorize_mode_memorize_description">From memory. The page is hidden, and the words appear as you recite them.</string>
+  <string name="memorize_mode_recite_title">Recitation</string>
+  <string name="memorize_mode_recite_description">Reading. The page stays as it is, and the words are marked as you read.</string>
+  <string name="memorize_mode_salah_title">In prayer (salah)</string>
+  <string name="memorize_mode_salah_description">Hands-free with the screen off. Reminds you if you get stuck.</string>
+  <string name="memorize_sheet_recorded_contribute">Recorded for Record and contribute</string>
+  <string name="memorize_sheet_recorded">Recorded, as set in Record my recitation</string>
+  <string name="memorize_sheet_record_this">Record this session</string>
+  <string name="memorize_mic_more_ways">More ways to recite, including salah</string>
+  <!-- Record and contribute; Recording sessions -->
+  <string name="memorize_contribute_title">Record and contribute</string>
+  <string name="memorize_contribute_summary">Keeps every session on this phone with what the speech model heard, to help improve it. Nothing is sent.</string>
+  <string name="memorize_contribute_message">Every Memorization, Recitation and salah session will be recorded on this phone, with what the speech model heard and how the app followed you. These recordings can help improve the speech model and the app.\n\nNothing is sent. The recordings stay on this phone until you delete them, and a later version will ask you before sharing anything.\n\nYou can listen to them, export or delete them in Recording sessions.</string>
+  <string name="memorize_contribute_turn_on">Turn on</string>
+  <string name="memorize_sessions_title">Recording sessions</string>
+  <string name="memorize_sessions_summary">Listen to your sessions on their pages, export or delete them</string>
+  <string name="memorize_sessions_more">More options</string>
+  <string name="memorize_sessions_delete_all_confirm">Delete all your recording sessions?</string>
+  <string name="memorize_sessions_contributed">Contributed</string>
+  <string name="memorize_sessions_contribute_on">Record and contribute is on</string>
+  <string name="memorize_sessions_today">Today</string>
+  <string name="memorize_sessions_yesterday">Yesterday</string>
+  <string name="memorize_sessions_empty_title">No recording sessions yet</string>
+  <string name="memorize_sessions_empty_body">Turn on Record and contribute, or Record my recitation, in Settings. Then tap the microphone on a page and choose Memorization or Recitation. Each session you record appears here.</string>
+  <string name="memorize_sessions_export">Export session</string>
+  <string name="memorize_sessions_delete">Delete session</string>
+  <string name="memorize_sessions_deleted">Session deleted</string>
+  <string name="memorize_sessions_undo">Undo</string>
+  <string name="memorize_sessions_follow">Back to the word</string>
+  <string name="memorize_sessions_position">Position in the recording</string>
+  <string name="memorize_sessions_back">Back 5 seconds</string>
+  <string name="memorize_sessions_forward">Forward 5 seconds</string>
+  <string name="memorize_legend_recited">Recited</string>
+  <string name="memorize_legend_hinted">Hints</string>
+  <string name="memorize_legend_missed">Skipped</string>
+  <string name="memorize_legend_mistakes">Mistakes</string>
+  <plurals name="memorize_sessions_count">
+    <item quantity="one">%1$d session</item>
+    <item quantity="other">%1$d sessions</item>
+  </plurals>
 </resources>

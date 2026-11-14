@@ -10,11 +10,13 @@ internal data class Mark(val sura: Int, val ayah: Int, val word: Int, val type: 
 /**
  * What a memorization session looks like on the pages showing [ranges]: hidden words (whole ayat
  * as one mask per line when nothing of them has been recited), the mistake marker (on a word that
- * stays hidden), and the styling of hinted and skipped words.
+ * stays hidden), and the styling of hinted and skipped words. In [MemorizeState.Mode.RECITE] nothing
+ * is hidden: the words read so far are marked instead (see [recitation]).
  */
 internal object MemorizeMasks {
 
   fun marks(state: MemorizeState, ranges: Collection<VerseRange>): Set<Mark> {
+    if (state.mode == MemorizeState.Mode.RECITE) return recitation(state, ranges)
     val marks = HashSet<Mark>()
     val words = state.passage.words
     for (range in ranges) {
@@ -43,6 +45,33 @@ internal object MemorizeMasks {
           marks += Mark(id.sura, id.ayah, words[it].id.word, MemorizeHighlightTypes.MISTAKE)
         }
         index = end
+      }
+    }
+    return marks
+  }
+
+  /**
+   * Reading: a light trail on every word read since the user started (where the session follows
+   * them), hinted words, and, if [MemorizeState.showMistakes], the words skipped and the mistake
+   * being made.
+   */
+  private fun recitation(state: MemorizeState, ranges: Collection<VerseRange>): Set<Mark> {
+    val marks = HashSet<Mark>()
+    val words = state.passage.words
+    for (range in ranges) {
+      var index = firstAtOrAfter(state, range.startSura, range.startAyah)
+      while (index < words.size) {
+        val id = words[index].id
+        if (compare(id.sura, id.ayah, range.endingSura, range.endingAyah) > 0) break
+        val type = when {
+          index == state.mistake && state.showMistakes -> MemorizeHighlightTypes.MISTAKE
+          !state.started || index < state.firstWord || index >= state.cursor -> null
+          index in state.hinted -> MemorizeHighlightTypes.HINTED
+          index in state.missed -> if (state.showMistakes) MemorizeHighlightTypes.MISSED else MemorizeHighlightTypes.RECITED
+          else -> MemorizeHighlightTypes.RECITED
+        }
+        if (type != null) marks += Mark(id.sura, id.ayah, id.word, type)
+        index++
       }
     }
     return marks

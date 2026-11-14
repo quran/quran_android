@@ -57,8 +57,11 @@ class MemorizePreferencesProvider(
       KEY_ON_MISTAKES -> preferences.hintOnMistakes
       KEY_ON_PAUSES -> preferences.hintOnPauses
       KEY_STRICT -> preferences.strictTashkeel
+      KEY_RECITE_MARK -> preferences.reciteMarkMistakes
+      KEY_RECITE_SAY -> preferences.reciteSayFix
       KEY_AUTO_DOWNLOAD -> preferences.autoDownload
       KEY_DOUBLE_CHECK -> preferences.doubleCheck
+      KEY_CONTRIBUTE -> preferences.contribute
       else -> defValue
     }
 
@@ -68,8 +71,11 @@ class MemorizePreferencesProvider(
         KEY_ON_MISTAKES -> preferences.hintOnMistakes = value
         KEY_ON_PAUSES -> preferences.hintOnPauses = value
         KEY_STRICT -> preferences.strictTashkeel = value
+        KEY_RECITE_MARK -> preferences.reciteMarkMistakes = value
+        KEY_RECITE_SAY -> preferences.reciteSayFix = value
         KEY_AUTO_DOWNLOAD -> preferences.autoDownload = value
         KEY_DOUBLE_CHECK -> preferences.doubleCheck = value
+        KEY_CONTRIBUTE -> preferences.contribute = value
       }
     }
 
@@ -144,6 +150,13 @@ class MemorizePreferencesProvider(
         summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
       })
     }
+    // reading with the text shown has its own switches (the reader sees the next word)
+    category.addPreference(SwitchPreferenceCompat(context).apply {
+      setup(KEY_RECITE_MARK, R.string.memorize_recite_mark_title, R.string.memorize_recite_mark_summary)
+    })
+    category.addPreference(SwitchPreferenceCompat(context).apply {
+      setup(KEY_RECITE_SAY, R.string.memorize_recite_say_title, R.string.memorize_recite_say_summary)
+    })
     category.addPreference(SwitchPreferenceCompat(context).apply {
       setup(KEY_STRICT, R.string.memorize_strict_title, R.string.memorize_strict_summary)
     })
@@ -159,6 +172,25 @@ class MemorizePreferencesProvider(
         context.getString(R.string.memorize_recording_ask),
       )
       summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
+    })
+    category.addPreference(SwitchPreferenceCompat(context).apply {
+      setup(KEY_CONTRIBUTE, R.string.memorize_contribute_title, R.string.memorize_contribute_summary)
+      setOnPreferenceChangeListener { preference, value ->
+        if (value == true) {
+          // consent: what is kept, and that nothing leaves the phone
+          AlertDialog.Builder(preference.context)
+            .setTitle(R.string.memorize_contribute_title)
+            .setMessage(R.string.memorize_contribute_message)
+            .setPositiveButton(R.string.memorize_contribute_turn_on) { _, _ ->
+              (preference as SwitchPreferenceCompat).isChecked = true
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+          false
+        } else {
+          true
+        }
+      }
     })
     category.addPreference(ListPreference(context).apply {
       setup(KEY_RECORDING_SPLIT, R.string.memorize_recording_split_title, null)
@@ -179,7 +211,7 @@ class MemorizePreferencesProvider(
       summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
     })
     category.addPreference(Preference(context).apply {
-      setup(KEY_RECORDINGS, R.string.memorize_recordings_title, R.string.memorize_recordings_summary)
+      setup(KEY_RECORDINGS, R.string.memorize_sessions_title, R.string.memorize_sessions_summary)
     })
     category.addPreference(SwitchPreferenceCompat(context).apply {
       setup(KEY_DOUBLE_CHECK, R.string.memorize_double_check_title, null)
@@ -404,6 +436,8 @@ class MemorizePreferencesProvider(
     const val KEY_ON_PAUSES = "memorize_on_pauses"
     const val KEY_VOICE = "memorize_voice"
     const val KEY_STRICT = "memorize_strict"
+    const val KEY_RECITE_MARK = "memorize_recite_mark"
+    const val KEY_RECITE_SAY = "memorize_recite_say"
     const val KEY_BACKGROUND = "memorize_background"
     const val KEY_MODEL = "memorize_model"
     const val KEY_AUTO_DOWNLOAD = "memorize_auto_download"
@@ -413,6 +447,7 @@ class MemorizePreferencesProvider(
     const val KEY_RECORDING_SPLIT = "memorize_recording_split"
     const val KEY_KEEP_RECORDINGS = "memorize_keep_recordings"
     const val KEY_RECORDINGS = "memorize_recordings"
+    const val KEY_CONTRIBUTE = "memorize_contribute"
     const val KEY_PRIVACY = "memorize_privacy"
   }
 }

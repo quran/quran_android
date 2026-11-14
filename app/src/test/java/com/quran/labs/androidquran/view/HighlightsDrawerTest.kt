@@ -10,6 +10,7 @@ import com.quran.data.model.AyahGlyph.AyahEndGlyph
 import com.quran.data.model.AyahGlyph.WordGlyph
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.highlight.HighlightType
+import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.SingleAyahHighlight
@@ -74,6 +75,26 @@ class HighlightsDrawerTest {
     assertThat(canvas.rects).containsExactly(RectF(600f, 0f, 900f, 50f))
   }
 
+  @Test
+  fun `at night an opaque background is toned down and one with its own alpha keeps it`() {
+    // #ff212529 and #1f000000
+    val opaque = HighlightType(9001, R.color.title_color, HighlightType.Mode.UNDERLAY)
+    val light = HighlightType(9002, R.color.ripple_dark, HighlightType.Mode.UNDERLAY)
+    val highlights: SortedMap<HighlightType, Set<AyahHighlight>> = TreeMap()
+    highlights[opaque] = setOf(SingleAyahHighlight(first.sura, first.ayah, 1))
+    highlights[light] = setOf(SingleAyahHighlight(second.sura, second.ayah, 1))
+    val canvas = RecordingCanvas()
+    val drawer = HighlightsDrawer({ ayahCoordinates }, { emptyMap() }, { highlights }, {}, isNightMode = { true })
+
+    drawer.draw(
+      PageCoordinates(1, RectF(0f, 0f, 1000f, 100f), emptyList(), emptyList()),
+      canvas,
+      ImageView(ApplicationProvider.getApplicationContext())
+    )
+
+    assertThat(canvas.alphas).containsExactly(0x66, 0x1F).inOrder()
+  }
+
   // a layout with one box per ayah and line (the newer Madani prints, Shemerly): no word glyphs
   private val ayahLines = listOf(AyahBounds(1, 1, 600, 0, 900, 50), AyahBounds(2, 2, 700, 50, 1000, 100))
   private val ayahLevel = AyahCoordinates(
@@ -119,9 +140,11 @@ class HighlightsDrawerTest {
   private class RecordingCanvas : Canvas(Bitmap.createBitmap(1000, 100, Bitmap.Config.ARGB_8888)) {
     val rects = mutableListOf<RectF>()
     val clipped = mutableListOf<RectF>()
+    val alphas = mutableListOf<Int>()
 
     override fun drawRect(rect: RectF, paint: android.graphics.Paint) {
       rects += RectF(rect)
+      alphas += android.graphics.Color.alpha(paint.color)
     }
 
     override fun clipOutRect(rect: RectF): Boolean {

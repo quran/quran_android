@@ -16,6 +16,7 @@ import com.quran.mobile.feature.memorize.model.SpeechModelStore
 import com.quran.mobile.feature.memorize.prompt.HintVoice
 import com.quran.mobile.feature.memorize.recording.Recorders
 import com.quran.mobile.feature.memorize.recording.Recording
+import com.quran.mobile.feature.memorize.recording.SessionEvent
 import com.quran.mobile.feature.memorize.recording.SessionRecorder
 import com.quran.mobile.feature.memorize.settings.MemorizePreferences
 import com.quran.mobile.feature.memorize.tracker.WordId
@@ -138,6 +139,125 @@ class MemorizeSessionControllerTest {
     assertThat(controller.state.value!!.cursor).isEqualTo(1)
     assertThat(controller.state.value!!.hinted).containsExactly(0)
     assertThat(voice.played).containsExactly(listOf(WordId(112, 1, 1)))
+  }
+
+  @Test
+  fun `reading hides nothing and the session follows the reader`() = runTest {
+    val controller = controller()
+    controller.start(SuraAyah(112, 1), MemorizeState.Mode.RECITE)
+    runCurrent()
+    assertThat(controller.state.value!!.isHidden(0)).isFalse()
+
+    recite("قُل", "هُوَ", "للَااهُ", "ءَحَدڇ")
+
+    val state = controller.state.value!!
+    assertThat(state.cursor).isEqualTo(4)
+    assertThat(state.isHidden(4)).isFalse()
+    assertThat(state.showMistakes).isTrue()
+  }
+
+  @Test
+  fun `a mistake while reading is marked, and the correct word said after the delay`() = runTest {
+    preferences.hintDelaySeconds = 2
+    val controller = controller()
+    controller.start(SuraAyah(112, 1), MemorizeState.Mode.RECITE)
+    runCurrent()
+    recite("قُل", "هُوَ", "سَمِعَ", "مُوسَاا", "كَتَبَ")
+    assertThat(controller.state.value!!.mistake).isEqualTo(2)
+
+    microphone.silence(3)
+    advanceTimeBy(5_000)
+
+    assertThat(voice.played.first()).containsExactly(WordId(112, 1, 3))
+    assertThat(controller.state.value!!.hinted).containsExactly(2)
+  }
+
+  @Test
+  fun `without saying the correct word, a mistake while reading is only marked`() = runTest {
+    preferences.hintDelaySeconds = 2
+    preferences.reciteSayFix = false
+    val controller = controller()
+    controller.start(SuraAyah(112, 1), MemorizeState.Mode.RECITE)
+    runCurrent()
+    recite("قُل", "هُوَ", "سَمِعَ", "مُوسَاا", "كَتَبَ")
+
+    microphone.silence(3)
+    advanceTimeBy(10_000)
+
+    assertThat(voice.played).isEmpty()
+    assertThat(controller.state.value!!.mistake).isEqualTo(2)
+  }
+
+  @Test
+  fun `without marking mistakes, a mistake while reading isn't shown but the word is still said`() = runTest {
+    preferences.hintDelaySeconds = 2
+    preferences.reciteMarkMistakes = false
+    val controller = controller()
+    controller.start(SuraAyah(112, 1), MemorizeState.Mode.RECITE)
+    runCurrent()
+    recite("قُل", "هُوَ", "سَمِعَ", "مُوسَاا", "كَتَبَ")
+    assertThat(controller.state.value!!.mistake).isNull()
+    assertThat(controller.state.value!!.showMistakes).isFalse()
+
+    microphone.silence(3)
+    advanceTimeBy(5_000)
+
+    assertThat(voice.played.first()).containsExactly(WordId(112, 1, 3))
+  }
+
+  @Test
+  fun `a reader who stops gets no help, the next word is in front of them`() = runTest {
+    preferences.hintDelaySeconds = 2
+    val controller = controller()
+    controller.start(SuraAyah(112, 1), MemorizeState.Mode.RECITE)
+    runCurrent()
+    recite("قُل", "هُوَ")
+
+    microphone.silence(3)
+    advanceTimeBy(10_000)
+
+    assertThat(voice.played).isEmpty()
+    assertThat(controller.state.value!!.cursor).isEqualTo(2)
+  }
+
+  @Test
+  fun `a session recorded to contribute keeps what the model heard and what the session did`() = runTest {
+    preferences.hintDelaySeconds = 2
+    val controller = controller()
+    controller.start(SuraAyah(112, 1), contribute = true)
+    runCurrent()
+    recite("قُل", "هُوَ", "سَمِعَ", "مُوسَاا", "كَتَبَ")
+    microphone.silence(3)
+    advanceTimeBy(5_000)
+    controller.stop()
+    runCurrent()
+
+    val recorder = recorders.started.single()
+    assertThat(recorder.keepsDetails).isTrue()
+    assertThat(recorder.heard).containsAtLeast("قُل", "هُوَ", "سَمِعَ").inOrder()
+    val kinds = recorder.details.map { it.kind }
+    assertThat(kinds).containsAtLeast(
+      SessionEvent.Kind.SPEECH, SessionEvent.Kind.MISTAKE, SessionEvent.Kind.MARK_SHOWN, SessionEvent.Kind.HINT,
+    ).inOrder()
+    assertThat(recorder.details.first { it.kind == SessionEvent.Kind.HINT }.word).isEqualTo(WordId(112, 1, 3))
+    // the hinted word had a mistake marked on it
+    assertThat(recorder.words).contains(WordId(112, 1, 3) to Recording.WordStatus.HINTED)
+    assertThat(recorder.mistakes).containsExactly(WordId(112, 1, 3), 1)
+    assertThat(recorder.events.last()).isEqualTo("finish")
+  }
+
+  @Test
+  fun `a session that isn't contributing tells its recording nothing more`() = runTest {
+    val controller = controller()
+    controller.start(SuraAyah(112, 1), record = true)
+    runCurrent()
+    recite("قُل", "هُوَ", "سَمِعَ", "مُوسَاا", "كَتَبَ")
+    controller.stop()
+    runCurrent()
+
+    val recorder = recorders.started.single()
+    assertThat(recorder.heard).isEmpty()
+    assertThat(recorder.details).isEmpty()
   }
 
   @Test
@@ -748,21 +868,42 @@ class MemorizeSessionControllerTest {
   private class FakeRecorders : Recorders {
     val started = mutableListOf<FakeRecorder>()
 
-    override fun start(start: SuraAyah, mode: MemorizeState.Mode): SessionRecorder = FakeRecorder().also { started += it }
+    override fun start(start: SuraAyah, mode: MemorizeState.Mode, contribute: Boolean, info: Map<String, Any>): SessionRecorder =
+      FakeRecorder(contribute).also { started += it }
   }
 
-  private class FakeRecorder : SessionRecorder {
+  private class FakeRecorder(override val keepsDetails: Boolean) : SessionRecorder {
     override val session = "recorded-session"
     var frames = 0
     val words = mutableListOf<Pair<WordId, Recording.WordStatus>>()
+    val mistakes = mutableMapOf<WordId, Int>()
     val events = mutableListOf<String>()
+    val heard = mutableListOf<String>()
+    val details = mutableListOf<SessionEvent>()
+
+    override fun heard(tokens: List<RecognizedToken>) {
+      heard += tokens.map { it.text }
+    }
+
+    override fun event(event: SessionEvent) {
+      details += event
+    }
 
     override fun write(samples: FloatArray) {
       frames++
     }
 
-    override fun word(word: WordId, startMs: Long?, endMs: Long?, status: Recording.WordStatus, phonemes: String, endsSura: Boolean) {
+    override fun word(
+      word: WordId,
+      startMs: Long?,
+      endMs: Long?,
+      status: Recording.WordStatus,
+      phonemes: String,
+      endsSura: Boolean,
+      mistakes: Int,
+    ) {
       words += word to status
+      if (mistakes > 0) this.mistakes[word] = mistakes
     }
 
     override fun pause() {

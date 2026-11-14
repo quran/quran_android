@@ -51,6 +51,30 @@ class RecordingPlayer @Inject constructor(
 
   /** Plays [recording], from where it was paused if it is the one loaded. */
   fun play(recording: Recording) {
+    val player = load(recording)
+    player.play()
+    tick()
+  }
+
+  /** Goes to [positionMs] of [recording] (loading it if needed), playing or not as it was. */
+  fun seekTo(recording: Recording, positionMs: Long) {
+    val player = load(recording)
+    val (part, offset) = partAt(recording.parts, positionMs)
+    player.seekTo(part, offset)
+    _playback.value = Playback(recording, position(recording, player), player.isPlaying)
+  }
+
+  /** Moves [deltaMs] forward (or back) in what is loaded. */
+  fun skip(deltaMs: Long) {
+    val playback = _playback.value ?: return
+    seekTo(playback.recording, (playback.positionMs + deltaMs).coerceIn(0, playback.recording.durationMs))
+  }
+
+  fun pause() {
+    player?.pause()
+  }
+
+  private fun load(recording: Recording): ExoPlayer {
     val player = player ?: ExoPlayer.Builder(context).build().also {
       it.setAudioAttributes(
         AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_SPEECH).build(),
@@ -65,12 +89,7 @@ class RecordingPlayer @Inject constructor(
       player.prepare()
     }
     _playback.value = Playback(recording, position(recording, player), player.isPlaying)
-    player.play()
-    tick()
-  }
-
-  fun pause() {
-    player?.pause()
+    return player
   }
 
   fun stop() {
@@ -100,7 +119,20 @@ class RecordingPlayer @Inject constructor(
   private fun position(recording: Recording, player: ExoPlayer): Long =
     recording.parts.take(player.currentMediaItemIndex).sumOf { it.durationMs } + player.currentPosition
 
-  private companion object {
-    const val TICK_MS = 250L
+  internal companion object {
+    // often enough for the word being heard to be lit as it is said
+    private const val TICK_MS = 100L
+
+    /** Which of [parts] (played one after the other) holds [positionMs], and where in it. */
+    fun partAt(parts: List<Recording.Part>, positionMs: Long): Pair<Int, Long> {
+      var start = 0L
+      parts.forEachIndexed { index, part ->
+        if (positionMs < start + part.durationMs || index == parts.lastIndex) {
+          return index to (positionMs - start).coerceIn(0, part.durationMs)
+        }
+        start += part.durationMs
+      }
+      return 0 to 0L
+    }
   }
 }

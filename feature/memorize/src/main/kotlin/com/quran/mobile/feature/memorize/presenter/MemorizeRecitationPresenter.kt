@@ -29,7 +29,11 @@ import com.quran.mobile.feature.memorize.session.MemorizeSessionController
 import com.quran.mobile.feature.memorize.session.MemorizeState
 import com.quran.mobile.feature.memorize.settings.MemorizePreferences
 import com.quran.mobile.feature.memorize.ui.MicButtonState
+import com.quran.mobile.feature.memorize.ui.ModeSheet
+import com.quran.mobile.feature.memorize.ui.ModeSheetState
+import com.quran.mobile.common.ui.core.R as CoreR
 import com.quran.recitation.presenter.RecitationPresenter
+import com.quran.recitation.presenter.RecitationStart
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -76,7 +80,7 @@ class MemorizeRecitationPresenter @Inject constructor(
   private var micButton: FloatingMicButton? = null
   // from the reading screen: the pages on screen and how to start a session there
   private var pagesOnScreen: () -> List<Int> = { emptyList() }
-  private var startOnScreen: (Boolean) -> Unit = {}
+  private var startOnScreen: (RecitationStart) -> Unit = {}
 
   override fun bind(what: Activity) {
     activityRef = WeakReference(what)
@@ -99,8 +103,8 @@ class MemorizeRecitationPresenter @Inject constructor(
     val micButton = FloatingMicButton(
       activity = what,
       preferences = preferences,
-      onToggle = { if (controller.state.value == null) startOnScreen(false) else controller.pauseOrResume() },
-      onChooseMode = { startOnScreen(true) },
+      onToggle = { if (controller.state.value == null) startOnScreen(RecitationStart.CHOOSE) else controller.pauseOrResume() },
+      onChooseMode = { startOnScreen(RecitationStart.CHOOSE_ALL) },
       onEnd = ::endSession,
       onReplay = { if (sessionPlayback.isPlaying) sessionPlayback.pause() else sessionPlayback.play() },
     ).also { it.attach() }
@@ -117,6 +121,7 @@ class MemorizeRecitationPresenter @Inject constructor(
           recording = it.recordingId != null,
           canReplay = it.recordingId != null,
           replaying = playback?.isPlaying == true && playback.recording.id == it.recordingId,
+          reciting = it.mode == MemorizeState.Mode.RECITE,
         )
       }
     }
@@ -154,9 +159,12 @@ class MemorizeRecitationPresenter @Inject constructor(
 
   override fun supportsHints(): Boolean = true
 
+  // nothing is hidden while reading with the text shown
+  override fun supportsAyahVisibility(): Boolean = controller.state.value?.mode != MemorizeState.Mode.RECITE
+
   override fun onHintRequested() = controller.requestHint()
 
-  override fun setReadingScreen(pagesOnScreen: () -> List<Int>, start: (showModeSelection: Boolean) -> Unit) {
+  override fun setReadingScreen(pagesOnScreen: () -> List<Int>, start: (RecitationStart) -> Unit) {
     this.pagesOnScreen = pagesOnScreen
     startOnScreen = start
   }
@@ -174,7 +182,7 @@ class MemorizeRecitationPresenter @Inject constructor(
 
   private fun lastAyah(page: Int) = quranInfo.getVerseRangeForPage(page).let { SuraAyah(it.endingSura, it.endingAyah) }
 
-  override fun startOrStopRecitation(startAyah: () -> SuraAyah, showModeSelection: Boolean) {
+  override fun startOrStopRecitation(startAyah: () -> SuraAyah, start: RecitationStart) {
     val state = controller.state.value
     if (state != null && state.isActive) {
       controller.pauseOrResume()
@@ -186,24 +194,42 @@ class MemorizeRecitationPresenter @Inject constructor(
     pendingStart = startAyah
     voiceChecked = false
     pendingRecord = null
-    if (showModeSelection) chooseMode() else {
-      pendingMode = MemorizeState.Mode.MEMORIZE
-      proceed()
+    when (start) {
+      RecitationStart.DEFAULT -> {
+        pendingMode = MemorizeState.Mode.MEMORIZE
+        proceed()
+      }
+      RecitationStart.CHOOSE -> chooseMode(MemorizeState.Mode.MEMORIZE, MemorizeState.Mode.RECITE)
+      RecitationStart.CHOOSE_ALL -> chooseMode(MemorizeState.Mode.MEMORIZE, MemorizeState.Mode.RECITE, MemorizeState.Mode.SALAH)
     }
   }
 
-  /** Long press: memorize on screen, or follow the recitation during salah. */
-  private fun chooseMode() {
+  /**
+   * The mode window: memorize (the page hidden) or recite (the text shown), and salah after a long
+   * press. With "Record my recitation" asking each time, the user decides there.
+   */
+  private fun chooseMode(vararg modes: MemorizeState.Mode) {
     val activity = activityRef.get() ?: return
-    val modes = arrayOf(MemorizeState.Mode.MEMORIZE, MemorizeState.Mode.SALAH)
-    AlertDialog.Builder(activity)
-      .setTitle(R.string.memorize_choose_mode)
-      .setItems(arrayOf(activity.getString(R.string.memorize_mode_memorize), activity.getString(R.string.memorize_mode_salah))) { _, which ->
-        pendingMode = modes[which]
+    val start = pendingStart?.invoke() ?: return
+    val names = activity.resources.getStringArray(CoreR.array.sura_names)
+    val position = activity.getString(R.string.memorize_sheet_position, names.getOrElse(start.sura - 1) { "${start.sura}" }, start.ayah)
+    val record = when {
+      preferences.contribute -> ModeSheetState.RecordLine.Contributing
+      preferences.recordingMode == MemorizePreferences.RecordingMode.ALWAYS -> ModeSheetState.RecordLine.Always
+      preferences.recordingMode == MemorizePreferences.RecordingMode.ASK -> ModeSheetState.RecordLine.Ask
+      else -> ModeSheetState.RecordLine.Off
+    }
+    ModeSheet.show(
+      activity,
+      ModeSheetState(position, modes.toList(), record),
+      onChoose = { mode, recordThis ->
+        pendingMode = mode
+        // decided in the window: no need to ask again
+        if (record == ModeSheetState.RecordLine.Ask) pendingRecord = recordThis
         proceed()
-      }
-      .setNegativeButton(android.R.string.cancel) { _, _ -> pendingStart = null }
-      .show()
+      },
+      onCancel = { pendingStart = null },
+    )
   }
 
   override fun endSession() {
@@ -248,6 +274,11 @@ class MemorizeRecitationPresenter @Inject constructor(
         // with automatic downloads, the session downloads the suras it reaches on its own
         if (preferences.autoDownload) proceed() else checkHintVoice(activity, start())
       }
+      // "Record and contribute" records every session
+      pendingRecord == null && preferences.contribute -> {
+        pendingRecord = true
+        proceed()
+      }
       pendingRecord == null -> when (preferences.recordingMode) {
         MemorizePreferences.RecordingMode.OFF -> {
           pendingRecord = false
@@ -264,12 +295,15 @@ class MemorizeRecitationPresenter @Inject constructor(
         // the user is expected where they asked to start (the page on screen, or an ayah they chose)
         val home = start()
         val pages = startPages()
+        val record = pendingRecord == true
+        val contribute = preferences.contribute
         if (pages == null) {
-          controller.start(home, pendingMode, record = pendingRecord == true)
+          controller.start(home, pendingMode, record = record, contribute = contribute)
         } else {
           val first = firstAyah(pages.first).takeIf { it <= home } ?: home
           controller.start(
-            first, pendingMode, record = pendingRecord == true, startAnywhereUntil = lastAyah(pages.last), home = home,
+            first, pendingMode, record = record, startAnywhereUntil = lastAyah(pages.last), home = home,
+            contribute = contribute,
           )
         }
         if (pendingMode == MemorizeState.Mode.SALAH) {
@@ -283,7 +317,7 @@ class MemorizeRecitationPresenter @Inject constructor(
   /** Offers to download the sura (or the whole Quran) in the hint voice so hints can be spoken offline. */
   private fun checkHintVoice(activity: Activity, start: SuraAyah) {
     val qari = voiceDownloads.voice()
-    if (!preferences.correctorEnabled || qari == null) {
+    if (!preferences.speaksHints(pendingMode) || qari == null) {
       proceed()
       return
     }

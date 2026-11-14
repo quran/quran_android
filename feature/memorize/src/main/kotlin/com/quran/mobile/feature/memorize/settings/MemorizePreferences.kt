@@ -5,6 +5,7 @@ import androidx.core.content.edit
 import com.quran.data.di.AppScope
 import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.mobile.feature.memorize.recording.RecordingSplit
+import com.quran.mobile.feature.memorize.session.MemorizeState
 import com.quran.mobile.feature.memorize.tracker.hint.HintConfig
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
@@ -35,6 +36,16 @@ class MemorizePreferences @Inject constructor(@param:ApplicationContext context:
     get() = prefs.getBoolean(KEY_ON_PAUSES, true)
     set(value) = prefs.edit { putBoolean(KEY_ON_PAUSES, value) }
 
+  /** Reading with the text shown (Recitation): mark wrong and skipped words. */
+  var reciteMarkMistakes: Boolean
+    get() = prefs.getBoolean(KEY_RECITE_MARK, true)
+    set(value) = prefs.edit { putBoolean(KEY_RECITE_MARK, value) }
+
+  /** Reading with the text shown (Recitation): after a mistake, say the correct word in the hint voice. */
+  var reciteSayFix: Boolean
+    get() = prefs.getBoolean(KEY_RECITE_SAY, true)
+    set(value) = prefs.edit { putBoolean(KEY_RECITE_SAY, value) }
+
   /** Treat wrong short vowels (tashkeel) as mistakes. Off by default: fewer false alarms. */
   var strictTashkeel: Boolean
     get() = prefs.getBoolean(KEY_STRICT, false)
@@ -57,6 +68,14 @@ class MemorizePreferences @Inject constructor(@param:ApplicationContext context:
     get() = prefs.getString(KEY_RECORDING, null)?.let { runCatching { RecordingMode.valueOf(it) }.getOrNull() }
       ?: RecordingMode.OFF
     set(value) = prefs.edit { putString(KEY_RECORDING, value.name) }
+
+  /**
+   * "Record and contribute": every session is recorded, with what the speech model heard, to help
+   * improve the models (kept on the phone). Off by default.
+   */
+  var contribute: Boolean
+    get() = prefs.getBoolean(KEY_CONTRIBUTE, false)
+    set(value) = prefs.edit { putBoolean(KEY_CONTRIBUTE, value) }
 
   enum class KeepRecordings {
     /** Until the user deletes them. */
@@ -109,8 +128,25 @@ class MemorizePreferences @Inject constructor(@param:ApplicationContext context:
     get() = prefs.getBoolean(KEY_DISCLAIMER, false)
     set(value) = prefs.edit { putBoolean(KEY_DISCLAIMER, value) }
 
-  fun hintConfig(salah: Boolean = false): HintConfig {
+  /** Whether hints may need the hint voice in [mode]. */
+  fun speaksHints(mode: MemorizeState.Mode): Boolean =
+    if (mode == MemorizeState.Mode.RECITE) reciteSayFix else correctorEnabled
+
+  fun hintConfig(mode: MemorizeState.Mode = MemorizeState.Mode.MEMORIZE): HintConfig {
     val delayMs = hintDelaySeconds * 1_000L
+    if (mode == MemorizeState.Mode.RECITE) {
+      // the reader sees the next word: no help when they stop, only the correct word after a
+      // mistake (the Recitation switches, not the corrector's)
+      return HintConfig(
+        delayMs = delayMs,
+        wordsPerHint = 1,
+        onMistakes = reciteMarkMistakes || reciteSayFix,
+        hintAfterMistake = reciteSayFix,
+        onPauses = false,
+        wordHintsBeforeLonger = Int.MAX_VALUE,
+      )
+    }
+    val salah = mode == MemorizeState.Mode.SALAH
     return HintConfig(
       delayMs = delayMs,
       wordsPerHint = wordsPerHint,
@@ -134,10 +170,13 @@ class MemorizePreferences @Inject constructor(@param:ApplicationContext context:
     const val KEY_ON_MISTAKES = "hint_on_mistakes"
     const val KEY_ON_PAUSES = "hint_on_pauses"
     const val KEY_STRICT = "strict_tashkeel"
+    const val KEY_RECITE_MARK = "recite_mark_mistakes"
+    const val KEY_RECITE_SAY = "recite_say_fix"
     const val KEY_DISCLAIMER = "disclaimer_accepted"
     const val KEY_PROMPT_QARI = "prompt_qari"
     const val KEY_AUTO_DOWNLOAD = "auto_download"
     const val KEY_RECORDING = "recording_mode"
+    const val KEY_CONTRIBUTE = "contribute"
     const val KEY_KEEP_RECORDINGS = "keep_recordings"
     const val KEY_RECORDING_SPLIT = "recording_split"
     const val KEY_MIC_X = "mic_button_x"

@@ -156,6 +156,7 @@ class AudioBarPresenter @Inject constructor(
       AudioBarState.RecitationListening(
         showTranscript = recitationPresenter.supportsTranscript(),
         showHint = recitationPresenter.supportsHints(),
+        showHideVerses = recitationPresenter.supportsAyahVisibility(),
       )
     } else if (isPlaying) {
       AudioBarState.RecitationPlaying(showTranscript = recitationPresenter.supportsTranscript())

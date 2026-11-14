@@ -18,6 +18,7 @@ import com.quran.mobile.feature.memorize.prompt.HintVoice
 import com.quran.mobile.feature.memorize.prompt.UpcomingSuras
 import com.quran.mobile.feature.memorize.recording.Recorders
 import com.quran.mobile.feature.memorize.recording.Recording
+import com.quran.mobile.feature.memorize.recording.SessionEvent
 import com.quran.mobile.feature.memorize.recording.SessionRecorder
 import com.quran.mobile.feature.memorize.settings.MemorizePreferences
 import com.quran.mobile.feature.memorize.tracker.PhonemeNormalizer
@@ -166,6 +167,11 @@ class MemorizeSessionController private constructor(
   private var extendingFor: String? = null
   // the basmala before a sura, once the passage goes beyond its first sura (see prepare)
   private var basmala: List<Pair<String, String>> = emptyList()
+  // how many times a mistake was marked on each word (passage index), for its recording
+  private val mistakeCounts = HashMap<Int, Int>()
+  // what a recording made to contribute was last told (see report)
+  private var reportedSpeech: Boolean? = null
+  private var reportedPrompting = false
 
   // the following are only touched on the main thread
   private var startJob: Job? = null
@@ -187,7 +193,8 @@ class MemorizeSessionController private constructor(
   val isActive: Boolean get() = _state.value?.isActive == true
 
   /**
-   * Starts a session at [startAyah]; with [record], the user's recitation is recorded too.
+   * Starts a session at [startAyah]; with [record], the user's recitation is recorded too, and with
+   * [contribute] the recording keeps what the speech model heard, to help improve the models.
    *
    * With [startAnywhereUntil] the user may start anywhere from [startAyah] up to that ayah (e.g. the
    * pages around the one on screen), and is expected at [home] (e.g. the first ayah on screen, where
@@ -199,12 +206,13 @@ class MemorizeSessionController private constructor(
     record: Boolean = false,
     startAnywhereUntil: SuraAyah? = null,
     home: SuraAyah = startAyah,
+    contribute: Boolean = false,
   ) {
     if (isActive || startJob?.isActive == true) return
     val sessionId = UUID.randomUUID().toString()
     startJob = scope.launch {
       try {
-        prepare(sessionId, startAyah, mode, record, startAnywhereUntil, home)
+        prepare(sessionId, startAyah, mode, record || contribute, contribute, startAnywhereUntil, home)
       } catch (e: CancellationException) {
         throw e
       } catch (_: Throwable) {
@@ -221,6 +229,7 @@ class MemorizeSessionController private constructor(
     startAyah: SuraAyah,
     mode: MemorizeState.Mode,
     record: Boolean,
+    contribute: Boolean,
     startAnywhereUntil: SuraAyah?,
     home: SuraAyah,
   ): Boolean {
@@ -231,13 +240,14 @@ class MemorizeSessionController private constructor(
       passage.words.indexOfLast { it.id.sura < end.sura || (it.id.sura == end.sura && it.id.ayah <= end.ayah) } + 1
     } ?: 0
     val homeIndex = passage.words.indexOfFirst { it.id.sura == home.sura && it.id.ayah == home.ayah }.coerceAtLeast(0)
-    val recorder = if (record) recorders.start(startAyah, mode) else null
+    val recorder = if (record) recorders.start(startAyah, mode, contribute, if (contribute) sessionInfo(mode) else emptyMap()) else null
     this.recorder = recorder
     _state.value = MemorizeState(
       sessionId, passage, System.currentTimeMillis(), MemorizeState.Status.PREPARING, mode, recordingId = recorder?.session,
       cursor = homeIndex,
       started = startWindow <= 1,
       firstWord = homeIndex,
+      showMistakes = mode != MemorizeState.Mode.RECITE || preferences.reciteMarkMistakes,
     )
     publishSession()
     // Listen right away: loading the model takes seconds on slow phones, and what the user says
@@ -268,6 +278,9 @@ class MemorizeSessionController private constructor(
       }
       wordLines.clear()
       wordLines.putAll(pageLines)
+      mistakeCounts.clear()
+      reportedSpeech = null
+      reportedPrompting = false
       extendingFor = null
       val words = passage.words.map { PhonemeNormalizer.normalize(it.wasl, keepShortVowels) }
       val fatiha = fatihaWords.map { PhonemeNormalizer.normalize(it.wasl, keepShortVowels) }
@@ -289,7 +302,7 @@ class MemorizeSessionController private constructor(
         "start $mode ${passage.words.first().id}..${passage.words.last().id} (${passage.words.size} words) " +
           "window=$startWindow home=$homeIndex ${passage.words[homeIndex].id} record=$record"
       }
-      scheduler = HintScheduler(preferences.hintConfig(salah = salah))
+      scheduler = HintScheduler(preferences.hintConfig(mode))
       silentSinceMs = -1L
       pauseHandled = true
       gapHandled = true
@@ -336,11 +349,11 @@ class MemorizeSessionController private constructor(
   fun stop() {
     startJob?.cancel()
     startJob = null
-    finishRecording()
     hintGeneration.incrementAndGet()
     promptPlayer.stop()
     prompting = false
     stopListening()
+    finishRecording()
     scope.launch(worker) {
       releaseEngine()
       follower = null
@@ -403,7 +416,9 @@ class MemorizeSessionController private constructor(
     val scheduler = scheduler ?: return
     // everything the microphone heard, hints included
     recorder?.write(frame.samples)
+    val frameStartMs = heardMs
     heardMs += frame.samples.size * 1000L / SAMPLE_RATE
+    reportEdges(frameStartMs, frame.speech)
     heard?.let { buffer ->
       // silence while a hint plays: the check must not hear Husary say the word
       for (x in frame.samples) buffer[(heardEnd++ % buffer.size).toInt()] = if (prompting) 0f else x
@@ -416,6 +431,7 @@ class MemorizeSessionController private constructor(
     val now = now()
     scheduler.onSpeechActivity(now, frame.speech)
     val tokens = stream.accept(frame.samples, speech = frame.speech)
+    if (tokens.isNotEmpty()) recorder?.takeIf { it.keepsDetails }?.heard(tokens)
     if (traceTo != null) {
       if (frame.speech != tracedSpeech) {
         tracedSpeech = frame.speech
@@ -475,6 +491,7 @@ class MemorizeSessionController private constructor(
     val calling = callState.isInCall()
     if (calling == inCall) return
     inCall = calling
+    report(if (calling) SessionEvent.Kind.CALL_STARTED else SessionEvent.Kind.CALL_ENDED, heardMs)
     if (calling) {
       // a hint cut short never finishes: stop waiting for it
       hintGeneration.incrementAndGet()
@@ -520,14 +537,24 @@ class MemorizeSessionController private constructor(
           missed += event.index
           recordWord(passage, event.index, null, null, Recording.WordStatus.MISSED)
         }
-        is TrackerEvent.Repetition -> scheduler.onRepetition(now())
-        is TrackerEvent.Mistake -> if (scheduler.isArmed) {
-          effects += scheduler.onMistake(now(), passage.words[event.index].id)
-        } else if (event.kind == TrackerEvent.Mistake.Kind.ELSEWHERE) {
-          // e.g. in salah, before the passage: shown, not spoken
-          update { it.copy(mistake = event.index) }
+        is TrackerEvent.Repetition -> {
+          scheduler.onRepetition(now())
+          report(SessionEvent.Kind.REPETITION, event.timeMs, passage.words.getOrNull(event.index)?.id) {
+            passage.words.getOrNull(event.lastIndex)?.id?.let { "${it.sura}:${it.ayah}:${it.word}" }
+          }
         }
-        is TrackerEvent.NonTarget -> Unit
+        is TrackerEvent.Mistake -> {
+          report(SessionEvent.Kind.MISTAKE, event.timeMs, passage.words.getOrNull(event.index)?.id) {
+            event.kind.name.lowercase(Locale.ROOT)
+          }
+          if (scheduler.isArmed) {
+            effects += scheduler.onMistake(now(), passage.words[event.index].id)
+          } else if (event.kind == TrackerEvent.Mistake.Kind.ELSEWHERE) {
+            // e.g. in salah, before the passage: shown, not spoken
+            showMistake(event.index)
+          }
+        }
+        is TrackerEvent.NonTarget -> report(SessionEvent.Kind.PHRASE, event.timeMs) { event.kind }
       }
     }
     val progressed = events.any { it is TrackerEvent.WordRecited || it is TrackerEvent.WordMissed }
@@ -618,12 +645,18 @@ class MemorizeSessionController private constructor(
     for (effect in effects) {
       trace { "hint scheduler: $effect" }
       when (effect) {
-        is HintScheduler.Effect.MarkMistake -> if (!checkMistake(effect.word)) update { state ->
-          state.copy(mistake = state.passage.words.indexOfFirst { it.id == effect.word }.takeIf { it >= 0 })
+        is HintScheduler.Effect.MarkMistake -> if (!checkMistake(effect.word)) {
+          _state.value?.passage?.words?.indexOfFirst { it.id == effect.word }?.takeIf { it >= 0 }?.let { showMistake(it) }
         }
-        is HintScheduler.Effect.ClearMistake -> update { it.copy(mistake = null) }
+        is HintScheduler.Effect.ClearMistake -> {
+          if (_state.value?.mistake != null) report(SessionEvent.Kind.MARK_CLEARED, heardMs, effect.word)
+          update { it.copy(mistake = null) }
+        }
         is HintScheduler.Effect.GiveHint -> if (!checkHint(effect.count, effect.extent)) giveHint(effect.count, effect.extent)
-        HintScheduler.Effect.GiveUp -> gaveUp = true
+        HintScheduler.Effect.GiveUp -> {
+          gaveUp = true
+          report(SessionEvent.Kind.GAVE_UP, heardMs)
+        }
       }
     }
   }
@@ -637,6 +670,7 @@ class MemorizeSessionController private constructor(
     val hinted = (first until follower.cursor).toList()
     if (hinted.isEmpty()) return
     hinted.forEach { recordWord(passage, it, heardMs, null, Recording.WordStatus.HINTED) }
+    report(SessionEvent.Kind.HINT, heardMs, passage.words[first].id) { hinted.size.toString() }
     scheduler.onHintStarted()
     update { it.copy(cursor = follower.cursor, hinted = it.hinted + hinted, mistake = null, started = follower.started) }
     val words = hinted.map { passage.words[it].id }.filter { it.sura == passage.words[first].id.sura }
@@ -698,8 +732,8 @@ class MemorizeSessionController private constructor(
 
   private fun finish() {
     scope.launch {
-      finishRecording()
       stopListening()
+      finishRecording()
       update { it.copy(status = MemorizeState.Status.FINISHED, mistake = null) }
       recitationEventPresenter.onListeningStateChange(false)
       // the passage is done; the user may keep reading, but the model's memory isn't needed
@@ -756,12 +790,14 @@ class MemorizeSessionController private constructor(
   /** Runs [check] on what the user said, then [then] on the worker with whether [index] was said. */
   private fun doubleCheck(check: DoubleCheck, passage: Passage, index: Int, then: (Boolean) -> Unit) {
     val audio = heardAudio()
+    val askedAtMs = heardMs
     scope.launch(checker) {
       val said = runCatching { check.said(audio, passage, index) }.getOrDefault(false)
       val ms = check.lastMs
       preferences.recordDoubleCheckMs(ms)
       withContext(worker) {
         trace { "double-check ${passage.words[index].id}: ${if (said) "said" else "not said"} ($ms ms)" }
+        report(SessionEvent.Kind.DOUBLE_CHECK, askedAtMs, passage.words[index].id) { "${if (said) "said" else "not said"} $ms ms" }
         then(said)
       }
     }
@@ -785,7 +821,7 @@ class MemorizeSessionController private constructor(
         if (this@MemorizeSessionController.follower === follower && follower.cursor == index && !said &&
           scheduler?.isArmed == true
         ) {
-          update { it.copy(mistake = index) }
+          showMistake(index)
         }
       }
     }
@@ -832,11 +868,70 @@ class MemorizeSessionController private constructor(
     return true
   }
 
+  /** Main thread, once listening has stopped. */
   private fun finishRecording() {
     val recorder = recorder ?: return
     this.recorder = null
-    recorder.finish()
+    if (!recorder.keepsDetails) {
+      recorder.finish()
+      return
+    }
+    // after the last frame: what the recognizer still had of the last words goes with the recording
+    scope.launch(worker) {
+      runCatching { stream?.finish() }.getOrNull()?.takeIf { it.isNotEmpty() }?.let { recorder.heard(it) }
+      recorder.finish()
+    }
   }
+
+  /** Worker only. Marks the word at [index] as a mistake (if marks are shown), and counts it. */
+  private fun showMistake(index: Int) {
+    val state = _state.value ?: return
+    if (state.mistake == index) return
+    mistakeCounts[index] = (mistakeCounts[index] ?: 0) + 1
+    report(SessionEvent.Kind.MARK_SHOWN, heardMs, state.passage.words.getOrNull(index)?.id) {
+      if (state.showMistakes) null else "not shown"
+    }
+    update { if (it.showMistakes) it.copy(mistake = index) else it }
+  }
+
+  /** Worker only. Tells a recording made to contribute what the session did at [atMs]. */
+  private inline fun report(kind: SessionEvent.Kind, atMs: Long, word: WordId? = null, detail: () -> String? = { null }) {
+    val recorder = recorder?.takeIf { it.keepsDetails } ?: return
+    recorder.event(SessionEvent(atMs, kind, word, detail()))
+  }
+
+  /** Worker only. When the user started or stopped speaking, and when a hint started or ended playing. */
+  private fun reportEdges(atMs: Long, speech: Boolean) {
+    if (recorder?.keepsDetails != true) return
+    if (speech != reportedSpeech) {
+      reportedSpeech = speech
+      report(if (speech) SessionEvent.Kind.SPEECH else SessionEvent.Kind.SILENCE, atMs)
+    }
+    val playing = prompting
+    if (playing != reportedPrompting) {
+      reportedPrompting = playing
+      report(if (playing) SessionEvent.Kind.PROMPT_STARTED else SessionEvent.Kind.PROMPT_ENDED, atMs)
+    }
+  }
+
+  /** What a recording made to contribute keeps about the session: its settings and speech model. */
+  private fun sessionInfo(mode: MemorizeState.Mode): Map<String, Any> = mapOf(
+    "mode" to mode.name.lowercase(Locale.ROOT),
+    "model" to models.spec.id,
+    "model_sha256" to models.spec.model.sha256,
+    "double_check" to preferences.doubleCheck,
+    "settings" to mapOf(
+      "hint_delay_s" to preferences.hintDelaySeconds,
+      "words_per_hint" to preferences.wordsPerHint,
+      "corrector" to preferences.correctorEnabled,
+      "hint_on_mistakes" to preferences.hintOnMistakes,
+      "hint_on_pauses" to preferences.hintOnPauses,
+      "strict_tashkeel" to preferences.strictTashkeel,
+      "recite_mark_mistakes" to preferences.reciteMarkMistakes,
+      "recite_say_fix" to preferences.reciteSayFix,
+      "hint_voice" to preferences.promptQariId,
+    ),
+  )
 
   /** Tells the recording (if any) what happened to the word at [index], in the session's audio time. */
   private fun recordWord(passage: Passage, index: Int, startMs: Long?, endMs: Long?, status: Recording.WordStatus) {
@@ -844,7 +939,10 @@ class MemorizeSessionController private constructor(
     val word = passage.words.getOrNull(index) ?: return
     // the passage always holds whole suras: its last word ends one too
     val endsSura = passage.words.getOrNull(index + 1)?.id?.sura != word.id.sura
-    recorder.word(word.id, startMs, endsSura = endsSura, endMs = endMs, status = status, phonemes = word.wasl)
+    recorder.word(
+      word.id, startMs, endsSura = endsSura, endMs = endMs, status = status, phonemes = word.wasl,
+      mistakes = mistakeCounts[index] ?: 0,
+    )
   }
 
   // ------------------------------------------------------------------------------------ state
@@ -901,7 +999,7 @@ class MemorizeSessionController private constructor(
       clock: () -> Long,
       lines: LineSource = LineSource { emptyMap() },
       upcoming: UpcomingSuras = UpcomingSuras {},
-      recorders: Recorders = Recorders { _, _ -> null },
+      recorders: Recorders = Recorders { _, _, _, _ -> null },
       lookaheadWords: Int = LOOKAHEAD_WORDS,
       trace: ((String) -> Unit)? = null,
       doubleChecks: DoubleCheckSource = DoubleCheckSource { null },
