@@ -51,15 +51,17 @@ RETASY_SURAS = {"Al-Faatihah": 1, "Al-Ikhlas": 112, "An-Nas": 114, "Ayat al-Kurs
                 "Quraish": 106, "Al-Feel": 105, "Al-Maun": 107, "An-Nasr": 110, "At-Takathur": 102,
                 "Al-Qariah": 101}
 
-DIACRITICS = re.compile(r"[ؐ-ًؚ-ٰٟۖ-ۭـ࣓-ࣿ]")
+# written as escapes: typed in Arabic, the ranges are easily reversed by the editor's bidi
+DIACRITICS = re.compile(r"[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640\u08D3-\u08FF]")
 UNIFY = str.maketrans({"أ": "ء", "إ": "ء", "ؤ": "ء", "ئ": "ء", "آ": "ءا", "ٱ": "ا", "ى": "ي", "ة": "ه",
-                       "ٰ": "ا", "ۥ": "و", "ۦ": "ي"})
+                       "ٰ": "ا", "ۥ": "و", "ۦ": "ي", "\u0654": "ء",
+                       "ی": "ي", "ک": "ك"})
 
 
 def skeleton(text):
     """Letters only, spelling variants unified (Uthmani and standard spelling compare equal)."""
     text = DIACRITICS.sub("", text.translate(UNIFY))
-    return re.sub(r"(.)\1+", r"\1", re.sub(r"[^ء-ي]", "", text))
+    return re.sub(r"(.)\1+", r"\1", re.sub(r"[^\u0621-\u064A]", "", text))
 
 
 def decode(data=None, path=None, start=0.0, duration=None):
@@ -94,12 +96,31 @@ class Lexicon:
                      text.execute("select sura, ayah, group_concat(uthmani, ' ') from words group by sura, ayah")}
 
     def find(self, sura, text):
-        """The ayah of `sura` whose text the clip's text matches."""
+        """The ayah of `sura` whose text the clip's text is (or is part of). Standard spelling differs
+        from the Uthmani in a few letters (الرحمن / ٱلرَّحْمَـٰنِ): failing an exact match, the closest
+        within 1 letter in 8."""
         sk = skeleton(text)
-        for (s, a), t in self.text.items():
-            if s == sura and (t == sk or (len(sk) >= 8 and sk in t)):
+        if not sk:
+            return None
+        ayat = [(a, t) for (s, a), t in self.text.items() if s == sura]
+        for a, t in ayat:
+            if t == sk or (len(sk) >= 8 and sk in t):
                 return a
+        best = min(ayat, key=lambda at: (part_distance(sk, at[1]) + abs(len(at[1]) - len(sk)) * (len(sk) < 8), at[0]))
+        if part_distance(sk, best[1]) <= len(sk) / 8 and (len(sk) >= 8 or len(best[1]) == len(sk)):
+            return best[0]
         return None
+
+
+def part_distance(a, b):
+    """Edit distance from `a` to the closest part of `b`."""
+    prev = [0] * (len(b) + 1)
+    for i, x in enumerate(a, 1):
+        cur = [i] + [0] * len(b)
+        for j, y in enumerate(b, 1):
+            cur[j] = min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (x != y))
+        prev = cur
+    return min(prev)
 
 
 def qud_clips(data, lex):
@@ -231,7 +252,8 @@ def non_native_clips(data, lex):
 
     def add(r, expect, what):
         sura = RETASY_SURAS[r["Surah"]]
-        ayah = lex.find(sura, r["Aya"])
+        # Ayat al-Kursi's phrases recur nearby (2:284 opens like a phrase of it)
+        ayah = 255 if r["Surah"] == "Ayat al-Kursi" else lex.find(sura, r["Aya"])
         if ayah is None:  # e.g. the isti'adha
             return False
         who = ", ".join(x for x in (r["reciter_country"], r["reciter_gender"], r["reciter_age"])

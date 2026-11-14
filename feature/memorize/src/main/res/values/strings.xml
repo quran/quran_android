@@ -172,4 +172,8 @@
     <item quantity="one">%1$d session</item>
     <item quantity="other">%1$d sessions</item>
   </plurals>
+  <!-- no verse left out; words missed inside a verse -->
+  <string name="memorize_missed_words_title">Words missed inside a verse</string>
+  <string name="memorize_missed_words_loose">Let a word or two pass (marked as skipped)</string>
+  <string name="memorize_missed_words_strict">Every word must be heard</string>
 </resources>

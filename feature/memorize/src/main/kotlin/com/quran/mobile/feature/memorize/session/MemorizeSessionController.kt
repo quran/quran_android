@@ -24,6 +24,7 @@ import com.quran.mobile.feature.memorize.settings.MemorizePreferences
 import com.quran.mobile.feature.memorize.tracker.PhonemeNormalizer
 import com.quran.mobile.feature.memorize.tracker.RecitationTracker
 import com.quran.mobile.feature.memorize.tracker.TimedPhoneme
+import com.quran.mobile.feature.memorize.tracker.TrackerConfig
 import com.quran.mobile.feature.memorize.tracker.TrackerEvent
 import com.quran.mobile.feature.memorize.tracker.WordId
 import com.quran.mobile.feature.memorize.tracker.engine.RecitationEngine
@@ -284,12 +285,23 @@ class MemorizeSessionController private constructor(
       extendingFor = null
       val words = passage.words.map { PhonemeNormalizer.normalize(it.wasl, keepShortVowels) }
       val fatiha = fatihaWords.map { PhonemeNormalizer.normalize(it.wasl, keepShortVowels) }
+      // which ayah each word is in: restarts are found behind, and (but in salah) no ayah is left out
+      val ayahs = passage.words.map { ayahId(it.id) }
       val engine = engine ?: engineFactory.create(models).also { engine = it }
       stream = engine.newStream()
       follower = if (salah) {
-        SalahFollower(SalahFlow(words, fatiha, phrases, startWindow = startWindow, startIndex = homeIndex))
+        SalahFollower(
+          SalahFlow(
+            words, fatiha, phrases, startWindow = startWindow, startIndex = homeIndex,
+            passageAyahs = ayahs, fatihaAyahs = fatihaWords.map { ayahId(it.id) },
+          )
+        )
       } else {
-        MemorizeFollower(RecitationTracker(words, startIndex = homeIndex, phrases = phrases, startWindow = startWindow))
+        MemorizeFollower(
+          RecitationTracker(
+            words, trackerConfig(), startIndex = homeIndex, phrases = phrases, startWindow = startWindow, ayahs = ayahs,
+          )
+        )
       }
       // the session's clock starts now (the trace's times too)
       heardMs = 0L
@@ -385,8 +397,9 @@ class MemorizeSessionController private constructor(
         while (isActive) {
           delay(TICK_MS)
           if (ticks++ % CALL_CHECK_TICKS == 0) checkCall()
-          // before the user started, only starting elsewhere gets a hint (the first word)
-          if (follower?.started != false || _state.value?.mistake != null) {
+          // before the user started, only starting elsewhere gets a hint (the first word), and not
+          // while what they recite is heard at two places and the start waits for the difference
+          if ((follower?.started != false || _state.value?.mistake != null) && follower?.startPending != true) {
             scheduler?.onTick(now())?.let { applyEffects(it) }
           }
         }
@@ -538,7 +551,7 @@ class MemorizeSessionController private constructor(
           recordWord(passage, event.index, null, null, Recording.WordStatus.MISSED)
         }
         is TrackerEvent.Repetition -> {
-          scheduler.onRepetition(now())
+          effects += scheduler.onRepetition(now())
           report(SessionEvent.Kind.REPETITION, event.timeMs, passage.words.getOrNull(event.index)?.id) {
             passage.words.getOrNull(event.lastIndex)?.id?.let { "${it.sura}:${it.ayah}:${it.word}" }
           }
@@ -606,7 +619,7 @@ class MemorizeSessionController private constructor(
         val moreLines = lines.forSuras(more.words.first().id.sura..more.words.last().id.sura)
         // the session may have ended (or another started) while the suras were read
         if (_state.value?.id != session || this@MemorizeSessionController.follower !== follower) return@launch
-        follower.extend(more.words.map { PhonemeNormalizer.normalize(it.wasl, keepShortVowels) })
+        follower.extend(more.words.map { PhonemeNormalizer.normalize(it.wasl, keepShortVowels) }, more.words.map { ayahId(it.id) })
         trace { "passage extended to ${more.words.last().id}" }
         wordLines.putAll(moreLines)
         update { if (it.id == session) it.copy(passage = it.passage + more) else it }
@@ -656,7 +669,13 @@ class MemorizeSessionController private constructor(
         HintScheduler.Effect.GiveUp -> {
           gaveUp = true
           report(SessionEvent.Kind.GAVE_UP, heardMs)
+          // ten hints and the user went on regardless: rather than stay where they aren't, follow
+          // them (what was never heard is marked as skipped)
+          follower?.releaseHold()
         }
+        // no hint will give the word the user went on past: after the delay, follow them (what
+        // they left out is marked as skipped)
+        HintScheduler.Effect.FollowOn -> follower?.releaseHold()
       }
     }
   }
@@ -966,6 +985,16 @@ class MemorizeSessionController private constructor(
 
   private fun now(): Long = clock()
 
+  /** One id per ayah, for the tracker. */
+  private fun ayahId(word: WordId): Int = word.sura * 1000 + word.ayah
+
+  /**
+   * Outside salah no ayah may be left out: the tracker holds at the first word not recited. Inside an
+   * ayah, a word or two the recognizer missed may pass, unless every word must be heard.
+   */
+  private fun trackerConfig(): TrackerConfig =
+    TrackerConfig(skipAyat = false, maxMissedWords = if (preferences.everyWordHeard) 0 else MISSED_WORDS_IN_AYAH)
+
   /** Diagnostics, built only when they're on; worker only. */
   private inline fun trace(message: () -> String) {
     traceTo?.let { it("t=%.1fs %s".format(Locale.ROOT, heardMs / 1000.0, message())) }
@@ -1017,6 +1046,8 @@ class MemorizeSessionController private constructor(
     private const val SAMPLE_RATE = 16_000
     /** Words kept loaded ahead of the user: several pages, so the next sura is always there. */
     private const val LOOKAHEAD_WORDS = 300
+    /** Words in a row the recognizer may miss inside an ayah, when not every word must be heard. */
+    private const val MISSED_WORDS_IN_AYAH = 2
     /** At most this many words of an ayah are given at once when its lines aren't known. */
     private const val UNKNOWN_LINE_WORDS = 8
 

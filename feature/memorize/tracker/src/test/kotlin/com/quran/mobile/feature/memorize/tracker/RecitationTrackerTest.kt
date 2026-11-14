@@ -119,14 +119,15 @@ class RecitationTrackerTest {
   }
 
   @Test
-  fun `a phrase that is repeated is placed where the user is expected`() {
-    // the same three words twice in the window, the user expected at the second
-    val words = listOf("yaqawmi", "budullaha", "malakum", "wailaa", "thamuda", "yaqawmi", "budullaha", "malakum")
+  fun `a phrase that is repeated is placed by the words that follow it`() {
+    // the same three words twice in the window, followed by different words
+    val words = listOf("yaqawmi", "budullaha", "malakum", "wailaa", "thamuda", "yaqawmi", "budullaha", "malakum", "minilahin")
     val tracker = RecitationTracker(words, startIndex = 3, startWindow = words.size)
 
-    val events = tracker.say("yaqawmibudullahamalakum")
+    // which of the two isn't known yet
+    assertThat(recited(tracker.say("yaqawmibudullahamalakum"))).isEmpty()
 
-    assertThat(recited(events)).containsExactly(5, 6, 7).inOrder()
+    assertThat(recited(tracker.say("minilahin"))).containsExactly(5, 6, 7, 8).inOrder()
   }
 
   @Test

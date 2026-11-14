@@ -93,6 +93,16 @@ class HintSchedulerTest {
   }
 
   @Test
+  fun `going back to repeat after a mistake takes its mark down and waits`() {
+    val scheduler = armed()
+    scheduler.onMistake(1_000, word)
+
+    assertThat(scheduler.onRepetition(2_000)).containsExactly(Effect.ClearMistake(word))
+    // the hint for the mistake no longer comes 4 s after it
+    assertThat(scheduler.onTick(5_000)).isEmpty()
+  }
+
+  @Test
   fun `pauses at the end of an ayah are ignored when configured`() {
     val scheduler = HintScheduler(HintConfig(ayahBoundaryDelayMs = null))
     scheduler.arm(0, atAyahBoundary = false)
@@ -139,6 +149,46 @@ class HintSchedulerTest {
     assertThat(scheduler.nextDeadlineMs()).isNull()
     scheduler.onMistake(1_000, word)
     assertThat(scheduler.nextDeadlineMs()).isEqualTo(5_000)
+  }
+
+  @Test
+  fun `with mistake hints off a mistake isn't marked and the user is followed on after the delay`() {
+    val scheduler = HintScheduler(HintConfig(onMistakes = false, onPauses = false))
+    scheduler.arm(0, atAyahBoundary = false)
+
+    assertThat(scheduler.onMistake(1_000, word)).isEmpty()
+    assertThat(scheduler.onTick(4_999)).isEmpty()
+    assertThat(scheduler.onTick(5_000)).containsExactly(Effect.FollowOn)
+    // once
+    assertThat(scheduler.onTick(100_000)).isEmpty()
+    assertThat(scheduler.isArmed).isTrue()
+  }
+
+  @Test
+  fun `with mistake hints off going back to the word waits again, and reciting it cancels`() {
+    val scheduler = HintScheduler(HintConfig(onMistakes = false, onPauses = false))
+    scheduler.arm(0, atAyahBoundary = false)
+    scheduler.onMistake(1_000, word)
+
+    scheduler.onRepetition(3_000)
+    assertThat(scheduler.onTick(5_000)).isEmpty()
+    assertThat(scheduler.nextDeadlineMs()).isEqualTo(7_000)
+
+    scheduler.onWordRecited(6_000, atAyahBoundary = false)
+    assertThat(scheduler.nextDeadlineMs()).isNull()
+  }
+
+  @Test
+  fun `with mistake hints off pause hints still come`() {
+    val scheduler = HintScheduler(HintConfig(onMistakes = false))
+    scheduler.arm(0, atAyahBoundary = false)
+    scheduler.onMistake(1_000, word)
+
+    assertThat(scheduler.onTick(4_000)).containsExactly(Effect.GiveHint(1))
+    // the hint gave the word: nothing is left to follow the user past
+    scheduler.onHintFinished(5_000)
+    assertThat(scheduler.onTick(8_999)).isEmpty()
+    assertThat(scheduler.onTick(9_000)).containsExactly(Effect.GiveHint(1))
   }
 
   @Test
@@ -252,6 +302,8 @@ class HintSchedulerTest {
     scheduler.arm(0, atAyahBoundary = false)
 
     assertThat(scheduler.onMistake(1_000, word)).containsExactly(Effect.MarkMistake(word))
+    // no hint: after the delay the user may be followed on, and the mark stays
+    assertThat(scheduler.onTick(5_000)).containsExactly(Effect.FollowOn)
     assertThat(scheduler.onTick(60_000)).isEmpty()
     // the mark goes once the user recovers
     assertThat(scheduler.onWordRecited(61_000, atAyahBoundary = false)).containsExactly(Effect.ClearMistake(word))

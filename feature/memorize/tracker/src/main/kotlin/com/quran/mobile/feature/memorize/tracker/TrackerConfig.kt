@@ -38,6 +38,16 @@ data class TrackerConfig(
    * phrase that went unrecognized), so a takbir is still recognized after them.
    */
   val phraseGarbageCap: Double = 1.0,
+  /**
+   * Whether the user may leave out ayat: catching up may then pass over any number of words (salah,
+   * where it is how a rak'ah picks the passage up again). Without it (memorization), a catch-up may
+   * pass over at most [maxMissedWords] words in a row and never more than half of an ayah; otherwise
+   * the tracker holds at the first word not recited (needs the words' ayat).
+   */
+  val skipAyat: Boolean = true,
+  val maxMissedWords: Int = Int.MAX_VALUE,
+  /** How far back (in words) a restart is looked for. */
+  val farBackWords: Int = 40,
 ) {
   fun allowance(length: Int): Double = when {
     length <= 3 -> 0.5

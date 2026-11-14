@@ -12,7 +12,8 @@ import com.quran.mobile.feature.memorize.tracker.WordId
  * the user still doesn't continue on their own, another hint follows after the same delay, and so
  * on; after [HintConfig.wordHintsBeforeLonger] of them each hint gives the rest of the ayah or of
  * the line ([Extent.AYAH_OR_LINE]). A pause without a mistake (the user is stuck) is treated the
- * same way once the user has been silent long enough.
+ * same way once the user has been silent long enough. When mistakes aren't hinted, a user who went
+ * on past one is followed on after the same delay ([Effect.FollowOn]).
  *
  * The scheduler is a pure state machine: every input carries the current time and every output is
  * returned as a list of [Effect]s, so it can be driven by a real clock on the device and by a fake
@@ -32,6 +33,13 @@ class HintScheduler(private val config: HintConfig) {
 
     /** Too many hints in a row without the user continuing: stop hinting until re-anchored. */
     data object GiveUp : Effect
+
+    /**
+     * The user went on past a mistake that no hint will settle (mistakes aren't hinted, or only
+     * marked) and didn't come back to it within the delay: follow them on (what they left out is
+     * marked as skipped). A mark stays until they do.
+     */
+    data object FollowOn : Effect
   }
 
   enum class Extent {
@@ -52,6 +60,9 @@ class HintScheduler(private val config: HintConfig) {
   // how many times the user has tried the word of the pending mistake and stopped
   private var attempts = 0
   private var consecutiveHints = 0
+  // a mistake no hint will settle, and since when (or the user's last try at it)
+  private var unsettled: WordId? = null
+  private var unsettledSinceMs = 0L
 
   val isArmed: Boolean get() = armed
 
@@ -63,6 +74,7 @@ class HintScheduler(private val config: HintConfig) {
     val effects = clearMistake()
     armed = true
     prompting = false
+    unsettled = null
     consecutiveHints = 0
     lastProgressMs = nowMs
     speechEndedMs = nowMs
@@ -74,6 +86,7 @@ class HintScheduler(private val config: HintConfig) {
   fun disarm(): List<Effect> {
     armed = false
     prompting = false
+    unsettled = null
     return clearMistake()
   }
 
@@ -85,18 +98,32 @@ class HintScheduler(private val config: HintConfig) {
   fun onWordRecited(nowMs: Long, atAyahBoundary: Boolean): List<Effect> {
     lastProgressMs = nowMs
     consecutiveHints = 0
+    unsettled = null
     this.atAyahBoundary = atAyahBoundary
     return clearMistake()
   }
 
-  /** The user repeated words they already said (normal while memorizing): they're still going. */
-  fun onRepetition(nowMs: Long) {
+  /**
+   * The user repeated words they already said (normal while memorizing): they're still going. After
+   * a mistake it is them going back to try the word again: its mark goes, and its hint waits.
+   */
+  fun onRepetition(nowMs: Long): List<Effect> {
     lastProgressMs = nowMs
+    if (unsettled != null) unsettledSinceMs = nowMs
+    return clearMistake()
   }
 
   /** The user said something other than [expected]. */
   fun onMistake(nowMs: Long, expected: WordId): List<Effect> {
-    if (!armed || !config.onMistakes) return emptyList()
+    if (!armed) return emptyList()
+    if (!config.onMistakes || !config.hintAfterMistake) {
+      // no hint will give it
+      if (unsettled != expected) {
+        unsettled = expected
+        unsettledSinceMs = nowMs
+      }
+      if (!config.onMistakes) return emptyList()
+    }
     if (mistake == expected) return emptyList()
     val effects = clearMistake().toMutableList()
     mistake = expected
@@ -122,6 +149,7 @@ class HintScheduler(private val config: HintConfig) {
   fun onHintStarted() {
     prompting = true
     mistake = null
+    unsettled = null
   }
 
   /** The hint finished playing (or there was no audio to play). The delay restarts now. */
@@ -134,6 +162,12 @@ class HintScheduler(private val config: HintConfig) {
   /** The time at which [onTick] will next do something, or null if nothing is pending. */
   fun nextDeadlineMs(): Long? {
     if (!armed || prompting) return null
+    return listOfNotNull(hintDeadlineMs(), followOnDeadlineMs()).minOrNull()
+  }
+
+  private fun followOnDeadlineMs(): Long? = if (unsettled != null) unsettledSinceMs + config.delayMs else null
+
+  private fun hintDeadlineMs(): Long? {
     if (mistake != null) {
       // the mistake stays marked until the user recovers, without a hint
       if (!config.hintAfterMistake) return null
@@ -160,12 +194,19 @@ class HintScheduler(private val config: HintConfig) {
     val deadline = nextDeadlineMs() ?: return emptyList()
     if (nowMs < deadline) return emptyList()
 
+    val followOn = followOnDeadlineMs()
+    if (followOn != null && nowMs >= followOn) {
+      unsettled = null
+      return listOf(Effect.FollowOn)
+    }
     if (consecutiveHints >= config.maxConsecutiveHints) {
       armed = false
       return clearMistake() + Effect.GiveUp
     }
     consecutiveHints++
     prompting = true
+    // the hint gives the word the user went on past
+    unsettled = null
     val extent = if (consecutiveHints > config.wordHintsBeforeLonger) Extent.AYAH_OR_LINE else Extent.WORDS
     return clearMistake() + Effect.GiveHint(config.wordsPerHint, extent)
   }

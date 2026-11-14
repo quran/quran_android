@@ -46,6 +46,15 @@ class MemorizePreferences @Inject constructor(@param:ApplicationContext context:
     get() = prefs.getBoolean(KEY_RECITE_SAY, true)
     set(value) = prefs.edit { putBoolean(KEY_RECITE_SAY, value) }
 
+  /**
+   * Inside an ayah, every word must be heard before the session goes on ("strict"). Off by default
+   * ("loose"): a word or two the recognizer missed may pass, marked as skipped. Either way no ayah may
+   * be left out (except in salah).
+   */
+  var everyWordHeard: Boolean
+    get() = prefs.getBoolean(KEY_EVERY_WORD, false)
+    set(value) = prefs.edit { putBoolean(KEY_EVERY_WORD, value) }
+
   /** Treat wrong short vowels (tashkeel) as mistakes. Off by default: fewer false alarms. */
   var strictTashkeel: Boolean
     get() = prefs.getBoolean(KEY_STRICT, false)
@@ -172,6 +181,7 @@ class MemorizePreferences @Inject constructor(@param:ApplicationContext context:
     const val KEY_STRICT = "strict_tashkeel"
     const val KEY_RECITE_MARK = "recite_mark_mistakes"
     const val KEY_RECITE_SAY = "recite_say_fix"
+    const val KEY_EVERY_WORD = "every_word_heard"
     const val KEY_DISCLAIMER = "disclaimer_accepted"
     const val KEY_PROMPT_QARI = "prompt_qari"
     const val KEY_AUTO_DOWNLOAD = "auto_download"

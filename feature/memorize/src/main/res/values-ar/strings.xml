@@ -184,4 +184,8 @@
     <item quantity="many">%1$d جلسة</item>
     <item quantity="other">%1$d جلسة</item>
   </plurals>
+  <!-- no verse left out; words missed inside a verse -->
+  <string name="memorize_missed_words_title">الكلمات المتروكة داخل الآية</string>
+  <string name="memorize_missed_words_loose">تجاوز كلمة أو كلمتين (تُعلَّم متروكة)</string>
+  <string name="memorize_missed_words_strict">يجب سماع كل كلمة</string>
 </resources>

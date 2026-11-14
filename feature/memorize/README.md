@@ -94,6 +94,24 @@ reader: the page turns with the word being heard, which is lit with a trail behi
 skipped words and mistakes are marked, and tapping a word plays from it. The app draws those pages
 (`PagePreviews` in `common/recitation`, implemented in `:app`), as the reading screen does.
 
+**No ayah is left out** (Memorization; Recitation too). The tracker knows which ayah each word is
+in. A user who goes on to a later ayah without reciting one is held at its first word: nothing
+after it is revealed, the word is marked as a mistake and given after the hint delay, then the next,
+until they are back; after ten hints in a row, or once the hint delay is over when no hint will
+give the word (mistake hints off; Recitation without "say the correct word"), the session follows
+them on and marks what they left out as skipped. Before holding, it checks what it heard: if there was speech where the words
+should be (said but misheard, e.g. a noisy stretch), they are passed over and marked as skipped;
+only words with nothing heard for them count as left out. Settings, "Words missed inside a verse":
+"Let a word or two pass" (default; never more than half an ayah) or "Every word must be heard"
+(misheard words hold too). In salah ayat may still be left out (that is how a rak'ah picks the
+passage up again).
+
+**Restarts and similar ayat** (every mode). Going back to the start of the ayah being recited is a
+repetition, not a mistake; when lost, a restart behind is preferred to a jump ahead, so ayat that
+open alike (2:149 and 2:150) or share a phrase (2:144 and 2:150) no longer pull the session forward.
+At the start, while what is heard is the same word for word at two places on the pages around, the
+session waits for the words that tell them apart.
+
 In salah any phrase of ruku/sujud (takbir, tasmi', tahmid, tasbeeh, tasleem) ends the passage of the
 rak'ah; hints resume when the passage continues after the next Al-Fatiha. A pause is 0.8 s of
 silence or 1.5 s without anything new recognized (loud mosques are never silent). The speech

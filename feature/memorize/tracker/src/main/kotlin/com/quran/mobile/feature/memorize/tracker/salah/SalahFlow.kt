@@ -24,6 +24,10 @@ class SalahFlow(
   startWindow: Int = 0,
   /** Where the user is expected to start (e.g. the page on screen), within [startWindow]. */
   startIndex: Int = 0,
+  /** Which ayah each passage word is in (see [RecitationTracker]); empty when not known. */
+  passageAyahs: List<Int> = emptyList(),
+  /** The same for Al-Fatiha's words. */
+  private val fatihaAyahs: List<Int> = emptyList(),
 ) {
   enum class Phase {
     /** Before the passage starts in this rak'ah (opening takbir, istiftah, Al-Fatiha...). */
@@ -36,7 +40,7 @@ class SalahFlow(
     BETWEEN_RAKAHS,
   }
 
-  val passage = RecitationTracker(passageWords, config, startIndex, phrases, startWindow)
+  val passage = RecitationTracker(passageWords, config, startIndex, phrases, startWindow, passageAyahs)
   private var fatiha = newFatihaTracker()
   // this rak'ah's Al-Fatiha is over: what follows should be the passage
   private var afterFatiha = false
@@ -110,7 +114,7 @@ class SalahFlow(
   }
 
   /** More of the passage (the next sura); the session doesn't end with the current one. */
-  fun extendPassage(more: List<String>) = passage.extend(more)
+  fun extendPassage(more: List<String>, moreAyahs: List<Int> = emptyList()) = passage.extend(more, moreAyahs)
 
   /** The user stopped making sound (e.g. after the takbir, for ruku). */
   fun onPause(): List<TrackerEvent> {
@@ -129,7 +133,7 @@ class SalahFlow(
   /** Whether the corrector may help now. */
   val isReadingPassage: Boolean get() = phase == Phase.PASSAGE
 
-  private fun newFatihaTracker() = RecitationTracker(fatihaWords, config)
+  private fun newFatihaTracker() = RecitationTracker(fatihaWords, config, ayahs = fatihaAyahs)
 
   companion object {
     const val TAKBIR = "takbir"

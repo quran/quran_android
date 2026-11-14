@@ -86,6 +86,7 @@ class MemorizePreferencesProvider(
       KEY_RECORDING -> preferences.recordingMode.name
       KEY_RECORDING_SPLIT -> preferences.recordingSplit.name
       KEY_KEEP_RECORDINGS -> preferences.keepRecordings.name
+      KEY_MISSED_WORDS -> if (preferences.everyWordHeard) STRICT else LOOSE
       else -> defValue
     }
 
@@ -96,6 +97,7 @@ class MemorizePreferencesProvider(
         KEY_RECORDING_SPLIT -> RecordingSplit.entries.firstOrNull { it.name == value }?.let { preferences.recordingSplit = it }
         KEY_KEEP_RECORDINGS -> MemorizePreferences.KeepRecordings.entries.firstOrNull { it.name == value }
           ?.let { preferences.keepRecordings = it }
+        KEY_MISSED_WORDS -> preferences.everyWordHeard = value == STRICT
       }
       val number = value?.toIntOrNull() ?: return
       when (key) {
@@ -150,6 +152,15 @@ class MemorizePreferencesProvider(
         summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
       })
     }
+    category.addPreference(ListPreference(context).apply {
+      setup(KEY_MISSED_WORDS, R.string.memorize_missed_words_title, null)
+      entryValues = arrayOf(LOOSE, STRICT)
+      entries = arrayOf(
+        context.getString(R.string.memorize_missed_words_loose),
+        context.getString(R.string.memorize_missed_words_strict),
+      )
+      summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
+    })
     // reading with the text shown has its own switches (the reader sees the next word)
     category.addPreference(SwitchPreferenceCompat(context).apply {
       setup(KEY_RECITE_MARK, R.string.memorize_recite_mark_title, R.string.memorize_recite_mark_summary)
@@ -438,6 +449,9 @@ class MemorizePreferencesProvider(
     const val KEY_STRICT = "memorize_strict"
     const val KEY_RECITE_MARK = "memorize_recite_mark"
     const val KEY_RECITE_SAY = "memorize_recite_say"
+    const val KEY_MISSED_WORDS = "memorize_missed_words"
+    const val LOOSE = "loose"
+    const val STRICT = "strict"
     const val KEY_BACKGROUND = "memorize_background"
     const val KEY_MODEL = "memorize_model"
     const val KEY_AUTO_DOWNLOAD = "memorize_auto_download"

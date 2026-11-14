@@ -27,7 +27,13 @@ import kotlin.math.abs
  * With a [startWindow] the user may start anywhere in the first [startWindow] words (e.g. the pages
  * around the one on screen): the tracker first finds where they started, and reports a
  * [Mistake.Kind.ELSEWHERE] on the word they were expected to start at (startIndex: e.g. the first
- * word on screen) if what they recite isn't there.
+ * word on screen) if what they recite isn't there. While what was heard is the same, word for word,
+ * at another place there (two ayat that open alike), the start waits for the words that differ.
+ *
+ * With [ayahs] (which ayah each word is in), going back to the start of the ayah is a repetition,
+ * and when lost, a restart behind the cursor is preferred to a jump ahead. [TrackerConfig.skipAyat]
+ * off (memorization), the user can't leave ayat out: the tracker holds at the first word not recited
+ * instead of catching up past it (see [TrackerConfig.maxMissedWords]).
  *
  * This is a port of the reference implementation used to benchmark the speech models; keep the
  * two in sync (see the golden tests).
@@ -40,10 +46,19 @@ class RecitationTracker(
   phrases: List<Pair<String, String>> = emptyList(),
   /** How many of the first words the user may start at; 0 or 1: the first word. */
   private val startWindow: Int = 0,
+  /** Which ayah each word is in (any id per ayah), or empty when not known. */
+  ayahs: List<Int> = emptyList(),
 ) {
 
   private val words = ArrayList(words)
   private val phrases = ArrayList(phrases)
+  private val ayahs = ArrayList(ayahs)
+  // words left out so far, by ayah (only counted when the ayat are known)
+  private val missedInAyah = HashMap<Int, Int>()
+  // the next catch-up may pass over what the tracker holds at (see releaseHold)
+  private var release = false
+  // where a repetition in progress (behind the cursor) goes on: the word after the last repeated
+  private var repeatNext: Int? = null
 
   /** Diagnostics: why the tracker decided what it did (e.g. why no start was found yet). */
   var trace: ((String) -> Unit)? = null
@@ -51,21 +66,32 @@ class RecitationTracker(
   var cursor: Int = startIndex
     private set
 
+  /**
+   * Whether what the user started with is the same, word for word, at two places in the start window,
+   * and the start waits for the words that tell them apart (a pause settles it at the nearer place).
+   */
+  val startPending: Boolean get() = !anchored && waitedForStart
+
   /** Whether it is known where the user started (always, without a [startWindow]). */
   var anchored: Boolean = startWindow <= 1
     private set
 
-  // where the user was expected to start, and how many words they recited from the start found:
-  // until a few have been, a mistake means the start was wrong and is looked for again
-  private val home = startIndex
+  // where the user is expected to start, and how many words they recited from the start found: until a
+  // few have been, a mistake means the start was wrong and is looked for again. The start dropped that
+  // way becomes where they are expected: the search prefers it, and a mark or hint before a new start
+  // is there (not back at the first ayah on screen)
+  private var home = startIndex
   private var sinceStart = if (startWindow <= 1) CONFIRMED_START_WORDS else 0
+  // the start was alike elsewhere and is being waited out
+  private var waitedForStart = false
 
   /** Whether every word loaded so far has been recited (see [extend]). */
   val isDone: Boolean get() = cursor >= words.size
 
   /** More of the passage, e.g. the next sura once the user nears the end of this one. */
-  fun extend(more: List<String>) {
+  fun extend(more: List<String>, moreAyahs: List<Int> = emptyList()) {
     words.addAll(more)
+    if (ayahs.isNotEmpty()) ayahs.addAll(moreAyahs)
   }
 
   /** Phrases that become possible later, e.g. the basmala once the passage leaves Al-Fatiha. */
@@ -74,12 +100,18 @@ class RecitationTracker(
   }
 
   private val pending = ArrayList<TimedPhoneme>()
+  // what was heard before the pending phonemes since anything last explained it (they fell out of
+  // pending, which keeps the last maxPending): evidence of words said but misheard
+  private val overflow = ArrayList<TimedPhoneme>()
   private var mistakeAt: Int? = null
 
   fun feed(phonemes: List<TimedPhoneme>): List<TrackerEvent> {
     pending.addAll(phonemes)
     if (pending.size > config.maxPending) {
-      pending.subList(0, pending.size - config.maxPending).clear()
+      val dropped = pending.subList(0, pending.size - config.maxPending)
+      overflow.addAll(dropped)
+      if (overflow.size > OVERFLOW_MAX) overflow.subList(0, overflow.size - OVERFLOW_MAX).clear()
+      dropped.clear()
     }
     if (isDone || pending.isEmpty()) return emptyList()
     return update()
@@ -90,12 +122,15 @@ class RecitationTracker(
    * nothing follows it (e.g. the takbir before ruku).
    */
   fun onPause(): List<TrackerEvent> {
+    // the user stopped while their start is the same at two places: the one nearest where they were
+    // expected (they may be stuck, and only a known start can be helped)
+    if (startPending) return findStart(settle = true)
     if (pending.isEmpty() || phrases.isEmpty()) return emptyList()
     val heard = CharArray(pending.size) { pending[it].symbol }
     for ((kind, phrase) in phrases) {
-      if (phraseCost(heard, phrase) <= 0.5 + 0.2 * phrase.length) {
+      if (!saidByPassage(phrase) && phraseCost(heard, phrase) <= 0.5 + 0.2 * phrase.length) {
         val event = NonTarget(cursor, pending.last().timeMs, kind)
-        pending.clear()
+        clearPending()
         mistakeAt = null
         return listOf(event)
       }
@@ -130,7 +165,7 @@ class RecitationTracker(
 
   /** Forgets what was heard since the last recited word (it belonged to something else). */
   fun discardPending() {
-    pending.clear()
+    clearPending()
     mistakeAt = null
   }
 
@@ -141,8 +176,149 @@ class RecitationTracker(
     anchored = true
     sinceStart = CONFIRMED_START_WORDS
     cursor = minOf(words.size, cursor + count)
-    pending.clear()
+    // what was heard stays evidence (the user may have gone on)
+    setAside()
     mistakeAt = null
+  }
+
+  // ----------------------------------------------------------------------------------------- ayat
+
+  private fun knowsAyat(): Boolean = ayahs.size == words.size && words.isNotEmpty()
+
+  /** The first word of the ayah word [index] is in. */
+  private fun ayahStart(index: Int): Int {
+    val ayah = ayahs[index]
+    var i = index
+    while (i > 0 && ayahs[i - 1] == ayah) i--
+    return i
+  }
+
+  private fun ayahLength(index: Int): Int {
+    var end = index
+    while (end + 1 < ayahs.size && ayahs[end + 1] == ayahs[index]) end++
+    return end - ayahStart(index) + 1
+  }
+
+  /**
+   * The first word of the ayah of the last word reached, when a restart of it starts further back than
+   * [TrackerConfig.backWords] (at most [TrackerConfig.farBackWords]), else null.
+   */
+  private fun restartStart(): Int? {
+    if (!knowsAyat() || cursor == 0) return null
+    val start = ayahStart(minOf(cursor, words.size) - 1)
+    return start.takeIf { it >= cursor - config.farBackWords && it < cursor - config.backWords }
+  }
+
+  /**
+   * Where a repetition may start: [TrackerConfig.backWords] before the cursor, or (a restart) the
+   * start of the ayah of the last word reached, or where a repetition in progress goes on.
+   */
+  private fun backStart(): Int =
+    listOfNotNull(maxOf(0, cursor - config.backWords), restartStart(), repeatNext).min()
+
+  /**
+   * The app gave up hinting the words the tracker holds at (the user went on regardless): the next
+   * catch-up may pass over them, as if ayat could be left out.
+   */
+  fun releaseHold() {
+    release = true
+  }
+
+  /** Whether the words [missed] may be left behind as missed (see [TrackerConfig.skipAyat]). */
+  private fun canPass(missed: List<Int>): Boolean {
+    if (config.skipAyat || missed.isEmpty() || release) return true
+    if (missed.size > config.maxMissedWords) return false
+    if (knowsAyat()) {
+      val perAyah = LinkedHashMap<Int, MutableList<Int>>()
+      for (x in missed) perAyah.getOrPut(ayahs[x]) { ArrayList() }.add(x)
+      for ((ayah, xs) in perAyah) {
+        if ((missedInAyah[ayah] ?: 0) + xs.size > ayahLength(xs[0]) / 2) return false
+      }
+    }
+    return true
+  }
+
+  /** Words left out (not said), counted against their ayah. */
+  private fun noteMissed(indexes: List<Int>) {
+    if (!knowsAyat()) return
+    for (x in indexes) {
+      val ayah = ayahs[x]
+      missedInAyah[ayah] = (missedInAyah[ayah] ?: 0) + 1
+    }
+  }
+
+  /**
+   * Of the words [missed] (not recited), those that count as left out: the ones not [said], and with
+   * every word to be heard ([TrackerConfig.maxMissedWords] 0), the ones said but misheard too.
+   */
+  private fun leftOut(said: Set<Int>, missed: List<Int>): List<Int> =
+    if (config.maxMissedWords == 0) missed else missed.filter { it !in said }
+
+  /**
+   * Which of words[[first], [last]) the [speech] heard (in order, before what came after them) was for:
+   * per word, the phonemes heard for it and their cost, aligning all of the words with all of it.
+   */
+  private fun evidence(first: Int, last: Int, speech: CharArray): Map<Int, Pair<Int, Double>> {
+    val win = window(first, last)
+    val n = speech.size
+    val m = win.symbols.size
+    val width = m + 1
+    val cost = DoubleArray((n + 1) * width) { Double.POSITIVE_INFINITY }
+    val back = CharArray((n + 1) * width)
+    cost[0] = 0.0
+    // leading sounds: the end of the word before, a hesitation
+    for (i in 1..n) {
+      cost[i * width] = i * config.garbageCost
+      back[i * width] = 'g'
+    }
+    for (j in 1..m) {
+      cost[j] = cost[j - 1] + indel(win.symbols[j - 1], win.pos[j - 1], words[win.word[j - 1]].length)
+      back[j] = 'd'
+    }
+    for (i in 1..n) {
+      for (j in 1..m) {
+        val length = words[win.word[j - 1]].length
+        var best = cost[(i - 1) * width + j - 1] + sub(speech[i - 1], win.symbols[j - 1])
+        var op = 's'
+        val ins = cost[(i - 1) * width + j] + indel(speech[i - 1], win.pos[j - 1], length)
+        if (ins < best) {
+          best = ins
+          op = 'i'
+        }
+        val del = cost[i * width + j - 1] + indel(win.symbols[j - 1], win.pos[j - 1], length)
+        if (del < best) {
+          best = del
+          op = 'd'
+        }
+        cost[i * width + j] = best
+        back[i * width + j] = op
+      }
+    }
+    val heard = IntArray(last - first)
+    val costs = DoubleArray(last - first)
+    var i = n
+    var j = m
+    while (i > 0 || j > 0) {
+      when (back[i * width + j]) {
+        'g' -> i--
+        's' -> {
+          val w = win.word[j - 1] - first
+          heard[w]++
+          costs[w] += sub(speech[i - 1], win.symbols[j - 1])
+          i--
+          j--
+        }
+        'i' -> {
+          costs[win.word[j - 1] - first] += indel(speech[i - 1], win.pos[j - 1], words[win.word[j - 1]].length)
+          i--
+        }
+        else -> {
+          costs[win.word[j - 1] - first] += indel(win.symbols[j - 1], win.pos[j - 1], words[win.word[j - 1]].length)
+          j--
+        }
+      }
+    }
+    return (first until last).associateWith { heard[it - first] to costs[it - first] }
   }
 
   // ---------------------------------------------------------------------------------------- costs
@@ -187,16 +363,20 @@ class RecitationTracker(
    * Semi-global alignment of [heard] with the window; returns the path (garbage step first). Of
    * equally good ends, the furthest one, or with [nearest] the one closest to that word.
    */
-  private fun align(heard: CharArray, win: Window, nearest: Int? = null): List<Step> {
+  private fun align(heard: CharArray, win: Window, nearest: Int? = null, restart: Int? = null, next: Int? = null): List<Step> {
     val n = heard.size
     val m = win.symbols.size
     val width = m + 1
     val cost = DoubleArray((n + 1) * width) { Double.POSITIVE_INFINITY }
     val back = CharArray((n + 1) * width)
 
+    // behind the cursor (with a [restart]): within backWords, or at the start of the ayah, not the
+    // words between (a phrase an ayah says twice, as 5:46, is otherwise taken for the earlier one)
+    val near = if (restart != null || next != null) cursor - config.backWords else Int.MIN_VALUE
     val allowedStarts = BooleanArray(width)
     for (j in 0 until m) {
-      if ((j == 0 || win.word[j - 1] != win.word[j]) && win.word[j] <= cursor) allowedStarts[j] = true
+      val w = win.word[j]
+      if ((j == 0 || win.word[j - 1] != w) && w <= cursor && (w >= near || w == restart || w == next)) allowedStarts[j] = true
     }
     for (i in 0..n) {
       for (j in 0..m) {
@@ -302,11 +482,11 @@ class RecitationTracker(
   private fun update(): List<TrackerEvent> {
     if (!anchored) return findStart()
     val events = ArrayList<TrackerEvent>()
-    val first = maxOf(0, cursor - config.backWords)
+    val first = backStart()
     val last = minOf(words.size, cursor + config.aheadWords)
     val heard = CharArray(pending.size) { pending[it].symbol }
     val win = window(first, last)
-    val path = align(heard, win)
+    val path = align(heard, win, restart = restartStart(), next = repeatNext)
 
     val stats = HashMap<Int, WordStats>()
     for (step in path) {
@@ -382,12 +562,22 @@ class RecitationTracker(
     // Re-synchronization: the user is confidently reciting words after the cursor (the model
     // misheard a word, or the user skipped one). Catch up so the reader never gets stuck.
     if (lastPending < 0) {
-      val anchor = resyncAnchor(stats, ::complete, ::good)
+      fun fromContext(x: Int): Boolean {
+        val s = stats[x] ?: return false
+        val length = words[x].length
+        return s.heard >= config.contextMinHeard * length && s.cost <= config.contextCost * length
+      }
+      var anchor = resyncAnchor(stats, ::complete, ::good)
+      // words left out may only be passed over within the limits (TrackerConfig.skipAyat); a word heard
+      // but not recognized was said
+      fun heard(x: Int): Boolean = (stats[x]?.heard ?: 0) >= config.contextMinHeard * words[x].length
+      val notRecited = if (anchor != null) (cursor until anchor).filter { !fromContext(it) } else emptyList()
+      val leftOut = leftOut(notRecited.filter { heard(it) }.toSet(), notRecited)
+      if (anchor != null && !canPass(leftOut)) anchor = null
       if (anchor != null) {
         for (x in cursor until anchor) {
           val s = stats[x]
-          val length = words[x].length
-          if (s != null && s.heard >= config.contextMinHeard * length && s.cost <= config.contextCost * length) {
+          if (s != null && fromContext(x)) {
             val time = if (s.lastPending >= 0) timeOf(s.lastPending) else lastTime
             val start = if (s.firstPending >= 0) timeOf(s.firstPending) else null
             events += WordRecited(x, time, s.cost, fromContext = true, startMs = start)
@@ -395,6 +585,8 @@ class RecitationTracker(
             events += WordMissed(x, lastTime)
           }
         }
+        noteMissed(leftOut)
+        release = false
         w = anchor
         while (w < words.size && complete(w) && good(w)) {
           lastPending = stats.getValue(w).lastPending
@@ -410,6 +602,7 @@ class RecitationTracker(
         events.add(0, Repetition(repeated.first(), repeated.last(), timeOf(stats.getValue(repeated.last()).lastPending)))
       }
       cursor = w
+      repeatNext = null
       consumePending(lastPending)
       mistakeAt = null
       return events
@@ -420,6 +613,7 @@ class RecitationTracker(
       val lp = stats.getValue(repeated.last()).lastPending
       events += Repetition(repeated.first(), repeated.last(), timeOf(lp))
       consumePending(lp)
+      repeatNext = (repeated.last() + 1).takeIf { it < cursor && knowsAyat() }
       return events
     }
 
@@ -441,11 +635,20 @@ class RecitationTracker(
       return events
     }
 
+    // Still repeating (e.g. starting the ayah again): what is being said now is a good match for a word
+    // behind the cursor, which isn't complete yet. Not a mistake.
+    if (repeated.isNotEmpty() && knowsAyat()) {
+      val heardWords = stats.filterValues { it.lastPending >= 0 }.keys
+      if (heardWords.all { it < cursor } && heardWords.all { stats.getValue(it).cost <= config.allowance(words[it].length) }) {
+        return events
+      }
+    }
+
     // Mistake? Right after the start was found, rather a wrong start: look for it again.
     if (heard.size >= words[cursor].length + config.mistakeMargin && sinceStart < CONFIRMED_START_WORDS) {
-      trace?.invoke("start at $cursor not confirmed after $sinceStart words: searching again")
+      trace?.invoke("start at $cursor not confirmed after $sinceStart words: searching again, expected there")
       anchored = false
-      cursor = home
+      home = cursor
       mistakeAt = null
       return findStart()
     }
@@ -462,7 +665,7 @@ class RecitationTracker(
    * words in the start window. A known phrase (isti'adha, basmala...) is waited out; anything else
    * long enough that matches nowhere in the window is recited elsewhere.
    */
-  private fun findStart(): List<TrackerEvent> {
+  private fun findStart(settle: Boolean = false): List<TrackerEvent> {
     val heard = CharArray(pending.size) { pending[it].symbol }
     val windowEnd = minOf(startWindow, words.size)
     // align as if the user could be repeating any word of the window
@@ -485,7 +688,10 @@ class RecitationTracker(
         else -> indel(words[w][pos], pos, words[w].length)
       }
       if (step.op == 'm' || step.op == 's' || step.op == 'd') s.covered.add(col)
-      if (step.op == 'm' || step.op == 'i' || step.op == 's') s.lastPending = step.pendingIndex
+      if (step.op == 'm' || step.op == 'i' || step.op == 's') {
+        if (s.firstPending < 0) s.firstPending = step.pendingIndex
+        s.lastPending = step.pendingIndex
+      }
       if (step.op == 'm') s.matched++
     }
     val columnStart = HashMap<Int, Int>()
@@ -521,13 +727,38 @@ class RecitationTracker(
       )
     }
     if (start != null) {
+      // what was heard is the same, word for word, at another place (e.g. two ayat that open alike):
+      // wait for the words that tell them apart, as long as there is room to keep listening
+      var run = 0
+      while (start + run < words.size && confident(start + run)) run++
+      val elsewhere = (0 until windowEnd).firstOrNull { k ->
+        k != start && k + run <= words.size && (0 until run).all { words[k + it] == words[start + it] }
+      }
+      if (elsewhere != null && !settle && pending.size < config.maxPending - AMBIGUOUS_ROOM) {
+        trace?.invoke("start at $start or $elsewhere ($run words alike): waiting")
+        waitedForStart = true
+        return emptyList()
+      }
       anchored = true
       sinceStart = 0
       cursor = start
       mistakeAt = null
-      return update()
+      if (!waitedForStart) return update()
+      // after waiting, more words may have been heard than a normal update looks ahead: they count
+      waitedForStart = false
+      val events = ArrayList<TrackerEvent>()
+      for (w in start until start + run) {
+        val s = firstWords.getValue(w)
+        events += WordRecited(w, timeOf(s.lastPending), s.cost, startMs = timeOf(s.firstPending))
+      }
+      consumePending(firstWords.getValue(start + run - 1).lastPending)
+      cursor = start + run
+      sinceStart = run
+      return if (pending.isEmpty()) events else events + update()
     }
 
+    // no start (any more): nothing to wait for
+    waitedForStart = false
     val phrase = matchPhrase(heard)
     val completedAt = phrase?.second
     if (phrase != null && completedAt != null) {
@@ -543,11 +774,14 @@ class RecitationTracker(
       mistakeAt = cursor
       val event = Mistake(cursor, pending.last().timeMs, Mistake.Kind.ELSEWHERE)
       // what was recited elsewhere can't help finding the start
-      pending.clear()
+      clearPending()
       return listOf(event)
     }
     // only recent speech can be the start
-    if (pending.size > 2 * ELSEWHERE_PHONEMES) pending.subList(0, pending.size - 2 * ELSEWHERE_PHONEMES).clear()
+    if (pending.size > 2 * ELSEWHERE_PHONEMES) {
+      overflow.clear()
+      pending.subList(0, pending.size - 2 * ELSEWHERE_PHONEMES).clear()
+    }
     return emptyList()
   }
 
@@ -574,7 +808,21 @@ class RecitationTracker(
     return (1..m).minOf { cost[n * width + it] }
   }
 
+  /** Pending isn't explained by anything, but stays evidence of what was said. */
+  private fun setAside() {
+    overflow.addAll(pending)
+    if (overflow.size > OVERFLOW_MAX) overflow.subList(0, overflow.size - OVERFLOW_MAX).clear()
+    pending.clear()
+  }
+
+  /** What is still to be explained; anything heard before it is no longer evidence. */
+  private fun clearPending() {
+    pending.clear()
+    overflow.clear()
+  }
+
   private fun consumePending(throughIndex: Int) {
+    overflow.clear()
     pending.subList(0, minOf(pending.size, throughIndex + 1)).clear()
   }
 
@@ -595,14 +843,42 @@ class RecitationTracker(
   }
 
   /**
-   * Searches words[cursor, cursor + farWords) for the most recent phonemes heard. On a confident
-   * match, the words before it are missed and the matched words recited.
+   * A place in the recovery window that matches what was heard last. [elsewhere]: behind, in the middle
+   * of the ayah before (further back than backWords), rather a phrase said again than a restart.
+   */
+  private class Candidate(
+    val cost: Double,
+    val ahead: Boolean,
+    val distance: Int,
+    val end: Int,
+    val first: Int,
+    val last: Int,
+    val elsewhere: Boolean = false,
+  ) {
+    /** Restarts and going on first, then jumps ahead, then a phrase said again behind. */
+    val rank: Int get() = if (elsewhere) 2 else if (ahead) 1 else 0
+  }
+
+  /**
+   * Searches words[cursor, cursor + farWords) for the most recent phonemes heard, and with the words'
+   * ayat also back to the start of the previous ayah. A confident match at or behind the cursor is a
+   * repetition (a restart); one ahead of it leaves the words before it missed and recites the matched
+   * ones, if they may be left out ([TrackerConfig.skipAyat]). Otherwise the tracker holds where it
+   * is: an empty list.
    */
   private fun recover(): List<TrackerEvent>? {
     val tailLength = minOf(pending.size, config.recoverTail)
     if (tailLength < config.recoverMinTail) return null
     val tail = CharArray(tailLength) { pending[pending.size - tailLength + it].symbol }
-    val win = window(cursor, minOf(words.size, cursor + config.farWords))
+    var first = cursor
+    var current = -1
+    var previous = -1
+    if (knowsAyat() && cursor > 0) {
+      current = ayahStart(minOf(cursor, words.size - 1))
+      previous = if (current > 0) ayahStart(current - 1) else current
+      first = maxOf(previous, cursor - config.farBackWords, 0)
+    }
+    val win = window(first, minOf(words.size, cursor + config.farWords))
     val n = tail.size
     val m = win.symbols.size
     if (m == 0) return null
@@ -632,21 +908,82 @@ class RecitationTracker(
     }
     val limit = config.recoverCost * n
     val lastTime = pending.last().timeMs
+    val candidates = ArrayList<Candidate>()
     for (j in 1..m) {
       if (cost[n * width + j] > limit) continue
       val startWord = win.word[minOf(start[n * width + j], m - 1)]
       val endWord = win.word[j - 1]
       if (endWord - startWord + 1 < 2) continue
+      val ahead = startWord > cursor
+      val distance = if (ahead) startWord - cursor else maxOf(0, cursor - 1 - endWord)
+      // behind, in the middle of the ayah before: rather a phrase said again further on (5:44 and 5:45
+      // both end "wa man lam yahkum bima anzala llahu fa-ula'ika hum") than a restart
+      val elsewhere = current >= 0 && startWord < current && startWord > previous + 1 &&
+        startWord < cursor - config.backWords && startWord != repeatNext
+      candidates += Candidate(cost[n * width + j], ahead, distance, j, startWord, endWord, elsewhere)
+    }
+    // Of the matches as good as the best (within half a phoneme), the nearest the cursor: a restart
+    // (at or behind it) before a jump ahead. A weaker match behind (a phrase the passage repeats)
+    // doesn't stand for one ahead that is better. Without the ayat, as before: the earliest end.
+    val ordered = if (knowsAyat()) {
+      val best = candidates.minOfOrNull { it.cost } ?: 0.0
+      candidates.filter { it.cost <= best + 0.5 }.sortedWith(compareBy({ it.rank }, { it.distance }, { it.end }))
+    } else {
+      candidates
+    }
+    var held = false
+    for (candidate in ordered) {
+      // the match ahead was the user going on, held back: not a restart of the ayah before
+      if (candidate.elsewhere && held) continue
       // only words fully covered by the match count; the last one may still be in progress
-      val endComplete = j == m || win.word[j] != endWord
-      val lastWord = if (endComplete) endWord else endWord - 1
+      val endComplete = candidate.end == m || win.word[candidate.end] != candidate.last
+      val lastWord = if (endComplete) candidate.last else candidate.last - 1
+      if (!candidate.ahead) {
+        // a restart (from behind the cursor), or the user simply going on
+        val events = ArrayList<TrackerEvent>()
+        if (candidate.first < cursor) events += Repetition(candidate.first, minOf(candidate.last, cursor - 1), lastTime)
+        for (x in cursor..lastWord) events += WordRecited(x, lastTime, 0.0, recovered = true)
+        repeatNext = (lastWord + 1).takeIf { it < cursor && knowsAyat() }
+        cursor = maxOf(cursor, lastWord + 1)
+        clearPending()
+        mistakeAt = null
+        return events
+      }
+      val missed = (cursor until candidate.first).toList()
+      val said = HashSet<Int>()
+      val context = HashSet<Int>()
+      if (missed.isNotEmpty() && !config.skipAyat) {
+        // what was heard before the match: were the words between said (and misheard)?
+        val heard = overflow + pending
+        val speech = CharArray(heard.size - tailLength) { heard[it].symbol }
+        for ((x, evidence) in evidence(cursor, candidate.first, speech)) {
+          if (evidence.first >= config.contextMinHeard * words[x].length) {
+            said += x
+            if (evidence.second <= config.contextCost * words[x].length) context += x
+          }
+        }
+      }
+      val leftOut = leftOut(said, missed.filter { it !in context })
+      if (!canPass(leftOut)) {
+        held = true
+        continue
+      }
       val events = ArrayList<TrackerEvent>()
-      for (x in cursor until startWord) events += WordMissed(x, lastTime)
-      for (x in startWord..lastWord) events += WordRecited(x, lastTime, 0.0, recovered = true)
+      missed.forEach { events += if (it in context) WordRecited(it, lastTime, 0.0, fromContext = true) else WordMissed(it, lastTime) }
+      noteMissed(leftOut)
+      release = false
+      for (x in candidate.first..lastWord) events += WordRecited(x, lastTime, 0.0, recovered = true)
       cursor = lastWord + 1
-      pending.clear()
+      clearPending()
       mistakeAt = null
       return events
+    }
+    if (held) {
+      // the user went on past words that can't be left out: hold at the first of them (its mistake
+      // stands); what was heard of the later words is set aside (still evidence)
+      trace?.invoke("holding at $cursor: what was heard is further on")
+      setAside()
+      return emptyList()
     }
     return null
   }
@@ -655,9 +992,19 @@ class RecitationTracker(
    * If the heard phonemes are (the beginning of) a known phrase, returns its kind and the index of
    * the last heard phoneme of the completed phrase, or null for the index while it's in progress.
    */
+  /**
+   * Whether the passage itself says [phrase] here: its words from the cursor (or one of the next two)
+   * spell it out (27:30 says the basmala).
+   */
+  private fun saidByPassage(phrase: String): Boolean = (0..2).any { k ->
+    val from = cursor + k
+    from < words.size && words.subList(from, minOf(words.size, from + 12)).joinToString("").startsWith(phrase)
+  }
+
   private fun matchPhrase(heard: CharArray): Pair<String, Int?>? {
     var best: Pair<String, Int?>? = null
     for ((kind, phrase) in phrases) {
+      if (saidByPassage(phrase)) continue
       val n = heard.size
       val m = phrase.length
       if (n == 0 || m == 0) continue
@@ -705,6 +1052,10 @@ class RecitationTracker(
     const val START_PHONEMES = 10
     /** Words recited from the start found after which it is no longer doubted. */
     const val CONFIRMED_START_WORDS = 6
+    /** Phonemes kept as evidence beyond pending. */
+    const val OVERFLOW_MAX = 280
+    /** Phonemes left in the pending buffer when a start alike elsewhere is chosen anyway (the nearest). */
+    const val AMBIGUOUS_ROOM = 10
 
     val CONFUSABLE: List<Set<Char>> = listOf(
       setOf('س', 'ص'), setOf('ت', 'ط'), setOf('د', 'ض'), setOf('ذ', 'ز', 'ظ'), setOf('ح', 'ه'),

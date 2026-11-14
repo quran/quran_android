@@ -23,6 +23,8 @@ class RecitationTrackerGoldenTest {
     val phrases = mutableListOf<Pair<String, String>>()
     val actions = mutableListOf<Action>()
     val expected = mutableMapOf<Int, MutableList<String>>()
+    var ayahs = emptyList<Int>()
+    var config = TrackerConfig()
     file.readLines().filter { it.isNotEmpty() }.forEach { line ->
       val parts = line.split('\t')
       when (parts[0]) {
@@ -34,11 +36,20 @@ class RecitationTrackerGoldenTest {
         })
         "H" -> actions += Action.Hint(parts[1].toInt())
         "S" -> actions += Action.Pause
+        "A" -> ayahs = parts[1].split(',').map { it.toInt() }
+        "C" -> parts[1].split(';').forEach {
+          val (key, value) = it.split('=')
+          config = when (key) {
+            "skip_ayat" -> config.copy(skipAyat = value == "1")
+            "max_missed_words" -> config.copy(maxMissedWords = value.toInt())
+            else -> error("unknown setting $key in ${file.name}")
+          }
+        }
         "E" -> expected.getOrPut(parts[1].toInt()) { mutableListOf() } += parts.drop(2).joinToString("\t")
       }
     }
 
-    val tracker = RecitationTracker(words, phrases = phrases)
+    val tracker = RecitationTracker(words, config, phrases = phrases, ayahs = ayahs)
     actions.forEachIndexed { index, action ->
       when (action) {
         is Action.Hint -> tracker.markHinted(action.count)

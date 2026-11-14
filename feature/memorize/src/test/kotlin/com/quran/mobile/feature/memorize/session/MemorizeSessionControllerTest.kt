@@ -128,6 +128,61 @@ class MemorizeSessionControllerTest {
   }
 
   @Test
+  fun `an ayah left out is held at, nothing after it revealed and its first word marked`() = runTest {
+    val controller = controller()
+    controller.start(SuraAyah(112, 1))
+    runCurrent()
+
+    // ayah 1, then ayah 3: ayah 2 left out
+    recite(*pronunciations(SuraAyah(112, 1), 4))
+    recite(*pronunciations(SuraAyah(112, 3), 4))
+
+    val state = controller.state.value!!
+    assertThat(state.cursor).isEqualTo(4)
+    assertThat(state.missed).isEmpty()
+    assertThat(state.mistake).isEqualTo(4)
+    assertThat(state.isHidden(8)).isTrue()
+  }
+
+  @Test
+  fun `with hints off, an ayah left out is held for the hint delay, then the user is followed on`() = runTest {
+    preferences.correctorEnabled = false
+    preferences.hintDelaySeconds = 2
+    val controller = controller()
+    controller.start(SuraAyah(112, 1))
+    runCurrent()
+
+    // ayah 1, then ayah 3: ayah 2 left out
+    recite(*pronunciations(SuraAyah(112, 1), 4))
+    recite(*pronunciations(SuraAyah(112, 3), 4))
+    assertThat(controller.state.value!!.cursor).isEqualTo(4)
+
+    // the user goes on (no hint will give them ayah 2)
+    advanceTimeBy(3_000)
+    recite(*pronunciations(SuraAyah(112, 4), 5))
+
+    val state = controller.state.value!!
+    assertThat(state.cursor).isEqualTo(15)
+    assertThat(state.missed).containsAtLeast(4, 5)
+    assertThat(voice.played).isEmpty()
+  }
+
+  @Test
+  fun `when every word must be heard, an unheard word holds the session`() = runTest {
+    preferences.everyWordHeard = true
+    val controller = controller()
+    controller.start(SuraAyah(112, 1))
+    runCurrent()
+
+    // the last word of ayah 1 isn't heard
+    recite(*pronunciations(SuraAyah(112, 1), 3))
+    recite(*pronunciations(SuraAyah(112, 2), 2))
+
+    assertThat(controller.state.value!!.cursor).isEqualTo(3)
+    assertThat(controller.state.value!!.missed).isEmpty()
+  }
+
+  @Test
   fun `a hint reveals and speaks the next word`() = runTest {
     val controller = controller()
     controller.start(SuraAyah(112, 1))
@@ -203,6 +258,46 @@ class MemorizeSessionControllerTest {
     advanceTimeBy(5_000)
 
     assertThat(voice.played.first()).containsExactly(WordId(112, 1, 3))
+  }
+
+  @Test
+  fun `a reader who leaves out an ayah is held at it, and given its first word after the delay`() = runTest {
+    preferences.hintDelaySeconds = 2
+    val controller = controller()
+    controller.start(SuraAyah(112, 1), MemorizeState.Mode.RECITE)
+    runCurrent()
+
+    // ayah 1, then ayah 3: ayah 2 left out
+    recite(*pronunciations(SuraAyah(112, 1), 4))
+    recite(*pronunciations(SuraAyah(112, 3), 4))
+    assertThat(controller.state.value!!.cursor).isEqualTo(4)
+    assertThat(controller.state.value!!.mistake).isEqualTo(4)
+
+    microphone.silence(3)
+    advanceTimeBy(5_000)
+
+    assertThat(voice.played.first()).containsExactly(WordId(112, 2, 1))
+  }
+
+  @Test
+  fun `without saying the correct word, a reader who left out an ayah is followed on after the delay`() = runTest {
+    preferences.hintDelaySeconds = 2
+    preferences.reciteSayFix = false
+    val controller = controller()
+    controller.start(SuraAyah(112, 1), MemorizeState.Mode.RECITE)
+    runCurrent()
+
+    recite(*pronunciations(SuraAyah(112, 1), 4))
+    recite(*pronunciations(SuraAyah(112, 3), 4))
+    assertThat(controller.state.value!!.cursor).isEqualTo(4)
+
+    advanceTimeBy(3_000)
+    recite(*pronunciations(SuraAyah(112, 4), 5))
+
+    val state = controller.state.value!!
+    assertThat(state.cursor).isEqualTo(15)
+    assertThat(state.missed).containsAtLeast(4, 5)
+    assertThat(voice.played).isEmpty()
   }
 
   @Test
@@ -660,6 +755,32 @@ class MemorizeSessionControllerTest {
     assertThat(state.started).isTrue()
     assertThat(state.firstWord).isEqualTo(home + 15)
     assertThat(state.currentAyah).isEqualTo(SuraAyah(113, 2))
+  }
+
+  @Test
+  fun `no hint while the start is heard at two places alike, and a pause settles it`() = runTest {
+    preferences.hintDelaySeconds = 2
+    val controller = controller()
+    // 2:149 and 2:150 open with the same 8 words
+    controller.start(SuraAyah(2, 147), startAnywhereUntil = SuraAyah(2, 151))
+    runCurrent()
+    val passage = controller.state.value!!.passage.words
+    // recited elsewhere first: the first word on screen is marked, and would be given after the delay
+    recite(*pronunciations(SuraAyah(1, 2), 8))
+    assertThat(controller.state.value!!.mistake).isNotNull()
+
+    recite(*pronunciations(SuraAyah(2, 149), 5))
+    advanceTimeBy(5_000)
+    assertThat(voice.played).isEmpty()
+    assertThat(controller.state.value!!.started).isFalse()
+
+    microphone.silence(12)
+    advanceTimeBy(1_000)
+    runCurrent()
+    val state = controller.state.value!!
+    assertThat(state.started).isTrue()
+    assertThat(passage[state.firstWord].id).isEqualTo(WordId(2, 149, 1))
+    assertThat(passage[state.cursor].id).isEqualTo(WordId(2, 149, 6))
   }
 
   @Test
