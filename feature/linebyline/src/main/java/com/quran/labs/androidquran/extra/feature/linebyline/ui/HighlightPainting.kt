@@ -1,14 +1,29 @@
 package com.quran.labs.androidquran.extra.feature.linebyline.ui
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.labs.androidquran.common.ui.core.HighlightColors
 import com.quran.labs.androidquran.extra.feature.linebyline.model.HighlightType
 
 val HighlightType.isUnderText: Boolean
-  get() = this is HighlightType.Highlight
+  get() = this is HighlightType.Highlight || this is HighlightType.Recitation
 
 private const val NightHighlightAlpha = 0.40f
+
+// as on image pages, whose night filter would otherwise make these marks glare
+private const val NightRecitationAlpha = 0x66 / 255f
+
+@Composable
+fun HighlightType.color(isNightMode: Boolean): Color {
+  return if (this is HighlightType.Recitation) {
+    val color = colorResource(if (isNightMode) nightColor else color)
+    if (isNightMode) color.copy(alpha = NightRecitationAlpha) else color
+  } else {
+    paintColor(isNightMode)
+  }
+}
 
 fun HighlightType.paintColor(isNightMode: Boolean): Color {
   return when (this) {
@@ -20,6 +35,8 @@ fun HighlightType.paintColor(isNightMode: Boolean): Color {
       val paletteColor = HighlightColors[color].color
       if (isNightMode) paletteColor.copy(alpha = NightHighlightAlpha) else paletteColor
     }
+    // a resource: see color()
+    is HighlightType.Recitation -> Color.Unspecified
   }
 }
 

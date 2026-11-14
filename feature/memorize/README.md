@@ -55,6 +55,10 @@ for the page type in use from its own glyph boxes (`GlyphTypes`: the text gives 
 hizb/sajdah markers, the font's shortest glyphs are its waqf marks — this reproduces the madani
 pages' types exactly for all 6,236 ayat at every width). Marks are backgrounds under the words
 (red: mistake, teal: hinted, amber: skipped) so colored (tajweed) mushafs keep their colors.
+Word by word needs a box per glyph: the Madani and Tajweed page types have them. The newer Madani
+prints (1421, 1440, and the 1439/1441 line-by-line ones) and the Shemerly print only have a box per
+ayah and line, so there each ayah is hidden until all of it has been recited, and marks cover the
+whole ayah. Shemerly's ayat that run on to the next page are hidden on both pages.
 
 Recordings (opt-in): a recording per sura or per session, named by where it starts and ends, played
 back from the audio bar or the floating mic (the page follows), and exported from Settings → My
@@ -184,7 +188,8 @@ text, so it is only for development.
 
 ## Known limitations
 
-* Hafs, madani pages only. Recognition degrades on heavily reverberant/noisy audio. On real prayer
+* Hafs only (the Warsh and Qaloon qira'at aren't covered by the model or the lexicon). Ayah by ayah,
+  not word by word, on page types without word boxes (see Pages). Recognition degrades on heavily reverberant/noisy audio. On real prayer
   recordings from mosques (evaluation T6, 3 hours) passages are followed with 97.6 % recall; false
   spoken hints per 10 minutes: 0 (Masjid an-Nabawi, qiyam), 1–2 (Masjid al-Haram, UK mosques),
   3 (Indonesian/Pakistani imams), 5 (local mosques with loudspeakers). Where loudspeakers garble the

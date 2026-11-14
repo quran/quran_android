@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.extra.feature.linebyline.model
 
 import com.quran.data.model.PageAppearance
+import com.quran.mobile.linebyline.data.dao.AyahHighlight
 import com.quran.mobile.linebyline.data.dao.AyahMarkerInfo
 import com.quran.mobile.linebyline.data.dao.SuraHeader
 import kotlinx.collections.immutable.ImmutableList
@@ -19,7 +20,9 @@ data class PageInfo(
   val sidelines: ImmutableList<SidelineModel>,
   val targetScrollPosition: Int,
   val showSidelines: Boolean,
-  val skippedPageCount: Int
+  val skippedPageCount: Int,
+  // the parts of lines a recitation session hides (words not recited yet)
+  val hiddenRanges: ImmutableList<AyahHighlight> = persistentListOf()
 )
 
 val EmptySettings =

@@ -21,6 +21,7 @@ import com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT
 import com.quran.data.model.highlight.HighlightType.Mode.UNDERLAY
 import com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight
+import com.quran.labs.androidquran.ui.helpers.AyahHighlight.SingleAyahHighlight
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.TransitionAyahHighlight
 import com.quran.page.common.data.AyahBounds
 import com.quran.page.common.data.AyahCoordinates
@@ -171,7 +172,14 @@ class HighlightsDrawer(
         wordGlyphsCoords.getMaskBounds(highlight.key)?.let { return it }
       }
       if (highlight.key.count { it == ':' } == 2) {
-        return wordGlyphsCoords.getBounds(highlight.key, true, false)
+        val ayahKey = highlight.key.substringBeforeLast(':')
+        // a layout with one box per ayah and line has no word glyphs: its ayat are hidden, shown
+        // and marked whole
+        return if (wordGlyphsCoords.hasGlyphs(ayahKey)) {
+          wordGlyphsCoords.getBounds(highlight.key, true, false)
+        } else {
+          highlightCoordinates[SingleAyahHighlight(ayahKey)]?.map { it.bounds }
+        }
       }
     }
 

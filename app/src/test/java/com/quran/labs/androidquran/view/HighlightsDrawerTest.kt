@@ -74,11 +74,64 @@ class HighlightsDrawerTest {
     assertThat(canvas.rects).containsExactly(RectF(600f, 0f, 900f, 50f))
   }
 
+  // a layout with one box per ayah and line (the newer Madani prints, Shemerly): no word glyphs
+  private val ayahLines = listOf(AyahBounds(1, 1, 600, 0, 900, 50), AyahBounds(2, 2, 700, 50, 1000, 100))
+  private val ayahLevel = AyahCoordinates(
+    page = 1,
+    ayahCoordinates = mapOf("1:1" to ayahLines),
+    glyphCoordinates = null,
+    wordGlyphCoordinates = PageGlyphsCoords(1, emptyList())
+  )
+
+  @Test
+  fun `a word of an ayah without word glyphs is hidden with its whole ayah`() {
+    val canvas = draw(ayahLevel, HIDE_TYPE, SingleAyahHighlight(1, 1, 2))
+    assertThat(canvas.clipped).containsExactly(RectF(600f, 0f, 900f, 50f), RectF(700f, 50f, 1000f, 100f))
+  }
+
+  @Test
+  fun `a word of an ayah without word glyphs is marked on its whole ayah`() {
+    val canvas = draw(ayahLevel, UNDERLAY_TYPE, SingleAyahHighlight(1, 1, 2))
+    assertThat(canvas.rects).containsExactly(RectF(600f, 0f, 900f, 50f), RectF(700f, 50f, 1000f, 100f))
+  }
+
+  @Test
+  fun `a word of an ayah with word glyphs is marked alone`() {
+    val canvas = draw(ayahCoordinates, UNDERLAY_TYPE, SingleAyahHighlight(1, 2, 1))
+    assertThat(canvas.rects).hasSize(1)
+    assertThat(canvas.rects.single().left).isAtLeast(590f)
+    assertThat(canvas.rects.single().right).isAtMost(750f)
+  }
+
+  private fun draw(coordinates: AyahCoordinates, type: HighlightType, highlight: AyahHighlight): RecordingCanvas {
+    val highlights: SortedMap<HighlightType, Set<AyahHighlight>> = TreeMap()
+    highlights[type] = setOf(highlight)
+    val boundsByAyah = coordinates.ayahCoordinates.mapKeys { SingleAyahHighlight(it.key) as AyahHighlight }
+    val canvas = RecordingCanvas()
+    HighlightsDrawer({ coordinates }, { boundsByAyah }, { highlights }, {}).draw(
+      PageCoordinates(1, RectF(0f, 0f, 1000f, 100f), emptyList(), emptyList()),
+      canvas,
+      ImageView(ApplicationProvider.getApplicationContext())
+    )
+    return canvas
+  }
+
   private class RecordingCanvas : Canvas(Bitmap.createBitmap(1000, 100, Bitmap.Config.ARGB_8888)) {
     val rects = mutableListOf<RectF>()
+    val clipped = mutableListOf<RectF>()
 
     override fun drawRect(rect: RectF, paint: android.graphics.Paint) {
       rects += RectF(rect)
     }
+
+    override fun clipOutRect(rect: RectF): Boolean {
+      clipped += RectF(rect)
+      return true
+    }
+  }
+
+  private companion object {
+    val HIDE_TYPE = HighlightType(1001, android.R.color.black, HighlightType.Mode.HIDE)
+    val UNDERLAY_TYPE = HighlightType(1002, android.R.color.white, HighlightType.Mode.UNDERLAY)
   }
 }

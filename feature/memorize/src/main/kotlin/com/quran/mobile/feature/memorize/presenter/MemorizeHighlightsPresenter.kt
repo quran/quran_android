@@ -2,6 +2,7 @@ package com.quran.mobile.feature.memorize.presenter
 
 import com.quran.data.core.QuranInfo
 import com.quran.data.di.QuranPageScope
+import com.quran.data.model.VerseRange
 import com.quran.data.model.highlight.HighlightInfo
 import com.quran.mobile.feature.memorize.session.MemorizeSessionController
 import com.quran.mobile.feature.memorize.session.MemorizeState
@@ -65,7 +66,16 @@ class MemorizeHighlightsPresenter @Inject constructor(
   }
 
   private fun marksFor(state: MemorizeState, pages: Set<Int>): Set<Mark> =
-    MemorizeMasks.marks(state, pages.map { quranInfo.getVerseRangeForPage(it) })
+    MemorizeMasks.marks(state, pages.map { versesOn(it) })
+
+  // the page's ayat and the next page's first one, which may begin on this page in a mushaf whose
+  // ayat run on to the next page (Shemerly); elsewhere this page has nothing of it to mark
+  private fun versesOn(page: Int): VerseRange {
+    val range = quranInfo.getVerseRangeForPage(page)
+    val next = page + 1
+    if (!quranInfo.isValidPage(next)) return range
+    return range.copy(endingSura = quranInfo.getSuraOnPage(next), endingAyah = quranInfo.getFirstAyahOnPage(next))
+  }
 
   private fun Mark.info() = HighlightInfo(sura, ayah, word, type, scrollToAyah = false)
 }

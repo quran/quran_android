@@ -496,18 +496,21 @@ class AyahTrackerPresenter @Inject constructor(
   }
 
   private fun highlight(highlightInfo: HighlightInfo) {
-    val page = quranInfo.getPageFromSuraAyah(highlightInfo.sura, highlightInfo.ayah)
+    val pages = pagesOf(highlightInfo)
     items.asSequence()
-      .filter { it.page == page }
-      .forEach { it.onHighlight(page, highlightInfo) }
+      .filter { it.page in pages }
+      .forEach { it.onHighlight(it.page, highlightInfo) }
   }
 
   private fun unhighlight(highlightInfo: HighlightInfo) {
-    val page = quranInfo.getPageFromSuraAyah(highlightInfo.sura, highlightInfo.ayah)
+    val pages = pagesOf(highlightInfo)
     items.asSequence()
-      .filter { it.page == page }
-      .forEach { it.onUnhighlight(page, highlightInfo) }
+      .filter { it.page in pages }
+      .forEach { it.onUnhighlight(it.page, highlightInfo) }
   }
+
+  private fun pagesOf(highlightInfo: HighlightInfo): Set<Int> =
+    pagesOfAyah(quranInfo, highlightInfo.sura, highlightInfo.ayah)
 
   private fun unHighlightAyahs(type: HighlightType, page: Int? = null) {
     items.asSequence()
@@ -515,4 +518,17 @@ class AyahTrackerPresenter @Inject constructor(
       .forEach { it.onUnHighlightAyahType(type) }
   }
 
+  internal companion object {
+    /**
+     * The pages an ayah may be on. QuranInfo gives the last one; an ayah that begins a page may
+     * have begun on the page before, in a mushaf whose ayat run on to the next page (Shemerly).
+     * Elsewhere, that page has no bounds for it and draws nothing.
+     */
+    fun pagesOfAyah(quranInfo: QuranInfo, sura: Int, ayah: Int): Set<Int> {
+      val page = quranInfo.getPageFromSuraAyah(sura, ayah)
+      if (!quranInfo.isValidPage(page)) return setOf(page)
+      val beginsPage = quranInfo.getSuraOnPage(page) == sura && quranInfo.getFirstAyahOnPage(page) == ayah
+      return if (beginsPage && quranInfo.isValidPage(page - 1)) setOf(page - 1, page) else setOf(page)
+    }
+  }
 }

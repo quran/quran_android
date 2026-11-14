@@ -203,6 +203,12 @@ class PageGlyphsCoords(val page: Int, glyphCoords: List<GlyphCoords>) {
     expandedGlyphs.associate { it.glyph to it.bounds }
   }
 
+  /** Whether the ayah ("[sura]:[ayah]") has glyphs on this page. */
+  fun hasGlyphs(ayahKey: String): Boolean {
+    val split = ayahKey.split(":")
+    return glyphsByAyah.containsKey(SuraAyah(split[0].toInt(), split[1].toInt()))
+  }
+
   /**
    * Gets bounds that fully cover the ink of a word, or of all the words of an ayah, so that it can
    * be hidden. A word is covered together with the waqf marks that follow it; each glyph is

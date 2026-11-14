@@ -148,7 +148,8 @@ fun QuranPageWrapper(
         ratio,
         colorFilter = colorFilter,
         displaySettings.showLineDividers && shouldShowLineFor(pageInfo.page, it.lineId),
-        lineColor
+        lineColor,
+        hidden = pageInfo.hiddenRanges.filter { hidden -> hidden.lineId == it.lineId }
       )
     },
     suraHeaderComposable = {

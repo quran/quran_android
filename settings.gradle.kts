@@ -66,6 +66,7 @@ include(":pages:data:madani")
 include(":pages:data:warsh")
 include(":pages:common:madani")
 include(":pages:common:warsh")
+include(":pages:linebyline")
 include(":autoquran")
 
 if (File(rootDir, "extras/settings-extra.gradle").exists()) {

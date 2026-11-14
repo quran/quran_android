@@ -8,6 +8,7 @@ import com.quran.mobile.feature.memorize.glyph.HafsGlyphTypeResolver
 import com.quran.page.common.data.coordinates.GlyphSize
 import com.quran.page.common.data.coordinates.GlyphTypeResolver
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -30,11 +31,12 @@ fun interface LineSource {
  */
 @SingleIn(AppScope::class)
 class PageLines private constructor(
-  private val fileManager: QuranFileManager,
+  // a new one each time: it belongs to the page type in use, which the user may change
+  private val fileManager: Provider<QuranFileManager>,
   private val glyphTypes: HafsGlyphTypeResolver,
   private val io: CoroutineDispatcher,
 ) : LineSource {
-  @Inject constructor(fileManager: QuranFileManager, glyphTypes: HafsGlyphTypeResolver) :
+  @Inject constructor(fileManager: Provider<QuranFileManager>, glyphTypes: HafsGlyphTypeResolver) :
     this(fileManager, glyphTypes, Dispatchers.IO)
 
   /**
@@ -92,7 +94,7 @@ class PageLines private constructor(
 
   // the database for this screen's width, or another width's (they share their lines)
   private fun database(): File? {
-    val current = fileManager.ayahInfoFileDirectory()
+    val current = fileManager().ayahInfoFileDirectory()
     if (current.isFile) return current
     return current.parentFile?.listFiles { file -> file.name.matches(AYAHINFO) }?.minByOrNull { it.name }
   }
