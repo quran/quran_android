@@ -100,6 +100,44 @@ class AudioUtilsTest {
   }
 
   @Test
+  fun testGetLastAyahByJuzStopsAtTheEndOfTheJuz() {
+    // mode 3 is JUZ; page 5 is in juz' 1, so playback should stop at the start
+    // of juz' 2 (2:142) rather than running past it.
+    val lastAyah = audioUtils().getLastAyahToPlay(
+      SuraAyah(2, 1),
+      currentPage = 5,
+      mode = 3,
+      isDualPageVisible = false
+    )
+    assertThat(lastAyah).isEqualTo(SuraAyah(2, 142))
+  }
+
+  @Test
+  fun testGetLastAyahByJuzForAMiddleJuz() {
+    // mode 3 is JUZ; page 50 is in juz' 3, so playback should stop at the start
+    // of juz' 4 (3:93).
+    val lastAyah = audioUtils().getLastAyahToPlay(
+      SuraAyah(3, 1),
+      currentPage = 50,
+      mode = 3,
+      isDualPageVisible = false
+    )
+    assertThat(lastAyah).isEqualTo(SuraAyah(3, 93))
+  }
+
+  @Test
+  fun testGetLastAyahByJuzForTheLastJuz() {
+    // mode 3 is JUZ; page 600 is in juz' 30, which always ends at 114:6
+    val lastAyah = audioUtils().getLastAyahToPlay(
+      SuraAyah(78, 1),
+      currentPage = 600,
+      mode = 3,
+      isDualPageVisible = false
+    )
+    assertThat(lastAyah).isEqualTo(SuraAyah(114, 6))
+  }
+
+  @Test
   fun testGetQariListKeepsGappedQarisUnlessHiddenByAnEmptyGaplessAlternative() {
     val gapless = Qari(1, R.string.app_name, "https://url1/", path = "gapless",
       hasGaplessAlternative = false, db = "gapless")
