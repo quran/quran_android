@@ -91,6 +91,9 @@ class ProgressScreenRenderTest {
   private fun eachLook(name: String, selection: ProgressSelection, wide: Boolean = true) {
     val devices = listOfNotNull(
       Triple("phone", "w411dp-h891dp", "xxhdpi"),
+      Triple("phone_landscape", "w891dp-h411dp", "xxhdpi"),
+      Triple("small_phone", "w360dp-h640dp", "xhdpi"),
+      Triple("small_tablet", "w715dp-h1198dp", "mdpi").takeIf { wide },
       Triple("matepad_landscape", "w1400dp-h920dp", "xhdpi").takeIf { wide },
       Triple("matepad_portrait", "w920dp-h1400dp", "xhdpi").takeIf { wide },
       Triple("medium", "w700dp-h1000dp", "mdpi").takeIf { wide },

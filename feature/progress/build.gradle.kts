@@ -17,10 +17,14 @@ android {
 }
 
 // -Pprogress.render: ProgressScreenRenderTest draws the Progress screens to
-// build/outputs/progress-renders (phone, MatePad 12 X landscape and portrait, a medium window;
-// English and Arabic; day and night) to look at them
+// build/outputs/progress-renders (phones upright and on their side, a small phone, tablets, the
+// MatePad 12 X landscape and portrait; English and Arabic; day and night) to look at them. The
+// tablet-sized bitmaps need more than the default heap.
 tasks.withType<Test>().configureEach {
-  if (providers.gradleProperty("progress.render").isPresent) systemProperty("progress.render", "true")
+  if (providers.gradleProperty("progress.render").isPresent) {
+    systemProperty("progress.render", "true")
+    maxHeapSize = "2g"
+  }
 }
 
 dependencies {

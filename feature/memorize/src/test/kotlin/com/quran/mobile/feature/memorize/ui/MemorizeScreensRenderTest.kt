@@ -210,6 +210,8 @@ class MemorizeScreensRenderTest {
     // size, density
     val devices = listOfNotNull(
       Triple("phone", "w411dp-h891dp", "xxhdpi").takeIf { phone },
+      Triple("phone_landscape", "w891dp-h411dp", "xxhdpi").takeIf { phone },
+      Triple("small_phone", "w360dp-h640dp", "xhdpi").takeIf { phone },
       Triple("tablet", "w840dp-h1280dp", "mdpi").takeIf { tablet },
       // the Huawei MatePad 12 X, 2800×1840 at xhdpi
       Triple("matepad_landscape", "w1400dp-h920dp", "xhdpi").takeIf { tablet },

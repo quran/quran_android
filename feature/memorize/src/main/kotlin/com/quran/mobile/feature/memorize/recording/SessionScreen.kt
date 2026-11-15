@@ -10,11 +10,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -23,7 +25,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalButton
@@ -35,6 +39,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -128,19 +133,41 @@ internal fun SessionScreen(
       )
     },
   ) { padding ->
-    Column(modifier = Modifier.padding(padding).fillMaxSize()) {
-      // a page view may draw beyond its bounds (its background)
-      Box(modifier = Modifier.weight(1f).fillMaxWidth().clipToBounds()) {
-        if (recording != null && renderer != null && pages.isNotEmpty()) {
-          SessionPages(recording, pages, pageOf, playback?.positionMs, renderer, onSeek)
+    BoxWithConstraints(modifier = Modifier.padding(padding).fillMaxSize()) {
+      val pagesView: @Composable (Modifier) -> Unit = { modifier ->
+        // a page view may draw beyond its bounds (its background)
+        Box(modifier = modifier.clipToBounds()) {
+          if (recording != null && renderer != null && pages.isNotEmpty()) {
+            SessionPages(recording, pages, pageOf, playback?.positionMs, renderer, onSeek)
+          }
         }
       }
-      HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-      Legend(counts)
-      // media playback reads left to right in every language (time, the timeline and the controls), as
-      // Material's bidirectionality guidance has it
-      CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        Player(recording, playback, onPlay, onPause, onSeek, onSkip)
+      val controls: @Composable () -> Unit = {
+        Legend(counts)
+        // media playback reads left to right in every language (time, the timeline and the controls), as
+        // Material's bidirectionality guidance has it
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+          Player(recording, playback, onPlay, onPause, onSeek, onSkip)
+        }
+      }
+      if (maxHeight < SHORT_HEIGHT && maxWidth > maxHeight) {
+        // a phone on its side: the pages get the height, the player sits beside them
+        Row(modifier = Modifier.fillMaxSize()) {
+          pagesView(Modifier.weight(1f).fillMaxHeight())
+          VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+          Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.width(SIDE_PLAYER_WIDTH).fillMaxHeight().verticalScroll(rememberScrollState()),
+          ) {
+            controls()
+          }
+        }
+      } else {
+        Column(modifier = Modifier.fillMaxSize()) {
+          pagesView(Modifier.weight(1f).fillMaxWidth())
+          HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+          controls()
+        }
       }
     }
   }
@@ -337,3 +364,7 @@ private fun Player(
 }
 
 private const val SKIP_MS = 5_000L
+
+// below this height (a phone on its side) the player goes beside the pages
+private val SHORT_HEIGHT = 480.dp
+private val SIDE_PLAYER_WIDTH = 360.dp
