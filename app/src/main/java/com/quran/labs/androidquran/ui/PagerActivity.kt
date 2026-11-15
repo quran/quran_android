@@ -299,6 +299,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     // field injection
     pagerActivityComponent.inject(this)
 
+    // enforce the orientation lock before setContentView so the activity never
+    // shows the wrong orientation first. https://github.com/quran/quran_android/issues/3947
+    enforceOrientationLock()
+
     isFoldableDeviceOpenAndVertical =
       savedInstanceState?.getBoolean(LAST_FOLDING_STATE, isFoldableDeviceOpenAndVertical)
         ?: isFoldableDeviceOpenAndVertical
@@ -387,6 +391,25 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       val pageIndex = quranInfo.getPositionFromPage(curPage, isDualPageVisible)
       viewPager.setCurrentItem(pageIndex)
     }
+  }
+
+  /** Applies the orientation lock preference, falling back to no lock when disabled or unsupported. */
+  private fun enforceOrientationLock() {
+    if (quranSettings.isLockOrientation &&
+      OrientationLockUtils.isOrientationLockSupported(resources.configuration)
+    ) {
+      val current = resources.configuration.orientation
+      if (quranSettings.isLandscapeOrientation) {
+        if (current == Configuration.ORIENTATION_PORTRAIT) {
+          requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+          return
+        }
+      } else if (current == Configuration.ORIENTATION_LANDSCAPE) {
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        return
+      }
+    }
+    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
   }
 
   private fun initialize(savedInstanceState: Bundle?) {
@@ -604,22 +627,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     // just got created, need to reconnect to service
     shouldReconnect = true
-
-    // enforce orientation lock
-    if (quranSettings.isLockOrientation &&
-      OrientationLockUtils.isOrientationLockSupported(resources.configuration)
-    ) {
-      val current = resources.configuration.orientation
-      if (quranSettings.isLandscapeOrientation) {
-        if (current == Configuration.ORIENTATION_PORTRAIT) {
-          requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-          return
-        }
-      } else if (current == Configuration.ORIENTATION_LANDSCAPE) {
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        return
-      }
-    }
 
     quranEventLogger.logAnalytics(isDualPages, showingTranslation, isSplitScreen)
 
@@ -896,6 +903,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     super.onResume()
     quranSettings.registerPreferencesListener(themePreferencesListener)
     refreshQuranPages()
+
+    // re-apply the orientation lock so preference changes made while stopped take effect.
+    enforceOrientationLock()
 
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
