@@ -13,6 +13,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,6 +37,8 @@ import java.util.zip.ZipInputStream
 class SpeechModelStore private constructor(
   private val context: Context,
   val spec: SpeechModelSpec,
+  /** How long to wait before trying a cut-off download again (doubled each time). */
+  private val retryDelayMs: Long = RETRY_DELAY_MS,
 ) {
   @Inject constructor(@ApplicationContext context: Context) : this(context, SpeechModelSpec.DEFAULT)
 
@@ -79,22 +82,22 @@ class SpeechModelStore private constructor(
       for (file in spec.files) {
         val target = File(directory, file.name)
         if (target.length() == file.size) continue
-        val connection = URL(file.url).openConnection() as HttpURLConnection
-        connection.instanceFollowRedirects = true
-        connection.connectTimeout = 30_000
-        connection.readTimeout = 60_000
-        try {
-          if (connection.responseCode != HttpURLConnection.HTTP_OK) {
-            throw IOException("HTTP ${connection.responseCode} for ${file.name}")
+        val base = done
+        // a connection that drops (as mobile networks do) is tried again; a wrong file is not
+        var attempt = 1
+        while (true) {
+          try {
+            fetch(file, target) { written -> _state.value = State.Downloading(base + written, total) }
+            break
+          } catch (e: WrongFile) {
+            throw e
+          } catch (e: IOException) {
+            if (attempt == DOWNLOAD_ATTEMPTS) throw e
+            delay(retryDelayMs shl (attempt - 1))
+            attempt++
           }
-          val base = done
-          install(connection.inputStream, file, target) { written ->
-            _state.value = State.Downloading(base + written, total)
-          }
-          done += file.downloadSize
-        } finally {
-          connection.disconnect()
         }
+        done += file.downloadSize
       }
       _state.value = State.Installed
     } catch (e: CancellationException) {
@@ -105,6 +108,24 @@ class SpeechModelStore private constructor(
     } catch (e: SecurityException) {
       // e.g. no network permission (a test APK); never a crash of the app's download scope
       _state.value = State.Failed(e.message ?: e.javaClass.simpleName)
+    }
+  }
+
+  private suspend fun fetch(file: ModelFile, target: File, progress: (Long) -> Unit) {
+    val connection = URL(file.url).openConnection() as HttpURLConnection
+    connection.instanceFollowRedirects = true
+    connection.connectTimeout = 30_000
+    connection.readTimeout = 60_000
+    try {
+      val code = connection.responseCode
+      if (code != HttpURLConnection.HTTP_OK) {
+        // a server error may pass; a missing file won't
+        if (code in 400..499) throw WrongFile("HTTP $code for ${file.name}")
+        throw IOException("HTTP $code for ${file.name}")
+      }
+      install(connection.inputStream, file, target, progress)
+    } finally {
+      connection.disconnect()
     }
   }
 
@@ -188,12 +209,20 @@ class SpeechModelStore private constructor(
     }
   }
 
+  /** A file that is wrong as served (missing, or not the one pinned): trying again won't help. */
+  private class WrongFile(message: String) : IOException(message)
+
   companion object {
+    /** A cut-off download is tried this many times in all, waiting [RETRY_DELAY_MS], then twice that. */
+    private const val DOWNLOAD_ATTEMPTS = 3
+    private const val RETRY_DELAY_MS = 2_000L
+
     /** A store for another model (in its own directory), e.g. the double-check's. */
     internal fun of(context: Context, spec: SpeechModelSpec) = SpeechModelStore(context, spec)
 
     /** A store for a model of the test's own files. */
-    internal fun forTest(context: Context, spec: SpeechModelSpec) = SpeechModelStore(context, spec)
+    internal fun forTest(context: Context, spec: SpeechModelSpec, retryDelayMs: Long = RETRY_DELAY_MS) =
+      SpeechModelStore(context, spec, retryDelayMs)
   }
 
   private fun isZip(input: InputStream): Boolean {
@@ -228,8 +257,10 @@ class SpeechModelStore private constructor(
         }
       }
       val sha = digest.digest().joinToString("") { "%02x".format(it) }
+      // shorter than it should be: the connection was cut (a download tries again)
+      if (written < (expected?.size ?: file.size)) throw IOException("${file.name} was cut short")
       if (sha != (expected?.sha256 ?: file.sha256) || written != (expected?.size ?: file.size)) {
-        throw IOException("${file.name} failed verification")
+        throw WrongFile("${file.name} failed verification")
       }
       if (expected != null) {
         convert(partial, file, target)
