@@ -96,6 +96,7 @@ object Constants {
   const val PREF_USE_OLD_BACKGROUND = "useOldBackground"
   const val PREF_MOBILE_SYNC_LEGACY_BOOKMARKS_MIGRATED = "mobileSyncLegacyBookmarksMigrated"
   const val PREF_HAS_SEEN_MOVABLE_BOOKMARK_EDUCATION = "hasSeenMovableBookmarkEducation"
+  const val PREF_RESTRICT_TO_RANGE = "restrictToRange"
   const val PREF_LAST_SEEN_ANNOUNCEMENT = "lastSeenAnnouncement"
 
   // Themes

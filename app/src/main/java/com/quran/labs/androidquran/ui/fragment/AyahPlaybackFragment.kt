@@ -18,6 +18,7 @@ import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.labs.androidquran.ui.util.TypefaceManager
+import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.QuranSpinner
 import com.quran.mobile.di.AyahActionFragmentProvider
@@ -56,6 +57,9 @@ class AyahPlaybackFragment : AyahActionFragment() {
 
   @Inject
   lateinit var quranInfo: QuranInfo
+
+  @Inject
+  lateinit var quranSettings: QuranSettings
 
   object Provider : AyahActionFragmentProvider {
     override val order = SlidingPagerAdapter.AUDIO_PAGE
@@ -193,6 +197,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
       val verseRepeat = repeatVerse
       val rangeRepeat = repeatRange
       val enforceRange = restrictToRange.isChecked
+      quranSettings.setShouldEnforceAudioBounds(enforceRange)
       var updatedRange = false
 
       val speed = SPEEDS[playbackSpeedPicker.value - 1]
@@ -310,7 +315,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
           verseRepeatCount = lastRequest.repeatInfo
           rangeRepeatCount = lastRequest.rangeRepeatInfo
           currentSpeed = lastRequest.playbackSpeed
-          shouldEnforce = lastRequest.enforceBounds
+          shouldEnforce = lastRequest.enforceBounds || quranSettings.shouldEnforceAudioBounds()
         } else {
           shouldReset = false
         }
@@ -324,7 +329,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
           val startPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah)
           val pageBounds = quranInfo.getPageBounds(startPage)
           ending = SuraAyah(pageBounds[2], pageBounds[3])
-          shouldEnforce = false
+          shouldEnforce = quranSettings.shouldEnforceAudioBounds()
         } else {
           ending = selectionEnd
           shouldEnforce = true
