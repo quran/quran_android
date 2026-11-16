@@ -82,4 +82,18 @@
       android:textSize="14sp"
       tools:text="1"
       />
+
+  <!-- a reading bookmark's days in Progress (the Bookmarks list only) -->
+  <ImageButton
+      android:id="@+id/progressButton"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:layout_gravity="center_vertical"
+      android:layout_marginStart="4dp"
+      android:layout_marginLeft="4dp"
+      android:background="?attr/selectableItemBackgroundBorderless"
+      android:contentDescription="@string/reading_bookmark_progress"
+      android:src="@drawable/ic_progress_chart"
+      android:visibility="gone"
+      />
 </LinearLayout>

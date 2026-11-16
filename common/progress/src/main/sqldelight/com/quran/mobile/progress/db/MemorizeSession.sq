@@ -1,0 +1,64 @@
+-- What each Memorize, Recitation and Salah session came to (counts only: no audio, no words heard).
+CREATE TABLE memorize_session (
+  id TEXT PRIMARY KEY NOT NULL,
+  -- MEMORIZE, RECITE or SALAH
+  mode TEXT NOT NULL,
+  started_at_ms INTEGER NOT NULL,
+  local_day INTEGER NOT NULL,
+  ended_at_ms INTEGER NOT NULL,
+  -- audio the session heard
+  listened_ms INTEGER NOT NULL,
+  start_sura INTEGER NOT NULL,
+  start_ayah INTEGER NOT NULL,
+  end_sura INTEGER NOT NULL,
+  end_ayah INTEGER NOT NULL,
+  words INTEGER NOT NULL,
+  recited INTEGER NOT NULL,
+  hinted INTEGER NOT NULL,
+  missed INTEGER NOT NULL,
+  mistakes INTEGER NOT NULL,
+  -- 1 if the passage was recited to its end
+  finished INTEGER NOT NULL,
+  recording_id TEXT
+);
+
+CREATE INDEX memorize_session_day ON memorize_session(local_day);
+
+CREATE TABLE memorize_session_ayah (
+  session_id TEXT NOT NULL,
+  sura INTEGER NOT NULL,
+  ayah INTEGER NOT NULL,
+  -- the ayah's words, and those of them the session went through
+  ayah_words INTEGER NOT NULL,
+  words INTEGER NOT NULL,
+  hinted INTEGER NOT NULL,
+  missed INTEGER NOT NULL,
+  mistakes INTEGER NOT NULL,
+  PRIMARY KEY (session_id, sura, ayah)
+);
+
+CREATE INDEX memorize_session_ayah_by_ayah ON memorize_session_ayah(sura, ayah);
+
+insertSession:
+INSERT OR REPLACE INTO memorize_session(
+  id, mode, started_at_ms, local_day, ended_at_ms, listened_ms, start_sura, start_ayah, end_sura, end_ayah,
+  words, recited, hinted, missed, mistakes, finished, recording_id
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+insertSessionAyah:
+INSERT OR REPLACE INTO memorize_session_ayah(session_id, sura, ayah, ayah_words, words, hinted, missed, mistakes)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+sessions:
+SELECT * FROM memorize_session ORDER BY started_at_ms;
+
+sessionAyahs:
+SELECT memorize_session_ayah.*, memorize_session.mode, memorize_session.started_at_ms
+FROM memorize_session_ayah JOIN memorize_session ON memorize_session.id = memorize_session_ayah.session_id
+ORDER BY memorize_session.started_at_ms;
+
+deleteAllSessionAyahs:
+DELETE FROM memorize_session_ayah;
+
+deleteAllSessions:
+DELETE FROM memorize_session;

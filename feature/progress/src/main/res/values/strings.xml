@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="progress_title">Progress</string>
+  <string name="progress_back">Back</string>
+
+  <!-- the navigation's four sections -->
+  <string name="progress_section_bookmarks">Bookmarks</string>
+  <string name="progress_section_memorizing">Memorizing</string>
+  <string name="progress_section_salah">Salah</string>
+  <string name="progress_section_sessions">Sessions</string>
+
+  <!-- the bookmark list -->
+  <string name="progress_add_bookmark">Add a bookmark</string>
+  <string name="progress_purpose_reading">Reading</string>
+  <string name="progress_purpose_memorization">Memorization</string>
+  <string name="progress_purpose_review">Review</string>
+  <string name="progress_sample">Sample data</string>
+  <string name="progress_not_placed">not placed</string>
+  <string name="progress_juz">juz %1$d</string>
+  <string name="progress_day_of">day %1$d of %2$d</string>
+  <string name="progress_no_deadline">no deadline</string>
+  <string name="progress_separator">"&#160;· "</string>
+
+  <!-- a bookmark's detail -->
+  <string name="progress_started">Started %1$s</string>
+  <string name="progress_finishes_by">finishes by %1$s</string>
+  <string name="progress_overdue_since">was due %1$s</string>
+  <string name="progress_kept_since">Followed since %1$s</string>
+  <string name="progress_at">page %1$d, %2$s&#160;%3$d:%4$d</string>
+  <string name="progress_juz_title">Juz</string>
+  <plurals name="progress_ahead">
+    <item quantity="one">%1$d page ahead of a %2$d-day pace</item>
+    <item quantity="other">%1$d pages ahead of a %2$d-day pace</item>
+  </plurals>
+  <plurals name="progress_behind">
+    <item quantity="one">%1$d page behind a %2$d-day pace</item>
+    <item quantity="other">%1$d pages behind a %2$d-day pace</item>
+  </plurals>
+  <string name="progress_on_pace">on a %1$d-day pace</string>
+  <string name="progress_legend_now">where it is</string>
+  <string name="progress_legend_pace">where the pace is today</string>
+  <string name="progress_legend_read">read this cycle</string>
+  <string name="progress_juz_detail">Juz %1$d: pages %2$d–%3$d, %4$d of %5$d read this cycle</string>
+  <string name="progress_days_title">Days</string>
+  <string name="progress_pages_per_day">pages per day</string>
+  <string name="progress_goal">goal %1$d</string>
+  <string name="progress_minutes_per_day">minutes reading per day</string>
+  <string name="progress_average">%1$d on average</string>
+  <string name="progress_today_value">%1$d today</string>
+  <string name="progress_day_semantics">Day %1$d: %2$s, %3$s</string>
+  <string name="progress_day_to_come">Day %1$d, still to come</string>
+  <plurals name="progress_pages">
+    <item quantity="one">%d page</item>
+    <item quantity="other">%d pages</item>
+  </plurals>
+  <plurals name="progress_minutes">
+    <item quantity="one">%d minute</item>
+    <item quantity="other">%d minutes</item>
+  </plurals>
+  <plurals name="progress_days">
+    <item quantity="one">%d day</item>
+    <item quantity="other">%d days</item>
+  </plurals>
+  <string name="progress_hours_minutes">%1$d h %2$d m</string>
+  <string name="progress_minutes_only">%1$d m</string>
+  <plurals name="progress_uncredited">
+    <item quantity="one">%d minute read today goes to the next bookmark you move</item>
+    <item quantity="other">%d minutes read today go to the next bookmark you move</item>
+  </plurals>
+  <string name="progress_fact_reading">reading this cycle, %1$s</string>
+  <string name="progress_fact_last">last khatma, %1$s</string>
+  <string name="progress_fact_none">None yet</string>
+  <string name="progress_fact_last_label">last khatma</string>
+  <string name="progress_fact_reminder">daily reminder while this khatma is open</string>
+  <string name="progress_fact_reminder_off">Daily reminder off</string>
+  <string name="progress_reminder_needs_permission">Allow notifications for the daily reminder</string>
+  <string name="progress_allow">Allow</string>
+  <string name="progress_no_history">Pages and minutes appear here as you read and move this bookmark. Until then, the bars show sample days.</string>
+  <string name="progress_not_placed_detail">Place this bookmark from an ayah\'s menu in the reader, and its days start here.</string>
+  <string name="progress_start_cycle">Start a new khatma now</string>
+
+  <!-- memorizing -->
+  <string name="progress_held_title">Ayat held, by juz</string>
+  <string name="progress_held_explained">An ayah is held when, the last time you memorized it, you recited every word without a hint.</string>
+  <string name="progress_held_of">%1$d of %2$d ayat</string>
+  <string name="progress_held_summary">Juz %1$d: %2$d of %3$d ayat held</string>
+  <string name="progress_juz_suras">Juz %1$d, by sura</string>
+  <string name="progress_accuracy_title">Words recited without help</string>
+  <string name="progress_accuracy_per_day">percent per day</string>
+  <string name="progress_hints_per_day">hints per day</string>
+  <string name="progress_no_sessions">These charts fill in as you memorize with the microphone. Until then, they show sample days.</string>
+
+  <!-- salah -->
+  <string name="progress_salah_title">Prayers followed</string>
+  <string name="progress_prayers_per_day">prayers per day</string>
+  <string name="progress_salah_hints">hints given per day</string>
+
+  <!-- sessions -->
+  <string name="progress_sessions_empty">Sessions you recite with the microphone appear here, by day.</string>
+  <string name="progress_mode_memorize">Memorize</string>
+  <string name="progress_mode_recite">Recitation</string>
+  <string name="progress_mode_salah">Salah</string>
+  <string name="progress_session_counts">Recited %1$d, hints %2$d, skipped %3$d</string>
+  <string name="progress_session_finished">to the end</string>
+  <string name="progress_play_recording">Play the recording</string>
+  <string name="progress_session_ayah">%1$s %2$d:%3$d</string>
+  <string name="progress_session_ayat">Ayat</string>
+  <string name="progress_ayah_counts">%1$d of %2$d words, hints %3$d, skipped %4$d</string>
+  <string name="progress_choose_session">Choose a session to see each ayah.</string>
+  <string name="progress_choose_bookmark">Choose a bookmark to see its days.</string>
+
+  <!-- the daily reminder -->
+  <string name="progress_reminder_channel">Reading reminder</string>
+  <string name="progress_reminder_channel_description">Once a day, while a khatma is open, if it\'s behind or wasn\'t read yet that day</string>
+  <string name="progress_reminder_title">%1$s</string>
+  <string name="progress_reminder_not_read">%1$d pages a day finish it by %2$s.</string>
+  <string name="progress_reminder_behind">%1$d pages behind. %2$d a day still finish it by %3$s.</string>
+  <string name="progress_reminder_overdue">%1$d pages to go to finish this khatma.</string>
+
+  <!-- settings -->
+  <string name="progress_settings_category">Progress</string>
+  <string name="progress_settings_bookmarks">Reading bookmarks</string>
+  <string name="progress_settings_bookmarks_summary">Turn on more bookmarks, name them, and set what each is for</string>
+  <string name="progress_settings_reminder">Daily reminder</string>
+  <string name="progress_settings_reminder_summary">While a khatma is open, if it\'s behind or wasn\'t read yet that day</string>
+  <string name="progress_settings_reminder_time">Reminder time</string>
+  <string name="progress_settings_session_log">Keep session results</string>
+  <string name="progress_settings_session_log_summary">For the Memorizing, Salah and Sessions charts: counts only, kept on this device</string>
+  <string name="progress_settings_clear">Clear progress history</string>
+  <string name="progress_settings_clear_summary">Bookmark moves, reading time and session results</string>
+  <string name="progress_settings_clear_message">This clears what Progress kept on this device. Your bookmarks stay where they are.</string>
+  <string name="progress_settings_clear_confirm">Clear</string>
+  <string name="progress_settings_debug_clock">Move the clock a day ahead (debug)</string>
+  <string name="progress_settings_debug_clock_summary">Now %1$d days ahead. Tap to add one.</string>
+  <string name="progress_settings_debug_clock_reset">Put the clock back to today (debug)</string>
+  <string name="progress_settings_debug_seed">Fill in 12 days of reading (debug)</string>
+  <string name="progress_settings_debug_reminder">Show today\'s reminder now (debug)</string>
+  <string name="progress_settings_debug_reminder_none">Nothing is due: no open khatma with a deadline is behind or unread today, or notifications are off</string>
+
+  <!-- the bookmark editor -->
+  <string name="progress_editor_title">Reading bookmarks</string>
+  <string name="progress_editor_synced">Synced</string>
+  <string name="progress_editor_device">On this device only</string>
+  <string name="progress_editor_name">Name</string>
+  <string name="progress_editor_for">For</string>
+  <string name="progress_editor_days">Days to finish</string>
+  <string name="progress_editor_explained">Teal, orange and red sync with your account. The other colours stay on this device, and appear in the reader\'s bookmark menu once turned on.</string>
+</resources>

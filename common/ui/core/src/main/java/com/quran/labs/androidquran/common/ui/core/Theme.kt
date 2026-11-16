@@ -95,6 +95,7 @@ object QuranIcons {
   val FastRewind: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.FastRewind
   val HighlightOff: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.HighlightOff
   val Logout: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Logout
+  val Lightbulb: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Lightbulb
   val MenuBook: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.MenuBook
   val Mic: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Mic
   val Notes: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.Notes

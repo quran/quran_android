@@ -16,4 +16,7 @@ class TestApplication : QuranApplication() {
 
   override fun initializeWorkManager() {
   }
+
+  override fun startProgress() {
+  }
 }

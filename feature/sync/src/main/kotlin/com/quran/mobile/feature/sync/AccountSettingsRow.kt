@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.labs.androidquran.common.ui.core.modifier.autoMirror
 import com.quran.mobile.feature.sync.state.AccountSettingsEvent
 import com.quran.mobile.feature.sync.state.AccountSettingsState
 
@@ -103,8 +102,7 @@ private fun SignInPromptRow(onClick: () -> Unit, modifier: Modifier = Modifier) 
       Icon(
         imageVector = QuranIcons.ChevronRight,
         contentDescription = null,
-        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.autoMirror()
+        tint = MaterialTheme.colorScheme.onSurfaceVariant
       )
     }
   }

@@ -9,4 +9,5 @@ interface AudioBarRecitationListener {
   fun onEndRecitationSessionPressed()
   fun onPlayRecitationPressed()
   fun onPauseRecitationPressed()
+  fun onRecitationHintPressed() {}
 }

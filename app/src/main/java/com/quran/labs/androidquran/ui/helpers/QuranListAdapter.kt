@@ -39,6 +39,7 @@ class QuranListAdapter(
   private var tagMap: Map<String, Tag> = emptyMap()
   private var showTags = false
   private var showDate = false
+  private var showProgress = false
 
   private var touchListener: QuranTouchListener? = null
 
@@ -156,6 +157,11 @@ class QuranListAdapter(
     this.showDate = showDate
   }
 
+  /** Whether reading bookmark rows get a button to their days in Progress. */
+  fun setShowProgress(showProgress: Boolean) {
+    this.showProgress = showProgress
+  }
+
   private fun getQuranRow(position: Int): QuranRow = elements[position]
 
   private fun bindRow(vh: HeaderHolder, position: Int) {
@@ -165,6 +171,7 @@ class QuranListAdapter(
 
     with(holder) {
       number.text = QuranUtils.getLocalizedNumber(item.sura)
+      progress?.visibility = if (showProgress && item.isReadingBookmark) View.VISIBLE else View.GONE
       metadata.visibility = View.VISIBLE
       metadata.text = item.metadata
       tags.visibility = View.GONE
@@ -332,6 +339,15 @@ class QuranListAdapter(
     val image: ImageView = itemView.findViewById(R.id.rowIcon)
     val tags: TagsViewGroup = itemView.findViewById(R.id.tags)
     val date: TextView? = itemView.findViewById(R.id.show_date)
+    // every variant of the row layout has it; a missing one shouldn't take the list down
+    val progress: View? = itemView.findViewById<View?>(R.id.progressButton)?.also { button ->
+      button.setOnClickListener {
+        val position = bindingAdapterPosition
+        if (position != RecyclerView.NO_POSITION) {
+          touchListener?.onProgressClicked(elements[position], position)
+        }
+      }
+    }
   }
 
   private inner class CollectionHeaderHolder(itemView: View) : HeaderHolder(itemView) {
@@ -354,6 +370,7 @@ class QuranListAdapter(
     fun onClick(row: QuranRow, position: Int)
     fun onLongClick(row: QuranRow, position: Int): Boolean
     fun onOpenClicked(row: QuranRow, position: Int) = Unit
+    fun onProgressClicked(row: QuranRow, position: Int) = Unit
   }
 
   private companion object {

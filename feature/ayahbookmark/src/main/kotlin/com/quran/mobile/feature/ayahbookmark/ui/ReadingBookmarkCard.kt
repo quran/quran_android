@@ -191,7 +191,7 @@ private fun OtherReadingBookmarksRow(
       verticalAlignment = Alignment.CenterVertically,
       modifier = Modifier.width(others.stackWidth())
     ) {
-      others.forEachIndexed { index, bookmark ->
+      others.take(MAX_GLYPHS).forEachIndexed { index, bookmark ->
         Icon(
           imageVector = if (bookmark is EmptyReadingBookmark) BookmarkOutlineIcon else BookmarkIcon,
           contentDescription = null,
@@ -225,5 +225,10 @@ private val ButtonContentPadding = PaddingValues(horizontal = 16.dp, vertical = 
 private val GlyphSize = 14.dp
 private val GlyphOverlap = 5.dp
 
-private fun ImmutableList<ReadingBookmark>.stackWidth(): Dp =
-  if (isEmpty()) 0.dp else GlyphSize * size - GlyphOverlap * (size - 1)
+// with more bookmarks turned on, the stack shows the first few
+private const val MAX_GLYPHS = 4
+
+private fun ImmutableList<ReadingBookmark>.stackWidth(): Dp {
+  val shown = size.coerceAtMost(MAX_GLYPHS)
+  return if (shown == 0) 0.dp else GlyphSize * shown - GlyphOverlap * (shown - 1)
+}

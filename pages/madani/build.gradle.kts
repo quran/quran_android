@@ -12,5 +12,7 @@ dependencies {
   implementation(project(":common:upgrade"))
 
   implementation(project(":pages:common:madani"))
+
+  implementation(libs.androidx.annotation)
   api(project(":pages:data:madani"))
 }

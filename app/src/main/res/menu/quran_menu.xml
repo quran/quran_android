@@ -5,6 +5,11 @@
           android:icon="@drawable/ic_not_favorite"
           android:title="@string/menu_bookmarks"
           app:showAsAction="ifRoom" />
+    <item android:id="@+id/memorize"
+          android:icon="@drawable/ic_mic"
+          android:title="@string/menu_memorize"
+          android:visible="false"
+          app:showAsAction="ifRoom" />
     <item android:id="@+id/goto_translation"
           android:icon="@drawable/ic_translation"
           android:title="@string/menu_translation"

@@ -59,7 +59,8 @@ class ReadingBookmarkSheetPresenter(
     val draftNames = remember { mutableStateOf<Map<ReadingBookmarkType, String>>(emptyMap()) }
 
     val slots = remember(stored, draftNames.value, target) {
-      ReadingBookmarkType.entries.map { slot ->
+      // the synced slots, and those kept on the device that are turned on (the DAO lists only those)
+      ReadingBookmarkType.entries.filter { it.synced || it in stored }.map { slot ->
         val row = stored[slot]
         ReadingBookmarkSlotItem(
           slot = slot,

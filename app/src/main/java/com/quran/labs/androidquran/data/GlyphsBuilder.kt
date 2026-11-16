@@ -23,7 +23,21 @@ class GlyphsBuilder {
   private var curAyah: SuraAyah? = null
   private var nextWordPos: Int = 1
 
-  fun append(sura: Int, ayah: Int, glyphPosition: Int, line: Int, type: String, bounds: RectF) {
+  /**
+   * @param wordPosition the word position of a [WORD] glyph when it is known up front (e.g. when an
+   *   ayah continues from the previous page and the first word on this page isn't word 1). When
+   *   null, words are numbered in the order they are appended.
+   */
+  @JvmOverloads
+  fun append(
+    sura: Int,
+    ayah: Int,
+    glyphPosition: Int,
+    line: Int,
+    type: String,
+    bounds: RectF,
+    wordPosition: Int? = null
+  ) {
     val suraAyah = SuraAyah(sura, ayah)
 
     // If we're on a different ayah, reset word position to 1
@@ -37,7 +51,11 @@ class GlyphsBuilder {
       SAJDAH ->  SajdahGlyph(suraAyah, glyphPosition)
       PAUSE  ->   PauseGlyph(suraAyah, glyphPosition)
       END    -> AyahEndGlyph(suraAyah, glyphPosition)
-      WORD   ->    WordGlyph(suraAyah, glyphPosition, nextWordPos++)
+      WORD   -> {
+        val position = wordPosition ?: nextWordPos
+        nextWordPos = position + 1
+        WordGlyph(suraAyah, glyphPosition, position)
+      }
       else   -> throw IllegalArgumentException("Unknown glyph type $type")
     }
 
@@ -48,7 +66,7 @@ class GlyphsBuilder {
 
   // Glyph Type keys
   // Note: it's important these types match what is defined in the ayahinfo db
-  private companion object {
+  companion object {
     const val HIZB = "hizb"
     const val SAJDAH = "sajdah"
     const val PAUSE = "pause"

@@ -18,31 +18,24 @@ data class ReadingBookmarkSlotSpec(
 )
 
 object ReadingBookmarkSlots {
-  private val teal = ReadingBookmarkSlotSpec(
-    slot = ReadingBookmarkType.TEAL,
-    colorResourceId = R.color.reading_bookmark_teal,
-    nameResourceId = R.string.reading_bookmark_teal
-  )
-
-  private val orange = ReadingBookmarkSlotSpec(
-    slot = ReadingBookmarkType.ORANGE,
-    colorResourceId = R.color.reading_bookmark_orange,
-    nameResourceId = R.string.reading_bookmark_orange
-  )
-
-  private val red = ReadingBookmarkSlotSpec(
-    slot = ReadingBookmarkType.RED,
-    colorResourceId = R.color.reading_bookmark_red,
-    nameResourceId = R.string.reading_bookmark_red
-  )
-
-  operator fun get(slot: ReadingBookmarkType): ReadingBookmarkSlotSpec {
-    return when (slot) {
-      ReadingBookmarkType.TEAL -> teal
-      ReadingBookmarkType.ORANGE -> orange
-      ReadingBookmarkType.RED -> red
+  private val specs = ReadingBookmarkType.entries.associateWith { slot ->
+    when (slot) {
+      ReadingBookmarkType.TEAL -> ReadingBookmarkSlotSpec(slot, R.color.reading_bookmark_teal, R.string.reading_bookmark_teal)
+      ReadingBookmarkType.ORANGE ->
+        ReadingBookmarkSlotSpec(slot, R.color.reading_bookmark_orange, R.string.reading_bookmark_orange)
+      ReadingBookmarkType.RED -> ReadingBookmarkSlotSpec(slot, R.color.reading_bookmark_red, R.string.reading_bookmark_red)
+      ReadingBookmarkType.GREEN ->
+        ReadingBookmarkSlotSpec(slot, R.color.reading_bookmark_green, R.string.reading_bookmark_green)
+      ReadingBookmarkType.BLUE -> ReadingBookmarkSlotSpec(slot, R.color.reading_bookmark_blue, R.string.reading_bookmark_blue)
+      ReadingBookmarkType.PURPLE ->
+        ReadingBookmarkSlotSpec(slot, R.color.reading_bookmark_purple, R.string.reading_bookmark_purple)
+      ReadingBookmarkType.BROWN ->
+        ReadingBookmarkSlotSpec(slot, R.color.reading_bookmark_brown, R.string.reading_bookmark_brown)
+      ReadingBookmarkType.GREY -> ReadingBookmarkSlotSpec(slot, R.color.reading_bookmark_grey, R.string.reading_bookmark_grey)
     }
   }
+
+  operator fun get(slot: ReadingBookmarkType): ReadingBookmarkSlotSpec = specs.getValue(slot)
 
   fun displayName(context: Context, slot: ReadingBookmarkType, name: String?): String =
     name?.takeIf { it.isNotBlank() } ?: context.getString(this[slot].nameResourceId)

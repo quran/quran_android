@@ -14,6 +14,8 @@ import com.quran.data.dao.Settings
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.bookmark.AyahReadingBookmark
 import com.quran.data.model.highlight.Highlight
+import com.quran.data.model.highlight.HighlightInfo
+import com.quran.data.model.highlight.HighlightType as RecitationHighlightType
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.SelectionIndicator
 import com.quran.data.model.selection.SelectionRectangle
@@ -47,6 +49,10 @@ import com.quran.mobile.linebyline.data.model.PageModel
 import com.quran.mobile.mapper.imlaei.data.ImlaeiUthmaniMapper
 import com.quran.mobile.mapper.imlaei.data.WordAlignment
 import com.quran.reading.common.ReadingEventPresenter
+import com.quran.recitation.presenter.RecitationHighlightsPresenter
+import com.quran.recitation.presenter.RecitationHighlightsPresenter.HighlightAction
+import com.quran.recitation.presenter.RecitationHighlightsPresenter.RecitationPage
+import com.quran.recitation.presenter.RecitationPresenter
 import dev.zacsweers.metro.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -56,9 +62,13 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -79,6 +89,8 @@ class QuranLineByLinePresenter @Inject constructor(
   private val crashReporter: CrashReporter,
   private val quranInfo: QuranInfo,
   private val imlaeiUthmaniMapper: ImlaeiUthmaniMapper,
+  private val recitationPresenter: RecitationPresenter,
+  private val recitationHighlightsPresenter: RecitationHighlightsPresenter,
   pages: IntArray
 ) {
   private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -121,8 +133,9 @@ class QuranLineByLinePresenter @Inject constructor(
     return combine(
       pageSelection(),
       readingBookmarksForPage(),
-      lineByLineSettings.displaySettingsFlow
-    ) { highlights, readingBookmarks, displaySettings ->
+      lineByLineSettings.displaySettingsFlow,
+      recitationMarks()
+    ) { highlights, readingBookmarks, displaySettings, recitationMarks ->
       val displayText = DisplayText(
         quranPageInfo.suraName(page),
         quranPageInfo.juz(page),
@@ -146,6 +159,7 @@ class QuranLineByLinePresenter @Inject constructor(
       }
 
       val pageDetails = pageDetailsFetcher.await()
+      val recitation = RecitationHighlights.of(recitationMarks, pageDetails.ayahBounds, pageDetails.wordBounds)
       PageInfo(
         page,
         pageProvider.pageType(),
@@ -154,12 +168,13 @@ class QuranLineByLinePresenter @Inject constructor(
         pageDetails.lines,
         pageDetails.suraHeaders,
         pageDetails.ayahMarkers,
-        highlights,
+        (recitation.underText + highlights).toImmutableList(),
         readingBookmarks,
         sidelines,
         targetScrollPosition,
         showSidelines,
-        quranPageInfo.skippedPagesCount()
+        quranPageInfo.skippedPagesCount(),
+        recitation.hidden
       )
     }
   }
@@ -401,6 +416,38 @@ class QuranLineByLinePresenter @Inject constructor(
       }
       .distinctUntilChanged()
   }
+
+  /** The marks of a recitation session (e.g. memorizing) on this page, while the page is shown. */
+  private fun recitationMarks(): Flow<List<HighlightInfo>> {
+    if (!recitationPresenter.isRecitationEnabled()) return flowOf(emptyList())
+    return callbackFlow {
+      val marks = LinkedHashMap<RecitationMark, HighlightInfo>()
+      val recitationPage = object : RecitationPage {
+        override val pageNumbers = setOf(page)
+
+        override fun applyHighlights(highlights: List<HighlightAction>) {
+          highlights.forEach { action ->
+            when (action) {
+              is HighlightAction.Highlight -> marks[action.highlightInfo.mark()] = action.highlightInfo
+              is HighlightAction.Unhighlight -> marks.remove(action.highlightInfo.mark())
+              is HighlightAction.UnhighlightAll ->
+                if (action.page == null || action.page == page) {
+                  marks.keys.removeAll { it.type == action.highlightType }
+                }
+            }
+          }
+          trySend(marks.values.toList())
+        }
+      }
+      send(emptyList())
+      recitationHighlightsPresenter.bind(recitationPage)
+      awaitClose { recitationHighlightsPresenter.unbind(recitationPage) }
+    }.flowOn(Dispatchers.Main)
+  }
+
+  private data class RecitationMark(val sura: Int, val ayah: Int, val word: Int, val type: RecitationHighlightType)
+
+  private fun HighlightInfo.mark() = RecitationMark(sura, ayah, word, highlightType)
 
   private fun highlightsForPage(): Flow<List<Highlight>> {
     val range = quranInfo.getVerseRangeForPage(page)

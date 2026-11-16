@@ -63,6 +63,7 @@ object Constants {
   const val PREF_HAVE_UPDATED_TRANSLATIONS = "haveUpdatedTranslations"
   const val PREF_USE_NEW_BACKGROUND = "useNewBackground"
   const val PREF_USE_VOLUME_KEY_NAV = "volumeKeyNavigation"
+  const val PREF_SWAP_VOLUME_KEYS = "swapVolumeKeys"
   const val PREF_SORT_BOOKMARKS = "sortBookmarks"
   const val PREF_GROUP_BOOKMARKS_BY_TAG = "groupBookmarksByTag"
   const val PREF_SHOW_RECENTS = "showRecents"

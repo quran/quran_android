@@ -33,7 +33,7 @@ constructor(
       File(outputPath, ".nomedia").createNewFile()
     }
 
-    val data = pageTypes.map {
+    val data = pageTypes.entries.sortedBy { order(it.key) }.map {
       val provider = it.value
       val previewImage = File(outputPath, "${it.key}.png")
       val downloadedImage = if (previewImage.exists()) {
@@ -65,6 +65,9 @@ constructor(
     currentView?.onUpdatedData(data)
   }
 
+  // the classic Madani mushaf first, then the newer Madani prints, then the others
+  private fun order(pageType: String) = PAGE_TYPE_ORDER.indexOf(pageType).takeIf { it >= 0 } ?: PAGE_TYPE_ORDER.size
+
   override fun bind(what: PageSelectActivity) {
     currentView = what
     generateData()
@@ -76,5 +79,11 @@ constructor(
       compositeDisposable.clear()
       downloadingSet.clear()
     }
+  }
+
+  private companion object {
+    val PAGE_TYPE_ORDER = listOf(
+      "madani", "new_madani", "new_madani_1441", "madani_1441_lines", "new_madani_1439_lines", "tajweed", "shemerly"
+    )
   }
 }

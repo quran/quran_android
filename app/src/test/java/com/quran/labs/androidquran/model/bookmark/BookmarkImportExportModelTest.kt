@@ -25,6 +25,7 @@ import com.quran.labs.androidquran.fakes.FakeReadingBookmarksDao
 import com.quran.labs.androidquran.fakes.FakeRecentPagesDao
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.mobile.bookmark.importdata.BookmarkBackupImportNormalizer
+import com.quran.mobile.bookmark.importdata.LocalReadingBookmarkImporter
 import com.quran.mobile.bookmark.importdata.MobileSyncImportData
 import com.quran.mobile.bookmark.importdata.MobileSyncImportReadingBookmark
 import com.quran.mobile.bookmark.importdata.MobileSyncImportResult
@@ -58,6 +59,7 @@ class BookmarkImportExportModelTest {
   private lateinit var quranInfo: QuranInfo
   private lateinit var mobileSyncImporter: FakeMobileSyncImporter
   private lateinit var bookmarkImportExportModel: BookmarkImportExportModel
+  private val locallyImported = mutableListOf<BackupReadingBookmark>()
 
   @Before
   fun setUp() {
@@ -84,7 +86,8 @@ class BookmarkImportExportModelTest {
         pageMapper,
         DefaultMobileSyncTimestampProvider()
       ),
-      mobileSyncImporter
+      mobileSyncImporter,
+      LocalReadingBookmarkImporter { bookmarks, _ -> locallyImported += bookmarks }
     )
   }
 
@@ -496,6 +499,47 @@ class BookmarkImportExportModelTest {
     assertThat(importedData().readingSessions.map { session -> session.timestampMillis })
       .containsExactly(1_000_000L, 900_000L)
       .inOrder()
+  }
+
+  @Test
+  fun testExportKeepsReadingBookmarksKeptOnTheDeviceApart() {
+    readingBookmarksDao.setReadingBookmark(
+      PageReadingBookmark(ReadingBookmarkType.ORANGE, 12, Instant.fromEpochSeconds(1000))
+    )
+    readingBookmarksDao.setReadingBookmark(
+      PageReadingBookmark(ReadingBookmarkType.GREEN, 30, Instant.fromEpochSeconds(2000), name = "Al-Kahf")
+    )
+
+    val testObserver = TestObserver<Uri>()
+    bookmarkImportExportModel.exportBookmarksObservable()
+      .subscribe(testObserver)
+    BaseTestExtension.awaitTerminalEvent(testObserver)
+    testObserver.assertNoErrors()
+
+    val exportedData = BookmarkJsonModel().fromJson(backupFile().source().buffer())
+    // older versions read readingBookmarks, and fail on a slot they don't know
+    assertThat(exportedData.readingBookmarks.map { it.slot }).containsExactly(ReadingBookmarkType.ORANGE)
+    assertThat(exportedData.localReadingBookmarks).containsExactly(
+      BackupReadingBookmark(
+        slot = ReadingBookmarkType.GREEN,
+        type = BackupReadingBookmark.TYPE_PAGE,
+        page = 30,
+        timestamp = Instant.fromEpochSeconds(2000),
+        name = "Al-Kahf"
+      )
+    )
+  }
+
+  @Test
+  fun testImportHandsReadingBookmarksKeptOnTheDeviceToTheirImporter() {
+    val green = BackupReadingBookmark(
+      slot = ReadingBookmarkType.GREEN,
+      type = BackupReadingBookmark.TYPE_PAGE,
+      page = 30,
+      timestamp = Instant.fromEpochSeconds(2000)
+    )
+    importData(BookmarkData(localReadingBookmarks = listOf(green)))
+    assertThat(locallyImported).containsExactly(green)
   }
 
   @Test

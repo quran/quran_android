@@ -1,0 +1,149 @@
+package com.quran.mobile.feature.memorize.tracker.salah
+
+import com.google.common.truth.Truth.assertThat
+import com.quran.mobile.feature.memorize.tracker.TimedPhoneme
+import com.quran.mobile.feature.memorize.tracker.TrackerEvent
+import org.junit.Test
+
+class SalahFlowTest {
+
+  // Latin stand-ins for phonemes keep the scenario readable.
+  private val fatiha = listOf("alhamdu", "lillahi", "rabbi", "lalamin", "arrahmani", "rrahimi")
+  private val passage = listOf("qulhuwa", "llahu", "ahadun", "llahu", "ssamadu", "lamyalid", "walamyulad")
+  private val phrases = listOf(
+    "takbir" to "allahuakbar", "ameen" to "amin", "ruku" to "subhanarabbiyalazim", "tasmi" to "samiallahulimanhamidah",
+  )
+
+  private var time = 0L
+
+  private fun SalahFlow.say(text: String): List<TrackerEvent> =
+    feed(text.map { TimedPhoneme(it, (time++) * 80) })
+
+  private fun recitedIndexes(events: List<TrackerEvent>) =
+    events.filterIsInstance<TrackerEvent.WordRecited>().map { it.index }
+
+  @Test
+  fun `prayer speech around the passage is never a mistake and the passage continues next rak'ah`() {
+    val flow = SalahFlow(passage, fatiha, phrases)
+    val all = mutableListOf<TrackerEvent>()
+
+    // rak'ah 1
+    all += flow.say("allahuakbar")
+    all += flow.say("alhamdulillahirabbilalamin")
+    all += flow.say("arrahmanirrahimi")
+    all += flow.say("amin")
+    assertThat(flow.isReadingPassage).isFalse()
+
+    val first = flow.say("qulhuwallahuahadun")
+    assertThat(recitedIndexes(first)).containsExactly(0, 1, 2).inOrder()
+    assertThat(flow.isReadingPassage).isTrue()
+
+    all += flow.say("allahuakbar")
+    all += flow.onPause() // ruku: silence after the takbir
+    assertThat(flow.phase).isEqualTo(SalahFlow.Phase.BETWEEN_RAKAHS)
+    all += flow.say("subhanarabbiyalazim")
+
+    // rak'ah 2: Al-Fatiha again, then the passage from where it stopped
+    all += flow.say("alhamdulillahirabbilalamin")
+    all += flow.say("arrahmanirrahimi")
+    val second = flow.say("llahussamadulamyalidwalamyulad")
+
+    assertThat(all.filterIsInstance<TrackerEvent.Mistake>()).isEmpty()
+    assertThat(all.filterIsInstance<TrackerEvent.WordRecited>()).isEmpty()
+    assertThat(recitedIndexes(second)).containsExactly(3, 4, 5, 6).inOrder()
+    assertThat(second.filterIsInstance<TrackerEvent.Mistake>()).isEmpty()
+  }
+
+  @Test
+  fun `the passage is over once ruku is heard, even if the takbir wasn't recognized`() {
+    val flow = SalahFlow(passage, fatiha, phrases)
+    flow.say("qulhuwallahuahadun")
+    assertThat(flow.isReadingPassage).isTrue()
+
+    // a takbir lost in the echo, then rising from ruku
+    flow.say("xx")
+    flow.say("samiallahulimanhamidah")
+    flow.onPause()
+
+    assertThat(flow.phase).isEqualTo(SalahFlow.Phase.BETWEEN_RAKAHS)
+    assertThat(flow.isReadingPassage).isFalse()
+  }
+
+  @Test
+  fun `a wrong word inside the passage is still a mistake`() {
+    val flow = SalahFlow(passage, fatiha, phrases)
+    flow.say("qulhuwallahu")
+
+    val events = flow.say("xyzxyzxyzxyz")
+
+    assertThat(events.filterIsInstance<TrackerEvent.Mistake>().map { it.index }).containsExactly(2)
+  }
+
+  @Test
+  fun `the passage continues into the next sura in the following rak'ah`() {
+    val flow = SalahFlow(passage, fatiha, phrases + ("basmala" to "bismillahirrahmanirrahim"))
+    flow.say("qulhuwallahuahadun")
+    flow.say("llahussamadulamyalidwalamyulad")
+    assertThat(flow.passage.isDone).isTrue()
+
+    // the session loads the next sura before the user gets there
+    flow.extendPassage(listOf("qulauzu", "birabbi", "lfalaqi"))
+    flow.say("allahuakbar")
+    flow.onPause()
+    flow.say("alhamdulillahirabbilalamin")
+    flow.say("arrahmanirrahimi")
+    val next = flow.say("bismillahirrahmanirrahimqulauzubirabbilfalaqi")
+
+    assertThat(recitedIndexes(next)).containsExactly(7, 8, 9).inOrder()
+    assertThat(next.filterIsInstance<TrackerEvent.Mistake>()).isEmpty()
+    assertThat(flow.isReadingPassage).isTrue()
+  }
+
+  @Test
+  fun `a passage recited after Al-Fatiha that isn't on screen is marked, prayer speech isn't`() {
+    val flow = SalahFlow(passage, fatiha, phrases, startWindow = passage.size)
+    val all = mutableListOf<TrackerEvent>()
+    all += flow.say("allahuakbar")
+    all += flow.say("alhamdulillahirabbilalamin")
+    all += flow.say("arrahmanirrahimi")
+    all += flow.say("amin")
+    assertThat(all.filterIsInstance<TrackerEvent.Mistake>()).isEmpty()
+
+    val elsewhere = flow.say("waddhuhawallayliidhasajamawaddaakarabbukawamaqala")
+    assertThat(elsewhere.filterIsInstance<TrackerEvent.Mistake>().map { it.kind })
+      .containsExactly(TrackerEvent.Mistake.Kind.ELSEWHERE)
+    assertThat(flow.isReadingPassage).isFalse()
+
+    // the passage on screen, started in its middle
+    val started = flow.say("llahussamadulamyalid")
+    assertThat(recitedIndexes(started)).containsExactly(3, 4, 5).inOrder()
+    assertThat(flow.isReadingPassage).isTrue()
+  }
+
+  @Test
+  fun `the passage's start isn't looked for while Al-Fatiha is recited`() {
+    // a passage whose words also occur in Al-Fatiha
+    val passageLikeFatiha = listOf("rabbi", "lalamin", "qulhuwa", "llahu", "ahadun")
+    val flow = SalahFlow(passageLikeFatiha, fatiha, phrases, startWindow = passageLikeFatiha.size)
+
+    flow.say("alhamdulillahi")
+    flow.say("rabbilalamin")
+    assertThat(flow.passage.anchored).isFalse()
+
+    flow.say("arrahmanirrahimi")
+    flow.say("amin")
+    val passage = flow.say("qulhuwallahuahadun")
+    assertThat(recitedIndexes(passage)).containsExactly(2, 3, 4).inOrder()
+  }
+
+  @Test
+  fun `the passage is found when listening starts after Al-Fatiha`() {
+    // e.g. the user pressed the mic once the imam had finished Al-Fatiha
+    val flow = SalahFlow(passage, fatiha, phrases, startWindow = passage.size)
+
+    val events = flow.say("llahussamadulamyalid")
+
+    assertThat(recitedIndexes(events)).containsExactly(3, 4, 5).inOrder()
+    assertThat(flow.isReadingPassage).isTrue()
+  }
+}

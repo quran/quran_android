@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.LocalQuranColors
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.labs.androidquran.common.ui.core.modifier.autoMirror
 import com.quran.mobile.feature.sync.state.AccountProfile
 import com.quran.mobile.feature.sync.state.AccountSyncEvent
 import com.quran.mobile.feature.sync.state.AccountSyncState
@@ -106,8 +105,7 @@ internal fun AccountSyncScreen(
           IconButton(onClick = onBackPressed) {
             Icon(
               imageVector = QuranIcons.ArrowBack,
-              contentDescription = stringResource(AppCompatR.string.abc_action_bar_up_description),
-              modifier = Modifier.autoMirror()
+              contentDescription = stringResource(AppCompatR.string.abc_action_bar_up_description)
             )
           }
         }

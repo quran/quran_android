@@ -23,3 +23,6 @@ crashlytics-build.properties
 com_crashlytics_export_strings.xml
 extras
 app/google-services.json
+
+# memorize feature: vendored native dependencies (tools/memorize/fetch_sherpa_onnx.sh)
+/third_party/

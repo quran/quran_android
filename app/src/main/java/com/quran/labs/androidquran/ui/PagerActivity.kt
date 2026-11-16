@@ -84,6 +84,7 @@ import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenter
 import com.quran.labs.androidquran.feature.reading.presenter.AudioPresenterScreen
 import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkChange
 import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkPresenter
+import com.quran.labs.androidquran.feature.reading.presenter.ReadingTimePresenter
 import com.quran.labs.androidquran.feature.reading.presenter.RecentPagePresenter
 import com.quran.labs.androidquran.feature.reading.presenter.recitation.PagerActivityRecitationPresenter
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
@@ -112,6 +113,7 @@ import com.quran.labs.androidquran.ui.listener.AudioBarListener
 import com.quran.labs.androidquran.ui.readingbookmark.createReadingBookmarkToastView
 import com.quran.labs.androidquran.ui.util.ToastCompat.makeText
 import com.quran.labs.androidquran.ui.util.TranslationsSpinnerAdapter
+import com.quran.labs.androidquran.ui.util.VolumeKeyNavigation
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.OrientationLockUtils
 import com.quran.labs.androidquran.util.QuranFileUtils
@@ -235,6 +237,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   @Inject lateinit var bookmarksDao: BookmarksDao
   @Inject lateinit var recentPagePresenter: RecentPagePresenter
   @Inject lateinit var readingBookmarkPresenter: ReadingBookmarkPresenter
+  @Inject lateinit var readingTimePresenter: ReadingTimePresenter
   @Inject lateinit var quranSettings: QuranSettings
   @Inject lateinit var quranNaming: QuranNaming
   @Inject lateinit var quranScreenInfo: QuranScreenInfo
@@ -630,7 +633,14 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         { currentPage },
         { ayahToolBar },
         { ayah: SuraAyah -> ensurePage(ayah.sura, ayah.ayah) },
-        { sliderPage: Int -> showSlider(slidingPagerAdapter.getPagePosition(sliderPage)) }
+        { sliderPage: Int -> showSlider(slidingPagerAdapter.getPagePosition(sliderPage)) },
+        onSessionActiveChanged = { isActive ->
+          onEndSessionBackCallback.isEnabled = isActive
+          invalidateOptionsMenu()
+        },
+        stopAudio = { if (audioStatusRepositoryBridge.audioRequest() != null) onStopPressed() },
+        isShowingTranslation = { showingTranslation },
+        switchToQuran = { switchToQuran() },
       ))
   }
 
@@ -873,12 +883,12 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
     val navigate = (audioStatusRepositoryBridge.audioRequest() == null
         && quranSettings.navigateWithVolumeKeys())
-    if (navigate && keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-      viewPager.currentItem -= 1
-      return true
-    } else if (navigate && keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-      viewPager.currentItem += 1
-      return true
+    if (navigate) {
+      val offset = VolumeKeyNavigation.pagerOffset(keyCode, quranSettings.shouldSwapVolumeKeys())
+      if (offset != 0) {
+        viewPager.currentItem += offset
+        return true
+      }
     }
     return super.onKeyDown(keyCode, event)
   }
@@ -900,6 +910,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
     readingBookmarkPresenter.bind(currentPageFlow, this)
+    readingTimePresenter.bind(currentPageFlow) { page ->
+      if (isDualPageVisible) setOfNotNull(page, (page + 1).takeIf { quranInfo.isValidPage(it) }) else setOf(page)
+    }
 
     if (shouldReconnect) {
       foregroundDisposable.add(
@@ -1105,6 +1118,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     quranNavigator.jumpTo(SuraAyah(sura, ayah))
   }
 
+  override fun onUserInteraction() {
+    super.onUserInteraction()
+    readingTimePresenter.onInteraction()
+  }
+
   public override fun onPause() {
     quranSettings.unregisterPreferencesListener(themePreferencesListener)
     foregroundDisposable.clear()
@@ -1112,6 +1130,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     promptDialog = null
     recentPagePresenter.unbind()
     readingBookmarkPresenter.unbind(this)
+    readingTimePresenter.unbind()
     quranSettings.wasShowingTranslation = pagerAdapter.isShowingTranslation
 
     super.onPause()
@@ -1193,6 +1212,14 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         translation.isVisible = false
       }
     }
+
+    menu.findItem(R.id.memorize)?.let { memorize ->
+      memorize.isVisible = !showingTranslation && pagerActivityRecitationPresenter.isRecitationEnabled()
+      memorize.setTitle(
+        if (pagerActivityRecitationPresenter.hasSession()) R.string.menu_memorize_stop else R.string.menu_memorize
+      )
+    }
+
     return true
   }
 
@@ -1200,6 +1227,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     val itemId = item.itemId
     if (itemId == R.id.favorite_item) {
       showReadingBookmarkSheet(ReadingBookmarkTarget.Page(currentPage))
+      return true
+    } else if (itemId == R.id.memorize) {
+      pagerActivityRecitationPresenter.onMemorizeMenuPressed()
       return true
     } else if (itemId == R.id.goto_quran) {
       switchToQuran()

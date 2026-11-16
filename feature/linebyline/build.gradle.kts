@@ -11,6 +11,7 @@ dependencies {
   implementation(project(":common:audio"))
   implementation(project(":common:bookmark"))
   implementation(project(":common:reading"))
+  implementation(project(":common:recitation"))
   implementation(project(":common:analytics"))
   implementation(project(":common:drawing"))
   implementation(project(":common:linebyline:ui"))

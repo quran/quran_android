@@ -42,7 +42,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
-import com.quran.labs.androidquran.common.ui.core.modifier.autoMirror
 import com.quran.shared.auth.model.AuthState
 import kotlinx.coroutines.launch
 
@@ -70,8 +69,7 @@ internal fun QuranSyncScreen(
           IconButton(onClick = onBackPressed) {
             Icon(
               imageVector = QuranIcons.ArrowBack,
-              contentDescription = "",
-              modifier = Modifier.autoMirror()
+              contentDescription = ""
             )
           }
         }

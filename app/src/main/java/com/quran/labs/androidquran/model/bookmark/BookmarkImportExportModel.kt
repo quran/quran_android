@@ -11,6 +11,7 @@ import com.quran.data.model.bookmark.BackupReadingBookmark
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.labs.androidquran.R
 import com.quran.mobile.bookmark.importdata.BookmarkBackupImportNormalizer
+import com.quran.mobile.bookmark.importdata.LocalReadingBookmarkImporter
 import com.quran.mobile.bookmark.importdata.MobileSyncImporter
 import com.quran.mobile.bookmark.model.ReadingBookmarkPageMapper
 import com.quran.mobile.di.qualifier.ApplicationContext
@@ -33,7 +34,8 @@ class BookmarkImportExportModel @Inject internal constructor(
   private val readingBookmarksDao: ReadingBookmarksDao,
   private val pageMapper: ReadingBookmarkPageMapper,
   private val backupImportNormalizer: BookmarkBackupImportNormalizer,
-  private val mobileSyncImporter: MobileSyncImporter
+  private val mobileSyncImporter: MobileSyncImporter,
+  private val localReadingBookmarkImporter: LocalReadingBookmarkImporter,
 ) {
   fun readBookmarks(source: BufferedSource): Single<BookmarkData> {
     return Single.defer {
@@ -100,6 +102,12 @@ class BookmarkImportExportModel @Inject internal constructor(
         val pageType = pageMapper.currentPageType()
         val allTags = bookmarksDao.tags()
         val systemTagIds = allTags.filter { tag -> tag.isSystem }.mapTo(mutableSetOf()) { it.id }
+        val readingBookmarks = readingBookmarksDao.readingBookmarks()
+          .mapNotNull { bookmark ->
+            BackupReadingBookmark.fromReadingBookmark(bookmark) { sura, ayah ->
+              pageMapper.suraAyahToPage(sura, ayah, pageType)
+            }
+          }
         BookmarkData(
           tags = allTags.filterNot { tag -> tag.isSystem },
           bookmarks = bookmarksDao.bookmarks(BookmarkSortOrder.SORT_DATE_ADDED)
@@ -110,13 +118,9 @@ class BookmarkImportExportModel @Inject internal constructor(
               bookmark.copy(id = (index + 1).toString()).withTags(bookmark.tags - systemTagIds)
             },
           recentPages = recentPagesDao.recentPages(),
-          readingBookmarks = readingBookmarksDao.readingBookmarks()
-            .mapNotNull { bookmark ->
-              BackupReadingBookmark.fromReadingBookmark(bookmark) { sura, ayah ->
-                pageMapper.suraAyahToPage(sura, ayah, pageType)
-              }
-            },
-          pageType = pageType
+          readingBookmarks = readingBookmarks.filter { it.slot.synced },
+          pageType = pageType,
+          localReadingBookmarks = readingBookmarks.filterNot { it.slot.synced },
         )
       }
     }.subscribeOn(Schedulers.io())
@@ -136,6 +140,7 @@ class BookmarkImportExportModel @Inject internal constructor(
     if (!importData.isEmpty()) {
       mobileSyncImporter.importData(importData, deleteExisting = false)
     }
+    localReadingBookmarkImporter.import(data.localReadingBookmarks, data.pageType)
   }
 
   companion object {

@@ -34,26 +34,25 @@ object HighlightTypes {
 
   private val FIRST_READING_BOOKMARK_ID = FIRST_HIGHLIGHT_ID + HIGHLIGHTS.size
 
-  private val READING_BOOKMARKS: Map<ReadingBookmarkType, HighlightType> = mapOf(
-    ReadingBookmarkType.TEAL to HighlightType(
-      FIRST_READING_BOOKMARK_ID,
-      UiCoreR.color.reading_bookmark_page_teal,
-      UNDERLINE,
-      nightColorResId = UiCoreR.color.reading_bookmark_page_teal_night
-    ),
-    ReadingBookmarkType.ORANGE to HighlightType(
-      FIRST_READING_BOOKMARK_ID + 1,
-      UiCoreR.color.reading_bookmark_page_orange,
-      UNDERLINE,
-      nightColorResId = UiCoreR.color.reading_bookmark_page_orange_night
-    ),
-    ReadingBookmarkType.RED to HighlightType(
-      FIRST_READING_BOOKMARK_ID + 2,
-      UiCoreR.color.reading_bookmark_page_red,
-      UNDERLINE,
-      nightColorResId = UiCoreR.color.reading_bookmark_page_red_night
-    )
-  )
+  private val READING_BOOKMARKS: Map<ReadingBookmarkType, HighlightType> =
+    ReadingBookmarkType.entries.associateWith { slot ->
+      val (day, night) = when (slot) {
+        ReadingBookmarkType.TEAL -> UiCoreR.color.reading_bookmark_page_teal to UiCoreR.color.reading_bookmark_page_teal_night
+        ReadingBookmarkType.ORANGE ->
+          UiCoreR.color.reading_bookmark_page_orange to UiCoreR.color.reading_bookmark_page_orange_night
+        ReadingBookmarkType.RED -> UiCoreR.color.reading_bookmark_page_red to UiCoreR.color.reading_bookmark_page_red_night
+        ReadingBookmarkType.GREEN ->
+          UiCoreR.color.reading_bookmark_page_green to UiCoreR.color.reading_bookmark_page_green_night
+        ReadingBookmarkType.BLUE -> UiCoreR.color.reading_bookmark_page_blue to UiCoreR.color.reading_bookmark_page_blue_night
+        ReadingBookmarkType.PURPLE ->
+          UiCoreR.color.reading_bookmark_page_purple to UiCoreR.color.reading_bookmark_page_purple_night
+        ReadingBookmarkType.BROWN ->
+          UiCoreR.color.reading_bookmark_page_brown to UiCoreR.color.reading_bookmark_page_brown_night
+        ReadingBookmarkType.GREY -> UiCoreR.color.reading_bookmark_page_grey to UiCoreR.color.reading_bookmark_page_grey_night
+      }
+      // ids follow the slot order, so where two bookmarks underline one ayah the first slot's shows
+      HighlightType(FIRST_READING_BOOKMARK_ID + slot.ordinal, day, UNDERLINE, nightColorResId = night)
+    }
 
   val readingBookmarks: Collection<HighlightType> = READING_BOOKMARKS.values
 

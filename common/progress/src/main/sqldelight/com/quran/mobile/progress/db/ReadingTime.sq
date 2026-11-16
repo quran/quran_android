@@ -1,0 +1,36 @@
+-- Time spent with Quran pages open in the reader. Each row is one page's share of one stretch of
+-- reading; the time is credited to the bookmark that moves next (slot is null until then).
+CREATE TABLE reading_time (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  local_day INTEGER NOT NULL,
+  -- when the stretch ended (wall time, ProgressClock)
+  at_ms INTEGER NOT NULL,
+  page_type TEXT NOT NULL,
+  page INTEGER NOT NULL,
+  ms INTEGER NOT NULL,
+  -- 1 once the page had been on screen long enough to count as read
+  read INTEGER NOT NULL,
+  -- the bookmark it was credited to, and when (the time of that bookmark's move)
+  slot TEXT,
+  credited_at INTEGER
+);
+
+CREATE INDEX reading_time_day ON reading_time(local_day);
+CREATE INDEX reading_time_slot_at ON reading_time(slot, at_ms);
+
+insertTime:
+INSERT INTO reading_time(local_day, at_ms, page_type, page, ms, read, slot, credited_at)
+VALUES (?, ?, ?, ?, ?, ?, NULL, NULL);
+
+creditUpTo:
+UPDATE reading_time SET slot = :slot, credited_at = :at WHERE slot IS NULL AND at_ms <= :at;
+
+minutesBySlotAndDay:
+SELECT slot, local_day, credited_at, SUM(ms) AS ms FROM reading_time GROUP BY slot, local_day, credited_at;
+
+timeOnDays:
+SELECT local_day, SUM(ms) AS ms, COUNT(DISTINCT CASE WHEN read = 1 THEN page_type || ':' || page END) AS pages
+FROM reading_time WHERE local_day BETWEEN ? AND ? GROUP BY local_day;
+
+deleteAllTime:
+DELETE FROM reading_time;

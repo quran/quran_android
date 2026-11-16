@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- unused: hidden words are not drawn -->
+  <color name="memorize_hidden">#00000000</color>
+  <color name="memorize_mistake">#73E53935</color>
+  <color name="memorize_mistake_night">#FFEF5350</color>
+  <color name="memorize_hinted">#5900897B</color>
+  <color name="memorize_hinted_night">#FF4DB6AC</color>
+  <color name="memorize_missed">#40FB8C00</color>
+  <color name="memorize_missed_night">#FFCE93D8</color>
+  <!-- the reading trail (Recitation) and the word heard in a playback: the app's accent, blue by
+       day and gold at night; their night colours keep their own alpha -->
+  <color name="memorize_recited">#291F6FB2</color>
+  <color name="memorize_recited_night">#38E2AF56</color>
+  <color name="memorize_playing">#661F6FB2</color>
+  <color name="memorize_playing_night">#8CE2AF56</color>
+</resources>
