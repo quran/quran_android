@@ -4,6 +4,7 @@ import android.app.Application
 import app.cash.turbine.test
 import com.google.common.truth.Truth
 import com.quran.labs.androidquran.base.TestApplication
+import com.quran.labs.androidquran.data.BundledTranslations
 import com.quran.labs.androidquran.dao.translation.Translation
 import com.quran.labs.androidquran.dao.translation.TranslationItem
 import com.quran.labs.androidquran.dao.translation.TranslationList
@@ -196,6 +197,26 @@ class TranslationManagerPresenterTest {
 
     // Assert - staleness check is false so no coroutine is launched
     Truth.assertThat(mockWebServer.requestCount).isEqualTo(0)
+  }
+
+  @Test
+  fun `getTranslations includes bundled translations and installs them`() = runTest {
+    // Arrange
+    quranSettings.setLastUpdatedTranslationDate(System.currentTimeMillis())
+    enqueueMockResponse()
+
+    // Act
+    val items = translationManager().getTranslations(false).toList().single()
+
+    // Assert
+    Truth.assertThat(items.map { it.translation.id })
+      .contains(BundledTranslations.cebuano.id)
+    Truth.assertThat(quranSettings.bundledTranslationsInstalled()).isTrue()
+    val dbFile = File(
+      quranFileUtils.getQuranDatabaseDirectory(),
+      BundledTranslations.CEBUANO_DATABASE_FILE_NAME
+    )
+    Truth.assertThat(dbFile.exists()).isTrue()
   }
 
   private fun enqueueMockResponse() {
