@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "qaris": [
+    {
+      "id": 0,
+      "nameResource": "qari_minshawi_murattal_gapless",
+      "url": "https://download.quranicaudio.com/quran/muhammad_siddeeq_al-minshaawee/",
+      "opusUrl": null,
+      "path": "minshawi_murattal",
+      "hasGaplessAlternative": false,
+      "db": "minshawi_murattal"
+    },
+    {
+      "id": 1,
+      "nameResource": "qari_husary_gapless",
+      "url": "https://download.quranicaudio.com/quran/mahmood_khaleel_al-husaree/",
+      "opusUrl": null,
+      "path": "husary",
+      "hasGaplessAlternative": false,
+      "db": "husary"
+    },
+    {
+      "id": 2,
+      "nameResource": "qari_basfar",
+      "url": "https://mirrors.quranicaudio.com/everyayah/Abdullah_Basfar_192kbps/",
+      "opusUrl": null,
+      "path": "2",
+      "hasGaplessAlternative": false,
+      "db": null
+    }
+  ]
+}

@@ -16,6 +16,7 @@ fun CommonExtension.applyAndroidCommon(project: Project) {
   lint.apply {
     checkReleaseBuilds = true
     enable.add("Interoperability")
-    lintConfig = project.rootProject.file("lint.xml")
+    @Suppress("UnstableApiUsage")
+    lintConfig = project.isolated.rootProject.projectDirectory.file("lint.xml").asFile
   }
 }
