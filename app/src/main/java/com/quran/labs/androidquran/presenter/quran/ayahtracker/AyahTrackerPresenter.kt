@@ -451,6 +451,8 @@ class AyahTrackerPresenter @Inject constructor(
       recitationHighlightsPresenter.unbind(this)
       recitationPopupPresenter.unbind(this)
     }
+    unHighlightAyahs(HighlightTypes.AUDIO)
+    lastHighlightedAudioAyah = null
     items = emptyArray()
     scope.cancel()
   }
