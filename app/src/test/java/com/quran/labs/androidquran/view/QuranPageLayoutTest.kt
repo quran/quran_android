@@ -3,7 +3,7 @@ package com.quran.labs.androidquran.view
 import android.content.Context
 import android.content.res.Configuration
 import androidx.test.core.app.ApplicationProvider
-import com.quran.labs.androidquran.TestApplication
+import com.quran.labs.androidquran.base.TestApplication
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
