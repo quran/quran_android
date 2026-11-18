@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   `kotlin-dsl`
+  alias(libs.plugins.ksp)
 }
 
 group = "com.quran.labs.androidquran.buildlogic"
@@ -12,6 +13,9 @@ dependencies {
   compileOnly(libs.compose.compiler.gradlePlugin)
   compileOnly(libs.sqldelight.gradlePlugin)
   compileOnly(libs.ksp.gradlePlugin)
+  implementation(libs.moshi)
+  ksp(libs.moshi.codegen)
+  implementation(libs.kotlinpoet)
   implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
 
@@ -28,6 +32,11 @@ kotlin {
 
 gradlePlugin {
   plugins {
+    register("qariCatalog") {
+      id = "quran.qari-catalog"
+      implementationClass = "QariCatalogPlugin"
+    }
+
     register("androidApplication") {
       id = "quran.android.application"
       implementationClass = "AndroidApplicationConventionPlugin"

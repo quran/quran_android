@@ -1,5 +1,6 @@
 plugins {
   id 'quran.android.library.android'
+  id 'quran.qari-catalog'
   alias libs.plugins.kotlin.parcelize
   alias libs.plugins.metro
   // needed for the stability of various model classes
@@ -7,6 +8,11 @@ plugins {
 }
 
 android.namespace 'com.quran.labs.androidquran.common.audio'
+
+qariCatalog {
+  catalogFile = layout.projectDirectory.file('catalogs/hafs.json')
+  overrideProperty = 'qariCatalogFile'
+}
 
 dependencies {
   implementation project(":common:di")
