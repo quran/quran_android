@@ -508,6 +508,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
 
     val nonRestoringViewPager = findViewById<NonRestoringViewPager>(R.id.quran_pager)
+ViewCompat.setOnApplyWindowInsetsListener(nonRestoringViewPager) { view, windowInsets ->
+val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
+view.updatePadding(bottom = insets.bottom)
+windowInsets
+}
     nonRestoringViewPager.setIsDualPagesInLandscape(
       QuranUtils.isDualPagesInLandscape(this, quranScreenInfo)
     )
