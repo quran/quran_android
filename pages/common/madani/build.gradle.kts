@@ -6,8 +6,10 @@ plugins {
 android.namespace = "com.quran.labs.androidquran.pages.common.madani"
 
 dependencies {
+  implementation(project(":common:audio"))
   implementation(project(":common:data"))
   implementation(project(":common:upgrade"))
+  api(project(":pages:data:madani"))
 
   // annotations
   implementation(libs.androidx.annotation)
