@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <string name="remove_button">제거</string>
+  <string name="cancel">취소</string>
+  <string name="from">에서</string>
+  <string name="to">까지</string>
+  <string name="loading">로드 중&#8230;</string>
+  <string name="canceling">취소 중&#8230;</string>
+
   <string name="default_collection">즐겨찾기</string>
+  <!-- shown next to an ayah number in translation mode when the ayah is in several collections -->
   <plurals name="ayah_collections">
     <item quantity="other">컬렉션 %d개</item>
   </plurals>
+  <!-- legacy page bookmarks' collection; translations live in app, which overrides this -->
+  <string name="old_page_bookmarks">오래된 페이지 책갈피</string>
+
   <!-- names of the ayah highlight colors -->
   <string name="highlight_color_yellow">노랑</string>
   <string name="highlight_color_green">초록</string>
   <string name="highlight_color_blue">파랑</string>
+  <string name="highlight_color_pink">분홍</string>
   <string name="highlight_color_purple">보라</string>
+  <!-- names of the three reading bookmark slots -->
+  <string name="reading_bookmark_teal">청록</string>
+  <string name="reading_bookmark_orange">주황</string>
   <string name="reading_bookmark_red">빨강</string>
 </resources>
