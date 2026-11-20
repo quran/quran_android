@@ -30,14 +30,6 @@ dependencies {
   implementation project(":feature:autoquran")
   implementation project(":common:di")
   implementation project(":common:data")
-  implementation project(":common:pages")
   implementation project(":common:audio")
-  // should be api in modules that implement LocalDataUpgrade
-  implementation project(":common:upgrade")
-
-  if (new File(rootDir, "extras/extras.gradle").exists()) {
-    implementation project(":extras:pages:default")
-  } else {
-    implementation project(":pages:madani")
-  }
+  implementation project(":pages:common:madani")
 }

@@ -6,11 +6,20 @@ plugins {
 android.namespace = "com.quran.labs.androidquran.pages.madani"
 
 dependencies {
+  implementation(project(":common:audio"))
   implementation(project(":common:data"))
   implementation(project(":common:pages"))
-  implementation(project(":common:audio"))
   implementation(project(":common:upgrade"))
+  implementation(project(":common:drawing"))
+  // has to be api, otherwise can't add classes to the correct components
+  api(project(":feature:linebyline"))
 
-  implementation(project(":pages:common:madani"))
   api(project(":pages:data:madani"))
+  api(project(":pages:common:madani"))
+
+  implementation(libs.androidx.annotation)
+  implementation(libs.androidx.fragment.ktx)
+
+  testImplementation(libs.junit)
+  testImplementation(libs.truth)
 }

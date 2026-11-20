@@ -1,4 +1,4 @@
-package com.quran.data.page.provider.madani
+package com.quran.labs.androidquran.pages.common.madani
 
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.MushafType
@@ -7,9 +7,13 @@ import com.quran.data.source.PageSizeCalculator
 import com.quran.labs.androidquran.common.audio.qaris
 import com.quran.labs.androidquran.pages.common.madani.size.DefaultPageSizeCalculator
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
-import com.quran.labs.androidquran.pages.madani.R
 
 class MadaniPageProvider : PageProvider {
+  companion object {
+    private const val baseUrl = "https://files.quran.app/hafs"
+    private const val madaniUrl = "$baseUrl/madani"
+    private val dataSource by lazy { MadaniDataSource() }
+  }
 
   override fun getDataSource() = dataSource
 
@@ -20,19 +24,21 @@ class MadaniPageProvider : PageProvider {
 
   override fun mushafType() = MushafType.MADANI_1405
 
-  override fun getImagesBaseUrl() = "$baseUrl/"
+  override fun getImagesBaseUrl() = "$madaniUrl/"
 
-  override fun getImagesZipBaseUrl() = "$baseUrl/zips/"
+  override fun getImagesZipBaseUrl() = "$madaniUrl/zips/"
 
-  override fun getPatchBaseUrl() = "$baseUrl/patches/v"
+  override fun getPatchBaseUrl() = "$madaniUrl/patches/v"
 
-  override fun getAyahInfoBaseUrl() = "$baseUrl/databases/ayahinfo/"
+  override fun getAyahInfoBaseUrl() = "$madaniUrl/databases/ayahinfo/"
 
   override fun getAudioDirectoryName() = "audio"
 
   override fun getDatabaseDirectoryName() = "databases"
 
   override fun getAyahInfoDirectoryName() = getDatabaseDirectoryName()
+
+  override fun ayahInfoDbHasGlyphData() = true
 
   override fun getDatabasesBaseUrl() = "$baseUrl/databases/"
 
@@ -47,9 +53,4 @@ class MadaniPageProvider : PageProvider {
   override fun getDefaultQariId(): Int = 0
 
   override fun getQaris() = qaris()
-
-  companion object {
-    private const val baseUrl = "https://android.quran.com/data"
-    private val dataSource by lazy { MadaniDataSource() }
-  }
 }
