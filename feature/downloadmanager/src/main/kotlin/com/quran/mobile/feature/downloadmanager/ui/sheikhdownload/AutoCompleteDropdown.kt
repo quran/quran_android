@@ -3,6 +3,8 @@ package com.quran.mobile.feature.downloadmanager.ui.sheikhdownload
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material.Text
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenu
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
@@ -71,7 +73,7 @@ fun AutoCompleteDropdown(
       },
       colors = ExposedDropdownMenuDefaults.textFieldColors(),
       modifier = Modifier
-        .menuAnchor()
+        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable)
         .onFocusChanged { focusState ->
           if (focusState.isFocused) {
             val text = textState.value.text
