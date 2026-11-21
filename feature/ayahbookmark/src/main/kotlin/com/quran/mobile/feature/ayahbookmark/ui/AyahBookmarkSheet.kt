@@ -156,7 +156,7 @@ internal fun AyahBookmarkSheet(
           nameError = creation.nameError,
           onNameChange = { eventSink(AyahBookmarkEvent.CollectionNameChanged(it)) },
           onCancel = { eventSink(AyahBookmarkEvent.CancelCreatingCollection) },
-          onCreate = { eventSink(AyahBookmarkEvent.CreateCollection(creation.name)) }
+          onCreate = { eventSink(AyahBookmarkEvent.CreateCollection(it)) }
         )
       }
     }

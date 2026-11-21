@@ -68,9 +68,12 @@ internal fun NewCollectionInputRow(
   nameError: AyahBookmarkCollectionNameError?,
   onNameChange: (String) -> Unit,
   onCancel: () -> Unit,
-  onCreate: () -> Unit,
+  onCreate: (String) -> Unit,
   modifier: Modifier = Modifier
 ) {
+  val textFieldValue = remember {
+    mutableStateOf(TextFieldValue(text = name, selection = TextRange(name.length)))
+  }
   val focusRequester = remember { FocusRequester() }
   LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
@@ -92,10 +95,6 @@ internal fun NewCollectionInputRow(
 
     Column(modifier = Modifier.weight(1f)) {
       Box {
-        val textFieldValue = remember {
-          mutableStateOf(TextFieldValue(text = name, selection = TextRange(name.length)))
-        }
-
         BasicTextField(
           value = textFieldValue.value,
           onValueChange = { newValue ->
@@ -109,7 +108,7 @@ internal fun NewCollectionInputRow(
           ),
           cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
           keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-          keyboardActions = KeyboardActions(onDone = { onCreate() }),
+          keyboardActions = KeyboardActions(onDone = { onCreate(textFieldValue.value.text) }),
           modifier = Modifier
             .fillMaxWidth()
             .focusRequester(focusRequester)
@@ -155,7 +154,7 @@ internal fun NewCollectionInputRow(
         .padding(6.dp)
     )
 
-    TextButton(onClick = onCreate, enabled = !isSubmitting) {
+    TextButton(onClick = { onCreate(textFieldValue.value.text) }, enabled = !isSubmitting) {
       if (isSubmitting) {
         CircularProgressIndicator(
           modifier = Modifier.size(16.dp),
