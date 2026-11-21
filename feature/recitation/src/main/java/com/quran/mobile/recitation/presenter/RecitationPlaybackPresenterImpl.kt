@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @ActivityScope
-class RecitationPlaybackPresenterImpl @Inject constructor(): RecitationPlaybackPresenter {
+@Inject
+class RecitationPlaybackPresenterImpl : RecitationPlaybackPresenter {
   override val recitationPlaybackFlow: StateFlow<RecitationSelection> =
     MutableStateFlow(RecitationSelection.None)
 

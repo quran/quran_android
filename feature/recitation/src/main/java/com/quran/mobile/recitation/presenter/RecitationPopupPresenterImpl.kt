@@ -6,7 +6,8 @@ import com.quran.recitation.presenter.RecitationPopupPresenter.PopupContainer
 import dev.zacsweers.metro.Inject
 
 @QuranPageScope
-class RecitationPopupPresenterImpl @Inject constructor(): RecitationPopupPresenter {
+@Inject
+class RecitationPopupPresenterImpl : RecitationPopupPresenter {
   override fun bind(what: PopupContainer) {}
   override fun unbind(what: PopupContainer) {}
 }

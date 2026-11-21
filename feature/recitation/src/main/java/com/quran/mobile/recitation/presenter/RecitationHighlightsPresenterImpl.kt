@@ -6,7 +6,8 @@ import com.quran.recitation.presenter.RecitationHighlightsPresenter.RecitationPa
 import dev.zacsweers.metro.Inject
 
 @QuranPageScope
-class RecitationHighlightsPresenterImpl @Inject constructor(): RecitationHighlightsPresenter {
+@Inject
+class RecitationHighlightsPresenterImpl : RecitationHighlightsPresenter {
   override fun bind(what: RecitationPage) {}
   override fun unbind(what: RecitationPage) {}
 

@@ -7,7 +7,8 @@ import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 
 @ContributesBinding(AppScope::class)
-class QuranAudioExtensionDecider @Inject constructor() : AudioExtensionDecider {
+@Inject
+class QuranAudioExtensionDecider : AudioExtensionDecider {
 
   /**
    * Returns the audio file extension for a given Qari.

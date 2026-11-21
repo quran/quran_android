@@ -16,7 +16,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 
 @SingleIn(AppScope::class)
-class ReadingBookmarkPageMapper @Inject constructor(
+@Inject
+class ReadingBookmarkPageMapper(
   private val settings: Settings,
   private val pageProviders: Map<@JvmSuppressWildcards String, @JvmSuppressWildcards PageProvider>,
   @param:Named(DependencyInjectionConstants.FALLBACK_PAGE_TYPE) private val fallbackPageType: String

@@ -12,7 +12,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 @SingleIn(AppScope::class)
-class ImlaeiUthmaniDatabaseProvider @Inject constructor(
+@Inject
+class ImlaeiUthmaniDatabaseProvider(
   @param:ApplicationContext private val appContext: Context,
   private val quranFileManager: QuranFileManager
 ) {

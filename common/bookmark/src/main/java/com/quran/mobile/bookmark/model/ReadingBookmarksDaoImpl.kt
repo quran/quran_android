@@ -39,7 +39,8 @@ import com.quran.shared.persistence.model.ReadingBookmark as SyncReadingBookmark
  * @param timestampProvider provides the timestamp assigned to locally written bookmarks.
  */
 @SingleIn(AppScope::class)
-class ReadingBookmarksDaoImpl @Inject constructor(
+@Inject
+class ReadingBookmarksDaoImpl(
   private val pageMapper: ReadingBookmarkPageMapper,
   private val readingBookmarksRepository: ReadingBookmarksRepository,
   private val timestampProvider: MobileSyncTimestampProvider

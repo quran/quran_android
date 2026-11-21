@@ -39,7 +39,8 @@ import kotlinx.coroutines.withContext
 import com.quran.shared.persistence.model.Collection as SyncCollection
 
 @SingleIn(AppScope::class)
-class BookmarksDaoImpl @Inject constructor(
+@Inject
+class BookmarksDaoImpl(
   private val quranInfoProvider: () -> QuranInfo,
   private val bookmarksRepository: BookmarksRepository,
   private val collectionsRepository: CollectionsRepository,

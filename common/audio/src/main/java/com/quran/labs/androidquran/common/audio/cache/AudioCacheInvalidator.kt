@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
 
 @SingleIn(AppScope::class)
-class AudioCacheInvalidator @Inject constructor() {
+@Inject
+class AudioCacheInvalidator {
   private val cache = MutableSharedFlow<Int>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
   fun qarisToInvalidate(): Flow<Int> = cache.filter { it > -1 }

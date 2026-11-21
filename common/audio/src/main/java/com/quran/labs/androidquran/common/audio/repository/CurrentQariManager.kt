@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
 @SingleIn(AppScope::class)
-class CurrentQariManager @Inject constructor(@ApplicationContext appContext: Context, private val qariUtil: QariUtil) {
+@Inject
+class CurrentQariManager(@ApplicationContext appContext: Context, private val qariUtil: QariUtil) {
   private val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
   private val currentQariFlow =
     MutableStateFlow(prefs.getInt(PREF_DEFAULT_QARI, qariUtil.getDefaultQariId()))

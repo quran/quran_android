@@ -21,7 +21,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @SingleIn(AppScope::class)
-class QariDownloadInfoManager @Inject constructor(
+@Inject
+class QariDownloadInfoManager(
   private val quranFileManager: QuranFileManager,
   private val audioInfoCommand: AudioInfoCommand,
   private val downloadInfoStreams: DownloadInfoStreams,

@@ -6,7 +6,8 @@ import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import dev.zacsweers.metro.Inject
 
-class QariUtil @Inject constructor(private val pageProvider: PageProvider) {
+@Inject
+class QariUtil(private val pageProvider: PageProvider) {
 
   /**
    * Get a list of all available qaris as [Qari].

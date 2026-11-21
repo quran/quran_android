@@ -28,7 +28,8 @@ interface MobileSyncImporter {
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class MobileSyncImporterImpl @Inject constructor(
+@Inject
+class MobileSyncImporterImpl(
   mobileSyncDatabase: MobileSyncDatabase,
   @param:ApplicationContext private val appContext: Context
 ) : MobileSyncImporter {

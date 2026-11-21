@@ -23,7 +23,8 @@ import kotlinx.coroutines.withContext
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class HighlightsDaoImpl @Inject constructor(
+@Inject
+class HighlightsDaoImpl(
   private val timestampProvider: MobileSyncTimestampProvider,
   private val collectionBookmarksRepository: CollectionBookmarksRepository,
   appCoroutineScope: AppCoroutineScope

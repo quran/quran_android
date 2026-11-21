@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 @SingleIn(AppScope::class)
-class AudioStatusRepository @Inject constructor() {
+@Inject
+class AudioStatusRepository {
   private val audioPlaybackInternalFlow = MutableStateFlow<AudioStatus>(AudioStatus.Stopped)
 
   val audioPlaybackFlow = audioPlaybackInternalFlow.asStateFlow()

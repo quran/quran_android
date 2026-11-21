@@ -6,7 +6,8 @@ import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 
 @SingleIn(AppScope::class)
-class RecitationSettingsImpl @Inject constructor() : RecitationSettings {
+@Inject
+class RecitationSettingsImpl : RecitationSettings {
   override fun isRecitationEnabled() = false
   override fun toggleAyahVisibility() {}
 }
