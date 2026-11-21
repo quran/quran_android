@@ -305,6 +305,7 @@ dependencies {
   testImplementation(libs.espresso.intents)
   testImplementation(libs.turbine)
   testImplementation(libs.kotlinx.coroutines.test)
+  testImplementation(libs.kotlinx.collections.immutable)
   testImplementation(libs.sqldelight.sqlite.driver)
   testImplementation(libs.sqldelight.primitive.adapters)
   testImplementation(libs.quran.mobile.sync)

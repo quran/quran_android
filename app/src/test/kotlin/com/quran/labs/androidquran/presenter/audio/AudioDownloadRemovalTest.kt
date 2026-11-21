@@ -11,6 +11,7 @@ import com.quran.labs.androidquran.common.audio.cache.command.AudioInfoCommand
 import com.quran.labs.androidquran.common.audio.cache.command.GappedAudioInfoCommand
 import com.quran.labs.androidquran.common.audio.cache.command.GaplessAudioInfoCommand
 import com.quran.labs.androidquran.common.audio.extension.isRangeDownloaded
+import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.util.AudioDecoderCapabilities
 import com.quran.labs.androidquran.common.audio.util.QariUtil
 import com.quran.labs.androidquran.common.audio.util.QuranAudioExtensionDecider
@@ -21,6 +22,7 @@ import com.quran.mobile.common.download.Downloader
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.EntryForQari
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhDownloadDialog
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhUiModel
+import com.quran.mobile.feature.downloadmanager.presenter.AudioManagerPresenter
 import com.quran.mobile.feature.downloadmanager.presenter.SheikhAudioPresenter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -146,6 +148,34 @@ class AudioDownloadRemovalTest {
     fixture.presenter.onRemoveSelection()
     fixture.confirm(fixture.state().dialog as SheikhDownloadDialog.RemoveConfirmation)
     assertThat(File(temporaryFolder.root, "reciter/103").exists()).isFalse()
+    assertThat(partial.exists()).isTrue()
+  }
+
+  @Test
+  fun gappedOverviewCountsOnlyCompleteSuras() = runBlocking {
+    val gappedQari = qari.copy(db = null, hasGaplessAlternative = true)
+    (1..3).forEach { audioFile("103/$it.mp3") }
+    val partial = audioFile("114/1.mp3")
+    val fixture = Fixture(gappedQari)
+    val state = fixture.state()
+    val overview = AudioManagerPresenter(fixture.manager).downloadedShuyookh { qari ->
+      QariItem(
+        id = qari.id,
+        name = "Reciter",
+        url = qari.url,
+        opusUrl = qari.opusUrl,
+        path = qari.path,
+        hasGaplessAlternative = qari.hasGaplessAlternative,
+        db = qari.db
+      )
+    }
+    assertThat(overview.first().single().downloadedSuras).isEqualTo(1)
+    assertThat(state.sura(114).hasLocalFiles).isTrue()
+
+    fixture.presenter.selectEntry(state.sura(103))
+    fixture.presenter.onRemoveSelection()
+    fixture.confirm(fixture.state().dialog as SheikhDownloadDialog.RemoveConfirmation)
+    assertThat(overview.first().single().downloadedSuras).isEqualTo(0)
     assertThat(partial.exists()).isTrue()
   }
 
