@@ -24,10 +24,10 @@ This is a simple (Madani based) Quran app for Android.
 
 ## Credits
 
-* madani images from [quran images project](https://github.com/quran/quran.com-images) on github.
-* qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia).
-* naskh images used with permission of SHL Info Systems.
-* translation, tafsir and Arabic data come from [quranenc](https://quranenc.com) and [King Saud University](https://quran.ksu.edu.sa). a small number of translations also come from [tanzil](http://tanzil.net).
+* Madani images from [quran images project](https://github.com/quran/quran.com-images) on GitHub.
+* Qaloon images used with permission of Nous Memes Editions Et Diffusion (Tunisia).
+* Naskh images used with permission of SHL Info Systems.
+* Translation, tafsir and Arabic data come from [quranenc](https://quranenc.com) and [King Saud University](https://quran.ksu.edu.sa). A small number of translations also come from [tanzil](http://tanzil.net).
 
 ## Contributing
 
