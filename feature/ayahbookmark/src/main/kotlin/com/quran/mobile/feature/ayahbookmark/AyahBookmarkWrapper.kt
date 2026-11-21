@@ -13,7 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberStandardBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -98,10 +98,7 @@ class AyahBookmarkWrapper(
     val state by stateFlow.collectAsState()
 
     val scaffoldState = rememberBottomSheetScaffoldState(
-      bottomSheetState = rememberStandardBottomSheetState(
-        initialValue = SheetValue.Hidden,
-        skipHiddenState = false
-      )
+      bottomSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
     )
     val hasOpened = remember { mutableStateOf(false) }
     val peekHeight = (LocalConfiguration.current.screenHeightDp / 2).dp
