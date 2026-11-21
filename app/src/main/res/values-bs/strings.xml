@@ -332,4 +332,20 @@
   <string name="prefs_split_page_and_translation_title">Kur\'an i prijevod u dual modu</string>
   <string name="prefs_split_page_and_translation_summary">U dual page modu sa prevodima, Prikazana je stranica i prijevod kur\'ana</string>
   <string name="scoped_storage_message">Zbog Android promjena radi povećanja privatnosti korisnika, kopiranje datoteka izvan direktorija aplikacija može zaustaviti Quran za Android da pristupi svojim podacima u budućim verzijama Androida. Jeste li sigurni da biste voljeli koristiti ovu stazu?</string>
+
+  <string name="audio_widget_name">Audio plejer Kur\'ana</string>
+  <string name="audio_widget_description">Reproducirajte odabrane ajete uz omiljenog učača, bez promjene pozicije čitanja.</string>
+  <string name="audio_widget_configure_title">Postavke audio widgeta</string>
+  <string name="audio_widget_title_label">Naslov widgeta</string>
+  <string name="audio_widget_title_hint">Neobavezno, npr. Jutarnji zikr</string>
+  <string name="audio_widget_qari_label">Učač</string>
+  <string name="audio_widget_not_configured">Dodirnite za podešavanje</string>
+  <string name="audio_widget_loading">Učitavanje: %1$s</string>
+  <string name="audio_widget_playing">Reprodukcija: %1$s</string>
+  <string name="audio_widget_paused">Pauzirano: %1$s</string>
+  <string name="audio_widget_downloading_files">Preuzimanje neophodnih datoteka…</string>
+  <string name="audio_widget_unavailable">Reprodukcija nije moguća, dodirnite za promjenu postavki</string>
+  <string name="audio_widget_preview_qari">Vaš učač, vaši ajeti</string>
+  <string name="audio_widget_preview_status">Reprodukcija: Sura El-Fātiḥa, 1. ajet</string>
+  <string name="audio_widget_open_app">Otvori Kur\'an</string>
 </resources>

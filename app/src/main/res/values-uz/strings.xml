@@ -347,4 +347,20 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Qurʼon yuklamalari</string>
   <string name="notification_channel_audio">Qurʼon qiroati</string>
+
+  <string name="audio_widget_name">Qurʼon audio pleyeri</string>
+  <string name="audio_widget_description">Tanlangan oyatlarni sevimli qorining ijrosida tinglang, oʻqish joyingiz oʻzgarmaydi.</string>
+  <string name="audio_widget_configure_title">Audio vidjet sozlamalari</string>
+  <string name="audio_widget_title_label">Vidjet sarlavhasi</string>
+  <string name="audio_widget_title_hint">Ixtiyoriy, masalan: Tonggi zikrlar</string>
+  <string name="audio_widget_qari_label">Qori</string>
+  <string name="audio_widget_not_configured">Sozlash uchun bosing</string>
+  <string name="audio_widget_loading">Yuklanmoqda: %1$s</string>
+  <string name="audio_widget_playing">Ijro etilmoqda: %1$s</string>
+  <string name="audio_widget_paused">Pauza: %1$s</string>
+  <string name="audio_widget_downloading_files">Kerakli fayllar yuklab olinmoqda…</string>
+  <string name="audio_widget_unavailable">Ijro etib boʻlmadi, sozlamalarni oʻzgartirish uchun bosing</string>
+  <string name="audio_widget_preview_qari">Sizning qoringiz, sizning oyatlaringiz</string>
+  <string name="audio_widget_preview_status">Ijro etilmoqda: Fotiha surasi 1-oyat</string>
+  <string name="audio_widget_open_app">Qurʼonni ochish</string>
 </resources>

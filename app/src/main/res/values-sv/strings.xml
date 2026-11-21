@@ -312,4 +312,20 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Nedladdningar av Koranen</string>
   <string name="notification_channel_audio">Uppläsning av Koranen</string>
+
+  <string name="audio_widget_name">Koranens ljudspelare</string>
+  <string name="audio_widget_description">Spela upp valda verser med din favoritrecitatör, utan att ändra din läsposition.</string>
+  <string name="audio_widget_configure_title">Inställningar för ljudwidget</string>
+  <string name="audio_widget_title_label">Widgetens titel</string>
+  <string name="audio_widget_title_hint">Valfritt, t.ex. Morgonens adhkar</string>
+  <string name="audio_widget_qari_label">Recitatör</string>
+  <string name="audio_widget_not_configured">Tryck för att ställa in</string>
+  <string name="audio_widget_loading">Läser in: %1$s</string>
+  <string name="audio_widget_playing">Spelar: %1$s</string>
+  <string name="audio_widget_paused">Pausad: %1$s</string>
+  <string name="audio_widget_downloading_files">Laddar ner krävda filer…</string>
+  <string name="audio_widget_unavailable">Kan inte spela upp, tryck för att ändra inställningarna</string>
+  <string name="audio_widget_preview_qari">Din recitatör, dina verser</string>
+  <string name="audio_widget_preview_status">Spelar: Surah Al-Fātihah, Ayah 1</string>
+  <string name="audio_widget_open_app">Öppna Koranen</string>
 </resources>

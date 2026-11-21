@@ -327,4 +327,20 @@
   <string name="prefs_split_page_and_translation_summary">Аудармалары бар қосарлы бет режимінде Құран беті мен аудармасы көрсетілген</string>
   <string name="notification_channel_download">Құран жүктеулері</string>
   <string name="notification_channel_audio">Құранды қайталау</string>
+
+  <string name="audio_widget_name">Құран аудиоплеері</string>
+  <string name="audio_widget_description">Таңдалған аяттарды сүйікті қариыңыздың орындауында тыңдаңыз, оқу орныңыз өзгермейді.</string>
+  <string name="audio_widget_configure_title">Аудио виджет баптаулары</string>
+  <string name="audio_widget_title_label">Виджет атауы</string>
+  <string name="audio_widget_title_hint">Міндетті емес, мысалы: Таңғы зікірлер</string>
+  <string name="audio_widget_qari_label">Қари</string>
+  <string name="audio_widget_not_configured">Баптау үшін түртіңіз</string>
+  <string name="audio_widget_loading">Жүктелуде: %1$s</string>
+  <string name="audio_widget_playing">Ойнатылуда: %1$s</string>
+  <string name="audio_widget_paused">Кідіртілді: %1$s</string>
+  <string name="audio_widget_downloading_files">Керекті файлдар жүктелуде…</string>
+  <string name="audio_widget_unavailable">Ойнату мүмкін емес, баптауларды өзгерту үшін түртіңіз</string>
+  <string name="audio_widget_preview_qari">Сіздің қариыңыз, сіздің аяттарыңыз</string>
+  <string name="audio_widget_preview_status">Ойнатылуда: Фатиха сүресі, 1-аят</string>
+  <string name="audio_widget_open_app">Құранды ашу</string>
 </resources>

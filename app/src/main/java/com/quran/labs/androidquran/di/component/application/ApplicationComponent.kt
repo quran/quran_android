@@ -31,6 +31,8 @@ import com.quran.labs.androidquran.ui.fragment.QuranSettingsFragment
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import com.quran.labs.androidquran.ui.helpers.QuranNavigator
+import com.quran.labs.androidquran.widget.AudioWidget
+import com.quran.labs.androidquran.widget.AudioWidgetConfigureActivity
 import com.quran.labs.androidquran.widget.BookmarksWidget
 import com.quran.labs.androidquran.widget.BookmarksWidgetListProvider
 import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
@@ -94,6 +96,8 @@ interface ApplicationComponent : QuranApplicationComponent {
   // widgets
   fun inject(bookmarksWidgetListProvider: BookmarksWidgetListProvider)
   fun inject(bookmarksWidget: BookmarksWidget)
+  fun inject(audioWidget: AudioWidget)
+  fun inject(audioWidgetConfigureActivity: AudioWidgetConfigureActivity)
 
   @DependencyGraph.Factory
   interface Factory {

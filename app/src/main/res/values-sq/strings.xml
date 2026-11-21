@@ -312,4 +312,20 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Shkarkimet e Kuranit</string>
   <string name="notification_channel_audio">Recitimi i Kuranit</string>
+
+  <string name="audio_widget_name">Luajtësi audio i Kuranit</string>
+  <string name="audio_widget_description">Dëgjo ajetet e zgjedhura me recituesin tënd të preferuar, pa ndryshuar vendin e leximit.</string>
+  <string name="audio_widget_configure_title">Cilësimet e widget-it audio</string>
+  <string name="audio_widget_title_label">Titulli i widget-it</string>
+  <string name="audio_widget_title_hint">Opsionale, p.sh. Dhikri i mëngjesit</string>
+  <string name="audio_widget_qari_label">Recituesi</string>
+  <string name="audio_widget_not_configured">Prek për ta konfiguruar</string>
+  <string name="audio_widget_loading">Po ngarkohet: %1$s</string>
+  <string name="audio_widget_playing">Po luhet: %1$s</string>
+  <string name="audio_widget_paused">Në pauzë: %1$s</string>
+  <string name="audio_widget_downloading_files">Po shkarkohen skedarët e kërkuar…</string>
+  <string name="audio_widget_unavailable">Nuk mund të luhet, prek për të ndryshuar cilësimet</string>
+  <string name="audio_widget_preview_qari">Recituesi yt, ajetet e tua</string>
+  <string name="audio_widget_preview_status">Po luhet: Sura Al-Fātihah, Ajah 1</string>
+  <string name="audio_widget_open_app">Hap Kuranin</string>
 </resources>

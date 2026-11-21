@@ -331,4 +331,20 @@
   <string name="prefs_category_dual_screen">Željene postavke dvojne stranice</string>
   <string name="prefs_split_page_and_translation_title">Kuran i prevod u dual modu</string>
   <string name="prefs_split_page_and_translation_summary">U režimu dvojne stranice sa prevodima, prikazana je Stranica Kurana i prevod</string>
+
+  <string name="audio_widget_name">Audio plejer Kur\'ana</string>
+  <string name="audio_widget_description">Reprodukujte izabrane ajete uz omiljenog učača, bez promene mesta čitanja.</string>
+  <string name="audio_widget_configure_title">Podešavanja audio vidžeta</string>
+  <string name="audio_widget_title_label">Naslov vidžeta</string>
+  <string name="audio_widget_title_hint">Opciono, npr. Jutarnji zikr</string>
+  <string name="audio_widget_qari_label">Učač</string>
+  <string name="audio_widget_not_configured">Dodirnite za podešavanje</string>
+  <string name="audio_widget_loading">Učitavanje: %1$s</string>
+  <string name="audio_widget_playing">Reprodukcija: %1$s</string>
+  <string name="audio_widget_paused">Pauzirano: %1$s</string>
+  <string name="audio_widget_downloading_files">Preuzimanje neophodnih datoteka…</string>
+  <string name="audio_widget_unavailable">Reprodukcija nije moguća, dodirnite za promenu podešavanja</string>
+  <string name="audio_widget_preview_qari">Vaš učač, vaši ajeti</string>
+  <string name="audio_widget_preview_status">Reprodukcija: Sura El-Fātiḥa, 1. ajet</string>
+  <string name="audio_widget_open_app">Otvori Kur\'an</string>
 </resources>

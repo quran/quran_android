@@ -435,4 +435,22 @@
   <string name="notification_channel_download">Quran Downloads</string>
   <string name="notification_channel_audio">Quran Recitation</string>
   <string name="tag_save_error">Unable to rename this collection. It may no longer be available.</string>
+
+  <!-- audio widget -->
+  <string name="audio_widget_name">Quran Audio Player</string>
+  <string name="audio_widget_description">Play a chosen set of verses with your favorite reciter, without changing your reading position.</string>
+  <string name="audio_widget_configure_title">Audio Widget Settings</string>
+  <string name="audio_widget_title_label">Widget title</string>
+  <string name="audio_widget_title_hint">Optional, e.g. Morning Adhkar</string>
+  <string name="audio_widget_qari_label">Reciter</string>
+  <string name="audio_widget_not_configured">Tap to set up</string>
+  <string name="audio_widget_range" translatable="false">%1$s – %2$s</string>
+  <string name="audio_widget_loading">Loading: %1$s</string>
+  <string name="audio_widget_playing">Playing: %1$s</string>
+  <string name="audio_widget_paused">Paused: %1$s</string>
+  <string name="audio_widget_downloading_files">Downloading required files…</string>
+  <string name="audio_widget_unavailable">Unable to play, tap to change settings</string>
+  <string name="audio_widget_preview_qari">Your reciter, your verses</string>
+  <string name="audio_widget_preview_status">Playing: Surah Al-Fatihah, Ayah 1</string>
+  <string name="audio_widget_open_app">Open Quran</string>
 </resources>

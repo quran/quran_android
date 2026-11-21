@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:configure="com.quran.labs.androidquran.widget.AudioWidgetConfigureActivity"
+    android:description="@string/audio_widget_description"
+    android:initialLayout="@layout/audio_widget"
+    android:minHeight="40dp"
+    android:minWidth="250dp"
+    android:minResizeHeight="40dp"
+    android:minResizeWidth="180dp"
+    android:previewImage="@drawable/audio_widget_preview"
+    android:previewLayout="@layout/audio_widget"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellHeight="1"
+    android:targetCellWidth="4"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen"
+    android:widgetFeatures="reconfigurable" />

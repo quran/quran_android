@@ -248,4 +248,20 @@
   <string name="notification_channel_download">Descargas del Corán</string>
   <string name="notification_channel_audio">Recitación del Corán</string>
   <string name="quran_ayah_details">%1$s - Ayah %2$s, Yuz\' %3$s</string>
+
+  <string name="audio_widget_name">Reproductor de audio del Corán</string>
+  <string name="audio_widget_description">Reproduce los versículos que elijas con tu recitador favorito, sin cambiar tu posición de lectura.</string>
+  <string name="audio_widget_configure_title">Ajustes del widget de audio</string>
+  <string name="audio_widget_title_label">Título del widget</string>
+  <string name="audio_widget_title_hint">Opcional, p. ej. Adhkar de la mañana</string>
+  <string name="audio_widget_qari_label">Recitador</string>
+  <string name="audio_widget_not_configured">Toca para configurar</string>
+  <string name="audio_widget_loading">Cargando: %1$s</string>
+  <string name="audio_widget_playing">Reproduciendo: %1$s</string>
+  <string name="audio_widget_paused">En pausa: %1$s</string>
+  <string name="audio_widget_downloading_files">Descargando archivos requeridos…</string>
+  <string name="audio_widget_unavailable">No se puede reproducir, toca para cambiar los ajustes</string>
+  <string name="audio_widget_preview_qari">Tu recitador, tus versículos</string>
+  <string name="audio_widget_preview_status">Reproduciendo: Capítulo El Inicio, Versículo 1</string>
+  <string name="audio_widget_open_app">Abrir el Corán</string>
 </resources>

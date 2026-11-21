@@ -335,4 +335,20 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Unduhan Quran</string>
   <string name="notification_channel_audio">Bacaan Quran</string>
+
+  <string name="audio_widget_name">Pemutar Audio Quran</string>
+  <string name="audio_widget_description">Putar ayat pilihan dengan qari favorit Anda, tanpa mengubah posisi bacaan.</string>
+  <string name="audio_widget_configure_title">Pengaturan Widget Audio</string>
+  <string name="audio_widget_title_label">Judul widget</string>
+  <string name="audio_widget_title_hint">Opsional, mis. Dzikir Pagi</string>
+  <string name="audio_widget_qari_label">Qari</string>
+  <string name="audio_widget_not_configured">Ketuk untuk mengatur</string>
+  <string name="audio_widget_loading">Memuat: %1$s</string>
+  <string name="audio_widget_playing">Memutar: %1$s</string>
+  <string name="audio_widget_paused">Dijeda: %1$s</string>
+  <string name="audio_widget_downloading_files">Mengunduh berkas yang diperlukan…</string>
+  <string name="audio_widget_unavailable">Tidak dapat memutar, ketuk untuk mengubah pengaturan</string>
+  <string name="audio_widget_preview_qari">Qari Anda, ayat pilihan Anda</string>
+  <string name="audio_widget_preview_status">Memutar: Surat Al-Fatihah, Ayat 1</string>
+  <string name="audio_widget_open_app">Buka Quran</string>
 </resources>
