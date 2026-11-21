@@ -41,7 +41,7 @@ fun SheikhEntryRow(
     is EntryForQari.DatabaseForQari -> databaseNaming(LocalContext.current)
   }
 
-  if (sheikhEntryUiModel.isDownloaded) {
+  if (sheikhEntryUiModel.hasLocalFiles) {
     DownloadCommonRow(
       title = title,
       subtitle = stringResource(id = deleteEntryResourceId),

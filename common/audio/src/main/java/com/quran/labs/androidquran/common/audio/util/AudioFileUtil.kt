@@ -5,6 +5,9 @@ import okio.Path
 
 object AudioFileUtil {
 
+  /** Formats that may exist on disk, regardless of the current catalog or device decoders. */
+  val audioExtensions = listOf("mp3", "opus")
+
   fun filesMatchingSuffixWithSuffixRemoved(fileSystem: FileSystem, path: Path, suffix: String): List<String> {
     return fileNamesMatchingSuffix(fileSystem, path, suffix)
       .map { it.name.removeSuffix(suffix) }

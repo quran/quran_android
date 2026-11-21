@@ -7,7 +7,7 @@ import com.quran.labs.androidquran.common.audio.cache.AudioCacheInvalidator
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoManager
 import com.quran.labs.androidquran.common.audio.model.download.AudioDownloadMetadata
 import com.quran.labs.androidquran.common.audio.model.download.QariDownloadInfo
-import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
+import com.quran.labs.androidquran.common.audio.util.AudioFileUtil
 import com.quran.mobile.common.download.DownloadConstants
 import com.quran.mobile.common.download.DownloadInfo
 import com.quran.mobile.common.download.DownloadInfoStreams
@@ -37,7 +37,6 @@ class SheikhAudioPresenter @Inject constructor(
   private val downloadInfoStream: DownloadInfoStreams,
   private val quranFileManager: QuranFileManager,
   private val audioCacheInvalidator: AudioCacheInvalidator,
-  private val audioExtensionDecider: AudioExtensionDecider,
   private val downloader: Downloader
 ) {
   private val selectedEntriesFlow = MutableStateFlow<List<EntryForQari>>(emptyList())
@@ -58,7 +57,8 @@ class SheikhAudioPresenter @Inject constructor(
             .map { sura ->
               EntryForQari.SuraForQari(
                 sura,
-                qariInfo.fullyDownloadedSuras.contains(sura)
+                qariInfo.fullyDownloadedSuras.contains(sura),
+                qariInfo.surasWithLocalFiles.contains(sura)
               )
             }
           val databaseState = qariInfo.asDatabaseForQariEntry()
@@ -107,7 +107,7 @@ class SheikhAudioPresenter @Inject constructor(
   }
 
   suspend fun onSuraAction(qariId: Int, entry: EntryForQari) {
-    if (entry.isDownloaded) {
+    if (entry.hasLocalFiles) {
       onRemoveSelection()
     } else {
       onDownloadSelection(qariId)
@@ -173,7 +173,8 @@ class SheikhAudioPresenter @Inject constructor(
   }
 
   fun onRemoveSelection() {
-    currentDialogFlow.value = SheikhDownloadDialog.RemoveConfirmation(selectedEntriesFlow.value)
+    val entriesToRemove = selectedEntriesFlow.value.filter { it.hasLocalFiles }
+    currentDialogFlow.value = SheikhDownloadDialog.RemoveConfirmation(entriesToRemove)
   }
 
   fun onCancelDialog() {
@@ -194,10 +195,9 @@ class SheikhAudioPresenter @Inject constructor(
               databasePath.delete()
             }
           }
-          val allowedExtensions = audioExtensionDecider.allowedAudioExtensions(qari)
           suras.flatMap {
             val paddedSura = it.toString().padStart(3, '0')
-            allowedExtensions.map { ext ->
+            AudioFileUtil.audioExtensions.map { ext ->
               File(File(directory, qari.path), "$paddedSura.$ext")
             }
           }.filter { it.exists() }
