@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="quran_sync_title">Quran.com 同步</string>
+  <string name="quran_sync_settings_category">帳戶</string>
+  <string name="quran_sync_settings_summary">書籤、收藏集和閱讀歷史</string>
+  <string name="quran_sync_not_signed_in">未登入</string>
+  <string name="quran_sync_signed_in">已登入</string>
+  <string name="quran_sync_loading">正在登入</string>
+  <string name="quran_sync_login">登入</string>
+  <string name="quran_sync_logout">退出登入</string>
+  <string name="quran_sync_name">姓名</string>
+  <string name="quran_sync_email">電子郵件</string>
+  <string name="quran_sync_account_id">帳戶 ID</string>
+  <string name="quran_sync_action_error">暫時無法更新同步。</string>
+  <string name="quran_sync_bookmarks_cta_title">隨時隨地同步您的書籤</string>
+  <string name="quran_sync_bookmarks_cta_subtitle">從任何裝置、任何時間訪問它們</string>
+  <string name="quran_sync_bookmarks_cta_button">使用 Quran.com 登入</string>
+  <string name="quran_sync_bookmarks_cta_dismiss">關閉</string>
+</resources>
