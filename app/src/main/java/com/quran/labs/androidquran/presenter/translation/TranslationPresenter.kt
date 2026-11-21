@@ -27,7 +27,12 @@ class TranslationPresenter @Inject internal constructor(
     translationModel, translationsAdapter, translationUtil, quranInfo, translationListPresenter
   ) {
 
+  // the saved scroll position is only restored the first time the verses are shown. later
+  // refreshes (ex when coming back from the share sheet) keep the position the person scrolled to.
+  private var isScrollPositionRestored = false
+
   suspend fun refresh() {
+    var didShowVerses = false
     pages
       .map {
         withContext(Dispatchers.IO) {
@@ -44,9 +49,16 @@ class TranslationPresenter @Inject internal constructor(
             getPage(result.ayahInformation), result.translations,
             result.ayahInformation
           )
-          screen.updateScrollPosition()
+          if (!isScrollPositionRestored) {
+            screen.updateScrollPosition()
+          }
+          didShowVerses = true
         }
       }
+
+    if (didShowVerses) {
+      isScrollPositionRestored = true
+    }
   }
 
   private fun getPage(result: List<QuranAyahInfo>): Int {
@@ -65,6 +77,10 @@ class TranslationPresenter @Inject internal constructor(
       verses: List<@JvmSuppressWildcards QuranAyahInfo>
     )
 
+    /**
+     * Restores the saved scroll position. Only called the first time verses are shown, so that
+     * refreshing the page doesn't move the list away from where the person scrolled to.
+     */
     fun updateScrollPosition()
   }
 }
