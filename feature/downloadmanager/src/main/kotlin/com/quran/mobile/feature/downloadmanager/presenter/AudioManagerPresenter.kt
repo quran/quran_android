@@ -25,7 +25,7 @@ class AudioManagerPresenter @Inject constructor(
           .map { qariDownloadInfo ->
             DownloadedSheikhUiModel(
               qariItem = lambda(qariDownloadInfo.qari),
-              downloadedSuras = qariDownloadInfo.fullyDownloadedSuras.size
+              downloadedSuras = qariDownloadInfo.surasWithLocalFiles.size
             )
           }
           .sortedBy { it.qariItem.name }
