@@ -31,7 +31,8 @@ import kotlin.time.Instant
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class RecentPagesDaoImpl @Inject constructor(
+@Inject
+class RecentPagesDaoImpl(
   private val quranInfoProvider: () -> QuranInfo,
   private val settings: Settings,
   private val readingSessionsRepository: ReadingSessionsRepository,

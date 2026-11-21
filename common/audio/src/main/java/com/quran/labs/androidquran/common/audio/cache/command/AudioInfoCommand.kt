@@ -9,7 +9,8 @@ import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
 
-class AudioInfoCommand @Inject constructor(
+@Inject
+class AudioInfoCommand(
   private val fileSystem: FileSystem,
   private val qariUtil: QariUtil,
   private val audioExtensionDecider: AudioExtensionDecider,

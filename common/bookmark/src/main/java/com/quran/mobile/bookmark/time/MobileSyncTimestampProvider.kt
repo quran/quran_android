@@ -21,7 +21,8 @@ interface MobileSyncTimestampProvider {
 
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
-class DefaultMobileSyncTimestampProvider @Inject constructor() : MobileSyncTimestampProvider {
+@Inject
+class DefaultMobileSyncTimestampProvider : MobileSyncTimestampProvider {
   override fun now(): PlatformDateTime {
     return Clock.System.now().toPlatform()
   }

@@ -14,7 +14,8 @@ import com.quran.mobile.bookmark.legacy.LegacyBookmarkIds
 import com.quran.mobile.bookmark.time.legacyTimestampMillis
 import dev.zacsweers.metro.Inject
 
-class LegacyBookmarkMigrationNormalizer @Inject constructor(
+@Inject
+class LegacyBookmarkMigrationNormalizer(
   private val quranInfo: QuranInfo
 ) {
   fun normalize(snapshot: LegacyBookmarksSnapshot): MobileSyncImportData {

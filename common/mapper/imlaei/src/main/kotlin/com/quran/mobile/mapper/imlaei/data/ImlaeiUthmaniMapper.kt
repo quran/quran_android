@@ -8,7 +8,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @SingleIn(AppScope::class)
-class ImlaeiUthmaniMapper @Inject constructor(
+@Inject
+class ImlaeiUthmaniMapper(
   private val imlaeiUthmaniDatabaseProvider: ImlaeiUthmaniDatabaseProvider
 ) {
 

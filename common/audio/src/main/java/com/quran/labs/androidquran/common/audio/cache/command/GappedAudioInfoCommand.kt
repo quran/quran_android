@@ -7,7 +7,8 @@ import dev.zacsweers.metro.Inject
 import okio.FileSystem
 import okio.Path
 
-class GappedAudioInfoCommand @Inject constructor(
+@Inject
+class GappedAudioInfoCommand(
   private val quranInfo: QuranInfo,
   private val fileSystem: FileSystem
 ) {

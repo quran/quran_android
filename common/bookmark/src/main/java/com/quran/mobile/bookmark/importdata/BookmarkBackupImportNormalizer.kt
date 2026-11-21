@@ -14,7 +14,8 @@ import com.quran.mobile.bookmark.time.legacyTimestampMillis
 import com.quran.shared.persistence.model.ReadingBookmarkSlot
 import dev.zacsweers.metro.Inject
 
-class BookmarkBackupImportNormalizer @Inject constructor(
+@Inject
+class BookmarkBackupImportNormalizer(
   private val pageMapper: ReadingBookmarkPageMapper,
   private val timestampProvider: MobileSyncTimestampProvider
 ) {

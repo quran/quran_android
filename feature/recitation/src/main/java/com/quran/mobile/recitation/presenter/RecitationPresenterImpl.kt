@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @QuranScope
-class RecitationPresenterImpl @Inject constructor(): RecitationPresenter {
+@Inject
+class RecitationPresenterImpl : RecitationPresenter {
   override fun bind(what: Activity) {}
   override fun unbind(what: Activity) {}
 

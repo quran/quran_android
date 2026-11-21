@@ -5,7 +5,8 @@ import dev.zacsweers.metro.Inject
 import okio.FileSystem
 import okio.Path
 
-class GaplessAudioInfoCommand @Inject constructor(private val fileSystem: FileSystem) {
+@Inject
+class GaplessAudioInfoCommand(private val fileSystem: FileSystem) {
 
   fun gaplessDownloads(path: Path, allowedExtensions: List<String>): Pair<List<Int>, List<Int>> {
     return fullGaplessDownloads(path, allowedExtensions) to partialGaplessDownloads(path, allowedExtensions)
