@@ -332,4 +332,6 @@
   <string name="prefs_split_page_and_translation_title">Kur\'an i prijevod u dual modu</string>
   <string name="prefs_split_page_and_translation_summary">U dual page modu sa prevodima, Prikazana je stranica i prijevod kur\'ana</string>
   <string name="scoped_storage_message">Zbog Android promjena radi povećanja privatnosti korisnika, kopiranje datoteka izvan direktorija aplikacija može zaustaviti Quran za Android da pristupi svojim podacima u budućim verzijama Androida. Jeste li sigurni da biste voljeli koristiti ovu stazu?</string>
+  <string name="reading_history_back">Nazad</string>
+  <string name="reading_history_forward">Naprijed</string>
 </resources>

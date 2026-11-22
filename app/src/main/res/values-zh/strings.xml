@@ -279,4 +279,6 @@
   <string name="prefs_split_page_and_translation_summary">在带翻译的双页模式下，显示古兰经页面和翻译。</string>
   <string name="notification_channel_download">古兰经下载</string>
   <string name="notification_channel_audio">古兰经诵读</string>
+  <string name="reading_history_back">返回</string>
+  <string name="reading_history_forward">前进</string>
 </resources>

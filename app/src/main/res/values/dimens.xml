@@ -35,6 +35,7 @@
 
   <!-- page selector -->
   <dimen name="page_margin">6dp</dimen>
+  <dimen name="reading_history_audio_fallback">56dp</dimen>
 
   <!-- translation and tafseer screen -->
   <dimen name="arabic_text_line_spacing_multiplier">1.2</dimen>

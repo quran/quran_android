@@ -364,4 +364,6 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_audio">Рецитация Корана</string>
   <string name="notification_channel_download">Загрузки Корана</string>
+  <string name="reading_history_back">Назад</string>
+  <string name="reading_history_forward">Вперёд</string>
 </resources>

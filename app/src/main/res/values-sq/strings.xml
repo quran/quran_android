@@ -312,4 +312,6 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Shkarkimet e Kuranit</string>
   <string name="notification_channel_audio">Recitimi i Kuranit</string>
+  <string name="reading_history_back">Prapa</string>
+  <string name="reading_history_forward">Përpara</string>
 </resources>

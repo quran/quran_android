@@ -327,4 +327,6 @@
   <string name="prefs_split_page_and_translation_summary">Аудармалары бар қосарлы бет режимінде Құран беті мен аудармасы көрсетілген</string>
   <string name="notification_channel_download">Құран жүктеулері</string>
   <string name="notification_channel_audio">Құранды қайталау</string>
+  <string name="reading_history_back">Артқа</string>
+  <string name="reading_history_forward">Алға</string>
 </resources>

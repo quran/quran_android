@@ -294,4 +294,6 @@ escolher um leitor-qari diferente. Clique play para baixar e reproduzir a págin
   <string name="prefs_split_page_and_translation_summary">No modo página dupla com traduções, a página do Alcorão e a tradução é mostrada</string>
   <string name="notification_channel_download">Downloads do Alcorão</string>
   <string name="notification_channel_audio">Recitação do Alcorão</string>
+  <string name="reading_history_back">Voltar</string>
+  <string name="reading_history_forward">Avançar</string>
 </resources>

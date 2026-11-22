@@ -312,4 +312,6 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Nedladdningar av Koranen</string>
   <string name="notification_channel_audio">Uppläsning av Koranen</string>
+  <string name="reading_history_back">Tillbaka</string>
+  <string name="reading_history_forward">Framåt</string>
 </resources>

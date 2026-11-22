@@ -331,4 +331,6 @@
   <string name="prefs_category_dual_screen">Željene postavke dvojne stranice</string>
   <string name="prefs_split_page_and_translation_title">Kuran i prevod u dual modu</string>
   <string name="prefs_split_page_and_translation_summary">U režimu dvojne stranice sa prevodima, prikazana je Stranica Kurana i prevod</string>
+  <string name="reading_history_back">Nazad</string>
+  <string name="reading_history_forward">Napred</string>
 </resources>

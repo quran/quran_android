@@ -301,4 +301,6 @@
   <string name="prefs_split_page_and_translation_summary">هنگامی که دو صفحه مجاور فعال می شوند، صفحه قرآن و ترجمه با هم نمایش داده می شوند</string>
   <string name="notification_channel_download">دانلود فایل های قرآن</string>
   <string name="notification_channel_audio">قرائت قرآن</string>
+  <string name="reading_history_back">بازگشت</string>
+  <string name="reading_history_forward">جلو</string>
 </resources>
