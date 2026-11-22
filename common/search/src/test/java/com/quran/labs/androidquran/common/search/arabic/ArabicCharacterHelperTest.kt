@@ -25,6 +25,43 @@ class ArabicCharacterHelperTest {
   }
 
   @Test
+  fun `alef madda generates class including alef variants`() {
+    // Arrange: آ (\u0622) should map to the same alef class as ا, so searching آ finds ا
+    val query = "\u0622"
+    // Act
+    val regex = ArabicCharacterHelper.generateRegex(query)
+    // Assert
+    assertThat(regex).contains("\u0622") // آ
+    assertThat(regex).contains("\u0623") // أ
+    assertThat(regex).contains("\u0625") // إ
+    assertThat(regex).contains("\u0627") // ا
+  }
+
+  @Test
+  fun `alef with hamza below generates class including alef variants`() {
+    // Arrange: إ (\u0625) should map to the same alef class as ا, so searching إ finds ا
+    val query = "\u0625"
+    // Act
+    val regex = ArabicCharacterHelper.generateRegex(query)
+    // Assert
+    assertThat(regex).contains("\u0625") // إ
+    assertThat(regex).contains("\u0622") // آ
+    assertThat(regex).contains("\u0623") // أ
+    assertThat(regex).contains("\u0627") // ا
+  }
+
+  @Test
+  fun `generated regex for alef madda matches plain alef`() {
+    // Arrange: typing آ should also match the plain alef spelling ا - the reverse of the alef mapping
+    val query = "\u0622"
+    // Act
+    val regex = ArabicCharacterHelper.generateRegex(query)
+    val pattern = Regex(regex)
+    // Assert
+    assertThat(pattern.containsMatchIn("\u0627")).isTrue()
+  }
+
+  @Test
   fun `waw generates character class including waw with hamza`() {
     // Arrange: و (\u0648) should map to وؤ
     val query = "\u0648"
@@ -33,6 +70,28 @@ class ArabicCharacterHelperTest {
     // Assert
     assertThat(regex).contains("\u0648") // و
     assertThat(regex).contains("\u0624") // ؤ
+  }
+
+  @Test
+  fun `waw with hamza generates class including plain waw`() {
+    // Arrange: ؤ (\u0624) should map to ؤو, so searching ؤ finds و - the reverse of the waw mapping
+    val query = "\u0624"
+    // Act
+    val regex = ArabicCharacterHelper.generateRegex(query)
+    // Assert
+    assertThat(regex).contains("\u0624") // ؤ
+    assertThat(regex).contains("\u0648") // و
+  }
+
+  @Test
+  fun `generated regex for waw with hamza matches plain waw`() {
+    // Arrange: typing ؤ should also match the plain waw spelling و
+    val query = "\u0624"
+    // Act
+    val regex = ArabicCharacterHelper.generateRegex(query)
+    val pattern = Regex(regex)
+    // Assert
+    assertThat(pattern.containsMatchIn("\u0648")).isTrue()
   }
 
   @Test
