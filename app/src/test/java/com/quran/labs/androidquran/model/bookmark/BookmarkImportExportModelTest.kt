@@ -311,6 +311,30 @@ class BookmarkImportExportModelTest {
   }
 
   @Test
+  fun testExportBookmarksCsvSeparatesMultipleTagsAndLeavesUntaggedEmpty() {
+    val sink = Buffer()
+
+    BookmarkJsonModel().toCSV(
+      sink,
+      BookmarkData(
+        tags = listOf(Tag("1", "First"), Tag("2", "Second"), Tag("3", "Third")),
+        bookmarks = listOf(
+          Bookmark("1", 1, 1, 1, 1000, tags = listOf("1", "2", "3")),
+          Bookmark("2", 2, 255, 42, 2000),
+          Bookmark("3", 3, 1, 50, 3000, tags = listOf("missing", "2"))
+        )
+      )
+    )
+
+    assertThat(sink.readUtf8()).isEqualTo(
+      "type, sura, ayah, page, timestamp, tags, slot \n" +
+        "bookmark, 1, 1, 1, 1000, First|Second|Third, \n" +
+        "bookmark, 2, 255, 42, 2000, , \n" +
+        "bookmark, 3, 1, 50, 3000, Second, \n"
+    )
+  }
+
+  @Test
   fun testImportDeduplicatesTagNames() {
     importData(
       BookmarkData(
