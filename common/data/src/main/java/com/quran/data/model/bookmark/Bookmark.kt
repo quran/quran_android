@@ -28,6 +28,6 @@ data class Bookmark @JvmOverloads constructor(
     "bookmark, $sura, $ayah, $page, $timestamp, ${getSemiColonSeparatedTags(tagsList)},"
 
   private fun getSemiColonSeparatedTags(tagsList: List<Tag>) =
-    tags.map { tagsList.find { tag -> tag.id == it }?.name }
-      .reduceOrNull { tags, tag -> "$tags$tag|" }
+    tags.mapNotNull { tagsList.find { tag -> tag.id == it }?.name }
+      .joinToString("|")
 }
