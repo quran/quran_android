@@ -877,6 +877,10 @@ class AudioService : Service(), Player.Listener {
     if (isSetupAsForeground || setUpAsForeground()) {
       state = State.Stopped
       relaxResources(releaseExoPlayer = false, stopForeground = false)
+      // Stop the current file before loading the next one. Loading gapless timings suspends,
+      // and if the old file reached its end meanwhile, onPlayerCompleted would advance the
+      // queue past the ayah we are about to play (e.g. to ayah 2 of the next sura).
+      player?.stop()
       playerOverride = false
       currentWord = null
 
