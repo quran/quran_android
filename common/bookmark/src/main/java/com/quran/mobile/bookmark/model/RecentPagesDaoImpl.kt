@@ -42,14 +42,14 @@ class RecentPagesDaoImpl(
   private val readingSessionsState: StateFlow<List<ReadingSession>?> =
     readingSessionsRepository.getReadingSessionsFlow()
       .distinctUntilChanged()
-      .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
+      .stateIn(appCoroutineScope, SharingStarted.WhileSubscribed(5000), null)
 
   private val pageTypeState: StateFlow<String?> =
     settings.preferencesFlow()
       .map { settings.pageType() }
       .onStart { emit(settings.pageType()) }
       .distinctUntilChanged()
-      .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
+      .stateIn(appCoroutineScope, SharingStarted.WhileSubscribed(5000), null)
 
   override fun recentPagesFlow(): Flow<List<RecentPage>> {
     return combine(

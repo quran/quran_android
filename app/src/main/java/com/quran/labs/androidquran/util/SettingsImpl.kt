@@ -63,6 +63,10 @@ class SettingsImpl @Inject constructor(private val quranSettings: QuranSettings)
     }
   }
 
+  override suspend fun appTheme(): String {
+    return quranSettings.currentTheme()
+  }
+
   override suspend fun pageTextBrightness(): Int {
     return quranSettings.pageTextBrightness
   }

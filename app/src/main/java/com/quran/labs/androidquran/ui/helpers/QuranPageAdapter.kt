@@ -1,9 +1,12 @@
 package com.quran.labs.androidquran.ui.helpers
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.quran.data.core.QuranInfo
+import com.quran.labs.androidquran.common.ui.core.CleanablePageFragment
+import com.quran.labs.androidquran.common.ui.core.PooledPageView
 import com.quran.labs.androidquran.ui.fragment.QuranPageFragment
 import com.quran.labs.androidquran.ui.fragment.TabletFragment
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment
@@ -22,6 +25,8 @@ class QuranPageAdapter(
   private var pageMode: PageMode = makePageMode()
   private val totalPages: Int = quranInfo.numberOfPagesConsideringSkipped
   private val totalPagesDual: Int = totalPages / 2 + (totalPages % 2)
+  private val viewPool = ArrayDeque<View>(MAX_VIEW_POOL_SIZE)
+  private val activeViews = LinkedHashMap<Int, View>(4)
 
   override fun shouldSaveFragmentHistory(): Boolean = false
 
@@ -30,6 +35,7 @@ class QuranPageAdapter(
       isShowingTranslation = true
       pageMode = makePageMode()
       notifyDataSetChanged()
+      clearViewPool()
     }
   }
 
@@ -105,21 +111,116 @@ class QuranPageAdapter(
     }
   }
 
+  override fun instantiateItem(container: ViewGroup, position: Int): Any {
+    if (pageMode == PageMode.SingleArabicPage && pageViewFactory != null) {
+      val page = quranInfo.getPageFromPosition(position, isDualPagesVisible)
+      activeViews[position]?.let { existing ->
+        if (existing.parent === container) {
+          return existing
+        }
+      }
+      val pooled = if (viewPool.isNotEmpty()) viewPool.removeFirst() else null
+      if (pooled != null) {
+        if (pooled is PooledPageView) {
+          pooled.rebindPage(page)
+        }
+        (pooled.parent as? ViewGroup)?.removeView(pooled)
+        container.addView(pooled)
+        activeViews[position] = pooled
+        return pooled
+      }
+      val created = pageViewFactory.providePageView(container.context, page, pageMode)
+      if (created != null) {
+        container.addView(created)
+        activeViews[position] = created
+        return created
+      }
+    }
+    return super.instantiateItem(container, position)
+  }
+
+  override fun setPrimaryItem(container: ViewGroup, position: Int, currentItem: Any) {
+    if (currentItem is View) {
+      return
+    }
+    super.setPrimaryItem(container, position, currentItem)
+  }
+
+  override fun isViewFromObject(view: View, currentItem: Any): Boolean {
+    if (currentItem is View) {
+      return view === currentItem
+    }
+    return super.isViewFromObject(view, currentItem)
+  }
+
   override fun destroyItem(container: ViewGroup, position: Int, currentItem: Any) {
+    if (currentItem is View) {
+      if (activeViews[position] === currentItem) {
+        activeViews.remove(position)
+      }
+      (currentItem as? PooledPageView)?.cleanup()
+      container.removeView(currentItem)
+      if (currentItem is PooledPageView &&
+        pageMode == PageMode.SingleArabicPage &&
+        viewPool.size < MAX_VIEW_POOL_SIZE
+      ) {
+        viewPool.addLast(currentItem)
+      }
+      return
+    }
     val f = currentItem as Fragment
     Timber.d("destroying item: %d, %s", position, f)
     cleanupFragment(f)
     super.destroyItem(container, position, currentItem)
   }
 
+  fun clearViewPool() {
+    while (viewPool.isNotEmpty()) {
+      val view = viewPool.removeFirst()
+      (view as? PooledPageView)?.cleanup()
+    }
+    activeViews.values.forEach { view ->
+      (view as? PooledPageView)?.cleanup()
+    }
+    activeViews.clear()
+  }
+
+  fun clearDetachedViewPool() {
+    while (viewPool.isNotEmpty()) {
+      val view = viewPool.removeFirst()
+      (view as? PooledPageView)?.cleanup()
+    }
+  }
+
+  fun invalidateActivePageViews() {
+    activeViews.values.forEach { view ->
+      view.invalidate()
+      if (view is ViewGroup) {
+        for (i in 0 until view.childCount) {
+          view.getChildAt(i).invalidate()
+        }
+      }
+    }
+  }
+
+  internal fun pooledViewCountForTest(): Int = viewPool.size
+
+  internal fun activeViewForTest(position: Int): View? = activeViews[position]
+
   override fun cleanupFragment(f: Fragment) {
     if (f is QuranPageFragment) {
       f.cleanup()
     } else if (f is TabletFragment) {
+      f.cleanup()
+    } else if (f is CleanablePageFragment) {
       f.cleanup()
     }
   }
 
   private val isDualPagesVisible: Boolean
     get() = isDualPages && !(isSplitScreen && isShowingTranslation)
+
+  private companion object {
+    const val MAX_VIEW_POOL_SIZE = 3
+  }
 }

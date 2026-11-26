@@ -4,11 +4,13 @@ import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.view.ActionMode
-import androidx.appcompat.widget.Toolbar
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
-import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.base.TestApplication
+import com.quran.labs.androidquran.hybrid.contract.HybridNavTab
+import com.quran.labs.androidquran.util.QuranSettings
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -19,21 +21,36 @@ import org.robolectric.annotation.Config
 @Config(application = TestApplication::class, sdk = [33])
 class QuranActivityBackCallbackTest {
 
+  @Before
+  fun setup() {
+    QuranSettings.getInstance(ApplicationProvider.getApplicationContext()).pageType = "madani"
+  }
+
   @Test
-  fun `back press collapses expanded search view without finishing activity`() {
+  fun `back press returns from search or bookmarks tab to index without finishing activity`() {
     ActivityScenario.launch(QuranActivity::class.java).use { scenario ->
       scenario.onActivity { activity ->
         Shadows.shadowOf(Looper.getMainLooper()).idle()
-        val toolbar = activity.findViewById<Toolbar>(R.id.toolbar)
-        val searchItem = toolbar.menu.findItem(R.id.search)
-        assertThat(searchItem).isNotNull()
+        assertThat(activity.hubStateHolder.uiState.value.selectedTab).isEqualTo(HybridNavTab.INDEX)
 
-        assertThat(searchItem.expandActionView()).isTrue()
-        assertThat(searchItem.isActionViewExpanded).isTrue()
+        activity.hubStateHolder.selectNavTab(HybridNavTab.SEARCH)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        assertThat(activity.hubStateHolder.uiState.value.selectedTab).isEqualTo(HybridNavTab.SEARCH)
 
         activity.onBackPressedDispatcher.onBackPressed()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
 
-        assertThat(searchItem.isActionViewExpanded).isFalse()
+        assertThat(activity.hubStateHolder.uiState.value.selectedTab).isEqualTo(HybridNavTab.INDEX)
+        assertThat(activity.isFinishing).isFalse()
+
+        activity.hubStateHolder.selectNavTab(HybridNavTab.BOOKMARKS)
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        assertThat(activity.hubStateHolder.uiState.value.selectedTab).isEqualTo(HybridNavTab.BOOKMARKS)
+
+        activity.onBackPressedDispatcher.onBackPressed()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        assertThat(activity.hubStateHolder.uiState.value.selectedTab).isEqualTo(HybridNavTab.INDEX)
         assertThat(activity.isFinishing).isFalse()
       }
     }

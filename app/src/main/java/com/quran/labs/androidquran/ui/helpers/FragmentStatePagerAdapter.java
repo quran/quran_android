@@ -144,7 +144,7 @@ public abstract class FragmentStatePagerAdapter extends PagerAdapter {
       mSavedState.add(null);
     }
 
-    mSavedState.set(position, fragment.isAdded()
+    mSavedState.set(position, (shouldSaveFragmentHistory() && fragment.isAdded())
         ? mFragmentManager.saveFragmentInstanceState(fragment) : null);
     mFragments.set(position, null);
 

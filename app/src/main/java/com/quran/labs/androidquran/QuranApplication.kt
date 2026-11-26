@@ -9,8 +9,12 @@ import com.quran.common.search.RustArabicSearchEngine
 import com.quran.data.di.AppCoroutineScope
 import com.quran.labs.androidquran.common.audio.util.AudioDecoderCapabilities
 import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
+import com.quran.labs.androidquran.common.ui.core.BitmapPoolTrimRegistry
 import com.quran.labs.androidquran.core.worker.QuranWorkerFactory
 import com.quran.labs.androidquran.di.component.application.ApplicationComponent
+import com.quran.labs.androidquran.hybrid.contract.DailyWirdRepository
+import com.quran.labs.androidquran.hybrid.hub.HybridIndexDataSource
+import com.quran.labs.androidquran.hybrid.ui.VectorPathDrawable
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.RecordingLogTree
@@ -24,7 +28,10 @@ import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.Provider
 import dev.zacsweers.metro.createGraphFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @HasMemberInjections
@@ -37,6 +44,8 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
   @Inject lateinit var quranSyncManager: Provider<QuranSyncManager>
   @Inject lateinit var appCoroutineScope: AppCoroutineScope
   @Inject lateinit var audioDecoderCapabilities: Provider<AudioDecoderCapabilities>
+  @Inject lateinit var dailyWirdRepository: Provider<DailyWirdRepository>
+  @Inject lateinit var hybridIndexDataSource: Provider<HybridIndexDataSource>
 
   override fun provideQuranApplicationComponent(): QuranApplicationComponent {
     return applicationComponent
@@ -48,17 +57,11 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
     applicationComponent = initializeInjector()
     applicationComponent.inject(this)
 
-    // Register foreground sync observer on the main thread without eagerly initializing the
-    // sync database/graph; heavy graph warm-up, widget check, and codec probe run off-main.
-    val syncManager = quranSyncManager()
-    syncManager.startForegroundSync()
+    // Register foreground sync observer off Application.onCreate(); heavy graph warm-up,
+    // widget check, and sync observer setup run asynchronously without stalling cold start.
     initializeWorkManager()
-
-    appCoroutineScope.launch {
-      syncManager.warmUpIfConfigured()
-      bookmarksWidgetSubscriber().subscribeBookmarksWidgetIfNecessary()
-      audioDecoderCapabilities().isOpusSupported()
-    }
+    scheduleColdStartPrewarm()
+    scheduleStartupSync()
 
     // theme setup
     val theme = quranSettings.currentTheme()
@@ -88,6 +91,29 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
     // On-demand initialization via workManagerConfiguration avoids main-thread Room/SQLite startup.
   }
 
+  open fun scheduleColdStartPrewarm() {
+    appCoroutineScope.launch(Dispatchers.IO) {
+      delay(COLD_START_PREWARM_DELAY_MS)
+      dailyWirdRepository().stateFlow
+      hybridIndexDataSource().prewarmSuras(this@QuranApplication)
+      VectorPathDrawable.prewarmHubPaths()
+    }
+  }
+
+  open fun scheduleStartupSync() {
+    appCoroutineScope.launch {
+      delay(STARTUP_SYNC_DELAY_MS)
+      val syncManager = quranSyncManager()
+      syncManager.warmUpIfConfigured()
+      if (syncManager.isConfigured) {
+        withContext(Dispatchers.Main.immediate) {
+          syncManager.startForegroundSync()
+        }
+      }
+      bookmarksWidgetSubscriber().subscribeBookmarksWidgetIfNecessary()
+    }
+  }
+
   override fun onTrimMemory(level: Int) {
     super.onTrimMemory(level)
     trimCaches(level)
@@ -101,6 +127,9 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
 
   @VisibleForTesting
   internal fun trimCaches(level: Int) {
+    if (level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
+      BitmapPoolTrimRegistry.clearAll()
+    }
     if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW ||
       level == ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN
     ) {
@@ -128,6 +157,8 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
   }
 
   private companion object {
+    private const val COLD_START_PREWARM_DELAY_MS = 1200L
+    private const val STARTUP_SYNC_DELAY_MS = 8500L
     private const val SURA_HEADER_DRAWER_CLASS =
       "com.quran.labs.androidquran.common.drawing.helper.SuraHeaderDrawer"
   }

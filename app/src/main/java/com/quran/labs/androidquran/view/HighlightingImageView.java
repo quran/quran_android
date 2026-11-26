@@ -22,6 +22,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -61,7 +62,7 @@ public class HighlightingImageView extends AppCompatImageView {
 
   private static ColorMatrixColorFilter cachedNightModeFilter;
   private static int cachedFilterTextBrightness = -1;
-  private static int cachedFilterBgBrightness = -1;
+  private static int cachedFilterBgColor = 0;
 
   private int overlayTextColor;
   private int headerFooterSize;
@@ -77,7 +78,7 @@ public class HighlightingImageView extends AppCompatImageView {
   private boolean isNightMode;
   private boolean isColorFilterOn;
   private int nightModeTextBrightness = Constants.DEFAULT_NIGHT_MODE_TEXT_BRIGHTNESS;
-  private int nightModeBackgroundBrightness = Constants.DEFAULT_NIGHT_MODE_BACKGROUND_BRIGHTNESS;
+  private int nightModeBackgroundColor = Color.BLACK;
 
   // Params for drawing text
   private int fontSize;
@@ -239,10 +240,18 @@ public class HighlightingImageView extends AppCompatImageView {
   }
 
   public void setNightMode(boolean isNightMode, int textBrightness, int backgroundBrightness) {
+    setNightModeWithBackgroundColor(
+        isNightMode,
+        textBrightness,
+        Color.rgb(backgroundBrightness, backgroundBrightness, backgroundBrightness));
+  }
+
+  public void setNightModeWithBackgroundColor(
+      boolean isNightMode, int textBrightness, @ColorInt int backgroundColor) {
     this.isNightMode = isNightMode;
     if (isNightMode) {
       nightModeTextBrightness = textBrightness;
-      nightModeBackgroundBrightness = backgroundBrightness;
+      nightModeBackgroundColor = backgroundColor;
       // we need a new color filter now
       isColorFilterOn = false;
     }
@@ -418,13 +427,16 @@ public class HighlightingImageView extends AppCompatImageView {
       ColorMatrixColorFilter filter = cachedNightModeFilter;
       if (filter == null ||
           cachedFilterTextBrightness != nightModeTextBrightness ||
-          cachedFilterBgBrightness != nightModeBackgroundBrightness) {
-        float[] matrix =
-            NightModeColorMatrix.create(nightModeTextBrightness, nightModeBackgroundBrightness);
+          cachedFilterBgColor != nightModeBackgroundColor) {
+        float[] matrix = NightModeColorMatrix.create(
+            nightModeTextBrightness,
+            Color.red(nightModeBackgroundColor),
+            Color.green(nightModeBackgroundColor),
+            Color.blue(nightModeBackgroundColor));
         filter = new ColorMatrixColorFilter(matrix);
         cachedNightModeFilter = filter;
         cachedFilterTextBrightness = nightModeTextBrightness;
-        cachedFilterBgBrightness = nightModeBackgroundBrightness;
+        cachedFilterBgColor = nightModeBackgroundColor;
       }
       setColorFilter(filter);
       isColorFilterOn = true;

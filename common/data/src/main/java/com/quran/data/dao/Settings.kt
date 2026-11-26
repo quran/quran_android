@@ -8,6 +8,7 @@ interface Settings {
   suspend fun setShouldOverlayPageInfo(shouldOverlay: Boolean)
   suspend fun lastPage(): Int
   suspend fun pageAppearance(): PageAppearance
+  suspend fun appTheme(): String = "default"
   suspend fun pageTextBrightness(): Int
   suspend fun nightModeBackgroundBrightness(): Int
   // null for Light's shaded background

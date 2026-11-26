@@ -2,6 +2,8 @@ package com.quran.labs.androidquran.ui.fragment
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Matrix
+import android.graphics.RectF
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -9,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
@@ -205,6 +208,45 @@ class QuranPageFragment : Fragment(), PageController, QuranPage, QuranPageScreen
   override fun setAyahCoordinatesData(ayahCoordinates: AyahCoordinates) {
     ayahTrackerPresenter.setAyahCoordinates(ayahCoordinates)
     ayahCoordinatesError = false
+    notifyAyahSelectionCoordinatesIfNeeded()
+  }
+
+  fun getAyahOverlayRects(sura: Int, ayah: Int, relativeTo: View): List<RectF>? {
+    val iv = imageView ?: return null
+    if (iv.width <= 0 || iv.height <= 0 || iv.drawable == null) {
+      return null
+    }
+    val trackerItem = ayahTrackerItems?.firstOrNull() as? AyahImageTrackerItem ?: return null
+    val bounds = trackerItem.coordinates?.get("$sura:$ayah") ?: return null
+    if (bounds.isEmpty()) {
+      return null
+    }
+
+    val matrix = Matrix(iv.imageMatrix)
+    val ivLocation = IntArray(2)
+    val relLocation = IntArray(2)
+    iv.getLocationInWindow(ivLocation)
+    relativeTo.getLocationInWindow(relLocation)
+    val offsetX = iv.paddingLeft.toFloat() + (ivLocation[0] - relLocation[0]).toFloat()
+    val offsetY = iv.paddingTop.toFloat() + (ivLocation[1] - relLocation[1]).toFloat()
+
+    return bounds.map { ayahBound ->
+      RectF().apply {
+        matrix.mapRect(this, ayahBound.bounds)
+        offset(offsetX, offsetY)
+      }
+    }
+  }
+
+  private fun notifyAyahSelectionCoordinatesIfNeeded() {
+    if (!isAdded) return
+    if (readingEventPresenter.currentAyahSelection() !is AyahSelection.None) {
+      imageView?.doOnLayout {
+        if (isAdded) {
+          (activity as? PagerActivity)?.onPageAyahCoordinatesReady(pageNumber)
+        }
+      }
+    }
   }
 
   override fun setAyahCoordinatesError() {
@@ -250,6 +292,7 @@ class QuranPageFragment : Fragment(), PageController, QuranPage, QuranPageScreen
       if (previousBitmap != null && previousBitmap !== pageBitmap) {
         PageBitmapRecycler.scheduleRecycle(previousBitmap)
       }
+      notifyAyahSelectionCoordinatesIfNeeded()
     } else {
       currentPageBitmap = null
       quranPagePresenter.resetImageState()

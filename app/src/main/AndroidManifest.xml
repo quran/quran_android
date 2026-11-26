@@ -232,7 +232,7 @@
           android:value="true" />
     </service>
 
-    <!-- override WorkManager initialization, but keep androidx.startup for others -->
+    <!-- override WorkManager and EmojiCompat initialization, keeping androidx.startup for ProfileInstaller and others -->
     <provider
         android:name="androidx.startup.InitializationProvider"
         android:authorities="${applicationId}.androidx-startup"
@@ -240,6 +240,10 @@
         tools:node="merge">
       <meta-data
           android:name="androidx.work.WorkManagerInitializer"
+          android:value="androidx.startup"
+          tools:node="remove" />
+      <meta-data
+          android:name="androidx.emoji2.text.EmojiCompatInitializer"
           android:value="androidx.startup"
           tools:node="remove" />
     </provider>

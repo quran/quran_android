@@ -26,6 +26,7 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.feature.downloadmanager.AudioManagerActivity
+import com.quran.mobile.feature.pagetheme.PageThemeConstants
 import com.quran.mobile.feature.pagetheme.PageThemeSheetWrapper
 import com.quran.mobile.feature.pagetheme.pageThemeSummary
 import dev.zacsweers.metro.Inject
@@ -73,6 +74,8 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
     // handle theme preference
     val themePref: Preference? = findPreference(Constants.PREF_APP_THEME)
     themePref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+      QuranSettings.getInstance(requireContext()).pageAppearance =
+        PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
       ThemeUtil.setTheme(newValue as String)
       true
     }

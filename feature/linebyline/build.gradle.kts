@@ -4,6 +4,21 @@ plugins {
 }
 
 android.namespace = "com.quran.labs.androidquran.extra.feature.linebyline"
+android.testOptions.unitTests.isIncludeAndroidResources = true
+
+androidComponents {
+  onVariants { variant ->
+    @Suppress("UnstableApiUsage")
+    (variant as? com.android.build.api.variant.HasUnitTest)?.unitTest?.manifestPlaceholders?.putAll(
+      mapOf(
+        "oidcRedirectScheme" to "com.quran.labs.androidquran.test",
+        "oidcRedirectHost" to "callback",
+        "oidcPostLogoutRedirectScheme" to "com.quran.labs.androidquran.test",
+        "oidcPostLogoutRedirectHost" to "callback"
+      )
+    )
+  }
+}
 
 dependencies {
   implementation(project(":common:di"))
@@ -42,6 +57,7 @@ dependencies {
   // testing
   testImplementation(libs.junit)
   testImplementation(libs.truth)
+  testImplementation(libs.robolectric)
   testImplementation(libs.kotlinx.coroutines.test)
   testImplementation(libs.turbine)
 }

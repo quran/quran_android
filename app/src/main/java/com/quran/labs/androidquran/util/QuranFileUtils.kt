@@ -99,6 +99,7 @@ class QuranFileUtils @Inject constructor(
 
   @WorkerThread
   override fun removeFilesForWidth(width: Int, directoryLambda: ((String) -> String)) {
+    QuranSettings.getInstance(appContext).clearVerifiedPagesSignature()
     val widthParam = "_$width"
     val quranDirectoryWithoutLambda = getQuranImagesDirectory(widthParam)
     val quranDirectory = directoryLambda(quranDirectoryWithoutLambda.absolutePath)
@@ -133,8 +134,14 @@ class QuranFileUtils @Inject constructor(
   ): Boolean {
     val quranDirectory = getQuranImagesDirectory(widthParam)
     Timber.d("haveAllImages: for width %s, directory is: %s", widthParam, quranDirectory)
+    val settings = QuranSettings.getInstance(appContext)
     if (quranDirectory.isDirectory) {
       Timber.d("haveAllImages: media state is mounted and directory exists")
+      if (settings.hasVerifiedAllPages(widthParam, totalPages) &&
+        hasSamplePages(quranDirectory, totalPages)
+      ) {
+        return true
+      }
       val fileList = quranDirectory.list()
       if (fileList == null) {
         Timber.d("haveAllImages: null fileList, checking page by page...")
@@ -142,6 +149,7 @@ class QuranFileUtils @Inject constructor(
           val name = getPageFileName(i)
           if (!File(quranDirectory, name).exists() && !File(quranDirectory, i.toString()).exists()) {
             Timber.d("haveAllImages: couldn't find page %d", i)
+            settings.clearVerifiedPagesSignature()
             return false
           }
         }
@@ -149,10 +157,13 @@ class QuranFileUtils @Inject constructor(
         // ideally, we should loop for each page and ensure
         // all pages are there, but this will do for now.
         Timber.d("haveAllImages: found %d files instead of 604.", fileList.size)
+        settings.clearVerifiedPagesSignature()
         return false
       }
+      settings.setVerifiedAllPages(widthParam, totalPages)
       return true
     } else {
+      settings.clearVerifiedPagesSignature()
       Timber.d(
         "haveAllImages: couldn't find the directory, so %s",
         if (makeDirectory) "making it instead." else "doing nothing."
@@ -162,6 +173,18 @@ class QuranFileUtils @Inject constructor(
       }
     }
     return false
+  }
+
+  private fun hasSamplePages(quranDirectory: File, totalPages: Int): Boolean {
+    val midPage = (totalPages / 2).coerceAtLeast(1)
+    return pageExistsInDirectory(quranDirectory, 1) &&
+      pageExistsInDirectory(quranDirectory, midPage) &&
+      pageExistsInDirectory(quranDirectory, totalPages)
+  }
+
+  private fun pageExistsInDirectory(quranDirectory: File, page: Int): Boolean {
+    val name = getPageFileName(page)
+    return File(quranDirectory, name).exists() || File(quranDirectory, page.toString()).exists()
   }
 
   private val isSDCardMounted: Boolean

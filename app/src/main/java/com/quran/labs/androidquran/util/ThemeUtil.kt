@@ -88,7 +88,9 @@ object ThemeUtil {
     }
     AppThemeStyle.select(style)
     AppThemeStyle.setOledDarkMode(settings.isOledDarkMode)
-    activity.theme.applyStyle(themeOverlayRes(style), true)
+    if (style != AppThemeStyle.DEFAULT) {
+      activity.theme.applyStyle(themeOverlayRes(style), true)
+    }
     val isNight = (activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
       Configuration.UI_MODE_NIGHT_YES
     val isDark = isDarkAppearance(settings.currentTheme(), isNight)

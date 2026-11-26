@@ -8,6 +8,6 @@
   <string name="ayahbookmark_create">إنشاء</string>
   <string name="ayahbookmark_saved">محفوظة</string>
   <string name="ayahbookmark_not_saved">غير محفوظة</string>
-  <string name="ayahbookmark_highlight_title">تمييز</string>
+  <string name="ayahbookmark_highlight_title">تظليل</string>
   <string name="ayahbookmark_highlight_none">بلا</string>
 </resources>

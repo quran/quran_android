@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <item name="mushaf_clip_container" type="id" />
+  <item name="daily_wird_progress" type="id" />
+  <item name="hybrid_hub_root" type="id" />
+  <item name="hybrid_hub_list" type="id" />
+  <item name="hybrid_bottom_nav" type="id" />
+  <item name="hybrid_search_root" type="id" />
+  <item name="hybrid_search_input" type="id" />
+  <item name="hybrid_search_clear" type="id" />
+  <item name="hybrid_search_list" type="id" />
+  <item name="recent_chip" type="id" />
+  <item name="verseText" type="id" />
+  <item name="tafsir_body" type="id" />
+  <item name="tafsir_empty_cta" type="id" />
+  <item name="hybrid_palette_sheet_root" type="id" />
+  <item name="hybrid_press_feedback_attached" type="id" />
+  <item name="hybrid_press_anim_active" type="id" />
+  <item name="hybrid_press_pending_runnable" type="id" />
+  <item name="hybrid_anim_target_visible" type="id" />
+  <item name="hybrid_anim_generation" type="id" />
+</resources>

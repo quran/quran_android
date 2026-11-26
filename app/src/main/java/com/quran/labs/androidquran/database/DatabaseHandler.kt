@@ -3,12 +3,14 @@ package com.quran.labs.androidquran.database
 import android.content.Context
 import android.database.Cursor
 import android.database.DefaultDatabaseErrorHandler
+import android.database.MatrixCursor
 import android.database.SQLException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.provider.BaseColumns
 import android.util.SparseArray
 import androidx.annotation.IntDef
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import com.quran.common.search.ArabicSearcher
 import com.quran.common.search.DefaultSearcher
@@ -31,6 +33,7 @@ class DatabaseHandler private constructor(
   private var schemaVersion = 1
   private var database: SQLiteDatabase? = null
 
+  private val matchStart: String
   private val defaultSearcher: Searcher
   private val arabicSearcher: ArabicSearcher
 
@@ -48,8 +51,336 @@ class DatabaseHandler private constructor(
     private const val COL_VALUE = "value"
     private const val MATCH_END = "</font>"
     private const val ELLIPSES = "<b>...</b>"
+    private const val SNIPPET_TARGET_LEN = 220
+    private const val SNIPPET_MAX_FULL_LEN = 260
+    private const val WORD_BOUNDARY_LOOKAHEAD = 28
 
     private val databaseMap: MutableMap<String, DatabaseHandler> = HashMap()
+
+    @VisibleForTesting
+    internal fun normalizeArabicQuery(query: String): String {
+      if (query.isEmpty()) return ""
+      val sb = StringBuilder(query.length)
+      var prevSpace = true
+      for (i in query.indices) {
+        val ch = query[i]
+        if (isArabicIgnorable(ch)) continue
+        if (ch.isWhitespace()) {
+          if (!prevSpace && sb.isNotEmpty()) {
+            sb.append(' ')
+            prevSpace = true
+          }
+          continue
+        }
+        sb.append(foldArabicChar(ch))
+        prevSpace = false
+      }
+      if (sb.isNotEmpty() && sb[sb.length - 1] == ' ') {
+        sb.setLength(sb.length - 1)
+      }
+      return sb.toString()
+    }
+
+    private fun isArabicIgnorable(ch: Char): Boolean {
+      val code = ch.code
+      return (code in 0x064B..0x065F) ||
+        code == 0x0670 || // Superscript Alef (dagger alif)
+        code == 0x0640 || // Tatweel / Kashida
+        (code in 0x0610..0x061A) || // Arabic honorifics/signs
+        (code in 0x06D6..0x06ED) || // Quranic annotation marks
+        code == 0x061C || // Arabic Letter Mark
+        code == 0x200C || // ZWNJ
+        code == 0x200D    // ZWJ
+    }
+
+    private fun foldArabicChar(ch: Char): Char {
+      return when (ch) {
+        '\u0622', '\u0623', '\u0625', '\u0671', '\u0672', '\u0673' -> '\u0627' // آ أ إ ٱ ٲ ٳ -> ا
+        '\u0629' -> '\u0647' // ة -> ه
+        '\u0649', '\u06CC', '\u0626' -> '\u064A' // ى ی ئ -> ي
+        '\u0624' -> '\u0648' // ؤ -> و
+        else -> ch
+      }
+    }
+
+    private fun normalizeIntoBuffer(
+      text: String,
+      normBuf: CharArray,
+      origStartBuf: IntArray,
+      origEndBuf: IntArray
+    ): Int {
+      var normLen = 0
+      var prevWasSpace = true
+      val len = text.length
+      var i = 0
+      while (i < len) {
+        val ch = text[i]
+        if (isArabicIgnorable(ch)) {
+          if (normLen > 0 && !prevWasSpace) {
+            origEndBuf[normLen - 1] = i + 1
+          }
+          i++
+          continue
+        }
+        if (ch.isWhitespace()) {
+          if (!prevWasSpace && normLen > 0) {
+            normBuf[normLen] = ' '
+            origStartBuf[normLen] = i
+            origEndBuf[normLen] = i + 1
+            normLen++
+            prevWasSpace = true
+          } else if (normLen > 0 && prevWasSpace) {
+            origEndBuf[normLen - 1] = i + 1
+          }
+          i++
+          continue
+        }
+        normBuf[normLen] = foldArabicChar(ch)
+        origStartBuf[normLen] = i
+        origEndBuf[normLen] = i + 1
+        normLen++
+        prevWasSpace = false
+        i++
+      }
+      if (normLen > 0 && normBuf[normLen - 1] == ' ') {
+        normLen--
+      }
+      return normLen
+    }
+
+    private fun indexOfChars(
+      haystack: CharArray,
+      haystackLen: Int,
+      needle: CharArray,
+      fromIndex: Int
+    ): Int {
+      val needleLen = needle.size
+      if (needleLen == 0) return -1
+      val maxStart = haystackLen - needleLen
+      if (fromIndex > maxStart) return -1
+      val first = needle[0]
+      var i = if (fromIndex < 0) 0 else fromIndex
+      while (i <= maxStart) {
+        if (haystack[i] == first) {
+          var j = 1
+          while (j < needleLen && haystack[i + j] == needle[j]) {
+            j++
+          }
+          if (j == needleLen) return i
+        }
+        i++
+      }
+      return -1
+    }
+
+    private fun sortAndMergeRanges(starts: ArrayList<Int>, ends: ArrayList<Int>) {
+      val n = starts.size
+      if (n <= 1) return
+      // Insertion sort (typically very few matches per verse)
+      for (i in 1 until n) {
+        val keyS = starts[i]
+        val keyE = ends[i]
+        var j = i - 1
+        while (j >= 0 && (starts[j] > keyS || (starts[j] == keyS && ends[j] > keyE))) {
+          starts[j + 1] = starts[j]
+          ends[j + 1] = ends[j]
+          j--
+        }
+        starts[j + 1] = keyS
+        ends[j + 1] = keyE
+      }
+      var write = 0
+      for (i in 1 until n) {
+        if (starts[i] <= ends[write]) {
+          if (ends[i] > ends[write]) {
+            ends[write] = ends[i]
+          }
+        } else {
+          write++
+          starts[write] = starts[i]
+          ends[write] = ends[i]
+        }
+      }
+      while (starts.size > write + 1) {
+        starts.removeAt(starts.size - 1)
+        ends.removeAt(ends.size - 1)
+      }
+    }
+
+    private fun cleanTafsirHtml(raw: String): String {
+      val len = raw.length
+      val sb = StringBuilder(len)
+      var i = 0
+      while (i < len) {
+        val ch = raw[i]
+        if (ch == '<') {
+          val gt = raw.indexOf('>', i + 1)
+          if (gt > i) {
+            // Insert space for block/line-break tags so adjacent words stay separated
+            val isBreakTag = raw.regionMatches(i + 1, "br", 0, 2, ignoreCase = true) ||
+              raw.regionMatches(i + 1, "/p", 0, 2, ignoreCase = true) ||
+              raw.regionMatches(i + 1, "/div", 0, 4, ignoreCase = true) ||
+              raw.regionMatches(i + 1, "/li", 0, 3, ignoreCase = true)
+            if (isBreakTag && sb.isNotEmpty() && !sb[sb.length - 1].isWhitespace()) {
+              sb.append(' ')
+            }
+            i = gt + 1
+            continue
+          }
+        } else if (ch == '&') {
+          if (raw.regionMatches(i, "&nbsp;", 0, 6, ignoreCase = true)) {
+            sb.append(' ')
+            i += 6
+            continue
+          } else if (raw.regionMatches(i, "&quot;", 0, 6, ignoreCase = true)) {
+            sb.append('"')
+            i += 6
+            continue
+          } else if (raw.regionMatches(i, "&#39;", 0, 5)) {
+            sb.append('\'')
+            i += 5
+            continue
+          }
+        }
+        sb.append(ch)
+        i++
+      }
+      return sb.toString()
+    }
+
+    private fun appendCollapsed(
+      out: StringBuilder,
+      text: String,
+      from: Int,
+      to: Int,
+      trimLeadingSpace: Boolean
+    ) {
+      var i = from
+      var lastWasSpace = out.isEmpty() || out[out.length - 1] == ' '
+      if (trimLeadingSpace) {
+        while (i < to && text[i].isWhitespace()) i++
+      }
+      while (i < to) {
+        val ch = text[i]
+        if (ch.isWhitespace()) {
+          if (!lastWasSpace) {
+            out.append(' ')
+            lastWasSpace = true
+          }
+        } else {
+          out.append(ch)
+          lastWasSpace = false
+        }
+        i++
+      }
+    }
+
+    private fun buildHighlightedSnippet(
+      text: String,
+      matchStarts: ArrayList<Int>,
+      matchEnds: ArrayList<Int>,
+      matchStartTag: String,
+      matchEndTag: String,
+      buffer: StringBuilder
+    ): String {
+      val len = text.length
+      val firstStart = matchStarts[0]
+      val firstEnd = matchEnds[0]
+      var winStart: Int
+      var winEnd: Int
+      if (len <= SNIPPET_MAX_FULL_LEN) {
+        winStart = 0
+        winEnd = len
+      } else {
+        val matchLen = firstEnd - firstStart
+        val targetWindow = maxOf(SNIPPET_TARGET_LEN, matchLen)
+        val center = firstStart + matchLen / 2
+        val rawStart = (center - targetWindow / 2).coerceIn(0, firstStart)
+        var rawEnd = (rawStart + targetWindow).coerceAtMost(len)
+        if (rawEnd < firstEnd) {
+          rawEnd = firstEnd.coerceAtMost(len)
+        }
+        winStart = if (rawEnd == len) {
+          (rawEnd - targetWindow).coerceIn(0, firstStart)
+        } else {
+          rawStart
+        }
+        winEnd = rawEnd
+
+        if (winStart > 0) {
+          var forward = winStart
+          val maxForward = minOf(firstStart, winStart + WORD_BOUNDARY_LOOKAHEAD)
+          while (forward < maxForward && !text[forward].isWhitespace()) {
+            forward++
+          }
+          if (forward < maxForward) {
+            while (forward < firstStart && text[forward].isWhitespace()) {
+              forward++
+            }
+            winStart = forward
+          } else {
+            var backward = winStart
+            val minBackward = maxOf(0, winStart - WORD_BOUNDARY_LOOKAHEAD)
+            while (backward > minBackward && !text[backward - 1].isWhitespace()) {
+              backward--
+            }
+            winStart = backward
+          }
+        }
+
+        if (winEnd < len) {
+          var backward = winEnd
+          val minBackward = maxOf(firstEnd, winEnd - WORD_BOUNDARY_LOOKAHEAD)
+          while (backward > minBackward && !text[backward - 1].isWhitespace()) {
+            backward--
+          }
+          if (backward > minBackward) {
+            while (backward > firstEnd && text[backward - 1].isWhitespace()) {
+              backward--
+            }
+            winEnd = backward
+          } else {
+            var forward = winEnd
+            val maxForward = minOf(len, winEnd + WORD_BOUNDARY_LOOKAHEAD)
+            while (forward < maxForward && !text[forward].isWhitespace()) {
+              forward++
+            }
+            winEnd = forward
+          }
+        }
+      }
+
+      buffer.setLength(0)
+      if (winStart > 0) {
+        buffer.append("... ")
+      }
+      var cursor = winStart
+      for (k in matchStarts.indices) {
+        val ms = matchStarts[k]
+        val me = matchEnds[k]
+        if (me <= cursor) continue
+        if (ms >= winEnd) break
+        val clampedStart = maxOf(ms, cursor)
+        val clampedEnd = minOf(me, winEnd)
+        if (clampedStart > cursor) {
+          appendCollapsed(buffer, text, cursor, clampedStart, trimLeadingSpace = (cursor == winStart))
+        }
+        buffer.append(matchStartTag)
+        appendCollapsed(buffer, text, clampedStart, clampedEnd, trimLeadingSpace = false)
+        buffer.append(matchEndTag)
+        cursor = clampedEnd
+      }
+      if (cursor < winEnd) {
+        appendCollapsed(buffer, text, cursor, winEnd, trimLeadingSpace = (cursor == winStart))
+      }
+      while (buffer.isNotEmpty() && buffer[buffer.length - 1] == ' ') {
+        buffer.setLength(buffer.length - 1)
+      }
+      if (winEnd < len) {
+        buffer.append(" ...")
+      }
+      return buffer.toString()
+    }
 
     @JvmStatic
     @Synchronized
@@ -84,11 +415,11 @@ class DatabaseHandler private constructor(
 
   init {
     // initialize the searchers first
-    val matchString = "<font color=\"" +
+    matchStart = "<font color=\"" +
         ContextCompat.getColor(context, R.color.translation_highlight) +
         "\">"
-    defaultSearcher = DefaultSearcher(matchString, MATCH_END, ELLIPSES)
-    arabicSearcher = ArabicSearcher(defaultSearcher, matchString, MATCH_END)
+    defaultSearcher = DefaultSearcher(matchStart, MATCH_END, ELLIPSES)
+    arabicSearcher = ArabicSearcher(defaultSearcher, matchStart, MATCH_END)
 
     // if there's no Quran base directory, there are no databases
     val base = quranFileUtils.getQuranDatabaseDirectory()
@@ -321,6 +652,121 @@ class DatabaseHandler private constructor(
 
   fun search(q: String, table: String, withSnippets: Boolean, isArabicDatabase: Boolean): Cursor? {
     return searchInternal(q, table, withSnippets, isArabicDatabase, rawArabic = false)
+  }
+
+  /**
+   * Scans [table] for normalized Arabic matches (diacritic-insensitive, Alef/Hamza/Ta-Marbuta/Ya
+   * folded, supporting exact phrase and multi-token matching) without touching
+   * [RustArabicSearchEngine]. Returns ALL matching rows with clean highlighted context snippets.
+   */
+  fun searchArabicNormalized(q: String, table: String = VERSE_TABLE): Cursor? {
+    if (!validDatabase()) return null
+    val columns = arrayOf(BaseColumns._ID, COL_SURA, COL_AYAH, COL_TEXT)
+    val normalizedQuery = normalizeArabicQuery(q)
+    if (normalizedQuery.isEmpty()) {
+      return MatrixCursor(columns)
+    }
+
+    val phraseChars = normalizedQuery.toCharArray()
+    val tokens = normalizedQuery.split(' ').filter { it.isNotEmpty() }.distinct()
+    val tokenChars = Array(tokens.size) { tokens[it].toCharArray() }
+    val resultCursor = MatrixCursor(columns)
+
+    var normBuf = CharArray(512)
+    var origStartBuf = IntArray(512)
+    var origEndBuf = IntArray(512)
+    val matchStarts = ArrayList<Int>(8)
+    val matchEnds = ArrayList<Int>(8)
+    val snippetBuilder = StringBuilder(320)
+
+    val sql =
+      "SELECT rowid as ${BaseColumns._ID}, $COL_SURA, $COL_AYAH, $COL_TEXT FROM $table ORDER BY $COL_SURA, $COL_AYAH"
+    try {
+      database?.rawQuery(sql, null)?.use { cursor ->
+        while (cursor.moveToNext()) {
+          val rawText = cursor.getString(3) ?: continue
+          if (rawText.isEmpty()) continue
+          val cleanText = if (rawText.indexOf('<') >= 0 || rawText.indexOf('&') >= 0) {
+            cleanTafsirHtml(rawText)
+          } else {
+            rawText
+          }
+          if (cleanText.isEmpty()) continue
+
+          val cleanLen = cleanText.length
+          if (normBuf.size < cleanLen) {
+            val newSize = maxOf(cleanLen, normBuf.size * 2)
+            normBuf = CharArray(newSize)
+            origStartBuf = IntArray(newSize)
+            origEndBuf = IntArray(newSize)
+          }
+
+          val normLen = normalizeIntoBuffer(cleanText, normBuf, origStartBuf, origEndBuf)
+          if (normLen == 0) continue
+
+          val phraseIdx = indexOfChars(normBuf, normLen, phraseChars, 0)
+          val usePhrase = phraseIdx >= 0
+          if (!usePhrase) {
+            if (tokenChars.size <= 1) continue
+            var allFound = true
+            for (t in tokenChars) {
+              if (indexOfChars(normBuf, normLen, t, 0) < 0) {
+                allFound = false
+                break
+              }
+            }
+            if (!allFound) continue
+          }
+
+          matchStarts.clear()
+          matchEnds.clear()
+          if (usePhrase) {
+            var pos = phraseIdx
+            val pLen = phraseChars.size
+            while (pos >= 0) {
+              matchStarts.add(origStartBuf[pos])
+              matchEnds.add(origEndBuf[pos + pLen - 1])
+              pos = indexOfChars(normBuf, normLen, phraseChars, pos + pLen)
+            }
+          } else {
+            for (t in tokenChars) {
+              val tLen = t.size
+              var pos = indexOfChars(normBuf, normLen, t, 0)
+              while (pos >= 0) {
+                matchStarts.add(origStartBuf[pos])
+                matchEnds.add(origEndBuf[pos + tLen - 1])
+                pos = indexOfChars(normBuf, normLen, t, pos + tLen)
+              }
+            }
+            sortAndMergeRanges(matchStarts, matchEnds)
+          }
+
+          if (matchStarts.isEmpty()) continue
+
+          val snippet = buildHighlightedSnippet(
+            text = cleanText,
+            matchStarts = matchStarts,
+            matchEnds = matchEnds,
+            matchStartTag = matchStart,
+            matchEndTag = MATCH_END,
+            buffer = snippetBuilder
+          )
+          resultCursor.addRow(
+            arrayOf<Any>(
+              cursor.getLong(0),
+              cursor.getInt(1),
+              cursor.getInt(2),
+              snippet
+            )
+          )
+        }
+      }
+    } catch (e: Exception) {
+      Timber.e(e)
+      resultCursor.close()
+      return null
+    }
+    return resultCursor
   }
 
   private fun searchInternal(

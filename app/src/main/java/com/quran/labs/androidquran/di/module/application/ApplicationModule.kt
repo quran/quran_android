@@ -16,6 +16,8 @@ import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoManager
 import com.quran.labs.androidquran.common.audio.cache.QariDownloadInfoSource
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.data.QuranDisplayInterface
+import com.quran.labs.androidquran.hybrid.contract.HybridSearchHost
+import com.quran.labs.androidquran.hybrid.search.RealHybridSearchHost
 import com.quran.labs.androidquran.presenter.ContentResolverOps
 import com.quran.labs.androidquran.util.AudioFileUtils
 import com.quran.labs.androidquran.util.AudioUtils
@@ -136,6 +138,10 @@ object ApplicationModule {
 
   @Provides
   fun provideQuranDisplayInterface(impl: QuranDisplayData): QuranDisplayInterface = impl
+
+  @Provides
+  @SingleIn(AppScope::class)
+  fun provideHybridSearchHost(impl: RealHybridSearchHost): HybridSearchHost = impl
 
   @Provides
   fun provideContentResolverOps(@ApplicationContext context: Context): ContentResolverOps =

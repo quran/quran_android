@@ -41,6 +41,7 @@ import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit.DAYS
+import java.util.concurrent.TimeUnit.MILLISECONDS
 import java.util.concurrent.TimeUnit.SECONDS
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -112,9 +113,9 @@ class QuranDataPresenter @Inject internal constructor(
           .flatMap { Single.fromCallable { localDataUpgrade().processData(it) } }
           .map { checkPatchStatus(it) }
           .flatMap { Single.fromCallable { localDataUpgrade().processPatch(it) } }
-          .doOnSuccess {
-            // Run non-blocking post-check housekeeping (arabic DB copy + legacy marker cleanup)
-            // asynchronously so QuranDataActivity -> QuranActivity transition isn't delayed.
+          .doOnSuccess { status ->
+            // Run non-blocking post-check housekeeping (arabic DB copy + legacy marker cleanup +
+            // deferred WorkManager partial-pages check) asynchronously after cold start.
             Completable.fromAction {
               quranFileUtils.hasArabicSearchDatabase()
 
@@ -132,6 +133,10 @@ class QuranDataPresenter @Inject internal constructor(
             }
               .subscribeOn(Schedulers.io())
               .subscribe({}, { Timber.e(it) })
+
+            if (status.havePages()) {
+              scheduleDeferredPartialPageCheck()
+            }
           }
     }
   }
@@ -216,37 +221,43 @@ class QuranDataPresenter @Inject internal constructor(
           quranSettings.setDefaultImagesDirectory("")
         }
       }
+    }
+  }
 
-      val pageType = quranSettings.pageType
-      if (!quranSettings.didCheckPartialImages(pageType) &&
-          !pageType.endsWith("lines") &&
+  private fun scheduleDeferredPartialPageCheck() {
+    val pageType = quranSettings.pageType
+    if (quranSettings.didCheckPartialImages(pageType) || pageType.endsWith("lines")) {
+      return
+    }
+    Completable.timer(PARTIAL_CHECK_DEFER_MS, MILLISECONDS, Schedulers.io())
+      .andThen(Completable.fromAction {
+        if (!quranSettings.didCheckPartialImages(pageType) &&
           UserManagerCompat.isUserUnlocked(appContext)
-      ) {
-        Timber.d("enqueuing work for $pageType...")
-
-        // setup check pages task
-        val checkTasksInputData = workDataOf(WorkerConstants.PAGE_TYPE to pageType)
-        val checkPartialPagesTask = OneTimeWorkRequestBuilder<PartialPageCheckingWorker>()
+        ) {
+          Timber.d("enqueuing deferred work for $pageType...")
+          val checkTasksInputData = workDataOf(WorkerConstants.PAGE_TYPE to pageType)
+          val checkPartialPagesTask = OneTimeWorkRequestBuilder<PartialPageCheckingWorker>()
             .setInputData(checkTasksInputData)
             .build()
 
-        // setup missing page task
-        val missingPageTaskConstraints = Constraints.Builder()
+          val missingPageTaskConstraints = Constraints.Builder()
             .setRequiredNetworkType(CONNECTED)
             .build()
-        val missingPageDownloadTask = OneTimeWorkRequestBuilder<MissingPageDownloadWorker>()
+          val missingPageDownloadTask = OneTimeWorkRequestBuilder<MissingPageDownloadWorker>()
             .setConstraints(missingPageTaskConstraints)
             .build()
 
-        // run check pages task
-        WorkManager.getInstance(appContext)
-            .beginUniqueWork("${WorkerConstants.CLEANUP_PREFIX}$pageType",
-                KEEP,
-                checkPartialPagesTask)
+          WorkManager.getInstance(appContext)
+            .beginUniqueWork(
+              "${WorkerConstants.CLEANUP_PREFIX}$pageType",
+              KEEP,
+              checkPartialPagesTask
+            )
             .then(missingPageDownloadTask)
             .enqueue()
-      }
-    }
+        }
+      })
+      .subscribe({}, { Timber.w(it, "Unable to schedule partial page check") })
   }
 
   private fun actuallyCheckPages(totalPages: Int): Single<QuranDataStatus> {
@@ -307,7 +318,8 @@ class QuranDataPresenter @Inject internal constructor(
   }
 
   private companion object {
-    const val AUDIO_UPDATER_DELAY_SECONDS = 5L
+    const val AUDIO_UPDATER_DELAY_SECONDS = 9L
+    const val PARTIAL_CHECK_DEFER_MS = 9000L
     val audioUpdaterScheduled = AtomicBoolean(false)
   }
 }

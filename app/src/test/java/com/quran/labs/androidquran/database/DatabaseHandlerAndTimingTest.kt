@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.quran.common.search.RustArabicSearchEngine
 import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.fakes.FakeQuranFileUtils
@@ -24,6 +25,7 @@ class DatabaseHandlerAndTimingTest {
   fun tearDown() {
     DatabaseHandler.clearDatabaseHandlerIfExists("translation_test.db")
     DatabaseHandler.clearDatabaseHandlerIfExists("fts3.db")
+    DatabaseHandler.clearDatabaseHandlerIfExists("ar_norm.db")
   }
 
   @Test
@@ -116,6 +118,72 @@ class DatabaseHandlerAndTimingTest {
         .inOrder()
     } finally {
       DatabaseHandler.clearDatabaseHandlerIfExists("fts3.db")
+      dbFile.delete()
+    }
+  }
+
+  @Test
+  fun `searchArabicNormalized folds diacritics`() {
+    val quranFileUtils = FakeQuranFileUtils.create(context)
+    val dbDir = quranFileUtils.getQuranDatabaseDirectory().apply { mkdirs() }
+    val dbFile = File(dbDir, "ar_norm.db")
+    dbFile.delete()
+    DatabaseHandler.clearDatabaseHandlerIfExists("ar_norm.db")
+
+    val longPrefix = "مقدمة طويلة في التفسير ".repeat(12)
+    val longSuffix = " وخاتمة طويلة في بيان المعاني".repeat(12)
+    val longVerse = "$longPrefix وَأَخْبِرْ -أَيُّهَا الرَّسُولُ- الَّذِينَ آمَنُوا بِاللَّهِ وَأَقَامُوا الصَّلَاةَ وَالْإِيمَانِ وَالزَّكَاةَ لِمُوسَىٰ $longSuffix"
+
+    val db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+    try {
+      db.execSQL("CREATE TABLE properties(property TEXT, value INTEGER)")
+      db.execSQL("INSERT INTO properties VALUES ('schema_version', 2)")
+      db.execSQL("CREATE VIRTUAL TABLE verses USING fts3 (sura INTEGER, ayah INTEGER, text TEXT)")
+      val stmt = db.compileStatement("INSERT INTO verses(sura, ayah, text) VALUES (?, ?, ?)")
+      stmt.bindLong(1, 2L)
+      stmt.bindLong(2, 25L)
+      stmt.bindString(3, longVerse)
+      stmt.executeInsert()
+    } finally {
+      db.close()
+    }
+
+    try {
+      val handler = DatabaseHandler.getDatabaseHandler(context, "ar_norm.db", quranFileUtils)
+      assertThat(RustArabicSearchEngine.isLoaded()).isFalse()
+
+      // Long tafsir extracts clean ~220-char snippet centered on match with ellipses and highlights full diacritized word
+      handler.searchArabicNormalized("الله")!!.use { c ->
+        assertThat(c.count).isEqualTo(1)
+        assertThat(c.moveToFirst()).isTrue()
+        assertThat(c.getInt(1)).isEqualTo(2)
+        assertThat(c.getInt(2)).isEqualTo(25)
+        val snippet = c.getString(3)
+        assertThat(snippet).startsWith("... ")
+        assertThat(snippet).endsWith(" ...")
+        assertThat(snippet).contains("اللَّهِ</font>")
+        assertThat(snippet.length).isLessThan(350)
+      }
+
+      // Multi-token non-contiguous Arabic query ("الصلاة الزكاة") matches and highlights both words
+      handler.searchArabicNormalized("الصلاة الزكاة")!!.use { c ->
+        assertThat(c.count).isEqualTo(1)
+        assertThat(c.moveToFirst()).isTrue()
+        val snippet = c.getString(3)
+        assertThat(snippet).contains("الصَّلَاةَ</font>")
+        assertThat(snippet).contains("الزَّكَاةَ</font>")
+      }
+
+      // Diacritic/Alef/Ta-Marbuta/Ya variants all match
+      for (q in listOf("الايمان", "ايها", "الصلاه", "موسى", "موسي", "امنوا", "ايها الرسول")) {
+        handler.searchArabicNormalized(q)!!.use { c ->
+          assertThat(c.count).isEqualTo(1)
+        }
+      }
+
+      assertThat(RustArabicSearchEngine.isLoaded()).isFalse()
+    } finally {
+      DatabaseHandler.clearDatabaseHandlerIfExists("ar_norm.db")
       dbFile.delete()
     }
   }

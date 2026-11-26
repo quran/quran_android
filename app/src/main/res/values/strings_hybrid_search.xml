@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="hybrid_search_placeholder">Search the Quran…</string>
+  <string name="hybrid_search_scope_ayahs">Ayahs</string>
+  <string name="hybrid_search_scope_suras">Surahs</string>
+  <string name="hybrid_search_scope_tafsir">Tafsir</string>
+  <string name="hybrid_search_action_listen">Listen</string>
+  <string name="hybrid_search_action_bookmark">Save</string>
+  <string name="hybrid_search_action_bookmarked">Saved</string>
+  <string name="hybrid_search_action_open_page">Open page</string>
+  <string name="hybrid_search_stub_message">Search experience ready for integration</string>
+  <string name="hybrid_search_clear_cd">Clear search</string>
+  <string name="hybrid_search_count_ayahs">%1$s ayahs</string>
+  <string name="hybrid_search_count_suras">%1$s surahs</string>
+  <string name="hybrid_search_count_tafsir">%1$s results</string>
+  <string name="hybrid_search_speed_ms">%1$s ms</string>
+  <string name="hybrid_search_sura_ayah_header">Surah %1$s : %2$s</string>
+  <string name="hybrid_search_sura_card_title">Surah %1$s</string>
+  <string name="hybrid_search_juz_label">Juz %1$s</string>
+  <string name="hybrid_search_page_pill">p. %1$s</string>
+  <string name="hybrid_search_empty_title">Instant Quran Search</string>
+  <string name="hybrid_search_empty_subtitle">Search ayahs in Uthmani script, browse 114 surahs, or search installed tafsir.</string>
+  <string name="hybrid_search_no_results">No results found for \"%1$s\"</string>
+  <string name="hybrid_search_tafsir_empty_title">No local tafsir or translation installed</string>
+  <string name="hybrid_search_tafsir_empty_body">Download a tafsir such as Al-Tafsir Al-Muyassar to search verse meanings offline.</string>
+  <string name="hybrid_search_tafsir_download_cta">Download Tafsir</string>
+</resources>

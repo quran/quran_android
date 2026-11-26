@@ -17,11 +17,17 @@
         android:layout_height="match_parent"
         layout="@layout/quran_page_activity"/>
 
-    <!-- Slider layout -->
+    <!-- Slider layout (child index 1 required by SlidingUpPanelLayout) -->
     <include
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         layout="@layout/ayah_action_panel_layout"/>
+
+    <!-- Proposal 5 unified calm reading & 3-tab study overlay (Native Android Views) -->
+    <com.quran.labs.androidquran.hybrid.reader.HybridReaderOverlayView
+        android:id="@+id/hybrid_reader_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
   <!-- overlay -->
   <FrameLayout

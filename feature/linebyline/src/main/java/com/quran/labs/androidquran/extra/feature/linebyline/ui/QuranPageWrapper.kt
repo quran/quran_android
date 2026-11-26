@@ -23,7 +23,7 @@ fun QuranPageWrapper(
   pageInfo: PageInfo,
   pageContentType: PageContentType,
   dualScreenMode: Boolean,
-  suraHeaderBitmap: ImageBitmap,
+  suraHeaderBitmap: ImageBitmap?,
   ayahNumberFormatter: NumberFormat,
   onClick: () -> Unit,
   onPagePositioned: (Float, Float, Int, Int) -> Unit,
@@ -63,11 +63,23 @@ fun QuranPageWrapper(
     Color.Black
   }
   val colorFilter = remember(lineColor) { ColorFilter.tint(lineColor) }
+  val headerColorFilter = remember(headerColor) { ColorFilter.tint(headerColor) }
 
   QuranPage(
-    pageInfo,
-    pageContentType,
-    isScrollable,
+    pageInfo = pageInfo,
+    pageContentType = pageContentType,
+    isScrollable = isScrollable,
+    suraHeaderBitmap = suraHeaderBitmap,
+    ayahNumberFormatter = ayahNumberFormatter,
+    lineColorFilter = colorFilter,
+    headerColorFilter = headerColorFilter,
+    lineColor = lineColor,
+    ringColor = ringColor,
+    innerColor = innerColor,
+    markerTextColor = textColor,
+    shouldShowLineDivider = { lineId ->
+      displaySettings.showLineDividers && shouldShowLineFor(pageInfo.page, lineId)
+    },
     headerComposable = {
       if (showHeaderFooter) {
         QuranHeaderFooter(
@@ -98,59 +110,6 @@ fun QuranPageWrapper(
         Spacer(modifier = Modifier)
       }
     },
-    quranLineComposable = {
-      QuranLine(
-        image = it.lineImage,
-        lineId = it.lineId,
-        ratio,
-        colorFilter = colorFilter,
-        displaySettings.showLineDividers && shouldShowLineFor(pageInfo.page, it.lineId),
-        lineColor
-      )
-    },
-    suraHeaderComposable = {
-      SuraHeader(
-        image = suraHeaderBitmap,
-        lineId = it.lineId,
-        centerX = it.centerX,
-        centerY = it.centerY,
-        tint = headerColor,
-        lineRatio = ratio
-      )
-    },
-    ayahMarkerInfoComposable = { marker, textMeasurer ->
-      AyahMarker(
-        lineId = marker.lineId,
-        centerX = marker.centerX,
-        centerY = marker.centerY,
-        ringColor = ringColor,
-        innerColor = innerColor,
-        text = ayahNumberFormatter.format(marker.ayah),
-        // was 0.0375f for sub-100 ayat, but breaks ayah 77/78/87/88
-        // note that, sometimes, this breaks the second time the activity is loaded
-        textWidthRatio = if (marker.ayah > 100) 0.03f else 0.0370f,
-        textColor = textColor,
-        textMeasurer = textMeasurer
-      )
-    },
-    highlightComposable = { highlight, color ->
-      Highlight(
-        lineId = highlight.lineId,
-        left = highlight.left,
-        right = highlight.right,
-        color = color,
-        lineRatio = ratio
-      )
-    },
-    readingBookmarkComposable = { highlight, colors ->
-      ReadingBookmarkUnderline(
-        lineId = highlight.lineId,
-        left = highlight.left,
-        right = highlight.right,
-        lineRatio = ratio,
-        colors = colors
-      )
-    },
     sidelinesComposable = {
       Sidelines(
         pageInfo.sidelines,
@@ -159,17 +118,17 @@ fun QuranPageWrapper(
         if (pageInfo.page % 2 == 0) SidelinesPosition.RIGHT else SidelinesPosition.LEFT
       )
     },
-    onPagePositioned,
-    onSelectionStart,
-    onSelectionModified,
-    onSelectionEnd,
+    onPagePositioned = onPagePositioned,
+    onSelectionStart = onSelectionStart,
+    onSelectionModified = onSelectionModified,
+    onSelectionEnd = onSelectionEnd,
     modifier = Modifier.clickable(
       interactionSource = remember { MutableInteractionSource() },
       indication = null
     ) {
       onClick()
     },
-    isNightMode,
+    isNightMode = isNightMode,
     backgroundColor = if (isNightMode) {
       AppThemeStyle.current.darkMushafBackground(displaySettings.nightModeBackgroundBrightness)
     } else {

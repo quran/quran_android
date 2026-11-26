@@ -10,6 +10,7 @@ class FakeSettings : Settings {
   val preferencesSharedFlow = MutableSharedFlow<String>()
 
   fun setPageAppearance(value: PageAppearance) { data["pageAppearance"] = value }
+  fun setAppTheme(value: String) { data["appTheme"] = value }
   fun setTextBrightness(value: Int) { data["pageTextBrightness"] = value }
   fun setNightBackgroundBrightness(value: Int) { data["nightModeBackgroundBrightness"] = value }
   fun setDayBackgroundColor(value: Int) { data["dayPageBackgroundColor"] = value }
@@ -26,6 +27,7 @@ class FakeSettings : Settings {
   override suspend fun lastPage(): Int = 1
   override suspend fun pageAppearance(): PageAppearance =
     data["pageAppearance"] as? PageAppearance ?: PageAppearance.Light
+  override suspend fun appTheme(): String = data["appTheme"] as? String ?: "default"
   override suspend fun pageTextBrightness(): Int = data["pageTextBrightness"] as? Int ?: 255
   override suspend fun nightModeBackgroundBrightness(): Int = data["nightModeBackgroundBrightness"] as? Int ?: 0
   override suspend fun dayPageBackgroundColor(): Int? = data["dayPageBackgroundColor"] as? Int

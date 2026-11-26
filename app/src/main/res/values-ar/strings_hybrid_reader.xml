@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="hybrid_reader_tab_recitation">التلاوة</string>
+  <string name="hybrid_reader_tab_tafsir">التفسير</string>
+  <string name="hybrid_reader_tab_appearance">المظهر</string>
+
+  <string name="hybrid_reader_action_listen">استماع</string>
+  <string name="hybrid_reader_action_tafsir">تفسير</string>
+  <string name="hybrid_reader_action_bookmark">حفظ</string>
+  <string name="hybrid_reader_action_copy">نسخ</string>
+  <string name="hybrid_reader_action_share">مشاركة</string>
+
+  <string name="hybrid_reader_tool_save">حفظ</string>
+  <string name="hybrid_reader_tool_appearance">مظهر</string>
+  <string name="hybrid_reader_tool_tafsir">تفسير</string>
+
+  <string name="hybrid_reader_back_cd">العودة إلى الرئيسية</string>
+  <string name="hybrid_reader_expand_drawer_cd">توسيع لوحة الدراسة</string>
+  <string name="hybrid_reader_collapse_drawer_cd">طي لوحة الدراسة</string>
+  <string name="hybrid_reader_play_cd">تشغيل</string>
+  <string name="hybrid_reader_pause_cd">إيقاف مؤقت</string>
+  <string name="hybrid_reader_previous_ayah_cd">الآية السابقة</string>
+  <string name="hybrid_reader_next_ayah_cd">الآية التالية</string>
+
+  <string name="hybrid_reader_selection_tag_format">%1$s — الآية %2$s</string>
+  <string name="hybrid_reader_selection_range_tag_format">%1$s — الآيات %2$s–%3$s</string>
+  <string name="hybrid_reader_capsule_meta_format">%1$s — %2$s : %3$s</string>
+  <string name="hybrid_reader_qari_subtitle_format">المصحف المرتّل — %1$s : %2$s</string>
+  <string name="hybrid_reader_qari_switch">القارئ</string>
+  <string name="hybrid_reader_repeat">تكرار</string>
+  <string name="hybrid_reader_repeat_count_format">تكرار %1$s</string>
+  <string name="hybrid_reader_repeat_infinite">تكرار ∞</string>
+  <string name="hybrid_reader_speed_format">%1$s×</string>
+  <string name="hybrid_reader_downloading">جاري تحميل التلاوة…</string>
+  <string name="hybrid_reader_download_cancel">إلغاء</string>
+  <string name="hybrid_reader_download_mobile_prompt">التحميل عبر شبكة الجوال؟</string>
+  <string name="hybrid_reader_download_allow">سماح</string>
+
+  <string name="hybrid_reader_tafsir_muyassar">التفسير الميسر</string>
+  <string name="hybrid_reader_tafsir_peek_title_format">%1$s — الآية %2$s</string>
+  <string name="hybrid_reader_show_all">عرض الكل</string>
+  <string name="hybrid_reader_tafsir_source_label">المصدر</string>
+  <string name="hybrid_reader_tafsir_empty_title">لم يتم تحميل التفسير بعد</string>
+  <string name="hybrid_reader_tafsir_empty_body">حمّل التفسير الميسر أو أي تفسير آخر لقراءة المعاني مباشرة داخل لوحة الدراسة.</string>
+  <string name="hybrid_reader_tafsir_download">تحميل التفسير الميسر</string>
+  <string name="hybrid_reader_tafsir_loading">جاري تحميل التفسير…</string>
+  <string name="hybrid_reader_tafsir_unavailable_ayah">نص التفسير غير متوفر لهذه الآية في المصدر المختار.</string>
+
+  <string name="hybrid_reader_appearance_app_mode">وضع التطبيق</string>
+  <string name="hybrid_reader_mode_light">نهاري</string>
+  <string name="hybrid_reader_mode_dark">ليلي</string>
+  <string name="hybrid_reader_mode_auto">تلقائي</string>
+  <string name="hybrid_reader_appearance_palette">لون السمة الهادئة</string>
+  <string name="hybrid_reader_palette_default">افتراضي</string>
+  <string name="hybrid_reader_palette_green">أخضر</string>
+  <string name="hybrid_reader_palette_blue">أزرق</string>
+  <string name="hybrid_reader_palette_beige">بيج</string>
+  <string name="hybrid_reader_palette_gray">رمادي</string>
+  <string name="hybrid_reader_appearance_mushaf">مظهر صفحة المصحف</string>
+  <string name="hybrid_reader_mushaf_light">فاتح</string>
+  <string name="hybrid_reader_mushaf_sepia">ورقي</string>
+  <string name="hybrid_reader_mushaf_dark">داكن</string>
+  <string name="hybrid_reader_mushaf_preview_sample">بسم</string>
+  <string name="hybrid_reader_mushaf_match_app">مطابقة وضع التطبيق (نهاري/ليلي)</string>
+  <string name="hybrid_reader_night_text_brightness">سطوع النص الليلي</string>
+  <string name="hybrid_reader_night_bg_brightness">سطوع الخلفية الليلية</string>
+</resources>

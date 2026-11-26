@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.util
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.SpannedString
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
@@ -179,6 +180,79 @@ object SearchResultFormatter {
       }
     }
     return result
+  }
+
+  /**
+   * Returns packed UTF-16 match spans `[start0, end0, start1, end1, ...]` for raw Arabic [text],
+   * preferring native Rust spans when [rustVerseIndex] and [rustGeneration] are valid and falling
+   * back to [compiledQuery].
+   */
+  fun extractArabicMatchRanges(
+    text: String,
+    compiledQuery: ArabicCompiledQuery?,
+    rustVerseIndex: Int = -1,
+    rustGeneration: Int = -1
+  ): IntArray {
+    if (text.isEmpty() || compiledQuery == null || text.indexOf('<') >= 0) {
+      return IntArray(0)
+    }
+    val nativeSpans = if (rustVerseIndex >= 0 && rustGeneration > 0) {
+      RustArabicSearchEngine.findMatchSpans(rustVerseIndex, compiledQuery.query, rustGeneration)
+    } else {
+      null
+    }
+    if (nativeSpans != null) {
+      return nativeSpans
+    }
+    var start = compiledQuery.findFirst(text, 0)
+    if (start < 0) {
+      return IntArray(0)
+    }
+    val matchLen = compiledQuery.length
+    val ranges = ArrayList<Int>(4)
+    while (start >= 0) {
+      val end = start + matchLen
+      if (end <= text.length) {
+        ranges.add(start)
+        ranges.add(end)
+      }
+      start = compiledQuery.findFirst(text, end)
+    }
+    return ranges.toIntArray()
+  }
+
+  /**
+   * Parses HTML search snippets via [format] (TagSoup-free fast path + bounded cache) and
+   * returns the plain text paired with packed UTF-16 `[start, end, ...]` highlight ranges.
+   */
+  fun extractHtmlHighlightRanges(text: String): Pair<String, IntArray> {
+    if (text.isEmpty()) {
+      return "" to IntArray(0)
+    }
+    if (text.indexOf('<') < 0 && text.indexOf('&') < 0) {
+      return text to IntArray(0)
+    }
+    val formatted = format(text)
+    val plain = formatted.toString()
+    if (formatted !is Spanned) {
+      return plain to IntArray(0)
+    }
+    val spans = formatted.getSpans(0, formatted.length, ForegroundColorSpan::class.java)
+    if (spans.isEmpty()) {
+      return plain to IntArray(0)
+    }
+    val packed = IntArray(spans.size * 2)
+    var count = 0
+    for (span in spans) {
+      val s = formatted.getSpanStart(span)
+      val e = formatted.getSpanEnd(span)
+      if (s >= 0 && e > s && e <= plain.length) {
+        packed[count++] = s
+        packed[count++] = e
+      }
+    }
+    val finalPacked = if (count == packed.size) packed else packed.copyOf(count)
+    return plain to finalPacked
   }
 
   fun clearCache() {

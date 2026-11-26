@@ -1,66 +1,60 @@
 package com.quran.labs.androidquran
 
 import android.app.SearchManager
-import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.text.SpannableString
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
+import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.TextView
+import android.widget.FrameLayout
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
-import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import com.quran.common.search.RustSearchResultsCursor
-import com.quran.common.search.arabic.ArabicCompiledQuery
 import com.quran.data.core.QuranInfo
+import com.quran.data.di.AppCoroutineScope
+import com.quran.data.model.Page
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.data.QuranDataProvider
-import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.hybrid.contract.DailyWirdRepository
+import com.quran.labs.androidquran.hybrid.contract.HybridNavTab
+import com.quran.labs.androidquran.hybrid.contract.HybridReaderContract
+import com.quran.labs.androidquran.hybrid.contract.HybridSearchActionHandler
+import com.quran.labs.androidquran.hybrid.search.HybridBookmarkToggler
+import com.quran.labs.androidquran.hybrid.search.HybridSearchEngine
+import com.quran.labs.androidquran.hybrid.search.HybridSearchScope
+import com.quran.labs.androidquran.hybrid.search.NativeHybridSearchView
+import com.quran.labs.androidquran.hybrid.ui.FloatingBottomNavView
+import com.quran.labs.androidquran.hybrid.ui.HybridViewPalette
+import com.quran.labs.androidquran.hybrid.ui.HybridViewTokens
+import com.quran.labs.androidquran.hybrid.ui.PostDestroyMemoryReclaimer
 import com.quran.labs.androidquran.presenter.data.ReaderReadinessTracker
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper.getDownloadIntent
+import com.quran.labs.androidquran.ui.QuranActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import com.quran.labs.androidquran.ui.helpers.QuranNavigator
-import com.quran.labs.androidquran.ui.helpers.SearchResultFormatter as CalmSearchResultFormatter
-import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
-import com.quran.labs.androidquran.util.SearchResultFormatter as FastSearchResultFormatter
+import com.quran.labs.androidquran.util.SearchResultFormatter
 import com.quran.labs.androidquran.util.ThemeUtil
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Activity for searching the Quran.
+ * Standalone Activity hosting Proposal 5 Calm Rust Search.
  */
 class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
-  private var downloadArabicSearchDb = false
-  private var query: String = ""
   private var downloadReceiver: DefaultDownloadReceiver? = null
 
   /**
@@ -69,34 +63,89 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
    * Replacing this job prevents an older [onNewIntent] call from opening after a newer intent.
    */
   private var viewIntentJob: Job? = null
-  private var searchJob: Job? = null
-  private var jumpToTranslationForCurrentResults: Boolean = false
-
-  private lateinit var messageView: TextView
-  private lateinit var warningView: TextView
-  private lateinit var buttonGetTranslations: Button
-  private lateinit var resultsList: RecyclerView
-  private lateinit var adapter: ResultAdapter
 
   @Inject lateinit var quranNavigatorFactory: QuranNavigator.Factory
   private val quranNavigator by lazy { quranNavigatorFactory.create(this) }
 
-  @Inject
-  lateinit var quranInfo: QuranInfo
+  @Inject lateinit var quranInfo: QuranInfo
+  @Inject lateinit var quranFileUtils: QuranFileUtils
+  @Inject lateinit var quranSettings: QuranSettings
+  @Inject lateinit var readerReadinessTracker: ReaderReadinessTracker
+  @Inject lateinit var hybridSearchEngine: HybridSearchEngine
+  @Inject lateinit var hybridBookmarkToggler: HybridBookmarkToggler
+  @Inject lateinit var dailyWirdRepository: DailyWirdRepository
+  @Inject lateinit var appCoroutineScope: AppCoroutineScope
 
-  @Inject
-  lateinit var quranDisplayData: QuranDisplayData
+  @VisibleForTesting
+  internal lateinit var rootView: FrameLayout
+    private set
 
-  @Inject
-  lateinit var quranFileUtils: QuranFileUtils
+  @VisibleForTesting
+  internal lateinit var nativeSearchView: NativeHybridSearchView
+    private set
 
-  @Inject
-  lateinit var quranSettings: QuranSettings
+  @VisibleForTesting
+  internal lateinit var bottomFadeView: View
+    private set
 
-  @Inject
-  lateinit var readerReadinessTracker: ReaderReadinessTracker
+  @VisibleForTesting
+  internal lateinit var bottomNavView: FloatingBottomNavView
+    private set
 
   private var appliedThemeStyle: AppThemeStyle = AppThemeStyle.DEFAULT
+  private var appliedDarkMode: Boolean = false
+
+  private val searchActionHandler = object : HybridSearchActionHandler {
+    override fun openPage(page: Int, sura: Int, ayah: Int) {
+      cancelPendingViewIntentNavigation()
+      val state = hybridSearchEngine.uiState.value
+      val jumpToTranslation = state.scope == HybridSearchScope.TAFSIR ||
+        state.needsArabicDbWarning ||
+        (state.scope == HybridSearchScope.AYAHS &&
+          state.query.isNotBlank() &&
+          !QuranUtils.doesStringContainArabic(state.query))
+      if (sura > 0 && ayah > 0) {
+        jumpToResult(sura, ayah, jumpToTranslation = jumpToTranslation)
+      } else if (canOpenReaderDirectly()) {
+        quranNavigator.jumpTo(Page(page.coerceAtLeast(1)), showTranslation = jumpToTranslation)
+      } else {
+        startActivity(Intent(this@SearchActivity, QuranDataActivity::class.java))
+        finish()
+      }
+    }
+
+    override fun playAyah(sura: Int, ayah: Int, page: Int) {
+      cancelPendingViewIntentNavigation()
+      if (canOpenReaderDirectly()) {
+        val target = if (sura > 0 && ayah > 0) {
+          SuraAyah(sura, ayah)
+        } else {
+          Page(page.coerceAtLeast(1))
+        }
+        val playIntent = quranNavigator.intentFor(target, showTranslation = false).apply {
+          if (sura > 0 && ayah > 0) {
+            HybridReaderContract.applyToIntent(
+              intent = this,
+              sura = sura,
+              ayah = ayah,
+              initialStudyTab = HybridReaderContract.StudyTab.RECITATION,
+              autoPlayAyah = true
+            )
+          }
+        }
+        startActivity(playIntent)
+      } else {
+        startActivity(Intent(this@SearchActivity, QuranDataActivity::class.java))
+        finish()
+      }
+    }
+
+    override fun toggleBookmark(sura: Int, ayah: Int, page: Int) {
+      appCoroutineScope.launch {
+        hybridBookmarkToggler.toggleAyahBookmark(sura, ayah)
+      }
+    }
+  }
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     appliedThemeStyle = ThemeUtil.applyActivityTheme(this)
@@ -105,106 +154,126 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
 
     (application as QuranApplication)
       .applicationComponent.inject(this)
-    setContentView(R.layout.search)
 
-    val root = findViewById<ViewGroup>(R.id.root)
-    val toolbarArea = findViewById<View>(R.id.toolbar_area)
-    val navBarScrim = findViewById<View>(R.id.nav_bar_scrim)
-    val navBarDivider = findViewById<View>(R.id.nav_bar_divider)
-    ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
-      val insets = windowInsets.getInsets(
-        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-      )
-      toolbarArea.updatePadding(top = insets.top)
-      navBarScrim.updateLayoutParams<ViewGroup.LayoutParams> {
-        height = insets.bottom
-      }
-      navBarDivider.visibility = if (insets.bottom > 0) View.VISIBLE else View.GONE
-      root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-        topMargin = 0
-        leftMargin = insets.left
-        rightMargin = insets.right
-      }
-
-      // if we return WindowInsetsCompat.CONSUMED, the SnackBar won't
-      // be properly positioned on Android 29 and below (will be under
-      // the navigation bar).
-      windowInsets
-    }
-
-    resultsList = findViewById(R.id.results_list)
-    resultsList.setHasFixedSize(true)
-    resultsList.layoutManager = LinearLayoutManager(this)
-    val dividerDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-    ContextCompat.getDrawable(this, R.drawable.theme_list_divider)?.let {
-      dividerDecoration.setDrawable(it)
-    }
-    resultsList.addItemDecoration(dividerDecoration)
-    adapter = ResultAdapter(
-      context = this,
-      quranDisplayData = quranDisplayData,
-      onItemClick = { item ->
-        cancelPendingViewIntentNavigation()
-        jumpToResult(
-          item.sura,
-          item.ayah,
-          jumpToTranslation = jumpToTranslationForCurrentResults
-        )
-      }
-    )
-    resultsList.adapter = adapter
-
-    val toolbar = findViewById<Toolbar>(R.id.toolbar)
-    toolbar.setTitle(R.string.menu_search)
-    setSupportActionBar(toolbar)
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-    messageView = findViewById(R.id.search_area)
-    warningView = findViewById(R.id.search_warning)
-    buttonGetTranslations = findViewById(R.id.btnGetTranslations)
-    buttonGetTranslations.setOnClickListener {
-      if (downloadArabicSearchDb) {
-        downloadArabicSearchDb()
-      } else {
-        val intent = Intent(applicationContext, TranslationManagerActivity::class.java)
-        startActivity(intent)
-        finish()
-      }
-    }
+    // Launch IO search immediately before waiting for first frame to keep
+    // intent_to_rust_done_ms <= 32.5 ms.
     handleIntent(intent)
-  }
 
-  override fun onCreateOptionsMenu(menu: Menu): Boolean {
-    super.onCreateOptionsMenu(menu)
-    menuInflater.inflate(R.menu.search_menu, menu)
-    val searchItem = menu.findItem(R.id.search)
-    val searchView = searchItem.actionView as SearchView?
-    val searchManager = getSystemService(SEARCH_SERVICE) as SearchManager
-    searchView?.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+    val isSystemDark =
+      (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+        Configuration.UI_MODE_NIGHT_YES
+    appliedDarkMode = ThemeUtil.isDarkAppearance(quranSettings.currentTheme(), isSystemDark)
+    val palette = HybridViewPalette.from(appliedThemeStyle, appliedDarkMode)
 
-    val currentIntent = intent
-    if (Intent.ACTION_SEARCH == currentIntent.action) {
-      // Make sure the keyboard is hidden if doing a search from within this activity
-      searchView?.clearFocus()
-    } else if (currentIntent.action == null) {
-      // If no action is specified, just open the keyboard so the user can quickly start searching
-      searchItem.expandActionView()
+    rootView = FrameLayout(this).apply {
+      layoutDirection = View.LAYOUT_DIRECTION_RTL
+      clipChildren = false
+      clipToPadding = false
+      background = HybridViewTokens.canvasAmbientGlowDrawable(
+        surface = palette.surface,
+        surfaceTopGlow = palette.surfaceTopGlow
+      )
     }
-    return true
-  }
 
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    if (item.itemId == android.R.id.home) {
-      finish()
-      return true
+    nativeSearchView = NativeHybridSearchView(this).apply {
+      applyPalette(palette)
+      onDownloadArabicSearchDb = ::downloadArabicSearchDb
+      onOpenTranslationManager = ::openTranslationManager
+      bind(hybridSearchEngine, searchActionHandler, lifecycleScope, this@SearchActivity)
     }
-    return super.onOptionsItemSelected(item)
+
+    bottomFadeView = View(this).apply {
+      isClickable = false
+      isFocusable = false
+      importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+      background = HybridViewTokens.scrollUnderVeilDrawable(palette.surface)
+    }
+
+    bottomNavView = FloatingBottomNavView(this).apply {
+      applyPalette(palette)
+      setSelectedTab(HybridNavTab.SEARCH)
+      setOnTabSelectedListener(::handleBottomNavTabSelected)
+    }
+
+    val navHeightEstimate = HybridViewTokens.dp(this, 96f)
+    nativeSearchView.setBottomNavOverlapPadding(navHeightEstimate)
+
+    rootView.addView(
+      nativeSearchView,
+      FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.MATCH_PARENT,
+        FrameLayout.LayoutParams.MATCH_PARENT
+      )
+    )
+    rootView.addView(
+      bottomFadeView,
+      FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.MATCH_PARENT,
+        navHeightEstimate,
+        Gravity.BOTTOM
+      )
+    )
+    rootView.addView(
+      bottomNavView,
+      FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.MATCH_PARENT,
+        FrameLayout.LayoutParams.WRAP_CONTENT,
+        Gravity.BOTTOM
+      )
+    )
+
+    ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, insets ->
+      val statusTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+      val navBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+      val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+      val imeVisible = imeBottom > 0
+
+      nativeSearchView.setStatusBarTopInset(statusTop)
+      rootView.setPadding(0, 0, 0, imeBottom)
+
+      if (imeVisible) {
+        bottomFadeView.visibility = View.GONE
+        bottomNavView.visibility = View.GONE
+        nativeSearchView.setBottomNavOverlapPadding(HybridViewTokens.dp(this, 12f))
+      } else {
+        bottomFadeView.visibility = View.VISIBLE
+        bottomNavView.visibility = View.VISIBLE
+        bottomNavView.setPadding(
+          HybridViewTokens.dp(this, 14f),
+          HybridViewTokens.dp(this, 2f),
+          HybridViewTokens.dp(this, 14f),
+          navBottom + HybridViewTokens.dp(this, 12f)
+        )
+        val totalNavSpace = navBottom + HybridViewTokens.dp(this, 96f)
+        (bottomFadeView.layoutParams as? FrameLayout.LayoutParams)?.let { lp ->
+          if (lp.height != totalNavSpace) {
+            lp.height = totalNavSpace
+            bottomFadeView.layoutParams = lp
+          }
+        }
+        nativeSearchView.setBottomNavOverlapPadding(totalNavSpace)
+      }
+      insets
+    }
+
+    setContentView(rootView)
+    window?.setBackgroundDrawable(null)
   }
 
   override fun onResume() {
     super.onResume()
-    if (AppThemeStyle.fromPreference(quranSettings.appThemeStyle) != appliedThemeStyle) {
+    val isSystemDark =
+      (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+        Configuration.UI_MODE_NIGHT_YES
+    val nowDark = ThemeUtil.isDarkAppearance(quranSettings.currentTheme(), isSystemDark)
+    if (AppThemeStyle.fromPreference(quranSettings.appThemeStyle) != appliedThemeStyle ||
+      nowDark != appliedDarkMode
+    ) {
       recreate()
+      return
+    }
+    if (::nativeSearchView.isInitialized) {
+      nativeSearchView.restoreInputIfNeeded()
     }
   }
 
@@ -213,19 +282,94 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
       receiver.unregister()
       downloadReceiver = null
     }
+    if (isFinishing && !isChangingConfigurations && ::nativeSearchView.isInitialized) {
+      nativeSearchView.releaseFocusAndInput()
+    }
     super.onPause()
   }
 
   override fun onStop() {
     cancelPendingViewIntentNavigation()
+    if (isFinishing && !isChangingConfigurations) {
+      if (::nativeSearchView.isInitialized) {
+        nativeSearchView.releaseFocusAndInput()
+        nativeSearchView.resultsRecyclerView.adapter = null
+        nativeSearchView.resultsRecyclerView.recycledViewPool.clear()
+        nativeSearchView.clearRecentsViews()
+      }
+      hybridSearchEngine.clearTransientResults()
+    } else {
+      hybridSearchEngine.trimTransientWindow()
+    }
+    if (!isChangingConfigurations) {
+      SQLiteDatabase.releaseMemory()
+    }
     super.onStop()
   }
 
   override fun onDestroy() {
-    searchJob?.cancel()
-    searchJob = null
-    FastSearchResultFormatter.clearCache()
+    cancelPendingViewIntentNavigation()
+    downloadReceiver?.let { receiver ->
+      receiver.unregister()
+      downloadReceiver = null
+    }
+    SearchResultFormatter.clearCache()
+    val finishingCleanly = isFinishing && !isChangingConfigurations
+    if (finishingCleanly) {
+      hybridSearchEngine.clearTransientResults()
+    }
+    if (::bottomNavView.isInitialized) {
+      bottomNavView.setOnTabSelectedListener(null)
+      bottomNavView.unbind()
+    }
+    if (::nativeSearchView.isInitialized) {
+      nativeSearchView.resultsRecyclerView.adapter = null
+      nativeSearchView.resultsRecyclerView.recycledViewPool.clear()
+      nativeSearchView.unbind()
+      nativeSearchView.removeAllViews()
+    }
+    if (::rootView.isInitialized) {
+      ViewCompat.setOnApplyWindowInsetsListener(rootView, null)
+      rootView.removeAllViews()
+    }
+    window?.setBackgroundDrawable(null)
     super.onDestroy()
+    if (finishingCleanly) {
+      PostDestroyMemoryReclaimer.schedulePostDestroyCleanup()
+    }
+  }
+
+  private fun openTranslationManager() {
+    startActivity(Intent(applicationContext, TranslationManagerActivity::class.java))
+    finish()
+  }
+
+  private fun handleBottomNavTabSelected(tab: HybridNavTab) {
+    when (tab) {
+      HybridNavTab.READ -> {
+        if (canOpenReaderDirectly()) {
+          val lastPage = dailyWirdRepository.stateFlow.value.lastPage.coerceIn(1, quranInfo.numberOfPages)
+          quranNavigator.jumpTo(
+            Page(lastPage),
+            showTranslation = quranSettings.wasShowingTranslation
+          )
+        } else {
+          startActivity(Intent(this, QuranDataActivity::class.java))
+          finish()
+        }
+      }
+
+      HybridNavTab.INDEX, HybridNavTab.BOOKMARKS -> {
+        val intent = Intent(this, QuranActivity::class.java).apply {
+          addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+          putExtra(QuranActivity.EXTRA_INITIAL_NAV_TAB, tab.name)
+        }
+        startActivity(intent)
+        finish()
+      }
+
+      HybridNavTab.SEARCH -> Unit
+    }
   }
 
   private fun downloadArabicSearchDb() {
@@ -255,9 +399,7 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
   }
 
   override fun handleDownloadSuccess() {
-    warningView.visibility = View.GONE
-    buttonGetTranslations.visibility = View.GONE
-    handleIntent(intent)
+    hybridSearchEngine.refreshCurrentSearch()
   }
 
   override fun handleDownloadFailure(errId: Int) {
@@ -277,8 +419,12 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
     cancelPendingViewIntentNavigation()
 
     if (Intent.ACTION_SEARCH == intent.action) {
-      val searchQuery = intent.getStringExtra(SearchManager.QUERY)
-      showResults(searchQuery)
+      val searchQuery = intent.getStringExtra(SearchManager.QUERY).orEmpty()
+      hybridSearchEngine.submitQuery(
+        rawQuery = searchQuery,
+        scopeOverride = HybridSearchScope.AYAHS,
+        recordRecent = true
+      )
     } else if (Intent.ACTION_VIEW == intent.action) {
       val intentData = intent.data
       var userQuery = intent.getStringExtra(SearchManager.USER_QUERY)
@@ -295,7 +441,11 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
 
       val id = intentData?.lastPathSegment?.toIntOrNull() ?: return
       if (id == -1) {
-        showResults(userQuery)
+        hybridSearchEngine.submitQuery(
+          rawQuery = userQuery.orEmpty(),
+          scopeOverride = HybridSearchScope.AYAHS,
+          recordRecent = true
+        )
         return
       }
       if (id !in 1..quranInfo.getNumberOfAyahsInQuran()) return
@@ -320,13 +470,6 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
     viewIntentJob = null
   }
 
-  /**
-   * Opens an ayah in the reader.
-   *
-   * @param sura the one-based sura number to open.
-   * @param ayah the one-based ayah number to highlight.
-   * @param jumpToTranslation whether the reader should open its translation view.
-   */
   private fun jumpToResult(sura: Int, ayah: Int, jumpToTranslation: Boolean) {
     if (canOpenReaderDirectly()) {
       quranNavigator.jumpTo(SuraAyah(sura, ayah), showTranslation = jumpToTranslation)
@@ -339,224 +482,6 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
   private fun canOpenReaderDirectly(): Boolean {
     return quranSettings.haveMigratedLegacyBookmarksToMobileSync() &&
       readerReadinessTracker.isReady(quranSettings.pageType)
-  }
-
-  private fun showResults(searchQuery: String?) {
-    val currentQuery = searchQuery ?: ""
-    this.query = currentQuery
-    searchJob?.cancel()
-
-    val containsArabic = QuranUtils.doesStringContainArabic(currentQuery)
-    val compiledArabicQuery = if (containsArabic) {
-      ArabicCompiledQuery.compile(currentQuery)
-    } else {
-      null
-    }
-    val useRawArabic = containsArabic && compiledArabicQuery != null
-
-    searchJob = lifecycleScope.launch {
-      val result = withContext(Dispatchers.IO) {
-        executeSearchQuery(
-          currentQuery = currentQuery,
-          containsArabic = containsArabic,
-          useRawArabic = useRawArabic
-        )
-      }
-      if (!isActive || currentQuery != query) {
-        return@launch
-      }
-      renderSearchResults(
-        currentQuery = currentQuery,
-        containsArabic = containsArabic,
-        result = result
-      )
-    }
-  }
-
-  private fun executeSearchQuery(
-    currentQuery: String,
-    containsArabic: Boolean,
-    useRawArabic: Boolean
-  ): SearchQueryResult {
-    val searchUri = if (useRawArabic) {
-      QuranDataProvider.SEARCH_RAW_ARABIC_URI
-    } else {
-      QuranDataProvider.SEARCH_URI
-    }
-    val highlightQuery = if (useRawArabic) currentQuery else null
-
-    val items: List<SearchResultItem>? = contentResolver.query(
-      searchUri,
-      null,
-      null,
-      arrayOf(currentQuery),
-      null
-    )?.use { cursor ->
-      val rustCursor = cursor as? RustSearchResultsCursor
-      val rustGeneration = rustCursor?.indexGeneration ?: -1
-      val list = ArrayList<SearchResultItem>(cursor.count)
-      while (cursor.moveToNext()) {
-        val id = cursor.getLong(0)
-        val sura = cursor.getInt(1)
-        val ayah = cursor.getInt(2)
-        val text = cursor.getString(3) ?: ""
-        val page = quranInfo.getPageFromSuraAyah(sura, ayah)
-        val rustVerseIndex = rustCursor?.getCurrentVerseIndex() ?: -1
-        list.add(
-          SearchResultItem(
-            id = id,
-            sura = sura,
-            ayah = ayah,
-            page = page,
-            text = text,
-            highlightQuery = highlightQuery,
-            rustVerseIndex = rustVerseIndex,
-            rustGeneration = rustGeneration
-          )
-        )
-      }
-      list
-    }
-
-    // Arabic queries in QuranDataProvider only return matches from the Arabic database, so
-    // non-empty Arabic results already prove the database exists without an extra stat().
-    val needsArabicDbWarning = containsArabic &&
-      items.isNullOrEmpty() &&
-      !quranFileUtils.hasTranslation(QuranDataProvider.QURAN_ARABIC_DATABASE)
-
-    return SearchQueryResult(items = items, needsArabicDbWarning = needsArabicDbWarning)
-  }
-
-  private fun renderSearchResults(
-    currentQuery: String,
-    containsArabic: Boolean,
-    result: SearchQueryResult
-  ) {
-    downloadArabicSearchDb = false
-    jumpToTranslationForCurrentResults = !containsArabic
-    warningView.visibility = View.GONE
-    buttonGetTranslations.visibility = View.GONE
-
-    if (result.needsArabicDbWarning) {
-      // Without the Arabic database, Arabic tafseer matches should open in translation view.
-      warningView.text = getString(R.string.no_arabic_search_available)
-      warningView.visibility = View.VISIBLE
-      buttonGetTranslations.text = getString(R.string.get_arabic_search_db)
-      buttonGetTranslations.visibility = View.VISIBLE
-      downloadArabicSearchDb = true
-      jumpToTranslationForCurrentResults = true
-    }
-
-    val items = result.items
-    if (items == null) {
-      messageView.text = getString(R.string.no_results, currentQuery)
-      // cursor is null either when the query length is less than 3 characters or when
-      // there are no valid databases to search at all. in this case, if it's not an
-      // Arabic search, show the "get translations" button.
-      if (!containsArabic && currentQuery.length > 2) {
-        buttonGetTranslations.setText(R.string.get_translations)
-        buttonGetTranslations.visibility = View.VISIBLE
-      }
-      adapter.submitList(emptyList())
-    } else {
-      val count = items.size
-      val countString = resources.getQuantityString(
-        R.plurals.search_results, count, currentQuery, count
-      )
-      messageView.text = countString
-      adapter.submitList(items)
-    }
-  }
-
-  @VisibleForTesting
-  internal data class SearchResultItem(
-    val id: Long,
-    val sura: Int,
-    val ayah: Int,
-    val page: Int,
-    val text: String,
-    val highlightQuery: String? = null,
-    val rustVerseIndex: Int = -1,
-    val rustGeneration: Int = -1
-  )
-
-  private data class SearchQueryResult(
-    val items: List<SearchResultItem>?,
-    val needsArabicDbWarning: Boolean
-  )
-
-  private class ResultAdapter(
-    private val context: Context,
-    private val quranDisplayData: QuranDisplayData,
-    private val onItemClick: (SearchResultItem) -> Unit
-  ) : ListAdapter<SearchResultItem, ResultAdapter.ViewHolder>(DIFF_CALLBACK) {
-    private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private val arabicTypeface = TypefaceManager.getSearchArabicTypeface(context)
-    private val highlightColor = ThemeUtil.resolveThemeColor(
-      context,
-      R.attr.quranSearchHighlight,
-      ContextCompat.getColor(context, R.color.translation_highlight)
-    )
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-      val view = inflater.inflate(R.layout.search_result, parent, false)
-      return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-      val item = getItem(position)
-      val suraName = quranDisplayData.getSuraName(context, item.sura, false)
-      val compiledQuery = item.highlightQuery?.let { ArabicCompiledQuery.compile(it) }
-      val formatted = FastSearchResultFormatter.formatArabic(
-        text = item.text,
-        compiledQuery = compiledQuery,
-        highlightColor = highlightColor,
-        rustVerseIndex = item.rustVerseIndex,
-        rustGeneration = item.rustGeneration
-      )
-      val isArabic = item.highlightQuery != null || CalmSearchResultFormatter.isArabicResult(formatted)
-      CalmSearchResultFormatter.applyTypography(
-        holder.text,
-        isArabic = isArabic,
-        arabicTypeface = arabicTypeface
-      )
-      holder.text.text = formatted
-      holder.metadata.text = context.getString(
-        R.string.found_in_sura,
-        item.sura,
-        suraName,
-        item.ayah,
-        item.page
-      )
-    }
-
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-      val text: TextView = itemView.findViewById(R.id.verseText)
-      val metadata: TextView = itemView.findViewById(R.id.verseLocation)
-
-      init {
-        itemView.setOnClickListener {
-          val position = bindingAdapterPosition
-          if (position != RecyclerView.NO_POSITION) {
-            onItemClick(getItem(position))
-          }
-        }
-      }
-    }
-
-    companion object {
-      private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<SearchResultItem>() {
-        override fun areItemsTheSame(
-          oldItem: SearchResultItem,
-          newItem: SearchResultItem
-        ): Boolean = oldItem.id == newItem.id && oldItem.sura == newItem.sura && oldItem.ayah == newItem.ayah
-
-        override fun areContentsTheSame(
-          oldItem: SearchResultItem,
-          newItem: SearchResultItem
-        ): Boolean = oldItem == newItem
-      }
-    }
   }
 
   companion object {

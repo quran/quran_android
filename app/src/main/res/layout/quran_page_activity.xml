@@ -7,11 +7,19 @@
     android:keepScreenOn="true"
     >
 
-  <androidx.viewpager.widget.NonRestoringViewPager
+  <FrameLayout
+      android:id="@+id/mushaf_clip_container"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:id="@+id/quran_pager"
-      />
+      android:clipChildren="true"
+      android:clipToPadding="true"
+      >
+    <androidx.viewpager.widget.NonRestoringViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/quran_pager"
+        />
+  </FrameLayout>
 
   <com.quran.page.common.toolbar.AyahToolBar
       android:id="@+id/ayah_toolbar"
@@ -25,6 +33,7 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:background="?attr/quranToolbarBackground"
+      android:visibility="gone"
       >
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"

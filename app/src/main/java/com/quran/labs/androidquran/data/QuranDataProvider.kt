@@ -7,6 +7,7 @@ import android.content.ContentValues
 import android.content.UriMatcher
 import android.database.Cursor
 import android.database.MatrixCursor
+import android.database.sqlite.SQLiteException
 import android.net.Uri
 import android.provider.BaseColumns
 import androidx.annotation.VisibleForTesting
@@ -25,6 +26,7 @@ import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
+import java.util.Locale
 
 @HasMemberInjections
 open class QuranDataProvider : ContentProvider() {
@@ -66,6 +68,11 @@ open class QuranDataProvider : ContentProvider() {
         requireNotNull(selectionArgs) { "selectionArgs must be provided for the Uri: $uri" }
         val rawArabic = uri.getBooleanQueryParameter(QUERY_PARAM_RAW_ARABIC, false)
         search(selectionArgs[0], rawArabic = rawArabic)
+      }
+
+      SEARCH_TAFSIR -> {
+        requireNotNull(selectionArgs) { "selectionArgs must be provided for the Uri: $uri" }
+        searchTafsir(selectionArgs[0])
       }
 
       else -> {
@@ -222,9 +229,121 @@ open class QuranDataProvider : ContentProvider() {
     return handler.searchRawArabic(query)
   }
 
+  /**
+   * Searches locally installed tafsir and translation databases without touching
+   * [RustArabicSearchEngine], preserving the global Quran verse arena and leaving
+   * standard [search] untouched.
+   */
+  @VisibleForTesting
+  internal fun searchTafsir(
+    query: String,
+    translations: List<LocalTranslation>? = null,
+    maxResults: Int = Int.MAX_VALUE
+  ): Cursor? {
+    val resolvedTranslations = translations ?: availableTranslations()
+    if (resolvedTranslations.isEmpty()) {
+      return null
+    }
+
+    val matrix = MatrixCursor(TAFSIR_COLUMNS)
+    val sanitized = sanitizeTafsirQuery(query)
+    if (sanitized.isEmpty() || maxResults <= 0) {
+      return matrix
+    }
+
+    val queryIsArabic = QuranUtils.doesStringContainArabic(sanitized)
+    val orderedTranslations = if (queryIsArabic) {
+      val arabicFirst = resolvedTranslations.filter { "ar" == it.languageCode }
+      val others = resolvedTranslations.filterNot { "ar" == it.languageCode }
+      arabicFirst + others
+    } else {
+      resolvedTranslations
+    }
+
+    var totalAdded = 0
+    for (translation in orderedTranslations) {
+      if (totalAdded >= maxResults) {
+        break
+      }
+      try {
+        searchTafsirDatabase(sanitized, translation.filename)?.use { inner ->
+          val translatorName = translation.resolveTranslatorName()
+          while (inner.moveToNext() && totalAdded < maxResults) {
+            val id = inner.getLong(0)
+            val sura = inner.getInt(1)
+            val ayah = inner.getInt(2)
+            val text = inner.getString(3) ?: ""
+            matrix.addRow(
+              arrayOf<Any>(
+                id,
+                sura,
+                ayah,
+                text,
+                translatorName,
+                translation.id,
+                translation.languageCode.orEmpty()
+              )
+            )
+            totalAdded++
+          }
+        }
+      } catch (e: SQLiteException) {
+        Timber.w(e, "Tafsir search failed for %s", translation.filename)
+      }
+    }
+    return matrix
+  }
+
+  @VisibleForTesting
+  internal open fun searchTafsirDatabase(query: String, databaseName: String): Cursor? {
+    val handler = getDatabaseHandler(context!!, databaseName, quranFileUtils)
+    if (QuranUtils.doesStringContainArabic(query)) {
+      // Normalized Arabic tafsir scan (diacritic-insensitive, Alef/Hamza/Ta-Marbuta/Ya folded,
+      // unlimited recall with clean context snippets) without touching RustArabicSearchEngine.
+      return handler.searchArabicNormalized(query)
+    }
+    // CRITICAL: Always pass isArabicDatabase = false so DatabaseHandler uses DefaultSearcher
+    // and never calls RustArabicSearchEngine.ensureLoaded on a tafsir DB.
+    return handler.search(query, withSnippets = true, isArabicDatabase = false)
+  }
+
+  private fun sanitizeTafsirQuery(query: String): String {
+    val cleaned = buildString(query.length) {
+      var prevSpace = true
+      for (ch in query) {
+        val isFtsOperator = ch == '"' || ch == '*' || ch == '^' ||
+          ch == '(' || ch == ')' || ch == ':' ||
+          ch == '{' || ch == '}' || ch == '[' || ch == ']' ||
+          ch == '-'
+        if (isFtsOperator || ch.isWhitespace()) {
+          if (!prevSpace) {
+            append(' ')
+            prevSpace = true
+          }
+        } else {
+          append(ch)
+          prevSpace = false
+        }
+      }
+    }.trim()
+
+    if (cleaned.isEmpty()) {
+      return ""
+    }
+
+    return cleaned.split(' ')
+      .filter { token ->
+        if (token.isEmpty()) return@filter false
+        val upper = token.uppercase(Locale.ROOT)
+        upper != "AND" && upper != "OR" && upper != "NOT" &&
+          upper != "NEAR" && !upper.startsWith("NEAR/")
+      }
+      .joinToString(" ")
+  }
+
   override fun getType(uri: Uri): String? {
     return when (uriMatcher.match(uri)) {
-      SEARCH_VERSES -> {
+      SEARCH_VERSES, SEARCH_TAFSIR -> {
         VERSES_MIME_TYPE
       }
 
@@ -260,19 +379,32 @@ open class QuranDataProvider : ContentProvider() {
     @JvmField val SEARCH_URI: Uri = Uri.parse("content://$AUTHORITY/quran/search")
     @JvmField val SEARCH_RAW_ARABIC_URI: Uri =
       SEARCH_URI.buildUpon().appendQueryParameter(QUERY_PARAM_RAW_ARABIC, "1").build()
+    @JvmField val SEARCH_TAFSIR_URI: Uri = Uri.parse("content://$AUTHORITY/quran/tafsir/search")
     const val VERSES_MIME_TYPE =
       ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.quran.labs.androidquran"
     const val QURAN_ARABIC_DATABASE = QuranFileConstants.ARABIC_DATABASE
+    internal val TAFSIR_COLUMNS = arrayOf(
+      BaseColumns._ID,
+      "sura",
+      "ayah",
+      "text",
+      "translator_name",
+      "translation_id",
+      "language_code"
+    )
 
     // UriMatcher stuff
     private const val SEARCH_VERSES = 0
     private const val SEARCH_SUGGEST = 1
+    private const val SEARCH_TAFSIR = 2
     private val uriMatcher = buildUriMatcher()
 
     private fun buildUriMatcher(): UriMatcher {
       val matcher = UriMatcher(UriMatcher.NO_MATCH)
       matcher.addURI(AUTHORITY, "quran/search", SEARCH_VERSES)
       matcher.addURI(AUTHORITY, "quran/search/*", SEARCH_VERSES)
+      matcher.addURI(AUTHORITY, "quran/tafsir/search", SEARCH_TAFSIR)
+      matcher.addURI(AUTHORITY, "quran/tafsir/search/*", SEARCH_TAFSIR)
       matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SEARCH_SUGGEST)
       matcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY + "/*", SEARCH_SUGGEST)
       return matcher

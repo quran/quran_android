@@ -19,10 +19,10 @@ class LineByLinePageViewFactory : PageViewFactory {
   }
 
   override fun providePageView(context: Context, pageNumber: Int, pageMode: PageMode): View? {
-    return if (pageMode == PageMode.DualScreenMode.Arabic) {
-      QuranLineByLineWrapperView(context, pageNumber, true)
-    } else {
-      null
+    return when (pageMode) {
+      PageMode.SingleArabicPage -> QuranLineByLineWrapperView(context, pageNumber, false)
+      PageMode.DualScreenMode.Arabic -> QuranLineByLineWrapperView(context, pageNumber, true)
+      else -> null
     }
   }
 }

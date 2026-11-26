@@ -238,6 +238,7 @@ public class QuranSettings implements PageThemeSettings {
   public void setPageType(String pageType) {
     prefs.edit().putString(Constants.PREF_PAGE_TYPE, pageType).apply();
     clearDefaultImagesDirectory();
+    clearVerifiedPagesSignature();
   }
 
   public boolean getShowRecents() {
@@ -584,5 +585,21 @@ public class QuranSettings implements PageThemeSettings {
     setToSave.add(pageType);
     perInstallationPrefs.edit()
         .putStringSet(Constants.PREF_CHECKED_PARTIAL_IMAGES, setToSave).apply();
+  }
+
+  private static final String PREF_VERIFIED_PAGES_SIG = "hybrid_verified_pages_sig";
+
+  public boolean hasVerifiedAllPages(String widthParam, int totalPages) {
+    final String expected = getPageType() + "|" + widthParam + "|" + totalPages;
+    return expected.equals(perInstallationPrefs.getString(PREF_VERIFIED_PAGES_SIG, null));
+  }
+
+  public void setVerifiedAllPages(String widthParam, int totalPages) {
+    final String sig = getPageType() + "|" + widthParam + "|" + totalPages;
+    perInstallationPrefs.edit().putString(PREF_VERIFIED_PAGES_SIG, sig).apply();
+  }
+
+  public void clearVerifiedPagesSignature() {
+    perInstallationPrefs.edit().remove(PREF_VERIFIED_PAGES_SIG).apply();
   }
 }

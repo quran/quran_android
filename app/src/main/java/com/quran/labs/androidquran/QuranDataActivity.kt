@@ -6,6 +6,8 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
@@ -14,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnPreDraw
 import androidx.work.WorkManager
 import com.quran.common.upgrade.PreferencesUpgrade
 import com.quran.data.core.QuranConstants
@@ -98,12 +101,21 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
   private var disposable: Disposable? = null
   private var lastForceValue: Boolean = false
   private var didCheckPermissions: Boolean = false
+  private var hasDrawnFirstFrame: Boolean = false
+  private var pendingLaunchAfterDraw: Boolean = false
+  private var isActivityResumed: Boolean = false
 
   private val scope = MainScope()
 
   public override fun onCreate(savedInstanceState: Bundle?) {
     ThemeUtil.applyActivityTheme(this)
     super.onCreate(savedInstanceState)
+    val decor = window.decorView
+    decor.doOnPreDraw {
+      Handler(Looper.getMainLooper()).postAtFrontOfQueue {
+        onFirstFrameDrawn()
+      }
+    }
     val quranApp = application as QuranApplication
     quranApp.applicationComponent.inject(this)
     quranSettings = QuranSettings.getInstance(this)
@@ -113,48 +125,20 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
     if (quranSettings.version != BuildConfig.VERSION_CODE) {
       quranSettings.upgradePreferences(preferencesUpgrade())
     }
+    quranDataPresenter.bind(this)
+    if (!didCheckPermissions) {
+      didCheckPermissions = true
+      checkPermissions()
+    }
   }
 
   override fun onResume() {
     super.onResume()
+    isActivityResumed = true
     quranDataPresenter.bind(this)
-    val downloadReceiver = DefaultDownloadReceiver(
-        this,
-        QuranDownloadService.DOWNLOAD_TYPE_PAGES
-    )
-    downloadReceiver.setCanCancelDownload(true)
-    downloadReceiver.setListener(this)
-    downloadReceiver.register(this)
-    this.downloadReceiver = downloadReceiver
-
-    disposable = Single.timer(100, MILLISECONDS)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { _: Long? ->
-          if (!QuranDownloadService.isRunning()) {
-            return@subscribe
-          }
-          // try to reconnect to the service - delayed since some devices consider
-          // onResume as part of the app being in the background for starting-service
-          // purposes.
-          val reconnectIntent = Intent(this@QuranDataActivity, QuranDownloadService::class.java)
-          reconnectIntent.action = QuranDownloadService.ACTION_RECONNECT
-          reconnectIntent.putExtra(
-              QuranDownloadService.EXTRA_DOWNLOAD_TYPE,
-              QuranDownloadService.DOWNLOAD_TYPE_PAGES
-          )
-          try {
-            // this should be perfectly valid - on some devices though, despite the 100ms
-            // delay (or a longer one), some devices still complain about not being in the
-            // foreground.
-            //
-            // since this isn't strictly necessary (since the download service should emit
-            // periodically on its own anyway, and should handle multiple download requests,
-            // etc), let's just drop it if it fails since this is expected to rarely occur.
-            startService(reconnectIntent)
-          } catch (ise: IllegalStateException) {
-            Timber.e(ise)
-          }
-        }
+    if (hasDrawnFirstFrame && !isFinishing && !isDestroyed && QuranDownloadService.isRunning()) {
+      registerDownloadReceiverIfNeeded()
+    }
 
     if (!didCheckPermissions) {
       didCheckPermissions = true
@@ -162,8 +146,52 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
     }
   }
 
-  override fun onPause() {
+  private fun registerDownloadReceiverIfNeeded() {
+    if (downloadReceiver != null) return
+    val receiver = DefaultDownloadReceiver(
+      this,
+      QuranDownloadService.DOWNLOAD_TYPE_PAGES
+    )
+    receiver.setCanCancelDownload(true)
+    receiver.setListener(this)
+    receiver.register(this)
+    this.downloadReceiver = receiver
+
     disposable?.dispose()
+    disposable = Single.timer(100, MILLISECONDS)
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe { _: Long? ->
+        if (!QuranDownloadService.isRunning()) {
+          return@subscribe
+        }
+        // try to reconnect to the service - delayed since some devices consider
+        // onResume as part of the app being in the background for starting-service
+        // purposes.
+        val reconnectIntent = Intent(this@QuranDataActivity, QuranDownloadService::class.java)
+        reconnectIntent.action = QuranDownloadService.ACTION_RECONNECT
+        reconnectIntent.putExtra(
+          QuranDownloadService.EXTRA_DOWNLOAD_TYPE,
+          QuranDownloadService.DOWNLOAD_TYPE_PAGES
+        )
+        try {
+          // this should be perfectly valid - on some devices though, despite the 100ms
+          // delay (or a longer one), some devices still complain about not being in the
+          // foreground.
+          //
+          // since this isn't strictly necessary (since the download service should emit
+          // periodically on its own anyway, and should handle multiple download requests,
+          // etc), let's just drop it if it fails since this is expected to rarely occur.
+          startService(reconnectIntent)
+        } catch (ise: IllegalStateException) {
+          Timber.e(ise)
+        }
+      }
+  }
+
+  override fun onPause() {
+    isActivityResumed = false
+    disposable?.dispose()
+    disposable = null
     quranDataPresenter.unbind(this)
     downloadReceiver?.let { receiver ->
       receiver.unregister()
@@ -182,6 +210,7 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
 
   override fun onDestroy() {
     scope.cancel()
+    window?.setBackgroundDrawable(null)
     super.onDestroy()
   }
 
@@ -414,6 +443,7 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
   }
 
   private fun actuallyDownloadQuranImages(force: Boolean) {
+    registerDownloadReceiverIfNeeded()
     // if any broadcasts were received, then we are already downloading
     // so unless we know what we are doing (via force), don't ask the
     // service to restart the download
@@ -518,7 +548,37 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
     runListView()
   }
 
+  private fun onFirstFrameDrawn() {
+    if (!hasDrawnFirstFrame) {
+      hasDrawnFirstFrame = true
+      if (pendingLaunchAfterDraw && !isFinishing && !isDestroyed) {
+        pendingLaunchAfterDraw = false
+        launchListViewNow()
+        return
+      }
+      if (isActivityResumed && !isFinishing && !isDestroyed && QuranDownloadService.isRunning()) {
+        registerDownloadReceiverIfNeeded()
+      }
+    }
+  }
+
   private fun runListView() {
+    if (!isFinishing && !isDestroyed) {
+      if (hasDrawnFirstFrame || intent?.action == ACTION_OPEN_PAGE) {
+        launchListViewNow()
+      } else {
+        pendingLaunchAfterDraw = true
+        window.decorView.postDelayed({
+          if (pendingLaunchAfterDraw && !isFinishing && !isDestroyed) {
+            pendingLaunchAfterDraw = false
+            launchListViewNow()
+          }
+        }, 120L)
+      }
+    }
+  }
+
+  private fun launchListViewNow() {
     if (!isFinishing && !isDestroyed) {
       if (intent?.action == ACTION_OPEN_PAGE) {
         jumpToRequestedPage(intent)
