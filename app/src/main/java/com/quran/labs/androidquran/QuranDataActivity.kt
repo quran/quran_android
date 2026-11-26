@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.annotation.RequiresApi
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -17,6 +18,8 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
 import com.quran.common.upgrade.PreferencesUpgrade
+import com.quran.data.core.QuranConstants
+import com.quran.data.core.QuranInfo
 import com.quran.data.model.Page
 import com.quran.data.model.QuranDataStatus
 import com.quran.data.model.SuraAyah
@@ -78,6 +81,9 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
 
   @Inject
   lateinit var preferencesUpgrade: PreferencesUpgrade
+
+  @Inject
+  lateinit var quranInfo: QuranInfo
 
   private lateinit var quranSettings: QuranSettings
 
@@ -509,13 +515,22 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
     }
   }
 
-  private fun jumpToRequestedPage(sourceIntent: Intent) {
+  @VisibleForTesting
+  internal fun jumpToRequestedPage(sourceIntent: Intent) {
     val sura = sourceIntent.getIntExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, -1)
     val ayah = sourceIntent.getIntExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, -1)
-    val location = if (sura > 0 && ayah > 0) {
+    val isValidSuraAyah = sura in 1..QuranConstants.NUMBER_OF_SURAS &&
+      ayah in 1..quranInfo.getNumberOfAyahs(sura)
+    val location = if (isValidSuraAyah) {
       SuraAyah(sura, ayah)
     } else {
-      Page(sourceIntent.getIntExtra("page", Constants.PAGES_FIRST))
+      val requestedPage = sourceIntent.getIntExtra("page", Constants.PAGES_FIRST)
+      val safePage = if (quranInfo.isValidPage(requestedPage)) {
+        requestedPage
+      } else {
+        Constants.PAGES_FIRST
+      }
+      Page(safePage)
     }
     val showTranslation = if (sourceIntent.hasExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION)) {
       sourceIntent.getBooleanExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, false)

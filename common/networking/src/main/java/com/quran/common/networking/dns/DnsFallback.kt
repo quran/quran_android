@@ -8,16 +8,40 @@ import org.xbill.DNS.SimpleResolver
 import java.net.InetAddress
 
 class DnsFallback : Dns {
-  private var initialized = false
 
   override fun lookup(hostname: String): MutableList<InetAddress> {
-    if (!initialized) {
+    ensureInitialized()
+    return Address.getAllByName(hostname).toMutableList()
+  }
+
+  companion object {
+    @Volatile
+    private var initialized = false
+    private val initLock = Any()
+
+    internal fun ensureInitialized(
+      configureResolver: () -> Unit = ::configureDefaultResolver
+    ) {
+      if (!initialized) {
+        synchronized(initLock) {
+          if (!initialized) {
+            configureResolver()
+            initialized = true
+          }
+        }
+      }
+    }
+
+    internal fun resetForTest() {
+      synchronized(initLock) {
+        initialized = false
+      }
+    }
+
+    private fun configureDefaultResolver() {
       val googleResolver = SimpleResolver("8.8.8.8")
       val cloudflareResolver = SimpleResolver("1.1.1.1")
       Lookup.setDefaultResolver(ExtendedResolver(arrayOf(googleResolver, cloudflareResolver)))
-      initialized = true
     }
-
-    return Address.getAllByName(hostname).toMutableList()
   }
 }

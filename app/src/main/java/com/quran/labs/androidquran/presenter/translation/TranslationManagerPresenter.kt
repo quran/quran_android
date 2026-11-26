@@ -34,6 +34,7 @@ import okio.sink
 import okio.source
 import timber.log.Timber
 import java.io.File
+import java.io.IOException
 
 @SingleIn(AppScope::class)
 open class TranslationManagerPresenter @Inject internal constructor(
@@ -129,10 +130,12 @@ open class TranslationManagerPresenter @Inject internal constructor(
       val request: Request = Request.Builder()
         .url(url)
         .build()
-      val response = okHttpClient.newCall(request).execute()
-      val responseBody = response.body
-      val result = moshiTranslationListAdapter.fromJson(responseBody!!.source())
-      responseBody.close()
+      val result = okHttpClient.newCall(request).execute().use { response ->
+        if (!response.isSuccessful) {
+          throw IOException("Unexpected response code: ${response.code}")
+        }
+        moshiTranslationListAdapter.fromJson(response.body.source())
+      }
       if (result != null && result.translations.isNotEmpty()) {
         emit(result)
       }
@@ -170,11 +173,21 @@ open class TranslationManagerPresenter @Inject internal constructor(
   internal open suspend fun mergeWithServerTranslations(serverTranslations: List<Translation>): List<TranslationItem> {
     val localTranslations = translationsDBAdapter.translationsHash()
     val databaseDir = quranFileUtils.getQuranDatabaseDirectory()
+    val databaseDirCanonical = databaseDir.canonicalPath
+    val databaseDirPrefix = if (databaseDirCanonical.endsWith(File.separator)) {
+      databaseDirCanonical
+    } else {
+      databaseDirCanonical + File.separator
+    }
     val updates: MutableList<TranslationItem> = ArrayList()
 
-    val results = serverTranslations.mapIndexed { _, translation ->
+    val results = serverTranslations.mapNotNull { translation ->
+      val dbFile = resolveSafeTranslationFile(databaseDir, databaseDirPrefix, translation.fileName)
+      if (dbFile == null) {
+        Timber.w("Ignoring translation with unsafe filename: %s", translation.fileName)
+        return@mapNotNull null
+      }
       val local = localTranslations[translation.id]
-      val dbFile = File(databaseDir, translation.fileName)
       val translationExists = dbFile.exists()
       var override: TranslationItem? = null
 
@@ -222,6 +235,22 @@ open class TranslationManagerPresenter @Inject internal constructor(
       translationsDBAdapter.writeTranslationUpdates(updates)
     }
     return results
+  }
+
+  private fun resolveSafeTranslationFile(
+    databaseDir: File,
+    databaseDirPrefix: String,
+    fileName: String
+  ): File? {
+    if (fileName.isBlank() ||
+      fileName.contains('/') ||
+      fileName.contains('\\') ||
+      fileName.contains("..")
+    ) {
+      return null
+    }
+    val target = File(databaseDir, fileName)
+    return if (target.canonicalPath.startsWith(databaseDirPrefix)) target else null
   }
 
   private fun getVersionFromDatabase(filename: String): Pair<Int, Int> {

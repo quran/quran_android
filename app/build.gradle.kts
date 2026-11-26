@@ -136,6 +136,9 @@ androidComponents {
     variant.resValues.put(variant.makeResValueKey("string", "authority"),
       ResValue("$applicationId.data.QuranDataProvider")
     )
+    variant.resValues.put(variant.makeResValueKey("string", "search_suggest_intent_data"),
+      ResValue("content://$applicationId.data.QuranDataProvider/quran/verse")
+    )
     variant.resValues.put(variant.makeResValueKey("string", "file_authority"),
       ResValue("$applicationId.fileprovider")
     )

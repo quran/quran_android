@@ -27,7 +27,9 @@ import java.util.concurrent.TimeUnit
  * deterministic PNG on-demand, keeping browsing cheap.
  */
 class QariArtworkContentProvider : ContentProvider() {
+  @Volatile
   private var didInject = false
+  private val injectionLock = Any()
 
   @Inject
   lateinit var pageProvider: PageProvider
@@ -61,7 +63,7 @@ class QariArtworkContentProvider : ContentProvider() {
   }
 
   override fun openFile(uri: Uri, mode: String): ParcelFileDescriptor {
-    if (!mode.startsWith("r")) throw FileNotFoundException("Read-only provider")
+    if (mode != "r") throw FileNotFoundException("Read-only provider")
     val (qariId, sura) = parse(uri)
       ?: throw FileNotFoundException("Unknown uri: $uri")
     // Some qaris may legitimately have id == 0.
@@ -114,7 +116,7 @@ class QariArtworkContentProvider : ContentProvider() {
 
   private fun isKnownQariId(qariId: Int): Boolean {
     return if (!ensureInjected()) {
-      true
+      false
     } else {
       val cached = knownQariIdCache[qariId]
       if (cached != null) {
@@ -177,18 +179,21 @@ class QariArtworkContentProvider : ContentProvider() {
   }
 
   private fun ensureInjected(): Boolean {
-    return if (didInject) {
-      true
-    } else {
-      val appContext = context?.applicationContext as? QuranApplicationComponentProvider
-      val component = runCatching { appContext?.provideQuranApplicationComponent() }.getOrNull()
-      val injector = component as? QuranAutoInjector
-      if (injector != null) {
-        injector.inject(this)
-        didInject = true
+    if (didInject) return true
+    return synchronized(injectionLock) {
+      if (didInject) {
         true
       } else {
-        false
+        val appContext = context?.applicationContext as? QuranApplicationComponentProvider
+        val component = runCatching { appContext?.provideQuranApplicationComponent() }.getOrNull()
+        val injector = component as? QuranAutoInjector
+        if (injector != null) {
+          injector.inject(this)
+          didInject = true
+          true
+        } else {
+          false
+        }
       }
     }
   }

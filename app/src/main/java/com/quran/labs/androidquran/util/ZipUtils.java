@@ -41,6 +41,9 @@ public class ZipUtils {
         Enumeration<? extends ZipEntry> entries = zip.entries();
 
         String canonicalPath = destDirectory.getCanonicalPath();
+        String canonicalDestWithSep = canonicalPath.endsWith(File.separator)
+            ? canonicalPath
+            : canonicalPath + File.separator;
 
         long total = 0;
         int processedFiles = 0;
@@ -49,27 +52,44 @@ public class ZipUtils {
           ZipEntry entry = entries.nextElement();
 
           File currentEntryFile = new File(destDirectory, entry.getName());
-          if (currentEntryFile.getCanonicalPath().startsWith(canonicalPath)) {
-            if (entry.isDirectory()) {
-              if (!currentEntryFile.exists()) {
-                currentEntryFile.mkdirs();
-              }
-              continue;
-            } else if (currentEntryFile.exists()) {
+          String entryCanonicalPath = currentEntryFile.getCanonicalPath();
+          if (entry.isDirectory()) {
+            if (!entryCanonicalPath.equals(canonicalPath)
+                && !entryCanonicalPath.startsWith(canonicalDestWithSep)) {
+              throw new IllegalStateException("Invalid zip file.");
+            }
+            if (!currentEntryFile.isDirectory() && !currentEntryFile.mkdirs()
+                && !currentEntryFile.isDirectory()) {
+              throw new IOException("Failed to create directory: " + currentEntryFile);
+            }
+            continue;
+          }
+
+          if (entryCanonicalPath.startsWith(canonicalDestWithSep)) {
+            File parent = currentEntryFile.getParentFile();
+            if (parent != null && !parent.isDirectory() && !parent.mkdirs()
+                && !parent.isDirectory()) {
+              throw new IOException("Failed to create parent directory: " + parent);
+            }
+            if (currentEntryFile.exists()) {
               // delete files that already exist
               currentEntryFile.delete();
             }
 
-            try ( InputStream is = zip.getInputStream(entry);  FileOutputStream ostream = new FileOutputStream(currentEntryFile)) {
+            try (InputStream is = zip.getInputStream(entry);
+                 FileOutputStream ostream = new FileOutputStream(currentEntryFile)) {
               int size;
               byte[] buf = new byte[BUFFER_SIZE];
-              while (total + BUFFER_SIZE <= MAX_UNZIPPED_SIZE && (size = is.read(buf)) > 0) {
+              while ((size = is.read(buf)) > 0) {
+                if (total + size > MAX_UNZIPPED_SIZE) {
+                  throw new IllegalStateException("Invalid zip file.");
+                }
                 ostream.write(buf, 0, size);
                 total += size;
               }
             }
 
-            if (processedFiles >= MAX_FILES || total >= MAX_UNZIPPED_SIZE) {
+            if (processedFiles >= MAX_FILES) {
               throw new IllegalStateException("Invalid zip file.");
             }
 

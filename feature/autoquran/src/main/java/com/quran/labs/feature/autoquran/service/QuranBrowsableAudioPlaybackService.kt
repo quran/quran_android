@@ -297,7 +297,7 @@ class QuranBrowsableAudioPlaybackService : MediaLibraryService() {
           session.notifySearchResultChanged(browser, query, surahBuilder.search(query).size, params)
           LibraryResult.ofVoid(params)
         }.getOrElse { t ->
-          Timber.e(t, "onSearch failed for query=$query")
+          Timber.e(t, "onSearch failed (queryLength=%d)", query.length)
           LibraryResult.ofError(SessionError.ERROR_UNKNOWN)
         }
         settable.set(result)
@@ -319,7 +319,7 @@ class QuranBrowsableAudioPlaybackService : MediaLibraryService() {
           val items = surahBuilder.search(query)
           LibraryResult.ofItemList(items, LibraryParams.Builder().build())
         }.getOrElse { t ->
-          Timber.e(t, "onGetSearchResult failed for query=$query")
+          Timber.e(t, "onGetSearchResult failed (queryLength=%d)", query.length)
           LibraryResult.ofError(SessionError.ERROR_UNKNOWN)
         }
         settable.set(result)

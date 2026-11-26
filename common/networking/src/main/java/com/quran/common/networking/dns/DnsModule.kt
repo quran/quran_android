@@ -15,7 +15,7 @@ class DnsModule {
 
   @Provides
   fun providesDns(servers: List<@JvmSuppressWildcards Dns>): Dns {
-    return MultiDns(servers)
+    return MultiDns(servers, listOf(DnsFallback()))
   }
 
   @Provides
@@ -29,7 +29,7 @@ class DnsModule {
         .cache(dnsCache)
         .build()
 
-    return listOfNotNull(Dns.SYSTEM, DnsFallback(), provideCloudflareDns(bootstrapClient))
+    return listOfNotNull(Dns.SYSTEM, provideCloudflareDns(bootstrapClient))
   }
 
   private fun provideCloudflareDns(bootstrapClient: OkHttpClient): Dns? {

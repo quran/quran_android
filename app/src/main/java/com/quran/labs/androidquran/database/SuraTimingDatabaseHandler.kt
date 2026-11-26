@@ -56,17 +56,18 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
   }
 
   init {
-    Timber.d("opening gapless data file, %s", path)
+    val dbFileName = File(path).name
+    Timber.d("opening gapless data file: %s", dbFileName)
     database = try {
       SQLiteDatabase.openDatabase(
         path, null,
         SQLiteDatabase.NO_LOCALIZED_COLLATORS, DefaultDatabaseErrorHandler()
       )
     } catch (sce: SQLiteDatabaseCorruptException) {
-      Timber.d("database corrupted: %s", path)
+      Timber.d("database corrupted: %s", dbFileName)
       null
     } catch (se: SQLException) {
-      Timber.d("database at $path ${if (File(path).exists()) "exists " else "doesn 't exist"}")
+      Timber.d("database $dbFileName ${if (File(path).exists()) "exists" else "doesn't exist"}")
       Timber.e(se)
       null
     }
@@ -117,7 +118,7 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
     return try {
       cursor = database?.query(
         PropertiesTable.TABLE_NAME, arrayOf(PropertiesTable.COL_VALUE),
-        PropertiesTable.COL_PROPERTY + "= '$property'", null, null, null, null
+        "${PropertiesTable.COL_PROPERTY} = ?", arrayOf(property), null, null, null
       )
       if (cursor != null && cursor.moveToFirst()) {
         cursor.getInt(0)

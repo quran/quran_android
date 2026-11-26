@@ -2,6 +2,7 @@ package com.quran.common.search.arabic
 
 object ArabicCharacterHelper {
   private const val bannedChars = "[()]"
+  private const val regexMetaChars = "\\.*+?{}|^$"
   private val lookupTable = hashMapOf(
       // given: ا
       // match: آأإاﻯ
@@ -54,8 +55,12 @@ object ArabicCharacterHelper {
         regexBuilder.append("[")
         regexBuilder.append(result)
         regexBuilder.append("]")
-      } else if (it !in bannedChars){
-        regexBuilder.append(it)
+      } else if (it !in bannedChars) {
+        if (it in regexMetaChars) {
+          regexBuilder.append(Regex.escape(it.toString()))
+        } else {
+          regexBuilder.append(it)
+        }
       }
     }
     return regexBuilder.toString()

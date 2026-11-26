@@ -73,7 +73,7 @@ class QuranSyncActivity : FragmentActivity() {
       ?.provideQuranApplicationComponent() as? QuranSyncComponentInterface
     injector?.quranSyncComponentFactory()?.generate()?.inject(this)
 
-    if (!syncManager.isConfigured) {
+    if (!::syncManager.isInitialized || !syncManager.isConfigured) {
       finish()
       return
     }
@@ -218,7 +218,9 @@ class QuranSyncActivity : FragmentActivity() {
   }
 
   override fun onDestroy() {
-    syncManager.unregisterAuthActivity(authActivityRegistration)
+    if (::syncManager.isInitialized) {
+      syncManager.unregisterAuthActivity(authActivityRegistration)
+    }
     authActivityRegistration = null
     super.onDestroy()
   }

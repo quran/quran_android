@@ -12,53 +12,69 @@ import timber.log.Timber
 import java.net.InetAddress
 import java.net.UnknownHostException
 
-class MultiDns(private val servers: List<Dns>) : Dns {
+class MultiDns(
+  private val servers: List<Dns>,
+  private val fallbackServers: List<Dns> = emptyList()
+) : Dns {
 
   override fun lookup(hostname: String): MutableList<InetAddress> {
     return runBlocking {
-      val start = System.currentTimeMillis()
+      val exceptions = mutableListOf<Throwable>()
+      lookupFromServers(servers, hostname, exceptions)?.let { return@runBlocking it }
+      lookupFromServers(fallbackServers, hostname, exceptions)?.let { return@runBlocking it }
 
-      val job = SupervisorJob()
-      val externalScope = CoroutineScope(Dispatchers.IO + job)
+      val primaryException = UnknownHostException("All DNS servers failed for hostname: $hostname")
+      exceptions.forEach(primaryException::addSuppressed)
+      throw primaryException
+    }
+  }
 
-      val tasks: List<Pair<Deferred<Result<MutableList<InetAddress>>>, Dns>> =
-        servers.map { dns ->
-          externalScope.async {
-            runCatching { dns.lookup(hostname).toMutableList() }
-          } to dns
-        }
+  private suspend fun lookupFromServers(
+    candidates: List<Dns>,
+    hostname: String,
+    exceptions: MutableList<Throwable>
+  ): MutableList<InetAddress>? {
+    if (candidates.isEmpty()) return null
 
-      try {
-        val remaining = tasks.toMutableList()
-        val exceptions = mutableListOf<Throwable>()
+    val start = System.currentTimeMillis()
+    val job = SupervisorJob()
+    val externalScope = CoroutineScope(Dispatchers.IO + job)
 
-        while (remaining.isNotEmpty()) {
-          val (result, completedDeferred, provider) = select<Triple<Result<MutableList<InetAddress>>, Deferred<Result<MutableList<InetAddress>>>, Dns>> {
-            remaining.forEach { (deferred, dns) ->
-              deferred.onAwait { answer ->
-                Timber.d("DNS server $dns responded for $hostname in ${System.currentTimeMillis() - start}ms")
-                Triple(answer, deferred, dns)
-              }
+    val tasks: List<Pair<Deferred<Result<MutableList<InetAddress>>>, Dns>> =
+      candidates.map { dns ->
+        externalScope.async {
+          runCatching { dns.lookup(hostname).toMutableList() }
+        } to dns
+      }
+
+    try {
+      val remaining = tasks.toMutableList()
+
+      while (remaining.isNotEmpty()) {
+        val (result, completedDeferred, provider) = select<Triple<Result<MutableList<InetAddress>>, Deferred<Result<MutableList<InetAddress>>>, Dns>> {
+          remaining.forEach { (deferred, dns) ->
+            deferred.onAwait { answer ->
+              Timber.d("DNS server $dns responded for $hostname in ${System.currentTimeMillis() - start}ms")
+              Triple(answer, deferred, dns)
             }
           }
-
-          remaining.removeAll { it.first == completedDeferred }
-
-          result.onSuccess { successResult ->
-            Timber.d("DNS got result from $provider; cancelling others and returning")
-            job.cancel()
-            return@runBlocking successResult
-          }.onFailure { exception ->
-            exceptions.add(exception)
-          }
         }
 
-        val primaryException = UnknownHostException("All DNS servers failed for hostname: $hostname")
-        exceptions.forEach(primaryException::addSuppressed)
-        throw primaryException
-      } finally {
-        job.cancel()
+        remaining.removeAll { it.first == completedDeferred }
+
+        val successResult = result.getOrNull()
+        if (successResult != null) {
+          Timber.d("DNS got result from $provider; cancelling others and returning")
+          job.cancel()
+          return successResult
+        } else {
+          result.exceptionOrNull()?.let(exceptions::add)
+        }
       }
+
+      return null
+    } finally {
+      job.cancel()
     }
   }
 }

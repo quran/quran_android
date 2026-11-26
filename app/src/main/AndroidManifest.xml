@@ -185,11 +185,7 @@
     <service
         android:exported="false"
         android:name=".service.AudioService"
-        android:foregroundServiceType="mediaPlayback">
-      <intent-filter>
-        <action android:name="android.intent.action.MEDIA_BUTTON"/>
-      </intent-filter>
-    </service>
+        android:foregroundServiceType="mediaPlayback" />
 
     <service
         android:name=".widget.BookmarksWidgetService"
@@ -200,7 +196,6 @@
         android:exported="true">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-        <action android:name="com.quran.labs.androidquran.UPDATE_LIST" />
       </intent-filter>
 
       <meta-data

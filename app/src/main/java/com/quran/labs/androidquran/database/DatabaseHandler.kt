@@ -88,22 +88,30 @@ class DatabaseHandler private constructor(
 
     // if there's no Quran base directory, there are no databases
     val base = quranFileUtils.getQuranDatabaseDirectory()
-    base.let {
-      val path = File(base, databaseName).absolutePath
-      Timber.d("opening database file: %s", path)
-      database = try {
-        SQLiteDatabase.openDatabase(path, null,
-          SQLiteDatabase.NO_LOCALIZED_COLLATORS, DefaultDatabaseErrorHandler())
-      } catch (sce: SQLiteDatabaseCorruptException) {
-        Timber.d("corrupt database: %s", databaseName)
-        throw sce
-      } catch (se: SQLException) {
-        Timber.d("database at $path ${if (File(path).exists()) "exists " else "doesn 't exist"}")
-        throw se
-      }
-
-      schemaVersion = getSchemaVersion()
+    val baseCanonical = base.canonicalPath
+    val basePrefix = if (baseCanonical.endsWith(File.separator)) {
+      baseCanonical
+    } else {
+      baseCanonical + File.separator
     }
+    val dbFile = File(base, databaseName)
+    val path = dbFile.canonicalPath
+    require(!databaseName.contains('/') && !databaseName.contains('\\') && path.startsWith(basePrefix)) {
+      "Invalid database name"
+    }
+    Timber.d("opening database file: %s", dbFile.name)
+    database = try {
+      SQLiteDatabase.openDatabase(path, null,
+        SQLiteDatabase.NO_LOCALIZED_COLLATORS, DefaultDatabaseErrorHandler())
+    } catch (sce: SQLiteDatabaseCorruptException) {
+      Timber.d("corrupt database: %s", dbFile.name)
+      throw sce
+    } catch (se: SQLException) {
+      Timber.d("database ${dbFile.name} ${if (dbFile.exists()) "exists" else "doesn't exist"}")
+      throw se
+    }
+
+    schemaVersion = getSchemaVersion()
   }
 
   @Retention(AnnotationRetention.SOURCE)
@@ -239,48 +247,41 @@ class DatabaseHandler private constructor(
   private fun getVersesInternal(verses: VerseRange, table: String): Cursor? {
     if (!validDatabase()) return null
 
-    val whereQuery = StringBuilder()
-    whereQuery.append("(")
+    val whereQuery: String
+    val whereArgs: Array<String>
 
     if (verses.startSura == verses.endingSura) {
-      whereQuery.append(COL_SURA)
-        .append("=").append(verses.startSura)
-        .append(" and ").append(COL_AYAH)
-        .append(">=").append(verses.startAyah)
-        .append(" and ").append(COL_AYAH)
-        .append("<=").append(verses.endingAyah)
+      whereQuery =
+        "($COL_SURA = CAST(? AS INTEGER) and $COL_AYAH >= CAST(? AS INTEGER) and $COL_AYAH <= CAST(? AS INTEGER))"
+      whereArgs = arrayOf(
+        verses.startSura.toString(),
+        verses.startAyah.toString(),
+        verses.endingAyah.toString()
+      )
     } else {
-      // (sura = minSura and ayah >= minAyah)
-      whereQuery.append("(").append(COL_SURA).append("=")
-        .append(verses.startSura).append(" and ")
-        .append(COL_AYAH).append(">=").append(verses.startAyah).append(")")
-
-      whereQuery.append(" or ")
-
-      // (sura = maxSura and ayah <= maxAyah)
-      whereQuery.append("(").append(COL_SURA).append("=")
-        .append(verses.endingSura).append(" and ")
-        .append(COL_AYAH).append("<=").append(verses.endingAyah).append(")")
-
-      whereQuery.append(" or ")
-
-      // (sura > minSura and sura < maxSura)
-      whereQuery.append("(").append(COL_SURA).append(">")
-        .append(verses.startSura).append(" and ")
-        .append(COL_SURA).append("<")
-        .append(verses.endingSura).append(")")
+      whereQuery =
+        "(($COL_SURA = CAST(? AS INTEGER) and $COL_AYAH >= CAST(? AS INTEGER)) or ($COL_SURA = CAST(? AS INTEGER) and $COL_AYAH <= CAST(? AS INTEGER)) or ($COL_SURA > CAST(? AS INTEGER) and $COL_SURA < CAST(? AS INTEGER)))"
+      whereArgs = arrayOf(
+        verses.startSura.toString(),
+        verses.startAyah.toString(),
+        verses.endingSura.toString(),
+        verses.endingAyah.toString(),
+        verses.startSura.toString(),
+        verses.endingSura.toString()
+      )
     }
-
-    whereQuery.append(")")
 
     return database?.query(
       table, arrayOf("rowid as _id", COL_SURA, COL_AYAH, COL_TEXT),
-      whereQuery.toString(), null, null, null,
+      whereQuery, whereArgs, null, null,
       "$COL_SURA,$COL_AYAH"
     )
   }
 
   fun getVersesByIds(ids: List<Int>): Cursor? {
+    if (!validDatabase() || ids.isEmpty()) {
+      return null
+    }
     val builder = StringBuilder()
     for (i in ids.indices) {
       if (i > 0) {
@@ -329,7 +330,7 @@ class DatabaseHandler private constructor(
     ) +
         " " + searcher.getLimit(withSnippets)
     searchText = searcher.processSearchText(searchText, useFullTextIndex)
-    Timber.d("search query: $qtext, query: $searchText")
+    Timber.d("search query length: %d, fts: %b", searchText.length, useFullTextIndex)
 
     val columns = arrayOf(BaseColumns._ID, COL_SURA, COL_AYAH, COL_TEXT)
     return try {

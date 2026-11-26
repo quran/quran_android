@@ -473,7 +473,8 @@ class QuranFileUtils @Inject constructor(
   }
 
   private fun recitationsDirectory(): String {
-    val recitationDirectory = getQuranBaseDirectory(appContext).toString() + "$recitationPath/"
+    val baseDir = getQuranBaseDirectory(appContext)?.let(::File) ?: quranInternalBaseDirectory
+    val recitationDirectory = File(baseDir, recitationPath).absolutePath + File.separator
     makeDirectory(recitationDirectory)
     return recitationDirectory
   }

@@ -207,4 +207,24 @@ class ArabicCharacterHelperTest {
     // Assert
     assertThat(pattern.containsMatchIn("\u0623")).isTrue()
   }
+
+  @Test
+  fun `regex metacharacters are escaped and compile safely without ReDoS`() {
+    val metacharacters = ".*+?{}|^$\\"
+    val regex = ArabicCharacterHelper.generateRegex(metacharacters)
+
+    val compiled = Regex(regex)
+    assertThat(compiled.containsMatchIn(metacharacters)).isTrue()
+    assertThat(compiled.containsMatchIn("anything_else")).isFalse()
+  }
+
+  @Test
+  fun `malicious quantifier and grouping query compiles and matches only literal text`() {
+    val payload = "(a+)+[0-9]{1,9}\\E.*"
+    val regex = ArabicCharacterHelper.generateRegex(payload)
+
+    val compiled = Regex(regex)
+    assertThat(compiled.containsMatchIn("aaaaaaaaaaaaaaaaaaaa!")).isFalse()
+    assertThat(compiled.containsMatchIn("a++0-9{1,9}\\E.*")).isTrue()
+  }
 }

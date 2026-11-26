@@ -32,7 +32,20 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
   }
 
   override fun processSearchText(searchText: String, hasFTS: Boolean): String {
-    return defaultSearcher.processSearchText(searchText.replace(arabicRegex, "_"), false)
+    val escaped = if (defaultSearcher is DefaultSearcher) {
+      defaultSearcher.escapeLikeWildcards(searchText)
+    } else {
+      searchText
+        .replace("\\", "\\\\")
+        .replace("%", "\\%")
+        .replace("_", "\\_")
+    }
+    val normalized = escaped.replace(arabicRegex, "_")
+    return if (defaultSearcher is DefaultSearcher) {
+      "%$normalized%"
+    } else {
+      defaultSearcher.processSearchText(normalized, false)
+    }
   }
 
   override fun runQuery(database: SQLiteDatabase,

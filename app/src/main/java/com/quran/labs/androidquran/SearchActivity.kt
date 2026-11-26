@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.database.Cursor
 import android.os.Bundle
-import android.text.Html
 import android.text.SpannableString
 import android.view.LayoutInflater
 import android.view.Menu
@@ -23,6 +22,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
@@ -410,7 +410,7 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener,
 
       val text = cursor.getString(3)
       val suraName = quranDisplayData.getSuraName(this.context, sura, false)
-      holder.text.text = Html.fromHtml(text)
+      holder.text.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT)
       holder.metadata.text = this.context.getString(
         R.string.found_in_sura,
         sura,

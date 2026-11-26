@@ -51,8 +51,9 @@ class QuranDataProvider : ContentProvider() {
         return null
       }
     }
-    Timber.d("uri: %s", uri.toString())
-    return when (uriMatcher.match(uri)) {
+    val uriMatch = uriMatcher.match(uri)
+    Timber.d("querying uri match: %d", uriMatch)
+    return when (uriMatch) {
       SEARCH_SUGGEST -> {
         requireNotNull(selectionArgs) { "selectionArgs must be provided for the Uri: $uri" }
         getSuggestions(selectionArgs[0])
@@ -168,7 +169,7 @@ class QuranDataProvider : ContentProvider() {
     query: String,
     translations: List<LocalTranslation> = availableTranslations()
   ): Cursor? {
-    Timber.d("query: %s", query)
+    Timber.d("query length: %d", query.length)
     val queryIsArabic = QuranUtils.doesStringContainArabic(query)
     val haveArabic = queryIsArabic &&
         quranFileUtils.hasArabicSearchDatabase()
