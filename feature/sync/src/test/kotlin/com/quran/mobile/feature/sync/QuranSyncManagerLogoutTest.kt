@@ -1,10 +1,28 @@
 package com.quran.mobile.feature.sync
 
+import android.content.ContextWrapper
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
 class QuranSyncManagerLogoutTest {
+
+  @Test
+  fun `sync manager defers graph initialization when unconfigured`() = runTest {
+    val unconfiguredContext = ContextWrapper(null)
+
+    val manager = QuranSyncManager(unconfiguredContext)
+
+    assertThat(manager.isGraphInitialized()).isFalse()
+    manager.startForegroundSync()
+    manager.warmUpIfConfigured()
+    assertThat(manager.isConfigured).isFalse()
+    assertThat(manager.canTriggerSync).isFalse()
+    assertThat(manager.canTriggerSyncFlow.first()).isFalse()
+    assertThat(manager.showBookmarksSignInCardFlow.first()).isFalse()
+    assertThat(manager.isGraphInitialized()).isFalse()
+  }
 
   @Test
   fun `logout clears recovery marker when logout succeeds`() = runTest {

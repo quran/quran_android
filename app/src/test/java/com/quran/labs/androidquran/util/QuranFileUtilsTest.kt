@@ -1,6 +1,7 @@
 package com.quran.labs.androidquran.util
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.hardware.display.DisplayManager
 import android.os.Environment
 import android.view.Display
@@ -9,8 +10,14 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.data.source.DisplaySize
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.base.TestApplication
+import com.quran.labs.androidquran.common.Response
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.fakes.FakePageProvider
+import okhttp3.OkHttpClient
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
+import okio.Buffer
+import java.io.ByteArrayOutputStream
 import java.io.File
 import org.junit.After
 import org.junit.Before
@@ -88,10 +95,68 @@ class QuranFileUtilsTest {
     assertThat(recordingsDir).startsWith(expectedBase)
   }
 
-  private fun quranFileUtils(ayahInfoDirectory: String): QuranFileUtils {
+  @Test
+  fun `getPageFileName formats three digit zero padded filenames`() {
+    assertThat(QuranFileUtils.getPageFileName(1)).isEqualTo("page001.png")
+    assertThat(QuranFileUtils.getPageFileName(10)).isEqualTo("page010.png")
+    assertThat(QuranFileUtils.getPageFileName(604)).isEqualTo("page604.png")
+  }
+
+  @Test
+  fun `getImageFromWeb writes raw response bytes and returns error on repeated 404`() {
+    val server = MockWebServer()
+    server.start()
+    try {
+      val baseUrl = server.url("/").toString()
+      val quranFileUtils = quranFileUtils(
+        ayahInfoDirectory = "new_madani/databases",
+        imagesBaseUrl = baseUrl,
+      )
+      val okHttpClient = OkHttpClient.Builder().build()
+
+      // 1) 404 triggers 1 retry then returns ERROR_DOWNLOADING_ERROR
+      server.enqueue(MockResponse().setResponseCode(404))
+      server.enqueue(MockResponse().setResponseCode(404))
+      val failedResponse = quranFileUtils.getImageFromWeb(
+        okHttpClient, context, "_1024", "page001.png"
+      )
+      assertThat(failedResponse.isSuccessful).isFalse()
+      assertThat(failedResponse.errorCode).isEqualTo(Response.ERROR_DOWNLOADING_ERROR)
+      assertThat(server.requestCount).isEqualTo(2)
+
+      // 2) 200 writes exact raw PNG bytes without recompression
+      val sourceBitmap = Bitmap.createBitmap(8, 8, Bitmap.Config.ARGB_8888)
+      val rawBytes = ByteArrayOutputStream().use { out ->
+        sourceBitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+        out.toByteArray()
+      }
+      sourceBitmap.recycle()
+
+      server.enqueue(MockResponse().setResponseCode(200).setBody(Buffer().write(rawBytes)))
+      val successResponse = quranFileUtils.getImageFromWeb(
+        okHttpClient, context, "_1024", "page001.png"
+      )
+      assertThat(successResponse.isSuccessful).isTrue()
+      assertThat(successResponse.bitmap).isNotNull()
+      successResponse.bitmap?.recycle()
+
+      val savedFile = File(quranFileUtils.getQuranImagesDirectory("_1024"), "page001.png")
+      assertThat(savedFile.exists()).isTrue()
+      assertThat(savedFile.readBytes()).isEqualTo(rawBytes)
+    } finally {
+      server.shutdown()
+    }
+  }
+
+  private fun quranFileUtils(
+    ayahInfoDirectory: String,
+    imagesBaseUrl: String = "",
+  ): QuranFileUtils {
     val pageProvider = object : PageProvider by FakePageProvider() {
       override fun getDatabaseDirectoryName(): String = "databases"
       override fun getAyahInfoDirectoryName(): String = ayahInfoDirectory
+      override fun getImagesDirectoryName(): String = "images"
+      override fun getImagesBaseUrl(): String = imagesBaseUrl
     }
     val display = context.getSystemService(DisplayManager::class.java)
       .getDisplay(Display.DEFAULT_DISPLAY)!!

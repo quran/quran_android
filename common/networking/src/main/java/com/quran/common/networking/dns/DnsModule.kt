@@ -9,6 +9,7 @@ import okhttp3.OkHttpClient
 import okhttp3.dnsoverhttps.DnsOverHttps
 import java.io.File
 import java.net.UnknownHostException
+import java.util.concurrent.TimeUnit
 
 @BindingContainer
 class DnsModule {
@@ -20,13 +21,17 @@ class DnsModule {
 
   @Provides
   fun provideDnsCache(cacheDirectory: File): Cache {
-    return Cache(cacheDirectory, 5 * 1024 * 1024L)
+    return Cache(File(cacheDirectory, "dns_cache"), 5 * 1024 * 1024L)
   }
 
   @Provides
   fun provideServers(dnsCache: Cache): List<Dns> {
     val bootstrapClient = OkHttpClient.Builder()
         .cache(dnsCache)
+        .connectTimeout(BOOTSTRAP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .readTimeout(BOOTSTRAP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .writeTimeout(BOOTSTRAP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        .callTimeout(BOOTSTRAP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
         .build()
 
     return listOfNotNull(Dns.SYSTEM, provideCloudflareDns(bootstrapClient))
@@ -41,5 +46,9 @@ class DnsModule {
     } catch (_: UnknownHostException) {
       null
     }
+  }
+
+  companion object {
+    private const val BOOTSTRAP_TIMEOUT_SECONDS = 5L
   }
 }

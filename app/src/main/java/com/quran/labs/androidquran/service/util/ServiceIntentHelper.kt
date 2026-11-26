@@ -41,15 +41,6 @@ object ServiceIntentHelper {
   }
 
   @JvmStatic
-  fun getErrorResourceFromDownloadIntent(
-    intent: Intent,
-    willRetry: Boolean
-  ): Int {
-    val errorCode = intent.getIntExtra(QuranDownloadNotifier.ProgressIntent.ERROR_CODE, 0)
-    return getErrorResourceFromErrorCode(errorCode, willRetry)
-  }
-
-
   fun getErrorResourceFromErrorCode(
     errorCode: Int,
     willRetry: Boolean

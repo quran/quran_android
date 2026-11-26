@@ -1,11 +1,13 @@
 package com.quran.mobile.feature.sync.state
 
+import androidx.compose.runtime.Immutable
 import com.quran.shared.pipeline.SyncRun
 import kotlinx.collections.immutable.ImmutableList
 
 internal sealed interface AccountSyncState {
   data object SessionEnded : AccountSyncState
 
+  @Immutable
   data class SignedIn(
     val profile: AccountProfile,
     val activity: SyncActivityState,

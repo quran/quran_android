@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.common.drawing.helper
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -7,6 +8,7 @@ import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.RectF
+import android.util.SparseArray
 import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
@@ -21,22 +23,18 @@ class SuraHeaderDrawer(@DrawableRes val headerResource: Int,
     isFilterBitmap = true
   }
   private val bounds = RectF()
-  private lateinit var header: Bitmap
 
   override fun draw(pageCoordinates: PageCoordinates, canvas: Canvas, image: ImageView) {
     val width = image.width
-    if (width > 0) {
-      pageCoordinates.suraHeaders.forEach {
-        if (!::header.isInitialized) {
-          val tmp = BitmapFactory.decodeResource(image.context.resources, headerResource,
-              BitmapFactory.Options().apply { inSampleSize = 2 })
-          header = tmp.extractAlpha()
-          tmp.recycle()
-        }
+    val headers = pageCoordinates.suraHeaders
+    val imageDrawable = image.drawable
+    if (width > 0 && imageDrawable != null && headers.isNotEmpty()) {
+      val header = getOrLoadHeader(image.context)
+      val intrinsicWidth = imageDrawable.intrinsicWidth
+      val left = intrinsicWidth * 0.025f
+      val height = intrinsicWidth * 0.1f
 
-        val intrinsicWidth = image.drawable.intrinsicWidth
-        val left = intrinsicWidth * 0.025f
-        val height = intrinsicWidth * 0.1f
+      headers.forEach {
         val top = it.y - height / 2
         bounds.set(left,
             top,
@@ -46,8 +44,40 @@ class SuraHeaderDrawer(@DrawableRes val headerResource: Int,
         bounds.top += image.paddingTop
         bounds.bottom += image.paddingTop
         bounds.left += image.paddingLeft
-        bounds.right += image.paddingRight
+        bounds.right += image.paddingLeft
         canvas.drawBitmap(header, null, bounds, paint)
+      }
+    }
+  }
+
+  private fun getOrLoadHeader(context: Context): Bitmap {
+    synchronized(headerCache) {
+      val cached = headerCache[headerResource]
+      if (cached != null && !cached.isRecycled) {
+        return cached
+      }
+      val tmp = BitmapFactory.decodeResource(
+        context.resources,
+        headerResource,
+        BitmapFactory.Options().apply { inSampleSize = 2 }
+      )
+      val alphaBitmap = if (tmp.config == Bitmap.Config.ALPHA_8) {
+        tmp
+      } else {
+        tmp.extractAlpha().also { tmp.recycle() }
+      }
+      headerCache.put(headerResource, alphaBitmap)
+      return alphaBitmap
+    }
+  }
+
+  companion object {
+    private val headerCache = SparseArray<Bitmap>()
+
+    @JvmStatic
+    fun clearCache() {
+      synchronized(headerCache) {
+        headerCache.clear()
       }
     }
   }

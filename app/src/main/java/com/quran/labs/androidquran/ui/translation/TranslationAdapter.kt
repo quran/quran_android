@@ -1,7 +1,10 @@
 package com.quran.labs.androidquran.ui.translation
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
+import android.os.Build
+import android.provider.Settings
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -173,7 +176,7 @@ internal class TranslationAdapter(
               // otherwise, unhighlight
               val start = highlightedStartPosition
               val changeCount = highlightedRowCount
-              recyclerView.handler.post {
+              recyclerView.post {
                 notifyItemRangeChanged(start, changeCount, HIGHLIGHT_CHANGE)
               }
             }
@@ -185,9 +188,12 @@ internal class TranslationAdapter(
           notifyItemRangeChanged(startChangeRange, startChangeCount, HIGHLIGHT_CHANGE)
           val layoutManager = recyclerView.layoutManager
           if ((force || highlightedType == HighlightTypes.AUDIO) && layoutManager is LinearLayoutManager) {
-            layoutManager.scrollToPositionWithOffset(startPosition, 64)
-          } else {
+            val offsetPx = (SCROLL_OFFSET_DP * context.resources.displayMetrics.density).toInt()
+            layoutManager.scrollToPositionWithOffset(startPosition, offsetPx)
+          } else if (areAnimatorsEnabled()) {
             recyclerView.smoothScrollToPosition(startPosition)
+          } else {
+            recyclerView.scrollToPosition(startPosition)
           }
         }
       }
@@ -203,7 +209,7 @@ internal class TranslationAdapter(
     if (highlightedAyah > 0 && highlightedRowCount > 0) {
       val start = highlightedStartPosition
       val count = highlightedRowCount
-      recyclerView.handler.post {
+      recyclerView.post {
         notifyItemRangeChanged(start, count)
       }
     }
@@ -293,7 +299,11 @@ internal class TranslationAdapter(
       if (targetAyah != null && targetPage != null) {
         val match = data.indexOfFirst { it.ayahInfo.asSuraAyah() == targetAyah }
         if (match > -1) {
-          recyclerView.smoothScrollToPosition(match)
+          if (areAnimatorsEnabled()) {
+            recyclerView.smoothScrollToPosition(match)
+          } else {
+            recyclerView.scrollToPosition(match)
+          }
         } else {
           // it's not on this page...
           onJumpToVerseListener.onJumpToAyah(targetAyah, targetPage)
@@ -596,6 +606,18 @@ internal class TranslationAdapter(
     }
   }
 
+  private fun areAnimatorsEnabled(): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      ValueAnimator.areAnimatorsEnabled()
+    } else {
+      Settings.Global.getFloat(
+        context.contentResolver,
+        Settings.Global.ANIMATOR_DURATION_SCALE,
+        1f
+      ) != 0f
+    }
+  }
+
   internal interface OnVerseSelectedListener {
     fun onVerseSelected(ayahInfo: QuranAyahInfo)
   }
@@ -610,5 +632,6 @@ internal class TranslationAdapter(
     private const val HIGHLIGHT_CHANGE = 1
     private const val INDICATORS_CHANGE = 2
     private const val SAVED_HIGHLIGHT_ALPHA = 0x4D
+    private const val SCROLL_OFFSET_DP = 64f
   }
 }

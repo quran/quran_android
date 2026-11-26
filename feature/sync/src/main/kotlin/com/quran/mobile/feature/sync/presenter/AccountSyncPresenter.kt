@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
@@ -112,24 +113,19 @@ internal class AccountSyncPresenter(
       }
     }.collectAsState(initial = HeldItemLookup())
 
-    return AccountSyncState.SignedIn(
-      profile = account.profile,
-      activity = account.activity,
-      heldRows = heldItemRows(account.activity.heldItems, lookup),
-      blockingItemCount = account.activity.blockingItems.size,
-      recentRuns = account.activity.runs.take(PREVIEW_COUNT).toImmutableList(),
-      signOutWarning = if (isConfirmingSignOut) {
-        signOutWarning(signOutCounts, account.activity.blockingItems.size)
-      } else {
-        null
-      },
-      isSigningOut = isSigningOut,
-      signOutError = signOutError,
-      eventSink = { event ->
+    val heldRows = remember(account.activity.heldItems, lookup) {
+      heldItemRows(account.activity.heldItems, lookup)
+    }
+    val recentRuns = remember(account.activity.runs) {
+      account.activity.runs.take(PREVIEW_COUNT).toImmutableList()
+    }
+    val currentAccountEventSink by rememberUpdatedState(account.eventSink)
+    val eventSink = remember(scope) {
+      { event: AccountSyncEvent ->
         when (event) {
           AccountSyncEvent.SyncNow -> {
             if (!sessionEnded && !isSigningOut && authState.value is AuthState.Success) {
-              account.eventSink(AccountSettingsEvent.SyncNow)
+              currentAccountEventSink(AccountSettingsEvent.SyncNow)
             }
           }
           AccountSyncEvent.RequestSignOut -> {
@@ -163,6 +159,22 @@ internal class AccountSyncPresenter(
           AccountSyncEvent.DismissSignOutError -> signOutError = null
         }
       }
+    }
+
+    return AccountSyncState.SignedIn(
+      profile = account.profile,
+      activity = account.activity,
+      heldRows = heldRows,
+      blockingItemCount = account.activity.blockingItems.size,
+      recentRuns = recentRuns,
+      signOutWarning = if (isConfirmingSignOut) {
+        signOutWarning(signOutCounts, account.activity.blockingItems.size)
+      } else {
+        null
+      },
+      isSigningOut = isSigningOut,
+      signOutError = signOutError,
+      eventSink = eventSink
     )
   }
 

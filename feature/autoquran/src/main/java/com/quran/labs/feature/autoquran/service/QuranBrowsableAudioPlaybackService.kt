@@ -98,8 +98,8 @@ class QuranBrowsableAudioPlaybackService : MediaLibraryService() {
 
     return RecentPlaybackRecorder(delayedExecutor) { qariId, sura ->
       if (::recentQariManager.isInitialized) {
-        recentQariManager.recordQari(qariId, sura)
-        scope.launch {
+        scope.launch(Dispatchers.IO) {
+          recentQariManager.recordQari(qariId, sura)
           val recentCount = surahBuilder.children(BrowsableSurahBuilder.RECENT_ID).size
           mediaSession?.notifyChildrenChanged(
             BrowsableSurahBuilder.RECENT_ID, recentCount, null

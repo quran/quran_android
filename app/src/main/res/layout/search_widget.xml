@@ -11,8 +11,10 @@
       android:layout_width="0dp"
       android:layout_height="match_parent"
       android:layout_weight="1"
+      android:minHeight="48dp"
       android:scaleType="centerInside"
       android:background="@android:color/transparent"
+      android:contentDescription="@string/app_name"
       android:src="@drawable/icon" />
 
   <ImageButton
@@ -20,7 +22,9 @@
       android:layout_width="0dp"
       android:layout_height="match_parent"
       android:layout_weight="1"
+      android:minHeight="48dp"
       android:background="@android:color/transparent"
+      android:contentDescription="@string/menu_search"
       android:src="@drawable/ic_ab_search" />
 
   <ImageButton
@@ -28,7 +32,9 @@
       android:layout_width="0dp"
       android:layout_height="match_parent"
       android:layout_weight="1"
+      android:minHeight="48dp"
       android:background="@android:color/transparent"
+      android:contentDescription="@string/menu_jump_last_page"
       android:src="@drawable/ic_goto_quran" />
 
   <ImageButton
@@ -36,7 +42,9 @@
       android:layout_width="0dp"
       android:layout_height="match_parent"
       android:layout_weight="1"
+      android:minHeight="48dp"
       android:background="@android:color/transparent"
+      android:contentDescription="@string/menu_jump"
       android:src="@drawable/ic_baseline_arrow_upright_24" />
 
 </LinearLayout>

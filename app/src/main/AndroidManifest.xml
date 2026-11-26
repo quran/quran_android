@@ -151,6 +151,7 @@
     </receiver>
 
     <activity android:name=".QuranImportActivity"
+        android:theme="@style/QuranToolBarDayNight"
         android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.SEND"/>

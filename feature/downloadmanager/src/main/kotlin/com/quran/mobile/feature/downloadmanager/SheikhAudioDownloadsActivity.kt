@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,6 +32,7 @@ import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.EntryForQar
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhDownloadDialog
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraOption
 import com.quran.mobile.feature.downloadmanager.presenter.SheikhAudioPresenter
+import com.quran.mobile.feature.downloadmanager.ui.LoadingIndicator
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.DownloadErrorDialog
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.DownloadProgressDialog
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.RemoveConfirmationDialog
@@ -92,6 +94,12 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
 
       QuranTheme {
         val currentDownloadState = sheikhDownloadsState.value
+        val selectionInfo = currentDownloadState?.selections ?: emptySet()
+
+        BackHandler(enabled = selectionInfo.isNotEmpty()) {
+          sheikhAudioPresenter.clearSelection()
+        }
+
         Box(
           modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
@@ -105,7 +113,6 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
           Column {
             val titleResource =
               currentDownloadState?.qariItem?.nameResource ?: R.string.audio_manager
-            val selectionInfo = currentDownloadState?.selections ?: emptyList()
 
             SheikhDownloadToolbar(
               titleResource = titleResource,
@@ -132,6 +139,8 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
                 onEntryClicked = { onSuraClicked(currentDownloadState.selections, it) },
                 onSelectionStarted = { onSuraClicked(currentDownloadState.selections, it, true) }
               )
+            } else {
+              LoadingIndicator()
             }
           }
 
@@ -176,7 +185,7 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
   }
 
   private fun onSuraClicked(
-    selectedSuras: List<EntryForQari>,
+    selectedSuras: Set<EntryForQari>,
     sura: EntryForQari,
     isStartSelection: Boolean = false
   ) {

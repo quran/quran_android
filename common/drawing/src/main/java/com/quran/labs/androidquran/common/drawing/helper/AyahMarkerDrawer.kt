@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.util.SparseArray
 import android.widget.ImageView
 import com.quran.labs.androidquran.common.drawing.AyahMarkerDrawable
 import com.quran.page.common.data.PageCoordinates
@@ -13,6 +14,7 @@ import java.util.Locale
 
 class AyahMarkerDrawer(private val drawable: AyahMarkerDrawable) : ImageDrawHelper {
   private val formatter = NumberFormat.getIntegerInstance(Locale("ar", "EG"))
+  private val formattedAyahCache = SparseArray<String>()
 
   private val textRatio = 0.0375f
   private val largeTextRatio = 0.03f
@@ -53,11 +55,17 @@ class AyahMarkerDrawer(private val drawable: AyahMarkerDrawable) : ImageDrawHelp
 
             paint.textSize = width * if (it.ayah > 100) largeTextRatio else textRatio
             val yOffset = (paint.descent() - paint.ascent()) / 2 - paint.descent()
-            canvas.drawText(formatter.format(it.ayah),
+            canvas.drawText(formatAyah(it.ayah),
                 points[0] + image.paddingLeft,
                 points[1] + yOffset + image.paddingTop + 4,
                 paint)
           }
+    }
+  }
+
+  private fun formatAyah(ayah: Int): String {
+    return formattedAyahCache.get(ayah) ?: formatter.format(ayah).also {
+      formattedAyahCache.put(ayah, it)
     }
   }
 }

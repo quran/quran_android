@@ -18,11 +18,13 @@ internal data class SyncActivityState(
 ) {
   val blockingItems: ImmutableList<HeldSyncItem> = heldItems.filter { it.waitingOn == null }.toImmutableList()
 
+  @Immutable
   sealed interface Status {
     data object NeverSynced : Status
     data object Syncing : Status
     data class Retrying(val reason: SyncErrorKind) : Status
     data class Failed(val reason: SyncErrorKind?) : Status
+    @Immutable
     data class Synced(val at: Instant) : Status
   }
 }

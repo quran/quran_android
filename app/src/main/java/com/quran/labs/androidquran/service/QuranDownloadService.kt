@@ -12,9 +12,9 @@ import android.os.Looper
 import android.os.Message
 import android.os.Parcelable
 import android.os.StatFs
+import android.os.SystemClock
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.IntentCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.VerseRange
@@ -24,9 +24,10 @@ import com.quran.labs.androidquran.service.download.DownloadStrategy
 import com.quran.labs.androidquran.service.download.GaplessDownloadStrategy
 import com.quran.labs.androidquran.service.download.GappedDownloadStrategy
 import com.quran.labs.androidquran.service.download.SingleFileDownloadStrategy
+import com.quran.labs.androidquran.service.util.DownloadProgressBus
+import com.quran.labs.androidquran.service.util.DownloadProgressEvent
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.NotificationDetails
-import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifierImpl
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
@@ -38,12 +39,15 @@ import dev.zacsweers.metro.Inject
 import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okio.BufferedSink
+import okio.BufferedSource
 import okio.appendingSink
 import okio.buffer
 import okio.sink
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.Volatile
 
@@ -56,14 +60,16 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
   // written from ui thread and read by download thread
   @Volatile
   private var isDownloadCanceled = false
+  @Volatile
+  private var activeCall: Call? = null
   private var fallbackByDefault = false
-  private lateinit var broadcastManager: LocalBroadcastManager
   private lateinit var quranSettings: QuranSettings
   private lateinit var wifiLock: WifiLock
 
-  private var lastSentIntent: Intent? = null
+  @Volatile
+  private var lastSentEvent: DownloadProgressEvent? = null
   private val successfulZippedDownloads: MutableMap<String, Boolean> = mutableMapOf()
-  private val recentlyFailedDownloads: MutableMap<String, Intent> = mutableMapOf()
+  private val recentlyFailedDownloads: MutableMap<String, DownloadProgressEvent> = mutableMapOf()
 
   // incremented from ui thread and decremented by download thread
   private val currentOperations = AtomicInteger(0)
@@ -94,6 +100,7 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
 
   override fun onCreate() {
     super.onCreate()
+    running.set(true)
     val thread = HandlerThread(TAG)
     thread.start()
 
@@ -107,7 +114,6 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
     quranSettings = QuranSettings.getInstance(this)
 
     (application as QuranApplication).applicationComponent.inject(this)
-    broadcastManager = LocalBroadcastManager.getInstance(appContext)
     notifier = QuranDownloadNotifierImpl(this, this, downloadInfoStreams)
   }
 
@@ -116,41 +122,31 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
       if (ACTION_CANCEL_DOWNLOADS == intent.action) {
         serviceHandler.removeCallbacksAndMessages(null)
         isDownloadCanceled = true
+        activeCall?.cancel()
         sendNoOpMessage(startId)
       } else if (ACTION_RECONNECT == intent.action) {
         val type = intent.getIntExtra(EXTRA_DOWNLOAD_TYPE, DOWNLOAD_TYPE_UNDEF)
-        val currentLast = lastSentIntent
-        val lastType = currentLast?.getIntExtra(
-          EXTRA_DOWNLOAD_TYPE,
-          DOWNLOAD_TYPE_UNDEF
-        ) ?: -1
+        val currentLast = lastSentEvent
+        val lastType = currentLast?.downloadType ?: -1
 
-        if (type == lastType) {
-          if (currentLast != null) {
-            broadcastManager.sendBroadcast(currentLast)
-          }
+        if (type == lastType && currentLast != null) {
+          DownloadProgressBus.emit(currentLast)
         } else if (serviceHandler.hasMessages(type)) {
-          val progressIntent = Intent(ProgressIntent.INTENT_NAME)
-          progressIntent.putExtra(ProgressIntent.DOWNLOAD_TYPE, type)
-          progressIntent.putExtra(
-            ProgressIntent.STATE,
-            ProgressIntent.STATE_DOWNLOADING
-          )
-          broadcastManager.sendBroadcast(progressIntent)
+          DownloadProgressBus.emit(DownloadProgressEvent.Downloading(downloadType = type))
         }
         sendNoOpMessage(startId)
       } else {
-        // if we are currently downloading, resend the last broadcast
+        // if we are currently downloading, resend the last progress event
         // and don't queue anything
         val download = intent.getStringExtra(EXTRA_DOWNLOAD_KEY)
-        val currentLast = lastSentIntent
-        val currentDownload = currentLast?.getStringExtra(ProgressIntent.DOWNLOAD_KEY)
-        if (download != null && download == currentDownload) {
-          Timber.d("resending last broadcast...")
-          broadcastManager.sendBroadcast(currentLast)
+        val currentLast = lastSentEvent
+        if (download != null && download == currentLast?.downloadKey) {
+          Timber.d("resending last progress event...")
+          DownloadProgressBus.emit(currentLast)
 
-          val state = currentLast.getStringExtra(ProgressIntent.STATE)
-          if (ProgressIntent.STATE_SUCCESS != state && ProgressIntent.STATE_ERROR != state) {
+          val isTerminal = currentLast is DownloadProgressEvent.Success ||
+            (currentLast is DownloadProgressEvent.Error && currentLast.isFatal)
+          if (!isTerminal) {
             // re-queue fatal errors and success cases again just in case
             // of a race condition in which we miss the error pref and
             // miss the success/failure notification and this re-play
@@ -201,13 +197,16 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
 
   override fun onTimeout(startId: Int, fgsType: Int) {
     isDownloadCanceled = true
+    activeCall?.cancel()
     serviceHandler.removeCallbacksAndMessages(null)
     // stop the service without waiting for the download thread
     stopSelf()
   }
 
   override fun onDestroy() {
+    running.set(false)
     isDownloadCanceled = true
+    activeCall?.cancel()
     // download thread releases the Wi-Fi lock
     serviceLooper.quit()
     super.onDestroy()
@@ -233,15 +232,15 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
       // check if already downloaded, and if so, send broadcast
       val isZipFile = url!!.endsWith(".zip")
       if (isZipFile && successfulZippedDownloads.containsKey(url)) {
-        lastSentIntent = notifier.broadcastDownloadSuccessful(details)
+        lastSentEvent = notifier.broadcastDownloadSuccessful(details)
         return
       } else if (recentlyFailedDownloads.containsKey(url)) {
         // if recently failed and we want to repeat the last error...
         if (intent.getBooleanExtra(EXTRA_REPEAT_LAST_ERROR, false)) {
-          val failedIntent = recentlyFailedDownloads[url]
-          if (failedIntent != null) {
-            // re-broadcast and leave - just in case of race condition
-            broadcastManager.sendBroadcast(failedIntent)
+          val failedEvent = recentlyFailedDownloads[url]
+          if (failedEvent != null) {
+            // re-emit and leave - just in case of race condition
+            DownloadProgressBus.emit(failedEvent)
             return
           }
         } else {
@@ -266,7 +265,7 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
         outputFile = getFilenameFromUrl(url)
       }
       val destination = intent.getStringExtra(EXTRA_DESTINATION)
-      lastSentIntent = null
+      lastSentEvent = null
 
       if (destination == null) {
         return
@@ -361,12 +360,12 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
       if (result && isZipFile) {
         successfulZippedDownloads[url] = true
       } else if (!result) {
-        val lastIntent = lastSentIntent
-        if (lastIntent != null) {
-          recentlyFailedDownloads[url] = lastIntent
+        val lastEvent = lastSentEvent
+        if (lastEvent != null) {
+          recentlyFailedDownloads[url] = lastEvent
         }
       }
-      lastSentIntent = null
+      lastSentEvent = null
     }
   }
 
@@ -381,14 +380,14 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
 
   private fun downloadCommon(strategy: DownloadStrategy, details: NotificationDetails): Boolean {
     details.setFileStatus(1, strategy.fileCount())
-    lastSentIntent = notifier.notifyProgress(details, 0, 0)
+    lastSentEvent = notifier.notifyProgress(details, 0, 0)
 
     return if (strategy.downloadFiles()) {
       if (isDownloadCanceled) {
         notifyError(QuranDownloadNotifier.ERROR_CANCELLED, true, "", details)
         false
       } else {
-        lastSentIntent = notifier.notifyDownloadSuccessful(details)
+        lastSentEvent = notifier.notifyDownloadSuccessful(details)
         true
       }
     } else {
@@ -518,110 +517,133 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
         filename,
         notificationInfo
       )
-    val builder: Request.Builder = Request.Builder()
-      .url(url).tag(DEFAULT_TAG)
 
     Timber.d(
       "downloadUrl: trying to download - file %s",
       if (actualFile.exists()) "exists" else "doesn't exist"
     )
-    var downloadedAmount: Long = 0
-    if (partialFile.exists()) {
-      downloadedAmount = partialFile.length()
-      Timber.d("downloadUrl: partialFile exists, length: %d", downloadedAmount)
-      builder.addHeader("Range", "bytes=$downloadedAmount-")
-    }
     val isZip = filename.endsWith(".zip")
+    var retried416 = false
 
-    var call: Call? = null
-    try {
-      val request: Request = builder.build()
-      call = okHttpClient.newCall(request)
-      val shouldRetryWithoutRange = call.execute().use { response ->
-        if (response.isSuccessful) {
-          Timber.d("successful response: %d - %d", response.code, downloadedAmount)
-          if (downloadedAmount > 0 && response.code != 206) {
-            if (partialFile.exists() && !partialFile.delete()) {
-              return QuranDownloadNotifier.ERROR_PERMISSIONS
-            }
-            downloadedAmount = 0
-          }
-          val body = response.body
-          val bodySource = body.source()
-          val contentLength = body.contentLength()
-          val size = if (contentLength >= 0) contentLength + downloadedAmount else -1L
+    while (true) {
+      if (isDownloadCanceled) {
+        return QuranDownloadNotifier.ERROR_CANCELLED
+      }
+      val builder: Request.Builder = Request.Builder()
+        .url(url).tag(DEFAULT_TAG)
+      var downloadedAmount: Long = 0
+      if (partialFile.exists()) {
+        downloadedAmount = partialFile.length()
+        Timber.d("downloadUrl: partialFile exists, length: %d", downloadedAmount)
+        builder.addHeader("Range", "bytes=$downloadedAmount-")
+      }
 
-          if (size > 0 && !isSpaceAvailable(size + (if (isZip) downloadedAmount + size else 0))) {
-            return QuranDownloadNotifier.ERROR_DISK_SPACE
-          } else if (actualFile.exists()) {
-            if (actualFile.length() == (size + downloadedAmount)) {
-              // we already downloaded, why are we re-downloading?
-              return DOWNLOAD_SUCCESS
-            } else if (!actualFile.delete()) {
-              return QuranDownloadNotifier.ERROR_PERMISSIONS
-            }
-          }
+      var call: Call? = null
+      try {
+        val request: Request = builder.build()
+        call = okHttpClient.newCall(request)
+        activeCall = call
+        var shouldRetry416 = false
 
-          val sink = if (downloadedAmount > 0) {
-            partialFile.appendingSink().buffer()
-          } else {
-            partialFile.sink().buffer()
-          }
-          sink.use { bufferedSink ->
-            var read = 0L
-            var loops = 0
-            var totalRead = downloadedAmount
-
-            while (!isDownloadCanceled && !bodySource.exhausted() &&
-              ((bodySource.read(bufferedSink.buffer, BUFFER_SIZE.toLong()).also { read = it }) > 0)
-            ) {
-              totalRead += read
-              if (loops++ % 5 == 0) {
-                lastSentIntent = notifier.notifyProgress(notificationInfo, totalRead, size)
+        call.execute().use { response ->
+          if (response.isSuccessful) {
+            Timber.d("successful response: %d - %d", response.code, downloadedAmount)
+            if (downloadedAmount > 0 && response.code != 206) {
+              if (partialFile.exists() && !partialFile.delete()) {
+                return QuranDownloadNotifier.ERROR_PERMISSIONS
               }
-              bufferedSink.flush()
+              downloadedAmount = 0
             }
-          }
+            val body = response.body
+            val contentLength = body.contentLength()
+            val size = if (contentLength >= 0) contentLength + downloadedAmount else -1L
+            val requiredSpace = if (contentLength >= 0) {
+              size + (if (isZip) downloadedAmount + size else 0L)
+            } else {
+              0L
+            }
 
-          if (isDownloadCanceled) {
-            return QuranDownloadNotifier.ERROR_CANCELLED
-          } else if (!partialFile.renameTo(actualFile)) {
-            return notifyError(
-              QuranDownloadNotifier.ERROR_PERMISSIONS,
-              true,
-              filename,
-              notificationInfo
-            )
+            if (requiredSpace > 0 && !isSpaceAvailable(requiredSpace, path)) {
+              return QuranDownloadNotifier.ERROR_DISK_SPACE
+            } else if (actualFile.exists()) {
+              if (contentLength >= 0 && actualFile.length() == size) {
+                // we already downloaded, why are we re-downloading?
+                return DOWNLOAD_SUCCESS
+              } else if (!actualFile.delete()) {
+                return QuranDownloadNotifier.ERROR_PERMISSIONS
+              }
+            }
+
+            val source = body.source()
+            val rawSink = if (downloadedAmount > 0) {
+              partialFile.appendingSink()
+            } else {
+              partialFile.sink()
+            }
+            rawSink.buffer().use { sink ->
+              var lastNotifyMs = 0L
+              copySourceToSink(
+                source = source,
+                sink = sink,
+                initialDownloadedAmount = downloadedAmount,
+                isCanceled = { isDownloadCanceled },
+                onProgress = { totalRead ->
+                  val now = SystemClock.elapsedRealtime()
+                  if (now - lastNotifyMs >= PROGRESS_NOTIFY_INTERVAL_MS) {
+                    lastNotifyMs = now
+                    lastSentEvent = notifier.notifyProgress(notificationInfo, totalRead, size)
+                  }
+                }
+              )
+            }
+
+            if (isDownloadCanceled) {
+              return QuranDownloadNotifier.ERROR_CANCELLED
+            } else if (!partialFile.renameTo(actualFile)) {
+              return notifyError(
+                QuranDownloadNotifier.ERROR_PERMISSIONS,
+                true,
+                filename,
+                notificationInfo
+              )
+            }
+            return DOWNLOAD_SUCCESS
+          } else if (response.code == 416 && !retried416) {
+            if (!partialFile.delete()) {
+              return QuranDownloadNotifier.ERROR_PERMISSIONS
+            }
+            retried416 = true
+            shouldRetry416 = true
+          } else {
+            Timber.e(Exception("Unable to download file - code: " + response.code))
           }
-          return DOWNLOAD_SUCCESS
-        } else if (response.code == 416) {
-          if (!partialFile.delete()) {
-            return QuranDownloadNotifier.ERROR_PERMISSIONS
-          }
-          true
-        } else {
-          Timber.e(Exception("Unable to download file - code: " + response.code))
-          false
         }
-      }
-      if (shouldRetryWithoutRange) {
-        return downloadUrl(url, path, filename, notificationInfo)
-      }
-    } catch (exception: IOException) {
-      Timber.d(exception, "Failed to download file")
-    } catch (se: SecurityException) {
-      Timber.e(se, "Security exception while downloading file")
-    }
 
-    return if ((call != null && call.isCanceled())) QuranDownloadNotifier.ERROR_CANCELLED else notifyError(
-      QuranDownloadNotifier.ERROR_NETWORK,
-      false, filename, notificationInfo
-    )
+        if (shouldRetry416) {
+          continue
+        }
+      } catch (exception: IOException) {
+        Timber.d(exception, "Failed to download file")
+      } catch (se: SecurityException) {
+        Timber.e(se, "Security exception while downloading file")
+      } finally {
+        activeCall = null
+      }
+
+      return if (isDownloadCanceled || (call != null && call.isCanceled())) {
+        QuranDownloadNotifier.ERROR_CANCELLED
+      } else {
+        notifyError(
+          QuranDownloadNotifier.ERROR_NETWORK,
+          false, filename, notificationInfo
+        )
+      }
+    }
   }
 
   override fun onProcessingProgress(details: NotificationDetails, processed: Int, total: Int) {
     if (details.totalFiles == 1) {
-      lastSentIntent = notifier.notifyDownloadProcessing(
+      lastSentEvent = notifier.notifyDownloadProcessing(
         details, processed, total
       )
     }
@@ -633,7 +655,7 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
     filename: String,
     details: NotificationDetails
   ): Int {
-    lastSentIntent = notifier.notifyError(errorCode, isFatal, filename, details)
+    lastSentEvent = notifier.notifyError(errorCode, isFatal, filename, details)
 
     if (isFatal) {
       // write last error in prefs
@@ -642,14 +664,13 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
     return errorCode
   }
 
-  // TODO: this is actually a bug - we may not be using /sdcard...
-  // we may not have permission, etc - some devices get a IllegalArgumentException
-  // because the path passed is /storage/emulated/0, for example.
-  private fun isSpaceAvailable(spaceNeeded: Long): Boolean {
+  private fun isSpaceAvailable(spaceNeeded: Long, path: String): Boolean {
     try {
-      val fsStats = StatFs(
-        Environment.getExternalStorageDirectory().absolutePath
-      )
+      val fsStats = try {
+        StatFs(path)
+      } catch (_: IllegalArgumentException) {
+        StatFs(Environment.getExternalStorageDirectory().absolutePath)
+      }
       val availableSpace = fsStats.availableBlocksLong * fsStats.blockSizeLong
 
       return availableSpace > spaceNeeded
@@ -700,12 +721,36 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
     const val PREF_LAST_DOWNLOAD_ITEM: String = "lastDownloadItem"
 
     const val BUFFER_SIZE: Int = 4096 * 2
+    private const val PROGRESS_NOTIFY_INTERVAL_MS = 150L
     private const val WAIT_TIME = 15 * 1000
     private const val RETRY_COUNT = 3
     private const val PARTIAL_EXT = ".part"
 
     // download method return values
     private const val DOWNLOAD_SUCCESS = 0
+
+    private val running = AtomicBoolean(false)
+
+    @JvmStatic
+    fun isRunning(): Boolean = running.get()
+
+    internal inline fun copySourceToSink(
+      source: BufferedSource,
+      sink: BufferedSink,
+      initialDownloadedAmount: Long,
+      isCanceled: () -> Boolean,
+      onProgress: (totalRead: Long) -> Unit = {}
+    ) {
+      var read = 0L
+      var totalRead = initialDownloadedAmount
+      while (!isCanceled() && !source.exhausted() &&
+        ((source.read(sink.buffer, BUFFER_SIZE.toLong()).also { read = it }) > 0)
+      ) {
+        totalRead += read
+        sink.emitCompleteSegments()
+        onProgress(totalRead)
+      }
+    }
 
     @VisibleForTesting
     internal fun getFilenameFromUrl(url: String): String {

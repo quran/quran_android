@@ -225,6 +225,30 @@ class ArabicCharacterHelperTest {
 
     val compiled = Regex(regex)
     assertThat(compiled.containsMatchIn("aaaaaaaaaaaaaaaaaaaa!")).isFalse()
-    assertThat(compiled.containsMatchIn("a++0-9{1,9}\\E.*")).isTrue()
+    assertThat(compiled.containsMatchIn("a++[0-9]{1,9}\\E.*")).isTrue()
+  }
+
+  @Test
+  fun `regex metacharacters in query are escaped and compile without PatternSyntaxException`() {
+    // Arrange: query with unclosed brackets, quantifiers, escapes, and anchors
+    val query = "*+?[\\]{}|^$."
+    // Act
+    val regex = ArabicCharacterHelper.generateRegex(query)
+    val pattern = java.util.regex.Pattern.compile(regex)
+    // Assert: compiled pattern matches the literal metacharacter sequence
+    assertThat(pattern.matcher(query).matches()).isTrue()
+  }
+
+  @Test
+  fun `mixed arabic and regex metacharacters match literal metacharacters alongside arabic variants`() {
+    // Arrange
+    val query = "\u0627[1]*"
+    // Act
+    val regex = ArabicCharacterHelper.generateRegex(query)
+    val pattern = java.util.regex.Pattern.compile(regex)
+    // Assert
+    assertThat(pattern.matcher("\u0623[1]*").matches()).isTrue()
+    assertThat(pattern.matcher("\u0623111").matches()).isFalse()
   }
 }
+

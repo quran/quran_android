@@ -15,7 +15,7 @@ class QuranColors(
 
 val lightQuranColors = QuranColors(
   defaultTextColor = Color.Black,
-  success = Color(0xFF34C759),
+  success = Color(0xFF137333),
   caution = Color(0xFFA04B00),
   cautionBackground = Color(0xFFFFF4E5),
   cautionSeparator = Color(0xFFF3DDBF)

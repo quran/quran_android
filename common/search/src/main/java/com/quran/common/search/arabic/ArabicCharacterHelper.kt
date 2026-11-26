@@ -1,66 +1,53 @@
 package com.quran.common.search.arabic
 
 object ArabicCharacterHelper {
-  private const val bannedChars = "[()]"
-  private const val regexMetaChars = "\\.*+?{}|^$"
-  private val lookupTable = hashMapOf(
-      // given: ا
-      // match: آأإاﻯ
-      "\u0627" to "\u0622\u0623\u0625\u0627\u0649",
+  fun equivalentChars(ch: Char): String? {
+    return when (ch) {
+      // given: ا -> match: آأإاﻯ
+      '\u0627' -> "\u0622\u0623\u0625\u0627\u0649"
+      // given: و -> match: وؤ
+      '\u0648' -> "\u0648\u0624"
+      // given: ﺃ -> match: ﺃﺀﺆﺋ
+      '\u0623' -> "\u0621\u0623\u0624\u0626\u0627"
+      // given: ﺀ -> match: ﺀﺃﺆ
+      '\u0621' -> "\u0621\u0623\u0624\u0626\u0627"
+      // given: ﺕ -> match: ﺕﺓ
+      '\u062a' -> "\u062a\u0629"
+      // given: ﺓ -> match: ﺓتﻫ
+      '\u0629' -> "\u0629\u062a\u0647"
+      // given: ه -> match: ةه
+      '\u0647' -> "\u0647\u0629"
+      // given: ﻯ -> match: ﻯي
+      '\u0649' -> "\u0649\u064a"
+      // given: ي -> match: يﻯ
+      '\u064a' -> "\u064a\u0649"
+      // given: ئ -> match: ئﻯي (especially helpful for rewayat Warsh)
+      '\u0626' -> "\u0626\u0649\u064a"
+      else -> null
+    }
+  }
 
-      // given: و
-      // match: وؤ
-      "\u0648" to "\u0648\u0624",
-
-      // given: ﺃ
-      // match: ﺃﺀﺆﺋ
-      "\u0623" to "\u0621\u0623\u0624\u0626\u0627",
-
-      // given: ﺀ
-      // match: ﺀﺃﺆ
-      "\u0621" to "\u0621\u0623\u0624\u0626\u0627",
-
-      // given: ﺕ
-      // match: ﺕﺓ
-      "\u062a" to "\u062a\u0629",
-
-      // given: ﺓ
-      // match: ﺓتﻫ
-      "\u0629" to "\u0629\u062a\u0647",
-
-      // given: ه
-      // match: ةه
-      "\u0647" to "\u0647\u0629",
-
-      // given: ﻯ
-      // match: ﻯي
-      "\u0649" to "\u0649\u064a",
-
-      // given: ي
-      // match: يﻯ
-      "\u064a" to "\u064a\u0649",
-
-      // given: ئ
-      // match: ئﻯي
-      // this is especially helpful for rewayat Warsh
-      "\u0626" to "\u0626\u0649\u064a",
-  )
+  private fun isRegexMetaChar(ch: Char): Boolean {
+    return when (ch) {
+      '\\', '^', '$', '.', '|', '?', '*', '+', '[', ']', '{', '}' -> true
+      else -> false
+    }
+  }
 
   fun generateRegex(query: String): String {
-    val characters = query.toCharArray()
-    val regexBuilder = StringBuilder()
-    characters.forEach {
-      val result = lookupTable[it.toString()]
+    val regexBuilder = StringBuilder(query.length)
+    for (i in query.indices) {
+      val ch = query[i]
+      val result = equivalentChars(ch)
       if (result != null) {
-        regexBuilder.append("[")
+        regexBuilder.append('[')
         regexBuilder.append(result)
-        regexBuilder.append("]")
-      } else if (it !in bannedChars) {
-        if (it in regexMetaChars) {
-          regexBuilder.append(Regex.escape(it.toString()))
-        } else {
-          regexBuilder.append(it)
+        regexBuilder.append(']')
+      } else if (ch != '(' && ch != ')') {
+        if (isRegexMetaChar(ch)) {
+          regexBuilder.append('\\')
         }
+        regexBuilder.append(ch)
       }
     }
     return regexBuilder.toString()

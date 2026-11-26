@@ -24,29 +24,32 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 open class ArabicDatabaseUtils @Inject internal constructor(
   @param:ApplicationContext private val appContext: Context,
   private val quranInfo: QuranInfo,
-  quranFileUtils: QuranFileUtils
-) {
   private val quranFileUtils: QuranFileUtils
-  private var arabicDatabaseHandler: DatabaseHandler?
-
-  init {
-    arabicDatabaseHandler = getArabicDatabaseHandler()
-    this.quranFileUtils = quranFileUtils
-  }
+) {
+  @Volatile
+  private var arabicDatabaseHandler: DatabaseHandler? = null
 
   // open only for testing
   @VisibleForTesting
   internal open fun getArabicDatabaseHandler(): DatabaseHandler? {
-    if (arabicDatabaseHandler == null) {
-      try {
-        arabicDatabaseHandler = getDatabaseHandler(
-          appContext.applicationContext, QuranDataProvider.QURAN_ARABIC_DATABASE, quranFileUtils
-        )
-      } catch (e: Exception) {
-        // ignore
-      }
+    val existing = arabicDatabaseHandler
+    if (existing != null) {
+      return existing
     }
-    return arabicDatabaseHandler
+    return synchronized(this) {
+      var handler = arabicDatabaseHandler
+      if (handler == null) {
+        try {
+          handler = getDatabaseHandler(
+            appContext.applicationContext, QuranDataProvider.QURAN_ARABIC_DATABASE, quranFileUtils
+          )
+          arabicDatabaseHandler = handler
+        } catch (e: Exception) {
+          // ignore
+        }
+      }
+      handler
+    }
   }
 
   fun getVerses(start: SuraAyah, end: SuraAyah): Single<List<QuranText>> {
@@ -117,7 +120,7 @@ open class ArabicDatabaseUtils @Inject internal constructor(
       var cursor: Cursor? = null
       try {
         cursor = arabicDatabaseHandler.getVersesByIds(ayat)
-        while (cursor!!.moveToNext()) {
+        while (cursor != null && cursor.moveToNext()) {
           val id = cursor.getInt(0)
           val sura = cursor.getInt(1)
           val ayah = cursor.getInt(2)

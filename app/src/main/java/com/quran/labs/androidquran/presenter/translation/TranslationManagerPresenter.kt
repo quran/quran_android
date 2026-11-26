@@ -81,6 +81,7 @@ open class TranslationManagerPresenter @Inject internal constructor(
 
     return flow
       .map { mergeWithServerTranslations(it.translations) }
+      .flowOn(Dispatchers.IO)
       .onEach { translations ->
         val updatedTranslations = translations.any { it.needsUpgrade() }
         quranSettings.setHaveUpdatedTranslations(updatedTranslations)

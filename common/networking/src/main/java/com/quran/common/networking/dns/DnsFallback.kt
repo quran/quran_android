@@ -15,6 +15,8 @@ class DnsFallback : Dns {
   }
 
   companion object {
+    private const val RESOLVER_TIMEOUT_SECONDS = 3
+
     @Volatile
     private var initialized = false
     private val initLock = Any()
@@ -39,8 +41,12 @@ class DnsFallback : Dns {
     }
 
     private fun configureDefaultResolver() {
-      val googleResolver = SimpleResolver("8.8.8.8")
-      val cloudflareResolver = SimpleResolver("1.1.1.1")
+      val googleResolver = SimpleResolver("8.8.8.8").apply {
+        setTimeout(RESOLVER_TIMEOUT_SECONDS)
+      }
+      val cloudflareResolver = SimpleResolver("1.1.1.1").apply {
+        setTimeout(RESOLVER_TIMEOUT_SECONDS)
+      }
       Lookup.setDefaultResolver(ExtendedResolver(arrayOf(googleResolver, cloudflareResolver)))
     }
   }

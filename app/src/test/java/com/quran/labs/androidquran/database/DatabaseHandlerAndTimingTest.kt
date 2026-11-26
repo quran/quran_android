@@ -119,4 +119,49 @@ class DatabaseHandlerAndTimingTest {
       dbFile.delete()
     }
   }
+
+  @Test
+  fun `suraTimingDatabaseHandler caches schemaVersion and queries timings with bind args`() {
+    val dbFile = File(context.cacheDir, "timing_test.db")
+    dbFile.delete()
+
+    val db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+    try {
+      db.execSQL("CREATE TABLE properties(property TEXT, value INTEGER)")
+      db.execSQL("INSERT INTO properties VALUES ('version', 3)")
+      db.execSQL("INSERT INTO properties VALUES ('schema_version', 2)")
+      db.execSQL("CREATE TABLE timings(sura INTEGER, ayah INTEGER, time INTEGER, words TEXT)")
+      db.execSQL("INSERT INTO timings VALUES (1, 1, 100, '1:0:50')")
+      db.execSQL("INSERT INTO timings VALUES (1, 2, 200, '1:50:150')")
+      db.execSQL("INSERT INTO timings VALUES (2, 1, 300, '1:0:90')")
+    } finally {
+      db.close()
+    }
+
+    val path = dbFile.absolutePath
+    try {
+      val handler = SuraTimingDatabaseHandler.getDatabaseHandler(path)
+      assertThat(handler.getVersion()).isEqualTo(3)
+      assertThat(handler.getSchemaVersion()).isEqualTo(2)
+      // Cached second call returns same schemaVersion
+      assertThat(handler.getSchemaVersion()).isEqualTo(2)
+
+      val cursor = handler.getAyahTimings(1)
+      assertThat(cursor).isNotNull()
+      try {
+        assertThat(cursor!!.count).isEqualTo(2)
+        assertThat(cursor.moveToFirst()).isTrue()
+        assertThat(cursor.getInt(1)).isEqualTo(1)
+        assertThat(cursor.getLong(2)).isEqualTo(100L)
+        assertThat(cursor.getString(3)).isEqualTo("1:0:50")
+        assertThat(cursor.moveToNext()).isTrue()
+        assertThat(cursor.getInt(1)).isEqualTo(2)
+      } finally {
+        cursor?.close()
+      }
+    } finally {
+      SuraTimingDatabaseHandler.clearDatabaseHandlerIfExists(path)
+      dbFile.delete()
+    }
+  }
 }

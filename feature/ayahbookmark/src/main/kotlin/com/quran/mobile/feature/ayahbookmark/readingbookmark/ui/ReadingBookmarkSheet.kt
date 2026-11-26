@@ -1,7 +1,6 @@
 package com.quran.mobile.feature.ayahbookmark.readingbookmark.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,8 +11,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -64,16 +65,13 @@ internal fun ReadingBookmarkSheet(
         .padding(top = 14.dp, start = if (state.isNested) 6.dp else 18.dp, end = 18.dp)
     ) {
       if (state.isNested) {
-        Icon(
-          imageVector = QuranIcons.ArrowBack,
-          contentDescription = stringResource(R.string.readingbookmark_back),
-          tint = MaterialTheme.colorScheme.onSurface,
-          modifier = Modifier
-            .clip(RoundedCornerShape(percent = 100))
-            .clickable { eventSink(ReadingBookmarkSheetEvent.Dismiss) }
-            .padding(11.dp)
-            .size(22.dp)
-        )
+        IconButton(onClick = { eventSink(ReadingBookmarkSheetEvent.Dismiss) }) {
+          Icon(
+            imageVector = QuranIcons.ArrowBack,
+            contentDescription = stringResource(R.string.readingbookmark_back),
+            tint = MaterialTheme.colorScheme.onSurface
+          )
+        }
       }
       Text(
         text = stringResource(R.string.readingbookmark_title),
@@ -81,27 +79,25 @@ internal fun ReadingBookmarkSheet(
         color = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier.weight(1f)
       )
-      Text(
-        text = if (state.isEditing) {
-          stringResource(R.string.readingbookmark_done_editing)
-        } else {
-          stringResource(R.string.readingbookmark_edit)
-        },
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier
-          .clip(RoundedCornerShape(percent = 100))
-          .clickable {
-            eventSink(
-              if (state.isEditing) {
-                ReadingBookmarkSheetEvent.StopEditing
-              } else {
-                ReadingBookmarkSheetEvent.StartEditing
-              }
-            )
+      TextButton(
+        onClick = {
+          eventSink(
+            if (state.isEditing) {
+              ReadingBookmarkSheetEvent.StopEditing
+            } else {
+              ReadingBookmarkSheetEvent.StartEditing
+            }
+          )
+        }
+      ) {
+        Text(
+          text = if (state.isEditing) {
+            stringResource(R.string.readingbookmark_done_editing)
+          } else {
+            stringResource(R.string.readingbookmark_edit)
           }
-          .padding(horizontal = 8.dp, vertical = 4.dp)
-      )
+        )
+      }
     }
 
     Text(

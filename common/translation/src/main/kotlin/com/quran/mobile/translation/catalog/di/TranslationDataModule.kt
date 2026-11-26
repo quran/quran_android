@@ -1,6 +1,7 @@
 package com.quran.mobile.translation.catalog.di
 
 import android.content.Context
+import androidx.sqlite.db.SupportSQLiteDatabase
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.quran.data.di.AppScope
 import com.quran.mobile.di.qualifier.ApplicationContext
@@ -21,7 +22,13 @@ class TranslationDataModule {
       AndroidSqliteDriver(
         schema = TranslationsDatabase.Schema,
         context = context,
-        name = "translations.db"
+        name = "translations.db",
+        callback = object : AndroidSqliteDriver.Callback(TranslationsDatabase.Schema) {
+          override fun onConfigure(db: SupportSQLiteDatabase) {
+            super.onConfigure(db)
+            db.enableWriteAheadLogging()
+          }
+        }
       )
     )
   }

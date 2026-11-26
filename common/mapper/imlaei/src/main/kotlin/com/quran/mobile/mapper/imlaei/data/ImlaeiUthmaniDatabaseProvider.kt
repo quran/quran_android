@@ -8,6 +8,8 @@ import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -18,19 +20,24 @@ class ImlaeiUthmaniDatabaseProvider(
   private val quranFileManager: QuranFileManager
 ) {
   private val databaseName = "word_alignment.db"
-  private val databasePath = File(quranFileManager.databaseDirectory(), databaseName)
+  private val mutex = Mutex()
+
+  @Volatile
   private var cachedDatabase: ImlaeiUthmaniMappingDatabase? = null
 
-  private suspend fun ensureWordAlignmentDatabase(): Boolean {
-    return if (databasePath.exists()) {
-      true
-    } else {
-      withContext(Dispatchers.IO) {
+  private suspend fun ensureWordAlignmentDatabase(
+    databaseDirectory: File,
+    databasePath: File
+  ): Boolean {
+    return withContext(Dispatchers.IO) {
+      if (databasePath.exists()) {
+        true
+      } else {
         runCatching {
           quranFileManager.copyFromAssetsRelative(
             databaseName,
             databaseName,
-            quranFileManager.databaseDirectory()
+            databaseDirectory
           )
         }.isSuccess
       }
@@ -38,16 +45,22 @@ class ImlaeiUthmaniDatabaseProvider(
   }
 
   suspend fun provideDatabase(): ImlaeiUthmaniMappingDatabase? {
-    val cached = cachedDatabase
-    return cached
-        ?: if (ensureWordAlignmentDatabase()) {
-          val filePath = databasePath.absolutePath
-          val driver = AndroidSqliteDriver(ImlaeiUthmaniMappingDatabase.Schema, appContext, name = filePath)
-          val database = ImlaeiUthmaniMappingDatabase(driver)
-          cachedDatabase = database
-          database
-        } else {
-          null
-        }
+    cachedDatabase?.let { return it }
+    return mutex.withLock {
+      cachedDatabase?.let { return@withLock it }
+      val databaseDirectory = withContext(Dispatchers.IO) {
+        quranFileManager.databaseDirectory()
+      }
+      val databasePath = File(databaseDirectory, databaseName)
+      if (ensureWordAlignmentDatabase(databaseDirectory, databasePath)) {
+        val filePath = databasePath.absolutePath
+        val driver = AndroidSqliteDriver(ImlaeiUthmaniMappingDatabase.Schema, appContext, name = filePath)
+        val database = ImlaeiUthmaniMappingDatabase(driver)
+        cachedDatabase = database
+        database
+      } else {
+        null
+      }
+    }
   }
 }

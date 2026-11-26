@@ -1,5 +1,6 @@
 package com.quran.mobile.feature.sync.state
 
+import androidx.compose.runtime.Immutable
 import com.quran.shared.persistence.model.NoteRange
 import com.quran.shared.persistence.model.ReadingBookmarkSlot
 import com.quran.shared.pipeline.HeldSyncItem
@@ -7,6 +8,7 @@ import com.quran.shared.pipeline.SyncResourceType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
+@Immutable
 internal data class HeldItemRowState(
   val item: HeldSyncItem,
   val title: Title,

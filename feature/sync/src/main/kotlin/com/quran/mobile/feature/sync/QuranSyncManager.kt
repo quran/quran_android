@@ -2,6 +2,7 @@ package com.quran.mobile.feature.sync
 
 import android.content.Context
 import androidx.activity.ComponentActivity
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.quran.data.di.AppScope
 import com.quran.mobile.di.qualifier.ApplicationContext
@@ -10,6 +11,7 @@ import com.quran.shared.auth.model.AuthConfig
 import com.quran.shared.auth.model.AuthState
 import com.quran.shared.persistence.DriverFactory
 import com.quran.shared.pipeline.AppEnvironment
+import com.quran.shared.pipeline.QuranDataService
 import com.quran.shared.pipeline.di.AppGraph
 import com.quran.shared.pipeline.di.SharedDependencyGraph
 import com.quran.shared.pipeline.storage.createMobileSyncStorage
@@ -19,6 +21,7 @@ import io.ktor.http.URLBuilder
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
@@ -26,11 +29,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import org.publicvalue.multiplatform.oidc.OpenIdConnectClient
 import org.publicvalue.multiplatform.oidc.appsupport.AndroidCodeAuthFlowFactory
 import org.publicvalue.multiplatform.oidc.appsupport.HandleRedirectActivity
@@ -40,6 +45,7 @@ import org.publicvalue.multiplatform.oidc.flows.EndSessionFlow
 import org.publicvalue.multiplatform.oidc.tokenstore.AndroidSettingsTokenStore
 import timber.log.Timber
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Owns the app-scoped Quran sync graph and the Android OAuth activity registration.
@@ -55,7 +61,9 @@ class QuranSyncManager(
   @param:ApplicationContext private val context: Context
 ) {
   private val config = QuranSyncConfig(context)
-  private val authActionScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+  private val authActionScope by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+    CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+  }
   private val authActionMutex = Mutex()
   private var codeAuthFlowFactory: AndroidCodeAuthFlowFactory? = null
   private var registeredAuthActivityId: Int? = null
@@ -63,21 +71,39 @@ class QuranSyncManager(
   private var activeAuthActions = 0
   // The pending-logout marker is only recovery state for a later process. Same-process OIDC
   // redirect Activities are expected during a normal logout and must not consume the marker.
-  private val logoutRecoveryProcessId = UUID.randomUUID().toString()
-  private val syncPreferences = context.getSharedPreferences(
-    SYNC_PREFERENCES_NAME,
-    Context.MODE_PRIVATE
-  )
-  private val tokenStore = AndroidSettingsTokenStore(context)
-  private val graph: AppGraph = createGraph()
-  private val bookmarksSignInCardDismissed = MutableStateFlow(
-    syncPreferences.getBoolean(KEY_DISMISSED_BOOKMARKS_SIGN_IN_CARD, false)
-  )
+  private val logoutRecoveryProcessId by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+    UUID.randomUUID().toString()
+  }
+  private val foregroundSyncRegistered = AtomicBoolean(false)
+  private val syncPreferences by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+    context.getSharedPreferences(
+      SYNC_PREFERENCES_NAME,
+      Context.MODE_PRIVATE
+    )
+  }
+  private val tokenStore by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+    AndroidSettingsTokenStore(context)
+  }
+  private val graphLazy: Lazy<AppGraph> = lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+    createGraph()
+  }
+  private val graph: AppGraph
+    get() = graphLazy.value
 
-  internal val quranDataService = graph.quranDataService
+  private val bookmarksSignInCardDismissed by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+    MutableStateFlow(
+      syncPreferences.getBoolean(KEY_DISMISSED_BOOKMARKS_SIGN_IN_CARD, false)
+    )
+  }
+
+  internal val quranDataService: QuranDataService
+    get() = graph.quranDataService
+
+  @VisibleForTesting
+  internal fun isGraphInitialized(): Boolean = graphLazy.isInitialized()
 
   val isConfigured: Boolean
-    get() = graph.authService.isAuthenticationConfigured
+    get() = config.isConfigured && graph.authService.isAuthenticationConfigured
 
   val authState: StateFlow<AuthState>
     get() = graph.authService.authState
@@ -93,9 +119,13 @@ class QuranSyncManager(
    * mobile-sync's auth model classes.
    */
   val canTriggerSyncFlow: Flow<Boolean>
-    get() = authState
-      .map { authState -> isConfigured && authState is AuthState.Success }
-      .distinctUntilChanged()
+    get() = if (!config.isConfigured) {
+      flowOf(false)
+    } else {
+      authState
+        .map { authState -> isConfigured && authState is AuthState.Success }
+        .distinctUntilChanged()
+    }
 
   /**
    * Returns whether a manual sync trigger is currently valid.
@@ -104,7 +134,7 @@ class QuranSyncManager(
    * the time of a user action.
    */
   val canTriggerSync: Boolean
-    get() = isConfigured && authState.value is AuthState.Success
+    get() = config.isConfigured && isConfigured && authState.value is AuthState.Success
 
   /**
    * Emits whether the bookmarks sign-in CTA card should be shown.
@@ -113,9 +143,13 @@ class QuranSyncManager(
    * already signed in, and they have not already dismissed it.
    */
   val showBookmarksSignInCardFlow: Flow<Boolean>
-    get() = combine(authState, bookmarksSignInCardDismissed) { authState, dismissed ->
-      isConfigured && authState !is AuthState.Success && !dismissed
-    }.distinctUntilChanged()
+    get() = if (!config.isConfigured) {
+      flowOf(false)
+    } else {
+      combine(authState, bookmarksSignInCardDismissed) { authState, dismissed ->
+        isConfigured && authState !is AuthState.Success && !dismissed
+      }.distinctUntilChanged()
+    }
 
   /**
    * Persists that the user dismissed the bookmarks sign-in CTA card so it does not reappear.
@@ -189,7 +223,11 @@ class QuranSyncManager(
     runAuthAction {
       executeLogoutWithRecovery(
         markPending = ::markLogoutPending,
-        clearPending = ::clearLogoutPending,
+        clearPending = {
+          withContext(NonCancellable + Dispatchers.IO) {
+            clearLogoutPending()
+          }
+        },
         clearError = graph.authService::clearError,
         performLogout = graph.quranDataService::logout
       )
@@ -229,10 +267,24 @@ class QuranSyncManager(
   }
 
   fun startForegroundSync() {
-    if (isConfigured) {
+    if (config.isConfigured && foregroundSyncRegistered.compareAndSet(false, true)) {
       ProcessLifecycleOwner.get().lifecycle.addObserver(
-        ForegroundSync(graph.quranDataService::syncOnForeground)
+        ForegroundSync {
+          if (isConfigured) {
+            graph.quranDataService.syncOnForeground()
+          }
+        }
       )
+    }
+  }
+
+  /**
+   * Warms up the shared sync graph on a background thread when sync is configured so initial
+   * foreground sync begins without stalling Application.onCreate() on the main thread.
+   */
+  fun warmUpIfConfigured() {
+    if (config.isConfigured) {
+      graph
     }
   }
 
@@ -287,8 +339,8 @@ class QuranSyncManager(
     }
   }
 
-  private fun markLogoutPending(): Boolean {
-    return syncPreferences.edit()
+  private suspend fun markLogoutPending(): Boolean = withContext(Dispatchers.IO) {
+    syncPreferences.edit()
       .putString(KEY_LOGOUT_PENDING_PROCESS_ID, logoutRecoveryProcessId)
       .commit()
   }
@@ -321,8 +373,8 @@ class QuranSyncManager(
 }
 
 internal suspend fun executeLogoutWithRecovery(
-  markPending: () -> Boolean,
-  clearPending: () -> Unit,
+  markPending: suspend () -> Boolean,
+  clearPending: suspend () -> Unit,
   clearError: () -> Unit,
   performLogout: suspend () -> Unit
 ) {

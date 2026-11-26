@@ -31,7 +31,7 @@ class DatabaseHandler private constructor(
   private var database: SQLiteDatabase? = null
 
   private val defaultSearcher: Searcher
-  private val arabicSearcher: Searcher
+  private val arabicSearcher: ArabicSearcher
 
   companion object {
     private const val COL_SURA = "sura"
@@ -101,8 +101,18 @@ class DatabaseHandler private constructor(
     }
     Timber.d("opening database file: %s", dbFile.name)
     database = try {
-      SQLiteDatabase.openDatabase(path, null,
-        SQLiteDatabase.NO_LOCALIZED_COLLATORS, DefaultDatabaseErrorHandler())
+      SQLiteDatabase.openDatabase(
+        path,
+        null,
+        SQLiteDatabase.OPEN_READONLY or SQLiteDatabase.NO_LOCALIZED_COLLATORS,
+        DefaultDatabaseErrorHandler()
+      ).also { db ->
+        try {
+          db.execSQL("PRAGMA cache_size = -512")
+        } catch (_: Exception) {
+          // keep default cache size if PRAGMA is unsupported
+        }
+      }
     } catch (sce: SQLiteDatabaseCorruptException) {
       Timber.d("corrupt database: %s", dbFile.name)
       throw sce
@@ -301,7 +311,21 @@ class DatabaseHandler private constructor(
     return search(query, VERSE_TABLE, withSnippets, isArabicDatabase)
   }
 
+  fun searchRawArabic(query: String): Cursor? {
+    return searchInternal(query, VERSE_TABLE, withSnippets = true, isArabicDatabase = true, rawArabic = true)
+  }
+
   fun search(q: String, table: String, withSnippets: Boolean, isArabicDatabase: Boolean): Cursor? {
+    return searchInternal(q, table, withSnippets, isArabicDatabase, rawArabic = false)
+  }
+
+  private fun searchInternal(
+    q: String,
+    table: String,
+    withSnippets: Boolean,
+    isArabicDatabase: Boolean,
+    rawArabic: Boolean
+  ): Cursor? {
     if (!validDatabase()) return null
 
     var searchText = q
@@ -334,7 +358,11 @@ class DatabaseHandler private constructor(
 
     val columns = arrayOf(BaseColumns._ID, COL_SURA, COL_AYAH, COL_TEXT)
     return try {
-      searcher.runQuery(database!!, qtext, searchText, q, withSnippets, columns)
+      if (rawArabic && isArabicDatabase) {
+        arabicSearcher.runQueryRaw(database!!, qtext, searchText, q, columns)
+      } else {
+        searcher.runQuery(database!!, qtext, searchText, q, withSnippets, columns)
+      }
     } catch (e: Exception) {
       Timber.e(e)
       null

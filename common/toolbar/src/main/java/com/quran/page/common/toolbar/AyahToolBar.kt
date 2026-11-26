@@ -106,10 +106,8 @@ class AyahToolBar @JvmOverloads constructor(
     val pipHeight = toolBarPip.measuredHeight
     val menuWidth = menuLayout.measuredWidth
     val menuHeight = menuLayout.measuredHeight
-    var pipLeft = pipOffset.toInt()
-    if (pipLeft + pipWidth > totalWidth) {
-      pipLeft = totalWidth / 2 - pipWidth / 2
-    }
+    val maxPipLeft = (totalWidth - pipWidth).coerceAtLeast(0)
+    val pipLeft = pipOffset.toInt().coerceIn(0, maxPipLeft)
 
     // overlap the pip and toolbar by 1px to avoid occasional gap
     if (pipPosition == SelectedAyahPlacementType.TOP) {
@@ -182,16 +180,15 @@ class AyahToolBar @JvmOverloads constructor(
       setImageDrawable(item.icon)
       setBackgroundResource(R.drawable.toolbar_button)
       id = item.itemId
+      contentDescription = item.title
       layoutParams = LayoutParams(itemWidth, LayoutParams.MATCH_PARENT)
       setOnClickListener(this@AyahToolBar)
       setOnLongClickListener(this@AyahToolBar)
     }
   }
 
-  // relying on getWidth() may give us the width of a shorter
-  // submenu instead of the actual menu
   private val toolBarWidth: Int
-    get() = menu.size() * itemWidth
+    get() = menuLayout.childCount * itemWidth
 
   fun setBookmarked(bookmarked: Boolean) {
     val bookmarkItem = menu.findItem(R.id.cab_bookmark_ayah)
@@ -209,8 +206,10 @@ class AyahToolBar @JvmOverloads constructor(
         selectionIndicator is SelectionIndicator.ScrollOnly) {
       hideMenu()
     } else {
+      showMenu(menu)
       updatePosition(selectionIndicator)
-      showMenu()
+      visibility = VISIBLE
+      isShowing = true
     }
   }
 
@@ -279,12 +278,6 @@ class AyahToolBar @JvmOverloads constructor(
 
   private fun resetMenu(force: Boolean = false) {
     showMenu(menu, force)
-  }
-
-  private fun showMenu() {
-    showMenu(menu)
-    visibility = VISIBLE
-    isShowing = true
   }
 
   private fun hideMenu() {

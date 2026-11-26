@@ -27,6 +27,7 @@
   <style name="NotificationTitle" parent="android:TextAppearance.StatusBar.EventContent.Title" />
 
   <style name="QuranDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+    <item name="quranAccent">@color/accent_navy_gold</item>
     <item name="colorAccent">?attr/quranAccent</item>
     <item name="android:backgroundDimAmount">0.3</item>
   </style>
@@ -75,27 +76,27 @@
     <item name="android:textSize">16sp</item>
   </style>
 
-  <style name="SherlockDropDownItem">
-    <item name="android:textAppearance">@style/SherlockDropDownItemText</item>
-    <item name="android:paddingLeft">8dp</item>
-    <item name="android:paddingRight">8dp</item>
+  <style name="QuranDropDownItem">
+    <item name="android:textAppearance">@style/QuranDropDownItemText</item>
+    <item name="android:paddingStart">8dp</item>
+    <item name="android:paddingEnd">8dp</item>
     <item name="android:gravity">center_vertical</item>
   </style>
 
-  <style name="SherlockDropDownItemText">
-    <item name="android:textColor">@color/sherlock_primary_text_disable</item>
+  <style name="QuranDropDownItemText">
+    <item name="android:textColor">@color/quran_spinner_primary_text_disable</item>
     <item name="android:textSize">16sp</item>
     <item name="android:textStyle">normal</item>
   </style>
 
-  <style name="SherlockSpinnerItem">
-    <item name="android:textAppearance">@style/SherlockSpinnerItemText</item>
-    <item name="android:paddingLeft">8dp</item>
-    <item name="android:paddingRight">8dp</item>
+  <style name="QuranSpinnerItem">
+    <item name="android:textAppearance">@style/QuranSpinnerItemText</item>
+    <item name="android:paddingStart">8dp</item>
+    <item name="android:paddingEnd">8dp</item>
   </style>
 
-  <style name="SherlockSpinnerItemText">
-    <item name="android:textColor">@color/sherlock_primary_text</item>
+  <style name="QuranSpinnerItemText">
+    <item name="android:textColor">@color/quran_spinner_primary_text</item>
     <item name="android:textSize">16sp</item>
     <item name="android:textStyle">normal</item>
   </style>

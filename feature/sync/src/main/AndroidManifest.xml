@@ -4,6 +4,7 @@
     <activity
         android:name=".QuranSyncActivity"
         android:exported="false"
-        android:launchMode="singleTop" />
+        android:launchMode="singleTop"
+        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
   </application>
 </manifest>

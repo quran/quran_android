@@ -13,6 +13,7 @@ class ZipUtilsTest {
 
   companion object {
     private const val TEST_MAX_UNZIPPED_SIZE = 5 * 1024 * 1024 // 5 mb
+    private const val DEFAULT_MAX_UNZIPPED_SIZE = 0x1f400000
     private const val CLI_ROOT_DIRECTORY = "src/test/resources"
   }
 
@@ -24,13 +25,14 @@ class ZipUtilsTest {
   @Before
   fun setup() {
     originalMaxUnzippedSize = ZipUtils.MAX_UNZIPPED_SIZE
+    ZipUtils.MAX_UNZIPPED_SIZE = DEFAULT_MAX_UNZIPPED_SIZE
     destinationDirectory = File(CLI_ROOT_DIRECTORY, "tmp")
     destinationDirectory.mkdir()
   }
 
   @After
   fun cleanup() {
-    ZipUtils.MAX_UNZIPPED_SIZE = originalMaxUnzippedSize
+    ZipUtils.MAX_UNZIPPED_SIZE = DEFAULT_MAX_UNZIPPED_SIZE
     removeDirectory(destinationDirectory)
     removeDirectoryIfExists(File(CLI_ROOT_DIRECTORY, "tmp_evil"))
   }
@@ -132,6 +134,27 @@ class ZipUtilsTest {
     val extracted = File(destinationDirectory, "nested/dir/file.txt")
     assertThat(extracted.exists()).isTrue()
     assertThat(extracted.readText()).isEqualTo("hello")
+  }
+
+  @Test
+  fun testProgressListenerReceivesItemAndCounts() {
+    val zipFile = File(destinationDirectory, "progress.zip")
+    ZipOutputStream(FileOutputStream(zipFile)).use { zos ->
+      zos.putNextEntry(ZipEntry("a.txt"))
+      zos.write("one".toByteArray())
+      zos.closeEntry()
+      zos.putNextEntry(ZipEntry("b.txt"))
+      zos.write("two".toByteArray())
+      zos.closeEntry()
+    }
+
+    val reports = mutableListOf<Triple<String, Int, Int>>()
+    val ok = ZipUtils.unzipFile(zipFile, destinationDirectory, "tag") { obj, processed, total ->
+      reports.add(Triple(obj, processed, total))
+    }
+
+    assertThat(ok).isTrue()
+    assertThat(reports).containsExactly(Triple("tag", 1, 2), Triple("tag", 2, 2)).inOrder()
   }
 
   @Test

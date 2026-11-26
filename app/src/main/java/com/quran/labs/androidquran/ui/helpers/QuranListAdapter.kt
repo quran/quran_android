@@ -34,11 +34,14 @@ class QuranListAdapter(
   private val inflater = LayoutInflater.from(context)
   private val checkedState = SparseBooleanArray()
   private val locale = QuranUtils.getCurrentLocale()
-  private val emptyColorAlpha =
+  private val dateFormat: SimpleDateFormat by lazy { SimpleDateFormat("MMM dd, HH:mm", locale) }
+  private val emptyColorAlpha: Float by lazy {
     ResourcesCompat.getFloat(context.resources, R.dimen.empty_highlight_alpha)
+  }
   private var tagMap: Map<String, Tag> = emptyMap()
   private var showTags = false
   private var showDate = false
+  private var suraMetadataProvider: ((Int) -> String)? = null
 
   private var touchListener: QuranTouchListener? = null
 
@@ -141,12 +144,16 @@ class QuranListAdapter(
     touchListener = listener
   }
 
+  fun setSuraMetadataProvider(provider: ((Int) -> String)?) {
+    suraMetadataProvider = provider
+  }
+
   fun setElements(elements: Array<QuranRow>, tagMap: Map<String, Tag>) {
     this.elements = elements
     this.tagMap = tagMap
   }
 
-  fun getTag(tagId: String): Tag? = tagMap[tagId]
+  fun getTag(tagId: String?): Tag? = tagId?.let { tagMap[it] }
 
   fun setShowTags(showTags: Boolean) {
     this.showTags = showTags
@@ -166,16 +173,26 @@ class QuranListAdapter(
     with(holder) {
       number.text = QuranUtils.getLocalizedNumber(item.sura)
       metadata.visibility = View.VISIBLE
-      metadata.text = item.metadata
+      val resolvedMetadata = item.metadata ?: if (item.sura > 0) {
+        suraMetadataProvider?.invoke(item.sura)
+      } else {
+        null
+      }
+      metadata.text = resolvedMetadata
       tags.visibility = View.GONE
       image.contentDescription = item.imageContentDescription
 
 
       when {
         item.juzType != null -> {
-          image.setImageDrawable(
-            JuzView(context, item.juzType, item.juzOverlayText)
-          )
+          val existing = image.drawable as? JuzView
+          if (existing != null) {
+            existing.update(item.juzType, item.juzOverlayText)
+          } else {
+            image.setImageDrawable(
+              JuzView(context, item.juzType, item.juzOverlayText)
+            )
+          }
           image.visibility = View.VISIBLE
           number.visibility = View.GONE
         }
@@ -194,8 +211,7 @@ class QuranListAdapter(
           }
 
           if (showDate && !item.isReadingBookmark) {
-            val date = SimpleDateFormat("MMM dd, HH:mm", locale)
-              .format(Date(item.dateAddedInMillis))
+            val date = dateFormat.format(Date(item.dateAddedInMillis))
             holder.metadata.text = buildString {
               append(item.metadata)
               append(" - ")
@@ -206,21 +222,22 @@ class QuranListAdapter(
           image.visibility = View.VISIBLE
           number.visibility = View.GONE
 
-          val tagList = ArrayList<Tag>()
           val bookmark = item.bookmark
           if (bookmark != null && bookmark.tags.isNotEmpty() && showTags) {
+            val tagList = ArrayList<Tag>(bookmark.tags.size)
             for (i in bookmark.tags.indices) {
               val tagId = bookmark.tags[i]
               val tag = tagMap[tagId]
               tag?.let { tagList.add(it.copy(name = CollectionNames.displayName(context, it))) }
             }
-          }
-
-          if (tagList.isEmpty()) {
-            tags.visibility = View.GONE
+            if (tagList.isEmpty()) {
+              tags.visibility = View.GONE
+            } else {
+              tags.setTags(tagList)
+              tags.visibility = View.VISIBLE
+            }
           } else {
-            tags.setTags(tagList)
-            tags.visibility = View.VISIBLE
+            tags.visibility = View.GONE
           }
         }
       }

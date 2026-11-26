@@ -98,6 +98,9 @@ public class IconPageIndicator extends HorizontalScrollView implements
 
   private void animateToIcon(final int position) {
     final View iconView = mIconsLayout.getChildAt(position);
+    if (iconView == null) {
+      return;
+    }
     if (mIconSelector != null) {
       removeCallbacks(mIconSelector);
     }
@@ -156,7 +159,7 @@ public class IconPageIndicator extends HorizontalScrollView implements
       return;
     }
     if (mViewPager != null) {
-      mViewPager.addOnPageChangeListener(null);
+      mViewPager.removeOnPageChangeListener(this);
     }
     PagerAdapter adapter = view.getAdapter();
     if (adapter == null) {
@@ -171,7 +174,13 @@ public class IconPageIndicator extends HorizontalScrollView implements
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
     int count = mIconsLayout.getChildCount();
-    ImageView v = (ImageView) mIconsLayout.getChildAt(mSelectedIndex);
+    if (count == 0 || mSelectedIndex < 0 || mSelectedIndex >= count) {
+      return;
+    }
+    View v = mIconsLayout.getChildAt(mSelectedIndex);
+    if (v == null) {
+      return;
+    }
     final int bottom = v.getHeight();
     final int top = bottom - mIndicatorHeight;
     int left = v.getLeft();
@@ -179,10 +188,12 @@ public class IconPageIndicator extends HorizontalScrollView implements
 
     if (mSelectedIndex + 1 < count) {
       View nextIcon = mIconsLayout.getChildAt(mSelectedIndex + 1);
-      left = (int) (mSelectionOffset * nextIcon.getLeft() +
-          (1.0f - mSelectionOffset) * left);
-      right = (int) (mSelectionOffset * nextIcon.getRight() +
-          (1.0f - mSelectionOffset) * right);
+      if (nextIcon != null) {
+        left = (int) (mSelectionOffset * nextIcon.getLeft() +
+            (1.0f - mSelectionOffset) * left);
+        right = (int) (mSelectionOffset * nextIcon.getRight() +
+            (1.0f - mSelectionOffset) * right);
+      }
     }
 
     mIndicatorPaint.setColor(mIndicatorColor);
@@ -191,19 +202,28 @@ public class IconPageIndicator extends HorizontalScrollView implements
 
   public void notifyDataSetChanged() {
     mIconsLayout.removeAllViews();
-    IconPagerAdapter iconAdapter = (IconPagerAdapter) mViewPager.getAdapter();
+    PagerAdapter pagerAdapter = mViewPager.getAdapter();
+    IconPagerAdapter iconAdapter = (IconPagerAdapter) pagerAdapter;
     int count = iconAdapter.getCount();
     for (int i = 0; i < count; i++) {
       ImageView view = new ImageView(getContext(), null, androidx.appcompat.R.attr.actionButtonStyle);
       view.setImageResource(iconAdapter.getIconResId(i));
+      CharSequence title = pagerAdapter.getPageTitle(i);
+      if (title != null) {
+        view.setContentDescription(title);
+      }
       view.setTag(i);
       view.setOnClickListener(this);
       mIconsLayout.addView(view, new LayoutParams(WRAP_CONTENT, MATCH_PARENT));
     }
-    if (mSelectedIndex > count) {
-      mSelectedIndex = count - 1;
+    if (count == 0) {
+      mSelectedIndex = 0;
+    } else {
+      if (mSelectedIndex >= count) {
+        mSelectedIndex = count - 1;
+      }
+      setCurrentItem(mSelectedIndex);
     }
-    setCurrentItem(mSelectedIndex);
     requestLayout();
   }
 

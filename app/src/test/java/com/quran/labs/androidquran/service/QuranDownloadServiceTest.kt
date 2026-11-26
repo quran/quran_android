@@ -34,6 +34,7 @@ class QuranDownloadServiceTest {
     mockWebServer.start()
     tempDir = Files.createTempDirectory("download_service_test").toFile()
     ShadowStatFs.registerStats(Environment.getExternalStorageDirectory(), 1024, 1024, 1024)
+    ShadowStatFs.registerStats(tempDir, 1024, 1024, 1024)
     service = Robolectric.buildService(QuranDownloadService::class.java)
       .create()
       .get()

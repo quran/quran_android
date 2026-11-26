@@ -14,3 +14,14 @@ SELECT * FROM word_alignment WHERE sura = ? AND ayah >= ? AND ayah <= ?;
 findWordAlignmentsInSuraUntilEnd:
 SELECT * FROM word_alignment WHERE sura = ? AND ayah >= ?;
 
+findWordAlignmentsInRange:
+SELECT * FROM word_alignment
+WHERE sura >= :startSura AND sura <= :endSura
+  AND (
+    (sura = :startSura AND ayah >= :startAyah)
+    OR (sura > :startSura AND sura < :endSura)
+    OR (sura = :endSura AND ayah <= :endAyah)
+  )
+ORDER BY sura, ayah, audio_word_number;
+
+

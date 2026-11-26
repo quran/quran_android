@@ -8,14 +8,23 @@ import com.quran.data.di.AppScope
 import com.quran.labs.androidquran.common.drawing.util.getDrawableAsAlpha8
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
+import java.util.concurrent.ConcurrentHashMap
 
 @SingleIn(AppScope::class)
 class ImageBitmapUtil @Inject constructor() {
-  private val cache = mutableMapOf<Int, ImageBitmap>()
+  private val cache = ConcurrentHashMap<Int, ImageBitmap>()
 
   fun alpha8Image(appContext: Context, @DrawableRes drawableResId: Int): ImageBitmap {
-    return cache.getOrPut(drawableResId) {
-      appContext.resources.getDrawableAsAlpha8(drawableResId).asImageBitmap()
+    return cache[drawableResId] ?: synchronized(cache) {
+      cache.getOrPut(drawableResId) {
+        appContext.resources.getDrawableAsAlpha8(drawableResId).asImageBitmap()
+      }
+    }
+  }
+
+  fun clearCache() {
+    synchronized(cache) {
+      cache.clear()
     }
   }
 }

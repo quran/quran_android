@@ -27,7 +27,7 @@ internal class QuranSyncConfig(
     )
 
   private fun syncString(resourceId: Int): String {
-    return context.getString(resourceId).trim()
+    return context.getString(resourceId).orEmpty().trim()
   }
 
   internal companion object {
