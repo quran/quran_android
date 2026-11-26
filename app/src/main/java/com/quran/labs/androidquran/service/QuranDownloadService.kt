@@ -12,6 +12,7 @@ import android.os.Looper
 import android.os.Message
 import android.os.Parcelable
 import android.os.StatFs
+import androidx.annotation.VisibleForTesting
 import androidx.core.content.IntentCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.quran.data.core.QuranInfo
@@ -37,9 +38,9 @@ import dev.zacsweers.metro.Inject
 import okhttp3.Call
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okio.BufferedSource
 import okio.appendingSink
 import okio.buffer
+import okio.sink
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -49,7 +50,8 @@ import kotlin.concurrent.Volatile
 class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
   private lateinit var serviceLooper: Looper
   private lateinit var serviceHandler: ServiceHandler
-  private lateinit var notifier: QuranDownloadNotifier
+  @VisibleForTesting
+  internal lateinit var notifier: QuranDownloadNotifier
 
   // written from ui thread and read by download thread
   @Volatile
@@ -336,6 +338,10 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
           }
         }
       } else {
+        if (resolveSafeOutputFile(File(destination), outputFile) == null) {
+          notifyError(QuranDownloadNotifier.ERROR_INVALID_DOWNLOAD, true, outputFile, details)
+          return
+        }
         strategy = SingleFileDownloadStrategy(
           url, destination, outputFile, details,
           notifier
@@ -475,7 +481,8 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
     if (result == DOWNLOAD_SUCCESS) {
       if (filename.endsWith("zip")) {
         // finish unzipping even if canceled
-        val actualFile = File(path, filename)
+        val actualFile = resolveSafeOutputFile(File(path), filename)
+          ?: return QuranDownloadNotifier.ERROR_INVALID_DOWNLOAD
         if (!ZipUtils.unzipFile(
             actualFile, File(path), notificationInfo,
             this
@@ -490,15 +497,29 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
     return result
   }
 
-  private fun downloadUrl(
+  @VisibleForTesting
+  internal fun downloadUrl(
     url: String, path: String, filename: String,
     notificationInfo: NotificationDetails
   ): Int {
     Timber.d("downloading %s", url)
+    val destDir = File(path)
+    val actualFile = resolveSafeOutputFile(destDir, filename)
+      ?: return notifyError(
+        QuranDownloadNotifier.ERROR_INVALID_DOWNLOAD,
+        true,
+        filename,
+        notificationInfo
+      )
+    val partialFile = resolveSafeOutputFile(destDir, filename + PARTIAL_EXT)
+      ?: return notifyError(
+        QuranDownloadNotifier.ERROR_INVALID_DOWNLOAD,
+        true,
+        filename,
+        notificationInfo
+      )
     val builder: Request.Builder = Request.Builder()
       .url(url).tag(DEFAULT_TAG)
-    val partialFile = File(path, filename + PARTIAL_EXT)
-    val actualFile = File(path, filename)
 
     Timber.d(
       "downloadUrl: trying to download - file %s",
@@ -513,69 +534,83 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
     val isZip = filename.endsWith(".zip")
 
     var call: Call? = null
-    var source: BufferedSource? = null
     try {
       val request: Request = builder.build()
       call = okHttpClient.newCall(request)
-      val response = call.execute()
-      if (response.isSuccessful) {
-        Timber.d("successful response: %d - %d", response.code, downloadedAmount)
-        val sink = partialFile.appendingSink().buffer()
-        val body = response.body
-        source = body.source()
-        val size = body.contentLength() + downloadedAmount
+      val shouldRetryWithoutRange = call.execute().use { response ->
+        if (response.isSuccessful) {
+          Timber.d("successful response: %d - %d", response.code, downloadedAmount)
+          if (downloadedAmount > 0 && response.code != 206) {
+            if (partialFile.exists() && !partialFile.delete()) {
+              return QuranDownloadNotifier.ERROR_PERMISSIONS
+            }
+            downloadedAmount = 0
+          }
+          val body = response.body
+          val bodySource = body.source()
+          val contentLength = body.contentLength()
+          val size = if (contentLength >= 0) contentLength + downloadedAmount else -1L
 
-        if (!isSpaceAvailable(size + (if (isZip) downloadedAmount + size else 0))) {
-          return QuranDownloadNotifier.ERROR_DISK_SPACE
-        } else if (actualFile.exists()) {
-          if (actualFile.length() == (size + downloadedAmount)) {
-            // we already downloaded, why are we re-downloading?
-            return DOWNLOAD_SUCCESS
-          } else if (!actualFile.delete()) {
+          if (size > 0 && !isSpaceAvailable(size + (if (isZip) downloadedAmount + size else 0))) {
+            return QuranDownloadNotifier.ERROR_DISK_SPACE
+          } else if (actualFile.exists()) {
+            if (actualFile.length() == (size + downloadedAmount)) {
+              // we already downloaded, why are we re-downloading?
+              return DOWNLOAD_SUCCESS
+            } else if (!actualFile.delete()) {
+              return QuranDownloadNotifier.ERROR_PERMISSIONS
+            }
+          }
+
+          val sink = if (downloadedAmount > 0) {
+            partialFile.appendingSink().buffer()
+          } else {
+            partialFile.sink().buffer()
+          }
+          sink.use { bufferedSink ->
+            var read = 0L
+            var loops = 0
+            var totalRead = downloadedAmount
+
+            while (!isDownloadCanceled && !bodySource.exhausted() &&
+              ((bodySource.read(bufferedSink.buffer, BUFFER_SIZE.toLong()).also { read = it }) > 0)
+            ) {
+              totalRead += read
+              if (loops++ % 5 == 0) {
+                lastSentIntent = notifier.notifyProgress(notificationInfo, totalRead, size)
+              }
+              bufferedSink.flush()
+            }
+          }
+
+          if (isDownloadCanceled) {
+            return QuranDownloadNotifier.ERROR_CANCELLED
+          } else if (!partialFile.renameTo(actualFile)) {
+            return notifyError(
+              QuranDownloadNotifier.ERROR_PERMISSIONS,
+              true,
+              filename,
+              notificationInfo
+            )
+          }
+          return DOWNLOAD_SUCCESS
+        } else if (response.code == 416) {
+          if (!partialFile.delete()) {
             return QuranDownloadNotifier.ERROR_PERMISSIONS
           }
+          true
+        } else {
+          Timber.e(Exception("Unable to download file - code: " + response.code))
+          false
         }
-
-        var read = 0L
-        var loops = 0
-        var totalRead = downloadedAmount
-
-        while (!isDownloadCanceled && !source.exhausted() &&
-          ((source.read(sink.buffer, BUFFER_SIZE.toLong()).also { read = it }) > 0)
-        ) {
-          totalRead += read
-          if (loops++ % 5 == 0) {
-            lastSentIntent = notifier.notifyProgress(notificationInfo, totalRead, size)
-          }
-          sink.flush()
-        }
-        sink.closeQuietly()
-
-        if (isDownloadCanceled) {
-          return QuranDownloadNotifier.ERROR_CANCELLED
-        } else if (!partialFile.renameTo(actualFile)) {
-          return notifyError(
-            QuranDownloadNotifier.ERROR_PERMISSIONS,
-            true,
-            filename,
-            notificationInfo
-          )
-        }
-        return DOWNLOAD_SUCCESS
-      } else if (response.code == 416) {
-        if (!partialFile.delete()) {
-          return QuranDownloadNotifier.ERROR_PERMISSIONS
-        }
+      }
+      if (shouldRetryWithoutRange) {
         return downloadUrl(url, path, filename, notificationInfo)
-      } else {
-        Timber.e(Exception("Unable to download file - code: " + response.code))
       }
     } catch (exception: IOException) {
       Timber.d(exception, "Failed to download file")
     } catch (se: SecurityException) {
       Timber.e(se, "Security exception while downloading file")
-    } finally {
-      source.closeQuietly()
     }
 
     return if ((call != null && call.isCanceled())) QuranDownloadNotifier.ERROR_CANCELLED else notifyError(
@@ -672,14 +707,38 @@ class QuranDownloadService : Service(), ZipListener<NotificationDetails> {
     // download method return values
     private const val DOWNLOAD_SUCCESS = 0
 
-    private fun getFilenameFromUrl(url: String): String {
-      val slashIndex = url.lastIndexOf("/")
+    @VisibleForTesting
+    internal fun getFilenameFromUrl(url: String): String {
+      val withoutFragment = url.substringBefore('#')
+      val withoutQuery = withoutFragment.substringBefore('?')
+      val slashIndex = withoutQuery.lastIndexOf("/")
       if (slashIndex != -1) {
-        return url.substring(slashIndex + 1)
+        return withoutQuery.substring(slashIndex + 1)
       }
 
       // should never happen
-      return url
+      return withoutQuery
+    }
+
+    @VisibleForTesting
+    internal fun resolveSafeOutputFile(baseDir: File, filename: String): File? {
+      if (filename.isBlank() ||
+        filename == "." ||
+        filename == ".." ||
+        filename.contains('/') ||
+        filename.contains('\\') ||
+        filename.contains("..")
+      ) {
+        return null
+      }
+      val baseCanonical = baseDir.canonicalPath
+      val basePrefix = if (baseCanonical.endsWith(File.separator)) {
+        baseCanonical
+      } else {
+        baseCanonical + File.separator
+      }
+      val target = File(baseDir, filename)
+      return if (target.canonicalPath.startsWith(basePrefix)) target else null
     }
   }
 }

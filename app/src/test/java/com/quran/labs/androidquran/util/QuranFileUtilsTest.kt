@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.util
 
 import android.content.Context
 import android.hardware.display.DisplayManager
+import android.os.Environment
 import android.view.Display
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
@@ -11,11 +12,13 @@ import com.quran.labs.androidquran.base.TestApplication
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.fakes.FakePageProvider
 import java.io.File
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowEnvironment
 
 @Config(application = TestApplication::class, sdk = [33])
 @RunWith(RobolectricTestRunner::class)
@@ -25,7 +28,13 @@ class QuranFileUtilsTest {
 
   @Before
   fun setUp() {
+    QuranSettings.setInstance(null)
     File(context.filesDir, "quran_android").deleteRecursively()
+  }
+
+  @After
+  fun tearDown() {
+    QuranSettings.setInstance(null)
   }
 
   @Test
@@ -59,6 +68,24 @@ class QuranFileUtilsTest {
     val quranFileUtils = quranFileUtils(ayahInfoDirectory = "new_madani/databases")
 
     assertThat(quranFileUtils.hasArabicSearchDatabase()).isFalse()
+  }
+
+  @Test
+  fun `recitation directories fall back to internal storage when base directory is null`() {
+    ShadowEnvironment.setExternalStorageState("removed")
+    QuranSettings.getInstance(context).appCustomLocation =
+      Environment.getExternalStorageDirectory().absolutePath
+    val quranFileUtils = quranFileUtils(ayahInfoDirectory = "new_madani/databases")
+    assertThat(quranFileUtils.getQuranBaseDirectory(context)).isNull()
+
+    val sessionsDir = quranFileUtils.recitationSessionsDirectory()
+    val recordingsDir = quranFileUtils.recitationRecordingsDirectory()
+
+    assertThat(sessionsDir).doesNotContain("nullrecitation")
+    assertThat(recordingsDir).doesNotContain("nullrecitation")
+    val expectedBase = File(context.filesDir, "quran_android").absolutePath
+    assertThat(sessionsDir).startsWith(expectedBase)
+    assertThat(recordingsDir).startsWith(expectedBase)
   }
 
   private fun quranFileUtils(ayahInfoDirectory: String): QuranFileUtils {

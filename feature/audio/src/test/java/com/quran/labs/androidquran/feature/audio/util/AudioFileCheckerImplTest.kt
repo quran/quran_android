@@ -225,4 +225,58 @@ class AudioFileCheckerImplTest {
     // Assert
     assertThat(result).isFalse()
   }
+
+  @Test
+  fun `doesFileExistForQari returns false for path traversal filenames on gapless qari`() {
+    tempFolder.newFolder("gapless_sheikh")
+    tempFolder.newFile("secret.db")
+
+    assertThat(checker.doesFileExistForQari(gaplessQari, "../secret.db")).isFalse()
+    assertThat(checker.doesFileExistForQari(gaplessQari, "../../foo")).isFalse()
+    assertThat(checker.doesFileExistForQari(gaplessQari, "..\\secret.db")).isFalse()
+    assertThat(checker.doesFileExistForQari(gaplessQari, "sub/001.mp3")).isFalse()
+    assertThat(checker.doesHashMatchForQariFile(gaplessQari, "../secret.db", "any")).isFalse()
+  }
+
+  @Test
+  fun `localFileForQari rejects traversal and separator filenames`() {
+    val invalidNames = listOf("../secret.db", "../../foo", "..\\secret.db", "sub/001.mp3", ".", "..", "")
+
+    invalidNames.forEach { invalid ->
+      val gaplessError = try {
+        checker.localFileForQari(gaplessQari, invalid)
+        null
+      } catch (e: IllegalArgumentException) {
+        e
+      }
+      assertThat(gaplessError).isNotNull()
+
+      val gappedError = try {
+        checker.localFileForQari(gappedQari, invalid)
+        null
+      } catch (e: IllegalArgumentException) {
+        e
+      }
+      assertThat(gappedError).isNotNull()
+    }
+  }
+
+  @Test
+  fun `doesFileExistForQari and localFileForQari reject malformed gapped filenames`() {
+    tempFolder.newFolder("gapped_sheikh")
+    val malformedNames = listOf("bad", "12345.mp3", "abcdef.mp3", "002255", "002255.mp3/evil", "002255.mp3/../x")
+
+    malformedNames.forEach { malformed ->
+      assertThat(checker.doesFileExistForQari(gappedQari, malformed)).isFalse()
+      assertThat(checker.doesHashMatchForQariFile(gappedQari, malformed, "any")).isFalse()
+
+      val error = try {
+        checker.localFileForQari(gappedQari, malformed)
+        null
+      } catch (e: IllegalArgumentException) {
+        e
+      }
+      assertThat(error).isNotNull()
+    }
+  }
 }

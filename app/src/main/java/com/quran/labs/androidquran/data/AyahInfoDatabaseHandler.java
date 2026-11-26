@@ -17,6 +17,7 @@ import com.quran.page.common.data.SuraHeaderLocation;
 import com.quran.page.common.data.coordinates.PageGlyphsCoords;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +86,22 @@ public class AyahInfoDatabaseHandler {
                                   QuranFileUtils quranFileUtils) throws SQLException {
     File base = quranFileUtils.getQuranAyahDatabaseDirectory();
     File path = new File(base, databaseName);
-    database = SQLiteDatabase.openDatabase(path.getAbsolutePath(), null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+    try {
+      String baseCanonical = base.getCanonicalPath();
+      String basePrefix = baseCanonical.endsWith(File.separator)
+          ? baseCanonical
+          : baseCanonical + File.separator;
+      String targetCanonical = path.getCanonicalPath();
+      if (databaseName.contains("/")
+          || databaseName.contains("\\")
+          || !targetCanonical.startsWith(basePrefix)) {
+        throw new IllegalArgumentException("Invalid database name: " + databaseName);
+      }
+      database = SQLiteDatabase.openDatabase(
+          targetCanonical, null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
+    } catch (IOException e) {
+      throw new SQLException("Failed to resolve database path", e);
+    }
     hasGlyphData = quranFileUtils.getAyahInfoDbHasGlyphData();
   }
 

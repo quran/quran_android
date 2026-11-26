@@ -17,4 +17,7 @@ dependencies {
 
   implementation libs.moshi
   ksp(libs.moshi.codegen)
+
+  testImplementation libs.junit
+  testImplementation libs.truth
 }

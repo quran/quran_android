@@ -187,18 +187,12 @@ class QuranSyncManager(
    */
   suspend fun logout() {
     runAuthAction {
-      if (!markLogoutPending()) {
-        error("Unable to persist sync logout recovery marker")
-      }
-
-      try {
-        graph.quranDataService.logout()
-      } catch (e: Exception) {
-        graph.authService.clearError()
-        throw e
-      } finally {
-        clearLogoutPending()
-      }
+      executeLogoutWithRecovery(
+        markPending = ::markLogoutPending,
+        clearPending = ::clearLogoutPending,
+        clearError = graph.authService::clearError,
+        performLogout = graph.quranDataService::logout
+      )
     }
   }
 
@@ -324,6 +318,25 @@ class QuranSyncManager(
   class AuthActivityRegistration internal constructor(
     internal val id: Int
   )
+}
+
+internal suspend fun executeLogoutWithRecovery(
+  markPending: () -> Boolean,
+  clearPending: () -> Unit,
+  clearError: () -> Unit,
+  performLogout: suspend () -> Unit
+) {
+  if (!markPending()) {
+    error("Unable to persist sync logout recovery marker")
+  }
+
+  try {
+    performLogout()
+    clearPending()
+  } catch (e: Exception) {
+    clearError()
+    throw e
+  }
 }
 
 private object InactiveAuthFlowFactory : CodeAuthFlowFactory {
