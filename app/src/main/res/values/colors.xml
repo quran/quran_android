@@ -5,8 +5,8 @@
   <color name="toolbar_icon_tint">#ff44464e</color>
   <color name="toolbar_secondary_text">#ff44464e</color>
 
-  <color name="surface">#fffaf8f7</color>
-  <color name="accent_navy_gold">#ff1f6fb2</color>
+  <color name="surface">#fff6f5f1</color>
+  <color name="accent_navy_gold">#ff23394f</color>
   <color name="secondary_dark_background">#ffffffff</color>
   <color name="header_background">#dee2e6</color>
   <color name="header_text_color">@color/sura_number_color</color>

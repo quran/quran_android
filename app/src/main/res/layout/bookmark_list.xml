@@ -4,16 +4,29 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/quranSurface"
     android:orientation="vertical">
 
-  <androidx.appcompat.widget.Toolbar
-      android:id="@+id/toolbar"
-      style="@style/ToolBarArea"
+  <FrameLayout
+      android:id="@+id/toolbar_area"
       android:layout_width="match_parent"
-      android:layout_height="?attr/actionBarSize"
-      android:theme="@style/ToolbarStyle"
-      app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
-      app:titleTextAppearance="@style/ToolbarTitleText" />
+      android:layout_height="wrap_content"
+      android:background="?attr/quranToolbarBackground">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/ToolBarArea"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ToolbarStyle"
+        app:popupTheme="?attr/quranPopupTheme"
+        app:titleTextAppearance="@style/ToolbarTitleText" />
+  </FrameLayout>
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:background="?attr/quranDivider" />
 
   <FrameLayout
       android:layout_width="match_parent"
@@ -34,7 +47,7 @@
         android:paddingStart="32dp"
         android:paddingEnd="32dp"
         android:gravity="center"
-        android:textColor="@color/sura_details_color"
+        android:textColor="?attr/quranTextSecondary"
         android:textSize="16sp"
         android:visibility="gone" />
   </FrameLayout>

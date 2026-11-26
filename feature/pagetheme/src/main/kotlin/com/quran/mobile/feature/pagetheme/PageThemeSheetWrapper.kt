@@ -3,6 +3,7 @@ package com.quran.mobile.feature.pagetheme
 import android.content.Context
 import android.widget.FrameLayout
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -52,6 +53,8 @@ class PageThemeSheetWrapper(
       ModalBottomSheet(
         onDismissRequest = onDismissed,
         sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+        contentColor = MaterialTheme.colorScheme.onSurface,
         scrimColor = Color.Transparent
       ) {
         PageThemeSheet(

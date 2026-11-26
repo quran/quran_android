@@ -37,6 +37,7 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.util.ThemeUtil;
 
 import java.util.Locale;
 
@@ -114,11 +115,25 @@ public class SlidingTabLayout extends HorizontalScrollView {
     mTitleOffset = (int) (TITLE_OFFSET_DIPS * density);
     mTabPadding = (int) (TAB_VIEW_PADDING_DIPS * density);
 
-    mSelectedTabColor = ContextCompat.getColor(context, R.color.accent_color);
-    mUnselectedTabColor = ContextCompat.getColor(context, R.color.tab_unselected_color);
+    mSelectedTabColor = ThemeUtil.resolveThemeColor(
+        context,
+        R.attr.quranTabSelectedText,
+        ContextCompat.getColor(context, R.color.accent_color)
+    );
+    mUnselectedTabColor = ThemeUtil.resolveThemeColor(
+        context,
+        R.attr.quranTabUnselectedText,
+        ContextCompat.getColor(context, R.color.tab_unselected_color)
+    );
 
     mTabStrip = new SlidingTabStrip(context);
-    mTabStrip.setSelectedIndicatorColors(ContextCompat.getColor(context, R.color.indicator_color));
+    mTabStrip.setSelectedIndicatorColors(
+        ThemeUtil.resolveThemeColor(
+            context,
+            R.attr.quranTabIndicator,
+            ContextCompat.getColor(context, R.color.indicator_color)
+        )
+    );
     addView(mTabStrip, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
   }
 

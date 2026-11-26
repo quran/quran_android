@@ -8,6 +8,7 @@ import androidx.work.Configuration
 import com.quran.common.search.RustArabicSearchEngine
 import com.quran.data.di.AppCoroutineScope
 import com.quran.labs.androidquran.common.audio.util.AudioDecoderCapabilities
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.core.worker.QuranWorkerFactory
 import com.quran.labs.androidquran.di.component.application.ApplicationComponent
 import com.quran.labs.androidquran.util.QuranSettings
@@ -62,6 +63,7 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
     // theme setup
     val theme = quranSettings.currentTheme()
     ThemeUtil.setTheme(theme)
+    ThemeUtil.applyThemeStyle(AppThemeStyle.fromPreference(quranSettings.appThemeStyle))
   }
 
   open fun setupTimber() {

@@ -12,6 +12,7 @@ import com.quran.labs.androidquran.ui.fragment.JumpFragment
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.ui.helpers.QuranNavigator
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.util.ThemeUtil
 import dev.zacsweers.metro.Inject
 
 /**
@@ -27,6 +28,7 @@ class ShowJumpFragmentActivity : AppCompatActivity(), JumpDestination {
   lateinit var settings: QuranSettings
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    ThemeUtil.applyActivityTheme(this)
     super.onCreate(savedInstanceState)
     (application as QuranApplication).applicationComponent.inject(this)
     supportRequestWindowFeature(Window.FEATURE_NO_TITLE)

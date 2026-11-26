@@ -1,7 +1,13 @@
 package com.quran.page.common.toolbar
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -12,6 +18,7 @@ import android.view.View.OnLongClickListener
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import androidx.annotation.AttrRes
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.Insets
@@ -37,6 +44,8 @@ class AyahToolBar @JvmOverloads constructor(
   private val menuLayout: LinearLayout
   private val toolBarPip: AyahToolBarPip
   private val toolBarTotalHeight: Int
+  private val iconTint: Int?
+  private val rippleColor: Int?
 
   private var pipOffset = 0f
   private var pipPosition: SelectedAyahPlacementType
@@ -63,7 +72,10 @@ class AyahToolBar @JvmOverloads constructor(
     val toolBarHeight = resources.getDimensionPixelSize(R.dimen.toolbar_height)
     pipHeight = resources.getDimensionPixelSize(R.dimen.toolbar_pip_height)
     pipWidth = resources.getDimensionPixelSize(R.dimen.toolbar_pip_width)
-    val background = ContextCompat.getColor(context, R.color.toolbar_background)
+    val background = resolveThemeColor(context, R.attr.ayahToolbarBackground)
+      ?: ContextCompat.getColor(context, R.color.toolbar_background)
+    iconTint = resolveThemeColor(context, R.attr.ayahToolbarIconTint)
+    rippleColor = resolveThemeColor(context, R.attr.ayahToolbarRipple)
 
     toolBarTotalHeight = resources.getDimensionPixelSize(R.dimen.toolbar_total_height)
 
@@ -178,12 +190,34 @@ class AyahToolBar @JvmOverloads constructor(
   private fun getMenuItemView(item: MenuItem): View {
     return ImageButton(context).apply {
       setImageDrawable(item.icon)
-      setBackgroundResource(R.drawable.toolbar_button)
+      iconTint?.let { imageTintList = ColorStateList.valueOf(it) }
+      background = createButtonBackground(rippleColor)
       id = item.itemId
       contentDescription = item.title
       layoutParams = LayoutParams(itemWidth, LayoutParams.MATCH_PARENT)
       setOnClickListener(this@AyahToolBar)
       setOnLongClickListener(this@AyahToolBar)
+    }
+  }
+
+  private fun createButtonBackground(rippleColor: Int?): Drawable? {
+    return if (rippleColor != null) {
+      RippleDrawable(ColorStateList.valueOf(rippleColor), null, ColorDrawable(Color.WHITE))
+    } else {
+      ContextCompat.getDrawable(context, R.drawable.toolbar_button)
+    }
+  }
+
+  private fun resolveThemeColor(context: Context, @AttrRes attrRes: Int): Int? {
+    val typedValue = TypedValue()
+    return if (context.theme.resolveAttribute(attrRes, typedValue, true)) {
+      if (typedValue.resourceId != 0) {
+        ContextCompat.getColor(context, typedValue.resourceId)
+      } else {
+        typedValue.data
+      }
+    } else {
+      null
     }
   }
 

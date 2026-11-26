@@ -22,6 +22,7 @@ import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.ui.core.CollectionNames
 import com.quran.labs.androidquran.presenter.bookmark.TagBookmarkPresenter
+import com.quran.labs.androidquran.util.ThemeUtil
 import dev.zacsweers.metro.HasMemberInjections
 import dev.zacsweers.metro.Inject
 
@@ -52,8 +53,7 @@ open class TagBookmarkDialog : DialogFragment() {
     }
   }
 
-  private fun createTagsListView(): ListView {
-    val context = requireContext()
+  private fun createTagsListView(context: Context = requireContext()): ListView {
     val adapter = TagsAdapter(context, tagBookmarkPresenter)
     this.adapter = adapter
     val listview = ListView(context)
@@ -88,8 +88,8 @@ open class TagBookmarkDialog : DialogFragment() {
   }
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-    val builder = Builder(requireActivity(), R.style.QuranDialogTheme)
-    builder.setView(createTagsListView())
+    val builder = Builder(requireActivity(), ThemeUtil.dialogThemeRes())
+    builder.setView(createTagsListView(builder.context))
     builder.setPositiveButton(R.string.dialog_ok) { _: DialogInterface?, _: Int -> }
     builder.setNegativeButton(com.quran.mobile.common.ui.core.R.string.cancel) { _: DialogInterface?, _: Int -> dismiss() }
     return builder.create()

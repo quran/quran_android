@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.util.ThemeUtil
 
 class TagsViewGroup @JvmOverloads constructor(
   context: Context,
@@ -21,7 +22,11 @@ class TagsViewGroup @JvmOverloads constructor(
   private val chipSpacing = resources.getDimensionPixelSize(R.dimen.tag_margin)
   private val chipPadding = resources.getDimensionPixelSize(R.dimen.tag_padding)
   private val chipTextSize = resources.getDimensionPixelSize(R.dimen.tag_text_size).toFloat()
-  private val chipTextColor = ContextCompat.getColor(context, R.color.accent_color)
+  private val chipTextColor = ThemeUtil.resolveThemeColor(
+    context,
+    R.attr.quranAccent,
+    ContextCompat.getColor(context, R.color.accent_color)
+  )
 
   fun setTags(tags: List<Tag>) {
     for (i in tags.indices) {

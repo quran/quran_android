@@ -35,6 +35,7 @@ import com.quran.labs.androidquran.ui.helpers.BookmarkUIConverter
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter
 import com.quran.labs.androidquran.ui.helpers.QuranListAdapter.QuranTouchListener
 import com.quran.labs.androidquran.ui.helpers.QuranRow
+import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.mobile.feature.sync.BookmarksSignInCard
 import com.quran.mobile.feature.sync.QuranSyncActivity
 import com.quran.mobile.feature.sync.QuranSyncManager
@@ -361,9 +362,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
               BookmarkPresenter.DELAY_DELETION_DURATION_IN_MS
             )
             snackbar.setAction(R.string.undo, mOnUndoClickListener)
-            snackbar.setTextColor(res.getColor(R.color.default_text))
-            snackbar.getView()
-              .setBackgroundColor(res.getColor(R.color.snackbar_background_color))
+            ThemeUtil.styleSnackbar(snackbar)
             snackbar.show()
           }
           return true

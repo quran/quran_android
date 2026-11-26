@@ -2,9 +2,12 @@ package com.quran.mobile.feature.downloadmanager
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import com.quran.common.search.SearchTextUtil
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInterface
@@ -87,7 +91,21 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
     }
     val sheikhDownloadsFlow = sheikhAudioPresenter.sheikhInfo(qariId)
 
-    enableEdgeToEdge()
+    val isNight = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+      Configuration.UI_MODE_NIGHT_YES
+    val palette = AppThemeStyle.current.palette(isNight)
+    enableEdgeToEdge(
+      statusBarStyle = if (palette.isLightToolbar) {
+        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+      } else {
+        SystemBarStyle.dark(Color.TRANSPARENT)
+      },
+      navigationBarStyle = if (isNight) {
+        SystemBarStyle.dark(Color.TRANSPARENT)
+      } else {
+        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+      }
+    )
 
     setContent {
       val sheikhDownloadsState = sheikhDownloadsFlow.collectAsState(null)

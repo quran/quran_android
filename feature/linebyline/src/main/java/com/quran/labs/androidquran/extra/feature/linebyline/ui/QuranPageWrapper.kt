@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import com.quran.data.source.PageContentType
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.extra.feature.linebyline.model.PageInfo
 import com.quran.labs.androidquran.extra.feature.linebyline.model.SidelinesPosition
 import java.text.NumberFormat
@@ -170,8 +171,7 @@ fun QuranPageWrapper(
     },
     isNightMode,
     backgroundColor = if (isNightMode) {
-      val brightness = displaySettings.nightModeBackgroundBrightness
-      Color(brightness, brightness, brightness)
+      AppThemeStyle.current.darkMushafBackground(displaySettings.nightModeBackgroundBrightness)
     } else {
       displaySettings.dayBackgroundColor?.let { Color(it) }
     }

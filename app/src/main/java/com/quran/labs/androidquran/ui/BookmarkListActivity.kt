@@ -8,13 +8,13 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -43,6 +43,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranNavigator
 import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.util.ThemeUtil
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,7 +77,8 @@ class BookmarkListActivity : AppCompatActivity(),
   lateinit var quranSettings: QuranSettings
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    enableEdgeToEdge()
+    ThemeUtil.applyActivityTheme(this)
+    ThemeUtil.enableThemedEdgeToEdge(this)
     super.onCreate(savedInstanceState)
     (application as QuranApplication).applicationComponent.inject(this)
 
@@ -90,12 +92,14 @@ class BookmarkListActivity : AppCompatActivity(),
     setContentView(R.layout.bookmark_list)
 
     val root = findViewById<ViewGroup>(R.id.root)
+    val toolbarArea = findViewById<View>(R.id.toolbar_area)
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
       val insets = windowInsets.getInsets(
         WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
       )
+      toolbarArea.updatePadding(top = insets.top)
       root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-        topMargin = insets.top
+        topMargin = 0
         leftMargin = insets.left
         rightMargin = insets.right
       }
@@ -320,6 +324,11 @@ class BookmarkListActivity : AppCompatActivity(),
     actionMode?.finish()
   }
 
+  override fun onSupportActionModeStarted(mode: ActionMode) {
+    super.onSupportActionModeStarted(mode)
+    ThemeUtil.applyActionModeStatusGuard(this)
+  }
+
   private fun removeSelectedRows() {
     val adapter = adapter ?: return
     val recyclerView = recyclerView ?: return
@@ -345,8 +354,7 @@ class BookmarkListActivity : AppCompatActivity(),
         recyclerView, message, BookmarkPresenter.DELAY_DELETION_DURATION_IN_MS
       )
       snackbar.setAction(R.string.undo) { bookmarkListPresenter.cancelRemoval() }
-      snackbar.setTextColor(resources.getColor(R.color.default_text))
-      snackbar.view.setBackgroundColor(resources.getColor(R.color.snackbar_background_color))
+      ThemeUtil.styleSnackbar(snackbar)
       snackbar.show()
     }
   }

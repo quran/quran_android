@@ -18,6 +18,7 @@ import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.ui.core.CollectionNames
 import com.quran.labs.androidquran.ui.QuranActivity
 import com.quran.labs.androidquran.util.QuranUtils
+import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.labs.androidquran.view.JuzView
 import com.quran.labs.androidquran.view.TagsViewGroup
 import java.text.SimpleDateFormat
@@ -205,9 +206,16 @@ class QuranListAdapter(
           if (item.imageFilterColorResource == null) {
             image.colorFilter = null
           } else {
-            image.setColorFilter(
-              ContextCompat.getColor(context, item.imageFilterColorResource), PorterDuff.Mode.SRC_ATOP
-            )
+            val filterColor = if (item.imageFilterColorResource == R.color.icon_tint) {
+              ThemeUtil.resolveThemeColor(
+                context,
+                R.attr.quranSuraNumberText,
+                ContextCompat.getColor(context, R.color.icon_tint)
+              )
+            } else {
+              ContextCompat.getColor(context, item.imageFilterColorResource)
+            }
+            image.setColorFilter(filterColor, PorterDuff.Mode.SRC_ATOP)
           }
 
           if (showDate && !item.isReadingBookmark) {

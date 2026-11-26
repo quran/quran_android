@@ -1,8 +1,11 @@
 package com.quran.mobile.feature.sync
 
 import android.content.ActivityNotFoundException
+import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -92,7 +95,20 @@ class QuranSyncActivity : FragmentActivity() {
       )
     }
     authActivityRegistration = syncManager.registerAuthActivity(this)
-    enableEdgeToEdge()
+    val isNight = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+      Configuration.UI_MODE_NIGHT_YES
+    enableEdgeToEdge(
+      statusBarStyle = if (isNight) {
+        SystemBarStyle.dark(Color.TRANSPARENT)
+      } else {
+        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+      },
+      navigationBarStyle = if (isNight) {
+        SystemBarStyle.dark(Color.TRANSPARENT)
+      } else {
+        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+      }
+    )
 
     // the account screen starts with the first sign-in and closes when that session ends
     lifecycleScope.launch {

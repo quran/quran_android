@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <attr name="ayahToolbarBackground" format="color" />
+  <attr name="ayahToolbarIconTint" format="color" />
+  <attr name="ayahToolbarRipple" format="color" />
+</resources>

@@ -8,6 +8,7 @@ import android.graphics.Path
 import android.graphics.Path.FillType.EVEN_ODD
 import android.graphics.Point
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.quran.labs.androidquran.common.toolbar.R
@@ -26,9 +27,19 @@ class AyahToolBarPip @JvmOverloads constructor(
 
   init {
     position = SelectedAyahPlacementType.BOTTOM
+    val typedValue = TypedValue()
+    val resolvedColor = if (context.theme.resolveAttribute(R.attr.ayahToolbarBackground, typedValue, true)) {
+      if (typedValue.resourceId != 0) {
+        ContextCompat.getColor(context, typedValue.resourceId)
+      } else {
+        typedValue.data
+      }
+    } else {
+      ContextCompat.getColor(context, R.color.toolbar_background)
+    }
     paint = Paint().apply {
       isAntiAlias = true
-      color = ContextCompat.getColor(context, R.color.toolbar_background)
+      color = resolvedColor
       style = FILL_AND_STROKE
     }
   }

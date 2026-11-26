@@ -23,9 +23,10 @@ data class QuranAccent(
   companion object {
     // keep in sync with accent_navy_gold, which xml views take through ?attr/quranAccent
     val NavyGold = QuranAccent(
-      light = Color(0xFF1F6FB2),
-      dark = Color(0xFFE2AF56),
-      onDark = Color(0xFF000A3D)
+      light = Color(0xFF23394F),
+      dark = Color(0xFF89A5C4),
+      onLight = Color(0xFFFFFFFF),
+      onDark = Color(0xFF15171A)
     )
 
     /** The accent [QuranTheme] uses. */

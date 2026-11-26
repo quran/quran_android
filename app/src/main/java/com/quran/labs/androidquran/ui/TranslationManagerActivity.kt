@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.util.SparseIntArray
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -34,6 +35,7 @@ import com.quran.labs.androidquran.ui.adapter.DownloadedMenuActionListener
 import com.quran.labs.androidquran.ui.adapter.TranslationsAdapter
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.util.ThemeUtil
 import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.MainScope
@@ -80,8 +82,9 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   private val scope = MainScope()
 
   public override fun onCreate(savedInstanceState: Bundle?) {
+    ThemeUtil.applyActivityTheme(this)
+    ThemeUtil.enableThemedEdgeToEdge(this)
     super.onCreate(savedInstanceState)
-    enableEdgeToEdge()
 
     (application as QuranApplication).applicationComponent.inject(this)
     setContentView(R.layout.translation_manager)
@@ -94,12 +97,14 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     ab?.setDisplayHomeAsUpEnabled(true)
 
     val root = findViewById<ViewGroup>(R.id.root)
+    val toolbarArea = findViewById<View>(R.id.toolbar_area)
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
       val insets = windowInsets.getInsets(
         WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
       )
+      toolbarArea.updatePadding(top = insets.top)
       root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-        topMargin = insets.top
+        topMargin = 0
         leftMargin = insets.left
         rightMargin = insets.right
       }
@@ -273,13 +278,13 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
 
   private fun onErrorDownloadTranslations() {
     translationSwipeRefresh.isRefreshing = false
-    Snackbar
-      .make(
-        translationRecycler,
-        R.string.error_getting_translation_list,
-        Snackbar.LENGTH_SHORT
-      )
-      .show()
+    val snackbar = Snackbar.make(
+      translationRecycler,
+      R.string.error_getting_translation_list,
+      Snackbar.LENGTH_SHORT
+    )
+    ThemeUtil.styleSnackbar(snackbar)
+    snackbar.show()
   }
 
   private fun onTranslationsUpdated(items: List<TranslationItem>) {
@@ -479,6 +484,11 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     actionMode?.finish()
     selectionListener.clearSelection()
     downloadedItemActionListener = null
+  }
+
+  override fun onSupportActionModeStarted(mode: ActionMode) {
+    super.onSupportActionModeStarted(mode)
+    ThemeUtil.applyActionModeStatusGuard(this)
   }
 
   internal class TranslationSelectionListener(private val adapter: TranslationsAdapter) {

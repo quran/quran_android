@@ -110,6 +110,23 @@ class SearchResultFormatterTest {
     assertThat(SearchResultFormatter.cacheSize()).isEqualTo(0)
   }
 
+  @Test
+  fun `format with overrideHighlightColor recolors font spans on fast zero-TagSoup path`() {
+    val input = "بسم <font color=\"-13388315\">الله</font> الرحمن الرحيم"
+    val calmGreen = android.graphics.Color.parseColor("#2E6A4E")
+
+    val fast = SearchResultFormatter.parseFastPath(input, overrideHighlightColor = calmGreen)
+    assertThat(fast).isNotNull()
+
+    val formatted = SearchResultFormatter.format(input, overrideHighlightColor = calmGreen) as Spanned
+    assertThat(formatted.toString()).isEqualTo("بسم الله الرحمن الرحيم")
+    val spans = formatted.getSpans(0, formatted.length, ForegroundColorSpan::class.java)
+    assertThat(spans).hasLength(1)
+    assertThat(spans[0].foregroundColor).isEqualTo(calmGreen)
+    assertThat(formatted.getSpanStart(spans[0])).isEqualTo(4)
+    assertThat(formatted.getSpanEnd(spans[0])).isEqualTo(8)
+  }
+
   private fun assertMatchesHtmlCompat(rawHtml: String, actual: CharSequence) {
     val expected = HtmlCompat.fromHtml(rawHtml, HtmlCompat.FROM_HTML_MODE_COMPACT)
     assertThat(actual.toString()).isEqualTo(expected.toString())

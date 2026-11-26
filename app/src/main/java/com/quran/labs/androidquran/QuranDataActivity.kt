@@ -35,6 +35,7 @@ import com.quran.labs.androidquran.ui.whatsnew.AnnouncementActivity
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
 import com.quran.labs.androidquran.worker.WorkerConstants
 import dev.zacsweers.metro.Inject
@@ -101,6 +102,7 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
   private val scope = MainScope()
 
   public override fun onCreate(savedInstanceState: Bundle?) {
+    ThemeUtil.applyActivityTheme(this)
     super.onCreate(savedInstanceState)
     val quranApp = application as QuranApplication
     quranApp.applicationComponent.inject(this)

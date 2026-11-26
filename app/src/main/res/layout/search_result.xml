@@ -2,19 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
+    android:background="@drawable/quran_row_ripple"
     android:orientation="vertical"
-    android:padding="5dp">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp">
 
   <TextView
       android:id="@+id/verseText"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:includeFontPadding="true"
       android:textAppearance="@style/SearchResult" />
 
   <TextView
       android:id="@+id/verseLocation"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:fontFamily="sans-serif-medium"
       android:textAppearance="@style/SearchResult.Location" />
 </LinearLayout>

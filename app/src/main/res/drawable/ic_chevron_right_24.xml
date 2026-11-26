@@ -4,7 +4,7 @@
     android:viewportWidth="24"
     android:viewportHeight="24"
     android:autoMirrored="true"
-    android:tint="@color/sura_number_color">
+    android:tint="?attr/quranHeaderText">
   <path
       android:fillColor="@android:color/white"
       android:pathData="M10,6L8.59,7.41 13.17,12l-4.58,4.59L10,18l6,-6z"/>

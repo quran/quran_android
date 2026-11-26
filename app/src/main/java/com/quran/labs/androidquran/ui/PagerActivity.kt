@@ -116,9 +116,11 @@ import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.OrientationLockUtils
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.ShareUtil
+import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.labs.androidquran.view.IconPageIndicator
 import com.quran.labs.androidquran.view.QuranSpinner
 import com.quran.labs.androidquran.view.SlidingUpPanelLayout
@@ -298,7 +300,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
   }
 
+  private var appliedThemeStyle: AppThemeStyle = AppThemeStyle.DEFAULT
+
   public override fun onCreate(savedInstanceState: Bundle?) {
+    appliedThemeStyle = ThemeUtil.applyActivityTheme(this)
     WindowCompat.setDecorFitsSystemWindows(window, false)
     super.onCreate(savedInstanceState)
 
@@ -877,13 +882,22 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     if (!::windowInsetsController.isInitialized) {
       return
     }
-    val lightBars = shouldUseLightSystemBars(
+    val lightNavigationBar = resources.getBoolean(R.bool.light_navigation_bar)
+    val isLightToolbar = ThemeUtil.resolveThemeBoolean(
+      this,
+      R.attr.quranIsLightToolbar,
+      fallback = lightNavigationBar
+    )
+    windowInsetsController.isAppearanceLightStatusBars = shouldUseLightStatusBar(
       isActionBarHidden = isActionBarHidden,
       isNightMode = quranSettings.isNightMode,
-      lightNavigationBar = resources.getBoolean(R.bool.light_navigation_bar)
+      isLightToolbar = isLightToolbar
     )
-    windowInsetsController.isAppearanceLightStatusBars = lightBars
-    windowInsetsController.isAppearanceLightNavigationBars = lightBars
+    windowInsetsController.isAppearanceLightNavigationBars = shouldUseLightSystemBars(
+      isActionBarHidden = isActionBarHidden,
+      isNightMode = quranSettings.isNightMode,
+      lightNavigationBar = lightNavigationBar
+    )
   }
 
   private fun animateToolBar(visible: Boolean) {
@@ -969,6 +983,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   public override fun onResume() {
     super.onResume()
+    if (AppThemeStyle.fromPreference(quranSettings.appThemeStyle) != appliedThemeStyle) {
+      recreate()
+      return
+    }
     quranSettings.registerPreferencesListener(themePreferencesListener)
     refreshQuranPages()
     updateSystemBarAppearance()
@@ -1451,11 +1469,23 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
             val sura =
               quranDisplayData.getSuraNameFromPage(this@PagerActivity, page, true)
             holder.title.text = sura
-            holder.title.setTextColor(ResourcesCompat.getColor(resources, R.color.toolbar_text, null))
+            holder.title.setTextColor(
+              ThemeUtil.resolveThemeColor(
+                this@PagerActivity,
+                R.attr.quranToolbarText,
+                ResourcesCompat.getColor(resources, R.color.toolbar_text, null)
+              )
+            )
             val desc = quranDisplayData.getPageSubtitle(this@PagerActivity, page)
             holder.subtitle.text = desc
             holder.subtitle.visibility = View.VISIBLE
-            holder.subtitle.setTextColor(ResourcesCompat.getColor(resources, R.color.toolbar_secondary_text, null))
+            holder.subtitle.setTextColor(
+              ThemeUtil.resolveThemeColor(
+                this@PagerActivity,
+                R.attr.quranToolbarSecondaryText,
+                ResourcesCompat.getColor(resources, R.color.toolbar_secondary_text, null)
+              )
+            )
           }
           return view
         }
@@ -2163,6 +2193,14 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       lightNavigationBar: Boolean
     ): Boolean {
       return if (isActionBarHidden) !isNightMode else lightNavigationBar
+    }
+
+    internal fun shouldUseLightStatusBar(
+      isActionBarHidden: Boolean,
+      isNightMode: Boolean,
+      isLightToolbar: Boolean
+    ): Boolean {
+      return if (isActionBarHidden) !isNightMode else isLightToolbar
     }
 
     internal fun readingBookmarkToastBottomMargin(

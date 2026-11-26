@@ -12,8 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
-import androidx.annotation.ColorInt
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -22,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -32,6 +31,7 @@ import com.quran.common.search.RustSearchResultsCursor
 import com.quran.common.search.arabic.ArabicCompiledQuery
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.data.QuranDisplayData
 import com.quran.labs.androidquran.presenter.data.ReaderReadinessTracker
@@ -41,10 +41,13 @@ import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDo
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper.getDownloadIntent
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
 import com.quran.labs.androidquran.ui.helpers.QuranNavigator
+import com.quran.labs.androidquran.ui.helpers.SearchResultFormatter as CalmSearchResultFormatter
+import com.quran.labs.androidquran.ui.util.TypefaceManager
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
-import com.quran.labs.androidquran.util.SearchResultFormatter
+import com.quran.labs.androidquran.util.SearchResultFormatter as FastSearchResultFormatter
+import com.quran.labs.androidquran.util.ThemeUtil
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -93,8 +96,11 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
   @Inject
   lateinit var readerReadinessTracker: ReaderReadinessTracker
 
+  private var appliedThemeStyle: AppThemeStyle = AppThemeStyle.DEFAULT
+
   public override fun onCreate(savedInstanceState: Bundle?) {
-    enableEdgeToEdge()
+    appliedThemeStyle = ThemeUtil.applyActivityTheme(this)
+    ThemeUtil.enableThemedEdgeToEdge(this)
     super.onCreate(savedInstanceState)
 
     (application as QuranApplication)
@@ -102,12 +108,20 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
     setContentView(R.layout.search)
 
     val root = findViewById<ViewGroup>(R.id.root)
+    val toolbarArea = findViewById<View>(R.id.toolbar_area)
+    val navBarScrim = findViewById<View>(R.id.nav_bar_scrim)
+    val navBarDivider = findViewById<View>(R.id.nav_bar_divider)
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
       val insets = windowInsets.getInsets(
         WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
       )
+      toolbarArea.updatePadding(top = insets.top)
+      navBarScrim.updateLayoutParams<ViewGroup.LayoutParams> {
+        height = insets.bottom
+      }
+      navBarDivider.visibility = if (insets.bottom > 0) View.VISIBLE else View.GONE
       root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-        topMargin = insets.top
+        topMargin = 0
         leftMargin = insets.left
         rightMargin = insets.right
       }
@@ -121,11 +135,14 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
     resultsList = findViewById(R.id.results_list)
     resultsList.setHasFixedSize(true)
     resultsList.layoutManager = LinearLayoutManager(this)
-    resultsList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+    val dividerDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+    ContextCompat.getDrawable(this, R.drawable.theme_list_divider)?.let {
+      dividerDecoration.setDrawable(it)
+    }
+    resultsList.addItemDecoration(dividerDecoration)
     adapter = ResultAdapter(
       context = this,
       quranDisplayData = quranDisplayData,
-      highlightColor = ContextCompat.getColor(this, R.color.translation_highlight),
       onItemClick = { item ->
         cancelPendingViewIntentNavigation()
         jumpToResult(
@@ -136,15 +153,6 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
       }
     )
     resultsList.adapter = adapter
-
-    ViewCompat.setOnApplyWindowInsetsListener(resultsList) { _, windowInsets ->
-      val insets = windowInsets.getInsets(
-        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-      )
-
-      resultsList.setPadding(0, 0, 0, insets.bottom)
-      windowInsets
-    }
 
     val toolbar = findViewById<Toolbar>(R.id.toolbar)
     toolbar.setTitle(R.string.menu_search)
@@ -193,6 +201,13 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
     return super.onOptionsItemSelected(item)
   }
 
+  override fun onResume() {
+    super.onResume()
+    if (AppThemeStyle.fromPreference(quranSettings.appThemeStyle) != appliedThemeStyle) {
+      recreate()
+    }
+  }
+
   public override fun onPause() {
     downloadReceiver?.let { receiver ->
       receiver.unregister()
@@ -209,7 +224,7 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
   override fun onDestroy() {
     searchJob?.cancel()
     searchJob = null
-    SearchResultFormatter.clearCache()
+    FastSearchResultFormatter.clearCache()
     super.onDestroy()
   }
 
@@ -473,10 +488,15 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
   private class ResultAdapter(
     private val context: Context,
     private val quranDisplayData: QuranDisplayData,
-    @ColorInt private val highlightColor: Int,
     private val onItemClick: (SearchResultItem) -> Unit
   ) : ListAdapter<SearchResultItem, ResultAdapter.ViewHolder>(DIFF_CALLBACK) {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
+    private val arabicTypeface = TypefaceManager.getSearchArabicTypeface(context)
+    private val highlightColor = ThemeUtil.resolveThemeColor(
+      context,
+      R.attr.quranSearchHighlight,
+      ContextCompat.getColor(context, R.color.translation_highlight)
+    )
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
       val view = inflater.inflate(R.layout.search_result, parent, false)
@@ -487,13 +507,20 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
       val item = getItem(position)
       val suraName = quranDisplayData.getSuraName(context, item.sura, false)
       val compiledQuery = item.highlightQuery?.let { ArabicCompiledQuery.compile(it) }
-      holder.text.text = SearchResultFormatter.formatArabic(
+      val formatted = FastSearchResultFormatter.formatArabic(
         text = item.text,
         compiledQuery = compiledQuery,
         highlightColor = highlightColor,
         rustVerseIndex = item.rustVerseIndex,
         rustGeneration = item.rustGeneration
       )
+      val isArabic = item.highlightQuery != null || CalmSearchResultFormatter.isArabicResult(formatted)
+      CalmSearchResultFormatter.applyTypography(
+        holder.text,
+        isArabic = isArabic,
+        arabicTypeface = arabicTypeface
+      )
+      holder.text.text = formatted
       holder.metadata.text = context.getString(
         R.string.found_in_sura,
         item.sura,

@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@color/panel_background_color"
+    android:background="?attr/quranSurfaceElevated"
     tools:ignore="Overdraw"
     >
   <LinearLayout

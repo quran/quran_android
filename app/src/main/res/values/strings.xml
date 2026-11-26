@@ -435,4 +435,5 @@
   <string name="notification_channel_download">Quran Downloads</string>
   <string name="notification_channel_audio">Quran Recitation</string>
   <string name="tag_save_error">Unable to rename this collection. It may no longer be available.</string>
+  <string name="prefs_theme_style_title">Theme color</string>
 </resources>

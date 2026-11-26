@@ -16,6 +16,7 @@ import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.rememberTextMeasurer
 import com.quran.data.source.PageContentType
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.extra.feature.linebyline.model.LineModel
 import com.quran.labs.androidquran.extra.feature.linebyline.model.PageInfo
 import com.quran.labs.androidquran.extra.feature.linebyline.ui.modifier.pageGradient
@@ -75,7 +76,8 @@ fun QuranPage(
       .filter { it.highlightType.isUnderText }
       .map { it.highlightType.paintColor(isNightMode) to it.ayahHighlights }
   }
-  val overlayHighlightsByLine = remember(pageInfo.ayahHighlights, isNightMode) {
+  val activeThemeStyle = AppThemeStyle.current
+  val overlayHighlightsByLine = remember(pageInfo.ayahHighlights, isNightMode, activeThemeStyle) {
     buildMap<Int, MutableList<Pair<AyahHighlight, Color>>> {
       pageInfo.ayahHighlights.forEach { highlightAyah ->
         if (!highlightAyah.highlightType.isUnderText) {

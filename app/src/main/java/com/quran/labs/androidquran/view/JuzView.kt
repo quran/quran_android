@@ -6,10 +6,13 @@ import android.graphics.ColorFilter
 import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.RectF
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.text.TextPaint
+import android.util.TypedValue
 import androidx.core.content.ContextCompat
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.util.ThemeUtil
 
 class JuzView(
   private val context: Context,
@@ -17,19 +20,41 @@ class JuzView(
   overlayText: String?
 ) : Drawable() {
 
-  private var radius = 0
+  private var radius = 0f
   private var percentage: Int = 0
   private var overlayText: String? = null
   private var textOffset = 0f
+  private val strokeWidthPx: Float
+  private val arcInsetPx: Float
 
   private val circleRect = RectF()
+  private val arcRect = RectF()
   private val circlePaint = Paint()
+  private val circleStrokePaint = Paint()
   private var overlayTextPaint: TextPaint? = null
   private val circleBackgroundPaint = Paint()
 
   init {
-    val circleColor = ContextCompat.getColor(context, R.color.accent_color)
-    val circleBackground = ContextCompat.getColor(context, R.color.accent_color_dark)
+    val resources = context.resources
+    val density = resources.displayMetrics.density
+    strokeWidthPx = density
+    arcInsetPx = 2f * density
+
+    val circleColor = ThemeUtil.resolveThemeColor(
+      context,
+      R.attr.quranAccent,
+      ContextCompat.getColor(context, R.color.accent_color)
+    )
+    val circleBackground = ThemeUtil.resolveThemeColor(
+      context,
+      R.attr.quranSuraNumberBg,
+      ContextCompat.getColor(context, R.color.accent_color_dark)
+    )
+    val circleStroke = ThemeUtil.resolveThemeColor(
+      context,
+      R.attr.quranSuraNumberStroke,
+      circleColor
+    )
 
     circlePaint.apply {
       style = Paint.Style.FILL
@@ -43,6 +68,13 @@ class JuzView(
       isAntiAlias = true
     }
 
+    circleStrokePaint.apply {
+      style = Paint.Style.STROKE
+      strokeWidth = strokeWidthPx
+      color = circleStroke
+      isAntiAlias = true
+    }
+
     update(type, overlayText)
   }
 
@@ -50,16 +82,25 @@ class JuzView(
     this.overlayText = overlayText
     if (!overlayText.isNullOrEmpty() && overlayTextPaint == null) {
       val resources = context.resources
-      val textPaintColor = ContextCompat.getColor(context, R.color.header_background)
-      val textPaintSize = resources.getDimensionPixelSize(R.dimen.juz_overlay_text_size)
+      val textPaintColor = ThemeUtil.resolveThemeColor(
+        context,
+        R.attr.quranOnAccent,
+        ContextCompat.getColor(context, R.color.header_background)
+      )
+      val textPaintSize = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_SP,
+        13.5f,
+        resources.displayMetrics
+      )
       val textPaint = TextPaint().apply {
         isAntiAlias = true
         color = textPaintColor
-        textSize = textPaintSize.toFloat()
+        textSize = textPaintSize
+        typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
         textAlign = Paint.Align.CENTER
       }
       val textHeight = textPaint.descent() - textPaint.ascent()
-      textOffset = textHeight / 2 - textPaint.descent()
+      textOffset = textHeight / 2f - textPaint.descent()
       overlayTextPaint = textPaint
     }
 
@@ -75,41 +116,45 @@ class JuzView(
 
   override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
     super.setBounds(left, top, right, bottom)
-    radius = (right - left) / 2
-    val yOffset = (bottom - top - 2 * radius) / 2
+    radius = (right - left) / 2f
+    val yOffset = (bottom - top - 2f * radius) / 2f
+    val halfStroke = strokeWidthPx / 2f
     circleRect.set(
-      left.toFloat(), (top + yOffset).toFloat(),
-      right.toFloat(), (top + yOffset + 2 * radius).toFloat()
+      left + halfStroke,
+      top + yOffset + halfStroke,
+      right - halfStroke,
+      top + yOffset + 2f * radius - halfStroke
+    )
+    arcRect.set(
+      left + arcInsetPx,
+      top + yOffset + arcInsetPx,
+      right - arcInsetPx,
+      top + yOffset + 2f * radius - arcInsetPx
     )
   }
 
   override fun draw(canvas: Canvas) {
-    canvas.drawCircle(
-      circleRect.centerX(),
-      circleRect.centerY(),
-      radius.toFloat(),
-      circleBackgroundPaint
-    )
-    canvas.drawArc(
-      circleRect, -90f,
-      (3.6 * percentage).toFloat(), true, circlePaint
-    )
+    val cx = circleRect.centerX()
+    val cy = circleRect.centerY()
+    val bgRadius = (radius - strokeWidthPx / 2f).coerceAtLeast(0f)
+    canvas.drawCircle(cx, cy, bgRadius, circleBackgroundPaint)
+    canvas.drawArc(arcRect, -90f, (3.6 * percentage).toFloat(), true, circlePaint)
+    canvas.drawCircle(cx, cy, bgRadius, circleStrokePaint)
     overlayTextPaint?.let { textPaint ->
       val text = overlayText
       if (text != null) {
-        canvas.drawText(
-          text, circleRect.centerX(),
-          circleRect.centerY() + textOffset, textPaint
-        )
+        canvas.drawText(text, cx, cy + textOffset, textPaint)
       }
     }
   }
 
+  @Deprecated("Deprecated in Java")
   override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
 
   override fun setAlpha(alpha: Int) {
     circlePaint.alpha = alpha
     circleBackgroundPaint.alpha = alpha
+    circleStrokePaint.alpha = alpha
     overlayTextPaint?.alpha = alpha
     invalidateSelf()
   }
@@ -117,6 +162,7 @@ class JuzView(
   override fun setColorFilter(cf: ColorFilter?) {
     circlePaint.colorFilter = cf
     circleBackgroundPaint.colorFilter = cf
+    circleStrokePaint.colorFilter = cf
     overlayTextPaint?.colorFilter = cf
     invalidateSelf()
   }

@@ -1,16 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/root"
+    android:background="?attr/quranSurface"
     android:orientation="vertical">
 
-  <androidx.appcompat.widget.Toolbar
-      android:id="@+id/toolbar"
+  <FrameLayout
+      android:id="@+id/toolbar_area"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:theme="@style/ToolbarStyle"
-      android:background="?attr/colorPrimary"/>
+      android:background="?attr/quranToolbarBackground">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ToolbarStyle"
+        app:popupTheme="?attr/quranPopupTheme"
+        app:titleTextAppearance="@style/ToolbarTitleText" />
+  </FrameLayout>
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:background="?attr/quranDivider" />
 
   <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
       android:id="@+id/translation_swipe_refresh"

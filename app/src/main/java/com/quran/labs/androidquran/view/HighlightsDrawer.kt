@@ -12,6 +12,7 @@ import android.util.LongSparseArray
 import android.util.TypedValue
 import android.util.TypedValue.COMPLEX_UNIT_DIP
 import android.widget.ImageView
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import com.quran.data.model.highlight.HighlightType
@@ -21,8 +22,10 @@ import com.quran.data.model.highlight.HighlightType.Mode.HIDE
 import com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT
 import com.quran.data.model.highlight.HighlightType.Mode.UNDERLAY
 import com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.TransitionAyahHighlight
+import com.quran.labs.androidquran.ui.helpers.HighlightTypes
 import com.quran.page.common.data.AyahBounds
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
@@ -58,6 +61,17 @@ class HighlightsDrawer(
       type: HighlightType,
       isNightMode: Boolean
     ): Paint {
+      if (type == HighlightTypes.SELECTION) {
+        val style = AppThemeStyle.current
+        val key = (1L shl 60) or
+          (style.ordinal.toLong() shl 1) or
+          (if (isNightMode) 1L else 0L)
+        val cached = cache.get(key)
+        if (cached != null) return cached
+        return Paint().apply {
+          color = style.palette(isNightMode).ayahHighlightFill.toArgb()
+        }.also { cache.put(key, it) }
+      }
       val colorResId = if (isNightMode) type.nightColorResId else type.colorResId
       val key = (type.mode.ordinal.toLong() shl 33) or
         ((colorResId.toLong() and 0xFFFFFFFFL) shl 1) or

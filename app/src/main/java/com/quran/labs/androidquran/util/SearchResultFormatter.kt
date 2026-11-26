@@ -30,32 +30,73 @@ object SearchResultFormatter {
   private const val TAG_BOLD_CLOSE = "</b>"
 
   private val cache = LruCache<String, CharSequence>(MAX_CACHE_ENTRIES)
+  private val recoloredCache = LruCache<String, CharSequence>(MAX_CACHE_ENTRIES)
+  private var lastRecoloredColor: Int = 0
   private val arabicCache = LruCache<String, CharSequence>(MAX_CACHE_ENTRIES)
   private var lastArabicQuery: String? = null
   private var lastArabicColor: Int = 0
 
-  fun format(text: String): CharSequence {
+  fun format(text: String, @ColorInt overrideHighlightColor: Int? = null): CharSequence {
     if (text.isEmpty()) {
       return text
     }
-    cache[text]?.let { return it }
+    if (overrideHighlightColor == null) {
+      cache[text]?.let { return it }
 
-    val formatted = parseFastPath(text)
-      ?: HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT)
-    val immutable: CharSequence = if (formatted is String || formatted is SpannedString) {
-      formatted
-    } else {
-      SpannedString.valueOf(formatted)
+      val formatted = parseFastPath(text, overrideHighlightColor = null)
+        ?: HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT)
+      val immutable: CharSequence = if (formatted is String || formatted is SpannedString) {
+        formatted
+      } else {
+        SpannedString.valueOf(formatted)
+      }
+      cache.put(text, immutable)
+      return immutable
     }
-    cache.put(text, immutable)
+
+    synchronized(recoloredCache) {
+      if (lastRecoloredColor != overrideHighlightColor) {
+        recoloredCache.evictAll()
+        lastRecoloredColor = overrideHighlightColor
+      } else {
+        recoloredCache[text]?.let { return it }
+      }
+    }
+
+    val fast = parseFastPath(text, overrideHighlightColor = overrideHighlightColor)
+    val immutable: CharSequence = if (fast != null) {
+      if (fast is String || fast is SpannedString) fast else SpannedString.valueOf(fast)
+    } else {
+      val parsed = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_COMPACT)
+      val builder = SpannableStringBuilder(parsed)
+      val existingSpans = builder.getSpans(0, builder.length, ForegroundColorSpan::class.java)
+      for (span in existingSpans) {
+        val start = builder.getSpanStart(span)
+        val end = builder.getSpanEnd(span)
+        val flags = builder.getSpanFlags(span)
+        builder.removeSpan(span)
+        if (start >= 0 && end > start) {
+          builder.setSpan(ForegroundColorSpan(overrideHighlightColor), start, end, flags)
+        }
+      }
+      SpannedString(builder)
+    }
+
+    synchronized(recoloredCache) {
+      if (lastRecoloredColor == overrideHighlightColor) {
+        recoloredCache.put(text, immutable)
+      }
+    }
     return immutable
   }
 
   /**
-   * Highlights raw Arabic verse [text] directly with [ForegroundColorSpan] using [compiledQuery],
-   * avoiding upfront `<font>` HTML serialization and subsequent HTML parsing.
+   * Highlights raw Arabic verse [text] directly with [ForegroundColorSpan] using native Rust
+   * UTF-16 spans when available or [compiledQuery] fallback, avoiding upfront `<font>` HTML
+   * serialization and subsequent HTML parsing.
    *
-   * Falls back to [format] if [text] already contains HTML markup or [compiledQuery] is null.
+   * Falls back to [format] (preserving [highlightColor]) if [text] already contains HTML markup
+   * or [compiledQuery] is null.
    */
   fun formatArabic(
     text: String,
@@ -68,7 +109,7 @@ object SearchResultFormatter {
       return text
     }
     if (compiledQuery == null || text.indexOf('<') >= 0) {
-      return format(text)
+      return format(text, overrideHighlightColor = highlightColor)
     }
 
     val queryKey = compiledQuery.query
@@ -142,6 +183,10 @@ object SearchResultFormatter {
 
   fun clearCache() {
     cache.evictAll()
+    synchronized(recoloredCache) {
+      recoloredCache.evictAll()
+      lastRecoloredColor = 0
+    }
     synchronized(arabicCache) {
       arabicCache.evictAll()
       lastArabicQuery = null
@@ -161,7 +206,10 @@ object SearchResultFormatter {
    * markup, or whitespace runs that require full HTML processing.
    */
   @VisibleForTesting
-  internal fun parseFastPath(text: String): CharSequence? {
+  internal fun parseFastPath(
+    text: String,
+    @ColorInt overrideHighlightColor: Int? = null
+  ): CharSequence? {
     val len = text.length
     if (len == 0) {
       return text
@@ -257,7 +305,7 @@ object SearchResultFormatter {
 
         text.regionMatches(lt, TAG_FONT_PREFIX, 0, TAG_FONT_PREFIX.length, ignoreCase = true) -> {
           val color = parseFontTagColor(text, lt + TAG_FONT_PREFIX.length, gt) ?: return null
-          openTags.add(OpenTag(TagType.FONT, builder.length, color))
+          openTags.add(OpenTag(TagType.FONT, builder.length, overrideHighlightColor ?: color))
         }
 
         else -> return null
