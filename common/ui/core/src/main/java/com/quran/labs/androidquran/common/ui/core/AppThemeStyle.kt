@@ -461,11 +461,60 @@ enum class AppThemeStyle(
       onDark = darkPalette.onAccent
     )
 
-  fun palette(useDarkTheme: Boolean): AppThemePalette {
-    return if (useDarkTheme) darkPalette else lightPalette
+  val oledDarkPalette: AppThemePalette by lazy {
+    val oledCard = when (this) {
+      DEFAULT -> Color(0xFF0B0C0E)
+      GREEN -> Color(0xFF090D0B)
+      BLUE -> Color(0xFF090C10)
+      BEIGE -> Color(0xFF0D0B09)
+      GRAY -> Color(0xFF0B0B0C)
+    }
+    val oledElevated = when (this) {
+      DEFAULT -> Color(0xFF131519)
+      GREEN -> Color(0xFF101613)
+      BLUE -> Color(0xFF10151C)
+      BEIGE -> Color(0xFF161310)
+      GRAY -> Color(0xFF131416)
+    }
+    val oledVariant = when (this) {
+      DEFAULT -> Color(0xFF1A1D22)
+      GREEN -> Color(0xFF17201B)
+      BLUE -> Color(0xFF171E28)
+      BEIGE -> Color(0xFF211C17)
+      GRAY -> Color(0xFF1B1C1F)
+    }
+    val oledDivider = Color(0xFF1F2329)
+    darkPalette.copy(
+      surface = Color(0xFF000000),
+      surfaceElevated = oledElevated,
+      cardSurface = oledCard,
+      surfaceVariant = oledVariant,
+      headerBackground = oledCard,
+      toolbarBackground = Color(0xFF000000),
+      divider = oledDivider,
+      glassBg = oledCard.copy(alpha = 0.88f),
+      mushafOverlayBg = Color(0xFF000000),
+      navBg = Color(0xF0000000),
+      navBorder = oledDivider,
+      surfaceTopGlow = Color(0xFF000000),
+      glassFloatBg = oledElevated.copy(alpha = 0.94f),
+      shadowTint = Color(0xFF000000)
+    )
   }
 
-  fun darkMushafBackground(brightness: Int = 0): Color {
+  fun palette(useDarkTheme: Boolean): AppThemePalette =
+    palette(isDark = useDarkTheme, oled = isOledDarkMode)
+
+  fun palette(isDark: Boolean, oled: Boolean = isOledDarkMode): AppThemePalette {
+    return when {
+      !isDark -> lightPalette
+      oled -> oledDarkPalette
+      else -> darkPalette
+    }
+  }
+
+  fun darkMushafBackground(brightness: Int = 0, oled: Boolean = isOledDarkMode): Color {
+    if (oled) return Color(0xFF000000)
     val base = darkPalette.mushafOverlayBg
     val clamped = brightness.coerceIn(0, 255)
     if (clamped == 0) return base
@@ -479,10 +528,20 @@ enum class AppThemeStyle(
   }
 
   @ColorInt
-  fun darkMushafBackgroundArgb(brightness: Int = 0): Int = darkMushafBackground(brightness).toArgb()
+  fun darkMushafBackgroundArgb(brightness: Int = 0, oled: Boolean = isOledDarkMode): Int =
+    darkMushafBackground(brightness, oled).toArgb()
 
   companion object {
     const val PREF_KEY: String = "appThemeStyle"
+
+    @Volatile
+    var isOledDarkMode: Boolean = false
+      private set
+
+    @JvmStatic
+    fun setOledDarkMode(enabled: Boolean) {
+      isOledDarkMode = enabled
+    }
 
     var current: AppThemeStyle by mutableStateOf(DEFAULT)
       private set
@@ -500,9 +559,14 @@ enum class AppThemeStyle(
     }
 
     @JvmStatic
+    @JvmOverloads
     @ColorInt
-    fun resolveDarkMushafBackgroundArgb(preferenceValue: String?, brightness: Int): Int {
-      return fromPreference(preferenceValue).darkMushafBackgroundArgb(brightness)
+    fun resolveDarkMushafBackgroundArgb(
+      preferenceValue: String?,
+      brightness: Int,
+      oled: Boolean = isOledDarkMode
+    ): Int {
+      return fromPreference(preferenceValue).darkMushafBackgroundArgb(brightness, oled)
     }
 
     fun fromKey(key: String?): AppThemeStyle = fromPreference(key)

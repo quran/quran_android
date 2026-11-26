@@ -87,8 +87,16 @@ object ThemeUtil {
       AppThemeStyle.fromPreference(settings.appThemeStyle)
     }
     AppThemeStyle.select(style)
+    AppThemeStyle.setOledDarkMode(settings.isOledDarkMode)
     activity.theme.applyStyle(themeOverlayRes(style), true)
-    val surfaceColor = resolveThemeColor(activity, R.attr.quranSurface, Color.TRANSPARENT)
+    val isNight = (activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+      Configuration.UI_MODE_NIGHT_YES
+    val isDark = isDarkAppearance(settings.currentTheme(), isNight)
+    val surfaceColor = if (isDark && settings.isOledDarkMode) {
+      Color.BLACK
+    } else {
+      resolveThemeColor(activity, R.attr.quranSurface, Color.TRANSPARENT)
+    }
     if (surfaceColor != Color.TRANSPARENT) {
       activity.window?.setBackgroundDrawable(ColorDrawable(surfaceColor))
     }
@@ -105,12 +113,20 @@ object ThemeUtil {
       val statusGuard = abRoot.getChildAt(abRoot.childCount - 1)
       statusGuard?.let {
         if (statusGuard::class == View::class && statusGuard.top == 0) {
+          val isNight = (activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES
+          val settings = QuranSettings.getInstance(activity)
+          val isOled = isDarkAppearance(settings.currentTheme(), isNight) && settings.isOledDarkMode
           statusGuard.setBackgroundColor(
-            resolveThemeColor(
-              activity,
-              R.attr.quranToolbarBackground,
-              ContextCompat.getColor(activity, R.color.toolbar)
-            )
+            if (isOled) {
+              Color.BLACK
+            } else {
+              resolveThemeColor(
+                activity,
+                R.attr.quranToolbarBackground,
+                ContextCompat.getColor(activity, R.color.toolbar)
+              )
+            }
           )
         }
       }
@@ -142,19 +158,26 @@ object ThemeUtil {
   fun enableThemedEdgeToEdge(activity: ComponentActivity) {
     val isNight = (activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
       Configuration.UI_MODE_NIGHT_YES
-    val isLightToolbar = resolveThemeBoolean(
-      activity,
-      R.attr.quranIsLightToolbar,
-      fallback = !isNight
-    )
+    val settings = QuranSettings.getInstance(activity)
+    val isDark = isDarkAppearance(settings.currentTheme(), isNight)
+    val isOled = isDark && settings.isOledDarkMode
+    val isLightToolbar = if (isOled) {
+      false
+    } else {
+      resolveThemeBoolean(
+        activity,
+        R.attr.quranIsLightToolbar,
+        fallback = !isDark
+      )
+    }
     activity.enableEdgeToEdge(
       statusBarStyle = if (isLightToolbar) {
         SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
       } else {
-        SystemBarStyle.dark(Color.TRANSPARENT)
+        SystemBarStyle.dark(if (isOled) Color.BLACK else Color.TRANSPARENT)
       },
-      navigationBarStyle = if (isNight) {
-        SystemBarStyle.dark(Color.TRANSPARENT)
+      navigationBarStyle = if (isDark) {
+        SystemBarStyle.dark(if (isOled) Color.BLACK else Color.TRANSPARENT)
       } else {
         SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
       }

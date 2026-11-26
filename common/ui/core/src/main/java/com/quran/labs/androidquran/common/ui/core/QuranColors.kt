@@ -30,7 +30,8 @@ class QuranColors(
   val editorialAccent: Color = AppThemeStyle.DEFAULT.lightPalette.editorialAccent,
   val surfaceTopGlow: Color = AppThemeStyle.DEFAULT.lightPalette.surfaceTopGlow,
   val glassFloatBg: Color = AppThemeStyle.DEFAULT.lightPalette.glassFloatBg,
-  val shadowTint: Color = AppThemeStyle.DEFAULT.lightPalette.shadowTint
+  val shadowTint: Color = AppThemeStyle.DEFAULT.lightPalette.shadowTint,
+  val isOled: Boolean = false
 )
 
 val lightQuranColors = QuranColors(
@@ -141,7 +142,8 @@ internal fun quranColorsFor(
     editorialAccent = palette.editorialAccent,
     surfaceTopGlow = palette.surfaceTopGlow,
     glassFloatBg = palette.glassFloatBg,
-    shadowTint = palette.shadowTint
+    shadowTint = palette.shadowTint,
+    isOled = useDarkTheme && palette.surface == Color(0xFF000000)
   )
 }
 

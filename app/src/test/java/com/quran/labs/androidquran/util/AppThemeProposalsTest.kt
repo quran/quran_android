@@ -41,6 +41,7 @@ class AppThemeProposalsTest {
   @After
   fun tearDown() {
     AppThemeStyle.select(AppThemeStyle.DEFAULT)
+    AppThemeStyle.setOledDarkMode(false)
   }
 
   @Test
@@ -48,7 +49,87 @@ class AppThemeProposalsTest {
     for (style in AppThemeStyle.entries) {
       assertPaletteContrast("${style.storageKey} (light)", style.lightPalette)
       assertPaletteContrast("${style.storageKey} (dark)", style.darkPalette)
+      assertPaletteContrast("${style.storageKey} (oled dark)", style.palette(isDark = true, oled = true))
     }
+  }
+
+  @Test
+  fun `pure black OLED dark palettes use true #000000 surfaces, preserve duo-tone accents, pass WCAG AA, and localize labels`() {
+    val pureBlack = Color(0xFF000000)
+    val expectedCards = mapOf(
+      AppThemeStyle.DEFAULT to Color(0xFF0B0C0E),
+      AppThemeStyle.GREEN to Color(0xFF090D0B),
+      AppThemeStyle.BLUE to Color(0xFF090C10),
+      AppThemeStyle.BEIGE to Color(0xFF0D0B09),
+      AppThemeStyle.GRAY to Color(0xFF0B0B0C)
+    )
+    val expectedElevated = mapOf(
+      AppThemeStyle.DEFAULT to Color(0xFF131519),
+      AppThemeStyle.GREEN to Color(0xFF101613),
+      AppThemeStyle.BLUE to Color(0xFF10151C),
+      AppThemeStyle.BEIGE to Color(0xFF161310),
+      AppThemeStyle.GRAY to Color(0xFF131416)
+    )
+
+    try {
+      AppThemeStyle.setOledDarkMode(true)
+      for (style in AppThemeStyle.entries) {
+        val label = "${style.storageKey} (oled)"
+        val oled = style.palette(isDark = true, oled = true)
+        assertWithMessage("$label 1-arg palette(true) respects AppThemeStyle.isOledDarkMode")
+          .that(style.palette(true))
+          .isEqualTo(oled)
+        assertWithMessage("$label named palette(useDarkTheme = true) respects AppThemeStyle.isOledDarkMode")
+          .that(style.palette(useDarkTheme = true))
+          .isEqualTo(oled)
+        assertWithMessage("$label light mode ignores OLED flag")
+          .that(style.palette(isDark = false, oled = true))
+          .isEqualTo(style.lightPalette)
+
+        assertThat(oled.surface).isEqualTo(pureBlack)
+        assertThat(oled.surfaceTopGlow).isEqualTo(pureBlack)
+        assertThat(oled.toolbarBackground).isEqualTo(pureBlack)
+        assertThat(oled.mushafOverlayBg).isEqualTo(pureBlack)
+        assertThat(oled.shadowTint).isEqualTo(pureBlack)
+        assertThat(oled.cardSurface).isEqualTo(expectedCards[style])
+        assertThat(oled.surfaceElevated).isEqualTo(expectedElevated[style])
+        assertThat(oled.divider).isEqualTo(Color(0xFF1F2329))
+        assertThat(oled.glassFloatBg).isEqualTo(oled.surfaceElevated.copy(alpha = 0.94f))
+
+        // Preserve every duo-tone accent and CTA token from darkPalette
+        assertThat(oled.accent).isEqualTo(style.darkPalette.accent)
+        assertThat(oled.editorialAccent).isEqualTo(style.darkPalette.editorialAccent)
+        assertThat(oled.ctaBackground).isEqualTo(style.darkPalette.ctaBackground)
+        assertThat(oled.onCta).isEqualTo(style.darkPalette.onCta)
+        assertThat(oled.textPrimary).isEqualTo(style.darkPalette.textPrimary)
+        assertThat(oled.textSecondary).isEqualTo(style.darkPalette.textSecondary)
+        assertThat(oled.searchHighlight).isEqualTo(style.darkPalette.searchHighlight)
+
+        assertPaletteContrast(label, oled)
+        assertContrast(label, "onCta on ctaBackground", oled.onCta, oled.ctaBackground, 4.5)
+      }
+
+      AppThemeStyle.setOledDarkMode(false)
+      for (style in AppThemeStyle.entries) {
+        assertThat(style.palette(true)).isEqualTo(style.darkPalette)
+      }
+    } finally {
+      AppThemeStyle.setOledDarkMode(false)
+    }
+
+    val appContext = ApplicationProvider.getApplicationContext<Context>()
+    assertThat(appContext.getString(R.string.hybrid_appearance_oled_title)).isEqualTo("Pure Black (OLED)")
+    assertThat(appContext.getString(R.string.hybrid_appearance_oled_subtitle))
+      .isEqualTo("True black background for OLED screens")
+
+    val arabicConfig = Configuration(appContext.resources.configuration).apply {
+      setLocale(Locale.forLanguageTag("ar"))
+    }
+    val arabicContext = appContext.createConfigurationContext(arabicConfig)
+    assertThat(arabicContext.getString(R.string.hybrid_appearance_oled_title))
+      .isEqualTo("الوضع الليلي الكامل (OLED)")
+    assertThat(arabicContext.getString(R.string.hybrid_appearance_oled_subtitle))
+      .isEqualTo("خلفية سوداء نقية لشاشات OLED")
   }
 
   @Test

@@ -308,6 +308,14 @@ public class QuranSettings implements PageThemeSettings {
     prefs.edit().putString(Constants.PREF_APP_THEME_STYLE, style).apply();
   }
 
+  public boolean isOledDarkMode() {
+    return prefs.getBoolean(Constants.PREF_OLED_DARK_MODE, false);
+  }
+
+  public void setOledDarkMode(boolean enabled) {
+    prefs.edit().putBoolean(Constants.PREF_OLED_DARK_MODE, enabled).apply();
+  }
+
   @Override
   public String getPageAppearance() {
     String appearance = prefs.getString(Constants.PREF_PAGE_APPEARANCE, null);
@@ -337,7 +345,8 @@ public class QuranSettings implements PageThemeSettings {
   public int getPageThemeBackgroundColor() {
     if (isNightMode()) {
       int brightness = getNightModeBackgroundBrightness();
-      return AppThemeStyle.resolveDarkMushafBackgroundArgb(getAppThemeStyle(), brightness);
+      return AppThemeStyle.resolveDarkMushafBackgroundArgb(
+          getAppThemeStyle(), brightness, isOledDarkMode());
     }
     return getDayPageBackgroundColor();
   }

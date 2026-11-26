@@ -92,6 +92,7 @@ object Constants {
   const val PREF_SHOW_LINE_DIVIDERS = "showLineDividers"
   const val PREF_APP_THEME = "appTheme"
   const val PREF_APP_THEME_STYLE = "appThemeStyle"
+  const val PREF_OLED_DARK_MODE = "oledDarkMode"
   const val PREF_PAGE_THEME = "pageTheme"
   const val PREF_PAGE_APPEARANCE = "pageAppearance"
   const val PREF_USE_OLD_BACKGROUND = "useOldBackground"
