@@ -12,9 +12,34 @@ class ArabicCompiledQuery private constructor(
   private val exactChars: CharArray,
   private val charGroups: Array<CharArray?>,
   private val anchorOffset: Int,
-  private val anchorChar: Char
+  private val anchorChar: Char,
+  private val morphological: ArabicMorphologicalQuery?
 ) {
   val length: Int = exactChars.size
+
+  /**
+   * Returns packed variable-length UTF-16 highlight spans `[start0, end0, ...]` using full
+   * morphological/orthographic Arabic matching (100% parity with Rust `nativeFindMatchSpans`).
+   */
+  fun findAllMatchSpans(text: String): IntArray {
+    val morph = morphological
+    if (morph != null) {
+      return morph.findAllSpans(text, allowSubstringFallback = true)
+    }
+    var start = findFirst(text, 0)
+    if (start < 0) return IntArray(0)
+    val matchLen = length
+    val ranges = ArrayList<Int>(4)
+    while (start >= 0) {
+      val end = start + matchLen
+      if (end <= text.length) {
+        ranges.add(start)
+        ranges.add(end)
+      }
+      start = findFirst(text, end)
+    }
+    return ranges.toIntArray()
+  }
 
   fun findFirst(text: String, fromIndex: Int = 0): Int {
     val startFrom = if (fromIndex < 0) 0 else fromIndex
@@ -124,7 +149,14 @@ class ArabicCompiledQuery private constructor(
       return compiled
     }
 
-    private fun compileUncached(query: String): ArabicCompiledQuery? {
+    internal fun compileLiteralOnly(query: String): ArabicCompiledQuery? {
+      return compileUncached(query, attachMorphological = false)
+    }
+
+    private fun compileUncached(
+      query: String,
+      attachMorphological: Boolean = true
+    ): ArabicCompiledQuery? {
       if (query.isEmpty()) {
         return null
       }
@@ -172,7 +204,8 @@ class ArabicCompiledQuery private constructor(
         exactChars = if (count == exactList.size) exactList else exactList.copyOf(count),
         charGroups = if (count == groupList.size) groupList else groupList.copyOf(count),
         anchorOffset = anchorOffset,
-        anchorChar = anchorChar
+        anchorChar = anchorChar,
+        morphological = if (attachMorphological) ArabicMorphologicalQuery.compile(query) else null
       )
     }
   }

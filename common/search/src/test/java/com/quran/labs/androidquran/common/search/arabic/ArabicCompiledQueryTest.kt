@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.common.search.arabic
 import com.google.common.truth.Truth.assertThat
 import com.quran.common.search.arabic.ArabicCharacterHelper
 import com.quran.common.search.arabic.ArabicCompiledQuery
+import com.quran.common.search.arabic.ArabicMorphologicalQuery
 import org.junit.Test
 import java.util.regex.Pattern
 
@@ -82,5 +83,88 @@ class ArabicCompiledQueryTest {
 
     val different = ArabicCompiledQuery.compile("الرحيم")
     assertThat(different).isNotSameInstanceAs(first)
+  }
+
+  @Test
+  fun `morphological query covers allah proclitics, lillah elision, and rejects false positives`() {
+    val qAllah = ArabicMorphologicalQuery.compile("الله")!!
+    val qAllahDiacritics = ArabicMorphologicalQuery.compile("اللَّهِ")!!
+    val qAllahTatweel = ArabicMorphologicalQuery.compile("ال\u0640ل\u0640ه")!!
+
+    val mustMatch = listOf(
+      "بسم الله الرحمن الرحيم" to "الله",
+      "الحمد لله رب العالمين" to "لله",
+      "ولله المشرق والمغرب" to "ولله",
+      "فلله الآخرة والأولى" to "فلله",
+      "قل اللهم مالك الملك" to "اللهم",
+      "قل آلله أذن لكم" to "آلله",
+      "بالله وتالله وأبالله" to "بالله",
+      "قُلْ هُوَ اللَّهُ أَحَدٌ" to "اللَّهُ"
+    )
+    for ((text, expectedToken) in mustMatch) {
+      for (q in listOf(qAllah, qAllahDiacritics, qAllahTatweel)) {
+        val spans = q.findAllSpans(text, allowSubstringFallback = false)
+        assertThat(spans.size).isAtLeast(2)
+        val firstMatch = text.substring(spans[0], spans[1])
+        assertThat(firstMatch).isEqualTo(expectedToken)
+      }
+    }
+
+    val mustReject = listOf("اللهو واللعب", "ذات اللهب", "يضلله من دونه", "للهدى والرشاد")
+    for (text in mustReject) {
+      assertThat(qAllah.findAllSpans(text, allowSubstringFallback = false)).isEmpty()
+    }
+  }
+
+  @Test
+  fun `morphological query ranks jannah tiers cleanly and rejects jinn and unrelated roots`() {
+    val qJannah = ArabicMorphologicalQuery.compile("الجنة")!!
+    val qJannahHa = ArabicMorphologicalQuery.compile("الجنه")!!
+    val starts = ArrayList<Int>()
+    val ends = ArrayList<Int>()
+
+    // Tier 1: explicit definite singular + proclitics + لِـ+ال elision
+    for (text in listOf("اسكن أنت وزوجك الجنة", "وأبشروا بالجنة", "طريق للجنة", "وللجنة أبواب")) {
+      assertThat(qJannah.matchAndCollectSpans(text, starts, ends)).isEqualTo(ArabicMorphologicalQuery.TIER_EXACT)
+      assertThat(qJannahHa.matchAndCollectSpans(text, starts, ends)).isEqualTo(ArabicMorphologicalQuery.TIER_EXACT)
+    }
+
+    // Tier 2: indefinite singular + Uthmani open-Ta + possessive singular
+    for (text in listOf("وجنة عرضها السماوات", "فروح وريحان وجنت نعيم", "وادخلي جنتي", "ودخل جنته", "لولا إذ دخلت جنتك")) {
+      assertThat(qJannah.matchAndCollectSpans(text, starts, ends)).isEqualTo(ArabicMorphologicalQuery.TIER_SINGULAR_MORPH)
+    }
+
+    // Tier 3: dual & sound feminine plural
+    for (text in listOf("كلتا الجنتين", "جنتان عن يمين", "وبدلناهم بجنتيهم جنتين", "لهم جنات تجري", "في روضات الجنات")) {
+      assertThat(qJannah.matchAndCollectSpans(text, starts, ends)).isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+    }
+
+    // Zero false positives on short stem "جن"
+    for (text in listOf("شركاء الجن", "جند من السماء", "فلا جناح عليه", "أنتم أجنة", "السجن أحب إلي", "سجنت نفسك", "مجنون")) {
+      assertThat(qJannah.matchAndCollectSpans(text, starts, ends, allowSubstringFallback = false))
+        .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+    }
+  }
+
+  @Test
+  fun `morphological query supports al-to-lil elision, open-ta, plural alternation, and presentation forms`() {
+    val starts = ArrayList<Int>()
+    val ends = ArrayList<Int>()
+
+    assertThat(ArabicMorphologicalQuery.compile("الرحمن")!!.matchAndCollectSpans("عهد للرحمن", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_EXACT)
+    assertThat(ArabicMorphologicalQuery.compile("الرحمن")!!.matchAndCollectSpans("ربنا رحمنا", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+    assertThat(ArabicMorphologicalQuery.compile("الناس")!!.matchAndCollectSpans("هدى للناس", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_EXACT)
+    assertThat(ArabicMorphologicalQuery.compile("الإيمان")!!.matchAndCollectSpans("للإيمان وإيمانهم", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_EXACT)
+    assertThat(ArabicMorphologicalQuery.compile("الصلاة")!!.matchAndCollectSpans("حافظوا على الصلوات", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+    assertThat(ArabicMorphologicalQuery.compile("المؤمنون")!!.matchAndCollectSpans("بشرى للمؤمنين", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+    // Arabic Presentation Forms-B (found in real quran.ar.muyassar.db e.g. ﺑ«مكة»)
+    assertThat(ArabicMorphologicalQuery.compile("مكة")!!.matchAndCollectSpans("\uFE91«مكة»", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_EXACT)
   }
 }

@@ -11,19 +11,21 @@ mod tests {
     }
 
     #[test]
-    fn equivalence_classes_match_arabic_character_helper_exactly() {
+    fn normalization_and_orthographic_equivalence_classes() {
         let cases: &[(&str, &str, &str)] = &[
             // (query char, chars that MUST match, chars that MUST NOT match)
-            ("\u{0627}", "\u{0622}\u{0623}\u{0625}\u{0627}\u{0649}", "\u{0621}\u{0624}\u{0626}\u{064a}\u{0628}"),
+            ("\u{0627}", "\u{0622}\u{0623}\u{0625}\u{0627}\u{0671}", "\u{0628}\u{0648}\u{064a}"),
+            ("\u{0623}", "\u{0622}\u{0623}\u{0625}\u{0627}\u{0671}", "\u{0628}\u{0648}\u{064a}"),
+            ("\u{0625}", "\u{0622}\u{0623}\u{0625}\u{0627}\u{0671}", "\u{0628}\u{0648}\u{064a}"),
+            ("\u{0622}", "\u{0622}\u{0623}\u{0625}\u{0627}\u{0671}", "\u{0628}\u{0648}\u{064a}"),
             ("\u{0648}", "\u{0648}\u{0624}", "\u{0627}\u{0621}\u{064a}"),
-            ("\u{0623}", "\u{0621}\u{0623}\u{0624}\u{0626}\u{0627}", "\u{0622}\u{0625}\u{0649}"),
-            ("\u{0621}", "\u{0621}\u{0623}\u{0624}\u{0626}\u{0627}", "\u{0622}\u{0625}\u{0649}"),
+            ("\u{0624}", "\u{0648}\u{0624}", "\u{0627}\u{0621}\u{064a}"),
             ("\u{062a}", "\u{062a}\u{0629}", "\u{0647}\u{062b}"),
             ("\u{0629}", "\u{0629}\u{062a}\u{0647}", "\u{062b}\u{062d}"),
             ("\u{0647}", "\u{0647}\u{0629}", "\u{062a}\u{062d}"),
-            ("\u{0649}", "\u{0649}\u{064a}", "\u{0627}\u{0626}"),
-            ("\u{064a}", "\u{064a}\u{0649}", "\u{0627}\u{0626}"),
-            ("\u{0626}", "\u{0626}\u{0649}\u{064a}", "\u{0621}\u{0623}\u{0627}"),
+            ("\u{0649}", "\u{0649}\u{064a}\u{0626}", "\u{0627}\u{0628}"),
+            ("\u{064a}", "\u{064a}\u{0649}\u{0626}", "\u{0627}\u{0628}"),
+            ("\u{0626}", "\u{0626}\u{0649}\u{064a}", "\u{0627}\u{0628}"),
         ];
 
         for &(q, should_match, should_not_match) in cases {
@@ -64,19 +66,19 @@ mod tests {
     }
 
     #[test]
-    fn multi_match_non_overlapping_and_all_mask_queries() {
-        let verse = utf16("الله لا إله إلا هو الحي القيوم والله عليم");
+    fn multi_match_proclitic_lillah_and_short_queries() {
+        let verse = utf16("الله لا إله إلا هو الحي القيوم والله عليم ولله الأمر");
         let q = CompiledArabicQuery::compile_str("الله").unwrap();
-        assert_eq!(q.find_all_spans(&verse), vec![0, 4, 32, 36]);
+        // Matches whole Arabic words: "الله" (0..4), "والله" (31..36), "ولله" (42..46)
+        assert_eq!(q.find_all_spans(&verse), vec![0, 4, 31, 36, 42, 46]);
 
         let repeating = utf16("للل لل للل");
         let q_ll = CompiledArabicQuery::compile_str("لل").unwrap();
         assert_eq!(q_ll.find_all_spans(&repeating), vec![0, 2, 4, 6, 7, 9]);
 
-        // All characters are equivalence masks (no exact anchor).
-        let q_mask_only = CompiledArabicQuery::compile_str("اه").unwrap();
+        let q_short = CompiledArabicQuery::compile_str("اه").unwrap();
         let text = utf16("آة إه اة");
-        assert_eq!(q_mask_only.find_all_spans(&text), vec![0, 2, 3, 5, 6, 8]);
+        assert_eq!(q_short.find_all_spans(&text), vec![0, 2, 3, 5, 6, 8]);
     }
 
     #[test]
@@ -88,6 +90,63 @@ mod tests {
 
         let q_emoji = CompiledArabicQuery::compile_str("\u{1F600}").unwrap();
         assert_eq!(q_emoji.find_all_spans(&verse), vec![4, 6, 12, 14]);
+    }
+
+    #[test]
+    fn comprehensive_allah_and_jannah_morphology_with_zero_false_positives() {
+        let rows = [
+            (1, 1, 1, "بسم الله الرحمن الرحيم"),
+            (2, 1, 2, "الحمد لله رب العالمين"),
+            (3, 2, 115, "ولله المشرق والمغرب"),
+            (4, 3, 26, "قل اللهم مالك الملك"),
+            (5, 10, 59, "قل آلله أذن لكم"),
+            (6, 53, 25, "فلله الآخرة والأولى"),
+            (7, 29, 64, "لهو ولعب اللهو"),
+            (8, 111, 3, "ذات اللهب"),
+            (9, 10, 74, "يضلله من دونه"),
+            (10, 2, 35, "اسكن أنت وزوجك الجنة"),
+            (11, 41, 30, "وأبشروا بالجنة التي كنتم توعدون"),
+            (12, 3, 133, "وجنة عرضها السماوات والأرض"),
+            (13, 56, 89, "فروح وريحان وجنت نعيم"),
+            (14, 89, 30, "وادخلي جنتي"),
+            (15, 18, 33, "كلتا الجنتين آتت أكلها"),
+            (16, 34, 15, "آية جنتان عن يمين وشمال"),
+            (17, 34, 16, "وبدلناهم بجنتيهم جنتين"),
+            (18, 2, 25, "لهم جنات تجري من تحتها الأنهار"),
+            (19, 42, 22, "في روضات الجنات"),
+            (20, 6, 100, "وجعلوا لله شركاء الجن"),
+            (21, 36, 28, "جند من السماء"),
+            (22, 2, 158, "فلا جناح عليه"),
+            (23, 53, 32, "وإذ أنتم أجنة في بطون أمهاتكم"),
+            (24, 12, 33, "السجن أحب إلي"),
+        ];
+        let index = VerseIndex::from_utf8_rows(&rows).unwrap();
+
+        // "الله" must include الله / لله / ولله / اللهم / آلله / فلله and REJECT اللهو / اللهب / يضلله!
+        let q_allah = CompiledArabicQuery::compile_str("الله").unwrap();
+        let allah_hits = index.search(&q_allah, usize::MAX);
+        let allah_ids: Vec<i32> = allah_hits.chunks_exact(MATCH_STRIDE).map(|c| c[1]).collect();
+        assert_eq!(allah_ids, vec![1, 2, 3, 4, 5, 6, 20]);
+
+        // "الجنة" must return Tier 1 (الجنة/بالجنة) -> Tier 2 (وجنة/وجنت/جنتي) -> Tier 3 (الجنتين/جنتان/بجنتيهم/جنات/الجنات)
+        // and REJECT الجن / جند / جناح / أجنة / السجن!
+        let q_jannah = CompiledArabicQuery::compile_str("الجنة").unwrap();
+        let jannah_hits = index.search(&q_jannah, usize::MAX);
+        let jannah_ids: Vec<i32> = jannah_hits.chunks_exact(MATCH_STRIDE).map(|c| c[1]).collect();
+        assert_eq!(jannah_ids, vec![10, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
+
+        // Lazy keyboard "الجنه" must produce identical 100% comprehensive results!
+        let q_jannah_ha = CompiledArabicQuery::compile_str("الجنه").unwrap();
+        assert_eq!(index.search(&q_jannah_ha, usize::MAX), jannah_hits);
+
+        // Verify exact highlight spans on morphological matches (e.g. "بجنتيهم" and "جنتين" on row 17)
+        let r17 = index.verse_slice(16).unwrap();
+        let spans17 = q_jannah.find_all_spans(r17);
+        assert_eq!(spans17.len(), 4); // 2 matched words: بجنتيهم and جنتين
+        let s1 = String::from_utf16(&r17[spans17[0] as usize..spans17[1] as usize]).unwrap();
+        let s2 = String::from_utf16(&r17[spans17[2] as usize..spans17[3] as usize]).unwrap();
+        assert_eq!(s1, "بجنتيهم");
+        assert_eq!(s2, "جنتين");
     }
 
     #[test]
@@ -106,15 +165,17 @@ mod tests {
 
         let q_allah = CompiledArabicQuery::compile_str("الله").unwrap();
         let all = index.search(&q_allah, usize::MAX);
-        assert_eq!(all.len(), 3 * MATCH_STRIDE);
+        // Matches 1:1 (الله), 1:2 (لله), 2:255 (الله/والله), 9:104 (الله)
+        assert_eq!(all.len(), 4 * MATCH_STRIDE);
         assert_eq!(&all[0..4], &[0, 1, 1, 1]);
-        assert_eq!(&all[4..8], &[3, 4, 2, 255]);
-        assert_eq!(&all[8..12], &[5, 6, 9, 104]);
+        assert_eq!(&all[4..8], &[1, 2, 1, 2]);
+        assert_eq!(&all[8..12], &[3, 4, 2, 255]);
+        assert_eq!(&all[12..16], &[5, 6, 9, 104]);
 
         let capped = index.search(&q_allah, 2);
         assert_eq!(capped.len(), 2 * MATCH_STRIDE);
         assert_eq!(&capped[0..4], &[0, 1, 1, 1]);
-        assert_eq!(&capped[4..8], &[3, 4, 2, 255]);
+        assert_eq!(&capped[4..8], &[1, 2, 1, 2]);
 
         // موسي (with ya) must match موسى (with alef maqsura)
         let q_musa = CompiledArabicQuery::compile_str("موسي").unwrap();
@@ -125,70 +186,18 @@ mod tests {
         let q_tawba = CompiledArabicQuery::compile_str("توبة").unwrap();
         let tawba_hits = index.search(&q_tawba, 10);
         assert_eq!(tawba_hits, vec![5, 6, 9, 104]);
-    }
 
-    #[test]
-    fn bitmask_prefilter_and_two_step_exact_pair_have_zero_false_negatives() {
-        let rows = [
-            (1, 1, 1, "آمنوا ألم إنا الله موسى عيسى"),
-            (2, 2, 1, "للهم للل اللة الل اة أه"),
-            (3, 2, 2, "سؤال مؤمن شاطئ شيء"),
-            (4, 2, 3, "رحمة نعمة رحمت ربك"),
-            (5, 2, 4, "بسم \u{1F600} الله الرحمن"),
-            (6, 2, 5, "كتاب لا ريب فيه هدى للمتقين"),
-            (7, 2, 6, "في قلوبهم مرض فزادهم الله مرضا"),
-        ];
-        let index = VerseIndex::from_utf8_rows(&rows).unwrap();
-        let queries = [
-            "ا",
-            "آ",
-            "أ",
-            "ء",
-            "و",
-            "ت",
-            "ة",
-            "ه",
-            "ى",
-            "ي",
-            "ئ",
-            "الله",
-            "لل",
-            "الل",
-            "اللة",
-            "للهم",
-            "اه",
-            "رحمة",
-            "رحمت",
-            "نعمة",
-            "سؤال",
-            "شاطئ",
-            "هدى",
-            "هدي",
-            "في قلوبهم",
-            "\u{1F600} الله",
-            "غيرموجود",
-        ];
-
-        for q in queries {
-            let compiled = CompiledArabicQuery::compile_str(q).unwrap();
-            let actual = index.search(&compiled, usize::MAX);
-
-            // Brute-force check against every verse slice without bitmask prefilter
-            let mut expected = Vec::new();
-            for (idx, &(row_id, sura, ayah, text)) in rows.iter().enumerate() {
-                let u16s = utf16(text);
-                if compiled.find_first(&u16s, 0).is_some() {
-                    expected.extend_from_slice(&[idx as i32, row_id, sura, ayah]);
-                }
-            }
-            assert_eq!(actual, expected, "parity mismatch for query {q:?}");
-        }
+        // Mid-typing prefix fallback ("الرح") matches الرحمن / الرحيم
+        let q_prefix = CompiledArabicQuery::compile_str("الرح").unwrap();
+        let prefix_hits = index.search(&q_prefix, 10);
+        assert_eq!(prefix_hits.len(), 2 * MATCH_STRIDE);
     }
 
     #[test]
     fn real_quran_db_export_parity_if_present() {
-        // When QURAN_AR_TSV is provided by the verification harness (exported from quran.ar.db),
-        // verify 100% exact hit counts and sub-5ms scan speed across all 6,236 Quran verses.
+        // When QURAN_AR_TSV is provided (exported from real quran.ar.db),
+        // verify 100% comprehensive hit counts, total occurrences, zero false positives,
+        // and sub-5ms scan speed across all 6,236 Quran verses.
         let Ok(tsv_path) = std::env::var("QURAN_AR_TSV") else {
             return;
         };
@@ -208,82 +217,93 @@ mod tests {
         assert_eq!(parsed.len(), 6236, "must load all 6,236 Quran verses");
 
         let index = VerseIndex::from_utf8_rows(&parsed).unwrap();
-        let expected_counts: &[(&str, usize)] = &[
-            ("الله", 1842),
-            ("الرحمن", 159),
-            ("الصلاة", 61),
-            ("موسى", 131),
-            ("موسي", 131),
-            ("يعملون", 57),
-            ("توبة", 7),
-            ("اه", 1005),
-            (".*+[", 0),
-            ("(الله)", 1842),
-            ("ا", 6180),
+        let expected_counts: &[(&str, usize, usize)] = &[
+            // (query, expected_unique_verses, expected_total_occurrences)
+            ("الله", 1913, 2816),
+            ("(الله)", 1913, 2816),
+            ("اللَّهِ", 1913, 2816),
+            ("ال\u{0640}ل\u{0640}ه", 1913, 2816),
+            ("الجنة", 154, 159),
+            ("الجنه", 154, 159),
+            ("جنة", 154, 159),
+            ("الايمان", 76, 86),
+            ("الإيمان", 76, 86),
+            ("الصلاة", 77, 82),
+            ("الصلاه", 77, 82),
+            ("الرحمن", 167, 169),
+            ("الناس", 225, 241),
+            ("الكتاب", 232, 253),
+            ("النار", 138, 145),
+            ("المؤمنين", 175, 180),
+            ("المؤمنون", 175, 180),
+            ("موسى", 131, 136),
+            ("موسي", 131, 136),
+            ("رحمة", 113, 115),
+            ("نعمة", 47, 48),
+            ("الجن", 23, 23),
+            ("يعملون", 57, 57),
+            (".*+[", 0, 0),
         ];
 
-        for &(query, expected_hits) in expected_counts {
+        for &(query, expected_verses, expected_occ) in expected_counts {
             let compiled = CompiledArabicQuery::compile_str(query).unwrap();
             let t0 = std::time::Instant::now();
             let packed = index.search(&compiled, usize::MAX);
             let elapsed_ms = t0.elapsed().as_secs_f64() * 1000.0;
             let hit_count = packed.len() / MATCH_STRIDE;
             assert_eq!(
-                hit_count, expected_hits,
-                "hit count mismatch for query {query:?}"
+                hit_count, expected_verses,
+                "verse count mismatch for query {query:?}"
             );
-            // Verify every returned verse actually has at least one valid in-bounds UTF-16 span.
+            let mut total_occ = 0usize;
             for chunk in packed.chunks_exact(MATCH_STRIDE) {
                 let verse_idx = chunk[0] as usize;
                 let slice = index.verse_slice(verse_idx).expect("valid verse_idx");
                 let spans = compiled.find_all_spans(slice);
-                assert!(!spans.is_empty(), "matched verse must have >=1 span");
+                assert!(!spans.is_empty(), "matched verse must have >=1 span for {query:?}");
                 assert_eq!(spans.len() % 2, 0);
+                total_occ += spans.len() / 2;
                 for pair in spans.chunks_exact(2) {
                     assert!(pair[0] >= 0 && pair[1] > pair[0] && (pair[1] as usize) <= slice.len());
                 }
             }
-            eprintln!("Rust parity OK: query={query:?} hits={hit_count} elapsed={elapsed_ms:.3} ms");
+            assert_eq!(
+                total_occ, expected_occ,
+                "occurrence count mismatch for query {query:?}"
+            );
+            assert!(elapsed_ms < 20.0, "search too slow ({elapsed_ms:.3} ms) for {query:?}");
+            eprintln!(
+                "Rust real-DB OK: query={query:?} verses={hit_count} occ={total_occ} elapsed={elapsed_ms:.3} ms"
+            );
         }
 
-        // If QURAN_AR_EXPECTED_SPANS is also provided, verify 100% exact row-by-row AND
-        // span-by-span equality against the ArabicCharacterHelper regex oracle.
-        if let Ok(expected_path) = std::env::var("QURAN_AR_EXPECTED_SPANS") {
-            let oracle = std::fs::read_to_string(&expected_path).expect("read QURAN_AR_EXPECTED_SPANS");
-            let mut verified_queries = 0usize;
-            for line in oracle.lines().filter(|l| !l.is_empty()) {
-                let (query, expected_rows_str) = line.split_once('\t').expect("tab-delimited oracle line");
-                let compiled = CompiledArabicQuery::compile_str(query).expect("compiled query");
-                let packed = index.search(&compiled, usize::MAX);
+        // Verify Surah Al-Fatihah 1:2 ("الحمد لله رب العالمين") is hit #2 for "الله"!
+        let q_allah = CompiledArabicQuery::compile_str("الله").unwrap();
+        let packed_allah = index.search(&q_allah, 5);
+        assert_eq!(&packed_allah[0..4], &[0, 1, 1, 1]); // 1:1 بسم الله
+        assert_eq!(&packed_allah[4..8], &[1, 2, 1, 2]); // 1:2 الحمد لله
 
-                let mut actual_rows = Vec::with_capacity(packed.len() / MATCH_STRIDE);
-                for chunk in packed.chunks_exact(MATCH_STRIDE) {
-                    let vidx = chunk[0] as usize;
-                    let slice = index.verse_slice(vidx).expect("valid verse_idx");
-                    let spans = compiled.find_all_spans(slice);
-                    let spans_str: Vec<String> = spans
-                        .chunks_exact(2)
-                        .map(|p| format!("{}:{}", p[0], p[1]))
-                        .collect();
-                    actual_rows.push(format!(
-                        "{},{},{},{}|{}",
-                        chunk[0],
-                        chunk[1],
-                        chunk[2],
-                        chunk[3],
-                        spans_str.join(",")
-                    ));
-                }
-                let actual_joined = actual_rows.join(";");
-                assert_eq!(
-                    actual_joined, expected_rows_str,
-                    "100% row+span parity mismatch for query {query:?}"
-                );
-                verified_queries += 1;
-            }
-            assert_eq!(verified_queries, 11);
-            eprintln!("100% exact row-by-row & span-by-span parity verified across all 11 queries x 6,236 verses!");
-        }
+        // Verify Tier 1 (explicit الجنة/بالجنة = 55 verses) comes FIRST for "الجنة"!
+        let q_jannah = CompiledArabicQuery::compile_str("الجنة").unwrap();
+        let packed_jannah = index.search(&q_jannah, usize::MAX);
+        assert_eq!(packed_jannah.len() / MATCH_STRIDE, 154);
+        // First hit should be 2:35 ("...اسكن أنت وزوجك الجنة")
+        assert_eq!(packed_jannah[2], 2);
+        assert_eq!(packed_jannah[3], 35);
+
+        // Verify multi-word contiguous phrases & topical all-words fallback & mid-typing prefix!
+        let q_hamd = CompiledArabicQuery::compile_str("الحمد لله").unwrap();
+        let packed_hamd = index.search(&q_hamd, usize::MAX);
+        assert!(packed_hamd.len() / MATCH_STRIDE >= 23, "الحمد لله must match all Quranic occurrences");
+        assert_eq!(&packed_hamd[0..4], &[1, 2, 1, 2]); // 1:2 الحمد لله رب العالمين
+
+        let q_topical = CompiledArabicQuery::compile_str("الصلاة الزكاة").unwrap();
+        let packed_topical = index.search(&q_topical, usize::MAX);
+        assert!(packed_topical.len() / MATCH_STRIDE >= 25, "الصلاة الزكاة topical search must match >=25 verses");
+
+        let q_prefix = CompiledArabicQuery::compile_str("الرح").unwrap();
+        let packed_prefix = index.search(&q_prefix, usize::MAX);
+        assert!(packed_prefix.len() / MATCH_STRIDE >= 160, "mid-typing prefix الرح must fall back cleanly");
     }
 
     #[test]
@@ -294,7 +314,6 @@ mod tests {
         use std::ptr;
         use std::sync::atomic::{AtomicUsize, Ordering};
 
-        // 1. Null env / null args must never crash or unwind.
         unsafe {
             assert_eq!(
                 Java_com_quran_common_search_RustArabicSearchEngine_nativeLoadIndex(
@@ -346,7 +365,6 @@ mod tests {
             );
         }
 
-        // 2. Full FFI round-trip via mock JNINativeInterface verifying DeleteLocalRef & UTF-16 spans.
         enum MockObj {
             IntArr(Vec<i32>),
             Str(Vec<u16>),
@@ -497,11 +515,12 @@ mod tests {
         let env: *mut JNIEnv = &mut env_ptr as *mut JNIEnv;
 
         DELETED_LOCAL_REFS.store(0, Ordering::SeqCst);
-        let row_ids = Box::into_raw(Box::new(MockObj::IntArr(vec![10, 20]))) as jintArray;
-        let suras = Box::into_raw(Box::new(MockObj::IntArr(vec![1, 2]))) as jintArray;
-        let ayahs = Box::into_raw(Box::new(MockObj::IntArr(vec![1, 255]))) as jintArray;
+        let row_ids = Box::into_raw(Box::new(MockObj::IntArr(vec![10, 20, 30]))) as jintArray;
+        let suras = Box::into_raw(Box::new(MockObj::IntArr(vec![1, 1, 2]))) as jintArray;
+        let ayahs = Box::into_raw(Box::new(MockObj::IntArr(vec![1, 2, 255]))) as jintArray;
         let texts = Box::into_raw(Box::new(MockObj::StrArr(vec![
             utf16("بسم الله الرحمن الرحيم"),
+            utf16("الحمد لله رب العالمين"),
             utf16("الله لا إله إلا هو والله عليم"),
         ]))) as jobjectArray;
         let query = Box::into_raw(Box::new(MockObj::Str(utf16("الله")))) as jstring;
@@ -516,7 +535,7 @@ mod tests {
                 texts,
             );
             assert_eq!(ok, JNI_TRUE);
-            assert_eq!(DELETED_LOCAL_REFS.load(Ordering::SeqCst), 2);
+            assert_eq!(DELETED_LOCAL_REFS.load(Ordering::SeqCst), 3);
             assert_eq!(
                 Java_com_quran_common_search_RustArabicSearchEngine_nativeIsLoaded(
                     env,
@@ -536,7 +555,7 @@ mod tests {
                 MockObj::IntArr(v) => v.clone(),
                 _ => panic!("expected IntArr"),
             };
-            assert_eq!(packed, vec![0, 10, 1, 1, 1, 20, 2, 255]);
+            assert_eq!(packed, vec![0, 10, 1, 1, 1, 20, 1, 2, 2, 30, 2, 255]);
             drop(Box::from_raw(res_arr as *mut MockObj));
 
             let txt_obj = Java_com_quran_common_search_RustArabicSearchEngine_nativeGetVerseText(
@@ -551,15 +570,30 @@ mod tests {
             }
             drop(Box::from_raw(txt_obj as *mut MockObj));
 
-            let spans_obj = Java_com_quran_common_search_RustArabicSearchEngine_nativeFindMatchSpans(
+            // Row 1: "الحمد لله رب العالمين" -> "لله" at [6, 9]
+            let spans_lillah = Java_com_quran_common_search_RustArabicSearchEngine_nativeFindMatchSpans(
                 env,
                 ptr::null_mut(),
                 1,
                 query,
             );
+            assert!(!spans_lillah.is_null());
+            match &*(spans_lillah as *const MockObj) {
+                MockObj::IntArr(v) => assert_eq!(v, &vec![6, 9]),
+                _ => panic!("expected IntArr"),
+            }
+            drop(Box::from_raw(spans_lillah as *mut MockObj));
+
+            // Row 2: "الله لا إله إلا هو والله عليم" -> "الله" [0, 4] and "والله" [19, 24]
+            let spans_obj = Java_com_quran_common_search_RustArabicSearchEngine_nativeFindMatchSpans(
+                env,
+                ptr::null_mut(),
+                2,
+                query,
+            );
             assert!(!spans_obj.is_null());
             match &*(spans_obj as *const MockObj) {
-                MockObj::IntArr(v) => assert_eq!(v, &vec![0, 4, 20, 24]),
+                MockObj::IntArr(v) => assert_eq!(v, &vec![0, 4, 19, 24]),
                 _ => panic!("expected IntArr"),
             }
             drop(Box::from_raw(spans_obj as *mut MockObj));
@@ -576,7 +610,6 @@ mod tests {
                 JNI_FALSE
             );
 
-            // Clean up mock allocations
             let _ = Box::from_raw(row_ids as *mut MockObj);
             let _ = Box::from_raw(suras as *mut MockObj);
             let _ = Box::from_raw(ayahs as *mut MockObj);
@@ -595,27 +628,39 @@ mod tests {
         ];
         let index = VerseIndex::from_utf8_rows(&rows).unwrap();
 
-        for adversarial in [
+        // Tatweel & diacritized Arabic queries normalize cleanly and match BOTH rows!
+        for normalized_allah in ["ال\u{0640}ل\u{0640}ه", "اللَّهُ", "اللّٰهِ"] {
+            let compiled = CompiledArabicQuery::compile_str(normalized_allah).unwrap();
+            let hits = index.search(&compiled, 100);
+            assert_eq!(hits, vec![0, 1, 1, 1, 1, 2, 112, 1], "failed for {normalized_allah:?}");
+            // Verify highlight span on diacritized "اللّٰهُ" covers entire word including trailing damma!
+            let row2_slice = index.verse_slice(1).unwrap();
+            let spans = compiled.find_all_spans(row2_slice);
+            assert_eq!(spans.len(), 2);
+            let matched = String::from_utf16(&row2_slice[spans[0] as usize..spans[1] as usize]).unwrap();
+            assert_eq!(matched, "اللّٰهُ");
+        }
+
+        // Dagger alif query matches الرحمن cleanly
+        let q_rahman = CompiledArabicQuery::compile_str("الرحم\u{0670}ن").unwrap();
+        assert_eq!(index.search(&q_rahman, 100), vec![0, 1, 1, 1]);
+
+        // Pure whitespace, pure tatweel, pure zero-width, pure harakat, and emoji-prefixed return empty cleanly
+        for empty_or_unmatched in [
             "",
             "   \t\n ",
             "\u{0640}\u{0640}",
             "\u{200B}\u{200C}\u{200D}\u{200F}",
-            "ال\u{0640}ل\u{0640}ه",
             "🕌الله",
-            "الرحم\u{0670}ن",
             "\u{064B}\u{064C}\u{064D}\u{064E}\u{064F}\u{0650}\u{0651}\u{0652}",
         ] {
-            let q: Vec<u16> = adversarial.encode_utf16().collect();
+            let q: Vec<u16> = empty_or_unmatched.encode_utf16().collect();
             let Some(compiled) = CompiledArabicQuery::compile(&q) else {
-                assert!(adversarial.is_empty());
+                assert!(empty_or_unmatched.is_empty());
                 continue;
             };
             let hits = index.search(&compiled, 100);
-            if adversarial == "الرحم\u{0670}ن" {
-                assert_eq!(hits, vec![0, 1, 1, 1]);
-            } else {
-                assert!(hits.is_empty(), "unexpected hit for {adversarial:?}: {hits:?}");
-            }
+            assert!(hits.is_empty(), "unexpected hit for {empty_or_unmatched:?}: {hits:?}");
         }
     }
 

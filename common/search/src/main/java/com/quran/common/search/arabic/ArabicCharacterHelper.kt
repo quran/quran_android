@@ -3,10 +3,12 @@ package com.quran.common.search.arabic
 object ArabicCharacterHelper {
   fun equivalentChars(ch: Char): String? {
     return when (ch) {
-      // given: ا -> match: آأإاﻯ
-      '\u0627' -> "\u0622\u0623\u0625\u0627\u0649"
-      // given: و -> match: وؤ
-      '\u0648' -> "\u0648\u0624"
+      // given: ا -> match: آأإاﻯٱ
+      '\u0627' -> "\u0622\u0623\u0625\u0627\u0649\u0671"
+      // given: آ / إ / ٱ -> match: آأإاٱ
+      '\u0622', '\u0625', '\u0671' -> "\u0622\u0623\u0625\u0627\u0671"
+      // given: و / ؤ -> match: وؤ
+      '\u0648', '\u0624' -> "\u0648\u0624"
       // given: ﺃ -> match: ﺃﺀﺆﺋ
       '\u0623' -> "\u0621\u0623\u0624\u0626\u0627"
       // given: ﺀ -> match: ﺀﺃﺆ

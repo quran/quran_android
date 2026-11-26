@@ -3,7 +3,7 @@ package com.quran.common.search
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.quran.common.search.arabic.ArabicCharacterHelper
-import com.quran.common.search.arabic.ArabicCompiledQuery
+import com.quran.common.search.arabic.ArabicMorphologicalQuery
 import java.util.regex.Pattern
 
 class ArabicSearcher(private val defaultSearcher: Searcher,
@@ -113,25 +113,117 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
 
     val initialCapacity = if (maxResults == SUGGESTIONS_LIMIT) SUGGESTIONS_LIMIT else INITIAL_RESULTS_CAPACITY
     val resultsBuilder = SearchResultsCursor.Builder(columns, initialCapacity)
-    val compiledQuery = ArabicCompiledQuery.compile(originalSearchText)
+    val morphologicalQuery = ArabicMorphologicalQuery.compile(originalSearchText)
 
-    if (compiledQuery != null) {
+    if (morphologicalQuery != null) {
+      val simpleTable = extractSimpleTableName(query)
+      val scanSql = if (simpleTable != null) {
+        // Scan the full Arabic verse table so SQLite LIKE never pre-filters out
+        // لِـ+ال elisions (لله/للجنة/للناس), Uthmani open-Ta, diacritics, or plurals (جنات/جنتين).
+        stripLikeWhereClause(query)
+      } else {
+        query
+      }
+      val scanArgs: Array<String>? = if (scanSql !== query) null else arrayOf(searchText)
+
       val highlightBuffer = if (highlightMatches) StringBuilder(256) else null
-      database.rawQuery(query, arrayOf(searchText)).use { cursor ->
+      val matchStarts = ArrayList<Int>(4)
+      val matchEnds = ArrayList<Int>(4)
+      val tier1Ids = ArrayList<Int>()
+      val tier1Suras = ArrayList<Int>()
+      val tier1Ayahs = ArrayList<Int>()
+      val tier1Texts = ArrayList<String>()
+      val tier2Ids = ArrayList<Int>()
+      val tier2Suras = ArrayList<Int>()
+      val tier2Ayahs = ArrayList<Int>()
+      val tier2Texts = ArrayList<String>()
+      val tier3Ids = ArrayList<Int>()
+      val tier3Suras = ArrayList<Int>()
+      val tier3Ayahs = ArrayList<Int>()
+      val tier3Texts = ArrayList<String>()
+
+      val isWordLevel = morphologicalQuery.isWordLevel()
+      database.rawQuery(scanSql, scanArgs).use { cursor ->
         while (cursor.moveToNext()) {
           val text = cursor.getString(3) ?: continue
-          val matchText = if (highlightBuffer != null) {
-            compiledQuery.highlightTo(text, matchStart, matchEnd, highlightBuffer) ?: continue
+          val tier = morphologicalQuery.matchAndCollectSpans(
+            text = text,
+            startsOut = matchStarts,
+            endsOut = matchEnds,
+            allowNonContiguousMultiWord = true,
+            allowSubstringFallback = !isWordLevel
+          )
+          if (tier == ArabicMorphologicalQuery.NO_MATCH) continue
+          val outText = if (highlightBuffer != null) {
+            ArabicMorphologicalQuery.formatHighlighted(
+              text = text,
+              starts = matchStarts,
+              ends = matchEnds,
+              matchStart = matchStart,
+              matchEnd = matchEnd,
+              buffer = highlightBuffer
+            )
           } else {
-            if (compiledQuery.findFirst(text, 0) < 0) continue
             text
           }
-          resultsBuilder.addRow(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), matchText)
-          if (resultsBuilder.size == maxResults) {
-            break
+          val rowId = cursor.getInt(0)
+          val sura = cursor.getInt(1)
+          val ayah = cursor.getInt(2)
+          when (tier) {
+            ArabicMorphologicalQuery.TIER_EXACT -> {
+              tier1Ids.add(rowId); tier1Suras.add(sura); tier1Ayahs.add(ayah); tier1Texts.add(outText)
+            }
+            ArabicMorphologicalQuery.TIER_SINGULAR_MORPH -> {
+              tier2Ids.add(rowId); tier2Suras.add(sura); tier2Ayahs.add(ayah); tier2Texts.add(outText)
+            }
+            else -> {
+              tier3Ids.add(rowId); tier3Suras.add(sura); tier3Ayahs.add(ayah); tier3Texts.add(outText)
+            }
           }
         }
       }
+
+      if (tier1Ids.isEmpty() && tier2Ids.isEmpty() && tier3Ids.isEmpty() && isWordLevel) {
+        // Mid-typing prefix / substring fallback (100% parity with Rust VerseIndex::search)
+        database.rawQuery(scanSql, scanArgs).use { cursor ->
+          while (cursor.moveToNext()) {
+            val text = cursor.getString(3) ?: continue
+            val tier = morphologicalQuery.matchAndCollectSpans(
+              text = text,
+              startsOut = matchStarts,
+              endsOut = matchEnds,
+              allowNonContiguousMultiWord = false,
+              allowSubstringFallback = true
+            )
+            if (tier == ArabicMorphologicalQuery.NO_MATCH) continue
+            val outText = if (highlightBuffer != null) {
+              ArabicMorphologicalQuery.formatHighlighted(
+                text = text,
+                starts = matchStarts,
+                ends = matchEnds,
+                matchStart = matchStart,
+                matchEnd = matchEnd,
+                buffer = highlightBuffer
+              )
+            } else {
+              text
+            }
+            resultsBuilder.addRow(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), outText)
+            if (resultsBuilder.size == maxResults) break
+          }
+        }
+        return resultsBuilder.build()
+      }
+
+      fun appendTier(ids: ArrayList<Int>, suras: ArrayList<Int>, ayahs: ArrayList<Int>, texts: ArrayList<String>) {
+        for (i in ids.indices) {
+          if (resultsBuilder.size >= maxResults) return
+          resultsBuilder.addRow(ids[i], suras[i], ayahs[i], texts[i])
+        }
+      }
+      appendTier(tier1Ids, tier1Suras, tier1Ayahs, tier1Texts)
+      appendTier(tier2Ids, tier2Suras, tier2Ayahs, tier2Texts)
+      appendTier(tier3Ids, tier3Suras, tier3Ayahs, tier3Texts)
       return resultsBuilder.build()
     }
 
@@ -242,6 +334,11 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
   private fun extractSimpleTableName(sql: String): String? {
     val match = SIMPLE_ARABIC_QUERY_REGEX.find(sql) ?: return null
     return match.groupValues[1]
+  }
+
+  private fun stripLikeWhereClause(sql: String): String {
+    val idx = sql.indexOf(" WHERE ", ignoreCase = true)
+    return if (idx > 0) sql.substring(0, idx) else sql
   }
 
   companion object {

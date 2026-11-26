@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.quran.common.search.RustArabicSearchEngine
 import com.quran.common.search.RustSearchResultsCursor
 import com.quran.common.search.arabic.ArabicCompiledQuery
+import com.quran.common.search.arabic.ArabicMorphologicalQuery
 import org.junit.Assert.assertThrows
 import org.junit.Test
 
@@ -36,6 +37,19 @@ class RustArabicSearchEngineAdversarialTest {
     assertThat(matched.findFirst(verse, -5)).isEqualTo(4)
     assertThat(matched.highlightTo(verse, "<b>", "</b>", sb))
       .isEqualTo("بسم <b>الله</b> الرحمن الرحيم")
+
+    // Adversarial inputs to ArabicMorphologicalQuery must never throw or falsely match
+    assertThat(ArabicMorphologicalQuery.compile("")).isNull()
+    assertThat(ArabicMorphologicalQuery.compile("()")).isNull()
+    assertThat(ArabicMorphologicalQuery.compile("((()))")).isNull()
+    for (q in listOf("   ", "\u0640\u0640", "\u200B\u200C\u200D\u200F", "🕌الله", "ا".repeat(512), ".*+?[\\]{}|")) {
+      val mq = ArabicMorphologicalQuery.compile(q)
+      assertThat(mq).isNotNull()
+      assertThat(mq!!.findAllSpans(verse)).isEmpty()
+    }
+    // Tatweel and tashkeel inside Arabic query normalize cleanly and match verse
+    assertThat(ArabicMorphologicalQuery.compile("ال\u0640ل\u0640ه")!!.findAllSpans(verse)).asList().containsExactly(4, 8)
+    assertThat(ArabicMorphologicalQuery.compile("اللَّهِ")!!.findAllSpans("الحمد لله رب العالمين")).asList().containsExactly(6, 9)
   }
 
   @Test
