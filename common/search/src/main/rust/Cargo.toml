@@ -1,0 +1,17 @@
+[package]
+name = "quran_search"
+version = "0.1.0"
+edition = "2021"
+description = "Native Rust Arabic Quran search engine with exact ArabicCharacterHelper parity"
+
+[lib]
+name = "quran_search"
+crate-type = ["cdylib", "rlib"]
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = "symbols"
+# Keep default panic = "unwind" so std::panic::catch_unwind at every JNI
+# boundary catches unexpected panics and never aborts the JVM across FFI.

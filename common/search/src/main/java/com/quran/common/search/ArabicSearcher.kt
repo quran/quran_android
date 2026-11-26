@@ -94,6 +94,23 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
     maxResults: Int,
     columns: Array<String>
   ): Cursor {
+    if (RustArabicSearchEngine.isNativeAvailable && hasEffectivePatternChars(originalSearchText)) {
+      val tableName = extractSimpleTableName(query)
+      if (tableName != null) {
+        val rustCursor = executeNativeRustQuery(
+          database = database,
+          table = tableName,
+          originalSearchText = originalSearchText,
+          highlightMatches = highlightMatches,
+          maxResults = maxResults,
+          columns = columns
+        )
+        if (rustCursor != null) {
+          return rustCursor
+        }
+      }
+    }
+
     val initialCapacity = if (maxResults == SUGGESTIONS_LIMIT) SUGGESTIONS_LIMIT else INITIAL_RESULTS_CAPACITY
     val resultsBuilder = SearchResultsCursor.Builder(columns, initialCapacity)
     val compiledQuery = ArabicCompiledQuery.compile(originalSearchText)
@@ -158,9 +175,80 @@ class ArabicSearcher(private val defaultSearcher: Searcher,
     return resultsBuilder.build()
   }
 
+  private fun executeNativeRustQuery(
+    database: SQLiteDatabase,
+    table: String,
+    originalSearchText: String,
+    highlightMatches: Boolean,
+    maxResults: Int,
+    columns: Array<String>
+  ): Cursor? {
+    val generation = RustArabicSearchEngine.ensureLoaded(database, table)
+    if (generation <= 0) {
+      return null
+    }
+    val packed = RustArabicSearchEngine.search(originalSearchText, maxResults, generation)
+      ?: return null
+
+    if (!highlightMatches) {
+      return RustSearchResultsCursor(columns, packed, generation)
+    }
+
+    val hitCount = packed.size / RustArabicSearchEngine.MATCH_STRIDE
+    val resultsBuilder = SearchResultsCursor.Builder(columns, hitCount.coerceAtLeast(8))
+    val highlightBuffer = StringBuilder(256)
+    var offset = 0
+    while (offset + RustArabicSearchEngine.MATCH_STRIDE <= packed.size) {
+      val verseIndex = packed[offset]
+      val rowId = packed[offset + 1]
+      val sura = packed[offset + 2]
+      val ayah = packed[offset + 3]
+      val text = RustArabicSearchEngine.getVerseText(verseIndex) ?: return null
+      val spans = RustArabicSearchEngine.findMatchSpans(verseIndex, originalSearchText, generation)
+        ?: return null
+
+      highlightBuffer.setLength(0)
+      var lastEnd = 0
+      var spanIdx = 0
+      while (spanIdx + 1 < spans.size) {
+        val start = spans[spanIdx]
+        val end = spans[spanIdx + 1]
+        if (start >= lastEnd && end > start && end <= text.length) {
+          highlightBuffer.append(text, lastEnd, start)
+          highlightBuffer.append(matchStart)
+          highlightBuffer.append(text, start, end)
+          highlightBuffer.append(matchEnd)
+          lastEnd = end
+        }
+        spanIdx += 2
+      }
+      highlightBuffer.append(text, lastEnd, text.length)
+      resultsBuilder.addRow(rowId, sura, ayah, highlightBuffer.toString())
+      offset += RustArabicSearchEngine.MATCH_STRIDE
+    }
+    return resultsBuilder.build()
+  }
+
+  private fun hasEffectivePatternChars(query: String): Boolean {
+    for (i in query.indices) {
+      val ch = query[i]
+      if (ch != '(' && ch != ')') {
+        return true
+      }
+    }
+    return false
+  }
+
+  private fun extractSimpleTableName(sql: String): String? {
+    val match = SIMPLE_ARABIC_QUERY_REGEX.find(sql) ?: return null
+    return match.groupValues[1]
+  }
+
   companion object {
     private const val arabicRegexChars = "\u0627\u0623\u0621\u062a\u0629\u0647\u0648\u0649\u064a\u0626"
     private const val INITIAL_RESULTS_CAPACITY = 256
     private const val SUGGESTIONS_LIMIT = 6
+    private val SIMPLE_ARABIC_QUERY_REGEX =
+      Regex("""FROM\s+([A-Za-z_][A-Za-z0-9_]*)\s+WHERE\s+text\s+LIKE\s+\?""", RegexOption.IGNORE_CASE)
   }
 }

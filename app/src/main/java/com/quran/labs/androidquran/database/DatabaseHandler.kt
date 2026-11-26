@@ -12,6 +12,7 @@ import androidx.annotation.IntDef
 import androidx.core.content.ContextCompat
 import com.quran.common.search.ArabicSearcher
 import com.quran.common.search.DefaultSearcher
+import com.quran.common.search.RustArabicSearchEngine
 import com.quran.common.search.Searcher
 import com.quran.data.model.QuranText
 import com.quran.data.model.VerseRange
@@ -67,6 +68,9 @@ class DatabaseHandler private constructor(
     @Synchronized
     fun clearDatabaseHandlerIfExists(databaseName: String) {
       try {
+        if (databaseName == QuranFileConstants.ARABIC_DATABASE) {
+          RustArabicSearchEngine.releaseIndex()
+        }
         val handler = databaseMap.remove(databaseName)
         if (handler != null) {
           handler.database?.close()

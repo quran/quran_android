@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.quran.common.search.RustSearchResultsCursor
 import com.quran.common.search.arabic.ArabicCompiledQuery
 import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
@@ -376,6 +377,8 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
       arrayOf(currentQuery),
       null
     )?.use { cursor ->
+      val rustCursor = cursor as? RustSearchResultsCursor
+      val rustGeneration = rustCursor?.indexGeneration ?: -1
       val list = ArrayList<SearchResultItem>(cursor.count)
       while (cursor.moveToNext()) {
         val id = cursor.getLong(0)
@@ -383,6 +386,7 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
         val ayah = cursor.getInt(2)
         val text = cursor.getString(3) ?: ""
         val page = quranInfo.getPageFromSuraAyah(sura, ayah)
+        val rustVerseIndex = rustCursor?.getCurrentVerseIndex() ?: -1
         list.add(
           SearchResultItem(
             id = id,
@@ -390,7 +394,9 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
             ayah = ayah,
             page = page,
             text = text,
-            highlightQuery = highlightQuery
+            highlightQuery = highlightQuery,
+            rustVerseIndex = rustVerseIndex,
+            rustGeneration = rustGeneration
           )
         )
       }
@@ -454,7 +460,9 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
     val ayah: Int,
     val page: Int,
     val text: String,
-    val highlightQuery: String? = null
+    val highlightQuery: String? = null,
+    val rustVerseIndex: Int = -1,
+    val rustGeneration: Int = -1
   )
 
   private data class SearchQueryResult(
@@ -482,7 +490,9 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
       holder.text.text = SearchResultFormatter.formatArabic(
         text = item.text,
         compiledQuery = compiledQuery,
-        highlightColor = highlightColor
+        highlightColor = highlightColor,
+        rustVerseIndex = item.rustVerseIndex,
+        rustGeneration = item.rustGeneration
       )
       holder.metadata.text = context.getString(
         R.string.found_in_sura,

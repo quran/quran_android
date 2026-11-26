@@ -13,6 +13,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.common.search.ArabicSearcher
 import com.quran.common.search.DefaultSearcher
+import com.quran.common.search.RustSearchResultsCursor
 import com.quran.common.search.SearchResultsCursor
 import com.quran.common.search.arabic.ArabicCompiledQuery
 import com.quran.data.core.QuranInfo
@@ -69,6 +70,36 @@ class SearchResultsCursorAndArabicHighlightTest {
   }
 
   @Test
+  fun `RustSearchResultsCursor exposes packed ids suras ayahs and verse indices accurately`() {
+    val columns = arrayOf("_id", "sura", "ayah", "text")
+    val packed = intArrayOf(
+      // [verseIndex, rowId, sura, ayah]
+      0, 1, 1, 1,
+      254, 262, 2, 255
+    )
+    RustSearchResultsCursor(columns, packed, indexGeneration = 7).use { cursor ->
+      assertThat(cursor.count).isEqualTo(2)
+      assertThat(cursor.indexGeneration).isEqualTo(7)
+      assertThat(cursor.columnNames).isEqualTo(columns)
+
+      assertThat(cursor.moveToFirst()).isTrue()
+      assertThat(cursor.getCurrentVerseIndex()).isEqualTo(0)
+      assertThat(cursor.getInt(0)).isEqualTo(1)
+      assertThat(cursor.getLong(0)).isEqualTo(1L)
+      assertThat(cursor.getInt(1)).isEqualTo(1)
+      assertThat(cursor.getInt(2)).isEqualTo(1)
+      assertThat(cursor.getString(0)).isEqualTo("1")
+      assertThat(cursor.isNull(3)).isTrue()
+
+      assertThat(cursor.moveToNext()).isTrue()
+      assertThat(cursor.getCurrentVerseIndex()).isEqualTo(254)
+      assertThat(cursor.getInt(0)).isEqualTo(262)
+      assertThat(cursor.getInt(1)).isEqualTo(2)
+      assertThat(cursor.getInt(2)).isEqualTo(255)
+    }
+  }
+
+  @Test
   fun `formatArabic matches HtmlCompat color spans exactly and invalidates cache on query or color change`() {
     val colorA = -13388315
     val colorB = -16711936
@@ -104,9 +135,7 @@ class SearchResultsCursorAndArabicHighlightTest {
 
   @Test
   fun `ArabicSearcher runQueryRaw returns full unformatted matches without suggestions cap`() {
-    val dbFile = File(context.cacheDir, "raw_arabic_search_test.db")
-    dbFile.delete()
-    val db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+    val db = SQLiteDatabase.create(null)
     try {
       db.execSQL("CREATE TABLE verses(sura INTEGER, ayah INTEGER, text TEXT)")
       for (i in 1..12) {
@@ -129,7 +158,6 @@ class SearchResultsCursorAndArabicHighlightTest {
       }
     } finally {
       db.close()
-      dbFile.delete()
     }
   }
 

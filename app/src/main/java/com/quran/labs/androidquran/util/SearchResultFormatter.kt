@@ -10,6 +10,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.VisibleForTesting
 import androidx.collection.LruCache
 import androidx.core.text.HtmlCompat
+import com.quran.common.search.RustArabicSearchEngine
 import com.quran.common.search.arabic.ArabicCompiledQuery
 
 /**
@@ -59,7 +60,9 @@ object SearchResultFormatter {
   fun formatArabic(
     text: String,
     compiledQuery: ArabicCompiledQuery?,
-    @ColorInt highlightColor: Int
+    @ColorInt highlightColor: Int,
+    rustVerseIndex: Int = -1,
+    rustGeneration: Int = -1
   ): CharSequence {
     if (text.isEmpty()) {
       return text
@@ -79,35 +82,62 @@ object SearchResultFormatter {
       }
     }
 
-    var start = compiledQuery.findFirst(text, 0)
-    if (start < 0) {
-      synchronized(arabicCache) {
-        if (lastArabicQuery == queryKey && lastArabicColor == highlightColor) {
-          arabicCache.put(text, text)
-        }
-      }
-      return text
+    val nativeSpans = if (rustVerseIndex >= 0 && rustGeneration > 0) {
+      RustArabicSearchEngine.findMatchSpans(rustVerseIndex, queryKey, rustGeneration)
+    } else {
+      null
     }
 
-    val builder = SpannableStringBuilder(text)
-    val matchLen = compiledQuery.length
-    while (start >= 0) {
-      val end = start + matchLen
-      builder.setSpan(
-        ForegroundColorSpan(highlightColor),
-        start,
-        end,
-        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-      )
-      start = compiledQuery.findFirst(text, end)
-    }
-    val immutable = SpannedString(builder)
-    synchronized(arabicCache) {
-      if (lastArabicQuery == queryKey && lastArabicColor == highlightColor) {
-        arabicCache.put(text, immutable)
+    val result: CharSequence = if (nativeSpans != null) {
+      if (nativeSpans.isEmpty()) {
+        text
+      } else {
+        val builder = SpannableStringBuilder(text)
+        var applied = false
+        var i = 0
+        while (i + 1 < nativeSpans.size) {
+          val start = nativeSpans[i]
+          val end = nativeSpans[i + 1]
+          if (start >= 0 && end > start && end <= text.length) {
+            builder.setSpan(
+              ForegroundColorSpan(highlightColor),
+              start,
+              end,
+              Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            applied = true
+          }
+          i += 2
+        }
+        if (applied) SpannedString(builder) else text
+      }
+    } else {
+      var start = compiledQuery.findFirst(text, 0)
+      if (start < 0) {
+        text
+      } else {
+        val builder = SpannableStringBuilder(text)
+        val matchLen = compiledQuery.length
+        while (start >= 0) {
+          val end = start + matchLen
+          builder.setSpan(
+            ForegroundColorSpan(highlightColor),
+            start,
+            end,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+          )
+          start = compiledQuery.findFirst(text, end)
+        }
+        SpannedString(builder)
       }
     }
-    return immutable
+
+    synchronized(arabicCache) {
+      if (lastArabicQuery == queryKey && lastArabicColor == highlightColor) {
+        arabicCache.put(text, result)
+      }
+    }
+    return result
   }
 
   fun clearCache() {

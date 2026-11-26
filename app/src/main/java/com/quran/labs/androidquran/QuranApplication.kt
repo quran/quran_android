@@ -5,6 +5,7 @@ import android.content.ComponentCallbacks2
 import android.database.sqlite.SQLiteDatabase
 import androidx.annotation.VisibleForTesting
 import androidx.work.Configuration
+import com.quran.common.search.RustArabicSearchEngine
 import com.quran.data.di.AppCoroutineScope
 import com.quran.labs.androidquran.common.audio.util.AudioDecoderCapabilities
 import com.quran.labs.androidquran.core.worker.QuranWorkerFactory
@@ -103,6 +104,11 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
     ) {
       SearchResultFormatter.clearCache()
       SQLiteDatabase.releaseMemory()
+    }
+    if (level >= ComponentCallbacks2.TRIM_MEMORY_BACKGROUND ||
+      level == ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL
+    ) {
+      RustArabicSearchEngine.releaseIndex()
     }
     if (level >= ComponentCallbacks2.TRIM_MEMORY_BACKGROUND) {
       QuranUtils.clearLocalizedNumberCache()
