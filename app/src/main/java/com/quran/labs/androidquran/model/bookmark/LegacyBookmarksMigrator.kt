@@ -6,6 +6,7 @@ import com.quran.mobile.bookmark.importdata.MobileSyncImporter
 import com.quran.mobile.bookmark.migration.LegacyBookmarkMigrationNormalizer
 import com.quran.mobile.bookmark.migration.LegacyBookmarksDataSource
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -17,10 +18,22 @@ import timber.log.Timber
 @SingleIn(AppScope::class)
 class LegacyBookmarksMigrator @Inject constructor(
   private val quranSettings: QuranSettings,
-  private val legacyBookmarksDataSource: LegacyBookmarksDataSource,
-  private val normalizer: LegacyBookmarkMigrationNormalizer,
-  private val mobileSyncImporter: MobileSyncImporter
+  private val legacyBookmarksDataSource: Provider<LegacyBookmarksDataSource>,
+  private val normalizer: Provider<LegacyBookmarkMigrationNormalizer>,
+  private val mobileSyncImporter: Provider<MobileSyncImporter>
 ) {
+  internal constructor(
+    quranSettings: QuranSettings,
+    legacyBookmarksDataSource: LegacyBookmarksDataSource,
+    normalizer: LegacyBookmarkMigrationNormalizer,
+    mobileSyncImporter: MobileSyncImporter
+  ) : this(
+    quranSettings = quranSettings,
+    legacyBookmarksDataSource = Provider { legacyBookmarksDataSource },
+    normalizer = Provider { normalizer },
+    mobileSyncImporter = Provider { mobileSyncImporter }
+  )
+
   private val migrationMutex = Mutex()
 
   suspend fun migrateIfNeeded(): Boolean {
@@ -38,11 +51,11 @@ class LegacyBookmarksMigrator @Inject constructor(
   private suspend fun migrate(): Boolean {
     return withContext(Dispatchers.IO) {
       try {
-        val snapshot = legacyBookmarksDataSource.snapshot()
+        val snapshot = legacyBookmarksDataSource().snapshot()
         if (!snapshot.isEmpty()) {
-          val migrationData = normalizer.normalize(snapshot)
+          val migrationData = normalizer().normalize(snapshot)
           if (!migrationData.isEmpty()) {
-            mobileSyncImporter.importData(migrationData, deleteExisting = false)
+            mobileSyncImporter().importData(migrationData, deleteExisting = false)
           }
         }
 

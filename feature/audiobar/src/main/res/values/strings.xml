@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="audiobar_play">Play</string>
+  <string name="audiobar_pause">Pause</string>
+  <string name="audiobar_stop">Stop</string>
+  <string name="audiobar_rewind">Rewind</string>
+  <string name="audiobar_fast_forward">Fast forward</string>
+  <string name="audiobar_repeat">Repeat</string>
+  <string name="audiobar_speed">Playback speed</string>
+  <string name="audiobar_settings">Audio settings</string>
+  <string name="audiobar_record">Record recitation</string>
+  <string name="audiobar_hide_verses">Hide verses</string>
+  <string name="audiobar_end_session">End recitation</string>
+  <string name="audiobar_pause_recitation">Pause recitation</string>
+  <string name="audiobar_play_recitation">Play recitation</string>
+  <string name="audiobar_transcript">Transcript</string>
+</resources>

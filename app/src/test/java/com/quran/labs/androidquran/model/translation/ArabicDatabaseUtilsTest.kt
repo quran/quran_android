@@ -119,4 +119,25 @@ class ArabicDatabaseUtilsTest {
     assertThat(ArabicDatabaseUtils.getAyahWithoutBasmallah(4, 1, "first ayah")).isEqualTo("first ayah")
   }
 
+  @Test
+  fun testDatabaseHandlerIsInitializedLazily() {
+    var getHandlerCalls = 0
+    val utils = object : ArabicDatabaseUtils(
+      context,
+      QuranInfo(MadaniDataSource()),
+      quranFileUtils
+    ) {
+      override fun getArabicDatabaseHandler(): DatabaseHandler? {
+        getHandlerCalls++
+        return null
+      }
+    }
+
+    assertThat(getHandlerCalls).isEqualTo(0)
+
+    val result = utils.getAyahTextForAyat(listOf(1))
+    assertThat(result).isEmpty()
+    assertThat(getHandlerCalls).isEqualTo(1)
+  }
 }
+

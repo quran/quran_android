@@ -3,13 +3,21 @@ package com.quran.labs.androidquran.extra.feature.linebyline.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+
+private class AyahMarkerStyleCache(
+  var width: Float = -1f,
+  var style: TextStyle? = null
+)
 
 @Composable
 fun AyahMarker(
@@ -20,9 +28,12 @@ fun AyahMarker(
   innerColor: Color,
   text: String,
   textColor: Color,
-  textWidthRatio: Float
+  textWidthRatio: Float,
+  textMeasurer: TextMeasurer = rememberTextMeasurer()
 ) {
-  val textMeasurer = rememberTextMeasurer()
+  val baseTextStyle = remember(textColor) { TextStyle.Default.copy(color = textColor) }
+  val density = LocalDensity.current
+  val styleCache = remember(textColor, textWidthRatio, density) { AyahMarkerStyleCache() }
 
   Canvas(modifier = Modifier.fillMaxSize()) {
     val width = this.size.width
@@ -45,9 +56,16 @@ fun AyahMarker(
       style = Stroke(width = strokeWidth)
     )
 
-    val fontSize = (width * textWidthRatio).toSp()
-    val measurement =
-      textMeasurer.measure(text, TextStyle.Default.copy(color = textColor, fontSize = fontSize))
+    val style = if (styleCache.width == width && styleCache.style != null) {
+      styleCache.style!!
+    } else {
+      val fontSize = (width * textWidthRatio).toSp()
+      baseTextStyle.copy(fontSize = fontSize).also {
+        styleCache.width = width
+        styleCache.style = it
+      }
+    }
+    val measurement = textMeasurer.measure(text, style)
 
     drawText(
       measurement,

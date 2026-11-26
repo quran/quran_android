@@ -177,4 +177,44 @@ class DefaultSearcherTest {
     // Assert
     assertThat(processed).isEqualTo("%%")
   }
+
+  @Test
+  fun `getQuery without FTS includes ESCAPE clause`() {
+    val query = searcher.getQuery(
+      withSnippets = false,
+      hasFTS = false,
+      table = "quran_text",
+      columns = "sura, ayah",
+      searchColumn = "text"
+    )
+
+    assertThat(query).endsWith("LIKE  ? ESCAPE '\\'")
+  }
+
+  @Test
+  fun `getQuery with FTS does not include ESCAPE clause`() {
+    val query = searcher.getQuery(
+      withSnippets = false,
+      hasFTS = true,
+      table = "quran_text",
+      columns = "sura, ayah",
+      searchColumn = "text"
+    )
+
+    assertThat(query).doesNotContain("ESCAPE")
+  }
+
+  @Test
+  fun `processSearchText without FTS escapes backslash percent and underscore`() {
+    val processed = searcher.processSearchText("100%_a\\b", hasFTS = false)
+
+    assertThat(processed).isEqualTo("%100\\%\\_a\\\\b%")
+  }
+
+  @Test
+  fun `processSearchText with FTS leaves LIKE wildcards untouched`() {
+    val processed = searcher.processSearchText("100%_a", hasFTS = true)
+
+    assertThat(processed).isEqualTo("100%_a*")
+  }
 }

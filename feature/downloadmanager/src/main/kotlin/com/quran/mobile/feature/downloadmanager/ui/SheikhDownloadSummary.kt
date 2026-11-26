@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -31,7 +30,7 @@ fun SheikhDownloadSummary(
   onQariItemClicked: ((QariItem) -> Unit)
 ) {
   val (color, tintColor) = if (downloadedSheikhUiModel.downloadedSuras > 0) {
-    Color(0xff5e8900) to MaterialTheme.colorScheme.onPrimary
+    MaterialTheme.colorScheme.primary to MaterialTheme.colorScheme.onPrimary
   } else {
     MaterialTheme.colorScheme.tertiary to MaterialTheme.colorScheme.onTertiary
   }
@@ -46,7 +45,7 @@ fun SheikhDownloadSummary(
   ) {
     Image(
       painterResource(id = R.drawable.ic_download),
-      contentDescription = "",
+      contentDescription = null,
       colorFilter = ColorFilter.tint(tintColor),
       modifier = Modifier
         .align(Alignment.CenterVertically)

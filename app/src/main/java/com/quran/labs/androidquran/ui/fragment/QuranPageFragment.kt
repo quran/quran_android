@@ -28,7 +28,9 @@ import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener
 import com.quran.labs.androidquran.ui.helpers.AyahTracker
 import com.quran.labs.androidquran.ui.helpers.HighlightTypes
+import com.quran.labs.androidquran.ui.helpers.PageBitmapRecycler
 import com.quran.labs.androidquran.ui.helpers.QuranPage
+import com.quran.labs.androidquran.ui.helpers.ScaledPageBitmapDrawable
 import com.quran.labs.androidquran.ui.util.PageController
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
@@ -72,6 +74,7 @@ class QuranPageFragment : Fragment(), PageController, QuranPage, QuranPageScreen
 
   private var imageView: HighlightingImageView? = null
   private var quranPageLayout: QuranImagePageLayout? = null
+  private var currentPageBitmap: Bitmap? = null
   private var ayahCoordinatesError = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,7 +122,7 @@ class QuranPageFragment : Fragment(), PageController, QuranPage, QuranPageScreen
       val quranPageLayout = quranPageLayout
       val height = quranScreenInfo.getHeight()
       if (imageView != null && quranPageLayout != null) {
-        arrayOf(
+        val items: Array<AyahTrackerItem> = arrayOf(
           if (quranPageLayout.canScroll()) {
             AyahScrollableImageTrackerItem(
               pageNumber,
@@ -141,6 +144,8 @@ class QuranPageFragment : Fragment(), PageController, QuranPage, QuranPageScreen
             )
           }
         )
+        ayahTrackerItems = items
+        items
       } else {
         emptyArray()
       }
@@ -174,10 +179,23 @@ class QuranPageFragment : Fragment(), PageController, QuranPage, QuranPageScreen
 
   fun cleanup() {
     Timber.d("cleaning up page %d", pageNumber)
-    if (quranPageLayout != null) {
-      imageView!!.setImageDrawable(null)
-      quranPageLayout = null
+    ayahTrackerItems = null
+    imageView?.setImageDrawable(null)
+    imageView = null
+    quranPageLayout = null
+    val bitmapToRecycle = currentPageBitmap
+    currentPageBitmap = null
+    if (bitmapToRecycle != null) {
+      if (::quranPagePresenter.isInitialized) {
+        quranPagePresenter.resetImageState()
+      }
+      PageBitmapRecycler.scheduleRecycle(bitmapToRecycle)
     }
+  }
+
+  override fun onDestroyView() {
+    cleanup()
+    super.onDestroyView()
   }
 
   override fun setPageCoordinates(pageCoordinates: PageCoordinates) {
@@ -213,7 +231,31 @@ class QuranPageFragment : Fragment(), PageController, QuranPage, QuranPageScreen
   }
 
   override fun setPageBitmap(page: Int, pageBitmap: Bitmap) {
-    imageView?.setImageDrawable(pageBitmap.toDrawable(resources))
+    setPageBitmap(page, pageBitmap, pageBitmap.width, pageBitmap.height)
+  }
+
+  override fun setPageBitmap(
+    page: Int,
+    pageBitmap: Bitmap,
+    sourceWidth: Int,
+    sourceHeight: Int
+  ) {
+    val previousBitmap = currentPageBitmap
+    val targetView = imageView
+    if (targetView != null) {
+      currentPageBitmap = pageBitmap
+      targetView.setImageDrawable(
+        ScaledPageBitmapDrawable.create(resources, pageBitmap, sourceWidth, sourceHeight)
+      )
+      if (previousBitmap != null && previousBitmap !== pageBitmap) {
+        PageBitmapRecycler.scheduleRecycle(previousBitmap)
+      }
+    } else {
+      currentPageBitmap = null
+      quranPagePresenter.resetImageState()
+      PageBitmapRecycler.scheduleRecycle(previousBitmap)
+      PageBitmapRecycler.scheduleRecycle(pageBitmap)
+    }
   }
 
   override fun hidePageDownloadError() {

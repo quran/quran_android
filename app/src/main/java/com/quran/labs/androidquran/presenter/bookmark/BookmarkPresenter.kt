@@ -40,26 +40,50 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
-open class BookmarkPresenter @Inject internal constructor(
+open class BookmarkPresenter private constructor(
   private val bookmarksDao: BookmarksDao,
   private val recentPagesDao: RecentPagesDao,
   private val readingBookmarksDao: ReadingBookmarksDao,
   private val highlightsDao: HighlightsDao,
   private val quranSettings: QuranSettings,
   private val arabicDatabaseUtils: Provider<ArabicDatabaseUtils>,
+  private val ioDispatcher: CoroutineDispatcher,
 ) : Presenter<BookmarksFragment> {
+
+  @Inject
+  internal constructor(
+    bookmarksDao: BookmarksDao,
+    recentPagesDao: RecentPagesDao,
+    readingBookmarksDao: ReadingBookmarksDao,
+    highlightsDao: HighlightsDao,
+    quranSettings: QuranSettings,
+    arabicDatabaseUtils: Provider<ArabicDatabaseUtils>,
+  ) : this(
+    bookmarksDao,
+    recentPagesDao,
+    readingBookmarksDao,
+    highlightsDao,
+    quranSettings,
+    arabicDatabaseUtils,
+    Dispatchers.IO,
+  )
   private var sortOrder: Int = quranSettings.bookmarksSortOrder
   var isGroupedByTags: Boolean = quranSettings.bookmarksGroupedByTags
     private set
@@ -77,24 +101,22 @@ open class BookmarkPresenter @Inject internal constructor(
 
   private var pendingRemoval: DisposableSingleObserver<BookmarkRawResult>? = null
   private var itemsToRemove: MutableList<QuranRow>? = null
-  private val presenterScope = MainScope()
-
-  init {
-    subscribeToChanges()
-  }
+  private var bindScope: CoroutineScope? = null
 
   open fun subscribeToChanges() {
-    presenterScope.launch {
+    val scope = bindScope ?: return
+    scope.launch {
       try {
         bookmarksDao.changes.collect {
           onObservedDataChanged()
         }
       } catch (throwable: Throwable) {
+        if (throwable is CancellationException) throw throwable
         Timber.e(throwable, "Error observing bookmark changes")
       }
     }
 
-    presenterScope.launch {
+    scope.launch {
       try {
         recentPagesDao.recentPagesFlow()
           .drop(1)
@@ -102,11 +124,12 @@ open class BookmarkPresenter @Inject internal constructor(
             onObservedDataChanged()
           }
       } catch (throwable: Throwable) {
+        if (throwable is CancellationException) throw throwable
         Timber.e(throwable, "Error observing recent page changes")
       }
     }
 
-    presenterScope.launch {
+    scope.launch {
       try {
         readingBookmarksDao.readingBookmarksFlow()
           .drop(1)
@@ -114,11 +137,12 @@ open class BookmarkPresenter @Inject internal constructor(
             onObservedDataChanged()
           }
       } catch (throwable: Throwable) {
+        if (throwable is CancellationException) throw throwable
         Timber.e(throwable, "Error observing reading bookmark changes")
       }
     }
 
-    presenterScope.launch {
+    scope.launch {
       try {
         highlightsDao.highlightsFlow()
           .drop(1)
@@ -126,6 +150,7 @@ open class BookmarkPresenter @Inject internal constructor(
             onObservedDataChanged()
           }
       } catch (throwable: Throwable) {
+        if (throwable is CancellationException) throw throwable
         Timber.e(throwable, "Error observing highlight changes")
       }
     }
@@ -271,7 +296,9 @@ open class BookmarkPresenter @Inject internal constructor(
       val bookmarkId = row.bookmarkId
       val tagId = row.tagId
       when {
-        row.isPlacedReadingBookmark -> readingBookmarkSlotsToClear.add(row.readingBookmarkType)
+        row.isPlacedReadingBookmark -> {
+          row.readingBookmarkType?.let { readingBookmarkSlotsToClear.add(it) }
+        }
 
         row.isHighlightedAyah -> highlightsToClear.add(SuraAyah(row.sura, row.ayah))
 
@@ -401,7 +428,7 @@ open class BookmarkPresenter @Inject internal constructor(
 
   @VisibleForTesting
   suspend fun removeItems(items: List<QuranRow>) {
-    withContext(Dispatchers.IO) {
+    withContext(ioDispatcher) {
       val tagsToDelete = mutableListOf<Tag>()
       val bookmarksToDelete = mutableListOf<Bookmark>()
       val bookmarksToUntag = mutableListOf<Pair<Bookmark, String>>()
@@ -410,20 +437,23 @@ open class BookmarkPresenter @Inject internal constructor(
 
       items.forEach { row ->
         val tagId = row.tagId
+        val bookmark = row.bookmark
         when {
-          row.isPlacedReadingBookmark -> readingBookmarksToClear += row.readingBookmarkType
+          row.isPlacedReadingBookmark -> {
+            row.readingBookmarkType?.let { readingBookmarksToClear += it }
+          }
 
           row.isHighlightedAyah -> highlightsToClear += SuraAyah(row.sura, row.ayah)
 
           row.isBookmarkHeader && tagId != null -> {
-            tagsToDelete += Tag(tagId, row.text)
+            tagsToDelete += Tag(tagId, row.text.orEmpty())
           }
 
-          row.isBookmark && row.bookmark != null -> {
+          row.isBookmark && bookmark != null -> {
             if (tagId != null) {
-              bookmarksToUntag += row.bookmark to tagId
+              bookmarksToUntag += bookmark to tagId
             } else {
-              bookmarksToDelete += row.bookmark
+              bookmarksToDelete += bookmark
             }
           }
         }
@@ -440,7 +470,7 @@ open class BookmarkPresenter @Inject internal constructor(
   }
 
   private suspend fun getBookmarkData(sortOrder: Int): BookmarkData {
-    return withContext(Dispatchers.IO) {
+    return withContext(ioDispatcher) {
       BookmarkData(
         tags = bookmarksDao.tags(),
         bookmarks = bookmarksDao.bookmarks(sortOrder)
@@ -464,12 +494,13 @@ open class BookmarkPresenter @Inject internal constructor(
     return if (highlightedAyat.isEmpty()) {
       rows
     } else {
-      val ayahText = withContext(Dispatchers.IO) {
+      val ayahText = withContext(ioDispatcher) {
         try {
           arabicDatabaseUtils().getAyahTextForSuraAyahs(
             highlightedAyat.map { row -> row.highlight.suraAyah }
           )
         } catch (throwable: Throwable) {
+          if (throwable is CancellationException) throw throwable
           // fall back if the arabic database isn't available
           Timber.d(throwable, "Unable to hydrate highlight ayah text")
           emptyMap()
@@ -483,12 +514,13 @@ open class BookmarkPresenter @Inject internal constructor(
   }
 
   private suspend fun hydrateAyahText(bookmarkData: BookmarkData): BookmarkData {
-    return withContext(Dispatchers.IO) {
+    return withContext(ioDispatcher) {
       try {
         bookmarkData.copy(
           bookmarks = arabicDatabaseUtils().hydrateAyahText(bookmarkData.bookmarks.toMutableList())
         )
       } catch (throwable: Throwable) {
+        if (throwable is CancellationException) throw throwable
         // fall back to showing sura and ayah names if the arabic database isn't available
         Timber.d(throwable, "Unable to hydrate bookmark ayah text")
         bookmarkData
@@ -497,7 +529,7 @@ open class BookmarkPresenter @Inject internal constructor(
   }
 
   private suspend fun getRecentPages(): List<RecentPage> {
-    return withContext(Dispatchers.IO) { recentPagesDao.recentPages() }
+    return withContext(ioDispatcher) { recentPagesDao.recentPages() }
   }
 
   @VisibleForTesting
@@ -518,21 +550,23 @@ open class BookmarkPresenter @Inject internal constructor(
   }
 
   private fun getBookmarks(sortOrder: Int, groupByTags: Boolean) {
-    presenterScope.launch {
+    bindScope?.launch {
       try {
         val result = getBookmarksList(sortOrder, groupByTags)
+        val fragment = this@BookmarkPresenter.fragment
+        if (!isActive || fragment == null) {
+          return@launch
+        }
         cachedData = result
-        val fragment = fragment
-        if (fragment != null) {
-          val itemsPendingRemoval = itemsToRemove
-          if (pendingRemoval != null && !itemsPendingRemoval.isNullOrEmpty()) {
-            val preview = predictQuranListAfterDeletion(itemsPendingRemoval) ?: result
-            fragment.onNewRawData(preview)
-          } else {
-            fragment.onNewRawData(result)
-          }
+        val itemsPendingRemoval = itemsToRemove
+        if (pendingRemoval != null && !itemsPendingRemoval.isNullOrEmpty()) {
+          val preview = predictQuranListAfterDeletion(itemsPendingRemoval) ?: result
+          fragment.onNewRawData(preview)
+        } else {
+          fragment.onNewRawData(result)
         }
       } catch (throwable: Throwable) {
+        if (throwable is CancellationException) throw throwable
         Timber.e(throwable, "Unable to load bookmarks")
       }
     }
@@ -675,9 +709,13 @@ open class BookmarkPresenter @Inject internal constructor(
     tags: List<Tag>,
     bookmarks: List<Bookmark>
   ): Map<String, List<Bookmark>> {
-    return tags.associate { tag ->
-      tag.id to bookmarks.filter { bookmark -> bookmark.tags.contains(tag.id) }
+    val result = HashMap<String, MutableList<Bookmark>>(tags.size)
+    for (bookmark in bookmarks) {
+      for (tagId in bookmark.tags) {
+        result.getOrPut(tagId) { mutableListOf() }.add(bookmark)
+      }
     }
+    return result
   }
 
   private fun generateTagMap(tags: List<Tag>): Map<String, Tag> {
@@ -685,19 +723,44 @@ open class BookmarkPresenter @Inject internal constructor(
   }
 
   override fun bind(fragment: BookmarksFragment) {
+    bindScope?.cancel()
+    bindScope = MainScope()
     this.fragment = fragment
+    subscribeToChanges()
     requestData(true)
   }
 
   override fun unbind(fragment: BookmarksFragment) {
     if (fragment == this.fragment) {
       this.fragment = null
+      cachedData = null
+      bindScope?.cancel()
+      bindScope = null
     }
   }
 
   companion object {
     @BaseTransientBottomBar.Duration
     const val DELAY_DELETION_DURATION_IN_MS: Int = 4 * 1000 // 4 seconds
+
+    @VisibleForTesting
+    fun forTest(
+      bookmarksDao: BookmarksDao,
+      recentPagesDao: RecentPagesDao,
+      readingBookmarksDao: ReadingBookmarksDao,
+      highlightsDao: HighlightsDao,
+      quranSettings: QuranSettings,
+      arabicDatabaseUtils: Provider<ArabicDatabaseUtils>,
+      ioDispatcher: CoroutineDispatcher,
+    ): BookmarkPresenter = BookmarkPresenter(
+      bookmarksDao,
+      recentPagesDao,
+      readingBookmarksDao,
+      highlightsDao,
+      quranSettings,
+      arabicDatabaseUtils,
+      ioDispatcher,
+    )
   }
 
 }

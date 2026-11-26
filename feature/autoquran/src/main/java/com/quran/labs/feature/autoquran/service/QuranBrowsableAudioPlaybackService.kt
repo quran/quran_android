@@ -98,8 +98,8 @@ class QuranBrowsableAudioPlaybackService : MediaLibraryService() {
 
     return RecentPlaybackRecorder(delayedExecutor) { qariId, sura ->
       if (::recentQariManager.isInitialized) {
-        recentQariManager.recordQari(qariId, sura)
-        scope.launch {
+        scope.launch(Dispatchers.IO) {
+          recentQariManager.recordQari(qariId, sura)
           val recentCount = surahBuilder.children(BrowsableSurahBuilder.RECENT_ID).size
           mediaSession?.notifyChildrenChanged(
             BrowsableSurahBuilder.RECENT_ID, recentCount, null
@@ -297,7 +297,7 @@ class QuranBrowsableAudioPlaybackService : MediaLibraryService() {
           session.notifySearchResultChanged(browser, query, surahBuilder.search(query).size, params)
           LibraryResult.ofVoid(params)
         }.getOrElse { t ->
-          Timber.e(t, "onSearch failed for query=$query")
+          Timber.e(t, "onSearch failed (queryLength=%d)", query.length)
           LibraryResult.ofError(SessionError.ERROR_UNKNOWN)
         }
         settable.set(result)
@@ -319,7 +319,7 @@ class QuranBrowsableAudioPlaybackService : MediaLibraryService() {
           val items = surahBuilder.search(query)
           LibraryResult.ofItemList(items, LibraryParams.Builder().build())
         }.getOrElse { t ->
-          Timber.e(t, "onGetSearchResult failed for query=$query")
+          Timber.e(t, "onGetSearchResult failed (queryLength=%d)", query.length)
           LibraryResult.ofError(SessionError.ERROR_UNKNOWN)
         }
         settable.set(result)

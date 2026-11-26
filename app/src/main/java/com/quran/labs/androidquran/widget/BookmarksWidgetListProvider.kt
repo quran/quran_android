@@ -41,7 +41,6 @@ class BookmarksWidgetListProvider(private val context: Context) : RemoteViewsFac
 
   init {
     (context.applicationContext as QuranApplication).applicationComponent.inject(this)
-    populateListItem()
   }
 
   private fun populateListItem() {
@@ -71,19 +70,23 @@ class BookmarksWidgetListProvider(private val context: Context) : RemoteViewsFac
     val item = quranRowList[position]
     remoteView.setTextViewText(R.id.sura_title, item.text)
     remoteView.setTextViewText(R.id.sura_meta_data, item.metadata)
-    remoteView.setImageViewResource(R.id.widget_favorite_icon, item.imageResource)
-    if (item.imageFilterColorResource == null) {
+    item.imageResource?.let { resId ->
+      remoteView.setImageViewResource(R.id.widget_favorite_icon, resId)
+    }
+    val filterColorRes = item.imageFilterColorResource
+    if (filterColorRes == null) {
       // If a color filter isn't set, then sometimes the color filter of bookmarks can crossover into each other
       remoteView.setInt(R.id.widget_favorite_icon, "setColorFilter", Color.WHITE)
     } else {
-      val imageFilterColor = ContextCompat.getColor(context, item.imageFilterColorResource)
+      val imageFilterColor = ContextCompat.getColor(context, filterColorRes)
       remoteView.setInt(R.id.widget_favorite_icon, "setColorFilter", imageFilterColor)
     }
+    val bookmark = item.bookmark
     val fillInIntent = Intent().apply {
       putExtras(Bundle().apply {
-        putInt("page", item.bookmark.page)
-        putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, item.bookmark.sura)
-        putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, item.bookmark.ayah)
+        putInt("page", bookmark?.page ?: item.page)
+        putExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, bookmark?.sura)
+        putExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, bookmark?.ayah)
       })
     }
     remoteView.setOnClickFillInIntent(R.id.widget_item, fillInIntent)

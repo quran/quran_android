@@ -49,53 +49,9 @@ fun QuranPageWrapper(
 
   val (headerColor, ringColor, innerColor, textColor) =
     if (pageInfo.pageType.contains("1439")) {
-      if (isNightMode) {
-        listOf(
-          // header color
-          Color(0x73, 0xaf, 0xfa),
-          // ring color
-          Color(0x73, 0xaf, 0xfa),
-          // inner color
-          Color(0x17, 0x25, 0x54),
-          // text color
-          Color(0x73, 0xaf, 0xfa)
-        )
-      } else {
-        listOf(
-          // header color
-          Color(0x25, 0x63, 0xeb),
-          // ring color
-          Color(0x25, 0x63, 0xeb),
-          // inner color
-          Color(0xef, 0xf6, 0xff),
-          // text color
-          Color(0x1d, 0x4e, 0xd8)
-        )
-      }
+      if (isNightMode) DARK_1439_COLORS else LIGHT_1439_COLORS
     } else {
-      if (isNightMode) {
-        listOf(
-          // header color
-          Color(0x04, 0x78, 0x57),
-          // ring color
-          Color(0x04, 0x78, 0x57),
-          // inner color
-          Color(0x02, 0x2c, 0x22),
-          // text color
-          Color(0x34, 0xd3, 0x99)
-        )
-      } else {
-        listOf(
-          // header color
-          Color(0x04, 0x78, 0x57),
-          // ring color
-          Color(0x04, 0x78, 0x57),
-          // inner color
-          Color(0xec, 0xfd, 0xf5),
-          // text color
-          Color(0x04, 0x78, 0x57)
-        )
-      }
+      if (isNightMode) DARK_COLORS else LIGHT_COLORS
     }
 
   val ratio = (pageContentType as PageContentType.Line).ratio
@@ -105,7 +61,7 @@ fun QuranPageWrapper(
   } else {
     Color.Black
   }
-  val colorFilter = ColorFilter.tint(lineColor)
+  val colorFilter = remember(lineColor) { ColorFilter.tint(lineColor) }
 
   QuranPage(
     pageInfo,
@@ -161,18 +117,19 @@ fun QuranPageWrapper(
         lineRatio = ratio
       )
     },
-    ayahMarkerInfoComposable = {
+    ayahMarkerInfoComposable = { marker, textMeasurer ->
       AyahMarker(
-        lineId = it.lineId,
-        centerX = it.centerX,
-        centerY = it.centerY,
+        lineId = marker.lineId,
+        centerX = marker.centerX,
+        centerY = marker.centerY,
         ringColor = ringColor,
         innerColor = innerColor,
-        text = ayahNumberFormatter.format(it.ayah),
+        text = ayahNumberFormatter.format(marker.ayah),
         // was 0.0375f for sub-100 ayat, but breaks ayah 77/78/87/88
         // note that, sometimes, this breaks the second time the activity is loaded
-        textWidthRatio = if (it.ayah > 100) 0.03f else 0.0370f,
-        textColor = textColor
+        textWidthRatio = if (marker.ayah > 100) 0.03f else 0.0370f,
+        textColor = textColor,
+        textMeasurer = textMeasurer
       )
     },
     highlightComposable = { highlight, color ->
@@ -224,3 +181,38 @@ fun QuranPageWrapper(
 private fun shouldShowLineFor(page: Int, line: Int): Boolean {
   return page > 3 && line > 0
 }
+
+private data class MarkerPalette(
+  val headerColor: Color,
+  val ringColor: Color,
+  val innerColor: Color,
+  val textColor: Color
+)
+
+private val DARK_1439_COLORS = MarkerPalette(
+  headerColor = Color(0x73, 0xaf, 0xfa),
+  ringColor = Color(0x73, 0xaf, 0xfa),
+  innerColor = Color(0x17, 0x25, 0x54),
+  textColor = Color(0x73, 0xaf, 0xfa)
+)
+
+private val LIGHT_1439_COLORS = MarkerPalette(
+  headerColor = Color(0x25, 0x63, 0xeb),
+  ringColor = Color(0x25, 0x63, 0xeb),
+  innerColor = Color(0xef, 0xf6, 0xff),
+  textColor = Color(0x1d, 0x4e, 0xd8)
+)
+
+private val DARK_COLORS = MarkerPalette(
+  headerColor = Color(0x04, 0x78, 0x57),
+  ringColor = Color(0x04, 0x78, 0x57),
+  innerColor = Color(0x02, 0x2c, 0x22),
+  textColor = Color(0x34, 0xd3, 0x99)
+)
+
+private val LIGHT_COLORS = MarkerPalette(
+  headerColor = Color(0x04, 0x78, 0x57),
+  ringColor = Color(0x04, 0x78, 0x57),
+  innerColor = Color(0xec, 0xfd, 0xf5),
+  textColor = Color(0x04, 0x78, 0x57)
+)

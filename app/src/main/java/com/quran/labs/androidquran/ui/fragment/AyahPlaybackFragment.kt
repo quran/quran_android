@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.ui.fragment
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -53,6 +52,9 @@ class AyahPlaybackFragment : AyahActionFragment() {
 
   private var lastSeenAudioRequest: AudioRequest? = null
   private var isOpen: Boolean = false
+  private val arabicNumberFormat: NumberFormat by lazy {
+    NumberFormat.getNumberInstance(Locale("ar", "EG"))
+  }
 
   @Inject
   lateinit var quranInfo: QuranInfo
@@ -80,11 +82,6 @@ class AyahPlaybackFragment : AyahActionFragment() {
     repeatVersePicker = view.findViewById(R.id.repeat_verse_picker)
     repeatRangePicker = view.findViewById(R.id.repeat_range_picker)
     playbackSpeedPicker = view.findViewById(R.id.playback_speed_picker)
-
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      val speedArea = view.findViewById<View>(R.id.playback_speed_area)
-      speedArea.visibility = View.GONE
-    }
 
     val context = requireContext()
     val locale: Locale = QuranUtils.getCurrentLocale()
@@ -128,22 +125,11 @@ class AyahPlaybackFragment : AyahActionFragment() {
     endingAyahAdapter = initializeAyahSpinner(context, endingAyahSpinner)
     initializeSuraSpinner(context, startSuraSpinner, startAyahAdapter)
     initializeSuraSpinner(context, endingSuraSpinner, endingAyahAdapter)
-
-    val repeatOptions = context.resources.getStringArray(R.array.repeatValues)
-    val rangeAdapter = ArrayAdapter<CharSequence>(context, ITEM_LAYOUT, repeatOptions)
-    rangeAdapter.setDropDownViewResource(
-      ITEM_DROPDOWN_LAYOUT
-    )
-    val verseAdapter = ArrayAdapter<CharSequence>(context, ITEM_LAYOUT, repeatOptions)
-    verseAdapter.setDropDownViewResource(
-      ITEM_DROPDOWN_LAYOUT
-    )
     return view
   }
 
   private fun arFormat(value: Int): String {
-    val numberFormat = NumberFormat.getNumberInstance(Locale("ar", "EG"))
-    return numberFormat.format(value.toLong())
+    return arabicNumberFormat.format(value.toLong())
   }
 
   override fun onAttach(context: Context) {
@@ -293,6 +279,9 @@ class AyahPlaybackFragment : AyahActionFragment() {
   }
 
   override fun refreshView() {
+    if (!::applyButton.isInitialized) {
+      return
+    }
     val context: Context? = activity
     val selectionEnd = end
     val selectionStart = start
@@ -361,8 +350,8 @@ class AyahPlaybackFragment : AyahActionFragment() {
   }
 
   companion object {
-    private val ITEM_LAYOUT = R.layout.sherlock_spinner_item
-    private val ITEM_DROPDOWN_LAYOUT = R.layout.sherlock_spinner_dropdown_item
+    private val ITEM_LAYOUT = R.layout.quran_spinner_item
+    private val ITEM_DROPDOWN_LAYOUT = R.layout.quran_spinner_dropdown_item
     private const val MAX_REPEATS = 25
     private val SPEEDS = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f)
     private const val DEFAULT_SPEED_INDEX = 2

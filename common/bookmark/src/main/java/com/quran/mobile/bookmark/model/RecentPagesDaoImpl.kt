@@ -61,25 +61,32 @@ class RecentPagesDaoImpl(
   }
 
   override suspend fun recentPages(): List<RecentPage> {
-    return recentPagesForSessions(readingSessionsRepository.getReadingSessions())
+    return withContext(Dispatchers.IO) {
+      recentPagesForSessions(readingSessionsRepository.getReadingSessions())
+    }
   }
 
   override suspend fun addRecentPage(page: Int) {
     val timestamp = timestampProvider.now()
     withContext(Dispatchers.IO) {
-      val quranInfo = quranInfoProvider()
-      addRecentPageInternal(page, quranInfo, timestamp)
-      pruneRecentSessions(quranInfo)
+      updateRecentPagesWithPage(
+        page = page,
+        deleteRange = null,
+        quranInfo = quranInfoProvider(),
+        timestamp = timestamp
+      )
     }
   }
 
   override suspend fun replaceRecentRangeWithPage(deleteRangeStart: Int, deleteRangeEnd: Int, page: Int) {
     val timestamp = timestampProvider.now()
     withContext(Dispatchers.IO) {
-      val quranInfo = quranInfoProvider()
-      deleteSessionsForPageRange(deleteRangeStart..deleteRangeEnd, quranInfo)
-      addRecentPageInternal(page, quranInfo, timestamp)
-      pruneRecentSessions(quranInfo)
+      updateRecentPagesWithPage(
+        page = page,
+        deleteRange = deleteRangeStart..deleteRangeEnd,
+        quranInfo = quranInfoProvider(),
+        timestamp = timestamp
+      )
     }
   }
 
@@ -93,17 +100,15 @@ class RecentPagesDaoImpl(
     withContext(Dispatchers.IO) {
       val quranInfo = quranInfoProvider()
       removeRecentPagesInternal()
-      pages
+      val seenPages = mutableSetOf<Int>()
+      val pagesToInsert = pages
         .take(MAX_RECENT_PAGES)
-        .asReversed()
-        .forEach { recentPage ->
-          addRecentPageInternal(
-            page = recentPage.page,
-            quranInfo = quranInfo,
-            timestamp = recentPage.timestamp
-          )
-        }
-      pruneRecentSessions(quranInfo)
+        .filter { quranInfo.isValidPage(it.page) && seenPages.add(it.page) }
+      for (i in pagesToInsert.lastIndex downTo 0) {
+        val recentPage = pagesToInsert[i]
+        val bounds = quranInfo.getPageBounds(recentPage.page)
+        readingSessionsRepository.addReadingSession(bounds[0], bounds[1], recentPage.timestamp)
+      }
     }
   }
 
@@ -113,20 +118,50 @@ class RecentPagesDaoImpl(
     }
   }
 
-  private suspend fun addRecentPageInternal(
+  private suspend fun updateRecentPagesWithPage(
     page: Int,
+    deleteRange: IntRange?,
     quranInfo: QuranInfo,
     timestamp: PlatformDateTime
-  ): Boolean {
-    if (quranInfo.isValidPage(page)) {
-      deleteSessionsForPageRange(page..page, quranInfo)
-      val bounds = quranInfo.getPageBounds(page)
-      val sura = bounds[0]
-      val ayah = bounds[1]
-      readingSessionsRepository.addReadingSession(sura, ayah, timestamp)
-      return true
+  ) {
+    val sessions = sortedSessions()
+    val validTargetPage = quranInfo.isValidPage(page)
+    val seenPages = mutableSetOf<Int>()
+    val surviving = ArrayList<ReadingSession>(sessions.size)
+
+    for (session in sessions) {
+      val sessionPage = pageForSession(session, quranInfo)
+      val matchesDeleteRange = sessionPage != null && deleteRange != null && sessionPage in deleteRange
+      val matchesTargetPage = validTargetPage && sessionPage == page
+      if (sessionPage == null || matchesDeleteRange || matchesTargetPage || !seenPages.add(sessionPage)) {
+        readingSessionsRepository.deleteReadingSession(session.sura, session.ayah)
+      } else {
+        surviving.add(session)
+      }
     }
-    return false
+
+    if (validTargetPage) {
+      val timestampMs = timestamp.toEpochMilliseconds()
+      val newerExistingCount = surviving.count { it.lastUpdated.toEpochMilliseconds() > timestampMs }
+      val maxSurviving = if (newerExistingCount >= MAX_RECENT_PAGES) {
+        MAX_RECENT_PAGES
+      } else {
+        MAX_RECENT_PAGES - 1
+      }
+      for (i in maxSurviving until surviving.size) {
+        val excess = surviving[i]
+        readingSessionsRepository.deleteReadingSession(excess.sura, excess.ayah)
+      }
+      if (newerExistingCount < MAX_RECENT_PAGES) {
+        val bounds = quranInfo.getPageBounds(page)
+        readingSessionsRepository.addReadingSession(bounds[0], bounds[1], timestamp)
+      }
+    } else {
+      for (i in MAX_RECENT_PAGES until surviving.size) {
+        val excess = surviving[i]
+        readingSessionsRepository.deleteReadingSession(excess.sura, excess.ayah)
+      }
+    }
   }
 
   private suspend fun deleteSessionsForPageRange(pageRange: IntRange, quranInfo: QuranInfo): Boolean {
@@ -134,21 +169,6 @@ class RecentPagesDaoImpl(
       .filter { session -> pageForSession(session, quranInfo)?.let { it in pageRange } == true }
     sessionsToDelete.forEach { readingSessionsRepository.deleteReadingSession(it.sura, it.ayah) }
     return sessionsToDelete.isNotEmpty()
-  }
-
-  private suspend fun pruneRecentSessions(quranInfo: QuranInfo): Boolean {
-    val seenPages = mutableSetOf<Int>()
-    var didWrite = false
-    sortedSessions().forEach { session ->
-      val page = pageForSession(session, quranInfo)
-      if (page == null || page in seenPages || seenPages.size >= MAX_RECENT_PAGES) {
-        readingSessionsRepository.deleteReadingSession(session.sura, session.ayah)
-        didWrite = true
-      } else {
-        seenPages.add(page)
-      }
-    }
-    return didWrite
   }
 
   private suspend fun removeRecentPagesInternal(): Boolean {

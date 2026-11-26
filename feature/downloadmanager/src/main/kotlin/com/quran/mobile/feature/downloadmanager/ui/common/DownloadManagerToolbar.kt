@@ -6,10 +6,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
-import com.quran.labs.androidquran.common.ui.core.modifier.autoMirror
+import com.quran.mobile.feature.downloadmanager.R
 
 @Composable
 fun DownloadManagerToolbar(
@@ -29,8 +29,7 @@ fun DownloadManagerToolbar(
       IconButton(onClick = onBackPressed) {
         Icon(
           imageVector = QuranIcons.ArrowBack,
-          contentDescription = "",
-          modifier = Modifier.autoMirror()
+          contentDescription = stringResource(R.string.audio_manager_navigate_up)
         )
       }
     },

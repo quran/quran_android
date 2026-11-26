@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
@@ -20,11 +21,13 @@ fun QuranNonScrollablePage(
   showSidelines: Boolean,
   sidelines: @Composable () -> Unit
 ) {
-  val innerCalculator = QuranPageCalculator()
-  val calculator = if (showSidelines) {
-    SidelinesWrapperCalculator(innerCalculator)
-  } else {
-    innerCalculator
+  val calculator = remember(showSidelines) {
+    val innerCalculator = QuranPageCalculator()
+    if (showSidelines) {
+      SidelinesWrapperCalculator(innerCalculator)
+    } else {
+      innerCalculator
+    }
   }
 
   Layout(
@@ -68,7 +71,7 @@ fun QuranNonScrollablePage(
       val nonSidelinesWidth = constraints.maxWidth - measurements.sidelinesWidth
       val sidelinesStartDelta = if (showSidelines && page % 2 == 1) measurements.sidelinesWidth else 0
       val headerTop =
-        (constraints.maxHeight - headerPlaceable.height - pagePlaceable.height - headerPlaceable.height) / 2
+        (constraints.maxHeight - headerPlaceable.height - pagePlaceable.height - footerPlaceable.height) / 2
       val headerHorizontal = sidelinesStartDelta + (nonSidelinesWidth - headerPlaceable.width) / 2
       headerPlaceable.place(headerHorizontal, headerTop)
       val pageHorizontal = sidelinesStartDelta + (nonSidelinesWidth - pagePlaceable.width) / 2

@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.ui.fragment
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,9 +27,10 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow.Builder
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.JuzView
 import dev.zacsweers.metro.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
+import dev.zacsweers.metro.Provider
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Fragment that displays a list of all Juz (using [QuranListAdapter], each divided into
@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 class JuzListFragment : Fragment() {
   private var recyclerView: RecyclerView? = null
   private var adapter: QuranListAdapter? = null
-  private val mainScope: CoroutineScope = MainScope()
+  private var pendingScrollPosition: Int? = null
 
   @Inject
   lateinit var quranInfo: QuranInfo
@@ -50,7 +50,7 @@ class JuzListFragment : Fragment() {
   lateinit var quranDisplayData: QuranDisplayData
 
   @Inject
-  lateinit var juzListPresenter: JuzListPresenter
+  lateinit var juzListPresenter: Provider<JuzListPresenter>
 
   override fun onCreateView(
     inflater: LayoutInflater,
@@ -89,6 +89,7 @@ class JuzListFragment : Fragment() {
   }
 
   override fun onDestroyView() {
+    pendingScrollPosition = null
     adapter = null
     recyclerView = null
     super.onDestroyView()
@@ -102,20 +103,30 @@ class JuzListFragment : Fragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    mainScope.launch {
-      fetchJuz2List()
+    // Off-screen on initial QuranActivity launch; defer starting background row generation past
+    // the first frame so it does not compete with SuraListFragment rendering.
+    view.post {
+      if (isAdded && getView() != null) {
+        viewLifecycleOwner.lifecycleScope.launch {
+          fetchJuz2List()
+        }
+      }
     }
   }
 
   override fun onResume() {
     val activity = requireActivity()
     if (activity is QuranActivity) {
-      viewLifecycleOwner.lifecycleScope.launch {
-        val recentPage = activity.latestPage()
-        if (recentPage != Constants.NO_PAGE) {
-          val juz = quranInfo.getJuzFromPage(recentPage)
-          val position = (juz - 1) * 9
-          recyclerView?.scrollToPosition(position)
+      view?.post {
+        if (isAdded && view != null) {
+          viewLifecycleOwner.lifecycleScope.launch {
+            val recentPage = activity.latestPage()
+            if (recentPage != Constants.NO_PAGE) {
+              val juz = quranInfo.getJuzFromPage(recentPage)
+              val position = (juz - 1) * 9
+              scrollToJuzPosition(position)
+            }
+          }
         }
       }
     }
@@ -126,31 +137,55 @@ class JuzListFragment : Fragment() {
     super.onResume()
   }
 
+  internal fun scrollToJuzPosition(position: Int) {
+    if (position < 0) {
+      return
+    }
+    val currentAdapter = adapter
+    val currentRecycler = recyclerView
+    if (currentAdapter != null && currentRecycler != null && currentAdapter.itemCount > position) {
+      pendingScrollPosition = null
+      currentRecycler.scrollToPosition(position)
+    } else {
+      pendingScrollPosition = position
+    }
+  }
+
   private fun updateScrollBarPositionHoneycomb() {
     recyclerView?.verticalScrollbarPosition = View.SCROLLBAR_POSITION_LEFT
   }
 
   private suspend fun fetchJuz2List() {
-    val quarters = if (QuranFileConstants.FETCH_QUARTER_NAMES_FROM_DATABASE) {
-      juzListPresenter.quarters().toTypedArray()
-    } else {
-      val context = context
-      if (context != null) {
-        val res = context.resources
-        res.getStringArray(R.array.quarter_prefix_array)
+    val hostContext = context ?: return
+    val rows = withContext(Dispatchers.Default) {
+      val quarters = if (QuranFileConstants.FETCH_QUARTER_NAMES_FROM_DATABASE) {
+        juzListPresenter().quarters().toTypedArray()
       } else {
-        emptyArray<String>()
+        hostContext.resources.getStringArray(R.array.quarter_prefix_array)
+      }
+      if (quarters.isEmpty()) {
+        emptyArray()
+      } else {
+        buildJuz2Rows(hostContext, quarters)
       }
     }
 
-    if (isAdded && quarters.isNotEmpty()) {
-      updateJuz2List(quarters)
+    if (isAdded && rows.isNotEmpty()) {
+      applyJuzRows(rows)
     }
   }
 
-  private fun updateJuz2List(quarters: Array<String>) {
-    val activity: Activity = activity ?: return
+  internal fun applyJuzRows(rows: Array<QuranRow>) {
+    val currentAdapter = adapter ?: return
+    currentAdapter.setElements(rows)
+    val scrollTarget = pendingScrollPosition
+    if (scrollTarget != null && scrollTarget in rows.indices) {
+      pendingScrollPosition = null
+      recyclerView?.scrollToPosition(scrollTarget)
+    }
+  }
 
+  private fun buildJuz2Rows(hostContext: Context, quarters: Array<String>): Array<QuranRow> {
     val elements = arrayOfNulls<QuranRow>(Constants.JUZ2_COUNT * (8 + 1))
     var ctr = 0
     for (i in 0 until 8 * Constants.JUZ2_COUNT) {
@@ -158,19 +193,16 @@ class JuzListFragment : Fragment() {
       val page = quranInfo.getPageFromSuraAyah(pos.sura, pos.ayah)
       if (i % 8 == 0) {
         val juz = 1 + i / 8
-        val juzTitle = activity.getString(
-          R.string.juz2_description,
-          QuranUtils.getLocalizedNumber(juz)
-        )
+        val juzTitle = quranDisplayData.getJuzDisplayString(hostContext, juz)
         val builder = Builder()
           .withType(QuranRow.HEADER)
           .withText(juzTitle)
           .withPage(quranInfo.getStartingPageForJuz(juz))
         elements[ctr++] = builder.build()
       }
-      val metadata = getString(
+      val metadata = hostContext.getString(
         R.string.sura_ayah_notification_str,
-        quranDisplayData.getSuraName(activity, pos.sura, false), pos.ayah
+        quranDisplayData.getSuraName(hostContext, pos.sura, false), pos.ayah
       )
       val juzTextWithEllipsis = quarters[i] + "..."
       val builder = Builder()
@@ -184,7 +216,7 @@ class JuzListFragment : Fragment() {
       }
       elements[ctr++] = builder.build()
     }
-    adapter?.setElements(elements.filterNotNull().toTypedArray())
+    return elements.filterNotNull().toTypedArray()
   }
 
   companion object {

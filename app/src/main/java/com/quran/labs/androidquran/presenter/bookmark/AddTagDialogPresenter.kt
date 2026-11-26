@@ -10,7 +10,6 @@ import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class AddTagDialogPresenter @Inject
 internal constructor(private val bookmarksDao: BookmarksDao) : Presenter<AddTagDialog> {
@@ -26,7 +25,6 @@ internal constructor(private val bookmarksDao: BookmarksDao) : Presenter<AddTagD
   }
 
   fun validate(tagName: String, tagId: String?): Boolean {
-    tags = runBlocking { bookmarksDao.tags() }
     if (tagName.isBlank()) {
       dialog?.onBlankTagName()
       return false

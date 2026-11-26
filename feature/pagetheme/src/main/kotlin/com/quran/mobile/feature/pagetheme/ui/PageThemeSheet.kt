@@ -14,11 +14,13 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,6 +30,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -66,6 +69,7 @@ fun PageThemeSheet(state: PageThemeSheetState, onClose: () -> Unit) {
   Column(
     modifier = Modifier
       .fillMaxWidth()
+      .verticalScroll(rememberScrollState())
       .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
   ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -106,11 +110,12 @@ private fun ThemeGrid(state: PageThemeSheetState) {
   val fontScale = LocalDensity.current.fontScale.coerceIn(1f, 1.5f)
   BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
     val columns = (maxWidth / (104.dp * fontScale)).toInt().coerceIn(1, 3)
+    val rows = remember(state.cards, columns) { state.cards.chunked(columns) }
     Column(
       verticalArrangement = Arrangement.spacedBy(8.dp),
       modifier = Modifier.selectableGroup()
     ) {
-      state.cards.chunked(columns).forEach { row ->
+      rows.forEach { row ->
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
           row.forEach { card ->
             ThemeCard(

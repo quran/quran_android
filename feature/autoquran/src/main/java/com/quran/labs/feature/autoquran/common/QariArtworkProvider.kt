@@ -91,20 +91,24 @@ class QariArtworkProvider @Inject constructor(
   ): ByteArray? {
     return try {
       val bitmap = createBitmap(ARTWORK_SIZE_PX, ARTWORK_SIZE_PX)
-      val canvas = Canvas(bitmap)
+      try {
+        val canvas = Canvas(bitmap)
 
-      val (bgColor, textColor) = colorsFor(qariId)
-      val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.FILL
-        color = bgColor
-      }
-      canvas.drawRect(0f, 0f, ARTWORK_SIZE_PX.toFloat(), ARTWORK_SIZE_PX.toFloat(), bgPaint)
+        val (bgColor, textColor) = colorsFor(qariId)
+        val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+          style = Paint.Style.FILL
+          color = bgColor
+        }
+        canvas.drawRect(0f, 0f, ARTWORK_SIZE_PX.toFloat(), ARTWORK_SIZE_PX.toFloat(), bgPaint)
 
-      drawForeground(canvas, ARTWORK_SIZE_PX, textColor)
+        drawForeground(canvas, ARTWORK_SIZE_PX, textColor)
 
-      ByteArrayOutputStream().use { out ->
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
-        out.toByteArray()
+        ByteArrayOutputStream().use { out ->
+          bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+          out.toByteArray()
+        }
+      } finally {
+        bitmap.recycle()
       }
     } catch (_: OutOfMemoryError) {
       null

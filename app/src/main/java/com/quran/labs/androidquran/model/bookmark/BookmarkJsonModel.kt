@@ -8,8 +8,11 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import dev.zacsweers.metro.Inject
+import okio.Buffer
 import okio.BufferedSink
 import okio.BufferedSource
+import okio.ForwardingSource
+import okio.buffer
 import java.io.IOException
 import kotlin.time.Instant
 
@@ -36,7 +39,22 @@ internal class BookmarkJsonModel @Inject constructor() {
 
   @Throws(IOException::class)
   fun fromJson(jsonSource: BufferedSource): BookmarkData {
-    return jsonAdapter.fromJson(jsonSource)!!
+    return jsonSource.use { source ->
+      var bytesRead = 0L
+      val boundedSource = object : ForwardingSource(source) {
+        override fun read(sink: Buffer, byteCount: Long): Long {
+          val read = super.read(sink, byteCount)
+          if (read > 0) {
+            bytesRead += read
+            if (bytesRead > MAX_JSON_SIZE_BYTES) {
+              throw IOException("Backup JSON exceeds maximum allowed size")
+            }
+          }
+          return read
+        }
+      }.buffer()
+      jsonAdapter.fromJson(boundedSource)!!
+    }
   }
 
   private object LegacyBackupInstantAdapter : JsonAdapter<Instant>() {
@@ -79,5 +97,9 @@ internal class BookmarkJsonModel @Inject constructor() {
         writer.value(value)
       }
     }
+  }
+
+  companion object {
+    internal const val MAX_JSON_SIZE_BYTES = 16L * 1024L * 1024L
   }
 }

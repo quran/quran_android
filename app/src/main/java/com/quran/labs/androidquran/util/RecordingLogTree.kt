@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.util
 
 import android.util.Log
 import com.quran.analytics.provider.SystemCrashReporter
+import com.quran.labs.androidquran.BuildConfig
 import timber.log.Timber
 import java.util.ArrayDeque
 import java.util.Deque
@@ -13,7 +14,9 @@ import java.util.Deque
  * Slightly modified version of Telecine's BugsnagTree.
  * https://github.com/JakeWharton/Telecine
  */
-class RecordingLogTree : Timber.Tree() {
+class RecordingLogTree(
+  private val isDebuggable: Boolean = BuildConfig.DEBUG
+) : Timber.Tree() {
 
   companion object {
     private const val BUFFER_SIZE = 200
@@ -35,6 +38,9 @@ class RecordingLogTree : Timber.Tree() {
   private val buffer: Deque<String> = ArrayDeque(BUFFER_SIZE + 1)
 
   override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+    if (!isDebuggable && priority < Log.INFO) {
+      return
+    }
     val newMessage = System.currentTimeMillis().toString() + " " + priorityToString(priority) + " " + message
     synchronized(buffer) {
       buffer.addLast(newMessage)

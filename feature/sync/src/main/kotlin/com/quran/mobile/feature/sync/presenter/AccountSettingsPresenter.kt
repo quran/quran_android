@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import com.quran.mobile.feature.sync.QuranSyncManager
 import com.quran.mobile.feature.sync.state.AccountSettingsEvent
 import com.quran.mobile.feature.sync.state.AccountSettingsState
@@ -50,9 +51,12 @@ internal class AccountSettingsPresenter(
     )
     val activity = syncActivityPresenter.present(observing)
 
-    val eventSink: (AccountSettingsEvent) -> Unit = { event ->
-      when (event) {
-        AccountSettingsEvent.SyncNow -> triggerSync()
+    val currentTriggerSync by rememberUpdatedState(triggerSync)
+    val eventSink: (AccountSettingsEvent) -> Unit = remember {
+      { event ->
+        when (event) {
+          AccountSettingsEvent.SyncNow -> currentTriggerSync()
+        }
       }
     }
     return AccountSettingsState.SignedIn(profile, activity, eventSink)

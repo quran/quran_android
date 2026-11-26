@@ -23,6 +23,8 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.DisplayCutoutCompat;
@@ -57,13 +59,17 @@ public class HighlightingImageView extends AppCompatImageView {
   // when enabled, will draw bounds around each glyph to visualize the glyph bounds
   private static final boolean DEBUG_BOUNDS = false;
 
-  private static int overlayTextColor = -1;
-  private static int headerFooterSize;
-  private static int headerFooterFontSize;
-  private static int scrollableHeaderFooterSize;
-  private static int scrollableHeaderFooterFontSize;
-  private static int dualPageHeaderFooterSize;
-  private static int dualPageHeaderFooterFontSize;
+  private static ColorMatrixColorFilter cachedNightModeFilter;
+  private static int cachedFilterTextBrightness = -1;
+  private static int cachedFilterBgBrightness = -1;
+
+  private int overlayTextColor;
+  private int headerFooterSize;
+  private int headerFooterFontSize;
+  private int scrollableHeaderFooterSize;
+  private int scrollableHeaderFooterFontSize;
+  private int dualPageHeaderFooterSize;
+  private int dualPageHeaderFooterFontSize;
 
   // Sorted map so we use highest priority highlighting when iterating
   private final SortedMap<HighlightType, Set<AyahHighlight>> currentHighlights = new TreeMap<>();
@@ -127,18 +133,16 @@ public class HighlightingImageView extends AppCompatImageView {
 
   public HighlightingImageView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    if (overlayTextColor == -1) {
-      final Resources res = context.getResources();
-      overlayTextColor = ContextCompat.getColor(context, R.color.overlay_text_color);
-      headerFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size);
-      scrollableHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_scrollable);
-      dualPageHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_dualPage);
-      headerFooterFontSize = res.getDimensionPixelSize(R.dimen.page_overlay_font_size);
-      scrollableHeaderFooterFontSize =
-          res.getDimensionPixelSize(R.dimen.page_overlay_font_size_scrollable);
-      dualPageHeaderFooterFontSize =
-          res.getDimensionPixelSize(R.dimen.page_overlay_font_size_dualPage);
-    }
+    final Resources res = context.getResources();
+    overlayTextColor = ContextCompat.getColor(context, R.color.overlay_text_color);
+    headerFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size);
+    scrollableHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_scrollable);
+    dualPageHeaderFooterSize = res.getDimensionPixelSize(R.dimen.page_overlay_size_dualPage);
+    headerFooterFontSize = res.getDimensionPixelSize(R.dimen.page_overlay_font_size);
+    scrollableHeaderFooterFontSize =
+        res.getDimensionPixelSize(R.dimen.page_overlay_font_size_scrollable);
+    dualPageHeaderFooterFontSize =
+        res.getDimensionPixelSize(R.dimen.page_overlay_font_size_dualPage);
 
     Insetter.builder()
         .setOnApplyInsetsListener((view, insets, initialState) -> {
@@ -154,6 +158,23 @@ public class HighlightingImageView extends AppCompatImageView {
           }
         })
         .applyToView(this);
+  }
+
+  @VisibleForTesting
+  @Nullable
+  ValueAnimator getAnimator() {
+    return animator;
+  }
+
+  @Override
+  protected void onDetachedFromWindow() {
+    if (animator != null) {
+      animator.cancel();
+      animator.removeAllUpdateListeners();
+      animator.removeAllListeners();
+      animator = null;
+    }
+    super.onDetachedFromWindow();
   }
 
   public void setIsScrollable(boolean scrollable, boolean landscape) {
@@ -263,7 +284,9 @@ public class HighlightingImageView extends AppCompatImageView {
 
     @Override
     public void onAnimationCancel(Animator animation) {
-      highlightCoordinates.remove(transitionHighlight);
+      if (highlightCoordinates != null) {
+        highlightCoordinates.remove(transitionHighlight);
+      }
       highlights.remove(transitionHighlight);
     }
 
@@ -392,9 +415,18 @@ public class HighlightingImageView extends AppCompatImageView {
 
   public void adjustNightMode() {
     if (isNightMode && !isColorFilterOn) {
-      float[] matrix =
-          NightModeColorMatrix.create(nightModeTextBrightness, nightModeBackgroundBrightness);
-      setColorFilter(new ColorMatrixColorFilter(matrix));
+      ColorMatrixColorFilter filter = cachedNightModeFilter;
+      if (filter == null ||
+          cachedFilterTextBrightness != nightModeTextBrightness ||
+          cachedFilterBgBrightness != nightModeBackgroundBrightness) {
+        float[] matrix =
+            NightModeColorMatrix.create(nightModeTextBrightness, nightModeBackgroundBrightness);
+        filter = new ColorMatrixColorFilter(matrix);
+        cachedNightModeFilter = filter;
+        cachedFilterTextBrightness = nightModeTextBrightness;
+        cachedFilterBgBrightness = nightModeBackgroundBrightness;
+      }
+      setColorFilter(filter);
       isColorFilterOn = true;
     } else if (!isNightMode) {
       clearColorFilter();
@@ -411,10 +443,8 @@ public class HighlightingImageView extends AppCompatImageView {
     float topBaseline;
     float bottomBaseline;
     String suraText = null;
-    String juzText = null;
     String pageText = null;
-    String rub3Text = null;
-    String manzilText = null;
+    String rightHeaderText = null;
   }
 
   public void setOverlayText(String suraText, String juzText, String pageText, String rub3Text, String manzilText) {
@@ -425,10 +455,8 @@ public class HighlightingImageView extends AppCompatImageView {
 
     overlayParams = new OverlayParams();
     overlayParams.suraText = suraText;
-    overlayParams.juzText = juzText;
     overlayParams.pageText = pageText;
-    overlayParams.rub3Text = rub3Text;
-    overlayParams.manzilText = manzilText;
+    overlayParams.rightHeaderText = juzText + rub3Text + manzilText;
     overlayParams.paint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DEV_KERN_TEXT_FLAG);
     overlayParams.paint.setTextSize(fontSize);
 //    if (juzText.contains("ج")) {
@@ -506,7 +534,7 @@ public class HighlightingImageView extends AppCompatImageView {
         overlayParams.paint);
     // Merge the current rub3 text with the juz' text
     overlayParams.paint.setTextAlign(Align.RIGHT);
-    canvas.drawText(overlayParams.juzText + overlayParams.rub3Text + overlayParams.manzilText,
+    canvas.drawText(overlayParams.rightHeaderText,
         (getWidth() - overlayParams.offsetX) - horizontalSafeOffset,
         overlayParams.topBaseline + topSafeOffset,
         overlayParams.paint);
@@ -529,30 +557,29 @@ public class HighlightingImageView extends AppCompatImageView {
       return;
     }
 
+    final boolean hasHighlights = pageCoordinates != null && !currentHighlights.isEmpty();
     // draw the highlights that go under the page image first
-    if (pageCoordinates != null) {
+    if (hasHighlights) {
       underlayHighlightsDrawer.draw(pageCoordinates, canvas, this);
-    }
 
-    // Save the canvas before applying any clippings
-    canvas.save();
+      // Save the canvas before applying any clippings
+      canvas.save();
 
-    // Draw highlights that involve clipping the canvas (HIDE, COLOR)
-    // Note: this must be done before the super.onDraw call so that HighlightsDrawer has a chance
-    //       to apply canvas clippings (e.g. hiding) before the image is drawn
-    if (pageCoordinates != null) {
+      // Draw highlights that involve clipping the canvas (HIDE, COLOR)
+      // Note: this must be done before the super.onDraw call so that HighlightsDrawer has a chance
+      //       to apply canvas clippings (e.g. hiding) before the image is drawn
       clippingHighlightsDrawer.draw(pageCoordinates, canvas, this);
-    }
 
-    // Draw the page image (excluding clipped out sections)
-    super.onDraw(canvas);
+      // Draw the page image (excluding clipped out sections)
+      super.onDraw(canvas);
 
-    // Restore the canvas to remove any clippings so the remaining highlights/drawers don't get clipped
-    canvas.restore();
+      // Restore the canvas to remove any clippings so the remaining highlights/drawers don't get clipped
+      canvas.restore();
 
-    // Draw remaining highlights (other than HIDE, COLOR)
-    if (pageCoordinates != null) {
+      // Draw remaining highlights (other than HIDE, COLOR)
       highlightsDrawer.draw(pageCoordinates, canvas, this);
+    } else {
+      super.onDraw(canvas);
     }
 
     // Draw overlay text

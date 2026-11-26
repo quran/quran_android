@@ -6,7 +6,7 @@
   <color name="accent_navy_gold">#ffe2af56</color>
   <color name="header_background">#ff424242</color>
   <color name="header_text_color">@color/sura_number_color</color>
-  <color name="sura_number_color">#7fffffff</color>
+  <color name="sura_number_color">#b3ffffff</color>
   <color name="surface">#ff212121</color>
   <color name="secondary_dark_background">#ff303030</color>
   <color name="ripple_dark">#33ffffff</color>

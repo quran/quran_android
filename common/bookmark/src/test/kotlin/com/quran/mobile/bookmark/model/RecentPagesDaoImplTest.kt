@@ -12,6 +12,8 @@ import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
 import com.quran.labs.androidquran.pages.data.warsh.WarshDataSource
 import com.quran.mobile.bookmark.di.MobileSyncDatabase
 import com.quran.mobile.bookmark.time.FakeMobileSyncTimestampProvider
+import com.quran.shared.persistence.model.ReadingSession
+import com.quran.shared.persistence.repository.readingsession.repository.ReadingSessionsRepository
 import com.quran.shared.persistence.repository.readingsession.repository.ReadingSessionsRepositoryImpl
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
@@ -189,6 +191,47 @@ class RecentPagesDaoImplTest {
 
       assertThat(awaitItem().map { it.page }).containsExactly(49)
       cancelAndIgnoreRemainingEvents()
+    }
+  }
+
+  @Test
+  fun `write operations read reading sessions only once per call`() = runTest {
+    val countingRepo = CountingReadingSessionsRepository(repository)
+    val countedDao = RecentPagesDaoImpl(
+      quranInfoProvider = { quranInfo },
+      settings = settings,
+      readingSessionsRepository = countingRepo,
+      timestampProvider = timestampProvider,
+      appCoroutineScope = appCoroutineScope
+    )
+
+    countedDao.addRecentPage(10)
+    assertThat(countingRepo.getReadingSessionsCallCount).isEqualTo(1)
+
+    countingRepo.getReadingSessionsCallCount = 0
+    countedDao.replaceRecentRangeWithPage(1, 20, 30)
+    assertThat(countingRepo.getReadingSessionsCallCount).isEqualTo(1)
+
+    countingRepo.getReadingSessionsCallCount = 0
+    countedDao.replaceRecentPages(
+      listOf(
+        RecentPage(1, Instant.fromEpochSeconds(1)),
+        RecentPage(2, Instant.fromEpochSeconds(1)),
+        RecentPage(3, Instant.fromEpochSeconds(1))
+      )
+    )
+    assertThat(countingRepo.getReadingSessionsCallCount).isEqualTo(1)
+    assertThat(countedDao.recentPages().map { it.page }).containsExactly(1, 2, 3).inOrder()
+  }
+
+  private class CountingReadingSessionsRepository(
+    private val delegate: ReadingSessionsRepository
+  ) : ReadingSessionsRepository by delegate {
+    var getReadingSessionsCallCount = 0
+
+    override suspend fun getReadingSessions(): List<ReadingSession> {
+      getReadingSessionsCallCount++
+      return delegate.getReadingSessions()
     }
   }
 

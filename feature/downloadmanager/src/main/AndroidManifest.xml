@@ -1,6 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
   <application>
-    <activity android:name=".AudioManagerActivity" />
-    <activity android:name=".SheikhAudioDownloadsActivity" />
+    <activity
+        android:name=".AudioManagerActivity"
+        android:exported="false"
+        android:theme="@style/Theme.DownloadManager" />
+    <activity
+        android:name=".SheikhAudioDownloadsActivity"
+        android:exported="false"
+        android:theme="@style/Theme.DownloadManager" />
   </application>
 </manifest>

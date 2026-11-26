@@ -21,34 +21,40 @@ class CoordinatesModel @Inject internal constructor(
   private val pageProvider: PageProvider
 ) : CoordinatesModelInterface {
   override fun getPageCoordinates(wantPageBounds: Boolean, vararg pages: Int): Observable<PageCoordinates> {
-    val database = ayahInfoDatabaseProvider.getAyahInfoHandler()
-      ?: return Observable.error(NoSuchElementException("No AyahInfoDatabaseHandler found!"))
-
-    return Observable.fromArray(*pages.toTypedArray())
-      .map { page: Int? ->
-        database.getPageInfo(
-          page!!, wantPageBounds
+    return Observable.defer {
+      val database = ayahInfoDatabaseProvider.getAyahInfoHandler()
+        ?: return@defer Observable.error<PageCoordinates>(
+          NoSuchElementException("No AyahInfoDatabaseHandler found!")
         )
-      }
-      .subscribeOn(Schedulers.computation())
+
+      Observable.fromArray(*pages.toTypedArray())
+        .map { page: Int ->
+          database.getPageInfo(
+            page, wantPageBounds
+          )
+        }
+    }.subscribeOn(Schedulers.computation())
   }
 
   override fun getAyahCoordinates(vararg pages: Int): Observable<AyahCoordinates> {
-    val database = ayahInfoDatabaseProvider.getAyahInfoHandler()
-      ?: return Observable.error(NoSuchElementException("No AyahInfoDatabaseHandler found!"))
+    return Observable.defer {
+      val database = ayahInfoDatabaseProvider.getAyahInfoHandler()
+        ?: return@defer Observable.error<AyahCoordinates>(
+          NoSuchElementException("No AyahInfoDatabaseHandler found!")
+        )
 
-    return Observable.fromArray(*pages.toTypedArray())
-      .map { page: Int? ->
-        database.getVersesBoundsForPage(
-          page!!
-        )
-      }
-      .map { ayahCoordinates: AyahCoordinates ->
-        this.normalizePageAyahs(
-          ayahCoordinates
-        )
-      }
-      .subscribeOn(Schedulers.computation())
+      Observable.fromArray(*pages.toTypedArray())
+        .map { page: Int ->
+          database.getVersesBoundsForPage(
+            page
+          )
+        }
+        .map { ayahCoordinates: AyahCoordinates ->
+          this.normalizePageAyahs(
+            ayahCoordinates
+          )
+        }
+    }.subscribeOn(Schedulers.computation())
   }
 
   private fun normalizePageAyahs(ayahCoordinates: AyahCoordinates): AyahCoordinates {

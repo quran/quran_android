@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.common.mapper
 
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.core.QuranInfo
+import com.quran.data.model.QuranText
 import com.quran.data.model.SuraAyah
 import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.pages.data.madani.MadaniDataSource
@@ -308,5 +309,41 @@ class MadaniToKufiMapperTest {
     assertThat(mapped.endingSura).isEqualTo(1)
     assertThat(mapped.endingAyah).isEqualTo(5)
     assertThat(mapped.versesInRange).isEqualTo(3)
+  }
+
+  @Test
+  fun testMapKufiDataAcrossMultiSuraSplitAndJoin() {
+    // Target range: Madani 1:6..2:2
+    // 1:6 madani -> 1:7 kufi
+    // 1:7 madani -> 1:7 kufi
+    // 2:1 madani -> 2:1 + 2:2 kufi (joined with "\n")
+    // 2:2 madani -> 2:3 kufi
+    val kufiData = listOf(
+      QuranText(1, 7, "kufi-1-7", null),
+      QuranText(2, 1, "kufi-2-1", "extra-2-1"),
+      QuranText(2, 2, "kufi-2-2", null),
+      QuranText(2, 3, "kufi-2-3", null),
+    )
+
+    val result = mapper.mapKufiData(VerseRange(1, 6, 2, 2, 4), kufiData)
+
+    assertThat(result).containsExactly(
+      QuranText(1, 6, "kufi-1-7", null),
+      QuranText(1, 7, "kufi-1-7", null),
+      QuranText(2, 1, "extra-2-1\nkufi-2-2", null),
+      QuranText(2, 2, "kufi-2-3", null),
+    ).inOrder()
+  }
+
+  @Test
+  fun testMapKufiDataUsesFirstMatchingEntryWhenDuplicateExists() {
+    val kufiData = listOf(
+      QuranText(1, 2, "first", null),
+      QuranText(1, 2, "second", null),
+    )
+
+    val result = mapper.mapKufiData(VerseRange(1, 1, 1, 1, 1), kufiData)
+
+    assertThat(result).containsExactly(QuranText(1, 1, "first", null))
   }
 }

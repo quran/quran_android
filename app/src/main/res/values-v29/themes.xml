@@ -4,8 +4,8 @@
     <item name="quranAccent">@color/accent_navy_gold</item>
     <item name="colorAccent">?attr/quranAccent</item>
     <item name="spinnerStyle">?attr/actionDropDownStyle</item>
-    <item name="spinnerDropDownItemStyle">@style/SherlockDropDownItem</item>
-    <item name="spinnerItemStyle">@style/SherlockSpinnerItem</item>
+    <item name="spinnerDropDownItemStyle">@style/QuranDropDownItem</item>
+    <item name="spinnerItemStyle">@style/QuranSpinnerItem</item>
     <item name="android:forceDarkAllowed">false</item>
   </style>
 
@@ -15,8 +15,8 @@
     <item name="colorAccent">?attr/quranAccent</item>
     <item name="windowActionModeOverlay">true</item>
     <item name="spinnerStyle">?attr/actionDropDownStyle</item>
-    <item name="spinnerDropDownItemStyle">@style/SherlockDropDownItem</item>
-    <item name="spinnerItemStyle">@style/SherlockSpinnerItem</item>
+    <item name="spinnerDropDownItemStyle">@style/QuranDropDownItem</item>
+    <item name="spinnerItemStyle">@style/QuranSpinnerItem</item>
     <item name="android:forceDarkAllowed">false</item>
   </style>
 

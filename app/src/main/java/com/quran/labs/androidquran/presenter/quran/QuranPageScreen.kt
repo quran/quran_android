@@ -9,6 +9,9 @@ interface QuranPageScreen {
   fun setPageCoordinates(pageCoordinates: PageCoordinates)
   fun setAyahCoordinatesError()
   fun setPageBitmap(page: Int, pageBitmap: Bitmap)
+  fun setPageBitmap(page: Int, pageBitmap: Bitmap, sourceWidth: Int, sourceHeight: Int) {
+    setPageBitmap(page, pageBitmap)
+  }
   fun hidePageDownloadError()
   fun setPageDownloadError(@StringRes errorMessage: Int)
   fun setAyahCoordinatesData(coordinates: AyahCoordinates)

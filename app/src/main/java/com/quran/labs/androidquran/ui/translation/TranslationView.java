@@ -8,7 +8,9 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.DisplayCutoutCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,8 +33,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import dev.chrisbanes.insetter.Insetter;
 
 public class TranslationView extends FrameLayout implements View.OnClickListener,
     TranslationAdapter.OnVerseSelectedListener, TranslationAdapter.OnJumpToAyahListener {
@@ -88,28 +88,32 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       }
     });
 
-    Insetter.builder()
-        .setOnApplyInsetsListener((view, insets, initialState) -> {
-          final DisplayCutoutCompat cutout = insets.getDisplayCutout();
-          if (cutout != null) {
-            final int topSafeOffset = cutout.getSafeInsetTop();
-            final int bottomSafeOffset = cutout.getSafeInsetBottom();
-            final int horizontalSafeOffset =
-                Math.max(cutout.getSafeInsetLeft(), cutout.getSafeInsetRight());
+    final int initialPaddingLeft = getPaddingLeft();
+    final int initialPaddingTop = getPaddingTop();
+    final int initialPaddingRight = getPaddingRight();
+    final int initialPaddingBottom = getPaddingBottom();
+    ViewCompat.setOnApplyWindowInsetsListener(this, (view, windowInsets) -> {
+      final Insets insets = windowInsets.getInsets(
+          WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout()
+      );
+      final int topSafeOffset = insets.top;
+      final int bottomSafeOffset = insets.bottom;
 
-            if (spacerDecoration == null) {
-              spacerDecoration = new SpacerDecoration(topSafeOffset, bottomSafeOffset);
-              translationRecycler.addItemDecoration(spacerDecoration);
-            } else {
-              if (spacerDecoration.setOffsets(topSafeOffset, bottomSafeOffset)) {
-                translationRecycler.invalidateItemDecorations();
-              }
-            }
+      if (spacerDecoration == null) {
+        spacerDecoration = new SpacerDecoration(topSafeOffset, bottomSafeOffset);
+        translationRecycler.addItemDecoration(spacerDecoration);
+      } else if (spacerDecoration.setOffsets(topSafeOffset, bottomSafeOffset)) {
+        translationRecycler.invalidateItemDecorations();
+      }
 
-            setPadding(horizontalSafeOffset, 0, horizontalSafeOffset, 0);
-          }
-        })
-        .applyToView(this);
+      view.setPadding(
+          initialPaddingLeft + insets.left,
+          initialPaddingTop,
+          initialPaddingRight + insets.right,
+          initialPaddingBottom
+      );
+      return windowInsets;
+    });
   }
 
   public void setPageController(PageController controller) {
@@ -123,6 +127,9 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
     List<TranslationViewRow> rows = new ArrayList<>();
     int currentSura = -1;
     boolean wantTranslationHeaders = translations.length > 1;
+    final LocalTranslation[] sortedTranslations = Arrays.copyOf(translations, translations.length);
+    Arrays.sort(sortedTranslations, new LocalTranslationDisplaySort());
+
     for (int i = 0, size = verses.size(); i < size; i++) {
       QuranAyahInfo verse = verses.get(i);
       int sura = verse.sura;
@@ -141,9 +148,6 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
       if (verse.arabicText != null) {
         rows.add(new TranslationViewRow(TranslationViewRow.Type.QURAN_TEXT, verse));
       }
-
-      final LocalTranslation[] sortedTranslations = Arrays.copyOf(translations, translations.length);
-      Arrays.sort(sortedTranslations, new LocalTranslationDisplaySort());
 
       for (int j = 0; j < sortedTranslations.length; j++) {
         final TranslationMetadata metadata = findText(verse.texts, (int) sortedTranslations[j].getId());
