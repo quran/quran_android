@@ -67,7 +67,9 @@ internal fun HybridPaletteSheet(
   isDarkActive: Boolean,
   onSelectThemeMode: (String) -> Unit,
   onSelectThemeStyle: (AppThemeStyle) -> Unit,
-  onDismiss: () -> Unit
+  onDismiss: () -> Unit,
+  isOledDarkMode: Boolean = AppThemeStyle.isOledDarkMode,
+  onToggleOledDarkMode: (Boolean) -> Unit = {}
 ) {
   val quranColors = LocalQuranColors.current
   val isDark = !quranColors.isLightToolbar
@@ -88,7 +90,9 @@ internal fun HybridPaletteSheet(
       isDarkActive = isDarkActive,
       onSelectThemeMode = onSelectThemeMode,
       onSelectThemeStyle = onSelectThemeStyle,
-      onDismiss = onDismiss
+      onDismiss = onDismiss,
+      isOledDarkMode = isOledDarkMode,
+      onToggleOledDarkMode = onToggleOledDarkMode
     )
   }
 }
@@ -101,13 +105,24 @@ internal fun HybridPaletteSheetContent(
   isDarkActive: Boolean,
   onSelectThemeMode: (String) -> Unit,
   onSelectThemeStyle: (AppThemeStyle) -> Unit,
-  onDismiss: () -> Unit
+  onDismiss: () -> Unit,
+  isOledDarkMode: Boolean = AppThemeStyle.isOledDarkMode,
+  onToggleOledDarkMode: (Boolean) -> Unit = {}
 ) {
   val quranColors = LocalQuranColors.current
   val isDark = !quranColors.isLightToolbar
+  val isOled = isDark && (isOledDarkMode || quranColors.isOled)
   val headingColor = if (isDark) quranColors.onToolbar else MaterialTheme.colorScheme.onBackground
-  val floatBorder = if (isDark) Color.White.copy(alpha = 0.13f) else Color.White.copy(alpha = 0.88f)
-  val cardBorder = if (isDark) Color.White.copy(alpha = 0.09f) else Color.Black.copy(alpha = 0.05f)
+  val floatBorder = when {
+    isOled -> Color(0x28FFFFFF)
+    isDark -> Color.White.copy(alpha = 0.13f)
+    else -> Color.White.copy(alpha = 0.88f)
+  }
+  val cardBorder = when {
+    isOled -> Color(0x1FFFFFFF)
+    isDark -> Color.White.copy(alpha = 0.09f)
+    else -> Color.Black.copy(alpha = 0.05f)
+  }
   val sheetShape = RoundedCornerShape(28.dp)
   val modeLabels = stringArrayResource(R.array.themes)
   val styleLabels = stringArrayResource(R.array.theme_styles)
@@ -238,6 +253,66 @@ internal fun HybridPaletteSheetContent(
       }
     }
 
+    if (isDarkActive) {
+      Row(
+        modifier = Modifier
+          .fillMaxWidth()
+          .clip(RoundedCornerShape(14.dp))
+          .background(MaterialTheme.colorScheme.surfaceVariant)
+          .border(1.dp, cardBorder, RoundedCornerShape(14.dp))
+          .semantics(mergeDescendants = true) {}
+          .clickable(role = Role.Switch) { onToggleOledDarkMode(!isOledDarkMode) }
+          .padding(horizontal = 14.dp, vertical = 11.dp)
+          .testTag("hub_palette_oled_toggle"),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+      ) {
+        Column(
+          modifier = Modifier.weight(1f),
+          verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+          Text(
+            text = stringResource(R.string.hybrid_appearance_oled_title),
+            color = headingColor,
+            fontSize = 13.5.sp,
+            fontWeight = FontWeight.Bold
+          )
+          Text(
+            text = stringResource(R.string.hybrid_appearance_oled_subtitle),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 11.5.sp,
+            fontWeight = FontWeight.Normal
+          )
+        }
+        Box(
+          modifier = Modifier
+            .size(width = 46.dp, height = 26.dp)
+            .clip(CircleShape)
+            .background(
+              if (isOledDarkMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background
+            )
+            .then(
+              if (isOledDarkMode) {
+                Modifier
+              } else {
+                Modifier.border(1.dp, floatBorder, CircleShape)
+              }
+            )
+            .padding(3.dp),
+          contentAlignment = if (isOledDarkMode) Alignment.CenterEnd else Alignment.CenterStart
+        ) {
+          Box(
+            modifier = Modifier
+              .size(20.dp)
+              .clip(CircleShape)
+              .background(
+                if (isOledDarkMode) MaterialTheme.colorScheme.onPrimary else headingColor
+              )
+          )
+        }
+      }
+    }
+
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
       Text(
         text = stringResource(R.string.hybrid_hub_theme_color_label),
@@ -251,7 +326,7 @@ internal fun HybridPaletteSheetContent(
       ) {
         AppThemeStyle.entries.forEachIndexed { idx, style ->
           val selected = style == currentThemeStyle
-          val previewPalette = style.palette(isDarkActive)
+          val previewPalette = style.palette(isDark = isDarkActive, oled = isOledDarkMode)
           val label = styleLabels.getOrElse(idx) { style.storageKey }
           val chipBg = if (selected) {
             MaterialTheme.colorScheme.primary.copy(alpha = if (isDark) 0.16f else 0.11f)

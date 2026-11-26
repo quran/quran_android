@@ -103,6 +103,7 @@ class HybridReaderControllerTest {
     translationsDBAdapter = FakeTranslationsDBAdapter()
     translationModel = FakeTranslationModel()
     AppThemeStyle.select(AppThemeStyle.DEFAULT)
+    AppThemeStyle.setOledDarkMode(false)
   }
 
   @After
@@ -112,6 +113,7 @@ class HybridReaderControllerTest {
     }
     QuranSettings.setInstance(null)
     AppThemeStyle.select(AppThemeStyle.DEFAULT)
+    AppThemeStyle.setOledDarkMode(false)
   }
 
   private fun createController(dispatcher: kotlinx.coroutines.CoroutineDispatcher): HybridReaderController {
@@ -511,5 +513,26 @@ class HybridReaderControllerTest {
     assertThat(controller.uiState.value.qariFullName).isEqualTo(expectedBName)
     assertThat(controller.uiState.value.qariShortName).isEqualTo(expectedBName)
     assertThat(controller.uiState.value.playbackStatus).isEqualTo(PlaybackStatus.PAUSED)
+  }
+
+  @Test
+  fun `setOledDarkMode persists setting updates AppThemeStyle and keeps standalone appearance sheet open`() = runTest {
+    val controller = createController(UnconfinedTestDispatcher(testScheduler))
+
+    controller.openAppearanceSheet()
+    assertThat(controller.uiState.value.isAppearanceSheetOpen).isTrue()
+    assertThat(controller.uiState.value.appearanceState.isOledDarkMode).isFalse()
+
+    controller.setOledDarkMode(true)
+    assertThat(quranSettings.isOledDarkMode).isTrue()
+    assertThat(AppThemeStyle.isOledDarkMode).isTrue()
+    assertThat(controller.uiState.value.appearanceState.isOledDarkMode).isTrue()
+    assertThat(controller.uiState.value.isAppearanceSheetOpen).isTrue()
+
+    controller.setOledDarkMode(false)
+    assertThat(quranSettings.isOledDarkMode).isFalse()
+    assertThat(AppThemeStyle.isOledDarkMode).isFalse()
+    assertThat(controller.uiState.value.appearanceState.isOledDarkMode).isFalse()
+    assertThat(controller.uiState.value.isAppearanceSheetOpen).isTrue()
   }
 }

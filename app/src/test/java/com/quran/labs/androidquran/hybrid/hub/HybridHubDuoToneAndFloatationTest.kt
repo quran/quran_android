@@ -14,9 +14,11 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.FragmentActivity
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
@@ -51,6 +53,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -63,6 +67,21 @@ import java.util.Locale
 @RunWith(RobolectricTestRunner::class)
 @Config(application = TestApplication::class, sdk = [33])
 class HybridHubDuoToneAndFloatationTest {
+
+  @Before
+  fun setUp() {
+    QuranSettings.setInstance(null)
+    AppThemeStyle.setOledDarkMode(false)
+    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+  }
+
+  @After
+  fun tearDown() {
+    QuranSettings.setInstance(null)
+    AppThemeStyle.setOledDarkMode(false)
+    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+    Shadows.shadowOf(Looper.getMainLooper()).idle()
+  }
 
   @Test
   fun `HybridHubView applies Z0 ambient glow, Z2 floating header pill without bottom divider, non-interactive veil, and Z3 FloatingBottomNav`() {
@@ -566,19 +585,206 @@ class HybridHubDuoToneAndFloatationTest {
   }
 
   @Test
-  fun `Arabic highlight title string uses تظليل instead of تمييز`() {
+  fun `Arabic bookmark and reading bookmark sheets have 100 percent Arabic localization with zero middle dots`() {
     val baseContext = ApplicationProvider.getApplicationContext<Context>()
     val arConfig = Configuration(baseContext.resources.configuration).apply {
       setLocale(Locale.forLanguageTag("ar"))
     }
     val arContext = baseContext.createConfigurationContext(arConfig)
-    val resId = arContext.resources.getIdentifier(
+
+    fun arString(name: String, vararg args: Any): String {
+      val resId = arContext.resources.getIdentifier(name, "string", arContext.packageName)
+      assertThat(resId).isNotEqualTo(0)
+      return if (args.isEmpty()) arContext.getString(resId) else arContext.getString(resId, *args)
+    }
+
+    assertThat(arString("ayahbookmark_highlight_title")).isEqualTo("تظليل")
+    assertThat(arString("ayahbookmark_reading_bookmark_is_here", "برتقالي")).isEqualTo("علامة برتقالي على هذه الآية")
+    assertThat(arString("ayahbookmark_reading_bookmark_move_here", "برتقالي")).isEqualTo("نقل علامة برتقالي إلى هنا")
+    assertThat(arString("ayahbookmark_reading_bookmark_set_here", "أحمر")).isEqualTo("وضع علامة أحمر هنا")
+    assertThat(arString("ayahbookmark_reading_bookmark_move")).isEqualTo("نقل")
+    assertThat(arString("ayahbookmark_reading_bookmark_set")).isEqualTo("وضع")
+    assertThat(arString("ayahbookmark_other_reading_bookmark")).isEqualTo("علامات القراءة الأخرى")
+    assertThat(arString("ayahbookmark_highlight_saved_on_close")).isEqualTo("يُحفظ تلقائياً عند إغلاق النافذة")
+    assertThat(arString("readingbookmark_title")).isEqualTo("علامات القراءة")
+    assertThat(arString("readingbookmark_subtitle")).isEqualTo("كل علامة تحفظ موضعاً واحداً وتنقلها مع تقدمك")
+    assertThat(arString("readingbookmark_placing_on", "الفاتحة")).isEqualTo("التثبيت على الفاتحة")
+    assertThat(arString("readingbookmark_at_location", "الصفحة 1")).isEqualTo("عند الصفحة 1")
+    assertThat(arString("readingbookmark_ayah_location")).isEqualTo("%1\$s — صفحة %2\$d")
+    val formattedAyahLoc = arString("readingbookmark_ayah_location", "سُورَةُ الفاتحة، آية 1", 1)
+    assertThat(formattedAyahLoc).contains("— صفحة ")
+    assertThat(formattedAyahLoc).doesNotContain("\u00B7")
+    assertThat(formattedAyahLoc).doesNotContain("Page")
+    assertThat(arString("readingbookmark_not_placed")).isEqualTo("غير موضوعة بعد")
+    assertThat(arString("readingbookmark_on_this_page")).isEqualTo("على هذه الصفحة")
+    assertThat(arString("readingbookmark_on_this_ayah")).isEqualTo("على هذه الآية")
+    assertThat(arString("readingbookmark_move_here")).isEqualTo("نقل إلى هنا")
+    assertThat(arString("readingbookmark_set_here")).isEqualTo("وضع هنا")
+    assertThat(arString("readingbookmark_clear")).isEqualTo("إزالة")
+    assertThat(arString("readingbookmark_back")).isEqualTo("رجوع")
+    assertThat(arString("readingbookmark_edit")).isEqualTo("تعديل")
+    assertThat(arString("readingbookmark_done_editing")).isEqualTo("إنهاء التعديل")
+    assertThat(arString("readingbookmark_editing_subtitle")).isEqualTo("اختر اسماً مميزاً لكل علامة قراءة")
+
+    val allKeys = listOf(
+      "ayahbookmark_done",
+      "ayahbookmark_saved",
+      "ayahbookmark_not_saved",
+      "ayahbookmark_reading_bookmark_is_here",
+      "ayahbookmark_reading_bookmark_move_here",
+      "ayahbookmark_reading_bookmark_set_here",
+      "ayahbookmark_reading_bookmark_move",
+      "ayahbookmark_reading_bookmark_set",
+      "ayahbookmark_other_reading_bookmark",
       "ayahbookmark_highlight_title",
-      "string",
-      arContext.packageName
+      "ayahbookmark_highlight_saved_on_close",
+      "ayahbookmark_highlight_none",
+      "ayahbookmark_collections_header",
+      "ayahbookmark_new_collection",
+      "ayahbookmark_collection_name_hint",
+      "ayahbookmark_collection_name_error",
+      "ayahbookmark_collection_name_duplicate",
+      "ayahbookmark_collection_name_reserved",
+      "ayahbookmark_collection_name_empty",
+      "ayahbookmark_collection_name_too_long",
+      "ayahbookmark_cancel",
+      "ayahbookmark_create",
+      "readingbookmark_title",
+      "readingbookmark_subtitle",
+      "readingbookmark_placing_on",
+      "readingbookmark_at_location",
+      "readingbookmark_ayah_location",
+      "readingbookmark_not_placed",
+      "readingbookmark_on_this_page",
+      "readingbookmark_on_this_ayah",
+      "readingbookmark_move_here",
+      "readingbookmark_set_here",
+      "readingbookmark_clear",
+      "readingbookmark_back",
+      "readingbookmark_edit",
+      "readingbookmark_done_editing",
+      "readingbookmark_editing_subtitle"
     )
-    assertThat(resId).isNotEqualTo(0)
-    assertThat(arContext.getString(resId)).isEqualTo("تظليل")
+    val asciiWordRegex = Regex("[A-Za-z]{2,}")
+    for (key in allKeys) {
+      val raw = arString(key)
+      assertThat(raw).doesNotContain("\u00B7")
+      assertThat(asciiWordRegex.containsMatchIn(raw)).isFalse()
+    }
+  }
+
+  @Test
+  fun `HybridPaletteSheetView shows OLED toggle ONLY in Dark mode and QuranActivity toggles OLED live keeping sheet open`() {
+    Robolectric.buildActivity(FragmentActivity::class.java).use { hostController ->
+      val activity = hostController.setup().get()
+      val toggledValues = mutableListOf<Boolean>()
+      val sheet = HybridPaletteSheetView(
+        context = activity,
+        onSelectThemeMode = {},
+        onSelectThemeStyle = {},
+        onDismiss = {},
+        onToggleOledDarkMode = { toggledValues.add(it) }
+      )
+
+      // Hidden in Light mode
+      sheet.update(
+        palette = HybridViewPalette.from(AppThemeStyle.DEFAULT, isDark = false, oled = false),
+        themeMode = Constants.THEME_LIGHT,
+        themeStyle = AppThemeStyle.DEFAULT,
+        navBottomInsetPx = 0,
+        isOledDarkMode = false
+      )
+      assertThat(sheet.oledToggleRowForTest().visibility).isEqualTo(View.GONE)
+
+      // Visible in Dark mode
+      sheet.update(
+        palette = HybridViewPalette.from(AppThemeStyle.DEFAULT, isDark = true, oled = false),
+        themeMode = Constants.THEME_DARK,
+        themeStyle = AppThemeStyle.DEFAULT,
+        navBottomInsetPx = 0,
+        isOledDarkMode = false
+      )
+      assertThat(sheet.oledToggleRowForTest().visibility).isEqualTo(View.VISIBLE)
+      assertThat(sheet.oledToggleRowForTest().isSelected).isFalse()
+      assertThat(sheet.oledTitleViewForTest().text.toString())
+        .isEqualTo(activity.getString(R.string.hybrid_appearance_oled_title))
+      assertThat(sheet.oledSubtitleViewForTest().text.toString())
+        .isEqualTo(activity.getString(R.string.hybrid_appearance_oled_subtitle))
+
+      sheet.oledToggleRowForTest().performClick()
+      assertThat(toggledValues).containsExactly(true)
+      Shadows.shadowOf(Looper.getMainLooper()).idle()
+    }
+
+    // End-to-end live in-place toggle in QuranActivity Dark mode (even when OS uiMode is Light!)
+    val appContext = ApplicationProvider.getApplicationContext<Context>()
+    QuranSettings.setInstance(null)
+    val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+    val settings = QuranSettings.getInstance(appContext)
+    val prevTheme = prefs.getString(Constants.PREF_APP_THEME, null)
+    val prevStyle = settings.appThemeStyle
+    val prevOled = settings.isOledDarkMode
+    prefs.edit().putString(Constants.PREF_APP_THEME, Constants.THEME_DARK).commit()
+    settings.appThemeStyle = AppThemeStyle.GREEN.storageKey
+    settings.isOledDarkMode = false
+    settings.pageType = "madani"
+    AppThemeStyle.setOledDarkMode(false)
+
+    try {
+      Robolectric.buildActivity(QuranActivity::class.java).use { controller ->
+        val hubActivity = controller.create().start().resume().visible().get()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        val paletteBtn = hubActivity.hubView.headerActionPillForTest()
+          .findViewWithTag<View>("hub_palette_button")
+        paletteBtn.performClick()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+        val liveSheet = hubActivity.hubView.paletteSheetViewForTest()!!
+        assertThat(hubActivity.isPaletteSheetShownForTest).isTrue()
+        assertThat(liveSheet.oledToggleRowForTest().visibility).isEqualTo(View.VISIBLE)
+        assertThat(hubActivity.appliedOledDarkModeForTest).isFalse()
+
+        // Toggle OLED ON live — stays open, no recreation, pure #000000 canvas
+        liveSheet.oledToggleRowForTest().performClick()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        assertThat(hubActivity.isFinishing).isFalse()
+        assertThat(hubActivity.isPaletteSheetShownForTest).isTrue()
+        assertThat(liveSheet.visibility).isEqualTo(View.VISIBLE)
+        assertThat(hubActivity.appliedOledDarkModeForTest).isTrue()
+        assertThat(settings.isOledDarkMode).isTrue()
+        assertThat(AppThemeStyle.isOledDarkMode).isTrue()
+        assertThat(liveSheet.oledToggleRowForTest().isSelected).isTrue()
+        val oledBgColors = (hubActivity.hubView.background as GradientDrawable).colors!!
+        assertThat(oledBgColors.all { it == Color.BLACK }).isTrue()
+
+        // Toggle OLED back OFF live — stays open, restores tonal dark surface
+        liveSheet.oledToggleRowForTest().performClick()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        assertThat(hubActivity.isPaletteSheetShownForTest).isTrue()
+        assertThat(hubActivity.appliedOledDarkModeForTest).isFalse()
+        assertThat(settings.isOledDarkMode).isFalse()
+        assertThat(AppThemeStyle.isOledDarkMode).isFalse()
+        val nonOledBgColors = (hubActivity.hubView.background as GradientDrawable).colors!!
+        assertThat(nonOledBgColors.last()).isNotEqualTo(Color.BLACK)
+
+        // Switching to Light mode inside Appearance sheet immediately hides OLED toggle row
+        liveSheet.modeButtonForTest(Constants.THEME_LIGHT).performClick()
+        Shadows.shadowOf(Looper.getMainLooper()).idle()
+        assertThat(liveSheet.oledToggleRowForTest().visibility).isEqualTo(View.GONE)
+      }
+    } finally {
+      if (prevTheme == null) {
+        prefs.edit().remove(Constants.PREF_APP_THEME).commit()
+      } else {
+        prefs.edit().putString(Constants.PREF_APP_THEME, prevTheme).commit()
+      }
+      settings.appThemeStyle = prevStyle
+      settings.isOledDarkMode = prevOled
+      AppThemeStyle.setOledDarkMode(false)
+      AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+      Shadows.shadowOf(Looper.getMainLooper()).idle()
+    }
   }
 
   private inline fun <reified T : View> collectViews(root: View): List<T> {

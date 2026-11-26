@@ -66,7 +66,8 @@ class HybridHubView(
   private val onDownloadArabicSearchDb: () -> Unit,
   private val onOpenTranslationManager: () -> Unit,
   initialPalette: HybridViewPalette = HybridViewPalette.from(AppThemeStyle.BEIGE, false),
-  private val lifecycleOwner: LifecycleOwner? = (context as? LifecycleOwner)
+  private val lifecycleOwner: LifecycleOwner? = (context as? LifecycleOwner),
+  private val onToggleOledDarkMode: (Boolean) -> Unit = {}
 ) : FrameLayout(context) {
 
   private var currentHeaderHeightPx: Int = 0
@@ -377,7 +378,8 @@ class HybridHubView(
         palette = palette,
         themeMode = latestUiState.appTheme,
         themeStyle = latestUiState.themeStyle,
-        navBottomInsetPx = navBottom
+        navBottomInsetPx = navBottom,
+        isOledDarkMode = latestUiState.isOledDarkMode
       )
     }
   }
@@ -458,7 +460,8 @@ class HybridHubView(
       palette = newPalette,
       themeMode = latestUiState.appTheme,
       themeStyle = latestUiState.themeStyle,
-      navBottomInsetPx = navBarBottomPx
+      navBottomInsetPx = navBarBottomPx,
+      isOledDarkMode = latestUiState.isOledDarkMode
     )
   }
 
@@ -552,7 +555,8 @@ class HybridHubView(
         palette = palette,
         themeMode = uiState.appTheme,
         themeStyle = uiState.themeStyle,
-        navBottomInsetPx = navBarBottomPx
+        navBottomInsetPx = navBarBottomPx,
+        isOledDarkMode = uiState.isOledDarkMode
       )
       sheet.setSheetVisible(true)
     } else {
@@ -766,7 +770,8 @@ class HybridHubView(
       context = context,
       onSelectThemeMode = onSelectThemeMode,
       onSelectThemeStyle = onSelectThemeStyle,
-      onDismiss = onDismissPaletteSheet
+      onDismiss = onDismissPaletteSheet,
+      onToggleOledDarkMode = onToggleOledDarkMode
     ).also { created ->
       created.id = R.id.hybrid_palette_sheet_root
       paletteSheetView = created

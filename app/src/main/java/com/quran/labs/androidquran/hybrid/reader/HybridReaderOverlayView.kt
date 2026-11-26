@@ -96,10 +96,6 @@ class HybridReaderOverlayView @JvmOverloads constructor(
   private val toolAppearanceIcon = HybridArchitecturalIcons.drawable(HybridArchitecturalIcons.APPEARANCE, Color.BLACK, dp(14f))
   private val toolAppearanceText = TextView(context)
   private val toolAppearanceBtn = LinearLayout(context)
-  private val toolDivider2 = View(context)
-  private val toolTafsirIcon = HybridArchitecturalIcons.drawable(HybridArchitecturalIcons.TAFSIR, Color.BLACK, dp(14f))
-  private val toolTafsirText = TextView(context)
-  private val toolTafsirBtn = LinearLayout(context)
 
   // Floating Ayah Action Bar (lazy-built on first ayah selection)
   private var isAyahBarBuilt = false
@@ -285,6 +281,15 @@ class HybridReaderOverlayView @JvmOverloads constructor(
   private var lastAppearanceMode: String? = null
   private var lastAppearanceStyle: AppThemeStyle? = null
   private var lastAppearancePageColor: PageColor? = null
+  private lateinit var oledToggleRow: LinearLayout
+  private lateinit var oledTitleView: TextView
+  private lateinit var oledSubtitleView: TextView
+  private lateinit var oledSwitchTrack: FrameLayout
+  private lateinit var oledSwitchThumb: View
+  private lateinit var oledRowBg: GradientDrawable
+  private lateinit var oledTrackBg: GradientDrawable
+  private lateinit var oledThumbBg: GradientDrawable
+  private var isOledToggleChecked: Boolean = false
   private lateinit var matchAppToggleRow: LinearLayout
   private lateinit var matchAppLabel: TextView
   private lateinit var matchAppCheckboxIcon: ImageView
@@ -304,6 +309,7 @@ class HybridReaderOverlayView @JvmOverloads constructor(
   private var palette = HybridViewPalette.from(AppThemeStyle.BEIGE, false)
   private var lastResolvedStyle: AppThemeStyle? = null
   private var lastResolvedDarkUi: Boolean? = null
+  private var lastResolvedOledUi: Boolean? = null
   private var lastSuraTitleText: String? = null
   private var lastPageNumberText: String? = null
   private var lastAyahTagText: String? = null
@@ -372,6 +378,7 @@ class HybridReaderOverlayView @JvmOverloads constructor(
   private var onTafsirStepAyah: ((Boolean) -> Unit)? = null
   private var onAppThemeStyleSelected: ((AppThemeStyle) -> Unit)? = null
   private var onAppThemeModeSelected: ((String) -> Unit)? = null
+  private var onOledDarkModeChanged: ((Boolean) -> Unit)? = null
   private var onPageAppearanceUpdated: (() -> Unit)? = null
   private var onMushafNudgeChanged: ((Float) -> Unit)? = null
 
@@ -443,16 +450,32 @@ class HybridReaderOverlayView @JvmOverloads constructor(
 
   override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
     super.onLayout(changed, left, top, right, bottom)
+    val maxViewportY = height.takeIf { it > 0 }?.toFloat() ?: Float.POSITIVE_INFINITY
+    val validBounds = state.ayahOverlayBounds?.takeIf {
+      it.isValidForOverlay(minBottomPx = statusTopPx.toFloat(), maxTopPx = maxViewportY)
+    }
     if (isAyahBarBuilt &&
       ayahBarWrapper.visibility == View.VISIBLE &&
-      state.ayahOverlayBounds != null &&
+      state.selectedStart != null &&
+      !state.isAnySheetOpen &&
+      validBounds != null &&
       (topPillsRow.bottom != lastMeasuredTopPillsBottom || audioCapsuleOuter.top != lastMeasuredAudioCapsuleTop)
     ) {
       lastMeasuredTopPillsBottom = topPillsRow.bottom
       lastMeasuredAudioCapsuleTop = audioCapsuleOuter.top
       post {
-        if (isAttachedToWindow && isAyahBarBuilt && ayahBarWrapper.visibility == View.VISIBLE) {
-          updateFloatingAyahBarPosition()
+        val freshMaxY = height.takeIf { it > 0 }?.toFloat() ?: Float.POSITIVE_INFINITY
+        val freshBounds = state.ayahOverlayBounds?.takeIf {
+          it.isValidForOverlay(minBottomPx = statusTopPx.toFloat(), maxTopPx = freshMaxY)
+        }
+        if (isAttachedToWindow &&
+          isAyahBarBuilt &&
+          ayahBarWrapper.visibility == View.VISIBLE &&
+          state.selectedStart != null &&
+          !state.isAnySheetOpen &&
+          freshBounds != null
+        ) {
+          updateFloatingAyahBarPosition(freshBounds)
         }
       }
     }
@@ -517,9 +540,9 @@ class HybridReaderOverlayView @JvmOverloads constructor(
       gravity = Gravity.CENTER_VERTICAL
       clipChildren = false
       clipToPadding = false
-      minimumHeight = dp(36f)
+      minimumHeight = dp(38f)
       setPadding(dp(4f), dp(2f), dp(6f), dp(2f))
-      addView(backButton, LinearLayout.LayoutParams(dp(32f), dp(32f)))
+      addView(backButton, LinearLayout.LayoutParams(dp(34f), dp(34f)))
       addView(
         navDivider,
         LinearLayout.LayoutParams(dp(1f), dp(14f)).apply {
@@ -530,7 +553,7 @@ class HybridReaderOverlayView @JvmOverloads constructor(
       addView(suraPageJumpArea)
     }
 
-    // Tools pill (left/end in RTL: Save | Appearance | Tafsir)
+    // Tools pill (left/end in RTL: Save | Appearance — Tafsir lives in Study Drawer & Ayah Action Bar)
     fun setupToolButton(
       btn: LinearLayout,
       iconView: ImageView,
@@ -548,12 +571,13 @@ class HybridReaderOverlayView @JvmOverloads constructor(
       iconView.setImageDrawable(icon)
       btn.apply {
         orientation = LinearLayout.HORIZONTAL
-        gravity = Gravity.CENTER_VERTICAL
+        gravity = Gravity.CENTER
         isClickable = true
         isFocusable = true
-        minimumHeight = dp(32f)
-        val ph = dp(8f)
-        val pv = dp(4f)
+        minimumWidth = dp(44f)
+        minimumHeight = dp(34f)
+        val ph = dp(10f)
+        val pv = dp(5f)
         setPadding(ph, pv, ph, pv)
         addView(iconView)
         addView(
@@ -586,28 +610,17 @@ class HybridReaderOverlayView @JvmOverloads constructor(
     ) {
       controller?.openAppearanceSheet()
     }
-    setupToolButton(
-      toolTafsirBtn,
-      ImageView(context),
-      toolTafsirIcon,
-      toolTafsirText,
-      R.string.hybrid_reader_tool_tafsir
-    ) {
-      controller?.openStudyDrawer(HybridReaderContract.StudyTab.TAFSIR)
-    }
 
     toolsPill.apply {
       orientation = LinearLayout.HORIZONTAL
       gravity = Gravity.CENTER_VERTICAL
       clipChildren = false
       clipToPadding = false
-      minimumHeight = dp(36f)
+      minimumHeight = dp(38f)
       setPadding(dp(4f), dp(2f), dp(4f), dp(2f))
       addView(toolSaveBtn)
       addView(toolDivider1, LinearLayout.LayoutParams(dp(1f), dp(14f)))
       addView(toolAppearanceBtn)
-      addView(toolDivider2, LinearLayout.LayoutParams(dp(1f), dp(14f)))
-      addView(toolTafsirBtn)
     }
 
     topPillsRow.addView(navPill)
@@ -772,7 +785,7 @@ class HybridReaderOverlayView @JvmOverloads constructor(
     addView(
       ayahBarWrapper,
       insertIdx,
-      LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+      LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.TOP or Gravity.LEFT)
     )
     applyAyahBarPalette(palette)
   }
@@ -1693,6 +1706,54 @@ class HybridReaderOverlayView @JvmOverloads constructor(
       clipChildren = false
       clipToPadding = false
     }
+    oledRowBg = HybridViewTokens.roundedDrawable(
+      fillColor = palette.surfaceVariant,
+      strokeColor = palette.cardHairlineBorder,
+      strokeWidthPx = dp(1f),
+      radiusPx = dpF(14f)
+    )
+    oledTrackBg = HybridViewTokens.roundedDrawable(
+      fillColor = palette.divider,
+      radiusPx = dpF(999f)
+    )
+    oledThumbBg = HybridViewTokens.roundedDrawable(
+      fillColor = Color.WHITE,
+      radiusPx = dpF(999f)
+    )
+    oledTitleView = TextView(context).apply {
+      text = context.getString(R.string.hybrid_appearance_oled_title)
+      setTextSize(TypedValue.COMPLEX_UNIT_SP, 12.5f)
+      setTypeface(Typeface.DEFAULT, Typeface.BOLD)
+      maxLines = 1
+      ellipsize = TextUtils.TruncateAt.END
+    }
+    oledSubtitleView = TextView(context).apply {
+      text = context.getString(R.string.hybrid_appearance_oled_subtitle)
+      setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
+      maxLines = 2
+      ellipsize = TextUtils.TruncateAt.END
+    }
+    oledSwitchThumb = View(context).apply {
+      background = oledThumbBg
+    }
+    oledSwitchTrack = FrameLayout(context).apply {
+      layoutDirection = View.LAYOUT_DIRECTION_RTL
+      background = oledTrackBg
+      val trackPad = dp(3f)
+      setPadding(trackPad, trackPad, trackPad, trackPad)
+      addView(
+        oledSwitchThumb,
+        FrameLayout.LayoutParams(dp(20f), dp(20f), Gravity.CENTER_VERTICAL or Gravity.START)
+      )
+    }
+    oledToggleRow = object : LinearLayout(context) {
+      override fun onInitializeAccessibilityNodeInfo(info: AccessibilityNodeInfo) {
+        super.onInitializeAccessibilityNodeInfo(info)
+        info.isCheckable = true
+        info.isChecked = isOledToggleChecked
+        info.text = oledTitleView.text
+      }
+    }
     matchAppCheckDrawable = HybridArchitecturalIcons.drawable(HybridArchitecturalIcons.CHECK, palette.onAccent, dp(13f))
     matchAppBoxBg = HybridViewTokens.roundedDrawable(
       fillColor = Color.TRANSPARENT,
@@ -1853,6 +1914,55 @@ class HybridReaderOverlayView @JvmOverloads constructor(
         LinearLayout.LayoutParams.MATCH_PARENT,
         LinearLayout.LayoutParams.WRAP_CONTENT
       ).apply { topMargin = dp(6f) }
+    )
+
+    // 1b. Pure Black OLED Dark Mode Toggle (visible ONLY in Dark Mode; keeps sheet open!)
+    oledToggleRow.apply {
+      orientation = LinearLayout.HORIZONTAL
+      gravity = Gravity.CENTER_VERTICAL
+      layoutDirection = View.LAYOUT_DIRECTION_RTL
+      visibility = View.GONE
+      isClickable = true
+      isFocusable = true
+      background = oledRowBg
+      setPadding(dp(12f), dp(10f), dp(12f), dp(10f))
+      val labelsCol = LinearLayout(context).apply {
+        orientation = LinearLayout.VERTICAL
+        addView(oledTitleView)
+        addView(
+          oledSubtitleView,
+          LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+          ).apply { topMargin = dp(2f) }
+        )
+      }
+      addView(
+        labelsCol,
+        LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+          marginEnd = dp(10f)
+        }
+      )
+      addView(
+        oledSwitchTrack,
+        LinearLayout.LayoutParams(dp(44f), dp(26f))
+      )
+      setOnClickListener {
+        if (!isSyncingAppearanceControls) {
+          val nextEnabled = !isOledToggleChecked
+          updateOledToggleVisual(nextEnabled)
+          controller?.setOledDarkMode(nextEnabled)
+          onOledDarkModeChanged?.invoke(nextEnabled)
+        }
+      }
+      HybridViewTokens.attachApplePressFeedback(this, AdaptiveMotionTokens.PRESS_SCALE)
+    }
+    col.addView(
+      oledToggleRow,
+      LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams.MATCH_PARENT,
+        LinearLayout.LayoutParams.WRAP_CONTENT
+      ).apply { topMargin = dp(10f) }
     )
 
     // 2. Duo-Tone Calm Palette (with crisp overlapping 2-dot swatches + check indicator!)
@@ -2127,7 +2237,8 @@ class HybridReaderOverlayView @JvmOverloads constructor(
     onAppThemeModeSelected: (String) -> Unit,
     onPageAppearanceUpdated: () -> Unit,
     onMushafNudgeChanged: (Float) -> Unit,
-    onStop: (() -> Unit)? = null
+    onStop: (() -> Unit)? = null,
+    onOledDarkModeChanged: ((Boolean) -> Unit)? = null
   ) {
     this.controller = readerController
     this.onBackToHub = onBackToHub
@@ -2151,6 +2262,7 @@ class HybridReaderOverlayView @JvmOverloads constructor(
     this.onTafsirStepAyah = onTafsirStepAyah
     this.onAppThemeStyleSelected = onAppThemeStyleSelected
     this.onAppThemeModeSelected = onAppThemeModeSelected
+    this.onOledDarkModeChanged = onOledDarkModeChanged
     this.onPageAppearanceUpdated = onPageAppearanceUpdated
     this.onMushafNudgeChanged = onMushafNudgeChanged
 
@@ -2196,8 +2308,14 @@ class HybridReaderOverlayView @JvmOverloads constructor(
       }
       updateTafsirPickerMaxHeight()
     }
-    if (isAyahBarBuilt) {
-      updateFloatingAyahBarPosition()
+    if (isAyahBarBuilt && ayahBarWrapper.visibility == View.VISIBLE && state.selectedStart != null && !state.isAnySheetOpen) {
+      val maxViewportY = height.takeIf { it > 0 }?.toFloat() ?: Float.POSITIVE_INFINITY
+      val validBounds = state.ayahOverlayBounds?.takeIf {
+        it.isValidForOverlay(minBottomPx = statusTopPx.toFloat(), maxTopPx = maxViewportY)
+      }
+      if (validBounds != null) {
+        updateFloatingAyahBarPosition(validBounds)
+      }
     }
   }
 
@@ -2210,10 +2328,12 @@ class HybridReaderOverlayView @JvmOverloads constructor(
         android.content.res.Configuration.UI_MODE_NIGHT_YES
     val darkUi = ThemeUtil.isDarkAppearance(uiState.appearanceState.appThemeMode, isSystemDark)
     val styleNow = uiState.appearanceState.appThemeStyle
-    if (lastResolvedStyle != styleNow || lastResolvedDarkUi != darkUi) {
+    val oledNow = darkUi && uiState.appearanceState.isOledDarkMode
+    if (lastResolvedStyle != styleNow || lastResolvedDarkUi != darkUi || lastResolvedOledUi != oledNow) {
       lastResolvedStyle = styleNow
       lastResolvedDarkUi = darkUi
-      val resolvedPalette = HybridViewPalette.from(styleNow, darkUi)
+      lastResolvedOledUi = oledNow
+      val resolvedPalette = HybridViewPalette.from(styleNow, darkUi, oledNow)
       if (resolvedPalette != palette) {
         applyPalette(resolvedPalette)
       }
@@ -2244,17 +2364,15 @@ class HybridReaderOverlayView @JvmOverloads constructor(
       )
     }
 
-    // Floating Ayah Bar
+    // Floating Ayah Bar — NEVER show while Study/Appearance sheet is open or before valid on-screen bounds exist!
     val selStart = uiState.selectedStart
-    val showAyahBar = selStart != null && !uiState.isAnySheetOpen
-    if (showAyahBar && selStart != null) {
+    val maxViewportY = height.takeIf { it > 0 }?.toFloat() ?: Float.POSITIVE_INFINITY
+    val validBounds = uiState.ayahOverlayBounds?.takeIf {
+      it.isValidForOverlay(minBottomPx = statusTopPx.toFloat(), maxTopPx = maxViewportY)
+    }
+    val showAyahBar = selStart != null && !uiState.isAnySheetOpen && validBounds != null
+    if (showAyahBar && selStart != null && validBounds != null) {
       ensureFloatingAyahBarBuilt()
-      HybridViewTokens.animateVisibilityTransition(
-        ayahBarWrapper,
-        true,
-        translateYDp = 6f,
-        hiddenVisibility = View.INVISIBLE
-      )
       val selEnd = uiState.selectedEnd
       val nextTag = if (selEnd != null && selEnd != selStart) {
         context.getString(
@@ -2283,7 +2401,14 @@ class HybridReaderOverlayView @JvmOverloads constructor(
           if (uiState.isSelectedAyahBookmarked) palette.editorialAccent else palette.textPrimary
         )
       }
-      updateFloatingAyahBarPosition()
+      // Anchor margins, gravity (TOP|LEFT), and caret BEFORE revealing ayahBarWrapper so it never flashes top-right.
+      updateFloatingAyahBarPosition(validBounds)
+      HybridViewTokens.animateVisibilityTransition(
+        ayahBarWrapper,
+        true,
+        translateYDp = 6f,
+        hiddenVisibility = View.INVISIBLE
+      )
     } else if (isAyahBarBuilt) {
       HybridViewTokens.animateVisibilityTransition(
         ayahBarWrapper,
@@ -3529,7 +3654,7 @@ class HybridReaderOverlayView @JvmOverloads constructor(
           bgDrawable.setColor(palette.surfaceVariant)
           bgDrawable.setStroke(strokePx, hairline)
         }
-        val sp = HybridViewPalette.from(style, palette.isDark)
+        val sp = HybridViewPalette.from(style, palette.isDark, palette.isOled)
         val ringColor = if (selected) {
           ColorUtils.compositeColors(palette.accentSoftBg, palette.cardSurface)
         } else {
@@ -3565,6 +3690,14 @@ class HybridReaderOverlayView @JvmOverloads constructor(
     lastAppearancePalette = palette
 
     isSyncingAppearanceControls = true
+    val wantOledVis = if (palette.isDark) View.VISIBLE else View.GONE
+    if (oledToggleRow.visibility != wantOledVis) {
+      oledToggleRow.visibility = wantOledVis
+      updateAppearanceSheetMaxHeight()
+    }
+    if (paletteChanged || isOledToggleChecked != a.isOledDarkMode) {
+      updateOledToggleVisual(a.isOledDarkMode)
+    }
     val wantChecked = a.pageAppearance == PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
     if (paletteChanged || isMatchAppChecked != wantChecked) {
       updateMatchAppToggleVisual(wantChecked)
@@ -3737,9 +3870,12 @@ class HybridReaderOverlayView @JvmOverloads constructor(
     )
   }
 
-  private fun updateFloatingAyahBarPosition() {
-    if (!isAyahBarBuilt || ayahBarWrapper.visibility != View.VISIBLE) return
-    val bounds = state.ayahOverlayBounds ?: return
+  private fun updateFloatingAyahBarPosition(targetBounds: AyahOverlayBounds? = state.ayahOverlayBounds) {
+    if (!isAyahBarBuilt) return
+    val maxViewportY = height.takeIf { it > 0 }?.toFloat() ?: Float.POSITIVE_INFINITY
+    val bounds = targetBounds?.takeIf {
+      it.isValidForOverlay(minBottomPx = statusTopPx.toFloat(), maxTopPx = maxViewportY)
+    } ?: return
     val vw = width.takeIf { it > 0 } ?: resources.displayMetrics.widthPixels
     val vh = height.takeIf { it > 0 } ?: resources.displayMetrics.heightPixels
     val maxBarW = (vw - dp(24f)).coerceAtLeast(dp(200f))
@@ -3913,7 +4049,7 @@ class HybridReaderOverlayView @JvmOverloads constructor(
     suraTitleText.setTextColor(newPalette.textPrimary)
     pageNumberText.setTextColor(newPalette.textSecondary)
 
-    // Left action pill: Bookmark (Color 2) | Appearance (textSecondary) | Tafsir (Color 1)
+    // Left action pill: Bookmark (Color 2) | Appearance (textSecondary)
     toolSaveOutlineIcon.setTintColor(newPalette.editorialAccent)
     toolSaveFilledIcon.setTintColor(newPalette.editorialAccent)
     toolSaveIconView.setImageDrawable(
@@ -3925,9 +4061,6 @@ class HybridReaderOverlayView @JvmOverloads constructor(
     toolDivider1.setBackgroundColor(newPalette.divider)
     toolAppearanceIcon.setTintColor(newPalette.textSecondary)
     toolAppearanceText.setTextColor(newPalette.textPrimary)
-    toolDivider2.setBackgroundColor(newPalette.divider)
-    toolTafsirIcon.setTintColor(newPalette.accent)
-    toolTafsirText.setTextColor(newPalette.textPrimary)
 
     // Bottom Audio Capsule (Z3 floatation + opaque fill + 1px specular rim + Z2 Color-1 CTA)
     val capsuleRadius = dpF(28f)
@@ -4304,6 +4437,25 @@ class HybridReaderOverlayView @JvmOverloads constructor(
     }
   }
 
+  private fun updateOledToggleVisual(enabled: Boolean) {
+    isOledToggleChecked = enabled
+    val strokePx = dp(1f)
+    val hairline = HybridViewTokens.luminousHairlineColor(palette, palette.divider)
+    oledRowBg.setColor(palette.surfaceVariant)
+    oledRowBg.setStroke(strokePx, hairline)
+    oledTitleView.setTextColor(palette.textPrimary)
+    oledSubtitleView.setTextColor(palette.textSecondary)
+    oledTrackBg.setColor(if (enabled) palette.accent else palette.divider)
+    oledThumbBg.setColor(if (enabled) palette.onAccent else Color.WHITE)
+    val targetGravity = Gravity.CENTER_VERTICAL or if (enabled) Gravity.END else Gravity.START
+    (oledSwitchThumb.layoutParams as? FrameLayout.LayoutParams)?.let { lp ->
+      if (lp.gravity != targetGravity) {
+        lp.gravity = targetGravity
+        oledSwitchThumb.layoutParams = lp
+      }
+    }
+  }
+
   private fun updateMatchAppToggleVisual(checked: Boolean) {
     isMatchAppChecked = checked
     val strokePx = dp(1.5f)
@@ -4359,10 +4511,11 @@ class HybridReaderOverlayView @JvmOverloads constructor(
       pressColor = newPalette.ripple
     )
     appearanceLabels.forEach { it.setTextColor(newPalette.textSecondary) }
+    updateOledToggleVisual(isOledToggleChecked)
     matchAppLabel.setTextColor(newPalette.textPrimary)
     updateMatchAppToggleVisual(isMatchAppChecked)
     appStyleSwatchBgs.forEach { (style, swatchDrawable) ->
-      val sp = HybridViewPalette.from(style, newPalette.isDark)
+      val sp = HybridViewPalette.from(style, newPalette.isDark, newPalette.isOled)
       val selected = style == state.appearanceState.appThemeStyle
       val ringColor = if (selected) {
         ColorUtils.compositeColors(newPalette.accentSoftBg, newPalette.cardSurface)
@@ -4387,7 +4540,6 @@ class HybridReaderOverlayView @JvmOverloads constructor(
     HybridViewTokens.resetApplePressFeedback(suraPageJumpArea)
     HybridViewTokens.resetApplePressFeedback(toolSaveBtn)
     HybridViewTokens.resetApplePressFeedback(toolAppearanceBtn)
-    HybridViewTokens.resetApplePressFeedback(toolTafsirBtn)
     HybridViewTokens.resetApplePressFeedback(capsulePlayBtn)
     HybridViewTokens.resetApplePressFeedback(capsuleExpandBtn)
     HybridViewTokens.resetApplePressFeedback(audioCapsuleCard)
@@ -4434,6 +4586,7 @@ class HybridReaderOverlayView @JvmOverloads constructor(
       appModeButtons.values.forEach { HybridViewTokens.resetApplePressFeedback(it) }
       appStyleChips.values.forEach { (chip, _) -> HybridViewTokens.resetApplePressFeedback(chip) }
       pageColorButtons.values.forEach { HybridViewTokens.resetApplePressFeedback(it) }
+      HybridViewTokens.resetApplePressFeedback(oledToggleRow)
       HybridViewTokens.resetApplePressFeedback(matchAppToggleRow)
     }
     super.onDetachedFromWindow()
@@ -4464,6 +4617,7 @@ class HybridReaderOverlayView @JvmOverloads constructor(
     onTafsirStepAyah = null
     onAppThemeStyleSelected = null
     onAppThemeModeSelected = null
+    onOledDarkModeChanged = null
     onPageAppearanceUpdated = null
     onMushafNudgeChanged = null
     studyDrawerHeightAnimator?.cancel()
@@ -4490,6 +4644,7 @@ class HybridReaderOverlayView @JvmOverloads constructor(
   internal fun toolAppearanceBtnForTest(): View = toolAppearanceBtn
   internal fun audioCapsuleCardForTest(): View = audioCapsuleCard
   internal fun capsulePlayBtnForTest(): View = capsulePlayBtn
+  internal fun ayahBarWrapperForTest(): View? = if (isAyahBarBuilt) ayahBarWrapper else null
   internal fun ayahActionPillForTest(): View? = if (isAyahBarBuilt) ayahActionPill else null
   internal fun ayahSelectionTagPillForTest(): TextView? = if (isAyahBarBuilt) ayahSelectionTagPill else null
   internal fun studyDrawerScrimForTest(): View? = if (isStudyDrawerBuilt) studyDrawerScrim else null
@@ -4497,6 +4652,9 @@ class HybridReaderOverlayView @JvmOverloads constructor(
   internal fun appearanceSheetScrimForTest(): View? = if (isAppearanceSheetBuilt) appearanceSheetScrim else null
   internal fun appearanceSheetCardForTest(): ViewGroup? = if (isAppearanceSheetBuilt) appearanceSheetCard else null
   internal fun appearanceSheetDoneBtnForTest(): View? = if (isAppearanceSheetBuilt) appearanceSheetDoneBtn else null
+  internal fun oledToggleRowForTest(): View? = if (isAppearanceSheetBuilt) oledToggleRow else null
+  internal fun isOledToggleCheckedForTest(): Boolean = isOledToggleChecked
+  internal fun currentPaletteForTest(): HybridViewPalette = palette
   internal fun drawerTabButtonsForTest(): Map<HybridReaderContract.StudyTab, TextView> = drawerTabButtons
   internal fun recPlayBtnForTest(): View? = if (isRecitationTabBuilt) recPlayBtn else null
   internal fun recStopBtnForTest(): View? = if (isRecitationTabBuilt) recStopBtn else null

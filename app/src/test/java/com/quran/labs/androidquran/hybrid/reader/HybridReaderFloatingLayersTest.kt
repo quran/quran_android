@@ -6,8 +6,11 @@ import android.graphics.Outline
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Looper
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.CheckBox
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.compose.ui.graphics.toArgb
@@ -43,6 +46,7 @@ class HybridReaderFloatingLayersTest {
   @After
   fun tearDown() {
     AppThemeStyle.select(AppThemeStyle.DEFAULT)
+    AppThemeStyle.setOledDarkMode(false)
   }
 
   private fun measureAndLayout(view: View, widthPx: Int = 720, heightPx: Int = 1604) {
@@ -538,5 +542,307 @@ class HybridReaderFloatingLayersTest {
       assertThat(darkFill and 0x00FFFFFF).isEqualTo(darkEditorial and 0x00FFFFFF)
       assertThat(Color.alpha(darkFill)).isIn(50..52)
     }
+  }
+
+  @Test
+  fun `floating ayah bar stays hidden on Tafsir stepping or missing-degenerate bounds and anchors below or above ayah after closing Tafsir or Search jump`() {
+    val activity = Robolectric.buildActivity(FragmentActivity::class.java).setup().get()
+    val overlay = HybridReaderOverlayView(activity)
+    activity.setContentView(overlay)
+    overlay.applyWindowInsets(statusTop = 64, navBottom = 48)
+    measureAndLayout(overlay)
+
+    // 1. Search -> Reader jump BEFORE glyph coordinates arrive (bounds == null): bar MUST stay hidden (never top-right!)
+    overlay.render(
+      HybridReaderUiState(
+        currentPage = 42,
+        suraNumber = 2,
+        suraName = "البقرة",
+        selectedStart = SuraAyah(2, 255),
+        selectedEnd = SuraAyah(2, 255),
+        selectedSuraName = "سورة البقرة",
+        ayahOverlayBounds = null,
+        isStudyDrawerOpen = false
+      )
+    )
+    measureAndLayout(overlay)
+    assertThat(overlay.ayahBarWrapperForTest()?.visibility ?: View.INVISIBLE).isNotEqualTo(View.VISIBLE)
+
+    // 2. Degenerate (0,0,0,0) bounds MUST also keep bar hidden
+    overlay.render(
+      HybridReaderUiState(
+        currentPage = 42,
+        suraNumber = 2,
+        suraName = "البقرة",
+        selectedStart = SuraAyah(2, 255),
+        selectedEnd = SuraAyah(2, 255),
+        selectedSuraName = "سورة البقرة",
+        ayahOverlayBounds = AyahOverlayBounds(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f),
+        isStudyDrawerOpen = false
+      )
+    )
+    measureAndLayout(overlay)
+    assertThat(overlay.ayahBarWrapperForTest()?.visibility ?: View.INVISIBLE).isNotEqualTo(View.VISIBLE)
+
+    // 3. Valid bounds arrive on Search -> Reader jump: bar anchors cleanly BELOW ayah (NEVER at top-right!)
+    val searchBounds = AyahOverlayBounds(
+      firstLineLeft = 100f,
+      firstLineTop = 500f,
+      firstLineRight = 600f,
+      firstLineBottom = 560f,
+      lastLineLeft = 140f,
+      lastLineTop = 565f,
+      lastLineRight = 560f,
+      lastLineBottom = 625f
+    )
+    overlay.render(
+      HybridReaderUiState(
+        currentPage = 42,
+        suraNumber = 2,
+        suraName = "البقرة",
+        selectedStart = SuraAyah(2, 255),
+        selectedEnd = SuraAyah(2, 255),
+        selectedSuraName = "سورة البقرة",
+        ayahOverlayBounds = searchBounds,
+        isStudyDrawerOpen = false
+      )
+    )
+    measureAndLayout(overlay)
+    val wrapper = overlay.ayahBarWrapperForTest()!!
+    assertThat(wrapper.visibility).isEqualTo(View.VISIBLE)
+    val lpAfterSearch = wrapper.layoutParams as FrameLayout.LayoutParams
+    assertThat(lpAfterSearch.gravity).isEqualTo(Gravity.TOP or Gravity.LEFT)
+    assertThat(wrapper.top).isGreaterThan(625)
+
+    // 4. Opening Tafsir and stepping to next ayah (2:256) MUST hide the Floating Ayah Action Bar
+    overlay.render(
+      HybridReaderUiState(
+        currentPage = 42,
+        suraNumber = 2,
+        suraName = "البقرة",
+        selectedStart = SuraAyah(2, 256),
+        selectedEnd = SuraAyah(2, 256),
+        selectedSuraName = "سورة البقرة",
+        ayahOverlayBounds = searchBounds,
+        isStudyDrawerOpen = true,
+        selectedStudyTab = StudyTab.TAFSIR
+      )
+    )
+    Shadows.shadowOf(Looper.getMainLooper()).idleFor(350, TimeUnit.MILLISECONDS)
+    measureAndLayout(overlay)
+    assertThat(wrapper.visibility).isNotEqualTo(View.VISIBLE)
+
+    // 5. Closing Tafsir while bounds are still refreshing (null) MUST keep bar hidden until fresh bounds arrive
+    overlay.render(
+      HybridReaderUiState(
+        currentPage = 42,
+        suraNumber = 2,
+        suraName = "البقرة",
+        selectedStart = SuraAyah(2, 256),
+        selectedEnd = SuraAyah(2, 256),
+        selectedSuraName = "سورة البقرة",
+        ayahOverlayBounds = null,
+        isStudyDrawerOpen = false
+      )
+    )
+    measureAndLayout(overlay)
+    assertThat(wrapper.visibility).isNotEqualTo(View.VISIBLE)
+
+    // 6. Fresh un-nudged bounds near bottom of page (above/overlapping capsule zone) arrive after closing Tafsir:
+    // bar flips and anchors cleanly ABOVE ayah (zero overlap with ayah, never stuck top-right)
+    val lowerAyahBounds = AyahOverlayBounds(
+      firstLineLeft = 100f,
+      firstLineTop = 1420f,
+      firstLineRight = 600f,
+      firstLineBottom = 1470f,
+      lastLineLeft = 120f,
+      lastLineTop = 1475f,
+      lastLineRight = 580f,
+      lastLineBottom = 1525f
+    )
+    overlay.render(
+      HybridReaderUiState(
+        currentPage = 42,
+        suraNumber = 2,
+        suraName = "البقرة",
+        selectedStart = SuraAyah(2, 256),
+        selectedEnd = SuraAyah(2, 256),
+        selectedSuraName = "سورة البقرة",
+        ayahOverlayBounds = lowerAyahBounds,
+        isStudyDrawerOpen = false
+      )
+    )
+    measureAndLayout(overlay)
+    assertThat(wrapper.visibility).isEqualTo(View.VISIBLE)
+    val lpAfterClose = wrapper.layoutParams as FrameLayout.LayoutParams
+    assertThat(lpAfterClose.gravity).isEqualTo(Gravity.TOP or Gravity.LEFT)
+    assertThat(wrapper.bottom).isAtMost(1420)
+    assertThat(wrapper.top).isGreaterThan(64)
+  }
+
+  @Test
+  fun `standalone Reader Appearance Sheet shows OLED toggle only in Dark mode updates palette to pure black and keeps sheet open`() {
+    val activity = Robolectric.buildActivity(FragmentActivity::class.java).setup().get()
+    val overlay = HybridReaderOverlayView(activity)
+    activity.setContentView(overlay)
+    overlay.applyWindowInsets(statusTop = 64, navBottom = 48)
+    measureAndLayout(overlay)
+
+    var lastOledCallback: Boolean? = null
+    val cbField = HybridReaderOverlayView::class.java.getDeclaredField("onOledDarkModeChanged")
+    cbField.isAccessible = true
+    cbField.set(overlay, { enabled: Boolean -> lastOledCallback = enabled })
+
+    // 1. Light mode: OLED toggle MUST be GONE
+    overlay.render(
+      HybridReaderUiState(
+        currentPage = 1,
+        suraNumber = 1,
+        suraName = "الفاتحة",
+        isAppearanceSheetOpen = true,
+        appearanceState = ReaderAppearanceState(
+          appThemeStyle = AppThemeStyle.BEIGE,
+          appThemeMode = Constants.THEME_LIGHT,
+          isOledDarkMode = false
+        )
+      )
+    )
+    measureAndLayout(overlay)
+    val oledRow = overlay.oledToggleRowForTest()!!
+    assertThat(oledRow.visibility).isEqualTo(View.GONE)
+    assertThat(overlay.currentPaletteForTest().isOled).isFalse()
+
+    // 2. Dark mode: OLED toggle MUST be VISIBLE with checkable a11y semantics and zero CheckBox widgets
+    overlay.render(
+      HybridReaderUiState(
+        currentPage = 1,
+        suraNumber = 1,
+        suraName = "الفاتحة",
+        isAppearanceSheetOpen = true,
+        appearanceState = ReaderAppearanceState(
+          appThemeStyle = AppThemeStyle.BEIGE,
+          appThemeMode = Constants.THEME_DARK,
+          isOledDarkMode = false
+        )
+      )
+    )
+    measureAndLayout(overlay)
+    assertThat(oledRow.visibility).isEqualTo(View.VISIBLE)
+    assertThat(overlay.isOledToggleCheckedForTest()).isFalse()
+    val a11yInfo = AccessibilityNodeInfo.obtain()
+    oledRow.onInitializeAccessibilityNodeInfo(a11yInfo)
+    assertThat(a11yInfo.isCheckable).isTrue()
+    assertThat(a11yInfo.isChecked).isFalse()
+    a11yInfo.recycle()
+
+    val sheetViews = ArrayList<View>()
+    fun collect(v: View) {
+      sheetViews.add(v)
+      if (v is ViewGroup) {
+        for (i in 0 until v.childCount) collect(v.getChildAt(i))
+      }
+    }
+    collect(overlay.appearanceSheetCardForTest()!!)
+    assertThat(sheetViews.none { it is CheckBox }).isTrue()
+    val texts = sheetViews.filterIsInstance<TextView>().map { it.text.toString() }
+    assertThat(texts).contains(context.getString(R.string.hybrid_appearance_oled_title))
+    assertThat(texts).contains(context.getString(R.string.hybrid_appearance_oled_subtitle))
+
+    // 3. Tapping OLED row dispatches callback, updates toggle visual, and keeps Appearance Sheet OPEN
+    oledRow.performClick()
+    assertThat(lastOledCallback).isTrue()
+    assertThat(overlay.isOledToggleCheckedForTest()).isTrue()
+    assertThat(overlay.isAppearanceSheetRenderVisibleForTest()).isTrue()
+
+    // 4. Rendering OLED enabled state updates overlay palette to true pure black (#000000) while staying open
+    overlay.render(
+      HybridReaderUiState(
+        currentPage = 1,
+        suraNumber = 1,
+        suraName = "الفاتحة",
+        isAppearanceSheetOpen = true,
+        appearanceState = ReaderAppearanceState(
+          appThemeStyle = AppThemeStyle.BEIGE,
+          appThemeMode = Constants.THEME_DARK,
+          isOledDarkMode = true
+        )
+      )
+    )
+    measureAndLayout(overlay)
+    val oledPalette = overlay.currentPaletteForTest()
+    assertThat(oledPalette.isOled).isTrue()
+    assertThat(oledPalette.surface).isEqualTo(Color.BLACK)
+    assertThat(oledPalette.mushafOverlayBg).isEqualTo(Color.BLACK)
+    assertThat(overlay.isAppearanceSheetRenderVisibleForTest()).isTrue()
+  }
+
+  @Test
+  fun `top-left tools pill omits redundant Tafsir button while keeping Save and Appearance and preserving Tafsir in Ayah Bar and Study Drawer`() {
+    val activity = Robolectric.buildActivity(FragmentActivity::class.java).setup().get()
+    val overlay = HybridReaderOverlayView(activity)
+    activity.setContentView(overlay)
+    overlay.applyWindowInsets(statusTop = 64, navBottom = 48)
+    measureAndLayout(overlay)
+
+    val validBounds = AyahOverlayBounds(
+      firstLineLeft = 100f,
+      firstLineTop = 500f,
+      firstLineRight = 600f,
+      firstLineBottom = 560f,
+      lastLineLeft = 140f,
+      lastLineTop = 565f,
+      lastLineRight = 560f,
+      lastLineBottom = 625f
+    )
+    overlay.render(
+      HybridReaderUiState(
+        currentPage = 1,
+        suraNumber = 1,
+        suraName = "الفاتحة",
+        selectedStart = SuraAyah(1, 7),
+        selectedEnd = SuraAyah(1, 7),
+        selectedSuraName = "سورة الفاتحة",
+        ayahOverlayBounds = validBounds
+      )
+    )
+    measureAndLayout(overlay)
+
+    fun collectTexts(root: View): List<String> {
+      val out = ArrayList<String>()
+      fun walk(v: View) {
+        if (v is TextView) out.add(v.text.toString())
+        if (v is ViewGroup) {
+          for (i in 0 until v.childCount) walk(v.getChildAt(i))
+        }
+      }
+      walk(root)
+      return out
+    }
+
+    // Top-left tools pill MUST have ONLY Save + Appearance (zero redundant Tafsir button!)
+    val toolsPill = overlay.toolsPillForTest()
+    val topToolTexts = collectTexts(toolsPill)
+    assertThat(topToolTexts).containsExactly(
+      context.getString(R.string.hybrid_reader_tool_save),
+      context.getString(R.string.hybrid_reader_tool_appearance)
+    )
+    assertThat(topToolTexts).doesNotContain(context.getString(R.string.hybrid_reader_tool_tafsir))
+
+    // Tafsir MUST remain accessible from the Floating Ayah Action Bar
+    val ayahBarTexts = collectTexts(overlay.ayahActionPillForTest()!!)
+    assertThat(ayahBarTexts).contains(context.getString(R.string.hybrid_reader_action_tafsir))
+
+    // Tafsir MUST remain accessible from the bottom Study Drawer tab rail
+    overlay.render(
+      HybridReaderUiState(
+        currentPage = 1,
+        suraNumber = 1,
+        suraName = "الفاتحة",
+        isStudyDrawerOpen = true,
+        selectedStudyTab = StudyTab.TAFSIR
+      )
+    )
+    measureAndLayout(overlay)
+    assertThat(overlay.drawerTabButtonsForTest().containsKey(StudyTab.TAFSIR)).isTrue()
   }
 }

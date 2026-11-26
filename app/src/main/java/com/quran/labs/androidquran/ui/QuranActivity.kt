@@ -121,6 +121,10 @@ class QuranActivity : AppCompatActivity(),
   internal val appliedThemeStyleForTest: AppThemeStyle
     get() = appliedThemeStyle
 
+  @VisibleForTesting
+  internal val appliedOledDarkModeForTest: Boolean
+    get() = appliedOledDarkMode
+
   @Inject lateinit var quranNavigator: Provider<QuranNavigator>
   @Inject lateinit var settings: QuranSettings
   @Inject lateinit var audioUtils: Provider<AudioUtils>
@@ -134,6 +138,7 @@ class QuranActivity : AppCompatActivity(),
 
   private var appliedThemeStyle: AppThemeStyle = AppThemeStyle.DEFAULT
   private var appliedDarkMode: Boolean = false
+  private var appliedOledDarkMode: Boolean = false
 
   private val searchActionHandler = object : HybridSearchActionHandler {
     override fun openPage(page: Int, sura: Int, ayah: Int) {
@@ -182,7 +187,8 @@ class QuranActivity : AppCompatActivity(),
       (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
         Configuration.UI_MODE_NIGHT_YES
     appliedDarkMode = ThemeUtil.isDarkAppearance(settings.currentTheme(), isSystemDark)
-    val initialPalette = HybridViewPalette.from(appliedThemeStyle, appliedDarkMode)
+    appliedOledDarkMode = settings.isOledDarkMode
+    val initialPalette = HybridViewPalette.from(appliedThemeStyle, appliedDarkMode, appliedOledDarkMode)
 
     hubView = HybridHubView(
       context = this,
@@ -229,13 +235,26 @@ class QuranActivity : AppCompatActivity(),
       },
       onSelectThemeMode = { mode ->
         hubStateHolder.updateThemeMode(mode)
+        val systemDarkNow =
+          (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES
+        val darkNow = ThemeUtil.isDarkAppearance(mode, systemDarkNow)
+        if (darkNow != appliedDarkMode) {
+          appliedDarkMode = darkNow
+          hubView.applyPalette(
+            HybridViewPalette.from(appliedThemeStyle, darkNow, appliedOledDarkMode)
+          )
+          ThemeUtil.enableThemedEdgeToEdge(this@QuranActivity)
+        }
+        syncHubBackCallback()
+        hubView.render(hubStateHolder.uiState.value, showPaletteSheet)
       },
       onSelectThemeStyle = { style ->
         hubStateHolder.updateThemeStyle(style)
         if (style != appliedThemeStyle) {
           appliedThemeStyle = style
           theme.applyStyle(ThemeUtil.themeOverlayRes(style), true)
-          hubView.applyPalette(HybridViewPalette.from(style, appliedDarkMode))
+          hubView.applyPalette(HybridViewPalette.from(style, appliedDarkMode, appliedOledDarkMode))
           ThemeUtil.enableThemedEdgeToEdge(this@QuranActivity)
         }
         syncHubBackCallback()
@@ -265,7 +284,19 @@ class QuranActivity : AppCompatActivity(),
       onOpenTranslationManager = {
         startActivity(Intent(this@QuranActivity, TranslationManagerActivity::class.java))
       },
-      initialPalette = initialPalette
+      initialPalette = initialPalette,
+      onToggleOledDarkMode = { enabled ->
+        hubStateHolder.updateOledDarkMode(enabled)
+        if (enabled != appliedOledDarkMode) {
+          appliedOledDarkMode = enabled
+          hubView.applyPalette(
+            HybridViewPalette.from(appliedThemeStyle, appliedDarkMode, appliedOledDarkMode)
+          )
+          ThemeUtil.enableThemedEdgeToEdge(this@QuranActivity)
+        }
+        syncHubBackCallback()
+        hubView.render(hubStateHolder.uiState.value, showPaletteSheet)
+      }
     )
 
     ViewCompat.setOnApplyWindowInsetsListener(hubView) { _, insets ->
@@ -313,9 +344,11 @@ class QuranActivity : AppCompatActivity(),
             (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
               Configuration.UI_MODE_NIGHT_YES
           val darkNow = ThemeUtil.isDarkAppearance(uiState.appTheme, systemDarkNow)
-          if (darkNow != appliedDarkMode) {
+          val oledNow = uiState.isOledDarkMode
+          if (darkNow != appliedDarkMode || oledNow != appliedOledDarkMode) {
             appliedDarkMode = darkNow
-            hubView.applyPalette(HybridViewPalette.from(appliedThemeStyle, darkNow))
+            appliedOledDarkMode = oledNow
+            hubView.applyPalette(HybridViewPalette.from(appliedThemeStyle, darkNow, oledNow))
             ThemeUtil.enableThemedEdgeToEdge(this@QuranActivity)
           }
           syncHubBackCallback()
@@ -366,6 +399,18 @@ class QuranActivity : AppCompatActivity(),
     } else {
       if (::hubView.isInitialized) {
         hubView.onActivityResume()
+        val systemDarkNow =
+          (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES
+        val darkNow = ThemeUtil.isDarkAppearance(settings.currentTheme(), systemDarkNow)
+        val oledNow = settings.isOledDarkMode
+        AppThemeStyle.setOledDarkMode(oledNow)
+        if (darkNow != appliedDarkMode || oledNow != appliedOledDarkMode) {
+          appliedDarkMode = darkNow
+          appliedOledDarkMode = oledNow
+          hubView.applyPalette(HybridViewPalette.from(appliedThemeStyle, darkNow, oledNow))
+          ThemeUtil.enableThemedEdgeToEdge(this)
+        }
       }
       hubStateHolder.syncThemeFromSettings()
       hubStateHolder.refreshDailyWirdForNewDay()
@@ -482,7 +527,7 @@ class QuranActivity : AppCompatActivity(),
     wirdGoalDialog?.dismiss()
     showWirdGoalDialog = true
     syncHubBackCallback()
-    val palette = HybridViewPalette.from(appliedThemeStyle, appliedDarkMode)
+    val palette = HybridViewPalette.from(appliedThemeStyle, appliedDarkMode, appliedOledDarkMode)
     wirdGoalDialog = DailyWirdGoalDialogNative.show(
       context = this,
       initialGoalPages = hubStateHolder.uiState.value.dailyWird.goalPages,

@@ -102,6 +102,34 @@ class HybridPaletteSheetSemanticsTest {
       val idx = AppThemeStyle.entries.indexOf(style)
       assertThat(styleNode.mergedLabelText()).contains(styleLabels[idx])
     }
+
+    // OLED toggle is absent in Light mode
+    assertThat(
+      clickableNodes.any { it.config.getOrNull(SemanticsProperties.TestTag) == "hub_palette_oled_toggle" }
+    ).isFalse()
+
+    // OLED toggle appears with merged switch semantics in Dark mode
+    val darkNodes = composeAndMeasure {
+      QuranTheme(useDarkTheme = true, style = AppThemeStyle.BEIGE) {
+        HybridPaletteSheetContent(
+          currentAppTheme = Constants.THEME_DARK,
+          currentThemeStyle = AppThemeStyle.BEIGE,
+          isDarkActive = true,
+          onSelectThemeMode = {},
+          onSelectThemeStyle = {},
+          onDismiss = {},
+          isOledDarkMode = true,
+          onToggleOledDarkMode = {}
+        )
+      }
+    }
+    val oledNode = darkNodes.firstOrNull {
+      it.config.getOrNull(SemanticsProperties.TestTag) == "hub_palette_oled_toggle"
+    }
+    assertWithMessage("OLED toggle must appear in Dark mode with merged clickable semantics")
+      .that(oledNode).isNotNull()
+    assertThat(oledNode!!.config.contains(SemanticsActions.OnClick)).isTrue()
+    assertThat(oledNode.mergedLabelText()).contains(context.getString(R.string.hybrid_appearance_oled_title))
   }
 
   @Test

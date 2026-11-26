@@ -37,6 +37,33 @@ class HybridSearchHighlighterTest {
   }
 
   @Test
+  fun `computeArabicRanges highlights lillah, proclitics, open-ta, dual, and plural forms accurately`() {
+    val qAllah = ArabicCompiledQuery.compile("الله")!!
+    val fatihah2 = "الحمد لله رب العالمين"
+    val fatihahRanges = HybridSearchHighlighter.computeArabicRanges(fatihah2, qAllah)
+    assertThat(fatihahRanges.map { fatihah2.substring(it.start, it.end) }).containsExactly("لله")
+
+    val qJannah = ArabicCompiledQuery.compile("الجنة")!!
+    val dualVerse = "وبدلناهم بجنتيهم جنتين"
+    val dualRanges = HybridSearchHighlighter.computeArabicRanges(dualVerse, qJannah)
+    assertThat(dualRanges.map { dualVerse.substring(it.start, it.end) })
+      .containsExactly("بجنتيهم", "جنتين")
+      .inOrder()
+
+    val openTaVerse = "فروح وريحان وجنت نعيم"
+    val openTaRanges = HybridSearchHighlighter.computeArabicRanges(openTaVerse, qJannah)
+    assertThat(openTaRanges.map { openTaVerse.substring(it.start, it.end) }).containsExactly("وجنت")
+
+    val pluralVerse = "لهم جنات تجري من تحتها الأنهار"
+    val pluralRanges = HybridSearchHighlighter.computeArabicRanges(pluralVerse, qJannah)
+    assertThat(pluralRanges.map { pluralVerse.substring(it.start, it.end) }).containsExactly("جنات")
+
+    val lilVerse = "طريق للجنة بإذن الله"
+    val lilRanges = HybridSearchHighlighter.computeArabicRanges(lilVerse, qJannah)
+    assertThat(lilRanges.map { lilVerse.substring(it.start, it.end) }).containsExactly("للجنة")
+  }
+
+  @Test
   fun `extractPlainTextAndRanges parses font tags via fast path without TagSoup`() {
     val raw = "In the name of <font color=\"-13388315\">Allah</font>, the Merciful"
     val (plain, ranges) = HybridSearchHighlighter.extractPlainTextAndRanges(raw)

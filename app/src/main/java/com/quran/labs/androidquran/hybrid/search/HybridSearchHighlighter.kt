@@ -7,6 +7,7 @@ import androidx.annotation.ColorInt
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import com.quran.common.search.RustArabicSearchEngine
 import com.quran.common.search.arabic.ArabicCompiledQuery
 import com.quran.labs.androidquran.util.SearchResultFormatter
 
@@ -18,15 +19,15 @@ object HybridSearchHighlighter {
     rustVerseIndex: Int = -1,
     rustGeneration: Int = -1
   ): List<HighlightSpanRange> {
-    if (text.isEmpty() || compiledQuery == null) {
+    if (text.isEmpty() || compiledQuery == null || text.indexOf('<') >= 0) {
       return emptyList()
     }
-    val packed = SearchResultFormatter.extractArabicMatchRanges(
-      text = text,
-      compiledQuery = compiledQuery,
-      rustVerseIndex = rustVerseIndex,
-      rustGeneration = rustGeneration
-    )
+    val nativeSpans = if (rustVerseIndex >= 0 && rustGeneration > 0) {
+      RustArabicSearchEngine.findMatchSpans(rustVerseIndex, compiledQuery.query, rustGeneration)
+    } else {
+      null
+    }
+    val packed = nativeSpans ?: compiledQuery.findAllMatchSpans(text)
     return toHighlightRanges(packed, text.length)
   }
 
@@ -42,10 +43,7 @@ object HybridSearchHighlighter {
       return plainText to toHighlightRanges(packed, plainText.length)
     }
     if (arabicQueryFallback != null) {
-      val fallbackPacked = SearchResultFormatter.extractArabicMatchRanges(
-        text = plainText,
-        compiledQuery = arabicQueryFallback
-      )
+      val fallbackPacked = arabicQueryFallback.findAllMatchSpans(plainText)
       return plainText to toHighlightRanges(fallbackPacked, plainText.length)
     }
     return plainText to emptyList()

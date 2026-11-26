@@ -340,4 +340,27 @@ class HybridReaderGeometryAndFormattingTest {
       assertThat(p.suppressTopPills || p.suppressBottomCapsule).isTrue()
     }
   }
+
+  @Test
+  fun `AyahOverlayBounds isValidForOverlay rejects zero, degenerate, NaN, and offscreen bounds`() {
+    assertThat(AyahOverlayBounds(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f).isValidForOverlay()).isFalse()
+    assertThat(AyahOverlayBounds(100f, 200f, 100f, 250f, 100f, 200f, 100f, 250f).isValidForOverlay()).isFalse()
+    assertThat(AyahOverlayBounds(100f, 200f, 300f, 201f, 100f, 200f, 300f, 201f).isValidForOverlay()).isFalse()
+    assertThat(AyahOverlayBounds(Float.NaN, 200f, 300f, 260f, 100f, 200f, 300f, 260f).isValidForOverlay()).isFalse()
+    // Completely above status bar
+    assertThat(
+      AyahOverlayBounds(100f, 10f, 400f, 50f, 100f, 10f, 400f, 50f)
+        .isValidForOverlay(minBottomPx = 64f, maxTopPx = 1604f)
+    ).isFalse()
+    // Completely below viewport
+    assertThat(
+      AyahOverlayBounds(100f, 1620f, 400f, 1680f, 100f, 1620f, 400f, 1680f)
+        .isValidForOverlay(minBottomPx = 64f, maxTopPx = 1604f)
+    ).isFalse()
+    // Valid on-screen ayah bounds
+    assertThat(
+      AyahOverlayBounds(100f, 400f, 580f, 460f, 140f, 465f, 540f, 525f)
+        .isValidForOverlay(minBottomPx = 64f, maxTopPx = 1604f)
+    ).isTrue()
+  }
 }

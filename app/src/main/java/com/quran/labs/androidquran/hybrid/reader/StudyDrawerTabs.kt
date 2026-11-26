@@ -1078,7 +1078,8 @@ fun ReaderAppearanceSheet(
   onMatchAppThemeChanged: (Boolean) -> Unit,
   onNightTextBrightnessChanged: (Int) -> Unit,
   onNightBgBrightnessChanged: (Int) -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  onOledDarkModeChanged: (Boolean) -> Unit = {}
 ) {
   val quranColors = LocalQuranColors.current
   val isDark = !quranColors.isLightToolbar
@@ -1203,6 +1204,41 @@ fun ReaderAppearanceSheet(
               )
             }
           }
+        }
+      }
+
+      // 1b. Pure Black OLED Dark Mode Toggle (visible ONLY in Dark Mode; keeps sheet open!)
+      if (isDark) {
+        Row(
+          modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f))
+            .border(width = 1.dp, color = quranColors.divider, shape = RoundedCornerShape(12.dp))
+            .semantics(mergeDescendants = true) {}
+            .clickable(role = Role.Switch, onClick = { onOledDarkModeChanged(!appearance.isOledDarkMode) })
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+          Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+          ) {
+            Text(
+              text = stringResource(R.string.hybrid_appearance_oled_title),
+              color = textPrimary,
+              fontSize = 12.5.sp,
+              fontWeight = FontWeight.Bold
+            )
+            Text(
+              text = stringResource(R.string.hybrid_appearance_oled_subtitle),
+              color = textSecondary,
+              fontSize = 11.sp
+            )
+          }
+          Spacer(modifier = Modifier.width(8.dp))
+          Switch(checked = appearance.isOledDarkMode, onCheckedChange = null)
         }
       }
 

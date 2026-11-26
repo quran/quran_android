@@ -94,6 +94,7 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
 
   private var appliedThemeStyle: AppThemeStyle = AppThemeStyle.DEFAULT
   private var appliedDarkMode: Boolean = false
+  private var appliedOledDarkMode: Boolean = false
 
   private val searchActionHandler = object : HybridSearchActionHandler {
     override fun openPage(page: Int, sura: Int, ayah: Int) {
@@ -163,7 +164,8 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
       (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
         Configuration.UI_MODE_NIGHT_YES
     appliedDarkMode = ThemeUtil.isDarkAppearance(quranSettings.currentTheme(), isSystemDark)
-    val palette = HybridViewPalette.from(appliedThemeStyle, appliedDarkMode)
+    appliedOledDarkMode = quranSettings.isOledDarkMode
+    val palette = HybridViewPalette.from(appliedThemeStyle, appliedDarkMode, appliedOledDarkMode)
 
     rootView = FrameLayout(this).apply {
       layoutDirection = View.LAYOUT_DIRECTION_RTL
@@ -266,11 +268,33 @@ class SearchActivity : AppCompatActivity(), SimpleDownloadListener {
       (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
         Configuration.UI_MODE_NIGHT_YES
     val nowDark = ThemeUtil.isDarkAppearance(quranSettings.currentTheme(), isSystemDark)
+    val nowOled = quranSettings.isOledDarkMode
+    AppThemeStyle.setOledDarkMode(nowOled)
     if (AppThemeStyle.fromPreference(quranSettings.appThemeStyle) != appliedThemeStyle ||
       nowDark != appliedDarkMode
     ) {
       recreate()
       return
+    }
+    if (nowOled != appliedOledDarkMode) {
+      appliedOledDarkMode = nowOled
+      val updatedPalette = HybridViewPalette.from(appliedThemeStyle, appliedDarkMode, appliedOledDarkMode)
+      if (::rootView.isInitialized) {
+        rootView.background = HybridViewTokens.canvasAmbientGlowDrawable(
+          surface = updatedPalette.surface,
+          surfaceTopGlow = updatedPalette.surfaceTopGlow
+        )
+      }
+      if (::nativeSearchView.isInitialized) {
+        nativeSearchView.applyPalette(updatedPalette)
+      }
+      if (::bottomFadeView.isInitialized) {
+        bottomFadeView.background = HybridViewTokens.scrollUnderVeilDrawable(updatedPalette.surface)
+      }
+      if (::bottomNavView.isInitialized) {
+        bottomNavView.applyPalette(updatedPalette)
+      }
+      ThemeUtil.enableThemedEdgeToEdge(this)
     }
     if (::nativeSearchView.isInitialized) {
       nativeSearchView.restoreInputIfNeeded()

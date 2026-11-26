@@ -58,6 +58,8 @@ class HybridHubStateHolderTest {
     quranInfo = QuranInfo(MadaniDataSource())
     settings = QuranSettings.getInstance(context)
     settings.appThemeStyle = AppThemeStyle.DEFAULT.storageKey
+    settings.isOledDarkMode = false
+    AppThemeStyle.setOledDarkMode(false)
     settings.pageType = "madani"
 
     val wirdPrefs = context.getSharedPreferences("test_hub_wird_prefs", Context.MODE_PRIVATE)
@@ -201,5 +203,20 @@ class HybridHubStateHolderTest {
     stateHolder.updateThemeMode(Constants.THEME_DARK)
     assertThat(stateHolder.uiState.value.appTheme).isEqualTo(Constants.THEME_DARK)
     assertThat(settings.pageAppearance).isEqualTo(PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC)
+
+    try {
+      stateHolder.updateOledDarkMode(true)
+      assertThat(stateHolder.uiState.value.isOledDarkMode).isTrue()
+      assertThat(settings.isOledDarkMode).isTrue()
+      assertThat(AppThemeStyle.isOledDarkMode).isTrue()
+
+      settings.isOledDarkMode = false
+      stateHolder.syncThemeFromSettings()
+      assertThat(stateHolder.uiState.value.isOledDarkMode).isFalse()
+      assertThat(AppThemeStyle.isOledDarkMode).isFalse()
+    } finally {
+      settings.isOledDarkMode = false
+      AppThemeStyle.setOledDarkMode(false)
+    }
   }
 }

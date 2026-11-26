@@ -103,11 +103,14 @@ class HybridHubStateHolder internal constructor(
   private fun createInitialState(): HybridHubUiState {
     val initialWird = dailyWirdRepository.stateFlow.value
     val prewarmedSuras = indexDataSource.getCachedSurasOrNull(context)
+    val oled = settings.isOledDarkMode
+    AppThemeStyle.setOledDarkMode(oled)
     return HybridHubUiState(
       selectedTab = HybridNavTab.INDEX,
       indexSegment = HubIndexSegment.SURAS,
       themeStyle = AppThemeStyle.fromPreference(settings.appThemeStyle),
       appTheme = settings.currentTheme(),
+      isOledDarkMode = oled,
       dailyWird = initialWird,
       fallbackLastSuraName = suraNameForPage(initialWird.lastPage),
       suras = prewarmedSuras ?: indexDataSource.buildSurasRange(context, 1, INITIAL_VISIBLE_SURAS),
@@ -228,10 +231,13 @@ class HybridHubStateHolder internal constructor(
   }
 
   fun syncThemeFromSettings() {
+    val oled = settings.isOledDarkMode
+    AppThemeStyle.setOledDarkMode(oled)
     _uiState.update {
       it.copy(
         themeStyle = AppThemeStyle.fromPreference(settings.appThemeStyle),
-        appTheme = settings.currentTheme()
+        appTheme = settings.currentTheme(),
+        isOledDarkMode = oled
       )
     }
   }
@@ -250,6 +256,12 @@ class HybridHubStateHolder internal constructor(
     settings.appThemeStyle = style.storageKey
     ThemeUtil.applyThemeStyle(style)
     _uiState.update { it.copy(themeStyle = style) }
+  }
+
+  fun updateOledDarkMode(enabled: Boolean) {
+    settings.isOledDarkMode = enabled
+    AppThemeStyle.setOledDarkMode(enabled)
+    _uiState.update { it.copy(isOledDarkMode = enabled) }
   }
 
   suspend fun toggleAyahBookmark(sura: Int, ayah: Int): Boolean {

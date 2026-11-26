@@ -101,10 +101,13 @@ class QuranDataProviderSearchTest {
 
       val cursor = searcher.runQuery(db, sql, likeArg, "الله", true, columns)
       try {
-        assertThat(cursor.count).isEqualTo(1)
+        assertThat(cursor.count).isEqualTo(2)
         assertThat(cursor.moveToFirst()).isTrue()
         assertThat(cursor.getString(3))
           .isEqualTo("بسم <font color=\"$1\">الله</font> الرحمن الرحيم")
+        assertThat(cursor.moveToNext()).isTrue()
+        assertThat(cursor.getString(3))
+          .isEqualTo("الحمد <font color=\"$1\">لله</font> رب العالمين")
       } finally {
         cursor.close()
       }
@@ -143,7 +146,7 @@ class QuranDataProviderSearchTest {
         assertThat(fullCursor.getInt(1)).isEqualTo(2)
         assertThat(fullCursor.getInt(2)).isEqualTo(255)
         assertThat(fullCursor.getString(3)).isEqualTo(
-          "<font color=\"-13388315\">الله</font> لا إله إلا هو الحي القيوم و<font color=\"-13388315\">الله</font> عليم"
+          "<font color=\"-13388315\">الله</font> لا إله إلا هو الحي القيوم <font color=\"-13388315\">والله</font> عليم"
         )
         assertThat(fullCursor.moveToNext()).isTrue()
         assertThat(fullCursor.getInt(1)).isEqualTo(3)

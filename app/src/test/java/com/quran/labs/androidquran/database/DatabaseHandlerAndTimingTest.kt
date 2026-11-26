@@ -26,6 +26,7 @@ class DatabaseHandlerAndTimingTest {
     DatabaseHandler.clearDatabaseHandlerIfExists("translation_test.db")
     DatabaseHandler.clearDatabaseHandlerIfExists("fts3.db")
     DatabaseHandler.clearDatabaseHandlerIfExists("ar_norm.db")
+    DatabaseHandler.clearDatabaseHandlerIfExists("ar_comp.db")
   }
 
   @Test
@@ -184,6 +185,68 @@ class DatabaseHandlerAndTimingTest {
       assertThat(RustArabicSearchEngine.isLoaded()).isFalse()
     } finally {
       DatabaseHandler.clearDatabaseHandlerIfExists("ar_norm.db")
+      dbFile.delete()
+    }
+  }
+
+  @Test
+  fun `searchArabicNormalized comprehensive allah and jannah recall with ranking and zero noise`() {
+    val quranFileUtils = FakeQuranFileUtils.create(context)
+    val dbDir = quranFileUtils.getQuranDatabaseDirectory().apply { mkdirs() }
+    val dbFile = File(dbDir, "ar_comp.db").apply { delete() }
+    DatabaseHandler.clearDatabaseHandlerIfExists("ar_comp.db")
+
+    SQLiteDatabase.openOrCreateDatabase(dbFile, null).use { db ->
+      db.execSQL("CREATE TABLE properties(property TEXT, value INTEGER)")
+      db.execSQL("INSERT INTO properties VALUES ('schema_version', 2)")
+      db.execSQL("CREATE VIRTUAL TABLE verses USING fts3 (sura INTEGER, ayah INTEGER, text TEXT)")
+      val rows = listOf(
+        Triple(1, 2, "الثناء على اللَّهِ والحمد لِلَّهِ رب العالمين"),
+        Triple(2, 25, "وبشر الذين آمنوا بأن لهم جَنَّاتٍ تجري من تحتها الأنهار"),
+        Triple(2, 35, "اسكن أنت وزوجك الجَنَّةَ"),
+        Triple(2, 45, "53"), // numeric hyperlink row like real quran.ar.muyassar.db
+        Triple(3, 133, "وسارعوا إلى مغفرة وجَنَّةٍ عرضها السماوات"),
+        Triple(6, 100, "وجعلوا لِلَّهِ شركاء الجِنَّ"),
+        Triple(18, 33, "كلتا الجَنَّتَيْنِ آتت أكلها"),
+        Triple(29, 64, "إنما هذه الحياة الدنيا لَهْوٌ واللَّهْوُ زائل"),
+        Triple(53, 32, "وإذ أنتم أَجِنَّةٌ في بطون أمهاتكم"),
+        Triple(53, 25, "فَلِلَّهِ الآخرة والأولى")
+      )
+      val stmt = db.compileStatement("INSERT INTO verses(sura, ayah, text) VALUES (?, ?, ?)")
+      for ((s, a, t) in rows) {
+        stmt.clearBindings()
+        stmt.bindLong(1, s.toLong())
+        stmt.bindLong(2, a.toLong())
+        stmt.bindString(3, t)
+        stmt.executeInsert()
+      }
+    }
+
+    try {
+      val handler = DatabaseHandler.getDatabaseHandler(context, "ar_comp.db", quranFileUtils)
+
+      // "الله" matches لله / للَّه / فلله and rejects اللهو (29:64) and numeric hyperlink rows!
+      handler.searchArabicNormalized("الله")!!.use { c ->
+        val pairs = mutableListOf<String>()
+        while (c.moveToNext()) {
+          pairs.add("${c.getInt(1)}:${c.getInt(2)}")
+          assertThat(c.getString(3)).contains("<font color=")
+        }
+        assertThat(pairs).containsExactly("1:2", "6:100", "53:25").inOrder()
+      }
+
+      // "الجنة" ranks Tier 1 (الجنة 2:35) -> Tier 2 (جنة 3:133) -> Tier 3 (جنات 2:25, الجنتين 18:33)
+      // and rejects الجن (6:100) and أجنة (53:32)!
+      handler.searchArabicNormalized("الجنة")!!.use { c ->
+        val pairs = mutableListOf<String>()
+        while (c.moveToNext()) {
+          pairs.add("${c.getInt(1)}:${c.getInt(2)}")
+          assertThat(c.getString(3)).contains("<font color=")
+        }
+        assertThat(pairs).containsExactly("2:35", "3:133", "2:25", "18:33").inOrder()
+      }
+    } finally {
+      DatabaseHandler.clearDatabaseHandlerIfExists("ar_comp.db")
       dbFile.delete()
     }
   }

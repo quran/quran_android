@@ -106,6 +106,7 @@ data class HybridHubUiState(
   val indexSegment: HubIndexSegment = HubIndexSegment.SURAS,
   val themeStyle: AppThemeStyle = AppThemeStyle.DEFAULT,
   val appTheme: String = Constants.THEME_DEFAULT,
+  val isOledDarkMode: Boolean = false,
   val dailyWird: DailyWirdState = DailyWirdState(),
   val fallbackLastSuraName: String = "",
   val suras: List<SuraIndexItem> = emptyList(),

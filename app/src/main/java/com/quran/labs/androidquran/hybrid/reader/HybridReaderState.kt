@@ -28,6 +28,36 @@ data class AyahOverlayBounds(
   val unNudgedLastLineBottom: Float = lastLineBottom
 )
 
+/**
+ * Guards against uninitialized, degenerate `(0,0,0,0)`, NaN/Infinite, or completely off-screen
+ * bounds before anchoring the Floating Ayah Action Bar. Prevents RTL top-right corner placement.
+ */
+fun AyahOverlayBounds.isValidForOverlay(
+  minBottomPx: Float = 0f,
+  maxTopPx: Float = Float.POSITIVE_INFINITY
+): Boolean {
+  if (!firstLineLeft.isFinite() || !firstLineTop.isFinite() ||
+    !firstLineRight.isFinite() || !firstLineBottom.isFinite() ||
+    !lastLineLeft.isFinite() || !lastLineTop.isFinite() ||
+    !lastLineRight.isFinite() || !lastLineBottom.isFinite()
+  ) {
+    return false
+  }
+  val firstWidth = firstLineRight - firstLineLeft
+  val lastWidth = lastLineRight - lastLineLeft
+  val firstHeight = firstLineBottom - firstLineTop
+  val lastHeight = lastLineBottom - lastLineTop
+  val totalTop = min(firstLineTop, lastLineTop)
+  val totalBottom = max(firstLineBottom, lastLineBottom)
+  return firstWidth > 4f &&
+    lastWidth > 4f &&
+    firstHeight > 2f &&
+    lastHeight > 2f &&
+    totalBottom > totalTop + 4f &&
+    totalBottom > minBottomPx &&
+    totalTop < maxTopPx
+}
+
 enum class AyahBarPlacementDirection {
   BELOW_AYAH,
   ABOVE_AYAH
@@ -77,6 +107,7 @@ data class TafsirDisplayState(
 data class ReaderAppearanceState(
   val appThemeStyle: AppThemeStyle = AppThemeStyle.DEFAULT,
   val appThemeMode: String = Constants.THEME_DEFAULT,
+  val isOledDarkMode: Boolean = false,
   val pageTheme: String = PageThemeConstants.PAGE_THEME_LIGHT,
   val pageAppearance: String = PageThemeConstants.PAGE_APPEARANCE_LIGHT,
   val isNightPage: Boolean = false,

@@ -32,7 +32,8 @@ class HybridPaletteSheetView(
   context: Context,
   private val onSelectThemeMode: (String) -> Unit,
   private val onSelectThemeStyle: (AppThemeStyle) -> Unit,
-  private val onDismiss: () -> Unit
+  private val onDismiss: () -> Unit,
+  private val onToggleOledDarkMode: (Boolean) -> Unit = {}
 ) : FrameLayout(context) {
 
   /**
@@ -126,17 +127,27 @@ class HybridPaletteSheetView(
   )
   private val modeLabelView = TextView(context)
   private val modeRow = LinearLayout(context)
+  private val oledRow = LinearLayout(context)
+  private val oledTitleView = TextView(context)
+  private val oledSubtitleView = TextView(context)
+  private val oledSwitchTrack = FrameLayout(context)
+  private val oledSwitchThumb = View(context)
   private val colorLabelView = TextView(context)
   private val modeButtons = LinkedHashMap<String, TextView>()
   private val styleChips = LinkedHashMap<AppThemeStyle, StyleChipHolder>()
 
   private var activeMode: String = Constants.THEME_DEFAULT
   private var activeStyle: AppThemeStyle = AppThemeStyle.BEIGE
+  private var activeOled: Boolean = false
   private var currentPalette = HybridViewPalette.from(AppThemeStyle.BEIGE, false)
 
   internal fun sheetCardForTest(): View = sheetCard
   internal fun doneButtonForTest(): View = doneButton
   internal fun modeButtonForTest(mode: String): TextView = modeButtons.getValue(mode)
+  internal fun oledToggleRowForTest(): View = oledRow
+  internal fun oledSwitchTrackForTest(): View = oledSwitchTrack
+  internal fun oledTitleViewForTest(): TextView = oledTitleView
+  internal fun oledSubtitleViewForTest(): TextView = oledSubtitleView
   internal fun styleChipForTest(style: AppThemeStyle): View = styleChips.getValue(style).chip
   internal fun styleSwatchForTest(style: AppThemeStyle): DuoToneSwatchView =
     styleChips.getValue(style).swatch
@@ -279,6 +290,74 @@ class HybridPaletteSheetView(
     }
     sheetCard.addView(modeRow)
 
+    // Pure Black (OLED) toggle row — shown ONLY when Dark appearance is active
+    oledTitleView.apply {
+      text = context.getString(R.string.hybrid_appearance_oled_title)
+      setTextSize(TypedValue.COMPLEX_UNIT_SP, 13.5f)
+      setTypeface(Typeface.DEFAULT, Typeface.BOLD)
+    }
+    oledSubtitleView.apply {
+      text = context.getString(R.string.hybrid_appearance_oled_subtitle)
+      setTextSize(TypedValue.COMPLEX_UNIT_SP, 11.5f)
+    }
+    val oledTextCol = LinearLayout(context).apply {
+      orientation = LinearLayout.VERTICAL
+      addView(oledTitleView)
+      addView(
+        oledSubtitleView,
+        LinearLayout.LayoutParams(
+          LinearLayout.LayoutParams.WRAP_CONTENT,
+          LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply { topMargin = HybridViewTokens.dp(context, 2f) }
+      )
+    }
+    val switchPad = HybridViewTokens.dp(context, 3f)
+    val thumbSize = HybridViewTokens.dp(context, 20f)
+    oledSwitchTrack.apply {
+      setPadding(switchPad, switchPad, switchPad, switchPad)
+      addView(
+        oledSwitchThumb,
+        LayoutParams(thumbSize, thumbSize, Gravity.START or Gravity.CENTER_VERTICAL)
+      )
+    }
+    oledRow.apply {
+      tag = "hub_oled_toggle_row"
+      orientation = LinearLayout.HORIZONTAL
+      gravity = Gravity.CENTER_VERTICAL
+      layoutDirection = View.LAYOUT_DIRECTION_RTL
+      isClickable = true
+      isFocusable = true
+      visibility = View.GONE
+      val ph = HybridViewTokens.dp(context, 14f)
+      val pv = HybridViewTokens.dp(context, 11f)
+      setPadding(ph, pv, ph, pv)
+      contentDescription = "${oledTitleView.text} — ${oledSubtitleView.text}"
+      addView(
+        oledTextCol,
+        LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).apply {
+          marginEnd = HybridViewTokens.dp(context, 12f)
+        }
+      )
+      addView(
+        oledSwitchTrack,
+        LinearLayout.LayoutParams(
+          HybridViewTokens.dp(context, 46f),
+          HybridViewTokens.dp(context, 26f)
+        )
+      )
+      setOnClickListener { onToggleOledDarkMode(!activeOled) }
+      HybridViewTokens.attachApplePressFeedback(this, AdaptiveMotionTokens.PRESS_SCALE)
+    }
+    sheetCard.addView(
+      oledRow,
+      LinearLayout.LayoutParams(
+        LinearLayout.LayoutParams.MATCH_PARENT,
+        LinearLayout.LayoutParams.WRAP_CONTENT
+      ).apply {
+        topMargin = HybridViewTokens.dp(context, 10f)
+      }
+    )
+
     // Duo-Tone Calm Palette (Plain color names ONLY)
     colorLabelView.apply {
       text = context.getString(R.string.hybrid_hub_theme_color_label)
@@ -389,11 +468,13 @@ class HybridPaletteSheetView(
     palette: HybridViewPalette,
     themeMode: String,
     themeStyle: AppThemeStyle,
-    navBottomInsetPx: Int
+    navBottomInsetPx: Int,
+    isOledDarkMode: Boolean = palette.isOled
   ) {
     currentPalette = palette
     activeMode = themeMode
     activeStyle = themeStyle
+    activeOled = isOledDarkMode
 
     setBackgroundColor(palette.scrim)
     val strokePx = HybridViewTokens.dp(context, 1f)
@@ -488,6 +569,41 @@ class HybridPaletteSheetView(
     }
 
     val chipRadius = HybridViewTokens.dpF(context, 14f)
+    oledRow.visibility = if (palette.isDark) View.VISIBLE else View.GONE
+    oledRow.isSelected = isOledDarkMode
+    oledRow.background = HybridViewTokens.lightweightPressRoundedDrawable(
+      fillColor = palette.surfaceVariant,
+      strokeColor = palette.cardHairlineBorder,
+      strokeWidthPx = strokePx,
+      radiusPx = chipRadius,
+      pressColor = palette.ripple
+    )
+    oledTitleView.setTextColor(palette.textPrimary)
+    oledSubtitleView.setTextColor(palette.textSecondary)
+    oledSwitchTrack.background = if (isOledDarkMode) {
+      HybridViewTokens.roundedDrawable(
+        fillColor = palette.accent,
+        radiusPx = pillRadius
+      )
+    } else {
+      HybridViewTokens.roundedDrawable(
+        fillColor = palette.surface,
+        strokeColor = palette.floatHairlineBorder,
+        strokeWidthPx = strokePx,
+        radiusPx = pillRadius
+      )
+    }
+    oledSwitchThumb.background = HybridViewTokens.circleDrawable(
+      fillColor = if (isOledDarkMode) palette.onAccent else palette.textPrimary
+    )
+    val thumbGravity = (if (isOledDarkMode) Gravity.END else Gravity.START) or Gravity.CENTER_VERTICAL
+    (oledSwitchThumb.layoutParams as? LayoutParams)?.let { lp ->
+      if (lp.gravity != thumbGravity) {
+        lp.gravity = thumbGravity
+        oledSwitchThumb.layoutParams = lp
+      }
+    }
+
     styleChips.forEach { (style, holder) ->
       val selected = style == activeStyle
       holder.chip.isSelected = selected
@@ -526,7 +642,7 @@ class HybridPaletteSheetView(
           radiusPx = chipRadius
         )
       }
-      val stylePalette = HybridViewPalette.from(style, palette.isDark)
+      val stylePalette = HybridViewPalette.from(style, palette.isDark, isOledDarkMode)
       val ringColor = if (selected) {
         ColorUtils.compositeColors(palette.accentSoftBg, palette.cardSurface)
       } else {
@@ -605,6 +721,7 @@ class HybridPaletteSheetView(
     sheetCard.animate().cancel()
     sheetCard.translationY = 0f
     HybridViewTokens.resetApplePressFeedback(doneButton)
+    HybridViewTokens.resetApplePressFeedback(oledRow)
     modeButtons.values.forEach { HybridViewTokens.resetApplePressFeedback(it) }
     styleChips.values.forEach { HybridViewTokens.resetApplePressFeedback(it.chip) }
     super.onDetachedFromWindow()

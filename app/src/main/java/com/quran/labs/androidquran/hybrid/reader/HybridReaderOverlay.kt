@@ -68,7 +68,8 @@ fun HybridReaderOverlay(
   onAppThemeModeSelected: (String) -> Unit,
   onPageAppearanceUpdated: () -> Unit,
   onMushafNudgeChanged: (Float) -> Unit,
-  onStop: () -> Unit = {}
+  onStop: () -> Unit = {},
+  onOledDarkModeChanged: (Boolean) -> Unit = {}
 ) {
   val uiStateState = controller.uiState.collectAsState()
   val appearanceState by remember(uiStateState) {
@@ -107,6 +108,7 @@ fun HybridReaderOverlay(
       onTafsirStepAyah = onTafsirStepAyah,
       onAppThemeStyleSelected = onAppThemeStyleSelected,
       onAppThemeModeSelected = onAppThemeModeSelected,
+      onOledDarkModeChanged = onOledDarkModeChanged,
       onPageAppearanceUpdated = onPageAppearanceUpdated,
       onMushafNudgeChanged = onMushafNudgeChanged
     )
@@ -138,6 +140,7 @@ private fun HybridReaderOverlayContent(
   onTafsirStepAyah: (Boolean) -> Unit,
   onAppThemeStyleSelected: (AppThemeStyle) -> Unit,
   onAppThemeModeSelected: (String) -> Unit,
+  onOledDarkModeChanged: (Boolean) -> Unit,
   onPageAppearanceUpdated: () -> Unit,
   onMushafNudgeChanged: (Float) -> Unit
 ) {
@@ -236,6 +239,7 @@ private fun HybridReaderOverlayContent(
       uiStateState,
       viewportWidthPx,
       viewportHeightPx,
+      statusTopPx,
       topObstacleBottomPx,
       bottomObstacleTopPx,
       density
@@ -244,7 +248,11 @@ private fun HybridReaderOverlayContent(
         val state = uiStateState.value
         val selectedStart = state.selectedStart
         val bounds = state.ayahOverlayBounds
-        if (selectedStart != null && bounds != null && !state.isAnySheetOpen) {
+        if (selectedStart != null &&
+          !state.isAnySheetOpen &&
+          bounds != null &&
+          bounds.isValidForOverlay(minBottomPx = statusTopPx, maxTopPx = viewportHeightPx)
+        ) {
           computeFloatingAyahBarPlacement(
             bounds = bounds,
             viewportWidthPx = viewportWidthPx,
@@ -272,7 +280,6 @@ private fun HybridReaderOverlayContent(
       onJumpPageClick = onJumpPage,
       onTogglePageBookmark = onTogglePageBookmark,
       onOpenAppearance = { controller.openAppearanceSheet() },
-      onOpenTafsir = { controller.openStudyDrawer(StudyTab.TAFSIR) },
       modifier = Modifier.align(Alignment.TopCenter)
     )
 
@@ -326,6 +333,7 @@ private fun HybridReaderOverlayContent(
       controller = controller,
       onAppThemeStyleSelected = onAppThemeStyleSelected,
       onAppThemeModeSelected = onAppThemeModeSelected,
+      onOledDarkModeChanged = onOledDarkModeChanged,
       onPageAppearanceUpdated = onPageAppearanceUpdated,
       modifier = Modifier.align(Alignment.BottomCenter)
     )
@@ -393,7 +401,6 @@ private fun TopPillsSlot(
   onJumpPageClick: () -> Unit,
   onTogglePageBookmark: () -> Unit,
   onOpenAppearance: () -> Unit,
-  onOpenTafsir: () -> Unit,
   modifier: Modifier = Modifier
 ) {
   val visible by remember(uiStateState, ayahBarPlacementState) {
@@ -419,8 +426,7 @@ private fun TopPillsSlot(
       onBackClick = onBackClick,
       onJumpPageClick = onJumpPageClick,
       onTogglePageBookmark = onTogglePageBookmark,
-      onOpenAppearance = onOpenAppearance,
-      onOpenTafsir = onOpenTafsir
+      onOpenAppearance = onOpenAppearance
     )
   }
 }
@@ -581,6 +587,7 @@ private fun AppearanceSheetSlot(
   controller: HybridReaderController,
   onAppThemeStyleSelected: (AppThemeStyle) -> Unit,
   onAppThemeModeSelected: (String) -> Unit,
+  onOledDarkModeChanged: (Boolean) -> Unit,
   onPageAppearanceUpdated: () -> Unit,
   modifier: Modifier = Modifier
 ) {
@@ -608,6 +615,10 @@ private fun AppearanceSheetSlot(
       onSelectAppThemeMode = { mode ->
         controller.selectAppThemeMode(mode)
         onAppThemeModeSelected(mode)
+      },
+      onOledDarkModeChanged = { enabled ->
+        controller.setOledDarkMode(enabled)
+        onOledDarkModeChanged(enabled)
       },
       onSelectPageColor = { pageColor: PageColor ->
         controller.selectPageColor(pageColor)

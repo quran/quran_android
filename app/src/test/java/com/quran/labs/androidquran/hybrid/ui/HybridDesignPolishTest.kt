@@ -313,6 +313,23 @@ class HybridDesignPolishTest {
       assertThat(Color.alpha(dark.glassRimHighlight)).isEqualTo(36)
       assertThat(Color.alpha(light.glassFloatBg)).isLessThan(255)
       assertThat(Color.alpha(dark.glassFloatBg)).isLessThan(255)
+      assertThat(light.isOled).isFalse()
+      assertThat(dark.isOled).isFalse()
+
+      val oledDark = HybridViewPalette.from(style, isDark = true, oled = true)
+      assertThat(oledDark.isOled).isTrue()
+      assertThat(oledDark.surface).isEqualTo(Color.BLACK)
+      assertThat(oledDark.surfaceTopGlow).isEqualTo(Color.BLACK)
+      assertThat(oledDark.toolbarBackground).isEqualTo(Color.BLACK)
+      assertThat(oledDark.mushafOverlayBg).isEqualTo(Color.BLACK)
+      assertThat(oledDark.cardHairlineBorder).isEqualTo(0x1FFFFFFF)
+      assertThat(oledDark.floatHairlineBorder).isEqualTo(0x28FFFFFF)
+      assertThat(oledDark.accent).isEqualTo(dark.accent)
+      assertThat(oledDark.editorialAccent).isEqualTo(dark.editorialAccent)
+
+      val lightWithOledFlag = HybridViewPalette.from(style, isDark = false, oled = true)
+      assertThat(lightWithOledFlag.isOled).isFalse()
+      assertThat(lightWithOledFlag.surface).isEqualTo(light.surface)
     }
   }
 

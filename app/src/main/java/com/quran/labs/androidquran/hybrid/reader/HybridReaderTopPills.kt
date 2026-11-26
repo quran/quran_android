@@ -49,12 +49,10 @@ fun HybridReaderTopPills(
   onJumpPageClick: () -> Unit,
   onTogglePageBookmark: () -> Unit,
   onOpenAppearance: () -> Unit,
-  onOpenTafsir: () -> Unit,
   modifier: Modifier = Modifier
 ) {
   val quranColors = LocalQuranColors.current
   val isDark = !quranColors.isLightToolbar
-  val accent = MaterialTheme.colorScheme.primary
   val editorialAccent = quranColors.editorialAccent
   val textPrimary = MaterialTheme.colorScheme.onBackground
   val textSecondary = MaterialTheme.colorScheme.onSurfaceVariant
@@ -130,7 +128,7 @@ fun HybridReaderTopPills(
       )
     }
 
-    // Trailing Tools Pill (Z3): Bookmark (Color 2) | Appearance (textSecondary) | Tafsir (Color 1)
+    // Trailing Tools Pill (Z3): Bookmark (Color 2) | Appearance (textSecondary)
     Row(
       modifier = Modifier
         .height(36.dp)
@@ -164,18 +162,6 @@ fun HybridReaderTopPills(
         iconTint = textSecondary,
         textColor = textPrimary,
         onClick = onOpenAppearance
-      )
-      VerticalHairlineDivider(
-        height = 10.dp,
-        color = quranColors.divider.copy(alpha = 0.85f),
-        modifier = Modifier.padding(horizontal = 2.dp)
-      )
-      TopToolChip(
-        icon = ReaderIcons.Tafsir,
-        label = stringResource(R.string.hybrid_reader_tool_tafsir),
-        iconTint = accent,
-        textColor = textPrimary,
-        onClick = onOpenTafsir
       )
     }
   }

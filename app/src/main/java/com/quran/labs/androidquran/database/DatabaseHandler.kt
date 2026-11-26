@@ -16,6 +16,7 @@ import com.quran.common.search.ArabicSearcher
 import com.quran.common.search.DefaultSearcher
 import com.quran.common.search.RustArabicSearchEngine
 import com.quran.common.search.Searcher
+import com.quran.common.search.arabic.ArabicMorphologicalQuery
 import com.quran.data.model.QuranText
 import com.quran.data.model.VerseRange
 import com.quran.labs.androidquran.R
@@ -64,7 +65,7 @@ class DatabaseHandler private constructor(
       var prevSpace = true
       for (i in query.indices) {
         val ch = query[i]
-        if (isArabicIgnorable(ch)) continue
+        if (ArabicMorphologicalQuery.isArabicIgnorable(ch)) continue
         if (ch.isWhitespace()) {
           if (!prevSpace && sb.isNotEmpty()) {
             sb.append(' ')
@@ -72,7 +73,8 @@ class DatabaseHandler private constructor(
           }
           continue
         }
-        sb.append(foldArabicChar(ch))
+        val folded = ArabicMorphologicalQuery.foldArabicLetter(ch)
+        sb.append(if (folded == '\u0629') '\u0647' else folded)
         prevSpace = false
       }
       if (sb.isNotEmpty() && sb[sb.length - 1] == ' ') {
@@ -81,130 +83,13 @@ class DatabaseHandler private constructor(
       return sb.toString()
     }
 
-    private fun isArabicIgnorable(ch: Char): Boolean {
-      val code = ch.code
-      return (code in 0x064B..0x065F) ||
-        code == 0x0670 || // Superscript Alef (dagger alif)
-        code == 0x0640 || // Tatweel / Kashida
-        (code in 0x0610..0x061A) || // Arabic honorifics/signs
-        (code in 0x06D6..0x06ED) || // Quranic annotation marks
-        code == 0x061C || // Arabic Letter Mark
-        code == 0x200C || // ZWNJ
-        code == 0x200D    // ZWJ
-    }
-
-    private fun foldArabicChar(ch: Char): Char {
-      return when (ch) {
-        '\u0622', '\u0623', '\u0625', '\u0671', '\u0672', '\u0673' -> '\u0627' // آ أ إ ٱ ٲ ٳ -> ا
-        '\u0629' -> '\u0647' // ة -> ه
-        '\u0649', '\u06CC', '\u0626' -> '\u064A' // ى ی ئ -> ي
-        '\u0624' -> '\u0648' // ؤ -> و
-        else -> ch
-      }
-    }
-
-    private fun normalizeIntoBuffer(
-      text: String,
-      normBuf: CharArray,
-      origStartBuf: IntArray,
-      origEndBuf: IntArray
-    ): Int {
-      var normLen = 0
-      var prevWasSpace = true
-      val len = text.length
-      var i = 0
-      while (i < len) {
+    private fun isPureNumericHyperlink(text: String): Boolean {
+      if (text.isEmpty() || text.length > 10) return false
+      for (i in text.indices) {
         val ch = text[i]
-        if (isArabicIgnorable(ch)) {
-          if (normLen > 0 && !prevWasSpace) {
-            origEndBuf[normLen - 1] = i + 1
-          }
-          i++
-          continue
-        }
-        if (ch.isWhitespace()) {
-          if (!prevWasSpace && normLen > 0) {
-            normBuf[normLen] = ' '
-            origStartBuf[normLen] = i
-            origEndBuf[normLen] = i + 1
-            normLen++
-            prevWasSpace = true
-          } else if (normLen > 0 && prevWasSpace) {
-            origEndBuf[normLen - 1] = i + 1
-          }
-          i++
-          continue
-        }
-        normBuf[normLen] = foldArabicChar(ch)
-        origStartBuf[normLen] = i
-        origEndBuf[normLen] = i + 1
-        normLen++
-        prevWasSpace = false
-        i++
+        if (ch !in '0'..'9') return false
       }
-      if (normLen > 0 && normBuf[normLen - 1] == ' ') {
-        normLen--
-      }
-      return normLen
-    }
-
-    private fun indexOfChars(
-      haystack: CharArray,
-      haystackLen: Int,
-      needle: CharArray,
-      fromIndex: Int
-    ): Int {
-      val needleLen = needle.size
-      if (needleLen == 0) return -1
-      val maxStart = haystackLen - needleLen
-      if (fromIndex > maxStart) return -1
-      val first = needle[0]
-      var i = if (fromIndex < 0) 0 else fromIndex
-      while (i <= maxStart) {
-        if (haystack[i] == first) {
-          var j = 1
-          while (j < needleLen && haystack[i + j] == needle[j]) {
-            j++
-          }
-          if (j == needleLen) return i
-        }
-        i++
-      }
-      return -1
-    }
-
-    private fun sortAndMergeRanges(starts: ArrayList<Int>, ends: ArrayList<Int>) {
-      val n = starts.size
-      if (n <= 1) return
-      // Insertion sort (typically very few matches per verse)
-      for (i in 1 until n) {
-        val keyS = starts[i]
-        val keyE = ends[i]
-        var j = i - 1
-        while (j >= 0 && (starts[j] > keyS || (starts[j] == keyS && ends[j] > keyE))) {
-          starts[j + 1] = starts[j]
-          ends[j + 1] = ends[j]
-          j--
-        }
-        starts[j + 1] = keyS
-        ends[j + 1] = keyE
-      }
-      var write = 0
-      for (i in 1 until n) {
-        if (starts[i] <= ends[write]) {
-          if (ends[i] > ends[write]) {
-            ends[write] = ends[i]
-          }
-        } else {
-          write++
-          starts[write] = starts[i]
-          ends[write] = ends[i]
-        }
-      }
-      while (starts.size > write + 1) {
-        starts.removeAt(starts.size - 1)
-        ends.removeAt(ends.size - 1)
-      }
+      return true
     }
 
     private fun cleanTafsirHtml(raw: String): String {
@@ -655,29 +540,26 @@ class DatabaseHandler private constructor(
   }
 
   /**
-   * Scans [table] for normalized Arabic matches (diacritic-insensitive, Alef/Hamza/Ta-Marbuta/Ya
-   * folded, supporting exact phrase and multi-token matching) without touching
-   * [RustArabicSearchEngine]. Returns ALL matching rows with clean highlighted context snippets.
+   * Scans [table] for comprehensive Arabic matches (full orthographic normalization, proclitics,
+   * `لِـ+ال` elisions like `لله`/`للجنة`/`للناس`, Uthmani open-Ta, ranked singular/dual/plural
+   * morphology, and multi-token topical matching) without touching [RustArabicSearchEngine].
+   * Returns ALL matching rows ranked Tier 1 (exact) -> Tier 2 (singular/possessive) -> Tier 3
+   * (dual/plural/topical) with clean highlighted context snippets.
    */
   fun searchArabicNormalized(q: String, table: String = VERSE_TABLE): Cursor? {
     if (!validDatabase()) return null
     val columns = arrayOf(BaseColumns._ID, COL_SURA, COL_AYAH, COL_TEXT)
-    val normalizedQuery = normalizeArabicQuery(q)
-    if (normalizedQuery.isEmpty()) {
-      return MatrixCursor(columns)
-    }
+    val matcher = ArabicMorphologicalQuery.compile(q)
+      ?: return MatrixCursor(columns)
 
-    val phraseChars = normalizedQuery.toCharArray()
-    val tokens = normalizedQuery.split(' ').filter { it.isNotEmpty() }.distinct()
-    val tokenChars = Array(tokens.size) { tokens[it].toCharArray() }
     val resultCursor = MatrixCursor(columns)
-
-    var normBuf = CharArray(512)
-    var origStartBuf = IntArray(512)
-    var origEndBuf = IntArray(512)
     val matchStarts = ArrayList<Int>(8)
     val matchEnds = ArrayList<Int>(8)
     val snippetBuilder = StringBuilder(320)
+    val tier1Rows = ArrayList<Array<Any>>(64)
+    val tier2Rows = ArrayList<Array<Any>>(32)
+    val tier3Rows = ArrayList<Array<Any>>(32)
+    val isWordLevel = matcher.isWordLevel()
 
     val sql =
       "SELECT rowid as ${BaseColumns._ID}, $COL_SURA, $COL_AYAH, $COL_TEXT FROM $table ORDER BY $COL_SURA, $COL_AYAH"
@@ -685,7 +567,7 @@ class DatabaseHandler private constructor(
       database?.rawQuery(sql, null)?.use { cursor ->
         while (cursor.moveToNext()) {
           val rawText = cursor.getString(3) ?: continue
-          if (rawText.isEmpty()) continue
+          if (rawText.isEmpty() || isPureNumericHyperlink(rawText)) continue
           val cleanText = if (rawText.indexOf('<') >= 0 || rawText.indexOf('&') >= 0) {
             cleanTafsirHtml(rawText)
           } else {
@@ -693,55 +575,14 @@ class DatabaseHandler private constructor(
           }
           if (cleanText.isEmpty()) continue
 
-          val cleanLen = cleanText.length
-          if (normBuf.size < cleanLen) {
-            val newSize = maxOf(cleanLen, normBuf.size * 2)
-            normBuf = CharArray(newSize)
-            origStartBuf = IntArray(newSize)
-            origEndBuf = IntArray(newSize)
-          }
-
-          val normLen = normalizeIntoBuffer(cleanText, normBuf, origStartBuf, origEndBuf)
-          if (normLen == 0) continue
-
-          val phraseIdx = indexOfChars(normBuf, normLen, phraseChars, 0)
-          val usePhrase = phraseIdx >= 0
-          if (!usePhrase) {
-            if (tokenChars.size <= 1) continue
-            var allFound = true
-            for (t in tokenChars) {
-              if (indexOfChars(normBuf, normLen, t, 0) < 0) {
-                allFound = false
-                break
-              }
-            }
-            if (!allFound) continue
-          }
-
-          matchStarts.clear()
-          matchEnds.clear()
-          if (usePhrase) {
-            var pos = phraseIdx
-            val pLen = phraseChars.size
-            while (pos >= 0) {
-              matchStarts.add(origStartBuf[pos])
-              matchEnds.add(origEndBuf[pos + pLen - 1])
-              pos = indexOfChars(normBuf, normLen, phraseChars, pos + pLen)
-            }
-          } else {
-            for (t in tokenChars) {
-              val tLen = t.size
-              var pos = indexOfChars(normBuf, normLen, t, 0)
-              while (pos >= 0) {
-                matchStarts.add(origStartBuf[pos])
-                matchEnds.add(origEndBuf[pos + tLen - 1])
-                pos = indexOfChars(normBuf, normLen, t, pos + tLen)
-              }
-            }
-            sortAndMergeRanges(matchStarts, matchEnds)
-          }
-
-          if (matchStarts.isEmpty()) continue
+          val tier = matcher.matchAndCollectSpans(
+            text = cleanText,
+            startsOut = matchStarts,
+            endsOut = matchEnds,
+            allowNonContiguousMultiWord = true,
+            allowSubstringFallback = !isWordLevel
+          )
+          if (tier == ArabicMorphologicalQuery.NO_MATCH || matchStarts.isEmpty()) continue
 
           val snippet = buildHighlightedSnippet(
             text = cleanText,
@@ -751,16 +592,66 @@ class DatabaseHandler private constructor(
             matchEndTag = MATCH_END,
             buffer = snippetBuilder
           )
-          resultCursor.addRow(
-            arrayOf<Any>(
-              cursor.getLong(0),
-              cursor.getInt(1),
-              cursor.getInt(2),
-              snippet
-            )
+          val row = arrayOf<Any>(
+            cursor.getLong(0),
+            cursor.getInt(1),
+            cursor.getInt(2),
+            snippet
           )
+          when (tier) {
+            ArabicMorphologicalQuery.TIER_EXACT -> tier1Rows.add(row)
+            ArabicMorphologicalQuery.TIER_SINGULAR_MORPH -> tier2Rows.add(row)
+            else -> tier3Rows.add(row)
+          }
         }
       }
+
+      if (tier1Rows.isEmpty() && tier2Rows.isEmpty() && tier3Rows.isEmpty() && isWordLevel) {
+        // Mid-typing prefix / partial-word fallback so live typing in Tafsir never drops to 0 hits
+        database?.rawQuery(sql, null)?.use { cursor ->
+          while (cursor.moveToNext()) {
+            val rawText = cursor.getString(3) ?: continue
+            if (rawText.isEmpty() || isPureNumericHyperlink(rawText)) continue
+            val cleanText = if (rawText.indexOf('<') >= 0 || rawText.indexOf('&') >= 0) {
+              cleanTafsirHtml(rawText)
+            } else {
+              rawText
+            }
+            if (cleanText.isEmpty()) continue
+
+            val tier = matcher.matchAndCollectSpans(
+              text = cleanText,
+              startsOut = matchStarts,
+              endsOut = matchEnds,
+              allowNonContiguousMultiWord = false,
+              allowSubstringFallback = true
+            )
+            if (tier == ArabicMorphologicalQuery.NO_MATCH || matchStarts.isEmpty()) continue
+
+            val snippet = buildHighlightedSnippet(
+              text = cleanText,
+              matchStarts = matchStarts,
+              matchEnds = matchEnds,
+              matchStartTag = matchStart,
+              matchEndTag = MATCH_END,
+              buffer = snippetBuilder
+            )
+            resultCursor.addRow(
+              arrayOf<Any>(
+                cursor.getLong(0),
+                cursor.getInt(1),
+                cursor.getInt(2),
+                snippet
+              )
+            )
+          }
+        }
+        return resultCursor
+      }
+
+      for (row in tier1Rows) resultCursor.addRow(row)
+      for (row in tier2Rows) resultCursor.addRow(row)
+      for (row in tier3Rows) resultCursor.addRow(row)
     } catch (e: Exception) {
       Timber.e(e)
       resultCursor.close()

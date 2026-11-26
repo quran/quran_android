@@ -158,11 +158,17 @@ data class HybridViewPalette(
   @ColorInt val glassRimHighlight: Int,
   @ColorInt val shadowTint: Int,
   @ColorInt val cardHairlineBorder: Int,
-  @ColorInt val floatHairlineBorder: Int
+  @ColorInt val floatHairlineBorder: Int,
+  val isOled: Boolean = false
 ) {
   companion object {
-    fun from(style: AppThemeStyle, isDark: Boolean): HybridViewPalette {
-      val p: AppThemePalette = if (isDark) style.darkPalette else style.lightPalette
+    fun from(
+      style: AppThemeStyle,
+      isDark: Boolean,
+      oled: Boolean = AppThemeStyle.isOledDarkMode
+    ): HybridViewPalette {
+      val effectiveOled = isDark && oled
+      val p: AppThemePalette = style.palette(isDark = isDark, oled = effectiveOled)
       val accent = p.accent.toArgb()
       val editorialAccent = p.editorialAccent.toArgb()
       val editorialSoftBg = ColorUtils.setAlphaComponent(editorialAccent, if (isDark) 38 else 33)
@@ -208,16 +214,17 @@ data class HybridViewPalette(
         glassFloatBg = p.glassFloatBg.toArgb(),
         glassRimHighlight = Color.argb(if (isDark) 36 else 203, 255, 255, 255),
         shadowTint = p.shadowTint.toArgb(),
-        cardHairlineBorder = if (isDark) {
-          Color.argb(23, 255, 255, 255)
-        } else {
-          Color.argb(13, 0, 0, 0)
+        cardHairlineBorder = when {
+          effectiveOled -> 0x1FFFFFFF
+          isDark -> Color.argb(23, 255, 255, 255)
+          else -> Color.argb(13, 0, 0, 0)
         },
-        floatHairlineBorder = if (isDark) {
-          Color.argb(33, 255, 255, 255)
-        } else {
-          Color.argb(224, 255, 255, 255)
-        }
+        floatHairlineBorder = when {
+          effectiveOled -> 0x28FFFFFF
+          isDark -> Color.argb(33, 255, 255, 255)
+          else -> Color.argb(224, 255, 255, 255)
+        },
+        isOled = effectiveOled
       )
     }
   }

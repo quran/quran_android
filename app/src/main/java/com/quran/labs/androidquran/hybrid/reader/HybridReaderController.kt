@@ -511,6 +511,12 @@ class HybridReaderController(
     syncAppearanceState()
   }
 
+  fun setOledDarkMode(enabled: Boolean) {
+    quranSettings.isOledDarkMode = enabled
+    AppThemeStyle.setOledDarkMode(enabled)
+    syncAppearanceState()
+  }
+
   fun selectPageColor(color: PageColor) {
     val currentIsNight = quranSettings.isNightMode
     val currentMatchApp = quranSettings.pageAppearance == PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
@@ -557,6 +563,7 @@ class HybridReaderController(
   private fun readAppearanceState(): ReaderAppearanceState {
     val style = AppThemeStyle.fromPreference(quranSettings.appThemeStyle)
     val appMode = runCatching { quranSettings.currentTheme() }.getOrDefault(Constants.THEME_DEFAULT)
+    val isOledDarkMode = runCatching { quranSettings.isOledDarkMode }.getOrDefault(false)
     val pageTheme = runCatching { quranSettings.pageTheme }.getOrDefault(PageThemeConstants.PAGE_THEME_LIGHT)
     val pageAppearance = runCatching { quranSettings.pageAppearance }.getOrDefault(PageThemeConstants.PAGE_APPEARANCE_LIGHT)
     val isNightPage = runCatching { quranSettings.isNightMode }.getOrDefault(false)
@@ -569,6 +576,7 @@ class HybridReaderController(
     return ReaderAppearanceState(
       appThemeStyle = style,
       appThemeMode = appMode,
+      isOledDarkMode = isOledDarkMode,
       pageTheme = pageTheme,
       pageAppearance = pageAppearance,
       isNightPage = isNightPage,
