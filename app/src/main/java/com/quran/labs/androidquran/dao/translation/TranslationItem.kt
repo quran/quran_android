@@ -16,6 +16,16 @@ data class TranslationItem @JvmOverloads constructor(val translation: Translatio
     return localVersion > 0 && this.translation.currentVersion > this.localVersion
   }
 
+  fun matchesQuery(query: String): Boolean {
+    val normalizedQuery = query.trim()
+    if (normalizedQuery.isEmpty()) {
+      return true
+    }
+    return translation.displayName.contains(normalizedQuery, ignoreCase = true) ||
+        translation.translator?.contains(normalizedQuery, ignoreCase = true) == true ||
+        translation.translatorNameLocalized?.contains(normalizedQuery, ignoreCase = true) == true
+  }
+
   fun withTranslationRemoved() = this.copy(localVersion = 0)
 
   fun withDisplayOrder(newDisplayOrder: Int) = this.copy(displayOrder = newDisplayOrder)
