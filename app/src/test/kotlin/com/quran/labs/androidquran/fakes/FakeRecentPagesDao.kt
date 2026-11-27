@@ -52,6 +52,6 @@ class FakeRecentPagesDao : RecentPagesDao {
   }
 
   companion object {
-    private const val MAX_RECENT_PAGES = 3
+    private const val MAX_RECENT_PAGES = 10
   }
 }
