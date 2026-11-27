@@ -316,4 +316,8 @@
   <string name="prefs_category_dual_screen">Çift Sayfa Tercihleri</string>
   <string name="prefs_split_page_and_translation_summary">Çevirilerle çift sayfa modunda, Kuran sayfası ve çevirisi gösterilir</string>
   <string name="prefs_split_page_and_translation_title">Kur\'an\'dan bir sayfayı ve çeviriden başka bir sayfa görüntüleme</string>
+
+  <string name="fatiha_prompt_read">Fatiha\'yı oku</string>
+  <string name="fatiha_prompt_return">«%1$s» suresine dön</string>
+  <string name="fatiha_prompt_dismiss">Kapat</string>
 </resources>

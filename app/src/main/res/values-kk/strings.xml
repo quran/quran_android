@@ -327,4 +327,8 @@
   <string name="prefs_split_page_and_translation_summary">Аудармалары бар қосарлы бет режимінде Құран беті мен аудармасы көрсетілген</string>
   <string name="notification_channel_download">Құран жүктеулері</string>
   <string name="notification_channel_audio">Құранды қайталау</string>
+
+  <string name="fatiha_prompt_read">Фатиханы оқы</string>
+  <string name="fatiha_prompt_return">«%1$s» сүресіне оралу</string>
+  <string name="fatiha_prompt_dismiss">Жабу</string>
 </resources>

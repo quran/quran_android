@@ -8,6 +8,7 @@ import com.quran.data.di.AppCoroutineScope
 import com.quran.labs.androidquran.common.audio.util.AudioDecoderCapabilities
 import com.quran.labs.androidquran.core.worker.QuranWorkerFactory
 import com.quran.labs.androidquran.di.component.application.ApplicationComponent
+import com.quran.labs.androidquran.ui.helpers.FatihaPromptSession
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.RecordingLogTree
 import com.quran.labs.androidquran.util.ThemeUtil
@@ -42,6 +43,7 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
     applicationComponent = initializeInjector()
     applicationComponent.inject(this)
     quranSyncManager.startForegroundSync()
+    FatihaPromptSession.install(this)
     initializeWorkManager()
     bookmarksWidgetSubscriber.subscribeBookmarksWidgetIfNecessary()
 

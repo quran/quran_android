@@ -53,6 +53,7 @@ import com.quran.labs.androidquran.ui.fragment.JuzListFragment
 import com.quran.labs.androidquran.ui.fragment.SuraListFragment
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog.OnBookmarkTagsUpdateListener
+import com.quran.labs.androidquran.ui.helpers.FatihaPromptSession
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.ui.helpers.QuranNavigator
 import com.quran.labs.androidquran.ui.helpers.QuranRow
@@ -139,6 +140,9 @@ class QuranActivity : AppCompatActivity(),
 
   private var jumpToPageOnResume: Int? = null
 
+  /** True while this screen exists only to forward into the reader. */
+  internal var isOpeningDirectlyIntoReading: Boolean = false
+
   public override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
@@ -205,7 +209,11 @@ class QuranActivity : AppCompatActivity(),
         }
       }
       if (ShortcutsActivity.ACTION_JUMP_TO_LATEST == intent.action) {
+        isOpeningDirectlyIntoReading = true
         jumpToLastPage()
+      } else if (savedInstanceState == null && settings.resumeReadingOnLaunch) {
+        isOpeningDirectlyIntoReading = true
+        jumpToLastPage(onlyIfKnown = true)
       }
     }
     updateTranslationsListAsNeeded()
@@ -247,6 +255,7 @@ class QuranActivity : AppCompatActivity(),
   override fun onPause() {
     compositeDisposable.clear()
     isPaused = true
+    isOpeningDirectlyIntoReading = false
     super.onPause()
   }
 
@@ -414,9 +423,14 @@ class QuranActivity : AppCompatActivity(),
     super.onSaveInstanceState(outState)
   }
 
-  private fun jumpToLastPage() {
+  private fun jumpToLastPage(onlyIfKnown: Boolean = false) {
     lifecycleScope.launch {
       val recentPage = latestPage()
+      if (onlyIfKnown && recentPage == Constants.NO_PAGE) {
+        isOpeningDirectlyIntoReading = false
+        FatihaPromptSession.pendingDirectOpen = false
+        return@launch
+      }
       jumpTo(
         if (recentPage == Constants.NO_PAGE) 1 else recentPage
       )

@@ -248,4 +248,8 @@
   <string name="notification_channel_download">Descargas del Corán</string>
   <string name="notification_channel_audio">Recitación del Corán</string>
   <string name="quran_ayah_details">%1$s - Ayah %2$s, Yuz\' %3$s</string>
+
+  <string name="fatiha_prompt_read">Leer Al-Fatiha</string>
+  <string name="fatiha_prompt_return">Volver a la sura «%1$s»</string>
+  <string name="fatiha_prompt_dismiss">Cerrar</string>
 </resources>

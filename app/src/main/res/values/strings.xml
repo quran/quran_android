@@ -435,4 +435,9 @@
   <string name="notification_channel_download">Quran Downloads</string>
   <string name="notification_channel_audio">Quran Recitation</string>
   <string name="tag_save_error">Unable to rename this collection. It may no longer be available.</string>
+
+  <!-- direct-open reading prompt -->
+  <string name="fatiha_prompt_read">Read Al-Fatiha</string>
+  <string name="fatiha_prompt_return">Go back to surah \"%1$s\"</string>
+  <string name="fatiha_prompt_dismiss">Dismiss</string>
 </resources>

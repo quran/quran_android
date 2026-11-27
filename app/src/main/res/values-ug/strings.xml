@@ -286,4 +286,8 @@
   <string name="play_restrict_range">پەقەت يۇقىرىدىكى ئايەتلەرنىلا ئاڭلاڭ</string>
   <string name="play_verses_range">بىر يۈرۈش ئايەتلەرنى ئاڭلاڭ:</string>
   <string name="play_each_verse">ھەر بىر ئايەتنى ئاڭلاڭ:</string>
+
+  <string name="fatiha_prompt_read">فاتىھەنى ئوقۇڭ</string>
+  <string name="fatiha_prompt_return">«%1$s» سۈرىسىگە قايتىڭ</string>
+  <string name="fatiha_prompt_dismiss">تاقاش</string>
 </resources>

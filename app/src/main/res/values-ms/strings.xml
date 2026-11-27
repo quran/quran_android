@@ -304,4 +304,8 @@
   <string name="prefs_category_dual_screen">Preferensi Halaman Ganda</string>
   <string name="prefs_split_page_and_translation_title">Al-Quran dan terjemahan dalam mode ganda</string>
   <string name="prefs_split_page_and_translation_summary">Dalam mode halaman ganda dengan terjemahan, halaman Quran dan terjemahan ditampilkan</string>
+
+  <string name="fatiha_prompt_read">Baca Al-Fatihah</string>
+  <string name="fatiha_prompt_return">Kembali ke surah \"%1$s\"</string>
+  <string name="fatiha_prompt_dismiss">Tutup</string>
 </resources>

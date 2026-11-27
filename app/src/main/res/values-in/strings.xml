@@ -335,4 +335,8 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Unduhan Quran</string>
   <string name="notification_channel_audio">Bacaan Quran</string>
+
+  <string name="fatiha_prompt_read">Baca Al-Fatihah</string>
+  <string name="fatiha_prompt_return">Kembali ke surah \"%1$s\"</string>
+  <string name="fatiha_prompt_dismiss">Tutup</string>
 </resources>

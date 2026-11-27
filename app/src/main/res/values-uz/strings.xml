@@ -347,4 +347,8 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Qurʼon yuklamalari</string>
   <string name="notification_channel_audio">Qurʼon qiroati</string>
+
+  <string name="fatiha_prompt_read">Fotihani o‘qish</string>
+  <string name="fatiha_prompt_return">«%1$s» surasiga qaytish</string>
+  <string name="fatiha_prompt_dismiss">Yopish</string>
 </resources>

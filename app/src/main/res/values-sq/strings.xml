@@ -312,4 +312,8 @@
   <!-- notification channel names [CHAR LIMIT=40] -->
   <string name="notification_channel_download">Shkarkimet e Kuranit</string>
   <string name="notification_channel_audio">Recitimi i Kuranit</string>
+
+  <string name="fatiha_prompt_read">Lexo Al-Fatihanë</string>
+  <string name="fatiha_prompt_return">Kthehu te surja «%1$s»</string>
+  <string name="fatiha_prompt_dismiss">Mbyll</string>
 </resources>
