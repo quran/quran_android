@@ -6,7 +6,7 @@
 
 use std::panic::{catch_unwind, AssertUnwindSafe};
 use std::ptr;
-use std::sync::RwLock;
+use std::sync::{Arc, RwLock};
 
 use crate::engine::{
     compute_verse_letter_mask, CompiledArabicQuery, VerseIndex, VerseMeta, MAX_ARENA_CODE_UNITS,
@@ -18,6 +18,22 @@ use crate::jni_sys::{
 };
 
 static INDEX: RwLock<Option<VerseIndex>> = RwLock::new(None);
+static QUERY_CACHE: RwLock<Option<(Vec<u16>, Option<Arc<CompiledArabicQuery>>)>> = RwLock::new(None);
+
+fn compile_cached_query(query_u16: &[u16]) -> Option<Arc<CompiledArabicQuery>> {
+    {
+        let guard = QUERY_CACHE.read().unwrap_or_else(|e| e.into_inner());
+        if let Some((cached_q, cached_compiled)) = guard.as_ref() {
+            if cached_q.as_slice() == query_u16 {
+                return cached_compiled.clone();
+            }
+        }
+    }
+    let compiled = CompiledArabicQuery::compile(query_u16).map(Arc::new);
+    let mut guard = QUERY_CACHE.write().unwrap_or_else(|e| e.into_inner());
+    *guard = Some((query_u16.to_vec(), compiled.clone()));
+    compiled
+}
 
 /// Stack buffer threshold for query UTF-16 code units (zero heap allocation for typical queries).
 const QUERY_STACK_CAP: usize = 128;
@@ -248,7 +264,7 @@ unsafe fn search_impl(env: *mut JNIEnv, query: jstring, max_results: jint) -> ji
     if max_results <= 0 {
         return new_int_array(env, fns, &[]);
     }
-    let compiled = match with_jstring_u16(env, fns, query, CompiledArabicQuery::compile) {
+    let compiled = match with_jstring_u16(env, fns, query, compile_cached_query) {
         Some(Some(c)) => c,
         Some(None) => {
             let guard = INDEX.read().unwrap_or_else(|e| e.into_inner());
@@ -306,7 +322,7 @@ unsafe fn find_match_spans_impl(
     if verse_index < 0 {
         return new_int_array(env, fns, &[]);
     }
-    let compiled = match with_jstring_u16(env, fns, query, CompiledArabicQuery::compile) {
+    let compiled = match with_jstring_u16(env, fns, query, compile_cached_query) {
         Some(Some(c)) => c,
         _ => return new_int_array(env, fns, &[]),
     };

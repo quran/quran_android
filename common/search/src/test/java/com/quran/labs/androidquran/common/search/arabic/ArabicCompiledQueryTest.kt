@@ -167,4 +167,91 @@ class ArabicCompiledQueryTest {
     assertThat(ArabicMorphologicalQuery.compile("مكة")!!.matchAndCollectSpans("\uFE91«مكة»", starts, ends))
       .isEqualTo(ArabicMorphologicalQuery.TIER_EXACT)
   }
+
+  @Test
+  fun `universal morphology covers muslim inflections, bidirectional plurals, weak-ya, broken plurals, and strict guardrails`() {
+    val starts = ArrayList<Int>()
+    val ends = ArrayList<Int>()
+
+    // 1. "مسلم" forward expansion across ALL forms
+    val qMuslim = ArabicMorphologicalQuery.compile("مسلم")!!
+    assertThat(qMuslim.matchAndCollectSpans("كان حنيفا مسلما", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_SINGULAR_MORPH)
+    assertThat(qMuslim.matchAndCollectSpans("أمة مسلمة لك", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_SINGULAR_MORPH)
+    for (pluralText in listOf(
+      "وأنتم مسلمون",
+      "ونحن له المسلمون",
+      "إن المسلمين والمسلمات",
+      "بشرى للمسلمين",
+      "مسلمين ومسلمات",
+      "رجلان مسلمان"
+    )) {
+      assertThat(qMuslim.matchAndCollectSpans(pluralText, starts, ends))
+        .isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+    }
+
+    // 2. Bidirectional reverse lookup: searching plural/feminine keeps exact form Tier 1 and finds siblings
+    val qMuslimin = ArabicMorphologicalQuery.compile("المسلمين")!!
+    assertThat(qMuslimin.matchAndCollectSpans("بشرى للمسلمين", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_EXACT)
+    assertThat(qMuslimin.matchAndCollectSpans("حنيفا مسلما", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_SINGULAR_MORPH)
+    assertThat(qMuslimin.matchAndCollectSpans("وأنتم مسلمون", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+
+    val qJannat = ArabicMorphologicalQuery.compile("جنات")!!
+    assertThat(qJannat.matchAndCollectSpans("لهم جنات تجري", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_EXACT)
+    assertThat(qJannat.matchAndCollectSpans("اسكن أنت وزوجك الجنة", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_SINGULAR_MORPH)
+    assertThat(qJannat.matchAndCollectSpans("كلتا الجنتين", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+
+    // 3. Defective weak-ي stems
+    assertThat(ArabicMorphologicalQuery.compile("متقي")!!.matchAndCollectSpans("هدى للمتقين", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+    assertThat(ArabicMorphologicalQuery.compile("مهتدي")!!.matchAndCollectSpans("هم المهتدون", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+    assertThat(ArabicMorphologicalQuery.compile("معتدي")!!.matchAndCollectSpans("لا يحب المعتدين", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+
+    // 4. Broken plurals & hamza-final seat alternation (آباءهم / آباؤهم / آبائهم)
+    assertThat(ArabicMorphologicalQuery.compile("نبي")!!.matchAndCollectSpans("ويقتلون الأنبياء والنبيين", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+    assertThat(ArabicMorphologicalQuery.compile("قلب")!!.matchAndCollectSpans("ختم الله على قلوبهم", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+    assertThat(ArabicMorphologicalQuery.compile("كتاب")!!.matchAndCollectSpans("وملائكته وكتبه ورسله", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+    assertThat(ArabicMorphologicalQuery.compile("كتاب")!!.matchAndCollectSpans("ولو أنا كتبنا عليهم", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+    assertThat(ArabicMorphologicalQuery.compile("الأب")!!.matchAndCollectSpans("ما وجدنا عليه آباؤنا وآبائهم", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+    assertThat(ArabicMorphologicalQuery.compile("اليد")!!.matchAndCollectSpans("غلت أيديهم بل يداه مبسوطتان", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.TIER_DUAL_PLURAL_OR_TOPICAL)
+    assertThat(ArabicMorphologicalQuery.compile("اليد")!!.matchAndCollectSpans("فيكيدوا لك كيدا", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+
+    // 5. Strict precision & homograph guardrails
+    assertThat(ArabicMorphologicalQuery.compile("الأم")!!.matchAndCollectSpans("يقول آمنا بالله", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+    assertThat(ArabicMorphologicalQuery.compile("أمة")!!.matchAndCollectSpans("فأماته الله مائة عام", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+    assertThat(ArabicMorphologicalQuery.compile("سنة")!!.matchAndCollectSpans("بلسان عربي مبين", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+    assertThat(ArabicMorphologicalQuery.compile("السن")!!.matchAndCollectSpans("سنة الله في الذين خلوا", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+    assertThat(ArabicMorphologicalQuery.compile("نعمة")!!.matchAndCollectSpans("قالوا نعم", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+    assertThat(ArabicMorphologicalQuery.compile("نعم")!!.matchAndCollectSpans("واذكروا نعمة الله", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+    assertThat(ArabicMorphologicalQuery.compile("الجن")!!.matchAndCollectSpans("أصحاب الجنة", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+    assertThat(ArabicMorphologicalQuery.compile("نملة")!!.matchAndCollectSpans("إنما نملي لهم", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+    assertThat(ArabicMorphologicalQuery.compile("عظيم")!!.matchAndCollectSpans("يحيي العظام وهي رميم", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+    assertThat(ArabicMorphologicalQuery.compile("الملائكة")!!.matchAndCollectSpans("إن الملوك إذا دخلوا قرية", starts, ends))
+      .isEqualTo(ArabicMorphologicalQuery.NO_MATCH)
+  }
 }

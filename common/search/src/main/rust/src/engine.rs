@@ -15,6 +15,7 @@
 //! - Sub-millisecond warm lookup over all 6,236 Quran verses via an in-memory inverted word index.
 
 use std::collections::{HashMap, HashSet};
+use std::sync::OnceLock;
 
 /// Maximum verses allowed in a single loaded index (~16x full Quran of 6,236 verses).
 pub const MAX_VERSES: usize = 100_000;
@@ -28,6 +29,7 @@ pub const MATCH_STRIDE: usize = 4;
 
 // Arabic Unicode constants
 const CH_HAMZA: u16 = 0x0621; // ء
+const CH_ALEF_MADDA: u16 = 0x0622; // آ
 const CH_ALEF: u16 = 0x0627; // ا
 const CH_BA: u16 = 0x0628; // ب
 const CH_TA_MARBUTA: u16 = 0x0629; // ة
@@ -520,6 +522,29 @@ const SHORT_PHRASE_PROCLITICS: &[&[u16]] = &[
     &[CH_KAF],
 ];
 
+const SAFE_WA_BA_PROCLITICS: &[&[u16]] = &[
+    &[],
+    &[CH_WAW],
+    &[CH_BA],
+    &[CH_WAW, CH_BA],
+    &[CH_FA, CH_BA],
+];
+
+const SAFE_NO_KAF_PROCLITICS: &[&[u16]] = &[
+    &[],
+    &[CH_WAW],
+    &[CH_FA],
+    &[CH_BA],
+    &[CH_LAM],
+    &[CH_WAW, CH_BA],
+    &[CH_FA, CH_BA],
+    &[CH_WAW, CH_LAM],
+    &[CH_FA, CH_LAM],
+];
+
+const SAFE_WA_LAM_PROCLITICS: &[&[u16]] = &[&[], &[CH_WAW], &[CH_LAM]];
+const SAFE_WA_BA_LAM_PROCLITICS: &[&[u16]] = &[&[], &[CH_WAW], &[CH_BA], &[CH_LAM]];
+
 const PRONOUNS: &[&[u16]] = &[
     &[CH_HA],
     &[CH_HA, CH_ALEF],
@@ -534,12 +559,544 @@ const PRONOUNS: &[&[u16]] = &[
     &[CH_NUN, CH_ALEF],
 ];
 
+const MOTHER_PRONOUNS: &[&[u16]] = &[
+    &[CH_HA],
+    &[CH_HA, CH_ALEF],
+    &[CH_HA, CH_MIM],
+    &[CH_HA, CH_MIM, CH_ALEF],
+    &[CH_HA, CH_NUN],
+    &[CH_KAF],
+    &[CH_KAF, CH_MIM],
+    &[CH_KAF, CH_MIM, CH_ALEF],
+];
+
 const WORD_ALLAH: &[u16] = &[CH_ALEF, CH_LAM, CH_LAM, CH_HA];
 const WORD_ALLAH_TA: &[u16] = &[CH_ALEF, CH_LAM, CH_LAM, CH_TA_MARBUTA];
 const WORD_LILLAH: &[u16] = &[CH_LAM, CH_LAM, CH_HA];
 const WORD_ALLAHUMMA: &[u16] = &[CH_ALEF, CH_LAM, CH_LAM, CH_HA, CH_MIM];
 const WORD_ABDULLAH: &[u16] = &[CH_AIN, CH_BA, CH_DAL, CH_ALEF, CH_LAM, CH_LAM, CH_HA];
 const WORD_RAHMAN: &[u16] = &[CH_RA, 0x062D, CH_MIM, CH_NUN]; // رحمن
+
+// ================================================================================================
+// Curated Quranic Broken-Plural, Irregular-Lemma & Precision Guardrail Lexicon
+// ================================================================================================
+
+const CARDINAL_NUMBERS_RAW: &[&str] = &[
+    "ثلاث", "اربع", "خمس", "ست", "سبع", "ثمان", "ثماني", "تسع", "عشر",
+    "عشرون", "عشرين", "ثلاثون", "ثلاثين", "اربعون", "اربعين",
+    "خمسون", "خمسين", "ستون", "ستين", "سبعون", "سبعين",
+    "ثمانون", "ثمانين", "تسعون", "تسعين", "اثنين", "اثنتين", "مايتين",
+];
+
+const NON_PLURAL_WN_YN_RAW: &[&str] = &[
+    "فرعون", "هارون", "قارون", "زيتون", "عرجون", "ماعون",
+    "مجنون", "مكنون", "مسنون", "ممنون", "مفتون", "مشحون",
+    "موزون", "مرهون", "مسجون", "مديون", "طاعون", "صهيون", "موتون",
+    "مسكين", "شياطين", "مساكين", "مداين", "موازين", "مستبين",
+    "عليين", "سجين", "غسلين", "يقطين", "بساتين", "فلسطين", "سلاطين", "ملايين",
+];
+
+const NON_PLURAL_AT_RAW: &[&str] = &[
+    "مات", "فات", "بات", "يات", "ذات", "نبات", "ثبات", "سبات", "شتات",
+    "فرات", "رفات", "ممات", "ميقات", "حيات", "امرات", "مرضات", "صلات",
+    "زكات", "غدات", "مشكات", "نجات", "منات", "تورات", "هيهات", "لات",
+    "عرفات", "اصوات", "اموات", "اقوات", "اوقات", "انبات", "افات", "ابيات", "بيات",
+];
+
+const NON_DUAL_TAN_TIN_RAW: &[&str] = &[
+    "بهتان", "متين", "وتين", "تين", "ستين", "مايتين", "اثنتين", "هاتين",
+    "ياتين", "اتين", "يوتين", "لاوتين", "قانتين", "مخبتين", "ميتين", "اختين",
+];
+
+const NO_FEM_EXPANSION_RAW: &[&str] = &[
+    "كفار", "فجار", "رحمن", "سلطان", "قران", "شيطان", "انسان", "ميزان",
+    "ايمان", "سليمان", "فرعون", "هارون", "قارون",
+];
+
+const NO_DUAL_AN_EXPANSION_RAW: &[&str] = &[
+    "سليم", "رحمن", "قران", "شيطان", "انسان", "ميزان", "ايمان", "سلطان", "مستعان",
+];
+
+const NON_DUAL_AN_RAW: &[&str] = &[
+    "سليمان", "مستعان", "سلطان", "سبحان", "رمضان", "قربان", "بنيان", "طغيان",
+    "عصيان", "غفران", "كفران", "شكران", "حسبان", "نسيان", "عمران", "فرقان",
+    "عدوان", "احسان", "خسران", "مرجان", "طوفان", "ريحان", "حيوان", "شيطان",
+    "انسان", "ايمان", "ميزان", "برهان", "بهتان",
+];
+
+const FEM_PARTICIPLE_EXCLUDE_RAW: &[&str] = &[
+    "مدينة", "سفينة", "حديقة", "خليفة", "ملايكة", "مغفرة", "معذرة", "موعظة",
+    "منزلة", "مفسدة", "مخلفة", "طايفة", "قارعة", "واقعة", "حاقة", "غاشية",
+    "دابة", "مايدة", "ساعة", "كفارة", "عبادة", "قيامة", "شهادة", "رسالة",
+    "تجارة", "عمارة", "ولاية", "هداية", "خيانة", "ضلالة", "جهالة", "سفاهة",
+    "شفاعة", "جماعة", "نهاية", "حجارة", "فاحشة", "كبيرة", "بصيرة", "خبيثة",
+    "طيبة", "مقبرة", "ناصية", "صاعقة", "دايرة", "قاعدة", "قلادة", "سقاية",
+    "سريرة", "شريعة", "قبيلة", "صحيفة", "بهيمة", "زيتونة", "فاكهة", "سنبلة",
+    "اريكة", "صومعة", "سلسلة", "نمرقة", "زربية", "مصيبة", "عقوبة", "امانة",
+    "خطيية", "مسالة", "معصية", "مشيية", "مرحمة", "متربة", "مسغبة", "مقربة",
+];
+
+const ROOT_HA_WORDS_RAW: &[&str] = &[
+    "وجه", "اله", "سفيه", "وجيه", "شبيه", "فقه", "شبه", "كره",
+    "وجوه", "افواه", "شفاه", "فواكه", "اشباه", "نبيه", "نزيه",
+];
+
+const BROKEN_PLURAL_TA_MARBUTA_RAW: &[&str] = &[
+    "ملايكة", "كفرة", "فجرة", "سحرة", "اخوة", "فتية", "سادة", "الهة",
+    "حجارة", "السنة", "افيدة", "اسورة", "اعمدة", "اودية", "نسوة",
+    "اشربة", "اطعمة", "امتعة", "ادوية", "البسة", "اتربة",
+];
+
+const NO_TANWIN_YA_RAW: &[&str] = &[
+    "موتي", "قري", "مرضي", "قتلي", "يتامي", "اسري", "اساري", "نصاري",
+    "انثي", "اعمي", "هوي", "فتي", "ايدي", "موالي", "نواصي", "ليالي", "زرابي",
+    "بني", "يدي", "ابي", "اخي", "ابوي",
+];
+
+const MAQSURA_PRON_PLURALS_RAW: &[&str] = &[
+    "موتي", "مرضي", "قتلي", "يتامي", "اسري", "اساري", "فتي", "نصاري", "هوي", "انثي",
+];
+
+const SAFE_3_REV_BASES_RAW: &[&str] = &[
+    "نبي", "اخر", "اول", "اهل", "ضال", "مضل", "فرح", "ميت", "طيب",
+    "رجل", "ملك", "عين", "زوج", "قرن", "بحر", "شهر", "عام", "قلب",
+    "حزب", "عبد", "ذكر", "اجل", "اثم", "الف", "كفل", "ضعف", "حول",
+];
+
+const NO_PRON_FAMILY_MEMBERS_RAW: &[&str] = &[
+    "فرق", "ظلل", "ورق", "نمل", "كلم", "قري",
+];
+
+/// Broken plurals ending in `ون`/`ين`/`ان` where final `ن` is lexical (NOT a sound plural/dual suffix),
+/// so possessive pronouns attach directly (`موازينه`, `شياطينهم`, `بطونهم`, `آذانهم`, `ألوانكم`, `إخوانهم`).
+const BROKEN_PLURAL_N_PRON_RAW: &[&str] = &[
+    "موازين", "شياطين", "مساكين", "بطون", "عيون", "قرون", "ظنون", "سجون", "حصون",
+    "اذان", "اذقان", "اوثان", "الوان", "اخوان", "نيران", "غلمان", "ولدان", "فتيان",
+    "رهبان", "حيتان", "براهين", "عميان", "ذكران",
+];
+
+/// Special member prefixes inside `LEMMA_FAMILIES_RAW`:
+/// - `=X`: definite-only (`ال`/`لل` + proclitics, e.g. `=انس` -> `الانس`/`والانس`, never bare verb `آنَسَ`).
+/// - `@X`: fixed inflected token with safe proclitics (e.g. `@بيده`, `@قراها`, `@ابواه`, `@يدي`).
+/// - `!X`: fixed inflected token with `""`/`و`/`ل` proclitics only (e.g. `!ابي`, never `فأبى`).
+const LEMMA_FAMILIES_RAW: &[&[&str]] = &[
+    // 1. Prophets, Angels, Worship, Faith
+    &["نبي", "انبياء", "نبيون", "نبيين"],
+    &["رسول", "رسل"],
+    &["ملك", "ملايكة", "ملكان", "ملكين"],
+    &["ملك", "ملوك"],
+    &["اله", "الهة", "الهين"],
+    &["رب", "ارباب"],
+    &["عبد", "عباد", "عبيد", "عبدين"],
+    &["صلاة", "صلوات"],
+    &["زكاة", "زكوات"],
+    &["نعمة", "نعمات"],
+    &["رحمة", "رحمات"],
+    &["سنة", "سنن"],
+    &["سنة", "سنين", "سنوات"],
+    &["مسجد", "مساجد"],
+    &["صومعة", "صوامع"],
+    &["صنم", "اصنام"],
+    &["وثن", "اوثان"],
+    &["شيطان", "شياطين"],
+    &["طاغوت", "طواغيت"],
+    &["نار", "نيران"],
+    // 2. Scripture, Speech, Signs, Knowledge
+    &["كتاب", "كتب"],
+    &["صحيفة", "صحف"],
+    &["سفر", "اسفار"],
+    &["لوح", "الواح"],
+    &["قلم", "اقلام"],
+    &["اية", "ايات", "ايتين"],
+    &["سورة", "سور"],
+    &["كلمة", "كلمات", "كلم"],
+    &["قول", "اقوال"],
+    &["حديث", "احاديث"],
+    &["نبا", "انباء"],
+    &["مثل", "امثال"],
+    &["حجة", "حجج"],
+    &["برهان", "براهين"],
+    &["حكم", "احكام"],
+    &["امر", "امور"],
+    &["شان", "شوون", "شءون"],
+    &["اسم", "اسماء"],
+    &["لسان", "السنة"],
+    &["صوت", "اصوات"],
+    &["حلم", "احلام"],
+    &["سر", "اسرار"],
+    &["غيب", "غيوب"],
+    &["سريرة", "سراير"],
+    &["شريعة", "شرايع"],
+    &["ملة", "ملل"],
+    &["عهد", "عهود"],
+    &["ميثاق", "مواثيق"],
+    // 3. Deeds, Virtues, Sins, Trials, Rewards
+    &["عمل", "اعمال"],
+    &["فعل", "افعال"],
+    &["ذنب", "ذنوب"],
+    &["خطيية", "خطايا", "خطييات"],
+    &["اثم", "اثام"],
+    &["سيية", "سييات"],
+    &["حسنة", "حسنات"],
+    &["فاحشة", "فواحش"],
+    &["كبيرة", "كباير"],
+    &["وزر", "اوزار"],
+    &["فتنة", "فتن"],
+    &["مرض", "امراض"],
+    &["اجر", "اجور"],
+    &["درجة", "درجات"],
+    &["ميزان", "موازين"],
+    &["حد", "حدود"],
+    &["ظن", "ظنون"],
+    &["هوي", "اهواء"],
+    &["شهوة", "شهوات"],
+    &["خير", "خيرات", "اخيار"],
+    &["طيب", "طيبة", "طيبون", "طيبين", "طيبات"],
+    &["خبيث", "خبيثة", "خبيثون", "خبيثين", "خبيثات", "خبايث"],
+    &["ظلمة", "ظلمات"],
+    &["نور", "انوار"],
+    &["ضلال", "ضلالة"],
+    &["مصيبة", "مصايب"],
+    // 4. Human Beings, Kinship, Communities
+    &["انسان", "=انس", "ناس", "اناس", "اناسي"],
+    &["رجل", "رجال", "رجلان", "رجلين"],
+    &["رجل", "ارجل"],
+    &["امراة", "امرات", "نساء", "نسوة", "امراتان", "امراتين"],
+    &["ابن", "ابناء", "بني", "بنو", "بنين"],
+    &["بنت", "بنات"],
+    &[
+        "اب", "اباء", "ابوان", "ابوين", "@ابواه", "@ابويه", "@ابويكم", "@ابوي",
+        "@ابوه", "@ابوهم", "@ابوك", "@ابوكم", "@ابونا", "@اباه", "@اباكم",
+        "@ابيه", "@ابيهم", "@ابيك", "@ابيكم", "!ابي",
+    ],
+    &[
+        "اخ", "اخوة", "اخوان", "اخوين", "@اخوه", "@اخوهم", "@اخوك", "@اخوكم",
+        "@اخاه", "@اخاك", "@اخيه", "@اخيهم", "@اخيك", "!اخي",
+    ],
+    &["اخت", "اخوات", "اختان", "اختين"],
+    &["ام", "امهات"],
+    &["امة", "امم"],
+    &["ولد", "اولاد", "ولدان"],
+    &["ذرية", "ذريات"],
+    &["زوج", "ازواج", "زوجان", "زوجين"],
+    &["اهل", "اهلون", "اهلين"],
+    &["قوم", "اقوام"],
+    &["قبيلة", "قبايل"],
+    &["شعب", "شعوب"],
+    &["سبط", "اسباط"],
+    &["نسب", "انساب"],
+    &["رحم", "ارحام"],
+    &["صاحب", "اصحاب", "صاحبة"],
+    &["عدو", "اعداء"],
+    &["ولي", "اولياء", "موالي"],
+    &["صديق", "اصدقاء"],
+    &["خليل", "اخلاء"],
+    &["شريك", "شركاء"],
+    &["قرين", "قرناء"],
+    &["خليط", "خلطاء"],
+    &["نصير", "انصار"],
+    &["شهيد", "شهداء"],
+    &["شاهد", "اشهاد", "شهداء"],
+    &["شفيع", "شفعاء"],
+    &["خليفة", "خلفاء", "خلايف"],
+    &["حبر", "احبار"],
+    &["راهب", "رهبان"],
+    &["حواري", "حواريون", "حواريين"],
+    &["رباني", "ربانيون", "ربانيين"],
+    &["عربي", "عرب", "اعراب"],
+    &["يهودي", "يهود"],
+    &["نصراني", "نصاري"],
+    // 5. Human Conditions, Roles, Traits
+    &["نفس", "انفس", "نفوس"],
+    &["روح", "ارواح"],
+    &["حي", "احياء"],
+    &["ميت", "موتي", "اموات", "ميتون", "ميتين", "ميتة"],
+    &["قتيل", "قتلي"],
+    &["مريض", "مرضي"],
+    &["فقير", "فقراء"],
+    &["غني", "اغنياء"],
+    &["مسكين", "مساكين"],
+    &["يتيم", "يتامي"],
+    &["اسير", "اسري", "اساري"],
+    &["ضعيف", "ضعفاء", "ضعاف"],
+    &["قوي", "اقوياء"],
+    &["شديد", "اشداء", "شداد"],
+    &["كبير", "كبار", "كبراء", "كبيرة", "كباير"],
+    &["صغير", "صغار", "صغيرة"],
+    &["عظيم", "عظيمة"],
+    &["كريم", "كرام", "كريمة"],
+    &["سفيه", "سفهاء"],
+    &["عالم", "علماء"],
+    &["شاعر", "شعراء"],
+    &["كافر", "كفار", "كفرة"],
+    &["فاجر", "فجار", "فجرة"],
+    &["ساحر", "سحرة"],
+    &["غلام", "غلمان"],
+    &["فتي", "فتية", "فتيان"],
+    &["شيخ", "شيوخ"],
+    &["طفل", "اطفال"],
+    &["بكر", "ابكار"],
+    &["ذكر", "ذكور", "ذكران", "ذكرين"],
+    &["انثي", "اناث", "انثيين"],
+    &["اعمي", "عمي", "عميان"],
+    &["اصم", "صم"],
+    &["حنيف", "حنفاء"],
+    &["سيد", "سادة"],
+    &["جند", "جنود"],
+    &["حزب", "احزاب", "حزبان", "حزبين"],
+    &["طايفة", "طوايف", "طايفتان", "طايفتين"],
+    &["فية", "فيات", "فيتان", "فيتين"],
+    &["فريق", "فرق", "فريقان", "فريقين"],
+    &["اول", "اولون", "اولين", "اوايل"],
+    &["اخر", "اخرون", "اخرين", "اخران"],
+    &["ضال", "ضالون", "ضالين"],
+    &["مضل", "مضلون", "مضلين"],
+    &["تواب", "توابون", "توابين"],
+    // 6. Human Body
+    &["قلب", "قلوب", "قلبين"],
+    &["فواد", "افيدة"],
+    &["صدر", "صدور"],
+    &["وجه", "وجوه"],
+    &["راس", "رءوس", "رووس", "روس"],
+    &["ناصية", "نواصي"],
+    &["عين", "اعين", "عيون", "عينان", "عينين"],
+    &["بصر", "ابصار"],
+    &["اذن", "اذان"],
+    &["سمع", "اسماع"],
+    &["فم", "افواه"],
+    &["شفة", "شفاه", "شفتين"],
+    &["ذقن", "اذقان"],
+    &["عنق", "اعناق"],
+    &["رقبة", "رقاب"],
+    &["يد", "ايدي", "يدان", "يدين", "@يدي", "@يديه", "@يديك", "@يداه", "@يداك", "@يدا"],
+    &["شمال", "شمايل"],
+    &["اصبع", "اصابع"],
+    &["كعب", "كعبين", "كعاب"],
+    &["قدم", "اقدام"],
+    &["بطن", "بطون"],
+    &["ظهر", "ظهور"],
+    &["دبر", "ادبار"],
+    &["جنب", "جنوب"],
+    &["عظم", "عظام"],
+    &["جلد", "جلود"],
+    &["دم", "دماء"],
+    &["لحم", "لحوم"],
+    &["جرح", "جروح"],
+    &["فرج", "فروج"],
+    // 7. Cosmos, Nature, Time, Flora, Fauna
+    &["سماء", "سماوات", "سموات"],
+    &["ارض", "ارضين", "اراض"],
+    &["يوم", "ايام", "يومان", "يومين"],
+    &["ليل", "ليلة", "ليالي", "ليال"],
+    &["وقت", "اوقات"],
+    &["شهر", "اشهر", "شهور", "شهران", "شهرين"],
+    &["عام", "اعوام", "عامان", "عامين"],
+    &["حول", "حولين", "احوال"],
+    &["قرن", "قرون", "قرنان", "قرنين"],
+    &["نجم", "نجوم"],
+    &["كوكب", "كواكب"],
+    &["برج", "بروج"],
+    &["افق", "افاق"],
+    &["مشرق", "مشارق", "مشرقين"],
+    &["مغرب", "مغارب", "مغربين"],
+    &["ريح", "رياح"],
+    &["سحاب", "سحابة", "سحب"],
+    &["صاعقة", "صواعق"],
+    &["ظل", "ظلال", "ظلل"],
+    &["نهر", "انهار"],
+    &["بحر", "بحار", "ابحر", "بحران", "بحرين"],
+    &["موج", "امواج"],
+    &["جبل", "جبال"],
+    &["حجر", "حجارة", "احجار"],
+    &["صخرة", "صخر", "صخور"],
+    &["قطر", "اقطار"],
+    &["واد", "وادي", "اودية"],
+    &["سبيل", "سبل"],
+    &["طريق", "طرق", "طرايق"],
+    &["شجرة", "شجر", "اشجار"],
+    &["نخلة", "نخل", "نخيل"],
+    &["ثمرة", "ثمر", "ثمرات", "ثمار"],
+    &["فاكهة", "فواكه"],
+    &["عنب", "اعناب"],
+    &["سنبلة", "سنابل", "سنبلات"],
+    &["حبة", "حبات", "حبوب"],
+    &["ورقة", "ورق", "اوراق"],
+    &["حديقة", "حدايق"],
+    &["روضة", "روضات", "رياض"],
+    &["سدرة", "سدر"],
+    &["زيتونة", "زيتون"],
+    &["دابة", "دواب"],
+    &["بهيمة", "بهايم"],
+    &["وحش", "وحوش"],
+    &["طير", "طيور", "طاير"],
+    &["نملة", "نمل"],
+    &["نحلة", "نحل"],
+    &["حوت", "حيتان"],
+    &["كلب", "كلاب"],
+    &["حمار", "حمير"],
+    &["بغل", "بغال"],
+    &["ناقة", "نوق"],
+    &["بقرة", "بقر", "بقرات"],
+    // 8. Places, Buildings, Possessions, Objects
+    &["بيت", "بيوت"],
+    &["دار", "ديار"],
+    &["مدينة", "مداين", "مدن"],
+    &["قرية", "قري", "قريتين", "@قراها"],
+    &["بلد", "بلدة", "بلاد"],
+    &["سوق", "اسواق"],
+    &["قصر", "قصور"],
+    &["حصن", "حصون"],
+    &["غرفة", "غرف", "غرفات"],
+    &["منزل", "منازل"],
+    &["مجلس", "مجالس"],
+    &["مضجع", "مضاجع"],
+    &["معرج", "معارج"],
+    &["قبر", "قبور"],
+    &["جدث", "اجداث"],
+    &["مقبرة", "مقابر"],
+    &["باب", "ابواب"],
+    &["جدار", "جدر"],
+    &["قاعدة", "قواعد"],
+    &["عمود", "عمد", "اعمدة"],
+    &["وتد", "اوتاد"],
+    &["خيمة", "خيام"],
+    &["سجن", "سجون"],
+    &["سفينة", "سفن"],
+    &["مال", "اموال"],
+    &["كنز", "كنوز"],
+    &["ثوب", "ثياب"],
+    &["سوار", "اساور", "اسورة"],
+    &["قلادة", "قلايد"],
+    &["كوب", "اكواب"],
+    &["ابريق", "اباريق"],
+    &["سرير", "سرر"],
+    &["اريكة", "ارايك"],
+    &["نمرقة", "نمارق"],
+    &["زربية", "زرابي"],
+    &["مفتاح", "مفاتح", "مفاتيح"],
+    &["قفل", "اقفال"],
+    &["سلسلة", "سلاسل"],
+    &["غل", "اغلال"],
+    &["صفد", "اصفاد"],
+    &["نفل", "انفال"],
+    &["شيء", "اشياء"],
+    &["سبب", "اسباب"],
+    &["مرفق", "مرافق"],
+    &["دايرة", "دواير"],
+    &["حمل", "احمال"],
+    &["عقد", "عقود"],
+    &["اثر", "اثار"],
+    &["اجل", "اجال", "اجلين"],
+    &["اصل", "اصول"],
+    &["فرع", "فروع"],
+    &["جزء", "اجزاء"],
+    &["لون", "الوان"],
+    &["مكان", "اماكن"],
+    &["موضع", "مواضع"],
+    &["موطن", "مواطن"],
+    &["مشعر", "مشاعر"],
+    &["منسك", "مناسك"],
+    &["قوت", "اقوات"],
+    &["رزق", "ارزاق"],
+];
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum FamilyMemberKind {
+    Normal,
+    DefOnly,
+    FixedSafe,
+    FixedWaLam,
+}
+
+struct FamilyMember {
+    kind: FamilyMemberKind,
+    text: Vec<u16>,
+}
+
+struct MorphLexicon {
+    cardinal_numbers: HashSet<Vec<u16>>,
+    non_plural_wn_yn: HashSet<Vec<u16>>,
+    non_plural_at: HashSet<Vec<u16>>,
+    non_dual_tan_tin: HashSet<Vec<u16>>,
+    no_fem_expansion: HashSet<Vec<u16>>,
+    no_dual_an_expansion: HashSet<Vec<u16>>,
+    non_dual_an: HashSet<Vec<u16>>,
+    fem_participle_exclude: HashSet<Vec<u16>>,
+    root_ha_words: HashSet<Vec<u16>>,
+    broken_plural_ta_marbuta: HashSet<Vec<u16>>,
+    no_tanwin_ya: HashSet<Vec<u16>>,
+    maqsura_pron_plurals: HashSet<Vec<u16>>,
+    safe_3_rev_bases: HashSet<Vec<u16>>,
+    no_pron_family_members: HashSet<Vec<u16>>,
+    broken_plural_n_pron: HashSet<Vec<u16>>,
+    families: Vec<Vec<FamilyMember>>,
+    family_index: HashMap<Vec<u16>, Vec<usize>>,
+}
+
+impl MorphLexicon {
+    fn build() -> Self {
+        fn build_set(raw: &[&str]) -> HashSet<Vec<u16>> {
+            let mut set = HashSet::with_capacity(raw.len() * 2);
+            for &s in raw {
+                set.insert(s.encode_utf16().collect());
+            }
+            set
+        }
+
+        let mut families = Vec::with_capacity(LEMMA_FAMILIES_RAW.len());
+        let mut family_index: HashMap<Vec<u16>, Vec<usize>> =
+            HashMap::with_capacity(LEMMA_FAMILIES_RAW.len() * 3);
+
+        for (fam_idx, &raw_fam) in LEMMA_FAMILIES_RAW.iter().enumerate() {
+            let mut members = Vec::with_capacity(raw_fam.len());
+            for &entry in raw_fam {
+                let (kind, rest) = if let Some(r) = entry.strip_prefix('=') {
+                    (FamilyMemberKind::DefOnly, r)
+                } else if let Some(r) = entry.strip_prefix('@') {
+                    (FamilyMemberKind::FixedSafe, r)
+                } else if let Some(r) = entry.strip_prefix('!') {
+                    (FamilyMemberKind::FixedWaLam, r)
+                } else {
+                    (FamilyMemberKind::Normal, entry)
+                };
+                let text: Vec<u16> = rest.encode_utf16().collect();
+                let list = family_index.entry(text.clone()).or_default();
+                if list.last().copied() != Some(fam_idx) {
+                    list.push(fam_idx);
+                }
+                members.push(FamilyMember { kind, text });
+            }
+            families.push(members);
+        }
+
+        Self {
+            cardinal_numbers: build_set(CARDINAL_NUMBERS_RAW),
+            non_plural_wn_yn: build_set(NON_PLURAL_WN_YN_RAW),
+            non_plural_at: build_set(NON_PLURAL_AT_RAW),
+            non_dual_tan_tin: build_set(NON_DUAL_TAN_TIN_RAW),
+            no_fem_expansion: build_set(NO_FEM_EXPANSION_RAW),
+            no_dual_an_expansion: build_set(NO_DUAL_AN_EXPANSION_RAW),
+            non_dual_an: build_set(NON_DUAL_AN_RAW),
+            fem_participle_exclude: build_set(FEM_PARTICIPLE_EXCLUDE_RAW),
+            root_ha_words: build_set(ROOT_HA_WORDS_RAW),
+            broken_plural_ta_marbuta: build_set(BROKEN_PLURAL_TA_MARBUTA_RAW),
+            no_tanwin_ya: build_set(NO_TANWIN_YA_RAW),
+            maqsura_pron_plurals: build_set(MAQSURA_PRON_PLURALS_RAW),
+            safe_3_rev_bases: build_set(SAFE_3_REV_BASES_RAW),
+            no_pron_family_members: build_set(NO_PRON_FAMILY_MEMBERS_RAW),
+            broken_plural_n_pron: build_set(BROKEN_PLURAL_N_PRON_RAW),
+            families,
+            family_index,
+        }
+    }
+}
+
+static MORPH_LEXICON: OnceLock<MorphLexicon> = OnceLock::new();
+
+#[inline]
+fn lexicon() -> &'static MorphLexicon {
+    MORPH_LEXICON.get_or_init(MorphLexicon::build)
+}
 
 #[inline]
 fn concat_slices(parts: &[&[u16]]) -> Vec<u16> {
@@ -549,6 +1106,12 @@ fn concat_slices(parts: &[&[u16]]) -> Vec<u16> {
         out.extend_from_slice(p);
     }
     out
+}
+
+fn add_with_proclitics(set: &mut HashSet<Vec<u16>>, stem: &[u16], proclitics: &[&[u16]]) {
+    for &p in proclitics {
+        set.insert(concat_slices(&[p, stem]));
+    }
 }
 
 fn add_definite_forms(set: &mut HashSet<Vec<u16>>, stem: &[u16]) {
@@ -583,6 +1146,275 @@ fn ends_with_slice(hay: &[u16], suf: &[u16]) -> bool {
     hay.len() >= suf.len() && &hay[hay.len() - suf.len()..] == suf
 }
 
+#[inline]
+fn starts_with_slice(hay: &[u16], pre: &[u16]) -> bool {
+    hay.len() >= pre.len() && &hay[..pre.len()] == pre
+}
+
+const WORD_YAD: &[u16] = &[CH_YA, CH_DAL]; // يد
+const WORD_RABB: &[u16] = &[CH_RA, CH_BA]; // رب
+const WORD_UMM: &[u16] = &[CH_ALEF, CH_MIM]; // ام
+const WORD_DAM: &[u16] = &[CH_DAL, CH_MIM]; // دم
+const WORD_AKH: &[u16] = &[CH_ALEF, 0x062E]; // اخ
+const WORD_SUMM: &[u16] = &[0x0635, CH_MIM]; // صم
+const WORD_HAYY: &[u16] = &[0x062D, CH_YA]; // حي
+const WORD_KUTUB: &[u16] = &[CH_KAF, CH_TA, CH_BA]; // كتب
+const WORD_KALIM: &[u16] = &[CH_KAF, CH_LAM, CH_MIM]; // كلم
+const WORD_QURA: &[u16] = &[0x0642, CH_RA, CH_YA]; // قري
+const WORD_BIN: &[u16] = &[CH_BA, CH_NUN]; // بن
+const WORD_SAMAW: &[u16] = &[CH_SIN, CH_MIM, CH_ALEF, CH_WAW]; // سماو
+const WORD_AALA: &[u16] = &[CH_ALEF, CH_AIN, CH_LAM, CH_YA]; // اعلي
+const WORD_AAL: &[u16] = &[CH_ALEF, CH_AIN, CH_LAM]; // اعل
+const WORD_MUSA: &[u16] = &[CH_MIM, CH_WAW, CH_SIN, CH_YA]; // موسي
+const WORD_FARIQ: &[u16] = &[CH_FA, CH_RA, CH_YA, 0x0642]; // فريق
+const WORD_ALAMIN: &[u16] = &[CH_AIN, CH_ALEF, CH_LAM, CH_MIM, CH_YA, CH_NUN]; // عالمين
+const WORD_ALAMUN: &[u16] = &[CH_AIN, CH_ALEF, CH_LAM, CH_MIM, CH_WAW, CH_NUN]; // عالمون
+
+fn add_pronoun_forms(
+    set: &mut HashSet<Vec<u16>>,
+    stem: &[u16],
+    proclitics: &[&[u16]],
+    prons: &[&[u16]],
+    skip_na: bool,
+    lex: &MorphLexicon,
+) {
+    for &pron in prons {
+        if skip_na && pron == [CH_NUN, CH_ALEF] {
+            continue;
+        }
+        let form = concat_slices(&[stem, pron]);
+        add_with_proclitics(set, &form, proclitics);
+    }
+    // Hamza-final اء seat alternation before pronouns: آباءهم / آباؤهم (و) / آبائهم (ي)
+    if stem.len() >= 4 && ends_with_slice(stem, &[CH_ALEF, CH_HAMZA]) {
+        let base = &stem[..stem.len() - 1];
+        for &pron in prons {
+            let f_waw = concat_slices(&[base, &[CH_WAW], pron]);
+            let f_ya = concat_slices(&[base, &[CH_YA], pron]);
+            add_with_proclitics(set, &f_waw, proclitics);
+            add_with_proclitics(set, &f_ya, proclitics);
+        }
+    }
+    // Alef-maqsura plurals (ى -> ا before pronoun: موتاهم / يتاماهم / أسراهم / فتاه)
+    if lex.maqsura_pron_plurals.contains(stem) {
+        let base = &stem[..stem.len() - 1];
+        for &pron in prons {
+            let form = concat_slices(&[base, &[CH_ALEF], pron]);
+            add_with_proclitics(set, &form, proclitics);
+        }
+    }
+}
+
+fn add_fem_paradigm(
+    set: &mut HashSet<Vec<u16>>,
+    base: &[u16],
+    include_singular: bool,
+    include_dual_plural: bool,
+) {
+    if include_singular {
+        for &e in &[CH_TA_MARBUTA, CH_TA] {
+            let form = concat_slices(&[base, &[e]]);
+            add_definite_forms(set, &form);
+            add_indefinite_forms(set, &form, false);
+        }
+        for &pron in PRONOUNS {
+            let form = concat_slices(&[base, &[CH_TA], pron]);
+            add_indefinite_forms(set, &form, false);
+        }
+    }
+    if include_dual_plural {
+        for dual_end in &[&[CH_TA, CH_ALEF, CH_NUN][..], &[CH_TA, CH_YA, CH_NUN][..]] {
+            let form = concat_slices(&[base, dual_end]);
+            add_definite_forms(set, &form);
+            add_indefinite_forms(set, &form, false);
+        }
+        for dual_c in &[&[CH_TA, CH_ALEF][..], &[CH_TA, CH_YA][..]] {
+            for &pron in PRONOUNS {
+                let form = concat_slices(&[base, dual_c, pron]);
+                add_indefinite_forms(set, &form, false);
+            }
+        }
+        // Guard base == "ام": أمة takes broken plural أمم, NEVER أمات/أماته ("caused to die")!
+        if base != WORD_UMM {
+            let mut plurals = Vec::with_capacity(2);
+            plurals.push(concat_slices(&[base, &[CH_ALEF, CH_TA]]));
+            if base.len() >= 3 && base.last() == Some(&CH_ALEF) {
+                plurals.push(concat_slices(&[&base[..base.len() - 1], &[CH_WAW, CH_ALEF, CH_TA]]));
+            }
+            for pl in &plurals {
+                add_definite_forms(set, pl);
+                add_indefinite_forms(set, pl, false);
+                for &pron in PRONOUNS {
+                    let form = concat_slices(&[pl, pron]);
+                    add_indefinite_forms(set, &form, false);
+                }
+            }
+        }
+    }
+}
+
+fn add_masculine_inflections(
+    t2: &mut HashSet<Vec<u16>>,
+    t3: &mut HashSet<Vec<u16>>,
+    stem: &[u16],
+    is_participle_shape: bool,
+    lex: &MorphLexicon,
+) {
+    if !lex.no_fem_expansion.contains(stem) {
+        for &e in &[CH_TA_MARBUTA, CH_TA] {
+            let form = concat_slices(&[stem, &[e]]);
+            add_definite_forms(t2, &form);
+            add_indefinite_forms(t2, &form, false);
+        }
+        for &pron in PRONOUNS {
+            let form = concat_slices(&[stem, &[CH_TA], pron]);
+            add_indefinite_forms(t2, &form, false);
+        }
+        add_fem_paradigm(t3, stem, false, true);
+    }
+
+    // Masculine sound plural ون / ين
+    for suf in &[&[CH_WAW, CH_NUN][..], &[CH_YA, CH_NUN][..]] {
+        let form = concat_slices(&[stem, suf]);
+        add_definite_forms(t3, &form);
+        add_indefinite_forms(t3, &form, false);
+    }
+
+    // Masculine dual ان
+    if !lex.no_dual_an_expansion.contains(stem) {
+        let dual = concat_slices(&[stem, &[CH_ALEF, CH_NUN]]);
+        add_definite_forms(t3, &dual);
+        add_indefinite_forms(t3, &dual, false);
+    }
+
+    // Construct masculine plural (stem + و / stem + ي + optional pron) for clear participles
+    if stem.len() >= 4 && is_participle_shape {
+        let c_waw = concat_slices(&[stem, &[CH_WAW]]);
+        let c_ya = concat_slices(&[stem, &[CH_YA]]);
+        add_indefinite_forms(t3, &c_waw, false);
+        add_indefinite_forms(t3, &c_ya, false);
+        for &pron in PRONOUNS {
+            if pron != [CH_YA] {
+                let fw = concat_slices(&[stem, &[CH_WAW], pron]);
+                let fy = concat_slices(&[stem, &[CH_YA], pron]);
+                add_indefinite_forms(t3, &fw, false);
+                add_indefinite_forms(t3, &fy, false);
+            }
+        }
+    }
+}
+
+fn add_family_member(target: &mut HashSet<Vec<u16>>, member: &FamilyMember, lex: &MorphLexicon) {
+    let m = member.text.as_slice();
+    match member.kind {
+        FamilyMemberKind::DefOnly => {
+            add_definite_forms(target, m);
+            return;
+        }
+        FamilyMemberKind::FixedWaLam => {
+            add_with_proclitics(target, m, SAFE_WA_LAM_PROCLITICS);
+            return;
+        }
+        FamilyMemberKind::FixedSafe => {
+            let procls = if starts_with_slice(m, WORD_YAD) {
+                SAFE_WA_BA_PROCLITICS
+            } else {
+                SAFE_NO_KAF_PROCLITICS
+            };
+            add_with_proclitics(target, m, procls);
+            return;
+        }
+        FamilyMemberKind::Normal => {}
+    }
+
+    if m.len() == 2 {
+        add_definite_forms(target, m);
+        if m == WORD_YAD {
+            add_with_proclitics(target, m, SAFE_WA_BA_PROCLITICS);
+            add_pronoun_forms(target, m, SAFE_WA_BA_PROCLITICS, PRONOUNS, false, lex);
+        } else if m == WORD_RABB {
+            add_with_proclitics(target, m, SAFE_NO_KAF_PROCLITICS);
+            add_pronoun_forms(target, m, SAFE_NO_KAF_PROCLITICS, PRONOUNS, false, lex);
+        } else if m == WORD_UMM {
+            // Never bare أم (أَمْ 119x), never امنا (آمَنَّا 38x), never امي (أُمِّي)
+            add_pronoun_forms(target, m, SAFE_NO_KAF_PROCLITICS, MOTHER_PRONOUNS, false, lex);
+        } else if m == WORD_DAM {
+            target.insert(m.to_vec());
+            target.insert(concat_slices(&[&[CH_WAW], m]));
+            target.insert(concat_slices(&[&[CH_BA], m]));
+            add_pronoun_forms(target, m, SAFE_WA_BA_PROCLITICS, PRONOUNS, false, lex);
+        } else if m == WORD_AKH || m == WORD_SUMM {
+            target.insert(m.to_vec());
+            target.insert(concat_slices(&[&[CH_WAW], m]));
+        } else if m == WORD_HAYY {
+            // Never وحي ("revelation")
+            target.insert(m.to_vec());
+        }
+        return;
+    }
+
+    if lex.broken_plural_ta_marbuta.contains(m) {
+        // Broken plural ending in ة (ملائكة/كفرة/فجرة/سحرة/ألسنة/أفئدة/إخوة/فتية...):
+        // Never emit bare open-Ta (كفرت/فجرت/سحرت) or dual/ات; only ة + possessive ت+pron.
+        let base = &m[..m.len() - 1];
+        add_definite_forms(target, m);
+        add_indefinite_forms(target, m, false);
+        for &pron in PRONOUNS {
+            let form = concat_slices(&[base, &[CH_TA], pron]);
+            add_indefinite_forms(target, &form, false);
+        }
+        return;
+    }
+
+    if m.len() >= 3 && m.last() == Some(&CH_TA_MARBUTA) {
+        add_fem_paradigm(target, &m[..m.len() - 1], true, true);
+        return;
+    }
+
+    if m == WORD_KALIM || m == WORD_QURA {
+        add_definite_forms(target, m);
+        add_with_proclitics(target, m, SAFE_WA_BA_LAM_PROCLITICS);
+        return;
+    }
+
+    add_definite_forms(target, m);
+    add_indefinite_forms(target, m, false);
+    let last = *m.last().unwrap_or(&0);
+    let ends_at = ends_with_slice(m, &[CH_ALEF, CH_TA]);
+    let ends_non_at_infl = ends_with_slice(m, &[CH_WAW, CH_NUN])
+        || ends_with_slice(m, &[CH_YA, CH_NUN])
+        || ends_with_slice(m, &[CH_ALEF, CH_NUN])
+        || ends_with_slice(m, &[CH_WAW, CH_ALEF])
+        || ends_with_slice(m, &[CH_TA, CH_MIM])
+        || ends_with_slice(m, &[CH_TA, CH_NUN]);
+    if last != CH_ALEF
+        && last != CH_HAMZA
+        && last != CH_HA
+        && !ends_at
+        && !ends_non_at_infl
+        && !lex.no_tanwin_ya.contains(m)
+        && m != WORD_RAHMAN
+    {
+        let tanwin = concat_slices(&[m, &[CH_ALEF]]);
+        add_indefinite_forms(target, &tanwin, false);
+    }
+    // Sound feminine plurals (-ات) and broken plurals with lexical -ن (موازين/شياطين/بطون/آذان/إخوان/ألوان)
+    // take direct possessive pronouns!
+    if (!ends_non_at_infl || lex.broken_plural_n_pron.contains(m))
+        && !lex.no_pron_family_members.contains(m)
+        && (last != CH_HA || lex.root_ha_words.contains(m))
+    {
+        add_pronoun_forms(
+            target,
+            m,
+            INDEF_PROCLITICS,
+            PRONOUNS,
+            m == WORD_KUTUB,
+            lex,
+        );
+    }
+}
+
 #[derive(Clone, Debug)]
 struct WordMatcher {
     tier1: HashSet<Vec<u16>>,
@@ -591,7 +1423,7 @@ struct WordMatcher {
 }
 
 impl WordMatcher {
-    fn build(orig_first: u16, orig_last: u16, norm_w: &[u16]) -> Self {
+    fn build(orig_w: &[u16], norm_w: &[u16]) -> Self {
         let mut t1: HashSet<Vec<u16>> = HashSet::with_capacity(32);
         let mut t2: HashSet<Vec<u16>> = HashSet::new();
         let mut t3: HashSet<Vec<u16>> = HashSet::new();
@@ -624,73 +1456,337 @@ impl WordMatcher {
             return Self { tier1: t1, tier2: t2, tier3: t3 };
         }
 
+        let lex = lexicon();
+        let orig_first = orig_w.first().copied().unwrap_or(0);
+        let orig_last = orig_w.last().copied().unwrap_or(0);
+
         // Detect definite article ال (orig_first must be plain ا or Alef Wasla ٱ, never أ/إ/آ)
         let has_al = (orig_first == CH_ALEF || orig_first == CH_ALEF_WASLA)
             && norm_w.len() >= 4
             && norm_w[0] == CH_ALEF
             && norm_w[1] == CH_LAM;
         let stem = if has_al { &norm_w[2..] } else { norm_w };
+        let orig_stem = if has_al && orig_w.len() >= 2 { &orig_w[2..] } else { orig_w };
+        let orig_stem_first = orig_stem.first().copied().unwrap_or(0);
+        let orig_stem_second = orig_stem.get(1).copied().unwrap_or(0);
 
-        // Detect feminine ة-noun:
-        // - Explicit ة ending (stem len >= 3), OR
-        // - Definite ال + ه ending (lazy keyboard typing like الجنه / الصلاه / الرحمه)
+        let ends_wn = ends_with_slice(stem, &[CH_WAW, CH_NUN]);
+        let ends_yn = ends_with_slice(stem, &[CH_YA, CH_NUN]);
+        let ends_an = ends_with_slice(stem, &[CH_ALEF, CH_NUN]);
+        let ends_at = ends_with_slice(stem, &[CH_ALEF, CH_TA]);
+        let ends_tan = ends_with_slice(stem, &[CH_TA, CH_ALEF, CH_NUN]);
+        let ends_tin = ends_with_slice(stem, &[CH_TA, CH_YA, CH_NUN]);
+
+        // Detect feminine ة-noun (explicit ة, or definite ال + ه lazy typing like الجنه/الصلاه)
         let is_fem = stem.len() >= 3
             && (orig_last == CH_TA_MARBUTA || (has_al && orig_last == CH_HA));
 
+        let is_fa3il_shape = orig_stem_second == CH_ALEF
+            && (stem.len() == 4
+                || (stem.len() == 5 && orig_last == CH_TA_MARBUTA)
+                || (stem.len() == 6 && (ends_wn || ends_yn || ends_an || ends_at)));
+        let in_known_nouns = lex.family_index.contains_key(stem);
+        let is_verb_like = !has_al
+            && !is_fem
+            && !in_known_nouns
+            && !is_fa3il_shape
+            && stem.len() >= 4
+            && matches!(stem[0], CH_YA | CH_TA | CH_NUN);
+
+        let mut family_lookup_keys: Vec<Vec<u16>> = Vec::with_capacity(3);
+        family_lookup_keys.push(stem.to_vec());
+
         if is_fem {
             let base = &stem[..stem.len() - 1]; // len >= 2
-            let fem_ends: &[u16] = if orig_last == CH_HA {
-                &[CH_TA_MARBUTA, CH_TA, CH_HA]
-            } else {
-                &[CH_TA_MARBUTA, CH_TA]
-            };
+            let fem_canon = concat_slices(&[base, &[CH_TA_MARBUTA]]);
 
-            if has_al {
-                for &e in fem_ends {
-                    let form = concat_slices(&[base, &[e]]);
-                    add_definite_forms(&mut t1, &form);
+            if lex.broken_plural_ta_marbuta.contains(fem_canon.as_slice()) {
+                let fem_ends: &[u16] = if orig_last == CH_HA {
+                    &[CH_TA_MARBUTA, CH_HA]
+                } else {
+                    &[CH_TA_MARBUTA]
+                };
+                if has_al {
+                    for &e in fem_ends {
+                        let form = concat_slices(&[base, &[e]]);
+                        add_definite_forms(&mut t1, &form);
+                        add_indefinite_forms(&mut t2, &form, false);
+                    }
+                } else {
+                    for &e in fem_ends {
+                        let form = concat_slices(&[base, &[e]]);
+                        add_indefinite_forms(&mut t1, &form, false);
+                        add_definite_forms(&mut t1, &form);
+                    }
+                }
+                for &pron in PRONOUNS {
+                    let form = concat_slices(&[base, &[CH_TA], pron]);
                     add_indefinite_forms(&mut t2, &form, false);
                 }
+                if orig_last == CH_HA {
+                    family_lookup_keys.push(fem_canon);
+                }
             } else {
-                for &e in fem_ends {
-                    let form = concat_slices(&[base, &[e]]);
-                    add_indefinite_forms(&mut t1, &form, false);
-                    add_definite_forms(&mut t1, &form);
+                let fem_ends: &[u16] = if orig_last == CH_HA {
+                    &[CH_TA_MARBUTA, CH_TA, CH_HA]
+                } else {
+                    &[CH_TA_MARBUTA, CH_TA]
+                };
+                if has_al {
+                    for &e in fem_ends {
+                        let form = concat_slices(&[base, &[e]]);
+                        add_definite_forms(&mut t1, &form);
+                        add_indefinite_forms(&mut t2, &form, false);
+                    }
+                } else {
+                    for &e in fem_ends {
+                        let form = concat_slices(&[base, &[e]]);
+                        add_indefinite_forms(&mut t1, &form, false);
+                        add_definite_forms(&mut t1, &form);
+                    }
+                }
+                for &pron in PRONOUNS {
+                    let form = concat_slices(&[base, &[CH_TA], pron]);
+                    add_indefinite_forms(&mut t2, &form, false);
+                }
+                add_fem_paradigm(&mut t3, base, false, true);
+                if orig_last == CH_HA {
+                    family_lookup_keys.push(fem_canon.clone());
+                }
+
+                // Participle feminine singular (مسلمة/مؤمنة/صالحة/كافرة...) -> link masculine singular/plural in T3
+                let base_last = *base.last().unwrap_or(&0);
+                if base.len() >= 4
+                    && !lex.fem_participle_exclude.contains(fem_canon.as_slice())
+                    && !matches!(base_last, CH_ALEF | CH_YA | CH_WAW | CH_HAMZA)
+                {
+                    let is_base_part =
+                        base[0] == CH_MIM || (base.len() == 4 && base[1] == CH_ALEF);
+                    if is_base_part {
+                        add_definite_forms(&mut t3, base);
+                        add_indefinite_forms(&mut t3, base, false);
+                        let tanwin = concat_slices(&[base, &[CH_ALEF]]);
+                        add_indefinite_forms(&mut t3, &tanwin, false);
+                        for suf in &[&[CH_WAW, CH_NUN][..], &[CH_YA, CH_NUN][..]] {
+                            let pl = concat_slices(&[base, suf]);
+                            add_definite_forms(&mut t3, &pl);
+                            add_indefinite_forms(&mut t3, &pl, false);
+                        }
+                        family_lookup_keys.push(base.to_vec());
+                    }
                 }
             }
-
-            // Tier 2: Singular possessive (base + ت + pronoun)
+        } else if stem.len() >= 5
+            && (ends_tan || ends_tin)
+            && !is_verb_like
+            && !lex.non_dual_tan_tin.contains(stem)
+        {
+            // Reverse Feminine Dual: الجنتين / جنتان / القريتين / الطائفتين / آيتين / مرتين
+            let base = &stem[..stem.len() - 3];
+            if has_al {
+                add_definite_forms(&mut t1, stem);
+                add_indefinite_forms(&mut t2, stem, false);
+            } else {
+                add_indefinite_forms(&mut t1, stem, false);
+                add_definite_forms(&mut t1, stem);
+            }
+            for &e in &[CH_TA_MARBUTA, CH_TA] {
+                let form = concat_slices(&[base, &[e]]);
+                add_definite_forms(&mut t2, &form);
+                add_indefinite_forms(&mut t2, &form, false);
+            }
             for &pron in PRONOUNS {
                 let form = concat_slices(&[base, &[CH_TA], pron]);
                 add_indefinite_forms(&mut t2, &form, false);
             }
-
-            // Tier 3: Dual (تان / تين + construct تا/تي + pronoun)
-            for dual_end in &[&[CH_TA, CH_ALEF, CH_NUN][..], &[CH_TA, CH_YA, CH_NUN][..]] {
-                let form = concat_slices(&[base, dual_end]);
-                add_definite_forms(&mut t3, &form);
-                add_indefinite_forms(&mut t3, &form, false);
+            add_fem_paradigm(&mut t3, base, false, true);
+            family_lookup_keys.push(concat_slices(&[base, &[CH_TA_MARBUTA]]));
+        } else if stem.len() >= 4
+            && ends_at
+            && !is_verb_like
+            && !lex.non_plural_at.contains(stem)
+        {
+            // Reverse Feminine Plural: جنات / مسلمات / مؤمنات / صالحات / آيات / صلوات / حسنات / سيئات
+            let base = &stem[..stem.len() - 2];
+            if has_al {
+                add_definite_forms(&mut t1, stem);
+                add_indefinite_forms(&mut t2, stem, false);
+            } else {
+                add_indefinite_forms(&mut t1, stem, false);
+                add_definite_forms(&mut t1, stem);
             }
-            for dual_c in &[&[CH_TA, CH_ALEF][..], &[CH_TA, CH_YA][..]] {
+            for &pron in PRONOUNS {
+                let form = concat_slices(&[stem, pron]);
+                add_indefinite_forms(&mut t2, &form, false);
+            }
+            if base.len() >= 2 && base != WORD_BIN && base != WORD_SAMAW && base != WORD_UMM {
+                for &e in &[CH_TA_MARBUTA, CH_TA] {
+                    let form = concat_slices(&[base, &[e]]);
+                    add_definite_forms(&mut t2, &form);
+                    add_indefinite_forms(&mut t2, &form, false);
+                }
                 for &pron in PRONOUNS {
-                    let form = concat_slices(&[base, dual_c, pron]);
+                    let form = concat_slices(&[base, &[CH_TA], pron]);
+                    add_indefinite_forms(&mut t2, &form, false);
+                }
+                if base.len() >= 3 && base.last() == Some(&CH_WAW) {
+                    let a_base = concat_slices(&[&base[..base.len() - 1], &[CH_ALEF]]);
+                    for &e in &[CH_TA_MARBUTA, CH_TA] {
+                        let form = concat_slices(&[&a_base, &[e]]);
+                        add_definite_forms(&mut t2, &form);
+                        add_indefinite_forms(&mut t2, &form, false);
+                    }
+                    family_lookup_keys.push(concat_slices(&[&a_base, &[CH_TA_MARBUTA]]));
+                }
+                family_lookup_keys.push(concat_slices(&[base, &[CH_TA_MARBUTA]]));
+
+                for dual_end in &[&[CH_TA, CH_ALEF, CH_NUN][..], &[CH_TA, CH_YA, CH_NUN][..]] {
+                    let form = concat_slices(&[base, dual_end]);
+                    add_definite_forms(&mut t3, &form);
                     add_indefinite_forms(&mut t3, &form, false);
+                }
+                for dual_c in &[&[CH_TA, CH_ALEF][..], &[CH_TA, CH_YA][..]] {
+                    for &pron in PRONOUNS {
+                        let form = concat_slices(&[base, dual_c, pron]);
+                        add_indefinite_forms(&mut t3, &form, false);
+                    }
+                }
+                if base.len() >= 4
+                    && (base[0] == CH_MIM || (base.len() == 4 && base[1] == CH_ALEF))
+                    && !lex.no_fem_expansion.contains(base)
+                {
+                    add_definite_forms(&mut t3, base);
+                    add_indefinite_forms(&mut t3, base, false);
+                    let base_last = *base.last().unwrap_or(&0);
+                    if !matches!(base_last, CH_ALEF | CH_HAMZA | CH_YA) {
+                        let tanwin = concat_slices(&[base, &[CH_ALEF]]);
+                        add_indefinite_forms(&mut t3, &tanwin, false);
+                        add_pronoun_forms(&mut t3, base, INDEF_PROCLITICS, PRONOUNS, false, lex);
+                        for suf in &[&[CH_WAW, CH_NUN][..], &[CH_YA, CH_NUN][..]] {
+                            let pl = concat_slices(&[base, suf]);
+                            add_definite_forms(&mut t3, &pl);
+                            add_indefinite_forms(&mut t3, &pl, false);
+                        }
+                    }
+                    family_lookup_keys.push(base.to_vec());
+                }
+            }
+        } else if stem.len() >= 5
+            && (ends_wn || ends_yn)
+            && !is_verb_like
+            && !lex.non_plural_wn_yn.contains(stem)
+            && !lex.cardinal_numbers.contains(stem)
+        {
+            // Reverse Masculine Sound Plural / Dual: المسلمون/المسلمين/المؤمنين/الصالحين/المتقين/الكافرون/النبيين
+            let base = &stem[..stem.len() - 2];
+            let alt_suf: &[u16] = if ends_wn { &[CH_YA, CH_NUN] } else { &[CH_WAW, CH_NUN] };
+            if has_al {
+                add_definite_forms(&mut t1, stem);
+                add_indefinite_forms(&mut t2, stem, false);
+            } else {
+                add_indefinite_forms(&mut t1, stem, false);
+                add_definite_forms(&mut t1, stem);
+            }
+            let alt_pl = concat_slices(&[base, alt_suf]);
+            add_definite_forms(&mut t3, &alt_pl);
+            add_indefinite_forms(&mut t3, &alt_pl, false);
+
+            let base_last = *base.last().unwrap_or(&0);
+            if base.len() >= 4 || lex.safe_3_rev_bases.contains(base) {
+                add_definite_forms(&mut t2, base);
+                add_indefinite_forms(&mut t2, base, false);
+                if base_last != CH_ALEF
+                    && base_last != CH_HAMZA
+                    && base_last != CH_HA
+                    && !lex.no_tanwin_ya.contains(base)
+                    && base != WORD_RAHMAN
+                {
+                    let tanwin = concat_slices(&[base, &[CH_ALEF]]);
+                    add_indefinite_forms(&mut t2, &tanwin, false);
+                }
+                if base_last != CH_HA || lex.root_ha_words.contains(base) {
+                    add_pronoun_forms(&mut t2, base, INDEF_PROCLITICS, PRONOUNS, false, lex);
+                }
+                if stem != WORD_ALAMIN && stem != WORD_ALAMUN {
+                    family_lookup_keys.push(base.to_vec());
                 }
             }
 
-            // Tier 3: Sound feminine plural (ات + optional pronoun; صلا -> صلوات for base ending in ا)
-            let mut plurals = Vec::with_capacity(2);
-            plurals.push(concat_slices(&[base, &[CH_ALEF, CH_TA]]));
-            if base.len() >= 3 && base.last() == Some(&CH_ALEF) {
-                plurals.push(concat_slices(&[&base[..base.len() - 1], &[CH_WAW, CH_ALEF, CH_TA]]));
+            // Defective weak-ي singular (متقون/متقين -> متقي, مهتدين -> مهتدي, معتدين -> معتدي, باقين -> باقي, أعلون -> أعلى)
+            if base.len() >= 3
+                && base_last != CH_YA
+                && (base[0] == CH_MIM || (base.len() == 3 && base[1] == CH_ALEF) || base == WORD_AAL)
+            {
+                let weak_sg = concat_slices(&[base, &[CH_YA]]);
+                add_definite_forms(&mut t2, &weak_sg);
+                add_indefinite_forms(&mut t2, &weak_sg, false);
             }
-            for pl in &plurals {
-                add_definite_forms(&mut t3, pl);
-                add_indefinite_forms(&mut t3, pl, false);
-                for &pron in PRONOUNS {
-                    let form = concat_slices(&[pl, pron]);
-                    add_indefinite_forms(&mut t3, &form, false);
+
+            if base.len() >= 4
+                && !matches!(base_last, CH_ALEF | CH_HAMZA | CH_YA | CH_WAW | CH_HA)
+                && !lex.no_fem_expansion.contains(base)
+            {
+                let is_part = base[0] == CH_MIM || (base.len() == 4 && base[1] == CH_ALEF);
+                if is_part {
+                    for &e in &[CH_TA_MARBUTA, CH_TA] {
+                        let form = concat_slices(&[base, &[e]]);
+                        add_definite_forms(&mut t2, &form);
+                        add_indefinite_forms(&mut t2, &form, false);
+                    }
+                    for &pron in PRONOUNS {
+                        let form = concat_slices(&[base, &[CH_TA], pron]);
+                        add_indefinite_forms(&mut t2, &form, false);
+                    }
+                    add_fem_paradigm(&mut t3, base, false, true);
+                    if !lex.no_dual_an_expansion.contains(base) {
+                        let dual = concat_slices(&[base, &[CH_ALEF, CH_NUN]]);
+                        add_definite_forms(&mut t3, &dual);
+                        add_indefinite_forms(&mut t3, &dual, false);
+                    }
+                    let c_waw = concat_slices(&[base, &[CH_WAW]]);
+                    let c_ya = concat_slices(&[base, &[CH_YA]]);
+                    add_indefinite_forms(&mut t3, &c_waw, false);
+                    add_indefinite_forms(&mut t3, &c_ya, false);
+                    for &pron in PRONOUNS {
+                        if pron != [CH_YA] {
+                            let fw = concat_slices(&[base, &[CH_WAW], pron]);
+                            let fy = concat_slices(&[base, &[CH_YA], pron]);
+                            add_indefinite_forms(&mut t3, &fw, false);
+                            add_indefinite_forms(&mut t3, &fy, false);
+                        }
+                    }
                 }
+            }
+        } else if stem.len() >= 6
+            && ends_an
+            && !is_verb_like
+            && !lex.non_dual_an.contains(stem)
+        {
+            // Reverse Masculine Dual (strictly guarded): مسلمان / مؤمنان / ساحران / والدان / فريقان
+            let base = &stem[..stem.len() - 2];
+            if has_al {
+                add_definite_forms(&mut t1, stem);
+                add_indefinite_forms(&mut t2, stem, false);
+            } else {
+                add_indefinite_forms(&mut t1, stem, false);
+                add_definite_forms(&mut t1, stem);
+            }
+            if base.len() >= 4
+                && (base[0] == CH_MIM
+                    || (base.len() == 4 && base[1] == CH_ALEF)
+                    || base == WORD_FARIQ)
+            {
+                add_definite_forms(&mut t2, base);
+                add_indefinite_forms(&mut t2, base, false);
+                let base_last = *base.last().unwrap_or(&0);
+                if !matches!(base_last, CH_ALEF | CH_HAMZA | CH_YA | CH_HA) {
+                    let tanwin = concat_slices(&[base, &[CH_ALEF]]);
+                    add_indefinite_forms(&mut t2, &tanwin, false);
+                    add_pronoun_forms(&mut t2, base, INDEF_PROCLITICS, PRONOUNS, false, lex);
+                }
+                let is_part = base[0] == CH_MIM || (base.len() == 4 && base[1] == CH_ALEF);
+                add_masculine_inflections(&mut t2, &mut t3, base, is_part, lex);
+                family_lookup_keys.push(base.to_vec());
             }
         } else if has_al {
             // Definite non-feminine noun
@@ -698,56 +1794,97 @@ impl WordMatcher {
             if stem.len() >= 3 {
                 add_indefinite_forms(&mut t2, stem, false);
                 let last = *stem.last().unwrap_or(&0);
-                if last != CH_ALEF && last != CH_HAMZA && stem != WORD_RAHMAN {
+                if last != CH_ALEF
+                    && last != CH_HAMZA
+                    && !lex.no_tanwin_ya.contains(stem)
+                    && stem != WORD_RAHMAN
+                {
                     let tanwin = concat_slices(&[stem, &[CH_ALEF]]);
                     add_indefinite_forms(&mut t2, &tanwin, false);
                 }
-                let ends_wn = ends_with_slice(stem, &[CH_WAW, CH_NUN]);
-                let ends_yn = ends_with_slice(stem, &[CH_YA, CH_NUN]);
-                if !ends_wn && !ends_yn {
-                    for &pron in PRONOUNS {
-                        let form = concat_slices(&[stem, pron]);
-                        add_indefinite_forms(&mut t2, &form, false);
+                if (!ends_wn && !ends_yn) || lex.broken_plural_n_pron.contains(stem) {
+                    add_pronoun_forms(
+                        &mut t2,
+                        stem,
+                        INDEF_PROCLITICS,
+                        PRONOUNS,
+                        stem == WORD_KUTUB,
+                        lex,
+                    );
+                }
+                let can_masc = !lex.cardinal_numbers.contains(stem)
+                    && !matches!(last, CH_TA_MARBUTA | CH_ALEF | CH_HAMZA | CH_WAW | CH_HA | CH_YA)
+                    && !ends_wn
+                    && !ends_yn
+                    && !ends_an
+                    && !ends_at
+                    && (stem.len() >= 4 || (stem.len() == 3 && orig_stem_first == CH_ALEF_MADDA));
+                if can_masc {
+                    let is_part = stem[0] == CH_MIM
+                        || (stem.len() == 4 && orig_stem_second == CH_ALEF);
+                    add_masculine_inflections(&mut t2, &mut t3, stem, is_part, lex);
+                } else if stem.len() >= 4
+                    && last == CH_YA
+                    && !lex.cardinal_numbers.contains(stem)
+                    && ((stem[0] == CH_MIM && stem != WORD_MUSA && !in_known_nouns)
+                        || (stem.len() == 4 && orig_stem_second == CH_ALEF)
+                        || stem == WORD_AALA)
+                {
+                    // Defective weak-ي stems (المتقي/المهتدي/المعتدي/الباقي/العالي/الأعلى)
+                    let drop_y = &stem[..stem.len() - 1];
+                    for suf in &[&[CH_WAW, CH_NUN][..], &[CH_YA, CH_NUN][..]] {
+                        let pl = concat_slices(&[drop_y, suf]);
+                        add_definite_forms(&mut t3, &pl);
+                        add_indefinite_forms(&mut t3, &pl, false);
                     }
+                    add_fem_paradigm(&mut t3, stem, true, true);
                 }
-                if stem.len() >= 5 && ends_wn {
-                    let alt = concat_slices(&[&stem[..stem.len() - 2], &[CH_YA, CH_NUN]]);
-                    add_definite_forms(&mut t3, &alt);
-                    add_indefinite_forms(&mut t3, &alt, false);
-                } else if stem.len() >= 5 && ends_yn {
-                    let alt = concat_slices(&[&stem[..stem.len() - 2], &[CH_WAW, CH_NUN]]);
-                    add_definite_forms(&mut t3, &alt);
-                    add_indefinite_forms(&mut t3, &alt, false);
-                }
-            } else {
-                // 2-letter definite stems (e.g. الجن/اليد/الدم): allow only bare & و+stem
-                // so unrelated 3-letter roots (e.g. فرح from الرح, كلب from اللب) never collide.
+            } else if stem == WORD_YAD {
+                add_with_proclitics(&mut t2, stem, SAFE_WA_BA_PROCLITICS);
+                add_pronoun_forms(&mut t2, stem, SAFE_WA_BA_PROCLITICS, PRONOUNS, false, lex);
+            } else if stem == WORD_RABB {
+                add_with_proclitics(&mut t2, stem, SAFE_NO_KAF_PROCLITICS);
+                add_pronoun_forms(&mut t2, stem, SAFE_NO_KAF_PROCLITICS, PRONOUNS, false, lex);
+            } else if stem == WORD_UMM {
+                add_pronoun_forms(
+                    &mut t2,
+                    stem,
+                    SAFE_NO_KAF_PROCLITICS,
+                    MOTHER_PRONOUNS,
+                    false,
+                    lex,
+                );
+            } else if stem == WORD_DAM {
                 t2.insert(stem.to_vec());
                 t2.insert(concat_slices(&[&[CH_WAW], stem]));
+                t2.insert(concat_slices(&[&[CH_BA], stem]));
+                add_pronoun_forms(&mut t2, stem, SAFE_WA_BA_PROCLITICS, PRONOUNS, false, lex);
+            } else {
+                // 2-letter definite stems (e.g. الجن/السن/السر): allow only bare & و+stem
+                t2.insert(stem.to_vec());
+                if stem != WORD_HAYY {
+                    t2.insert(concat_slices(&[&[CH_WAW], stem]));
+                }
             }
         } else {
             // Indefinite non-feminine Arabic word (len >= 3)
-            let is_verb_like = norm_w.len() >= 4
-                && matches!(norm_w[0], CH_YA | CH_TA | CH_NUN);
-            add_indefinite_forms(&mut t1, norm_w, is_verb_like);
-            add_definite_forms(&mut t1, norm_w);
-            if norm_w.last() == Some(&CH_HA) {
-                let alt_ta = concat_slices(&[&norm_w[..norm_w.len() - 1], &[CH_TA_MARBUTA]]);
+            add_indefinite_forms(&mut t1, stem, is_verb_like);
+            add_definite_forms(&mut t1, stem);
+            let last = *stem.last().unwrap_or(&0);
+            if last == CH_HA && !lex.root_ha_words.contains(stem) {
+                let alt_ta = concat_slices(&[&stem[..stem.len() - 1], &[CH_TA_MARBUTA]]);
                 add_indefinite_forms(&mut t1, &alt_ta, false);
                 add_definite_forms(&mut t1, &alt_ta);
             }
 
-            let last = *norm_w.last().unwrap_or(&0);
-            let ends_wn = ends_with_slice(norm_w, &[CH_WAW, CH_NUN]);
-            let ends_yn = ends_with_slice(norm_w, &[CH_YA, CH_NUN]);
-            let ends_wa = ends_with_slice(norm_w, &[CH_WAW, CH_ALEF]);
-            let ends_tm = ends_with_slice(norm_w, &[CH_TA, CH_MIM]);
-            let ends_tn = ends_with_slice(norm_w, &[CH_TA, CH_NUN]);
-            let ends_pron = last == CH_HA
-                || ends_with_slice(norm_w, &[CH_HA, CH_ALEF])
-                || ends_with_slice(norm_w, &[CH_HA, CH_MIM])
-                || ends_with_slice(norm_w, &[CH_KAF, CH_MIM])
-                || ends_with_slice(norm_w, &[CH_NUN, CH_ALEF]);
+            let ends_wa = ends_with_slice(stem, &[CH_WAW, CH_ALEF]);
+            let ends_tm = ends_with_slice(stem, &[CH_TA, CH_MIM]);
+            let ends_tn = ends_with_slice(stem, &[CH_TA, CH_NUN]);
+            let ends_pron = (last == CH_HA && !lex.root_ha_words.contains(stem))
+                || ends_with_slice(stem, &[CH_HA, CH_ALEF])
+                || ends_with_slice(stem, &[CH_HA, CH_MIM])
+                || ends_with_slice(stem, &[CH_KAF, CH_MIM])
+                || ends_with_slice(stem, &[CH_NUN, CH_ALEF]);
 
             if last != CH_ALEF
                 && last != CH_HAMZA
@@ -756,25 +1893,81 @@ impl WordMatcher {
                 && !ends_wa
                 && !ends_tm
                 && !ends_tn
-                && norm_w != WORD_RAHMAN
+                && !lex.no_tanwin_ya.contains(stem)
+                && stem != WORD_RAHMAN
+                && stem != WORD_KALIM
             {
-                let tanwin = concat_slices(&[norm_w, &[CH_ALEF]]);
+                let tanwin = concat_slices(&[stem, &[CH_ALEF]]);
                 add_indefinite_forms(&mut t2, &tanwin, false);
             }
-            if !ends_wa && !ends_wn && !ends_yn && !ends_tm && !ends_tn && !ends_pron {
-                for &pron in PRONOUNS {
-                    let form = concat_slices(&[norm_w, pron]);
-                    add_indefinite_forms(&mut t2, &form, false);
-                }
+            if ((!ends_wa && !ends_wn && !ends_yn && !ends_tm && !ends_tn && !ends_pron)
+                || lex.broken_plural_n_pron.contains(stem))
+                && stem != WORD_KALIM
+                && stem != WORD_QURA
+            {
+                add_pronoun_forms(
+                    &mut t2,
+                    stem,
+                    INDEF_PROCLITICS,
+                    PRONOUNS,
+                    stem == WORD_KUTUB,
+                    lex,
+                );
             }
-            if norm_w.len() >= 5 && ends_wn {
-                let alt = concat_slices(&[&norm_w[..norm_w.len() - 2], &[CH_YA, CH_NUN]]);
-                add_indefinite_forms(&mut t3, &alt, false);
-                add_definite_forms(&mut t3, &alt);
-            } else if norm_w.len() >= 5 && ends_yn {
-                let alt = concat_slices(&[&norm_w[..norm_w.len() - 2], &[CH_WAW, CH_NUN]]);
-                add_indefinite_forms(&mut t3, &alt, false);
-                add_definite_forms(&mut t3, &alt);
+
+            let starts_folded_al = starts_with_slice(stem, &[CH_ALEF, CH_LAM]);
+            let can_masc = !is_verb_like
+                && !starts_folded_al
+                && !lex.cardinal_numbers.contains(stem)
+                && !matches!(last, CH_TA_MARBUTA | CH_ALEF | CH_HAMZA | CH_WAW | CH_HA | CH_YA)
+                && !ends_wn
+                && !ends_yn
+                && !ends_an
+                && !ends_at
+                && !ends_wa
+                && !ends_tm
+                && !ends_tn
+                && !ends_pron
+                && (stem.len() >= 4 || (stem.len() == 3 && orig_stem_first == CH_ALEF_MADDA));
+            if can_masc {
+                let is_part = stem[0] == CH_MIM
+                    || (stem.len() == 4 && orig_stem_second == CH_ALEF);
+                add_masculine_inflections(&mut t2, &mut t3, stem, is_part, lex);
+            } else if !is_verb_like
+                && !starts_folded_al
+                && stem.len() >= 4
+                && last == CH_YA
+                && !lex.cardinal_numbers.contains(stem)
+                && ((stem[0] == CH_MIM && stem != WORD_MUSA && !in_known_nouns)
+                    || (stem.len() == 4 && orig_stem_second == CH_ALEF)
+                    || stem == WORD_AALA)
+            {
+                let drop_y = &stem[..stem.len() - 1];
+                for suf in &[&[CH_WAW, CH_NUN][..], &[CH_YA, CH_NUN][..]] {
+                    let pl = concat_slices(&[drop_y, suf]);
+                    add_definite_forms(&mut t3, &pl);
+                    add_indefinite_forms(&mut t3, &pl, false);
+                }
+                add_fem_paradigm(&mut t3, stem, true, true);
+            }
+        }
+
+        // Curated Quranic Broken-Plural & Irregular-Lemma Family Expansion (Tier 3)
+        if !is_verb_like {
+            let mut seen_fams: Vec<usize> = Vec::new();
+            for key in &family_lookup_keys {
+                if let Some(fam_ids) = lex.family_index.get(key.as_slice()) {
+                    for &fid in fam_ids {
+                        if !seen_fams.contains(&fid) {
+                            seen_fams.push(fid);
+                            for member in &lex.families[fid] {
+                                if member.text.as_slice() != stem {
+                                    add_family_member(&mut t3, member, lex);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -1015,11 +2208,10 @@ impl CompiledArabicQuery {
             });
         }
 
-        // Pure Arabic query: extract words with original first/last characters preserved.
-        let mut raw_words: Vec<(u16, u16, Vec<u16>)> = Vec::new();
+        // Pure Arabic query: extract words with original unfolded letters preserved alongside folded letters.
+        let mut raw_words: Vec<(Vec<u16>, Vec<u16>)> = Vec::new();
+        let mut cur_orig: Vec<u16> = Vec::new();
         let mut cur_norm: Vec<u16> = Vec::new();
-        let mut cur_orig_first = 0u16;
-        let mut cur_orig_last = 0u16;
 
         for &ch in query_u16 {
             if ch == b'(' as u16 || ch == b')' as u16 || is_arabic_ignorable(ch) {
@@ -1028,8 +2220,7 @@ impl CompiledArabicQuery {
             if is_whitespace_u16(ch) {
                 if !cur_norm.is_empty() {
                     raw_words.push((
-                        cur_orig_first,
-                        cur_orig_last,
+                        std::mem::take(&mut cur_orig),
                         std::mem::take(&mut cur_norm),
                     ));
                 }
@@ -1038,15 +2229,12 @@ impl CompiledArabicQuery {
             let unpresented = map_presentation_form(ch);
             let folded = fold_arabic_letter(ch);
             if is_arabic_letter(folded) {
-                if cur_norm.is_empty() {
-                    cur_orig_first = unpresented;
-                }
-                cur_orig_last = unpresented;
+                cur_orig.push(unpresented);
                 cur_norm.push(folded);
             }
         }
         if !cur_norm.is_empty() {
-            raw_words.push((cur_orig_first, cur_orig_last, cur_norm));
+            raw_words.push((cur_orig, cur_norm));
         }
 
         if raw_words.is_empty() {
@@ -1058,7 +2246,7 @@ impl CompiledArabicQuery {
         }
 
         if raw_words.len() == 1 {
-            let (orig_first, orig_last, norm_w) = raw_words.into_iter().next().unwrap();
+            let (orig_w, norm_w) = raw_words.into_iter().next().unwrap();
             let eff_len = norm_w.len();
             if eff_len < 3 {
                 // Short 1-2 letter Arabic query: preserve direct substring semantics with normalization
@@ -1073,7 +2261,7 @@ impl CompiledArabicQuery {
                     query_mask: mask,
                 });
             }
-            let matcher = WordMatcher::build(orig_first, orig_last, &norm_w);
+            let matcher = WordMatcher::build(&orig_w, &norm_w);
             return Some(Self {
                 mode: QueryMode::SingleWord {
                     matcher,
@@ -1087,12 +2275,12 @@ impl CompiledArabicQuery {
         // Multi-word Arabic query
         let mut norm_phrase = Vec::new();
         let mut words = Vec::with_capacity(raw_words.len());
-        for (idx, (orig_first, orig_last, norm_w)) in raw_words.into_iter().enumerate() {
+        for (idx, (orig_w, norm_w)) in raw_words.into_iter().enumerate() {
             if idx > 0 {
                 norm_phrase.push(CH_SPACE);
             }
             norm_phrase.extend_from_slice(&norm_w);
-            words.push(WordMatcher::build(orig_first, orig_last, &norm_w));
+            words.push(WordMatcher::build(&orig_w, &norm_w));
         }
         let eff_len = norm_phrase.len();
         Some(Self {
