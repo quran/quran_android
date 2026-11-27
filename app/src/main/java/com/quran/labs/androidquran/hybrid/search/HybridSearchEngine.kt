@@ -164,6 +164,12 @@ class HybridSearchEngine internal constructor(
   @Volatile
   private var staticLayoutConfigSig: String = ""
 
+  @Volatile
+  private var staticLayoutCacheGen: Long = -1L
+
+  @Volatile
+  private var measuredAvailWidthPx: Int = 0
+
   private data class ResolvedPaletteColors(
     val highlightColor: Color,
     val highlightBg: Color,
@@ -252,12 +258,36 @@ class HybridSearchEngine internal constructor(
   fun clearStaticLayoutCache() {
     synchronized(staticLayoutCache) {
       staticLayoutCache.evictAll()
+      staticLayoutCacheGen = -1L
     }
     synchronized(refLayoutCache) {
       refLayoutCache.evictAll()
     }
     synchronized(pagePillLayoutCache) {
       pagePillLayoutCache.evictAll()
+    }
+  }
+
+  private fun resetVerseStaticLayoutCacheForGeneration(gen: Long) {
+    synchronized(staticLayoutCache) {
+      if (staticLayoutCacheGen != gen) {
+        staticLayoutCache.evictAll()
+        staticLayoutCacheGen = gen
+      }
+    }
+  }
+
+  fun updateExpectedVerseAvailWidthPx(availWidthPx: Int) {
+    if (availWidthPx <= 0) return
+    val prevExpected = expectedAvailWidthPx()
+    measuredAvailWidthPx = availWidthPx
+    if (prevExpected != availWidthPx) {
+      synchronized(staticLayoutCache) {
+        staticLayoutCache.evictAll()
+      }
+      synchronized(refLayoutCache) {
+        refLayoutCache.evictAll()
+      }
     }
   }
 
@@ -279,7 +309,11 @@ class HybridSearchEngine internal constructor(
     }
   }
 
+  internal fun expectedAvailWidthPxForTest(): Int = expectedAvailWidthPx()
+
   private fun expectedAvailWidthPx(): Int {
+    val measured = measuredAvailWidthPx
+    if (measured > 0) return measured
     val dm = context.resources.displayMetrics
     val outerPad = HybridViewTokens.dp(context, 14f)
     val cardPad = HybridViewTokens.dp(context, 14f)
@@ -309,11 +343,16 @@ class HybridSearchEngine internal constructor(
     val configSig = "$availW|${dm.density}|$fontScale|$highlightColorArgb|$highlightBgArgb|" +
       "${paletteColors.versePrimaryArgb}|${paletteColors.refAccentArgb}|${paletteColors.pillSecondaryArgb}|${uthmaniTf != null}"
     synchronized(staticLayoutCache) {
+      if (queryGeneration.get() != gen) return
       if (staticLayoutConfigSig != configSig) {
         staticLayoutCache.evictAll()
         synchronized(refLayoutCache) { refLayoutCache.evictAll() }
         synchronized(pagePillLayoutCache) { pagePillLayoutCache.evictAll() }
         staticLayoutConfigSig = configSig
+      }
+      if (staticLayoutCacheGen != gen) {
+        staticLayoutCache.evictAll()
+        staticLayoutCacheGen = gen
       }
     }
     val batchPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -465,7 +504,10 @@ class HybridSearchEngine internal constructor(
       )
       val built = buildStaticLayout(highlightedSource, batchPaint, availW, isArabic = true) ?: continue
       synchronized(staticLayoutCache) {
-        if (staticLayoutConfigSig == configSig && queryGeneration.get() == gen) {
+        if (staticLayoutConfigSig == configSig &&
+          queryGeneration.get() == gen &&
+          staticLayoutCacheGen == gen
+        ) {
           staticLayoutCache.put(key, built)
         }
       }
@@ -476,6 +518,7 @@ class HybridSearchEngine internal constructor(
     hits: List<AyahSearchHit>,
     highlightColorArgb: Int,
     highlightBgArgb: Int,
+    gen: Long,
     startIndex: Int = 0,
     endIndex: Int = hits.size
   ) {
@@ -492,11 +535,16 @@ class HybridSearchEngine internal constructor(
     val configSig = "$availW|${dm.density}|$fontScale|$highlightColorArgb|$highlightBgArgb|" +
       "${paletteColors.versePrimaryArgb}|${paletteColors.refAccentArgb}|${paletteColors.pillSecondaryArgb}|${uthmaniTf != null}"
     synchronized(staticLayoutCache) {
+      if (queryGeneration.get() != gen) return
       if (staticLayoutConfigSig != configSig) {
         staticLayoutCache.evictAll()
         synchronized(refLayoutCache) { refLayoutCache.evictAll() }
         synchronized(pagePillLayoutCache) { pagePillLayoutCache.evictAll() }
         staticLayoutConfigSig = configSig
+      }
+      if (staticLayoutCacheGen != gen) {
+        staticLayoutCache.evictAll()
+        staticLayoutCacheGen = gen
       }
     }
     val batchPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -525,6 +573,7 @@ class HybridSearchEngine internal constructor(
     // slice exceeds STATIC_LAYOUT_CACHE_SIZE so incremental batches never skip boundary items.
     val effectiveStart = maxOf(clampedStart, clampedEnd - STATIC_LAYOUT_CACHE_SIZE)
     for (i in effectiveStart until clampedEnd) {
+      if (queryGeneration.get() != gen) return
       val hit = hits[i]
       val key = staticLayoutKey(hit.sura, hit.ayah)
 
@@ -546,7 +595,7 @@ class HybridSearchEngine internal constructor(
           if (builtPill != null) {
             pillLayout = builtPill
             synchronized(pagePillLayoutCache) {
-              if (staticLayoutConfigSig == configSig) {
+              if (staticLayoutConfigSig == configSig && queryGeneration.get() == gen) {
                 pagePillLayoutCache.put(pillKey, builtPill)
               }
             }
@@ -571,7 +620,7 @@ class HybridSearchEngine internal constructor(
           )
           if (builtRef != null) {
             synchronized(refLayoutCache) {
-              if (staticLayoutConfigSig == configSig) {
+              if (staticLayoutConfigSig == configSig && queryGeneration.get() == gen) {
                 refLayoutCache.put(key, builtRef)
               }
             }
@@ -586,7 +635,10 @@ class HybridSearchEngine internal constructor(
         val source = hit.precomputedNativeText ?: hit.text
         val built = buildStaticLayout(source, batchPaint, availW, hit.isArabic) ?: continue
         synchronized(staticLayoutCache) {
-          if (staticLayoutConfigSig == configSig) {
+          if (staticLayoutConfigSig == configSig &&
+            queryGeneration.get() == gen &&
+            staticLayoutCacheGen == gen
+          ) {
             staticLayoutCache.put(key, built)
           }
         }
@@ -644,9 +696,7 @@ class HybridSearchEngine internal constructor(
           .setTextDirection(
             if (isArabic) TextDirectionHeuristics.RTL else TextDirectionHeuristics.FIRSTSTRONG_RTL
           )
-          .setEllipsize(TextUtils.TruncateAt.END)
-          .setEllipsizedWidth(widthPx)
-          .setMaxLines(6)
+          .setMaxLines(Int.MAX_VALUE)
           .build()
       } else {
         @Suppress("DEPRECATION")
@@ -717,6 +767,10 @@ class HybridSearchEngine internal constructor(
         noTranslationsWarning = false,
         noTafsirInstalled = false
       )
+    }
+
+    if (targetScope == HybridSearchScope.AYAHS) {
+      resetVerseStaticLayoutCacheForGeneration(gen)
     }
 
     val searchDispatcher = if (targetScope == HybridSearchScope.AYAHS) rustSearchDispatcher else ioDispatcher
@@ -859,7 +913,7 @@ class HybridSearchEngine internal constructor(
         highlightBg = highlightBg
       )
       if (nextBatch.isNotEmpty()) {
-        prebuildStaticLayouts(nextBatch, hColorArgb, hBgArgb)
+        prebuildStaticLayouts(nextBatch, hColorArgb, hBgArgb, gen = gen)
       }
       if (queryGeneration.get() != gen) return@launch
       _uiState.update { state ->
@@ -1073,6 +1127,8 @@ class HybridSearchEngine internal constructor(
   }
 
   private suspend fun executeAyahSearch(gen: Long, query: String) {
+    if (queryGeneration.get() != gen) return
+    resetVerseStaticLayoutCacheForGeneration(gen)
     val containsArabic = QuranUtils.doesStringContainArabic(query)
     val compiledArabic = if (containsArabic) ArabicCompiledQuery.compile(query) else null
     val useRawArabic = containsArabic && compiledArabic != null
@@ -1152,7 +1208,7 @@ class HybridSearchEngine internal constructor(
           highlightColor = highlightColor,
           highlightBg = highlightBg
         )
-        prebuildStaticLayouts(built, resolvedHighlightColorArgb, resolvedHighlightBgArgb)
+        prebuildStaticLayouts(built, resolvedHighlightColorArgb, resolvedHighlightBgArgb, gen = gen)
         built
       }
     } else {

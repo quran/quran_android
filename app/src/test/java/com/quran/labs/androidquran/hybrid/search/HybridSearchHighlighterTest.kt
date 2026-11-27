@@ -61,6 +61,18 @@ class HybridSearchHighlighterTest {
     val lilVerse = "طريق للجنة بإذن الله"
     val lilRanges = HybridSearchHighlighter.computeArabicRanges(lilVerse, qJannah)
     assertThat(lilRanges.map { lilVerse.substring(it.start, it.end) }).containsExactly("للجنة")
+
+    val qMuslim = ArabicCompiledQuery.compile("مسلم")!!
+    val muslimVerse = "إن المسلمين والمسلمات والمؤمنين والمؤمنات"
+    val muslimRanges = HybridSearchHighlighter.computeArabicRanges(muslimVerse, qMuslim)
+    assertThat(muslimRanges.map { muslimVerse.substring(it.start, it.end) })
+      .containsExactly("المسلمين", "والمسلمات")
+      .inOrder()
+
+    val qHeart = ArabicCompiledQuery.compile("قلب")!!
+    val heartVerse = "ختم الله على قلوبهم وعلى سمعهم"
+    val heartRanges = HybridSearchHighlighter.computeArabicRanges(heartVerse, qHeart)
+    assertThat(heartRanges.map { heartVerse.substring(it.start, it.end) }).containsExactly("قلوبهم")
   }
 
   @Test

@@ -9,10 +9,12 @@ import android.graphics.RectF
 import android.graphics.Typeface
 import android.os.Build
 import android.text.Layout
+import android.text.Spanned
 import android.text.StaticLayout
 import android.text.TextDirectionHeuristics
 import android.text.TextPaint
 import android.text.TextUtils
+import android.text.style.ForegroundColorSpan
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -500,6 +502,14 @@ class HybridSearchAdapter(
       }
     }
 
+    private fun forceParentLayout() {
+      var p = parent
+      while (p is View && p !is RecyclerView && p.id != android.R.id.content) {
+        p.forceLayout()
+        p = p.parent
+      }
+    }
+
     fun setPrebuiltContent(newText: CharSequence, layout: StaticLayout?) {
       val sameText = boundText === newText || boundText == newText
       val prevLayout = prebuiltLayout
@@ -507,11 +517,19 @@ class HybridSearchAdapter(
       boundText = newText
 
       if (layout != null) {
+        val expectedW = layout.width + compoundPaddingLeft + compoundPaddingRight
+        val expectedH = layout.height + compoundPaddingTop + compoundPaddingBottom
         val matchesMeasuredBounds = isLaidOut &&
           (width - compoundPaddingLeft - compoundPaddingRight) == layout.width &&
-          measuredHeight == layout.height + compoundPaddingTop + compoundPaddingBottom
-        if (!matchesMeasuredBounds && isLaidOut && !isInLayout && (!sameText || prevLayout !== layout)) {
-          requestLayout()
+          measuredWidth == expectedW &&
+          measuredHeight == expectedH &&
+          height == expectedH
+        if (!matchesMeasuredBounds) {
+          forceLayout()
+          forceParentLayout()
+          if (isLaidOut && !isInLayout) {
+            requestLayout()
+          }
         }
         invalidate()
         return
@@ -519,8 +537,22 @@ class HybridSearchAdapter(
 
       if (!sameText || fallbackSyncedText !== newText) {
         fallbackSyncedText = newText
-        super.setText(newText, BufferType.NORMAL)
+        if (isLaidOut && !isInLayout) {
+          super.setText(newText, BufferType.NORMAL)
+        } else {
+          suppressRelayout = true
+          super.setText(newText, BufferType.NORMAL)
+          suppressRelayout = false
+        }
+        forceLayout()
+        forceParentLayout()
+        if (isLaidOut && !isInLayout) {
+          requestLayout()
+        }
+        invalidate()
       } else if (prevLayout !== layout) {
+        forceLayout()
+        forceParentLayout()
         if (isLaidOut && !isInLayout) {
           requestLayout()
         }
@@ -620,6 +652,14 @@ class HybridSearchAdapter(
       }
     }
 
+    private fun forceParentLayout() {
+      var p = parent
+      while (p is View && p !is RecyclerView && p.id != android.R.id.content) {
+        p.forceLayout()
+        p = p.parent
+      }
+    }
+
     fun setPrebuiltContent(
       newText: CharSequence,
       layout: StaticLayout?,
@@ -636,11 +676,18 @@ class HybridSearchAdapter(
       highlightPaint.color = highlightBg
 
       if (layout != null) {
+        val expectedH = layout.height + compoundPaddingTop + compoundPaddingBottom
         val matchesMeasuredBounds = isLaidOut &&
           (width - compoundPaddingLeft - compoundPaddingRight) == layout.width &&
-          measuredHeight == layout.height + compoundPaddingTop + compoundPaddingBottom
-        if (!matchesMeasuredBounds && isLaidOut && !isInLayout && (!sameText || prevLayout !== layout)) {
-          requestLayout()
+          measuredWidth == width &&
+          measuredHeight == expectedH &&
+          height == expectedH
+        if (!matchesMeasuredBounds) {
+          forceLayout()
+          forceParentLayout()
+          if (isLaidOut && !isInLayout) {
+            requestLayout()
+          }
         }
         invalidate()
         return
@@ -648,8 +695,22 @@ class HybridSearchAdapter(
 
       if (!sameText || fallbackSyncedText !== newText) {
         fallbackSyncedText = newText
-        super.setText(newText, BufferType.NORMAL)
+        if (isLaidOut && !isInLayout) {
+          super.setText(newText, BufferType.NORMAL)
+        } else {
+          suppressRelayout = true
+          super.setText(newText, BufferType.NORMAL)
+          suppressRelayout = false
+        }
+        forceLayout()
+        forceParentLayout()
+        if (isLaidOut && !isInLayout) {
+          requestLayout()
+        }
+        invalidate()
       } else if (prevLayout !== layout) {
+        forceLayout()
+        forceParentLayout()
         if (isLaidOut && !isInLayout) {
           requestLayout()
         }
@@ -981,7 +1042,10 @@ class HybridSearchAdapter(
           return
         }
       }
-      requestLayout()
+      forceLayout()
+      if (isLaidOut && !isInLayout) {
+        requestLayout()
+      }
       invalidate()
     }
 
@@ -1317,8 +1381,8 @@ class HybridSearchAdapter(
       id = R.id.verseText
       setTextSize(TypedValue.COMPLEX_UNIT_SP, 18.5f)
       setLineSpacing(0f, 1.42f)
-      maxLines = 6
-      ellipsize = TextUtils.TruncateAt.END
+      maxLines = Int.MAX_VALUE
+      ellipsize = null
       textAlignment = View.TEXT_ALIGNMENT_VIEW_START
       typeface = NativeUthmaniTypefaceCache.get(context) ?: Typeface.DEFAULT
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -1529,8 +1593,21 @@ class HybridSearchAdapter(
           highlightColor = palette.searchHighlight
         )
       }
-      val prebuiltLayout = if (hit.isArabic && matchesPalette) {
+      val candidateLayout = if (hit.isArabic && matchesPalette) {
         staticLayoutProvider?.invoke(hit.sura, hit.ayah)
+      } else {
+        null
+      }
+      val prebuiltLayout = if (
+        candidateLayout != null &&
+        layoutMatchesVerseContent(
+          layout = candidateLayout,
+          expectedText = hit.text,
+          expectedRanges = hit.highlightRanges,
+          expectedPrecomputed = precomputed
+        )
+      ) {
+        candidateLayout
       } else {
         null
       }
@@ -1540,6 +1617,40 @@ class HybridSearchAdapter(
         ranges = hit.highlightRanges,
         highlightBg = palette.searchHighlightBg
       )
+    }
+
+    private fun layoutMatchesVerseContent(
+      layout: StaticLayout,
+      expectedText: String,
+      expectedRanges: List<HighlightSpanRange>,
+      expectedPrecomputed: CharSequence?
+    ): Boolean {
+      val layoutText = layout.text
+      if (expectedPrecomputed != null && layoutText === expectedPrecomputed) return true
+      val len = expectedText.length
+      if (layoutText.length != len || layoutText.toString() != expectedText) return false
+      val spanned = layoutText as? Spanned
+      if (spanned == null) {
+        return expectedRanges.none { r ->
+          val s = r.start.coerceIn(0, len)
+          val e = r.end.coerceIn(s, len)
+          s < e
+        }
+      }
+      val spans = spanned.getSpans(0, len, ForegroundColorSpan::class.java)
+      var spanIdx = 0
+      for (i in expectedRanges.indices) {
+        val r = expectedRanges[i]
+        val start = r.start.coerceIn(0, len)
+        val end = r.end.coerceIn(start, len)
+        if (start >= end) continue
+        if (spanIdx >= spans.size) return false
+        val span = spans[spanIdx++]
+        if (spanned.getSpanStart(span) != start || spanned.getSpanEnd(span) != end) {
+          return false
+        }
+      }
+      return spanIdx == spans.size
     }
 
     fun resetTransientMotion() {
@@ -1766,8 +1877,8 @@ class HybridSearchAdapter(
     private val snippetView = StaticLayoutVerseView(context).apply {
       setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.5f)
       setLineSpacing(0f, 1.35f)
-      maxLines = 5
-      ellipsize = TextUtils.TruncateAt.END
+      maxLines = Int.MAX_VALUE
+      ellipsize = null
       textAlignment = View.TEXT_ALIGNMENT_VIEW_START
     }
     private val divider = View(context)

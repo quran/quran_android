@@ -392,8 +392,12 @@ class NativeHybridSearchView @JvmOverloads constructor(
   ) {
     actionHandler = handler
     restoreInputIfNeeded()
-    if (engine === searchEngine && stateCollectionJob?.isActive == true) return
+    if (engine === searchEngine && stateCollectionJob?.isActive == true) {
+      syncExpectedVerseAvailWidth()
+      return
+    }
     engine = searchEngine
+    syncExpectedVerseAvailWidth()
     scope.launch(Dispatchers.IO) {
       NativeUthmaniTypefaceCache.get(context.applicationContext)
     }
@@ -758,6 +762,20 @@ class NativeHybridSearchView @JvmOverloads constructor(
       HybridViewTokens.attachApplePressFeedback(this, 0.965f)
     }
     recentsRow.addView(clearRecentsBtn)
+  }
+
+  override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+    super.onSizeChanged(w, h, oldw, oldh)
+    syncExpectedVerseAvailWidth(w)
+  }
+
+  private fun syncExpectedVerseAvailWidth(viewWidthPx: Int = width) {
+    if (viewWidthPx <= 0) return
+    val cardPad = HybridViewTokens.dp(context, 14f)
+    val cardAvailW = (viewWidthPx - paddingLeft - paddingRight - cardPad * 2).coerceAtLeast(0)
+    if (cardAvailW > 0) {
+      engine?.updateExpectedVerseAvailWidthPx(cardAvailW)
+    }
   }
 
   override fun onDetachedFromWindow() {

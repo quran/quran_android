@@ -252,6 +252,77 @@ class DatabaseHandlerAndTimingTest {
   }
 
   @Test
+  fun `searchArabicNormalized supports universal muslim inflections and broken plurals in Tafsir`() {
+    val quranFileUtils = FakeQuranFileUtils.create(context)
+    val dbDir = quranFileUtils.getQuranDatabaseDirectory().apply { mkdirs() }
+    val dbFile = File(dbDir, "ar_comp.db").apply { delete() }
+    DatabaseHandler.clearDatabaseHandlerIfExists("ar_comp.db")
+
+    SQLiteDatabase.openOrCreateDatabase(dbFile, null).use { db ->
+      db.execSQL("CREATE TABLE properties(property TEXT, value INTEGER)")
+      db.execSQL("INSERT INTO properties VALUES ('schema_version', 2)")
+      db.execSQL("CREATE VIRTUAL TABLE verses USING fts3 (sura INTEGER, ayah INTEGER, text TEXT)")
+      val rows = listOf(
+        Triple(2, 7, "ختم الله على قُلُوبِهِمْ فلم يعودوا يؤمنون"),
+        Triple(2, 128, "واجعل من ذريتنا أمة مُسْلِمَةً لك"),
+        Triple(3, 67, "كان إبراهيم حنيفاً مُسْلِماً"),
+        Triple(16, 89, "وبشرى لِلْمُسْلِمِينَ الموحدين"),
+        Triple(33, 35, "إن المُسْلِمِينَ والمُسْلِمَاتِ أعد الله لهم مغفرة"),
+        Triple(3, 112, "ويقتلون الأَنْبِيَاءَ والنَّبِيِّينَ بغير حق"),
+        Triple(5, 64, "غُلَّتْ أَيْدِيهِمْ ولعنوا بما قالوا"),
+        Triple(12, 5, "فيكيدوا لك كَيْداً عظيماً")
+      )
+      val stmt = db.compileStatement("INSERT INTO verses(sura, ayah, text) VALUES (?, ?, ?)")
+      for ((s, a, t) in rows) {
+        stmt.clearBindings()
+        stmt.bindLong(1, s.toLong())
+        stmt.bindLong(2, a.toLong())
+        stmt.bindString(3, t)
+        stmt.executeInsert()
+      }
+    }
+
+    try {
+      val handler = DatabaseHandler.getDatabaseHandler(context, "ar_comp.db", quranFileUtils)
+
+      handler.searchArabicNormalized("مسلم")!!.use { c ->
+        val pairs = mutableListOf<String>()
+        while (c.moveToNext()) {
+          pairs.add("${c.getInt(1)}:${c.getInt(2)}")
+          assertThat(c.getString(3)).contains("<font color=")
+        }
+        // Tier 2 (مسلمة 2:128, مسلما 3:67) -> Tier 3 (للمسلمين 16:89, المسلمين والمسلمات 33:35)
+        assertThat(pairs).containsExactly("2:128", "3:67", "16:89", "33:35").inOrder()
+      }
+
+      handler.searchArabicNormalized("قلب")!!.use { c ->
+        assertThat(c.count).isEqualTo(1)
+        assertThat(c.moveToFirst()).isTrue()
+        assertThat(c.getString(3)).contains("قُلُوبِهِمْ</font>")
+      }
+
+      handler.searchArabicNormalized("نبي")!!.use { c ->
+        assertThat(c.count).isEqualTo(1)
+        assertThat(c.moveToFirst()).isTrue()
+        val snippet = c.getString(3)
+        assertThat(snippet).contains("الأَنْبِيَاءَ</font>")
+        assertThat(snippet).contains("النَّبِيِّينَ</font>")
+      }
+
+      // اليد matches أيديهم (5:64) and NEVER كيدا (12:5)
+      handler.searchArabicNormalized("اليد")!!.use { c ->
+        assertThat(c.count).isEqualTo(1)
+        assertThat(c.moveToFirst()).isTrue()
+        assertThat(c.getInt(1)).isEqualTo(5)
+        assertThat(c.getInt(2)).isEqualTo(64)
+      }
+    } finally {
+      DatabaseHandler.clearDatabaseHandlerIfExists("ar_comp.db")
+      dbFile.delete()
+    }
+  }
+
+  @Test
   fun `suraTimingDatabaseHandler caches schemaVersion and queries timings with bind args`() {
     val dbFile = File(context.cacheDir, "timing_test.db")
     dbFile.delete()
