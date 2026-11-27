@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.quran.labs.androidquran.common.audio.model.playback.PlaybackSpeed
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.audiobar.state.AudioBarState
@@ -119,9 +120,9 @@ internal fun AudioBar(
       RepeatableButton(
         icon = QuranIcons.Speed,
         contentDescription = "",
-        values = SPEED_VALUES,
+        values = PlaybackSpeed.speeds,
         value = state.speed,
-        defaultValue = 1.0f,
+        defaultValue = PlaybackSpeed.DEFAULT_SPEED,
         modifier = Modifier
           .width(40.dp)
           .weight(1f),
@@ -142,7 +143,6 @@ internal fun AudioBar(
 }
 
 private val REPEAT_VALUES = listOf(0, 1, 2, 3, -1)
-private val SPEED_VALUES = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f)
 
 @Preview
 @Composable

@@ -15,6 +15,7 @@ import com.quran.data.core.QuranInfo
 import com.quran.data.model.SuraAyah
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
+import com.quran.labs.androidquran.common.audio.model.playback.PlaybackSpeed
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.SlidingPagerAdapter
 import com.quran.labs.androidquran.ui.util.TypefaceManager
@@ -115,9 +116,10 @@ class AyahPlaybackFragment : AyahActionFragment() {
     repeatRangePicker.value = defaultRangeRepeat
     repeatVersePicker.value = defaultVerseRepeat
     playbackSpeedPicker.minValue = 1
-    playbackSpeedPicker.maxValue = SPEEDS.size
-    playbackSpeedPicker.displayedValues = SPEEDS.map { numberFormat.format(it) }.toTypedArray()
-    playbackSpeedPicker.value = DEFAULT_SPEED_INDEX + 1
+    playbackSpeedPicker.maxValue = PlaybackSpeed.speeds.size
+    playbackSpeedPicker.displayedValues =
+      PlaybackSpeed.speeds.map { numberFormat.format(it) }.toTypedArray()
+    playbackSpeedPicker.value = PlaybackSpeed.speeds.indexOf(PlaybackSpeed.DEFAULT_SPEED) + 1
     repeatRangePicker.setOnValueChangedListener { _: NumberPicker?, _: Int, newVal: Int ->
       if (newVal > 1) {
         // whenever we want to repeat the range, we have to enable restrictToRange
@@ -195,7 +197,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
       val enforceRange = restrictToRange.isChecked
       var updatedRange = false
 
-      val speed = SPEEDS[playbackSpeedPicker.value - 1]
+      val speed = PlaybackSpeed.speeds[playbackSpeedPicker.value - 1]
       if (currentStart != decidedStart || currentEnding != decidedEnd) {
         // different range or not playing, so make a new request
         updatedRange = true
@@ -355,7 +357,7 @@ class AyahPlaybackFragment : AyahActionFragment() {
         restrictToRange.isChecked = shouldEnforce
         repeatRangePicker.value = rangeRepeatCount + 1
         repeatVersePicker.value = verseRepeatCount + 1
-        playbackSpeedPicker.value = SPEEDS.indexOf(currentSpeed) + 1
+        playbackSpeedPicker.value = PlaybackSpeed.speeds.indexOf(currentSpeed) + 1
       }
     }
   }
@@ -364,7 +366,5 @@ class AyahPlaybackFragment : AyahActionFragment() {
     private val ITEM_LAYOUT = R.layout.sherlock_spinner_item
     private val ITEM_DROPDOWN_LAYOUT = R.layout.sherlock_spinner_dropdown_item
     private const val MAX_REPEATS = 25
-    private val SPEEDS = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f)
-    private const val DEFAULT_SPEED_INDEX = 2
   }
 }
