@@ -6,6 +6,7 @@ import com.quran.data.di.AppScope
 import com.quran.labs.androidquran.dao.translation.Translation
 import com.quran.labs.androidquran.dao.translation.TranslationItem
 import com.quran.labs.androidquran.dao.translation.TranslationList
+import com.quran.labs.androidquran.data.BundledTranslations
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.database.DatabaseHandler.Companion.getDatabaseHandler
 import com.quran.labs.androidquran.database.TranslationsDBAdapter
@@ -79,7 +80,10 @@ open class TranslationManagerPresenter @Inject internal constructor(
     }
 
     return flow
-      .map { mergeWithServerTranslations(it.translations) }
+      .map {
+        BundledTranslations.installTranslations(quranFileUtils, quranSettings)
+        mergeWithServerTranslations(BundledTranslations.mergeServerTranslations(it.translations))
+      }
       .onEach { translations ->
         val updatedTranslations = translations.any { it.needsUpgrade() }
         quranSettings.setHaveUpdatedTranslations(updatedTranslations)
