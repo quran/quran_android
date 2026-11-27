@@ -20,12 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
+import com.quran.mobile.feature.audiobar.R
 import com.quran.mobile.feature.audiobar.state.AudioBarUiEvent
 
 @Composable
@@ -36,7 +38,10 @@ internal fun RecitationListeningAudioBar(
 ) {
   RecitationAudioBar(eventSink, true, modifier = modifier) {
     IconButton(onClick = { listeningEventSink(AudioBarUiEvent.RecitationListeningEvent.HideVerses) }) {
-      Icon(QuranIcons.MenuBook, contentDescription = "")
+      Icon(
+        QuranIcons.MenuBook,
+        contentDescription = stringResource(id = R.string.audiobar_hide_verses)
+      )
     }
   }
 }
@@ -49,11 +54,17 @@ internal fun RecitationPlayingAudioBar(
 ) {
   RecitationAudioBar(eventSink, false, modifier = modifier) {
     IconButton(onClick = { playingEventSink(AudioBarUiEvent.RecitationPlayingEvent.EndSession) }) {
-      Icon(QuranIcons.Close, contentDescription = "")
+      Icon(
+        QuranIcons.Close,
+        contentDescription = stringResource(id = R.string.audiobar_end_session)
+      )
     }
 
     IconButton(onClick = { playingEventSink(AudioBarUiEvent.RecitationPlayingEvent.PauseRecitation) }) {
-      Icon(QuranIcons.Pause, contentDescription = "")
+      Icon(
+        QuranIcons.Pause,
+        contentDescription = stringResource(id = R.string.audiobar_pause_recitation)
+      )
     }
   }
 }
@@ -66,11 +77,17 @@ internal fun RecitationStoppedAudioBar(
 ) {
   RecitationAudioBar(eventSink, false, modifier = modifier) {
     IconButton(onClick = { stoppedEventSink(AudioBarUiEvent.RecitationStoppedEvent.EndSession) }) {
-      Icon(QuranIcons.Close, contentDescription = "")
+      Icon(
+        QuranIcons.Close,
+        contentDescription = stringResource(id = R.string.audiobar_end_session)
+      )
     }
 
     IconButton(onClick = { stoppedEventSink(AudioBarUiEvent.RecitationStoppedEvent.PlayRecitation) }) {
-      Icon(QuranIcons.PlayArrow, contentDescription = "")
+      Icon(
+        QuranIcons.PlayArrow,
+        contentDescription = stringResource(id = R.string.audiobar_play_recitation)
+      )
     }
   }
 }
@@ -95,7 +112,10 @@ internal fun RecitationAudioBar(
     VerticalDivider(thickness = Dp.Hairline)
 
     IconButton(onClick = { eventSink(AudioBarUiEvent.CommonRecordingEvent.Transcript) }) {
-      Icon(QuranIcons.Chat, contentDescription = "")
+      Icon(
+        QuranIcons.Chat,
+        contentDescription = stringResource(id = R.string.audiobar_transcript)
+      )
     }
 
     VerticalDivider(thickness = Dp.Hairline)
@@ -118,7 +138,11 @@ internal fun RecitationAudioBar(
       } else {
         LocalContentColor.current
       }
-      Icon(QuranIcons.Mic, contentDescription = "", tint = tint)
+      Icon(
+        QuranIcons.Mic,
+        contentDescription = stringResource(id = R.string.audiobar_record),
+        tint = tint
+      )
     }
   }
 }

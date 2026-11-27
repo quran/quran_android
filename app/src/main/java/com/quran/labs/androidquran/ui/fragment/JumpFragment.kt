@@ -28,6 +28,7 @@ import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
 import com.quran.labs.androidquran.util.QuranUtils
+import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.labs.androidquran.view.ForceCompleteTextView
 import dev.zacsweers.metro.Inject
 import timber.log.Timber
@@ -49,12 +50,13 @@ class JumpFragment : DialogFragment() {
 
   override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
     val activity: Activity = requireActivity()
-    val inflater = activity.layoutInflater
+    val builder = Builder(activity, ThemeUtil.dialogThemeRes())
+    val dialogContext = builder.context
+    val inflater = LayoutInflater.from(dialogContext)
 
     @SuppressLint("InflateParams")
     val layout = inflater.inflate(R.layout.jump_dialog, null)
 
-    val builder = Builder(activity, R.style.QuranDialogTheme)
     builder.setTitle(activity.getString(R.string.menu_jump))
 
     // Sura chooser
@@ -65,7 +67,7 @@ class JumpFragment : DialogFragment() {
         }
 
     val suraAdapter = InfixFilterArrayAdapter(
-        activity,
+        dialogContext,
         android.R.layout.simple_spinner_dropdown_item, suras
     )
     suraInput.setAdapter(suraAdapter)

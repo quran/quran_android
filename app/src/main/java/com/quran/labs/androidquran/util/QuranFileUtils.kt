@@ -2,11 +2,13 @@ package com.quran.labs.androidquran.util
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Bitmap.CompressFormat.PNG
-import android.graphics.Bitmap.Config.ALPHA_8
 import android.graphics.BitmapFactory
 import android.graphics.BitmapFactory.Options
+import android.graphics.ImageDecoder
+import android.os.Build
 import android.os.Environment
+import androidx.annotation.RequiresApi
+import androidx.annotation.VisibleForTesting
 import androidx.annotation.WorkerThread
 import com.quran.data.core.QuranFileManager
 import com.quran.data.model.audio.Qari
@@ -14,12 +16,10 @@ import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.BuildConfig
 import com.quran.labs.androidquran.common.Response
 import com.quran.labs.androidquran.data.QuranDataProvider
-import com.quran.labs.androidquran.extension.closeQuietly
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject
 import okhttp3.OkHttpClient
 import okhttp3.Request.Builder
-import okhttp3.ResponseBody
 import okio.Buffer
 import okio.ForwardingSource
 import okio.Source
@@ -28,10 +28,8 @@ import okio.sink
 import okio.source
 import timber.log.Timber
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.text.NumberFormat
 import java.util.Collections
 import java.util.Locale
 
@@ -172,17 +170,19 @@ class QuranFileUtils @Inject constructor(
       return state == Environment.MEDIA_MOUNTED
     }
 
+  @JvmOverloads
   fun getImageFromSD(
     widthParam: String?,
-    filename: String
+    filename: String,
+    maxTargetWidth: Int = 0
   ): Response {
     val location: File =
       widthParam?.let { getQuranImagesDirectory(it) }
           ?: getQuranImagesDirectory()
-    val options = Options()
-    options.inPreferredConfig = ALPHA_8
-    val bitmap = BitmapFactory.decodeFile(File(location, filename).absolutePath, options)
-    return bitmap?.let { Response(it) } ?: Response(Response.ERROR_FILE_NOT_FOUND)
+    val file = File(location, filename)
+    val decoded = decodePageBitmapFromFile(file, maxTargetWidth)
+    return decoded?.let { Response(it.bitmap, 0, it.sourceWidth, it.sourceHeight) }
+      ?: Response(Response.ERROR_FILE_NOT_FOUND)
   }
 
   private fun writeNoMediaFile(parentDir: File): Boolean {
@@ -289,13 +289,15 @@ class QuranFileUtils @Inject constructor(
     }
   }
 
+  @JvmOverloads
   fun getImageFromWeb(
     okHttpClient: OkHttpClient,
     context: Context,
     widthParam: String,
-    filename: String
+    filename: String,
+    maxTargetWidth: Int = 0
   ): Response {
-    return getImageFromWeb(okHttpClient, context, widthParam, filename, false)
+    return getImageFromWeb(okHttpClient, context, widthParam, filename, false, maxTargetWidth)
   }
 
   private fun getImageFromWeb(
@@ -303,7 +305,8 @@ class QuranFileUtils @Inject constructor(
     context: Context,
     widthParam: String,
     filename: String,
-    isRetry: Boolean
+    isRetry: Boolean,
+    maxTargetWidth: Int
   ): Response {
     val base = imageBaseUrl
     val urlString = (base + "width" + widthParam + File.separator + filename)
@@ -312,32 +315,48 @@ class QuranFileUtils @Inject constructor(
         .url(urlString)
         .build()
     val call = okHttpClient.newCall(request)
-    var responseBody: ResponseBody? = null
+    var tempFile: File? = null
     try {
-      val response = call.execute()
-      if (response.isSuccessful) {
-        responseBody = response.body
-        // handling for BitmapFactory.decodeStream not throwing an error
-        // when the download is interrupted or an exception occurs. This
-        // is taken from both Glide (see ExceptionHandlingInputStream) and
-        // Picasso (see BitmapFactory).
-        val exceptionCatchingSource =
-          ExceptionCatchingSource(responseBody.source())
-        val bufferedSource = exceptionCatchingSource.buffer()
-        val bitmap = decodeBitmapStream(bufferedSource.inputStream())
-        // throw if an error occurred while decoding the stream
-        exceptionCatchingSource.throwIfCaught()
-        if (bitmap != null) {
-          val path = getQuranImagesDirectory(widthParam)
-          var warning = Response.WARN_SD_CARD_NOT_FOUND
+      call.execute().use { response ->
+        if (response.isSuccessful) {
+          val exceptionCatchingSource =
+            ExceptionCatchingSource(response.body.source())
+          val bufferedSource = exceptionCatchingSource.buffer()
           if (makeQuranImagesDirectory(widthParam)) {
+            val path = getQuranImagesDirectory(widthParam)
             val resultPath = File(path, filename)
-            warning = if (tryToSaveBitmap(
-                bitmap, resultPath
-              )
-            ) 0 else Response.WARN_COULD_NOT_SAVE_FILE
+            val tmpPrefix = if (filename.length >= 3) "$filename." else "tmp_$filename."
+            val tmp = File.createTempFile(tmpPrefix, ".tmp", path)
+            tempFile = tmp
+            tmp.sink().buffer().use { sink ->
+              sink.writeAll(bufferedSource)
+            }
+            exceptionCatchingSource.throwIfCaught()
+
+            if (resultPath.exists()) {
+              resultPath.delete()
+            }
+            val saved = tmp.renameTo(resultPath) || copyFileAndDelete(tmp, resultPath)
+            val decoded = if (saved) {
+              decodePageBitmapFromFile(resultPath, maxTargetWidth)
+            } else {
+              decodePageBitmapFromFile(tmp, maxTargetWidth).also {
+                tmp.delete()
+              }
+            }
+            if (decoded != null) {
+              val warning = if (saved) 0 else Response.WARN_COULD_NOT_SAVE_FILE
+              return Response(decoded.bitmap, warning, decoded.sourceWidth, decoded.sourceHeight)
+            } else if (saved) {
+              resultPath.delete()
+            }
+          } else {
+            val bitmap = decodeBitmapStream(bufferedSource.inputStream())
+            exceptionCatchingSource.throwIfCaught()
+            if (bitmap != null) {
+              return Response(bitmap, Response.WARN_SD_CARD_NOT_FOUND)
+            }
           }
-          return Response(bitmap, warning)
         }
       }
     } catch (_: InterruptedException) {
@@ -345,37 +364,108 @@ class QuranFileUtils @Inject constructor(
     } catch (ioe: IOException) {
       Timber.e(ioe, "exception downloading file")
     } finally {
-      responseBody.closeQuietly()
+      tempFile?.let {
+        if (it.exists()) {
+          it.delete()
+        }
+      }
     }
     return if (isRetry) Response(
         Response.ERROR_DOWNLOADING_ERROR
-    ) else getImageFromWeb(okHttpClient, context, widthParam, filename, true)
+    ) else getImageFromWeb(okHttpClient, context, widthParam, filename, true, maxTargetWidth)
   }
 
   private fun decodeBitmapStream(`is`: InputStream): Bitmap? {
-    val options = Options()
-    options.inPreferredConfig = ALPHA_8
-    return BitmapFactory.decodeStream(`is`, null, options)
+    return BitmapFactory.decodeStream(`is`, null, Options())
   }
 
-  private fun tryToSaveBitmap(bitmap: Bitmap, savePath: File): Boolean {
-    var output: FileOutputStream? = null
-    try {
-      output = FileOutputStream(savePath)
-      return bitmap.compress(PNG, 100, output)
-    } catch (ioe: IOException) {
-      // do nothing
-    } finally {
+  private fun decodePageBitmapFromFile(file: File, maxTargetWidth: Int = 0): DecodedPageBitmap? {
+    if (!file.exists()) {
+      return null
+    }
+    val effectiveTargetWidth = if (maxTargetWidth > 0) {
+      maxTargetWidth
+    } else {
+      appContext.resources.displayMetrics.widthPixels
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !isRobolectricRuntime()) {
       try {
-        if (output != null) {
-          output.flush()
-          output.close()
-        }
-      } catch (e: Exception) {
-        // ignore...
+        return decodePageBitmapHardware(file, effectiveTargetWidth)
+      } catch (_: UnsupportedOperationException) {
+        // Fall back to software decoding on devices/environments without hardware decoder support.
+      } catch (_: IllegalStateException) {
+        // Fall back to software decoding if hardware allocation is unavailable.
+      } catch (ioe: IOException) {
+        Timber.w(ioe, "ImageDecoder failed to decode %s", file.name)
+        return null
       }
     }
-    return false
+    return decodePageBitmapSoftware(file, effectiveTargetWidth)
+  }
+
+  @RequiresApi(Build.VERSION_CODES.P)
+  private fun decodePageBitmapHardware(file: File, maxTargetWidth: Int): DecodedPageBitmap {
+    var sourceWidth = 0
+    var sourceHeight = 0
+    val source = ImageDecoder.createSource(file)
+    val bitmap = ImageDecoder.decodeBitmap(source) { decoder, info, _ ->
+      sourceWidth = info.size.width
+      sourceHeight = info.size.height
+      decoder.allocator = ImageDecoder.ALLOCATOR_HARDWARE
+      val targetDims = computeTargetDecodeDimensions(sourceWidth, sourceHeight, maxTargetWidth)
+      if (targetDims != null) {
+        decoder.setTargetSize(targetDims.first, targetDims.second)
+      }
+    }
+    return DecodedPageBitmap(bitmap, sourceWidth, sourceHeight)
+  }
+
+  @VisibleForTesting
+  internal fun decodePageBitmapSoftware(file: File, maxTargetWidth: Int): DecodedPageBitmap? {
+    val boundsOptions = Options().apply { inJustDecodeBounds = true }
+    BitmapFactory.decodeFile(file.absolutePath, boundsOptions)
+    val sourceWidth = boundsOptions.outWidth
+    val sourceHeight = boundsOptions.outHeight
+    if (sourceWidth <= 0 || sourceHeight <= 0) {
+      return null
+    }
+
+    val decodeOptions = Options().apply {
+      if (maxTargetWidth in 1 until sourceWidth) {
+        inScaled = true
+        inDensity = sourceWidth
+        inTargetDensity = maxTargetWidth
+      }
+    }
+    val bitmap = BitmapFactory.decodeFile(file.absolutePath, decodeOptions) ?: return null
+    if (decodeOptions.inScaled) {
+      bitmap.density = Bitmap.DENSITY_NONE
+    }
+    return DecodedPageBitmap(bitmap, sourceWidth, sourceHeight)
+  }
+
+  private fun isRobolectricRuntime(): Boolean {
+    return "robolectric".equals(Build.FINGERPRINT, ignoreCase = true)
+  }
+
+  internal data class DecodedPageBitmap(
+    val bitmap: Bitmap,
+    val sourceWidth: Int,
+    val sourceHeight: Int
+  )
+
+  private fun copyFileAndDelete(sourceFile: File, destinationFile: File): Boolean {
+    return try {
+      sourceFile.source().use { source ->
+        destinationFile.sink().buffer().use { sink ->
+          sink.writeAll(source)
+        }
+      }
+      sourceFile.delete()
+      true
+    } catch (_: IOException) {
+      false
+    }
   }
 
   private val quranInternalBaseDirectory: File
@@ -389,7 +479,7 @@ class QuranFileUtils @Inject constructor(
 
   fun getQuranBaseDirectory(context: Context): String? {
     var basePath = QuranSettings.getInstance(context).appCustomLocation
-    if (!isSDCardMounted) {
+    if (basePath != appContext.filesDir.absolutePath && !isSDCardMounted) {
       // if our best guess suggests that we won't have access to the data due to the sdcard not
       // being mounted, then set the base path to null for now.
       if (basePath == null || basePath == Environment.getExternalStorageDirectory().absolutePath ||
@@ -473,7 +563,8 @@ class QuranFileUtils @Inject constructor(
   }
 
   private fun recitationsDirectory(): String {
-    val recitationDirectory = getQuranBaseDirectory(appContext).toString() + "$recitationPath/"
+    val baseDir = getQuranBaseDirectory(appContext)?.let(::File) ?: quranInternalBaseDirectory
+    val recitationDirectory = File(baseDir, recitationPath).absolutePath + File.separator
     makeDirectory(recitationDirectory)
     return recitationDirectory
   }
@@ -721,9 +812,27 @@ class QuranFileUtils @Inject constructor(
   companion object {
     private const val QURAN_BASE = "quran_android/"
     @JvmStatic fun getPageFileName(p: Int): String {
-      val nf = NumberFormat.getInstance(Locale.US)
-      nf.minimumIntegerDigits = 3
-      return "page" + nf.format(p.toLong()) + ".png"
+      return String.format(Locale.US, "page%03d.png", p)
+    }
+
+    /**
+     * Computes viewport-matched decode dimensions when the source image exceeds [maxTargetWidth].
+     * Returns `null` when no downscaling is needed (e.g. landscape or high-resolution screens),
+     * guaranteeing images are never upscaled.
+     */
+    @VisibleForTesting
+    internal fun computeTargetDecodeDimensions(
+      sourceWidth: Int,
+      sourceHeight: Int,
+      maxTargetWidth: Int
+    ): Pair<Int, Int>? {
+      if (sourceWidth <= 0 || sourceHeight <= 0 || maxTargetWidth !in 1 until sourceWidth) {
+        return null
+      }
+      val targetHeight = ((sourceHeight.toLong() * maxTargetWidth + sourceWidth / 2) / sourceWidth)
+        .toInt()
+        .coerceAtLeast(1)
+      return maxTargetWidth to targetHeight
     }
   }
 }

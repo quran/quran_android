@@ -56,10 +56,14 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -81,7 +85,8 @@ class QuranLineByLinePresenter @Inject constructor(
   private val imlaeiUthmaniMapper: ImlaeiUthmaniMapper,
   pages: IntArray
 ) {
-  private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+  @Volatile
+  private var scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
   private val page = pages[0]
 
@@ -98,23 +103,43 @@ class QuranLineByLinePresenter @Inject constructor(
     val imlaeiUthmaniMappings: List<WordAlignment>
   )
 
-  private val pageDetailsFetcher: Deferred<PageDetails> by lazy {
-    scope.async {
-      withContext(Dispatchers.IO) {
-        val range = quranInfo.getVerseRangeForPage(page)
-        val startAyah = SuraAyah(range.startSura, range.startAyah)
-        val endAyah = SuraAyah(range.endingSura, range.endingAyah)
+  @Volatile
+  private var pageDetailsDeferred: Deferred<PageDetails>? = null
 
-        PageDetails(
-          lines = linesForPage(page),
-          suraHeaders = pageModel.suraHeaders(page),
-          ayahMarkers = pageModel.ayahMarkers(page),
-          ayahBounds = pageModel.ayahHighlight(page),
-          wordBounds = pageModel.wordHighlights(page),
-          imlaeiUthmaniMappings = imlaeiUthmaniMapper.mapWords(startAyah, endAyah)
-        )
-      }
+  @Synchronized
+  fun attach() {
+    if (!scope.isActive) {
+      scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     }
+  }
+
+  @Synchronized
+  fun detach() {
+    scope.cancel()
+    pageDetailsDeferred = null
+  }
+
+  @Synchronized
+  private fun pageDetailsFetcher(): Deferred<PageDetails> {
+    val existing = pageDetailsDeferred
+    if (existing != null && !existing.isCancelled) {
+      return existing
+    }
+    attach()
+    return scope.async {
+      val range = quranInfo.getVerseRangeForPage(page)
+      val startAyah = SuraAyah(range.startSura, range.startAyah)
+      val endAyah = SuraAyah(range.endingSura, range.endingAyah)
+
+      PageDetails(
+        lines = linesForPage(page),
+        suraHeaders = pageModel.suraHeaders(page),
+        ayahMarkers = pageModel.ayahMarkers(page),
+        ayahBounds = pageModel.ayahHighlight(page),
+        wordBounds = pageModel.wordHighlights(page),
+        imlaeiUthmaniMappings = imlaeiUthmaniMapper.mapWords(startAyah, endAyah)
+      )
+    }.also { pageDetailsDeferred = it }
   }
 
   fun loadPage(): Flow<PageInfo> {
@@ -145,7 +170,7 @@ class QuranLineByLinePresenter @Inject constructor(
         -1
       }
 
-      val pageDetails = pageDetailsFetcher.await()
+      val pageDetails = pageDetailsFetcher().await()
       PageInfo(
         page,
         pageProvider.pageType(),
@@ -206,7 +231,7 @@ class QuranLineByLinePresenter @Inject constructor(
 
   suspend fun modifySelectionRange(offsetX: Float, offsetY: Float) {
     val previousSelection = readingEventPresenter.ayahSelectionFlow.value
-    val ayahHighlights = pageDetailsFetcher.await().ayahBounds
+    val ayahHighlights = pageDetailsFetcher().await().ayahBounds
     val selectedAyah = selectionHelper.modifySelectionRange(offsetX, offsetY, ayahHighlights)
     if (selectedAyah != null) {
       val selectionStart = selectionStartSuraAyah ?: selectedAyah
@@ -277,7 +302,7 @@ class QuranLineByLinePresenter @Inject constructor(
     val startAyah = selection.startSuraAyah() ?: return null
     val endAyah = selection.endSuraAyah() ?: return null
 
-    val highlights = pageDetailsFetcher.await().ayahBounds
+    val highlights = pageDetailsFetcher().await().ayahBounds
     val initialStartBounds = highlights.firstOrNull { it.sura == startAyah.sura && it.ayah == startAyah.ayah }
     val initialEndBounds = highlights.lastOrNull { it.sura == endAyah.sura && it.ayah == endAyah.ayah }
 
@@ -309,7 +334,7 @@ class QuranLineByLinePresenter @Inject constructor(
       readingEventPresenter.ayahSelectionFlow,
       audioStatusRepository.audioPlaybackFlow,
     ) { bookmarks, highlights, selectedAyah, audioPlaybackStatus ->
-      val pageDetails = pageDetailsFetcher.await()
+      val pageDetails = pageDetailsFetcher().await()
       val ayahHighlights = pageDetails.ayahBounds
       val currentBookmarkHighlights = bookmarks.map {
           bookmark -> ayahHighlights.filter { it.sura == bookmark.sura && it.ayah == bookmark.ayah }
@@ -386,7 +411,7 @@ class QuranLineByLinePresenter @Inject constructor(
   private fun readingBookmarksForPage(): Flow<ImmutableList<ReadingBookmarkAyah>> {
     return readingBookmarksDao.readingBookmarksFlow()
       .map { readingBookmarks ->
-        val ayahBounds = pageDetailsFetcher.await().ayahBounds
+        val ayahBounds = pageDetailsFetcher().await().ayahBounds
         readingBookmarks
           .filterIsInstance<AyahReadingBookmark>()
           .groupBy({ it.asSuraAyah() }, { it.slot })
@@ -417,27 +442,36 @@ class QuranLineByLinePresenter @Inject constructor(
 
   private suspend fun linesForPage(page: Int): ImmutableList<LineModel> {
     return withContext(Dispatchers.IO) {
-      val lines = mutableListOf<LineModel>()
       val whence = quranFileManager.quranImagesDirectory()
-      for (lineNumber in 1..15) {
-        val file = File(File(whence, page.toString()), "$lineNumber.png")
-
-        val fileName = file.toString()
-        val sourceBitmap = BitmapFactory.decodeFile(fileName, options)
-        if (sourceBitmap != null) {
-          val bitmap = sourceBitmap.extractAlpha()
-          sourceBitmap.recycle()
-          lines.add(LineModel(lineNumber - 1, bitmap.asImageBitmap()))
-        } else {
-          val status = if (file.exists()) {
-            "exists: ${file.name} with length ${file.length()}"
-          } else {
-            "missing"
+      val pageDirectory = File(whence, page.toString())
+      coroutineScope {
+        (1..15).map { lineNumber ->
+          async {
+            val file = File(pageDirectory, "$lineNumber.png")
+            val options = BitmapFactory.Options().apply {
+              inPreferredConfig = Bitmap.Config.ALPHA_8
+            }
+            val sourceBitmap = BitmapFactory.decodeFile(file.toString(), options)
+            if (sourceBitmap != null) {
+              val bitmap = if (sourceBitmap.config == Bitmap.Config.ALPHA_8) {
+                sourceBitmap
+              } else {
+                sourceBitmap.extractAlpha().also { sourceBitmap.recycle() }
+              }
+              LineModel(lineNumber - 1, bitmap.asImageBitmap())
+            } else {
+              val status = if (file.exists()) {
+                "exists: ${file.name} with length ${file.length()}"
+              } else {
+                "missing"
+              }
+              throw MissingLineByLineImagesException(
+                "Failed to load line $lineNumber for page $page - file $status"
+              )
+            }
           }
-          throw MissingLineByLineImagesException("Failed to load line $lineNumber for page $page - file $status")
-        }
+        }.awaitAll().toImmutableList()
       }
-      lines.toImmutableList()
     }
   }
 
@@ -467,26 +501,25 @@ class QuranLineByLinePresenter @Inject constructor(
             direction
           }
 
+          val options = BitmapFactory.Options().apply {
+            inPreferredConfig = Bitmap.Config.ALPHA_8
+          }
           val sourceBitmap = BitmapFactory.decodeFile(it.toString(), options)
           if (sourceBitmap != null) {
-            val bitmap = sourceBitmap.extractAlpha()
-            sourceBitmap.recycle()
+            val bitmap = if (sourceBitmap.config == Bitmap.Config.ALPHA_8) {
+              sourceBitmap
+            } else {
+              sourceBitmap.extractAlpha().also { sourceBitmap.recycle() }
+            }
             SidelineModel(bitmap.asImageBitmap(), number, actualDirection)
           } else {
             crashReporter.log("failed to load sideline image [$it] on page [$page]")
             null
           }
-        }.toImmutableList()
+        }.sortedBy { it.targetLine }.toImmutableList()
       } else {
         persistentListOf()
       }
     }
-  }
-
-  companion object {
-    private val options = BitmapFactory.Options()
-      .apply {
-        inPreferredConfig = Bitmap.Config.ALPHA_8
-      }
   }
 }

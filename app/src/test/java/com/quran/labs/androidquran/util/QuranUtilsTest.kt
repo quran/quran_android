@@ -50,4 +50,11 @@ class QuranUtilsTest {
     // \u064A YEH (1610), the upper bound
     assertThat(QuranUtils.doesStringContainArabic("\u064A")).isTrue()
   }
+
+  @Test
+  fun testReshapedArabicAndLeadingWildcardsAreDetected() {
+    assertThat(QuranUtils.doesStringContainArabic("  *[\u0627]")).isTrue()
+    assertThat(QuranUtils.doesStringContainArabic("\uFE8E")).isTrue()
+    assertThat(QuranUtils.doesStringContainArabic("*()[] ")).isFalse()
+  }
 }

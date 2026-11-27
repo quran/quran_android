@@ -22,8 +22,9 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_marginBottom="4dp"
-      android:layout_toRightOf="@id/widget_favorite_icon"
+      android:layout_toEndOf="@id/widget_favorite_icon"
       android:textAppearance="@style/TitleText"
+      android:textColor="@android:color/white"
       tools:text="Surah title"
       />
   <TextView
@@ -31,8 +32,8 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_below="@id/sura_title"
-      android:layout_toRightOf="@id/widget_favorite_icon"
-      android:textColor="@color/sura_details_color"
+      android:layout_toEndOf="@id/widget_favorite_icon"
+      android:textColor="#e0e0e0"
       android:textSize="14sp"
       tools:text="Surah location"
       />

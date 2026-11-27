@@ -2,8 +2,8 @@
 <resources>
     <style name="QuranToolBar.Overlay">
       <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
-      <item name="android:statusBarColor">@color/toolbar</item>
-      <item name="android:navigationBarColor">@color/toolbar</item>
+      <item name="android:statusBarColor">?attr/quranToolbarBackground</item>
+      <item name="android:navigationBarColor">?attr/quranToolbarBackground</item>
       <item name="actionButtonStyle">@style/QuranToolBarActionButton</item>
       <item name="actionModeCloseButtonStyle">@style/QuranToolBarActionButton</item>
     </style>

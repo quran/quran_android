@@ -3,8 +3,10 @@ package com.quran.mobile.feature.ayahbookmark.readingbookmark.presenter
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import com.quran.data.core.QuranInfo
 import com.quran.data.dao.ReadingBookmarksDao
 import com.quran.data.di.AppCoroutineScope
@@ -71,45 +73,63 @@ class ReadingBookmarkSheetPresenter(
       }.toImmutableList()
     }
 
+    val currentStored by rememberUpdatedState(stored)
     fun commitNames() {
       val drafts = draftNames.value
       draftNames.value = emptyMap()
       drafts.forEach { (slot, draft) ->
         val name = draft.trim().ifBlank { null }
-        if (name != stored[slot]?.name) {
+        if (name != currentStored[slot]?.name) {
           appCoroutineScope.launch { readingBookmarksDao.renameReadingBookmark(slot, name) }
         }
       }
     }
 
-    val eventSink: (ReadingBookmarkSheetEvent) -> Unit = { event ->
-      when (event) {
-        ReadingBookmarkSheetEvent.StartEditing -> isEditing.value = true
+    val eventSink: (ReadingBookmarkSheetEvent) -> Unit = remember(target) {
+      { event ->
+        when (event) {
+          ReadingBookmarkSheetEvent.StartEditing -> isEditing.value = true
 
-        ReadingBookmarkSheetEvent.StopEditing -> {
-          commitNames()
-          isEditing.value = false
-        }
+          ReadingBookmarkSheetEvent.StopEditing -> {
+            commitNames()
+            isEditing.value = false
+          }
 
-        is ReadingBookmarkSheetEvent.NameChanged -> {
-          draftNames.value += event.slot to event.name
-        }
+          is ReadingBookmarkSheetEvent.NameChanged -> {
+            draftNames.value += event.slot to event.name
+          }
 
-        is ReadingBookmarkSheetEvent.PlaceSlot -> {
-          isDismissed.value = true
-          onAction(ReadingBookmarkAction.Place(event.slot, target))
-        }
+          is ReadingBookmarkSheetEvent.PlaceSlot -> {
+            isDismissed.value = true
+            onAction(ReadingBookmarkAction.Place(event.slot, target))
+          }
 
-        is ReadingBookmarkSheetEvent.ClearSlot -> {
-          isDismissed.value = true
-          onAction(ReadingBookmarkAction.Clear(event.slot))
-        }
+          is ReadingBookmarkSheetEvent.ClearSlot -> {
+            isDismissed.value = true
+            onAction(ReadingBookmarkAction.Clear(event.slot))
+          }
 
-        ReadingBookmarkSheetEvent.Dismiss -> {
-          commitNames()
-          isDismissed.value = true
+          ReadingBookmarkSheetEvent.Dismiss -> {
+            commitNames()
+            isDismissed.value = true
+          }
         }
       }
+    }
+
+    val targetNameResolver = remember(quranNaming) {
+      { context: Context, bookmarkTarget: ReadingBookmarkTarget ->
+        when (bookmarkTarget) {
+          is ReadingBookmarkTarget.Page -> quranNaming.getSuraPageString(context, bookmarkTarget.page)
+          is ReadingBookmarkTarget.Ayah -> {
+            val suraAyah = bookmarkTarget.suraAyah
+            quranNaming.getSuraAyahString(context, suraAyah.sura, suraAyah.ayah)
+          }
+        }
+      }
+    }
+    val locationNameResolver = remember(quranNaming, quranInfo) {
+      { context: Context, bookmark: ReadingBookmark -> locationName(context, bookmark) }
     }
 
     return ReadingBookmarkSheetState(
@@ -118,16 +138,8 @@ class ReadingBookmarkSheetPresenter(
       isNested = isNested,
       isEditing = isEditing.value,
       isDismissed = isDismissed.value,
-      targetNameResolver = { context, bookmarkTarget ->
-        when (bookmarkTarget) {
-          is ReadingBookmarkTarget.Page -> quranNaming.getSuraPageString(context, bookmarkTarget.page)
-          is ReadingBookmarkTarget.Ayah -> {
-            val suraAyah = bookmarkTarget.suraAyah
-            quranNaming.getSuraAyahString(context, suraAyah.sura, suraAyah.ayah)
-          }
-        }
-      },
-      locationNameResolver = { context, bookmark -> locationName(context, bookmark) },
+      targetNameResolver = targetNameResolver,
+      locationNameResolver = locationNameResolver,
       eventSink = eventSink
     )
   }

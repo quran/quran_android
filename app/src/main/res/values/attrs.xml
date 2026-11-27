@@ -25,6 +25,31 @@
   <!-- the accent the app icon lends the interface -->
   <attr name="quranAccent" format="color"/>
 
+  <!-- semantic theme proposal tokens -->
+  <attr name="quranSurface" format="color"/>
+  <attr name="quranSurfaceElevated" format="color"/>
+  <attr name="quranHeaderBackground" format="color"/>
+  <attr name="quranHeaderText" format="color"/>
+  <attr name="quranToolbarBackground" format="color"/>
+  <attr name="quranToolbarText" format="color"/>
+  <attr name="quranToolbarSecondaryText" format="color"/>
+  <attr name="quranToolbarIconTint" format="color"/>
+  <attr name="quranTabSelectedText" format="color"/>
+  <attr name="quranTabUnselectedText" format="color"/>
+  <attr name="quranTabIndicator" format="color"/>
+  <attr name="quranOnAccent" format="color"/>
+  <attr name="quranTextPrimary" format="color"/>
+  <attr name="quranTextSecondary" format="color"/>
+  <attr name="quranSuraNumberBg" format="color"/>
+  <attr name="quranSuraNumberText" format="color"/>
+  <attr name="quranSuraNumberStroke" format="color"/>
+  <attr name="quranDivider" format="color"/>
+  <attr name="quranSearchHighlight" format="color"/>
+  <attr name="quranRipple" format="color"/>
+  <attr name="quranRowSelected" format="color"/>
+  <attr name="quranIsLightToolbar" format="boolean"/>
+  <attr name="quranPopupTheme" format="reference"/>
+
   <declare-styleable name="AyahNumberView">
     <attr name="android:textColor" />
     <attr name="android:textSize" />

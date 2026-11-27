@@ -16,9 +16,12 @@ fun CommonExtension.applyComposeCommon(project: Project) {
   }
 
   project.extensions.configure<ComposeCompilerGradlePluginExtension> {
-    // manually enable source info until this is fixed:
-    // https://issuetracker.google.com/issues/362780328
-    includeSourceInformation.set(true)
+    // Keep Compose source info for debug/inspection builds, but omit it in release/beta builds
+    // to shrink DEX bytecode and runtime slot-table overhead.
+    val isReleaseOrBetaBuild = project.gradle.startParameter.taskNames.any { taskName ->
+      taskName.contains("Release", ignoreCase = true) || taskName.contains("Beta", ignoreCase = true)
+    }
+    includeSourceInformation.set(!isReleaseOrBetaBuild)
 
     if (project.findProperty("composeCompilerReports") == "true") {
       reportsDestination.set(project.layout.buildDirectory.get().asFile.resolve("compose_compiler"))

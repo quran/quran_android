@@ -24,7 +24,7 @@
       android:id="@+id/toolbar_area"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="@color/toolbar"
+      android:background="?attr/quranToolbarBackground"
       >
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ToolbarStyle"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
+        app:popupTheme="?attr/quranPopupTheme"
         app:titleTextAppearance="@style/ToolbarTitleText"
         app:subtitleTextAppearance="@style/ToolbarSubtitleText"
         android:elevation="4dp"

@@ -1,13 +1,12 @@
 package com.quran.labs.androidquran.ui
 
 import android.content.DialogInterface
-import android.content.IntentFilter
 import android.os.Bundle
 import android.util.SparseIntArray
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
@@ -15,7 +14,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -30,13 +29,13 @@ import com.quran.labs.androidquran.presenter.translation.TranslationManagerPrese
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
-import com.quran.labs.androidquran.service.util.QuranDownloadNotifier
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper.getDownloadIntent
 import com.quran.labs.androidquran.ui.adapter.DownloadedItemActionListener
 import com.quran.labs.androidquran.ui.adapter.DownloadedMenuActionListener
 import com.quran.labs.androidquran.ui.adapter.TranslationsAdapter
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.util.ThemeUtil
 import dev.zacsweers.metro.Inject
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.MainScope
@@ -83,8 +82,9 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   private val scope = MainScope()
 
   public override fun onCreate(savedInstanceState: Bundle?) {
+    ThemeUtil.applyActivityTheme(this)
+    ThemeUtil.enableThemedEdgeToEdge(this)
     super.onCreate(savedInstanceState)
-    enableEdgeToEdge()
 
     (application as QuranApplication).applicationComponent.inject(this)
     setContentView(R.layout.translation_manager)
@@ -97,12 +97,14 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     ab?.setDisplayHomeAsUpEnabled(true)
 
     val root = findViewById<ViewGroup>(R.id.root)
+    val toolbarArea = findViewById<View>(R.id.toolbar_area)
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
       val insets = windowInsets.getInsets(
         WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
       )
+      toolbarArea.updatePadding(top = insets.top)
       root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-        topMargin = insets.top
+        topMargin = 0
         leftMargin = insets.left
         rightMargin = insets.right
       }
@@ -151,11 +153,8 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   }
 
   public override fun onStop() {
-    val receiver = downloadReceiver
-    if (receiver != null) {
-      receiver.setListener(null)
-      LocalBroadcastManager.getInstance(this)
-        .unregisterReceiver(receiver)
+    downloadReceiver?.let { receiver ->
+      receiver.unregister()
       downloadReceiver = null
     }
     super.onStop()
@@ -279,13 +278,13 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
 
   private fun onErrorDownloadTranslations() {
     translationSwipeRefresh.isRefreshing = false
-    Snackbar
-      .make(
-        translationRecycler,
-        R.string.error_getting_translation_list,
-        Snackbar.LENGTH_SHORT
-      )
-      .show()
+    val snackbar = Snackbar.make(
+      translationRecycler,
+      R.string.error_getting_translation_list,
+      Snackbar.LENGTH_SHORT
+    )
+    ThemeUtil.styleSnackbar(snackbar)
+    snackbar.show()
   }
 
   private fun onTranslationsUpdated(items: List<TranslationItem>) {
@@ -338,16 +337,12 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     val (_, _, _, _, _, fileName, url) = selectedItem.translation
     clearDatabaseHandlerIfExists(fileName)
     if (downloadReceiver == null) {
-      val downloadReceiver = DefaultDownloadReceiver(
+      val receiver = DefaultDownloadReceiver(
         this,
         QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION
       )
-      LocalBroadcastManager.getInstance(this).registerReceiver(
-        downloadReceiver, IntentFilter(
-          QuranDownloadNotifier.ProgressIntent.INTENT_NAME
-        )
-      )
-      this.downloadReceiver = downloadReceiver
+      receiver.register(this)
+      this.downloadReceiver = receiver
     }
     downloadReceiver!!.setListener(this)
 
@@ -489,6 +484,11 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     actionMode?.finish()
     selectionListener.clearSelection()
     downloadedItemActionListener = null
+  }
+
+  override fun onSupportActionModeStarted(mode: ActionMode) {
+    super.onSupportActionModeStarted(mode)
+    ThemeUtil.applyActionModeStatusGuard(this)
   }
 
   internal class TranslationSelectionListener(private val adapter: TranslationsAdapter) {

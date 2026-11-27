@@ -28,8 +28,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -40,36 +42,36 @@ class QuranSyncRepositoryProvider(
   syncManager: QuranSyncManager,
   appCoroutineScope: AppCoroutineScope
 ) : MobileSyncRepositoryProvider {
-  private val quranDataService = syncManager.quranDataService
+  private val quranDataServiceProvider: () -> QuranDataService = { syncManager.quranDataService }
 
   override val bookmarksRepository: BookmarksRepository =
-    SyncBookmarksRepository(quranDataService)
+    SyncBookmarksRepository(quranDataServiceProvider)
 
   override val bookmarkCollectionsState: BookmarkCollectionsState =
-    SyncBookmarkCollectionsState(quranDataService, appCoroutineScope)
+    SyncBookmarkCollectionsState(quranDataServiceProvider, appCoroutineScope)
 
   override val collectionsRepository: CollectionsRepository =
-    SyncCollectionsRepository(quranDataService, bookmarkCollectionsState)
+    SyncCollectionsRepository(quranDataServiceProvider, bookmarkCollectionsState)
 
   override val collectionBookmarksRepository: CollectionBookmarksRepository =
-    SyncCollectionBookmarksRepository(quranDataService, bookmarkCollectionsState)
+    SyncCollectionBookmarksRepository(quranDataServiceProvider, bookmarkCollectionsState)
 
   override val readingBookmarksRepository: ReadingBookmarksRepository =
-    SyncReadingBookmarksRepository(quranDataService)
+    SyncReadingBookmarksRepository(quranDataServiceProvider)
 
   override val readingSessionsRepository: ReadingSessionsRepository =
-    SyncReadingSessionsRepository(quranDataService)
+    SyncReadingSessionsRepository(quranDataServiceProvider)
 }
 
 private class SyncBookmarksRepository(
-  private val quranDataService: QuranDataService
+  private val quranDataServiceProvider: () -> QuranDataService
 ) : BookmarksRepository {
   override suspend fun replaceAyahBookmarkCollections(
     sura: Int,
     ayah: Int,
     collectionIds: List<String>
   ): BookmarkCollectionsReplacementResult {
-    return quranDataService.replaceAyahBookmarkCollections(sura, ayah, collectionIds)
+    return quranDataServiceProvider().replaceAyahBookmarkCollections(sura, ayah, collectionIds)
   }
 
   override suspend fun replaceAyahBookmarkCollections(
@@ -78,22 +80,25 @@ private class SyncBookmarksRepository(
     collectionIds: List<String>,
     timestamp: PlatformDateTime
   ): BookmarkCollectionsReplacementResult {
-    return quranDataService.replaceAyahBookmarkCollections(sura, ayah, collectionIds, timestamp)
+    return quranDataServiceProvider().replaceAyahBookmarkCollections(sura, ayah, collectionIds, timestamp)
   }
 }
 
 private class SyncBookmarkCollectionsState(
-  quranDataService: QuranDataService,
-  appCoroutineScope: AppCoroutineScope
+  private val quranDataServiceProvider: () -> QuranDataService,
+  private val appCoroutineScope: AppCoroutineScope
 ) : BookmarkCollectionsState {
-  override val collectionsWithBookmarks: StateFlow<List<CollectionWithAyahBookmarks>?> =
-    quranDataService.collectionsWithBookmarks
+  override val collectionsWithBookmarks: StateFlow<List<CollectionWithAyahBookmarks>?> by lazy(
+    LazyThreadSafetyMode.SYNCHRONIZED
+  ) {
+    flow { emitAll(quranDataServiceProvider().collectionsWithBookmarks) }
       .distinctUntilChanged()
       .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
+  }
 }
 
 private class SyncCollectionsRepository(
-  private val quranDataService: QuranDataService,
+  private val quranDataServiceProvider: () -> QuranDataService,
   private val bookmarkCollectionsState: BookmarkCollectionsState
 ) : CollectionsRepository {
   override suspend fun getAllCollections(): List<Collection> {
@@ -101,15 +106,15 @@ private class SyncCollectionsRepository(
   }
 
   override suspend fun addCollection(name: String): Collection {
-    return quranDataService.addCollection(name)
+    return quranDataServiceProvider().addCollection(name)
   }
 
   override suspend fun addCollection(name: String, timestamp: PlatformDateTime): Collection {
-    return quranDataService.addCollection(name, timestamp)
+    return quranDataServiceProvider().addCollection(name, timestamp)
   }
 
   override suspend fun updateCollection(id: String, name: String): Collection {
-    return quranDataService.updateCollection(id, name)
+    return quranDataServiceProvider().updateCollection(id, name)
   }
 
   override suspend fun updateCollection(
@@ -117,11 +122,11 @@ private class SyncCollectionsRepository(
     name: String,
     timestamp: PlatformDateTime
   ): Collection {
-    return quranDataService.updateCollection(id, name, timestamp)
+    return quranDataServiceProvider().updateCollection(id, name, timestamp)
   }
 
   override suspend fun deleteCollection(id: String): Boolean {
-    return quranDataService.deleteCollection(id)
+    return quranDataServiceProvider().deleteCollection(id)
   }
 
   override fun getCollectionsFlow(): Flow<List<Collection>> {
@@ -132,7 +137,7 @@ private class SyncCollectionsRepository(
 }
 
 private class SyncCollectionBookmarksRepository(
-  private val quranDataService: QuranDataService,
+  private val quranDataServiceProvider: () -> QuranDataService,
   private val bookmarkCollectionsState: BookmarkCollectionsState
 ) : CollectionBookmarksRepository {
   override suspend fun getBookmarksForCollection(collectionId: String): List<CollectionAyahBookmark> {
@@ -147,7 +152,7 @@ private class SyncCollectionBookmarksRepository(
     sura: Int,
     ayah: Int
   ): CollectionAyahBookmark {
-    return quranDataService.addAyahBookmarkToCollection(collectionId, sura, ayah)
+    return quranDataServiceProvider().addAyahBookmarkToCollection(collectionId, sura, ayah)
   }
 
   override suspend fun addAyahBookmarkToCollection(
@@ -156,18 +161,18 @@ private class SyncCollectionBookmarksRepository(
     ayah: Int,
     timestamp: PlatformDateTime
   ): CollectionAyahBookmark {
-    return quranDataService.addAyahBookmarkToCollection(collectionId, sura, ayah, timestamp)
+    return quranDataServiceProvider().addAyahBookmarkToCollection(collectionId, sura, ayah, timestamp)
   }
 
   override suspend fun removeAyahBookmarkFromCollection(
     collectionId: String,
     bookmarkId: String
   ): Boolean {
-    return quranDataService.removeAyahBookmarkFromCollection(collectionId, bookmarkId)
+    return quranDataServiceProvider().removeAyahBookmarkFromCollection(collectionId, bookmarkId)
   }
 
   override suspend fun removeAllAyahBookmarksFromCollection(collectionId: String): Int {
-    return quranDataService.removeAllAyahBookmarksFromCollection(collectionId)
+    return quranDataServiceProvider().removeAllAyahBookmarksFromCollection(collectionId)
   }
 
   override fun getBookmarksForCollectionFlow(collectionId: String): Flow<List<CollectionAyahBookmark>> {
@@ -183,7 +188,7 @@ private class SyncCollectionBookmarksRepository(
   }
 
   override fun getHighlightsFlow(): Flow<List<AyahHighlight>> {
-    return quranDataService.highlights
+    return flow { emitAll(quranDataServiceProvider().highlights) }
   }
 
   override suspend fun setHighlight(
@@ -192,14 +197,14 @@ private class SyncCollectionBookmarksRepository(
     color: AyahHighlightColor,
     timestamp: PlatformDateTime
   ): AyahHighlight {
-    return quranDataService.setHighlight(sura, ayah, color, timestamp)
+    return quranDataServiceProvider().setHighlight(sura, ayah, color, timestamp)
   }
 
   override suspend fun deleteHighlight(
     sura: Int,
     ayah: Int
   ): Boolean {
-    return quranDataService.deleteHighlight(sura, ayah)
+    return quranDataServiceProvider().deleteHighlight(sura, ayah)
   }
 
   override suspend fun deleteHighlight(
@@ -207,54 +212,54 @@ private class SyncCollectionBookmarksRepository(
     ayah: Int,
     timestamp: PlatformDateTime
   ): Boolean {
-    return quranDataService.deleteHighlight(sura, ayah)
+    return quranDataServiceProvider().deleteHighlight(sura, ayah)
   }
 
   override suspend fun deleteHighlights(color: AyahHighlightColor): Int {
-    return quranDataService.deleteHighlights(color)
+    return quranDataServiceProvider().deleteHighlights(color)
   }
 }
 
 private class SyncReadingBookmarksRepository(
-  private val quranDataService: QuranDataService
+  private val quranDataServiceProvider: () -> QuranDataService
 ) : ReadingBookmarksRepository {
   override suspend fun getReadingBookmarks(mushaf: Mushaf): List<ReadingBookmark> {
-    return quranDataService.readingBookmarks(mushaf).first()
+    return quranDataServiceProvider().readingBookmarks(mushaf).first()
   }
 
   override fun getReadingBookmarksFlow(mushaf: Mushaf): Flow<List<ReadingBookmark>> {
-    return quranDataService.readingBookmarks(mushaf)
+    return flow { emitAll(quranDataServiceProvider().readingBookmarks(mushaf)) }
   }
 
   override suspend fun setAyahReadingBookmark(slot: ReadingBookmarkSlot, sura: Int, ayah: Int) =
-    quranDataService.setAyahReadingBookmark(slot, sura, ayah)
+    quranDataServiceProvider().setAyahReadingBookmark(slot, sura, ayah)
 
   override suspend fun setAyahReadingBookmark(
     slot: ReadingBookmarkSlot,
     sura: Int,
     ayah: Int,
     timestamp: PlatformDateTime
-  ) = quranDataService.setAyahReadingBookmark(slot, sura, ayah, timestamp)
+  ) = quranDataServiceProvider().setAyahReadingBookmark(slot, sura, ayah, timestamp)
 
   override suspend fun setPageReadingBookmark(slot: ReadingBookmarkSlot, page: Int, mushaf: Mushaf) =
-    quranDataService.setPageReadingBookmark(slot, page, mushaf)
+    quranDataServiceProvider().setPageReadingBookmark(slot, page, mushaf)
 
   override suspend fun setPageReadingBookmark(
     slot: ReadingBookmarkSlot,
     page: Int,
     mushaf: Mushaf,
     timestamp: PlatformDateTime
-  ) = quranDataService.setPageReadingBookmark(slot, page, mushaf, timestamp)
+  ) = quranDataServiceProvider().setPageReadingBookmark(slot, page, mushaf, timestamp)
 
   override suspend fun clearReadingBookmark(slot: ReadingBookmarkSlot): ReadingBookmark {
-    return quranDataService.clearReadingBookmark(slot)
+    return quranDataServiceProvider().clearReadingBookmark(slot)
   }
 
   override suspend fun clearReadingBookmark(
     slot: ReadingBookmarkSlot,
     timestamp: PlatformDateTime
   ): ReadingBookmark {
-    return quranDataService.clearReadingBookmark(slot, timestamp)
+    return quranDataServiceProvider().clearReadingBookmark(slot, timestamp)
   }
 
   override suspend fun renameReadingBookmark(
@@ -262,7 +267,7 @@ private class SyncReadingBookmarksRepository(
     name: String?,
     mushaf: Mushaf
   ): ReadingBookmark {
-    return quranDataService.renameReadingBookmark(slot, name, mushaf)
+    return quranDataServiceProvider().renameReadingBookmark(slot, name, mushaf)
   }
 
   override suspend fun renameReadingBookmark(
@@ -271,19 +276,19 @@ private class SyncReadingBookmarksRepository(
     mushaf: Mushaf,
     timestamp: PlatformDateTime
   ): ReadingBookmark {
-    return quranDataService.renameReadingBookmark(slot, name, mushaf, timestamp)
+    return quranDataServiceProvider().renameReadingBookmark(slot, name, mushaf, timestamp)
   }
 }
 
 private class SyncReadingSessionsRepository(
-  private val quranDataService: QuranDataService
+  private val quranDataServiceProvider: () -> QuranDataService
 ) : ReadingSessionsRepository {
   override suspend fun getReadingSessions(): List<ReadingSession> {
-    return quranDataService.readingSessions.first()
+    return quranDataServiceProvider().readingSessions.first()
   }
 
   override suspend fun addReadingSession(sura: Int, ayah: Int): ReadingSession {
-    return quranDataService.addReadingSession(sura, ayah)
+    return quranDataServiceProvider().addReadingSession(sura, ayah)
   }
 
   override suspend fun addReadingSession(
@@ -291,7 +296,7 @@ private class SyncReadingSessionsRepository(
     ayah: Int,
     timestamp: PlatformDateTime
   ): ReadingSession {
-    return quranDataService.addReadingSession(sura, ayah, timestamp)
+    return quranDataServiceProvider().addReadingSession(sura, ayah, timestamp)
   }
 
   override suspend fun updateReadingSession(
@@ -299,7 +304,7 @@ private class SyncReadingSessionsRepository(
     sura: Int,
     ayah: Int
   ): ReadingSession {
-    return quranDataService.updateReadingSession(id, sura, ayah)
+    return quranDataServiceProvider().updateReadingSession(id, sura, ayah)
   }
 
   override suspend fun updateReadingSession(
@@ -308,14 +313,14 @@ private class SyncReadingSessionsRepository(
     ayah: Int,
     timestamp: PlatformDateTime
   ): ReadingSession {
-    return quranDataService.updateReadingSession(id, sura, ayah, timestamp)
+    return quranDataServiceProvider().updateReadingSession(id, sura, ayah, timestamp)
   }
 
   override fun getReadingSessionsFlow(): Flow<List<ReadingSession>> {
-    return quranDataService.readingSessions
+    return flow { emitAll(quranDataServiceProvider().readingSessions) }
   }
 
   override suspend fun deleteReadingSession(sura: Int, ayah: Int): Boolean {
-    return quranDataService.deleteReadingSession(sura, ayah)
+    return quranDataServiceProvider().deleteReadingSession(sura, ayah)
   }
 }

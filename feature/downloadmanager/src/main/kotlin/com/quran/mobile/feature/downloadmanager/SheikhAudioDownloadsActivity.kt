@@ -2,9 +2,13 @@ package com.quran.mobile.feature.downloadmanager
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import com.quran.common.search.SearchTextUtil
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInterface
@@ -31,6 +36,7 @@ import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.EntryForQar
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhDownloadDialog
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraOption
 import com.quran.mobile.feature.downloadmanager.presenter.SheikhAudioPresenter
+import com.quran.mobile.feature.downloadmanager.ui.LoadingIndicator
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.DownloadErrorDialog
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.DownloadProgressDialog
 import com.quran.mobile.feature.downloadmanager.ui.sheikhdownload.RemoveConfirmationDialog
@@ -85,13 +91,33 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
     }
     val sheikhDownloadsFlow = sheikhAudioPresenter.sheikhInfo(qariId)
 
-    enableEdgeToEdge()
+    val isNight = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+      Configuration.UI_MODE_NIGHT_YES
+    val palette = AppThemeStyle.current.palette(isNight)
+    enableEdgeToEdge(
+      statusBarStyle = if (palette.isLightToolbar) {
+        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+      } else {
+        SystemBarStyle.dark(Color.TRANSPARENT)
+      },
+      navigationBarStyle = if (isNight) {
+        SystemBarStyle.dark(Color.TRANSPARENT)
+      } else {
+        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+      }
+    )
 
     setContent {
       val sheikhDownloadsState = sheikhDownloadsFlow.collectAsState(null)
 
       QuranTheme {
         val currentDownloadState = sheikhDownloadsState.value
+        val selectionInfo = currentDownloadState?.selections ?: emptySet()
+
+        BackHandler(enabled = selectionInfo.isNotEmpty()) {
+          sheikhAudioPresenter.clearSelection()
+        }
+
         Box(
           modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
@@ -105,7 +131,6 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
           Column {
             val titleResource =
               currentDownloadState?.qariItem?.nameResource ?: R.string.audio_manager
-            val selectionInfo = currentDownloadState?.selections ?: emptyList()
 
             SheikhDownloadToolbar(
               titleResource = titleResource,
@@ -132,6 +157,8 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
                 onEntryClicked = { onSuraClicked(currentDownloadState.selections, it) },
                 onSelectionStarted = { onSuraClicked(currentDownloadState.selections, it, true) }
               )
+            } else {
+              LoadingIndicator()
             }
           }
 
@@ -176,7 +203,7 @@ class SheikhAudioDownloadsActivity : ComponentActivity() {
   }
 
   private fun onSuraClicked(
-    selectedSuras: List<EntryForQari>,
+    selectedSuras: Set<EntryForQari>,
     sura: EntryForQari,
     isStartSelection: Boolean = false
   ) {

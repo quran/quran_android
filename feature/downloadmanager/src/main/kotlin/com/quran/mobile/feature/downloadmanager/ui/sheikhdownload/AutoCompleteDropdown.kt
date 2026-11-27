@@ -1,13 +1,14 @@
 package com.quran.mobile.feature.downloadmanager.ui.sheikhdownload
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.material.Text
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenu
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -87,11 +88,13 @@ fun AutoCompleteDropdown(
       ExposedDropdownMenu(
         expanded = isExpanded.value,
         onDismissRequest = { isExpanded.value = false },
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         modifier = Modifier.heightIn(max = 150.dp)
       ) {
         filtered.forEach {
           DropdownMenuItem(
-            text = { Text(it.name, color = MaterialTheme.colorScheme.onSecondaryContainer) },
+            text = { Text(it.name, color = MaterialTheme.colorScheme.onSurface) },
             onClick = {
               textState.value = textState.value.copy(text = it.name)
               isExpanded.value = false

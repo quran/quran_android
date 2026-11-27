@@ -6,11 +6,15 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
 import android.preference.PreferenceManager
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.ColorUtils
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import com.quran.common.upgrade.PreferencesUpgrade
 import com.quran.data.model.PageAppearance
 import com.quran.labs.androidquran.base.TestApplication
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.data.Constants
 import com.quran.mobile.feature.pagetheme.PageThemeConstants
 import kotlinx.coroutines.test.runTest
@@ -38,6 +42,7 @@ class ReaderThemeTest {
     preferences.edit().clear().commit()
     perInstallationPreferences.edit().clear().commit()
     QuranSettings.setInstance(null)
+    AppThemeStyle.setOledDarkMode(false)
     originalSystemConfiguration = Configuration(Resources.getSystem().configuration)
   }
 
@@ -45,6 +50,7 @@ class ReaderThemeTest {
     preferences.edit().clear().commit()
     perInstallationPreferences.edit().clear().commit()
     QuranSettings.setInstance(null)
+    AppThemeStyle.setOledDarkMode(false)
     Resources.getSystem().updateConfiguration(originalSystemConfiguration, Resources.getSystem().displayMetrics)
   }
 
@@ -64,13 +70,109 @@ class ReaderThemeTest {
       .putInt(Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS, 4)
       .commit()
     settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_DARK
+    val expectedNightBg = AppThemeStyle.DEFAULT.darkMushafBackgroundArgb(4)
     for (theme in listOf(PageThemeConstants.PAGE_THEME_LIGHT, PageThemeConstants.PAGE_THEME_SEPIA)) {
       settings.pageTheme = theme
       assertThat(settings.isNightMode).isTrue()
       assertThat(settings.isLightPage).isFalse()
       assertThat(settings.pageTextBrightness).isEqualTo(230)
-      assertThat(settings.pageThemeBackgroundColor).isEqualTo(Color.rgb(4, 4, 4))
+      assertThat(settings.pageThemeBackgroundColor).isEqualTo(expectedNightBg)
+      assertThat(settings.pageThemeBackgroundColor).isNotEqualTo(Color.BLACK)
     }
+  }
+
+  @Test fun `dark page theme background resolves tonal AppThemeStyle mushafOverlayBg across all 5 palettes`() {
+    val settings = QuranSettings.getInstance(context)
+    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_DARK
+    settings.nightModeBackgroundBrightness = 0
+
+    for (style in AppThemeStyle.entries) {
+      settings.appThemeStyle = style.storageKey
+      val bg0 = settings.pageThemeBackgroundColor
+      assertWithMessage("${style.storageKey} dark bg at brightness 0 must match mushafOverlayBg")
+        .that(bg0)
+        .isEqualTo(style.darkPalette.mushafOverlayBg.toArgb())
+      assertWithMessage("${style.storageKey} dark bg must never be #000000")
+        .that(bg0)
+        .isNotEqualTo(Color.BLACK)
+
+      settings.nightModeBackgroundBrightness = 32
+      val bg32 = settings.pageThemeBackgroundColor
+      settings.nightModeBackgroundBrightness = 64
+      val bg64 = settings.pageThemeBackgroundColor
+      settings.nightModeBackgroundBrightness = 0
+
+      assertThat(ColorUtils.calculateLuminance(bg32)).isGreaterThan(ColorUtils.calculateLuminance(bg0))
+      assertThat(ColorUtils.calculateLuminance(bg64)).isGreaterThan(ColorUtils.calculateLuminance(bg32))
+      assertThat(Color.red(bg64)).isAtLeast(Color.red(bg0))
+      assertThat(Color.green(bg64)).isAtLeast(Color.green(bg0))
+      assertThat(Color.blue(bg64)).isAtLeast(Color.blue(bg0))
+
+      when (style) {
+        AppThemeStyle.GREEN -> {
+          assertThat(Color.green(bg64)).isGreaterThan(Color.blue(bg64))
+          assertThat(Color.blue(bg64)).isGreaterThan(Color.red(bg64))
+        }
+        AppThemeStyle.BLUE -> {
+          assertThat(Color.blue(bg64)).isGreaterThan(Color.green(bg64))
+          assertThat(Color.green(bg64)).isGreaterThan(Color.red(bg64))
+        }
+        AppThemeStyle.BEIGE -> {
+          assertThat(Color.red(bg64)).isGreaterThan(Color.green(bg64))
+          assertThat(Color.green(bg64)).isGreaterThan(Color.blue(bg64))
+        }
+        else -> Unit
+      }
+    }
+
+    // Automatic appearance in dark mode also uses tonal dark mushaf background
+    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
+    setAppTheme(Constants.THEME_DARK)
+    settings.appThemeStyle = AppThemeStyle.GREEN.storageKey
+    assertThat(settings.isNightMode).isTrue()
+    assertThat(settings.pageThemeBackgroundColor).isEqualTo(0xFF0E1311.toInt())
+    settings.appThemeStyle = AppThemeStyle.BEIGE.storageKey
+    assertThat(settings.pageThemeBackgroundColor).isEqualTo(0xFF181511.toInt())
+  }
+
+  @Test fun `OLED dark mode persists preference and returns true #000000 mushaf background in dark mode only`() {
+    val settings = QuranSettings.getInstance(context)
+    assertThat(settings.isOledDarkMode).isFalse()
+
+    settings.isOledDarkMode = true
+    assertThat(settings.isOledDarkMode).isTrue()
+    assertThat(preferences.getBoolean(Constants.PREF_OLED_DARK_MODE, false)).isTrue()
+
+    // Direct AppThemeStyle OLED mushaf background returns pure #000000 across all 5 styles and brightnesses
+    for (style in AppThemeStyle.entries) {
+      for (brightness in listOf(0, 16, 64)) {
+        assertThat(style.darkMushafBackgroundArgb(brightness, oled = true))
+          .isEqualTo(0xFF000000.toInt())
+      }
+    }
+
+    // QuranSettings dark page background resolves pure #000000 when OLED is enabled
+    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_DARK
+    for (style in AppThemeStyle.entries) {
+      settings.appThemeStyle = style.storageKey
+      settings.nightModeBackgroundBrightness = 0
+      assertThat(settings.pageThemeBackgroundColor).isEqualTo(0xFF000000.toInt())
+      settings.nightModeBackgroundBrightness = 40
+      assertThat(settings.pageThemeBackgroundColor).isEqualTo(0xFF000000.toInt())
+    }
+
+    // Light page appearance is unaffected by OLED dark mode
+    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_LIGHT
+    settings.pageTheme = PageThemeConstants.PAGE_THEME_SEPIA
+    assertThat(settings.isNightMode).isFalse()
+    assertThat(settings.pageThemeBackgroundColor).isEqualTo(0xfff8ebd5.toInt())
+
+    // Disabling OLED restores standard tonal dark mushaf background
+    settings.isOledDarkMode = false
+    settings.pageAppearance = PageThemeConstants.PAGE_APPEARANCE_DARK
+    settings.nightModeBackgroundBrightness = 0
+    settings.appThemeStyle = AppThemeStyle.GREEN.storageKey
+    assertThat(settings.pageThemeBackgroundColor).isEqualTo(0xFF0E1311.toInt())
   }
 
   @Test fun `night text brightness never goes below the readable minimum`() {

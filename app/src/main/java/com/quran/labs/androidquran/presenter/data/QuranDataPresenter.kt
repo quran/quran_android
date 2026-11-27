@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.presenter.data
 import android.content.Context
 import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
+import androidx.core.os.UserManagerCompat
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy.KEEP
@@ -29,6 +30,7 @@ import com.quran.labs.androidquran.worker.PartialPageCheckingWorker
 import com.quran.labs.androidquran.worker.WorkerConstants
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
@@ -39,6 +41,8 @@ import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit.DAYS
+import java.util.concurrent.TimeUnit.SECONDS
+import java.util.concurrent.atomic.AtomicBoolean
 
 class QuranDataPresenter @Inject internal constructor(
   @ApplicationContext val appContext: Context,
@@ -46,13 +50,14 @@ class QuranDataPresenter @Inject internal constructor(
   val quranScreenInfo: QuranScreenInfo,
   private val quranPageProvider: PageProvider,
   val quranFileUtils: QuranFileUtils,
-  private val localDataUpgrade: LocalDataUpgrade,
-  private val legacyBookmarksMigrator: LegacyBookmarksMigrator,
+  private val localDataUpgrade: Provider<LocalDataUpgrade>,
+  private val legacyBookmarksMigrator: Provider<LegacyBookmarksMigrator>,
   private val readerReadinessTracker: ReaderReadinessTracker
 ) : Presenter<QuranDataActivity> {
 
   private var activity: QuranDataActivity? = null
   private var checkPagesDisposable: Disposable? = null
+  private var audioUpdaterDisposable: Disposable? = null
   private var cachedPageType: String? = null
   private var lastCachedResult: QuranDataStatus? = null
 
@@ -87,9 +92,12 @@ class QuranDataPresenter @Inject internal constructor(
   }
 
   private fun migrateLegacyBookmarks(): Completable {
+    if (quranSettings.haveMigratedLegacyBookmarksToMobileSync()) {
+      return Completable.complete()
+    }
     return Completable.fromAction {
       runBlocking {
-        legacyBookmarksMigrator.migrateIfNeeded()
+        legacyBookmarksMigrator().migrateIfNeeded()
       }
     }
   }
@@ -101,43 +109,65 @@ class QuranDataPresenter @Inject internal constructor(
     } else {
       supportLegacyPages(pages)
           .andThen(actuallyCheckPages(pages))
-          .flatMap { Single.fromCallable { localDataUpgrade.processData(it) } }
+          .flatMap { Single.fromCallable { localDataUpgrade().processData(it) } }
           .map { checkPatchStatus(it) }
-          .flatMap { Single.fromCallable { localDataUpgrade.processPatch(it) } }
+          .flatMap { Single.fromCallable { localDataUpgrade().processPatch(it) } }
           .doOnSuccess {
-            // we call this to make sure the database is copied to the proper directory if it is
-            // only in the downloaded directory.
-            quranFileUtils.hasArabicSearchDatabase()
+            // Run non-blocking post-check housekeeping (arabic DB copy + legacy marker cleanup)
+            // asynchronously so QuranDataActivity -> QuranActivity transition isn't delayed.
+            Completable.fromAction {
+              quranFileUtils.hasArabicSearchDatabase()
 
-            try {
-              val quranHiddenDirectoryMarkerFile = ".q4a"
-              File(appContext.noBackupFilesDir, quranHiddenDirectoryMarkerFile).delete()
+              try {
+                val quranHiddenDirectoryMarkerFile = ".q4a"
+                File(appContext.noBackupFilesDir, quranHiddenDirectoryMarkerFile).delete()
 
-              val baseDirectory = quranFileUtils.quranBaseDirectory
-              File(baseDirectory, quranHiddenDirectoryMarkerFile).delete()
-              val quranDirectoryMarkerFile = "q4a"
-              File(baseDirectory, quranDirectoryMarkerFile).delete()
-            } catch (e: Exception) {
-              Timber.e(e)
+                val baseDirectory = quranFileUtils.quranBaseDirectory
+                File(baseDirectory, quranHiddenDirectoryMarkerFile).delete()
+                val quranDirectoryMarkerFile = "q4a"
+                File(baseDirectory, quranDirectoryMarkerFile).delete()
+              } catch (e: Exception) {
+                Timber.e(e)
+              }
             }
+              .subscribeOn(Schedulers.io())
+              .subscribe({}, { Timber.e(it) })
           }
     }
   }
 
   private fun scheduleAudioUpdater() {
-    val audioUpdaterTaskConstraints = Constraints.Builder()
-        .setRequiredNetworkType(CONNECTED)
-        .build()
+    if (!audioUpdaterScheduled.compareAndSet(false, true)) {
+      return
+    }
+    audioUpdaterDisposable = Completable.timer(AUDIO_UPDATER_DELAY_SECONDS, SECONDS, Schedulers.io())
+        .andThen(Completable.fromAction {
+          if (!UserManagerCompat.isUserUnlocked(appContext)) {
+            audioUpdaterScheduled.set(false)
+            return@fromAction
+          }
+          val audioUpdaterTaskConstraints = Constraints.Builder()
+              .setRequiredNetworkType(CONNECTED)
+              .build()
 
-    // setup audio update task
-    val updateAudioTask = PeriodicWorkRequestBuilder<AudioUpdateWorker>(7, DAYS)
-        .setConstraints(audioUpdaterTaskConstraints)
-        .build()
+          // setup audio update task
+          val updateAudioTask = PeriodicWorkRequestBuilder<AudioUpdateWorker>(7, DAYS)
+              .setConstraints(audioUpdaterTaskConstraints)
+              .build()
 
-    // run audio update task once a week
-    WorkManager.getInstance(appContext)
-        .enqueueUniquePeriodicWork(Constants.AUDIO_UPDATE_UNIQUE_WORK,
-            ExistingPeriodicWorkPolicy.KEEP, updateAudioTask)
+          // run audio update task once a week
+          WorkManager.getInstance(appContext)
+              .enqueueUniquePeriodicWork(Constants.AUDIO_UPDATE_UNIQUE_WORK,
+                  ExistingPeriodicWorkPolicy.KEEP, updateAudioTask)
+        })
+        .subscribe(
+          { audioUpdaterDisposable = null },
+          {
+            audioUpdaterScheduled.set(false)
+            audioUpdaterDisposable = null
+            Timber.w(it, "Unable to schedule periodic audio update work")
+          }
+        )
   }
 
   fun imagesVersion() = quranPageProvider.getImageVersion()
@@ -188,7 +218,10 @@ class QuranDataPresenter @Inject internal constructor(
       }
 
       val pageType = quranSettings.pageType
-      if (!quranSettings.didCheckPartialImages(pageType) && !pageType.endsWith("lines")) {
+      if (!quranSettings.didCheckPartialImages(pageType) &&
+          !pageType.endsWith("lines") &&
+          UserManagerCompat.isUserUnlocked(appContext)
+      ) {
         Timber.d("enqueuing work for $pageType...")
 
         // setup check pages task
@@ -271,5 +304,10 @@ class QuranDataPresenter @Inject internal constructor(
     if (this.activity === activity) {
       this.activity = null
     }
+  }
+
+  private companion object {
+    const val AUDIO_UPDATER_DELAY_SECONDS = 5L
+    val audioUpdaterScheduled = AtomicBoolean(false)
   }
 }

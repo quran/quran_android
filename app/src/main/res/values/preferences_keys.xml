@@ -8,6 +8,7 @@
   <string translatable="false" name="prefs_path">quranSettings</string>
   <string translatable="false" name="prefs_advanced_path">quranAdvancedSettings</string>
   <string translatable="false" name="prefs_app_theme">appTheme</string>
+  <string translatable="false" name="prefs_app_theme_style">appThemeStyle</string>
   <string translatable="false" name="prefs_page_theme">pageTheme</string>
   <string translatable="false" name="prefs_dual_page_enabled">useDualPageMode</string>
   <string translatable="false" name="prefs_sura_translated_name">suraTranslatedName</string>
@@ -44,5 +45,13 @@
     <item>light</item>
     <item>dark</item>
     <item>default</item>
+  </array>
+
+  <array name="theme_style_values" translatable="false">
+    <item>default</item>
+    <item>green</item>
+    <item>blue</item>
+    <item>beige</item>
+    <item>gray</item>
   </array>
 </resources>

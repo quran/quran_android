@@ -69,7 +69,7 @@ class QuranPagePresenter @Inject constructor(
 
   private fun getAyahCoordinates(pages: IntArray) {
     compositeDisposable.add(
-      Completable.timer(500, TimeUnit.MILLISECONDS)
+      Completable.timer(AYAH_COORDINATES_DELAY_MS, TimeUnit.MILLISECONDS)
         .andThen(Observable.fromArray(*pages.toTypedArray()))
         .flatMap { coordinatesModel.getAyahCoordinates(it) }
         .observeOn(AndroidSchedulers.mainThread())
@@ -100,7 +100,12 @@ class QuranPagePresenter @Inject constructor(
               val bitmap = response.bitmap
               if (bitmap != null) {
                 didDownloadImages = true
-                pageScreen.setPageBitmap(response.pageNumber, bitmap)
+                pageScreen.setPageBitmap(
+                  response.pageNumber,
+                  bitmap,
+                  response.sourceWidth,
+                  response.sourceHeight
+                )
               } else {
                 didDownloadImages = false
                 val errorRes: Int = when (response.errorCode) {
@@ -120,10 +125,18 @@ class QuranPagePresenter @Inject constructor(
     )
   }
 
+  fun resetImageState() {
+    didDownloadImages = false
+  }
+
   fun refresh() {
     if (encounteredError) {
       encounteredError = false
       getPageCoordinates(pages)
     }
+  }
+
+  companion object {
+    internal const val AYAH_COORDINATES_DELAY_MS = 150L
   }
 }

@@ -17,6 +17,9 @@ import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhDownl
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SheikhUiModel
 import com.quran.mobile.feature.downloadmanager.model.sheikhdownload.SuraDownloadStatusEvent
 import dev.zacsweers.metro.Inject
+import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +28,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
@@ -39,7 +43,7 @@ class SheikhAudioPresenter @Inject constructor(
   private val audioCacheInvalidator: AudioCacheInvalidator,
   private val downloader: Downloader
 ) {
-  private val selectedEntriesFlow = MutableStateFlow<List<EntryForQari>>(emptyList())
+  private val selectedEntriesFlow = MutableStateFlow<PersistentSet<EntryForQari>>(persistentSetOf())
   private val currentDialogFlow = MutableStateFlow<SheikhDownloadDialog>(SheikhDownloadDialog.None)
 
   fun sheikhInfo(qariId: Int): Flow<SheikhUiModel> {
@@ -47,28 +51,35 @@ class SheikhAudioPresenter @Inject constructor(
   }
 
   private fun sheikhInfoFlow(qariId: Int): Flow<SheikhUiModel> {
-    return combine(qariDownloadInfoManager.downloadedQariInfo(), selectedEntriesFlow, currentDialogFlow) {
-        downloadInfo, selectedSuras, currentDialog ->
-        val qariInfo = downloadInfo.firstOrNull { it.qari.id == qariId }
-        if (qariInfo == null) {
+    val entriesFlow = qariDownloadInfoManager.downloadedQariInfo()
+      .map { downloadInfo ->
+        val qariInfo = downloadInfo.firstOrNull { it.qari.id == qariId } ?: return@map null
+        val fullyDownloaded = qariInfo.fullyDownloadedSuras.toSet()
+        val localFiles = qariInfo.surasWithLocalFiles.toSet()
+        val suraModels = (1..114)
+          .map { sura ->
+            EntryForQari.SuraForQari(
+              sura,
+              sura in fullyDownloaded,
+              sura in localFiles,
+            )
+          }
+        val databaseState = qariInfo.asDatabaseForQariEntry()
+        val entries = if (databaseState != null) {
+          (listOf(databaseState) + suraModels).toImmutableList()
+        } else {
+          suraModels.toImmutableList()
+        }
+        qariInfo.qari to entries
+      }
+      .flowOn(Dispatchers.IO)
+
+    return combine(entriesFlow, selectedEntriesFlow, currentDialogFlow) {
+        qariAndEntries, selectedSuras, currentDialog ->
+        if (qariAndEntries == null) {
           null
         } else {
-          val suraModels = (1..114)
-            .map { sura ->
-              EntryForQari.SuraForQari(
-                sura,
-                qariInfo.fullyDownloadedSuras.contains(sura),
-                qariInfo.surasWithLocalFiles.contains(sura)
-              )
-            }
-          val databaseState = qariInfo.asDatabaseForQariEntry()
-          val databases = if (databaseState != null) {
-            listOf(databaseState)
-          } else {
-            listOf()
-          }
-
-          SheikhUiModel(qariInfo.qari, databases + suraModels, selectedSuras, currentDialog)
+          SheikhUiModel(qariAndEntries.first, qariAndEntries.second, selectedSuras, currentDialog)
         }
       }
       .filterNotNull()
@@ -86,20 +97,20 @@ class SheikhAudioPresenter @Inject constructor(
   }
 
   fun selectEntry(entry: EntryForQari) {
-    selectedEntriesFlow.value += entry
+    selectedEntriesFlow.value = selectedEntriesFlow.value.adding(entry)
   }
 
   fun toggleEntrySelection(entry: EntryForQari) {
     val currentSelection = selectedEntriesFlow.value
-    if (entry in currentSelection) {
-      selectedEntriesFlow.value = currentSelection - entry
+    selectedEntriesFlow.value = if (entry in currentSelection) {
+      currentSelection.removing(entry)
     } else {
-      selectedEntriesFlow.value = currentSelection + entry
+      currentSelection.adding(entry)
     }
   }
 
   fun clearSelection() {
-    selectedEntriesFlow.value = emptyList()
+    selectedEntriesFlow.value = persistentSetOf()
   }
 
   fun showPostNotificationsRationaleDialog() {
@@ -123,7 +134,7 @@ class SheikhAudioPresenter @Inject constructor(
     if (currentSelection.isEmpty()) {
       currentDialogFlow.value = SheikhDownloadDialog.DownloadRangeSelection
     } else {
-      selectedEntriesFlow.value = emptyList()
+      selectedEntriesFlow.value = persistentSetOf()
 
       val suras = currentSelection.filterIsInstance<EntryForQari.SuraForQari>().map { it.sura }
       val downloadDatabase = currentSelection.filterIsInstance<EntryForQari.DatabaseForQari>().isNotEmpty()
@@ -182,7 +193,7 @@ class SheikhAudioPresenter @Inject constructor(
   }
 
   suspend fun removeSuras(qariId: Int, suras: List<Int>, removeDatabase: Boolean) {
-    selectedEntriesFlow.value = emptyList()
+    selectedEntriesFlow.value = persistentSetOf()
     withContext(Dispatchers.IO) {
       val qariInfo = qariInfoForId(qariId)
       val directory = quranFileManager.audioFileDirectory()

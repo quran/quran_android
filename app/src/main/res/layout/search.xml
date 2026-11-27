@@ -1,22 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/quranSurface"
     android:orientation="vertical">
-  <androidx.appcompat.widget.Toolbar
-      android:id="@+id/toolbar"
+
+  <FrameLayout
+      android:id="@+id/toolbar_area"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="?attr/colorPrimary"/>
+      android:background="?attr/quranToolbarBackground">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ToolbarStyle"
+        app:popupTheme="?attr/quranPopupTheme"
+        app:titleTextAppearance="@style/ToolbarTitleText" />
+  </FrameLayout>
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:background="?attr/quranDivider" />
 
   <TextView
       android:id="@+id/search_warning"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="@color/header_background"
-      android:padding="12dp"
-      android:textColor="?android:textColorPrimary"
-      android:textSize="17sp"
+      android:background="?attr/quranHeaderBackground"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:paddingTop="10dp"
+      android:paddingBottom="10dp"
+      android:textColor="?attr/quranHeaderText"
+      android:textSize="14sp"
       android:visibility="gone" />
 
   <Button
@@ -28,18 +49,42 @@
 
   <TextView
       android:id="@+id/search_area"
-      android:layout_width="fill_parent"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="@color/header_background"
-      android:padding="12dp"
+      android:background="?attr/quranHeaderBackground"
+      android:fontFamily="sans-serif-medium"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:paddingTop="10dp"
+      android:paddingBottom="10dp"
       android:text="@string/search_key"
-      android:textColor="?android:textColorPrimary"
-      android:textSize="17sp" />
+      android:textColor="?attr/quranHeaderText"
+      android:textSize="14sp" />
 
-  <ListView
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:background="?attr/quranDivider" />
+
+  <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/results_list"
       android:layout_width="match_parent"
       android:layout_height="0dp"
       android:layout_weight="1"
-      android:clipToPadding="false"/>
+      android:background="?attr/quranSurface"
+      android:clipToPadding="false"
+      android:scrollbars="vertical" />
+
+  <View
+      android:id="@+id/nav_bar_divider"
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:background="?attr/quranDivider"
+      android:visibility="gone" />
+
+  <View
+      android:id="@+id/nav_bar_scrim"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:background="?attr/quranToolbarBackground" />
 </LinearLayout>

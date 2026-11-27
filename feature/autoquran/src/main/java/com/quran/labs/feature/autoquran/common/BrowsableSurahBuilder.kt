@@ -9,6 +9,7 @@ import com.quran.data.model.audio.Qari
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.common.audio.util.AudioExtensionDecider
 import com.quran.labs.feature.autoquran.R
+import com.quran.mobile.common.ui.core.R as UiCoreR
 import com.quran.mobile.di.qualifier.ApplicationContext
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
@@ -156,14 +157,25 @@ class BrowsableSurahBuilder @Inject constructor(
    * Typically, this is a list of 114 [MediaItem]s, one for each sura.
    */
   private fun suraMediaItemsForQariId(qariId: Int): ImmutableList<MediaItem> {
-    val qari = pageProvider.getQaris().firstOrNull { it.id == qariId }
-    return if (qari != null) {
-      (1..114).map { sura ->
-        makeSuraMediaItem(qari, sura)
-      }.let { ImmutableList.copyOf(it) }
-    } else {
-      ImmutableList.of()
-    }
+    val qari = pageProvider.getQaris().firstOrNull { it.id == qariId } ?: return ImmutableList.of()
+    val suraNames = appContext.resources.getStringArray(UiCoreR.array.sura_names)
+    val qariName = appContext.getString(qari.nameResource)
+    val extension = audioExtensionDecider.audioExtensionForQari(qari)
+    val (baseUrl, mimeType) = audioUrlAndMimeType(qari, extension)
+
+    return (1..114).map { sura ->
+      val suraName = appContext.getString(R.string.quran_sura_title, suraNames[sura - 1])
+      buildSuraMediaItem(
+        qari = qari,
+        sura = sura,
+        suraName = suraName,
+        qariName = qariName,
+        extension = extension,
+        baseUrl = baseUrl,
+        mimeType = mimeType,
+        showQariSubtitle = false,
+      )
+    }.let { ImmutableList.copyOf(it) }
   }
 
   /**
@@ -196,14 +208,40 @@ class BrowsableSurahBuilder @Inject constructor(
   ): MediaItem {
     val suraName = getSuraName(appContext, sura, wantPrefix = true, wantTranslation = false)
     val extension = audioExtensionDecider.audioExtensionForQari(qari)
-    val (baseUrl, mimeType) = if (extension == "opus" && qari.opusUrl != null) {
-      qari.opusUrl to MimeTypes.AUDIO_OPUS
+    val (baseUrl, mimeType) = audioUrlAndMimeType(qari, extension)
+    val qariName = appContext.getString(qari.nameResource)
+    return buildSuraMediaItem(
+      qari = qari,
+      sura = sura,
+      suraName = suraName,
+      qariName = qariName,
+      extension = extension,
+      baseUrl = baseUrl,
+      mimeType = mimeType,
+      showQariSubtitle = showQariSubtitle,
+    )
+  }
+
+  private fun audioUrlAndMimeType(qari: Qari, extension: String): Pair<String, String> {
+    val opusUrl = qari.opusUrl
+    return if (extension == "opus" && opusUrl != null) {
+      opusUrl to MimeTypes.AUDIO_OPUS
     } else {
       qari.url to MimeTypes.AUDIO_MPEG
     }
-    val artworkUri = qariArtworkProvider.suraArtworkUriFor(qari, sura)
-    val qariName = appContext.getString(qari.nameResource)
+  }
 
+  private fun buildSuraMediaItem(
+    qari: Qari,
+    sura: Int,
+    suraName: String,
+    qariName: String,
+    extension: String,
+    baseUrl: String,
+    mimeType: String,
+    showQariSubtitle: Boolean,
+  ): MediaItem {
+    val artworkUri = qariArtworkProvider.suraArtworkUriFor(qari, sura)
     return MediaItem.Builder()
       .setMediaId("sura_${sura}_${qari.id}")
       .setMediaMetadata(

@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okio.Buffer
@@ -196,6 +197,67 @@ class TranslationManagerPresenterTest {
 
     // Assert - staleness check is false so no coroutine is launched
     Truth.assertThat(mockWebServer.requestCount).isEqualTo(0)
+  }
+
+  @Test
+  fun `remoteTranslationList throws IOException and closes body on non-2xx response with JSON body`() = runTest {
+    mockWebServer.enqueue(
+      MockResponse()
+        .setResponseCode(404)
+        .setBody("{\"data\":[]}")
+    )
+
+    var bodyClosed = false
+    val trackingClient = OkHttpClient.Builder()
+      .addNetworkInterceptor { chain ->
+        val response = chain.proceed(chain.request())
+        val originalBody = response.body
+        val wrappedBody = object : ResponseBody() {
+          override fun contentType() = originalBody.contentType()
+          override fun contentLength() = originalBody.contentLength()
+          override fun source() = originalBody.source()
+          override fun close() {
+            bodyClosed = true
+            originalBody.close()
+          }
+        }
+        response.newBuilder().body(wrappedBody).build()
+      }
+      .build()
+
+    val appContext = ApplicationProvider.getApplicationContext<Application>()
+    val presenter = TranslationManagerPresenter(
+      appContext, trackingClient, quranSettings, fakeTranslationsAdapter, quranFileUtils
+    ).apply {
+      host = mockWebServer.url("").toString()
+    }
+
+    presenter.remoteTranslationList().test {
+      val throwable = awaitError()
+      Truth.assertThat(throwable).isInstanceOf(IOException::class.java)
+    }
+    Truth.assertThat(bodyClosed).isTrue()
+  }
+
+  @Test
+  fun `mergeWithServerTranslations rejects path traversal filenames`() = runTest {
+    val dbDir = quranFileUtils.getQuranDatabaseDirectory()
+    dbDir.mkdirs()
+    val outsideFile = File(dbDir.parentFile, "outside_secret.db")
+    outsideFile.writeText("keep-me")
+
+    val safeTranslation = makeTranslation(id = 1, fileName = "valid.db")
+    val traversalSlash = makeTranslation(id = 2, fileName = "../outside_secret.db")
+    val traversalBackslash = makeTranslation(id = 3, fileName = "..\\outside_secret.db")
+    val traversalDotDot = makeTranslation(id = 4, fileName = "foo..bar.db")
+
+    val merged = translationManager().mergeWithServerTranslations(
+      listOf(safeTranslation, traversalSlash, traversalBackslash, traversalDotDot)
+    )
+
+    Truth.assertThat(merged.map { it.translation.id }).containsExactly(1)
+    Truth.assertThat(outsideFile.exists()).isTrue()
+    outsideFile.delete()
   }
 
   private fun enqueueMockResponse() {

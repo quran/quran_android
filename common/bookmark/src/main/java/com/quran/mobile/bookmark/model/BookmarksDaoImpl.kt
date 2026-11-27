@@ -49,10 +49,20 @@ class BookmarksDaoImpl(
   private val timestampProvider: MobileSyncTimestampProvider,
   appCoroutineScope: AppCoroutineScope
 ) : BookmarksDao {
+  private val cacheLock = Any()
+  private var cachedCollectionData: CachedCollectionData? = null
+  private var directReadSequence: Long = 0L
+
   private val bookmarkCollectionDataState: StateFlow<BookmarkCollectionData?> =
     bookmarkCollectionsState.collectionsWithBookmarks
       .filterNotNull()
-      .map(::toBookmarkCollectionData)
+      .map { collectionsWithBookmarks ->
+        toBookmarkCollectionData(
+          collectionsWithBookmarks = collectionsWithBookmarks,
+          fromCurrentSnapshot = false,
+          readSequence = 0L
+        )
+      }
       .distinctUntilChanged()
       .stateIn(appCoroutineScope, SharingStarted.Eagerly, null)
 
@@ -292,49 +302,97 @@ class BookmarksDaoImpl(
   }
 
   private suspend fun bookmarkCollectionData(): BookmarkCollectionData {
-    return toBookmarkCollectionData(bookmarkCollectionsState.currentCollectionsWithBookmarks())
+    val sequence = synchronized(cacheLock) { ++directReadSequence }
+    return toBookmarkCollectionData(
+      collectionsWithBookmarks = bookmarkCollectionsState.currentCollectionsWithBookmarks(),
+      fromCurrentSnapshot = true,
+      readSequence = sequence
+    )
   }
 
   private fun toBookmarkCollectionData(
-    collectionsWithBookmarks: List<CollectionWithAyahBookmarks>
+    collectionsWithBookmarks: List<CollectionWithAyahBookmarks>,
+    fromCurrentSnapshot: Boolean,
+    readSequence: Long
   ): BookmarkCollectionData {
-    val defaultCollectionId = collectionsWithBookmarks
-      .firstOrNull { collectionWithBookmarks -> collectionWithBookmarks.collection.isDefault }
-      ?.collection
-      ?.id
-    val membershipsByBookmarkId = collectionsWithBookmarks
-      .flatMap { collectionWithBookmarks -> collectionWithBookmarks.bookmarks }
-      .groupBy { bookmark -> bookmark.bookmarkId }
-    val collectionIdsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
-      memberships.mapTo(mutableSetOf()) { membership -> membership.collectionId }
-    }
-    val tagMembershipsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
-      memberships.associateBy { membership -> membership.collectionId }
-    }
-    val representativeMembershipsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
-      memberships.maxBy { membership ->
-        membership.bookmarkLastUpdated.fromPlatform().toEpochMilliseconds()
+    val quranInfo = quranInfoProvider()
+    synchronized(cacheLock) {
+      val cached = cachedCollectionData
+      val latestFlowValue = bookmarkCollectionsState.collectionsWithBookmarks.value
+      val isLatestFlowValue = latestFlowValue == null ||
+        latestFlowValue === collectionsWithBookmarks ||
+        latestFlowValue == collectionsWithBookmarks
+      if (cached != null &&
+        cached.quranInfo === quranInfo &&
+        (cached.collectionsWithBookmarks === collectionsWithBookmarks ||
+          cached.collectionsWithBookmarks == collectionsWithBookmarks)
+      ) {
+        if (!fromCurrentSnapshot && cached.fromCurrentSnapshot && isLatestFlowValue) {
+          cached.fromCurrentSnapshot = false
+        }
+        return cached.data
       }
-    }
-    val ayahBookmarksById = representativeMembershipsByBookmarkId
-      .mapValues { (_, membership) -> membership.asAyahBookmark() }
-    val bookmarks = representativeMembershipsByBookmarkId
-      .map { (bookmarkId, bookmark) ->
-        toBookmark(bookmark, collectionIdsByBookmarkId[bookmarkId].orEmpty().toList())
+
+      val defaultCollectionId = collectionsWithBookmarks
+        .firstOrNull { collectionWithBookmarks -> collectionWithBookmarks.collection.isDefault }
+        ?.collection
+        ?.id
+      val membershipsByBookmarkId = collectionsWithBookmarks
+        .flatMap { collectionWithBookmarks -> collectionWithBookmarks.bookmarks }
+        .groupBy { bookmark -> bookmark.bookmarkId }
+      val collectionIdsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
+        memberships.mapTo(mutableSetOf()) { membership -> membership.collectionId }
       }
-    return BookmarkCollectionData(
-      bookmarks = bookmarks,
-      ayahBookmarksById = ayahBookmarksById,
-      collectionIdsByBookmarkId = collectionIdsByBookmarkId,
-      tagMembershipsByBookmarkId = tagMembershipsByBookmarkId,
-      collectionsById = collectionsWithBookmarks
-        .map { collectionWithBookmarks -> collectionWithBookmarks.collection }
-        .associateBy { collection -> collection.id },
-      tags = collectionsWithBookmarks.map { collectionWithBookmarks ->
-        collectionWithBookmarks.collection.asTag()
-      },
-      defaultCollectionId = defaultCollectionId
-    )
+      val tagMembershipsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
+        memberships.associateBy { membership -> membership.collectionId }
+      }
+      val representativeMembershipsByBookmarkId = membershipsByBookmarkId.mapValues { (_, memberships) ->
+        memberships.maxBy { membership ->
+          membership.bookmarkLastUpdated.fromPlatform().toEpochMilliseconds()
+        }
+      }
+      val ayahBookmarksById = representativeMembershipsByBookmarkId
+        .mapValues { (_, membership) -> membership.asAyahBookmark() }
+      val bookmarks = representativeMembershipsByBookmarkId
+        .map { (bookmarkId, bookmark) ->
+          toBookmark(bookmark, collectionIdsByBookmarkId[bookmarkId].orEmpty().toList(), quranInfo)
+        }
+      val result = BookmarkCollectionData(
+        bookmarks = bookmarks,
+        ayahBookmarksById = ayahBookmarksById,
+        collectionIdsByBookmarkId = collectionIdsByBookmarkId,
+        tagMembershipsByBookmarkId = tagMembershipsByBookmarkId,
+        collectionsById = collectionsWithBookmarks
+          .map { collectionWithBookmarks -> collectionWithBookmarks.collection }
+          .associateBy { collection -> collection.id },
+        tags = collectionsWithBookmarks.map { collectionWithBookmarks ->
+          collectionWithBookmarks.collection.asTag()
+        },
+        defaultCollectionId = defaultCollectionId
+      )
+
+      val shouldUpdateCache = if (fromCurrentSnapshot) {
+        cached == null || readSequence >= cached.directReadSequence
+      } else {
+        isLatestFlowValue && (
+          cached == null ||
+            !cached.fromCurrentSnapshot ||
+            cached.collectionsWithBookmarks === collectionsWithBookmarks ||
+            cached.collectionsWithBookmarks == collectionsWithBookmarks
+          )
+      }
+      if (shouldUpdateCache) {
+        val nextSequence = maxOf(cached?.directReadSequence ?: 0L, readSequence)
+        cachedCollectionData = CachedCollectionData(
+          collectionsWithBookmarks = collectionsWithBookmarks,
+          quranInfo = quranInfo,
+          data = result,
+          fromCurrentSnapshot = fromCurrentSnapshot,
+          directReadSequence = nextSequence
+        )
+      }
+      return result
+    }
   }
 
   private fun SyncCollection.asTag(): Tag =
@@ -370,9 +428,13 @@ class BookmarksDaoImpl(
     )
   }
 
-  private fun toBookmark(bookmark: CollectionAyahBookmark, tagIds: List<String>): Bookmark {
+  private fun toBookmark(
+    bookmark: CollectionAyahBookmark,
+    tagIds: List<String>,
+    quranInfo: QuranInfo
+  ): Bookmark {
     val timestampSeconds = bookmark.bookmarkLastUpdated.fromPlatform().toEpochMilliseconds() / 1000
-    val page = quranInfoProvider().getPageFromSuraAyah(bookmark.sura, bookmark.ayah)
+    val page = quranInfo.getPageFromSuraAyah(bookmark.sura, bookmark.ayah)
     return Bookmark(
       id = bookmark.bookmarkId,
       sura = bookmark.sura,
@@ -390,6 +452,14 @@ class BookmarksDaoImpl(
       else -> bookmarks.sortedByDescending { it.timestamp }
     }
   }
+
+  private class CachedCollectionData(
+    val collectionsWithBookmarks: List<CollectionWithAyahBookmarks>,
+    val quranInfo: QuranInfo,
+    val data: BookmarkCollectionData,
+    var fromCurrentSnapshot: Boolean,
+    val directReadSequence: Long
+  )
 
   private data class BookmarkCollectionData(
     val bookmarks: List<Bookmark>,

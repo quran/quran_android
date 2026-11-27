@@ -12,17 +12,20 @@ class AyahInfoDatabaseProvider @Inject constructor(
   private val widthParameter: String,
   private val quranFileUtils: QuranFileUtils
 ) {
+  @Volatile
   private var databaseHandler: AyahInfoDatabaseHandler? = null
 
   fun getAyahInfoHandler(): AyahInfoDatabaseHandler? {
-    if (databaseHandler == null) {
-      val filename = quranFileUtils.getAyaPositionFileName(widthParameter)
-      databaseHandler = AyahInfoDatabaseHandler.getAyahInfoDatabaseHandler(
-        filename,
-        quranFileUtils
-      )
+    databaseHandler?.let { return it }
+    return synchronized(this) {
+      databaseHandler ?: run {
+        val filename = quranFileUtils.getAyaPositionFileName(widthParameter)
+        AyahInfoDatabaseHandler.getAyahInfoDatabaseHandler(
+          filename,
+          quranFileUtils
+        ).also { databaseHandler = it }
+      }
     }
-    return databaseHandler
   }
 
   fun getPageWidth(): Int = widthParameter.substring(1).toInt()

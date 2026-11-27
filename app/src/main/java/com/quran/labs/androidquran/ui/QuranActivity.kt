@@ -13,7 +13,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AlertDialog.Builder
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +24,7 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -40,7 +40,9 @@ import com.quran.labs.androidquran.QuranPreferenceActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.SearchActivity
 import com.quran.labs.androidquran.ShortcutsActivity
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.data.Constants
+import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.labs.androidquran.feature.reading.model.LatestPageTracker
 import com.quran.labs.androidquran.presenter.data.QuranIndexEventLogger
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter
@@ -62,6 +64,7 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.SlidingTabLayout
 import com.quran.mobile.di.ExtraScreenProvider
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -100,9 +103,9 @@ class QuranActivity : AppCompatActivity(),
   private val compositeDisposable = CompositeDisposable()
   private val latestPageFlow: Flow<Int> by lazy {
     combine(
-      recentPagesDao.recentPagesFlow()
+      recentPagesDao().recentPagesFlow()
         .map { recentPages -> recentPages.firstOrNull()?.page ?: Constants.NO_PAGE },
-      latestPageTracker.latestPage
+      latestPageTracker().latestPage
     ) { persistedPage, latestPage ->
       latestPage
         ?.takeIf { it.pageType == settings.pageType }
@@ -120,27 +123,29 @@ class QuranActivity : AppCompatActivity(),
   private lateinit var searchItemCollapserCallback: OnBackPressedCallback
   private lateinit var supportActionModeClearingCallback: OnBackPressedCallback
 
-  @Inject lateinit var quranNavigator: QuranNavigator
+  @Inject lateinit var quranNavigator: Provider<QuranNavigator>
 
   @Inject
   lateinit var settings: QuranSettings
   @Inject
-  lateinit var audioUtils: AudioUtils
+  lateinit var audioUtils: Provider<AudioUtils>
   @Inject
-  lateinit var recentPagesDao: RecentPagesDao
+  lateinit var recentPagesDao: Provider<RecentPagesDao>
   @Inject
-  lateinit var latestPageTracker: LatestPageTracker
+  lateinit var latestPageTracker: Provider<LatestPageTracker>
   @Inject
-  lateinit var translationManagerPresenter: TranslationManagerPresenter
+  lateinit var translationManagerPresenter: Provider<TranslationManagerPresenter>
   @Inject
-  lateinit var quranIndexEventLogger: QuranIndexEventLogger
+  lateinit var quranIndexEventLogger: Provider<QuranIndexEventLogger>
   @Inject
   lateinit var extraScreens: Set<@JvmSuppressWildcards ExtraScreenProvider>
 
   private var jumpToPageOnResume: Int? = null
+  private var appliedThemeStyle: AppThemeStyle = AppThemeStyle.DEFAULT
 
   public override fun onCreate(savedInstanceState: Bundle?) {
-    enableEdgeToEdge()
+    appliedThemeStyle = ThemeUtil.applyActivityTheme(this)
+    ThemeUtil.enableThemedEdgeToEdge(this)
     super.onCreate(savedInstanceState)
     val quranApp = application as QuranApplication
     quranApp.applicationComponent
@@ -155,12 +160,20 @@ class QuranActivity : AppCompatActivity(),
     isRtl = isRtl()
 
     val root = findViewById<ViewGroup>(R.id.root)
+    val toolbarArea = findViewById<View>(R.id.toolbar_area)
+    val navBarScrim = findViewById<View>(R.id.nav_bar_scrim)
+    val navBarDivider = findViewById<View>(R.id.nav_bar_divider)
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
       val insets = windowInsets.getInsets(
         WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
       )
+      toolbarArea.updatePadding(top = insets.top)
+      navBarScrim.updateLayoutParams<ViewGroup.LayoutParams> {
+        height = insets.bottom
+      }
+      navBarDivider.visibility = if (insets.bottom > 0) View.VISIBLE else View.GONE
       root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-        topMargin = insets.top
+        topMargin = 0
         leftMargin = insets.left
         rightMargin = insets.right
       }
@@ -177,16 +190,18 @@ class QuranActivity : AppCompatActivity(),
     ab?.setTitle(R.string.app_name)
 
     val pager = findViewById<ViewPager>(R.id.index_pager)
-    pager.offscreenPageLimit = 3
-    val pagerAdapter = PagerAdapter(supportFragmentManager)
-    pager.adapter = pagerAdapter
-    val indicator = findViewById<SlidingTabLayout>(R.id.indicator)
-    indicator.setViewPager(pager)
-    jumpToPageOnResume = if (isRtl) {
+    val initialPage = if (isRtl) {
       TITLES.size - 1
     } else {
       0
     }
+    pager.offscreenPageLimit = 1
+    val pagerAdapter = PagerAdapter(supportFragmentManager)
+    pager.adapter = pagerAdapter
+    pager.setCurrentItem(initialPage, false)
+    val indicator = findViewById<SlidingTabLayout>(R.id.indicator)
+    indicator.setViewPager(pager)
+    jumpToPageOnResume = if (savedInstanceState != null) initialPage else null
 
     if (savedInstanceState != null) {
       showedTranslationUpgradeDialog = savedInstanceState.getBoolean(
@@ -208,12 +223,20 @@ class QuranActivity : AppCompatActivity(),
         jumpToLastPage()
       }
     }
-    updateTranslationsListAsNeeded()
-    quranIndexEventLogger.logAnalytics()
+    window.decorView.post {
+      if (!isFinishing && !isDestroyed) {
+        updateTranslationsListAsNeeded()
+        quranIndexEventLogger().logAnalytics()
+      }
+    }
   }
 
   public override fun onResume() {
     super.onResume()
+    if (AppThemeStyle.fromPreference(settings.appThemeStyle) != appliedThemeStyle) {
+      recreate()
+      return
+    }
     val isRtl = isRtl()
     if (isRtl != this.isRtl) {
       val i = intent
@@ -230,9 +253,12 @@ class QuranActivity : AppCompatActivity(),
           Completable.timer(500, MILLISECONDS)
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe {
+                if (!AudioService.isRunning()) {
+                  return@subscribe
+                }
                 try {
                   startService(
-                    audioUtils.getAudioIntent(this@QuranActivity, AudioService.ACTION_STOP)
+                    audioUtils().getAudioIntent(this@QuranActivity, AudioService.ACTION_STOP)
                   )
                 } catch (_: IllegalStateException) {
                   // do nothing, we might be in the background
@@ -294,6 +320,7 @@ class QuranActivity : AppCompatActivity(),
         isEnabled = false
       }
     }
+    onBackPressedDispatcher.addCallback(this, searchItemCollapserCallback)
 
     // clear the action mode if it's active on back press
     val supportActionModeEnabled = supportActionMode != null
@@ -302,6 +329,7 @@ class QuranActivity : AppCompatActivity(),
         supportActionMode?.finish()
       }
     }
+    onBackPressedDispatcher.addCallback(this, supportActionModeClearingCallback)
   }
 
   private fun isRtl(): Boolean {
@@ -384,26 +412,7 @@ class QuranActivity : AppCompatActivity(),
     supportActionMode = mode
     supportActionModeClearingCallback.isEnabled = true
     super.onSupportActionModeStarted(mode)
-
-    /**
-     * hack to fix the status bar color when action mode starts.
-     * unfortunately, despite being edge to edge, switching to contextual action mode causes
-     * [androidx.appcompat.app.AppCompatDelegate] and its implementation to set a status guard
-     * under the status bar (white in light mode, black in dark mode). this breaks the edge to
-     * edge look and feel, so we manually set the status guard's background color.
-     */
-    val abRoot = findViewById<ViewGroup>(androidx.appcompat.R.id.action_bar_root)
-    // has to be .post otherwise the background is set to the default color overriding this
-    abRoot.post {
-      val statusGuard = abRoot.getChildAt(abRoot.childCount - 1)
-      statusGuard?.let {
-        // not using `is` here because i literally want a View, not a subclass of View.
-        // checking top to be 0 is just a second just in case check.
-        if (statusGuard::class == View::class && statusGuard.top == 0) {
-          statusGuard.setBackgroundColor(ContextCompat.getColor(this, R.color.toolbar))
-        }
-      }
-    }
+    ThemeUtil.applyActionModeStatusGuard(this)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
@@ -425,8 +434,12 @@ class QuranActivity : AppCompatActivity(),
 
   private fun updateTranslationsListAsNeeded() {
     if (!updatedTranslations) {
-      translationManagerPresenter.checkForUpdates()
       updatedTranslations = true
+      val isCacheStale = System.currentTimeMillis() -
+        settings.lastUpdatedTranslationDate > Constants.MIN_TRANSLATION_REFRESH_TIME
+      if (isCacheStale) {
+        translationManagerPresenter().checkForUpdates()
+      }
     }
   }
 
@@ -461,11 +474,11 @@ class QuranActivity : AppCompatActivity(),
   }
 
   override fun jumpTo(page: Int) {
-    quranNavigator.jumpTo(Page(page), showTranslation = settings.wasShowingTranslation)
+    quranNavigator().jumpTo(Page(page), showTranslation = settings.wasShowingTranslation)
   }
 
   override fun jumpToAndHighlight(page: Int, sura: Int, ayah: Int) {
-    quranNavigator.jumpTo(SuraAyah(sura, ayah), showTranslation = settings.wasShowingTranslation)
+    quranNavigator().jumpTo(SuraAyah(sura, ayah), showTranslation = settings.wasShowingTranslation)
   }
 
   fun jumpTo(row: QuranRow) {
@@ -474,7 +487,7 @@ class QuranActivity : AppCompatActivity(),
     } else {
       Page(row.page)
     }
-    quranNavigator.jumpTo(location, row.readingBookmarkType, settings.wasShowingTranslation)
+    quranNavigator().jumpTo(location, row.readingBookmarkType, settings.wasShowingTranslation)
   }
 
   private fun gotoPageDialog() {

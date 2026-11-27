@@ -51,6 +51,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
   private static PaintDrawable leftGradient;
   private static PaintDrawable rightGradient;
   private static int gradientForNumberOfPages;
+  private static int gradientWidth;
   private static boolean areGradientsLandscape;
   private static BitmapDrawable leftPageBorder;
   private static BitmapDrawable rightPageBorder;
@@ -73,6 +74,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
   private View innerView;
   private int viewPaddingSmall;
   private int viewPaddingLarge;
+  private int borderWidthPx;
 
   public QuranPageLayout(Context context) {
     super(context);
@@ -87,6 +89,8 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     innerView = generateContentView(context, isLandscape);
     viewPaddingSmall = resources.getDimensionPixelSize(R.dimen.page_margin_small);
     viewPaddingLarge = resources.getDimensionPixelSize(R.dimen.page_margin_large);
+    borderWidthPx = (int) TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP, 13f, resources.getDisplayMetrics());
 
     LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     if (isLandscape && shouldWrapWithScrollView()) {
@@ -121,8 +125,19 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
           BitmapFactory.decodeResource(resources, R.drawable.night_right_border));
     }
 
-    updateGradients();
+    updateGradients(0);
     setWillNotDraw(false);
+  }
+
+  @Override
+  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    super.onSizeChanged(w, h, oldw, oldh);
+    if (w > 0 && w != oldw) {
+      updateGradients(w);
+      if (getBackground() instanceof PaintDrawable) {
+        setBackground(pageNumber % 2 == 0 ? leftGradient : rightGradient);
+      }
+    }
   }
 
   @Override
@@ -148,13 +163,10 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
   }
 
   private int getBorderWidth(Drawable drawable) {
-    if (drawable == lineDrawable)
+    if (drawable == lineDrawable) {
       return lineDrawable.getIntrinsicWidth();
-
-    // enlarge the book side indicator to a sensible device-independent width
-    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-        13f,
-        getResources().getDisplayMetrics());
+    }
+    return borderWidthPx;
   }
 
   @Override
@@ -215,17 +227,25 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     return 1;
   }
 
-  private void updateGradients() {
+  private void updateGradients(int measuredWidth) {
     int pagesVisible = getPagesVisible();
-    if (rightGradient == null || gradientForNumberOfPages != pagesVisible) {
+    if (measuredWidth <= 0 && rightGradient != null && gradientForNumberOfPages == pagesVisible) {
+      return;
+    }
+    final int width;
+    if (measuredWidth > 0) {
+      width = measuredWidth / pagesVisible;
+    } else {
       final WindowManager mgr =
           (WindowManager) context.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
       Display display = mgr.getDefaultDisplay();
-      int width = QuranDisplayHelper.getWidthKitKat(display);
-      width = width / pagesVisible;
+      width = QuranDisplayHelper.getWidthKitKat(display) / pagesVisible;
+    }
+    if (rightGradient == null || gradientForNumberOfPages != pagesVisible || gradientWidth != width) {
       leftGradient = QuranDisplayHelper.getPaintDrawable(width, 0);
       rightGradient = QuranDisplayHelper.getPaintDrawable(0, width);
       gradientForNumberOfPages = pagesVisible;
+      gradientWidth = width;
     }
   }
 

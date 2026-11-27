@@ -24,6 +24,7 @@ import com.quran.shared.persistence.util.fromPlatform
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -625,6 +626,103 @@ class BookmarksDaoImplTest {
     assertThat(dao.bookmarks()).isEmpty()
     assertThat(collectionBookmarksRepository.getHighlightsFlow().first().single().color)
       .isEqualTo(AyahHighlightColor.PURPLE)
+  }
+
+  @Test
+  fun `memoized collection data avoids rebuilding on repeated reads and updates on write or quranInfo change`() = runTest {
+    val collectionsRepository = CollectionsRepositoryImpl(database.synced)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database.synced)
+    val state = RepositoryBackedTestBookmarkCollectionsState(
+      collectionsRepository,
+      collectionBookmarksRepository,
+      appCoroutineScope
+    )
+    var currentQuranInfo = QuranInfo(MadaniDataSource())
+    val trackedDao = BookmarksDaoImpl(
+      quranInfoProvider = { currentQuranInfo },
+      bookmarksRepository = BookmarksRepositoryImpl(database.synced),
+      collectionsRepository = collectionsRepository,
+      collectionBookmarksRepository = collectionBookmarksRepository,
+      bookmarkCollectionsState = state,
+      timestampProvider = timestampProvider,
+      appCoroutineScope = appCoroutineScope
+    )
+
+    addDefaultBookmark(SuraAyah(2, 255))
+    val firstRead = trackedDao.bookmarks()
+    val secondRead = trackedDao.bookmarks()
+    assertThat(firstRead).hasSize(1)
+    // Memoized BookmarkCollectionData returns identical bookmark list instances on unchanged state
+    assertThat(secondRead.single()).isSameInstanceAs(firstRead.single())
+
+    // Immediate write-then-read reflects new bookmark
+    addDefaultBookmark(SuraAyah(36, 1))
+    val thirdRead = trackedDao.bookmarks()
+    assertThat(thirdRead.map { it.sura to it.ayah }).containsExactly(2 to 255, 36 to 1)
+
+    // Changing QuranInfo invalidates memoized page numbers
+    currentQuranInfo = QuranInfo(com.quran.labs.androidquran.pages.data.warsh.WarshDataSource())
+    val fourthRead = trackedDao.bookmarks()
+    assertThat(fourthRead.first { it.sura == 2 && it.ayah == 255 }.page)
+      .isEqualTo(currentQuranInfo.getPageFromSuraAyah(2, 255))
+  }
+
+  @Test
+  fun `stale background flow emission does not clobber memoized current snapshot cache`() = runTest {
+    val collectionsRepository = CollectionsRepositoryImpl(database.synced)
+    val collectionBookmarksRepository = CollectionBookmarksRepositoryImpl(database.synced)
+    val repoBackedState = RepositoryBackedTestBookmarkCollectionsState(
+      collectionsRepository,
+      collectionBookmarksRepository,
+      appCoroutineScope
+    )
+    val emptySnapshot = repoBackedState.currentCollectionsWithBookmarks()
+    addDefaultBookmark(SuraAyah(2, 255))
+    val populatedSnapshot = repoBackedState.currentCollectionsWithBookmarks()
+
+    var currentSnapshot = populatedSnapshot
+    val flowState = MutableStateFlow<List<CollectionWithAyahBookmarks>?>(null)
+    val racingState = object : BookmarkCollectionsState {
+      override val collectionsWithBookmarks: StateFlow<List<CollectionWithAyahBookmarks>?> = flowState
+
+      override suspend fun currentCollectionsWithBookmarks(): List<CollectionWithAyahBookmarks> {
+        return currentSnapshot
+      }
+    }
+    val raceDao = BookmarksDaoImpl(
+      quranInfoProvider = { quranInfo },
+      bookmarksRepository = BookmarksRepositoryImpl(database.synced),
+      collectionsRepository = collectionsRepository,
+      collectionBookmarksRepository = collectionBookmarksRepository,
+      bookmarkCollectionsState = racingState,
+      timestampProvider = timestampProvider,
+      appCoroutineScope = appCoroutineScope
+    )
+
+    val firstRead = raceDao.bookmarks()
+    assertThat(firstRead).hasSize(1)
+
+    // Simulate a delayed pre-write snapshot arriving on the background StateFlow after a direct read
+    flowState.value = emptySnapshot
+    assertThat(raceDao.bookmarksFlow().first { it.isEmpty() }).isEmpty()
+
+    val secondRead = raceDao.bookmarks()
+    assertThat(secondRead).hasSize(1)
+    assertThat(secondRead.single()).isSameInstanceAs(firstRead.single())
+
+    // Once the flow catches up to the direct read snapshot, subsequent flow updates refresh cache
+    flowState.value = populatedSnapshot
+    assertThat(raceDao.bookmarksFlow().first { it.size == 1 }).hasSize(1)
+
+    addDefaultBookmark(SuraAyah(36, 1))
+    val updatedSnapshot = repoBackedState.currentCollectionsWithBookmarks()
+    currentSnapshot = updatedSnapshot
+    flowState.value = updatedSnapshot
+    val flowUpdated = raceDao.bookmarksFlow().first { it.size == 2 }
+    val thirdRead = raceDao.bookmarks()
+    assertThat(thirdRead.map { it.sura to it.ayah }).containsExactly(2 to 255, 36 to 1)
+    assertThat(thirdRead.first { it.sura == 2 && it.ayah == 255 })
+      .isSameInstanceAs(flowUpdated.first { it.sura == 2 && it.ayah == 255 })
   }
 
   /** Seeds a default-collection bookmark for tests exercising another DAO behavior. */

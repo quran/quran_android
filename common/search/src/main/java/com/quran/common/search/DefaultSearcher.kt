@@ -19,6 +19,12 @@ class DefaultSearcher(private val matchStart: String,
       " LIKE "
     }
 
+    val escapeClause = if (hasFTS) {
+      ""
+    } else {
+      " ESCAPE '\\'"
+    }
+
     val whatToSelect = if (hasFTS && withSnippets) {
       "snippet(" + table + ", '" +
           matchStart + "', '" + matchEnd +
@@ -27,7 +33,7 @@ class DefaultSearcher(private val matchStart: String,
       searchColumn
     }
 
-    return "select $columns, $whatToSelect FROM $table WHERE $searchColumn $operator ?"
+    return "select $columns, $whatToSelect FROM $table WHERE $searchColumn $operator ?$escapeClause"
   }
 
   override fun getLimit(withSnippets: Boolean): String {
@@ -40,8 +46,15 @@ class DefaultSearcher(private val matchStart: String,
       "$searchText*"
     } else {
       // LIKE query
-      "%$searchText%"
+      "%${escapeLikeWildcards(searchText)}%"
     }
+  }
+
+  internal fun escapeLikeWildcards(searchText: String): String {
+    return searchText
+      .replace("\\", "\\\\")
+      .replace("%", "\\%")
+      .replace("_", "\\_")
   }
 
   override fun runQuery(database: SQLiteDatabase,

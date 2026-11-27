@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -139,6 +140,11 @@ internal fun RevealPreviousIcon(state: RevealState, modifier: Modifier = Modifie
 internal fun RevealNewIcon(state: RevealState, shape: Shape, modifier: Modifier = Modifier) {
   val background = painterResource(R.drawable.ic_launcher_background)
   val foreground = painterResource(R.drawable.ic_launcher_foreground)
+  val density = LocalDensity.current
+  val penBlurEffect = remember(density) {
+    val blur = with(density) { 6.dp.toPx() }
+    BlurEffect(blur, blur, TileMode.Decal)
+  }
   Box(modifier.size(RevealIconSize)) {
     Spacer(
       Modifier
@@ -189,8 +195,7 @@ internal fun RevealNewIcon(state: RevealState, shape: Shape, modifier: Modifier 
         .requiredSize(RevealIconSize + PenWidth * 2, PenHeight + 24.dp)
         .graphicsLayer {
           alpha = state.penAlpha
-          val blur = 6.dp.toPx()
-          renderEffect = BlurEffect(blur, blur, TileMode.Decal)
+          renderEffect = penBlurEffect
         }
         .drawBehind {
           val glyph = state.progress(RevealTimeline.GlyphWrite)

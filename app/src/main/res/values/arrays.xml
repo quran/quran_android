@@ -17,4 +17,12 @@
     <item>Dark</item>
     <item>Automatic</item>
   </array>
+
+  <array name="theme_styles">
+    <item>Default</item>
+    <item>Green</item>
+    <item>Blue</item>
+    <item>Beige</item>
+    <item>Gray</item>
+  </array>
 </resources>
