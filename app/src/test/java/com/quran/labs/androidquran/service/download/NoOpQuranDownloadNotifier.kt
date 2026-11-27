@@ -1,6 +1,6 @@
 package com.quran.labs.androidquran.service.download
 
-import android.content.Intent
+import com.quran.labs.androidquran.service.util.DownloadProgressEvent
 import com.quran.labs.androidquran.service.util.QuranDownloadNotifier
 
 class NoOpQuranDownloadNotifier : QuranDownloadNotifier {
@@ -8,39 +8,59 @@ class NoOpQuranDownloadNotifier : QuranDownloadNotifier {
   }
 
   override fun notifyProgress(
-    details: QuranDownloadNotifier.NotificationDetails?,
+    details: QuranDownloadNotifier.NotificationDetails,
     downloadedSize: Long,
     totalSize: Long
-  ): Intent = Intent()
+  ): DownloadProgressEvent = DownloadProgressEvent.Downloading(
+    downloadType = details.type,
+    downloadKey = details.key,
+    title = details.title
+  )
 
   override fun notifyDownloadProcessing(
-    details: QuranDownloadNotifier.NotificationDetails?,
+    details: QuranDownloadNotifier.NotificationDetails,
     done: Int,
     total: Int
-  ): Intent = Intent()
+  ): DownloadProgressEvent = DownloadProgressEvent.Processing(
+    downloadType = details.type,
+    downloadKey = details.key,
+    title = details.title
+  )
 
-  override fun notifyDownloadSuccessful(details: QuranDownloadNotifier.NotificationDetails?): Intent {
-    return Intent()
-  }
+  override fun notifyDownloadSuccessful(
+    details: QuranDownloadNotifier.NotificationDetails
+  ): DownloadProgressEvent = DownloadProgressEvent.Success(
+    downloadType = details.type,
+    downloadKey = details.key,
+    title = details.title
+  )
 
   override fun notifyFileDownloaded(
-    details: QuranDownloadNotifier.NotificationDetails?,
-    filename: String?
+    details: QuranDownloadNotifier.NotificationDetails,
+    filename: String
   ) {
   }
 
-  override fun broadcastDownloadSuccessful(details: QuranDownloadNotifier.NotificationDetails?): Intent {
-    return Intent()
-  }
+  override fun broadcastDownloadSuccessful(
+    details: QuranDownloadNotifier.NotificationDetails
+  ): DownloadProgressEvent = DownloadProgressEvent.Success(
+    downloadType = details.type,
+    downloadKey = details.key,
+    title = details.title
+  )
 
   override fun notifyError(
     errorCode: Int,
     isFatal: Boolean,
     filename: String?,
-    details: QuranDownloadNotifier.NotificationDetails?
-  ): Intent {
-    return Intent()
-  }
+    details: QuranDownloadNotifier.NotificationDetails
+  ): DownloadProgressEvent = DownloadProgressEvent.Error(
+    downloadType = details.type,
+    downloadKey = details.key,
+    title = details.title,
+    errorCode = errorCode,
+    isFatal = isFatal
+  )
 
   override fun notifyDownloadStarting() {
   }

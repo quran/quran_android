@@ -3,9 +3,11 @@ package com.quran.labs.androidquran.widget
 import com.quran.data.dao.BookmarksDao
 import com.quran.data.di.AppScope
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -16,10 +18,11 @@ import kotlinx.coroutines.flow.onEach
  */
 @SingleIn(AppScope::class)
 class BookmarksWidgetSubscriber @Inject constructor(
-  private val bookmarksDao: BookmarksDao,
+  private val bookmarksDao: Provider<BookmarksDao>,
   private val bookmarksWidgetUpdater: BookmarksWidgetUpdater
 ) {
-  private var scope: CoroutineScope = MainScope()
+  private val lock = Any()
+  private var scope: CoroutineScope? = null
   private var isSubscribed = false
 
   fun subscribeBookmarksWidgetIfNecessary() {
@@ -29,15 +32,17 @@ class BookmarksWidgetSubscriber @Inject constructor(
   }
 
   private fun subscribeBookmarksWidget() {
-    if (isSubscribed) {
-      return
+    val subscriptionScope = synchronized(lock) {
+      if (isSubscribed) {
+        return
+      }
+      isSubscribed = true
+      CoroutineScope(SupervisorJob() + Dispatchers.IO).also { scope = it }
     }
 
-    isSubscribed = true
-    scope = MainScope()
-    bookmarksDao.changes
+    bookmarksDao().changes
       .onEach { bookmarksWidgetUpdater.updateBookmarksWidget() }
-      .launchIn(scope)
+      .launchIn(subscriptionScope)
   }
 
   fun onEnabledBookmarksWidget() {
@@ -45,7 +50,10 @@ class BookmarksWidgetSubscriber @Inject constructor(
   }
 
   fun onDisabledBookmarksWidget() {
-    scope.cancel()
-    isSubscribed = false
+    synchronized(lock) {
+      scope?.cancel()
+      scope = null
+      isSubscribed = false
+    }
   }
 }

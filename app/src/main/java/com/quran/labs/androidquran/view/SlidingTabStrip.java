@@ -89,6 +89,10 @@ class SlidingTabStrip extends LeftToRightLinearLayout {
     invalidate();
   }
 
+  int getSelectedPosition() {
+    return mSelectedPosition;
+  }
+
   @Override
   protected void onDraw(Canvas canvas) {
     final int height = getHeight();

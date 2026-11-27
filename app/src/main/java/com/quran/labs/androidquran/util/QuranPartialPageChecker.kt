@@ -48,54 +48,66 @@ class QuranPartialPageChecker @Inject constructor() {
     var pixelArray: IntArray? = null
 
     // skip pages 1 and 2 since they're "special" (not full pages)
+    val rowsToCheck =
+      // madani, 9 for 1920, 7 for 1280, 5 for 1260 and 1024, and
+      //   less for smaller images.
+      // for naskh, 1 for everything
+      // for qaloon, 2 for largest size, 1 for smallest
+      // for warsh, 2 for everything
+      when (width) {
+        "_1024", "_1260" -> 5
+        "_1280" -> 7
+        "_1920" -> 9
+        else -> 4
+      }
+
     for (page in 3..numberOfPages) {
       val filename = QuranFileUtils.getPageFileName(page)
-      if (File(directory, filename).exists()) {
-        val bitmap = BitmapFactory.decodeFile(
-            File(directory, filename).absolutePath, options
-        )
-
-        // this is an optimization to avoid allocating 8 * width of memory
-        // for everything.
-        val rowsToCheck =
-          // madani, 9 for 1920, 7 for 1280, 5 for 1260 and 1024, and
-          //   less for smaller images.
-          // for naskh, 1 for everything
-          // for qaloon, 2 for largest size, 1 for smallest
-          // for warsh, 2 for everything
-          when (width) {
-            "_1024", "_1260" -> 5
-            "_1280" -> 7
-            "_1920" -> 9
-            else -> 4
-          }
-
-        val bitmapWidth = bitmap.width
-        // these should all be the same size, so we can just allocate once
-        val pixels = if (pixelArray?.size == (bitmapWidth * rowsToCheck)) {
-          pixelArray
-        } else {
-          pixelArray = IntArray(bitmapWidth * rowsToCheck)
-          pixelArray
+      val file = File(directory, filename)
+      if (file.exists()) {
+        val bitmap = BitmapFactory.decodeFile(file.absolutePath, options)
+        if (bitmap == null) {
+          result.add(page)
+          continue
         }
 
-        // get the set of pixels
-        bitmap.getPixels(
-            pixels,
-            0,
-            bitmapWidth,
-            0,
-            bitmap.height - rowsToCheck,
-            bitmapWidth,
-            rowsToCheck
-        )
+        try {
+          val bitmapWidth = bitmap.width
+          val bitmapHeight = bitmap.height
+          val actualRowsToCheck = rowsToCheck.coerceAtMost(bitmapHeight)
+          if (bitmapWidth <= 0 || actualRowsToCheck <= 0) {
+            result.add(page)
+            continue
+          }
 
-        // see if there's any non-0 pixel
-        val foundPixel = pixels.any { it != 0 }
+          // these should all be the same size, so we can just allocate once
+          val pixels = if (pixelArray?.size == (bitmapWidth * actualRowsToCheck)) {
+            pixelArray
+          } else {
+            pixelArray = IntArray(bitmapWidth * actualRowsToCheck)
+            pixelArray
+          }
 
-        // if all are non-zero, assume the image is partially blank
-        if (!foundPixel) {
-          result.add(page)
+          // get the set of pixels
+          bitmap.getPixels(
+              pixels,
+              0,
+              bitmapWidth,
+              0,
+              bitmapHeight - actualRowsToCheck,
+              bitmapWidth,
+              actualRowsToCheck
+          )
+
+          // see if there's any non-0 pixel
+          val foundPixel = pixels.any { it != 0 }
+
+          // if all are zero, assume the image is partially blank
+          if (!foundPixel) {
+            result.add(page)
+          }
+        } finally {
+          bitmap.recycle()
         }
       }
     }

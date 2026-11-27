@@ -3,10 +3,16 @@ package com.quran.mobile.feature.ayahbookmark
 import android.content.Context
 import android.widget.FrameLayout
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.MaterialTheme
@@ -16,7 +22,6 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.quran.data.core.ReadingBookmarkUpdater
@@ -95,7 +101,7 @@ class AyahBookmarkWrapper(
         presenter.present()
       }
     }
-    val state by stateFlow.collectAsState()
+    val state by stateFlow.collectAsStateWithLifecycle()
 
     val scaffoldState = rememberBottomSheetScaffoldState(
       bottomSheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
@@ -148,7 +154,11 @@ class AyahBookmarkWrapper(
             state = state,
             modifier = Modifier
               .fillMaxHeight()
-              .imePadding()
+              .windowInsetsPadding(
+                WindowInsets.navigationBars
+                  .union(WindowInsets.ime)
+                  .only(WindowInsetsSides.Bottom)
+              )
           )
         }
       ) {

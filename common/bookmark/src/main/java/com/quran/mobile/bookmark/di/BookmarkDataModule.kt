@@ -1,6 +1,7 @@
 package com.quran.mobile.bookmark.di
 
 import android.content.Context
+import androidx.sqlite.db.SupportSQLiteDatabase
 import app.cash.sqldelight.adapter.primitive.IntColumnAdapter
 import app.cash.sqldelight.db.AfterVersion
 import app.cash.sqldelight.db.SqlDriver
@@ -34,7 +35,7 @@ class BookmarkDataModule {
       schema = BookmarksDatabase.Schema,
       context = context,
       name = "bookmarks.db",
-      callback = AndroidSqliteDriver.Callback(
+      callback = object : AndroidSqliteDriver.Callback(
         BookmarksDatabase.Schema,
         AfterVersion(2) {
           val lastPage = runBlocking { settings.lastPage() }
@@ -42,7 +43,12 @@ class BookmarkDataModule {
             it.execute(null, "INSERT INTO last_pages(page) values($lastPage)", 0)
           }
         }
-      ),
+      ) {
+        override fun onConfigure(db: SupportSQLiteDatabase) {
+          super.onConfigure(db)
+          db.enableWriteAheadLogging()
+        }
+      },
     )
     return BookmarksDatabase(
       driver,

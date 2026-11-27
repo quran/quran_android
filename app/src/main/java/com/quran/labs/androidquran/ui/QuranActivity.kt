@@ -62,6 +62,7 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.SlidingTabLayout
 import com.quran.mobile.di.ExtraScreenProvider
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -100,9 +101,9 @@ class QuranActivity : AppCompatActivity(),
   private val compositeDisposable = CompositeDisposable()
   private val latestPageFlow: Flow<Int> by lazy {
     combine(
-      recentPagesDao.recentPagesFlow()
+      recentPagesDao().recentPagesFlow()
         .map { recentPages -> recentPages.firstOrNull()?.page ?: Constants.NO_PAGE },
-      latestPageTracker.latestPage
+      latestPageTracker().latestPage
     ) { persistedPage, latestPage ->
       latestPage
         ?.takeIf { it.pageType == settings.pageType }
@@ -120,20 +121,20 @@ class QuranActivity : AppCompatActivity(),
   private lateinit var searchItemCollapserCallback: OnBackPressedCallback
   private lateinit var supportActionModeClearingCallback: OnBackPressedCallback
 
-  @Inject lateinit var quranNavigator: QuranNavigator
+  @Inject lateinit var quranNavigator: Provider<QuranNavigator>
 
   @Inject
   lateinit var settings: QuranSettings
   @Inject
-  lateinit var audioUtils: AudioUtils
+  lateinit var audioUtils: Provider<AudioUtils>
   @Inject
-  lateinit var recentPagesDao: RecentPagesDao
+  lateinit var recentPagesDao: Provider<RecentPagesDao>
   @Inject
-  lateinit var latestPageTracker: LatestPageTracker
+  lateinit var latestPageTracker: Provider<LatestPageTracker>
   @Inject
-  lateinit var translationManagerPresenter: TranslationManagerPresenter
+  lateinit var translationManagerPresenter: Provider<TranslationManagerPresenter>
   @Inject
-  lateinit var quranIndexEventLogger: QuranIndexEventLogger
+  lateinit var quranIndexEventLogger: Provider<QuranIndexEventLogger>
   @Inject
   lateinit var extraScreens: Set<@JvmSuppressWildcards ExtraScreenProvider>
 
@@ -177,16 +178,18 @@ class QuranActivity : AppCompatActivity(),
     ab?.setTitle(R.string.app_name)
 
     val pager = findViewById<ViewPager>(R.id.index_pager)
-    pager.offscreenPageLimit = 3
-    val pagerAdapter = PagerAdapter(supportFragmentManager)
-    pager.adapter = pagerAdapter
-    val indicator = findViewById<SlidingTabLayout>(R.id.indicator)
-    indicator.setViewPager(pager)
-    jumpToPageOnResume = if (isRtl) {
+    val initialPage = if (isRtl) {
       TITLES.size - 1
     } else {
       0
     }
+    pager.offscreenPageLimit = 1
+    val pagerAdapter = PagerAdapter(supportFragmentManager)
+    pager.adapter = pagerAdapter
+    pager.setCurrentItem(initialPage, false)
+    val indicator = findViewById<SlidingTabLayout>(R.id.indicator)
+    indicator.setViewPager(pager)
+    jumpToPageOnResume = if (savedInstanceState != null) initialPage else null
 
     if (savedInstanceState != null) {
       showedTranslationUpgradeDialog = savedInstanceState.getBoolean(
@@ -208,8 +211,12 @@ class QuranActivity : AppCompatActivity(),
         jumpToLastPage()
       }
     }
-    updateTranslationsListAsNeeded()
-    quranIndexEventLogger.logAnalytics()
+    window.decorView.post {
+      if (!isFinishing && !isDestroyed) {
+        updateTranslationsListAsNeeded()
+        quranIndexEventLogger().logAnalytics()
+      }
+    }
   }
 
   public override fun onResume() {
@@ -230,9 +237,12 @@ class QuranActivity : AppCompatActivity(),
           Completable.timer(500, MILLISECONDS)
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe {
+                if (!AudioService.isRunning()) {
+                  return@subscribe
+                }
                 try {
                   startService(
-                    audioUtils.getAudioIntent(this@QuranActivity, AudioService.ACTION_STOP)
+                    audioUtils().getAudioIntent(this@QuranActivity, AudioService.ACTION_STOP)
                   )
                 } catch (_: IllegalStateException) {
                   // do nothing, we might be in the background
@@ -294,6 +304,7 @@ class QuranActivity : AppCompatActivity(),
         isEnabled = false
       }
     }
+    onBackPressedDispatcher.addCallback(this, searchItemCollapserCallback)
 
     // clear the action mode if it's active on back press
     val supportActionModeEnabled = supportActionMode != null
@@ -302,6 +313,7 @@ class QuranActivity : AppCompatActivity(),
         supportActionMode?.finish()
       }
     }
+    onBackPressedDispatcher.addCallback(this, supportActionModeClearingCallback)
   }
 
   private fun isRtl(): Boolean {
@@ -425,8 +437,12 @@ class QuranActivity : AppCompatActivity(),
 
   private fun updateTranslationsListAsNeeded() {
     if (!updatedTranslations) {
-      translationManagerPresenter.checkForUpdates()
       updatedTranslations = true
+      val isCacheStale = System.currentTimeMillis() -
+        settings.lastUpdatedTranslationDate > Constants.MIN_TRANSLATION_REFRESH_TIME
+      if (isCacheStale) {
+        translationManagerPresenter().checkForUpdates()
+      }
     }
   }
 
@@ -461,11 +477,11 @@ class QuranActivity : AppCompatActivity(),
   }
 
   override fun jumpTo(page: Int) {
-    quranNavigator.jumpTo(Page(page), showTranslation = settings.wasShowingTranslation)
+    quranNavigator().jumpTo(Page(page), showTranslation = settings.wasShowingTranslation)
   }
 
   override fun jumpToAndHighlight(page: Int, sura: Int, ayah: Int) {
-    quranNavigator.jumpTo(SuraAyah(sura, ayah), showTranslation = settings.wasShowingTranslation)
+    quranNavigator().jumpTo(SuraAyah(sura, ayah), showTranslation = settings.wasShowingTranslation)
   }
 
   fun jumpTo(row: QuranRow) {
@@ -474,7 +490,7 @@ class QuranActivity : AppCompatActivity(),
     } else {
       Page(row.page)
     }
-    quranNavigator.jumpTo(location, row.readingBookmarkType, settings.wasShowingTranslation)
+    quranNavigator().jumpTo(location, row.readingBookmarkType, settings.wasShowingTranslation)
   }
 
   private fun gotoPageDialog() {

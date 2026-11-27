@@ -1,7 +1,6 @@
 package com.quran.labs.androidquran.ui
 
 import android.content.DialogInterface
-import android.content.IntentFilter
 import android.os.Bundle
 import android.util.SparseIntArray
 import android.view.Menu
@@ -15,7 +14,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -30,7 +28,6 @@ import com.quran.labs.androidquran.presenter.translation.TranslationManagerPrese
 import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
-import com.quran.labs.androidquran.service.util.QuranDownloadNotifier
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper.getDownloadIntent
 import com.quran.labs.androidquran.ui.adapter.DownloadedItemActionListener
 import com.quran.labs.androidquran.ui.adapter.DownloadedMenuActionListener
@@ -151,11 +148,8 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
   }
 
   public override fun onStop() {
-    val receiver = downloadReceiver
-    if (receiver != null) {
-      receiver.setListener(null)
-      LocalBroadcastManager.getInstance(this)
-        .unregisterReceiver(receiver)
+    downloadReceiver?.let { receiver ->
+      receiver.unregister()
       downloadReceiver = null
     }
     super.onStop()
@@ -338,16 +332,12 @@ class TranslationManagerActivity : AppCompatActivity(), SimpleDownloadListener,
     val (_, _, _, _, _, fileName, url) = selectedItem.translation
     clearDatabaseHandlerIfExists(fileName)
     if (downloadReceiver == null) {
-      val downloadReceiver = DefaultDownloadReceiver(
+      val receiver = DefaultDownloadReceiver(
         this,
         QuranDownloadService.DOWNLOAD_TYPE_TRANSLATION
       )
-      LocalBroadcastManager.getInstance(this).registerReceiver(
-        downloadReceiver, IntentFilter(
-          QuranDownloadNotifier.ProgressIntent.INTENT_NAME
-        )
-      )
-      this.downloadReceiver = downloadReceiver
+      receiver.register(this)
+      this.downloadReceiver = receiver
     }
     downloadReceiver!!.setListener(this)
 

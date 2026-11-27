@@ -11,6 +11,9 @@ import java.io.File
 class SuraTimingDatabaseHandler private constructor(path: String) {
   private var database: SQLiteDatabase? = null
 
+  @Volatile
+  private var cachedSchemaVersion: Int? = null
+
   object TimingsTable {
     const val TABLE_NAME = "timings"
     const val COL_SURA = "sura"
@@ -56,17 +59,25 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
   }
 
   init {
-    Timber.d("opening gapless data file, %s", path)
+    val dbFileName = File(path).name
+    Timber.d("opening gapless data file: %s", dbFileName)
     database = try {
       SQLiteDatabase.openDatabase(
         path, null,
-        SQLiteDatabase.NO_LOCALIZED_COLLATORS, DefaultDatabaseErrorHandler()
-      )
+        SQLiteDatabase.OPEN_READONLY or SQLiteDatabase.NO_LOCALIZED_COLLATORS,
+        DefaultDatabaseErrorHandler()
+      ).also { db ->
+        try {
+          db.execSQL("PRAGMA cache_size = -512")
+        } catch (_: Exception) {
+          // keep default cache size if PRAGMA is unsupported
+        }
+      }
     } catch (sce: SQLiteDatabaseCorruptException) {
-      Timber.d("database corrupted: %s", path)
+      Timber.d("database corrupted: %s", dbFileName)
       null
     } catch (se: SQLException) {
-      Timber.d("database at $path ${if (File(path).exists()) "exists " else "doesn 't exist"}")
+      Timber.d("database $dbFileName ${if (File(path).exists()) "exists" else "doesn't exist"}")
       Timber.e(se)
       null
     }
@@ -92,8 +103,8 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
             TimingsTable.COL_AYAH,
             TimingsTable.COL_TIME
           ) + extraColumns,
-          TimingsTable.COL_SURA + "=" + sura,
-          null, null, null, TimingsTable.COL_AYAH + " ASC"
+          TimingsTable.COL_SURA + " = ?",
+          arrayOf(sura.toString()), null, null, TimingsTable.COL_AYAH + " ASC"
         )
       } catch (_: Exception) {
         null
@@ -105,8 +116,18 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
     return findIntegerProperty("version")
   }
 
+  @Synchronized
   fun getSchemaVersion(): Int {
-    return findIntegerProperty("schema_version")
+    val cached = cachedSchemaVersion
+    if (cached != null) {
+      return cached
+    }
+    if (!validDatabase()) {
+      return -1
+    }
+    return findIntegerProperty("schema_version").also {
+      cachedSchemaVersion = it
+    }
   }
 
   private fun findIntegerProperty(property: String): Int {
@@ -117,7 +138,7 @@ class SuraTimingDatabaseHandler private constructor(path: String) {
     return try {
       cursor = database?.query(
         PropertiesTable.TABLE_NAME, arrayOf(PropertiesTable.COL_VALUE),
-        PropertiesTable.COL_PROPERTY + "= '$property'", null, null, null, null
+        "${PropertiesTable.COL_PROPERTY} = ?", arrayOf(property), null, null, null
       )
       if (cursor != null && cursor.moveToFirst()) {
         cursor.getInt(0)

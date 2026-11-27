@@ -12,6 +12,9 @@ class FirebaseProvider @Inject constructor(): AnalyticsProvider {
   private val firebaseAnalytics: FirebaseAnalytics by lazy { Firebase.analytics }
 
   override fun logEvent(name: String, params: Map<String, Any>) {
+    @Suppress("KotlinConstantConditions")
+    if (BuildConfig.DEBUG) return
+
     val bundle = Bundle()
     params.forEach { (key, value) ->
       when (value) {
@@ -23,9 +26,6 @@ class FirebaseProvider @Inject constructor(): AnalyticsProvider {
       }
     }
 
-    @Suppress("KotlinConstantConditions")
-    if (!BuildConfig.DEBUG) {
-      firebaseAnalytics.logEvent(name, bundle)
-    }
+    firebaseAnalytics.logEvent(name, bundle)
   }
 }

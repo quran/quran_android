@@ -12,23 +12,22 @@ import androidx.core.content.ContextCompat
 import com.quran.labs.androidquran.R
 
 class JuzView(
-  context: Context,
+  private val context: Context,
   type: Int,
-  private val overlayText: String?
+  overlayText: String?
 ) : Drawable() {
 
   private var radius = 0
-  private var circleY = 0
-  private val percentage: Int
+  private var percentage: Int = 0
+  private var overlayText: String? = null
   private var textOffset = 0f
 
-  private lateinit var circleRect: RectF
+  private val circleRect = RectF()
   private val circlePaint = Paint()
   private var overlayTextPaint: TextPaint? = null
   private val circleBackgroundPaint = Paint()
 
   init {
-    val resources = context.resources
     val circleColor = ContextCompat.getColor(context, R.color.accent_color)
     val circleBackground = ContextCompat.getColor(context, R.color.accent_color_dark)
 
@@ -44,21 +43,24 @@ class JuzView(
       isAntiAlias = true
     }
 
-    if (!overlayText.isNullOrEmpty()) {
+    update(type, overlayText)
+  }
+
+  fun update(type: Int, overlayText: String?) {
+    this.overlayText = overlayText
+    if (!overlayText.isNullOrEmpty() && overlayTextPaint == null) {
+      val resources = context.resources
       val textPaintColor = ContextCompat.getColor(context, R.color.header_background)
       val textPaintSize = resources.getDimensionPixelSize(R.dimen.juz_overlay_text_size)
-      overlayTextPaint = TextPaint()
-      overlayTextPaint?.apply {
+      val textPaint = TextPaint().apply {
         isAntiAlias = true
         color = textPaintColor
         textSize = textPaintSize.toFloat()
         textAlign = Paint.Align.CENTER
       }
-
-      overlayTextPaint?.let { textPaint ->
-        val textHeight = textPaint.descent() - textPaint.ascent()
-        textOffset = textHeight / 2 - textPaint.descent()
-      }
+      val textHeight = textPaint.descent() - textPaint.ascent()
+      textOffset = textHeight / 2 - textPaint.descent()
+      overlayTextPaint = textPaint
     }
 
     this.percentage = when (type) {
@@ -68,29 +70,35 @@ class JuzView(
       TYPE_QUARTER -> 25
       else -> 0
     }
+    invalidateSelf()
   }
 
   override fun setBounds(left: Int, top: Int, right: Int, bottom: Int) {
     super.setBounds(left, top, right, bottom)
     radius = (right - left) / 2
     val yOffset = (bottom - top - 2 * radius) / 2
-    circleY = radius + yOffset
-    circleRect = RectF(
+    circleRect.set(
       left.toFloat(), (top + yOffset).toFloat(),
       right.toFloat(), (top + yOffset + 2 * radius).toFloat()
     )
   }
 
   override fun draw(canvas: Canvas) {
-    canvas.drawCircle(radius.toFloat(), circleY.toFloat(), radius.toFloat(), circleBackgroundPaint)
+    canvas.drawCircle(
+      circleRect.centerX(),
+      circleRect.centerY(),
+      radius.toFloat(),
+      circleBackgroundPaint
+    )
     canvas.drawArc(
       circleRect, -90f,
       (3.6 * percentage).toFloat(), true, circlePaint
     )
     overlayTextPaint?.let { textPaint ->
-      if (overlayText != null) {
+      val text = overlayText
+      if (text != null) {
         canvas.drawText(
-          overlayText, circleRect.centerX(),
+          text, circleRect.centerX(),
           circleRect.centerY() + textOffset, textPaint
         )
       }
@@ -99,9 +107,19 @@ class JuzView(
 
   override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
 
-  override fun setAlpha(alpha: Int) {}
+  override fun setAlpha(alpha: Int) {
+    circlePaint.alpha = alpha
+    circleBackgroundPaint.alpha = alpha
+    overlayTextPaint?.alpha = alpha
+    invalidateSelf()
+  }
 
-  override fun setColorFilter(cf: ColorFilter?) {}
+  override fun setColorFilter(cf: ColorFilter?) {
+    circlePaint.colorFilter = cf
+    circleBackgroundPaint.colorFilter = cf
+    overlayTextPaint?.colorFilter = cf
+    invalidateSelf()
+  }
 
   companion object {
     const val TYPE_JUZ = 1

@@ -46,6 +46,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
   private var recyclerView: RecyclerView? = null
   private var bookmarksAdapter: QuranListAdapter? = null
   private var emptyStateView: ComposeView? = null
+  private var emptyStateContentInitialized = false
 
   @Inject
   lateinit var bookmarkPresenter: BookmarkPresenter
@@ -72,13 +73,19 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     val view = inflater.inflate(R.layout.quran_bookmarks_list, container, false)
 
     val context = requireContext()
-    view.findViewById<ComposeView>(R.id.sync_sign_in_card).setContent {
-      QuranTheme {
-        BookmarksSignInCard(
-          syncManager = syncManager,
-          onSignIn = { startActivity(Intent(context, QuranSyncActivity::class.java)) }
-        )
+    val signInCardView = view.findViewById<ComposeView>(R.id.sync_sign_in_card)
+    if (syncManager.isConfigured) {
+      signInCardView.visibility = View.VISIBLE
+      signInCardView.setContent {
+        QuranTheme {
+          BookmarksSignInCard(
+            syncManager = syncManager,
+            onSignIn = { startActivity(Intent(context, QuranSyncActivity::class.java)) }
+          )
+        }
       }
+    } else {
+      signInCardView.visibility = View.GONE
     }
 
     val bookmarksSwipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.bookmarks_swipe_refresh)
@@ -97,13 +104,8 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     this.bookmarksAdapter = bookmarksAdapter
     recyclerView.setAdapter(bookmarksAdapter)
 
-    val emptyStateView = view.findViewById<ComposeView>(R.id.bookmarks_empty_state)
-    emptyStateView.setContent {
-      QuranTheme {
-        BookmarksEmptyState()
-      }
-    }
-    this.emptyStateView = emptyStateView
+    emptyStateView = view.findViewById(R.id.bookmarks_empty_state)
+    emptyStateContentInitialized = false
 
     ViewCompat.setOnApplyWindowInsetsListener(
       recyclerView
@@ -149,6 +151,7 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
     recyclerView = null
     bookmarksAdapter = null
     emptyStateView = null
+    emptyStateContentInitialized = false
     super.onDestroyView()
   }
 
@@ -251,7 +254,21 @@ class BookmarksFragment : Fragment(), QuranTouchListener {
       )
       bookmarksAdapter.notifyDataSetChanged()
 
-      emptyStateView?.visibility = if (items.rows.isEmpty()) View.VISIBLE else View.GONE
+      if (items.rows.isEmpty()) {
+        emptyStateView?.let { emptyView ->
+          if (!emptyStateContentInitialized) {
+            emptyStateContentInitialized = true
+            emptyView.setContent {
+              QuranTheme {
+                BookmarksEmptyState()
+              }
+            }
+          }
+          emptyView.visibility = View.VISIBLE
+        }
+      } else {
+        emptyStateView?.visibility = View.GONE
+      }
     }
   }
 

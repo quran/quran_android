@@ -6,12 +6,12 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
@@ -44,7 +44,7 @@ class PageThemeSheetWrapper(
         presenter.present()
       }
     }
-    val state by stateFlow.collectAsState()
+    val state by stateFlow.collectAsStateWithLifecycle()
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()

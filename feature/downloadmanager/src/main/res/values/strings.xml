@@ -7,6 +7,7 @@
 
   <!-- audio manager -->
   <string name="audio_manager">Audio Manager</string>
+  <string name="audio_manager_navigate_up">Navigate up</string>
   <string name="audio_manager_remove_audio_title">Remove Surah?</string>
   <string name="audio_manager_remove_audio_msg">Are you sure you would like to remove %1$s?</string>
   <string name="audio_manager_remove_multiple_audio_msg">Are you sure you would like to remove?</string>

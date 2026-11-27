@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.rememberTextMeasurer
 import com.quran.data.source.PageContentType
 import com.quran.labs.androidquran.extra.feature.linebyline.model.LineModel
 import com.quran.labs.androidquran.extra.feature.linebyline.model.PageInfo
@@ -24,7 +26,11 @@ import com.quran.mobile.linebyline.ui.renderer.composable.QuranLineLayout
 import com.quran.mobile.linebyline.ui.renderer.composable.QuranPageLayout
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.launch
+
+internal fun shouldAnimateScrollTo(
+  targetScrollPosition: Int,
+  currentScrollValue: Int
+): Boolean = targetScrollPosition >= 0 && targetScrollPosition != currentScrollValue
 
 @Composable
 fun QuranPage(
@@ -35,7 +41,7 @@ fun QuranPage(
   footerComposable: @Composable () -> Unit,
   quranLineComposable: @Composable (LineModel) -> Unit,
   suraHeaderComposable: @Composable (SuraHeader) -> Unit,
-  ayahMarkerInfoComposable: @Composable (AyahMarkerInfo) -> Unit,
+  ayahMarkerInfoComposable: @Composable (AyahMarkerInfo, TextMeasurer) -> Unit,
   highlightComposable: @Composable (AyahHighlight, Color) -> Unit,
   readingBookmarkComposable: @Composable (AyahHighlight, ImmutableList<Color>) -> Unit,
   sidelinesComposable: @Composable () -> Unit,
@@ -56,13 +62,41 @@ fun QuranPage(
   }
 
   val scrollState = rememberScrollState()
-  val coroutineScope = rememberCoroutineScope()
+  val textMeasurer = rememberTextMeasurer()
+
+  val suraHeadersByLine = remember(pageInfo.suraHeaders) {
+    pageInfo.suraHeaders.groupBy { it.lineId }
+  }
+  val ayahMarkersByLine = remember(pageInfo.ayahMarkers) {
+    pageInfo.ayahMarkers.groupBy { it.lineId }
+  }
+  val underTextHighlights = remember(pageInfo.ayahHighlights, isNightMode) {
+    pageInfo.ayahHighlights
+      .filter { it.highlightType.isUnderText }
+      .map { it.highlightType.paintColor(isNightMode) to it.ayahHighlights }
+  }
+  val overlayHighlightsByLine = remember(pageInfo.ayahHighlights, isNightMode) {
+    buildMap<Int, MutableList<Pair<AyahHighlight, Color>>> {
+      pageInfo.ayahHighlights.forEach { highlightAyah ->
+        if (!highlightAyah.highlightType.isUnderText) {
+          val color = highlightAyah.highlightType.paintColor(isNightMode)
+          highlightAyah.ayahHighlights.forEach { ayahHighlight ->
+            getOrPut(ayahHighlight.lineId) { mutableListOf() }.add(ayahHighlight to color)
+          }
+        }
+      }
+    }
+  }
+  val readingBookmarkEntries = remember(pageInfo.readingBookmarks, isNightMode) {
+    pageInfo.readingBookmarks.map { readingBookmark ->
+      val colors = readingBookmark.slots.map { it.paintColor(isNightMode) }.toImmutableList()
+      colors to readingBookmark.ayahHighlights
+    }
+  }
 
   LaunchedEffect(key1 = pageInfo.targetScrollPosition) {
-    if (pageInfo.targetScrollPosition >= 0 && pageInfo.targetScrollPosition != scrollState.value) {
-      coroutineScope.launch {
-        scrollState.animateScrollTo(pageInfo.targetScrollPosition)
-      }
+    if (shouldAnimateScrollTo(pageInfo.targetScrollPosition, scrollState.value)) {
+      scrollState.animateScrollTo(pageInfo.targetScrollPosition)
     }
   }
 
@@ -80,16 +114,12 @@ fun QuranPage(
     ) {
       Box {
         // highlights that act as a background are painted before the lines are drawn
-        pageInfo.ayahHighlights
-          .filter { it.highlightType.isUnderText }
-          .forEach { highlightAyah ->
-            val color = highlightAyah.highlightType.paintColor(isNightMode)
-            highlightAyah.ayahHighlights.forEach { highlightComposable(it, color) }
-          }
+        underTextHighlights.forEach { (color, highlights) ->
+          highlights.forEach { highlightComposable(it, color) }
+        }
 
-        pageInfo.readingBookmarks.forEach { readingBookmark ->
-          val colors = readingBookmark.slots.map { it.paintColor(isNightMode) }.toImmutableList()
-          readingBookmark.ayahHighlights.forEach { readingBookmarkComposable(it, colors) }
+        readingBookmarkEntries.forEach { (colors, ayahHighlights) ->
+          ayahHighlights.forEach { readingBookmarkComposable(it, colors) }
         }
 
         QuranLineLayout(
@@ -116,8 +146,7 @@ fun QuranPage(
               quranLineComposable(lineInfo)
 
               // Sura Headers
-              val suraHeaders = pageInfo.suraHeaders.filter { it.lineId == lineId }
-              suraHeaders.forEach {
+              suraHeadersByLine[lineId]?.forEach {
                 suraHeaderComposable(it)
               }
             }
@@ -129,23 +158,13 @@ fun QuranPage(
           val lineId = lineInfo.lineId
 
           // Ayah Markers
-          val markers = pageInfo.ayahMarkers.filter { it.lineId == lineId }
-          markers.forEach {
-            ayahMarkerInfoComposable(it)
+          ayahMarkersByLine[lineId]?.forEach {
+            ayahMarkerInfoComposable(it, textMeasurer)
           }
 
           // Highlights
-          val highlights = pageInfo.ayahHighlights.filter { highlightAyah ->
-            !highlightAyah.highlightType.isUnderText &&
-                highlightAyah.ayahHighlights.any { it.lineId == lineId }
-          }
-          highlights.forEach { highlightAyah ->
-            val color = highlightAyah.highlightType.paintColor(isNightMode)
-            highlightAyah.ayahHighlights
-              .filter { it.lineId == lineId }
-              .forEach {
-                highlightComposable(it, color)
-              }
+          overlayHighlightsByLine[lineId]?.forEach { (highlight, color) ->
+            highlightComposable(highlight, color)
           }
         }
       }

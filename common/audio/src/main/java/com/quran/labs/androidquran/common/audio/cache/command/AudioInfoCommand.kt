@@ -23,25 +23,31 @@ class AudioInfoCommand(
     val path = audioDirectory.toPath()
     val directories = fileSystem.listOrNull(path) ?: emptyList()
 
-    val folders = directories.filter { it.toFile().isDirectory }
+    val foldersByName = directories
+      .filter { fileSystem.metadataOrNull(it)?.isDirectory == true }
+      .associateBy { it.name }
     val qaris = qariUtil.getQariList()
     return qaris.map { qari ->
-      val matchingPath = folders.firstOrNull { it.name == qari.path }
-      generateQariDownloadInfoWithPath(qari, matchingPath)
+      generateQariDownloadInfoWithPath(qari, foldersByName[qari.path])
     }
   }
 
   fun generateQariDownloadInfo(qari: Qari, audioDirectory: String): QariDownloadInfo {
-    val path = audioDirectory.toPath()
-    val directories = fileSystem.listOrNull(path) ?: emptyList()
-
-    val folders = directories.filter { it.toFile().isDirectory }
-    val matchingPath = folders.firstOrNull { it.name == qari.path }
+    val qariPath = audioDirectory.toPath() / qari.path
+    val matchingPath = if (fileSystem.metadataOrNull(qariPath)?.isDirectory == true) {
+      qariPath
+    } else {
+      null
+    }
     return generateQariDownloadInfoWithPath(qari, matchingPath)
   }
 
   private fun generateQariDownloadInfoWithPath(qari: Qari, path: Path?): QariDownloadInfo {
     val allowedExtensions = audioExtensionDecider.allowedAudioExtensions(qari)
+    val sameAsAllAudioExtensions =
+      allowedExtensions.size == AudioFileUtil.audioExtensions.size &&
+          allowedExtensions.containsAll(AudioFileUtil.audioExtensions)
+
     return if (qari.isGapless) {
       val (fullDownloads, partialDownloads) =
         if (path == null) {
@@ -49,10 +55,10 @@ class AudioInfoCommand(
         } else {
           gaplessAudioInfoCommand.gaplessDownloads(path, allowedExtensions)
         }
-      val surasWithLocalFiles = if (path == null) {
-        emptyList()
-      } else {
-        gaplessAudioInfoCommand.gaplessDownloads(path, AudioFileUtil.audioExtensions).first
+      val surasWithLocalFiles = when {
+        path == null -> emptyList()
+        sameAsAllAudioExtensions -> fullDownloads
+        else -> gaplessAudioInfoCommand.gaplessDownloads(path, AudioFileUtil.audioExtensions).first
       }
       QariDownloadInfo.GaplessQariDownloadInfo(qari, fullDownloads, partialDownloads, surasWithLocalFiles)
     } else {
@@ -62,12 +68,16 @@ class AudioInfoCommand(
         } else {
           gappedAudioInfoCommand.gappedDownloads(path, allowedExtensions)
         }
-      val surasWithLocalFiles = if (path == null) {
-        emptyList()
-      } else {
-        val (localFullDownloads, localPartialDownloads) =
-          gappedAudioInfoCommand.gappedDownloads(path, AudioFileUtil.audioExtensions)
-        (localFullDownloads + localPartialDownloads.map { it.sura }).distinct()
+      val surasWithLocalFiles = when {
+        path == null -> emptyList()
+        sameAsAllAudioExtensions -> {
+          (fullDownloads + partiallyDownloadedSuras.map { it.sura }).distinct()
+        }
+        else -> {
+          val (localFullDownloads, localPartialDownloads) =
+            gappedAudioInfoCommand.gappedDownloads(path, AudioFileUtil.audioExtensions)
+          (localFullDownloads + localPartialDownloads.map { it.sura }).distinct()
+        }
       }
       QariDownloadInfo.GappedQariDownloadInfo(qari, fullDownloads, partiallyDownloadedSuras, surasWithLocalFiles)
     }

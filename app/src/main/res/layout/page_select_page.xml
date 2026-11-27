@@ -27,8 +27,8 @@
       android:layout_height="wrap_content"
       android:layout_gravity="bottom|end"
       android:layout_marginEnd="16dp"
-      android:layout_marginRight="16dp"
       android:layout_marginBottom="92dp"
+      android:contentDescription="@string/prefs_page_type_summary"
       android:src="@drawable/ic_done"
     />
 

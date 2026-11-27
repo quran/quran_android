@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,7 +8,9 @@
       android:id="@+id/toolbar"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="?attr/colorPrimary"/>
+      android:background="?attr/colorPrimary"
+      android:theme="@style/ToolbarStyle"
+      app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"/>
 
   <TextView
       android:id="@+id/search_warning"
@@ -28,7 +31,7 @@
 
   <TextView
       android:id="@+id/search_area"
-      android:layout_width="fill_parent"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:background="@color/header_background"
       android:padding="12dp"
@@ -36,10 +39,11 @@
       android:textColor="?android:textColorPrimary"
       android:textSize="17sp" />
 
-  <ListView
+  <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/results_list"
       android:layout_width="match_parent"
       android:layout_height="0dp"
       android:layout_weight="1"
-      android:clipToPadding="false"/>
+      android:clipToPadding="false"
+      android:scrollbars="vertical" />
 </LinearLayout>

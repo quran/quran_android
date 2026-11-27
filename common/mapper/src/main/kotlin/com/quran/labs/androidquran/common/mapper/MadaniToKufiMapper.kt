@@ -16,6 +16,9 @@ import kotlin.math.abs
  */
 class MadaniToKufiMapper @Inject constructor(private val quranInfo: QuranInfo): AyahMapper {
   private val map = MadaniToKufiMap.translationMap
+  private val reversedMap: Map<Int, List<MadaniToKufiOperator>> by lazy {
+    map.mapValues { (_, suraMappings) -> suraMappings.map { reverseOperation(it) } }
+  }
   private val kufiHafsMushafMap = MadaniDataSource().numberOfAyahsForSuraArray
 
   override fun mapAyah(suraAyah: SuraAyah): List<SuraAyah> {
@@ -24,18 +27,23 @@ class MadaniToKufiMapper @Inject constructor(private val quranInfo: QuranInfo): 
   }
 
   override fun reverseMapAyah(suraAyah: SuraAyah): List<SuraAyah> {
-    val suraMappings = map[suraAyah.sura] ?: error("Sura mapping not found for ${suraAyah.sura}")
-    val reversedMappings = suraMappings.map { reverseOperation(it) }
-    return mapInternal(suraAyah, reversedMappings)
+    val suraMappings = reversedMap[suraAyah.sura]
+      ?: error("Sura mapping not found for ${suraAyah.sura}")
+    return mapInternal(suraAyah, suraMappings)
   }
 
   private fun mapInternal(suraAyah: SuraAyah, suraMappings: List<MadaniToKufiOperator>): List<SuraAyah> {
-    val operations = suraMappings.filter { it.appliesToSuraAyah(suraAyah.sura, suraAyah.ayah) }
-    if (operations.size > 1) {
-      error("Multiple operations found for $suraAyah")
+    var operation: MadaniToKufiOperator? = null
+    for (i in suraMappings.indices) {
+      val candidate = suraMappings[i]
+      if (candidate.appliesToSuraAyah(suraAyah.sura, suraAyah.ayah)) {
+        if (operation != null) {
+          error("Multiple operations found for $suraAyah")
+        }
+        operation = candidate
+      }
     }
 
-    val operation = operations.firstOrNull()
     return if (operation == null) {
       listOf(suraAyah)
     } else {
@@ -68,7 +76,17 @@ class MadaniToKufiMapper @Inject constructor(private val quranInfo: QuranInfo): 
     targetVerseRange: VerseRange,
     kufiData: List<QuranText>
   ): List<QuranText> {
-    return (targetVerseRange.startSura..targetVerseRange.endingSura).flatMap { sura ->
+    val kufiByKey = HashMap<Long, QuranText>(kufiData.size * 2)
+    for (i in kufiData.indices) {
+      val item = kufiData[i]
+      val key = suraAyahKey(item.sura, item.ayah)
+      if (!kufiByKey.containsKey(key)) {
+        kufiByKey[key] = item
+      }
+    }
+
+    val result = ArrayList<QuranText>(kufiData.size)
+    for (sura in targetVerseRange.startSura..targetVerseRange.endingSura) {
       // the start ayah is startAyah if it's startSura, endingAyah if endingSura, and 1 otherwise
       // since it's a sura in between this particular range of suras.
       val startAyah = when (sura) {
@@ -85,20 +103,36 @@ class MadaniToKufiMapper @Inject constructor(private val quranInfo: QuranInfo): 
         quranInfo.getNumberOfAyahs(sura)
       }
 
-      (startAyah..maxAyah).map { nonKufiAyah ->
-        reverseMapText(sura, nonKufiAyah, kufiData)
+      for (nonKufiAyah in startAyah..maxAyah) {
+        result.add(reverseMapText(sura, nonKufiAyah, kufiByKey))
       }
     }
+    return result
   }
 
-  private fun reverseMapText(sura: Int, nonKufiAyah: Int, kufiData: List<QuranText>): QuranText {
-    val mapped = mapAyah(SuraAyah(sura, nonKufiAyah))
-    val mappedData = mapped.map { mappedSuraAyah ->
-      kufiData.first { it.sura == mappedSuraAyah.sura && it.ayah == mappedSuraAyah.ayah }
-    }
+  private fun suraAyahKey(sura: Int, ayah: Int): Long {
+    return (sura.toLong() shl 32) or (ayah.toLong() and 0xFFFFFFFFL)
+  }
 
-    // this will swallow ayah links and just inline all mapped ayahs for now
-    val text = mappedData.joinToString("\n") { it.extraData ?: it.text }
+  private fun reverseMapText(
+    sura: Int,
+    nonKufiAyah: Int,
+    kufiByKey: Map<Long, QuranText>
+  ): QuranText {
+    val mapped = mapAyah(SuraAyah(sura, nonKufiAyah))
+    val text = if (mapped.size == 1) {
+      val mappedSuraAyah = mapped[0]
+      val item = kufiByKey[suraAyahKey(mappedSuraAyah.sura, mappedSuraAyah.ayah)]
+        ?: throw NoSuchElementException("Missing kufi data for $mappedSuraAyah")
+      item.extraData ?: item.text
+    } else {
+      // this will swallow ayah links and just inline all mapped ayahs for now
+      mapped.joinToString("\n") { mappedSuraAyah ->
+        val item = kufiByKey[suraAyahKey(mappedSuraAyah.sura, mappedSuraAyah.ayah)]
+          ?: throw NoSuchElementException("Missing kufi data for $mappedSuraAyah")
+        item.extraData ?: item.text
+      }
+    }
     return QuranText(sura, nonKufiAyah, text, null)
   }
 

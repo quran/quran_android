@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
@@ -15,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -39,11 +39,14 @@ fun QuranScrollablePage(
   showSidelines: Boolean,
   sidelines: @Composable () -> Unit
 ) {
-  val innerCalculator = QuranScrollablePageCalculator(LocalDensity.current.density)
-  val calculator = if (showSidelines) {
-    SidelinesWrapperCalculator(innerCalculator)
-  } else {
-    innerCalculator
+  val density = LocalDensity.current.density
+  val calculator = remember(density, showSidelines) {
+    val innerCalculator = QuranScrollablePageCalculator(density)
+    if (showSidelines) {
+      SidelinesWrapperCalculator(innerCalculator)
+    } else {
+      innerCalculator
+    }
   }
 
   Layout(
@@ -52,11 +55,11 @@ fun QuranScrollablePage(
         page,
         calculator = calculator,
         scrollState = scrollState,
-        header = { header() },
-        quran = { quran() },
-        footer = { footer() },
+        header = header,
+        quran = quran,
+        footer = footer,
         showSidelines = showSidelines,
-        sidelines = { sidelines() }
+        sidelines = sidelines
       )
     }
   ) { measurables, constraints ->
@@ -86,7 +89,6 @@ fun QuranScrollableColumn(
   }
 
   val currentVerticalPadding = WindowInsets.systemBars
-    .union(WindowInsets.navigationBars)
     .union(WindowInsets.displayCutout)
     .only(WindowInsetsSides.Vertical)
     .asPaddingValues()
@@ -99,8 +101,10 @@ fun QuranScrollableColumn(
 
   val maximumVerticalPaddingPx = with(LocalDensity.current) { maximumVerticalPadding.roundToPx() }
 
-  if (maximumVerticalPaddingPx > verticalPadding.intValue) {
-    verticalPadding.intValue = maximumVerticalPaddingPx
+  SideEffect {
+    if (maximumVerticalPaddingPx > verticalPadding.intValue) {
+      verticalPadding.intValue = maximumVerticalPaddingPx
+    }
   }
 
   Layout(

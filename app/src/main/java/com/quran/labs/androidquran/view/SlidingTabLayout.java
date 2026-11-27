@@ -88,6 +88,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
   private ViewPager mViewPager;
   private ViewPager.OnPageChangeListener mViewPagerPageChangeListener;
+  private InternalViewPagerListener mInternalViewPagerListener;
+  private int mMaxTabWidth;
 
   private final SlidingTabStrip mTabStrip;
 
@@ -166,13 +168,25 @@ public class SlidingTabLayout extends HorizontalScrollView {
    * (number of tabs and tab titles) does not change after this call has been made.
    */
   public void setViewPager(ViewPager viewPager) {
+    if (mViewPager != null && mInternalViewPagerListener != null) {
+      mViewPager.removeOnPageChangeListener(mInternalViewPagerListener);
+      mInternalViewPagerListener = null;
+    }
     mTabStrip.removeAllViews();
 
     mViewPager = viewPager;
     if (viewPager != null) {
-      viewPager.addOnPageChangeListener(new InternalViewPagerListener());
+      mInternalViewPagerListener = new InternalViewPagerListener();
+      viewPager.addOnPageChangeListener(mInternalViewPagerListener);
       populateTabStrip();
       updateTabsTextColor();
+      final int tabCount = mTabStrip.getChildCount();
+      if (tabCount > 0) {
+        final int currentItem = viewPager.getCurrentItem();
+        if (currentItem >= 0 && currentItem < tabCount) {
+          mTabStrip.onViewPagerPageChanged(currentItem, 0f);
+        }
+      }
     }
   }
 
@@ -215,8 +229,13 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     int targetWidth = 0;
     final int tabs = adapter.getCount();
+    if (tabs == 0) {
+      mMaxTabWidth = 0;
+      return;
+    }
     for (int i = 0; i < tabs; i++) {
-      String str = adapter.getPageTitle(i).toString();
+      CharSequence pageTitle = adapter.getPageTitle(i);
+      String str = pageTitle != null ? pageTitle.toString() : "";
       str = str.toUpperCase(Locale.getDefault());
 
       int width = (int) paint.measureText(str);
@@ -226,11 +245,13 @@ public class SlidingTabLayout extends HorizontalScrollView {
       }
     }
 
-    if (targetWidth * tabs < metrics.widthPixels) {
-      targetWidth = metrics.widthPixels / tabs;
-    }
+    mMaxTabWidth = targetWidth;
+    final int containerWidth = getWidth() > 0
+        ? getWidth() - getPaddingLeft() - getPaddingRight()
+        : metrics.widthPixels;
+    final boolean tabsFit = targetWidth * tabs <= containerWidth;
 
-    for (int i = 0; i < adapter.getCount(); i++) {
+    for (int i = 0; i < tabs; i++) {
       View tabView = null;
       TextView tabTitleView = null;
 
@@ -254,9 +275,41 @@ public class SlidingTabLayout extends HorizontalScrollView {
       }
       tabView.setOnClickListener(tabClickListener);
 
-      final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-          targetWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
+      final LinearLayout.LayoutParams params = tabsFit
+          ? new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
+          : new LinearLayout.LayoutParams(targetWidth, ViewGroup.LayoutParams.WRAP_CONTENT);
       mTabStrip.addView(tabView, params);
+    }
+  }
+
+  @Override
+  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    super.onSizeChanged(w, h, oldw, oldh);
+    if (w > 0 && w != oldw) {
+      final int tabCount = mTabStrip.getChildCount();
+      if (tabCount > 0 && mMaxTabWidth > 0) {
+        final int availableWidth = w - getPaddingLeft() - getPaddingRight();
+        final boolean tabsFit = mMaxTabWidth * tabCount <= availableWidth;
+        final int targetWidth = tabsFit ? 0 : mMaxTabWidth;
+        final float targetWeight = tabsFit ? 1f : 0f;
+        boolean layoutChanged = false;
+        for (int i = 0; i < tabCount; i++) {
+          final View child = mTabStrip.getChildAt(i);
+          final LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) child.getLayoutParams();
+          if (lp.width != targetWidth || lp.weight != targetWeight) {
+            lp.width = targetWidth;
+            lp.weight = targetWeight;
+            layoutChanged = true;
+          }
+        }
+        if (layoutChanged) {
+          post(() -> {
+            if (mTabStrip.isAttachedToWindow()) {
+              mTabStrip.requestLayout();
+            }
+          });
+        }
+      }
     }
   }
 

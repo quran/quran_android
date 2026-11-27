@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -27,12 +29,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,16 +44,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
-import com.quran.labs.androidquran.common.ui.core.modifier.autoMirror
 import com.quran.shared.auth.model.AuthState
 import kotlinx.coroutines.launch
+import androidx.appcompat.R as AppCompatR
 
 @Composable
 internal fun QuranSyncScreen(
   syncManager: QuranSyncManager,
   onBackPressed: () -> Unit
 ) {
-  val authState by syncManager.authState.collectAsState()
+  val authState by syncManager.authState.collectAsStateWithLifecycle()
   val scope = rememberCoroutineScope()
   var isActionRunning by remember { mutableStateOf(false) }
   var actionError by remember { mutableStateOf<String?>(null) }
@@ -70,8 +72,7 @@ internal fun QuranSyncScreen(
           IconButton(onClick = onBackPressed) {
             Icon(
               imageVector = QuranIcons.ArrowBack,
-              contentDescription = "",
-              modifier = Modifier.autoMirror()
+              contentDescription = stringResource(AppCompatR.string.abc_action_bar_up_description)
             )
           }
         }
@@ -89,6 +90,7 @@ internal fun QuranSyncScreen(
             .only(WindowInsetsSides.Horizontal)
         )
         .navigationBarsPadding()
+        .verticalScroll(rememberScrollState())
         .padding(horizontal = 24.dp, vertical = 20.dp),
       verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {

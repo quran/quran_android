@@ -1,5 +1,6 @@
 package com.quran.mobile.feature.audiobar.ui
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -9,11 +10,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
@@ -49,6 +53,8 @@ internal fun DownloadingAudioBar(
   )
 }
 
+internal fun normalizedProgress(progress: Int): Float = progress.coerceIn(0, 100) / 100f
+
 @Composable
 internal fun ProgressAudioBar(
   progress: Int,
@@ -71,8 +77,12 @@ internal fun ProgressAudioBar(
             .padding(end = 8.dp)
         )
       } else {
+        val animatedProgress by animateFloatAsState(
+          targetValue = normalizedProgress(progress),
+          label = "audioProgress"
+        )
         LinearProgressIndicator(
-          progress = { progress.toFloat() / 100f },
+          progress = { animatedProgress },
           gapSize = 0.dp,
           drawStopIndicator = {},
           modifier = Modifier.fillMaxWidth()
@@ -80,7 +90,12 @@ internal fun ProgressAudioBar(
         )
       }
 
-      Text(text = stringResource(id = messageResource))
+      Text(
+        text = stringResource(id = messageResource),
+        style = MaterialTheme.typography.bodySmall,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+      )
     }
   }
 }

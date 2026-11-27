@@ -16,6 +16,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
@@ -150,7 +152,8 @@ internal fun NewCollectionInputRow(
         MaterialTheme.colorScheme.onSurfaceVariant
       },
       modifier = Modifier
-        .clickable(enabled = !isSubmitting) { onCancel() }
+        .minimumInteractiveComponentSize()
+        .clickable(enabled = !isSubmitting, role = Role.Button) { onCancel() }
         .padding(6.dp)
     )
 

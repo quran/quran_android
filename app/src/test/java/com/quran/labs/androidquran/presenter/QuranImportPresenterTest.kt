@@ -1,12 +1,17 @@
 package com.quran.labs.androidquran.presenter
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.os.ParcelFileDescriptor
+import androidx.core.content.ContextCompat
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import com.quran.data.dao.Settings
 import com.quran.data.model.PageAppearance
+import com.quran.labs.androidquran.QuranImportActivity
 import com.quran.labs.androidquran.base.TestApplication
+import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.fakes.FakeBookmarksDao
 import com.quran.labs.androidquran.fakes.FakeContentResolverOps
 import com.quran.labs.androidquran.fakes.FakePageProvider
@@ -25,12 +30,15 @@ import io.reactivex.rxjava3.observers.TestObserver
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import okio.BufferedSource
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.io.ByteArrayInputStream
+import java.io.File
 import java.io.FileNotFoundException
 import java.io.InputStream
 
@@ -43,7 +51,9 @@ class QuranImportPresenterTest {
 
   @Before
   fun setup() {
+    QuranSettings.setInstance(null)
     context = ApplicationProvider.getApplicationContext()
+    QuranSettings.getInstance(context).pageType = "madani"
     val settings = FakeSettings()
     val pageMapper = ReadingBookmarkPageMapper(
       settings = settings,
@@ -63,6 +73,11 @@ class QuranImportPresenterTest {
       ),
       FakeMobileSyncImporter()
     )
+  }
+
+  @After
+  fun tearDown() {
+    QuranSettings.setInstance(null)
   }
 
   // ---- parseExternalFile tests ----
@@ -137,6 +152,77 @@ class QuranImportPresenterTest {
     observer.awaitTerminalEvent()
     observer.assertError(NullPointerException::class.java)
     observer.assertValueCount(0)
+  }
+
+  @Test
+  fun testNonUriExtraStreamDoesNotCrashAndShowsError() {
+    val intent = Intent().apply {
+      putExtra(Intent.EXTRA_STREAM, "not-a-uri")
+    }
+    val activity = Robolectric.buildActivity(QuranImportActivity::class.java, intent)
+      .create()
+      .get()
+    val presenter = QuranImportPresenter(context, importExportModel, FakeContentResolverOps())
+
+    presenter.bind(activity)
+
+    assertThat(activity.isShowingDialog()).isTrue()
+    presenter.unbind(activity)
+  }
+
+  @Test
+  fun testParseUriRejectsAppPrivateAndSystemUris() {
+    val presenter = QuranImportPresenter(context, importExportModel, FakeContentResolverOps())
+    val privateDirs = listOfNotNull(
+      ContextCompat.getDataDir(context),
+      context.filesDir,
+      context.cacheDir,
+      context.codeCacheDir,
+      context.noBackupFilesDir
+    )
+    val blockedUris = privateDirs.map { dir ->
+      Uri.fromFile(File(dir, "secret.json"))
+    } + listOf(
+      Uri.parse("file:///dev/null"),
+      Uri.parse("file:///proc/self/cmdline"),
+      Uri.parse("file:///sys/kernel/notes")
+    )
+
+    for (uri in blockedUris) {
+      val parseUriObserver = TestObserver<BufferedSource>()
+      presenter.parseUri(uri).subscribe(parseUriObserver)
+      parseUriObserver.awaitTerminalEvent()
+      parseUriObserver.assertError(SecurityException::class.java)
+
+      val parseExternalObserver = TestObserver<BufferedSource>()
+      presenter.parseExternalFile(uri).subscribe(parseExternalObserver)
+      parseExternalObserver.awaitTerminalEvent()
+      parseExternalObserver.assertError(SecurityException::class.java)
+    }
+  }
+
+  @Test
+  fun testParseUriClosesParcelFileDescriptorWhenSourceClosed() {
+    val tempFile = File.createTempFile("import_test", ".json", context.getExternalFilesDir(null))
+    tempFile.writeText("{\"bookmarks\":[],\"tags\":[]}")
+    try {
+      val pfd = ParcelFileDescriptor.open(tempFile, ParcelFileDescriptor.MODE_READ_ONLY)
+      val fakeOps = FakeContentResolverOps(fileDescriptor = pfd)
+      val presenter = QuranImportPresenter(context, importExportModel, fakeOps)
+
+      val observer = TestObserver<BufferedSource>()
+      presenter.parseUri(Uri.parse("content://quran.test/backup")).subscribe(observer)
+      observer.awaitTerminalEvent()
+      observer.assertValueCount(1)
+
+      val source = observer.values().single()
+      assertThat(pfd.fileDescriptor.valid()).isTrue()
+      val content = source.use { it.readUtf8() }
+      assertThat(content).contains("bookmarks")
+      assertThat(pfd.fileDescriptor.valid()).isFalse()
+    } finally {
+      tempFile.delete()
+    }
   }
 
   private class FakeMobileSyncImporter : MobileSyncImporter {

@@ -29,7 +29,9 @@ import com.quran.labs.androidquran.presenter.translation.TranslationPresenter
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener
 import com.quran.labs.androidquran.ui.helpers.AyahTracker
+import com.quran.labs.androidquran.ui.helpers.PageBitmapRecycler
 import com.quran.labs.androidquran.ui.helpers.QuranPage
+import com.quran.labs.androidquran.ui.helpers.ScaledPageBitmapDrawable
 import com.quran.labs.androidquran.ui.translation.TranslationView
 import com.quran.labs.androidquran.ui.util.PageController
 import com.quran.labs.androidquran.util.QuranScreenInfo
@@ -73,6 +75,9 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
   private var ayahTrackerItemsStorage: Array<AyahTrackerItem>? = null
   private var splitTranslationView: TranslationView? = null
   private var splitImageView: HighlightingImageView? = null
+  private var leftPageBitmap: Bitmap? = null
+  private var rightPageBitmap: Bitmap? = null
+  private var splitPageBitmap: Bitmap? = null
   private var lastLongPressPage = -1
 
   private lateinit var mainView: TabletView
@@ -266,87 +271,92 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
 
   override fun getAyahTrackerItems(): Array<AyahTrackerItem> {
     val cachedTrackerItems = ayahTrackerItemsStorage
-    return if (cachedTrackerItems == null) {
-      if (mode == Mode.ARABIC) {
-        val leftImageView = leftImageView
-        val rightImageView = rightImageView
-        if (leftImageView != null && rightImageView != null) {
-          val left = if (quranInfo.isValidPage(pageNumber + 1)) {
-            AyahImageTrackerItem(
-              pageNumber + 1,
+    if (cachedTrackerItems != null) {
+      return cachedTrackerItems
+    }
+
+    val items: Array<AyahTrackerItem> = if (mode == Mode.ARABIC) {
+      val leftImageView = leftImageView
+      val rightImageView = rightImageView
+      if (leftImageView != null && rightImageView != null) {
+        val left = if (quranInfo.isValidPage(pageNumber + 1)) {
+          AyahImageTrackerItem(
+            pageNumber + 1,
+            quranInfo,
+            quranDisplayData,
+            false,
+            imageDrawHelpers,
+            leftImageView
+          )
+        } else {
+          NoOpImageTrackerItem(pageNumber + 1)
+        }
+
+        val right = AyahImageTrackerItem(
+          pageNumber,
+          quranInfo,
+          quranDisplayData,
+          true,
+          imageDrawHelpers,
+          rightImageView
+        )
+        arrayOf(right, left)
+      } else {
+        emptyArray()
+      }
+    } else if (mode == Mode.TRANSLATION) {
+      if (isSplitScreen) {
+        val splitTranslationView = splitTranslationView!!
+        val (translationItem, imageItem) = if (isQuranOnRight) {
+          val translationItem = AyahTranslationTrackerItem(pageNumber, quranInfo, splitTranslationView)
+          val splitImageView = splitImageView
+          if (splitImageView != null) {
+            translationItem to AyahImageTrackerItem(
+              pageNumber,
+              quranInfo,
+              quranDisplayData,
+              true,
+              imageDrawHelpers,
+              splitImageView
+            )
+          } else {
+            translationItem to null
+          }
+        } else {
+          val translationItem = AyahTranslationTrackerItem(pageNumber, quranInfo, splitTranslationView)
+          val splitImageView = splitImageView
+          if (splitImageView != null) {
+            translationItem to AyahImageTrackerItem(pageNumber,
               quranInfo,
               quranDisplayData,
               false,
               imageDrawHelpers,
-              leftImageView
+              splitImageView
             )
           } else {
-            NoOpImageTrackerItem(pageNumber + 1)
+            translationItem to null
           }
-
-          val right = AyahImageTrackerItem(
-            pageNumber,
-            quranInfo,
-            quranDisplayData,
-            true,
-            imageDrawHelpers,
-            rightImageView
-          )
-          arrayOf(right, left)
-        } else {
-          emptyArray()
         }
-      } else if (mode == Mode.TRANSLATION) {
-        if (isSplitScreen) {
-          val splitTranslationView = splitTranslationView!!
-          val (translationItem, imageItem) = if (isQuranOnRight) {
-            val translationItem = AyahTranslationTrackerItem(pageNumber, quranInfo, splitTranslationView)
-            val splitImageView = splitImageView
-            if (splitImageView != null) {
-              translationItem to AyahImageTrackerItem(
-                pageNumber,
-                quranInfo,
-                quranDisplayData,
-                true,
-                imageDrawHelpers,
-                splitImageView
-              )
-            } else {
-              translationItem to null
-            }
-          } else {
-            val translationItem = AyahTranslationTrackerItem(pageNumber, quranInfo, splitTranslationView)
-            val splitImageView = splitImageView
-            if (splitImageView != null) {
-              translationItem to AyahImageTrackerItem(pageNumber,
-                quranInfo,
-                quranDisplayData,
-                false,
-                imageDrawHelpers,
-                splitImageView
-              )
-            } else {
-              translationItem to null
-            }
-          }
 
-          val splitItem = if (imageItem == null) {
-            AyahTranslationTrackerItem(pageNumber, quranInfo, splitTranslationView)
-          } else {
-            AyahSplitConsolidationTrackerItem(pageNumber, imageItem, translationItem)
-          }
-          arrayOf(splitItem)
+        val splitItem = if (imageItem == null) {
+          AyahTranslationTrackerItem(pageNumber, quranInfo, splitTranslationView)
         } else {
-          val left = AyahTranslationTrackerItem(pageNumber + 1, quranInfo, leftTranslation!!)
-          val right = AyahTranslationTrackerItem(pageNumber, quranInfo, rightTranslation!!)
-          arrayOf(right, left)
+          AyahSplitConsolidationTrackerItem(pageNumber, imageItem, translationItem)
         }
+        arrayOf(splitItem)
       } else {
-        emptyArray()
+        val left = AyahTranslationTrackerItem(pageNumber + 1, quranInfo, leftTranslation!!)
+        val right = AyahTranslationTrackerItem(pageNumber, quranInfo, rightTranslation!!)
+        arrayOf(right, left)
       }
     } else {
-      cachedTrackerItems
+      emptyArray()
     }
+
+    if (items.isNotEmpty()) {
+      ayahTrackerItemsStorage = items
+    }
+    return items
   }
 
   override fun onAttach(context: Context) {
@@ -378,11 +388,66 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
   }
 
   override fun setPageBitmap(page: Int, pageBitmap: Bitmap) {
+    setPageBitmap(page, pageBitmap, pageBitmap.width, pageBitmap.height)
+  }
+
+  override fun setPageBitmap(
+    page: Int,
+    pageBitmap: Bitmap,
+    sourceWidth: Int,
+    sourceHeight: Int
+  ) {
     if (isSplitScreen && mode == Mode.TRANSLATION) {
-      splitImageView!!.setImageDrawable(BitmapDrawable(resources, pageBitmap))
+      val previousBitmap = splitPageBitmap
+      val targetView = splitImageView
+      if (targetView != null) {
+        splitPageBitmap = pageBitmap
+        targetView.setImageDrawable(
+          ScaledPageBitmapDrawable.create(resources, pageBitmap, sourceWidth, sourceHeight)
+        )
+        if (previousBitmap != null && previousBitmap !== pageBitmap) {
+          PageBitmapRecycler.scheduleRecycle(previousBitmap)
+        }
+      } else {
+        splitPageBitmap = null
+        quranPagePresenter.value.resetImageState()
+        PageBitmapRecycler.scheduleRecycle(previousBitmap)
+        PageBitmapRecycler.scheduleRecycle(pageBitmap)
+      }
+    } else if (page == pageNumber) {
+      val previousBitmap = rightPageBitmap
+      val targetView: ImageView? = rightImageView
+      if (targetView != null) {
+        rightPageBitmap = pageBitmap
+        targetView.setImageDrawable(
+          ScaledPageBitmapDrawable.create(resources, pageBitmap, sourceWidth, sourceHeight)
+        )
+        if (previousBitmap != null && previousBitmap !== pageBitmap) {
+          PageBitmapRecycler.scheduleRecycle(previousBitmap)
+        }
+      } else {
+        rightPageBitmap = null
+        quranPagePresenter.value.resetImageState()
+        PageBitmapRecycler.scheduleRecycle(previousBitmap)
+        PageBitmapRecycler.scheduleRecycle(pageBitmap)
+      }
     } else {
-      val imageView: ImageView? = if (page == pageNumber) rightImageView else leftImageView
-      imageView?.setImageDrawable(BitmapDrawable(resources, pageBitmap))
+      val previousBitmap = leftPageBitmap
+      val targetView: ImageView? = leftImageView
+      if (targetView != null) {
+        leftPageBitmap = pageBitmap
+        targetView.setImageDrawable(
+          ScaledPageBitmapDrawable.create(resources, pageBitmap, sourceWidth, sourceHeight)
+        )
+        if (previousBitmap != null && previousBitmap !== pageBitmap) {
+          PageBitmapRecycler.scheduleRecycle(previousBitmap)
+        }
+      } else {
+        leftPageBitmap = null
+        quranPagePresenter.value.resetImageState()
+        PageBitmapRecycler.scheduleRecycle(previousBitmap)
+        PageBitmapRecycler.scheduleRecycle(pageBitmap)
+      }
     }
   }
 
@@ -435,9 +500,35 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
 
   fun cleanup() {
     Timber.d("cleaning up page %d", pageNumber)
+    ayahTrackerItemsStorage = null
     leftImageView?.setImageDrawable(null)
     rightImageView?.setImageDrawable(null)
     splitImageView?.setImageDrawable(null)
+    val leftBitmap = leftPageBitmap
+    val rightBitmap = rightPageBitmap
+    val splitBitmap = splitPageBitmap
+    leftPageBitmap = null
+    rightPageBitmap = null
+    splitPageBitmap = null
+    if (leftBitmap != null || rightBitmap != null || splitBitmap != null) {
+      if (::quranPagePresenter.isInitialized && quranPagePresenter.isInitialized()) {
+        quranPagePresenter.value.resetImageState()
+      }
+      PageBitmapRecycler.scheduleRecycle(leftBitmap)
+      PageBitmapRecycler.scheduleRecycle(rightBitmap)
+      PageBitmapRecycler.scheduleRecycle(splitBitmap)
+    }
+  }
+
+  override fun onDestroyView() {
+    cleanup()
+    leftImageView = null
+    rightImageView = null
+    splitImageView = null
+    leftTranslation = null
+    rightTranslation = null
+    splitTranslationView = null
+    super.onDestroyView()
   }
 
   override fun setPageCoordinates(pageCoordinates: PageCoordinates) {

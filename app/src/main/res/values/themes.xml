@@ -5,8 +5,8 @@
     <item name="quranAccent">@color/accent_navy_gold</item>
     <item name="colorAccent">?attr/quranAccent</item>
     <item name="spinnerStyle">?attr/actionDropDownStyle</item>
-    <item name="spinnerDropDownItemStyle">@style/SherlockDropDownItem</item>
-    <item name="spinnerItemStyle">@style/SherlockSpinnerItem</item>
+    <item name="spinnerDropDownItemStyle">@style/QuranDropDownItem</item>
+    <item name="spinnerItemStyle">@style/QuranSpinnerItem</item>
   </style>
 
   <style name="QuranToolBar" parent="Theme.AppCompat.DayNight.NoActionBar">
@@ -15,8 +15,8 @@
     <item name="colorAccent">?attr/quranAccent</item>
     <item name="windowActionModeOverlay">true</item>
     <item name="spinnerStyle">?attr/actionDropDownStyle</item>
-    <item name="spinnerDropDownItemStyle">@style/SherlockDropDownItem</item>
-    <item name="spinnerItemStyle">@style/SherlockSpinnerItem</item>
+    <item name="spinnerDropDownItemStyle">@style/QuranDropDownItem</item>
+    <item name="spinnerItemStyle">@style/QuranSpinnerItem</item>
   </style>
 
   <style name="QuranToolBarDayNight" parent="Theme.AppCompat.DayNight.NoActionBar">
@@ -28,8 +28,8 @@
     <item name="iconTint">@color/icon_tint</item>
     <item name="windowActionModeOverlay">true</item>
     <item name="spinnerStyle">?attr/actionDropDownStyle</item>
-    <item name="spinnerDropDownItemStyle">@style/SherlockDropDownItem</item>
-    <item name="spinnerItemStyle">@style/SherlockSpinnerItem</item>
+    <item name="spinnerDropDownItemStyle">@style/QuranDropDownItem</item>
+    <item name="spinnerItemStyle">@style/QuranSpinnerItem</item>
   </style>
 
   <style name="QuranToolBarActionButton" parent="Widget.AppCompat.ActionButton">

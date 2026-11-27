@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +41,6 @@ import coil3.compose.AsyncImage
 import com.quran.labs.androidquran.common.ui.core.LocalQuranColors
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.labs.androidquran.common.ui.core.modifier.autoMirror
 import com.quran.mobile.feature.sync.state.AccountProfile
 import com.quran.mobile.feature.sync.state.SyncActivityState
 import com.quran.mobile.feature.sync.state.SyncActivityState.Status
@@ -119,8 +119,7 @@ private fun ProfileRow(profile: AccountProfile, onClick: () -> Unit) {
     Icon(
       imageVector = QuranIcons.ChevronRight,
       contentDescription = null,
-      tint = MaterialTheme.colorScheme.onSurfaceVariant,
-      modifier = Modifier.autoMirror()
+      tint = MaterialTheme.colorScheme.onSurfaceVariant
     )
   }
 }
@@ -225,7 +224,9 @@ private fun SyncPillButton(button: SyncStatusSummary.Button, onClick: () -> Unit
     enabled = button.isEnabled,
     shape = CircleShape,
     color = accent.copy(alpha = 0.1f),
-    modifier = Modifier.alpha(if (button.isEnabled) 1f else 0.45f)
+    modifier = Modifier
+      .minimumInteractiveComponentSize()
+      .alpha(if (button.isEnabled) 1f else 0.45f)
   ) {
     Text(
       text = stringResource(button.title),
@@ -262,9 +263,7 @@ private fun ReviewHeldItemsRow(onClick: () -> Unit) {
         imageVector = QuranIcons.ChevronRight,
         contentDescription = null,
         tint = caution,
-        modifier = Modifier
-          .autoMirror()
-          .size(20.dp)
+        modifier = Modifier.size(20.dp)
       )
     }
   }

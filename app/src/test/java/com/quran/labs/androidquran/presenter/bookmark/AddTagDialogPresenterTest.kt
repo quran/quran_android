@@ -79,6 +79,18 @@ class AddTagDialogPresenterTest {
     assertThat(dialog.isAdded).isTrue()
   }
 
+  @Test
+  fun `adding a duplicate tag name shows duplicate error`() = runTest {
+    bookmarksDao.setTags(listOf(Tag("tag-1", "Review")))
+    val dialog = shownDialog()
+
+    dialog.submit("Review")
+
+    assertThat(dialog.tagNameError()).isEqualTo(dialog.getString(R.string.tag_duplicate_tag_error))
+    assertThat(bookmarksDao.addedTagNames()).isEmpty()
+    assertThat(dialog.isAdded).isTrue()
+  }
+
   private fun boundPresenter(): AddTagDialogPresenter {
     return AddTagDialogPresenter(bookmarksDao).apply { bind(AddTagDialog()) }
   }
@@ -91,6 +103,7 @@ class AddTagDialogPresenterTest {
     shadowOf(Looper.getMainLooper()).idle()
     dialog.addTagDialogPresenter.unbind(dialog)
     dialog.addTagDialogPresenter = AddTagDialogPresenter(dao).apply { bind(dialog) }
+    shadowOf(Looper.getMainLooper()).idle()
     return dialog
   }
 

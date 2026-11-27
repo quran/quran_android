@@ -5,8 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import androidx.annotation.VisibleForTesting
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import com.quran.data.di.AppScope
 import com.quran.data.model.bookmark.BookmarkData
 import com.quran.labs.androidquran.QuranImportActivity
@@ -26,7 +29,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import okio.BufferedSource
 import okio.buffer
 import okio.source
-import java.io.FileInputStream
+import java.io.File
+import java.io.IOException
 
 @SingleIn(AppScope::class)
 class QuranImportPresenter @Inject internal constructor(
@@ -43,7 +47,7 @@ class QuranImportPresenter @Inject internal constructor(
   private fun handleIntent(intent: Intent) {
     requestingPermissions = false
     if (importObservable == null) {
-      val uri = intent.data ?: intent.extras?.get(Intent.EXTRA_STREAM) as Uri?
+      val uri = intent.data ?: IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
       if (uri != null) {
         parseIntentUri(uri)
       } else {
@@ -96,7 +100,11 @@ class QuranImportPresenter @Inject internal constructor(
 
         override fun onError(e: Throwable) {
           if (currentActivity != null) {
-            handleExternalStorageFile(uri)
+            if (e is SecurityException) {
+              currentActivity?.showError()
+            } else {
+              handleExternalStorageFile(uri)
+            }
           }
         }
 
@@ -156,13 +164,13 @@ class QuranImportPresenter @Inject internal constructor(
   @VisibleForTesting
   fun parseUri(uri: Uri): Maybe<BufferedSource> {
     return Maybe.defer {
+      if (isBlockedUri(uri)) {
+        return@defer Maybe.error(SecurityException("Blocked URI"))
+      }
       val pfd = contentResolverOps.openFileDescriptor(uri, "r")
       if (pfd != null) {
-        val fd = pfd.fileDescriptor
         return@defer Maybe.just(
-          FileInputStream(
-            fd
-          ).source().buffer()
+          ParcelFileDescriptor.AutoCloseInputStream(pfd).source().buffer()
         )
       }
       Maybe.empty()
@@ -172,6 +180,9 @@ class QuranImportPresenter @Inject internal constructor(
   @VisibleForTesting
   fun parseExternalFile(uri: Uri): Maybe<BufferedSource> {
     return Maybe.defer {
+      if (isBlockedUri(uri)) {
+        return@defer Maybe.error(SecurityException("Blocked URI"))
+      }
       val stream = contentResolverOps.openInputStream(uri)
       if (stream != null) {
         return@defer Maybe.just(
@@ -179,6 +190,52 @@ class QuranImportPresenter @Inject internal constructor(
         )
       }
       Maybe.empty()
+    }
+  }
+
+  private fun isBlockedUri(uri: Uri): Boolean {
+    if (!"file".equals(uri.scheme, ignoreCase = true)) {
+      return false
+    }
+    val rawPath = uri.path
+    if (rawPath.isNullOrBlank()) {
+      return true
+    }
+    val canonicalPath = try {
+      File(rawPath).canonicalPath
+    } catch (_: IOException) {
+      return true
+    }
+
+    val normalizedCanonical = canonicalPath.replace('\\', '/').substringAfter(':')
+    val blockedPrefixes = listOf("/dev", "/proc", "/sys")
+    if (blockedPrefixes.any { prefix ->
+        rawPath == prefix || rawPath.startsWith("$prefix/") ||
+          normalizedCanonical == prefix || normalizedCanonical.startsWith("$prefix/")
+      }
+    ) {
+      return true
+    }
+
+    val privateDirs = listOfNotNull(
+      ContextCompat.getDataDir(appContext),
+      appContext.filesDir,
+      appContext.cacheDir,
+      appContext.codeCacheDir,
+      appContext.noBackupFilesDir
+    )
+    return privateDirs.any { dir ->
+      val dirCanonical = try {
+        dir.canonicalPath
+      } catch (_: IOException) {
+        return@any true
+      }
+      val dirPrefix = if (dirCanonical.endsWith(File.separator)) {
+        dirCanonical
+      } else {
+        dirCanonical + File.separator
+      }
+      canonicalPath == dirCanonical || canonicalPath.startsWith(dirPrefix)
     }
   }
 

@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import android.preference.PreferenceManager
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.KeyEvent
@@ -37,6 +36,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
@@ -145,9 +145,12 @@ import com.quran.page.common.toolbar.AyahToolBar
 import com.quran.page.common.toolbar.di.AyahToolBarInjector
 import com.quran.reading.common.ReadingEventPresenter
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
@@ -208,13 +211,16 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private val themePreferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
     if (key in PAGE_COLOR_PREFERENCES) {
       refreshQuranPages()
+      updateSystemBarAppearance()
     }
   }
   private lateinit var pagerAdapter: QuranPageAdapter
   private lateinit var ayahToolBar: AyahToolBar
   private lateinit var slidingPanel: SlidingUpPanelLayout
   private lateinit var slidingPager: ViewPager
+  private lateinit var slidingPageIndicator: IconPageIndicator
   private lateinit var slidingPagerAdapter: SlidingPagerAdapter
+  private var isSlidingPagerAttached = false
   private lateinit var translationsSpinner: QuranSpinner
   private lateinit var overlay: FrameLayout
   private lateinit var toolBarArea: View
@@ -238,7 +244,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   @Inject lateinit var quranSettings: QuranSettings
   @Inject lateinit var quranNaming: QuranNaming
   @Inject lateinit var quranScreenInfo: QuranScreenInfo
-  @Inject lateinit var arabicDatabaseUtils: ArabicDatabaseUtils
+  @Inject lateinit var arabicDatabaseUtils: Provider<ArabicDatabaseUtils>
   @Inject lateinit var shareUtil: ShareUtil
   @Inject lateinit var audioUtils: AudioUtils
   @Inject lateinit var quranDisplayData: QuranDisplayData
@@ -330,13 +336,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     setContentView(R.layout.quran_page_activity_slider)
 
-    val lightStatusBar = resources.getBoolean(R.bool.light_navigation_bar)
     windowInsetsController = WindowInsetsControllerCompat(
       window, findViewById<ViewGroup>(R.id.sliding_panel)
-    ).apply {
-      isAppearanceLightStatusBars = lightStatusBar
-      isAppearanceLightNavigationBars = lightStatusBar
-    }
+    )
+    updateSystemBarAppearance()
     registerBackPressedCallbacks()
     initialize(savedInstanceState)
     requestPermissionLauncher =
@@ -474,7 +477,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     supportActionBar?.setDisplayShowHomeEnabled(true)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    initAyahActionPanel()
+    initAyahActionPanel(savedInstanceState)
 
     if (showingTranslation && translationNames.isNotEmpty()) {
       updateActionBarSpinner()
@@ -665,6 +668,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
   }
 
+  internal fun isDualPageLayout(): Boolean = isDualPages
+
   private val isDualPageVisible: Boolean
     get() = isDualPages && !(isSplitScreen && showingTranslation)
 
@@ -688,31 +693,33 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
       .shareIn(scope, SharingStarted.Eagerly, 1)
 
-  private fun initAyahActionPanel() {
+  private fun initAyahActionPanel(savedInstanceState: Bundle?) {
     slidingPanel = findViewById(R.id.sliding_panel)
     val slidingLayout =
       slidingPanel.findViewById<ViewGroup>(R.id.sliding_layout)
     slidingPager = slidingPanel
       .findViewById(R.id.sliding_layout_pager)
-    val slidingPageIndicator =
+    slidingPageIndicator =
       slidingPanel
-        .findViewById<IconPageIndicator>(R.id.sliding_pager_indicator)
+        .findViewById(R.id.sliding_pager_indicator)
 
     // Find close button and set listener
     val closeButton = slidingPanel
       .findViewById<View>(R.id.sliding_menu_close)
     closeButton.setOnClickListener { v: View? -> endAyahMode() }
 
-    // Create and set fragment pager adapter
+    // Create the adapter object (lightweight), but defer attaching to ViewPager until
+    // the sliding panel is actually opened so hidden fragments/pickers aren't inflated
+    // on every reader cold launch.
     slidingPagerAdapter = SlidingPagerAdapter(
+      this,
       supportFragmentManager,
       QuranUtils.isRtl(),
       additionalAyahPanels
     )
-    slidingPager.setAdapter(slidingPagerAdapter)
-
-    // Attach the view pager to the action bar
-    slidingPageIndicator.setViewPager(slidingPager)
+    if (savedInstanceState?.getBoolean(LAST_SLIDER_INITIALIZED, false) == true) {
+      ensureSlidingPagerAttached()
+    }
 
     // Set sliding layout parameters
     val displayHeight = resources.displayMetrics.heightPixels
@@ -724,8 +731,17 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     // When clicking any menu items, expand the panel
     slidingPageIndicator.setOnClickListener { v: View? ->
       if (!slidingPanel.isExpanded) {
+        ensureSlidingPagerAttached()
         slidingPanel.expandPane()
       }
+    }
+  }
+
+  private fun ensureSlidingPagerAttached() {
+    if (!isSlidingPagerAttached) {
+      isSlidingPagerAttached = true
+      slidingPager.setAdapter(slidingPagerAdapter)
+      slidingPageIndicator.setViewPager(slidingPager)
     }
   }
 
@@ -851,23 +867,83 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   private fun clearUiVisibilityListener() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      ViewCompat.setOnApplyWindowInsetsListener(window.decorView, null)
+    }
     viewPager.setOnSystemUiVisibilityChangeListener(null)
+  }
+
+  private fun updateSystemBarAppearance() {
+    if (!::windowInsetsController.isInitialized) {
+      return
+    }
+    val lightBars = shouldUseLightSystemBars(
+      isActionBarHidden = isActionBarHidden,
+      isNightMode = quranSettings.isNightMode,
+      lightNavigationBar = resources.getBoolean(R.bool.light_navigation_bar)
+    )
+    windowInsetsController.isAppearanceLightStatusBars = lightBars
+    windowInsetsController.isAppearanceLightNavigationBars = lightBars
   }
 
   private fun animateToolBar(visible: Boolean) {
     isActionBarHidden = !visible
+    updateSystemBarAppearance()
 
-    // animate toolbar
-    toolBarArea.animate()
-      .translationY((if (visible) 0 else -toolBarArea.height).toFloat())
-      .setDuration(250)
-      .start()
+    toolBarArea.animate().cancel()
+    audioStatusBar.animate().cancel()
 
-    // and audio bar
-    audioStatusBar.animate()
-      .translationY((if (visible) 0 else audioStatusBar.height).toFloat())
-      .setDuration(250)
-      .start()
+    if (visible) {
+      toolBarArea.visibility = View.VISIBLE
+      toolBarArea.animate()
+        .translationY(0f)
+        .setDuration(250)
+        .start()
+
+      audioStatusBar.visibility = View.VISIBLE
+      audioStatusBar.animate()
+        .translationY(0f)
+        .setDuration(250)
+        .start()
+    } else {
+      val hideToolBar = {
+        if (isActionBarHidden) {
+          toolBarArea.animate()
+            .translationY(-toolBarArea.height.toFloat())
+            .setDuration(250)
+            .withEndAction {
+              if (isActionBarHidden) {
+                toolBarArea.visibility = View.INVISIBLE
+              }
+            }
+            .start()
+        }
+      }
+      if (toolBarArea.height == 0) {
+        toolBarArea.doOnLayout { hideToolBar() }
+      } else {
+        hideToolBar()
+      }
+
+      val hideAudioBar = {
+        if (isActionBarHidden) {
+          audioStatusBar.animate()
+            .translationY(audioStatusBar.height.toFloat())
+            .setDuration(250)
+            .withEndAction {
+              if (isActionBarHidden) {
+                audioStatusBar.visibility = View.INVISIBLE
+              }
+            }
+            .start()
+        }
+      }
+      if (audioStatusBar.height == 0) {
+        audioStatusBar.doOnLayout { hideAudioBar() }
+      } else {
+        hideAudioBar()
+      }
+    }
   }
 
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -887,8 +963,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     return (((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
         keyCode == KeyEvent.KEYCODE_VOLUME_UP) && (
         audioStatusRepositoryBridge.audioRequest() == null) &&
-        PreferenceManager.getDefaultSharedPreferences(this)
-          .getBoolean(Constants.PREF_USE_VOLUME_KEY_NAV, false))
+        quranSettings.navigateWithVolumeKeys())
         || super.onKeyUp(keyCode, event))
   }
 
@@ -896,16 +971,21 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     super.onResume()
     quranSettings.registerPreferencesListener(themePreferencesListener)
     refreshQuranPages()
+    updateSystemBarAppearance()
 
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
     readingBookmarkPresenter.bind(currentPageFlow, this)
 
     if (shouldReconnect) {
+      shouldReconnect = false
       foregroundDisposable.add(
         Completable.timer(500, TimeUnit.MILLISECONDS)
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe {
+            if (!AudioService.isRunning()) {
+              return@subscribe
+            }
             try {
               startService(
                 audioUtils.getAudioIntent(
@@ -916,7 +996,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
             } catch (ise: IllegalStateException) {
               // we're likely in the background, so ignore.
             }
-            shouldReconnect = false
           })
     }
   }
@@ -1150,6 +1229,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     state.putBoolean(LAST_ACTIONBAR_STATE, isActionBarHidden)
     state.putBoolean(LAST_WAS_DUAL_PAGES, isDualPages)
     state.putBoolean(LAST_FOLDING_STATE, isFoldableDeviceOpenAndVertical)
+    state.putBoolean(LAST_SLIDER_INITIALIZED, isSlidingPagerAttached)
     super.onSaveInstanceState(state)
   }
 
@@ -1506,11 +1586,12 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       )
       view.updatePadding(left = insets.left, right = insets.right)
       val params = view.layoutParams as FrameLayout.LayoutParams
-      params.bottomMargin = if (audioStatusBar.isVisible) {
-        audioStatusBar.height
-      } else {
-        insets.bottom
-      }
+      params.bottomMargin = readingBookmarkToastBottomMargin(
+        isActionBarHidden = isActionBarHidden,
+        isAudioBarVisible = audioStatusBar.isVisible,
+        audioBarHeight = audioStatusBar.height,
+        bottomInset = insets.bottom
+      )
       view.layoutParams = params
       windowInsets
     }
@@ -1954,8 +2035,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         }
       } else if (canShowUi) {
         compositeDisposable.add(
-          arabicDatabaseUtils
-            .getVerses(start, end)
+          Single.defer { arabicDatabaseUtils().getVerses(start, end) }
+            .subscribeOn(Schedulers.io())
             .filter { quranAyahs: List<QuranText?> -> quranAyahs.isNotEmpty() }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { quranAyahs: List<QuranText> ->
@@ -1977,6 +2058,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   private fun showSlider(sliderPage: Int) {
+    ensureSlidingPagerAttached()
     readingEventPresenterBridge.clearMenuForSelection()
     slidingPager.currentItem = sliderPage
     slidingPanel.showPane()
@@ -2060,6 +2142,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     private const val LAST_READING_MODE_IS_TRANSLATION = "LAST_READING_MODE_IS_TRANSLATION"
     private const val LAST_ACTIONBAR_STATE = "LAST_ACTIONBAR_STATE"
     private const val LAST_FOLDING_STATE = "LAST_FOLDING_STATE"
+    private const val LAST_SLIDER_INITIALIZED = "LAST_SLIDER_INITIALIZED"
 
     const val EXTRA_JUMP_TO_TRANSLATION: String = "jumpToTranslation"
     const val EXTRA_HIGHLIGHT_SURA: String = "highlightSura"
@@ -2073,5 +2156,26 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     // AYAH ACTION PANEL STUFF
     // Max height of sliding panel (% of screen)
     private const val PANEL_MAX_HEIGHT = 0.6f
+
+    internal fun shouldUseLightSystemBars(
+      isActionBarHidden: Boolean,
+      isNightMode: Boolean,
+      lightNavigationBar: Boolean
+    ): Boolean {
+      return if (isActionBarHidden) !isNightMode else lightNavigationBar
+    }
+
+    internal fun readingBookmarkToastBottomMargin(
+      isActionBarHidden: Boolean,
+      isAudioBarVisible: Boolean,
+      audioBarHeight: Int,
+      bottomInset: Int
+    ): Int {
+      return if (!isActionBarHidden && isAudioBarVisible) {
+        audioBarHeight
+      } else {
+        bottomInset
+      }
+    }
   }
 }

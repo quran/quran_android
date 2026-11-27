@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.extra.feature.linebyline.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -19,6 +20,8 @@ fun SuraHeader(
   lineRatio: Float,
   tint: Color = Color.Black
 ) {
+  val colorFilter = remember(tint) { ColorFilter.tint(tint) }
+
   Canvas(modifier = Modifier.fillMaxSize()) {
     val lastLineIndex = 14
     val lineHeight = this.size.width * lineRatio
@@ -33,7 +36,7 @@ fun SuraHeader(
       image = image,
       dstOffset = IntOffset(xOffset, yOffset),
       dstSize = IntSize(width, height),
-      colorFilter = ColorFilter.tint(tint)
+      colorFilter = colorFilter
     )
   }
 }

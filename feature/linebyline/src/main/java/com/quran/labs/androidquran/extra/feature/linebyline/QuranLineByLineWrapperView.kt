@@ -7,10 +7,12 @@ import android.content.Intent
 import android.widget.FrameLayout
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.quran.data.page.provider.di.inject
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.common.drawing.R
@@ -34,6 +36,8 @@ class QuranLineByLineWrapperView(
 ) : FrameLayout(context) {
   @Volatile
   private var didRequestFallback = false
+  private var wasDetached = false
+  private val attachGeneration = mutableIntStateOf(0)
 
   @Inject
   lateinit var imageBitmapUtil: ImageBitmapUtil
@@ -47,45 +51,71 @@ class QuranLineByLineWrapperView(
     addView(generateComposeView())
   }
 
+  override fun onAttachedToWindow() {
+    super.onAttachedToWindow()
+    quranLineByLinePresenter.attach()
+    if (wasDetached) {
+      wasDetached = false
+      attachGeneration.intValue++
+    }
+  }
+
+  override fun onDetachedFromWindow() {
+    wasDetached = true
+    quranLineByLinePresenter.detach()
+    super.onDetachedFromWindow()
+  }
+
   private fun generateComposeView(): ComposeView {
-    val pageFlow = quranLineByLinePresenter.loadPage()
-      .catch { throwable ->
-        if (throwable is MissingLineByLineImagesException) {
-          if (!didRequestFallback) {
-            Timber.e(throwable, "Missing line image")
-            withContext(Dispatchers.Main) {
-              if (quranLineByLinePresenter.fallbackToImageType()) {
-                didRequestFallback = true
-
-                val activity = resolveActivity(context)
-                finishAndRestart(activity)
-              }
-            }
-          }
-
-          emit(quranLineByLinePresenter.emptyState())
-        } else {
-          throw throwable
-        }
-      }
-
     return ComposeView(context).apply {
       setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
       consumeWindowInsets = false
       setContent {
         val scope = rememberCoroutineScope()
-        val pageInfo = pageFlow.collectAsState(quranLineByLinePresenter.emptyState(), Dispatchers.IO)
+        val generation = attachGeneration.intValue
+        val pageFlow = remember(generation, quranLineByLinePresenter) {
+          quranLineByLinePresenter.loadPage()
+            .catch { throwable ->
+              if (throwable is MissingLineByLineImagesException) {
+                if (!didRequestFallback) {
+                  Timber.e(throwable, "Missing line image")
+                  withContext(Dispatchers.Main) {
+                    if (quranLineByLinePresenter.fallbackToImageType()) {
+                      didRequestFallback = true
+
+                      val activity = resolveActivity(context)
+                      finishAndRestart(activity)
+                    }
+                  }
+                }
+
+                emit(quranLineByLinePresenter.emptyState())
+              } else {
+                throw throwable
+              }
+            }
+        }
+        val pageInfo = pageFlow.collectAsStateWithLifecycle(
+          initialValue = quranLineByLinePresenter.emptyState(),
+          context = Dispatchers.IO
+        )
+        val suraHeaderBitmap = remember(imageBitmapUtil) {
+          imageBitmapUtil.alpha8Image(
+            context.applicationContext,
+            R.drawable.chapter_hdr
+          )
+        }
+        val ayahNumberFormatter = remember {
+          NumberFormat.getIntegerInstance(Locale("ar", "EG"))
+        }
 
         MaterialTheme {
           QuranPageWrapper(
             pageInfo = pageInfo.value,
             pageContentType = pageProvider.getPageContentType(),
             dualScreenMode = dualScreenMode,
-            suraHeaderBitmap = imageBitmapUtil.alpha8Image(
-              context.applicationContext,
-              R.drawable.chapter_hdr
-            ),
-            ayahNumberFormatter = NumberFormat.getIntegerInstance(Locale("ar", "EG")),
+            suraHeaderBitmap = suraHeaderBitmap,
+            ayahNumberFormatter = ayahNumberFormatter,
             onClick = quranLineByLinePresenter::onClick,
             onPagePositioned = quranLineByLinePresenter::onPagePositioned,
             onSelectionStart = { x, y -> scope.launch { quranLineByLinePresenter.startSelection(x, y) } },

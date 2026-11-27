@@ -18,8 +18,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,7 +43,8 @@ fun BookmarksSignInCard(
   onSignIn: () -> Unit,
   modifier: Modifier = Modifier
 ) {
-  val isVisible by syncManager.showBookmarksSignInCardFlow.collectAsState(initial = false)
+  val showSignInCardFlow = remember(syncManager) { syncManager.showBookmarksSignInCardFlow }
+  val isVisible by showSignInCardFlow.collectAsStateWithLifecycle(initialValue = false)
   if (isVisible) {
     SyncSignInCard(
       onSignIn = onSignIn,
@@ -85,7 +87,7 @@ private fun SyncSignInCard(
             modifier = Modifier.size(18.dp)
           )
         }
-        Column(modifier = Modifier.padding(start = 10.dp, end = 24.dp)) {
+        Column(modifier = Modifier.padding(start = 10.dp, end = 40.dp)) {
           Text(
             text = stringResource(R.string.quran_sync_bookmarks_cta_title),
             style = MaterialTheme.typography.titleMedium,

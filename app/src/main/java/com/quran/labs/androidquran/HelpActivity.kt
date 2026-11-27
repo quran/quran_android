@@ -42,6 +42,7 @@ class HelpActivity : AppCompatActivity() {
     }
 
     val helpWrapper = findViewById<ViewGroup>(R.id.help_wrapper)
+    val initialBottomPadding = helpWrapper.paddingBottom
     ViewCompat.setOnApplyWindowInsetsListener(helpWrapper) { _, windowInsets ->
       val insets = windowInsets.getInsets(
         WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
@@ -51,7 +52,7 @@ class HelpActivity : AppCompatActivity() {
         helpWrapper.paddingLeft,
         helpWrapper.paddingTop,
         helpWrapper.paddingRight,
-        helpWrapper.paddingBottom + insets.bottom
+        initialBottomPadding + insets.bottom
       )
 
       windowInsets
