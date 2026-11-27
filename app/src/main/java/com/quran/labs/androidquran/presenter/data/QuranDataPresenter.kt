@@ -81,6 +81,10 @@ class QuranDataPresenter @Inject internal constructor(
                 }
                 activity?.onPagesChecked(it)
                 checkPagesDisposable = null
+              }, Consumer { error ->
+                Timber.e(error, "Error checking Quran pages on startup")
+                checkPagesDisposable = null
+                activity?.onStorageNotAvailable()
               })
       scheduleAudioUpdater()
     }

@@ -42,6 +42,7 @@ public class AyahInfoDatabaseHandler {
 
   private final SQLiteDatabase database;
   private final boolean hasGlyphData;
+  private final int xCoordinateOffset;
 
   static AyahInfoDatabaseHandler getAyahInfoDatabaseHandler(
       String databaseName, QuranFileUtils quranFileUtils) {
@@ -87,6 +88,10 @@ public class AyahInfoDatabaseHandler {
     File path = new File(base, databaseName);
     database = SQLiteDatabase.openDatabase(path.getAbsolutePath(), null, SQLiteDatabase.NO_LOCALIZED_COLLATORS);
     hasGlyphData = quranFileUtils.getAyahInfoDbHasGlyphData();
+    // Tajweed width_1280 PNG images are 1340x1890 (30-31px left/right border margin around the 1280px coordinate space)
+    boolean isTajweedDb = "ayahinfo_1280.db".equals(databaseName) ||
+        base.getAbsolutePath().contains("tajweed");
+    xCoordinateOffset = isTajweedDb ? 31 : 0;
   }
 
   private boolean validDatabase() {
@@ -115,7 +120,12 @@ public class AyahInfoDatabaseHandler {
           "MAX(" + MAX_X + ")", "MAX(" + MAX_Y + ")" };
       c = database.query(GLYPHS_TABLE, colNames, COL_PAGE + "=" + page, null, null, null, null);
       if (c.moveToFirst()) {
-        return new RectF(c.getInt(0), c.getInt(1), c.getInt(2), c.getInt(3));
+        return new RectF(
+            c.getInt(0) + xCoordinateOffset,
+            c.getInt(1),
+            c.getInt(2) + xCoordinateOffset,
+            c.getInt(3)
+        );
       } else {
         throw new IllegalArgumentException("getPageBounds() on a non-existent page: " + page);
       }
@@ -124,29 +134,54 @@ public class AyahInfoDatabaseHandler {
     }
   }
 
+  private static class RawGlyphRow {
+    final int line;
+    final int sura;
+    final int ayah;
+    final int position;
+    final int rawWidth;
+    final RectF bounds;
+    final String glyphType;
+
+    RawGlyphRow(int line, int sura, int ayah, int position, int rawWidth, RectF bounds, String glyphType) {
+      this.line = line;
+      this.sura = sura;
+      this.ayah = ayah;
+      this.position = position;
+      this.rawWidth = rawWidth;
+      this.bounds = bounds;
+      this.glyphType = glyphType;
+    }
+  }
+
   @NonNull
   public AyahCoordinates getVersesBoundsForPage(int page) {
-    boolean includeGlyphData = hasGlyphData && haveGlyphData();
+    boolean hasGlyphTypeColumn = haveGlyphData();
     GlyphsBuilder glyphsBuilder = new GlyphsBuilder();
     Map<String, List<AyahBounds>> ayahBounds = new HashMap<>();
+    List<RawGlyphRow> rawRows = new ArrayList<>();
     Cursor cursor = null;
     try {
-      cursor = getVersesBoundsCursorForPage(page, includeGlyphData);
+      cursor = getVersesBoundsCursorForPage(page, hasGlyphTypeColumn);
       while (cursor.moveToNext()) {
         int line = cursor.getInt(1);
         int sura = cursor.getInt(2);
         int ayah = cursor.getInt(3);
         int position = cursor.getInt(4);
-        int minX = cursor.getInt(5);
-        int minY = cursor.getInt(6);
-        int maxX = cursor.getInt(7);
-        int maxY = cursor.getInt(8);
+        int rawMinX = cursor.getInt(5) + xCoordinateOffset;
+        int rawMinY = cursor.getInt(6);
+        int rawMaxX = cursor.getInt(7) + xCoordinateOffset;
+        int rawMaxY = cursor.getInt(8);
+        String glyphType = hasGlyphTypeColumn ? cursor.getString(9) : null;
 
-        if (includeGlyphData) {
-          String glyphType = cursor.getString(9);
-          RectF r = new RectF(minX, minY, maxX, maxY);
-          glyphsBuilder.append(sura, ayah, position, line, glyphType, r);
-        }
+        int rawWidth = rawMaxX - rawMinX;
+        int minX = Math.min(rawMinX, rawMaxX);
+        int maxX = Math.max(rawMinX, rawMaxX);
+        int minY = Math.min(rawMinY, rawMaxY);
+        int maxY = Math.max(rawMinY, rawMaxY);
+
+        RectF r = new RectF(minX, minY, maxX, maxY);
+        rawRows.add(new RawGlyphRow(line, sura, ayah, position, rawWidth, r, glyphType));
 
         String key = sura + ":" + ayah;
         List<AyahBounds> bounds = ayahBounds.get(key);
@@ -171,8 +206,59 @@ public class AyahInfoDatabaseHandler {
       DatabaseUtils.closeCursor(cursor);
     }
 
-    PageGlyphsCoords glyphCoords = includeGlyphData ?
-        new PageGlyphsCoords(page, glyphsBuilder.build()) : null;
+    int i = 0;
+    int size = rawRows.size();
+    while (i < size) {
+      int startIdx = i;
+      RawGlyphRow first = rawRows.get(startIdx);
+      int endIdx = startIdx;
+      while (endIdx + 1 < size &&
+          rawRows.get(endIdx + 1).sura == first.sura &&
+          rawRows.get(endIdx + 1).ayah == first.ayah) {
+        endIdx++;
+      }
+
+      int ayahRowCount = endIdx - startIdx + 1;
+      int nonPauseNonEndCount = 0;
+      for (int k = startIdx; k <= endIdx; k++) {
+        boolean isEnd = (k == endIdx && ayahRowCount > 1);
+        if (!isEnd && rawRows.get(k).rawWidth > 18) {
+          nonPauseNonEndCount++;
+        }
+      }
+      int expectedWords = com.quran.labs.androidquran.memorization.QuranMemorizationManager.INSTANCE
+          .getWordCountForAyah(new com.quran.data.model.SuraAyah(first.sura, first.ayah));
+      boolean firstIsHizb = (expectedWords > 0 &&
+          nonPauseNonEndCount == expectedWords + 1 &&
+          first.position == 1 &&
+          first.rawWidth > 18);
+
+      for (int k = startIdx; k <= endIdx; k++) {
+        RawGlyphRow row = rawRows.get(k);
+        String type = row.glyphType;
+        RectF bounds = row.bounds;
+        if (type == null || type.isEmpty()) {
+          if (k == endIdx && ayahRowCount > 1) {
+            type = "end";
+          } else if (row.rawWidth <= 18) {
+            type = "pause";
+            float cx = (bounds.left + bounds.right) / 2f;
+            bounds = new RectF(cx - 14f, bounds.top - 2f, cx + 14f, bounds.bottom + 2f);
+          } else if (k == startIdx && firstIsHizb) {
+            type = "hizb";
+          } else {
+            type = "word";
+          }
+        }
+        glyphsBuilder.append(row.sura, row.ayah, row.position, row.line, type, bounds);
+      }
+
+      i = endIdx + 1;
+    }
+
+    List<com.quran.page.common.data.coordinates.GlyphCoords> builtGlyphs = glyphsBuilder.build();
+    PageGlyphsCoords glyphCoords = builtGlyphs.isEmpty() ? null :
+        new PageGlyphsCoords(page, builtGlyphs);
 
     return new AyahCoordinates(page, ayahBounds, glyphCoords);
   }

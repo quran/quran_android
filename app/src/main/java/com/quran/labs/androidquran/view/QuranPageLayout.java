@@ -151,9 +151,9 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     if (drawable == lineDrawable)
       return lineDrawable.getIntrinsicWidth();
 
-    // enlarge the book side indicator to a sensible device-independent width
+    // subtle Mushaf book-edge spine indicator preserving full-page reading width
     return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-        13f,
+        3f,
         getResources().getDisplayMetrics());
   }
 

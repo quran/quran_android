@@ -45,14 +45,14 @@ class PageGlyphsCoords(val page: Int, glyphCoords: List<GlyphCoords>) {
         right = pageBounds.right
         // Expand vertically to adjacent lines
         top = when {
-          line == firstLine -> pageBounds.top       // first line -> expand to top edge of page
+          line == firstLine -> pageBounds.top - 4f  // first line -> expand slightly past top edge
           prev != null -> midpointY(prev, this)     // expand to adjacent line
-          else -> bounds.top                        // leave as is
+          else -> bounds.top - 3f                   // sura boundary -> slight padding
         }
         bottom = when {
-          line == lastLine -> pageBounds.bottom     // last line -> expand to bottom edge of page
-          next != null -> midpointY(this, next)     // expand to adjacent line
-          else -> bounds.bottom                     // leave as is
+          line == lastLine -> pageBounds.bottom + 4f // last line -> expand slightly past bottom edge
+          next != null -> midpointY(this, next)      // expand to adjacent line
+          else -> bounds.bottom + 3f                 // sura boundary -> slight padding
         }
       }
     }
@@ -60,34 +60,78 @@ class PageGlyphsCoords(val page: Int, glyphCoords: List<GlyphCoords>) {
 
   val expandedGlyphsByLine: Map<Int, List<GlyphCoords>> by lazy {
     glyphsByLine.mapValues { (line, glyphs) ->
-      glyphs.mapIndexed { idx, glyph ->
-        // Get prev/next glyphs
-        val prev = glyphs.getOrNull(idx - 1)
-        val next = glyphs.getOrNull(idx + 1)
-        // Expand the bounds vertically to adjacent lines and horizontally to adjacent glyphs
+      val lineBound = lineBounds[line] ?: RectF()
+      val expLineBound = expandedLineBounds[line] ?: lineBound
+      val nonPauseGlyphs = glyphs
+        .filter { it.glyph !is AyahGlyph.PauseGlyph }
+        .sortedByDescending { it.bounds.centerX() }
+
+      val expandedNonPauseMap = nonPauseGlyphs.mapIndexed { idx, glyph ->
+        val prev = nonPauseGlyphs.getOrNull(idx - 1)
+        val next = nonPauseGlyphs.getOrNull(idx + 1)
+        val prevIsMarker = prev != null &&
+          (prev.glyph is AyahGlyph.AyahEndGlyph || prev.glyph is AyahGlyph.HizbGlyph)
+        val nextIsMarker = next != null &&
+          (next.glyph is AyahGlyph.AyahEndGlyph || next.glyph is AyahGlyph.HizbGlyph)
+
         val expandedBounds = RectF(glyph.bounds).apply {
-          // Expand vertically to adjacent lines
-          top = expandedLineBounds[line]!!.top
-          bottom = expandedLineBounds[line]!!.bottom
-          // Expand horizontally to adjacent glyphs (or edge of line)
-          right = when {
-            idx == 0 -> lineBounds[line]!!.right                // first glyph -> expand to right edge
-            prev != null -> midpointX(this, prev.bounds)        // expand to adjacent glyph
-            else -> glyph.bounds.right                          // leave as is
+          top = minOf(glyph.bounds.top - 4f, expLineBound.top)
+          bottom = maxOf(glyph.bounds.bottom + 4f, expLineBound.bottom)
+          val targetRight = when {
+            idx == 0 -> glyph.bounds.right + 14f
+            prevIsMarker -> prev!!.bounds.left - 1f
+            prev != null -> midpointX(this, prev.bounds)
+            else -> glyph.bounds.right + 10f
           }
-          left = when {
-            idx == glyphs.size - 1 -> lineBounds[line]!!.left   // last glyph -> expand to left edge
-            next != null -> midpointX(next.bounds, this)        // expand to adjacent glyph
-            else -> glyph.bounds.left                           // leave as is
+          val targetLeft = when {
+            idx == nonPauseGlyphs.lastIndex -> glyph.bounds.left - 14f
+            nextIsMarker -> next!!.bounds.right + 1f
+            next != null -> midpointX(next.bounds, this)
+            else -> glyph.bounds.left - 10f
+          }
+          if (targetRight > targetLeft) {
+            right = targetRight
+            left = targetLeft
+          } else {
+            right = maxOf(glyph.bounds.right, targetRight)
+            left = minOf(glyph.bounds.left, targetLeft)
           }
         }
-        glyph.copy(bounds = expandedBounds)
+        (glyph.glyph.ayah to glyph.glyph.position) to glyph.copy(bounds = expandedBounds)
+      }.toMap()
+
+      glyphs.map { glyph ->
+        expandedNonPauseMap[glyph.glyph.ayah to glyph.glyph.position] ?: glyph
       }
     }
   }
 
   val expandedGlyphs: List<GlyphCoords>
     get() = expandedGlyphsByLine.values.flatten()
+
+  private val expandedWordBoundsByKey: Map<Pair<SuraAyah, Int>, List<RectF>> by lazy {
+    val result = mutableMapOf<Pair<SuraAyah, Int>, MutableList<RectF>>()
+    for (gc in expandedGlyphs) {
+      val wg = gc.glyph as? WordGlyph
+      if (wg != null) {
+        result.getOrPut(wg.ayah to wg.wordPosition) { mutableListOf() }.add(gc.bounds)
+      }
+    }
+    // Attach any PauseGlyph to its preceding WordGlyph on the same ayah so pause marks hide/reveal with their word
+    for ((suraAyah, ayahGlyphs) in glyphsByAyah) {
+      var currentWordPos = 1
+      for (gc in ayahGlyphs) {
+        when (val g = gc.glyph) {
+          is WordGlyph -> currentWordPos = g.wordPosition
+          is AyahGlyph.PauseGlyph -> {
+            result.getOrPut(suraAyah to currentWordPos) { mutableListOf() }.add(RectF(gc.bounds))
+          }
+          else -> Unit
+        }
+      }
+    }
+    result
+  }
 
   // GLYPH BOUNDS (HIGHLIGHTING)
 
@@ -106,20 +150,29 @@ class PageGlyphsCoords(val page: Int, glyphCoords: List<GlyphCoords>) {
     val ayah = SuraAyah(Integer.valueOf(split[0]), Integer.valueOf(split[1]))
     return when (split.size) {
         2 -> getBoundsForAyah(ayah, expandVertically, expandHorizontally)
-        3 -> getBoundsForWord(ayah, Integer.valueOf(split[2]))
+        3 -> getBoundsForWord(ayah, Integer.valueOf(split[2]), expandVertically)
         else -> throw IllegalArgumentException("invalid key: $key, expecting _:_ or _:_:_")
     }
   }
 
   /** Get the bounds for the specified ayah word (not including non-word glyphs)  */
   fun getBoundsForWord(word: AyahWord): List<RectF>? =
-    getBoundsForWord(word.ayah, word.wordPosition)
+    getBoundsForWord(word.ayah, word.wordPosition, false)
 
   /** Get the bounds for the specified ayah word (not including non-word glyphs)  */
-  fun getBoundsForWord(ayah: SuraAyah, wordPosition: Int): List<RectF>? =
-    glyphsByAyah[ayah]
-      ?.find { it.glyph is WordGlyph && it.glyph.wordPosition == wordPosition }
-      ?.let { getBoundsForGlyph(it) }
+  @JvmOverloads
+  fun getBoundsForWord(ayah: SuraAyah, wordPosition: Int, expandBounds: Boolean = false): List<RectF>? =
+    if (expandBounds) {
+      expandedWordBoundsByKey[ayah to wordPosition]?.map { RectF(it) }
+        ?: glyphsByAyah[ayah]
+          ?.filter { it.glyph is WordGlyph && it.glyph.wordPosition == wordPosition }
+          ?.takeIf { it.isNotEmpty() }
+          ?.map { RectF(it.bounds).alignWithLine(it.line).expandToAdjacentLines(it.line) }
+    } else {
+      glyphsByAyah[ayah]
+        ?.find { it.glyph is WordGlyph && it.glyph.wordPosition == wordPosition }
+        ?.let { getBoundsForGlyph(it) }
+    }
 
   /** Get the bounds for the glyph at the specified position.  */
   fun getBoundsForGlyph(glyph: AyahGlyph): List<RectF>? =

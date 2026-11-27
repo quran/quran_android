@@ -74,4 +74,12 @@
   <color name="text_primary">#ff212121</color>
   <color name="disabled_color">#ffbdbdbd</color>
   <color name="text_hint_color">#ff9e9e9e</color>
+
+  <!-- Memorization (Hifz) Hide & Reveal Colors -->
+  <color name="mushaf_paper_color">#fffdf8</color>
+  <color name="memorization_bar_bg">#f5f7fa</color>
+  <color name="memorization_bar_stroke">#25000000</color>
+  <color name="memorization_selected_bg">#1f6fb2</color>
+  <color name="memorization_selected_text">#ffffff</color>
+  <color name="memorization_unselected_text">#44464e</color>
 </resources>

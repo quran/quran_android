@@ -2,6 +2,7 @@ package com.quran.labs.androidquran.view
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
@@ -20,8 +21,11 @@ import com.quran.data.model.highlight.HighlightType.Mode.HIDE
 import com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT
 import com.quran.data.model.highlight.HighlightType.Mode.UNDERLAY
 import com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE
+import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight
 import com.quran.labs.androidquran.ui.helpers.AyahHighlight.TransitionAyahHighlight
+import com.quran.labs.androidquran.ui.helpers.HighlightTypes
+import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.page.common.data.AyahBounds
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
@@ -39,6 +43,9 @@ class HighlightsDrawer(
 
   // cached objects for onDraw
   private val scaledRect = RectF()
+  private val memorizationPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    style = Paint.Style.FILL
+  }
   private val alreadyHighlighted = mutableMapOf<HighlightType.Mode, MutableSet<AyahHighlight>>()
 
   // Singleton object so we can share the cache across all pages
@@ -98,14 +105,32 @@ class HighlightsDrawer(
     val filteredHighlights = currentHighlights.filterKeys { it.mode in highlightTypesFilter }
 
     for ((highlightType, highlights) in filteredHighlights) {
-      val paint = PaintCache.getPaintForHighlightType(image.context, highlightType, isNightMode())
+      val isMemorizationHide = (highlightType == HighlightTypes.MEMORIZATION_HIDE)
+      val paint = if (isMemorizationHide) {
+        val settings = QuranSettings.getInstance(image.context)
+        val paperColor = when {
+          isNightMode() -> {
+            val b = settings.nightModeBackgroundBrightness
+            Color.rgb(b, b, b)
+          }
+          !settings.isLightPage -> settings.pageThemeBackgroundColor
+          else -> ContextCompat.getColor(image.context, R.color.mushaf_paper_color)
+        }
+        memorizationPaint.apply {
+          color = paperColor
+          alpha = 255
+        }
+      } else {
+        PaintCache.getPaintForHighlightType(image.context, highlightType, isNightMode())
+      }
 
       for (highlight in highlights) {
-        if (alreadyHighlightedContains(highlightType, highlight)) continue
+        if (!isMemorizationHide && alreadyHighlightedContains(highlightType, highlight)) continue
 
         val isUnderline = highlightType.mode == UNDERLINE
         val rangesToDraw = glyphsCoords?.takeIf { !highlightType.isTransitionAnimated }
           ?.getBounds(highlight.key, !isUnderline, highlightType.mode == BACKGROUND)
+          ?.takeIf { it.isNotEmpty() }
           ?: ayahLineCoords?.get(highlight.key)?.takeIf { isUnderline }?.map { it.bounds }
           ?: highlightCoordinates[highlight]?.map { it.bounds }
 
@@ -120,6 +145,9 @@ class HighlightsDrawer(
 
             image.imageMatrix.mapRect(scaledRect, bounds)
             scaledRect.offset(image.paddingLeft.toFloat(), image.paddingTop.toFloat())
+            if (isMemorizationHide) {
+              scaledRect.inset(-1.5f, -0.5f)
+            }
 
             when (highlightType.mode) {
               HIDE -> {

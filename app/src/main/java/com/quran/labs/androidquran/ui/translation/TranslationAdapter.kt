@@ -38,6 +38,14 @@ import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.view.AyahNumberView
 import com.quran.labs.androidquran.view.DividerView
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
+import android.view.animation.DecelerateInterpolator
+import com.quran.labs.androidquran.memorization.FallbackMushafPageRenderer
+import com.quran.labs.androidquran.memorization.MemorizationUiState
+import com.quran.labs.androidquran.memorization.QuranMemorizationManager
+import com.quran.labs.androidquran.memorization.RevealTransition
 import com.quran.mobile.common.ui.core.R as UiCoreR
 import com.quran.mobile.feature.pagetheme.PageThemeConstants
 
@@ -47,7 +55,7 @@ internal class TranslationAdapter(
   private val onClickListener: View.OnClickListener,
   private val onVerseSelectedListener: OnVerseSelectedListener,
   private val onJumpToVerseListener: OnJumpToAyahListener
-) : RecyclerView.Adapter<TranslationAdapter.RowViewHolder>() {
+) : RecyclerView.Adapter<TranslationAdapter.RowViewHolder>(), QuranMemorizationManager.Listener {
   private val inflater: LayoutInflater = LayoutInflater.from(context)
   private val data: MutableList<TranslationViewRow> = mutableListOf()
 
@@ -73,10 +81,77 @@ internal class TranslationAdapter(
   private val expandedHyperlinks = mutableSetOf<Pair<Int, Int>>()
   private val expandedFootnotes = mutableMapOf<QuranAyahInfo, List<Int>>()
 
+  private var paperBackgroundColor: Int = Color.parseColor("#FDFBEF")
+  private val wordAnimationFractions = mutableMapOf<String, Float>()
+  private var revealAnimator: ValueAnimator? = null
+  private var lastHandledTransitionId: Long = -1L
+
   private val defaultClickListener = View.OnClickListener { this.handleClick(it) }
   private val defaultLongClickListener = View.OnLongClickListener { this.selectVerseRows(it) }
   private val expandClickListener = View.OnClickListener { v -> toggleExpandTafseer(v) }
   private val expandHyperlinkClickListener = View.OnClickListener { v -> toggleTafseerJump(v) }
+
+  init {
+    paperBackgroundColor = QuranSettings.getInstance(context).pageThemeBackgroundColor
+    QuranMemorizationManager.addListener(this)
+  }
+
+  override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+    super.onAttachedToRecyclerView(recyclerView)
+    QuranMemorizationManager.addListener(this)
+  }
+
+  override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+    QuranMemorizationManager.removeListener(this)
+    revealAnimator?.cancel()
+    super.onDetachedFromRecyclerView(recyclerView)
+  }
+
+  override fun onMemorizationStateChanged(state: MemorizationUiState) {
+    val transition = state.lastTransition
+    if (transition != null && transition.id != lastHandledTransitionId) {
+      lastHandledTransitionId = transition.id
+      startRevealAnimation(transition)
+    } else if (!recyclerView.isComputingLayout) {
+      notifyDataSetChanged()
+    } else {
+      recyclerView.post { notifyDataSetChanged() }
+    }
+  }
+
+  private fun startRevealAnimation(transition: RevealTransition) {
+    revealAnimator?.cancel()
+    wordAnimationFractions.clear()
+    val keys = transition.wordPositions.map { pos ->
+      "${transition.suraAyah.sura}:${transition.suraAyah.ayah}:$pos"
+    }
+    keys.forEach { wordAnimationFractions[it] = 0f }
+
+    revealAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+      duration = 350L
+      interpolator = DecelerateInterpolator()
+      addUpdateListener { anim ->
+        val fraction = anim.animatedValue as Float
+        keys.forEach { wordAnimationFractions[it] = fraction }
+        if (!recyclerView.isComputingLayout) {
+          notifyDataSetChanged()
+        }
+      }
+      addListener(object : AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: Animator) {
+          keys.forEach { wordAnimationFractions.remove(it) }
+          if (!recyclerView.isComputingLayout) {
+            notifyDataSetChanged()
+          }
+        }
+
+        override fun onAnimationCancel(animation: Animator) {
+          keys.forEach { wordAnimationFractions.remove(it) }
+        }
+      })
+      start()
+    }
+  }
 
   fun getSelectedVersePopupPosition(): IntArray? {
     return if (highlightedStartPosition > -1) {
@@ -242,6 +317,8 @@ internal class TranslationAdapter(
       this.inlineAyahColor = QuranAccent.current.light.toArgb()
     }
 
+    this.paperBackgroundColor = quranSettings.pageThemeBackgroundColor
+
     if (this.data.isNotEmpty()) {
       notifyDataSetChanged()
     }
@@ -255,6 +332,23 @@ internal class TranslationAdapter(
         onVerseSelectedListener.onVerseSelected(ayahInfo)
         return
       }
+    }
+    if (QuranMemorizationManager.isHiddenModeEnabled()) {
+      val tappedAyah = if (position != RecyclerView.NO_POSITION && position < data.size) {
+        data[position].ayahInfo.asSuraAyah()
+      } else null
+      val page = QuranMemorizationManager.uiState.value.currentPage
+      val pagerActivity = context as? com.quran.labs.androidquran.ui.PagerActivity
+      if (pagerActivity != null) {
+        pagerActivity.handleMemorizationTapOnPage(page, tappedAyah)
+      } else {
+        QuranMemorizationManager.revealNextOnPage(
+          page = page,
+          context = context,
+          targetAyah = tappedAyah
+        )
+      }
+      return
     }
     onClickListener.onClick(view)
   }
@@ -334,18 +428,13 @@ internal class TranslationAdapter(
           text = row.data
           holder.text.setBackgroundColor(suraHeaderColor)
         } else if (row.type == TranslationViewRow.Type.BASMALLAH || row.type == TranslationViewRow.Type.QURAN_TEXT) {
-          val str = SpannableString(
-            if (row.type == TranslationViewRow.Type.BASMALLAH) {
-              ArabicDatabaseUtils.AR_BASMALLAH
-            } else {
-              ArabicDatabaseUtils.getAyahWithoutBasmallah(
-                row.ayahInfo.sura, row.ayahInfo.ayah, row.ayahInfo.arabicText!!
-              )
+          text = if (row.type == TranslationViewRow.Type.BASMALLAH) {
+            SpannableString(ArabicDatabaseUtils.AR_BASMALLAH).apply {
+              setSpan(UthmaniSpan(context), 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
-          )
-          str.setSpan(UthmaniSpan(context), 0, str.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-          text = str
+          } else {
+            buildMemorizationAwareQuranText(row.ayahInfo)
+          }
           holder.text.setTextColor(arabicTextColor)
           holder.text.textSize = ARABIC_MULTIPLIER * ayahFontSize
         } else {
@@ -602,6 +691,67 @@ internal class TranslationAdapter(
 
   internal interface OnJumpToAyahListener {
     fun onJumpToAyah(target: SuraAyah, page: Int)
+  }
+
+  private fun buildMemorizationAwareQuranText(ayahInfo: QuranAyahInfo): SpannableString {
+    val suraAyah = SuraAyah(ayahInfo.sura, ayahInfo.ayah)
+    val rawArabic = ayahInfo.arabicText?.let {
+      ArabicDatabaseUtils.getAyahWithoutBasmallah(ayahInfo.sura, ayahInfo.ayah, it)
+    } ?: FallbackMushafPageRenderer.getWordsForAyah(suraAyah).joinToString(" ")
+
+    val medallionToken = "﴿${FallbackMushafPageRenderer.formatArabicDigits(ayahInfo.ayah)}﴾"
+    val rawTokens = rawArabic.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+    val wordTokens = rawTokens.filterNot { token ->
+      token.startsWith("﴿") && token.endsWith("﴾")
+    }.ifEmpty { FallbackMushafPageRenderer.getWordsForAyah(suraAyah) }
+
+    val page = QuranMemorizationManager.uiState.value.currentPage
+    QuranMemorizationManager.registerAyahWordCountFromText(page, suraAyah, wordTokens.size)
+
+    val builder = SpannableStringBuilder()
+    val isHiddenMode = QuranMemorizationManager.isHiddenModeEnabled()
+
+    for (index in wordTokens.indices) {
+      val wordPos = index + 1
+      val word = wordTokens[index]
+      val start = builder.length
+      builder.append(word)
+      val end = builder.length
+      builder.append(' ')
+
+      val key = "${suraAyah.sura}:${suraAyah.ayah}:$wordPos"
+      val animFraction = wordAnimationFractions[key]
+      val isRevealed = QuranMemorizationManager.isWordRevealed(page, suraAyah, wordPos)
+
+      val revealFraction = when {
+        !isHiddenMode && animFraction == null -> 1f
+        animFraction != null -> animFraction.coerceIn(0f, 1f)
+        isRevealed -> 1f
+        else -> 0f
+      }
+
+      val wordColor = ColorUtils.blendARGB(paperBackgroundColor, arabicTextColor, revealFraction)
+      builder.setSpan(
+        ForegroundColorSpan(wordColor),
+        start,
+        end,
+        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+      )
+    }
+
+    // End-of-ayah medallion (﴿١﴾) always remains visible in place in arabicTextColor
+    val medallionStart = builder.length
+    builder.append(medallionToken)
+    builder.setSpan(
+      ForegroundColorSpan(arabicTextColor),
+      medallionStart,
+      builder.length,
+      Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
+
+    val spannable = SpannableString(builder)
+    spannable.setSpan(UthmaniSpan(context), 0, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    return spannable
   }
 
   companion object {

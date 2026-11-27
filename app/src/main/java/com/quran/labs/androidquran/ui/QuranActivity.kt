@@ -343,6 +343,9 @@ class QuranActivity : AppCompatActivity(),
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (val itemId = item.itemId) {
+      R.id.kids_mode -> {
+        com.quran.labs.androidquran.kidsclassroom.KidsModeActivity.start(this)
+      }
       R.id.settings -> {
         startActivity(Intent(this, QuranPreferenceActivity::class.java))
       }
@@ -531,28 +534,28 @@ class QuranActivity : AppCompatActivity(),
   private inner class PagerAdapter(fm: FragmentManager) :
       FragmentPagerAdapter(fm) {
 
-    override fun getCount() = 3
+    override fun getCount() = TITLES.size
 
     override fun getItem(position: Int): Fragment {
       var pos = position
       if (isRtl) {
-        pos = abs(position - 2)
+        pos = abs(position - (TITLES.size - 1))
       }
       return when (pos) {
         SURA_LIST -> SuraListFragment.newInstance()
         JUZ2_LIST -> JuzListFragment.newInstance()
         BOOKMARKS_LIST -> BookmarksFragment.newInstance()
-        else -> BookmarksFragment.newInstance()
+        else -> SuraListFragment.newInstance()
       }
     }
 
     override fun getItemId(position: Int): Long {
-      val pos = if (isRtl) abs(position - 2) else position
+      val pos = if (isRtl) abs(position - (TITLES.size - 1)) else position
       return when (pos) {
         SURA_LIST -> SURA_LIST.toLong()
         JUZ2_LIST -> JUZ2_LIST.toLong()
         BOOKMARKS_LIST -> BOOKMARKS_LIST.toLong()
-        else -> BOOKMARKS_LIST.toLong()
+        else -> SURA_LIST.toLong()
       }
     }
 

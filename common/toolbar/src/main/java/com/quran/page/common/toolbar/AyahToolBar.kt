@@ -182,6 +182,7 @@ class AyahToolBar @JvmOverloads constructor(
       setImageDrawable(item.icon)
       setBackgroundResource(R.drawable.toolbar_button)
       id = item.itemId
+      contentDescription = item.title
       layoutParams = LayoutParams(itemWidth, LayoutParams.MATCH_PARENT)
       setOnClickListener(this@AyahToolBar)
       setOnLongClickListener(this@AyahToolBar)

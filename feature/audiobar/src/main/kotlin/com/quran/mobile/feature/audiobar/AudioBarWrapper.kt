@@ -17,6 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -28,6 +30,7 @@ import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.feature.audiobar.presenter.AudioBarPresenter
+import com.quran.mobile.feature.audiobar.state.AudioBarState
 import com.quran.mobile.feature.audiobar.ui.AudioBar
 import dev.zacsweers.metro.Inject
 
@@ -53,6 +56,11 @@ class AudioBarWrapper @JvmOverloads constructor(
           audioBarPresenter.audioBarPresenter()
         }
       }
+      val currentState by flow.collectAsState()
+      // Keep the Quran reading & memorization page completely clean when audio is idle/stopped.
+      if (currentState is AudioBarState.Stopped) {
+        return@QuranTheme
+      }
       val eventListeners = remember(audioBarPresenter) { audioBarPresenter.eventListeners() }
 
       Card(
@@ -60,7 +68,7 @@ class AudioBarWrapper @JvmOverloads constructor(
         modifier = Modifier.fillMaxWidth()
       ) {
         AudioBar(
-          flow,
+          currentState,
           eventListeners,
           modifier = Modifier
             .padding(

@@ -48,6 +48,8 @@ open class QuranImagePageLayout(context: Context) : QuranPageLayout(context) {
     imageView.setOnTouchListener(gestureListener)
     imageView.isClickable = true
     imageView.isLongClickable = true
+    setOnTouchListener(gestureListener)
+    isClickable = true
   }
 
   fun getImageView(): HighlightingImageView = imageView

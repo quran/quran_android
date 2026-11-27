@@ -71,6 +71,7 @@ open class QuranApplication : Application(), QuranApplicationComponentProvider, 
   open fun initializeWorkManager() {
     if (UserManagerCompat.isUserUnlocked(this)) {
       WorkManager.initialize(this, workManagerConfiguration)
+      com.quran.labs.androidquran.flashcards.FlashcardDueNotificationScheduler.initialize(this)
     }
   }
 }

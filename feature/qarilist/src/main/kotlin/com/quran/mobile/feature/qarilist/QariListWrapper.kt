@@ -52,10 +52,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class QariListWrapper(
+class QariListWrapper @JvmOverloads constructor(
   context: Context,
   private val startAyah: SuraAyah,
   private val endAyah: SuraAyah,
+  private val onDismissed: () -> Unit = {},
 ): FrameLayout(context) {
 
   @Inject
@@ -93,16 +94,21 @@ class QariListWrapper(
 
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
-    val closeDialog = {
+    var dismissed by remember { mutableStateOf(false) }
+    val closeDialog: () -> Unit = {
       focusManager.clearFocus()
       coroutineScope.launch {
         state.bottomSheetState.hide()
+        if (!dismissed) {
+          dismissed = true
+          onDismissed()
+        }
       }
     }
 
-    val onQariSelected = { qari: QariItem ->
-      closeDialog()
+    val onQariSelected: (QariItem) -> Unit = { qari: QariItem ->
       currentQariManager.setCurrentQari(qari.id)
+      closeDialog()
     }
 
     var searchQuery by remember { mutableStateOf("") }
@@ -192,8 +198,19 @@ class QariListWrapper(
           hasExpanded.value = true
         }
 
-        if (hasExpanded.value && state.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) {
-          closeDialog()
+        if (hasExpanded.value &&
+          (state.bottomSheetState.currentValue == SheetValue.PartiallyExpanded ||
+              state.bottomSheetState.currentValue == SheetValue.Hidden)
+        ) {
+          LaunchedEffect(state.bottomSheetState.currentValue) {
+            if (state.bottomSheetState.currentValue == SheetValue.PartiallyExpanded) {
+              state.bottomSheetState.hide()
+            }
+            if (!dismissed) {
+              dismissed = true
+              onDismissed()
+            }
+          }
         }
       }
     }

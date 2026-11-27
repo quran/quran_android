@@ -30,4 +30,12 @@
 
   <color name="text_primary">#ffffffff</color>
   <color name="text_hint_color">#80ffffff</color>
+
+  <!-- Memorization (Hifz) Hide & Reveal Colors - Night -->
+  <color name="mushaf_paper_color">#ff121212</color>
+  <color name="memorization_bar_bg">#ff24282e</color>
+  <color name="memorization_bar_stroke">#33ffffff</color>
+  <color name="memorization_selected_bg">#ffe2af56</color>
+  <color name="memorization_selected_text">#ff000000</color>
+  <color name="memorization_unselected_text">#ffffffff</color>
 </resources>

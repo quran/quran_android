@@ -138,9 +138,7 @@ public class TranslationView extends FrameLayout implements View.OnClickListener
 
       rows.add(new TranslationViewRow(TranslationViewRow.Type.VERSE_NUMBER, verse));
 
-      if (verse.arabicText != null) {
-        rows.add(new TranslationViewRow(TranslationViewRow.Type.QURAN_TEXT, verse));
-      }
+      rows.add(new TranslationViewRow(TranslationViewRow.Type.QURAN_TEXT, verse));
 
       final LocalTranslation[] sortedTranslations = Arrays.copyOf(translations, translations.length);
       Arrays.sort(sortedTranslations, new LocalTranslationDisplaySort());

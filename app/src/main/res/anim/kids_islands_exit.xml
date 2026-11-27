@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Progress Islands softly receding while entering a lesson -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/fast_out_slow_in"
+    android:shareInterpolator="true">
+  <alpha
+      android:duration="180"
+      android:fromAlpha="1.0"
+      android:toAlpha="0.88" />
+  <scale
+      android:duration="200"
+      android:fromXScale="1.0"
+      android:fromYScale="1.0"
+      android:pivotX="50%"
+      android:pivotY="50%"
+      android:toXScale="1.02"
+      android:toYScale="1.02" />
+</set>

@@ -1,30 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:keepScreenOn="true"
     >
 
-  <androidx.viewpager.widget.NonRestoringViewPager
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:id="@+id/quran_pager"
-      />
-
-  <com.quran.page.common.toolbar.AyahToolBar
-      android:id="@+id/ayah_toolbar"
-      android:layout_width="wrap_content"
-      android:layout_height="@dimen/toolbar_total_height"
-      android:visibility="gone"
-      />
-
-  <FrameLayout
+  <LinearLayout
       android:id="@+id/toolbar_area"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:orientation="vertical"
       android:background="@color/toolbar"
+      android:elevation="4dp"
       >
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -35,7 +25,6 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
         app:titleTextAppearance="@style/ToolbarTitleText"
         app:subtitleTextAppearance="@style/ToolbarSubtitleText"
-        android:elevation="4dp"
         >
       <com.quran.labs.androidquran.view.QuranSpinner
           android:id="@+id/spinner"
@@ -44,13 +33,100 @@
           android:visibility="gone"
           />
     </androidx.appcompat.widget.Toolbar>
-  </FrameLayout>
 
-  <com.quran.mobile.feature.audiobar.AudioBarWrapper
-      android:id="@+id/audio_area"
+    <com.quran.labs.androidquran.memorization.MemorizationBottomBarView
+        android:id="@+id/memorization_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        />
+  </LinearLayout>
+
+  <LinearLayout
+      android:id="@+id/reader_body_container"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_gravity="bottom"
-      android:visibility="gone"
-      />
-</FrameLayout>
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:orientation="vertical"
+      >
+
+    <FrameLayout
+        android:id="@+id/top_recitation_dock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <FrameLayout
+        android:id="@+id/page_area_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+
+      <androidx.viewpager.widget.NonRestoringViewPager
+          android:id="@+id/quran_pager"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          />
+
+      <com.quran.page.common.toolbar.AyahToolBar
+          android:id="@+id/ayah_toolbar"
+          android:layout_width="wrap_content"
+          android:layout_height="@dimen/toolbar_total_height"
+          android:visibility="gone"
+          />
+
+      <LinearLayout
+          android:id="@+id/bottom_bar_container"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_gravity="bottom"
+          android:orientation="vertical"
+          >
+        <com.quran.mobile.feature.audiobar.AudioBarWrapper
+            android:id="@+id/audio_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            />
+      </LinearLayout>
+
+      <ImageButton
+          android:id="@+id/subtle_options_reveal_btn"
+          android:layout_width="48dp"
+          android:layout_height="48dp"
+          android:layout_gravity="bottom|end"
+          android:layout_marginEnd="6dp"
+          android:layout_marginBottom="4dp"
+          android:background="@drawable/bg_subtle_options_pill"
+          android:src="@drawable/ic_recitation_options"
+          android:scaleType="centerInside"
+          android:padding="14dp"
+          android:alpha="0.62"
+          android:contentDescription="@string/memorization_options_menu"
+          />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_recitation_dock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+      <com.quran.labs.androidquran.memorization.tasmee.TasmeeBottomRecordingBarView
+          android:id="@+id/tasmee_bottom_recording_bar"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:visibility="gone"
+          />
+
+      <com.quran.labs.androidquran.kidsclassroom.KidsClassroomOverlayView
+          android:id="@+id/kids_classroom_overlay"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:visibility="gone"
+          />
+    </LinearLayout>
+  </LinearLayout>
+</LinearLayout>

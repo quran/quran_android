@@ -1,0 +1,30 @@
+{
+  "schema": "tilawi-teacher-qaris-v1",
+  "default_qari_id": "husary_muallim",
+  "stop_reference_qari_id": "husary_muallim",
+  "qaris": [
+    {
+      "qari_id": "husary_muallim",
+      "name_en": "Mahmoud Khalil Al-Husary (Muallim)",
+      "name_ar": "محمود خليل الحصري (المعلم)",
+      "is_default": true,
+      "is_stop_reference": true,
+      "has_children_repeat": false,
+      "stream_base_url": "https://everyayah.com/data/Husary_Muallim_128kbps/",
+      "json_file": "husary_muallim_full.json",
+      "total_ayat": 6236
+    },
+    {
+      "qari_id": "minshawi_teacher",
+      "name_en": "Mohamed Siddiq Al-Minshawi (Teacher with Children)",
+      "name_ar": "محمد صديق المنشاوي (المعلم مع الأطفال)",
+      "is_default": false,
+      "is_stop_reference": false,
+      "stop_reference": "husary_muallim",
+      "has_children_repeat": true,
+      "stream_base_url": "https://everyayah.com/data/Minshawy_Teacher_128kbps/",
+      "json_file": "minshawi_teacher_full.json",
+      "total_ayat": 6236
+    }
+  ]
+}

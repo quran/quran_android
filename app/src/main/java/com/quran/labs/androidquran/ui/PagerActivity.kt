@@ -32,6 +32,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -103,6 +104,7 @@ import com.quran.labs.androidquran.ui.fragment.TranslationFragment
 import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener
 import com.quran.labs.androidquran.ui.helpers.AyahTracker
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
+import com.quran.labs.androidquran.ui.helpers.MushafPageFlipTransformer
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
 import com.quran.labs.androidquran.ui.helpers.QuranNavigator
 import com.quran.labs.androidquran.ui.helpers.QuranPage
@@ -119,6 +121,24 @@ import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.ShareUtil
+import com.quran.labs.androidquran.kidsclassroom.ClassroomStage
+import com.quran.labs.androidquran.kidsclassroom.KidsAyahCelebrationOverlayView
+import com.quran.labs.androidquran.kidsclassroom.KidsSurahAnalysisOverlayView
+import com.quran.labs.androidquran.kidsclassroom.KidsClassroomManager
+import com.quran.labs.androidquran.kidsclassroom.KidsClassroomOverlayView
+import com.quran.labs.androidquran.kidsclassroom.KidsClassroomUiState
+import com.quran.labs.androidquran.kidsclassroom.MinshawiJuz30Repository
+import com.quran.labs.androidquran.memorization.KidsClassroomOptionsOverlayView
+import com.quran.labs.androidquran.memorization.MemorizationBottomBarView
+import com.quran.labs.androidquran.memorization.MemorizationControlsSheetOverlayView
+import com.quran.labs.androidquran.memorization.MemorizationFormatting
+import com.quran.labs.androidquran.memorization.MemorizationRepetitionOverlayView
+import com.quran.labs.androidquran.memorization.MemorizationTapOutcome
+import com.quran.labs.androidquran.memorization.QuranMemorizationManager
+import com.quran.labs.androidquran.memorization.RevealMode
+import com.quran.labs.androidquran.memorization.WordWindowSetupOverlayView
+import com.quran.labs.androidquran.memorization.tasmee.LiveTasmeeManager
+import com.quran.labs.androidquran.memorization.tasmee.TasmeeBottomRecordingBarView
 import com.quran.labs.androidquran.view.IconPageIndicator
 import com.quran.labs.androidquran.view.QuranSpinner
 import com.quran.labs.androidquran.view.SlidingUpPanelLayout
@@ -185,7 +205,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   ActivityCompat.OnRequestPermissionsResultCallback, AudioPresenterScreen,
   ReadingBookmarkPresenter.Screen {
   private var lastPopupTime: Long = 0
-  private var isActionBarHidden = true
+  private var isActionBarHidden = false
   private var shouldReconnect = false
   private var showingTranslation = false
   private var needsPermissionToDownloadOver3g = true
@@ -203,10 +223,19 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private var activeTranslationsFilesNames: Set<String?>? = null
   private var translationsSpinnerAdapter: TranslationsSpinnerAdapter? = null
 
+  private lateinit var bottomBarContainer: View
+  private lateinit var memorizationBar: MemorizationBottomBarView
+  private lateinit var tasmeeBottomRecordingBar: TasmeeBottomRecordingBarView
+  private lateinit var kidsClassroomOverlay: KidsClassroomOverlayView
+  private var subtleOptionsRevealBtn: View? = null
   private lateinit var audioStatusBar: AudioBarWrapper
   private lateinit var viewPager: ViewPager
+  private var isProgrammaticRecitationPageTurn = false
+  private var lastObservedReaderPage = -1
+  private var activeCelebrationEventId: Long = -1L
   private val themePreferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
     if (key in PAGE_COLOR_PREFERENCES) {
+      syncReaderSurfaceBackground()
       refreshQuranPages()
     }
   }
@@ -220,15 +249,24 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private lateinit var toolBarArea: View
 
   private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
+  private var requestMicPermissionLauncher: ActivityResultLauncher<String>? = null
 
   private var isSplitScreen = false
 
   private lateinit var onClearAyahModeBackCallback: OnBackPressedCallback
   private lateinit var onShowingTranslationBackCallback: OnBackPressedCallback
   private lateinit var onEndSessionBackCallback: OnBackPressedCallback
+  private lateinit var onKidsClassroomBackCallback: OnBackPressedCallback
+  private lateinit var onLiveTasmeeBackCallback: OnBackPressedCallback
+  private var pendingMicRequester: Int = MIC_REQUESTER_NONE
+  private var isKidsSessionMode: Boolean = false
+  private var kidsSessionInitialStars: Int = 0
+  private var kidsSessionInitialSurahMastered: Int = 0
+  private var kidsSessionSurah: Int = 1
 
   private var lastSelectedTranslationAyah: QuranAyahInfo? = null
   private var lastActivatedLocalTranslations: Array<LocalTranslation> = emptyArray()
+  private var flashcardRatingDialog: AlertDialog? = null
 
   @Inject lateinit var quranNavigator: QuranNavigator
 
@@ -265,6 +303,55 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private lateinit var compositeDisposable: CompositeDisposable
   private val foregroundDisposable = CompositeDisposable()
   private val scope = MainScope()
+
+  private val kidsNavigateCallback: (SuraAyah) -> Unit = { targetAyah ->
+    isProgrammaticRecitationPageTurn = true
+    try {
+      ensurePage(targetAyah.sura, targetAyah.ayah)
+      refreshQuranPages()
+    } finally {
+      isProgrammaticRecitationPageTurn = false
+    }
+  }
+  private val kidsMicPermissionCallback: () -> Unit = {
+    pendingMicRequester = MIC_REQUESTER_KIDS_CLASSROOM
+    requestMicPermissionLauncher?.launch(Manifest.permission.RECORD_AUDIO)
+  }
+  private val tasmeeMicPermissionCallback: () -> Unit = {
+    pendingMicRequester = MIC_REQUESTER_LIVE_TASMEE
+    requestMicPermissionLauncher?.launch(Manifest.permission.RECORD_AUDIO)
+  }
+  private val tasmeeAdvancePageCallback: (Int) -> Unit = { completedPage ->
+    if (canShowUi()) {
+      isProgrammaticRecitationPageTurn = true
+      try {
+        handleMemorizationTapOnPage(completedPage)
+      } finally {
+        isProgrammaticRecitationPageTurn = false
+      }
+    }
+  }
+  private val tasmeeStopPlaybackCallback: () -> Unit = {
+    onStopPressed()
+  }
+  private val tasmeeWordsRevealedCallback: () -> Unit = {
+    if (!isFinishing) {
+      refreshQuranPages()
+    }
+  }
+  private val tasmeeJumpToPageCallback: (Int) -> Unit = { targetPage ->
+    if (canShowUi()) {
+      isProgrammaticRecitationPageTurn = true
+      try {
+        val clampedPage = targetPage.coerceIn(1, 604)
+        val pos = quranInfo.getPositionFromPage(clampedPage, isDualPageVisible)
+        viewPager.setCurrentItem(pos, true)
+        refreshQuranPages()
+      } finally {
+        isProgrammaticRecitationPageTurn = false
+      }
+    }
+  }
 
   val pagerActivityComponent: PagerActivityComponent by lazy {
     (application as QuranApplication)
@@ -345,6 +432,79 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
           isGranted!!
         )
       }
+    requestMicPermissionLauncher =
+      registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean? ->
+        val granted = isGranted == true
+        val requester = pendingMicRequester
+        pendingMicRequester = MIC_REQUESTER_NONE
+        if (requester == MIC_REQUESTER_LIVE_TASMEE) {
+          LiveTasmeeManager.onRecordAudioPermissionResult(this, granted, currentPage, quranInfo)
+          onLiveTasmeeBackCallback.isEnabled = LiveTasmeeManager.isEnabled()
+          refreshQuranPages()
+          supportInvalidateOptionsMenu()
+          if (!granted) {
+            makeText(this, R.string.live_tasmee_mic_permission_needed, Toast.LENGTH_SHORT).show()
+          }
+        } else {
+          KidsClassroomManager.onRecordAudioPermissionResult(this, granted)
+          if (!granted) {
+            makeText(this, R.string.kids_classroom_mic_permission_needed, Toast.LENGTH_SHORT).show()
+          }
+        }
+      }
+    KidsClassroomManager.onNavigateToAyahPage = kidsNavigateCallback
+    KidsClassroomManager.onRequestMicPermission = kidsMicPermissionCallback
+    LiveTasmeeManager.onRequestMicPermission = tasmeeMicPermissionCallback
+    LiveTasmeeManager.onAdvancePageOrLoopRange = tasmeeAdvancePageCallback
+    LiveTasmeeManager.onStopPlaybackAudio = tasmeeStopPlaybackCallback
+    LiveTasmeeManager.onWordsRevealed = tasmeeWordsRevealedCallback
+    LiveTasmeeManager.onJumpToPage = tasmeeJumpToPageCallback
+
+    lifecycleScope.launch {
+      lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+        launch {
+          QuranMemorizationManager.uiState.collect {
+            syncMemorizationAndTasmeeBarsVisibility()
+          }
+        }
+        launch {
+          LiveTasmeeManager.uiState.collect {
+            syncMemorizationAndTasmeeBarsVisibility()
+          }
+        }
+        launch {
+          KidsClassroomManager.uiState.collect { kidsState ->
+            syncMemorizationAndTasmeeBarsVisibility()
+            syncKidsAyahCelebrationOverlay(kidsState)
+          }
+        }
+      }
+    }
+
+    val kidsSessionRequested = intent?.getBooleanExtra(EXTRA_KIDS_SESSION_MODE, false) == true ||
+      savedInstanceState?.getBoolean(LAST_KIDS_SESSION_MODE, false) == true
+    val kidsPracticeSurah = intent?.getIntExtra(EXTRA_START_KIDS_MODE_SURAH, -1) ?: -1
+    val kidsPracticeAyah = intent?.getIntExtra(EXTRA_START_KIDS_MODE_AYAH, 1)?.coerceAtLeast(1) ?: 1
+    val kidsAutoModeRaw = intent?.getStringExtra(EXTRA_START_KIDS_AUTO_MODE)
+    if (kidsSessionRequested || kidsPracticeSurah in 1..114) {
+      isKidsSessionMode = true
+      intent?.removeExtra(EXTRA_KIDS_SESSION_MODE)
+    }
+    if (kidsPracticeSurah in 1..114) {
+      intent?.removeExtra(EXTRA_START_KIDS_MODE_SURAH)
+      intent?.removeExtra(EXTRA_START_KIDS_MODE_AYAH)
+      intent?.removeExtra(EXTRA_START_KIDS_AUTO_MODE)
+      val launchMode = com.quran.labs.androidquran.kidsclassroom.KidsLessonLaunchMode.entries
+        .firstOrNull { it.name == kidsAutoModeRaw }
+        ?: com.quran.labs.androidquran.kidsclassroom.KidsLessonLaunchMode.OPEN_READY
+      startKidsModeForSurah(kidsPracticeSurah, kidsPracticeAyah, launchMode)
+    } else if (intent?.getBooleanExtra(EXTRA_START_CHILDREN_LEARNING_MODE, false) == true) {
+      intent.removeExtra(EXTRA_START_CHILDREN_LEARNING_MODE)
+      activateOrToggleChildrenLearningMode(forceEnable = true)
+    } else if (intent?.getBooleanExtra(EXTRA_START_LIVE_TASMEE_MODE, false) == true) {
+      intent.removeExtra(EXTRA_START_LIVE_TASMEE_MODE)
+      activateOrToggleLiveTasmeeMode(forceEnable = true)
+    }
 
     // read the list of translations
     requestTranslationsList()
@@ -418,15 +578,12 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     window.setBackgroundDrawable(null)
 
     var page = -1
-    isActionBarHidden = true
+    isActionBarHidden = false
     if (savedInstanceState != null) {
       Timber.d("non-null saved instance state!")
       page = savedInstanceState.getInt(LAST_READ_PAGE, -1)
       showingTranslation = savedInstanceState
         .getBoolean(LAST_READING_MODE_IS_TRANSLATION, false)
-      if (savedInstanceState.containsKey(LAST_ACTIONBAR_STATE)) {
-        isActionBarHidden = !savedInstanceState.getBoolean(LAST_ACTIONBAR_STATE)
-      }
       val lastWasDualPages = savedInstanceState.getBoolean(LAST_WAS_DUAL_PAGES, isDualPages)
       shouldAdjustPageNumber = (lastWasDualPages != isDualPages)
     } else {
@@ -452,7 +609,140 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     compositeDisposable = CompositeDisposable()
 
+    bottomBarContainer = findViewById(R.id.bottom_bar_container)
+    memorizationBar = findViewById(R.id.memorization_bar)
+    tasmeeBottomRecordingBar = findViewById(R.id.tasmee_bottom_recording_bar)
+    kidsClassroomOverlay = findViewById(R.id.kids_classroom_overlay)
+    subtleOptionsRevealBtn = findViewById(R.id.subtle_options_reveal_btn)
     audioStatusBar = findViewById(R.id.audio_area)
+
+    syncReaderSurfaceBackground()
+    QuranMemorizationManager.ensurePreferencesLoaded(this)
+
+    subtleOptionsRevealBtn?.setOnClickListener {
+      showMemorizationControlsSheet()
+    }
+    tasmeeBottomRecordingBar.onMicTapped = {
+      LiveTasmeeManager.onMicButtonTapped(this@PagerActivity, currentPage, quranInfo)
+      syncMemorizationAndTasmeeBarsVisibility()
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+    }
+    tasmeeBottomRecordingBar.onStopRecording = {
+      stopActiveRecitationRecording()
+    }
+    tasmeeBottomRecordingBar.onRetryDownload = {
+      LiveTasmeeManager.retryDownloadIfNeeded(this@PagerActivity)
+    }
+    tasmeeBottomRecordingBar.onSelectRevealMode = { mode ->
+      QuranMemorizationManager.setRevealMode(mode, this@PagerActivity)
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+    }
+    tasmeeBottomRecordingBar.onOpenOptions = {
+      showMemorizationControlsSheet()
+    }
+    tasmeeBottomRecordingBar.onPreviousAyah = {
+      LiveTasmeeManager.goToPreviousAyah(this@PagerActivity)
+    }
+    tasmeeBottomRecordingBar.onNextAyah = {
+      LiveTasmeeManager.skipToNextAyah(this@PagerActivity)
+    }
+    kidsClassroomOverlay.onRequestOptionsSheet = {
+      showKidsClassroomOptionsSheet()
+    }
+    kidsClassroomOverlay.onPreviousAyah = {
+      KidsClassroomManager.goToPreviousAyah(this@PagerActivity, autoPlay = false)
+      refreshQuranPages()
+    }
+    kidsClassroomOverlay.onNextAyah = {
+      KidsClassroomManager.advanceToNextAyah(this@PagerActivity, autoPlay = false)
+      refreshQuranPages()
+    }
+
+    memorizationBar.onToggleHideText = {
+      QuranMemorizationManager.toggleHiddenMode(currentPage, quranInfo, this@PagerActivity)
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+    }
+    memorizationBar.onSelectFullAyahMode = {
+      QuranMemorizationManager.onProminentModeButtonPressed(
+        RevealMode.FULL_AYAH,
+        currentPage,
+        quranInfo,
+        this@PagerActivity
+      )
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+    }
+    memorizationBar.onSelectWordByWordMode = {
+      QuranMemorizationManager.onProminentModeButtonPressed(
+        RevealMode.WORD_BY_WORD,
+        currentPage,
+        quranInfo,
+        this@PagerActivity
+      )
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+    }
+    memorizationBar.onSelectWordWindowMode = {
+      QuranMemorizationManager.onProminentModeButtonPressed(
+        RevealMode.WORD_WINDOW,
+        currentPage,
+        quranInfo,
+        this@PagerActivity
+      )
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+    }
+    memorizationBar.onSelectSingleWordMode = {
+      QuranMemorizationManager.onProminentModeButtonPressed(
+        RevealMode.SINGLE_WORD,
+        currentPage,
+        quranInfo,
+        this@PagerActivity
+      )
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+    }
+    memorizationBar.onSelectSingleWordTajweedMode = {
+      val wasTajweed = quranSettings.pageType == "tajweed"
+      QuranMemorizationManager.onProminentModeButtonPressed(
+        RevealMode.SINGLE_WORD_TAJWEED,
+        currentPage,
+        quranInfo,
+        this@PagerActivity
+      )
+      ensureTajweedPageLoadedOrRefresh(wasTajweed, currentPage)
+    }
+    memorizationBar.onResetPage = {
+      QuranMemorizationManager.resetAllPages(currentPage, quranInfo, this@PagerActivity)
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+    }
+    memorizationBar.onToggleLiveTasmee = {
+      activateOrToggleLiveTasmeeMode(forceEnable = false)
+    }
+    memorizationBar.onRetryTasmeeDownload = {
+      LiveTasmeeManager.retryDownloadIfNeeded(this@PagerActivity)
+    }
+    memorizationBar.showInlineTasmeeStrip = false
+    memorizationBar.isTajweedMushaf = quranSettings.pageType == "tajweed"
+    memorizationBar.onToggleTajweedMushaf = {
+      val nextPageType = if (quranSettings.pageType == "tajweed") "madani" else "tajweed"
+      quranSettings.pageType = nextPageType
+      memorizationBar.isTajweedMushaf = nextPageType == "tajweed"
+      val targetPage = currentPage
+      val isTranslation = showingTranslation
+      val restartIntent = Intent(this@PagerActivity, PagerActivity::class.java).apply {
+        putExtra("page", targetPage)
+        putExtra(EXTRA_JUMP_TO_TRANSLATION, isTranslation)
+      }
+      finish()
+      overridePendingTransition(0, 0)
+      startActivity(restartIntent)
+      overridePendingTransition(0, 0)
+    }
 
     toolBarArea = findViewById(R.id.toolbar_area)
     translationsSpinner = findViewById(R.id.spinner)
@@ -466,6 +756,17 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       )
       view.updatePadding(insets.left, insets.top, insets.right, 0)
       windowInsets
+    }
+
+    (findViewById<View>(R.id.reader_body_container) ?: findViewById<View>(R.id.page_area_container))?.let { bodyArea ->
+      ViewCompat.setOnApplyWindowInsetsListener(bodyArea) { view, windowInsets ->
+        val insets = windowInsets.getInsets(
+          WindowInsetsCompat.Type.navigationBars() or
+              WindowInsetsCompat.Type.displayCutout()
+        )
+        view.updatePadding(insets.left, 0, insets.right, insets.bottom)
+        windowInsets
+      }
     }
 
     val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -514,6 +815,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     viewPager = nonRestoringViewPager
     viewPager.setAdapter(pagerAdapter)
+    MushafPageFlipTransformer.installSmoothFlipping(viewPager)
 
     ayahToolBar.setOnItemSelectedListener(AyahMenuItemSelectionHandler())
     val onPageChangeListener: OnPageChangeListener = object : OnPageChangeListener {
@@ -528,10 +830,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         val currentSelection = readingEventPresenter.currentAyahSelection()
         val selectionIndicator =
           currentSelection.selectionIndicator()
-        val suraAyah = currentSelection.startSuraAyah()
-        if (selectionIndicator !== SelectionIndicator.None && selectionIndicator !== SelectionIndicator.ScrollOnly && suraAyah != null) {
-          val startPage = quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah)
-          val barPos = quranInfo.getPositionFromPage(startPage, isDualPageVisible)
+        val anchorAyah = currentSelection.endSuraAyah() ?: currentSelection.startSuraAyah()
+        if (selectionIndicator !== SelectionIndicator.None && selectionIndicator !== SelectionIndicator.ScrollOnly && anchorAyah != null) {
+          val anchorPage = quranInfo.getPageFromSuraAyah(anchorAyah.sura, anchorAyah.ayah)
+          val barPos = quranInfo.getPositionFromPage(anchorPage, isDualPageVisible)
           if (position == barPos) {
             // Swiping to next ViewPager page (i.e. prev quran page)
             val updatedSelectionIndicator =
@@ -547,7 +849,13 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
               updatedSelectionIndicator
             )
           } else {
-            readingEventPresenterBridge.clearSelectedAyah()
+            // Move floating toolbar offscreen without clearing selectionStart so users can
+            // swipe across pages and long-press an ending ayah for multi-page memorization ranges
+            val updatedSelectionIndicator =
+              selectionIndicator.withXScroll((viewPager.width * 2).toFloat())
+            readingEventPresenterBridge.withSelectionIndicator(
+              updatedSelectionIndicator
+            )
           }
         }
       }
@@ -555,6 +863,34 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       override fun onPageSelected(position: Int) {
         Timber.d("onPageSelected(): %d", position)
         val page = quranInfo.getPageFromPosition(position, isDualPageVisible)
+        if (lastObservedReaderPage != -1 &&
+          page != lastObservedReaderPage &&
+          !isProgrammaticRecitationPageTurn
+        ) {
+          stopActiveRecitationRecording()
+        }
+        lastObservedReaderPage = page
+        QuranMemorizationManager.setCurrentPage(page, quranInfo, this@PagerActivity)
+        if (KidsClassroomManager.isEnabled() && page in 1..604) {
+          val curClassroomAyah = KidsClassroomManager.currentState().currentAyah
+          val curClassroomPage = quranInfo.getPageFromSuraAyah(curClassroomAyah.sura, curClassroomAyah.ayah)
+          val curClassroomPos = quranInfo.getPositionFromPage(curClassroomPage, isDualPageVisible)
+          if (curClassroomPos != position) {
+            val firstSuraOnPage = quranInfo.getSuraOnPage(page)
+            val firstAyahOnPage = quranInfo.getFirstAyahOnPage(page).coerceAtLeast(1)
+            val candidate = SuraAyah(firstSuraOnPage, firstAyahOnPage)
+            if (MinshawiJuz30Repository.isSupportedAyah(candidate)) {
+              KidsClassroomManager.selectAyahAndTurn(this@PagerActivity, candidate, 0, autoPlayLoop = false)
+            }
+          }
+        }
+        val cardToRate = com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.onReaderPageSelected(
+          this@PagerActivity,
+          page
+        )
+        if (cardToRate != null) {
+          showFlashcardRatingDialog(cardToRate)
+        }
 
         if (quranSettings.shouldDisplayMarkerPopup()) {
           lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
@@ -566,16 +902,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
           updateActionBarTitle(page)
         } else {
           refreshActionBarSpinner()
-        }
-
-        // If we're more than 1 page away from ayah selection end ayah mode
-        val suraAyah: SuraAyah? = selectionStart
-        if (suraAyah != null) {
-          val startPage = quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah)
-          val ayahPos = quranInfo.getPositionFromPage(startPage, isDualPageVisible)
-          if (abs((ayahPos - position).toDouble()) > 1) {
-            endAyahMode()
-          }
         }
       }
     }
@@ -601,6 +927,14 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     if (page == 0) {
       onPageChangeListener.onPageSelected(0)
     }
+    lastObservedReaderPage = currentPage
+    QuranMemorizationManager.setCurrentPage(currentPage, quranInfo, this@PagerActivity)
+    syncMemorizationAndTasmeeBarsVisibility()
+    com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.setActiveCardFromIntent(
+      this@PagerActivity,
+      intent?.getStringExtra(com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.EXTRA_FLASHCARD_ID),
+      currentPage
+    )
 
     // just got created, need to reconnect to service
     shouldReconnect = true
@@ -649,6 +983,49 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
     }
     onBackPressedDispatcher.addCallback(this, onShowingTranslationBackCallback)
+
+    onKidsClassroomBackCallback = object : OnBackPressedCallback(KidsClassroomManager.isEnabled() || isKidsSessionMode) {
+      override fun handleOnBackPressed() {
+        if (dismissVisibleOverlayIfAny()) {
+          return
+        }
+        val state = KidsClassroomManager.currentState()
+        if (isKidsLoopActivelyRunning(state)) {
+          // 1st Back press during active audio/recording stops the turn cleanly instead of leaving
+          KidsClassroomManager.stopActiveLoop()
+          syncMemorizationAndTasmeeBarsVisibility()
+          refreshQuranPages()
+          return
+        }
+        if (isKidsSessionMode) {
+          returnToKidsProgressIslands()
+          return
+        }
+        KidsClassroomManager.disableClassroomMode(this@PagerActivity)
+        onKidsClassroomBackCallback.isEnabled = false
+        syncMemorizationAndTasmeeBarsVisibility()
+        refreshQuranPages()
+        supportInvalidateOptionsMenu()
+      }
+    }
+    onBackPressedDispatcher.addCallback(this, onKidsClassroomBackCallback)
+
+    onLiveTasmeeBackCallback = object : OnBackPressedCallback(LiveTasmeeManager.isEnabled()) {
+      override fun handleOnBackPressed() {
+        if (dismissVisibleOverlayIfAny()) {
+          return
+        }
+        if (LiveTasmeeManager.isActivelyListening()) {
+          // 1st Back press pauses listening cleanly back to READY without discarding highlights
+          LiveTasmeeManager.pauseListeningToReady()
+          syncMemorizationAndTasmeeBarsVisibility()
+          refreshQuranPages()
+          return
+        }
+        stopActiveRecitationRecording()
+      }
+    }
+    onBackPressedDispatcher.addCallback(this, onLiveTasmeeBackCallback)
 
     onClearAyahModeBackCallback = object : OnBackPressedCallback(selectionStart != null) {
       override fun handleOnBackPressed() {
@@ -731,15 +1108,120 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
   override fun onWindowFocusChanged(hasFocus: Boolean) {
     super.onWindowFocusChanged(hasFocus)
-    if (hasFocus) {
-      handler.sendEmptyMessageDelayed(MSG_HIDE_ACTIONBAR, DEFAULT_HIDE_AFTER_TIME)
-    } else {
+    if (!hasFocus) {
       handler.removeMessages(MSG_HIDE_ACTIONBAR)
     }
   }
 
   private fun onPageClicked() {
-    toggleActionBar()
+    if (KidsClassroomManager.onMushafPageTapped()) {
+      return
+    }
+    if (QuranMemorizationManager.isHiddenModeEnabled()) {
+      handleMemorizationTapOnPage(currentPage)
+    }
+  }
+
+  fun handleMemorizationTapOnPage(page: Int = currentPage, tappedAyah: SuraAyah? = null) {
+    if (!QuranMemorizationManager.isHiddenModeEnabled()) {
+      return
+    }
+    when (val outcome = QuranMemorizationManager.onMemorizationPageTap(page, quranInfo, this, tappedAyah)) {
+      is MemorizationTapOutcome.NotInHiddenMode -> {
+        // Keep upper and lower bars steady without toggling fullscreen
+      }
+      is MemorizationTapOutcome.Revealed -> {
+        // StateFlow/listener updates the Quran page view in-place
+      }
+      is MemorizationTapOutcome.TurnToNextPage -> {
+        turnToNextPageInMemorization(fromPage = page, explicitTargetPage = outcome.nextPage)
+      }
+      is MemorizationTapOutcome.LoopBackToRangeStart -> {
+        val targetPos = quranInfo.getPositionFromPage(outcome.targetPage, isDualPageVisible)
+        if (viewPager.currentItem != targetPos) {
+          viewPager.setCurrentItem(targetPos, true)
+        }
+        QuranMemorizationManager.setCurrentPage(outcome.targetPage, quranInfo, this)
+        refreshQuranPages()
+        supportInvalidateOptionsMenu()
+
+        if (outcome.completedRepetitions > 0) {
+          val isArabic = com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.isAppInArabicMode(this)
+          val res = MemorizationFormatting.localizedResources(this, isArabic)
+          val completedStr = com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.formatNumber(
+            outcome.completedRepetitions,
+            isArabic
+          )
+          val msg = if (outcome.targetRepetitions == QuranMemorizationManager.REPEAT_UNLIMITED) {
+            res.getString(R.string.memorization_repeat_loop_unlimited_toast, completedStr)
+          } else {
+            val targetStr = com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.formatNumber(
+              outcome.targetRepetitions,
+              isArabic
+            )
+            res.getString(R.string.memorization_repeat_loop_toast, completedStr, targetStr)
+          }
+          makeText(this, msg, Toast.LENGTH_SHORT).show()
+        }
+      }
+      is MemorizationTapOutcome.RangeRepetitionsCompleted -> {
+        supportInvalidateOptionsMenu()
+        val isArabic = com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.isAppInArabicMode(this)
+        val res = MemorizationFormatting.localizedResources(this, isArabic)
+        makeText(
+          this,
+          res.getString(R.string.memorization_repeat_completed_toast),
+          Toast.LENGTH_SHORT
+        ).show()
+      }
+      is MemorizationTapOutcome.EndOfPageReached -> {
+        val activeCard = com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.getActiveCard(this)
+        if (activeCard != null && page == activeCard.endPage) {
+          showFlashcardRatingDialog(activeCard)
+        }
+      }
+    }
+  }
+
+  fun turnToNextPageInMemorization(
+    fromPage: Int = currentPage,
+    explicitTargetPage: Int = fromPage + 1
+  ): Boolean {
+    val nextPage = explicitTargetPage
+    if (quranInfo.isValidPage(nextPage)) {
+      val nextPos = quranInfo.getPositionFromPage(nextPage, isDualPageVisible)
+      if (nextPos != viewPager.currentItem) {
+        viewPager.setCurrentItem(nextPos, true)
+        return true
+      } else if (isDualPageVisible) {
+        val nextOutcome = QuranMemorizationManager.onMemorizationPageTap(nextPage, quranInfo, this)
+        if (nextOutcome is MemorizationTapOutcome.Revealed) {
+          return true
+        } else if (nextOutcome is MemorizationTapOutcome.LoopBackToRangeStart) {
+          val targetPos = quranInfo.getPositionFromPage(nextOutcome.targetPage, true)
+          if (viewPager.currentItem != targetPos) {
+            viewPager.setCurrentItem(targetPos, true)
+          }
+          refreshQuranPages()
+          supportInvalidateOptionsMenu()
+          return true
+        } else if (nextOutcome is MemorizationTapOutcome.TurnToNextPage &&
+          quranInfo.isValidPage(nextOutcome.nextPage)
+        ) {
+          val nextSpreadPos = quranInfo.getPositionFromPage(nextOutcome.nextPage, true)
+          if (nextSpreadPos != viewPager.currentItem) {
+            viewPager.setCurrentItem(nextSpreadPos, true)
+            return true
+          }
+        }
+      }
+    }
+
+    val activeCard = com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.getActiveCard(this)
+    if (activeCard != null && fromPage == activeCard.endPage) {
+      showFlashcardRatingDialog(activeCard)
+    }
+    return false
   }
 
   private fun onAudioPlaybackAyahChanged(suraAyah: SuraAyah?) {
@@ -758,6 +1240,12 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     if (haveSelection) {
       val startPosition = startPosition(ayahSelection)
+      if (KidsClassroomManager.isEnabled() && startPosition != null && MinshawiJuz30Repository.isSupportedAyah(startPosition)) {
+        KidsClassroomManager.selectAyahAndTurn(this, startPosition, 0, autoPlayLoop = false)
+        endAyahMode()
+        refreshQuranPages()
+        return
+      }
       updateLocalTranslations(startPosition)
       onClearAyahModeBackCallback.isEnabled = selectionStart != null
     } else {
@@ -782,92 +1270,31 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
   }
 
-  private fun setUiVisibility(isVisible: Boolean) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-      setUiVisibilityR(isVisible)
-    } else {
-      setUiVisibilityKitKat(isVisible)
+  private fun setUiVisibility(@Suppress("UNUSED_PARAMETER") isVisible: Boolean) {
+    // Keep system bars, top toolbar, and bottom container permanently steady to eliminate screen-tap flickering
+    isActionBarHidden = false
+    if (::toolBarArea.isInitialized) {
+      toolBarArea.translationY = 0f
     }
-  }
-
-  private fun setUiVisibilityR(isVisible: Boolean) {
-    if (isVisible) {
-      windowInsetsController.show(
-        WindowInsetsCompat.Type.statusBars() or
-            WindowInsetsCompat.Type.navigationBars()
-      )
-    } else {
-      windowInsetsController.hide(
-        WindowInsetsCompat.Type.statusBars() or
-            WindowInsetsCompat.Type.navigationBars()
-      )
-      windowInsetsController.systemBarsBehavior =
-        WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-    }
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode) {
-      animateToolBar(isVisible)
-    }
-  }
-
-  private fun setUiVisibilityKitKat(isVisible: Boolean) {
-    var flags = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
-    if (!isVisible) {
-      flags = flags or (View.SYSTEM_UI_FLAG_LOW_PROFILE
-          or View.SYSTEM_UI_FLAG_FULLSCREEN
-          or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-          or View.SYSTEM_UI_FLAG_IMMERSIVE)
-    }
-    viewPager.systemUiVisibility = flags
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode) {
-      animateToolBar(isVisible)
+    if (::bottomBarContainer.isInitialized) {
+      bottomBarContainer.translationY = 0f
     }
   }
 
   private fun setUiVisibilityListener() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-      ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets ->
-        val isStatusBarVisible = insets.isVisible(WindowInsetsCompat.Type.statusBars())
-        // on devices with "hide full screen indicator" or "hide the bottom bar,"
-        // this always returns false, which causes the touches to not work.
-        val isNavigationBarVisible = insets.isVisible(WindowInsetsCompat.Type.navigationBars())
-
-        // as a fix for the aforementioned point, make either one's visibility suggest
-        // visibility (instead of requiring both to agree).
-        val isVisible = isStatusBarVisible || isNavigationBarVisible
-
-        animateToolBar(isVisible)
-        insets
-      }
-    } else {
-      viewPager.setOnSystemUiVisibilityChangeListener { flags: Int ->
-        val visible = (flags and View.SYSTEM_UI_FLAG_FULLSCREEN) == 0
-        animateToolBar(visible)
-      }
-    }
+    isActionBarHidden = false
+    toolBarArea.translationY = 0f
+    bottomBarContainer.translationY = 0f
   }
 
   private fun clearUiVisibilityListener() {
     viewPager.setOnSystemUiVisibilityChangeListener(null)
   }
 
-  private fun animateToolBar(visible: Boolean) {
-    isActionBarHidden = !visible
-
-    // animate toolbar
-    toolBarArea.animate()
-      .translationY((if (visible) 0 else -toolBarArea.height).toFloat())
-      .setDuration(250)
-      .start()
-
-    // and audio bar
-    audioStatusBar.animate()
-      .translationY((if (visible) 0 else audioStatusBar.height).toFloat())
-      .setDuration(250)
-      .start()
+  private fun animateToolBar(@Suppress("UNUSED_PARAMETER") visible: Boolean) {
+    isActionBarHidden = false
+    toolBarArea.translationY = 0f
+    bottomBarContainer.translationY = 0f
   }
 
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -895,6 +1322,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   public override fun onResume() {
     super.onResume()
     quranSettings.registerPreferencesListener(themePreferencesListener)
+    syncReaderSurfaceBackground()
     refreshQuranPages()
 
     audioPresenter.bind(this)
@@ -1094,22 +1522,71 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
 
       setIntent(intent)
+      val kidsSessionRequested = intent.getBooleanExtra(EXTRA_KIDS_SESSION_MODE, false)
+      val kidsPracticeSurah = intent.getIntExtra(EXTRA_START_KIDS_MODE_SURAH, -1)
+      val kidsPracticeAyah = intent.getIntExtra(EXTRA_START_KIDS_MODE_AYAH, 1).coerceAtLeast(1)
+      val kidsAutoModeRaw = intent.getStringExtra(EXTRA_START_KIDS_AUTO_MODE)
+      if (kidsSessionRequested || kidsPracticeSurah in 1..114) {
+        isKidsSessionMode = true
+        intent.removeExtra(EXTRA_KIDS_SESSION_MODE)
+      } else if (!intent.getBooleanExtra(EXTRA_START_CHILDREN_LEARNING_MODE, false)) {
+        // Explicit Normal Mode navigation clears any previous Kids Session flag
+        if (isKidsSessionMode) {
+          isKidsSessionMode = false
+          if (KidsClassroomManager.isEnabled()) {
+            KidsClassroomManager.disableClassroomMode(this)
+          }
+          syncMemorizationAndTasmeeBarsVisibility()
+          supportInvalidateOptionsMenu()
+        }
+      }
+      if (kidsPracticeSurah in 1..114) {
+        intent.removeExtra(EXTRA_START_KIDS_MODE_SURAH)
+        intent.removeExtra(EXTRA_START_KIDS_MODE_AYAH)
+        intent.removeExtra(EXTRA_START_KIDS_AUTO_MODE)
+        val launchMode = com.quran.labs.androidquran.kidsclassroom.KidsLessonLaunchMode.entries
+          .firstOrNull { it.name == kidsAutoModeRaw }
+          ?: com.quran.labs.androidquran.kidsclassroom.KidsLessonLaunchMode.OPEN_READY
+        startKidsModeForSurah(kidsPracticeSurah, kidsPracticeAyah, launchMode)
+      } else if (intent.getBooleanExtra(EXTRA_START_CHILDREN_LEARNING_MODE, false)) {
+        intent.removeExtra(EXTRA_START_CHILDREN_LEARNING_MODE)
+        activateOrToggleChildrenLearningMode(forceEnable = true)
+      } else if (intent.getBooleanExtra(EXTRA_START_LIVE_TASMEE_MODE, false)) {
+        intent.removeExtra(EXTRA_START_LIVE_TASMEE_MODE)
+        activateOrToggleLiveTasmeeMode(forceEnable = true)
+      }
+      com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.setActiveCardFromIntent(
+        this,
+        intent.getStringExtra(com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.EXTRA_FLASHCARD_ID),
+        currentPage
+      )
     }
   }
 
   override fun jumpTo(page: Int) {
+    if (page != currentPage) {
+      stopActiveRecitationRecording()
+    }
     quranNavigator.jumpTo(Page(page))
   }
 
   override fun jumpToAndHighlight(page: Int, sura: Int, ayah: Int) {
+    if (page != currentPage) {
+      stopActiveRecitationRecording()
+    }
     quranNavigator.jumpTo(SuraAyah(sura, ayah))
   }
 
   public override fun onPause() {
+    if (!isChangingConfigurations) {
+      stopActiveRecitationRecording()
+    }
     quranSettings.unregisterPreferencesListener(themePreferencesListener)
     foregroundDisposable.clear()
     promptDialog?.dismiss()
     promptDialog = null
+    flashcardRatingDialog?.dismiss()
+    flashcardRatingDialog = null
     recentPagePresenter.unbind()
     readingBookmarkPresenter.unbind(this)
     quranSettings.wasShowingTranslation = pagerAdapter.isShowingTranslation
@@ -1133,6 +1610,31 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     audioStatusRepositoryBridge.dispose()
     readingEventPresenterBridge.dispose()
     downloadBridge.unsubscribe()
+    if (KidsClassroomManager.onNavigateToAyahPage === kidsNavigateCallback) {
+      KidsClassroomManager.onNavigateToAyahPage = null
+    }
+    if (KidsClassroomManager.onRequestMicPermission === kidsMicPermissionCallback) {
+      KidsClassroomManager.onRequestMicPermission = null
+    }
+    if (LiveTasmeeManager.onRequestMicPermission === tasmeeMicPermissionCallback) {
+      LiveTasmeeManager.onRequestMicPermission = null
+    }
+    if (LiveTasmeeManager.onAdvancePageOrLoopRange === tasmeeAdvancePageCallback) {
+      LiveTasmeeManager.onAdvancePageOrLoopRange = null
+    }
+    if (LiveTasmeeManager.onStopPlaybackAudio === tasmeeStopPlaybackCallback) {
+      LiveTasmeeManager.onStopPlaybackAudio = null
+    }
+    if (LiveTasmeeManager.onWordsRevealed === tasmeeWordsRevealedCallback) {
+      LiveTasmeeManager.onWordsRevealed = null
+    }
+    if (LiveTasmeeManager.onJumpToPage === tasmeeJumpToPageCallback) {
+      LiveTasmeeManager.onJumpToPage = null
+    }
+    if (isFinishing && !isChangingConfigurations) {
+      LiveTasmeeManager.stopTasmee()
+      KidsClassroomManager.stopActiveLoop()
+    }
     handler.removeCallbacksAndMessages(null)
     scope.cancel()
     super.onDestroy()
@@ -1150,6 +1652,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     state.putBoolean(LAST_ACTIONBAR_STATE, isActionBarHidden)
     state.putBoolean(LAST_WAS_DUAL_PAGES, isDualPages)
     state.putBoolean(LAST_FOLDING_STATE, isFoldableDeviceOpenAndVertical)
+    state.putBoolean(LAST_KIDS_SESSION_MODE, isKidsSessionMode)
     super.onSaveInstanceState(state)
   }
 
@@ -1182,15 +1685,94 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       refreshBookmarksMenu()
     }
 
+    val isMemorizationActive = QuranMemorizationManager.isHiddenModeEnabled()
+    val currentRevealMode = QuranMemorizationManager.getRevealMode()
+
+    val memorizationItem = menu.findItem(R.id.memorization_mode)
+    if (memorizationItem != null) {
+      memorizationItem.isChecked = isMemorizationActive
+      memorizationItem.setIcon(
+        if (isMemorizationActive) R.drawable.ic_memorization_hidden else R.drawable.ic_memorization_mode
+      )
+      memorizationItem.setTitle(
+        if (isMemorizationActive) R.string.show_quran_text else R.string.hide_quran_text
+      )
+      memorizationItem.icon?.alpha = if (isMemorizationActive) 255 else 210
+    }
+
+    menu.findItem(R.id.memorization_full_ayah)?.apply {
+      isChecked = isMemorizationActive && currentRevealMode == RevealMode.FULL_AYAH
+    }
+    menu.findItem(R.id.memorization_word_by_word)?.apply {
+      isChecked = isMemorizationActive && currentRevealMode == RevealMode.WORD_BY_WORD
+    }
+    menu.findItem(R.id.memorization_word_window)?.apply {
+      isChecked = isMemorizationActive && currentRevealMode == RevealMode.WORD_WINDOW
+      title = MemorizationFormatting.formatWordWindowMenuTitle(this@PagerActivity)
+    }
+    menu.findItem(R.id.memorization_single_word)?.apply {
+      isChecked = isMemorizationActive && currentRevealMode == RevealMode.SINGLE_WORD
+    }
+    menu.findItem(R.id.memorization_live_tasmee)?.apply {
+      val isTasmeeActive = LiveTasmeeManager.isEnabled()
+      isChecked = isTasmeeActive
+      setIcon(
+        if (isTasmeeActive) R.drawable.ic_live_tasmee_mic_active else R.drawable.ic_live_tasmee_mic
+      )
+      icon?.alpha = if (isTasmeeActive) 255 else 215
+    }
+    menu.findItem(R.id.memorization_single_word_tajweed)?.apply {
+      isChecked = isMemorizationActive && currentRevealMode == RevealMode.SINGLE_WORD_TAJWEED
+    }
+    menu.findItem(R.id.memorization_repeat_range)?.apply {
+      val activeRange = QuranMemorizationManager.getActiveRange()
+      isChecked = activeRange != null
+      title = MemorizationFormatting.formatActiveRangeMenuTitle(this@PagerActivity, activeRange)
+    }
+    // Keep memorization & recitation sub-items hidden from the overflow dropdown;
+    // all controls live in the unified clean Options UI sheet.
+    menu.findItem(R.id.memorization_reset)?.apply {
+      isVisible = false
+    }
+    menu.findItem(R.id.tajweed_mushaf)?.apply {
+      isChecked = quranSettings.pageType == "tajweed"
+    }
+    menu.findItem(R.id.children_learning_mode)?.apply {
+      isChecked = KidsClassroomManager.isEnabled()
+    }
+    menu.findItem(R.id.select_reciter)?.apply {
+      title = getString(R.string.select_reciter_with_current, currentQariItem().name)
+    }
+
     val quran = menu.findItem(R.id.goto_quran)
     val translation = menu.findItem(R.id.goto_translation)
-    if (quran != null && translation != null) {
-      if (!showingTranslation) {
-        quran.isVisible = false
-        translation.isVisible = true
-      } else {
-        quran.isVisible = true
-        translation.isVisible = false
+    if (isKidsSessionMode) {
+      // Dedicated Kids Mode toolbar: hide adult-only actions so the lesson stays calm & focused
+      menu.findItem(R.id.favorite_item)?.isVisible = false
+      quran?.isVisible = false
+      translation?.isVisible = false
+      menu.findItem(R.id.search)?.isVisible = false
+      menu.findItem(R.id.memorization_mode)?.isVisible = false
+      menu.findItem(R.id.jump)?.isVisible = false
+      menu.findItem(R.id.settings)?.isVisible = false
+      menu.findItem(R.id.help)?.isVisible = false
+      menu.findItem(R.id.page_theme)?.isVisible = true
+      menu.findItem(R.id.memorization_options_sheet)?.isVisible = true
+    } else {
+      menu.findItem(R.id.favorite_item)?.isVisible = true
+      menu.findItem(R.id.search)?.isVisible = true
+      menu.findItem(R.id.memorization_mode)?.isVisible = true
+      menu.findItem(R.id.jump)?.isVisible = true
+      menu.findItem(R.id.settings)?.isVisible = true
+      menu.findItem(R.id.help)?.isVisible = true
+      if (quran != null && translation != null) {
+        if (!showingTranslation) {
+          quran.isVisible = false
+          translation.isVisible = true
+        } else {
+          quran.isVisible = true
+          translation.isVisible = false
+        }
       }
     }
     return true
@@ -1213,6 +1795,112 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     } else if (itemId == R.id.page_theme) {
       showPageThemeSheet()
       return true
+    } else if (itemId == R.id.memorization_mode) {
+      QuranMemorizationManager.toggleHiddenMode(currentPage, quranInfo, this)
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+      return true
+    } else if (itemId == R.id.memorization_options_sheet) {
+      if (isKidsSessionMode || KidsClassroomManager.isEnabled()) {
+        showKidsClassroomOptionsSheet()
+      } else {
+        showMemorizationControlsSheet()
+      }
+      return true
+    } else if (itemId == R.id.memorization_full_ayah) {
+      QuranMemorizationManager.onProminentModeButtonPressed(
+        RevealMode.FULL_AYAH,
+        currentPage,
+        quranInfo,
+        this
+      )
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+      return true
+    } else if (itemId == R.id.memorization_word_by_word) {
+      QuranMemorizationManager.onProminentModeButtonPressed(
+        RevealMode.WORD_BY_WORD,
+        currentPage,
+        quranInfo,
+        this
+      )
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+      return true
+    } else if (itemId == R.id.memorization_word_window) {
+      showWordWindowSetupSheet()
+      return true
+    } else if (itemId == R.id.memorization_single_word) {
+      QuranMemorizationManager.onProminentModeButtonPressed(
+        RevealMode.SINGLE_WORD,
+        currentPage,
+        quranInfo,
+        this
+      )
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+      return true
+    } else if (itemId == R.id.memorization_live_tasmee) {
+      activateOrToggleLiveTasmeeMode(forceEnable = false)
+      return true
+    } else if (itemId == R.id.memorization_single_word_tajweed) {
+      val wasTajweed = quranSettings.pageType == "tajweed"
+      QuranMemorizationManager.onProminentModeButtonPressed(
+        RevealMode.SINGLE_WORD_TAJWEED,
+        currentPage,
+        quranInfo,
+        this
+      )
+      ensureTajweedPageLoadedOrRefresh(wasTajweed, currentPage)
+      return true
+    } else if (itemId == R.id.memorization_repeat_range) {
+      showMemorizationRepetitionSheet(selectionStart, selectionEnd)
+      return true
+    } else if (itemId == R.id.memorization_reset) {
+      QuranMemorizationManager.resetAllPages(currentPage, quranInfo, this)
+      val activeStartPage = QuranMemorizationManager.getActiveRange()?.startPage
+      if (activeStartPage != null) {
+        val targetPos = quranInfo.getPositionFromPage(activeStartPage, isDualPageVisible)
+        if (viewPager.currentItem != targetPos) {
+          viewPager.setCurrentItem(targetPos, true)
+        }
+      }
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+      return true
+    } else if (itemId == R.id.tajweed_mushaf) {
+      val nextPageType = if (quranSettings.pageType == "tajweed") "madani" else "tajweed"
+      quranSettings.pageType = nextPageType
+      memorizationBar.isTajweedMushaf = nextPageType == "tajweed"
+      val targetPage = currentPage
+      val isTranslation = showingTranslation
+      val restartIntent = Intent(this@PagerActivity, PagerActivity::class.java).apply {
+        putExtra("page", targetPage)
+        putExtra(EXTRA_JUMP_TO_TRANSLATION, isTranslation)
+      }
+      finish()
+      overridePendingTransition(0, 0)
+      startActivity(restartIntent)
+      overridePendingTransition(0, 0)
+      return true
+    } else if (itemId == R.id.children_learning_mode) {
+      activateOrToggleChildrenLearningMode(forceEnable = false)
+      return true
+    } else if (itemId == R.id.memory_flashcards) {
+      val flashcardsIntent = Intent(
+        this,
+        com.quran.labs.androidquran.flashcards.MemoryFlashcardsActivity::class.java
+      ).apply {
+        putExtra(com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.EXTRA_INITIAL_PAGE, currentPage)
+      }
+      startActivity(flashcardsIntent)
+      return true
+    } else if (itemId == R.id.select_reciter) {
+      onShowQariList()
+      return true
+    } else if (itemId == R.id.play_page_audio) {
+      onPlayPressed()
+      return true
     } else if (itemId == R.id.settings) {
       val i = Intent(this, QuranPreferenceActivity::class.java)
       startActivity(i)
@@ -1222,6 +1910,30 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       startActivity(i)
       return true
     } else if (itemId == android.R.id.home) {
+      if (dismissVisibleOverlayIfAny()) {
+        return true
+      }
+      if (isKidsSessionMode) {
+        returnToKidsProgressIslands()
+        return true
+      }
+      val kidsState = KidsClassroomManager.currentState()
+      if (LiveTasmeeManager.isActivelyListening()) {
+        LiveTasmeeManager.pauseListeningToReady()
+        syncMemorizationAndTasmeeBarsVisibility()
+        refreshQuranPages()
+        return true
+      }
+      if (isKidsLoopActivelyRunning(kidsState)) {
+        stopActiveRecitationRecording()
+        return true
+      }
+      if (LiveTasmeeManager.isEnabled()) {
+        LiveTasmeeManager.stopTasmee()
+      }
+      if (KidsClassroomManager.isEnabled()) {
+        KidsClassroomManager.disableClassroomMode(this)
+      }
       onSessionEnd()
       finish()
       return true
@@ -1235,14 +1947,116 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   private fun refreshQuranPages() {
-    val pos = viewPager.currentItem
-    val start = if (pos == 0) 0 else pos - 1
-    val end = if (pos == pagerAdapter.count - 1) pos else pos + 1
-    for (i in start..end) {
+    val totalCount = pagerAdapter.count
+    for (i in 0 until totalCount) {
       val f = pagerAdapter.getFragmentIfExists(i)
       if (f is QuranPage) {
         (f as QuranPage).updateView()
       }
+    }
+  }
+
+  private fun showFlashcardRatingDialog(
+    card: com.quran.labs.androidquran.flashcards.MemoryFlashcard
+  ) {
+    if (!canShowUi() || flashcardRatingDialog?.isShowing == true) return
+    val isArabic = com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.isAppInArabicMode(this)
+    val builder = AlertDialog.Builder(this)
+    builder.setTitle(R.string.flashcard_rate_dialog_title)
+      .setMessage(
+        getString(
+          R.string.flashcard_rate_dialog_message,
+          card.firstAyahCue,
+          card.lastAyahCue
+        )
+      )
+      .setPositiveButton(
+        getString(R.string.flashcard_rate_good, card.nextGoodScheduleLabel(isArabic))
+      ) { dialog: DialogInterface, _: Int ->
+        dialog.dismiss()
+        flashcardRatingDialog = null
+        handleFlashcardRated(card, isGood = true)
+      }
+      .setNegativeButton(
+        getString(
+          R.string.flashcard_rate_repeat,
+          com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.getRepeatScheduleLabel(isArabic)
+        )
+      ) { dialog: DialogInterface, _: Int ->
+        dialog.dismiss()
+        flashcardRatingDialog = null
+        handleFlashcardRated(card, isGood = false)
+      }
+      .setOnCancelListener {
+        flashcardRatingDialog = null
+        com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.markRatingDialogDismissed()
+      }
+    val dialog = builder.create()
+    flashcardRatingDialog = dialog
+    dialog.show()
+  }
+
+  private fun handleFlashcardRated(
+    card: com.quran.labs.androidquran.flashcards.MemoryFlashcard,
+    isGood: Boolean
+  ) {
+    val isArabic = com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.isAppInArabicMode(this)
+    com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.rateCard(
+      context = this,
+      cardId = card.id,
+      isGood = isGood
+    )
+    val nextCard = com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.advanceToNextCardInSession(
+      context = this,
+      quranInfo = quranInfo
+    )
+    if (nextCard != null) {
+      if (nextCard.isTextCard()) {
+        val remainingIds = com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.consumeRemainingQueueIds(this)
+        val studyTextIntent = Intent(
+          this,
+          com.quran.labs.androidquran.flashcards.MemoryFlashcardsActivity::class.java
+        ).apply {
+          putExtra(com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.EXTRA_STUDY_TEXT_CARD_ID, nextCard.id)
+          putStringArrayListExtra(
+            com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.EXTRA_STUDY_QUEUE_IDS,
+            ArrayList(remainingIds)
+          )
+          putExtra(com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.EXTRA_INITIAL_PAGE, currentPage)
+          flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        startActivity(studyTextIntent)
+        finish()
+        return
+      }
+      val nextPos = quranInfo.getPositionFromPage(nextCard.startPage, isDualPageVisible)
+      viewPager.currentItem = nextPos
+      QuranMemorizationManager.setCurrentPage(nextCard.startPage, quranInfo, this)
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+      val formattedPage = com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.formatNumber(
+        nextCard.startPage,
+        isArabic
+      )
+      makeText(
+        this,
+        getString(R.string.flashcard_next_card_toast, formattedPage),
+        Toast.LENGTH_SHORT
+      ).show()
+    } else {
+      makeText(
+        this,
+        getString(R.string.flashcard_session_complete_toast),
+        Toast.LENGTH_SHORT
+      ).show()
+      val flashcardsIntent = Intent(
+        this,
+        com.quran.labs.androidquran.flashcards.MemoryFlashcardsActivity::class.java
+      ).apply {
+        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        putExtra(com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.EXTRA_INITIAL_PAGE, currentPage)
+      }
+      startActivity(flashcardsIntent)
     }
   }
 
@@ -1254,6 +2068,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     pagerAdapter.setQuranMode()
     showingTranslation = false
     onShowingTranslationBackCallback.isEnabled = false
+    syncMemorizationAndTasmeeBarsVisibility()
     if (shouldUpdatePageNumber()) {
       val position = quranInfo.getPositionFromPage(page, true)
       viewPager.currentItem = position
@@ -1264,6 +2079,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   private fun switchToTranslation() {
+    stopActiveRecitationRecording()
     if (selectionStart != null) {
       endAyahMode()
     }
@@ -1275,6 +2091,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       pagerAdapter.setTranslationMode()
       showingTranslation = true
       onShowingTranslationBackCallback.isEnabled = true
+      syncMemorizationAndTasmeeBarsVisibility()
       if (shouldUpdatePageNumber()) {
         val position = quranInfo.getPositionFromPage(page, false)
         viewPager.currentItem = position
@@ -1331,7 +2148,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       translationsSpinner.visibility = View.GONE
       actionBar.setDisplayShowTitleEnabled(true)
       actionBar.title = sura
-      val desc = quranDisplayData.getPageSubtitle(this, page)
+      val desc = if (isKidsSessionMode) {
+        getString(R.string.kids_mode_toolbar_subtitle)
+      } else {
+        quranDisplayData.getPageSubtitle(this, page)
+      }
       actionBar.subtitle = desc
     }
   }
@@ -1395,23 +2216,16 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     audioPresenter.onDownloadSuccess()
   }
 
-  fun toggleActionBarVisibility(visible: Boolean) {
-    if (visible == isActionBarHidden) {
-      toggleActionBar()
-    }
+  fun toggleActionBarVisibility(@Suppress("UNUSED_PARAMETER") visible: Boolean) {
+    handler.removeMessages(MSG_HIDE_ACTIONBAR)
+    isActionBarHidden = false
+    setUiVisibility(true)
   }
 
   fun toggleActionBar() {
-    if (isActionBarHidden) {
-      setUiVisibility(true)
-
-      isActionBarHidden = false
-    } else {
-      handler.removeMessages(MSG_HIDE_ACTIONBAR)
-      setUiVisibility(false)
-
-      isActionBarHidden = true
-    }
+    handler.removeMessages(MSG_HIDE_ACTIONBAR)
+    isActionBarHidden = false
+    setUiVisibility(true)
   }
 
   private fun ensurePage(sura: Int, ayah: Int) {
@@ -1506,7 +2320,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       )
       view.updatePadding(left = insets.left, right = insets.right)
       val params = view.layoutParams as FrameLayout.LayoutParams
-      params.bottomMargin = if (audioStatusBar.isVisible) {
+      params.bottomMargin = if (audioStatusBar.isVisible && audioStatusBar.height > 0) {
         audioStatusBar.height
       } else {
         insets.bottom
@@ -1708,7 +2522,12 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         starting, page,
         quranSettings.preferredDownloadAmount, isDualPageVisible
       )!!
-    val qariListWrapper = QariListWrapper(this, starting, ending)
+    val qariListWrapper = QariListWrapper(this, starting, ending) {
+      overlay.removeAllViews()
+      overlay.visibility = View.GONE
+      toggleActionBarVisibility(true)
+      supportInvalidateOptionsMenu()
+    }
     overlay.removeAllViews()
     overlay.addView(
       qariListWrapper,
@@ -1753,6 +2572,652 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     )
     overlay.visibility = View.VISIBLE
     toggleActionBarVisibility(false)
+  }
+
+  private fun showWordWindowSetupSheet() {
+    val sheet = WordWindowSetupOverlayView(
+      context = this,
+      isNightPage = quranSettings.isNightMode,
+      onApplyWindow = { chosenWindowWords ->
+        QuranMemorizationManager.setPreviousAyahWindowWords(chosenWindowWords, this)
+        if (!QuranMemorizationManager.isHiddenModeEnabled() ||
+          QuranMemorizationManager.getRevealMode() != RevealMode.WORD_WINDOW
+        ) {
+          QuranMemorizationManager.onProminentModeButtonPressed(
+            RevealMode.WORD_WINDOW,
+            currentPage,
+            quranInfo,
+            this
+          )
+        }
+        refreshQuranPages()
+        supportInvalidateOptionsMenu()
+      },
+      onDismissed = {
+        overlay.removeAllViews()
+        overlay.visibility = View.GONE
+        toggleActionBarVisibility(true)
+      }
+    )
+    overlay.removeAllViews()
+    overlay.addView(
+      sheet,
+      ViewGroup.LayoutParams.MATCH_PARENT,
+      ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    overlay.visibility = View.VISIBLE
+    toggleActionBarVisibility(false)
+  }
+
+  private fun showMemorizationRepetitionSheet(
+    initialStartAyah: SuraAyah? = null,
+    initialEndAyah: SuraAyah? = null
+  ) {
+    val sheet = MemorizationRepetitionOverlayView(
+      context = this,
+      quranInfo = quranInfo,
+      currentPage = currentPage,
+      initialStartAyah = initialStartAyah,
+      initialEndAyah = initialEndAyah,
+      isNightPage = quranSettings.isNightMode,
+      onStartRange = { startAyah, endAyah, repetitions, revealMode, windowWords ->
+        val wasTajweed = quranSettings.pageType == "tajweed"
+        QuranMemorizationManager.setPreviousAyahWindowWords(windowWords, this)
+        QuranMemorizationManager.setRevealMode(revealMode, this)
+        val range = QuranMemorizationManager.startRangeMemorization(
+          startAyah = startAyah,
+          endAyah = endAyah,
+          targetRepetitions = repetitions,
+          quranInfo = quranInfo,
+          context = this
+        )
+        endAyahMode()
+        if (revealMode == RevealMode.SINGLE_WORD_TAJWEED && !wasTajweed) {
+          ensureTajweedPageLoadedOrRefresh(wasTajweed = false, targetPage = range.startPage)
+        } else {
+          val startPos = quranInfo.getPositionFromPage(range.startPage, isDualPageVisible)
+          if (viewPager.currentItem != startPos) {
+            viewPager.setCurrentItem(startPos, true)
+          }
+          QuranMemorizationManager.setCurrentPage(range.startPage, quranInfo, this)
+          refreshQuranPages()
+          supportInvalidateOptionsMenu()
+        }
+      },
+      onStopRange = {
+        QuranMemorizationManager.clearMemorizationRange()
+        refreshQuranPages()
+        supportInvalidateOptionsMenu()
+      },
+      onDismissed = {
+        overlay.removeAllViews()
+        overlay.visibility = View.GONE
+        toggleActionBarVisibility(true)
+      }
+    )
+    overlay.removeAllViews()
+    overlay.addView(
+      sheet,
+      ViewGroup.LayoutParams.MATCH_PARENT,
+      ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    overlay.visibility = View.VISIBLE
+    toggleActionBarVisibility(false)
+  }
+
+  private fun activateOrToggleChildrenLearningMode(forceEnable: Boolean) {
+    val wasTajweed = quranSettings.pageType == "tajweed"
+    val targetAyah = if (forceEnable) {
+      KidsClassroomManager.enableClassroomMode(
+        context = this,
+        currentPage = currentPage,
+        selectedAyah = selectionStart,
+        quranInfo = quranInfo,
+        enableWordHiding = true
+      )
+    } else {
+      KidsClassroomManager.toggleClassroomMode(
+        context = this,
+        currentPage = currentPage,
+        selectedAyah = selectionStart,
+        quranInfo = quranInfo,
+        enableWordHiding = true
+      )
+    }
+
+    onKidsClassroomBackCallback.isEnabled = KidsClassroomManager.isEnabled()
+    syncMemorizationAndTasmeeBarsVisibility()
+
+    if (targetAyah != null) {
+      val targetPage = quranInfo.getPageFromSuraAyah(targetAyah.sura, targetAyah.ayah)
+        .takeIf { quranInfo.isValidPage(it) } ?: currentPage
+      if (showingTranslation) {
+        switchToQuran()
+      }
+      onStopPressed()
+      endAyahMode()
+      if (!wasTajweed) {
+        quranSettings.pageType = "tajweed"
+        memorizationBar.isTajweedMushaf = true
+        val restartIntent = Intent(this@PagerActivity, PagerActivity::class.java).apply {
+          putExtra("page", targetPage)
+          putExtra(EXTRA_JUMP_TO_TRANSLATION, false)
+          putExtra(EXTRA_START_CHILDREN_LEARNING_MODE, true)
+          putExtra(EXTRA_KIDS_SESSION_MODE, isKidsSessionMode)
+        }
+        finish()
+        overridePendingTransition(0, 0)
+        startActivity(restartIntent)
+        overridePendingTransition(0, 0)
+      } else {
+        ensurePage(targetAyah.sura, targetAyah.ayah)
+        refreshQuranPages()
+        supportInvalidateOptionsMenu()
+      }
+    } else {
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+    }
+  }
+
+  private fun activateOrToggleLiveTasmeeMode(forceEnable: Boolean) {
+    if (showingTranslation) {
+      switchToQuran()
+    }
+    endAyahMode()
+    if (forceEnable) {
+      LiveTasmeeManager.prepareTasmeeReady(this, currentPage, quranInfo)
+    } else {
+      LiveTasmeeManager.toggleTasmee(this, currentPage, quranInfo)
+    }
+    onKidsClassroomBackCallback.isEnabled = KidsClassroomManager.isEnabled() || isKidsSessionMode
+    syncMemorizationAndTasmeeBarsVisibility()
+    refreshQuranPages()
+    supportInvalidateOptionsMenu()
+  }
+
+  private fun showMemorizationControlsSheet() {
+    val sheet = MemorizationControlsSheetOverlayView(
+      context = this,
+      isNightPage = quranSettings.isNightMode,
+      isTajweedMushaf = quranSettings.pageType == "tajweed",
+      currentReciterName = currentQariItem().name,
+      onOpenKidsMode = {
+        stopActiveRecitationRecording()
+        com.quran.labs.androidquran.kidsclassroom.KidsModeActivity.start(this)
+      },
+      onToggleLiveTasmee = {
+        activateOrToggleLiveTasmeeMode(forceEnable = false)
+      },
+      onToggleHideText = {
+        QuranMemorizationManager.toggleHiddenMode(currentPage, quranInfo, this)
+        refreshQuranPages()
+        supportInvalidateOptionsMenu()
+      },
+      onSelectRevealMode = { mode ->
+        val wasTajweed = quranSettings.pageType == "tajweed"
+        QuranMemorizationManager.onProminentModeButtonPressed(
+          mode,
+          currentPage,
+          quranInfo,
+          this
+        )
+        if (mode == RevealMode.SINGLE_WORD_TAJWEED) {
+          ensureTajweedPageLoadedOrRefresh(wasTajweed, currentPage)
+        } else {
+          refreshQuranPages()
+          supportInvalidateOptionsMenu()
+        }
+      },
+      onOpenWordWindowSetup = {
+        showWordWindowSetupSheet()
+      },
+      onOpenRepetitionSetup = {
+        showMemorizationRepetitionSheet(selectionStart, selectionEnd)
+      },
+      onResetPage = {
+        QuranMemorizationManager.resetAllPages(currentPage, quranInfo, this)
+        refreshQuranPages()
+        supportInvalidateOptionsMenu()
+      },
+      onToggleTajweedMushaf = {
+        val nextPageType = if (quranSettings.pageType == "tajweed") "madani" else "tajweed"
+        quranSettings.pageType = nextPageType
+        memorizationBar.isTajweedMushaf = nextPageType == "tajweed"
+        val restartIntent = Intent(this@PagerActivity, PagerActivity::class.java).apply {
+          putExtra("page", currentPage)
+          putExtra(EXTRA_JUMP_TO_TRANSLATION, showingTranslation)
+        }
+        finish()
+        overridePendingTransition(0, 0)
+        startActivity(restartIntent)
+        overridePendingTransition(0, 0)
+      },
+      onPlayPageAudio = {
+        onPlayPressed()
+      },
+      onSelectReciter = {
+        onShowQariList()
+      },
+      onOpenFlashcards = {
+        val flashcardsIntent = Intent(
+          this,
+          com.quran.labs.androidquran.flashcards.MemoryFlashcardsActivity::class.java
+        ).apply {
+          putExtra(
+            com.quran.labs.androidquran.flashcards.MemoryFlashcardManager.EXTRA_INITIAL_PAGE,
+            currentPage
+          )
+        }
+        startActivity(flashcardsIntent)
+      },
+      onDismissed = {
+        overlay.removeAllViews()
+        overlay.visibility = View.GONE
+        toggleActionBarVisibility(true)
+      }
+    )
+    overlay.removeAllViews()
+    overlay.addView(
+      sheet,
+      ViewGroup.LayoutParams.MATCH_PARENT,
+      ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    overlay.visibility = View.VISIBLE
+    toggleActionBarVisibility(false)
+  }
+
+  private fun showKidsClassroomOptionsSheet() {
+    if (!::overlay.isInitialized || isFinishing || isDestroyed) return
+    val sheet = KidsClassroomOptionsOverlayView(
+      context = this,
+      isNightPage = quranSettings.isNightMode,
+      isKidsSessionMode = isKidsSessionMode,
+      onExitClassroomMode = {
+        if (isKidsSessionMode) {
+          returnToKidsProgressIslands()
+        } else {
+          KidsClassroomManager.disableClassroomMode(this@PagerActivity)
+          syncMemorizationAndTasmeeBarsVisibility()
+          refreshQuranPages()
+          supportInvalidateOptionsMenu()
+        }
+      },
+      onOpenSurahAnalysis = {
+        val surah = if (KidsClassroomManager.isEnabled()) {
+          KidsClassroomManager.currentState().currentAyah.sura
+        } else {
+          quranInfo.getSuraOnPage(currentPage)
+        }
+        showKidsSurahAnalysisSheet(surah)
+      },
+      onOpenAchievements = {
+        if (isKidsSessionMode) {
+          returnToKidsProgressIslands(
+            targetTab = com.quran.labs.androidquran.kidsclassroom.KidsModeTab.REWARDS
+          )
+        } else {
+          com.quran.labs.androidquran.kidsclassroom.KidsModeActivity.start(
+            this,
+            com.quran.labs.androidquran.kidsclassroom.KidsModeTab.REWARDS
+          )
+        }
+      },
+      onDismissed = {
+        overlay.removeAllViews()
+        overlay.visibility = View.GONE
+        toggleActionBarVisibility(true)
+      }
+    )
+    overlay.removeAllViews()
+    overlay.addView(
+      sheet,
+      ViewGroup.LayoutParams.MATCH_PARENT,
+      ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    overlay.visibility = View.VISIBLE
+    toggleActionBarVisibility(false)
+  }
+
+  private fun showKidsSurahAnalysisSheet(initialSurah: Int) {
+    if (!::overlay.isInitialized || isFinishing || isDestroyed) return
+    val sheet = KidsSurahAnalysisOverlayView(
+      context = this,
+      initialSurah = initialSurah.coerceIn(1, 114),
+      isNightPage = quranSettings.isNightMode,
+      onPracticeAyah = { targetAyah ->
+        if (!KidsClassroomManager.isEnabled()) {
+          KidsClassroomManager.enableClassroomMode(
+            context = this@PagerActivity,
+            currentPage = currentPage,
+            selectedAyah = targetAyah,
+            quranInfo = quranInfo,
+            enableWordHiding = true
+          )
+          syncMemorizationAndTasmeeBarsVisibility()
+        }
+        KidsClassroomManager.selectAyahAndTurn(
+          context = this@PagerActivity,
+          suraAyah = targetAyah,
+          turnIndex = 0,
+          autoStartMode = com.quran.labs.androidquran.kidsclassroom.KidsPracticeMode.LISTEN_AND_REPEAT
+        )
+        refreshQuranPages()
+      },
+      onDismissed = {
+        overlay.removeAllViews()
+        overlay.visibility = View.GONE
+        toggleActionBarVisibility(true)
+      }
+    )
+    overlay.removeAllViews()
+    overlay.addView(
+      sheet,
+      ViewGroup.LayoutParams.MATCH_PARENT,
+      ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    overlay.visibility = View.VISIBLE
+    toggleActionBarVisibility(false)
+  }
+
+  private fun startKidsModeForSurah(
+    surah: Int,
+    ayah: Int = 1,
+    launchMode: com.quran.labs.androidquran.kidsclassroom.KidsLessonLaunchMode =
+      com.quran.labs.androidquran.kidsclassroom.KidsLessonLaunchMode.OPEN_READY
+  ) {
+    val safeSurah = surah.coerceIn(1, 114)
+    val safeAyah = ayah.coerceAtLeast(1)
+    val targetAyah = SuraAyah(safeSurah, safeAyah)
+
+    // Snapshot starting rewards so returning to Progress Islands celebrates newly earned progress
+    com.quran.labs.androidquran.kidsclassroom.RewardsDataStore.initialize(applicationContext)
+    val snapshotRewards = com.quran.labs.androidquran.kidsclassroom.RewardsDataStore.state.value
+    kidsSessionSurah = safeSurah
+    kidsSessionInitialStars = snapshotRewards.totalStars
+    kidsSessionInitialSurahMastered = snapshotRewards.surahMasteredCount[safeSurah] ?: 0
+
+    ensurePage(safeSurah, safeAyah)
+    if (!KidsClassroomManager.isEnabled()) {
+      KidsClassroomManager.enableClassroomMode(
+        context = this,
+        currentPage = quranInfo.getPageFromSuraAyah(safeSurah, safeAyah),
+        selectedAyah = targetAyah,
+        quranInfo = quranInfo,
+        enableWordHiding = true
+      )
+      syncMemorizationAndTasmeeBarsVisibility()
+    } else {
+      KidsClassroomManager.selectAyahAndTurn(
+        context = this,
+        suraAyah = targetAyah,
+        turnIndex = 0,
+        autoStartMode = null
+      )
+    }
+
+    when (launchMode) {
+      com.quran.labs.androidquran.kidsclassroom.KidsLessonLaunchMode.LISTEN_AND_REPEAT -> {
+        KidsClassroomManager.selectAyahAndTurn(
+          context = this,
+          suraAyah = targetAyah,
+          turnIndex = 0,
+          autoStartMode = com.quran.labs.androidquran.kidsclassroom.KidsPracticeMode.LISTEN_AND_REPEAT
+        )
+      }
+      com.quran.labs.androidquran.kidsclassroom.KidsLessonLaunchMode.RECITE_AND_REVEAL -> {
+        KidsClassroomManager.selectAyahAndTurn(
+          context = this,
+          suraAyah = targetAyah,
+          turnIndex = 0,
+          autoStartMode = com.quran.labs.androidquran.kidsclassroom.KidsPracticeMode.RECITE_AND_REVEAL
+        )
+      }
+      com.quran.labs.androidquran.kidsclassroom.KidsLessonLaunchMode.OPEN_READY -> Unit
+    }
+
+    updateActionBarTitle(currentPage)
+    supportInvalidateOptionsMenu()
+    refreshQuranPages()
+  }
+
+  private fun returnToKidsProgressIslands(
+    targetTab: com.quran.labs.androidquran.kidsclassroom.KidsModeTab =
+      com.quran.labs.androidquran.kidsclassroom.KidsModeTab.ISLANDS
+  ) {
+    val activeSurah = if (KidsClassroomManager.isEnabled()) {
+      KidsClassroomManager.currentState().currentAyah.sura
+    } else {
+      kidsSessionSurah
+    }.coerceIn(1, 114)
+
+    com.quran.labs.androidquran.kidsclassroom.RewardsDataStore.initialize(applicationContext)
+    val latestRewards = com.quran.labs.androidquran.kidsclassroom.RewardsDataStore.state.value
+    val starsGained = (latestRewards.totalStars - kidsSessionInitialStars).coerceAtLeast(0)
+    val masteredNow = latestRewards.surahMasteredCount[activeSurah] ?: 0
+    val masteredBaseline = if (activeSurah == kidsSessionSurah) kidsSessionInitialSurahMastered else masteredNow
+    val ayatGained = (masteredNow - masteredBaseline).coerceAtLeast(0)
+    val surahCompleted = com.quran.labs.androidquran.kidsclassroom.SurahJourneyPlanner
+      .isSurahCompleted(activeSurah, latestRewards)
+
+    if (LiveTasmeeManager.isEnabled()) {
+      LiveTasmeeManager.stopTasmee()
+    }
+    if (KidsClassroomManager.isEnabled()) {
+      KidsClassroomManager.disableClassroomMode(this)
+    }
+    onSessionEnd()
+
+    if (targetTab == com.quran.labs.androidquran.kidsclassroom.KidsModeTab.ISLANDS) {
+      com.quran.labs.androidquran.kidsclassroom.KidsModeNavigationState.emitReturnToIslands(
+        surahNumber = activeSurah,
+        starsGained = starsGained,
+        ayatMasteredGained = ayatGained,
+        surahJustCompleted = surahCompleted && (starsGained > 0 || ayatGained > 0)
+      )
+    }
+
+    val islandsIntent = com.quran.labs.androidquran.kidsclassroom.KidsModeActivity.createIntent(
+      context = this,
+      initialTab = targetTab
+    ).apply {
+      addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+    }
+    startActivity(islandsIntent)
+    @Suppress("DEPRECATION")
+    overridePendingTransition(R.anim.kids_islands_enter, R.anim.kids_lesson_exit)
+    finish()
+  }
+
+  private fun syncReaderSurfaceBackground() {
+    val surfaceColor = if (!quranSettings.isLightPage) {
+      quranSettings.pageThemeBackgroundColor
+    } else {
+      ContextCompat.getColor(this, com.quran.mobile.feature.pagetheme.R.color.page_background)
+    }
+    findViewById<View>(R.id.reader_body_container)?.setBackgroundColor(surfaceColor)
+    findViewById<View>(R.id.bottom_recitation_dock)?.setBackgroundColor(surfaceColor)
+  }
+
+  private fun isKidsLoopActivelyRunning(state: KidsClassroomUiState): Boolean {
+    return state.stage == ClassroomStage.QARI_RECITING ||
+      state.stage == ClassroomStage.KIDS_REPEATING ||
+      state.stage == ClassroomStage.CHILD_RECITING ||
+      state.stage == ClassroomStage.TASMEE_STREAMING ||
+      state.stage == ClassroomStage.SCORING ||
+      state.isAutoTransitionPending
+  }
+
+  private fun dismissVisibleOverlayIfAny(): Boolean {
+    if (KidsClassroomManager.currentState().pendingCelebration != null) {
+      KidsClassroomManager.dismissCelebrationOnly()
+      return true
+    }
+    if (::overlay.isInitialized && overlay.visibility == View.VISIBLE && overlay.childCount > 0) {
+      overlay.removeAllViews()
+      overlay.visibility = View.GONE
+      toggleActionBarVisibility(true)
+      return true
+    }
+    return false
+  }
+
+  private fun animateDockEntranceIfShowing(view: View, shouldShow: Boolean) {
+    val wasVisible = view.visibility == View.VISIBLE
+    view.visibility = if (shouldShow) View.VISIBLE else View.GONE
+    if (shouldShow && !wasVisible && view.isAttachedToWindow) {
+      val shiftPx = 10f * resources.displayMetrics.density
+      view.animate().cancel()
+      view.alpha = 0f
+      view.translationY = shiftPx
+      view.animate()
+        .alpha(1f)
+        .translationY(0f)
+        .setDuration(200L)
+        .setInterpolator(android.view.animation.PathInterpolator(0.23f, 1f, 0.32f, 1f))
+        .start()
+    } else if (!shouldShow) {
+      view.animate().cancel()
+      view.alpha = 1f
+      view.translationY = 0f
+    }
+  }
+
+  private fun syncMemorizationAndTasmeeBarsVisibility() {
+    if (!::memorizationBar.isInitialized || !::tasmeeBottomRecordingBar.isInitialized) {
+      return
+    }
+    val isTasmeeOn = LiveTasmeeManager.isEnabled()
+    val isTasmeeActivelyListening = LiveTasmeeManager.isActivelyListening()
+    val isKidsOn = KidsClassroomManager.isEnabled() && !isTasmeeOn
+    val isActiveRecordingOrLesson = isTasmeeActivelyListening ||
+      (isKidsOn && isKidsLoopActivelyRunning(KidsClassroomManager.currentState()))
+
+    // Keep top memorization_bar hidden so the Mushaf page remains full-screen;
+    // options are accessed via the 1-click subtle options reveal button or toolbar icon.
+    memorizationBar.visibility = View.GONE
+    animateDockEntranceIfShowing(tasmeeBottomRecordingBar, !showingTranslation && isTasmeeOn)
+    if (::kidsClassroomOverlay.isInitialized) {
+      animateDockEntranceIfShowing(kidsClassroomOverlay, !showingTranslation && isKidsOn)
+    }
+    subtleOptionsRevealBtn?.visibility =
+      if (!showingTranslation && !isTasmeeOn && !isKidsOn) View.VISIBLE else View.GONE
+
+    // Calmly soften top toolbar chrome during an active recording or learning session
+    // so the Mushaf glyphs and bottom bar hold clean visual focus (still tappable).
+    findViewById<View>(R.id.toolbar_area)?.let { topBar ->
+      val targetAlpha = if (isActiveRecordingOrLesson && !showingTranslation) 0.68f else 1.0f
+      if (kotlin.math.abs(topBar.alpha - targetAlpha) > 0.02f) {
+        topBar.animate()
+          .alpha(targetAlpha)
+          .setDuration(if (isActiveRecordingOrLesson) 200L else 160L)
+          .setInterpolator(android.view.animation.PathInterpolator(0.23f, 1f, 0.32f, 1f))
+          .start()
+      }
+    }
+
+    if (::onLiveTasmeeBackCallback.isInitialized) {
+      onLiveTasmeeBackCallback.isEnabled = isTasmeeOn
+    }
+    if (::onKidsClassroomBackCallback.isInitialized) {
+      onKidsClassroomBackCallback.isEnabled = KidsClassroomManager.isEnabled() || isKidsSessionMode
+    }
+  }
+
+  private fun syncKidsAyahCelebrationOverlay(kidsState: KidsClassroomUiState) {
+    if (!::overlay.isInitialized || isFinishing || isDestroyed) return
+    val event = kidsState.pendingCelebration
+    if (event == null || !kidsState.isEnabled) {
+      activeCelebrationEventId = -1L
+      if (overlay.childCount > 0 && overlay.getChildAt(0) is KidsAyahCelebrationOverlayView) {
+        overlay.removeAllViews()
+        overlay.visibility = View.GONE
+      }
+      return
+    }
+    if (event.eventId == activeCelebrationEventId) return
+    activeCelebrationEventId = event.eventId
+
+    val celebrationView = KidsAyahCelebrationOverlayView(
+      context = this,
+      event = event,
+      autoContinueEnabled = kidsState.autoNextEnabled,
+      onContinue = {
+        KidsClassroomManager.dismissCelebrationAndContinue(this@PagerActivity)
+        refreshQuranPages()
+      },
+      onDismiss = {
+        KidsClassroomManager.dismissCelebrationOnly()
+      },
+      onOpenSurahAnalysis = {
+        val completedSurah = event.suraAyah.sura
+        KidsClassroomManager.dismissCelebrationOnly()
+        showKidsSurahAnalysisSheet(completedSurah)
+      },
+      onOpenAchievements = {
+        KidsClassroomManager.dismissCelebrationOnly()
+        if (isKidsSessionMode) {
+          returnToKidsProgressIslands(
+            targetTab = com.quran.labs.androidquran.kidsclassroom.KidsModeTab.REWARDS
+          )
+        } else {
+          com.quran.labs.androidquran.kidsclassroom.KidsModeActivity.start(
+            this@PagerActivity,
+            com.quran.labs.androidquran.kidsclassroom.KidsModeTab.REWARDS
+          )
+        }
+      }
+    )
+    overlay.removeAllViews()
+    overlay.addView(
+      celebrationView,
+      ViewGroup.LayoutParams.MATCH_PARENT,
+      ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    overlay.visibility = View.VISIBLE
+    toggleActionBarVisibility(false)
+  }
+
+  private fun stopActiveRecitationRecording() {
+    var changed = false
+    if (LiveTasmeeManager.isEnabled()) {
+      LiveTasmeeManager.stopTasmee()
+      changed = true
+    }
+    val kidsState = KidsClassroomManager.currentState()
+    if (kidsState.stage == ClassroomStage.QARI_RECITING ||
+      kidsState.stage == ClassroomStage.KIDS_REPEATING ||
+      kidsState.stage == ClassroomStage.CHILD_RECITING ||
+      kidsState.stage == ClassroomStage.TASMEE_STREAMING ||
+      kidsState.isAutoTransitionPending
+    ) {
+      KidsClassroomManager.stopActiveLoop()
+      changed = true
+    }
+    syncMemorizationAndTasmeeBarsVisibility()
+    if (changed && !isFinishing) {
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+    }
+  }
+
+  private fun ensureTajweedPageLoadedOrRefresh(wasTajweed: Boolean, targetPage: Int) {
+    quranSettings.pageType = "tajweed"
+    memorizationBar.isTajweedMushaf = true
+    if (!wasTajweed) {
+      val isTranslation = showingTranslation
+      val restartIntent = Intent(this@PagerActivity, PagerActivity::class.java).apply {
+        putExtra("page", targetPage)
+        putExtra(EXTRA_JUMP_TO_TRANSLATION, isTranslation)
+      }
+      finish()
+      overridePendingTransition(0, 0)
+      startActivity(restartIntent)
+      overridePendingTransition(0, 0)
+    } else {
+      refreshQuranPages()
+      supportInvalidateOptionsMenu()
+    }
   }
 
   private fun showAyahBookmarkSheet(suraAyah: SuraAyah) {
@@ -1894,6 +3359,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         )
         playFromAyah(startSuraAyah.sura, startSuraAyah.ayah)
         toggleActionBarVisibility(true)
+      } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_memorize_range) {
+        endAyahMode()
+        showMemorizationRepetitionSheet(startSuraAyah, endSuraAyah)
+        return true
       } else if (itemId == com.quran.labs.androidquran.common.toolbar.R.id.cab_recite_from_here) {
         onEndSessionBackCallback.isEnabled = true
         pagerActivityRecitationPresenter.onRecitationPressed()
@@ -2064,7 +3533,18 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     const val EXTRA_JUMP_TO_TRANSLATION: String = "jumpToTranslation"
     const val EXTRA_HIGHLIGHT_SURA: String = "highlightSura"
     const val EXTRA_HIGHLIGHT_AYAH: String = "highlightAyah"
+    const val EXTRA_START_CHILDREN_LEARNING_MODE: String = "startChildrenLearningMode"
+    const val EXTRA_KIDS_SESSION_MODE: String = "kidsSessionMode"
+    const val EXTRA_START_KIDS_MODE_SURAH: String = "startKidsModeSurah"
+    const val EXTRA_START_KIDS_MODE_AYAH: String = "startKidsModeAyah"
+    const val EXTRA_START_KIDS_AUTO_MODE: String = "startKidsAutoMode"
+    const val EXTRA_START_LIVE_TASMEE_MODE: String = "startLiveTasmeeMode"
     const val LAST_WAS_DUAL_PAGES: String = "wasDualPages"
+    private const val LAST_KIDS_SESSION_MODE: String = "lastKidsSessionMode"
+
+    private const val MIC_REQUESTER_NONE = 0
+    private const val MIC_REQUESTER_KIDS_CLASSROOM = 1
+    private const val MIC_REQUESTER_LIVE_TASMEE = 2
 
     private const val DEFAULT_HIDE_AFTER_TIME: Long = 2000
 
