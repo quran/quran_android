@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string-array name="sura_names">
+    <item>알-파티하</item>
+    <item>알-바까라</item>
+    <item>알리-이므란</item>
+    <item>안-니사ʾ</item>
+    <item>알-마ʾ이다</item>
+    <item>알-안ʿ암</item>
+    <item>알-아ʿ라프</item>
+    <item>알-안팔</item>
+    <item>앗-타우바</item>
+    <item>유누스</item>
+    <item>후드</item>
+    <item>유수프</item>
+    <item>아르-라드</item>
+    <item>이브라힘</item>
+    <item>알-히즈르</item>
+    <item>안-나흘</item>
+    <item>알-이스라ʾ</item>
+    <item>알-카흐프</item>
+    <item>마리암</item>
+    <item>타-하</item>
+    <item>알-안비야ʾ</item>
+    <item>알-하지</item>
+    <item>알-무ʾ미눈</item>
+    <item>안-누르</item>
+    <item>알-푸르깐</item>
+    <item>앗-슈아라ʾ</item>
+    <item>안-남르</item>
+    <item>알-까사스</item>
+    <item>알-안카부트</item>
+    <item>아르-룸</item>
+    <item>루끄만</item>
+    <item>앗-사즈다</item>
+    <item>알-아흐잡</item>
+    <item>사바ʾ</item>
+    <item>파티르</item>
+    <item>야-신</item>
+    <item>앗-사파트</item>
+    <item>사드</item>
+    <item>아즈-주마르</item>
+    <item>가피르</item>
+    <item>푸실랏</item>
+    <item>앗-슈라</item>
+    <item>아즈-주크루프</item>
+    <item>앗-두칸</item>
+    <item>알-자시야</item>
+    <item>알-아흐까프</item>
+    <item>무함마드</item>
+    <item>알-파트흐</item>
+    <item>알-후주랏</item>
+    <item>까프</item>
+    <item>앗-다리야트</item>
+    <item>앗-투르</item>
+    <item>안-나즘</item>
+    <item>알-까마르</item>
+    <item>아르-라흐만</item>
+    <item>알-와끼아</item>
+    <item>알-하디드</item>
+    <item>알-무자딜라</item>
+    <item>알-하슈르</item>
+    <item>알-뭄타하나</item>
+    <item>앗-사프</item>
+    <item>알-주무아</item>
+    <item>알-무나피꾼</item>
+    <item>앗-타가분</item>
+    <item>앗-탈라끄</item>
+    <item>앗-타흐림</item>
+    <item>알-물크</item>
+    <item>알-깔람</item>
+    <item>알-하까</item>
+    <item>알-마아리쥬</item>
+    <item>누흐</item>
+    <item>알-진</item>
+    <item>알-무잠밀</item>
+    <item>알-뭇다씨르</item>
+    <item>알-끼야마</item>
+    <item>알-인산</item>
+    <item>알-무르살랏</item>
+    <item>안-나바ʾ</item>
+    <item>안-나지앗</item>
+    <item>아바사</item>
+    <item>앗-타끄위르</item>
+    <item>알-인피타르</item>
+    <item>알-무타피핀</item>
+    <item>알-인시까끄</item>
+    <item>알-부루즈</item>
+    <item>앗-타리끄</item>
+    <item>알-아알라</item>
+    <item>알-가시야</item>
+    <item>알-파즈르</item>
+    <item>알-발라드</item>
+    <item>앗-샴스</item>
+    <item>알-라일</item>
+    <item>앗-두하</item>
+    <item>앗-샤르흐</item>
+    <item>앗-틴</item>
+    <item>알-알라끄</item>
+    <item>알-까드르</item>
+    <item>알-바이이나</item>
+    <item>아즈-잘잘라</item>
+    <item>알-아디야트</item>
+    <item>알-까리아</item>
+    <item>앗-타카수르</item>
+    <item>알-아스르</item>
+    <item>알-후마자</item>
+    <item>알-필</item>
+    <item>꾸라이쉬</item>
+    <item>알-마운</item>
+    <item>알-카우사르</item>
+    <item>알-카피룬</item>
+    <item>안-나스르</item>
+    <item>알-마사드</item>
+    <item>알-이클라스</item>
+    <item>알-팔라끄</item>
+    <item>안-나스</item>
+  </string-array>
+
+  <string-array name="sura_names_translation">
+    <item>개경장</item>
+    <item>암소</item>
+    <item>이므란의 가족</item>
+    <item>여성</item>
+    <item>식탁</item>
+    <item>가축</item>
+    <item>높은 곳들</item>
+    <item>전리품</item>
+    <item>회개</item>
+    <item>유누스</item>
+    <item>후드</item>
+    <item>유수프</item>
+    <item>천둥</item>
+    <item>이브라힘</item>
+    <item>돌지대</item>
+    <item>꿀벌</item>
+    <item>밤의 여정</item>
+    <item>동굴</item>
+    <item>마리암</item>
+    <item>타-하</item>
+    <item>예언자들</item>
+    <item>성지순례</item>
+    <item>신앙인들</item>
+    <item>빛</item>
+    <item>분별</item>
+    <item>시인들</item>
+    <item>개미</item>
+    <item>이야기</item>
+    <item>거미</item>
+    <item>로마인들</item>
+    <item>루끄만</item>
+    <item>절</item>
+    <item>동맹군</item>
+    <item>시바</item>
+    <item>창조주</item>
+    <item>야-신</item>
+    <item>열을 지어 선 사람들</item>
+    <item>사드</item>
+    <item>무리들</item>
+    <item>용서하시는 분</item>
+    <item>상세한 설명</item>
+    <item>협의</item>
+    <item>장식품</item>
+    <item>연기</item>
+    <item>무릎 꿇은 자들</item>
+    <item>모래 언덕</item>
+    <item>무함마드 ﷺ</item>
+    <item>승리</item>
+    <item>방들</item>
+    <item>까프</item>
+    <item>흩뿌리는 바람</item>
+    <item>시나이 산</item>
+    <item>별</item>
+    <item>달</item>
+    <item>가장 자비로우신 분</item>
+    <item>피할 수 없는 사건</item>
+    <item>철</item>
+    <item>논쟁하는 여성</item>
+    <item>집결</item>
+    <item>심사받는 여성</item>
+    <item>열</item>
+    <item>금요일</item>
+    <item>위선자들</item>
+    <item>상호 손실</item>
+    <item>이혼</item>
+    <item>금지</item>
+    <item>왕권</item>
+    <item>펜</item>
+    <item>피할 수 없는 날</item>
+    <item>상승의 길</item>
+    <item>누흐</item>
+    <item>진(정령)</item>
+    <item>옷에 싸인 자</item>
+    <item>옷에 덮인 자</item>
+    <item>부활</item>
+    <item>인간</item>
+    <item>파견된 자들</item>
+    <item>소식</item>
+    <item>뽑아내는 자들</item>
+    <item>그가 얼굴을 찌푸렸을 때</item>
+    <item>말아 올림</item>
+    <item>쪼개짐</item>
+    <item>속이는 자들</item>
+    <item>갈라짐</item>
+    <item>별자리들</item>
+    <item>밤에 찾아오는 자</item>
+    <item>가장 높으신 분</item>
+    <item>압도하는 것</item>
+    <item>새벽녘</item>
+    <item>도시</item>
+    <item>태양</item>
+    <item>밤</item>
+    <item>오전</item>
+    <item>가슴을 틔워줌</item>
+    <item>무화과</item>
+    <item>핏덩이</item>
+    <item>결정된 밤</item>
+    <item>분명한 증거</item>
+    <item>지진</item>
+    <item>달리는 말들</item>
+    <item>들이닥치는 재앙</item>
+    <item>더 많이 가지려는 욕심</item>
+    <item>시간</item>
+    <item>비방하는 자</item>
+    <item>코끼리</item>
+    <item>꾸라이쉬</item>
+    <item>작은 친절</item>
+    <item>천국의 강</item>
+    <item>불신자들</item>
+    <item>도움</item>
+    <item>새끼줄</item>
+    <item>순결</item>
+    <item>새벽빛</item>
+    <item>인류</item>
+  </string-array>
+</resources>
