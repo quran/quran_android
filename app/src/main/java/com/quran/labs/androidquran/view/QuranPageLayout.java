@@ -89,7 +89,7 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
     viewPaddingLarge = resources.getDimensionPixelSize(R.dimen.page_margin_large);
 
     LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-    if (isLandscape && shouldWrapWithScrollView()) {
+    if (isScrollableLayout(resources)) {
       scrollView = new ObservableScrollView(context);
       scrollView.setFillViewport(true);
       addView(scrollView, lp);
@@ -197,6 +197,13 @@ public abstract class QuranPageLayout extends QuranPageWrapperLayout
 
   protected abstract View generateContentView(@NonNull Context context, boolean isLandscape);
 
+protected boolean isScrollableLayout(@NonNull Resources resources) {
+final Configuration config = resources.getConfiguration();
+final boolean isLandscape = config.orientation == Configuration.ORIENTATION_LANDSCAPE;
+final boolean isShortViewport = config.screenWidthDp > 0 && config.screenHeightDp > 0 && config.screenHeightDp < config.screenWidthDp * 1.4f;
+return (isLandscape || isShortViewport) && shouldWrapWithScrollView();
+}
+      
   protected boolean shouldWrapWithScrollView() {
     return true;
   }

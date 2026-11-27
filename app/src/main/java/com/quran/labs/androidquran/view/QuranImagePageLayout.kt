@@ -25,7 +25,7 @@ open class QuranImagePageLayout(context: Context) : QuranPageLayout(context) {
   override fun generateContentView(context: Context, isLandscape: Boolean): View {
     imageView = HighlightingImageView(context).apply {
       adjustViewBounds = true
-      setIsScrollable(isLandscape && shouldWrapWithScrollView(), isLandscape)
+      setIsScrollable(isScrollableLayout(context.resources), isLandscape)
     }
     return imageView
   }
