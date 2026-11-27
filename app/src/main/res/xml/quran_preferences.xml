@@ -28,6 +28,16 @@
         app:iconSpaceReserved="false"
         app:useSimpleSummaryProvider="true" />
 
+    <androidx.preference.ListPreference
+        android:defaultValue="default"
+        android:dialogTitle="@string/prefs_theme_style_title"
+        android:entries="@array/theme_styles"
+        android:entryValues="@array/theme_style_values"
+        android:key="@string/prefs_app_theme_style"
+        android:title="@string/prefs_theme_style_title"
+        app:iconSpaceReserved="false"
+        app:useSimpleSummaryProvider="true" />
+
     <Preference
         android:key="@string/prefs_page_theme"
         android:title="@string/prefs_page_theme_title"

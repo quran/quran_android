@@ -1,15 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
+    android:background="?attr/quranSurface"
     android:orientation="vertical"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
-  <androidx.appcompat.widget.Toolbar
-      android:id="@+id/toolbar"
+  <FrameLayout
+      android:id="@+id/toolbar_area"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:background="?attr/colorPrimary"/>
+      android:background="?attr/quranToolbarBackground">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ToolbarStyle"
+        app:popupTheme="?attr/quranPopupTheme"
+        app:titleTextAppearance="@style/ToolbarTitleText" />
+  </FrameLayout>
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      android:background="?attr/quranDivider" />
 
   <ScrollView
       android:id="@+id/scroll_view"
@@ -31,7 +47,7 @@
           android:paddingBottom="8dp"
           android:text="@string/help_title"
           android:textAppearance="?android:attr/textAppearanceMedium"
-          android:textColor="@color/text_primary"
+          android:textColor="?attr/quranTextPrimary"
           android:textStyle="bold" />
 
       <TextView
@@ -41,7 +57,7 @@
           android:lineSpacingExtra="4dip"
           android:paddingBottom="8dp"
           android:textAppearance="?android:attr/textAppearanceSmall"
-          android:textColor="@color/text_primary"
+          android:textColor="?attr/quranTextPrimary"
           android:textSize="16sp" />
 
       <TextView
@@ -50,7 +66,7 @@
           android:layout_height="wrap_content"
           android:autoLink="email"
           android:text="@string/email_us"
-          android:textColor="@color/text_primary" />
+          android:textColor="?attr/quranTextPrimary" />
     </LinearLayout>
   </ScrollView>
 </LinearLayout>

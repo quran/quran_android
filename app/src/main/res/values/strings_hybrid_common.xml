@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="hybrid_app_title">Al-Qur\'an Al-Kareem</string>
+  <string name="hybrid_nav_read">Read</string>
+  <string name="hybrid_nav_index">Index</string>
+  <string name="hybrid_nav_search">Search</string>
+  <string name="hybrid_nav_bookmarks">Saved</string>
+</resources>

@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.extra.feature.linebyline.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.IntOffset
@@ -21,35 +22,58 @@ fun Sidelines(
   colorFilter: ColorFilter,
   position: SidelinesPosition
 ) {
+  val sortedSidelines = remember(sidelines) {
+    var isSorted = true
+    for (i in 1 until sidelines.size) {
+      if (sidelines[i].targetLine < sidelines[i - 1].targetLine) {
+        isSorted = false
+        break
+      }
+    }
+    if (isSorted) sidelines else sidelines.sortedBy { it.targetLine }
+  }
+  val locationsBuffer = remember(sortedSidelines) { FloatArray(sortedSidelines.size * 2) }
+
   Canvas(modifier = Modifier.fillMaxSize()) {
     val totalWidth = this.size.width
     val totalHeight = this.size.height
 
-    val sortedSidelines = sidelines.sortedBy { it.targetLine }
-
     val lineHeight = totalHeight / 15f
-    val locations = sortedSidelines.map {
-      val targetLineTop = lineHeight * (it.targetLine - 1)
-      val y = if (it.direction == SidelineDirection.UP) {
+    val count = sortedSidelines.size
+    for (i in 0 until count) {
+      val item = sortedSidelines[i]
+      val targetLineTop = lineHeight * (item.targetLine - 1)
+      val y = if (item.direction == SidelineDirection.UP) {
         val potentialY = targetLineTop + lineHeight
-        max(0f, potentialY - it.image.height)
+        max(0f, potentialY - item.image.height)
       } else {
         targetLineTop
       }
-      y to y + it.image.height
+      locationsBuffer[i * 2] = y
+      locationsBuffer[i * 2 + 1] = y + item.image.height
     }
 
-    sortedSidelines.forEachIndexed { index, model ->
-      val whence = locations[index]
+    for (index in 0 until count) {
+      val model = sortedSidelines[index]
+      val locStart = locationsBuffer[index * 2]
+      val locEnd = locationsBuffer[index * 2 + 1]
+      val hasNextOverlap = index + 1 < count && locationsBuffer[(index + 1) * 2] < locEnd
+
       val size =
-        if (locations.size > index + 1 && locations[index + 1].first < locations[index].second) {
+        if (hasNextOverlap) {
           val originalLinesSpanned = ceil(1f * model.image.height / (1.35 * quranImageLineHeight)).toInt()
           val nextUsedLine = if (model.direction == SidelineDirection.UP) {
-            (sidelines.filter { it.targetLine < model.targetLine }
-              .maxByOrNull { it.targetLine }?.targetLine ?: 1) - 1
+            var prev = index - 1
+            while (prev >= 0 && sortedSidelines[prev].targetLine == model.targetLine) {
+              prev--
+            }
+            (if (prev >= 0) sortedSidelines[prev].targetLine else 1) - 1
           } else {
-            (sidelines.filter { it.targetLine > model.targetLine }
-              .minByOrNull { it.targetLine }?.targetLine ?: 16) - 1
+            var next = index + 1
+            while (next < count && sortedSidelines[next].targetLine == model.targetLine) {
+              next++
+            }
+            (if (next < count) sortedSidelines[next].targetLine else 16) - 1
           }
           val targetLinesToSpan = max(originalLinesSpanned, abs(nextUsedLine - model.targetLine))
           val targetHeight = targetLinesToSpan * lineHeight
@@ -77,13 +101,13 @@ fun Sidelines(
           )
         }
 
-      val y = if (locations.size > index + 1 && locations[index + 1].first < (locations[index].first + size.height)) {
-        val updatedY = locations[index].first + size.height
-        whence.first - (updatedY - locations[index + 1].first)
-      } else if (whence.first + size.height > totalHeight) {
-        whence.first - ((whence.first + size.height) - totalHeight.toInt())
+      val y = if (index + 1 < count && locationsBuffer[(index + 1) * 2] < (locStart + size.height)) {
+        val updatedY = locStart + size.height
+        locStart - (updatedY - locationsBuffer[(index + 1) * 2])
+      } else if (locStart + size.height > totalHeight) {
+        locStart - ((locStart + size.height) - totalHeight.toInt())
       } else {
-        whence.first
+        locStart
       }
 
       // deltaX is intended to align sidelines to hug the page

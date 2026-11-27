@@ -7,18 +7,21 @@ import androidx.core.os.LocaleListCompat
 import com.quran.common.upgrade.PreferencesUpgrade
 import com.quran.data.dao.Settings
 import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 class MadaniPreferencesUpgrade @Inject constructor(private val settings: Settings): PreferencesUpgrade {
 
-  private val scope = MainScope()
-
   override fun upgrade(context: Context, from: Int, to: Int): Boolean {
-    scope.launch(Dispatchers.Main.immediate) {
+    if (from > 3460 && from > 3441) {
+      return true
+    }
+
+    val appContext = context.applicationContext
+    CoroutineScope(Dispatchers.Main.immediate).launch {
       if (from <= 3460) {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
+        val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
         if (prefs.getBoolean("useArabicNames", false)) {
           val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags("ar-EG")
           AppCompatDelegate.setApplicationLocales(appLocale)

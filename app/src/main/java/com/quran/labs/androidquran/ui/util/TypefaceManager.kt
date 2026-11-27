@@ -55,4 +55,11 @@ object TypefaceManager {
     }
   }
 
+  /**
+   * Uthmani Naskh typeface for Arabic search results. UthmanTN1Ver10.otf includes complete
+   * basic Arabic/punctuation coverage plus OpenType GSUB ligature lookup for plain "الله"
+   * rendering with the proper shadda and dagger alif.
+   */
+  fun getSearchArabicTypeface(context: Context): Typeface = getHeaderFooterTypeface(context)
+
 }

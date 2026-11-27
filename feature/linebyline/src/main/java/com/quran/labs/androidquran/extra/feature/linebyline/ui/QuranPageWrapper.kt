@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import com.quran.data.source.PageContentType
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.extra.feature.linebyline.model.PageInfo
 import com.quran.labs.androidquran.extra.feature.linebyline.model.SidelinesPosition
 import java.text.NumberFormat
@@ -22,7 +23,7 @@ fun QuranPageWrapper(
   pageInfo: PageInfo,
   pageContentType: PageContentType,
   dualScreenMode: Boolean,
-  suraHeaderBitmap: ImageBitmap,
+  suraHeaderBitmap: ImageBitmap?,
   ayahNumberFormatter: NumberFormat,
   onClick: () -> Unit,
   onPagePositioned: (Float, Float, Int, Int) -> Unit,
@@ -49,53 +50,9 @@ fun QuranPageWrapper(
 
   val (headerColor, ringColor, innerColor, textColor) =
     if (pageInfo.pageType.contains("1439")) {
-      if (isNightMode) {
-        listOf(
-          // header color
-          Color(0x73, 0xaf, 0xfa),
-          // ring color
-          Color(0x73, 0xaf, 0xfa),
-          // inner color
-          Color(0x17, 0x25, 0x54),
-          // text color
-          Color(0x73, 0xaf, 0xfa)
-        )
-      } else {
-        listOf(
-          // header color
-          Color(0x25, 0x63, 0xeb),
-          // ring color
-          Color(0x25, 0x63, 0xeb),
-          // inner color
-          Color(0xef, 0xf6, 0xff),
-          // text color
-          Color(0x1d, 0x4e, 0xd8)
-        )
-      }
+      if (isNightMode) DARK_1439_COLORS else LIGHT_1439_COLORS
     } else {
-      if (isNightMode) {
-        listOf(
-          // header color
-          Color(0x04, 0x78, 0x57),
-          // ring color
-          Color(0x04, 0x78, 0x57),
-          // inner color
-          Color(0x02, 0x2c, 0x22),
-          // text color
-          Color(0x34, 0xd3, 0x99)
-        )
-      } else {
-        listOf(
-          // header color
-          Color(0x04, 0x78, 0x57),
-          // ring color
-          Color(0x04, 0x78, 0x57),
-          // inner color
-          Color(0xec, 0xfd, 0xf5),
-          // text color
-          Color(0x04, 0x78, 0x57)
-        )
-      }
+      if (isNightMode) DARK_COLORS else LIGHT_COLORS
     }
 
   val ratio = (pageContentType as PageContentType.Line).ratio
@@ -105,12 +62,24 @@ fun QuranPageWrapper(
   } else {
     Color.Black
   }
-  val colorFilter = ColorFilter.tint(lineColor)
+  val colorFilter = remember(lineColor) { ColorFilter.tint(lineColor) }
+  val headerColorFilter = remember(headerColor) { ColorFilter.tint(headerColor) }
 
   QuranPage(
-    pageInfo,
-    pageContentType,
-    isScrollable,
+    pageInfo = pageInfo,
+    pageContentType = pageContentType,
+    isScrollable = isScrollable,
+    suraHeaderBitmap = suraHeaderBitmap,
+    ayahNumberFormatter = ayahNumberFormatter,
+    lineColorFilter = colorFilter,
+    headerColorFilter = headerColorFilter,
+    lineColor = lineColor,
+    ringColor = ringColor,
+    innerColor = innerColor,
+    markerTextColor = textColor,
+    shouldShowLineDivider = { lineId ->
+      displaySettings.showLineDividers && shouldShowLineFor(pageInfo.page, lineId)
+    },
     headerComposable = {
       if (showHeaderFooter) {
         QuranHeaderFooter(
@@ -141,58 +110,6 @@ fun QuranPageWrapper(
         Spacer(modifier = Modifier)
       }
     },
-    quranLineComposable = {
-      QuranLine(
-        image = it.lineImage,
-        lineId = it.lineId,
-        ratio,
-        colorFilter = colorFilter,
-        displaySettings.showLineDividers && shouldShowLineFor(pageInfo.page, it.lineId),
-        lineColor
-      )
-    },
-    suraHeaderComposable = {
-      SuraHeader(
-        image = suraHeaderBitmap,
-        lineId = it.lineId,
-        centerX = it.centerX,
-        centerY = it.centerY,
-        tint = headerColor,
-        lineRatio = ratio
-      )
-    },
-    ayahMarkerInfoComposable = {
-      AyahMarker(
-        lineId = it.lineId,
-        centerX = it.centerX,
-        centerY = it.centerY,
-        ringColor = ringColor,
-        innerColor = innerColor,
-        text = ayahNumberFormatter.format(it.ayah),
-        // was 0.0375f for sub-100 ayat, but breaks ayah 77/78/87/88
-        // note that, sometimes, this breaks the second time the activity is loaded
-        textWidthRatio = if (it.ayah > 100) 0.03f else 0.0370f,
-        textColor = textColor
-      )
-    },
-    highlightComposable = { highlight, color ->
-      Highlight(
-        lineId = highlight.lineId,
-        left = highlight.left,
-        right = highlight.right,
-        color = color,
-        lineRatio = ratio
-      )
-    },
-    readingBookmarkComposable = { highlight, colors ->
-      ReadingBookmarkUnderline(
-        lineId = highlight.lineId,
-        left = highlight.left,
-        right = highlight.right,
-        lineRatio = ratio,
-        colors = colors
-      )
-    },
     sidelinesComposable = {
       Sidelines(
         pageInfo.sidelines,
@@ -201,20 +118,19 @@ fun QuranPageWrapper(
         if (pageInfo.page % 2 == 0) SidelinesPosition.RIGHT else SidelinesPosition.LEFT
       )
     },
-    onPagePositioned,
-    onSelectionStart,
-    onSelectionModified,
-    onSelectionEnd,
+    onPagePositioned = onPagePositioned,
+    onSelectionStart = onSelectionStart,
+    onSelectionModified = onSelectionModified,
+    onSelectionEnd = onSelectionEnd,
     modifier = Modifier.clickable(
       interactionSource = remember { MutableInteractionSource() },
       indication = null
     ) {
       onClick()
     },
-    isNightMode,
+    isNightMode = isNightMode,
     backgroundColor = if (isNightMode) {
-      val brightness = displaySettings.nightModeBackgroundBrightness
-      Color(brightness, brightness, brightness)
+      AppThemeStyle.current.darkMushafBackground(displaySettings.nightModeBackgroundBrightness)
     } else {
       displaySettings.dayBackgroundColor?.let { Color(it) }
     }
@@ -224,3 +140,38 @@ fun QuranPageWrapper(
 private fun shouldShowLineFor(page: Int, line: Int): Boolean {
   return page > 3 && line > 0
 }
+
+private data class MarkerPalette(
+  val headerColor: Color,
+  val ringColor: Color,
+  val innerColor: Color,
+  val textColor: Color
+)
+
+private val DARK_1439_COLORS = MarkerPalette(
+  headerColor = Color(0x73, 0xaf, 0xfa),
+  ringColor = Color(0x73, 0xaf, 0xfa),
+  innerColor = Color(0x17, 0x25, 0x54),
+  textColor = Color(0x73, 0xaf, 0xfa)
+)
+
+private val LIGHT_1439_COLORS = MarkerPalette(
+  headerColor = Color(0x25, 0x63, 0xeb),
+  ringColor = Color(0x25, 0x63, 0xeb),
+  innerColor = Color(0xef, 0xf6, 0xff),
+  textColor = Color(0x1d, 0x4e, 0xd8)
+)
+
+private val DARK_COLORS = MarkerPalette(
+  headerColor = Color(0x04, 0x78, 0x57),
+  ringColor = Color(0x04, 0x78, 0x57),
+  innerColor = Color(0x02, 0x2c, 0x22),
+  textColor = Color(0x34, 0xd3, 0x99)
+)
+
+private val LIGHT_COLORS = MarkerPalette(
+  headerColor = Color(0x04, 0x78, 0x57),
+  ringColor = Color(0x04, 0x78, 0x57),
+  innerColor = Color(0xec, 0xfd, 0xf5),
+  textColor = Color(0x04, 0x78, 0x57)
+)

@@ -67,6 +67,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.util.lerp
 import androidx.core.content.getSystemService
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 
@@ -90,8 +93,9 @@ internal fun IconRevealScreen(onContinue: () -> Unit, onNightChange: (isNight: B
   }
   var playback by remember { mutableIntStateOf(0) }
   val currentOnNightChange by rememberUpdatedState(onNightChange)
+  val lifecycleOwner = LocalLifecycleOwner.current
 
-  LaunchedEffect(state, playback) {
+  LaunchedEffect(state, playback, lifecycleOwner) {
     val onNightfall = { currentOnNightChange(true) }
     val onSettle = { haptics.performHapticFeedback(HapticFeedbackType.Confirm) }
     when {
@@ -112,7 +116,9 @@ internal fun IconRevealScreen(onContinue: () -> Unit, onNightChange: (isNight: B
         }
       }
     }
-    state.shineRepeatedly()
+    lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+      state.shineRepeatedly()
+    }
   }
 
   BoxWithConstraints(

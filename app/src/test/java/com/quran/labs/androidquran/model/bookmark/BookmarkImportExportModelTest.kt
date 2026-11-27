@@ -35,6 +35,7 @@ import io.reactivex.rxjava3.observers.TestObserver
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import okio.Buffer
+import okio.ForwardingSource
 import okio.buffer
 import okio.source
 import org.junit.Before
@@ -519,6 +520,48 @@ class BookmarkImportExportModelTest {
     assertThat(readingBookmark.sura).isEqualTo(2)
     assertThat(readingBookmark.ayah).isEqualTo(255)
     assertThat(readingBookmark.timestampMillis).isEqualTo(1_000_000)
+  }
+
+  @Test
+  fun testBookmarkJsonModelFromJsonClosesSource() {
+    var closed = false
+    val backingBuffer = Buffer().writeUtf8(TAGS_JSON)
+    val trackingSource = object : ForwardingSource(backingBuffer) {
+      override fun close() {
+        closed = true
+        super.close()
+      }
+    }.buffer()
+
+    val data = BookmarkJsonModel().fromJson(trackingSource)
+
+    assertThat(data.tags).hasSize(3)
+    assertThat(closed).isTrue()
+  }
+
+  @Test
+  fun testBookmarkJsonModelFromJsonRejectsOversizedPayloadAndClosesSource() {
+    var closed = false
+    val oversized = Buffer()
+      .writeUtf8("{\"bookmarks\":[],\"tags\":[{\"id\":1,\"name\":\"")
+      .write(ByteArray(BookmarkJsonModel.MAX_JSON_SIZE_BYTES.toInt() + 64) { 'a'.code.toByte() })
+      .writeUtf8("\"}]}")
+    val trackingSource = object : ForwardingSource(oversized) {
+      override fun close() {
+        closed = true
+        super.close()
+      }
+    }.buffer()
+
+    var thrown: IOException? = null
+    try {
+      BookmarkJsonModel().fromJson(trackingSource)
+    } catch (e: IOException) {
+      thrown = e
+    }
+
+    assertThat(thrown).isNotNull()
+    assertThat(closed).isTrue()
   }
 
   private fun importData(data: BookmarkData) {

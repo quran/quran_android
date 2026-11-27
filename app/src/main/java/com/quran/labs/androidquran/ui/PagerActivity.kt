@@ -1,6 +1,8 @@
 package com.quran.labs.androidquran.ui
 
 import android.Manifest
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.SearchManager
 import android.content.ComponentName
 import android.content.DialogInterface
@@ -8,6 +10,10 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.database.sqlite.SQLiteDatabase
+import android.graphics.Rect
+import android.graphics.RectF
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -31,12 +37,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.doOnLayout
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
@@ -71,11 +80,15 @@ import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.common.audio.model.QariItem
 import com.quran.labs.androidquran.common.audio.model.QariItem.Companion.fromQari
 import com.quran.labs.androidquran.common.audio.model.playback.AudioRequest
+import com.quran.labs.androidquran.common.audio.model.playback.AudioStatus
+import com.quran.labs.androidquran.common.audio.model.playback.PlaybackStatus
 import com.quran.labs.androidquran.common.audio.repository.AudioStatusRepository
 import com.quran.labs.androidquran.common.audio.repository.CurrentQariManager
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.data.QuranDataProvider
 import com.quran.labs.androidquran.data.QuranDisplayData
+import com.quran.labs.androidquran.data.TimingRepository
+import com.quran.labs.androidquran.database.TranslationsDBAdapter
 import com.quran.labs.androidquran.di.component.activity.PagerActivityComponent
 import com.quran.labs.androidquran.feature.reading.bridge.AudioStatusRepositoryBridge
 import com.quran.labs.androidquran.feature.reading.bridge.DownloadBridge
@@ -86,8 +99,20 @@ import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkChan
 import com.quran.labs.androidquran.feature.reading.presenter.ReadingBookmarkPresenter
 import com.quran.labs.androidquran.feature.reading.presenter.RecentPagePresenter
 import com.quran.labs.androidquran.feature.reading.presenter.recitation.PagerActivityRecitationPresenter
+import com.quran.labs.androidquran.hybrid.contract.AdaptiveMotionTokens
+import com.quran.labs.androidquran.hybrid.contract.DailyWirdRepository
+import com.quran.labs.androidquran.hybrid.contract.HybridReaderContract
+import com.quran.labs.androidquran.hybrid.reader.AyahOverlayBounds
+import com.quran.labs.androidquran.hybrid.reader.HybridReaderController
+import com.quran.labs.androidquran.hybrid.reader.HybridReaderIntentParser
+import com.quran.labs.androidquran.hybrid.reader.HybridReaderOverlayView
+import com.quran.labs.androidquran.hybrid.reader.TafsirLookupHelper
+import com.quran.labs.androidquran.hybrid.reader.computeSelectedItemOverlayBounds
+import com.quran.labs.androidquran.hybrid.reader.isValidForOverlay
 import com.quran.labs.androidquran.model.translation.ArabicDatabaseUtils
 import com.quran.labs.androidquran.presenter.data.QuranEventLogger
+import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahImageTrackerItem
+import com.quran.labs.androidquran.presenter.quran.ayahtracker.AyahTrackerPresenter
 import com.quran.labs.androidquran.presenter.translationlist.TranslationListPresenter
 import com.quran.labs.androidquran.service.AudioService
 import com.quran.labs.androidquran.service.QuranDownloadService
@@ -97,6 +122,7 @@ import com.quran.labs.androidquran.service.util.PermissionUtil.havePostNotificat
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper.getDownloadIntent
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog
 import com.quran.labs.androidquran.ui.fragment.JumpFragment
+import com.quran.labs.androidquran.ui.fragment.QuranPageFragment
 import com.quran.labs.androidquran.ui.fragment.TabletFragment
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog.OnBookmarkTagsUpdateListener
 import com.quran.labs.androidquran.ui.fragment.TranslationFragment
@@ -116,9 +142,17 @@ import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.OrientationLockUtils
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
+import com.quran.labs.androidquran.common.ui.core.BitmapPoolTrimRegistry
+import com.quran.labs.androidquran.extra.feature.linebyline.QuranLineByLineWrapperView
+import com.quran.labs.androidquran.extra.feature.linebyline.resource.LineBitmapRecycler
+import com.quran.labs.androidquran.hybrid.ui.PostDestroyMemoryReclaimer
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
+import com.quran.labs.androidquran.util.SearchResultFormatter
 import com.quran.labs.androidquran.util.ShareUtil
+import com.quran.labs.androidquran.util.ThemeUtil
+import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.labs.androidquran.view.IconPageIndicator
 import com.quran.labs.androidquran.view.QuranSpinner
 import com.quran.labs.androidquran.view.SlidingUpPanelLayout
@@ -139,21 +173,26 @@ import com.quran.mobile.feature.pagetheme.PageThemeSheetWrapper
 import com.quran.mobile.feature.qarilist.QariListWrapper
 import com.quran.mobile.feature.qarilist.di.QariListWrapperInjector
 import com.quran.mobile.translation.model.LocalTranslation
+import com.quran.mobile.translation.verse.TranslationModel
 import com.quran.page.common.data.QuranNaming
 import com.quran.page.common.factory.PageViewFactoryProvider
 import com.quran.page.common.toolbar.AyahToolBar
 import com.quran.page.common.toolbar.di.AyahToolBarInjector
 import com.quran.reading.common.ReadingEventPresenter
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.buffer
@@ -169,6 +208,7 @@ import java.lang.ref.WeakReference
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /**
  * Activity that displays the Quran (in Arabic or translation mode).
@@ -207,22 +247,54 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   private lateinit var viewPager: ViewPager
   private val themePreferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
     if (key in PAGE_COLOR_PREFERENCES) {
+      if (key == Constants.PREF_APP_THEME_STYLE) {
+        val updatedStyle = AppThemeStyle.fromPreference(quranSettings.appThemeStyle)
+        if (updatedStyle != appliedThemeStyle) {
+          appliedThemeStyle = updatedStyle
+          AppThemeStyle.select(updatedStyle)
+          theme.applyStyle(ThemeUtil.themeOverlayRes(updatedStyle), true)
+        }
+      } else if (key == Constants.PREF_OLED_DARK_MODE) {
+        AppThemeStyle.setOledDarkMode(quranSettings.isOledDarkMode)
+        if (::hybridReaderController.isInitialized) {
+          hybridReaderController.syncAppearanceState()
+        }
+      }
       refreshQuranPages()
+      applyHybridMushafBackdrop()
+      updateSystemBarAppearance()
     }
   }
   private lateinit var pagerAdapter: QuranPageAdapter
   private lateinit var ayahToolBar: AyahToolBar
   private lateinit var slidingPanel: SlidingUpPanelLayout
   private lateinit var slidingPager: ViewPager
+  private lateinit var slidingPageIndicator: IconPageIndicator
   private lateinit var slidingPagerAdapter: SlidingPagerAdapter
+  private var isSlidingPagerAttached = false
   private lateinit var translationsSpinner: QuranSpinner
   private lateinit var overlay: FrameLayout
   private lateinit var toolBarArea: View
+  private lateinit var hybridReaderOverlay: HybridReaderOverlayView
+  private var mushafClipContainer: FrameLayout? = null
+  private lateinit var hybridReaderController: HybridReaderController
+  private var pageSettleDebounceJob: Job? = null
+  private var qariListObserverJob: Job? = null
+  private var lineByLineBoundsJob: Job? = null
+  private var pendingBoundsLayoutRetry: Boolean = false
+  private var lineByLineAttachRetries: Int = 0
+  private var pageChangeListener: OnPageChangeListener? = null
+  private var pendingMarkerPopupPage: Int? = null
+  private var lastViewPagerScrollState: Int = ViewPager.SCROLL_STATE_IDLE
+  private var lastScrolledBoundsOffsetPx: Int = Int.MIN_VALUE
+  private var statusBarTopInsetPx: Int = 0
+  private var mushafClipRect: Rect? = null
 
   private var requestPermissionLauncher: ActivityResultLauncher<String>? = null
 
   private var isSplitScreen = false
 
+  private lateinit var onHybridOverlayOrDrawerBackCallback: OnBackPressedCallback
   private lateinit var onClearAyahModeBackCallback: OnBackPressedCallback
   private lateinit var onShowingTranslationBackCallback: OnBackPressedCallback
   private lateinit var onEndSessionBackCallback: OnBackPressedCallback
@@ -238,7 +310,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   @Inject lateinit var quranSettings: QuranSettings
   @Inject lateinit var quranNaming: QuranNaming
   @Inject lateinit var quranScreenInfo: QuranScreenInfo
-  @Inject lateinit var arabicDatabaseUtils: ArabicDatabaseUtils
+  @Inject lateinit var arabicDatabaseUtils: Provider<ArabicDatabaseUtils>
   @Inject lateinit var shareUtil: ShareUtil
   @Inject lateinit var audioUtils: AudioUtils
   @Inject lateinit var quranDisplayData: QuranDisplayData
@@ -256,6 +328,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   @Inject lateinit var downloadInfoStreams: DownloadInfoStreams
   @Inject lateinit var qariManager: CurrentQariManager
   @Inject lateinit var downloadBridge: DownloadBridge
+  @Inject lateinit var dailyWirdRepository: DailyWirdRepository
+  @Inject lateinit var translationsDBAdapter: TranslationsDBAdapter
+  @Inject lateinit var translationModel: TranslationModel
+  @Inject lateinit var translationUtil: TranslationUtil
+  @Inject lateinit var timingRepository: TimingRepository
 
   private lateinit var audioStatusRepositoryBridge: AudioStatusRepositoryBridge
   private lateinit var readingEventPresenterBridge: ReadingEventPresenterBridge
@@ -284,7 +361,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       val activity = activity.get()
       if (activity != null) {
         if (msg.what == MSG_HIDE_ACTIONBAR) {
-          activity.toggleActionBarVisibility(false)
+          if (activity.shouldAutoHideChrome()) {
+            activity.toggleActionBarVisibility(false)
+          }
         } else {
           super.handleMessage(msg)
         }
@@ -292,12 +371,16 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
   }
 
+  private var appliedThemeStyle: AppThemeStyle = AppThemeStyle.DEFAULT
+
   public override fun onCreate(savedInstanceState: Bundle?) {
+    appliedThemeStyle = ThemeUtil.applyActivityTheme(this)
     WindowCompat.setDecorFitsSystemWindows(window, false)
     super.onCreate(savedInstanceState)
 
     // field injection
     pagerActivityComponent.inject(this)
+    AppThemeStyle.setOledDarkMode(quranSettings.isOledDarkMode)
 
     isFoldableDeviceOpenAndVertical =
       savedInstanceState?.getBoolean(LAST_FOLDING_STATE, isFoldableDeviceOpenAndVertical)
@@ -330,13 +413,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     setContentView(R.layout.quran_page_activity_slider)
 
-    val lightStatusBar = resources.getBoolean(R.bool.light_navigation_bar)
     windowInsetsController = WindowInsetsControllerCompat(
       window, findViewById<ViewGroup>(R.id.sliding_panel)
-    ).apply {
-      isAppearanceLightStatusBars = lightStatusBar
-      isAppearanceLightNavigationBars = lightStatusBar
-    }
+    )
+    updateSystemBarAppearance()
     registerBackPressedCallbacks()
     initialize(savedInstanceState)
     requestPermissionLauncher =
@@ -367,6 +447,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       val page = currentPage
       isDualPages = nextIsDualPages
 
+      if (::pagerAdapter.isInitialized) {
+        pagerAdapter.clearViewPool()
+      }
       pagerAdapter = QuranPageAdapter(
         supportFragmentManager,
         isDualPages,
@@ -419,6 +502,15 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     var page = -1
     isActionBarHidden = true
+    var restoredDrawerOpen = false
+    var restoredAppearanceOpen = false
+    var restoredStudyTab = HybridReaderContract.StudyTab.RECITATION
+    var restoredSelectedSura = -1
+    var restoredSelectedAyah = -1
+    var restoredSelectedEndSura = -1
+    var restoredSelectedEndAyah = -1
+    var parsedLaunchExtras = HybridReaderIntentParser.parse(intent, quranInfo, Constants.PAGES_FIRST)
+
     if (savedInstanceState != null) {
       Timber.d("non-null saved instance state!")
       page = savedInstanceState.getInt(LAST_READ_PAGE, -1)
@@ -429,24 +521,18 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
       val lastWasDualPages = savedInstanceState.getBoolean(LAST_WAS_DUAL_PAGES, isDualPages)
       shouldAdjustPageNumber = (lastWasDualPages != isDualPages)
+      restoredDrawerOpen = savedInstanceState.getBoolean(KEY_HYBRID_DRAWER_OPEN, false)
+      restoredAppearanceOpen = savedInstanceState.getBoolean(KEY_HYBRID_APPEARANCE_OPEN, false)
+      restoredStudyTab = HybridReaderContract.StudyTab.fromExtra(
+        savedInstanceState.getString(KEY_HYBRID_STUDY_TAB)
+      ) ?: HybridReaderContract.StudyTab.RECITATION
+      restoredSelectedSura = savedInstanceState.getInt(KEY_HYBRID_SELECTED_SURA, -1)
+      restoredSelectedAyah = savedInstanceState.getInt(KEY_HYBRID_SELECTED_AYAH, -1)
+      restoredSelectedEndSura = savedInstanceState.getInt(KEY_HYBRID_SELECTED_END_SURA, -1)
+      restoredSelectedEndAyah = savedInstanceState.getInt(KEY_HYBRID_SELECTED_END_AYAH, -1)
     } else {
-      val intent = intent
-      val extras = intent.extras
-      if (extras != null) {
-        page = extras.getInt("page", Constants.PAGES_FIRST)
-        showingTranslation =
-          extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation)
-        val highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1)
-        val highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1)
-
-        if (highlightedSura > -1 && highlightedAyah > -1) {
-          readingEventPresenterBridge.setSelection(
-            highlightedSura,
-            highlightedAyah,
-            true
-          )
-        }
-      }
+      page = parsedLaunchExtras.page
+      showingTranslation = parsedLaunchExtras.jumpToTranslation || showingTranslation
     }
     onShowingTranslationBackCallback.isEnabled = showingTranslation
 
@@ -457,6 +543,48 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     toolBarArea = findViewById(R.id.toolbar_area)
     translationsSpinner = findViewById(R.id.spinner)
     overlay = findViewById(R.id.overlay)
+    hybridReaderOverlay = findViewById(R.id.hybrid_reader_overlay)
+
+    initHybridReaderController()
+    applyHybridMushafBackdrop()
+
+    if (savedInstanceState != null) {
+      if (restoredSelectedSura > 0 && restoredSelectedAyah > 0) {
+        val restoredStart = SuraAyah(restoredSelectedSura, restoredSelectedAyah)
+        if (restoredSelectedEndSura > 0 && restoredSelectedEndAyah > 0) {
+          val restoredEnd = SuraAyah(restoredSelectedEndSura, restoredSelectedEndAyah)
+          if (restoredEnd != restoredStart) {
+            readingEventPresenter.onAyahSelection(
+              AyahRange(restoredStart, restoredEnd, SelectionIndicator.None)
+            )
+          } else {
+            readingEventPresenterBridge.setSelection(restoredSelectedSura, restoredSelectedAyah, false)
+          }
+        } else {
+          readingEventPresenterBridge.setSelection(restoredSelectedSura, restoredSelectedAyah, false)
+        }
+      }
+      if (restoredDrawerOpen || restoredAppearanceOpen) {
+        hybridReaderController.restoreUiState(
+          isDrawerOpen = restoredDrawerOpen,
+          studyTab = restoredStudyTab,
+          isAppearanceSheetOpen = restoredAppearanceOpen
+        )
+      }
+    } else {
+      val highlightedSura = parsedLaunchExtras.highlightSura
+      val highlightedAyah = parsedLaunchExtras.highlightAyah
+      if (highlightedSura != null && highlightedAyah != null) {
+        readingEventPresenterBridge.setSelection(
+          highlightedSura,
+          highlightedAyah,
+          true
+        )
+      }
+      parsedLaunchExtras.initialStudyTab?.let { tab ->
+        hybridReaderController.openStudyDrawer(tab)
+      }
+    }
 
     ViewCompat.setOnApplyWindowInsetsListener(toolBarArea) { view, windowInsets ->
       val insets = windowInsets.getInsets(
@@ -474,7 +602,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     supportActionBar?.setDisplayShowHomeEnabled(true)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    initAyahActionPanel()
+    initAyahActionPanel(savedInstanceState)
 
     if (showingTranslation && translationNames.isNotEmpty()) {
       updateActionBarSpinner()
@@ -508,16 +636,57 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
 
     val nonRestoringViewPager = findViewById<NonRestoringViewPager>(R.id.quran_pager)
+    mushafClipContainer = findViewById(R.id.mushaf_clip_container)
     nonRestoringViewPager.setIsDualPagesInLandscape(
       QuranUtils.isDualPagesInLandscape(this, quranScreenInfo)
     )
 
     viewPager = nonRestoringViewPager
+    viewPager.offscreenPageLimit = 1
     viewPager.setAdapter(pagerAdapter)
+    ViewCompat.setOnApplyWindowInsetsListener(viewPager) { _, windowInsets ->
+      val top = windowInsets.getInsets(
+        WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.displayCutout()
+      ).top
+      val navBottom = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+      if (::hybridReaderOverlay.isInitialized) {
+        hybridReaderOverlay.applyWindowInsets(top, navBottom)
+      }
+      if (top != statusBarTopInsetPx) {
+        statusBarTopInsetPx = top
+        applyMushafStatusBarClip(targetNudgePx = viewPager.translationY)
+      }
+      windowInsets
+    }
 
     ayahToolBar.setOnItemSelectedListener(AyahMenuItemSelectionHandler())
+    // Proposal 5 FloatingAyahActionBar replaces legacy AyahToolBar; detach so onAttachedToWindow never binds AyahToolBarPresenter.
+    ayahToolBar.visibility = View.GONE
+    (ayahToolBar.parent as? ViewGroup)?.removeView(ayahToolBar)
     val onPageChangeListener: OnPageChangeListener = object : OnPageChangeListener {
       override fun onPageScrollStateChanged(state: Int) {
+        lastViewPagerScrollState = state
+        if (state != ViewPager.SCROLL_STATE_IDLE) {
+          lineByLineBoundsJob?.cancel()
+          lineByLineBoundsJob = null
+        } else {
+          lastScrolledBoundsOffsetPx = Int.MIN_VALUE
+          pageSettleDebounceJob?.cancel()
+          val settledPage = currentPage
+          val markerPage = pendingMarkerPopupPage
+          pendingMarkerPopupPage = null
+          viewPager.post {
+            if (!isFinishing && !isDestroyed && ::hybridReaderController.isInitialized) {
+              hybridReaderController.recordSettledPage(settledPage)
+              if (markerPage != null && quranSettings.shouldDisplayMarkerPopup()) {
+                lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
+                  this@PagerActivity, quranInfo, markerPage, isDualPageVisible, lastPopupTime
+                )
+              }
+            }
+          }
+          refreshHybridAyahBounds()
+        }
       }
 
       override fun onPageScrolled(
@@ -550,22 +719,38 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
             readingEventPresenterBridge.clearSelectedAyah()
           }
         }
+        if (suraAyah != null &&
+          (positionOffsetPixels == 0 || abs(positionOffsetPixels - lastScrolledBoundsOffsetPx) >= 8)
+        ) {
+          lastScrolledBoundsOffsetPx = positionOffsetPixels
+          refreshHybridAyahBounds()
+        }
       }
 
       override fun onPageSelected(position: Int) {
         Timber.d("onPageSelected(): %d", position)
+        lastScrolledBoundsOffsetPx = Int.MIN_VALUE
         val page = quranInfo.getPageFromPosition(position, isDualPageVisible)
+        hybridReaderController.updateCurrentPage(page)
+        schedulePageSettle(page)
 
         if (quranSettings.shouldDisplayMarkerPopup()) {
-          lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
-            this@PagerActivity, quranInfo, page, isDualPageVisible, lastPopupTime
-          )
+          if (lastViewPagerScrollState == ViewPager.SCROLL_STATE_IDLE) {
+            pendingMarkerPopupPage = null
+            lastPopupTime = QuranDisplayHelper.displayMarkerPopup(
+              this@PagerActivity, quranInfo, page, isDualPageVisible, lastPopupTime
+            )
+          } else {
+            pendingMarkerPopupPage = page
+          }
         }
 
-        if (!showingTranslation) {
-          updateActionBarTitle(page)
-        } else {
-          refreshActionBarSpinner()
+        if (toolBarArea.visibility == View.VISIBLE) {
+          if (!showingTranslation) {
+            updateActionBarTitle(page)
+          } else {
+            refreshActionBarSpinner()
+          }
         }
 
         // If we're more than 1 page away from ayah selection end ayah mode
@@ -579,10 +764,13 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         }
       }
     }
+    pageChangeListener = onPageChangeListener
     viewPager.addOnPageChangeListener(onPageChangeListener)
 
     setUiVisibilityListener()
-    audioStatusBar.visibility = View.VISIBLE
+    toolBarArea.visibility = View.GONE
+    audioStatusBar.visibility = View.GONE
+    ayahToolBar.visibility = View.GONE
     toggleActionBarVisibility(true)
 
     if (shouldAdjustPageNumber) {
@@ -598,8 +786,24 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
 
     val pageIndex = quranInfo.getPositionFromPage(page, isDualPageVisible)
     viewPager.setCurrentItem(pageIndex)
+    hybridReaderController.updateCurrentPage(page)
     if (page == 0) {
       onPageChangeListener.onPageSelected(0)
+    }
+
+    bindHybridReaderOverlay()
+    viewPager.post {
+      if (!isFinishing && !isDestroyed) {
+        hybridReaderController.recordSettledPage(currentPage)
+        refreshHybridAyahBounds()
+        if (savedInstanceState == null &&
+          parsedLaunchExtras.autoPlayAyah &&
+          parsedLaunchExtras.highlightSura != null &&
+          parsedLaunchExtras.highlightAyah != null
+        ) {
+          playFromAyah(parsedLaunchExtras.highlightSura, parsedLaunchExtras.highlightAyah)
+        }
+      }
     }
 
     // just got created, need to reconnect to service
@@ -656,6 +860,28 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       }
     }
     onBackPressedDispatcher.addCallback(this, onClearAyahModeBackCallback)
+
+    onHybridOverlayOrDrawerBackCallback = object : OnBackPressedCallback(false) {
+      override fun handleOnBackPressed() {
+        if (overlay.isVisible) {
+          qariListObserverJob?.cancel()
+          qariListObserverJob = null
+          overlay.removeAllViews()
+          overlay.visibility = View.GONE
+          toggleActionBarVisibility(true)
+          updateHybridBackCallbackState()
+        } else if (::hybridReaderOverlay.isInitialized && hybridReaderOverlay.dismissTafsirPicker()) {
+          updateHybridBackCallbackState()
+        } else if (::hybridReaderController.isInitialized && hybridReaderController.uiState.value.isAppearanceSheetOpen) {
+          hybridReaderController.closeAppearanceSheet()
+          updateHybridBackCallbackState()
+        } else if (::hybridReaderController.isInitialized && hybridReaderController.uiState.value.isStudyDrawerOpen) {
+          hybridReaderController.closeStudyDrawer()
+          updateHybridBackCallbackState()
+        }
+      }
+    }
+    onBackPressedDispatcher.addCallback(this, onHybridOverlayOrDrawerBackCallback)
   }
 
   override fun onRequestPermissionsResult(
@@ -664,6 +890,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     pagerActivityRecitationPresenter.onPermissionsResult(requestCode, grantResults)
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
   }
+
+  internal fun isDualPageLayout(): Boolean = isDualPages
 
   private val isDualPageVisible: Boolean
     get() = isDualPages && !(isSplitScreen && showingTranslation)
@@ -688,57 +916,86 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       .buffer(onBufferOverflow = BufferOverflow.DROP_OLDEST)
       .shareIn(scope, SharingStarted.Eagerly, 1)
 
-  private fun initAyahActionPanel() {
+  private fun initAyahActionPanel(savedInstanceState: Bundle?) {
     slidingPanel = findViewById(R.id.sliding_panel)
     val slidingLayout =
       slidingPanel.findViewById<ViewGroup>(R.id.sliding_layout)
     slidingPager = slidingPanel
       .findViewById(R.id.sliding_layout_pager)
-    val slidingPageIndicator =
+    slidingPageIndicator =
       slidingPanel
-        .findViewById<IconPageIndicator>(R.id.sliding_pager_indicator)
+        .findViewById(R.id.sliding_pager_indicator)
 
     // Find close button and set listener
     val closeButton = slidingPanel
       .findViewById<View>(R.id.sliding_menu_close)
     closeButton.setOnClickListener { v: View? -> endAyahMode() }
 
-    // Create and set fragment pager adapter
+    // Create the adapter object (lightweight), but defer attaching to ViewPager until
+    // the sliding panel is actually opened so hidden fragments/pickers aren't inflated
+    // on every reader cold launch.
     slidingPagerAdapter = SlidingPagerAdapter(
+      this,
       supportFragmentManager,
       QuranUtils.isRtl(),
       additionalAyahPanels
     )
-    slidingPager.setAdapter(slidingPagerAdapter)
+    if (savedInstanceState?.getBoolean(LAST_SLIDER_INITIALIZED, false) == true) {
+      ensureSlidingPagerAttached()
+    }
 
-    // Attach the view pager to the action bar
-    slidingPageIndicator.setViewPager(slidingPager)
-
-    // Set sliding layout parameters
+    // Retire legacy SlidingUpPanelLayout UI in favor of Proposal 5 Unified Study Drawer
     val displayHeight = resources.displayMetrics.heightPixels
     slidingLayout.layoutParams.height = (displayHeight * PANEL_MAX_HEIGHT).toInt()
-    slidingPanel.setEnableDragViewTouchEvents(true)
+    slidingPanel.setSlidingEnabled(false)
+    slidingPanel.setCoveredFadeColor(0)
     slidingPanel.setPanelSlideListener(SlidingPanelListener())
     slidingLayout.visibility = View.GONE
+    slidingPanel.hidePane()
+  }
 
-    // When clicking any menu items, expand the panel
-    slidingPageIndicator.setOnClickListener { v: View? ->
-      if (!slidingPanel.isExpanded) {
-        slidingPanel.expandPane()
-      }
+  private fun ensureSlidingPagerAttached() {
+    if (!isSlidingPagerAttached) {
+      isSlidingPagerAttached = true
+      slidingPager.setAdapter(slidingPagerAdapter)
+      slidingPageIndicator.setViewPager(slidingPager)
     }
   }
 
   override fun onWindowFocusChanged(hasFocus: Boolean) {
     super.onWindowFocusChanged(hasFocus)
     if (hasFocus) {
-      handler.sendEmptyMessageDelayed(MSG_HIDE_ACTIONBAR, DEFAULT_HIDE_AFTER_TIME)
+      scheduleAutoHideChromeIfAllowed()
     } else {
       handler.removeMessages(MSG_HIDE_ACTIONBAR)
     }
   }
 
+  private fun scheduleAutoHideChromeIfAllowed() {
+    handler.removeMessages(MSG_HIDE_ACTIONBAR)
+    val hasSelection = selectionStart != null
+    val isSheetOpen = ::hybridReaderController.isInitialized && hybridReaderController.uiState.value.isAnySheetOpen
+    val isModalOpen = ::overlay.isInitialized && overlay.isVisible
+    if (!hasSelection && !isSheetOpen && !isModalOpen) {
+      handler.sendEmptyMessageDelayed(MSG_HIDE_ACTIONBAR, DEFAULT_HIDE_AFTER_TIME)
+    }
+  }
+
   private fun onPageClicked() {
+    if (::hybridReaderOverlay.isInitialized && hybridReaderOverlay.dismissTafsirPicker()) {
+      updateHybridBackCallbackState()
+      return
+    }
+    if (::hybridReaderController.isInitialized && hybridReaderController.uiState.value.isAppearanceSheetOpen) {
+      hybridReaderController.closeAppearanceSheet()
+      updateHybridBackCallbackState()
+      return
+    }
+    if (::hybridReaderController.isInitialized && hybridReaderController.uiState.value.isStudyDrawerOpen) {
+      hybridReaderController.closeStudyDrawer()
+      updateHybridBackCallbackState()
+      return
+    }
     toggleActionBar()
   }
 
@@ -756,14 +1013,41 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       viewPager.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
     }
 
+    lineByLineBoundsJob?.cancel()
+    lineByLineBoundsJob = null
+    lineByLineAttachRetries = 0
+
     if (haveSelection) {
+      handler.removeMessages(MSG_HIDE_ACTIONBAR)
       val startPosition = startPosition(ayahSelection)
       updateLocalTranslations(startPosition)
       onClearAyahModeBackCallback.isEnabled = selectionStart != null
+      val endPosition = ayahSelection.endSuraAyah()
+      val isSheetOpen = ::hybridReaderController.isInitialized && hybridReaderController.uiState.value.isAnySheetOpen
+      val isNudged = ::viewPager.isInitialized && abs(viewPager.translationY) >= 0.5f
+      val bounds = if (startPosition != null && !isSheetOpen && !isNudged) {
+        computeAyahOverlayBounds(startPosition, endPosition, ayahSelection.selectionIndicator())
+      } else {
+        null
+      }
+      if (::hybridReaderController.isInitialized) {
+        hybridReaderController.onAyahSelectionChanged(startPosition, endPosition, bounds)
+      }
+      if (bounds == null && startPosition != null && !isSheetOpen && ::viewPager.isInitialized) {
+        viewPager.post {
+          if (!isFinishing && !isDestroyed) {
+            refreshHybridAyahBounds()
+          }
+        }
+      }
     } else {
       endAyahMode()
       onClearAyahModeBackCallback.isEnabled = false
+      if (::hybridReaderController.isInitialized) {
+        hybridReaderController.onAyahSelectionChanged(null, null, null)
+      }
     }
+    updateHybridBackCallbackState()
   }
 
   private fun startPosition(ayahSelection: AyahSelection): SuraAyah? {
@@ -851,23 +1135,43 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   private fun clearUiVisibilityListener() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      ViewCompat.setOnApplyWindowInsetsListener(window.decorView, null)
+    }
     viewPager.setOnSystemUiVisibilityChangeListener(null)
+  }
+
+  private fun updateSystemBarAppearance() {
+    if (!::windowInsetsController.isInitialized) {
+      return
+    }
+    val lightNavigationBar = resources.getBoolean(R.bool.light_navigation_bar)
+    val isLightToolbar = ThemeUtil.resolveThemeBoolean(
+      this,
+      R.attr.quranIsLightToolbar,
+      fallback = lightNavigationBar
+    )
+    windowInsetsController.isAppearanceLightStatusBars = shouldUseLightStatusBar(
+      isActionBarHidden = isActionBarHidden,
+      isNightMode = quranSettings.isNightMode,
+      isLightToolbar = isLightToolbar
+    )
+    windowInsetsController.isAppearanceLightNavigationBars = shouldUseLightSystemBars(
+      isActionBarHidden = isActionBarHidden,
+      isNightMode = quranSettings.isNightMode,
+      lightNavigationBar = lightNavigationBar
+    )
   }
 
   private fun animateToolBar(visible: Boolean) {
     isActionBarHidden = !visible
-
-    // animate toolbar
-    toolBarArea.animate()
-      .translationY((if (visible) 0 else -toolBarArea.height).toFloat())
-      .setDuration(250)
-      .start()
-
-    // and audio bar
-    audioStatusBar.animate()
-      .translationY((if (visible) 0 else audioStatusBar.height).toFloat())
-      .setDuration(250)
-      .start()
+    updateSystemBarAppearance()
+    toolBarArea.visibility = View.GONE
+    audioStatusBar.visibility = View.GONE
+    ayahToolBar.visibility = View.GONE
+    if (::hybridReaderController.isInitialized) {
+      hybridReaderController.setChromeVisible(visible)
+    }
   }
 
   override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
@@ -887,25 +1191,44 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     return (((keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
         keyCode == KeyEvent.KEYCODE_VOLUME_UP) && (
         audioStatusRepositoryBridge.audioRequest() == null) &&
-        PreferenceManager.getDefaultSharedPreferences(this)
-          .getBoolean(Constants.PREF_USE_VOLUME_KEY_NAV, false))
+        quranSettings.navigateWithVolumeKeys())
         || super.onKeyUp(keyCode, event))
+  }
+
+  override fun onStart() {
+    super.onStart()
+    BitmapPoolTrimRegistry.notifyRestore()
   }
 
   public override fun onResume() {
     super.onResume()
+    if (AppThemeStyle.fromPreference(quranSettings.appThemeStyle) != appliedThemeStyle) {
+      recreate()
+      return
+    }
+    AppThemeStyle.setOledDarkMode(quranSettings.isOledDarkMode)
     quranSettings.registerPreferencesListener(themePreferencesListener)
     refreshQuranPages()
+    updateSystemBarAppearance()
+    if (::hybridReaderController.isInitialized) {
+      hybridReaderController.syncAppearanceState()
+      hybridReaderController.refreshTafsirAfterResume()
+    }
+    applyHybridMushafBackdrop()
 
     audioPresenter.bind(this)
     recentPagePresenter.bind(currentPageFlow)
     readingBookmarkPresenter.bind(currentPageFlow, this)
 
     if (shouldReconnect) {
+      shouldReconnect = false
       foregroundDisposable.add(
         Completable.timer(500, TimeUnit.MILLISECONDS)
           .observeOn(AndroidSchedulers.mainThread())
           .subscribe {
+            if (!AudioService.isRunning()) {
+              return@subscribe
+            }
             try {
               startService(
                 audioUtils.getAudioIntent(
@@ -916,7 +1239,6 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
             } catch (ise: IllegalStateException) {
               // we're likely in the background, so ignore.
             }
-            shouldReconnect = false
           })
     }
   }
@@ -1061,13 +1383,14 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     recentPagePresenter.onJump()
     val extras = intent.extras
     if (extras != null) {
-      val page = extras.getInt("page", Constants.PAGES_FIRST)
+      val parsed = HybridReaderIntentParser.parse(intent, quranInfo, Constants.PAGES_FIRST)
+      val page = parsed.page
 
       val currentValue = showingTranslation
-      showingTranslation = extras.getBoolean(EXTRA_JUMP_TO_TRANSLATION, showingTranslation)
-      val highlightedSura = extras.getInt(EXTRA_HIGHLIGHT_SURA, -1)
-      val highlightedAyah = extras.getInt(EXTRA_HIGHLIGHT_AYAH, -1)
-      if (highlightedSura > 0 && highlightedAyah > 0) {
+      showingTranslation = parsed.jumpToTranslation || showingTranslation
+      val highlightedSura = parsed.highlightSura
+      val highlightedAyah = parsed.highlightAyah
+      if (highlightedSura != null && highlightedAyah != null) {
         readingEventPresenterBridge.setSelection(highlightedSura, highlightedAyah, true)
       }
 
@@ -1085,12 +1408,32 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         supportInvalidateOptionsMenu()
       }
 
-      if (highlightedAyah > 0 && highlightedSura > 0) {
+      if (highlightedAyah != null && highlightedSura != null) {
         // this will jump to the right page automagically
         ensurePage(highlightedSura, highlightedAyah)
       } else {
         val pagePosition = quranInfo.getPositionFromPage(page, isDualPageVisible)
         viewPager.currentItem = pagePosition
+      }
+
+      if (::hybridReaderController.isInitialized) {
+        hybridReaderController.updateCurrentPage(page)
+        schedulePageSettle(page)
+        parsed.initialStudyTab?.let { tab ->
+          hybridReaderController.openStudyDrawer(tab)
+          updateHybridBackCallbackState()
+        }
+      }
+
+      if (highlightedSura != null && highlightedAyah != null) {
+        viewPager.post {
+          if (!isFinishing && !isDestroyed) {
+            refreshHybridAyahBounds()
+            if (parsed.autoPlayAyah) {
+              playFromAyah(highlightedSura, highlightedAyah)
+            }
+          }
+        }
       }
 
       setIntent(intent)
@@ -1108,6 +1451,12 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   public override fun onPause() {
     quranSettings.unregisterPreferencesListener(themePreferencesListener)
     foregroundDisposable.clear()
+    pageSettleDebounceJob?.cancel()
+    lineByLineBoundsJob?.cancel()
+    lineByLineBoundsJob = null
+    if (::hybridReaderController.isInitialized && ::viewPager.isInitialized) {
+      hybridReaderController.recordSettledPage(currentPage)
+    }
     promptDialog?.dismiss()
     promptDialog = null
     recentPagePresenter.unbind()
@@ -1121,6 +1470,22 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     // the activity will be paused when requesting notification
     // permissions, which will otherwise break audio presenter.
     audioPresenter.unbind(this)
+    if (!isChangingConfigurations) {
+      if (::pagerAdapter.isInitialized) {
+        if (isFinishing) {
+          pagerAdapter.clearViewPool()
+        } else {
+          pagerAdapter.clearDetachedViewPool()
+        }
+      }
+      LineBitmapRecycler.recycleNow()
+      BitmapPoolTrimRegistry.clearAll()
+      LineBitmapRecycler.recycleNow()
+      SQLiteDatabase.releaseMemory()
+    }
+    if (::hybridReaderOverlay.isInitialized) {
+      hybridReaderOverlay.cancelPendingWarmupsOnStop()
+    }
     super.onStop()
   }
 
@@ -1129,13 +1494,79 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     clearUiVisibilityListener()
 
     translationJob?.cancel(CancellationException())
+    pageSettleDebounceJob?.cancel()
+    qariListObserverJob?.cancel()
+    qariListObserverJob = null
+    lineByLineBoundsJob?.cancel()
+    lineByLineBoundsJob = null
     compositeDisposable.dispose()
     audioStatusRepositoryBridge.dispose()
     readingEventPresenterBridge.dispose()
     downloadBridge.unsubscribe()
     handler.removeCallbacksAndMessages(null)
     scope.cancel()
+
+    if (::onEndSessionBackCallback.isInitialized) {
+      onEndSessionBackCallback.remove()
+    }
+    if (::onShowingTranslationBackCallback.isInitialized) {
+      onShowingTranslationBackCallback.remove()
+    }
+    if (::onClearAyahModeBackCallback.isInitialized) {
+      onClearAyahModeBackCallback.remove()
+    }
+    if (::onHybridOverlayOrDrawerBackCallback.isInitialized) {
+      onHybridOverlayOrDrawerBackCallback.remove()
+    }
+
+    if (::viewPager.isInitialized) {
+      viewPager.animate().setListener(null)
+      viewPager.animate().cancel()
+      viewPager.setLayerType(View.LAYER_TYPE_NONE, null)
+      pageChangeListener?.let { viewPager.removeOnPageChangeListener(it) }
+      pageChangeListener = null
+      viewPager.clearOnPageChangeListeners()
+      viewPager.adapter = null
+    }
+    if (::pagerAdapter.isInitialized) {
+      pagerAdapter.clearViewPool()
+    }
+    LineBitmapRecycler.recycleNow()
+    if (isSlidingPagerAttached && ::slidingPager.isInitialized) {
+      slidingPager.adapter = null
+    }
+    if (::overlay.isInitialized) {
+      overlay.removeAllViews()
+      (overlay.parent as? ViewGroup)?.removeView(overlay)
+    }
+    if (::hybridReaderOverlay.isInitialized) {
+      hybridReaderOverlay.unbind()
+      (hybridReaderOverlay.parent as? ViewGroup)?.removeView(hybridReaderOverlay)
+    }
+    window?.setBackgroundDrawable(null)
+
+    val shouldScheduleGc = isFinishing && !isChangingConfigurations
+    val isConfigChange = isChangingConfigurations
     super.onDestroy()
+    BitmapPoolTrimRegistry.clearAll()
+    LineBitmapRecycler.recycleNow()
+    if (!isConfigChange) {
+      QuranUtils.clearLocalizedNumberCache()
+      SearchResultFormatter.clearCache()
+      clearSuraHeaderCache()
+    }
+    if (shouldScheduleGc) {
+      PostDestroyMemoryReclaimer.schedulePostDestroyCleanup()
+    }
+  }
+
+  private fun clearSuraHeaderCache() {
+    try {
+      val clazz = Class.forName(SURA_HEADER_DRAWER_CLASS)
+      clazz.getMethod("clearCache").invoke(null)
+    } catch (_: Throwable) {
+      // Flavor may not include SuraHeaderDrawer; ignore safely.
+    }
   }
 
   private fun onSessionEnd() {
@@ -1150,6 +1581,21 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     state.putBoolean(LAST_ACTIONBAR_STATE, isActionBarHidden)
     state.putBoolean(LAST_WAS_DUAL_PAGES, isDualPages)
     state.putBoolean(LAST_FOLDING_STATE, isFoldableDeviceOpenAndVertical)
+    state.putBoolean(LAST_SLIDER_INITIALIZED, isSlidingPagerAttached)
+    if (::hybridReaderController.isInitialized) {
+      val ui = hybridReaderController.uiState.value
+      state.putBoolean(KEY_HYBRID_DRAWER_OPEN, ui.isStudyDrawerOpen)
+      state.putBoolean(KEY_HYBRID_APPEARANCE_OPEN, ui.isAppearanceSheetOpen)
+      state.putString(KEY_HYBRID_STUDY_TAB, ui.selectedStudyTab.extraValue)
+      ui.selectedStart?.let { sel ->
+        state.putInt(KEY_HYBRID_SELECTED_SURA, sel.sura)
+        state.putInt(KEY_HYBRID_SELECTED_AYAH, sel.ayah)
+      }
+      ui.selectedEnd?.let { endSel ->
+        state.putInt(KEY_HYBRID_SELECTED_END_SURA, endSel.sura)
+        state.putInt(KEY_HYBRID_SELECTED_END_AYAH, endSel.ayah)
+      }
+    }
     super.onSaveInstanceState(state)
   }
 
@@ -1244,6 +1690,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         (f as QuranPage).updateView()
       }
     }
+    pagerAdapter.invalidateActivePageViews()
   }
 
   private fun switchToQuran() {
@@ -1325,6 +1772,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   private fun updateActionBarTitle(page: Int) {
+    if (::toolBarArea.isInitialized && toolBarArea.visibility != View.VISIBLE) {
+      return
+    }
     val sura = quranDisplayData.getSuraNameFromPage(this, page, true)
     val actionBar = supportActionBar
     if (actionBar != null) {
@@ -1371,11 +1821,23 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
             val sura =
               quranDisplayData.getSuraNameFromPage(this@PagerActivity, page, true)
             holder.title.text = sura
-            holder.title.setTextColor(ResourcesCompat.getColor(resources, R.color.toolbar_text, null))
+            holder.title.setTextColor(
+              ThemeUtil.resolveThemeColor(
+                this@PagerActivity,
+                R.attr.quranToolbarText,
+                ResourcesCompat.getColor(resources, R.color.toolbar_text, null)
+              )
+            )
             val desc = quranDisplayData.getPageSubtitle(this@PagerActivity, page)
             holder.subtitle.text = desc
             holder.subtitle.visibility = View.VISIBLE
-            holder.subtitle.setTextColor(ResourcesCompat.getColor(resources, R.color.toolbar_secondary_text, null))
+            holder.subtitle.setTextColor(
+              ThemeUtil.resolveThemeColor(
+                this@PagerActivity,
+                R.attr.quranToolbarSecondaryText,
+                ResourcesCompat.getColor(resources, R.color.toolbar_secondary_text, null)
+              )
+            )
           }
           return view
         }
@@ -1404,13 +1866,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   fun toggleActionBar() {
     if (isActionBarHidden) {
       setUiVisibility(true)
-
-      isActionBarHidden = false
+      animateToolBar(true)
     } else {
       handler.removeMessages(MSG_HIDE_ACTIONBAR)
       setUiVisibility(false)
-
-      isActionBarHidden = true
+      animateToolBar(false)
     }
   }
 
@@ -1466,6 +1926,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   override fun setPageReadingBookmarkSelected(isBookmarked: Boolean) {
     isCurrentPageReadingBookmarked = isBookmarked
     refreshBookmarksMenu(isBookmarked)
+    if (::hybridReaderController.isInitialized) {
+      hybridReaderController.setCurrentPageBookmarked(isBookmarked)
+    }
   }
 
   override fun showReadingBookmarkChangedToast(
@@ -1494,23 +1957,19 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         Gravity.BOTTOM
       )
     )
-    // the sliding panel that hosts the rest of the reading UI claims every touch within its
-    // collapsed (audio bar) region for its own drag/tap handling, regardless of what's drawn on
-    // top of it there - so rather than fight that, sit the toast just above the audio bar (when
-    // one is visible, its own height already accounts for the navigation bar inset) or above the
-    // navigation bar directly (when it isn't, e.g. three-button navigation in edge-to-edge mode).
-    // side padding covers landscape three-button navigation and display cutouts.
     ViewCompat.setOnApplyWindowInsetsListener(toastView) { view, windowInsets ->
       val insets = windowInsets.getInsets(
         WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.displayCutout()
       )
       view.updatePadding(left = insets.left, right = insets.right)
       val params = view.layoutParams as FrameLayout.LayoutParams
-      params.bottomMargin = if (audioStatusBar.isVisible) {
-        audioStatusBar.height
-      } else {
-        insets.bottom
-      }
+      val capsuleReservePx = insets.bottom + (86f * resources.displayMetrics.density).toInt()
+      params.bottomMargin = readingBookmarkToastBottomMargin(
+        isActionBarHidden = isActionBarHidden,
+        isAudioBarVisible = isHybridBottomCapsuleVisible(),
+        audioBarHeight = capsuleReservePx,
+        bottomInset = insets.bottom
+      )
       view.layoutParams = params
       windowInsets
     }
@@ -1530,7 +1989,21 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   override fun onContinuePlaybackPressed() {
-    handlePlayback(null)
+    val activeRequest = audioStatusRepositoryBridge.audioRequest()
+    val selectedQari = currentQariItem()
+    if (activeRequest != null && activeRequest.qari.id != selectedQari.id) {
+      val uiState = if (::hybridReaderController.isInitialized) {
+        hybridReaderController.uiState.value
+      } else {
+        null
+      }
+      val resumeAyah = uiState?.selectedStart
+        ?: uiState?.playbackAyah
+        ?: activeRequest.start
+      playFromAyah(resumeAyah.sura, resumeAyah.ayah)
+    } else {
+      handlePlayback(null)
+    }
   }
 
   override fun onPlayPressed() {
@@ -1561,7 +2034,17 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     val end = selectionEnd
     // handle the case of multiple ayat being selected and play them as a range if so
     val ending = if ((end == null || start == end || start.after(end))) null else end
-    playFromAyah(start, ending, page, 0, 0, ending != null, 1.0f)
+    val pendingSpeed = if (::hybridReaderController.isInitialized) {
+      hybridReaderController.pendingPlaybackSpeed
+    } else {
+      1.0f
+    }
+    val pendingRepeat = if (::hybridReaderController.isInitialized) {
+      hybridReaderController.pendingRepeatCount
+    } else {
+      0
+    }
+    playFromAyah(start, ending, page, pendingRepeat, 0, ending != null, pendingSpeed)
   }
 
   fun playFromAyah(
@@ -1708,15 +2191,63 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         starting, page,
         quranSettings.preferredDownloadAmount, isDualPageVisible
       )!!
+    val initialQariId = qariManager.currentQari().id
     val qariListWrapper = QariListWrapper(this, starting, ending)
+    qariListObserverJob?.cancel()
+    qariListObserverJob = null
     overlay.removeAllViews()
+    qariListWrapper.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+      override fun onViewAttachedToWindow(v: View) = Unit
+      override fun onViewDetachedFromWindow(v: View) {
+        qariListObserverJob?.cancel()
+        qariListObserverJob = null
+      }
+    })
     overlay.addView(
       qariListWrapper,
       ViewGroup.LayoutParams.MATCH_PARENT,
       ViewGroup.LayoutParams.MATCH_PARENT
     )
     overlay.visibility = View.VISIBLE
+    handler.removeMessages(MSG_HIDE_ACTIONBAR)
     toggleActionBarVisibility(false)
+    updateHybridBackCallbackState()
+
+    qariListObserverJob = scope.launch {
+      qariManager.flow().collectLatest { qari ->
+        if (qari.id != initialQariId && overlay.isVisible && overlay.getChildAt(0) === qariListWrapper) {
+          delay(250L)
+          if (!isFinishing && !isDestroyed && overlay.getChildAt(0) === qariListWrapper) {
+            overlay.removeAllViews()
+            overlay.visibility = View.GONE
+            toggleActionBarVisibility(true)
+            updateHybridBackCallbackState()
+            qariListObserverJob?.cancel()
+            qariListObserverJob = null
+
+            val uiState = if (::hybridReaderController.isInitialized) {
+              hybridReaderController.uiState.value
+            } else {
+              null
+            }
+            val currentPlaybackStatus = uiState?.playbackStatus
+              ?: (audioStatusRepository.audioPlaybackFlow.value as? AudioStatus.Playback)?.playbackStatus
+            if (currentPlaybackStatus == PlaybackStatus.PLAYING ||
+              currentPlaybackStatus == PlaybackStatus.PREPARING
+            ) {
+              val targetAyah = uiState?.playbackAyah
+                ?: (audioStatusRepository.audioPlaybackFlow.value as? AudioStatus.Playback)?.currentAyah
+                ?: uiState?.selectedStart
+                ?: SuraAyah(
+                  quranDisplayData.safelyGetSuraOnPage(currentPage),
+                  quranInfo.getFirstAyahOnPage(currentPage).coerceAtLeast(1)
+                )
+              playFromAyah(targetAyah.sura, targetAyah.ayah)
+            }
+          }
+        }
+      }
+    }
   }
 
   private fun showReadingBookmarkSheet(target: ReadingBookmarkTarget) {
@@ -1727,8 +2258,11 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         overlay.removeAllViews()
         overlay.visibility = View.GONE
         toggleActionBarVisibility(true)
+        updateHybridBackCallbackState()
       }
     )
+    qariListObserverJob?.cancel()
+    qariListObserverJob = null
     overlay.removeAllViews()
     overlay.addView(
       readingBookmarkSheetWrapper,
@@ -1736,15 +2270,25 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       ViewGroup.LayoutParams.MATCH_PARENT
     )
     overlay.visibility = View.VISIBLE
+    handler.removeMessages(MSG_HIDE_ACTIONBAR)
     toggleActionBarVisibility(false)
+    updateHybridBackCallbackState()
   }
 
   private fun showPageThemeSheet() {
+    if (::hybridReaderController.isInitialized) {
+      hybridReaderController.openAppearanceSheet()
+      updateHybridBackCallbackState()
+      return
+    }
     val pageThemeSheetWrapper = PageThemeSheetWrapper(this, quranSettings) {
       overlay.removeAllViews()
       overlay.visibility = View.GONE
       toggleActionBarVisibility(true)
+      updateHybridBackCallbackState()
     }
+    qariListObserverJob?.cancel()
+    qariListObserverJob = null
     overlay.removeAllViews()
     overlay.addView(
       pageThemeSheetWrapper,
@@ -1752,7 +2296,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       ViewGroup.LayoutParams.MATCH_PARENT
     )
     overlay.visibility = View.VISIBLE
+    handler.removeMessages(MSG_HIDE_ACTIONBAR)
     toggleActionBarVisibility(false)
+    updateHybridBackCallbackState()
   }
 
   private fun showAyahBookmarkSheet(suraAyah: SuraAyah) {
@@ -1761,7 +2307,10 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       overlay.visibility = View.GONE
       toggleActionBarVisibility(true)
       updateAyahBookmark(suraAyah, isBookmarked)
+      updateHybridBackCallbackState()
     }
+    qariListObserverJob?.cancel()
+    qariListObserverJob = null
     overlay.removeAllViews()
     overlay.addView(
       ayahBookmarkWrapper,
@@ -1769,7 +2318,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
       ViewGroup.LayoutParams.MATCH_PARENT
     )
     overlay.visibility = View.VISIBLE
+    handler.removeMessages(MSG_HIDE_ACTIONBAR)
     toggleActionBarVisibility(false)
+    updateHybridBackCallbackState()
   }
 
   fun updatePlayOptions(
@@ -1954,8 +2505,8 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
         }
       } else if (canShowUi) {
         compositeDisposable.add(
-          arabicDatabaseUtils
-            .getVerses(start, end)
+          Single.defer { arabicDatabaseUtils().getVerses(start, end) }
+            .subscribeOn(Schedulers.io())
             .filter { quranAyahs: List<QuranText?> -> quranAyahs.isNotEmpty() }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { quranAyahs: List<QuranText> ->
@@ -1977,6 +2528,7 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
   }
 
   private fun showSlider(sliderPage: Int) {
+    ensureSlidingPagerAttached()
     readingEventPresenterBridge.clearMenuForSelection()
     slidingPager.currentItem = sliderPage
     slidingPanel.showPane()
@@ -1993,6 +2545,9 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     val start = selectionStart
     if (start != null && start == suraAyah) {
       ayahToolBar.setBookmarked(bookmarked)
+    }
+    if (::hybridReaderController.isInitialized) {
+      hybridReaderController.setSelectedAyahBookmarked(suraAyah, bookmarked)
     }
   }
 
@@ -2046,20 +2601,624 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     }
   }
 
+  private fun initHybridReaderController() {
+    val tafsirHelper = TafsirLookupHelper(
+      translationsDBAdapter = translationsDBAdapter,
+      translationModel = translationModel,
+      translationUtil = translationUtil,
+      arabicTextLoader = { suraAyah -> loadSingleAyahArabicText(suraAyah) },
+      ioDispatcher = Dispatchers.IO
+    )
+    hybridReaderController = HybridReaderController(
+      appContext = applicationContext,
+      quranInfo = quranInfo,
+      quranDisplayData = quranDisplayData,
+      quranSettings = quranSettings,
+      dailyWirdRepository = dailyWirdRepository,
+      audioStatusRepository = audioStatusRepository,
+      currentQariManager = qariManager,
+      downloadInfoStreams = downloadInfoStreams,
+      timingRepository = timingRepository,
+      bookmarksDao = bookmarksDao,
+      tafsirLookupHelper = tafsirHelper,
+      scope = scope,
+      ioDispatcher = Dispatchers.IO,
+      defaultPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+    )
+    hybridReaderController.startObserving()
+
+    scope.launch {
+      var prevSheetOpen = false
+      hybridReaderController.uiState.collectLatest { state ->
+        val sheetOpen = state.isAnySheetOpen
+        if (sheetOpen != prevSheetOpen) {
+          prevSheetOpen = sheetOpen
+          if (sheetOpen) {
+            lineByLineBoundsJob?.cancel()
+            lineByLineBoundsJob = null
+            hybridReaderController.updateAyahOverlayBounds(null)
+            handler.removeMessages(MSG_HIDE_ACTIONBAR)
+            if (::viewPager.isInitialized &&
+              ::toolBarArea.isInitialized &&
+              ::audioStatusBar.isInitialized &&
+              ::ayahToolBar.isInitialized &&
+              ::windowInsetsController.isInitialized
+            ) {
+              toggleActionBarVisibility(true)
+            }
+          } else if (::viewPager.isInitialized && abs(viewPager.translationY) < 0.5f) {
+            // Sheet closed without active Mushaf nudge: immediately re-anchor any highlighted ayah.
+            requestVisibleLineByLinePositionSync()
+            viewPager.post {
+              if (!isFinishing && !isDestroyed && !hybridReaderController.uiState.value.isAnySheetOpen) {
+                refreshHybridAyahBounds()
+              }
+            }
+          }
+          updateHybridBackCallbackState()
+        }
+      }
+    }
+  }
+
+  private fun bindHybridReaderOverlay() {
+    hybridReaderOverlay.bind(
+      readerController = hybridReaderController,
+      scope = lifecycleScope,
+      onBackToHub = {
+        onSessionEnd()
+        finish()
+      },
+      onJumpPage = {
+        JumpFragment().show(supportFragmentManager, JumpFragment.TAG)
+      },
+      onTogglePageBookmark = {
+        showReadingBookmarkSheet(ReadingBookmarkTarget.Page(currentPage))
+      },
+      onAyahListen = { ayah ->
+        quranEventLogger.logAudioPlayback(
+          QuranEventLogger.AudioPlaybackSource.AYAH,
+          currentQariItem(),
+          isDualPages,
+          showingTranslation,
+          isSplitScreen
+        )
+        playFromAyah(ayah.sura, ayah.ayah)
+        endAyahMode()
+      },
+      onAyahTafsir = { _ ->
+        // Keep the ayah selected & highlighted while inspecting its Tafsir in Study Drawer
+        hybridReaderController.openStudyDrawer(HybridReaderContract.StudyTab.TAFSIR)
+        updateHybridBackCallbackState()
+      },
+      onAyahBookmark = { ayah ->
+        showAyahBookmarkSheet(ayah)
+      },
+      onAyahCopy = { start, end ->
+        shareAyah(start, end, isCopy = true)
+      },
+      onAyahShare = { start, end ->
+        shareAyah(start, end, isCopy = false)
+      },
+      onPlayPause = {
+        val state = hybridReaderController.uiState.value
+        when (state.playbackStatus) {
+          PlaybackStatus.PLAYING -> onPausePressed()
+          PlaybackStatus.PAUSED -> {
+            val activeRequest = audioStatusRepositoryBridge.audioRequest()
+            val selectedQari = currentQariItem()
+            if (activeRequest != null && activeRequest.qari.id != selectedQari.id) {
+              val resumeAyah = state.selectedStart
+                ?: state.playbackAyah
+                ?: SuraAyah(state.suraNumber, state.firstAyahOnPage.coerceAtLeast(1))
+              quranEventLogger.logAudioPlayback(
+                QuranEventLogger.AudioPlaybackSource.AYAH,
+                selectedQari,
+                isDualPages,
+                showingTranslation,
+                isSplitScreen
+              )
+              playFromAyah(resumeAyah.sura, resumeAyah.ayah)
+            } else {
+              onContinuePlaybackPressed()
+            }
+          }
+          PlaybackStatus.PREPARING -> onCancelPressed(false)
+          null -> {
+            val sel = state.selectedStart
+            if (sel != null) {
+              quranEventLogger.logAudioPlayback(
+                QuranEventLogger.AudioPlaybackSource.AYAH,
+                currentQariItem(),
+                isDualPages,
+                showingTranslation,
+                isSplitScreen
+              )
+              playFromAyah(sel.sura, sel.ayah)
+            } else {
+              onPlayPressed()
+            }
+          }
+        }
+      },
+      onSkipNext = { onNextPressed() },
+      onSkipPrev = { onPreviousPressed() },
+      onSpeedChanged = { speed -> setPlaybackSpeed(speed) },
+      onRepeatChanged = { repeat -> setRepeatCount(repeat) },
+      onShowQariList = { onShowQariList() },
+      onCancelDownload = { onCancelPressed(true) },
+      onAllowMobileDownload = { onAcceptPressed() },
+      onOpenTafsirManager = { startTranslationManager() },
+      onTafsirStepAyah = { next ->
+        val current = hybridReaderController.resolveTargetStudyAyah()
+        val stepped = hybridReaderController.adjacentAyah(current, next)
+        if (stepped != null) {
+          ensurePage(stepped.sura, stepped.ayah)
+          readingEventPresenterBridge.setSelection(stepped.sura, stepped.ayah, true)
+        }
+      },
+      onAppThemeStyleSelected = { style ->
+        appliedThemeStyle = style
+        theme.applyStyle(ThemeUtil.themeOverlayRes(style), true)
+        refreshQuranPages()
+        applyHybridMushafBackdrop()
+        updateSystemBarAppearance()
+      },
+      onAppThemeModeSelected = { _ ->
+        refreshQuranPages()
+        applyHybridMushafBackdrop()
+        updateSystemBarAppearance()
+      },
+      onPageAppearanceUpdated = {
+        refreshQuranPages()
+        applyHybridMushafBackdrop()
+        updateSystemBarAppearance()
+      },
+      onMushafNudgeChanged = { nudgePx ->
+        if (::viewPager.isInitialized) {
+          if (abs(viewPager.translationY - nudgePx) > 0.5f) {
+            viewPager.animate().setListener(null)
+            viewPager.animate().cancel()
+            // Apply static clip on parent container ONCE before animating translationY on GPU
+            // (eliminates per-frame clipBounds mutation jank).
+            if (nudgePx < -0.5f) {
+              applyMushafStatusBarClip(targetNudgePx = nudgePx)
+            }
+            if (viewPager.isAttachedToWindow && AdaptiveMotionTokens.areAnimationsEnabled(this)) {
+              viewPager.animate()
+                .translationY(nudgePx)
+                .setDuration(AdaptiveMotionTokens.TAB_SWITCH_DURATION_MS.toLong())
+                .setListener(object : AnimatorListenerAdapter() {
+                  override fun onAnimationCancel(animation: Animator) {
+                    viewPager.animate().setListener(null)
+                  }
+
+                  override fun onAnimationEnd(animation: Animator) {
+                    viewPager.animate().setListener(null)
+                    applyMushafStatusBarClip(targetNudgePx = nudgePx)
+                    if (!isFinishing && !isDestroyed && !hybridReaderController.uiState.value.isAnySheetOpen) {
+                      requestVisibleLineByLinePositionSync()
+                      refreshHybridAyahBounds()
+                    }
+                  }
+                })
+                .start()
+            } else {
+              viewPager.translationY = nudgePx
+              applyMushafStatusBarClip(targetNudgePx = nudgePx)
+              if (!isFinishing && !isDestroyed && !hybridReaderController.uiState.value.isAnySheetOpen) {
+                requestVisibleLineByLinePositionSync()
+                refreshHybridAyahBounds()
+              }
+            }
+          } else {
+            applyMushafStatusBarClip(targetNudgePx = nudgePx)
+            if (abs(nudgePx) < 0.5f &&
+              !isFinishing &&
+              !isDestroyed &&
+              !hybridReaderController.uiState.value.isAnySheetOpen &&
+              selectionStart != null &&
+              hybridReaderController.uiState.value.ayahOverlayBounds == null
+            ) {
+              requestVisibleLineByLinePositionSync()
+              refreshHybridAyahBounds()
+            }
+          }
+        }
+      },
+      onStop = { onStopPressed() },
+      onOledDarkModeChanged = { enabled ->
+        AppThemeStyle.setOledDarkMode(enabled)
+        refreshQuranPages()
+        applyHybridMushafBackdrop()
+        updateSystemBarAppearance()
+      }
+    )
+  }
+
+  private fun applyMushafStatusBarClip(targetNudgePx: Float = 0f) {
+    val container = mushafClipContainer
+    if (container != null) {
+      val statusTop = statusBarTopInsetPx
+      if (targetNudgePx < -0.5f && statusTop > 0 && container.width > 0 && container.height > 0) {
+        val rect = mushafClipRect ?: Rect().also { mushafClipRect = it }
+        rect.set(0, statusTop, container.width, container.height)
+        if (container.clipBounds != rect) {
+          container.clipBounds = rect
+        }
+      } else if (container.clipBounds != null) {
+        container.clipBounds = null
+      }
+      return
+    }
+    if (!::viewPager.isInitialized) return
+    val statusTop = statusBarTopInsetPx
+    if (targetNudgePx < -0.5f && statusTop > 0 && viewPager.width > 0 && viewPager.height > 0) {
+      val rect = mushafClipRect ?: Rect().also { mushafClipRect = it }
+      rect.set(0, statusTop, viewPager.width, viewPager.height)
+      viewPager.clipBounds = rect
+    } else if (viewPager.clipBounds != null) {
+      viewPager.clipBounds = null
+    }
+  }
+
+  private fun applyHybridMushafBackdrop() {
+    if (!::slidingPanel.isInitialized) return
+    val isNightUi = ThemeUtil.isDarkAppearance(
+      quranSettings.currentTheme(),
+      (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+    )
+    val isOled = quranSettings.isOledDarkMode
+    val bgColor = if (quranSettings.isNightMode) {
+      appliedThemeStyle.darkMushafBackgroundArgb(quranSettings.nightModeBackgroundBrightness, isOled)
+    } else {
+      appliedThemeStyle.palette(isDark = isNightUi, oled = isOled).mushafOverlayBg.toArgb()
+    }
+    slidingPanel.setBackgroundColor(bgColor)
+    if (::viewPager.isInitialized) {
+      viewPager.setBackgroundColor(bgColor)
+    }
+  }
+
+  private fun schedulePageSettle(page: Int) {
+    pageSettleDebounceJob?.cancel()
+    if (lastViewPagerScrollState == ViewPager.SCROLL_STATE_IDLE) {
+      hybridReaderController.recordSettledPage(page)
+    } else {
+      pageSettleDebounceJob = scope.launch {
+        delay(600L)
+        if (!isFinishing && !isDestroyed) {
+          hybridReaderController.recordSettledPage(currentPage)
+        }
+      }
+    }
+  }
+
+  fun onPageAyahCoordinatesReady(page: Int) {
+    if (!::hybridReaderController.isInitialized) return
+    val selection = readingEventPresenter.currentAyahSelection()
+    val start = selection.startSuraAyah() ?: return
+    val selectedPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah)
+    if (selectedPage == page || page == currentPage) {
+      refreshHybridAyahBounds()
+    }
+  }
+
+  private fun refreshHybridAyahBounds() {
+    if (!::hybridReaderController.isInitialized ||
+      !::hybridReaderOverlay.isInitialized ||
+      !::viewPager.isInitialized
+    ) {
+      return
+    }
+    val selection = readingEventPresenter.currentAyahSelection()
+    val start = selection.startSuraAyah()
+    val end = selection.endSuraAyah()
+    if (start == null) {
+      lineByLineBoundsJob?.cancel()
+      lineByLineBoundsJob = null
+      hybridReaderController.updateAyahOverlayBounds(null)
+      return
+    }
+    val uiState = hybridReaderController.uiState.value
+    if (uiState.isAnySheetOpen) {
+      lineByLineBoundsJob?.cancel()
+      lineByLineBoundsJob = null
+      hybridReaderController.updateAyahOverlayBounds(null)
+      return
+    }
+    // Never emit unanchored (0,0) coordinates before ViewPager & overlay finish layout.
+    if (!viewPager.isLaidOut || viewPager.width <= 0 || viewPager.height <= 0 ||
+      !hybridReaderOverlay.isLaidOut || hybridReaderOverlay.width <= 0 || hybridReaderOverlay.height <= 0
+    ) {
+      if (!pendingBoundsLayoutRetry) {
+        pendingBoundsLayoutRetry = true
+        viewPager.doOnLayout {
+          pendingBoundsLayoutRetry = false
+          if (!isFinishing && !isDestroyed) {
+            refreshHybridAyahBounds()
+          }
+        }
+      }
+      return
+    }
+    if (abs(viewPager.translationY) >= 0.5f) {
+      // Wait for un-nudge animation to settle at translationY == 0f before anchoring the bar.
+      return
+    }
+
+    val indicator = selection.selectionIndicator()
+    val validBounds = computeAyahOverlayBounds(start, end, indicator)
+    if (validBounds != null) {
+      hybridReaderController.updateAyahOverlayBounds(validBounds)
+      return
+    }
+
+    hybridReaderController.updateAyahOverlayBounds(null)
+
+    if (lastViewPagerScrollState == ViewPager.SCROLL_STATE_IDLE &&
+      (indicator is SelectionIndicator.None || indicator is SelectionIndicator.ScrollOnly)
+    ) {
+      val ayahPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah)
+      val ayahPos = quranInfo.getPositionFromPage(ayahPage, isDualPageVisible)
+      if (ayahPos == viewPager.currentItem) {
+        scheduleLineByLineSelectionBoundsResolve(start)
+      }
+    }
+  }
+
+  private fun requestVisibleLineByLinePositionSync() {
+    if (!::viewPager.isInitialized || !viewPager.isLaidOut) return
+    val wrappers = findVisibleLineByLineWrapperViews()
+    for (wrapper in wrappers) {
+      if (wrapper.isAttachedToWindow) {
+        findLineByLineCanvasChild(wrapper).requestLayout()
+      }
+    }
+  }
+
+  private fun scheduleLineByLineSelectionBoundsResolve(expectedStart: SuraAyah) {
+    val wrappers = findVisibleLineByLineWrapperViews()
+    if (wrappers.isEmpty()) {
+      // ViewPager may not have populated the pooled QuranLineByLineWrapperView child yet on cold start.
+      if (pagerAdapter.getFragmentIfExists(viewPager.currentItem) == null && lineByLineAttachRetries < 2) {
+        lineByLineAttachRetries++
+        viewPager.post {
+          if (!isFinishing && !isDestroyed) {
+            refreshHybridAyahBounds()
+          }
+        }
+      }
+      return
+    }
+    val attachedWrappers = wrappers.filter { it.isAttachedToWindow }
+    if (attachedWrappers.isEmpty()) return
+
+    lineByLineBoundsJob?.cancel()
+    lineByLineBoundsJob = null
+
+    // Force layout pass on the visible line-by-line canvas(es) so reportPagePositionIfNeeded()
+    // records exact on-screen un-nudged window X/Y before endSelection() resolves glyph rectangles.
+    var primaryCanvas: View? = null
+    for (wrapper in attachedWrappers) {
+      val canvas = findLineByLineCanvasChild(wrapper)
+      canvas.requestLayout()
+      if (primaryCanvas == null) {
+        primaryCanvas = canvas
+      }
+    }
+    val anchorCanvas = primaryCanvas ?: return
+    anchorCanvas.doOnPreDraw {
+      if (isFinishing || isDestroyed || !::hybridReaderController.isInitialized) return@doOnPreDraw
+      if (hybridReaderController.uiState.value.isAnySheetOpen) return@doOnPreDraw
+      if (lastViewPagerScrollState != ViewPager.SCROLL_STATE_IDLE || abs(viewPager.translationY) >= 0.5f) {
+        return@doOnPreDraw
+      }
+      val currentSelection = readingEventPresenter.currentAyahSelection()
+      val currentIndicator = currentSelection.selectionIndicator()
+      if (currentSelection.startSuraAyah() != expectedStart ||
+        (currentIndicator !is SelectionIndicator.None && currentIndicator !is SelectionIndicator.ScrollOnly)
+      ) {
+        return@doOnPreDraw
+      }
+      lineByLineBoundsJob?.cancel()
+      lineByLineBoundsJob = scope.launch {
+        for (wrapper in attachedWrappers) {
+          if (wrapper.isAttachedToWindow) {
+            runCatching { wrapper.quranLineByLinePresenter.endSelection() }
+          }
+        }
+      }
+    }
+  }
+
+  private fun findVisibleLineByLineWrapperViews(): List<QuranLineByLineWrapperView> {
+    if (!::viewPager.isInitialized) return emptyList()
+    val vpWidth = viewPager.width
+    if (vpWidth <= 0) return emptyList()
+    val scrollX = viewPager.scrollX
+    val visibleMin = scrollX
+    val visibleMax = scrollX + vpWidth
+    val result = ArrayList<QuranLineByLineWrapperView>(2)
+    for (i in 0 until viewPager.childCount) {
+      val child = viewPager.getChildAt(i) ?: continue
+      val centerX = (child.left + child.right) / 2
+      if (centerX in visibleMin..visibleMax && child.width > 0 && child.height > 0) {
+        collectLineByLineWrappers(child, depth = 0, out = result)
+      }
+    }
+    return result
+  }
+
+  private fun collectLineByLineWrappers(
+    view: View,
+    depth: Int,
+    out: MutableList<QuranLineByLineWrapperView>
+  ) {
+    if (view is QuranLineByLineWrapperView) {
+      out.add(view)
+      return
+    }
+    if (depth >= 3 || view !is ViewGroup) return
+    for (i in 0 until view.childCount) {
+      collectLineByLineWrappers(view.getChildAt(i), depth + 1, out)
+    }
+  }
+
+  private fun findLineByLineCanvasChild(wrapper: QuranLineByLineWrapperView): View {
+    val first = wrapper.getChildAt(0) ?: return wrapper
+    return if (first is ViewGroup && first.childCount > 0) first.getChildAt(0) else first
+  }
+
+  private fun computeAyahOverlayBounds(
+    start: SuraAyah,
+    end: SuraAyah?,
+    indicator: SelectionIndicator
+  ): AyahOverlayBounds? {
+    if (!::viewPager.isInitialized || !::hybridReaderOverlay.isInitialized) return null
+    if (!hybridReaderOverlay.isLaidOut || hybridReaderOverlay.width <= 0 || hybridReaderOverlay.height <= 0) {
+      return null
+    }
+    val ayahPage = quranInfo.getPageFromSuraAyah(start.sura, start.ayah)
+    val ayahPos = quranInfo.getPositionFromPage(ayahPage, isDualPageVisible)
+    val currentPos = viewPager.currentItem
+    if (lastViewPagerScrollState == ViewPager.SCROLL_STATE_IDLE && ayahPos != currentPos) {
+      return null
+    }
+    val minBottomPx = statusBarTopInsetPx.toFloat()
+    val maxTopPx = hybridReaderOverlay.height.toFloat()
+    val fragment = pagerAdapter.getFragmentIfExists(ayahPos)
+    if (fragment is QuranPageFragment) {
+      val startRects = fragment.getAyahOverlayRects(start.sura, start.ayah, hybridReaderOverlay)
+      if (!startRects.isNullOrEmpty()) {
+        val first = startRects.first()
+        val lastRects = if (end != null && end != start) {
+          val endPage = quranInfo.getPageFromSuraAyah(end.sura, end.ayah)
+          val endPos = quranInfo.getPositionFromPage(endPage, isDualPageVisible)
+          val endFragment = if (endPos == ayahPos) fragment else pagerAdapter.getFragmentIfExists(endPos) as? QuranPageFragment
+          endFragment?.getAyahOverlayRects(end.sura, end.ayah, hybridReaderOverlay)
+        } else {
+          null
+        }
+        val last = (lastRects?.takeIf { it.isNotEmpty() } ?: startRects).last()
+        return AyahOverlayBounds(
+          firstLineLeft = first.left,
+          firstLineTop = first.top,
+          firstLineRight = first.right,
+          firstLineBottom = first.bottom,
+          lastLineLeft = last.left,
+          lastLineTop = last.top,
+          lastLineRight = last.right,
+          lastLineBottom = last.bottom,
+          unNudgedLastLineBottom = last.bottom - viewPager.translationY
+        ).takeIf { it.isValidForOverlay(minBottomPx = minBottomPx, maxTopPx = maxTopPx) }
+      }
+    }
+
+    if (fragment is AyahTrackerPresenter.AyahInteractionHandler && ayahPos == currentPos) {
+      val trackerItem = fragment.getAyahTrackerItems()
+        .firstOrNull { it.page == ayahPage } as? AyahImageTrackerItem
+      val iv = trackerItem?.ayahView
+      if (trackerItem != null && iv != null && iv.isLaidOut && iv.width > 0 && iv.height > 0) {
+        val derived = trackerItem.getToolBarPosition(ayahPage, start.sura, start.ayah)
+        if (derived is SelectionIndicator.SelectedItemPosition) {
+          val overlayLoc = IntArray(2).also { hybridReaderOverlay.getLocationInWindow(it) }
+          val ivLoc = IntArray(2).also { iv.getLocationInWindow(it) }
+          return computeSelectedItemOverlayBounds(
+            indicator = derived,
+            overlayLocationInWindow = overlayLoc,
+            imageViewLocationInWindow = ivLoc,
+            imageViewWidth = iv.width,
+            viewPagerTranslationY = viewPager.translationY
+          ).takeIf { it.isValidForOverlay(minBottomPx = minBottomPx, maxTopPx = maxTopPx) }
+        }
+      }
+    }
+
+    if (indicator is SelectionIndicator.SelectedItemPosition && ayahPos == currentPos) {
+      val overlayLoc = IntArray(2)
+      hybridReaderOverlay.getLocationInWindow(overlayLoc)
+      val tracker = resolveCurrentTracker() as? AyahTrackerPresenter
+      val imageView = tracker?.getQuranPageImageView(ayahPage)
+      if (imageView != null && (!imageView.isLaidOut || imageView.width <= 0 || imageView.height <= 0)) {
+        return null
+      }
+      val ivLoc = imageView?.let { iv ->
+        IntArray(2).also { iv.getLocationInWindow(it) }
+      }
+      return computeSelectedItemOverlayBounds(
+        indicator = indicator,
+        overlayLocationInWindow = overlayLoc,
+        imageViewLocationInWindow = ivLoc,
+        imageViewWidth = imageView?.width ?: 0,
+        viewPagerTranslationY = viewPager.translationY
+      ).takeIf { it.isValidForOverlay(minBottomPx = minBottomPx, maxTopPx = maxTopPx) }
+    }
+
+    return null
+  }
+
+  private suspend fun loadSingleAyahArabicText(suraAyah: SuraAyah): String? {
+    return withContext(Dispatchers.IO) {
+      if (!quranFileUtils.hasArabicSearchDatabase()) {
+        return@withContext null
+      }
+      runCatching {
+        arabicDatabaseUtils().getVerses(suraAyah, suraAyah)
+          .blockingGet()
+          .firstOrNull()
+          ?.text
+      }.getOrNull()
+    }
+  }
+
+  private fun updateHybridBackCallbackState() {
+    if (!::onHybridOverlayOrDrawerBackCallback.isInitialized) return
+    val isOverlayOpen = ::overlay.isInitialized && overlay.isVisible
+    val isSheetOpen = ::hybridReaderController.isInitialized && hybridReaderController.uiState.value.isAnySheetOpen
+    val isTafsirPickerOpen = ::hybridReaderOverlay.isInitialized && hybridReaderOverlay.isTafsirPickerOpen()
+    onHybridOverlayOrDrawerBackCallback.isEnabled = isOverlayOpen || isSheetOpen || isTafsirPickerOpen
+  }
+
+  private fun shouldAutoHideChrome(): Boolean {
+    val hasSelection = selectionStart != null
+    val isSheetOpen = ::hybridReaderController.isInitialized && hybridReaderController.uiState.value.isAnySheetOpen
+    val isModalOpen = ::overlay.isInitialized && overlay.isVisible
+    return !hasSelection && !isSheetOpen && !isModalOpen
+  }
+
+  private fun isHybridBottomCapsuleVisible(): Boolean {
+    if (!::hybridReaderController.isInitialized) return false
+    val ui = hybridReaderController.uiState.value
+    return !ui.isAnySheetOpen && (ui.isChromeVisible || ui.isAudioActive || ui.downloadProgress != null || ui.showNetworkPrompt)
+  }
+
   companion object {
     private val PAGE_COLOR_PREFERENCES = setOf(
       Constants.PREF_PAGE_THEME,
       Constants.PREF_PAGE_APPEARANCE,
       Constants.PREF_APP_THEME,
+      Constants.PREF_APP_THEME_STYLE,
+      Constants.PREF_OLED_DARK_MODE,
       Constants.PREF_NIGHT_MODE_TEXT_BRIGHTNESS,
       Constants.PREF_NIGHT_MODE_BACKGROUND_BRIGHTNESS,
       Constants.PREF_USE_OLD_BACKGROUND
     )
     private const val AUDIO_DOWNLOAD_KEY = "AUDIO_DOWNLOAD_KEY"
+    private const val SURA_HEADER_DRAWER_CLASS =
+      "com.quran.labs.androidquran.common.drawing.helper.SuraHeaderDrawer"
     private const val LAST_READ_PAGE = "LAST_READ_PAGE"
     private const val LAST_READING_MODE_IS_TRANSLATION = "LAST_READING_MODE_IS_TRANSLATION"
     private const val LAST_ACTIONBAR_STATE = "LAST_ACTIONBAR_STATE"
     private const val LAST_FOLDING_STATE = "LAST_FOLDING_STATE"
+    private const val LAST_SLIDER_INITIALIZED = "LAST_SLIDER_INITIALIZED"
+    private const val KEY_HYBRID_DRAWER_OPEN = "hybrid_drawer_open"
+    private const val KEY_HYBRID_APPEARANCE_OPEN = "hybrid_appearance_open"
+    private const val KEY_HYBRID_STUDY_TAB = "hybrid_study_tab"
+    private const val KEY_HYBRID_SELECTED_SURA = "hybrid_selected_sura"
+    private const val KEY_HYBRID_SELECTED_AYAH = "hybrid_selected_ayah"
+    private const val KEY_HYBRID_SELECTED_END_SURA = "hybrid_selected_end_sura"
+    private const val KEY_HYBRID_SELECTED_END_AYAH = "hybrid_selected_end_ayah"
 
     const val EXTRA_JUMP_TO_TRANSLATION: String = "jumpToTranslation"
     const val EXTRA_HIGHLIGHT_SURA: String = "highlightSura"
@@ -2073,5 +3232,34 @@ class PagerActivity : AppCompatActivity(), AudioBarListener, OnBookmarkTagsUpdat
     // AYAH ACTION PANEL STUFF
     // Max height of sliding panel (% of screen)
     private const val PANEL_MAX_HEIGHT = 0.6f
+
+    internal fun shouldUseLightSystemBars(
+      isActionBarHidden: Boolean,
+      isNightMode: Boolean,
+      lightNavigationBar: Boolean
+    ): Boolean {
+      return if (isActionBarHidden) !isNightMode else lightNavigationBar
+    }
+
+    internal fun shouldUseLightStatusBar(
+      isActionBarHidden: Boolean,
+      isNightMode: Boolean,
+      isLightToolbar: Boolean
+    ): Boolean {
+      return if (isActionBarHidden) !isNightMode else isLightToolbar
+    }
+
+    internal fun readingBookmarkToastBottomMargin(
+      isActionBarHidden: Boolean,
+      isAudioBarVisible: Boolean,
+      audioBarHeight: Int,
+      bottomInset: Int
+    ): Int {
+      return if (!isActionBarHidden && isAudioBarVisible) {
+        audioBarHeight
+      } else {
+        bottomInset
+      }
+    }
   }
 }

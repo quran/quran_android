@@ -11,9 +11,115 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.page.common.data.QuranNaming
 import dev.zacsweers.metro.Inject
 import timber.log.Timber
+import java.util.concurrent.atomic.AtomicReferenceArray
 import com.quran.mobile.common.ui.core.R as UiCoreR
 
 class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): QuranNaming, QuranDisplayInterface {
+
+  @Volatile
+  private var cachedSuraNames: CachedSuraNames? = null
+
+  private fun getSuraNameTranslationsArray(context: Context): Array<String> {
+    val cached = getOrLoadCachedSuraNames(context)
+    cached.suraNameTranslations?.let { return it }
+    return synchronized(this) {
+      val current = getOrLoadCachedSuraNames(context)
+      current.suraNameTranslations ?: context.resources
+        .getStringArray(UiCoreR.array.sura_names_translation)
+        .also { current.suraNameTranslations = it }
+    }
+  }
+
+  private fun getOrLoadCachedSuraNames(context: Context): CachedSuraNames {
+    val resources = context.resources
+    val localeTags = resources.configuration.locales.toLanguageTags()
+    val resourcesId = System.identityHashCode(resources)
+    val existing = cachedSuraNames
+    if (existing != null &&
+      existing.resourcesIdentity == resourcesId &&
+      existing.localeTags == localeTags
+    ) {
+      return existing
+    }
+    return synchronized(this) {
+      val current = cachedSuraNames
+      if (current != null &&
+        current.resourcesIdentity == resourcesId &&
+        current.localeTags == localeTags
+      ) {
+        current
+      } else {
+        CachedSuraNames(
+          resourcesIdentity = resourcesId,
+          localeTags = localeTags,
+          suraNames = resources.getStringArray(UiCoreR.array.sura_names)
+        ).also { cachedSuraNames = it }
+      }
+    }
+  }
+
+  fun clearCache() {
+    cachedSuraNames = null
+  }
+
+  private class CachedSuraNames(
+    val resourcesIdentity: Int,
+    val localeTags: String,
+    val suraNames: Array<String>,
+    @Volatile var suraNameTranslations: Array<String>? = null,
+    @Volatile var suraTitleTemplate: StringTemplate? = null,
+    @Volatile var juzDescriptionTemplate: StringTemplate? = null,
+    @Volatile var makkiPrefix: String? = null,
+    @Volatile var madaniPrefix: String? = null,
+    val suraNamesWithPrefix: AtomicReferenceArray<String> = AtomicReferenceArray(Constants.SURAS_COUNT),
+    val suraListMetaStrings: AtomicReferenceArray<String> = AtomicReferenceArray(Constants.SURAS_COUNT)
+  )
+
+  private class StringTemplate(
+    val prefix: String,
+    val suffix: String
+  ) {
+    fun format(arg: String): String {
+      return if (suffix.isEmpty()) {
+        prefix + arg
+      } else if (prefix.isEmpty()) {
+        arg + suffix
+      } else {
+        prefix + arg + suffix
+      }
+    }
+
+    companion object {
+      private const val SENTINEL = "\u0000"
+
+      fun from(context: Context, @StringRes resId: Int): StringTemplate {
+        val rendered = context.getString(resId, SENTINEL)
+        val idx = rendered.indexOf(SENTINEL)
+        return if (idx >= 0) {
+          StringTemplate(rendered.substring(0, idx), rendered.substring(idx + 1))
+        } else {
+          StringTemplate(rendered, "")
+        }
+      }
+    }
+  }
+
+  private fun getSuraTitleTemplate(context: Context, cached: CachedSuraNames): StringTemplate {
+    return cached.suraTitleTemplate ?: StringTemplate.from(context, R.string.quran_sura_title).also {
+      cached.suraTitleTemplate = it
+    }
+  }
+
+  private fun getJuzDescriptionTemplate(context: Context, cached: CachedSuraNames): StringTemplate {
+    return cached.juzDescriptionTemplate ?: StringTemplate.from(context, R.string.juz2_description).also {
+      cached.juzDescriptionTemplate = it
+    }
+  }
+
+  fun getJuzDisplayString(context: Context, juz: Int): String {
+    val cached = getOrLoadCachedSuraNames(context)
+    return getJuzDescriptionTemplate(context, cached).format(QuranUtils.getLocalizedNumber(juz))
+  }
 
   /**
    * Get localized sura name from resources
@@ -47,15 +153,33 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
   ): String {
     if (sura < Constants.SURA_FIRST || sura > Constants.SURA_LAST) return ""
 
+    val cached = getOrLoadCachedSuraNames(context)
+    val index = sura - 1
+    val baseName = cached.suraNames[index]
+    if (!wantPrefix && !wantTranslation) {
+      return baseName
+    }
+
+    if (wantPrefix && !wantTranslation) {
+      cached.suraNamesWithPrefix.get(index)?.let { return it }
+      val prefixed = getSuraTitleTemplate(context, cached).format(baseName)
+      cached.suraNamesWithPrefix.compareAndSet(index, null, prefixed)
+      return cached.suraNamesWithPrefix.get(index) ?: prefixed
+    }
+
     val builder = StringBuilder()
-    val suraNames = context.resources.getStringArray(UiCoreR.array.sura_names)
     if (wantPrefix) {
-      builder.append(context.getString(R.string.quran_sura_title, suraNames[sura - 1]))
+      val prefixed = cached.suraNamesWithPrefix.get(index) ?: run {
+        val computed = getSuraTitleTemplate(context, cached).format(baseName)
+        cached.suraNamesWithPrefix.compareAndSet(index, null, computed)
+        cached.suraNamesWithPrefix.get(index) ?: computed
+      }
+      builder.append(prefixed)
     } else {
-      builder.append(suraNames[sura - 1])
+      builder.append(baseName)
     }
     if (wantTranslation) {
-      val translation = context.resources.getStringArray(UiCoreR.array.sura_names_translation)[sura - 1]
+      val translation = getSuraNameTranslationsArray(context)[index]
       if (!TextUtils.isEmpty(translation)) {
         // Some sura names may not have translation
         builder.append(" (")
@@ -152,7 +276,28 @@ class QuranDisplayData @Inject constructor(private val quranInfo: QuranInfo): Qu
   }
 
   fun getSuraListMetaString(context: Context, sura: Int): String {
-    val info = context.getString(if (quranInfo.isMakki(sura)) R.string.makki else R.string.madani) + " - "
+    if (sura in Constants.SURA_FIRST..Constants.SURA_LAST) {
+      val metaArray = getOrLoadCachedSuraNames(context).suraListMetaStrings
+      val index = sura - 1
+      metaArray.get(index)?.let { return it }
+      val computed = buildSuraListMetaString(context, sura)
+      metaArray.compareAndSet(index, null, computed)
+      return metaArray.get(index) ?: computed
+    }
+    return buildSuraListMetaString(context, sura)
+  }
+
+  private fun buildSuraListMetaString(context: Context, sura: Int): String {
+    val cached = getOrLoadCachedSuraNames(context)
+    val info = if (quranInfo.isMakki(sura)) {
+      cached.makkiPrefix ?: (context.getString(R.string.makki) + " - ").also {
+        cached.makkiPrefix = it
+      }
+    } else {
+      cached.madaniPrefix ?: (context.getString(R.string.madani) + " - ").also {
+        cached.madaniPrefix = it
+      }
+    }
 
     val ayahs = quranInfo.getNumberOfAyahs(sura)
     return info + context.resources.getQuantityString(

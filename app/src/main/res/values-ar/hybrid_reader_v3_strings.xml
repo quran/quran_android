@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="hybrid_reader_tafsir_list">قائمة التفاسير</string>
+  <string name="hybrid_reader_tafsir_picker_title">قائمة التفاسير</string>
+  <string name="hybrid_reader_tafsir_download_more">تحميل المزيد من التفاسير</string>
+  <string name="hybrid_reader_tafsir_expand_cd">توسيع التفسير</string>
+  <string name="hybrid_reader_tafsir_collapse_cd">تصغير التفسير</string>
+  <string name="hybrid_reader_appearance_sheet_title">المظهر</string>
+  <string name="hybrid_reader_done">تم</string>
+</resources>

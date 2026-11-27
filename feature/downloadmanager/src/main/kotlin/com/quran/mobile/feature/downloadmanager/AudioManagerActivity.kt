@@ -1,25 +1,36 @@
 package com.quran.mobile.feature.downloadmanager
 
 import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.quran.labs.androidquran.common.audio.model.QariItem
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
+import com.quran.labs.androidquran.common.ui.core.LocalQuranColors
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
 import com.quran.mobile.di.QuranApplicationComponentProvider
 import com.quran.mobile.feature.downloadmanager.di.DownloadManagerComponentInterface
@@ -45,11 +56,26 @@ class AudioManagerActivity : ComponentActivity() {
     val downloadedShuyookhFlow =
       audioManagerPresenter.downloadedShuyookh { QariItem.fromQari(this, it) }
 
-    enableEdgeToEdge()
+    val isNight = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+      Configuration.UI_MODE_NIGHT_YES
+    val palette = AppThemeStyle.current.palette(isNight)
+    enableEdgeToEdge(
+      statusBarStyle = if (palette.isLightToolbar) {
+        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+      } else {
+        SystemBarStyle.dark(Color.TRANSPARENT)
+      },
+      navigationBarStyle = if (isNight) {
+        SystemBarStyle.dark(Color.TRANSPARENT)
+      } else {
+        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+      }
+    )
 
     setContent {
       val downloadedShuyookhState = downloadedShuyookhFlow.collectAsState(persistentListOf())
       QuranTheme {
+        val quranColors = LocalQuranColors.current
         Column(modifier = Modifier
           .background(MaterialTheme.colorScheme.surface)
           .fillMaxSize()
@@ -64,12 +90,22 @@ class AudioManagerActivity : ComponentActivity() {
             onBackPressed = { finish() }
           )
 
-          val shuyookhDownloadInfo = downloadedShuyookhState.value
-          if (shuyookhDownloadInfo.isEmpty()) {
-            LoadingIndicator()
-          } else {
-            ShuyookhList(shuyookh = shuyookhDownloadInfo, onQariItemClicked = ::onQariClicked)
+          Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+            val shuyookhDownloadInfo = downloadedShuyookhState.value
+            if (shuyookhDownloadInfo.isEmpty()) {
+              LoadingIndicator()
+            } else {
+              ShuyookhList(shuyookh = shuyookhDownloadInfo, onQariItemClicked = ::onQariClicked)
+            }
           }
+
+          HorizontalDivider(color = quranColors.divider)
+          Spacer(
+            modifier = Modifier
+              .fillMaxWidth()
+              .background(quranColors.toolbarBackground)
+              .windowInsetsBottomHeight(WindowInsets.navigationBars)
+          )
         }
       }
     }

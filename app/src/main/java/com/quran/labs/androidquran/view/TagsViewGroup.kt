@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.quran.data.model.bookmark.Tag
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.util.ThemeUtil
 
 class TagsViewGroup @JvmOverloads constructor(
   context: Context,
@@ -21,27 +22,46 @@ class TagsViewGroup @JvmOverloads constructor(
   private val chipSpacing = resources.getDimensionPixelSize(R.dimen.tag_margin)
   private val chipPadding = resources.getDimensionPixelSize(R.dimen.tag_padding)
   private val chipTextSize = resources.getDimensionPixelSize(R.dimen.tag_text_size).toFloat()
-  private val chipTextColor = ContextCompat.getColor(context, R.color.accent_color)
+  private val chipTextColor = ThemeUtil.resolveThemeColor(
+    context,
+    R.attr.quranAccent,
+    ContextCompat.getColor(context, R.color.accent_color)
+  )
 
   fun setTags(tags: List<Tag>) {
-    removeAllViews()
-    tags.forEach { tag ->
-      addView(
-        TextView(context).apply {
-          text = tag.name
-          setTextSize(TypedValue.COMPLEX_UNIT_PX, chipTextSize)
-          setTextColor(chipTextColor)
-          setBackgroundResource(R.drawable.tag_chip_background)
-          setPadding(chipPadding, 0, chipPadding, 0)
-          gravity = Gravity.CENTER
-          isSingleLine = true
-          // names never truncate in practice; this only guards one absurdly long name
-          ellipsize = TextUtils.TruncateAt.END
-        },
-        LayoutParams(LayoutParams.WRAP_CONTENT, chipHeight)
-      )
+    for (i in tags.indices) {
+      val tag = tags[i]
+      val chip = if (i < childCount) {
+        (getChildAt(i) as TextView).apply {
+          visibility = VISIBLE
+        }
+      } else {
+        createTagChip(tag.name).also {
+          addView(it, LayoutParams(LayoutParams.WRAP_CONTENT, chipHeight))
+        }
+      }
+      if (chip.text != tag.name) {
+        chip.text = tag.name
+      }
+    }
+    for (i in tags.size until childCount) {
+      getChildAt(i).visibility = GONE
     }
     requestLayout()
+  }
+
+  private fun createTagChip(tagName: String): TextView {
+    return TextView(context).apply {
+      text = tagName
+      setTextSize(TypedValue.COMPLEX_UNIT_PX, chipTextSize)
+      setTextColor(chipTextColor)
+      setBackgroundResource(R.drawable.tag_chip_background)
+      setPadding(chipPadding, 0, chipPadding, 0)
+      gravity = Gravity.CENTER
+      isSingleLine = true
+      // names never truncate in practice; this only guards one absurdly long name
+      ellipsize = TextUtils.TruncateAt.END
+    }
   }
 
   override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

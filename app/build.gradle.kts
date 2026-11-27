@@ -64,10 +64,13 @@ android {
 
   signingConfigs {
     create("release") {
-      storeFile = file((project.property("STORE_FILE") as String))
-      storePassword = project.property("STORE_PASSWORD") as String
-      keyAlias = project.property("KEY_ALIAS") as String
-      keyPassword = project.property("KEY_PASSWORD") as String
+      val storeFilePath = project.findProperty("STORE_FILE") as? String
+      if (!storeFilePath.isNullOrBlank()) {
+        storeFile = file(storeFilePath)
+        storePassword = project.findProperty("STORE_PASSWORD") as? String
+        keyAlias = project.findProperty("KEY_ALIAS") as? String
+        keyPassword = project.findProperty("KEY_PASSWORD") as? String
+      }
     }
   }
 
@@ -135,6 +138,9 @@ androidComponents {
 
     variant.resValues.put(variant.makeResValueKey("string", "authority"),
       ResValue("$applicationId.data.QuranDataProvider")
+    )
+    variant.resValues.put(variant.makeResValueKey("string", "search_suggest_intent_data"),
+      ResValue("content://$applicationId.data.QuranDataProvider/quran/verse")
     )
     variant.resValues.put(variant.makeResValueKey("string", "file_authority"),
       ResValue("$applicationId.fileprovider")
@@ -253,7 +259,6 @@ dependencies {
   implementation(libs.androidx.media)
   implementation(libs.androidx.media3.exoplayer)
   implementation(libs.androidx.media3.session)
-  implementation(libs.androidx.localbroadcastmanager)
   implementation(libs.androidx.preference.ktx)
   implementation(libs.androidx.recyclerview)
   implementation(libs.material)
@@ -265,7 +270,7 @@ dependencies {
   implementation(libs.compose.material3)
   implementation(libs.compose.ui)
   implementation(libs.compose.ui.tooling.preview)
-  implementation(libs.compose.ui.tooling)
+  debugImplementation(libs.compose.ui.tooling)
 
   // okio
   implementation(libs.okio)
@@ -316,6 +321,11 @@ dependencies {
   // Number Picker
   implementation(libs.number.picker)
 
+}
+
+configurations.matching { it.name.contains("beta", ignoreCase = true) }.configureEach {
+  exclude(group = "androidx.compose.ui", module = "ui-tooling")
+  exclude(group = "androidx.compose.ui", module = "ui-tooling-data")
 }
 
 // Kover coverage configuration

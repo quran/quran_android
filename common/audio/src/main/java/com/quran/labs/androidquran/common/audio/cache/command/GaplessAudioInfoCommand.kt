@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.common.audio.cache.command
 
-import com.quran.labs.androidquran.common.audio.util.AudioFileUtil
 import dev.zacsweers.metro.Inject
 import okio.FileSystem
 import okio.Path
@@ -9,30 +8,42 @@ import okio.Path
 class GaplessAudioInfoCommand(private val fileSystem: FileSystem) {
 
   fun gaplessDownloads(path: Path, allowedExtensions: List<String>): Pair<List<Int>, List<Int>> {
-    return fullGaplessDownloads(path, allowedExtensions) to partialGaplessDownloads(path, allowedExtensions)
+    val entries = fileSystem.listOrNull(path) ?: return emptyList<Int>() to emptyList()
+    val full = LinkedHashSet<Int>()
+    val partial = LinkedHashSet<Int>()
+
+    for (entry in entries) {
+      val name = entry.name
+      if (name.endsWith(".part")) {
+        val withoutPart = name.removeSuffix(".part")
+        val sura = extractSuraNumber(withoutPart, allowedExtensions)
+        if (sura != null) {
+          partial.add(sura)
+        }
+      } else {
+        val sura = extractSuraNumber(name, allowedExtensions)
+        if (sura != null) {
+          full.add(sura)
+        }
+      }
+    }
+    return full.toList() to partial.toList()
   }
 
-  private fun fullGaplessDownloads(path: Path, allowedExtensions: List<String>): List<Int> {
-    val paths = allowedExtensions.flatMap { extension ->
-      AudioFileUtil.filesMatchingSuffixWithSuffixRemoved(fileSystem, path, ".$extension")
+  private fun extractSuraNumber(filename: String, allowedExtensions: List<String>): Int? {
+    for (extension in allowedExtensions) {
+      val suffix = ".$extension"
+      if (filename.endsWith(suffix)) {
+        val base = filename.removeSuffix(suffix)
+        if (base.length == 3) {
+          val sura = base.toIntOrNull()
+          if (sura != null && sura in 1..114) {
+            return sura
+          }
+        }
+        return null
+      }
     }
-
-    return paths
-      .filter { it.length == 3 }
-      .mapNotNull { it.toIntOrNull() }
-      .filter { it in 1..114 }
-      .distinct()
-  }
-
-  private fun partialGaplessDownloads(path: Path, allowedExtensions: List<String>): List<Int> {
-    val paths = allowedExtensions.flatMap { extension ->
-      AudioFileUtil.filesMatchingSuffixWithSuffixRemoved(fileSystem, path, ".$extension.part")
-    }
-
-    return paths
-      .filter { it.length == 3 }
-      .mapNotNull { it.toIntOrNull() }
-      .filter { it in 1..114 }
-      .distinct()
+    return null
   }
 }

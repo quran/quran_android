@@ -14,10 +14,12 @@ import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.TranslationUtil
 import com.quran.mobile.translation.model.LocalTranslation
 import com.quran.mobile.translation.verse.TranslationModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -29,21 +31,12 @@ open class BaseTranslationPresenter<T : Any> internal constructor(
     private val translationsAdapter: TranslationsDBAdapter,
     private val translationUtil: TranslationUtil,
     private val quranInfo: QuranInfo,
-    translationListPresenter: TranslationListPresenter,
+    private val translationListPresenter: TranslationListPresenter,
 ) : Presenter<T> {
   private val translationMap: MutableMap<String, LocalTranslation> = HashMap()
-  private val scope = MainScope()
+  private var bindScope: CoroutineScope? = null
 
   var translationScreen: T? = null
-
-  init {
-    translationListPresenter.translations()
-      .onEach { translations ->
-        updateTranslationsMap(translations)
-        onAvailableTranslationsChanged(translations)
-      }
-      .launchIn(scope)
-  }
 
   suspend fun getVerses(
     getArabic: Boolean,
@@ -244,10 +237,23 @@ open class BaseTranslationPresenter<T : Any> internal constructor(
                      val ayahInformation: List<QuranAyahInfo>)
 
   override fun bind(what: T) {
+    bindScope?.cancel()
+    val scope = MainScope()
+    bindScope = scope
     translationScreen = what
+    translationListPresenter.translations()
+      .onEach { translations ->
+        updateTranslationsMap(translations)
+        onAvailableTranslationsChanged(translations)
+      }
+      .launchIn(scope)
   }
 
   override fun unbind(what: T) {
-    translationScreen = null
+    if (translationScreen === what) {
+      translationScreen = null
+      bindScope?.cancel()
+      bindScope = null
+    }
   }
 }

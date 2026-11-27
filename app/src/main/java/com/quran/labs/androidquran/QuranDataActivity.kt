@@ -4,19 +4,23 @@ import android.Manifest.permission
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import androidx.annotation.RequiresApi
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.core.view.doOnPreDraw
 import androidx.work.WorkManager
 import com.quran.common.upgrade.PreferencesUpgrade
+import com.quran.data.core.QuranConstants
+import com.quran.data.core.QuranInfo
 import com.quran.data.model.Page
 import com.quran.data.model.QuranDataStatus
 import com.quran.data.model.SuraAyah
@@ -26,7 +30,6 @@ import com.quran.labs.androidquran.service.QuranDownloadService
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver
 import com.quran.labs.androidquran.service.util.DefaultDownloadReceiver.SimpleDownloadListener
 import com.quran.labs.androidquran.service.util.PermissionUtil
-import com.quran.labs.androidquran.service.util.QuranDownloadNotifier.ProgressIntent
 import com.quran.labs.androidquran.service.util.ServiceIntentHelper
 import com.quran.labs.androidquran.ui.PagerActivity
 import com.quran.labs.androidquran.ui.QuranActivity
@@ -35,15 +38,19 @@ import com.quran.labs.androidquran.ui.whatsnew.AnnouncementActivity
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.labs.androidquran.widget.ShowJumpFragmentActivity
 import com.quran.labs.androidquran.worker.WorkerConstants
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -64,8 +71,8 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
  */
 class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequestPermissionsResultCallback {
 
-  @Inject lateinit var quranNavigatorFactory: QuranNavigator.Factory
-  private val quranNavigator by lazy { quranNavigatorFactory.create(this) }
+  @Inject lateinit var quranNavigatorFactory: Provider<QuranNavigator.Factory>
+  private val quranNavigator by lazy { quranNavigatorFactory().create(this) }
 
   @Inject
   lateinit var quranFileUtils: QuranFileUtils
@@ -77,7 +84,10 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
   lateinit var quranDataPresenter: QuranDataPresenter
 
   @Inject
-  lateinit var preferencesUpgrade: PreferencesUpgrade
+  lateinit var preferencesUpgrade: Provider<PreferencesUpgrade>
+
+  @Inject
+  lateinit var quranInfo: Provider<QuranInfo>
 
   private lateinit var quranSettings: QuranSettings
 
@@ -87,65 +97,48 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
   private var downloadReceiver: DefaultDownloadReceiver? = null
   private var quranDataStatus: QuranDataStatus? = null
   private var updateDialog: AlertDialog? = null
+  private var migrationDialogJob: Job? = null
   private var disposable: Disposable? = null
   private var lastForceValue: Boolean = false
   private var didCheckPermissions: Boolean = false
+  private var hasDrawnFirstFrame: Boolean = false
+  private var pendingLaunchAfterDraw: Boolean = false
+  private var isActivityResumed: Boolean = false
 
   private val scope = MainScope()
 
   public override fun onCreate(savedInstanceState: Bundle?) {
+    ThemeUtil.applyActivityTheme(this)
     super.onCreate(savedInstanceState)
+    val decor = window.decorView
+    decor.doOnPreDraw {
+      Handler(Looper.getMainLooper()).postAtFrontOfQueue {
+        onFirstFrameDrawn()
+      }
+    }
     val quranApp = application as QuranApplication
     quranApp.applicationComponent.inject(this)
     quranSettings = QuranSettings.getInstance(this)
     if (quranSettings.isFreshInstall) {
       AnnouncementActivity.markSeen(quranSettings)
     }
-    quranSettings.upgradePreferences(preferencesUpgrade)
+    if (quranSettings.version != BuildConfig.VERSION_CODE) {
+      quranSettings.upgradePreferences(preferencesUpgrade())
+    }
+    quranDataPresenter.bind(this)
+    if (!didCheckPermissions) {
+      didCheckPermissions = true
+      checkPermissions()
+    }
   }
 
   override fun onResume() {
     super.onResume()
+    isActivityResumed = true
     quranDataPresenter.bind(this)
-    val downloadReceiver = DefaultDownloadReceiver(
-        this,
-        QuranDownloadService.DOWNLOAD_TYPE_PAGES
-    )
-    downloadReceiver.setCanCancelDownload(true)
-    val action = ProgressIntent.INTENT_NAME
-    LocalBroadcastManager.getInstance(this)
-        .registerReceiver(
-            downloadReceiver,
-            IntentFilter(action)
-        )
-    downloadReceiver.setListener(this)
-    this.downloadReceiver = downloadReceiver
-
-    disposable = Single.timer(100, MILLISECONDS)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe { _: Long? ->
-          // try to reconnect to the service - delayed since some devices consider
-          // onResume as part of the app being in the background for starting-service
-          // purposes.
-          val reconnectIntent = Intent(this@QuranDataActivity, QuranDownloadService::class.java)
-          reconnectIntent.action = QuranDownloadService.ACTION_RECONNECT
-          reconnectIntent.putExtra(
-              QuranDownloadService.EXTRA_DOWNLOAD_TYPE,
-              QuranDownloadService.DOWNLOAD_TYPE_PAGES
-          )
-          try {
-            // this should be perfectly valid - on some devices though, despite the 100ms
-            // delay (or a longer one), some devices still complain about not being in the
-            // foreground.
-            //
-            // since this isn't strictly necessary (since the download service should emit
-            // periodically on its own anyway, and should handle multiple download requests,
-            // etc), let's just drop it if it fails since this is expected to rarely occur.
-            startService(reconnectIntent)
-          } catch (ise: IllegalStateException) {
-            Timber.e(ise)
-          }
-        }
+    if (hasDrawnFirstFrame && !isFinishing && !isDestroyed && QuranDownloadService.isRunning()) {
+      registerDownloadReceiverIfNeeded()
+    }
 
     if (!didCheckPermissions) {
       didCheckPermissions = true
@@ -153,12 +146,55 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
     }
   }
 
-  override fun onPause() {
+  private fun registerDownloadReceiverIfNeeded() {
+    if (downloadReceiver != null) return
+    val receiver = DefaultDownloadReceiver(
+      this,
+      QuranDownloadService.DOWNLOAD_TYPE_PAGES
+    )
+    receiver.setCanCancelDownload(true)
+    receiver.setListener(this)
+    receiver.register(this)
+    this.downloadReceiver = receiver
+
     disposable?.dispose()
+    disposable = Single.timer(100, MILLISECONDS)
+      .observeOn(AndroidSchedulers.mainThread())
+      .subscribe { _: Long? ->
+        if (!QuranDownloadService.isRunning()) {
+          return@subscribe
+        }
+        // try to reconnect to the service - delayed since some devices consider
+        // onResume as part of the app being in the background for starting-service
+        // purposes.
+        val reconnectIntent = Intent(this@QuranDataActivity, QuranDownloadService::class.java)
+        reconnectIntent.action = QuranDownloadService.ACTION_RECONNECT
+        reconnectIntent.putExtra(
+          QuranDownloadService.EXTRA_DOWNLOAD_TYPE,
+          QuranDownloadService.DOWNLOAD_TYPE_PAGES
+        )
+        try {
+          // this should be perfectly valid - on some devices though, despite the 100ms
+          // delay (or a longer one), some devices still complain about not being in the
+          // foreground.
+          //
+          // since this isn't strictly necessary (since the download service should emit
+          // periodically on its own anyway, and should handle multiple download requests,
+          // etc), let's just drop it if it fails since this is expected to rarely occur.
+          startService(reconnectIntent)
+        } catch (ise: IllegalStateException) {
+          Timber.e(ise)
+        }
+      }
+  }
+
+  override fun onPause() {
+    isActivityResumed = false
+    disposable?.dispose()
+    disposable = null
     quranDataPresenter.unbind(this)
     downloadReceiver?.let { receiver ->
-      receiver.setListener(null)
-      LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
+      receiver.unregister()
       downloadReceiver = null
     }
 
@@ -174,6 +210,7 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
 
   override fun onDestroy() {
     scope.cancel()
+    window?.setBackgroundDrawable(null)
     super.onDestroy()
   }
 
@@ -182,7 +219,7 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
     val path = quranSettings.appCustomLocation
     val fallbackFile = filesDir
     val usesInternalDir = path == fallbackFile.absolutePath
-    val usesExternalFileDir =
+    val usesExternalFileDir = !usesInternalDir &&
         ContextCompat.getExternalFilesDirs(this, null).any { file: File? ->
           file?.absolutePath == path
         }
@@ -202,7 +239,24 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
     }
   }
 
-  private fun showMigrationDialog() {
+  private fun showMigrationDialog(delayMs: Long = 0L) {
+    if (updateDialog != null) {
+      return
+    }
+    if (delayMs > 0L) {
+      migrationDialogJob?.cancel()
+      migrationDialogJob = scope.launch {
+        delay(delayMs)
+        if (!isFinishing && !isDestroyed && updateDialog == null) {
+          showMigrationDialogNow()
+        }
+      }
+    } else {
+      showMigrationDialogNow()
+    }
+  }
+
+  private fun showMigrationDialogNow() {
     if (updateDialog == null) {
       val migrationDialog = AlertDialog.Builder(this)
         .setView(R.layout.migration_upgrade)
@@ -214,6 +268,8 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
   }
 
   private fun hideMigrationDialog() {
+    migrationDialogJob?.cancel()
+    migrationDialogJob = null
     updateDialog?.dismiss()
     updateDialog = null
   }
@@ -233,7 +289,7 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
   }
 
   private fun checkPages() {
-    showMigrationDialog()
+    showMigrationDialog(delayMs = MIGRATION_DIALOG_DELAY_MS)
     quranDataPresenter.checkPages()
   }
 
@@ -387,6 +443,7 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
   }
 
   private fun actuallyDownloadQuranImages(force: Boolean) {
+    registerDownloadReceiverIfNeeded()
     // if any broadcasts were received, then we are already downloading
     // so unless we know what we are doing (via force), don't ask the
     // service to restart the download
@@ -491,7 +548,37 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
     runListView()
   }
 
+  private fun onFirstFrameDrawn() {
+    if (!hasDrawnFirstFrame) {
+      hasDrawnFirstFrame = true
+      if (pendingLaunchAfterDraw && !isFinishing && !isDestroyed) {
+        pendingLaunchAfterDraw = false
+        launchListViewNow()
+        return
+      }
+      if (isActivityResumed && !isFinishing && !isDestroyed && QuranDownloadService.isRunning()) {
+        registerDownloadReceiverIfNeeded()
+      }
+    }
+  }
+
   private fun runListView() {
+    if (!isFinishing && !isDestroyed) {
+      if (hasDrawnFirstFrame || intent?.action == ACTION_OPEN_PAGE) {
+        launchListViewNow()
+      } else {
+        pendingLaunchAfterDraw = true
+        window.decorView.postDelayed({
+          if (pendingLaunchAfterDraw && !isFinishing && !isDestroyed) {
+            pendingLaunchAfterDraw = false
+            launchListViewNow()
+          }
+        }, 120L)
+      }
+    }
+  }
+
+  private fun launchListViewNow() {
     if (!isFinishing && !isDestroyed) {
       if (intent?.action == ACTION_OPEN_PAGE) {
         jumpToRequestedPage(intent)
@@ -509,13 +596,23 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
     }
   }
 
-  private fun jumpToRequestedPage(sourceIntent: Intent) {
+  @VisibleForTesting
+  internal fun jumpToRequestedPage(sourceIntent: Intent) {
     val sura = sourceIntent.getIntExtra(PagerActivity.EXTRA_HIGHLIGHT_SURA, -1)
     val ayah = sourceIntent.getIntExtra(PagerActivity.EXTRA_HIGHLIGHT_AYAH, -1)
-    val location = if (sura > 0 && ayah > 0) {
+    val info = quranInfo()
+    val isValidSuraAyah = sura in 1..QuranConstants.NUMBER_OF_SURAS &&
+      ayah in 1..info.getNumberOfAyahs(sura)
+    val location = if (isValidSuraAyah) {
       SuraAyah(sura, ayah)
     } else {
-      Page(sourceIntent.getIntExtra("page", Constants.PAGES_FIRST))
+      val requestedPage = sourceIntent.getIntExtra("page", Constants.PAGES_FIRST)
+      val safePage = if (info.isValidPage(requestedPage)) {
+        requestedPage
+      } else {
+        Constants.PAGES_FIRST
+      }
+      Page(safePage)
     }
     val showTranslation = if (sourceIntent.hasExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION)) {
       sourceIntent.getBooleanExtra(PagerActivity.EXTRA_JUMP_TO_TRANSLATION, false)
@@ -559,6 +656,7 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
     const val ACTION_OPEN_PAGE = "com.quran.labs.androidquran.open_page"
     const val PAGES_DOWNLOAD_KEY = "PAGES_DOWNLOAD_KEY"
     private const val REQUEST_POST_NOTIFICATION_PERMISSIONS = 1
+    private const val MIGRATION_DIALOG_DELAY_MS = 150L
 
     fun openPageIntent(
       context: Context,

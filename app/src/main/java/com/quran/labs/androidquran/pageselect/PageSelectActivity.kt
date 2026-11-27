@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -15,6 +14,7 @@ import com.quran.labs.androidquran.QuranDataActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.ui.helpers.QuranDisplayHelper
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.util.ThemeUtil
 import dev.zacsweers.metro.Inject
 
 class PageSelectActivity : AppCompatActivity() {
@@ -27,7 +27,8 @@ class PageSelectActivity : AppCompatActivity() {
   private var isProcessing = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    enableEdgeToEdge()
+    ThemeUtil.applyActivityTheme(this)
+    ThemeUtil.enableThemedEdgeToEdge(this)
 
     super.onCreate(savedInstanceState)
     (application as QuranApplication).applicationComponent.inject(this)

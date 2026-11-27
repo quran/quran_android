@@ -323,4 +323,5 @@
     القادمة، هل ترغب في نقل البيانات على أية حال؟
   </string>
   <string name="comma">"،"</string>
+  <string name="prefs_theme_style_title">لون السمة</string>
 </resources>

@@ -80,8 +80,11 @@ class MissingPageDownloadWorker(private val context: Context,
     val pageName = QuranFileUtils.getPageFileName(pageToDownload.page)
 
     return try {
-      quranFileUtils.getImageFromWeb(okHttpClient, context, pageToDownload.width, pageName)
-          .isSuccessful
+      val response = quranFileUtils.getImageFromWeb(
+        okHttpClient, context, pageToDownload.width, pageName
+      )
+      response.bitmap?.recycle()
+      response.isSuccessful
     } catch (throwable: Throwable) {
       false
     }

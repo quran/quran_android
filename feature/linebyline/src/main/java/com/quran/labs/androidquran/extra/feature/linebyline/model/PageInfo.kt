@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.extra.feature.linebyline.model
 
+import android.graphics.Bitmap
 import com.quran.data.model.PageAppearance
 import com.quran.mobile.linebyline.data.dao.AyahMarkerInfo
 import com.quran.mobile.linebyline.data.dao.SuraHeader
@@ -11,15 +12,24 @@ data class PageInfo(
   val pageType: String,
   val displayText: DisplayText,
   val displaySettings: DisplaySettings,
-  val lineModels: ImmutableList<LineModel>,
-  val suraHeaders: ImmutableList<SuraHeader>,
-  val ayahMarkers: ImmutableList<AyahMarkerInfo>,
-  val ayahHighlights: ImmutableList<HighlightAyah>,
-  val readingBookmarks: ImmutableList<ReadingBookmarkAyah>,
-  val sidelines: ImmutableList<SidelineModel>,
-  val targetScrollPosition: Int,
-  val showSidelines: Boolean,
-  val skippedPageCount: Int
+  val compositedPageBitmap: Bitmap? = null,
+  val compositedWidth: Int = 0,
+  val compositedHeight: Int = 0,
+  val compositedIsNightMode: Boolean = false,
+  val compositedTextBrightness: Int = 255,
+  val compositedShowDividers: Boolean = false,
+  val compositedLineColor: Int = 0,
+  val compositedHeaderColor: Int = 0,
+  val compositedAyahColor: Int = 0,
+  val lineModels: ImmutableList<LineModel> = persistentListOf(),
+  val suraHeaders: ImmutableList<SuraHeader> = persistentListOf(),
+  val ayahMarkers: ImmutableList<AyahMarkerInfo> = persistentListOf(),
+  val ayahHighlights: ImmutableList<HighlightAyah> = persistentListOf(),
+  val readingBookmarks: ImmutableList<ReadingBookmarkAyah> = persistentListOf(),
+  val sidelines: ImmutableList<SidelineModel> = persistentListOf(),
+  val targetScrollPosition: Int = -1,
+  val showSidelines: Boolean = false,
+  val skippedPageCount: Int = 0
 )
 
 val EmptySettings =
@@ -35,17 +45,8 @@ val EmptySettings =
 
 val EmptyPageInfo =
   PageInfo(
-    0,
-    "",
-    DisplayText("", "", "", "", ""),
-    EmptySettings,
-    persistentListOf(),
-    persistentListOf(),
-    persistentListOf(),
-    persistentListOf(),
-    persistentListOf(),
-    persistentListOf(),
-    -1,
-    false,
-    0
+    page = 0,
+    pageType = "",
+    displayText = DisplayText("", "", "", "", ""),
+    displaySettings = EmptySettings
   )

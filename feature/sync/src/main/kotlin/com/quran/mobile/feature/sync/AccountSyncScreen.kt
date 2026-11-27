@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.LocalQuranColors
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.labs.androidquran.common.ui.core.modifier.autoMirror
 import com.quran.mobile.feature.sync.state.AccountProfile
 import com.quran.mobile.feature.sync.state.AccountSyncEvent
 import com.quran.mobile.feature.sync.state.AccountSyncState
@@ -71,6 +71,7 @@ import com.quran.shared.pipeline.SyncResourceType
 import com.quran.shared.pipeline.SyncRun
 import com.quran.shared.pipeline.SyncRunResult
 import com.quran.shared.pipeline.SyncRunTrigger
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import kotlin.time.Clock
@@ -106,8 +107,7 @@ internal fun AccountSyncScreen(
           IconButton(onClick = onBackPressed) {
             Icon(
               imageVector = QuranIcons.ArrowBack,
-              contentDescription = stringResource(AppCompatR.string.abc_action_bar_up_description),
-              modifier = Modifier.autoMirror()
+              contentDescription = stringResource(AppCompatR.string.abc_action_bar_up_description)
             )
           }
         }
@@ -140,8 +140,9 @@ internal fun AccountSyncScreen(
       }
       if (state.heldRows.isNotEmpty()) {
         item(key = "held") {
+          val previewHeldRows = remember(state.heldRows) { state.heldRows.take(3).toImmutableList() }
           HeldItemsSection(
-            rows = state.heldRows.take(3),
+            rows = previewHeldRows,
             count = state.blockingItemCount,
             verses = verses,
             onShowAll = onSyncActivity,
@@ -275,7 +276,7 @@ internal fun SyncStatusCard(summary: SyncStatusSummary, onSyncNow: () -> Unit) {
 
 @Composable
 internal fun HeldItemsSection(
-  rows: List<HeldItemRowState>,
+  rows: ImmutableList<HeldItemRowState>,
   count: Int,
   verses: QuranVerses,
   onShowAll: (() -> Unit)? = null,
@@ -305,7 +306,7 @@ internal fun HeldItemsSection(
 
 @Composable
 internal fun RecentSyncsSection(
-  runs: List<SyncRun>,
+  runs: ImmutableList<SyncRun>,
   footer: String? = null,
   onSeeAll: (() -> Unit)? = null
 ) {

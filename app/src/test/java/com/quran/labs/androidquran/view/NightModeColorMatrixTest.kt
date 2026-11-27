@@ -38,6 +38,19 @@ class NightModeColorMatrixTest {
     }
   }
 
+  @Test
+  fun tonalBackgroundMapsWhiteToTonalSurfaceAndKeepsTajweedReadable() {
+    val matrix = NightModeColorMatrix.create(255, 0x14, 0x21, 0x1B)
+    assertThat(matrix.applyTo(0x000000)).isEqualTo(0xFFFFFF)
+    assertThat(matrix.applyTo(0xFFFFFF)).isEqualTo(0x14211B)
+    tajweedColors.forEach { color ->
+      val night = matrix.applyTo(color)
+      val hueShift = abs(hue(night) - hue(color)).let { min(it, 360 - it) }
+      assertThat(hueShift).isLessThan(10f)
+      assertThat(contrastOnBlack(night)).isAtLeast(4.5)
+    }
+  }
+
   private val tajweedColors = listOf(
     0x04943C, // ghunnah
     0x046C94, // tafkheem

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
@@ -13,6 +12,7 @@ import androidx.annotation.VisibleForTesting;
 import com.quran.common.upgrade.PreferencesUpgrade;
 import com.quran.labs.androidquran.BuildConfig;
 import com.quran.labs.androidquran.R;
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle;
 import com.quran.labs.androidquran.data.Constants;
 import com.quran.labs.androidquran.service.QuranDownloadService;
 import com.quran.mobile.feature.pagetheme.PageTheme;
@@ -80,6 +80,8 @@ public class QuranSettings implements PageThemeSettings {
     String appearance = getPageAppearance();
     if (PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC.equals(appearance)) {
       boolean systemNight = (Resources.getSystem().getConfiguration().uiMode
+          & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+          || (appContext.getResources().getConfiguration().uiMode
           & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
       return ThemeUtil.isDarkAppearance(currentTheme(), systemNight);
     }
@@ -236,6 +238,7 @@ public class QuranSettings implements PageThemeSettings {
   public void setPageType(String pageType) {
     prefs.edit().putString(Constants.PREF_PAGE_TYPE, pageType).apply();
     clearDefaultImagesDirectory();
+    clearVerifiedPagesSignature();
   }
 
   public boolean getShowRecents() {
@@ -297,6 +300,23 @@ public class QuranSettings implements PageThemeSettings {
     return theme;
   }
 
+  public String getAppThemeStyle() {
+    final String style = prefs.getString(Constants.PREF_APP_THEME_STYLE, null);
+    return style != null ? style : "default";
+  }
+
+  public void setAppThemeStyle(String style) {
+    prefs.edit().putString(Constants.PREF_APP_THEME_STYLE, style).apply();
+  }
+
+  public boolean isOledDarkMode() {
+    return prefs.getBoolean(Constants.PREF_OLED_DARK_MODE, false);
+  }
+
+  public void setOledDarkMode(boolean enabled) {
+    prefs.edit().putBoolean(Constants.PREF_OLED_DARK_MODE, enabled).apply();
+  }
+
   @Override
   public String getPageAppearance() {
     String appearance = prefs.getString(Constants.PREF_PAGE_APPEARANCE, null);
@@ -326,7 +346,8 @@ public class QuranSettings implements PageThemeSettings {
   public int getPageThemeBackgroundColor() {
     if (isNightMode()) {
       int brightness = getNightModeBackgroundBrightness();
-      return Color.rgb(brightness, brightness, brightness);
+      return AppThemeStyle.resolveDarkMushafBackgroundArgb(
+          getAppThemeStyle(), brightness, isOledDarkMode());
     }
     return getDayPageBackgroundColor();
   }
@@ -564,5 +585,21 @@ public class QuranSettings implements PageThemeSettings {
     setToSave.add(pageType);
     perInstallationPrefs.edit()
         .putStringSet(Constants.PREF_CHECKED_PARTIAL_IMAGES, setToSave).apply();
+  }
+
+  private static final String PREF_VERIFIED_PAGES_SIG = "hybrid_verified_pages_sig";
+
+  public boolean hasVerifiedAllPages(String widthParam, int totalPages) {
+    final String expected = getPageType() + "|" + widthParam + "|" + totalPages;
+    return expected.equals(perInstallationPrefs.getString(PREF_VERIFIED_PAGES_SIG, null));
+  }
+
+  public void setVerifiedAllPages(String widthParam, int totalPages) {
+    final String sig = getPageType() + "|" + widthParam + "|" + totalPages;
+    perInstallationPrefs.edit().putString(PREF_VERIFIED_PAGES_SIG, sig).apply();
+  }
+
+  public void clearVerifiedPagesSignature() {
+    perInstallationPrefs.edit().remove(PREF_VERIFIED_PAGES_SIG).apply();
   }
 }

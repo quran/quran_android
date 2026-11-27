@@ -17,7 +17,7 @@ data class Bookmark @JvmOverloads constructor(
   fun isPageBookmark() = sura == null && ayah == null
 
   fun withTags(tagIds: List<String>): Bookmark {
-    return this.copy(tags = mutableListOf<String>().apply { addAll(tagIds) })
+    return this.copy(tags = tagIds.toList())
   }
 
   fun withAyahText(ayahText: String): Bookmark {
@@ -27,7 +27,29 @@ data class Bookmark @JvmOverloads constructor(
   fun getCommaSeparatedValues(tagsList: List<Tag>) =
     "bookmark, $sura, $ayah, $page, $timestamp, ${getSemiColonSeparatedTags(tagsList)},"
 
-  private fun getSemiColonSeparatedTags(tagsList: List<Tag>) =
-    tags.map { tagsList.find { tag -> tag.id == it }?.name }
-      .reduceOrNull { tags, tag -> "$tags$tag|" }
+  private fun getSemiColonSeparatedTags(tagsList: List<Tag>): String? {
+    val tagsById = tagsList.associateBy { it.id }
+    return tags.map { tagId ->
+      tagsById[tagId]?.name?.let(::sanitizeCsvValue)
+    }.reduceOrNull { acc, tag -> "$acc$tag|" }
+  }
+}
+
+private val FORMULA_PREFIX_CHARS = setOf('=', '+', '-', '@', '\t', '\r')
+
+private fun sanitizeCsvValue(value: String): String {
+  val sanitized = value
+    .replace('\r', ' ')
+    .replace('\n', ' ')
+    .replace(',', ' ')
+  val firstChar = sanitized.firstOrNull()
+  val firstNonSpace = sanitized.firstOrNull { !it.isWhitespace() }
+  return if (
+    (firstChar != null && firstChar in FORMULA_PREFIX_CHARS) ||
+    (firstNonSpace != null && firstNonSpace in FORMULA_PREFIX_CHARS)
+  ) {
+    "'$sanitized"
+  } else {
+    sanitized
+  }
 }

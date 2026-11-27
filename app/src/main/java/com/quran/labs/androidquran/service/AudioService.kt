@@ -79,13 +79,16 @@ import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.abs
 
 /**
@@ -153,8 +156,12 @@ class AudioService : Service(), Player.Listener {
   private var displayIcon: Bitmap? = null
   private var gaplessSuraData: SuraTimings = SuraTimings.EMPTY
   private var currentWord: Int? = null
+  private var lastMetadataSura: Int = -1
+  private var lastMetadataAyah: Int = -1
   private val compositeDisposable = CompositeDisposable()
   private lateinit var scope: CoroutineScope
+  private var gaplessTimingJob: Job? = null
+  private val startedNotificationIconLoad = AtomicBoolean(false)
 
   @Inject
   lateinit var quranInfo: QuranInfo
@@ -279,6 +286,7 @@ class AudioService : Service(), Player.Listener {
 
   override fun onCreate() {
     Timber.i("debug: Creating service")
+    running.set(true)
     val thread = HandlerThread(
       "AyahAudioService",
       Process.THREAD_PRIORITY_BACKGROUND
@@ -313,14 +321,16 @@ class AudioService : Service(), Player.Listener {
     } catch (oom: OutOfMemoryError) {
       Timber.e(oom)
     }
+  }
 
-    val icon = displayIcon
-    // if we couldn't load the 1x1 bitmap, we can't load the image either
-    if (icon != null) {
+  private fun ensureNotificationIconLoaded() {
+    val icon = displayIcon ?: return
+    if (notificationIcon == null && startedNotificationIconLoad.compareAndSet(false, true)) {
       compositeDisposable.add(
         Maybe.fromCallable { generateNotificationIcon() ?: icon }
           .subscribeOn(Schedulers.io())
-          .subscribe { bitmap: Bitmap? -> notificationIcon = bitmap })
+          .subscribe { bitmap: Bitmap? -> notificationIcon = bitmap }
+      )
     }
   }
 
@@ -577,8 +587,14 @@ class AudioService : Service(), Player.Listener {
         currentWord = null
       }
 
-      // Notify once about the current state
-      notifyAyahChanged()
+      // Notify once about the current state; only push MediaMetadataCompat IPC when (sura, ayah) changes
+      val currentSura = localAudioQueue.getCurrentSura()
+      val currentAyah = localAudioQueue.getCurrentAyah()
+      if (currentSura != lastMetadataSura || currentAyah != lastMetadataAyah) {
+        notifyAyahChanged()
+      } else {
+        updateAudioPlaybackStatus()
+      }
 
       // schedule next the update
       if (nextUpdateDelay != null) {
@@ -725,9 +741,13 @@ class AudioService : Service(), Player.Listener {
   }
 
   private fun processStopRequest(force: Boolean = false) {
+    gaplessTimingJob?.cancel()
+    gaplessTimingJob = null
     setState(PlaybackStateCompat.STATE_STOPPED)
     serviceHandler.removeMessages(MSG_UPDATE_AUDIO_POS)
     currentWord = null
+    lastMetadataSura = -1
+    lastMetadataAyah = -1
     if (State.Preparing == state) {
       shouldStop = true
       relaxResources(releaseExoPlayer = false, stopForeground = true)
@@ -742,11 +762,18 @@ class AudioService : Service(), Player.Listener {
       // service is no longer necessary. Will be started again if needed.
       serviceHandler.removeCallbacksAndMessages(null)
       stopSelf()
+    } else {
+      // Ensure an explicit stop while already stopped still tears down the idle service.
+      serviceHandler.removeCallbacksAndMessages(null)
+      stopSelf()
     }
   }
 
   private fun notifyAyahChanged() {
     val localAudioRequest = audioRequest ?: return
+    val localAudioQueue = audioQueue
+    lastMetadataSura = localAudioQueue?.getCurrentSura() ?: -1
+    lastMetadataAyah = localAudioQueue?.getCurrentAyah() ?: -1
     updateAudioPlaybackStatus()
 
     val metadataBuilder = MediaMetadataCompat.Builder()
@@ -874,6 +901,8 @@ class AudioService : Service(), Player.Listener {
    * Starts playing the next file.
    */
   private fun playAudio(playRepeatSeparator: Boolean = false) {
+    gaplessTimingJob?.cancel()
+    gaplessTimingJob = null
     if (isSetupAsForeground || setUpAsForeground()) {
       state = State.Stopped
       relaxResources(releaseExoPlayer = false, stopForeground = false)
@@ -885,9 +914,16 @@ class AudioService : Service(), Player.Listener {
       if (localAudioQueue != null && localAudioRequest != null) {
         val dbPath = localAudioRequest.audioPathInfo.gaplessDatabase
         if (localAudioRequest.isGapless() && dbPath != null) {
-          scope.launch {
-            val timings = updateGaplessData(dbPath, localAudioQueue.getCurrentSura())
-            playAudio(playRepeatSeparator, timings)
+          val requestedSura = localAudioQueue.getCurrentSura()
+          gaplessTimingJob = scope.launch {
+            val timings = updateGaplessData(dbPath, requestedSura)
+            if (isActive &&
+              audioRequest === localAudioRequest &&
+              audioQueue === localAudioQueue &&
+              localAudioQueue.getCurrentSura() == requestedSura
+            ) {
+              playAudio(playRepeatSeparator, timings)
+            }
           }
         } else {
           playAudio(playRepeatSeparator, null)
@@ -1180,23 +1216,28 @@ class AudioService : Service(), Player.Listener {
     return try {
       val resources = appContext.resources
       val logo = BitmapFactory.decodeResource(resources, QuranFileConstants.ICON_RESOURCE_ID)
-      val iconWidth = logo.width
-      val iconHeight = logo.height
-      val cd = ContextCompat.getColor(
-        appContext,
-        R.color.audio_notification_background_color
-      ).toDrawable()
-      val bitmap = createBitmap(iconWidth * 2, iconHeight * 2)
-      val canvas = Canvas(bitmap)
-      cd.setBounds(0, 0, canvas.width, canvas.height)
-      cd.draw(canvas)
-      canvas.drawBitmap(
-        logo,
-        (iconWidth / 2.0).toInt().toFloat(),
-        (iconHeight / 2.0).toInt().toFloat(),
-        null
-      )
-      bitmap
+        ?: return null
+      try {
+        val iconWidth = logo.width
+        val iconHeight = logo.height
+        val cd = ContextCompat.getColor(
+          appContext,
+          R.color.audio_notification_background_color
+        ).toDrawable()
+        val bitmap = createBitmap(iconWidth * 2, iconHeight * 2)
+        val canvas = Canvas(bitmap)
+        cd.setBounds(0, 0, canvas.width, canvas.height)
+        cd.draw(canvas)
+        canvas.drawBitmap(
+          logo,
+          (iconWidth / 2.0).toInt().toFloat(),
+          (iconHeight / 2.0).toInt().toFloat(),
+          null
+        )
+        bitmap
+      } finally {
+        logo.recycle()
+      }
     } catch (oomError: OutOfMemoryError) {
       // if this happens, we need to handle it gracefully, since it's not crash worthy.
       Timber.e(oomError)
@@ -1214,24 +1255,10 @@ class AudioService : Service(), Player.Listener {
    * Callers must abandon playback in that case, including incoming media buttons.
    */
   private fun setUpAsForeground(): Boolean {
+    ensureNotificationIconLoaded()
     // clear the "downloading complete" notification (if it exists)
     notificationManager.cancel(QuranDownloadNotifier.DOWNLOADING_COMPLETE_NOTIFICATION)
     val appContext = applicationContext
-    val pi = notificationPendingIntent
-
-    val mutabilityFlag = PendingIntent.FLAG_IMMUTABLE
-    val previousIntent = PendingIntent.getService(
-      appContext, REQUEST_CODE_PREVIOUS, audioUtils.getAudioIntent(this, ACTION_REWIND),
-      PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
-    )
-    val nextIntent = PendingIntent.getService(
-      appContext, REQUEST_CODE_SKIP, audioUtils.getAudioIntent(this, ACTION_SKIP),
-      PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
-    )
-    val pauseIntent = PendingIntent.getService(
-      appContext, REQUEST_CODE_PAUSE, audioUtils.getAudioIntent(this, ACTION_PAUSE),
-      PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
-    )
     val audioTitle = getTitle()
     val currentNotificationBuilder = notificationBuilder
     val updatedBuilder = if (currentNotificationBuilder == null) {
@@ -1242,11 +1269,11 @@ class AudioService : Service(), Player.Listener {
         .setColor(notificationColor)
         .setOngoing(true)
         .setContentTitle(getString(R.string.app_name))
-        .setContentIntent(pi)
+        .setContentIntent(notificationPendingIntent)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        .addAction(R.drawable.ic_previous, getString(R.string.previous), previousIntent)
-        .addAction(R.drawable.ic_pause, getString(R.string.pause), pauseIntent)
-        .addAction(R.drawable.ic_next, getString(R.string.next), nextIntent)
+        .addAction(R.drawable.ic_previous, getString(R.string.previous), previousPendingIntent)
+        .addAction(R.drawable.ic_pause, getString(R.string.pause), pausePendingIntent)
+        .addAction(R.drawable.ic_next, getString(R.string.next), nextPendingIntent)
         .setShowWhen(false)
         .setWhen(0) // older platforms seem to ignore setShowWhen(false)
         .setLargeIcon(icon)
@@ -1286,17 +1313,6 @@ class AudioService : Service(), Player.Listener {
 
   private fun getPausedNotificationBuilder(): NotificationCompat.Builder {
     val appContext = applicationContext
-
-    val mutabilityFlag = PendingIntent.FLAG_IMMUTABLE
-    val resumeIntent = PendingIntent.getService(
-      appContext, REQUEST_CODE_RESUME, audioUtils.getAudioIntent(this, ACTION_PLAYBACK),
-      PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
-    )
-    val stopIntent = PendingIntent.getService(
-      appContext, REQUEST_CODE_STOP, audioUtils.getAudioIntent(this, ACTION_STOP),
-      PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
-    )
-    val pi = notificationPendingIntent
     val localPausedNotificationBuilder = pausedNotificationBuilder
     val pauseBuilder = if (localPausedNotificationBuilder == null) {
       val builder =
@@ -1306,10 +1322,10 @@ class AudioService : Service(), Player.Listener {
         .setColor(notificationColor)
         .setOngoing(true)
         .setContentTitle(getString(R.string.app_name))
-        .setContentIntent(pi)
+        .setContentIntent(notificationPendingIntent)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        .addAction(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_play, getString(R.string.play), resumeIntent)
-        .addAction(R.drawable.ic_stop, getString(R.string.stop), stopIntent)
+        .addAction(com.quran.labs.androidquran.common.toolbar.R.drawable.ic_play, getString(R.string.play), resumePendingIntent)
+        .addAction(R.drawable.ic_stop, getString(R.string.stop), stopPendingIntent)
         .setShowWhen(false)
         .setWhen(0)
         .setLargeIcon(notificationIcon)
@@ -1328,16 +1344,48 @@ class AudioService : Service(), Player.Listener {
     return pauseBuilder
   }
 
-  private val notificationPendingIntent: PendingIntent
-    get() {
-      val appContext = applicationContext
-      val mutabilityFlag = PendingIntent.FLAG_IMMUTABLE
+  private val notificationPendingIntent: PendingIntent by lazy {
+    val appContext = applicationContext
+    PendingIntent.getActivity(
+      appContext, REQUEST_CODE_MAIN, Intent(appContext, PagerActivity::class.java),
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+  }
 
-      return PendingIntent.getActivity(
-        appContext, REQUEST_CODE_MAIN, Intent(appContext, PagerActivity::class.java),
-        PendingIntent.FLAG_UPDATE_CURRENT or mutabilityFlag
-      )
-    }
+  private val previousPendingIntent: PendingIntent by lazy {
+    PendingIntent.getService(
+      applicationContext, REQUEST_CODE_PREVIOUS, audioUtils.getAudioIntent(this, ACTION_REWIND),
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+  }
+
+  private val nextPendingIntent: PendingIntent by lazy {
+    PendingIntent.getService(
+      applicationContext, REQUEST_CODE_SKIP, audioUtils.getAudioIntent(this, ACTION_SKIP),
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+  }
+
+  private val pausePendingIntent: PendingIntent by lazy {
+    PendingIntent.getService(
+      applicationContext, REQUEST_CODE_PAUSE, audioUtils.getAudioIntent(this, ACTION_PAUSE),
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+  }
+
+  private val resumePendingIntent: PendingIntent by lazy {
+    PendingIntent.getService(
+      applicationContext, REQUEST_CODE_RESUME, audioUtils.getAudioIntent(this, ACTION_PLAYBACK),
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+  }
+
+  private val stopPendingIntent: PendingIntent by lazy {
+    PendingIntent.getService(
+      applicationContext, REQUEST_CODE_STOP, audioUtils.getAudioIntent(this, ACTION_STOP),
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+  }
 
   /**
    * Called when there's an error playing media. When this happens, ExoPlayer
@@ -1352,6 +1400,9 @@ class AudioService : Service(), Player.Listener {
   }
 
   override fun onDestroy() {
+    running.set(false)
+    gaplessTimingJob?.cancel()
+    gaplessTimingJob = null
     compositeDisposable.clear()
     // Service is being killed, so make sure we release our resources
     serviceHandler.removeCallbacksAndMessages(null)
@@ -1360,6 +1411,10 @@ class AudioService : Service(), Player.Listener {
     relaxResources(true, true)
     mediaSession.release()
     timingRepository.clear()
+    notificationBuilder = null
+    pausedNotificationBuilder = null
+    notificationIcon = null
+    displayIcon = null
     scope.cancel()
     super.onDestroy()
   }
@@ -1404,6 +1459,11 @@ class AudioService : Service(), Player.Listener {
     @Volatile
     @UnstableApi
     private var audioStreamCache: SimpleCache? = null
+
+    private val running = AtomicBoolean(false)
+
+    @JvmStatic
+    fun isRunning(): Boolean = running.get()
 
     @OptIn(UnstableApi::class)
     private fun getAudioStreamCache(context: Context): SimpleCache {

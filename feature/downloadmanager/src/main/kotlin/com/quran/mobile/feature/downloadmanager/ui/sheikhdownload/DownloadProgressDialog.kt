@@ -2,7 +2,7 @@ package com.quran.mobile.feature.downloadmanager.ui.sheikhdownload
 
 import android.content.Context
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.LinearProgressIndicator
@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -26,6 +27,7 @@ fun DownloadProgressDialog(
   onCancel: () -> Unit
 ) {
   val progressState = progressEvents.collectAsState(NoProgress)
+  val decimalFormat = remember { DecimalFormat("###.00") }
 
   val currentEvent = progressState.value
   AlertDialog(
@@ -36,15 +38,18 @@ fun DownloadProgressDialog(
       )
     },
     text = {
-      val progress = if (currentEvent.progress == -1) 0 else currentEvent.progress
-      Column(modifier = Modifier.height(56.dp)) {
+      Column(modifier = Modifier.heightIn(min = 56.dp)) {
         Text(
-          currentEvent.asMessage(LocalContext.current),
+          currentEvent.asMessage(LocalContext.current, decimalFormat),
           modifier = Modifier.padding(bottom = 8.dp, end = 16.dp)
         )
-        LinearProgressIndicator(
-          progress = { (progress / 100.0f) },
-        )
+        if (currentEvent.progress == -1) {
+          LinearProgressIndicator()
+        } else {
+          LinearProgressIndicator(
+            progress = { (currentEvent.progress / 100.0f) },
+          )
+        }
       }
     },
     confirmButton = {},
@@ -57,8 +62,10 @@ fun DownloadProgressDialog(
   )
 }
 
-private fun SuraDownloadStatusEvent.Progress.asMessage(context: Context): String {
-  val decimalFormat = DecimalFormat("###.00")
+private fun SuraDownloadStatusEvent.Progress.asMessage(
+  context: Context,
+  decimalFormat: DecimalFormat,
+): String {
   val megabyte = 1024 * 1024
   val downloaded = context.getString(
     R.string.download_amount_in_megabytes,

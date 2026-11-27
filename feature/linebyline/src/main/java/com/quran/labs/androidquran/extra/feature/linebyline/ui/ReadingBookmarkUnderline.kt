@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.extra.feature.linebyline.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -25,6 +26,8 @@ fun ReadingBookmarkUnderline(
   lineRatio: Float,
   colors: ImmutableList<Color>
 ) {
+  val pillPath = remember { Path() }
+
   Canvas(modifier = Modifier.fillMaxSize()) {
     val width = this.size.width
     val lineHeight = width * lineRatio
@@ -43,13 +46,12 @@ fun ReadingBookmarkUnderline(
     if (colors.size == 1) {
       drawRoundRect(colors.first(), Offset(x, y), Size(underlineWidth, thickness), cornerRadius)
     } else {
-      val pill = Path().apply {
-        addRoundRect(RoundRect(x, y, x + underlineWidth, y + thickness, cornerRadius))
-      }
+      pillPath.reset()
+      pillPath.addRoundRect(RoundRect(x, y, x + underlineWidth, y + thickness, cornerRadius))
 
       // first slot starts at the right, where the line begins
       val segmentWidth = underlineWidth / colors.size
-      clipPath(pill) {
+      clipPath(pillPath) {
         colors.forEachIndexed { index, color ->
           val segmentStart = x + underlineWidth - segmentWidth * (index + 1)
           drawRect(color, Offset(segmentStart, y), Size(segmentWidth, thickness))

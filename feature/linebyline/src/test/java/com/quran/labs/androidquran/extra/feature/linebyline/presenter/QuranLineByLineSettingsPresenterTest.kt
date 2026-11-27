@@ -172,4 +172,28 @@ class QuranLineByLineSettingsPresenterTest {
     assertThat(emitted.pageAppearance).isEqualTo(PageAppearance.Light)
     assertThat(emitted.textBrightness).isEqualTo(150)
   }
+
+  @Test
+  fun `DisplaySettings isNightMode honors explicit dark and light appTheme when pageAppearance is Automatic`() = runTest {
+    val fakeSettings = FakeSettings()
+    fakeSettings.setPageAppearance(PageAppearance.Automatic)
+    fakeSettings.setAppTheme("dark")
+    val presenter = QuranLineByLineSettingsPresenter.forTest(fakeSettings, backgroundScope)
+
+    val darkEmitted = presenter.displaySettingsFlow.first { it.appTheme == "dark" }
+    assertThat(darkEmitted.isNightMode(systemNight = false)).isTrue()
+    assertThat(darkEmitted.isNightMode(systemNight = true)).isTrue()
+
+    fakeSettings.setAppTheme("light")
+    fakeSettings.emitPreferencesChange("appTheme")
+    val lightEmitted = presenter.displaySettingsFlow.first { it.appTheme == "light" }
+    assertThat(lightEmitted.isNightMode(systemNight = true)).isFalse()
+    assertThat(lightEmitted.isNightMode(systemNight = false)).isFalse()
+
+    fakeSettings.setAppTheme("default")
+    fakeSettings.emitPreferencesChange("appTheme")
+    val autoEmitted = presenter.displaySettingsFlow.first { it.appTheme == "default" }
+    assertThat(autoEmitted.isNightMode(systemNight = true)).isTrue()
+    assertThat(autoEmitted.isNightMode(systemNight = false)).isFalse()
+  }
 }

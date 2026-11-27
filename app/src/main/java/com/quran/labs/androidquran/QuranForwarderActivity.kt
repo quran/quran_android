@@ -2,6 +2,7 @@ package com.quran.labs.androidquran
 
 import android.app.Activity
 import android.os.Bundle
+import com.quran.data.core.QuranConstants
 import com.quran.data.core.QuranInfo
 import dev.zacsweers.metro.Inject
 
@@ -37,15 +38,20 @@ class QuranForwarderActivity : Activity() {
           }
         }
 
-        if (sura != null) {
-          val page = quranInfo.getPageFromSuraAyah(sura, ayah)
-          val showSuraIntent = QuranDataActivity.openPageIntent(
-            context = this,
-            page = page,
-            sura = sura,
-            ayah = ayah
-          )
-          startActivity(showSuraIntent)
+        if (sura != null && sura in 1..QuranConstants.NUMBER_OF_SURAS) {
+          val maxAyahs = quranInfo.getNumberOfAyahs(sura)
+          if (ayah in 1..maxAyahs) {
+            val page = quranInfo.getPageFromSuraAyah(sura, ayah)
+            if (quranInfo.isValidPage(page)) {
+              val showSuraIntent = QuranDataActivity.openPageIntent(
+                context = this,
+                page = page,
+                sura = sura,
+                ayah = ayah
+              )
+              startActivity(showSuraIntent)
+            }
+          }
         }
       }
     }

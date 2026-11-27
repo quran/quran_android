@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="hybrid_app_title">القرآن الكريم</string>
+  <string name="hybrid_nav_read">القراءة</string>
+  <string name="hybrid_nav_index">الفهرس</string>
+  <string name="hybrid_nav_search">بحث</string>
+  <string name="hybrid_nav_bookmarks">المحفوظات</string>
+</resources>

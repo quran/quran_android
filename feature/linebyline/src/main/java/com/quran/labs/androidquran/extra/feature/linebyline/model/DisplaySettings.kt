@@ -9,5 +9,15 @@ data class DisplaySettings(
   val dayBackgroundColor: Int?,
   val showHeaderFooter: Boolean,
   val showSidelines: Boolean,
-  val showLineDividers: Boolean
-)
+  val showLineDividers: Boolean,
+  val appTheme: String = "default"
+) {
+  fun isNightMode(systemNight: Boolean): Boolean {
+    val isAppDark = when (appTheme) {
+      "light" -> false
+      "dark" -> true
+      else -> systemNight
+    }
+    return pageAppearance.isNightMode(isAppDark)
+  }
+}

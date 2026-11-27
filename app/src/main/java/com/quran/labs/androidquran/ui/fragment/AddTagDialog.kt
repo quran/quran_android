@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
@@ -13,6 +14,7 @@ import com.quran.data.model.collection.CollectionNameException
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.presenter.bookmark.AddTagDialogPresenter
+import com.quran.labs.androidquran.util.ThemeUtil
 import dev.zacsweers.metro.Inject
 
 class AddTagDialog : DialogFragment() {
@@ -63,12 +65,12 @@ class AddTagDialog : DialogFragment() {
     val originalName = args?.getString(EXTRA_NAME, "") ?: ""
 
     val activity = requireActivity()
-    val inflater = activity.layoutInflater
+    val builder = AlertDialog.Builder(activity, ThemeUtil.dialogThemeRes())
+    val inflater = LayoutInflater.from(builder.context)
 
     @SuppressLint("InflateParams")
     val layout = inflater.inflate(R.layout.tag_dialog, null)
 
-    val builder = AlertDialog.Builder(activity, R.style.QuranDialogTheme)
     builder.setTitle(getString(R.string.tag_dlg_title))
 
     val text = layout.findViewById<TextInputEditText>(R.id.tag_name)

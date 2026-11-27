@@ -1,5 +1,6 @@
 package com.quran.labs.androidquran.ui.helpers
 
+import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.quran.labs.androidquran.ui.fragment.AyahPlaybackFragment
@@ -8,6 +9,7 @@ import com.quran.labs.androidquran.view.IconPageIndicator
 import com.quran.mobile.di.AyahActionFragmentProvider
 
 class SlidingPagerAdapter(
+  private val context: Context,
   fm: FragmentManager,
   private val isRtl: Boolean,
   additionalPanels: Set<AyahActionFragmentProvider>,
@@ -37,6 +39,17 @@ class SlidingPagerAdapter(
   override fun getItem(position: Int): Fragment {
     val pos = getPagePosition(position)
     return pages[pos].newAyahActionFragment()
+  }
+
+  override fun getPageTitle(position: Int): CharSequence? {
+    val pos = getPagePosition(position)
+    val resId = when (pages[pos].order) {
+      TRANSLATION_PAGE -> com.quran.labs.androidquran.common.toolbar.R.string.translation_ayah
+      AUDIO_PAGE -> com.quran.labs.androidquran.common.toolbar.R.string.play_from_here
+      TRANSCRIPT_PAGE -> com.quran.labs.androidquran.common.toolbar.R.string.recite_from_here
+      else -> null
+    }
+    return resId?.let { context.getString(it) }
   }
 
   fun getPagePosition(page: Int): Int {

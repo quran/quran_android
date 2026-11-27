@@ -39,7 +39,8 @@ class QuranLineByLineSettingsPresenter private constructor(
         settings.dayPageBackgroundColor(),
         settings.shouldShowHeaderFooter(),
         settings.showSidelines(),
-        settings.showLineDividers()
+        settings.showLineDividers(),
+        settings.appTheme()
       )
     }
     .stateIn(scope, SharingStarted.Eagerly, EmptySettings)

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="hybrid_hub_continue_reading">متابعة القراءة</string>
+  <string name="hybrid_hub_resume_cta">متابعة</string>
+  <string name="hybrid_hub_daily_wird">الورد اليومي</string>
+  <string name="hybrid_hub_wird_pages_format">%1$s من %2$s صفحة</string>
+  <string name="hybrid_hub_tab_suras">السور</string>
+  <string name="hybrid_hub_tab_juz">الأجزاء</string>
+  <string name="hybrid_hub_tab_hizb">الأحزاب</string>
+  <string name="hybrid_hub_page_pill_format">ص %1$s</string>
+
+  <string name="hybrid_hub_palette_desc">المظهر</string>
+  <string name="hybrid_hub_settings_desc">الإعدادات</string>
+
+  <string name="hybrid_hub_sura_ayah_format">%1$s — الآية %2$s</string>
+  <string name="hybrid_hub_juz_format">الجزء %1$s</string>
+  <string name="hybrid_hub_page_full_format">صفحة %1$s</string>
+  <string name="hybrid_hub_daily_wird_percent_format">الورد اليومي (%1$s)</string>
+  <string name="hybrid_hub_wird_goal_title">هدف الورد اليومي</string>
+  <string name="hybrid_hub_wird_goal_subtitle">حدّد عدد الصفحات اليومي المستهدف للقراءة</string>
+  <string name="hybrid_hub_wird_goal_unit">%1$s صفحة يوميًا</string>
+  <string name="hybrid_hub_wird_completed">أتممت وردك</string>
+  <string name="hybrid_hub_save">حفظ</string>
+  <string name="hybrid_hub_cancel">إلغاء</string>
+  <string name="hybrid_hub_done">تم</string>
+
+  <string name="hybrid_hub_sura_meta_format">%1$s، %2$s</string>
+  <string name="hybrid_hub_hizb_format">الحزب %1$s</string>
+  <string name="hybrid_hub_ayah_ref_format">%1$s — الآية %2$s</string>
+
+  <string name="hybrid_hub_palette_sheet_title">المظهر</string>
+  <string name="hybrid_hub_theme_mode_label">وضع العرض</string>
+  <string name="hybrid_hub_theme_color_label">لوحة الألوان</string>
+
+  <string name="hybrid_hub_saved_title">المحفوظات</string>
+  <string name="hybrid_hub_saved_reading">علامة القراءة</string>
+  <string name="hybrid_hub_saved_recents">الصفحات الأخيرة</string>
+  <string name="hybrid_hub_saved_ayahs">الآيات المحفوظة</string>
+  <string name="hybrid_hub_saved_highlights">الآيات المظللة</string>
+  <string name="hybrid_hub_saved_empty_title">لا توجد محفوظات بعد</string>
+  <string name="hybrid_hub_saved_empty_subtitle">احفظ صفحة أو آية أثناء القراءة للعودة إليها بسهولة.</string>
+  <string name="hybrid_hub_saved_remove_desc">إزالة</string>
+  <string name="hybrid_hub_saved_clear_recents">مسح</string>
+</resources>

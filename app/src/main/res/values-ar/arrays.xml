@@ -5,4 +5,12 @@
     <item>داكن</item>
     <item>تلقائي</item>
   </array>
+
+  <array name="theme_styles">
+    <item>افتراضي</item>
+    <item>أخضر</item>
+    <item>أزرق</item>
+    <item>بيج</item>
+    <item>رمادي</item>
+  </array>
 </resources>

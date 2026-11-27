@@ -1,5 +1,6 @@
 package com.quran.mobile.feature.downloadmanager.ui.sheikhdownload
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +30,7 @@ fun SuraRangeDialog(
     onDismissRequest = onDismiss,
     properties = DialogProperties()
   ) {
-    val backgroundColor = MaterialTheme.colorScheme.surface
+    val backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh
     val startSura = remember { mutableStateOf(1) }
     val endingSura = remember { mutableStateOf(114) }
 
@@ -37,7 +38,8 @@ fun SuraRangeDialog(
       modifier = Modifier,
       shape = MaterialTheme.shapes.medium,
       color = backgroundColor,
-      contentColor = contentColorFor(backgroundColor)
+      contentColor = contentColorFor(backgroundColor),
+      border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
     ) {
       Column(modifier = Modifier.padding(16.dp)) {
         Text(

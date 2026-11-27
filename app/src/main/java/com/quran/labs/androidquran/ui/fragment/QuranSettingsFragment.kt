@@ -7,10 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.preference.CheckBoxPreference
+import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceGroup
@@ -18,6 +16,7 @@ import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.QuranAdvancedPreferenceActivity
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.pageselect.PageSelectActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
@@ -27,6 +26,7 @@ import com.quran.labs.androidquran.util.QuranUtils
 import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.mobile.di.ExtraPreferencesProvider
 import com.quran.mobile.feature.downloadmanager.AudioManagerActivity
+import com.quran.mobile.feature.pagetheme.PageThemeConstants
 import com.quran.mobile.feature.pagetheme.PageThemeSheetWrapper
 import com.quran.mobile.feature.pagetheme.pageThemeSummary
 import dev.zacsweers.metro.Inject
@@ -74,8 +74,22 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
     // handle theme preference
     val themePref: Preference? = findPreference(Constants.PREF_APP_THEME)
     themePref?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+      QuranSettings.getInstance(requireContext()).pageAppearance =
+        PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
       ThemeUtil.setTheme(newValue as String)
       true
+    }
+    val themeStylePref: ListPreference? = findPreference(Constants.PREF_APP_THEME_STYLE)
+    if (themeStylePref != null) {
+      val resolved = AppThemeStyle.fromPreference(themeStylePref.value)
+      if (themeStylePref.value != resolved.storageKey) {
+        themeStylePref.value = resolved.storageKey
+      }
+      themeStylePref.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
+        ThemeUtil.applyThemeStyle(AppThemeStyle.fromPreference(newValue as? String))
+        activity?.recreate()
+        true
+      }
     }
     updatePageThemeSummary()
 
@@ -113,17 +127,7 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
     val view = super.onCreateView(inflater, container, savedInstanceState)
     val recyclerView = listView
     recyclerView.clipToPadding = false
-    ViewCompat.setOnApplyWindowInsetsListener(recyclerView) { view, windowInsets ->
-      val insets = windowInsets.getInsets(
-        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-      )
-      recyclerView.updateLayoutParams<ViewGroup.LayoutParams> {
-        // top, left, right are handled by QuranActivity
-        view.setPadding(0, 0, 0, insets.bottom)
-      }
-
-      windowInsets
-    }
+    recyclerView.setPadding(0, 0, 0, 0)
     return view
   }
 

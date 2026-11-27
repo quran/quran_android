@@ -25,35 +25,37 @@ class ImageUtil @Inject constructor(private val okHttpClient: OkHttpClient) {
         val call = okHttpClient.newCall(request)
 
         try {
-          val response = call.execute()
-          if (response.isSuccessful) {
-            // save the png from the download to a temporary file
-            response.body
-              .source()
-              .use { source ->
-                destination.sink()
-                  .buffer()
-                  .use { destination ->
-                    destination.writeAll(source)
-                  }
-              }
+          call.execute().use { response ->
+            if (response.isSuccessful) {
+              // save the png from the download to a temporary file
+              response.body
+                .source()
+                .use { source ->
+                  destination.sink()
+                    .buffer()
+                    .use { sink ->
+                      sink.writeAll(source)
+                    }
+                }
 
-            // and write it to the normal file
-            destination.source()
-              .use { source ->
-                outputPath.sink()
-                  .buffer()
-                  .use { destination ->
-                    destination.writeAll(source)
+              if (!destination.renameTo(outputPath)) {
+                // fallback copy when atomic rename is unsupported
+                destination.source()
+                  .use { source ->
+                    outputPath.sink()
+                      .buffer()
+                      .use { sink ->
+                        sink.writeAll(source)
+                      }
                   }
+                destination.delete()
               }
-
-            // and delete the old one
-            destination.delete()
+            }
           }
         } catch (_: IOException) {
-          // if the download fails, not much we can do
+          destination.delete()
         } catch (_: InterruptedException) {
+          destination.delete()
           // if we're interrupted, pretend nothing happened. This happened
           // due to a dispose / cancellation. Maybe's fromCallable will not
           // actually emit in this case.

@@ -8,14 +8,23 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @SingleIn(AppScope::class)
-@Inject
-class ImlaeiUthmaniMapper(
-  private val imlaeiUthmaniDatabaseProvider: ImlaeiUthmaniDatabaseProvider
+class ImlaeiUthmaniMapper private constructor(
+  private val databaseProvider: suspend () -> ImlaeiUthmaniMappingDatabase?
 ) {
+  @Inject
+  constructor(
+    imlaeiUthmaniDatabaseProvider: ImlaeiUthmaniDatabaseProvider
+  ) : this({ imlaeiUthmaniDatabaseProvider.provideDatabase() })
+
+  companion object {
+    internal fun forTest(
+      databaseProvider: suspend () -> ImlaeiUthmaniMappingDatabase?
+    ): ImlaeiUthmaniMapper = ImlaeiUthmaniMapper(databaseProvider)
+  }
 
   suspend fun mapWords(start: SuraAyah, end: SuraAyah): List<WordAlignment> {
     return withContext(Dispatchers.IO) {
-      val database = imlaeiUthmaniDatabaseProvider.provideDatabase()
+      val database = databaseProvider()
       if (database == null) {
         emptyList()
       } else {
@@ -26,18 +35,19 @@ class ImlaeiUthmaniMapper(
             start.ayah.toLong(),
             end.ayah.toLong()
           )
-          .executeAsList()
-          .map { it.asWordAlignment() }
-        } else {
-          val beginning = queries.findWordAlignmentsInSuraUntilEnd(start.sura.toLong(), start.ayah.toLong())
-          val ending = queries.findWordAlignmentsInSuraForAyahRange(end.sura.toLong(), 1L, end.ayah.toLong())
-          val middle = (start.sura + 1 until end.sura).map {
-            queries.findWordAlignmentsInSuraUntilEnd(it.toLong(), 1L)
-          }
-          val queries = listOf(beginning) + middle + ending
-          queries.map { it.executeAsList() }
-            .flatten()
+            .executeAsList()
             .map { it.asWordAlignment() }
+        } else if (start.sura < end.sura) {
+          queries.findWordAlignmentsInRange(
+            startSura = start.sura.toLong(),
+            endSura = end.sura.toLong(),
+            startAyah = start.ayah.toLong(),
+            endAyah = end.ayah.toLong()
+          )
+            .executeAsList()
+            .map { it.asWordAlignment() }
+        } else {
+          emptyList()
         }
       }
     }

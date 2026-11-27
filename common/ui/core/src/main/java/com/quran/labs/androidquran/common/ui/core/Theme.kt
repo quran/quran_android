@@ -1,6 +1,5 @@
 package com.quran.labs.androidquran.common.ui.core
 
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
@@ -11,8 +10,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
 
 private val LightColors = lightColorScheme(
   secondary = lightSecondary,
@@ -64,20 +61,58 @@ private val DarkColors = darkColorScheme(
   surfaceContainerHighest = darkSurfaceColorHighest
 )
 
-private fun accentedColors(accent: QuranAccent, useDarkTheme: Boolean): ColorScheme {
+private fun styledColors(
+  style: AppThemeStyle,
+  accent: QuranAccent,
+  useDarkTheme: Boolean
+): ColorScheme {
   val base = if (useDarkTheme) DarkColors else LightColors
-  val primary = if (useDarkTheme) accent.dark else accent.light
+  val palette = style.palette(useDarkTheme)
+  val primary = if (style == AppThemeStyle.DEFAULT) {
+    if (useDarkTheme) accent.dark else accent.light
+  } else {
+    palette.accent
+  }
+  val onPrimary = if (style == AppThemeStyle.DEFAULT) {
+    if (useDarkTheme) accent.onDark else accent.onLight
+  } else {
+    palette.onAccent
+  }
+  val inversePrimary = if (style == AppThemeStyle.DEFAULT) {
+    if (useDarkTheme) accent.light else accent.dark
+  } else {
+    if (useDarkTheme) style.lightPalette.accent else style.darkPalette.accent
+  }
   return base.copy(
     primary = primary,
-    onPrimary = if (useDarkTheme) accent.onDark else accent.onLight,
-    primaryContainer = primary.copy(alpha = 0.12f).compositeOver(base.surface),
+    onPrimary = onPrimary,
+    primaryContainer = primary.copy(alpha = 0.14f).compositeOver(palette.surface),
     onPrimaryContainer = primary,
-    inversePrimary = if (useDarkTheme) accent.light else accent.dark,
-    surfaceTint = primary
+    inversePrimary = inversePrimary,
+    secondary = palette.accent,
+    onSecondary = palette.onAccent,
+    secondaryContainer = palette.headerBackground,
+    onSecondaryContainer = palette.onHeader,
+    tertiary = palette.tertiary,
+    onTertiary = palette.onTertiary,
+    tertiaryContainer = primary.copy(alpha = 0.16f).compositeOver(palette.surface),
+    onTertiaryContainer = palette.textPrimary,
+    background = palette.surface,
+    onBackground = palette.textPrimary,
+    surface = palette.surface,
+    onSurface = palette.textPrimary,
+    surfaceVariant = palette.surfaceVariant,
+    onSurfaceVariant = palette.textSecondary,
+    surfaceTint = primary,
+    outline = palette.textSecondary,
+    outlineVariant = palette.divider,
+    surfaceContainerLowest = palette.surface,
+    surfaceContainerLow = palette.surfaceElevated,
+    surfaceContainer = palette.surfaceElevated,
+    surfaceContainerHigh = palette.cardSurface,
+    surfaceContainerHighest = palette.cardSurface
   )
 }
-
-private val forceLtr = listOf("huawei", "lenovo", "tecno")
 
 object QuranIcons {
   val AccountCircle: ImageVector get() = com.quran.labs.androidquran.common.ui.core.icons.AccountCircle
@@ -115,37 +150,21 @@ object QuranIcons {
 @Composable
 fun QuranTheme(
   useDarkTheme: Boolean = isSystemInDarkTheme(),
+  style: AppThemeStyle = AppThemeStyle.current,
   content: @Composable () -> Unit
 ) {
   val accent = QuranAccent.current
-  val colors = remember(accent, useDarkTheme) { accentedColors(accent, useDarkTheme) }
-
-  val quranColors = if (useDarkTheme) {
-    darkQuranColors
-  } else {
-    lightQuranColors
+  val colors = remember(style, accent, useDarkTheme) { styledColors(style, accent, useDarkTheme) }
+  val palette = remember(style, useDarkTheme) { style.palette(useDarkTheme) }
+  val quranColors = remember(style, palette, useDarkTheme) {
+    quranColorsFor(style, palette, useDarkTheme)
   }
 
-  // hack workaround for https://issuetracker.google.com/issues/266059178
-  // crashes on Lollipop / MR1, mostly on Huawei and Lenovo devices due to
-  // Compose in RTL. Force LTR for all Composables on Lollipop to attempt
-  // to work around this crash for now.
-  val locals =
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M &&
-      Build.MANUFACTURER.lowercase() in forceLtr
-    ) {
-      arrayOf(LocalLayoutDirection provides LayoutDirection.Ltr)
-    } else {
-      emptyArray()
-    }
-
-  CompositionLocalProvider(*locals) {
-    CompositionLocalProvider(LocalQuranColors provides quranColors) {
-      MaterialTheme(
-        colorScheme = colors,
-        typography = AppTypography,
-        content = content
-      )
-    }
+  CompositionLocalProvider(LocalQuranColors provides quranColors) {
+    MaterialTheme(
+      colorScheme = colors,
+      typography = AppTypography,
+      content = content
+    )
   }
 }

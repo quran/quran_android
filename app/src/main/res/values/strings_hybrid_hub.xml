@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="hybrid_hub_continue_reading">Continue Reading</string>
+  <string name="hybrid_hub_resume_cta">Continue</string>
+  <string name="hybrid_hub_daily_wird">Daily Wird</string>
+  <string name="hybrid_hub_wird_pages_format">%1$s of %2$s pages</string>
+  <string name="hybrid_hub_tab_suras">Surahs</string>
+  <string name="hybrid_hub_tab_juz">Juz</string>
+  <string name="hybrid_hub_tab_hizb">Hizb</string>
+  <string name="hybrid_hub_page_pill_format">p. %1$s</string>
+
+  <string name="hybrid_hub_palette_desc">Appearance</string>
+  <string name="hybrid_hub_settings_desc">Settings</string>
+
+  <string name="hybrid_hub_sura_ayah_format">%1$s — Ayah %2$s</string>
+  <string name="hybrid_hub_juz_format">Juz\' %1$s</string>
+  <string name="hybrid_hub_page_full_format">Page %1$s</string>
+  <string name="hybrid_hub_daily_wird_percent_format">Daily Wird (%1$s)</string>
+  <string name="hybrid_hub_wird_goal_title">Daily Wird Goal</string>
+  <string name="hybrid_hub_wird_goal_subtitle">Set how many pages you aim to read each day</string>
+  <string name="hybrid_hub_wird_goal_unit">%1$s pages / day</string>
+  <string name="hybrid_hub_wird_completed">Goal reached</string>
+  <string name="hybrid_hub_save">Save</string>
+  <string name="hybrid_hub_cancel">Cancel</string>
+  <string name="hybrid_hub_done">Done</string>
+
+  <string name="hybrid_hub_sura_meta_format">%1$s, %2$s</string>
+  <string name="hybrid_hub_hizb_format">Hizb %1$s</string>
+  <string name="hybrid_hub_ayah_ref_format">%1$s — Ayah %2$s</string>
+
+  <string name="hybrid_hub_palette_sheet_title">Appearance</string>
+  <string name="hybrid_hub_theme_mode_label">Display Mode</string>
+  <string name="hybrid_hub_theme_color_label">Calm Palette</string>
+
+  <string name="hybrid_hub_saved_title">Saved</string>
+  <string name="hybrid_hub_saved_reading">Reading Position</string>
+  <string name="hybrid_hub_saved_recents">Recent Pages</string>
+  <string name="hybrid_hub_saved_ayahs">Bookmarked Ayahs</string>
+  <string name="hybrid_hub_saved_highlights">Highlights</string>
+  <string name="hybrid_hub_saved_empty_title">Nothing saved yet</string>
+  <string name="hybrid_hub_saved_empty_subtitle">Bookmark a page or ayah while reading to return to it quickly.</string>
+  <string name="hybrid_hub_saved_remove_desc">Remove</string>
+  <string name="hybrid_hub_saved_clear_recents">Clear</string>
+</resources>

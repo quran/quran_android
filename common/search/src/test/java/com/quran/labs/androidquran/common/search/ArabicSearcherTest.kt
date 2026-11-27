@@ -202,4 +202,11 @@ class ArabicSearcherTest {
     assertThat(resultWhenFts).isEqualTo("%abc%")
     assertThat(resultWhenNoFts).isEqualTo("%abc%")
   }
+
+  @Test
+  fun `processSearchText escapes literal LIKE wildcards while keeping arabic placeholders`() {
+    val result = realArabicSearcher.processSearchText("%_\u0627\\", hasFTS = false)
+
+    assertThat(result).isEqualTo("%\\%\\__\\\\%")
+  }
 }

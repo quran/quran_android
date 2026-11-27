@@ -156,6 +156,9 @@ class AyahTranslationFragment : AyahActionFragment(), TranslationScreen {
   }
 
   public override fun refreshView() {
+    if (!::translationView.isInitialized) {
+      return
+    }
     val start = start
     val end = end
     if (start == null || end == null) {

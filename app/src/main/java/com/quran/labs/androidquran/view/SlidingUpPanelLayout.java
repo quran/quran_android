@@ -591,7 +591,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     if (childCount > 2) {
       // Timber.e("onMeasure: More than two child views are not supported.");
-    } else if (getChildAt(1).getVisibility() == GONE) {
+    } else if (childCount == 2 && getChildAt(1).getVisibility() == GONE) {
       panelHeight = 0;
     }
 
@@ -958,12 +958,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
   private void onPanelDragged(int newTop) {
     final int topBound = getSlidingTop();
-    mSlideOffset = mIsSlidingUp
-        ? (float) (newTop - topBound) / mSlideRange
-        : (float) (topBound - newTop) / mSlideRange;
+    if (mSlideRange > 0) {
+      mSlideOffset = mIsSlidingUp
+          ? (float) (newTop - topBound) / mSlideRange
+          : (float) (topBound - newTop) / mSlideRange;
+    } else {
+      mSlideOffset = 1.f;
+    }
     dispatchOnPanelSlide(mSlideableView);
 
-    if (mParallaxOffset > 0) {
+    if (mParallaxOffset > 0 && mMainView != null) {
         int mainViewOffset = getCurrentParallaxOffset();
         moveMainView(mainViewOffset);
     }

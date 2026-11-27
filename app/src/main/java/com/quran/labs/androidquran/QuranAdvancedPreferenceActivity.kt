@@ -4,19 +4,21 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import com.quran.labs.androidquran.service.util.PermissionUtil
 import com.quran.labs.androidquran.ui.fragment.QuranAdvancedSettingsFragment
 import com.quran.labs.androidquran.ui.util.ToastCompat
 import com.quran.labs.androidquran.util.QuranSettings
+import com.quran.labs.androidquran.util.ThemeUtil
 
 class QuranAdvancedPreferenceActivity : AppCompatActivity() {
 
@@ -28,18 +30,27 @@ class QuranAdvancedPreferenceActivity : AppCompatActivity() {
   private var locationToWrite: String? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    enableEdgeToEdge()
+    ThemeUtil.applyActivityTheme(this)
+    ThemeUtil.enableThemedEdgeToEdge(this)
 
     super.onCreate(savedInstanceState)
     setContentView(R.layout.preferences)
 
     val root = findViewById<ViewGroup>(R.id.root)
+    val toolbarArea = findViewById<View>(R.id.toolbar_area)
+    val navBarScrim = findViewById<View>(R.id.nav_bar_scrim)
+    val navBarDivider = findViewById<View>(R.id.nav_bar_divider)
     ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
       val insets = windowInsets.getInsets(
         WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
       )
+      toolbarArea.updatePadding(top = insets.top)
+      navBarScrim.updateLayoutParams<ViewGroup.LayoutParams> {
+        height = insets.bottom
+      }
+      navBarDivider.visibility = if (insets.bottom > 0) View.VISIBLE else View.GONE
       root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-        topMargin = insets.top
+        topMargin = 0
         leftMargin = insets.left
         rightMargin = insets.right
       }

@@ -7,16 +7,24 @@ package com.quran.labs.androidquran.view
 object NightModeColorMatrix {
 
   @JvmStatic
-  fun create(textBrightness: Int, backgroundBrightness: Int): FloatArray {
-    val scale = 1f + (textBrightness - backgroundBrightness) / 255f
-    val r = 0.3f * scale
-    val g = 0.4f * scale
-    val b = 0.3f * scale
+  fun create(textBrightness: Int, backgroundBrightness: Int): FloatArray =
+    create(textBrightness, backgroundBrightness, backgroundBrightness, backgroundBrightness)
+
+  @JvmStatic
+  fun create(
+    textBrightness: Int,
+    bgRed: Int,
+    bgGreen: Int,
+    bgBlue: Int
+  ): FloatArray {
+    val scaleR = 1f + (textBrightness - bgRed) / 255f
+    val scaleG = 1f + (textBrightness - bgGreen) / 255f
+    val scaleB = 1f + (textBrightness - bgBlue) / 255f
     val offset = textBrightness.toFloat()
     return floatArrayOf(
-      1 - r, -g, -b, 0f, offset,
-      -r, 1 - g, -b, 0f, offset,
-      -r, -g, 1 - b, 0f, offset,
+      1f - 0.3f * scaleR, -0.4f * scaleR, -0.3f * scaleR, 0f, offset,
+      -0.3f * scaleG, 1f - 0.4f * scaleG, -0.3f * scaleG, 0f, offset,
+      -0.3f * scaleB, -0.4f * scaleB, 1f - 0.3f * scaleB, 0f, offset,
       0f, 0f, 0f, 1f, 0f
     )
   }

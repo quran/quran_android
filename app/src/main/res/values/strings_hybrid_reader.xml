@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="hybrid_reader_tab_recitation">Recitation</string>
+  <string name="hybrid_reader_tab_tafsir">Tafsir</string>
+  <string name="hybrid_reader_tab_appearance">Appearance</string>
+
+  <string name="hybrid_reader_action_listen">Listen</string>
+  <string name="hybrid_reader_action_tafsir">Tafsir</string>
+  <string name="hybrid_reader_action_bookmark">Save</string>
+  <string name="hybrid_reader_action_copy">Copy</string>
+  <string name="hybrid_reader_action_share">Share</string>
+
+  <string name="hybrid_reader_tool_save">Save</string>
+  <string name="hybrid_reader_tool_appearance">Appearance</string>
+  <string name="hybrid_reader_tool_tafsir">Tafsir</string>
+
+  <string name="hybrid_reader_back_cd">Back to Quran Hub</string>
+  <string name="hybrid_reader_expand_drawer_cd">Expand study drawer</string>
+  <string name="hybrid_reader_collapse_drawer_cd">Collapse study drawer</string>
+  <string name="hybrid_reader_play_cd">Play</string>
+  <string name="hybrid_reader_pause_cd">Pause</string>
+  <string name="hybrid_reader_previous_ayah_cd">Previous ayah</string>
+  <string name="hybrid_reader_next_ayah_cd">Next ayah</string>
+
+  <string name="hybrid_reader_selection_tag_format">%1$s — Ayah %2$s</string>
+  <string name="hybrid_reader_selection_range_tag_format">%1$s — Ayah %2$s–%3$s</string>
+  <string name="hybrid_reader_capsule_meta_format">%1$s — %2$s : %3$s</string>
+  <string name="hybrid_reader_qari_subtitle_format">Murattal — %1$s : %2$s</string>
+  <string name="hybrid_reader_qari_switch">Reciter</string>
+  <string name="hybrid_reader_repeat">Repeat</string>
+  <string name="hybrid_reader_repeat_count_format">Repeat %1$s</string>
+  <string name="hybrid_reader_repeat_infinite">Repeat ∞</string>
+  <string name="hybrid_reader_speed_format">%1$s×</string>
+  <string name="hybrid_reader_downloading">Downloading audio…</string>
+  <string name="hybrid_reader_download_cancel">Cancel</string>
+  <string name="hybrid_reader_download_mobile_prompt">Download audio over mobile network?</string>
+  <string name="hybrid_reader_download_allow">Allow</string>
+
+  <string name="hybrid_reader_tafsir_muyassar">Al-Tafsir Al-Muyassar</string>
+  <string name="hybrid_reader_tafsir_peek_title_format">%1$s — Ayah %2$s</string>
+  <string name="hybrid_reader_show_all">Show all</string>
+  <string name="hybrid_reader_tafsir_source_label">Source</string>
+  <string name="hybrid_reader_tafsir_empty_title">No tafsir downloaded yet</string>
+  <string name="hybrid_reader_tafsir_empty_body">Download Al-Tafsir Al-Muyassar or another tafsir to read explanations right inside the Study Drawer.</string>
+  <string name="hybrid_reader_tafsir_download">Download Tafsir</string>
+  <string name="hybrid_reader_tafsir_loading">Loading tafsir…</string>
+  <string name="hybrid_reader_tafsir_unavailable_ayah">Tafsir text is not available for this ayah in the selected source.</string>
+
+  <string name="hybrid_reader_appearance_app_mode">App Mode</string>
+  <string name="hybrid_reader_mode_light">Light</string>
+  <string name="hybrid_reader_mode_dark">Dark</string>
+  <string name="hybrid_reader_mode_auto">Auto</string>
+  <string name="hybrid_reader_appearance_palette">Calm Palette</string>
+  <string name="hybrid_reader_palette_default">Default</string>
+  <string name="hybrid_reader_palette_green">Green</string>
+  <string name="hybrid_reader_palette_blue">Blue</string>
+  <string name="hybrid_reader_palette_beige">Beige</string>
+  <string name="hybrid_reader_palette_gray">Gray</string>
+  <string name="hybrid_reader_appearance_mushaf">Mushaf Page</string>
+  <string name="hybrid_reader_mushaf_light">Light</string>
+  <string name="hybrid_reader_mushaf_sepia">Sepia</string>
+  <string name="hybrid_reader_mushaf_dark">Dark</string>
+  <string name="hybrid_reader_mushaf_preview_sample">بسم</string>
+  <string name="hybrid_reader_mushaf_match_app">Match app light/dark mode</string>
+  <string name="hybrid_reader_night_text_brightness">Night text brightness</string>
+  <string name="hybrid_reader_night_bg_brightness">Night background brightness</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="hybrid_reader_tafsir_list">Tafsir List</string>
+  <string name="hybrid_reader_tafsir_picker_title">Tafsir List</string>
+  <string name="hybrid_reader_tafsir_download_more">Download more tafsirs</string>
+  <string name="hybrid_reader_tafsir_expand_cd">Expand tafsir</string>
+  <string name="hybrid_reader_tafsir_collapse_cd">Collapse tafsir</string>
+  <string name="hybrid_reader_appearance_sheet_title">Appearance</string>
+  <string name="hybrid_reader_done">Done</string>
+</resources>

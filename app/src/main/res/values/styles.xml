@@ -2,8 +2,9 @@
 <resources>
 
   <style name="TitleText">
-    <item name="android:textSize">16sp</item>
-    <item name="android:textColor">@color/title_color</item>
+    <item name="android:textSize">16.5sp</item>
+    <item name="android:textColor">?attr/quranTextPrimary</item>
+    <item name="android:fontFamily">sans-serif-medium</item>
     <item name="android:lines">1</item>
     <item name="android:maxLines">1</item>
   </style>
@@ -13,9 +14,63 @@
   </style>
 
   <style name="ToolbarStyle" parent="ThemeOverlay.AppCompat.DayNight.ActionBar">
-    <item name="iconTint">@color/toolbar_icon_tint</item>
-    <item name="android:textColorPrimary">@color/toolbar_text</item>
-    <item name="android:textColorSecondary">@color/toolbar_secondary_text</item>
+    <item name="iconTint">?attr/quranToolbarIconTint</item>
+    <item name="colorControlNormal">?attr/quranToolbarIconTint</item>
+    <item name="colorControlHighlight">?attr/quranRipple</item>
+    <item name="android:colorControlHighlight">?attr/quranRipple</item>
+    <item name="actionButtonStyle">@style/QuranToolBarActionButton</item>
+    <item name="android:textColorPrimary">?attr/quranToolbarText</item>
+    <item name="android:textColorSecondary">?attr/quranToolbarSecondaryText</item>
+    <item name="android:textColorHint">?attr/quranToolbarSecondaryText</item>
+    <item name="autoCompleteTextViewStyle">@style/Widget.Quran.AutoCompleteTextView</item>
+    <item name="android:autoCompleteTextViewStyle">@style/Widget.Quran.AutoCompleteTextView</item>
+    <item name="listPopupWindowStyle">@style/Widget.Quran.ListPopupWindow</item>
+    <item name="android:listPopupWindowStyle">@style/Widget.Quran.ListPopupWindow</item>
+    <item name="android:popupBackground">@drawable/quran_popup_background</item>
+  </style>
+
+  <style name="Widget.Quran.PopupMenu.Overflow" parent="Widget.AppCompat.PopupMenu.Overflow">
+    <item name="android:popupBackground">@drawable/quran_popup_background</item>
+  </style>
+
+  <style name="Widget.Quran.PopupMenu" parent="Widget.AppCompat.PopupMenu">
+    <item name="android:popupBackground">@drawable/quran_popup_background</item>
+  </style>
+
+  <style name="Widget.Quran.ListPopupWindow" parent="Widget.AppCompat.ListPopupWindow">
+    <item name="android:popupBackground">@drawable/quran_popup_background</item>
+  </style>
+
+  <style name="Widget.Quran.AutoCompleteTextView" parent="Widget.AppCompat.AutoCompleteTextView">
+    <item name="android:popupBackground">@drawable/quran_popup_background</item>
+  </style>
+
+  <style name="Widget.Quran.Spinner.DropDown" parent="Widget.AppCompat.Spinner.DropDown.ActionBar">
+    <item name="android:popupBackground">@drawable/quran_popup_background</item>
+    <item name="popupTheme">?attr/quranPopupTheme</item>
+    <item name="android:popupTheme">?attr/quranPopupTheme</item>
+  </style>
+
+  <style name="TextAppearance.Quran.PopupMenu.Large" parent="TextAppearance.AppCompat.Widget.PopupMenu.Large">
+    <item name="android:textColor">@color/quran_text_primary_selector</item>
+  </style>
+
+  <style name="TextAppearance.Quran.PopupMenu.Small" parent="TextAppearance.AppCompat.Widget.PopupMenu.Small">
+    <item name="android:textColor">@color/quran_text_primary_selector</item>
+  </style>
+
+  <style name="TextAppearance.Quran.ActionMode.Title" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">
+    <item name="android:textColor">?attr/quranToolbarText</item>
+  </style>
+
+  <style name="TextAppearance.Quran.ActionMode.Subtitle" parent="TextAppearance.AppCompat.Widget.ActionMode.Subtitle">
+    <item name="android:textColor">?attr/quranToolbarSecondaryText</item>
+  </style>
+
+  <style name="Widget.Quran.ActionMode" parent="Widget.AppCompat.ActionMode">
+    <item name="background">?attr/actionModeBackground</item>
+    <item name="titleTextStyle">@style/TextAppearance.Quran.ActionMode.Title</item>
+    <item name="subtitleTextStyle">@style/TextAppearance.Quran.ActionMode.Subtitle</item>
   </style>
 
   <style name="ToolbarTitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title" />
@@ -27,8 +82,84 @@
   <style name="NotificationTitle" parent="android:TextAppearance.StatusBar.EventContent.Title" />
 
   <style name="QuranDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+    <item name="quranAccent">@color/default_theme_accent</item>
+    <item name="quranOnAccent">@color/default_theme_on_accent</item>
+    <item name="quranSurface">@color/default_theme_surface</item>
+    <item name="quranSurfaceElevated">@color/default_theme_surface_elevated</item>
+    <item name="quranTextPrimary">@color/default_theme_text_primary</item>
+    <item name="quranTextSecondary">@color/default_theme_text_secondary</item>
+    <item name="quranDivider">@color/default_theme_divider</item>
+    <item name="quranRipple">@color/default_theme_ripple</item>
+    <item name="quranRowSelected">@color/default_theme_row_selected</item>
     <item name="colorAccent">?attr/quranAccent</item>
+    <item name="colorControlActivated">?attr/quranAccent</item>
+    <item name="colorControlNormal">?attr/quranTextSecondary</item>
+    <item name="colorControlHighlight">?attr/quranRipple</item>
+    <item name="android:colorControlHighlight">?attr/quranRipple</item>
+    <item name="android:windowBackground">@drawable/quran_dialog_background</item>
+    <item name="android:colorBackground">?attr/quranSurfaceElevated</item>
+    <item name="android:colorBackgroundFloating">?attr/quranSurfaceElevated</item>
+    <item name="android:textColorPrimary">@color/quran_text_primary_selector</item>
+    <item name="android:textColorSecondary">@color/quran_text_secondary_selector</item>
+    <item name="textColorAlertDialogListItem">@color/quran_text_primary_selector</item>
+    <item name="android:textColorAlertDialogListItem">@color/quran_text_primary_selector</item>
+    <item name="listPopupWindowStyle">@style/Widget.Quran.ListPopupWindow</item>
+    <item name="android:listPopupWindowStyle">@style/Widget.Quran.ListPopupWindow</item>
+    <item name="autoCompleteTextViewStyle">@style/Widget.Quran.AutoCompleteTextView</item>
+    <item name="android:autoCompleteTextViewStyle">@style/Widget.Quran.AutoCompleteTextView</item>
+    <item name="android:popupBackground">@drawable/quran_popup_background</item>
+    <item name="android:listDivider">@drawable/theme_list_divider</item>
     <item name="android:backgroundDimAmount">0.3</item>
+  </style>
+
+  <style name="QuranDialogTheme.Default" parent="QuranDialogTheme" />
+
+  <style name="QuranDialogTheme.Green" parent="QuranDialogTheme">
+    <item name="quranAccent">@color/green_theme_accent</item>
+    <item name="quranOnAccent">@color/green_theme_on_accent</item>
+    <item name="quranSurface">@color/green_theme_surface</item>
+    <item name="quranSurfaceElevated">@color/green_theme_surface_elevated</item>
+    <item name="quranTextPrimary">@color/green_theme_text_primary</item>
+    <item name="quranTextSecondary">@color/green_theme_text_secondary</item>
+    <item name="quranDivider">@color/green_theme_divider</item>
+    <item name="quranRipple">@color/green_theme_ripple</item>
+    <item name="quranRowSelected">@color/green_theme_row_selected</item>
+  </style>
+
+  <style name="QuranDialogTheme.Blue" parent="QuranDialogTheme">
+    <item name="quranAccent">@color/blue_theme_accent</item>
+    <item name="quranOnAccent">@color/blue_theme_on_accent</item>
+    <item name="quranSurface">@color/blue_theme_surface</item>
+    <item name="quranSurfaceElevated">@color/blue_theme_surface_elevated</item>
+    <item name="quranTextPrimary">@color/blue_theme_text_primary</item>
+    <item name="quranTextSecondary">@color/blue_theme_text_secondary</item>
+    <item name="quranDivider">@color/blue_theme_divider</item>
+    <item name="quranRipple">@color/blue_theme_ripple</item>
+    <item name="quranRowSelected">@color/blue_theme_row_selected</item>
+  </style>
+
+  <style name="QuranDialogTheme.Beige" parent="QuranDialogTheme">
+    <item name="quranAccent">@color/beige_theme_accent</item>
+    <item name="quranOnAccent">@color/beige_theme_on_accent</item>
+    <item name="quranSurface">@color/beige_theme_surface</item>
+    <item name="quranSurfaceElevated">@color/beige_theme_surface_elevated</item>
+    <item name="quranTextPrimary">@color/beige_theme_text_primary</item>
+    <item name="quranTextSecondary">@color/beige_theme_text_secondary</item>
+    <item name="quranDivider">@color/beige_theme_divider</item>
+    <item name="quranRipple">@color/beige_theme_ripple</item>
+    <item name="quranRowSelected">@color/beige_theme_row_selected</item>
+  </style>
+
+  <style name="QuranDialogTheme.Gray" parent="QuranDialogTheme">
+    <item name="quranAccent">@color/gray_theme_accent</item>
+    <item name="quranOnAccent">@color/gray_theme_on_accent</item>
+    <item name="quranSurface">@color/gray_theme_surface</item>
+    <item name="quranSurfaceElevated">@color/gray_theme_surface_elevated</item>
+    <item name="quranTextPrimary">@color/gray_theme_text_primary</item>
+    <item name="quranTextSecondary">@color/gray_theme_text_secondary</item>
+    <item name="quranDivider">@color/gray_theme_divider</item>
+    <item name="quranRipple">@color/gray_theme_ripple</item>
+    <item name="quranRowSelected">@color/gray_theme_row_selected</item>
   </style>
 
   <style name="TranslationText">
@@ -61,13 +192,13 @@
   </style>
 
   <style name="SearchResult">
-    <item name="android:textColor">@color/text_primary</item>
+    <item name="android:textColor">?attr/quranTextPrimary</item>
     <item name="android:textSize">16sp</item>
   </style>
 
   <style name="SearchResult.Location">
-    <item name="android:textColor">@color/text_hint_color</item>
-    <item name="android:textSize">14sp</item>
+    <item name="android:textColor">?attr/quranTextSecondary</item>
+    <item name="android:textSize">13sp</item>
   </style>
 
   <style name="PanelLabel">
@@ -75,27 +206,27 @@
     <item name="android:textSize">16sp</item>
   </style>
 
-  <style name="SherlockDropDownItem">
-    <item name="android:textAppearance">@style/SherlockDropDownItemText</item>
-    <item name="android:paddingLeft">8dp</item>
-    <item name="android:paddingRight">8dp</item>
+  <style name="QuranDropDownItem">
+    <item name="android:textAppearance">@style/QuranDropDownItemText</item>
+    <item name="android:paddingStart">8dp</item>
+    <item name="android:paddingEnd">8dp</item>
     <item name="android:gravity">center_vertical</item>
   </style>
 
-  <style name="SherlockDropDownItemText">
-    <item name="android:textColor">@color/sherlock_primary_text_disable</item>
+  <style name="QuranDropDownItemText">
+    <item name="android:textColor">@color/quran_spinner_primary_text_disable</item>
     <item name="android:textSize">16sp</item>
     <item name="android:textStyle">normal</item>
   </style>
 
-  <style name="SherlockSpinnerItem">
-    <item name="android:textAppearance">@style/SherlockSpinnerItemText</item>
-    <item name="android:paddingLeft">8dp</item>
-    <item name="android:paddingRight">8dp</item>
+  <style name="QuranSpinnerItem">
+    <item name="android:textAppearance">@style/QuranSpinnerItemText</item>
+    <item name="android:paddingStart">8dp</item>
+    <item name="android:paddingEnd">8dp</item>
   </style>
 
-  <style name="SherlockSpinnerItemText">
-    <item name="android:textColor">@color/sherlock_primary_text</item>
+  <style name="QuranSpinnerItemText">
+    <item name="android:textColor">@color/quran_spinner_primary_text</item>
     <item name="android:textSize">16sp</item>
     <item name="android:textStyle">normal</item>
   </style>

@@ -1,6 +1,7 @@
 package com.quran.mobile.feature.audiobar.presenter
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import com.quran.data.di.QuranScope
 import com.quran.data.model.audio.Qari
@@ -20,66 +21,65 @@ import com.quran.recitation.events.RecitationEventPresenter
 import com.quran.recitation.events.RecitationPlaybackEventPresenter
 import com.quran.recitation.presenter.RecitationPresenter
 import dev.zacsweers.metro.Inject
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @QuranScope
 class AudioBarPresenter @Inject constructor(
-  downloadInfoStreams: DownloadInfoStreams,
-  recitationEventPresenter: RecitationEventPresenter,
-  recitationPlaybackEventPresenter: RecitationPlaybackEventPresenter,
+  private val downloadInfoStreams: DownloadInfoStreams,
+  private val recitationEventPresenter: RecitationEventPresenter,
+  private val recitationPlaybackEventPresenter: RecitationPlaybackEventPresenter,
   private val audioStatusRepository: AudioStatusRepository,
   private val currentQariManager: CurrentQariManager,
   private val recitationPresenter: RecitationPresenter,
   private val audioBarEventRepository: AudioBarEventRepository
 ) {
 
-  private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
   private val internalAudioBarFlow =
     MutableStateFlow<AudioBarState>(AudioBarState.Loading(-1, R.string.loading))
 
-  init {
-    downloadInfoStreams.downloadInfoStream()
-      .map { downloadInfo -> downloadInfo.toAudioBarState() }
-      .onEach { internalAudioBarFlow.value = it }
-      .launchIn(scope)
-
-    combine(
-      audioStatusRepository.audioPlaybackFlow,
-      currentQariManager.flow(),
-      recitationPresenter.isRecitationEnabledFlow(),
-    ) { audioStatus, qari, isRecitationEnabled ->
-      transformAudioBarState(audioStatus, isRecitationEnabled, qari)
-    }
-      .onEach { internalAudioBarFlow.value = it }
-      .launchIn(scope)
-
-    combine(
-      recitationPresenter.isRecitationEnabledFlow(),
-      recitationEventPresenter.recitationSessionFlow,
-      recitationEventPresenter.listeningStateFlow,
-      recitationPlaybackEventPresenter.playingStateFlow
-    ) { isRecitationEnabled, recitationSession, isListening, isPlaying ->
-      if (isRecitationEnabled) {
-        transformAudioBarRecitationState(recitationSession, isListening, isPlaying)
-      } else {
-        null
-      }
-    }
-      .filterNotNull()
-      .onEach { internalAudioBarFlow.value = it }
-      .launchIn(scope)
-  }
-
   @Composable
   internal fun audioBarPresenter(): AudioBarState {
+    LaunchedEffect(Unit) {
+      launch(Dispatchers.IO) {
+        downloadInfoStreams.downloadInfoStream()
+          .map { downloadInfo -> downloadInfo.toAudioBarState() }
+          .onEach { internalAudioBarFlow.value = it }
+          .launchIn(this)
+
+        combine(
+          audioStatusRepository.audioPlaybackFlow,
+          currentQariManager.flow(),
+          recitationPresenter.isRecitationEnabledFlow(),
+        ) { audioStatus, qari, isRecitationEnabled ->
+          transformAudioBarState(audioStatus, isRecitationEnabled, qari)
+        }
+          .onEach { internalAudioBarFlow.value = it }
+          .launchIn(this)
+
+        combine(
+          recitationPresenter.isRecitationEnabledFlow(),
+          recitationEventPresenter.recitationSessionFlow,
+          recitationEventPresenter.listeningStateFlow,
+          recitationPlaybackEventPresenter.playingStateFlow
+        ) { isRecitationEnabled, recitationSession, isListening, isPlaying ->
+          if (isRecitationEnabled) {
+            transformAudioBarRecitationState(recitationSession, isListening, isPlaying)
+          } else {
+            null
+          }
+        }
+          .filterNotNull()
+          .onEach { internalAudioBarFlow.value = it }
+          .launchIn(this)
+      }
+    }
     val state = internalAudioBarFlow.collectAsState()
     return state.value
   }

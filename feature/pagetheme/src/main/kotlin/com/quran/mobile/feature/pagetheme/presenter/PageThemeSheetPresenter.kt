@@ -45,53 +45,60 @@ class PageThemeSheetPresenter(
       pageCards(pageTheme, isNightPage, useOldBackground, backgroundBrightness, nightTextBrightness)
     }
 
-    val setAppearance: (String) -> Unit = { appearance ->
-      settings.pageAppearance = appearance
-      pageAppearance = appearance
+    val setAppearance = remember {
+      { appearance: String ->
+        settings.pageAppearance = appearance
+        pageAppearance = appearance
+      }
     }
 
-    val eventSink: (PageThemeSheetEvent) -> Unit = { event ->
-      when (event) {
-        is PageThemeSheetEvent.SelectColor -> {
-          if (event.color == PageColor.Dark) {
+    val eventSink: (PageThemeSheetEvent) -> Unit = remember {
+      { event ->
+        when (event) {
+          is PageThemeSheetEvent.SelectColor -> {
+            val currentIsNight = settings.isNightMode
+            val currentMatchApp = pageAppearance == PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
+            if (event.color == PageColor.Dark) {
+              setAppearance(
+                if (currentMatchApp && currentIsNight) PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
+                else PageThemeConstants.PAGE_APPEARANCE_DARK
+              )
+            } else {
+              val theme = if (event.color == PageColor.Sepia) PageTheme.Sepia else PageTheme.Light
+              settings.pageTheme = theme.storageKey
+              pageTheme = theme
+              setAppearance(
+                if (currentMatchApp && !currentIsNight) PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
+                else PageThemeConstants.PAGE_APPEARANCE_LIGHT
+              )
+            }
+          }
+
+          is PageThemeSheetEvent.MatchAppThemeChanged -> {
+            val currentIsNight = settings.isNightMode
             setAppearance(
-              if (matchAppTheme && isNightPage) PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
-              else PageThemeConstants.PAGE_APPEARANCE_DARK
-            )
-          } else {
-            val theme = if (event.color == PageColor.Sepia) PageTheme.Sepia else PageTheme.Light
-            settings.pageTheme = theme.storageKey
-            pageTheme = theme
-            setAppearance(
-              if (matchAppTheme && !isNightPage) PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
-              else PageThemeConstants.PAGE_APPEARANCE_LIGHT
+              when {
+                event.matchAppTheme -> PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
+                currentIsNight -> PageThemeConstants.PAGE_APPEARANCE_DARK
+                else -> PageThemeConstants.PAGE_APPEARANCE_LIGHT
+              }
             )
           }
-        }
 
-        is PageThemeSheetEvent.MatchAppThemeChanged -> {
-          setAppearance(
-            when {
-              event.matchAppTheme -> PageThemeConstants.PAGE_APPEARANCE_AUTOMATIC
-              isNightPage -> PageThemeConstants.PAGE_APPEARANCE_DARK
-              else -> PageThemeConstants.PAGE_APPEARANCE_LIGHT
-            }
-          )
-        }
+          is PageThemeSheetEvent.TextBrightnessChanged -> {
+            settings.nightModeTextBrightness = event.brightness
+            textBrightness = event.brightness
+          }
 
-        is PageThemeSheetEvent.TextBrightnessChanged -> {
-          settings.nightModeTextBrightness = event.brightness
-          textBrightness = event.brightness
-        }
+          is PageThemeSheetEvent.BackgroundBrightnessChanged -> {
+            settings.nightModeBackgroundBrightness = event.brightness
+            backgroundBrightness = event.brightness
+          }
 
-        is PageThemeSheetEvent.BackgroundBrightnessChanged -> {
-          settings.nightModeBackgroundBrightness = event.brightness
-          backgroundBrightness = event.brightness
-        }
-
-        is PageThemeSheetEvent.UseOldBackgroundChanged -> {
-          settings.setUseOldBackground(event.useOldBackground)
-          useOldBackground = event.useOldBackground
+          is PageThemeSheetEvent.UseOldBackgroundChanged -> {
+            settings.setUseOldBackground(event.useOldBackground)
+            useOldBackground = event.useOldBackground
+          }
         }
       }
     }

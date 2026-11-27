@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:minHeight="48dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
     android:orientation="horizontal"
     android:background="@drawable/transparent_item_background">
   <CheckBox
@@ -23,14 +23,14 @@
       android:scaleType="center"
       android:visibility="gone"
       android:contentDescription="@null"
-      app:tint="@color/toolbar_icon_tint"
+      app:tint="?attr/quranTextPrimary"
       />
   <TextView
       android:id="@+id/tag_name"
       android:layout_width="0dp"
       android:layout_height="48dp"
       android:layout_weight="1"
-      android:textColor="@color/default_text"
+      android:textColor="?attr/quranTextPrimary"
       android:gravity="center_vertical"
       />
 </LinearLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="hybrid_search_placeholder">ابحث في القرآن الكريم…</string>
+  <string name="hybrid_search_scope_ayahs">الآيات</string>
+  <string name="hybrid_search_scope_suras">السور</string>
+  <string name="hybrid_search_scope_tafsir">التفسير</string>
+  <string name="hybrid_search_action_listen">استماع</string>
+  <string name="hybrid_search_action_bookmark">حفظ</string>
+  <string name="hybrid_search_action_bookmarked">محفوظ</string>
+  <string name="hybrid_search_action_open_page">فتح الصفحة</string>
+  <string name="hybrid_search_stub_message">شاشة البحث جاهزة للتكامل</string>
+  <string name="hybrid_search_clear_cd">مسح البحث</string>
+  <string name="hybrid_search_count_ayahs">%1$s آية</string>
+  <string name="hybrid_search_count_suras">%1$s سورة</string>
+  <string name="hybrid_search_count_tafsir">%1$s نتيجة</string>
+  <string name="hybrid_search_speed_ms">%1$s مللي ثانية</string>
+  <string name="hybrid_search_sura_ayah_header">سورة %1$s : %2$s</string>
+  <string name="hybrid_search_sura_card_title">سورة %1$s</string>
+  <string name="hybrid_search_juz_label">الجزء %1$s</string>
+  <string name="hybrid_search_page_pill">ص %1$s</string>
+  <string name="hybrid_search_empty_title">البحث الفوري في القرآن</string>
+  <string name="hybrid_search_empty_subtitle">ابحث في الآيات بالرسم العثماني، أو تصفّح السور الـ ١١٤، أو ابحث في التفاسير المحمّلة.</string>
+  <string name="hybrid_search_no_results">لا توجد نتائج لـ «%1$s»</string>
+  <string name="hybrid_search_tafsir_empty_title">لا يوجد تفسير أو ترجمة محمّلة محلياً</string>
+  <string name="hybrid_search_tafsir_empty_body">حمّل تفسيراً مثل التفسير الميسر للبحث في معاني الآيات دون اتصال.</string>
+  <string name="hybrid_search_tafsir_download_cta">تحميل التفاسير</string>
+</resources>

@@ -11,7 +11,8 @@ import com.quran.labs.androidquran.util.QuranPartialPageChecker
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.labs.androidquran.util.QuranSettings
 import dev.zacsweers.metro.Inject
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -25,7 +26,7 @@ class PartialPageCheckingWorker(private val context: Context,
                                 private val quranPartialPageChecker: QuranPartialPageChecker
 ) : CoroutineWorker(context, params) {
 
-  override suspend fun doWork(): Result = coroutineScope {
+  override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
     Timber.d("PartialPageCheckingWorker")
     val requestedPageType = params.inputData.getString(WorkerConstants.PAGE_TYPE)
     if (requestedPageType != quranSettings.pageType) {

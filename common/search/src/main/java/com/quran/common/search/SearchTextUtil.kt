@@ -31,9 +31,8 @@ object SearchTextUtil {
   }
 
   fun isRtl(s: String): Boolean {
-    val characters = s.toCharArray()
-    for (character in characters) {
-      val directionality = Character.getDirectionality(character).toInt()
+    for (i in s.indices) {
+      val directionality = Character.getDirectionality(s[i]).toInt()
       if (directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT.toInt() ||
         directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC.toInt()
       ) {

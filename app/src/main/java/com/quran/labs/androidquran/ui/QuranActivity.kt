@@ -1,56 +1,47 @@
 package com.quran.labs.androidquran.ui
 
-import android.app.SearchManager
-import android.content.ComponentName
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.database.sqlite.SQLiteDatabase
 import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AlertDialog.Builder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
-import androidx.appcompat.widget.SearchView
-import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager.widget.ViewPager
+import androidx.lifecycle.repeatOnLifecycle
 import com.quran.data.dao.RecentPagesDao
 import com.quran.data.model.Page
 import com.quran.data.model.SuraAyah
-import com.quran.labs.androidquran.AboutUsActivity
-import com.quran.labs.androidquran.HelpActivity
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.QuranPreferenceActivity
 import com.quran.labs.androidquran.R
 import com.quran.labs.androidquran.SearchActivity
 import com.quran.labs.androidquran.ShortcutsActivity
+import com.quran.labs.androidquran.common.ui.core.AppThemeStyle
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.feature.reading.model.LatestPageTracker
+import com.quran.labs.androidquran.hybrid.contract.HybridNavTab
+import com.quran.labs.androidquran.hybrid.contract.HybridReaderContract
+import com.quran.labs.androidquran.hybrid.contract.HybridSearchActionHandler
+import com.quran.labs.androidquran.hybrid.hub.DailyWirdGoalDialogNative
+import com.quran.labs.androidquran.hybrid.hub.HybridHubStateHolder
+import com.quran.labs.androidquran.hybrid.hub.HybridHubView
+import com.quran.labs.androidquran.hybrid.search.HybridSearchEngine
+import com.quran.labs.androidquran.hybrid.ui.HybridViewPalette
 import com.quran.labs.androidquran.presenter.data.QuranIndexEventLogger
 import com.quran.labs.androidquran.presenter.translation.TranslationManagerPresenter
 import com.quran.labs.androidquran.service.AudioService
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog
 import com.quran.labs.androidquran.ui.fragment.AddTagDialog.Companion.newInstance
-import com.quran.labs.androidquran.ui.fragment.BookmarksFragment
-import com.quran.labs.androidquran.ui.fragment.JumpFragment
-import com.quran.labs.androidquran.ui.fragment.JuzListFragment
-import com.quran.labs.androidquran.ui.fragment.SuraListFragment
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog
 import com.quran.labs.androidquran.ui.fragment.TagBookmarkDialog.OnBookmarkTagsUpdateListener
 import com.quran.labs.androidquran.ui.helpers.JumpDestination
@@ -59,34 +50,29 @@ import com.quran.labs.androidquran.ui.helpers.QuranRow
 import com.quran.labs.androidquran.util.AudioUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
-import com.quran.labs.androidquran.view.SlidingTabLayout
+import com.quran.labs.androidquran.util.ThemeUtil
 import com.quran.mobile.di.ExtraScreenProvider
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit.MILLISECONDS
-import kotlin.math.abs
 
 /**
- * The home screen activity for the app. Displays a toolbar and 3 fragments:
- *
- *  * [SuraListFragment]
- *  * [JuzListFragment]
- *  * [BookmarksFragment]
- *
- * When this activity is created, it may run a background check to see if updated translations
- * are available, and if so, show a dialog asking the user if they want to download them.
- *
- * This activity is called from several places:
- *  * [com.quran.labs.androidquran.QuranDataActivity]
- *  * [ShortcutsActivity]
+ * The Proposal 5 Main Card Hub activity hosting:
+ *  - Hero "Continue Reading" + Daily Wird progress card
+ *  - Segmented Index (Surahs | Juz | Hizb)
+ *  - Embedded Search tab ([HybridSearchHost])
+ *  - Saved Bookmarks & Recents tab
+ *  - Floating 4-tab bottom navigation ([HybridNavTab])
  */
 class QuranActivity : AppCompatActivity(),
     OnBookmarkTagsUpdateListener,
@@ -95,14 +81,13 @@ class QuranActivity : AppCompatActivity(),
   private var showedTranslationUpgradeDialog = false
   private var isRtl = false
   private var isPaused = false
-  private var searchItem: MenuItem? = null
   private var supportActionMode: ActionMode? = null
   private val compositeDisposable = CompositeDisposable()
   private val latestPageFlow: Flow<Int> by lazy {
     combine(
-      recentPagesDao.recentPagesFlow()
+      recentPagesDao().recentPagesFlow()
         .map { recentPages -> recentPages.firstOrNull()?.page ?: Constants.NO_PAGE },
-      latestPageTracker.latestPage
+      latestPageTracker().latestPage
     ) { persistedPage, latestPage ->
       latestPage
         ?.takeIf { it.pageType == settings.pageType }
@@ -117,30 +102,74 @@ class QuranActivity : AppCompatActivity(),
   }
 
   private var backStackListener: FragmentManager.OnBackStackChangedListener? = null
-  private lateinit var searchItemCollapserCallback: OnBackPressedCallback
+  private lateinit var hubBackCallback: OnBackPressedCallback
   private lateinit var supportActionModeClearingCallback: OnBackPressedCallback
 
-  @Inject lateinit var quranNavigator: QuranNavigator
+  private var showPaletteSheet: Boolean = false
+  private var showWirdGoalDialog: Boolean = false
+  private var wirdGoalDialog: AlertDialog? = null
 
-  @Inject
-  lateinit var settings: QuranSettings
-  @Inject
-  lateinit var audioUtils: AudioUtils
-  @Inject
-  lateinit var recentPagesDao: RecentPagesDao
-  @Inject
-  lateinit var latestPageTracker: LatestPageTracker
-  @Inject
-  lateinit var translationManagerPresenter: TranslationManagerPresenter
-  @Inject
-  lateinit var quranIndexEventLogger: QuranIndexEventLogger
-  @Inject
-  lateinit var extraScreens: Set<@JvmSuppressWildcards ExtraScreenProvider>
+  @VisibleForTesting
+  internal lateinit var hubView: HybridHubView
+    private set
 
-  private var jumpToPageOnResume: Int? = null
+  @VisibleForTesting
+  internal val isPaletteSheetShownForTest: Boolean
+    get() = showPaletteSheet
+
+  @VisibleForTesting
+  internal val appliedThemeStyleForTest: AppThemeStyle
+    get() = appliedThemeStyle
+
+  @VisibleForTesting
+  internal val appliedOledDarkModeForTest: Boolean
+    get() = appliedOledDarkMode
+
+  @Inject lateinit var quranNavigator: Provider<QuranNavigator>
+  @Inject lateinit var settings: QuranSettings
+  @Inject lateinit var audioUtils: Provider<AudioUtils>
+  @Inject lateinit var recentPagesDao: Provider<RecentPagesDao>
+  @Inject lateinit var latestPageTracker: Provider<LatestPageTracker>
+  @Inject lateinit var translationManagerPresenter: Provider<TranslationManagerPresenter>
+  @Inject lateinit var quranIndexEventLogger: Provider<QuranIndexEventLogger>
+  @Inject lateinit var extraScreens: Set<@JvmSuppressWildcards ExtraScreenProvider>
+  @Inject lateinit var hybridSearchEngine: Provider<HybridSearchEngine>
+  @Inject lateinit var hubStateHolder: HybridHubStateHolder
+
+  private var appliedThemeStyle: AppThemeStyle = AppThemeStyle.DEFAULT
+  private var appliedDarkMode: Boolean = false
+  private var appliedOledDarkMode: Boolean = false
+
+  private val searchActionHandler = object : HybridSearchActionHandler {
+    override fun openPage(page: Int, sura: Int, ayah: Int) {
+      jumpToAndHighlight(page, sura, ayah)
+    }
+
+    override fun playAyah(sura: Int, ayah: Int, page: Int) {
+      val intent = quranNavigator().intentFor(
+        SuraAyah(sura, ayah),
+        showTranslation = settings.wasShowingTranslation
+      )
+      HybridReaderContract.applyToIntent(
+        intent = intent,
+        sura = sura,
+        ayah = ayah,
+        initialStudyTab = HybridReaderContract.StudyTab.RECITATION,
+        autoPlayAyah = true
+      )
+      startActivity(intent)
+    }
+
+    override fun toggleBookmark(sura: Int, ayah: Int, page: Int) {
+      lifecycleScope.launch {
+        hubStateHolder.toggleAyahBookmark(sura, ayah)
+      }
+    }
+  }
 
   public override fun onCreate(savedInstanceState: Bundle?) {
-    enableEdgeToEdge()
+    appliedThemeStyle = ThemeUtil.applyActivityTheme(this)
+    ThemeUtil.enableThemedEdgeToEdge(this)
     super.onCreate(savedInstanceState)
     val quranApp = application as QuranApplication
     quranApp.applicationComponent
@@ -150,49 +179,146 @@ class QuranActivity : AppCompatActivity(),
       .generate()
       .inject(this)
 
-    registerBackPressedCallbacks()
-    setContentView(R.layout.quran_index)
     isRtl = isRtl()
+    registerBackPressedCallbacks()
+    hubStateHolder.startObserving(lifecycleScope, latestPageFlow)
 
-    val root = findViewById<ViewGroup>(R.id.root)
-    ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
-      val insets = windowInsets.getInsets(
-        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-      )
-      root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-        topMargin = insets.top
-        leftMargin = insets.left
-        rightMargin = insets.right
+    val isSystemDark =
+      (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+        Configuration.UI_MODE_NIGHT_YES
+    appliedDarkMode = ThemeUtil.isDarkAppearance(settings.currentTheme(), isSystemDark)
+    appliedOledDarkMode = settings.isOledDarkMode
+    val initialPalette = HybridViewPalette.from(appliedThemeStyle, appliedDarkMode, appliedOledDarkMode)
+
+    hubView = HybridHubView(
+      context = this,
+      scope = lifecycleScope,
+      searchEngineProvider = { hybridSearchEngine() },
+      searchActionHandler = searchActionHandler,
+      onNavTabSelected = { tab ->
+        if (tab == HybridNavTab.READ) {
+          jumpToLastPage()
+        } else {
+          hubStateHolder.selectNavTab(tab)
+          syncHubBackCallback()
+        }
+      },
+      onIndexSegmentSelected = { segment ->
+        hubStateHolder.selectIndexSegment(segment)
+      },
+      onContinueReadingClick = {
+        val targetPage = hubStateHolder.uiState.value.dailyWird.lastPage
+        if (targetPage in 1..MAX_QURAN_PAGES_FALLBACK) {
+          jumpTo(targetPage)
+        } else {
+          jumpToLastPage()
+        }
+      },
+      onOpenPage = { page ->
+        jumpTo(page)
+      },
+      onOpenAyah = { page, sura, ayah ->
+        jumpToAndHighlight(page, sura, ayah)
+      },
+      onOpenSettingsClick = {
+        startActivity(Intent(this@QuranActivity, QuranPreferenceActivity::class.java))
+      },
+      onOpenPaletteSheet = {
+        showPaletteSheet = true
+        syncHubBackCallback()
+        hubView.render(hubStateHolder.uiState.value, showPaletteSheet)
+      },
+      onDismissPaletteSheet = {
+        showPaletteSheet = false
+        syncHubBackCallback()
+        hubView.render(hubStateHolder.uiState.value, showPaletteSheet)
+      },
+      onSelectThemeMode = { mode ->
+        hubStateHolder.updateThemeMode(mode)
+        val systemDarkNow =
+          (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES
+        val darkNow = ThemeUtil.isDarkAppearance(mode, systemDarkNow)
+        if (darkNow != appliedDarkMode) {
+          appliedDarkMode = darkNow
+          hubView.applyPalette(
+            HybridViewPalette.from(appliedThemeStyle, darkNow, appliedOledDarkMode)
+          )
+          ThemeUtil.enableThemedEdgeToEdge(this@QuranActivity)
+        }
+        syncHubBackCallback()
+        hubView.render(hubStateHolder.uiState.value, showPaletteSheet)
+      },
+      onSelectThemeStyle = { style ->
+        hubStateHolder.updateThemeStyle(style)
+        if (style != appliedThemeStyle) {
+          appliedThemeStyle = style
+          theme.applyStyle(ThemeUtil.themeOverlayRes(style), true)
+          hubView.applyPalette(HybridViewPalette.from(style, appliedDarkMode, appliedOledDarkMode))
+          ThemeUtil.enableThemedEdgeToEdge(this@QuranActivity)
+        }
+        syncHubBackCallback()
+        hubView.render(hubStateHolder.uiState.value, showPaletteSheet)
+      },
+      onOpenWirdGoalDialog = {
+        openDailyWirdGoalDialog()
+      },
+      onClearReadingBookmark = { slot ->
+        hubStateHolder.clearReadingBookmark(slot)
+      },
+      onRemoveRecentPage = { page ->
+        hubStateHolder.removeRecentPage(page)
+      },
+      onClearAllRecents = {
+        hubStateHolder.clearAllRecentPages()
+      },
+      onRemoveAyahBookmark = { sura, ayah ->
+        hubStateHolder.removeAyahBookmark(sura, ayah)
+      },
+      onClearHighlight = { sura, ayah ->
+        hubStateHolder.clearHighlight(sura, ayah)
+      },
+      onDownloadArabicSearchDb = {
+        startActivity(Intent(this@QuranActivity, SearchActivity::class.java))
+      },
+      onOpenTranslationManager = {
+        startActivity(Intent(this@QuranActivity, TranslationManagerActivity::class.java))
+      },
+      initialPalette = initialPalette,
+      onToggleOledDarkMode = { enabled ->
+        hubStateHolder.updateOledDarkMode(enabled)
+        if (enabled != appliedOledDarkMode) {
+          appliedOledDarkMode = enabled
+          hubView.applyPalette(
+            HybridViewPalette.from(appliedThemeStyle, appliedDarkMode, appliedOledDarkMode)
+          )
+          ThemeUtil.enableThemedEdgeToEdge(this@QuranActivity)
+        }
+        syncHubBackCallback()
+        hubView.render(hubStateHolder.uiState.value, showPaletteSheet)
       }
+    )
 
-      // if we return WindowInsetsCompat.CONSUMED, the SnackBar won't
-      // be properly positioned on Android 29 and below (will be under
-      // the navigation bar).
-      windowInsets
+    ViewCompat.setOnApplyWindowInsetsListener(hubView) { _, insets ->
+      val statusTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+      val navBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+      val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+      hubView.applyWindowInsets(statusTop, navBottom, imeBottom)
+      insets
     }
 
-    val tb = findViewById<Toolbar>(R.id.toolbar)
-    setSupportActionBar(tb)
-    val ab = supportActionBar
-    ab?.setTitle(R.string.app_name)
-
-    val pager = findViewById<ViewPager>(R.id.index_pager)
-    pager.offscreenPageLimit = 3
-    val pagerAdapter = PagerAdapter(supportFragmentManager)
-    pager.adapter = pagerAdapter
-    val indicator = findViewById<SlidingTabLayout>(R.id.indicator)
-    indicator.setViewPager(pager)
-    jumpToPageOnResume = if (isRtl) {
-      TITLES.size - 1
-    } else {
-      0
-    }
+    setContentView(hubView)
+    window?.setBackgroundDrawable(null)
 
     if (savedInstanceState != null) {
       showedTranslationUpgradeDialog = savedInstanceState.getBoolean(
           SI_SHOWED_UPGRADE_DIALOG, false
       )
+      showPaletteSheet = savedInstanceState.getBoolean(
+          SI_SHOW_PALETTE_SHEET, false
+      )
     }
+    syncHubBackCallback()
 
     val intent = intent
     if (intent != null) {
@@ -208,31 +334,97 @@ class QuranActivity : AppCompatActivity(),
         jumpToLastPage()
       }
     }
-    updateTranslationsListAsNeeded()
-    quranIndexEventLogger.logAnalytics()
+    applyInitialNavTab(intent)
+    hubView.render(hubStateHolder.uiState.value, showPaletteSheet)
+
+    lifecycleScope.launch {
+      repeatOnLifecycle(Lifecycle.State.STARTED) {
+        hubStateHolder.uiState.collectLatest { uiState ->
+          val systemDarkNow =
+            (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+              Configuration.UI_MODE_NIGHT_YES
+          val darkNow = ThemeUtil.isDarkAppearance(uiState.appTheme, systemDarkNow)
+          val oledNow = uiState.isOledDarkMode
+          if (darkNow != appliedDarkMode || oledNow != appliedOledDarkMode) {
+            appliedDarkMode = darkNow
+            appliedOledDarkMode = oledNow
+            hubView.applyPalette(HybridViewPalette.from(appliedThemeStyle, darkNow, oledNow))
+            ThemeUtil.enableThemedEdgeToEdge(this@QuranActivity)
+          }
+          syncHubBackCallback()
+          hubView.render(uiState, showPaletteSheet)
+        }
+      }
+    }
+
+    window.decorView.post {
+      if (!isFinishing && !isDestroyed) {
+        updateTranslationsListAsNeeded()
+        quranIndexEventLogger().logAnalytics()
+      }
+    }
+  }
+
+  override fun onNewIntent(intent: Intent) {
+    super.onNewIntent(intent)
+    setIntent(intent)
+    applyInitialNavTab(intent)
+  }
+
+  private fun applyInitialNavTab(intent: Intent?) {
+    val raw = intent?.getStringExtra(EXTRA_INITIAL_NAV_TAB) ?: return
+    val tab = HybridNavTab.entries.firstOrNull { it.name == raw && it != HybridNavTab.READ } ?: return
+    hubStateHolder.selectNavTab(tab)
+    syncHubBackCallback()
+  }
+
+  override fun onStart() {
+    super.onStart()
+    if (::hubView.isInitialized) {
+      hubView.scheduleIdlePrebuildIfNeeded()
+    }
   }
 
   public override fun onResume() {
     super.onResume()
+    if (AppThemeStyle.fromPreference(settings.appThemeStyle) != appliedThemeStyle) {
+      recreate()
+      return
+    }
     val isRtl = isRtl()
     if (isRtl != this.isRtl) {
       val i = intent
       finish()
       startActivity(i)
     } else {
-      val pageToJumpTo = jumpToPageOnResume
-      if (pageToJumpTo != null) {
-        findViewById<ViewPager>(R.id.index_pager).currentItem = pageToJumpTo
-        jumpToPageOnResume = null
+      if (::hubView.isInitialized) {
+        hubView.onActivityResume()
+        val systemDarkNow =
+          (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES
+        val darkNow = ThemeUtil.isDarkAppearance(settings.currentTheme(), systemDarkNow)
+        val oledNow = settings.isOledDarkMode
+        AppThemeStyle.setOledDarkMode(oledNow)
+        if (darkNow != appliedDarkMode || oledNow != appliedOledDarkMode) {
+          appliedDarkMode = darkNow
+          appliedOledDarkMode = oledNow
+          hubView.applyPalette(HybridViewPalette.from(appliedThemeStyle, darkNow, oledNow))
+          ThemeUtil.enableThemedEdgeToEdge(this)
+        }
       }
+      hubStateHolder.syncThemeFromSettings()
+      hubStateHolder.refreshDailyWirdForNewDay()
 
       compositeDisposable.add(
           Completable.timer(500, MILLISECONDS)
               .observeOn(AndroidSchedulers.mainThread())
               .subscribe {
+                if (!AudioService.isRunning()) {
+                  return@subscribe
+                }
                 try {
                   startService(
-                    audioUtils.getAudioIntent(this@QuranActivity, AudioService.ACTION_STOP)
+                    audioUtils().getAudioIntent(this@QuranActivity, AudioService.ACTION_STOP)
                   )
                 } catch (_: IllegalStateException) {
                   // do nothing, we might be in the background
@@ -250,7 +442,26 @@ class QuranActivity : AppCompatActivity(),
     super.onPause()
   }
 
+  override fun onStop() {
+    if (!isChangingConfigurations) {
+      if (::hubView.isInitialized) {
+        hubView.releaseTransientOnStop()
+        hubStateHolder.releaseTransientBookmarksOnStop()
+      }
+      SQLiteDatabase.releaseMemory()
+    }
+    super.onStop()
+  }
+
   override fun onDestroy() {
+    upgradeDialog?.dismiss()
+    upgradeDialog = null
+    wirdGoalDialog?.dismiss()
+    wirdGoalDialog = null
+    if (::hubView.isInitialized) {
+      hubView.unbind()
+    }
+    window?.setBackgroundDrawable(null)
     // only set to handle Android Q memory leaks
     backStackListener?.let {
       supportFragmentManager.removeOnBackStackChangedListener(it)
@@ -282,18 +493,25 @@ class QuranActivity : AppCompatActivity(),
       supportFragmentManager.addOnBackStackChangedListener(listener)
     }
 
-    // collapse the search view if it's expanded on back press
-    val searchItemExpanded = searchItem?.isActionViewExpanded ?: false
-    searchItemCollapserCallback = object : OnBackPressedCallback(searchItemExpanded) {
+    hubBackCallback = object : OnBackPressedCallback(false) {
       override fun handleOnBackPressed() {
-        val searchItem = searchItem
-        if (searchItem != null && searchItem.isActionViewExpanded) {
-          searchItem.collapseActionView()
+        when {
+          showWirdGoalDialog -> {
+            wirdGoalDialog?.dismiss()
+            showWirdGoalDialog = false
+          }
+          showPaletteSheet -> {
+            showPaletteSheet = false
+            hubView.render(hubStateHolder.uiState.value, showPaletteSheet)
+          }
+          hubStateHolder.uiState.value.selectedTab != HybridNavTab.INDEX -> {
+            hubStateHolder.selectNavTab(HybridNavTab.INDEX)
+          }
         }
-        // once it's collapsed, disable it
-        isEnabled = false
+        syncHubBackCallback()
       }
     }
+    onBackPressedDispatcher.addCallback(this, hubBackCallback)
 
     // clear the action mode if it's active on back press
     val supportActionModeEnabled = supportActionMode != null
@@ -302,76 +520,39 @@ class QuranActivity : AppCompatActivity(),
         supportActionMode?.finish()
       }
     }
+    onBackPressedDispatcher.addCallback(this, supportActionModeClearingCallback)
+  }
+
+  private fun openDailyWirdGoalDialog() {
+    wirdGoalDialog?.dismiss()
+    showWirdGoalDialog = true
+    syncHubBackCallback()
+    val palette = HybridViewPalette.from(appliedThemeStyle, appliedDarkMode, appliedOledDarkMode)
+    wirdGoalDialog = DailyWirdGoalDialogNative.show(
+      context = this,
+      initialGoalPages = hubStateHolder.uiState.value.dailyWird.goalPages,
+      palette = palette,
+      onSave = { goalPages ->
+        hubStateHolder.setDailyWirdGoal(goalPages)
+      },
+      onDismiss = {
+        showWirdGoalDialog = false
+        wirdGoalDialog = null
+        syncHubBackCallback()
+      }
+    )
+  }
+
+  private fun syncHubBackCallback() {
+    if (::hubBackCallback.isInitialized) {
+      hubBackCallback.isEnabled = showWirdGoalDialog ||
+        showPaletteSheet ||
+        hubStateHolder.uiState.value.selectedTab != HybridNavTab.INDEX
+    }
   }
 
   private fun isRtl(): Boolean {
     return QuranUtils.isRtl()
-  }
-
-  override fun onCreateOptionsMenu(menu: Menu): Boolean {
-    super.onCreateOptionsMenu(menu)
-    val inflater = menuInflater
-    inflater.inflate(R.menu.home_menu, menu)
-    searchItem = menu.findItem(R.id.search)
-    searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-      override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-        searchItemCollapserCallback.isEnabled = true
-        return true
-      }
-
-      override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-        searchItemCollapserCallback.isEnabled = false
-        return true
-      }
-    })
-    val searchView = searchItem?.actionView as SearchView
-    val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-    searchView.queryHint = getString(R.string.search_hint)
-    searchView.setSearchableInfo(
-        searchManager.getSearchableInfo(
-            ComponentName(this, SearchActivity::class.java)
-        )
-    )
-
-    // Add additional injected screens (if any)
-    extraScreens
-      .sortedBy { it.order }
-      .forEach { menu.add(Menu.NONE, it.id, Menu.NONE, it.titleResId) }
-
-    return true
-  }
-
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    when (val itemId = item.itemId) {
-      R.id.settings -> {
-        startActivity(Intent(this, QuranPreferenceActivity::class.java))
-      }
-      R.id.last_page -> {
-        jumpToLastPage()
-      }
-      R.id.help -> {
-        startActivity(Intent(this, HelpActivity::class.java))
-      }
-      R.id.about -> {
-        startActivity(Intent(this, AboutUsActivity::class.java))
-      }
-      R.id.jump -> {
-        gotoPageDialog()
-      }
-      R.id.other_apps -> {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = "market://search?q=pub:quran.com".toUri()
-        if (packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY) == null) {
-          intent.data = "https://play.google.com/store/search?q=pub:quran.com".toUri()
-        }
-        startActivity(intent)
-      }
-      else -> {
-        val handled = extraScreens.firstOrNull { it.id == itemId }?.onClick(this) ?: false
-        return handled || super.onOptionsItemSelected(item)
-      }
-    }
-    return true
   }
 
   override fun onSupportActionModeFinished(mode: ActionMode) {
@@ -384,32 +565,17 @@ class QuranActivity : AppCompatActivity(),
     supportActionMode = mode
     supportActionModeClearingCallback.isEnabled = true
     super.onSupportActionModeStarted(mode)
-
-    /**
-     * hack to fix the status bar color when action mode starts.
-     * unfortunately, despite being edge to edge, switching to contextual action mode causes
-     * [androidx.appcompat.app.AppCompatDelegate] and its implementation to set a status guard
-     * under the status bar (white in light mode, black in dark mode). this breaks the edge to
-     * edge look and feel, so we manually set the status guard's background color.
-     */
-    val abRoot = findViewById<ViewGroup>(androidx.appcompat.R.id.action_bar_root)
-    // has to be .post otherwise the background is set to the default color overriding this
-    abRoot.post {
-      val statusGuard = abRoot.getChildAt(abRoot.childCount - 1)
-      statusGuard?.let {
-        // not using `is` here because i literally want a View, not a subclass of View.
-        // checking top to be 0 is just a second just in case check.
-        if (statusGuard::class == View::class && statusGuard.top == 0) {
-          statusGuard.setBackgroundColor(ContextCompat.getColor(this, R.color.toolbar))
-        }
-      }
-    }
+    ThemeUtil.applyActionModeStatusGuard(this)
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
     outState.putBoolean(
         SI_SHOWED_UPGRADE_DIALOG,
         showedTranslationUpgradeDialog
+    )
+    outState.putBoolean(
+        SI_SHOW_PALETTE_SHEET,
+        showPaletteSheet
     )
     super.onSaveInstanceState(outState)
   }
@@ -425,8 +591,12 @@ class QuranActivity : AppCompatActivity(),
 
   private fun updateTranslationsListAsNeeded() {
     if (!updatedTranslations) {
-      translationManagerPresenter.checkForUpdates()
       updatedTranslations = true
+      val isCacheStale = System.currentTimeMillis() -
+        settings.lastUpdatedTranslationDate > Constants.MIN_TRANSLATION_REFRESH_TIME
+      if (isCacheStale) {
+        translationManagerPresenter().checkForUpdates()
+      }
     }
   }
 
@@ -461,11 +631,11 @@ class QuranActivity : AppCompatActivity(),
   }
 
   override fun jumpTo(page: Int) {
-    quranNavigator.jumpTo(Page(page), showTranslation = settings.wasShowingTranslation)
+    quranNavigator().jumpTo(Page(page), showTranslation = settings.wasShowingTranslation)
   }
 
   override fun jumpToAndHighlight(page: Int, sura: Int, ayah: Int) {
-    quranNavigator.jumpTo(SuraAyah(sura, ayah), showTranslation = settings.wasShowingTranslation)
+    quranNavigator().jumpTo(SuraAyah(sura, ayah), showTranslation = settings.wasShowingTranslation)
   }
 
   fun jumpTo(row: QuranRow) {
@@ -474,15 +644,7 @@ class QuranActivity : AppCompatActivity(),
     } else {
       Page(row.page)
     }
-    quranNavigator.jumpTo(location, row.readingBookmarkType, settings.wasShowingTranslation)
-  }
-
-  private fun gotoPageDialog() {
-    if (!isPaused) {
-      val fm = supportFragmentManager
-      val jumpDialog = JumpFragment()
-      jumpDialog.show(fm, JumpFragment.TAG)
-    }
+    quranNavigator().jumpTo(location, row.readingBookmarkType, settings.wasShowingTranslation)
   }
 
   fun addTag() {
@@ -528,56 +690,13 @@ class QuranActivity : AppCompatActivity(),
     dialog.show(fm, AddTagDialog.TAG)
   }
 
-  private inner class PagerAdapter(fm: FragmentManager) :
-      FragmentPagerAdapter(fm) {
-
-    override fun getCount() = 3
-
-    override fun getItem(position: Int): Fragment {
-      var pos = position
-      if (isRtl) {
-        pos = abs(position - 2)
-      }
-      return when (pos) {
-        SURA_LIST -> SuraListFragment.newInstance()
-        JUZ2_LIST -> JuzListFragment.newInstance()
-        BOOKMARKS_LIST -> BookmarksFragment.newInstance()
-        else -> BookmarksFragment.newInstance()
-      }
-    }
-
-    override fun getItemId(position: Int): Long {
-      val pos = if (isRtl) abs(position - 2) else position
-      return when (pos) {
-        SURA_LIST -> SURA_LIST.toLong()
-        JUZ2_LIST -> JUZ2_LIST.toLong()
-        BOOKMARKS_LIST -> BOOKMARKS_LIST.toLong()
-        else -> BOOKMARKS_LIST.toLong()
-      }
-    }
-
-    override fun getPageTitle(position: Int): CharSequence {
-      val resId = if (isRtl) ARABIC_TITLES[position] else TITLES[position]
-      return getString(resId)
-    }
-  }
-
   companion object {
-    private val TITLES = intArrayOf(
-        R.string.quran_sura,
-        R.string.quran_juz2,
-        R.string.menu_bookmarks
-    )
-    private val ARABIC_TITLES = intArrayOf(
-        R.string.menu_bookmarks,
-        R.string.quran_juz2,
-        R.string.quran_sura
-    )
     const val EXTRA_SHOW_TRANSLATION_UPGRADE = "transUp"
+    const val EXTRA_INITIAL_NAV_TAB = "hybrid_initial_nav_tab"
     private const val SI_SHOWED_UPGRADE_DIALOG = "si_showed_dialog"
-    private const val SURA_LIST = 0
-    private const val JUZ2_LIST = 1
-    private const val BOOKMARKS_LIST = 2
+    private const val SI_SHOW_PALETTE_SHEET = "si_show_palette_sheet"
     private var updatedTranslations = false
   }
 }
+
+private const val MAX_QURAN_PAGES_FALLBACK = 604

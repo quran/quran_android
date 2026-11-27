@@ -1,16 +1,23 @@
 package com.quran.mobile.feature.sync
 
 import android.content.ActivityNotFoundException
+import android.content.res.Configuration
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -19,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.quran.data.core.QuranConstants
 import com.quran.data.core.QuranInfo
@@ -73,7 +81,7 @@ class QuranSyncActivity : FragmentActivity() {
       ?.provideQuranApplicationComponent() as? QuranSyncComponentInterface
     injector?.quranSyncComponentFactory()?.generate()?.inject(this)
 
-    if (!syncManager.isConfigured) {
+    if (!::syncManager.isInitialized || !syncManager.isConfigured) {
       finish()
       return
     }
@@ -87,7 +95,20 @@ class QuranSyncActivity : FragmentActivity() {
       )
     }
     authActivityRegistration = syncManager.registerAuthActivity(this)
-    enableEdgeToEdge()
+    val isNight = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+      Configuration.UI_MODE_NIGHT_YES
+    enableEdgeToEdge(
+      statusBarStyle = if (isNight) {
+        SystemBarStyle.dark(Color.TRANSPARENT)
+      } else {
+        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+      },
+      navigationBarStyle = if (isNight) {
+        SystemBarStyle.dark(Color.TRANSPARENT)
+      } else {
+        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+      }
+    )
 
     // the account screen starts with the first sign-in and closes when that session ends
     lifecycleScope.launch {
@@ -106,7 +127,7 @@ class QuranSyncActivity : FragmentActivity() {
       QuranTheme {
         var showSyncActivity by rememberSaveable { mutableStateOf(false) }
         val screenState = rememberSaveableStateHolder()
-        val state = accountSyncState.collectAsState().value
+        val state = accountSyncState.collectAsStateWithLifecycle().value
         if (state == null) {
           QuranSyncScreen(
             syncManager = syncManager,
@@ -114,25 +135,35 @@ class QuranSyncActivity : FragmentActivity() {
           )
         } else {
           BackHandler(enabled = showSyncActivity) { showSyncActivity = false }
-          screenState.SaveableStateProvider(if (showSyncActivity) "activity" else "account") {
-            if (showSyncActivity) {
-              SyncActivityScreen(
-                activity = state.activity,
-                heldRows = state.heldRows,
-                verses = verses,
-                onBackPressed = { showSyncActivity = false },
-                onSyncNow = { state.eventSink(AccountSyncEvent.SyncNow) },
-                onEdit = ::editHeldItem
-              )
-            } else {
-              AccountSyncScreen(
-                state = state,
-                verses = verses,
-                onBackPressed = { finish() },
-                onManageAccount = ::openProfile,
-                onSyncActivity = { showSyncActivity = true },
-                onEdit = ::editHeldItem
-              )
+          AnimatedContent(
+            targetState = showSyncActivity,
+            transitionSpec = {
+              val direction = if (targetState) SlideDirection.Start else SlideDirection.End
+              (slideIntoContainer(direction) + fadeIn()) togetherWith
+                (slideOutOfContainer(direction) + fadeOut())
+            },
+            label = "syncActivityScreen"
+          ) { showingSyncActivity ->
+            screenState.SaveableStateProvider(if (showingSyncActivity) "activity" else "account") {
+              if (showingSyncActivity) {
+                SyncActivityScreen(
+                  activity = state.activity,
+                  heldRows = state.heldRows,
+                  verses = verses,
+                  onBackPressed = { showSyncActivity = false },
+                  onSyncNow = { state.eventSink(AccountSyncEvent.SyncNow) },
+                  onEdit = ::editHeldItem
+                )
+              } else {
+                AccountSyncScreen(
+                  state = state,
+                  verses = verses,
+                  onBackPressed = { finish() },
+                  onManageAccount = ::openProfile,
+                  onSyncActivity = { showSyncActivity = true },
+                  onEdit = ::editHeldItem
+                )
+              }
             }
           }
           readingBookmarkToRename?.let { bookmark ->
@@ -218,7 +249,9 @@ class QuranSyncActivity : FragmentActivity() {
   }
 
   override fun onDestroy() {
-    syncManager.unregisterAuthActivity(authActivityRegistration)
+    if (::syncManager.isInitialized) {
+      syncManager.unregisterAuthActivity(authActivityRegistration)
+    }
     authActivityRegistration = null
     super.onDestroy()
   }

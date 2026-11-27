@@ -21,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.quran.labs.androidquran.common.ui.core.QuranIcons
 import com.quran.labs.androidquran.common.ui.core.QuranTheme
-import com.quran.labs.androidquran.common.ui.core.modifier.autoMirror
 import com.quran.mobile.feature.sync.state.HeldItemRowState
 import com.quran.mobile.feature.sync.state.SyncActivityState
 import kotlinx.collections.immutable.ImmutableList
@@ -51,8 +50,7 @@ internal fun SyncActivityScreen(
           IconButton(onClick = onBackPressed) {
             Icon(
               imageVector = QuranIcons.ArrowBack,
-              contentDescription = stringResource(AppCompatR.string.abc_action_bar_up_description),
-              modifier = Modifier.autoMirror()
+              contentDescription = stringResource(AppCompatR.string.abc_action_bar_up_description)
             )
           }
         }

@@ -6,8 +6,11 @@ import com.quran.data.model.AyahGlyph
 import com.quran.data.model.AyahGlyph.WordGlyph
 import com.quran.data.model.AyahWord
 import com.quran.data.model.SuraAyah
+import java.util.concurrent.ConcurrentHashMap
 
 class PageGlyphsCoords(val page: Int, glyphCoords: List<GlyphCoords>) {
+
+  private val ayahBoundsCache = ConcurrentHashMap<Long, List<RectF>>()
 
   // key: line number, val: bounds
   val glyphsByAyah: Map<SuraAyah, List<GlyphCoords>> =
@@ -102,12 +105,21 @@ class PageGlyphsCoords(val page: Int, glyphCoords: List<GlyphCoords>) {
    * @return a list of the bounds for the specified key or null
    */
   fun getBounds(key: String, expandVertically: Boolean, expandHorizontally: Boolean): List<RectF>? {
-    val split = key.split(":").toTypedArray()
-    val ayah = SuraAyah(Integer.valueOf(split[0]), Integer.valueOf(split[1]))
-    return when (split.size) {
-        2 -> getBoundsForAyah(ayah, expandVertically, expandHorizontally)
-        3 -> getBoundsForWord(ayah, Integer.valueOf(split[2]))
-        else -> throw IllegalArgumentException("invalid key: $key, expecting _:_ or _:_:_")
+    val firstColon = key.indexOf(':')
+    if (firstColon <= 0) throw IllegalArgumentException("invalid key: $key, expecting _:_ or _:_:_")
+    val secondColon = key.indexOf(':', firstColon + 1)
+    val sura = key.substring(0, firstColon).toInt()
+    return if (secondColon == -1) {
+      val ayah = key.substring(firstColon + 1).toInt()
+      getBoundsForAyah(SuraAyah(sura, ayah), expandVertically, expandHorizontally)
+    } else {
+      val thirdColon = key.indexOf(':', secondColon + 1)
+      if (thirdColon != -1) {
+        throw IllegalArgumentException("invalid key: $key, expecting _:_ or _:_:_")
+      }
+      val ayah = key.substring(firstColon + 1, secondColon).toInt()
+      val word = key.substring(secondColon + 1).toInt()
+      getBoundsForWord(SuraAyah(sura, ayah), word)
     }
   }
 
@@ -147,14 +159,37 @@ class PageGlyphsCoords(val page: Int, glyphCoords: List<GlyphCoords>) {
    *                           to match the longest line
    * @return a list of the bounds for the specified ayah or null
    */
-  private fun getBoundsForAyah(ayah: SuraAyah, expandVertically: Boolean, expandHorizontally: Boolean): List<RectF>? =
-    glyphsByAyah[ayah]
-      ?.groupingBy { it.line }
-      ?.fold(RectF()) { bounds, glyph -> bounds + glyph.bounds }
-      ?.mapValues { it.value.alignWithLine(it.key) }
-      ?.mapValues { if (expandVertically) it.value.expandToAdjacentLines(it.key) else it.value }
-      ?.apply { if (expandHorizontally) expandBoundsHorizontallyToAlignWithOtherLines(this) }
-      ?.values?.toList()
+  private fun getBoundsForAyah(ayah: SuraAyah, expandVertically: Boolean, expandHorizontally: Boolean): List<RectF>? {
+    val cacheKey = (ayah.sura.toLong() shl 16) or
+      (ayah.ayah.toLong() shl 2) or
+      (if (expandVertically) 2L else 0L) or
+      (if (expandHorizontally) 1L else 0L)
+    ayahBoundsCache[cacheKey]?.let { return it }
+
+    val glyphs = glyphsByAyah[ayah] ?: return null
+    val byLine = LinkedHashMap<Int, RectF>()
+    for (i in glyphs.indices) {
+      val glyph = glyphs[i]
+      val existing = byLine[glyph.line]
+      if (existing == null) {
+        byLine[glyph.line] = RectF(glyph.bounds)
+      } else {
+        existing.union(glyph.bounds)
+      }
+    }
+    for ((line, bounds) in byLine) {
+      bounds.alignWithLine(line)
+      if (expandVertically) {
+        bounds.expandToAdjacentLines(line)
+      }
+    }
+    if (expandHorizontally) {
+      expandBoundsHorizontallyToAlignWithOtherLines(byLine)
+    }
+    val result = byLine.values.toList()
+    ayahBoundsCache.putIfAbsent(cacheKey, result)
+    return result
+  }
 
   /** Set this bound's top and bottom to that of the specified line */
   private fun RectF.alignWithLine(line: Int): RectF {
@@ -200,16 +235,14 @@ class PageGlyphsCoords(val page: Int, glyphCoords: List<GlyphCoords>) {
 
   fun getLineAtPoint(x: Float, y: Float): Int? {
     // Pass #1: Search for exact match
-    val exactMatch = lineBounds
-      .filterValues { it.contains(x, y) }
-      .firstNotNullOfOrNull { it.key }
-    if (exactMatch != null) return exactMatch
+    for ((line, bounds) in lineBounds) {
+      if (bounds.contains(x, y)) return line
+    }
 
     // Pass #2: Search exact match within vertically expanded bounds
-    val expandedMatch = expandedLineBounds
-      .filterValues { it.contains(x, y) }
-      .firstNotNullOfOrNull { it.key }
-    if (expandedMatch != null) return expandedMatch
+    for ((line, bounds) in expandedLineBounds) {
+      if (bounds.contains(x, y)) return line
+    }
 
     // No match
     return null

@@ -22,7 +22,8 @@ import com.quran.labs.androidquran.util.NotificationChannelUtil
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import dev.zacsweers.metro.Inject
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 
@@ -35,7 +36,7 @@ class AudioUpdateWorker(
   private val quranSettings: QuranSettings
 ) : CoroutineWorker(context, params) {
 
-  override suspend fun doWork(): Result = coroutineScope {
+  override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
     val audioPathRoot = quranFileUtils.getQuranAudioDirectory(context)
     if (audioPathRoot != null) {
       val currentVersion = quranSettings.currentAudioRevision

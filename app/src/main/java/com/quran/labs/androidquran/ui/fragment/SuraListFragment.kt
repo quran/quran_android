@@ -34,6 +34,7 @@ import com.quran.labs.androidquran.ui.helpers.QuranRowFactory
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.labs.androidquran.util.QuranUtils
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -49,7 +50,7 @@ class SuraListFragment : Fragment(), QuranTouchListener {
   lateinit var quranSettings: QuranSettings
 
   @Inject
-  lateinit var readingBookmarksDao: ReadingBookmarksDao
+  lateinit var readingBookmarksDao: Provider<ReadingBookmarksDao>
 
   @Inject
   lateinit var quranRowFactory: QuranRowFactory
@@ -58,6 +59,7 @@ class SuraListFragment : Fragment(), QuranTouchListener {
   private var numberOfPages = 0
   private var showSuraTranslatedName = false
   private var readingBookmarks: List<ReadingBookmark> = emptyList()
+  private var readingBookmarksObserverStarted = false
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
@@ -74,18 +76,28 @@ class SuraListFragment : Fragment(), QuranTouchListener {
     recyclerView = view.findViewById(R.id.recycler_view)
     showSuraTranslatedName = quranSettings.isShowSuraTranslatedName
     val quranListAdapter = QuranListAdapter(requireActivity(), recyclerView, getSuraList(), false)
+    quranListAdapter.setSuraMetadataProvider { sura ->
+      quranDisplayData.getSuraListMetaString(requireContext(), sura)
+    }
     quranListAdapter.setQuranTouchListener(this)
     recyclerView.apply {
+      setHasFixedSize(true)
       layoutManager = LinearLayoutManager(context)
       itemAnimator = DefaultItemAnimator()
       adapter = quranListAdapter
     }
 
-    viewLifecycleOwner.lifecycleScope.launch {
-      viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-        readingBookmarksDao.readingBookmarksFlow()
-          .distinctUntilChanged()
-          .collect { updateReadingBookmarks(it) }
+    readingBookmarksObserverStarted = false
+    recyclerView.post {
+      if (isAdded && getView() != null && !readingBookmarksObserverStarted) {
+        readingBookmarksObserverStarted = true
+        viewLifecycleOwner.lifecycleScope.launch {
+          viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            readingBookmarksDao().readingBookmarksFlow()
+              .distinctUntilChanged()
+              .collect { updateReadingBookmarks(it) }
+          }
+        }
       }
     }
 
@@ -106,6 +118,11 @@ class SuraListFragment : Fragment(), QuranTouchListener {
     return view
   }
 
+  override fun onDestroyView() {
+    readingBookmarksObserverStarted = false
+    super.onDestroyView()
+  }
+
   override fun onResume() {
     super.onResume()
     val activity = requireActivity()
@@ -115,15 +132,17 @@ class SuraListFragment : Fragment(), QuranTouchListener {
         showHideSuraTranslatedName()
         showSuraTranslatedName = newValueOfShowSuraTranslatedName
       }
-      viewLifecycleOwner.lifecycleScope.launch {
-        readingBookmarks = placedReadingBookmarks(readingBookmarksDao.readingBookmarks())
-        updateSuraList()
-        val recentPage = activity.latestPage()
-        if (recentPage != Constants.NO_PAGE) {
-          val sura = quranDisplayData.safelyGetSuraOnPage(recentPage)
-          val juz = quranInfo.getJuzFromPage(recentPage)
-          val position = sura + juz - 1 + readingBookmarkOffset()
-          recyclerView.scrollToPosition(position)
+      recyclerView.post {
+        if (isAdded && view != null) {
+          viewLifecycleOwner.lifecycleScope.launch {
+            val recentPage = activity.latestPage()
+            if (recentPage != Constants.NO_PAGE) {
+              val sura = quranDisplayData.safelyGetSuraOnPage(recentPage)
+              val juz = quranInfo.getJuzFromPage(recentPage)
+              val position = sura + juz - 1 + readingBookmarkOffset()
+              recyclerView.scrollToPosition(position)
+            }
+          }
         }
       }
 
@@ -155,10 +174,7 @@ class SuraListFragment : Fragment(), QuranTouchListener {
     val wantPrefix = activity.resources.getBoolean(R.bool.show_surat_prefix)
     val wantTranslation = quranSettings.isShowSuraTranslatedName
     for (juz in 1..JUZ2_COUNT) {
-      val headerTitle = activity.getString(
-        R.string.juz2_description,
-        QuranUtils.getLocalizedNumber(juz)
-      )
+      val headerTitle = quranDisplayData.getJuzDisplayString(activity, juz)
       val headerBuilder = QuranRow.Builder()
         .withType(QuranRow.HEADER)
         .withText(headerTitle)
@@ -171,7 +187,6 @@ class SuraListFragment : Fragment(), QuranTouchListener {
       while (sura <= SURAS_COUNT && quranInfo.getPageNumberForSura(sura) < next) {
         val builder = QuranRow.Builder()
           .withText(quranDisplayData.getSuraName(activity, sura, wantPrefix, wantTranslation))
-          .withMetadata(quranDisplayData.getSuraListMetaString(activity, sura))
           .withSura(sura)
           .withPage(quranInfo.getPageNumberForSura(sura))
         elements[pos++] = builder.build()
