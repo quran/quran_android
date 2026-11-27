@@ -3,6 +3,7 @@ package com.quran.labs.androidquran.ui.helpers
 import com.quran.data.model.bookmark.ReadingBookmarkType
 import com.quran.data.model.highlight.HighlightColor
 import com.quran.data.model.highlight.HighlightType
+import com.quran.data.model.highlight.HighlightType.Mode.HIDE
 import com.quran.data.model.highlight.HighlightType.Mode.HIGHLIGHT
 import com.quran.data.model.highlight.HighlightType.Mode.UNDERLAY
 import com.quran.data.model.highlight.HighlightType.Mode.UNDERLINE
@@ -19,6 +20,13 @@ object HighlightTypes {
   val NOTE =      HighlightType(3,  R.color.note_highlight,      HIGHLIGHT)
   @JvmField
   val BOOKMARK =  HighlightType(4,  R.color.bookmark_highlight,  HIGHLIGHT)
+  @JvmField
+  val MEMORIZATION_HIDE = HighlightType(
+    100,
+    R.color.mushaf_paper_color,
+    HIGHLIGHT,
+    nightColorResId = R.color.mushaf_paper_color
+  )
 
   private const val FIRST_HIGHLIGHT_ID = 5L
 

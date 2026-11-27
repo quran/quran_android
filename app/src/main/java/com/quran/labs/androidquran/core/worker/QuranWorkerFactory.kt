@@ -16,6 +16,12 @@ class QuranWorkerFactory @Inject constructor(
     workerClassName: String,
     workerParameters: WorkerParameters
   ): ListenableWorker? {
+    if (workerClassName == com.quran.labs.androidquran.flashcards.FlashcardDueNotificationWorker::class.java.name) {
+      return com.quran.labs.androidquran.flashcards.FlashcardDueNotificationWorker(
+        appContext,
+        workerParameters
+      )
+    }
     val workerClass = Class.forName(workerClassName)
     val factory = workerTaskFactories.entries.find { workerClass.kotlin == it.key }?.value
     return factory?.invoke()?.makeWorker(appContext, workerParameters)

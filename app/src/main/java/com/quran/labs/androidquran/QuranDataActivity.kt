@@ -331,6 +331,9 @@ class QuranDataActivity : AppCompatActivity(), SimpleDownloadListener, OnRequest
         quranSettings.shouldFetchPages() -> {
           downloadQuranImages(false)
         }
+        quranSettings.pageType == "tajweed" -> {
+          runListView()
+        }
         else -> {
           promptForDownload()
         }

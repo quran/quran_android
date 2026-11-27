@@ -381,7 +381,7 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
     if (isSplitScreen && mode == Mode.TRANSLATION) {
       splitImageView!!.setImageDrawable(BitmapDrawable(resources, pageBitmap))
     } else {
-      val imageView: ImageView? = if (page == pageNumber) rightImageView else leftImageView
+      val imageView: HighlightingImageView? = if (page == pageNumber) rightImageView else leftImageView
       imageView?.setImageDrawable(BitmapDrawable(resources, pageBitmap))
     }
   }
@@ -433,6 +433,8 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
     }
   }
 
+  private val latestAyahCoordinates = mutableMapOf<Int, AyahCoordinates>()
+
   fun cleanup() {
     Timber.d("cleaning up page %d", pageNumber)
     leftImageView?.setImageDrawable(null)
@@ -466,9 +468,6 @@ class TabletFragment : Fragment(), PageController, TranslationPresenter.Translat
   override fun handleLongPress(suraAyah: SuraAyah) {
     if (isVisible) {
       val page = quranInfo.getPageFromSuraAyah(suraAyah.sura, suraAyah.ayah)
-      if (page != lastLongPressPage) {
-        ayahTrackerPresenter.endAyahMode()
-      }
       lastLongPressPage = page
       ayahTrackerPresenter.onLongPress(suraAyah)
     }

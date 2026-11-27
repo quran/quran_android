@@ -8,4 +8,5 @@
   <string name="recite_from_here">اقرأ من هنا</string>
   <string name="search_key">للبحث عن آية</string>
   <string name="copy_ayah">نسخ الآية</string>
+  <string name="memorize_ayah_range">حفظ وتكرار النطاق</string>
 </resources>

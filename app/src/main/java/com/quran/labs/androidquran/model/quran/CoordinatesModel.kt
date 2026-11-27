@@ -1,10 +1,14 @@
 package com.quran.labs.androidquran.model.quran
 
+import android.content.Context
 import android.graphics.RectF
 import androidx.core.graphics.plus
+import com.quran.data.core.QuranInfo
 import com.quran.data.di.ActivityScope
 import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.data.AyahInfoDatabaseProvider
+import com.quran.labs.androidquran.memorization.FallbackMushafPageRenderer
+import com.quran.mobile.di.qualifier.ApplicationContext
 import com.quran.page.common.data.AyahBounds
 import com.quran.page.common.data.AyahCoordinates
 import com.quran.page.common.data.PageCoordinates
@@ -17,31 +21,35 @@ import kotlin.math.min
 
 @ActivityScope
 class CoordinatesModel @Inject internal constructor(
+  @ApplicationContext private val appContext: Context,
+  private val quranInfo: QuranInfo,
   private val ayahInfoDatabaseProvider: AyahInfoDatabaseProvider,
   private val pageProvider: PageProvider
 ) : CoordinatesModelInterface {
   override fun getPageCoordinates(wantPageBounds: Boolean, vararg pages: Int): Observable<PageCoordinates> {
-    val database = ayahInfoDatabaseProvider.getAyahInfoHandler()
-      ?: return Observable.error(NoSuchElementException("No AyahInfoDatabaseHandler found!"))
-
     return Observable.fromArray(*pages.toTypedArray())
       .map { page: Int? ->
-        database.getPageInfo(
-          page!!, wantPageBounds
-        )
+        val p = page!!
+        val database = ayahInfoDatabaseProvider.getAyahInfoHandler()
+        if (database != null) {
+          database.getPageInfo(p, wantPageBounds)
+        } else {
+          FallbackMushafPageRenderer.getFallbackPageCoordinates(appContext, quranInfo, p, wantPageBounds)
+        }
       }
       .subscribeOn(Schedulers.computation())
   }
 
   override fun getAyahCoordinates(vararg pages: Int): Observable<AyahCoordinates> {
-    val database = ayahInfoDatabaseProvider.getAyahInfoHandler()
-      ?: return Observable.error(NoSuchElementException("No AyahInfoDatabaseHandler found!"))
-
     return Observable.fromArray(*pages.toTypedArray())
       .map { page: Int? ->
-        database.getVersesBoundsForPage(
-          page!!
-        )
+        val p = page!!
+        val database = ayahInfoDatabaseProvider.getAyahInfoHandler()
+        if (database != null) {
+          database.getVersesBoundsForPage(p)
+        } else {
+          FallbackMushafPageRenderer.getFallbackAyahCoordinates(appContext, quranInfo, p)
+        }
       }
       .map { ayahCoordinates: AyahCoordinates ->
         this.normalizePageAyahs(

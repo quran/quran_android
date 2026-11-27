@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.core.view.ViewCompat
@@ -18,6 +19,9 @@ import com.quran.data.source.PageProvider
 import com.quran.labs.androidquran.QuranAdvancedPreferenceActivity
 import com.quran.labs.androidquran.QuranApplication
 import com.quran.labs.androidquran.R
+import com.quran.labs.androidquran.common.audio.model.QariItem
+import com.quran.labs.androidquran.common.audio.repository.CurrentQariManager
+import com.quran.labs.androidquran.common.audio.util.QariUtil
 import com.quran.labs.androidquran.data.Constants
 import com.quran.labs.androidquran.pageselect.PageSelectActivity
 import com.quran.labs.androidquran.ui.TranslationManagerActivity
@@ -38,6 +42,12 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
 
   @Inject
   lateinit var extraPreferences: Set<@JvmSuppressWildcards ExtraPreferencesProvider>
+
+  @Inject
+  lateinit var currentQariManager: CurrentQariManager
+
+  @Inject
+  lateinit var qariUtil: QariUtil
 
   override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
     addPreferencesFromResource(R.xml.quran_preferences)
@@ -92,6 +102,7 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
       startActivity(Intent(activity, AudioManagerActivity::class.java))
       true
     }
+    updateSelectedReciterSummary()
 
     val pageChangePref: Preference? = findPreference(Constants.PREF_PAGE_TYPE)
     if (pageTypes.size < 2 && pageChangePref != null) {
@@ -133,6 +144,26 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
       val intent = Intent(activity, QuranAdvancedPreferenceActivity::class.java)
       startActivity(intent)
       return true
+    } else if ("prefs_memory_flashcards" == key) {
+      val intent = Intent(activity, com.quran.labs.androidquran.flashcards.MemoryFlashcardsActivity::class.java)
+      startActivity(intent)
+      return true
+    } else if ("prefs_children_learning_mode" == key) {
+      com.quran.labs.androidquran.kidsclassroom.KidsModeActivity.start(requireContext())
+      return true
+    } else if ("prefs_live_tasmee_mode" == key) {
+      val ctx = requireContext()
+      val settings = QuranSettings.getInstance(ctx)
+      val initialPage = settings.lastPage.takeIf { it in 1..604 } ?: 1
+      val intent = Intent(activity, com.quran.labs.androidquran.ui.PagerActivity::class.java).apply {
+        putExtra("page", initialPage)
+        putExtra(com.quran.labs.androidquran.ui.PagerActivity.EXTRA_START_LIVE_TASMEE_MODE, true)
+      }
+      startActivity(intent)
+      return true
+    } else if (SELECT_RECITER_KEY == key) {
+      showSelectReciterDialog()
+      return true
     } else if (Constants.PREF_PAGE_TYPE == key) {
       val intent = Intent(activity, PageSelectActivity::class.java)
       startActivity(intent)
@@ -169,6 +200,34 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
       pageThemeSummary(requireContext(), QuranSettings.getInstance(requireContext()))
   }
 
+  private fun updateSelectedReciterSummary() {
+    val context = context ?: return
+    val currentItem = QariItem.fromQari(context, currentQariManager.currentQari())
+    findPreference<Preference>(SELECT_RECITER_KEY)?.summary = currentItem.name
+  }
+
+  private fun showSelectReciterDialog() {
+    val context = requireContext()
+    val qaris = qariUtil.getQariList(context)
+    if (qaris.isEmpty()) return
+    val currentId = currentQariManager.currentQariId()
+    val checkedIndex = qaris.indexOfFirst { it.id == currentId }.coerceAtLeast(0)
+    val titles = qaris.map { it.name }.toTypedArray()
+
+    AlertDialog.Builder(context)
+      .setTitle(R.string.select_reciter_title)
+      .setSingleChoiceItems(titles, checkedIndex) { dialog, which ->
+        val selected = qaris.getOrNull(which)
+        if (selected != null) {
+          currentQariManager.setCurrentQari(selected.id)
+          updateSelectedReciterSummary()
+        }
+        dialog.dismiss()
+      }
+      .setNegativeButton(R.string.flashcard_delete_cancel_button, null)
+      .show()
+  }
+
   private fun isCurrentlyArabic(): Boolean {
     val locale = QuranUtils.getCurrentLocale()
     return locale.language == "ar"
@@ -189,5 +248,6 @@ class QuranSettingsFragment : PreferenceFragmentCompat() {
 
   companion object {
     private const val ARABIC_KEY = "useArabicNames"
+    private const val SELECT_RECITER_KEY = "prefs_select_reciter"
   }
 }

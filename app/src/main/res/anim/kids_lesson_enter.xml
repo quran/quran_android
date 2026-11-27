@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Entering Kids Mushaf lesson from an Island: crisp rise + subtle scale -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/fast_out_slow_in"
+    android:shareInterpolator="true">
+  <alpha
+      android:duration="200"
+      android:fromAlpha="0.0"
+      android:toAlpha="1.0" />
+  <scale
+      android:duration="220"
+      android:fromXScale="0.96"
+      android:fromYScale="0.96"
+      android:pivotX="50%"
+      android:pivotY="50%"
+      android:toXScale="1.0"
+      android:toYScale="1.0" />
+</set>

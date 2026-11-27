@@ -179,9 +179,25 @@ class QuranFileUtils @Inject constructor(
     val location: File =
       widthParam?.let { getQuranImagesDirectory(it) }
           ?: getQuranImagesDirectory()
+    val targetFile = File(location, filename)
+    if (!targetFile.exists() && imagesDirectory.isNotEmpty()) {
+      val resolvedWidth = widthParam ?: quranScreenInfo.widthParam
+      val assetPath = "$imagesDirectory/width$resolvedWidth/$filename"
+      try {
+        appContext.assets.open(assetPath).use { input ->
+          if (makeQuranImagesDirectory(resolvedWidth)) {
+            targetFile.outputStream().use { output ->
+              input.copyTo(output)
+            }
+          }
+        }
+      } catch (_: Exception) {
+        // Not bundled in assets; will be fetched from web/zip range
+      }
+    }
     val options = Options()
-    options.inPreferredConfig = ALPHA_8
-    val bitmap = BitmapFactory.decodeFile(File(location, filename).absolutePath, options)
+    options.inPreferredConfig = if (imagesDirectory.isEmpty()) ALPHA_8 else Bitmap.Config.ARGB_8888
+    val bitmap = BitmapFactory.decodeFile(targetFile.absolutePath, options)
     return bitmap?.let { Response(it) } ?: Response(Response.ERROR_FILE_NOT_FOUND)
   }
 
@@ -305,6 +321,12 @@ class QuranFileUtils @Inject constructor(
     filename: String,
     isRetry: Boolean
   ): Response {
+    if (imagesDirectory.isNotEmpty()) {
+      val zipRangeResponse = getImageFromRemoteZipRange(okHttpClient, widthParam, filename)
+      if (zipRangeResponse.isSuccessful) {
+        return zipRangeResponse
+      }
+    }
     val base = imageBaseUrl
     val urlString = (base + "width" + widthParam + File.separator + filename)
     Timber.d("want to download: %s", urlString)
@@ -347,14 +369,176 @@ class QuranFileUtils @Inject constructor(
     } finally {
       responseBody.closeQuietly()
     }
-    return if (isRetry) Response(
-        Response.ERROR_DOWNLOADING_ERROR
-    ) else getImageFromWeb(okHttpClient, context, widthParam, filename, true)
+    return if (isRetry) {
+      val fallbackZipResponse = getImageFromRemoteZipRange(okHttpClient, widthParam, filename)
+      if (fallbackZipResponse.isSuccessful) {
+        fallbackZipResponse
+      } else {
+        Response(Response.ERROR_DOWNLOADING_ERROR)
+      }
+    } else getImageFromWeb(okHttpClient, context, widthParam, filename, true)
+  }
+
+  private fun getImageFromRemoteZipRange(
+    okHttpClient: OkHttpClient,
+    widthParam: String,
+    filename: String
+  ): Response {
+    val zipUrl = getZipFileUrl(widthParam)
+    val entryKey = "width$widthParam/$filename"
+    try {
+      val directory = getOrFetchRemoteZipDirectory(okHttpClient, zipUrl) ?: return Response(Response.ERROR_DOWNLOADING_ERROR)
+      val entry = directory[entryKey] ?: return Response(Response.ERROR_FILE_NOT_FOUND)
+      val endByte = entry.localHeaderOffset + entry.compressedSize + 128L
+      val req = Builder()
+        .url(zipUrl)
+        .header("Range", "bytes=${entry.localHeaderOffset}-$endByte")
+        .build()
+      okHttpClient.newCall(req).execute().use { resp ->
+        if (!resp.isSuccessful && resp.code != 206) {
+          return Response(Response.ERROR_DOWNLOADING_ERROR)
+        }
+        val chunk = resp.body?.bytes() ?: return Response(Response.ERROR_DOWNLOADING_ERROR)
+        if (chunk.size < 30) return Response(Response.ERROR_DOWNLOADING_ERROR)
+        val fileNameLen = readLeShort(chunk, 26)
+        val extraLen = readLeShort(chunk, 28)
+        val dataStart = 30 + fileNameLen + extraLen
+        val compSize = entry.compressedSize.toInt()
+        if (dataStart + compSize > chunk.size) return Response(Response.ERROR_DOWNLOADING_ERROR)
+
+        val pngBytes = if (entry.compressionMethod == 8) {
+          val inflater = java.util.zip.Inflater(true)
+          try {
+            inflater.setInput(chunk, dataStart, compSize)
+            val out = ByteArray(entry.uncompressedSize.toInt())
+            var offset = 0
+            while (!inflater.finished() && offset < out.size) {
+              val count = inflater.inflate(out, offset, out.size - offset)
+              if (count <= 0 && inflater.needsInput()) break
+              offset += count
+            }
+            out
+          } finally {
+            inflater.end()
+          }
+        } else {
+          chunk.copyOfRange(dataStart, dataStart + compSize)
+        }
+
+        val options = Options().apply {
+          inPreferredConfig = if (imagesDirectory.isEmpty()) ALPHA_8 else Bitmap.Config.ARGB_8888
+        }
+        val bitmap = BitmapFactory.decodeByteArray(pngBytes, 0, pngBytes.size, options)
+        if (bitmap != null) {
+          val path = getQuranImagesDirectory(widthParam)
+          var warning = Response.WARN_SD_CARD_NOT_FOUND
+          if (makeQuranImagesDirectory(widthParam)) {
+            val resultPath = File(path, filename)
+            warning = try {
+              resultPath.writeBytes(pngBytes)
+              0
+            } catch (_: IOException) {
+              Response.WARN_COULD_NOT_SAVE_FILE
+            }
+          }
+          return Response(bitmap, warning)
+        }
+      }
+    } catch (e: Exception) {
+      Timber.e(e, "Failed extracting %s from remote zip %s", entryKey, zipUrl)
+    }
+    return Response(Response.ERROR_DOWNLOADING_ERROR)
+  }
+
+  private fun getOrFetchRemoteZipDirectory(
+    okHttpClient: OkHttpClient,
+    zipUrl: String
+  ): Map<String, RemoteZipEntry>? {
+    remoteZipDirectoryCache[zipUrl]?.let { return it }
+    synchronized(remoteZipDirectoryCache) {
+      remoteZipDirectoryCache[zipUrl]?.let { return it }
+      val eocdReq = Builder()
+        .url(zipUrl)
+        .header("Range", "bytes=-65536")
+        .build()
+      val (cdSize, cdOffset) = okHttpClient.newCall(eocdReq).execute().use { resp ->
+        if (!resp.isSuccessful && resp.code != 206) return null
+        val tail = resp.body?.bytes() ?: return null
+        var eocdPos = -1
+        for (i in tail.size - 22 downTo 0) {
+          if (tail[i] == 0x50.toByte() &&
+              tail[i + 1] == 0x4b.toByte() &&
+              tail[i + 2] == 0x05.toByte() &&
+              tail[i + 3] == 0x06.toByte()
+          ) {
+            eocdPos = i
+            break
+          }
+        }
+        if (eocdPos < 0) return null
+        val size = readLeInt(tail, eocdPos + 12)
+        val offset = readLeInt(tail, eocdPos + 16)
+        size to offset
+      }
+
+      val cdReq = Builder()
+        .url(zipUrl)
+        .header("Range", "bytes=$cdOffset-${cdOffset + cdSize - 1}")
+        .build()
+      val cdBytes = okHttpClient.newCall(cdReq).execute().use { resp ->
+        if (!resp.isSuccessful && resp.code != 206) return null
+        resp.body?.bytes() ?: return null
+      }
+
+      val entries = HashMap<String, RemoteZipEntry>(620)
+      var pos = 0
+      while (pos + 46 <= cdBytes.size) {
+        if (cdBytes[pos] != 0x50.toByte() ||
+            cdBytes[pos + 1] != 0x4b.toByte() ||
+            cdBytes[pos + 2] != 0x01.toByte() ||
+            cdBytes[pos + 3] != 0x02.toByte()
+        ) {
+          break
+        }
+        val method = readLeShort(cdBytes, pos + 10)
+        val compSize = readLeInt(cdBytes, pos + 20)
+        val uncompSize = readLeInt(cdBytes, pos + 24)
+        val nameLen = readLeShort(cdBytes, pos + 28)
+        val extraLen = readLeShort(cdBytes, pos + 30)
+        val commentLen = readLeShort(cdBytes, pos + 32)
+        val localOffset = readLeInt(cdBytes, pos + 42)
+        if (pos + 46 + nameLen > cdBytes.size) break
+        val name = String(cdBytes, pos + 46, nameLen, Charsets.UTF_8)
+        entries[name] = RemoteZipEntry(
+          localHeaderOffset = localOffset,
+          compressedSize = compSize,
+          uncompressedSize = uncompSize,
+          compressionMethod = method
+        )
+        pos += 46 + nameLen + extraLen + commentLen
+      }
+      if (entries.isNotEmpty()) {
+        remoteZipDirectoryCache[zipUrl] = entries
+      }
+      return entries
+    }
+  }
+
+  private fun readLeShort(bytes: ByteArray, offset: Int): Int {
+    return (bytes[offset].toInt() and 0xFF) or
+        ((bytes[offset + 1].toInt() and 0xFF) shl 8)
+  }
+
+  private fun readLeInt(bytes: ByteArray, offset: Int): Long {
+    return (bytes[offset].toLong() and 0xFFL) or
+        ((bytes[offset + 1].toLong() and 0xFFL) shl 8) or
+        ((bytes[offset + 2].toLong() and 0xFFL) shl 16) or
+        ((bytes[offset + 3].toLong() and 0xFFL) shl 24)
   }
 
   private fun decodeBitmapStream(`is`: InputStream): Bitmap? {
     val options = Options()
-    options.inPreferredConfig = ALPHA_8
+    options.inPreferredConfig = if (imagesDirectory.isEmpty()) ALPHA_8 else Bitmap.Config.ARGB_8888
     return BitmapFactory.decodeStream(`is`, null, options)
   }
 
@@ -718,8 +902,17 @@ class QuranFileUtils @Inject constructor(
     }
   }
 
+  private data class RemoteZipEntry(
+    val localHeaderOffset: Long,
+    val compressedSize: Long,
+    val uncompressedSize: Long,
+    val compressionMethod: Int
+  )
+
   companion object {
     private const val QURAN_BASE = "quran_android/"
+    private val remoteZipDirectoryCache = java.util.concurrent.ConcurrentHashMap<String, Map<String, RemoteZipEntry>>()
+
     @JvmStatic fun getPageFileName(p: Int): String {
       val nf = NumberFormat.getInstance(Locale.US)
       nf.minimumIntegerDigits = 3

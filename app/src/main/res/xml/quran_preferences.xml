@@ -72,6 +72,24 @@
         android:title="@string/prefs_page_type_title"
         app:iconSpaceReserved="false"/>
 
+    <Preference
+        android:key="@string/prefs_memory_flashcards_key"
+        android:summary="@string/memory_flashcards_subtitle"
+        android:title="@string/memory_flashcards_title"
+        app:iconSpaceReserved="false"/>
+
+    <Preference
+        android:key="@string/prefs_children_learning_mode_key"
+        android:summary="@string/children_learning_mode_subtitle"
+        android:title="@string/children_learning_mode_title"
+        app:iconSpaceReserved="false"/>
+
+    <Preference
+        android:key="@string/prefs_live_tasmee_mode_key"
+        android:summary="@string/live_tasmee_subtitle"
+        android:title="@string/live_tasmee_title"
+        app:iconSpaceReserved="false"/>
+
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="@string/prefs_overlay_page_info"
@@ -176,6 +194,11 @@
       android:key="@string/prefs_download_category_key"
       android:title="@string/prefs_category_download"
       app:iconSpaceReserved="false">
+
+    <Preference
+        android:key="@string/prefs_select_reciter_key"
+        android:title="@string/select_reciter_title"
+        app:iconSpaceReserved="false"/>
 
     <CheckBoxPreference
         android:defaultValue="false"

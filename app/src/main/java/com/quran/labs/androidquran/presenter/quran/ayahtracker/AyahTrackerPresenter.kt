@@ -21,6 +21,7 @@ import com.quran.data.model.highlight.HighlightInfo
 import com.quran.data.model.highlight.HighlightType
 import com.quran.data.model.selection.AyahSelection
 import com.quran.data.model.selection.SelectionIndicator
+import com.quran.data.model.selection.endSuraAyah
 import com.quran.data.model.selection.startSuraAyah
 import com.quran.labs.androidquran.common.QuranAyahInfo
 import com.quran.labs.androidquran.common.audio.model.playback.currentPlaybackAyah
@@ -37,6 +38,8 @@ import com.quran.labs.androidquran.ui.helpers.AyahSelectedListener.EventType.SIN
 import com.quran.labs.androidquran.ui.helpers.AyahTracker
 import com.quran.labs.androidquran.ui.helpers.HighlightTypes
 import com.quran.labs.androidquran.ui.translation.ayahIndicators
+import com.quran.labs.androidquran.kidsclassroom.KidsClassroomManager
+import com.quran.labs.androidquran.memorization.QuranMemorizationManager
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranSettings
 import com.quran.mobile.translation.model.LocalTranslation
@@ -85,6 +88,7 @@ class AyahTrackerPresenter @Inject constructor(
   private var items: Array<AyahTrackerItem> = emptyArray()
   private var pendingHighlightInfo: HighlightInfo? = null
   private var lastHighlightedAyah: SuraAyah? = null
+  private var lastHighlightedEndAyah: SuraAyah? = null
   private var lastHighlightedAudioAyah: SuraAyah? = null
 
   private val isRecitationEnabled = recitationPresenter.isRecitationEnabled()
@@ -149,12 +153,12 @@ class AyahTrackerPresenter @Inject constructor(
 
   private fun onAyahSelectionChanged(ayahSelection: AyahSelection) {
     val startSuraAyah = ayahSelection.startSuraAyah()
+    val endSuraAyah = ayahSelection.endSuraAyah()
 
-    // optimization - if the current ayah is still highlighted, don't issue a request
-    // to unhighlight.
-    if (startSuraAyah != lastHighlightedAyah) {
+    if (startSuraAyah != lastHighlightedAyah || endSuraAyah != lastHighlightedEndAyah) {
       unHighlightAyahs(HighlightTypes.SELECTION)
       lastHighlightedAyah = startSuraAyah
+      lastHighlightedEndAyah = endSuraAyah
     }
 
     when (ayahSelection) {
@@ -324,8 +328,22 @@ class AyahTrackerPresenter @Inject constructor(
     page: Int,
     ayahCoordinatesError: Boolean
   ): Boolean {
+    if ((eventType == SINGLE_TAP || eventType == DOUBLE_TAP || eventType == LONG_PRESS) &&
+      KidsClassroomManager.onMushafPageTapped()
+    ) {
+      return true
+    }
     if (eventType === DOUBLE_TAP) {
-      readingEventPresenter.onAyahSelection(AyahSelection.None)
+      if (readingEventPresenter.currentAyahSelection() != AyahSelection.None) {
+        readingEventPresenter.onAyahSelection(AyahSelection.None)
+      } else if (QuranMemorizationManager.isHiddenModeEnabled()) {
+        val tappedAyah = getAyahForPosition(page, event.x, event.y)
+        if (activity is PagerActivity) {
+          activity.handleMemorizationTapOnPage(page, tappedAyah)
+        } else {
+          readingEventPresenter.onClick()
+        }
+      }
     } else if (eventType == LONG_PRESS ||
       readingEventPresenter.currentAyahSelection() != AyahSelection.None
     ) {
@@ -335,6 +353,13 @@ class AyahTrackerPresenter @Inject constructor(
       } else {
         // either a press or a long press, but we're in selection mode
         handleAyahSelection(event, eventType, page)
+      }
+    } else if (eventType == SINGLE_TAP && QuranMemorizationManager.isHiddenModeEnabled()) {
+      val tappedAyah = getAyahForPosition(page, event.x, event.y)
+      if (activity is PagerActivity) {
+        activity.handleMemorizationTapOnPage(page, tappedAyah)
+      } else {
+        QuranMemorizationManager.onMemorizationPageTap(page, quranInfo, activity, tappedAyah)
       }
     } else if (eventType == SINGLE_TAP && recitationEventPresenter.hasRecitationSession()) {
       handleTap(event, eventType, page)

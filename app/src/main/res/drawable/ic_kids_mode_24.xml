@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <!-- Crescent moon rising gracefully over the Kids Progress Island -->
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M11.93,3.02 A5.8,5.8 0 1,0 17.01,10.28 A4.6,4.6 0 1,1 11.93,3.02 Z" />
+  <!-- Curved Progress Island silhouette -->
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M3.8,19.1 C6.4,17.0 9.1,16.3 12.0,16.3 C14.9,16.3 17.6,17.0 20.2,19.1 C20.55,19.38 20.35,19.95 19.9,19.95 L4.1,19.95 C3.65,19.95 3.45,19.38 3.8,19.1 Z" />
+  <!-- Gentle lagoon ripple beneath the island -->
+  <path
+      android:pathData="M5.6,21.55 Q8.8,20.85 12.0,21.55 Q15.2,22.25 18.4,21.55"
+      android:strokeColor="@android:color/white"
+      android:strokeWidth="1.35"
+      android:strokeLineCap="round" />
+</vector>

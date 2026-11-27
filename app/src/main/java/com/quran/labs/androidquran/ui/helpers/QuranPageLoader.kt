@@ -1,8 +1,10 @@
 package com.quran.labs.androidquran.ui.helpers
 
 import android.content.Context
+import com.quran.data.core.QuranInfo
 import com.quran.data.di.ActivityScope
 import com.quran.labs.androidquran.common.Response
+import com.quran.labs.androidquran.memorization.FallbackMushafPageRenderer
 import com.quran.labs.androidquran.util.QuranFileUtils
 import com.quran.labs.androidquran.util.QuranScreenInfo
 import com.quran.mobile.di.qualifier.ApplicationContext
@@ -18,7 +20,8 @@ class QuranPageLoader @Inject internal constructor(
   private val okHttpClient: OkHttpClient,
   private val imageWidth: String,
   private val quranScreenInfo: QuranScreenInfo,
-  private val quranFileUtils: QuranFileUtils
+  private val quranFileUtils: QuranFileUtils,
+  private val quranInfo: QuranInfo
 ) : QuranPageLoaderInterface {
 
   private fun loadImage(pageNumber: Int): Response {
@@ -62,7 +65,17 @@ class QuranPageLoader @Inject internal constructor(
     if ((response == null || response.bitmap == null) && oom != null) {
       throw oom
     }
-    response!!.setPageData(pageNumber)
+
+    if (response == null || response.bitmap == null) {
+      val fallbackBitmap = FallbackMushafPageRenderer.renderFallbackPageBitmap(
+        appContext,
+        quranInfo,
+        pageNumber
+      )
+      response = Response(fallbackBitmap)
+    }
+
+    response.setPageData(pageNumber)
     return response
   }
 

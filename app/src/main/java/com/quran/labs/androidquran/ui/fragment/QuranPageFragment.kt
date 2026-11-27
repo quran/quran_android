@@ -160,10 +160,12 @@ class QuranPageFragment : Fragment(), PageController, QuranPage, QuranPageScreen
       .inject(this)
   }
 
+  private var latestAyahCoordinates: AyahCoordinates? = null
+
   override fun onStart() {
     super.onStart()
-    quranPagePresenter.bind(this)
     ayahTrackerPresenter.bind(this)
+    quranPagePresenter.bind(this)
   }
 
   override fun onStop() {
@@ -185,9 +187,14 @@ class QuranPageFragment : Fragment(), PageController, QuranPage, QuranPageScreen
   }
 
   override fun setAyahCoordinatesData(ayahCoordinates: AyahCoordinates) {
+    latestAyahCoordinates = ayahCoordinates
     ayahTrackerPresenter.setAyahCoordinates(ayahCoordinates)
     ayahCoordinatesError = false
   }
+
+  fun getPageNumber(): Int = pageNumber
+  fun getImageView(): HighlightingImageView? = imageView
+  fun getAyahCoordinates(): AyahCoordinates? = latestAyahCoordinates
 
   override fun setAyahCoordinatesError() {
     ayahCoordinatesError = true

@@ -69,8 +69,7 @@ class QuranPagePresenter @Inject constructor(
 
   private fun getAyahCoordinates(pages: IntArray) {
     compositeDisposable.add(
-      Completable.timer(500, TimeUnit.MILLISECONDS)
-        .andThen(Observable.fromArray(*pages.toTypedArray()))
+      Observable.fromArray(*pages.toTypedArray())
         .flatMap { coordinatesModel.getAyahCoordinates(it) }
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeWith(object : DisposableObserver<AyahCoordinates>() {

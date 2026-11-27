@@ -36,6 +36,17 @@ constructor(
     val data = pageTypes.map {
       val provider = it.value
       val previewImage = File(outputPath, "${it.key}.png")
+      if (!previewImage.exists()) {
+        try {
+          quranFileUtils.copyFromAssetsRelative(
+            "pagetypes/snips/${it.key}.png",
+            "${it.key}.png",
+            outputPath
+          )
+        } catch (_: Exception) {
+          // Will fall back to network download below
+        }
+      }
       val downloadedImage = if (previewImage.exists()) {
         previewImage
       } else if (!downloadingSet.contains(it.key)) {

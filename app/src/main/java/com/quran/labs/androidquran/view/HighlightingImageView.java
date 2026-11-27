@@ -49,10 +49,29 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import android.animation.AnimatorListenerAdapter;
+import android.view.animation.LinearInterpolator;
+
+import com.quran.data.model.SuraAyah;
+import com.quran.labs.androidquran.kidsclassroom.KidsClassroomHighlightsDrawer;
+import com.quran.labs.androidquran.kidsclassroom.KidsClassroomManager;
+import com.quran.labs.androidquran.kidsclassroom.KidsClassroomUiState;
+import com.quran.labs.androidquran.memorization.AyahGlyphSynthesizer;
+import com.quran.labs.androidquran.memorization.FadingWord;
+import com.quran.labs.androidquran.memorization.MemorizationHighlightsDrawer;
+import com.quran.labs.androidquran.memorization.MemorizationUiState;
+import com.quran.labs.androidquran.memorization.QuranMemorizationManager;
+import com.quran.labs.androidquran.memorization.RevealMode;
+import com.quran.labs.androidquran.memorization.RevealTransition;
+import com.quran.page.common.data.coordinates.PageGlyphsCoords;
+
+import java.util.Collections;
+
 import dev.chrisbanes.insetter.Insetter;
 import kotlin.Unit;
 
-public class HighlightingImageView extends AppCompatImageView {
+public class HighlightingImageView extends AppCompatImageView
+    implements QuranMemorizationManager.Listener, KidsClassroomManager.Listener {
   // for debugging / visualizing glyph bounds:
   // when enabled, will draw bounds around each glyph to visualize the glyph bounds
   private static final boolean DEBUG_BOUNDS = false;
@@ -118,6 +137,55 @@ public class HighlightingImageView extends AppCompatImageView {
       HIGHLIGHT, BACKGROUND
   );
 
+  public static final long WORD_REVEAL_DURATION_MS = 320L;
+  public static final long WORD_WINDOW_FADE_OUT_DURATION_MS = 520L;
+
+  private static final class ActiveWordAnim {
+    final SuraAyah suraAyah;
+    final int wordPos;
+    final float startFraction;
+    final float targetFraction;
+    final long durationMs;
+
+    ActiveWordAnim(
+        SuraAyah suraAyah,
+        int wordPos,
+        float startFraction,
+        float targetFraction,
+        long durationMs
+    ) {
+      this.suraAyah = suraAyah;
+      this.wordPos = wordPos;
+      this.startFraction = startFraction;
+      this.targetFraction = targetFraction;
+      this.durationMs = durationMs;
+    }
+  }
+
+  private final Map<String, Float> wordAnimationFractions = new HashMap<>();
+  private final Map<String, ActiveWordAnim> activeWordAnimations = new HashMap<>();
+  private ValueAnimator revealAnimator;
+  private long currentAnimatorDurationMs = 0L;
+  private long currentAnimatorElapsedMs = 0L;
+  private boolean isRestartingRevealAnimator = false;
+  private long lastHandledTransitionId = -1L;
+
+  private final MemorizationHighlightsDrawer memorizationHighlightsDrawer =
+      new MemorizationHighlightsDrawer(
+          () -> ayahCoordinates,
+          c -> { super.onDraw(c); return Unit.INSTANCE; },
+          () -> isNightMode,
+          () -> nightModeTextBrightness,
+          () -> nightModeBackgroundBrightness,
+          () -> wordAnimationFractions
+      );
+
+  private final KidsClassroomHighlightsDrawer kidsClassroomHighlightsDrawer =
+      new KidsClassroomHighlightsDrawer(
+          () -> ayahCoordinates,
+          () -> isNightMode
+      );
+
   private final ImageDrawHelper glyphBoundsDebuggingDrawer = DEBUG_BOUNDS ?
       new GlyphBoundsDebuggingDrawer(() -> ayahCoordinates) : null;
 
@@ -154,6 +222,250 @@ public class HighlightingImageView extends AppCompatImageView {
           }
         })
         .applyToView(this);
+    QuranMemorizationManager.addListener(this);
+    KidsClassroomManager.addListener(this);
+  }
+
+  @Override
+  protected void onAttachedToWindow() {
+    super.onAttachedToWindow();
+    QuranMemorizationManager.addListener(this);
+    KidsClassroomManager.addListener(this);
+  }
+
+  @Override
+  protected void onDetachedFromWindow() {
+    QuranMemorizationManager.removeListener(this);
+    KidsClassroomManager.removeListener(this);
+    clearAllWordAnimations();
+    super.onDetachedFromWindow();
+  }
+
+  @Override
+  public void onKidsClassroomStateChanged(@NonNull KidsClassroomUiState state) {
+    postInvalidateOnAnimation();
+  }
+
+  private void clearAllWordAnimations() {
+    isRestartingRevealAnimator = false;
+    if (revealAnimator != null) {
+      revealAnimator.cancel();
+      revealAnimator = null;
+    }
+    activeWordAnimations.clear();
+    wordAnimationFractions.clear();
+    currentAnimatorDurationMs = 0L;
+    currentAnimatorElapsedMs = 0L;
+  }
+
+  @Override
+  public void onMemorizationStateChanged(@NonNull MemorizationUiState state) {
+    if (!state.isHiddenModeEnabled() ||
+        (state.getLastTransition() == null &&
+            (state.getPageProgress().getRevealedWords() == 0 ||
+                state.getRevealMode().isSingleActiveWordMode()))) {
+      clearAllWordAnimations();
+      invalidate();
+      return;
+    }
+
+    final RevealTransition transition = state.getLastTransition();
+    final int currentPageNum = pageCoordinates != null ? pageCoordinates.getPage() :
+        (ayahCoordinates != null ? ayahCoordinates.getPage() : -1);
+    if (transition != null &&
+        transition.getId() != lastHandledTransitionId &&
+        transition.getPage() == currentPageNum) {
+      lastHandledTransitionId = transition.getId();
+      startRevealColorTransition(transition, state.getRevealMode());
+    } else {
+      invalidate();
+    }
+  }
+
+  private void startRevealColorTransition(
+      @NonNull RevealTransition transition,
+      @NonNull RevealMode revealMode
+  ) {
+    final long previousElapsedMs = currentAnimatorElapsedMs;
+    if (revealAnimator != null && revealAnimator.isRunning()) {
+      isRestartingRevealAnimator = true;
+      revealAnimator.cancel();
+      isRestartingRevealAnimator = false;
+    }
+
+    final int pageNum = transition.getPage();
+    final Set<String> fadingOutKeys = new HashSet<>();
+    for (FadingWord fadingWord : transition.getFadingOutWords()) {
+      fadingOutKeys.add(fadingWord.key());
+    }
+
+    // Carry over still-running animations when appropriate; prune any stale ones
+    final Map<String, ActiveWordAnim> carriedAnimations = new HashMap<>();
+    final Map<String, Float> carriedStartFractions = new HashMap<>();
+
+    for (Map.Entry<String, ActiveWordAnim> entry : activeWordAnimations.entrySet()) {
+      final String key = entry.getKey();
+      final ActiveWordAnim prev = entry.getValue();
+      final Float currentFractionObj = wordAnimationFractions.get(key);
+      final float currentFraction = currentFractionObj != null ? currentFractionObj : prev.targetFraction;
+      final long remainingMs = prev.durationMs - previousElapsedMs;
+
+      if (fadingOutKeys.contains(key)) {
+        // Was mid-reveal and just got pushed out of the Word Window: remember its current fraction
+        carriedStartFractions.put(key, currentFraction);
+        continue;
+      }
+
+      if (prev.targetFraction <= 0f) {
+        // Ongoing Word Window fade-out from an earlier tap: continue smoothly if still visible
+        if (revealMode == RevealMode.WORD_WINDOW && remainingMs > 16L && currentFraction > 0.02f) {
+          carriedAnimations.put(
+              key,
+              new ActiveWordAnim(prev.suraAyah, prev.wordPos, currentFraction, 0f, remainingMs)
+          );
+        }
+      } else {
+        // Ongoing fade-in from an earlier tap: keep ONLY if the word is still revealed
+        final boolean stillRevealed =
+            QuranMemorizationManager.INSTANCE.isWordRevealed(pageNum, prev.suraAyah, prev.wordPos);
+        if (stillRevealed && remainingMs > 16L && currentFraction < 0.98f) {
+          carriedAnimations.put(
+              key,
+              new ActiveWordAnim(prev.suraAyah, prev.wordPos, currentFraction, 1f, remainingMs)
+          );
+        }
+      }
+    }
+
+    activeWordAnimations.clear();
+    wordAnimationFractions.clear();
+    activeWordAnimations.putAll(carriedAnimations);
+
+    // 1. Register newly fading-out words (Word Window removing words smoothly: 1.0f -> 0.0f)
+    for (FadingWord fadingWord : transition.getFadingOutWords()) {
+      final String key = fadingWord.key();
+      final Float startFromCarried = carriedStartFractions.get(key);
+      final float startFraction = startFromCarried != null ?
+          Math.max(0.05f, Math.min(1f, startFromCarried)) : 1f;
+      activeWordAnimations.put(
+          key,
+          new ActiveWordAnim(
+              fadingWord.getSuraAyah(),
+              fadingWord.getWordPosition(),
+              startFraction,
+              0f,
+              WORD_WINDOW_FADE_OUT_DURATION_MS
+          )
+      );
+    }
+
+    // 2. Register newly revealed words (0.0f -> 1.0f)
+    final SuraAyah targetAyah = transition.getSuraAyah();
+    for (Integer wordPos : transition.getWordPositions()) {
+      final String key = targetAyah.sura + ":" + targetAyah.ayah + ":" + wordPos;
+      activeWordAnimations.put(
+          key,
+          new ActiveWordAnim(
+              targetAyah,
+              wordPos,
+              0f,
+              1f,
+              WORD_REVEAL_DURATION_MS
+          )
+      );
+    }
+
+    long maxDurationMs = 0L;
+    for (ActiveWordAnim anim : activeWordAnimations.values()) {
+      if (anim.durationMs > maxDurationMs) {
+        maxDurationMs = anim.durationMs;
+      }
+    }
+
+    currentAnimatorDurationMs = maxDurationMs;
+    currentAnimatorElapsedMs = 0L;
+    applyRevealAnimationAtElapsedMs(0L);
+    invalidate();
+
+    if (maxDurationMs <= 0L || activeWordAnimations.isEmpty()) {
+      return;
+    }
+
+    final long totalDurationMs = maxDurationMs;
+    revealAnimator = ValueAnimator.ofFloat(0f, 1f);
+    revealAnimator.setDuration(totalDurationMs);
+    revealAnimator.setInterpolator(new LinearInterpolator());
+    revealAnimator.addUpdateListener(anim -> {
+      final float rawFraction = (Float) anim.getAnimatedValue();
+      final long elapsedMs = Math.round(rawFraction * totalDurationMs);
+      currentAnimatorElapsedMs = elapsedMs;
+      applyRevealAnimationAtElapsedMs(elapsedMs);
+      invalidate();
+    });
+    revealAnimator.addListener(new AnimatorListenerAdapter() {
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        if (!isRestartingRevealAnimator) {
+          activeWordAnimations.clear();
+          wordAnimationFractions.clear();
+          currentAnimatorDurationMs = 0L;
+          currentAnimatorElapsedMs = 0L;
+          invalidate();
+        }
+      }
+
+      @Override
+      public void onAnimationCancel(Animator animation) {
+        if (!isRestartingRevealAnimator) {
+          activeWordAnimations.clear();
+          wordAnimationFractions.clear();
+          currentAnimatorDurationMs = 0L;
+          currentAnimatorElapsedMs = 0L;
+          invalidate();
+        }
+      }
+    });
+    revealAnimator.start();
+  }
+
+  private void applyRevealAnimationAtElapsedMs(long elapsedMs) {
+    final List<String> finishedKeys = new ArrayList<>();
+    for (Map.Entry<String, ActiveWordAnim> entry : activeWordAnimations.entrySet()) {
+      final String key = entry.getKey();
+      final ActiveWordAnim spec = entry.getValue();
+      if (spec.durationMs <= 0L || elapsedMs >= spec.durationMs) {
+        finishedKeys.add(key);
+      } else {
+        final float rawT = Math.min(1f, Math.max(0f, (float) elapsedMs / (float) spec.durationMs));
+        final float easedT = 1f - (1f - rawT) * (1f - rawT);
+        final float current = spec.startFraction + (spec.targetFraction - spec.startFraction) * easedT;
+        wordAnimationFractions.put(key, current);
+      }
+    }
+    for (String finishedKey : finishedKeys) {
+      activeWordAnimations.remove(finishedKey);
+      wordAnimationFractions.remove(finishedKey);
+    }
+  }
+
+  public void advanceRevealAnimationForTest(long elapsedMs) {
+    if (revealAnimator != null && revealAnimator.isRunning()) {
+      isRestartingRevealAnimator = true;
+      revealAnimator.cancel();
+      isRestartingRevealAnimator = false;
+      revealAnimator = null;
+    }
+    currentAnimatorElapsedMs = Math.max(0L, elapsedMs);
+    applyRevealAnimationAtElapsedMs(currentAnimatorElapsedMs);
+    invalidate();
+  }
+
+  public Map<String, Float> getWordAnimationFractions() {
+    return Collections.unmodifiableMap(wordAnimationFractions);
+  }
+
+  public AyahCoordinates getAyahCoordinatesData() {
+    return ayahCoordinates;
   }
 
   public void setIsScrollable(boolean scrollable, boolean landscape) {
@@ -207,14 +519,47 @@ public class HighlightingImageView extends AppCompatImageView {
   public void setPageData(PageCoordinates pageCoordinates, Set<ImageDrawHelper> imageDrawHelpers) {
     this.imageDrawHelpers = imageDrawHelpers;
     this.pageCoordinates = pageCoordinates;
+    invalidate();
   }
 
   public void setAyahData(AyahCoordinates ayahCoordinates) {
+    QuranMemorizationManager.INSTANCE.ensurePreferencesLoaded(getContext());
+    QuranMemorizationManager.INSTANCE.ensureWordAlignmentLoaded(getContext());
+    PageGlyphsCoords glyphCoords = ayahCoordinates.getGlyphCoordinates();
+    if (glyphCoords == null && !ayahCoordinates.getAyahCoordinates().isEmpty()) {
+      glyphCoords = AyahGlyphSynthesizer.synthesize(
+          ayahCoordinates.getPage(),
+          ayahCoordinates.getAyahCoordinates()
+      );
+      if (glyphCoords != null) {
+        ayahCoordinates = new AyahCoordinates(
+            ayahCoordinates.getPage(),
+            ayahCoordinates.getAyahCoordinates(),
+            glyphCoords,
+            ayahCoordinates.getAyahLineCoordinates(),
+            ayahCoordinates.getUnderlineRaiseRatio()
+        );
+      }
+    }
     this.ayahCoordinates = ayahCoordinates;
+    if (this.pageCoordinates == null) {
+      this.pageCoordinates = new PageCoordinates(
+          ayahCoordinates.getPage(),
+          new RectF(),
+          Collections.emptyList(),
+          Collections.emptyList()
+      );
+    }
+    QuranMemorizationManager.INSTANCE.registerPageGlyphs(
+        ayahCoordinates.getPage(),
+        glyphCoords,
+        ayahCoordinates.getAyahCoordinates().keySet()
+    );
     highlightCoordinates = new HashMap<>();
     for (Map.Entry<String, List<AyahBounds>> entry: ayahCoordinates.getAyahCoordinates().entrySet()) {
       highlightCoordinates.put(new SingleAyahHighlight(entry.getKey()), entry.getValue());
     }
+    invalidate();
   }
 
   public void setNightMode(boolean isNightMode, int textBrightness, int backgroundBrightness) {
@@ -541,6 +886,7 @@ public class HighlightingImageView extends AppCompatImageView {
     // Note: this must be done before the super.onDraw call so that HighlightsDrawer has a chance
     //       to apply canvas clippings (e.g. hiding) before the image is drawn
     if (pageCoordinates != null) {
+      memorizationHighlightsDrawer.draw(pageCoordinates, canvas, this);
       clippingHighlightsDrawer.draw(pageCoordinates, canvas, this);
     }
 
@@ -553,6 +899,7 @@ public class HighlightingImageView extends AppCompatImageView {
     // Draw remaining highlights (other than HIDE, COLOR)
     if (pageCoordinates != null) {
       highlightsDrawer.draw(pageCoordinates, canvas, this);
+      kidsClassroomHighlightsDrawer.draw(pageCoordinates, canvas, this);
     }
 
     // Draw overlay text

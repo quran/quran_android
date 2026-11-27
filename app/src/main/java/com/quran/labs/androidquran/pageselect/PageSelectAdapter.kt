@@ -68,7 +68,7 @@ class PageSelectAdapter(val inflater: LayoutInflater,
   private fun readImage(path: String, imageRef: WeakReference<ImageView>) {
     compositeDisposable.add(
         Maybe.fromCallable {
-          val options = BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.ALPHA_8 }
+          val options = BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.ARGB_8888 }
           BitmapFactory.decodeFile(path, options)
         }
         .subscribeOn(Schedulers.io())

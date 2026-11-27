@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Leaving Mushaf lesson back to Progress Islands: crisp scale-down + fade -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/fast_out_slow_in"
+    android:shareInterpolator="true">
+  <alpha
+      android:duration="180"
+      android:fromAlpha="1.0"
+      android:toAlpha="0.0" />
+  <scale
+      android:duration="200"
+      android:fromXScale="1.0"
+      android:fromYScale="1.0"
+      android:pivotX="50%"
+      android:pivotY="50%"
+      android:toXScale="0.95"
+      android:toYScale="0.95" />
+</set>

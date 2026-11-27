@@ -221,6 +221,7 @@ dependencies {
   implementation(project(":common:data"))
   implementation(project(":common:di"))
   implementation(project(":common:download"))
+  implementation(project(":common:drawing"))
   implementation(project(":common:networking"))
   implementation(project(":common:pages"))
   implementation(project(":common:preference"))
@@ -245,14 +246,24 @@ dependencies {
 
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.kotlinx.coroutines.android)
+  implementation(libs.kotlinx.collections.immutable)
 
   implementation(libs.retrofit)
   implementation(libs.converter.moshi)
 
   implementation(libs.androidx.appcompat)
+  implementation(libs.androidx.core.ktx)
+  implementation(libs.androidx.activity.compose)
+  implementation(libs.androidx.fragment.ktx)
+  implementation(libs.androidx.lifecycle.process)
+  implementation(libs.androidx.lifecycle.runtime.compose)
+  implementation(libs.androidx.dynamicanimation)
+  implementation(libs.androidx.browser)
   implementation(libs.androidx.media)
   implementation(libs.androidx.media3.exoplayer)
+  // implementation(libs.androidx.media3.datasource.okhttp)
   implementation(libs.androidx.media3.session)
+  implementation(libs.onnxruntime.android)
   implementation(libs.androidx.localbroadcastmanager)
   implementation(libs.androidx.preference.ktx)
   implementation(libs.androidx.recyclerview)
@@ -262,7 +273,10 @@ dependencies {
 
   // compose
   implementation(libs.compose.foundation)
+  implementation(libs.compose.animation)
+  implementation(libs.compose.material)
   implementation(libs.compose.material3)
+  implementation(libs.compose.runtime)
   implementation(libs.compose.ui)
   implementation(libs.compose.ui.tooling.preview)
   implementation(libs.compose.ui.tooling)
@@ -287,13 +301,16 @@ dependencies {
   implementation(libs.androidx.work.runtime.ktx)
 
   implementation(libs.okhttp)
+  implementation(libs.okhttp.dnsoverhttps)
+  implementation(libs.okhttp.tls)
 
   implementation(libs.moshi)
   ksp(libs.moshi.codegen)
 
   implementation(libs.insetter)
   implementation(libs.timber)
-  debugImplementation(libs.leakcanary.android)
+  // Commented out: adds a duplicate MAIN/LAUNCHER activity (LeakLauncherActivity) and READ_EXTERNAL_STORAGE
+  // debugImplementation(libs.leakcanary.android)
 
   testImplementation(project(":common:test-utils"))
   testImplementation(libs.junit)
