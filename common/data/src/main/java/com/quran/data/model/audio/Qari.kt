@@ -10,6 +10,8 @@ data class Qari(
   val path: String,
   val hasGaplessAlternative: Boolean,
   val db: String? = null,
+  /** this qari's recitation id on quran.com, when the same recitation is there. */
+  val quranComId: Int? = null,
 ) {
   val databaseName = if (db.isNullOrEmpty()) null else db
   val isGapless: Boolean = databaseName != null

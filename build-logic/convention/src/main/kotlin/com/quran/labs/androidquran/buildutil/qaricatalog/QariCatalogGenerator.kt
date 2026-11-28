@@ -45,6 +45,7 @@ internal object QariCatalogGenerator {
         .add("path = %S,\n", value.path)
         .add("hasGaplessAlternative = %L,\n", value.hasGaplessAlternative)
         .add("db = %S,\n", value.db)
+        .add("quranComId = %L,\n", value.quranComId)
         .unindent().add("),\n")
     }
     initializer.unindent().add(")")

@@ -27,6 +27,14 @@ class QariUtil(private val pageProvider: PageProvider) {
   }
 
   /**
+   * Get the local id of the qari for a quran.com recitation id.
+   *
+   * @return the qari id, or null when this recitation is not one of ours.
+   */
+  fun qariIdForQuranComId(quranComId: Int): Int? =
+    getQariList().firstOrNull { it.quranComId == quranComId }?.id
+
+  /**
    * Get a list of all available qaris as [QariItem]s
    *
    * @param context the current context
