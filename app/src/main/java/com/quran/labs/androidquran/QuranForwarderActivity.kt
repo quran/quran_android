@@ -18,24 +18,14 @@ class QuranForwarderActivity : Activity() {
     if (intent != null) {
       val data = intent.data
       if (data != null) {
-        val urlString = data.toString()
-        val pieces = urlString.split("/".toRegex()).toTypedArray()
-
-        var sura: Int? = null
-        var ayah = 1
-        for (s in pieces) {
-          try {
-            val i = s.toInt()
-            if (sura == null) {
-              sura = i
-            } else {
-              ayah = i
-              break
-            }
-          } catch (nfe: NumberFormatException) {
-            // leave it as null
-          }
-        }
+        // the authority and the path segments, rather than the whole uri split
+        // on "/": a query string would otherwise be left inside the last piece
+        // ("255?play=true"), fail to parse as a number, and send the reader to
+        // the first ayah of the sura with no error anywhere.
+        val numbers = (listOfNotNull(data.authority) + data.pathSegments)
+          .mapNotNull { it.toIntOrNull() }
+        val sura = numbers.firstOrNull()
+        val ayah = numbers.getOrNull(1) ?: 1
 
         if (sura != null) {
           val page = quranInfo.getPageFromSuraAyah(sura, ayah)
