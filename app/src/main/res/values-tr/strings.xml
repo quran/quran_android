@@ -185,7 +185,7 @@
   <string name="translation_dialog_later">Sonra</string>
   <string name="translation_dialog_yes">Evet</string>
   <string name="timing_database">Gerekli dosyalar</string>
-  <string name="page_description">sayfa  %1$s, cüz %2$s</string>
+  <string name="page_description">sayfa %1$s, cüz %2$s</string>
 
   <string name="menu_bookmarks_page">Sayfa işaretleri</string>
   <string name="menu_sort_date">Eklendiği tarih</string>
