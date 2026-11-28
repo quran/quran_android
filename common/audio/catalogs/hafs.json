@@ -8,7 +8,8 @@
       "opusUrl": null,
       "path": "minshawi_murattal",
       "hasGaplessAlternative": false,
-      "db": "minshawi_murattal"
+      "db": "minshawi_murattal",
+      "quranComId": 9
     },
     {
       "id": 1,
@@ -17,7 +18,8 @@
       "opusUrl": null,
       "path": "husary",
       "hasGaplessAlternative": false,
-      "db": "husary"
+      "db": "husary",
+      "quranComId": 6
     },
     {
       "id": 2,

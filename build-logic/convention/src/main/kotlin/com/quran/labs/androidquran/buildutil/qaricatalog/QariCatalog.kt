@@ -17,5 +17,6 @@ internal data class QariCatalogEntry(
   val path: String,
   val hasGaplessAlternative: Boolean,
   val opusUrl: String? = null,
-  val db: String? = null
+  val db: String? = null,
+  val quranComId: Int? = null
 )
